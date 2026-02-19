@@ -1,42 +1,33 @@
-import { useEffect } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
-import { useDispatch, useSelector } from 'react-redux';
 import { Container, Stack } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { DeprecatedReduxState } from '@src/store';
 
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
 import AriaLiveRegion from './AriaLiveRegion';
-import { RequestStatus } from '../data/constants';
 import ChecklistSection from './ChecklistSection';
-import { fetchCourseLaunchQuery, fetchCourseBestPracticesQuery } from './data/thunks';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
+import { useCourseBestPractices, useCourseLaunch } from './data/apiHooks';
 
 const CourseChecklist = () => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const { courseId, courseDetails } = useCourseAuthoringContext();
   const enableQuality = getConfig().ENABLE_CHECKLIST_QUALITY === 'true';
 
-  useEffect(() => {
-    dispatch(fetchCourseLaunchQuery({ courseId }));
-    dispatch(fetchCourseBestPracticesQuery({ courseId }));
-  }, [courseId]);
+  const {
+    data: bestPracticeData,
+    isPending: isPendingBestPacticeData,
+  } = useCourseBestPractices({ courseId });
 
   const {
-    loadingStatus,
-    launchData,
-    bestPracticeData,
-  } = useSelector((state: DeprecatedReduxState) => state.courseChecklist);
+    data: launchData,
+    isPending: isPendingLaunchData,
+    failureReason: launchError,
+  } = useCourseLaunch({ courseId });
 
-  const { bestPracticeChecklistLoadingStatus, launchChecklistLoadingStatus, launchChecklistStatus } = loadingStatus;
-
-  const isCourseLaunchChecklistLoading = bestPracticeChecklistLoadingStatus === RequestStatus.IN_PROGRESS;
-  const isCourseBestPracticeChecklistLoading = launchChecklistLoadingStatus === RequestStatus.IN_PROGRESS;
-  const isLoadingDenied = launchChecklistStatus === RequestStatus.DENIED;
+  const isLoadingDenied = launchError?.response?.status === 403;
 
   if (isLoadingDenied) {
     return (
@@ -64,8 +55,8 @@ const CourseChecklist = () => {
         />
         <AriaLiveRegion
           {...{
-            isCourseLaunchChecklistLoading,
-            isCourseBestPracticeChecklistLoading,
+            isCourseLaunchChecklistLoading: isPendingLaunchData,
+            isCourseBestPracticeChecklistLoading: isPendingBestPacticeData,
             enableQuality,
           }}
         />
@@ -75,7 +66,7 @@ const CourseChecklist = () => {
             dataHeading={intl.formatMessage(messages.launchChecklistLabel)}
             data={launchData}
             idPrefix="launchChecklist"
-            isLoading={isCourseLaunchChecklistLoading}
+            isLoading={isPendingLaunchData}
           />
           {enableQuality && (
             <ChecklistSection
@@ -83,7 +74,7 @@ const CourseChecklist = () => {
               dataHeading={intl.formatMessage(messages.bestPracticesChecklistLabel)}
               data={bestPracticeData}
               idPrefix="bestPracticesChecklist"
-              isLoading={isCourseBestPracticeChecklistLoading}
+              isLoading={isPendingBestPacticeData}
             />
           )}
         </Stack>

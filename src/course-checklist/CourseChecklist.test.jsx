@@ -1,16 +1,12 @@
 import {
   render,
-  waitFor,
   screen,
   initializeMocks,
 } from '@src/testUtils';
 import '@testing-library/jest-dom';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { RequestStatus } from '../data/constants';
-import { executeThunk } from '../utils';
 import { getCourseLaunchApiUrl, getCourseBestPracticesApiUrl } from './data/api';
-import { fetchCourseLaunchQuery, fetchCourseBestPracticesQuery } from './data/thunks';
 import {
   courseId,
   generateCourseLaunchData,
@@ -20,7 +16,6 @@ import messages from './messages';
 import CourseChecklist from './index';
 
 let axiosMock;
-let store;
 
 const renderComponent = () => {
   render(
@@ -33,22 +28,18 @@ const renderComponent = () => {
 const mockStore = async (status) => {
   axiosMock.onGet(getCourseLaunchApiUrl(courseId)).reply(status, generateCourseLaunchData());
   axiosMock.onGet(getCourseBestPracticesApiUrl(courseId)).reply(status, generateCourseBestPracticesData());
-
-  await executeThunk(fetchCourseLaunchQuery(courseId), store.dispatch);
-  await executeThunk(fetchCourseBestPracticesQuery(courseId), store.dispatch);
 };
 
 describe('CourseChecklistPage', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
-    store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
   });
   describe('renders', () => {
     describe('if enable_quality prop is true', () => {
       it('two checklist components ', async () => {
-        renderComponent();
         await mockStore(200);
+        renderComponent();
 
         expect(screen.getByText(messages.launchChecklistLabel.defaultMessage)).toBeVisible();
 
@@ -56,9 +47,9 @@ describe('CourseChecklistPage', () => {
       });
 
       describe('an aria-live region with', () => {
-        it('an aria-live region', () => {
+        it('an aria-live region', async () => {
           renderComponent();
-          const ariaLiveRegion = screen.getByRole('status');
+          const ariaLiveRegion = await screen.findByRole('status');
 
           expect(ariaLiveRegion).toBeDefined();
 
@@ -66,29 +57,17 @@ describe('CourseChecklistPage', () => {
         });
 
         it('correct content when the launch checklist has loaded', async () => {
-          renderComponent();
           await mockStore(404);
-          await waitFor(() => {
-            const { launchChecklistStatus } = store.getState().courseChecklist.loadingStatus;
-
-            expect(launchChecklistStatus).not.toEqual(RequestStatus.SUCCESSFUL);
-
-            expect(screen.getByText(messages.launchChecklistDoneLoadingLabel.defaultMessage)).toBeInTheDocument();
-          });
+          renderComponent();
+          expect(await screen.findByText(messages.launchChecklistDoneLoadingLabel.defaultMessage)).toBeInTheDocument();
         });
 
         it('correct content when the best practices checklist is loading', async () => {
-          renderComponent();
           await mockStore(404);
-          await waitFor(() => {
-            const { bestPracticeChecklistStatus } = store.getState().courseChecklist.loadingStatus;
-
-            expect(bestPracticeChecklistStatus).not.toEqual(RequestStatus.IN_PROGRESS);
-
-            expect(
-              screen.getByText(messages.bestPracticesChecklistDoneLoadingLabel.defaultMessage),
-            ).toBeInTheDocument();
-          });
+          renderComponent();
+          expect(
+            await screen.findByText(messages.bestPracticesChecklistDoneLoadingLabel.defaultMessage),
+          ).toBeInTheDocument();
         });
       });
     });
@@ -111,27 +90,15 @@ describe('CourseChecklistPage', () => {
 
       describe('an aria-live region with', () => {
         it('correct content when the launch checklist has loaded', async () => {
-          renderComponent();
           await mockStore(404);
-          await waitFor(() => {
-            const { launchChecklistStatus } = store.getState().courseChecklist.loadingStatus;
-
-            expect(launchChecklistStatus).not.toEqual(RequestStatus.SUCCESSFUL);
-
-            expect(screen.getByText(messages.launchChecklistDoneLoadingLabel.defaultMessage)).toBeInTheDocument();
-          });
+          renderComponent();
+          expect(await screen.findByText(messages.launchChecklistDoneLoadingLabel.defaultMessage)).toBeInTheDocument();
         });
 
         it('correct content when the best practices checklist is loading', async () => {
-          renderComponent();
           await mockStore(404);
-          await waitFor(() => {
-            const { bestPracticeChecklistStatus } = store.getState().courseChecklist.loadingStatus;
-
-            expect(bestPracticeChecklistStatus).not.toEqual(RequestStatus.IN_PROGRESS);
-
-            expect(screen.queryByText(messages.bestPracticesChecklistDoneLoadingLabel.defaultMessage)).toBeNull();
-          });
+          renderComponent();
+          expect(screen.queryByText(messages.bestPracticesChecklistDoneLoadingLabel.defaultMessage)).toBeNull();
         });
       });
     });
@@ -144,11 +111,7 @@ describe('CourseChecklistPage', () => {
 
       renderComponent();
 
-      await waitFor(() => {
-        const { launchChecklistStatus } = store.getState().courseChecklist.loadingStatus;
-        expect(launchChecklistStatus).toEqual(RequestStatus.DENIED);
-        expect(screen.getByRole('alert')).toBeInTheDocument();
-      });
+      expect(await screen.findByRole('alert')).toBeInTheDocument();
     });
   });
 });
