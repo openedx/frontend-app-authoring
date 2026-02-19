@@ -59,8 +59,8 @@ export const apiUrls = {
    * @param pageIndex Zero-indexed page number
    * @param pageSize How many tags per page to load
    */
-  tagList: (taxonomyId: number, pageIndex: number, pageSize: number) => makeUrl(`${taxonomyId}/tags/`, {
-    page: (pageIndex + 1), page_size: pageSize,
+  tagList: (taxonomyId: number, pageIndex: number, pageSize: number, depth?: number) => makeUrl(`${taxonomyId}/tags/`, {
+    page: (pageIndex + 1), page_size: pageSize, full_depth_threshold: depth || 0
   }),
   /**
    * Get _all_ tags below a given parent tag. This may be replaced with something more scalable in the future.

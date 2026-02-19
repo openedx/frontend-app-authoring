@@ -1,16 +1,61 @@
 // @ts-check
 import React, { useState, useMemo } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button, DataTable } from '@openedx/paragon';
+import { Button } from '@openedx/paragon';
 import { isEqual } from 'lodash';
 import Proptypes from 'prop-types';
+
+import {
+  useReactTable,
+  getCoreRowModel,
+  getExpandedRowModel,
+  flexRender,
+} from '@tanstack/react-table';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
 import { useTagListData, useSubTags, useCreateTag } from '../data/apiHooks';
 
 /**
- * Modified SubTagsExpanded to accept creation props
+ * 1. Reusable Editable Cell
+ */
+const EditableCell = ({ initialValue, onSave, onCancel }) => {
+  const [value, setValue] = useState(initialValue);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.target.blur(); // Trigger onBlur to save
+    } else if (e.key === 'Escape') {
+      onCancel();
+    }
+  };
+
+  return (
+    <input
+      autoFocus
+      type="text"
+      className="form-control form-control-sm"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={() => onSave(value)}
+      onKeyDown={handleKeyDown}
+      onClick={(e) => e.stopPropagation()}
+    />
+  );
+};
+
+EditableCell.propTypes = {
+  initialValue: Proptypes.string,
+  onSave: Proptypes.func.isRequired,
+  onCancel: Proptypes.func.isRequired,
+};
+
+EditableCell.defaultProps = {
+  initialValue: '',
+};
+
+/**
+ * SubTagsExpanded Component
  */
 const SubTagsExpanded = ({
   taxonomyId,
@@ -30,8 +75,7 @@ const SubTagsExpanded = ({
   }
 
   return (
-    <ul style={{ listStyleType: 'none', paddingLeft: '30px', marginTop: '10px' }}>
-      {/* 2. Conditionally inject the input field for new sub-rows */}
+    <ul style={{ listStyleType: 'none', paddingLeft: '30px', margin: '10px 0' }}>
       {isCreating && (
         <li style={{ marginBottom: '8px' }}>
           <EditableCell
@@ -59,107 +103,41 @@ SubTagsExpanded.propTypes = {
 };
 
 /**
- * 1. New Component: Reusable Editable Cell
- * Handles the input field, saving on Enter/Blur, and canceling on Escape.
+ * Expand toggle for rows with children (Updated for v8 API)
  */
-const EditableCell = ({ initialValue, onSave, onCancel }) => {
-  const [value, setValue] = useState(initialValue);
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.target.blur(); // Trigger onBlur to save
-    } else if (e.key === 'Escape') {
-      onCancel();
-    }
-  };
-
+const OptionalExpandLink = ({ row }) => {
+  console.log('can expand: ', row.getCanExpand())
   return (
-    <input
-      autoFocus
-      type="text"
-      className="form-control form-control-sm"
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={() => onSave(value)}
-      onKeyDown={handleKeyDown}
-      onClick={(e) => e.stopPropagation()} // Prevent row click events
-    />
-  );
+    row.original.childCount > 0 ? (
+      <div
+        className="d-flex justify-content-end"
+        style={{ cursor: 'pointer' }}
+        onClick={row.getToggleExpandedHandler()}
+      >
+        {row.getIsExpanded() ? '👇' : '👉'}
+      </div>
+    ) : null
+  )
 };
-
-EditableCell.propTypes = {
-  initialValue: Proptypes.string,
-  onSave: Proptypes.func.isRequired,
-  onCancel: Proptypes.func.isRequired,
-};
-
-EditableCell.defaultProps = {
-  initialValue: '',
-};
-
-SubTagsExpanded.propTypes = {
-  taxonomyId: Proptypes.number.isRequired,
-  parentTagValue: Proptypes.string.isRequired,
-};
-
-/**
- * An "Expand" toggle to show/hide subtags, but one which is hidden if the given tag row has no subtags.
- */
-const OptionalExpandLink = ({ row }) => (
-  row.original.childCount > 0 ? <div className="d-flex justify-content-end"><DataTable.ExpandRow row={row} /></div> : null
-);
-OptionalExpandLink.propTypes = DataTable.ExpandRow.propTypes;
-
-/**
- * Custom DataTable cell to join tag value with child count
- */
-const TagValue = ({ row }) => (
-  <>
-    <span>{row.original.value}</span>
-    <span className="text-secondary-500">{` (${row.original.descendantCount})`}</span>
-  </>
-);
-TagValue.propTypes = {
-  row: Proptypes.shape({
-    original: Proptypes.shape({
-      value: Proptypes.string.isRequired,
-      childCount: Proptypes.number.isRequired,
-      descendantCount: Proptypes.number.isRequired,
-    }).isRequired,
-  }).isRequired,
-};
+OptionalExpandLink.propTypes = { row: Proptypes.object.isRequired };
 
 const TagListTable = ({ taxonomyId }) => {
   const intl = useIntl();
-  const [options, setOptions] = useState({
+
+  // Standardizing pagination state for TanStack v8
+  const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
     pageSize: 100,
   });
 
-  // 3. New States for editing and creating
-  // 'top' means new root row. A tag ID means creating a subtag under that ID. null means inactive.
+  const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
+
   const [creatingParentId, setCreatingParentId] = useState(null);
   const [editingRowId, setEditingRowId] = useState(null);
 
-  const { isLoading, data: tagList } = useTagListData(taxonomyId, options);
+  const { isLoading, data: tagList } = useTagListData(taxonomyId, pagination);
   const createTagMutation = useCreateTag(taxonomyId);
-  // Hypothetical update mutation - replace with your actual API hook
-  // const updateTagMutation = useUpdateTag(taxonomyId);
 
-  const fetchData = (args) => {
-    if (!isEqual(args, options)) {
-      setOptions({ ...args });
-    }
-  };
-
-  const TableAction = ({ tableInstance }) => (
-    // Here is access to the tableInstance
-    <Button onClick={() => { tableInstance.toggleAllRowsExpanded() }}>
-      Expand All
-    </Button>
-  );
-
-  // 4. Inject draft row dynamically for top-level creation & append isEditing flags
   const rowData = useMemo(() => {
     const data = [...(tagList?.results || [])].map(item => ({
       ...item,
@@ -175,10 +153,11 @@ const TagListTable = ({ taxonomyId }) => {
         childCount: 0,
       });
     }
+    console.log('rowData: ', data);
     return data;
   }, [tagList?.results, creatingParentId, editingRowId]);
 
-  // --- Handlers ---
+
   const handleCreateTopTag = async (value) => {
     if (value.trim()) {
       await createTagMutation.mutateAsync({ value });
@@ -188,7 +167,6 @@ const TagListTable = ({ taxonomyId }) => {
 
   const handleCreateSubTag = async (value, parentId) => {
     if (value.trim()) {
-      // Adjust payload based on how your backend expects parent relationships
       await createTagMutation.mutateAsync({ value, parentId });
     }
     setCreatingParentId(null);
@@ -196,17 +174,16 @@ const TagListTable = ({ taxonomyId }) => {
 
   const handleUpdateTag = async (id, value, originalValue) => {
     if (value.trim() && value !== originalValue) {
-      // await updateTagMutation.mutateAsync({ id, value });
       console.log('Update backend here', id, value);
     }
     setEditingRowId(null);
   };
 
-  // 5. Wrap columns in useMemo to safely access state/handlers
   const columns = useMemo(() => [
     {
-      Header: intl.formatMessage(messages.tagListColumnValueHeader),
-      Cell: ({ row }) => {
+      // Note: Header/Cell are lowercase in v8
+      header: intl.formatMessage(messages.tagListColumnValueHeader),
+      cell: ({ row }) => {
         const { isNew, isEditing, value, descendantCount, id } = row.original;
 
         if (isNew) {
@@ -238,12 +215,12 @@ const TagListTable = ({ taxonomyId }) => {
     },
     {
       id: 'expander',
-      Header: <></>,
-      Cell: OptionalExpandLink,
+      header: () => <></>,
+      cell: OptionalExpandLink,
     },
     {
-      id: 'options',
-      Header: (
+      id: 'add',
+      header: () => (
         <span
           style={{ cursor: 'pointer', fontSize: '1.2rem', fontWeight: 'bold' }}
           title="Add Tag"
@@ -255,67 +232,146 @@ const TagListTable = ({ taxonomyId }) => {
           +
         </span>
       ),
-      Cell: ({ row }) => (
-        <div className="d-flex gap-2">
-          {/* You might want to replace these spans with a Paragon Dropdown/Menu component */}
-          <span
-            style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3', marginRight: '2rem' }}
-            onClick={() => {
-              setEditingRowId(row.original.id);
-              setCreatingParentId(null);
-            }}
-          >
-            Edit
-          </span>
-          <span
-            style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3' }}
-            onClick={() => {
-              setCreatingParentId(row.original.id);
-              setEditingRowId(null);
-              // Important: Expand the row so the user can see the new input field
-              if (!row.isExpanded) row.toggleRowExpanded();
-            }}
-          >
-            + Subtag
-          </span>
-        </div>
-      )
+      cell: ({ row }) => {
+        if (row.original.isNew) {
+          return <div className="d-flex gap-2"></div>;
+        }
+
+        return (
+          <div className="d-flex gap-2">
+            <span
+              style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3', marginRight: '1rem' }}
+              onClick={() => {
+                setEditingRowId(row.original.id);
+                setCreatingParentId(null);
+              }}
+            >
+              Edit
+            </span>
+            <span
+              style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3' }}
+              onClick={() => {
+                setCreatingParentId(row.original.id);
+                setEditingRowId(null);
+                // v8 API uses toggleExpanded(true) to force expand
+                row.toggleExpanded(true);
+              }}
+            >
+              + Subtag
+            </span>
+          </div>
+        );
+      }
     },
-  ], [intl, creatingParentId, editingRowId]); // Re-render columns when these states change
+  ], [intl, creatingParentId, editingRowId]);
+
+  // Initialize TanStack Table
+  const table = useReactTable({
+    data: rowData,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    // Manual pagination config
+    manualPagination: true,
+    pageCount: tagList?.numPages ?? -1,
+    state: {
+      pagination,
+    },
+    onPaginationChange: setPagination,
+    getRowCanExpand: (row) => row.original.childCount > 0
+  });
 
   return (
     <div className="tag-list-table">
-      <DataTable
-        isLoading={isLoading}
-        isPaginated
-        manualPagination
-        fetchData={fetchData}
-        data={rowData}
-        itemCount={tagList?.count || 0}
-        pageCount={tagList?.numPages || 0}
-        initialState={options}
-        isExpandable
-        tableActions={[
-          // @ts-ignore
-          <TableAction key="expand-all" />,
-        ]}
-        renderRowSubComponent={({ row }) => (
-          <SubTagsExpanded
-            taxonomyId={taxonomyId}
-            parentTagValue={row.original.value}
-            parentTagId={row.original.id}
-            isCreating={creatingParentId === row.original.id}
-            onSaveNewSubTag={handleCreateSubTag}
-            onCancelCreation={() => setCreatingParentId(null)}
-          />
-        )}
-        columns={columns}
-      >
-        <DataTable.TableControlBar />
-        <DataTable.Table />
-        <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
-        {tagList?.numPages !== undefined && tagList?.numPages > 1 && <DataTable.TableFooter />}
-      </DataTable>
+      <div className="mb-3">
+        <Button onClick={() => table.toggleAllRowsExpanded()}>
+          Expand All
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <table className="table w-100" style={{ borderCollapse: 'collapse' }}>
+          <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id} style={{ borderBottom: '2px solid #ddd' }}>
+                {headerGroup.headers.map(header => (
+                  <th key={header.id} style={{ padding: '8px', textAlign: 'left' }}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+
+          <tbody>
+            {table.getRowModel().rows.length === 0 && (
+              <tr>
+                <td colSpan={columns.length} style={{ textAlign: 'center', padding: '1rem' }}>
+                  {intl.formatMessage(messages.noResultsFoundMessage)}
+                </td>
+              </tr>
+            )}
+
+            {table.getRowModel().rows.map(row => (
+              <React.Fragment key={row.id}>
+                {/* Main Row */}
+                <tr style={{ borderBottom: '1px solid #eee' }}>
+                  {row.getVisibleCells().map(cell => (
+                    <td key={cell.id} style={{ padding: '8px' }}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+
+                {/* Subcomponent Rendering */}
+                {row.getIsExpanded() && (
+                  <tr style={{ backgroundColor: '#f9f9f9' }}>
+                    {/* colSpan stretches the sub-row across the whole table */}
+                    <td colSpan={row.getVisibleCells().length} style={{ padding: '8px 8px 8px 24px' }}>
+                      <SubTagsExpanded
+                        taxonomyId={taxonomyId}
+                        parentTagValue={row.original.value}
+                        parentTagId={row.original.id}
+                        isCreating={creatingParentId === row.original.id}
+                        onSaveNewSubTag={handleCreateSubTag}
+                        onCancelCreation={() => setCreatingParentId(null)}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {/* Basic Pagination Controls */}
+      {(tagList?.numPages || 0) > 1 && (
+        <div className="d-flex justify-content-between align-items-center mt-3">
+          <Button
+            disabled={!table.getCanPreviousPage()}
+            onClick={() => table.previousPage()}
+          >
+            Previous
+          </Button>
+          <span>
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </span>
+          <Button
+            disabled={!table.getCanNextPage()}
+            onClick={() => table.nextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

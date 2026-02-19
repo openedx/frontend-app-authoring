@@ -210,7 +210,7 @@ export const useTagListData = (taxonomyId: number, options: QueryOptions) => {
   return useQuery({
     queryKey: taxonomyQueryKeys.taxonomyTagListPage(taxonomyId, pageIndex, pageSize),
     queryFn: async () => {
-      const { data } = await getAuthenticatedHttpClient().get(apiUrls.tagList(taxonomyId, pageIndex, pageSize));
+      const { data } = await getAuthenticatedHttpClient().get(apiUrls.tagList(taxonomyId, pageIndex, pageSize, 1000));
       return camelCaseObject(data) as TagListData;
     },
   });
