@@ -4,19 +4,19 @@ import {
 import { SidebarPage } from '@src/generic/sidebar';
 import { useToggle } from '@openedx/paragon';
 import { useStateWithUrlSearchParam } from '@src/hooks';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { messageTypes } from '../constants';
 
 export type UnitSidebarPageKeys = 'info' | 'add' | 'align';
 export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
 
 interface UnitSidebarContextData {
   currentPageKey: UnitSidebarPageKeys;
-  setCurrentPageKey: (pageKey: UnitSidebarPageKeys, componentId?: string) => void;
+  setCurrentPageKey: (pageKey: UnitSidebarPageKeys, componentId?: string | null) => void;
   currentTabKey?: string;
   setCurrentTabKey: (tabKey: string | undefined) => void;
-  // The Id of the component used in the current sidebar page
-  // The component is not necessarily selected to open a selected sidebar.
-  // Example: Align sidebar
-  currentComponentId?: string;
+  selectedComponentId?: string;
+  setSelectedComponentId: (componentId?: string) => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
@@ -32,6 +32,7 @@ export const UnitSidebarProvider = ({
   children?: React.ReactNode,
   readOnly: boolean,
 }) => {
+  const { sendMessageToIframe } = useIframe();
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<UnitSidebarPageKeys>(
     'info',
     'sidebar',
@@ -39,16 +40,23 @@ export const UnitSidebarProvider = ({
     (value: UnitSidebarPageKeys) => value,
   );
   const [currentTabKey, setCurrentTabKey] = useState<string>();
-  const [currentComponentId, setCurrentComponentId] = useState<string>();
+  const [selectedComponentId, setSelectedComponentId] = useState<string>();
   const [isOpen, open,, toggle] = useToggle(true);
 
   const setCurrentPageKey = useCallback(/* istanbul ignore next */ (
     pageKey: UnitSidebarPageKeys,
-    componentId?: string,
+    componentId?: string | null,
   ) => {
+    // Reset tab
     setCurrentTabKey(undefined);
     setCurrentPageKeyState(pageKey);
-    setCurrentComponentId(componentId);
+    if (componentId !== undefined) {
+      setSelectedComponentId(componentId === null ? undefined : componentId);
+    }
+    if (componentId === null) {
+      // Deselect the component
+      sendMessageToIframe(messageTypes.clearSelection, null);
+    }
     open();
   }, [open]);
 
@@ -58,7 +66,8 @@ export const UnitSidebarProvider = ({
       setCurrentPageKey,
       currentTabKey,
       setCurrentTabKey,
-      currentComponentId,
+      selectedComponentId,
+      setSelectedComponentId,
       isOpen,
       open,
       toggle,
@@ -69,7 +78,8 @@ export const UnitSidebarProvider = ({
       setCurrentPageKey,
       currentTabKey,
       setCurrentTabKey,
-      currentComponentId,
+      selectedComponentId,
+      setSelectedComponentId,
       isOpen,
       open,
       toggle,

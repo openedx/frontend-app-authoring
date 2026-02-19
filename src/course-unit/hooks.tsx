@@ -139,8 +139,9 @@ export const useCourseUnit = ({
   const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
 
   const unitXBlockActions = {
-    handleDelete: (XBlockId) => {
-      dispatch(deleteUnitItemQuery(blockId, XBlockId, sendMessageToIframe));
+    handleDelete: async (XBlockId) => {
+      // oxlint-disable-next-line typescript-eslint(await-thenable)
+      await dispatch(deleteUnitItemQuery(blockId, XBlockId, sendMessageToIframe));
     },
     handleDuplicate: (XBlockId) => {
       dispatch(duplicateUnitItemQuery(

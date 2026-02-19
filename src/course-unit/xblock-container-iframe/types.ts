@@ -31,7 +31,7 @@ export interface XBlockContainerIframeProps {
   blockId: string;
   isUnitVerticalType: boolean,
   unitXBlockActions: {
-    handleDelete: (XBlockId: string | null) => void;
+    handleDelete: (XBlockId: string | null) => Promise<void> | void;
     handleDuplicate: (XBlockId: string | null) => void;
     handleUnlink: (XBlockId: string | null) => void;
   };

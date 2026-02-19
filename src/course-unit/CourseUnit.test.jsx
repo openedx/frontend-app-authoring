@@ -25,6 +25,7 @@ import { getClipboardUrl } from '@src/generic/data/api';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockContentData } from '@src/content-tags-drawer/data/api.mocks';
 import {
   mockContentLibrary,
   mockGetContentLibraryV2List,
@@ -89,6 +90,7 @@ mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetContentLibraryV2List.applyMock();
 mockLibraryBlockMetadata.applyMock();
+mockContentData.applyMock();
 
 const {
   block_id: id,
@@ -2939,9 +2941,10 @@ describe('<CourseUnit />', () => {
 
     await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
 
-    simulatePostMessageEvent(messageTypes.openManageTags, { contentId: blockId });
+    simulatePostMessageEvent(messageTypes.openManageTags, { contentId: mockContentData.textXBlock });
 
     await screen.findByText('Align');
+    await screen.findByText(mockContentData.textXBlockData.displayName);
   });
 
   describe('Add sidebar', () => {
@@ -3243,5 +3246,22 @@ describe('<CourseUnit />', () => {
     const sidebarToggle = await screen.findByTestId('sidebar-toggle');
     expect(sidebarToggle).toBeInTheDocument();
     expect(within(sidebarToggle).queryByRole('button', { name: 'Add' })).not.toBeInTheDocument();
+  });
+
+  it('opens the component info sidebar on postMessage event', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+
+    render(<RootWrapper />);
+
+    await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+
+    simulatePostMessageEvent(messageTypes.xblockSelected, {
+      contentId: mockContentData.textXBlock,
+    });
+
+    await screen.findByText(mockContentData.textXBlockData.displayName);
   });
 });

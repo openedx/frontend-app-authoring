@@ -24,6 +24,7 @@ import { UnlinkModal } from '@src/generic/unlink-modal';
 import VideoSelectorPage from '@src/editors/VideoSelectorPage';
 import EditorPage from '@src/editors/EditorPage';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { messageTypes } from '../constants';
 import {
   fetchCourseSectionVerticalData,
@@ -53,12 +54,15 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { setCurrentPageKey } = useUnitSidebarContext();
+  const {
+    setCurrentPageKey,
+    setSelectedComponentId,
+  } = useUnitSidebarContext();
 
   // Useful to reload iframe
   const [iframeKey, setIframeKey] = useState(0);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
+  const { isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal } = useCourseAuthoringContext();
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
@@ -115,7 +119,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const handleUnlinkXBlock = (usageId: string) => {
     setUnlinkXBlockId(usageId);
-    openUnlinkModal();
+    openUnlinkModal({});
   };
 
   const handleManageXBlockAccess = (usageId: string) => {
@@ -127,9 +131,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     }
   };
 
-  const onDeleteSubmit = () => {
+  const onDeleteSubmit = async () => {
     if (deleteXBlockId) {
-      unitXBlockActions.handleDelete(deleteXBlockId);
+      await unitXBlockActions.handleDelete(deleteXBlockId);
+      setSelectedComponentId(undefined);
       closeDeleteModal();
     }
   };
@@ -180,6 +185,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const handleOpenManageTagsModal = (id: string) => {
     if (isUnitPageNewDesignEnabled()) {
       setCurrentPageKey('align', id);
+      sendMessageToIframe(messageTypes.selectXblock, { locator: id });
     } else {
       // Legacy manage tags modal
       setConfigureXBlockId(id);
@@ -204,6 +210,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     setIframeKey((prev) => prev + 1);
   };
 
+  const handleXBlockSelected = (id) => {
+    setCurrentPageKey('info', id);
+  };
+
   const messageHandlers = useMessageHandlers({
     courseId,
     dispatch,
@@ -222,6 +232,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleHideProcessingNotification,
     handleEditXBlock,
     handleRefreshIframe,
+    handleXBlockSelected,
   });
 
   useIframeMessages(readonly ? {} : messageHandlers);

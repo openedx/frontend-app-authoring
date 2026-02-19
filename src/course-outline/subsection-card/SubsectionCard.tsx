@@ -67,7 +67,7 @@ const SubsectionCard = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
@@ -156,6 +156,14 @@ const SubsectionCard = ({
 
   const handleClickMenuButton = () => {
     setCurrentSelection({
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
+  };
+
+  const handleClickManageTags = () => {
+    setSelectedContainerState({
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
@@ -290,6 +298,7 @@ const SubsectionCard = ({
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
                 onClickDuplicate={onDuplicateSubmit}
+                onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
                 actions={actions}
