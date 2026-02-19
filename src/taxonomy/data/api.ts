@@ -2,6 +2,8 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type { TaxonomyData, TaxonomyListData } from './types';
 
+
+
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 const getTaxonomiesV1Endpoint = () => new URL('api/content_tagging/v1/taxonomies/', getApiBaseUrl()).href;
 /**
@@ -74,6 +76,7 @@ export const apiUrls = {
   tagsImport: (taxonomyId) => makeUrl(`${taxonomyId}/tags/import/`),
   /** URL to plan (preview what would happen) a taxonomy import */
   tagsPlanImport: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/import/plan/`),
+  createTag: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/`),
 } satisfies Record<string, (...args: any[]) => string>;
 
 /**
