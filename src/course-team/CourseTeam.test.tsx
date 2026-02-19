@@ -12,6 +12,7 @@ import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from '.
 import { getCourseTeamApiUrl, updateCourseTeamUserApiUrl } from './data/api';
 import CourseTeam from './CourseTeam';
 import messages from './messages';
+import addUserFormMessages from './add-user-form/messages';
 
 let axiosMock;
 const mockPathname = '/foo-bar';
@@ -191,6 +192,42 @@ describe('<CourseTeam />', () => {
       expect(axiosMock.history.put.length).toBe(1);
     });
     expect(axiosMock.history.put[0].url).toEqual(updateUrl);
+  });
+
+  it('should show warning modal when submitting an already existing user email', async () => {
+    const user = userEvent.setup();
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, courseTeamWithOneUser);
+
+    render();
+
+    await user.click(await screen.findByRole('button', { name: messages.addNewMemberButton.defaultMessage }));
+    await user.type(screen.getByRole('textbox'), 'staff@example.com');
+    await user.click(screen.getByRole('button', { name: addUserFormMessages.addUserButton.defaultMessage }));
+
+    expect(await screen.findByText('Already a course team member')).toBeInTheDocument();
+  });
+
+  it('should hide the form after successfully adding a new user', async () => {
+    const user = userEvent.setup();
+    const newEmail = 'newuser@example.com';
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, courseTeamWithOneUser);
+    axiosMock
+      .onPost(updateCourseTeamUserApiUrl(courseId, newEmail))
+      .reply(200);
+
+    render();
+
+    await user.click(await screen.findByRole('button', { name: messages.addNewMemberButton.defaultMessage }));
+    await user.type(screen.getByRole('textbox'), newEmail);
+    await user.click(screen.getByRole('button', { name: addUserFormMessages.addUserButton.defaultMessage }));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('add-user-form')).not.toBeInTheDocument();
+    });
   });
 
   it('displays an alert and sets status to DENIED when API responds with 403', async () => {
