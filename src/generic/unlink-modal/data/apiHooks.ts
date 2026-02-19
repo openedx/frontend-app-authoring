@@ -3,8 +3,8 @@ import { courseLibrariesQueryKeys } from '@src/course-libraries';
 import { getCourseKey } from '@src/generic/key-utils';
 
 import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
-import { unlinkDownstream } from './api';
 import { ParentIds } from '@src/generic/types';
+import { unlinkDownstream } from './api';
 
 export const useUnlinkDownstream = () => {
   const queryClient = useQueryClient();

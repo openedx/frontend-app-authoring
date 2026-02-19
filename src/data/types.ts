@@ -130,7 +130,7 @@ export interface XBlock extends XBlockBase {
   childInfo: XblockChildInfo;
 }
 
-export interface UnitXBlock extends XBlockBase {};
+export interface UnitXBlock extends XBlockBase {}
 
 interface OutlineError {
   data?: string;

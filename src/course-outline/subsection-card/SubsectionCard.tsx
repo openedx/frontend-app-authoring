@@ -143,7 +143,10 @@ const SubsectionCard = ({
   useEffect(() => {
     // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(subsection.editedOnRaw))) {
-      queryClient.cancelQueries({queryKey: courseOutlineQueryKeys.courseItemId(initialData.id)});
+      queryClient.cancelQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
+      // eslint-disable-next-line no-console
+      }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
   }, [initialData, subsection]);

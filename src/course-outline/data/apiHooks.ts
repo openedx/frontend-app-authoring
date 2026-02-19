@@ -92,19 +92,19 @@ export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initial
     initialData,
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
     queryFn: enabled && itemId ? async () => {
-      const data = await getCourseItem<T>(itemId!)
+      const data = await getCourseItem<T>(itemId!);
       // If the container has children blocks, update children react-query cache
       // data without hitting the API as each xblock call returns its children information as well.
-      if ("childInfo" in data) {
+      if ('childInfo' in data) {
         // This could mean that data is of a section or subsection
-        (data.childInfo as XblockChildInfo).children.forEach((child) => {
-          queryClient.cancelQueries({queryKey: courseOutlineQueryKeys.courseItemId(child.id)});
+        (data.childInfo as XblockChildInfo).children.forEach(async (child) => {
+          await queryClient.cancelQueries({ queryKey: courseOutlineQueryKeys.courseItemId(child.id) });
           queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(child.id), child);
-          if ("childInfo" in child) {
+          if ('childInfo' in child) {
             // This means that the data is of section and so its children subsections also
             // have children i.e. units
-            (child.childInfo as XblockChildInfo).children.forEach((grandChild) => {
-              queryClient.cancelQueries({queryKey: courseOutlineQueryKeys.courseItemId(grandChild.id)});
+            (child.childInfo as XblockChildInfo).children.forEach(async (grandChild) => {
+              await queryClient.cancelQueries({ queryKey: courseOutlineQueryKeys.courseItemId(grandChild.id) });
               queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(grandChild.id), grandChild);
             });
           }
@@ -112,7 +112,7 @@ export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initial
       }
       return data;
     } : skipToken,
-  })
+  });
 };
 
 export const useCourseDetails = (courseId?: string, enabled: boolean = true) => (
