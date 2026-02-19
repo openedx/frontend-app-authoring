@@ -1,7 +1,6 @@
 import {
   useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
-import { useDispatch } from 'react-redux';
 import {
   Bubble, Button, useToggle,
 } from '@openedx/paragon';
@@ -14,7 +13,6 @@ import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
@@ -60,7 +58,6 @@ const SectionCard = ({
   resetScrollState,
 }: SectionCardProps) => {
   const currentRef = useRef(null);
-  const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
   const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
@@ -111,6 +108,7 @@ const SectionCard = ({
   useEffect(() => {
     // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(section.editedOnRaw))) {
+      queryClient.cancelQueries({queryKey: courseOutlineQueryKeys.courseItemId(initialData.id)});
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
   }, [initialData, section]);
@@ -167,11 +165,13 @@ const SectionCard = ({
   }, [locatorId, setIsExpanded]);
 
   const handleOnPostChangeSync = useCallback(() => {
-    dispatch(fetchCourseSectionQuery([section.id]));
+    queryClient.invalidateQueries({
+      queryKey: courseOutlineQueryKeys.courseItemId(section.id),
+    });
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
     }
-  }, [dispatch, section, courseId, queryClient]);
+  }, [section, courseId, queryClient]);
 
   // re-create actions object for customizations
   const actions = { ...sectionActions };

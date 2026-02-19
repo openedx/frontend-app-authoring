@@ -169,24 +169,13 @@ const useCourseOutline = ({ courseId }) => {
       return;
     }
 
-    await unlinkDownstream(currentUnlinkModalData.value.id, {
+    await unlinkDownstream({
+      downstreamBlockId: currentUnlinkModalData.value.id,
+      sectionId: currentUnlinkModalData.sectionId,
+      subsectionId: currentUnlinkModalData.subsectionId,
+    }, {
       onSuccess: () => {
         closeUnlinkModal();
-        // istanbul ignore next
-        // refresh child block data
-        currentUnlinkModalData.value.childInfo?.children.forEach((block) => {
-          queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(block.id) });
-          block.childInfo?.children.forEach(({ id: blockId }) => {
-            queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
-          });
-        });
-        // refresh parent blocks data
-        queryClient.invalidateQueries({
-          queryKey: courseOutlineQueryKeys.courseItemId(currentUnlinkModalData?.sectionId),
-        });
-        queryClient.invalidateQueries({
-          queryKey: courseOutlineQueryKeys.courseItemId(currentUnlinkModalData?.subsectionId),
-        });
       },
     });
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);

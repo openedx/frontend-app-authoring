@@ -2,6 +2,7 @@ import { containerComparisonQueryKeys } from '@src/container-comparison/data/api
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
 import { getCourseKey } from '@src/generic/key-utils';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
+import { ParentIds } from '@src/generic/types';
 import {
   QueryClient,
   skipToken, useMutation, useQuery, useQueryClient,
@@ -39,13 +40,6 @@ export const courseOutlineQueryKeys = {
     'status',
     { taskId },
   ],
-};
-
-type ParentIds = {
-  /** This id will be used to invalidate data of parent subsection */
-  subsectionId?: string;
-  /** This id will be used to invalidate data of parent section */
-  sectionId?: string;
 };
 
 /**
@@ -99,15 +93,21 @@ export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initial
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
     queryFn: enabled && itemId ? async () => {
       const data = await getCourseItem<T>(itemId!)
-      // Set child subsection and grandChild unit data of this section
-      // This allows us to update children data without hitting the API as
-      // each xblock call returns its children information as well.
-      if ("childInfo" in data && data.category === 'chapter') {
+      // If the container has children blocks, update children react-query cache
+      // data without hitting the API as each xblock call returns its children information as well.
+      if ("childInfo" in data) {
+        // This could mean that data is of a section or subsection
         (data.childInfo as XblockChildInfo).children.forEach((child) => {
+          queryClient.cancelQueries({queryKey: courseOutlineQueryKeys.courseItemId(child.id)});
           queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(child.id), child);
-          (child.childInfo as XblockChildInfo).children.forEach((grandChild) => {
-            queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(grandChild.id), grandChild);
-          });
+          if ("childInfo" in child) {
+            // This means that the data is of section and so its children subsections also
+            // have children i.e. units
+            (child.childInfo as XblockChildInfo).children.forEach((grandChild) => {
+              queryClient.cancelQueries({queryKey: courseOutlineQueryKeys.courseItemId(grandChild.id)});
+              queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(grandChild.id), grandChild);
+            });
+          }
         });
       }
       return data;

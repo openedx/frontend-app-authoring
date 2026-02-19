@@ -44,14 +44,14 @@ export const InfoSection = ({ itemId }: Props) => {
    */
   // istanbul ignore next
   const handleOnPostChangeSync = useCallback(() => {
+    // invalidating section data will update all children blocks as well.
     if (selectedContainerState?.sectionId) {
-      dispatch(fetchCourseSectionQuery([selectedContainerState.sectionId]));
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(selectedContainerState?.sectionId),
+      });
     }
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
-      queryClient.invalidateQueries({
-        queryKey: courseOutlineQueryKeys.course(courseId),
-      });
     }
   }, [dispatch, selectedContainerState, queryClient, courseId]);
 
