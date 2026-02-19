@@ -161,7 +161,7 @@ const CourseTeam = () => {
         <InternetConnectionAlert
           isFailed={errorMessage !== undefined}
           isQueryPending={isQueryPending}
-          onInternetConnectionFailed={() => {}}
+          onInternetConnectionFailed={/* istanbul ignore next */ () => {}}
         />
       </div>
     </>

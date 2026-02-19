@@ -136,6 +136,7 @@ describe('<CourseTeam />', () => {
 
     render();
 
+    await screen.findByText(messages.headingTitle.defaultMessage);
     expect(screen.queryByRole('button', { name: messages.addNewMemberButton.defaultMessage })).not.toBeInTheDocument();
     expect(screen.queryByTestId('add-team-member')).not.toBeInTheDocument();
   });
