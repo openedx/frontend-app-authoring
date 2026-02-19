@@ -77,16 +77,19 @@ const useCourseTeam = () => {
     handleOpenInfoModal(MODAL_TYPES.delete, email);
   };
 
+  const getErrorMessage = () => {
+    const errorObject = addUserMutation.error ?? editUserRoleMutation.error ?? deleteUserMutation.error;
+    // @ts-ignore
+    return errorObject?.response?.data?.error;
+  };
+
   return {
     modalType,
     courseName: courseDetails?.name ?? '',
     currentEmail,
     courseTeamUsers,
     currentUserEmail,
-    errorMessage: (
-      addUserMutation.error?.message ?? editUserRoleMutation.error?.message
-      ?? deleteUserMutation.error?.message
-    ),
+    errorMessage: getErrorMessage(),
     isLoading: isLoadingCourseTeamStatus,
     isLoadingDenied: courseTeamStatusIsDenied,
     isSingleAdmin,
