@@ -6,6 +6,10 @@ import {
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { COURSE_PERMISSIONS } from '@src/authz/constants';
+import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
 import Placeholder from '../editors/Placeholder';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
@@ -41,6 +45,15 @@ const AdvancedSettings = () => {
   const { courseId, courseDetails } = useCourseAuthoringContext();
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
+  const waffleFlags = useWaffleFlags(courseId);
+  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
+    canManageAdvancedSettings: {
+      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
+      scope: courseId,
+    },
+  }, isAuthzEnabled);
+
   useEffect(() => {
     dispatch(fetchCourseAppSettings(courseId));
     dispatch(fetchProctoringExamErrors(courseId));
@@ -52,7 +65,7 @@ const AdvancedSettings = () => {
   const settingsWithSendErrors = useSelector(getSendRequestErrors) || {};
   const loadingSettingsStatus = useSelector(getLoadingStatus);
 
-  const isLoading = loadingSettingsStatus === RequestStatus.IN_PROGRESS;
+  const isLoading = loadingSettingsStatus === RequestStatus.IN_PROGRESS || (isAuthzEnabled && isLoadingUserPermissions);
   const updateSettingsButtonState = {
     labels: {
       default: intl.formatMessage(messages.buttonSaveText),
@@ -128,6 +141,15 @@ const AdvancedSettings = () => {
     showSaveSettingsPrompt(true);
   };
 
+  // Show permission denied alert when authz is enabled and user doesn't have permission
+  const authzIsEnabledAndNoPermission = isAuthzEnabled
+    && !isLoadingUserPermissions
+    && !userPermissions?.canManageAdvancedSettings;
+
+  if (authzIsEnabledAndNoPermission) {
+    return <PermissionDeniedAlert />;
+  }
+
   return (
     <>
       <Container size="xl" className="advanced-settings px-4">
@@ -192,8 +214,8 @@ const AdvancedSettings = () => {
                           defaultMessage="{visibility} deprecated settings"
                           values={{
                             visibility:
-                                    showDeprecated ? intl.formatMessage(messages.deprecatedButtonHideText)
-                                      : intl.formatMessage(messages.deprecatedButtonShowText),
+                              showDeprecated ? intl.formatMessage(messages.deprecatedButtonHideText)
+                                : intl.formatMessage(messages.deprecatedButtonShowText),
                           }}
                         />
                       </Button>

@@ -1,8 +1,15 @@
 // @ts-check
 
+import { waitFor } from '@testing-library/react';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { initializeMocks, render } from '../../testUtils';
 import messages from './messages';
 import { HelpSidebar } from '.';
+
+jest.mock('@src/authz/data/apiHooks', () => ({
+  useUserPermissions: jest.fn(),
+}));
 
 const mockPathname = '/foo-bar';
 
@@ -22,6 +29,11 @@ const props = {
 describe('HelpSidebar', () => {
   beforeEach(() => {
     initializeMocks();
+    // @ts-ignore
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: undefined,
+    });
   });
 
   it('renders children correctly', () => {
@@ -55,5 +67,42 @@ describe('HelpSidebar', () => {
     const initialProps = { ...props, showOtherSettings: true, proctoredExamSettingsUrl: 'http:/link-to' };
     const { getByText } = renderHelpSidebar(initialProps);
     expect(getByText(messages.sidebarLinkToProctoredExamSettings.defaultMessage)).toBeTruthy();
+  });
+
+  it('should render the advanced settings sidebar link when authz.enable_course_authoring flag is enabled and the user is authorized', async () => {
+    // Mock feature flag
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
+    // @ts-ignore
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: { canManageAdvancedSettings: true },
+    });
+    const { queryByText } = renderHelpSidebar(props);
+    await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeTruthy());
+  });
+  it('should not render the advanced settings sidebar link when authz.enable_course_authoring flag is enabled and the user is not authorized', async () => {
+    // Mock feature flag
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
+    // @ts-ignore
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: { canManageAdvancedSettings: false },
+    });
+    const { queryByText } = renderHelpSidebar(props);
+    await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy());
+  });
+  it('should not render the advanced settings sidebar link when authz.enable_course_authoring flag is enabled and the permissions are still loading', async () => {
+    // Mock feature flag
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
+    // @ts-ignore
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: true,
+      data: undefined,
+    });
+    const { queryByText } = renderHelpSidebar(props);
+    await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy());
   });
 });
