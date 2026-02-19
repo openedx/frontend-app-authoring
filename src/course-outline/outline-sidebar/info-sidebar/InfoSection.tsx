@@ -35,6 +35,13 @@ export const InfoSection = ({ itemId }: Props) => {
 
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
 
+  /**
+   * Called after a library component sync operation completes (e.g. accepting or ignoring
+   * an upstream update). Refreshes all stale data that may have been affected:
+   *   - Re-fetches the parent section's outline data so counts/status stay current.
+   *   - Invalidates the library links query so the sync-status badges update.
+   *   - Invalidates the full course outline query so the top-level view reflects the change.
+   */
   // istanbul ignore next
   const handleOnPostChangeSync = useCallback(() => {
     if (selectedContainerState?.sectionId) {
