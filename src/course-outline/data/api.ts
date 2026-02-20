@@ -1,7 +1,14 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { XBlock } from '@src/data/types';
-import { CourseOutline, CourseDetails, CourseItemUpdateResult } from './types';
+import {
+  CourseOutline,
+  CourseDetails,
+  CourseItemUpdateResult,
+  ConfigureSectionData,
+  ConfigureSubsectionData,
+  ConfigureUnitData,
+} from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -212,23 +219,15 @@ export async function publishCourseItem(itemId: string): Promise<CourseItemUpdat
 
 /**
  * Configure course section
- * @param {string} sectionId
- * @param {boolean} isVisibleToStaffOnly
- * @param {string} startDatetime
- * @returns {Promise<Object>}
  */
-export async function configureCourseSection(
-  sectionId: string,
-  isVisibleToStaffOnly: boolean,
-  startDatetime: string,
-): Promise<object> {
+export async function configureCourseSection(variables: ConfigureSectionData): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(sectionId), {
+    .post(getCourseItemApiUrl(variables.sectionId), {
       publish: 'republish',
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
-        start: startDatetime,
+        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+        start: variables.startDatetime,
       },
     });
 
@@ -237,65 +236,29 @@ export async function configureCourseSection(
 
 /**
  * Configure course section
- * @param {string} itemId
- * @param {string} isVisibleToStaffOnly
- * @param {string} releaseDate
- * @param {string} graderType
- * @param {string} dueDate
- * @param {boolean} isProctoredExam,
- * @param {boolean} isOnboardingExam,
- * @param {boolean} isPracticeExam,
- * @param {string} examReviewRules,
- * @param {boolean} isTimeLimited
- * @param {number} defaultTimeLimitMin
- * @param {string} hideAfterDue
- * @param {string} showCorrectness
- * @param {boolean} isPrereq,
- * @param {string} prereqUsageKey,
- * @param {number} prereqMinScore,
- * @param {number} prereqMinCompletion,
- * @returns {Promise<Object>}
  */
-export async function configureCourseSubsection(
-  itemId: string,
-  isVisibleToStaffOnly: string,
-  releaseDate: string,
-  graderType: string,
-  dueDate: string,
-  isTimeLimited: boolean,
-  isProctoredExam: boolean,
-  isOnboardingExam: boolean,
-  isPracticeExam: boolean,
-  examReviewRules: string,
-  defaultTimeLimitMin: number,
-  hideAfterDue: string,
-  showCorrectness: string,
-  isPrereq: boolean,
-  prereqUsageKey: string,
-  prereqMinScore: number,
-  prereqMinCompletion: number,
-): Promise<object> {
+export async function configureCourseSubsection(variables: ConfigureSubsectionData): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(itemId), {
+    .post(getCourseItemApiUrl(variables.itemId), {
       publish: 'republish',
-      graderType,
-      isPrereq,
-      prereqUsageKey,
-      prereqMinScore,
-      prereqMinCompletion,
+      graderType: variables.graderType,
+      isPrereq: variables.isPrereq,
+      prereqUsageKey: variables.prereqUsageKey,
+      prereqMinScore: variables.prereqMinScore,
+      prereqMinCompletion: variables.prereqMinCompletion,
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
-        due: dueDate,
-        hide_after_due: hideAfterDue,
-        show_correctness: showCorrectness,
-        is_practice_exam: isPracticeExam,
-        is_time_limited: isTimeLimited,
-        is_proctored_enabled: isProctoredExam || isPracticeExam || isOnboardingExam,
-        exam_review_rules: examReviewRules,
-        default_time_limit_minutes: defaultTimeLimitMin,
-        is_onboarding_exam: isOnboardingExam,
-        start: releaseDate,
+        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+        due: variables.dueDate,
+        hide_after_due: variables.hideAfterDue,
+        show_correctness: variables.showCorrectness,
+        is_practice_exam: variables.isPracticeExam,
+        is_time_limited: variables.isTimeLimited,
+        is_proctored_enabled: variables.isProctoredExam || variables.isPracticeExam || variables.isOnboardingExam,
+        exam_review_rules: variables.examReviewRules,
+        default_time_limit_minutes: variables.defaultTimeLimitMin,
+        is_onboarding_exam: variables.isOnboardingExam,
+        start: variables.releaseDate,
       },
     });
   return data;
@@ -303,26 +266,16 @@ export async function configureCourseSubsection(
 
 /**
  * Configure course unit
- * @param {string} unitId
- * @param {boolean} isVisibleToStaffOnly
- * @param {object} groupAccess
- * @param {boolean} discussionEnabled
- * @returns {Promise<Object>}
  */
-export async function configureCourseUnit(
-  unitId: string,
-  isVisibleToStaffOnly: boolean,
-  groupAccess: object,
-  discussionEnabled: boolean,
-): Promise<object> {
+export async function configureCourseUnit(variables: ConfigureUnitData): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(unitId), {
+    .post(getCourseItemApiUrl(variables.unitId), {
       publish: 'republish',
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
-        group_access: groupAccess,
-        discussion_enabled: discussionEnabled,
+        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+        group_access: variables.groupAccess,
+        discussion_enabled: variables.discussionEnabled,
       },
     });
 

@@ -14,6 +14,7 @@ import { useEventListener } from '@src/generic/hooks';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { COURSE_BLOCK_NAMES, iframeMessageTypes } from '@src/constants';
 
+import { ConfigureUnitData } from '@src/course-outline/data/types';
 import { messageTypes, PUBLISH_TYPES } from './constants';
 import {
   createNewCourseXBlock,
@@ -99,19 +100,17 @@ export const useCourseUnit = ({
     dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
   };
 
-  const handleConfigureSubmit = (id, isVisible, groupAccess, isDiscussionEnabled, closeModalFn) => {
+  const handleConfigureSubmit = (variables: ConfigureUnitData & { closeModalFn?: () => void }) => {
     dispatch(editCourseUnitVisibilityAndData(
-      id,
+      variables.unitId,
       PUBLISH_TYPES.republish,
-      isVisible,
-      groupAccess,
-      isDiscussionEnabled,
-      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id }),
+      variables.isVisibleToStaffOnly,
+      variables.groupAccess,
+      variables.discussionEnabled,
+      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: variables.unitId }),
       blockId,
     ));
-    if (typeof closeModalFn === 'function') {
-      closeModalFn();
-    }
+    variables.closeModalFn?.();
   };
 
   const handleTitleEditSubmit = (displayName) => {

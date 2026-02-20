@@ -25,6 +25,7 @@ import VideoSelectorPage from '@src/editors/VideoSelectorPage';
 import EditorPage from '@src/editors/EditorPage';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { ConfigureUnitData } from '@src/course-outline/data/types';
 import { messageTypes } from '../constants';
 import {
   fetchCourseSectionVerticalData,
@@ -146,9 +147,13 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     }
   };
 
-  const onManageXBlockAccessSubmit = (...args: any[]) => {
+  const onManageXBlockAccessSubmit = (variables: Omit<ConfigureUnitData, 'unitId'>) => {
     if (configureXBlockId) {
-      handleConfigureSubmit(configureXBlockId, ...args, closeConfigureModal);
+      handleConfigureSubmit({
+        unitId: configureXBlockId,
+        ...variables,
+        closeModalFn: closeConfigureModal,
+      });
       setAccessManagedXBlockData({});
     }
   };

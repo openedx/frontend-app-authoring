@@ -1,4 +1,5 @@
 import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
+import { ConfigureSectionData, ConfigureSubsectionData, ConfigureUnitData } from '@src/course-outline/data/types';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
 import { getCourseKey } from '@src/generic/key-utils';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
@@ -15,6 +16,9 @@ import {
   getCourseDetails,
   getCourseItem,
   publishCourseItem,
+  configureCourseSection,
+  configureCourseSubsection,
+  configureCourseUnit,
 } from './api';
 
 export const courseOutlineQueryKeys = {
@@ -168,6 +172,41 @@ export const useDeleteCourseItem = () => {
     } & ParentIds) => deleteCourseItem(variables.itemId),
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
+      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+    },
+  });
+};
+
+export const useConfigureSection = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: ConfigureSectionData & ParentIds) => configureCourseSection(variables),
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
+      });
+      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+    },
+  });
+};
+
+export const useConfigureSubsection = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: ConfigureSubsectionData & ParentIds) => configureCourseSubsection(variables),
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
+      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+    },
+  });
+};
+
+export const useConfigureUnit = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.unitId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
     },
   });

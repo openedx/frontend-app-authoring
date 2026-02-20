@@ -97,6 +97,7 @@ const CourseOutline = () => {
     isDisabledReindexButton,
     isHighlightsModalOpen,
     isConfigureModalOpen,
+    isConfigureOpPending,
     isDeleteModalOpen,
     closeHighlightsModal,
     handleConfigureModalClose,
@@ -527,6 +528,8 @@ const CourseOutline = () => {
             || handleAddAndOpenUnit.isPending
             || handleAddSubsection.isPending
             || handleAddSection.isPending
+            || handleAddSection.isPending
+            || isConfigureOpPending
           }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}

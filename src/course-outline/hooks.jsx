@@ -12,7 +12,13 @@ import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { useQueryClient } from '@tanstack/react-query';
-import { courseOutlineQueryKeys, useDeleteCourseItem } from '@src/course-outline/data/apiHooks';
+import {
+  courseOutlineQueryKeys,
+  useConfigureSection,
+  useConfigureSubsection,
+  useConfigureUnit,
+  useDeleteCourseItem,
+} from '@src/course-outline/data/apiHooks';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   deleteSection,
@@ -42,9 +48,6 @@ import {
   fetchCourseOutlineIndexQuery,
   fetchCourseReindexQuery,
   updateCourseSectionHighlightsQuery,
-  configureCourseSectionQuery,
-  configureCourseSubsectionQuery,
-  configureCourseUnitQuery,
   setSectionOrderListQuery,
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
@@ -180,17 +183,41 @@ const useCourseOutline = ({ courseId }) => {
     });
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
 
-  const handleConfigureItemSubmit = (...arg) => {
+  const {
+    mutate: configureCourseSection,
+    isPending: isSectionConfigurePending,
+  } = useConfigureSection();
+  const {
+    mutate: configureCourseSubsection,
+    isPending: isSubsectionConfigurePending,
+  } = useConfigureSubsection();
+  const {
+    mutate: configureCourseUnit,
+    isPending: isUnitConfigurePending,
+  } = useConfigureUnit();
+  const isConfigureOpPending = isSectionConfigurePending || isSubsectionConfigurePending || isUnitConfigurePending;
+  const handleConfigureItemSubmit = (variables) => {
     const category = getBlockType(currentSelection.currentId);
     switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        dispatch(configureCourseSectionQuery(currentSelection?.sectionId, ...arg));
+        configureCourseSection({
+          sectionId: currentSelection?.sectionId,
+          ...variables,
+        });
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        dispatch(configureCourseSubsectionQuery(currentSelection?.currentId, currentSelection?.sectionId, ...arg));
+        configureCourseSubsection({
+          itemId: currentSelection?.currentId,
+          sectionId: currentSelection?.sectionId,
+          ...variables,
+        });
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
-        dispatch(configureCourseUnitQuery(currentSelection?.currentId, currentSelection?.sectionId, ...arg));
+        configureCourseUnit({
+          unitId: currentSelection?.currentId,
+          sectionId: currentSelection?.sectionId,
+          ...variables,
+        });
         break;
       default:
         // istanbul ignore next
@@ -360,6 +387,7 @@ const useCourseOutline = ({ courseId }) => {
     isConfigureModalOpen,
     openConfigureModal,
     handleConfigureModalClose,
+    isConfigureOpPending,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,

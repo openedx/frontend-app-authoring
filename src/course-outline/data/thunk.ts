@@ -17,9 +17,6 @@ import {
   getCourseLaunch,
   getCourseOutlineIndex,
   getCourseItem,
-  configureCourseSection,
-  configureCourseSubsection,
-  configureCourseUnit,
   restartIndexingOnCourse,
   updateCourseSectionHighlights,
   setSectionOrderList,
@@ -277,76 +274,6 @@ export function configureCourseItemQuery(sectionId: string, configureFn: () => P
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
-  };
-}
-
-export function configureCourseSectionQuery(sectionId: string, isVisibleToStaffOnly: boolean, startDatetime: string) {
-  return async (dispatch) => {
-    dispatch(configureCourseItemQuery(
-      sectionId,
-      async () => configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime),
-    ));
-  };
-}
-
-export function configureCourseSubsectionQuery(
-  itemId: string,
-  sectionId: string,
-  isVisibleToStaffOnly: string,
-  releaseDate: string,
-  graderType: string,
-  dueDate: string,
-  isTimeLimited: boolean,
-  isProctoredExam: boolean,
-  isOnboardingExam: boolean,
-  isPracticeExam: boolean,
-  examReviewRules: string,
-  defaultTimeLimitMin: number,
-  hideAfterDue: string,
-  showCorrectness: string,
-  isPrereq: boolean,
-  prereqUsageKey: string,
-  prereqMinScore: number,
-  prereqMinCompletion: number,
-) {
-  return async (dispatch) => {
-    dispatch(configureCourseItemQuery(
-      sectionId,
-      async () => configureCourseSubsection(
-        itemId,
-        isVisibleToStaffOnly,
-        releaseDate,
-        graderType,
-        dueDate,
-        isTimeLimited,
-        isProctoredExam,
-        isOnboardingExam,
-        isPracticeExam,
-        examReviewRules,
-        defaultTimeLimitMin,
-        hideAfterDue,
-        showCorrectness,
-        isPrereq,
-        prereqUsageKey,
-        prereqMinScore,
-        prereqMinCompletion,
-      ),
-    ));
-  };
-}
-
-export function configureCourseUnitQuery(
-  itemId: string,
-  sectionId: string,
-  isVisibleToStaffOnly: boolean,
-  groupAccess: object,
-  discussionEnabled: boolean,
-) {
-  return async (dispatch) => {
-    dispatch(configureCourseItemQuery(
-      sectionId,
-      async () => configureCourseUnit(itemId, isVisibleToStaffOnly, groupAccess, discussionEnabled),
-    ));
   };
 }
 

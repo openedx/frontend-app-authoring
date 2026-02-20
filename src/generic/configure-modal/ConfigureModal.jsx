@@ -147,27 +147,30 @@ const ConfigureModal = ({
     const groupAccess = {};
     switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        onConfigureSubmit(data.isVisibleToStaffOnly, releaseDate);
+        onConfigureSubmit({
+          isVisibleToStaffOnly: data.isVisibleToStaffOnly,
+          releaseDate,
+        });
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        onConfigureSubmit(
-          data.isVisibleToStaffOnly,
+        onConfigureSubmit({
+          isVisibleToStaffOnly: data.isVisibleToStaffOnly,
           releaseDate,
-          data.graderType,
-          data.dueDate,
-          data.isTimeLimited,
-          data.isProctoredExam,
-          data.isOnboardingExam,
-          data.isPracticeExam,
-          data.examReviewRules,
-          data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
-          data.hideAfterDue,
-          data.showCorrectness,
-          data.isPrereq,
-          data.prereqUsageKey,
-          data.prereqMinScore,
-          data.prereqMinCompletion,
-        );
+          graderType: data.graderType,
+          dueDate: data.dueDate,
+          isTimeLimited: data.isTimeLimited,
+          isProctoredExam: data.isProctoredExam,
+          isOnboardingExam: data.isOnboardingExam,
+          isPracticeExam: data.isPracticeExam,
+          examReviewRules: data.examReviewRules,
+          defaultTimeLimitMin: data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
+          hideAfterDue: data.hideAfterDue,
+          showCorrectness: data.showCorrectness,
+          isPrereq: data.isPrereq,
+          prereqUsageKey: data.prereqUsageKey,
+          prereqMinScore: data.prereqMinScore,
+          prereqMinCompletion: data.prereqMinCompletion,
+        });
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
       case COURSE_BLOCK_NAMES.libraryContent.id:
@@ -178,7 +181,11 @@ const ConfigureModal = ({
           const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
           groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
         }
-        onConfigureSubmit(data.isVisibleToStaffOnly, groupAccess, data.discussionEnabled);
+        onConfigureSubmit({
+          isVisibleToStaffOnly: data.isVisibleToStaffOnly,
+          groupAccess,
+          discussionEnabled: data.discussionEnabled,
+        });
         break;
       default:
         break;

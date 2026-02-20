@@ -1,3 +1,4 @@
+import { ConfigureUnitData } from '@src/course-outline/data/types';
 import { UserPartitionInfoTypes, UserPartitionTypes, XBlockPrereqs } from '@src/data/types';
 
 export interface XBlockActionsTypes {
@@ -36,7 +37,7 @@ export interface XBlockContainerIframeProps {
     handleUnlink: (XBlockId: string | null) => void;
   };
   courseVerticalChildren: Array<XBlockTypes>;
-  handleConfigureSubmit: (XBlockId: string, ...args: any[]) => void;
+  handleConfigureSubmit: (variables: ConfigureUnitData & { closeModalFn?: () => void }) => void;
   readonly?: boolean;
 }
 
