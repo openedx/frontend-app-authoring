@@ -235,7 +235,7 @@ export const useCreateTag = (taxonomyId) => {
   return useMutation({
     mutationFn: async ({ value, parentTagValue }: { value: string, parentTagValue?: string }) => {
       try {
-        await getAuthenticatedHttpClient().post(apiUrls.createTag(taxonomyId), { tag: value });
+        await getAuthenticatedHttpClient().post(apiUrls.createTag(taxonomyId), { tag: value, parent_tag_value: parentTagValue });
       } catch (err) {
         throw new Error((err as any).response?.data?.error || (err as any).message);
       }
