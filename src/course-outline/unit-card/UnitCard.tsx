@@ -5,14 +5,12 @@ import {
   useRef,
 } from 'react';
 import classNames from 'classnames';
-import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -61,7 +59,6 @@ const UnitCard = ({
   discussionsSettings,
 }: UnitCardProps) => {
   const currentRef = useRef(null);
-  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const locatorId = searchParams.get('show');
@@ -162,11 +159,13 @@ const UnitCard = ({
   };
 
   const handleOnPostChangeSync = useCallback(() => {
-    dispatch(fetchCourseSectionQuery([section.id]));
+    queryClient.invalidateQueries({
+      queryKey: courseOutlineQueryKeys.courseItemId(section.id),
+    });
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
     }
-  }, [dispatch, section, queryClient, courseId]);
+  }, [section, queryClient, courseId]);
 
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -202,6 +201,10 @@ const UnitCard = ({
   useEffect(() => {
     // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(unit.editedOnRaw))) {
+      queryClient.cancelQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
+      // eslint-disable-next-line no-console
+      }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
   }, [initialData, unit]);

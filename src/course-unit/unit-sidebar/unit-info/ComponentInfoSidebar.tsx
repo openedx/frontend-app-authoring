@@ -53,7 +53,7 @@ export const ComponentInfoSidebar = () => {
   const handlePostChange = () => {
     sendMessageToIframe(messageTypes.refreshXBlock, null);
     queryClient.invalidateQueries({
-      queryKey: courseOutlineQueryKeys.courseItemId(selectedComponentId),
+      queryKey: courseOutlineQueryKeys.courseItemId(sectionId),
     });
   };
 

@@ -6,16 +6,16 @@ import { Cached, LinkOff, Newsstand } from '@openedx/paragon/icons';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { XBlock } from '@src/data/types';
+import type { XBlock, XBlockBase } from '@src/data/types';
 import { ContainerType, getBlockType, normalizeContainerType } from '@src/generic/key-utils';
 import { useToggleWithValue } from '@src/hooks';
 import { useMemo } from 'react';
 import messages from './messages';
 
 interface SubProps {
-  blockData: XBlock;
+  blockData: XBlockBase;
   displayName: string;
-  openSyncModal: (val: XBlock) => void;
+  openSyncModal: (val: XBlockBase) => void;
   sectionId?: string;
 }
 

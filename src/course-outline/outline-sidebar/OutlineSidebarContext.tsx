@@ -144,7 +144,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     setCurrentFlow(flow);
   }, [setCurrentFlow, setCurrentPageKey]);
 
-  const { data: currentItemData } = useCourseItemData(selectedContainerState?.currentId);
+  const { data: currentItemData } = useCourseItemData<XBlock>(selectedContainerState?.currentId);
   const sectionsList = useSelector(getSectionsList);
 
   /** Stores last section that allows adding subsections inside it. */

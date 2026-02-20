@@ -1,7 +1,6 @@
 import {
   useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
-import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
@@ -15,7 +14,6 @@ import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import { useClipboard, PasteComponent } from '@src/generic/clipboard';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import { ContainerType } from '@src/generic/key-utils';
@@ -65,7 +63,6 @@ const SubsectionCard = ({
 }: SubsectionCardProps) => {
   const currentRef = useRef(null);
   const intl = useIntl();
-  const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
   const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
@@ -146,6 +143,10 @@ const SubsectionCard = ({
   useEffect(() => {
     // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(subsection.editedOnRaw))) {
+      queryClient.cancelQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
+      // eslint-disable-next-line no-console
+      }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
   }, [initialData, subsection]);
@@ -171,11 +172,13 @@ const SubsectionCard = ({
   };
 
   const handleOnPostChangeSync = useCallback(() => {
-    dispatch(fetchCourseSectionQuery([section.id]));
+    queryClient.invalidateQueries({
+      queryKey: courseOutlineQueryKeys.courseItemId(section.id),
+    });
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
     }
-  }, [dispatch, section, queryClient, courseId]);
+  }, [section, queryClient, courseId]);
 
   const handleSubsectionMoveUp = () => {
     onOrderChange(section, moveUpDetails);

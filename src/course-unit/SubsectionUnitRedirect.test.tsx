@@ -14,7 +14,7 @@ const expectedCourseItemDataWithUnit = {
   childInfo: {
     children: [
       {
-        id: 'unitId',
+        id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@1',
       },
     ],
   },
@@ -64,7 +64,12 @@ describe('SubsectionUnitRedirect', () => {
       // Confirm redirection by checking the final URL
       const mockNavigate = screen.getByTestId('mock-navigate');
       expect(mockNavigate).toBeInTheDocument();
-      expect(mockNavigate).toHaveAttribute('data-to', `/course/${courseId}/container/unitId`);
+      expect(mockNavigate).toHaveAttribute(
+        'data-to',
+        `/course/${courseId}/container/${encodeURIComponent(
+          'block-v1:edX+DemoX+Demo_Course+type@vertical+block@1',
+        )}`,
+      );
     });
   });
 

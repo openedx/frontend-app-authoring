@@ -70,7 +70,7 @@ export interface UpstreamInfo {
   isReadyToSyncIndividually?: boolean,
 }
 
-export interface XBlock {
+export interface XBlockBase {
   id: string;
   locator: string;
   usageKey: string;
@@ -102,7 +102,6 @@ export interface XBlock {
   highlightsEnabled: boolean;
   highlightsPreviewOnly: boolean;
   highlightsDocUrl: string;
-  childInfo: XblockChildInfo;
   ancestorHasStaffLock: boolean;
   staffOnlyMessage: boolean;
   hasPartitionGroupComponents: boolean;
@@ -127,7 +126,11 @@ export interface XBlock {
   upstreamInfo?: UpstreamInfo;
 }
 
-export type UnitXBlock = Omit<XBlock, 'childInfo'>;
+export interface XBlock extends XBlockBase {
+  childInfo: XblockChildInfo;
+}
+
+export interface UnitXBlock extends XBlockBase {}
 
 interface OutlineError {
   data?: string;

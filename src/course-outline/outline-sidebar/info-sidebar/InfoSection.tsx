@@ -4,7 +4,6 @@ import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
@@ -44,14 +43,14 @@ export const InfoSection = ({ itemId }: Props) => {
    */
   // istanbul ignore next
   const handleOnPostChangeSync = useCallback(() => {
+    // invalidating section data will update all children blocks as well.
     if (selectedContainerState?.sectionId) {
-      dispatch(fetchCourseSectionQuery([selectedContainerState.sectionId]));
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(selectedContainerState?.sectionId),
+      });
     }
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
-      queryClient.invalidateQueries({
-        queryKey: courseOutlineQueryKeys.course(courseId),
-      });
     }
   }, [dispatch, selectedContainerState, queryClient, courseId]);
 

@@ -1,16 +1,15 @@
 /* eslint-disable import/named */
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ModalDialog,
   ActionRow,
 } from '@openedx/paragon';
 
-import { courseOutlineQueryKeys, usePublishCourseItem } from '@src/course-outline/data/apiHooks';
+import { usePublishCourseItem } from '@src/course-outline/data/apiHooks';
 import type { UnitXBlock, XBlock } from '@src/data/types';
 import LoadingButton from '@src/generic/loading-button';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useQueryClient } from '@tanstack/react-query';
 import messages from './messages';
 import { COURSE_BLOCK_NAMES } from '../constants';
 
@@ -26,22 +25,6 @@ const PublishModal = () => {
     : undefined;
   const children: Array<XBlock | UnitXBlock> | undefined = childInfo?.children;
   const publishMutation = usePublishCourseItem();
-  const queryClient = useQueryClient();
-
-  const childrenIds = useMemo(() => children?.reduce((
-    result: string[],
-    current: XBlock | UnitXBlock,
-  ): string[] => {
-    let temp = [...result];
-    if ('childInfo' in current) {
-      const grandChildren = current.childInfo.children.filter((child) => child.hasChanges);
-      temp = [...temp, ...grandChildren.map((child) => child.id)];
-    }
-    if (current.hasChanges) {
-      temp.push(current.id);
-    }
-    return temp;
-  }, []), [children]);
 
   const onPublishSubmit = async () => {
     if (id) {
@@ -52,10 +35,6 @@ const PublishModal = () => {
       }, {
         onSettled: () => {
           closePublishModal();
-          // Update query client to refresh the data of all children blocks
-          childrenIds?.forEach((blockId) => {
-            queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
-          });
         },
       });
     }

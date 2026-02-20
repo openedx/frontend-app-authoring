@@ -73,7 +73,8 @@ export const useCourseUnit = ({
   const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useClipboard(canEdit);
   const { canPasteComponent } = courseVerticalChildren;
   const { displayName: unitTitle, category: unitCategory } = xblockInfo;
-  const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
+  const sequenceId = courseUnit.ancestorInfo?.ancestors[0]?.id;
+  const sectionId = courseUnit.ancestorInfo?.ancestors[1]?.id;
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
   const isUnitLegacyLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
   const isSplitTestType = unitCategory === COURSE_BLOCK_NAMES.splitTest.id;
@@ -139,19 +140,26 @@ export const useCourseUnit = ({
   const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
 
   const unitXBlockActions = {
-    handleDelete: async (XBlockId) => {
+    handleDelete: async (XBlockId: string) => {
       // oxlint-disable-next-line typescript-eslint(await-thenable)
       await dispatch(deleteUnitItemQuery(blockId, XBlockId, sendMessageToIframe));
     },
-    handleDuplicate: (XBlockId) => {
+    handleDuplicate: (XBlockId: string) => {
       dispatch(duplicateUnitItemQuery(
         blockId,
         XBlockId,
-        (courseKey, locator) => sendMessageToIframe(messageTypes.completeXBlockDuplicating, { courseKey, locator }),
+        (courseKey: string, locator: string) => sendMessageToIframe(
+          messageTypes.completeXBlockDuplicating,
+          { courseKey, locator },
+        ),
       ));
     },
-    handleUnlink: async (XBlockId) => {
-      await unlinkDownstream(XBlockId);
+    handleUnlink: async (XBlockId: string) => {
+      await unlinkDownstream({
+        downstreamBlockId: XBlockId,
+        subsectionId: sequenceId,
+        sectionId,
+      });
       dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
     },
   };
