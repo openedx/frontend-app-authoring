@@ -2,6 +2,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Button, CheckboxFilter, useToggle,
 } from '@openedx/paragon';
+import { AgreementGated } from '@src/constants';
 import { RequestStatus } from '@src/data/constants';
 import {
   ActiveColumn,
@@ -29,6 +30,7 @@ import messages from '@src/files-and-videos/videos-page/messages';
 import TranscriptSettings from '@src/files-and-videos/videos-page/transcript-settings';
 import UploadModal from '@src/files-and-videos/videos-page/upload-modal';
 import VideoThumbnail from '@src/files-and-videos/videos-page/VideoThumbnail';
+import { GatedComponentWrapper } from '@src/generic/agreement-gated-feature';
 import { useModels } from '@src/generic/model-store';
 import { DeprecatedReduxState } from '@src/store';
 import React, { useEffect, useRef } from 'react';
@@ -224,23 +226,24 @@ export const CourseVideosTable = () => {
   ];
 
   return (
-    <>
-      <ActionRow>
-        <ActionRow.Spacer />
-        {isVideoTranscriptEnabled ? (
-          <Button
-            variant="link"
-            size="sm"
-            onClick={() => {
-              openTranscriptSettings();
-              handleErrorReset({ errorType: 'transcript' });
-            }}
-          >
-            {intl.formatMessage(messages.transcriptSettingsButtonLabel)}
-          </Button>
-        ) : null}
-      </ActionRow>
-      {
+    <GatedComponentWrapper gatingTypes={[AgreementGated.UPLOAD, AgreementGated.UPLOAD_VIDEOS]}>
+      <>
+        <ActionRow>
+          <ActionRow.Spacer />
+          {isVideoTranscriptEnabled ? (
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => {
+                openTranscriptSettings();
+                handleErrorReset({ errorType: 'transcript' });
+              }}
+            >
+              {intl.formatMessage(messages.transcriptSettingsButtonLabel)}
+            </Button>
+          ) : null}
+        </ActionRow>
+        {
         loadingStatus !== RequestStatus.FAILED && (
         <>
           {isVideoTranscriptEnabled && (
@@ -275,14 +278,15 @@ export const CourseVideosTable = () => {
         </>
         )
     }
-      <UploadModal
-        {...{
-          isUploadTrackerOpen,
-          currentUploadingIdsRef: uploadingIdsRef.current,
-          handleUploadCancel,
-          addVideoStatus,
-        }}
-      />
-    </>
+        <UploadModal
+          {...{
+            isUploadTrackerOpen,
+            currentUploadingIdsRef: uploadingIdsRef.current,
+            handleUploadCancel,
+            addVideoStatus,
+          }}
+        />
+      </>
+    </GatedComponentWrapper>
   );
 };

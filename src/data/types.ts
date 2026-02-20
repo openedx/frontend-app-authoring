@@ -162,3 +162,19 @@ export type SelectionState = {
   sectionId?: string;
   subsectionId?: string;
 };
+
+export interface UserAgreementRecord {
+  username: string;
+  agreementType: string;
+  acceptedAt: string | null;
+  isCurrent: boolean;
+}
+
+export interface UserAgreement {
+  type: string;
+  name: string;
+  summary: string;
+  hasText: boolean;
+  url: string;
+  updated: string;
+}

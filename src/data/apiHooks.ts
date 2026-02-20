@@ -1,16 +1,19 @@
-import {
-  skipToken, useMutation, useQuery, useQueryClient,
-} from '@tanstack/react-query';
+import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
+import { UserAgreement, UserAgreementRecord } from '@src/data/types';
 import { libraryAuthoringQueryKeys } from '@src/library-authoring/data/apiHooks';
 import {
-  getWaffleFlags,
-  waffleFlagDefaults,
-  bulkModulestoreMigrate,
-  getModulestoreMigrationStatus,
+  skipToken, useMutation, useQueries, useQuery, useQueryClient, UseQueryOptions,
+} from '@tanstack/react-query';
+import {
   BulkMigrateRequestData,
+  bulkModulestoreMigrate,
   getCourseDetails,
-  getPreviewModulestoreMigration,
+  getModulestoreMigrationStatus,
+  getPreviewModulestoreMigration, getUserAgreement,
+  getUserAgreementRecord,
+  getWaffleFlags, updateUserAgreementRecord,
+  waffleFlagDefaults,
 } from './api';
 import { RequestStatus, RequestStatusType } from './constants';
 
@@ -130,3 +133,47 @@ export const useCourseDetails = (courseId: string) => {
     status,
   };
 };
+
+export const getGatingAgreementTypes = (gatingTypes: string[]): string[] => (
+  [...new Set(
+    gatingTypes
+      .flatMap(gatingType => getConfig().AGREEMENT_GATING?.[gatingType])
+      .filter(item => Boolean(item)),
+  )]
+);
+
+export const useUserAgreementRecord = (agreementType:string) => (
+  useQuery<UserAgreementRecord, Error>({
+    queryKey: ['agreement-record', agreementType],
+    queryFn: () => getUserAgreementRecord(agreementType),
+    retry: false,
+  })
+);
+
+export const useUserAgreementRecords = (agreementTypes:string[]) => (
+  useQueries({
+    queries: agreementTypes.map<UseQueryOptions<UserAgreementRecord, Error>>(agreementType => ({
+      queryKey: ['agreement-record', agreementType],
+      queryFn: () => getUserAgreementRecord(agreementType),
+      retry: false,
+    })),
+  })
+);
+
+export const useUserAgreementRecordUpdater = (agreementType:string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => updateUserAgreementRecord(agreementType),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['agreement-record', agreementType] });
+    },
+  });
+};
+
+export const useUserAgreement = (agreementType:string) => (
+  useQuery<UserAgreement, Error>({
+    queryKey: ['agreements', agreementType],
+    queryFn: () => getUserAgreement(agreementType),
+    retry: false,
+  })
+);
