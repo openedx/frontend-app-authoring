@@ -15,7 +15,7 @@ import { FileUpload as FileUploadIcon } from '@openedx/paragon/icons';
 
 import useModalDropzone from './useModalDropzone';
 import messages from './messages';
-import { UPLOAD_FILE_MAX_SIZE } from '../../constants';
+import { UPLOAD_FILE_MAX_SIZE } from '@src/constants';
 
 const ModalDropzone = ({
   fileTypes,
