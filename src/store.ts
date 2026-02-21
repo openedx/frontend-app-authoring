@@ -11,7 +11,6 @@ import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions/data/slice';
 import { reducer as pagesAndResourcesReducer } from './pages-and-resources/data/slice';
 import { reducer as customPagesReducer } from './custom-pages/data/slice';
-import { reducer as advancedSettingsReducer } from './advanced-settings/data/slice';
 import { reducer as studioHomeReducer } from './studio-home/data/slice';
 import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/data/slice';
 import { reducer as filesReducer } from './files-and-videos/files-page/data/slice';
@@ -41,7 +40,6 @@ export interface DeprecatedReduxState {
   assets: Record<string, any>;
   pagesAndResources: Record<string, any>;
   scheduleAndDetails: Record<string, any>;
-  advancedSettings: Record<string, any>;
   studioHome: InferState<typeof studioHomeReducer>;
   models: Record<string, any>;
   live: Record<string, any>;
@@ -75,7 +73,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       assets: filesReducer,
       pagesAndResources: pagesAndResourcesReducer,
       scheduleAndDetails: scheduleAndDetailsReducer,
-      advancedSettings: advancedSettingsReducer,
       studioHome: studioHomeReducer,
       models: modelsReducer,
       live: liveReducer,

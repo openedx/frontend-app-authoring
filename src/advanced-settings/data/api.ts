@@ -1,11 +1,10 @@
-/* eslint-disable import/prefer-default-export */
 import {
   camelCaseObject,
   getConfig,
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { camelCase } from 'lodash';
-import { convertObjectToSnakeCase } from '../../utils';
+import { convertObjectToSnakeCase } from '@src/utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getCourseAdvancedSettingsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings/${courseId}`;
@@ -13,10 +12,8 @@ const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/
 
 /**
  * Get's advanced setting for a course.
- * @param {string} courseId
- * @returns {Promise<Object>}
  */
-export async function getCourseAdvancedSettings(courseId) {
+export async function getCourseAdvancedSettings(courseId: string): Promise<Record<string, any>> {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`);
   const keepValues = {};
@@ -36,11 +33,11 @@ export async function getCourseAdvancedSettings(courseId) {
 
 /**
  * Updates advanced setting for a course.
- * @param {string} courseId
- * @param {object} settings
- * @returns {Promise<Object>}
  */
-export async function updateCourseAdvancedSettings(courseId, settings) {
+export async function updateCourseAdvancedSettings(
+  courseId: string,
+  settings: Record<string, any>,
+): Promise<Record<string, any>> {
   const { data } = await getAuthenticatedHttpClient()
     .patch(`${getCourseAdvancedSettingsApiUrl(courseId)}`, convertObjectToSnakeCase(settings));
   const keepValues = {};
@@ -60,10 +57,8 @@ export async function updateCourseAdvancedSettings(courseId, settings) {
 
 /**
  * Gets proctoring exam errors.
- * @param {string} courseId
- * @returns {Promise<Object>}
  */
-export async function getProctoringExamErrors(courseId) {
+export async function getProctoringExamErrors(courseId: string): Promise<Record<string, any>> {
   const { data } = await getAuthenticatedHttpClient().get(`${getProctoringErrorsApiUrl()}${courseId}`);
   const keepValues = {};
   Object.keys(data).forEach((key) => {
@@ -77,5 +72,6 @@ export async function getProctoringExamErrors(courseId) {
       value: keepValues[key]?.value,
     };
   });
+
   return formattedData;
 }
