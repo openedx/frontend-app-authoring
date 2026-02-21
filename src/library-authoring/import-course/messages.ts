@@ -252,7 +252,7 @@ const messages = defineMessages({
   },
   importFailedAlertBody: {
     id: 'library-authoring.import-course.import-details.import-failed.body',
-    defaultMessage: '{courseName} was not imported into your Library. See details bellow',
+    defaultMessage: '{courseName} was not imported into your Library. See details below',
     description: 'Body of the import failed card in the import details page.',
   },
   importFailedDetailsSectionTitle: {
@@ -288,7 +288,7 @@ const messages = defineMessages({
   importPartialAlertBody: {
     id: 'library-authoring.import-course.import-details.import-partial.alert.title',
     defaultMessage: '{courseName} has been imported to your library in a collection called {collectionName}.'
-    + ' Some content was not added to your course. See details bellow.',
+    + ' Some content was not added to your course. See details below.',
     description: 'Body of the alert in the import details page when the migration is in partial import.',
   },
   importPartialBody: {

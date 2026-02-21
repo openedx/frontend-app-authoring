@@ -28,7 +28,7 @@ const messages = defineMessages({
   },
   hasTopParentBrokenLinkText: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.has-top-parent-broken-link-text',
-    defaultMessage: '{name} was reused as part of a {parentType} which has a broken link. To recieve library updates to this component, unlink the broken link.',
+    defaultMessage: '{name} was reused as part of a {parentType} which has a broken link. To receive library updates to this component, unlink the broken link.',
     description: 'Text displayed in sidebar library reference card when a block was reused as part of a parent block which has a broken link.',
   },
   hasTopParentBrokenLinkBtn: {
@@ -51,12 +51,12 @@ const messages = defineMessages({
     defaultMessage: '{name} has been modified in this course.',
     description: 'Text displayed in sidebar library reference card when it is modified in course.',
   },
-  topParentReaadyToSyncText: {
+  topParentReadyToSyncText: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.top-parent-ready-to-sync-text',
     defaultMessage: '{name} has available updates',
     description: 'Text displayed in sidebar library reference card when it is has updates available.',
   },
-  topParentReaadyToSyncBtn: {
+  topParentReadyToSyncBtn: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.top-parent-ready-to-sync-btn',
     defaultMessage: 'Review Updates',
     description: 'Text displayed in sidebar library reference card button when it is has updates available.',

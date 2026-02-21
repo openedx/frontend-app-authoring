@@ -166,13 +166,13 @@ const TopLevelTextAndButton = ({
   if (upstreamInfo?.readyToSync) {
     return (
       <Stack direction="vertical" gap={2}>
-        <FormattedMessage {...messages.topParentReaadyToSyncText} values={messageValues} />
+        <FormattedMessage {...messages.topParentReadyToSyncText} values={messageValues} />
         <Button
           variant="outline-primary"
           iconBefore={Cached}
           onClick={handleSyncClick}
         >
-          <FormattedMessage {...messages.topParentReaadyToSyncBtn} values={messageValues} />
+          <FormattedMessage {...messages.topParentReadyToSyncBtn} values={messageValues} />
         </Button>
       </Stack>
     );

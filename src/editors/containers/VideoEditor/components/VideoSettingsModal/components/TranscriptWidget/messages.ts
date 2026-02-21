@@ -44,7 +44,7 @@ const messages = defineMessages({
   },
   fileSizeError: {
     id: 'authoring.videoeditor.transcript.error.fileSizeError',
-    defaultMessage: 'Transcript file size exeeds the maximum. Please try again.',
+    defaultMessage: 'Transcript file size exceeds the maximum. Please try again.',
     description: 'Message presented to user when transcript file size is too large',
   },
   deleteTranscript: {

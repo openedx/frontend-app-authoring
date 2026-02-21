@@ -38,7 +38,7 @@ const messages = defineMessages({
   },
   customPagesExplanationBody: {
     id: 'course-authoring.custom-pages.customPagesExplanation.body',
-    defaultMessage: `You can create and edit custom pages to probide students with additional course content. For example, you can create
+    defaultMessage: `You can create and edit custom pages to provide students with additional course content. For example, you can create
       pages for the grading policy, course slide, and a course calendar.`,
   },
   studentViewExplanationHeader: {

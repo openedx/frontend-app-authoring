@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   stepperUpdatingTitle: {
     id: 'course-authoring.import.stepper.title.updating',
-    defaultMessage: 'Updating сourse',
+    defaultMessage: 'Updating course',
   },
   stepperSuccessTitle: {
     id: 'course-authoring.import.stepper.title.success',
