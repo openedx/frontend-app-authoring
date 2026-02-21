@@ -20,6 +20,7 @@ let store;
 const courseId = 'course-v1:org+101+101';
 const enrollmentTrackGroups = groupConfigurationResponseMock.allGroupConfigurations[0];
 const contentGroups = groupConfigurationResponseMock.allGroupConfigurations[1];
+const teamGroups = groupConfigurationResponseMock.allGroupConfigurations[2];
 
 const renderComponent = () => render(
   <CourseAuthoringProvider courseId={courseId}>
@@ -61,6 +62,7 @@ describe('<GroupConfigurations />', () => {
       ).toBeInTheDocument();
       expect(getByText(contentGroups.name)).toBeInTheDocument();
       expect(getByText(enrollmentTrackGroups.name)).toBeInTheDocument();
+      expect(getByText(teamGroups.name)).toBeInTheDocument();
     });
   });
 
