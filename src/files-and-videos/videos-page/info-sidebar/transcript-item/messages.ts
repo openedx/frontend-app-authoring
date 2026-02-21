@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   fileSizeError: {
     id: 'course-authoriong.video-uploads.file-info.transcript.error.fileSizeError',
-    defaultMessage: 'Transcript file size exeeds the maximum. Please try again.',
+    defaultMessage: 'Transcript file size exceeds the maximum. Please try again.',
     description: 'Message presented to user when transcript file size is too large',
   },
   deleteTranscript: {

@@ -53,7 +53,7 @@ export const messages = defineMessages({
   },
   openResponseTypeButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.types.open-response',
-    defaultMessage: 'Open Reponse',
+    defaultMessage: 'Open Response',
     description: 'Content of button to create a Open Response component.',
   },
   dragDropTypeButton: {

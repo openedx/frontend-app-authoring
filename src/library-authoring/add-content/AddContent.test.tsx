@@ -88,7 +88,7 @@ describe('<AddContent />', () => {
     expect(screen.queryByRole('button', { name: /collection/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /text/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /problem/i })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /open reponse/i })).toBeInTheDocument(); // Excluded from MVP
+    expect(screen.queryByRole('button', { name: /open response/i })).toBeInTheDocument(); // Excluded from MVP
     expect(screen.queryByRole('button', { name: /drag drop/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /video/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /copy from clipboard/i })).not.toBeInTheDocument();
