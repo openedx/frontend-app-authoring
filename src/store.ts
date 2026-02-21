@@ -15,7 +15,6 @@ import { reducer as advancedSettingsReducer } from './advanced-settings/data/sli
 import { reducer as studioHomeReducer } from './studio-home/data/slice';
 import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/data/slice';
 import { reducer as filesReducer } from './files-and-videos/files-page/data/slice';
-import { reducer as courseTeamReducer } from './course-team/data/slice';
 import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';
 import { reducer as processingNotificationReducer } from './generic/processing-notification/data/slice';
 import { reducer as courseExportReducer } from './export-page/data/slice';
@@ -45,7 +44,6 @@ export interface DeprecatedReduxState {
   studioHome: InferState<typeof studioHomeReducer>;
   models: Record<string, any>;
   live: Record<string, any>;
-  courseTeam: Record<string, any>;
   courseUpdates: Record<string, any>;
   processingNotification: Record<string, any>;
   courseExport: Record<string, any>;
@@ -79,7 +77,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       studioHome: studioHomeReducer,
       models: modelsReducer,
       live: liveReducer,
-      courseTeam: courseTeamReducer,
       courseUpdates: CourseUpdatesReducer,
       processingNotification: processingNotificationReducer,
       courseExport: courseExportReducer,
