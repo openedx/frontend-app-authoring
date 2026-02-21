@@ -178,7 +178,7 @@ describe('LibraryReferenceCard', () => {
       />,
     );
     expect(await screen.findByText(
-      `${itemData.displayName} was reused as part of a section which has a broken link. To recieve library updates to this component, unlink the broken link.`,
+      `${itemData.displayName} was reused as part of a section which has a broken link. To receive library updates to this component, unlink the broken link.`,
     )).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Unlink section' }));
