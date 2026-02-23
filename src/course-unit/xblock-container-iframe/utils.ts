@@ -1,25 +1,20 @@
 import { getConfig } from '@edx/frontend-platform';
+import { AccessManagedXBlockDataTypes } from '@src/data/types';
 
 import { COURSE_BLOCK_NAMES } from '../../constants';
-import { FormattedAccessManagedXBlockDataTypes, XBlockTypes } from './types';
+import { XBlockTypes } from './types';
 
 /**
  * Formats the XBlock data into a standardized structure for access management.
- *
- * @param {XBlockTypes} xblock - The XBlock object containing the original data.
- * @param {string} usageId - The unique identifier for the XBlock.
- *
- * @returns {FormattedAccessManagedXBlockDataTypes} - The formatted XBlock data, ready for access management operations.
  */
 export const formatAccessManagedXBlockData = (
   xblock: XBlockTypes,
   usageId: string,
-): FormattedAccessManagedXBlockDataTypes => ({
+): AccessManagedXBlockDataTypes => ({
   category: COURSE_BLOCK_NAMES.component.id,
   displayName: xblock.name,
   userPartitionInfo: xblock.userPartitionInfo,
   showCorrectness: 'always',
-  blockType: xblock.blockType,
   id: usageId,
 });
 

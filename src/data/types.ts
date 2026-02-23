@@ -92,7 +92,7 @@ export interface XBlockBase {
   due?: string;
   relativeWeeksDue?: number;
   format?: string;
-  courseGraders: string[];
+  courseGraders?: string[];
   hasChanges: boolean;
   actions: XBlockActions;
   explanatoryMessage?: string;
@@ -124,6 +124,10 @@ export interface XBlockBase {
   prereqMinCompletion?: number;
   discussionEnabled?: boolean;
   upstreamInfo?: UpstreamInfo;
+  wasExamEverLinkedWithExternal?: boolean;
+  supportsOnboarding?: boolean;
+  showReviewRules?: boolean;
+  onlineProctoringRules?: string;
 }
 
 export interface XBlock extends XBlockBase {
@@ -164,4 +168,36 @@ export type SelectionState = {
   currentId: string;
   sectionId?: string;
   subsectionId?: string;
+};
+
+export type AccessManagedXBlockDataTypes = {
+  id: string;
+  displayName?: string;
+  start?: string;
+  visibilityState?: string | boolean;
+  due?: string;
+  isTimeLimited?: boolean;
+  defaultTimeLimitMinutes?: number;
+  hideAfterDue?: boolean;
+  showCorrectness?: string | boolean;
+  courseGraders?: string[];
+  category?: string;
+  format?: string;
+  userPartitionInfo?: UserPartitionInfoTypes;
+  ancestorHasStaffLock?: boolean;
+  isPrereq?: boolean;
+  prereqs?: XBlockPrereqs[];
+  prereq?: string;
+  prereqMinScore?: number;
+  prereqMinCompletion?: number;
+  releasedToStudents?: boolean;
+  wasExamEverLinkedWithExternal?: boolean;
+  isProctoredExam?: boolean;
+  isOnboardingExam?: boolean;
+  isPracticeExam?: boolean;
+  examReviewRules?: string;
+  supportsOnboarding?: boolean;
+  showReviewRules?: boolean;
+  onlineProctoringRules?: string;
+  discussionEnabled?: boolean;
 };

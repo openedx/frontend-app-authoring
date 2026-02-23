@@ -219,9 +219,11 @@ export const useUpdateCourseSectionHighlights = () => {
     mutationFn: (variables: {
       sectionId: string;
       highlights: string[];
-    } & ParentIds) => updateCourseSectionHighlights( variables.sectionId, variables.highlights),
+    } & ParentIds) => updateCourseSectionHighlights(variables.sectionId, variables.highlights),
     onSettled: (_data, _err, variables) => {
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)) });
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
+      });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
     },
   });

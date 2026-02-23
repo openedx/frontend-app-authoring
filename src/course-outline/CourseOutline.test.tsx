@@ -292,7 +292,7 @@ describe('<CourseOutline />', () => {
     expect(alertElements.find(
       (el) => el.classList.contains('alert-content'),
     )).toHaveTextContent(
-      "Unable to save changes. Please try again.",
+      'Unable to save changes. Please try again.',
     );
   });
 
@@ -1647,13 +1647,13 @@ describe('<CourseOutline />', () => {
     const highlightBtn = await screen.findAllByRole('button', { name: '0 Section highlights' });
     await user.click(highlightBtn[0]);
     const dialog = await screen.findByRole('dialog');
-    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 1'}), {
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 1' }), {
       target: { value: 'New Highlight 1' },
     });
-    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 2'}), {
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 2' }), {
       target: { value: 'New Highlight 2' },
     });
-    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 3'}), {
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 3' }), {
       target: { value: 'New Highlight 3' },
     });
     await user.click(await within(dialog).findByRole('button', { name: 'Save' }));

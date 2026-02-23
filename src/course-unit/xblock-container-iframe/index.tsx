@@ -26,6 +26,7 @@ import EditorPage from '@src/editors/EditorPage';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ConfigureUnitData } from '@src/course-outline/data/types';
+import { AccessManagedXBlockDataTypes } from '@src/data/types';
 import { messageTypes } from '../constants';
 import {
   fetchCourseSectionVerticalData,
@@ -38,7 +39,6 @@ import {
 import messages from './messages';
 import {
   XBlockContainerIframeProps,
-  AccessManagedXBlockDataTypes,
 } from './types';
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
@@ -70,7 +70,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const [blockType, setBlockType] = useState<string>('');
   const { useVideoGalleryFlow } = useWaffleFlags(courseId);
   const [newBlockId, setNewBlockId] = useState<string>('');
-  const [accessManagedXBlockData, setAccessManagedXBlockData] = useState<AccessManagedXBlockDataTypes | {}>({});
+  const [
+    accessManagedXBlockData,
+    setAccessManagedXBlockData,
+  ] = useState<AccessManagedXBlockDataTypes | undefined>(undefined);
   const [iframeOffset, setIframeOffset] = useState(0);
   const [deleteXBlockId, setDeleteXBlockId] = useState<string | null>(null);
   const [unlinkXBlockId, setUnlinkXBlockId] = useState<string | null>(null);
@@ -154,7 +157,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         ...variables,
         closeModalFn: closeConfigureModal,
       });
-      setAccessManagedXBlockData({});
+      setAccessManagedXBlockData(undefined);
     }
   };
 
@@ -293,19 +296,17 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
           />
         </div>
       )}
-      {Object.keys(accessManagedXBlockData).length ? (
-        <ConfigureModal
-          isXBlockComponent
-          isOpen={isConfigureModalOpen}
-          onClose={() => {
-            closeConfigureModal();
-            setAccessManagedXBlockData({});
-          }}
-          onConfigureSubmit={onManageXBlockAccessSubmit}
-          currentItemData={accessManagedXBlockData as AccessManagedXBlockDataTypes}
-          isSelfPaced={false}
-        />
-      ) : null}
+      <ConfigureModal
+        isXBlockComponent
+        isOpen={isConfigureModalOpen}
+        onClose={() => {
+          closeConfigureModal();
+          setAccessManagedXBlockData(undefined);
+        }}
+        onConfigureSubmit={onManageXBlockAccessSubmit}
+        currentItemData={accessManagedXBlockData}
+        isSelfPaced={false}
+      />
       <iframe
         key={iframeKey}
         ref={iframeRef}
