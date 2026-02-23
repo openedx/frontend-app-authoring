@@ -202,14 +202,14 @@ function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateT
       id: 'add',
       header: () => (
         <span
-          style={{ cursor: 'pointer', fontSize: '1.2rem', fontWeight: 'bold' }}
+          style={{ cursor: 'pointer', fontSize: '1.1rem', fontWeight: 'bold', color: '#0056b3', marginLeft: '0.5rem' }}
           title="Add Tag"
           onClick={() => {
             setCreatingParentId('top');
             setEditingRowId(null);
           } }
         >
-          +
+          Add Tag
         </span>
       ),
       cell: ({ row }) => {
@@ -341,6 +341,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
 
 
   const handleCreateTopTag = async (value) => {
+    console.log('Creating top-level tag with value:', value);
     if (value.trim()) {
       await createTagMutation.mutateAsync({ value });
     }
