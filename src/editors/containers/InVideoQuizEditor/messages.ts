@@ -101,6 +101,11 @@ const messages = defineMessages({
     defaultMessage: 'Failed to parse jump back data',
     description: 'Error message when jump back JSON parsing fails.',
   },
+  duplicateTimeError: {
+    id: 'InVideoQuizEditor.duplicateTimeError',
+    defaultMessage: 'Each problem must have a unique timestamp. Please remove duplicate times.',
+    description: 'Validation error when multiple quiz items share the same time.',
+  },
   saveErrorTitle: {
     id: 'InVideoQuizEditor.saveErrorTitle',
     defaultMessage: 'Error saving in-video quiz',

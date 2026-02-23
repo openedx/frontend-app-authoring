@@ -37,6 +37,7 @@ import { getItemIcon } from '@src/generic/block-type-utils';
 import AlertError from '@src/generic/alert-error';
 import ModalIframe from '@src/generic/modal-iframe';
 import EditorPage from '@src/editors/EditorPage';
+import supportedEditors from '@src/editors/supportedEditors';
 import DraggableList, { SortableItem as GenericSortableItem } from '@src/generic/DraggableList';
 import { ToastContext } from '@src/generic/toast-context';
 import { useUnitHandler } from './data/hooks';
@@ -208,10 +209,7 @@ const UnitCard = ({
     `${getConfig().STUDIO_BASE_URL}/xblock/${blockId}/action/edit`
   );
 
-  const supportsMFEEditor = (blockType: string): boolean => {
-    const supportedTypes = ['html', 'video', 'problem', 'video_upload', 'games'];
-    return supportedTypes.includes(blockType);
-  };
+  const supportsMFEEditor = (blockType: string): boolean => Boolean(supportedEditors[blockType]);
 
   const handleShowLegacyEditModal = (blockId: string) => {
     setEditXBlockId(blockId);

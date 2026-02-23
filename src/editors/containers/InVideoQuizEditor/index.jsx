@@ -102,6 +102,14 @@ export const InVideoQuizEditor = ({
       setSaveError(intl.formatMessage(messages.timeFormatError));
       return;
     }
+    const times = quizItems
+      .map((item) => item.time)
+      .filter(Boolean);
+    const hasDuplicateTimes = times.length !== new Set(times).size;
+    if (hasDuplicateTimes) {
+      setSaveError(intl.formatMessage(messages.duplicateTimeError));
+      return;
+    }
     const hasProblemWithoutTimer = quizItems.some((item) => item.problemId && !item.time);
     if (hasProblemWithoutTimer) {
       setSaveError(intl.formatMessage(messages.timerRequiredError));
