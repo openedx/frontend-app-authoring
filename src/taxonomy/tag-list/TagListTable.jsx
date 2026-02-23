@@ -63,53 +63,78 @@ const SubTagsExpanded = ({
   onSaveNewSubTag,
   onCancelCreation,
   subTagsData,
+  visibleColumnCount,
+  createTagMutation,
+  creatingParentId,
+  editingRowId,
+  setCreatingParentId,
+  setEditingRowId,
 }) => {
+  const columnCount = subTagsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
+
   return (
-    <ul style={{ listStyleType: 'none', paddingLeft: '30px', margin: '10px 0' }}>
+    <>
       {isCreating && (
-        <tr style={{ marginBottom: '8px' }}>
-          <EditableCell
-            onSave={(val) => onSaveNewSubTag(val, parentTagValue)}
-            onCancel={onCancelCreation}
-          />
+        <tr>
+          <td colSpan={columnCount} style={{ padding: '8px 8px 8px 24px' }}>
+            <EditableCell
+              onSave={(val) => onSaveNewSubTag(val, parentTagValue)}
+              onCancel={onCancelCreation}
+            />
+          </td>
         </tr>
       )}
       {subTagsData?.map(row => {
         const tagData = row.original || row; // Handle both raw and table row data
         return (
-          <>
-            <tr key={tagData.id}>
-              <td key={tagData.id} style={{ paddingLeft: `${(tagData.depth - 1) * 30}px`, marginBottom: '4px' }}>
-                {tagData.value} <span className="text-secondary-500">{tagData.descendantCount > 0 ? `(${tagData.descendantCount})` : null}</span>
-              </td>
+          <React.Fragment key={tagData.id}>
+            <tr style={{ borderBottom: '1px solid #eee' }}>
+              {row.getVisibleCells().map(cell => (
+                <td key={cell.id} style={{ padding: '8px' }}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
             </tr>
-            <tr>
+
+            <tr style={{ backgroundColor: '#f9f9f9' }}>
               {/* colSpan stretches the sub-row across the whole table */}
               <td colSpan={row.getVisibleCells().length} style={{ padding: '8px 8px 8px 24px' }}>
                 <SubTagsExpanded
                   subTagsData={row.subRows}
+                  visibleColumnCount={row.getVisibleCells().length}
                   parentTagValue={row.original.value}
                   parentTagId={row.original.id}
-                  // isCreating={creatingParentId === row.original.id}
-                  // onSaveNewSubTag={handleCreateSubTag}
-                  // onCancelCreation={() => setCreatingParentId(null)}
+                  isCreating={creatingParentId === row.original.id}
+                  onSaveNewSubTag={onSaveNewSubTag}
+                  onCancelCreation={() => setCreatingParentId(null)}
+                  createTagMutation={createTagMutation}
+                  creatingParentId={creatingParentId}
+                  editingRowId={editingRowId}
+                  setCreatingParentId={setCreatingParentId}
+                  setEditingRowId={setEditingRowId}
                 />
               </td>
             </tr>
-          </>
+          </React.Fragment>
         );
       })}
-    </ul>
+    </>
   );
 };
 
 SubTagsExpanded.propTypes = {
   subTagsData: Proptypes.array.isRequired,
+  visibleColumnCount: Proptypes.number,
   parentTagValue: Proptypes.string.isRequired,
   parentTagId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]).isRequired,
   isCreating: Proptypes.bool,
   onSaveNewSubTag: Proptypes.func,
   onCancelCreation: Proptypes.func,
+  createTagMutation: Proptypes.object,
+  creatingParentId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
+  editingRowId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
+  setCreatingParentId: Proptypes.func,
+  setEditingRowId: Proptypes.func,
 };
 
 /**
@@ -321,6 +346,8 @@ const TagListTable = ({ taxonomyId }) => {
 
   const columns = useMemo(() => getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateTag, setEditingRowId), [intl, creatingParentId, editingRowId]);
 
+  console.log('rowData for table: ', rowData);
+
   // Initialize TanStack Table
   const table = useReactTable({
     data: rowData,
@@ -375,7 +402,7 @@ const TagListTable = ({ taxonomyId }) => {
               </tr>
             )}
 
-            {table.getRowModel().rows.map(row => (
+            {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
               <React.Fragment key={row.id}>
                 {/* Main Row */}
                 <tr style={{ borderBottom: '1px solid #eee' }}>
@@ -393,11 +420,17 @@ const TagListTable = ({ taxonomyId }) => {
                     <td colSpan={row.getVisibleCells().length} style={{ padding: '8px 8px 8px 24px' }}>
                       <SubTagsExpanded
                         subTagsData={row.subRows}
+                          visibleColumnCount={row.getVisibleCells().length}
                         parentTagValue={row.original.value}
                         parentTagId={row.original.id}
                         isCreating={creatingParentId === row.original.id}
                         onSaveNewSubTag={handleCreateSubTag}
                         onCancelCreation={() => setCreatingParentId(null)}
+                        createTagMutation={createTagMutation}
+                        creatingParentId={creatingParentId}
+                        editingRowId={editingRowId}
+                        setCreatingParentId={setCreatingParentId}
+                        setEditingRowId={setEditingRowId}
                       />
                     </td>
                   </tr>
