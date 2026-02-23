@@ -149,7 +149,7 @@ const ConfigureModal = ({
       case COURSE_BLOCK_NAMES.chapter.id:
         onConfigureSubmit({
           isVisibleToStaffOnly: data.isVisibleToStaffOnly,
-          releaseDate,
+          startDatetime: releaseDate,
         });
         break;
       case COURSE_BLOCK_NAMES.sequential.id:

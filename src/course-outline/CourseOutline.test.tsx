@@ -36,7 +36,6 @@ import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery, syncDiscussionsTopics,
-  updateCourseSectionHighlightsQuery,
 } from './data/thunk';
 import {
   courseOutlineIndexMock,
@@ -93,13 +92,6 @@ jest.mock('@src/help-urls/hooks', () => ({
     visibility: 'some',
     grading: 'some',
     outline: 'some',
-  }),
-}));
-
-jest.mock('@edx/frontend-platform/i18n', () => ({
-  ...jest.requireActual('@edx/frontend-platform/i18n'),
-  useIntl: () => ({
-    formatMessage: (message) => message.defaultMessage,
   }),
 }));
 
@@ -300,7 +292,7 @@ describe('<CourseOutline />', () => {
     expect(alertElements.find(
       (el) => el.classList.contains('alert-content'),
     )).toHaveTextContent(
-      pageAlertMessages.alertFailedGeneric.defaultMessage,
+      "Unable to save changes. Please try again.",
     );
   });
 
@@ -1627,15 +1619,14 @@ describe('<CourseOutline />', () => {
   });
 
   it('check update highlights when update highlights query is successfully', async () => {
-    const { getByRole } = renderComponent();
+    const user = userEvent.setup();
+    renderComponent();
 
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const highlights = [
       'New Highlight 1',
       'New Highlight 2',
       'New Highlight 3',
-      'New Highlight 4',
-      'New Highlight 5',
     ];
 
     axiosMock
@@ -1653,12 +1644,21 @@ describe('<CourseOutline />', () => {
         ...section,
         highlights,
       });
-
-    await executeThunk(updateCourseSectionHighlightsQuery(section.id, highlights), store.dispatch);
-
-    await waitFor(() => {
-      expect(getByRole('button', { name: '5 Section highlights' })).toBeInTheDocument();
+    const highlightBtn = await screen.findAllByRole('button', { name: '0 Section highlights' });
+    await user.click(highlightBtn[0]);
+    const dialog = await screen.findByRole('dialog');
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 1'}), {
+      target: { value: 'New Highlight 1' },
     });
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 2'}), {
+      target: { value: 'New Highlight 2' },
+    });
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 3'}), {
+      target: { value: 'New Highlight 3' },
+    });
+    await user.click(await within(dialog).findByRole('button', { name: 'Save' }));
+
+    expect(await screen.findByRole('button', { name: '3 Section highlights' })).toBeInTheDocument();
   });
 
   it('check whether section move up and down options work correctly', async () => {

@@ -18,6 +18,7 @@ import {
   useConfigureSubsection,
   useConfigureUnit,
   useDeleteCourseItem,
+  useUpdateCourseSectionHighlights,
 } from '@src/course-outline/data/apiHooks';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
@@ -47,7 +48,6 @@ import {
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   fetchCourseReindexQuery,
-  updateCourseSectionHighlightsQuery,
   setSectionOrderListQuery,
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
@@ -150,9 +150,16 @@ const useCourseOutline = ({ courseId }) => {
     openHighlightsModal();
   };
 
+  const {
+    mutate: updateCourseSectionHighlights,
+    isPending: isSectionHighlightsUpdatePending,
+  } = useUpdateCourseSectionHighlights();
   const handleHighlightsFormSubmit = (highlights) => {
     const dataToSend = Object.values(highlights).filter(Boolean);
-    dispatch(updateCourseSectionHighlightsQuery(currentSelection?.currentId, dataToSend));
+    updateCourseSectionHighlights({
+      sectionId: currentSelection?.currentId,
+      highlights: dataToSend,
+    });
 
     closeHighlightsModal();
   };
@@ -394,6 +401,7 @@ const useCourseOutline = ({ courseId }) => {
     handleConfigureItemSubmit,
     statusBarData,
     isEnableHighlightsModalOpen,
+    isSectionHighlightsUpdatePending,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
     isInternetConnectionAlertFailed: isSavingStatusFailed,

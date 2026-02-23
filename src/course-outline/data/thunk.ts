@@ -18,7 +18,6 @@ import {
   getCourseOutlineIndex,
   getCourseItem,
   restartIndexingOnCourse,
-  updateCourseSectionHighlights,
   setSectionOrderList,
   setVideoSharingOption,
   setCourseItemOrderList,
@@ -233,26 +232,6 @@ export function fetchCourseSectionQuery(sectionIds: string[], scrollToId?: {
         status: RequestStatus.FAILED,
         errors: getErrorDetails(error),
       }));
-    }
-  };
-}
-
-export function updateCourseSectionHighlightsQuery(sectionId: string, highlights: string[]) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await updateCourseSectionHighlights(sectionId, highlights).then(async (result) => {
-        if (result) {
-          await dispatch(fetchCourseSectionQuery([sectionId]));
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
-        }
-      });
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };
 }

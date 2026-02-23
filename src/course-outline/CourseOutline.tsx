@@ -110,6 +110,7 @@ const CourseOutline = () => {
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
+    isSectionHighlightsUpdatePending,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
     handleDeleteItemSubmit,
@@ -530,6 +531,7 @@ const CourseOutline = () => {
             || handleAddSection.isPending
             || handleAddSection.isPending
             || isConfigureOpPending
+            || isSectionHighlightsUpdatePending
           }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}

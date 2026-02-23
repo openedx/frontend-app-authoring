@@ -19,6 +19,7 @@ import {
   configureCourseSection,
   configureCourseSubsection,
   configureCourseUnit,
+  updateCourseSectionHighlights,
 } from './api';
 
 export const courseOutlineQueryKeys = {
@@ -207,6 +208,20 @@ export const useConfigureUnit = () => {
     mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.unitId)) });
+      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+    },
+  });
+};
+
+export const useUpdateCourseSectionHighlights = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: {
+      sectionId: string;
+      highlights: string[];
+    } & ParentIds) => updateCourseSectionHighlights( variables.sectionId, variables.highlights),
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
     },
   });
