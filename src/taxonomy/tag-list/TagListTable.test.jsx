@@ -191,6 +191,20 @@ describe('<TagListTable />', () => {
   });
 
   describe('Create a new top-level tag', () => {
+    /* Acceptance Criteria:
+    System-defined taxonomies must not be editable, and thus should not show the "Add tag" button
+    */
+    it('should not show "Add tag" button for system-defined taxonomies', async () => {
+      axiosMock.onGet(rootTagsListUrl).reply(200, {
+          ...mockTagsResponse,
+          system_defined: true,
+      });
+      render(<RootWrapper />);
+      await waitFor(() => {
+        expect(screen.queryByText('Add Tag')).not.toBeInTheDocument();
+      });
+    });
+
     it('should add draft row when top-level"Add tag" button is clicked', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
       render(<RootWrapper />);
@@ -722,6 +736,20 @@ describe('<TagListTable />', () => {
 
   describe('Create a new subtag', () => {
     /* Acceptance Criteria:
+    System-defined taxonomies must not be editable, and thus should not show the "Add sub-tag" option in the parent action menu
+    */
+    it('should not show "Add sub-tag" option in parent action menu for system-defined taxonomies', async () => {
+      axiosMock.onGet(rootTagsListUrl).reply(200, {
+          ...mockTagsResponse,
+          system_defined: true,
+      });
+      render(<RootWrapper />);
+      await waitFor(() => {
+        expect(screen.queryAllByText('Add Subtag')).not.toBeInTheDocument();
+      });
+    });
+
+    /* Acceptance Criteria:
     The user can add a sub-tag using a parent action menu (three dots)
     Given the user is viewing the taxonomy detail page
     And a tag is displayed in the tag list
@@ -1091,6 +1119,22 @@ describe('<TagListTable />', () => {
           expect(action).toBeDisabled();
         });
       }
+    });
+  });
+
+  describe('Create a nested sub-tag', () => {
+    /* Acceptance Criteria:
+      System-defined taxonomies must not be editable, and thus should not show the "Add sub-tag" option in the sub-tag action menu
+      */
+    it('should not show "Add sub-tag" option in sub-tag action menu for system-defined taxonomies', async () => {
+      axiosMock.onGet(rootTagsListUrl).reply(200, {
+          ...mockTagsResponse,
+          system_defined: true,
+      });
+      render(<RootWrapper />);
+      await waitFor(() => {
+        expect(screen.queryAllByText('Add Subtag')).not.toBeInTheDocument();
+      });
     });
 
     /* Acceptance Criteria:
