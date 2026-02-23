@@ -69,6 +69,7 @@ const SubTagsExpanded = ({
   editingRowId,
   setCreatingParentId,
   setEditingRowId,
+  maxDepth,
 }) => {
   const columnCount = subTagsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
 
@@ -89,10 +90,12 @@ const SubTagsExpanded = ({
         return (
           <React.Fragment key={tagData.id}>
             <tr style={{ borderBottom: '1px solid #eee' }}>
-              {row.getVisibleCells().map(cell => (
-                <td key={cell.id} style={{ padding: '8px' }}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
+              {row.getVisibleCells()
+                .filter(cell => cell.column.id !== 'add')
+                .map(cell => (
+                  <td key={cell.id} style={{ padding: '8px' }}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
               ))}
             </tr>
 
@@ -112,6 +115,7 @@ const SubTagsExpanded = ({
                   editingRowId={editingRowId}
                   setCreatingParentId={setCreatingParentId}
                   setEditingRowId={setEditingRowId}
+                  maxDepth={maxDepth - 1}
                 />
               </td>
             </tr>
@@ -135,6 +139,7 @@ SubTagsExpanded.propTypes = {
   editingRowId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
   setCreatingParentId: Proptypes.func,
   setEditingRowId: Proptypes.func,
+  maxDepth: Proptypes.number,
 };
 
 /**
@@ -144,13 +149,13 @@ const OptionalExpandLink = ({ row }) => {
   console.log('can expand: ', row.getCanExpand())
   return (
     row.original.childCount > 0 ? (
-      <div
+      <a
         className="d-flex justify-content-end"
         style={{ cursor: 'pointer' }}
         onClick={row.getToggleExpandedHandler()}
       >
-        {row.getIsExpanded() ? 'v' : '>'}
-      </div>
+        Expand row
+      </a>
     ) : null
   )
 };
@@ -215,6 +220,29 @@ function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateT
         return (
           <div className="d-flex gap-2">
             <span
+              style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3' }}
+              onClick={() => {
+                setCreatingParentId(row.original.id);
+                setEditingRowId(null);
+                row.toggleExpanded(true);
+              } }
+            >
+              Add Subtag
+            </span>
+          </div>
+        );
+      }
+    },
+    {
+      id: 'edit',
+      cell: ({ row }) => {
+        if (row.original.isNew) {
+          return <div className="d-flex gap-2"></div>;
+        }
+
+        return (
+          <div className="d-flex gap-2">
+            <span
               style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3', marginRight: '1rem' }}
               onClick={() => {
                 setEditingRowId(row.original.id);
@@ -222,17 +250,6 @@ function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateT
               } }
             >
               Edit
-            </span>
-            <span
-              style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3' }}
-              onClick={() => {
-                setCreatingParentId(row.original.id);
-                setEditingRowId(null);
-                // v8 API uses toggleExpanded(true) to force expand
-                row.toggleExpanded(true);
-              } }
-            >
-              + Subtag
             </span>
           </div>
         );
@@ -301,7 +318,7 @@ function getRowData(tagList, editingRowId, creatingParentId) {
   return data;
 }
 
-const TagListTable = ({ taxonomyId }) => {
+const TagListTable = ({ taxonomyId, maxDepth }) => {
   const intl = useIntl();
 
   // Standardizing pagination state for TanStack v8
@@ -420,7 +437,7 @@ const TagListTable = ({ taxonomyId }) => {
                     <td colSpan={row.getVisibleCells().length} style={{ padding: '8px 8px 8px 24px' }}>
                       <SubTagsExpanded
                         subTagsData={row.subRows}
-                          visibleColumnCount={row.getVisibleCells().length}
+                        visibleColumnCount={row.getVisibleCells().length}
                         parentTagValue={row.original.value}
                         parentTagId={row.original.id}
                         isCreating={creatingParentId === row.original.id}
@@ -431,6 +448,7 @@ const TagListTable = ({ taxonomyId }) => {
                         editingRowId={editingRowId}
                         setCreatingParentId={setCreatingParentId}
                         setEditingRowId={setEditingRowId}
+                        maxDepth={maxDepth - 1}
                       />
                     </td>
                   </tr>
@@ -443,7 +461,7 @@ const TagListTable = ({ taxonomyId }) => {
 
       {/* Basic Pagination Controls */}
       {(tagList?.numPages || 0) > 1 && (
-        <div className="d-flex justify-content-between align-items-center mt-3">
+        <div role="navigation" aria-label="table pagination" className="d-flex justify-content-between align-items-center mt-3">
           <Button
             disabled={!table.getCanPreviousPage()}
             onClick={() => table.previousPage()}
