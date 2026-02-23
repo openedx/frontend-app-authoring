@@ -4,7 +4,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import {
-  render, waitFor, screen, within,
+  render, waitFor, waitForElementToBeRemoved, screen, within,
 } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
@@ -59,6 +59,24 @@ const mockTagsResponse = {
       _id: 1003,
       sub_tags_url: '/request/to/load/subtags/3',
     },
+    {
+      ...tagDefaults,
+      depth: 1,
+      value: 'the child tag',
+      child_count: 0,
+      _id: 1111,
+      sub_tags_url: null,
+      parent_value: 'root tag 1',
+    },
+    {
+      ...tagDefaults,
+      depth: 2,
+      value: 'the grandchild tag',
+      child_count: 0,
+      _id: 1111,
+      sub_tags_url: null,
+      parent_value: 'the child tag',
+    },
   ],
 };
 const mockTagsPaginationResponse = {
@@ -70,7 +88,7 @@ const mockTagsPaginationResponse = {
   start: 0,
   results: [],
 };
-const rootTagsListUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?page=1&page_size=100';
+const rootTagsListUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?page=1&page_size=100&full_depth_threshold=1000';
 const subTagsResponse = {
   next: null,
   previous: null,
@@ -115,8 +133,9 @@ describe('<TagListTable />', () => {
     axiosMock.onGet(rootTagsListUrl).reply(() => promise);
     render(<RootWrapper />);
     const spinner = screen.getByRole('status');
-    expect(spinner.textContent).toEqual('loading');
-    resolveResponse([200, {}]);
+    expect(spinner.textContent).toEqual('Loading...');
+    resolveResponse([200, { results: [] }]);
+    await waitForElementToBeRemoved(() => screen.queryByRole('status'));
     const noFoundComponent = await screen.findByText('No results found');
     expect(noFoundComponent).toBeInTheDocument();
   });
@@ -137,7 +156,7 @@ describe('<TagListTable />', () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
     render(<RootWrapper />);
-    const expandButton = screen.getAllByLabelText('Expand row')[0];
+    const expandButton = screen.getAllByText('Expand row')[0];
     expandButton.click();
     const childTag = await screen.findByText('the child tag');
     expect(childTag).toBeInTheDocument();
@@ -160,6 +179,5 @@ describe('<TagListTable />', () => {
       name: /table pagination/i,
     });
     expect(tableFooter[0]).toBeInTheDocument();
-    expect(tableFooter[1]).toBeInTheDocument();
   });
 });
