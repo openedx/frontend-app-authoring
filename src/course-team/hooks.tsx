@@ -1,9 +1,11 @@
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { useState } from 'react';
 import { useToggle } from '@openedx/paragon';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { USER_ROLES } from '../constants';
+import messages from './messages';
 import { MODAL_TYPES, type ModalType } from './constants';
 import {
   useChangeRoleTeamUser,
@@ -13,6 +15,7 @@ import {
 } from './data/apiHooks';
 
 const useCourseTeam = () => {
+  const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
 
   const { email: currentUserEmail } = getAuthenticatedUser();
@@ -80,7 +83,7 @@ const useCourseTeam = () => {
   const getErrorMessage = () => {
     const errorObject = addUserMutation.error ?? editUserRoleMutation.error ?? deleteUserMutation.error;
     // @ts-ignore
-    return errorObject?.response?.data?.error;
+    return errorObject?.response?.data?.error ?? intl.formatMessage(messages.unknownError);
   };
 
   return {
