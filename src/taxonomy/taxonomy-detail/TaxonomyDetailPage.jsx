@@ -88,7 +88,7 @@ const TaxonomyDetailPage = () => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
-              <TagListTable taxonomyId={taxonomyId} />
+              <TagListTable taxonomyId={taxonomyId} maxDepth={3} />
             </Layout.Element>
             <Layout.Element>
               <TaxonomyDetailSideCard taxonomy={taxonomy} />

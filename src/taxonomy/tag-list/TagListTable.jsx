@@ -1,8 +1,8 @@
 // @ts-check
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button } from '@openedx/paragon';
-import { isEqual } from 'lodash';
+import { Button, Toast } from '@openedx/paragon';
+import { isEqual, set } from 'lodash';
 import Proptypes from 'prop-types';
 
 import {
@@ -15,6 +15,25 @@ import {
 import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
 import { useTagListData, useSubTags, useCreateTag } from '../data/apiHooks';
+
+const TABLE_MODES = {
+  VIEW: 'view',
+  DRAFT: 'draft',
+  WRITE: 'write',
+}
+
+const TRANSITION_TABLE = {
+  [TABLE_MODES.VIEW]: [TABLE_MODES.DRAFT],
+  [TABLE_MODES.DRAFT]: [TABLE_MODES.WRITE],
+  [TABLE_MODES.WRITE]: [TABLE_MODES.DRAFT, TABLE_MODES.VIEW],
+}
+
+const switchMode = (currentMode, targetMode) => {
+  if (TRANSITION_TABLE[currentMode].includes(targetMode)) {
+    return targetMode;
+  }
+  throw new Error(`Invalid table mode transition from ${currentMode} to ${targetMode}`);
+};
 
 /**
  * 1. Reusable Editable Cell
@@ -31,16 +50,30 @@ const EditableCell = ({ initialValue, onSave, onCancel }) => {
   };
 
   return (
-    <input
-      autoFocus
-      type="text"
-      className="form-control form-control-sm"
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={() => onSave(value)}
-      onKeyDown={handleKeyDown}
-      onClick={(e) => e.stopPropagation()}
-    />
+    <span className="d-flex align-items-start">
+      <span className='mr-2'>
+        <input
+          autoFocus
+          type="text"
+          className="form-control form-control-sm"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onClick={(e) => e.stopPropagation()}
+          placeholder='Type tag name'
+        />
+      </span>
+      <span className='mr-2'>
+        <Button variant="secondary" size="sm" onClick={onCancel}>
+          Cancel
+        </Button>
+      </span>
+      <span className='mr-2'>
+        <Button variant="primary" size="sm" onClick={() => onSave(value)}>
+          Save
+        </Button>
+      </span>
+    </span>
   );
 };
 
@@ -72,12 +105,13 @@ const SubTagsExpanded = ({
   maxDepth,
 }) => {
   const columnCount = subTagsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
+  const showAddSubTagButton = maxDepth > 0;
 
   return (
     <>
       {isCreating && (
         <tr>
-          <td colSpan={columnCount} style={{ padding: '8px 8px 8px 24px' }}>
+          <td colSpan={columnCount} style={{ padding: '8px 8px 8px 0' }}>
             <EditableCell
               onSave={(val) => onSaveNewSubTag(val, parentTagValue)}
               onCancel={onCancelCreation}
@@ -91,7 +125,7 @@ const SubTagsExpanded = ({
           <React.Fragment key={tagData.id}>
             <tr style={{ borderBottom: '1px solid #eee' }}>
               {row.getVisibleCells()
-                .filter(cell => cell.column.id !== 'add')
+                .filter(cell => showAddSubTagButton || cell.column.id !== 'add')
                 .map(cell => (
                   <td key={cell.id} style={{ padding: '8px' }}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -161,7 +195,7 @@ const OptionalExpandLink = ({ row }) => {
 };
 OptionalExpandLink.propTypes = { row: Proptypes.object.isRequired };
 
-function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateTag, setEditingRowId) {
+function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateTag, setEditingRowId, setToast) {
   return [
     {
       header: intl.formatMessage(messages.tagListColumnValueHeader),
@@ -171,7 +205,7 @@ function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateT
         if (isNew) {
           return (
             <EditableCell
-              onSave={handleCreateTopTag}
+              onSave={(value) => handleCreateTopTag(value, setToast)}
               onCancel={() => setCreatingParentId(null)} />
           );
         }
@@ -233,28 +267,28 @@ function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateT
         );
       }
     },
-    {
-      id: 'edit',
-      cell: ({ row }) => {
-        if (row.original.isNew) {
-          return <div className="d-flex gap-2"></div>;
-        }
+    // {
+    //   id: 'edit',
+    //   cell: ({ row }) => {
+    //     if (row.original.isNew) {
+    //       return <div className="d-flex gap-2"></div>;
+    //     }
 
-        return (
-          <div className="d-flex gap-2">
-            <span
-              style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3', marginRight: '1rem' }}
-              onClick={() => {
-                setEditingRowId(row.original.id);
-                setCreatingParentId(null);
-              } }
-            >
-              Edit
-            </span>
-          </div>
-        );
-      }
-    },
+    //     return (
+    //       <div className="d-flex gap-2">
+    //         <span
+    //           style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3', marginRight: '1rem' }}
+    //           onClick={() => {
+    //             setEditingRowId(row.original.id);
+    //             setCreatingParentId(null);
+    //           } }
+    //         >
+    //           Edit
+    //         </span>
+    //       </div>
+    //     );
+    //   }
+    // },
   ];
 }
 
@@ -291,21 +325,20 @@ function buildTree(data) {
   return tree;
 }
 
-function transformToTableData(data, editingRowId) {
+function transformToTableData(data) {
   if (!data) return []
-  const augmentedData = data.map(item => ({
-        ...item,
-    isEditing: item.id === editingRowId,
-  }));
-  const nestedData = buildTree(augmentedData);
+  // This will live somewhere else
+  // const augmentedData = data.map(item => ({
+  //       ...item,
+  //   isEditing: item.id === editingRowId,
+  // }));
+  const nestedData = buildTree(data);
 
   return nestedData;
 }
 
-function getRowData(tagList, editingRowId, creatingParentId) {
-  const data = transformToTableData(tagList?.results, editingRowId)
-
-  if (creatingParentId === 'top') {
+function getDisplayData(data, editingRowId, creatingParentId, tableMode) {
+  if (tableMode === TABLE_MODES.DRAFT && creatingParentId === 'top') {
     data.unshift({
       id: 'draft-top-row',
       isNew: true,
@@ -314,11 +347,16 @@ function getRowData(tagList, editingRowId, creatingParentId) {
       childCount: 0,
     });
   }
-  console.log('rowData: ', data);
   return data;
 }
 
 const TagListTable = ({ taxonomyId, maxDepth }) => {
+  // The table has a VIEW and a WRITE mode. It starts in VIEW mode.
+  // It switches to WRITE mode when a user edits or creates a tag. It remains in WRITE mode even after saving changes,
+  // and only switches to VIEW when the user refreshes the page, orders a column, or navigates to a different page of the table.
+  // During WRITE mode, the table makes POST requests to the backend and receives success or failure responses.
+  // However, the table does not refresh to show the updated data from the backend.
+  // This allows us to show the newly created or updated tag in the same place without reordering.
   const intl = useIntl();
 
   // Standardizing pagination state for TanStack v8
@@ -331,19 +369,32 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
 
   const [creatingParentId, setCreatingParentId] = useState(null);
   const [editingRowId, setEditingRowId] = useState(null);
+  const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
+
+  const [tableMode, setTableMode] = useState(TABLE_MODES.VIEW);
+  const [displayData, setDisplayData] = useState([]);
 
   const { isLoading, data: tagList } = useTagListData(taxonomyId, pagination);
   const createTagMutation = useCreateTag(taxonomyId);
 
-  const rowData = useMemo(() => {
-    return getRowData(tagList, editingRowId, creatingParentId);
-  }, [tagList?.results, creatingParentId, editingRowId]);
+  useMemo(() => {
+    // get row data if table is in VIEW mode, otherwise keep current data to avoid disrupting user while they are editing or creating a tag
+    if (tableMode === TABLE_MODES.VIEW) {
+      const data = transformToTableData(tagList?.results);
+      setDisplayData(data);
+    }
+  }, [tagList?.results, editingRowId, pagination, tableMode]);
 
 
-  const handleCreateTopTag = async (value) => {
+
+  const remainingDepth = maxDepth - 1
+  const showAddSubTagButton = remainingDepth > 0;
+
+  const handleCreateTopTag = async (value, setToast) => {
     console.log('Creating top-level tag with value:', value);
     if (value.trim()) {
       await createTagMutation.mutateAsync({ value });
+      setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: value }), variant: 'success' });
     }
     setCreatingParentId(null);
   };
@@ -351,6 +402,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   const handleCreateSubTag = async (value, parentTagValue) => {
     if (value.trim()) {
       await createTagMutation.mutateAsync({ value, parentTagValue });
+      setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: value }), variant: 'success' });
     }
     setCreatingParentId(null);
   };
@@ -362,13 +414,13 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
     setEditingRowId(null);
   };
 
-  const columns = useMemo(() => getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateTag, setEditingRowId), [intl, creatingParentId, editingRowId]);
+  const columns = useMemo(() => getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateTag, setEditingRowId, setToast), [intl, creatingParentId, editingRowId]);
 
-  console.log('rowData for table: ', rowData);
+  console.log('rowData for table: ', displayData);
 
   // Initialize TanStack Table
   const table = useReactTable({
-    data: rowData,
+    data: displayData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -424,7 +476,9 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
               <React.Fragment key={row.id}>
                 {/* Main Row */}
                 <tr style={{ borderBottom: '1px solid #eee' }}>
-                  {row.getVisibleCells().map(cell => (
+                  {row.getVisibleCells()
+                    .filter(cell => showAddSubTagButton || cell.column.id !== 'add')
+                    .map(cell => (
                     <td key={cell.id} style={{ padding: '8px' }}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
@@ -449,7 +503,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
                         editingRowId={editingRowId}
                         setCreatingParentId={setCreatingParentId}
                         setEditingRowId={setEditingRowId}
-                        maxDepth={maxDepth - 1}
+                        maxDepth={remainingDepth - 1}
                       />
                     </td>
                   </tr>
@@ -480,6 +534,14 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
           </Button>
         </div>
       )}
+      <Toast
+        show={toast.show}
+        onClose={() => { setToast({ show: false })} }
+        delay={15000}
+        className="bg-success-100 border-success"
+      >
+        {toast.message}
+      </Toast>
     </div>
   );
 };

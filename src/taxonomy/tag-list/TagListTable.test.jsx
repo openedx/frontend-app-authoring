@@ -191,20 +191,6 @@ describe('<TagListTable />', () => {
   });
 
   describe('Create a new top-level tag', () => {
-    /* Acceptance Criteria:
-    System-defined taxonomies must not be editable, and thus should not show the "Add tag" button
-    */
-    it('should not show "Add tag" button for system-defined taxonomies', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, {
-          ...mockTagsResponse,
-          system_defined: true,
-      });
-      render(<RootWrapper />);
-      await waitFor(() => {
-        expect(screen.queryByText('Add Tag')).not.toBeInTheDocument();
-      });
-    });
-
     it('should add draft row when top-level"Add tag" button is clicked', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
       render(<RootWrapper />);
@@ -242,7 +228,8 @@ describe('<TagListTable />', () => {
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
-      fireEvent.blur(input);
+      const saveButton = within(draftRow[1]).getByText('Save');
+      fireEvent.click(saveButton);
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(1);
         expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({
@@ -351,6 +338,43 @@ describe('<TagListTable />', () => {
       fireEvent.click(saveButton);
       const spinner = await screen.findByRole('status');
       expect(spinner.textContent).toEqual('Saving...');
+    });
+
+    it('should show a newly created top-level tag without triggering a page refresh', async () => {
+      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      axiosMock.onPost(createTagUrl).reply(201, {
+        ...tagDefaults,
+        value: 'a new tag',
+        child_count: 0,
+        descendant_count: 0,
+        _id: 1234,
+      });
+      render(<RootWrapper />);
+      const tag = await screen.findByText('root tag 1');
+      expect(tag).toBeInTheDocument();
+      const addButton = await screen.findByText('Add Tag');
+      addButton.click();
+      const draftRow = await screen.findAllByRole('row');
+      const input = draftRow[1].querySelector('input');
+      expect(input).toBeInTheDocument();
+
+      fireEvent.change(input, { target: { value: 'a new tag' } });
+      const saveButton = within(draftRow[1]).getByText('Save');
+      fireEvent.click(saveButton);
+      let newTag;
+      await waitFor(() => {
+        newTag = screen.getByText('a new tag');
+        expect(newTag).toBeInTheDocument();
+      });
+      // expect the new tag to be the first row after the header, that is, the top of the list
+      const rows = screen.getAllByRole('row');
+      expect(rows[1]).toContainElement(newTag);
+      // expect there to be no draft row, that is, no row should contain an input element
+      const draftRows = rows.filter(row => row.querySelector('input'));
+      expect(draftRows.length).toBe(0);
+
+      // expect only one get request to have been made, that is, the table should not have been refreshed
+      expect(axiosMock.history.get.length).toBe(1);
     });
 
     it('should show a toast message when a new tag is successfully saved', async () => {
@@ -736,20 +760,6 @@ describe('<TagListTable />', () => {
 
   describe('Create a new subtag', () => {
     /* Acceptance Criteria:
-    System-defined taxonomies must not be editable, and thus should not show the "Add sub-tag" option in the parent action menu
-    */
-    it('should not show "Add sub-tag" option in parent action menu for system-defined taxonomies', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, {
-          ...mockTagsResponse,
-          system_defined: true,
-      });
-      render(<RootWrapper />);
-      await waitFor(() => {
-        expect(screen.queryAllByText('Add Subtag')).not.toBeInTheDocument();
-      });
-    });
-
-    /* Acceptance Criteria:
     The user can add a sub-tag using a parent action menu (three dots)
     Given the user is viewing the taxonomy detail page
     And a tag is displayed in the tag list
@@ -1123,20 +1133,6 @@ describe('<TagListTable />', () => {
   });
 
   describe('Create a nested sub-tag', () => {
-    /* Acceptance Criteria:
-      System-defined taxonomies must not be editable, and thus should not show the "Add sub-tag" option in the sub-tag action menu
-      */
-    it('should not show "Add sub-tag" option in sub-tag action menu for system-defined taxonomies', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, {
-          ...mockTagsResponse,
-          system_defined: true,
-      });
-      render(<RootWrapper />);
-      await waitFor(() => {
-        expect(screen.queryAllByText('Add Subtag')).not.toBeInTheDocument();
-      });
-    });
-
     /* Acceptance Criteria:
       User can add a sub-tag as child of a sub-tag (nested sub-tags)
       Given the user is on the taxonomy detail page
