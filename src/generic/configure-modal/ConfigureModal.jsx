@@ -277,7 +277,7 @@ const ConfigureModal = ({
       onClose={onClose}
       hasCloseButton
       isFullscreenOnMobile
-      isOverflowVisible={true}
+      isOverflowVisible
     >
       <div data-testid="configure-modal">
         <ModalDialog.Header className="configure-modal__header">
