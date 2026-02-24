@@ -352,8 +352,8 @@ export const InVideoQuizEditor = ({
       returnFunction={returnFunction}
       isDirty={() => isDirty}
       onSave={handleSave}
-      saveButtonLabel={intl.formatMessage(messages.addToCourse)}
-      saveButtonAriaLabel={intl.formatMessage(messages.addToCourse)}
+      saveButtonLabel={intl.formatMessage(messages.save)}
+      saveButtonAriaLabel={intl.formatMessage(messages.save)}
     >
       <div className="editor-body h-75 overflow-auto">
         {!blockFinished ? loading : page}
