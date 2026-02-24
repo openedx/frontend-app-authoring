@@ -236,26 +236,6 @@ export function fetchCourseSectionQuery(sectionIds: string[], scrollToId?: {
   };
 }
 
-export function configureCourseItemQuery(sectionId: string, configureFn: () => Promise<any>) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await configureFn().then(async (result) => {
-        if (result) {
-          await dispatch(fetchCourseSectionQuery([sectionId]));
-          dispatch(hideProcessingNotification());
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-        }
-      });
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
 /**
  * Generic function to duplicate any course item. See wrapper functions below for specific implementations.
  * @param {string} itemId
