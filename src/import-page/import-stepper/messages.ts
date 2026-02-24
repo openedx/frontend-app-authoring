@@ -45,10 +45,6 @@ const messages = defineMessages({
     id: 'course-authoring.import.stepper.button.outline',
     defaultMessage: 'View updated outline',
   },
-  defaultErrorMessage: {
-    id: 'course-authoring.import.stepper.error.default',
-    defaultMessage: 'Error importing course',
-  },
   stepperHeaderTitle: {
     id: 'course-authoring.import.stepper.header.title',
     defaultMessage: 'Course import status',

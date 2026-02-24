@@ -20,7 +20,6 @@ import { reducer as processingNotificationReducer } from './generic/processing-n
 import { reducer as courseExportReducer } from './export-page/data/slice';
 import { reducer as courseOptimizerReducer } from './optimizer-page/data/slice';
 import { reducer as genericReducer } from './generic/data/slice';
-import { reducer as courseImportReducer } from './import-page/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
 import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
@@ -49,7 +48,6 @@ export interface DeprecatedReduxState {
   courseExport: Record<string, any>;
   courseOptimizer: Record<string, any>;
   generic: Record<string, any>;
-  courseImport: Record<string, any>;
   videos: Record<string, any>;
   courseOutline: Record<string, any>;
   courseUnit: Record<string, any>;
@@ -82,7 +80,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       courseExport: courseExportReducer,
       courseOptimizer: courseOptimizerReducer,
       generic: genericReducer,
-      courseImport: courseImportReducer,
       videos: videosReducer,
       courseOutline: courseOutlineReducer,
       courseUnit: courseUnitReducer,
