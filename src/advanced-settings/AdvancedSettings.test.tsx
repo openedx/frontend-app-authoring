@@ -50,6 +50,14 @@ describe('<AdvancedSettings />', () => {
     } as unknown as ReturnType<typeof useUserPermissions>);
   });
 
+  it('should render placeholder when settings fetch returns 403', async () => {
+    axiosMock
+      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
+      .reply(403);
+    render();
+    expect(await screen.findByText(/Under Construction/i)).toBeInTheDocument();
+  });
+
   it('should render without errors', async () => {
     render();
     expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
@@ -141,6 +149,18 @@ describe('<AdvancedSettings />', () => {
       });
     await user.click(screen.getByText('Save changes'));
     expect(screen.getByText('Your policy changes have been saved.')).toBeInTheDocument();
+  });
+
+  it('should show error modal on save failure', async () => {
+    const user = userEvent.setup();
+    render();
+    const textarea = await screen.findByLabelText(/Advanced Module List/i);
+    fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
+    axiosMock
+      .onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`)
+      .reply(500);
+    await user.click(screen.getByText('Save changes'));
+    expect(await screen.findByText('Validation error while saving')).toBeInTheDocument();
   });
 
   it('should render without errors when authz.enable_course_authoring flag is enabled and the user is authorized', async () => {

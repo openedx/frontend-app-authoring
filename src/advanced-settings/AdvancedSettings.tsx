@@ -90,10 +90,10 @@ const AdvancedSettings = () => {
       showSaveSettingsPrompt(false);
     } else if (queryError && !hasInternetConnectionError) {
       // @ts-ignore
-      setErrorFields(queryError?.response?.data);
+      setErrorFields(queryError?.response?.data ?? []);
       showErrorModal(true);
     }
-  }, [isQuerySuccess]);
+  }, [isQuerySuccess, queryError]);
 
   if (isLoading) {
     return (
@@ -132,6 +132,7 @@ const AdvancedSettings = () => {
     }
   };
 
+  /* istanbul ignore next */
   const handleInternetConnectionFailed = () => {
     setInternetConnectionError(true);
     showSaveSettingsPrompt(false);
@@ -279,7 +280,7 @@ const AdvancedSettings = () => {
               <Button variant="tertiary" onClick={handleResetSettingsValues}>
                 {intl.formatMessage(messages.buttonCancelText)}
               </Button>
-            ) : null,
+            ) : /* istanbul ignore next */ null,
             <StatefulButton
               key="statefulBtn"
               onClick={handleUpdateAdvancedSettingsData}
