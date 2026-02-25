@@ -56,8 +56,6 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
 
   useEffect(() => {
     const cookieData = cookies.get(LAST_IMPORT_COOKIE_NAME);
-    // TODO verificar si es necesario setear el saving status por algo
-    // dispatch(updateSavingStatus(RequestStatus.SUCCESSFUL));
     if (cookieData) {
       setImportTriggered(true);
       setFileName(cookieData.fileName);
