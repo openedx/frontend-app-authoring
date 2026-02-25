@@ -398,3 +398,4 @@ Please do not report security issues in public, and email security@openedx.org i
 .. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-app-course-authoring/coverage.svg?branch=master
     :target: https://codecov.io/github/openedx/frontend-app-course-authoring?branch=master
     :alt: Codecov
+
