@@ -58,7 +58,7 @@ import {
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
   const {
-    handleAddSection,
+    handleAddBlock,
     setCurrentSelection,
     currentSelection,
     currentUnlinkModalData,
@@ -111,7 +111,7 @@ const useCourseOutline = ({ courseId }) => {
   const headerNavigationsActions = {
     handleNewSection: () => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleAddSection.mutateAsync({
+      handleAddBlock.mutateAsync({
         type: ContainerType.Chapter,
         parentLocator: courseStructure?.id,
         displayName: COURSE_BLOCK_NAMES.chapter.name,

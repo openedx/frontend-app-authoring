@@ -31,8 +31,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
     handleAddAndOpenUnit: handleOnAddUnitFromLibrary,
-    handleAddSubsection: {},
-    handleAddSection: {},
+    handleAddBlock: {},
     setCurrentSelection,
   }),
 }));

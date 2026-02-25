@@ -71,10 +71,8 @@ const CourseOutline = () => {
   const {
     courseId,
     courseUsageKey,
-    handleAddSubsection,
-    handleAddUnit,
+    handleAddBlock,
     handleAddAndOpenUnit,
-    handleAddSection,
     isUnlinkModalOpen,
     closeUnlinkModal,
     currentSelection,
@@ -389,7 +387,6 @@ const CourseOutline = () => {
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
                                     onOrderChange={updateSectionOrderByIndex}
-                                    resetScrollState={resetScrollState}
                                   >
                                     <SortableContext
                                       id={section.id}
@@ -526,11 +523,8 @@ const CourseOutline = () => {
           // Show processing toast if any mutation is running
           isShow={
             isShowProcessingNotification
-            || handleAddUnit.isPending
+            || handleAddBlock.isPending
             || handleAddAndOpenUnit.isPending
-            || handleAddSubsection.isPending
-            || handleAddSection.isPending
-            || handleAddSection.isPending
             || isConfigureOpPending
             || isSectionHighlightsUpdatePending
             || isDuplicatingItem

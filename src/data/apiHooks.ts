@@ -152,8 +152,6 @@ export function createGlobalState<T>(
     });
 
     function setData(data: Partial<T>) {
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("createGlobalState#(anon)#setData data: ", data); // __AUTO_GENERATED_PRINT_VAR_END__
       queryClient.setQueryData([queryKey], data);
     }
 

@@ -4,18 +4,14 @@ import {
 } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
-import { getCourseItem } from '@src/course-outline/data/api';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  addSection, addSubsection, addUnit, updateSavingStatus,
-} from '@src/course-outline/data/slice';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { getOutlineIndexData } from '@src/course-outline/data/selectors';
 import { useToggleWithValue } from '@src/hooks';
 import { SelectionState, type UnitXBlock, type XBlock } from '@src/data/types';
 import { CourseDetailsData } from './data/api';
 import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
-import { RequestStatus, RequestStatusType } from './data/constants';
+import { RequestStatusType } from './data/constants';
 
 type ModalState = {
   value?: XBlock | UnitXBlock;
@@ -30,10 +26,8 @@ export type CourseAuthoringContextData = {
   courseDetails?: CourseDetailsData;
   courseDetailStatus: RequestStatusType;
   canChangeProviders: boolean;
-  handleAddSection: ReturnType<typeof useCreateCourseBlock>;
-  handleAddSubsection: ReturnType<typeof useCreateCourseBlock>;
   handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
-  handleAddUnit: ReturnType<typeof useCreateCourseBlock>;
+  handleAddBlock: ReturnType<typeof useCreateCourseBlock>;
   openUnitPage: (locator: string) => void;
   getUnitUrl: (locator: string) => string;
   isUnlinkModalOpen: boolean;
@@ -66,7 +60,6 @@ export const CourseAuthoringProvider = ({
   children,
   courseId,
 }: CourseAuthoringProviderProps) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const waffleFlags = useWaffleFlags();
   const { data: courseDetails, status: courseDetailStatus } = useCourseDetails(courseId);
@@ -114,47 +107,11 @@ export const CourseAuthoringProvider = ({
       window.location.assign(url);
     }
   };
-
-  const addSectionToCourse = /* istanbul ignore next */ async (locator: string) => {
-    try {
-      const data = await getCourseItem(locator);
-      // Page should scroll to newly added section.
-      data.shouldScroll = true;
-      dispatch(addSection(data));
-    } catch {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-
-  const addSubsectionToCourse = /* istanbul ignore next */ async (locator: string, parentLocator: string) => {
-    try {
-      const data = await getCourseItem(locator);
-      // Page should scroll to newly added subsection.
-      data.shouldScroll = true;
-      dispatch(addSubsection({ parentLocator, data }));
-    } catch {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-
-  const addUnitToCourse = /* istanbul ignore next */ async (locator: string, parentLocator: string) => {
-    try {
-      const data = await getCourseItem(locator);
-      // Page should scroll to newly added subsection.
-      data.shouldScroll = true;
-      dispatch(addUnit({ parentLocator, data }));
-    } catch {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-
-  const handleAddSection = useCreateCourseBlock(addSectionToCourse);
-  const handleAddSubsection = useCreateCourseBlock(addSubsectionToCourse);
   /**
   * import a unit block from library and redirect user to this unit page.
   */
   const handleAddAndOpenUnit = useCreateCourseBlock(openUnitPage);
-  const handleAddUnit = useCreateCourseBlock(addUnitToCourse);
+  const handleAddBlock = useCreateCourseBlock();
 
   const context = useMemo<CourseAuthoringContextData>(() => ({
     courseId,
@@ -162,9 +119,7 @@ export const CourseAuthoringProvider = ({
     courseDetails,
     courseDetailStatus,
     canChangeProviders,
-    handleAddSection,
-    handleAddSubsection,
-    handleAddUnit,
+    handleAddBlock,
     handleAddAndOpenUnit,
     getUnitUrl,
     openUnitPage,
@@ -184,9 +139,7 @@ export const CourseAuthoringProvider = ({
     courseDetails,
     courseDetailStatus,
     canChangeProviders,
-    handleAddSection,
-    handleAddSubsection,
-    handleAddUnit,
+    handleAddBlock,
     handleAddAndOpenUnit,
     getUnitUrl,
     openUnitPage,

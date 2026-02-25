@@ -1,6 +1,5 @@
-import { data } from '@remix-run/router';
 import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
-import { duplicateSection, updateSectionList } from '@src/course-outline/data/slice';
+import { addSection, duplicateSection, updateSectionList } from '@src/course-outline/data/slice';
 import { ConfigureSectionData, ConfigureSubsectionData, ConfigureUnitData } from '@src/course-outline/data/types';
 import { createGlobalState } from '@src/data/apiHooks';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
@@ -94,14 +93,24 @@ export const useCreateCourseBlock = (
   callback?: ((locator: string, parentLocator: string) => Promise<void>),
 ) => {
   const queryClient = useQueryClient();
+  const { setData } = useScrollState();
+  const dispatch = useDispatch();
   return useMutation({
     mutationFn: (variables: CreateCourseXBlockMutationProps) => createCourseXblock(variables),
-    onSettled: async (data: { locator: string; }, _err, variables) => {
+    onSuccess: async (data: { locator: string; }, variables) => {
       await callback?.(data.locator, variables.parentLocator);
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
       });
-      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      await invalidateParentQueries(queryClient, variables);
+      // scroll to newly added block
+      setData({id: data.locator});
+      // if newly created block is chapter or section, fetch and add it to store
+      // all other types are handled by invalidateParentQueries and useCourseItemData
+      if (getBlockType(data.locator) === 'chapter') {
+        const newBlock = await getCourseItem(data.locator);
+        dispatch(addSection(newBlock));
+      }
     },
   });
 };

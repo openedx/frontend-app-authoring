@@ -143,17 +143,6 @@ const slice = createSlice({
         return section;
       });
     },
-    addSubsection: (state: CourseOutlineState, { payload }) => {
-      state.sectionsList = state.sectionsList.map((section) => {
-        if (section.id === payload.parentLocator) {
-          section.childInfo.children = [
-            ...section.childInfo.children.filter(child => child.id !== payload.data.id), // Filter to avoid duplicates
-            payload.data,
-          ];
-        }
-        return section;
-      });
-    },
     deleteSection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.filter(
         ({ id }) => id !== payload.itemId,
@@ -167,25 +156,6 @@ const slice = createSlice({
         section.childInfo.children = section.childInfo.children.filter(
           ({ id }) => id !== payload.itemId,
         );
-        return section;
-      });
-    },
-    // FIXME: This is a temporary measure to add unit using redux even while we are
-    // actively trying to get rid of it.
-    // To remove this and other add functions, we need to migrate course outline data
-    // to a react-query and perform optimistic updates to add/remove content.
-    addUnit: /* istanbul ignore next */ (state: CourseOutlineState, { payload }) => {
-      state.sectionsList = state.sectionsList.map((section) => {
-        section.childInfo.children = section.childInfo.children.map((subsection) => {
-          if (subsection.id !== payload.parentLocator) {
-            return subsection;
-          }
-          subsection.childInfo.children = [
-            ...subsection.childInfo.children.filter(({ id }) => id !== payload.data.id),
-            payload.data,
-          ];
-          return subsection;
-        });
         return section;
       });
     },
@@ -227,7 +197,6 @@ const slice = createSlice({
 
 export const {
   addSection,
-  addSubsection,
   fetchOutlineIndexSuccess,
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
@@ -242,7 +211,6 @@ export const {
   deleteSection,
   deleteSubsection,
   deleteUnit,
-  addUnit,
   duplicateSection,
   reorderSectionList,
   setPasteFileNotices,

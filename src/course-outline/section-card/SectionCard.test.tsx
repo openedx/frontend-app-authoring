@@ -26,8 +26,6 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
-    handleAddSubsectionFromLibrary: jest.fn(),
-    handleNewSubsectionSubmit: jest.fn(),
     setCurrentSelection,
   }),
 }));
