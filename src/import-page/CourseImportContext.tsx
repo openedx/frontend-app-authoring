@@ -3,7 +3,6 @@ import {
 } from 'react';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
-import { UseMutationResult } from '@tanstack/react-query';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -15,14 +14,9 @@ import messages from './messages';
 
 export type CourseImportContextData = {
   importTriggered: boolean;
-  setImportTriggered: React.Dispatch<React.SetStateAction<boolean>>;
-  importMutation: UseMutationResult;
   progress?: number;
-  updateProgress: React.Dispatch<React.SetStateAction<number | undefined>>;
   fileName?: string;
-  setFileName: React.Dispatch<React.SetStateAction<string | undefined>>;
   currentStage: number;
-  setCurrentStage: React.Dispatch<React.SetStateAction<number>>;
   anyRequestFailed: boolean;
   anyRequestInProgress: boolean;
   isLoadingDenied: boolean;
@@ -128,14 +122,9 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
   const context = useMemo<CourseImportContextData>(() => {
     const contextValue = {
       importTriggered,
-      setImportTriggered,
-      importMutation,
       progress,
-      updateProgress,
       fileName,
-      setFileName,
       currentStage,
-      setCurrentStage,
       anyRequestFailed,
       anyRequestInProgress,
       isLoadingDenied,
@@ -146,14 +135,9 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
     return contextValue;
   }, [
     importTriggered,
-    setImportTriggered,
-    importMutation,
     progress,
-    updateProgress,
     fileName,
-    setFileName,
     currentStage,
-    setCurrentStage,
     anyRequestFailed,
     anyRequestInProgress,
     isLoadingDenied,
