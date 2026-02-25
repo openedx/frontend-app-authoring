@@ -1,4 +1,4 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
@@ -18,9 +18,30 @@ const ImportStepper = () => {
     currentStage,
     formattedErrorMessage,
     anyRequestFailed,
+    successDate,
   } = useCourseImportContext();
 
   const handleRedirectCourseOutline = () => window.location.replace(`${getConfig().STUDIO_BASE_URL}/course/${courseId}`);
+
+  const successTitle = intl.formatMessage(messages.stepperSuccessTitle);
+  let successTitleComponent;
+  const localizedSuccessDate = successDate ? (
+    <FormattedDate
+      value={successDate}
+      year="2-digit"
+      month="2-digit"
+      day="2-digit"
+      hour="numeric"
+      minute="numeric"
+    />
+  ) : null;
+  if (localizedSuccessDate && currentStage === IMPORT_STAGES.SUCCESS) {
+    successTitleComponent = (
+      <>
+        {successTitle} ({localizedSuccessDate})
+      </>
+    );
+  }
 
   const steps = [
     {
@@ -40,9 +61,10 @@ const ImportStepper = () => {
       description: intl.formatMessage(messages.stepperUpdatingDescription),
       key: IMPORT_STAGES.UPDATING,
     }, {
-      title: intl.formatMessage(messages.stepperSuccessTitle),
+      title: successTitle,
       description: intl.formatMessage(messages.stepperSuccessDescription),
       key: IMPORT_STAGES.SUCCESS,
+      titleComponent: successTitleComponent,
     },
   ];
 
@@ -50,7 +72,7 @@ const ImportStepper = () => {
     <section>
       <h3 className="mt-4">{intl.formatMessage(messages.stepperHeaderTitle)}</h3>
       <CourseStepper
-        percent={currentStage === IMPORT_STAGES.UPLOADING ? progress : null}
+        percent={currentStage === IMPORT_STAGES.UPLOADING ? progress : undefined}
         steps={steps}
         activeKey={currentStage}
         hasError={anyRequestFailed}

@@ -22,6 +22,7 @@ export type CourseImportContextData = {
   isLoadingDenied: boolean;
   handleOnProcessUpload: (props: OnProcessUploadProps) => Promise<void>;
   formattedErrorMessage: string;
+  successDate?: number;
 };
 
 /**
@@ -51,6 +52,7 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
   const [fileName, setFileName] = useState<string>();
   const importMutation = useStartCourseImporting(courseId);
   const [progress, updateProgress] = useState<number>(0);
+  const [successDate, setSuccessDate] = useState<number>();
 
   const cookies = new Cookies();
 
@@ -59,6 +61,7 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
     if (cookieData) {
       setImportTriggered(true);
       setFileName(cookieData.fileName);
+      setSuccessDate(cookieData.date);
     }
   }, []);
 
@@ -85,7 +88,9 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
       handleError,
       updateProgress,
     }).then(() => {
-      setImportCookie(moment().valueOf(), file.name);
+      const momentData = moment().valueOf();
+      setImportCookie(momentData, file.name);
+      setSuccessDate(momentData);
     }).catch((error) => {
       handleError(error);
     });
@@ -128,6 +133,7 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
       isLoadingDenied,
       handleOnProcessUpload,
       formattedErrorMessage,
+      successDate,
     };
 
     return contextValue;
@@ -141,6 +147,7 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
     isLoadingDenied,
     handleOnProcessUpload,
     formattedErrorMessage,
+    successDate,
   ]);
 
   return (
