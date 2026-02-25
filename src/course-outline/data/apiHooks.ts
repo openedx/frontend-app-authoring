@@ -1,13 +1,17 @@
+import { data } from '@remix-run/router';
 import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
+import { duplicateSection, updateSectionList } from '@src/course-outline/data/slice';
 import { ConfigureSectionData, ConfigureSubsectionData, ConfigureUnitData } from '@src/course-outline/data/types';
+import { createGlobalState } from '@src/data/apiHooks';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
-import { getCourseKey } from '@src/generic/key-utils';
+import { getBlockType, getCourseKey } from '@src/generic/key-utils';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { ParentIds } from '@src/generic/types';
 import {
   QueryClient,
   skipToken, useMutation, useQuery, useQueryClient,
 } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
 import {
   createCourseXblock,
   type CreateCourseXBlockType,
@@ -20,6 +24,7 @@ import {
   configureCourseSubsection,
   configureCourseUnit,
   updateCourseSectionHighlights,
+  duplicateCourseItem,
 } from './api';
 
 export const courseOutlineQueryKeys = {
@@ -32,6 +37,7 @@ export const courseOutlineQueryKeys = {
     ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId) : undefined),
     itemId,
   ],
+  scrollToCourseItemId: [ "courseOutline", "scroll" ],
   courseDetails: (courseId?: string) => [
     ...courseOutlineQueryKeys.course(courseId),
     'details',
@@ -46,6 +52,14 @@ export const courseOutlineQueryKeys = {
     { taskId },
   ],
 };
+
+type ScrollState = {
+  id?: string;
+}
+
+export const useScrollState = createGlobalState<ScrollState>(courseOutlineQueryKeys.scrollToCourseItemId, {
+  id: undefined
+})
 
 /**
  * Invalidate parent Subsection and Section data.
@@ -94,6 +108,7 @@ export const useCreateCourseBlock = (
 
 export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initialData?: T, enabled: boolean = true) => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   return useQuery<T>({
     initialData,
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
@@ -115,6 +130,14 @@ export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initial
             });
           }
         });
+      }
+      // We update redux store section list to update children list in outline.
+      // Even though each block has its own hook to fetch data, new child blocks or deleted blocks
+      // won't be detected as the child blocks are rendered in the outline from the top level
+      // sectionList from redux store.
+      if (['chapter', 'section'].includes(data.category)) {
+        const payload = { [data.id]: data };
+        dispatch(updateSectionList(payload));
       }
       return data;
     } : skipToken,
@@ -226,5 +249,29 @@ export const useUpdateCourseSectionHighlights = () => {
       });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
     },
+  });
+};
+
+export const useDuplicateItem = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const { setData } = useScrollState();
+  return useMutation({
+    mutationFn: (variables: {
+      itemId: string;
+      parentId: string;
+    } & ParentIds) => duplicateCourseItem(variables.itemId, variables.parentId),
+    onSuccess: async (data, variables) => {
+      await invalidateParentQueries(queryClient, variables);
+      // add duplicated section to store, subsection and unit are handled by invalidateParentQueries
+      if (getBlockType(variables.itemId) === 'chapter') {
+        const duplicatedItem = await getCourseItem(data.locator);
+        // Page should scroll to newly duplicated item.
+        // duplicatedItem.shouldScroll = true;
+        dispatch(duplicateSection({ id: variables.itemId, duplicatedItem }));
+      }
+      // scroll to newly added block
+      setData({id: data.locator});
+    }
   });
 };

@@ -130,3 +130,42 @@ export const useCourseDetails = (courseId: string) => {
     status,
   };
 };
+
+/**
+ * Create a global state function for a query.
+ */
+export function createGlobalState<T>(
+  queryKey: unknown,
+  initialData: T | null = null,
+) {
+  return function () {
+    const queryClient = useQueryClient();
+
+    const { data } = useQuery({
+      queryKey: [queryKey],
+      queryFn: () => Promise.resolve(initialData),
+      refetchInterval: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchIntervalInBackground: false,
+    });
+
+    function setData(data: Partial<T>) {
+      // __AUTO_GENERATED_PRINT_VAR_START__
+      console.log("createGlobalState#(anon)#setData data: ", data); // __AUTO_GENERATED_PRINT_VAR_END__
+      queryClient.setQueryData([queryKey], data);
+    }
+
+    function resetData() {
+      queryClient.invalidateQueries({
+        queryKey: [queryKey],
+      });
+      queryClient.refetchQueries({
+        queryKey: [queryKey],
+      });
+    }
+
+    return { data, setData, resetData };
+  };
+}

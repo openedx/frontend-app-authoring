@@ -314,7 +314,7 @@ export async function deleteCourseItem(itemId: string): Promise<object> {
 /**
  * Duplicate course section
  */
-export async function duplicateCourseItem(itemId: string, parentId: string): Promise<XBlock> {
+export async function duplicateCourseItem(itemId: string, parentId: string): Promise<{ courseKey: string, locator: string }> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       duplicate_source_locator: itemId,

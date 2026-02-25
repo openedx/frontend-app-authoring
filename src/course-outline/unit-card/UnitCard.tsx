@@ -22,7 +22,7 @@ import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
@@ -76,6 +76,7 @@ const UnitCard = ({
     initialSubsectionData,
   );
   const { data: unit = initialData } = useCourseItemData<UnitXBlock>(initialData.id, initialData);
+  const { data: scrollState, resetData: resetScrollState } = useScrollState();
   const isScrolledToElement = locatorId === unit.id;
 
   const {
@@ -211,12 +212,13 @@ const UnitCard = ({
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
-    if (currentRef.current && (unit.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (scrollState?.id === unit.id || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop, true);
+      resetScrollState()
     }
-  }, [isScrolledToElement]);
+  }, [isScrolledToElement, scrollState, resetScrollState]);
 
   if (!isHeaderVisible) {
     return null;

@@ -117,6 +117,7 @@ const CourseOutline = () => {
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
+    isDuplicatingItem,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,
@@ -532,6 +533,7 @@ const CourseOutline = () => {
             || handleAddSection.isPending
             || isConfigureOpPending
             || isSectionHighlightsUpdatePending
+            || isDuplicatingItem
           }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}

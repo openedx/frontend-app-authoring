@@ -18,6 +18,7 @@ import {
   useConfigureSubsection,
   useConfigureUnit,
   useDeleteCourseItem,
+  useDuplicateItem,
   useUpdateCourseSectionHighlights,
 } from '@src/course-outline/data/apiHooks';
 import { COURSE_BLOCK_NAMES } from './constants';
@@ -40,9 +41,6 @@ import {
   getCreatedOn,
 } from './data/selectors';
 import {
-  duplicateSectionQuery,
-  duplicateSubsectionQuery,
-  duplicateUnitQuery,
   enableCourseHighlightsEmailsQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
@@ -298,20 +296,35 @@ const useCourseOutline = ({ courseId }) => {
     deleteSubsection,
   ]);
 
+  const {
+    mutate: duplicateItem,
+    isPending: isDuplicatingItem,
+  } = useDuplicateItem();
   const handleDuplicateSectionSubmit = () => {
-    dispatch(duplicateSectionQuery(currentSelection?.sectionId, courseStructure.id));
+    duplicateItem({
+      itemId: currentSelection?.currentId,
+      parentId: courseStructure.id,
+      sectionId: currentSelection?.sectionId,
+      subsectionId: currentSelection?.subsectionId,
+    });
   };
 
   const handleDuplicateSubsectionSubmit = () => {
-    dispatch(duplicateSubsectionQuery(currentSelection?.subsectionId, currentSelection?.sectionId));
+    duplicateItem({
+      itemId: currentSelection?.currentId,
+      parentId: currentSelection?.sectionId,
+      sectionId: currentSelection?.sectionId,
+      subsectionId: currentSelection?.subsectionId,
+    });
   };
 
   const handleDuplicateUnitSubmit = () => {
-    dispatch(duplicateUnitQuery(
-      currentSelection?.currentId,
-      currentSelection?.subsectionId,
-      currentSelection?.sectionId,
-    ));
+    duplicateItem({
+      itemId: currentSelection?.currentId,
+      parentId: currentSelection?.subsectionId,
+      sectionId: currentSelection?.sectionId,
+      subsectionId: currentSelection?.subsectionId,
+    });
   };
 
   const handleVideoSharingOptionChange = (value) => {
@@ -416,6 +429,7 @@ const useCourseOutline = ({ courseId }) => {
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
+    isDuplicatingItem,
     handleDuplicateUnitSubmit,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
