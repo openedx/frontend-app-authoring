@@ -22,7 +22,7 @@ const stepsMock = [
 ];
 
 const renderComponent = (props) => render(
-  <CourseStepper steps={stepsMock} {...props} />
+  <CourseStepper steps={stepsMock} {...props} />,
 );
 
 describe('<CourseStepper />', () => {

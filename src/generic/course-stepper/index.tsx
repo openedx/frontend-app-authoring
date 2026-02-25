@@ -16,7 +16,7 @@ export interface CourseStepperProps {
   }[];
   activeKey: number;
   percent?: number | boolean;
-  errorMessage?: string;
+  errorMessage?: string | null;
   hasError?: boolean;
 }
 
@@ -107,7 +107,5 @@ const CourseStepper = ({
     </div>
   );
 };
-
-
 
 export default CourseStepper;
