@@ -11,7 +11,6 @@ import {
 } from '../utils/getChecklistForStatusBar';
 import { getErrorDetails } from '../utils/getErrorDetails';
 import {
-  duplicateCourseItem,
   enableCourseHighlightsEmails,
   getCourseBestPractices,
   getCourseLaunch,
@@ -35,7 +34,6 @@ import {
   updateSavingStatus,
   updateSectionList,
   updateFetchSectionLoadingStatus,
-  duplicateSection,
   reorderSectionList,
   setPasteFileNotices,
   updateCourseLaunchQueryStatus,

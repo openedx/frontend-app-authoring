@@ -138,7 +138,7 @@ export function createGlobalState<T>(
   queryKey: unknown,
   initialData: T | null = null,
 ) {
-  return function () {
+  return () => {
     const queryClient = useQueryClient();
 
     const { data } = useQuery({
@@ -151,15 +151,15 @@ export function createGlobalState<T>(
       refetchIntervalInBackground: false,
     });
 
-    function setData(data: Partial<T>) {
-      queryClient.setQueryData([queryKey], data);
+    function setData(x: Partial<T>) {
+      queryClient.setQueryData([queryKey], x);
     }
 
-    function resetData() {
+    async function resetData() {
       queryClient.invalidateQueries({
         queryKey: [queryKey],
       });
-      queryClient.refetchQueries({
+      await queryClient.refetchQueries({
         queryKey: [queryKey],
       });
     }

@@ -56,7 +56,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
     >
       <Col className="py-3">
         <Stack direction="horizontal" gap={3}>
-          {( handleAddAndOpenUnit.isPending || handleAddBlock.isPending) && (
+          {(handleAddAndOpenUnit.isPending || handleAddBlock.isPending) && (
             <LoadingSpinner />
           )}
           <h3 className="mb-0">{getTitle()}</h3>

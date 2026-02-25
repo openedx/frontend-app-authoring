@@ -97,7 +97,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     isSectionsExpanded
     isSelfPaced={false}
     isCustomRelativeDatesActive={false}
-    resetScrollState={jest.fn()}
     {...props}
   >
     <span>children</span>

@@ -36,7 +36,7 @@ export const courseOutlineQueryKeys = {
     ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId) : undefined),
     itemId,
   ],
-  scrollToCourseItemId: [ "courseOutline", "scroll" ],
+  scrollToCourseItemId: ['courseOutline', 'scroll'],
   courseDetails: (courseId?: string) => [
     ...courseOutlineQueryKeys.course(courseId),
     'details',
@@ -54,11 +54,11 @@ export const courseOutlineQueryKeys = {
 
 type ScrollState = {
   id?: string;
-}
+};
 
 export const useScrollState = createGlobalState<ScrollState>(courseOutlineQueryKeys.scrollToCourseItemId, {
-  id: undefined
-})
+  id: undefined,
+});
 
 /**
  * Invalidate parent Subsection and Section data.
@@ -104,7 +104,7 @@ export const useCreateCourseBlock = (
       });
       await invalidateParentQueries(queryClient, variables);
       // scroll to newly added block
-      setData({id: data.locator});
+      setData({ id: data.locator });
       // if newly created block is chapter or section, fetch and add it to store
       // all other types are handled by invalidateParentQueries and useCourseItemData
       if (getBlockType(data.locator) === 'chapter') {
@@ -280,7 +280,7 @@ export const useDuplicateItem = () => {
         dispatch(duplicateSection({ id: variables.itemId, duplicatedItem }));
       }
       // scroll to newly added block
-      setData({id: data.locator});
-    }
+      setData({ id: data.locator });
+    },
   });
 };

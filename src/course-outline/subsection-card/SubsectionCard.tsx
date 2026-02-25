@@ -26,6 +26,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SubsectionCardProps {
@@ -42,7 +43,6 @@ interface SubsectionCardProps {
   onOrderChange: (section: XBlock, moveDetails: any) => void,
   onOpenConfigureModal: () => void,
   onPasteClick: (parentLocator: string, sectionId: string) => void,
-  resetScrollState: () => void,
 }
 
 const SubsectionCard = ({
@@ -227,7 +227,7 @@ const SubsectionCard = ({
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop, true);
-      resetScrollState();
+      resetScrollState().catch((error) => handleResponseErrors(error));
     }
   }, [isScrolledToElement, scrollState, resetScrollState]);
 

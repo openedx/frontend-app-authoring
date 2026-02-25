@@ -81,7 +81,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
       render(<OutlineAddChildButtons
         childType={containerType}
         parentLocator={parentLocator}
-        grandParentLocator={}
+        grandParentLocator={grandParentLocator}
       />, { extraWrapper: OutlineSidebarProvider });
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
