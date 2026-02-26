@@ -1,4 +1,5 @@
-import React from 'react';
+import { ReactElement } from 'react';
+import classNames from 'classnames';
 import {
   Settings as SettingsIcon,
   ManageHistory as SuccessIcon,
@@ -6,16 +7,26 @@ import {
   CheckCircle,
 } from '@openedx/paragon/icons';
 import { Icon } from '@openedx/paragon';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
+
+export interface CourseStepperProps {
+  steps: {
+    title: string;
+    description: string;
+    titleComponent?: ReactElement;
+  }[];
+  activeKey: number;
+  percent?: number | boolean;
+  errorMessage?: string | null;
+  hasError?: boolean;
+}
 
 const CourseStepper = ({
   steps,
   activeKey,
-  percent,
-  hasError,
-  errorMessage,
-}) => {
+  percent = false,
+  hasError = false,
+  errorMessage = '',
+}: CourseStepperProps) => {
   const getStepperSettings = (index) => {
     const lastStepIndex = steps.length - 1;
     const isActiveStep = index === activeKey;
@@ -42,7 +53,7 @@ const CourseStepper = ({
     };
 
     return {
-      stepIcon: getStepIcon(index),
+      stepIcon: getStepIcon(),
       isPercentShow: Boolean(percent) && percent !== 100 && isActiveStep && !hasError,
       isErrorMessageShow: isErrorStep && errorMessage,
       isActiveClass: isActiveStep && !isLastStep && !hasError,
@@ -53,7 +64,7 @@ const CourseStepper = ({
 
   return (
     <div className="course-stepper">
-      {steps.length ? steps.map(({ title, description }, index) => {
+      {steps.length ? steps.map(({ title, description, titleComponent }, index) => {
         const {
           stepIcon,
           isPercentShow,
@@ -74,10 +85,10 @@ const CourseStepper = ({
             data-testid="course-stepper__step"
           >
             <div className="course-stepper__step-icon">
-              <Icon src={stepIcon} alt={title} data-testid={`${title}-icon`} />
+              <Icon src={stepIcon} data-testid={`${title}-icon`} />
             </div>
             <div className="course-stepper__step-info">
-              <h3 className="h4 title course-stepper__step-title font-weight-600">{title}</h3>
+              <h3 className="h4 title course-stepper__step-title font-weight-600">{titleComponent ?? title}</h3>
               {isPercentShow && (
                 <p
                   className="course-stepper__step-percent font-weight-400"
@@ -95,23 +106,6 @@ const CourseStepper = ({
       }) : null}
     </div>
   );
-};
-
-CourseStepper.defaultProps = {
-  percent: false,
-  hasError: false,
-  errorMessage: '',
-};
-
-CourseStepper.propTypes = {
-  steps: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-  })).isRequired,
-  activeKey: PropTypes.number.isRequired,
-  percent: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
-  errorMessage: PropTypes.string,
-  hasError: PropTypes.bool,
 };
 
 export default CourseStepper;

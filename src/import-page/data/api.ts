@@ -5,14 +5,20 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const postImportCourseApiUrl = (courseId) => `${getApiBaseUrl()}/import/${courseId}`;
 export const getImportStatusApiUrl = (courseId, fileName) => `${getApiBaseUrl()}/import_status/${courseId}/${fileName}`;
 
+export interface ImportStatusData {
+  importStatus: number,
+  message?: string,
+}
+
 /**
  * Start import course.
- * @param {string} courseId
- * @param {File} fileData
- * @param {Record<string, any>} requestConfig
- * @returns {Promise<Record<string, any>>}
  */
-export async function startCourseImporting(courseId, fileData, requestConfig, updateProgress) {
+export async function startCourseImporting(
+  courseId: string,
+  fileData: File,
+  requestConfig: Record<string, any>,
+  updateProgress: (percent: number) => void,
+): Promise<ImportStatusData> {
   const chunkSize = 20 * 1000000; // 20 MB
   const fileSize = fileData.size || 0;
   const chunkLength = Math.ceil(fileSize / chunkSize);
@@ -54,12 +60,13 @@ export async function startCourseImporting(courseId, fileData, requestConfig, up
 
 /**
  * Get import status.
- * @param {string} courseId
- * @param {string} fileName
- * @returns {Promise<Object>}
  */
-export async function getImportStatus(courseId, fileName) {
+export async function getImportStatus(
+  courseId: string,
+  fileName: string,
+): Promise<ImportStatusData> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getImportStatusApiUrl(courseId, fileName));
+
   return camelCaseObject(data);
 }

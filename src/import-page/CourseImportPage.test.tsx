@@ -1,17 +1,17 @@
+import { screen } from '@testing-library/react';
 import { Helmet } from 'react-helmet';
 import Cookies from 'universal-cookie';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getCourseDetailsUrl } from '@src/data/api';
-import { initializeMocks, render, waitFor } from '../testUtils';
-import { RequestStatus } from '../data/constants';
+import { initializeMocks, render, waitFor } from '@src/testUtils';
 import messages from './messages';
 import CourseImportPage from './CourseImportPage';
 import { getImportStatusApiUrl } from './data/api';
 import { IMPORT_STAGES } from './data/constants';
 import stepperMessages from './import-stepper/messages';
+import { CourseImportProvider } from './CourseImportContext';
 
-let store;
 let axiosMock;
 let cookies;
 const courseId = '123';
@@ -27,7 +27,9 @@ jest.mock('universal-cookie', () => {
 
 const renderComponent = () => render(
   <CourseAuthoringProvider courseId={courseId}>
-    <CourseImportPage />
+    <CourseImportProvider>
+      <CourseImportPage />
+    </CourseImportProvider>
   </CourseAuthoringProvider>,
 );
 
@@ -38,7 +40,6 @@ describe('<CourseImportPage />', () => {
       username: 'username',
     };
     const mocks = initializeMocks({ user });
-    store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.test'))
@@ -49,6 +50,7 @@ describe('<CourseImportPage />', () => {
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });
+
   it('should render page title correctly', async () => {
     renderComponent();
     await waitFor(() => {
@@ -58,67 +60,59 @@ describe('<CourseImportPage />', () => {
       );
     });
   });
+
   it('should render without errors', async () => {
-    const { getByText } = renderComponent();
-    await waitFor(() => {
-      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
-      const importPageElement = getByText(messages.headingTitle.defaultMessage, {
-        selector: 'h2.sub-header-title',
-      });
-      expect(importPageElement).toBeInTheDocument();
-      expect(getByText(messages.description1.defaultMessage)).toBeInTheDocument();
-      expect(getByText(messages.description2.defaultMessage)).toBeInTheDocument();
-      expect(getByText(messages.description3.defaultMessage)).toBeInTheDocument();
+    renderComponent();
+    expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+    const importPageElement = screen.getByText(messages.headingTitle.defaultMessage, {
+      selector: 'h2.sub-header-title',
     });
+    expect(importPageElement).toBeInTheDocument();
+    expect(screen.getByText(messages.description1.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.description2.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.description3.defaultMessage)).toBeInTheDocument();
   });
+
   it('should fetch status without clicking when cookies has', async () => {
-    cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.test' });
-    const { getByText } = renderComponent();
-    expect(getByText(stepperMessages.stepperUnpackingDescription.defaultMessage)).toBeInTheDocument();
+    cookies.get.mockReturnValue({ date: 1679787000, fileName: 'testFileName.test' });
+    renderComponent();
+    expect(screen.getByText(stepperMessages.stepperUnpackingDescription.defaultMessage)).toBeInTheDocument();
   });
+
   it('should show error', async () => {
+    const errorMessage = 'This is a test error message';
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
-      .reply(200, { importStatus: -IMPORT_STAGES.UPDATING, message: '' });
-    cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
-    const { getByText } = renderComponent();
-    await waitFor(() => {
-      expect(getByText(stepperMessages.defaultErrorMessage.defaultMessage)).toBeInTheDocument();
-    }, { timeout: 4000 });
+      .reply(200, { importStatus: -IMPORT_STAGES.UPDATING, message: errorMessage });
+    cookies.get.mockReturnValue({ date: 1679787000, fileName: 'testFileName.tar.gz' });
+    renderComponent();
+    expect(await screen.findByText(errorMessage)).toBeInTheDocument();
   });
+
   it('should show success button', async () => {
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
       .reply(200, { importStatus: IMPORT_STAGES.SUCCESS, message: '' });
-    cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
-    const { getByText } = renderComponent();
-    await waitFor(() => {
-      expect(getByText(stepperMessages.viewOutlineButton.defaultMessage)).toBeInTheDocument();
-    }, { timeout: 4000 });
+    cookies.get.mockReturnValue({ date: 1679787000, fileName: 'testFileName.tar.gz' });
+    renderComponent();
+    expect(await screen.findByText(stepperMessages.viewOutlineButton.defaultMessage)).toBeInTheDocument();
   });
 
   it('displays an alert and sets status to DENIED when API responds with 403', async () => {
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
       .reply(403);
-    cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
-    const { getByRole } = renderComponent();
-    await waitFor(() => {
-      expect(getByRole('alert')).toBeInTheDocument();
-    }, { timeout: 4000 });
-    const { loadingStatus } = store.getState().courseImport;
-    expect(loadingStatus).toEqual(RequestStatus.DENIED);
+    cookies.get.mockReturnValue({ date: 1679787000, fileName: 'testFileName.tar.gz' });
+    renderComponent();
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
 
-  it('sets loading status to FAILED upon receiving a 404 response from the API', async () => {
+  it('shows an error message upon receiving a 404 response from the API', async () => {
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
       .reply(404);
-    cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
+    cookies.get.mockReturnValue({ date: 1679787000, fileName: 'testFileName.tar.gz' });
     renderComponent();
-    await waitFor(() => {
-      const { loadingStatus } = store.getState().courseImport;
-      expect(loadingStatus).toEqual(RequestStatus.FAILED);
-    }, { timeout: 4000 });
+    expect(await screen.findByText(messages.defaultErrorMessage.defaultMessage)).toBeInTheDocument();
   });
 });

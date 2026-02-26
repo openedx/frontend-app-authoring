@@ -1,17 +1,15 @@
-import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import PropTypes from 'prop-types';
 import { Hyperlink } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
+import { HelpSidebar } from '@src/generic/help-sidebar';
+import { useHelpUrls } from '@src/help-urls/hooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
-import { HelpSidebar } from '../../generic/help-sidebar';
-import { useHelpUrls } from '../../help-urls/hooks';
 import messages from './messages';
 
-const ImportSidebar = ({
-  courseId,
-}) => {
+const ImportSidebar = () => {
   const intl = useIntl();
+  const { courseId } = useCourseAuthoringContext();
   const { importCourse: importLearnMoreUrl } = useHelpUrls(['importCourse']);
   return (
     <HelpSidebar courseId={courseId}>
@@ -40,17 +38,13 @@ const ImportSidebar = ({
       <hr />
       <Hyperlink
         className="small"
-        href={importLearnMoreUrl}
+        destination={importLearnMoreUrl}
         target="_blank"
       >
         {intl.formatMessage(messages.learnMoreButtonTitle)}
       </Hyperlink>
     </HelpSidebar>
   );
-};
-
-ImportSidebar.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default ImportSidebar;

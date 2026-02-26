@@ -1,6 +1,4 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { render, screen, initializeMocks } from '@src/testUtils';
 
 import CourseStepper from '.';
 
@@ -24,35 +22,34 @@ const stepsMock = [
 ];
 
 const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <CourseStepper steps={stepsMock} {...props} />
-  </IntlProvider>,
+  <CourseStepper steps={stepsMock} {...props} />,
 );
 
 describe('<CourseStepper />', () => {
-  it('renders CourseStepper correctly', () => {
-    const {
-      getByText, getByTestId, getAllByTestId, queryByTestId,
-    } = renderComponent({ activeKey: 0 });
+  beforeEach(() => {
+    initializeMocks();
+  });
 
-    const steps = getAllByTestId('course-stepper__step');
+  it('renders CourseStepper correctly', () => {
+    renderComponent({ activeKey: 0 });
+
+    const steps = screen.getAllByTestId('course-stepper__step');
     expect(steps.length).toBe(stepsMock.length);
 
     stepsMock.forEach((step) => {
-      expect(getByText(step.title)).toBeInTheDocument();
-      expect(getByText(step.description)).toBeInTheDocument();
-      expect(getByTestId(`${step.title}-icon`)).toBeInTheDocument();
+      expect(screen.getByText(step.title)).toBeInTheDocument();
+      expect(screen.getByText(step.description)).toBeInTheDocument();
+      expect(screen.getByTestId(`${step.title}-icon`)).toBeInTheDocument();
     });
 
-    const percentElement = queryByTestId('course-stepper__step-percent');
-    expect(percentElement).toBeNull();
+    expect(screen.queryByTestId('course-stepper__step-percent')).toBeNull();
   });
 
   it('marks the active and done steps correctly', () => {
     const activeKey = 1;
-    const { getAllByTestId } = renderComponent({ activeKey });
+    renderComponent({ activeKey });
 
-    const steps = getAllByTestId('course-stepper__step');
+    const steps = screen.getAllByTestId('course-stepper__step');
     stepsMock.forEach((_, index) => {
       const stepElement = steps[index];
       if (index === activeKey) {
@@ -71,37 +68,46 @@ describe('<CourseStepper />', () => {
   });
 
   it('mark the error step correctly', () => {
-    const { getAllByTestId } = renderComponent({ activeKey: 1, hasError: true });
+    renderComponent({ activeKey: 1, hasError: true });
 
-    const errorStep = getAllByTestId('course-stepper__step')[1];
+    const errorStep = screen.getAllByTestId('course-stepper__step')[1];
     expect(errorStep).toHaveClass('error');
   });
 
   it('shows error message for error step', () => {
     const errorMessage = 'Some error text';
-    const { getAllByTestId } = renderComponent({ activeKey: 1, hasError: true, errorMessage });
+    renderComponent({ activeKey: 1, hasError: true, errorMessage });
 
-    const errorStep = getAllByTestId('course-stepper__step')[1];
+    const errorStep = screen.getAllByTestId('course-stepper__step')[1];
     expect(errorStep).toHaveClass('error');
   });
 
   it('shows percentage for active step', () => {
     const percent = 50;
-    const { getByTestId } = renderComponent({ activeKey: 1, percent });
+    renderComponent({ activeKey: 1, percent });
 
-    const percentElement = getByTestId('course-stepper__step-percent');
+    const percentElement = screen.getByTestId('course-stepper__step-percent');
     expect(percentElement).toBeInTheDocument();
     expect(percentElement).toHaveTextContent(`${percent}%`);
   });
 
-  it('shows null when steps length equal to zero', () => {
-    const { queryByTestId } = render(
-      <IntlProvider locale="en">
-        <CourseStepper steps={[]} activeKey={0} />
-      </IntlProvider>,
-    );
+  it('renders titleComponent instead of title when provided', () => {
+    const customTitle = <span data-testid="custom-title">Custom Title Component</span>;
+    const stepsWithTitleComponent = [
+      { ...stepsMock[0], titleComponent: customTitle },
+      ...stepsMock.slice(1),
+    ];
 
-    const steps = queryByTestId('[data-testid="course-stepper__step"]');
+    renderComponent({ steps: stepsWithTitleComponent, activeKey: 0 });
+
+    expect(screen.getByTestId('custom-title')).toBeInTheDocument();
+    expect(screen.queryByText(stepsMock[0].title)).not.toBeInTheDocument();
+  });
+
+  it('shows null when steps length equal to zero', () => {
+    renderComponent({ steps: [], activeKey: 0 });
+
+    const steps = screen.queryByTestId('[data-testid="course-stepper__step"]');
     expect(steps).toBe(null);
   });
 });
