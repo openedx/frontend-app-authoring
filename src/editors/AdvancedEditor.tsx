@@ -68,7 +68,7 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
               {intl.formatMessage(editorModalWrapperMessages.modalTitle)}
             </ModalDialog.Title>
             <ActionRow.Spacer />
-            <Stack direction="horizontal" reversed>
+            <Stack direction="horizontal" reversed gap={1}>
               <ModalCloseButton
                 as={IconButton}
                 src={Close}

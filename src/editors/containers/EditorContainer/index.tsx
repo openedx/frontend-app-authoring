@@ -152,7 +152,7 @@ const EditorContainer: React.FC<Props> = ({
               <TitleHeader isInitialized={isInitialized} />
             </h2>
             <ActionRow.Spacer />
-            <Stack direction="horizontal" reversed>
+            <Stack direction="horizontal" reversed gap={1}>
               <IconButton
                 src={Close}
                 iconAs={Icon}

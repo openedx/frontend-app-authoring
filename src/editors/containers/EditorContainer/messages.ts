@@ -57,7 +57,7 @@ const messages = defineMessages({
     description: 'Label for Save button',
   },
   toggleFullscreenButtonLabel: {
-    id: 'authoring.editorfooter.toggleFullscreen.label',
+    id: 'authoring.editorHeader.toggleFullscreen.label',
     defaultMessage: 'Toggle Fullscreen',
     description: 'Label for toggle fullscreen button',
   },
