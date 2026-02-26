@@ -16,6 +16,8 @@ import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
 import { useTagListData, useSubTags, useCreateTag } from '../data/apiHooks';
 
+// State machine for table modes
+
 const TABLE_MODES = {
   VIEW: 'view',
   DRAFT: 'draft',
@@ -180,7 +182,6 @@ SubTagsExpanded.propTypes = {
  * Expand toggle for rows with children (Updated for v8 API)
  */
 const OptionalExpandLink = ({ row }) => {
-  console.log('can expand: ', row.getCanExpand())
   return (
     row.original.childCount > 0 ? (
       <a
@@ -292,49 +293,108 @@ function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateT
   ];
 }
 
-// AI-generated
-function buildTree(data) {
-  const tree = [];
-  const lookup = {};
-
-  // Step 1: Create a lookup map of all items using 'value' as the key.
-  // We use the spread operator (...) to create a shallow copy so we
-  // don't mutate the original data array.
-  for (const item of data) {
-    lookup[item.value] = { ...item };
+class TagTree {
+  constructor(data) {
+    this.data = data;
+    this.rows = [];
+    this.nodesFlat = {};
+    this.buildTree();
   }
 
-  // Step 2: Iterate through the data again to link children to their parents.
-  for (const item of data) {
-    // Get the reference to the newly copied object in our lookup map
-    const currentNode = lookup[item.value];
-    const parentValue = currentNode.parentValue;
+  buildTree() {
+    if (!this.data) return { rows: [] };
+    const treeChildren = [];
+    const lookup = {};
 
-    if (parentValue !== null && lookup[parentValue]) {
-      // If the node has a parent, initialize the subRows array (if needed) and push it
-      if (!lookup[parentValue].subRows) {
-        lookup[parentValue].subRows = [];
+    // Step 1: Create a lookup map of all items using 'value' as the key.
+    // We use the spread operator (...) to create a shallow copy so we
+    // don't mutate the original data array.
+    for (const item of this.data) {
+      lookup[item.value] = { ...item };
+    }
+
+    // Step 2: Iterate through the data again to link children to their parents.
+    for (const item of this.data) {
+      // Get the reference to the newly copied object in our lookup map
+      const currentNode = lookup[item.value];
+      const parentValue = currentNode.parentValue;
+
+      if (parentValue !== null && lookup[parentValue]) {
+        // If the node has a parent, initialize the subRows array (if needed) and push it
+        if (!lookup[parentValue].subRows) {
+          lookup[parentValue].subRows = [];
+        }
+        lookup[parentValue].subRows.push(currentNode);
+      } else {
+        // If there is no parentValue (or it equals null), it is a root node
+        treeChildren.push(currentNode);
       }
-      lookup[parentValue].subRows.push(currentNode);
-    } else {
-      // If there is no parentValue (or it equals null), it is a root node
-      tree.push(currentNode);
+    }
+    console.log('rows: ', treeChildren);
+    this.rows = treeChildren;
+  }
+
+  getNode(value) {
+    return this._findNodeByValueRecursive(this.rows, value);
+  }
+
+  _findNodeByValueRecursive(nodes, value) {
+    for (const node of nodes) {
+      if (node.value === value) {
+        return node;
+      }
+      if (node.subRows) {
+        const found = this._findNodeByValueRecursive(node.subRows, value);
+        if (found) {
+          return found;
+        }
+      }
+    }
+    return null;
+  }
+
+  editNodeValue(oldValue, newValue) {
+    const node = this.getNode(oldValue);
+    if (node) {
+      node.value = newValue;
     }
   }
 
-  return tree;
+  addNode(newNode, parentValue = null) {
+    if (parentValue) {
+      const parentNode = this.getNode(parentValue);
+      if (parentNode) {
+        if (!parentNode.subRows) {
+          parentNode.subRows = [];
+        }
+        parentNode.subRows.push(newNode);
+      }
+    } else {
+      this.rows.push(newNode);
+    }
+  }
+
+  removeNode(value, parentValue = null) {
+    if (parentValue) {
+      const parentNode = this.getNode(parentValue);
+      if (parentNode && parentNode.subRows) {
+        parentNode.subRows = parentNode.subRows.filter(node => node.value !== value);
+      }
+    } else {
+      this.rows = this.rows.filter(node => node.value !== value);
+    }
+  }
 }
 
-function transformToTableData(data) {
+function addEditRow(data, editingRowId) {
   if (!data) return []
-  // This will live somewhere else
-  // const augmentedData = data.map(item => ({
-  //       ...item,
-  //   isEditing: item.id === editingRowId,
-  // }));
-  const nestedData = buildTree(data);
+  const augmentedData = data.map(item => ({
+        ...item,
+    isEditing: item.id === editingRowId,
+  }));
+  const tree = new TagTree(augmentedData);
 
-  return nestedData;
+  return tree.rows;
 }
 
 function getDisplayData(data, editingRowId, creatingParentId, tableMode) {
@@ -372,6 +432,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
 
   const [tableMode, setTableMode] = useState(TABLE_MODES.VIEW);
+  const [sourceData, setSourceData] = useState([]);
   const [displayData, setDisplayData] = useState([]);
 
   const { isLoading, data: tagList } = useTagListData(taxonomyId, pagination);
@@ -380,7 +441,9 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   useMemo(() => {
     // get row data if table is in VIEW mode, otherwise keep current data to avoid disrupting user while they are editing or creating a tag
     if (tableMode === TABLE_MODES.VIEW) {
-      const data = transformToTableData(tagList?.results);
+      const tree = new TagTree(tagList?.results);
+      const data = tree.rows || [];
+      setSourceData(data);
       setDisplayData(data);
     }
   }, [tagList?.results, editingRowId, pagination, tableMode]);
