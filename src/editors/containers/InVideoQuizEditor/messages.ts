@@ -121,6 +121,21 @@ const messages = defineMessages({
     defaultMessage: 'Please select a problem for the entered time.',
     description: 'Validation error when timer is entered but problem is missing.',
   },
+  contentNotFoundTitle: {
+    id: 'InVideoQuizEditor.contentNotFoundTitle',
+    defaultMessage: 'Content not found',
+    description: 'Alert heading when required content is missing from the unit.',
+  },
+  noVideoFoundInUnit: {
+    id: 'InVideoQuizEditor.noVideoFoundInUnit',
+    defaultMessage: 'No video found for this unit',
+    description: 'Alert shown when no video components exist in the unit.',
+  },
+  noProblemFoundInUnit: {
+    id: 'InVideoQuizEditor.noProblemFoundInUnit',
+    defaultMessage: 'No problem found for this unit',
+    description: 'Alert shown when no problem components exist in the unit.',
+  },
 });
 
 export default messages;

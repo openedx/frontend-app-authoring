@@ -62,8 +62,12 @@ export const InVideoQuizEditor = ({
   const intl = useIntl();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [saveError, setSaveError] = useState(null);
+  const [contentAlertDismissed, setContentAlertDismissed] = useState(false);
   const returnUrl = useSelector(selectors.app.returnUrl);
   const analytics = useSelector(selectors.app.analytics);
+
+  const hasNoVideos = blockFinished && settingsLoaded && videos.length === 0;
+  const hasNoProblems = blockFinished && settingsLoaded && problems.length === 0;
 
   const isValidTimeFormat = useCallback((value) => /^\d+:[0-5]\d$/.test(value), []);
 
@@ -207,6 +211,13 @@ export const InVideoQuizEditor = ({
 
   const page = (
     <div className="in-video-quiz-editor">
+      {(hasNoVideos || hasNoProblems) && !contentAlertDismissed && (
+        <Alert variant="danger" dismissible onClose={() => setContentAlertDismissed(true)}>
+          <Alert.Heading>{intl.formatMessage(messages.contentNotFoundTitle)}</Alert.Heading>
+          {hasNoVideos && <div>{intl.formatMessage(messages.noVideoFoundInUnit)}</div>}
+          {hasNoProblems && <div>{intl.formatMessage(messages.noProblemFoundInUnit)}</div>}
+        </Alert>
+      )}
       {saveError && (
         <Alert variant="danger" dismissible onClose={() => setSaveError(null)}>
           <Alert.Heading>{intl.formatMessage(messages.saveErrorTitle)}</Alert.Heading>
