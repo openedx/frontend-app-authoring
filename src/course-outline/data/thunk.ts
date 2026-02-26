@@ -20,7 +20,6 @@ import {
   setSectionOrderList,
   setVideoSharingOption,
   setCourseItemOrderList,
-  pasteBlock,
   dismissNotification, createDiscussionsTopics,
 } from './api';
 import {
@@ -35,7 +34,6 @@ import {
   updateSectionList,
   updateFetchSectionLoadingStatus,
   reorderSectionList,
-  setPasteFileNotices,
   updateCourseLaunchQueryStatus,
 } from './slice';
 
@@ -307,27 +305,6 @@ export function setUnitOrderListQuery(
         dispatch(fetchCourseSectionQuery(sectionIds));
       },
     ));
-  };
-}
-
-export function pasteClipboardContent(parentLocator: string, sectionId: string) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.pasting));
-
-    try {
-      await pasteBlock(parentLocator).then(async (result: any) => {
-        if (result) {
-          dispatch(fetchCourseSectionQuery([sectionId]));
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
-          dispatch(setPasteFileNotices(result?.staticFileNotices));
-        }
-      });
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
   };
 }
 

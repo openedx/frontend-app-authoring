@@ -1,6 +1,11 @@
 import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
 import { addSection, duplicateSection, updateSectionList } from '@src/course-outline/data/slice';
-import { ConfigureSectionData, ConfigureSubsectionData, ConfigureUnitData } from '@src/course-outline/data/types';
+import {
+  ConfigureSectionData,
+  ConfigureSubsectionData,
+  ConfigureUnitData,
+  StaticFileNotices,
+} from '@src/course-outline/data/types';
 import { createGlobalState } from '@src/data/apiHooks';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
 import { getBlockType, getCourseKey } from '@src/generic/key-utils';
@@ -24,6 +29,7 @@ import {
   configureCourseUnit,
   updateCourseSectionHighlights,
   duplicateCourseItem,
+  pasteBlock,
 } from './api';
 
 export const courseOutlineQueryKeys = {
@@ -36,7 +42,14 @@ export const courseOutlineQueryKeys = {
     ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId) : undefined),
     itemId,
   ],
-  scrollToCourseItemId: ['courseOutline', 'scroll'],
+  scrollToCourseItemId: (courseId?: string) => [
+    ...courseOutlineQueryKeys.course(courseId),
+    'scroll',
+  ],
+  pasteFileNotices: (courseId?: string) => [
+    ...courseOutlineQueryKeys.course(courseId),
+    'pasteFileNotices',
+  ],
   courseDetails: (courseId?: string) => [
     ...courseOutlineQueryKeys.course(courseId),
     'details',
@@ -90,10 +103,11 @@ type CreateCourseXBlockMutationProps = CreateCourseXBlockType & ParentIds;
  * @returns Mutation object for creating course blocks
  */
 export const useCreateCourseBlock = (
+  courseKey: string,
   callback?: ((locator: string, parentLocator: string) => Promise<void>),
 ) => {
   const queryClient = useQueryClient();
-  const { setData } = useScrollState();
+  const { setData } = useScrollState(courseKey);
   const dispatch = useDispatch();
   return useMutation({
     mutationFn: (variables: CreateCourseXBlockMutationProps) => createCourseXblock(variables),
@@ -261,10 +275,10 @@ export const useUpdateCourseSectionHighlights = () => {
   });
 };
 
-export const useDuplicateItem = () => {
+export const useDuplicateItem = (courseKey: string) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const { setData } = useScrollState();
+  const { setData } = useScrollState(courseKey);
   return useMutation({
     mutationFn: (variables: {
       itemId: string;
@@ -279,6 +293,33 @@ export const useDuplicateItem = () => {
       }
       // scroll to newly added block
       setData({ id: data.locator });
+    },
+  });
+};
+
+export const usePasteFileNotices = createGlobalState<StaticFileNotices>(
+  courseOutlineQueryKeys.pasteFileNotices,
+  {
+    newFiles: [],
+    conflictingFiles: [],
+    errorFiles: [],
+  },
+);
+
+export const usePasteItem = (courseId?: string) => {
+  const queryClient = useQueryClient();
+  const { setData: setScrollState } = useScrollState(courseId);
+  const { setData } = usePasteFileNotices(courseId);
+  return useMutation({
+    mutationFn: (variables: {
+      parentLocator: string;
+    } & ParentIds) => pasteBlock(variables.parentLocator),
+    onSuccess: async (data, variables) => {
+      await invalidateParentQueries(queryClient, variables);
+      // set pasteFileNotices
+      setData(data.staticFileNotices);
+      // scroll to pasted block
+      setScrollState({ id: data.locator });
     },
   });
 };

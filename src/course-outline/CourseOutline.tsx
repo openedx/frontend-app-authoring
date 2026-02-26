@@ -118,6 +118,7 @@ const CourseOutline = () => {
     isDuplicatingItem,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
+    isPasting,
     notificationDismissUrl,
     discussionsSettings,
     discussionsIncontextLearnmoreUrl,
@@ -526,6 +527,7 @@ const CourseOutline = () => {
             || isConfigureOpPending
             || isSectionHighlightsUpdatePending
             || isDuplicatingItem
+            || isPasting
           }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}

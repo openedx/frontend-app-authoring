@@ -77,7 +77,7 @@ const UnitCard = ({
     initialSubsectionData,
   );
   const { data: unit = initialData } = useCourseItemData<UnitXBlock>(initialData.id, initialData);
-  const { data: scrollState, resetData: resetScrollState } = useScrollState();
+  const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
   const isScrolledToElement = locatorId === unit.id;
 
   const {

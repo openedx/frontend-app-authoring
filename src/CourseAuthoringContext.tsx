@@ -110,8 +110,8 @@ export const CourseAuthoringProvider = ({
   /**
   * import a unit block from library and redirect user to this unit page.
   */
-  const handleAddAndOpenUnit = useCreateCourseBlock(openUnitPage);
-  const handleAddBlock = useCreateCourseBlock();
+  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
+  const handleAddBlock = useCreateCourseBlock(courseId);
 
   const context = useMemo<CourseAuthoringContextData>(() => ({
     courseId,

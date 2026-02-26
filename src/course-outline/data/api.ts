@@ -8,6 +8,7 @@ import {
   ConfigureSectionData,
   ConfigureSubsectionData,
   ConfigureUnitData,
+  StaticFileNotices,
 } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
@@ -423,7 +424,12 @@ export async function setVideoSharingOption(
  * @param {string} parentLocator
  * @returns {Promise<Object>}
 */
-export async function pasteBlock(parentLocator: string): Promise<object> {
+export async function pasteBlock(parentLocator: string): Promise<{
+  locator: string;
+  courseKey: string;
+  staticFileNotices: StaticFileNotices;
+  upstreamRef: string;
+}> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       parent_locator: parentLocator,

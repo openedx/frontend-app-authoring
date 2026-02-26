@@ -42,7 +42,11 @@ interface SubsectionCardProps {
   getPossibleMoves: (index: number, step: number) => void,
   onOrderChange: (section: XBlock, moveDetails: any) => void,
   onOpenConfigureModal: () => void,
-  onPasteClick: (parentLocator: string, sectionId: string) => void,
+  onPasteClick: (
+    parentLocator: string,
+    subsectionId: string,
+    sectionId: string
+  ) => void,
 }
 
 const SubsectionCard = ({
@@ -76,7 +80,7 @@ const SubsectionCard = ({
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
   const { data: subsection = initialData } = useCourseItemData(initialData.id, initialData);
-  const { data: scrollState, resetData: resetScrollState } = useScrollState();
+  const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
   const isScrolledToElement = locatorId === subsection.id;
 
   const {
@@ -188,7 +192,7 @@ const SubsectionCard = ({
     onOrderChange(section, moveDownDetails);
   };
 
-  const handlePasteButtonClick = () => onPasteClick(id, section.id);
+  const handlePasteButtonClick = () => onPasteClick(id, id, section.id);
 
   const titleComponent = (
     <TitleButton

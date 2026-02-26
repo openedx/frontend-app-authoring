@@ -74,7 +74,6 @@ export interface CourseOutlineState {
   actions: XBlockActions;
   enableProctoredExams: boolean;
   enableTimedExams: boolean;
-  pasteFileNotices: object;
   createdOn: null | Date;
 }
 
@@ -123,3 +122,9 @@ export interface ConfigureUnitData {
   groupAccess: object,
   discussionEnabled: boolean,
 }
+
+export type StaticFileNotices = {
+  conflictingFiles: string[],
+  errorFiles: string[],
+  newFiles: string[],
+};

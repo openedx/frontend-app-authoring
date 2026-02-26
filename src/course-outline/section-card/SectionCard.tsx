@@ -67,7 +67,7 @@ const SectionCard = ({
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
-  const { data: scrollState, resetData: resetScrollState } = useScrollState();
+  const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
   const isScrolledToElement = locatorId === section?.id;
 
   // Expand the section if a search result should be shown/scrolled to

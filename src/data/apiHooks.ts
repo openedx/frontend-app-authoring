@@ -135,14 +135,15 @@ export const useCourseDetails = (courseId: string) => {
  * Create a global state function for a query.
  */
 export function createGlobalState<T>(
-  queryKey: unknown,
+  queryKeyFn: (queryKeyArgs?: any) => unknown[],
   initialData: T | null = null,
 ) {
-  return () => {
+  return (queryKeyArgs?: any) => {
     const queryClient = useQueryClient();
+    const queryKey = queryKeyFn(queryKeyArgs);
 
     const { data } = useQuery({
-      queryKey: [queryKey],
+      queryKey,
       queryFn: () => Promise.resolve(initialData),
       refetchInterval: false,
       refetchOnMount: false,
@@ -152,15 +153,15 @@ export function createGlobalState<T>(
     });
 
     function setData(x: Partial<T>) {
-      queryClient.setQueryData([queryKey], x);
+      queryClient.setQueryData(queryKey, x);
     }
 
     async function resetData() {
-      queryClient.invalidateQueries({
-        queryKey: [queryKey],
+      await queryClient.invalidateQueries({
+        queryKey,
       });
       await queryClient.refetchQueries({
-        queryKey: [queryKey],
+        queryKey,
       });
     }
 

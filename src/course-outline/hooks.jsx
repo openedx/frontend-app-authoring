@@ -19,6 +19,7 @@ import {
   useConfigureUnit,
   useDeleteCourseItem,
   useDuplicateItem,
+  usePasteItem,
   useUpdateCourseSectionHighlights,
 } from '@src/course-outline/data/apiHooks';
 import { COURSE_BLOCK_NAMES } from './constants';
@@ -49,7 +50,6 @@ import {
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
   setUnitOrderListQuery,
-  pasteClipboardContent,
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
@@ -99,8 +99,13 @@ const useCourseOutline = ({ courseId }) => {
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
-  const handlePasteClipboardClick = (parentLocator, sectionId) => {
-    dispatch(pasteClipboardContent(parentLocator, sectionId));
+  const { mutate: pasteClipboardContent, isPending: isPasting } = usePasteItem(courseId);
+  const handlePasteClipboardClick = (parentLocator, subsectionId, sectionId) => {
+    pasteClipboardContent({
+      parentLocator,
+      subsectionId,
+      sectionId,
+    });
   };
 
   const headerNavigationsActions = {
@@ -294,7 +299,7 @@ const useCourseOutline = ({ courseId }) => {
   const {
     mutate: duplicateItem,
     isPending: isDuplicatingItem,
-  } = useDuplicateItem();
+  } = useDuplicateItem(courseId);
   const handleDuplicateSectionSubmit = () => {
     duplicateItem({
       itemId: currentSelection?.currentId,
@@ -428,6 +433,7 @@ const useCourseOutline = ({ courseId }) => {
     handleDuplicateUnitSubmit,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
+    isPasting,
     notificationDismissUrl,
     discussionsSettings,
     discussionsIncontextLearnmoreUrl,

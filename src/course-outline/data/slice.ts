@@ -47,9 +47,8 @@ const initialState = {
   },
   enableProctoredExams: false,
   enableTimedExams: false,
-  pasteFileNotices: {},
   createdOn: null,
-} satisfies CourseOutlineState as unknown as CourseOutlineState;
+} satisfies CourseOutlineState;
 
 const slice = createSlice({
   name: 'courseOutline',
@@ -174,14 +173,6 @@ const slice = createSlice({
         return [...result, currentValue];
       }, []);
     },
-    setPasteFileNotices: (state: CourseOutlineState, { payload }) => {
-      state.pasteFileNotices = payload;
-    },
-    removePasteFileNotices: (state: CourseOutlineState, { payload }) => {
-      const pasteFileNotices = { ...state.pasteFileNotices };
-      payload.forEach((key: string | number) => delete pasteFileNotices[key]);
-      state.pasteFileNotices = pasteFileNotices;
-    },
   },
 });
 
@@ -203,8 +194,6 @@ export const {
   deleteUnit,
   duplicateSection,
   reorderSectionList,
-  setPasteFileNotices,
-  removePasteFileNotices,
   dismissError,
 } = slice.actions;
 
