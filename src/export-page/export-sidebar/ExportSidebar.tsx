@@ -1,14 +1,16 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import PropTypes from 'prop-types';
 import { Hyperlink } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
-import { HelpSidebar } from '../../generic/help-sidebar';
-import { useHelpUrls } from '../../help-urls/hooks';
+import { HelpSidebar } from '@src/generic/help-sidebar';
+import { useHelpUrls } from '@src/help-urls/hooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+
 import messages from './messages';
 
-const ExportSidebar = ({ courseId }) => {
+const ExportSidebar = () => {
   const intl = useIntl();
+  const { courseId } = useCourseAuthoringContext();
   const { exportCourse: exportLearnMoreUrl } = useHelpUrls(['exportCourse']);
   return (
     <HelpSidebar courseId={courseId}>
@@ -33,13 +35,11 @@ const ExportSidebar = ({ courseId }) => {
       <h4 className="help-sidebar-about-title">{intl.formatMessage(messages.openDownloadFile)}</h4>
       <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.openDownloadFileDescription)}</p>
       <hr />
-      <Hyperlink className="small" href={exportLearnMoreUrl} target="_blank" variant="outline-primary">{intl.formatMessage(messages.learnMoreButtonTitle)}</Hyperlink>
+      <Hyperlink className="small" destination={exportLearnMoreUrl} target="_blank">
+        {intl.formatMessage(messages.learnMoreButtonTitle)}
+      </Hyperlink>
     </HelpSidebar>
   );
-};
-
-ExportSidebar.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default ExportSidebar;
