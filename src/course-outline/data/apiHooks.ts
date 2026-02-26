@@ -275,8 +275,6 @@ export const useDuplicateItem = () => {
       // add duplicated section to store, subsection and unit are handled by invalidateParentQueries
       if (getBlockType(variables.itemId) === 'chapter') {
         const duplicatedItem = await getCourseItem(data.locator);
-        // Page should scroll to newly duplicated item.
-        // duplicatedItem.shouldScroll = true;
         dispatch(duplicateSection({ id: variables.itemId, duplicatedItem }));
       }
       // scroll to newly added block

@@ -38,7 +38,7 @@ import {
   fetchCourseOutlineIndexQuery, syncDiscussionsTopics,
 } from './data/thunk';
 import {
-  courseOutlineIndexMock,
+  courseOutlineIndexMock as originalCourseOutlineIndexMock,
   courseOutlineIndexWithoutSections,
   courseBestPracticesMock,
   courseLaunchMock,
@@ -70,6 +70,7 @@ const getContainerKey = jest.fn().mockReturnValue('lct:org:lib:unit:1');
 const getContainerType = jest.fn().mockReturnValue('unit');
 const clearSelection = jest.fn();
 let selectedContainerId: string | undefined;
+let courseOutlineIndexMock = cloneDeep(originalCourseOutlineIndexMock);
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
@@ -155,6 +156,8 @@ describe('<CourseOutline />', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
     selectedContainerId = undefined;
+    // restore index mock
+    courseOutlineIndexMock = cloneDeep(originalCourseOutlineIndexMock);
 
     jest.mocked(useLocation).mockReturnValue({
       pathname: mockPathname,
@@ -396,6 +399,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new subsection correctly', async () => {
+    const user = userEvent.setup();
     const { findAllByTestId } = renderComponent();
     const [section] = await findAllByTestId('section-card');
     let subsections = await within(section).findAllByTestId('subsection-card');
@@ -420,10 +424,14 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getXBlockApiUrl(courseSubsectionMock.id))
       .reply(200, courseSubsectionMock);
+    const firstSectionData = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    // @ts-ignore
+    firstSectionData.childInfo.children.push(courseSubsectionMock);
+    axiosMock
+      .onGet(getXBlockApiUrl(firstSectionData.id))
+      .reply(200, firstSectionData);
     const newSubsectionButton = await within(section).findByRole('button', { name: 'New subsection' });
-    await act(async () => {
-      fireEvent.click(newSubsectionButton);
-    });
+    await user.click(newSubsectionButton);
 
     subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(3);
@@ -532,6 +540,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds a section from library correctly', async () => {
+    const user = userEvent.setup();
     getContainerKey.mockReturnValue('lct:org:lib:section:1');
     getContainerKey.mockReturnValue('section');
     renderComponent();
@@ -544,11 +553,14 @@ describe('<CourseOutline />', () => {
         locator: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersdafdd',
         courseKey: 'course-v1:UNIX+UX1+2025_T3',
       });
+    axiosMock
+      .onGet(getXBlockApiUrl('block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersdafdd'))
+      .reply(200, courseSectionMock);
 
     const addSectionFromLibraryButton = await screen.findByRole('button', {
       name: /use section from library/i,
     });
-    fireEvent.click(addSectionFromLibraryButton);
+    await user.click(addSectionFromLibraryButton);
 
     // click dummy button to execute onComponentSelected prop.
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
@@ -697,26 +709,54 @@ describe('<CourseOutline />', () => {
   });
 
   it('check edit title works for section, subsection and unit', async () => {
-    const { findAllByTestId } = renderComponent();
+    const user = userEvent.setup();
+    renderComponent();
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const checkEditTitle = async (element, item, newName, elementName) => {
       axiosMock.reset();
       axiosMock
         .onPost(getCourseItemApiUrl(item.id))
         .reply(200, { dummy: 'value' });
+
+      if (item.id === section.id) {
+        // return normal section data the first time to keep original name first
+        axiosMock
+          .onGet(getXBlockApiUrl(section.id))
+          // @ts-ignore
+          .replyOnce(section);
+      }
+
       // mock section, subsection and unit name and check within the elements.
       // this is done to avoid adding conditions to this mock.
+
       axiosMock
-        .onGet(getXBlockApiUrl(item.id))
+        .onGet(getXBlockApiUrl(section.id))
         .reply(200, {
-          ...item,
+          ...section,
           display_name: newName,
+          childInfo: {
+            children: [
+              {
+                ...section.childInfo.children[0],
+                display_name: newName,
+                childInfo: {
+                  children: [
+                    {
+                      ...section.childInfo.children[0].childInfo.children[0],
+                      display_name: newName,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
         });
 
       const editButton = await within(element).findByTestId(`${elementName}-edit-button`);
       fireEvent.click(editButton);
       const editField = await within(element).findByTestId(`${elementName}-edit-field`);
       fireEvent.change(editField, { target: { value: newName } });
-      await act(async () => fireEvent.blur(editField));
+      await user.keyboard('{enter}');
       expect(
         axiosMock.history.post[axiosMock.history.post.length - 1].data,
       ).toBe(JSON.stringify({
@@ -729,8 +769,7 @@ describe('<CourseOutline />', () => {
     };
 
     // check section
-    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    const [sectionElement] = await findAllByTestId('section-card');
+    const [sectionElement] = await screen.findAllByTestId('section-card');
     await checkEditTitle(sectionElement, section, 'New section name', 'section');
 
     // check subsection

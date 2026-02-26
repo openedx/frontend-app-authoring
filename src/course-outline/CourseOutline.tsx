@@ -130,7 +130,6 @@ const CourseOutline = () => {
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
     errors,
-    resetScrollState,
     handleUnlinkItemSubmit,
   } = useCourseOutline({ courseId });
 
@@ -413,7 +412,6 @@ const CourseOutline = () => {
                                           onOpenConfigureModal={openConfigureModal}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
-                                          resetScrollState={resetScrollState}
                                         >
                                           <SortableContext
                                             id={subsection.id}

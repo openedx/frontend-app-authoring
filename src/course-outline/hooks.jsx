@@ -26,7 +26,6 @@ import {
   deleteSection,
   deleteSubsection,
   deleteUnit,
-  resetScrollField,
   updateSavingStatus,
 } from './data/slice';
 import {
@@ -102,10 +101,6 @@ const useCourseOutline = ({ courseId }) => {
 
   const handlePasteClipboardClick = (parentLocator, sectionId) => {
     dispatch(pasteClipboardContent(parentLocator, sectionId));
-  };
-
-  const resetScrollState = () => {
-    dispatch(resetScrollField());
   };
 
   const headerNavigationsActions = {
@@ -446,7 +441,6 @@ const useCourseOutline = ({ courseId }) => {
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
     errors,
-    resetScrollState,
     handleUnlinkItemSubmit,
   };
 };

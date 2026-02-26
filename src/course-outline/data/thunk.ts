@@ -195,32 +195,13 @@ export function fetchCourseReindexQuery(reindexLink: string) {
 /**
  * Fetches course sections and optionally scrolls to a specific subsection/unit.
  */
-export function fetchCourseSectionQuery(sectionIds: string[], scrollToId?: {
-  subsectionId: string,
-  unitId?: string,
-}) {
+export function fetchCourseSectionQuery(sectionIds: string[]) {
   return async (dispatch) => {
     dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
       const sections = {};
       const results = await Promise.all(sectionIds.map((sectionId) => getCourseItem(sectionId)));
       results.forEach(section => {
-        if (scrollToId) {
-          const targetSubsection = section?.childInfo?.children?.find(
-            subsection => subsection.id === scrollToId.subsectionId,
-          );
-
-          if (targetSubsection) {
-            if (scrollToId.unitId) {
-              const targetUnit = targetSubsection?.childInfo?.children?.find(unit => unit.id === scrollToId.unitId);
-              if (targetUnit) {
-                targetUnit.shouldScroll = true;
-              }
-            } else {
-              targetSubsection.shouldScroll = true;
-            }
-          }
-        }
         sections[section.id] = section;
       });
       dispatch(updateSectionList(sections));
@@ -337,7 +318,7 @@ export function pasteClipboardContent(parentLocator: string, sectionId: string) 
     try {
       await pasteBlock(parentLocator).then(async (result: any) => {
         if (result) {
-          dispatch(fetchCourseSectionQuery([sectionId], { subsectionId: parentLocator, unitId: result.locator }));
+          dispatch(fetchCourseSectionQuery([sectionId]));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
           dispatch(setPasteFileNotices(result?.staticFileNotices));

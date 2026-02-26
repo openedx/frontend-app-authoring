@@ -107,7 +107,6 @@ export interface XBlockBase {
   hasPartitionGroupComponents: boolean;
   userPartitionInfo?: UserPartitionInfoTypes;
   enableCopyPasteUnits: boolean;
-  shouldScroll: boolean;
   isHeaderVisible: boolean;
   proctoringExamConfigurationLink?: string;
   isTimeLimited?: boolean;
@@ -128,6 +127,7 @@ export interface XBlockBase {
   supportsOnboarding?: boolean;
   showReviewRules?: boolean;
   onlineProctoringRules?: string;
+  groupAccess?: object;
 }
 
 export interface XBlock extends XBlockBase {
