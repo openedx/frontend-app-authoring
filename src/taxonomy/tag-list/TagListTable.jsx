@@ -1,7 +1,7 @@
 // @ts-check
 import React, { useState, useMemo, useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Toast } from '@openedx/paragon';
+import { Button, Toast, Card, ActionRow } from '@openedx/paragon';
 import { isEqual, set } from 'lodash';
 import Proptypes from 'prop-types';
 
@@ -184,7 +184,7 @@ SubTagsExpanded.propTypes = {
  */
 const OptionalExpandLink = ({ row }) => {
   return (
-    row.original.childCount > 0 ? (
+    row.depth === 0 && row.original.childCount > 0 ? (
       <a
         className="d-flex justify-content-end"
         style={{ cursor: 'pointer' }}
@@ -411,92 +411,97 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   });
 
   return (
-    <div className="tag-list-table">
-      <div className="mb-3">
-        <Button onClick={() => table.toggleAllRowsExpanded()}>
-          Expand All
-        </Button>
-      </div>
+    <Card>
+      <Card.Header
+        actions={
+          <ActionRow>
+            <Button onClick={() => table.toggleAllRowsExpanded()}>
+              Expand All
+            </Button>
+          </ActionRow>
+        } />
 
       {isLoading ? (
         <LoadingSpinner />
       ) : (
-        <table className="table w-100" style={{ borderCollapse: 'collapse' }}>
-          <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id} style={{ borderBottom: '2px solid #ddd' }}>
-                {headerGroup.headers.map(header => (
-                  <th key={header.id} style={{ padding: '8px', textAlign: 'left' }}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-
-          <tbody>
-            {table.getRowModel().rows.length === 0 && (
-              <tr>
-                <td colSpan={columns.length} style={{ textAlign: 'center', padding: '1rem' }}>
-                  {intl.formatMessage(messages.noResultsFoundMessage)}
-                </td>
-              </tr>
-            )}
-
-            {isCreatingTopTag && (
-              <tr>
-                <td style={{ padding: '8px 8px 8px 0' }}>
-                  <EditableCell
-                    onSave={(value) => handleCreateTopTag(value, setToast)}
-                    onCancel={() => setIsCreatingTopTag(false)} />
-                </td>
-              </tr>
-            )}
-            {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
-              <React.Fragment key={row.id}>
-                {/* Main Row */}
-                <tr style={{ borderBottom: '1px solid #eee' }}>
-                  {row.getVisibleCells()
-                    .filter(cell => showAddSubTagButton || cell.column.id !== 'add')
-                    .map(cell => (
-                    <td key={cell.id} style={{ padding: '8px' }}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
+        <Card.Section>
+          <table className="table w-100" style={{ borderCollapse: 'collapse' }}>
+            <thead>
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id} style={{ borderBottom: '2px solid #ddd' }}>
+                  {headerGroup.headers.map(header => (
+                    <th key={header.id} style={{ padding: '8px', textAlign: 'left' }}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </th>
                   ))}
                 </tr>
+              ))}
+            </thead>
 
-                {/* Subcomponent Rendering */}
-                {row.getIsExpanded() && (
-                  <tr style={{ backgroundColor: '#f9f9f9' }}>
-                    {/* colSpan stretches the sub-row across the whole table */}
-                    <td colSpan={row.getVisibleCells().length} style={{ padding: '8px 8px 8px 24px' }}>
-                      <SubTagsExpanded
-                        subTagsData={row.subRows}
-                        visibleColumnCount={row.getVisibleCells().length}
-                        parentTagValue={row.original.value}
-                        parentTagId={row.original.id}
-                        isCreating={creatingParentId === row.original.id}
-                        onSaveNewSubTag={handleCreateSubTag}
-                        onCancelCreation={() => setCreatingParentId(null)}
-                        createTagMutation={createTagMutation}
-                        creatingParentId={creatingParentId}
-                        editingRowId={editingRowId}
-                        setCreatingParentId={setCreatingParentId}
-                        setEditingRowId={setEditingRowId}
-                        maxDepth={remainingDepth - 1}
-                      />
-                    </td>
+            <tbody>
+              {table.getRowModel().rows.length === 0 && (
+                <tr>
+                  <td colSpan={columns.length} style={{ textAlign: 'center', padding: '1rem' }}>
+                    {intl.formatMessage(messages.noResultsFoundMessage)}
+                  </td>
+                </tr>
+              )}
+
+              {isCreatingTopTag && (
+                <tr>
+                  <td style={{ padding: '8px 8px 8px 0' }}>
+                    <EditableCell
+                      onSave={(value) => handleCreateTopTag(value, setToast)}
+                      onCancel={() => setIsCreatingTopTag(false)} />
+                  </td>
+                </tr>
+              )}
+              {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
+                <React.Fragment key={row.id}>
+                  {/* Main Row */}
+                  <tr style={{ borderBottom: '1px solid #eee' }}>
+                    {row.getVisibleCells()
+                      .filter(cell => showAddSubTagButton || cell.column.id !== 'add')
+                      .map(cell => (
+                      <td key={cell.id} style={{ padding: '8px' }}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
                   </tr>
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
+
+                  {/* Subcomponent Rendering */}
+                  {row.getIsExpanded() && (
+                    <tr style={{ backgroundColor: '#f9f9f9' }}>
+                      {/* colSpan stretches the sub-row across the whole table */}
+                      <td colSpan={row.getVisibleCells().length} style={{ padding: '8px 8px 8px 24px' }}>
+                        <SubTagsExpanded
+                          subTagsData={row.subRows}
+                          visibleColumnCount={row.getVisibleCells().length}
+                          parentTagValue={row.original.value}
+                          parentTagId={row.original.id}
+                          isCreating={creatingParentId === row.original.id}
+                          onSaveNewSubTag={handleCreateSubTag}
+                          onCancelCreation={() => setCreatingParentId(null)}
+                          createTagMutation={createTagMutation}
+                          creatingParentId={creatingParentId}
+                          editingRowId={editingRowId}
+                          setCreatingParentId={setCreatingParentId}
+                          setEditingRowId={setEditingRowId}
+                          maxDepth={remainingDepth - 1}
+                        />
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+        </Card.Section>
       )}
 
       {/* Basic Pagination Controls */}
@@ -527,7 +532,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       >
         {toast.message}
       </Toast>
-    </div>
+    </Card>
   );
 };
 
