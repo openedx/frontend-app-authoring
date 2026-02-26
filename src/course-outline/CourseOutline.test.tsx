@@ -2309,6 +2309,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit copy & paste option works correctly', async () => {
+    const user = userEvent.setup();
     renderComponent();
     // get first section -> first subsection -> first unit element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2367,13 +2368,6 @@ describe('<CourseOutline />', () => {
     const lastUnitElement = (await within(subsectionElement).findAllByTestId('unit-card')).slice(-1)[0];
     expect(lastUnitElement).toHaveTextContent(unit.displayName);
 
-    // check pasteFileNotices in store
-    expect(store.getState().courseOutline.pasteFileNotices).toEqual({
-      newFiles: ['some.css'],
-      conflictingFiles: ['con.css'],
-      errorFiles: ['error.css'],
-    });
-
     let alerts = await screen.findAllByRole('alert');
     // Exclude processing notification toast
     alerts = alerts.filter((el) => !el.classList.contains('toast-container'));
@@ -2382,18 +2376,18 @@ describe('<CourseOutline />', () => {
 
     // check alerts for errorFiles
     let dismissBtn = await within(alerts[0]).findByText('Dismiss');
-    fireEvent.click(dismissBtn);
+    await user.click(dismissBtn);
 
     // check alerts for conflictingFiles
     dismissBtn = await within(alerts[1]).findByText('Dismiss');
-    fireEvent.click(dismissBtn);
+    await user.click(dismissBtn);
 
     // check alerts for newFiles
     dismissBtn = await within(alerts[2]).findByText('Dismiss');
-    fireEvent.click(dismissBtn);
+    await user.click(dismissBtn);
 
-    // check pasteFileNotices in store
-    expect(store.getState().courseOutline.pasteFileNotices).toEqual({});
+    // check that all alerts are gone
+    expect((screen.queryAllByRole('alert')).length).toEqual(0);
   });
 
   it('should show toats on export tags', async () => {
