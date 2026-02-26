@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import {
   Container, Button, Layout, StatefulButton, TransitionReplace,
 } from '@openedx/paragon';
@@ -38,7 +39,6 @@ const AdvancedSettings = () => {
   const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
 
   const { courseId, courseDetails } = useCourseAuthoringContext();
-  document.title = getPageHeadTitle(courseDetails?.name ?? '', intl.formatMessage(messages.headingTitle));
 
   const waffleFlags = useWaffleFlags(courseId);
   const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
@@ -155,6 +155,11 @@ const AdvancedSettings = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          {getPageHeadTitle(courseDetails?.name ?? '', intl.formatMessage(messages.headingTitle))}
+        </title>
+      </Helmet>
       <Container size="xl" className="advanced-settings px-4">
         <div className="setting-header mt-5">
           {(proctoringErrors?.length > 0) && (

@@ -15,22 +15,11 @@ export const advancedSettingsQueryKeys = {
   proctoringExamErrors: (courseId: string) => [...advancedSettingsQueryKeys.all, courseId, 'proctoringErrors'],
 };
 
-const sortSettingsByDisplayName = (settings: Record<string, any>): Record<string, any> => {
-  const sortedDisplayName: string[] = [];
-  Object.values(settings).forEach(value => {
-    const { displayName }: { displayName: string } = value;
-    sortedDisplayName.push(displayName);
-  });
-  const sortedSettingValues = {};
-  sortedDisplayName.sort((a, b) => a.localeCompare(b)).forEach((displayName => {
-    Object.entries(settings).forEach(([key, value]) => {
-      if (value.displayName === displayName) {
-        sortedSettingValues[key] = value;
-      }
-    });
-  }));
-  return sortedSettingValues;
-};
+const sortSettingsByDisplayName = (settings: Record<string, any>): Record<string, any> => (
+  Object.fromEntries(Object.entries(settings).sort(
+    ([, v1], [, v2]) => v1.displayName.localeCompare(v2.displayName),
+  ))
+);
 
 /**
  * Fetches the advanced settings for a course, sorted alphabetically by display name.
