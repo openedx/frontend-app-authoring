@@ -1,7 +1,7 @@
 // @ts-check
 import React, { useState, useMemo, useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Toast, Card, ActionRow, Icon } from '@openedx/paragon';
+import { Button, Toast, Card, ActionRow, Icon, IconButton, IconButtonWithTooltip } from '@openedx/paragon';
 import { Add, AddCircle } from '@openedx/paragon/icons';
 import { isEqual, set } from 'lodash';
 import Proptypes from 'prop-types';
@@ -238,16 +238,17 @@ function getColumns({ intl, handleCreateTopTag, setIsCreatingTopTag, setCreating
     {
       id: 'add',
       header: () => (
-        <span
-          style={{ cursor: 'pointer', fontSize: '1.1rem', fontWeight: 'bold', color: '#0056b3', marginLeft: '0.5rem' }}
-          title="Add Tag"
+        <IconButtonWithTooltip
+          tooltipPlacement='top'
+          tooltipContent={<div>Create a new tag</div>}
+          src={AddCircle}
+          alt="Create Tag"
+          size="inline"
           onClick={() => {
             setIsCreatingTopTag(true);
             setEditingRowId(null);
-          } }
-        >
-          <Icon src={AddCircle} className="text-dark-900" />
-        </span>
+          }}
+        />
       ),
       cell: ({ row }) => {
         if (row.original.isNew) {
@@ -425,9 +426,9 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       {isLoading ? (
         <LoadingSpinner />
       ) : (
-        <Card.Section>
+        <Card.Section className="p-0">
           <table className="table w-100" style={{ borderCollapse: 'collapse' }}>
-            <thead>
+            <thead className="bg-light-400">
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id} style={{ borderBottom: '2px solid #ddd' }}>
                   {headerGroup.headers.map(header => (
