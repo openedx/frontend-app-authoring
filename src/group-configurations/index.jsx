@@ -60,9 +60,11 @@ const GroupConfigurations = () => {
   }
 
   const enrollmentTrackGroup = shouldShowEnrollmentTrack
-    ? allGroupConfigurations[0]
+    ? allGroupConfigurations.find((group) => group.scheme === 'enrollment_track')
     : null;
-  const contentGroup = allGroupConfigurations?.[shouldShowEnrollmentTrack ? 1 : 0];
+
+  const contentGroup = allGroupConfigurations.find((group) => group.scheme === 'cohort');
+
   const teamGroups = allGroupConfigurations.filter((group) => group.scheme === 'team');
 
   return (
