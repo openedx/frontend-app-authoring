@@ -1,7 +1,8 @@
 // @ts-check
 import React, { useState, useMemo, useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Toast, Card, ActionRow } from '@openedx/paragon';
+import { Button, Toast, Card, ActionRow, Icon } from '@openedx/paragon';
+import { Add, AddCircle } from '@openedx/paragon/icons';
 import { isEqual, set } from 'lodash';
 import Proptypes from 'prop-types';
 
@@ -245,7 +246,7 @@ function getColumns({ intl, handleCreateTopTag, setIsCreatingTopTag, setCreating
             setEditingRowId(null);
           } }
         >
-          Add Tag
+          <Icon src={AddCircle} className="text-dark-900" />
         </span>
       ),
       cell: ({ row }) => {
