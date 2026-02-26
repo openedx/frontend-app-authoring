@@ -197,7 +197,7 @@ const OptionalExpandLink = ({ row }) => {
 };
 OptionalExpandLink.propTypes = { row: Proptypes.object.isRequired };
 
-function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateTag, setEditingRowId, setToast) {
+function getColumns({ intl, handleCreateTopTag, setIsCreatingTopTag, setCreatingParentId, handleUpdateTag, setEditingRowId, setToast }) {
   return [
     {
       header: intl.formatMessage(messages.tagListColumnValueHeader),
@@ -208,7 +208,7 @@ function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateT
           return (
             <EditableCell
               onSave={(value) => handleCreateTopTag(value, setToast)}
-              onCancel={() => setCreatingParentId(null)} />
+              onCancel={() => setIsCreatingTopTag(false)} />
           );
         }
 
@@ -241,7 +241,7 @@ function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateT
           style={{ cursor: 'pointer', fontSize: '1.1rem', fontWeight: 'bold', color: '#0056b3', marginLeft: '0.5rem' }}
           title="Add Tag"
           onClick={() => {
-            setCreatingParentId('top');
+            setIsCreatingTopTag(true);
             setEditingRowId(null);
           } }
         >
@@ -294,29 +294,29 @@ function getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateT
   ];
 }
 
-function addEditRow(data, editingRowId) {
-  if (!data) return []
-  const augmentedData = data.map(item => ({
-        ...item,
-    isEditing: item.id === editingRowId,
-  }));
-  const tree = new TagTree(augmentedData);
+// function addEditRow(data, editingRowId) {
+//   if (!data) return []
+//   const augmentedData = data.map(item => ({
+//         ...item,
+//     isEditing: item.id === editingRowId,
+//   }));
+//   const tree = new TagTree(augmentedData);
 
-  return tree.rows;
-}
+//   return tree.getAllAsDeepCopy();
+// }
 
-function getDisplayData(data, editingRowId, creatingParentId, tableMode) {
-  if (tableMode === TABLE_MODES.DRAFT && creatingParentId === 'top') {
-    data.unshift({
-      id: 'draft-top-row',
-      isNew: true,
-      value: '',
-      descendantCount: 0,
-      childCount: 0,
-    });
-  }
-  return data;
-}
+// function getDisplayData(data, editingRowId, creatingParentId, tableMode) {
+//   if (tableMode === TABLE_MODES.DRAFT && creatingParentId === 'top') {
+//     data.unshift({
+//       id: 'draft-top-row',
+//       isNew: true,
+//       value: '',
+//       descendantCount: 0,
+//       childCount: 0,
+//     });
+//   }
+//   return data;
+// }
 
 const TagListTable = ({ taxonomyId, maxDepth }) => {
   // The table has a VIEW and a WRITE mode. It starts in VIEW mode.
@@ -341,6 +341,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
 
   const [tableMode, setTableMode] = useState(TABLE_MODES.VIEW);
   const [tagTree, setTagTree] = useState(null);
+  const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
 
   const { isLoading, data: tagList } = useTagListData(taxonomyId, pagination);
   const createTagMutation = useCreateTag(taxonomyId);
@@ -350,8 +351,10 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
     if (tableMode === TABLE_MODES.VIEW && tagList?.results) {
       console.log('tagList results: ', tagList?.results);
       const tree = new TagTree(tagList?.results);
-      console.log('tree rows: ', tree.rows);
-      setTagTree(tree);
+      console.log('tree rows: ', tree.getAllAsDeepCopy());
+      if (tree) {
+        setTagTree(tree);
+      }
     }
   }, [tagList?.results, editingRowId, pagination, tableMode]);
 
@@ -366,7 +369,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       await createTagMutation.mutateAsync({ value });
       setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: value }), variant: 'success' });
     }
-    setCreatingParentId(null);
+    setIsCreatingTopTag(false);
   };
 
   const handleCreateSubTag = async (value, parentTagValue) => {
@@ -384,13 +387,16 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
     setEditingRowId(null);
   };
 
-  const columns = useMemo(() => getColumns(intl, handleCreateTopTag, setCreatingParentId, handleUpdateTag, setEditingRowId, setToast), [intl, creatingParentId, editingRowId]);
+  const columns = useMemo(() => getColumns({
+    intl, handleCreateTopTag, setIsCreatingTopTag, setCreatingParentId,handleUpdateTag, setEditingRowId, setToast }),
+    [intl, isCreatingTopTag, editingRowId]
+  );
 
-  console.log('rowData for table: ', displayData);
+  console.log('rowData for table: ', tagTree?.getAllAsDeepCopy());
 
   // Initialize TanStack Table
   const table = useReactTable({
-    data: displayData,
+    data: tagTree?.getAllAsDeepCopy() || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -442,6 +448,15 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
               </tr>
             )}
 
+            {isCreatingTopTag && (
+              <tr>
+                <td style={{ padding: '8px 8px 8px 0' }}>
+                  <EditableCell
+                    onSave={(value) => handleCreateTopTag(value, setToast)}
+                    onCancel={() => setIsCreatingTopTag(false)} />
+                </td>
+              </tr>
+            )}
             {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
               <React.Fragment key={row.id}>
                 {/* Main Row */}
