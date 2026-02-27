@@ -6,11 +6,11 @@ import {
   Row,
 } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { LoadingSpinner } from '@src/generic/Loading';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import getPageHeadTitle from '@src/generic/utils';
+import { SavingErrorAlert } from '@src/generic/saving-error-alert';
 
-import { LoadingSpinner } from '../generic/Loading';
-import SubHeader from '../generic/sub-header/SubHeader';
-import getPageHeadTitle from '../generic/utils';
-import { SavingErrorAlert } from '../generic/saving-error-alert';
 import messages from './messages';
 import ContentGroupsSection from './content-groups-section';
 import ExperimentConfigurationsSection from './experiment-configurations-section';

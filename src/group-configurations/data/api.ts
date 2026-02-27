@@ -1,13 +1,40 @@
-// @ts-check
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const API_PATH_PATTERN = 'group_configurations';
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getContentStoreApiUrl = (courseId) =>
+export interface Group {
+  id: number;
+  name: string;
+  usage?: any;
+  version: number;
+}
+
+export interface GroupConfiguration {
+  id: number;
+  name: string;
+  active: boolean;
+  description: string;
+  groups: Group[];
+  parameters: Record<string, any>;
+  readOnly: boolean;
+  scheme: string;
+  usage?: any;
+  version: string;
+}
+
+export interface GroupConfigurationResponse {
+  allGroupConfigurations: GroupConfiguration[];
+  experimentGroupConfigurations?: GroupConfiguration[];
+  mfeProctoredExamSettingsUrl: string;
+  shouldShowEnrollmentTrack: boolean;
+  shouldShowExperimentGroups: boolean;
+}
+
+export const getContentStoreApiUrl = (courseId: string) =>
   `${getStudioBaseUrl()}/api/contentstore/v1/${API_PATH_PATTERN}/${courseId}`;
-export const getLegacyApiUrl = (courseId, parentGroupId, groupId) => {
+export const getLegacyApiUrl = (courseId: string, parentGroupId?: number, groupId?: number) => {
   const parentUrlPath = `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}`;
   const parentGroupPath = `${parentGroupId ? `/${parentGroupId}` : ''}`;
   const groupPath = `${groupId ? `/${groupId}` : ''}`;
@@ -16,10 +43,8 @@ export const getLegacyApiUrl = (courseId, parentGroupId, groupId) => {
 
 /**
  * Get content groups and experimental group configurations for course.
- * @param {string} courseId
- * @returns {Promise<Object>}
  */
-export async function getGroupConfigurations(courseId) {
+export async function getGroupConfigurations(courseId: string): Promise<GroupConfigurationResponse> {
   const { data } = await getAuthenticatedHttpClient().get(
     getContentStoreApiUrl(courseId),
   );
@@ -29,11 +54,8 @@ export async function getGroupConfigurations(courseId) {
 
 /**
  * Create new content group for course.
- * @param {string} courseId
- * @param {object} group
- * @returns {Promise<Object>}
  */
-export async function createContentGroup(courseId, group) {
+export async function createContentGroup(courseId: string, group: GroupConfiguration): Promise<GroupConfiguration> {
   const { data } = await getAuthenticatedHttpClient().post(
     getLegacyApiUrl(courseId, group.id),
     group,
@@ -44,11 +66,8 @@ export async function createContentGroup(courseId, group) {
 
 /**
  * Edit exists content group in course.
- * @param {string} courseId
- * @param {object} group
- * @returns {Promise<Object>}
  */
-export async function editContentGroup(courseId, group) {
+export async function editContentGroup(courseId: string, group: GroupConfiguration): Promise<GroupConfiguration> {
   const { data } = await getAuthenticatedHttpClient().post(
     getLegacyApiUrl(courseId, group.id),
     group,
@@ -59,26 +78,20 @@ export async function editContentGroup(courseId, group) {
 
 /**
  * Delete exists content group from the course.
- * @param {string} courseId
- * @param {number} parentGroupId
- * @param {number} groupId
- * @returns {Promise<Object>}
  */
-export async function deleteContentGroup(courseId, parentGroupId, groupId) {
-  const { data } = await getAuthenticatedHttpClient().delete(
+export async function deleteContentGroup(courseId: string, parentGroupId: number, groupId: number): Promise<void> {
+  await getAuthenticatedHttpClient().delete(
     getLegacyApiUrl(courseId, parentGroupId, groupId),
   );
-
-  return camelCaseObject(data);
 }
 
 /**
  * Create a new experiment configuration for the course.
- * @param {string} courseId
- * @param {object} configuration
- * @returns {Promise<Object>}
  */
-export async function createExperimentConfiguration(courseId, configuration) {
+export async function createExperimentConfiguration(
+  courseId: string,
+  configuration: GroupConfiguration,
+): Promise<GroupConfiguration> {
   const { data } = await getAuthenticatedHttpClient().post(
     getLegacyApiUrl(courseId),
     configuration,
@@ -89,11 +102,11 @@ export async function createExperimentConfiguration(courseId, configuration) {
 
 /**
  * Edit the experiment configuration for the course.
- * @param {string} courseId
- * @param {object} configuration
- * @returns {Promise<Object>}
  */
-export async function editExperimentConfiguration(courseId, configuration) {
+export async function editExperimentConfiguration(
+  courseId: string,
+  configuration: GroupConfiguration,
+): Promise<GroupConfiguration> {
   const { data } = await getAuthenticatedHttpClient().post(
     getLegacyApiUrl(courseId, configuration.id),
     configuration,
@@ -104,14 +117,9 @@ export async function editExperimentConfiguration(courseId, configuration) {
 
 /**
  * Delete existing experimental configuration from the course.
- * @param {string} courseId
- * @param {number} configurationId
- * @returns {Promise<Object>}
  */
-export async function deleteExperimentConfiguration(courseId, configurationId) {
-  const { data } = await getAuthenticatedHttpClient().delete(
+export async function deleteExperimentConfiguration(courseId: string, configurationId: number): Promise<void> {
+  await getAuthenticatedHttpClient().delete(
     getLegacyApiUrl(courseId, configurationId),
   );
-
-  return camelCaseObject(data);
 }

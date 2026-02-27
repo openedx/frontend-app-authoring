@@ -18,13 +18,19 @@ import {
   editExperimentConfigurationQuery,
   fetchGroupConfigurationsQuery,
 } from './data/thunk';
+import { useGetGroupConfigurations } from './data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
-const useGroupConfigurations = (courseId) => {
+const useGroupConfigurations = () => {
   const dispatch = useDispatch();
-  const groupConfigurations = useSelector(getGroupConfigurationsData);
-  const loadingStatus = useSelector(getLoadingStatus);
+  const { courseId } = useCourseAuthoringContext();
+  const {
+    data: groupConfigurations,
+    isPending: isPendingGroupConfigurations,
+    failureReason: groupConfigurationsError,
+  } = useGetGroupConfigurations(courseId);
+
   const savingStatus = useSelector(getSavingStatus);
-  const errorMessage = useSelector(getErrorMessage);
 
   const handleInternetConnectionFailed = () => {
     dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
@@ -79,12 +85,11 @@ const useGroupConfigurations = (courseId) => {
   }, [courseId]);
 
   return {
-    isLoading: loadingStatus === RequestStatus.IN_PROGRESS,
-    isLoadingDenied: loadingStatus === RequestStatus.DENIED,
+    isLoading: isPendingGroupConfigurations,
+    isLoadingDenied: groupConfigurationsError?.response?.status === 403,
     savingStatus,
     contentGroupActions,
     experimentConfigurationActions,
-    errorMessage,
     groupConfigurations,
     handleInternetConnectionFailed,
   };
