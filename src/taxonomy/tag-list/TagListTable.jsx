@@ -367,24 +367,27 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
 
   const handleCreateTopTag = async (value, setToast) => {
     console.log('Creating top-level tag with value:', value);
-    if (value.trim()) {
-      await createTagMutation.mutateAsync({ value });
-      setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: value }), variant: 'success' });
+    const trimmed = value.trim();
+    if (trimmed) {
+      await createTagMutation.mutateAsync({ value: trimmed });
+      setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }), variant: 'success' });
     }
     setIsCreatingTopTag(false);
   };
 
   const handleCreateSubTag = async (value, parentTagValue) => {
-    if (value.trim()) {
-      await createTagMutation.mutateAsync({ value, parentTagValue });
-      setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: value }), variant: 'success' });
+    const trimmed = value.trim();
+    if (trimmed) {
+      await createTagMutation.mutateAsync({ value: trimmed, parentTagValue });
+      setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }), variant: 'success' });
     }
     setCreatingParentId(null);
   };
 
   const handleUpdateTag = async (id, value, originalValue) => {
-    if (value.trim() && value !== originalValue) {
-      console.log('Update backend here', id, value);
+    const trimmed = value.trim();
+    if (trimmed && trimmed !== originalValue) {
+      console.log('Update backend here', id, trimmed);
     }
     setEditingRowId(null);
   };
@@ -455,7 +458,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
               )}
 
               {isCreatingTopTag && (
-                <tr>
+                <tr id="creating-top-tag-row" data-testid="creating-top-tag-row">
                   <td style={{ padding: '8px 8px 8px 0' }}>
                     <EditableCell
                       onSave={(value) => handleCreateTopTag(value, setToast)}
