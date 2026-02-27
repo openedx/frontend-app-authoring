@@ -439,7 +439,9 @@ export const apiMethods = {
         return {
           ...baseCard,
           term_image: card.term_image || '',
+          term_image_alt: card.term_image_alt || '',
           definition_image: card.definition_image || '',
+          definition_image_alt: card.definition_image_alt || '',
         };
       }
       return baseCard;

@@ -156,6 +156,26 @@ const messages = defineMessages({
     defaultMessage: 'On',
     description: 'Label for on toggle button.',
   },
+  imageSettingsTooltip: {
+    id: 'GameEditor.imageSettingsTooltip',
+    defaultMessage: 'Image settings',
+    description: 'Tooltip for image settings button.',
+  },
+  imageSettingsTitle: {
+    id: 'GameEditor.imageSettingsTitle',
+    defaultMessage: 'Image Settings',
+    description: 'Title for image settings modal.',
+  },
+  saveButtonLabel: {
+    id: 'GameEditor.saveButtonLabel',
+    defaultMessage: 'Save',
+    description: 'Label for save button in image settings modal.',
+  },
+  altTextError: {
+    id: 'GameEditor.altTextError',
+    defaultMessage: 'Alt text is required for non-decorative images.',
+    description: 'Error message when alt text is missing.',
+  },
 });
 
 export default messages;

@@ -31,9 +31,11 @@ describe('game reducer', () => {
           term: '',
           term_image: '',
           term_image_path: '',
+          term_image_alt: '',
           definition: '',
           definition_image: '',
           definition_image_path: '',
+          definition_image_alt: '',
           editorOpen: true,
         }],
         isDirty: false,
@@ -225,9 +227,11 @@ describe('game reducer', () => {
         term: '',
         term_image: '',
         term_image_path: '',
+        term_image_alt: '',
         definition: '',
         definition_image: '',
         definition_image_path: '',
+        definition_image_alt: '',
         editorOpen: true,
       });
       expect(result.isDirty).toBe(true);

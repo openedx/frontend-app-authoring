@@ -43,6 +43,7 @@ import Button from '../../sharedComponents/Button';
 import DraggableList, { SortableItem } from '../../../generic/DraggableList';
 import messages from './messages';
 import PictureIcon from './PictureIcon';
+import GameImageSettingsModal from './GameImageSettingsModal';
 
 export const hooks = {
   getContent: ({ type, settings, list }) => {
@@ -89,6 +90,8 @@ export const GameEditor = ({
   list,
   updateTerm,
   updateDefinition,
+  updateTermImageAlt,
+  updateDefinitionImageAlt,
   toggleOpen,
   setList,
   addCard,
@@ -106,6 +109,12 @@ export const GameEditor = ({
   const [validationErrors, setValidationErrors] = useState({});
   const [localInputValues, setLocalInputValues] = useState({});
   const [isAlertVisible, setIsAlertVisible] = useState(true);
+  const [imageSettingsModal, setImageSettingsModal] = useState({
+    isOpen: false,
+    imageData: null,
+    cardIndex: null,
+    imageType: null,
+  });
 
   const MAX_TERM_LENGTH = 120;
   const MAX_DEFINITION_LENGTH = 120;
@@ -322,9 +331,56 @@ export const GameEditor = ({
     </div>
   );
 
-  const renderImageDisplay = useCallback((imageUrl, filePath, index, imageType) => (
+  const renderImageDisplay = useCallback((imageUrl, filePath, index, imageType, altText) => (
     <div className="card-image-area d-flex align-items-center align-self-stretch">
-      <img className="card-image" src={imageUrl} alt={`${imageType.toUpperCase()}_IMG`} />
+      <OverlayTrigger
+        placement="bottom"
+        overlay={(
+          <Tooltip id={`image-settings-tooltip-${imageType}-${index}`}>
+            <IconButton
+              src={PictureIcon}
+              iconAs={Icon}
+              alt="IMG"
+              variant="plain"
+            />
+          </Tooltip>
+        )}
+      >
+        <div
+          role="button"
+          tabIndex={0}
+          style={{ cursor: 'pointer', display: 'inline-block' }}
+          onClick={() => setImageSettingsModal({
+            isOpen: true,
+            imageData: {
+              url: imageUrl,
+              altText: altText || '',
+            },
+            cardIndex: index,
+            imageType,
+          })}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setImageSettingsModal({
+                isOpen: true,
+                imageData: {
+                  url: imageUrl,
+                  altText: altText || '',
+                },
+                cardIndex: index,
+                imageType,
+              });
+            }
+          }}
+        >
+          <img
+            className="card-image"
+            src={imageUrl}
+            alt={`${imageType.toUpperCase()}_IMG`}
+          />
+        </div>
+      </OverlayTrigger>
       <IconButton
         src={DeleteOutline}
         iconAs={Icon}
@@ -333,7 +389,7 @@ export const GameEditor = ({
         onClick={() => handleImageRemove(index, imageType, filePath)}
       />
     </div>
-  ), [handleImageRemove]);
+  ), [handleImageRemove, intl]);
 
   const renderImageUploadButton = useCallback((index, imageType) => (
     <IconButton
@@ -345,9 +401,27 @@ export const GameEditor = ({
     />
   ), []);
 
-  const termImageDiv = (card, index) => renderImageDisplay(card.term_image, card.term_image_path, index, 'term');
+  const handleImageSettingsSave = useCallback((altTextData) => {
+    const { cardIndex, imageType } = imageSettingsModal;
+    const altText = altTextData.altText || '';
+
+    if (imageType === 'term') {
+      updateTermImageAlt({ index: cardIndex, termImageAlt: altText });
+    } else if (imageType === 'definition') {
+      updateDefinitionImageAlt({ index: cardIndex, definitionImageAlt: altText });
+    }
+
+    setImageSettingsModal({
+      isOpen: false,
+      imageData: null,
+      cardIndex: null,
+      imageType: null,
+    });
+  }, [imageSettingsModal, updateTermImageAlt, updateDefinitionImageAlt]);
+
+  const termImageDiv = (card, index) => renderImageDisplay(card.term_image, card.term_image_path, index, 'term', card.term_image_alt);
   const termImageUploadButton = (card, index) => renderImageUploadButton(index, 'term');
-  const definitionImageDiv = (card, index) => renderImageDisplay(card.definition_image, card.definition_image_path, index, 'definition');
+  const definitionImageDiv = (card, index) => renderImageDisplay(card.definition_image, card.definition_image_path, index, 'definition', card.definition_image_alt);
   const definitionImageUploadButton = (card, index) => renderImageUploadButton(index, 'definition');
 
   const timerSettingsOption = (
@@ -705,6 +779,18 @@ export const GameEditor = ({
         )}
         {!blockFinished ? loading : page}
       </div>
+      <GameImageSettingsModal
+        key={`${imageSettingsModal.cardIndex}-${imageSettingsModal.imageType}-${imageSettingsModal.imageData?.url}`}
+        isOpen={imageSettingsModal.isOpen}
+        close={() => setImageSettingsModal({
+          isOpen: false,
+          imageData: null,
+          cardIndex: null,
+          imageType: null,
+        })}
+        imageData={imageSettingsModal.imageData}
+        onSave={handleImageSettingsSave}
+      />
     </EditorContainer>
   );
 };
@@ -720,6 +806,8 @@ GameEditor.propTypes = {
   })).isRequired,
   updateTerm: PropTypes.func.isRequired,
   updateDefinition: PropTypes.func.isRequired,
+  updateTermImageAlt: PropTypes.func.isRequired,
+  updateDefinitionImageAlt: PropTypes.func.isRequired,
   toggleOpen: PropTypes.func.isRequired,
   setList: PropTypes.func.isRequired,
   addCard: PropTypes.func.isRequired,
@@ -756,6 +844,8 @@ export const mapDispatchToProps = {
   updateType: actions.game.updateType,
   updateTerm: actions.game.updateTerm,
   updateDefinition: actions.game.updateDefinition,
+  updateTermImageAlt: actions.game.updateTermImageAlt,
+  updateDefinitionImageAlt: actions.game.updateDefinitionImageAlt,
   toggleOpen: actions.game.toggleOpen,
   setList: actions.game.setList,
   addCard: actions.game.addCard,

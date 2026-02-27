@@ -31,9 +31,11 @@ export const loadGamesSettings = () => (dispatch) => {
           term: card.term || '',
           term_image: card.term_image || '',
           term_image_path: card.term_image_path || '',
+          term_image_alt: card.term_image_alt || '',
           definition: card.definition || '',
           definition_image: card.definition_image || '',
           definition_image_path: card.definition_image_path || '',
+          definition_image_alt: card.definition_image_alt || '',
           editorOpen: true,
         }));
         dispatch(actions.game.setList(formattedCards));
@@ -43,9 +45,11 @@ export const loadGamesSettings = () => (dispatch) => {
           term: '',
           term_image: '',
           term_image_path: '',
+          term_image_alt: '',
           definition: '',
           definition_image: '',
           definition_image_path: '',
+          definition_image_alt: '',
           editorOpen: true,
         };
         dispatch(actions.game.setList([emptyCard]));

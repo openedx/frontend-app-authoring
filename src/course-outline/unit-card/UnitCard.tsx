@@ -380,7 +380,7 @@ const UnitCard = ({
             blockId={editXBlockId}
             studioEndpointUrl={getConfig().STUDIO_BASE_URL}
             lmsEndpointUrl={getConfig().LMS_BASE_URL}
-            onClose={null}
+            onClose={handleCloseMFEEditor}
             returnFunction={handleSaveEditedXBlockData}
           />
         </div>
