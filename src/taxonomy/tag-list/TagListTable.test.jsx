@@ -360,7 +360,6 @@ describe('<TagListTable />', () => {
       const saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       let newTag;
-      screen.debug();
       await waitFor(() => {
         newTag = screen.getByText('a new tag');
         expect(newTag).toBeInTheDocument();
@@ -803,7 +802,6 @@ describe('<TagListTable />', () => {
 
       rows = await screen.findAllByRole('row');
       draftRows = rows.filter(row => row.querySelector('input'));
-      screen.debug();
       expect(draftRows[0].querySelector('input')).toBeInTheDocument();
       // expect the draft row to be directly beneath the parent tag row
       const parentRowIndex = rows.findIndex(row => within(row).queryByText('root tag 1'));

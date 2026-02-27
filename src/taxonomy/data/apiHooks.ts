@@ -206,13 +206,14 @@ export const useImportPlan = (taxonomyId: number, file: File | null) => useQuery
  * Use the list of tags in a taxonomy.
  */
 export const useTagListData = (taxonomyId: number, options: QueryOptions) => {
-  const { pageIndex, pageSize } = options;
+  const { pageIndex, pageSize, enabled = true } = options;
   return useQuery({
     queryKey: taxonomyQueryKeys.taxonomyTagListPage(taxonomyId, pageIndex, pageSize),
     queryFn: async () => {
       const { data } = await getAuthenticatedHttpClient().get(apiUrls.tagList(taxonomyId, pageIndex, pageSize, 1000));
       return camelCaseObject(data) as TagListData;
     },
+    enabled,
   });
 };
 

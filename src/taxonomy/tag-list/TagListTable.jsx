@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState, useMemo, useEffect, useReducer } from 'react';
+import React, { useState, useMemo, useEffect, useReducer, useRef } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Toast, Card, ActionRow, Icon, IconButton, IconButtonWithTooltip } from '@openedx/paragon';
 import { Add, AddCircle } from '@openedx/paragon/icons';
@@ -209,7 +209,16 @@ const OptionalExpandLink = ({ row }) => {
 };
 OptionalExpandLink.propTypes = { row: Proptypes.object.isRequired };
 
-function getColumns({ intl, handleCreateTopTag, setIsCreatingTopTag, setCreatingParentId, handleUpdateTag, setEditingRowId, setToast }) {
+function getColumns({
+  intl,
+  handleCreateTopTag,
+  setIsCreatingTopTag,
+  setCreatingParentId,
+  handleUpdateTag,
+  setEditingRowId,
+  setToast,
+  onStartDraft,
+}) {
   return [
     {
       header: intl.formatMessage(messages.tagListColumnValueHeader),
@@ -256,6 +265,7 @@ function getColumns({ intl, handleCreateTopTag, setIsCreatingTopTag, setCreating
           alt="Create Tag"
           size="inline"
           onClick={() => {
+            onStartDraft();
             setIsCreatingTopTag(true);
             setEditingRowId(null);
           }}
@@ -271,6 +281,7 @@ function getColumns({ intl, handleCreateTopTag, setIsCreatingTopTag, setCreating
             <span
               style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3' }}
               onClick={() => {
+                onStartDraft();
                 setCreatingParentId(row.original.id);
                 setEditingRowId(null);
                 row.toggleExpanded(true);
@@ -352,19 +363,59 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   const [editingRowId, setEditingRowId] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
 
-  const [tableMode] = useReducer(tableModeReducer, TABLE_MODES.VIEW);
-  const [tagTree, setTagTree] = useState(null);
+  const [tableMode, dispatchTableMode] = useReducer(tableModeReducer, TABLE_MODES.VIEW);
+  const [tagTree, setTagTree] = useState(/** @type {TagTree | null} */(null));
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
+  const modeBeforeDraftRef = useRef(TABLE_MODES.VIEW);
 
-  const { isLoading, data: tagList } = useTagListData(taxonomyId, pagination);
+  const transitionTableMode = (targetMode) => {
+    if (targetMode === tableMode) {
+      return;
+    }
+    dispatchTableMode({ type: TABLE_MODE_ACTIONS.TRANSITION, targetMode });
+  };
+
+  const enterDraftMode = () => {
+    modeBeforeDraftRef.current = tableMode;
+    transitionTableMode(TABLE_MODES.DRAFT);
+  };
+
+  const exitDraftWithoutSave = () => {
+    const previousMode = modeBeforeDraftRef.current;
+    const targetMode = previousMode === TABLE_MODES.WRITE ? TABLE_MODES.WRITE : TABLE_MODES.VIEW;
+    transitionTableMode(targetMode);
+  };
+
+  const applyLocalTagPreview = (value, parentTagValue = null) => {
+    setTagTree((currentTagTree) => {
+      const nextTree = currentTagTree || new TagTree([]);
+      const parentTag = parentTagValue ? nextTree.getTagAsDeepCopy(parentTagValue) : null;
+
+      nextTree.addNode({
+        id: Date.now(),
+        value,
+        parentValue: parentTagValue,
+        depth: parentTag ? parentTag.depth + 1 : 0,
+        childCount: 0,
+        descendantCount: 0,
+        subTagsUrl: null,
+        externalId: null,
+      }, parentTagValue);
+
+      return nextTree;
+    });
+  };
+
+  const { isLoading, data: tagList } = useTagListData(taxonomyId, {
+    ...pagination,
+    enabled: tableMode === TABLE_MODES.VIEW,
+  });
   const createTagMutation = useCreateTag(taxonomyId);
 
-  useMemo(() => {
+  useEffect(() => {
     // get row data if table is in VIEW mode, otherwise keep current data to avoid disrupting user while they are editing or creating a tag
     if (tableMode === TABLE_MODES.VIEW && tagList?.results) {
-      console.log('tagList results: ', tagList?.results);
       const tree = new TagTree(tagList?.results);
-      console.log('tree rows: ', tree.getAllAsDeepCopy());
       if (tree) {
         setTagTree(tree);
       }
@@ -377,10 +428,11 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   const showAddSubTagButton = remainingDepth > 0;
 
   const handleCreateTopTag = async (value, setToast) => {
-    console.log('Creating top-level tag with value:', value);
     const trimmed = value.trim();
     if (trimmed) {
       await createTagMutation.mutateAsync({ value: trimmed });
+      applyLocalTagPreview(trimmed);
+      transitionTableMode(TABLE_MODES.WRITE);
       setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }), variant: 'success' });
     }
     setIsCreatingTopTag(false);
@@ -390,6 +442,8 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
     const trimmed = value.trim();
     if (trimmed) {
       await createTagMutation.mutateAsync({ value: trimmed, parentTagValue });
+      applyLocalTagPreview(trimmed, parentTagValue);
+      transitionTableMode(TABLE_MODES.WRITE);
       setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }), variant: 'success' });
     }
     setCreatingParentId(null);
@@ -404,11 +458,24 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   };
 
   const columns = useMemo(() => getColumns({
-    intl, handleCreateTopTag, setIsCreatingTopTag, setCreatingParentId,handleUpdateTag, setEditingRowId, setToast }),
-    [intl, isCreatingTopTag, editingRowId]
+    intl,
+    handleCreateTopTag,
+    setIsCreatingTopTag,
+    setCreatingParentId,
+    handleUpdateTag,
+    setEditingRowId,
+    setToast,
+    onStartDraft: enterDraftMode,
+  }),
+    [intl, isCreatingTopTag, editingRowId, tableMode]
   );
 
-  console.log('rowData for table: ', tagTree?.getAllAsDeepCopy());
+  const handlePaginationChange = (updater) => {
+    if (tableMode === TABLE_MODES.WRITE) {
+      transitionTableMode(TABLE_MODES.VIEW);
+    }
+    setPagination(updater);
+  };
 
   // Initialize TanStack Table
   const table = useReactTable({
@@ -422,7 +489,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
     state: {
       pagination,
     },
-    onPaginationChange: setPagination,
+    onPaginationChange: handlePaginationChange,
     getSubRows: (row) => row.subRows || null,
   });
 
@@ -473,7 +540,10 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
                   <td style={{ padding: '8px 8px 8px 0' }}>
                     <EditableCell
                       onSave={(value) => handleCreateTopTag(value, setToast)}
-                      onCancel={() => setIsCreatingTopTag(false)} />
+                      onCancel={() => {
+                        setIsCreatingTopTag(false);
+                        exitDraftWithoutSave();
+                      }} />
                   </td>
                 </tr>
               )}
@@ -502,7 +572,10 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
                           parentTagId={row.original.id}
                           isCreating={creatingParentId === row.original.id}
                           onSaveNewSubTag={handleCreateSubTag}
-                          onCancelCreation={() => setCreatingParentId(null)}
+                          onCancelCreation={() => {
+                            setCreatingParentId(null);
+                            exitDraftWithoutSave();
+                          }}
                           createTagMutation={createTagMutation}
                           creatingParentId={creatingParentId}
                           editingRowId={editingRowId}
@@ -542,7 +615,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       )}
       <Toast
         show={toast.show}
-        onClose={() => { setToast({ show: false })} }
+        onClose={() => { setToast((prevToast) => ({ ...prevToast, show: false }))} }
         delay={15000}
         className="bg-success-100 border-success"
       >
