@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import ProcessingNotification from '../processing-notification';
 
@@ -29,6 +29,12 @@ export const ToastContext = React.createContext<ToastContextData>({
   closeToast: () => {},
 });
 
+// Module-level references to showToast and closeToast, kept in sync by ToastProvider.
+// This allows calling them from outside React (e.g. Redux thunks)
+// without violating the Rules of Hooks.
+let internalShowToast: ToastContextData['showToast'] = () => {};
+let internalCloseToast: ToastContextData['closeToast'] = () => {};
+
 /**
  * React component to provide `ToastContext` to the app
  */
@@ -55,6 +61,12 @@ export const ToastProvider = (props: ToastProviderProps) => {
   }, [setToastMessage, setToastAction]);
   const closeToast = React.useCallback(() => resetState(), [setToastMessage, setToastAction]);
 
+  // Keep the module-level references up to date whenever the callbacks change.
+  React.useEffect(() => {
+    internalShowToast = showToast;
+    internalCloseToast = closeToast;
+  }, [showToast, closeToast]);
+
   const context = React.useMemo(() => ({
     toastMessage,
     toastAction,
@@ -76,3 +88,30 @@ export const ToastProvider = (props: ToastProviderProps) => {
     </ToastContext.Provider>
   );
 };
+
+export function useToastContext(): ToastContextData {
+  const ctx = useContext(ToastContext);
+  if (ctx === undefined) {
+    /* istanbul ignore next */
+    throw new Error('useToastContext() was used in a component without a <ToastProvider> ancestor.');
+  }
+  return ctx;
+}
+
+/**
+ * Imperative API for triggering a toast notification from outside React
+ * (e.g. Redux thunks, plain async functions). Requires that a <ToastProvider>
+ * is mounted in the tree before this is called.
+ */
+export function showToastOutsideReact(message: string, action?: ToastActionData) {
+  internalShowToast(message, action);
+}
+
+/**
+ * Imperative API for closing the active toast from outside React
+ * (e.g. Redux thunks, plain async functions). Requires that a <ToastProvider>
+ * is mounted in the tree before this is called.
+ */
+export function closeToastOutsideReact() {
+  internalCloseToast();
+}

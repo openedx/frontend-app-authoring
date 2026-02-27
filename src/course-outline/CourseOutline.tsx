@@ -20,10 +20,8 @@ import { useLocation } from 'react-router-dom';
 import { CourseAuthoringOutlineSidebarSlot } from '@src/plugin-slots/CourseAuthoringOutlineSidebarSlot';
 
 import { LoadingSpinner } from '@src/generic/Loading';
-import { getProcessingNotification } from '@src/generic/processing-notification/data/selectors';
 import { RequestStatus } from '@src/data/constants';
 import SubHeader from '@src/generic/sub-header/SubHeader';
-import ProcessingNotification from '@src/generic/processing-notification';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
@@ -37,6 +35,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useToastContext } from '@src/generic/toast-context';
 import {
   getProctoredExamsFlag,
   getTimedExamsFlag,
@@ -77,6 +76,7 @@ const CourseOutline = () => {
     closeUnlinkModal,
     currentSelection,
   } = useCourseAuthoringContext();
+  const { showToast } = useToastContext();
 
   const {
     courseName,
@@ -161,11 +161,6 @@ const CourseOutline = () => {
     setSections(() => [...sectionsList]);
   };
 
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
-
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
   const itemCategory = currentItemData?.category || '';
@@ -234,6 +229,24 @@ const CourseOutline = () => {
   useEffect(() => {
     setSections(sectionsList);
   }, [sectionsList]);
+
+  useEffect(() => {
+    if (handleAddBlock.isPending
+      || handleAddAndOpenUnit.isPending
+      || isConfigureOpPending
+      || isSectionHighlightsUpdatePending
+      || isDuplicatingItem
+      || isPasting) {
+      showToast(NOTIFICATION_MESSAGES.saving);
+    }
+  }, [
+    handleAddBlock.isPending,
+    handleAddAndOpenUnit.isPending,
+    isConfigureOpPending,
+    isSectionHighlightsUpdatePending,
+    isDuplicatingItem,
+    isPasting,
+  ]);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -518,20 +531,6 @@ const CourseOutline = () => {
         />
       </Container>
       <div className="alert-toast">
-        <ProcessingNotification
-          // Show processing toast if any mutation is running
-          isShow={
-            isShowProcessingNotification
-            || handleAddBlock.isPending
-            || handleAddAndOpenUnit.isPending
-            || isConfigureOpPending
-            || isSectionHighlightsUpdatePending
-            || isDuplicatingItem
-            || isPasting
-          }
-          // HACK: Use saving as default title till we have a need for better messages
-          title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}
-        />
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}
           isQueryPending={savingStatus === RequestStatus.PENDING}

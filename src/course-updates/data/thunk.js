@@ -1,6 +1,6 @@
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { RequestStatus } from '../../data/constants';
-import { hideProcessingNotification, showProcessingNotification } from '../../generic/processing-notification/data/slice';
+import { showToastOutsideReact, closeToastOutsideReact } from '../../generic/toast-context';
 import {
   getCourseUpdates,
   getCourseHandouts,
@@ -50,16 +50,16 @@ export function createCourseUpdateQuery(courseId, data) {
   return async (dispatch) => {
     try {
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.PENDING }));
-      dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+      showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
       const courseUpdate = await createUpdate(courseId, data);
       dispatch(createCourseUpdate(courseUpdate));
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
         error: { creatingUpdate: false },
       }));
     } catch {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
         error: { creatingUpdate: true },
@@ -72,16 +72,16 @@ export function editCourseUpdateQuery(courseId, data) {
   return async (dispatch) => {
     try {
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.PENDING }));
-      dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+      showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
       const courseUpdate = await editUpdate(courseId, data);
       dispatch(editCourseUpdate(courseUpdate));
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
         error: { savingUpdates: false },
       }));
     } catch {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
         error: { savingUpdates: true },
@@ -94,16 +94,16 @@ export function deleteCourseUpdateQuery(courseId, updateId) {
   return async (dispatch) => {
     try {
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.PENDING }));
-      dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
+      showToastOutsideReact(NOTIFICATION_MESSAGES.deleting);
       const courseUpdates = await deleteUpdate(courseId, updateId);
       dispatch(deleteCourseUpdate(courseUpdates));
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
         error: { deletingUpdates: false },
       }));
     } catch {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
         error: { deletingUpdates: true },
@@ -142,16 +142,16 @@ export function editCourseHandoutsQuery(courseId, data) {
   return async (dispatch) => {
     try {
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.PENDING }));
-      dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+      showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
       const courseHandouts = await editHandouts(courseId, data);
       dispatch(editCourseHandouts(courseHandouts));
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
         error: { savingHandouts: false },
       }));
     } catch {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
         error: { savingHandouts: true },

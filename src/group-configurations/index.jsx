@@ -7,7 +7,6 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { LoadingSpinner } from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
-import ProcessingNotification from '../generic/processing-notification';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
 import messages from './messages';
 import ContentGroupsSection from './content-groups-section';
@@ -27,8 +26,6 @@ const GroupConfigurations = () => {
     errorMessage,
     contentGroupActions,
     experimentConfigurationActions,
-    processingNotificationTitle,
-    isShowProcessingNotification,
     groupConfigurations: {
       allGroupConfigurations,
       shouldShowEnrollmentTrack,
@@ -128,10 +125,6 @@ const GroupConfigurations = () => {
         <SavingErrorAlert
           savingStatus={savingStatus}
           errorMessage={errorMessage}
-        />
-        <ProcessingNotification
-          isShow={isShowProcessingNotification}
-          title={processingNotificationTitle}
         />
       </div>
     </>

@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { initializeMocks, render, screen } from '../../testUtils';
+import { initializeMocks, render, screen } from '@src/testUtils';
 import ProcessingNotification from '.';
 
 const mockUndo = jest.fn();
