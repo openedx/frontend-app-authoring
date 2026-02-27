@@ -7,6 +7,7 @@ import GameEditor from './containers/GameEditor';
 // ADDED_EDITOR_IMPORTS GO HERE
 
 import { blockTypes } from './data/constants/app';
+import PdfEditor from "@src/editors/containers/PdfEditor";
 
 const supportedEditors = {
   [blockTypes.html]: TextEditor,
@@ -15,6 +16,7 @@ const supportedEditors = {
   [blockTypes.video_upload]: VideoUploadEditor,
   // ADDED_EDITORS GO BELOW
   [blockTypes.game]: GameEditor,
+  [blockTypes.pdf]: PdfEditor,
 } as const;
 
 export default supportedEditors;
