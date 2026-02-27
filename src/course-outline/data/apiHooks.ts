@@ -1,12 +1,21 @@
 import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
+import { addSection, duplicateSection, updateSectionList } from '@src/course-outline/data/slice';
+import {
+  ConfigureSectionData,
+  ConfigureSubsectionData,
+  ConfigureUnitData,
+  StaticFileNotices,
+} from '@src/course-outline/data/types';
+import { createGlobalState } from '@src/data/apiHooks';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
-import { getCourseKey } from '@src/generic/key-utils';
+import { getBlockType, getCourseKey } from '@src/generic/key-utils';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { ParentIds } from '@src/generic/types';
 import {
   QueryClient,
   skipToken, useMutation, useQuery, useQueryClient,
 } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
 import {
   createCourseXblock,
   type CreateCourseXBlockType,
@@ -15,6 +24,12 @@ import {
   getCourseDetails,
   getCourseItem,
   publishCourseItem,
+  configureCourseSection,
+  configureCourseSubsection,
+  configureCourseUnit,
+  updateCourseSectionHighlights,
+  duplicateCourseItem,
+  pasteBlock,
 } from './api';
 
 export const courseOutlineQueryKeys = {
@@ -26,6 +41,14 @@ export const courseOutlineQueryKeys = {
   courseItemId: (itemId?: string) => [
     ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId) : undefined),
     itemId,
+  ],
+  scrollToCourseItemId: (courseId?: string) => [
+    ...courseOutlineQueryKeys.course(courseId),
+    'scroll',
+  ],
+  pasteFileNotices: (courseId?: string) => [
+    ...courseOutlineQueryKeys.course(courseId),
+    'pasteFileNotices',
   ],
   courseDetails: (courseId?: string) => [
     ...courseOutlineQueryKeys.course(courseId),
@@ -41,6 +64,14 @@ export const courseOutlineQueryKeys = {
     { taskId },
   ],
 };
+
+type ScrollState = {
+  id?: string;
+};
+
+export const useScrollState = createGlobalState<ScrollState>(courseOutlineQueryKeys.scrollToCourseItemId, {
+  id: undefined,
+});
 
 /**
  * Invalidate parent Subsection and Section data.
@@ -72,23 +103,35 @@ type CreateCourseXBlockMutationProps = CreateCourseXBlockType & ParentIds;
  * @returns Mutation object for creating course blocks
  */
 export const useCreateCourseBlock = (
+  courseKey: string,
   callback?: ((locator: string, parentLocator: string) => Promise<void>),
 ) => {
   const queryClient = useQueryClient();
+  const { setData } = useScrollState(courseKey);
+  const dispatch = useDispatch();
   return useMutation({
     mutationFn: (variables: CreateCourseXBlockMutationProps) => createCourseXblock(variables),
-    onSettled: async (data: { locator: string; }, _err, variables) => {
+    onSuccess: async (data: { locator: string; }, variables) => {
       await callback?.(data.locator, variables.parentLocator);
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
       });
-      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      await invalidateParentQueries(queryClient, variables);
+      // scroll to newly added block
+      setData({ id: data.locator });
+      // if newly created block is chapter or section, fetch and add it to store
+      // all other types are handled by invalidateParentQueries and useCourseItemData
+      if (getBlockType(data.locator) === 'chapter') {
+        const newBlock = await getCourseItem(data.locator);
+        dispatch(addSection(newBlock));
+      }
     },
   });
 };
 
 export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initialData?: T, enabled: boolean = true) => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   return useQuery<T>({
     initialData,
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
@@ -110,6 +153,14 @@ export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initial
             });
           }
         });
+      }
+      // We update redux store section list to update children list in outline.
+      // Even though each block has its own hook to fetch data, new child blocks or deleted blocks
+      // won't be detected as the child blocks are rendered in the outline from the top level
+      // sectionList from redux store.
+      if (['chapter', 'section'].includes(data.category)) {
+        const payload = { [data.id]: data };
+        dispatch(updateSectionList(payload));
       }
       return data;
     } : skipToken,
@@ -169,6 +220,106 @@ export const useDeleteCourseItem = () => {
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+    },
+  });
+};
+
+export const useConfigureSection = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: ConfigureSectionData & ParentIds) => configureCourseSection(variables),
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
+      });
+      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+    },
+  });
+};
+
+export const useConfigureSubsection = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: ConfigureSubsectionData & ParentIds) => configureCourseSubsection(variables),
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
+      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+    },
+  });
+};
+
+export const useConfigureUnit = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.unitId)) });
+      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+    },
+  });
+};
+
+export const useUpdateCourseSectionHighlights = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: {
+      sectionId: string;
+      highlights: string[];
+    } & ParentIds) => updateCourseSectionHighlights(variables.sectionId, variables.highlights),
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
+      });
+      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+    },
+  });
+};
+
+export const useDuplicateItem = (courseKey: string) => {
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const { setData } = useScrollState(courseKey);
+  return useMutation({
+    mutationFn: (variables: {
+      itemId: string;
+      parentId: string;
+    } & ParentIds) => duplicateCourseItem(variables.itemId, variables.parentId),
+    onSuccess: async (data, variables) => {
+      await invalidateParentQueries(queryClient, variables);
+      // add duplicated section to store, subsection and unit are handled by invalidateParentQueries
+      if (getBlockType(variables.itemId) === 'chapter') {
+        const duplicatedItem = await getCourseItem(data.locator);
+        dispatch(duplicateSection({ id: variables.itemId, duplicatedItem }));
+      }
+      // scroll to newly added block
+      setData({ id: data.locator });
+    },
+  });
+};
+
+export const usePasteFileNotices = createGlobalState<StaticFileNotices>(
+  courseOutlineQueryKeys.pasteFileNotices,
+  {
+    newFiles: [],
+    conflictingFiles: [],
+    errorFiles: [],
+  },
+);
+
+export const usePasteItem = (courseId?: string) => {
+  const queryClient = useQueryClient();
+  const { setData: setScrollState } = useScrollState(courseId);
+  const { setData } = usePasteFileNotices(courseId);
+  return useMutation({
+    mutationFn: (variables: {
+      parentLocator: string;
+    } & ParentIds) => pasteBlock(variables.parentLocator),
+    onSuccess: async (data, variables) => {
+      await invalidateParentQueries(queryClient, variables);
+      // set pasteFileNotices
+      setData(data.staticFileNotices);
+      // scroll to pasted block
+      setScrollState({ id: data.locator });
     },
   });
 };

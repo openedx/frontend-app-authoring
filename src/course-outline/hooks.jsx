@@ -12,13 +12,21 @@ import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { useQueryClient } from '@tanstack/react-query';
-import { courseOutlineQueryKeys, useDeleteCourseItem } from '@src/course-outline/data/apiHooks';
+import {
+  courseOutlineQueryKeys,
+  useConfigureSection,
+  useConfigureSubsection,
+  useConfigureUnit,
+  useDeleteCourseItem,
+  useDuplicateItem,
+  usePasteItem,
+  useUpdateCourseSectionHighlights,
+} from '@src/course-outline/data/apiHooks';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   deleteSection,
   deleteSubsection,
   deleteUnit,
-  resetScrollField,
   updateSavingStatus,
 } from './data/slice';
 import {
@@ -33,23 +41,15 @@ import {
   getCreatedOn,
 } from './data/selectors';
 import {
-  duplicateSectionQuery,
-  duplicateSubsectionQuery,
-  duplicateUnitQuery,
   enableCourseHighlightsEmailsQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   fetchCourseReindexQuery,
-  updateCourseSectionHighlightsQuery,
-  configureCourseSectionQuery,
-  configureCourseSubsectionQuery,
-  configureCourseUnitQuery,
   setSectionOrderListQuery,
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
   setUnitOrderListQuery,
-  pasteClipboardContent,
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
@@ -57,7 +57,7 @@ import {
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
   const {
-    handleAddSection,
+    handleAddBlock,
     setCurrentSelection,
     currentSelection,
     currentUnlinkModalData,
@@ -99,18 +99,19 @@ const useCourseOutline = ({ courseId }) => {
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
-  const handlePasteClipboardClick = (parentLocator, sectionId) => {
-    dispatch(pasteClipboardContent(parentLocator, sectionId));
-  };
-
-  const resetScrollState = () => {
-    dispatch(resetScrollField());
+  const { mutate: pasteClipboardContent, isPending: isPasting } = usePasteItem(courseId);
+  const handlePasteClipboardClick = (parentLocator, subsectionId, sectionId) => {
+    pasteClipboardContent({
+      parentLocator,
+      subsectionId,
+      sectionId,
+    });
   };
 
   const headerNavigationsActions = {
     handleNewSection: () => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleAddSection.mutateAsync({
+      handleAddBlock.mutateAsync({
         type: ContainerType.Chapter,
         parentLocator: courseStructure?.id,
         displayName: COURSE_BLOCK_NAMES.chapter.name,
@@ -147,9 +148,16 @@ const useCourseOutline = ({ courseId }) => {
     openHighlightsModal();
   };
 
+  const {
+    mutate: updateCourseSectionHighlights,
+    isPending: isSectionHighlightsUpdatePending,
+  } = useUpdateCourseSectionHighlights();
   const handleHighlightsFormSubmit = (highlights) => {
     const dataToSend = Object.values(highlights).filter(Boolean);
-    dispatch(updateCourseSectionHighlightsQuery(currentSelection?.currentId, dataToSend));
+    updateCourseSectionHighlights({
+      sectionId: currentSelection?.currentId,
+      highlights: dataToSend,
+    });
 
     closeHighlightsModal();
   };
@@ -180,17 +188,41 @@ const useCourseOutline = ({ courseId }) => {
     });
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
 
-  const handleConfigureItemSubmit = (...arg) => {
+  const {
+    mutate: configureCourseSection,
+    isPending: isSectionConfigurePending,
+  } = useConfigureSection();
+  const {
+    mutate: configureCourseSubsection,
+    isPending: isSubsectionConfigurePending,
+  } = useConfigureSubsection();
+  const {
+    mutate: configureCourseUnit,
+    isPending: isUnitConfigurePending,
+  } = useConfigureUnit();
+  const isConfigureOpPending = isSectionConfigurePending || isSubsectionConfigurePending || isUnitConfigurePending;
+  const handleConfigureItemSubmit = (variables) => {
     const category = getBlockType(currentSelection.currentId);
     switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        dispatch(configureCourseSectionQuery(currentSelection?.sectionId, ...arg));
+        configureCourseSection({
+          sectionId: currentSelection?.sectionId,
+          ...variables,
+        });
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        dispatch(configureCourseSubsectionQuery(currentSelection?.currentId, currentSelection?.sectionId, ...arg));
+        configureCourseSubsection({
+          itemId: currentSelection?.currentId,
+          sectionId: currentSelection?.sectionId,
+          ...variables,
+        });
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
-        dispatch(configureCourseUnitQuery(currentSelection?.currentId, currentSelection?.sectionId, ...arg));
+        configureCourseUnit({
+          unitId: currentSelection?.currentId,
+          sectionId: currentSelection?.sectionId,
+          ...variables,
+        });
         break;
       default:
         // istanbul ignore next
@@ -264,20 +296,35 @@ const useCourseOutline = ({ courseId }) => {
     deleteSubsection,
   ]);
 
+  const {
+    mutate: duplicateItem,
+    isPending: isDuplicatingItem,
+  } = useDuplicateItem(courseId);
   const handleDuplicateSectionSubmit = () => {
-    dispatch(duplicateSectionQuery(currentSelection?.sectionId, courseStructure.id));
+    duplicateItem({
+      itemId: currentSelection?.currentId,
+      parentId: courseStructure.id,
+      sectionId: currentSelection?.sectionId,
+      subsectionId: currentSelection?.subsectionId,
+    });
   };
 
   const handleDuplicateSubsectionSubmit = () => {
-    dispatch(duplicateSubsectionQuery(currentSelection?.subsectionId, currentSelection?.sectionId));
+    duplicateItem({
+      itemId: currentSelection?.currentId,
+      parentId: currentSelection?.sectionId,
+      sectionId: currentSelection?.sectionId,
+      subsectionId: currentSelection?.subsectionId,
+    });
   };
 
   const handleDuplicateUnitSubmit = () => {
-    dispatch(duplicateUnitQuery(
-      currentSelection?.currentId,
-      currentSelection?.subsectionId,
-      currentSelection?.sectionId,
-    ));
+    duplicateItem({
+      itemId: currentSelection?.currentId,
+      parentId: currentSelection?.subsectionId,
+      sectionId: currentSelection?.sectionId,
+      subsectionId: currentSelection?.subsectionId,
+    });
   };
 
   const handleVideoSharingOptionChange = (value) => {
@@ -360,12 +407,14 @@ const useCourseOutline = ({ courseId }) => {
     isConfigureModalOpen,
     openConfigureModal,
     handleConfigureModalClose,
+    isConfigureOpPending,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
     statusBarData,
     isEnableHighlightsModalOpen,
+    isSectionHighlightsUpdatePending,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
     isInternetConnectionAlertFailed: isSavingStatusFailed,
@@ -380,9 +429,11 @@ const useCourseOutline = ({ courseId }) => {
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
+    isDuplicatingItem,
     handleDuplicateUnitSubmit,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
+    isPasting,
     notificationDismissUrl,
     discussionsSettings,
     discussionsIncontextLearnmoreUrl,
@@ -396,7 +447,6 @@ const useCourseOutline = ({ courseId }) => {
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
     errors,
-    resetScrollState,
     handleUnlinkItemSubmit,
   };
 };

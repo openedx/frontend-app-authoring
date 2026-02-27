@@ -19,7 +19,6 @@ CourseOutlineUnitCardExtraActionsSlot.propTypes = {
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
     actions: PropTypes.shape({
       deletable: PropTypes.bool.isRequired,
       draggable: PropTypes.bool.isRequired,
@@ -36,7 +35,6 @@ CourseOutlineUnitCardExtraActionsSlot.propTypes = {
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
     isTimeLimited: PropTypes.bool,
     graded: PropTypes.bool,
   }).isRequired,
@@ -46,7 +44,6 @@ CourseOutlineUnitCardExtraActionsSlot.propTypes = {
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
   }).isRequired,
 };
 

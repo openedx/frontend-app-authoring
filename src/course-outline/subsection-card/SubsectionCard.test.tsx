@@ -31,8 +31,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
     handleAddAndOpenUnit: handleOnAddUnitFromLibrary,
-    handleAddSubsection: {},
-    handleAddSection: {},
+    handleAddBlock: {},
     setCurrentSelection,
   }),
 }));
@@ -127,7 +126,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     onDuplicateSubmit={jest.fn()}
     onOpenConfigureModal={jest.fn()}
     onPasteClick={jest.fn()}
-    resetScrollState={jest.fn()}
     isSectionsExpanded={false}
     {...props}
   >
@@ -344,6 +342,7 @@ describe('<SubsectionCard />', () => {
       type: COMPONENT_TYPES.libraryV2,
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
       category: 'vertical',
+      sectionId: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
       libraryContentKey: containerKey,
     });
   });

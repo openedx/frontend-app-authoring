@@ -1,7 +1,4 @@
-/* eslint-disable import/named */
-import React from 'react';
 import * as Yup from 'yup';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ModalDialog,
@@ -13,13 +10,25 @@ import {
 } from '@openedx/paragon';
 import { Formik } from 'formik';
 
-import { VisibilityTypes } from '../../data/constants';
-import { COURSE_BLOCK_NAMES } from '../../constants';
+import { VisibilityTypes } from '@src/data/constants';
+import { COURSE_BLOCK_NAMES } from '@src/constants';
+import { AccessManagedXBlockDataTypes } from '@src/data/types';
 import messages from './messages';
 import BasicTab from './BasicTab';
 import VisibilityTab from './VisibilityTab';
 import AdvancedTab from './AdvancedTab';
 import { UnitTab } from './UnitTab';
+
+interface Props {
+  isOpen: boolean,
+  onClose: () => void;
+  onConfigureSubmit: (args: object) => void,
+  enableProctoredExams?: boolean,
+  enableTimedExams?: boolean,
+  currentItemData?: AccessManagedXBlockDataTypes,
+  isXBlockComponent?: boolean,
+  isSelfPaced?: boolean,
+}
 
 const ConfigureModal = ({
   isOpen,
@@ -30,8 +39,13 @@ const ConfigureModal = ({
   enableTimedExams = false,
   isXBlockComponent = false,
   isSelfPaced,
-}) => {
+}: Props) => {
   const intl = useIntl();
+
+  if (!currentItemData) {
+    return null;
+  }
+
   const {
     displayName,
     start: sectionStartDate,
@@ -61,10 +75,10 @@ const ConfigureModal = ({
     showReviewRules,
     onlineProctoringRules,
     discussionEnabled,
-  } = currentItemData || {};
+  } = currentItemData;
 
   const getSelectedGroups = () => {
-    if (userPartitionInfo?.selectedPartitionIndex >= 0) {
+    if ((userPartitionInfo?.selectedPartitionIndex || 0) >= 0) {
       return userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]
         ?.groups
         .filter(({ selected }) => selected)
@@ -147,27 +161,30 @@ const ConfigureModal = ({
     const groupAccess = {};
     switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        onConfigureSubmit(data.isVisibleToStaffOnly, releaseDate);
+        onConfigureSubmit({
+          isVisibleToStaffOnly: data.isVisibleToStaffOnly,
+          startDatetime: releaseDate,
+        });
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        onConfigureSubmit(
-          data.isVisibleToStaffOnly,
+        onConfigureSubmit({
+          isVisibleToStaffOnly: data.isVisibleToStaffOnly,
           releaseDate,
-          data.graderType,
-          data.dueDate,
-          data.isTimeLimited,
-          data.isProctoredExam,
-          data.isOnboardingExam,
-          data.isPracticeExam,
-          data.examReviewRules,
-          data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
-          data.hideAfterDue,
-          data.showCorrectness,
-          data.isPrereq,
-          data.prereqUsageKey,
-          data.prereqMinScore,
-          data.prereqMinCompletion,
-        );
+          graderType: data.graderType,
+          dueDate: data.dueDate,
+          isTimeLimited: data.isTimeLimited,
+          isProctoredExam: data.isProctoredExam,
+          isOnboardingExam: data.isOnboardingExam,
+          isPracticeExam: data.isPracticeExam,
+          examReviewRules: data.examReviewRules,
+          defaultTimeLimitMin: data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
+          hideAfterDue: data.hideAfterDue,
+          showCorrectness: data.showCorrectness,
+          isPrereq: data.isPrereq,
+          prereqUsageKey: data.prereqUsageKey,
+          prereqMinScore: data.prereqMinScore,
+          prereqMinCompletion: data.prereqMinCompletion,
+        });
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
       case COURSE_BLOCK_NAMES.libraryContent.id:
@@ -175,10 +192,14 @@ const ConfigureModal = ({
       case COURSE_BLOCK_NAMES.component.id:
         // groupAccess should be {partitionId: [group1, group2]} or {} if selectedPartitionIndex === -1
         if (data.selectedPartitionIndex >= 0) {
-          const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
+          const partitionId = userPartitionInfo!.selectablePartitions[data.selectedPartitionIndex].id;
           groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
         }
-        onConfigureSubmit(data.isVisibleToStaffOnly, groupAccess, data.discussionEnabled);
+        onConfigureSubmit({
+          isVisibleToStaffOnly: data.isVisibleToStaffOnly,
+          groupAccess,
+          discussionEnabled: data.discussionEnabled,
+        });
         break;
       default:
         break;
@@ -195,8 +216,8 @@ const ConfigureModal = ({
                 values={values}
                 setFieldValue={setFieldValue}
                 isSubsection={isSubsection}
-                courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
-                isSelfPaced={isSelfPaced}
+                courseGraders={courseGraders || []}
+                isSelfPaced={!!isSelfPaced}
               />
             </Tab>
             <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
@@ -218,8 +239,8 @@ const ConfigureModal = ({
                 values={values}
                 setFieldValue={setFieldValue}
                 isSubsection={isSubsection}
-                courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
-                isSelfPaced={isSelfPaced}
+                courseGraders={courseGraders || []}
+                isSelfPaced={!!isSelfPaced}
               />
             </Tab>
             <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
@@ -295,7 +316,7 @@ const ConfigureModal = ({
           {({
             values, handleSubmit, setFieldValue,
           }) => (
-            <>
+            <Form onSubmit={handleSubmit}>
               <ModalDialog.Body className="configure-modal__body">
                 <Form.Group size="sm" className="form-field">
                   {renderModalBody(values, setFieldValue)}
@@ -308,75 +329,18 @@ const ConfigureModal = ({
                   </ModalDialog.CloseButton>
                   <Button
                     data-testid="configure-save-button"
-                    onClick={handleSubmit}
+                    type="submit"
                   >
                     {intl.formatMessage(messages.saveButton)}
                   </Button>
                 </ActionRow>
               </ModalDialog.Footer>
-            </>
+            </Form>
           )}
         </Formik>
       </div>
     </ModalDialog>
   );
-};
-
-ConfigureModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onConfigureSubmit: PropTypes.func.isRequired,
-  enableProctoredExams: PropTypes.bool,
-  enableTimedExams: PropTypes.bool,
-  currentItemData: PropTypes.shape({
-    displayName: PropTypes.string,
-    start: PropTypes.string,
-    visibilityState: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-    due: PropTypes.string,
-    isTimeLimited: PropTypes.bool,
-    defaultTimeLimitMinutes: PropTypes.number,
-    hideAfterDue: PropTypes.bool,
-    showCorrectness: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-    courseGraders: PropTypes.arrayOf(PropTypes.string),
-    category: PropTypes.string,
-    format: PropTypes.string,
-    userPartitionInfo: PropTypes.shape({
-      selectablePartitions: PropTypes.arrayOf(PropTypes.shape({
-        groups: PropTypes.arrayOf(PropTypes.shape({
-          deleted: PropTypes.bool,
-          id: PropTypes.number,
-          name: PropTypes.string,
-          selected: PropTypes.bool,
-        })),
-        id: PropTypes.number,
-        name: PropTypes.string,
-        scheme: PropTypes.string,
-      })),
-      selectedPartitionIndex: PropTypes.number,
-      selectedGroupsLabel: PropTypes.string,
-    }),
-    ancestorHasStaffLock: PropTypes.bool,
-    isPrereq: PropTypes.bool,
-    prereqs: PropTypes.arrayOf({
-      blockDisplayName: PropTypes.string,
-      blockUsageKey: PropTypes.string,
-    }),
-    prereq: PropTypes.string,
-    prereqMinScore: PropTypes.number,
-    prereqMinCompletion: PropTypes.number,
-    releasedToStudents: PropTypes.bool,
-    wasExamEverLinkedWithExternal: PropTypes.bool,
-    isProctoredExam: PropTypes.bool,
-    isOnboardingExam: PropTypes.bool,
-    isPracticeExam: PropTypes.bool,
-    examReviewRules: PropTypes.string,
-    supportsOnboarding: PropTypes.bool,
-    showReviewRules: PropTypes.bool,
-    onlineProctoringRules: PropTypes.string,
-    discussionEnabled: PropTypes.bool,
-  }),
-  isXBlockComponent: PropTypes.bool,
-  isSelfPaced: PropTypes.bool.isRequired,
 };
 
 export default ConfigureModal;

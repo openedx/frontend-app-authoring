@@ -22,8 +22,9 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SectionCardProps {
@@ -39,7 +40,6 @@ interface SectionCardProps {
   index: number,
   canMoveItem: (oldIndex: number, newIndex: number) => boolean,
   onOrderChange: (oldIndex: number, newIndex: number) => void,
-  resetScrollState: () => void,
 }
 
 const SectionCard = ({
@@ -55,7 +55,6 @@ const SectionCard = ({
   onDuplicateSubmit,
   isSectionsExpanded,
   onOrderChange,
-  resetScrollState,
 }: SectionCardProps) => {
   const currentRef = useRef(null);
   const { activeId, overId } = useContext(DragContext);
@@ -68,6 +67,7 @@ const SectionCard = ({
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
+  const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
   const isScrolledToElement = locatorId === section?.id;
 
   // Expand the section if a search result should be shown/scrolled to
@@ -153,13 +153,13 @@ const SectionCard = ({
   }, [activeId, overId]);
 
   useEffect(() => {
-    if (currentRef.current && (section.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (scrollState?.id === section.id || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop, true);
-      resetScrollState();
+      resetScrollState().catch((error) => handleResponseErrors(error));
     }
-  }, [isScrolledToElement]);
+  }, [isScrolledToElement, scrollState, resetScrollState]);
 
   useEffect(() => {
     // If the locatorId is set/changed, we need to make sure that the section is expanded

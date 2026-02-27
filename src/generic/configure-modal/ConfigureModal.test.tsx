@@ -4,6 +4,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 
+import { AccessManagedXBlockDataTypes } from '@src/data/types';
 import initializeStore from '../../store';
 import ConfigureModal from './ConfigureModal';
 import {
@@ -39,7 +40,7 @@ const renderComponent = () => render(
         isOpen
         onClose={onCloseMock}
         onConfigureSubmit={onConfigureSubmitMock}
-        currentItemData={currentSectionMock}
+        currentItemData={currentSectionMock as unknown as AccessManagedXBlockDataTypes}
         isSelfPaced={false}
       />
     </IntlProvider>,
@@ -82,14 +83,14 @@ describe('<ConfigureModal /> for Section', () => {
   });
 });
 
-const renderSubsectionComponent = (props) => render(
+const renderSubsectionComponent = (props?: object) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
       <ConfigureModal
         isOpen
         onClose={onCloseMock}
         onConfigureSubmit={onConfigureSubmitMock}
-        currentItemData={currentSubsectionMock}
+        currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
         isSelfPaced={false}
         {...props}
       />
@@ -172,14 +173,14 @@ describe('<ConfigureModal /> for Subsection', () => {
   });
 });
 
-const renderUnitComponent = (props) => render(
+const renderUnitComponent = (props?: object) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
       <ConfigureModal
         isOpen
         onClose={onCloseMock}
         onConfigureSubmit={onConfigureSubmitMock}
-        currentItemData={currentUnitMock}
+        currentItemData={currentUnitMock as unknown as AccessManagedXBlockDataTypes}
         {...props}
       />
     </IntlProvider>,
@@ -238,7 +239,7 @@ describe('<ConfigureModal /> for Unit', () => {
   });
 });
 
-const renderXBlockComponent = (props) => render(
+const renderXBlockComponent = (props?: object) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
       <ConfigureModal
@@ -246,7 +247,7 @@ const renderXBlockComponent = (props) => render(
         isXBlockComponent
         onClose={onCloseMock}
         onConfigureSubmit={onConfigureSubmitMock}
-        currentItemData={currentXBlockMock}
+        currentItemData={currentXBlockMock as unknown as AccessManagedXBlockDataTypes}
         {...props}
       />
     </IntlProvider>,
@@ -325,7 +326,7 @@ describe('<ConfigureModal /> with enableTimedExams prop', () => {
           isOpen
           onClose={onCloseMock}
           onConfigureSubmit={onConfigureSubmitMock}
-          currentItemData={currentSubsectionMock}
+          currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
           enableTimedExams={enableTimedExams}
           isSelfPaced={false}
         />
@@ -393,8 +394,8 @@ describe('<ConfigureModal /> with enableTimedExams prop', () => {
 
     const buttons = getByRole('tab', {
       name: messages.advancedTabTitle.defaultMessage,
-    }).parentElement.querySelectorAll('button');
-    expect(buttons.length).toBeGreaterThan(0);
+    }).parentElement?.querySelectorAll('button');
+    expect(buttons?.length).toBeGreaterThan(0);
   });
 
   it('defaults enableTimedExams to false when not provided', async () => {
@@ -407,7 +408,7 @@ describe('<ConfigureModal /> with enableTimedExams prop', () => {
             isOpen
             onClose={onCloseMock}
             onConfigureSubmit={onConfigureSubmitMock}
-            currentItemData={currentSubsectionMock}
+            currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
             isSelfPaced={false}
           />
         </IntlProvider>

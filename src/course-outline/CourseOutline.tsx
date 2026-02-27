@@ -71,10 +71,8 @@ const CourseOutline = () => {
   const {
     courseId,
     courseUsageKey,
-    handleAddSubsection,
-    handleAddUnit,
+    handleAddBlock,
     handleAddAndOpenUnit,
-    handleAddSection,
     isUnlinkModalOpen,
     closeUnlinkModal,
     currentSelection,
@@ -97,6 +95,7 @@ const CourseOutline = () => {
     isDisabledReindexButton,
     isHighlightsModalOpen,
     isConfigureModalOpen,
+    isConfigureOpPending,
     isDeleteModalOpen,
     closeHighlightsModal,
     handleConfigureModalClose,
@@ -109,14 +108,17 @@ const CourseOutline = () => {
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
+    isSectionHighlightsUpdatePending,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
+    isDuplicatingItem,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
+    isPasting,
     notificationDismissUrl,
     discussionsSettings,
     discussionsIncontextLearnmoreUrl,
@@ -129,7 +131,6 @@ const CourseOutline = () => {
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
     errors,
-    resetScrollState,
     handleUnlinkItemSubmit,
   } = useCourseOutline({ courseId });
 
@@ -386,7 +387,6 @@ const CourseOutline = () => {
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
                                     onOrderChange={updateSectionOrderByIndex}
-                                    resetScrollState={resetScrollState}
                                   >
                                     <SortableContext
                                       id={section.id}
@@ -413,7 +413,6 @@ const CourseOutline = () => {
                                           onOpenConfigureModal={openConfigureModal}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
-                                          resetScrollState={resetScrollState}
                                         >
                                           <SortableContext
                                             id={subsection.id}
@@ -523,10 +522,12 @@ const CourseOutline = () => {
           // Show processing toast if any mutation is running
           isShow={
             isShowProcessingNotification
-            || handleAddUnit.isPending
+            || handleAddBlock.isPending
             || handleAddAndOpenUnit.isPending
-            || handleAddSubsection.isPending
-            || handleAddSection.isPending
+            || isConfigureOpPending
+            || isSectionHighlightsUpdatePending
+            || isDuplicatingItem
+            || isPasting
           }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}

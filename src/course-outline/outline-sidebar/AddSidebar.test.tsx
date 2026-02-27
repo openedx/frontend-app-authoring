@@ -21,7 +21,7 @@ import type { ContainerType } from '@src/generic/key-utils';
 import { XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { snakeCaseKeys } from '@src/editors/utils';
-import { getXBlockBaseApiUrl } from '@src/course-outline/data/api';
+import { getXBlockApiUrl, getXBlockBaseApiUrl } from '@src/course-outline/data/api';
 import MockAdapter from 'axios-mock-adapter/types';
 import { AddSidebar } from './AddSidebar';
 
@@ -199,10 +199,13 @@ describe('AddSidebar', () => {
     const sectionId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chapter123';
     axiosMock.onPost(getXBlockBaseApiUrl())
       .reply(200, { locator: sectionId });
+    axiosMock.onGet(getXBlockApiUrl(sectionId))
+      .reply(200, {});
     renderComponent();
 
     const subsection = await screen.findByRole('button', { name: 'Subsection' });
     await user.click(subsection);
+    await waitFor(() => expect(axiosMock.history.post.length).toBeGreaterThan(1));
     // should add a section first
     expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
       type: 'chapter',
@@ -250,6 +253,8 @@ describe('AddSidebar', () => {
       .reply(200, { locator: subsectionId });
     axiosMock.onPost(getXBlockBaseApiUrl(), unitBody)
       .reply(200, { locator: unitId });
+    axiosMock.onGet(getXBlockApiUrl(sectionId))
+      .reply(200, {});
     renderComponent();
 
     const unit = await screen.findByRole('button', { name: 'Unit' });

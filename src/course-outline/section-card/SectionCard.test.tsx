@@ -26,8 +26,6 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
-    handleAddSubsectionFromLibrary: jest.fn(),
-    handleNewSubsectionSubmit: jest.fn(),
     setCurrentSelection,
   }),
 }));
@@ -99,7 +97,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     isSectionsExpanded
     isSelfPaced={false}
     isCustomRelativeDatesActive={false}
-    resetScrollState={jest.fn()}
     {...props}
   >
     <span>children</span>
