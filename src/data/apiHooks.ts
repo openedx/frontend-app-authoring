@@ -160,9 +160,6 @@ export function createGlobalState<T>(
       await queryClient.invalidateQueries({
         queryKey,
       });
-      await queryClient.refetchQueries({
-        queryKey,
-      });
     }
 
     return { data, setData, resetData };

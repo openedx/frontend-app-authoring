@@ -236,7 +236,7 @@ export async function configureCourseSection(variables: ConfigureSectionData): P
 }
 
 /**
- * Configure course section
+ * Configure course subsection
  */
 export async function configureCourseSubsection(variables: ConfigureSubsectionData): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()

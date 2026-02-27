@@ -98,7 +98,7 @@ export interface ConfigureSectionData {
 
 export interface ConfigureSubsectionData {
   itemId: string,
-  isVisibleToStaffOnly: string,
+  isVisibleToStaffOnly: boolean,
   releaseDate: string,
   graderType: string,
   dueDate: string,
