@@ -32,6 +32,7 @@ export interface TaxonomyListData {
 export interface QueryOptions {
   pageIndex: number;
   pageSize: number;
+  enabled?: boolean;
 }
 
 export interface TagData {
