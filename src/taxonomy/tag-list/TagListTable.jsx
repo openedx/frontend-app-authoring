@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState, useMemo, useEffect, useReducer, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useReducer } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Toast, Card, ActionRow, Icon, IconButton, IconButtonWithTooltip } from '@openedx/paragon';
 import { Add, AddCircle } from '@openedx/paragon/icons';
@@ -366,7 +366,6 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   const [tableMode, dispatchTableMode] = useReducer(tableModeReducer, TABLE_MODES.VIEW);
   const [tagTree, setTagTree] = useState(/** @type {TagTree | null} */(null));
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
-  const modeBeforeDraftRef = useRef(TABLE_MODES.VIEW);
 
   const transitionTableMode = (targetMode) => {
     if (targetMode === tableMode) {
@@ -376,14 +375,11 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   };
 
   const enterDraftMode = () => {
-    modeBeforeDraftRef.current = tableMode;
     transitionTableMode(TABLE_MODES.DRAFT);
   };
 
   const exitDraftWithoutSave = () => {
-    const previousMode = modeBeforeDraftRef.current;
-    const targetMode = previousMode === TABLE_MODES.WRITE ? TABLE_MODES.WRITE : TABLE_MODES.VIEW;
-    transitionTableMode(targetMode);
+    transitionTableMode(TABLE_MODES.WRITE);
   };
 
   const applyLocalTagPreview = (value, parentTagValue = null) => {
@@ -490,7 +486,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       pagination,
     },
     onPaginationChange: handlePaginationChange,
-    getSubRows: (row) => row.subRows || null,
+    getSubRows: (row) => row.subRows || undefined,
   });
 
   return (
