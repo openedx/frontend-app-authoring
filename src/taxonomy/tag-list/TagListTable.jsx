@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useReducer } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Toast, Card, ActionRow, Icon, IconButton, IconButtonWithTooltip } from '@openedx/paragon';
 import { Add, AddCircle } from '@openedx/paragon/icons';
@@ -32,10 +32,21 @@ const TRANSITION_TABLE = {
   [TABLE_MODES.WRITE]: [TABLE_MODES.DRAFT, TABLE_MODES.VIEW],
 }
 
-const switchMode = (currentMode, targetMode) => {
+const TABLE_MODE_ACTIONS = {
+  TRANSITION: 'transition',
+};
+
+/** @type {import('react').Reducer<string, { type: string, targetMode: string }>} */
+const tableModeReducer = (currentMode, action) => {
+  if (action?.type !== TABLE_MODE_ACTIONS.TRANSITION) {
+    throw new Error(`Unknown table mode action: ${action?.type}`);
+  }
+
+  const { targetMode } = action;
   if (TRANSITION_TABLE[currentMode].includes(targetMode)) {
     return targetMode;
   }
+
   throw new Error(`Invalid table mode transition from ${currentMode} to ${targetMode}`);
 };
 
@@ -341,7 +352,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   const [editingRowId, setEditingRowId] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
 
-  const [tableMode, setTableMode] = useState(TABLE_MODES.VIEW);
+  const [tableMode] = useReducer(tableModeReducer, TABLE_MODES.VIEW);
   const [tagTree, setTagTree] = useState(null);
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
 
