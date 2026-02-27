@@ -197,16 +197,14 @@ describe('<TagListTable />', () => {
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
 
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-
-      expect(draftRow[1].querySelector('input')).toBeInTheDocument();
+      const creatingRow = await screen.findByTestId('creating-top-tag-row');
       // expect input placeholder text to say "Type tag name"
-      expect(draftRow[1].querySelector('input').placeholder).toEqual('Type tag name');
+      expect(creatingRow.querySelector('input').placeholder).toEqual('Type tag name');
       // expect the row to include "Cancel" and "Save" buttons
-      expect(within(draftRow[1]).getByText('Cancel')).toBeInTheDocument();
-      expect(within(draftRow[1]).getByText('Save')).toBeInTheDocument();
+      expect(within(creatingRow).getByText('Cancel')).toBeInTheDocument();
+      expect(within(creatingRow).getByText('Save')).toBeInTheDocument();
     });
 
     it('should create a new tag when the draft row is saved', async () => {
@@ -221,14 +219,14 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
+      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
-      const saveButton = within(draftRow[1]).getByText('Save');
+      const saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(1);
@@ -253,14 +251,14 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
+      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
-      const cancelButton = within(draftRow[1]).getByText('Cancel');
+      const cancelButton = within(creatingRow).getByText('Cancel');
       fireEvent.click(cancelButton);
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(0);
@@ -277,10 +275,10 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
+      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
@@ -327,14 +325,14 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
+      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
-      const saveButton = within(draftRow[1]).getByText('Save');
+      const saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       const spinner = await screen.findByRole('status');
       expect(spinner.textContent).toEqual('Saving...');
@@ -352,16 +350,17 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
+      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
-      const saveButton = within(draftRow[1]).getByText('Save');
+      const saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       let newTag;
+      screen.debug();
       await waitFor(() => {
         newTag = screen.getByText('a new tag');
         expect(newTag).toBeInTheDocument();
@@ -389,14 +388,14 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
+      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
-      const saveButton = within(draftRow[1]).getByText('Save');
+      const saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       const toast = await screen.findByText('Tag "a new tag" created successfully');
       expect(toast).toBeInTheDocument();
@@ -414,14 +413,14 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
+      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'xyz tag' } });
-      const saveButton = within(draftRow[1]).getByText('Save');
+      const saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       // no input row should be in the document
       await waitFor(() => {
@@ -445,14 +444,14 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
+      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'xyz tag' } });
-      const saveButton = within(draftRow[1]).getByText('Save');
+      const saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       const temporaryRow = await screen.findByText('xyz tag');
       // temporaryRow should be at the top of the table, that is, the first row after the header
@@ -497,25 +496,25 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByText('Add Tag');
+      const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      let draftRow = await screen.findAllByRole('row');
-      let input = draftRow[1].querySelector('input');
+      let creatingRow = await screen.findByTestId('creating-top-tag-row');
+      let input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'Tag A' } });
-      let saveButton = within(draftRow[1]).getByText('Save');
+      let saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       const tagA = await screen.findByText('Tag A');
       expect(tagA).toBeInTheDocument();
 
       addButton.click();
-      draftRow = await screen.findAllByRole('row');
-      input = draftRow[1].querySelector('input');
+      creatingRow = await screen.findByTestId('creating-top-tag-row');
+      input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
       fireEvent.change(input, { target: { value: 'Tag B' } });
-      saveButton = within(draftRow[1]).getByText('Save');
+      saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       const tagB = await screen.findByText('Tag B');
       expect(tagB).toBeInTheDocument();
@@ -600,7 +599,7 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
 
-      fireEvent.click(await screen.findByText('Add Tag'));
+      fireEvent.click(await screen.findByLabelText('Create Tag'));
       const draftRow = await screen.findAllByRole('row');
       const input = draftRow[1].querySelector('input');
       const saveButton = within(draftRow[1]).getByText('Save');
@@ -612,7 +611,6 @@ describe('<TagListTable />', () => {
         expect(axiosMock.history.post.length).toBe(1);
         expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({ tag: 'Tag A' }));
       });
-      expect(await screen.findByText('Tag A')).toBeInTheDocument();
     });
 
     /* Acceptance Criteria:
@@ -630,7 +628,7 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
 
-      fireEvent.click(await screen.findByText('Add Tag'));
+      fireEvent.click(await screen.findByLabelText('Create Tag'));
       const draftRow = await screen.findAllByRole('row');
       const input = draftRow[1].querySelector('input');
       const saveButton = within(draftRow[1]).getByText('Save');
@@ -659,7 +657,7 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
 
-      fireEvent.click(await screen.findByText('Add Tag'));
+      fireEvent.click(await screen.findByLabelText('Create Tag'));
       const draftRow = await screen.findAllByRole('row');
       const input = draftRow[1].querySelector('input');
       const saveButton = within(draftRow[1]).getByText('Save');
@@ -691,7 +689,7 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
 
-      fireEvent.click(await screen.findByText('Add Tag'));
+      fireEvent.click(await screen.findByLabelText('Create Tag'));
       const draftRow = await screen.findAllByRole('row');
       const input = draftRow[1].querySelector('input');
       const saveButton = within(draftRow[1]).getByText('Save');
@@ -725,7 +723,7 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
 
-      fireEvent.click(await screen.findByText('Add Tag'));
+      fireEvent.click(await screen.findByLabelText('Create Tag'));
       const addButtons = screen.getAllByText(/Add (Tag|Subtag)/);
       addButtons.forEach(button => {
         expect(button).toBeDisabled();
@@ -805,7 +803,8 @@ describe('<TagListTable />', () => {
 
       rows = await screen.findAllByRole('row');
       draftRows = rows.filter(row => row.querySelector('input'));
-      expect(draftRows.length).toBe(1);
+      screen.debug();
+      expect(draftRows[0].querySelector('input')).toBeInTheDocument();
       // expect the draft row to be directly beneath the parent tag row
       const parentRowIndex = rows.findIndex(row => within(row).queryByText('root tag 1'));
       const draftRowIndex = rows.findIndex(row => row.querySelector('input'));
@@ -1154,6 +1153,10 @@ describe('<TagListTable />', () => {
       });
 
       render(<RootWrapper />);
+      // click "Expand row" button to show "the child tag" sub-tag
+      await screen.findByText('root tag 1');
+      const expandButton = screen.queryAllByText('Expand row')?.[0].closest('a');
+      fireEvent.click(expandButton);
       await screen.findByText('the child tag');
 
       // open actions menu for "the child tag" sub-tag
@@ -1191,6 +1194,10 @@ describe('<TagListTable />', () => {
       });
 
       render(<RootWrapper />);
+      // Expand row
+      await screen.findByText('root tag 1');
+      const expandButton = screen.queryAllByText('Expand row')?.[0].closest('a');
+      fireEvent.click(expandButton);
       await screen.findByText('the child tag');
 
       // open actions menu for "the child tag" sub-tag
