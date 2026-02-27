@@ -200,7 +200,16 @@ export interface EditorState {
 
 export { actions, selectors };
 
-export function initializeStore(preloadedState = undefined) {
+type RecursivePartial<T> = {
+  [P in keyof T]?:
+  T[P] extends (infer U)[] ? RecursivePartial<U>[] :
+    T[P] extends object | undefined ? RecursivePartial<T[P]> :
+      T[P];
+};
+
+export type PartialEditorState = RecursivePartial<EditorState>;
+
+export function initializeStore(preloadedState?: PartialEditorState) {
   return configureStore({
     reducer: editorReducer,
     preloadedState,

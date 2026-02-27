@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, initializeMocks } from '@src/testUtils';
-import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
-import { thunkActions } from '@src/editors/data/redux';
+import { editorRender } from '@src/editors/editorTestRender';
+import { type PartialEditorState, thunkActions } from '@src/editors/data/redux';
 
 import ProblemEditor from './index';
 import messages from './messages';

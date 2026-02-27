@@ -283,7 +283,7 @@ const FileTable = ({
           }}
         />
       </DataTable>
-      <FileInput key="generic-file-upload" fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} />
+      <FileInput key="generic-file-upload" fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} id="generic-file-upload-field" />
       {!isEmpty(selectedRows) && (
         <InfoModal
           file={selectedRows[0].original}

@@ -1,7 +1,8 @@
 import React from 'react';
 import { screen, fireEvent, initializeMocks } from '@src/testUtils';
-import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
+import { editorRender } from '@src/editors/editorTestRender';
 import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
+import { type PartialEditorState } from '@src/editors/data/redux';
 import EditProblemView from './index';
 
 const { saveBlock } = require('../../../../hooks');

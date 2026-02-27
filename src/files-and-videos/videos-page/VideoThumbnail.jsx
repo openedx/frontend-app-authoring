@@ -106,6 +106,7 @@ const VideoThumbnail = ({
           fileInput={fileInputControl}
           supportedFileFormats={supportedFiles}
           allowMultiple={false}
+          id="video-thumbnail-upload"
         />
       )}
     </div>

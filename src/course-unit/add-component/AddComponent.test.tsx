@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 import userEvent from '@testing-library/user-event';
 
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import {
   act,
   render,
@@ -316,6 +317,55 @@ describe('<AddComponent />', () => {
           });
         }
       });
+    });
+  });
+
+  it('adds a PDF block from the advanced selection in modal as an mfe-editable block', async () => {
+    const user = userEvent.setup();
+    const {
+      getByRole, queryAllByRole, queryAllByText,
+    } = renderComponent();
+    const advancedBtn = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
+    });
+
+    await user.click(advancedBtn);
+
+    const dialog = getByRole('dialog');
+    const pdfOption = within(dialog).getByLabelText('PDF');
+    await user.click(pdfOption);
+    const confirmation = within(dialog).getByText('Select');
+    await user.click(confirmation);
+    await waitFor(() => expect(queryAllByRole('dialog')).toEqual([]));
+    expect(queryAllByText('PDF')).toEqual([]);
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: COMPONENT_TYPES.pdf,
+    }, expect.any(Function));
+  });
+
+  it('adds a PDF block from the advanced selection in modal as a traditional block', async () => {
+    const user = userEvent.setup();
+    mockWaffleFlags({ useNewPdfEditor: false });
+    const { getByRole, queryAllByRole } = renderComponent();
+    const advancedBtn = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
+    });
+
+    await user.click(advancedBtn);
+
+    const dialog = getByRole('dialog');
+    const pdfOption = within(dialog).getByLabelText('PDF');
+    await user.click(pdfOption);
+    const confirmation = within(dialog).getByText('Select');
+    await user.click(confirmation);
+    await waitFor(() => expect(queryAllByRole('dialog')).toEqual([]));
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: COMPONENT_TYPES.pdf,
+      category: COMPONENT_TYPES.pdf,
     });
   });
 

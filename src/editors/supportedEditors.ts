@@ -1,3 +1,4 @@
+import PdfEditor from '@src/editors/containers/PdfEditor';
 import TextEditor from './containers/TextEditor';
 import VideoEditor from './containers/VideoEditor';
 import ProblemEditor from './containers/ProblemEditor';
@@ -15,6 +16,7 @@ const supportedEditors = {
   [blockTypes.video_upload]: VideoUploadEditor,
   // ADDED_EDITORS GO BELOW
   [blockTypes.game]: GameEditor,
+  [blockTypes.pdf]: PdfEditor,
 } as const;
 
 export default supportedEditors;

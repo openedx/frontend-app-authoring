@@ -127,3 +127,8 @@ export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
 export const validateNumericInputUrl = (({ studioEndpointUrl }) => (
   `${studioEndpointUrl}/api/contentstore/v2/validate/numerical-input/`
 )) satisfies UrlFunction;
+
+// There's also a 'handlerUrl', but it's different for some reason. Not sure what one has to do to use the 'v2' URLs.
+export const xblockHandlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
+  `${studioEndpointUrl}/xblock/${blockId}/handler/${handlerName}`
+)) satisfies UrlFunction;
