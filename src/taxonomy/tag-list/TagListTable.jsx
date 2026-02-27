@@ -1,8 +1,18 @@
 // @ts-check
 import React, { useState, useMemo, useEffect, useReducer } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Toast, Card, ActionRow, Icon, IconButton, IconButtonWithTooltip } from '@openedx/paragon';
-import { Add, AddCircle } from '@openedx/paragon/icons';
+import {
+  Button,
+  Toast,
+  Card,
+  ActionRow,
+  Icon,
+  IconButton,
+  IconButtonWithTooltip,
+  Spinner,
+  Pagination,
+} from '@openedx/paragon';
+import { AddCircle, MoreVert } from '@openedx/paragon/icons';
 import { isEqual, set } from 'lodash';
 import Proptypes from 'prop-types';
 
@@ -36,6 +46,19 @@ const TABLE_MODE_ACTIONS = {
   TRANSITION: 'transition',
 };
 
+const TAG_NAME_PATTERN = /^[\w\- ]+$/;
+
+const getInlineValidationMessage = (value) => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return 'Name is required';
+  }
+  if (!TAG_NAME_PATTERN.test(trimmed)) {
+    return 'Invalid character in tag name';
+  }
+  return '';
+};
+
 /** @type {import('react').Reducer<string, { type: string, targetMode: string }>} */
 const tableModeReducer = (currentMode, action) => {
   if (action?.type !== TABLE_MODE_ACTIONS.TRANSITION) {
@@ -53,12 +76,33 @@ const tableModeReducer = (currentMode, action) => {
 /**
  * 1. Reusable Editable Cell
  */
-const EditableCell = ({ initialValue, onSave, onCancel }) => {
+const EditableCell = ({
+  initialValue,
+  onSave,
+  onCancel,
+  errorMessage,
+  isSaving,
+}) => {
   const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  const validationMessage = getInlineValidationMessage(value);
+  const effectiveErrorMessage = errorMessage || validationMessage;
+  const isSaveDisabled = Boolean(validationMessage) || isSaving;
+
+  const handleSave = () => {
+    if (!isSaveDisabled) {
+      onSave(value);
+    }
+  };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      e.target.blur(); // Trigger onBlur to save
+      e.preventDefault();
+      handleSave();
     } else if (e.key === 'Escape') {
       onCancel();
     }
@@ -77,17 +121,29 @@ const EditableCell = ({ initialValue, onSave, onCancel }) => {
           onClick={(e) => e.stopPropagation()}
           placeholder='Type tag name'
         />
+        {effectiveErrorMessage && (
+          <div className="text-danger small mt-1">{effectiveErrorMessage}</div>
+        )}
       </span>
       <span className='mr-2'>
-        <Button variant="secondary" size="sm" onClick={onCancel}>
+        <Button variant="secondary" size="sm" onClick={onCancel} disabled={isSaving}>
           Cancel
         </Button>
       </span>
       <span className='mr-2'>
-        <Button variant="primary" size="sm" onClick={() => onSave(value)}>
+        <Button variant="primary" size="sm" onClick={handleSave} disabled={isSaveDisabled}>
           Save
         </Button>
       </span>
+      {isSaving && (
+        <Spinner
+          animation="border"
+          role="status"
+          variant="primary"
+          size="sm"
+          screenReaderText="Saving..."
+        />
+      )}
     </span>
   );
 };
@@ -96,10 +152,14 @@ EditableCell.propTypes = {
   initialValue: Proptypes.string,
   onSave: Proptypes.func.isRequired,
   onCancel: Proptypes.func.isRequired,
+  errorMessage: Proptypes.string,
+  isSaving: Proptypes.bool,
 };
 
 EditableCell.defaultProps = {
   initialValue: '',
+  errorMessage: '',
+  isSaving: false,
 };
 
 /**
@@ -118,9 +178,13 @@ const SubTagsExpanded = ({
   setCreatingParentId,
   setEditingRowId,
   maxDepth,
+  draftError,
+  isSavingDraft,
+  onStartDraft,
+  setIsCreatingTopTag,
+  setDraftError,
 }) => {
   const columnCount = subTagsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
-  const showAddSubTagButton = maxDepth > 0;
 
   return (
     <>
@@ -128,8 +192,13 @@ const SubTagsExpanded = ({
         <tr>
           <td colSpan={columnCount} style={{ padding: '8px 8px 8px 0' }}>
             <EditableCell
+              errorMessage={draftError}
+              isSaving={isSavingDraft}
               onSave={(val) => onSaveNewSubTag(val, parentTagValue)}
-              onCancel={onCancelCreation}
+              onCancel={() => {
+                setDraftError('');
+                onCancelCreation();
+              }}
             />
           </td>
         </tr>
@@ -140,7 +209,6 @@ const SubTagsExpanded = ({
           <React.Fragment key={tagData.id}>
             <tr style={{ borderBottom: '1px solid #eee' }}>
               {row.getVisibleCells()
-                .filter(cell => showAddSubTagButton || cell.column.id !== 'add')
                 .map(cell => (
                   <td key={cell.id} style={{ padding: '8px' }}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -164,7 +232,12 @@ const SubTagsExpanded = ({
                   editingRowId={editingRowId}
                   setCreatingParentId={setCreatingParentId}
                   setEditingRowId={setEditingRowId}
-                  maxDepth={maxDepth - 1}
+                  maxDepth={maxDepth}
+                  draftError={draftError}
+                  isSavingDraft={isSavingDraft}
+                  onStartDraft={onStartDraft}
+                  setIsCreatingTopTag={setIsCreatingTopTag}
+                  setDraftError={setDraftError}
                 />
               </td>
             </tr>
@@ -189,6 +262,11 @@ SubTagsExpanded.propTypes = {
   setCreatingParentId: Proptypes.func,
   setEditingRowId: Proptypes.func,
   maxDepth: Proptypes.number,
+  draftError: Proptypes.string,
+  isSavingDraft: Proptypes.bool,
+  onStartDraft: Proptypes.func,
+  setIsCreatingTopTag: Proptypes.func,
+  setDraftError: Proptypes.func,
 };
 
 /**
@@ -218,7 +296,17 @@ function getColumns({
   setEditingRowId,
   setToast,
   onStartDraft,
+  activeActionMenuRowId,
+  setActiveActionMenuRowId,
+  hasOpenDraft,
+  draftError,
+  setDraftError,
+  isSavingDraft,
+  maxDepth,
+  creatingParentId,
 }) {
+  const canAddSubtag = (row) => row.original.depth < maxDepth;
+
   return [
     {
       header: intl.formatMessage(messages.tagListColumnValueHeader),
@@ -228,8 +316,13 @@ function getColumns({
         if (isNew) {
           return (
             <EditableCell
+              errorMessage={draftError}
+              isSaving={isSavingDraft}
               onSave={(value) => handleCreateTopTag(value, setToast)}
-              onCancel={() => setIsCreatingTopTag(false)} />
+              onCancel={() => {
+                setDraftError('');
+                setIsCreatingTopTag(false);
+              }} />
           );
         }
 
@@ -237,8 +330,12 @@ function getColumns({
           return (
             <EditableCell
               initialValue={value}
+              errorMessage={draftError}
               onSave={(newVal) => handleUpdateTag(id, newVal, value)}
-              onCancel={() => setEditingRowId(null)} />
+              onCancel={() => {
+                setDraftError('');
+                setEditingRowId(null);
+              }} />
           );
         }
 
@@ -266,29 +363,52 @@ function getColumns({
           size="inline"
           onClick={() => {
             onStartDraft();
+            setDraftError('');
             setIsCreatingTopTag(true);
             setEditingRowId(null);
+            setActiveActionMenuRowId(null);
           }}
+          disabled={hasOpenDraft}
         />
       ),
       cell: ({ row }) => {
-        if (row.original.isNew) {
+        if (row.original.isNew || !canAddSubtag(row)) {
           return <div className="d-flex gap-2"></div>;
         }
 
+        const isMenuOpen = activeActionMenuRowId === row.original.id;
+        const disableAddSubtag = hasOpenDraft && creatingParentId !== row.original.id;
+        const startSubtagDraft = () => {
+          onStartDraft();
+          setDraftError('');
+          setCreatingParentId(row.original.id);
+          setEditingRowId(null);
+          setIsCreatingTopTag(false);
+          setActiveActionMenuRowId(null);
+          row.toggleExpanded(true);
+        };
+
         return (
-          <div className="d-flex gap-2">
-            <span
-              style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3' }}
+          <div className="d-flex align-items-center gap-2">
+            <IconButton
+              src={MoreVert}
+              alt="Actions"
+              iconAs={Icon}
               onClick={() => {
-                onStartDraft();
-                setCreatingParentId(row.original.id);
-                setEditingRowId(null);
-                row.toggleExpanded(true);
-              } }
-            >
-              Add Subtag
-            </span>
+                setActiveActionMenuRowId(isMenuOpen ? null : row.original.id);
+              }}
+              disabled={disableAddSubtag}
+            />
+            {isMenuOpen && (
+              <Button
+                variant="tertiary"
+                size="sm"
+                onClick={startSubtagDraft}
+                disabled={disableAddSubtag}
+              >
+                Add Subtag
+              </Button>
+            )}
           </div>
         );
       }
@@ -366,6 +486,8 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   const [tableMode, dispatchTableMode] = useReducer(tableModeReducer, TABLE_MODES.VIEW);
   const [tagTree, setTagTree] = useState(/** @type {TagTree | null} */(null));
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
+  const [activeActionMenuRowId, setActiveActionMenuRowId] = useState(null);
+  const [draftError, setDraftError] = useState('');
 
   const transitionTableMode = (targetMode) => {
     if (targetMode === tableMode) {
@@ -418,31 +540,56 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
     }
   }, [tagList?.results, editingRowId, pagination, tableMode]);
 
-
-
-  const remainingDepth = maxDepth - 1
-  const showAddSubTagButton = remainingDepth > 0;
-
   const handleCreateTopTag = async (value, setToast) => {
     const trimmed = value.trim();
-    if (trimmed) {
+    const validationError = getInlineValidationMessage(trimmed);
+    if (validationError) {
+      setDraftError(validationError);
+      return;
+    }
+
+    try {
+      setDraftError('');
       await createTagMutation.mutateAsync({ value: trimmed });
       applyLocalTagPreview(trimmed);
       transitionTableMode(TABLE_MODES.WRITE);
-      setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }), variant: 'success' });
+      setToast({
+        show: true,
+        message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }),
+        variant: 'success',
+      });
+      setIsCreatingTopTag(false);
+    } catch (error) {
+      transitionTableMode(TABLE_MODES.WRITE);
+      setDraftError(/** @type {any} */(error)?.message || intl.formatMessage(messages.tagCreationErrorMessage));
+      setToast({ show: true, message: 'Toast: Tag not saved', variant: 'danger' });
     }
-    setIsCreatingTopTag(false);
   };
 
   const handleCreateSubTag = async (value, parentTagValue) => {
     const trimmed = value.trim();
-    if (trimmed) {
+    const validationError = getInlineValidationMessage(trimmed);
+    if (validationError) {
+      setDraftError(validationError);
+      return;
+    }
+
+    try {
+      setDraftError('');
       await createTagMutation.mutateAsync({ value: trimmed, parentTagValue });
       applyLocalTagPreview(trimmed, parentTagValue);
       transitionTableMode(TABLE_MODES.WRITE);
-      setToast({ show: true, message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }), variant: 'success' });
+      setToast({
+        show: true,
+        message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }),
+        variant: 'success',
+      });
+      setCreatingParentId(null);
+    } catch (error) {
+      transitionTableMode(TABLE_MODES.WRITE);
+      setDraftError(/** @type {any} */(error)?.message || intl.formatMessage(messages.tagCreationErrorMessage));
+      setToast({ show: true, message: 'Toast: Tag not saved', variant: 'danger' });
     }
-    setCreatingParentId(null);
   };
 
   const handleUpdateTag = async (id, value, originalValue) => {
@@ -453,6 +600,8 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
     setEditingRowId(null);
   };
 
+  const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;
+
   const columns = useMemo(() => getColumns({
     intl,
     handleCreateTopTag,
@@ -462,8 +611,27 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
     setEditingRowId,
     setToast,
     onStartDraft: enterDraftMode,
+    activeActionMenuRowId,
+    setActiveActionMenuRowId,
+    hasOpenDraft,
+    draftError,
+    setDraftError,
+    isSavingDraft: createTagMutation.isPending,
+    maxDepth,
+    creatingParentId,
   }),
-    [intl, isCreatingTopTag, editingRowId, tableMode]
+    [
+      intl,
+      isCreatingTopTag,
+      editingRowId,
+      tableMode,
+      activeActionMenuRowId,
+      hasOpenDraft,
+      creatingParentId,
+      draftError,
+      createTagMutation.isPending,
+      maxDepth,
+    ]
   );
 
   const handlePaginationChange = (updater) => {
@@ -535,8 +703,11 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
                 <tr id="creating-top-tag-row" data-testid="creating-top-tag-row">
                   <td style={{ padding: '8px 8px 8px 0' }}>
                     <EditableCell
+                      errorMessage={draftError}
+                      isSaving={createTagMutation.isPending}
                       onSave={(value) => handleCreateTopTag(value, setToast)}
                       onCancel={() => {
+                        setDraftError('');
                         setIsCreatingTopTag(false);
                         exitDraftWithoutSave();
                       }} />
@@ -548,7 +719,6 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
                   {/* Main Row */}
                   <tr style={{ borderBottom: '1px solid #eee' }}>
                     {row.getVisibleCells()
-                      .filter(cell => showAddSubTagButton || cell.column.id !== 'add')
                       .map(cell => (
                       <td key={cell.id} style={{ padding: '8px' }}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -569,6 +739,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
                           isCreating={creatingParentId === row.original.id}
                           onSaveNewSubTag={handleCreateSubTag}
                           onCancelCreation={() => {
+                            setDraftError('');
                             setCreatingParentId(null);
                             exitDraftWithoutSave();
                           }}
@@ -577,7 +748,12 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
                           editingRowId={editingRowId}
                           setCreatingParentId={setCreatingParentId}
                           setEditingRowId={setEditingRowId}
-                          maxDepth={remainingDepth - 1}
+                          maxDepth={maxDepth}
+                          draftError={draftError}
+                          isSavingDraft={createTagMutation.isPending}
+                          onStartDraft={enterDraftMode}
+                          setIsCreatingTopTag={setIsCreatingTopTag}
+                          setDraftError={setDraftError}
                         />
                       </td>
                     </tr>
@@ -590,30 +766,31 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       )}
 
       {/* Basic Pagination Controls */}
-      {(tagList?.numPages || 0) > 1 && (
-        <div role="navigation" aria-label="table pagination" className="d-flex justify-content-between align-items-center mt-3">
-          <Button
-            disabled={!table.getCanPreviousPage()}
-            onClick={() => table.previousPage()}
-          >
-            Previous
-          </Button>
+      {((tagList?.numPages || 0)) > 1 && (
+        <div role="navigation" aria-label="table pagination" className="d-flex flex-column align-items-center mt-3">
           <span>
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            Page {table.getState().pagination.pageIndex + 1} of {((tableMode === TABLE_MODES.WRITE)
+              ? Math.max(tagList?.numPages || 1, 2)
+              : (tagList?.numPages || 0))}
           </span>
-          <Button
-            disabled={!table.getCanNextPage()}
-            onClick={() => table.nextPage()}
-          >
-            Next
-          </Button>
+          <Pagination
+            className="d-flex justify-content-center"
+            paginationLabel="table pagination"
+            pageCount={(tableMode === TABLE_MODES.WRITE)
+              ? Math.max(tagList?.numPages || 1, 2)
+              : (tagList?.numPages || 0)}
+            currentPage={table.getState().pagination.pageIndex + 1}
+            onPageSelect={(page) => {
+              table.setPageIndex(page - 1);
+            }}
+          />
         </div>
       )}
       <Toast
         show={toast.show}
         onClose={() => { setToast((prevToast) => ({ ...prevToast, show: false }))} }
         delay={15000}
-        className="bg-success-100 border-success"
+        className={toast.variant === 'danger' ? 'bg-danger-100 border-danger' : 'bg-success-100 border-success'}
       >
         {toast.message}
       </Toast>

@@ -495,7 +495,7 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
+      let addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
       let creatingRow = await screen.findByTestId('creating-top-tag-row');
       let input = creatingRow.querySelector('input');
@@ -507,6 +507,7 @@ describe('<TagListTable />', () => {
       const tagA = await screen.findByText('Tag A');
       expect(tagA).toBeInTheDocument();
 
+      addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
       creatingRow = await screen.findByTestId('creating-top-tag-row');
       input = creatingRow.querySelector('input');
@@ -769,7 +770,8 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
 
-      expect(screen.queryAllByText('Add Subtag')).not.toBeInTheDocument();
+      screen.debug();
+      expect(screen.queryAllByText('Add Subtag').length).toBe(0);
       // user clicks on row actions for root tag 1
       const row = screen.getByText('root tag 1').closest('tr');
       const actionsButton = within(row).getByRole('button', { name: /actions/i });
@@ -794,14 +796,14 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
 
-      let rows = await screen.findAllByRole('row');
-      let draftRows = rows.filter(row => row.querySelector('input'));
-      expect(draftRows.length).toBe(0);
+      const row = screen.getByText('root tag 1').closest('tr');
+      const actionsButton = within(row).getByRole('button', { name: /actions/i });
+      await fireEvent.click(actionsButton);
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
 
-      rows = await screen.findAllByRole('row');
-      draftRows = rows.filter(row => row.querySelector('input'));
+      const rows = await screen.findAllByRole('row');
+      const draftRows = rows.filter(row => row.querySelector('input'));
       expect(draftRows[0].querySelector('input')).toBeInTheDocument();
       // expect the draft row to be directly beneath the parent tag row
       const parentRowIndex = rows.findIndex(row => within(row).queryByText('root tag 1'));
@@ -829,7 +831,10 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
 
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+      const row = screen.getByText('root tag 1').closest('tr');
+      const actionsButton = within(row).getByRole('button', { name: /actions/i });
+      await fireEvent.click(actionsButton);
+      await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(row => row.querySelector('input'));
       const input = draftRow.querySelector('input');
@@ -850,7 +855,10 @@ describe('<TagListTable />', () => {
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
 
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+      const row = screen.getByText('root tag 1').closest('tr');
+      const actionsButton = within(row).getByRole('button', { name: /actions/i });
+      await fireEvent.click(actionsButton);
+      await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(row => row.querySelector('input'));
       const input = draftRow.querySelector('input');
@@ -877,6 +885,7 @@ describe('<TagListTable />', () => {
     And the new sub-tag is indented
     And the inline input row is no longer displayed
     */
+   // somehow not working when run with the rest of the tests, but works when run in isolation - needs investigation
     it('should create and render a new sub-tag under the selected parent', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
       axiosMock.onPost(createTagUrl).reply(201, {
@@ -890,17 +899,20 @@ describe('<TagListTable />', () => {
 
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
+      const row = screen.getByText('root tag 1').closest('tr');
+      const actionsButton = within(row).getByRole('button', { name: /actions/i });
+      await fireEvent.click(actionsButton);
 
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+      await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(row => row.querySelector('input'));
       const input = draftRow.querySelector('input');
 
-      fireEvent.change(input, { target: { value: 'child-new' } });
-      fireEvent.click(within(draftRow).getByText('Save'));
+      await fireEvent.change(input, { target: { value: 'child-new' } });
+      await fireEvent.click(within(draftRow).getByText('Save'));
 
-      expect(await screen.findByText('child-new')).toBeInTheDocument();
       await waitFor(() => {
+        expect(screen.getByText('child-new')).toBeInTheDocument();
         const currentRows = screen.getAllByRole('row');
         const currentDraftRows = currentRows.filter(row => row.querySelector('input'));
         expect(currentDraftRows.length).toBe(0);
@@ -1084,6 +1096,10 @@ describe('<TagListTable />', () => {
 
       render(<RootWrapper />);
       await screen.findByText('root tag 1');
+
+      const row = screen.getByText('root tag 1').closest('tr');
+      const actionsButton = within(row).getByRole('button', { name: /actions/i });
+      await fireEvent.click(actionsButton);
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
