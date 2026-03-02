@@ -21,11 +21,11 @@ import messages from './messages';
 import EditableCell from './EditableCell';
 import SubTagsExpanded from './SubTagsExpanded';
 
-const TagListTableDisplay = ({
+const EditableTreeTableDisplay = ({
   maxDepth,
-  tagTree,
+  treeData,
   columns,
-  tagList,
+  pageCount,
   pagination,
   handlePaginationChange,
   isLoading,
@@ -47,13 +47,13 @@ const TagListTableDisplay = ({
 }) => {
   // Initialize TanStack Table
   const table = useReactTable({
-    data: tagTree?.getAllAsDeepCopy() || [],
+    data: treeData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     // Manual pagination config
     manualPagination: true,
-    pageCount: tagList?.numPages ?? -1,
+    pageCount: pageCount ?? -1,
     state: {
       pagination,
     },
@@ -172,15 +172,15 @@ const TagListTableDisplay = ({
       )}
 
       {/* Basic Pagination Controls */}
-      {((tagList?.numPages || 0)) > 1 && (
+      {(pageCount) > 1 && (
         <div role="navigation" aria-label="table pagination" className="d-flex flex-column align-items-center mt-3">
           <span>
-            Page {table.getState().pagination.pageIndex + 1} of {(tagList?.numPages || 0)}
+            Page {table.getState().pagination.pageIndex + 1} of {pageCount}
           </span>
           <Pagination
             className="d-flex justify-content-center"
             paginationLabel="table pagination"
-            pageCount={tagList?.numPages || 0}
+            pageCount={pageCount}
             currentPage={table.getState().pagination.pageIndex + 1}
             onPageSelect={(page) => {
               table.setPageIndex(page - 1);
@@ -200,4 +200,4 @@ const TagListTableDisplay = ({
   );
 };
 
-export default TagListTableDisplay;
+export default EditableTreeTableDisplay;
