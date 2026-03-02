@@ -33,13 +33,13 @@ import { TagTree } from './tagTree';
 const TABLE_MODES = {
   VIEW: 'view',
   DRAFT: 'draft',
-  WRITE: 'write',
+  PREVIEW: 'preview',
 }
 
 const TRANSITION_TABLE = {
   [TABLE_MODES.VIEW]: [TABLE_MODES.DRAFT],
-  [TABLE_MODES.DRAFT]: [TABLE_MODES.WRITE],
-  [TABLE_MODES.WRITE]: [TABLE_MODES.DRAFT, TABLE_MODES.VIEW],
+  [TABLE_MODES.DRAFT]: [TABLE_MODES.PREVIEW],
+  [TABLE_MODES.PREVIEW]: [TABLE_MODES.DRAFT, TABLE_MODES.VIEW],
 }
 
 const TABLE_MODE_ACTIONS = {
@@ -463,10 +463,10 @@ function getColumns({
 // }
 
 const TagListTable = ({ taxonomyId, maxDepth }) => {
-  // The table has a VIEW and a WRITE mode. It starts in VIEW mode.
-  // It switches to WRITE mode when a user edits or creates a tag. It remains in WRITE mode even after saving changes,
+  // The table has a VIEW, DRAFT, and a PREVIEW mode. It starts in VIEW mode.
+  // It switches to DRAFT mode when a user edits or creates a tag. It switches to PREVIEW mode after saving changes,
   // and only switches to VIEW when the user refreshes the page, orders a column, or navigates to a different page of the table.
-  // During WRITE mode, the table makes POST requests to the backend and receives success or failure responses.
+  // During DRAFT and PREVIEW mode the table makes POST requests to the backend and receives success or failure responses.
   // However, the table does not refresh to show the updated data from the backend.
   // This allows us to show the newly created or updated tag in the same place without reordering.
   const intl = useIntl();
@@ -501,7 +501,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   };
 
   const exitDraftWithoutSave = () => {
-    transitionTableMode(TABLE_MODES.WRITE);
+    transitionTableMode(TABLE_MODES.PREVIEW);
   };
 
   const applyLocalTagPreview = (value, parentTagValue = null) => {
@@ -552,7 +552,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       setDraftError('');
       await createTagMutation.mutateAsync({ value: trimmed });
       applyLocalTagPreview(trimmed);
-      transitionTableMode(TABLE_MODES.WRITE);
+      transitionTableMode(TABLE_MODES.PREVIEW);
       setToast({
         show: true,
         message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }),
@@ -560,7 +560,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       });
       setIsCreatingTopTag(false);
     } catch (error) {
-      transitionTableMode(TABLE_MODES.WRITE);
+      transitionTableMode(TABLE_MODES.PREVIEW);
       setDraftError(/** @type {any} */(error)?.message || intl.formatMessage(messages.tagCreationErrorMessage));
       setToast({ show: true, message: 'Toast: Tag not saved', variant: 'danger' });
     }
@@ -578,7 +578,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       setDraftError('');
       await createTagMutation.mutateAsync({ value: trimmed, parentTagValue });
       applyLocalTagPreview(trimmed, parentTagValue);
-      transitionTableMode(TABLE_MODES.WRITE);
+      transitionTableMode(TABLE_MODES.PREVIEW);
       setToast({
         show: true,
         message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }),
@@ -586,7 +586,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       });
       setCreatingParentId(null);
     } catch (error) {
-      transitionTableMode(TABLE_MODES.WRITE);
+      transitionTableMode(TABLE_MODES.PREVIEW);
       setDraftError(/** @type {any} */(error)?.message || intl.formatMessage(messages.tagCreationErrorMessage));
       setToast({ show: true, message: 'Toast: Tag not saved', variant: 'danger' });
     }
@@ -635,7 +635,7 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
   );
 
   const handlePaginationChange = (updater) => {
-    if (tableMode === TABLE_MODES.WRITE) {
+    if (tableMode === TABLE_MODES.PREVIEW) {
       transitionTableMode(TABLE_MODES.VIEW);
     }
     setPagination(updater);
@@ -769,14 +769,14 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
       {((tagList?.numPages || 0)) > 1 && (
         <div role="navigation" aria-label="table pagination" className="d-flex flex-column align-items-center mt-3">
           <span>
-            Page {table.getState().pagination.pageIndex + 1} of {((tableMode === TABLE_MODES.WRITE)
+            Page {table.getState().pagination.pageIndex + 1} of {((tableMode === TABLE_MODES.PREVIEW)
               ? Math.max(tagList?.numPages || 1, 2)
               : (tagList?.numPages || 0))}
           </span>
           <Pagination
             className="d-flex justify-content-center"
             paginationLabel="table pagination"
-            pageCount={(tableMode === TABLE_MODES.WRITE)
+            pageCount={(tableMode === TABLE_MODES.PREVIEW)
               ? Math.max(tagList?.numPages || 1, 2)
               : (tagList?.numPages || 0)}
             currentPage={table.getState().pagination.pageIndex + 1}
