@@ -19,10 +19,9 @@ import {
 import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
 import EditableCell from './EditableCell';
-import SubTagsExpanded from './SubTagsExpanded';
+import SubRowsExpanded from './SubRowsExpanded';
 
 const EditableTreeTableDisplay = ({
-  maxDepth,
   treeData,
   columns,
   pageCount,
@@ -40,10 +39,7 @@ const EditableTreeTableDisplay = ({
   handleCreateChildRow,
   creatingParentId,
   setCreatingParentId,
-  editingRowId,
-  setEditingRowId,
   setDraftError,
-  enterDraftMode,
 }) => {
   // Initialize TanStack Table
   const table = useReactTable({
@@ -134,35 +130,24 @@ const EditableTreeTableDisplay = ({
 
                   {/* Subcomponent Rendering */}
                   {row.getIsExpanded() && (
-                    <tr style={{ backgroundColor: '#f9f9f9' }}>
-                      {/* colSpan stretches the sub-row across the whole table */}
-                      <td colSpan={row.getVisibleCells().length} style={{ padding: '8px 8px 8px 24px' }}>
-                        <SubTagsExpanded
-                          childRowsData={row.subRows}
-                          visibleColumnCount={row.getVisibleCells().length}
-                          parentRowValue={row.original.value}
-                          parentRowId={row.original.id}
-                          isCreating={creatingParentId === row.original.id}
-                          onSaveNewChildRow={handleCreateChildRow}
-                          onCancelCreation={() => {
-                            setDraftError('');
-                            setCreatingParentId(null);
-                            exitDraftWithoutSave();
-                          }}
-                          createRowMutation={createRowMutation}
-                          creatingParentId={creatingParentId}
-                          editingRowId={editingRowId}
-                          setCreatingParentId={setCreatingParentId}
-                          setEditingRowId={setEditingRowId}
-                          maxDepth={maxDepth}
-                          draftError={draftError}
-                          isSavingDraft={createRowMutation.isPending}
-                          onStartDraft={enterDraftMode}
-                          setIsCreatingTopRow={setIsCreatingTopRow}
-                          setDraftError={setDraftError}
-                        />
-                      </td>
-                    </tr>
+                    <SubRowsExpanded
+                      childRowsData={row.subRows}
+                      visibleColumnCount={row.getVisibleCells().length}
+                      parentRowValue={row.original.value}
+                      isCreating={creatingParentId === row.original.id}
+                      onSaveNewChildRow={handleCreateChildRow}
+                      onCancelCreation={() => {
+                        setDraftError('');
+                        setCreatingParentId(null);
+                        exitDraftWithoutSave();
+                      }}
+                      creatingParentId={creatingParentId}
+                      setCreatingParentId={setCreatingParentId}
+                      depth={1}
+                      draftError={draftError}
+                      isSavingDraft={createRowMutation.isPending}
+                      setDraftError={setDraftError}
+                    />
                   )}
                 </React.Fragment>
               ))}

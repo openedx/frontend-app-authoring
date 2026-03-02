@@ -1,29 +1,30 @@
 import { rawData, treeRowData } from "./mockData";
-import { TagTree, TagTreeError } from "./tagTree";
+import { TagTree } from "./tagTree";
+import TagTreeError from "./tagTreeError";
 
 const newSubtagChildRow = {
-	value: 'newChild',
-	externalId: null,
-	canChangeTag: true,
-	canDeleteTag: true,
-	id: 8,
-	parentValue: 'ab',
-	subTagsUrl: null,
-	childCount: 0,
-	descendantCount: 0,
-	depth: 1,
+  value: 'newChild',
+  externalId: null,
+  canChangeTag: true,
+  canDeleteTag: true,
+  id: 8,
+  parentValue: 'ab',
+  subTagsUrl: null,
+  childCount: 0,
+  descendantCount: 0,
+  depth: 1,
 };
 
 describe('TagTree', () => {
-	it('builds a tree structure from flat tag data', () => {
-		const tree = new TagTree(rawData);
-		expect(tree.getAllAsDeepCopy()).toEqual(treeRowData);
-	});
+  it('builds a tree structure from flat tag data', () => {
+    const tree = new TagTree(rawData);
+    expect(tree.getAllAsDeepCopy()).toEqual(treeRowData);
+  });
 
-	it('handles empty data', () => {
-		const tree = new TagTree([]);
-		expect(tree.getAllAsDeepCopy()).toEqual([]);
-	});
+  it('handles empty data', () => {
+    const tree = new TagTree([]);
+    expect(tree.getAllAsDeepCopy()).toEqual([]);
+  });
 
   it('gets all rows as deep copy', () => {
     const tree = new TagTree(rawData);
@@ -56,40 +57,40 @@ describe('TagTree', () => {
     expect(node).toBeNull();
   });
 
-	it('creates a new top-level row', () => {
-		const tree = new TagTree(rawData);
-		const newRow = {
-			value: 'newTopLevel',
-			externalId: null,
-			canChangeTag: true,
-			canDeleteTag: true,
-			id: 7,
-			parentValue: null,
-			subTagsUrl: null,
-			childCount: 0,
-			descendantCount: 0,
-			depth: 0,
-		};
-		tree.addNode(newRow, null);
-		expect(tree.getAllAsDeepCopy()).toContainEqual(newRow);
-	});
+  it('creates a new top-level row', () => {
+    const tree = new TagTree(rawData);
+    const newRow = {
+      value: 'newTopLevel',
+      externalId: null,
+      canChangeTag: true,
+      canDeleteTag: true,
+      id: 7,
+      parentValue: null,
+      subTagsUrl: null,
+      childCount: 0,
+      descendantCount: 0,
+      depth: 0,
+    };
+    tree.addNode(newRow, null);
+    expect(tree.getAllAsDeepCopy()).toContainEqual(newRow);
+  });
 
-	it('creates a new child row', () => {
-		const tree = new TagTree(rawData);
-		tree.addNode(newSubtagChildRow, 'ab');
-		const parentNode = tree.getTagAsDeepCopy('ab');
-		expect(parentNode?.subRows).toContainEqual(newSubtagChildRow);
-	});
+  it('creates a new child row', () => {
+    const tree = new TagTree(rawData);
+    tree.addNode(newSubtagChildRow, 'ab');
+    const parentNode = tree.getTagAsDeepCopy('ab');
+    expect(parentNode?.subRows).toContainEqual(newSubtagChildRow);
+  });
 
-	it('edits a node value', () => {
-		const tree = new TagTree(rawData);
-		tree.addNode(newSubtagChildRow, 'ab');
-		tree.editTagValue('ab', 'editedAb');
-		expect(tree.getTagAsDeepCopy('editedAb')).not.toBeNull();
-		expect(tree.getTagAsDeepCopy('ab')).toBeNull();
-		expect(tree.getTagAsDeepCopy('editedAb')?.value).toBe('editedAb');
-		expect(tree.getTagAsDeepCopy('editedAb')?.subRows).toContainEqual(newSubtagChildRow);
-	});
+  it('edits a node value', () => {
+    const tree = new TagTree(rawData);
+    tree.addNode(newSubtagChildRow, 'ab');
+    tree.editTagValue('ab', 'editedAb');
+    expect(tree.getTagAsDeepCopy('editedAb')).not.toBeNull();
+    expect(tree.getTagAsDeepCopy('ab')).toBeNull();
+    expect(tree.getTagAsDeepCopy('editedAb')?.value).toBe('editedAb');
+    expect(tree.getTagAsDeepCopy('editedAb')?.subRows).toContainEqual(newSubtagChildRow);
+  });
 
   it('deletes a top-level node and its children', () => {
     const tree = new TagTree(rawData);
@@ -107,125 +108,125 @@ describe('TagTree', () => {
     expect(parentNode?.subRows).not.toContainEqual(newSubtagChildRow);
   });
 
-	it('returns null and leaves tree unchanged when removing a non-existent node', () => {
-		const tree = new TagTree(rawData);
-		const before = tree.getTagAsDeepCopy('ab');
+  it('returns null and leaves tree unchanged when removing a non-existent node', () => {
+    const tree = new TagTree(rawData);
+    const before = tree.getTagAsDeepCopy('ab');
 
-		const removed = tree.removeNode('does-not-exist');
+    const removed = tree.removeNode('does-not-exist');
 
-		expect(removed).toBeNull();
-		expect(tree.getTagAsDeepCopy('ab')).toEqual(before);
-	});
+    expect(removed).toBeNull();
+    expect(tree.getTagAsDeepCopy('ab')).toEqual(before);
+  });
 
-	it('returns null and leaves tree unchanged when editing a non-existent node', () => {
-		const tree = new TagTree(rawData);
-		const before = tree.getTagAsDeepCopy('ab');
+  it('returns null and leaves tree unchanged when editing a non-existent node', () => {
+    const tree = new TagTree(rawData);
+    const before = tree.getTagAsDeepCopy('ab');
 
-		const edited = tree.editTagValue('does-not-exist', 'new-value');
+    const edited = tree.editTagValue('does-not-exist', 'new-value');
 
-		expect(edited).toBeNull();
-		expect(tree.getTagAsDeepCopy('ab')).toEqual(before);
-	});
+    expect(edited).toBeNull();
+    expect(tree.getTagAsDeepCopy('ab')).toEqual(before);
+  });
 
-	it('does not add a node when parentValue is provided but parent does not exist', () => {
-		const tree = new TagTree(rawData);
-		const rowCountBefore = tree.getAllAsDeepCopy().length;
+  it('does not add a node when parentValue is provided but parent does not exist', () => {
+    const tree = new TagTree(rawData);
+    const rowCountBefore = tree.getAllAsDeepCopy().length;
 
-		tree.addNode(newSubtagChildRow, 'missing-parent');
+    tree.addNode(newSubtagChildRow, 'missing-parent');
 
-		expect(tree.getAllAsDeepCopy()).toHaveLength(rowCountBefore);
-		expect(tree.getTagAsDeepCopy('newChild')).toBeNull();
-	});
+    expect(tree.getAllAsDeepCopy()).toHaveLength(rowCountBefore);
+    expect(tree.getTagAsDeepCopy('newChild')).toBeNull();
+  });
 
-	it('treats orphaned nodes as roots during tree construction', () => {
-		const orphanData = [
-			{
-				value: 'orphan',
-				externalId: null,
-				canChangeTag: true,
-				canDeleteTag: true,
-				id: 900,
-				parentValue: 'missing-parent',
-				subTagsUrl: null,
-				childCount: 0,
-				descendantCount: 0,
-				depth: 1,
-			},
-		];
+  it('treats orphaned nodes as roots during tree construction', () => {
+    const orphanData = [
+      {
+        value: 'orphan',
+        externalId: null,
+        canChangeTag: true,
+        canDeleteTag: true,
+        id: 900,
+        parentValue: 'missing-parent',
+        subTagsUrl: null,
+        childCount: 0,
+        descendantCount: 0,
+        depth: 1,
+      },
+    ];
 
-		const tree = new TagTree(orphanData);
+    const tree = new TagTree(orphanData);
 
-		expect(tree.getAllAsDeepCopy()).toHaveLength(1);
-		expect(tree.getAllAsDeepCopy()[0].value).toBe('orphan');
-	});
+    expect(tree.getAllAsDeepCopy()).toHaveLength(1);
+    expect(tree.getAllAsDeepCopy()[0].value).toBe('orphan');
+  });
 
-	it('rejects duplicate tag values during tree construction', () => {
-		const duplicateValueData = [
-			{
-				value: 'dup',
-				externalId: null,
-				canChangeTag: true,
-				canDeleteTag: true,
-				id: 1001,
-				parentValue: null,
-				subTagsUrl: null,
-				childCount: 0,
-				descendantCount: 0,
-				depth: 0,
-			},
-			{
-				value: 'dup',
-				externalId: null,
-				canChangeTag: true,
-				canDeleteTag: true,
-				id: 1002,
-				parentValue: null,
-				subTagsUrl: null,
-				childCount: 0,
-				descendantCount: 0,
-				depth: 0,
-			},
-		];
+  it('rejects duplicate tag values during tree construction', () => {
+    const duplicateValueData = [
+      {
+        value: 'dup',
+        externalId: null,
+        canChangeTag: true,
+        canDeleteTag: true,
+        id: 1001,
+        parentValue: null,
+        subTagsUrl: null,
+        childCount: 0,
+        descendantCount: 0,
+        depth: 0,
+      },
+      {
+        value: 'dup',
+        externalId: null,
+        canChangeTag: true,
+        canDeleteTag: true,
+        id: 1002,
+        parentValue: null,
+        subTagsUrl: null,
+        childCount: 0,
+        descendantCount: 0,
+        depth: 0,
+      },
+    ];
 
-		expect(() => new TagTree(duplicateValueData)).toThrow(TagTreeError);
-	});
+    expect(() => new TagTree(duplicateValueData)).toThrow(TagTreeError);
+  });
 
-	it('rejects cycles in parent/child relationships during tree construction', () => {
-		const cyclicData = [
-			{
-				value: 'a',
-				externalId: null,
-				canChangeTag: true,
-				canDeleteTag: true,
-				id: 1101,
-				parentValue: 'b',
-				subTagsUrl: null,
-				childCount: 1,
-				descendantCount: 1,
-				depth: 0,
-			},
-			{
-				value: 'b',
-				externalId: null,
-				canChangeTag: true,
-				canDeleteTag: true,
-				id: 1102,
-				parentValue: 'a',
-				subTagsUrl: null,
-				childCount: 1,
-				descendantCount: 1,
-				depth: 1,
-			},
-		];
+  it('rejects cycles in parent/child relationships during tree construction', () => {
+    const cyclicData = [
+      {
+        value: 'a',
+        externalId: null,
+        canChangeTag: true,
+        canDeleteTag: true,
+        id: 1101,
+        parentValue: 'b',
+        subTagsUrl: null,
+        childCount: 1,
+        descendantCount: 1,
+        depth: 0,
+      },
+      {
+        value: 'b',
+        externalId: null,
+        canChangeTag: true,
+        canDeleteTag: true,
+        id: 1102,
+        parentValue: 'a',
+        subTagsUrl: null,
+        childCount: 1,
+        descendantCount: 1,
+        depth: 1,
+      },
+    ];
 
-		expect(() => new TagTree(cyclicData)).toThrow(TagTreeError);
-	});
+    expect(() => new TagTree(cyclicData)).toThrow(TagTreeError);
+  });
 
-	it('throws TagTreeError when editing a tag value to one that already exists', () => {
-		const tree = new TagTree(rawData);
+  it('throws TagTreeError when editing a tag value to one that already exists', () => {
+    const tree = new TagTree(rawData);
 
-		expect(() => tree.editTagValue('ab', 'Brass2')).toThrow(TagTreeError);
-	});
+    expect(() => tree.editTagValue('ab', 'Brass2')).toThrow(TagTreeError);
+  });
 
   it('throws TagTreeError when adding a node with a value that already exists', () => {
     const tree = new TagTree(rawData);
