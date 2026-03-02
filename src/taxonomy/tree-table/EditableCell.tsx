@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import Proptypes from 'prop-types';
 
 import { Button, Spinner } from '@openedx/paragon';
 
+interface EditableCellProps {
+  initialValue?: string;
+  onSave: (value: string) => void;
+  onCancel: () => void;
+  errorMessage?: string;
+  isSaving?: boolean;
+  getInlineValidationMessage?: (value: string) => string;
+}
+
 const EditableCell = ({
-  initialValue,
+  initialValue = '',
   onSave,
   onCancel,
-  errorMessage,
-  isSaving,
+  errorMessage = '',
+  isSaving = false,
   getInlineValidationMessage = () => '',
-}) => {
-  const [value, setValue] = useState(initialValue);
+}: EditableCellProps) => {
+  const [value, setValue] = useState<string>(initialValue);
 
   useEffect(() => {
     setValue(initialValue);
@@ -27,7 +35,7 @@ const EditableCell = ({
     }
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       handleSave();
@@ -73,22 +81,6 @@ const EditableCell = ({
       )}
     </span>
   );
-};
-
-EditableCell.propTypes = {
-  initialValue: Proptypes.string,
-  onSave: Proptypes.func.isRequired,
-  onCancel: Proptypes.func.isRequired,
-  errorMessage: Proptypes.string,
-  isSaving: Proptypes.bool,
-  getInlineValidationMessage: Proptypes.func,
-};
-
-EditableCell.defaultProps = {
-  initialValue: '',
-  errorMessage: '',
-  isSaving: false,
-  getInlineValidationMessage: () => '',
 };
 
 export default EditableCell;

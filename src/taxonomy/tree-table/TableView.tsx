@@ -1,4 +1,3 @@
-// @ts-check
 import React from 'react';
 import {
   Button,
@@ -13,10 +12,40 @@ import {
   getCoreRowModel,
   getExpandedRowModel,
   flexRender,
+  type OnChangeFn,
+  type PaginationState,
 } from '@tanstack/react-table';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import TableBody from './TableBody';
+import type {
+  CreateRowMutationState,
+  RowId,
+  ToastState,
+  TreeColumnDef,
+  TreeRowData,
+} from './types';
+
+interface TableViewProps {
+  treeData: TreeRowData[];
+  columns: TreeColumnDef[];
+  pageCount: number;
+  pagination: PaginationState;
+  handlePaginationChange: OnChangeFn<PaginationState>;
+  isLoading: boolean;
+  isCreatingTopRow: boolean;
+  draftError: string;
+  createRowMutation: CreateRowMutationState;
+  handleCreateTopRow: (value: string, setToast: React.Dispatch<React.SetStateAction<ToastState>>) => void;
+  toast: ToastState;
+  setToast: React.Dispatch<React.SetStateAction<ToastState>>;
+  setIsCreatingTopRow: (isCreating: boolean) => void;
+  exitDraftWithoutSave: () => void;
+  handleCreateChildRow: (value: string, parentRowValue: string) => void;
+  creatingParentId: RowId | null;
+  setCreatingParentId: (id: RowId | null) => void;
+  setDraftError: (error: string) => void;
+}
 
 const TableView = ({
   treeData,
@@ -37,14 +66,12 @@ const TableView = ({
   creatingParentId,
   setCreatingParentId,
   setDraftError,
-}) => {
-  // Initialize TanStack Table
+}: TableViewProps) => {
   const table = useReactTable({
     data: treeData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    // Manual pagination config
     manualPagination: true,
     pageCount: pageCount ?? -1,
     state: {
@@ -89,7 +116,6 @@ const TableView = ({
             </thead>
 
             <TableBody
-              treeData={treeData}
               columns={columns}
               isCreatingTopRow={isCreatingTopRow}
               draftError={draftError}
@@ -108,8 +134,7 @@ const TableView = ({
         </Card.Section>
       )}
 
-      {/* Basic Pagination Controls */}
-      {(pageCount) > 1 && (
+      {pageCount > 1 && (
         <div role="navigation" aria-label="table pagination" className="d-flex flex-column align-items-center mt-3">
           <span>
             Page {table.getState().pagination.pageIndex + 1} of {pageCount}
@@ -127,7 +152,9 @@ const TableView = ({
       )}
       <Toast
         show={toast.show}
-        onClose={() => { setToast((prevToast) => ({ ...prevToast, show: false }))} }
+        onClose={() => {
+          setToast((prevToast) => ({ ...prevToast, show: false }));
+        }}
         delay={15000}
         className={toast.variant === 'danger' ? 'bg-danger-100 border-danger' : 'bg-success-100 border-success'}
       >
