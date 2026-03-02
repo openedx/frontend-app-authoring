@@ -1,25 +1,43 @@
 import React from 'react';
-import Proptypes from 'prop-types';
 import { flexRender } from '@tanstack/react-table';
 
 import EditableCell from './EditableCell';
+import type {
+  RowId,
+  TreeRow,
+} from './types';
+
+interface SubRowsExpandedProps {
+  parentRowValue: string;
+  isCreating?: boolean;
+  onSaveNewChildRow?: (value: string, parentRowValue: string) => void;
+  onCancelCreation?: () => void;
+  childRowsData?: TreeRow[];
+  visibleColumnCount?: number;
+  depth?: number;
+  draftError?: string;
+  isSavingDraft?: boolean;
+  setDraftError?: (error: string) => void;
+  creatingParentId?: RowId | null;
+  setCreatingParentId?: (value: RowId | null) => void;
+}
 
 const SubRowsExpanded = ({
   parentRowValue,
-  isCreating,
-  onSaveNewChildRow,
-  onCancelCreation,
-  childRowsData,
+  isCreating = false,
+  onSaveNewChildRow = () => {},
+  onCancelCreation = () => {},
+  childRowsData = [],
   visibleColumnCount,
-  depth,
-  draftError,
-  isSavingDraft,
-  setDraftError,
-  creatingParentId,
-  setCreatingParentId,
-}) => {
+  depth = 1,
+  draftError = '',
+  isSavingDraft = false,
+  setDraftError = () => {},
+  creatingParentId = null,
+  setCreatingParentId = () => {},
+}: SubRowsExpandedProps) => {
   const columnCount = childRowsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
-  const paddingLeft = depth + 4; // Additional left padding for sub-rows
+  const paddingLeft = depth + 4;
 
   return (
     <>
@@ -45,9 +63,9 @@ const SubRowsExpanded = ({
         </tr>
       )}
       {childRowsData?.map(row => {
-        const rowData = row.original || row; // Handle both raw and table row data
+        const rowData = row.original || row;
         return (
-          <React.Fragment key={rowData.id}>
+          <React.Fragment key={String(rowData.id)}>
             <tr style={{ borderBottom: '1px solid #eee' }}>
               {row.getVisibleCells()
                 .map(cell => (
@@ -57,10 +75,9 @@ const SubRowsExpanded = ({
                 ))}
             </tr>
             <SubRowsExpanded
-              childRowsData={row.subRows}
+              childRowsData={row.subRows as TreeRow[]}
               visibleColumnCount={row.getVisibleCells().length}
-              parentRowValue={row.original.value}
-              parentRowId={row.original.id}
+              parentRowValue={String(row.original.value)}
               isCreating={creatingParentId === row.original.id}
               onSaveNewChildRow={onSaveNewChildRow}
               onCancelCreation={() => setCreatingParentId(null)}
@@ -76,21 +93,6 @@ const SubRowsExpanded = ({
       })}
     </>
   );
-};
-
-SubRowsExpanded.propTypes = {
-  childRowsData: Proptypes.array.isRequired,
-  visibleColumnCount: Proptypes.number,
-  parentRowValue: Proptypes.string.isRequired,
-  isCreating: Proptypes.bool,
-  onSaveNewChildRow: Proptypes.func,
-  onCancelCreation: Proptypes.func,
-  creatingParentId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
-  setCreatingParentId: Proptypes.func,
-  depth: Proptypes.number,
-  draftError: Proptypes.string,
-  isSavingDraft: Proptypes.bool,
-  setDraftError: Proptypes.func,
 };
 
 export default SubRowsExpanded;
