@@ -5,13 +5,13 @@ import { flexRender } from '@tanstack/react-table';
 import EditableCell from './EditableCell';
 
 const SubTagsExpanded = ({
-  parentTagValue,
+  parentRowValue,
   isCreating,
-  onSaveNewSubTag,
+  onSaveNewChildRow,
   onCancelCreation,
-  subTagsData,
+  childRowsData,
   visibleColumnCount,
-  createTagMutation,
+  createRowMutation,
   creatingParentId,
   editingRowId,
   setCreatingParentId,
@@ -20,10 +20,10 @@ const SubTagsExpanded = ({
   draftError,
   isSavingDraft,
   onStartDraft,
-  setIsCreatingTopTag,
+  setIsCreatingTopRow,
   setDraftError,
 }) => {
-  const columnCount = subTagsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
+  const columnCount = childRowsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
 
   return (
     <>
@@ -33,14 +33,14 @@ const SubTagsExpanded = ({
             <EditableCell
               errorMessage={draftError}
               isSaving={isSavingDraft}
-              onSave={(val) => onSaveNewSubTag(val, parentTagValue)}
+              onSave={(val) => onSaveNewChildRow(val, parentRowValue)}
               onCancel={() => {
                 setDraftError('');
                 onCancelCreation();
               }}
               getInlineValidationMessage={(value) => {
                 if (!value.trim()) {
-                  return 'Tag name cannot be empty.';
+                  return 'Name cannot be empty.';
                 }
                 return '';
               }}
@@ -48,10 +48,10 @@ const SubTagsExpanded = ({
           </td>
         </tr>
       )}
-      {subTagsData?.map(row => {
-        const tagData = row.original || row; // Handle both raw and table row data
+      {childRowsData?.map(row => {
+        const rowData = row.original || row; // Handle both raw and table row data
         return (
-          <React.Fragment key={tagData.id}>
+          <React.Fragment key={rowData.id}>
             <tr style={{ borderBottom: '1px solid #eee' }}>
               {row.getVisibleCells()
                 .map(cell => (
@@ -65,14 +65,14 @@ const SubTagsExpanded = ({
               {/* colSpan stretches the sub-row across the whole table */}
               <td colSpan={row.getVisibleCells().length} style={{ padding: '8px 8px 8px 24px' }}>
                 <SubTagsExpanded
-                  subTagsData={row.subRows}
+                  childRowsData={row.subRows}
                   visibleColumnCount={row.getVisibleCells().length}
-                  parentTagValue={row.original.value}
-                  parentTagId={row.original.id}
+                  parentRowValue={row.original.value}
+                  parentRowId={row.original.id}
                   isCreating={creatingParentId === row.original.id}
-                  onSaveNewSubTag={onSaveNewSubTag}
+                  onSaveNewChildRow={onSaveNewChildRow}
                   onCancelCreation={() => setCreatingParentId(null)}
-                  createTagMutation={createTagMutation}
+                  createRowMutation={createRowMutation}
                   creatingParentId={creatingParentId}
                   editingRowId={editingRowId}
                   setCreatingParentId={setCreatingParentId}
@@ -81,7 +81,7 @@ const SubTagsExpanded = ({
                   draftError={draftError}
                   isSavingDraft={isSavingDraft}
                   onStartDraft={onStartDraft}
-                  setIsCreatingTopTag={setIsCreatingTopTag}
+                  setIsCreatingTopRow={setIsCreatingTopRow}
                   setDraftError={setDraftError}
                 />
               </td>
@@ -94,14 +94,14 @@ const SubTagsExpanded = ({
 };
 
 SubTagsExpanded.propTypes = {
-  subTagsData: Proptypes.array.isRequired,
+  childRowsData: Proptypes.array.isRequired,
   visibleColumnCount: Proptypes.number,
-  parentTagValue: Proptypes.string.isRequired,
-  parentTagId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]).isRequired,
+  parentRowValue: Proptypes.string.isRequired,
+  parentRowId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]).isRequired,
   isCreating: Proptypes.bool,
-  onSaveNewSubTag: Proptypes.func,
+  onSaveNewChildRow: Proptypes.func,
   onCancelCreation: Proptypes.func,
-  createTagMutation: Proptypes.object,
+  createRowMutation: Proptypes.object,
   creatingParentId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
   editingRowId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
   setCreatingParentId: Proptypes.func,
@@ -110,7 +110,7 @@ SubTagsExpanded.propTypes = {
   draftError: Proptypes.string,
   isSavingDraft: Proptypes.bool,
   onStartDraft: Proptypes.func,
-  setIsCreatingTopTag: Proptypes.func,
+  setIsCreatingTopRow: Proptypes.func,
   setDraftError: Proptypes.func,
 };
 

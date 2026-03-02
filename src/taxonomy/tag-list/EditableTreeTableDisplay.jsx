@@ -29,15 +29,15 @@ const EditableTreeTableDisplay = ({
   pagination,
   handlePaginationChange,
   isLoading,
-  isCreatingTopTag,
+  isCreatingTopRow,
   draftError,
-  createTagMutation,
-  handleCreateTopTag,
+  createRowMutation,
+  handleCreateTopRow,
   toast,
   setToast,
-  setIsCreatingTopTag,
+  setIsCreatingTopRow,
   exitDraftWithoutSave,
-  handleCreateSubTag,
+  handleCreateChildRow,
   creatingParentId,
   setCreatingParentId,
   editingRowId,
@@ -105,16 +105,16 @@ const EditableTreeTableDisplay = ({
                 </tr>
               )}
 
-              {isCreatingTopTag && (
+              {isCreatingTopRow && (
                 <tr id="creating-top-tag-row" data-testid="creating-top-tag-row">
                   <td style={{ padding: '8px 8px 8px 0' }}>
                     <EditableCell
                       errorMessage={draftError}
-                      isSaving={createTagMutation.isPending}
-                      onSave={(value) => handleCreateTopTag(value, setToast)}
+                      isSaving={createRowMutation.isPending}
+                      onSave={(value) => handleCreateTopRow(value, setToast)}
                       onCancel={() => {
                         setDraftError('');
-                        setIsCreatingTopTag(false);
+                        setIsCreatingTopRow(false);
                         exitDraftWithoutSave();
                       }} />
                   </td>
@@ -138,27 +138,27 @@ const EditableTreeTableDisplay = ({
                       {/* colSpan stretches the sub-row across the whole table */}
                       <td colSpan={row.getVisibleCells().length} style={{ padding: '8px 8px 8px 24px' }}>
                         <SubTagsExpanded
-                          subTagsData={row.subRows}
+                          childRowsData={row.subRows}
                           visibleColumnCount={row.getVisibleCells().length}
-                          parentTagValue={row.original.value}
-                          parentTagId={row.original.id}
+                          parentRowValue={row.original.value}
+                          parentRowId={row.original.id}
                           isCreating={creatingParentId === row.original.id}
-                          onSaveNewSubTag={handleCreateSubTag}
+                          onSaveNewChildRow={handleCreateChildRow}
                           onCancelCreation={() => {
                             setDraftError('');
                             setCreatingParentId(null);
                             exitDraftWithoutSave();
                           }}
-                          createTagMutation={createTagMutation}
+                          createRowMutation={createRowMutation}
                           creatingParentId={creatingParentId}
                           editingRowId={editingRowId}
                           setCreatingParentId={setCreatingParentId}
                           setEditingRowId={setEditingRowId}
                           maxDepth={maxDepth}
                           draftError={draftError}
-                          isSavingDraft={createTagMutation.isPending}
+                          isSavingDraft={createRowMutation.isPending}
                           onStartDraft={enterDraftMode}
-                          setIsCreatingTopTag={setIsCreatingTopTag}
+                          setIsCreatingTopRow={setIsCreatingTopRow}
                           setDraftError={setDraftError}
                         />
                       </td>
