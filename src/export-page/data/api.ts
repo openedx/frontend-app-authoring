@@ -7,7 +7,7 @@ export const getExportStatusApiUrl = (courseId: string) => new URL(`export_statu
 
 export interface ExportStatusData {
   exportStatus: number;
-  exportOutput?: string;
+  exportOutput?: string; // URL to the exported course file
   exportError?: {
     rawErrorMsg?: string;
     editUnitUrl?: string;
