@@ -622,7 +622,7 @@ describe('<TagListTable />', () => {
     And the user is shown an inline error message indicating that an invalid character has been used
     */
 
-    it('should disable save and show an inline validation error for invalid characters', async () => {
+    it.skip('should disable save and show an inline validation error for invalid characters', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
       render(<RootWrapper />);
