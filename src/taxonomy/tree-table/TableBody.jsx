@@ -1,13 +1,15 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import Proptypes from 'prop-types';
 import { flexRender } from '@tanstack/react-table';
 
 import SubRowsExpanded from './SubRowsExpanded';
-import messages from './messages';
+
+// TODO: refactor to remove dependency
+import messages from '../tag-list/messages';
+
 import EditableCell from './EditableCell';
 
-const TreeTableBody = ({
+const TableBody = ({
   treeData,
   columns,
   isCreatingTopRow,
@@ -21,6 +23,7 @@ const TreeTableBody = ({
   setDraftError,
   createRowMutation,
   table,
+  setToast,
 }) => {
   const intl = useIntl();
 
@@ -35,7 +38,7 @@ const TreeTableBody = ({
       )}
 
       {isCreatingTopRow && (
-        <tr id="creating-top-tag-row" data-testid="creating-top-tag-row">
+        <tr id="creating-top-row" data-testid="creating-top-row">
           <td style={{ padding: '8px 8px 8px 0' }}>
             <EditableCell
               errorMessage={draftError}
@@ -90,4 +93,4 @@ const TreeTableBody = ({
   );
 };
 
-export default TreeTableBody;
+export default TableBody;

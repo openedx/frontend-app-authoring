@@ -27,7 +27,7 @@ import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
 import { useTagListData, useSubTags, useCreateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
-import EditableTreeTableDisplay from './EditableTreeTableDisplay';
+import { TreeTableView } from '../tree-table';
 
 // State machine for table modes
 
@@ -535,27 +535,11 @@ const TagListTable = ({ taxonomyId, maxDepth }) => {
     setPagination(updater);
   };
 
-  // Initialize TanStack Table
-  const table = useReactTable({
-    data: tagTree?.getAllAsDeepCopy() || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    // Manual pagination config
-    manualPagination: true,
-    pageCount: tagList?.numPages ?? -1,
-    state: {
-      pagination,
-    },
-    onPaginationChange: handlePaginationChange,
-    getSubRows: (row) => row.subRows || undefined,
-  });
-
   const pageCount = tagList?.numPages ?? -1;
   const treeData = tagTree?.getAllAsDeepCopy() || [];
 
   return (
-    <EditableTreeTableDisplay
+    <TreeTableView
       {...{
         maxDepth,
         treeData,

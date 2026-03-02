@@ -203,7 +203,7 @@ describe('<TagListTable />', () => {
 
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const creatingRow = await screen.findByTestId('creating-top-row');
       // expect input placeholder text to say "Type tag name"
       expect(creatingRow.querySelector('input').placeholder).toEqual('Type tag name');
       // expect the row to include "Cancel" and "Save" buttons
@@ -225,7 +225,7 @@ describe('<TagListTable />', () => {
       expect(tag).toBeInTheDocument();
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const creatingRow = await screen.findByTestId('creating-top-row');
       const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
@@ -257,7 +257,7 @@ describe('<TagListTable />', () => {
       expect(tag).toBeInTheDocument();
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const creatingRow = await screen.findByTestId('creating-top-row');
       const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
@@ -281,7 +281,7 @@ describe('<TagListTable />', () => {
       expect(tag).toBeInTheDocument();
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const creatingRow = await screen.findByTestId('creating-top-row');
       const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
@@ -331,7 +331,7 @@ describe('<TagListTable />', () => {
       expect(tag).toBeInTheDocument();
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const creatingRow = await screen.findByTestId('creating-top-row');
       const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
@@ -356,7 +356,7 @@ describe('<TagListTable />', () => {
       expect(tag).toBeInTheDocument();
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const creatingRow = await screen.findByTestId('creating-top-row');
       const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
@@ -393,7 +393,7 @@ describe('<TagListTable />', () => {
       expect(tag).toBeInTheDocument();
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const creatingRow = await screen.findByTestId('creating-top-row');
       const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
@@ -418,7 +418,7 @@ describe('<TagListTable />', () => {
       expect(tag).toBeInTheDocument();
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const creatingRow = await screen.findByTestId('creating-top-row');
       const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
@@ -449,7 +449,7 @@ describe('<TagListTable />', () => {
       expect(tag).toBeInTheDocument();
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
+      const creatingRow = await screen.findByTestId('creating-top-row');
       const input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
@@ -501,7 +501,7 @@ describe('<TagListTable />', () => {
       expect(tag).toBeInTheDocument();
       let addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      let creatingRow = await screen.findByTestId('creating-top-tag-row');
+      let creatingRow = await screen.findByTestId('creating-top-row');
       let input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
@@ -513,7 +513,7 @@ describe('<TagListTable />', () => {
 
       addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
-      creatingRow = await screen.findByTestId('creating-top-tag-row');
+      creatingRow = await screen.findByTestId('creating-top-row');
       input = creatingRow.querySelector('input');
       expect(input).toBeInTheDocument();
 
