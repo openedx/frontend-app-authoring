@@ -16,7 +16,6 @@ import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/dat
 import { reducer as filesReducer } from './files-and-videos/files-page/data/slice';
 import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';
 import { reducer as processingNotificationReducer } from './generic/processing-notification/data/slice';
-import { reducer as courseExportReducer } from './export-page/data/slice';
 import { reducer as courseOptimizerReducer } from './optimizer-page/data/slice';
 import { reducer as genericReducer } from './generic/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
@@ -43,7 +42,6 @@ export interface DeprecatedReduxState {
   live: Record<string, any>;
   courseUpdates: Record<string, any>;
   processingNotification: Record<string, any>;
-  courseExport: Record<string, any>;
   courseOptimizer: Record<string, any>;
   generic: Record<string, any>;
   videos: Record<string, any>;
@@ -74,7 +72,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       live: liveReducer,
       courseUpdates: CourseUpdatesReducer,
       processingNotification: processingNotificationReducer,
-      courseExport: courseExportReducer,
       courseOptimizer: courseOptimizerReducer,
       generic: genericReducer,
       videos: videosReducer,
