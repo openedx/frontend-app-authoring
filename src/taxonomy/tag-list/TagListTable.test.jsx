@@ -128,19 +128,23 @@ describe('<TagListTable />', () => {
     axiosMock.reset();
   });
 
-  it('shows the spinner before the query is complete', async () => {
-    // Simulate an actual slow response from the API:
-    let resolveResponse;
-    const promise = new Promise(resolve => { resolveResponse = resolve; });
-    axiosMock.onGet(rootTagsListUrl).reply(() => promise);
+  it('has a valid tr -> td structure when the table is expanded to show subtags', async () => {
+    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+    axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
     render(<RootWrapper />);
-    const spinner = screen.getByRole('status');
-    expect(spinner.textContent).toEqual('Loading...');
-    resolveResponse([200, { results: [] }]);
-    await waitForElementToBeRemoved(() => screen.queryByRole('status'));
-    const noFoundComponent = await screen.findByText('No results found');
-    expect(noFoundComponent).toBeInTheDocument();
+    const expandButton = screen.getAllByText('Expand All')[0];
+    expandButton.click();
+    const childTag = await screen.findByText('the child tag');
+    expect(childTag).toBeInTheDocument();
+    // a tr should never be nested inside a td
+    const allCells = screen.getAllByRole('cell');
+    allCells.forEach(cell => {
+      const nestedTr = cell.querySelector('tr');
+      expect(nestedTr).toBeNull();
+    });
   });
+
+
 
   it('should render page correctly', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
@@ -1166,6 +1170,20 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     queryClient.clear();
+  });
+
+  it('shows the spinner before the query is complete', async () => {
+    // Simulate an actual slow response from the API:
+    let resolveResponse;
+    const promise = new Promise(resolve => { resolveResponse = resolve; });
+    axiosMock.onGet(rootTagsListUrl).reply(() => promise);
+    render(<RootWrapper />);
+    const spinner = await screen.findByRole('status');
+    expect(spinner.textContent).toEqual('Loading...');
+    resolveResponse([200, { results: [] }]);
+    await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+    const noFoundComponent = await screen.findByText('No results found');
+    expect(noFoundComponent).toBeInTheDocument();
   });
 
   /* Acceptance Criteria:

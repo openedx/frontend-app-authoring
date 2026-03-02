@@ -1,3 +1,5 @@
+import TagTreeError from './tagTreeError';
+
 export interface TagData {
   childCount: number;
   descendantCount: number;
@@ -15,13 +17,6 @@ export interface TagData {
 
 export interface TagTreeNode extends TagData {
   subRows?: TagTreeNode[];
-}
-
-export class TagTreeError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'TagTreeError';
-  }
 }
 
 /**
