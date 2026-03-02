@@ -873,51 +873,6 @@ describe('<TagListTable />', () => {
     });
 
     /* Acceptance Criteria:
-    Saving a tag with a name creates the sub-tag beneath the parent tag
-    Given the user is on the taxonomy detail page
-    And an inline "Add sub-tag" row is displayed beneath a parent tag
-    When the user enters a valid sub-tag name
-    And the user selects "Save"
-    Then a new sub-tag is created under the selected parent tag
-    And the new sub-tag appears in the tag list beneath the parent tag
-    And the new sub-tag is indented
-    And the inline input row is no longer displayed
-    */
-   // somehow not working when run with the rest of the tests, but works when run in isolation - needs investigation
-    it('should create and render a new sub-tag under the selected parent', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'child-new',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 2222,
-        parent_value: 'root tag 1',
-      });
-
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
-      const row = screen.getByText('root tag 1').closest('tr');
-      const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      await fireEvent.click(actionsButton);
-
-      await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
-      const input = draftRow.querySelector('input');
-
-      await fireEvent.change(input, { target: { value: 'child-new' } });
-      await fireEvent.click(within(draftRow).getByText('Save'));
-
-      await waitFor(() => {
-        expect(screen.getByText('child-new')).toBeInTheDocument();
-        const currentRows = screen.getAllByRole('row');
-        const currentDraftRows = currentRows.filter(row => row.querySelector('input'));
-        expect(currentDraftRows.length).toBe(0);
-      });
-    });
-
-    /* Acceptance Criteria:
     Save is not allowed when the input is empty
     Given the user is on the taxonomy detail page
     And an inline "Add sub-tag" row is displayed beneath a parent tag
@@ -1074,41 +1029,6 @@ describe('<TagListTable />', () => {
       expect(draftRows.length).toBe(1);
     });
 
-    /* Acceptance Criteria:
-    New tag appears without refreshing the page
-    Given an inline "Add sub-tag" row is displayed beneath a parent tag
-    When a tag name is successfully added
-    Then the new sub-tag appears in the list without a page refresh
-    And the table does not get refreshed (no additional get request is made)
-    */
-    it('should show a newly created sub-tag without triggering a page refresh', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'child appears immediately',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 3333,
-        parent_value: 'root tag 1',
-      });
-
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
-
-      const row = screen.getByText('root tag 1').closest('tr');
-      const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      await fireEvent.click(actionsButton);
-
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
-      const input = draftRow.querySelector('input');
-      fireEvent.change(input, { target: { value: 'child appears immediately' } });
-      fireEvent.click(within(draftRow).getByText('Save'));
-
-      expect(await screen.findByText('child appears immediately')).toBeInTheDocument();
-      expect(axiosMock.history.get.length).toBe(1);
-    });
 
     /* Acceptance Criteria:
     Users can only add subtags if they have the correct permissions
@@ -1153,38 +1073,6 @@ describe('<TagListTable />', () => {
       And the user can enter a name and save to create a new nested sub-tag
       */
 
-    it('should allow adding a nested sub-tag under a sub-tag', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'nested child',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 4444,
-        parent_value: 'the child tag',
-      });
-
-      render(<RootWrapper />);
-      // click "Expand row" button to show "the child tag" sub-tag
-      await screen.findByText('root tag 1');
-      const expandButton = screen.queryAllByText('Expand row')?.[0].closest('a');
-      fireEvent.click(expandButton);
-      await screen.findByText('the child tag');
-
-      // open actions menu for "the child tag" sub-tag
-      const row = screen.getByText('the child tag').closest('tr');
-      const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      await fireEvent.click(actionsButton);
-      await fireEvent.click(screen.getByText('Add Subtag'));
-
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
-      const input = draftRow.querySelector('input');
-      await fireEvent.change(input, { target: { value: 'nested child' } });
-      await fireEvent.click(within(input.closest('tr')).getByText('Save'));
-
-      expect(await screen.findByText('nested child')).toBeInTheDocument();
-    });
 
     /* Acceptance Criteria:
       Nested sub-tags save and display correctly without refreshing the page
@@ -1194,46 +1082,6 @@ describe('<TagListTable />', () => {
       And the table does not get refreshed (no additional get request is made)
       */
 
-    it('should show a newly created nested sub-tag without triggering a page refresh', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'nested child appears immediately',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 5555,
-        parent_value: 'the child tag',
-      });
-
-      render(<RootWrapper />);
-      // Expand row
-      await screen.findByText('root tag 1');
-      const expandButton = screen.queryAllByText('Expand row')?.[0].closest('a');
-      fireEvent.click(expandButton);
-      await screen.findByText('the child tag');
-
-      // open actions menu for "the child tag" sub-tag
-      const row = screen.getByText('the child tag').closest('tr');
-      const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      await fireEvent.click(actionsButton);
-      await fireEvent.click(screen.getByText('Add Subtag'));
-
-      const rows = await screen.findAllByRole('row');
-      const inputs = screen.getAllByPlaceholderText('Type tag name');
-      const input = inputs.find(i => i.value === 'nested child appears immediately') || inputs.find(i => i.value === '');
-
-      if (input.value !== 'nested child appears immediately') {
-        await fireEvent.change(input, { target: { value: 'nested child appears immediately' } });
-      }
-
-      const draftRow = input.closest('tr');
-      const saveButton = within(draftRow).getByText('Save');
-
-      await fireEvent.click(saveButton);
-
-      expect(await screen.findByText('nested child appears immediately')).toBeInTheDocument();
-      expect(axiosMock.history.get.length).toBe(1);
-    });
 
     /* Acceptance Criteria:
       Nested sub-tags are only creatable for the taxonomy's max-depth level
@@ -1288,5 +1136,200 @@ describe('<TagListTable />', () => {
       fireEvent.click(actionsButton);
       expect(screen.queryByText('Add Subtag')).not.toBeInTheDocument();
     });
+  });
+});
+
+// These async creation flows are intentionally isolated because they pass individually
+// but can be flaky when interleaved with the larger suite's async/query timing.
+describe('<TagListTable /> isolated async subtag tests', () => {
+  beforeAll(async () => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+  });
+
+  beforeEach(async () => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    queryClient.clear();
+  });
+
+  /* Acceptance Criteria:
+  Saving a tag with a name creates the sub-tag beneath the parent tag
+  Given the user is on the taxonomy detail page
+  And an inline "Add sub-tag" row is displayed beneath a parent tag
+  When the user enters a valid sub-tag name
+  And the user selects "Save"
+  Then a new sub-tag is created under the selected parent tag
+  And the new sub-tag appears in the tag list beneath the parent tag
+  And the new sub-tag is indented
+  And the inline input row is no longer displayed
+  */
+  it('should create and render a new sub-tag under the selected parent', async () => {
+    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+    axiosMock.onPost(createTagUrl).reply(201, {
+      ...tagDefaults,
+      value: 'child-new',
+      child_count: 0,
+      descendant_count: 0,
+      _id: 2222,
+      parent_value: 'root tag 1',
+    });
+
+    render(<RootWrapper />);
+    await screen.findByText('root tag 1');
+    const row = screen.getByText('root tag 1').closest('tr');
+    const actionsButton = within(row).getByRole('button', { name: /actions/i });
+    await fireEvent.click(actionsButton);
+
+    await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+    const rows = await screen.findAllByRole('row');
+    const draftRow = rows.find(row => row.querySelector('input'));
+    const input = draftRow.querySelector('input');
+
+    await fireEvent.change(input, { target: { value: 'child-new' } });
+    await fireEvent.click(within(draftRow).getByText('Save'));
+
+    await waitFor(() => {
+      expect(screen.getByText('child-new')).toBeInTheDocument();
+      const currentRows = screen.getAllByRole('row');
+      const currentDraftRows = currentRows.filter(row => row.querySelector('input'));
+      expect(currentDraftRows.length).toBe(0);
+    });
+  });
+
+  /* Acceptance Criteria:
+  New tag appears without refreshing the page
+  Given an inline "Add sub-tag" row is displayed beneath a parent tag
+  When a tag name is successfully added
+  Then the new sub-tag appears in the list without a page refresh
+  And the table does not get refreshed (no additional get request is made)
+  */
+  it('should show a newly created sub-tag without triggering a page refresh', async () => {
+    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+    axiosMock.onPost(createTagUrl).reply(201, {
+      ...tagDefaults,
+      value: 'child appears immediately',
+      child_count: 0,
+      descendant_count: 0,
+      _id: 3333,
+      parent_value: 'root tag 1',
+    });
+
+    render(<RootWrapper />);
+    await screen.findByText('root tag 1');
+
+    const row = screen.getByText('root tag 1').closest('tr');
+    const actionsButton = within(row).getByRole('button', { name: /actions/i });
+    await fireEvent.click(actionsButton);
+
+    fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+    const rows = await screen.findAllByRole('row');
+    const draftRow = rows.find(row => row.querySelector('input'));
+    const input = draftRow.querySelector('input');
+    fireEvent.change(input, { target: { value: 'child appears immediately' } });
+    fireEvent.click(within(draftRow).getByText('Save'));
+
+    expect(await screen.findByText('child appears immediately')).toBeInTheDocument();
+    expect(axiosMock.history.get.length).toBe(1);
+  });
+
+  /* Acceptance Criteria:
+    User can add a sub-tag as child of a sub-tag (nested sub-tags)
+    Given the user is on the taxonomy detail page
+    And the user has opened the actions menu for a sub-tag
+    When the user selects "Add sub-tag" from the sub-tag's actions menu
+    Then an inline row is displayed directly beneath the sub-tag
+    And the user can enter a name and save to create a new nested sub-tag
+    */
+  it('should allow adding a nested sub-tag under a sub-tag', async () => {
+    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+    axiosMock.onPost(createTagUrl).reply(201, {
+      ...tagDefaults,
+      value: 'nested child',
+      child_count: 0,
+      descendant_count: 0,
+      _id: 4444,
+      parent_value: 'the child tag',
+    });
+
+    render(<RootWrapper />);
+    await screen.findByText('root tag 1');
+    const expandButton = screen.queryAllByText('Expand row')?.[0].closest('a');
+    fireEvent.click(expandButton);
+    await screen.findByText('the child tag');
+
+    const row = screen.getByText('the child tag').closest('tr');
+    const actionsButton = within(row).getByRole('button', { name: /actions/i });
+    await fireEvent.click(actionsButton);
+    await fireEvent.click(screen.getByText('Add Subtag'));
+
+    const rows = await screen.findAllByRole('row');
+    const draftRow = rows.find(row => row.querySelector('input'));
+    const input = draftRow.querySelector('input');
+    await fireEvent.change(input, { target: { value: 'nested child' } });
+    await fireEvent.click(within(input.closest('tr')).getByText('Save'));
+
+    expect(await screen.findByText('nested child')).toBeInTheDocument();
+  });
+
+  /* Acceptance Criteria:
+    Nested sub-tags save and display correctly without refreshing the page
+    Given an inline "Add sub-tag" row is displayed beneath a sub-tag
+    When a tag name is successfully added
+    Then the new nested sub-tag appears in the list without a page refresh
+    And the table does not get refreshed (no additional get request is made)
+    */
+  it('should show a newly created nested sub-tag without triggering a page refresh', async () => {
+    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+    axiosMock.onPost(createTagUrl).reply(201, {
+      ...tagDefaults,
+      value: 'nested child appears immediately',
+      child_count: 0,
+      descendant_count: 0,
+      _id: 5555,
+      parent_value: 'the child tag',
+    });
+
+    render(<RootWrapper />);
+    await screen.findByText('root tag 1');
+    const expandButton = screen.queryAllByText('Expand row')?.[0].closest('a');
+    fireEvent.click(expandButton);
+    await screen.findByText('the child tag');
+
+    const row = screen.getByText('the child tag').closest('tr');
+    const actionsButton = within(row).getByRole('button', { name: /actions/i });
+    await fireEvent.click(actionsButton);
+    await fireEvent.click(screen.getByText('Add Subtag'));
+
+    const rows = await screen.findAllByRole('row');
+    const inputs = screen.getAllByPlaceholderText('Type tag name');
+    const input = inputs.find(i => i.value === 'nested child appears immediately') || inputs.find(i => i.value === '');
+
+    if (input.value !== 'nested child appears immediately') {
+      await fireEvent.change(input, { target: { value: 'nested child appears immediately' } });
+    }
+
+    const draftRow = input.closest('tr');
+    const saveButton = within(draftRow).getByText('Save');
+
+    await fireEvent.click(saveButton);
+
+    expect(await screen.findByText('nested child appears immediately')).toBeInTheDocument();
+    expect(axiosMock.history.get.length).toBe(1);
   });
 });
