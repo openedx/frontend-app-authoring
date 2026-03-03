@@ -10,7 +10,12 @@ export interface ToastActionData {
 export interface ToastContextData {
   toastMessage: string | null;
   toastAction?: ToastActionData;
-  showToast: (message: string, action?: ToastActionData) => void;
+  toastDelay?: number;
+  showToast: (
+    message: string,
+    action?: ToastActionData,
+    delay?: number,
+  ) => void;
   closeToast: () => void;
 }
 
@@ -43,11 +48,15 @@ export const ToastProvider = (props: ToastProviderProps) => {
   // see: https://github.com/open-craft/frontend-app-course-authoring/pull/38#discussion_r1638990647
 
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
-  const [toastAction, setToastAction] = React.useState<ToastActionData | undefined>(undefined);
+  const [toastAction, setToastAction] = React.useState<ToastActionData>();
+  const [toastDelay, setToastDelay] = React.useState<number>();
 
   const resetState = React.useCallback(() => {
     setToastMessage(null);
     setToastAction(undefined);
+    // Set Toast delay by default, currently,
+    // it is not possible to disable the timer in Paragon's toast menu.
+    setToastDelay(undefined);
   }, []);
 
   React.useEffect(() => () => {
@@ -55,9 +64,14 @@ export const ToastProvider = (props: ToastProviderProps) => {
     resetState();
   }, []);
 
-  const showToast = React.useCallback((message, action?: ToastActionData) => {
+  const showToast = React.useCallback((
+    message,
+    action?: ToastActionData,
+    delay?: number,
+  ) => {
     setToastMessage(message);
     setToastAction(action);
+    setToastDelay(delay);
   }, [setToastMessage, setToastAction]);
   const closeToast = React.useCallback(() => resetState(), [setToastMessage, setToastAction]);
 
@@ -70,9 +84,16 @@ export const ToastProvider = (props: ToastProviderProps) => {
   const context = React.useMemo(() => ({
     toastMessage,
     toastAction,
+    toastDelay,
     showToast,
     closeToast,
-  }), [toastMessage, toastAction, showToast, closeToast]);
+  }), [
+    toastMessage,
+    toastAction,
+    toastDelay,
+    showToast,
+    closeToast,
+  ]);
 
   return (
     <ToastContext.Provider value={context}>
@@ -82,6 +103,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
           isShow={toastMessage !== null}
           title={toastMessage}
           action={toastAction}
+          delay={toastDelay}
           close={closeToast}
         />
       )}

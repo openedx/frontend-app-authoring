@@ -99,7 +99,7 @@ const useCourseOutline = ({ courseId }) => {
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
-  const { mutate: pasteClipboardContent, isPending: isPasting } = usePasteItem(courseId);
+  const { mutate: pasteClipboardContent } = usePasteItem(courseId);
   const handlePasteClipboardClick = (parentLocator, subsectionId, sectionId) => {
     pasteClipboardContent({
       parentLocator,
@@ -150,7 +150,6 @@ const useCourseOutline = ({ courseId }) => {
 
   const {
     mutate: updateCourseSectionHighlights,
-    isPending: isSectionHighlightsUpdatePending,
   } = useUpdateCourseSectionHighlights();
   const handleHighlightsFormSubmit = (highlights) => {
     const dataToSend = Object.values(highlights).filter(Boolean);
@@ -190,17 +189,13 @@ const useCourseOutline = ({ courseId }) => {
 
   const {
     mutate: configureCourseSection,
-    isPending: isSectionConfigurePending,
   } = useConfigureSection();
   const {
     mutate: configureCourseSubsection,
-    isPending: isSubsectionConfigurePending,
   } = useConfigureSubsection();
   const {
     mutate: configureCourseUnit,
-    isPending: isUnitConfigurePending,
   } = useConfigureUnit();
-  const isConfigureOpPending = isSectionConfigurePending || isSubsectionConfigurePending || isUnitConfigurePending;
   const handleConfigureItemSubmit = (variables) => {
     const category = getBlockType(currentSelection.currentId);
     switch (category) {
@@ -298,7 +293,6 @@ const useCourseOutline = ({ courseId }) => {
 
   const {
     mutate: duplicateItem,
-    isPending: isDuplicatingItem,
   } = useDuplicateItem(courseId);
   const handleDuplicateSectionSubmit = () => {
     duplicateItem({
@@ -407,14 +401,12 @@ const useCourseOutline = ({ courseId }) => {
     isConfigureModalOpen,
     openConfigureModal,
     handleConfigureModalClose,
-    isConfigureOpPending,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
     statusBarData,
     isEnableHighlightsModalOpen,
-    isSectionHighlightsUpdatePending,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
     isInternetConnectionAlertFailed: isSavingStatusFailed,
@@ -429,11 +421,9 @@ const useCourseOutline = ({ courseId }) => {
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
-    isDuplicatingItem,
     handleDuplicateUnitSubmit,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
-    isPasting,
     notificationDismissUrl,
     discussionsSettings,
     discussionsIncontextLearnmoreUrl,

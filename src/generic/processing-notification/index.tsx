@@ -12,10 +12,15 @@ export interface ProcessingNotificationProps {
     onClick?: () => void;
   };
   close?: () => void;
+  delay?: number;
 }
 
 const ProcessingNotification = ({
-  isShow, title, action, close,
+  isShow,
+  title,
+  action,
+  close,
+  delay = 5000,
 }: ProcessingNotificationProps) => (
   // @ts-ignore - Toast has a poor definition of children
   <Toast
@@ -24,6 +29,7 @@ const ProcessingNotification = ({
     aria-hidden={isShow}
     action={action && { ...action }}
     onClose={close || (() => {})}
+    delay={delay}
   >
     { /* @ts-ignore - Toast has a poor definition of children */ }
     <span className="d-flex align-items-center">

@@ -29,13 +29,11 @@ import { UnlinkModal } from '@src/generic/unlink-modal';
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
-import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { useToastContext } from '@src/generic/toast-context';
 import {
   getProctoredExamsFlag,
   getTimedExamsFlag,
@@ -70,13 +68,10 @@ const CourseOutline = () => {
   const {
     courseId,
     courseUsageKey,
-    handleAddBlock,
-    handleAddAndOpenUnit,
     isUnlinkModalOpen,
     closeUnlinkModal,
     currentSelection,
   } = useCourseAuthoringContext();
-  const { showToast } = useToastContext();
 
   const {
     courseName,
@@ -95,7 +90,6 @@ const CourseOutline = () => {
     isDisabledReindexButton,
     isHighlightsModalOpen,
     isConfigureModalOpen,
-    isConfigureOpPending,
     isDeleteModalOpen,
     closeHighlightsModal,
     handleConfigureModalClose,
@@ -108,17 +102,14 @@ const CourseOutline = () => {
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
-    isSectionHighlightsUpdatePending,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
-    isDuplicatingItem,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
-    isPasting,
     notificationDismissUrl,
     discussionsSettings,
     discussionsIncontextLearnmoreUrl,
@@ -229,24 +220,6 @@ const CourseOutline = () => {
   useEffect(() => {
     setSections(sectionsList);
   }, [sectionsList]);
-
-  useEffect(() => {
-    if (handleAddBlock.isPending
-      || handleAddAndOpenUnit.isPending
-      || isConfigureOpPending
-      || isSectionHighlightsUpdatePending
-      || isDuplicatingItem
-      || isPasting) {
-      showToast(NOTIFICATION_MESSAGES.saving);
-    }
-  }, [
-    handleAddBlock.isPending,
-    handleAddAndOpenUnit.isPending,
-    isConfigureOpPending,
-    isSectionHighlightsUpdatePending,
-    isDuplicatingItem,
-    isPasting,
-  ]);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
