@@ -101,26 +101,22 @@ describe('group configurations API calls', () => {
   it('should delete content group', async () => {
     const parentGroupId = contentGroups.id;
     const groupId = contentGroups.groups[0].id;
-    const response = { ...groupConfigurationResponseMock };
     const updatedContentGroups = {
       ...contentGroups,
       groups: contentGroups.groups.filter((group) => group.id !== groupId),
     };
 
-    response.allGroupConfigurations[1] = updatedContentGroups;
     axiosMock
       .onDelete(
         getLegacyApiUrl(courseId, parentGroupId, groupId),
       )
-      .reply(200, response);
+      .reply(200, {});
 
-    const result = await deleteContentGroup(courseId, parentGroupId, groupId);
-    const expected = camelCaseObject(response);
+    await deleteContentGroup(courseId, parentGroupId, groupId);
 
     expect(axiosMock.history.delete[0].url).toEqual(
       getLegacyApiUrl(courseId, updatedContentGroups.id, groupId),
     );
-    expect(result).toEqual(expected);
   });
 
   it('should create experiment configurations', async () => {

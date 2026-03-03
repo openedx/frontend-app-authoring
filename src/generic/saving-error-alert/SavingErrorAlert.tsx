@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Warning as WarningIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { RequestStatus } from '../../data/constants';
 import AlertMessage from '../alert-message';
 import messages from './messages';
 
+export interface SavingErrorAlertProps {
+  isQueryFailed: boolean;
+  errorMessage?: string;
+}
+
 const SavingErrorAlert = ({
-  savingStatus,
+  isQueryFailed,
   errorMessage,
-}) => {
+}: SavingErrorAlertProps) => {
   const intl = useIntl();
   const [showAlert, setShowAlert] = useState(false);
   const [isOnline, setIsOnline] = useState(window.navigator.onLine);
-  const isQueryFailed = savingStatus === RequestStatus.FAILED;
 
   useEffect(() => {
     const handleOnlineStatus = () => setIsOnline(window.navigator.onLine);
@@ -52,15 +54,6 @@ const SavingErrorAlert = ({
       )}
     />
   );
-};
-
-SavingErrorAlert.defaultProps = {
-  errorMessage: undefined,
-};
-
-SavingErrorAlert.propTypes = {
-  savingStatus: PropTypes.string.isRequired,
-  errorMessage: PropTypes.string,
 };
 
 export default SavingErrorAlert;

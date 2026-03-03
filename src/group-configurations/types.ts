@@ -1,3 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
+import { AxiosError } from 'axios';
+
 export interface Usage {
   label: string;
   url: string;
@@ -6,7 +9,7 @@ export interface Usage {
 export interface Group {
   id: number;
   name: string;
-  usage: Usage[];
+  usage?: Usage[];
   version: number;
 }
 
@@ -25,3 +28,5 @@ export interface AvailableGroup {
   scheme: string;
   version: number;
 }
+
+export type OnErrorCallbackFunc = (error: AxiosError) => void;

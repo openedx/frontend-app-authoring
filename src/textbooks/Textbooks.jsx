@@ -10,6 +10,7 @@ import { Add as AddIcon } from '@openedx/paragon/icons';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { RequestStatus } from '@src/data/constants';
 
 import { useWaffleFlags } from '../data/apiHooks';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
@@ -135,7 +136,7 @@ const Textbooks = () => {
       </Container>
       <div className="alert-toast">
         <SavingErrorAlert
-          savingStatus={savingStatus}
+          isQueryFailed={savingStatus === RequestStatus.FAILED}
           errorMessage={errorMessage}
         />
       </div>

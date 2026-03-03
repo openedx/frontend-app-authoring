@@ -5,6 +5,7 @@ import {
   Stack,
   Row,
 } from '@openedx/paragon';
+import { Helmet } from 'react-helmet';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import SubHeader from '@src/generic/sub-header/SubHeader';
@@ -26,23 +27,24 @@ const GroupConfigurations = () => {
   const { courseId, courseDetails } = useCourseAuthoringContext();
   const {
     isLoading,
-    savingStatus,
-    errorMessage,
+    anyMutationFailed,
+    mutationErrorMessage,
     contentGroupActions,
     experimentConfigurationActions,
-    groupConfigurations: {
-      allGroupConfigurations,
-      shouldShowEnrollmentTrack,
-      shouldShowExperimentGroups,
-      experimentGroupConfigurations,
-    },
+    groupConfigurations,
     isLoadingDenied,
-  } = useGroupConfigurations(courseId);
+  } = useGroupConfigurations();
 
   document.title = getPageHeadTitle(
     courseDetails?.name ?? '',
     formatMessage(messages.headingTitle),
   );
+  const {
+    shouldShowEnrollmentTrack = false,
+    shouldShowExperimentGroups = false,
+    experimentGroupConfigurations = [],
+    allGroupConfigurations = [],
+  } = groupConfigurations ?? {};
 
   if (isLoadingDenied) {
     return (
@@ -70,6 +72,9 @@ const GroupConfigurations = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{getPageHeadTitle(courseDetails?.name ?? '', formatMessage(messages.headingTitle))}</title>
+      </Helmet>
       <Container size="xl" className="group-configurations px-4">
         <div className="mt-5" />
         <SubHeader
@@ -128,8 +133,8 @@ const GroupConfigurations = () => {
       </Container>
       <div className="alert-toast">
         <SavingErrorAlert
-          savingStatus={savingStatus}
-          errorMessage={errorMessage}
+          isQueryFailed={anyMutationFailed}
+          errorMessage={mutationErrorMessage}
         />
       </div>
     </>

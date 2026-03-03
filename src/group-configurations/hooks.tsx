@@ -1,98 +1,87 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { RequestStatus } from '../data/constants';
-import {
-  getGroupConfigurationsData,
-  getLoadingStatus,
-  getSavingStatus,
-  getErrorMessage,
-} from './data/selectors';
-import { updateSavingStatuses } from './data/slice';
-import {
-  createContentGroupQuery,
-  createExperimentConfigurationQuery,
-  deleteContentGroupQuery,
-  deleteExperimentConfigurationQuery,
-  editContentGroupQuery,
-  editExperimentConfigurationQuery,
-  fetchGroupConfigurationsQuery,
-} from './data/thunk';
-import { useGetGroupConfigurations } from './data/apiHooks';
+import { useState } from 'react';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { getMessageFromAxiosError } from '@src/generic/saving-error-alert/utils';
+import {
+  useCreateContentGroup,
+  useCreateExperimentConfiguration,
+  useDeleteContentGroup,
+  useDeleteExperimentConfiguration,
+  useEditContentGroup,
+  useEditExperimentConfiguration,
+  useGetGroupConfigurations,
+} from './data/apiHooks';
+import { AvailableGroup, OnErrorCallbackFunc } from './types';
 
-const useGroupConfigurations = () => {
-  const dispatch = useDispatch();
+export const useGroupConfigurations = () => {
   const { courseId } = useCourseAuthoringContext();
+  const [mutationErrorMessage, setMutationErrorMessage] = useState<string>();
   const {
     data: groupConfigurations,
     isPending: isPendingGroupConfigurations,
     failureReason: groupConfigurationsError,
   } = useGetGroupConfigurations(courseId);
 
-  const savingStatus = useSelector(getSavingStatus);
+  const handleMutationError: OnErrorCallbackFunc = (error) => (
+    setMutationErrorMessage(getMessageFromAxiosError(error))
+  );
 
-  const handleInternetConnectionFailed = () => {
-    dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
-  };
+  const createGroupMutation = useCreateContentGroup(courseId, handleMutationError);
+  const editGroupMutation = useEditContentGroup(courseId, handleMutationError);
+  const deleteGroupMutation = useDeleteContentGroup(courseId, handleMutationError);
+  const createExperimentConfigMutation = useCreateExperimentConfiguration(courseId, handleMutationError);
+  const editExperimentConfigMutation = useEditExperimentConfiguration(courseId, handleMutationError);
+  const deleteExperimentConfigMutaion = useDeleteExperimentConfiguration(courseId, handleMutationError);
+
+  const anyMutationFailed = createGroupMutation.isError || editGroupMutation.isError
+    || deleteGroupMutation.isError || createExperimentConfigMutation.isError
+    || editExperimentConfigMutation.isError || deleteExperimentConfigMutaion.isError;
 
   const contentGroupActions = {
-    handleCreate: (group, callbackToClose) => {
-      dispatch(createContentGroupQuery(courseId, group)).then((result) => {
-        if (result) {
-          callbackToClose();
-        }
-      });
+    handleCreate: async (group: AvailableGroup, callbackToClose: () => void) => {
+      const result = await createGroupMutation.mutateAsync(group);
+      if (result) {
+        callbackToClose();
+      }
     },
-    handleEdit: (group, callbackToClose) => {
-      dispatch(editContentGroupQuery(courseId, group)).then((result) => {
-        if (result) {
-          callbackToClose();
-        }
-      });
+    handleEdit: async (group: AvailableGroup, callbackToClose: () => void) => {
+      const result = await editGroupMutation.mutateAsync(group);
+      if (result) {
+        callbackToClose();
+      }
     },
-    handleDelete: (parentGroupId, groupId) => {
-      dispatch(deleteContentGroupQuery(courseId, parentGroupId, groupId));
+    handleDelete: (parentGroupId: number, groupId: number) => {
+      deleteGroupMutation.mutate({
+        parentGroupId,
+        groupId,
+      });
     },
   };
 
   const experimentConfigurationActions = {
-    handleCreate: (configuration, callbackToClose) => {
-      dispatch(
-        createExperimentConfigurationQuery(courseId, configuration),
-      ).then((result) => {
-        if (result) {
-          callbackToClose();
-        }
-      });
+    handleCreate: async (configuration: AvailableGroup, callbackToClose: () => void) => {
+      const result = await createExperimentConfigMutation.mutateAsync(configuration);
+      if (result) {
+        callbackToClose();
+      }
     },
-    handleEdit: (configuration, callbackToClose) => {
-      dispatch(editExperimentConfigurationQuery(courseId, configuration)).then(
-        (result) => {
-          if (result) {
-            callbackToClose();
-          }
-        },
-      );
+    handleEdit: async (configuration: AvailableGroup, callbackToClose: () => void) => {
+      const result = await editExperimentConfigMutation.mutateAsync(configuration);
+      if (result) {
+        callbackToClose();
+      }
     },
-    handleDelete: (configurationId) => {
-      dispatch(deleteExperimentConfigurationQuery(courseId, configurationId));
+    handleDelete: (configurationId: number) => {
+      deleteExperimentConfigMutaion.mutate(configurationId);
     },
   };
-
-  useEffect(() => {
-    dispatch(fetchGroupConfigurationsQuery(courseId));
-  }, [courseId]);
 
   return {
     isLoading: isPendingGroupConfigurations,
     isLoadingDenied: groupConfigurationsError?.response?.status === 403,
-    savingStatus,
     contentGroupActions,
     experimentConfigurationActions,
     groupConfigurations,
-    handleInternetConnectionFailed,
+    anyMutationFailed,
+    mutationErrorMessage,
   };
 };
-
-export { useGroupConfigurations };

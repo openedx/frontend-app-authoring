@@ -1,32 +1,13 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { AvailableGroup } from '../types';
 
 const API_PATH_PATTERN = 'group_configurations';
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export interface Group {
-  id: number;
-  name: string;
-  usage?: any;
-  version: number;
-}
-
-export interface GroupConfiguration {
-  id: number;
-  name: string;
-  active: boolean;
-  description: string;
-  groups: Group[];
-  parameters: Record<string, any>;
-  readOnly: boolean;
-  scheme: string;
-  usage?: any;
-  version: string;
-}
-
 export interface GroupConfigurationResponse {
-  allGroupConfigurations: GroupConfiguration[];
-  experimentGroupConfigurations?: GroupConfiguration[];
+  allGroupConfigurations: AvailableGroup[];
+  experimentGroupConfigurations?: AvailableGroup[];
   mfeProctoredExamSettingsUrl: string;
   shouldShowEnrollmentTrack: boolean;
   shouldShowExperimentGroups: boolean;
@@ -55,7 +36,7 @@ export async function getGroupConfigurations(courseId: string): Promise<GroupCon
 /**
  * Create new content group for course.
  */
-export async function createContentGroup(courseId: string, group: GroupConfiguration): Promise<GroupConfiguration> {
+export async function createContentGroup(courseId: string, group: AvailableGroup): Promise<AvailableGroup> {
   const { data } = await getAuthenticatedHttpClient().post(
     getLegacyApiUrl(courseId, group.id),
     group,
@@ -67,7 +48,7 @@ export async function createContentGroup(courseId: string, group: GroupConfigura
 /**
  * Edit exists content group in course.
  */
-export async function editContentGroup(courseId: string, group: GroupConfiguration): Promise<GroupConfiguration> {
+export async function editContentGroup(courseId: string, group: AvailableGroup): Promise<AvailableGroup> {
   const { data } = await getAuthenticatedHttpClient().post(
     getLegacyApiUrl(courseId, group.id),
     group,
@@ -90,8 +71,8 @@ export async function deleteContentGroup(courseId: string, parentGroupId: number
  */
 export async function createExperimentConfiguration(
   courseId: string,
-  configuration: GroupConfiguration,
-): Promise<GroupConfiguration> {
+  configuration: AvailableGroup,
+): Promise<AvailableGroup> {
   const { data } = await getAuthenticatedHttpClient().post(
     getLegacyApiUrl(courseId),
     configuration,
@@ -105,8 +86,8 @@ export async function createExperimentConfiguration(
  */
 export async function editExperimentConfiguration(
   courseId: string,
-  configuration: GroupConfiguration,
-): Promise<GroupConfiguration> {
+  configuration: AvailableGroup,
+): Promise<AvailableGroup> {
   const { data } = await getAuthenticatedHttpClient().post(
     getLegacyApiUrl(courseId, configuration.id),
     configuration,

@@ -22,7 +22,6 @@ import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
 import { reducer as textbooksReducer } from './textbooks/data/slice';
 import { reducer as certificatesReducer } from './certificates/data/slice';
-import { reducer as groupConfigurationsReducer } from './group-configurations/data/slice';
 
 type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
 
@@ -53,7 +52,6 @@ export interface DeprecatedReduxState {
     componentMode: (typeof MODE_STATES)[keyof typeof MODE_STATES];
     certificatesData: any;
   };
-  groupConfigurations: InferState<typeof groupConfigurationsReducer>;
   textbooks: Record<string, any>;
 }
 
@@ -75,7 +73,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       courseOutline: courseOutlineReducer,
       courseUnit: courseUnitReducer,
       certificates: certificatesReducer,
-      groupConfigurations: groupConfigurationsReducer,
       textbooks: textbooksReducer,
     },
     preloadedState: preloadedState as DeprecatedReduxState | undefined,

@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { useDispatch } from 'react-redux';
 import { AxiosError } from 'axios';
 import {
   useQuery,
@@ -7,7 +6,10 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
+import { useToastContext } from '@src/generic/toast-context';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
 import * as api from './api';
+import { AvailableGroup, OnErrorCallbackFunc } from '../types';
 
 export const groupConfigurationsQueryKeys = {
   all: ['groupConfigurations'],
@@ -30,82 +32,133 @@ export const useGetGroupConfigurations = (courseId: string) => (
 /**
  * Use this mutation to create a new content group for a course.
  */
-export const useCreateContentGroup = (courseId: string) => {
+export const useCreateContentGroup = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
-  return useMutation({
-    mutationFn: (group: api.GroupConfiguration) => api.createContentGroup(courseId, group),
+  const {
+    showToast,
+    closeToast,
+  } = useToastContext();
+  return useMutation<AvailableGroup, AxiosError, AvailableGroup>({
+    mutationFn: (group: AvailableGroup) => api.createContentGroup(courseId, group),
     onSettled: () => {
+      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
     },
     onMutate: () => {
+      showToast(NOTIFICATION_MESSAGES.saving);
     },
+    onError,
   });
 };
 
 /**
  * Use this mutation to edit an existing content group in a course.
  */
-export const useEditContentGroup = (courseId: string) => {
+export const useEditContentGroup = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
+  const {
+    showToast,
+    closeToast,
+  } = useToastContext();
   return useMutation({
-    mutationFn: (group: api.GroupConfiguration) => api.editContentGroup(courseId, group),
+    mutationFn: (group: AvailableGroup) => api.editContentGroup(courseId, group),
     onSettled: () => {
+      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
     },
+    onMutate: () => {
+      showToast(NOTIFICATION_MESSAGES.saving);
+    },
+    onError,
   });
 };
 
 /**
  * Use this mutation to delete an existing content group from a course.
  */
-export const useDeleteContentGroup = (courseId: string) => {
+export const useDeleteContentGroup = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
+  const {
+    showToast,
+    closeToast,
+  } = useToastContext();
   return useMutation({
     mutationFn: ({ parentGroupId, groupId }: { parentGroupId: number; groupId: number; }) => (
       api.deleteContentGroup(courseId, parentGroupId, groupId)
     ),
     onSettled: () => {
+      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
     },
+    onMutate: () => {
+      showToast(NOTIFICATION_MESSAGES.deleting);
+    },
+    onError,
   });
 };
 
 /**
  * Use this mutation to create a new experiment configuration for a course.
  */
-export const useCreateExperimentConfiguration = (courseId: string) => {
+export const useCreateExperimentConfiguration = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
+  const {
+    showToast,
+    closeToast,
+  } = useToastContext();
   return useMutation({
-    mutationFn: (configuration: api.GroupConfiguration) => api.createExperimentConfiguration(courseId, configuration),
+    mutationFn: (configuration: AvailableGroup) => api.createExperimentConfiguration(courseId, configuration),
     onSettled: () => {
+      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
     },
+    onMutate: () => {
+      showToast(NOTIFICATION_MESSAGES.saving);
+    },
+    onError,
   });
 };
 
 /**
  * Use this mutation to edit the experiment configuration for a course.
  */
-export const useEditExperimentConfiguration = (courseId: string) => {
+export const useEditExperimentConfiguration = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
+  const {
+    showToast,
+    closeToast,
+  } = useToastContext();
   return useMutation({
-    mutationFn: (configuration: api.GroupConfiguration) => api.editExperimentConfiguration(courseId, configuration),
+    mutationFn: (configuration: AvailableGroup) => api.editExperimentConfiguration(courseId, configuration),
     onSettled: () => {
+      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
     },
+    onMutate: () => {
+      showToast(NOTIFICATION_MESSAGES.saving);
+    },
+    onError,
   });
 };
 
 /**
  * Use this mutation to delete an existing experiment configuration from a course.
  */
-export const useDeleteExperimentConfiguration = (courseId: string) => {
+export const useDeleteExperimentConfiguration = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
+  const {
+    showToast,
+    closeToast,
+  } = useToastContext();
   return useMutation({
     mutationFn: (configurationId: number) => api.deleteExperimentConfiguration(courseId, configurationId),
     onSettled: () => {
+      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
     },
+    onMutate: () => {
+      showToast(NOTIFICATION_MESSAGES.deleting);
+    },
+    onError,
   });
 };
