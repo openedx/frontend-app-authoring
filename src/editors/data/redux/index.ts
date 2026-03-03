@@ -36,7 +36,7 @@ const actions = StrictDict({
   video: video.actions,
   problem: problem.actions,
   game: game.actions,
-  pdf: pdf.selectors,
+  pdf: pdf.actions,
 });
 
 const selectors = StrictDict({

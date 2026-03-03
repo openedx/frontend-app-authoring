@@ -14,4 +14,4 @@ const simpleSelectors: { [Property in keyof PdfState]: (state: EditorState) => P
   source_url: mkSimpleSelector(pdfState => pdfState.source_url),
 };
 
-export default simpleSelectors;
+export default {...simpleSelectors, pdfState};

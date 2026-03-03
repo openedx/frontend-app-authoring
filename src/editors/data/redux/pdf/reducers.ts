@@ -12,7 +12,12 @@ export const initialPdfState: () => PdfState = () => ({
 const pdf = createSlice({
   name: 'pdf',
   initialState: initialPdfState(),
-  reducers: {},
+  reducers: {
+    updateField: (state, { payload }) => ({
+      ...state,
+      ...payload,
+    }),
+  },
 });
 
 export const { reducer, actions } = pdf;
