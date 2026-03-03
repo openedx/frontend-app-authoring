@@ -1,1 +1,2 @@
-export { default as TreeTableView } from './TableView';
+export { TableView } from './TableView';
+export { EditableCell } from './EditableCell';

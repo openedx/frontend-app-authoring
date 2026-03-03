@@ -83,4 +83,4 @@ const EditableCell = ({
   );
 };
 
-export default EditableCell;
+export { EditableCell };

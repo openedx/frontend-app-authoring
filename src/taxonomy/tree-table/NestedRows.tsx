@@ -1,13 +1,13 @@
 import React from 'react';
 import { flexRender } from '@tanstack/react-table';
 
-import EditableCell from './EditableCell';
+import { EditableCell } from './EditableCell';
 import type {
   RowId,
   TreeRow,
 } from './types';
 
-interface SubRowsExpandedProps {
+interface NestedRowsProps {
   parentRowValue: string;
   isCreating?: boolean;
   onSaveNewChildRow?: (value: string, parentRowValue: string) => void;
@@ -22,7 +22,7 @@ interface SubRowsExpandedProps {
   setCreatingParentId?: (value: RowId | null) => void;
 }
 
-const SubRowsExpanded = ({
+const NestedRows = ({
   parentRowValue,
   isCreating = false,
   onSaveNewChildRow = () => {},
@@ -35,7 +35,7 @@ const SubRowsExpanded = ({
   setDraftError = () => {},
   creatingParentId = null,
   setCreatingParentId = () => {},
-}: SubRowsExpandedProps) => {
+}: NestedRowsProps) => {
   const columnCount = childRowsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
   const paddingLeft = depth + 4;
 
@@ -74,7 +74,7 @@ const SubRowsExpanded = ({
                   </td>
                 ))}
             </tr>
-            <SubRowsExpanded
+            <NestedRows
               childRowsData={row.subRows as TreeRow[]}
               visibleColumnCount={row.getVisibleCells().length}
               parentRowValue={String(row.original.value)}
@@ -95,4 +95,4 @@ const SubRowsExpanded = ({
   );
 };
 
-export default SubRowsExpanded;
+export default NestedRows;

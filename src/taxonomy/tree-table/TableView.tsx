@@ -36,12 +36,11 @@ interface TableViewProps {
   isCreatingTopRow: boolean;
   draftError: string;
   createRowMutation: CreateRowMutationState;
-  handleCreateTopRow: (value: string, setToast: React.Dispatch<React.SetStateAction<ToastState>>) => void;
   toast: ToastState;
   setToast: React.Dispatch<React.SetStateAction<ToastState>>;
   setIsCreatingTopRow: (isCreating: boolean) => void;
   exitDraftWithoutSave: () => void;
-  handleCreateChildRow: (value: string, parentRowValue: string) => void;
+  handleCreateRow: (value: string, parentRowValue?: string) => void;
   creatingParentId: RowId | null;
   setCreatingParentId: (id: RowId | null) => void;
   setDraftError: (error: string) => void;
@@ -57,12 +56,11 @@ const TableView = ({
   isCreatingTopRow,
   draftError,
   createRowMutation,
-  handleCreateTopRow,
+  handleCreateRow,
   toast,
   setToast,
   setIsCreatingTopRow,
   exitDraftWithoutSave,
-  handleCreateChildRow,
   creatingParentId,
   setCreatingParentId,
   setDraftError,
@@ -80,6 +78,8 @@ const TableView = ({
     onPaginationChange: handlePaginationChange,
     getSubRows: (row) => row?.subRows || undefined,
   });
+
+  const currentPageIndex = table.getState().pagination.pageIndex + 1;
 
   return (
     <Card>
@@ -119,16 +119,14 @@ const TableView = ({
               columns={columns}
               isCreatingTopRow={isCreatingTopRow}
               draftError={draftError}
-              handleCreateTopRow={handleCreateTopRow}
+              handleCreateRow={handleCreateRow}
               setIsCreatingTopRow={setIsCreatingTopRow}
               exitDraftWithoutSave={exitDraftWithoutSave}
-              handleCreateChildRow={handleCreateChildRow}
               creatingParentId={creatingParentId}
               setCreatingParentId={setCreatingParentId}
               setDraftError={setDraftError}
               createRowMutation={createRowMutation}
               table={table}
-              setToast={setToast}
             />
           </table>
         </Card.Section>
@@ -137,13 +135,13 @@ const TableView = ({
       {pageCount > 1 && (
         <div role="navigation" aria-label="table pagination" className="d-flex flex-column align-items-center mt-3">
           <span>
-            Page {table.getState().pagination.pageIndex + 1} of {pageCount}
+            Page {currentPageIndex} of {pageCount}
           </span>
           <Pagination
             className="d-flex justify-content-center"
             paginationLabel="table pagination"
             pageCount={pageCount}
-            currentPage={table.getState().pagination.pageIndex + 1}
+            currentPage={currentPageIndex}
             onPageSelect={(page) => {
               table.setPageIndex(page - 1);
             }}
@@ -164,4 +162,4 @@ const TableView = ({
   );
 };
 
-export default TableView;
+export { TableView };

@@ -28,6 +28,7 @@ export interface TagTreeNode extends TagData {
  */
 export class TagTree {
   private data: TagData[];
+
   private rows: TagTreeNode[];
 
   constructor(data: TagData[]) {
@@ -108,7 +109,7 @@ export class TagTree {
     for (const item of this.data) {
       // Get the reference to the newly copied object in our lookup map
       const currentNode = lookup[item.value];
-      const parentValue = currentNode.parentValue;
+      const parentValue = currentNode?.parentValue;
 
       if (parentValue !== null && lookup[parentValue]) {
         // If the node has a parent, initialize the subRows array (if needed) and push it
@@ -126,13 +127,13 @@ export class TagTree {
     this.rows = treeChildren;
   }
 
-  _findNodeByValueRecursive(nodes: TagTreeNode[], value: string): TagTreeNode | null {
+  private findNodeByValueRecursive(nodes: TagTreeNode[], value: string): TagTreeNode | null {
     for (const node of nodes) {
       if (node.value === value) {
         return node;
       }
       if (node.subRows) {
-        const found = this._findNodeByValueRecursive(node.subRows, value);
+        const found = this.findNodeByValueRecursive(node.subRows, value);
         if (found) {
           return found;
         }
@@ -142,7 +143,7 @@ export class TagTree {
   }
 
   private getNode(value: string): TagTreeNode | null {
-    return this._findNodeByValueRecursive(this.rows, value);
+    return this.findNodeByValueRecursive(this.rows, value);
   }
 
   // We don't want to expose editing the tree nodes directly, so that tree integrity is maintained.

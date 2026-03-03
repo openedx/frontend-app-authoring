@@ -2,11 +2,11 @@ import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { flexRender } from '@tanstack/react-table';
 
-import SubRowsExpanded from './SubRowsExpanded';
+import NestedRows from './NestedRows';
 
 import messages from '../tag-list/messages';
 
-import EditableCell from './EditableCell';
+import { EditableCell } from './EditableCell';
 import type {
   CreateRowMutationState,
   RowId,
@@ -19,32 +19,28 @@ interface TableBodyProps {
   columns: TreeColumnDef[];
   isCreatingTopRow: boolean;
   draftError: string;
-  handleCreateTopRow: (value: string, setToast: React.Dispatch<React.SetStateAction<ToastState>>) => void;
   setIsCreatingTopRow: (isCreating: boolean) => void;
   exitDraftWithoutSave: () => void;
-  handleCreateChildRow: (value: string, parentRowValue: string) => void;
+  handleCreateRow: (value: string, parentRowValue?: string) => void;
   creatingParentId: RowId | null;
   setCreatingParentId: (id: RowId | null) => void;
   setDraftError: (error: string) => void;
   createRowMutation: CreateRowMutationState;
   table: TreeTable;
-  setToast: React.Dispatch<React.SetStateAction<ToastState>>;
 }
 
 const TableBody = ({
   columns,
   isCreatingTopRow,
   draftError,
-  handleCreateTopRow,
+  handleCreateRow,
   setIsCreatingTopRow,
   exitDraftWithoutSave,
-  handleCreateChildRow,
   creatingParentId,
   setCreatingParentId,
   setDraftError,
   createRowMutation,
   table,
-  setToast,
 }: TableBodyProps) => {
   const intl = useIntl();
 
@@ -64,7 +60,7 @@ const TableBody = ({
             <EditableCell
               errorMessage={draftError}
               isSaving={createRowMutation.isPending}
-              onSave={(value) => handleCreateTopRow(value, setToast)}
+              onSave={(value) => handleCreateRow(value)}
               onCancel={() => {
                 setDraftError('');
                 setIsCreatingTopRow(false);
@@ -87,12 +83,12 @@ const TableBody = ({
           </tr>
 
           {row.getIsExpanded() && (
-            <SubRowsExpanded
+            <NestedRows
               childRowsData={row.subRows}
               visibleColumnCount={row.getVisibleCells().length}
               parentRowValue={String(row.original.value)}
               isCreating={creatingParentId === row.original.id}
-              onSaveNewChildRow={handleCreateChildRow}
+              onSaveNewChildRow={handleCreateRow}
               onCancelCreation={() => {
                 setDraftError('');
                 setCreatingParentId(null);
