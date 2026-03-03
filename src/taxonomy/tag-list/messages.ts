@@ -21,6 +21,10 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.creation-error',
     defaultMessage: 'Error: unable to create tag',
   },
+  tagUpdateSuccessMessage: {
+    id: 'course-authoring.tag-list.update-success',
+    defaultMessage: 'Tag \"{name}\" updated successfully',
+  },
 });
 
 export default messages;
