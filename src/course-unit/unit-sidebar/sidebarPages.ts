@@ -1,9 +1,11 @@
-import { Info, Plus } from '@openedx/paragon/icons';
+import { getConfig } from '@edx/frontend-platform';
+import { Info, Tag, Plus } from '@openedx/paragon/icons';
 import { SidebarPage } from '@src/generic/sidebar';
 import messages from './messages';
-import { UnitInfoSidebar } from './unit-info/UnitInfoSidebar';
+import { UnitAlignSidebar } from './UnitAlignSidebar';
 import { AddSidebar } from './AddSidebar';
 import { useUnitSidebarContext } from './UnitSidebarContext';
+import { InfoSidebar } from './unit-info/InfoSidebar';
 
 export type UnitSidebarPages = {
   info: SidebarPage;
@@ -18,10 +20,12 @@ export type UnitSidebarPages = {
  * if you want to use the context in the sidebar pages.
  */
 export const useUnitSidebarPages = (): UnitSidebarPages => {
-  const { readOnly } = useUnitSidebarContext();
+  const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
+  const { readOnly, selectedComponentId } = useUnitSidebarContext();
+  const hasComponentSelected = selectedComponentId !== undefined;
   return {
     info: {
-      component: UnitInfoSidebar,
+      component: InfoSidebar,
       icon: Info,
       title: messages.sidebarButtonInfo,
     },
@@ -30,6 +34,15 @@ export const useUnitSidebarPages = (): UnitSidebarPages => {
         component: AddSidebar,
         icon: Plus,
         title: messages.sidebarButtonAdd,
+        disabled: hasComponentSelected,
+        tooltip: hasComponentSelected ? messages.sidebarDisabledAddTooltip : undefined,
+      },
+    }),
+    ...(showAlignSidebar && {
+      align: {
+        component: UnitAlignSidebar,
+        icon: Tag,
+        title: messages.sidebarButtonAlign,
       },
     }),
   };

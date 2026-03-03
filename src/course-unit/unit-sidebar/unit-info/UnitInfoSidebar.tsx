@@ -189,7 +189,7 @@ const UnitInfoSettings = () => {
 };
 
 /**
- * Main component that renders the tabs of the info sidebar.
+ * Component that renders the tabs of the info sidebar for units.
  */
 export const UnitInfoSidebar = () => {
   const intl = useIntl();
@@ -212,7 +212,7 @@ export const UnitInfoSidebar = () => {
       />
       <Tabs
         id="unit-info-sidebar-tabs"
-        className="my-2 d-flex justify-content-around"
+        className="my-2 mx-n3.5"
         activeKey={currentTabKey}
         onSelect={setCurrentTabKey}
       >

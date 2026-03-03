@@ -48,6 +48,7 @@ interface CardHeaderProps {
   onClickMoveDown: () => void;
   onClickCopy?: () => void;
   onClickCard?: (e: React.MouseEvent) => void;
+  onClickManageTags?: () => void;
   titleComponent: ReactNode;
   namePrefix: string;
   proctoringExamConfigurationLink?: string,
@@ -86,6 +87,7 @@ const CardHeader = ({
   onClickMoveDown,
   onClickCopy,
   onClickCard,
+  onClickManageTags,
   titleComponent,
   namePrefix,
   actions,
@@ -113,6 +115,7 @@ const CardHeader = ({
     if (showNewSidebar && showAlignSidebar) {
       setCurrentPageKey('align');
       onClickMenuButton();
+      onClickManageTags?.();
     } else {
       openLegacyTagsDrawer();
     }

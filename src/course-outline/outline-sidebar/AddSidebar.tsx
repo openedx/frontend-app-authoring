@@ -50,8 +50,7 @@ type AddContentButtonProps = {
 const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   const {
     courseUsageKey,
-    handleAddSection,
-    handleAddSubsection,
+    handleAddBlock,
     handleAddAndOpenUnit,
   } = useCourseAuthoringContext();
   const {
@@ -65,7 +64,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   let subsectionParentId = lastEditableSubsection?.data?.id;
 
   const addSection = (onSuccess?: (data: { locator: string; }) => void) => {
-    handleAddSection.mutate({
+    handleAddBlock.mutate({
       type: ContainerType.Chapter,
       parentLocator: courseUsageKey,
       displayName: COURSE_BLOCK_NAMES.chapter.name,
@@ -82,10 +81,11 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   };
 
   const addSubsection = (sectionId: string, onSuccess?: (data: { locator: string; }) => void) => {
-    handleAddSubsection.mutate({
+    handleAddBlock.mutate({
       type: ContainerType.Sequential,
       parentLocator: sectionId,
       displayName: COURSE_BLOCK_NAMES.sequential.name,
+      sectionId,
     }, {
       onSuccess: (data: { locator: string; }) => {
         // istanbul ignore next
@@ -146,8 +146,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   }, [
     blockType,
     courseUsageKey,
-    handleAddSection,
-    handleAddSubsection,
+    handleAddBlock,
     handleAddAndOpenUnit,
     currentFlow,
     sectionParentId,
@@ -155,7 +154,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     lastEditableSubsection,
   ]);
 
-  const disabled = handleAddSection.isPending || handleAddSubsection.isPending || handleAddAndOpenUnit.isPending;
+  const disabled = handleAddBlock.isPending || handleAddAndOpenUnit.isPending;
 
   return (
     <BlockCardButton
@@ -213,9 +212,7 @@ const AddNewContent = () => {
 const ShowLibraryContent = () => {
   const {
     courseUsageKey,
-    handleAddSection,
-    handleAddSubsection,
-    handleAddUnit,
+    handleAddBlock,
   } = useCourseAuthoringContext();
   const {
     isCurrentFlowOn,
@@ -233,7 +230,7 @@ const ShowLibraryContent = () => {
   const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
     switch (blockType) {
       case 'section':
-        await handleAddSection.mutateAsync({
+        await handleAddBlock.mutateAsync({
           type: COMPONENT_TYPES.libraryV2,
           category: ContainerType.Chapter,
           parentLocator: courseUsageKey,
@@ -243,11 +240,12 @@ const ShowLibraryContent = () => {
       case 'subsection':
         sectionParentId = currentFlow?.parentLocator || sectionParentId;
         if (sectionParentId) {
-          await handleAddSubsection.mutateAsync({
+          await handleAddBlock.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Sequential,
             parentLocator: sectionParentId,
             libraryContentKey: usageKey,
+            sectionId: sectionParentId,
           });
         }
         break;
@@ -257,7 +255,7 @@ const ShowLibraryContent = () => {
         );
         subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
         if (subsectionParentId) {
-          await handleAddUnit.mutateAsync({
+          await handleAddBlock.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Vertical,
             parentLocator: subsectionParentId,
@@ -273,9 +271,7 @@ const ShowLibraryContent = () => {
     stopCurrentFlow();
   }, [
     courseUsageKey,
-    handleAddSection,
-    handleAddSubsection,
-    handleAddUnit,
+    handleAddBlock,
     lastEditableSection,
     lastEditableSubsection,
     currentFlow,
@@ -327,7 +323,7 @@ const AddTabs = () => {
   return (
     <Tabs
       variant="tabs"
-      className="my-2 d-flex justify-content-around"
+      className="mb-4 mx-n4.5"
       id="add-content-tabs"
       activeKey={key}
       onSelect={setKey}

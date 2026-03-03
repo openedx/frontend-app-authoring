@@ -5,21 +5,22 @@ import {
   Icon,
   IconButton,
   IconButtonToggle,
+  IconButtonWithTooltip,
   Stack,
 } from '@openedx/paragon';
-import {
-  FormatIndentDecrease,
-  FormatIndentIncrease,
-} from '@openedx/paragon/icons';
 import { ResizableBox } from '@src/generic/resizable/Resizable';
 import type { MessageDescriptor } from 'react-intl';
 
 import messages from './messages';
+import { CollapsedIcon } from './icons/CollapsedIcon';
+import { ExpandedIcon } from './icons/ExpandedIcon';
 
 export interface SidebarPage {
   component: React.ComponentType;
   icon: React.ComponentType;
   title: MessageDescriptor;
+  disabled?: boolean;
+  tooltip?: MessageDescriptor;
 }
 
 type SidebarPages = Record<string, SidebarPage>;
@@ -87,11 +88,16 @@ export function Sidebar<T extends SidebarPages>({
 }: SidebarProps<T>) {
   const intl = useIntl();
 
-  const SidebarComponent = pages[currentPageKey].component;
+  const {
+    component: SidebarComponent,
+    icon: SidebarIcon,
+    title,
+  } = pages[currentPageKey];
+  const activeKey = isOpen ? currentPageKey : undefined;
 
   return (
     <Stack direction="horizontal" className="sidebar align-items-baseline ml-3" gap={2}>
-      {isOpen && !!currentPageKey && (
+      {(isOpen && !!currentPageKey) ? (
         <ResizableBox>
           <div className="sidebar-content p-3 bg-white border-right">
             <Dropdown data-testid="sidebar-dropdown">
@@ -101,14 +107,15 @@ export function Sidebar<T extends SidebarPages>({
                 variant="tertiary"
                 className="x-small text-primary font-weight-bold pl-0"
               >
-                {intl.formatMessage(pages[currentPageKey].title)}
-                <Icon src={pages[currentPageKey].icon} size="xs" className="ml-2" />
+                {intl.formatMessage(title)}
+                <Icon src={SidebarIcon} size="xs" className="ml-2" />
               </Dropdown.Toggle>
               <Dropdown.Menu className="mt-1">
                 {Object.entries(pages).map(([key, page]) => (
                   <Dropdown.Item
                     key={key}
                     onClick={() => setCurrentPageKey(key)}
+                    disabled={page.disabled}
                   >
                     <Stack direction="horizontal" gap={2}>
                       <Icon src={page.icon} />
@@ -121,30 +128,44 @@ export function Sidebar<T extends SidebarPages>({
             <SidebarComponent />
           </div>
         </ResizableBox>
+      ) : (
+        <div className="min-vh-100 border" />
       )}
-      <div className="sidebar-toggle" data-testid="sidebar-toggle">
+      <div className="sidebar-toggle p-1" data-testid="sidebar-toggle">
         <IconButton
-          src={isOpen ? FormatIndentIncrease : FormatIndentDecrease}
+          src={isOpen ? ExpandedIcon : CollapsedIcon}
           alt={intl.formatMessage(messages.toggle)}
           onClick={toggle}
           variant="primary"
         />
         <IconButtonToggle
-          activeValue={currentPageKey}
+          activeValue={activeKey}
           onChange={setCurrentPageKey}
         >
-          {Object.entries(pages).map(([key, page]) => (
-            <IconButton
-              key={key}
-              // FIXME: The following ts-ignore can be removed when the type fix is released in paragon
-              // https://github.com/openedx/paragon/pull/4031
-              // @ts-ignore
-              value={key}
-              src={page.icon}
-              alt={intl.formatMessage(page.title)}
-              className="rounded-iconbutton"
-            />
-          ))}
+          {Object.entries(pages).map(([key, page]) => {
+            const buttonData = {
+              key,
+              value: key,
+              src: page.icon,
+              alt: intl.formatMessage(page.title),
+              className: 'rounded-iconbutton my-2',
+              disabled: page.disabled,
+            };
+
+            if (page.tooltip) {
+              return (
+                <IconButtonWithTooltip
+                  {...buttonData}
+                  style={{ pointerEvents: 'all' }}
+                  tooltipContent={<div>{intl.formatMessage(page.tooltip)}</div>}
+                />
+              );
+            }
+
+            return (
+              <IconButton {...buttonData} />
+            );
+          })}
         </IconButtonToggle>
       </div>
     </Stack>

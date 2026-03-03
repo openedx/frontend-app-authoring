@@ -5,14 +5,12 @@ import {
   useRef,
 } from 'react';
 import classNames from 'classnames';
-import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -24,8 +22,9 @@ import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface UnitCardProps {
@@ -61,9 +60,8 @@ const UnitCard = ({
   discussionsSettings,
 }: UnitCardProps) => {
   const currentRef = useRef(null);
-  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const locatorId = searchParams.get('show');
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'unit';
@@ -79,6 +77,7 @@ const UnitCard = ({
     initialSubsectionData,
   );
   const { data: unit = initialData } = useCourseItemData<UnitXBlock>(initialData.id, initialData);
+  const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
   const isScrolledToElement = locatorId === unit.id;
 
   const {
@@ -140,6 +139,14 @@ const UnitCard = ({
     });
   };
 
+  const handleClickManageTags = () => {
+    setSelectedContainerState({
+      currentId: unit.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
+  };
+
   const handleUnitMoveUp = () => {
     onOrderChange(section, moveUpDetails);
   };
@@ -154,11 +161,13 @@ const UnitCard = ({
   };
 
   const handleOnPostChangeSync = useCallback(() => {
-    dispatch(fetchCourseSectionQuery([section.id]));
+    queryClient.invalidateQueries({
+      queryKey: courseOutlineQueryKeys.courseItemId(section.id),
+    });
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
     }
-  }, [dispatch, section, queryClient, courseId]);
+  }, [section, queryClient, courseId]);
 
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -194,18 +203,23 @@ const UnitCard = ({
   useEffect(() => {
     // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(unit.editedOnRaw))) {
+      queryClient.cancelQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
+      // eslint-disable-next-line no-console
+      }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
   }, [initialData, unit]);
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
-    if (currentRef.current && (unit.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (scrollState?.id === unit.id || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop, true);
+      resetScrollState().catch((error) => handleResponseErrors(error));
     }
-  }, [isScrolledToElement]);
+  }, [isScrolledToElement, scrollState, resetScrollState]);
 
   if (!isHeaderVisible) {
     return null;
@@ -269,6 +283,7 @@ const UnitCard = ({
             onClickSync={openSyncModal}
             onClickCard={onClickCard}
             onClickDuplicate={onDuplicateSubmit}
+            onClickManageTags={handleClickManageTags}
             titleComponent={titleComponent}
             namePrefix={namePrefix}
             actions={actions}

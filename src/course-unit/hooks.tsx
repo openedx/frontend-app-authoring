@@ -14,6 +14,7 @@ import { useEventListener } from '@src/generic/hooks';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { COURSE_BLOCK_NAMES, iframeMessageTypes } from '@src/constants';
 
+import { ConfigureUnitData } from '@src/course-outline/data/types';
 import { messageTypes, PUBLISH_TYPES } from './constants';
 import {
   createNewCourseXBlock,
@@ -73,7 +74,8 @@ export const useCourseUnit = ({
   const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useClipboard(canEdit);
   const { canPasteComponent } = courseVerticalChildren;
   const { displayName: unitTitle, category: unitCategory } = xblockInfo;
-  const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
+  const sequenceId = courseUnit.ancestorInfo?.ancestors[0]?.id;
+  const sectionId = courseUnit.ancestorInfo?.ancestors[1]?.id;
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
   const isUnitLegacyLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
   const isSplitTestType = unitCategory === COURSE_BLOCK_NAMES.splitTest.id;
@@ -98,19 +100,17 @@ export const useCourseUnit = ({
     dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
   };
 
-  const handleConfigureSubmit = (id, isVisible, groupAccess, isDiscussionEnabled, closeModalFn) => {
+  const handleConfigureSubmit = (variables: ConfigureUnitData & { closeModalFn?: () => void }) => {
     dispatch(editCourseUnitVisibilityAndData(
-      id,
+      variables.unitId,
       PUBLISH_TYPES.republish,
-      isVisible,
-      groupAccess,
-      isDiscussionEnabled,
-      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id }),
+      variables.isVisibleToStaffOnly,
+      variables.groupAccess,
+      variables.discussionEnabled,
+      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: variables.unitId }),
       blockId,
     ));
-    if (typeof closeModalFn === 'function') {
-      closeModalFn();
-    }
+    variables.closeModalFn?.();
   };
 
   const handleTitleEditSubmit = (displayName) => {
@@ -139,18 +139,26 @@ export const useCourseUnit = ({
   const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
 
   const unitXBlockActions = {
-    handleDelete: (XBlockId) => {
-      dispatch(deleteUnitItemQuery(blockId, XBlockId, sendMessageToIframe));
+    handleDelete: async (XBlockId: string) => {
+      // oxlint-disable-next-line typescript-eslint(await-thenable)
+      await dispatch(deleteUnitItemQuery(blockId, XBlockId, sendMessageToIframe));
     },
-    handleDuplicate: (XBlockId) => {
+    handleDuplicate: (XBlockId: string) => {
       dispatch(duplicateUnitItemQuery(
         blockId,
         XBlockId,
-        (courseKey, locator) => sendMessageToIframe(messageTypes.completeXBlockDuplicating, { courseKey, locator }),
+        (courseKey: string, locator: string) => sendMessageToIframe(
+          messageTypes.completeXBlockDuplicating,
+          { courseKey, locator },
+        ),
       ));
     },
-    handleUnlink: async (XBlockId) => {
-      await unlinkDownstream(XBlockId);
+    handleUnlink: async (XBlockId: string) => {
+      await unlinkDownstream({
+        downstreamBlockId: XBlockId,
+        subsectionId: sequenceId,
+        sectionId,
+      });
       dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
     },
   };

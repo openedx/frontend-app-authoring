@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   stepperUpdatingTitle: {
     id: 'course-authoring.import.stepper.title.updating',
-    defaultMessage: 'Updating сourse',
+    defaultMessage: 'Updating course',
   },
   stepperSuccessTitle: {
     id: 'course-authoring.import.stepper.title.success',
@@ -44,10 +44,6 @@ const messages = defineMessages({
   viewOutlineButton: {
     id: 'course-authoring.import.stepper.button.outline',
     defaultMessage: 'View updated outline',
-  },
-  defaultErrorMessage: {
-    id: 'course-authoring.import.stepper.error.default',
-    defaultMessage: 'Error importing course',
   },
   stepperHeaderTitle: {
     id: 'course-authoring.import.stepper.header.title',

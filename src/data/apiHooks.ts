@@ -130,3 +130,38 @@ export const useCourseDetails = (courseId: string) => {
     status,
   };
 };
+
+/**
+ * Create a global state function for a query.
+ */
+export function createGlobalState<T>(
+  queryKeyFn: (queryKeyArgs?: any) => unknown[],
+  initialData: T | null = null,
+) {
+  return (queryKeyArgs?: any) => {
+    const queryClient = useQueryClient();
+    const queryKey = queryKeyFn(queryKeyArgs);
+
+    const { data } = useQuery({
+      queryKey,
+      queryFn: () => Promise.resolve(initialData),
+      refetchInterval: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchIntervalInBackground: false,
+    });
+
+    function setData(x: Partial<T>) {
+      queryClient.setQueryData(queryKey, x);
+    }
+
+    async function resetData() {
+      await queryClient.invalidateQueries({
+        queryKey,
+      });
+    }
+
+    return { data, setData, resetData };
+  };
+}

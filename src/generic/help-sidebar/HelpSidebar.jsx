@@ -4,6 +4,8 @@ import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { COURSE_PERMISSIONS } from '@src/authz/constants';
 import { useWaffleFlags } from '../../data/apiHooks';
 import { otherLinkURLParams } from './constants';
 import messages from './messages';
@@ -25,7 +27,7 @@ const HelpSidebar = ({
     scheduleAndDetails,
     groupConfigurations,
   } = otherLinkURLParams;
-  const waffleFlags = useWaffleFlags();
+  const waffleFlags = useWaffleFlags(courseId);
 
   const showOtherLink = (params) => !pathname.includes(params);
   const generateLegacyURL = (urlParameter) => {
@@ -38,6 +40,26 @@ const HelpSidebar = ({
   const courseTeamDestination = generateLegacyURL(courseTeam);
   const advancedSettingsDestination = generateLegacyURL(advancedSettings);
   const groupConfigurationsDestination = generateLegacyURL(groupConfigurations);
+
+  /*
+    AuthZ for Course Authoring
+    If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
+  */
+  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
+    canManageAdvancedSettings: {
+      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
+      scope: courseId,
+    },
+  }, isAuthzEnabled);
+
+  // If it's still loading, don't show the Advanced Settings link, otherwise, use the permission to decide
+  const authzCanManageAdvancedSettings = isLoadingUserPermissions
+    ? false
+    : !!userPermissions?.canManageAdvancedSettings;
+
+  // When authz is enabled, use permission, otherwise it's always allowed (legacy behavior)
+  const canManageAdvancedSettings = isAuthzEnabled ? authzCanManageAdvancedSettings : true;
 
   return (
     <aside className={classNames('help-sidebar', className)}>
@@ -90,7 +112,7 @@ const HelpSidebar = ({
                     isNewPage={waffleFlags.useNewGroupConfigurationsPage}
                   />
                 )}
-                {showOtherLink(advancedSettings) && (
+                {showOtherLink(advancedSettings) && canManageAdvancedSettings && (
                   <HelpSidebarLink
                     pathToPage={waffleFlags.useNewAdvancedSettingsPage
                       ? `/course/${courseId}/${advancedSettings}` : advancedSettingsDestination}

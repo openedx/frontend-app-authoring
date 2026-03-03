@@ -35,7 +35,7 @@ export interface UnitTabProps {
   },
   setFieldValue: (key: string, value: any) => void,
   showWarning: boolean,
-  userPartitionInfo: UserPartitionInfo,
+  userPartitionInfo?: UserPartitionInfo,
 }
 
 export const DiscussionEditComponent = ({
@@ -56,7 +56,7 @@ export const DiscussionEditComponent = ({
 export interface AccessEditComponentProps {
   selectedPartitionIndex: number,
   setFieldValue: (key: string, value: any) => void,
-  userPartitionInfo: UserPartitionInfo,
+  userPartitionInfo?: UserPartitionInfo,
   selectedGroups: string[],
 }
 
@@ -91,11 +91,11 @@ export const AccessEditComponent = ({
         data-testid="group-type-select"
       >
         <option value="-1" key="-1">
-          {userPartitionInfo.selectedPartitionIndex === -1
+          {userPartitionInfo?.selectedPartitionIndex === -1
             ? intl.formatMessage(messages.unitSelectGroupType)
             : intl.formatMessage(messages.unitAllLearnersAndStaff)}
         </option>
-        {userPartitionInfo.selectablePartitions.map((partition, index) => (
+        {userPartitionInfo?.selectablePartitions.map((partition, index) => (
           <option
             key={partition.id}
             value={index}
@@ -105,7 +105,7 @@ export const AccessEditComponent = ({
         ))}
       </Form.Control>
 
-      {selectedPartitionIndex >= 0 && userPartitionInfo.selectablePartitions.length && (
+      {selectedPartitionIndex >= 0 && userPartitionInfo?.selectablePartitions.length && (
         <Form.Group controlId="select-groups-checkboxes">
           <Form.Label><FormattedMessage {...messages.unitSelectGroup} /></Form.Label>
           <div
@@ -199,7 +199,7 @@ export const UnitTab = ({
           )}
         </>
       )}
-      {userPartitionInfo.selectablePartitions.length > 0 && (
+      {(userPartitionInfo?.selectablePartitions.length || 0) > 0 && (
         <Form.Group controlId="groupSelect">
           <h4 className="mt-3">
             <FormattedMessage {...getAccessBlockTitle()} />

@@ -26,6 +26,7 @@ import { getFileSizeToClosestByte } from '@src/utils';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { UPLOAD_FILE_MAX_SIZE } from '@src/constants';
 
 export const CourseFilesTable = () => {
   const intl = useIntl();
@@ -75,7 +76,7 @@ export const CourseFilesTable = () => {
     usageErrorMessages: errorMessages.usageMetrics,
     fileType: 'file',
   };
-  const maxFileSize = 20 * 1048576;
+  const maxFileSize = UPLOAD_FILE_MAX_SIZE;
 
   const activeColumn = {
     id: 'activeStatus',
