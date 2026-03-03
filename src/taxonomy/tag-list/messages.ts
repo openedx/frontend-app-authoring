@@ -53,6 +53,10 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.hide-subtags.button-label',
     defaultMessage: 'Hide Subtags',
   },
+  tagUpdateSuccessMessage: {
+    id: 'course-authoring.tag-list.update-success',
+    defaultMessage: 'Tag \"{name}\" updated successfully',
+  },
 });
 
 export default messages;
