@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { debounce } from 'lodash';
 
-import { useClipboard } from '../../../generic/clipboard';
-import { handleResponseErrors } from '../../../generic/saving-error-alert';
-import { NOTIFICATION_MESSAGES } from '../../../constants';
-import { updateSavingStatus } from '../../data/slice';
-import { messageTypes } from '../../constants';
+import { useClipboard } from '@src/generic/clipboard';
+import { messageTypes } from '@src/course-unit/constants';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
+import { updateSavingStatus } from '@src/course-unit/data/slice';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
+
 import { MessageHandlersTypes, UseMessageHandlersTypes } from './types';
 
 /**
@@ -32,6 +33,7 @@ export const useMessageHandlers = ({
   handleHideProcessingNotification,
   handleEditXBlock,
   handleRefreshIframe,
+  handleXBlockSelected,
 }: UseMessageHandlersTypes): MessageHandlersTypes => {
   const { copyToClipboard } = useClipboard();
 
@@ -45,7 +47,7 @@ export const useMessageHandlers = ({
     [messageTypes.scrollToXBlock]: debounce(({ scrollOffset }) => handleScrollToXBlock(scrollOffset), 1000),
     [messageTypes.toggleCourseXBlockDropdown]: ({
       courseXBlockDropdownHeight,
-    }: { courseXBlockDropdownHeight: number }) => setIframeOffset(courseXBlockDropdownHeight),
+    }) => setIframeOffset(courseXBlockDropdownHeight),
     [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
     [messageTypes.closeXBlockEditorModal]: handleCloseLegacyEditorXBlockModal,
     [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
@@ -63,6 +65,7 @@ export const useMessageHandlers = ({
       payload.type,
       payload.locator,
     ),
+    [messageTypes.xblockSelected]: ({ contentId }) => handleXBlockSelected(contentId),
   }), [
     courseId,
     handleDeleteXBlock,
@@ -71,5 +74,6 @@ export const useMessageHandlers = ({
     handleManageXBlockAccess,
     handleScrollToXBlock,
     copyToClipboard,
+    handleXBlockSelected,
   ]);
 };

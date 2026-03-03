@@ -29,6 +29,11 @@ const messages = defineMessages({
     id: 'course-authoring.export.button.title',
     defaultMessage: 'Export course content',
   },
+  unknownError: {
+    id: 'course-authoring.export.error.unknown',
+    defaultMessage: 'An unexpected error occurred. Please try again.',
+    description: 'Fallback error message shown when the API returns an error in an unexpected format.',
+  },
 });
 
 export default messages;

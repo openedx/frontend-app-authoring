@@ -52,7 +52,7 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
               <Button
                 variant="outline-primary"
                 iconBefore={InfoOutline}
-                onClick={() => setCurrentPageKey('info')}
+                onClick={() => setCurrentPageKey('info', null)}
               >
                 {intl.formatMessage(messages.infoButton)}
               </Button>
@@ -60,7 +60,7 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
                 <Button
                   variant="outline-primary"
                   iconBefore={Add}
-                  onClick={() => setCurrentPageKey('add')}
+                  onClick={() => setCurrentPageKey('add', null)}
                 >
                   {intl.formatMessage(messages.addButton)}
                 </Button>

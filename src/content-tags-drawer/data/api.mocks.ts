@@ -403,10 +403,19 @@ mockTaxonomyTagsData.applyMock = () => jest.spyOn(api, 'getTaxonomyTagsData').mo
 /**
  * Mock for `getContentData()`
  */
-export async function mockContentData(): Promise<any> {
-  return mockContentData.data;
+export async function mockContentData(contentId: string): Promise<any> {
+  switch (contentId) {
+    case mockContentData.textXBlock:
+      return mockContentData.textXBlockData;
+    default:
+      return mockContentData.data;
+  }
 }
 mockContentData.data = {
   displayName: 'Unit 1',
+};
+mockContentData.textXBlock = 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4';
+mockContentData.textXBlockData = {
+  displayName: 'Text XBlock 1',
 };
 mockContentData.applyMock = () => jest.spyOn(api, 'getContentData').mockImplementation(mockContentData);

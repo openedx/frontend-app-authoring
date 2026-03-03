@@ -11,6 +11,7 @@ import {
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { ConfigureUnitData } from '@src/course-outline/data/types';
 import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
@@ -21,13 +22,7 @@ type HeaderTitleProps = {
   isTitleEditFormOpen: boolean;
   handleTitleEdit: () => void;
   handleTitleEditSubmit: (title: string) => void;
-  handleConfigureSubmit: (
-    id: string,
-    isVisible: boolean,
-    groupAccess: boolean,
-    isDiscussionEnabled: boolean,
-    closeModalFn: (value: boolean) => void
-  ) => void;
+  handleConfigureSubmit: (variables: ConfigureUnitData & { closeModalFn?: () => void }) => void;
 };
 
 /**
@@ -56,14 +51,12 @@ const HeaderTitle = ({
     COURSE_BLOCK_NAMES.component.id,
   ].includes(currentItemData.category);
 
-  const onConfigureSubmit = (...arg) => {
-    handleConfigureSubmit(
-      currentItemData.id,
-      arg[0],
-      arg[1],
-      arg[2],
-      closeConfigureModal,
-    );
+  const onConfigureSubmit = (variables: Omit<ConfigureUnitData, 'unitId'>) => {
+    handleConfigureSubmit({
+      ...variables,
+      unitId: currentItemData.id,
+      closeModalFn: closeConfigureModal,
+    });
   };
 
   useEffect(() => {

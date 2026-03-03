@@ -31,6 +31,8 @@ import GroupConfigurations from './group-configurations';
 import { CourseLibraries } from './course-libraries';
 import { IframeProvider } from './generic/hooks/context/iFrameContext';
 import { CourseAuthoringProvider } from './CourseAuthoringContext';
+import { CourseImportProvider } from './import-page/CourseImportContext';
+import { CourseExportProvider } from './export-page/CourseExportContext';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -141,11 +143,23 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="import"
-            element={<PageWrap><CourseImportPage /></PageWrap>}
+            element={(
+              <PageWrap>
+                <CourseImportProvider>
+                  <CourseImportPage />
+                </CourseImportProvider>
+              </PageWrap>
+            )}
           />
           <Route
             path="export"
-            element={<PageWrap><CourseExportPage /></PageWrap>}
+            element={(
+              <PageWrap>
+                <CourseExportProvider>
+                  <CourseExportPage />
+                </CourseExportProvider>
+              </PageWrap>
+            )}
           />
           <Route
             path="optimizer"

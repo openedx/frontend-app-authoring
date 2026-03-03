@@ -1,7 +1,6 @@
 import {
   useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
-import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
@@ -15,7 +14,6 @@ import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import { useClipboard, PasteComponent } from '@src/generic/clipboard';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import { ContainerType } from '@src/generic/key-utils';
@@ -26,8 +24,9 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SubsectionCardProps {
@@ -43,8 +42,11 @@ interface SubsectionCardProps {
   getPossibleMoves: (index: number, step: number) => void,
   onOrderChange: (section: XBlock, moveDetails: any) => void,
   onOpenConfigureModal: () => void,
-  onPasteClick: (parentLocator: string, sectionId: string) => void,
-  resetScrollState: () => void,
+  onPasteClick: (
+    parentLocator: string,
+    subsectionId: string,
+    sectionId: string
+  ) => void,
 }
 
 const SubsectionCard = ({
@@ -61,13 +63,11 @@ const SubsectionCard = ({
   onOrderChange,
   onOpenConfigureModal,
   onPasteClick,
-  resetScrollState,
 }: SubsectionCardProps) => {
   const currentRef = useRef(null);
   const intl = useIntl();
-  const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
@@ -80,6 +80,7 @@ const SubsectionCard = ({
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
   const { data: subsection = initialData } = useCourseItemData(initialData.id, initialData);
+  const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
   const isScrolledToElement = locatorId === subsection.id;
 
   const {
@@ -146,6 +147,10 @@ const SubsectionCard = ({
   useEffect(() => {
     // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(subsection.editedOnRaw))) {
+      queryClient.cancelQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
+      // eslint-disable-next-line no-console
+      }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
   }, [initialData, subsection]);
@@ -162,12 +167,22 @@ const SubsectionCard = ({
     });
   };
 
+  const handleClickManageTags = () => {
+    setSelectedContainerState({
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
+  };
+
   const handleOnPostChangeSync = useCallback(() => {
-    dispatch(fetchCourseSectionQuery([section.id]));
+    queryClient.invalidateQueries({
+      queryKey: courseOutlineQueryKeys.courseItemId(section.id),
+    });
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
     }
-  }, [dispatch, section, queryClient, courseId]);
+  }, [section, queryClient, courseId]);
 
   const handleSubsectionMoveUp = () => {
     onOrderChange(section, moveUpDetails);
@@ -177,7 +192,7 @@ const SubsectionCard = ({
     onOrderChange(section, moveDownDetails);
   };
 
-  const handlePasteButtonClick = () => onPasteClick(id, section.id);
+  const handlePasteButtonClick = () => onPasteClick(id, id, section.id);
 
   const titleComponent = (
     <TitleButton
@@ -212,13 +227,13 @@ const SubsectionCard = ({
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
-    if (currentRef.current && (subsection.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (scrollState?.id === subsection.id || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop, true);
-      resetScrollState();
+      resetScrollState().catch((error) => handleResponseErrors(error));
     }
-  }, [isScrolledToElement]);
+  }, [isScrolledToElement, scrollState, resetScrollState]);
 
   useEffect(() => {
     // If the locatorId is set/changed, we need to make sure that the subsection is expanded
@@ -290,6 +305,7 @@ const SubsectionCard = ({
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
                 onClickDuplicate={onDuplicateSubmit}
+                onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
                 actions={actions}

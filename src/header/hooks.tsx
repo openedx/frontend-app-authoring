@@ -9,6 +9,9 @@ import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import courseOptimizerMessages from '@src/optimizer-page/messages';
 import { SidebarActions } from '@src/library-authoring/common/context/SidebarContext';
 import { LibQueryParamKeys } from '@src/library-authoring/routes';
+
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { COURSE_PERMISSIONS } from '@src/authz/constants';
 import messages from './messages';
 
 export const useContentMenuItems = (courseId: string) => {
@@ -55,8 +58,29 @@ export const useContentMenuItems = (courseId: string) => {
 export const useSettingMenuItems = (courseId: string) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const { canAccessAdvancedSettings } = useSelector(getStudioHomeData);
-  const waffleFlags = useWaffleFlags();
+  const { canAccessAdvancedSettings: legacyCanAccessAdvancedSettings } = useSelector(getStudioHomeData);
+  const waffleFlags = useWaffleFlags(courseId);
+
+  /*
+    AuthZ for Course Authoring
+    If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
+    Otherwise, fallback to existing logic.
+  */
+  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
+    canManageAdvancedSettings: {
+      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
+      scope: courseId,
+    },
+  }, isAuthzEnabled);
+
+  const authzCanManageAdvancedSettings = isLoadingUserPermissions
+    ? false
+    : userPermissions?.canManageAdvancedSettings || false;
+
+  const canAccessAdvancedSettings = isAuthzEnabled
+    ? authzCanManageAdvancedSettings
+    : legacyCanAccessAdvancedSettings;
 
   const items = [
     {
@@ -75,7 +99,7 @@ export const useSettingMenuItems = (courseId: string) => {
       href: waffleFlags.useNewGroupConfigurationsPage ? `/course/${courseId}/group_configurations` : `${studioBaseUrl}/group_configurations/${courseId}`,
       title: intl.formatMessage(messages['header.links.groupConfigurations']),
     },
-    ...(canAccessAdvancedSettings === true
+    ...(canAccessAdvancedSettings
       ? [{
         href: waffleFlags.useNewAdvancedSettingsPage ? `/course/${courseId}/settings/advanced` : `${studioBaseUrl}/settings/advanced/${courseId}`,
         title: intl.formatMessage(messages['header.links.advancedSettings']),

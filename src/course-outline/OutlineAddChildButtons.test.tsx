@@ -14,10 +14,8 @@ jest.mock('@src/studio-home/data/selectors', () => ({
   }),
 }));
 
-const handleAddSection = { mutateAsync: jest.fn() };
-const handleAddSubsection = { mutateAsync: jest.fn() };
 const handleAddAndOpenUnit = { mutateAsync: jest.fn() };
-const handleAddUnit = { mutateAsync: jest.fn() };
+const handleAddBlock = { mutateAsync: jest.fn() };
 const courseUsageKey = 'some/usage/key';
 const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
@@ -25,10 +23,8 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId: 5,
     courseUsageKey,
     getUnitUrl: (id: string) => `/some/${id}`,
-    handleAddSection,
-    handleAddSubsection,
     handleAddAndOpenUnit,
-    handleAddUnit,
+    handleAddBlock,
     setCurrentSelection,
   }),
 }));
@@ -81,9 +77,11 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
 
     it('calls appropriate new handlers', async () => {
       const parentLocator = `parent-of-${containerType}`;
+      const grandParentLocator = `grandparent-of-${containerType}`;
       render(<OutlineAddChildButtons
         childType={containerType}
         parentLocator={parentLocator}
+        grandParentLocator={grandParentLocator}
       />, { extraWrapper: OutlineSidebarProvider });
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
@@ -91,17 +89,18 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
       await userEvent.click(newBtn);
       switch (containerType) {
         case ContainerType.Section:
-          await waitFor(() => expect(handleAddSection.mutateAsync).toHaveBeenCalledWith({
+          await waitFor(() => expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith({
             type: ContainerType.Chapter,
             parentLocator: courseUsageKey,
             displayName: 'Section',
           }));
           break;
         case ContainerType.Subsection:
-          await waitFor(() => expect(handleAddSubsection.mutateAsync).toHaveBeenCalledWith({
+          await waitFor(() => expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith({
             type: ContainerType.Sequential,
             parentLocator,
             displayName: 'Subsection',
+            sectionId: parentLocator,
           }));
           break;
         case ContainerType.Unit:
@@ -109,6 +108,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
             type: ContainerType.Vertical,
             parentLocator,
             displayName: 'Unit',
+            sectionId: grandParentLocator,
           }));
           break;
         default:

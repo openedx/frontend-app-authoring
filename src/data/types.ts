@@ -70,7 +70,7 @@ export interface UpstreamInfo {
   isReadyToSyncIndividually?: boolean,
 }
 
-export interface XBlock {
+export interface XBlockBase {
   id: string;
   locator: string;
   usageKey: string;
@@ -92,7 +92,7 @@ export interface XBlock {
   due?: string;
   relativeWeeksDue?: number;
   format?: string;
-  courseGraders: string[];
+  courseGraders?: string[];
   hasChanges: boolean;
   actions: XBlockActions;
   explanatoryMessage?: string;
@@ -102,13 +102,11 @@ export interface XBlock {
   highlightsEnabled: boolean;
   highlightsPreviewOnly: boolean;
   highlightsDocUrl: string;
-  childInfo: XblockChildInfo;
   ancestorHasStaffLock: boolean;
   staffOnlyMessage: boolean;
   hasPartitionGroupComponents: boolean;
   userPartitionInfo?: UserPartitionInfoTypes;
   enableCopyPasteUnits: boolean;
-  shouldScroll: boolean;
   isHeaderVisible: boolean;
   proctoringExamConfigurationLink?: string;
   isTimeLimited?: boolean;
@@ -125,9 +123,18 @@ export interface XBlock {
   prereqMinCompletion?: number;
   discussionEnabled?: boolean;
   upstreamInfo?: UpstreamInfo;
+  wasExamEverLinkedWithExternal?: boolean;
+  supportsOnboarding?: boolean;
+  showReviewRules?: boolean;
+  onlineProctoringRules?: string;
+  groupAccess?: object;
 }
 
-export type UnitXBlock = Omit<XBlock, 'childInfo'>;
+export interface XBlock extends XBlockBase {
+  childInfo: XblockChildInfo;
+}
+
+export interface UnitXBlock extends XBlockBase {}
 
 interface OutlineError {
   data?: string;
@@ -161,4 +168,36 @@ export type SelectionState = {
   currentId: string;
   sectionId?: string;
   subsectionId?: string;
+};
+
+export type AccessManagedXBlockDataTypes = {
+  id: string;
+  displayName?: string;
+  start?: string;
+  visibilityState?: string | boolean;
+  due?: string;
+  isTimeLimited?: boolean;
+  defaultTimeLimitMinutes?: number;
+  hideAfterDue?: boolean;
+  showCorrectness?: string | boolean;
+  courseGraders?: string[];
+  category?: string;
+  format?: string;
+  userPartitionInfo?: UserPartitionInfoTypes;
+  ancestorHasStaffLock?: boolean;
+  isPrereq?: boolean;
+  prereqs?: XBlockPrereqs[];
+  prereq?: string;
+  prereqMinScore?: number;
+  prereqMinCompletion?: number;
+  releasedToStudents?: boolean;
+  wasExamEverLinkedWithExternal?: boolean;
+  isProctoredExam?: boolean;
+  isOnboardingExam?: boolean;
+  isPracticeExam?: boolean;
+  examReviewRules?: string;
+  supportsOnboarding?: boolean;
+  showReviewRules?: boolean;
+  onlineProctoringRules?: string;
+  discussionEnabled?: boolean;
 };

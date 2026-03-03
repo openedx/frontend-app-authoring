@@ -34,7 +34,7 @@ interface PrereqItem {
 interface AdvancedTabProps {
   values: ValuesProps;
   setFieldValue: (field: string, value: any) => void;
-  releasedToStudents: boolean;
+  releasedToStudents?: boolean;
   prereqs?: PrereqItem[];
   wasExamEverLinkedWithExternal?: boolean;
   enableProctoredExams?: boolean;

@@ -74,7 +74,6 @@ export interface CourseOutlineState {
   actions: XBlockActions;
   enableProctoredExams: boolean;
   enableTimedExams: boolean;
-  pasteFileNotices: object;
   createdOn: null | Date;
 }
 
@@ -90,3 +89,42 @@ export interface CourseItemUpdateResult {
     displayName?: string;
   }
 }
+
+export interface ConfigureSectionData {
+  sectionId: string,
+  isVisibleToStaffOnly: boolean,
+  startDatetime: string,
+}
+
+export interface ConfigureSubsectionData {
+  itemId: string,
+  isVisibleToStaffOnly: boolean,
+  releaseDate: string,
+  graderType: string,
+  dueDate: string,
+  isTimeLimited: boolean,
+  isProctoredExam: boolean,
+  isOnboardingExam: boolean,
+  isPracticeExam: boolean,
+  examReviewRules: string,
+  defaultTimeLimitMin: number,
+  hideAfterDue: string,
+  showCorrectness: string,
+  isPrereq: boolean,
+  prereqUsageKey: string,
+  prereqMinScore: number,
+  prereqMinCompletion: number,
+}
+
+export interface ConfigureUnitData {
+  unitId: string,
+  isVisibleToStaffOnly: boolean,
+  groupAccess: object,
+  discussionEnabled: boolean,
+}
+
+export type StaticFileNotices = {
+  conflictingFiles: string[],
+  errorFiles: string[],
+  newFiles: string[],
+};

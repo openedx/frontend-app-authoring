@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Info',
     description: 'Label of the button for the Info sidebar',
   },
+  sidebarButtonAlign: {
+    id: 'course-authoring.unit-page.sidebar.info.sidebar-button-align',
+    defaultMessage: 'Align',
+    description: 'Label of the button for the Align sidebar',
+  },
   sidebarButtonAdd: {
     id: 'course-authoring.unit-page.sidebar.add.sidebar-button-add',
     defaultMessage: 'Add',
@@ -65,6 +70,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.sidebar.add.back.button',
     defaultMessage: 'Advanced Blocks',
     description: 'Title for the add advanced blocks page in the unit sidebar',
+  },
+  sidebarDisabledAddTooltip: {
+    id: 'course-authoring.course-unit.sidebar.add.disabled.tooltip',
+    defaultMessage: 'Cannot add content to components',
+    description: 'Tooltip for the Add sidebar when is disabled.',
   },
 });
 

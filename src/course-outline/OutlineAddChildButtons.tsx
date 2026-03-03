@@ -28,9 +28,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
   const intl = useIntl();
   const { isCurrentFlowOn, currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
   const {
-    handleAddSection,
-    handleAddSubsection,
-    handleAddUnit,
+    handleAddBlock,
     handleAddAndOpenUnit,
   } = useCourseAuthoringContext();
 
@@ -58,10 +56,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
     >
       <Col className="py-3">
         <Stack direction="horizontal" gap={3}>
-          {(handleAddSection.isPending
-            || handleAddSubsection.isPending
-            || handleAddAndOpenUnit.isPending
-            || handleAddUnit.isPending) && (
+          {(handleAddAndOpenUnit.isPending || handleAddBlock.isPending) && (
             <LoadingSpinner />
           )}
           <h3 className="mb-0">{getTitle()}</h3>
@@ -86,11 +81,11 @@ interface BaseProps {
   btnClasses?: string;
   btnSize?: 'sm' | 'md' | 'lg' | 'inline';
   parentLocator: string;
+  grandParentLocator?: string;
 }
 
 interface NewChildButtonsProps extends BaseProps {
   handleUseFromLibraryClick?: () => void;
-  grandParentLocator?: string;
 }
 
 const NewOutlineAddChildButtons = ({
@@ -113,8 +108,7 @@ const NewOutlineAddChildButtons = ({
   const intl = useIntl();
   const {
     courseUsageKey,
-    handleAddSection,
-    handleAddSubsection,
+    handleAddBlock,
     handleAddAndOpenUnit,
   } = useCourseAuthoringContext();
   const { startCurrentFlow } = useOutlineSidebarContext();
@@ -132,7 +126,7 @@ const NewOutlineAddChildButtons = ({
         newButton: messages.newSectionButton,
         importButton: messages.useSectionFromLibraryButton,
       };
-      onNewCreateContent = () => handleAddSection.mutateAsync({
+      onNewCreateContent = () => handleAddBlock.mutateAsync({
         type: ContainerType.Chapter,
         parentLocator: courseUsageKey,
         displayName: COURSE_BLOCK_NAMES.chapter.name,
@@ -144,10 +138,11 @@ const NewOutlineAddChildButtons = ({
         newButton: messages.newSubsectionButton,
         importButton: messages.useSubsectionFromLibraryButton,
       };
-      onNewCreateContent = () => handleAddSubsection.mutateAsync({
+      onNewCreateContent = () => handleAddBlock.mutateAsync({
         type: ContainerType.Sequential,
         parentLocator,
         displayName: COURSE_BLOCK_NAMES.sequential.name,
+        sectionId: parentLocator,
       });
       flowType = ContainerType.Subsection;
       break;
@@ -160,6 +155,7 @@ const NewOutlineAddChildButtons = ({
         type: ContainerType.Vertical,
         parentLocator,
         displayName: COURSE_BLOCK_NAMES.vertical.name,
+        sectionId: grandParentLocator,
       });
       flowType = ContainerType.Unit;
       break;
@@ -226,6 +222,7 @@ const LegacyOutlineAddChildButtons = ({
   btnClasses = 'mt-4 border-gray-500 rounded-0',
   btnSize,
   parentLocator,
+  grandParentLocator,
   onClickCard,
 }: BaseProps) => {
   // WARNING: Do not use "useStudioHome" to get "librariesV2Enabled" flag below,
@@ -237,8 +234,7 @@ const LegacyOutlineAddChildButtons = ({
   const intl = useIntl();
   const {
     courseUsageKey,
-    handleAddSection,
-    handleAddSubsection,
+    handleAddBlock,
     handleAddAndOpenUnit,
   } = useCourseAuthoringContext();
   const [
@@ -263,12 +259,12 @@ const LegacyOutlineAddChildButtons = ({
         importButton: messages.useSectionFromLibraryButton,
         modalTitle: messages.sectionPickerModalTitle,
       };
-      onNewCreateContent = () => handleAddSection.mutateAsync({
+      onNewCreateContent = () => handleAddBlock.mutateAsync({
         type: ContainerType.Chapter,
         parentLocator: courseUsageKey,
         displayName: COURSE_BLOCK_NAMES.chapter.name,
       });
-      onUseLibraryContent = (selected: SelectedComponent) => handleAddSection.mutateAsync({
+      onUseLibraryContent = (selected: SelectedComponent) => handleAddBlock.mutateAsync({
         type: COMPONENT_TYPES.libraryV2,
         category: ContainerType.Chapter,
         parentLocator: courseUsageKey,
@@ -283,16 +279,18 @@ const LegacyOutlineAddChildButtons = ({
         importButton: messages.useSubsectionFromLibraryButton,
         modalTitle: messages.subsectionPickerModalTitle,
       };
-      onNewCreateContent = () => handleAddSubsection.mutateAsync({
+      onNewCreateContent = () => handleAddBlock.mutateAsync({
         type: ContainerType.Sequential,
         parentLocator,
         displayName: COURSE_BLOCK_NAMES.sequential.name,
+        sectionId: parentLocator,
       });
-      onUseLibraryContent = (selected: SelectedComponent) => handleAddSubsection.mutateAsync({
+      onUseLibraryContent = (selected: SelectedComponent) => handleAddBlock.mutateAsync({
         type: COMPONENT_TYPES.libraryV2,
         category: ContainerType.Sequential,
         parentLocator,
         libraryContentKey: selected.usageKey,
+        sectionId: parentLocator,
       });
       visibleTabs = [ContentType.subsections];
       query = ['block_type = "subsection"'];
@@ -307,12 +305,14 @@ const LegacyOutlineAddChildButtons = ({
         type: ContainerType.Vertical,
         parentLocator,
         displayName: COURSE_BLOCK_NAMES.vertical.name,
+        sectionId: grandParentLocator,
       });
       onUseLibraryContent = (selected: SelectedComponent) => handleAddAndOpenUnit.mutateAsync({
         type: COMPONENT_TYPES.libraryV2,
         category: ContainerType.Vertical,
         parentLocator,
         libraryContentKey: selected.usageKey,
+        sectionId: grandParentLocator,
       });
       visibleTabs = [ContentType.units];
       query = ['block_type = "unit"'];

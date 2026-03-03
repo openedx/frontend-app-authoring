@@ -15,12 +15,11 @@ describe('setExportCookie', () => {
   it('should set the export cookie with the provided date and completed status', () => {
     const cookiesSetMock = jest.spyOn(Cookies.prototype, 'set');
     const date = moment('2023-07-24').valueOf();
-    const completed = true;
-    setExportCookie(date, completed);
+    setExportCookie(date);
 
     expect(cookiesSetMock).toHaveBeenCalledWith(
       LAST_EXPORT_COOKIE_NAME,
-      { date, completed },
+      { date },
       { path: '/some-path' },
     );
 

@@ -36,10 +36,9 @@ import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery, syncDiscussionsTopics,
-  updateCourseSectionHighlightsQuery,
 } from './data/thunk';
 import {
-  courseOutlineIndexMock,
+  courseOutlineIndexMock as originalCourseOutlineIndexMock,
   courseOutlineIndexWithoutSections,
   courseBestPracticesMock,
   courseLaunchMock,
@@ -71,6 +70,7 @@ const getContainerKey = jest.fn().mockReturnValue('lct:org:lib:unit:1');
 const getContainerType = jest.fn().mockReturnValue('unit');
 const clearSelection = jest.fn();
 let selectedContainerId: string | undefined;
+let courseOutlineIndexMock = cloneDeep(originalCourseOutlineIndexMock);
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
@@ -93,13 +93,6 @@ jest.mock('@src/help-urls/hooks', () => ({
     visibility: 'some',
     grading: 'some',
     outline: 'some',
-  }),
-}));
-
-jest.mock('@edx/frontend-platform/i18n', () => ({
-  ...jest.requireActual('@edx/frontend-platform/i18n'),
-  useIntl: () => ({
-    formatMessage: (message) => message.defaultMessage,
   }),
 }));
 
@@ -163,6 +156,8 @@ describe('<CourseOutline />', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
     selectedContainerId = undefined;
+    // restore index mock
+    courseOutlineIndexMock = cloneDeep(originalCourseOutlineIndexMock);
 
     jest.mocked(useLocation).mockReturnValue({
       pathname: mockPathname,
@@ -300,7 +295,7 @@ describe('<CourseOutline />', () => {
     expect(alertElements.find(
       (el) => el.classList.contains('alert-content'),
     )).toHaveTextContent(
-      pageAlertMessages.alertFailedGeneric.defaultMessage,
+      'Unable to save changes. Please try again.',
     );
   });
 
@@ -404,6 +399,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new subsection correctly', async () => {
+    const user = userEvent.setup();
     const { findAllByTestId } = renderComponent();
     const [section] = await findAllByTestId('section-card');
     let subsections = await within(section).findAllByTestId('subsection-card');
@@ -428,10 +424,14 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getXBlockApiUrl(courseSubsectionMock.id))
       .reply(200, courseSubsectionMock);
+    const firstSectionData = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    // @ts-ignore
+    firstSectionData.childInfo.children.push(courseSubsectionMock);
+    axiosMock
+      .onGet(getXBlockApiUrl(firstSectionData.id))
+      .reply(200, firstSectionData);
     const newSubsectionButton = await within(section).findByRole('button', { name: 'New subsection' });
-    await act(async () => {
-      fireEvent.click(newSubsectionButton);
-    });
+    await user.click(newSubsectionButton);
 
     subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(3);
@@ -540,6 +540,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds a section from library correctly', async () => {
+    const user = userEvent.setup();
     getContainerKey.mockReturnValue('lct:org:lib:section:1');
     getContainerKey.mockReturnValue('section');
     renderComponent();
@@ -552,11 +553,14 @@ describe('<CourseOutline />', () => {
         locator: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersdafdd',
         courseKey: 'course-v1:UNIX+UX1+2025_T3',
       });
+    axiosMock
+      .onGet(getXBlockApiUrl('block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersdafdd'))
+      .reply(200, courseSectionMock);
 
     const addSectionFromLibraryButton = await screen.findByRole('button', {
       name: /use section from library/i,
     });
-    fireEvent.click(addSectionFromLibraryButton);
+    await user.click(addSectionFromLibraryButton);
 
     // click dummy button to execute onComponentSelected prop.
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
@@ -705,26 +709,54 @@ describe('<CourseOutline />', () => {
   });
 
   it('check edit title works for section, subsection and unit', async () => {
-    const { findAllByTestId } = renderComponent();
+    const user = userEvent.setup();
+    renderComponent();
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const checkEditTitle = async (element, item, newName, elementName) => {
       axiosMock.reset();
       axiosMock
         .onPost(getCourseItemApiUrl(item.id))
         .reply(200, { dummy: 'value' });
+
+      if (item.id === section.id) {
+        // return normal section data the first time to keep original name first
+        axiosMock
+          .onGet(getXBlockApiUrl(section.id))
+          // @ts-ignore
+          .replyOnce(section);
+      }
+
       // mock section, subsection and unit name and check within the elements.
       // this is done to avoid adding conditions to this mock.
+
       axiosMock
-        .onGet(getXBlockApiUrl(item.id))
+        .onGet(getXBlockApiUrl(section.id))
         .reply(200, {
-          ...item,
+          ...section,
           display_name: newName,
+          childInfo: {
+            children: [
+              {
+                ...section.childInfo.children[0],
+                display_name: newName,
+                childInfo: {
+                  children: [
+                    {
+                      ...section.childInfo.children[0].childInfo.children[0],
+                      display_name: newName,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
         });
 
       const editButton = await within(element).findByTestId(`${elementName}-edit-button`);
       fireEvent.click(editButton);
       const editField = await within(element).findByTestId(`${elementName}-edit-field`);
       fireEvent.change(editField, { target: { value: newName } });
-      await act(async () => fireEvent.blur(editField));
+      await user.keyboard('{enter}');
       expect(
         axiosMock.history.post[axiosMock.history.post.length - 1].data,
       ).toBe(JSON.stringify({
@@ -737,8 +769,7 @@ describe('<CourseOutline />', () => {
     };
 
     // check section
-    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    const [sectionElement] = await findAllByTestId('section-card');
+    const [sectionElement] = await screen.findAllByTestId('section-card');
     await checkEditTitle(sectionElement, section, 'New section name', 'section');
 
     // check subsection
@@ -1627,15 +1658,14 @@ describe('<CourseOutline />', () => {
   });
 
   it('check update highlights when update highlights query is successfully', async () => {
-    const { getByRole } = renderComponent();
+    const user = userEvent.setup();
+    renderComponent();
 
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const highlights = [
       'New Highlight 1',
       'New Highlight 2',
       'New Highlight 3',
-      'New Highlight 4',
-      'New Highlight 5',
     ];
 
     axiosMock
@@ -1653,12 +1683,21 @@ describe('<CourseOutline />', () => {
         ...section,
         highlights,
       });
-
-    await executeThunk(updateCourseSectionHighlightsQuery(section.id, highlights), store.dispatch);
-
-    await waitFor(() => {
-      expect(getByRole('button', { name: '5 Section highlights' })).toBeInTheDocument();
+    const highlightBtn = await screen.findAllByRole('button', { name: '0 Section highlights' });
+    await user.click(highlightBtn[0]);
+    const dialog = await screen.findByRole('dialog');
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 1' }), {
+      target: { value: 'New Highlight 1' },
     });
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 2' }), {
+      target: { value: 'New Highlight 2' },
+    });
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 3' }), {
+      target: { value: 'New Highlight 3' },
+    });
+    await user.click(await within(dialog).findByRole('button', { name: 'Save' }));
+
+    expect(await screen.findByRole('button', { name: '3 Section highlights' })).toBeInTheDocument();
   });
 
   it('check whether section move up and down options work correctly', async () => {
@@ -2270,6 +2309,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit copy & paste option works correctly', async () => {
+    const user = userEvent.setup();
     renderComponent();
     // get first section -> first subsection -> first unit element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2328,13 +2368,6 @@ describe('<CourseOutline />', () => {
     const lastUnitElement = (await within(subsectionElement).findAllByTestId('unit-card')).slice(-1)[0];
     expect(lastUnitElement).toHaveTextContent(unit.displayName);
 
-    // check pasteFileNotices in store
-    expect(store.getState().courseOutline.pasteFileNotices).toEqual({
-      newFiles: ['some.css'],
-      conflictingFiles: ['con.css'],
-      errorFiles: ['error.css'],
-    });
-
     let alerts = await screen.findAllByRole('alert');
     // Exclude processing notification toast
     alerts = alerts.filter((el) => !el.classList.contains('toast-container'));
@@ -2343,18 +2376,18 @@ describe('<CourseOutline />', () => {
 
     // check alerts for errorFiles
     let dismissBtn = await within(alerts[0]).findByText('Dismiss');
-    fireEvent.click(dismissBtn);
+    await user.click(dismissBtn);
 
     // check alerts for conflictingFiles
     dismissBtn = await within(alerts[1]).findByText('Dismiss');
-    fireEvent.click(dismissBtn);
+    await user.click(dismissBtn);
 
     // check alerts for newFiles
     dismissBtn = await within(alerts[2]).findByText('Dismiss');
-    fireEvent.click(dismissBtn);
+    await user.click(dismissBtn);
 
-    // check pasteFileNotices in store
-    expect(store.getState().courseOutline.pasteFileNotices).toEqual({});
+    // check that all alerts are gone
+    expect((screen.queryAllByRole('alert')).length).toEqual(0);
   });
 
   it('should show toats on export tags', async () => {

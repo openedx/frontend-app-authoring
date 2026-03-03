@@ -1,7 +1,6 @@
 import {
   useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
-import { useDispatch } from 'react-redux';
 import {
   Bubble, Button, useToggle,
 } from '@openedx/paragon';
@@ -14,7 +13,6 @@ import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
@@ -24,8 +22,9 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SectionCardProps {
@@ -41,7 +40,6 @@ interface SectionCardProps {
   index: number,
   canMoveItem: (oldIndex: number, newIndex: number) => boolean,
   onOrderChange: (oldIndex: number, newIndex: number) => void,
-  resetScrollState: () => void,
 }
 
 const SectionCard = ({
@@ -57,12 +55,10 @@ const SectionCard = ({
   onDuplicateSubmit,
   isSectionsExpanded,
   onOrderChange,
-  resetScrollState,
 }: SectionCardProps) => {
   const currentRef = useRef(null);
-  const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const {
@@ -71,6 +67,7 @@ const SectionCard = ({
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
+  const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
   const isScrolledToElement = locatorId === section?.id;
 
   // Expand the section if a search result should be shown/scrolled to
@@ -111,6 +108,10 @@ const SectionCard = ({
   useEffect(() => {
     // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(section.editedOnRaw))) {
+      queryClient.cancelQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
+      // eslint-disable-next-line no-console
+      }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
   }, [initialData, section]);
@@ -152,13 +153,13 @@ const SectionCard = ({
   }, [activeId, overId]);
 
   useEffect(() => {
-    if (currentRef.current && (section.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (scrollState?.id === section.id || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop, true);
-      resetScrollState();
+      resetScrollState().catch((error) => handleResponseErrors(error));
     }
-  }, [isScrolledToElement]);
+  }, [isScrolledToElement, scrollState, resetScrollState]);
 
   useEffect(() => {
     // If the locatorId is set/changed, we need to make sure that the section is expanded
@@ -167,11 +168,13 @@ const SectionCard = ({
   }, [locatorId, setIsExpanded]);
 
   const handleOnPostChangeSync = useCallback(() => {
-    dispatch(fetchCourseSectionQuery([section.id]));
+    queryClient.invalidateQueries({
+      queryKey: courseOutlineQueryKeys.courseItemId(section.id),
+    });
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
     }
-  }, [dispatch, section, courseId, queryClient]);
+  }, [section, courseId, queryClient]);
 
   // re-create actions object for customizations
   const actions = { ...sectionActions };
@@ -194,6 +197,13 @@ const SectionCard = ({
 
   const handleClickMenuButton = () => {
     setCurrentSelection({
+      currentId: section.id,
+      sectionId: section.id,
+    });
+  };
+
+  const handleClickManageTags = () => {
+    setSelectedContainerState({
       currentId: section.id,
       sectionId: section.id,
     });
@@ -284,6 +294,7 @@ const SectionCard = ({
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
                 onClickDuplicate={onDuplicateSubmit}
+                onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
                 actions={actions}

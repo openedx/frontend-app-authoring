@@ -11,9 +11,10 @@ import {
 } from '@openedx/paragon/icons';
 import { uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { usePasteFileNotices } from '@src/course-outline/data/apiHooks';
 import CourseOutlinePageAlertsSlot from '../../plugin-slots/CourseOutlinePageAlertsSlot';
 import advancedSettingsMessages from '../../advanced-settings/messages';
 import { OutOfSyncAlert } from '../../course-libraries/OutOfSyncAlert';
@@ -23,8 +24,7 @@ import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import AlertMessage from '../../generic/alert-message';
 import AlertProctoringError from '../../generic/AlertProctoringError';
 import { API_ERROR_TYPES } from '../constants';
-import { getPasteFileNotices } from '../data/selectors';
-import { dismissError, removePasteFileNotices } from '../data/slice';
+import { dismissError } from '../data/slice';
 import messages from './messages';
 
 const PageAlerts = ({
@@ -48,7 +48,7 @@ const PageAlerts = ({
   const [showDiscussionAlert, setShowDiscussionAlert] = useState(
     localStorage.getItem(discussionAlertDismissKey) === null,
   );
-  const { newFiles, conflictingFiles, errorFiles } = useSelector(getPasteFileNotices);
+  const { data: pasteFileNotices, setData: setPasteFileNotices } = usePasteFileNotices(courseId);
   const [showOutOfSyncAlert, setShowOutOfSyncAlert] = useState(false);
   const navigate = useNavigate();
 
@@ -247,16 +247,16 @@ const PageAlerts = ({
 
   const newFilesPasteAlert = () => {
     const onDismiss = () => {
-      dispatch(removePasteFileNotices(['newFiles']));
+      setPasteFileNotices({ ...pasteFileNotices, newFiles: [] });
     };
 
-    if (newFiles?.length) {
+    if (pasteFileNotices?.newFiles?.length) {
       return (
         <AlertMessage
-          title={intl.formatMessage(messages.newFileAlertTitle, { newFilesLen: newFiles.length })}
+          title={intl.formatMessage(messages.newFileAlertTitle, { newFilesLen: pasteFileNotices.newFiles.length })}
           description={intl.formatMessage(
             messages.newFileAlertDesc,
-            { newFilesLen: newFiles.length, newFilesStr: newFiles.join(', ') },
+            { newFilesLen: pasteFileNotices.newFiles.length, newFilesStr: pasteFileNotices.newFiles.join(', ') },
           )}
           dismissible
           show
@@ -279,16 +279,16 @@ const PageAlerts = ({
 
   const errorFilesPasteAlert = () => {
     const onDismiss = () => {
-      dispatch(removePasteFileNotices(['errorFiles']));
+      setPasteFileNotices({ ...pasteFileNotices, errorFiles: [] });
     };
 
-    if (errorFiles?.length) {
+    if (pasteFileNotices?.errorFiles?.length) {
       return (
         <AlertMessage
           title={intl.formatMessage(messages.errorFileAlertTitle)}
           description={intl.formatMessage(
             messages.errorFileAlertDesc,
-            { errorFilesLen: errorFiles.length, errorFilesStr: errorFiles.join(', ') },
+            { errorFilesLen: pasteFileNotices.errorFiles.length, errorFilesStr: pasteFileNotices.errorFiles.join(', ') },
           )}
           dismissible
           show
@@ -303,19 +303,22 @@ const PageAlerts = ({
 
   const conflictingFilesPasteAlert = () => {
     const onDismiss = () => {
-      dispatch(removePasteFileNotices(['conflictingFiles']));
+      setPasteFileNotices({ ...pasteFileNotices, conflictingFiles: [] });
     };
 
-    if (conflictingFiles?.length) {
+    if (pasteFileNotices?.conflictingFiles?.length) {
       return (
         <AlertMessage
           title={intl.formatMessage(
             messages.conflictingFileAlertTitle,
-            { conflictingFilesLen: conflictingFiles.length },
+            { conflictingFilesLen: pasteFileNotices.conflictingFiles.length },
           )}
           description={intl.formatMessage(
             messages.conflictingFileAlertDesc,
-            { conflictingFilesLen: conflictingFiles.length, conflictingFilesStr: conflictingFiles.join(', ') },
+            {
+              conflictingFilesLen: pasteFileNotices.conflictingFiles.length,
+              conflictingFilesStr: pasteFileNotices.conflictingFiles.join(', '),
+            },
           )}
           dismissible
           show

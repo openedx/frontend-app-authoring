@@ -6,6 +6,25 @@
     min-height: 100vh;
     height: 100%;
     max-height: 300vh;
+
+    /*
+     * Change the styles for tabs in all sidebars.
+     *
+     * The tabs occupy the entire width of the sidebar,
+     * and each tab shares the space equally.
+     * The clickable area of ​​the tab is the entire
+     * area it occupies, not just the label.
+     */
+    .pgn__tabs {
+      .nav-item {
+        flex: 1 1 0;
+        text-align: center;
+      }
+
+      .pgn__tab_more {
+        display: none;
+      }
+    }
   }
 
   .dropdown-toggle {
