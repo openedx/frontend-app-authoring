@@ -1,4 +1,3 @@
-import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Layout } from '@openedx/paragon';
 

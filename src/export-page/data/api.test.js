@@ -1,6 +1,5 @@
-import MockAdapter from 'axios-mock-adapter';
-import { initializeMockApp, getConfig } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getConfig } from '@edx/frontend-platform';
+import { initializeMocks } from '@src/testUtils';
 
 import { getExportStatus, postExportCourseApiUrl, startCourseExporting } from './api';
 
@@ -9,15 +8,7 @@ const courseId = 'course-123';
 
 describe('API Functions', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    ({ axiosMock } = initializeMocks());
   });
 
   afterEach(() => {
