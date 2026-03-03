@@ -96,15 +96,3 @@ export const clearSaveError = ({
 export const clearCreateError = ({
   dispatch,
 }) => () => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.createBlock }));
-
-export const checkValidFileSize = ({
-  file,
-  onSizeFail,
-}) => {
-  // Check if the file size is greater than 20 MB, upload size limit
-  if (file.size > 20000000) {
-    onSizeFail();
-    return false;
-  }
-  return true;
-};

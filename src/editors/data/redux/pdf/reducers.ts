@@ -5,8 +5,8 @@ export const initialPdfState: () => PdfState = () => ({
   displayName: 'pdf',
   url: '',
   allowDownload: true,
-  source_text: '',
-  source_url: '',
+  sourceText: '',
+  sourceUrl: '',
 });
 
 const pdf = createSlice({

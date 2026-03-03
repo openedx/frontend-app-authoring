@@ -10,8 +10,8 @@ const simpleSelectors: { [Property in keyof PdfState]: (state: EditorState) => P
   displayName: mkSimpleSelector(pdfState => pdfState.displayName),
   url: mkSimpleSelector(pdfState => pdfState.url),
   allowDownload: mkSimpleSelector(pdfState => pdfState.allowDownload),
-  source_text: mkSimpleSelector(pdfState => pdfState.source_text),
-  source_url: mkSimpleSelector(pdfState => pdfState.source_url),
+  sourceText: mkSimpleSelector(pdfState => pdfState.sourceText),
+  sourceUrl: mkSimpleSelector(pdfState => pdfState.sourceUrl),
 };
 
 export default {...simpleSelectors, pdfState};

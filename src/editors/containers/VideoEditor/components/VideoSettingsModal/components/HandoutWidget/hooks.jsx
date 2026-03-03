@@ -57,4 +57,18 @@ export const fileSizeError = () => {
   };
 };
 
-export default { fileInput, fileSizeError, parseHandoutName };
+
+export const checkValidFileSize = ({
+  file,
+  onSizeFail,
+}) => {
+  // Check if the file size is greater than 20 MB, upload size limit
+  if (file.size > 20000000) {
+    onSizeFail();
+    return false;
+  }
+  return true;
+};
+
+
+export default { fileInput, fileSizeError, parseHandoutName, checkValidFileSize };
