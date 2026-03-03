@@ -34,9 +34,10 @@ export const ToastContext = React.createContext<ToastContextData>({
   closeToast: () => {},
 });
 
-// Module-level references to showToast and closeToast, kept in sync by ToastProvider.
+// TODO: Temporary solution. Module-level references to showToast and closeToast, kept in sync by ToastProvider.
 // This allows calling them from outside React (e.g. Redux thunks)
 // without violating the Rules of Hooks.
+// This approach is used in Redux thunks as a workaround and will be migrated to React Query soon.
 let internalShowToast: ToastContextData['showToast'] = () => {};
 let internalCloseToast: ToastContextData['closeToast'] = () => {};
 
