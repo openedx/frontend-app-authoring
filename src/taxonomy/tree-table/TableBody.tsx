@@ -76,7 +76,12 @@ const TableBody = ({
           <tr style={{ borderBottom: '1px solid #eee' }}>
             {row.getVisibleCells()
               .map(cell => (
-                <td key={cell.id} style={{ padding: '8px' }}>
+                <td key={cell.id} style={{
+                  padding: '8px',
+                  width: cell.column.getSize(),
+                  minWidth: cell.column.columnDef.minSize ?? cell.column.getSize(),
+                  maxWidth: cell.column.columnDef.maxSize ?? cell.column.getSize(),
+                }}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
