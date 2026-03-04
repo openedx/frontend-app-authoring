@@ -1405,7 +1405,6 @@ module.exports = {
           highlights_preview_only: false,
           highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           enable_proctored_exams: false,
-          create_zendesk_tickets: true,
           enable_timed_exams: true,
           ancestor_has_staff_lock: false,
           user_partition_info: {
