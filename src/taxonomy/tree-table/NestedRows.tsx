@@ -8,6 +8,7 @@ import type {
 } from './types';
 
 interface NestedRowsProps {
+  parentRow: TreeRow;
   parentRowValue: string;
   isCreating?: boolean;
   onSaveNewChildRow?: (value: string, parentRowValue: string) => void;
@@ -23,6 +24,7 @@ interface NestedRowsProps {
 }
 
 const NestedRows = ({
+  parentRow,
   parentRowValue,
   isCreating = false,
   onSaveNewChildRow = () => {},
@@ -39,6 +41,9 @@ const NestedRows = ({
   const columnCount = childRowsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
   const paddingLeft = depth + 4;
 
+  if (!parentRow.getIsExpanded()) {
+    return null;
+  }
   return (
     <>
       {isCreating && (
@@ -68,13 +73,14 @@ const NestedRows = ({
           <React.Fragment key={String(rowData.id)}>
             <tr style={{ borderBottom: '1px solid #eee' }}>
               {row.getVisibleCells()
-                .map(cell => (
-                  <td key={cell.id} className={`p-2 pl-${paddingLeft}`}>
+                .map((cell, index) => (
+                  <td key={cell.id} className={`p-2 ${index === 0 ? `pl-${paddingLeft}` : ''}`}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
             </tr>
             <NestedRows
+              parentRow={row}
               childRowsData={row.subRows as TreeRow[]}
               visibleColumnCount={row.getVisibleCells().length}
               parentRowValue={String(row.original.value)}
