@@ -48,13 +48,13 @@ interface GetColumnsArgs {
 }
 
 const OptionalExpandLink = ({ row }: { row: Row<TreeRowData> }) => (
-  row.depth === 0 && asTagListRowData(row).childCount > 0 ? (
+  asTagListRowData(row).childCount > 0 ? (
     <IconButton
       src={row.getIsExpanded() ? ExpandLess : ExpandMore}
       onClick={row.getToggleExpandedHandler()}
       alt="Show Subtags"
     />
-  ) : null
+  ) : <span style={{ display: 'inline-block', width: '44px' }} /> // Placeholder to keep alignment for rows without children
 );
 
 function getColumns({
@@ -77,14 +77,6 @@ function getColumns({
   const canAddSubtag = (row: Row<TreeRowData>) => asTagListRowData(row).depth < maxDepth;
 
   return [
-    {
-      id: 'expander',
-      header: () => null,
-      cell: OptionalExpandLink,
-      size: 16,
-      minSize: 16,
-      maxSize: 16,
-    },
     {
       header: intl.formatMessage(messages.tagListColumnValueHeader),
       cell: ({ row }: { row: Row<TreeRowData> }) => {
@@ -125,6 +117,7 @@ function getColumns({
 
         return (
           <>
+            <OptionalExpandLink row={row} />
             <span>{value}</span>
             <span className="text-secondary-500">{` (${descendantCount})`}</span>
           </>
