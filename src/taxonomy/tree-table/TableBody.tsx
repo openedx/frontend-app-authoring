@@ -86,27 +86,25 @@ const TableBody = ({
                 </td>
               ))}
           </tr>
-
-          {row.getIsExpanded() && (
-            <NestedRows
-              childRowsData={row.subRows}
-              visibleColumnCount={row.getVisibleCells().length}
-              parentRowValue={String(row.original.value)}
-              isCreating={creatingParentId === row.original.id}
-              onSaveNewChildRow={handleCreateRow}
-              onCancelCreation={() => {
-                setDraftError('');
-                setCreatingParentId(null);
-                exitDraftWithoutSave();
-              }}
-              creatingParentId={creatingParentId}
-              setCreatingParentId={setCreatingParentId}
-              depth={1}
-              draftError={draftError}
-              isSavingDraft={createRowMutation.isPending}
-              setDraftError={setDraftError}
-            />
-          )}
+          <NestedRows
+            parentRow={row}
+            childRowsData={row.subRows}
+            visibleColumnCount={row.getVisibleCells().length}
+            parentRowValue={String(row.original.value)}
+            isCreating={creatingParentId === row.original.id}
+            onSaveNewChildRow={handleCreateRow}
+            onCancelCreation={() => {
+              setDraftError('');
+              setCreatingParentId(null);
+              exitDraftWithoutSave();
+            }}
+            creatingParentId={creatingParentId}
+            setCreatingParentId={setCreatingParentId}
+            depth={1}
+            draftError={draftError}
+            isSavingDraft={createRowMutation.isPending}
+            setDraftError={setDraftError}
+          />
         </React.Fragment>
       ))}
     </tbody>

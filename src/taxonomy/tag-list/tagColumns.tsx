@@ -180,7 +180,7 @@ function getColumns({
                 onClick={startSubtagDraft}
                 disabled={disableAddSubtag}
               >
-                Add Subtag
+                {intl.formatMessage(messages.addSubtag)}
               </Button>
             )}
           </div>

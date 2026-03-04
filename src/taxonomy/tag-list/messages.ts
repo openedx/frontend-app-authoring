@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.update-success',
     defaultMessage: 'Tag \"{name}\" updated successfully',
   },
+  addSubtag: {
+    id: 'course-authoring.tag-list.add-subtag',
+    defaultMessage: 'Add Subtag',
+  },
 });
 
 export default messages;
