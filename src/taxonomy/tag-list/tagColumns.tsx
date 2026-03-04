@@ -5,7 +5,7 @@ import {
   IconButton,
   IconButtonWithTooltip,
 } from '@openedx/paragon';
-import { AddCircle, MoreVert } from '@openedx/paragon/icons';
+import { AddCircle, MoreVert, ExpandMore, ExpandLess } from '@openedx/paragon/icons';
 import type { Row } from '@tanstack/react-table';
 import type { IntlShape } from 'react-intl';
 
@@ -49,14 +49,11 @@ interface GetColumnsArgs {
 
 const OptionalExpandLink = ({ row }: { row: Row<TreeRowData> }) => (
   row.depth === 0 && asTagListRowData(row).childCount > 0 ? (
-    <Button
-      variant="link"
-      size="sm"
-      className="d-flex justify-content-end"
+    <IconButton
+      src={row.getIsExpanded() ? ExpandLess : ExpandMore}
       onClick={row.getToggleExpandedHandler()}
-    >
-      Expand row
-    </Button>
+      alt="Show Subtags"
+    />
   ) : null
 );
 
@@ -80,6 +77,14 @@ function getColumns({
   const canAddSubtag = (row: Row<TreeRowData>) => asTagListRowData(row).depth < maxDepth;
 
   return [
+    {
+      id: 'expander',
+      header: () => null,
+      cell: OptionalExpandLink,
+      size: 16,
+      minSize: 16,
+      maxSize: 16,
+    },
     {
       header: intl.formatMessage(messages.tagListColumnValueHeader),
       cell: ({ row }: { row: Row<TreeRowData> }) => {
@@ -125,11 +130,6 @@ function getColumns({
           </>
         );
       },
-    },
-    {
-      id: 'expander',
-      header: () => null,
-      cell: OptionalExpandLink,
     },
     {
       id: 'add',

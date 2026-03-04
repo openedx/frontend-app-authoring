@@ -102,7 +102,13 @@ const TableView = ({
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id} style={{ borderBottom: '2px solid #ddd' }}>
                   {headerGroup.headers.map(header => (
-                    <th key={header.id} style={{ padding: '8px', textAlign: 'left' }}>
+                    <th key={header.id} style={{
+                      padding: '8px',
+                      textAlign: 'left',
+                      width: header.getSize(),
+                      minWidth: header.column.columnDef.minSize ?? header.getSize(),
+                      maxWidth: header.column.columnDef.maxSize ?? header.getSize(),
+                    }}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
