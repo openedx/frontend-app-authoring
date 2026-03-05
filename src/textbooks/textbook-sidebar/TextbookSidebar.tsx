@@ -1,14 +1,14 @@
-import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import PropTypes from 'prop-types';
+import { HelpSidebar } from '@src/generic/help-sidebar';
+import { useHelpUrls } from '@src/help-urls/hooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { Hyperlink } from '@openedx/paragon';
-import { HelpSidebar } from '../../generic/help-sidebar';
 import messages from './messages';
-import { useHelpUrls } from '../../help-urls/hooks';
 
-const TextbookSidebar = ({ courseId }) => {
+const TextbookSidebar = () => {
   const intl = useIntl();
+  const { courseId } = useCourseAuthoringContext();
   const { textbooks: textbookUrl } = useHelpUrls(['textbooks']);
 
   return (
@@ -36,10 +36,6 @@ const TextbookSidebar = ({ courseId }) => {
       </Hyperlink>
     </HelpSidebar>
   );
-};
-
-TextbookSidebar.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default TextbookSidebar;

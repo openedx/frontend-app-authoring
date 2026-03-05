@@ -1,6 +1,4 @@
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { initializeMocks } from '@src/testUtils';
 
 import { textbooksMock } from 'CourseAuthoring/textbooks/__mocks__';
 import {
@@ -18,23 +16,12 @@ const courseId = 'course-v1:org+101+101';
 
 describe('getTextbooks', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
+    const mocks = initializeMocks();
 
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getTextbooksApiUrl(courseId))
       .reply(200, textbooksMock);
-  });
-
-  afterEach(() => {
-    axiosMock.reset();
   });
 
   it('should fetch textbooks for a course', async () => {
@@ -49,7 +36,7 @@ describe('getTextbooks', () => {
 
 describe('createTextbook', () => {
   it('should create a new textbook for a course', async () => {
-    const textbookData = { title: 'New Textbook', chapters: [] };
+    const textbookData = { tabTitle: 'New Textbook', chapters: [] };
     axiosMock.onPost(getUpdateTextbooksApiUrl(courseId)).reply(200, textbookData);
 
     const result = await createTextbook(courseId, textbookData);
@@ -61,7 +48,7 @@ describe('createTextbook', () => {
 describe('editTextbook', () => {
   it('should edit an existing textbook for a course', async () => {
     const textbookId = '1';
-    const editedTextbookData = { id: '1', title: 'Edited Textbook', chapters: [] };
+    const editedTextbookData = { id: '1', tabTitle: 'Edited Textbook', chapters: [] };
     axiosMock.onPut(getEditTextbooksApiUrl(courseId, textbookId)).reply(200, editedTextbookData);
 
     const result = await editTextbook(courseId, editedTextbookData);
@@ -75,8 +62,6 @@ describe('deleteTextbook', () => {
     const textbookId = '1';
     axiosMock.onDelete(getEditTextbooksApiUrl(courseId, textbookId)).reply(200, {});
 
-    const result = await deleteTextbook(courseId, textbookId);
-
-    expect(result).toEqual({});
+    await expect(deleteTextbook(courseId, textbookId)).resolves.toBeUndefined();
   });
 });

@@ -96,7 +96,7 @@ const useModalDropzone = ({
   const handleUpload = async () => {
     if (!selectedFile) { return; }
 
-    onSavingStatus(RequestStatus.PENDING);
+    onSavingStatus({ status: RequestStatus.PENDING });
 
     const onUploadProgress = (progressEvent) => {
       const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);

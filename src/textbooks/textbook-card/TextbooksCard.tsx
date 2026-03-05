@@ -1,6 +1,4 @@
-import PropTypes from 'prop-types';
-import { useContext, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -15,28 +13,29 @@ import {
   RemoveRedEye as ViewIcon,
   DeleteOutline as DeleteIcon,
 } from '@openedx/paragon/icons';
-import { AppContext } from '@edx/frontend-platform/react';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
-import { RequestStatus } from '../../data/constants';
-import { getCurrentTextbookId, getSavingStatus } from '../data/selectors';
-import TextbookForm from '../textbook-form/TextbookForm';
+import TextbookForm, { TextbookFormOnSubmit } from '../textbook-form/TextbookForm';
 import { getTextbookFormInitialValues } from '../utils';
 import messages from './messages';
+import { Textbook } from '../data/api';
+
+export interface TextbookCardProps {
+  textbook: Textbook;
+  onEditSubmit: (fromValues: Textbook, onSuccess: () => void) => void;
+  onDeleteSubmit: (id: string) => void;
+  textbookIndex: number;
+}
 
 const TextbookCard = ({
   textbook,
-  courseId,
-  handleSavingStatusDispatch,
   onEditSubmit,
   onDeleteSubmit,
   textbookIndex,
-}) => {
+}: TextbookCardProps) => {
   const intl = useIntl();
-  const { config } = useContext(AppContext);
-
-  const savingStatus = useSelector(getSavingStatus);
-  const currentTextbookId = useSelector(getCurrentTextbookId);
+  const { courseId } = useCourseAuthoringContext();
 
   const [isTextbookFormOpen, openTextbookForm, closeTextbookForm] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
@@ -44,7 +43,7 @@ const TextbookCard = ({
   const { tabTitle, chapters, id } = textbook;
 
   const onPreviewTextbookClick = () => {
-    window.open(`${config.LMS_BASE_URL}/courses/${courseId}/pdfbook/${textbookIndex}/`, '_blank');
+    window.open(`${getConfig().LMS_BASE_URL}/courses/${courseId}/pdfbook/${textbookIndex}/`, '_blank');
   };
 
   const handleDeleteButtonSubmit = () => {
@@ -52,11 +51,9 @@ const TextbookCard = ({
     onDeleteSubmit(id);
   };
 
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL && currentTextbookId === id) {
-      closeTextbookForm();
-    }
-  }, [savingStatus, currentTextbookId]);
+  const handleEditSubmit: TextbookFormOnSubmit = (values) => {
+    onEditSubmit(values, closeTextbookForm);
+  };
 
   return (
     <>
@@ -65,8 +62,7 @@ const TextbookCard = ({
           <TextbookForm
             closeTextbookForm={closeTextbookForm}
             initialFormValues={getTextbookFormInitialValues(true, { tab_title: tabTitle, chapters, id })}
-            onSubmit={onEditSubmit}
-            onSavingStatus={handleSavingStatusDispatch}
+            onSubmit={handleEditSubmit}
           />
         ) :
         (
@@ -81,6 +77,7 @@ const TextbookCard = ({
                       src={ViewIcon}
                       iconAs={Icon}
                       data-testid="textbook-view-button"
+                      alt={intl.formatMessage(messages.buttonView)}
                       onClick={onPreviewTextbookClick}
                     />
                     <IconButtonWithTooltip
@@ -88,6 +85,7 @@ const TextbookCard = ({
                       src={EditIcon}
                       iconAs={Icon}
                       data-testid="textbook-edit-button"
+                      alt={intl.formatMessage(messages.buttonEdit)}
                       onClick={openTextbookForm}
                     />
                     <IconButtonWithTooltip
@@ -95,6 +93,7 @@ const TextbookCard = ({
                       src={DeleteIcon}
                       iconAs={Icon}
                       data-testid="textbook-delete-button"
+                      alt={intl.formatMessage(messages.buttonDelete)}
                       onClick={openDeleteModal}
                     />
                   </ActionRow>
@@ -126,22 +125,6 @@ const TextbookCard = ({
       />
     </>
   );
-};
-
-TextbookCard.propTypes = {
-  textbook: PropTypes.shape({
-    tabTitle: PropTypes.string.isRequired,
-    chapters: PropTypes.arrayOf(PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      url: PropTypes.string.isRequired,
-    })).isRequired,
-    id: PropTypes.string.isRequired,
-  }).isRequired,
-  courseId: PropTypes.string.isRequired,
-  handleSavingStatusDispatch: PropTypes.func.isRequired,
-  onEditSubmit: PropTypes.func.isRequired,
-  onDeleteSubmit: PropTypes.func.isRequired,
-  textbookIndex: PropTypes.string.isRequired,
 };
 
 export default TextbookCard;

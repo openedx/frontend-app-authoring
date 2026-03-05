@@ -10,13 +10,11 @@ import { Add as AddIcon } from '@openedx/paragon/icons';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { RequestStatus } from '@src/data/constants';
+import { SavingErrorAlert } from '@src/generic/saving-error-alert';
+import { LoadingSpinner } from '@src/generic/Loading';
+import SubHeader from '@src/generic/sub-header/SubHeader';
 
-import { useWaffleFlags } from '../data/apiHooks';
-import { SavingErrorAlert } from '../generic/saving-error-alert';
-import { LoadingSpinner } from '../generic/Loading';
-import SubHeader from '../generic/sub-header/SubHeader';
-import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
+import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import TextbookCard from './textbook-card/TextbooksCard';
 import TextbookSidebar from './textbook-sidebar/TextbookSidebar';
@@ -27,24 +25,22 @@ import messages from './messages';
 
 const Textbooks = () => {
   const intl = useIntl();
-  const { courseId, courseDetails } = useCourseAuthoringContext();
-  const waffleFlags = useWaffleFlags(courseId);
+  const { courseDetails } = useCourseAuthoringContext();
 
   const {
     textbooks,
     isLoading,
     isLoadingFailed,
     breadcrumbs,
-    errorMessage,
-    savingStatus,
+    mutationErrorMessage,
+    anyMutationFailed,
     isTextbookFormOpen,
     openTextbookForm,
     closeTextbookForm,
     handleTextbookFormSubmit,
-    handleSavingStatusDispatch,
     handleTextbookEditFormSubmit,
     handleTextbookDeleteSubmit,
-  } = useTextbooks(courseId, waffleFlags);
+  } = useTextbooks();
 
   if (isLoadingFailed) {
     return (
@@ -106,8 +102,6 @@ const Textbooks = () => {
                         <TextbookCard
                           key={textbook.id}
                           textbook={textbook}
-                          courseId={courseId}
-                          handleSavingStatusDispatch={handleSavingStatusDispatch}
                           onEditSubmit={handleTextbookEditFormSubmit}
                           onDeleteSubmit={handleTextbookDeleteSubmit}
                           textbookIndex={index}
@@ -121,7 +115,6 @@ const Textbooks = () => {
                         closeTextbookForm={closeTextbookForm}
                         initialFormValues={getTextbookFormInitialValues()}
                         onSubmit={handleTextbookFormSubmit}
-                        onSavingStatus={handleSavingStatusDispatch}
                       />
                     )}
                   </div>
@@ -129,15 +122,15 @@ const Textbooks = () => {
               </article>
             </Layout.Element>
             <Layout.Element>
-              <TextbookSidebar courseId={courseId} />
+              <TextbookSidebar />
             </Layout.Element>
           </Layout>
         </section>
       </Container>
       <div className="alert-toast">
         <SavingErrorAlert
-          isQueryFailed={savingStatus === RequestStatus.FAILED}
-          errorMessage={errorMessage}
+          isQueryFailed={anyMutationFailed}
+          errorMessage={mutationErrorMessage}
         />
       </div>
     </>
