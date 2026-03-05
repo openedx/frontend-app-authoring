@@ -23,6 +23,8 @@ export const useCreateLibraryV2 = () => {
     mutationFn: createLibraryV2,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibraryList() });
+      // Invalidate the search token to refresh with the new library's access_id
+      queryClient.invalidateQueries({ queryKey: ['content_search'] });
     },
   });
 };
