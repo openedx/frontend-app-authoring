@@ -4,6 +4,7 @@ import {
   Icon,
   IconButton,
   IconButtonWithTooltip,
+  Dropdown,
 } from '@openedx/paragon';
 import {
   AddCircle,
@@ -89,7 +90,6 @@ function getColumns({
           isNew,
           isEditing,
           value,
-          descendantCount,
         } = asTagListRowData(row);
 
         if (isNew) {
@@ -131,30 +131,31 @@ function getColumns({
     {
       id: 'add',
       header: () => (
-        <IconButtonWithTooltip
-          tooltipPlacement="top"
-          tooltipContent={<div>Create a new tag</div>}
-          src={AddCircle}
-          alt="Create Tag"
-          size="inline"
-          onClick={() => {
-            onStartDraft();
-            setDraftError('');
-            setIsCreatingTopTag(true);
-            setEditingRowId(null);
-            setActiveActionMenuRowId(null);
-          }}
-          disabled={hasOpenDraft}
-        />
+        <div className="d-flex justify-content-end">
+          <IconButtonWithTooltip
+            tooltipPlacement="top"
+            tooltipContent={<div>Create a new tag</div>}
+            src={AddCircle}
+            alt="Create Tag"
+            size="inline"
+            onClick={() => {
+              onStartDraft();
+              setDraftError('');
+              setIsCreatingTopTag(true);
+              setEditingRowId(null);
+              setActiveActionMenuRowId(null);
+            }}
+            disabled={hasOpenDraft}
+          />
+        </div>
       ),
       cell: ({ row }: { row: Row<TreeRowData> }) => {
         const rowData = asTagListRowData(row);
 
-        if (rowData.isNew) {
+        if (rowData.isNew || !canAddSubtag(row)) {
           return <div className="d-flex gap-2" />;
         }
 
-        const isMenuOpen = activeActionMenuRowId === rowData.id;
         const disableAddSubtag = hasOpenDraft && creatingParentId !== rowData.id;
         const startSubtagDraft = () => {
           onStartDraft();
@@ -167,8 +168,23 @@ function getColumns({
         };
 
         return (
-          <div className="d-flex align-items-center gap-2">
-            <IconButton
+          <div className="d-flex align-items-center justify-content-end gap-2">
+            <Dropdown>
+              <Dropdown.Toggle
+                id={`dropdown-toggle-for-tag-${rowData.value}`}
+                as={IconButton}
+                src={MoreVert}
+                iconAs={Icon}
+                variant="primary"
+                aria-label={`More actions for tag ${rowData.value}`}
+              />
+              <Dropdown.Menu>
+                <Dropdown.Item as={Button} onClick={startSubtagDraft} disabled={disableAddSubtag}>
+                  {intl.formatMessage(messages.addSubtag)}
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+            {/* <IconButton
               src={MoreVert}
               alt="Actions"
               iconAs={Icon}
@@ -176,6 +192,7 @@ function getColumns({
                 setActiveActionMenuRowId(isMenuOpen ? null : rowData.id);
               }}
               disabled={disableAddSubtag}
+              size="sm"
             />
             {isMenuOpen && canAddSubtag(row) && (
               <Button
@@ -186,33 +203,11 @@ function getColumns({
               >
                 {intl.formatMessage(messages.addSubtag)}
               </Button>
-            )}
+            )} */}
           </div>
         );
       },
     },
-    // {
-    //   id: 'edit',
-    //   cell: ({ row }) => {
-    //     if (row.original.isNew) {
-    //       return <div className="d-flex gap-2"></div>;
-    //     }
-
-    //     return (
-    //       <div className="d-flex gap-2">
-    //         <span
-    //           style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#0056b3', marginRight: '1rem' }}
-    //           onClick={() => {
-    //             setEditingRowId(row.original.id);
-    //             setCreatingParentId(null);
-    //           } }
-    //         >
-    //           Edit
-    //         </span>
-    //       </div>
-    //     );
-    //   }
-    // },
   ];
 }
 
