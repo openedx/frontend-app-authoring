@@ -56,7 +56,7 @@ const TableBody = ({
 
       {isCreatingTopRow && (
         <tr id="creating-top-row" data-testid="creating-top-row">
-          <td style={{ padding: '8px 8px 8px 0' }}>
+          <td colSpan={columns.length} style={{ padding: '8px 8px 8px 0' }}>
             <EditableCell
               errorMessage={draftError}
               isSaving={createRowMutation.isPending}
@@ -77,10 +77,12 @@ const TableBody = ({
             {row.getVisibleCells()
               .map(cell => (
                 <td key={cell.id} style={{
-                  padding: '8px',
                   width: cell.column.getSize(),
                   minWidth: cell.column.columnDef.minSize ?? cell.column.getSize(),
                   maxWidth: cell.column.columnDef.maxSize ?? cell.column.getSize(),
+                  padding: '8px',
+                  verticalAlign: 'top',
+                  overflowWrap: 'anywhere',
                 }}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>

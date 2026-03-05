@@ -5,7 +5,12 @@ import {
   IconButton,
   IconButtonWithTooltip,
 } from '@openedx/paragon';
-import { AddCircle, MoreVert, ExpandMore, ExpandLess } from '@openedx/paragon/icons';
+import {
+  AddCircle,
+  MoreVert,
+  ExpandMore,
+  ExpandLess,
+} from '@openedx/paragon/icons';
 import type { Row } from '@tanstack/react-table';
 import type { IntlShape } from 'react-intl';
 
@@ -48,13 +53,13 @@ interface GetColumnsArgs {
 }
 
 const OptionalExpandLink = ({ row }: { row: Row<TreeRowData> }) => (
-  asTagListRowData(row).childCount > 0 ? (
-    <IconButton
-      src={row.getIsExpanded() ? ExpandLess : ExpandMore}
-      onClick={row.getToggleExpandedHandler()}
-      alt="Show Subtags"
-    />
-  ) : <span style={{ display: 'inline-block', width: '44px' }} /> // Placeholder to keep alignment for rows without children
+  <IconButton
+    src={row.getIsExpanded() ? ExpandLess : ExpandMore}
+    onClick={row.getToggleExpandedHandler()}
+    alt="Show Subtags"
+    size="sm"
+    style={{ visibility: row.getCanExpand() ? 'visible' : 'hidden' }}
+  />
 );
 
 function getColumns({
@@ -74,7 +79,7 @@ function getColumns({
   maxDepth,
   creatingParentId,
 }: GetColumnsArgs): TreeColumnDef[] {
-  const canAddSubtag = (row: Row<TreeRowData>) => asTagListRowData(row).depth < maxDepth;
+  const canAddSubtag = (row: Row<TreeRowData>) => row.depth + 1 < maxDepth;
 
   return [
     {
@@ -116,11 +121,10 @@ function getColumns({
         }
 
         return (
-          <>
+          <span className="d-flex align-items-center gap-2">
             <OptionalExpandLink row={row} />
             <span>{value}</span>
-            <span className="text-secondary-500">{` (${descendantCount})`}</span>
-          </>
+          </span>
         );
       },
     },
@@ -146,7 +150,7 @@ function getColumns({
       cell: ({ row }: { row: Row<TreeRowData> }) => {
         const rowData = asTagListRowData(row);
 
-        if (rowData.isNew || !canAddSubtag(row)) {
+        if (rowData.isNew) {
           return <div className="d-flex gap-2" />;
         }
 
@@ -173,7 +177,7 @@ function getColumns({
               }}
               disabled={disableAddSubtag}
             />
-            {isMenuOpen && (
+            {isMenuOpen && canAddSubtag(row) && (
               <Button
                 variant="tertiary"
                 size="sm"

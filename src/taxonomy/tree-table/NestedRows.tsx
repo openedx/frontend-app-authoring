@@ -39,7 +39,7 @@ const NestedRows = ({
   setCreatingParentId = () => {},
 }: NestedRowsProps) => {
   const columnCount = childRowsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
-  const paddingLeft = depth + 4;
+  const indentPx = depth * 16;
 
   if (!parentRow.getIsExpanded()) {
     return null;
@@ -48,7 +48,8 @@ const NestedRows = ({
     <>
       {isCreating && (
         <tr>
-          <td colSpan={columnCount} className={`p-2 pl-${paddingLeft}`}>
+          <td colSpan={columnCount} style={{ padding: '8px 8px 8px 0' }}>
+            <div style={{ paddingInlineStart: `${indentPx}px`, maxWidth: '100%' }}>
             <EditableCell
               errorMessage={draftError}
               isSaving={isSavingDraft}
@@ -64,6 +65,7 @@ const NestedRows = ({
                 return '';
               }}
             />
+            </div>
           </td>
         </tr>
       )}
@@ -73,11 +75,30 @@ const NestedRows = ({
           <React.Fragment key={String(rowData.id)}>
             <tr style={{ borderBottom: '1px solid #eee' }}>
               {row.getVisibleCells()
-                .map((cell, index) => (
-                  <td key={cell.id} className={`p-2 ${index === 0 ? `pl-${paddingLeft}` : ''}`}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+                .map((cell, index) => {
+                  const content = flexRender(cell.column.columnDef.cell, cell.getContext());
+                  const isFirstColumn = index === 0;
+
+                  return (
+                    <td
+                      key={cell.id}
+                      style={{
+                        width: cell.column.getSize(),
+                        minWidth: cell.column.columnDef.minSize ?? cell.column.getSize(),
+                        maxWidth: cell.column.columnDef.maxSize ?? cell.column.getSize(),
+                        padding: '8px',
+                        verticalAlign: 'top',
+                        overflowWrap: 'anywhere',
+                      }}
+                    >
+                      {isFirstColumn ? (
+                        <div style={{ paddingInlineStart: `${indentPx}px` }}>{content}</div>
+                      ) : (
+                        content
+                      )}
+                    </td>
+                  );
+                })}
             </tr>
             <NestedRows
               parentRow={row}

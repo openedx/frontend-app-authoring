@@ -97,10 +97,10 @@ const TableView = ({
         <LoadingSpinner />
       ) : (
         <Card.Section className="p-0">
-          <table className="table w-100" style={{ borderCollapse: 'collapse' }}>
+          <table className="table w-100 tag-list-table" style={{ borderCollapse: 'collapse', tableLayout: 'fixed', width: '100%' }}>
             <thead className="bg-light-400">
               {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id} style={{ borderBottom: '2px solid #ddd' }}>
+                <tr key={headerGroup.id}>
                   {headerGroup.headers.map(header => (
                     <th key={header.id} style={{
                       padding: '8px',
