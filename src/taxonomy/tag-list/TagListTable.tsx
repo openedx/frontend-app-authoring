@@ -4,7 +4,7 @@ import React, {
   useEffect,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import type { PaginationState } from '@tanstack/react-table';
+import type { PaginationState, TableMeta } from '@tanstack/react-table';
 import { useTagListData, useCreateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
 import { TableView } from '../tree-table';
@@ -47,8 +47,34 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
   const [activeActionMenuRowId, setActiveActionMenuRowId] = useState<RowId | null>(null);
   const [draftError, setDraftError] = useState('');
+  const [draftRowData, setDraftRowData] = useState<TreeRowData | null>(null);
   const treeData = (tagTree?.getAllAsDeepCopy() || []) as unknown as TreeRowData[];
   const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;
+
+  const meta: TableMeta<TreeRowData> = {
+    updateData: (rowId, columnId, value) => {
+      setDraftRowData((prev) => {
+        if (!prev) return prev;
+        if (prev.id !== rowId) return prev;
+        return {
+          ...prev,
+          [columnId]: value,
+        };
+      });
+    },
+    saveRow: (rowId: string | number, parentTagValue?: string) => {
+      if (!draftRowData) return;
+      // TODO: handle error / prevent this from happening
+      if (draftRowData.id !== rowId) throw new Error('Mismatching rowId on saveRow');
+      if (!parentTagValue) {
+        handleCreateTag(draftRowData.value);
+      } else if (creatingParentId && parentTagValue) {
+        handleCreateTag(draftRowData.value, parentTagValue);
+      } else if (editingRowId) {
+        // TODO: implement
+      }
+    },
+  };
 
   // PAGINATION
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
@@ -136,6 +162,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   return (
     <TableView
       {...{
+        meta,
         maxDepth,
         treeData,
         columns,

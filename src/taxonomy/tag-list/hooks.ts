@@ -109,7 +109,7 @@ const useEditActions = ({
     });
   };
 
-  const handleCreateTag = async (value: string, parentTagValue = undefined) => {
+  const handleCreateTag = async (value: string, parentTagValue?: string) => {
     const trimmed = value.trim();
     const validationError = getInlineValidationMessage(trimmed);
     if (validationError) {

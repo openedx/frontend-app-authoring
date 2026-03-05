@@ -5,6 +5,7 @@ import {
   IconButton,
   IconButtonWithTooltip,
   Dropdown,
+  Spinner,
 } from '@openedx/paragon';
 import {
   AddCircle,
@@ -85,7 +86,7 @@ function getColumns({
   return [
     {
       header: intl.formatMessage(messages.tagListColumnValueHeader),
-      cell: ({ row }: { row: Row<TreeRowData> }) => {
+      cell: ({ row, column, table }) => {
         const {
           isNew,
           isEditing,
@@ -97,11 +98,14 @@ function getColumns({
             <EditableCell
               errorMessage={draftError}
               isSaving={isSavingDraft}
-              onSave={(newValue) => handleCreateTag(newValue)}
-              onCancel={() => {
-                setDraftError('');
-                setIsCreatingTopTag(false);
+              onChange={(e) => {
+                table.options.meta?.updateData(row.id, column.id, e.target.value);
               }}
+              // onSave={(newValue) => handleCreateTag(newValue)}
+              // onCancel={() => {
+              //   setDraftError('');
+              //   setIsCreatingTopTag(false);
+              // }}
             />
           );
         }
@@ -129,7 +133,7 @@ function getColumns({
       },
     },
     {
-      id: 'add',
+      id: 'actions',
       header: () => (
         <div className="d-flex justify-content-end">
           <IconButtonWithTooltip
@@ -149,10 +153,10 @@ function getColumns({
           />
         </div>
       ),
-      cell: ({ row }: { row: Row<TreeRowData> }) => {
+      cell: ({ row, table }) => {
         const rowData = asTagListRowData(row);
 
-        if (rowData.isNew || !canAddSubtag(row)) {
+        if (rowData.isNew || rowData.isEditing || !canAddSubtag(row)) {
           return <div className="d-flex gap-2" />;
         }
 
