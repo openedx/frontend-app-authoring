@@ -60,7 +60,7 @@ const NestedRows = ({
               }}
               getInlineValidationMessage={(value) => {
                 if (!value.trim()) {
-                  return 'Name cannot be empty.';
+                  return `Field "value" cannot be empty.`;
                 }
                 return '';
               }}

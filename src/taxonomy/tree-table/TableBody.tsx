@@ -14,6 +14,7 @@ import type {
   TreeColumnDef,
   TreeTable,
 } from './types';
+import { Button, Spinner } from '@openedx/paragon';
 
 interface TableBodyProps {
   columns: TreeColumnDef[];
@@ -60,13 +61,40 @@ const TableBody = ({
             <EditableCell
               errorMessage={draftError}
               isSaving={createRowMutation.isPending}
-              onSave={(value) => handleCreateRow(value)}
-              onCancel={() => {
-                setDraftError('');
-                setIsCreatingTopRow(false);
-                exitDraftWithoutSave();
+              onChange={(e) => {
+                table.options.meta?.updateData(row.id, column.id, e.target.value);
               }}
+              // onSave={(value) => handleCreateRow(value)}
+              // onCancel={() => {
+              //   setDraftError('');
+              //   setIsCreatingTopRow(false);
+              //   exitDraftWithoutSave();
+              // }}
             />
+          </td>
+          <td>
+            <span className="d-flex justify-content-end">
+              <span className="mr-2">
+                {/* <Button variant="secondary" size="sm" onClick={onCancel} disabled={rowData.isSaving}> */}
+                <Button variant="secondary" size="sm">
+                  Cancel
+                </Button>
+              </span>
+              <span className="mr-2">
+                <Button variant="primary" size="sm" onClick={() => table.options.meta?.saveRow(rowData.id)} disabled={rowData.isSaveDisabled as boolean | undefined}>
+                  Save
+                </Button>
+              </span>
+              {createRowMutation.isPending && (
+                <Spinner
+                  animation="border"
+                  role="status"
+                  variant="primary"
+                  size="sm"
+                  screenReaderText="Saving..."
+                />
+              )}
+            </span>
           </td>
         </tr>
       )}
