@@ -30,6 +30,16 @@ const TestComponentToClose = () => {
   return <div>Content</div>;
 };
 
+const TestComponentWithDelay = ({ delay }: { delay: number }) => {
+  const { showToast } = React.useContext(ToastContext);
+
+  React.useEffect(() => {
+    showToast('This is the Toast!', undefined, delay);
+  }, [showToast]);
+
+  return <div>Content</div>;
+};
+
 let store;
 const RootWrapper = ({ children }: WraperProps) => (
   <AppProvider store={store}>
@@ -72,6 +82,17 @@ describe('<ToastProvider />', () => {
   it('should close toast', async () => {
     render(<RootWrapper><TestComponentToClose /></RootWrapper>);
     expect(await screen.findByText('Content')).toBeInTheDocument();
+    expect(screen.queryByText('This is the Toast!')).not.toBeInTheDocument();
+  });
+
+  it('should keep toast visible past default delay when custom delay is provided', async () => {
+    render(<RootWrapper><TestComponentWithDelay delay={10000} /></RootWrapper>);
+    expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
+    // Still visible after the default 5000ms delay
+    jest.advanceTimersByTime(6000);
+    expect(screen.queryByText('This is the Toast!')).toBeInTheDocument();
+    // Gone after the custom 10000ms delay
+    jest.advanceTimersByTime(5000);
     expect(screen.queryByText('This is the Toast!')).not.toBeInTheDocument();
   });
 });

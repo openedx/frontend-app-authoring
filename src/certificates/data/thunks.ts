@@ -1,9 +1,6 @@
 /* istanbul ignore file */
 import { RequestStatus } from '../../data/constants';
-import {
-  hideProcessingNotification,
-  showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
+import { showToastOutsideReact, closeToastOutsideReact } from '../../generic/toast-context';
 import { handleResponseErrors } from '../../generic/saving-error-alert';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import {
@@ -45,7 +42,7 @@ export function fetchCertificates(courseId) {
 export function createCourseCertificate(courseId, certificate) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       const certificateValues = await createCertificate(courseId, certificate);
@@ -55,7 +52,7 @@ export function createCourseCertificate(courseId, certificate) {
     } catch (error) {
       return handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -63,7 +60,7 @@ export function createCourseCertificate(courseId, certificate) {
 export function updateCourseCertificate(courseId, certificate) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       const certificatesValues = await updateCertificate(courseId, certificate);
@@ -73,7 +70,7 @@ export function updateCourseCertificate(courseId, certificate) {
     } catch (error) {
       return handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -81,7 +78,7 @@ export function updateCourseCertificate(courseId, certificate) {
 export function deleteCourseCertificate(courseId, certificateId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.deleting);
 
     try {
       await deleteCertificate(courseId, certificateId);
@@ -91,7 +88,7 @@ export function deleteCourseCertificate(courseId, certificateId) {
     } catch (error) {
       return handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -99,10 +96,9 @@ export function deleteCourseCertificate(courseId, certificateId) {
 export function updateCertificateActiveStatus(courseId, path, activationStatus) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-
-    dispatch(showProcessingNotification(
+    showToastOutsideReact(
       activationStatus ? ACTIVATION_MESSAGES.activating : ACTIVATION_MESSAGES.deactivating,
-    ));
+    );
 
     try {
       await updateActiveStatus(path, activationStatus);
@@ -112,7 +108,7 @@ export function updateCertificateActiveStatus(courseId, path, activationStatus) 
     } catch (error) {
       return handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
