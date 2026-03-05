@@ -10,6 +10,7 @@ export interface TreeRowData {
   id: RowId;
   value: string;
   subRows?: TreeRowData[];
+  depth?: number;
   [key: string]: unknown;
 }
 
