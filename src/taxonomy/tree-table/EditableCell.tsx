@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Button, Spinner } from '@openedx/paragon';
+import { Button, Form, Spinner } from '@openedx/paragon';
 
 interface EditableCellProps {
   initialValue?: string;
@@ -49,21 +49,21 @@ const EditableCell = ({
   return (
     <span className="d-flex align-items-start">
       <span className="mr-2">
-        <input
-          type="text"
-          className="form-control form-control-sm"
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-            onChange(e);
-          }}
-          onKeyDown={handleKeyDown}
-          onClick={(e) => e.stopPropagation()}
-          placeholder="Type tag name"
-        />
-        {effectiveErrorMessage && (
-          <div className="text-danger small mt-1">{effectiveErrorMessage}</div>
-        )}
+        <Form.Group controlId="editable-cell-input" className="mb-0">
+          <Form.Control
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value);
+              onChange(e);
+            }}
+            onKeyDown={handleKeyDown}
+            onClick={(e) => e.stopPropagation()}
+            floatingLabel="Type tag name"
+          />
+          {effectiveErrorMessage && (
+            <div className="text-danger small mt-1">{effectiveErrorMessage}</div>
+          )}
+        </Form.Group>
       </span>
       {/* <span className="mr-2">
         <Button variant="secondary" size="sm" onClick={onCancel} disabled={isSaving}>
