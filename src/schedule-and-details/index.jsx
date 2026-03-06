@@ -9,6 +9,7 @@ import {
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import Placeholder from '../editors/Placeholder';
 import { RequestStatus } from '../data/constants';
 import { useGetCourseDetails } from './data/apiHooks';
@@ -17,7 +18,6 @@ import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { STATEFUL_BUTTON_STATES } from '../constants';
 import getPageHeadTitle from '../generic/utils';
 import { useScrollToHashElement } from '../hooks';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import {
   fetchCourseSettingsQuery,
   updateCourseDetailsQuery,
@@ -42,14 +42,14 @@ import { useLoadValuesPrompt, useSaveValuesPrompt } from './hooks';
 
 const ScheduleAndDetails = () => {
   const intl = useIntl();
-  const courseDetails = useGetCourseDetails(courseId);
   const courseSettings = useSelector(getCourseSettings);
   const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
-  const isLoading = courseDetails.isLoading
-    || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
-
   const { courseId, courseDetails: course } = useCourseAuthoringContext();
   document.title = getPageHeadTitle(course?.name || '', intl.formatMessage(messages.headingTitle));
+
+  const courseDetails = useGetCourseDetails(courseId);
+  const isLoading = courseDetails.isLoading
+  || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
 
   const {
     platformName,

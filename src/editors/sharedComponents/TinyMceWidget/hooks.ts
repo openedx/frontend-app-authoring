@@ -389,7 +389,6 @@ export const setupCustomBehavior = ({
   editor.on('ExecCommand', /* istanbul ignore next */ async (e) => {
     if (editorType === 'text' && e.command === 'mceFocus') {
       const initialContent = editor.getContent();
-      // @ts-ignore Some parameters like 'lmsEndpointUrl' were missing here. Fix me?
       const newContent = await replaceStaticWithAsset({
         initialContent,
         editorType,
