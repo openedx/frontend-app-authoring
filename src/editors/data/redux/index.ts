@@ -8,6 +8,7 @@ import * as requests from './requests';
 import * as video from './video';
 import * as problem from './problem';
 import * as game from './game';
+import * as pdf from './pdf';
 import type { RequestKeys, RequestStates } from '../constants/requests';
 import { AdvancedProblemType, type GradingMethodKey, ProblemType } from '../constants/problem';
 
@@ -35,6 +36,7 @@ const actions = StrictDict({
   video: video.actions,
   problem: problem.actions,
   game: game.actions,
+  pdf: pdf.actions,
 });
 
 const selectors = StrictDict({
@@ -43,6 +45,7 @@ const selectors = StrictDict({
   video: video.selectors,
   problem: problem.selectors,
   game: game.selectors,
+  pdf: pdf.selectors,
 });
 
 export interface EditorState {
@@ -192,6 +195,7 @@ export interface EditorState {
       }
     }
   },
+  pdf: pdf.PdfState,
   game: {
     settings: Record<string, any>;
     exampleValue: 'this is an example value from the redux state';

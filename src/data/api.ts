@@ -90,6 +90,7 @@ export const waffleFlagDefaults = {
   useNewCertificatesPage: true,
   useNewTextbooksPage: true,
   useNewGroupConfigurationsPage: true,
+  useNewPdfEditor: true,
   useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
   enableAuthzCourseAuthoring: false,

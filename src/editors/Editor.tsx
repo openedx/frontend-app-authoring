@@ -40,6 +40,7 @@ const Editor: React.FC<Props> = ({
   });
 
   const EditorComponent = supportedEditors[blockType];
+  console.log("Component is", EditorComponent)
 
   // Do not load editor until everything is initialized.
   if (loading) {

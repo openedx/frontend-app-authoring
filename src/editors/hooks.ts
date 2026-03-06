@@ -46,6 +46,7 @@ export const saveBlock = ({
   returnFunction,
   validateEntry,
 }) => {
+  console.log("saveBlock called. Content is: ", content)
   if (!content) {
     return;
   }

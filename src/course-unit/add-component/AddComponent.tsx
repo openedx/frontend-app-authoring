@@ -170,7 +170,25 @@ const AddComponent = ({
         showAddLibraryContentModal();
         break;
       case COMPONENT_TYPES.advanced:
-        handleCreateNewCourseXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        // TODO: The 'advanced components' concept warrants examination.
+        // 'Advanced' is a bucket where we chuck all the blocks that are
+        // uncommon, or third-party installs. Until now, none of these have
+        // had special editors in this MFE. This is the first.
+        // The fact that advanced modules are handled as a special category
+        // *in code* and not just in UI seems like a mistake in retrospect.
+        //
+        // There will be more of these, and soon.
+        switch (moduleName) {
+          case COMPONENT_TYPES.pdf:
+            handleCreateNewCourseXBlock({ type: moduleName, parentLocator: blockId }, ({ courseKey, locator }) => {
+              setCourseId(courseKey);
+              setBlockType(moduleName);
+              setNewBlockId(locator);
+              showXBlockEditorModal();
+            });
+            break;
+          default: handleCreateNewCourseXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        }
         break;
       case COMPONENT_TYPES.openassessment:
         handleCreateNewCourseXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
