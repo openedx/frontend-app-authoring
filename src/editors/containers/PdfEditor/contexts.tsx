@@ -4,11 +4,9 @@ import {initialPdfState} from "@src/editors/data/redux/pdf/reducers";
 import { useBlockData } from "./api";
 
 declare type PdfErrors = Record<keyof PdfState, string[]>
-declare type FieldUpdater = <T, Property extends keyof T,>(key: Property, value: T[Property]) => void
 
 declare interface PdfBlockContextInterface {
   state: PdfState,
-  errors: PdfErrors,
   setState: (state: PdfState) => void,
   ready: boolean,
   fetchError: Error|null,
@@ -22,17 +20,15 @@ export const initEmptyErrors = () => Object.fromEntries(Object.keys(mockState).m
 
 export const PdfBlockContext = createContext<PdfBlockContextInterface>({
   state: initialPdfState(),
-  errors: initEmptyErrors(),
   setState: () => undefined,
   ready: false,
   fetchError: null,
 })
 
-export const PdfBlockContextProvider: React.FC<{blockId: string, children: React.ReactNode}> = ({blockId, children}) => {
+export const PdfBlockContextProvider: React.FC<{blockId: string, children: React.ReactNode}> = ({blockId, submit, children}) => {
   const {isPending, error, data, isSuccess} = useBlockData<PdfState>(blockId)
   console.log("data is", data)
   const [state, setState] = useState(initialPdfState())
-  const [errors, setErrors] = useState(initEmptyErrors())
 
   useEffect(() => {
     if (!data) {
@@ -42,5 +38,5 @@ export const PdfBlockContextProvider: React.FC<{blockId: string, children: React
   }, [data])
   console.log("Error is", error)
 
-  return <PdfBlockContext.Provider value={{state, errors, setState, ready: isSuccess, fetchError: error}}>{children}</PdfBlockContext.Provider>
+  return <PdfBlockContext.Provider value={{state, setState, ready: isSuccess, fetchError: error}}>{children}</PdfBlockContext.Provider>
 }

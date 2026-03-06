@@ -6,6 +6,7 @@ import {
   get, post, put, deleteObject,
 } from './utils';
 import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
+import {snakeCaseKeys} from "@src/editors/utils";
 
 const fetchByUnitIdOptions: AxiosRequestConfig = {};
 
@@ -348,6 +349,15 @@ export const apiMethods = {
           license: processLicense(content.licenseType, content.licenseDetails),
         },
       };
+    } else if (blockType === 'pdf') {
+      response = {
+        category: blockType,
+        courseKey: learningContextId,
+        has_changes: true,
+        id: blockId,
+        metadata: {display_name: content.displayName},
+        data: snakeCaseKeys(content),
+      }
     } else {
       throw new TypeError(`No Block in V2 Editors named /"${blockType}/", Cannot Save Content.`);
     }
