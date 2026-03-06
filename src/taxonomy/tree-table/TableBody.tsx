@@ -15,6 +15,8 @@ import type {
   TreeTable,
 } from './types';
 import { Button, Spinner } from '@openedx/paragon';
+import { Create } from '@openedx/paragon/icons';
+import { CreateRow } from './CreateRow';
 
 interface TableBodyProps {
   columns: TreeColumnDef[];
@@ -64,52 +66,15 @@ const TableBody = ({
       )}
 
       {isCreatingTopRow && (
-        <tr id="creating-top-row" data-testid="creating-top-row">
-          <td colSpan={1} style={{ padding: '8px 8px 8px 0' }}>
-            <EditableCell
-              errorMessage={draftError}
-              isSaving={createRowMutation.isPending}
-              onChange={(e) => {
-                setNewRowValue(e.target.value);
-              }}
-            />
-          </td>
-          <td colSpan={columns.length - 1} style={{
-            width: '150px',
-            minWidth: '20px',
-            maxWidth: '9.0072e+15px',
-            padding: '8px',
-            verticalAlign: 'top',
-            overflowWrap: 'anywhere',
-          }}>
-            <span className="d-flex justify-content-end">
-              <span className="mr-2">
-                <Button variant="secondary" size="sm" onClick={() => {
-                  setDraftError('');
-                  setNewRowValue('');
-                  setIsCreatingTopRow(false);
-                  exitDraftWithoutSave();
-                }}>
-                  Cancel
-                </Button>
-              </span>
-              <span className="mr-2">
-                <Button variant="primary" size="sm" onClick={() => handleCreateRow(newRowValue)}>
-                  Save
-                </Button>
-              </span>
-              {createRowMutation.isPending && (
-                <Spinner
-                  animation="border"
-                  role="status"
-                  variant="primary"
-                  size="sm"
-                  screenReaderText="Saving..."
-                />
-              )}
-            </span>
-          </td>
-        </tr>
+        <CreateRow
+          draftError={draftError}
+          setDraftError={setDraftError}
+          handleCreateRow={handleCreateRow}
+          setIsCreatingTopRow={setIsCreatingTopRow}
+          exitDraftWithoutSave={exitDraftWithoutSave}
+          createRowMutation={createRowMutation}
+          columns={columns}
+        />
       )}
 
       {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
@@ -147,6 +112,7 @@ const TableBody = ({
             draftError={draftError}
             isSavingDraft={createRowMutation.isPending}
             setDraftError={setDraftError}
+            setIsCreatingTopRow={setIsCreatingTopRow}
           />
         </React.Fragment>
       ))}

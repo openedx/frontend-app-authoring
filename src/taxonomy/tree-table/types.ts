@@ -20,6 +20,8 @@ export type TreeColumnDef = ColumnDef<TreeRowData, unknown>;
 
 export interface CreateRowMutationState {
   isPending: boolean;
+  isError: boolean;
+  error: unknown;
 }
 
 export interface ToastState {

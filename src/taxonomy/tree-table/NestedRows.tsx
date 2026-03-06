@@ -6,6 +6,8 @@ import type {
   RowId,
   TreeRow,
 } from './types';
+import { Create } from '@openedx/paragon/icons';
+import { CreateRow } from './CreateRow';
 
 interface NestedRowsProps {
   parentRow: TreeRow;
@@ -21,6 +23,7 @@ interface NestedRowsProps {
   setDraftError?: (error: string) => void;
   creatingParentId?: RowId | null;
   setCreatingParentId?: (value: RowId | null) => void;
+  setIsCreatingTopRow: (isCreating: boolean) => void;
 }
 
 const NestedRows = ({
@@ -37,6 +40,7 @@ const NestedRows = ({
   setDraftError = () => {},
   creatingParentId = null,
   setCreatingParentId = () => {},
+  setIsCreatingTopRow,
 }: NestedRowsProps) => {
   const columnCount = childRowsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
   const indentPx = depth * 16;
@@ -47,27 +51,15 @@ const NestedRows = ({
   return (
     <>
       {isCreating && (
-        <tr>
-          <td colSpan={columnCount} style={{ padding: '8px 8px 8px 0' }}>
-            <div style={{ paddingInlineStart: `${indentPx}px`, maxWidth: '100%' }}>
-            <EditableCell
-              errorMessage={draftError}
-              isSaving={isSavingDraft}
-              onSave={(val) => onSaveNewChildRow(val, parentRowValue)}
-              onCancel={() => {
-                setDraftError('');
-                onCancelCreation();
-              }}
-              getInlineValidationMessage={(value) => {
-                if (!value.trim()) {
-                  return `Field "value" cannot be empty.`;
-                }
-                return '';
-              }}
-            />
-            </div>
-          </td>
-        </tr>
+        <CreateRow
+          draftError={draftError}
+          setDraftError={setDraftError}
+          handleCreateRow={(value) => onSaveNewChildRow(value, parentRowValue)}
+          setIsCreatingTopRow={setIsCreatingTopRow}
+          exitDraftWithoutSave={onCancelCreation}
+          createRowMutation={{ isPending: isSavingDraft }}
+          columns={[]}
+        />
       )}
       {childRowsData?.map(row => {
         const rowData = row.original || row;
@@ -114,6 +106,7 @@ const NestedRows = ({
               draftError={draftError}
               isSavingDraft={isSavingDraft}
               setDraftError={setDraftError}
+              setIsCreatingTopRow={setIsCreatingTopRow}
             />
           </React.Fragment>
         );
