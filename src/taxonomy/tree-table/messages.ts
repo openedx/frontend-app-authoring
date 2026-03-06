@@ -49,6 +49,14 @@ const messages = defineMessages({
     id: 'course-authoring.tree-table.pagination.page-status',
     defaultMessage: 'Page {currentPage} of {pageCount}',
   },
+  expandAll: {
+    id: 'course-authoring.tree-table.expand-all',
+    defaultMessage: 'Expand All',
+  },
+  collapseAll: {
+    id: 'course-authoring.tree-table.collapse-all',
+    defaultMessage: 'Collapse All',
+  },
 });
 
 export default messages;
