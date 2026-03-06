@@ -1,5 +1,7 @@
 import 'CourseAuthoring/editors/setupEditorTest';
 import { getConfig } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import * as keyUtils from '../../../generic/key-utils';
 import { MockUseState } from '../../testUtils';
 
 import * as tinyMCE from '../../data/constants/tinyMCE';
@@ -17,6 +19,10 @@ jest.mock('react', () => ({
   useRef: jest.fn(val => ({ current: val })),
   useEffect: jest.fn(),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
+}));
+
+jest.mock('@edx/frontend-platform/auth', () => ({
+  getAuthenticatedHttpClient: jest.fn(),
 }));
 
 const state = new MockUseState(module);
@@ -192,30 +198,34 @@ describe('TinyMceEditor hooks', () => {
       const initialContent = `<img src="/static/soMEImagEURl1.jpeg"/><a href="/assets/v1/${baseAssetUrl}/test.pdf">test</a><img src="/${baseAssetUrl}@correct.png" /><img src="/${baseAssetUrl}/correct.png" />`;
       const learningContextId = 'course-v1:org+test+run';
       const lmsEndpointUrl = getConfig().LMS_BASE_URL;
-      it('returns updated src for text editor to update content', () => {
+
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('returns updated src for text editor to update content', async () => {
         const expected = `<img src="/${baseAssetUrl}@soMEImagEURl1.jpeg"/><a href="/${baseAssetUrl}@test.pdf">test</a><img src="/${baseAssetUrl}@correct.png" /><img src="/${baseAssetUrl}@correct.png" />`;
-        const actual = module.replaceStaticWithAsset({
+        const actual = await module.replaceStaticWithAsset({
           initialContent,
           learningContextId,
           validateAssetUrl: false,
         });
         expect(actual).toEqual(expected);
       });
-      it('returns updated src with absolute url for expandable editor to update content', () => {
-        const editorType = 'expandable';
+      it('returns updated src with absolute url for expandable editor to update content', async () => {
         const expected = `<img src="${lmsEndpointUrl}/${baseAssetUrl}@soMEImagEURl1.jpeg"/><a href="${lmsEndpointUrl}/${baseAssetUrl}@test.pdf">test</a><img src="${lmsEndpointUrl}/${baseAssetUrl}@correct.png" /><img src="${lmsEndpointUrl}/${baseAssetUrl}@correct.png" />`;
-        const actual = module.replaceStaticWithAsset({
+        const actual = await module.replaceStaticWithAsset({
           initialContent,
-          editorType,
+          editorType: 'expandable',
           lmsEndpointUrl,
           learningContextId,
           validateAssetUrl: false,
         });
         expect(actual).toEqual(expected);
       });
-      it('returns false when there are no srcs to update', () => {
+      it('returns false when there are no srcs to update', async () => {
         const content = '<div>Hello world!</div>';
-        const actual = module.replaceStaticWithAsset({ initialContent: content, learningContextId });
+        const actual = await module.replaceStaticWithAsset({ initialContent: content, learningContextId });
         expect(actual).toBeFalsy();
       });
       it('does not convert static URLs with subdirectories but converts direct static files', () => {
@@ -226,6 +236,79 @@ describe('TinyMceEditor hooks', () => {
           learningContextId,
         });
         expect(actual).toEqual(expected);
+      });
+
+      it('replaces multiple static assets in one content string', async () => {
+        const content = `
+      <img src="/static/a.png"/>
+      <img src="/static/b.png"/>
+    `;
+
+        const result = await module.replaceStaticWithAsset({
+          initialContent: content,
+          learningContextId,
+          validateAssetUrl: false,
+        });
+
+        expect(result).toBeTruthy();
+      });
+
+      it('validateAssetUrl success path replaces url', async () => {
+        getAuthenticatedHttpClient.mockReturnValue({
+          get: jest.fn(() => Promise.resolve({})),
+        });
+
+        const content = '<img src="/static/test.png"/>';
+
+        const result = await module.replaceStaticWithAsset({
+          initialContent: content,
+          learningContextId,
+          validateAssetUrl: true,
+        });
+
+        expect(result).toBeTruthy();
+      });
+
+      it('validateAssetUrl failure path keeps original content', async () => {
+        getAuthenticatedHttpClient.mockReturnValue({
+          get: jest.fn(() => Promise.reject(new Error('404'))),
+        });
+
+        const content = '<img src="/static/test.png"/>';
+
+        const result = await module.replaceStaticWithAsset({
+          initialContent: content,
+          learningContextId,
+          validateAssetUrl: true,
+        });
+
+        expect(result).toBeFalsy();
+      });
+
+      it('handles library keys correctly', async () => {
+        jest.spyOn(keyUtils, 'isLibraryKey').mockReturnValue(true);
+
+        const content = '<img src="/static/test.png"/>';
+
+        const result = await module.replaceStaticWithAsset({
+          initialContent: content,
+          learningContextId: 'lib:test',
+          validateAssetUrl: false,
+        });
+
+        expect(result).toContain('static/test.png');
+      });
+
+      it('returns false when asset already valid and no replacement needed', async () => {
+        const content = '<img src="/asset-v1:test+org+run+type@asset+block@test.png"/>';
+
+        const result = await module.replaceStaticWithAsset({
+          initialContent: content,
+          learningContextId,
+          validateAssetUrl: false,
+        });
+
+        expect(result).toBe(false);
       });
     });
     describe('setAssetToStaticUrl', () => {

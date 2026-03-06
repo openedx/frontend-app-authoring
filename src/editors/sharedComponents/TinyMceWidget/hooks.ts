@@ -105,7 +105,7 @@ export const parseContentForLabels = ({ editor, updateContent }) => {
   }
 };
 
-export const replaceStaticWithAsset = ({
+export const replaceStaticWithAsset = async ({
   initialContent,
   learningContextId,
   editorType,
@@ -118,7 +118,7 @@ export const replaceStaticWithAsset = ({
     src => src.startsWith('/static') || src.startsWith('/asset'),
   );
   if (!isEmpty(srcs)) {
-    srcs.forEach(async src => {
+    for (const src of srcs) {
       const currentContent = content;
       let staticFullUrl;
       const isStatic = src.startsWith('/static/');
@@ -160,6 +160,11 @@ export const replaceStaticWithAsset = ({
         // check if the asset exists on the server before replacing
         try {
           if (validateAssetUrl) {
+            // We intentionally await inside this loop because each replacement
+            // depends on the progressively updated `content` value.
+            // Executing the requests in parallel could introduce race conditions
+            // and produce inconsistent string replacements.
+            // eslint-disable-next-line no-await-in-loop
             await getAuthenticatedHttpClient()
               .get(staticFullUrl);
           }
@@ -169,7 +174,7 @@ export const replaceStaticWithAsset = ({
           content = currentContent;
         }
       }
-    });
+    }
     if (hasChanges) { return content; }
   }
   return false;
@@ -353,9 +358,9 @@ export const setupCustomBehavior = ({
     onAction: toggleLabelFormatting,
   });
   if (editorType === 'expandable') {
-    editor.on('init', () => {
+    editor.on('init', async () => {
       const initialContent = editor.getContent();
-      const newContent = replaceStaticWithAsset({
+      const newContent = await replaceStaticWithAsset({
         initialContent,
         editorType,
         lmsEndpointUrl,
@@ -381,10 +386,11 @@ export const setupCustomBehavior = ({
     }
   });
 
-  editor.on('ExecCommand', /* istanbul ignore next */ (e) => {
+  editor.on('ExecCommand', /* istanbul ignore next */ async (e) => {
     if (editorType === 'text' && e.command === 'mceFocus') {
       const initialContent = editor.getContent();
-      const newContent = replaceStaticWithAsset({
+      // @ts-ignore Some parameters like 'lmsEndpointUrl' were missing here. Fix me?
+      const newContent = await replaceStaticWithAsset({
         initialContent,
         editorType,
         lmsEndpointUrl,

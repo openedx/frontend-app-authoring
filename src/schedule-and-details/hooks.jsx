@@ -52,7 +52,7 @@ const useSaveValuesPrompt = (
     if (!isQueryPending && !isEditableState) {
       setEditedValues(initialEditedData);
     }
-  }, [initialEditedData.isLoading]);
+  }, [initialEditedData.dataUpdatedAt]);
 
   useEffect(() => {
     const errors = validateScheduleAndDetails(editedValues, canShowCertificateAvailableDateField, intl);
