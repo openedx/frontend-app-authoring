@@ -6,6 +6,7 @@ import {
   ActionRow,
   Pagination,
   Alert,
+  Icon,
 } from '@openedx/paragon';
 
 import {
@@ -28,7 +29,7 @@ import type {
   TreeRowData,
 } from './types';
 import messages from './messages';
-import { Info } from '@openedx/paragon/icons';
+import { ArrowDropUpDown, Info } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 interface TableViewProps {
@@ -106,8 +107,9 @@ const TableView = ({
         <Card.Header
           actions={(
             <ActionRow>
-              <Button onClick={() => table.toggleAllRowsExpanded()}>
-                Expand All
+              <Button onClick={() => table.toggleAllRowsExpanded()} variant="link" size="inline">
+                {table.getIsAllRowsExpanded() ? intl.formatMessage(messages.collapseAll) : intl.formatMessage(messages.expandAll)}
+                <Icon src={ArrowDropUpDown} />
               </Button>
             </ActionRow>
           )}

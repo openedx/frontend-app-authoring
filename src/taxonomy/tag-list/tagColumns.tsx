@@ -181,6 +181,7 @@ function getColumns({
                 iconAs={Icon}
                 variant="primary"
                 aria-label={`More actions for tag ${rowData.value}`}
+                size="sm"
               />
               <Dropdown.Menu>
                 <Dropdown.Item as={Button} onClick={startSubtagDraft} disabled={disableAddSubtag}>

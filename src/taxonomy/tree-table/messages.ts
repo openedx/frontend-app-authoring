@@ -9,6 +9,14 @@ const messages = defineMessages({
     id: 'course-authoring.tree-table.error-saving.message',
     defaultMessage: 'An error occurred while saving changes. Please try again.',
   },
+  expandAll: {
+    id: 'course-authoring.tree-table.expand-all',
+    defaultMessage: 'Expand All',
+  },
+  collapseAll: {
+    id: 'course-authoring.tree-table.collapse-all',
+    defaultMessage: 'Collapse All',
+  },
 });
 
 export default messages;
