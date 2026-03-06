@@ -115,7 +115,7 @@ const TableView = ({
                     <SearchField placeholder={intl.formatMessage(messages.searchPlaceholder)} onSubmit={() => {console.log('searched!')}} />
                   </Form.Group> */}
             <ActionRow>
-              <Button onClick={() => table.toggleAllRowsExpanded()} variant="link" size="inline">
+              <Button onClick={() => table.toggleAllRowsExpanded()} variant="link" size="inline" className="text-primary-500">
                 {table.getIsAllRowsExpanded() ? intl.formatMessage(messages.collapseAll) : intl.formatMessage(messages.expandAll)}
                 <Icon src={ArrowDropUpDown} />
               </Button>
@@ -125,14 +125,12 @@ const TableView = ({
             <thead className="bg-light-400">
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
+                  {headerGroup.headers.map((header, index) => (
                     <th key={header.id} style={{
-                      padding: '8px',
-                      textAlign: 'left',
                       width: header.getSize(),
                       minWidth: header.column.columnDef.minSize ?? header.getSize(),
                       maxWidth: header.column.columnDef.maxSize ?? header.getSize(),
-                    }}>
+                    }} className={`p-2 text-left ${index === 0 ? 'pl-2.5' : ''}`}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
