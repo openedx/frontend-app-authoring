@@ -6,8 +6,8 @@ export const useField = <K extends keyof PdfState>(
   fieldName: K, fieldUpdater: (newValue: PdfState[K]) => any
 ) => {
   const context = useContext(PdfBlockContext)
-  const value = context.settings[fieldName]
-  const errors = context.settings[fieldName]
+  const value = context.state[fieldName]
+  const errors = context.state[fieldName]
   return {
     onChange: (value: PdfState[K]) => fieldUpdater(value),
     value,
