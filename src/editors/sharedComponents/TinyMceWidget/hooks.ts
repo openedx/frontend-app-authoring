@@ -577,3 +577,39 @@ export const selectedImage = (val) => {
     setSelection,
   };
 };
+
+export const useProcessedEditorContent = ({
+  initialContent,
+  learningContextId,
+  editorType,
+  validateAssetUrl = false,
+}) => {
+  const [content, setContent] = useState(initialContent);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const process = async () => {
+      const newContent = await replaceStaticWithAsset({
+        initialContent,
+        learningContextId,
+        editorType,
+        lmsEndpointUrl: getConfig().LMS_BASE_URL,
+        validateAssetUrl,
+      });
+
+      if (mounted) {
+        setContent(newContent || initialContent);
+      }
+    };
+
+    // eslint-disable-next-line no-void
+    void process();
+
+    return () => {
+      mounted = false;
+    };
+  }, [initialContent, learningContextId, editorType, validateAssetUrl]);
+
+  return content;
+};

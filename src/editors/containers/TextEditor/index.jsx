@@ -17,7 +17,7 @@ import RawEditor from '../../sharedComponents/RawEditor';
 import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { prepareEditorRef, useProcessedEditorContent } from '../../sharedComponents/TinyMceWidget/hooks';
 
 const TextEditor = ({
   onClose,
@@ -36,13 +36,12 @@ const TextEditor = ({
 }) => {
   const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const initialContent = blockValue ? blockValue.data.data : '';
-  const newContent = replaceStaticWithAsset({
-    initialContent,
+
+  const editorContent = useProcessedEditorContent({
+    initialContent: blockValue ? blockValue.data.data : '',
     learningContextId,
     validateAssetUrl,
   });
-  const editorContent = newContent || initialContent;
   let staticRootUrl;
   if (isLibrary) {
     staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;

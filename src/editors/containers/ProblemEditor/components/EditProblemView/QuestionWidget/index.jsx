@@ -7,7 +7,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { selectors } from '../../../../../data/redux';
 import messages from './messages';
 import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../../../../sharedComponents/TinyMceWidget/hooks';
+import { prepareEditorRef, useProcessedEditorContent } from '../../../../../sharedComponents/TinyMceWidget/hooks';
 
 const QuestionWidget = ({
   // redux
@@ -19,12 +19,11 @@ const QuestionWidget = ({
 }) => {
   const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const initialContent = question;
-  const newContent = replaceStaticWithAsset({
-    initialContent,
+
+  const questionContent = useProcessedEditorContent({
+    initialContent: question,
     learningContextId,
   });
-  const questionContent = newContent || initialContent;
   let staticRootUrl;
   if (isLibrary) {
     staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
