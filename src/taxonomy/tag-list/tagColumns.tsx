@@ -61,6 +61,7 @@ const OptionalExpandLink = ({ row }: { row: Row<TreeRowData> }) => (
     alt="Show Subtags"
     size="sm"
     style={{ visibility: row.getCanExpand() ? 'visible' : 'hidden' }}
+    className="mr-1"
   />
 );
 
