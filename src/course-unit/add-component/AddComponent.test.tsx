@@ -390,6 +390,38 @@ describe('<AddComponent />', () => {
     });
   });
 
+  it('calls handleCreateNewCourseXBlock with callback that opens editor when InVideoQuiz is selected from Advanced modal', async () => {
+    handleCreateNewCourseXBlockMock.mockImplementation((_params, callback) => {
+      if (callback) {
+        callback({ courseKey: 'course-v1:test', locator: 'block-v1:test+invideoquiz' });
+      }
+    });
+
+    const user = userEvent.setup();
+    const { getByRole } = renderComponent();
+    const advancedButton = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
+    });
+
+    await user.click(advancedButton);
+    const modalContainer = getByRole('dialog');
+
+    const radioInput = within(modalContainer).getByRole('radio', { name: 'In Video Quiz' });
+    const sendBtn = within(modalContainer).getByRole('button', { name: messages.modalBtnText.defaultMessage });
+
+    expect(sendBtn).toBeDisabled();
+    await user.click(radioInput);
+    expect(sendBtn).not.toBeDisabled();
+
+    await user.click(sendBtn);
+
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: COMPONENT_TYPES.invideoquiz,
+      category: COMPONENT_TYPES.invideoquiz,
+    }, expect.any(Function));
+  });
+
   it('verifies "Text" component creation and submission in modal', async () => {
     const user = userEvent.setup();
     const { getByRole } = renderComponent();

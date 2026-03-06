@@ -82,6 +82,14 @@ module.exports = {
           tab: 'common',
           support_level: true,
         },
+        {
+          display_name: 'In Video Quiz',
+          category: 'invideoquiz',
+          boilerplate_name: null,
+          hinted: false,
+          tab: 'common',
+          support_level: true,
+        },
       ],
       display_name: 'Advanced',
       support_legend: {

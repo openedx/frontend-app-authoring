@@ -39,6 +39,7 @@ export const COMPONENT_TYPES = {
   video: 'video',
   dragAndDrop: 'drag-and-drop-v2',
   games: 'games',
+  invideoquiz: 'invideoquiz',
   lti: 'lti_consumer',
   scorm: 'scorm',
   h5p: 'h5pxblock',
