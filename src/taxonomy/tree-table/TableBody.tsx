@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { flexRender } from '@tanstack/react-table';
 
@@ -45,6 +45,14 @@ const TableBody = ({
 }: TableBodyProps) => {
   const intl = useIntl();
 
+  const [newRowValue, setNewRowValue] = useState('');
+
+  useEffect(() => {
+    if (!isCreatingTopRow) {
+      setNewRowValue('');
+    }
+  }, [isCreatingTopRow]);
+
   return (
     <tbody>
       {table.getRowModel().rows.length === 0 && (
@@ -57,31 +65,36 @@ const TableBody = ({
 
       {isCreatingTopRow && (
         <tr id="creating-top-row" data-testid="creating-top-row">
-          <td colSpan={columns.length} style={{ padding: '8px 8px 8px 0' }}>
+          <td colSpan={1} style={{ padding: '8px 8px 8px 0' }}>
             <EditableCell
               errorMessage={draftError}
               isSaving={createRowMutation.isPending}
               onChange={(e) => {
-                table.options.meta?.updateData(row.id, column.id, e.target.value);
+                setNewRowValue(e.target.value);
               }}
-              // onSave={(value) => handleCreateRow(value)}
-              // onCancel={() => {
-              //   setDraftError('');
-              //   setIsCreatingTopRow(false);
-              //   exitDraftWithoutSave();
-              // }}
             />
           </td>
-          <td>
+          <td colSpan={columns.length - 1} style={{
+            width: '150px',
+            minWidth: '20px',
+            maxWidth: '9.0072e+15px',
+            padding: '8px',
+            verticalAlign: 'top',
+            overflowWrap: 'anywhere',
+          }}>
             <span className="d-flex justify-content-end">
               <span className="mr-2">
-                {/* <Button variant="secondary" size="sm" onClick={onCancel} disabled={rowData.isSaving}> */}
-                <Button variant="secondary" size="sm">
+                <Button variant="secondary" size="sm" onClick={() => {
+                  setDraftError('');
+                  setNewRowValue('');
+                  setIsCreatingTopRow(false);
+                  exitDraftWithoutSave();
+                }}>
                   Cancel
                 </Button>
               </span>
               <span className="mr-2">
-                <Button variant="primary" size="sm" onClick={() => table.options.meta?.saveRow(rowData.id)} disabled={rowData.isSaveDisabled as boolean | undefined}>
+                <Button variant="primary" size="sm" onClick={() => handleCreateRow(newRowValue)}>
                   Save
                 </Button>
               </span>
