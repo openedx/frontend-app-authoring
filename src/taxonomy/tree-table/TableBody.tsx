@@ -4,7 +4,7 @@ import { flexRender } from '@tanstack/react-table';
 
 import NestedRows from './NestedRows';
 
-import messages from '../tag-list/messages';
+import messages from './messages';
 
 import { EditableCell } from './EditableCell';
 import type {
@@ -17,6 +17,8 @@ import type {
 import { Button, Spinner } from '@openedx/paragon';
 import { Create } from '@openedx/paragon/icons';
 import { CreateRow } from './CreateRow';
+import { create } from 'lodash';
+import Loading, { LoadingSpinner } from '@src/generic/Loading';
 
 interface TableBodyProps {
   columns: TreeColumnDef[];
@@ -30,6 +32,7 @@ interface TableBodyProps {
   setDraftError: (error: string) => void;
   createRowMutation: CreateRowMutationState;
   table: TreeTable;
+  isLoading: boolean;
 }
 
 const TableBody = ({
@@ -44,6 +47,7 @@ const TableBody = ({
   setDraftError,
   createRowMutation,
   table,
+  isLoading,
 }: TableBodyProps) => {
   const intl = useIntl();
 
@@ -55,11 +59,21 @@ const TableBody = ({
     }
   }, [isCreatingTopRow]);
 
+  if (isLoading) {
+    return (
+      <tr>
+        <td colSpan={columns.length} style={{ textAlign: 'center' }}>
+          <LoadingSpinner />
+        </td>
+      </tr>
+    )
+  }
+
   return (
     <tbody>
       {table.getRowModel().rows.length === 0 && (
         <tr>
-          <td colSpan={columns.length} style={{ textAlign: 'center', padding: '1rem' }}>
+          <td colSpan={columns.length} style={{ textAlign: 'center' }}>
             {intl.formatMessage(messages.noResultsFoundMessage)}
           </td>
         </tr>
@@ -82,14 +96,7 @@ const TableBody = ({
           <tr style={{ borderBottom: '1px solid #eee' }}>
             {row.getVisibleCells()
               .map(cell => (
-                <td key={cell.id} style={{
-                  width: cell.column.getSize(),
-                  minWidth: cell.column.columnDef.minSize ?? cell.column.getSize(),
-                  maxWidth: cell.column.columnDef.maxSize ?? cell.column.getSize(),
-                  padding: '8px',
-                  verticalAlign: 'top',
-                  overflowWrap: 'anywhere',
-                }}>
+                <td key={cell.id} className="p-1">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

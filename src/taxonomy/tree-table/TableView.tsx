@@ -7,6 +7,8 @@ import {
   Pagination,
   Alert,
   Icon,
+  Form,
+  SearchField,
 } from '@openedx/paragon';
 
 import {
@@ -73,6 +75,8 @@ const TableView = ({
   setCreatingParentId,
   setDraftError,
 }: TableViewProps) => {
+  const intl = useIntl();
+
   const table = useReactTable({
     data: treeData,
     meta,
@@ -90,75 +94,72 @@ const TableView = ({
 
   const currentPageIndex = table.getState().pagination.pageIndex + 1;
 
-  const { error, isError } = createRowMutation;
-  const intl = useIntl();
+  const { isError } = createRowMutation;
+  const [showError, setShowError] = React.useState(true);
 
   return (
     <>
-      {isError && (
-        <Alert variant="danger" icon={Info} dismissible>
+      {isError && showError && (
+        <Alert variant="danger" icon={Info} dismissible onClose={() => setShowError(false)}>
           <Alert.Heading>
             {intl.formatMessage(messages.errorSavingTitle)}
           </Alert.Heading>
           {intl.formatMessage(messages.errorSavingMessage)}
         </Alert>
       )}
-      <Card>
-        <Card.Header
-          actions={(
+      <Card className="tag-list-card">
+        <Card.Section className="p-0">
+          <div className="d-flex justify-content-end align-items-center p-4">
+            {/* TODO: Implement search functionality */}
+            {/* <Form.Group controlId="search-input" className="mb-0 mr-2">
+                    <SearchField placeholder={intl.formatMessage(messages.searchPlaceholder)} onSubmit={() => {console.log('searched!')}} />
+                  </Form.Group> */}
             <ActionRow>
               <Button onClick={() => table.toggleAllRowsExpanded()} variant="link" size="inline">
                 {table.getIsAllRowsExpanded() ? intl.formatMessage(messages.collapseAll) : intl.formatMessage(messages.expandAll)}
                 <Icon src={ArrowDropUpDown} />
               </Button>
             </ActionRow>
-          )}
-        />
-
-        {isLoading ? (
-          <LoadingSpinner />
-        ) : (
-          <Card.Section className="p-0">
-            <table className="table w-100 tag-list-table" style={{ borderCollapse: 'collapse', tableLayout: 'fixed', width: '100%' }}>
-              <thead className="bg-light-400">
-                {table.getHeaderGroups().map(headerGroup => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <th key={header.id} style={{
-                        padding: '8px',
-                        textAlign: 'left',
-                        width: header.getSize(),
-                        minWidth: header.column.columnDef.minSize ?? header.getSize(),
-                        maxWidth: header.column.columnDef.maxSize ?? header.getSize(),
-                      }}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-
-              <TableBody
-                columns={columns}
-                isCreatingTopRow={isCreatingTopRow}
-                draftError={draftError}
-                handleCreateRow={handleCreateRow}
-                setIsCreatingTopRow={setIsCreatingTopRow}
-                exitDraftWithoutSave={exitDraftWithoutSave}
-                creatingParentId={creatingParentId}
-                setCreatingParentId={setCreatingParentId}
-                setDraftError={setDraftError}
-                createRowMutation={createRowMutation}
-                table={table}
-              />
-            </table>
-          </Card.Section>
-        )}
+          </div>
+          <table className="table w-100 tag-list-table" style={{ borderCollapse: 'collapse', tableLayout: 'fixed', width: '100%' }}>
+            <thead className="bg-light-400">
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <th key={header.id} style={{
+                      padding: '8px',
+                      textAlign: 'left',
+                      width: header.getSize(),
+                      minWidth: header.column.columnDef.minSize ?? header.getSize(),
+                      maxWidth: header.column.columnDef.maxSize ?? header.getSize(),
+                    }}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <TableBody
+              columns={columns}
+              isCreatingTopRow={isCreatingTopRow}
+              draftError={draftError}
+              handleCreateRow={handleCreateRow}
+              setIsCreatingTopRow={setIsCreatingTopRow}
+              exitDraftWithoutSave={exitDraftWithoutSave}
+              creatingParentId={creatingParentId}
+              setCreatingParentId={setCreatingParentId}
+              setDraftError={setDraftError}
+              createRowMutation={createRowMutation}
+              table={table}
+              isLoading={isLoading}
+            />
+          </table>
+        </Card.Section>
 
         {pageCount > 1 && (
           <div role="navigation" aria-label="table pagination" className="d-flex flex-column align-items-center mt-3">
