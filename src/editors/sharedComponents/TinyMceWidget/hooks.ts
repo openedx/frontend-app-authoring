@@ -5,6 +5,7 @@ import {
   useEffect,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
 import { isEmpty } from 'lodash';
@@ -104,11 +105,12 @@ export const parseContentForLabels = ({ editor, updateContent }) => {
   }
 };
 
-export const replaceStaticWithAsset = ({
+export const replaceStaticWithAsset = async ({
   initialContent,
   learningContextId,
   editorType,
   lmsEndpointUrl,
+  validateAssetUrl = true,
 }) => {
   let content = initialContent;
   let hasChanges = false;
@@ -116,7 +118,7 @@ export const replaceStaticWithAsset = ({
     src => src.startsWith('/static') || src.startsWith('/asset'),
   );
   if (!isEmpty(srcs)) {
-    srcs.forEach(src => {
+    for (const src of srcs) {
       const currentContent = content;
       let staticFullUrl;
       const isStatic = src.startsWith('/static/');
@@ -154,10 +156,25 @@ export const replaceStaticWithAsset = ({
       }
       if (staticFullUrl) {
         const currentSrc = src.substring(0, src.indexOf('"'));
-        content = currentContent.replace(currentSrc, staticFullUrl);
-        hasChanges = true;
+
+        // check if the asset exists on the server before replacing
+        try {
+          if (validateAssetUrl) {
+            // We intentionally await inside this loop because each replacement
+            // depends on the progressively updated `content` value.
+            // Executing the requests in parallel could introduce race conditions
+            // and produce inconsistent string replacements.
+            // eslint-disable-next-line no-await-in-loop
+            await getAuthenticatedHttpClient()
+              .get(staticFullUrl);
+          }
+          content = currentContent.replace(currentSrc, staticFullUrl);
+          hasChanges = true;
+        } catch (e) {
+          content = currentContent;
+        }
       }
-    });
+    }
     if (hasChanges) { return content; }
   }
   return false;
@@ -341,9 +358,9 @@ export const setupCustomBehavior = ({
     onAction: toggleLabelFormatting,
   });
   if (editorType === 'expandable') {
-    editor.on('init', () => {
+    editor.on('init', async () => {
       const initialContent = editor.getContent();
-      const newContent = replaceStaticWithAsset({
+      const newContent = await replaceStaticWithAsset({
         initialContent,
         editorType,
         lmsEndpointUrl,
@@ -369,10 +386,10 @@ export const setupCustomBehavior = ({
     }
   });
 
-  editor.on('ExecCommand', /* istanbul ignore next */ (e) => {
+  editor.on('ExecCommand', /* istanbul ignore next */ async (e) => {
     if (editorType === 'text' && e.command === 'mceFocus') {
       const initialContent = editor.getContent();
-      const newContent = replaceStaticWithAsset({
+      const newContent = await replaceStaticWithAsset({
         initialContent,
         editorType,
         lmsEndpointUrl,
@@ -559,4 +576,40 @@ export const selectedImage = (val) => {
     selection,
     setSelection,
   };
+};
+
+export const useProcessedEditorContent = ({
+  initialContent,
+  learningContextId,
+  editorType,
+  validateAssetUrl = false,
+}) => {
+  const [content, setContent] = useState(initialContent);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const process = async () => {
+      const newContent = await replaceStaticWithAsset({
+        initialContent,
+        learningContextId,
+        editorType,
+        lmsEndpointUrl: getConfig().LMS_BASE_URL,
+        validateAssetUrl,
+      });
+
+      if (mounted) {
+        setContent(newContent || initialContent);
+      }
+    };
+
+    // eslint-disable-next-line no-void
+    void process();
+
+    return () => {
+      mounted = false;
+    };
+  }, [initialContent, learningContextId, editorType, validateAssetUrl]);
+
+  return content;
 };
