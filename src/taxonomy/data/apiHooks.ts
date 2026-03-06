@@ -180,13 +180,14 @@ export const useImportPlan = (taxonomyId: number, file: File | null) => useQuery
  * Use the list of tags in a taxonomy.
  */
 export const useTagListData = (taxonomyId: number, options: QueryOptions) => {
-  const { pageIndex, pageSize } = options;
+  const { pageIndex, pageSize, enabled = true } = options;
   return useQuery({
     queryKey: taxonomyQueryKeys.taxonomyTagListPage(taxonomyId, pageIndex, pageSize),
     queryFn: async () => {
-      const { data } = await getAuthenticatedHttpClient().get(apiUrls.tagList(taxonomyId, pageIndex, pageSize));
+      const { data } = await getAuthenticatedHttpClient().get(apiUrls.tagList(taxonomyId, pageIndex, pageSize, 1000));
       return camelCaseObject(data) as TagListData;
     },
+    enabled,
   });
 };
 
@@ -202,3 +203,27 @@ export const useSubTags = (taxonomyId: number, parentTagValue: string) => useQue
     return camelCaseObject(response.data) as TagListData;
   },
 });
+
+export const useCreateTag = (taxonomyId) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ value, parentTagValue }: { value: string, parentTagValue?: string }) => {
+      try {
+        await getAuthenticatedHttpClient().post(
+          apiUrls.createTag(taxonomyId),
+          { tag: value, parent_tag_value: parentTagValue },
+        );
+      } catch (err) {
+        throw new Error((err as any).response?.data?.error || (err as any).message);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId),
+      });
+      // In the metadata, 'tagsCount' (and possibly other fields) will have changed:
+      queryClient.invalidateQueries({ queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId) });
+    },
+  });
+}
