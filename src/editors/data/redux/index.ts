@@ -1,6 +1,5 @@
 import type { AxiosResponse } from 'axios';
 import { combineReducers } from 'redux';
-import { configureStore } from '@reduxjs/toolkit';
 import { StrictDict } from '../../utils';
 
 import * as app from './app';
@@ -24,6 +23,11 @@ const editorReducer = combineReducers({
 const rootReducer = (state: any, action: any) => {
   if (action.type === 'resetEditor') {
     return editorReducer(undefined, action);
+  }
+
+  // For test purposes only:
+  if (action.type === 'UPDATE_STATE') {
+    return action.newState;
   }
 
   return editorReducer(state, action);
@@ -200,10 +204,4 @@ export interface EditorState {
 
 export { actions, selectors };
 
-export function initializeStore(preloadedState = undefined) {
-  return configureStore({
-    reducer: editorReducer,
-    preloadedState,
-  });
-}
 export default rootReducer;

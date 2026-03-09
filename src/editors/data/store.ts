@@ -4,14 +4,16 @@ import { composeWithDevToolsLogOnlyInProduction } from '@redux-devtools/extensio
 import { createLogger } from 'redux-logger';
 
 import reducer, { actions, selectors, type EditorState } from './redux';
+import { PartialEditorState } from '../editorTestRender';
 
-export const createStore = () => {
+export const createStore = (preloadedState?: PartialEditorState) => {
   const loggerMiddleware = createLogger();
 
   const middleware = [thunkMiddleware, loggerMiddleware];
 
   const store: redux.Store<EditorState> = redux.createStore<EditorState, any, any, any>(
     reducer as any,
+    preloadedState as EditorState,
     composeWithDevToolsLogOnlyInProduction(redux.applyMiddleware(...middleware)),
   );
 
