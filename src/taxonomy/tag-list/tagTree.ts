@@ -193,10 +193,10 @@ export class TagTree {
     if (parentValue) {
       const parentNode = this.getNode(parentValue);
       if (parentNode && parentNode.subRows) {
-        parentNode.subRows = parentNode.subRows.filter(node => node.value !== value);
+        parentNode.subRows = parentNode.subRows.filter(subNode => subNode.value !== value);
       }
     } else {
-      this.rows = this.rows.filter(node => node.value !== value);
+      this.rows = this.rows.filter(rootNode => rootNode.value !== value);
     }
     return node;
   }

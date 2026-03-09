@@ -5,7 +5,6 @@ import {
   IconButton,
   IconButtonWithTooltip,
   Dropdown,
-  Spinner,
 } from '@openedx/paragon';
 import {
   AddCircle,
@@ -38,13 +37,11 @@ const asTagListRowData = (row: Row<TreeRowData>): TagListRowData => (
 
 interface GetColumnsArgs {
   intl: IntlShape;
-  handleCreateTag: (value: string, parentTagValue?: string) => void;
   setIsCreatingTopTag: (isCreating: boolean) => void;
   setCreatingParentId: (id: RowId | null) => void;
   handleUpdateTag: (value: string, originalValue: string) => void;
   setEditingRowId: (id: RowId | null) => void;
   onStartDraft: () => void;
-  activeActionMenuRowId: RowId | null;
   setActiveActionMenuRowId: (id: RowId | null) => void;
   hasOpenDraft: boolean;
   draftError: string;
@@ -67,13 +64,11 @@ const OptionalExpandLink = ({ row }: { row: Row<TreeRowData> }) => (
 
 function getColumns({
   intl,
-  handleCreateTag,
   setIsCreatingTopTag,
   setCreatingParentId,
   handleUpdateTag,
   setEditingRowId,
   onStartDraft,
-  activeActionMenuRowId,
   setActiveActionMenuRowId,
   hasOpenDraft,
   draftError,
@@ -154,7 +149,7 @@ function getColumns({
           />
         </div>
       ),
-      cell: ({ row, table }) => {
+      cell: ({ row }) => {
         const rowData = asTagListRowData(row);
 
         if (rowData.isNew || rowData.isEditing || !canAddSubtag(row)) {

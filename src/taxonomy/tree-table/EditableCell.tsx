@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Button, Form, Spinner } from '@openedx/paragon';
+import { Form } from '@openedx/paragon';
 
 interface EditableCellProps {
   initialValue?: string;

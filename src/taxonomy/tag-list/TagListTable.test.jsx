@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -26,6 +27,10 @@ const RootWrapper = ({ maxDepth = 2 }) => (
     </IntlProvider>
   </AppProvider>
 );
+
+RootWrapper.propTypes = {
+  maxDepth: PropTypes.number,
+};
 
 const tagDefaults = { depth: 0, external_id: null, parent_value: null };
 const mockTagsResponse = {
@@ -368,7 +373,7 @@ describe('<TagListTable />', () => {
       const rows = screen.getAllByRole('row');
       expect(rows[1]).toContainElement(newTag);
       // expect there to be no draft row, that is, no row should contain an input element
-      const draftRows = rows.filter(row => row.querySelector('input'));
+      const draftRows = rows.filter(tableRow => tableRow.querySelector('input'));
       expect(draftRows.length).toBe(0);
 
       // expect only one get request to have been made, that is, the table should not have been refreshed
@@ -801,11 +806,11 @@ describe('<TagListTable />', () => {
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
 
       const rows = await screen.findAllByRole('row');
-      const draftRows = rows.filter(row => row.querySelector('input'));
+      const draftRows = rows.filter(tableRow => tableRow.querySelector('input'));
       expect(draftRows[0].querySelector('input')).toBeInTheDocument();
       // expect the draft row to be directly beneath the parent tag row
-      const parentRowIndex = rows.findIndex(row => within(row).queryByText('root tag 1'));
-      const draftRowIndex = rows.findIndex(row => row.querySelector('input'));
+      const parentRowIndex = rows.findIndex(tableRow => within(tableRow).queryByText('root tag 1'));
+      const draftRowIndex = rows.findIndex(tableRow => tableRow.querySelector('input'));
       expect(draftRowIndex).toBe(parentRowIndex + 1);
       expect(draftRows[0].querySelector('input')).toBeInTheDocument();
       expect(draftRows[0].querySelector('input').placeholder).toEqual('Type tag name');
@@ -834,7 +839,7 @@ describe('<TagListTable />', () => {
       await fireEvent.click(actionsButton);
       await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
+      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
       const input = draftRow.querySelector('input');
       fireEvent.change(input, { target: { value: 'new subtag' } });
       fireEvent.click(within(draftRow).getByText('Cancel'));
@@ -842,7 +847,7 @@ describe('<TagListTable />', () => {
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(0);
         const currentRows = screen.getAllByRole('row');
-        const currentDraftRows = currentRows.filter(row => row.querySelector('input'));
+        const currentDraftRows = currentRows.filter(tableRow => tableRow.querySelector('input'));
         expect(currentDraftRows.length).toBe(0);
       });
     });
@@ -858,7 +863,7 @@ describe('<TagListTable />', () => {
       await fireEvent.click(actionsButton);
       await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
+      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
       const input = draftRow.querySelector('input');
 
       fireEvent.change(input, { target: { value: 'new subtag' } });
@@ -867,7 +872,7 @@ describe('<TagListTable />', () => {
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(0);
         const currentRows = screen.getAllByRole('row');
-        const currentDraftRows = currentRows.filter(row => row.querySelector('input'));
+        const currentDraftRows = currentRows.filter(tableRow => tableRow.querySelector('input'));
         expect(currentDraftRows.length).toBe(0);
       });
     });
@@ -888,7 +893,7 @@ describe('<TagListTable />', () => {
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
+      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
       const saveButton = within(draftRow).getByText('Save');
 
       expect(saveButton).toBeDisabled();
@@ -910,7 +915,7 @@ describe('<TagListTable />', () => {
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
+      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
       const input = draftRow.querySelector('input');
       const saveButton = within(draftRow).getByText('Save');
 
@@ -1121,7 +1126,7 @@ describe('<TagListTable />', () => {
       });
       fireEvent.click(screen.getAllByText('Add Subtag')[1]);
       const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
+      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
       const input = draftRow.querySelector('input');
       await fireEvent.change(input, { target: { value: 'depth 2 subtag' } });
       await fireEvent.click(within(draftRow).getByText('Save'));
@@ -1209,7 +1214,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
 
     await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
     const rows = await screen.findAllByRole('row');
-    const draftRow = rows.find(row => row.querySelector('input'));
+    const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
     const input = draftRow.querySelector('input');
 
     await fireEvent.change(input, { target: { value: 'child-new' } });
@@ -1218,7 +1223,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     await waitFor(() => {
       expect(screen.getByText('child-new')).toBeInTheDocument();
       const currentRows = screen.getAllByRole('row');
-      const currentDraftRows = currentRows.filter(row => row.querySelector('input'));
+      const currentDraftRows = currentRows.filter(tableRow => tableRow.querySelector('input'));
       expect(currentDraftRows.length).toBe(0);
     });
   });
@@ -1250,7 +1255,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
 
     fireEvent.click(screen.getAllByText('Add Subtag')[0]);
     const rows = await screen.findAllByRole('row');
-    const draftRow = rows.find(row => row.querySelector('input'));
+    const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
     const input = draftRow.querySelector('input');
     fireEvent.change(input, { target: { value: 'child appears immediately' } });
     fireEvent.click(within(draftRow).getByText('Save'));
@@ -1290,7 +1295,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     await fireEvent.click(screen.getByText('Add Subtag'));
 
     const rows = await screen.findAllByRole('row');
-    const draftRow = rows.find(row => row.querySelector('input'));
+    const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
     const input = draftRow.querySelector('input');
     await fireEvent.change(input, { target: { value: 'nested child' } });
     await fireEvent.click(within(input.closest('tr')).getByText('Save'));
@@ -1327,7 +1332,6 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     await fireEvent.click(actionsButton);
     await fireEvent.click(screen.getByText('Add Subtag'));
 
-    const rows = await screen.findAllByRole('row');
     const inputs = screen.getAllByPlaceholderText('Type tag name');
     const input = inputs.find(i => i.value === 'nested child appears immediately') || inputs.find(i => i.value === '');
 

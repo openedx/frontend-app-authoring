@@ -24,11 +24,6 @@ interface TagListTableProps {
   maxDepth: number;
 }
 
-export interface TableModeAction {
-  type: string;
-  targetMode: string;
-}
-
 const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   // The table has a VIEW, DRAFT, and a PREVIEW mode. It starts in VIEW mode.
   // It switches to DRAFT mode when a user edits or creates a tag.
@@ -50,6 +45,47 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const [draftRowData, setDraftRowData] = useState<TreeRowData | null>(null);
   const treeData = (tagTree?.getAllAsDeepCopy() || []) as unknown as TreeRowData[];
   const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;
+
+  // TABLE MODES
+  const {
+    tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode,
+  } = useTableModes();
+
+  // PAGINATION
+  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 100,
+  });
+  const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
+  const handlePaginationChange = (updater: React.SetStateAction<PaginationState>) => {
+    if (tableMode === TABLE_MODES.PREVIEW) {
+      enterViewMode();
+    }
+    setPagination(updater);
+  };
+
+  // API HOOKS
+  const { isLoading, data: tagList } = useTagListData(taxonomyId, {
+    ...pagination,
+    enabled: tableMode === TABLE_MODES.VIEW,
+  });
+  const createTagMutation = useCreateTag(taxonomyId);
+  const pageCount = tagList?.numPages ?? -1;
+
+  // Custom Edit Actions Hook - handles table mode transitions, API calls,
+  // and updating the table without a full data reload when creating or editing tags.
+  const { handleCreateTag, handleUpdateTag } = useEditActions({
+    setTagTree,
+    setDraftError,
+    createTagMutation,
+    enterPreviewMode,
+    setToast,
+    intl,
+    setIsCreatingTopTag,
+    setCreatingParentId,
+    exitDraftWithoutSave,
+    setEditingRowId,
+  });
 
   const meta: TableMeta<TreeRowData> = {
     updateData: (rowId, columnId, value) => {
@@ -76,57 +112,14 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     },
   };
 
-  // PAGINATION
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 100,
-  });
-  const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
-  const handlePaginationChange = (updater: React.SetStateAction<PaginationState>) => {
-    if (tableMode === TABLE_MODES.PREVIEW) {
-      enterViewMode();
-    }
-    setPagination(updater);
-  };
-
-  // TABLE MODES
-  const {
-    tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode,
-  } = useTableModes();
-
-  // API HOOKS
-  const { isLoading, data: tagList } = useTagListData(taxonomyId, {
-    ...pagination,
-    enabled: tableMode === TABLE_MODES.VIEW,
-  });
-  const createTagMutation = useCreateTag(taxonomyId);
-  const pageCount = tagList?.numPages ?? -1;
-
-  // Custom Edit Actions Hook - handles table mode transitions, API calls,
-  // and updating the table without a full data reload when creating or editing tags.
-  const { handleCreateTag, handleUpdateTag } = useEditActions({
-    setTagTree,
-    setDraftError,
-    createTagMutation,
-    enterPreviewMode,
-    setToast,
-    intl,
-    setIsCreatingTopTag,
-    setCreatingParentId,
-    exitDraftWithoutSave,
-    setEditingRowId,
-  });
-
   const columns = useMemo<TreeColumnDef[]>(
     () => getColumns({
       intl,
-      handleCreateTag,
       setIsCreatingTopTag,
       setCreatingParentId,
       handleUpdateTag,
       setEditingRowId,
       onStartDraft: enterDraftMode,
-      activeActionMenuRowId,
       setActiveActionMenuRowId,
       hasOpenDraft,
       draftError,

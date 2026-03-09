@@ -1,8 +1,6 @@
 import React from 'react';
 import { flexRender } from '@tanstack/react-table';
 
-import { Create } from '@openedx/paragon/icons';
-import { EditableCell } from './EditableCell';
 import type {
   RowId,
   TreeRow,
@@ -16,7 +14,6 @@ interface NestedRowsProps {
   onSaveNewChildRow?: (value: string, parentRowValue: string) => void;
   onCancelCreation?: () => void;
   childRowsData?: TreeRow[];
-  visibleColumnCount?: number;
   depth?: number;
   draftError?: string;
   isSavingDraft?: boolean;
@@ -33,7 +30,6 @@ const NestedRows = ({
   onSaveNewChildRow = () => {},
   onCancelCreation = () => {},
   childRowsData = [],
-  visibleColumnCount,
   depth = 1,
   draftError = '',
   isSavingDraft = false,
@@ -42,7 +38,6 @@ const NestedRows = ({
   setCreatingParentId = () => {},
   setIsCreatingTopRow,
 }: NestedRowsProps) => {
-  const columnCount = childRowsData?.[0]?.getVisibleCells?.().length || visibleColumnCount || 1;
   const indentPx = depth * 16;
 
   if (!parentRow.getIsExpanded()) {
@@ -95,7 +90,6 @@ const NestedRows = ({
             <NestedRows
               parentRow={row}
               childRowsData={row.subRows as TreeRow[]}
-              visibleColumnCount={row.getVisibleCells().length}
               parentRowValue={String(row.original.value)}
               isCreating={creatingParentId === row.original.id}
               onSaveNewChildRow={onSaveNewChildRow}

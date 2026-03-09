@@ -1,21 +1,20 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import messages from './messages';
-import { useTagListData, useCreateTag } from '../data/apiHooks';
+import { useCreateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
-import type {
-  RowId,
-  TreeColumnDef,
-  TreeRowData,
-} from '../tree-table/types';
+import type { RowId } from '../tree-table/types';
 import {
   TABLE_MODES,
   TRANSITION_TABLE,
   TABLE_MODE_ACTIONS,
   TAG_NAME_PATTERN,
 } from './constants';
-import { TableModeAction } from './TagListTable';
+
+export interface TableModeAction {
+  type: string;
+  targetMode: string;
+}
 
 interface UseTableModesReturn {
   tableMode: string;

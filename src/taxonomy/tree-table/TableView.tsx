@@ -7,8 +7,6 @@ import {
   Pagination,
   Alert,
   Icon,
-  Form,
-  SearchField,
 } from '@openedx/paragon';
 
 import {
@@ -23,7 +21,6 @@ import {
 
 import { ArrowDropUpDown, Info } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { LoadingSpinner } from '../../generic/Loading';
 import TableBody from './TableBody';
 import type {
   CreateRowMutationState,
@@ -111,17 +108,24 @@ const TableView = ({
         <Card.Section className="p-0">
           <div className="d-flex justify-content-end align-items-center p-4">
             {/* TODO: Implement search functionality */}
-            {/* <Form.Group controlId="search-input" className="mb-0 mr-2">
-                    <SearchField placeholder={intl.formatMessage(messages.searchPlaceholder)} onSubmit={() => {console.log('searched!')}} />
-                  </Form.Group> */}
             <ActionRow>
-              <Button onClick={() => table.toggleAllRowsExpanded()} variant="link" size="inline" className="text-primary-500">
-                {table.getIsAllRowsExpanded() ? intl.formatMessage(messages.collapseAll) : intl.formatMessage(messages.expandAll)}
+              <Button
+                onClick={() => table.toggleAllRowsExpanded()}
+                variant="link"
+                size="inline"
+                className="text-primary-500"
+              >
+                {table.getIsAllRowsExpanded()
+                  ? intl.formatMessage(messages.collapseAll)
+                  : intl.formatMessage(messages.expandAll)}
                 <Icon src={ArrowDropUpDown} />
               </Button>
             </ActionRow>
           </div>
-          <table className="table w-100 tag-list-table" style={{ borderCollapse: 'collapse', tableLayout: 'fixed', width: '100%' }}>
+          <table
+            className="table w-100 tag-list-table"
+            style={{ borderCollapse: 'collapse', tableLayout: 'fixed', width: '100%' }}
+          >
             <thead className="bg-light-400">
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id}>
@@ -185,7 +189,11 @@ const TableView = ({
             setToast((prevToast) => ({ ...prevToast, show: false }));
           }}
           delay={15000}
-          className={toast.variant === 'danger' ? 'bg-danger-100 border-danger' : 'bg-success-100 border-success'}
+          className={
+            toast.variant === 'danger'
+              ? 'bg-danger-100 border-danger'
+              : 'bg-success-100 border-success'
+          }
         >
           {toast.message}
         </Toast>

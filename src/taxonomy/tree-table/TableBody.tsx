@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { flexRender } from '@tanstack/react-table';
 
-import { Button, Spinner } from '@openedx/paragon';
-import { Create } from '@openedx/paragon/icons';
-import { create } from 'lodash';
-import Loading, { LoadingSpinner } from '@src/generic/Loading';
+import { LoadingSpinner } from '@src/generic/Loading';
 import NestedRows from './NestedRows';
 
 import messages from './messages';
 
-import { EditableCell } from './EditableCell';
 import type {
   CreateRowMutationState,
   RowId,
-  ToastState,
   TreeColumnDef,
   TreeTable,
 } from './types';
@@ -50,14 +45,6 @@ const TableBody = ({
   isLoading,
 }: TableBodyProps) => {
   const intl = useIntl();
-
-  const [newRowValue, setNewRowValue] = useState('');
-
-  useEffect(() => {
-    if (!isCreatingTopRow) {
-      setNewRowValue('');
-    }
-  }, [isCreatingTopRow]);
 
   if (isLoading) {
     return (
@@ -104,7 +91,6 @@ const TableBody = ({
           <NestedRows
             parentRow={row}
             childRowsData={row.subRows}
-            visibleColumnCount={row.getVisibleCells().length}
             parentRowValue={String(row.original.value)}
             isCreating={creatingParentId === row.original.id}
             onSaveNewChildRow={handleCreateRow}

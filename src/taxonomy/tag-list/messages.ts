@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   tagCreationSuccessMessage: {
     id: 'course-authoring.tag-list.creation-success',
-    defaultMessage: 'Tag \"{name}\" created successfully',
+    defaultMessage: 'Tag "{name}" created successfully',
   },
   tagCreationErrorMessage: {
     id: 'course-authoring.tag-list.creation-error',
@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   tagUpdateSuccessMessage: {
     id: 'course-authoring.tag-list.update-success',
-    defaultMessage: 'Tag \"{name}\" updated successfully',
+    defaultMessage: 'Tag "{name}" updated successfully',
   },
   addSubtag: {
     id: 'course-authoring.tag-list.add-subtag',
