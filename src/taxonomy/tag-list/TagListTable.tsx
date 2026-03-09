@@ -4,7 +4,7 @@ import React, {
   useEffect,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import type { PaginationState, TableMeta } from '@tanstack/react-table';
+import type { PaginationState } from '@tanstack/react-table';
 import { useTagListData, useCreateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
 import { TableView } from '../tree-table';
@@ -42,7 +42,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
   const [activeActionMenuRowId, setActiveActionMenuRowId] = useState<RowId | null>(null);
   const [draftError, setDraftError] = useState('');
-  const [draftRowData, setDraftRowData] = useState<TreeRowData | null>(null);
   const treeData = (tagTree?.getAllAsDeepCopy() || []) as unknown as TreeRowData[];
   const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;
 
