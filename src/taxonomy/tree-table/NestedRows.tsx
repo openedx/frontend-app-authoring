@@ -4,6 +4,7 @@ import { flexRender } from '@tanstack/react-table';
 import type {
   RowId,
   TreeRow,
+  CreateRowMutationState,
 } from './types';
 import { CreateRow } from './CreateRow';
 
@@ -21,6 +22,7 @@ interface NestedRowsProps {
   creatingParentId?: RowId | null;
   setCreatingParentId?: (value: RowId | null) => void;
   setIsCreatingTopRow: (isCreating: boolean) => void;
+  createRowMutation: CreateRowMutationState;
 }
 
 const NestedRows = ({
@@ -37,6 +39,7 @@ const NestedRows = ({
   creatingParentId = null,
   setCreatingParentId = () => {},
   setIsCreatingTopRow,
+  createRowMutation,
 }: NestedRowsProps) => {
   const indentPx = depth * 16;
 
@@ -52,7 +55,7 @@ const NestedRows = ({
           handleCreateRow={(value) => onSaveNewChildRow(value, parentRowValue)}
           setIsCreatingTopRow={setIsCreatingTopRow}
           exitDraftWithoutSave={onCancelCreation}
-          createRowMutation={{ isPending: isSavingDraft }}
+          createRowMutation={createRowMutation}
           columns={[]}
         />
       )}
@@ -101,6 +104,7 @@ const NestedRows = ({
               isSavingDraft={isSavingDraft}
               setDraftError={setDraftError}
               setIsCreatingTopRow={setIsCreatingTopRow}
+              createRowMutation={createRowMutation}
             />
           </React.Fragment>
         );

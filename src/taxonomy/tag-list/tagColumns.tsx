@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Button,
   Icon,
@@ -21,7 +20,6 @@ import type {
   TreeColumnDef,
   TreeRowData,
 } from '../tree-table/types';
-import { EditableCell } from '../tree-table';
 
 interface TagListRowData extends TreeRowData {
   depth: number;
@@ -66,14 +64,11 @@ function getColumns({
   intl,
   setIsCreatingTopTag,
   setCreatingParentId,
-  handleUpdateTag,
   setEditingRowId,
   onStartDraft,
   setActiveActionMenuRowId,
   hasOpenDraft,
-  draftError,
   setDraftError,
-  isSavingDraft,
   maxDepth,
   creatingParentId,
 }: GetColumnsArgs): TreeColumnDef[] {
@@ -82,43 +77,10 @@ function getColumns({
   return [
     {
       header: intl.formatMessage(messages.tagListColumnValueHeader),
-      cell: ({ row, column, table }) => {
+      cell: ({ row }) => {
         const {
-          isNew,
-          isEditing,
           value,
         } = asTagListRowData(row);
-
-        if (isNew) {
-          return (
-            <EditableCell
-              errorMessage={draftError}
-              isSaving={isSavingDraft}
-              onChange={(e) => {
-                table.options.meta?.updateData(row.id, column.id, e.target.value);
-              }}
-              // onSave={(newValue) => handleCreateTag(newValue)}
-              // onCancel={() => {
-              //   setDraftError('');
-              //   setIsCreatingTopTag(false);
-              // }}
-            />
-          );
-        }
-
-        if (isEditing) {
-          return (
-            <EditableCell
-              initialValue={value}
-              errorMessage={draftError}
-              onSave={(newVal) => handleUpdateTag(newVal, value)}
-              onCancel={() => {
-                setDraftError('');
-                setEditingRowId(null);
-              }}
-            />
-          );
-        }
 
         return (
           <span className="d-flex align-items-center gap-2">
@@ -185,26 +147,6 @@ function getColumns({
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            {/* <IconButton
-              src={MoreVert}
-              alt="Actions"
-              iconAs={Icon}
-              onClick={() => {
-                setActiveActionMenuRowId(isMenuOpen ? null : rowData.id);
-              }}
-              disabled={disableAddSubtag}
-              size="sm"
-            />
-            {isMenuOpen && canAddSubtag(row) && (
-              <Button
-                variant="tertiary"
-                size="sm"
-                onClick={startSubtagDraft}
-                disabled={disableAddSubtag}
-              >
-                {intl.formatMessage(messages.addSubtag)}
-              </Button>
-            )} */}
           </div>
         );
       },

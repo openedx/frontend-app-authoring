@@ -11,6 +11,8 @@ import {
   TAG_NAME_PATTERN,
 } from './constants';
 
+import messages from './messages';
+
 export interface TableModeAction {
   type: string;
   targetMode: string;
@@ -37,13 +39,13 @@ interface UseEditActionsParams {
   setEditingRowId: React.Dispatch<React.SetStateAction<RowId | null>>;
 }
 
-const getInlineValidationMessage = (value: string): string => {
+const getInlineValidationMessage = (value: string, intl: ReturnType<typeof useIntl>): string => {
   const trimmed = value.trim();
   if (!trimmed) {
-    return 'Name is required';
+    return intl.formatMessage(messages.nameRequired);
   }
   if (!TAG_NAME_PATTERN.test(trimmed)) {
-    return 'Invalid character in tag name';
+    return intl.formatMessage(messages.invalidCharacterInTagName);
   }
   return '';
 };
@@ -112,7 +114,7 @@ const useEditActions = ({
 
   const handleCreateTag = async (value: string, parentTagValue?: string) => {
     const trimmed = value.trim();
-    const validationError = getInlineValidationMessage(trimmed);
+    const validationError = getInlineValidationMessage(trimmed, intl);
     if (validationError) {
       setDraftError(validationError);
       return;

@@ -16,7 +16,6 @@ import {
   flexRender,
   type OnChangeFn,
   type PaginationState,
-  type TableMeta,
 } from '@tanstack/react-table';
 
 import { ArrowDropUpDown, Info } from '@openedx/paragon/icons';
@@ -49,12 +48,10 @@ interface TableViewProps {
   creatingParentId: RowId | null;
   setCreatingParentId: (id: RowId | null) => void;
   setDraftError: (error: string) => void;
-  meta: TableMeta<TreeRowData>;
 }
 
 const TableView = ({
   treeData,
-  meta,
   columns,
   pageCount,
   pagination,
@@ -76,7 +73,6 @@ const TableView = ({
 
   const table = useReactTable({
     data: treeData,
-    meta,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),

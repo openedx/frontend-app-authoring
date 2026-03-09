@@ -103,7 +103,7 @@ const TableBody = ({
             setCreatingParentId={setCreatingParentId}
             depth={1}
             draftError={draftError}
-            isSavingDraft={createRowMutation.isPending}
+            createRowMutation={createRowMutation}
             setDraftError={setDraftError}
             setIsCreatingTopRow={setIsCreatingTopRow}
           />

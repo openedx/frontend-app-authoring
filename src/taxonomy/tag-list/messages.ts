@@ -25,6 +25,14 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.add-subtag',
     defaultMessage: 'Add Subtag',
   },
+  nameRequired: {
+    id: 'course-authoring.tag-list.validation.name-required',
+    defaultMessage: 'Name is required',
+  },
+  invalidCharacterInTagName: {
+    id: 'course-authoring.tag-list.validation.invalid-character',
+    defaultMessage: 'Invalid character in tag name',
+  },
 });
 
 export default messages;
