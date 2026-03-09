@@ -170,7 +170,6 @@ describe('<CourseUnit />', () => {
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {
       waffle_flags: {
         'studio.enable_new_video_uploads_page': true,
-        'studio.enable_new_text_editor': false,
       },
     });
   });

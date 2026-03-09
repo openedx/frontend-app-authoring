@@ -1,7 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
 import * as hooks from './hooks';
 import * as appHooks from '../../hooks';
 import { filterKeys } from './utils';
@@ -25,7 +24,6 @@ jest.mock('../../hooks', () => ({
 
 const createStore = (customState = {}) => configureStore({
   reducer: () => customState,
-  middleware: [thunk],
 });
 
 describe('hooks module', () => {
@@ -136,8 +134,8 @@ describe('hooks module', () => {
         result.current.galleryProps.onHighlightChange({ target: { value: 'video123' } });
       });
 
-      await act(async () => {
-        await result.current.selectBtnProps.onClick();
+      act(() => {
+        result.current.selectBtnProps.onClick();
       });
 
       expect(appHooks.navigateTo).toHaveBeenCalledWith(

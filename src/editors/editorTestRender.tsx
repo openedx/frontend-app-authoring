@@ -27,7 +27,7 @@ export const editorRender = (
     initialState = {},
     learningContextId = 'course-v1:Org+COURSE+RUN',
     ...options
-  }: WrapperOptions & RouteOptions & { initialState?: PartialEditorState, learningContextId?: string } = {},
+  }: Omit<WrapperOptions, 'extraWrapper'> & RouteOptions & { initialState?: PartialEditorState, learningContextId?: string } = {},
 ) => {
   // We might need a way for the test cases to access this store directly. In that case we could allow either an
   // initialState parameter OR an editorStore parameter.
