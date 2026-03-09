@@ -8,8 +8,6 @@ import {
 import {
   AddCircle,
   MoreVert,
-  ExpandMore,
-  ExpandLess,
 } from '@openedx/paragon/icons';
 import type { Row } from '@tanstack/react-table';
 import type { IntlShape } from 'react-intl';
@@ -20,6 +18,7 @@ import type {
   TreeColumnDef,
   TreeRowData,
 } from '../tree-table/types';
+import OptionalExpandLink from './OptionalExpandLink';
 
 interface TagListRowData extends TreeRowData {
   depth: number;
@@ -48,17 +47,6 @@ interface GetColumnsArgs {
   maxDepth: number;
   creatingParentId: RowId | null;
 }
-
-const OptionalExpandLink = ({ row }: { row: Row<TreeRowData> }) => (
-  <IconButton
-    src={row.getIsExpanded() ? ExpandLess : ExpandMore}
-    onClick={row.getToggleExpandedHandler()}
-    alt="Show Subtags"
-    size="sm"
-    style={{ visibility: row.getCanExpand() ? 'visible' : 'hidden' }}
-    className="mr-1"
-  />
-);
 
 function getColumns({
   intl,

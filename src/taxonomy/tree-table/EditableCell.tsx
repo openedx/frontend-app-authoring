@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
 import { Form } from '@openedx/paragon';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
+import OptionalExpandLink from '../tag-list/OptionalExpandLink';
 
 interface EditableCellProps {
   initialValue?: string;
-  onSave?: (value: string) => void;
-  onCancel?: () => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   errorMessage?: string;
   isSaving?: boolean;
@@ -14,14 +16,14 @@ interface EditableCellProps {
 
 const EditableCell = ({
   initialValue = '',
-  onSave = () => {},
-  onCancel = () => {},
+  onKeyDown,
   onChange = () => {},
   errorMessage = '',
   isSaving = false,
   getInlineValidationMessage = () => '',
 }: EditableCellProps) => {
   const [value, setValue] = useState<string>(initialValue);
+  const intl = useIntl();
 
   useEffect(() => {
     setValue(initialValue);
@@ -29,25 +31,10 @@ const EditableCell = ({
 
   const validationMessage = getInlineValidationMessage(value);
   const effectiveErrorMessage = errorMessage || validationMessage;
-  const isSaveDisabled = Boolean(validationMessage) || isSaving;
-
-  const handleSave = () => {
-    if (!isSaveDisabled) {
-      onSave(value);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSave();
-    } else if (e.key === 'Escape') {
-      onCancel();
-    }
-  };
 
   return (
     <span className="d-flex align-items-start">
+      <OptionalExpandLink forceHide />
       <span className="mr-2">
         <Form.Group controlId="editable-cell-input" className="mb-0">
           <Form.Control
@@ -56,34 +43,17 @@ const EditableCell = ({
               setValue(e.target.value);
               onChange(e);
             }}
-            onKeyDown={handleKeyDown}
+            size="sm"
+            onKeyDown={onKeyDown}
             onClick={(e) => e.stopPropagation()}
-            floatingLabel="Type tag name"
+            floatingLabel={intl.formatMessage(messages.editTagInputLabel)}
+            disabled={isSaving}
           />
           {effectiveErrorMessage && (
             <div className="text-danger small mt-1">{effectiveErrorMessage}</div>
           )}
         </Form.Group>
       </span>
-      {/* <span className="mr-2">
-        <Button variant="secondary" size="sm" onClick={onCancel} disabled={isSaving}>
-          Cancel
-        </Button>
-      </span>
-      <span className="mr-2">
-        <Button variant="primary" size="sm" onClick={handleSave} disabled={isSaveDisabled}>
-          Save
-        </Button>
-      </span>
-      {isSaving && (
-        <Spinner
-          animation="border"
-          role="status"
-          variant="primary"
-          size="sm"
-          screenReaderText="Saving..."
-        />
-      )} */}
     </span>
   );
 };

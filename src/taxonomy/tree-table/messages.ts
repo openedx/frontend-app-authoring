@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'course-authoring.tree-table.search.placeholder',
     defaultMessage: 'Search...',
   },
+  editTagInputLabel: {
+    id: 'course-authoring.tree-table.edit-tag-input.label',
+    defaultMessage: 'Type tag name',
+  },
 });
 
 export default messages;

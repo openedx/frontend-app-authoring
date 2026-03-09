@@ -25,6 +25,27 @@ const CreateRow: React.FC<CreateRowProps> = ({
 }) => {
   const [newRowValue, setNewRowValue] = useState('');
 
+  const handleCancel = () => {
+    setDraftError('');
+    setNewRowValue('');
+    setIsCreatingTopRow(false);
+    exitDraftWithoutSave();
+  };
+
+  const handleSave = () => {
+    handleCreateRow(newRowValue);
+  };
+
+  const handleValueCellKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && newRowValue && !createRowMutation.isPending && !draftError) {
+      e.preventDefault();
+      handleSave();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      handleCancel();
+    }
+  };
+
   return (
 
     <tr id="creating-top-row" data-testid="creating-top-row">
@@ -35,6 +56,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
           onChange={(e) => {
             setNewRowValue(e.target.value);
           }}
+          onKeyDown={handleValueCellKeyPress}
         />
       </td>
       <td
@@ -53,18 +75,13 @@ const CreateRow: React.FC<CreateRowProps> = ({
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => {
-                setDraftError('');
-                setNewRowValue('');
-                setIsCreatingTopRow(false);
-                exitDraftWithoutSave();
-              }}
+              onClick={handleCancel}
             >
               Cancel
             </Button>
           </span>
           <span className="mr-2">
-            <Button variant="primary" size="sm" onClick={() => handleCreateRow(newRowValue)}>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={!newRowValue || createRowMutation.isPending}>
               Save
             </Button>
           </span>
