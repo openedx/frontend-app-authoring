@@ -63,6 +63,9 @@ describe('create library apiHooks', () => {
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
         queryKey: libraryAuthoringQueryKeys.contentLibraryList(),
       });
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+        queryKey: ['content_search'],
+      });
     });
   });
 
