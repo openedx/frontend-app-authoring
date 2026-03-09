@@ -86,31 +86,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     setEditingRowId,
   });
 
-  // const meta: TableMeta<TreeRowData> = {
-  //   updateData: (rowId, columnId: string | number, value) => {
-  //     setDraftRowData((prev) => {
-  //       if (!prev) { return prev; }
-  //       if (prev.id !== rowId) { return prev; }
-  //       return {
-  //         ...prev,
-  //         [columnId]: value,
-  //       };
-  //     });
-  //   },
-  //   saveRow: (rowId: string | number, parentTagValue?: string) => {
-  //     if (!draftRowData) { return; }
-  //     // TODO: handle error / prevent this from happening
-  //     if (draftRowData.id !== rowId) { throw new Error('Mismatching rowId on saveRow'); }
-  //     if (!parentTagValue) {
-  //       handleCreateTag(draftRowData.value);
-  //     } else if (creatingParentId && parentTagValue) {
-  //       handleCreateTag(draftRowData.value, parentTagValue);
-  //     } else if (editingRowId) {
-  //       // TODO: implement
-  //     }
-  //   },
-  // };
-
   const columns = useMemo<TreeColumnDef[]>(
     () => getColumns({
       intl,
