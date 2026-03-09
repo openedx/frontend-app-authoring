@@ -170,7 +170,19 @@ const AddComponent = ({
         showAddLibraryContentModal();
         break;
       case COMPONENT_TYPES.advanced:
-        handleCreateNewCourseXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        if (moduleName === COMPONENT_TYPES.invideoquiz) {
+          handleCreateNewCourseXBlock(
+            { type: moduleName, category: moduleName, parentLocator: blockId },
+            ({ courseKey, locator }) => {
+              setCourseId(courseKey);
+              setBlockType(moduleName);
+              setNewBlockId(locator);
+              showXBlockEditorModal();
+            },
+          );
+        } else {
+          handleCreateNewCourseXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        }
         break;
       case COMPONENT_TYPES.openassessment:
         handleCreateNewCourseXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
