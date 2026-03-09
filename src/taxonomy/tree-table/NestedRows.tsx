@@ -1,12 +1,12 @@
 import React from 'react';
 import { flexRender } from '@tanstack/react-table';
 
+import { Create } from '@openedx/paragon/icons';
 import { EditableCell } from './EditableCell';
 import type {
   RowId,
   TreeRow,
 } from './types';
-import { Create } from '@openedx/paragon/icons';
 import { CreateRow } from './CreateRow';
 
 interface NestedRowsProps {

@@ -21,6 +21,8 @@ import {
   type TableMeta,
 } from '@tanstack/react-table';
 
+import { ArrowDropUpDown, Info } from '@openedx/paragon/icons';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { LoadingSpinner } from '../../generic/Loading';
 import TableBody from './TableBody';
 import type {
@@ -31,8 +33,6 @@ import type {
   TreeRowData,
 } from './types';
 import messages from './messages';
-import { ArrowDropUpDown, Info } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
 
 interface TableViewProps {
   treeData: TreeRowData[];
@@ -126,11 +126,15 @@ const TableView = ({
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header, index) => (
-                    <th key={header.id} style={{
-                      width: header.getSize(),
-                      minWidth: header.column.columnDef.minSize ?? header.getSize(),
-                      maxWidth: header.column.columnDef.maxSize ?? header.getSize(),
-                    }} className={`p-2 text-left ${index === 0 ? 'pl-2.5' : ''}`}>
+                    <th
+                      key={header.id}
+                      style={{
+                        width: header.getSize(),
+                        minWidth: header.column.columnDef.minSize ?? header.getSize(),
+                        maxWidth: header.column.columnDef.maxSize ?? header.getSize(),
+                      }}
+                      className={`p-2 text-left ${index === 0 ? 'pl-2.5' : ''}`}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(

@@ -74,8 +74,10 @@ const useTableModes = (): UseTableModesReturn => {
   const enterPreviewMode = () => transitionTableMode(TABLE_MODES.PREVIEW);
   const enterViewMode = () => transitionTableMode(TABLE_MODES.VIEW);
 
-  return { tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode };
-}
+  return {
+    tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode,
+  };
+};
 
 const useEditActions = ({
   setTagTree,
@@ -134,7 +136,7 @@ const useEditActions = ({
       setDraftError((error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage));
       setToast({ show: true, message: intl.formatMessage(messages.tagCreationErrorMessage), variant: 'danger' });
     }
-  }
+  };
 
   const handleUpdateTag = async (value: string, originalValue: string) => {
     const trimmed = value.trim();
@@ -150,6 +152,6 @@ const useEditActions = ({
   };
 
   return { updateTableWithoutDataReload, handleCreateTag, handleUpdateTag };
-}
+};
 
 export { useTableModes, useEditActions };

@@ -1,6 +1,6 @@
-import { rawData, treeRowData } from "./mockData";
-import { TagTree } from "./tagTree";
-import TagTreeError from "./tagTreeError";
+import { rawData, treeRowData } from './mockData';
+import { TagTree } from './tagTree';
+import TagTreeError from './tagTreeError';
 
 const newSubtagChildRow = {
   value: 'newChild',

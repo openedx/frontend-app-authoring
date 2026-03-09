@@ -37,22 +37,29 @@ const CreateRow: React.FC<CreateRowProps> = ({
           }}
         />
       </td>
-      <td colSpan={columns.length - 1} style={{
-        width: '150px',
-        minWidth: '20px',
-        maxWidth: '9.0072e+15px',
-        padding: '8px',
-        verticalAlign: 'top',
-        overflowWrap: 'anywhere',
-      }}>
+      <td
+        colSpan={columns.length - 1}
+        style={{
+          width: '150px',
+          minWidth: '20px',
+          maxWidth: '9.0072e+15px',
+          padding: '8px',
+          verticalAlign: 'top',
+          overflowWrap: 'anywhere',
+        }}
+      >
         <span className="d-flex justify-content-end">
           <span className="mr-2">
-            <Button variant="secondary" size="sm" onClick={() => {
-              setDraftError('');
-              setNewRowValue('');
-              setIsCreatingTopRow(false);
-              exitDraftWithoutSave();
-            }}>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                setDraftError('');
+                setNewRowValue('');
+                setIsCreatingTopRow(false);
+                exitDraftWithoutSave();
+              }}
+            >
               Cancel
             </Button>
           </span>

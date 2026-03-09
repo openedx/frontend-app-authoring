@@ -226,4 +226,4 @@ export const useCreateTag = (taxonomyId) => {
       queryClient.invalidateQueries({ queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId) });
     },
   });
-}
+};

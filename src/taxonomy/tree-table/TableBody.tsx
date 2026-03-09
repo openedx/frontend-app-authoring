@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { flexRender } from '@tanstack/react-table';
 
+import { Button, Spinner } from '@openedx/paragon';
+import { Create } from '@openedx/paragon/icons';
+import { create } from 'lodash';
+import Loading, { LoadingSpinner } from '@src/generic/Loading';
 import NestedRows from './NestedRows';
 
 import messages from './messages';
@@ -14,11 +18,7 @@ import type {
   TreeColumnDef,
   TreeTable,
 } from './types';
-import { Button, Spinner } from '@openedx/paragon';
-import { Create } from '@openedx/paragon/icons';
 import { CreateRow } from './CreateRow';
-import { create } from 'lodash';
-import Loading, { LoadingSpinner } from '@src/generic/Loading';
 
 interface TableBodyProps {
   columns: TreeColumnDef[];
@@ -66,7 +66,7 @@ const TableBody = ({
           <LoadingSpinner />
         </td>
       </tr>
-    )
+    );
   }
 
   return (

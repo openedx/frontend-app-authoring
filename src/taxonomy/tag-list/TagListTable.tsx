@@ -54,8 +54,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const meta: TableMeta<TreeRowData> = {
     updateData: (rowId, columnId, value) => {
       setDraftRowData((prev) => {
-        if (!prev) return prev;
-        if (prev.id !== rowId) return prev;
+        if (!prev) { return prev; }
+        if (prev.id !== rowId) { return prev; }
         return {
           ...prev,
           [columnId]: value,
@@ -63,9 +63,9 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       });
     },
     saveRow: (rowId: string | number, parentTagValue?: string) => {
-      if (!draftRowData) return;
+      if (!draftRowData) { return; }
       // TODO: handle error / prevent this from happening
-      if (draftRowData.id !== rowId) throw new Error('Mismatching rowId on saveRow');
+      if (draftRowData.id !== rowId) { throw new Error('Mismatching rowId on saveRow'); }
       if (!parentTagValue) {
         handleCreateTag(draftRowData.value);
       } else if (creatingParentId && parentTagValue) {
@@ -90,7 +90,9 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   };
 
   // TABLE MODES
-  const { tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode } = useTableModes();
+  const {
+    tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode,
+  } = useTableModes();
 
   // API HOOKS
   const { isLoading, data: tagList } = useTagListData(taxonomyId, {

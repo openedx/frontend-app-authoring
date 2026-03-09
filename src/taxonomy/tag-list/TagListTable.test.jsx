@@ -144,8 +144,6 @@ describe('<TagListTable />', () => {
     });
   });
 
-
-
   it('should render page correctly', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     render(<RootWrapper />);
@@ -313,19 +311,17 @@ describe('<TagListTable />', () => {
     */
     it('should show a loading spinner when saving a new tag', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(() => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve([201, {
-              ...tagDefaults,
-              value: 'a new tag',
-              child_count: 0,
-              descendant_count: 0,
-              _id: 1234,
-            }]);
-          }, 100);
-        });
-      });
+      axiosMock.onPost(createTagUrl).reply(() => new Promise(resolve => {
+        setTimeout(() => {
+          resolve([201, {
+            ...tagDefaults,
+            value: 'a new tag',
+            child_count: 0,
+            descendant_count: 0,
+            _id: 1234,
+          }]);
+        }, 100);
+      }));
       render(<RootWrapper />);
       const tag = await screen.findByText('root tag 1');
       expect(tag).toBeInTheDocument();
@@ -1033,7 +1029,6 @@ describe('<TagListTable />', () => {
       expect(draftRows.length).toBe(1);
     });
 
-
     /* Acceptance Criteria:
     Users can only add subtags if they have the correct permissions
     Given the user is on the taxonomy detail page
@@ -1077,7 +1072,6 @@ describe('<TagListTable />', () => {
       And the user can enter a name and save to create a new nested sub-tag
       */
 
-
     /* Acceptance Criteria:
       Nested sub-tags save and display correctly without refreshing the page
       Given an inline "Add sub-tag" row is displayed beneath a sub-tag
@@ -1085,7 +1079,6 @@ describe('<TagListTable />', () => {
       Then the new nested sub-tag appears in the list without a page refresh
       And the table does not get refreshed (no additional get request is made)
       */
-
 
     /* Acceptance Criteria:
       Nested sub-tags are only creatable for the taxonomy's max-depth level
@@ -1127,9 +1120,9 @@ describe('<TagListTable />', () => {
         parent_value: 'the child tag',
       });
       fireEvent.click(screen.getAllByText('Add Subtag')[1]);
-      let rows = await screen.findAllByRole('row');
-      let draftRow = rows.find(row => row.querySelector('input'));
-      let input = draftRow.querySelector('input');
+      const rows = await screen.findAllByRole('row');
+      const draftRow = rows.find(row => row.querySelector('input'));
+      const input = draftRow.querySelector('input');
       await fireEvent.change(input, { target: { value: 'depth 2 subtag' } });
       await fireEvent.click(within(draftRow).getByText('Save'));
       await screen.findByText('depth 2 subtag');
