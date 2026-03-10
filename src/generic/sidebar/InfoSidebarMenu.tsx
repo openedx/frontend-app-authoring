@@ -84,7 +84,7 @@ export const InfoSidebarMenu = ({
           <Dropdown.Item onClick={onClickCopyLocation}>
             <Stack direction="horizontal" gap={2}>
               <Icon src={ContentCopy} />
-              {intl.formatMessage(messages.menuCopy)}
+              {intl.formatMessage(messages.menuCopyLocation)}
             </Stack>
           </Dropdown.Item>
         )}

@@ -25,6 +25,7 @@ import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
 import messages from '../messages';
 import { InfoSection } from './InfoSection';
+import { useClipboard } from '@src/generic/clipboard';
 
 export const UnitSidebar = () => {
   const intl = useIntl();
@@ -46,6 +47,7 @@ export const UnitSidebar = () => {
     openDeleteModal,
     openUnlinkModal,
   } = useCourseAuthoringContext();
+  const { copyToClipboard } = useClipboard();
 
   const handlePublish = () => {
     if (unitData?.hasChanges) {
@@ -118,6 +120,27 @@ export const UnitSidebar = () => {
     }
   };
 
+  const handleCopyLocation = () => {
+    // Extract the location ID: the part after "block@" at the end of the usage key
+    // e.g. "block-v1:org+course+run+type@vertical+block@abc123" → "abc123"
+    const locationId = unitId.match(/block@(.+)$/)?.[1];
+    if (!locationId) { return; }
+
+    if (navigator.clipboard) {
+      // Modern approach: requires HTTPS (secure context)
+      void navigator.clipboard.writeText(locationId);
+    } else {
+      // Fallback for HTTP (non-secure) dev environments
+      // Note: execCommand is deprecated but still widely supported as fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = locationId;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy'); // eslint-disable-line deprecation/deprecation
+      document.body.removeChild(textarea);
+    }
+  };
+
   return (
     <>
       <SidebarTitle
@@ -144,8 +167,8 @@ export const UnitSidebar = () => {
               navigate(`/library/${libId}/unit/${upstreamRef}`);
             }
           },
-          onClickCopy: () => {},
-          onClickCopyLocation: () => {},
+          onClickCopy: () => copyToClipboard(unitId),
+          onClickCopyLocation: handleCopyLocation,
         }}
       />
       <Stack direction="horizontal" gap={1} className="mx-2">
