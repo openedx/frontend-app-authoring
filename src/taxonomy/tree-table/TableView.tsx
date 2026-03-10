@@ -164,13 +164,20 @@ const TableView = ({
         </Card.Section>
 
         {pageCount > 1 && (
-          <div role="navigation" aria-label="table pagination" className="d-flex flex-column align-items-center mt-3">
+          <div
+            role="navigation"
+            aria-label={intl.formatMessage(messages.tablePaginationLabel)}
+            className="d-flex flex-column align-items-center mt-3"
+          >
             <span>
-              Page {currentPageIndex} of {pageCount}
+              {intl.formatMessage(messages.tablePaginationPageStatus, {
+                currentPage: currentPageIndex,
+                pageCount,
+              })}
             </span>
             <Pagination
               className="d-flex justify-content-center"
-              paginationLabel="table pagination"
+              paginationLabel={intl.formatMessage(messages.tablePaginationLabel)}
               pageCount={pageCount}
               currentPage={currentPageIndex}
               onPageSelect={(page) => {

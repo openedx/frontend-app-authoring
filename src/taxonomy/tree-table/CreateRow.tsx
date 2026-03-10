@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Button, Spinner } from '@openedx/paragon';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { EditableCell } from './EditableCell';
 import type { CreateRowMutationState, TreeColumnDef } from './types';
+import messages from './messages';
 
 interface CreateRowProps {
   draftError: string;
@@ -24,6 +26,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
   columns,
 }) => {
   const [newRowValue, setNewRowValue] = useState('');
+  const intl = useIntl();
 
   const handleCancel = () => {
     setDraftError('');
@@ -78,12 +81,12 @@ const CreateRow: React.FC<CreateRowProps> = ({
               size="sm"
               onClick={handleCancel}
             >
-              Cancel
+              {intl.formatMessage(messages.cancelButtonLabel)}
             </Button>
           </span>
           <span className="mr-2">
             <Button variant="primary" size="sm" onClick={handleSave} disabled={!newRowValue || createRowMutation.isPending}>
-              Save
+              {intl.formatMessage(messages.saveButtonLabel)}
             </Button>
           </span>
           {createRowMutation.isPending && (
@@ -92,7 +95,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
               role="status"
               variant="primary"
               size="sm"
-              screenReaderText="Saving..."
+              screenReaderText={intl.formatMessage(messages.savingSpinnerScreenReaderText)}
             />
           )}
         </span>

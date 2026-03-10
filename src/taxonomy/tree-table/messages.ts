@@ -29,6 +29,26 @@ const messages = defineMessages({
     id: 'course-authoring.tree-table.edit-tag-input.label',
     defaultMessage: 'Type tag name',
   },
+  cancelButtonLabel: {
+    id: 'course-authoring.tree-table.cancel.button-label',
+    defaultMessage: 'Cancel',
+  },
+  saveButtonLabel: {
+    id: 'course-authoring.tree-table.save.button-label',
+    defaultMessage: 'Save',
+  },
+  savingSpinnerScreenReaderText: {
+    id: 'course-authoring.tree-table.saving-spinner.screen-reader-text',
+    defaultMessage: 'Saving...',
+  },
+  tablePaginationLabel: {
+    id: 'course-authoring.tree-table.pagination.label',
+    defaultMessage: 'table pagination',
+  },
+  tablePaginationPageStatus: {
+    id: 'course-authoring.tree-table.pagination.page-status',
+    defaultMessage: 'Page {currentPage} of {pageCount}',
+  },
 });
 
 export default messages;

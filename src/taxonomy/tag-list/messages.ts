@@ -33,6 +33,22 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.validation.invalid-character',
     defaultMessage: 'Invalid character in tag name',
   },
+  createNewTagTooltip: {
+    id: 'course-authoring.tag-list.create-new-tag.tooltip',
+    defaultMessage: 'Create a new tag',
+  },
+  createTagButtonLabel: {
+    id: 'course-authoring.tag-list.create-tag.button-label',
+    defaultMessage: 'Create Tag',
+  },
+  moreActionsForTag: {
+    id: 'course-authoring.tag-list.more-actions-for-tag',
+    defaultMessage: 'More actions for tag {tagName}',
+  },
+  showSubtagsButtonLabel: {
+    id: 'course-authoring.tag-list.show-subtags.button-label',
+    defaultMessage: 'Show Subtags',
+  },
 });
 
 export default messages;

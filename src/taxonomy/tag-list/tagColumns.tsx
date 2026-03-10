@@ -84,9 +84,9 @@ function getColumns({
         <div className="d-flex justify-content-end">
           <IconButtonWithTooltip
             tooltipPlacement="top"
-            tooltipContent={<div>Create a new tag</div>}
+            tooltipContent={<div>{intl.formatMessage(messages.createNewTagTooltip)}</div>}
             src={AddCircle}
-            alt="Create Tag"
+            alt={intl.formatMessage(messages.createTagButtonLabel)}
             size="inline"
             onClick={() => {
               onStartDraft();
@@ -126,7 +126,7 @@ function getColumns({
                 src={MoreVert}
                 iconAs={Icon}
                 variant="primary"
-                aria-label={`More actions for tag ${rowData.value}`}
+                aria-label={intl.formatMessage(messages.moreActionsForTag, { tagName: rowData.value })}
                 size="sm"
               />
               <Dropdown.Menu>
