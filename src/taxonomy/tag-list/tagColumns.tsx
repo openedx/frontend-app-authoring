@@ -99,11 +99,6 @@ function getColumns({
             disabled={hasOpenDraft}
             aria-describedby={hasOpenDraft ? draftInProgressHintId : undefined}
           />
-          {hasOpenDraft && (
-            <span id={draftInProgressHintId} className="visually-hidden">
-              {intl.formatMessage(messages.draftInProgressHint)}
-            </span>
-          )}
         </div>
       ),
       cell: ({ row }) => {

@@ -53,10 +53,6 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.hide-subtags.button-label',
     defaultMessage: 'Hide Subtags',
   },
-  draftInProgressHint: {
-    id: 'course-authoring.tag-list.draft-in-progress.hint',
-    defaultMessage: 'Finish or cancel the current draft before creating another tag.',
-  },
 });
 
 export default messages;
