@@ -4,7 +4,8 @@ import classNames from 'classnames';
 import { breakpoints, useWindowSize } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import Loading from '../../generic/Loading';
+import Loading from '@src/generic/Loading';
+
 import { RequestStatus } from '../../data/constants';
 import SequenceNavigation from './sequence-navigation/SequenceNavigation';
 import messages from './messages';
