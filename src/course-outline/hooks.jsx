@@ -66,6 +66,7 @@ const useCourseOutline = ({ courseId }) => {
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
     handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
   } = useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
@@ -306,20 +307,6 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleDismissNotification = () => {
     dispatch(dismissNotificationQuery(`${getConfig().STUDIO_BASE_URL}${notificationDismissUrl}`));
-  };
-
-  const handleSubsectionDragAndDrop = (
-    sectionId,
-    prevSectionId,
-    subsectionListIds,
-    restoreSectionList,
-  ) => {
-    dispatch(setSubsectionOrderListQuery(
-      sectionId,
-      prevSectionId,
-      subsectionListIds,
-      restoreSectionList,
-    ));
   };
 
   const handleUnitDragAndDrop = (

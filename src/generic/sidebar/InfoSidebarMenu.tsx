@@ -24,7 +24,7 @@ export interface InfoSidebarMenuProps {
   onClickDuplicate?: () => void;
   onClickMoveUp?: () => void;
   onClickMoveDown?: () => void;
-  canMoveItem?: (oldIndex: number, newIndex: number) => boolean;
+  canMoveItem?: (oldIndex: number, step: number) => boolean;
   onClickCopy?: () => void;
   onClickCopyLocation?: () => void;
   onClickMove?: () => void;

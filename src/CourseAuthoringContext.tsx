@@ -1,6 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import {
-  createContext, useContext, useMemo, useState,
+  createContext, useContext, useEffect, useMemo, useState,
 } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useCreateCourseBlock, useDuplicateItem } from '@src/course-outline/data/apiHooks';
@@ -13,7 +13,7 @@ import { CourseDetailsData } from './data/api';
 import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { RequestStatusType } from './data/constants';
 import { arrayMove } from '@dnd-kit/sortable';
-import { setSectionOrderListQuery } from './course-outline/data/thunk';
+import { fetchCourseOutlineIndexQuery, setSectionOrderListQuery, setSubsectionOrderListQuery } from './course-outline/data/thunk';
 
 type ModalState = {
   value?: XBlock | UnitXBlock;
@@ -50,7 +50,9 @@ export type CourseAuthoringContextData = {
   handleDuplicateSubsectionSubmit: () => void;
   handleDuplicateUnitSubmit: () => void;
   handleSectionDragAndDrop: (sectionListIds: string[]) => void;
+  handleSubsectionDragAndDrop: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
   updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => void;
+  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => void;
 };
 
 /**
@@ -96,6 +98,14 @@ export const CourseAuthoringProvider = ({
   const restoreSectionList = () => {
     setSections(() => [...sectionsList]);
   };
+
+  useEffect(() => {
+    dispatch(fetchCourseOutlineIndexQuery(courseId));
+  }, [courseId]);
+
+  useEffect(() => {
+    setSections(sectionsList);
+  }, [sectionsList]);
 
   /**
   * This will hold the state of current item that is being operated on,
@@ -179,6 +189,19 @@ export const CourseAuthoringProvider = ({
     ));
   };
 
+  const handleSubsectionDragAndDrop = (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionListIds: string[],
+  ) => {
+    dispatch(setSubsectionOrderListQuery(
+      sectionId,
+      prevSectionId,
+      subsectionListIds,
+      restoreSectionList,
+    ));
+  };
+
   /**
    * Move section to new index
    */
@@ -191,6 +214,25 @@ export const CourseAuthoringProvider = ({
       handleSectionDragAndDrop(newSections.map(section => section.id));
       return newSections;
     });
+  };
+
+  /**
+   * Uses details from move information and moves subsection
+   */
+  const updateSubsectionOrderByIndex = (section: XBlock, moveDetails) => {
+    const { fn, args, sectionId } = moveDetails;
+    if (!args) {
+      return;
+    }
+    const [sectionsCopy, newSubsections] = fn(...args);
+    if (newSubsections && sectionId) {
+      setSections(sectionsCopy);
+      handleSubsectionDragAndDrop(
+        sectionId,
+        section.id,
+        newSubsections.map(subsection => subsection.id),
+      );
+    }
   };
 
   const context = useMemo<CourseAuthoringContextData>(() => ({
@@ -221,7 +263,9 @@ export const CourseAuthoringProvider = ({
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
     handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
     updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
   }), [
     courseId,
     courseUsageKey,
@@ -249,7 +293,9 @@ export const CourseAuthoringProvider = ({
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
     updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
   ]);
 
   return (

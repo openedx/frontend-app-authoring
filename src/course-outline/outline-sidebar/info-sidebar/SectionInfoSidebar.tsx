@@ -30,7 +30,7 @@ export const SectionSidebar = ({ sectionId, index }: Props) => {
     sections,
     updateSectionOrderByIndex,
   } = useCourseAuthoringContext();
-  const { clearSelection } = useOutlineSidebarContext();
+  const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
 
   const handlePublish = () => {
     if (sectionData?.hasChanges) {
@@ -45,17 +45,12 @@ export const SectionSidebar = ({ sectionId, index }: Props) => {
     return <Loading />;
   }
 
-  const handleMoveUp = () => {
-    if (index) {
-      updateSectionOrderByIndex(index, index - 1);
+  const handleMove = (step: number) => {
+    if (index !== undefined) {
+      updateSectionOrderByIndex(index, index + step);
+      setSelectedContainerState(selectedContainerState ? { ...selectedContainerState, index: index + step } : undefined);
     }
-  }
-
-  const handleMoveDown = () => {
-    if (index) {
-      updateSectionOrderByIndex(index, index + 1);
-    }
-  }
+  };
 
   return (
     <>
@@ -68,8 +63,8 @@ export const SectionSidebar = ({ sectionId, index }: Props) => {
           index: index ?? -1,
           canMoveItem: canMoveSection(sections),
           onClickDuplicate: handleDuplicateSectionSubmit,
-          onClickMoveUp: handleMoveUp,
-          onClickMoveDown: handleMoveDown,
+          onClickMoveUp: () => handleMove(-1),
+          onClickMoveDown: () => handleMove(1),
           onClickUnlink: () => {},
           onClickDelete: () => {},
           onClickViewLibrary: () => {},
