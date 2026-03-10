@@ -18,7 +18,7 @@ let store;
 let axiosMock;
 const queryClient = new QueryClient();
 
-const RootWrapper = ({ maxDepth = 2 }) => (
+const RootWrapper = ({ maxDepth = 3 }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
@@ -141,7 +141,6 @@ describe('<TagListTable />', () => {
     expandButton.click();
     const childTag = await screen.findByText('the child tag');
     expect(childTag).toBeInTheDocument();
-    // a tr should never be nested inside a td
     const allCells = screen.getAllByRole('cell');
     allCells.forEach(cell => {
       const nestedTr = cell.querySelector('tr');
@@ -1260,6 +1259,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     fireEvent.change(input, { target: { value: 'child appears immediately' } });
     fireEvent.click(within(draftRow).getByText('Save'));
 
+    // TODO: fix
     expect(await screen.findByText('child appears immediately')).toBeInTheDocument();
     expect(axiosMock.history.get.length).toBe(1);
   });
@@ -1283,16 +1283,15 @@ describe('<TagListTable /> isolated async subtag tests', () => {
       parent_value: 'the child tag',
     });
 
-    render(<RootWrapper />);
+    render(<RootWrapper maxDepth={3} />);
     await screen.findByText('root tag 1');
-    const expandButton = screen.queryAllByText('Expand row')?.[0].closest('button');
-    fireEvent.click(expandButton);
-    await screen.findByText('the child tag');
+    const expandButton = screen.getAllByLabelText('Show Subtags')[0];
+    await fireEvent.click(expandButton);
 
-    const row = screen.getByText('the child tag').closest('tr');
-    const actionsButton = within(row).getByRole('button', { name: /actions/i });
+    const childRow = (await screen.findByText('the child tag')).closest('tr');
+    const actionsButton = within(childRow).getByRole('button', { name: /more actions for tag the child tag/i });
     await fireEvent.click(actionsButton);
-    await fireEvent.click(screen.getByText('Add Subtag'));
+    await fireEvent.click(await screen.findByText('Add Subtag'));
 
     const rows = await screen.findAllByRole('row');
     const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
@@ -1321,9 +1320,9 @@ describe('<TagListTable /> isolated async subtag tests', () => {
       parent_value: 'the child tag',
     });
 
-    render(<RootWrapper />);
+    render(<RootWrapper maxDepth={3} />);
     await screen.findByText('root tag 1');
-    const expandButton = screen.queryAllByText('Expand row')?.[0].closest('button');
+    const expandButton = screen.getAllByLabelText('Show Subtags')[0];
     fireEvent.click(expandButton);
     await screen.findByText('the child tag');
 
@@ -1332,14 +1331,11 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     await fireEvent.click(actionsButton);
     await fireEvent.click(screen.getByText('Add Subtag'));
 
-    const inputs = screen.getAllByPlaceholderText('Type tag name');
-    const input = inputs.find(i => i.value === 'nested child appears immediately') || inputs.find(i => i.value === '');
+    const rows = await screen.findAllByRole('row');
+    const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
+    const input = draftRow.querySelector('input');
+    await fireEvent.change(input, { target: { value: 'nested child appears immediately' } });
 
-    if (input.value !== 'nested child appears immediately') {
-      await fireEvent.change(input, { target: { value: 'nested child appears immediately' } });
-    }
-
-    const draftRow = input.closest('tr');
     const saveButton = within(draftRow).getByText('Save');
 
     await fireEvent.click(saveButton);
