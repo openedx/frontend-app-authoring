@@ -114,6 +114,13 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       draftError,
       createTagMutation.isPending,
       maxDepth,
+      setIsCreatingTopTag,
+      setCreatingParentId,
+      handleUpdateTag,
+      setEditingRowId,
+      enterDraftMode,
+      setActiveActionMenuRowId,
+      setDraftError,
     ],
   );
 

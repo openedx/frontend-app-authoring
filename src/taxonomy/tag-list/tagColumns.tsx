@@ -136,7 +136,6 @@ function getColumns({
                   as={Button}
                   onClick={startSubtagDraft}
                   disabled={disableAddSubtag}
-                  aria-describedby={disableAddSubtag ? draftInProgressHintId : undefined}
                 >
                   {intl.formatMessage(messages.addSubtag)}
                 </Dropdown.Item>
