@@ -22,9 +22,11 @@ interface Props {
   sectionIndex?: number;
 }
 
-export const SubsectionSidebar = ({ subsectionId, index, sectionIndex }: Props) => {
+export const SubsectionSidebar = () => {
   const intl = useIntl();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
+  const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
+  const { subsectionId = '', index, sectionIndex } = selectedContainerState ?? {};
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
   const {
     openPublishModal,
@@ -32,7 +34,6 @@ export const SubsectionSidebar = ({ subsectionId, index, sectionIndex }: Props) 
     sections,
     updateSubsectionOrderByIndex,
   } = useCourseAuthoringContext();
-  const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
 
   const handlePublish = () => {
     if (selectedContainerState?.sectionId && subsectionData?.hasChanges) {

@@ -13,7 +13,7 @@ import { CourseDetailsData } from './data/api';
 import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { RequestStatusType } from './data/constants';
 import { arrayMove } from '@dnd-kit/sortable';
-import { fetchCourseOutlineIndexQuery, setSectionOrderListQuery, setSubsectionOrderListQuery } from './course-outline/data/thunk';
+import { fetchCourseOutlineIndexQuery, setSectionOrderListQuery, setSubsectionOrderListQuery, setUnitOrderListQuery } from './course-outline/data/thunk';
 
 type ModalState = {
   value?: XBlock | UnitXBlock;
@@ -51,8 +51,10 @@ export type CourseAuthoringContextData = {
   handleDuplicateUnitSubmit: () => void;
   handleSectionDragAndDrop: (sectionListIds: string[]) => void;
   handleSubsectionDragAndDrop: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
+  handleUnitDragAndDrop: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => void;
   updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => void;
   updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => void;
+  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => void;
 };
 
 /**
@@ -202,6 +204,41 @@ export const CourseAuthoringProvider = ({
     ));
   };
 
+  const handleUnitDragAndDrop = (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+  ) => {
+    dispatch(setUnitOrderListQuery(
+      sectionId,
+      subsectionId,
+      prevSectionId,
+      unitListIds,
+      restoreSectionList,
+    ));
+  };
+
+  /**
+   * Uses details from move information and moves unit
+   */
+  const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
+    const { fn, args, sectionId, subsectionId } = moveDetails;
+    if (!args) {
+      return;
+    }
+    const [sectionsCopy, newUnits] = fn(...args);
+    if (newUnits && subsectionId) {
+      setSections(sectionsCopy);
+      handleUnitDragAndDrop(
+        sectionId,
+        section.id,
+        subsectionId,
+        newUnits.map((unit) => unit.id),
+      );
+    }
+  };
+
   /**
    * Move section to new index
    */
@@ -264,8 +301,10 @@ export const CourseAuthoringProvider = ({
     handleDuplicateUnitSubmit,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
     updateSectionOrderByIndex,
     updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
   }), [
     courseId,
     courseUsageKey,
@@ -294,8 +333,10 @@ export const CourseAuthoringProvider = ({
     handleDuplicateSubsectionSubmit,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
     updateSectionOrderByIndex,
     updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
   ]);
 
   return (

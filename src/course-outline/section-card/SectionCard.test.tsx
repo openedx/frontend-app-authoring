@@ -367,10 +367,12 @@ describe('<SectionCard />', () => {
     expect(setCurrentSelection).toHaveBeenCalledWith({
       currentId: section.id,
       sectionId: section.id,
+      index: 1,
     });
     expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
       currentId: section.id,
       sectionId: section.id,
+      index: 1,
     });
   });
 });

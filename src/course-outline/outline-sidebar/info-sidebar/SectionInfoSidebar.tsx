@@ -15,14 +15,11 @@ import messages from '../messages';
 import { PublishButon } from './PublishButon';
 import { canMoveSection } from '@src/course-outline/drag-helper/utils';
 
-interface Props {
-  sectionId: string;
-  index?: number; 
-}
-
-export const SectionSidebar = ({ sectionId, index }: Props) => {
+export const SectionSidebar = () => {
   const intl = useIntl();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
+  const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
+  const { sectionId = '', index } = selectedContainerState ?? {};
   const { data: sectionData, isLoading } = useCourseItemData(sectionId);
   const {
     openPublishModal,
@@ -30,7 +27,6 @@ export const SectionSidebar = ({ sectionId, index }: Props) => {
     sections,
     updateSectionOrderByIndex,
   } = useCourseAuthoringContext();
-  const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
 
   const handlePublish = () => {
     if (sectionData?.hasChanges) {

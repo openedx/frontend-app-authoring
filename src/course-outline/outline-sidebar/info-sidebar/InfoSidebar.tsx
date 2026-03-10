@@ -17,29 +17,13 @@ export const InfoSidebar = () => {
   switch (itemType) {
     case ContainerType.Chapter:
     case ContainerType.Section:
-      return (
-        <SectionSidebar
-          sectionId={selectedContainerState.currentId}
-          index={selectedContainerState.index}
-        />
-      );
+      return <SectionSidebar />;
     case ContainerType.Sequential:
     case ContainerType.Subsection:
-      return (
-        <SubsectionSidebar
-          subsectionId={selectedContainerState.currentId}
-          index={selectedContainerState.index}
-          sectionIndex={selectedContainerState.sectionIndex}
-        />
-      );
+      return <SubsectionSidebar />;
     case ContainerType.Vertical:
     case ContainerType.Unit:
-      return (
-        <UnitSidebar
-          unitId={selectedContainerState.currentId}
-          index={selectedContainerState.index}
-        />
-      );
+      return <UnitSidebar />;
     default:
       return <CourseInfoSidebar />;
   }
