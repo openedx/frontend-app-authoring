@@ -41,6 +41,7 @@ export const UnitSidebar = () => {
     handleDuplicateUnitSubmit,
     sections,
     updateUnitOrderByIndex,
+    openDeleteModal,
   } = useCourseAuthoringContext();
 
   const handlePublish = () => {
@@ -128,7 +129,7 @@ export const UnitSidebar = () => {
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () => {},
-          onClickDelete: () => {},
+          onClickDelete: openDeleteModal,
           onClickViewLibrary: () => {},
           onClickCopy: () => {},
           onClickCopyLocation: () => {},
