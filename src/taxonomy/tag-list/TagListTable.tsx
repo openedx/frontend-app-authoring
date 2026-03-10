@@ -132,7 +132,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   return (
     <TableView
       {...{
-        maxDepth,
         treeData,
         columns,
         pageCount,
@@ -149,10 +148,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
         exitDraftWithoutSave,
         creatingParentId,
         setCreatingParentId,
-        editingRowId,
-        setEditingRowId,
         setDraftError,
-        enterDraftMode,
       }}
     />
   );

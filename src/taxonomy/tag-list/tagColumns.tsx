@@ -123,7 +123,7 @@ function getColumns({
           <div className="d-flex align-items-center justify-content-end gap-2">
             <Dropdown>
               <Dropdown.Toggle
-                id={`dropdown-toggle-for-tag-${rowData.value}`}
+                id={`dropdown-toggle-for-tag-${rowData.id}`}
                 as={IconButton}
                 src={MoreVert}
                 iconAs={Icon}

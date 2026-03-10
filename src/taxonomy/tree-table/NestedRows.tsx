@@ -87,7 +87,12 @@ const NestedRows = ({
               parentRowValue={String(row.original.value)}
               isCreating={creatingParentId === row.original.id}
               onSaveNewChildRow={onSaveNewChildRow}
-              onCancelCreation={() => setCreatingParentId(null)}
+              onCancelCreation={
+                () => {
+                  setCreatingParentId(null);
+                  onCancelCreation();
+                }
+              }
               creatingParentId={creatingParentId}
               setCreatingParentId={setCreatingParentId}
               depth={depth + 1}

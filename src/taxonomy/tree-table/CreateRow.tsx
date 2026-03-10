@@ -64,7 +64,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
         />
       </td>
       <td
-        colSpan={columns.length - 1}
+        colSpan={Math.max(columns.length - 1, 1)}
         className="tree-table-create-row-actions-cell p-2 align-top"
       >
         <span className="d-flex justify-content-end">
