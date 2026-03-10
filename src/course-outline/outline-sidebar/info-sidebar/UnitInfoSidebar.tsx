@@ -24,14 +24,20 @@ import { InfoSection } from './InfoSection';
 
 interface Props {
   unitId: string;
+  index?: number
 }
 
-export const UnitSidebar = ({ unitId }: Props) => {
+export const UnitSidebar = ({ unitId, index }: Props) => {
   const intl = useIntl();
   const [tab, setTab] = useState<'preview' | 'info' | 'settings'>('info');
   const { data: unitData, isLoading } = useCourseItemData(unitId);
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
-  const { openPublishModal, getUnitUrl, courseId } = useCourseAuthoringContext();
+  const {
+    openPublishModal,
+    getUnitUrl,
+    courseId,
+    handleDuplicateUnitSubmit,
+  } = useCourseAuthoringContext();
 
   const handlePublish = () => {
     if (unitData?.hasChanges) {
@@ -53,6 +59,18 @@ export const UnitSidebar = ({ unitId }: Props) => {
         title={unitData?.displayName || ''}
         icon={getItemIcon(unitData?.category || '')}
         onBackBtnClick={clearSelection}
+        menuProps={{
+          itemId: unitId,
+          index: index ?? -1,
+          onClickDuplicate: handleDuplicateUnitSubmit,
+          onClickMoveUp: () => {},
+          onClickMoveDown: () => {},
+          onClickUnlink: () => {},
+          onClickDelete: () => {},
+          onClickViewLibrary: () => {},
+          onClickCopy: () => {},
+          onClickCopyLocation: () => {},
+        }}
       />
       <Stack direction="horizontal" gap={1} className="mx-2">
         <Button

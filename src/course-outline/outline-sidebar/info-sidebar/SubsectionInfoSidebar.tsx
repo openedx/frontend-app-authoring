@@ -16,14 +16,18 @@ import messages from '../messages';
 
 interface Props {
   subsectionId: string;
+  index?: number;
 }
 
-export const SubsectionSidebar = ({ subsectionId }: Props) => {
+export const SubsectionSidebar = ({ subsectionId, index }: Props) => {
   const intl = useIntl();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
   const { selectedContainerState } = useOutlineSidebarContext();
-  const { openPublishModal } = useCourseAuthoringContext();
+  const {
+    openPublishModal,
+    handleDuplicateSubsectionSubmit,
+  } = useCourseAuthoringContext();
   const { clearSelection } = useOutlineSidebarContext();
 
   const handlePublish = () => {
@@ -45,6 +49,16 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
         title={subsectionData?.displayName || ''}
         icon={getItemIcon(subsectionData?.category || '')}
         onBackBtnClick={clearSelection}
+        menuProps={{
+          itemId: subsectionId,
+          index: index ?? -1,
+          onClickDuplicate: handleDuplicateSubsectionSubmit,
+          onClickMoveUp: () => {},
+          onClickMoveDown: () => {},
+          onClickUnlink: () => {},
+          onClickDelete: () => {},
+          onClickViewLibrary: () => {},
+        }}
       />
       {subsectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
       <Tabs

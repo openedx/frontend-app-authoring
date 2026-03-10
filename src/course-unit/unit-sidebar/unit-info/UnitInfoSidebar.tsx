@@ -209,6 +209,15 @@ export const UnitInfoSidebar = () => {
       <SidebarTitle
         title={currentItemData.displayName}
         icon={getItemIcon('unit')}
+        menuProps={{
+          itemId: currentItemData.id,
+          index: -1,
+          onClickUnlink: () => {},
+          onClickDelete: () => {},
+          onClickViewLibrary: () => {},
+          onClickCopy: () => {},
+          onClickCopyLocation: () => {},
+        }}
       />
       <Tabs
         id="unit-info-sidebar-tabs"

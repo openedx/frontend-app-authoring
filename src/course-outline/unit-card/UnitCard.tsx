@@ -136,6 +136,7 @@ const UnitCard = ({
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -144,6 +145,7 @@ const UnitCard = ({
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -172,6 +174,7 @@ const UnitCard = ({
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       openContainerInfoSidebar(unit.id, subsection.id, section.id);
+      selectAndTrigger();
     }
   }, [openContainerInfoSidebar]);
 
