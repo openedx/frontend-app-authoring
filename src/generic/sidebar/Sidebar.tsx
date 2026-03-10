@@ -144,7 +144,6 @@ export function Sidebar<T extends SidebarPages>({
         >
           {Object.entries(pages).map(([key, page]) => {
             const buttonData = {
-              key,
               value: key,
               src: page.icon,
               alt: intl.formatMessage(page.title),
@@ -155,6 +154,7 @@ export function Sidebar<T extends SidebarPages>({
             if (page.tooltip) {
               return (
                 <IconButtonWithTooltip
+                  key={key}
                   {...buttonData}
                   style={{ pointerEvents: 'all' }}
                   tooltipContent={<div>{intl.formatMessage(page.tooltip)}</div>}
