@@ -27,6 +27,7 @@ export const SectionSidebar = () => {
     sections,
     updateSectionOrderByIndex,
     openDeleteModal,
+    openUnlinkModal,
   } = useCourseAuthoringContext();
 
   const handlePublish = () => {
@@ -62,7 +63,7 @@ export const SectionSidebar = () => {
           onClickDuplicate: handleDuplicateSectionSubmit,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
-          onClickUnlink: () => {},
+          onClickUnlink: () => openUnlinkModal({ value: sectionData, sectionId }),
           onClickDelete: openDeleteModal,
           onClickViewLibrary: () => {},
         }}
