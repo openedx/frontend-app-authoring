@@ -13,16 +13,23 @@ import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/Ou
 import { InfoSection } from './InfoSection';
 import messages from '../messages';
 import { PublishButon } from './PublishButon';
+import { canMoveSection } from '@src/course-outline/drag-helper/utils';
 
 interface Props {
   sectionId: string;
+  index?: number; 
 }
 
-export const SectionSidebar = ({ sectionId }: Props) => {
+export const SectionSidebar = ({ sectionId, index }: Props) => {
   const intl = useIntl();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { data: sectionData, isLoading } = useCourseItemData(sectionId);
-  const { openPublishModal } = useCourseAuthoringContext();
+  const {
+    openPublishModal,
+    handleDuplicateSectionSubmit,
+    sections,
+    updateSectionOrderByIndex,
+  } = useCourseAuthoringContext();
   const { clearSelection } = useOutlineSidebarContext();
 
   const handlePublish = () => {
@@ -38,12 +45,35 @@ export const SectionSidebar = ({ sectionId }: Props) => {
     return <Loading />;
   }
 
+  const handleMoveUp = () => {
+    if (index) {
+      updateSectionOrderByIndex(index, index - 1);
+    }
+  }
+
+  const handleMoveDown = () => {
+    if (index) {
+      updateSectionOrderByIndex(index, index + 1);
+    }
+  }
+
   return (
     <>
       <SidebarTitle
         title={sectionData?.displayName || ''}
         icon={getItemIcon(sectionData?.category || '')}
         onBackBtnClick={clearSelection}
+        menuProps={{
+          itemId: sectionId,
+          index: index ?? -1,
+          canMoveItem: canMoveSection(sections),
+          onClickDuplicate: handleDuplicateSectionSubmit,
+          onClickMoveUp: handleMoveUp,
+          onClickMoveDown: handleMoveDown,
+          onClickUnlink: () => {},
+          onClickDelete: () => {},
+          onClickViewLibrary: () => {},
+        }}
       />
       {sectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
       <Tabs

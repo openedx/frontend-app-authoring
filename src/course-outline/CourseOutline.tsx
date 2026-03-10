@@ -12,7 +12,6 @@ import { Helmet } from 'react-helmet';
 import { CheckCircle as CheckCircleIcon, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import {
-  arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
@@ -76,6 +75,10 @@ const CourseOutline = () => {
     isUnlinkModalOpen,
     closeUnlinkModal,
     currentSelection,
+    sections,
+    restoreSectionList,
+    setSections,
+    updateSectionOrderByIndex,
   } = useCourseAuthoringContext();
 
   const {
@@ -155,11 +158,6 @@ const CourseOutline = () => {
     }
   }, [location, courseId, courseName]);
 
-  const [sections, setSections] = useState<XBlock[]>(sectionsList);
-
-  const restoreSectionList = () => {
-    setSections(() => [...sectionsList]);
-  };
 
   const {
     isShow: isShowProcessingNotification,
@@ -173,20 +171,6 @@ const CourseOutline = () => {
 
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
   const enableTimedExams = useSelector(getTimedExamsFlag);
-
-  /**
-   * Move section to new index
-   */
-  const updateSectionOrderByIndex = (currentIndex: number, newIndex: number) => {
-    if (currentIndex === newIndex) {
-      return;
-    }
-    setSections((prevSections) => {
-      const newSections = arrayMove(prevSections, currentIndex, newIndex);
-      handleSectionDragAndDrop(newSections.map(section => section.id));
-      return newSections;
-    });
-  };
 
   /**
    * Uses details from move information and moves subsection
@@ -399,6 +383,7 @@ const CourseOutline = () => {
                                           section={section}
                                           subsection={subsection}
                                           index={subsectionIndex}
+                                          sectionIndex={sectionIndex}
                                           getPossibleMoves={possibleSubsectionMoves(
                                             [...sections],
                                             sectionIndex,

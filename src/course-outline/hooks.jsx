@@ -34,7 +34,6 @@ import {
   getOutlineIndexData,
   getSavingStatus,
   getStatusBarData,
-  getSectionsList,
   getCourseActions,
   getCustomRelativeDatesActiveFlag,
   getErrors,
@@ -62,6 +61,11 @@ const useCourseOutline = ({ courseId }) => {
     currentSelection,
     currentUnlinkModalData,
     closeUnlinkModal,
+    isDuplicatingItem,
+    handleDuplicateSectionSubmit,
+    handleDuplicateSubsectionSubmit,
+    handleDuplicateUnitSubmit,
+    handleSectionDragAndDrop,
   } = useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
@@ -83,7 +87,7 @@ const useCourseOutline = ({ courseId }) => {
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
   const courseActions = useSelector(getCourseActions);
-  const sectionsList = useSelector(getSectionsList);
+  
   const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
   const genericSavingStatus = useSelector(getGenericSavingStatus);
   const errors = useSelector(getErrors);
@@ -296,54 +300,12 @@ const useCourseOutline = ({ courseId }) => {
     deleteSubsection,
   ]);
 
-  const {
-    mutate: duplicateItem,
-    isPending: isDuplicatingItem,
-  } = useDuplicateItem(courseId);
-  const handleDuplicateSectionSubmit = () => {
-    duplicateItem({
-      itemId: currentSelection?.currentId,
-      parentId: courseStructure.id,
-      sectionId: currentSelection?.sectionId,
-      subsectionId: currentSelection?.subsectionId,
-    });
-  };
-
-  const handleDuplicateSubsectionSubmit = () => {
-    duplicateItem({
-      itemId: currentSelection?.currentId,
-      parentId: currentSelection?.sectionId,
-      sectionId: currentSelection?.sectionId,
-      subsectionId: currentSelection?.subsectionId,
-    });
-  };
-
-  const handleDuplicateUnitSubmit = () => {
-    duplicateItem({
-      itemId: currentSelection?.currentId,
-      parentId: currentSelection?.subsectionId,
-      sectionId: currentSelection?.sectionId,
-      subsectionId: currentSelection?.subsectionId,
-    });
-  };
-
   const handleVideoSharingOptionChange = (value) => {
     dispatch(setVideoSharingOptionQuery(courseId, value));
   };
 
   const handleDismissNotification = () => {
     dispatch(dismissNotificationQuery(`${getConfig().STUDIO_BASE_URL}${notificationDismissUrl}`));
-  };
-
-  const handleSectionDragAndDrop = (
-    sectionListIds,
-    restoreSectionList,
-  ) => {
-    dispatch(setSectionOrderListQuery(
-      courseId,
-      sectionListIds,
-      restoreSectionList,
-    ));
   };
 
   const handleSubsectionDragAndDrop = (
@@ -396,7 +358,6 @@ const useCourseOutline = ({ courseId }) => {
     courseUsageKey: courseStructure?.id,
     courseActions,
     savingStatus,
-    sectionsList,
     isCustomRelativeDatesActive,
     isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
     isLoadingDenied: outlineIndexLoadingStatus === RequestStatus.DENIED,

@@ -152,6 +152,9 @@ export const moveUnit = (
  * This helps us avoid moving the item to a position of unmovable item.
  */
 export const canMoveSection = (sections: XBlock[]) => (id: number, step: number) => {
+  if (id === -1) {
+    return false;
+  }
   const newId = id + step;
   const indexCheck = newId >= 0 && newId < sections.length;
   if (!indexCheck) {

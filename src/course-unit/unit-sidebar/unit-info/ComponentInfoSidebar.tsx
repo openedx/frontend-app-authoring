@@ -63,6 +63,15 @@ export const ComponentInfoSidebar = () => {
         title={contentData?.displayName || ''}
         icon={getItemIcon(contentData?.category || '')}
         onBackBtnClick={handleBack}
+        menuProps={{
+          itemId: selectedComponentId || '',
+          onClickDuplicate: () => {},
+          onClickUnlink: () => {},
+          onClickDelete: () => {},
+          onClickViewLibrary: () => {},
+          onClickCopy: () => {},
+          onClickMove: () => {},
+        }}
       />
       <LibraryReferenceCard
         itemId={selectedComponentId}

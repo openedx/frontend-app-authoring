@@ -37,7 +37,7 @@ interface OutlineSidebarContextData {
   toggle: () => void;
   selectedContainerState?: SelectionState;
   setSelectedContainerState: (selectedContainerState?: SelectionState) => void;
-  openContainerInfoSidebar: (containerId: string, subsectionId?: string, sectionId?: string) => void;
+  openContainerInfoSidebar: (containerId: string, subsectionId?: string, sectionId?: string, index?: number) => void;
   clearSelection: () => void;
   /** Stores last section that allows adding subsections inside it. */
   lastEditableSection?: XBlock;
@@ -123,9 +123,10 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     containerId: string,
     subsectionId?: string,
     sectionId?: string,
+    index?: number,
   ) => {
     if (isOutlineNewDesignEnabled()) {
-      setSelectedContainerState({ currentId: containerId, subsectionId, sectionId });
+      setSelectedContainerState({ currentId: containerId, subsectionId, sectionId, index });
       setCurrentPageKey('info');
     }
   }, [setSelectedContainerState, setCurrentPageKey]);
