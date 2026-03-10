@@ -18,7 +18,8 @@ import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import XBlockContainerIframe from '@src/course-unit/xblock-container-iframe';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { getLibraryId } from '@src/generic/key-utils';
 import { possibleUnitMoves } from '@src/course-outline/drag-helper/utils';
 import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
@@ -27,6 +28,7 @@ import { InfoSection } from './InfoSection';
 
 export const UnitSidebar = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
   const [tab, setTab] = useState<'preview' | 'info' | 'settings'>('info');
   const { selectedContainerState, clearSelection, setSelectedContainerState } = useOutlineSidebarContext();
   const {
@@ -135,7 +137,13 @@ export const UnitSidebar = () => {
             subsectionId: selectedContainerState?.subsectionId,
           }),
           onClickDelete: openDeleteModal,
-          onClickViewLibrary: () => {},
+          onClickViewLibrary: () => {
+            const upstreamRef = unitData?.upstreamInfo?.upstreamRef;
+            if (upstreamRef) {
+              const libId = getLibraryId(upstreamRef);
+              navigate(`/library/${libId}/unit/${upstreamRef}`);
+            }
+          },
           onClickCopy: () => {},
           onClickCopyLocation: () => {},
         }}
