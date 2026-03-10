@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useId,
+  useRef,
+} from 'react';
 
 import { Form } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -25,14 +30,15 @@ const EditableCell = ({
   autoFocus = false,
 }: EditableCellProps) => {
   const [value, setValue] = useState<string>(initialValue);
+  const inputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
 
   useEffect(() => {
     if (autoFocus) {
-      const input = document.getElementById('editable-cell-input') as HTMLInputElement | null;
-      if (input) {
-        input.focus();
-        input.select();
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.select();
       }
     }
   }, [autoFocus]);
@@ -43,13 +49,15 @@ const EditableCell = ({
 
   const validationMessage = getInlineValidationMessage(value);
   const effectiveErrorMessage = errorMessage || validationMessage;
+  const errorMessageId = `${inputId}-error`;
 
   return (
     <span className="d-flex align-items-start">
       <OptionalExpandLink forceHide />
       <span className="mr-2">
-        <Form.Group controlId="editable-cell-input" className="mb-0">
+        <Form.Group controlId={inputId} className="mb-0">
           <Form.Control
+            ref={inputRef}
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
@@ -61,9 +69,13 @@ const EditableCell = ({
             floatingLabel={intl.formatMessage(messages.editTagInputLabel)}
             disabled={isSaving}
             autoComplete="off"
+            isInvalid={!!effectiveErrorMessage}
+            aria-describedby={effectiveErrorMessage ? errorMessageId : undefined}
           />
           {effectiveErrorMessage && (
-            <div className="text-danger small mt-1">{effectiveErrorMessage}</div>
+            <div id={errorMessageId} role="alert" aria-live="polite" className="text-danger small mt-1">
+              {effectiveErrorMessage}
+            </div>
           )}
         </Form.Group>
       </span>

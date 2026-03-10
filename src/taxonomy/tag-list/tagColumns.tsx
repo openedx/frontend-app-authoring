@@ -61,6 +61,7 @@ function getColumns({
   creatingParentId,
 }: GetColumnsArgs): TreeColumnDef[] {
   const canAddSubtag = (row: Row<TreeRowData>) => row.depth + 1 < maxDepth;
+  const draftInProgressHintId = 'tag-list-draft-in-progress-hint';
 
   return [
     {
@@ -96,7 +97,13 @@ function getColumns({
               setActiveActionMenuRowId(null);
             }}
             disabled={hasOpenDraft}
+            aria-describedby={hasOpenDraft ? draftInProgressHintId : undefined}
           />
+          {hasOpenDraft && (
+            <span id={draftInProgressHintId} className="visually-hidden">
+              {intl.formatMessage(messages.draftInProgressHint)}
+            </span>
+          )}
         </div>
       ),
       cell: ({ row }) => {
@@ -130,7 +137,12 @@ function getColumns({
                 size="sm"
               />
               <Dropdown.Menu>
-                <Dropdown.Item as={Button} onClick={startSubtagDraft} disabled={disableAddSubtag}>
+                <Dropdown.Item
+                  as={Button}
+                  onClick={startSubtagDraft}
+                  disabled={disableAddSubtag}
+                  aria-describedby={disableAddSubtag ? draftInProgressHintId : undefined}
+                >
                   {intl.formatMessage(messages.addSubtag)}
                 </Dropdown.Item>
               </Dropdown.Menu>

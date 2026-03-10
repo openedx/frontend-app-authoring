@@ -48,11 +48,13 @@ const TableBody = ({
 
   if (isLoading) {
     return (
-      <tr>
-        <td colSpan={columns.length} className="text-center">
-          <LoadingSpinner />
-        </td>
-      </tr>
+      <tbody>
+        <tr>
+          <td colSpan={columns.length} className="text-center">
+            <LoadingSpinner />
+          </td>
+        </tr>
+      </tbody>
     );
   }
 

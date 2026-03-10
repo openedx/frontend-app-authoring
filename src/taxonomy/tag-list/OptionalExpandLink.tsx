@@ -20,14 +20,36 @@ interface OptionalExpandLinkProps {
  */
 const OptionalExpandLink = ({ row, forceHide = false }: OptionalExpandLinkProps) => {
   const intl = useIntl();
+  const canExpand = !!row?.getCanExpand() && !forceHide;
+
+  if (!canExpand) {
+    return (
+      <IconButton
+        src={ExpandMore}
+        alt=""
+        size="sm"
+        className="mr-1 invisible"
+        disabled
+        tabIndex={-1}
+        aria-hidden
+      />
+    );
+  }
+
+  const isExpanded = !!row?.getIsExpanded();
+  const buttonLabel = isExpanded
+    ? intl.formatMessage(messages.hideSubtagsButtonLabel)
+    : intl.formatMessage(messages.showSubtagsButtonLabel);
 
   return (
     <IconButton
-      src={row?.getIsExpanded() ? ExpandLess : ExpandMore}
+      src={isExpanded ? ExpandLess : ExpandMore}
       onClick={row?.getToggleExpandedHandler()}
-      alt={intl.formatMessage(messages.showSubtagsButtonLabel)}
+      alt={buttonLabel}
+      aria-label={buttonLabel}
+      aria-expanded={isExpanded}
       size="sm"
-      className={`mr-1 ${row?.getCanExpand() && !forceHide ? '' : 'invisible'}`}
+      className="mr-1"
     />
   );
 };

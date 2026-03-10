@@ -111,6 +111,7 @@ const TableView = ({
                 variant="link"
                 size="inline"
                 className="text-primary-500"
+                aria-pressed={table.getIsAllRowsExpanded()}
               >
                 {table.getIsAllRowsExpanded()
                   ? intl.formatMessage(messages.collapseAll)
