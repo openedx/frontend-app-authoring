@@ -79,6 +79,7 @@ const CourseOutline = () => {
     restoreSectionList,
     setSections,
     updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
   } = useCourseAuthoringContext();
 
   const {
@@ -86,7 +87,6 @@ const CourseOutline = () => {
     savingStatus,
     statusBarData,
     courseActions,
-    sectionsList,
     isCustomRelativeDatesActive,
     isLoading,
     isLoadingDenied,
@@ -173,26 +173,6 @@ const CourseOutline = () => {
   const enableTimedExams = useSelector(getTimedExamsFlag);
 
   /**
-   * Uses details from move information and moves subsection
-   */
-  const updateSubsectionOrderByIndex = (section: XBlock, moveDetails) => {
-    const { fn, args, sectionId } = moveDetails;
-    if (!args) {
-      return;
-    }
-    const [sectionsCopy, newSubsections] = fn(...args);
-    if (newSubsections && sectionId) {
-      setSections(sectionsCopy);
-      handleSubsectionDragAndDrop(
-        sectionId,
-        section.id,
-        newSubsections.map(subsection => subsection.id),
-        restoreSectionList,
-      );
-    }
-  };
-
-  /**
    * Uses details from move information and moves unit
    */
   const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
@@ -214,10 +194,6 @@ const CourseOutline = () => {
       );
     }
   };
-
-  useEffect(() => {
-    setSections(sectionsList);
-  }, [sectionsList]);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -294,7 +270,7 @@ const CourseOutline = () => {
                 isSectionsExpanded={isSectionsExpanded}
                 headerNavigationsActions={headerNavigationsActions}
                 isDisabledReindexButton={isDisabledReindexButton}
-                hasSections={Boolean(sectionsList.length)}
+                hasSections={Boolean(sections.length)}
                 courseActions={courseActions}
                 errors={errors}
                 sections={sections}
@@ -324,7 +300,7 @@ const CourseOutline = () => {
                 <div>
                   {showNewActionsBar && (
                   <ActionRow className="mt-3">
-                    {Boolean(sectionsList.length) && (
+                    {Boolean(sections.length) && (
                     <Button
                       variant="outline-primary"
                       id="expand-collapse-all-button"

@@ -29,6 +29,7 @@ export const InfoSidebar = () => {
         <SubsectionSidebar
           subsectionId={selectedContainerState.currentId}
           index={selectedContainerState.index}
+          sectionIndex={selectedContainerState.sectionIndex}
         />
       );
     case ContainerType.Vertical:
