@@ -11,6 +11,7 @@ interface EditableCellProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   errorMessage?: string;
   isSaving?: boolean;
+  autoFocus?: boolean;
   getInlineValidationMessage?: (value: string) => string;
 }
 
@@ -21,9 +22,20 @@ const EditableCell = ({
   errorMessage = '',
   isSaving = false,
   getInlineValidationMessage = () => '',
+  autoFocus = false,
 }: EditableCellProps) => {
   const [value, setValue] = useState<string>(initialValue);
   const intl = useIntl();
+
+  useEffect(() => {
+    if (autoFocus) {
+      const input = document.getElementById('editable-cell-input') as HTMLInputElement | null;
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }
+  }, [autoFocus]);
 
   useEffect(() => {
     setValue(initialValue);
@@ -48,6 +60,7 @@ const EditableCell = ({
             onClick={(e) => e.stopPropagation()}
             floatingLabel={intl.formatMessage(messages.editTagInputLabel)}
             disabled={isSaving}
+            autoComplete="off"
           />
           {effectiveErrorMessage && (
             <div className="text-danger small mt-1">{effectiveErrorMessage}</div>

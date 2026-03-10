@@ -57,6 +57,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
             setNewRowValue(e.target.value);
           }}
           onKeyDown={handleValueCellKeyPress}
+          autoFocus
         />
       </td>
       <td
