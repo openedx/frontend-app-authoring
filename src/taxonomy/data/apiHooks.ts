@@ -205,7 +205,7 @@ export const useSubTags = (taxonomyId: number, parentTagValue: string) => useQue
   },
 });
 
-export const useCreateTag = (taxonomyId) => {
+export const useCreateTag = (taxonomyId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
