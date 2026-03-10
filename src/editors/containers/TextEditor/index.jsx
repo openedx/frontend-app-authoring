@@ -17,7 +17,7 @@ import RawEditor from '../../sharedComponents/RawEditor';
 import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { prepareEditorRef, useProcessedEditorContent } from '../../sharedComponents/TinyMceWidget/hooks';
 
 const TextEditor = ({
   onClose,
@@ -32,15 +32,16 @@ const TextEditor = ({
   learningContextId,
   images,
   isLibrary,
+  validateAssetUrl,
 }) => {
   const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const initialContent = blockValue ? blockValue.data.data : '';
-  const newContent = replaceStaticWithAsset({
-    initialContent,
+
+  const editorContent = useProcessedEditorContent({
+    initialContent: blockValue ? blockValue.data.data : '',
     learningContextId,
+    validateAssetUrl,
   });
-  const editorContent = newContent || initialContent;
   let staticRootUrl;
   if (isLibrary) {
     staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
@@ -106,6 +107,7 @@ TextEditor.defaultProps = {
   blockValue: null,
   blockFinished: null,
   returnFunction: null,
+  validateAssetUrl: null,
 };
 TextEditor.propTypes = {
   onClose: PropTypes.func.isRequired,
@@ -122,6 +124,7 @@ TextEditor.propTypes = {
   learningContextId: PropTypes.string, // This should be required but is NULL when the store is in initial state :/
   images: PropTypes.shape({}).isRequired,
   isLibrary: PropTypes.bool.isRequired,
+  validateAssetUrl: PropTypes.bool,
 };
 
 export const mapStateToProps = (state) => ({
