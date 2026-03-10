@@ -21,6 +21,7 @@ import {
 import { ArrowDropUpDown, Info } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import TableBody from './TableBody';
+import './TableView.scss';
 import type {
   CreateRowMutationState,
   RowId,
@@ -119,8 +120,7 @@ const TableView = ({
             </ActionRow>
           </div>
           <table
-            className="table w-100 tag-list-table"
-            style={{ borderCollapse: 'collapse', tableLayout: 'fixed', width: '100%' }}
+            className="table w-100 tag-list-table tree-table-layout-fixed"
           >
             <thead className="bg-light-400">
               {table.getHeaderGroups().map(headerGroup => (
@@ -128,12 +128,7 @@ const TableView = ({
                   {headerGroup.headers.map((header, index) => (
                     <th
                       key={header.id}
-                      style={{
-                        width: header.getSize(),
-                        minWidth: header.column.columnDef.minSize ?? header.getSize(),
-                        maxWidth: header.column.columnDef.maxSize ?? header.getSize(),
-                      }}
-                      className={`p-2 text-left ${index === 0 ? 'pl-2.5' : ''}`}
+                      className={`p-2 text-left ${index === 0 ? 'pl-2.5' : 'tree-table-actions-column'}`}
                     >
                       {header.isPlaceholder
                         ? null

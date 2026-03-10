@@ -27,8 +27,7 @@ const OptionalExpandLink = ({ row, forceHide = false }: OptionalExpandLinkProps)
       onClick={row?.getToggleExpandedHandler()}
       alt={intl.formatMessage(messages.showSubtagsButtonLabel)}
       size="sm"
-      style={{ visibility: row?.getCanExpand() && !forceHide ? 'visible' : 'hidden' }}
-      className="mr-1"
+      className={`mr-1 ${row?.getCanExpand() && !forceHide ? '' : 'invisible'}`}
     />
   );
 };

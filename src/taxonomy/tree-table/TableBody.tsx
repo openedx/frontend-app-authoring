@@ -49,7 +49,7 @@ const TableBody = ({
   if (isLoading) {
     return (
       <tr>
-        <td colSpan={columns.length} style={{ textAlign: 'center' }}>
+        <td colSpan={columns.length} className="text-center">
           <LoadingSpinner />
         </td>
       </tr>
@@ -60,7 +60,7 @@ const TableBody = ({
     <tbody>
       {table.getRowModel().rows.length === 0 && (
         <tr>
-          <td colSpan={columns.length} style={{ textAlign: 'center' }}>
+          <td colSpan={columns.length} className="text-center">
             {intl.formatMessage(messages.noResultsFoundMessage)}
           </td>
         </tr>
@@ -80,10 +80,10 @@ const TableBody = ({
 
       {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
         <React.Fragment key={row.id}>
-          <tr style={{ borderBottom: '1px solid #eee' }}>
+          <tr>
             {row.getVisibleCells()
-              .map(cell => (
-                <td key={cell.id} className="p-1">
+              .map((cell, index) => (
+                <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

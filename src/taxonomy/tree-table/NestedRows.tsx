@@ -41,8 +41,6 @@ const NestedRows = ({
   setIsCreatingTopRow,
   createRowMutation,
 }: NestedRowsProps) => {
-  const indentPx = depth * 16;
-
   if (!parentRow.getIsExpanded()) {
     return null;
   }
@@ -63,7 +61,7 @@ const NestedRows = ({
         const rowData = row.original || row;
         return (
           <React.Fragment key={String(rowData.id)}>
-            <tr style={{ borderBottom: '1px solid #eee' }}>
+            <tr>
               {row.getVisibleCells()
                 .map((cell, index) => {
                   const content = flexRender(cell.column.columnDef.cell, cell.getContext());
@@ -72,17 +70,10 @@ const NestedRows = ({
                   return (
                     <td
                       key={cell.id}
-                      style={{
-                        width: cell.column.getSize(),
-                        minWidth: cell.column.columnDef.minSize ?? cell.column.getSize(),
-                        maxWidth: cell.column.columnDef.maxSize ?? cell.column.getSize(),
-                        verticalAlign: 'top',
-                        overflowWrap: 'anywhere',
-                      }}
-                      className="p-1"
+                      className={`p-1 align-top tree-table-overflow-anywhere ${isFirstColumn ? '' : 'tree-table-actions-column'}`}
                     >
                       {isFirstColumn ? (
-                        <div style={{ paddingInlineStart: `${indentPx}px` }}>{content}</div>
+                        <div className={`tree-table-indent tree-table-indent-${Math.min(depth, 10)}`}>{content}</div>
                       ) : (
                         content
                       )}
