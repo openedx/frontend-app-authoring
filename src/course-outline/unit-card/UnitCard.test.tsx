@@ -93,6 +93,7 @@ const renderComponent = (props?: object) => render(
     subsection={subsection}
     unit={unit}
     index={1}
+    sectionIndex={0}
     getPossibleMoves={jest.fn()}
     onOrderChange={jest.fn()}
     onOpenDeleteModal={jest.fn()}
@@ -357,11 +358,15 @@ describe('<UnitCard />', () => {
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
+      sectionIndex: 0,
     });
     expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
+      sectionIndex: 0,
     });
   });
 });

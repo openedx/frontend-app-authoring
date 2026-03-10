@@ -65,6 +65,7 @@ export const ComponentInfoSidebar = () => {
         onBackBtnClick={handleBack}
         menuProps={{
           itemId: selectedComponentId || '',
+          index: 0,
           onClickDuplicate: () => {},
           onClickUnlink: () => {},
           onClickDelete: () => {},

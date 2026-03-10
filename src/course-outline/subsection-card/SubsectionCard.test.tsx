@@ -118,6 +118,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     section={section}
     subsection={subsection}
     index={1}
+    sectionIndex={0}
     isSelfPaced={false}
     getPossibleMoves={jest.fn()}
     onOrderChange={jest.fn()}
@@ -200,6 +201,8 @@ describe('<SubsectionCard />', () => {
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
+      sectionIndex: 0,
     });
   });
 
@@ -465,11 +468,15 @@ describe('<SubsectionCard />', () => {
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
+      sectionIndex: 0,
     });
     expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
+      sectionIndex: 0,
     });
   });
 });

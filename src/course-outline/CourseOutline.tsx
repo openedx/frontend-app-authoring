@@ -80,6 +80,7 @@ const CourseOutline = () => {
     setSections,
     updateSectionOrderByIndex,
     updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
   } = useCourseAuthoringContext();
 
   const {
@@ -171,29 +172,6 @@ const CourseOutline = () => {
 
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
   const enableTimedExams = useSelector(getTimedExamsFlag);
-
-  /**
-   * Uses details from move information and moves unit
-   */
-  const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
-    const {
-      fn, args, sectionId, subsectionId,
-    } = moveDetails;
-    if (!args) {
-      return;
-    }
-    const [sectionsCopy, newUnits] = fn(...args);
-    if (newUnits && sectionId && subsectionId) {
-      setSections(sectionsCopy);
-      handleUnitDragAndDrop(
-        sectionId,
-        section.id,
-        subsectionId,
-        newUnits.map(unit => unit.id),
-        restoreSectionList,
-      );
-    }
-  };
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -386,6 +364,7 @@ const CourseOutline = () => {
                                                 unit={unit}
                                                 subsection={subsection}
                                                 section={section}
+                                                sectionIndex={sectionIndex}
                                                 isSelfPaced={statusBarData.isSelfPaced}
                                                 isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                                 index={unitIndex}

@@ -31,6 +31,7 @@ interface UnitCardProps {
   unit: UnitXBlock;
   subsection: XBlock;
   section: XBlock;
+  sectionIndex: number;
   onOpenConfigureModal: () => void;
   onOpenDeleteModal: () => void;
   onDuplicateSubmit: () => void;
@@ -49,6 +50,7 @@ const UnitCard = ({
   unit: initialData,
   subsection: initialSubsectionData,
   section: initialSectionData,
+  sectionIndex,
   isSelfPaced,
   isCustomRelativeDatesActive,
   index,
@@ -137,6 +139,7 @@ const UnitCard = ({
       subsectionId: subsection.id,
       sectionId: section.id,
       index,
+      sectionIndex,
     });
   };
 
@@ -146,6 +149,7 @@ const UnitCard = ({
       subsectionId: subsection.id,
       sectionId: section.id,
       index,
+      sectionIndex,
     });
   };
 
@@ -173,7 +177,7 @@ const UnitCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      openContainerInfoSidebar(unit.id, subsection.id, section.id);
+      openContainerInfoSidebar(unit.id, subsection.id, section.id, index, sectionIndex);
       selectAndTrigger();
     }
   }, [openContainerInfoSidebar]);

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { isEmpty } from 'lodash';
+
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button, Stack, Tab, Tabs,
@@ -17,26 +19,28 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import XBlockContainerIframe from '@src/course-unit/xblock-container-iframe';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { Link } from 'react-router-dom';
+import { possibleUnitMoves } from '@src/course-outline/drag-helper/utils';
 import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
 import messages from '../messages';
 import { InfoSection } from './InfoSection';
 
-interface Props {
-  unitId: string;
-  index?: number
-}
-
-export const UnitSidebar = ({ unitId, index }: Props) => {
+export const UnitSidebar = () => {
   const intl = useIntl();
   const [tab, setTab] = useState<'preview' | 'info' | 'settings'>('info');
+  const { selectedContainerState, clearSelection, setSelectedContainerState } = useOutlineSidebarContext();
+  const {
+    currentId: unitId = '',
+    index,
+  } = selectedContainerState ?? {};
   const { data: unitData, isLoading } = useCourseItemData(unitId);
-  const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
   const {
     openPublishModal,
     getUnitUrl,
     courseId,
     handleDuplicateUnitSubmit,
+    sections,
+    updateUnitOrderByIndex,
   } = useCourseAuthoringContext();
 
   const handlePublish = () => {
@@ -53,6 +57,63 @@ export const UnitSidebar = ({ unitId, index }: Props) => {
     return <Loading />;
   }
 
+  // Resolve section and subsection from selectedContainerState indices
+  const sectionIndex = selectedContainerState?.sectionIndex;
+  const section = sectionIndex !== undefined ? sections[sectionIndex] : undefined;
+  const subsectionIndex = section && selectedContainerState?.subsectionId
+    ? section.childInfo.children.findIndex((s) => s.id === selectedContainerState.subsectionId)
+    : -1;
+  const subsection = subsectionIndex !== -1 ? section?.childInfo.children[subsectionIndex] : undefined;
+
+  // Build move calculator only when all ancestor context is available
+  const getPossibleMoves = (section && subsection && subsectionIndex !== -1)
+    ? possibleUnitMoves(
+      [...sections],
+      sectionIndex ?? -1,
+      subsectionIndex,
+      section,
+      subsection,
+      subsection.childInfo.children,
+    )
+    : undefined;
+
+  const canMoveUnit = (oldIndex: number, step: number) => {
+    if (getPossibleMoves) {
+      const moveDetails = getPossibleMoves(oldIndex, step);
+      return !isEmpty(moveDetails);
+    }
+    return false;
+  };
+
+  const handleMove = (step: number) => {
+    if (section && subsection && getPossibleMoves && index !== undefined && sectionIndex !== undefined) {
+      const moveDetails = getPossibleMoves(index, step);
+      // section is the current parent section (used as prevSection in cross-section moves)
+      updateUnitOrderByIndex(section, moveDetails);
+      if (!isEmpty(moveDetails)) {
+        const newSectionId = moveDetails.sectionId;
+        const newSubsectionId = moveDetails.subsectionId;
+        // Cross-subsection move: unit goes to end of previous or start of next subsection
+        const isCrossSubsection = newSubsectionId !== subsection.id;
+        const newSectionIndex = newSectionId !== section.id
+          ? sections.findIndex((s) => s.id === newSectionId)
+          : sectionIndex;
+        const newIndex = isCrossSubsection
+          ? (step === -1
+            ? sections[newSectionIndex].childInfo.children.find((s) => s.id === newSubsectionId)?.childInfo.children.length ?? 0
+            : 0)
+          : index + step;
+        setSelectedContainerState(selectedContainerState ? {
+          ...selectedContainerState,
+          sectionId: newSectionId,
+          sectionIndex: newSectionIndex,
+          subsectionId: newSubsectionId,
+          index: newIndex,
+        } : undefined);
+      }
+    }
+  };
+
   return (
     <>
       <SidebarTitle
@@ -62,9 +123,10 @@ export const UnitSidebar = ({ unitId, index }: Props) => {
         menuProps={{
           itemId: unitId,
           index: index ?? -1,
+          canMoveItem: canMoveUnit,
           onClickDuplicate: handleDuplicateUnitSubmit,
-          onClickMoveUp: () => {},
-          onClickMoveDown: () => {},
+          onClickMoveUp: () => handleMove(-1),
+          onClickMoveDown: () => handleMove(1),
           onClickUnlink: () => {},
           onClickDelete: () => {},
           onClickViewLibrary: () => {},

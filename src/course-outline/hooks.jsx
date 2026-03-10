@@ -48,7 +48,6 @@ import {
   setSectionOrderListQuery,
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
-  setUnitOrderListQuery,
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
@@ -67,6 +66,7 @@ const useCourseOutline = ({ courseId }) => {
     handleDuplicateUnitSubmit,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
   } = useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
@@ -307,22 +307,6 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleDismissNotification = () => {
     dispatch(dismissNotificationQuery(`${getConfig().STUDIO_BASE_URL}${notificationDismissUrl}`));
-  };
-
-  const handleUnitDragAndDrop = (
-    sectionId,
-    prevSectionId,
-    subsectionId,
-    unitListIds,
-    restoreSectionList,
-  ) => {
-    dispatch(setUnitOrderListQuery(
-      sectionId,
-      subsectionId,
-      prevSectionId,
-      unitListIds,
-      restoreSectionList,
-    ));
   };
 
   useEffect(() => {
