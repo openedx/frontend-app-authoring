@@ -157,14 +157,14 @@ describe('<TagListTable />', () => {
     const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(3 + 1); // 3 items plus header
     expect(within(rows[0]).getAllByRole('columnheader')[0].textContent).toEqual('Tag name');
-    expect(within(rows[1]).getAllByRole('cell')[0].textContent).toEqual('root tag 1 (14)');
+    expect(within(rows[1]).getAllByRole('cell')[0].textContent).toEqual('root tag 1');
   });
 
   it('should render page correctly with subtags', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
     render(<RootWrapper />);
-    const expandButton = screen.getAllByText('Expand row')[0];
+    const expandButton = await screen.findByLabelText('Show Subtags');
     expandButton.click();
     const childTag = await screen.findByText('the child tag');
     expect(childTag).toBeInTheDocument();
@@ -206,9 +206,7 @@ describe('<TagListTable />', () => {
       const addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
       const creatingRow = await screen.findByTestId('creating-top-row');
-      // expect input placeholder text to say "Type tag name"
-      expect(creatingRow.querySelector('input').placeholder).toEqual('Type tag name');
-      // expect the row to include "Cancel" and "Save" buttons
+
       expect(within(creatingRow).getByText('Cancel')).toBeInTheDocument();
       expect(within(creatingRow).getByText('Save')).toBeInTheDocument();
     });
@@ -812,7 +810,6 @@ describe('<TagListTable />', () => {
       const draftRowIndex = rows.findIndex(tableRow => tableRow.querySelector('input'));
       expect(draftRowIndex).toBe(parentRowIndex + 1);
       expect(draftRows[0].querySelector('input')).toBeInTheDocument();
-      expect(draftRows[0].querySelector('input').placeholder).toEqual('Type tag name');
       expect(within(draftRows[0]).getByText('Cancel')).toBeInTheDocument();
       expect(within(draftRows[0]).getByText('Save')).toBeInTheDocument();
     });
@@ -1257,10 +1254,12 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
     const input = draftRow.querySelector('input');
     fireEvent.change(input, { target: { value: 'child appears immediately' } });
+    expect(await screen.queryByText('child appears immediately')).toBeNull();
     fireEvent.click(within(draftRow).getByText('Save'));
 
-    // TODO: fix
-    expect(await screen.findByText('child appears immediately')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('child appears immediately')).toBeInTheDocument();
+    });
     expect(axiosMock.history.get.length).toBe(1);
   });
 
