@@ -51,6 +51,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   } = useTableModes();
 
   // PAGINATION
+  // TODO: Fix and enable pagination. For now, disable pagination on the api hook side.
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 100,

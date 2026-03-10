@@ -57,9 +57,16 @@ export const apiUrls = {
    * @param pageIndex Zero-indexed page number
    * @param pageSize How many tags per page to load
    */
-  tagList: (taxonomyId: number, pageIndex: number, pageSize: number, depth?: number) => makeUrl(`${taxonomyId}/tags/`, {
-    page: (pageIndex + 1), page_size: pageSize, full_depth_threshold: depth || 0,
-  }),
+  tagList: (taxonomyId: number, pageIndex: number | null, pageSize: number | null, fullDepthThreshold?: number) => {
+    if (pageIndex === null) {
+      return makeUrl(`${taxonomyId}/tags/`, { full_depth_threshold: fullDepthThreshold || 0 });
+    }
+    return makeUrl(`${taxonomyId}/tags/`, {
+      page: (pageIndex ?? 0) + 1,
+      page_size: pageSize ?? 10,
+      full_depth_threshold: fullDepthThreshold || 0,
+    });
+  },
   /**
    * Get _all_ tags below a given parent tag. This may be replaced with something more scalable in the future.
    */

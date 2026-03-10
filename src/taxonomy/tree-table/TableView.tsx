@@ -188,11 +188,6 @@ const TableView = ({
             setToast((prevToast) => ({ ...prevToast, show: false }));
           }}
           delay={15000}
-          className={
-            toast.variant === 'danger'
-              ? 'bg-danger-100 border-danger'
-              : 'bg-success-100 border-success'
-          }
         >
           {toast.message}
         </Toast>
