@@ -33,6 +33,7 @@ export const SubsectionSidebar = () => {
     handleDuplicateSubsectionSubmit,
     sections,
     updateSubsectionOrderByIndex,
+    openDeleteModal,
   } = useCourseAuthoringContext();
 
   const handlePublish = () => {
@@ -104,7 +105,7 @@ export const SubsectionSidebar = () => {
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () => {},
-          onClickDelete: () => {},
+          onClickDelete: openDeleteModal,
           onClickViewLibrary: () => {},
         }}
       />

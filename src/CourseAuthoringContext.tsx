@@ -1,9 +1,9 @@
 import { getConfig } from '@edx/frontend-platform';
 import {
-  createContext, useContext, useEffect, useMemo, useState,
+  createContext, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { useCreateCourseBlock, useDuplicateItem } from '@src/course-outline/data/apiHooks';
+import { useCreateCourseBlock, useDeleteCourseItem, useDuplicateItem } from '@src/course-outline/data/apiHooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { getOutlineIndexData, getSectionsList } from '@src/course-outline/data/selectors';
@@ -14,6 +14,10 @@ import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { RequestStatusType } from './data/constants';
 import { arrayMove } from '@dnd-kit/sortable';
 import { fetchCourseOutlineIndexQuery, setSectionOrderListQuery, setSubsectionOrderListQuery, setUnitOrderListQuery } from './course-outline/data/thunk';
+import { useToggle } from '@openedx/paragon';
+import { getBlockType } from './generic/key-utils';
+import { COURSE_BLOCK_NAMES } from './constants';
+import { deleteSection, deleteSubsection, deleteUnit } from './course-outline/data/slice';
 
 type ModalState = {
   value?: XBlock | UnitXBlock;
@@ -46,6 +50,10 @@ export type CourseAuthoringContextData = {
   restoreSectionList: () => void;
   setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
   isDuplicatingItem: boolean;
+  isDeleteModalOpen: boolean;
+  openDeleteModal: () => void;
+  closeDeleteModal: () => void;
+  getHandleDeleteItemSubmit: (callback: () => void) => () => Promise<void>;
   handleDuplicateSectionSubmit: () => void;
   handleDuplicateSubsectionSubmit: () => void;
   handleDuplicateUnitSubmit: () => void;
@@ -96,6 +104,8 @@ export const CourseAuthoringProvider = ({
   ] = useToggleWithValue<ModalState>();
   const sectionsList = useSelector(getSectionsList);
   const [sections, setSections] = useState<XBlock[]>(sectionsList);
+  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  
 
   const restoreSectionList = () => {
     setSections(() => [...sectionsList]);
@@ -272,6 +282,68 @@ export const CourseAuthoringProvider = ({
     }
   };
 
+  const deleteMutation = useDeleteCourseItem();
+  
+  const getHandleDeleteItemSubmit = useCallback((callback: () => void) => {
+    return async () => {
+      // istanbul ignore if
+      if (!currentSelection) {
+        return;
+      }
+      const category = getBlockType(currentSelection.currentId);
+      switch (category) {
+        case COURSE_BLOCK_NAMES.chapter.id:
+          await deleteMutation.mutateAsync(
+            { itemId: currentSelection.currentId },
+            {
+              onSettled: () => dispatch(deleteSection({ itemId: currentSelection.currentId })),
+            },
+          );
+          break;
+        case COURSE_BLOCK_NAMES.sequential.id:
+          await deleteMutation.mutateAsync(
+            { itemId: currentSelection.currentId, sectionId: currentSelection.sectionId },
+            {
+              onSettled: () => dispatch(deleteSubsection({
+                itemId: currentSelection.currentId,
+                sectionId: currentSelection.sectionId,
+              })),
+            },
+          );
+          break;
+        case COURSE_BLOCK_NAMES.vertical.id:
+          await deleteMutation.mutateAsync(
+            {
+              itemId: currentSelection.currentId,
+              subsectionId: currentSelection.subsectionId,
+              sectionId: currentSelection.sectionId,
+            },
+            {
+              onSettled: () => dispatch(deleteUnit({
+                itemId: currentSelection.currentId,
+                subsectionId: currentSelection.subsectionId,
+                sectionId: currentSelection.sectionId,
+              })),
+            },
+          );
+          break;
+        default:
+          // istanbul ignore next
+          throw new Error(`Unrecognized category ${category}`);
+      }
+      closeDeleteModal();
+      callback();
+    };
+  }, [
+    deleteMutation,
+    closeDeleteModal,
+    currentSelection,
+    dispatch,
+    deleteSection,
+    deleteUnit,
+    deleteSubsection,
+  ]);
+
   const context = useMemo<CourseAuthoringContextData>(() => ({
     courseId,
     courseUsageKey,
@@ -296,6 +368,10 @@ export const CourseAuthoringProvider = ({
     restoreSectionList,
     setSections,
     isDuplicatingItem,
+    isDeleteModalOpen,
+    openDeleteModal,
+    closeDeleteModal,
+    getHandleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
@@ -329,6 +405,10 @@ export const CourseAuthoringProvider = ({
     restoreSectionList,
     setSections,
     isDuplicatingItem,
+    isDeleteModalOpen,
+    openDeleteModal,
+    closeDeleteModal,
+    getHandleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleSectionDragAndDrop,
