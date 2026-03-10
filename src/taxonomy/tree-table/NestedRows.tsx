@@ -76,10 +76,10 @@ const NestedRows = ({
                         width: cell.column.getSize(),
                         minWidth: cell.column.columnDef.minSize ?? cell.column.getSize(),
                         maxWidth: cell.column.columnDef.maxSize ?? cell.column.getSize(),
-                        padding: '8px',
                         verticalAlign: 'top',
                         overflowWrap: 'anywhere',
                       }}
+                      className="p-1"
                     >
                       {isFirstColumn ? (
                         <div style={{ paddingInlineStart: `${indentPx}px` }}>{content}</div>
