@@ -94,7 +94,7 @@ const mockTagsPaginationResponse = {
   start: 0,
   results: [],
 };
-const rootTagsListUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?page=1&page_size=100&full_depth_threshold=1000';
+const rootTagsListUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=1000';
 const subTagsResponse = {
   next: null,
   previous: null,
