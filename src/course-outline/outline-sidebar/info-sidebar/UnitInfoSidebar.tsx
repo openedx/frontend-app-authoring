@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -26,6 +26,7 @@ import { PublishButon } from './PublishButon';
 import messages from '../messages';
 import { InfoSection } from './InfoSection';
 import { useClipboard } from '@src/generic/clipboard';
+import { ToastContext } from '@src/generic/toast-context';
 
 export const UnitSidebar = () => {
   const intl = useIntl();
@@ -48,6 +49,7 @@ export const UnitSidebar = () => {
     openUnlinkModal,
   } = useCourseAuthoringContext();
   const { copyToClipboard } = useClipboard();
+  const { showToast } = useContext(ToastContext);
 
   const handlePublish = () => {
     if (unitData?.hasChanges) {
@@ -124,7 +126,9 @@ export const UnitSidebar = () => {
     // Extract the location ID: the part after "block@" at the end of the usage key
     // e.g. "block-v1:org+course+run+type@vertical+block@abc123" → "abc123"
     const locationId = unitId.match(/block@(.+)$/)?.[1];
-    if (!locationId) { return; }
+    if (!locationId) {
+      return;
+    }
 
     if (navigator.clipboard) {
       // Modern approach: requires HTTPS (secure context)
@@ -139,6 +143,7 @@ export const UnitSidebar = () => {
       document.execCommand('copy'); // eslint-disable-line deprecation/deprecation
       document.body.removeChild(textarea);
     }
+    showToast(intl.formatMessage(messages.locationCopiedText));
   };
 
   return (
