@@ -3,6 +3,7 @@ import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
+import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarTitle } from '@src/generic/sidebar';
@@ -10,6 +11,7 @@ import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { getLibraryId } from '@src/generic/key-utils';
 import { possibleSubsectionMoves } from '@src/course-outline/drag-helper/utils';
 
 import { InfoSection } from './InfoSection';
@@ -24,6 +26,7 @@ interface Props {
 
 export const SubsectionSidebar = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
   const { subsectionId = '', index, sectionIndex } = selectedContainerState ?? {};
@@ -110,7 +113,13 @@ export const SubsectionSidebar = () => {
             sectionId: selectedContainerState?.sectionId,
           }),
           onClickDelete: openDeleteModal,
-          onClickViewLibrary: () => {},
+          onClickViewLibrary: () => {
+            const upstreamRef = subsectionData?.upstreamInfo?.upstreamRef;
+            if (upstreamRef) {
+              const libId = getLibraryId(upstreamRef);
+              navigate(`/library/${libId}/subsection/${upstreamRef}`);
+            }
+          },
         }}
       />
       {subsectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
