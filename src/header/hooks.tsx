@@ -17,18 +17,34 @@ import messages from './messages';
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const waffleFlags = useWaffleFlags();
+  const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
+
+  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
+    canViewCourseUpdates: {
+      action: COURSE_PERMISSIONS.VIEW_COURSE_UPDATES,
+      scope: courseId,
+    },
+  }, isAuthzEnabled);
+
+  const authzCanViewCourseUpdates = isLoadingUserPermissions
+    ? false
+    : userPermissions?.canViewCourseUpdates || false;
+
+  const canViewCourseUpdates = isAuthzEnabled
+    ? authzCanViewCourseUpdates
+    : true;
 
   const items = [
     {
       href: waffleFlags.useNewCourseOutlinePage ? `/course/${courseId}` : `${studioBaseUrl}/course/${courseId}`,
       title: intl.formatMessage(messages['header.links.outline']),
     },
-    {
+    ...(canViewCourseUpdates ? [{
       href: waffleFlags.useNewUpdatesPage ? `/course/${courseId}/course_info` : `${studioBaseUrl}/course_info/${courseId}`,
       title: intl.formatMessage(messages['header.links.updates']),
-    },
+    }] : []),
     {
       href: getPagePath(courseId, 'true', 'tabs'),
       title: intl.formatMessage(messages['header.links.pages']),

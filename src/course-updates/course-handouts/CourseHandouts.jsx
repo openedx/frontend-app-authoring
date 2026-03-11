@@ -6,21 +6,26 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
-const CourseHandouts = ({ contentForHandouts, onEdit, isDisabledButtons }) => {
+const CourseHandouts = ({
+  contentForHandouts, onEdit, isDisabledButtons, canEdit,
+}) => {
   const intl = useIntl();
 
   return (
     <div className="course-handouts" data-testid="course-handouts">
       <div className="course-handouts-header">
         <h2 className="course-handouts-header__title lead">{intl.formatMessage(messages.handoutsTitle)}</h2>
-        <IconButtonWithTooltip
-          tooltipContent={intl.formatMessage(messages.editButton)}
-          src={EditOutline}
-          iconAs={Icon}
-          disabled={isDisabledButtons}
-          data-testid="course-handouts-edit-button"
-          onClick={onEdit}
-        />
+        {canEdit && (
+          <IconButtonWithTooltip
+            aria-label={intl.formatMessage(messages.editButton)}
+            tooltipContent={intl.formatMessage(messages.editButton)}
+            src={EditOutline}
+            iconAs={Icon}
+            disabled={isDisabledButtons}
+            data-testid="course-handouts-edit-button"
+            onClick={onEdit}
+          />
+        )}
       </div>
       <div
         className="small"
@@ -35,6 +40,11 @@ CourseHandouts.propTypes = {
   contentForHandouts: PropTypes.string.isRequired,
   onEdit: PropTypes.func.isRequired,
   isDisabledButtons: PropTypes.bool.isRequired,
+  canEdit: PropTypes.bool,
+};
+
+CourseHandouts.defaultProps = {
+  canEdit: true,
 };
 
 export default CourseHandouts;

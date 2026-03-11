@@ -5,6 +5,9 @@ import {
   initializeMocks, render, waitFor, fireEvent, screen,
 } from '@src/testUtils';
 
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+
+import * as apiHooks from '@src/data/apiHooks';
 import {
   getCourseUpdatesApiUrl,
   getCourseHandoutApiUrl,
@@ -24,6 +27,19 @@ let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+
+jest.mock('@src/authz/data/apiHooks', () => ({
+  ...jest.requireActual('@src/authz/data/apiHooks'),
+  useUserPermissions: jest.fn(() => ({
+    isLoading: false,
+    data: { canManageCourseUpdates: false, canViewCourseUpdates: true },
+  })),
+}));
+
+jest.mock('@src/data/apiHooks', () => ({
+  ...jest.requireActual('@src/data/apiHooks'),
+  useWaffleFlags: jest.fn(() => ({ enableAuthzCourseAuthoring: false })),
+}));
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -340,6 +356,151 @@ describe('<CourseUpdates />', () => {
       expect(screen.queryByText('Some handouts 1')).toBeNull();
       expect(screen.getByText(courseHandoutsMock.data)).toBeVisible();
       expect(await screen.findByText(messages.savingHandoutsErrorDescription.defaultMessage));
+    });
+  });
+
+  describe('Authorization and permissions', () => {
+    describe('when user has permission to manage course updates', () => {
+      beforeEach(() => {
+        const mocks = initializeMocks();
+        store = mocks.reduxStore;
+        axiosMock = mocks.axiosMock;
+
+        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true });
+        (useUserPermissions as jest.Mock).mockReturnValue({
+          isLoading: false,
+          data: { canManageCourseUpdates: true },
+        });
+
+        axiosMock
+          .onGet(getCourseUpdatesApiUrl(courseId))
+          .reply(200, courseUpdatesMock);
+        axiosMock
+          .onGet(getCourseHandoutApiUrl(courseId))
+          .reply(200, courseHandoutsMock);
+      });
+
+      it('should render the "New update" button', async () => {
+        render(<RootWrapper />);
+
+        expect(await screen.findByRole('button', {
+          name: messages.newUpdateButton.defaultMessage,
+        })).toBeInTheDocument();
+      });
+
+      it('should render edit and delete buttons for course updates', async () => {
+        const { container } = render(<RootWrapper />);
+        await waitFor(() => {
+          expect(container.querySelectorAll('.course-update')).toHaveLength(3);
+        });
+
+        expect(await screen.findAllByRole('button', { name: /edit/i })).toHaveLength(4); // 3 for course updates and 1 for handouts
+        expect(await screen.findAllByRole('button', { name: /delete/i })).toHaveLength(3);
+      });
+    });
+
+    describe('when user does NOT have permission to manage course updates and enableAuthzCourseAuthoring is enabled', () => {
+      beforeEach(() => {
+        const mocks = initializeMocks();
+        store = mocks.reduxStore;
+        axiosMock = mocks.axiosMock;
+
+        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true });
+        (useUserPermissions as jest.Mock).mockReturnValue({
+          isLoading: false,
+          data: { canManageCourseUpdates: false },
+        });
+
+        axiosMock
+          .onGet(getCourseUpdatesApiUrl(courseId))
+          .reply(200, courseUpdatesMock);
+        axiosMock
+          .onGet(getCourseHandoutApiUrl(courseId))
+          .reply(200, courseHandoutsMock);
+      });
+
+      it('should NOT render the "New update" button', async () => {
+        render(<RootWrapper />);
+
+        await waitFor(() => {
+          expect(screen.getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+        });
+
+        const newUpdateButton = screen.queryByRole('button', { name: /New update/ });
+
+        expect(newUpdateButton).not.toBeInTheDocument();
+      });
+
+      it('should NOT render edit and delete buttons for course updates', async () => {
+        const { container } = render(<RootWrapper />);
+
+        await waitFor(() => {
+          expect(container.querySelectorAll('.course-update')).toHaveLength(3);
+          expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument();
+          expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+        });
+      });
+    });
+
+    describe('when enableAuthzCourseAuthoring is disabled', () => {
+      beforeEach(() => {
+        const mocks = initializeMocks();
+        store = mocks.reduxStore;
+        axiosMock = mocks.axiosMock;
+
+        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: false });
+        (useUserPermissions as jest.Mock).mockReturnValue({
+          isLoading: false,
+          data: { canManageCourseUpdates: false },
+        });
+
+        axiosMock
+          .onGet(getCourseUpdatesApiUrl(courseId))
+          .reply(200, courseUpdatesMock);
+        axiosMock
+          .onGet(getCourseHandoutApiUrl(courseId))
+          .reply(200, courseHandoutsMock);
+      });
+
+      it('should render the "New update" button (defaults to true when authz disabled)', async () => {
+        render(<RootWrapper />);
+
+        expect(await screen.findByRole('button', {
+          name: messages.newUpdateButton.defaultMessage,
+        })).toBeInTheDocument();
+      });
+    });
+
+    describe('when user does NOT have permission to view course updates', () => {
+      beforeEach(() => {
+        const mocks = initializeMocks();
+        store = mocks.reduxStore;
+        axiosMock = mocks.axiosMock;
+
+        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true });
+        (useUserPermissions as jest.Mock).mockReturnValue({
+          isLoading: false,
+          data: { canManageCourseUpdates: false, canViewCourseUpdates: false },
+        });
+
+        axiosMock
+          .onGet(getCourseUpdatesApiUrl(courseId))
+          .reply(200, courseUpdatesMock);
+        axiosMock
+          .onGet(getCourseHandoutApiUrl(courseId))
+          .reply(200, courseHandoutsMock);
+      });
+
+      it('should render PermissionDeniedAlert instead of course updates content', async () => {
+        render(<RootWrapper />);
+
+        expect(await screen.findByText(/You are not authorized to view this page/)).toBeInTheDocument();
+        expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
+        expect(screen.queryByText(messages.headingSubtitle.defaultMessage)).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', {
+          name: messages.newUpdateButton.defaultMessage,
+        })).not.toBeInTheDocument();
+      });
     });
   });
 });
