@@ -53,6 +53,11 @@ const createWrapper = () => {
 describe('header utils', () => {
   describe('getContentMenuItems', () => {
     it('when video upload page enabled should include Video Uploads option', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewCourseUpdates: false },
+      } as any);
       jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: false,
       });
@@ -64,6 +69,15 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(5);
     });
     it('when video upload page disabled should not include Video Uploads option', () => {
+      mockWaffleFlags({
+        enableAuthzCourseAuthoring: false,
+        useNewVideoUploadsPage: false,
+        useNewCertificatesPage: false,
+      });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewCourseUpdates: false },
+      } as any);
       jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: false,
       });
@@ -75,15 +89,53 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(4);
     });
     it('adds course libraries link to content menu when libraries v2 is enabled', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewCourseUpdates: false },
+      } as any);
       jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: true,
       });
       const actualItems = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems[1]).toEqual({ href: '/course/course-123/libraries', title: 'Library Updates' });
     });
+    it('when authz enabled and user has no permission to view course updates should not include course updates option', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewCourseUpdates: false },
+      } as any);
+      jest.mocked(useSelector).mockReturnValue({
+        librariesV2Enabled: false,
+      });
+      const actualItems = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItemsTitle = actualItems.map((item) => item.title);
+      expect(actualItemsTitle).not.toContain(messages['header.links.updates'].defaultMessage);
+    });
+    it('when authz enabled and user has permission to view course updates should include course updates option', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewCourseUpdates: true },
+      } as any);
+      jest.mocked(useSelector).mockReturnValue({
+        librariesV2Enabled: false,
+      });
+      const actualItems = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItemsTitle = actualItems.map((item) => item.title);
+      expect(actualItemsTitle).toContain(messages['header.links.updates'].defaultMessage);
+    });
   });
 
   describe('getSettingsMenuitems', () => {
+    beforeAll(() => {
+      mockWaffleFlags({
+        enableAuthzCourseAuthoring: false,
+        useNewVideoUploadsPage: false,
+        useNewCertificatesPage: false,
+      });
+    });
     beforeEach(() => {
       jest.mocked(useSelector).mockReturnValue({
         canAccessAdvancedSettings: true,

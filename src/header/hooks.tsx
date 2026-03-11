@@ -13,22 +13,28 @@ import { LibQueryParamKeys } from '@src/library-authoring/routes';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { COURSE_PERMISSIONS } from '@src/authz/constants';
 import messages from './messages';
+import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
+import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
 
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const waffleFlags = useWaffleFlags();
+  const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
+
+const {
+    permissions: { canViewCourseUpdates },
+  } = useUserPermissionsWithAuthzCourse(courseId, getCourseUpdatesPermissions(courseId));
 
   const items = [
     {
       href: waffleFlags.useNewCourseOutlinePage ? `/course/${courseId}` : `${studioBaseUrl}/course/${courseId}`,
       title: intl.formatMessage(messages['header.links.outline']),
     },
-    {
+    ...(canViewCourseUpdates ? [{
       href: waffleFlags.useNewUpdatesPage ? `/course/${courseId}/course_info` : `${studioBaseUrl}/course_info/${courseId}`,
       title: intl.formatMessage(messages['header.links.updates']),
-    },
+    }] : []),
     {
       href: getPagePath(courseId, 'true', 'tabs'),
       title: intl.formatMessage(messages['header.links.pages']),
