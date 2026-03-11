@@ -245,302 +245,271 @@ describe('<TagListTable />', () => {
   });
 
   describe('Create a new top-level tag', () => {
-    it('should add draft row when top-level"Add tag" button is clicked', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      renderTagListTable();
-      await waitForRootTag();
-
-      const { creatingRow } = await openTopLevelDraftRow();
-
-      expect(within(creatingRow).getByText('Cancel')).toBeInTheDocument();
-      expect(within(creatingRow).getByText('Save')).toBeInTheDocument();
-    });
-
-    it('should create a new tag when the draft row is saved', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'a new tag',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 1234,
+    describe('with editable user and loaded taxonomy', () => {
+      beforeEach(async () => {
+        axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+        renderTagListTable();
+        await waitForRootTag();
       });
-      renderTagListTable();
-      await waitForRootTag();
-      const { creatingRow, input } = await openTopLevelDraftRow();
 
-      fireEvent.change(input, { target: { value: 'a new tag' } });
-      const saveButton = within(creatingRow).getByText('Save');
-      fireEvent.click(saveButton);
-      await waitFor(() => {
-        expect(axiosMock.history.post.length).toBe(1);
-        expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({
-          tag: 'a new tag',
-        }));
+      it('should add draft row when top-level"Add tag" button is clicked', async () => {
+        const { creatingRow } = await openTopLevelDraftRow();
+
+        expect(within(creatingRow).getByText('Cancel')).toBeInTheDocument();
+        expect(within(creatingRow).getByText('Save')).toBeInTheDocument();
       });
-    });
 
-    it('should not create a new tag when the draft row is cancelled', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      renderTagListTable();
-      await waitForRootTag();
-      const { creatingRow, input } = await openTopLevelDraftRow();
-
-      fireEvent.change(input, { target: { value: 'a new tag' } });
-      const cancelButton = within(creatingRow).getByText('Cancel');
-      fireEvent.click(cancelButton);
-      await waitFor(() => {
-        expect(axiosMock.history.post.length).toBe(0);
-        expect(screen.queryByText('a new tag')).not.toBeInTheDocument();
-        expectNoDraftRows();
-      });
-    });
-
-    it('should not create a new tag when the escape button is pressed', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      renderTagListTable();
-      await waitForRootTag();
-      const { input } = await openTopLevelDraftRow();
-
-      fireEvent.change(input, { target: { value: 'a new tag' } });
-      fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
-      await waitFor(() => {
-        expect(axiosMock.history.post.length).toBe(0);
-        expect(screen.queryByText('a new tag')).not.toBeInTheDocument();
-        expectNoDraftRows();
-      });
-    });
-
-    it('should show a loading spinner when saving a new tag', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(() => new Promise(resolve => {
-        setTimeout(() => {
-          resolve([201, {
-            ...tagDefaults,
-            value: 'a new tag',
-            child_count: 0,
-            descendant_count: 0,
-            _id: 1234,
-          }]);
-        }, 100);
-      }));
-      renderTagListTable();
-      await waitForRootTag();
-      const { creatingRow, input } = await openTopLevelDraftRow();
-
-      fireEvent.change(input, { target: { value: 'a new tag' } });
-      const saveButton = within(creatingRow).getByText('Save');
-      fireEvent.click(saveButton);
-      const spinner = await screen.findByRole('status');
-      expect(spinner.textContent).toEqual('Saving...');
-    });
-
-    it('should show a newly created top-level tag without triggering a page refresh', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'a new tag',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 1234,
-      });
-      renderTagListTable();
-      await waitForRootTag();
-      const { creatingRow, input } = await openTopLevelDraftRow();
-
-      fireEvent.change(input, { target: { value: 'a new tag' } });
-      const saveButton = within(creatingRow).getByText('Save');
-      fireEvent.click(saveButton);
-      let newTag;
-      await waitFor(() => {
-        newTag = screen.getByText('a new tag');
-        expect(newTag).toBeInTheDocument();
-      });
-      // expect the new tag to be the first row after the header, that is, the top of the list
-      const rows = screen.getAllByRole('row');
-      expect(rows[1]).toContainElement(newTag);
-      expectNoDraftRows();
-
-      // expect only one get request to have been made, that is, the table should not have been refreshed
-      expect(axiosMock.history.get.length).toBe(1);
-    });
-
-    it('should show a toast message when a new tag is successfully saved', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'a new tag',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 1234,
-      });
-      renderTagListTable();
-      await waitForRootTag();
-      const { creatingRow, input } = await openTopLevelDraftRow();
-
-      fireEvent.change(input, { target: { value: 'a new tag' } });
-      const saveButton = within(creatingRow).getByText('Save');
-      fireEvent.click(saveButton);
-      const toast = await screen.findByText('Tag "a new tag" created successfully');
-      expect(toast).toBeInTheDocument();
-    });
-
-    it('should add a temporary row to the top of the table', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'xyz tag',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 1234,
-      });
-      renderTagListTable();
-      await waitForRootTag();
-      const { creatingRow, input } = await openTopLevelDraftRow();
-
-      fireEvent.change(input, { target: { value: 'xyz tag' } });
-      const saveButton = within(creatingRow).getByText('Save');
-      fireEvent.click(saveButton);
-      // no input row should be in the document
-      await waitFor(() => {
-        expectNoDraftRows();
-      });
-      const temporaryRow = await screen.findByText('xyz tag');
-      expect(temporaryRow).toBeInTheDocument();
-    });
-
-    // temporarily skipped because pagination is not implemented yet
-    it.skip('should refresh the table and remove the temporary row when a pagination button is clicked', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'xyz tag',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 1234,
-      });
-      renderTagListTable();
-      await waitForRootTag();
-      const { creatingRow, input } = await openTopLevelDraftRow();
-
-      fireEvent.change(input, { target: { value: 'xyz tag' } });
-      const saveButton = within(creatingRow).getByText('Save');
-      fireEvent.click(saveButton);
-      const temporaryRow = await screen.findByText('xyz tag');
-      // temporaryRow should be at the top of the table, that is, the first row after the header
-      const rows = screen.getAllByRole('row');
-      expect(rows[1]).toContainElement(temporaryRow);
-
-      // Simulate clicking a pagination button
-      const paginationButton = await screen.findByRole('button', { name: 'Go to page 2' });
-      fireEvent.click(paginationButton);
-
-      await waitFor(() => {
-        // A get request should have refreshed the table data
-        expect(axiosMock.history.get.length).toBeGreaterThan(1);
-        const xyzTagRow = screen.queryByText('xyz tag');
-        expect(xyzTagRow).toBeInTheDocument();
-        // expect the row to not be the first row after the header
-        expect(rows[1]).not.toContainElement(xyzTagRow);
-      });
-    });
-
-    // a bit flaky when ran together with other tests - any way to improve this?
-    it('should allow adding multiple tags consecutively without a page refresh', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(config => {
-        const requestData = JSON.parse(config.data);
-        return [201, {
+      it('should create a new tag when the draft row is saved', async () => {
+        axiosMock.onPost(createTagUrl).reply(201, {
           ...tagDefaults,
-          value: requestData.tag,
+          value: 'a new tag',
           child_count: 0,
           descendant_count: 0,
-          _id: Math.floor(Math.random() * 10000),
-        }];
+          _id: 1234,
+        });
+        const { creatingRow, input } = await openTopLevelDraftRow();
+
+        fireEvent.change(input, { target: { value: 'a new tag' } });
+        const saveButton = within(creatingRow).getByText('Save');
+        fireEvent.click(saveButton);
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toBe(1);
+          expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({
+            tag: 'a new tag',
+          }));
+        });
       });
-      renderTagListTable();
-      await waitForRootTag();
-      let addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      let creatingRow = await screen.findByTestId('creating-top-row');
-      let input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
 
-      fireEvent.change(input, { target: { value: 'Tag A' } });
-      let saveButton = within(creatingRow).getByText('Save');
-      fireEvent.click(saveButton);
-      const tagA = await screen.findByText('Tag A');
-      expect(tagA).toBeInTheDocument();
+      it('should not create a new tag when the draft row is cancelled', async () => {
+        const { creatingRow, input } = await openTopLevelDraftRow();
 
-      addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      creatingRow = await screen.findByTestId('creating-top-row');
-      input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
+        fireEvent.change(input, { target: { value: 'a new tag' } });
+        const cancelButton = within(creatingRow).getByText('Cancel');
+        fireEvent.click(cancelButton);
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toBe(0);
+          expect(screen.queryByText('a new tag')).not.toBeInTheDocument();
+          expectNoDraftRows();
+        });
+      });
 
-      fireEvent.change(input, { target: { value: 'Tag B' } });
-      saveButton = within(creatingRow).getByText('Save');
-      fireEvent.click(saveButton);
-      const tagB = await screen.findByText('Tag B');
-      expect(tagB).toBeInTheDocument();
+      it('should not create a new tag when the escape button is pressed', async () => {
+        const { input } = await openTopLevelDraftRow();
 
-      // expect Tag B to be above Tag A in the list
-      const rows = screen.getAllByRole('row');
-      const tagBRowIndex = rows.findIndex(row => within(row).queryByText('Tag B'));
-      const tagARowIndex = rows.findIndex(row => within(row).queryByText('Tag A'));
-      expect(tagBRowIndex).toBeLessThan(tagARowIndex);
+        fireEvent.change(input, { target: { value: 'a new tag' } });
+        fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toBe(0);
+          expect(screen.queryByText('a new tag')).not.toBeInTheDocument();
+          expectNoDraftRows();
+        });
+      });
+      it('should show a loading spinner when saving a new tag', async () => {
+        axiosMock.onPost(createTagUrl).reply(() => new Promise(resolve => {
+          setTimeout(() => {
+            resolve([201, {
+              ...tagDefaults,
+              value: 'a new tag',
+              child_count: 0,
+              descendant_count: 0,
+              _id: 1234,
+            }]);
+          }, 100);
+        }));
+        const { creatingRow, input } = await openTopLevelDraftRow();
 
-      // no additional get requests should have been made, that is, the table should not have been refreshed
-      expect(axiosMock.history.get.length).toBe(1);
-    });
+        fireEvent.change(input, { target: { value: 'a new tag' } });
+        const saveButton = within(creatingRow).getByText('Save');
+        fireEvent.click(saveButton);
+        const spinner = await screen.findByRole('status');
+        expect(spinner.textContent).toEqual('Saving...');
+      });
 
-    /* Acceptance Criteria:
-    Save is not allowed when the input is empty
-    Given the user is on the taxonomy detail page
-    And that an inline row is displayed at the top of the tag list to add a new tag
-    When the tag name field is empty
-    Then the “Save” button is disabled
-    */
-    it.skip('should disable the Save button when the input is empty', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      renderTagListTable();
-      await waitForRootTag();
-      const addButton = await screen.findByText('Add Tag');
-      addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
-      expect(input).toBeInTheDocument();
-      const saveButton = within(draftRow[1]).getByText('Save');
-      expect(saveButton).toBeDisabled();
-      fireEvent.change(input, { target: { value: 'a new tag' } });
-      expect(saveButton).not.toBeDisabled();
-    });
+      it('should show a newly created top-level tag without triggering a page refresh', async () => {
+        axiosMock.onPost(createTagUrl).reply(201, {
+          ...tagDefaults,
+          value: 'a new tag',
+          child_count: 0,
+          descendant_count: 0,
+          _id: 1234,
+        });
+        const { creatingRow, input } = await openTopLevelDraftRow();
 
-    /* Acceptance Criteria:
+        fireEvent.change(input, { target: { value: 'a new tag' } });
+        const saveButton = within(creatingRow).getByText('Save');
+        fireEvent.click(saveButton);
+        let newTag;
+        await waitFor(() => {
+          newTag = screen.getByText('a new tag');
+          expect(newTag).toBeInTheDocument();
+        });
+        // expect the new tag to be the first row after the header, that is, the top of the list
+        const rows = screen.getAllByRole('row');
+        expect(rows[1]).toContainElement(newTag);
+        expectNoDraftRows();
+
+        // expect only one get request to have been made, that is, the table should not have been refreshed
+        expect(axiosMock.history.get.length).toBe(1);
+      });
+
+      it('should show a toast message when a new tag is successfully saved', async () => {
+        axiosMock.onPost(createTagUrl).reply(201, {
+          ...tagDefaults,
+          value: 'a new tag',
+          child_count: 0,
+          descendant_count: 0,
+          _id: 1234,
+        });
+        const { creatingRow, input } = await openTopLevelDraftRow();
+
+        fireEvent.change(input, { target: { value: 'a new tag' } });
+        const saveButton = within(creatingRow).getByText('Save');
+        fireEvent.click(saveButton);
+        const toast = await screen.findByText('Tag "a new tag" created successfully');
+        expect(toast).toBeInTheDocument();
+      });
+
+      it('should add a temporary row to the top of the table', async () => {
+        axiosMock.onPost(createTagUrl).reply(201, {
+          ...tagDefaults,
+          value: 'xyz tag',
+          child_count: 0,
+          descendant_count: 0,
+          _id: 1234,
+        });
+        const { creatingRow, input } = await openTopLevelDraftRow();
+
+        fireEvent.change(input, { target: { value: 'xyz tag' } });
+        const saveButton = within(creatingRow).getByText('Save');
+        fireEvent.click(saveButton);
+        // no input row should be in the document
+        await waitFor(() => {
+          expectNoDraftRows();
+        });
+        const temporaryRow = await screen.findByText('xyz tag');
+        expect(temporaryRow).toBeInTheDocument();
+      });
+
+      // temporarily skipped because pagination is not implemented yet
+      it.skip('should refresh the table and remove the temporary row when a pagination button is clicked', async () => {
+        axiosMock.onPost(createTagUrl).reply(201, {
+          ...tagDefaults,
+          value: 'xyz tag',
+          child_count: 0,
+          descendant_count: 0,
+          _id: 1234,
+        });
+        const { creatingRow, input } = await openTopLevelDraftRow();
+
+        fireEvent.change(input, { target: { value: 'xyz tag' } });
+        const saveButton = within(creatingRow).getByText('Save');
+        fireEvent.click(saveButton);
+        const temporaryRow = await screen.findByText('xyz tag');
+        // temporaryRow should be at the top of the table, that is, the first row after the header
+        const rows = screen.getAllByRole('row');
+        expect(rows[1]).toContainElement(temporaryRow);
+
+        // Simulate clicking a pagination button
+        const paginationButton = await screen.findByRole('button', { name: 'Go to page 2' });
+        fireEvent.click(paginationButton);
+
+        await waitFor(() => {
+          // A get request should have refreshed the table data
+          expect(axiosMock.history.get.length).toBeGreaterThan(1);
+          const xyzTagRow = screen.queryByText('xyz tag');
+          expect(xyzTagRow).toBeInTheDocument();
+          // expect the row to not be the first row after the header
+          expect(rows[1]).not.toContainElement(xyzTagRow);
+        });
+      });
+
+      // a bit flaky when ran together with other tests - any way to improve this?
+      it('should allow adding multiple tags consecutively without a page refresh', async () => {
+        axiosMock.onPost(createTagUrl).reply(config => {
+          const requestData = JSON.parse(config.data);
+          return [201, {
+            ...tagDefaults,
+            value: requestData.tag,
+            child_count: 0,
+            descendant_count: 0,
+            _id: Math.floor(Math.random() * 10000),
+          }];
+        });
+        let addButton = await screen.findByLabelText('Create Tag');
+        addButton.click();
+        let creatingRow = await screen.findByTestId('creating-top-row');
+        let input = creatingRow.querySelector('input');
+        expect(input).toBeInTheDocument();
+
+        fireEvent.change(input, { target: { value: 'Tag A' } });
+        let saveButton = within(creatingRow).getByText('Save');
+        fireEvent.click(saveButton);
+        const tagA = await screen.findByText('Tag A');
+        expect(tagA).toBeInTheDocument();
+
+        addButton = await screen.findByLabelText('Create Tag');
+        addButton.click();
+        creatingRow = await screen.findByTestId('creating-top-row');
+        input = creatingRow.querySelector('input');
+        expect(input).toBeInTheDocument();
+
+        fireEvent.change(input, { target: { value: 'Tag B' } });
+        saveButton = within(creatingRow).getByText('Save');
+        fireEvent.click(saveButton);
+        const tagB = await screen.findByText('Tag B');
+        expect(tagB).toBeInTheDocument();
+
+        // expect Tag B to be above Tag A in the list
+        const rows = screen.getAllByRole('row');
+        const tagBRowIndex = rows.findIndex(row => within(row).queryByText('Tag B'));
+        const tagARowIndex = rows.findIndex(row => within(row).queryByText('Tag A'));
+        expect(tagBRowIndex).toBeLessThan(tagARowIndex);
+
+        // no additional get requests should have been made, that is, the table should not have been refreshed
+        expect(axiosMock.history.get.length).toBe(1);
+      });
+
+      /* Acceptance Criteria:
+      Save is not allowed when the input is empty
+      Given the user is on the taxonomy detail page
+      And that an inline row is displayed at the top of the tag list to add a new tag
+      When the tag name field is empty
+      Then the “Save” button is disabled
+      */
+      it.skip('should disable the Save button when the input is empty', async () => {
+        const addButton = await screen.findByText('Add Tag');
+        addButton.click();
+        const draftRow = await screen.findAllByRole('row');
+        const input = draftRow[1].querySelector('input');
+        expect(input).toBeInTheDocument();
+        const saveButton = within(draftRow[1]).getByText('Save');
+        expect(saveButton).toBeDisabled();
+        fireEvent.change(input, { target: { value: 'a new tag' } });
+        expect(saveButton).not.toBeDisabled();
+      });
+
+      /* Acceptance Criteria:
     Save is not allowed with input is only whitespace
     Given the user is on the taxonomy detail page
     And that an inline row is displayed at the top of the tag list to add a new tag
     When the tag name field only contains whitespace
     Then the “Save” button is disabled
     */
-    it.skip('should disable the Save button when the input only contains whitespace', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      renderTagListTable();
-      await waitForRootTag();
-      const addButton = await screen.findByText('Add Tag');
-      addButton.click();
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
-      expect(input).toBeInTheDocument();
-      const saveButton = within(draftRow[1]).getByText('Save');
-      expect(saveButton).toBeDisabled();
-      fireEvent.change(input, { target: { value: '   ' } });
-      expect(saveButton).toBeDisabled();
-      fireEvent.change(input, { target: { value: ' a ' } });
-      expect(saveButton).not.toBeDisabled();
-    });
+      it.skip('should disable the Save button when the input only contains whitespace', async () => {
+        const addButton = await screen.findByText('Add Tag');
+        addButton.click();
+        const draftRow = await screen.findAllByRole('row');
+        const input = draftRow[1].querySelector('input');
+        expect(input).toBeInTheDocument();
+        const saveButton = within(draftRow[1]).getByText('Save');
+        expect(saveButton).toBeDisabled();
+        fireEvent.change(input, { target: { value: '   ' } });
+        expect(saveButton).toBeDisabled();
+        fireEvent.change(input, { target: { value: ' a ' } });
+        expect(saveButton).not.toBeDisabled();
+      });
 
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Leading and trailing whitespace is removed from the tag name on save
     Given that the user is viewing the Taxonomy Detail page for a taxonomy
     When the user adds a new tag with the name " Tag A " and saves
@@ -549,34 +518,30 @@ describe('<TagListTable />', () => {
     And the saved tag name does not include leading or trailing whitespace
     */
 
-    it('should trim leading and trailing whitespace from the tag name before save', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'Tag A',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 4567,
+      it('should trim leading and trailing whitespace from the tag name before save', async () => {
+        axiosMock.onPost(createTagUrl).reply(201, {
+          ...tagDefaults,
+          value: 'Tag A',
+          child_count: 0,
+          descendant_count: 0,
+          _id: 4567,
+        });
+
+        fireEvent.click(await screen.findByLabelText('Create Tag'));
+        const draftRow = await screen.findAllByRole('row');
+        const input = draftRow[1].querySelector('input');
+        const saveButton = within(draftRow[1]).getByText('Save');
+
+        fireEvent.change(input, { target: { value: ' Tag A ' } });
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toBe(1);
+          expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({ tag: 'Tag A' }));
+        });
       });
 
-      renderTagListTable();
-      await waitForRootTag();
-
-      fireEvent.click(await screen.findByLabelText('Create Tag'));
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
-      const saveButton = within(draftRow[1]).getByText('Save');
-
-      fireEvent.change(input, { target: { value: ' Tag A ' } });
-      fireEvent.click(saveButton);
-
-      await waitFor(() => {
-        expect(axiosMock.history.post.length).toBe(1);
-        expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({ tag: 'Tag A' }));
-      });
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Save is not allowed with invalid characters
     Given the user is on the taxonomy detail page
     And that an inline row is displayed at the top of the tag list to add a new tag
@@ -585,24 +550,19 @@ describe('<TagListTable />', () => {
     And the user is shown an inline error message indicating that an invalid character has been used
     */
 
-    it.skip('should disable save and show an inline validation error for invalid characters', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      it.skip('should disable save and show an inline validation error for invalid characters', async () => {
+        fireEvent.click(await screen.findByLabelText('Create Tag'));
+        const draftRow = await screen.findAllByRole('row');
+        const input = draftRow[1].querySelector('input');
+        const saveButton = within(draftRow[1]).getByText('Save');
 
-      renderTagListTable();
-      await waitForRootTag();
+        fireEvent.change(input, { target: { value: 'invalid@tag' } });
 
-      fireEvent.click(await screen.findByLabelText('Create Tag'));
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
-      const saveButton = within(draftRow[1]).getByText('Save');
+        expect(saveButton).toBeDisabled();
+        expect(screen.getByText(/invalid character/i)).toBeInTheDocument();
+      });
 
-      fireEvent.change(input, { target: { value: 'invalid@tag' } });
-
-      expect(saveButton).toBeDisabled();
-      expect(screen.getByText(/invalid character/i)).toBeInTheDocument();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Save is not allowed with a duplicate root-level tag name
     Given the user is on the taxonomy detail page
     And that an inline row is displayed at the top of the tag list to add a new tag
@@ -611,27 +571,23 @@ describe('<TagListTable />', () => {
     Then the user is shown an inline error message indicating that the tag name already exists
     */
 
-    it('should show an inline duplicate-name error when the entered root tag already exists', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(400, {
-        error: 'Tag with this name already exists',
+      it('should show an inline duplicate-name error when the entered root tag already exists', async () => {
+        axiosMock.onPost(createTagUrl).reply(400, {
+          error: 'Tag with this name already exists',
+        });
+
+        fireEvent.click(await screen.findByLabelText('Create Tag'));
+        const draftRow = await screen.findAllByRole('row');
+        const input = draftRow[1].querySelector('input');
+        const saveButton = within(draftRow[1]).getByText('Save');
+
+        fireEvent.change(input, { target: { value: 'root tag 1' } });
+        fireEvent.click(saveButton);
+
+        expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
       });
 
-      renderTagListTable();
-      await waitForRootTag();
-
-      fireEvent.click(await screen.findByLabelText('Create Tag'));
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
-      const saveButton = within(draftRow[1]).getByText('Save');
-
-      fireEvent.change(input, { target: { value: 'root tag 1' } });
-      fireEvent.click(saveButton);
-
-      expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Error message will display if the save request fails
     Given the user is on the taxonomy detail page
     And that an inline row is displayed at the top of the tag list to add a new tag
@@ -643,53 +599,46 @@ describe('<TagListTable />', () => {
     And a toast appears to indicate that the tag was not saved
     */
 
-    it.skip('should keep the inline row and show a failure toast when save request fails', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(500, {
-        error: 'Internal server error',
+      it.skip('should keep the inline row and show a failure toast when save request fails', async () => {
+        axiosMock.onPost(createTagUrl).reply(500, {
+          error: 'Internal server error',
+        });
+
+        fireEvent.click(await screen.findByLabelText('Create Tag'));
+        const draftRow = await screen.findAllByRole('row');
+        const input = draftRow[1].querySelector('input');
+        const saveButton = within(draftRow[1]).getByText('Save');
+
+        fireEvent.change(input, { target: { value: 'will fail' } });
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+          const rows = screen.getAllByRole('row');
+          const draftRows = rows.filter(row => row.querySelector('input'));
+          expect(draftRows.length).toBe(1);
+        });
+        expect(await screen.findByText(/not saved|failed/i)).toBeInTheDocument();
+        // expect the input to retain the value that was entered before
+        expect(draftRow[1].querySelector('input').value).toEqual('will fail');
+        // expect a toast message to indicate that the save failed
+        expect(await screen.findByText(/toast/i)).toBeInTheDocument();
+        // expect the new tag to not be in the document outside the input field
+        expect(screen.queryByText('will fail')).not.toBeInTheDocument();
       });
 
-      renderTagListTable();
-      await waitForRootTag();
-
-      fireEvent.click(await screen.findByLabelText('Create Tag'));
-      const draftRow = await screen.findAllByRole('row');
-      const input = draftRow[1].querySelector('input');
-      const saveButton = within(draftRow[1]).getByText('Save');
-
-      fireEvent.change(input, { target: { value: 'will fail' } });
-      fireEvent.click(saveButton);
-
-      await waitFor(() => {
-        const rows = screen.getAllByRole('row');
-        const draftRows = rows.filter(row => row.querySelector('input'));
-        expect(draftRows.length).toBe(1);
-      });
-      expect(await screen.findByText(/not saved|failed/i)).toBeInTheDocument();
-      // expect the input to retain the value that was entered before
-      expect(draftRow[1].querySelector('input').value).toEqual('will fail');
-      // expect a toast message to indicate that the save failed
-      expect(await screen.findByText(/toast/i)).toBeInTheDocument();
-      // expect the new tag to not be in the document outside the input field
-      expect(screen.queryByText('will fail')).not.toBeInTheDocument();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Add only one new tag at a time
     Given the user is on the taxonomy detail page
     And that an inline row is displayed at the top of the tag list to add a new tag
     All Add Tag or Add Subtag buttons are disabled until the user either saves or cancels the new tag
     */
 
-    it.skip('should disable all Add Tag and Add Subtag buttons when the draft row is displayed', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      renderTagListTable();
-      await waitForRootTag();
-
-      fireEvent.click(await screen.findByLabelText('Create Tag'));
-      const addButtons = screen.getAllByText(/Add (Tag|Subtag)/);
-      addButtons.forEach(button => {
-        expect(button).toBeDisabled();
+      it.skip('should disable all Add Tag and Add Subtag buttons when the draft row is displayed', async () => {
+        fireEvent.click(await screen.findByLabelText('Create Tag'));
+        const addButtons = screen.getAllByText(/Add (Tag|Subtag)/);
+        addButtons.forEach(button => {
+          expect(button).toBeDisabled();
+        });
       });
     });
 
@@ -713,25 +662,28 @@ describe('<TagListTable />', () => {
   });
 
   describe('Create a new subtag', () => {
-    /* Acceptance Criteria:
+    describe('with editable user and loaded taxonomy', () => {
+      beforeEach(async () => {
+        axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+        renderTagListTable();
+        await waitForRootTag();
+      });
+
+      /* Acceptance Criteria:
     The user can add a sub-tag using a parent action menu (three dots)
     Given the user is viewing the taxonomy detail page
     And a tag is displayed in the tag list
     When the user opens the actions menu for that tag (three dots)
     Then the user sees an option labeled "Add sub-tag"
     */
-    it('should show an Add sub-tag option in the parent tag actions', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      it('should show an Add sub-tag option in the parent tag actions', async () => {
+        expect(screen.queryAllByText('Add Subtag').length).toBe(0);
+        // user clicks on row actions for root tag 1
+        openActionsMenuForTag('root tag 1');
+        expect(screen.getByText('Add Subtag')).toBeInTheDocument();
+      });
 
-      renderTagListTable();
-      await waitForRootTag();
-      expect(screen.queryAllByText('Add Subtag').length).toBe(0);
-      // user clicks on row actions for root tag 1
-      openActionsMenuForTag('root tag 1');
-      expect(screen.getByText('Add Subtag')).toBeInTheDocument();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Selecting Add sub-tag creates an inline input row beneath the selected tag
     Given the user is on the taxonomy detail page
     And the user is viewing the taxonomy detail page
@@ -742,25 +694,20 @@ describe('<TagListTable />', () => {
     And the row includes a "Cancel" button
     And the row includes a "Save" button
     */
-    it('should render an inline add-subtag row with input, placeholder, and action buttons', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      it('should render an inline add-subtag row with input, placeholder, and action buttons', async () => {
+        const { rows } = await openSubtagDraftRow({ tagName: 'root tag 1' });
+        const draftRows = rows.filter(tableRow => tableRow.querySelector('input'));
+        expect(draftRows[0].querySelector('input')).toBeInTheDocument();
+        // expect the draft row to be directly beneath the parent tag row
+        const parentRowIndex = rows.findIndex(tableRow => within(tableRow).queryByText('root tag 1'));
+        const draftRowIndex = rows.findIndex(tableRow => tableRow.querySelector('input'));
+        expect(draftRowIndex).toBe(parentRowIndex + 1);
+        expect(draftRows[0].querySelector('input')).toBeInTheDocument();
+        expect(within(draftRows[0]).getByText('Cancel')).toBeInTheDocument();
+        expect(within(draftRows[0]).getByText('Save')).toBeInTheDocument();
+      });
 
-      renderTagListTable();
-      await waitForRootTag();
-
-      const { rows } = await openSubtagDraftRow({ tagName: 'root tag 1' });
-      const draftRows = rows.filter(tableRow => tableRow.querySelector('input'));
-      expect(draftRows[0].querySelector('input')).toBeInTheDocument();
-      // expect the draft row to be directly beneath the parent tag row
-      const parentRowIndex = rows.findIndex(tableRow => within(tableRow).queryByText('root tag 1'));
-      const draftRowIndex = rows.findIndex(tableRow => tableRow.querySelector('input'));
-      expect(draftRowIndex).toBe(parentRowIndex + 1);
-      expect(draftRows[0].querySelector('input')).toBeInTheDocument();
-      expect(within(draftRows[0]).getByText('Cancel')).toBeInTheDocument();
-      expect(within(draftRows[0]).getByText('Save')).toBeInTheDocument();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Cancel removes the inline row and does not create a tag
     Given the user is on the taxonomy detail page
     And an inline "Add sub-tag" row is displayed beneath a parent tag
@@ -770,40 +717,30 @@ describe('<TagListTable />', () => {
     And no new sub-tag is created
     And the tag list remains unchanged
     */
-    it('should remove add-subtag row and avoid create request when cancelled', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      it('should remove add-subtag row and avoid create request when cancelled', async () => {
+        const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
+        fireEvent.change(input, { target: { value: 'new subtag' } });
+        fireEvent.click(within(draftRow).getByText('Cancel'));
 
-      renderTagListTable();
-      await waitForRootTag();
-
-      const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
-      fireEvent.change(input, { target: { value: 'new subtag' } });
-      fireEvent.click(within(draftRow).getByText('Cancel'));
-
-      await waitFor(() => {
-        expect(axiosMock.history.post.length).toBe(0);
-        expectNoDraftRows();
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toBe(0);
+          expectNoDraftRows();
+        });
       });
-    });
 
-    it('should remove add-subtag row and avoid create request on escape key', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      it('should remove add-subtag row and avoid create request on escape key', async () => {
+        const { input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
 
-      renderTagListTable();
-      await waitForRootTag();
+        fireEvent.change(input, { target: { value: 'new subtag' } });
+        fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
 
-      const { input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
-
-      fireEvent.change(input, { target: { value: 'new subtag' } });
-      fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
-
-      await waitFor(() => {
-        expect(axiosMock.history.post.length).toBe(0);
-        expectNoDraftRows();
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toBe(0);
+          expectNoDraftRows();
+        });
       });
-    });
 
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Save is not allowed when the input is empty
     Given the user is on the taxonomy detail page
     And an inline "Add sub-tag" row is displayed beneath a parent tag
@@ -811,45 +748,35 @@ describe('<TagListTable />', () => {
     Then "Save" is disabled
     And the user is shown an inline error message indicating the name is required
     */
-    it.skip('should disable Save and show required-name inline error for empty sub-tag input', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      it.skip('should disable Save and show required-name inline error for empty sub-tag input', async () => {
+        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+        const rows = await screen.findAllByRole('row');
+        const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
+        const saveButton = within(draftRow).getByText('Save');
 
-      renderTagListTable();
-      await waitForRootTag();
+        expect(saveButton).toBeDisabled();
+        expect(within(draftRow).getByText(/required|name is required/i)).toBeInTheDocument();
+      });
 
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-      const saveButton = within(draftRow).getByText('Save');
-
-      expect(saveButton).toBeDisabled();
-      expect(within(draftRow).getByText(/required|name is required/i)).toBeInTheDocument();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Save is not allowed with input is only whitespace
     Given the user is on the taxonomy detail page
     And an inline "Add sub-tag" row is displayed beneath a parent tag
     When the user enters only whitespace into the sub-tag name field
     Then "Save" is disabled
     */
-    it.skip('should keep Save disabled for whitespace-only sub-tag input', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      it.skip('should keep Save disabled for whitespace-only sub-tag input', async () => {
+        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+        const rows = await screen.findAllByRole('row');
+        const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
+        const input = draftRow.querySelector('input');
+        const saveButton = within(draftRow).getByText('Save');
 
-      renderTagListTable();
-      await waitForRootTag();
+        fireEvent.change(input, { target: { value: '   ' } });
+        expect(saveButton).toBeDisabled();
+      });
 
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-      const input = draftRow.querySelector('input');
-      const saveButton = within(draftRow).getByText('Save');
-
-      fireEvent.change(input, { target: { value: '   ' } });
-      expect(saveButton).toBeDisabled();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Save is not allowed with invalid characters
     Given the user is on the taxonomy detail page
     And an inline "Add sub-tag" row is displayed beneath a parent tag
@@ -857,24 +784,19 @@ describe('<TagListTable />', () => {
     Then the “Save” button is disabled
     And the user is shown an inline error message indicating that an invalid character has been used
     */
-    it.skip('should disable Save and show invalid-character error for sub-tag input', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      it.skip('should disable Save and show invalid-character error for sub-tag input', async () => {
+        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+        const rows = await screen.findAllByRole('row');
+        const draftRow = rows.find(row => row.querySelector('input'));
+        const input = draftRow.querySelector('input');
+        const saveButton = within(draftRow).getByText('Save');
 
-      renderTagListTable();
-      await waitForRootTag();
+        fireEvent.change(input, { target: { value: 'invalid@name' } });
+        expect(saveButton).toBeDisabled();
+        expect(within(draftRow).getByText(/invalid character/i)).toBeInTheDocument();
+      });
 
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
-      const input = draftRow.querySelector('input');
-      const saveButton = within(draftRow).getByText('Save');
-
-      fireEvent.change(input, { target: { value: 'invalid@name' } });
-      expect(saveButton).toBeDisabled();
-      expect(within(draftRow).getByText(/invalid character/i)).toBeInTheDocument();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Duplicate sub-tag name is not allowed
     Given that a sub-tag name exists under a parent tag
     When a tag name is entered that matches an existing sub-tag name
@@ -882,27 +804,23 @@ describe('<TagListTable />', () => {
     Then the sub-tag is not created
     And the user is shown an inline error message indicating the tag with that name already exists
     */
-    it.skip('should show duplicate-name error and avoid creating duplicate sub-tag', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(400, {
-        error: 'Tag with this name already exists',
+      it.skip('should show duplicate-name error and avoid creating duplicate sub-tag', async () => {
+        axiosMock.onPost(createTagUrl).reply(400, {
+          error: 'Tag with this name already exists',
+        });
+
+        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+        const rows = await screen.findAllByRole('row');
+        const draftRow = rows.find(row => row.querySelector('input'));
+        const input = draftRow.querySelector('input');
+
+        fireEvent.change(input, { target: { value: 'the child tag' } });
+        fireEvent.click(within(draftRow).getByText('Save'));
+
+        expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
       });
 
-      renderTagListTable();
-      await waitForRootTag();
-
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
-      const input = draftRow.querySelector('input');
-
-      fireEvent.change(input, { target: { value: 'the child tag' } });
-      fireEvent.click(within(draftRow).getByText('Save'));
-
-      expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Error message will display if the save request fails
     Given the user is on the taxonomy detail page
     Given an inline "Add sub-tag" row is displayed beneath a parent tag
@@ -913,29 +831,25 @@ describe('<TagListTable />', () => {
     And the inline row remains, so the user can try again or cancel
     And a toast appears to indicate that the tag was not saved
     */
-    it.skip('should keep inline row and show failure feedback when sub-tag save fails', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(500, {
-        error: 'Internal server error',
+      it.skip('should keep inline row and show failure feedback when sub-tag save fails', async () => {
+        axiosMock.onPost(createTagUrl).reply(500, {
+          error: 'Internal server error',
+        });
+
+        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+        const rows = await screen.findAllByRole('row');
+        const draftRow = rows.find(row => row.querySelector('input'));
+        const input = draftRow.querySelector('input');
+        fireEvent.change(input, { target: { value: 'subtag fail' } });
+        fireEvent.click(within(draftRow).getByText('Save'));
+
+        await waitFor(() => {
+          expect(getDraftRows().length).toBe(1);
+        });
+        expect(await screen.findByText(/not saved|failed/i)).toBeInTheDocument();
       });
 
-      renderTagListTable();
-      await waitForRootTag();
-
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(row => row.querySelector('input'));
-      const input = draftRow.querySelector('input');
-      fireEvent.change(input, { target: { value: 'subtag fail' } });
-      fireEvent.click(within(draftRow).getByText('Save'));
-
-      await waitFor(() => {
-        expect(getDraftRows().length).toBe(1);
-      });
-      expect(await screen.findByText(/not saved|failed/i)).toBeInTheDocument();
-    });
-
-    /* Acceptance Criteria:
+      /* Acceptance Criteria:
     Add only one new tag at a time
     Given an inline "Add sub-tag" row is displayed beneath a parent tag
     When the user opens the actions menu for that parent tag or any other parent tag (three dots)
@@ -943,19 +857,15 @@ describe('<TagListTable />', () => {
     Then the existing "Add sub-tag" row is removed
     And a new "Add sub-tag" row is added below the parent
     */
-    it.skip('should move the inline add-subtag row to the latest selected parent', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      it.skip('should move the inline add-subtag row to the latest selected parent', async () => {
+        const addSubtagActions = screen.getAllByText('Add Subtag');
+        fireEvent.click(addSubtagActions[0]);
+        fireEvent.click(addSubtagActions[1]);
 
-      renderTagListTable();
-      await waitForRootTag();
-
-      const addSubtagActions = screen.getAllByText('Add Subtag');
-      fireEvent.click(addSubtagActions[0]);
-      fireEvent.click(addSubtagActions[1]);
-
-      const rows = screen.getAllByRole('row');
-      const draftRows = rows.filter(row => row.querySelector('input'));
-      expect(draftRows.length).toBe(1);
+        const rows = screen.getAllByRole('row');
+        const draftRows = rows.filter(row => row.querySelector('input'));
+        expect(draftRows.length).toBe(1);
+      });
     });
 
     /* Acceptance Criteria:
@@ -1087,140 +997,135 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     expect(noFoundComponent).toBeInTheDocument();
   });
 
-  /* Acceptance Criteria:
-  Saving a tag with a name creates the sub-tag beneath the parent tag
-  Given the user is on the taxonomy detail page
-  And an inline "Add sub-tag" row is displayed beneath a parent tag
-  When the user enters a valid sub-tag name
-  And the user selects "Save"
-  Then a new sub-tag is created under the selected parent tag
-  And the new sub-tag appears in the tag list beneath the parent tag
-  And the new sub-tag is indented
-  And the inline input row is no longer displayed
-  */
-  it('should create and render a new sub-tag under the selected parent', async () => {
-    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-    axiosMock.onPost(createTagUrl).reply(201, {
-      ...tagDefaults,
-      value: 'child-new',
-      child_count: 0,
-      descendant_count: 0,
-      _id: 2222,
-      parent_value: 'root tag 1',
+  describe('with loaded root tags', () => {
+    beforeEach(async () => {
+      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      renderTagListTable();
+      await waitForRootTag();
     });
 
-    renderTagListTable();
-    await waitForRootTag();
-    const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
-
-    fireEvent.change(input, { target: { value: 'child-new' } });
-    fireEvent.click(within(draftRow).getByText('Save'));
-
-    await waitFor(() => {
-      expect(screen.getByText('child-new')).toBeInTheDocument();
-      expectNoDraftRows();
-    });
-  });
-
-  /* Acceptance Criteria:
-  New tag appears without refreshing the page
-  Given an inline "Add sub-tag" row is displayed beneath a parent tag
-  When a tag name is successfully added
-  Then the new sub-tag appears in the list without a page refresh
-  And the table does not get refreshed (no additional get request is made)
-  */
-  it('should show a newly created sub-tag without triggering a page refresh', async () => {
-    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-    axiosMock.onPost(createTagUrl).reply(201, {
-      ...tagDefaults,
-      value: 'child appears immediately',
-      child_count: 0,
-      descendant_count: 0,
-      _id: 3333,
-      parent_value: 'root tag 1',
-    });
-
-    renderTagListTable();
-    await waitForRootTag();
-
-    const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
-    fireEvent.change(input, { target: { value: 'child appears immediately' } });
-    expect(screen.queryByText('child appears immediately')).toBeNull();
-    fireEvent.click(within(draftRow).getByText('Save'));
-
-    await waitFor(() => {
-      expect(screen.queryByText('child appears immediately')).toBeInTheDocument();
-    });
-    expect(axiosMock.history.get.length).toBe(1);
-  });
-
-  /* Acceptance Criteria:
-    User can add a sub-tag as child of a sub-tag (nested sub-tags)
+    /* Acceptance Criteria:
+    Saving a tag with a name creates the sub-tag beneath the parent tag
     Given the user is on the taxonomy detail page
-    And the user has opened the actions menu for a sub-tag
-    When the user selects "Add sub-tag" from the sub-tag's actions menu
-    Then an inline row is displayed directly beneath the sub-tag
-    And the user can enter a name and save to create a new nested sub-tag
+    And an inline "Add sub-tag" row is displayed beneath a parent tag
+    When the user enters a valid sub-tag name
+    And the user selects "Save"
+    Then a new sub-tag is created under the selected parent tag
+    And the new sub-tag appears in the tag list beneath the parent tag
+    And the new sub-tag is indented
+    And the inline input row is no longer displayed
     */
-  it('should allow adding a nested sub-tag under a sub-tag', async () => {
-    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-    axiosMock.onPost(createTagUrl).reply(201, {
-      ...tagDefaults,
-      value: 'nested child',
-      child_count: 0,
-      descendant_count: 0,
-      _id: 4444,
-      parent_value: 'the child tag',
+    it('should create and render a new sub-tag under the selected parent', async () => {
+      axiosMock.onPost(createTagUrl).reply(201, {
+        ...tagDefaults,
+        value: 'child-new',
+        child_count: 0,
+        descendant_count: 0,
+        _id: 2222,
+        parent_value: 'root tag 1',
+      });
+
+      const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
+
+      fireEvent.change(input, { target: { value: 'child-new' } });
+      fireEvent.click(within(draftRow).getByText('Save'));
+
+      await waitFor(() => {
+        expect(screen.getByText('child-new')).toBeInTheDocument();
+        expectNoDraftRows();
+      });
     });
 
-    renderTagListTable(3);
-    await waitForRootTag();
-    const expandButton = screen.getAllByLabelText('Show Subtags')[0];
-    fireEvent.click(expandButton);
-
-    await screen.findByText('the child tag');
-    const { input } = await openSubtagDraftRow({
-      tagName: 'the child tag',
-      actionButtonName: /more actions for tag the child tag/i,
-    });
-    fireEvent.change(input, { target: { value: 'nested child' } });
-    fireEvent.click(within(input.closest('tr')).getByText('Save'));
-
-    expect(await screen.findByText('nested child')).toBeInTheDocument();
-  });
-
-  /* Acceptance Criteria:
-    Nested sub-tags save and display correctly without refreshing the page
-    Given an inline "Add sub-tag" row is displayed beneath a sub-tag
+    /* Acceptance Criteria:
+    New tag appears without refreshing the page
+    Given an inline "Add sub-tag" row is displayed beneath a parent tag
     When a tag name is successfully added
-    Then the new nested sub-tag appears in the list without a page refresh
+    Then the new sub-tag appears in the list without a page refresh
     And the table does not get refreshed (no additional get request is made)
     */
-  it('should show a newly created nested sub-tag without triggering a page refresh', async () => {
-    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-    axiosMock.onPost(createTagUrl).reply(201, {
-      ...tagDefaults,
-      value: 'nested child appears immediately',
-      child_count: 0,
-      descendant_count: 0,
-      _id: 5555,
-      parent_value: 'the child tag',
+    it('should show a newly created sub-tag without triggering a page refresh', async () => {
+      axiosMock.onPost(createTagUrl).reply(201, {
+        ...tagDefaults,
+        value: 'child appears immediately',
+        child_count: 0,
+        descendant_count: 0,
+        _id: 3333,
+        parent_value: 'root tag 1',
+      });
+
+      const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
+      fireEvent.change(input, { target: { value: 'child appears immediately' } });
+      expect(screen.queryByText('child appears immediately')).toBeNull();
+      fireEvent.click(within(draftRow).getByText('Save'));
+
+      await waitFor(() => {
+        expect(screen.queryByText('child appears immediately')).toBeInTheDocument();
+      });
+      expect(axiosMock.history.get.length).toBe(1);
     });
 
-    renderTagListTable(3);
-    await waitForRootTag();
-    const expandButton = screen.getAllByLabelText('Show Subtags')[0];
-    fireEvent.click(expandButton);
-    await screen.findByText('the child tag');
+    /* Acceptance Criteria:
+      User can add a sub-tag as child of a sub-tag (nested sub-tags)
+      Given the user is on the taxonomy detail page
+      And the user has opened the actions menu for a sub-tag
+      When the user selects "Add sub-tag" from the sub-tag's actions menu
+      Then an inline row is displayed directly beneath the sub-tag
+      And the user can enter a name and save to create a new nested sub-tag
+      */
+    it('should allow adding a nested sub-tag under a sub-tag', async () => {
+      axiosMock.onPost(createTagUrl).reply(201, {
+        ...tagDefaults,
+        value: 'nested child',
+        child_count: 0,
+        descendant_count: 0,
+        _id: 4444,
+        parent_value: 'the child tag',
+      });
 
-    const { draftRow, input } = await openSubtagDraftRow({ tagName: 'the child tag' });
-    fireEvent.change(input, { target: { value: 'nested child appears immediately' } });
+      const expandButton = screen.getAllByLabelText('Show Subtags')[0];
+      fireEvent.click(expandButton);
 
-    const saveButton = within(draftRow).getByText('Save');
+      await screen.findByText('the child tag');
+      const { input } = await openSubtagDraftRow({
+        tagName: 'the child tag',
+        actionButtonName: /more actions for tag the child tag/i,
+      });
+      fireEvent.change(input, { target: { value: 'nested child' } });
+      fireEvent.click(within(input.closest('tr')).getByText('Save'));
 
-    fireEvent.click(saveButton);
+      expect(await screen.findByText('nested child')).toBeInTheDocument();
+    });
 
-    expect(await screen.findByText('nested child appears immediately')).toBeInTheDocument();
-    expect(axiosMock.history.get.length).toBe(1);
+    /* Acceptance Criteria:
+      Nested sub-tags save and display correctly without refreshing the page
+      Given an inline "Add sub-tag" row is displayed beneath a sub-tag
+      When a tag name is successfully added
+      Then the new nested sub-tag appears in the list without a page refresh
+      And the table does not get refreshed (no additional get request is made)
+      */
+    it('should show a newly created nested sub-tag without triggering a page refresh', async () => {
+      axiosMock.onPost(createTagUrl).reply(201, {
+        ...tagDefaults,
+        value: 'nested child appears immediately',
+        child_count: 0,
+        descendant_count: 0,
+        _id: 5555,
+        parent_value: 'the child tag',
+      });
+
+      const expandButton = screen.getAllByLabelText('Show Subtags')[0];
+      fireEvent.click(expandButton);
+      await screen.findByText('the child tag');
+
+      const { draftRow, input } = await openSubtagDraftRow({ tagName: 'the child tag' });
+      fireEvent.change(input, { target: { value: 'nested child appears immediately' } });
+
+      const saveButton = within(draftRow).getByText('Save');
+
+      fireEvent.click(saveButton);
+
+      expect(await screen.findByText('nested child appears immediately')).toBeInTheDocument();
+      expect(axiosMock.history.get.length).toBe(1);
+    });
   });
 });
