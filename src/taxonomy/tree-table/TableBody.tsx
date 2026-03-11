@@ -28,6 +28,7 @@ interface TableBodyProps {
   createRowMutation: CreateRowMutationState;
   table: TreeTable;
   isLoading: boolean;
+  validate: (value: string, mode?: 'soft' | 'hard') => boolean;
 }
 
 const TableBody = ({
@@ -43,6 +44,7 @@ const TableBody = ({
   createRowMutation,
   table,
   isLoading,
+  validate,
 }: TableBodyProps) => {
   const intl = useIntl();
 
@@ -77,6 +79,7 @@ const TableBody = ({
           exitDraftWithoutSave={exitDraftWithoutSave}
           createRowMutation={createRowMutation}
           columns={columns}
+          validate={validate}
         />
       )}
 
@@ -108,6 +111,7 @@ const TableBody = ({
             createRowMutation={createRowMutation}
             setDraftError={setDraftError}
             setIsCreatingTopRow={setIsCreatingTopRow}
+            validate={validate}
           />
         </React.Fragment>
       ))}

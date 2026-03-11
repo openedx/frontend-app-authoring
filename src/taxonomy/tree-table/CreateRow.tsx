@@ -15,6 +15,7 @@ interface CreateRowProps {
   createRowMutation: CreateRowMutationState;
   columns: TreeColumnDef[];
   indent?: number;
+  validate: (value: string, mode?: 'soft' | 'hard') => boolean;
 }
 
 const CreateRow: React.FC<CreateRowProps> = ({
@@ -26,9 +27,18 @@ const CreateRow: React.FC<CreateRowProps> = ({
   createRowMutation,
   columns,
   indent = 0,
+  validate,
 }) => {
   const [newRowValue, setNewRowValue] = useState('');
   const intl = useIntl();
+  const [saveDisabled, setSaveDisabled] = useState(true);
+
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setNewRowValue(value);
+    const isValid = validate(value, 'soft');
+    setSaveDisabled(!isValid || createRowMutation.isPending || false);
+  };
 
   const handleCancel = () => {
     setDraftError('');
@@ -38,11 +48,11 @@ const CreateRow: React.FC<CreateRowProps> = ({
   };
 
   const handleSave = () => {
-    handleCreateRow(newRowValue);
+    handleCreateRow(newRowValue.trim());
   };
 
   const handleValueCellKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && newRowValue && !createRowMutation.isPending && !draftError) {
+    if (e.key === 'Enter' && newRowValue.trim() && !createRowMutation.isPending && !draftError) {
       e.preventDefault();
       handleSave();
     } else if (e.key === 'Escape') {
@@ -59,9 +69,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
           <EditableCell
             errorMessage={draftError}
             isSaving={createRowMutation.isPending}
-            onChange={(e) => {
-              setNewRowValue(e.target.value);
-            }}
+            onChange={handleValueChange}
             onKeyDown={handleValueCellKeyPress}
             autoFocus
           />
@@ -82,7 +90,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
             </Button>
           </span>
           <span className="mr-2">
-            <Button variant="primary" size="sm" onClick={handleSave} disabled={!newRowValue || createRowMutation.isPending}>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={saveDisabled}>
               {intl.formatMessage(messages.saveButtonLabel)}
             </Button>
           </span>

@@ -112,11 +112,24 @@ const useEditActions = ({
     });
   };
 
+  const validate = (value: string, mode: 'soft' | 'hard' = 'hard'): boolean => {
+    const validationError = getInlineValidationMessage(value, intl);
+    if (validationError) {
+      if (mode === 'hard') {
+        throw new Error(validationError);
+      }
+      setDraftError(validationError);
+      return false;
+    }
+
+    setDraftError('');
+    return true;
+  };
+
   const handleCreateTag = async (value: string, parentTagValue?: string) => {
     const trimmed = value.trim();
-    const validationError = getInlineValidationMessage(trimmed, intl);
-    if (validationError) {
-      setDraftError(validationError);
+
+    if (!validate(trimmed, 'soft')) {
       return;
     }
 
@@ -152,7 +165,12 @@ const useEditActions = ({
     setEditingRowId(null);
   };
 
-  return { updateTableWithoutDataReload, handleCreateTag, handleUpdateTag };
+  return {
+    updateTableWithoutDataReload,
+    handleCreateTag,
+    handleUpdateTag,
+    validate,
+  };
 };
 
 export { useTableModes, useEditActions };

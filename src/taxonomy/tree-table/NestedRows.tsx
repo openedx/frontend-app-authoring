@@ -22,6 +22,7 @@ interface NestedRowsProps {
   setCreatingParentId?: (value: RowId | null) => void;
   setIsCreatingTopRow: (isCreating: boolean) => void;
   createRowMutation: CreateRowMutationState;
+  validate: (value: string, mode?: 'soft' | 'hard') => boolean;
 }
 
 const NestedRows = ({
@@ -38,6 +39,7 @@ const NestedRows = ({
   setCreatingParentId = () => {},
   setIsCreatingTopRow,
   createRowMutation,
+  validate,
 }: NestedRowsProps) => {
   if (!parentRow.getIsExpanded()) {
     return null;
@@ -56,6 +58,7 @@ const NestedRows = ({
           createRowMutation={createRowMutation}
           columns={[]}
           indent={indent}
+          validate={validate}
         />
       )}
       {childRowsData?.map(row => {
@@ -101,6 +104,7 @@ const NestedRows = ({
               setDraftError={setDraftError}
               setIsCreatingTopRow={setIsCreatingTopRow}
               createRowMutation={createRowMutation}
+              validate={validate}
             />
           </React.Fragment>
         );

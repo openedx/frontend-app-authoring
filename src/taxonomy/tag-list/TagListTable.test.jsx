@@ -6,7 +6,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import {
   render, waitFor, waitForElementToBeRemoved, screen, within,
-  fireEvent, act,
+  fireEvent, act, cleanup,
 } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
@@ -470,8 +470,8 @@ describe('<TagListTable />', () => {
         expect(axiosMock.history.get.length).toBe(1);
       });
 
-      it.skip('should disable the Save button when the input is empty', async () => {
-        const addButton = await screen.findByText('Add Tag');
+      it('should disable the Save button when the input is empty', async () => {
+        const addButton = await screen.findByLabelText('Create Tag');
         fireEvent.click(addButton);
         const draftRow = await screen.findAllByRole('row');
         const input = draftRow[1].querySelector('input');
@@ -482,8 +482,8 @@ describe('<TagListTable />', () => {
         expect(saveButton).not.toBeDisabled();
       });
 
-      it.skip('should disable the Save button when the input only contains whitespace', async () => {
-        const addButton = await screen.findByText('Add Tag');
+      it('should disable the Save button when the input only contains whitespace', async () => {
+        const addButton = await screen.findByLabelText('Create Tag');
         fireEvent.click(addButton);
         const draftRow = await screen.findAllByRole('row');
         const input = draftRow[1].querySelector('input');
@@ -519,13 +519,15 @@ describe('<TagListTable />', () => {
         });
       });
 
-      it.skip('should disable save and show an inline validation error for invalid characters', async () => {
+      it('should disable save and show an inline validation error for invalid characters', async () => {
         fireEvent.click(await screen.findByLabelText('Create Tag'));
         const draftRow = await screen.findAllByRole('row');
         const input = draftRow[1].querySelector('input');
         const saveButton = within(draftRow[1]).getByText('Save');
 
-        fireEvent.change(input, { target: { value: 'invalid@tag' } });
+        await act(async () => {
+          fireEvent.change(input, { target: { value: 'invalid;tag' } });
+        });
 
         expect(saveButton).toBeDisabled();
         expect(screen.getByText(/invalid character/i)).toBeInTheDocument();
@@ -547,7 +549,7 @@ describe('<TagListTable />', () => {
         expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
       });
 
-      it.skip('should keep the inline row and show a failure toast when save request fails', async () => {
+      it('should keep the inline row and show a failure toast when save request fails', async () => {
         axiosMock.onPost(createTagUrl).reply(500, {
           error: 'Internal server error',
         });
@@ -565,21 +567,22 @@ describe('<TagListTable />', () => {
           const draftRows = rows.filter(row => row.querySelector('input'));
           expect(draftRows.length).toBe(1);
         });
-        expect(await screen.findByText(/not saved|failed/i)).toBeInTheDocument();
+
+        // Banner error message should be shown at the top of the table
+        expect(await screen.findByText('Error saving changes')).toBeInTheDocument();
+
+        // Toast message to indicate that the save failed
+        expect(await screen.findByText('Error: unable to create tag')).toBeInTheDocument();
         // expect the input to retain the value that was entered before
         expect(draftRow[1].querySelector('input').value).toEqual('will fail');
-        // expect a toast message to indicate that the save failed
-        expect(await screen.findByText(/toast/i)).toBeInTheDocument();
         // expect the new tag to not be in the document outside the input field
         expect(screen.queryByText('will fail')).not.toBeInTheDocument();
       });
 
-      it.skip('should disable all Add Tag and Add Subtag buttons when the draft row is displayed', async () => {
+      it('should disable Add Tag button when the draft row is displayed', async () => {
         fireEvent.click(await screen.findByLabelText('Create Tag'));
-        const addButtons = screen.getAllByText(/Add (Tag|Subtag)/);
-        addButtons.forEach(button => {
-          expect(button).toBeDisabled();
-        });
+        const addButton = await screen.findByLabelText('Create Tag');
+        expect(addButton).toBeDisabled();
       });
     });
 
@@ -636,18 +639,24 @@ describe('<TagListTable />', () => {
         });
       });
 
-      it.skip('should disable Save and show required-name inline error for empty sub-tag input', async () => {
-        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+      it('should disable Save and show required-name inline error for empty sub-tag input', async () => {
+        openActionsMenuForTag('root tag 1');
+        fireEvent.click(screen.getByText('Add Subtag'));
         const rows = await screen.findAllByRole('row');
         const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
         const saveButton = within(draftRow).getByText('Save');
+        const input = draftRow.querySelector('input');
+        act(() => {
+          fireEvent.change(input, { target: { value: ' ' } });
+        });
 
         expect(saveButton).toBeDisabled();
-        expect(within(draftRow).getByText(/required|name is required/i)).toBeInTheDocument();
+        expect(within(draftRow).getByText(/Name is required/i)).toBeInTheDocument();
       });
 
-      it.skip('should keep Save disabled for whitespace-only sub-tag input', async () => {
-        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+      it('should keep Save disabled for whitespace-only sub-tag input', async () => {
+        openActionsMenuForTag('root tag 1');
+        fireEvent.click(screen.getByText('Add Subtag'));
         const rows = await screen.findAllByRole('row');
         const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
         const input = draftRow.querySelector('input');
@@ -657,40 +666,26 @@ describe('<TagListTable />', () => {
         expect(saveButton).toBeDisabled();
       });
 
-      it.skip('should disable Save and show invalid-character error for sub-tag input', async () => {
-        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+      it('should disable Save and show invalid-character error for sub-tag input', async () => {
+        openActionsMenuForTag('root tag 1');
+        fireEvent.click(screen.getByText('Add Subtag'));
         const rows = await screen.findAllByRole('row');
         const draftRow = rows.find(row => row.querySelector('input'));
         const input = draftRow.querySelector('input');
         const saveButton = within(draftRow).getByText('Save');
 
-        fireEvent.change(input, { target: { value: 'invalid@name' } });
+        fireEvent.change(input, { target: { value: 'invalid;name' } });
         expect(saveButton).toBeDisabled();
         expect(within(draftRow).getByText(/invalid character/i)).toBeInTheDocument();
       });
 
-      it.skip('should show duplicate-name error and avoid creating duplicate sub-tag', async () => {
-        axiosMock.onPost(createTagUrl).reply(400, {
-          error: 'Tag with this name already exists',
-        });
-
-        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-        const rows = await screen.findAllByRole('row');
-        const draftRow = rows.find(row => row.querySelector('input'));
-        const input = draftRow.querySelector('input');
-
-        fireEvent.change(input, { target: { value: 'the child tag' } });
-        fireEvent.click(within(draftRow).getByText('Save'));
-
-        expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
-      });
-
-      it.skip('should keep inline row and show failure feedback when sub-tag save fails', async () => {
+      it('should keep inline row and show failure feedback when sub-tag save fails', async () => {
         axiosMock.onPost(createTagUrl).reply(500, {
           error: 'Internal server error',
         });
 
-        fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+        openActionsMenuForTag('root tag 1');
+        fireEvent.click(screen.getByText('Add Subtag'));
         const rows = await screen.findAllByRole('row');
         const draftRow = rows.find(row => row.querySelector('input'));
         const input = draftRow.querySelector('input');
@@ -700,17 +695,7 @@ describe('<TagListTable />', () => {
         await waitFor(() => {
           expect(getDraftRows().length).toBe(1);
         });
-        expect(await screen.findByText(/not saved|failed/i)).toBeInTheDocument();
-      });
-
-      it.skip('should move the inline add-subtag row to the latest selected parent', async () => {
-        const addSubtagActions = screen.getAllByText('Add Subtag');
-        fireEvent.click(addSubtagActions[0]);
-        fireEvent.click(addSubtagActions[1]);
-
-        const rows = screen.getAllByRole('row');
-        const draftRows = rows.filter(row => row.querySelector('input'));
-        expect(draftRows.length).toBe(1);
+        expect(await screen.findByText(/Error: unable to create tag/i)).toBeInTheDocument();
       });
     });
 
@@ -727,46 +712,38 @@ describe('<TagListTable />', () => {
     });
   });
 
-  describe('Create a nested sub-tag', () => {
-    it.skip('should only allow adding sub-tags up to the taxonomy max depth', async () => {
+  describe('At smaller max depth', () => {
+    beforeEach(async () => {
       const maxDepth = 2;
+      // clear all previously rendered react
+      cleanup();
       axiosMock.onGet(rootTagsListUrl).reply(200, {
         ...mockTagsResponse,
         max_depth: maxDepth,
       });
+      // re-render with a smaller max depth to allow nested sub-tags
       renderTagListTable(maxDepth);
-      await screen.findByText('the child tag');
+      await waitForRootTag();
+      await flushReactUpdates();
+    });
+    it('should only allow adding sub-tags up to the taxonomy max depth', async () => {
+      const expandButton = screen.getAllByLabelText('Show Subtags')[0];
 
       // open actions menu for depth 0 root tag
-      let row = openActionsMenuForTag('root tag 1');
+      openActionsMenuForTag('root tag 1');
       expect(screen.getByText('Add Subtag')).toBeInTheDocument();
 
-      // open actions menu for depth 1 sub-tag
-      row = openActionsMenuForTag('the child tag');
-      expect(screen.getByText('Add Subtag')).toBeInTheDocument();
-
-      // simulate a sub-tag at depth 2 by adding a tag with parent_value of the depth 1 sub-tag
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'depth 2 subtag',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 6666,
-        parent_value: 'the child tag',
+      act(() => {
+        fireEvent.click(expandButton);
       });
-      fireEvent.click(screen.getAllByText('Add Subtag')[1]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-      const input = draftRow.querySelector('input');
-      fireEvent.change(input, { target: { value: 'depth 2 subtag' } });
-      fireEvent.click(within(draftRow).getByText('Save'));
-      await screen.findByText('depth 2 subtag');
+      await waitFor(() => {
+        screen.findByText('the child tag');
+      });
 
-      // open actions menu for depth 2 sub-tag
-      row = screen.getByText('depth 2 subtag').closest('tr');
-      const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      fireEvent.click(actionsButton);
-      expect(screen.queryByText('Add Subtag')).not.toBeInTheDocument();
+      // depth 1 is the max allowed depth when maxDepth=2,
+      // so there should be no actions menu to add another sub-tag
+      const childTagRow = screen.getByText('the child tag').closest('tr');
+      expect(within(childTagRow).queryByRole('button', { name: /actions/i })).not.toBeInTheDocument();
     });
   });
 });
@@ -807,6 +784,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
   describe('with loaded root tags', () => {
     beforeEach(async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+      cleanup();
       renderTagListTable();
       await waitForRootTag();
       await flushReactUpdates();

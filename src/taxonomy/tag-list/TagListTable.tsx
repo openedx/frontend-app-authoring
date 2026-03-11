@@ -74,7 +74,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
 
   // Custom Edit Actions Hook - handles table mode transitions, API calls,
   // and updating the table without a full data reload when creating or editing tags.
-  const { handleCreateTag, handleUpdateTag } = useEditActions({
+  const { handleCreateTag, handleUpdateTag, validate } = useEditActions({
     setTagTree,
     setDraftError,
     createTagMutation,
@@ -156,6 +156,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
         creatingParentId,
         setCreatingParentId,
         setDraftError,
+        validate,
       }}
     />
   );
