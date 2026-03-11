@@ -13,6 +13,8 @@ const CourseUpdate = ({
   onEdit,
   onDelete,
   isDisabledButtons,
+  canEdit,
+  canDelete,
 }) => {
   const intl = useIntl();
 
@@ -27,22 +29,28 @@ const CourseUpdate = ({
           </div>
         )}
         <div className="course-update-header__action">
-          <IconButtonWithTooltip
-            tooltipContent={intl.formatMessage(messages.editButton)}
-            src={EditOutline}
-            iconAs={Icon}
-            disabled={isDisabledButtons}
-            data-testid="course-update-edit-button"
-            onClick={onEdit}
-          />
-          <IconButtonWithTooltip
-            tooltipContent={intl.formatMessage(messages.deleteButton)}
-            src={DeleteOutline}
-            iconAs={Icon}
-            disabled={isDisabledButtons}
-            data-testid="course-update-delete-button"
-            onClick={onDelete}
-          />
+          {canEdit && (
+            <IconButtonWithTooltip
+              aria-label={intl.formatMessage(messages.editButton)}
+              tooltipContent={intl.formatMessage(messages.editButton)}
+              src={EditOutline}
+              iconAs={Icon}
+              disabled={isDisabledButtons}
+              data-testid="course-update-edit-button"
+              onClick={onEdit}
+            />
+          )}
+          {canDelete && (
+            <IconButtonWithTooltip
+              aria-label={intl.formatMessage(messages.deleteButton)}
+              tooltipContent={intl.formatMessage(messages.deleteButton)}
+              src={DeleteOutline}
+              iconAs={Icon}
+              disabled={isDisabledButtons}
+              data-testid="course-update-delete-button"
+              onClick={onDelete}
+            />
+          )}
         </div>
       </div>
       {Boolean(contentForUpdate) && (
@@ -63,6 +71,13 @@ CourseUpdate.propTypes = {
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   isDisabledButtons: PropTypes.bool.isRequired,
+  canEdit: PropTypes.bool,
+  canDelete: PropTypes.bool,
+};
+
+CourseUpdate.defaultProps = {
+  canEdit: true,
+  canDelete: true,
 };
 
 export default CourseUpdate;
