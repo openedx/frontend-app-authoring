@@ -1,4 +1,5 @@
 import {
+  Bubble,
   Button,
   Icon,
   IconButton,
@@ -24,6 +25,7 @@ interface TagListRowData extends TreeRowData {
   depth: number;
   childCount: number;
   descendantCount: number;
+  usageCount: number;
   isNew?: boolean;
   isEditing?: boolean;
 }
@@ -47,6 +49,12 @@ interface GetColumnsArgs {
   creatingParentId: RowId | null;
 }
 
+const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
+  const count = asTagListRowData(row).usageCount ?? 0
+  return (count > 0 && <Bubble expandable={true}>
+    {count}
+  </Bubble>)
+};
 interface ActionsHeaderProps {
   onStartDraft: () => void;
   setDraftError: (error: string) => void;
@@ -152,6 +160,11 @@ function getColumns({
           </span>
         );
       },
+    },
+    {
+      id: 'count',
+      header: intl.formatMessage(messages.tagListColumnCountHeader),
+      cell: UsageCountDisplay,
     },
     {
       id: 'actions',

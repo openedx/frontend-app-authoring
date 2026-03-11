@@ -61,6 +61,7 @@ const mockTagsResponse = {
       descendant_count: 14,
       _id: 1001,
       sub_tags_url: '/request/to/load/subtags/1',
+      usage_count: 1,
     },
     {
       ...tagDefaults,
@@ -69,6 +70,7 @@ const mockTagsResponse = {
       descendant_count: 10,
       _id: 1002,
       sub_tags_url: '/request/to/load/subtags/2',
+      usage_count: 0,
     },
     {
       ...tagDefaults,
@@ -77,6 +79,7 @@ const mockTagsResponse = {
       descendant_count: 5,
       _id: 1003,
       sub_tags_url: '/request/to/load/subtags/3',
+      usage_count: 3,
     },
     {
       ...tagDefaults,
@@ -86,6 +89,7 @@ const mockTagsResponse = {
       _id: 1111,
       sub_tags_url: null,
       parent_value: 'root tag 1',
+      usage_count: 1,
     },
     {
       ...tagDefaults,
@@ -95,6 +99,7 @@ const mockTagsResponse = {
       _id: 1111,
       sub_tags_url: null,
       parent_value: 'the child tag',
+      usage_count: 1,
     },
   ],
 };

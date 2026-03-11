@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.column.value.header',
     defaultMessage: 'Tag name',
   },
+  tagListColumnCountHeader: {
+    id: 'course-authoring.tag-list.column.count.header',
+    defaultMessage: 'Usage Count',
+  },
   tagListError: {
     id: 'course-authoring.tag-list.error',
     defaultMessage: 'Error: unable to load child tags',
