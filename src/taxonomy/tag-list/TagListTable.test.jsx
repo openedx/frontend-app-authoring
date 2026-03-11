@@ -17,6 +17,16 @@ import TagListTable from './TagListTable';
 let store;
 let axiosMock;
 const queryClient = new QueryClient();
+const adminUser = {
+  userId: 3,
+  username: 'abc123',
+  administrator: true,
+  roles: [],
+};
+const nonAdminUser = {
+  ...adminUser,
+  administrator: false,
+};
 
 const RootWrapper = ({ maxDepth = 3 }) => (
   <AppProvider store={store}>
@@ -116,15 +126,54 @@ const subTagsResponse = {
 const subTagsUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
 const createTagUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/';
 
+const renderTagListTable = (maxDepth = 3) => render(<RootWrapper maxDepth={maxDepth} />);
+
+const waitForRootTag = async () => {
+  const tag = await screen.findByText('root tag 1');
+  expect(tag).toBeInTheDocument();
+  return tag;
+};
+
+const getDraftRows = () => screen.getAllByRole('row').filter(row => row.querySelector('input'));
+
+const expectNoDraftRows = () => {
+  expect(getDraftRows().length).toBe(0);
+};
+
+const openTopLevelDraftRow = async () => {
+  const addButton = await screen.findByLabelText('Create Tag');
+  addButton.click();
+  const creatingRow = await screen.findByTestId('creating-top-row');
+  const input = creatingRow.querySelector('input');
+  expect(input).toBeInTheDocument();
+  return { creatingRow, input };
+};
+
+const openActionsMenuForTag = (tagName, actionButtonName = /actions/i) => {
+  const row = screen.getByText(tagName).closest('tr');
+  const actionsButton = within(row).getByRole('button', { name: actionButtonName });
+  fireEvent.click(actionsButton);
+  return row;
+};
+
+const openSubtagDraftRow = async ({
+  tagName,
+  actionButtonName = /actions/i,
+  addSubtagIndex = 0,
+}) => {
+  openActionsMenuForTag(tagName, actionButtonName);
+  fireEvent.click(screen.getAllByText('Add Subtag')[addSubtagIndex]);
+  const rows = await screen.findAllByRole('row');
+  const draftRow = rows.find(row => row.querySelector('input'));
+  const input = draftRow.querySelector('input');
+  expect(input).toBeInTheDocument();
+  return { rows, draftRow, input };
+};
+
 describe('<TagListTable />', () => {
   beforeAll(async () => {
     initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
+      authenticatedUser: adminUser,
     });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
@@ -136,7 +185,7 @@ describe('<TagListTable />', () => {
   it('has a valid tr -> td structure when the table is expanded to show subtags', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
-    render(<RootWrapper />);
+    renderTagListTable();
     const expandButton = screen.getAllByText('Expand All')[0];
     expandButton.click();
     const childTag = await screen.findByText('the child tag');
@@ -150,9 +199,8 @@ describe('<TagListTable />', () => {
 
   it('should render page correctly', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-    render(<RootWrapper />);
-    const tag = await screen.findByText('root tag 1');
-    expect(tag).toBeInTheDocument();
+    renderTagListTable();
+    await waitForRootTag();
 
     const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(3 + 1); // 3 items plus header
@@ -163,7 +211,7 @@ describe('<TagListTable />', () => {
   it('should render page correctly with subtags', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
-    render(<RootWrapper />);
+    renderTagListTable();
     const expandButton = await screen.findByLabelText('Show Subtags');
     expandButton.click();
     const childTag = await screen.findByText('the child tag');
@@ -172,7 +220,7 @@ describe('<TagListTable />', () => {
 
   it('should not render pagination footer', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-    render(<RootWrapper />);
+    renderTagListTable();
     await waitFor(() => {
       expect(screen.queryByRole('navigation', {
         name: /table pagination/i,
@@ -182,7 +230,7 @@ describe('<TagListTable />', () => {
 
   it('should render pagination footer', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsPaginationResponse);
-    render(<RootWrapper />);
+    renderTagListTable();
     const tableFooter = await screen.findAllByRole('navigation', {
       name: /table pagination/i,
     });
@@ -191,7 +239,7 @@ describe('<TagListTable />', () => {
 
   it('should render correct number of items in pagination footer', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsPaginationResponse);
-    render(<RootWrapper />);
+    renderTagListTable();
     const paginationButtons = await screen.findByText('Page 1 of 2');
     expect(paginationButtons).toBeInTheDocument();
   });
@@ -199,13 +247,10 @@ describe('<TagListTable />', () => {
   describe('Create a new top-level tag', () => {
     it('should add draft row when top-level"Add tag" button is clicked', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
 
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-row');
+      const { creatingRow } = await openTopLevelDraftRow();
 
       expect(within(creatingRow).getByText('Cancel')).toBeInTheDocument();
       expect(within(creatingRow).getByText('Save')).toBeInTheDocument();
@@ -220,14 +265,9 @@ describe('<TagListTable />', () => {
         descendant_count: 0,
         _id: 1234,
       });
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-row');
-      const input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
+      const { creatingRow, input } = await openTopLevelDraftRow();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
       const saveButton = within(creatingRow).getByText('Save');
@@ -240,26 +280,11 @@ describe('<TagListTable />', () => {
       });
     });
 
-    /* Acceptance Criteria:
-    Cancel removes the inline row and does not create a tag
-      Given the user is on the taxonomy detail page
-      And that an inline row is displayed at the top of the tag list to add a new tag
-      When the user selects the “Cancel” button
-      Or when the user hits “escape” on their keyboard
-      Then the inline row is removed
-      And no new root-level tag is created
-      And the tag list remains unchanged
-    */
     it('should not create a new tag when the draft row is cancelled', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-row');
-      const input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
+      const { creatingRow, input } = await openTopLevelDraftRow();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
       const cancelButton = within(creatingRow).getByText('Cancel');
@@ -267,50 +292,25 @@ describe('<TagListTable />', () => {
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(0);
         expect(screen.queryByText('a new tag')).not.toBeInTheDocument();
-        // expect there to be no draft row, that is, no row should contain an input element
-        const rows = screen.getAllByRole('row');
-        const draftRows = rows.filter(row => row.querySelector('input'));
-        expect(draftRows.length).toBe(0);
+        expectNoDraftRows();
       });
     });
 
     it('should not create a new tag when the escape button is pressed', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-row');
-      const input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
+      const { input } = await openTopLevelDraftRow();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
       fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(0);
         expect(screen.queryByText('a new tag')).not.toBeInTheDocument();
-        // expect there to be no draft row, that is, no row should contain an input element
-        const rows = screen.getAllByRole('row');
-        const draftRows = rows.filter(row => row.querySelector('input'));
-        expect(draftRows.length).toBe(0);
+        expectNoDraftRows();
       });
     });
 
-    /* Acceptance Criteria:
-    Saving creates a new root-level tag
-    Given the user is on the taxonomy detail page
-    And that an inline row is displayed at the top of the tag list to add a new tag
-    When the user enters a tag name
-    And the user selects the “Save” button
-    Or the user hits “return/enter” on their keyboard
-    Then an indicator is displayed to show the save in progress (loading spinner)
-    Then a new root-level tag is created
-    And the current pagination has not changed
-    And the new tag appears in the tag list at the root level at the top
-    And the inline input row, along with the two buttons, is no longer displayed
-    And a toast appears to indicate that the tag was successfully saved
-    */
     it('should show a loading spinner when saving a new tag', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
       axiosMock.onPost(createTagUrl).reply(() => new Promise(resolve => {
@@ -324,14 +324,9 @@ describe('<TagListTable />', () => {
           }]);
         }, 100);
       }));
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-row');
-      const input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
+      const { creatingRow, input } = await openTopLevelDraftRow();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
       const saveButton = within(creatingRow).getByText('Save');
@@ -349,14 +344,9 @@ describe('<TagListTable />', () => {
         descendant_count: 0,
         _id: 1234,
       });
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-row');
-      const input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
+      const { creatingRow, input } = await openTopLevelDraftRow();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
       const saveButton = within(creatingRow).getByText('Save');
@@ -369,9 +359,7 @@ describe('<TagListTable />', () => {
       // expect the new tag to be the first row after the header, that is, the top of the list
       const rows = screen.getAllByRole('row');
       expect(rows[1]).toContainElement(newTag);
-      // expect there to be no draft row, that is, no row should contain an input element
-      const draftRows = rows.filter(tableRow => tableRow.querySelector('input'));
-      expect(draftRows.length).toBe(0);
+      expectNoDraftRows();
 
       // expect only one get request to have been made, that is, the table should not have been refreshed
       expect(axiosMock.history.get.length).toBe(1);
@@ -386,14 +374,9 @@ describe('<TagListTable />', () => {
         descendant_count: 0,
         _id: 1234,
       });
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-row');
-      const input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
+      const { creatingRow, input } = await openTopLevelDraftRow();
 
       fireEvent.change(input, { target: { value: 'a new tag' } });
       const saveButton = within(creatingRow).getByText('Save');
@@ -411,28 +394,22 @@ describe('<TagListTable />', () => {
         descendant_count: 0,
         _id: 1234,
       });
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-row');
-      const input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
+      const { creatingRow, input } = await openTopLevelDraftRow();
 
       fireEvent.change(input, { target: { value: 'xyz tag' } });
       const saveButton = within(creatingRow).getByText('Save');
       fireEvent.click(saveButton);
       // no input row should be in the document
       await waitFor(() => {
-        const rows = screen.getAllByRole('row');
-        const draftRows = rows.filter(row => row.querySelector('input'));
-        expect(draftRows.length).toBe(0);
+        expectNoDraftRows();
       });
       const temporaryRow = await screen.findByText('xyz tag');
       expect(temporaryRow).toBeInTheDocument();
     });
 
+    // temporarily skipped because pagination is not implemented yet
     it.skip('should refresh the table and remove the temporary row when a pagination button is clicked', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
       axiosMock.onPost(createTagUrl).reply(201, {
@@ -442,14 +419,9 @@ describe('<TagListTable />', () => {
         descendant_count: 0,
         _id: 1234,
       });
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-row');
-      const input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
+      const { creatingRow, input } = await openTopLevelDraftRow();
 
       fireEvent.change(input, { target: { value: 'xyz tag' } });
       const saveButton = within(creatingRow).getByText('Save');
@@ -473,15 +445,7 @@ describe('<TagListTable />', () => {
       });
     });
 
-    /* Acceptance Criteria:
-    Add multiple tags consecutively without a page refresh
-    Given that the user is viewing the Taxonomy Detail page for a taxonomy
-    When the user add a new tag named "Tag A" and save
-    And the user add a new tag named "Tag B" and save
-    Then the page does not perform a refresh
-    And "Tag B" appears at the top of the current page’s tag list
-    And "Tag A" appears directly below "Tag B" in the current page’s tag list
-    */
+    // a bit flaky when ran together with other tests - any way to improve this?
     it('should allow adding multiple tags consecutively without a page refresh', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
       axiosMock.onPost(createTagUrl).reply(config => {
@@ -494,9 +458,8 @@ describe('<TagListTable />', () => {
           _id: Math.floor(Math.random() * 10000),
         }];
       });
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
       let addButton = await screen.findByLabelText('Create Tag');
       addButton.click();
       let creatingRow = await screen.findByTestId('creating-top-row');
@@ -540,9 +503,8 @@ describe('<TagListTable />', () => {
     */
     it.skip('should disable the Save button when the input is empty', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
       const addButton = await screen.findByText('Add Tag');
       addButton.click();
       const draftRow = await screen.findAllByRole('row');
@@ -563,9 +525,8 @@ describe('<TagListTable />', () => {
     */
     it.skip('should disable the Save button when the input only contains whitespace', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
+      renderTagListTable();
+      await waitForRootTag();
       const addButton = await screen.findByText('Add Tag');
       addButton.click();
       const draftRow = await screen.findAllByRole('row');
@@ -598,8 +559,8 @@ describe('<TagListTable />', () => {
         _id: 4567,
       });
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(await screen.findByLabelText('Create Tag'));
       const draftRow = await screen.findAllByRole('row');
@@ -627,8 +588,8 @@ describe('<TagListTable />', () => {
     it.skip('should disable save and show an inline validation error for invalid characters', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(await screen.findByLabelText('Create Tag'));
       const draftRow = await screen.findAllByRole('row');
@@ -656,8 +617,8 @@ describe('<TagListTable />', () => {
         error: 'Tag with this name already exists',
       });
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(await screen.findByLabelText('Create Tag'));
       const draftRow = await screen.findAllByRole('row');
@@ -688,8 +649,8 @@ describe('<TagListTable />', () => {
         error: 'Internal server error',
       });
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(await screen.findByLabelText('Create Tag'));
       const draftRow = await screen.findAllByRole('row');
@@ -722,8 +683,8 @@ describe('<TagListTable />', () => {
 
     it.skip('should disable all Add Tag and Add Subtag buttons when the draft row is displayed', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(await screen.findByLabelText('Create Tag'));
       const addButtons = screen.getAllByText(/Add (Tag|Subtag)/);
@@ -741,18 +702,11 @@ describe('<TagListTable />', () => {
     */
 
     it('should hide Add Tag for users without taxonomy edit permissions', async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
-        },
-      });
+      initializeMockApp({ authenticatedUser: nonAdminUser });
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       expect(screen.queryByText('Add Tag')).not.toBeInTheDocument();
     });
@@ -769,13 +723,11 @@ describe('<TagListTable />', () => {
     it('should show an Add sub-tag option in the parent tag actions', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
       expect(screen.queryAllByText('Add Subtag').length).toBe(0);
       // user clicks on row actions for root tag 1
-      const row = screen.getByText('root tag 1').closest('tr');
-      const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      fireEvent.click(actionsButton);
+      openActionsMenuForTag('root tag 1');
       expect(screen.getByText('Add Subtag')).toBeInTheDocument();
     });
 
@@ -793,16 +745,10 @@ describe('<TagListTable />', () => {
     it('should render an inline add-subtag row with input, placeholder, and action buttons', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
-      const row = screen.getByText('root tag 1').closest('tr');
-      const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      fireEvent.click(actionsButton);
-
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-
-      const rows = await screen.findAllByRole('row');
+      const { rows } = await openSubtagDraftRow({ tagName: 'root tag 1' });
       const draftRows = rows.filter(tableRow => tableRow.querySelector('input'));
       expect(draftRows[0].querySelector('input')).toBeInTheDocument();
       // expect the draft row to be directly beneath the parent tag row
@@ -827,49 +773,33 @@ describe('<TagListTable />', () => {
     it('should remove add-subtag row and avoid create request when cancelled', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
-      const row = screen.getByText('root tag 1').closest('tr');
-      const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      fireEvent.click(actionsButton);
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-      const input = draftRow.querySelector('input');
+      const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
       fireEvent.change(input, { target: { value: 'new subtag' } });
       fireEvent.click(within(draftRow).getByText('Cancel'));
 
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(0);
-        const currentRows = screen.getAllByRole('row');
-        const currentDraftRows = currentRows.filter(tableRow => tableRow.querySelector('input'));
-        expect(currentDraftRows.length).toBe(0);
+        expectNoDraftRows();
       });
     });
 
     it('should remove add-subtag row and avoid create request on escape key', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
-      const row = screen.getByText('root tag 1').closest('tr');
-      const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      fireEvent.click(actionsButton);
-      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-      const rows = await screen.findAllByRole('row');
-      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-      const input = draftRow.querySelector('input');
+      const { input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
 
       fireEvent.change(input, { target: { value: 'new subtag' } });
       fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
 
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(0);
-        const currentRows = screen.getAllByRole('row');
-        const currentDraftRows = currentRows.filter(tableRow => tableRow.querySelector('input'));
-        expect(currentDraftRows.length).toBe(0);
+        expectNoDraftRows();
       });
     });
 
@@ -884,8 +814,8 @@ describe('<TagListTable />', () => {
     it.skip('should disable Save and show required-name inline error for empty sub-tag input', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
@@ -906,8 +836,8 @@ describe('<TagListTable />', () => {
     it.skip('should keep Save disabled for whitespace-only sub-tag input', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
@@ -930,8 +860,8 @@ describe('<TagListTable />', () => {
     it.skip('should disable Save and show invalid-character error for sub-tag input', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
@@ -958,8 +888,8 @@ describe('<TagListTable />', () => {
         error: 'Tag with this name already exists',
       });
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
@@ -989,8 +919,8 @@ describe('<TagListTable />', () => {
         error: 'Internal server error',
       });
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
@@ -1000,9 +930,7 @@ describe('<TagListTable />', () => {
       fireEvent.click(within(draftRow).getByText('Save'));
 
       await waitFor(() => {
-        const currentRows = screen.getAllByRole('row');
-        const currentDraftRows = currentRows.filter(row => row.querySelector('input'));
-        expect(currentDraftRows.length).toBe(1);
+        expect(getDraftRows().length).toBe(1);
       });
       expect(await screen.findByText(/not saved|failed/i)).toBeInTheDocument();
     });
@@ -1018,8 +946,8 @@ describe('<TagListTable />', () => {
     it.skip('should move the inline add-subtag row to the latest selected parent', async () => {
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       const addSubtagActions = screen.getAllByText('Add Subtag');
       fireEvent.click(addSubtagActions[0]);
@@ -1039,18 +967,11 @@ describe('<TagListTable />', () => {
     Or "Add sub-tag" is disabled
     */
     it('should hide or disable Add sub-tag actions when user lacks edit permissions', async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
-        },
-      });
+      initializeMockApp({ authenticatedUser: nonAdminUser });
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
-      render(<RootWrapper />);
-      await screen.findByText('root tag 1');
+      renderTagListTable();
+      await waitForRootTag();
 
       const addSubtagActions = screen.queryAllByText('Add Subtag');
       if (addSubtagActions.length === 0) {
@@ -1096,19 +1017,15 @@ describe('<TagListTable />', () => {
         ...mockTagsResponse,
         max_depth: maxDepth,
       });
-      render(<RootWrapper maxDepth={maxDepth} />);
+      renderTagListTable(maxDepth);
       await screen.findByText('the child tag');
 
       // open actions menu for depth 0 root tag
-      let row = screen.getByText('root tag 1').closest('tr');
-      let actionsButton = within(row).getByRole('button', { name: /actions/i });
-      fireEvent.click(actionsButton);
+      let row = openActionsMenuForTag('root tag 1');
       expect(screen.getByText('Add Subtag')).toBeInTheDocument();
 
       // open actions menu for depth 1 sub-tag
-      row = screen.getByText('the child tag').closest('tr');
-      actionsButton = within(row).getByRole('button', { name: /actions/i });
-      fireEvent.click(actionsButton);
+      row = openActionsMenuForTag('the child tag');
       expect(screen.getByText('Add Subtag')).toBeInTheDocument();
 
       // simulate a sub-tag at depth 2 by adding a tag with parent_value of the depth 1 sub-tag
@@ -1130,7 +1047,7 @@ describe('<TagListTable />', () => {
 
       // open actions menu for depth 2 sub-tag
       row = screen.getByText('depth 2 subtag').closest('tr');
-      actionsButton = within(row).getByRole('button', { name: /actions/i });
+      const actionsButton = within(row).getByRole('button', { name: /actions/i });
       fireEvent.click(actionsButton);
       expect(screen.queryByText('Add Subtag')).not.toBeInTheDocument();
     });
@@ -1142,24 +1059,14 @@ describe('<TagListTable />', () => {
 describe('<TagListTable /> isolated async subtag tests', () => {
   beforeAll(async () => {
     initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
+      authenticatedUser: adminUser,
     });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   beforeEach(async () => {
     initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
+      authenticatedUser: adminUser,
     });
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
@@ -1171,7 +1078,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     let resolveResponse;
     const promise = new Promise(resolve => { resolveResponse = resolve; });
     axiosMock.onGet(rootTagsListUrl).reply(() => promise);
-    render(<RootWrapper />);
+    renderTagListTable();
     const spinner = await screen.findByRole('status');
     expect(spinner.textContent).toEqual('Loading...');
     resolveResponse([200, { results: [] }]);
@@ -1202,25 +1109,16 @@ describe('<TagListTable /> isolated async subtag tests', () => {
       parent_value: 'root tag 1',
     });
 
-    render(<RootWrapper />);
-    await screen.findByText('root tag 1');
-    const row = screen.getByText('root tag 1').closest('tr');
-    const actionsButton = within(row).getByRole('button', { name: /actions/i });
-    fireEvent.click(actionsButton);
-
-    fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-    const rows = screen.getAllByRole('row');
-    const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-    const input = draftRow.querySelector('input');
+    renderTagListTable();
+    await waitForRootTag();
+    const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
 
     fireEvent.change(input, { target: { value: 'child-new' } });
     fireEvent.click(within(draftRow).getByText('Save'));
 
     await waitFor(() => {
       expect(screen.getByText('child-new')).toBeInTheDocument();
-      const currentRows = screen.getAllByRole('row');
-      const currentDraftRows = currentRows.filter(tableRow => tableRow.querySelector('input'));
-      expect(currentDraftRows.length).toBe(0);
+      expectNoDraftRows();
     });
   });
 
@@ -1242,17 +1140,10 @@ describe('<TagListTable /> isolated async subtag tests', () => {
       parent_value: 'root tag 1',
     });
 
-    render(<RootWrapper />);
-    await screen.findByText('root tag 1');
+    renderTagListTable();
+    await waitForRootTag();
 
-    const row = screen.getByText('root tag 1').closest('tr');
-    const actionsButton = within(row).getByRole('button', { name: /actions/i });
-    fireEvent.click(actionsButton);
-
-    fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-    const rows = await screen.findAllByRole('row');
-    const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-    const input = draftRow.querySelector('input');
+    const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
     fireEvent.change(input, { target: { value: 'child appears immediately' } });
     expect(screen.queryByText('child appears immediately')).toBeNull();
     fireEvent.click(within(draftRow).getByText('Save'));
@@ -1282,19 +1173,16 @@ describe('<TagListTable /> isolated async subtag tests', () => {
       parent_value: 'the child tag',
     });
 
-    render(<RootWrapper maxDepth={3} />);
-    await screen.findByText('root tag 1');
+    renderTagListTable(3);
+    await waitForRootTag();
     const expandButton = screen.getAllByLabelText('Show Subtags')[0];
     fireEvent.click(expandButton);
 
-    const childRow = (await screen.findByText('the child tag')).closest('tr');
-    const actionsButton = within(childRow).getByRole('button', { name: /more actions for tag the child tag/i });
-    fireEvent.click(actionsButton);
-    fireEvent.click(screen.getByText('Add Subtag'));
-
-    const rows = await screen.findAllByRole('row');
-    const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-    const input = draftRow.querySelector('input');
+    await screen.findByText('the child tag');
+    const { input } = await openSubtagDraftRow({
+      tagName: 'the child tag',
+      actionButtonName: /more actions for tag the child tag/i,
+    });
     fireEvent.change(input, { target: { value: 'nested child' } });
     fireEvent.click(within(input.closest('tr')).getByText('Save'));
 
@@ -1319,20 +1207,13 @@ describe('<TagListTable /> isolated async subtag tests', () => {
       parent_value: 'the child tag',
     });
 
-    render(<RootWrapper maxDepth={3} />);
-    await screen.findByText('root tag 1');
+    renderTagListTable(3);
+    await waitForRootTag();
     const expandButton = screen.getAllByLabelText('Show Subtags')[0];
     fireEvent.click(expandButton);
     await screen.findByText('the child tag');
 
-    const row = screen.getByText('the child tag').closest('tr');
-    const actionsButton = within(row).getByRole('button', { name: /actions/i });
-    fireEvent.click(actionsButton);
-    fireEvent.click(screen.getByText('Add Subtag'));
-
-    const rows = await screen.findAllByRole('row');
-    const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-    const input = draftRow.querySelector('input');
+    const { draftRow, input } = await openSubtagDraftRow({ tagName: 'the child tag' });
     fireEvent.change(input, { target: { value: 'nested child appears immediately' } });
 
     const saveButton = within(draftRow).getByText('Save');
