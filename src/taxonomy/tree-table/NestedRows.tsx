@@ -17,7 +17,6 @@ interface NestedRowsProps {
   childRowsData?: TreeRow[];
   depth?: number;
   draftError?: string;
-  isSavingDraft?: boolean;
   setDraftError?: (error: string) => void;
   creatingParentId?: RowId | null;
   setCreatingParentId?: (value: RowId | null) => void;
@@ -34,7 +33,6 @@ const NestedRows = ({
   childRowsData = [],
   depth = 1,
   draftError = '',
-  isSavingDraft = false,
   setDraftError = () => {},
   creatingParentId = null,
   setCreatingParentId = () => {},
@@ -97,7 +95,6 @@ const NestedRows = ({
               setCreatingParentId={setCreatingParentId}
               depth={depth + 1}
               draftError={draftError}
-              isSavingDraft={isSavingDraft}
               setDraftError={setDraftError}
               setIsCreatingTopRow={setIsCreatingTopRow}
               createRowMutation={createRowMutation}

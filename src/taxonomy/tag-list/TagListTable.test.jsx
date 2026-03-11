@@ -798,7 +798,7 @@ describe('<TagListTable />', () => {
 
       const row = screen.getByText('root tag 1').closest('tr');
       const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      await fireEvent.click(actionsButton);
+      fireEvent.click(actionsButton);
 
       fireEvent.click(screen.getAllByText('Add Subtag')[0]);
 
@@ -832,8 +832,8 @@ describe('<TagListTable />', () => {
 
       const row = screen.getByText('root tag 1').closest('tr');
       const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      await fireEvent.click(actionsButton);
-      await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+      fireEvent.click(actionsButton);
+      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
       const input = draftRow.querySelector('input');
@@ -856,8 +856,8 @@ describe('<TagListTable />', () => {
 
       const row = screen.getByText('root tag 1').closest('tr');
       const actionsButton = within(row).getByRole('button', { name: /actions/i });
-      await fireEvent.click(actionsButton);
-      await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+      fireEvent.click(actionsButton);
+      fireEvent.click(screen.getAllByText('Add Subtag')[0]);
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
       const input = draftRow.querySelector('input');
@@ -1124,8 +1124,8 @@ describe('<TagListTable />', () => {
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
       const input = draftRow.querySelector('input');
-      await fireEvent.change(input, { target: { value: 'depth 2 subtag' } });
-      await fireEvent.click(within(draftRow).getByText('Save'));
+      fireEvent.change(input, { target: { value: 'depth 2 subtag' } });
+      fireEvent.click(within(draftRow).getByText('Save'));
       await screen.findByText('depth 2 subtag');
 
       // open actions menu for depth 2 sub-tag
@@ -1206,15 +1206,15 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     await screen.findByText('root tag 1');
     const row = screen.getByText('root tag 1').closest('tr');
     const actionsButton = within(row).getByRole('button', { name: /actions/i });
-    await fireEvent.click(actionsButton);
+    fireEvent.click(actionsButton);
 
-    await fireEvent.click(screen.getAllByText('Add Subtag')[0]);
-    const rows = await screen.findAllByRole('row');
+    fireEvent.click(screen.getAllByText('Add Subtag')[0]);
+    const rows = screen.getAllByRole('row');
     const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
     const input = draftRow.querySelector('input');
 
-    await fireEvent.change(input, { target: { value: 'child-new' } });
-    await fireEvent.click(within(draftRow).getByText('Save'));
+    fireEvent.change(input, { target: { value: 'child-new' } });
+    fireEvent.click(within(draftRow).getByText('Save'));
 
     await waitFor(() => {
       expect(screen.getByText('child-new')).toBeInTheDocument();
@@ -1247,14 +1247,14 @@ describe('<TagListTable /> isolated async subtag tests', () => {
 
     const row = screen.getByText('root tag 1').closest('tr');
     const actionsButton = within(row).getByRole('button', { name: /actions/i });
-    await fireEvent.click(actionsButton);
+    fireEvent.click(actionsButton);
 
     fireEvent.click(screen.getAllByText('Add Subtag')[0]);
     const rows = await screen.findAllByRole('row');
     const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
     const input = draftRow.querySelector('input');
     fireEvent.change(input, { target: { value: 'child appears immediately' } });
-    expect(await screen.queryByText('child appears immediately')).toBeNull();
+    expect(screen.queryByText('child appears immediately')).toBeNull();
     fireEvent.click(within(draftRow).getByText('Save'));
 
     await waitFor(() => {
@@ -1285,18 +1285,18 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     render(<RootWrapper maxDepth={3} />);
     await screen.findByText('root tag 1');
     const expandButton = screen.getAllByLabelText('Show Subtags')[0];
-    await fireEvent.click(expandButton);
+    fireEvent.click(expandButton);
 
     const childRow = (await screen.findByText('the child tag')).closest('tr');
     const actionsButton = within(childRow).getByRole('button', { name: /more actions for tag the child tag/i });
-    await fireEvent.click(actionsButton);
-    await fireEvent.click(await screen.findByText('Add Subtag'));
+    fireEvent.click(actionsButton);
+    fireEvent.click(screen.getByText('Add Subtag'));
 
     const rows = await screen.findAllByRole('row');
     const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
     const input = draftRow.querySelector('input');
-    await fireEvent.change(input, { target: { value: 'nested child' } });
-    await fireEvent.click(within(input.closest('tr')).getByText('Save'));
+    fireEvent.change(input, { target: { value: 'nested child' } });
+    fireEvent.click(within(input.closest('tr')).getByText('Save'));
 
     expect(await screen.findByText('nested child')).toBeInTheDocument();
   });
@@ -1327,17 +1327,17 @@ describe('<TagListTable /> isolated async subtag tests', () => {
 
     const row = screen.getByText('the child tag').closest('tr');
     const actionsButton = within(row).getByRole('button', { name: /actions/i });
-    await fireEvent.click(actionsButton);
-    await fireEvent.click(screen.getByText('Add Subtag'));
+    fireEvent.click(actionsButton);
+    fireEvent.click(screen.getByText('Add Subtag'));
 
     const rows = await screen.findAllByRole('row');
     const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
     const input = draftRow.querySelector('input');
-    await fireEvent.change(input, { target: { value: 'nested child appears immediately' } });
+    fireEvent.change(input, { target: { value: 'nested child appears immediately' } });
 
     const saveButton = within(draftRow).getByText('Save');
 
-    await fireEvent.click(saveButton);
+    fireEvent.click(saveButton);
 
     expect(await screen.findByText('nested child appears immediately')).toBeInTheDocument();
     expect(axiosMock.history.get.length).toBe(1);
