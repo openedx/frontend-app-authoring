@@ -68,6 +68,7 @@ import CourseUnit from './CourseUnit';
 import tagsDrawerMessages from '../content-tags-drawer/messages';
 import configureModalMessages from '../generic/configure-modal/messages';
 import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
+import { getXBlockApiUrl } from '../course-outline/data/api';
 import addComponentMessages from './add-component/messages';
 import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
 import moveModalMessages from './move-modal/messages';
@@ -3249,6 +3250,10 @@ describe('<CourseUnit />', () => {
       ...getConfig(),
       ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
     });
+
+    axiosMock
+      .onGet(getXBlockApiUrl(mockContentData.textXBlock))
+      .reply(200, mockContentData.textXBlockData);
 
     render(<RootWrapper />);
 

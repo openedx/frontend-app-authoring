@@ -54,6 +54,7 @@ describe('InfoSidebar component', () => {
     const user = userEvent.setup();
     selectedContainerState = {
       currentId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@123',
+      sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@123',
     };
     const data = {
       id: selectedContainerState.currentId,
@@ -80,6 +81,7 @@ describe('InfoSidebar component', () => {
     const user = userEvent.setup();
     selectedContainerState = {
       currentId: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@123',
+      subsectionId: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@123',
       sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@123',
     };
     const data = {

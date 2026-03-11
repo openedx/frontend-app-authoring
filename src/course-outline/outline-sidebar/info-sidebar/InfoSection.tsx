@@ -54,6 +54,10 @@ export const InfoSection = ({ itemId }: Props) => {
     }
   }, [dispatch, selectedContainerState, queryClient, courseId]);
 
+  if (!itemData) {
+    return null;
+  }
+
   return (
     <>
       <LibraryReferenceCard

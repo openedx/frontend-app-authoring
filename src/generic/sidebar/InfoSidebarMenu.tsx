@@ -62,7 +62,7 @@ export const InfoSidebarMenu = ({
         alt={intl.formatMessage(messages.itemMenuAlt)}
       />
       <Dropdown.Menu>
-        {actions.duplicable && onClickDuplicate && (
+        {actions?.duplicable && onClickDuplicate && (
           <Dropdown.Item
             onClick={onClickDuplicate}
           >
@@ -96,7 +96,7 @@ export const InfoSidebarMenu = ({
             </Stack>
           </Dropdown.Item>
         )}
-        {actions.draggable && onClickMoveUp && onClickMoveDown && canMoveItem && (
+        {actions?.draggable && onClickMoveUp && onClickMoveDown && canMoveItem && (
           <>
             <Dropdown.Item
               onClick={onClickMoveUp}
@@ -128,12 +128,12 @@ export const InfoSidebarMenu = ({
             </Stack>
           </Dropdown.Item>
         )}
-        {((actions.unlinkable ?? null) !== null || actions.deletable) && <Dropdown.Divider />}
-        {(actions.unlinkable ?? null) !== null && (
+        {((actions?.unlinkable ?? null) !== null || actions?.deletable) && <Dropdown.Divider />}
+        {(actions?.unlinkable ?? null) !== null && (
           <Dropdown.Item
             onClick={onClickUnlink}
-            disabled={!actions.unlinkable}
-            title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
+            disabled={!actions?.unlinkable}
+            title={!actions?.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
           >
             <Stack direction="horizontal" gap={2}>
               <Icon src={LinkOff} />
@@ -141,7 +141,7 @@ export const InfoSidebarMenu = ({
             </Stack>
           </Dropdown.Item>
         )}
-        {actions.deletable && (
+        {actions?.deletable && (
           <Dropdown.Item
             onClick={onClickDelete}
             className="text-danger-700"
