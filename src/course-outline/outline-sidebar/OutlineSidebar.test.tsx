@@ -15,6 +15,8 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseDetails: jest.fn().mockReturnValue({ isPending: false, data: { title: 'Test Course' } }),
   useCreateCourseBlock: jest.fn(),
   useCourseItemData: jest.fn().mockReturnValue({ data: {} }),
+  useDuplicateItem: jest.fn().mockReturnValue({ duplicateItem: jest.fn() }),
+  useDeleteCourseItem: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
 }));
 
 const courseId = '123';

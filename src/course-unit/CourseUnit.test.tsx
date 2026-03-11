@@ -68,6 +68,7 @@ import CourseUnit from './CourseUnit';
 import tagsDrawerMessages from '../content-tags-drawer/messages';
 import configureModalMessages from '../generic/configure-modal/messages';
 import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
+import { getXBlockApiUrl } from '../course-outline/data/api';
 import addComponentMessages from './add-component/messages';
 import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
 import moveModalMessages from './move-modal/messages';
@@ -3250,6 +3251,10 @@ describe('<CourseUnit />', () => {
       ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
     });
 
+    axiosMock
+      .onGet(getXBlockApiUrl(mockContentData.textXBlock))
+      .reply(200, mockContentData.textXBlockData);
+
     render(<RootWrapper />);
 
     await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
@@ -3259,5 +3264,271 @@ describe('<CourseUnit />', () => {
     });
 
     await screen.findByText(mockContentData.textXBlockData.displayName);
+  });
+
+  describe('ComponentInfoSidebar menus', () => {
+    const componentId = mockContentData.textXBlock;
+    const componentData = {
+      displayName: 'Text XBlock 1',
+      category: 'html',
+      id: componentId,
+      actions: { duplicable: true, deletable: true, draggable: false },
+      upstreamInfo: null,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const renderComponentSidebar = async (data: any = componentData) => {
+      setConfig({ ...getConfig(), ENABLE_UNIT_PAGE_NEW_DESIGN: 'true' });
+      axiosMock.onGet(getXBlockApiUrl(componentId)).reply(200, data);
+      render(<RootWrapper />);
+      await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      simulatePostMessageEvent(messageTypes.xblockSelected, { contentId: componentId });
+      await screen.findByText(data.displayName);
+    };
+
+    it('duplicates component from sidebar menu', async () => {
+      const user = userEvent.setup();
+      await renderComponentSidebar();
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      axiosMock
+        .onPost(postXBlockBaseApiUrl())
+        .reply(200, { locator: 'new-block-id' });
+      axiosMock
+        .onGet(getCourseVerticalChildrenApiUrl(blockId))
+        .reply(200, courseVerticalChildrenMock);
+
+      const duplicateBtn = await screen.findByText('Duplicate');
+      await user.click(duplicateBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+      });
+      expect(axiosMock.history.post[0].url).toBe(postXBlockBaseApiUrl());
+      expect(JSON.parse(axiosMock.history.post[0].data).duplicate_source_locator).toBe(componentId);
+    });
+
+    it('opens delete modal and deletes component from sidebar menu', async () => {
+      const user = userEvent.setup();
+      await renderComponentSidebar();
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const deleteBtn = await screen.findByText('Delete');
+      await user.click(deleteBtn);
+
+      expect(await screen.findByRole('dialog')).toBeInTheDocument();
+
+      axiosMock
+        .onDelete(getXBlockBaseApiUrl(componentId))
+        .reply(200, {});
+      axiosMock
+        .onGet(getCourseVerticalChildrenApiUrl(blockId))
+        .reply(200, courseVerticalChildrenMock);
+
+      const confirmBtn = await screen.findByRole('button', { name: /^delete$/i });
+      await user.click(confirmBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.delete.length).toBe(1);
+      });
+      expect(axiosMock.history.delete[0].url).toBe(getXBlockBaseApiUrl(componentId));
+    });
+
+    it('opens move modal from sidebar menu', async () => {
+      const user = userEvent.setup();
+      await renderComponentSidebar();
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const moveBtn = await screen.findByText('Move');
+      await user.click(moveBtn);
+
+      expect(await screen.findByText(
+        moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', componentData.displayName),
+      )).toBeInTheDocument();
+    });
+
+    it('opens unlink modal and unlinks component from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const componentWithUpstream = {
+        ...componentData,
+        actions: { ...componentData.actions, unlinkable: true },
+        upstreamInfo: { upstreamRef: 'lb:org:lib:html:block-id' },
+      };
+      await renderComponentSidebar(componentWithUpstream);
+
+      axiosMock.onDelete(getDownstreamApiUrl(componentId)).reply(200, {});
+      axiosMock.onGet(getCourseVerticalChildrenApiUrl(blockId)).reply(200, courseVerticalChildrenMock);
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const unlinkBtn = await screen.findByText('Unlink from Library');
+      await user.click(unlinkBtn);
+
+      const confirmBtn = await screen.findByRole('button', { name: /confirm unlink/i });
+      await user.click(confirmBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.delete.length).toBe(1);
+      });
+      expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(componentId));
+    });
+
+    it('navigates to library when clicking View in Library from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const upstreamRef = 'lb:org:lib:html:block-id';
+      const componentWithUpstream = {
+        ...componentData,
+        upstreamInfo: { upstreamRef },
+      };
+      await renderComponentSidebar(componentWithUpstream);
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const viewLibBtn = await screen.findByText('View in Library');
+      await user.click(viewLibBtn);
+
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/library/'),
+      );
+    });
+  });
+
+  describe('UnitInfoSidebar menus', () => {
+    const unitId = courseSectionVerticalMock.xblock_info.id;
+    const upstreamRef = 'lb:org:lib:vertical:unit-id';
+
+    const unitItemData = {
+      id: unitId,
+      displayName: courseSectionVerticalMock.xblock_info.display_name,
+      category: 'vertical',
+      actions: { deletable: true, duplicable: false, draggable: false },
+      upstreamInfo: null,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const renderUnitInfoSidebar = async (itemData: any = unitItemData) => {
+      setConfig({ ...getConfig(), ENABLE_UNIT_PAGE_NEW_DESIGN: 'true' });
+      axiosMock.onGet(getXBlockApiUrl(unitId)).reply(200, itemData);
+      render(<RootWrapper />);
+      // Wait for the Details tab which is unique to the new unit info sidebar
+      await screen.findByRole('tab', { name: /details/i });
+      await screen.findByRole('button', { name: 'Item Menu' });
+    };
+
+    it('opens delete modal and deletes unit from sidebar menu', async () => {
+      const user = userEvent.setup();
+      await renderUnitInfoSidebar();
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const deleteBtn = await screen.findByText('Delete');
+      await user.click(deleteBtn);
+
+      expect(await screen.findByRole('dialog')).toBeInTheDocument();
+
+      axiosMock.onDelete(getXBlockBaseApiUrl(unitId)).reply(200, {});
+
+      const confirmBtn = await screen.findByRole('button', { name: /^delete$/i });
+      await user.click(confirmBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.delete.length).toBe(1);
+      });
+      expect(axiosMock.history.delete[0].url).toBe(getXBlockBaseApiUrl(unitId));
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}`);
+    });
+
+    it('opens unlink modal and unlinks unit from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const unitWithUpstream = {
+        ...unitItemData,
+        actions: { ...unitItemData.actions, unlinkable: true },
+        upstreamInfo: { upstreamRef },
+      };
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          xblock_info: {
+            ...courseSectionVerticalMock.xblock_info,
+            upstream_info: { upstream_ref: upstreamRef },
+          },
+        });
+      await executeThunk(fetchCourseSectionVerticalData(blockId, courseId), store.dispatch);
+      await renderUnitInfoSidebar(unitWithUpstream);
+
+      axiosMock.onDelete(getDownstreamApiUrl(unitId)).reply(200, {});
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const unlinkBtn = await screen.findByText('Unlink from Library');
+      await user.click(unlinkBtn);
+
+      const confirmBtn = await screen.findByRole('button', { name: /confirm unlink/i });
+      await user.click(confirmBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.delete.length).toBe(1);
+      });
+      expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(unitId));
+    });
+
+    it('navigates to library when clicking View in Library from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const unitWithUpstream = {
+        ...unitItemData,
+        upstreamInfo: { upstreamRef },
+      };
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          xblock_info: {
+            ...courseSectionVerticalMock.xblock_info,
+            upstream_info: { upstream_ref: upstreamRef },
+          },
+        });
+      await executeThunk(fetchCourseSectionVerticalData(blockId, courseId), store.dispatch);
+      await renderUnitInfoSidebar(unitWithUpstream);
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const viewLibBtn = await screen.findByText('View in Library');
+      await user.click(viewLibBtn);
+
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/library/'),
+      );
+    });
+
+    it('copies location ID to clipboard when Copy Location ID is clicked from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const writeText = jest.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: { writeText },
+        writable: true,
+        configurable: true,
+      });
+      await renderUnitInfoSidebar();
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const copyLocationBtn = await screen.findByText('Copy Location ID');
+      await user.click(copyLocationBtn);
+
+      expect(writeText).toHaveBeenCalledWith('867dddb6f55d410caaa9c1eb9c6743ec');
+    });
   });
 });

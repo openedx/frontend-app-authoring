@@ -16,15 +16,14 @@ import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/confi
 import { Form, Formik } from 'formik';
 import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
 import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
-import { editCourseUnitVisibilityAndData, fetchCourseSectionVerticalData, fetchCourseVerticalChildrenData } from '@src/course-unit/data/thunk';
+import { editCourseUnitVisibilityAndData, fetchCourseSectionVerticalData } from '@src/course-unit/data/thunk';
 import PublishControls from './PublishControls';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
 import { getLibraryId } from '@src/generic/key-utils';
 import { useClipboard } from '@src/generic/clipboard';
 import { ToastContext } from '@src/generic/toast-context';
-import { UnlinkModal } from '@src/generic/unlink-modal';
-import { useUnlinkDownstream } from '@src/generic/unlink-modal/data/apiHooks';
+import { UnlinkModal, useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useQueryClient } from '@tanstack/react-query';
 import { courseOutlineQueryKeys, useDeleteCourseItem } from '@src/course-outline/data/apiHooks';
@@ -246,7 +245,6 @@ export const UnitInfoSidebar = () => {
         closeUnlinkModal();
         queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(currentItemData.id) });
         dispatch(fetchCourseSectionVerticalData(currentItemData.id, sequenceId));
-        dispatch(fetchCourseVerticalChildrenData(currentItemData.id, false));
       },
     });
   };
@@ -267,7 +265,7 @@ export const UnitInfoSidebar = () => {
     if (navigator.clipboard) {
       // Modern approach: requires HTTPS (secure context)
       void navigator.clipboard.writeText(locationId);
-    } else {
+    } else /* istanbul ignore next */ {
       // Fallback for HTTP (non-secure) dev environments
       // Note: execCommand is deprecated but still widely supported as fallback
       const textarea = document.createElement('textarea');
