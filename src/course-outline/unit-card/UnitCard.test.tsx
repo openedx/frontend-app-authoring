@@ -1,6 +1,7 @@
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
+import { getConfig } from '@edx/frontend-platform';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 import { XBlock } from '@src/data/types';
@@ -261,5 +262,83 @@ describe('<UnitCard />', () => {
 
     expect(await screen.findByText(/unable to load unit components/i)).toBeInTheDocument();
     expect(screen.queryByText(errorMessage)).not.toBeInTheDocument();
+  });
+
+  describe('component editor links', () => {
+    const htmlComponent = {
+      blockId: 'block-v1:test+type@html+block@1',
+      blockType: 'html',
+      displayName: 'HTML Component',
+    };
+    const oraComponent = {
+      blockId: 'block-v1:test+type@openassessment+block@2',
+      blockType: 'openassessment',
+      displayName: 'ORA Component',
+    };
+
+    const setupExpandedView = async (components: any[]) => {
+      mockUseUnitHandler.mockReturnValue({
+        data: { components },
+        isLoading: false,
+        isError: false,
+        error: null,
+      });
+
+      renderComponent();
+
+      const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+      fireEvent.click(expandButton);
+    };
+
+    it('renders component names as links to the unit page', async () => {
+      await setupExpandedView([htmlComponent]);
+
+      const link = await screen.findByTestId('component-name-link');
+      expect(link.tagName).toBe('A');
+      expect(link).toHaveAttribute('href', `/some/${unit.id}#${htmlComponent.blockId}`);
+      expect(link).toHaveTextContent('HTML Component');
+    });
+
+    it('renders edit button with correct href for MFE-supported types', async () => {
+      await setupExpandedView([htmlComponent]);
+
+      const editButton = await screen.findByTestId('component-edit-button');
+      expect(editButton.tagName).toBe('A');
+      expect(editButton).toHaveAttribute('href', `/course/5/editor/html/${htmlComponent.blockId}`);
+    });
+
+    it('renders edit button with legacy Studio URL for non-MFE types', async () => {
+      await setupExpandedView([oraComponent]);
+
+      const editButton = await screen.findByTestId('component-edit-button');
+      const returnTo = encodeURIComponent(`${getConfig().STUDIO_BASE_URL}/container/${unit.id}`);
+      expect(editButton).toHaveAttribute(
+        'href',
+        `${getConfig().STUDIO_BASE_URL}/xblock/${oraComponent.blockId}/action/edit?returnTo=${returnTo}`,
+      );
+    });
+
+    it('opens modal editor on plain left-click on edit button (does not navigate)', async () => {
+      await setupExpandedView([htmlComponent]);
+
+      const editButton = await screen.findByTestId('component-edit-button');
+      const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+      Object.defineProperty(clickEvent, 'metaKey', { value: false });
+      Object.defineProperty(clickEvent, 'ctrlKey', { value: false });
+      Object.defineProperty(clickEvent, 'button', { value: 0 });
+
+      const prevented = !editButton.dispatchEvent(clickEvent);
+      expect(prevented).toBe(true);
+    });
+
+    it('allows Ctrl+click on edit button to open in new tab (does not prevent default)', async () => {
+      await setupExpandedView([htmlComponent]);
+
+      const editButton = await screen.findByTestId('component-edit-button');
+      const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true });
+
+      const prevented = !editButton.dispatchEvent(clickEvent);
+      expect(prevented).toBe(false);
+    });
   });
 });
