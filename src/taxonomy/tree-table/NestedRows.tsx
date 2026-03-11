@@ -42,6 +42,8 @@ const NestedRows = ({
   if (!parentRow.getIsExpanded()) {
     return null;
   }
+  const indent = Math.max(depth, 1);
+
   return (
     <>
       {isCreating && (
@@ -53,6 +55,7 @@ const NestedRows = ({
           exitDraftWithoutSave={onCancelCreation}
           createRowMutation={createRowMutation}
           columns={[]}
+          indent={indent}
         />
       )}
       {childRowsData?.map(row => {
@@ -71,7 +74,7 @@ const NestedRows = ({
                       className={`p-1 align-top tree-table-overflow-anywhere ${isFirstColumn ? '' : 'tree-table-actions-column'}`}
                     >
                       {isFirstColumn ? (
-                        <div className={`tree-table-indent tree-table-indent-${Math.min(depth, 10)}`}>{content}</div>
+                        <div className={`tree-table-indent tree-table-indent-${indent}`}>{content}</div>
                       ) : (
                         content
                       )}

@@ -14,6 +14,7 @@ interface CreateRowProps {
   exitDraftWithoutSave: () => void;
   createRowMutation: CreateRowMutationState;
   columns: TreeColumnDef[];
+  indent?: number;
 }
 
 const CreateRow: React.FC<CreateRowProps> = ({
@@ -24,6 +25,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
   exitDraftWithoutSave,
   createRowMutation,
   columns,
+  indent = 0,
 }) => {
   const [newRowValue, setNewRowValue] = useState('');
   const intl = useIntl();
@@ -53,15 +55,17 @@ const CreateRow: React.FC<CreateRowProps> = ({
 
     <tr id="creating-top-row" data-testid="creating-top-row">
       <td colSpan={1} className="py-2 pr-2 pl-0">
-        <EditableCell
-          errorMessage={draftError}
-          isSaving={createRowMutation.isPending}
-          onChange={(e) => {
-            setNewRowValue(e.target.value);
-          }}
-          onKeyDown={handleValueCellKeyPress}
-          autoFocus
-        />
+        <div className={`tree-table-indent tree-table-indent-${indent}`}>
+          <EditableCell
+            errorMessage={draftError}
+            isSaving={createRowMutation.isPending}
+            onChange={(e) => {
+              setNewRowValue(e.target.value);
+            }}
+            onKeyDown={handleValueCellKeyPress}
+            autoFocus
+          />
+        </div>
       </td>
       <td
         colSpan={Math.max(columns.length - 1, 1)}
