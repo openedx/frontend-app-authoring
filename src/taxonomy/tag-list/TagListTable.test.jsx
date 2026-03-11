@@ -736,9 +736,7 @@ describe('<TagListTable />', () => {
       act(() => {
         fireEvent.click(expandButton);
       });
-      await waitFor(() => {
-        screen.findByText('the child tag');
-      });
+      await screen.findByText('the child tag');
 
       // depth 1 is the max allowed depth when maxDepth=2,
       // so there should be no actions menu to add another sub-tag
