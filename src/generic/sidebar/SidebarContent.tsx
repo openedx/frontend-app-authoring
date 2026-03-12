@@ -27,14 +27,22 @@ interface SidebarContentProps {
  * </SidebarContent>
  * ```
  */
-export const SidebarContent = ({ children } : SidebarContentProps) => (
-  <Stack gap={1} className="px-3 py-1">
-    {Array.isArray(children) ? children.map((child, index) => (
-      // eslint-disable-next-line react/no-array-index-key
-      <React.Fragment key={index}>
-        {child}
-        {index !== children.length - 1 && <hr className="w-100" />}
-      </React.Fragment>
-    )) : children}
-  </Stack>
-);
+export const SidebarContent = ({ children } : SidebarContentProps) => {
+  // Flatten the array and filter out empty children to correctly render
+  // the hr element between each child.
+  const nonEmptyChildren = Array.isArray(children)
+    ? children.flat(Infinity).filter(child => !!child)
+    : [children];
+
+  return (
+    <Stack gap={1} className="px-3 py-1">
+      {nonEmptyChildren.map((child, index) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <React.Fragment key={index}>
+          {child}
+          {index !== nonEmptyChildren.length - 1 && <hr className="w-100" />}
+        </React.Fragment>
+      ))}
+    </Stack>
+  );
+};
