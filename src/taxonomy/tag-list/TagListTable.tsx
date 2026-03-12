@@ -96,6 +96,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       setCreatingParentId,
       handleUpdateTag,
       setEditingRowId,
+      editingRowId,
       onStartDraft: enterDraftMode,
       setActiveActionMenuRowId,
       hasOpenDraft,

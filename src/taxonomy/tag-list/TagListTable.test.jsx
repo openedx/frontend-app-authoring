@@ -255,6 +255,8 @@ describe('<TagListTable />', () => {
   });
 
   describe('Create a new top-level tag', () => {
+    it.todo('should not show tag creation buttons if the taxonomy includes `can_add_tag: false`');
+
     describe('with editable user and loaded taxonomy', () => {
       it('should add draft row when top-level "Add tag" button is clicked', async () => {
         const { creatingRow } = await openTopLevelDraftRow();
@@ -711,6 +713,21 @@ describe('<TagListTable />', () => {
         });
       }
     });
+  });
+
+  describe('Rename a top-level tag', () => {
+    it.todo('should not show tag edit buttons if the taxonomy includes `can_add_tag: false`');
+    it('should show tag actions menu', async () => {
+      openActionsMenuForTag('root tag 1');
+      expect(screen.getByText('Add Subtag')).toBeInTheDocument();
+      expect(screen.getByText('Rename')).toBeInTheDocument();
+    });
+    it.todo('should show editable input and action buttons when Rename is selected from actions menu');
+    it.todo('should disable Save button until the tag name is changed');
+    it.todo('should save changes and show success toast when Enter is pressed');
+    it.todo('should save changes and show success toast when Save is clicked');
+    it.todo('should cancel editing and revert to original name when Esc is pressed');
+    it.todo('should cancel editing and revert to original name when Cancel is clicked');
   });
 
   describe('At smaller max depth', () => {

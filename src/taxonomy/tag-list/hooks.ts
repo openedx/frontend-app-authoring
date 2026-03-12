@@ -1,7 +1,7 @@
 import { useReducer } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { useCreateTag } from '../data/apiHooks';
+import { useCreateTag, useUpdateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
 import type { RowId } from '../tree-table/types';
 import {
@@ -37,6 +37,7 @@ interface UseEditActionsParams {
   setCreatingParentId: React.Dispatch<React.SetStateAction<RowId | null>>;
   exitDraftWithoutSave: () => void;
   setEditingRowId: React.Dispatch<React.SetStateAction<RowId | null>>;
+  updateTagMutation: ReturnType<typeof useUpdateTag>;
 }
 
 const getInlineValidationMessage = (value: string, intl: ReturnType<typeof useIntl>): string => {
@@ -164,6 +165,7 @@ const useEditActions = ({
         setToast({ show: true, message, variant: 'danger' });
         return;
       }
+
       setToast({
         show: true,
         message: intl.formatMessage(messages.tagUpdateSuccessMessage, { name: trimmed }),

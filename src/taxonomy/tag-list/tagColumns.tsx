@@ -46,6 +46,7 @@ interface GetColumnsArgs {
   isSavingDraft: boolean;
   maxDepth: number;
   creatingParentId: RowId | null;
+  editingRowId: RowId | null;
 }
 
 function getColumns({
@@ -59,6 +60,7 @@ function getColumns({
   setDraftError,
   maxDepth,
   creatingParentId,
+  editingRowId,
 }: GetColumnsArgs): TreeColumnDef[] {
   const canAddSubtag = (row: Row<TreeRowData>) => row.depth + 1 < maxDepth;
   const draftInProgressHintId = 'tag-list-draft-in-progress-hint';
@@ -108,7 +110,9 @@ function getColumns({
           return <div className="d-flex gap-2" />;
         }
 
-        const disableAddSubtag = hasOpenDraft && creatingParentId !== rowData.id;
+        const disableAddSubtag = hasOpenDraft;
+        const disableEditTag = hasOpenDraft;
+
         const startSubtagDraft = () => {
           onStartDraft();
           setDraftError('');
@@ -117,6 +121,13 @@ function getColumns({
           setIsCreatingTopTag(false);
           setActiveActionMenuRowId(null);
           row.toggleExpanded(true);
+        };
+
+        const editTag = () => {
+          setEditingRowId(rowData.id);
+          setCreatingParentId(null);
+          setIsCreatingTopTag(false);
+          setActiveActionMenuRowId(null);
         };
 
         return (
@@ -138,6 +149,13 @@ function getColumns({
                   disabled={disableAddSubtag}
                 >
                   {intl.formatMessage(messages.addSubtag)}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  as={Button}
+                  onClick={editTag}
+                  disabled={disableEditTag}
+                >
+                  {intl.formatMessage(messages.renameTag)}
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

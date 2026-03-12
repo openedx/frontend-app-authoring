@@ -62,7 +62,6 @@ const CreateRow: React.FC<CreateRowProps> = ({
   };
 
   return (
-
     <tr id="creating-top-row" data-testid="creating-top-row">
       <td colSpan={1} className="py-2 pr-2 pl-0">
         <div className={`tree-table-indent tree-table-indent-${indent}`}>
