@@ -1,6 +1,11 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { fireEvent, render, screen } from '@testing-library/react';
+import {
+  createEvent,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 
 import { EditableCell } from './EditableCell';
 
@@ -42,5 +47,15 @@ describe('EditableCell', () => {
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'next' } });
     expect(onChange).toHaveBeenCalled();
     expect(screen.getByRole('textbox')).toHaveValue('next');
+  });
+
+  it('prevents input clicks from bubbling to parent rows', () => {
+    render(<EditableCell initialValue="value" />, { wrapper });
+    const input = screen.getByRole('textbox');
+    const clickEvent = createEvent.click(input);
+    const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
+
+    fireEvent(input, clickEvent);
+    expect(stopPropagationSpy).toHaveBeenCalled();
   });
 });

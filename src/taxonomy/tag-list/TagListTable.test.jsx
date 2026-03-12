@@ -12,6 +12,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../../store';
+import * as apiHooksModule from '../data/apiHooks';
+import * as hooksModule from './hooks';
+import * as treeTableModule from '../tree-table';
 import TagListTable from './TagListTable';
 
 let store;
@@ -878,5 +881,82 @@ describe('<TagListTable /> isolated async subtag tests', () => {
       expect(await screen.findByText('nested child appears immediately')).toBeInTheDocument();
       expect(axiosMock.history.get.length).toBe(1);
     });
+  });
+});
+
+describe('<TagListTable /> pagination transition behavior', () => {
+  let tableViewProps;
+  const mockEnterViewMode = jest.fn();
+
+  const mockTableMode = (tableMode) => {
+    jest.spyOn(hooksModule, 'useTableModes').mockReturnValue({
+      tableMode,
+      enterDraftMode: jest.fn(),
+      exitDraftWithoutSave: jest.fn(),
+      enterPreviewMode: jest.fn(),
+      enterViewMode: mockEnterViewMode,
+    });
+  };
+
+  beforeEach(() => {
+    tableViewProps = null;
+    mockEnterViewMode.mockReset();
+    store = initializeStore();
+    queryClient.clear();
+
+    jest.spyOn(apiHooksModule, 'useTagListData').mockReturnValue({
+      isLoading: false,
+      data: {
+        results: [],
+        numPages: 1,
+      },
+    });
+    jest.spyOn(apiHooksModule, 'useCreateTag').mockReturnValue({
+      isPending: false,
+      mutateAsync: jest.fn(),
+    });
+    jest.spyOn(hooksModule, 'useEditActions').mockReturnValue({
+      handleCreateTag: jest.fn(),
+      handleUpdateTag: jest.fn(),
+      validate: jest.fn(() => true),
+    });
+    jest.spyOn(treeTableModule, 'TableView').mockImplementation((props) => {
+      tableViewProps = props;
+      return <div data-testid="mock-table-view" />;
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('transitions from preview mode back to view mode on pagination changes', async () => {
+    mockTableMode('preview');
+
+    renderTagListTable();
+
+    expect(await screen.findByTestId('mock-table-view')).toBeInTheDocument();
+    expect(tableViewProps).toBeTruthy();
+
+    act(() => {
+      tableViewProps.handlePaginationChange({ pageIndex: 1, pageSize: 100 });
+    });
+
+    expect(mockEnterViewMode).toHaveBeenCalled();
+  });
+
+  it('does not transition to view mode on pagination changes when already in view mode', async () => {
+    mockTableMode('view');
+
+    renderTagListTable();
+
+    expect(await screen.findByTestId('mock-table-view')).toBeInTheDocument();
+    expect(tableViewProps).toBeTruthy();
+
+    act(() => {
+      tableViewProps.handlePaginationChange({ pageIndex: 1, pageSize: 100 });
+    });
+
+    expect(mockEnterViewMode).not.toHaveBeenCalled();
   });
 });

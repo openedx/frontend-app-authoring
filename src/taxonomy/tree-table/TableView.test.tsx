@@ -59,8 +59,7 @@ describe('TableView', () => {
     expect(screen.queryByRole('navigation', { name: /table pagination/i })).not.toBeInTheDocument();
   });
 
-  // Enable this test once backend pagination is implemented and wired through TagListTable.
-  it.skip('renders pagination and updates page selection when explicitly enabled', () => {
+  it('renders pagination and updates page selection when explicitly enabled', () => {
     const props = baseProps();
     render(<TableView {...props} enablePagination />, { wrapper });
 
