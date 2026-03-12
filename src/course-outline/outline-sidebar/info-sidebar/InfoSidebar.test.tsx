@@ -13,7 +13,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
     ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     selectedContainerState,
     clearSelection: jest.fn(),
-    setSelectedContainerState: jest.fn(),
+    setSelectedContainerState: mockSetSelectedContainerState,
   }),
 }));
 
@@ -32,6 +32,12 @@ const handleDuplicateSectionSubmit = jest.fn();
 const handleDuplicateUnitSubmit = jest.fn();
 const handleDuplicateSubsectionSubmit = jest.fn();
 const mockedNavigate = jest.fn();
+const updateUnitOrderByIndex = jest.fn();
+const updateSubsectionOrderByIndex = jest.fn();
+const updateSectionOrderByIndex = jest.fn();
+const mockSetSelectedContainerState = jest.fn();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let mockSections: any[] = [];
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -47,12 +53,12 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     openUnlinkModal,
     handleDuplicateUnitSubmit,
     getUnitUrl: jest.fn(),
-    sections: [],
-    updateUnitOrderByIndex: jest.fn(),
+    sections: mockSections,
+    updateUnitOrderByIndex,
     handleDuplicateSectionSubmit,
-    updateSectionOrderByIndex: jest.fn(),
+    updateSectionOrderByIndex,
     handleDuplicateSubsectionSubmit,
-    updateSubsectionOrderByIndex: jest.fn(),
+    updateSubsectionOrderByIndex,
   }),
 }));
 
@@ -73,6 +79,11 @@ describe('InfoSidebar component', () => {
     handleDuplicateUnitSubmit.mockClear();
     handleDuplicateSubsectionSubmit.mockClear();
     mockedNavigate.mockClear();
+    updateUnitOrderByIndex.mockClear();
+    updateSubsectionOrderByIndex.mockClear();
+    updateSectionOrderByIndex.mockClear();
+    mockSetSelectedContainerState.mockClear();
+    mockSections = [];
   });
 
   it('renders InfoSidebar with course info if selectedContainerState is undefined', async () => {
@@ -258,6 +269,102 @@ describe('InfoSidebar component', () => {
         expect.stringContaining('/library/'),
       );
     });
+
+    it('copies location ID to clipboard when Copy Location is clicked', async () => {
+      const user = userEvent.setup();
+      const writeText = jest.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: { writeText },
+        writable: true,
+        configurable: true,
+      });
+      await renderUnitMenu();
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const copyLocationBtn = await screen.findByText('Copy Location ID');
+      await user.click(copyLocationBtn);
+
+      expect(writeText).toHaveBeenCalledWith('unit1');
+    });
+
+    describe('handleMove', () => {
+      const seqId = 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@seq1';
+      const chId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1';
+      const draggableUnitData = {
+        ...unitData,
+        actions: { ...unitData.actions, draggable: true },
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const makeMovableUnit = (id: string): any => ({
+        id,
+        actions: { draggable: true },
+        childInfo: { children: [] },
+      });
+
+      const renderDraggableUnitMenu = async () => {
+        mockSections = [{
+          id: chId,
+          childInfo: {
+            children: [{
+              id: seqId,
+              childInfo: {
+                children: [
+                  makeMovableUnit('unit0'),
+                  makeMovableUnit(unitId),
+                  makeMovableUnit('unit2'),
+                ],
+              },
+            }],
+          },
+        }];
+        selectedContainerState = {
+          currentId: unitId,
+          subsectionId: seqId,
+          sectionId: chId,
+          sectionIndex: 0,
+          index: 1,
+        };
+        axiosMock.onGet(getXBlockApiUrl(unitId)).reply(200, draggableUnitData);
+        renderComponent();
+        await screen.findByText(draggableUnitData.displayName);
+        await screen.findByRole('button', { name: 'Item Menu' });
+      };
+
+      it('calls updateUnitOrderByIndex and setSelectedContainerState when Move Up is clicked', async () => {
+        const user = userEvent.setup();
+        await renderDraggableUnitMenu();
+
+        const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+        fireEvent.click(menuToggle);
+
+        const moveUpBtn = await screen.findByText('Move Up');
+        await user.click(moveUpBtn);
+
+        expect(updateUnitOrderByIndex).toHaveBeenCalled();
+        expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
+          expect.objectContaining({ index: 0, subsectionId: seqId, sectionId: chId }),
+        );
+      });
+
+      it('calls updateUnitOrderByIndex and setSelectedContainerState when Move Down is clicked', async () => {
+        const user = userEvent.setup();
+        await renderDraggableUnitMenu();
+
+        const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+        fireEvent.click(menuToggle);
+
+        const moveDownBtn = await screen.findByText('Move Down');
+        await user.click(moveDownBtn);
+
+        expect(updateUnitOrderByIndex).toHaveBeenCalled();
+        expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
+          expect.objectContaining({ index: 2, subsectionId: seqId, sectionId: chId }),
+        );
+      });
+    });
   });
 
   describe('SubsectionSidebar menus', () => {
@@ -351,6 +458,79 @@ describe('InfoSidebar component', () => {
         expect.stringContaining('/library/'),
       );
     });
+
+    describe('handleMove', () => {
+      const chId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1';
+      const draggableSubsectionData = {
+        ...subsectionData,
+        actions: { ...subsectionData.actions, draggable: true },
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const makeMovableSubsection = (id: string): any => ({
+        id,
+        actions: { draggable: true, childAddable: true },
+        childInfo: { children: [] },
+      });
+
+      const renderDraggableSubsectionMenu = async () => {
+        mockSections = [{
+          id: chId,
+          actions: { childAddable: true },
+          upstreamInfo: null,
+          childInfo: {
+            children: [
+              makeMovableSubsection('sub0'),
+              makeMovableSubsection(subsectionId),
+              makeMovableSubsection('sub2'),
+            ],
+          },
+        }];
+        selectedContainerState = {
+          currentId: subsectionId,
+          subsectionId,
+          sectionId: chId,
+          sectionIndex: 0,
+          index: 1,
+        };
+        axiosMock.onGet(getXBlockApiUrl(subsectionId)).reply(200, draggableSubsectionData);
+        renderComponent();
+        await screen.findByText(draggableSubsectionData.displayName);
+        await screen.findByRole('button', { name: 'Item Menu' });
+      };
+
+      it('calls updateSubsectionOrderByIndex and setSelectedContainerState when Move Up is clicked', async () => {
+        const user = userEvent.setup();
+        await renderDraggableSubsectionMenu();
+
+        const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+        fireEvent.click(menuToggle);
+
+        const moveUpBtn = await screen.findByText('Move Up');
+        await user.click(moveUpBtn);
+
+        expect(updateSubsectionOrderByIndex).toHaveBeenCalled();
+        expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
+          expect.objectContaining({ index: 0, sectionId: chId, sectionIndex: 0 }),
+        );
+      });
+
+      it('calls updateSubsectionOrderByIndex and setSelectedContainerState when Move Down is clicked', async () => {
+        const user = userEvent.setup();
+        await renderDraggableSubsectionMenu();
+
+        const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+        fireEvent.click(menuToggle);
+
+        const moveDownBtn = await screen.findByText('Move Down');
+        await user.click(moveDownBtn);
+
+        expect(updateSubsectionOrderByIndex).toHaveBeenCalled();
+        expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
+          expect.objectContaining({ index: 2, sectionId: chId, sectionIndex: 0 }),
+        );
+      });
+    });
   });
 
   describe('SectionSidebar menus', () => {
@@ -442,6 +622,69 @@ describe('InfoSidebar component', () => {
       expect(mockedNavigate).toHaveBeenCalledWith(
         expect.stringContaining('/library/'),
       );
+    });
+
+    describe('handleMove', () => {
+      const draggableSectionData = {
+        ...sectionData,
+        actions: { ...sectionData.actions, draggable: true },
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const makeMovableSection = (id: string): any => ({
+        id,
+        actions: { draggable: true },
+        childInfo: { children: [] },
+      });
+
+      const renderDraggableSectionMenu = async () => {
+        mockSections = [
+          makeMovableSection('sec0'),
+          makeMovableSection(sectionId),
+          makeMovableSection('sec2'),
+        ];
+        selectedContainerState = {
+          currentId: sectionId,
+          sectionId,
+          index: 1,
+        };
+        axiosMock.onGet(getXBlockApiUrl(sectionId)).reply(200, draggableSectionData);
+        renderComponent();
+        await screen.findByText(draggableSectionData.displayName);
+        await screen.findByRole('button', { name: 'Item Menu' });
+      };
+
+      it('calls updateSectionOrderByIndex and setSelectedContainerState when Move Up is clicked', async () => {
+        const user = userEvent.setup();
+        await renderDraggableSectionMenu();
+
+        const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+        fireEvent.click(menuToggle);
+
+        const moveUpBtn = await screen.findByText('Move Up');
+        await user.click(moveUpBtn);
+
+        expect(updateSectionOrderByIndex).toHaveBeenCalledWith(1, 0);
+        expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
+          expect.objectContaining({ index: 0 }),
+        );
+      });
+
+      it('calls updateSectionOrderByIndex and setSelectedContainerState when Move Down is clicked', async () => {
+        const user = userEvent.setup();
+        await renderDraggableSectionMenu();
+
+        const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+        fireEvent.click(menuToggle);
+
+        const moveDownBtn = await screen.findByText('Move Down');
+        await user.click(moveDownBtn);
+
+        expect(updateSectionOrderByIndex).toHaveBeenCalledWith(1, 2);
+        expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
+          expect.objectContaining({ index: 2 }),
+        );
+      });
     });
   });
 });

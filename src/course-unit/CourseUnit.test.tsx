@@ -3511,5 +3511,24 @@ describe('<CourseUnit />', () => {
         expect.stringContaining('/library/'),
       );
     });
+
+    it('copies location ID to clipboard when Copy Location ID is clicked from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const writeText = jest.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: { writeText },
+        writable: true,
+        configurable: true,
+      });
+      await renderUnitInfoSidebar();
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const copyLocationBtn = await screen.findByText('Copy Location ID');
+      await user.click(copyLocationBtn);
+
+      expect(writeText).toHaveBeenCalledWith('867dddb6f55d410caaa9c1eb9c6743ec');
+    });
   });
 });
