@@ -90,6 +90,7 @@ const useEditActions = ({
   setIsCreatingTopTag,
   setCreatingParentId,
   setEditingRowId,
+  updateTagMutation,
 }: UseEditActionsParams) => {
   const updateTableWithoutDataReload = (value: string, parentTagValue: string | null = null) => {
     setTagTree((currentTagTree) => {
@@ -154,7 +155,15 @@ const useEditActions = ({
   const handleUpdateTag = async (value: string, originalValue: string) => {
     const trimmed = value.trim();
     if (trimmed && trimmed !== originalValue) {
-      enterPreviewMode();
+      // enterPreviewMode();
+
+      try {
+        await updateTagMutation.mutateAsync({ value: trimmed, originalValue });
+      } catch (error) {
+        const message = intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage: (error as Error)?.message });
+        setToast({ show: true, message, variant: 'danger' });
+        return;
+      }
       setToast({
         show: true,
         message: intl.formatMessage(messages.tagUpdateSuccessMessage, { name: trimmed }),

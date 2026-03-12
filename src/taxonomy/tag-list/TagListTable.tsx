@@ -5,7 +5,7 @@ import React, {
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import type { PaginationState } from '@tanstack/react-table';
-import { useTagListData, useCreateTag } from '../data/apiHooks';
+import { useTagListData, useCreateTag, useUpdateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
 import { TableView } from '../tree-table';
 import type {
@@ -70,6 +70,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     enabled: tableMode === TABLE_MODES.VIEW,
   });
   const createTagMutation = useCreateTag(taxonomyId);
+  const updateTagMutation = useUpdateTag(taxonomyId);
   const pageCount = tagList?.numPages ?? -1;
 
   // Custom Edit Actions Hook - handles table mode transitions, API calls,
@@ -78,6 +79,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     setTagTree,
     setDraftError,
     createTagMutation,
+    updateTagMutation,
     enterPreviewMode,
     setToast,
     intl,
@@ -136,29 +138,41 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     }
   }, [tagList?.results, tableMode]);
 
+  const renameTagTest = () => {
+    if (!treeData.length) {
+      console.warn('No tags to rename');
+      return;
+    }
+    const tagToRename = treeData[0];
+    handleUpdateTag(`${tagToRename.value}-renamed`, tagToRename.value);
+  };
+
   return (
-    <TableView
-      {...{
-        treeData,
-        columns,
-        pageCount,
-        pagination,
-        handlePaginationChange,
-        isLoading,
-        isCreatingTopRow: isCreatingTopTag,
-        draftError,
-        createRowMutation: createTagMutation,
-        handleCreateRow: handleCreateTag,
-        toast,
-        setToast,
-        setIsCreatingTopRow: setIsCreatingTopTag,
-        exitDraftWithoutSave,
-        creatingParentId,
-        setCreatingParentId,
-        setDraftError,
-        validate,
-      }}
-    />
+    <>
+      <button type="button" onClick={renameTagTest}>Test Rename Tag</button>
+      <TableView
+        {...{
+          treeData,
+          columns,
+          pageCount,
+          pagination,
+          handlePaginationChange,
+          isLoading,
+          isCreatingTopRow: isCreatingTopTag,
+          draftError,
+          createRowMutation: createTagMutation,
+          handleCreateRow: handleCreateTag,
+          toast,
+          setToast,
+          setIsCreatingTopRow: setIsCreatingTopTag,
+          exitDraftWithoutSave,
+          creatingParentId,
+          setCreatingParentId,
+          setDraftError,
+          validate,
+        }}
+      />
+    </>
   );
 };
 

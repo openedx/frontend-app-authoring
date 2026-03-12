@@ -259,3 +259,27 @@ export const useCreateTag = (taxonomyId: number) => {
     },
   });
 };
+
+export const useUpdateTag = (taxonomyId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ value, originalValue }: { value: string, originalValue: string }) => {
+      try {
+        await getAuthenticatedHttpClient().patch(
+          apiUrls.updateTag(taxonomyId),
+          { tag: originalValue, updated_tag_value: value },
+        );
+      } catch (err) {
+        throw new Error(getApiErrorMessage(err));
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId),
+      });
+      // In the metadata, 'tagsCount' (and possibly other fields) will have changed:
+      queryClient.invalidateQueries({ queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId) });
+    },
+  });
+};
