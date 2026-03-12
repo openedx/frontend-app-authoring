@@ -89,6 +89,7 @@ export const ComponentInfoSidebar = () => {
 
   const handleDeleteSubmit = async () => {
     if (selectedComponentId && unitData?.id) {
+      // oxlint-disable-next-line typescript-eslint(await-thenable)
       await dispatch(deleteUnitItemQuery(unitData.id, selectedComponentId, sendMessageToIframe));
       closeDeleteModal();
       setCurrentPageKey('info', null);

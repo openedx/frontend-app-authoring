@@ -178,7 +178,7 @@ const TopLevelTextAndButton = ({
     );
   }
 
-  if ((upstreamInfo?.downstreamCustomized.length || 0) > 0) {
+  if ((upstreamInfo?.downstreamCustomized?.length || 0) > 0) {
     return (
       <FormattedMessage {...messages.topParentModifiedText} values={messageValues} />
     );
