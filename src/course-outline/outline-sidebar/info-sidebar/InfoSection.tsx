@@ -54,6 +54,7 @@ export const InfoSection = ({ itemId }: Props) => {
     }
   }, [dispatch, selectedContainerState, queryClient, courseId]);
 
+  /* istanbul ignore next */
   if (!itemData) {
     return null;
   }

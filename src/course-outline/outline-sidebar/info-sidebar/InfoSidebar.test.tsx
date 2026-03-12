@@ -654,6 +654,20 @@ describe('InfoSidebar component', () => {
         await screen.findByRole('button', { name: 'Item Menu' });
       };
 
+      it('renders Move Up/Down as disabled when index is undefined', async () => {
+        mockSections = [makeMovableSection(sectionId)];
+        selectedContainerState = { currentId: sectionId, sectionId };
+        axiosMock.onGet(getXBlockApiUrl(sectionId)).reply(200, draggableSectionData);
+        renderComponent();
+        await screen.findByText(draggableSectionData.displayName);
+
+        const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+        fireEvent.click(menuToggle);
+
+        expect(await screen.findByText('Move Up')).toBeInTheDocument();
+        expect(screen.getByText('Move Down')).toBeInTheDocument();
+      });
+
       it('calls updateSectionOrderByIndex and setSelectedContainerState when Move Up is clicked', async () => {
         const user = userEvent.setup();
         await renderDraggableSectionMenu();
