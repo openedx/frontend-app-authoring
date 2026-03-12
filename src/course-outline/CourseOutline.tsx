@@ -498,6 +498,7 @@ const CourseOutline = () => {
           isOpen={isConfigureModalOpen}
           onClose={handleConfigureModalClose}
           onConfigureSubmit={handleConfigureItemSubmit}
+          isOverflowVisible={itemCategory === COURSE_BLOCK_NAMES.chapter.id}
           currentItemData={currentItemData}
           enableProctoredExams={enableProctoredExams}
           enableTimedExams={enableTimedExams}
