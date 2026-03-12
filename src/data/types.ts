@@ -168,6 +168,8 @@ export type SelectionState = {
   currentId: string;
   sectionId?: string;
   subsectionId?: string;
+  index?: number;
+  sectionIndex?: number;
 };
 
 export type AccessManagedXBlockDataTypes = {

@@ -39,6 +39,7 @@ interface SubsectionCardProps {
   onOpenDeleteModal: () => void,
   onDuplicateSubmit: () => void,
   index: number,
+  sectionIndex: number,
   getPossibleMoves: (index: number, step: number) => void,
   onOrderChange: (section: XBlock, moveDetails: any) => void,
   onOpenConfigureModal: () => void,
@@ -57,6 +58,7 @@ const SubsectionCard = ({
   isCustomRelativeDatesActive,
   children,
   index,
+  sectionIndex,
   getPossibleMoves,
   onOpenDeleteModal,
   onDuplicateSubmit,
@@ -164,6 +166,8 @@ const SubsectionCard = ({
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      sectionIndex,
+      index,
     });
   };
 
@@ -172,6 +176,8 @@ const SubsectionCard = ({
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      sectionIndex,
+      index,
     });
   };
 
@@ -250,7 +256,8 @@ const SubsectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(subsection.id, subsection.id, section.id);
+      openContainerInfoSidebar(subsection.id, subsection.id, section.id, index, sectionIndex);
+      handleClickMenuButton();
       setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);

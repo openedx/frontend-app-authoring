@@ -199,6 +199,7 @@ const SectionCard = ({
     setCurrentSelection({
       currentId: section.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -206,6 +207,7 @@ const SectionCard = ({
     setSelectedContainerState({
       currentId: section.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -241,7 +243,8 @@ const SectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(section.id, undefined, section.id);
+      openContainerInfoSidebar(section.id, undefined, section.id, index);
+      handleClickMenuButton();
       setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);

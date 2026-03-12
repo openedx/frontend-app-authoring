@@ -12,7 +12,6 @@ import { Helmet } from 'react-helmet';
 import { CheckCircle as CheckCircleIcon, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import {
-  arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
@@ -76,6 +75,12 @@ const CourseOutline = () => {
     isUnlinkModalOpen,
     closeUnlinkModal,
     currentSelection,
+    sections,
+    restoreSectionList,
+    setSections,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
   } = useCourseAuthoringContext();
 
   const {
@@ -83,7 +88,6 @@ const CourseOutline = () => {
     savingStatus,
     statusBarData,
     courseActions,
-    sectionsList,
     isCustomRelativeDatesActive,
     isLoading,
     isLoadingDenied,
@@ -155,11 +159,6 @@ const CourseOutline = () => {
     }
   }, [location, courseId, courseName]);
 
-  const [sections, setSections] = useState<XBlock[]>(sectionsList);
-
-  const restoreSectionList = () => {
-    setSections(() => [...sectionsList]);
-  };
 
   const {
     isShow: isShowProcessingNotification,
@@ -173,67 +172,6 @@ const CourseOutline = () => {
 
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
   const enableTimedExams = useSelector(getTimedExamsFlag);
-
-  /**
-   * Move section to new index
-   */
-  const updateSectionOrderByIndex = (currentIndex: number, newIndex: number) => {
-    if (currentIndex === newIndex) {
-      return;
-    }
-    setSections((prevSections) => {
-      const newSections = arrayMove(prevSections, currentIndex, newIndex);
-      handleSectionDragAndDrop(newSections.map(section => section.id));
-      return newSections;
-    });
-  };
-
-  /**
-   * Uses details from move information and moves subsection
-   */
-  const updateSubsectionOrderByIndex = (section: XBlock, moveDetails) => {
-    const { fn, args, sectionId } = moveDetails;
-    if (!args) {
-      return;
-    }
-    const [sectionsCopy, newSubsections] = fn(...args);
-    if (newSubsections && sectionId) {
-      setSections(sectionsCopy);
-      handleSubsectionDragAndDrop(
-        sectionId,
-        section.id,
-        newSubsections.map(subsection => subsection.id),
-        restoreSectionList,
-      );
-    }
-  };
-
-  /**
-   * Uses details from move information and moves unit
-   */
-  const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
-    const {
-      fn, args, sectionId, subsectionId,
-    } = moveDetails;
-    if (!args) {
-      return;
-    }
-    const [sectionsCopy, newUnits] = fn(...args);
-    if (newUnits && sectionId && subsectionId) {
-      setSections(sectionsCopy);
-      handleUnitDragAndDrop(
-        sectionId,
-        section.id,
-        subsectionId,
-        newUnits.map(unit => unit.id),
-        restoreSectionList,
-      );
-    }
-  };
-
-  useEffect(() => {
-    setSections(sectionsList);
-  }, [sectionsList]);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -310,7 +248,7 @@ const CourseOutline = () => {
                 isSectionsExpanded={isSectionsExpanded}
                 headerNavigationsActions={headerNavigationsActions}
                 isDisabledReindexButton={isDisabledReindexButton}
-                hasSections={Boolean(sectionsList.length)}
+                hasSections={Boolean(sections.length)}
                 courseActions={courseActions}
                 errors={errors}
                 sections={sections}
@@ -340,7 +278,7 @@ const CourseOutline = () => {
                 <div>
                   {showNewActionsBar && (
                   <ActionRow className="mt-3">
-                    {Boolean(sectionsList.length) && (
+                    {Boolean(sections.length) && (
                     <Button
                       variant="outline-primary"
                       id="expand-collapse-all-button"
@@ -399,6 +337,7 @@ const CourseOutline = () => {
                                           section={section}
                                           subsection={subsection}
                                           index={subsectionIndex}
+                                          sectionIndex={sectionIndex}
                                           getPossibleMoves={possibleSubsectionMoves(
                                             [...sections],
                                             sectionIndex,
@@ -425,6 +364,7 @@ const CourseOutline = () => {
                                                 unit={unit}
                                                 subsection={subsection}
                                                 section={section}
+                                                sectionIndex={sectionIndex}
                                                 isSelfPaced={statusBarData.isSelfPaced}
                                                 isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                                 index={unitIndex}

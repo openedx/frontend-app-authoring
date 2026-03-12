@@ -1,24 +1,33 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
-import { useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { Tag } from '@openedx/paragon/icons';
 import { ContentTagsSnippet } from '@src/content-tags-drawer';
 import configureMessages from '@src/generic/configure-modal/messages';
 import {
   Button, ButtonGroup, Tab, Tabs,
 } from '@openedx/paragon';
+import { useToggle } from '@openedx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
 import { Form, Formik } from 'formik';
 import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
 import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
-import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
+import { editCourseUnitVisibilityAndData, fetchCourseSectionVerticalData } from '@src/course-unit/data/thunk';
 import PublishControls from './PublishControls';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
+import { getLibraryId } from '@src/generic/key-utils';
+import { useClipboard } from '@src/generic/clipboard';
+import { ToastContext } from '@src/generic/toast-context';
+import { UnlinkModal, useUnlinkDownstream } from '@src/generic/unlink-modal';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useQueryClient } from '@tanstack/react-query';
+import { courseOutlineQueryKeys, useDeleteCourseItem } from '@src/course-outline/data/apiHooks';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 
 /**
  * Component to show unit details: Publish status, Component counts and Content Tags.
@@ -193,22 +202,102 @@ const UnitInfoSettings = () => {
  */
 export const UnitInfoSidebar = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { copyToClipboard } = useClipboard();
   const currentItemData = useSelector(getCourseUnitData);
   const {
     currentTabKey,
     setCurrentTabKey,
   } = useUnitSidebarContext();
+  const { showToast } = useContext(ToastContext);
+  const { courseId } = useCourseAuthoringContext();
+
+  const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
+  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
+  const { mutateAsync: deleteCourseItem } = useDeleteCourseItem();
+  const queryClient = useQueryClient();
+
+  const sequenceId = currentItemData?.ancestorInfo?.ancestors?.[0]?.id;
+  const sectionId = currentItemData?.ancestorInfo?.ancestors?.[1]?.id;
+
+  const handleDeleteSubmit = async () => {
+    await deleteCourseItem({
+      itemId: currentItemData.id,
+      subsectionId: sequenceId,
+      sectionId,
+    }, {
+      onSuccess: () => {
+        closeDeleteModal();
+        navigate(`/course/${courseId}`);
+      },
+    });
+  };
+
+  const handleUnlinkSubmit = async () => {
+    await unlinkDownstream({
+      downstreamBlockId: currentItemData.id,
+      subsectionId: sequenceId,
+      sectionId,
+    }, {
+      onSuccess: () => {
+        closeUnlinkModal();
+        queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(currentItemData.id) });
+        dispatch(fetchCourseSectionVerticalData(currentItemData.id, sequenceId));
+      },
+    });
+  };
 
   useEffect(() => {
     // Set default Tab key
     setCurrentTabKey('details');
   }, []);
 
+  const handleCopyLocation = () => {
+    // Extract the location ID: the part after "block@" at the end of the usage key
+    // e.g. "block-v1:org+course+run+type@vertical+block@abc123" → "abc123"
+    const locationId = currentItemData.id.match(/block@(.+)$/)?.[1];
+    if (!locationId) {
+      return;
+    }
+
+    if (navigator.clipboard) {
+      // Modern approach: requires HTTPS (secure context)
+      void navigator.clipboard.writeText(locationId);
+    } else /* istanbul ignore next */ {
+      // Fallback for HTTP (non-secure) dev environments
+      // Note: execCommand is deprecated but still widely supported as fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = locationId;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy'); // eslint-disable-line deprecation/deprecation
+      document.body.removeChild(textarea);
+    }
+    showToast(intl.formatMessage(messages.locationCopiedText));
+  };
+
   return (
     <>
       <SidebarTitle
         title={currentItemData.displayName}
         icon={getItemIcon('unit')}
+        menuProps={{
+          itemId: currentItemData.id,
+          index: -1,
+          onClickUnlink: openUnlinkModal,
+          onClickDelete: openDeleteModal,
+          onClickViewLibrary: () => {
+            const upstreamRef = currentItemData?.upstreamInfo?.upstreamRef;
+            if (upstreamRef) {
+              const libId = getLibraryId(upstreamRef);
+              navigate(`/library/${libId}/unit/${upstreamRef}`);
+            }
+          },
+          onClickCopy: () => copyToClipboard(currentItemData.id),
+          onClickCopyLocation: handleCopyLocation,
+        }}
       />
       <Tabs
         id="unit-info-sidebar-tabs"
@@ -233,6 +322,19 @@ export const UnitInfoSidebar = () => {
           </div>
         </Tab>
       </Tabs>
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        close={closeDeleteModal}
+        onDeleteSubmit={handleDeleteSubmit}
+        category="unit"
+      />
+      <UnlinkModal
+        isOpen={isUnlinkModalOpen}
+        close={closeUnlinkModal}
+        onUnlinkSubmit={handleUnlinkSubmit}
+        displayName={currentItemData.displayName}
+        category="vertical"
+      />
     </>
   );
 };

@@ -1,17 +1,23 @@
 import { getConfig } from '@edx/frontend-platform';
 import {
-  createContext, useContext, useMemo, useState,
+  createContext, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
-import { useSelector } from 'react-redux';
+import { useCreateCourseBlock, useDeleteCourseItem, useDuplicateItem } from '@src/course-outline/data/apiHooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { getOutlineIndexData } from '@src/course-outline/data/selectors';
+import { getOutlineIndexData, getSectionsList } from '@src/course-outline/data/selectors';
 import { useToggleWithValue } from '@src/hooks';
 import { SelectionState, type UnitXBlock, type XBlock } from '@src/data/types';
 import { CourseDetailsData } from './data/api';
 import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { RequestStatusType } from './data/constants';
+import { arrayMove } from '@dnd-kit/sortable';
+import { fetchCourseOutlineIndexQuery, setSectionOrderListQuery, setSubsectionOrderListQuery, setUnitOrderListQuery } from './course-outline/data/thunk';
+import { useToggle } from '@openedx/paragon';
+import { getBlockType } from './generic/key-utils';
+import { COURSE_BLOCK_NAMES } from './constants';
+import { deleteSection, deleteSubsection, deleteUnit } from './course-outline/data/slice';
 
 type ModalState = {
   value?: XBlock | UnitXBlock;
@@ -40,6 +46,23 @@ export type CourseAuthoringContextData = {
   closePublishModal: () => void;
   currentSelection?: SelectionState;
   setCurrentSelection: React.Dispatch<React.SetStateAction<SelectionState | undefined>>;
+  sections: XBlock[];
+  restoreSectionList: () => void;
+  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
+  isDuplicatingItem: boolean;
+  isDeleteModalOpen: boolean;
+  openDeleteModal: () => void;
+  closeDeleteModal: () => void;
+  getHandleDeleteItemSubmit: (callback: () => void) => () => Promise<void>;
+  handleDuplicateSectionSubmit: () => void;
+  handleDuplicateSubsectionSubmit: () => void;
+  handleDuplicateUnitSubmit: () => void;
+  handleSectionDragAndDrop: (sectionListIds: string[]) => void;
+  handleSubsectionDragAndDrop: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
+  handleUnitDragAndDrop: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => void;
+  updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => void;
+  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => void;
+  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => void;
 };
 
 /**
@@ -61,6 +84,7 @@ export const CourseAuthoringProvider = ({
   courseId,
 }: CourseAuthoringProviderProps) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const waffleFlags = useWaffleFlags();
   const { data: courseDetails, status: courseDetailStatus } = useCourseDetails(courseId);
   const canChangeProviders = getAuthenticatedUser().administrator || new Date(courseDetails?.start ?? 0) > new Date();
@@ -78,6 +102,23 @@ export const CourseAuthoringProvider = ({
     openPublishModal,
     closePublishModal,
   ] = useToggleWithValue<ModalState>();
+  const sectionsList = useSelector(getSectionsList);
+  const [sections, setSections] = useState<XBlock[]>(sectionsList);
+  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  
+
+  const restoreSectionList = () => {
+    setSections(() => [...sectionsList]);
+  };
+
+  useEffect(() => {
+    dispatch(fetchCourseOutlineIndexQuery(courseId));
+  }, [courseId]);
+
+  useEffect(() => {
+    setSections(sectionsList);
+  }, [sectionsList]);
+
   /**
   * This will hold the state of current item that is being operated on,
   * For example:
@@ -113,6 +154,196 @@ export const CourseAuthoringProvider = ({
   const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const handleAddBlock = useCreateCourseBlock(courseId);
 
+  const {
+    mutate: duplicateItem,
+    isPending: isDuplicatingItem,
+  } = useDuplicateItem(courseId);
+  const handleDuplicateSectionSubmit = () => {
+    if (currentSelection && currentSelection.currentId) {
+      duplicateItem({
+        itemId: currentSelection.currentId,
+        parentId: courseStructure.id,
+        sectionId: currentSelection.sectionId,
+        subsectionId: currentSelection.subsectionId,
+      });
+    }
+  };
+
+  const handleDuplicateSubsectionSubmit = () => {
+    if (currentSelection && currentSelection.currentId && currentSelection.sectionId) {
+      duplicateItem({
+        itemId: currentSelection.currentId,
+        parentId: currentSelection.sectionId,
+        sectionId: currentSelection.sectionId,
+        subsectionId: currentSelection.subsectionId,
+      });
+    }
+  };
+
+  const handleDuplicateUnitSubmit = () => {
+    if (currentSelection && currentSelection.currentId && currentSelection.subsectionId) {
+      duplicateItem({
+        itemId: currentSelection?.currentId,
+        parentId: currentSelection?.subsectionId,
+        sectionId: currentSelection?.sectionId,
+        subsectionId: currentSelection?.subsectionId,
+      });
+    }
+  };
+
+  const handleSectionDragAndDrop = (
+    sectionListIds: string[],
+  ) => {
+    dispatch(setSectionOrderListQuery(
+      courseId,
+      sectionListIds,
+      restoreSectionList,
+    ));
+  };
+
+  const handleSubsectionDragAndDrop = (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionListIds: string[],
+  ) => {
+    dispatch(setSubsectionOrderListQuery(
+      sectionId,
+      prevSectionId,
+      subsectionListIds,
+      restoreSectionList,
+    ));
+  };
+
+  const handleUnitDragAndDrop = (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+  ) => {
+    dispatch(setUnitOrderListQuery(
+      sectionId,
+      subsectionId,
+      prevSectionId,
+      unitListIds,
+      restoreSectionList,
+    ));
+  };
+
+  /**
+   * Uses details from move information and moves unit
+   */
+  const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
+    const { fn, args, sectionId, subsectionId } = moveDetails;
+    if (!args) {
+      return;
+    }
+    const [sectionsCopy, newUnits] = fn(...args);
+    if (newUnits && subsectionId) {
+      setSections(sectionsCopy);
+      handleUnitDragAndDrop(
+        sectionId,
+        section.id,
+        subsectionId,
+        newUnits.map((unit) => unit.id),
+      );
+    }
+  };
+
+  /**
+   * Move section to new index
+   */
+  const updateSectionOrderByIndex = (currentIndex: number, newIndex: number) => {
+    if (currentIndex === newIndex) {
+      return;
+    }
+    setSections((prevSections) => {
+      const newSections = arrayMove(prevSections, currentIndex, newIndex);
+      handleSectionDragAndDrop(newSections.map(section => section.id));
+      return newSections;
+    });
+  };
+
+  /**
+   * Uses details from move information and moves subsection
+   */
+  const updateSubsectionOrderByIndex = (section: XBlock, moveDetails) => {
+    const { fn, args, sectionId } = moveDetails;
+    if (!args) {
+      return;
+    }
+    const [sectionsCopy, newSubsections] = fn(...args);
+    if (newSubsections && sectionId) {
+      setSections(sectionsCopy);
+      handleSubsectionDragAndDrop(
+        sectionId,
+        section.id,
+        newSubsections.map(subsection => subsection.id),
+      );
+    }
+  };
+
+  const deleteMutation = useDeleteCourseItem();
+  
+  const getHandleDeleteItemSubmit = useCallback((callback: () => void) => {
+    return async () => {
+      // istanbul ignore if
+      if (!currentSelection) {
+        return;
+      }
+      const category = getBlockType(currentSelection.currentId);
+      switch (category) {
+        case COURSE_BLOCK_NAMES.chapter.id:
+          await deleteMutation.mutateAsync(
+            { itemId: currentSelection.currentId },
+            {
+              onSettled: () => dispatch(deleteSection({ itemId: currentSelection.currentId })),
+            },
+          );
+          break;
+        case COURSE_BLOCK_NAMES.sequential.id:
+          await deleteMutation.mutateAsync(
+            { itemId: currentSelection.currentId, sectionId: currentSelection.sectionId },
+            {
+              onSettled: () => dispatch(deleteSubsection({
+                itemId: currentSelection.currentId,
+                sectionId: currentSelection.sectionId,
+              })),
+            },
+          );
+          break;
+        case COURSE_BLOCK_NAMES.vertical.id:
+          await deleteMutation.mutateAsync(
+            {
+              itemId: currentSelection.currentId,
+              subsectionId: currentSelection.subsectionId,
+              sectionId: currentSelection.sectionId,
+            },
+            {
+              onSettled: () => dispatch(deleteUnit({
+                itemId: currentSelection.currentId,
+                subsectionId: currentSelection.subsectionId,
+                sectionId: currentSelection.sectionId,
+              })),
+            },
+          );
+          break;
+        default:
+          // istanbul ignore next
+          throw new Error(`Unrecognized category ${category}`);
+      }
+      closeDeleteModal();
+      callback();
+    };
+  }, [
+    deleteMutation,
+    closeDeleteModal,
+    currentSelection,
+    dispatch,
+    deleteSection,
+    deleteUnit,
+    deleteSubsection,
+  ]);
+
   const context = useMemo<CourseAuthoringContextData>(() => ({
     courseId,
     courseUsageKey,
@@ -133,6 +364,23 @@ export const CourseAuthoringProvider = ({
     closePublishModal,
     currentSelection,
     setCurrentSelection,
+    sections,
+    restoreSectionList,
+    setSections,
+    isDuplicatingItem,
+    isDeleteModalOpen,
+    openDeleteModal,
+    closeDeleteModal,
+    getHandleDeleteItemSubmit,
+    handleDuplicateSectionSubmit,
+    handleDuplicateSubsectionSubmit,
+    handleDuplicateUnitSubmit,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
   }), [
     courseId,
     courseUsageKey,
@@ -153,6 +401,22 @@ export const CourseAuthoringProvider = ({
     closePublishModal,
     currentSelection,
     setCurrentSelection,
+    sections,
+    restoreSectionList,
+    setSections,
+    isDuplicatingItem,
+    isDeleteModalOpen,
+    openDeleteModal,
+    closeDeleteModal,
+    getHandleDeleteItemSubmit,
+    handleDuplicateSectionSubmit,
+    handleDuplicateSubsectionSubmit,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
   ]);
 
   return (

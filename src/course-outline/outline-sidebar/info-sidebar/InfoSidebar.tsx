@@ -17,13 +17,13 @@ export const InfoSidebar = () => {
   switch (itemType) {
     case ContainerType.Chapter:
     case ContainerType.Section:
-      return <SectionSidebar sectionId={selectedContainerState.currentId} />;
+      return <SectionSidebar />;
     case ContainerType.Sequential:
     case ContainerType.Subsection:
-      return <SubsectionSidebar subsectionId={selectedContainerState.currentId} />;
+      return <SubsectionSidebar />;
     case ContainerType.Vertical:
     case ContainerType.Unit:
-      return <UnitSidebar unitId={selectedContainerState.currentId} />;
+      return <UnitSidebar />;
     default:
       return <CourseInfoSidebar />;
   }

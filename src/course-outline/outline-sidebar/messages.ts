@@ -175,6 +175,11 @@ const messages = defineMessages({
     defaultMessage: '{name} is a library {category}. Content cannot be added to Library referenced {category}s.',
     description: 'Alert displayed in sidebar when author tries to add content in library referenced blocks',
   },
+  locationCopiedText: {
+    id: 'course-authoring.course-outline.sidebar.unit.copied-location',
+    defaultMessage: 'Location ID saved in the Clipboard',
+    description: 'Toast messages when the user copied an unit location ID',
+  },
 });
 
 export default messages;
