@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   errorSavingMessage: {
     id: 'course-authoring.tree-table.error-saving.message',
-    defaultMessage: 'An error occurred while saving changes. Please try again.',
+    defaultMessage: '{errorMessage}. Please try again.',
   },
   expandAll: {
     id: 'course-authoring.tree-table.expand-all',

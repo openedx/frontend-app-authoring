@@ -102,7 +102,7 @@ const TableView = ({
           <Alert.Heading>
             {intl.formatMessage(messages.errorSavingTitle)}
           </Alert.Heading>
-          {intl.formatMessage(messages.errorSavingMessage)}
+          {intl.formatMessage(messages.errorSavingMessage, { errorMessage: draftError || intl.formatMessage(messages.errorSavingMessage, { errorMessage: '' }) })}
         </Alert>
       )}
       <Card className="tag-list-card">

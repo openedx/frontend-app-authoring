@@ -65,6 +65,37 @@ export const taxonomyQueryKeys = {
   importPlan: (taxonomyId: number, fileId: string) => [...taxonomyQueryKeys.all, 'importPlan', taxonomyId, fileId],
 } satisfies Record<string, (string | number)[] | ((...args: any[]) => (string | number)[])>;
 
+const getApiErrorMessage = (err: unknown): string => {
+  const error = err as { message?: string; response?: { data?: unknown } };
+  const responseData = error?.response?.data;
+
+  if (Array.isArray(responseData)) {
+    const firstMessage = responseData.find((item): item is string => typeof item === 'string' && item.trim().length > 0);
+    if (firstMessage) {
+      return firstMessage;
+    }
+  }
+
+  if (typeof responseData === 'string' && responseData.trim().length > 0) {
+    return responseData;
+  }
+
+  if (responseData && typeof responseData === 'object') {
+    const objectData = responseData as { error?: string; detail?: string; message?: string };
+    if (typeof objectData.error === 'string' && objectData.error.trim().length > 0) {
+      return objectData.error;
+    }
+    if (typeof objectData.detail === 'string' && objectData.detail.trim().length > 0) {
+      return objectData.detail;
+    }
+    if (typeof objectData.message === 'string' && objectData.message.trim().length > 0) {
+      return objectData.message;
+    }
+  }
+
+  return error?.message || 'Unexpected error';
+};
+
 /**
  * Builds the query to get the taxonomy list
  * @param {string} [org] Filter the list to only show taxonomies assigned to this org
@@ -139,7 +170,7 @@ export const useImportTags = () => {
         const { data } = await getAuthenticatedHttpClient().put(apiUrls.tagsImport(taxonomyId), formData);
         return camelCaseObject(data);
       } catch (err) {
-        throw new Error((err as any).response?.data?.error || (err as any).message);
+        throw new Error(getApiErrorMessage(err));
       }
     },
     onSuccess: (data) => {
@@ -170,7 +201,7 @@ export const useImportPlan = (taxonomyId: number, file: File | null) => useQuery
       const { data } = await getAuthenticatedHttpClient().put(apiUrls.tagsPlanImport(taxonomyId), formData);
       return data.plan as string;
     } catch (err) {
-      throw new Error((err as any).response?.data?.error || (err as any).message);
+      throw new Error(getApiErrorMessage(err));
     }
   },
   retry: false, // If there's an error, it's probably a real problem with the file. Don't try again several times!
@@ -216,7 +247,7 @@ export const useCreateTag = (taxonomyId: number) => {
           { tag: value, parent_tag_value: parentTagValue },
         );
       } catch (err) {
-        throw new Error((err as any).response?.data?.error || (err as any).message);
+        throw new Error(getApiErrorMessage(err));
       }
     },
     onSuccess: () => {

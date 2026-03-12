@@ -151,7 +151,6 @@ describe('useEditActions', () => {
     const {
       actions,
       createTagMutation,
-      exitDraftWithoutSave,
       setDraftError,
       setToast,
     } = buildActions();
@@ -159,11 +158,10 @@ describe('useEditActions', () => {
 
     await actions.handleCreateTag('new tag');
 
-    expect(exitDraftWithoutSave).toHaveBeenCalled();
     expect(setDraftError).toHaveBeenCalledWith('server failed');
     expect(setToast).toHaveBeenCalledWith({
       show: true,
-      message: 'Error: unable to create tag',
+      message: 'Error creating tag: server failed',
       variant: 'danger',
     });
   });

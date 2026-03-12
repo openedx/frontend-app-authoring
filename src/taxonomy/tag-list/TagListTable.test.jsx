@@ -256,7 +256,7 @@ describe('<TagListTable />', () => {
 
   describe('Create a new top-level tag', () => {
     describe('with editable user and loaded taxonomy', () => {
-      it('should add draft row when top-level"Add tag" button is clicked', async () => {
+      it('should add draft row when top-level "Add tag" button is clicked', async () => {
         const { creatingRow } = await openTopLevelDraftRow();
 
         expect(within(creatingRow).getByText('Cancel')).toBeInTheDocument();
@@ -537,9 +537,7 @@ describe('<TagListTable />', () => {
       });
 
       it('should show an inline duplicate-name error when the entered root tag already exists', async () => {
-        axiosMock.onPost(createTagUrl).reply(400, {
-          error: 'Tag with this name already exists',
-        });
+        axiosMock.onPost(createTagUrl).reply(400, ['Tag with this name already exists']);
 
         fireEvent.click(await screen.findByLabelText('Create Tag'));
         const draftRow = await screen.findAllByRole('row');
@@ -549,7 +547,7 @@ describe('<TagListTable />', () => {
         fireEvent.change(input, { target: { value: 'root tag 1' } });
         fireEvent.click(saveButton);
 
-        expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
+        expect(await screen.findByText('Tag with this name already exists')).toBeInTheDocument();
       });
 
       it('should keep the inline row and show a failure toast when save request fails', async () => {
@@ -575,7 +573,7 @@ describe('<TagListTable />', () => {
         expect(await screen.findByText('Error saving changes')).toBeInTheDocument();
 
         // Toast message to indicate that the save failed
-        expect(await screen.findByText('Error: unable to create tag')).toBeInTheDocument();
+        expect(await screen.findByText('Error creating tag: Internal server error')).toBeInTheDocument();
         // expect the input to retain the value that was entered before
         expect(draftRow[1].querySelector('input').value).toEqual('will fail');
         // expect the new tag to not be in the document outside the input field
@@ -698,7 +696,7 @@ describe('<TagListTable />', () => {
         await waitFor(() => {
           expect(getDraftRows().length).toBe(1);
         });
-        expect(await screen.findByText(/Error: unable to create tag/i)).toBeInTheDocument();
+        expect(await screen.findByText(/Error creating tag:/i)).toBeInTheDocument();
       });
     });
 

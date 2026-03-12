@@ -89,7 +89,6 @@ const useEditActions = ({
   intl,
   setIsCreatingTopTag,
   setCreatingParentId,
-  exitDraftWithoutSave,
   setEditingRowId,
 }: UseEditActionsParams) => {
   const updateTableWithoutDataReload = (value: string, parentTagValue: string | null = null) => {
@@ -146,9 +145,9 @@ const useEditActions = ({
       setIsCreatingTopTag(false);
       setCreatingParentId(null);
     } catch (error) {
-      exitDraftWithoutSave();
-      setDraftError((error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage));
-      setToast({ show: true, message: intl.formatMessage(messages.tagCreationErrorMessage), variant: 'danger' });
+      const message = intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: (error as Error)?.message });
+      setDraftError((error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: '' }));
+      setToast({ show: true, message, variant: 'danger' });
     }
   };
 
