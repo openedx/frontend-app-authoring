@@ -55,7 +55,12 @@ describe('NestedRows', () => {
 
   it('resets creating parent and runs cancel callback for nested create row', () => {
     const nestedChild = makeRow({ id: 2, value: 'child', expanded: true });
-    const parent = makeRow({ id: 1, value: 'parent', expanded: true, subRows: [nestedChild] });
+    const parent = makeRow({
+      id: 1,
+      value: 'parent',
+      expanded: true,
+      subRows: [nestedChild],
+    });
     const setCreatingParentId = jest.fn();
     const onCancelCreation = jest.fn();
 
