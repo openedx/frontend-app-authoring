@@ -35,6 +35,7 @@ interface TableViewProps {
   treeData: TreeRowData[];
   columns: TreeColumnDef[];
   pageCount: number;
+  enablePagination?: boolean;
   pagination: PaginationState;
   handlePaginationChange: OnChangeFn<PaginationState>;
   isLoading: boolean;
@@ -56,6 +57,7 @@ const TableView = ({
   treeData,
   columns,
   pageCount,
+  enablePagination = false,
   pagination,
   handlePaginationChange,
   isLoading,
@@ -162,7 +164,7 @@ const TableView = ({
           </table>
         </Card.Section>
 
-        {pageCount > 1 && (
+        {enablePagination && pageCount > 1 && (
           <div
             role="navigation"
             aria-label={intl.formatMessage(messages.tablePaginationLabel)}
