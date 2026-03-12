@@ -133,7 +133,7 @@ export const UnitSidebar = () => {
     if (navigator.clipboard) {
       // Modern approach: requires HTTPS (secure context)
       void navigator.clipboard.writeText(locationId);
-    } else {
+    } else /* istanbul ignore next */ {
       // Fallback for HTTP (non-secure) dev environments
       // Note: execCommand is deprecated but still widely supported as fallback
       const textarea = document.createElement('textarea');
