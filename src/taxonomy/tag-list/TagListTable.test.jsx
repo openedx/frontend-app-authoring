@@ -274,7 +274,9 @@ describe('<TagListTable />', () => {
   });
 
   describe('Create a new top-level tag', () => {
-    it.todo('should not show tag creation buttons if the taxonomy includes `can_add_tag: false`');
+    it('should not show tag creation buttons if the taxonomy includes `can_add_tag: false`', async () => {
+      expect.assertions(1);
+    });
 
     describe('with editable user and loaded taxonomy', () => {
       it('should add draft row when top-level "Add tag" button is clicked', async () => {
@@ -617,108 +619,106 @@ describe('<TagListTable />', () => {
   });
 
   describe('Create a new subtag', () => {
-    describe('with editable user and loaded taxonomy', () => {
-      it('should show an Add sub-tag option in the parent tag actions', async () => {
-        expect(screen.queryAllByText('Add Subtag').length).toBe(0);
-        // user clicks on row actions for root tag 1
-        openActionsMenuForTag('root tag 1');
-        expect(screen.getByText('Add Subtag')).toBeInTheDocument();
+    it('should show an Add sub-tag option in the parent tag actions', async () => {
+      expect(screen.queryAllByText('Add Subtag').length).toBe(0);
+      // user clicks on row actions for root tag 1
+      openActionsMenuForTag('root tag 1');
+      expect(screen.getByText('Add Subtag')).toBeInTheDocument();
+    });
+
+    it('should render an inline add-subtag row with input, placeholder, and action buttons', async () => {
+      const { rows } = await openSubtagDraftRow({ tagName: 'root tag 1' });
+      const draftRows = rows.filter(tableRow => tableRow.querySelector('input'));
+      expect(draftRows[0].querySelector('input')).toBeInTheDocument();
+      // expect the draft row to be directly beneath the parent tag row
+      const parentRowIndex = rows.findIndex(tableRow => within(tableRow).queryByText('root tag 1'));
+      const draftRowIndex = rows.findIndex(tableRow => tableRow.querySelector('input'));
+      expect(draftRowIndex).toBe(parentRowIndex + 1);
+      expect(draftRows[0].querySelector('input')).toBeInTheDocument();
+      expect(within(draftRows[0]).getByText('Cancel')).toBeInTheDocument();
+      expect(within(draftRows[0]).getByText('Save')).toBeInTheDocument();
+    });
+
+    it('should remove add-subtag row and avoid create request when cancelled', async () => {
+      const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
+      fireEvent.change(input, { target: { value: 'new subtag' } });
+      fireEvent.click(within(draftRow).getByText('Cancel'));
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(0);
+        expectNoDraftRows();
+      });
+    });
+
+    it('should remove add-subtag row and avoid create request on escape key', async () => {
+      const { input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
+
+      fireEvent.change(input, { target: { value: 'new subtag' } });
+      fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(0);
+        expectNoDraftRows();
+      });
+    });
+
+    it('should disable Save and show required-name inline error for empty sub-tag input', async () => {
+      openActionsMenuForTag('root tag 1');
+      fireEvent.click(screen.getByText('Add Subtag'));
+      const rows = await screen.findAllByRole('row');
+      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
+      const saveButton = within(draftRow).getByText('Save');
+      const input = draftRow.querySelector('input');
+      act(() => {
+        fireEvent.change(input, { target: { value: ' ' } });
       });
 
-      it('should render an inline add-subtag row with input, placeholder, and action buttons', async () => {
-        const { rows } = await openSubtagDraftRow({ tagName: 'root tag 1' });
-        const draftRows = rows.filter(tableRow => tableRow.querySelector('input'));
-        expect(draftRows[0].querySelector('input')).toBeInTheDocument();
-        // expect the draft row to be directly beneath the parent tag row
-        const parentRowIndex = rows.findIndex(tableRow => within(tableRow).queryByText('root tag 1'));
-        const draftRowIndex = rows.findIndex(tableRow => tableRow.querySelector('input'));
-        expect(draftRowIndex).toBe(parentRowIndex + 1);
-        expect(draftRows[0].querySelector('input')).toBeInTheDocument();
-        expect(within(draftRows[0]).getByText('Cancel')).toBeInTheDocument();
-        expect(within(draftRows[0]).getByText('Save')).toBeInTheDocument();
+      expect(saveButton).toBeDisabled();
+      expect(within(draftRow).getByText(/Name is required/i)).toBeInTheDocument();
+    });
+
+    it('should keep Save disabled for whitespace-only sub-tag input', async () => {
+      openActionsMenuForTag('root tag 1');
+      fireEvent.click(screen.getByText('Add Subtag'));
+      const rows = await screen.findAllByRole('row');
+      const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
+      const input = draftRow.querySelector('input');
+      const saveButton = within(draftRow).getByText('Save');
+
+      fireEvent.change(input, { target: { value: '   ' } });
+      expect(saveButton).toBeDisabled();
+    });
+
+    it('should disable Save and show invalid-character error for sub-tag input', async () => {
+      openActionsMenuForTag('root tag 1');
+      fireEvent.click(screen.getByText('Add Subtag'));
+      const rows = await screen.findAllByRole('row');
+      const draftRow = rows.find(row => row.querySelector('input'));
+      const input = draftRow.querySelector('input');
+      const saveButton = within(draftRow).getByText('Save');
+
+      fireEvent.change(input, { target: { value: 'invalid;name' } });
+      expect(saveButton).toBeDisabled();
+      expect(within(draftRow).getByText(/invalid character/i)).toBeInTheDocument();
+    });
+
+    it('should keep inline row and show failure feedback when sub-tag save fails', async () => {
+      axiosMock.onPost(createTagUrl).reply(500, {
+        error: 'Internal server error',
       });
 
-      it('should remove add-subtag row and avoid create request when cancelled', async () => {
-        const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
-        fireEvent.change(input, { target: { value: 'new subtag' } });
-        fireEvent.click(within(draftRow).getByText('Cancel'));
+      openActionsMenuForTag('root tag 1');
+      fireEvent.click(screen.getByText('Add Subtag'));
+      const rows = await screen.findAllByRole('row');
+      const draftRow = rows.find(row => row.querySelector('input'));
+      const input = draftRow.querySelector('input');
+      fireEvent.change(input, { target: { value: 'subtag fail' } });
+      fireEvent.click(within(draftRow).getByText('Save'));
 
-        await waitFor(() => {
-          expect(axiosMock.history.post.length).toBe(0);
-          expectNoDraftRows();
-        });
+      await waitFor(() => {
+        expect(getDraftRows().length).toBe(1);
       });
-
-      it('should remove add-subtag row and avoid create request on escape key', async () => {
-        const { input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
-
-        fireEvent.change(input, { target: { value: 'new subtag' } });
-        fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
-
-        await waitFor(() => {
-          expect(axiosMock.history.post.length).toBe(0);
-          expectNoDraftRows();
-        });
-      });
-
-      it('should disable Save and show required-name inline error for empty sub-tag input', async () => {
-        openActionsMenuForTag('root tag 1');
-        fireEvent.click(screen.getByText('Add Subtag'));
-        const rows = await screen.findAllByRole('row');
-        const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-        const saveButton = within(draftRow).getByText('Save');
-        const input = draftRow.querySelector('input');
-        act(() => {
-          fireEvent.change(input, { target: { value: ' ' } });
-        });
-
-        expect(saveButton).toBeDisabled();
-        expect(within(draftRow).getByText(/Name is required/i)).toBeInTheDocument();
-      });
-
-      it('should keep Save disabled for whitespace-only sub-tag input', async () => {
-        openActionsMenuForTag('root tag 1');
-        fireEvent.click(screen.getByText('Add Subtag'));
-        const rows = await screen.findAllByRole('row');
-        const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-        const input = draftRow.querySelector('input');
-        const saveButton = within(draftRow).getByText('Save');
-
-        fireEvent.change(input, { target: { value: '   ' } });
-        expect(saveButton).toBeDisabled();
-      });
-
-      it('should disable Save and show invalid-character error for sub-tag input', async () => {
-        openActionsMenuForTag('root tag 1');
-        fireEvent.click(screen.getByText('Add Subtag'));
-        const rows = await screen.findAllByRole('row');
-        const draftRow = rows.find(row => row.querySelector('input'));
-        const input = draftRow.querySelector('input');
-        const saveButton = within(draftRow).getByText('Save');
-
-        fireEvent.change(input, { target: { value: 'invalid;name' } });
-        expect(saveButton).toBeDisabled();
-        expect(within(draftRow).getByText(/invalid character/i)).toBeInTheDocument();
-      });
-
-      it('should keep inline row and show failure feedback when sub-tag save fails', async () => {
-        axiosMock.onPost(createTagUrl).reply(500, {
-          error: 'Internal server error',
-        });
-
-        openActionsMenuForTag('root tag 1');
-        fireEvent.click(screen.getByText('Add Subtag'));
-        const rows = await screen.findAllByRole('row');
-        const draftRow = rows.find(row => row.querySelector('input'));
-        const input = draftRow.querySelector('input');
-        fireEvent.change(input, { target: { value: 'subtag fail' } });
-        fireEvent.click(within(draftRow).getByText('Save'));
-
-        await waitFor(() => {
-          expect(getDraftRows().length).toBe(1);
-        });
-        expect(await screen.findByText(/Error creating tag:/i)).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/Error creating tag:/i)).toBeInTheDocument();
     });
 
     it('should hide or disable Add sub-tag actions when user lacks edit permissions', async () => {
@@ -739,7 +739,12 @@ describe('<TagListTable />', () => {
       // make sure axios mock history is reset
       axiosMock.resetHistory();
     });
-    it.todo('should not show tag edit buttons if the taxonomy includes `can_add_tag: false`');
+    it('should disable tag edit buttons if the taxonomy includes `can_add_tag: false`', async () => {
+      expect.assertions(1);
+    });
+    it('should disable tag edit buttons if tag include `can_edit: false`', async () => {
+      expect.assertions(1);
+    });
     it('should show tag actions menu', async () => {
       openActionsMenuForTag('root tag 1');
       expect(screen.getByText('Add Subtag')).toBeInTheDocument();
