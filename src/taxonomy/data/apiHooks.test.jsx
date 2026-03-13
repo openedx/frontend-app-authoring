@@ -11,6 +11,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { apiUrls } from './api';
 
 import {
+  useCreateTag,
   useImportPlan,
   useImportTags,
   useImportNewTaxonomy,
@@ -104,5 +105,13 @@ describe('import taxonomy api calls', () => {
     });
     expect(result.current.error).toEqual(Error('test error'));
     expect(axiosMock.history.put[0].url).toEqual(apiUrls.tagsPlanImport(1));
+  });
+
+  it('should surface duplicate tag error returned as an array', async () => {
+    const duplicateError = "Tag with value 'ab' already exists for taxonomy.";
+    axiosMock.onPost(apiUrls.createTag(1)).reply(400, [duplicateError]);
+    const { result } = renderHook(() => useCreateTag(1), { wrapper });
+
+    await expect(result.current.mutateAsync({ value: 'ab' })).rejects.toEqual(Error(duplicateError));
   });
 });

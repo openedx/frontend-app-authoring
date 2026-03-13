@@ -57,9 +57,16 @@ export const apiUrls = {
    * @param pageIndex Zero-indexed page number
    * @param pageSize How many tags per page to load
    */
-  tagList: (taxonomyId: number, pageIndex: number, pageSize: number) => makeUrl(`${taxonomyId}/tags/`, {
-    page: (pageIndex + 1), page_size: pageSize,
-  }),
+  tagList: (taxonomyId: number, pageIndex: number | null, pageSize: number | null, fullDepthThreshold?: number) => {
+    if (pageIndex === null) {
+      return makeUrl(`${taxonomyId}/tags/`, { full_depth_threshold: fullDepthThreshold || 0 });
+    }
+    return makeUrl(`${taxonomyId}/tags/`, {
+      page: (pageIndex ?? 0) + 1,
+      page_size: pageSize ?? 10,
+      full_depth_threshold: fullDepthThreshold || 0,
+    });
+  },
   /**
    * Get _all_ tags below a given parent tag. This may be replaced with something more scalable in the future.
    */
@@ -74,6 +81,7 @@ export const apiUrls = {
   tagsImport: (taxonomyId) => makeUrl(`${taxonomyId}/tags/import/`),
   /** URL to plan (preview what would happen) a taxonomy import */
   tagsPlanImport: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/import/plan/`),
+  createTag: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/`),
 } satisfies Record<string, (...args: any[]) => string>;
 
 /**
