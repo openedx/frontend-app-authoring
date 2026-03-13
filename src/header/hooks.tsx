@@ -10,6 +10,8 @@ import courseOptimizerMessages from '@src/optimizer-page/messages';
 import { SidebarActions } from '@src/library-authoring/common/context/SidebarContext';
 import { LibQueryParamKeys } from '@src/library-authoring/routes';
 
+import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
+import { getFilesPermissions } from '@src/authz/permissionHelpers';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { COURSE_PERMISSIONS } from '@src/authz/constants';
 import messages from './messages';
@@ -17,8 +19,10 @@ import messages from './messages';
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const waffleFlags = useWaffleFlags();
+  const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
+
+  const { permissions: { canViewFiles } } = useUserPermissionsWithAuthzCourse(courseId, getFilesPermissions(courseId));
 
   const items = [
     {
@@ -33,10 +37,12 @@ export const useContentMenuItems = (courseId: string) => {
       href: getPagePath(courseId, 'true', 'tabs'),
       title: intl.formatMessage(messages['header.links.pages']),
     },
-    {
-      href: waffleFlags.useNewFilesUploadsPage ? `/course/${courseId}/assets` : `${studioBaseUrl}/assets/${courseId}`,
-      title: intl.formatMessage(messages['header.links.filesAndUploads']),
-    },
+    ...(canViewFiles
+      ? [{
+        href: waffleFlags.useNewFilesUploadsPage ? `/course/${courseId}/assets` : `${studioBaseUrl}/assets/${courseId}`,
+        title: intl.formatMessage(messages['header.links.filesAndUploads']),
+      }] : []
+    ),
   ];
   if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' || waffleFlags.useNewVideoUploadsPage) {
     items.push({

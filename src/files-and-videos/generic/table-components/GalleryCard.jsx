@@ -20,6 +20,10 @@ const GalleryCard = ({
   handleOpenFileInfo,
   thumbnailPreview,
   fileType,
+  permissions = {
+    canEditFiles: true,
+    canDeleteFiles: true,
+  },
 }) => {
   const lockFile = () => {
     const { locked, id } = original;
@@ -49,6 +53,7 @@ const GalleryCard = ({
                 },
               }])}
               openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
+              permissions={permissions}
             />
           </ActionRow>
         )}
@@ -105,6 +110,10 @@ GalleryCard.propTypes = {
   handleOpenFileInfo: PropTypes.func.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
   fileType: PropTypes.string.isRequired,
+  permissions: PropTypes.shape({
+    canEditFiles: PropTypes.bool,
+    canDeleteFiles: PropTypes.bool,
+  }),
 };
 
 export default GalleryCard;
