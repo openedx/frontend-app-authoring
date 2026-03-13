@@ -19,6 +19,7 @@ import './FileInfoModalSidebar.scss';
 const FileInfoModalSidebar = ({
   asset,
   handleLockedAsset,
+  canLockFile = true,
 }) => {
   const intl = useIntl();
   const [lockedState, setLockedState] = useState(asset?.locked);
@@ -93,6 +94,7 @@ const FileInfoModalSidebar = ({
         />
         <ActionRow.Spacer />
         <CheckboxControl
+          disabled={!canLockFile}
           checked={lockedState}
           onChange={handleLock}
           aria-label="Checkbox"
@@ -115,6 +117,7 @@ FileInfoModalSidebar.propTypes = {
     usageLocations: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
+  canLockFile: PropTypes.bool,
 };
 
 export default FileInfoModalSidebar;

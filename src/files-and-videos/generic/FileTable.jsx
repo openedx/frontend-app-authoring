@@ -42,6 +42,11 @@ const FileTable = ({
   maxFileSize,
   thumbnailPreview,
   infoModalSidebar,
+  permissions = {
+    canCreateFiles: true,
+    canDeleteFiles: true,
+    canEditFiles: true,
+  },
 }) => {
   const intl = useIntl();
   const pageCount = Math.ceil(files.length / 50);
@@ -153,6 +158,10 @@ const FileTable = ({
         fileType,
         setInitialState,
       }}
+      permissions={{
+        canCreateFiles: permissions.canCreateFiles,
+        canDeleteFiles: permissions.canDeleteFiles,
+      }}
     />
   );
 
@@ -167,6 +176,10 @@ const FileTable = ({
         className,
         original,
         fileType,
+        permissions: {
+          canEditFiles: permissions.canEditFiles,
+          canDeleteFiles: permissions.canDeleteFiles,
+        },
       }}
     />
   );
@@ -182,6 +195,10 @@ const FileTable = ({
         handleOpenFileInfo,
         handleOpenDeleteConfirmation,
         fileType,
+        permissions: {
+          canEditFiles: permissions.canEditFiles,
+          caneDeleteFiles: permissions.canDeleteFiles,
+        },
       }),
   };
 
@@ -224,7 +241,7 @@ const FileTable = ({
         FilterStatusComponent={FilterStatus}
         RowStatusComponent={RowStatus}
       >
-        {isEmpty(files) && loadingStatus !== RequestStatus.IN_PROGRESS ?
+        {permissions.canCreateFiles && isEmpty(files) && loadingStatus !== RequestStatus.IN_PROGRESS ?
           (
             <Dropzone
               data-testid="files-dropzone"
@@ -336,6 +353,11 @@ FileTable.propTypes = {
   maxFileSize: PropTypes.number.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
   infoModalSidebar: PropTypes.func.isRequired,
+  permissions: PropTypes.shape({
+    canCreateFiles: PropTypes.bool,
+    canDeleteFiles: PropTypes.bool,
+    canEditFiles: PropTypes.bool,
+  }),
 };
 
 FileTable.defaultProps = {

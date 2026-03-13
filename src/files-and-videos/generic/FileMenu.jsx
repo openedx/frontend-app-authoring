@@ -19,6 +19,10 @@ const FileMenu = ({
   portableUrl,
   id,
   fileType,
+  permissions = {
+    canEditFiles: true,
+    canDeleteFiles: true,
+  },
 }) => {
   const intl = useIntl();
   return (
@@ -63,13 +67,17 @@ const FileMenu = ({
         <Dropdown.Item onClick={openAssetInfo}>
           {intl.formatMessage(messages.infoTitle)}
         </Dropdown.Item>
-        <Dropdown.Divider />
-        <Dropdown.Item
-          data-testid="open-delete-confirmation-button"
-          onClick={openDeleteConfirmation}
-        >
-          {intl.formatMessage(messages.deleteTitle)}
-        </Dropdown.Item>
+        {permissions.canDeleteFiles && (
+          <>
+            <Dropdown.Divider />
+            <Dropdown.Item
+              data-testid="open-delete-confirmation-button"
+              onClick={openDeleteConfirmation}
+            >
+              {intl.formatMessage(messages.deleteTitle)}
+            </Dropdown.Item>
+          </>
+        )}
       </Dropdown.Menu>
     </Dropdown>
   );
@@ -85,6 +93,10 @@ FileMenu.propTypes = {
   portableUrl: PropTypes.string,
   id: PropTypes.string.isRequired,
   fileType: PropTypes.string.isRequired,
+  permissions: PropTypes.shape({
+    canEditFiles: PropTypes.bool,
+    canDeleteFiles: PropTypes.bool,
+  }),
 };
 
 FileMenu.defaultProps = {

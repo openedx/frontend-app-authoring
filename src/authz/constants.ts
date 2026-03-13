@@ -29,4 +29,8 @@ export const COURSE_PERMISSIONS = {
 
   VIEW_PAGES_AND_RESOURCES: 'courses.view_pages_and_resources',
   MANAGE_PAGES_AND_RESOURCES: 'courses.manage_pages_and_resources',
+  VIEW_FILES: 'courses.view_files',
+  CREATE_FILES: 'courses.create_files',
+  DELETE_FILES: 'courses.delete_files',
+  EDIT_FILES: 'courses.edit_files',
 };
