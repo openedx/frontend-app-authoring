@@ -285,4 +285,34 @@ describe('<LibraryInfo />', () => {
     expect(manageTeam).toBeInTheDocument();
     expect(manageTeam).toHaveAttribute('href', `${ADMIN_CONSOLE_URL}/authz/libraries/${libraryData.id}`);
   });
+
+  it('renders settings section title', () => {
+    jest.mock('@src/authz/data/apiHooks', () => ({
+      useUserPermissions: jest.fn().mockReturnValue({
+        isLoading: false,
+        data: { canManageTeam: true },
+      }),
+    }));
+
+    render();
+    expect(screen.getByText('Settings')).toBeInTheDocument();
+  });
+
+  it('renders PublicReadToggle when user can manage team', async () => {
+    jest.mock('@src/authz/data/apiHooks', () => ({
+      useUserPermissions: jest.fn().mockReturnValue({
+        isLoading: false,
+        data: { canManageTeam: true },
+      }),
+    }));
+
+    jest.mock('@src/library-authoring/data/apiHooks', () => ({
+      useContentLibrary: jest.fn(),
+      useUpdateLibraryMetadata: jest.fn(),
+    }));
+
+    render();
+    const allowSwitch = await screen.findByRole('switch', { name: /allow public read/i });
+    expect(allowSwitch).toBeInTheDocument();
+  });
 });
