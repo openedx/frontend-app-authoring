@@ -16,6 +16,10 @@ import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import { RequestStatus } from '@src/data/constants';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { COURSE_PERMISSIONS } from '@src/authz/constants';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import CourseHandouts from './course-handouts/CourseHandouts';
 import CourseUpdate from './course-update/CourseUpdate';
 import DeleteModal from './delete-modal/DeleteModal';
@@ -58,6 +62,26 @@ const CourseUpdates = () => {
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
 
+  const waffleFlags = useWaffleFlags(courseId);
+  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
+    canManageCourseUpdates: {
+      action: COURSE_PERMISSIONS.MANAGE_COURSE_UPDATES,
+      scope: courseId,
+    },
+    canViewCourseUpdates: {
+      action: COURSE_PERMISSIONS.VIEW_COURSE_UPDATES,
+      scope: courseId,
+    },
+  }, isAuthzEnabled);
+
+  let canManageCourseUpdates = true;
+  let canViewCourseUpdates = true;
+  if (isAuthzEnabled && !isLoadingUserPermissions) {
+    canManageCourseUpdates = userPermissions?.canManageCourseUpdates ?? false;
+    canViewCourseUpdates = userPermissions?.canViewCourseUpdates ?? true;
+  }
+
   const loadingStatuses = useSelector(getLoadingStatuses);
   const savingStatuses = useSelector(getSavingStatuses);
   const errors = useSelector(getErrors);
@@ -67,6 +91,9 @@ const CourseUpdates = () => {
   const anyStatusInProgress = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.IN_PROGRESS);
   const anyStatusPending = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.PENDING);
 
+  if (!canViewCourseUpdates) {
+    return <PermissionDeniedAlert />;
+  }
   if (anyStatusDenied) {
     return (
       <Container size="xl" className="course-unit px-4 mt-4">
@@ -146,7 +173,7 @@ const CourseUpdates = () => {
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
                     instruction={intl.formatMessage(messages.sectionInfo)}
-                    headerActions={(
+                    headerActions={(canManageCourseUpdates ? (
                       <Button
                         variant="primary"
                         iconBefore={AddIcon}
@@ -156,7 +183,7 @@ const CourseUpdates = () => {
                       >
                         {intl.formatMessage(messages.newUpdateButton)}
                       </Button>
-                    )}
+                    ) : null)}
                   />
                   <section className="updates-section">
                     {isMainFormOpen && (
@@ -186,6 +213,8 @@ const CourseUpdates = () => {
                                 contentForUpdate={courseUpdate.content}
                                 onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_update, courseUpdate)}
                                 onDelete={() => handleOpenDeleteForm(courseUpdate)}
+                                canEdit={canManageCourseUpdates}
+                                canDelete={canManageCourseUpdates}
                                 isDisabledButtons={isUpdateFormOpen}
                               />
                             )
@@ -215,6 +244,7 @@ const CourseUpdates = () => {
                           contentForHandouts={courseHandouts?.data || ''}
                           onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
                           isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
+                          canEdit={canManageCourseUpdates}
                         />
                       </div>
                       <DeleteModal
