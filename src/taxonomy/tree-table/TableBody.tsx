@@ -93,7 +93,7 @@ const TableBody = ({
 
       {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
         <React.Fragment key={row.id}>
-          {editingRowId === row.original.id ? (
+          {editingRowId === `${row.original.id}:${String(row.original.value)}` ? (
             <EditRow
               draftError={draftError}
               setDraftError={setDraftError}
@@ -136,6 +136,12 @@ const TableBody = ({
             setDraftError={setDraftError}
             setIsCreatingTopRow={setIsCreatingTopRow}
             validate={validate}
+            updateRowMutation={updateRowMutation}
+            handleUpdateRow={handleUpdateRow}
+            editingRowId={editingRowId}
+            setEditingRowId={setEditingRowId}
+            exitDraftWithoutSave={exitDraftWithoutSave}
+            columns={columns}
           />
         </React.Fragment>
       ))}

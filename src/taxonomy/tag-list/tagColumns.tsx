@@ -60,7 +60,7 @@ function getColumns({
   setDraftError,
   maxDepth,
 }: GetColumnsArgs): TreeColumnDef[] {
-  const canAddSubtag = (row: Row<TreeRowData>) => row.depth + 1 < maxDepth;
+  const reachedMaxDepth = (row: Row<TreeRowData>) => row.depth + 1 >= maxDepth;
   const draftInProgressHintId = 'tag-list-draft-in-progress-hint';
 
   return [
@@ -106,7 +106,7 @@ function getColumns({
       cell: ({ row }) => {
         const rowData = asTagListRowData(row);
 
-        if (rowData.isNew || rowData.isEditing || !canAddSubtag(row)) {
+        if (rowData.isNew || rowData.isEditing) {
           return <div className="d-flex gap-2" />;
         }
 
@@ -126,7 +126,7 @@ function getColumns({
         const editTag = () => {
           onStartDraft();
           setDraftError('');
-          setEditingRowId(rowData.id);
+          setEditingRowId(`${rowData.id}:${rowData.value}`);
           setCreatingParentId(null);
           setIsCreatingTopTag(false);
           setActiveActionMenuRowId(null);
@@ -148,7 +148,7 @@ function getColumns({
                 <Dropdown.Item
                   as={Button}
                   onClick={startSubtagDraft}
-                  disabled={disableAddSubtag}
+                  disabled={reachedMaxDepth(row) || disableAddSubtag}
                 >
                   {intl.formatMessage(messages.addSubtag)}
                 </Dropdown.Item>

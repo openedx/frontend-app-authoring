@@ -161,6 +161,11 @@ const openTopLevelDraftRow = async () => {
 };
 
 const openActionsMenuForTag = (tagName, actionButtonName = /actions/i) => {
+  // expand all
+  const expandButton = screen.getAllByText('Expand All')[0];
+  act(() => {
+    fireEvent.click(expandButton);
+  });
   const row = screen.getByText(tagName).closest('tr');
   const actionsButton = within(row).getByRole('button', { name: actionButtonName });
   act(() => {
@@ -734,90 +739,100 @@ describe('<TagListTable />', () => {
     });
   });
 
-  describe('Rename a top-level tag', () => {
-    beforeEach(async () => {
-      // make sure axios mock history is reset
-      axiosMock.resetHistory();
-    });
-    it('should disable tag edit buttons if the taxonomy includes `can_add_tag: false`', async () => {
-      expect.assertions(1);
-    });
-    it('should disable tag edit buttons if tag include `can_edit: false`', async () => {
-      expect.assertions(1);
-    });
-    it('should show tag actions menu', async () => {
-      openActionsMenuForTag('root tag 1');
-      expect(screen.getByText('Add Subtag')).toBeInTheDocument();
-      expect(screen.getByText('Rename')).toBeInTheDocument();
-    });
-    it('should show editable input and action buttons when Rename is selected from actions menu', async () => {
-      const { row } = await openRenameDraftRow('root tag 1');
-      expect(within(row).getByRole('textbox')).toBeInTheDocument();
-      // expect the input to be pre-filled with the current tag name
-      expect(within(row).getByRole('textbox').value).toEqual('root tag 1');
-      expect(within(row).getByText('Save')).toBeInTheDocument();
-      expect(within(row).getByText('Cancel')).toBeInTheDocument();
-    });
-    it('should disable Save button until the tag name is changed', async () => {
-      const { input, saveButton } = await openRenameDraftRow();
+  const tagDepthScenarios = [
+    {
+      description: 'Rename a top-level tag',
+      tagName: 'root tag 1',
+    },
+    { description: 'Rename a sub-tag', tagName: 'the child tag' },
+    { description: 'Rename a grandchild tag', tagName: 'the grandchild tag' },
+  ];
 
-      expect(saveButton).toBeDisabled();
-      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
-      expect(saveButton).not.toBeDisabled();
-    });
-    it('should save changes and show success toast when Enter is pressed', async () => {
-      axiosMock.onPatch(/.*/).reply(200, {});
-      const { input } = await openRenameDraftRow();
-
-      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
-      act(() => {
-        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+  tagDepthScenarios.forEach(({ description, tagName }) => {
+    describe(description, () => {
+      beforeEach(async () => {
+        axiosMock.resetHistory();
       });
-
-      await waitFor(() => {
-        expect(axiosMock.history.patch.length).toBe(1);
-        expect(axiosMock.history.patch[0].data).toEqual(JSON.stringify({
-          tag: 'root tag 1',
-          updated_tag_value: 'root tag 1 updated',
-        }));
+      it('should disable tag edit buttons if the taxonomy includes `can_add_tag: false`', async () => {
+        expect.assertions(1);
       });
-      expect(await screen.findByText('Tag "root tag 1 updated" updated successfully')).toBeInTheDocument();
-    });
-    it('should save changes and show success toast when Save is clicked', async () => {
-      axiosMock.onPatch(/.*/).reply(200, {});
-      const { input, saveButton } = await openRenameDraftRow();
-
-      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
-      fireEvent.click(saveButton);
-
-      await waitFor(() => {
-        expect(axiosMock.history.patch.length).toBe(1);
-        expect(axiosMock.history.patch[0].data).toEqual(JSON.stringify({
-          tag: 'root tag 1',
-          updated_tag_value: 'root tag 1 updated',
-        }));
+      it('should disable tag edit buttons if tag includes `can_edit: false`', async () => {
+        expect.assertions(1);
       });
-      expect(await screen.findByText('Tag "root tag 1 updated" updated successfully')).toBeInTheDocument();
-    });
-    it('should cancel editing and revert to original name when Esc is pressed', async () => {
-      const { input } = await openRenameDraftRow();
+      it('should show tag actions menu', async () => {
+        openActionsMenuForTag(tagName);
+        expect(screen.getByText('Add Subtag')).toBeInTheDocument();
+        expect(screen.getByText('Rename')).toBeInTheDocument();
+      });
+      it('should show editable input and action buttons when Rename is selected from actions menu', async () => {
+        const { row } = await openRenameDraftRow(tagName);
+        expect(within(row).getByRole('textbox')).toBeInTheDocument();
+        // expect the input to be pre-filled with the current tag name
+        expect(within(row).getByRole('textbox').value).toEqual(tagName);
+        expect(within(row).getByText('Save')).toBeInTheDocument();
+        expect(within(row).getByText('Cancel')).toBeInTheDocument();
+      });
+      it('should disable Save button until the tag name is changed', async () => {
+        const { input, saveButton } = await openRenameDraftRow(tagName);
 
-      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
-      fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
+        expect(saveButton).toBeDisabled();
+        fireEvent.change(input, { target: { value: `${tagName} updated` } });
+        expect(saveButton).not.toBeDisabled();
+      });
+      it('should save changes and show success toast when Enter is pressed', async () => {
+        axiosMock.onPatch(/.*/).reply(200, {});
+        const { input } = await openRenameDraftRow(tagName);
 
-      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
-      expect(screen.getByText('root tag 1')).toBeInTheDocument();
-      expect(axiosMock.history.patch.length).toBe(0);
-    });
-    it('should cancel editing and revert to original name when Cancel is clicked', async () => {
-      const { input, cancelButton } = await openRenameDraftRow();
+        fireEvent.change(input, { target: { value: `${tagName} updated` } });
+        act(() => {
+          fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+        });
 
-      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
-      fireEvent.click(cancelButton);
+        await waitFor(() => {
+          expect(axiosMock.history.patch.length).toBe(1);
+          expect(axiosMock.history.patch[0].data).toEqual(JSON.stringify({
+            tag: tagName,
+            updated_tag_value: `${tagName} updated`,
+          }));
+        });
+        expect(await screen.findByText(`Tag "${tagName} updated" updated successfully`)).toBeInTheDocument();
+      });
+      it('should save changes and show success toast when Save is clicked', async () => {
+        axiosMock.onPatch(/.*/).reply(200, {});
+        const { input, saveButton } = await openRenameDraftRow(tagName);
 
-      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
-      expect(screen.getByText('root tag 1')).toBeInTheDocument();
-      expect(axiosMock.history.patch.length).toBe(0);
+        fireEvent.change(input, { target: { value: `${tagName} updated` } });
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+          expect(axiosMock.history.patch.length).toBe(1);
+          expect(axiosMock.history.patch[0].data).toEqual(JSON.stringify({
+            tag: tagName,
+            updated_tag_value: `${tagName} updated`,
+          }));
+        });
+        expect(await screen.findByText(`Tag "${tagName} updated" updated successfully`)).toBeInTheDocument();
+      });
+      it('should cancel editing and revert to original name when Esc is pressed', async () => {
+        const { input } = await openRenameDraftRow(tagName);
+
+        fireEvent.change(input, { target: { value: `${tagName} updated` } });
+        fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
+
+        expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+        expect(screen.getByText(tagName)).toBeInTheDocument();
+        expect(axiosMock.history.patch.length).toBe(0);
+      });
+      it('should cancel editing and revert to original name when Cancel is clicked', async () => {
+        const { input, cancelButton } = await openRenameDraftRow(tagName);
+
+        fireEvent.change(input, { target: { value: `${tagName} updated` } });
+        fireEvent.click(cancelButton);
+
+        expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+        expect(screen.getByText(tagName)).toBeInTheDocument();
+        expect(axiosMock.history.patch.length).toBe(0);
+      });
     });
   });
 
@@ -836,21 +851,16 @@ describe('<TagListTable />', () => {
       await flushReactUpdates();
     });
     it('should only allow adding sub-tags up to the taxonomy max depth', async () => {
-      const expandButton = screen.getAllByLabelText('Show Subtags')[0];
-
-      // open actions menu for depth 0 root tag
-      openActionsMenuForTag('root tag 1');
-      expect(screen.getByText('Add Subtag')).toBeInTheDocument();
-
-      act(() => {
-        fireEvent.click(expandButton);
-      });
+      const expandAllButton = screen.getAllByText('Expand All')[0];
+      fireEvent.click(expandAllButton);
       await screen.findByText('the child tag');
 
       // depth 1 is the max allowed depth when maxDepth=2,
-      // so there should be no actions menu to add another sub-tag
+      // so Add Subtag is shown but disabled
       const childTagRow = screen.getByText('the child tag').closest('tr');
-      expect(within(childTagRow).queryByRole('button', { name: /actions/i })).not.toBeInTheDocument();
+      const childActionsButton = within(childTagRow).getByRole('button', { name: /more actions for tag the child tag/i });
+      fireEvent.click(childActionsButton);
+      expect(screen.getByRole('button', { name: 'Add Subtag' })).toBeDisabled();
     });
   });
 });
