@@ -17,4 +17,9 @@ export const CONTENT_LIBRARY_PERMISSIONS = {
 
 export const COURSE_PERMISSIONS = {
   MANAGE_ADVANCED_SETTINGS: 'courses.manage_advanced_settings',
+
+  VIEW_FILES: 'courses.view_files',
+  CREATE_FILES: 'courses.create_files',
+  DELETE_FILES: 'courses.delete_files',
+  EDIT_FILES: 'courses.edit_files',
 };
