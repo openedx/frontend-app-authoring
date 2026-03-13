@@ -7,10 +7,10 @@ import EditorContainer from '@src/editors/containers/EditorContainer';
 import { PdfBlockContext, PdfState } from '@src/editors/containers/PdfEditor/contexts';
 import { isEqual } from 'lodash';
 import DownloadOptions from '@src/editors/containers/PdfEditor/components/sections/DownloadOptions';
-import UploadWidget from '@src/editors/containers/PdfEditor/components/fields/UploadWidget';
+import { UploadWidget, defaultUploadMessages } from '@src/editors/sharedComponents/UploadWidget';
 import { Spinner } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import messages from './messages';
+import { messages, fileUploadMessages } from './messages';
 
 const EditorWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const intl = useIntl();
@@ -36,6 +36,8 @@ const EditorWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   return <>{children}</>; /* eslint-disable-line react/jsx-no-useless-fragment */
 };
 
+const uploadMessages = { ...defaultUploadMessages, ...fileUploadMessages };
+
 const PdfEditingModal: React.FC<EditorComponent> = (props) => {
   const { fields } = useContext(PdfBlockContext);
   const originalState = useRef({ ...fields });
@@ -44,7 +46,7 @@ const PdfEditingModal: React.FC<EditorComponent> = (props) => {
   useEffect(() => {
     // Form is initialized before we get these values, so we have to set them
     // when they arrive.
-    void setValues(fields);
+    void setValues(fields); // eslint-disable-line no-void
   }, [fields]);
 
   const isDirty = () => isEqual(originalState, values);
@@ -59,7 +61,7 @@ const PdfEditingModal: React.FC<EditorComponent> = (props) => {
   return (
     <EditorContainer {...props} isDirty={isDirty} getContent={getContent}>
       <EditorWrapper>
-        <UploadWidget supportedFileFormats={['.pdf']} urlFieldName="url" />
+        <UploadWidget supportedFileFormats={['.pdf']} urlFieldName="url" messages={uploadMessages} />
         <DownloadOptions />
       </EditorWrapper>
     </EditorContainer>

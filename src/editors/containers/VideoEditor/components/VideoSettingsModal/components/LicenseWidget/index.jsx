@@ -14,7 +14,7 @@ import { Add } from '@openedx/paragon/icons';
 import { actions, selectors } from '../../../../../../data/redux';
 import * as hooks from './hooks';
 import messages from './messages';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import CollapsibleFormWidget from '../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import LicenseBlurb from './LicenseBlurb';
 import LicenseSelector from './LicenseSelector';
 import LicenseDetails from './LicenseDetails';

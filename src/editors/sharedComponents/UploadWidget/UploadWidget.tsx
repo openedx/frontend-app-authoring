@@ -1,6 +1,5 @@
-import CollapsibleFormWidget from '@src/editors/containers/VideoEditor/components/VideoSettingsModal/components/CollapsibleFormWidget';
+import CollapsibleFormWidget from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { TextField } from '@src/editors/containers/PdfEditor/components/fields/index';
 import { FileInput, useFileInput } from '@src/files-and-videos/generic';
 import {
   ActionRow, Dropdown, Icon, IconButton, Button, Stack,
@@ -11,15 +10,21 @@ import { useField } from 'formik';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { useCourseAssetUpload } from '@src/editors/containers/PdfEditor/api';
 import type { AxiosResponse } from 'axios';
-import messages from './messages';
+import TextField from '@src/editors/sharedComponents/TextField';
+import defaultMessages from './messages';
 
 declare interface UploadWidgetArgs {
   supportedFileFormats: string[],
   urlFieldName: string,
+  messages?: typeof defaultMessages
 }
 
 /* Widget for uploading a file to the course file store. */
-const UploadWidget = ({ supportedFileFormats, urlFieldName }: UploadWidgetArgs) => {
+const UploadWidget = ({
+  supportedFileFormats,
+  urlFieldName,
+  messages = defaultMessages,
+}: UploadWidgetArgs) => {
   const intl = useIntl();
   const [manualMode, setManualMode] = useState(false);
   const [urlField, urlFieldMeta, urlFieldControl] = useField(urlFieldName);
@@ -36,7 +41,7 @@ const UploadWidget = ({ supportedFileFormats, urlFieldName }: UploadWidgetArgs) 
       return;
     }
     mutation.mutateAsync(file).then((result: AxiosResponse<{ asset: { external_url: string } }>) => {
-      void urlFieldControl.setValue(result.data.asset.external_url);
+      void urlFieldControl.setValue(result.data.asset.external_url); // eslint-disable-line no-void
     }).catch((error) => {
       urlFieldControl.setError(intl.formatMessage(messages.uploadError));
       throw error;
@@ -48,19 +53,15 @@ const UploadWidget = ({ supportedFileFormats, urlFieldName }: UploadWidgetArgs) 
 
   const deriveFileName = (rawName: string) => {
     const segments = rawName.split('/').reverse();
-    const name = intl.formatMessage(messages.defaultName);
-    for (let segment of segments) {
-      // Remove hash
-      segment = segment.replace(/#.*/, '');
-      // Remove query string
-      segment = segment.replace(/[?].*/, '');
-      // Remove LMS prefix data
-      segment = segment.replace(/.*@/, '');
-      if (segment) {
-        return segment;
-      }
-    }
-    return name;
+    const defaultName = intl.formatMessage(messages.defaultName);
+    let segment = segments[0] || '';
+    // Remove hash
+    segment = segment.replace(/#.*/, '');
+    // Remove query string
+    segment = segment.replace(/[?].*/, '');
+    // Remove LMS prefix data
+    segment = segment.replace(/.*@/, '');
+    return segment || defaultName;
   };
 
   return (
@@ -76,7 +77,7 @@ const UploadWidget = ({ supportedFileFormats, urlFieldName }: UploadWidgetArgs) 
       >
         {urlFieldMeta.error!}
       </ErrorAlert>
-      {manualMode && <TextField label="PDF Url" id="pdf-url" name="url" />}
+      {manualMode && <TextField label={intl.formatMessage(messages.urlFieldLabel)} id="pdf-url" name="url" />}
       {!manualMode && (
       <>
         <FileInput supportedFileFormats={supportedFileFormats} fileInput={fileInput} />
@@ -86,25 +87,25 @@ const UploadWidget = ({ supportedFileFormats, urlFieldName }: UploadWidgetArgs) 
             <ActionRow.Spacer />
             <Dropdown>
               <Dropdown.Toggle
-                id="dropdown-toggle-with-iconbutton-video-transcript-widget"
+                id={`dropdown-toggle-with-iconbutton-${urlFieldName}-widget`}
                 as={IconButton}
                 src={MoreHoriz}
                 iconAs={Icon}
                 variant="primary"
-                alt="Actions dropdown"
+                alt={messages.actionsDropdown}
               />
-              <Dropdown.Menu className="video_handout Action Menu">
+              <Dropdown.Menu className="asset_download Action Menu">
                 <Dropdown.Item
-                  key="handout-actions-replace"
+                  key="asset-actions-replace"
                   onClick={fileInput.click}
                 >
                   <FormattedMessage {...messages.replaceFile} />
                 </Dropdown.Item>
-                <Dropdown.Item key="handout-actions-download" target="_blank" href={urlField.value}>
+                <Dropdown.Item key="asset-actions-download" target="_blank" href={urlField.value}>
                   <FormattedMessage {...messages.downloadFile} />
                 </Dropdown.Item>
                 <Dropdown.Item
-                  key="handout-actions-manual"
+                  key="asset-actions-manual"
                   onClick={() => setManualMode(true)}
                 >
                   <FormattedMessage {...messages.manualUrl} />
@@ -119,7 +120,7 @@ const UploadWidget = ({ supportedFileFormats, urlFieldName }: UploadWidgetArgs) 
       {manualMode && (
         <ActionRow>
           <Button onClick={() => setManualMode(false)}>
-            <FormattedMessage {...messages.easyMode} />
+            <FormattedMessage {...messages.simpleMode} />
           </Button>
         </ActionRow>
       )}

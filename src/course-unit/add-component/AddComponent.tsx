@@ -179,7 +179,7 @@ const AddComponent = ({
         //
         // There will be more of these, and soon.
         if (moduleName === COMPONENT_TYPES.pdf && useNewPdfEditor) {
-          handleCreateNewCourseXBlock({type: moduleName, parentLocator: blockId}, ({courseKey, locator}) => {
+          handleCreateNewCourseXBlock({ type: moduleName, parentLocator: blockId }, ({ courseKey, locator }) => {
             setCourseId(courseKey);
             setBlockType(moduleName);
             setNewBlockId(locator);

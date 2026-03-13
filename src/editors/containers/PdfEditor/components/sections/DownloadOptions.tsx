@@ -1,11 +1,12 @@
 import { Form } from '@openedx/paragon';
 import CollapsibleFormWidget
-  from '@src/editors/containers/VideoEditor/components/VideoSettingsModal/components/CollapsibleFormWidget';
-import { CheckboxField, TextField } from '@src/editors/containers/PdfEditor/components/fields';
+  from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import { useFormikContext } from 'formik';
 import { PdfState } from '@src/editors/containers/PdfEditor/contexts';
-import { optional, useUrlValidator } from '@src/editors/containers/PdfEditor/components/fields/validators';
+import { optional, useUrlValidator } from '@src/editors/utils/validators';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import CheckboxField from '@src/editors/sharedComponents/CheckboxField';
+import TextField from '@src/editors/sharedComponents/TextField';
 import messages from './messages';
 
 const DownloadOptions = () => {
@@ -15,7 +16,7 @@ const DownloadOptions = () => {
   const urlValidator = optional(useUrlValidator());
   if (values.disableAllDownload) {
     // Download configuration is disabled at the instance-level, so don't even show these options.
-    return <></>;
+    return <></>; // eslint-disable-line react/jsx-no-useless-fragment
   }
   return (
     <CollapsibleFormWidget

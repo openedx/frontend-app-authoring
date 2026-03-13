@@ -24,7 +24,7 @@ import { RequestKeys } from '../../../../../../data/constants/requests';
 import { in8lTranscriptLanguages } from '../../../../../../data/constants/video';
 
 import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import CollapsibleFormWidget from '../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 
 import ImportTranscriptCard from './ImportTranscriptCard';
 import Transcript from './Transcript';

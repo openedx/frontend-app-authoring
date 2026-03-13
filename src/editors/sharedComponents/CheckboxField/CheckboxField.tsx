@@ -6,17 +6,19 @@ declare interface CheckboxFieldProps {
   label: string,
   id: string,
   hint: string,
+  disabled?: boolean,
   fieldConfig: string | FieldHookConfig<string>,
 }
 
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
-  label, id, hint = '', fieldConfig,
+  label, id, hint = '', disabled = false, fieldConfig,
 }) => {
   const [field, meta] = useField(fieldConfig);
   return (
     <Form.Group as={Col} controlId={id}>
       <Form.Checkbox
         checked={field.value}
+        disabled={disabled}
         {...field}
       >
         {label}

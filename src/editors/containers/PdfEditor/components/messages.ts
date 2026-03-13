@@ -1,6 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
-const messages = defineMessages({
+export const messages = defineMessages({
   blockFailed: {
     id: 'authoring.pdfEditor.blockFailed',
     defaultMessage: 'PDF block failed to load',
@@ -13,4 +13,10 @@ const messages = defineMessages({
   },
 });
 
-export default messages;
+export const fileUploadMessages = defineMessages({
+  urlFieldLabel: {
+    id: 'authoring.pdfEditor.urlFieldLabel',
+    defaultMessage: 'PDF URL',
+    description: 'Label for the PDF URL field',
+  },
+});

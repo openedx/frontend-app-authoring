@@ -42,7 +42,7 @@ jest.mock('../../../../../../data/redux', () => ({
     },
   },
 }));
-jest.mock('../CollapsibleFormWidget', () => 'CollapsibleFormWidget');
+jest.mock('../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget', () => 'CollapsibleFormWidget');
 jest.mock('./Transcript', () => 'Transcript');
 
 jest.mock('react-redux', () => ({

@@ -20,6 +20,18 @@ export const parseHandoutName = ({ handout }) => {
   return 'None';
 };
 
+export const checkValidFileSize = ({
+  file,
+  onSizeFail,
+}) => {
+  // Check if the file size is greater than 20 MB, upload size limit
+  if (file.size > 20000000) {
+    onSizeFail();
+    return false;
+  }
+  return true;
+};
+
 export const fileInput = ({ fileSizeError }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const dispatch = useDispatch();
@@ -55,18 +67,6 @@ export const fileSizeError = () => {
       dismiss: () => setShowSizeError(false),
     },
   };
-};
-
-export const checkValidFileSize = ({
-  file,
-  onSizeFail,
-}) => {
-  // Check if the file size is greater than 20 MB, upload size limit
-  if (file.size > 20000000) {
-    onSizeFail();
-    return false;
-  }
-  return true;
 };
 
 export default {

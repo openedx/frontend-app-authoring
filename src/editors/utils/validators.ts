@@ -1,6 +1,7 @@
+/* Formik-compatible validators. */
 import { useIntl } from '@edx/frontend-platform/i18n';
 import type { FieldValidator } from 'formik';
-import messages from './messages';
+import messages from '../sharedComponents/UploadWidget/messages';
 
 export const useUrlValidator = () => {
   const intl = useIntl();

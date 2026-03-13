@@ -20,7 +20,7 @@ import messages from './messages';
 import { FileInput } from '../../../../../../sharedComponents/FileInput';
 import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 import UploadErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/UploadErrorAlert';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import CollapsibleFormWidget from '../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import { ErrorContext } from '../../../../hooks';
 import { RequestKeys } from '../../../../../../data/constants/requests';
 
