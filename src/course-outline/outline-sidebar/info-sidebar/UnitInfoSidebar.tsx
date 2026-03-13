@@ -96,7 +96,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
       <Tabs
         variant="tabs"
         className="my-2 mx-n3.5"
-        id="add-content-tabs"
+        id="unit-content-tabs"
         activeKey={tab}
         onSelect={setTab}
         mountOnEnter
