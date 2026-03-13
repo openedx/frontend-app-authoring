@@ -15,6 +15,8 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePasteFileNotices } from '@src/course-outline/data/apiHooks';
+import { AlertAgreementGatedFeature } from '@src/generic/agreement-gated-feature';
+import { AgreementGated } from '../../constants';
 import CourseOutlinePageAlertsSlot from '../../plugin-slots/CourseOutlinePageAlertsSlot';
 import advancedSettingsMessages from '../../advanced-settings/messages';
 import { OutOfSyncAlert } from '../../course-libraries/OutOfSyncAlert';
@@ -441,6 +443,9 @@ const PageAlerts = ({
       {conflictingFilesPasteAlert()}
       {newFilesPasteAlert()}
       {renderOutOfSyncAlert()}
+      <AlertAgreementGatedFeature
+        gatingTypes={[AgreementGated.UPLOAD, AgreementGated.UPLOAD_VIDEOS, AgreementGated.UPLOAD_FILES]}
+      />
       <CourseOutlinePageAlertsSlot />
     </>
   );
