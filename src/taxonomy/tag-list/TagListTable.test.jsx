@@ -98,6 +98,15 @@ const mockTagsResponse = {
     },
   ],
 };
+
+const mockTagResponseDisallowingEdits = {
+  ...mockTagsResponse,
+  results: mockTagsResponse.results.map(tag => ({
+    ...tag,
+    can_change_tag: false,
+    can_delete_tag: false,
+  })),
+};
 const mockTagsPaginationResponse = {
   next: null,
   previous: null,
@@ -216,6 +225,7 @@ describe('<TagListTable />', () => {
       authenticatedUser: adminUser,
     });
     store = initializeStore();
+    queryClient.clear();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
@@ -279,8 +289,19 @@ describe('<TagListTable />', () => {
   });
 
   describe('Create a new top-level tag', () => {
-    it('should not show tag creation buttons if the taxonomy includes `can_add_tag: false`', async () => {
-      expect.assertions(1);
+    it('should disable tag creation buttons if the taxonomy includes `can_add_tag: false`', async () => {
+      axiosMock.onGet(rootTagsListUrl).reply(200, {
+        ...mockTagsResponse,
+        can_add_tag: false,
+      });
+      cleanup();
+      queryClient.clear();
+      renderTagListTable();
+      await waitForRootTag();
+
+      openActionsMenuForTag('root tag 1');
+      expect(screen.getByText('Add Subtag')).toBeDisabled();
+      expect(screen.getByLabelText('Create Tag')).toBeDisabled();
     });
 
     describe('with editable user and loaded taxonomy', () => {
@@ -457,6 +478,8 @@ describe('<TagListTable />', () => {
 
       // a bit flaky when ran together with other tests - any way to improve this?
       it('should allow adding multiple tags consecutively without a page refresh', async () => {
+        // clear axios mock history
+        axiosMock.reset();
         axiosMock.onPost(createTagUrl).reply(config => {
           const requestData = JSON.parse(config.data);
           return [201, {
@@ -498,7 +521,7 @@ describe('<TagListTable />', () => {
         expect(tagBRowIndex).toBeLessThan(tagARowIndex);
 
         // no additional get requests should have been made, that is, the table should not have been refreshed
-        expect(axiosMock.history.get.length).toBe(1);
+        expect(axiosMock.history.get.length).toBe(0);
       });
 
       it('should disable the Save button when the input is empty', async () => {
@@ -754,11 +777,32 @@ describe('<TagListTable />', () => {
         axiosMock.resetHistory();
       });
       it('should disable tag edit buttons if the taxonomy includes `can_add_tag: false`', async () => {
-        expect.assertions(1);
+        axiosMock.onGet(rootTagsListUrl).reply(200, {
+          ...mockTagsResponse,
+          can_add_tag: false,
+        });
+        cleanup();
+        queryClient.clear();
+        renderTagListTable();
+        await waitForRootTag();
+
+        openActionsMenuForTag(tagName);
+        expect(screen.getByText('Rename')).toBeInTheDocument();
+        expect(screen.getByText('Rename')).toBeDisabled();
       });
       it('should disable tag edit buttons if tag includes `can_edit: false`', async () => {
-        expect.assertions(1);
+        axiosMock.reset();
+        axiosMock.onGet(rootTagsListUrl).reply(200, mockTagResponseDisallowingEdits);
+        cleanup();
+        queryClient.clear();
+        renderTagListTable();
+        await waitForRootTag();
+
+        openActionsMenuForTag(tagName);
+        expect(screen.getByText('Rename')).toBeInTheDocument();
+        expect(screen.getByText('Rename')).toBeDisabled();
       });
+
       it('should show tag actions menu', async () => {
         openActionsMenuForTag(tagName);
         expect(screen.getByText('Add Subtag')).toBeInTheDocument();

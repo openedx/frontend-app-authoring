@@ -43,6 +43,7 @@ interface GetColumnsArgs {
   onStartDraft: () => void;
   setActiveActionMenuRowId: (id: RowId | null) => void;
   hasOpenDraft: boolean;
+  canAddTag: boolean;
   draftError: string;
   setDraftError: (error: string) => void;
   isSavingDraft: boolean;
@@ -57,6 +58,7 @@ function getColumns({
   onStartDraft,
   setActiveActionMenuRowId,
   hasOpenDraft,
+  canAddTag,
   setDraftError,
   maxDepth,
 }: GetColumnsArgs): TreeColumnDef[] {
@@ -98,7 +100,7 @@ function getColumns({
               setEditingRowId(null);
               setActiveActionMenuRowId(null);
             }}
-            disabled={hasOpenDraft}
+            disabled={hasOpenDraft || !canAddTag}
             aria-describedby={hasOpenDraft ? draftInProgressHintId : undefined}
           />
         </div>
@@ -110,8 +112,8 @@ function getColumns({
           return <div className="d-flex gap-2" />;
         }
 
-        const disableAddSubtag = hasOpenDraft;
-        const disableEditTag = hasOpenDraft;
+        const disableAddSubtag = hasOpenDraft || !canAddTag;
+        const disableEditTag = hasOpenDraft || !canAddTag || row.original.canChangeTag === false;
 
         const startSubtagDraft = () => {
           onStartDraft();
