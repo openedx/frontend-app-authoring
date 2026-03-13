@@ -47,8 +47,6 @@ interface GetColumnsArgs {
   setDraftError: (error: string) => void;
   isSavingDraft: boolean;
   maxDepth: number;
-  creatingParentId: RowId | null;
-  editingRowId: RowId | null;
 }
 
 function getColumns({
@@ -61,8 +59,6 @@ function getColumns({
   hasOpenDraft,
   setDraftError,
   maxDepth,
-  creatingParentId,
-  editingRowId,
 }: GetColumnsArgs): TreeColumnDef[] {
   const canAddSubtag = (row: Row<TreeRowData>) => row.depth + 1 < maxDepth;
   const draftInProgressHintId = 'tag-list-draft-in-progress-hint';
@@ -128,6 +124,8 @@ function getColumns({
         };
 
         const editTag = () => {
+          onStartDraft();
+          setDraftError('');
           setEditingRowId(rowData.id);
           setCreatingParentId(null);
           setIsCreatingTopTag(false);

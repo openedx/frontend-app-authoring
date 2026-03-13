@@ -16,7 +16,7 @@ import type {
 import {
   TABLE_MODES,
 } from './constants';
-import { EDITABLE_COLUMNS, getColumns } from './tagColumns';
+import { getColumns } from './tagColumns';
 import { useTableModes, useEditActions } from './hooks';
 
 interface TagListTableProps {
@@ -96,7 +96,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       setCreatingParentId,
       handleUpdateTag,
       setEditingRowId,
-      editingRowId,
       onStartDraft: enterDraftMode,
       setActiveActionMenuRowId,
       hasOpenDraft,
@@ -104,12 +103,10 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       setDraftError,
       isSavingDraft: createTagMutation.isPending,
       maxDepth,
-      creatingParentId,
     }),
     [
       intl,
       isCreatingTopTag,
-      editingRowId,
       tableMode,
       activeActionMenuRowId,
       hasOpenDraft,
@@ -139,45 +136,33 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     }
   }, [tagList?.results, tableMode]);
 
-  const renameTagTest = () => {
-    if (!treeData.length) {
-      console.warn('No tags to rename');
-      return;
-    }
-    const tagToRename = treeData[0];
-    handleUpdateTag(`${tagToRename.value}-renamed`, tagToRename.value);
-  };
-
-  console.log('editingRowId', editingRowId);
-
   return (
-    <>
-      <button type="button" onClick={renameTagTest}>Test Rename Tag</button>
-      <TableView
-        {...{
-          treeData,
-          columns,
-          pageCount,
-          pagination,
-          handlePaginationChange,
-          isLoading,
-          isCreatingTopRow: isCreatingTopTag,
-          draftError,
-          createRowMutation: createTagMutation,
-          handleCreateRow: handleCreateTag,
-          toast,
-          setToast,
-          setIsCreatingTopRow: setIsCreatingTopTag,
-          exitDraftWithoutSave,
-          creatingParentId,
-          setCreatingParentId,
-          setDraftError,
-          validate,
-          editingRowId,
-          editableColumns: EDITABLE_COLUMNS,
-        }}
-      />
-    </>
+    <TableView
+      {...{
+        treeData,
+        columns,
+        pageCount,
+        pagination,
+        handlePaginationChange,
+        isLoading,
+        isCreatingTopRow: isCreatingTopTag,
+        draftError,
+        createRowMutation: createTagMutation,
+        updateRowMutation: updateTagMutation,
+        handleCreateRow: handleCreateTag,
+        handleUpdateRow: handleUpdateTag,
+        toast,
+        setToast,
+        setIsCreatingTopRow: setIsCreatingTopTag,
+        exitDraftWithoutSave,
+        creatingParentId,
+        setCreatingParentId,
+        setDraftError,
+        validate,
+        editingRowId,
+        setEditingRowId,
+      }}
+    />
   );
 };
 

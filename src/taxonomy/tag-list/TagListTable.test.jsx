@@ -183,6 +183,22 @@ const openSubtagDraftRow = async ({
   return { rows, draftRow, input };
 };
 
+const openRenameDraftRow = async (tagName = 'root tag 1') => {
+  openActionsMenuForTag(tagName);
+  fireEvent.click(screen.getByText('Rename'));
+  const input = screen.getByRole('textbox');
+  const row = input.closest('tr');
+  expect(row).toBeInTheDocument();
+  const saveButton = within(row).getByText('Save');
+  const cancelButton = within(row).getByText('Cancel');
+  return {
+    row,
+    input,
+    saveButton,
+    cancelButton,
+  };
+};
+
 describe('<TagListTable />', () => {
   beforeAll(async () => {
     initializeMockApp({
@@ -191,8 +207,11 @@ describe('<TagListTable />', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
   beforeEach(async () => {
+    initializeMockApp({
+      authenticatedUser: adminUser,
+    });
     store = initializeStore();
-    axiosMock.reset();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
     renderTagListTable();
@@ -716,18 +735,85 @@ describe('<TagListTable />', () => {
   });
 
   describe('Rename a top-level tag', () => {
+    beforeEach(async () => {
+      // make sure axios mock history is reset
+      axiosMock.resetHistory();
+    });
     it.todo('should not show tag edit buttons if the taxonomy includes `can_add_tag: false`');
     it('should show tag actions menu', async () => {
       openActionsMenuForTag('root tag 1');
       expect(screen.getByText('Add Subtag')).toBeInTheDocument();
       expect(screen.getByText('Rename')).toBeInTheDocument();
     });
-    it.todo('should show editable input and action buttons when Rename is selected from actions menu');
-    it.todo('should disable Save button until the tag name is changed');
-    it.todo('should save changes and show success toast when Enter is pressed');
-    it.todo('should save changes and show success toast when Save is clicked');
-    it.todo('should cancel editing and revert to original name when Esc is pressed');
-    it.todo('should cancel editing and revert to original name when Cancel is clicked');
+    it('should show editable input and action buttons when Rename is selected from actions menu', async () => {
+      const { row } = await openRenameDraftRow('root tag 1');
+      expect(within(row).getByRole('textbox')).toBeInTheDocument();
+      // expect the input to be pre-filled with the current tag name
+      expect(within(row).getByRole('textbox').value).toEqual('root tag 1');
+      expect(within(row).getByText('Save')).toBeInTheDocument();
+      expect(within(row).getByText('Cancel')).toBeInTheDocument();
+    });
+    it('should disable Save button until the tag name is changed', async () => {
+      const { input, saveButton } = await openRenameDraftRow();
+
+      expect(saveButton).toBeDisabled();
+      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
+      expect(saveButton).not.toBeDisabled();
+    });
+    it('should save changes and show success toast when Enter is pressed', async () => {
+      axiosMock.onPatch(/.*/).reply(200, {});
+      const { input } = await openRenameDraftRow();
+
+      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
+      act(() => {
+        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+      });
+
+      await waitFor(() => {
+        expect(axiosMock.history.patch.length).toBe(1);
+        expect(axiosMock.history.patch[0].data).toEqual(JSON.stringify({
+          tag: 'root tag 1',
+          updated_tag_value: 'root tag 1 updated',
+        }));
+      });
+      expect(await screen.findByText('Tag "root tag 1 updated" updated successfully')).toBeInTheDocument();
+    });
+    it('should save changes and show success toast when Save is clicked', async () => {
+      axiosMock.onPatch(/.*/).reply(200, {});
+      const { input, saveButton } = await openRenameDraftRow();
+
+      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
+      fireEvent.click(saveButton);
+
+      await waitFor(() => {
+        expect(axiosMock.history.patch.length).toBe(1);
+        expect(axiosMock.history.patch[0].data).toEqual(JSON.stringify({
+          tag: 'root tag 1',
+          updated_tag_value: 'root tag 1 updated',
+        }));
+      });
+      expect(await screen.findByText('Tag "root tag 1 updated" updated successfully')).toBeInTheDocument();
+    });
+    it('should cancel editing and revert to original name when Esc is pressed', async () => {
+      const { input } = await openRenameDraftRow();
+
+      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
+      fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
+
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+      expect(screen.getByText('root tag 1')).toBeInTheDocument();
+      expect(axiosMock.history.patch.length).toBe(0);
+    });
+    it('should cancel editing and revert to original name when Cancel is clicked', async () => {
+      const { input, cancelButton } = await openRenameDraftRow();
+
+      fireEvent.change(input, { target: { value: 'root tag 1 updated' } });
+      fireEvent.click(cancelButton);
+
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+      expect(screen.getByText('root tag 1')).toBeInTheDocument();
+      expect(axiosMock.history.patch.length).toBe(0);
+    });
   });
 
   describe('At smaller max depth', () => {

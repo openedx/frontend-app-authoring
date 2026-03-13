@@ -6,6 +6,20 @@ import { EditableCell } from './EditableCell';
 import type { CreateRowMutationState, TreeColumnDef } from './types';
 import messages from './messages';
 
+interface DraftRowProps {
+  draftError: string;
+  initialValue?: string;
+  onSave: (value: string) => void;
+  onCancel: () => void;
+  mutationState: CreateRowMutationState;
+  columns: TreeColumnDef[];
+  indent?: number;
+  validate: (value: string, mode?: 'soft' | 'hard') => boolean;
+  requireValueChangeToEnableSave?: boolean;
+  rowTestId?: string;
+  rowId?: string;
+}
+
 interface CreateRowProps {
   draftError: string;
   setDraftError: (error: string) => void;
@@ -18,56 +32,73 @@ interface CreateRowProps {
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
 }
 
-const CreateRow: React.FC<CreateRowProps> = ({
+interface EditRowProps {
+  draftError: string;
+  setDraftError: (error: string) => void;
+  initialValue: string;
+  handleUpdateRow: (value: string) => void;
+  cancelEditRow: () => void;
+  updateRowMutation: CreateRowMutationState;
+  columns: TreeColumnDef[];
+  indent?: number;
+  validate: (value: string, mode?: 'soft' | 'hard') => boolean;
+}
+
+const DraftRow: React.FC<DraftRowProps> = ({
   draftError,
-  setDraftError,
-  handleCreateRow,
-  setIsCreatingTopRow,
-  exitDraftWithoutSave,
-  createRowMutation,
+  initialValue = '',
+  onSave,
+  onCancel,
+  mutationState,
   columns,
   indent = 0,
   validate,
+  requireValueChangeToEnableSave = false,
+  rowTestId,
+  rowId,
 }) => {
-  const [newRowValue, setNewRowValue] = useState('');
-  const intl = useIntl();
+  const [rowValue, setRowValue] = useState(initialValue);
   const [saveDisabled, setSaveDisabled] = useState(true);
+  const intl = useIntl();
+
+  const updateSaveDisabled = (value: string) => {
+    const trimmedValue = value.trim();
+    const isValid = validate(value, 'soft');
+    const isUnchanged = requireValueChangeToEnableSave && trimmedValue === initialValue.trim();
+    setSaveDisabled(!isValid || !trimmedValue || isUnchanged || mutationState.isPending || false);
+  };
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setNewRowValue(value);
-    const isValid = validate(value, 'soft');
-    setSaveDisabled(!isValid || createRowMutation.isPending || false);
-  };
-
-  const handleCancel = () => {
-    setDraftError('');
-    setNewRowValue('');
-    setIsCreatingTopRow(false);
-    exitDraftWithoutSave();
+    setRowValue(value);
+    updateSaveDisabled(value);
   };
 
   const handleSave = () => {
-    handleCreateRow(newRowValue.trim());
+    onSave(rowValue.trim());
   };
 
   const handleValueCellKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && newRowValue.trim() && !createRowMutation.isPending && !draftError) {
+    if (e.key === 'Enter' && !saveDisabled && !draftError) {
       e.preventDefault();
       handleSave();
-    } else if (e.key === 'Escape') {
+      return;
+    }
+
+    if (e.key === 'Escape') {
       e.preventDefault();
-      handleCancel();
+      onCancel();
     }
   };
 
   return (
-    <tr id="creating-top-row" data-testid="creating-top-row">
+    <tr id={rowId} data-testid={rowTestId}>
       <td colSpan={1} className="py-2 pr-2 pl-0">
         <div className={`tree-table-indent tree-table-indent-${indent}`}>
           <EditableCell
+            initialValue={initialValue}
             errorMessage={draftError}
-            isSaving={createRowMutation.isPending}
+            isSaving={mutationState.isPending}
             onChange={handleValueChange}
             onKeyDown={handleValueCellKeyPress}
             autoFocus
@@ -83,7 +114,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
             <Button
               variant="secondary"
               size="sm"
-              onClick={handleCancel}
+              onClick={onCancel}
             >
               {intl.formatMessage(messages.cancelButtonLabel)}
             </Button>
@@ -93,7 +124,7 @@ const CreateRow: React.FC<CreateRowProps> = ({
               {intl.formatMessage(messages.saveButtonLabel)}
             </Button>
           </span>
-          {createRowMutation.isPending && (
+          {mutationState.isPending && (
             <Spinner
               animation="border"
               role="status"
@@ -108,4 +139,67 @@ const CreateRow: React.FC<CreateRowProps> = ({
   );
 };
 
-export { CreateRow };
+const CreateRow: React.FC<CreateRowProps> = ({
+  draftError,
+  setDraftError,
+  handleCreateRow,
+  setIsCreatingTopRow,
+  exitDraftWithoutSave,
+  createRowMutation,
+  columns,
+  indent = 0,
+  validate,
+}) => {
+  const handleCancel = () => {
+    setDraftError('');
+    setIsCreatingTopRow(false);
+    exitDraftWithoutSave();
+  };
+
+  return (
+    <DraftRow
+      draftError={draftError}
+      onSave={handleCreateRow}
+      onCancel={handleCancel}
+      mutationState={createRowMutation}
+      columns={columns}
+      indent={indent}
+      validate={validate}
+      rowId="creating-top-row"
+      rowTestId="creating-top-row"
+    />
+  );
+};
+
+const EditRow: React.FC<EditRowProps> = ({
+  draftError,
+  setDraftError,
+  initialValue,
+  handleUpdateRow,
+  cancelEditRow,
+  updateRowMutation,
+  columns,
+  indent = 0,
+  validate,
+}) => {
+  const handleCancel = () => {
+    setDraftError('');
+    cancelEditRow();
+  };
+
+  return (
+    <DraftRow
+      draftError={draftError}
+      initialValue={initialValue}
+      onSave={handleUpdateRow}
+      onCancel={handleCancel}
+      mutationState={updateRowMutation}
+      columns={columns}
+      indent={indent}
+      validate={validate}
+      requireValueChangeToEnableSave
+    />
+  );
+};
+
+export { CreateRow, EditRow };

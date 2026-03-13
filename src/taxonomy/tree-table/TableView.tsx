@@ -42,6 +42,7 @@ interface TableViewProps {
   isCreatingTopRow: boolean;
   draftError: string;
   createRowMutation: CreateRowMutationState;
+  updateRowMutation: CreateRowMutationState;
   toast: ToastState;
   setToast: React.Dispatch<React.SetStateAction<ToastState>>;
   setIsCreatingTopRow: (isCreating: boolean) => void;
@@ -51,8 +52,9 @@ interface TableViewProps {
   setCreatingParentId: (id: RowId | null) => void;
   setDraftError: (error: string) => void;
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
+  handleUpdateRow: (value: string, originalValue: string) => void;
   editingRowId: RowId | null;
-  editableColumns: string[];
+  setEditingRowId: (id: RowId | null) => void;
 }
 
 const TableView = ({
@@ -66,6 +68,7 @@ const TableView = ({
   isCreatingTopRow,
   draftError,
   createRowMutation,
+  updateRowMutation,
   handleCreateRow,
   toast,
   setToast,
@@ -75,8 +78,9 @@ const TableView = ({
   setCreatingParentId,
   setDraftError,
   validate,
+  handleUpdateRow,
   editingRowId,
-  editableColumns,
+  setEditingRowId,
 }: TableViewProps) => {
   const intl = useIntl();
 
@@ -161,11 +165,13 @@ const TableView = ({
               setCreatingParentId={setCreatingParentId}
               setDraftError={setDraftError}
               createRowMutation={createRowMutation}
+              updateRowMutation={updateRowMutation}
               table={table}
               isLoading={isLoading}
               validate={validate}
+              handleUpdateRow={handleUpdateRow}
               editingRowId={editingRowId}
-              editableColumns={editableColumns}
+              setEditingRowId={setEditingRowId}
             />
           </table>
         </Card.Section>

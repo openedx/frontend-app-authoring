@@ -1,7 +1,6 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { flexRender } from '@tanstack/react-table';
-import type { Cell } from '@tanstack/react-table';
 
 import { LoadingSpinner } from '@src/generic/Loading';
 import NestedRows from './NestedRows';
@@ -12,11 +11,9 @@ import type {
   CreateRowMutationState,
   RowId,
   TreeColumnDef,
-  TreeRowData,
   TreeTable,
 } from './types';
-import { CreateRow } from './CreateRow';
-import { EditableCell } from './EditableCell';
+import { CreateRow, EditRow } from './CreateRow';
 
 interface TableBodyProps {
   columns: TreeColumnDef[];
@@ -29,11 +26,13 @@ interface TableBodyProps {
   setCreatingParentId: (id: RowId | null) => void;
   setDraftError: (error: string) => void;
   createRowMutation: CreateRowMutationState;
+  updateRowMutation: CreateRowMutationState;
   table: TreeTable;
   isLoading: boolean;
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
+  handleUpdateRow: (value: string, originalValue: string) => void;
   editingRowId: RowId | null;
-  editableColumns: string[];
+  setEditingRowId: (id: RowId | null) => void;
 }
 
 const TableBody = ({
@@ -47,19 +46,15 @@ const TableBody = ({
   setCreatingParentId,
   setDraftError,
   createRowMutation,
+  updateRowMutation,
   table,
   isLoading,
   validate,
+  handleUpdateRow,
   editingRowId,
-  editableColumns,
+  setEditingRowId,
 }: TableBodyProps) => {
   const intl = useIntl();
-  const isCellEditable = (rowId: RowId | null, cell: Cell<TreeRowData, unknown>) => {
-    console.log('cell column id:', cell.column.id);
-    return (
-      rowId === editingRowId && editableColumns.includes(cell.column.id)
-    )};
-  console.log('editableColumns in TableBody:', editableColumns);
 
   if (isLoading) {
     return (
@@ -98,21 +93,30 @@ const TableBody = ({
 
       {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
         <React.Fragment key={row.id}>
-          <tr>
-            {row.getVisibleCells()
-              .map((cell, index) => (
-                <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
-                  {isCellEditable(row.original.id, cell) ? (
-                    <EditableCell
-                      initialValue={String(cell.getValue())}
-                      autoFocus
-                    />
-                  ) : (
-                    flexRender(cell.column.columnDef.cell, cell.getContext())
-                  )}
-                </td>
-              ))}
-          </tr>
+          {editingRowId === row.original.id ? (
+            <EditRow
+              draftError={draftError}
+              setDraftError={setDraftError}
+              initialValue={String(row.original.value)}
+              handleUpdateRow={(value) => handleUpdateRow(value, String(row.original.value))}
+              cancelEditRow={() => {
+                setEditingRowId(null);
+                exitDraftWithoutSave();
+              }}
+              updateRowMutation={updateRowMutation}
+              columns={columns}
+              validate={validate}
+            />
+          ) : (
+            <tr>
+              {row.getVisibleCells()
+                .map((cell, index) => (
+                  <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+            </tr>
+          )}
           <NestedRows
             parentRow={row}
             childRowsData={row.subRows}
