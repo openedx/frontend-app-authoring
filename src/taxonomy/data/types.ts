@@ -32,6 +32,7 @@ export interface TaxonomyListData {
 export interface QueryOptions {
   pageIndex: number;
   pageSize: number;
+  enabled?: boolean;
 }
 
 export interface TagData {
@@ -47,6 +48,8 @@ export interface TagData {
   usageCount?: number;
   /** Database ID. Don't rely on this, as it is not present for free-text tags. */
   _id?: string;
+  canChangeTag?: boolean;
+  canDeleteTag?: boolean;
 }
 
 export interface TagListData {
@@ -55,6 +58,7 @@ export interface TagListData {
   next: string;
   numPages: number;
   previous: string;
+  canAddTag?: boolean;
   results: TagData[];
   start: number;
 }
