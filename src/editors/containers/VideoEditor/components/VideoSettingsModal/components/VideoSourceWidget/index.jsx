@@ -21,7 +21,7 @@ import * as hooks from './hooks';
 import messages from './messages';
 
 import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import CollapsibleFormWidget from '../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 
 /**
  * Collapsible Form widget controlling video source as well as fallback sources

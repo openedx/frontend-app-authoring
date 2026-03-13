@@ -22,7 +22,7 @@ import { acceptedImgKeys } from './constants';
 import * as hooks from './hooks';
 import messages from './messages';
 
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import CollapsibleFormWidget from '../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import { FileInput } from '../../../../../../sharedComponents/FileInput';
 import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 import { ErrorContext } from '../../../../hooks';

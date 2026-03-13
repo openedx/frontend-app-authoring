@@ -7,7 +7,7 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import { keyStore } from '../../../../../../utils';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import CollapsibleFormWidget from '../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import * as hooks from './hooks';
 import messages from '../messages';
 

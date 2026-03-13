@@ -12,7 +12,7 @@ import {
 } from '@openedx/paragon';
 
 import { selectors, actions } from '../../../../../../data/redux';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import CollapsibleFormWidget from '../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import messages from './messages';
 import * as hooks from './hooks';
 

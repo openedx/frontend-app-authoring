@@ -1,6 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import {
-  FC, useEffect, useState, useMemo, useCallback,
+  FC, useEffect, useState, useMemo, useCallback, Fragment,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle, Sheet, StandardModal } from '@openedx/paragon';
