@@ -17,12 +17,12 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import XBlockContainerIframe from '@src/course-unit/xblock-container-iframe';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { Link } from 'react-router-dom';
+import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
+import { useQueryClient } from '@tanstack/react-query';
 import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
 import messages from '../messages';
 import { InfoSection } from './InfoSection';
-import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
-import { useQueryClient } from '@tanstack/react-query';
 
 interface Props {
   unitId: string;
@@ -33,12 +33,12 @@ const UnitSettingsTab = ({ unitId }: Props) => {
   const { data: unitData, isPending } = useCourseItemData(unitId);
 
   if (isPending || !unitData) {
-    return <Loading />
+    return <Loading />;
   }
 
   const onUpdate = () => {
-    queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(unitId)});
-  }
+    queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(unitId) });
+  };
 
   return (
     <GenericUnitInfoSettings
@@ -49,7 +49,7 @@ const UnitSettingsTab = ({ unitId }: Props) => {
       updateCallback={onUpdate}
     />
   );
-}
+};
 
 export const UnitSidebar = ({ unitId }: Props) => {
   const intl = useIntl();

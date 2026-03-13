@@ -8,9 +8,9 @@ import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { Form, Formik } from 'formik';
 import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import messages from './messages';
 import configureMessages from '@src/generic/configure-modal/messages';
 import { useEditCourseUnitVisibilityAndData } from '@src/course-unit/data/apiHooks';
+import messages from './messages';
 
 interface UnitInfoSettingsProps {
   id: string;

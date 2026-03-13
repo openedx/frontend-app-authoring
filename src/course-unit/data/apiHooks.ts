@@ -1,11 +1,13 @@
 import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
-import { fetchCourseSectionVerticalDataSuccess, updateCourseVerticalChildren, updateQueryPendingStatus, updateSavingStatus } from '@src/course-unit/data/slice';
-import { getNotificationMessage } from './utils';
+import {
+  fetchCourseSectionVerticalDataSuccess, updateCourseVerticalChildren, updateQueryPendingStatus, updateSavingStatus,
+} from '@src/course-unit/data/slice';
 import { RequestStatus } from '@src/data/constants';
 import { hideProcessingNotification, showProcessingNotification } from '@src/generic/processing-notification/data/slice';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import {
   acceptLibraryBlockChanges,
   getCourseContainerChildren,
@@ -13,7 +15,7 @@ import {
   handleCourseUnitVisibilityAndData,
   ignoreLibraryBlockChanges,
 } from './api';
-import { handleResponseErrors } from '@src/generic/saving-error-alert';
+import { getNotificationMessage } from './utils';
 
 /**
  * Hook that provides a "mutation" that can be used to accept library block changes.
@@ -40,7 +42,7 @@ export const useEditCourseUnitVisibilityAndData = () => {
       dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
       dispatch(updateQueryPendingStatus(true));
       dispatch(showProcessingNotification(
-        getNotificationMessage(variables.type, variables.isVisible, true)
+        getNotificationMessage(variables.type, variables.isVisible, true),
       ));
     },
     onSuccess: async (_data, variables) => {
@@ -61,4 +63,4 @@ export const useEditCourseUnitVisibilityAndData = () => {
       handleResponseErrors(error, dispatch, updateSavingStatus);
     },
   });
-}
+};

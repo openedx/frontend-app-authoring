@@ -16,10 +16,10 @@ import { Form, Formik } from 'formik';
 import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
 import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
 import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
+import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
 import PublishControls from './PublishControls';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
-import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
 
 /**
  * Component to show unit details: Publish status, Component counts and Content Tags.
