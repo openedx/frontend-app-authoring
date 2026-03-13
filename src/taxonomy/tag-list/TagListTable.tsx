@@ -16,7 +16,7 @@ import type {
 import {
   TABLE_MODES,
 } from './constants';
-import { getColumns } from './tagColumns';
+import { EDITABLE_COLUMNS, getColumns } from './tagColumns';
 import { useTableModes, useEditActions } from './hooks';
 
 interface TagListTableProps {
@@ -148,6 +148,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     handleUpdateTag(`${tagToRename.value}-renamed`, tagToRename.value);
   };
 
+  console.log('editingRowId', editingRowId);
+
   return (
     <>
       <button type="button" onClick={renameTagTest}>Test Rename Tag</button>
@@ -171,6 +173,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
           setCreatingParentId,
           setDraftError,
           validate,
+          editingRowId,
+          editableColumns: EDITABLE_COLUMNS,
         }}
       />
     </>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { flexRender } from '@tanstack/react-table';
+import type { Cell } from '@tanstack/react-table';
 
 import { LoadingSpinner } from '@src/generic/Loading';
 import NestedRows from './NestedRows';
@@ -11,9 +12,11 @@ import type {
   CreateRowMutationState,
   RowId,
   TreeColumnDef,
+  TreeRowData,
   TreeTable,
 } from './types';
 import { CreateRow } from './CreateRow';
+import { EditableCell } from './EditableCell';
 
 interface TableBodyProps {
   columns: TreeColumnDef[];
@@ -29,6 +32,8 @@ interface TableBodyProps {
   table: TreeTable;
   isLoading: boolean;
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
+  editingRowId: RowId | null;
+  editableColumns: string[];
 }
 
 const TableBody = ({
@@ -45,8 +50,16 @@ const TableBody = ({
   table,
   isLoading,
   validate,
+  editingRowId,
+  editableColumns,
 }: TableBodyProps) => {
   const intl = useIntl();
+  const isCellEditable = (rowId: RowId | null, cell: Cell<TreeRowData, unknown>) => {
+    console.log('cell column id:', cell.column.id);
+    return (
+      rowId === editingRowId && editableColumns.includes(cell.column.id)
+    )};
+  console.log('editableColumns in TableBody:', editableColumns);
 
   if (isLoading) {
     return (
@@ -89,7 +102,14 @@ const TableBody = ({
             {row.getVisibleCells()
               .map((cell, index) => (
                 <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  {isCellEditable(row.original.id, cell) ? (
+                    <EditableCell
+                      initialValue={String(cell.getValue())}
+                      autoFocus
+                    />
+                  ) : (
+                    flexRender(cell.column.columnDef.cell, cell.getContext())
+                  )}
                 </td>
               ))}
           </tr>

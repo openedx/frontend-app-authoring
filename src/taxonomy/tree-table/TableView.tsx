@@ -51,6 +51,8 @@ interface TableViewProps {
   setCreatingParentId: (id: RowId | null) => void;
   setDraftError: (error: string) => void;
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
+  editingRowId: RowId | null;
+  editableColumns: string[];
 }
 
 const TableView = ({
@@ -73,6 +75,8 @@ const TableView = ({
   setCreatingParentId,
   setDraftError,
   validate,
+  editingRowId,
+  editableColumns,
 }: TableViewProps) => {
   const intl = useIntl();
 
@@ -160,6 +164,8 @@ const TableView = ({
               table={table}
               isLoading={isLoading}
               validate={validate}
+              editingRowId={editingRowId}
+              editableColumns={editableColumns}
             />
           </table>
         </Card.Section>

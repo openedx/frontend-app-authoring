@@ -20,6 +20,8 @@ import type {
 } from '../tree-table/types';
 import OptionalExpandLink from './OptionalExpandLink';
 
+const EDITABLE_COLUMNS = ['value'];
+
 interface TagListRowData extends TreeRowData {
   depth: number;
   childCount: number;
@@ -67,6 +69,8 @@ function getColumns({
 
   return [
     {
+      id: 'value',
+      accessorFn: (row) => row.value,
       header: intl.formatMessage(messages.tagListColumnValueHeader),
       cell: ({ row }) => {
         const {
@@ -166,4 +170,4 @@ function getColumns({
   ];
 }
 
-export { getColumns };
+export { getColumns, EDITABLE_COLUMNS };
