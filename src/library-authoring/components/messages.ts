@@ -246,5 +246,40 @@ const messages = defineMessages({
     defaultMessage: 'Remove',
     description: 'Button to confirm removal of a container from its parent',
   },
+  publicReadToggleLabel: {
+    id: 'course-authoring.library-authoring.public.read.toggle.label',
+    defaultMessage: 'Allow public read',
+    description: 'Library label toggle to allow public read',
+  },
+  publicReadToggleSubtext: {
+    id: 'course-authoring.library-authoring.public.read.toggle.subtext',
+    defaultMessage: 'Allows reuse of library content in courses.',
+    description: 'Library description toggle to allow public read',
+  },
+  publicReadToggleDefaultError: {
+    id: 'course-authoring.library-authoring.public.read.toggle.default.error.message',
+    defaultMessage: 'Something went wrong on our end. Please try again later.',
+    description: 'Libraries default error message',
+  },
+  publicReadToggle500Error: {
+    id: 'course-authoring.library-authoring.public.read.toggle.500.error.message',
+    defaultMessage: 'We\'re experiencing technical difficulties. Please try again later.',
+    description: 'Libraries internal server error message',
+  },
+  publicReadToggle502Error: {
+    id: 'course-authoring.library-authoring.public.read.toggle.502.error.message',
+    defaultMessage: 'We\'re having trouble connecting to our services. Please try again later.',
+    description: 'Libraries bad gateway error message',
+  },
+  publicReadToggle503Error: {
+    id: 'course-authoring.library-authoring.public.read.toggle.503.error.message',
+    defaultMessage: 'The service is temporarily unavailable. Please try again in a few moments.',
+    description: 'Libraries service temporarily unavailable message',
+  },
+  publicReadToggle408Error: {
+    id: 'course-authoring.library-authoring.public.read.toggle.408.error.message',
+    defaultMessage: 'The request took too long. Please check your connection and try again.',
+    description: 'Libraries request timeout message',
+  },
 });
 export default messages;

@@ -11,6 +11,11 @@ const messages = defineMessages({
     defaultMessage: 'Organization',
     description: 'Title for Organization section in Library info sidebar.',
   },
+  settingsSectionTitle: {
+    id: 'course-authoring.library-authoring.sidebar.info.settings.title',
+    defaultMessage: 'Settings',
+    description: 'Title for Settings section in Library info sidebar.',
+  },
   libraryTeamButtonTitle: {
     id: 'course-authoring.library-authoring.sidebar.info.library-team.button.title',
     defaultMessage: 'Library Team',
