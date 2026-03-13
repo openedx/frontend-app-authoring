@@ -13,6 +13,7 @@ import {
   initializeMocks,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
 import { executeThunk } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
 import FilesPage from './FilesPage';
@@ -44,6 +45,18 @@ let store;
 let file;
 ReactDOM.createPortal = jest.fn(node => node);
 jest.mock('file-saver');
+
+jest.mock('@src/authz/hooks', () => ({
+  useUserPermissionsWithAuthzCourse: jest.fn().mockReturnValue({
+    isLoading: false,
+    permissions: {
+      canViewFiles: true,
+      canEditFiles: true,
+      canDeleteFiles: true,
+      canCreateFiles: true,
+    },
+  }),
+}));
 
 const renderComponent = () => {
   render(
@@ -682,6 +695,106 @@ describe('FilesAndUploads', () => {
 
         expect(screen.getByText('Error')).toBeVisible();
       });
+    });
+  });
+
+  describe('permissions', () => {
+    beforeEach(() => {
+      const mocks = initializeMocks({
+        initialState: {
+          ...initialState,
+          assets: {
+            ...initialState.assets,
+            assetIds: [],
+          },
+          models: {},
+        },
+      });
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
+      file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
+      global.localStorage.clear();
+    });
+    it('should render permission alert when the user is not authorized to view files', async () => {
+      useUserPermissionsWithAuthzCourse.mockReturnValue({
+        isLoading: false,
+        permissions: {
+          canViewFiles: false,
+          canEditFiles: true,
+          canDeleteFiles: true,
+          canCreateFiles: true,
+        },
+      });
+      await mockStore(RequestStatus.SUCCESSFUL);
+      expect(await screen.findByText(/You are not authorized to view this page/)).toBeInTheDocument();
+    });
+
+    it('should not render dropzone when is not authorized to create files', async () => {
+      useUserPermissionsWithAuthzCourse.mockReturnValue({
+        isLoading: false,
+        permissions: {
+          canViewFiles: true,
+          canEditFiles: true,
+          canDeleteFiles: true,
+          canCreateFiles: false,
+        },
+      });
+      await emptyMockStore(RequestStatus.SUCCESSFUL);
+
+      expect(screen.queryByTestId('files-dropzone')).toBeNull();
+    });
+
+    it('should render dropzone when is authorized to create files', async () => {
+      useUserPermissionsWithAuthzCourse.mockReturnValue({
+        isLoading: false,
+        permissions: {
+          canViewFiles: true,
+          canEditFiles: true,
+          canDeleteFiles: true,
+          canCreateFiles: true,
+        },
+      });
+      await emptyMockStore(RequestStatus.SUCCESSFUL);
+
+      expect(screen.queryByTestId('files-dropzone')).toBeInTheDocument();
+    });
+
+    it('should not render delete item when is not authorized to delete files', async () => {
+      const user = userEvent.setup();
+      useUserPermissionsWithAuthzCourse.mockReturnValue({
+        isLoading: false,
+        permissions: {
+          canViewFiles: true,
+          canEditFiles: true,
+          canDeleteFiles: false,
+          canCreateFiles: true,
+        },
+      });
+      await mockStore(RequestStatus.SUCCESSFUL);
+
+      const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
+      await user.click(actionsButton);
+
+      expect(screen.queryByText(messages.deleteTitle.defaultMessage)).toBeNull();
+    });
+
+    it('should render delete item when is authorized to delete files', async () => {
+      const user = userEvent.setup();
+      useUserPermissionsWithAuthzCourse.mockReturnValue({
+        isLoading: false,
+        permissions: {
+          canViewFiles: true,
+          canEditFiles: true,
+          canDeleteFiles: true,
+          canCreateFiles: true,
+        },
+      });
+      await mockStore(RequestStatus.SUCCESSFUL);
+
+      const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
+      await user.click(actionsButton);
+
+      expect(screen.queryByText(messages.deleteTitle.defaultMessage)).toBeInTheDocument();
     });
   });
 });

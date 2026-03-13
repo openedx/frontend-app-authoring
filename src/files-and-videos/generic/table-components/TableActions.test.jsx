@@ -1,5 +1,6 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { DataTableContext } from '@openedx/paragon';
 import { initializeMocks, render } from '../../../testUtils';
 import TableActions from './TableActions';
@@ -131,5 +132,49 @@ describe('TableActions', () => {
 
     fireEvent.click(screen.getByRole('button', { name: messages.actionsButtonLabel.defaultMessage }));
     expect(screen.getByRole('link', { name: messages.downloadEncodingsTitle.defaultMessage })).toHaveAttribute('href', expect.stringContaining(encodingsDownloadUrl));
+  });
+
+  test('does not render delete menu item when canDeleteFiles permission is false', async () => {
+    const user = userEvent.setup();
+    const permissions = {
+      canCreateFiles: true,
+      canDeleteFiles: false,
+    };
+
+    renderWithContext({
+      permissions,
+      selectedFlatRows: [{ original: { id: '1', displayName: 'Video 1', wrapperType: 'video' } }],
+    });
+
+    await user.click(screen.getByRole('button', { name: messages.actionsButtonLabel.defaultMessage }));
+
+    expect(screen.queryByText(messages.deleteTitle.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.getByText(messages.downloadTitle.defaultMessage)).toBeInTheDocument();
+  });
+
+  test('does not render create button when canEditFiles permission is false', () => {
+    const permissions = {
+      canCreateFiles: true,
+      canDeleteFiles: false,
+    };
+
+    renderWithContext({
+      permissions,
+      selectedFlatRows: [{ original: { id: '1', displayName: 'Video 1', wrapperType: 'video' } }],
+    });
+
+    expect(screen.getByRole('button', { name: /Add videos/ })).toBeInTheDocument();
+  });
+
+  test('renders add videos button and delete menu item with permissions defaults', async () => {
+    const user = userEvent.setup();
+    renderWithContext({
+      selectedFlatRows: [{ original: { id: '1', displayName: 'Video 1', wrapperType: 'video' } }],
+    });
+
+    expect(screen.getByRole('button', { name: /Add videos/ })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: messages.actionsButtonLabel.defaultMessage }));
+
+    expect(screen.queryByText(messages.deleteTitle.defaultMessage)).toBeInTheDocument();
   });
 });

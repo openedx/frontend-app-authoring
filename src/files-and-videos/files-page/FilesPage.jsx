@@ -10,7 +10,9 @@ import Placeholder from '@src/editors/Placeholder';
 import { RequestStatus } from '@src/data/constants';
 import getPageHeadTitle from '@src/generic/utils';
 import EditFileAlertsSlot from '@src/plugin-slots/EditFileAlertsSlot';
-
+import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
+import { getFilesPermissions } from '@src/authz/permissionHelpers';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import { EditFileErrors } from '../generic';
 import { fetchAssets, resetErrors } from './data/thunks';
 import FilesPageProvider from './FilesPageProvider';
@@ -30,9 +32,22 @@ const FilesPage = () => {
     errors: errorMessages,
   } = useSelector(state => state.assets);
 
+  const {
+    isLoading: isLoadingPermissions,
+    permissions,
+  } = useUserPermissionsWithAuthzCourse(courseId, getFilesPermissions(courseId));
+
+  const {
+    canViewFiles,
+  } = permissions;
+
   useEffect(() => {
     dispatch(fetchAssets(courseId));
   }, [courseId]);
+
+  if (!isLoadingPermissions && !canViewFiles) {
+    return <PermissionDeniedAlert />;
+  }
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
 
