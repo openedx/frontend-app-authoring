@@ -28,6 +28,7 @@ interface Props {
   currentItemData?: AccessManagedXBlockDataTypes,
   isXBlockComponent?: boolean,
   isSelfPaced?: boolean,
+  isOverflowVisible?: boolean,
 }
 
 const ConfigureModal = ({
@@ -39,6 +40,7 @@ const ConfigureModal = ({
   enableTimedExams = false,
   isXBlockComponent = false,
   isSelfPaced,
+  isOverflowVisible = false,
 }: Props) => {
   const intl = useIntl();
 
@@ -298,7 +300,7 @@ const ConfigureModal = ({
       onClose={onClose}
       hasCloseButton
       isFullscreenOnMobile
-      isOverflowVisible
+      isOverflowVisible={isOverflowVisible}
     >
       <div data-testid="configure-modal">
         <ModalDialog.Header className="configure-modal__header">
