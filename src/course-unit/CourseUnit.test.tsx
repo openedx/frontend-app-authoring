@@ -43,7 +43,6 @@ import {
 import {
   createNewCourseXBlock,
   deleteUnitItemQuery,
-  editCourseUnitVisibilityAndData,
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
   getCourseOutlineInfoQuery,
@@ -377,7 +376,8 @@ describe('<CourseUnit />', () => {
           published_by: userName,
         },
       });
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    const publishBtn = await screen.findByRole('button', { name: /Publish/ });
+    await user.click(publishBtn);
 
     // check if the sidebar status is Published and Live
     expect(await screen.findByText(
@@ -419,7 +419,7 @@ describe('<CourseUnit />', () => {
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    await user.click(publishBtn);
 
     expect(await screen.findByTitle(
       xblockContainerIframeMessages.xblockIframeTitle.defaultMessage,
@@ -544,7 +544,8 @@ describe('<CourseUnit />', () => {
           published_by: userName,
         },
       });
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    const publishBtn = await screen.findByRole('button', { name: /Publish/ });
+    await user.click(publishBtn);
 
     await waitFor(() => {
       // check if the sidebar status is Published and Live
@@ -561,7 +562,7 @@ describe('<CourseUnit />', () => {
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    await user.click(publishBtn);
 
     const xblockIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
     expect(xblockIframe).toHaveAttribute(
@@ -715,7 +716,8 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    const publishBtn = await screen.findByRole('button', { name: /Publish/ });
+    await user.click(publishBtn);
 
     const problemButton = await screen.findByRole('button', {
       name: new RegExp(`problem ${addComponentMessages.buttonText.defaultMessage} Problem`, 'i'),
@@ -728,7 +730,7 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    await user.click(publishBtn);
 
     // after creating problem xblock, the sidebar status changes to Draft (unpublished changes)
     expect(screen.getByText(
@@ -897,7 +899,7 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    await user.click(publishButton);
 
     await waitFor(() => {
       // check if the sidebar status is Published and Live
@@ -922,7 +924,7 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    await user.click(publishButton);
 
     // after creating video xblock, the sidebar status changes to Draft (unpublished changes)
     expect(screen.getByText(
@@ -976,7 +978,8 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    const publishButton = await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage });
+    await user.click(publishButton);
 
     await waitFor(async () => {
       // check if the sidebar status is Published and Live
@@ -1006,7 +1009,7 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    await user.click(publishButton);
 
     // after creating video xblock, the sidebar status changes to Draft (unpublished changes)
     expect(screen.getByText(
@@ -1140,7 +1143,8 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, true), store.dispatch);
+    const publishButton = await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage });
+    await user.click(publishButton);
 
     await waitFor(async () => {
       expect(visibilityCheckbox).toBeChecked();
@@ -1176,7 +1180,7 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, null), store.dispatch);
+    await user.click(publishButton);
 
     expect(visibilityCheckbox).not.toBeChecked();
     expect(draftUnpublishedChangesHeading).toBeInTheDocument();
@@ -1213,7 +1217,8 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    const publishButton = await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage });
+    await user.click(publishButton);
 
     expect(within(courseUnitSidebar)
       .getByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
@@ -1273,11 +1278,8 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(
-      blockId,
-      PUBLISH_TYPES.discardChanges,
-      true,
-    ), store.dispatch);
+    const publishButton = await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage });
+    await user.click(publishButton);
 
     expect(within(courseUnitSidebar)
       .getByText(legacySidebarMessages.sidebarTitlePublishedNotYetReleased.defaultMessage)).toBeInTheDocument();
@@ -2432,7 +2434,8 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, true), store.dispatch);
+    const publishButton = await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage });
+    await user.click(publishButton);
     // Move to Details
     const detailsTab = screen.getByRole('tab', { name: /details/i });
     await user.click(detailsTab);
@@ -2463,7 +2466,7 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, false), store.dispatch);
+    await user.click(publishButton);
 
     // Move to Details
     await user.click(detailsTab);
@@ -2540,13 +2543,8 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(
-      blockId,
-      PUBLISH_TYPES.republish,
-      false,
-      null,
-      false,
-    ), store.dispatch);
+    const publishButton = await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage });
+    await user.click(publishButton);
 
     expect(discussionButton).not.toBeChecked();
   });

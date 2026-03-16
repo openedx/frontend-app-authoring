@@ -16,13 +16,15 @@ import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
 import { isUnitPageNewDesignEnabled } from '../utils';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { messageTypes, PUBLISH_TYPES } from '@src/course-unit/constants';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 
 type HeaderTitleProps = {
   unitTitle: string;
   isTitleEditFormOpen: boolean;
   handleTitleEdit: () => void;
   handleTitleEditSubmit: (title: string) => void;
-  handleConfigureSubmit: (variables: ConfigureUnitData & { closeModalFn?: () => void }) => void;
 };
 
 /**
@@ -37,7 +39,6 @@ const HeaderTitle = ({
   isTitleEditFormOpen,
   handleTitleEdit,
   handleTitleEditSubmit,
-  handleConfigureSubmit,
 }: HeaderTitleProps) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -51,11 +52,19 @@ const HeaderTitle = ({
     COURSE_BLOCK_NAMES.component.id,
   ].includes(currentItemData.category);
 
+  const configureFn = useConfigureUnitWithPageUpdates();
+  const { sendMessageToIframe } = useIframe();
   const onConfigureSubmit = (variables: Omit<ConfigureUnitData, 'unitId'>) => {
-    handleConfigureSubmit({
+    configureFn.mutate({
       ...variables,
+      type: PUBLISH_TYPES.republish,
       unitId: currentItemData.id,
-      closeModalFn: closeConfigureModal,
+    }, {
+      onSuccess: () => sendMessageToIframe(
+        messageTypes.completeManageXBlockAccess,
+        { locator: currentItemData.id }
+      ),
+      onSettled: () => closeConfigureModal(),
     });
   };
 

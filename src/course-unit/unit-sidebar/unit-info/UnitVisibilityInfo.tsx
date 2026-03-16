@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   Form, Icon, IconButton, Stack,
 } from '@openedx/paragon';
@@ -6,12 +6,12 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
 
 import { getCourseUnitData } from '@src/course-unit/data/selectors';
-import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
 import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { isUnitPageNewDesignEnabled } from '@src/course-unit/utils';
 import { Edit, Groups, Lock } from '@openedx/paragon/icons';
 import messages from './messages';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
+import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
 
 interface UnitVisibilityInfoProps {
   openVisibleModal: () => void,
@@ -42,11 +42,18 @@ const LegacyVisibilityInfo = ({
   } = useSelector(getCourseUnitData);
 
   const { blockId } = useParams();
-  const dispatch = useDispatch();
+  const publishMutation = useConfigureUnit();
 
   const handleCourseUnitVisibility = () => {
     /* istanbul ignore next */
-    dispatch(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, true));
+    if (blockId) {
+      publishMutation.mutate({
+        unitId: blockId,
+        type: PUBLISH_TYPES.republish,
+        isVisibleToStaffOnly: true,
+        groupAccess: null,
+      });
+    }
   };
 
   return (

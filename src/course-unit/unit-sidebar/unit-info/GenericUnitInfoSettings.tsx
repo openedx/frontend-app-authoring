@@ -18,6 +18,7 @@ interface UnitInfoSettingsProps {
   updateCallback?: () => void;
   sectionId?: string;
   subsectionId?: string;
+  configureHook?: typeof useConfigureUnit;
 }
 
 /**
@@ -34,18 +35,19 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     userPartitionInfo,
     sectionId,
     subsectionId,
+    configureHook = useConfigureUnit,
   } = props;
 
   const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
-  const mutateFn = useConfigureUnit();
+  const mutateFn = configureHook();
 
-  const handleUpdate = async (
+  const handleUpdate = (
     isVisible: boolean,
     groupAccess: Record<string, any> | null,
     isDiscussionEnabled?: boolean,
   ) => {
     // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-    await mutateFn.mutateAsync({
+    mutateFn.mutate({
       unitId: id,
       type: PUBLISH_TYPES.republish,
       isVisibleToStaffOnly: isVisible,
@@ -58,13 +60,16 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     });
   };
 
-  const handleSaveGroups = async (data, { resetForm }) => {
+  const handleSaveGroups = async (data: {
+    selectedPartitionIndex: number;
+    selectedGroups: any[];
+  }, { resetForm }: any) => {
     const groupAccess = {};
     if (userPartitionInfo && data.selectedPartitionIndex >= 0) {
       const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
       groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
     }
-    await handleUpdate(visibleToStaffOnly, groupAccess, !!discussionEnabled);
+    handleUpdate(visibleToStaffOnly, groupAccess, !!discussionEnabled);
     resetForm({ values: data });
   };
 

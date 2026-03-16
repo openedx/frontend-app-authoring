@@ -276,7 +276,9 @@ export async function configureCourseUnit(variables: ConfigureUnitData): Promise
       ...(variables.type === PUBLISH_TYPES.republish ? {
         metadata: {
           visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-          discussion_enabled: variables.discussionEnabled,
+          ...(variables.discussionEnabled !== undefined && {
+            discussion_enabled: variables.discussionEnabled,
+          }),
           ...(variables.groupAccess != null && { group_access: variables.groupAccess }),
         },
       } : {}),

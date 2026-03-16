@@ -1,17 +1,17 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Icon, Stack, useToggle } from '@openedx/paragon';
 import { InfoOutline as InfoOutlineIcon, Person } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import ModalNotification from '@src/generic/modal-notification';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { getCourseUnitData } from '@src/course-unit/data/selectors';
-import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
 import { messageTypes, PUBLISH_TYPES } from '@src/course-unit/constants';
 import { SidebarFooter, SidebarHeader } from '@src/course-unit/legacy-sidebar/components';
 import useCourseUnitData from '@src/course-unit/legacy-sidebar/hooks';
 import ReleaseInfoComponent from '@src/course-unit/legacy-sidebar/components/ReleaseInfoComponent';
 import messages from './messages';
 import UnitVisibilityInfo from './UnitVisibilityInfo';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 
 interface PublishControlsProps {
   blockId?: string,
@@ -44,28 +44,46 @@ const PublishControls = ({
     publishedOn,
   } = unitData;
 
-  const dispatch = useDispatch();
+  const publishMutation = useConfigureUnitWithPageUpdates();
 
   const handleCourseUnitVisibility = () => {
     closeVisibleModal();
-    dispatch(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, null));
+    if (blockId) {
+      publishMutation.mutate({
+        unitId: blockId,
+        type: PUBLISH_TYPES.republish,
+        isVisibleToStaffOnly: false,
+        groupAccess: null,
+      });
+    }
   };
 
   const handleCourseUnitDiscardChanges = () => {
     closeDiscardModal();
-    dispatch(editCourseUnitVisibilityAndData(
-      blockId,
-      PUBLISH_TYPES.discardChanges,
-      null,
-      null,
-      null,
-      /* istanbul ignore next */
-      () => sendMessageToIframe(messageTypes.refreshXBlock, null),
-    ));
+    if (blockId) {
+      publishMutation.mutate(
+        {
+          unitId: blockId,
+          type: PUBLISH_TYPES.discardChanges,
+          isVisibleToStaffOnly: false,
+          groupAccess: null,
+        },
+        {
+          onSuccess: () => sendMessageToIframe(messageTypes.refreshXBlock, null),
+        }
+      );
+    }
   };
 
   const handleCourseUnitPublish = () => {
-    dispatch(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic));
+    if (blockId) {
+      publishMutation.mutate({
+        unitId: blockId,
+        type: PUBLISH_TYPES.makePublic,
+        isVisibleToStaffOnly: false,
+        groupAccess: null,
+      });
+    }
   };
 
   return (

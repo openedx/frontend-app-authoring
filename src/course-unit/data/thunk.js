@@ -25,13 +25,11 @@ import {
   updateLoadingCourseSectionVerticalDataStatus,
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
-  updateQueryPendingStatus,
   fetchStaticFileNoticesSuccess,
   updateCourseOutlineInfo,
   updateCourseOutlineInfoLoadingStatus,
   updateMovedXBlockParams,
 } from './slice';
-import { getNotificationMessage } from './utils';
 
 export function fetchCourseSectionVerticalData(courseId, sequenceId) {
   return async (dispatch) => {

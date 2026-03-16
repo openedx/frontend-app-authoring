@@ -24,7 +24,7 @@ import EditorPage from '@src/editors/EditorPage';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ConfigureUnitData } from '@src/course-outline/data/types';
 import { AccessManagedXBlockDataTypes } from '@src/data/types';
-import { messageTypes } from '../constants';
+import { messageTypes, PUBLISH_TYPES } from '../constants';
 import {
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
@@ -40,13 +40,13 @@ import {
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 import { isUnitPageNewDesignEnabled } from '../utils';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId,
   blockId,
   unitXBlockActions,
   courseVerticalChildren,
-  handleConfigureSubmit,
   isUnitVerticalType,
   readonly,
 }) => {
@@ -152,12 +152,16 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     }
   };
 
+  const configureFn = useConfigureUnitWithPageUpdates();
   const onManageXBlockAccessSubmit = (variables: Omit<ConfigureUnitData, 'unitId'>) => {
     if (configureXBlockId) {
-      handleConfigureSubmit({
+      configureFn.mutate({
         unitId: configureXBlockId,
         ...variables,
-        closeModalFn: closeConfigureModal,
+        type: PUBLISH_TYPES.republish,
+      }, {
+        onSuccess: () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: configureXBlockId }),
+        onSettled: () => closeConfigureModal(),
       });
       setAccessManagedXBlockData(undefined);
     }

@@ -120,9 +120,9 @@ export interface ConfigureSubsectionData {
 export interface ConfigureUnitData {
   unitId: string;
   isVisibleToStaffOnly: boolean;
-  type: keyof typeof PUBLISH_TYPES;
+  type: typeof PUBLISH_TYPES[keyof typeof PUBLISH_TYPES];
   groupAccess: Record<string, any> | null,
-  discussionEnabled: boolean;
+  discussionEnabled?: boolean;
 }
 
 export type StaticFileNotices = {

@@ -6,13 +6,13 @@ import {
   ConfigureUnitData,
   StaticFileNotices,
 } from '@src/course-outline/data/types';
-import { useToastContext } from '@src/generic/toast-context';
-import { NOTIFICATION_MESSAGES } from '@src/constants';
+import { getNotificationMessage } from '@src/course-unit/data/utils';
 import { createGlobalState } from '@src/data/apiHooks';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
 import { getBlockType, getCourseKey } from '@src/generic/key-utils';
 import { useMutationWithProcessingNotification } from '@src/generic/processing-notification/data/apiHooks';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
+import { useToastContext } from '@src/generic/toast-context';
 import { ParentIds } from '@src/generic/types';
 import {
   QueryClient,
@@ -253,8 +253,14 @@ export const useConfigureSubsection = () => {
 
 export const useConfigureUnit = () => {
   const queryClient = useQueryClient();
+  const { showToast } = useToastContext();
   return useMutationWithProcessingNotification({
     mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
+    onMutate: (variables) => {
+      const msg = getNotificationMessage(variables.type, variables.isVisibleToStaffOnly, true);
+      // Show processing notification
+      showToast(msg, undefined, 15000);
+    },
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.unitId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));

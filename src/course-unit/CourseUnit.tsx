@@ -198,7 +198,6 @@ const CourseUnit = () => {
     handleTitleEditSubmit,
     headerNavigationsActions,
     handleTitleEdit,
-    handleConfigureSubmit,
     courseVerticalChildren,
     canPasteComponent,
     isMoveModalOpen,
@@ -297,7 +296,6 @@ const CourseUnit = () => {
                   isTitleEditFormOpen={isTitleEditFormOpen}
                   handleTitleEdit={handleTitleEdit}
                   handleTitleEditSubmit={handleTitleEditSubmit}
-                  handleConfigureSubmit={handleConfigureSubmit}
                 />
               )}
               breadcrumbs={(
@@ -352,7 +350,6 @@ const CourseUnit = () => {
                     isUnitVerticalType={isUnitVerticalType}
                     unitXBlockActions={unitXBlockActions}
                     courseVerticalChildren={courseVerticalChildren.children}
-                    handleConfigureSubmit={handleConfigureSubmit}
                   />
                 )}
                 {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData

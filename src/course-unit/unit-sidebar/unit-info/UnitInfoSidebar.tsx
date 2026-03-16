@@ -1,25 +1,22 @@
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
 import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 import { useEffect, useMemo } from 'react';
 import { Tag } from '@openedx/paragon/icons';
 import { ContentTagsSnippet } from '@src/content-tags-drawer';
-import configureMessages from '@src/generic/configure-modal/messages';
 import {
-  Button, ButtonGroup, Tab, Tabs,
+  Tab, Tabs,
 } from '@openedx/paragon';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useIframe } from '@src/generic/hooks/context/hooks';
-import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
-import { Form, Formik } from 'formik';
 import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
-import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
-import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
+import { messageTypes } from '@src/course-unit/constants';
 import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
 import PublishControls from './PublishControls';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 
 /**
  * Component to show unit details: Publish status, Component counts and Content Tags.
@@ -91,6 +88,7 @@ export const UnitInfoSettings = () => {
       discussionEnabled={discussionEnabled}
       userPartitionInfo={userPartitionInfo}
       updateCallback={updateCallback}
+      configureHook={useConfigureUnitWithPageUpdates}
     />
   );
 };
