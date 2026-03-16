@@ -22,6 +22,7 @@ import { useModel } from 'CourseAuthoring/generic/model-store';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
 import { useIsMobile } from 'CourseAuthoring/utils';
 import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
 
 import messages from './messages';
 
@@ -32,7 +33,6 @@ const ProctoringSettings = ({ onClose }) => {
     proctoringProvider: false,
     escalationEmail: '',
     allowOptingOut: false,
-    createZendeskTickets: false,
   };
   const [formValues, setFormValues] = useState(initialFormValues);
   const [loading, setLoading] = useState(true);
@@ -41,6 +41,7 @@ const ProctoringSettings = ({ onClose }) => {
   const [loadingPermissionError, setLoadingPermissionError] = useState(false);
   const [allowLtiProviders, setAllowLtiProviders] = useState(false);
   const [availableProctoringProviders, setAvailableProctoringProviders] = useState([]);
+  const [requiresEscalationEmailProviders, setRequiresEscalationEmailProviders] = useState([]);
   const [ltiProctoringProviders, setLtiProctoringProviders] = useState([]);
   const [courseStartDate, setCourseStartDate] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -65,7 +66,7 @@ const ProctoringSettings = ({ onClose }) => {
   }
 
   const { courseId } = useContext(PagesAndResourcesContext);
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseDetails } = useCourseAuthoringContext();
   const org = courseDetails?.org;
   const appInfo = useModel('courseApps', 'proctoring');
   const alertRef = React.createRef();
@@ -78,18 +79,14 @@ const ProctoringSettings = ({ onClose }) => {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
 
-    if (['allowOptingOut', 'createZendeskTickets'].includes(name)) {
+    if (['allowOptingOut'].includes(name)) {
       // Form.Radio expects string values, so convert back to a boolean here
       setFormValues({ ...formValues, [name]: value === 'true' });
     } else if (name === 'proctoringProvider') {
       const newFormValues = { ...formValues, proctoringProvider: value };
-
-      if (value === 'proctortrack') {
-        setFormValues({ ...newFormValues, createZendeskTickets: false });
+      if (requiresEscalationEmailProviders.includes(value)) {
+        setFormValues({ ...newFormValues });
         setShowEscalationEmail(true);
-      } else if (value === 'software_secure') {
-        setFormValues({ ...newFormValues, createZendeskTickets: true });
-        setShowEscalationEmail(false);
       } else if (isLtiProvider(value)) {
         setFormValues(newFormValues);
         setShowEscalationEmail(true);
@@ -116,14 +113,13 @@ const ProctoringSettings = ({ onClose }) => {
         enable_proctored_exams: formValues.enableProctoredExams,
         // lti providers are managed outside edx-platform, lti_external indicates this
         proctoring_provider: isLtiProviderSelected ? 'lti_external' : selectedProvider,
-        create_zendesk_tickets: formValues.createZendeskTickets,
       },
     };
     if (isEdxStaff) {
       studioDataToPostBack.proctored_exam_settings.allow_proctoring_opt_out = formValues.allowOptingOut;
     }
 
-    if (formValues.proctoringProvider === 'proctortrack') {
+    if (requiresEscalationEmailProviders.includes(formValues.proctoringProvider)) {
       studioDataToPostBack.proctored_exam_settings.proctoring_escalation_email = formValues.escalationEmail === '' ? null : formValues.escalationEmail;
     }
 
@@ -160,7 +156,7 @@ const ProctoringSettings = ({ onClose }) => {
     event.preventDefault();
     const isLtiProviderSelected = isLtiProvider(formValues.proctoringProvider);
     if (
-      (formValues.proctoringProvider === 'proctortrack' || isLtiProviderSelected)
+      (requiresEscalationEmailProviders.includes(formValues.proctoringProvider) || isLtiProviderSelected)
       && !EmailValidator.validate(formValues.escalationEmail)
       && !(formValues.escalationEmail === '' && !formValues.enableProctoredExams)
     ) {
@@ -387,29 +383,6 @@ const ProctoringSettings = ({ onClose }) => {
             </Form.Group>
           </fieldset>
         )}
-
-        {/* CREATE ZENDESK TICKETS */}
-        { isEdxStaff && formValues.enableProctoredExams && !isLtiProviderSelected && (
-          <fieldset aria-describedby="createZendeskTicketsText">
-            <Form.Group controlId="formCreateZendeskTickets">
-              <Form.Label as="legend" className="font-weight-bold">
-                {intl.formatMessage(messages['authoring.proctoring.createzendesk.label'])}
-              </Form.Label>
-              <Form.RadioSet
-                name="createZendeskTickets"
-                value={formValues.createZendeskTickets.toString()}
-                onChange={handleChange}
-              >
-                <Form.Radio value="true" data-testid="createZendeskTicketsYes">
-                  {intl.formatMessage(messages['authoring.proctoring.yes'])}
-                </Form.Radio>
-                <Form.Radio value="false" data-testid="createZendeskTicketsNo">
-                  {intl.formatMessage(messages['authoring.proctoring.no'])}
-                </Form.Radio>
-              </Form.RadioSet>
-            </Form.Group>
-          </fieldset>
-        )}
       </>
     );
   }
@@ -527,6 +500,7 @@ const ProctoringSettings = ({ onClose }) => {
           setSubmissionInProgress(false);
           setCourseStartDate(settingsResponse.data.course_start_date);
           setAvailableProctoringProviders(settingsResponse.data.available_proctoring_providers);
+          setRequiresEscalationEmailProviders(settingsResponse.data.requires_escalation_email_providers);
 
           // The list of providers returned by studio settings are the default behavior. If lti_external
           // is available as an option display the list of LTI providers returned by the exam service.
@@ -554,10 +528,11 @@ const ProctoringSettings = ({ onClose }) => {
             selectedProvider = proctoredExamSettings.proctoring_provider;
           }
 
-          const isProctortrack = selectedProvider === 'proctortrack';
+          const requiresEscalationEmailProvidersList = settingsResponse.data.requires_escalation_email_providers;
+          const isEscalationEmailRequired = requiresEscalationEmailProvidersList.includes(selectedProvider);
           const ltiProviderSelected = proctoringProvidersLti.some(p => p.name === selectedProvider);
 
-          if (isProctortrack || ltiProviderSelected) {
+          if (isEscalationEmailRequired || ltiProviderSelected) {
             setShowEscalationEmail(true);
           }
 
@@ -570,7 +545,6 @@ const ProctoringSettings = ({ onClose }) => {
             proctoringProvider: selectedProvider,
             enableProctoredExams: proctoredExamSettings.enable_proctored_exams,
             allowOptingOut: proctoredExamSettings.allow_proctoring_opt_out,
-            createZendeskTickets: proctoredExamSettings.create_zendesk_tickets,
             // The backend API may return null for the proctoringEscalationEmail value, which is the default.
             // In order to keep our email input component controlled, we use the empty string as the default
             // and perform this conversion during GETs and POSTs.

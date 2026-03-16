@@ -8,7 +8,7 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { ActionRow, Button, StandardModal } from '@openedx/paragon';
 
 import { ToastContext } from '../../generic/toast-context';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { LibraryProvider, useLibraryContext } from '../common/context/LibraryContext';
 import type { SelectedComponent } from '../common/context/ComponentPickerContext';
 import { useAddItemsToCollection, useAddItemsToContainer } from '../data/apiHooks';
 import genericMessages from '../generic/messages';
@@ -123,13 +123,18 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
         </ActionRow>
       )}
     >
-      <ComponentPicker
+      <LibraryProvider
         libraryId={libraryId}
-        componentPickerMode="multiple"
-        onChangeComponentSelection={setSelectedComponents}
-        extraFilter={extraFilter}
-        visibleTabs={visibleTabs}
-      />
+        skipUrlUpdate
+      >
+        <ComponentPicker
+          libraryId={libraryId}
+          componentPickerMode="multiple"
+          onChangeComponentSelection={setSelectedComponents}
+          extraFilter={extraFilter}
+          visibleTabs={visibleTabs}
+        />
+      </LibraryProvider>
     </StandardModal>
   );
 };

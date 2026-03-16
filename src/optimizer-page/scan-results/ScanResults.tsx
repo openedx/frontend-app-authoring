@@ -460,6 +460,7 @@ const ScanResults: FC<Props> = ({
     const handleUpdateCompletion = async () => {
       if (rerunLinkUpdateInProgress === false && isUpdateAllInProgress) {
         try {
+          // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
           const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
 
           if (!updateStatusResponse) {
@@ -494,7 +495,7 @@ const ScanResults: FC<Props> = ({
           } else if (onErrorStateChange) {
             onErrorStateChange(null);
           }
-        } catch (error) {
+        } catch {
           setIsUpdateAllInProgress(false);
           setUpdateAllCompleted(false);
           setUpdateAllTrigger(t => t + 1);
@@ -506,6 +507,7 @@ const ScanResults: FC<Props> = ({
       }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     handleUpdateCompletion();
   }, [rerunLinkUpdateInProgress,
     isUpdateAllInProgress,
@@ -590,6 +592,7 @@ const ScanResults: FC<Props> = ({
     try {
       setUpdatingLinkIds(prev => ({ ...prev, [uniqueId]: true }));
       const contentType = getContentType(sectionId || '');
+      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
       await dispatch(updateSinglePreviousRunLink(courseId, link, blockId, contentType));
 
       const pollForSingleLinkResult = async (attempts = 0): Promise<boolean> => {
@@ -597,6 +600,7 @@ const ScanResults: FC<Props> = ({
           throw new Error('Timeout waiting for link update result');
         }
 
+        // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
         const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
         const pollStatus = updateStatusResponse?.status || updateStatusResponse?.updateStatus;
 
@@ -717,7 +721,7 @@ const ScanResults: FC<Props> = ({
       };
 
       return await pollForSingleLinkResult();
-    } catch (error) {
+    } catch {
       if (onErrorStateChange) {
         onErrorStateChange(intl.formatMessage(messages.updateLinkError));
       }
@@ -755,10 +759,11 @@ const ScanResults: FC<Props> = ({
     try {
       setProcessedResponseIds(new Set());
       setIsUpdateAllInProgress(true);
+      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
       await dispatch(updateAllPreviousRunLinks(courseId));
 
       return true;
-    } catch (error) {
+    } catch {
       setIsUpdateAllInProgress(false); // Reset on error
       if (onErrorStateChange) {
         onErrorStateChange(intl.formatMessage(messages.updateLinksError));

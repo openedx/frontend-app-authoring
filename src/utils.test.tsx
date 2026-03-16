@@ -124,10 +124,10 @@ describe('FilesAndUploads utils', () => {
       expect(date.toISOString()).toBe('2023-10-01T12:00:00.000Z');
     });
 
-    it('returns an empty string for invalid date strings', () => {
+    it('returns undefined for invalid date strings', () => {
       const dateStr = '';
       const date = convertToDateFromString(dateStr);
-      expect(date).toBe('');
+      expect(date).toBeUndefined();
     });
   });
 

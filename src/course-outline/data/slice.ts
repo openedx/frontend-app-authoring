@@ -22,6 +22,7 @@ const initialState = {
   savingStatus: '',
   statusBarData: {
     courseReleaseDate: '',
+    endDate: '',
     highlightsEnabledForMessaging: false,
     isSelfPaced: false,
     checklist: {
@@ -35,9 +36,6 @@ const initialState = {
   },
   sectionsList: [],
   isCustomRelativeDatesActive: false,
-  currentSection: {},
-  currentSubsection: {},
-  currentItem: {},
   actions: {
     deletable: true,
     unlinkable: false,
@@ -49,9 +47,8 @@ const initialState = {
   },
   enableProctoredExams: false,
   enableTimedExams: false,
-  pasteFileNotices: {},
   createdOn: null,
-} satisfies CourseOutlineState as unknown as CourseOutlineState;
+} satisfies CourseOutlineState;
 
 const slice = createSlice({
   name: 'courseOutline',
@@ -123,47 +120,17 @@ const slice = createSlice({
     updateSectionList: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => (section.id in payload ? payload[section.id] : section));
     },
-    setCurrentItem: (state: CourseOutlineState, { payload }) => {
-      state.currentItem = payload;
-    },
     reorderSectionList: (state: CourseOutlineState, { payload }) => {
       const sectionsList = [...state.sectionsList];
       sectionsList.sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id));
 
       state.sectionsList = [...sectionsList];
     },
-    setCurrentSection: (state: CourseOutlineState, { payload }) => {
-      state.currentSection = payload;
-    },
-    setCurrentSubsection: (state: CourseOutlineState, { payload }) => {
-      state.currentSubsection = payload;
-    },
     addSection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = [
         ...state.sectionsList,
         payload,
       ];
-    },
-    resetScrollField: (state) => {
-      state.sectionsList = state.sectionsList.map((section) => {
-        section.shouldScroll = false;
-        section.childInfo.children.map((subsection) => {
-          subsection.shouldScroll = false;
-          return subsection;
-        });
-        return section;
-      });
-    },
-    addSubsection: (state: CourseOutlineState, { payload }) => {
-      state.sectionsList = state.sectionsList.map((section) => {
-        if (section.id === payload.parentLocator) {
-          section.childInfo.children = [
-            ...section.childInfo.children.filter(child => child.id !== payload.data.id), // Filter to avoid duplicates
-            payload.data,
-          ];
-        }
-        return section;
-      });
     },
     deleteSection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.filter(
@@ -206,20 +173,11 @@ const slice = createSlice({
         return [...result, currentValue];
       }, []);
     },
-    setPasteFileNotices: (state: CourseOutlineState, { payload }) => {
-      state.pasteFileNotices = payload;
-    },
-    removePasteFileNotices: (state: CourseOutlineState, { payload }) => {
-      const pasteFileNotices = { ...state.pasteFileNotices };
-      payload.forEach((key: string | number) => delete pasteFileNotices[key]);
-      state.pasteFileNotices = pasteFileNotices;
-    },
   },
 });
 
 export const {
   addSection,
-  addSubsection,
   fetchOutlineIndexSuccess,
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
@@ -231,18 +189,12 @@ export const {
   updateCourseLaunchQueryStatus,
   updateSavingStatus,
   updateSectionList,
-  setCurrentItem,
-  setCurrentSection,
-  setCurrentSubsection,
   deleteSection,
   deleteSubsection,
   deleteUnit,
   duplicateSection,
   reorderSectionList,
-  setPasteFileNotices,
-  removePasteFileNotices,
   dismissError,
-  resetScrollField,
 } = slice.actions;
 
 export const {

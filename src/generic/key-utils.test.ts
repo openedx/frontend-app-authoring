@@ -18,13 +18,19 @@ describe('component utils', () => {
       ['lct:org:lib:unit:my-unit-9284e2', 'unit'],
       ['lct:org:lib:section:my-section-9284e2', 'section'],
       ['lct:org:lib:subsection:my-section-9284e2', 'subsection'],
+      ['block-v1:org+type@html+block@1', 'html'],
+      ['block-v1:OpenCraftX+type@html+block@1571fe018-f3ce-45c9-8f53-5dafcb422fdd', 'html'],
+      ['block-v1:Axim+type@problem+block@571fe018-f3ce-45c9-8f53-5dafcb422fdd', 'problem'],
+      ['block-v1:org+type@unit+block@1', 'unit'],
+      ['block-v1:org+type@section+block@1', 'section'],
+      ['block-v1:org+type@subsection+block@1', 'subsection'],
     ]) {
       it(`returns '${expected}' for usage key '${input}'`, () => {
         expect(getBlockType(input)).toStrictEqual(expected);
       });
     }
 
-    for (const input of ['', undefined, null, 'not a key', 'lb:foo']) {
+    for (const input of ['', undefined, null, 'not a key', 'lb:foo', 'block-v1:foo']) {
       it(`throws an exception for usage key '${input}'`, () => {
         expect(() => getBlockType(input as any)).toThrow(`Invalid usageKey: ${input}`);
       });

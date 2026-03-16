@@ -1,10 +1,17 @@
 import { useCallback, useMemo, useState } from 'react';
-
 import {
   Alert,
-  Breadcrumb, Button, Card, Icon, Stack,
+  Button,
+  Card,
+  Icon,
+  Stack,
 } from '@openedx/paragon';
-import { ArrowBack, Add, Delete } from '@openedx/paragon/icons';
+import {
+  Add,
+  ArrowBack,
+  ChevronRight,
+  Delete,
+} from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
@@ -13,6 +20,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { useContainer, useContainerChildren } from '@src/library-authoring/data/apiHooks';
 import { BoldText } from '@src/utils';
 
+import { Container, LibraryBlockMetadata } from '@src/library-authoring/data/api';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
@@ -60,7 +68,7 @@ const CompareContainersWidgetInner = ({
     data: libData,
     isError: isLibError,
     error: libError,
-  } = useContainerChildren(state === 'removed' ? undefined : upstreamBlockId, true);
+  } = useContainerChildren<Container | LibraryBlockMetadata>(state === 'removed' ? undefined : upstreamBlockId, true);
   const {
     data: containerData,
     isError: isContainerTitleError,
@@ -147,25 +155,15 @@ const CompareContainersWidgetInner = ({
       return title;
     }
     return (
-      <Breadcrumb
-        ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
-        links={[
-          {
-            // This raises failed prop-type error as label expects a string but it works without any issues
-            label: <Stack direction="horizontal" gap={1}><Icon size="xs" src={ArrowBack} />Back</Stack>,
-            onClick: onBackBtnClick,
-            variant: 'link',
-            className: 'px-0 text-gray-900',
-          },
-          {
-            label: title,
-            variant: 'link',
-            className: 'px-0 text-gray-900',
-            disabled: true,
-          },
-        ]}
-        linkAs={Button}
-      />
+      <Stack direction="horizontal" gap={1}>
+        <Button variant="link" className="px-0 text-gray-900" onClick={onBackBtnClick}>
+          {/* We could also use iconBefore={ArrowBack} on the <Button> above but it's a bit too big that way. */}
+          <Icon size="xs" src={ArrowBack} className="mr-1" />
+          {intl.formatMessage(messages.breadcrumbBackLabel)}
+        </Button>
+        <Icon size="md" src={ChevronRight} />
+        <span role="heading" aria-level={3}>{title}</span>
+      </Stack>
     );
   }, [parent]);
 
@@ -243,7 +241,7 @@ export const CompareContainersWidget = ({
   // the alert would disappear. By keeping this call in CompareContainersWidget,
   // the alert remains in the modal regardless of whether you navigate within the children.
   if (!isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo
-      && data.upstreamReadyToSyncChildrenInfo.every(value => value.isModified && value.blockType === 'html')
+      && data.upstreamReadyToSyncChildrenInfo.every(value => value.downstreamCustomized.length > 0 && value.blockType === 'html')
   ) {
     localUpdateAlertCount = data.upstreamReadyToSyncChildrenInfo.length;
     if (localUpdateAlertCount === 1) {

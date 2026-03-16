@@ -4,7 +4,9 @@ const strictGet = (target, name) => {
     return target;
   }
 
-  if (name in target || name === '_reactFragment') {
+  // '@@toStringTag' is used by propTypes in its internal `isSymbol()` function.
+  // We can probably remove this exception once we get rid of propTypes.
+  if (name in target || name === '_reactFragment' || name === '@@toStringTag') {
     return target[name];
   }
 

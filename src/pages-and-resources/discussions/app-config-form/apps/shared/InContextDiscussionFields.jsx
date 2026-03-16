@@ -19,6 +19,7 @@ const InContextDiscussionFields = ({
 
   const [showPopup, setShowPopup] = useState(false);
   const handleConfirmation = () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     setFieldValue('enableGradedUnits', !values.enableGradedUnits);
     setShowPopup(false);
   };

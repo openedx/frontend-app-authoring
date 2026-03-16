@@ -13,7 +13,7 @@ import HintsCard from './settingsComponents/HintsCard';
 import ResetCard from './settingsComponents/ResetCard';
 import TimerCard from './settingsComponents/TimerCard';
 import TypeCard from './settingsComponents/TypeCard';
-import ToleranceCard from './settingsComponents/Tolerance';
+import { ToleranceCard } from './settingsComponents/Tolerance';
 import GroupFeedbackCard from './settingsComponents/GroupFeedback/index';
 import SwitchEditorCard from './settingsComponents/SwitchEditorCard';
 import messages from './messages';
@@ -203,6 +203,7 @@ SettingsWidget.propTypes = {
     showanswer: PropTypes.string,
     showResetButton: PropTypes.bool,
     rerandomize: PropTypes.string,
+    gradingMethod: PropTypes.string,
   }).isRequired,
   images: PropTypes.shape({}).isRequired,
   isLibrary: PropTypes.bool.isRequired,

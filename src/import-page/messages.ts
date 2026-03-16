@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'course-authoring.import.description3',
     defaultMessage: 'The import process has five stages. During the first two stages, you must stay on this page. You can leave this page after the unpacking stage has completed. We recommend, however, that you don\'t make important changes to your course until the import operation has completed.',
   },
+  defaultErrorMessage: {
+    id: 'course-authoring.import.stepper.error.default',
+    defaultMessage: 'Error importing course',
+  },
 });
 
 export default messages;

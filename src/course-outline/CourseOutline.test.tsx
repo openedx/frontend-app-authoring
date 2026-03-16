@@ -1,4 +1,4 @@
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
 import { logError } from '@edx/frontend-platform/logging';
@@ -12,10 +12,14 @@ import { getApiBaseUrl, getClipboardUrl } from '@src/generic/data/api';
 import { postXBlockBaseApiUrl } from '@src/course-unit/data/api';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import { userEvent } from '@testing-library/user-event';
+import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
+import { OutlineSidebarPagesProvider } from './outline-sidebar/OutlineSidebarPagesContext';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -32,10 +36,9 @@ import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery, syncDiscussionsTopics,
-  updateCourseSectionHighlightsQuery,
 } from './data/thunk';
 import {
-  courseOutlineIndexMock,
+  courseOutlineIndexMock as originalCourseOutlineIndexMock,
   courseOutlineIndexWithoutSections,
   courseBestPracticesMock,
   courseLaunchMock,
@@ -65,8 +68,19 @@ const mockPathname = '/foo-bar';
 const courseId = '123';
 const getContainerKey = jest.fn().mockReturnValue('lct:org:lib:unit:1');
 const getContainerType = jest.fn().mockReturnValue('unit');
+const clearSelection = jest.fn();
+let selectedContainerId: string | undefined;
+let courseOutlineIndexMock = cloneDeep(originalCourseOutlineIndexMock);
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
+jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
+  ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
+  useOutlineSidebarContext: () => ({
+    ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
+    clearSelection,
+    selectedContainerState: (() => (selectedContainerId ? { currentId: selectedContainerId } : undefined))(),
+  }),
+}));
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -82,21 +96,14 @@ jest.mock('@src/help-urls/hooks', () => ({
   }),
 }));
 
-jest.mock('@edx/frontend-platform/i18n', () => ({
-  ...jest.requireActual('@edx/frontend-platform/i18n'),
-  useIntl: () => ({
-    formatMessage: (message) => message.defaultMessage,
-  }),
-}));
-
 jest.mock('./data/api', () => ({
   ...jest.requireActual('./data/api'),
   getTagsCount: () => jest.fn().mockResolvedValue({}),
 }));
 
-// Mock ComponentPicker to call onComponentSelected on click
+// Mock LibraryAndComponentPicker to call onComponentSelected on click
 jest.mock('@src/library-authoring/component-picker', () => ({
-  ComponentPicker: (props) => {
+  LibraryAndComponentPicker: (props) => {
     const onClick = () => {
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
@@ -136,12 +143,21 @@ jest.mock('@src/studio-home/data/selectors', () => ({
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const renderComponent = () => render(
-  <CourseOutline courseId={courseId} />,
+  <CourseAuthoringProvider courseId={courseId}>
+    <OutlineSidebarPagesProvider>
+      <OutlineSidebarProvider>
+        <CourseOutline />
+      </OutlineSidebarProvider>
+    </OutlineSidebarPagesProvider>
+  </CourseAuthoringProvider>,
 );
 
 describe('<CourseOutline />', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
+    selectedContainerId = undefined;
+    // restore index mock
+    courseOutlineIndexMock = cloneDeep(originalCourseOutlineIndexMock);
 
     jest.mocked(useLocation).mockReturnValue({
       pathname: mockPathname,
@@ -179,12 +195,10 @@ describe('<CourseOutline />', () => {
   });
 
   it('render CourseOutline component correctly', async () => {
-    const { getByText } = renderComponent();
+    renderComponent();
 
-    await waitFor(() => {
-      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
-      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
-    });
+    expect(await screen.findByText('Demonstration Course')).toBeInTheDocument();
+    expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('logs an error when syncDiscussionsTopics encounters an API failure', async () => {
@@ -281,7 +295,7 @@ describe('<CourseOutline />', () => {
     expect(alertElements.find(
       (el) => el.classList.contains('alert-content'),
     )).toHaveTextContent(
-      pageAlertMessages.alertFailedGeneric.defaultMessage,
+      'Unable to save changes. Please try again.',
     );
   });
 
@@ -352,8 +366,9 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new section correctly', async () => {
-    const { findAllByTestId } = renderComponent();
-    let elements = await findAllByTestId('section-card');
+    const user = userEvent.setup();
+    renderComponent();
+    let elements = await screen.findAllByTestId('section-card');
     window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
       top: 0,
       bottom: 4000,
@@ -376,14 +391,15 @@ describe('<CourseOutline />', () => {
       .onGet(getXBlockApiUrl(courseSectionMock.id))
       .reply(200, courseSectionMock);
     const newSectionButton = (await screen.findAllByRole('button', { name: 'New section' }))[0];
-    await act(async () => fireEvent.click(newSectionButton));
+    await user.click(newSectionButton);
 
-    elements = await findAllByTestId('section-card');
+    elements = await screen.findAllByTestId('section-card');
     expect(elements.length).toBe(5);
     expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalled();
   });
 
   it('adds new subsection correctly', async () => {
+    const user = userEvent.setup();
     const { findAllByTestId } = renderComponent();
     const [section] = await findAllByTestId('section-card');
     let subsections = await within(section).findAllByTestId('subsection-card');
@@ -408,10 +424,14 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getXBlockApiUrl(courseSubsectionMock.id))
       .reply(200, courseSubsectionMock);
+    const firstSectionData = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    // @ts-ignore
+    firstSectionData.childInfo.children.push(courseSubsectionMock);
+    axiosMock
+      .onGet(getXBlockApiUrl(firstSectionData.id))
+      .reply(200, firstSectionData);
     const newSubsectionButton = await within(section).findByRole('button', { name: 'New subsection' });
-    await act(async () => {
-      fireEvent.click(newSubsectionButton);
-    });
+    await user.click(newSubsectionButton);
 
     subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(3);
@@ -428,7 +448,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPost(getXBlockBaseApiUrl())
       .reply(200, {
-        locator: 'some',
+        locator: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@vertical1e842129',
       });
     const newUnitButton = await within(subsectionElement).findByRole('button', { name: 'New unit' });
     await act(async () => fireEvent.click(newUnitButton));
@@ -436,8 +456,9 @@ describe('<CourseOutline />', () => {
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
     expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
-      parent_locator: subsection.id,
+      type: COURSE_BLOCK_NAMES.vertical.id,
       category: COURSE_BLOCK_NAMES.vertical.id,
+      parent_locator: subsection.id,
       display_name: COURSE_BLOCK_NAMES.vertical.name,
     }));
   });
@@ -454,7 +475,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPost(postXBlockBaseApiUrl())
       .reply(200, {
-        locator: 'some',
+        locator: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@vertical1e842129',
         parent_locator: 'parent',
       });
 
@@ -467,11 +488,11 @@ describe('<CourseOutline />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(3));
 
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    waitFor(() => {
+    await waitFor(() => {
       expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
         type: COMPONENT_TYPES.libraryV2,
         category: 'vertical',
@@ -492,8 +513,8 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPost(postXBlockBaseApiUrl())
       .reply(200, {
-        locator: 'some',
-        parent_locator: 'parent',
+        locator: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential45d4d95a',
+        parent_locator: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersda1',
       });
 
     const addSubsectionFromLibraryButton = within(sectionElement).getByRole('button', {
@@ -505,10 +526,10 @@ describe('<CourseOutline />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(3));
 
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    waitFor(() => {
+    await waitFor(() => {
       expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
         type: COMPONENT_TYPES.libraryV2,
         category: 'sequential',
@@ -519,6 +540,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds a section from library correctly', async () => {
+    const user = userEvent.setup();
     getContainerKey.mockReturnValue('lct:org:lib:section:1');
     getContainerKey.mockReturnValue('section');
     renderComponent();
@@ -528,23 +550,26 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPost(postXBlockBaseApiUrl())
       .reply(200, {
-        locator: 'some',
-        parent_locator: 'parent',
+        locator: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersdafdd',
+        courseKey: 'course-v1:UNIX+UX1+2025_T3',
       });
+    axiosMock
+      .onGet(getXBlockApiUrl('block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersdafdd'))
+      .reply(200, courseSectionMock);
 
     const addSectionFromLibraryButton = await screen.findByRole('button', {
       name: /use section from library/i,
     });
-    fireEvent.click(addSectionFromLibraryButton);
+    await user.click(addSectionFromLibraryButton);
 
     // click dummy button to execute onComponentSelected prop.
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(3));
 
     const courseUsageKey = courseOutlineIndexMock.courseStructure.id;
-    waitFor(() => {
+    await waitFor(() => {
       expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
         type: COMPONENT_TYPES.libraryV2,
         category: 'chapter',
@@ -684,14 +709,26 @@ describe('<CourseOutline />', () => {
   });
 
   it('check edit title works for section, subsection and unit', async () => {
-    const { findAllByTestId } = renderComponent();
-    const checkEditTitle = async (section, element, item, newName, elementName) => {
+    const user = userEvent.setup();
+    renderComponent();
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const checkEditTitle = async (element, item, newName, elementName) => {
       axiosMock.reset();
       axiosMock
         .onPost(getCourseItemApiUrl(item.id))
         .reply(200, { dummy: 'value' });
+
+      if (item.id === section.id) {
+        // return normal section data the first time to keep original name first
+        axiosMock
+          .onGet(getXBlockApiUrl(section.id))
+          // @ts-ignore
+          .replyOnce(section);
+      }
+
       // mock section, subsection and unit name and check within the elements.
       // this is done to avoid adding conditions to this mock.
+
       axiosMock
         .onGet(getXBlockApiUrl(section.id))
         .reply(200, {
@@ -719,7 +756,7 @@ describe('<CourseOutline />', () => {
       fireEvent.click(editButton);
       const editField = await within(element).findByTestId(`${elementName}-edit-field`);
       fireEvent.change(editField, { target: { value: newName } });
-      await act(async () => fireEvent.blur(editField));
+      await user.keyboard('{enter}');
       expect(
         axiosMock.history.post[axiosMock.history.post.length - 1].data,
       ).toBe(JSON.stringify({
@@ -732,19 +769,18 @@ describe('<CourseOutline />', () => {
     };
 
     // check section
-    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    const [sectionElement] = await findAllByTestId('section-card');
-    await checkEditTitle(section, sectionElement, section, 'New section name', 'section');
+    const [sectionElement] = await screen.findAllByTestId('section-card');
+    await checkEditTitle(sectionElement, section, 'New section name', 'section');
 
     // check subsection
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    await checkEditTitle(section, subsectionElement, subsection, 'New subsection name', 'subsection');
+    await checkEditTitle(subsectionElement, subsection, 'New subsection name', 'subsection');
 
     // check unit
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
-    await checkEditTitle(section, unitElement, unit, 'New unit name', 'unit');
+    await checkEditTitle(unitElement, unit, 'New unit name', 'unit');
   });
 
   it('check whether section, subsection and unit is deleted when corresponding delete button is clicked', async () => {
@@ -756,6 +792,7 @@ describe('<CourseOutline />', () => {
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+    selectedContainerId = section.id;
 
     const checkDeleteBtn = async (item, element, elementName) => {
       await waitFor(() => {
@@ -783,6 +820,7 @@ describe('<CourseOutline />', () => {
     await checkDeleteBtn(subsection, subsectionElement, 'subsection');
     // check section
     await checkDeleteBtn(section, sectionElement, 'section');
+    expect(clearSelection).toHaveBeenCalledTimes(1);
   });
 
   it('check whether section, subsection and unit is duplicated successfully', async () => {
@@ -870,47 +908,12 @@ describe('<CourseOutline />', () => {
           publish: 'make_public',
         })
         .reply(200, { dummy: 'value' });
-
-      let mockReturnValue = {
-        ...section,
-        childInfo: {
-          children: [
-            {
-              ...section.childInfo.children[0],
-              published: true,
-              visibilityState: 'live',
-            },
-            ...section.childInfo.children.slice(1),
-          ],
-        },
-      };
-      if (elementName === 'unit') {
-        mockReturnValue = {
-          ...section,
-          childInfo: {
-            children: [
-              {
-                ...section.childInfo.children[0],
-                childInfo: {
-                  displayName: 'Unit Tests',
-                  children: [
-                    {
-                      ...section.childInfo.children[0].childInfo.children[0],
-                      published: true,
-                      visibilityState: 'live',
-                    },
-                    ...section.childInfo.children[0].childInfo.children.slice(1),
-                  ],
-                },
-              },
-              ...section.childInfo.children.slice(1),
-            ],
-          },
-        };
-      }
       axiosMock
-        .onGet(getXBlockApiUrl(section.id))
-        .reply(200, mockReturnValue);
+        .onGet(getXBlockApiUrl(item.id))
+        .reply(200, {
+          ...item,
+          visibilityState: 'live',
+        });
 
       const menu = await within(element).findByTestId(`${elementName}-card-header__menu-button`);
       fireEvent.click(menu);
@@ -937,6 +940,17 @@ describe('<CourseOutline />', () => {
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const newReleaseDateIso = '2025-09-10T22:00:00Z';
     const newReleaseDate = '09/10/2025';
+
+    const [firstSection] = await findAllByTestId('section-card');
+
+    const sectionDropdownButton = await within(firstSection).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(sectionDropdownButton));
+    const configureBtn = await within(firstSection).findByTestId('section-card-header__menu-configure-button');
+    await act(async () => fireEvent.click(configureBtn));
+    let releaseDateStack = await findByTestId('release-date-stack');
+    let releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(releaseDatePicker).toHaveValue('08/10/2023');
+
     axiosMock
       .onPost(getCourseItemApiUrl(section.id), {
         publish: 'republish',
@@ -953,16 +967,6 @@ describe('<CourseOutline />', () => {
         ...section,
         start: newReleaseDateIso,
       });
-
-    const [firstSection] = await findAllByTestId('section-card');
-
-    const sectionDropdownButton = await within(firstSection).findByTestId('section-card-header__menu-button');
-    await act(async () => fireEvent.click(sectionDropdownButton));
-    const configureBtn = await within(firstSection).findByTestId('section-card-header__menu-configure-button');
-    await act(async () => fireEvent.click(configureBtn));
-    let releaseDateStack = await findByTestId('release-date-stack');
-    let releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
-    expect(releaseDatePicker).toHaveValue('08/10/2023');
 
     await act(async () => fireEvent.change(releaseDatePicker, { target: { value: newReleaseDate } }));
     expect(releaseDatePicker).toHaveValue(newReleaseDate);
@@ -986,6 +990,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check configure modal for subsection', async () => {
+    const user = userEvent.setup();
     const {
       findAllByTestId,
       findByTestId,
@@ -1027,14 +1032,14 @@ describe('<CourseOutline />', () => {
     subsection.isTimeLimited = expectedRequestData.metadata.is_time_limited;
     subsection.defaultTimeLimitMinutes = expectedRequestData.metadata.default_time_limit_minutes;
     subsection.hideAfterDue = expectedRequestData.metadata.hide_after_due;
-    section.childInfo.children[0] = subsection;
     axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, section);
+      .onGet(getXBlockApiUrl(subsection.id))
+      .reply(200, subsection);
+    section.childInfo.children[0] = subsection;
 
-    fireEvent.click(subsectionDropdownButton);
+    await user.click(subsectionDropdownButton);
     const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
-    fireEvent.click(configureBtn);
+    await user.click(configureBtn);
 
     // update fields
     let configureModal = await findByTestId('configure-modal');
@@ -1054,27 +1059,27 @@ describe('<CourseOutline />', () => {
 
     // visibility tab
     const visibilityTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.visibilityTabTitle.defaultMessage });
-    fireEvent.click(visibilityTab);
+    await user.click(visibilityTab);
     const visibilityRadioButtons = await within(configureModal).findAllByRole('radio');
-    fireEvent.click(visibilityRadioButtons[1]);
+    await user.click(visibilityRadioButtons[1]);
 
     let advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     let radioButtons = await within(configureModal).findAllByRole('radio');
-    fireEvent.click(radioButtons[1]);
+    await user.click(radioButtons[1]);
     let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
     let hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
     fireEvent.change(hours, { target: { value: '54:30' } });
     const saveButton = await within(configureModal).findByTestId('configure-save-button');
-    await act(async () => fireEvent.click(saveButton));
+    await user.click(saveButton);
 
     // verify request
     expect(axiosMock.history.post.length).toBe(3);
     expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
-    await act(async () => fireEvent.click(subsectionDropdownButton));
-    await act(async () => fireEvent.click(configureBtn));
+    await user.click(subsectionDropdownButton);
+    await user.click(configureBtn);
 
     configureModal = await findByTestId('configure-modal');
     releaseDateStack = await within(configureModal).findByTestId('release-date-stack');
@@ -1091,7 +1096,7 @@ describe('<CourseOutline />', () => {
     expect(graderTypeDropdown).toHaveValue(expectedRequestData.graderType);
 
     advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     radioButtons = await within(configureModal).findAllByRole('radio');
     expect(radioButtons[0]).toHaveProperty('checked', false);
     expect(radioButtons[1]).toHaveProperty('checked', true);
@@ -1101,6 +1106,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check prereq and proctoring settings in configure modal for subsection', async () => {
+    const user = userEvent.setup();
     const {
       findAllByTestId,
       findByTestId,
@@ -1148,13 +1154,10 @@ describe('<CourseOutline />', () => {
     subsection.prereqMinScore = expectedRequestData.prereqMinScore;
     subsection.prereqMinCompletion = expectedRequestData.prereqMinCompletion;
     section.childInfo.children[0] = subsection;
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, section);
 
-    fireEvent.click(subsectionDropdownButton);
+    await user.click(subsectionDropdownButton);
     const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
-    fireEvent.click(configureBtn);
+    await user.click(configureBtn);
 
     // update fields
     let configureModal = await findByTestId('configure-modal');
@@ -1165,13 +1168,13 @@ describe('<CourseOutline />', () => {
 
     // visibility tab
     const visibilityTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.visibilityTabTitle.defaultMessage });
-    fireEvent.click(visibilityTab);
+    await user.click(visibilityTab);
     const visibilityRadioButtons = await within(configureModal).findAllByRole('radio');
-    fireEvent.click(visibilityRadioButtons[2]);
+    await user.click(visibilityRadioButtons[2]);
 
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     let radioButtons = await within(configureModal).findAllByRole('radio');
-    fireEvent.click(radioButtons[2]);
+    await user.click(radioButtons[2]);
     let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
     let hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
     fireEvent.change(hours, { target: { value: '00:30' } });
@@ -1193,7 +1196,7 @@ describe('<CourseOutline />', () => {
     let prereqCheckbox = await within(configureModal).findByLabelText(
       configureModalMessages.prereqCheckboxLabel.defaultMessage,
     );
-    fireEvent.click(prereqCheckbox);
+    await user.click(prereqCheckbox);
 
     // fill some rules for proctored exams
     let examsRulesInput = await within(configureModal).findByLabelText(
@@ -1201,22 +1204,25 @@ describe('<CourseOutline />', () => {
     );
     fireEvent.change(examsRulesInput, { target: { value: expectedRequestData.metadata.exam_review_rules } });
 
+    axiosMock
+      .onGet(getXBlockApiUrl(subsection.id))
+      .reply(200, subsection);
     const saveButton = await within(configureModal).findByTestId('configure-save-button');
-    await act(async () => fireEvent.click(saveButton));
+    await user.click(saveButton);
 
     // verify request
     expect(axiosMock.history.post.length).toBe(3);
     expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
-    await act(async () => fireEvent.click(subsectionDropdownButton));
-    await act(async () => fireEvent.click(configureBtn));
+    await user.click(subsectionDropdownButton);
+    await user.click(configureBtn);
 
     configureModal = await findByTestId('configure-modal');
     advancedTab = await within(configureModal).findByRole('tab', {
       name: configureModalMessages.advancedTabTitle.defaultMessage,
     });
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     radioButtons = await within(configureModal).findAllByRole('radio');
     expect(radioButtons[0]).toHaveProperty('checked', false);
     expect(radioButtons[1]).toHaveProperty('checked', false);
@@ -1246,6 +1252,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check practice proctoring settings in configure modal', async () => {
+    const user = userEvent.setup();
     const {
       findAllByTestId,
       findByTestId,
@@ -1288,13 +1295,10 @@ describe('<CourseOutline />', () => {
     subsection.isOnboardingExam = expectedRequestData.metadata.is_onboarding_exam;
     subsection.examReviewRules = expectedRequestData.metadata.exam_review_rules;
     section.childInfo.children[0] = subsection;
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, section);
 
-    fireEvent.click(subsectionDropdownButton);
+    await user.click(subsectionDropdownButton);
     const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
-    fireEvent.click(configureBtn);
+    await user.click(configureBtn);
 
     // update fields
     let configureModal = await findByTestId('configure-modal');
@@ -1304,14 +1308,14 @@ describe('<CourseOutline />', () => {
     );
     // visibility tab
     const visibilityTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.visibilityTabTitle.defaultMessage });
-    fireEvent.click(visibilityTab);
+    await user.click(visibilityTab);
     const visibilityRadioButtons = await within(configureModal).findAllByRole('radio');
-    fireEvent.click(visibilityRadioButtons[4]);
+    await user.click(visibilityRadioButtons[4]);
 
     // advancedTab
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     let radioButtons = await within(configureModal).findAllByRole('radio');
-    fireEvent.click(radioButtons[3]);
+    await user.click(radioButtons[3]);
     let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
     let hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
     fireEvent.change(hours, { target: { value: '00:30' } });
@@ -1321,20 +1325,23 @@ describe('<CourseOutline />', () => {
       configureModalMessages.reviewRulesLabel.defaultMessage,
     )).not.toBeInTheDocument();
 
+    axiosMock
+      .onGet(getXBlockApiUrl(subsection.id))
+      .reply(200, subsection);
     const saveButton = await within(configureModal).findByTestId('configure-save-button');
-    await act(async () => fireEvent.click(saveButton));
+    await user.click(saveButton);
 
     // verify request
     expect(axiosMock.history.post.length).toBe(3);
     expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
-    await act(async () => fireEvent.click(subsectionDropdownButton));
-    await act(async () => fireEvent.click(configureBtn));
+    await user.click(subsectionDropdownButton);
+    await user.click(configureBtn);
 
     configureModal = await findByTestId('configure-modal');
     advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     radioButtons = await within(configureModal).findAllByRole('radio');
     expect(radioButtons[0]).toHaveProperty('checked', false);
     expect(radioButtons[1]).toHaveProperty('checked', false);
@@ -1346,6 +1353,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check onboarding proctoring settings in configure modal', async () => {
+    const user = userEvent.setup();
     const {
       findAllByTestId,
       findByTestId,
@@ -1388,30 +1396,27 @@ describe('<CourseOutline />', () => {
     subsection.isOnboardingExam = expectedRequestData.metadata.is_onboarding_exam;
     subsection.examReviewRules = expectedRequestData.metadata.exam_review_rules;
     section.childInfo.children[1] = subsection;
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, section);
 
-    fireEvent.click(subsectionDropdownButton);
+    await user.click(subsectionDropdownButton);
     const configureBtn = await within(secondSubsection).findByTestId('subsection-card-header__menu-configure-button');
-    fireEvent.click(configureBtn);
+    await user.click(configureBtn);
 
     // update fields
     let configureModal = await findByTestId('configure-modal');
     // visibility tab
     const visibilityTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.visibilityTabTitle.defaultMessage });
-    fireEvent.click(visibilityTab);
+    await user.click(visibilityTab);
     const visibilityRadioButtons = await within(configureModal).findAllByRole('radio');
-    fireEvent.click(visibilityRadioButtons[5]);
+    await user.click(visibilityRadioButtons[5]);
 
     // advancedTab
     let advancedTab = await within(configureModal).findByRole(
       'tab',
       { name: configureModalMessages.advancedTabTitle.defaultMessage },
     );
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     let radioButtons = await within(configureModal).findAllByRole('radio');
-    fireEvent.click(radioButtons[3]);
+    await user.click(radioButtons[3]);
     let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
     let hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
     fireEvent.change(hours, { target: { value: '00:30' } });
@@ -1421,20 +1426,23 @@ describe('<CourseOutline />', () => {
       configureModalMessages.reviewRulesLabel.defaultMessage,
     )).not.toBeInTheDocument();
 
+    axiosMock
+      .onGet(getXBlockApiUrl(subsection.id))
+      .reply(200, subsection);
     const saveButton = await within(configureModal).findByTestId('configure-save-button');
-    await act(async () => fireEvent.click(saveButton));
+    await user.click(saveButton);
 
     // verify request
     expect(axiosMock.history.post.length).toBe(3);
     expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
-    await act(async () => fireEvent.click(subsectionDropdownButton));
-    await act(async () => fireEvent.click(configureBtn));
+    await user.click(subsectionDropdownButton);
+    await user.click(configureBtn);
 
     configureModal = await findByTestId('configure-modal');
     advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     radioButtons = await within(configureModal).findAllByRole('radio');
     expect(radioButtons[0]).toHaveProperty('checked', false);
     expect(radioButtons[1]).toHaveProperty('checked', false);
@@ -1446,6 +1454,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check no special exam setting in configure modal', async () => {
+    const user = userEvent.setup();
     const {
       findAllByTestId,
       findByTestId,
@@ -1487,13 +1496,10 @@ describe('<CourseOutline />', () => {
     subsection.isOnboardingExam = expectedRequestData.metadata.is_onboarding_exam;
     subsection.examReviewRules = expectedRequestData.metadata.exam_review_rules;
     section.childInfo.children[0] = subsection;
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, section);
 
-    fireEvent.click(subsectionDropdownButton);
+    await user.click(subsectionDropdownButton);
     const configureBtn = await within(subsectionElement).findByTestId('subsection-card-header__menu-configure-button');
-    fireEvent.click(configureBtn);
+    await user.click(configureBtn);
 
     // update fields
     let configureModal = await findByTestId('configure-modal');
@@ -1503,9 +1509,9 @@ describe('<CourseOutline />', () => {
       'tab',
       { name: configureModalMessages.advancedTabTitle.defaultMessage },
     );
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     let radioButtons = await within(configureModal).findAllByRole('radio');
-    fireEvent.click(radioButtons[0]);
+    await user.click(radioButtons[0]);
 
     // time box should not be visible
     expect(within(configureModal).queryByLabelText(
@@ -1517,20 +1523,23 @@ describe('<CourseOutline />', () => {
       configureModalMessages.reviewRulesLabel.defaultMessage,
     )).not.toBeInTheDocument();
 
+    axiosMock
+      .onGet(getXBlockApiUrl(subsection.id))
+      .reply(200, subsection);
     const saveButton = await within(configureModal).findByTestId('configure-save-button');
-    await act(async () => fireEvent.click(saveButton));
+    await user.click(saveButton);
 
     // verify request
     expect(axiosMock.history.post.length).toBe(3);
     expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
-    await act(async () => fireEvent.click(subsectionDropdownButton));
-    await act(async () => fireEvent.click(configureBtn));
+    await user.click(subsectionDropdownButton);
+    await user.click(configureBtn);
 
     configureModal = await findByTestId('configure-modal');
     advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
-    fireEvent.click(advancedTab);
+    await user.click(advancedTab);
     radioButtons = await within(configureModal).findAllByRole('radio');
     expect(radioButtons[0]).toHaveProperty('checked', true);
     expect(radioButtons[1]).toHaveProperty('checked', false);
@@ -1539,6 +1548,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check configure modal for unit', async () => {
+    const user = userEvent.setup();
     const { findAllByTestId, findByTestId } = renderComponent();
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const [subsection] = section.childInfo.children;
@@ -1569,7 +1579,7 @@ describe('<CourseOutline />', () => {
 
     // after configuraiton response
     unit.visibilityState = 'staff_only';
-    unit.discussion_enabled = false;
+    unit.discussionEnabled = false;
     unit.userPartitionInfo = {
       selectablePartitions: [
         {
@@ -1598,37 +1608,37 @@ describe('<CourseOutline />', () => {
     subsection.childInfo.children[0] = unit;
     section.childInfo.children[0] = subsection;
 
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, section);
-
-    fireEvent.click(unitDropdownButton);
+    await user.click(unitDropdownButton);
     const configureBtn = await within(firstUnit).findByTestId('unit-card-header__menu-configure-button');
-    fireEvent.click(configureBtn);
+    await user.click(configureBtn);
 
     let configureModal = await findByTestId('configure-modal');
     expect(await within(configureModal).findByText(
       configureModalMessages.unitVisibility.defaultMessage,
     )).toBeInTheDocument();
     let visibilityCheckbox = await within(configureModal).findByTestId('unit-visibility-checkbox');
-    await act(async () => fireEvent.click(visibilityCheckbox));
+    await user.click(visibilityCheckbox);
     let discussionCheckbox = await within(configureModal).findByLabelText(
       configureModalMessages.discussionEnabledCheckbox.defaultMessage,
     );
     expect(discussionCheckbox).toBeChecked();
-    await act(async () => fireEvent.click(discussionCheckbox));
+    await user.click(discussionCheckbox);
 
     let groupeType = await within(configureModal).findByTestId('group-type-select');
     fireEvent.change(groupeType, { target: { value: '0' } });
 
     let checkboxes = await within(await within(configureModal).findByTestId('group-checkboxes')).findAllByRole('checkbox');
-    fireEvent.click(checkboxes[1]);
+    await user.click(checkboxes[1]);
+    axiosMock
+      .onGet(getXBlockApiUrl(unit.id))
+      .reply(200, unit);
+
     const saveButton = await within(configureModal).findByTestId('configure-save-button');
-    await act(async () => fireEvent.click(saveButton));
+    await user.click(saveButton);
 
     // reopen modal and check values
-    await act(async () => fireEvent.click(unitDropdownButton));
-    await act(async () => fireEvent.click(configureBtn));
+    await user.click(unitDropdownButton);
+    await user.click(configureBtn);
 
     configureModal = await findByTestId('configure-modal');
     visibilityCheckbox = await within(configureModal).findByTestId('unit-visibility-checkbox');
@@ -1648,15 +1658,14 @@ describe('<CourseOutline />', () => {
   });
 
   it('check update highlights when update highlights query is successfully', async () => {
-    const { getByRole } = renderComponent();
+    const user = userEvent.setup();
+    renderComponent();
 
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const highlights = [
       'New Highlight 1',
       'New Highlight 2',
       'New Highlight 3',
-      'New Highlight 4',
-      'New Highlight 5',
     ];
 
     axiosMock
@@ -1674,12 +1683,21 @@ describe('<CourseOutline />', () => {
         ...section,
         highlights,
       });
-
-    await executeThunk(updateCourseSectionHighlightsQuery(section.id, highlights), store.dispatch);
-
-    await waitFor(() => {
-      expect(getByRole('button', { name: '5 Section highlights' })).toBeInTheDocument();
+    const highlightBtn = await screen.findAllByRole('button', { name: '0 Section highlights' });
+    await user.click(highlightBtn[0]);
+    const dialog = await screen.findByRole('dialog');
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 1' }), {
+      target: { value: 'New Highlight 1' },
     });
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 2' }), {
+      target: { value: 'New Highlight 2' },
+    });
+    fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 3' }), {
+      target: { value: 'New Highlight 3' },
+    });
+    await user.click(await within(dialog).findByRole('button', { name: 'Save' }));
+
+    expect(await screen.findByRole('button', { name: '3 Section highlights' })).toBeInTheDocument();
   });
 
   it('check whether section move up and down options work correctly', async () => {
@@ -2291,6 +2309,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit copy & paste option works correctly', async () => {
+    const user = userEvent.setup();
     renderComponent();
     // get first section -> first subsection -> first unit element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2349,13 +2368,6 @@ describe('<CourseOutline />', () => {
     const lastUnitElement = (await within(subsectionElement).findAllByTestId('unit-card')).slice(-1)[0];
     expect(lastUnitElement).toHaveTextContent(unit.displayName);
 
-    // check pasteFileNotices in store
-    expect(store.getState().courseOutline.pasteFileNotices).toEqual({
-      newFiles: ['some.css'],
-      conflictingFiles: ['con.css'],
-      errorFiles: ['error.css'],
-    });
-
     let alerts = await screen.findAllByRole('alert');
     // Exclude processing notification toast
     alerts = alerts.filter((el) => !el.classList.contains('toast-container'));
@@ -2364,18 +2376,18 @@ describe('<CourseOutline />', () => {
 
     // check alerts for errorFiles
     let dismissBtn = await within(alerts[0]).findByText('Dismiss');
-    fireEvent.click(dismissBtn);
+    await user.click(dismissBtn);
 
     // check alerts for conflictingFiles
     dismissBtn = await within(alerts[1]).findByText('Dismiss');
-    fireEvent.click(dismissBtn);
+    await user.click(dismissBtn);
 
     // check alerts for newFiles
     dismissBtn = await within(alerts[2]).findByText('Dismiss');
-    fireEvent.click(dismissBtn);
+    await user.click(dismissBtn);
 
-    // check pasteFileNotices in store
-    expect(store.getState().courseOutline.pasteFileNotices).toEqual({});
+    // check that all alerts are gone
+    expect((screen.queryAllByRole('alert')).length).toEqual(0);
   });
 
   it('should show toats on export tags', async () => {
@@ -2482,5 +2494,21 @@ describe('<CourseOutline />', () => {
       expect(axiosMock.history.delete).toHaveLength(1);
     });
     expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(courseSectionMock.id));
+  });
+
+  it('check that the new status bar and expand bar is shown when flag is set', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    renderComponent();
+    const btn = await screen.findByRole('button', { name: 'Collapse all' });
+    expect(btn).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: 'View live' })).toBeInTheDocument();
+    expect((await screen.findAllByRole('button', { name: 'Add' })).length).toEqual(2);
+    expect(await screen.findByRole('button', { name: 'Course info' })).toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(btn);
+    expect(await screen.findByRole('button', { name: 'Expand all' })).toBeInTheDocument();
   });
 });

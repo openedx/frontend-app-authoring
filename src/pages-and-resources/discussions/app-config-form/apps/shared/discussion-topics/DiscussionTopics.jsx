@@ -26,13 +26,14 @@ const DiscussionTopics = () => {
 
   const handleTopicDelete = async (topicIndex, topicId, remove) => {
     await remove(topicIndex);
-    validateForm();
+    await validateForm();
     setValidDiscussionTopics(filterItemFromObject(validDiscussionTopics, 'id', topicId));
   };
 
   const handleOnFocus = useCallback((id, hasError) => {
     if (hasError) {
       setValidDiscussionTopics(currentValidTopics => filterItemFromObject(currentValidTopics, 'id', id));
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       setFieldValue('divideDiscussionIds', filterItemFromObject(divideDiscussionIds, 'id', id));
     } else {
       setValidDiscussionTopics(currentValidTopics => {
@@ -40,6 +41,7 @@ const DiscussionTopics = () => {
         const allValidTopics = removeElements(allDiscussionTopics, topic => topic.name !== '');
         return uniqBy(allValidTopics, 'id');
       });
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       setFieldValue('divideDiscussionIds', uniq([...divideDiscussionIds, id]));
     }
   }, [divideDiscussionIds, discussionTopics]);

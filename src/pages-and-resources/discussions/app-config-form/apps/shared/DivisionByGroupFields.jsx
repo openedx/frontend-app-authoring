@@ -36,10 +36,13 @@ const DivisionByGroupFields = () => {
   useEffect(() => {
     if (divideByCohorts) {
       if (!divideCourseTopicsByCohorts && size(discussionTopics) !== size(divideDiscussionIds)) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         setFieldValue('divideDiscussionIds', discussionTopics.map(topic => topic.id));
       }
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       setFieldValue('divideDiscussionIds', []);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       setFieldValue('divideCourseTopicsByCohorts', false);
     }
   }, [
@@ -59,6 +62,7 @@ const DivisionByGroupFields = () => {
   const handleDivideCourseTopicsByCohortsToggle = (event) => {
     const { checked } = event.target;
     if (!checked) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       setFieldValue('divideDiscussionIds', []);
     }
     handleChange(event);

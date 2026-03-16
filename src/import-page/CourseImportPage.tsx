@@ -1,49 +1,30 @@
-/* eslint-disable max-len */
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout,
 } from '@openedx/paragon';
-import Cookies from 'universal-cookie';
+
 import { Helmet } from 'react-helmet';
 
-import SubHeader from '../generic/sub-header/SubHeader';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
-import { RequestStatus } from '../data/constants';
-import { useModel } from '../generic/model-store';
-import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-import {
-  updateFileName, updateImportTriggered, updateSavingStatus, updateSuccessDate,
-} from './data/slice';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
+import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+
 import ImportStepper from './import-stepper/ImportStepper';
-import { getImportTriggered, getLoadingStatus, getSavingStatus } from './data/selectors';
-import { LAST_IMPORT_COOKIE_NAME } from './data/constants';
 import ImportSidebar from './import-sidebar/ImportSidebar';
 import FileSection from './file-section/FileSection';
 import messages from './messages';
+import { useCourseImportContext } from './CourseImportContext';
 
-const CourseImportPage = ({ courseId }: { courseId: string }) => {
+const CourseImportPage = () => {
   const intl = useIntl();
-  const dispatch = useDispatch();
-  const cookies = new Cookies();
-  const courseDetails = useModel('courseDetails', courseId);
-  const importTriggered = useSelector(getImportTriggered);
-  const savingStatus = useSelector(getSavingStatus);
-  const loadingStatus = useSelector(getLoadingStatus);
-  const anyRequestFailed = savingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.FAILED;
-  const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
-  const anyRequestInProgress = savingStatus === RequestStatus.PENDING || loadingStatus === RequestStatus.IN_PROGRESS;
-
-  useEffect(() => {
-    const cookieData = cookies.get(LAST_IMPORT_COOKIE_NAME);
-    if (cookieData) {
-      dispatch(updateSavingStatus(RequestStatus.SUCCESSFUL));
-      dispatch(updateImportTriggered(true));
-      dispatch(updateFileName(cookieData.fileName));
-      dispatch(updateSuccessDate(cookieData.date));
-    }
-  }, []);
+  const { courseDetails } = useCourseAuthoringContext();
+  const {
+    importTriggered,
+    anyRequestFailed,
+    anyRequestInProgress,
+    isLoadingDenied,
+  } = useCourseImportContext();
 
   if (isLoadingDenied) {
     return (
@@ -82,12 +63,12 @@ const CourseImportPage = ({ courseId }: { courseId: string }) => {
                 <p className="small">{intl.formatMessage(messages.description1)}</p>
                 <p className="small">{intl.formatMessage(messages.description2)}</p>
                 <p className="small">{intl.formatMessage(messages.description3)}</p>
-                <FileSection courseId={courseId} />
-                {importTriggered && <ImportStepper courseId={courseId} />}
+                <FileSection />
+                {importTriggered && <ImportStepper />}
               </article>
             </Layout.Element>
             <Layout.Element>
-              <ImportSidebar courseId={courseId} />
+              <ImportSidebar />
             </Layout.Element>
           </Layout>
         </section>

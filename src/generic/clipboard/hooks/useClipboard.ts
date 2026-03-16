@@ -59,7 +59,7 @@ const useClipboard = (canEdit: boolean = true) => {
         // If we don't have new data, invalidate the query
         queryClient.invalidateQueries({ queryKey: CLIPBOARD_QUERY_KEY });
       }
-    } catch (error) {
+    } catch {
       showToast(intl.formatMessage(messages.error));
       return;
     }

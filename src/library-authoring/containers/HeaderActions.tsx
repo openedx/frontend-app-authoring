@@ -1,7 +1,7 @@
 import { Button } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { useCallback } from 'react';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 
@@ -16,7 +16,7 @@ export const HeaderActions = ({
   infoBtnText,
   addContentBtnText,
 }: HeaderActionsProps) => {
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
   const {
     closeLibrarySidebar,
     sidebarItemInfo,

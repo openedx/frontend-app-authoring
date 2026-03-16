@@ -14,7 +14,7 @@ export interface CourseOptimizerState {
   loadingStatus: string;
   savingStatus: string;
   rerunLinkUpdateInProgress: boolean | null;
-  rerunLinkUpdateResult: any | null;
+  rerunLinkUpdateResult: any;
 }
 
 export type RootState = {

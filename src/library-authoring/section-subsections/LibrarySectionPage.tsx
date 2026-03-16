@@ -20,7 +20,7 @@ import { ContainerEditableTitle, FooterActions, HeaderActions } from '../contain
 /** Full library section page */
 export const LibrarySectionPage = () => {
   const intl = useIntl();
-  const { libraryId, containerId } = useLibraryContext();
+  const { libraryId, containerId, readOnly } = useLibraryContext();
   const {
     sidebarItemInfo,
   } = useSidebarContext();
@@ -84,6 +84,7 @@ export const LibrarySectionPage = () => {
           org={libraryData.org}
           contextId={libraryData.id}
           isLibrary
+          readOnly={readOnly}
           containerProps={{
             size: undefined,
           }}

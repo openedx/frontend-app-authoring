@@ -90,7 +90,7 @@ describe('<SearchUI />', () => {
 
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.post(searchEndpoint, (_url, req) => {
-      const requestData = JSON.parse(req.body?.toString() ?? '');
+      const requestData = JSON.parse((req.body ?? '') as string);
       const query = requestData?.queries[0]?.q ?? '';
       // We have to replace the query (search keywords) in the mock results with the actual query,
       // because otherwise Instantsearch will update the UI and change the query,
@@ -168,7 +168,7 @@ describe('<SearchUI />', () => {
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
     // And make sure the request was limited to this course:
     expect(fetchMock).toHaveLastFetched((_url, req) => {
-      const requestData = JSON.parse(req.body?.toString() ?? '');
+      const requestData = JSON.parse((req.body ?? '') as string);
       const requestedFilter = requestData?.queries[0].filter;
       return requestedFilter?.[1] === 'type = "course_block"'
         && requestedFilter?.[2] === 'context_key = "course-v1:org+test+123"';
@@ -337,7 +337,7 @@ describe('<SearchUI />', () => {
     let rendered: RenderResult;
     beforeEach(async () => {
       fetchMock.post(facetSearchEndpoint, (_path, req) => {
-        const requestData = JSON.parse(req.body?.toString() ?? '');
+        const requestData = JSON.parse((req.body ?? '') as string);
         switch (requestData.facetName) {
           case 'tags.taxonomy': return mockTagsFacetResult;
           case 'tags.level0': return mockTagsFacetResultLevel0;
@@ -356,7 +356,7 @@ describe('<SearchUI />', () => {
       await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
       // And make sure the request was limited to this course:
       expect(fetchMock).toHaveLastFetched((_url, req) => {
-        const requestData = JSON.parse(req.body?.toString() ?? '');
+        const requestData = JSON.parse((req.body ?? '') as string);
         const requestedFilter = requestData?.queries[0].filter;
         // the filter is:
         // ['', 'type = "course_block"', 'context_key = "course-v1:org+test+123"']
@@ -393,7 +393,7 @@ describe('<SearchUI />', () => {
       // Because we're mocking the results, there's no actual changes to the mock results,
       // but we can verify that the filter was sent in the request
       expect(fetchMock).toHaveLastFetched((_url, req) => {
-        const requestData = JSON.parse(req.body?.toString() ?? '');
+        const requestData = JSON.parse((req.body ?? '') as string);
         const requestedFilter = requestData?.queries[0].filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
           [
@@ -426,7 +426,7 @@ describe('<SearchUI />', () => {
       // Because we're mocking the results, there's no actual changes to the mock results,
       // but we can verify that the filter was sent in the request
       expect(fetchMock).toHaveLastFetched((_url, req) => {
-        const requestData = JSON.parse(req.body?.toString() ?? '');
+        const requestData = JSON.parse((req.body ?? '') as string);
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
           [],
@@ -461,7 +461,7 @@ describe('<SearchUI />', () => {
       // Because we're mocking the results, there's no actual changes to the mock results,
       // but we can verify that the filter was sent in the request
       expect(fetchMock).toHaveLastFetched((_url, req) => {
-        const requestData = JSON.parse(req.body?.toString() ?? '');
+        const requestData = JSON.parse((req.body ?? '') as string);
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
           [],
@@ -502,7 +502,7 @@ describe('<SearchUI />', () => {
       fireEvent.change(searchBox, { target: { value: 'test search' } });
       await waitFor(() => {
         expect(fetchMock).toHaveLastFetched((_url, req) => {
-          const requestData = JSON.parse(req.body?.toString() ?? '');
+          const requestData = JSON.parse((req.body ?? '') as string);
           // Check both the first and second query.q
           return requestData?.queries[0]?.q === 'test search'
             && requestData?.queries[1]?.q === 'test search';

@@ -1,12 +1,11 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import Responsive from 'react-responsive';
 import {
   Card, CheckboxControl, breakpoints,
 } from '@openedx/paragon';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import appMessages from '../app-config-form/messages';
 import FeaturesList from './FeaturesList';
@@ -15,7 +14,7 @@ const AppCard = ({
   app, onClick, selected, features,
 }) => {
   const intl = useIntl();
-  const { canChangeProviders } = useSelector(state => state.courseDetail);
+  const { canChangeProviders } = useCourseAuthoringContext();
   const supportText = app.hasFullSupport
     ? intl.formatMessage(messages.appFullSupport)
     : intl.formatMessage(messages.appBasicSupport);

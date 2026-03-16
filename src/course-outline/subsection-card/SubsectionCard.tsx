@@ -1,34 +1,32 @@
-import React, {
+import {
   useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
-import { useDispatch } from 'react-redux';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { StandardModal, useToggle } from '@openedx/paragon';
+import { useToggle } from '@openedx/paragon';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
 import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
-import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import { useClipboard, PasteComponent } from '@src/generic/clipboard';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
-import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
+import moment from 'moment';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SubsectionCardProps {
@@ -38,70 +36,52 @@ interface SubsectionCardProps {
   isSectionsExpanded: boolean,
   isSelfPaced: boolean,
   isCustomRelativeDatesActive: boolean,
-  onOpenPublishModal: () => void,
-  onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus?: RequestStatusType,
   onOpenDeleteModal: () => void,
-  onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
-  onNewUnitSubmit: (subsectionId: string) => void,
-  onAddUnitFromLibrary: (options: {
-    type: string,
-    category?: string,
-    parentLocator: string,
-    displayName?: string,
-    boilerplate?: string,
-    stagedContent?: string,
-    libraryContentKey: string,
-  }) => void,
   index: number,
   getPossibleMoves: (index: number, step: number) => void,
   onOrderChange: (section: XBlock, moveDetails: any) => void,
   onOpenConfigureModal: () => void,
-  onPasteClick: (parentLocator: string, sectionId: string) => void,
-  resetScrollState: () => void,
+  onPasteClick: (
+    parentLocator: string,
+    subsectionId: string,
+    sectionId: string
+  ) => void,
 }
 
 const SubsectionCard = ({
-  section,
-  subsection,
+  section: initialSectionData,
+  subsection: initialData,
   isSectionsExpanded,
   isSelfPaced,
   isCustomRelativeDatesActive,
   children,
   index,
   getPossibleMoves,
-  onOpenPublishModal,
-  onEditSubmit,
-  savingStatus,
   onOpenDeleteModal,
-  onOpenUnlinkModal,
   onDuplicateSubmit,
-  onNewUnitSubmit,
-  onAddUnitFromLibrary,
   onOrderChange,
   onOpenConfigureModal,
   onPasteClick,
-  resetScrollState,
 }: SubsectionCardProps) => {
   const currentRef = useRef(null);
   const intl = useIntl();
-  const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
+  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
-  const isScrolledToElement = locatorId === subsection.id;
-  const [isFormOpen, openForm, closeForm] = useToggle(false);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const [
-    isAddLibraryUnitModalOpen,
-    openAddLibraryUnitModal,
-    closeAddLibraryUnitModal,
-  ] = useToggle(false);
-  const { courseId } = useParams();
+  const {
+    courseId, openUnlinkModal, openPublishModal, setCurrentSelection,
+  } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
+  // Set initialData state from course outline and subsequently depend on its own state
+  const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
+  const { data: subsection = initialData } = useCourseItemData(initialData.id, initialData);
+  const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
+  const isScrolledToElement = locatorId === subsection.id;
 
   const {
     id,
@@ -162,31 +142,47 @@ const SubsectionCard = ({
     setIsExpanded(isSectionsExpanded);
   }, [isSectionsExpanded]);
 
+  /**
+  Temporary measure to keep the react-query state updated with redux state  */
+  useEffect(() => {
+    // istanbul ignore if
+    if (moment(initialData.editedOnRaw).isAfter(moment(subsection.editedOnRaw))) {
+      queryClient.cancelQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
+      // eslint-disable-next-line no-console
+      }).catch((error) => console.error('Error cancelling query:', error));
+      queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+    }
+  }, [initialData, subsection]);
+
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
   };
 
   const handleClickMenuButton = () => {
-    dispatch(setCurrentSection(section));
-    dispatch(setCurrentSubsection(subsection));
-    dispatch(setCurrentItem(subsection));
+    setCurrentSelection({
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
+  };
+
+  const handleClickManageTags = () => {
+    setSelectedContainerState({
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
   };
 
   const handleOnPostChangeSync = useCallback(() => {
-    dispatch(fetchCourseSectionQuery([section.id]));
+    queryClient.invalidateQueries({
+      queryKey: courseOutlineQueryKeys.courseItemId(section.id),
+    });
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
     }
-  }, [dispatch, section, queryClient, courseId]);
-
-  const handleEditSubmit = (titleValue: string) => {
-    if (displayName !== titleValue) {
-      onEditSubmit(id, section.id, titleValue);
-      return;
-    }
-
-    closeForm();
-  };
+  }, [section, queryClient, courseId]);
 
   const handleSubsectionMoveUp = () => {
     onOrderChange(section, moveUpDetails);
@@ -196,8 +192,7 @@ const SubsectionCard = ({
     onOrderChange(section, moveDownDetails);
   };
 
-  const handleNewButtonClick = () => onNewUnitSubmit(id);
-  const handlePasteButtonClick = () => onPasteClick(id, section.id);
+  const handlePasteButtonClick = () => onPasteClick(id, id, section.id);
 
   const titleComponent = (
     <TitleButton
@@ -205,7 +200,13 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} />}
+      prefixIcon={(
+        <UpstreamInfoIcon
+          upstreamInfo={upstreamInfo}
+          size="sm"
+          openSyncModal={openSyncModal}
+        />
+      )}
     />
   );
 
@@ -226,25 +227,19 @@ const SubsectionCard = ({
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
-    if (currentRef.current && (subsection.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (scrollState?.id === subsection.id || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop, true);
-      resetScrollState();
+      resetScrollState().catch((error) => handleResponseErrors(error));
     }
-  }, [isScrolledToElement]);
+  }, [isScrolledToElement, scrollState, resetScrollState]);
 
   useEffect(() => {
     // If the locatorId is set/changed, we need to make sure that the subsection is expanded
     // if it contains the result, in order to scroll to it
     setIsExpanded((prevState) => (containsSearchResult() || prevState));
   }, [locatorId, setIsExpanded]);
-
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      closeForm();
-    }
-  }, [savingStatus]);
 
   const isDraggable = (
     actions.draggable
@@ -253,15 +248,12 @@ const SubsectionCard = ({
       && !section.upstreamInfo?.upstreamRef
   );
 
-  const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
-    onAddUnitFromLibrary({
-      type: COMPONENT_TYPES.libraryV2,
-      category: ContainerType.Vertical,
-      parentLocator: id,
-      libraryContentKey: selectedUnit.usageKey,
-    });
-    closeAddLibraryUnitModal();
-  }, [id, onAddUnitFromLibrary, closeAddLibraryUnitModal]);
+  const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
+    if (!preventNodeEvents || e.target === e.currentTarget) {
+      openContainerInfoSidebar(subsection.id, subsection.id, section.id);
+      setIsExpanded(true);
+    }
+  }, [openContainerInfoSidebar]);
 
   return (
     <>
@@ -280,9 +272,16 @@ const SubsectionCard = ({
           background: '#f8f7f6',
           ...borderStyle,
         }}
+        onClick={(e) => onClickCard(e, true)}
       >
         <div
-          className={`subsection-card ${isScrolledToElement ? 'highlight' : ''}`}
+          className={classNames(
+            'subsection-card',
+            {
+              highlight: isScrolledToElement,
+              'outline-card-selected': subsection.id === selectedContainerState?.currentId,
+            },
+          )}
           data-testid="subsection-card"
           ref={currentRef}
         >
@@ -294,19 +293,19 @@ const SubsectionCard = ({
                 cardId={id}
                 hasChanges={hasChanges}
                 onClickMenuButton={handleClickMenuButton}
-                onClickPublish={onOpenPublishModal}
-                onClickEdit={openForm}
+                onClickPublish={() => openPublishModal({ value: subsection, sectionId: section.id })}
                 onClickDelete={onOpenDeleteModal}
-                onClickUnlink={onOpenUnlinkModal}
+                onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
+                  value: subsection,
+                  sectionId: section.id,
+                })}
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
                 onClickSync={openSyncModal}
-                isFormOpen={isFormOpen}
-                closeForm={closeForm}
-                onEditSubmit={handleEditSubmit}
-                savingStatus={savingStatus}
+                onClickCard={(e) => onClickCard(e, true)}
                 onClickDuplicate={onDuplicateSubmit}
+                onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
                 actions={actions}
@@ -315,7 +314,19 @@ const SubsectionCard = ({
                 extraActionsComponent={extraActionsComponent}
                 readyToSync={upstreamInfo?.readyToSync}
               />
-              <div className="subsection-card__content item-children" data-testid="subsection-card__content">
+              {
+                /* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
+                `SortableItem` component handles that for the whole `SubsectionCard`.
+                This `onClick` allows the user to select the Card by clicking on white areas of this component. */
+              }
+              <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+                className="subsection-card__content item-children"
+                data-testid="subsection-card__content"
+                onClick={
+                  /* istanbul ignore next */
+                  (e) => onClickCard(e, false)
+                }
+              >
                 <XBlockStatus
                   isSelfPaced={isSelfPaced}
                   isCustomRelativeDatesActive={isCustomRelativeDatesActive}
@@ -333,9 +344,10 @@ const SubsectionCard = ({
               {actions.childAddable && (
                 <>
                   <OutlineAddChildButtons
-                    handleNewButtonClick={handleNewButtonClick}
-                    handleUseFromLibraryClick={openAddLibraryUnitModal}
+                    onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Unit}
+                    parentLocator={subsection.id}
+                    grandParentLocator={section.id}
                   />
                   {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
                     <PasteComponent
@@ -351,21 +363,6 @@ const SubsectionCard = ({
           )}
         </div>
       </SortableItem>
-      <StandardModal
-        title={intl.formatMessage(messages.unitPickerModalTitle)}
-        isOpen={isAddLibraryUnitModalOpen}
-        onClose={closeAddLibraryUnitModal}
-        isOverflowVisible={false}
-        size="xl"
-      >
-        <ComponentPicker
-          showOnlyPublished
-          extraFilter={['block_type = "unit"']}
-          componentPickerMode="single"
-          onComponentSelected={handleSelectLibraryUnit}
-          visibleTabs={[ContentType.units]}
-        />
-      </StandardModal>
       {blockSyncData && (
         <PreviewLibraryXBlockChanges
           blockData={blockSyncData}

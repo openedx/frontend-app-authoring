@@ -10,7 +10,7 @@ import {
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import messages from '../messages';
 import { trimSlashes } from './utils';
-import CardItem from '.';
+import { CardItem } from '.';
 
 jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => studioHomeMock);
 

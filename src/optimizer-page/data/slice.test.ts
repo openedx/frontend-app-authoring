@@ -1,5 +1,11 @@
-import { AnyAction, configureStore, ThunkMiddleware } from '@reduxjs/toolkit';
-import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
+import {
+  configureStore,
+  type EnhancedStore,
+  type StoreEnhancer,
+  type ThunkDispatch,
+  type Tuple,
+  type UnknownAction,
+} from '@reduxjs/toolkit';
 import {
   CourseOptimizerState,
   reducer,
@@ -19,7 +25,9 @@ import {
 } from './slice';
 
 describe('courseOptimizer slice', () => {
-  let store: ToolkitStore<CourseOptimizerState, AnyAction, [ThunkMiddleware<CourseOptimizerState, AnyAction>]>;
+  let store: EnhancedStore<CourseOptimizerState, UnknownAction, Tuple<[StoreEnhancer<{
+    dispatch: ThunkDispatch<CourseOptimizerState, undefined, UnknownAction>;
+  }>, StoreEnhancer]>>;
 
   beforeEach(() => {
     store = configureStore({ reducer });

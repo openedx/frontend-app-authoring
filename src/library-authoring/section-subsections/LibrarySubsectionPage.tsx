@@ -22,7 +22,7 @@ import { ContainerEditableTitle, FooterActions, HeaderActions } from '../contain
 /** Full library subsection page */
 export const LibrarySubsectionPage = () => {
   const intl = useIntl();
-  const { libraryId, containerId } = useLibraryContext();
+  const { libraryId, containerId, readOnly } = useLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const { data: libraryData, isPending: isLibPending } = useContentLibrary(libraryId);
@@ -64,6 +64,7 @@ export const LibrarySubsectionPage = () => {
           title={libraryData.title}
           org={libraryData.org}
           contextId={libraryData.id}
+          readOnly={readOnly}
           isLibrary
           containerProps={{
             size: undefined,

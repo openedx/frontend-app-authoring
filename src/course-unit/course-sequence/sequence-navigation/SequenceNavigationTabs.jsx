@@ -5,8 +5,9 @@ import { Button } from '@openedx/paragon';
 import { Plus as PlusIcon, ContentPasteGo as ContentPasteGoIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { changeEditTitleFormOpen, updateQueryPendingStatus } from '../../data/slice';
-import { getCourseUnitData, getCourseId, getSequenceId } from '../../data/selectors';
+import { getCourseUnitData, getSequenceId } from '../../data/selectors';
 import messages from '../messages';
 import { useIndexOfLastVisibleChild } from '../hooks';
 import SequenceNavigationDropdown from './SequenceNavigationDropdown';
@@ -19,7 +20,7 @@ const SequenceNavigationTabs = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const sequenceId = useSelector(getSequenceId);
-  const courseId = useSelector(getCourseId);
+  const { courseId } = useCourseAuthoringContext();
   const courseUnit = useSelector(getCourseUnitData);
   const sequenceChildAddable = courseUnit?.ancestorInfo?.ancestors?.[0]?.actions?.childAddable;
 

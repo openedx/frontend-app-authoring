@@ -12,6 +12,7 @@ import ComponentCount from '@src/generic/component-count';
 import TagCount from '@src/generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '@src/search-manager';
 import { skipIfUnwantedTarget } from '@src/utils';
+import { ExtensionOff } from '@openedx/paragon/icons';
 import messages from './messages';
 
 type BaseCardProps = {
@@ -25,6 +26,7 @@ type BaseCardProps = {
   hasUnpublishedChanges?: boolean;
   onSelect: (e?: React.MouseEvent) => void;
   selected?: boolean;
+  isPlaceholder?: boolean;
 };
 
 const BaseCard = ({
@@ -46,8 +48,9 @@ const BaseCard = ({
             + (tags.level2?.length || 0) + (tags.level3?.length || 0);
   }, [tags]);
 
-  const itemIcon = getItemIcon(itemType);
+  const itemIcon = !props.isPlaceholder ? getItemIcon(itemType) : ExtensionOff;
   const intl = useIntl();
+  const itemComponentStyle = !props.isPlaceholder ? getComponentStyleColor(itemType) : 'component-style-other';
 
   return (
     <Container className="library-item-card selected">
@@ -62,9 +65,9 @@ const BaseCard = ({
         className={selected ? 'selected' : undefined}
       >
         <Card.Header
-          className={`library-item-header ${getComponentStyleColor(itemType)}`}
+          className={`library-item-header ${itemComponentStyle}`}
           title={
-            <Icon src={itemIcon} className="library-item-header-icon" />
+            <Icon src={itemIcon} className="library-item-header-icon my-2" />
           }
           actions={(
             <div
@@ -91,8 +94,12 @@ const BaseCard = ({
                   <BlockTypeLabel blockType={itemType} />
                 </small>
               </Stack>
-              <ComponentCount count={numChildren} />
-              <TagCount size="sm" count={tagCount} />
+              {!props.isPlaceholder && (
+              <>
+                <ComponentCount count={numChildren} />
+                <TagCount size="sm" count={tagCount} />
+              </>
+              )}
             </Stack>
             <div className="badge-container d-flex align-items-center justify-content-center">
               {props.hasUnpublishedChanges && (

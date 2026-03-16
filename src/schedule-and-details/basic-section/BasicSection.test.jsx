@@ -43,7 +43,7 @@ describe('<BasicSection />', () => {
   it('shows the page banner if the marketingEnabled is true', () => {
     const { getByText, queryAllByText } = render(<RootWrapper {...props} />);
     expect(
-      getByText(messages.basicBannerTitle.defaultMessage),
+      getByText(`Promoting your course with ${props.platformName}`),
     ).toBeInTheDocument();
     expect(
       getByText(messages.basicBannerText.defaultMessage),
@@ -66,7 +66,7 @@ describe('<BasicSection />', () => {
     ).toBeInTheDocument();
     expect(getByText(props.lmsLinkForAboutPage)).toBeInTheDocument();
     expect(inviteButton).toBeInTheDocument();
-    expect(queryAllByText(messages.basicBannerTitle.defaultMessage).length).toBe(0);
+    expect(queryAllByText(`Promoting your course with ${props.platformName}`).length).toBe(0);
   });
 
   it('checks link link to invite', () => {

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Breadcrumb,
@@ -11,11 +10,11 @@ import { Add as AddIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { useWaffleFlags } from '../data/apiHooks';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
-import { useModel } from '../generic/model-store';
 import { LoadingSpinner } from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
@@ -28,11 +27,10 @@ import { useTextbooks } from './hooks';
 import { getTextbookFormInitialValues } from './utils';
 import messages from './messages';
 
-const Textbooks = ({ courseId }) => {
+const Textbooks = () => {
   const intl = useIntl();
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const waffleFlags = useWaffleFlags(courseId);
-
-  const courseDetails = useModel('courseDetails', courseId);
 
   const {
     textbooks,
@@ -129,7 +127,6 @@ const Textbooks = ({ courseId }) => {
                         initialFormValues={getTextbookFormInitialValues()}
                         onSubmit={handleTextbookFormSubmit}
                         onSavingStatus={handleSavingStatusDispatch}
-                        courseId={courseId}
                       />
                     )}
                   </div>
@@ -154,10 +151,6 @@ const Textbooks = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-Textbooks.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default Textbooks;

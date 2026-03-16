@@ -9,9 +9,10 @@ import {
 } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { LoadingSpinner } from '../../generic/Loading';
 import { CodeEditor, EditorAccessor } from '../../generic/CodeEditor';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import {
   useUpdateXBlockOLX,
@@ -22,7 +23,8 @@ import { ComponentAdvancedAssets } from './ComponentAdvancedAssets';
 
 const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { readOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;

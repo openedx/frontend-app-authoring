@@ -23,6 +23,7 @@ import {
   Routes,
 } from 'react-router-dom';
 
+import * as authzApi from '@src/authz/data/api';
 import { ToastContext, type ToastContextData } from './generic/toast-context';
 import initializeReduxStore, { type DeprecatedReduxState } from './store';
 import { getApiWaffleFlagsUrl } from './data/api';
@@ -31,6 +32,7 @@ import { getApiWaffleFlagsUrl } from './data/api';
 let reduxStore: Store;
 let queryClient: QueryClient;
 let axiosMock: MockAdapter;
+let validateUserPermissionsMock: jest.SpiedFunction<typeof authzApi.validateUserPermissions>;
 
 /** To use this: `const { mockShowToast } = initializeMocks()` and `expect(mockShowToast).toHaveBeenCalled()` */
 let mockToastContext: ToastContextData = {
@@ -157,12 +159,12 @@ const defaultUser = {
  */
 export function initializeMocks({ user = defaultUser, initialState = undefined }: {
   user?: { userId: number, username: string },
-  initialState?: Partial<DeprecatedReduxState>
+  initialState?: Partial<DeprecatedReduxState>,
 } = {}) {
   initializeMockApp({
     authenticatedUser: user,
   });
-  reduxStore = initializeReduxStore(initialState as any);
+  reduxStore = initializeReduxStore(initialState);
   queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -192,12 +194,17 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
   // Clear the call counts etc. of all mocks. This doesn't remove the mock's effects; just clears their history.
   jest.clearAllMocks();
 
+  // Mock user permissions to avoid breaking tests that monitor axios calls
+  // If needed, override the mockResolvedValue in your test
+  validateUserPermissionsMock = jest.spyOn(authzApi, 'validateUserPermissions').mockResolvedValue({});
+
   return {
     reduxStore,
     axiosMock,
     mockShowToast: mockToastContext.showToast,
     mockToastAction: mockToastContext.toastAction,
     queryClient,
+    validateUserPermissionsMock,
   };
 }
 
@@ -223,3 +230,24 @@ export function createAxiosError({ code, message, path }: { code: number, messag
   );
   return error;
 }
+
+/*
+ * Utility to get the inner text of an element safely.
+ */
+const getInnerText = (element: Element | null): string => {
+  if (!element) {
+    return '';
+  }
+  return (element.textContent ?? '')
+    .split('\n')
+    .filter((text) => text && !/^\s+$/.test(text))
+    .map((text) => text.trim())
+    .join(' ');
+};
+
+export const matchInnerText = (
+  nodeName: string,
+  textToMatch: string,
+) => (_: string, element: Element | null) => !!element
+    && element.nodeName === nodeName
+    && getInnerText(element) === textToMatch;

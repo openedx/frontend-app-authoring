@@ -82,7 +82,7 @@ export const getSortedTranscripts = (languages, transcripts) => {
     transcriptDisplayNames.push(displayName);
   });
 
-  const sortedTranscripts = transcriptDisplayNames.sort();
+  const sortedTranscripts = transcriptDisplayNames.sort((a, b) => a.localeCompare(b));
   const sortedTranscriptCodes = [];
   sortedTranscripts.forEach(transcript => {
     Object.entries(languages).forEach(([key, value]) => {

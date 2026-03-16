@@ -9,7 +9,7 @@ import * as video from './video';
 import * as problem from './problem';
 import * as game from './game';
 import type { RequestKeys, RequestStates } from '../constants/requests';
-import { AdvancedProblemType, ProblemType } from '../constants/problem';
+import { AdvancedProblemType, type GradingMethodKey, ProblemType } from '../constants/problem';
 
 export { default as thunkActions } from './thunkActions';
 
@@ -122,7 +122,7 @@ export interface EditorState {
     videoSharingEnabledForAll: boolean;
     videoSharingEnabledForCourse: boolean;
     videoSharingLearnMoreLink: string;
-    thumbnail: null | any;
+    thumbnail: any;
     transcripts: any[];
     selectedVideoTranscriptUrls: Record<string, any>;
     allowTranscriptDownloads: boolean;
@@ -172,10 +172,11 @@ export interface EditorState {
     additionalAttributes: Record<string, any>;
     defaultSettings: Record<string, any>;
     settings: {
-      randomization: null | any; // Not sure what type this field has
+      randomization: any; // Not sure what type this field has
       scoring: {
         weight: number;
-        attempts: { unlimited: boolean; number: number | null; }
+        attempts: { unlimited: boolean; number: number | null; };
+        gradingMethod: GradingMethodKey;
       },
       hints: any[];
       timeBetween: number;

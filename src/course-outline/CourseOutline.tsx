@@ -1,15 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container,
-  Layout,
   Row,
   TransitionReplace,
   Toast,
-  StandardModal,
+  Button,
+  ActionRow,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
-import { CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
+import { CheckCircle as CheckCircleIcon, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import {
   arrayMove,
@@ -31,19 +31,17 @@ import { UnlinkModal } from '@src/generic/unlink-modal';
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
-import { ContainerType } from '@src/generic/key-utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
-import { ContentType } from '@src/library-authoring/routes';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
+import { ContainerType } from '@src/generic/key-utils';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import {
-  getCurrentItem,
   getProctoredExamsFlag,
   getTimedExamsFlag,
 } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
-import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
 import SubsectionCard from './subsection-card/SubsectionCard';
@@ -60,19 +58,27 @@ import {
 } from './drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
+import headerMessages from './header-navigations/messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
+import { StatusBar } from './status-bar/StatusBar';
+import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
+import { isOutlineNewDesignEnabled } from './utils';
 
-interface CourseOutlineProps {
-  courseId: string,
-}
-
-const CourseOutline = ({ courseId }: CourseOutlineProps) => {
+const CourseOutline = () => {
   const intl = useIntl();
   const location = useLocation();
+  const {
+    courseId,
+    courseUsageKey,
+    handleAddBlock,
+    handleAddAndOpenUnit,
+    isUnlinkModalOpen,
+    closeUnlinkModal,
+    currentSelection,
+  } = useCourseAuthoringContext();
 
   const {
-    courseUsageKey,
     courseName,
     savingStatus,
     statusBarData,
@@ -88,46 +94,31 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
     isInternetConnectionAlertFailed,
     isDisabledReindexButton,
     isHighlightsModalOpen,
-    isPublishModalOpen,
     isConfigureModalOpen,
+    isConfigureOpPending,
     isDeleteModalOpen,
-    isUnlinkModalOpen,
     closeHighlightsModal,
-    closePublishModal,
     handleConfigureModalClose,
     closeDeleteModal,
-    closeUnlinkModal,
-    openPublishModal,
     openConfigureModal,
     openDeleteModal,
-    openUnlinkModal,
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
+    isSectionHighlightsUpdatePending,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
-    handlePublishItemSubmit,
-    handleEditSubmit,
     handleDeleteItemSubmit,
-    handleUnlinkItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
-    handleNewSectionSubmit,
-    handleNewSubsectionSubmit,
-    handleNewUnitSubmit,
-    handleAddUnitFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddSectionFromLibrary,
-    getUnitUrl,
+    isDuplicatingItem,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
+    isPasting,
     notificationDismissUrl,
     discussionsSettings,
     discussionsIncontextLearnmoreUrl,
@@ -140,9 +131,12 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
     errors,
-    resetScrollState,
+    handleUnlinkItemSubmit,
   } = useCourseOutline({ courseId });
 
+  // Show the new actions bar if it is enabled in the configuration.
+  // This is a temporary flag until the new design feature is fully implemented.
+  const showNewActionsBar = isOutlineNewDesignEnabled();
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -172,9 +166,9 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
 
-  const currentItemData = useSelector(getCurrentItem);
+  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
-  const itemCategory = currentItemData?.category;
+  const itemCategory = currentItemData?.category || '';
   const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();
 
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
@@ -237,16 +231,6 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
     }
   };
 
-  const handleSelectLibrarySection = useCallback((selectedSection: SelectedComponent) => {
-    handleAddSectionFromLibrary.mutateAsync({
-      type: COMPONENT_TYPES.libraryV2,
-      category: ContainerType.Chapter,
-      parentLocator: courseUsageKey,
-      libraryContentKey: selectedSection.usageKey,
-    });
-    closeAddLibrarySectionModal();
-  }, [closeAddLibrarySectionModal, handleAddSectionFromLibrary.mutateAsync, courseId, courseUsageKey]);
-
   useEffect(() => {
     setSections(sectionsList);
   }, [sectionsList]);
@@ -262,7 +246,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
 
   if (isLoadingDenied) {
     return (
-      <Container size="xl" className="px-4 mt-4">
+      <Container fluid className="px-3 mt-4">
         <PageAlerts
           courseId={courseId}
           notificationDismissUrl={notificationDismissUrl}
@@ -285,7 +269,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
-      <Container size="xl" className="px-4">
+      <Container fluid className="px-3">
         <section className="course-outline-container mb-4 mt-5">
           <PageAlerts
             courseId={courseId}
@@ -300,6 +284,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
             savingStatus={savingStatus}
             errors={errors}
           />
+          <LegacyLibContentBlockAlert courseId={courseId} />
           <TransitionReplace>
             {showSuccessAlert ? (
               <AlertMessage
@@ -316,8 +301,9 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
             ) : null}
           </TransitionReplace>
           <SubHeader
-            title={intl.formatMessage(messages.headingTitle)}
+            title={courseName}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
+            hideBorder
             headerActions={(
               <CourseOutlineHeaderActionsSlot
                 isReIndexShow={isReIndexShow}
@@ -331,24 +317,45 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
               />
             )}
           />
-          <Layout
-            lg={[{ span: 9 }, { span: 3 }]}
-            md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 12 }, { span: 12 }]}
-            xs={[{ span: 12 }, { span: 12 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
-          >
-            <Layout.Element>
+          {showNewActionsBar
+            ? (
+              <StatusBar
+                courseId={courseId}
+                isLoading={isLoading}
+                statusBarData={statusBarData}
+              />
+            ) : (
+              <LegacyStatusBar
+                courseId={courseId}
+                isLoading={isLoading}
+                statusBarData={statusBarData}
+                openEnableHighlightsModal={openEnableHighlightsModal}
+                handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+              />
+            )}
+          <hr className="mt-4 mb-0 w-100 text-light-400" />
+          <div className="d-flex align-items-baseline">
+            <div className="flex-fill">
               <article>
                 <div>
-                  <section className="course-outline-section">
-                    <StatusBar
-                      courseId={courseId}
-                      isLoading={isLoading}
-                      statusBarData={statusBarData}
-                      openEnableHighlightsModal={openEnableHighlightsModal}
-                      handleVideoSharingOptionChange={handleVideoSharingOptionChange}
-                    />
+                  {showNewActionsBar && (
+                  <ActionRow className="mt-3">
+                    {Boolean(sectionsList.length) && (
+                    <Button
+                      variant="outline-primary"
+                      id="expand-collapse-all-button"
+                      data-testid="expand-collapse-all-button"
+                      iconBefore={isSectionsExpanded ? CloseFullscreen : OpenInFull}
+                      onClick={headerNavigationsActions.handleExpandAll}
+                    >
+                      {isSectionsExpanded
+                        ? intl.formatMessage(headerMessages.collapseAllButton)
+                        : intl.formatMessage(headerMessages.expandAllButton)}
+                    </Button>
+                    )}
+                  </ActionRow>
+                  )}
+                  <section>
                     {!errors?.outlineIndexApi && (
                       <div className="pt-4">
                         {sections.length ? (
@@ -374,19 +381,12 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                                     canMoveItem={canMoveSection(sections)}
                                     isSelfPaced={statusBarData.isSelfPaced}
                                     isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                    savingStatus={savingStatus}
                                     onOpenHighlightsModal={handleOpenHighlightsModal}
-                                    onOpenPublishModal={openPublishModal}
                                     onOpenConfigureModal={openConfigureModal}
                                     onOpenDeleteModal={openDeleteModal}
-                                    onOpenUnlinkModal={openUnlinkModal}
-                                    onEditSectionSubmit={handleEditSubmit}
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
-                                    onNewSubsectionSubmit={handleNewSubsectionSubmit}
                                     onOrderChange={updateSectionOrderByIndex}
-                                    onAddSubsectionFromLibrary={handleAddSubsectionFromLibrary.mutateAsync}
-                                    resetScrollState={resetScrollState}
                                   >
                                     <SortableContext
                                       id={section.id}
@@ -408,18 +408,11 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                                           isSectionsExpanded={isSectionsExpanded}
                                           isSelfPaced={statusBarData.isSelfPaced}
                                           isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                          savingStatus={savingStatus}
-                                          onOpenPublishModal={openPublishModal}
                                           onOpenDeleteModal={openDeleteModal}
-                                          onOpenUnlinkModal={openUnlinkModal}
-                                          onEditSubmit={handleEditSubmit}
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
-                                          onNewUnitSubmit={handleNewUnitSubmit}
-                                          onAddUnitFromLibrary={handleAddUnitFromLibrary.mutateAsync}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
-                                          resetScrollState={resetScrollState}
                                         >
                                           <SortableContext
                                             id={subsection.id}
@@ -443,14 +436,9 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                                                   subsection,
                                                   subsection.childInfo.children,
                                                 )}
-                                                savingStatus={savingStatus}
-                                                onOpenPublishModal={openPublishModal}
                                                 onOpenConfigureModal={openConfigureModal}
                                                 onOpenDeleteModal={openDeleteModal}
-                                                onOpenUnlinkModal={openUnlinkModal}
-                                                onEditSubmit={handleEditSubmit}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
-                                                getTitleLink={getUnitUrl}
                                                 onOrderChange={updateUnitOrderByIndex}
                                                 discussionsSettings={discussionsSettings}
                                               />
@@ -465,9 +453,8 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                             </DraggableList>
                             {courseActions.childAddable && (
                               <OutlineAddChildButtons
-                                handleNewButtonClick={handleNewSectionSubmit}
-                                handleUseFromLibraryClick={openAddLibrarySectionModal}
                                 childType={ContainerType.Section}
+                                parentLocator={courseUsageKey}
                               />
                             )}
                           </>
@@ -475,9 +462,8 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                           <EmptyPlaceholder>
                             {courseActions.childAddable && (
                               <OutlineAddChildButtons
-                                handleNewButtonClick={handleNewSectionSubmit}
-                                handleUseFromLibraryClick={openAddLibrarySectionModal}
                                 childType={ContainerType.Section}
+                                parentLocator={courseUsageKey}
                                 btnVariant="primary"
                                 btnClasses="mt-1"
                               />
@@ -489,15 +475,13 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                   </section>
                 </div>
               </article>
-            </Layout.Element>
-            <Layout.Element>
-              <CourseAuthoringOutlineSidebarSlot
-                courseId={courseId}
-                courseName={courseName}
-                sections={sections}
-              />
-            </Layout.Element>
-          </Layout>
+            </div>
+            <CourseAuthoringOutlineSidebarSlot
+              courseId={courseId}
+              courseName={courseName}
+              sections={sections}
+            />
+          </div>
           <EnableHighlightsModal
             isOpen={isEnableHighlightsModalOpen}
             close={closeEnableHighlightsModal}
@@ -509,11 +493,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
           onClose={closeHighlightsModal}
           onSubmit={handleHighlightsFormSubmit}
         />
-        <PublishModal
-          isOpen={isPublishModalOpen}
-          onClose={closePublishModal}
-          onPublishSubmit={handlePublishItemSubmit}
-        />
+        <PublishModal />
         <ConfigureModal
           isOpen={isConfigureModalOpen}
           onClose={handleConfigureModalClose}
@@ -536,30 +516,18 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
           close={closeUnlinkModal}
           onUnlinkSubmit={handleUnlinkItemSubmit}
         />
-        <StandardModal
-          title={intl.formatMessage(messages.sectionPickerModalTitle)}
-          isOpen={isAddLibrarySectionModalOpen}
-          onClose={closeAddLibrarySectionModal}
-          isOverflowVisible={false}
-          size="xl"
-        >
-          <ComponentPicker
-            showOnlyPublished
-            extraFilter={['block_type = "section"']}
-            componentPickerMode="single"
-            onComponentSelected={handleSelectLibrarySection}
-            visibleTabs={[ContentType.sections]}
-          />
-        </StandardModal>
       </Container>
       <div className="alert-toast">
         <ProcessingNotification
           // Show processing toast if any mutation is running
           isShow={
             isShowProcessingNotification
-            || handleAddUnitFromLibrary.isPending
-            || handleAddSubsectionFromLibrary.isPending
-            || handleAddSectionFromLibrary.isPending
+            || handleAddBlock.isPending
+            || handleAddAndOpenUnit.isPending
+            || isConfigureOpPending
+            || isSectionHighlightsUpdatePending
+            || isDuplicatingItem
+            || isPasting
           }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}

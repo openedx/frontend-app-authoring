@@ -14,7 +14,7 @@ import {
 } from '../../../search-manager';
 import { ToastContext } from '../../../generic/toast-context';
 import { CollectionMetadata } from '../../data/api';
-import { useLibraryContext } from '../../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../../common/context/SidebarContext';
 import genericMessages from '../messages';
 import messages from './messages';
@@ -119,11 +119,15 @@ const AddToCollectionsDrawer = ({
   onClose,
 }: CollectionsDrawerProps) => {
   const intl = useIntl();
-  const { libraryId } = useLibraryContext();
+  const { libraryId } = useOptionalLibraryContext();
+  const extraFilter = ['type = "collection"'];
+  if (libraryId) {
+    extraFilter.push(`context_key = "${libraryId}"`);
+  }
 
   return (
     <SearchContextProvider
-      extraFilter={[`context_key = "${libraryId}"`, 'type = "collection"']}
+      extraFilter={extraFilter}
       skipUrlUpdate
       skipBlockTypeFetch
     >
@@ -156,7 +160,7 @@ const EntityCollections = ({ collections, onManageClick }: {
   onManageClick: () => void;
 }) => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
 
   if (!collections?.length) {
     return (

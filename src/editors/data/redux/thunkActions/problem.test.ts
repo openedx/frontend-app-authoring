@@ -160,21 +160,24 @@ describe('problem thunkActions', () => {
   });
 
   describe('fetchAdvanceSettings', () => {
-    it('dispatches fetchAdvanceSettings action', () => {
-      fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
+    it('dispatches fetchAdvanceSettings action', async () => {
+      // eslint-disable-next-line no-void
+      void fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       expect(dispatchedAction.fetchAdvanceSettings).not.toEqual(undefined);
     });
-    it('dispatches actions.problem.updateField and loadProblem on success', () => {
+    it('dispatches actions.problem.updateField and loadProblem on success', async () => {
       dispatch.mockClear();
-      fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
+      // eslint-disable-next-line no-void
+      void fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       dispatchedAction.fetchAdvanceSettings.onSuccess({ data: { key: 'test', max_attempts: 1 } });
       expect(dispatch).toHaveBeenCalledWith(actions.problem.load(undefined));
     });
-    it('calls loadProblem on failure', () => {
+    it('calls loadProblem on failure', async () => {
       dispatch.mockClear();
-      fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
+      // eslint-disable-next-line no-void
+      void fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       dispatchedAction.fetchAdvanceSettings.onFailure();
       expect(dispatch).toHaveBeenCalledWith(actions.problem.load(undefined));

@@ -1,3 +1,4 @@
+// oxlint-disable unicorn/no-useless-spread
 /* eslint-disable react/prop-types */
 import userEvent from '@testing-library/user-event';
 
@@ -25,9 +26,9 @@ const blockId = '123';
 const handleCreateNewCourseXBlockMock = jest.fn();
 const usageKey = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fddest-usage-key';
 
-// Mock ComponentPicker to call onComponentSelected on click
+// Mock LibraryAndComponentPicker to call onComponentSelected on click
 jest.mock('../../library-authoring/component-picker', () => ({
-  ComponentPicker: (props) => {
+  LibraryAndComponentPicker: (props) => {
     const onClick = () => {
       if (props.componentPickerMode === 'single') {
         props.onComponentSelected({

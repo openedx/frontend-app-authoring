@@ -14,3 +14,10 @@ export interface UseIFrameBehaviorReturnTypes {
   showError: boolean;
   hasLoaded: boolean;
 }
+
+export type ParentIds = {
+  /** This id will be used to invalidate data of parent subsection */
+  subsectionId?: string;
+  /** This id will be used to invalidate data of parent section */
+  sectionId?: string;
+};

@@ -1,13 +1,19 @@
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
-  act, fireEvent, initializeMocks, render, screen, waitFor, within,
+  initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 
 import { XBlock } from '@src/data/types';
+import { Info } from '@openedx/paragon/icons';
+import userEvent from '@testing-library/user-event';
+import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
+import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
+const setCurrentSelection = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -15,6 +21,14 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
   useIgnoreLibraryBlockChanges: () => ({
     mutateAsync: mockUseIgnoreLibraryBlockChanges,
+  }),
+}));
+
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    getUnitUrl: (id: string) => `/some/${id}`,
+    setCurrentSelection,
   }),
 }));
 
@@ -68,6 +82,8 @@ const unit = {
     versionAvailable: 2,
     versionDeclined: null,
     errorMessage: null,
+    downstreamCustomized: [] as string[],
+    upstreamName: 'Upstream',
   },
 } satisfies Partial<XBlock> as XBlock;
 
@@ -79,13 +95,9 @@ const renderComponent = (props?: object) => render(
     index={1}
     getPossibleMoves={jest.fn()}
     onOrderChange={jest.fn()}
-    onOpenPublishModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
-    onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
-    onEditSubmit={jest.fn()}
     onDuplicateSubmit={jest.fn()}
-    getTitleLink={(id) => `/some/${id}`}
     isSelfPaced={false}
     isCustomRelativeDatesActive={false}
     discussionsSettings={{
@@ -97,6 +109,7 @@ const renderComponent = (props?: object) => render(
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
+    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
   },
 );
 
@@ -113,6 +126,34 @@ describe('<UnitCard />', () => {
       'href',
       '/some/block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
     );
+
+    // The card is not selected
+    const card = screen.getByTestId('unit-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+  });
+
+  it('render UnitCard component in selected state', async () => {
+    const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+
+    const { container } = renderComponent();
+
+    expect(screen.getByTestId('unit-card-header')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('unit-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+
+    // Get the <Row> that contains the card and click it to select the card
+    const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
+    expect(el).not.toBeNull();
+    await user.click(el!);
+
+    // The card is selected
+    expect(card).toHaveClass('outline-card-selected');
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
@@ -126,6 +167,7 @@ describe('<UnitCard />', () => {
   });
 
   it('hides duplicate & delete option based on duplicable & deletable action flag', async () => {
+    const user = userEvent.setup();
     const { findByTestId } = renderComponent({
       unit: {
         ...unit,
@@ -139,12 +181,13 @@ describe('<UnitCard />', () => {
     });
     const element = await findByTestId('unit-card');
     const menu = await within(element).findByTestId('unit-card-header__menu-button');
-    await act(async () => fireEvent.click(menu));
+    await user.click(menu);
     expect(within(element).queryByTestId('unit-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('unit-card-header__menu-delete-button')).not.toBeInTheDocument();
   });
 
   it('hides move, duplicate & delete options if parent was imported from library', async () => {
+    const user = userEvent.setup();
     const { findByTestId } = renderComponent({
       subsection: {
         ...subsection,
@@ -157,7 +200,7 @@ describe('<UnitCard />', () => {
     });
     const element = await findByTestId('unit-card');
     const menu = await within(element).findByTestId('unit-card-header__menu-button');
-    await act(async () => fireEvent.click(menu));
+    await user.click(menu);
     expect(within(element).queryByTestId('unit-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('unit-card-header__menu-delete-button')).not.toBeInTheDocument();
     expect(
@@ -169,6 +212,7 @@ describe('<UnitCard />', () => {
   });
 
   it('shows copy option based on enableCopyPasteUnits flag', async () => {
+    const user = userEvent.setup();
     const { findByTestId } = renderComponent({
       unit: {
         ...unit,
@@ -177,7 +221,7 @@ describe('<UnitCard />', () => {
     });
     const element = await findByTestId('unit-card');
     const menu = await within(element).findByTestId('unit-card-header__menu-button');
-    await act(async () => fireEvent.click(menu));
+    await user.click(menu);
     expect(within(element).queryByText(cardMessages.menuCopy.defaultMessage)).toBeInTheDocument();
   });
 
@@ -193,47 +237,131 @@ describe('<UnitCard />', () => {
   });
 
   it('should sync unit changes from upstream', async () => {
+    const user = userEvent.setup();
     renderComponent();
 
     expect(await screen.findByTestId('unit-card-header')).toBeInTheDocument();
 
     // Click on sync button
     const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
-    fireEvent.click(syncButton);
+    await user.click(syncButton);
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
 
     // Click on accept changes
     const acceptChangesButton = screen.getByText(/accept changes/i);
-    fireEvent.click(acceptChangesButton);
+    await user.click(acceptChangesButton);
 
     await waitFor(() => expect(mockUseAcceptLibraryBlockChanges).toHaveBeenCalled());
   });
 
   it('should decline sync unit changes from upstream', async () => {
+    const user = userEvent.setup();
     renderComponent();
 
     expect(await screen.findByTestId('unit-card-header')).toBeInTheDocument();
 
     // Click on sync button
     const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
-    fireEvent.click(syncButton);
+    await user.click(syncButton);
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
 
     // Click on ignore changes
     const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });
-    fireEvent.click(ignoreChangesButton);
+    await user.click(ignoreChangesButton);
 
     // Should open the confirmation modal
     expect(screen.getByRole('heading', { name: /ignore these changes\?/i })).toBeInTheDocument();
 
     // Click on ignore button
     const ignoreButton = screen.getByRole('button', { name: /ignore/i });
-    fireEvent.click(ignoreButton);
+    await user.click(ignoreButton);
 
     await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
+  });
+
+  it('should open legacy manage tags', async () => {
+    const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
+    });
+    renderComponent();
+    const element = await screen.findByTestId('unit-card');
+    const menu = await within(element).findByTestId('unit-card-header__menu-button');
+    await user.click(menu);
+
+    const manageTagsBtn = await within(element).findByTestId('unit-card-header__menu-manage-tags-button');
+    expect(manageTagsBtn).toBeInTheDocument();
+
+    await user.click(manageTagsBtn);
+
+    const drawer = await screen.findByRole('alert');
+    expect(within(drawer).getByText(/manage tags/i));
+  });
+
+  it('should open align sidebar', async () => {
+    const user = userEvent.setup();
+    const mockSetCurrentPageKey = jest.fn();
+    const mockSetSelectedContainerState = jest.fn();
+
+    const testSidebarPage = {
+      component: CourseInfoSidebar,
+      icon: Info,
+      title: '',
+    };
+
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockImplementation(() => ({
+        setCurrentPageKey: mockSetCurrentPageKey,
+        currentPageKey: 'info',
+        sidebarPages: {
+          info: testSidebarPage,
+          help: testSidebarPage,
+          add: testSidebarPage,
+        },
+        isOpen: true,
+        open: jest.fn(),
+        toggle: jest.fn(),
+        currentFlow: undefined,
+        startCurrentFlow: jest.fn(),
+        stopCurrentFlow: jest.fn(),
+        openContainerInfoSidebar: jest.fn(),
+        clearSelection: jest.fn(),
+        setSelectedContainerState: mockSetSelectedContainerState,
+      }));
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    renderComponent();
+    const element = await screen.findByTestId('unit-card');
+    const menu = await within(element).findByTestId('unit-card-header__menu-button');
+    await user.click(menu);
+
+    const manageTagsBtn = await within(element).findByTestId('unit-card-header__menu-manage-tags-button');
+    expect(manageTagsBtn).toBeInTheDocument();
+
+    await user.click(manageTagsBtn);
+
+    await waitFor(() => {
+      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
+    });
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: unit.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
+    expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
+      currentId: unit.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
   });
 });

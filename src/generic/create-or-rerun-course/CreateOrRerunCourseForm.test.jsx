@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   fireEvent,
   screen,
@@ -211,8 +210,8 @@ describe('<CreateOrRerunCourseForm />', () => {
 
     fireEvent.change(numberInput, { target: { value: 'long-name-which-is-longer-than-65-characters-to-check-for-errors' } });
 
-    waitFor(() => {
-      expect(screen.getByText(messages.totalLengthError)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(messages.totalLengthError.defaultMessage)).toBeInTheDocument();
     });
   });
 
@@ -278,9 +277,10 @@ describe('<CreateOrRerunCourseForm />', () => {
     const numberInput = await screen.findByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
 
     fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
+    fireEvent.blur(numberInput);
 
-    waitFor(() => {
-      expect(screen.getByText(messages.noSpaceError)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(messages.disallowedCharsError.defaultMessage)).toBeInTheDocument();
     });
   });
 });

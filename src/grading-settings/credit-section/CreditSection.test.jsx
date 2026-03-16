@@ -46,7 +46,7 @@ describe('<CreditSection />', () => {
     const inputElement = await findByTestId('minimum-grade-credit-input');
     expect(inputElement.value).toBe('10');
 
-    await fireEvent.change(inputElement, { target: { value: '.01' } });
+    fireEvent.change(inputElement, { target: { value: '.01' } });
     await findByText('Not able to set passing grade to less than: 0.1.');
   });
 });

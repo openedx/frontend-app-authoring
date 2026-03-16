@@ -7,11 +7,12 @@ import {
 } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
 import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
 import { ContainerType, getBlockType } from '../../generic/key-utils';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import {
   useContainerChildren,
   useUpdateContainer,
@@ -39,13 +40,16 @@ interface LibraryContainerMetadataWithUniqueId extends Container {
 
 interface ContainerRowProps extends LibraryContainerChildrenProps {
   container: LibraryContainerMetadataWithUniqueId;
+  index?: number;
 }
 
-const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) => {
+const ContainerRow = ({
+  containerKey, container, readOnly, index,
+}: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
@@ -54,7 +58,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
         displayName: newDisplayName,
       });
       showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
     }
   };
@@ -112,6 +116,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
           <ContainerMenu
             containerKey={container.originalId}
             displayName={container.displayName}
+            index={index}
           />
         )}
       </Stack>
@@ -123,7 +128,8 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
 export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryContainerChildrenProps) => {
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
-  const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
+  const { readOnly: libReadOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { navigateTo } = useLibraryRoutes();
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
@@ -138,7 +144,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     try {
       await orderMutator.mutateAsync(childrenKeys);
       showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
     }
   }, [orderMutator]);
@@ -148,7 +154,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     isLoading,
     isError,
     error,
-  } = useContainerChildren(containerKey, showOnlyPublished);
+  } = useContainerChildren<Container>(containerKey, showOnlyPublished);
 
   useEffect(() => {
     // Create new ids which are unique using index.
@@ -164,14 +170,18 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     return setOrderedChildren(newChildren || []);
   }, [children, setOrderedChildren]);
 
-  const handleChildClick = useCallback((child: LibraryContainerMetadataWithUniqueId, numberOfClicks: number) => {
+  const handleChildClick = useCallback((
+    child: LibraryContainerMetadataWithUniqueId,
+    numberOfClicks: number,
+    index: number,
+  ) => {
     if (readOnly) {
       // don't allow interaction if rendered as preview
       return;
     }
     const doubleClicked = numberOfClicks > 1;
     if (!doubleClicked) {
-      openItemSidebar(child.originalId, SidebarBodyItemId.ContainerInfo);
+      openItemSidebar(child.originalId, SidebarBodyItemId.ContainerInfo, index);
     } else {
       navigateTo({ containerId: child.originalId });
     }
@@ -215,7 +225,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
         activeId={activeDraggingId}
         setActiveId={setActiveDraggingId}
       >
-        {orderedChildren?.map((child) => (
+        {orderedChildren?.map((child, index) => (
           // A container can have multiple instances of the same block
           // eslint-disable-next-line react/no-array-index-key
           <SortableItem
@@ -229,19 +239,20 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               borderLeft: '8px solid #E1DDDB',
             }}
             isClickable={!readOnly}
-            onClick={(e) => skipIfUnwantedTarget(e, (event) => handleChildClick(child, event.detail))}
+            onClick={(e) => skipIfUnwantedTarget(e, (event) => handleChildClick(child, event.detail, index))}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleChildClick(child, 1);
+                handleChildClick(child, 1, index);
               }
             }}
             disabled={readOnly || libReadOnly}
-            cardClassName={sidebarItemInfo?.id === child.originalId ? 'selected' : undefined}
+            cardClassName={sidebarItemInfo?.id === child.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined}
             actions={(
               <ContainerRow
                 containerKey={containerKey}
                 container={child}
                 readOnly={readOnly || libReadOnly}
+                index={index}
               />
             )}
           />

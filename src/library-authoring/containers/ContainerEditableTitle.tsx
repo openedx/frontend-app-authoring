@@ -1,8 +1,9 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { useContext } from 'react';
 import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useContainer, useUpdateContainer } from '../data/apiHooks';
 import messages from './messages';
 
@@ -14,7 +15,8 @@ interface EditableTitleProps {
 export const ContainerEditableTitle = ({ containerId, textClassName }: EditableTitleProps) => {
   const intl = useIntl();
 
-  const { readOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   const { data: container } = useContainer(containerId);
 
@@ -27,7 +29,7 @@ export const ContainerEditableTitle = ({ containerId, textClassName }: EditableT
         displayName: newDisplayName,
       });
       showToast(intl.formatMessage(messages.updateContainerSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(messages.updateContainerErrorMsg));
     }
   };

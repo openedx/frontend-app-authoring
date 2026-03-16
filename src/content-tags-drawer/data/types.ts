@@ -1,4 +1,4 @@
-import type { TaxonomyData } from '../../taxonomy/data/types';
+import type { TaxonomyData } from '@src/taxonomy/data/types';
 
 /** A tag that has been applied to some content. */
 export interface Tag {
@@ -8,6 +8,7 @@ export interface Tag {
   lineage: string[];
   canChangeObjecttag: boolean;
   canDeleteObjecttag: boolean;
+  isCopied: boolean;
 }
 
 /** A list of the tags from one taxonomy that are applied to a content object. */

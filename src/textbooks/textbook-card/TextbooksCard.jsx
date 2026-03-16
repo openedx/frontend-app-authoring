@@ -66,7 +66,6 @@ const TextbookCard = ({
           initialFormValues={getTextbookFormInitialValues(true, { tab_title: tabTitle, chapters, id })}
           onSubmit={onEditSubmit}
           onSavingStatus={handleSavingStatusDispatch}
-          courseId={courseId}
         />
       ) : (
         (

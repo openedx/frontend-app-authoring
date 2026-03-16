@@ -68,8 +68,13 @@ const messages = defineMessages({
   },
   breadcrumbAriaLabel: {
     id: 'course-authoring.container-comparison.diff.breadcrumb.ariaLabel',
-    defaultMessage: 'Title breadcrumb',
-    description: 'Aria label text for breadcrumb in diff preview',
+    defaultMessage: 'Location',
+    description: 'Accessible label for the breadcrumbs which display the location of the unit, e.g. Section 1 > Unit 4',
+  },
+  breadcrumbBackLabel: {
+    id: 'course-authoring.container-comparison.diff.breadcrumb.backLabel',
+    defaultMessage: 'Back',
+    description: 'Link to go back to the parent section/subsection',
   },
   diffBeforeTitle: {
     id: 'course-authoring.container-comparison.diff.before.title',

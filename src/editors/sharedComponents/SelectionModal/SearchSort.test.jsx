@@ -1,8 +1,6 @@
-import React from 'react';
-
 import '@testing-library/jest-dom';
 import {
-  act, fireEvent, render, screen,
+  fireEvent, render, screen,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -48,43 +46,36 @@ describe('SearchSort component', () => {
     );
   }
 
-  test('adds a sort option for each sortKey', async () => {
+  test('adds a sort option for each sortKey', () => {
     const { getByRole } = getComponent();
-    await act(() => {
-      fireEvent.click(screen.getByRole('button', {
-        name: /By oldest/i,
-      }));
-    });
+    fireEvent.click(screen.getByRole('button', {
+      name: /By oldest/i,
+    }));
     Object.values(sortMessages)
       .forEach(({ defaultMessage }) => {
         expect(getByRole('link', { name: `By ${defaultMessage}` }))
           .toBeInTheDocument();
       });
   });
-  test('adds a sort option for each sortKey', async () => {
+  test('adds a sort option for each sortKey', () => {
     const { getByRole } = getComponent();
-    await act(() => {
-      fireEvent.click(screen.getByRole('button', { name: /oldest/i }));
-    });
+    fireEvent.click(screen.getByRole('button', { name: /oldest/i }));
     Object.values(sortMessages)
       .forEach(({ defaultMessage }) => {
         expect(getByRole('link', { name: `By ${defaultMessage}` }))
           .toBeInTheDocument();
       });
   });
-  test('adds a filter option for each filter key', async () => {
+  test('adds a filter option for each filter key', () => {
     const { getByTestId } = getComponent();
-    act(() => {
-      fireEvent.click(getByTestId('dropdown-filter'));
-    });
-
+    fireEvent.click(getByTestId('dropdown-filter'));
     Object.keys(filterMessages)
       .forEach((key) => {
         expect(getByTestId(`dropdown-filter-${key}`))
           .toBeInTheDocument();
       });
   });
-  test('searchbox should show clear message button when not empty', async () => {
+  test('searchbox should show clear message button when not empty', () => {
     const { queryByRole } = getComponent({ searchString: 'some string' });
     expect(queryByRole('button', { name: messages.clearSearch.defaultMessage }))
       .toBeInTheDocument();

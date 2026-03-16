@@ -25,11 +25,11 @@ import type { LibraryV1Data } from '@src/studio-home/data/api';
 import { ToastContext } from '@src/generic/toast-context';
 import { Filter, LibrariesList } from '@src/studio-home/tabs-section/libraries-tab';
 
+import { useBulkModulestoreMigrate } from '@src/data/apiHooks';
 import messages from './messages';
 import { SelectDestinationView } from './SelectDestinationView';
 import { ConfirmationView } from './ConfirmationView';
 import { LegacyMigrationHelpSidebar } from './LegacyMigrationHelpSidebar';
-import { useUpdateContainerCollections } from './data/apiHooks';
 
 export type MigrationStep = 'select-libraries' | 'select-destination' | 'confirmation-view';
 
@@ -83,7 +83,7 @@ export const LegacyLibMigrationPage = () => {
   const [migrationFilter, setMigrationFilter] = useState<Filter[]>([Filter.unmigrated]);
   const [destinationLibrary, setDestination] = useState<ContentLibrary>();
   const [confirmationButtonState, setConfirmationButtonState] = useState('default');
-  const migrate = useUpdateContainerCollections();
+  const migrate = useBulkModulestoreMigrate();
 
   const handleMigrate = useCallback(async () => {
     if (destinationLibrary) {
@@ -98,7 +98,7 @@ export const LegacyLibMigrationPage = () => {
           count: legacyLibraries.length,
         }));
         navigate(`/library/${destinationLibrary.id}?migration_task=${migrationTask.uuid}`);
-      } catch (error) {
+      } catch {
         showToast(intl.formatMessage(messages.migrationFailed));
       }
     }
@@ -114,6 +114,7 @@ export const LegacyLibMigrationPage = () => {
         break;
       case 'confirmation-view':
         setConfirmationButtonState('pending');
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         handleMigrate();
         break;
       default:

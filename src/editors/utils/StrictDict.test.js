@@ -39,7 +39,9 @@ describe('StrictDict', () => {
     expect(Object.values(dict)).toEqual([value1, value2]);
   });
   it('allows stringification', () => {
-    expect(dict.toString()).toEqual(rawDict.toString());
+    // Note: StrictDict stringifies as '[object Object]' which isn't stringification in any meaningful sense.
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+    expect(dict.toString()).toEqual('[object Object]');
     expect({ ...dict }).toEqual({ ...rawDict });
   });
   it('allows entry listing', () => {

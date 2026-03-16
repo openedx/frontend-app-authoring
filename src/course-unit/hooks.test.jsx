@@ -1,61 +1,9 @@
 import React from 'react';
 import { act, renderHook } from '@testing-library/react';
-import { useScrollToLastPosition, useLayoutGrid } from './hooks';
+import { useScrollToLastPosition } from './hooks';
 import { iframeMessageTypes } from '../constants';
 
 jest.useFakeTimers();
-
-describe('useLayoutGrid', () => {
-  it('returns fullWidth layout when isUnitLibraryType is true', () => {
-    const { result } = renderHook(() => useLayoutGrid('someCategory', true));
-
-    expect(result.current).toEqual({
-      lg: [{ span: 12 }, { span: 0 }],
-      md: [{ span: 12 }, { span: 0 }],
-      sm: [{ span: 12 }, { span: 0 }],
-      xs: [{ span: 12 }, { span: 0 }],
-      xl: [{ span: 12 }, { span: 0 }],
-    });
-  });
-
-  it('returns default layout when isUnitLibraryType is false', () => {
-    const { result } = renderHook(() => useLayoutGrid('someCategory', false));
-
-    expect(result.current).toEqual({
-      lg: [{ span: 8 }, { span: 4 }],
-      md: [{ span: 8 }, { span: 4 }],
-      sm: [{ span: 8 }, { span: 3 }],
-      xs: [{ span: 9 }, { span: 3 }],
-      xl: [{ span: 9 }, { span: 3 }],
-    });
-  });
-
-  it('does not recompute layout if unitCategory remains the same', () => {
-    const { result, rerender } = renderHook(
-      ({ unitCategory, isUnitLibraryType }) => useLayoutGrid(unitCategory, isUnitLibraryType),
-      { initialProps: { unitCategory: 'category1', isUnitLibraryType: false } },
-    );
-
-    const firstResult = result.current;
-
-    rerender({ unitCategory: 'category1', isUnitLibraryType: false });
-
-    expect(result.current).toBe(firstResult);
-  });
-
-  it('recomputes layout when unitCategory changes', () => {
-    const { result, rerender } = renderHook(
-      ({ unitCategory, isUnitLibraryType }) => useLayoutGrid(unitCategory, isUnitLibraryType),
-      { initialProps: { unitCategory: 'category1', isUnitLibraryType: false } },
-    );
-
-    const firstResult = result.current;
-
-    rerender({ unitCategory: 'category2', isUnitLibraryType: false });
-
-    expect(result.current).not.toBe(firstResult);
-  });
-});
 
 describe('useScrollToLastPosition', () => {
   const storageKey = 'createXBlockLastYPosition';

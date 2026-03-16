@@ -8,11 +8,11 @@ import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { RequestStatus } from '@src/data/constants';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { updateModel, updateModels } from '@src/generic/model-store';
+import { createCourseXblock } from '@src/course-outline/data/api';
 import { messageTypes } from '../constants';
 import {
   editUnitDisplayName,
   getVerticalData,
-  createCourseXblock,
   getCourseContainerChildren,
   handleCourseUnitVisibilityAndData,
   deleteUnitItem,
@@ -58,7 +58,7 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
       localStorage.removeItem('staticFileNotices');
       dispatch(fetchSequenceSuccess({ sequenceId }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.FAILED }));
       dispatch(fetchSequenceFailure({ sequenceId }));
       return false;
@@ -117,8 +117,8 @@ export function editCourseUnitVisibilityAndData(
         itemId,
         type,
         isVisible,
-        groupAccess,
         isDiscussionEnabled,
+        groupAccess,
       ).then(async (result) => {
         if (result) {
           if (callback) {
@@ -204,7 +204,7 @@ export function fetchCourseVerticalChildrenData(itemId, isSplitTestType, skipPag
       }
       dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
       dispatch(updateCourseVerticalChildrenLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(updateCourseVerticalChildrenLoadingStatus({ status: RequestStatus.FAILED }));
     }
   };

@@ -1,3 +1,4 @@
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
   initializeMocks, waitFor, render, screen,
 } from '../testUtils';
@@ -6,14 +7,14 @@ import { getXBlockApiUrl } from '../course-outline/data/api';
 
 let axiosMock;
 const courseId = '123';
-const subsectionId = 'block-v1+edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
+const subsectionId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
 const path = '/subsection/:subsectionId';
 
 const expectedCourseItemDataWithUnit = {
   childInfo: {
     children: [
       {
-        id: 'unitId',
+        id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@1',
       },
     ],
   },
@@ -26,12 +27,17 @@ const expectedCourseItemDataWithoutUnit = [{
 }];
 
 const renderSubsectionRedirectPage = () => {
-  render(<SubsectionUnitRedirect courseId={courseId} />, {
-    path,
-    routerProps: {
-      initialEntries: [`/subsection/${subsectionId}`],
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <SubsectionUnitRedirect />
+    </CourseAuthoringProvider>,
+    {
+      path,
+      routerProps: {
+        initialEntries: [`/subsection/${subsectionId}`],
+      },
     },
-  });
+  );
 };
 
 jest.mock('react-router-dom', () => {
@@ -58,7 +64,12 @@ describe('SubsectionUnitRedirect', () => {
       // Confirm redirection by checking the final URL
       const mockNavigate = screen.getByTestId('mock-navigate');
       expect(mockNavigate).toBeInTheDocument();
-      expect(mockNavigate).toHaveAttribute('data-to', `/course/${courseId}/container/unitId`);
+      expect(mockNavigate).toHaveAttribute(
+        'data-to',
+        `/course/${courseId}/container/${encodeURIComponent(
+          'block-v1:edX+DemoX+Demo_Course+type@vertical+block@1',
+        )}`,
+      );
     });
   });
 

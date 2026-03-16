@@ -251,9 +251,9 @@ describe('<ImportTagsWizard />', () => {
     } = render(<RootWrapper taxonomy={null} onClose={onClose} />);
 
     // Check that there is no export step
-    expect(await queryByTestId('export-step')).not.toBeInTheDocument();
+    expect(queryByTestId('export-step')).not.toBeInTheDocument();
     // Check that there is no back button in the upload step
-    expect(await queryByTestId('back-button')).not.toBeInTheDocument();
+    expect(queryByTestId('back-button')).not.toBeInTheDocument();
 
     // Check that we are on the upload step
     expect(getByTestId('upload-step')).toBeInTheDocument();

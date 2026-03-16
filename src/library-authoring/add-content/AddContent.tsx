@@ -53,6 +53,7 @@ type AddContentViewProps = {
   onCreateContent: (blockType: string) => void,
   isAddLibraryContentModalOpen: boolean,
   closeAddLibraryContentModal: () => void,
+  isComponentPicker?: boolean,
 };
 
 type AddAdvancedContentViewProps = {
@@ -87,9 +88,9 @@ const AddContentView = ({
   onCreateContent,
   isAddLibraryContentModalOpen,
   closeAddLibraryContentModal,
+  isComponentPicker,
 }: AddContentViewProps) => {
   const intl = useIntl();
-  const { componentPicker } = useLibraryContext();
   const {
     insideCollection,
     insideUnit,
@@ -231,7 +232,7 @@ const AddContentView = ({
   return (
     <>
       {visibleButtons}
-      {componentPicker && visibleButtons.includes(existingContentButton) && (
+      {isComponentPicker && visibleButtons.includes(existingContentButton) && (
         <PickLibraryContentModal
           isOpen={isAddLibraryContentModalOpen}
           onClose={closeAddLibraryContentModal}
@@ -297,7 +298,7 @@ export const parseErrorMsg = (
     if (detail) {
       return intl.formatMessage(detailedMessage, { detail });
     }
-  } catch (_err) {
+  } catch {
     // ignore
   }
   return intl.formatMessage(defaultMessage);
@@ -312,6 +313,7 @@ const AddContent = () => {
     openCreateCollectionModal,
     setCreateContainerModalType,
     openComponentEditor,
+    componentPicker,
   } = useLibraryContext();
   const {
     insideCollection,
@@ -395,15 +397,16 @@ const AddContent = () => {
 
   // Include the 'Paste from Clipboard' button if there is an Xblock in the clipboard
   // that can be pasted
-  const showPasteButton = false
+  const showPasteButton = (
     // We are not in a unit, subsection, or section, so we can paste any XBlock
-    || (!(insideUnit || insideSubsection || insideSection) && isPasteable)
+    (!(insideUnit || insideSubsection || insideSection) && isPasteable)
     // We are in a unit, so we can paste only components
     || (insideUnit && showPasteXBlock)
     // We are in a subsection, so we can only paste units
     || (insideSubsection && showPasteUnit)
     // We are in a section, so we can only paste subsections
-    || (insideSection && showPasteSubsection);
+    || (insideSection && showPasteSubsection)
+  );
 
   if (showPasteButton) {
     const pasteButton = {
@@ -458,7 +461,7 @@ const AddContent = () => {
     const suportedEditorTypes = Object.values(blockTypes);
     if (suportedEditorTypes.includes(blockType)) {
       // linkComponent on editor close.
-      openComponentEditor('', (data) => data && linkComponent(data.id), blockType);
+      openComponentEditor?.('', (data) => data && linkComponent(data.id), blockType);
     } else {
       createBlockMutation.mutateAsync({
         libraryId,
@@ -483,7 +486,7 @@ const AddContent = () => {
     if (blockType === 'paste') {
       onPaste();
     } else if (blockType === 'collection') {
-      openCreateCollectionModal();
+      openCreateCollectionModal?.();
     } else if (blockType === 'libraryContent') {
       showAddLibraryContentModal();
     } else if (blockType === 'advancedXBlock') {
@@ -493,7 +496,7 @@ const AddContent = () => {
       ContainerType.Subsection,
       ContainerType.Section,
     ].includes(blockType as ContainerType)) {
-      setCreateContainerModalType(blockType as ContainerType);
+      setCreateContainerModalType?.(blockType as ContainerType);
     } else {
       onCreateBlock(blockType);
     }
@@ -519,6 +522,7 @@ const AddContent = () => {
           onCreateContent={onCreateContent}
           isAddLibraryContentModalOpen={isAddLibraryContentModalOpen}
           closeAddLibraryContentModal={closeAddLibraryContentModal}
+          isComponentPicker={!!componentPicker}
         />
       )}
     </Stack>

@@ -3,13 +3,12 @@ import { initializeMockApp } from '@edx/frontend-platform/testing';
 import MockAdapter from 'axios-mock-adapter';
 import { waitFor } from '@testing-library/react';
 import { DivisionSchemes } from '../../../data/constants';
-import { LOADED } from '../../../data/slice';
 import initializeStore from '../../../store';
 import { executeThunk } from '../../../utils';
 import { generateProvidersApiResponse, legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
 import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from './api';
 import {
-  DENIED, FAILED, SAVED, selectApp, updateValidationStatus,
+  DENIED, FAILED, SAVED, LOADED, selectApp, updateValidationStatus,
 } from './slice';
 import { fetchDiscussionSettings, fetchProviders, saveProviderConfig } from './thunks';
 
@@ -326,9 +325,10 @@ describe('Data layer integration tests', () => {
     test('successfully saves an LTI configuration', async () => {
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
+      // Note: if this test is failing, it's likely because the POSTed data has changed and no longer exactly matches
+      // the expected data in the mock below.
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
         context_key: courseId,
-        enabled: true,
         lti_configuration: {
           lti_1p1_client_key: 'new_consumer_key',
           lti_1p1_client_secret: 'new_consumer_secret',
@@ -363,7 +363,7 @@ describe('Data layer integration tests', () => {
         mockedNavigator,
       ), store.dispatch);
 
-      waitFor(() => {
+      await waitFor(() => {
         expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
         expect(store.getState().discussions).toEqual(
           expect.objectContaining({
@@ -388,9 +388,10 @@ describe('Data layer integration tests', () => {
     test('successfully saves a Legacy configuration', async () => {
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false, 'legacy'));
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, legacyApiResponse);
+      // Note: if this test is failing, it's likely because the POSTed data has changed and no longer exactly matches
+      // the expected data in the mock below.
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
         context_key: courseId,
-        enabled: true,
         lti_configuration: {},
         plugin_configuration: {
           allow_anonymous: true,
@@ -458,7 +459,7 @@ describe('Data layer integration tests', () => {
         pagesAndResourcesPath,
         mockedNavigator,
       ), store.dispatch);
-      waitFor(() => {
+      await waitFor(() => {
         expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
         expect(store.getState().discussions).toEqual(
           expect.objectContaining({

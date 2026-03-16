@@ -5,6 +5,7 @@ import {
   useQueries,
   useMutation,
   useQueryClient,
+  skipToken,
 } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 import { TagData, TagListData } from '@src/taxonomy/data/types';
@@ -17,16 +18,21 @@ import {
 } from './api';
 import { libraryAuthoringQueryKeys, libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
 import { getLibraryId } from '../../generic/key-utils';
-import { UpdateTagsData } from './types';
+import type { UpdateTagsData } from './types';
 
 /**
  * Builds the query to get the taxonomy tags
- * @param taxonomyId The id of the taxonomy to fetch tags for
- * @param parentTag The tag whose children we're loading, if any
- * @param searchTerm The term passed in to perform search on tags
- * @param numPages How many pages of tags to load at this level
  */
-export const useTaxonomyTagsData = (taxonomyId: number, parentTag: string | null = null, numPages = 1, searchTerm = '') => {
+export const useTaxonomyTagsData = (
+  /** The id of the taxonomy to fetch tags for */
+  taxonomyId: number,
+  /** The tag whose children we're loading, if any */
+  parentTag: string | null = null,
+  /** How many pages of tags to load at this level */
+  numPages = 1,
+  /** The term passed in to perform search on tags */
+  searchTerm = '',
+) => {
   const queryClient = useQueryClient();
 
   const queryFn = async ({ queryKey }) => {
@@ -110,11 +116,10 @@ export const useContentTaxonomyTagsData = (contentId: string) => (
  * @param contentId The id of the content object
  * @param enabled Flag to enable/disable the query
  */
-export const useContentData = (contentId: string, enabled: boolean) => (
+export const useContentData = (contentId?: string, enabled: boolean = true) => (
   useQuery({
     queryKey: ['contentData', contentId],
-    queryFn: () => getContentData(contentId),
-    enabled,
+    queryFn: (enabled && contentId) ? () => getContentData(contentId) : skipToken,
   })
 );
 
@@ -128,7 +133,7 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
   const { containerId } = useParams();
 
   return useMutation({
-    mutationFn: ({ tagsData }: { tagsData: Promise<UpdateTagsData[]> }) => (
+    mutationFn: ({ tagsData }: { tagsData: UpdateTagsData[] }) => (
       updateContentTaxonomyTags(contentId, tagsData)
     ),
     onSettled: () => {
@@ -167,6 +172,7 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
         // feature to support the legacy Django template courseware page.
 
         // Sends content tags.
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         getContentTaxonomyTagsData(contentId).then((data) => {
           const contentData = { contentId, ...data };
 
@@ -182,6 +188,7 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
         });
 
         // Sends tags count.
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         getContentTaxonomyTagsCount(contentId).then((count) => {
           const contentData = { contentId, count };
 

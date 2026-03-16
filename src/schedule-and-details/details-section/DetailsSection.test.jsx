@@ -32,7 +32,7 @@ describe('<DetailsSection />', () => {
     ).toBeInTheDocument();
   });
 
-  it('should call onChange if dropdown value changed', () => {
+  it('should call onChange if dropdown value changed', async () => {
     const { getByRole } = render(<RootWrapper {...props} />);
     const option = getByRole('button', {
       name: courseSettingsMock.languageOptions[1][1],
@@ -42,7 +42,7 @@ describe('<DetailsSection />', () => {
       name: courseSettingsMock.languageOptions[0][1],
     });
 
-    waitFor(() => expect(anotherOption));
+    await waitFor(() => expect(anotherOption));
     fireEvent.click(anotherOption);
     expect(onChangeMock).toHaveBeenCalledWith(
       courseSettingsMock.languageOptions[0][0],

@@ -1,16 +1,12 @@
-import React from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import MockAdapter from 'axios-mock-adapter';
-import { render, queryByLabelText, queryByTestId } from '@testing-library/react';
+import {
+  render, queryByLabelText, queryByTestId, initializeMocks,
+} from '@src/testUtils';
+import { executeThunk } from '@src/utils';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import AppCard from './AppCard';
 import messages from './messages';
 import appMessages from '../app-config-form/messages';
-import initializeStore from '../../../store';
-import { executeThunk } from '../../../utils';
 import { getDiscussionsProvidersUrl } from '../data/api';
 import { fetchProviders } from '../data/thunks';
 import { legacyApiResponse } from '../factories/mockApiResponses';
@@ -29,17 +25,9 @@ describe('AppCard', () => {
   let container;
 
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = await initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
   });
 
   const mockStore = async (mockResponse) => {
@@ -49,16 +37,14 @@ describe('AppCard', () => {
 
   const createComponent = (data) => {
     const wrapper = render(
-      <AppProvider store={store}>
-        <IntlProvider locale="en">
-          <AppCard
-            app={data}
-            onClick={() => jest.fn()}
-            selected={selected}
-            features={[]}
-          />
-        </IntlProvider>
-      </AppProvider>,
+      <CourseAuthoringProvider courseId={courseId}>
+        <AppCard
+          app={data}
+          onClick={() => jest.fn()}
+          selected={selected}
+          features={[]}
+        />
+      </CourseAuthoringProvider>,
     );
     container = wrapper.container;
     return container;

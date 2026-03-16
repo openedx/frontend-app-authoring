@@ -1,3 +1,10 @@
 .courses-tab-container {
   min-height: 80vh;
+
+  .previously-migrated-chip {
+    .pgn__chip {
+      border: 0;
+      background-color: var(--pgn-color-warning-500);
+    }
+  }
 }

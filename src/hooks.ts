@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useMemo,
 } from 'react';
 import { history } from '@edx/frontend-platform';
 import { useLocation, useSearchParams } from 'react-router-dom';
@@ -189,4 +190,41 @@ export function useStateWithUrlSearchParam<Type>(
 
   // Return the computed value and wrapped set state function
   return [returnValue, returnSetter];
+}
+
+/**
+ * Creates a custom React hook that manages the state of a given value persistently across sessions.
+ * The stored value is kept in `window.localStorage`.
+ */
+export function useStickyState<T>(
+  defaultValue: T,
+  key: string,
+): [T, React.Dispatch<React.SetStateAction<T>>] {
+  const [value, setValue] = useState<T>(() => {
+    const stickyValue = window.localStorage.getItem(key);
+
+    return stickyValue !== null
+      ? JSON.parse(stickyValue)
+      : defaultValue;
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue];
+}
+
+export function useToggleWithValue<T>(defaultValue?: T): [
+  isDefined: boolean, value: T | undefined, define: ((val: T) => void), undefine: () => void,
+] {
+  const [value, setValue] = useState<T | undefined>(defaultValue);
+  const define = useCallback((val: T) => {
+    setValue(val);
+  }, []);
+  const undefine = useCallback(() => {
+    setValue(undefined);
+  }, []);
+  const isDefined = useMemo(() => value !== undefined, [value]);
+  return [isDefined, value, define, undefine];
 }

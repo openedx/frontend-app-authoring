@@ -24,7 +24,7 @@ import { useContentLibrary } from '@src/library-authoring/data/apiHooks';
 
 export const LibraryBackupPage = () => {
   const intl = useIntl();
-  const { libraryId } = useLibraryContext();
+  const { libraryId, readOnly } = useLibraryContext();
   const [taskId, setTaskId] = useState<string>('');
   const [isMutationInProgress, setIsMutationInProgress] = useState<boolean>(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -49,7 +49,7 @@ export const LibraryBackupPage = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } catch (error) {
+    } catch {
       // Fallback to window.location.href if the above fails
       window.location.href = url;
     }
@@ -144,6 +144,7 @@ export const LibraryBackupPage = () => {
           title={libraryData.title}
           org={libraryData.org}
           contextId={libraryId}
+          readOnly={readOnly}
           isLibrary
           containerProps={{
             size: undefined,

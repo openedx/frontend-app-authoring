@@ -1,6 +1,8 @@
 import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
 
+import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
+import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import {
   initializeMocks, render as baseRender, screen, waitFor, within, fireEvent,
 } from '../../testUtils';
@@ -43,18 +45,21 @@ const collectionHitSample: CollectionHit = {
 let axiosMock: MockAdapter;
 let mockShowToast;
 
-const libraryId = 'lib:org1:Demo_Course';
+const { libraryId } = mockContentLibrary;
 
-const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => baseRender(ui, {
+const render = (
+  ui: React.ReactElement,
+  showOnlyPublished: boolean = false,
+  libId: string = libraryId,
+) => baseRender(ui, {
   path: '/library/:libraryId',
-  params: { libraryId },
+  params: { libraryId: libId },
   extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId="lib:Axim:TEST"
-      showOnlyPublished={showOnlyPublished}
-    >
-      {children}
-    </LibraryProvider>
+    <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
+      <LibraryProvider libraryId={libId}>
+        {children}
+      </LibraryProvider>
+    </PublishedFilterContextProvider>
   ),
 });
 
@@ -63,6 +68,7 @@ describe('<CollectionCard />', () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     mockShowToast = mocks.mockShowToast;
+    mockContentLibrary.applyMock();
   });
 
   it('should render the card with title and description', () => {
@@ -192,5 +198,25 @@ describe('<CollectionCard />', () => {
       expect(axiosMock.history.delete.length).toEqual(1);
       expect(mockShowToast).toHaveBeenCalledWith('Failed to delete collection');
     });
+  });
+
+  it('should not show delete button when library is read-only', async () => {
+    const user = userEvent.setup();
+
+    // Render with read-only library
+    render(<CollectionCard hit={collectionHitSample} />, false, mockContentLibrary.libraryIdReadOnly);
+
+    // Open menu
+    const menu = await screen.findByTestId('collection-card-menu-toggle');
+    expect(menu).toBeInTheDocument();
+    await user.click(menu);
+
+    // Delete button should not be visible in readonly mode
+    const deleteOption = screen.queryByRole('button', { name: 'Delete' });
+    expect(deleteOption).not.toBeInTheDocument();
+
+    // Open button should still be visible
+    const openOption = screen.queryByRole('button', { name: 'Open' });
+    expect(openOption).toBeInTheDocument();
   });
 });

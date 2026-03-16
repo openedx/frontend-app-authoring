@@ -19,7 +19,8 @@ import Loading from '@src/generic/Loading';
 import TagCount from '@src/generic/tag-count';
 import { ToastContext } from '@src/generic/toast-context';
 import { skipIfUnwantedTarget, useRunOnNextRender } from '@src/utils';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
 import {
@@ -46,15 +47,16 @@ interface LibraryBlockMetadataWithUniqueId extends LibraryBlockMetadata {
 }
 
 interface ComponentBlockProps {
+  index: number;
   block: LibraryBlockMetadataWithUniqueId;
   readOnly?: boolean;
   isDragging?: boolean;
 }
 
 /** Component header */
-const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
+const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { showToast } = useContext(ToastContext);
   const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
@@ -68,7 +70,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
         },
       });
       showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
     }
   };
@@ -118,17 +120,19 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
           </Badge>
         )}
         <TagCount size="sm" count={block.tagsCount} onClick={readOnly ? undefined : jumpToManageTags} />
-        {!readOnly && <ComponentMenu usageKey={block.originalId} />}
+        {!readOnly && <ComponentMenu index={index} usageKey={block.originalId} />}
       </Stack>
     </>
   );
 };
 
 /** ComponentBlock to render preview of given component under Unit */
-const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) => {
-  const { showOnlyPublished } = useLibraryContext();
+const ComponentBlock = ({
+  block, readOnly, isDragging, index,
+}: ComponentBlockProps) => {
+  const { openComponentEditor } = useOptionalLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
-  const { openComponentEditor } = useLibraryContext();
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
 
   const handleComponentSelection = useCallback((numberOfClicks: number) => {
@@ -136,11 +140,15 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
       // don't allow interaction if rendered as preview
       return;
     }
-    openItemSidebar(block.originalId, SidebarBodyItemId.ComponentInfo);
+    openItemSidebar(
+      block.originalId,
+      SidebarBodyItemId.ComponentInfo,
+      index,
+    );
     const canEdit = canEditComponent(block.originalId);
     if (numberOfClicks > 1 && canEdit) {
       // Open editor on double click.
-      openComponentEditor(block.originalId);
+      openComponentEditor?.(block.originalId);
     }
   }, [block, openItemSidebar, canEditComponent, openComponentEditor, readOnly]);
 
@@ -174,7 +182,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
       <SortableItem
         id={block.id}
         componentStyle={getComponentStyle()}
-        actions={<BlockHeader block={block} readOnly={readOnly} />}
+        actions={<BlockHeader block={block} index={index} readOnly={readOnly} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
@@ -189,7 +197,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
           }
         }}
         disabled={readOnly}
-        cardClassName={sidebarItemInfo?.id === block.originalId ? 'selected' : undefined}
+        cardClassName={sidebarItemInfo?.id === block.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
@@ -226,7 +234,8 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { showToast } = useContext(ToastContext);
 
-  const { readOnly: libraryReadOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly: libraryReadOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   const readOnly = componentReadOnly || libraryReadOnly;
 
@@ -236,7 +245,7 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
     isLoading,
     isError,
     error,
-  } = useContainerChildren(unitId, showOnlyPublished);
+  } = useContainerChildren<LibraryBlockMetadata>(unitId, showOnlyPublished);
 
   const handleReorder = useCallback(() => async (newOrder?: LibraryBlockMetadataWithUniqueId[]) => {
     if (!newOrder) {
@@ -246,7 +255,7 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
     try {
       await orderMutator.mutateAsync(usageKeys);
       showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
     }
   }, [orderMutator]);
@@ -294,6 +303,7 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
             // eslint-disable-next-line react/no-array-index-key
             key={`${block.originalId}-${idx}-${block.modified}`}
             block={block}
+            index={idx}
             isDragging={hidePreviewFor === block.id}
             readOnly={readOnly}
           />

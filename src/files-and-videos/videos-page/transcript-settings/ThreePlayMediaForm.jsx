@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Form,
   Icon,
@@ -18,9 +18,8 @@ const ThreePlayMediaForm = ({
   data,
   setData,
   transcriptionPlan,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   if (hasTranscriptCredentials) {
     const selectedLanguages = data.preferredLanguages ? data.preferredLanguages : [];
     const turnaroundOptions = transcriptionPlan.turnaround;
@@ -133,8 +132,6 @@ ThreePlayMediaForm.propTypes = {
     translations: PropTypes.shape({}),
     languages: PropTypes.shape({}),
   }).isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(ThreePlayMediaForm);
+export default ThreePlayMediaForm;

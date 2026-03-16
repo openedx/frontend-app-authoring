@@ -1,11 +1,9 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Icon, Stack } from '@openedx/paragon';
 import { Question } from '@openedx/paragon/icons';
+import { Div, Paragraph } from '@src/utils';
 
 import messages from './messages';
-
-export const SingleLineBreak = (chunk: string[]) => <div>{chunk}</div>;
-export const Paragraph = (chunk: string[]) => <p>{chunk}</p>;
 
 export const LegacyMigrationHelpSidebar = () => (
   <div className="legacy-libraries-migration-help bg-white pt-3 mt-1">
@@ -42,7 +40,7 @@ export const LegacyMigrationHelpSidebar = () => (
         <span className="x-small">
           <FormattedMessage
             {...messages.helpAndSupportThirdQuestionBody}
-            values={{ div: SingleLineBreak, p: Paragraph }}
+            values={{ div: Div, p: Paragraph }}
           />
         </span>
       </Stack>

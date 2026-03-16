@@ -9,8 +9,11 @@ import {
   screen,
   waitFor,
   within,
-} from '../testUtils';
-import { mockContentSearchConfig } from '../search-manager/data/api.mock';
+} from '@src/testUtils';
+import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
+import { type ToastActionData } from '@src/generic/toast-context';
+import { libraryBlockChangesUrl } from '@src/course-unit/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CourseLibraries } from './CourseLibraries';
 import {
   mockGetEntityLinks,
@@ -18,8 +21,6 @@ import {
   mockFetchIndexDocuments,
   mockUseLibBlockMetadata,
 } from './data/api.mocks';
-import { libraryBlockChangesUrl } from '../course-unit/data/api';
-import { type ToastActionData } from '../generic/toast-context';
 
 mockContentSearchConfig.applyMock();
 mockGetEntityLinks.applyMock();
@@ -28,7 +29,7 @@ mockUseLibBlockMetadata.applyMock();
 
 const searchParamsGetMock = jest.fn();
 let axiosMock: MockAdapter;
-let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
+let mockShowToast: (message: string, action?: ToastActionData) => void;
 let queryClient: QueryClient;
 
 jest.mock('../studio-home/hooks', () => ({
@@ -58,7 +59,11 @@ describe('<CourseLibraries />', () => {
 
   const renderCourseLibrariesPage = async (courseKey?: string) => {
     const courseId = courseKey || mockGetEntityLinks.courseKey;
-    render(<CourseLibraries courseId={courseId} />);
+    render(
+      <CourseAuthoringProvider courseId={courseId}>
+        <CourseLibraries />
+      </CourseAuthoringProvider>,
+    );
   };
 
   it('shows the spinner before the query is complete', async () => {
@@ -114,7 +119,7 @@ describe('<CourseLibraries />', () => {
     const dismissBtn = await screen.findByRole('button', { name: 'Dismiss' });
     await user.click(dismissBtn);
     expect(allTab).toHaveAttribute('aria-selected', 'true');
-    waitFor(() => expect(alert).not.toBeInTheDocument());
+    await waitFor(() => expect(alert).not.toBeInTheDocument());
     // review updates button
     const reviewActionBtn = await screen.findByRole('button', { name: 'Review Updates' });
     await user.click(reviewActionBtn);
@@ -176,7 +181,11 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   const renderCourseLibrariesReviewPage = async (courseKey?: string) => {
     const courseId = courseKey || mockGetEntityLinks.courseKey;
-    render(<CourseLibraries courseId={courseId} />);
+    render(
+      <CourseAuthoringProvider courseId={courseId}>
+        <CourseLibraries />
+      </CourseAuthoringProvider>,
+    );
   };
 
   it('shows the spinner before the query is complete', async () => {

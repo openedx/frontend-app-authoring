@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Alert, Form } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import SettingsOption from '../../SettingsOption';
@@ -46,14 +46,13 @@ export const getSummary = ({ tolerance, intl }) => {
   }
 };
 
-const ToleranceCard = ({
+export const ToleranceCard = ({
   tolerance,
   answers,
   updateSettings,
   correctAnswerCount,
-  // inject
-  intl,
 }) => {
+  const intl = useIntl();
   const isAnswerRange = isAnswerRangeSet({ answers });
   const hasMultipleCorrectAnswers = correctAnswerCount > 1;
   let summary = getSummary({ tolerance, intl });
@@ -141,8 +140,4 @@ ToleranceCard.propTypes = {
     unselectedFeedback: PropTypes.string,
   })).isRequired,
   updateSettings: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
 };
-
-export const ToleranceCardInternal = ToleranceCard; // For testing only
-export default injectIntl(ToleranceCard);

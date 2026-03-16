@@ -2,9 +2,9 @@
     "extends": "@edx/typescript-config",
     "compilerOptions": {
       "outDir": "dist",
-      "baseUrl": "./src",
       "paths": {
-        "@src/*": ["./*"]
+        "@src/*": ["./src/*"],
+        "CourseAuthoring/*": ["./src/*"]
       },
       "types": ["jest", "@testing-library/jest-dom"]
     },

@@ -146,9 +146,29 @@ export const getLibraryBackupApiUrl = (libraryId: string) => `${getApiBaseUrl()}
  */
 export const getLibraryBackupStatusApiUrl = (libraryId: string, taskId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/backup/?task_id=${taskId}`;
 /**
+ * Get the URL for the API endpoint to restore a library from an archive.
+ */
+export const getLibraryRestoreApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/restore/`;
+/**
+ * Get the URL for the API endpoint to get the status of a library restore task.
+ */
+export const getLibraryRestoreStatusApiUrl = (taskId: string) => `${getApiBaseUrl()}/api/libraries/v2/restore/?task_id=${taskId}`;
+/**
  * Get the URL for the API endpoint to copy a single container.
  */
 export const getLibraryContainerCopyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}copy/`;
+/**
+ * Base url for modulestore_migrator
+ */
+export const getBaseModuleStoreMigrationUrl = () => `${getApiBaseUrl()}/api/modulestore_migrator/v1/`;
+/**
+ * Get the url for the API endpoint to list library course imports.
+ */
+export const getCourseImportsApiUrl = (libraryId: string) => `${getBaseModuleStoreMigrationUrl()}library/${libraryId}/migrations/courses/`;
+/**
+ * Get the url for the API endpoint to get migration blocks info.
+ */
+export const getModulestoreMigratedBlocksInfoUrl = () => `${getBaseModuleStoreMigrationUrl()}migration_blocks/`;
 
 export interface ContentLibrary {
   id: string;
@@ -244,6 +264,14 @@ export interface GetLibrariesV2CustomParams {
   order?: string,
   /* (optional) Search query to filter v2 Libraries by */
   search?: string,
+}
+
+export interface GetLibrariesV2CustomParamsNoPagination extends GetLibrariesV2CustomParams {
+  pagination: false,
+}
+
+export interface GetLibrariesV2CustomParamsPagination extends GetLibrariesV2CustomParams {
+  pagination?: true,
 }
 
 export type LibraryAssetResponse = {
@@ -364,10 +392,27 @@ export async function updateLibraryMetadata(libraryData: UpdateLibraryDataReques
   return camelCaseObject(data);
 }
 
+function isNoPagination(
+  params: GetLibrariesV2CustomParams,
+): params is GetLibrariesV2CustomParamsNoPagination {
+  return params.pagination === false;
+}
+
 /**
  * Get a list of content libraries.
  */
-export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParams): Promise<LibrariesV2Response> {
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParamsNoPagination
+): Promise<ContentLibrary[]>;
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParamsPagination
+): Promise<LibrariesV2Response>;
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParams
+): Promise<LibrariesV2Response | ContentLibrary[]>;
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParams,
+): Promise<LibrariesV2Response | ContentLibrary[]> {
   // Set default params if not passed in
   const customParamsDefaults = {
     type: customParams.type || 'complex',
@@ -380,7 +425,16 @@ export async function getContentLibraryV2List(customParams: GetLibrariesV2Custom
   const customParamsFormated = snakeCaseObject(customParamsDefaults);
   const { data } = await getAuthenticatedHttpClient()
     .get(getContentLibraryV2ListApiUrl(), { params: customParamsFormated });
-  return camelCaseObject(data);
+  const camel = camelCaseObject(data);
+
+  // Narrow the return type based on pagination flag
+  if (isNoPagination(customParams)) {
+    // `camel` is known to be an array of ContentLibrary
+    return camel as ContentLibrary[];
+  }
+
+  // otherwise it matches the paginated response shape
+  return camel as LibrariesV2Response;
 }
 
 /**
@@ -694,10 +748,10 @@ export async function restoreContainer(containerId: string) {
 /**
  * Fetch a library container's children's metadata.
  */
-export async function getLibraryContainerChildren(
+export async function getLibraryContainerChildren<ChildType = LibraryBlockMetadata | Container>(
   containerId: string,
   published: boolean = false,
-): Promise<LibraryBlockMetadata[] | Container[]> {
+): Promise<ChildType[]> {
   const { data } = await getAuthenticatedHttpClient().get(
     getLibraryContainerChildrenApiUrl(containerId, published),
   );
@@ -775,4 +829,80 @@ export async function getLibraryContainerHierarchy(
  */
 export async function publishContainer(containerId: string) {
   await getAuthenticatedHttpClient().post(getLibraryContainerPublishApiUrl(containerId));
+}
+
+export interface CourseImport {
+  taskUuid: string;
+  source: {
+    key: string;
+    displayName: string;
+  };
+  targetCollection: {
+    key: string;
+    title: string;
+  } | null;
+  state: 'Succeeded' | 'Failed' | 'In Progress';
+  progress: number;
+}
+
+/**
+ * Returns the course imports which had this library as destination.
+ */
+export async function getCourseImports(libraryId: string): Promise<CourseImport[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getCourseImportsApiUrl(libraryId));
+  return camelCaseObject(data);
+}
+
+export interface MigrationInfo {
+  sourceKey: string;
+  targetCollectionKey: string;
+  targetCollectionTitle: string;
+  targetKey: string;
+  targetTitle: string;
+}
+
+/**
+ * Get the migration info data for a list of source keys
+ */
+export async function getMigrationInfo(sourceKeys: string[]): Promise<Record<string, MigrationInfo[]>> {
+  const client = getAuthenticatedHttpClient();
+
+  const params = new URLSearchParams();
+  sourceKeys.forEach(key => params.append('source_keys', key));
+
+  const { data } = await client.get(`${getApiBaseUrl()}/api/modulestore_migrator/v1/migration_info/`, { params });
+  return camelCaseObject(data);
+}
+
+export interface BlockMigrationInfo {
+  sourceKey: string;
+  targetKey: string | null;
+  unsupportedReason?: string;
+}
+
+/**
+ * Get the migration blocks info data for a library
+ */
+export async function getModulestoreMigrationBlocksInfo(
+  libraryId: string,
+  collectionId?: string,
+  isFailed?: boolean,
+  taskUuid?: string,
+): Promise<BlockMigrationInfo[]> {
+  const client = getAuthenticatedHttpClient();
+
+  const params = new URLSearchParams();
+  params.append('target_key', libraryId);
+  if (collectionId) {
+    params.append('target_collection_key', collectionId);
+  }
+  if (taskUuid) {
+    params.append('task_uuid', taskUuid);
+  }
+  if (isFailed !== undefined) {
+    params.append('is_failed', JSON.stringify(isFailed));
+  }
+
+  const { data } = await client.get(getModulestoreMigratedBlocksInfoUrl(), { params });
+  return camelCaseObject(data);
 }

@@ -4,6 +4,7 @@ import fetchMock from 'fetch-mock-jest';
 import * as libApi from '@src/library-authoring/data/api';
 import { createAxiosError } from '@src/testUtils';
 
+import { UserTaskStatus } from '@src/data/constants';
 import mockLinksResult from '../__mocks__/publishableEntityLinks.json';
 import mockSummaryResult from '../__mocks__/linkCourseSummary.json';
 import mockLinkDetailsFromIndex from '../__mocks__/linkDetailsFromIndex.json';
@@ -104,4 +105,107 @@ export async function mockUseLibBlockMetadata() {
 }
 mockUseLibBlockMetadata.applyMock = () => {
   jest.spyOn(libApi, 'getLibraryBlockMetadata').mockImplementation(mockUseLibBlockMetadata);
+};
+
+/**
+ * Mock getCourseReadyToMigrateLegacyLibContentBlocks
+*/
+export async function mockGetReadyToUpdateReferences(
+  courseId?: string,
+): ReturnType<typeof api.getCourseReadyToMigrateLegacyLibContentBlocks> {
+  switch (courseId) {
+    case mockGetReadyToUpdateReferences.courseKeyLoading:
+      return new Promise(() => {});
+    case mockGetReadyToUpdateReferences.courseKeyEmpty:
+      return Promise.resolve([]);
+    case mockGetReadyToUpdateReferences.courseKeyWith2Blocks:
+      return Promise.resolve([{ usageKey: 'some-key-1' }, { usageKey: 'some-key-2' }]);
+    case mockGetReadyToUpdateReferences.courseKeyWith3Blocks:
+      return Promise.resolve([{ usageKey: 'some-key-1' }, { usageKey: 'some-key-2' }, { usageKey: 'some-key-3' }]);
+    case mockGetReadyToUpdateReferences.courseKeyWith1Block:
+      return Promise.resolve([{ usageKey: 'some-key-1' }]);
+    default:
+      throw Error();
+  }
+}
+mockGetReadyToUpdateReferences.courseKeyLoading = 'course-v1:loading+1+1';
+mockGetReadyToUpdateReferences.courseKeyEmpty = 'course-v1:empty+1+1';
+mockGetReadyToUpdateReferences.courseKeyWith2Blocks = 'course-v1:normal+2+2';
+mockGetReadyToUpdateReferences.courseKeyWith1Block = 'course-v1:normal+1+1';
+mockGetReadyToUpdateReferences.courseKeyWith3Blocks = 'course-v1:normal+3+3';
+mockGetReadyToUpdateReferences.applyMock = () => {
+  jest.spyOn(api, 'getCourseReadyToMigrateLegacyLibContentBlocks').mockImplementation(mockGetReadyToUpdateReferences);
+};
+
+/**
+ * Mock getCourseLegacyLibRefUpdateTaskStatus
+*/
+export async function mockGetCourseLegacyLibRefUpdateTaskStatus(
+  _courseId?: string,
+  taskId?: string,
+): ReturnType<typeof api.getCourseLegacyLibRefUpdateTaskStatus> {
+  switch (taskId) {
+    case mockGetCourseLegacyLibRefUpdateTaskStatus.taskInProgress:
+      return Promise.resolve({
+        state: UserTaskStatus.InProgress,
+        stateText: 'In Progress',
+        uuid: 'task-pending',
+      } as unknown as ReturnType<typeof api.getCourseLegacyLibRefUpdateTaskStatus>);
+    case mockGetCourseLegacyLibRefUpdateTaskStatus.taskComplete:
+      return Promise.resolve({
+        state: UserTaskStatus.Succeeded,
+        stateText: 'Succeeded',
+        uuid: 'task-complete',
+      } as unknown as ReturnType<typeof api.getCourseLegacyLibRefUpdateTaskStatus>);
+    case mockGetCourseLegacyLibRefUpdateTaskStatus.taskFailed:
+      return Promise.resolve({
+        state: UserTaskStatus.Failed,
+        stateText: 'Failed',
+        uuid: 'task-failed',
+      } as unknown as ReturnType<typeof api.getCourseLegacyLibRefUpdateTaskStatus>);
+    default:
+      throw Error();
+  }
+}
+mockGetCourseLegacyLibRefUpdateTaskStatus.taskInProgress = 'task-pending';
+mockGetCourseLegacyLibRefUpdateTaskStatus.taskComplete = 'task-complete';
+mockGetCourseLegacyLibRefUpdateTaskStatus.taskFailed = 'task-failed';
+mockGetCourseLegacyLibRefUpdateTaskStatus.applyMock = () => {
+  jest.spyOn(api, 'getCourseLegacyLibRefUpdateTaskStatus').mockImplementation(mockGetCourseLegacyLibRefUpdateTaskStatus);
+};
+
+/**
+ * Mock getCourseReadyToMigrateLegacyLibContentBlocks
+*/
+export async function mockMigrateCourseReadyToMigrateLegacyLibContentBlocks(
+  courseId?: string,
+): ReturnType<typeof api.migrateCourseReadyToMigrateLegacyLibContentBlocks> {
+  switch (courseId) {
+    case mockGetReadyToUpdateReferences.courseKeyWith2Blocks:
+      return Promise.resolve({
+        state: UserTaskStatus.InProgress,
+        stateText: 'In Progress',
+        uuid: 'task-pending',
+      } as unknown as ReturnType<typeof api.migrateCourseReadyToMigrateLegacyLibContentBlocks>);
+    case mockGetReadyToUpdateReferences.courseKeyWith1Block:
+      return Promise.resolve({
+        state: UserTaskStatus.InProgress,
+        stateText: 'In Progress',
+        uuid: 'task-complete',
+      } as unknown as ReturnType<typeof api.migrateCourseReadyToMigrateLegacyLibContentBlocks>);
+    case mockGetReadyToUpdateReferences.courseKeyWith3Blocks:
+      return Promise.resolve({
+        state: UserTaskStatus.InProgress,
+        stateText: 'In Progress',
+        uuid: 'task-failed',
+      } as unknown as ReturnType<typeof api.migrateCourseReadyToMigrateLegacyLibContentBlocks>);
+    default:
+      throw Error();
+  }
+}
+mockMigrateCourseReadyToMigrateLegacyLibContentBlocks.applyMock = () => {
+  jest.spyOn(
+    api,
+    'migrateCourseReadyToMigrateLegacyLibContentBlocks',
+  ).mockImplementation(mockMigrateCourseReadyToMigrateLegacyLibContentBlocks);
 };

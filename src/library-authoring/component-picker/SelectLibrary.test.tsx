@@ -7,16 +7,16 @@ import {
 import {
   mockGetContentLibraryV2List,
 } from '../data/api.mocks';
-import { ComponentPicker } from './ComponentPicker';
+import { LibraryAndComponentPicker } from './ComponentPicker';
 
-describe('<ComponentPicker />', () => {
+describe('<LibraryAndComponentPicker />', () => {
   beforeEach(() => {
     initializeMocks();
   });
 
   it('should render the library list', async () => {
     mockGetContentLibraryV2List.applyMock();
-    render(<ComponentPicker />);
+    render(<LibraryAndComponentPicker />);
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
@@ -24,21 +24,21 @@ describe('<ComponentPicker />', () => {
 
   it('should render the loading status', async () => {
     mockGetContentLibraryV2List.applyMockLoading();
-    render(<ComponentPicker />);
+    render(<LibraryAndComponentPicker />);
 
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
   });
 
   it('should render the no library status', async () => {
     mockGetContentLibraryV2List.applyMockEmpty();
-    render(<ComponentPicker />);
+    render(<LibraryAndComponentPicker />);
 
     expect(await screen.findByText(/you don't have any libraries created yet,/i)).toBeInTheDocument();
   });
 
   it('should render the no search result status', async () => {
     mockGetContentLibraryV2List.applyMockEmpty();
-    render(<ComponentPicker />);
+    render(<LibraryAndComponentPicker />);
 
     const searchField = await screen.findByPlaceholderText('Search for a library');
     fireEvent.change(searchField, { target: { value: 'test' } });
@@ -49,7 +49,7 @@ describe('<ComponentPicker />', () => {
 
   it('should render the error status', async () => {
     mockGetContentLibraryV2List.applyMockError();
-    render(<ComponentPicker />);
+    render(<LibraryAndComponentPicker />);
 
     expect(await screen.findByText(/mocked request failed with status code 500/i)).toBeInTheDocument();
   });

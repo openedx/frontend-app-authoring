@@ -16,6 +16,7 @@ export type UseMessageHandlersTypes = {
   handleShowProcessingNotification: (variant: string) => void;
   handleHideProcessingNotification: () => void;
   handleRefreshIframe: () => void;
+  handleXBlockSelected: (id: string) => void;
 };
 
 export type MessageHandlersTypes = Record<string, (payload: any) => void>;

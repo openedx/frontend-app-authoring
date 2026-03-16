@@ -252,12 +252,12 @@ export class OLXParser {
       choice.forEach((element, index) => {
         const preservedAnswer = preservedAnswers[index].filter(answer => !Object.keys(answer).includes(`${option}hint`));
         const preservedFeedback = preservedAnswers[index].filter(answer => Object.keys(answer).includes(`${option}hint`));
-        let title = element['#text'];
+        let title = String(element['#text']);
 
         if (isComplexAnswer && preservedAnswer) {
           title = this.richTextBuilder.build(preservedAnswer);
         }
-        const correct = eval(element['@_correct'].toLowerCase());
+        const correct = element['@_correct'].toLowerCase() === 'true';
         const id = indexToLetterMap[index];
         const feedback = this.getAnswerFeedback(preservedFeedback, `${option}hint`);
         answers.push(
@@ -272,14 +272,14 @@ export class OLXParser {
     } else {
       const preservedAnswer = preservedAnswers[0].filter(answer => !Object.keys(answer).includes(`${option}hint`));
       const preservedFeedback = preservedAnswers[0].filter(answer => Object.keys(answer).includes(`${option}hint`));
-      let title = choice['#text'];
+      let title = String(choice['#text']);
 
       if (isComplexAnswer && preservedAnswer) {
         title = this.richTextBuilder.build(preservedAnswer);
       }
       const feedback = this.getAnswerFeedback(preservedFeedback, `${option}hint`);
       answers.push({
-        correct: eval(choice['@_correct'].toLowerCase()),
+        correct: choice['@_correct'].toLowerCase() === 'true',
         id: indexToLetterMap[answers.length],
         title,
         ...feedback,

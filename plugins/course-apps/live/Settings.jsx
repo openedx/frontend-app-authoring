@@ -1,3 +1,4 @@
+// oxlint-disable unicorn/no-thenable
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { camelCase } from 'lodash';
@@ -11,6 +12,7 @@ import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-m
 import { useModel } from 'CourseAuthoring/generic/model-store';
 import Loading from 'CourseAuthoring/generic/Loading';
 import { RequestStatus } from 'CourseAuthoring/data/constants';
+import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
 
 import { fetchLiveData, saveLiveConfiguration, saveLiveConfigurationAsDraft } from './data/thunks';
 import { selectApp } from './data/slice';
@@ -25,7 +27,7 @@ const LiveSettings = ({
   const intl = useIntl();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const courseId = useSelector(state => state.courseDetail.courseId);
+  const { courseId } = useCourseAuthoringContext();
   const availableProviders = useSelector((state) => state.live.appIds);
   const {
     piiSharingAllowed, selectedAppId, enabled, status,
@@ -71,6 +73,7 @@ const LiveSettings = ({
   };
 
   const handleSettingsSave = async (values) => {
+    // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
     await dispatch(saveLiveConfiguration(courseId, values, navigate));
   };
 

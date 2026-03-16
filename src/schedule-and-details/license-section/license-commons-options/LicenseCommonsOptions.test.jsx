@@ -1,7 +1,4 @@
-import React from 'react';
-import {
-  render, fireEvent, act, waitFor,
-} from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { LICENSE_COMMONS_OPTIONS } from '../constants';
@@ -44,15 +41,17 @@ describe('<LicenseCommonsOptions />', () => {
     expect(checkboxList[3].checked).toBeFalsy();
   });
 
-  it('should call onToggleCheckbox event onClick', () => {
+  it('should call onToggleCheckbox event onClick', async () => {
     const { getAllByRole } = render(<RootWrapper {...props} />);
     const checkboxList = getAllByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkboxList[1]);
-    });
+    expect(props.onToggleCheckbox).not.toHaveBeenCalled();
+    fireEvent.click(checkboxList[1]);
     expect(props.onToggleCheckbox).toHaveBeenCalledWith(LICENSE_COMMONS_OPTIONS.nonCommercial);
-    waitFor(() => {
-      expect(checkboxList[1].checked).toBeFalsy();
-    });
+    // Note: there is no point in asserting that the checkbox is now checked,
+    // because it is a controlled component that never changes unless the props change.
+    // This test should really be implemented in a higher level component/page.
+    // await waitFor(() => {
+    //   expect(checkboxList[1].checked).toBeFalsy();
+    // });
   });
 });

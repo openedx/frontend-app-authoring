@@ -1,3 +1,4 @@
+import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import {
   fireEvent,
   initializeMocks,
@@ -32,15 +33,17 @@ const render = (
   <ComponentAdvancedInfo />,
   {
     extraWrapper: ({ children }: { children: React.ReactNode }) => (
-      <LibraryProvider libraryId={libraryId} showOnlyPublished={showOnlyPublished}>
-        <SidebarProvider
-          initialSidebarItemInfo={{
-            id: usageKey,
-            type: SidebarBodyItemId.ComponentInfo,
-          }}
-        >
-          {children}
-        </SidebarProvider>
+      <LibraryProvider libraryId={libraryId}>
+        <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
+          <SidebarProvider
+            initialSidebarItemInfo={{
+              id: usageKey,
+              type: SidebarBodyItemId.ComponentInfo,
+            }}
+          >
+            {children}
+          </SidebarProvider>
+        </PublishedFilterContextProvider>
       </LibraryProvider>
     ),
   },

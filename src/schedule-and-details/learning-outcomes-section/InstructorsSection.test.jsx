@@ -1,7 +1,4 @@
-import React from 'react';
-import {
-  act, fireEvent, render, waitFor,
-} from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { courseDetailsMock } from '../__mocks__';
@@ -28,39 +25,44 @@ describe('<LearningOutcomesSection />', () => {
     expect(getByRole('button', { name: messages.outcomesAdd.defaultMessage })).toBeInTheDocument();
   });
 
-  it('should create another learning outcome form on click Add learning outcome', () => {
-    const { getAllByRole, getByRole } = render(<RootWrapper {...props} />);
+  it('should create another learning outcome form on click Add learning outcome', async () => {
+    const { getByRole } = render(<RootWrapper {...props} />);
     const addButton = getByRole('button', { name: messages.outcomesAdd.defaultMessage });
-    act(() => {
-      fireEvent.click(addButton);
-    });
+    expect(onChangeMock).not.toHaveBeenCalled();
+    fireEvent.click(addButton);
+    expect(onChangeMock).toHaveBeenCalledWith([
+      props.learningInfo[0],
+      '', // <-- new
+    ], 'learningInfo');
 
-    waitFor(() => {
-      const deleteButtons = getAllByRole('button', { name: messages.outcomesDelete.defaultMessage });
-      expect(deleteButtons.length).toBe(2);
-    });
+    // FIXME: the following doesn't happen, because this is a controlled component and only changes
+    // when the props change (in response to 'onChange'). This needs to be tested at a higher level,
+    // e.g. testing the whole page together, not just this component.
+    // await waitFor(() => {
+    //   const deleteButtons = getAllByRole('button', { name: messages.outcomesDelete.defaultMessage });
+    //   expect(deleteButtons.length).toBe(2);
+    // });
   });
 
-  it('should delete learning outcome form on click Delete', () => {
-    const { getAllByRole, getByRole } = render(<RootWrapper {...props} />);
+  it('should delete learning outcome form on click Delete', async () => {
+    const { getByRole } = render(<RootWrapper {...props} />);
     const deleteButton = getByRole('button', { name: messages.outcomesDelete.defaultMessage });
-    act(() => {
-      fireEvent.click(deleteButton);
-    });
+    fireEvent.click(deleteButton);
 
     expect(onChangeMock).toHaveBeenCalledWith([], 'learningInfo');
-    waitFor(() => {
-      const deleteButtons = getAllByRole('button', { name: messages.outcomesDelete.defaultMessage });
-      expect(deleteButtons.length).toBe(0);
-    });
+    // FIXME: the following doesn't happen, because this is a controlled component and only changes
+    // when the props change (in response to 'onChange'). This needs to be tested at a higher level,
+    // e.g. testing the whole page together, not just this component.
+    // await waitFor(() => {
+    //   const deleteButtons = getAllByRole('button', { name: messages.outcomesDelete.defaultMessage });
+    //   expect(deleteButtons.length).toBe(0);
+    // });
   });
 
   it('should call onChange if input value changed', () => {
     const { getByPlaceholderText } = render(<RootWrapper {...props} />);
     const input = getByPlaceholderText(messages.outcomesInputPlaceholder.defaultMessage);
-    act(() => {
-      fireEvent.change(input, { target: { value: 'abc' } });
-    });
+    fireEvent.change(input, { target: { value: 'abc' } });
 
     expect(onChangeMock).toHaveBeenCalledWith(['abc'], 'learningInfo');
   });

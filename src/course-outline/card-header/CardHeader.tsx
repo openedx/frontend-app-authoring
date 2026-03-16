@@ -1,5 +1,5 @@
 import {
-  ReactNode, useEffect, useRef, useState,
+  ReactNode, useCallback, useEffect, useRef, useState,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -11,6 +11,7 @@ import {
   Icon,
   IconButton,
   IconButtonWithTooltip,
+  Stack,
   useToggle,
 } from '@openedx/paragon';
 import {
@@ -24,30 +25,30 @@ import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import TagCount from '@src/generic/tag-count';
 import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
+import { useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
 import messages from './messages';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface CardHeaderProps {
   title: string;
   status: string;
-  cardId?: string,
+  cardId: string,
   hasChanges: boolean;
   onClickPublish: () => void;
   onClickConfigure: () => void;
   onClickMenuButton: () => void;
-  onClickEdit: () => void;
-  isFormOpen: boolean;
-  onEditSubmit: (titleValue: string) => void;
-  closeForm: () => void;
   onClickDelete: () => void;
   onClickUnlink: () => void;
   onClickDuplicate: () => void;
   onClickMoveUp: () => void;
   onClickMoveDown: () => void;
   onClickCopy?: () => void;
+  onClickCard?: (e: React.MouseEvent) => void;
+  onClickManageTags?: () => void;
   titleComponent: ReactNode;
   namePrefix: string;
   proctoringExamConfigurationLink?: string,
@@ -69,7 +70,6 @@ interface CardHeaderProps {
   extraActionsComponent?: ReactNode,
   onClickSync?: () => void;
   readyToSync?: boolean;
-  savingStatus?: RequestStatusType;
 }
 
 const CardHeader = ({
@@ -80,16 +80,14 @@ const CardHeader = ({
   onClickPublish,
   onClickConfigure,
   onClickMenuButton,
-  onClickEdit,
-  isFormOpen,
-  onEditSubmit,
-  closeForm,
   onClickDelete,
   onClickUnlink,
   onClickDuplicate,
   onClickMoveUp,
   onClickMoveDown,
   onClickCopy,
+  onClickCard,
+  onClickManageTags,
   titleComponent,
   namePrefix,
   actions,
@@ -103,13 +101,27 @@ const CardHeader = ({
   extraActionsComponent,
   onClickSync,
   readyToSync,
-  savingStatus,
 }: CardHeaderProps) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
   const [titleValue, setTitleValue] = useState(title);
   const cardHeaderRef = useRef(null);
-  const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
+  const [isLegacyManageTagsDrawerOpen, openLegacyTagsDrawer, closeLegacyTagsDrawer] = useToggle(false);
+  const { setCurrentPageKey } = useOutlineSidebarContext();
+
+  const openManageTagsDrawer = useCallback(() => {
+    const showNewSidebar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
+    const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
+    if (showNewSidebar && showAlignSidebar) {
+      setCurrentPageKey('align');
+      onClickMenuButton();
+      onClickManageTags?.();
+    } else {
+      openLegacyTagsDrawer();
+    }
+  }, [setCurrentPageKey, openLegacyTagsDrawer, cardId]);
+  const { courseId, currentSelection } = useCourseAuthoringContext();
+  const [isFormOpen, openForm, closeForm] = useToggle(false);
 
   // Use studio url as base if proctoringExamConfigurationLink is a relative link
   const fullProctoringExamConfigurationLink = () => (
@@ -120,7 +132,11 @@ const CardHeader = ({
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
 
   const { data: contentTagCount } = useContentTagsCount(cardId);
-  const isSaving = savingStatus === RequestStatus.IN_PROGRESS;
+
+  const onEditClick = () => {
+    onClickMenuButton();
+    openForm();
+  };
 
   useEffect(() => {
     const locatorId = searchParams.get('show');
@@ -145,19 +161,41 @@ const CardHeader = ({
   );
 
   useEscapeClick({
-    onEscape: () => {
+    onEscape: /* istanbul ignore next */ () => {
       setTitleValue(title);
       closeForm();
     },
-    dependency: title,
+    dependency: [title],
   });
+
+  const editMutation = useUpdateCourseBlockName(courseId);
+  const handleEditSubmit = useCallback(() => {
+    if (title !== titleValue) {
+      editMutation.mutate({
+        itemId: cardId,
+        displayName: titleValue,
+        subsectionId: currentSelection?.subsectionId,
+        sectionId: currentSelection?.sectionId,
+      }, {
+        onSettled: () => closeForm(),
+      });
+    } else {
+      closeForm();
+    }
+  }, [title, titleValue, cardId, editMutation]);
 
   return (
     <>
-      <div
+      {
+        /* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
+        `SortableItem` component handles that for the whole `{Container}Card`.
+        This `onClick` allows the user to select the Card by clicking on white areas of this component. */
+      }
+      <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
         className="item-card-header"
         data-testid={`${namePrefix}-card-header`}
         ref={cardHeaderRef}
+        onClick={onClickCard}
       >
         {isFormOpen ? (
           <Form.Group className="m-0 w-75">
@@ -168,17 +206,22 @@ const CardHeader = ({
               name="displayName"
               onChange={(e) => setTitleValue(e.target.value)}
               aria-label={intl.formatMessage(messages.editFieldAriaLabel)}
-              onBlur={() => onEditSubmit(titleValue)}
-              onKeyDown={(e) => {
+              onBlur={handleEditSubmit}
+              onKeyDown={/* istanbul ignore next */ (e) => {
                 if (e.key === 'Enter') {
-                  onEditSubmit(titleValue);
+                  handleEditSubmit();
+                } else if (e.key === ' ') {
+                  // Avoid passing propagation to the `SortableItem` in the card,
+                  // which executes a `preventDefault`. If propagation is not prevented,
+                  // spaces cannot be added to names.
+                  e.stopPropagation();
                 }
               }}
-              disabled={isSaving}
+              disabled={editMutation.isPending}
             />
           </Form.Group>
         ) : (
-          <>
+          <Stack direction="horizontal" gap={2}>
             {titleComponent}
             <IconButtonWithTooltip
               className="item-card-button-icon"
@@ -186,11 +229,10 @@ const CardHeader = ({
               alt={intl.formatMessage(messages.altButtonRename)}
               tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
               iconAs={EditIcon}
-              onClick={onClickEdit}
-              // @ts-ignore
-              disabled={isSaving}
+              onClick={onEditClick}
+              disabled={editMutation.isPending}
             />
-          </>
+          </Stack>
         )}
         <div className="ml-auto d-flex">
           {(isVertical || isSequential) && (
@@ -240,7 +282,7 @@ const CardHeader = ({
               </Dropdown.Item>
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-configure-button`}
-                disabled={isSaving}
+                disabled={editMutation.isPending}
                 onClick={onClickConfigure}
               >
                 {intl.formatMessage(messages.menuConfigure)}
@@ -248,7 +290,7 @@ const CardHeader = ({
               {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
-                  disabled={isSaving}
+                  disabled={editMutation.isPending}
                   onClick={openManageTagsDrawer}
                 >
                   {intl.formatMessage(messages.menuManageTags)}
@@ -269,42 +311,42 @@ const CardHeader = ({
                 </Dropdown.Item>
               )}
               {actions.draggable && (
-                <>
-                  <Dropdown.Item
-                    data-testid={`${namePrefix}-card-header__menu-move-up-button`}
-                    onClick={onClickMoveUp}
-                    disabled={!actions.allowMoveUp}
-                  >
-                    {intl.formatMessage(messages.menuMoveUp)}
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    data-testid={`${namePrefix}-card-header__menu-move-down-button`}
-                    onClick={onClickMoveDown}
-                    disabled={!actions.allowMoveDown}
-                  >
-                    {intl.formatMessage(messages.menuMoveDown)}
-                  </Dropdown.Item>
-                </>
+              <>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-move-up-button`}
+                  onClick={onClickMoveUp}
+                  disabled={!actions.allowMoveUp}
+                >
+                  {intl.formatMessage(messages.menuMoveUp)}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-move-down-button`}
+                  onClick={onClickMoveDown}
+                  disabled={!actions.allowMoveDown}
+                >
+                  {intl.formatMessage(messages.menuMoveDown)}
+                </Dropdown.Item>
+              </>
               )}
               {((actions.unlinkable ?? null) !== null || actions.deletable) && <Dropdown.Divider />}
               {(actions.unlinkable ?? null) !== null && (
-                <Dropdown.Item
-                  data-testid={`${namePrefix}-card-header__menu-unlink-button`}
-                  onClick={onClickUnlink}
-                  disabled={!actions.unlinkable}
-                  className="allow-hover-on-disabled"
-                  title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
-                >
-                  {intl.formatMessage(messages.menuUnlink)}
-                </Dropdown.Item>
+              <Dropdown.Item
+                data-testid={`${namePrefix}-card-header__menu-unlink-button`}
+                onClick={onClickUnlink}
+                disabled={!actions.unlinkable}
+                className="allow-hover-on-disabled"
+                title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
+              >
+                {intl.formatMessage(messages.menuUnlink)}
+              </Dropdown.Item>
               )}
               {actions.deletable && (
-                <Dropdown.Item
-                  data-testid={`${namePrefix}-card-header__menu-delete-button`}
-                  onClick={onClickDelete}
-                >
-                  {intl.formatMessage(messages.menuDelete)}
-                </Dropdown.Item>
+              <Dropdown.Item
+                data-testid={`${namePrefix}-card-header__menu-delete-button`}
+                onClick={onClickDelete}
+              >
+                {intl.formatMessage(messages.menuDelete)}
+              </Dropdown.Item>
               )}
             </Dropdown.Menu>
           </Dropdown>
@@ -312,8 +354,8 @@ const CardHeader = ({
       </div>
       <ContentTagsDrawerSheet
         id={cardId}
-        onClose={/* istanbul ignore next */ () => closeManageTagsDrawer()}
-        showSheet={isManageTagsDrawerOpen}
+        onClose={/* istanbul ignore next */ () => closeLegacyTagsDrawer()}
+        showSheet={isLegacyManageTagsDrawerOpen}
       />
     </>
   );

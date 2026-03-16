@@ -1,14 +1,8 @@
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { injectIntl, IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  act, fireEvent, render, screen,
-} from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
+  act, fireEvent, render, screen, initializeMocks,
+} from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
-import initializeStore from '../store';
 import gradingSettings from './__mocks__/gradingSettings';
 import { getCourseSettingsApiUrl, getGradingSettingsApiUrl } from './data/api';
 import * as apiHooks from './data/apiHooks';
@@ -17,30 +11,21 @@ import messages from './messages';
 
 const courseId = '123';
 let axiosMock;
-let store;
-
-const queryClient = new QueryClient();
 
 const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <QueryClientProvider client={queryClient}>
-        <GradingSettings intl={injectIntl} courseId={courseId} />
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>
+  <CourseAuthoringProvider courseId={courseId}>
+    <GradingSettings />
+  </CourseAuthoringProvider>
 );
 
 describe('<GradingSettings />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3, username: 'abc123', administrator: true, roles: [],
-      },
-    });
+    const mocks = initializeMocks();
 
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    // jsdom doesn't implement scrollTo; mock to avoid noisy console errors.
+    Object.defineProperty(window, 'scrollTo', { value: jest.fn(), writable: true });
+
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getGradingSettingsApiUrl(courseId))
       .reply(200, gradingSettings);
@@ -97,6 +82,26 @@ describe('<GradingSettings />', () => {
     const segmentInput = segmentInputs[1];
     fireEvent.change(segmentInput, { target: { value: 'Test' } });
     testSaving();
+  });
+
+  it('should show success alert and hide save prompt after successful save', async () => {
+    // Trigger change to show save prompt
+    const segmentInputs = await screen.findAllByTestId('grading-scale-segment-input');
+    const segmentInput = segmentInputs[2];
+    fireEvent.change(segmentInput, { target: { value: 'PatchTest' } });
+    // Click save and verify pending state appears
+    const saveBtnInitial = screen.getByText(messages.buttonSaveText.defaultMessage);
+    fireEvent.click(saveBtnInitial);
+    expect(screen.getByText(messages.buttonSavingText.defaultMessage)).toBeInTheDocument();
+    // Wait for success alert to appear (mutation success)
+    const successAlert = await screen.findByText(messages.alertSuccess.defaultMessage);
+    expect(successAlert).toBeVisible();
+    // Pending label should disappear and save prompt should be hidden (button removed)
+    expect(screen.queryByText(messages.buttonSavingText.defaultMessage)).toBeNull();
+    const saveAlert = screen.queryByTestId('grading-settings-save-alert');
+    expect(saveAlert).toBeNull();
+    // Ensure original save button text is no longer present because the prompt closed
+    expect(screen.queryByText(messages.buttonSaveText.defaultMessage)).toBeNull();
   });
 
   it('should handle being offline gracefully', async () => {

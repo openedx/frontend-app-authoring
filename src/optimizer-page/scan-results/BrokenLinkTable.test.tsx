@@ -45,7 +45,7 @@ const findAllUpdateButtons = (): HTMLElement[] => {
   try {
     const updateBtn = screen.getAllByText(/^Update$/);
     return updateBtn as HTMLElement[];
-  } catch (e) {
+  } catch {
     return [];
   }
 };

@@ -2,14 +2,9 @@
 /* eslint-disable react/jsx-filename-extension */
 import {
   fireEvent, render, waitFor, screen,
-} from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import MockAdapter from 'axios-mock-adapter';
-import initializeStore from '../store';
+  initializeMocks,
+} from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import generalMessages from '../messages';
 import scanResultsMessages from './scan-results/messages';
@@ -24,36 +19,21 @@ import {
 import * as thunks from './data/thunks';
 import { useWaffleFlags } from '../data/apiHooks';
 
-let store;
 let axiosMock;
 const courseId = '123';
-const courseName = 'About Node JS';
-
-jest.mock('../generic/model-store', () => ({
-  useModel: jest.fn().mockReturnValue({
-    name: courseName,
-  }),
-}));
 
 // Mock the waffle flags hook
 jest.mock('../data/apiHooks', () => ({
+  ...jest.requireActual('../data/apiHooks'),
   useWaffleFlags: jest.fn(() => ({
     enableCourseOptimizerCheckPrevRunLinks: false,
   })),
 }));
 
-jest.mock('../generic/model-store', () => ({
-  useModel: jest.fn().mockReturnValue({
-    name: 'About Node JS',
-  }),
-}));
-
 const OptimizerPage = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <CourseOptimizerPage courseId={courseId} />
-    </IntlProvider>
-  </AppProvider>
+  <CourseAuthoringProvider courseId={courseId}>
+    <CourseOptimizerPage />
+  </CourseAuthoringProvider>
 );
 
 const setupOptimizerPage = async (apiResponse = mockApiResponse) => {
@@ -132,16 +112,8 @@ describe('CourseOptimizerPage', () => {
     beforeEach(() => {
       jest.useRealTimers();
       jest.clearAllMocks();
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: true,
-          roles: [],
-        },
-      });
-      store = initializeStore();
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      const mocks = initializeMocks();
+      axiosMock = mocks.axiosMock;
       axiosMock
         .onPost(postLinkCheckCourseApiUrl(courseId))
         .reply(200, { LinkCheckStatus: 'In-Progress' });

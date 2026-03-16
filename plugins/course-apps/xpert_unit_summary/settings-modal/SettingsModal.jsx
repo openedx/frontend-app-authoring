@@ -1,4 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getExternalLinkUrl } from '@edx/frontend-platform';
 import {
   ActionRow,
   Alert,
@@ -238,8 +239,10 @@ const SettingsModal = ({
     const values = { ...rest, enabled: enabled ? checked === 'true' : undefined };
 
     if (enabled) {
+      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
       success = await dispatch(updateXpertSettings(courseId, values));
     } else {
+      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
       success = await dispatch(removeXpertSettings(courseId));
     }
 
@@ -276,7 +279,7 @@ const SettingsModal = ({
     <div className="py-1">
       <Hyperlink
         className="text-primary-500"
-        destination="https://openai.com/api-data-privacy"
+        destination={getExternalLinkUrl('https://openai.com/api-data-privacy')}
         target="_blank"
         rel="noreferrer noopener"
       >

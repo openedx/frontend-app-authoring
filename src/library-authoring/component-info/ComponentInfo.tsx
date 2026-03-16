@@ -14,7 +14,7 @@ import {
 import { getBlockType } from '@src/generic/key-utils';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import {
   type ComponentInfoTab,
   COMPONENT_INFO_TABS,
@@ -62,6 +62,7 @@ const AddComponentWidget = () => {
         variant="outline-primary"
         className="m-1 text-nowrap flex-grow-1"
         onClick={() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           onComponentSelected({ usageKey, blockType: getBlockType(usageKey) });
         }}
       >
@@ -78,8 +79,10 @@ const AddComponentWidget = () => {
         blockType: getBlockType(usageKey),
       };
       if (!isChecked) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         addComponentToSelectedComponents(selectedComponent);
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         removeComponentFromSelectedComponents(selectedComponent);
       }
     };
@@ -107,9 +110,11 @@ const ComponentActions = ({
   hasUnpublishedChanges: boolean,
 }) => {
   const intl = useIntl();
-  const { openComponentEditor } = useLibraryContext();
+  const { openComponentEditor } = useOptionalLibraryContext();
   const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
   const canEdit = canEditComponent(componentId);
+
+  const { sidebarItemInfo } = useSidebarContext();
 
   if (isPublisherOpen) {
     return (
@@ -123,7 +128,7 @@ const ComponentActions = ({
   return (
     <div className="d-flex flex-wrap">
       <Button
-        {...(canEdit ? { onClick: () => openComponentEditor(componentId) } : { disabled: true })}
+        {...(canEdit ? { onClick: () => openComponentEditor?.(componentId) } : { disabled: true })}
         variant="outline-primary"
         className="m-1 text-nowrap flex-grow-1"
       >
@@ -141,7 +146,7 @@ const ComponentActions = ({
         )}
       </div>
       <div className="mt-2">
-        <ComponentMenu usageKey={componentId} />
+        <ComponentMenu usageKey={componentId} index={sidebarItemInfo?.index} />
       </div>
     </div>
   );
@@ -149,7 +154,7 @@ const ComponentActions = ({
 
 const ComponentInfo = () => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
 
   const {
     sidebarTab,

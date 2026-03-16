@@ -1,6 +1,6 @@
-import { PluginSlot } from '@openedx/frontend-plugin-framework/dist';
-import React from 'react';
-import OutlineSideBar from '../../course-outline/outline-sidebar/OutlineSidebar';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
+
+import OutlineSideBar from '@src/course-outline/outline-sidebar/OutlineSidebar';
 
 export const CourseAuthoringOutlineSidebarSlot = ({
   courseId,
@@ -16,7 +16,7 @@ export const CourseAuthoringOutlineSidebarSlot = ({
       sections,
     }}
   >
-    <OutlineSideBar courseId={courseId} />
+    <OutlineSideBar />
   </PluginSlot>
 );
 

@@ -32,7 +32,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
         id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@1',
         name: 'Html block 11',
         blockType: 'html',
-        isModified: true,
+        downstreamCustomized: ['display_name'],
         upstream: 'upstream-id',
       }];
       break;
@@ -44,14 +44,14 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
           id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@1',
           name: 'Html block 11',
           blockType: 'html',
-          isModified: true,
+          downstreamCustomized: ['display_name'],
           upstream: 'upstream-id',
         },
         {
           id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@2',
           name: 'Html block 22',
           blockType: 'html',
-          isModified: true,
+          downstreamCustomized: ['display_name'],
           upstream: 'upstream-id',
         },
       ];
@@ -78,7 +78,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
         versionSynced: 1,
         versionAvailable: 2,
         versionDeclined: null,
-        isModified: false,
+        downstreamCustomized: [],
       },
     }
   ));
@@ -107,7 +107,7 @@ mockGetCourseContainerChildren.childTemplate = {
     versionSynced: 1,
     versionAvailable: 2,
     versionDeclined: null,
-    isModified: false,
+    downstreamCustomized: [],
   },
 };
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */

@@ -1,0 +1,19 @@
+.course-unit-publish-controls {
+  border-radius: 5px;
+
+  &.draft {
+    box-shadow: 0 -7px 0 0 #B4610E;
+  }
+
+  &.only-staff {
+    box-shadow: 0 -7px 0 0 var(--pgn-color-primary-700);
+  }
+
+  &.live {
+    box-shadow: 0 -7px 0 0 var(--pgn-color-success-500);
+  }
+
+  &.published {
+    box-shadow: 0 -7px 0 0 var(--pgn-color-info-500);
+  }
+}

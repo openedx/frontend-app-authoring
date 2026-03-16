@@ -12,25 +12,31 @@ import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
 import { ToastContext } from '@src/generic/toast-context';
 
-import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { useRemoveItemsFromCollection } from '../data/apiHooks';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
+import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
+import containerMessages from '@src/library-authoring/containers/messages';
+import { useLibraryRoutes } from '@src/library-authoring/routes';
+import { useRunOnNextRender } from '@src/utils';
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import ComponentRemover from './ComponentRemover';
 import messages from './messages';
-import containerMessages from '../containers/messages';
-import { useLibraryRoutes } from '../routes';
-import { useRunOnNextRender } from '../../utils';
 
-export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
+interface Props {
+  usageKey: string;
+  index?: number;
+}
+
+export const ComponentMenu = ({ usageKey, index }: Props) => {
   const intl = useIntl();
   const {
     libraryId,
     collectionId,
     containerId,
     openComponentEditor,
-  } = useLibraryContext();
+    readOnly,
+  } = useOptionalLibraryContext();
 
   const {
     sidebarItemInfo,
@@ -48,6 +54,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const { copyToClipboard } = useClipboard();
 
   const updateClipboardClick = () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     copyToClipboard(usageKey);
   };
 
@@ -65,7 +72,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const handleEdit = useCallback(() => {
     openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
-    openComponentEditor(usageKey);
+    openComponentEditor?.(usageKey);
   }, [usageKey, openItemSidebar, openComponentEditor]);
 
   const scheduleJumpToCollection = useRunOnNextRender(() => {
@@ -98,9 +105,11 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
-        <Dropdown.Item {...(canEdit ? { onClick: handleEdit } : { disabled: true })}>
-          <FormattedMessage {...messages.menuEdit} />
-        </Dropdown.Item>
+        {!readOnly && (
+          <Dropdown.Item {...(canEdit ? { onClick: handleEdit } : { disabled: true })}>
+            <FormattedMessage {...messages.menuEdit} />
+          </Dropdown.Item>
+        )}
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
@@ -109,10 +118,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
             <FormattedMessage {...messages.removeComponentFromUnitMenu} />
           </Dropdown.Item>
         )}
-        <Dropdown.Item onClick={openDeleteModal}>
-          <FormattedMessage {...messages.menuDelete} />
-        </Dropdown.Item>
-        {insideCollection && (
+        {!readOnly && (
+          <Dropdown.Item onClick={openDeleteModal}>
+            <FormattedMessage {...messages.menuDelete} />
+          </Dropdown.Item>
+        )}
+        {insideCollection && !readOnly && (
           <Dropdown.Item onClick={removeFromCollection}>
             <FormattedMessage
               {...containerMessages.menuRemoveFromContainer}
@@ -122,9 +133,11 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
             />
           </Dropdown.Item>
         )}
-        <Dropdown.Item onClick={showManageCollections}>
-          <FormattedMessage {...containerMessages.menuAddToCollection} />
-        </Dropdown.Item>
+        {!readOnly && (
+          <Dropdown.Item onClick={showManageCollections}>
+            <FormattedMessage {...containerMessages.menuAddToCollection} />
+          </Dropdown.Item>
+        )}
       </Dropdown.Menu>
       {isDeleteModalOpen && (
         <ComponentDeleter
@@ -135,6 +148,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
       {isRemoveModalOpen && (
         <ComponentRemover
           usageKey={usageKey}
+          index={index}
           close={closeRemoveModal}
         />
       )}

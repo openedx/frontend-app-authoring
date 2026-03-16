@@ -10,7 +10,7 @@ import { FormattedMessage, FormattedNumber, useIntl } from '@edx/frontend-platfo
 
 import { LoadingSpinner } from '../../generic/Loading';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { getXBlockAssetsApiUrl } from '../data/api';
 import { useDeleteXBlockAsset, useInvalidateXBlockAssets, useXBlockAssets } from '../data/apiHooks';
@@ -18,7 +18,7 @@ import messages from './messages';
 
 export const ComponentAdvancedAssets: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;
@@ -59,6 +59,7 @@ export const ComponentAdvancedAssets: React.FC<Record<never, never>> = () => {
   const deleter = useDeleteXBlockAsset(usageKey);
   const [filePathToDelete, setConfirmDeleteAsset] = React.useState<string>('');
   const deleteFile = React.useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     deleter.mutateAsync(filePathToDelete); // Don't wait for this before clearing the modal on the next line
     setConfirmDeleteAsset('');
   }, [filePathToDelete, usageKey]);

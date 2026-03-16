@@ -9,6 +9,7 @@ import {
 import { ContainerType } from '@src/generic/key-utils';
 import type { ToastActionData } from '@src/generic/toast-context';
 import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
+import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import {
   mockContentLibrary,
   mockGetContainerChildren,
@@ -111,24 +112,23 @@ const render = (
     path,
     params,
     extraWrapper: ({ children }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-        showOnlyPublished={showOnlyPublished}
-      >
-        <SidebarProvider
-          initialSidebarItemInfo={{
-            id: containerId,
-            type: SidebarBodyItemId.ContainerInfo,
-          }}
-        >
-          {children}
-        </SidebarProvider>
-      </LibraryProvider>
+      <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
+        <LibraryProvider libraryId={libraryId}>
+          <SidebarProvider
+            initialSidebarItemInfo={{
+              id: containerId,
+              type: SidebarBodyItemId.ContainerInfo,
+            }}
+          >
+            {children}
+          </SidebarProvider>
+        </LibraryProvider>
+      </PublishedFilterContextProvider>
     ),
   });
 };
 let axiosMock: MockAdapter;
-let mockShowToast: { (message: string, action?: ToastActionData | undefined): void; mock?: any; };
+let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: any; };
 
 [
   {
@@ -211,7 +211,7 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       // Click on Copy Item
       const copyMenuItem = await screen.findByRole('button', { name: 'Copy to clipboard' });
       expect(copyMenuItem).toBeInTheDocument();
-      user.click(copyMenuItem);
+      await user.click(copyMenuItem);
 
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(1);
@@ -249,8 +249,8 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
           'i',
         ))).toBeInTheDocument();
       }
-      expect(await screen.queryAllByText('Will Publish').length).toBe(willPublishCount);
-      expect(await screen.queryAllByText('Draft').length).toBe(4 - willPublishCount);
+      expect(screen.queryAllByText('Will Publish').length).toBe(willPublishCount);
+      expect(screen.queryAllByText('Draft').length).toBe(4 - willPublishCount);
 
       // Click on the confirm Cancel button
       const publishCancel = await screen.findByRole('button', { name: 'Cancel' });

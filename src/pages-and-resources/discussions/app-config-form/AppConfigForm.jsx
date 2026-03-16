@@ -46,7 +46,9 @@ const AppConfigForm = ({
   const [confirmationDialogVisible, setConfirmationDialogVisible] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     (async () => {
+      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
       await dispatch(fetchDiscussionSettings(courseId, selectedAppId));
       setLoading(false);
     })();

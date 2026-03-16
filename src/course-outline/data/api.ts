@@ -1,13 +1,23 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { XBlock } from '@src/data/types';
-import { CourseOutline } from './types';
+import {
+  CourseOutline,
+  CourseDetails,
+  CourseItemUpdateResult,
+  ConfigureSectionData,
+  ConfigureSubsectionData,
+  ConfigureUnitData,
+  StaticFileNotices,
+} from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getCourseOutlineIndexApiUrl = (
   courseId: string,
 ) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
+
+export const getCourseDetailsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_details/${courseId}`;
 
 export const getCourseBestPracticesApiUrl = ({
   courseId,
@@ -42,15 +52,29 @@ export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}
 export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
 export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
 export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
+export const courseLegacyLibraryContentBlocks = (courseId: string) => `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
+export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) => `${courseLegacyLibraryContentBlocks(courseId)}${taskId}/`;
 
 /**
  * Get course outline index.
  * @param {string} courseId
- * @returns {Promise<courseOutline>}
+ * @returns {Promise<CourseOutline>}
  */
 export async function getCourseOutlineIndex(courseId: string): Promise<CourseOutline> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseOutlineIndexApiUrl(courseId));
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Get course details.
+ * @param {string} courseId
+ * @returns {Promise<CourseDetails>}
+ */
+export async function getCourseDetails(courseId: string): Promise<CourseDetails> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseDetailsApiUrl(courseId));
 
   return camelCaseObject(data);
 }
@@ -154,10 +178,8 @@ export async function restartIndexingOnCourse(reindexLink: string): Promise<obje
 
 /**
  * Get course Xblock
- * @param {string} itemId
- * @returns {Promise<XBlock>}
  */
-export async function getCourseItem(itemId: string): Promise<XBlock> {
+export async function getCourseItem<T = XBlock>(itemId: string): Promise<T> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getXBlockApiUrl(itemId));
   return camelCaseObject(data);
@@ -185,13 +207,11 @@ export async function updateCourseSectionHighlights(
 }
 
 /**
- * Publish course section
- * @param {string} sectionId
- * @returns {Promise<Object>}
+ * Publish course item
  */
-export async function publishCourseSection(sectionId: string): Promise<object> {
+export async function publishCourseItem(itemId: string): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(sectionId), {
+    .post(getCourseItemApiUrl(itemId), {
       publish: 'make_public',
     });
 
@@ -200,23 +220,15 @@ export async function publishCourseSection(sectionId: string): Promise<object> {
 
 /**
  * Configure course section
- * @param {string} sectionId
- * @param {boolean} isVisibleToStaffOnly
- * @param {string} startDatetime
- * @returns {Promise<Object>}
  */
-export async function configureCourseSection(
-  sectionId: string,
-  isVisibleToStaffOnly: boolean,
-  startDatetime: string,
-): Promise<object> {
+export async function configureCourseSection(variables: ConfigureSectionData): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(sectionId), {
+    .post(getCourseItemApiUrl(variables.sectionId), {
       publish: 'republish',
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
-        start: startDatetime,
+        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+        start: variables.startDatetime,
       },
     });
 
@@ -224,66 +236,30 @@ export async function configureCourseSection(
 }
 
 /**
- * Configure course section
- * @param {string} itemId
- * @param {string} isVisibleToStaffOnly
- * @param {string} releaseDate
- * @param {string} graderType
- * @param {string} dueDate
- * @param {boolean} isProctoredExam,
- * @param {boolean} isOnboardingExam,
- * @param {boolean} isPracticeExam,
- * @param {string} examReviewRules,
- * @param {boolean} isTimeLimited
- * @param {number} defaultTimeLimitMin
- * @param {string} hideAfterDue
- * @param {string} showCorrectness
- * @param {boolean} isPrereq,
- * @param {string} prereqUsageKey,
- * @param {number} prereqMinScore,
- * @param {number} prereqMinCompletion,
- * @returns {Promise<Object>}
+ * Configure course subsection
  */
-export async function configureCourseSubsection(
-  itemId: string,
-  isVisibleToStaffOnly: string,
-  releaseDate: string,
-  graderType: string,
-  dueDate: string,
-  isTimeLimited: boolean,
-  isProctoredExam: boolean,
-  isOnboardingExam: boolean,
-  isPracticeExam: boolean,
-  examReviewRules: string,
-  defaultTimeLimitMin: number,
-  hideAfterDue: string,
-  showCorrectness: string,
-  isPrereq: boolean,
-  prereqUsageKey: string,
-  prereqMinScore: number,
-  prereqMinCompletion: number,
-): Promise<object> {
+export async function configureCourseSubsection(variables: ConfigureSubsectionData): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(itemId), {
+    .post(getCourseItemApiUrl(variables.itemId), {
       publish: 'republish',
-      graderType,
-      isPrereq,
-      prereqUsageKey,
-      prereqMinScore,
-      prereqMinCompletion,
+      graderType: variables.graderType,
+      isPrereq: variables.isPrereq,
+      prereqUsageKey: variables.prereqUsageKey,
+      prereqMinScore: variables.prereqMinScore,
+      prereqMinCompletion: variables.prereqMinCompletion,
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
-        due: dueDate,
-        hide_after_due: hideAfterDue,
-        show_correctness: showCorrectness,
-        is_practice_exam: isPracticeExam,
-        is_time_limited: isTimeLimited,
-        is_proctored_enabled: isProctoredExam || isPracticeExam || isOnboardingExam,
-        exam_review_rules: examReviewRules,
-        default_time_limit_minutes: defaultTimeLimitMin,
-        is_onboarding_exam: isOnboardingExam,
-        start: releaseDate,
+        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+        due: variables.dueDate,
+        hide_after_due: variables.hideAfterDue,
+        show_correctness: variables.showCorrectness,
+        is_practice_exam: variables.isPracticeExam,
+        is_time_limited: variables.isTimeLimited,
+        is_proctored_enabled: variables.isProctoredExam || variables.isPracticeExam || variables.isOnboardingExam,
+        exam_review_rules: variables.examReviewRules,
+        default_time_limit_minutes: variables.defaultTimeLimitMin,
+        is_onboarding_exam: variables.isOnboardingExam,
+        start: variables.releaseDate,
       },
     });
   return data;
@@ -291,26 +267,16 @@ export async function configureCourseSubsection(
 
 /**
  * Configure course unit
- * @param {string} unitId
- * @param {boolean} isVisibleToStaffOnly
- * @param {object} groupAccess
- * @param {boolean} discussionEnabled
- * @returns {Promise<Object>}
  */
-export async function configureCourseUnit(
-  unitId: string,
-  isVisibleToStaffOnly: boolean,
-  groupAccess: object,
-  discussionEnabled: boolean,
-): Promise<object> {
+export async function configureCourseUnit(variables: ConfigureUnitData): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(unitId), {
+    .post(getCourseItemApiUrl(variables.unitId), {
       publish: 'republish',
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
-        group_access: groupAccess,
-        discussion_enabled: discussionEnabled,
+        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+        group_access: variables.groupAccess,
+        discussion_enabled: variables.discussionEnabled,
       },
     });
 
@@ -319,14 +285,11 @@ export async function configureCourseUnit(
 
 /**
  * Edit course section
- * @param {string} itemId
- * @param {string} displayName
- * @returns {Promise<Object>}
  */
-export async function editItemDisplayName(
-  itemId: string,
-  displayName: string,
-): Promise<object> {
+export async function editItemDisplayName({ itemId, displayName }: {
+  itemId: string;
+  displayName: string;
+}): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(itemId), {
       metadata: {
@@ -351,11 +314,11 @@ export async function deleteCourseItem(itemId: string): Promise<object> {
 
 /**
  * Duplicate course section
- * @param {string} itemId
- * @param {string} parentId
- * @returns {Promise<XBlock>}
  */
-export async function duplicateCourseItem(itemId: string, parentId: string): Promise<XBlock> {
+export async function duplicateCourseItem(itemId: string, parentId: string): Promise<{
+  courseKey: string;
+  locator: string;
+}> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       duplicate_source_locator: itemId,
@@ -365,20 +328,43 @@ export async function duplicateCourseItem(itemId: string, parentId: string): Pro
   return data;
 }
 
+export type CreateCourseXBlockType = {
+  type: string,
+  /** The category of the XBlock. Defaults to the type if not provided. */
+  category?: string,
+  parentLocator: string,
+  displayName?: string,
+  boilerplate?: string,
+  stagedContent?: string,
+  /** component key from library if being imported. */
+  libraryContentKey?: string,
+};
+
 /**
- * Add new course item like section, subsection or unit.
- * @param {string} parentLocator
- * @param {string} category
- * @param {string} displayName
- * @returns {Promise<Object>}
+ * Creates a new course XBlock. Can be used to create any type of block
+ * and also import a content from library.
  */
-export async function addNewCourseItem(parentLocator: string, category: string, displayName: string): Promise<object> {
+export async function createCourseXblock({
+  type,
+  category,
+  parentLocator,
+  displayName,
+  boilerplate,
+  stagedContent,
+  libraryContentKey,
+}: CreateCourseXBlockType) {
+  const body = {
+    type,
+    boilerplate,
+    category: category || type,
+    parent_locator: parentLocator,
+    display_name: displayName,
+    staged_content: stagedContent,
+    library_content_key: libraryContentKey,
+  };
+
   const { data } = await getAuthenticatedHttpClient()
-    .post(getXBlockBaseApiUrl(), {
-      parent_locator: parentLocator,
-      category,
-      display_name: displayName,
-    });
+    .post(getXBlockBaseApiUrl(), body);
 
   return data;
 }
@@ -438,7 +424,12 @@ export async function setVideoSharingOption(
  * @param {string} parentLocator
  * @returns {Promise<Object>}
 */
-export async function pasteBlock(parentLocator: string): Promise<object> {
+export async function pasteBlock(parentLocator: string): Promise<{
+  locator: string;
+  courseKey: string;
+  staticFileNotices: StaticFileNotices;
+  upstreamRef: string;
+}> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       parent_locator: parentLocator,

@@ -59,7 +59,7 @@ export async function getDownload(selectedRows, courseId) {
             throw new Error();
           }
           return await res.blob();
-        } catch (error) {
+        } catch {
           downloadErrors.push(`Failed to download ${asset?.displayName}.`);
           return null;
         }
@@ -70,7 +70,7 @@ export async function getDownload(selectedRows, courseId) {
       definedAssets.forEach((assetBlob, index) => {
         folder.file(assetNames[index], assetBlob.value, { blob: true });
       });
-      zip.generateAsync({ type: 'blob' }).then(content => {
+      await zip.generateAsync({ type: 'blob' }).then(content => {
         saveAs(content, `${courseId}-assets-${date}.zip`);
       });
     }
@@ -78,7 +78,7 @@ export async function getDownload(selectedRows, courseId) {
     const asset = selectedRows[0].original;
     try {
       saveAs(`${getApiBaseUrl()}/${asset.id}`, asset.displayName);
-    } catch (error) {
+    } catch {
       downloadErrors.push(`Failed to download ${asset?.displayName}.`);
     }
   } else {

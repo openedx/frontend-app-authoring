@@ -11,7 +11,7 @@ export interface SelectedComponent {
   blockType: string;
 }
 
-export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void;
+export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void | Promise<void>;
 export type ComponentSelectionChangedEvent = (selectedComponents: SelectedComponent[]) => void;
 
 type NoComponentPickerType = {
@@ -24,24 +24,32 @@ type NoComponentPickerType = {
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
   restrictToLibrary?: never;
+  extraFilter?: never;
+  isLoading?: never;
+  setIsLoading?: never;
 };
 
-type ComponentPickerSingleType = {
+type BasePickerType = {
+  restrictToLibrary: boolean;
+  extraFilter: string[],
+  isLoading?: boolean;
+  setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+type ComponentPickerSingleType = BasePickerType & {
   componentPickerMode: 'single';
   onComponentSelected: ComponentSelectedEvent;
   selectedComponents?: never;
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
-  restrictToLibrary: boolean;
 };
 
-type ComponentPickerMultipleType = {
+type ComponentPickerMultipleType = BasePickerType & {
   componentPickerMode: 'multiple';
   onComponentSelected?: never;
   selectedComponents: SelectedComponent[];
   addComponentToSelectedComponents: ComponentSelectedEvent;
   removeComponentFromSelectedComponents: ComponentSelectedEvent;
-  restrictToLibrary: boolean;
 };
 
 type ComponentPickerContextData = ComponentPickerSingleType | ComponentPickerMultipleType;
@@ -54,18 +62,22 @@ type ComponentPickerContextData = ComponentPickerSingleType | ComponentPickerMul
  */
 const ComponentPickerContext = createContext<ComponentPickerContextData | undefined>(undefined);
 
-export type ComponentPickerSingleProps = {
+type BasePickerProps = {
+  restrictToLibrary?: boolean;
+  /** Only show published components */
+  extraFilter?: string[],
+};
+
+export type ComponentPickerSingleProps = BasePickerProps & {
   componentPickerMode: 'single';
   onComponentSelected: ComponentSelectedEvent;
   onChangeComponentSelection?: never;
-  restrictToLibrary?: boolean;
 };
 
-export type ComponentPickerMultipleProps = {
+export type ComponentPickerMultipleProps = BasePickerProps & {
   componentPickerMode: 'multiple';
   onComponentSelected?: never;
   onChangeComponentSelection?: ComponentSelectionChangedEvent;
-  restrictToLibrary?: boolean;
 };
 
 type ComponentPickerProps = ComponentPickerSingleProps | ComponentPickerMultipleProps;
@@ -83,8 +95,10 @@ export const ComponentPickerProvider = ({
   restrictToLibrary = false,
   onComponentSelected,
   onChangeComponentSelection,
+  extraFilter,
 }: ComponentPickerProviderProps) => {
   const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>((
     selectedComponent: SelectedComponent,
@@ -123,6 +137,9 @@ export const ComponentPickerProvider = ({
           componentPickerMode,
           restrictToLibrary,
           onComponentSelected,
+          extraFilter: extraFilter || [],
+          isLoading,
+          setIsLoading,
         };
       case 'multiple':
         return {
@@ -131,6 +148,9 @@ export const ComponentPickerProvider = ({
           selectedComponents,
           addComponentToSelectedComponents,
           removeComponentFromSelectedComponents,
+          extraFilter: extraFilter || [],
+          isLoading,
+          setIsLoading,
         };
       default:
         // istanbul ignore next: this should never happen
@@ -144,6 +164,9 @@ export const ComponentPickerProvider = ({
     removeComponentFromSelectedComponents,
     selectedComponents,
     onChangeComponentSelection,
+    extraFilter,
+    isLoading,
+    setIsLoading,
   ]);
 
   return (

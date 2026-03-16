@@ -3,12 +3,6 @@
 // (whichever comes first).
 
 declare module '@edx/frontend-platform/i18n' {
-  // eslint-disable-next-line import/no-extraneous-dependencies
-  import { injectIntl as _injectIntl } from 'react-intl';
-  /** @deprecated Use useIntl() hook instead. */
-  export const injectIntl: typeof _injectIntl;
-  /** @deprecated Use useIntl() hook instead. */
-  export const intlShape: any;
 
   // eslint-disable-next-line import/no-extraneous-dependencies
   export {

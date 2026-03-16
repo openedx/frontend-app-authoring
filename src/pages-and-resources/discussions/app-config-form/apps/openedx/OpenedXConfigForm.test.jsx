@@ -323,10 +323,10 @@ describe('OpenedXConfigForm', () => {
     });
 
     test('check duplicate error is removed on deleting duplicate topic', async () => {
-      await await user.click(
+      await user.click(
         await findByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
       );
-      await await user.click(
+      await user.click(
         await findByRole(container, 'button', { name: messages.deleteButton.defaultMessage }),
       );
       await waitForElementToBeRemoved(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage));

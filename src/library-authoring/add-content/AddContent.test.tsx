@@ -68,7 +68,7 @@ const renderWithContainer = (containerId: string, containerType: 'unit' | 'secti
 };
 
 let axiosMock: MockAdapter;
-let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
+let mockShowToast: (message: string, action?: ToastActionData) => void;
 
 describe('<AddContent />', () => {
   beforeEach(() => {
@@ -88,12 +88,12 @@ describe('<AddContent />', () => {
     expect(screen.queryByRole('button', { name: /collection/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /text/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /problem/i })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /open reponse/i })).toBeInTheDocument(); // Excluded from MVP
+    expect(screen.queryByRole('button', { name: /open response/i })).toBeInTheDocument(); // Excluded from MVP
     expect(screen.queryByRole('button', { name: /drag drop/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /video/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /copy from clipboard/i })).not.toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument();
-    expect(await screen.queryByRole('button', { name: /existing library content/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /existing library content/i })).not.toBeInTheDocument();
   });
 
   it('should render advanced content buttons', async () => {
@@ -208,7 +208,7 @@ describe('<AddContent />', () => {
     expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called four times! Refactor to use react-query.
 
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    userEvent.click(pasteButton);
+    await userEvent.click(pasteButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
   });
@@ -223,7 +223,7 @@ describe('<AddContent />', () => {
 
     render();
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    userEvent.click(pasteButton);
+    await userEvent.click(pasteButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
     expect(mockShowToast).toHaveBeenCalledWith(
@@ -250,7 +250,7 @@ describe('<AddContent />', () => {
     expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called four times! Refactor to use react-query.
 
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    userEvent.click(pasteButton);
+    await userEvent.click(pasteButton);
 
     await waitFor(() => expect(axiosMock.history.post.length).toEqual(1));
     expect(axiosMock.history.post[0].url).toEqual(pasteUrl);
@@ -277,7 +277,7 @@ describe('<AddContent />', () => {
     expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called four times! Refactor to use react-query.
 
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    userEvent.click(pasteButton);
+    await userEvent.click(pasteButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
@@ -295,7 +295,7 @@ describe('<AddContent />', () => {
     render();
 
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    userEvent.click(pasteButton);
+    await userEvent.click(pasteButton);
 
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(0);
@@ -329,7 +329,7 @@ describe('<AddContent />', () => {
 
     render();
     const button = await screen.findByRole('button', { name: buttonName });
-    userEvent.click(button);
+    await userEvent.click(button);
 
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);

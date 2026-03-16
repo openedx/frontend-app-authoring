@@ -27,7 +27,6 @@ CourseOutlineSubsectionCardExtraActionsSlot.propTypes = {
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
     enableCopyPasteUnits: PropTypes.bool,
     proctoringExamConfigurationLink: PropTypes.string,
     actions: PropTypes.shape({

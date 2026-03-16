@@ -62,7 +62,7 @@ describe('HeaderButtons Component', () => {
     const dropdownButton = getByRole('button', { name: certificatesDataMock.courseModes[0] });
     await user.click(dropdownButton);
 
-    const verifiedMode = await getByRole('button', { name: certificatesDataMock.courseModes[1] });
+    const verifiedMode = getByRole('button', { name: certificatesDataMock.courseModes[1] });
     await user.click(verifiedMode);
 
     await waitFor(() => {
