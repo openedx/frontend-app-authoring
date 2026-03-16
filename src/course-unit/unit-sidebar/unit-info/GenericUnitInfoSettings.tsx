@@ -1,16 +1,14 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Button, ButtonGroup } from '@openedx/paragon';
 import { PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
-import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
 import { UserPartitionInfoTypes } from '@src/data/types';
 import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { Form, Formik } from 'formik';
 import { useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 import configureMessages from '@src/generic/configure-modal/messages';
-import { useEditCourseUnitVisibilityAndData } from '@src/course-unit/data/apiHooks';
 import messages from './messages';
+import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
 
 interface UnitInfoSettingsProps {
   id: string;
@@ -18,6 +16,8 @@ interface UnitInfoSettingsProps {
   discussionEnabled?: boolean;
   userPartitionInfo?: UserPartitionInfoTypes;
   updateCallback?: () => void;
+  sectionId?: string;
+  subsectionId?: string;
 }
 
 /**
@@ -32,10 +32,12 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     visibilityState,
     discussionEnabled,
     userPartitionInfo,
+    sectionId,
+    subsectionId,
   } = props;
 
   const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
-  const mutateFn = useEditCourseUnitVisibilityAndData();
+  const mutateFn = useConfigureUnit();
 
   const handleUpdate = async (
     isVisible: boolean,
@@ -46,9 +48,11 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     await mutateFn.mutateAsync({
       unitId: id,
       type: PUBLISH_TYPES.republish,
-      isVisible,
+      isVisibleToStaffOnly: isVisible,
       groupAccess,
-      isDiscussionEnabled: !!isDiscussionEnabled,
+      discussionEnabled: !!isDiscussionEnabled,
+      sectionId,
+      subsectionId,
     }, {
       onSuccess: () => props.updateCallback?.(),
     });

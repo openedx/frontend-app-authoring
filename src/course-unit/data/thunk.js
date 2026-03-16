@@ -11,7 +11,6 @@ import {
   editUnitDisplayName,
   getVerticalData,
   getCourseContainerChildren,
-  handleCourseUnitVisibilityAndData,
   deleteUnitItem,
   duplicateUnitItem,
   getCourseOutlineInfo,
@@ -83,48 +82,6 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
             models: courseSectionVerticalData.units || [],
           }));
           dispatch(fetchSequenceSuccess({ sequenceId }));
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-        }
-      });
-    } catch (error) {
-      handleResponseErrors(error, dispatch, updateSavingStatus);
-    } finally {
-      closeToastOutsideReact();
-    }
-  };
-}
-
-export function editCourseUnitVisibilityAndData(
-  itemId,
-  type,
-  isVisible,
-  groupAccess,
-  isDiscussionEnabled,
-  callback,
-  blockId = itemId,
-) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(updateQueryPendingStatus(true));
-    const notification = getNotificationMessage(type, isVisible, true);
-    showToastOutsideReact(notification);
-
-    try {
-      await handleCourseUnitVisibilityAndData(
-        itemId,
-        type,
-        isVisible,
-        isDiscussionEnabled,
-        groupAccess,
-      ).then(async (result) => {
-        if (result) {
-          if (callback) {
-            callback();
-          }
-          const courseSectionVerticalData = await getVerticalData(blockId);
-          dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
-          const courseVerticalChildrenData = await getCourseContainerChildren(blockId);
-          dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });

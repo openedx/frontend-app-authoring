@@ -1,5 +1,6 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { XBlock } from '@src/data/types';
 import {
   CourseOutline,
@@ -271,13 +272,14 @@ export async function configureCourseSubsection(variables: ConfigureSubsectionDa
 export async function configureCourseUnit(variables: ConfigureUnitData): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(variables.unitId), {
-      publish: 'republish',
-      metadata: {
-        // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-        group_access: variables.groupAccess,
-        discussion_enabled: variables.discussionEnabled,
-      },
+      publish: variables.groupAccess ? null : variables.type,
+      ...(variables.type === PUBLISH_TYPES.republish ? {
+        metadata: {
+          visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+          discussion_enabled: variables.discussionEnabled,
+          ...(variables.groupAccess != null && { group_access: variables.groupAccess }),
+        },
+      } : {}),
     });
 
   return data;

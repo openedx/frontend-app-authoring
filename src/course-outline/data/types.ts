@@ -1,4 +1,5 @@
 import { XBlock, XBlockActions } from '@src/data/types';
+import { PUBLISH_TYPES } from '@src/course-unit/constants';
 
 export interface CourseStructure {
   highlightsEnabledForMessaging: boolean,
@@ -117,10 +118,11 @@ export interface ConfigureSubsectionData {
 }
 
 export interface ConfigureUnitData {
-  unitId: string,
-  isVisibleToStaffOnly: boolean,
-  groupAccess: object,
-  discussionEnabled: boolean,
+  unitId: string;
+  isVisibleToStaffOnly: boolean;
+  type: keyof typeof PUBLISH_TYPES;
+  groupAccess: Record<string, any> | null,
+  discussionEnabled: boolean;
 }
 
 export type StaticFileNotices = {
