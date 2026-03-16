@@ -4,8 +4,9 @@ import React, {
   useEffect,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useQueryClient } from '@tanstack/react-query';
 import type { PaginationState } from '@tanstack/react-table';
-import { useTagListData, useCreateTag } from '../data/apiHooks';
+import { useTagListData, useCreateTag, taxonomyQueryKeys } from '../data/apiHooks';
 import { TagTree } from './tagTree';
 import { TableView } from '../tree-table';
 import type {
@@ -42,6 +43,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   // For reference, see https://github.com/openedx/frontend-app-authoring/pull/2872#discussion_r2880965005.
   const intl = useIntl();
 
+  const queryClient = useQueryClient();
   const [creatingParentId, setCreatingParentId] = useState<RowId | null>(null);
   const [editingRowId, setEditingRowId] = useState<RowId | null>(null);
 
@@ -144,6 +146,18 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       }
     }
   }, [tagList?.results, tableMode]);
+
+  //RELOAD DATA ON PAGE LOAD
+  // Addresses issue of stale data in taxonomies/tags query on
+  // page load without manual page refresh
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId),
+    });
+    queryClient.invalidateQueries({
+      queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId)
+    });
+  }, []);
 
   return (
     <TableView
