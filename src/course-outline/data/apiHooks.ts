@@ -11,12 +11,12 @@ import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { createGlobalState } from '@src/data/apiHooks';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
 import { getBlockType, getCourseKey } from '@src/generic/key-utils';
-import { useProcessingNotification } from '@src/generic/processing-notification/context';
+import { useMutationWithProcessingNotification } from '@src/generic/processing-notification/data/apiHooks';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { ParentIds } from '@src/generic/types';
 import {
   QueryClient,
-  skipToken, useMutation, useQuery, useQueryClient,
+  skipToken, useQuery, useQueryClient,
 } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import {
@@ -109,20 +109,12 @@ export const useCreateCourseBlock = (
   courseKey: string,
   callback?: ((locator: string, parentLocator: string) => Promise<void>),
 ) => {
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
   const queryClient = useQueryClient();
   const { setData } = useScrollState(courseKey);
   const dispatch = useDispatch();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables: CreateCourseXBlockMutationProps) => createCourseXblock(variables),
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving, undefined, 15000);
-    },
     onSuccess: async (data: { locator: string; }, variables) => {
-      closeToast();
       await callback?.(data.locator, variables.parentLocator);
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
@@ -136,9 +128,6 @@ export const useCreateCourseBlock = (
         const newBlock = await getCourseItem(data.locator);
         dispatch(addSection(newBlock));
       }
-    },
-    onError: () => {
-      closeToast();
     },
   });
 };
@@ -199,8 +188,7 @@ export const useCourseDetails = (courseId?: string, enabled: boolean = true) => 
  */
 export const useUpdateCourseBlockName = (courseId: string) => {
   const queryClient = useQueryClient();
-  const { setShow } = useProcessingNotification();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables:{
       itemId: string;
       displayName: string;
@@ -210,56 +198,40 @@ export const useUpdateCourseBlockName = (courseId: string) => {
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseId) });
     },
-    onMutate: () => setShow(true),
-    onSettled: () => setShow(false),
   });
 };
 
 export const usePublishCourseItem = () => {
   const queryClient = useQueryClient();
-  const { setShow } = useProcessingNotification();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables:{
       itemId: string;
     } & ParentIds) => publishCourseItem(variables.itemId),
     onSettled: (_data, _err, variables) => {
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
-      setShow(false);
     },
-    onMutate: () => setShow(true),
   });
 };
 
 export const useDeleteCourseItem = () => {
   const queryClient = useQueryClient();
-  const { setShow } = useProcessingNotification();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables:{
       itemId: string;
     } & ParentIds) => deleteCourseItem(variables.itemId),
-    onMutate: () => setShow(true),
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
-      setShow(false);
     },
   });
 };
 
 export const useConfigureSection = () => {
   const queryClient = useQueryClient();
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables: ConfigureSectionData & ParentIds) => configureCourseSection(variables),
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving, undefined, 15000);
-    },
     onSettled: (_data, _err, variables) => {
-      closeToast();
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
       });
@@ -270,17 +242,9 @@ export const useConfigureSection = () => {
 
 export const useConfigureSubsection = () => {
   const queryClient = useQueryClient();
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables: ConfigureSubsectionData & ParentIds) => configureCourseSubsection(variables),
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving, undefined, 15000);
-    },
     onSettled: (_data, _err, variables) => {
-      closeToast();
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
     },
@@ -289,17 +253,9 @@ export const useConfigureSubsection = () => {
 
 export const useConfigureUnit = () => {
   const queryClient = useQueryClient();
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving, undefined, 15000);
-    },
     onSettled: (_data, _err, variables) => {
-      closeToast();
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.unitId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
     },
@@ -307,47 +263,30 @@ export const useConfigureUnit = () => {
 };
 
 export const useUpdateCourseSectionHighlights = () => {
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
   const queryClient = useQueryClient();
-  const { setShow } = useProcessingNotification();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables: {
       sectionId: string;
       highlights: string[];
     } & ParentIds) => updateCourseSectionHighlights(variables.sectionId, variables.highlights),
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving, undefined, 15000);
-    },
     onSettled: (_data, _err, variables) => {
-      closeToast();
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
       });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
-      setShow(false);
     },
   });
 };
 
 export const useDuplicateItem = (courseKey: string) => {
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const { setData } = useScrollState(courseKey);
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables: {
       itemId: string;
       parentId: string;
     } & ParentIds) => duplicateCourseItem(variables.itemId, variables.parentId),
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving, undefined, 15000);
-    },
     onSuccess: async (data, variables) => {
       await invalidateParentQueries(queryClient, variables);
       // add duplicated section to store, subsection and unit are handled by invalidateParentQueries
@@ -357,9 +296,6 @@ export const useDuplicateItem = (courseKey: string) => {
       }
       // scroll to newly added block
       setData({ id: data.locator });
-    },
-    onSettled: () => {
-      closeToast();
     },
   });
 };
@@ -374,29 +310,19 @@ export const usePasteFileNotices = createGlobalState<StaticFileNotices>(
 );
 
 export const usePasteItem = (courseId?: string) => {
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
   const queryClient = useQueryClient();
   const { setData: setScrollState } = useScrollState(courseId);
   const { setData } = usePasteFileNotices(courseId);
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (variables: {
       parentLocator: string;
     } & ParentIds) => pasteBlock(variables.parentLocator),
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving, undefined, 15000);
-    },
     onSuccess: async (data, variables) => {
       await invalidateParentQueries(queryClient, variables);
       // set pasteFileNotices
       setData(data.staticFileNotices);
       // scroll to pasted block
       setScrollState({ id: data.locator });
-    },
-    onSettled: () => {
-      closeToast();
     },
   });
 };
