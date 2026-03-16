@@ -1031,7 +1031,7 @@ const ScanResults: FC<Props> = ({
                       if (hasVisibleBlock) {
                         return (
                           <div className="unit" key={unit.id}>
-                            <BrokenLinkTable unit={unit} filters={filters} updatedLinks={[]} />
+                            <BrokenLinkTable unit={unit} courseId={courseId} filters={filters} updatedLinks={[]} />
                           </div>
                         );
                       }

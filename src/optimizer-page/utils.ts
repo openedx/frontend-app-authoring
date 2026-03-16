@@ -1,5 +1,17 @@
-/* eslint-disable import/prefer-default-export */
+import { createCorrectInternalRoute } from '../utils';
 import { LinkCheckResult } from './types';
+ 
+export const buildBlockContainerUrl = (
+  courseId: string,
+  unitId: string,
+  blockId: string,
+): string => {
+  const path = `/course/${courseId}/container/${unitId}#${blockId}`;
+  const internalPath = createCorrectInternalRoute(path);
+  return typeof window !== 'undefined'
+    ? `${window.location.origin}${internalPath}`
+    : internalPath;
+};
 
 export const countBrokenLinks = (
   data: LinkCheckResult | null,

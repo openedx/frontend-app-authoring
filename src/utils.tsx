@@ -358,3 +358,14 @@ export const skipIfUnwantedTarget = (
 export const BoldText = (chunk: string[]) => <b>{chunk}</b>;
 export const Div = (chunk: string[]) => <div>{chunk}</div>;
 export const Paragraph = (chunk: string[]) => <p>{chunk}</p>;
+
+export const extractCourseIdFromBlockId = (blockId: string): string | null => {
+  const blockMatch = blockId.match(/^block-v1:([^+]+\+[^+]+\+[^+]+)\+type@/);
+  if (blockMatch) {
+    return `course-v1:${blockMatch[1]}`;
+  }
+  if (blockId.startsWith('course-v1:')) {
+    return blockId;
+  }
+  return null;
+};

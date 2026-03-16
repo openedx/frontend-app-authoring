@@ -9,6 +9,7 @@ import {
   convertToStringFromDate,
   isValidDate,
   getPagePath,
+  extractCourseIdFromBlockId,
 } from './utils';
 
 jest.mock('@edx/frontend-platform', () => ({
@@ -175,5 +176,36 @@ describe('getPagePath', () => {
 
     const result = getPagePath(courseId, isMfePageEnabled, urlParameter);
     expect(result).toBe(`/course/${courseId}/${urlParameter}`);
+  });
+});
+
+describe('extractCourseIdFromBlockId', () => {
+  it('extracts course ID from a valid block ID', () => {
+    const blockId = 'block-v1:org+cs101+1232+type@vertical+block@42619a13ca134e4bba2e7c558facd331';
+    const result = extractCourseIdFromBlockId(blockId);
+    expect(result).toBe('course-v1:org+cs101+1232');
+  });
+
+  it('extracts course ID from a block ID with different block type', () => {
+    const blockId = 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4';
+    const result = extractCourseIdFromBlockId(blockId);
+    expect(result).toBe('course-v1:edX+DemoX+Demo_Course');
+  });
+
+  it('returns the course ID unchanged if already in course format', () => {
+    const courseId = 'course-v1:org+cs101+1232';
+    const result = extractCourseIdFromBlockId(courseId);
+    expect(result).toBe('course-v1:org+cs101+1232');
+  });
+
+  it('returns null for invalid block ID format', () => {
+    const invalidBlockId = 'invalid-block-id';
+    const result = extractCourseIdFromBlockId(invalidBlockId);
+    expect(result).toBeNull();
+  });
+
+  it('returns null for empty string', () => {
+    const result = extractCourseIdFromBlockId('');
+    expect(result).toBeNull();
   });
 });
