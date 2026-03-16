@@ -18,6 +18,10 @@
     }
   }
 
+  .settingsOption.hints-card {
+    align-items: stretch;
+  }
+
   .settingsOption {
     .pgn__form-checkbox .pgn__form-label {
       min-width: .8rem;
