@@ -113,6 +113,8 @@ describe('buildBlockContainerUrl', () => {
 
     const result = buildBlockContainerUrl(courseId, unitId, blockId);
 
-    expect(result).toBe(`/course/${courseId}/container/${unitId}#${blockId}`);
+    expect(result).toBe(
+      `${window.location.origin}/course/${courseId}/container/${unitId}#${blockId}`,
+    );
   });
 });
