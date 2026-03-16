@@ -37,6 +37,7 @@ import { ContentType } from './library-authoring/routes';
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
 import { LegacyLibMigrationPage } from './legacy-libraries-migration/LegacyLibMigrationPage';
+import { ProcessingNotificationContextProvider } from '@src/generic/processing-notification/context';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -121,8 +122,10 @@ const App = () => {
     <AppProvider store={initializeStore()} wrapWithRouter={false}>
       <ToastProvider>
         <QueryClientProvider client={queryClient}>
-          <Head />
-          <RouterProvider router={router} />
+          <ProcessingNotificationContextProvider>
+            <Head />
+            <RouterProvider router={router} />
+          </ProcessingNotificationContextProvider>
         </QueryClientProvider>
       </ToastProvider>
     </AppProvider>

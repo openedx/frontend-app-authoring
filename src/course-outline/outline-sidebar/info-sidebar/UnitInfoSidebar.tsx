@@ -31,6 +31,7 @@ interface Props {
 const UnitSettingsTab = ({ unitId }: Props) => {
   const queryClient = useQueryClient();
   const { data: unitData, isPending } = useCourseItemData(unitId);
+  const { selectedContainerState } = useOutlineSidebarContext();
 
   if (isPending || !unitData) {
     return <Loading />;
@@ -47,6 +48,8 @@ const UnitSettingsTab = ({ unitId }: Props) => {
       discussionEnabled={unitData.discussionEnabled}
       userPartitionInfo={unitData.userPartitionInfo}
       updateCallback={onUpdate}
+      subsectionId={selectedContainerState?.subsectionId}
+      sectionId={selectedContainerState?.sectionId}
     />
   );
 };

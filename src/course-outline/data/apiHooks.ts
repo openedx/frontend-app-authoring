@@ -11,6 +11,7 @@ import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { createGlobalState } from '@src/data/apiHooks';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
 import { getBlockType, getCourseKey } from '@src/generic/key-utils';
+import { useProcessingNotification } from '@src/generic/processing-notification/context';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { ParentIds } from '@src/generic/types';
 import {
@@ -85,7 +86,7 @@ export const useScrollState = createGlobalState<ScrollState>(courseOutlineQueryK
  * 1. If sectionId exists, invalidate section data which also updates all children block data
  * 2. Else If subsectionId exists, invalidate subsection data
  */
-const invalidateParentQueries = async (queryClient: QueryClient, variables: ParentIds) => {
+export const invalidateParentQueries = async (queryClient: QueryClient, variables: ParentIds) => {
   if (variables.sectionId) {
     await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
   } else if (variables.subsectionId) {
@@ -198,6 +199,7 @@ export const useCourseDetails = (courseId?: string, enabled: boolean = true) => 
  */
 export const useUpdateCourseBlockName = (courseId: string) => {
   const queryClient = useQueryClient();
+  const { setShow } = useProcessingNotification();
   return useMutation({
     mutationFn: (variables:{
       itemId: string;
@@ -208,11 +210,14 @@ export const useUpdateCourseBlockName = (courseId: string) => {
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseId) });
     },
+    onMutate: () => setShow(true),
+    onSettled: () => setShow(false),
   });
 };
 
 export const usePublishCourseItem = () => {
   const queryClient = useQueryClient();
+  const { setShow } = useProcessingNotification();
   return useMutation({
     mutationFn: (variables:{
       itemId: string;
@@ -220,19 +225,24 @@ export const usePublishCourseItem = () => {
     onSettled: (_data, _err, variables) => {
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
+      setShow(false);
     },
+    onMutate: () => setShow(true),
   });
 };
 
 export const useDeleteCourseItem = () => {
   const queryClient = useQueryClient();
+  const { setShow } = useProcessingNotification();
   return useMutation({
     mutationFn: (variables:{
       itemId: string;
     } & ParentIds) => deleteCourseItem(variables.itemId),
+    onMutate: () => setShow(true),
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      setShow(false);
     },
   });
 };
@@ -302,6 +312,7 @@ export const useUpdateCourseSectionHighlights = () => {
     closeToast,
   } = useToastContext();
   const queryClient = useQueryClient();
+  const { setShow } = useProcessingNotification();
   return useMutation({
     mutationFn: (variables: {
       sectionId: string;
@@ -316,6 +327,7 @@ export const useUpdateCourseSectionHighlights = () => {
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
       });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      setShow(false);
     },
   });
 };
