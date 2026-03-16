@@ -379,7 +379,6 @@ file in this repo.
 .. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-app-course-authoring
 
 
-
 Reporting Security Issues
 *************************
 
