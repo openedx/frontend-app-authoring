@@ -17,6 +17,7 @@ import { apiUrls, ALL_TAXONOMIES, getApiErrorMessage } from './api';
 import * as api from './api';
 import type { QueryOptions, TagListData } from './types';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { EXPECTED_MAX_TAXONOMY_ITEMS } from './constants';
 
 // Query key patterns. Allows an easy way to clear all data related to a given taxonomy.
 // https://github.com/openedx/frontend-app-admin-portal/blob/2ba315d/docs/decisions/0006-tanstack-react-query.rst
