@@ -318,4 +318,11 @@ describe('TagTree', () => {
     expect(parentNode?.subRows?.[0]).toEqual(nextNewChild);
     expect(parentNode?.subRows?.[1]).toEqual(newChild);
   });
+
+  it('returns a flattened list of all nodes including subRows', () => {
+    const tree = new TagTree(rawData);
+    const flattened = tree.getAllFlattenedAsCopy();
+    const expectedValues = rawData.map(item => item.value);
+    expect(flattened.map(node => node.value)).toEqual(expectedValues);
+  });
 });
