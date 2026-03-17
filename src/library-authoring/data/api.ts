@@ -56,6 +56,26 @@ export const getLibraryBlockCollectionsUrl = (usageKey: string) =>
 export const getLibraryBlockHierarchyUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}hierarchy/`;
 
 /**
+ * Get the URL for the component draft history.
+ */
+export const getLibraryBlockDraftHistoryUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}draft_history/`;
+
+/**
+ * Get the URL for the component publish history.
+ */
+export const getLibraryBlockPublishHistoryUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}publish_history/`;
+
+/**
+ * Get the URL for the entries of a publish group.
+ */
+export const getLibraryBlockPublishHistoryEntriesUrl = (usageKey: string, publishGroupId: string) => `${getLibraryBlockMetadataUrl(usageKey)}publish_history/${publishGroupId}/entries/`
+
+/**
+ * Get the URL for the creation entry of a component.
+ */
+export const getLibraryBlockCreationEntryUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}creation_entry/`;
+
+/**
  * Get the URL for content library list API.
  */
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
@@ -332,6 +352,7 @@ export interface LibraryBlockMetadata {
   lastDraftCreatedBy: string | null;
   hasUnpublishedChanges: boolean;
   created: string | null;
+  createdBy: string | null;
   modified: string | null;
   tagsCount: number;
   collections: CollectionMetadata[];
@@ -930,5 +951,65 @@ export async function getModulestoreMigrationBlocksInfo(
   }
 
   const { data } = await client.get(getModulestoreMigratedBlocksInfoUrl(), { params });
+  return camelCaseObject(data);
+}
+
+export interface LibraryPublishHistoryGroup {
+  publishLogUuid: string;
+  title: string;
+  publishedBy: string;
+  publishedAt: string;
+  blockType: string;
+  contributors: LibraryPublishContributor[];
+  contributorsCount: number;
+}
+
+export interface LibraryPublishContributor {
+  profileImageUrls: {
+    full: string;
+    large: string;
+    medium: string;
+    small: string;
+  };
+  username: string;
+}
+
+export interface LibraryHistoryEntry {
+  changedBy: LibraryPublishContributor;
+  changedAt: string;
+  title: string;
+  blockType: string;
+  action: 'edited' | 'renamed' | 'created';
+}
+
+/**
+ * Get the publish history for a library block.
+ */
+export async function getLibraryBlockPublishHistory(usageKey: string): Promise<LibraryPublishHistoryGroup[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockPublishHistoryUrl(usageKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the entries for a publish history group of a library block.
+ */
+export async function getLibraryBlockPublishHistoryEntries(usageKey: string, publishGroupId: string): Promise<LibraryHistoryEntry[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockPublishHistoryEntriesUrl(usageKey, publishGroupId));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the draft history for a library block.
+ */
+export async function getLibraryBlockDraftHistory(usageKey: string): Promise<LibraryHistoryEntry[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockDraftHistoryUrl(usageKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the creation entry for a library block.
+ */
+export async function getLibraryBlockCreationEntry(usageKey: string): Promise<LibraryHistoryEntry> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockCreationEntryUrl(usageKey));
   return camelCaseObject(data);
 }

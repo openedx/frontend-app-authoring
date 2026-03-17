@@ -125,6 +125,10 @@ export const xblockQueryKeys = {
   xblockAssets: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'assets'],
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
   componentDownstreamLinks: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamLinks'],
+  draftHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'draftHistory'],
+  publishHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory'],
+  publishHistoryEntries: (usageKey: string, publishGroupId: string) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory', publishGroupId, 'entries'],
+  creationEntry: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'creationEntry'],
 
   /**
    * Predicate used to invalidate all metadata only (not OLX, fields, assets, etc.).
@@ -132,6 +136,8 @@ export const xblockQueryKeys = {
    * introspecting the usage keys.
    */
   allComponentMetadata: (query: Query) => query.queryKey[0] === 'xblock' && query.queryKey[2] === 'componentMetadata',
+  allDraftHistory: (query: Query) => query.queryKey[0] === 'xblock' && query.queryKey[2] === 'draftHistory',
+  allPublishHistory: (query: Query) => query.queryKey[0] === 'xblock' && query.queryKey[2] === 'publishHistory',
   componentHierarchy: (usageKey?: string) => {
     if (usageKey) {
       return [
@@ -161,6 +167,24 @@ export function invalidateComponentData(queryClient: QueryClient, contentLibrary
   // This might fail in case this helper is called after deleting the block.
   queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(contentLibraryId) });
   queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
+  queryClient.invalidateQueries({ queryKey: xblockQueryKeys.draftHistory(usageKey) });
+  queryClient.invalidateQueries({ queryKey: xblockQueryKeys.publishHistory(usageKey) });
+}
+
+/**
+ * Tell react-query to refresh its cache of component-related data across all components in all libraries.
+ *
+ * Use this when a bulk operation (e.g. publish all, revert all) affects an unknown set of components
+ * and it's not practical to invalidate them individually.
+ *
+ * @param queryClient The query client - get it via useQueryClient()
+ */
+export function invalidateAllComponentData(queryClient: QueryClient) {
+  // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
+  queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });
+  // For XBlocks, to invalidate the history log queries to refresh the history
+  queryClient.invalidateQueries({ predicate: xblockQueryKeys.allDraftHistory });
+  queryClient.invalidateQueries({ predicate: xblockQueryKeys.allPublishHistory });
 }
 
 /**
@@ -275,8 +299,7 @@ export const useCommitLibraryChanges = () => {
       // Invalidate all content-related metadata and search results for the whole library.
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
-      queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });
+      invalidateAllComponentData(queryClient);
     },
   });
 };
@@ -290,8 +313,7 @@ export const useRevertLibraryChanges = () => {
       // Invalidate all content-related metadata and search results for the whole library.
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
-      queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });
+      invalidateAllComponentData(queryClient);
     },
   });
 };
@@ -961,8 +983,7 @@ export const usePublishContainer = (containerId: string) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibraryContent(libraryId) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
-      queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });
+      invalidateAllComponentData(queryClient);
     },
   });
 };
@@ -1011,6 +1032,50 @@ export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true)
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationInfo(sourcesKeys),
     queryFn: enabled ? () => api.getMigrationInfo(sourcesKeys) : skipToken,
+  })
+);
+
+/**
+ * Returns the draft history of a library block.
+ */
+export const useLibraryBlockDraftHistory = (usageKey?: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.draftHistory(usageKey!),
+    queryFn: usageKey ? () => api.getLibraryBlockDraftHistory(usageKey) : skipToken,
+  })
+);
+
+/**
+ * Returns the publish history of a library block.
+ */
+export const useLibraryBlockPublishHistory = (usageKey?: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.publishHistory(usageKey!),
+    queryFn: usageKey ? () => api.getLibraryBlockPublishHistory(usageKey) : skipToken,
+  })
+);
+
+/**
+ * Returns the entries for a publish history group of a library block.
+ */
+export const useLibraryBlockPublishHistoryEntries = (
+  usageKey?: string,
+  publishGroupId?: string,
+  enabled: boolean = true,
+) => (
+  useQuery({
+    queryKey: xblockQueryKeys.publishHistoryEntries(usageKey!, publishGroupId!),
+    queryFn: (usageKey && publishGroupId && enabled) ? () => api.getLibraryBlockPublishHistoryEntries(usageKey, publishGroupId) : skipToken,
+  })
+);
+
+/**
+ * Returns the creation entry for a library block.
+ */
+export const useLibraryBlockCreationEntry = (usageKey?: string ) => (
+  useQuery({
+    queryKey: xblockQueryKeys.creationEntry(usageKey!),
+    queryFn: usageKey ? () => api.getLibraryBlockCreationEntry(usageKey) : skipToken,
   })
 );
 

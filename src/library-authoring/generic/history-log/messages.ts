@@ -1,0 +1,46 @@
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+  draftTitle: {
+    id: 'course-authoring.library-authoring.history.draft.title',
+    defaultMessage: '{displayName} is a draft',
+    description: 'Title for the draft group in the history log section.',
+  },
+  publishTitle: {
+    id: 'course-authoring.library-authoring.history.publish.title',
+    defaultMessage: '{user} published {icon} {displayName}',
+    description: 'Title for the publish group in the history log section.',
+  },
+  draftTitleDate: {
+    id: 'course-authoring.library-authoring.history.draft.date',
+    defaultMessage: '{count, plural, one {{count} change} other {{count} changes}} since {date}',
+    description: 'Title for the draft group in the history log section.',
+  },
+  createdTitle: {
+    id: 'course-authoring.library-authoring.history.created.title',
+    defaultMessage: '{user} created {icon} {displayName}',
+    description: 'Title for the created group in the history log section.',
+  },
+  historyEditEntry: {
+    id: 'course-authoring.library-authoring.history.edit-entry',
+    defaultMessage: '{user} edited {icon} {displayName}',
+    description: 'Edit entry of the history log.',
+  },
+  historyRenameEntry: {
+    id: 'course-authoring.library-authoring.history.rename-entry',
+    defaultMessage: '{user} renamed {icon} {displayName}',
+    description: 'Rename entry of the history log.',
+  },
+  historyEntryDefaultUser: {
+    id: 'course-authoring.library-authoring.history.default-user',
+    defaultMessage: 'Author',
+    description: 'Default user name when the user is not available',
+  },
+  historyContributors: {
+    id: 'course-authoring.library-authoring.history.contributors',
+    defaultMessage: '{count} {count, plural, one {author} other {authors}} contributed',
+    description: 'Contributors count in a publish history group',
+  },
+});
+
+export default messages;

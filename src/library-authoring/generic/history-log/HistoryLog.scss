@@ -1,0 +1,56 @@
+.history-log {
+  .history-log-group {
+    .history-log-group-avatar {
+      &.big-avatar {
+        border: 3px solid;
+      }
+
+      &.small-avatar {
+        border: 2px solid;
+      }      
+    }
+
+    .history-log-title {
+      max-width: 250px;
+    }
+
+    .history-log-vert {
+      width: 8px;
+      height: 2rem;
+      margin: -10px 0 -10px 20px;
+
+      &.history-log-vert-long {
+        height: 3.3rem;
+      }
+    }
+
+    &.draft-group {
+      .history-log-group-avatar {
+        border-color: #B4610E;
+      }
+
+      .history-log-vert {
+        background-color: #B4610E;
+      }
+    }
+
+    .contributors-avatars {
+      display: flex;
+      align-items: center;
+
+      .contributors-avatar {
+        margin-left: -.5rem;
+      }
+    }
+
+    &.publish-group {
+      .history-log-group-avatar {
+        border-color: var(--pgn-color-info-400);
+      }
+
+      .history-log-vert {
+        background-color: var(--pgn-color-info-400);
+      }
+    }
+  }
+}
