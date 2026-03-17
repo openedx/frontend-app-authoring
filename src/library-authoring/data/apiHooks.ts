@@ -122,6 +122,7 @@ export const xblockQueryKeys = {
   xblockAssets: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'assets'],
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
   componentDownstreamLinks: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamLinks'],
+  draftHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'draftHistory'],
 
   /**
    * Predicate used to invalidate all metadata only (not OLX, fields, assets, etc.).
@@ -1003,6 +1004,16 @@ export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true)
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationInfo(sourcesKeys),
     queryFn: enabled ? () => api.getMigrationInfo(sourcesKeys) : skipToken,
+  })
+);
+
+/**
+ * Returns the draft history of a library block.
+ */
+export const useLibraryBlockDraftHistory = (usageKey: string | undefined) => (
+  useQuery({
+    queryKey: xblockQueryKeys.draftHistory(usageKey!),
+    queryFn: usageKey ? () => api.getLibraryBlockDraftHistory(usageKey) : skipToken,
   })
 );
 

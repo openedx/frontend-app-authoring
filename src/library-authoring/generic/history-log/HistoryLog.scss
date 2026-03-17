@@ -1,0 +1,40 @@
+.history-log {
+  .history-log-group {
+
+    .history-log-group-avatar {
+      &.big-avatar {
+        border: 3px solid;
+      }
+
+      &.small-avatar {
+        border: 2px solid;
+      }      
+    }
+
+    .history-log-vert {
+      width: 8px;
+      height: 2rem;
+      margin: -10px 0 -10px 20px;
+    }
+
+    &.draft-group {
+      .history-log-group-avatar {
+        border-color: #B4610E;
+      }
+
+      .history-log-vert {
+        background-color: #B4610E;
+      }
+    }
+
+    &.publish-group {
+      .history-log-group-avatar {
+        border-color: #0D7D8C;
+      }
+
+      .history-log-vert {
+        background-color: #0D7D8C;
+      }
+    }
+  }
+}

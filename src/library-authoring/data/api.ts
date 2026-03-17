@@ -51,6 +51,11 @@ export const getLibraryBlockCollectionsUrl = (usageKey: string) => `${getLibrary
 export const getLibraryBlockHierarchyUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}hierarchy/`;
 
 /**
+ * Get the URL for the component draft history.
+ */
+export const getLibraryBlockDraftHistoryUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}draft_history/`;
+
+/**
  * Get the URL for content library list API.
  */
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
@@ -306,6 +311,7 @@ export interface LibraryBlockMetadata {
   lastDraftCreatedBy: string | null,
   hasUnpublishedChanges: boolean;
   created: string | null;
+  createdBy: string | null;
   modified: string | null;
   tagsCount: number;
   collections: CollectionMetadata[];
@@ -904,5 +910,20 @@ export async function getModulestoreMigrationBlocksInfo(
   }
 
   const { data } = await client.get(getModulestoreMigratedBlocksInfoUrl(), { params });
+  return camelCaseObject(data);
+}
+
+export interface LibraryHistoryEntry {
+  changedBy: string;
+  changedAt: string;
+  title: string;
+  action: 'edited' | 'renamed';
+}
+
+/**
+ * Get the draft history for a library block.
+ */
+export async function getLibraryBlockDraftHistory(usageKey: string): Promise<LibraryHistoryEntry[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockDraftHistoryUrl(usageKey));
   return camelCaseObject(data);
 }

@@ -1,14 +1,14 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 
-import AlertError from '../../generic/alert-error';
-import Loading from '../../generic/Loading';
+import AlertError from '@src/generic/alert-error';
+import Loading from '@src/generic/Loading';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
-import HistoryWidget from '../generic/history-widget';
 import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import { ComponentUsage } from './ComponentUsage';
 import messages from './messages';
+import { HistoryComponentLog } from '../generic/history-log/HistoryLog';
 
 const ComponentDetails = () => {
   const { sidebarItemInfo } = useSidebarContext();
@@ -48,7 +48,10 @@ const ComponentDetails = () => {
         <h3 className="h5">
           <FormattedMessage {...messages.detailsTabHistoryTitle} />
         </h3>
-        <HistoryWidget {...componentMetadata} />
+        <HistoryComponentLog
+          componentId={usageKey}
+          displayName={componentMetadata.displayName}
+        />
       </>
       <ComponentAdvancedInfo />
     </Stack>
