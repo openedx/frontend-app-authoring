@@ -259,27 +259,7 @@ const messages = defineMessages({
   publicReadToggleDefaultError: {
     id: 'course-authoring.library-authoring.public.read.toggle.default.error.message',
     defaultMessage: 'Something went wrong on our end. Please try again later.',
-    description: 'Libraries default error message',
-  },
-  publicReadToggle500Error: {
-    id: 'course-authoring.library-authoring.public.read.toggle.500.error.message',
-    defaultMessage: 'We\'re experiencing technical difficulties. Please try again later.',
-    description: 'Libraries internal server error message',
-  },
-  publicReadToggle502Error: {
-    id: 'course-authoring.library-authoring.public.read.toggle.502.error.message',
-    defaultMessage: 'We\'re having trouble connecting to our services. Please try again later.',
-    description: 'Libraries bad gateway error message',
-  },
-  publicReadToggle503Error: {
-    id: 'course-authoring.library-authoring.public.read.toggle.503.error.message',
-    defaultMessage: 'The service is temporarily unavailable. Please try again in a few moments.',
-    description: 'Libraries service temporarily unavailable message',
-  },
-  publicReadToggle408Error: {
-    id: 'course-authoring.library-authoring.public.read.toggle.408.error.message',
-    defaultMessage: 'The request took too long. Please check your connection and try again.',
-    description: 'Libraries request timeout message',
+    description: 'Public read toggle default error message',
   },
 });
 export default messages;

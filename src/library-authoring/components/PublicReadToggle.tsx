@@ -5,22 +5,6 @@ import { useContext } from 'react';
 import messages from './messages';
 import { useContentLibrary, useUpdateLibraryMetadata } from '../data/apiHooks';
 
-type ToggleError = Error & {
-  customAttributes?: {
-    httpErrorStatus?: number;
-  };
-};
-
-export const ERROR_TOAST_MAP: Record<number | string, { messageId: string }> = {
-  500: { messageId: 'publicReadToggle500Error' },
-  502: { messageId: 'publicReadToggle502Error' },
-  503: { messageId: 'publicReadToggle503Error' },
-  408: { messageId: 'publicReadToggle408Error' },
-
-  // Generic fallback error
-  DEFAULT: { messageId: 'publicReadToggleDefaultError' },
-};
-
 type PublicReadToggleProps = {
   libraryId: string;
   canEditToggle: boolean;
@@ -36,13 +20,8 @@ const PublicReadToggle = ({ libraryId, canEditToggle }: PublicReadToggleProps) =
     await updateLibrary({
       id: libraryId,
       allow_public_read: !library?.allowPublicRead,
-    }, {
-      onError: (error: ToggleError) => {
-        const errorStatus = error?.customAttributes?.httpErrorStatus || 'DEFAULT';
-        const toastConfig = ERROR_TOAST_MAP[errorStatus] || ERROR_TOAST_MAP.DEFAULT;
-        const message = formatMessage(messages[toastConfig.messageId]);
-        showToast(message);
-      },
+    }).catch(() => {
+      showToast(formatMessage(messages.publicReadToggleDefaultError));
     });
   };
 

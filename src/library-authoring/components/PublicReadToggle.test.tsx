@@ -1,4 +1,3 @@
-import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { initializeMocks, render, screen } from '@src/testUtils';
 import PublicReadToggle from './PublicReadToggle';
@@ -43,7 +42,7 @@ describe('PublicReadToggle', () => {
 
   it('calls updateLibrary when toggle is changed', async () => {
     const user = userEvent.setup();
-    const mockMutateAsync = jest.fn();
+    const mockMutateAsync = jest.fn().mockImplementation(() => Promise.resolve());
     mockUseContentLibrary.mockReturnValue({ data: { allowPublicRead: false } });
     mockUseUpdateLibraryMetadata.mockReturnValue({ mutateAsync: mockMutateAsync, isPending: false });
 
@@ -56,9 +55,6 @@ describe('PublicReadToggle', () => {
         id: 'lib1',
         allow_public_read: true,
       },
-      expect.objectContaining({
-        onError: expect.any(Function),
-      }),
     );
   });
 
@@ -76,7 +72,7 @@ describe('PublicReadToggle', () => {
       if (options?.onError) {
         options.onError(error);
       }
-      return Promise.resolve();
+      return Promise.reject(error);
     });
 
     mockUseContentLibrary.mockReturnValue({ data: { allowPublicRead: false } });
@@ -93,11 +89,29 @@ describe('PublicReadToggle', () => {
         id: 'lib1',
         allow_public_read: true,
       },
-      expect.objectContaining({
-        onError: expect.any(Function),
-      }),
     );
 
-    expect(mockShowToast).toHaveBeenCalledWith(messages.publicReadToggle500Error.defaultMessage);
+    expect(mockShowToast).toHaveBeenCalledWith(messages.publicReadToggleDefaultError.defaultMessage);
+  });
+
+  it('shows error toast when updateLibrary promise is rejected', async () => {
+    const user = userEvent.setup();
+    const mockMutateAsync = jest.fn().mockRejectedValue(new Error('Network error'));
+
+    mockUseContentLibrary.mockReturnValue({ data: { allowPublicRead: false } });
+    mockUseUpdateLibraryMetadata.mockReturnValue({ mutateAsync: mockMutateAsync, isPending: false });
+
+    render(
+      <PublicReadToggle libraryId="lib1" canEditToggle />,
+    );
+
+    await user.click(screen.getByRole('switch'));
+    expect(mockMutateAsync).toHaveBeenCalledWith(
+      {
+        id: 'lib1',
+        allow_public_read: true,
+      },
+    );
+    expect(mockShowToast).toHaveBeenCalledWith(messages.publicReadToggleDefaultError.defaultMessage);
   });
 });
