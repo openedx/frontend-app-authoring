@@ -728,21 +728,22 @@ describe('<TagListTable />', () => {
       await flushReactUpdates();
     });
     it('should only allow adding sub-tags up to the taxonomy max depth', async () => {
-      const expandButton = screen.getAllByLabelText('Show Subtags')[0];
+      fireEvent.click(screen.getAllByText('Expand All')[0]);
 
       // open actions menu for depth 0 root tag
       openActionsMenuForTag('root tag 1');
       expect(screen.getByText('Add Subtag')).toBeInTheDocument();
 
-      act(() => {
-        fireEvent.click(expandButton);
-      });
       await screen.findByText('the child tag');
+      await screen.findByText('the grandchild tag');
 
-      // depth 1 is the max allowed depth when maxDepth=2,
-      // so there should be no actions menu to add another sub-tag
+      // depth 1 is not innermost when maxDepth=2, so adding another sub-tag is allowed
       const childTagRow = screen.getByText('the child tag').closest('tr');
-      expect(within(childTagRow).queryByRole('button', { name: /actions/i })).not.toBeInTheDocument();
+      expect(within(childTagRow).getByRole('button', { name: /actions/i })).toBeInTheDocument();
+
+      // depth 2 is innermost when maxDepth=2, so no add-subtag action should be shown
+      const grandchildTagRow = screen.getByText('the grandchild tag').closest('tr');
+      expect(within(grandchildTagRow).queryByRole('button', { name: /actions/i })).not.toBeInTheDocument();
     });
   });
 });
@@ -878,6 +879,69 @@ describe('<TagListTable /> isolated async subtag tests', () => {
 
       expect(await screen.findByText('nested child appears immediately')).toBeInTheDocument();
       expect(axiosMock.history.get.length).toBe(1);
+    });
+
+    it('should allow adding a great-grandchild sub-tag under a grandchild tag', async () => {
+      axiosMock.onPost(createTagUrl).reply(201, {
+        ...tagDefaults,
+        value: 'great grandchild',
+        child_count: 0,
+        descendant_count: 0,
+        _id: 6666,
+        parent_value: 'the grandchild tag',
+      });
+
+      fireEvent.click(screen.getAllByText('Expand All')[0]);
+      await screen.findByText('the grandchild tag');
+
+      const { input } = await openSubtagDraftRow({
+        tagName: 'the grandchild tag',
+        actionButtonName: /more actions for tag the grandchild tag/i,
+      });
+      fireEvent.change(input, { target: { value: 'great grandchild' } });
+      fireEvent.click(within(input.closest('tr')).getByText('Save'));
+
+      expect(await screen.findByText('great grandchild')).toBeInTheDocument();
+    });
+
+    it('should show a newly created great-grandchild sub-tag without triggering a page refresh', async () => {
+      axiosMock.onPost(createTagUrl).reply(201, {
+        ...tagDefaults,
+        value: 'great grandchild appears immediately',
+        child_count: 0,
+        descendant_count: 0,
+        _id: 7777,
+        parent_value: 'the grandchild tag',
+      });
+
+      fireEvent.click(screen.getAllByText('Expand All')[0]);
+      await screen.findByText('the grandchild tag');
+
+      const { draftRow, input } = await openSubtagDraftRow({
+        tagName: 'the grandchild tag',
+        actionButtonName: /more actions for tag the grandchild tag/i,
+      });
+      fireEvent.change(input, { target: { value: 'great grandchild appears immediately' } });
+
+      const saveButton = within(draftRow).getByText('Save');
+
+      fireEvent.click(saveButton);
+
+      expect(await screen.findByText('great grandchild appears immediately')).toBeInTheDocument();
+      expect(axiosMock.history.get.length).toBe(1);
+    });
+
+    it('should allow adding a sub-tag at depth 2 when maxDepth is 3', async () => {
+      fireEvent.click(screen.getAllByText('Expand All')[0]);
+
+      await screen.findByText('the grandchild tag');
+      const grandchildRow = screen.getByText('the grandchild tag').closest('tr');
+      const grandchildActionsButton = within(grandchildRow).getByRole('button', {
+        name: /more actions for tag the grandchild tag/i,
+      });
+
+      fireEvent.click(grandchildActionsButton);
+      expect(screen.getByText('Add Subtag')).toBeInTheDocument();
     });
   });
 });

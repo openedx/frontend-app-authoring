@@ -60,7 +60,7 @@ function getColumns({
   maxDepth,
   creatingParentId,
 }: GetColumnsArgs): TreeColumnDef[] {
-  const canAddSubtag = (row: Row<TreeRowData>) => row.depth + 1 < maxDepth;
+  const canAddSubtag = (row: Row<TreeRowData>) => row.depth < maxDepth;
   const draftInProgressHintId = 'tag-list-draft-in-progress-hint';
 
   return [
