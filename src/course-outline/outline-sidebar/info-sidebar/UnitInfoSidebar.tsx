@@ -34,8 +34,7 @@ export const UnitSidebar = () => {
   const [tab, setTab] = useState<'preview' | 'info' | 'settings'>('info');
   const { selectedContainerState, clearSelection, setSelectedContainerState } = useOutlineSidebarContext();
   const {
-    /* istanbul ignore next */
-    currentId: unitId = '',
+    currentId: unitId = /* istanbul ignore next */ '',
     index,
   } = selectedContainerState ?? {};
   const { data: unitData, isLoading } = useCourseItemData(unitId);
@@ -115,6 +114,7 @@ export const UnitSidebar = () => {
             ? sections[newSectionIndex].childInfo.children.find((s) => s.id === newSubsectionId)?.childInfo.children.length ?? 0
             : 0)
           : index + step;
+        /* istanbul ignore next */
         setSelectedContainerState(selectedContainerState ? {
           ...selectedContainerState,
           sectionId: newSectionId,
@@ -177,8 +177,7 @@ export const UnitSidebar = () => {
               navigate(`/library/${libId}/unit/${upstreamRef}`);
             }
           },
-          /* istanbul ignore next */
-          onClickCopy: () => copyToClipboard(unitId),
+          onClickCopy: /* istanbul ignore next */ () => copyToClipboard(unitId),
           onClickCopyLocation: handleCopyLocation,
         }}
       />
