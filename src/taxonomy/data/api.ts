@@ -73,6 +73,7 @@ export const apiUrls = {
       page: (pageIndex ?? 0) + 1,
       page_size: pageSize ?? 10,
       full_depth_threshold: fullDepth ? MAX_TAXONOMY_ITEMS : 0,
+      include_counts: 'true',
     });
   },
   /**
