@@ -37,11 +37,25 @@ export class TagTree {
     this.buildTree();
   }
 
+  getAllFlattenedAsCopy(): TagTreeNode[] {
+    const flatten = (nodes: TagTreeNode[], accumulator: TagTreeNode[] = []): TagTreeNode[] => {
+      for (const node of nodes) {
+        accumulator.push({ ...node, subRows: undefined });
+        if (node.subRows) {
+          flatten(node.subRows, accumulator);
+        }
+      }
+      return accumulator;
+    };
+    return flatten(this.rows);
+  }
+
   getAllAsDeepCopy(): TagTreeNode[] {
     return JSON.parse(JSON.stringify(this.rows));
   }
 
   private validateNoDuplicateValues(items: TagData[]) {
+    // this should be case-sensitive to account for conceivable duplicates that have different cases in the backend.
     const seenValues = new Set<string>();
     for (const item of items) {
       if (seenValues.has(item.value)) {

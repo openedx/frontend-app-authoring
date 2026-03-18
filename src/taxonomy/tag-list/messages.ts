@@ -43,7 +43,7 @@ const messages = defineMessages({
   },
   moreActionsForTag: {
     id: 'course-authoring.tag-list.more-actions-for-tag',
-    defaultMessage: 'More actions for tag {tagName}',
+    defaultMessage: 'More actions for tag "{tagName}"',
   },
   showSubtagsButtonLabel: {
     id: 'course-authoring.tag-list.show-subtags.button-label',

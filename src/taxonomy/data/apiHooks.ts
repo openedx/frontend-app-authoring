@@ -16,6 +16,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { apiUrls, ALL_TAXONOMIES } from './api';
 import * as api from './api';
 import type { QueryOptions, TagListData } from './types';
+import { EXPECTED_MAX_TAXONOMY_ITEMS } from './constants';
 
 // Query key patterns. Allows an easy way to clear all data related to a given taxonomy.
 // https://github.com/openedx/frontend-app-admin-portal/blob/2ba315d/docs/decisions/0006-tanstack-react-query.rst
@@ -216,7 +217,9 @@ export const useTagListData = (taxonomyId: number, options: QueryOptions) => {
     // queryKey: taxonomyQueryKeys.taxonomyTagListPage(taxonomyId, pageIndex, pageSize),
     queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId), // For now, ignore pagination in the query key.
     queryFn: async () => {
-      const { data } = await getAuthenticatedHttpClient().get(apiUrls.tagList(taxonomyId, null, null, 1000));
+      const { data } = await getAuthenticatedHttpClient().get(
+        apiUrls.tagList(taxonomyId, null, null, EXPECTED_MAX_TAXONOMY_ITEMS),
+      );
       return camelCaseObject(data) as TagListData;
     },
     enabled,
