@@ -5,4 +5,4 @@
  * Right now we expect to load all tags for a taxonomy in one request,
  * and we just set this number really high to avoid any edge cases.
  */
-export const EXPECTED_MAX_TAXONOMY_ITEMS = 100000000;
+export const EXPECTED_MAX_TAXONOMY_ITEMS = 10000;
