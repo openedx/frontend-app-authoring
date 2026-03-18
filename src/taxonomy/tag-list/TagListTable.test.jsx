@@ -107,7 +107,7 @@ const mockTagsPaginationResponse = {
   start: 0,
   results: [],
 };
-const rootTagsListUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=1000';
+const rootTagsListUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=100000000';
 const subTagsResponse = {
   next: null,
   previous: null,
@@ -848,7 +848,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
       await screen.findByText('the child tag');
       const { input } = await openSubtagDraftRow({
         tagName: 'the child tag',
-        actionButtonName: /more actions for tag the child tag/i,
+        actionButtonName: /more actions for tag "the child tag"/i,
       });
       fireEvent.change(input, { target: { value: 'nested child' } });
       fireEvent.click(within(input.closest('tr')).getByText('Save'));
@@ -896,7 +896,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
 
       const { input } = await openSubtagDraftRow({
         tagName: 'the grandchild tag',
-        actionButtonName: /more actions for tag the grandchild tag/i,
+        actionButtonName: /more actions for tag "the grandchild tag"/i,
       });
       fireEvent.change(input, { target: { value: 'great grandchild' } });
       fireEvent.click(within(input.closest('tr')).getByText('Save'));
@@ -919,7 +919,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
 
       const { draftRow, input } = await openSubtagDraftRow({
         tagName: 'the grandchild tag',
-        actionButtonName: /more actions for tag the grandchild tag/i,
+        actionButtonName: /more actions for tag "the grandchild tag"/i,
       });
       fireEvent.change(input, { target: { value: 'great grandchild appears immediately' } });
 
@@ -937,7 +937,7 @@ describe('<TagListTable /> isolated async subtag tests', () => {
       await screen.findByText('the grandchild tag');
       const grandchildRow = screen.getByText('the grandchild tag').closest('tr');
       const grandchildActionsButton = within(grandchildRow).getByRole('button', {
-        name: /more actions for tag the grandchild tag/i,
+        name: /more actions for tag "the grandchild tag"/i,
       });
 
       fireEvent.click(grandchildActionsButton);
