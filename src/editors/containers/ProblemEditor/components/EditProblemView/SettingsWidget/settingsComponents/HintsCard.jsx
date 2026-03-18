@@ -23,6 +23,7 @@ const HintsCard = ({
 
   return (
     <SettingsOption
+      className="hints-card"
       title={intl.formatMessage(messages.hintSettingTitle)}
       summary={intl.formatMessage(summary.message, { ...summary.values })}
       none={!hints.length}

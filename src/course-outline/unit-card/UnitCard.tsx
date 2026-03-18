@@ -7,7 +7,9 @@ import {
   useState,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { useToggle, Icon, IconButtonWithTooltip } from '@openedx/paragon';
+import {
+  useToggle, Icon, OverlayTrigger, Tooltip,
+} from '@openedx/paragon';
 import { EditOutline as EditIcon } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -210,6 +212,14 @@ const UnitCard = ({
   );
 
   const supportsMFEEditor = (blockType: string): boolean => Boolean(supportedEditors[blockType]);
+
+  const getComponentEditorUrl = (blockType: string, blockId: string): string => {
+    if (supportsMFEEditor(blockType)) {
+      return `/course/${courseId}/editor/${blockType}/${blockId}`;
+    }
+    const returnTo = encodeURIComponent(`${getConfig().STUDIO_BASE_URL}/container/${id}`);
+    return `${getConfig().STUDIO_BASE_URL}/xblock/${blockId}/action/edit?returnTo=${returnTo}`;
+  };
 
   const handleShowLegacyEditModal = (blockId: string) => {
     setEditXBlockId(blockId);
@@ -477,6 +487,13 @@ const UnitCard = ({
                             id={component.blockId}
                             key={component.blockId}
                             buttonVariant="secondary"
+                            isClickable
+                            onClick={() => handleComponentClick(component.blockId)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleComponentClick(component.blockId);
+                              }
+                            }}
                             componentStyle={{
                               background: 'white',
                               borderRadius: '6px',
@@ -487,28 +504,49 @@ const UnitCard = ({
                               borderRadius: '6px 6px 0px 0px',
                               padding: '12px 16px',
                             }}
-                            isClickable
-                            onClick={() => handleComponentClick(component.blockId)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handleComponentClick(component.blockId);
-                              }
-                            }}
                             actions={(
                               <>
                                 <Icon src={ComponentIcon} className="mr-2 text-dark" />
-                                <span className="flex-grow-1">{component.displayName}</span>
-                                <IconButtonWithTooltip
-                                  className="component-card-button-icon btn-icon btn-icon-primary btn-icon-md"
-                                  data-testid="component-edit-button"
-                                  alt={intl.formatMessage(messages.editComponent)}
-                                  tooltipContent={<div>{intl.formatMessage(messages.editComponent)}</div>}
-                                  iconAs={EditIcon}
+                                <a
+                                  href={`${getTitleLink(id)}#${component.blockId}`}
+                                  className="flex-grow-1"
+                                  data-testid="component-name-link"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleComponentEdit(e, component.blockType, component.blockId);
+                                    if (!e.metaKey && !e.ctrlKey) {
+                                      e.preventDefault();
+                                      handleComponentClick(component.blockId);
+                                    }
                                   }}
-                                />
+                                >
+                                  {component.displayName}
+                                </a>
+                                <OverlayTrigger
+                                  placement="top"
+                                  overlay={(
+                                    <Tooltip id={`edit-tooltip-${component.blockId}`}>
+                                      {intl.formatMessage(messages.editComponent)}
+                                    </Tooltip>
+                                  )}
+                                >
+                                  <a
+                                    href={getComponentEditorUrl(component.blockType, component.blockId)}
+                                    className="component-card-button-icon btn btn-icon btn-icon-primary btn-icon-md"
+                                    data-testid="component-edit-button"
+                                    aria-label={intl.formatMessage(messages.editComponent)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (!e.metaKey && !e.ctrlKey) {
+                                        e.preventDefault();
+                                        handleComponentEdit(e, component.blockType, component.blockId);
+                                      }
+                                    }}
+                                  >
+                                    <span className="btn-icon_btn-icon-primary_icon">
+                                      <Icon src={EditIcon} />
+                                    </span>
+                                  </a>
+                                </OverlayTrigger>
                               </>
                             )}
                           />
