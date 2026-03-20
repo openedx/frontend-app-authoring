@@ -13,7 +13,7 @@ export function updateXpertSettings(courseId, state) {
       const { response } = await postXpertSettings(courseId, state);
       const { success } = response;
       if (success) {
-        dispatch(updateModel({ modelType: 'XpertSettings', model: { id: 'xpert-unit-summary', enabled: state.enabled } }));
+        dispatch(updateModel({ modelType: 'XpertSettings', model: { id: 'xpert_unit_summary', enabled: state.enabled } }));
         dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         return true;
       }
@@ -40,7 +40,7 @@ export function fetchXpertPluginConfigurable(courseId) {
     dispatch(addModel({
       modelType: 'XpertSettings.enabled',
       model: {
-        id: 'xpert-unit-summary',
+        id: 'xpert_unit_summary',
         enabled,
       },
     }));
@@ -62,7 +62,7 @@ export function fetchXpertSettings(courseId) {
     dispatch(addModel({
       modelType: 'XpertSettings',
       model: {
-        id: 'xpert-unit-summary',
+        id: 'xpert_unit_summary',
         enabled,
       },
     }));
@@ -79,7 +79,7 @@ export function removeXpertSettings(courseId) {
       const { response } = await deleteXpertSettings(courseId);
       const { success } = response;
       if (success) {
-        const model = { id: 'xpert-unit-summary', enabled: undefined };
+        const model = { id: 'xpert_unit_summary', enabled: undefined };
         dispatch(updateModel({ modelType: 'XpertSettings', model }));
         dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         return true;

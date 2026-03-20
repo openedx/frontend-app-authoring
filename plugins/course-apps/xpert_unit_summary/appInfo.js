@@ -1,5 +1,5 @@
 export default {
-  id: 'xpert-unit-summary',
+  id: 'xpert_unit_summary',
   enabled: false,
   name: 'Xpert unit summaries',
   description: 'Use generative AI to summarize course content and reinforce learning.',

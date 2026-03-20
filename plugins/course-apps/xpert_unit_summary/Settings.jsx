@@ -25,7 +25,7 @@ const XpertUnitSummarySettings = () => {
 
   return (
     <SettingsModal
-      appId="xpert-unit-summary"
+      appId="xpert_unit_summary"
       title={intl.formatMessage(messages.heading)}
       enableAppHelp={intl.formatMessage(messages.enableXpertUnitSummaryHelp)}
       helpPrivacyText={intl.formatMessage(messages.enableXpertUnitSummaryHelpPrivacyLink)}
