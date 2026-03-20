@@ -8,10 +8,11 @@ import {
   Icon,
   IconButton,
   useToggle,
+  Alert,
 } from '@openedx/paragon';
 import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { MoreVert } from '@openedx/paragon/icons';
+import { InfoOutline, MoreVert } from '@openedx/paragon/icons';
 
 import { useClipboard } from '@src/generic/clipboard';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
@@ -149,6 +150,15 @@ const ContainerActions = ({
   );
 };
 
+/* istanbul ignore next */
+/* istanbul ignore next */
+const ContainerSettings = () => (
+  <Alert icon={InfoOutline} variant="info">
+    <p>
+      <FormattedMessage {...messages.containerSettingsMsg} />
+    </p>
+  </Alert>
+);
 const ContainerInfo = () => {
   const intl = useIntl();
   const {
@@ -222,7 +232,7 @@ const ContainerInfo = () => {
         {renderTab(
           CONTAINER_INFO_TABS.Settings,
           intl.formatMessage(messages.settingsTabTitle),
-          // TODO: container settings component
+          <ContainerSettings />,
         )}
       </Tabs>
     </Stack>

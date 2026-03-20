@@ -32,6 +32,7 @@ export interface GetLibraryRestoreStatusResponse {
 
 export enum LibraryRestoreStatus {
   Pending = 'Pending',
+  InProgress = 'In Progress',
   Succeeded = 'Succeeded',
   Failed = 'Failed',
 }

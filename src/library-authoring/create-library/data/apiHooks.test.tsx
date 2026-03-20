@@ -173,6 +173,34 @@ describe('create library apiHooks', () => {
       expect(axiosMock.history.get[0].url).toEqual(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`);
     });
 
+    it('should handle in-progress status with refetch interval', async () => {
+      const taskId = 'in-progress-task-id';
+      const inProgressResult = {
+        state: LibraryRestoreStatus.InProgress,
+        result: null,
+        error: null,
+        error_log: null,
+      };
+
+      const expectedResult = {
+        state: LibraryRestoreStatus.InProgress,
+        result: null,
+        error: null,
+        errorLog: null,
+      };
+
+      axiosMock.onGet(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`).reply(200, inProgressResult);
+
+      const { result } = renderHook(() => useGetLibraryRestoreStatus(taskId), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBeFalsy();
+      });
+
+      expect(result.current.data).toEqual(expectedResult);
+      expect(axiosMock.history.get[0].url).toEqual(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`);
+    });
+
     it('should handle failed status', async () => {
       const taskId = 'failed-task-id';
       const failedResult = {
