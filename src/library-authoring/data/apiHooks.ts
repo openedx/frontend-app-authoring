@@ -123,6 +123,8 @@ export const xblockQueryKeys = {
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
   componentDownstreamLinks: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamLinks'],
   draftHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'draftHistory'],
+  publishHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory'],
+  publishHistoryEntries: (usageKey: string, publishGroupId: string) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory', publishGroupId, 'entries'],
 
   /**
    * Predicate used to invalidate all metadata only (not OLX, fields, assets, etc.).
@@ -159,6 +161,8 @@ export function invalidateComponentData(queryClient: QueryClient, contentLibrary
   // This might fail in case this helper is called after deleting the block.
   queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(contentLibraryId) });
   queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
+  queryClient.invalidateQueries({ queryKey: xblockQueryKeys.draftHistory(usageKey) });
+  queryClient.invalidateQueries({ queryKey: xblockQueryKeys.publishHistory(usageKey) });
 }
 
 /**
@@ -1014,6 +1018,30 @@ export const useLibraryBlockDraftHistory = (usageKey: string | undefined) => (
   useQuery({
     queryKey: xblockQueryKeys.draftHistory(usageKey!),
     queryFn: usageKey ? () => api.getLibraryBlockDraftHistory(usageKey) : skipToken,
+  })
+);
+
+/**
+ * Returns the publish history of a library block.
+ */
+export const useLibraryBlockPublishHistory = (usageKey: string | undefined) => (
+  useQuery({
+    queryKey: xblockQueryKeys.publishHistory(usageKey!),
+    queryFn: usageKey ? () => api.getLibraryBlockPublishHistory(usageKey) : skipToken,
+  })
+);
+
+/**
+ * Returns the entries for a publish history group of a library block.
+ */
+export const useLibraryBlockPublishHistoryEntries = (
+  usageKey: string | undefined,
+  publishGroupId: string | undefined,
+  enabled: boolean = true,
+) => (
+  useQuery({
+    queryKey: xblockQueryKeys.publishHistoryEntries(usageKey!, publishGroupId!),
+    queryFn: (usageKey && publishGroupId && enabled) ? () => api.getLibraryBlockPublishHistoryEntries(usageKey, publishGroupId) : skipToken,
   })
 );
 

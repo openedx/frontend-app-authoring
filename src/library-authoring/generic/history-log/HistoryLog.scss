@@ -1,6 +1,5 @@
 .history-log {
   .history-log-group {
-
     .history-log-group-avatar {
       &.big-avatar {
         border: 3px solid;
@@ -15,6 +14,10 @@
       width: 8px;
       height: 2rem;
       margin: -10px 0 -10px 20px;
+
+      &.history-log-vert-long {
+        height: 3.3rem;
+      }
     }
 
     &.draft-group {
@@ -27,13 +30,22 @@
       }
     }
 
+    .contributors-avatars {
+      display: flex;
+      align-items: center;
+
+      .contributors-avatar {
+        margin-left: -.5rem;
+      }
+    }
+
     &.publish-group {
       .history-log-group-avatar {
-        border-color: #0D7D8C;
+        border-color: var(--pgn-color-info-400);
       }
 
       .history-log-vert {
-        background-color: #0D7D8C;
+        background-color: var(--pgn-color-info-400);
       }
     }
   }
