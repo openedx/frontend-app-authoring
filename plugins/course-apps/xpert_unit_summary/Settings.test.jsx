@@ -206,7 +206,7 @@ describe('XpertUnitSummarySettings', () => {
     });
   });
 
-  describe('removing course configuration', () => {
+  describe('disabling course configuration', () => {
     beforeEach(() => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
         .reply(200, generateCourseLevelAPIResponse({
@@ -214,23 +214,23 @@ describe('XpertUnitSummarySettings', () => {
           enabled: true,
         }));
 
-      axiosMock.onDelete(API.getXpertSettingsUrl(courseId))
+      axiosMock.onPost(API.getXpertSettingsUrl(courseId))
         .reply(200, generateCourseLevelAPIResponse({
           success: true,
-          enabled: undefined,
+          enabled: false,
         }));
 
       renderComponent();
     });
 
-    test('Deleting course configuration', async () => {
-      jest.spyOn(API, 'deleteXpertSettings');
+    test('Disabling course configuration', async () => {
+      jest.spyOn(API, 'postXpertSettings');
 
       await waitFor(() => expect(container.querySelector('#enable-xpert_unit_summary-toggle')).toBeTruthy());
       fireEvent.click(container.querySelector('#enable-xpert_unit_summary-toggle'));
       fireEvent.click(getByText(container, 'Save'));
       await waitFor(() => expect(container.querySelector('#enable-xpert_unit_summary-toggle')).toBeTruthy());
-      expect(API.deleteXpertSettings).toBeCalled();
+      expect(API.postXpertSettings).toBeCalledWith(courseId, { enabled: false });
     });
   });
 

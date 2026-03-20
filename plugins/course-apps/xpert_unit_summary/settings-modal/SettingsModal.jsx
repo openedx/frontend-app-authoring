@@ -36,7 +36,7 @@ import { updateSavingStatus, updateResetStatus } from 'CourseAuthoring/pages-and
 import AppConfigFormDivider from 'CourseAuthoring/pages-and-resources/discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
-import { updateXpertSettings, resetXpertSettings, removeXpertSettings } from '../data/thunks';
+import { updateXpertSettings, resetXpertSettings } from '../data/thunks';
 import messages from './messages';
 import appInfo from '../appInfo';
 import ResetIcon from './ResetIcon';
@@ -235,13 +235,11 @@ const SettingsModal = ({
 
   const handleFormSubmit = async ({ enabled, checked, ...rest }) => {
     let success;
-    const values = { ...rest, enabled: enabled ? checked === 'true' : undefined };
+    const values = { ...rest, enabled: enabled ? checked === 'true' : false };
 
-    if (enabled) {
-      success = await dispatch(updateXpertSettings(courseId, values));
-    } else {
-      success = await dispatch(removeXpertSettings(courseId));
-    }
+    // Always update settings to save the enabled state (true/false)
+    // Don't delete the record when disabling, as that would fall back to system default
+    success = await dispatch(updateXpertSettings(courseId, values));
 
     if (onSettingsSave) {
       success = success && await onSettingsSave(values);
