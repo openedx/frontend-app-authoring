@@ -10,7 +10,10 @@ import { mockFetchIndexDocuments, mockContentSearchConfig } from '@src/search-ma
 import {
   mockContentLibrary,
   mockGetEntityLinks,
+  mockLibraryBlockDraftHistory,
   mockLibraryBlockMetadata,
+  mockLibraryBlockPublishHistory,
+  mockLibraryBlockPublishHistoryEntries,
   mockXBlockAssets,
   mockXBlockOLX,
 } from '../data/api.mocks';
@@ -21,6 +24,9 @@ import ComponentDetails from './ComponentDetails';
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
+mockLibraryBlockDraftHistory.applyMock();
+mockLibraryBlockPublishHistory.applyMock();
+mockLibraryBlockPublishHistoryEntries.applyMock();
 mockXBlockAssets.applyMock();
 mockXBlockOLX.applyMock();
 mockGetEntityLinks.applyMock();
@@ -95,11 +101,7 @@ describe('<ComponentDetails />', () => {
 
   it('should render the component history', async () => {
     render(mockLibraryBlockMetadata.usageKeyPublished);
-    // Show created date
-    expect(await screen.findByText('June 20, 2024')).toBeInTheDocument();
-    // Show modified date
-    expect(await screen.findByText('June 21, 2024')).toBeInTheDocument();
-    // Show last published date
-    expect(await screen.findByText('June 22, 2024')).toBeInTheDocument();
+    // Show created group (no draft or publish history for this usage key)
+    expect(await screen.findByText(/Author created this component/i)).toBeInTheDocument();
   });
 });

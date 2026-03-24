@@ -1211,15 +1211,25 @@ export async function mockLibraryBlockDraftHistory(usageKey: string): Promise<ap
 }
 mockLibraryBlockDraftHistory.usageKey = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
 mockLibraryBlockDraftHistory.usageKeyEmpty = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
+const mockContributor = (username: string): api.LibraryPublishContributor => ({
+  username,
+  profileImageUrls: {
+    full: 'icon/mock/path',
+    large: 'icon/mock/path',
+    medium: 'icon/mock/path',
+    small: 'icon/mock/path',
+  },
+});
+
 mockLibraryBlockDraftHistory.data = [
   {
-    changedBy: 'test_user_1',
+    changedBy: mockContributor('test_user_1'),
     changedAt: '2026-03-16T11:00:00Z',
     title: 'Electron Arcs',
     action: 'edited',
   },
   {
-    changedBy: 'test_user_2',
+    changedBy: mockContributor('test_user_2'),
     changedAt: '2026-03-13T10:00:00Z',
     title: 'More on Quarks',
     action: 'renamed',
@@ -1247,7 +1257,7 @@ mockLibraryBlockPublishHistory.data = [
     publishLogUuid: 'abc-123',
     publishedBy: 'author',
     publishedAt: '2026-03-14T10:00:00Z',
-    contributors: ['test_user_1', 'test_user_2', 'test_user_3', 'test_user_4', 'test_user_5'],
+    contributors: ['test_user_1', 'test_user_2', 'test_user_3', 'test_user_4', 'test_user_5'].map(mockContributor),
     contributorsCount: 5,
   },
 ] satisfies api.LibraryPublishHistoryGroup[];
@@ -1266,7 +1276,7 @@ export async function mockLibraryBlockPublishHistoryEntries(
 }
 mockLibraryBlockPublishHistoryEntries.data = [
   {
-    changedBy: 'test_user',
+    changedBy: mockContributor('test_user'),
     changedAt: '2026-03-10T09:00:00Z',
     title: 'Protons',
     action: 'edited',

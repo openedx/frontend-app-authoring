@@ -927,12 +927,22 @@ export interface LibraryPublishHistoryGroup {
   publishLogUuid: string;
   publishedBy: string;
   publishedAt: string;
-  contributors: string[];
+  contributors: LibraryPublishContributor[];
   contributorsCount: number;
 }
 
+export interface LibraryPublishContributor {
+  profileImageUrls: {
+    full: string;
+    large: string;
+    medium: string;
+    small: string;
+  };
+  username: string;
+}
+
 export interface LibraryHistoryEntry {
-  changedBy: string;
+  changedBy: LibraryPublishContributor;
   changedAt: string;
   title: string;
   action: 'edited' | 'renamed';

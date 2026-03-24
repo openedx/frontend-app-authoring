@@ -1,3 +1,4 @@
+import { ComponentProps, useState } from "react";
 import moment from "moment";
 import classNames from "classnames";
 import { Avatar, Collapsible, Icon, Stack, useToggle } from "@openedx/paragon";
@@ -7,7 +8,7 @@ import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
 import { useLibraryBlockPublishHistoryEntries } from "@src/library-authoring/data/apiHooks";
 import { LoadingSpinner } from "@src/generic/Loading";
 
-import { LibraryHistoryEntry } from "../../data/api";
+import { LibraryHistoryEntry, LibraryPublishContributor } from "../../data/api";
 import messages from "./messages";
 
 const MAX_VISIBLE_CONTRIBUTORS = 5;
@@ -32,13 +33,42 @@ export interface HistoryLogGroupEntriesProps {
   entries: LibraryHistoryEntry[];
 }
 
-export interface HistoryPublishLogGroup {
+export interface HistoryPublishLogGroupProps {
   itemId: string;
   publishGroupId: string;
   titleMessage: string;
   publishedAt: string;
-  contributors: string[];
+  contributors: LibraryPublishContributor[];
 }
+
+interface ContributorAvatarProps {
+  username: string;
+  src: string;
+  className: string;
+  size: ComponentProps<typeof Avatar>['size'];
+}
+
+interface ContributorsAvatarsProps {
+  contributors: LibraryPublishContributor[];
+}
+
+const ContributorAvatar = ({
+  username,
+  src,
+  className,
+  size,
+}: ContributorAvatarProps) => {
+  const [imgError, setImgError] = useState(false);
+  return (
+    <Avatar
+      className={className}
+      size={size}
+      src={imgError ? undefined : src}
+      alt={username}
+      onError={() => setImgError(true)}
+    />
+  );
+};
 
 const HistoryLogGroupTitle = ({
   titleMessage,
@@ -82,16 +112,17 @@ const HistoryLogGroupEntries = ({
       return (
         <div key={entry.changedAt}>
           <Stack direction="horizontal" gap={2} className="ml-1.5">
-            <Avatar
+            <ContributorAvatar
+              username={entry.changedBy.username}
+              src={entry.changedBy.profileImageUrls.medium}
               className="history-log-group-avatar small-avatar"
               size="sm"
-              alt={entry.changedBy}
             />
             <Stack>
               <span>
                 <FormattedMessage
                   {...entryMessage}
-                  values={{ user: entry.changedBy }}
+                  values={{ user: entry.changedBy.username }}
                 />
               </span>
               <span className="small text-gray-500">
@@ -150,21 +181,18 @@ export const HistoryDraftLogGroup = ({
   );
 };
 
-interface ContributorsAvatarsProps {
-  contributors: string[];
-}
-
 const ContributorsAvatars = ({ contributors }: ContributorsAvatarsProps) => {
   const visible = contributors.slice(0, MAX_VISIBLE_CONTRIBUTORS);
   return (
     <Stack direction="horizontal" gap={2} className="ml-4.5">
       <div className="contributors-avatars">
-        {visible.map((username) => (
-          <Avatar
+        {visible.map(({ username, profileImageUrls }) => (
+          <ContributorAvatar
             key={username}
+            size='xs'
             className="contributors-avatar"
-            size="xs"
-            alt={username}
+            username={username}
+            src={profileImageUrls.small}
           />
         ))}
       </div>
@@ -184,7 +212,7 @@ export const HistoryPublishLogGroup = ({
   titleMessage,
   publishedAt,
   contributors,
-}: HistoryPublishLogGroup) => {
+}: HistoryPublishLogGroupProps) => {
   const [isOpenCollapsible, openCollapsible, closeCollapsible] = useToggle(false);
 
   const {
