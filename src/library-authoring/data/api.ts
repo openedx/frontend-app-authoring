@@ -925,8 +925,10 @@ export async function getModulestoreMigrationBlocksInfo(
 
 export interface LibraryPublishHistoryGroup {
   publishLogUuid: string;
+  title: string;
   publishedBy: string;
   publishedAt: string;
+  blockType: string;
   contributors: LibraryPublishContributor[];
   contributorsCount: number;
 }
@@ -945,6 +947,7 @@ export interface LibraryHistoryEntry {
   changedBy: LibraryPublishContributor;
   changedAt: string;
   title: string;
+  blockType: string;
   action: 'edited' | 'renamed';
 }
 
@@ -969,5 +972,6 @@ export async function getLibraryBlockPublishHistoryEntries(usageKey: string, pub
  */
 export async function getLibraryBlockDraftHistory(usageKey: string): Promise<LibraryHistoryEntry[]> {
   const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockDraftHistoryUrl(usageKey));
+  console.log(data);
   return camelCaseObject(data);
 }

@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps, ReactNode, useState } from "react";
 import moment from "moment";
 import classNames from "classnames";
 import { Avatar, Collapsible, Icon, Stack, useToggle } from "@openedx/paragon";
@@ -8,19 +8,22 @@ import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
 import { useLibraryBlockPublishHistoryEntries } from "@src/library-authoring/data/apiHooks";
 import { LoadingSpinner } from "@src/generic/Loading";
 
-import { LibraryHistoryEntry, LibraryPublishContributor } from "../../data/api";
+import { LibraryHistoryEntry, LibraryPublishContributor, LibraryPublishHistoryGroup } from "../../data/api";
 import messages from "./messages";
+import { getItemIcon } from "@src/generic/block-type-utils";
 
 const MAX_VISIBLE_CONTRIBUTORS = 5;
 
 export interface HistoryLogGroupTitleProps {
-  titleMessage: string;
+  titleMessage: string | ReactNode;
   dateMessage: string;
   disableCollapsible?: boolean;
 }
 
 export interface HistoryCreatedLogGroupProps {
-  titleMessage: string;
+  user?: string | null;
+  displayName: string;
+  itemType: string;
   createdAt: string;
 }
 
@@ -33,12 +36,8 @@ export interface HistoryLogGroupEntriesProps {
   entries: LibraryHistoryEntry[];
 }
 
-export interface HistoryPublishLogGroupProps {
+export interface HistoryPublishLogGroupProps extends LibraryPublishHistoryGroup {
   itemId: string;
-  publishGroupId: string;
-  titleMessage: string;
-  publishedAt: string;
-  contributors: LibraryPublishContributor[];
 }
 
 interface ContributorAvatarProps {
@@ -79,9 +78,9 @@ const HistoryLogGroupTitle = ({
     <Stack direction="horizontal" gap={2} className="mb-1">
       <Avatar className="history-log-group-avatar big-avatar" size="md"/>
       <Stack>
-        <span>
+        <Stack direction="horizontal" gap={1}>
           {titleMessage}
-        </span>
+        </Stack>
         <span className="small text-gray-500">
           {dateMessage}
         </span>
@@ -107,8 +106,9 @@ const HistoryLogGroupEntries = ({
     <div className="history-log-vert" />
     {entries.map((entry) => {
       const entryMessage = entry.action === 'edited'
-        ? messages.historyEditComponentEntry
-        : messages.historyRenameComponentEntry;
+        ? messages.historyEditEntry
+        : messages.historyRenameEntry;
+      
       return (
         <div key={entry.changedAt}>
           <Stack direction="horizontal" gap={2} className="ml-1.5">
@@ -119,12 +119,16 @@ const HistoryLogGroupEntries = ({
               size="sm"
             />
             <Stack>
-              <span>
+              <Stack direction="horizontal" gap={1}>
                 <FormattedMessage
                   {...entryMessage}
-                  values={{ user: entry.changedBy.username }}
+                  values={{
+                    user: entry.changedBy.username,
+                    displayName: entry.title,
+                    icon: <Icon src={getItemIcon(entry.blockType)} />
+                  }}
                 />
-              </span>
+              </Stack>
               <span className="small text-gray-500">
                 {moment(entry.changedAt).fromNow()}
               </span>
@@ -139,17 +143,27 @@ const HistoryLogGroupEntries = ({
 );
 
 export const HistoryCreatedLogGroup = ({
-  titleMessage,
+  user,
+  displayName,
+  itemType,
   createdAt,
-}: HistoryCreatedLogGroupProps) => (
-  <div className="history-log-group publish-group">
-    <HistoryLogGroupTitle
-      titleMessage={titleMessage}
-      dateMessage={moment(createdAt).fromNow()}
-      disableCollapsible
-    />
-  </div>
-);
+}: HistoryCreatedLogGroupProps) => {
+  const intl = useIntl();
+
+  return (
+    <div className="history-log-group publish-group">
+      <HistoryLogGroupTitle
+        titleMessage={intl.formatMessage(messages.createdTitle, {
+          user: user ?? intl.formatMessage(messages.historyEntryDefaultUser),
+          displayName,
+          icon: <Icon src={getItemIcon(itemType)} />,
+        })}
+        dateMessage={moment(createdAt).fromNow()}
+        disableCollapsible
+      />
+    </div>
+  );
+};
 
 export const HistoryDraftLogGroup = ({
   displayName,
@@ -208,17 +222,20 @@ const ContributorsAvatars = ({ contributors }: ContributorsAvatarsProps) => {
 
 export const HistoryPublishLogGroup = ({
   itemId,
-  publishGroupId,
-  titleMessage,
+  publishLogUuid,
+  title,
+  publishedBy,
   publishedAt,
+  blockType,
   contributors,
 }: HistoryPublishLogGroupProps) => {
+  const intl = useIntl();
   const [isOpenCollapsible, openCollapsible, closeCollapsible] = useToggle(false);
 
   const {
     data: entries,
     isPending,
-  } = useLibraryBlockPublishHistoryEntries(itemId, publishGroupId, isOpenCollapsible);
+  } = useLibraryBlockPublishHistoryEntries(itemId, publishLogUuid, isOpenCollapsible);
 
   return (
     <div className="history-log-group publish-group">
@@ -229,7 +246,14 @@ export const HistoryPublishLogGroup = ({
       >
         <Collapsible.Trigger>
           <HistoryLogGroupTitle
-            titleMessage={titleMessage}
+            titleMessage={intl.formatMessage(
+              messages.publishTitle,
+              {
+                user: publishedBy,
+                displayName: title,
+                icon: <Icon src={getItemIcon(blockType)} /> 
+              },
+            )}
             dateMessage={moment(publishedAt).fromNow()}
           />
         </Collapsible.Trigger>

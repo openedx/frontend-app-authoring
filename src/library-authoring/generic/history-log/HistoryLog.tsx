@@ -1,8 +1,6 @@
-import { useIntl } from "@edx/frontend-platform/i18n";
 import { LoadingSpinner } from "@src/generic/Loading";
 import { useLibraryBlockDraftHistory, useLibraryBlockMetadata, useLibraryBlockPublishHistory } from "@src/library-authoring/data/apiHooks";
 import { HistoryCreatedLogGroup, HistoryDraftLogGroup, HistoryPublishLogGroup } from "./HistoryLogGroup";
-import messages from "./messages";
 
 export interface HistoryComponentLogProps {
   componentId: string;
@@ -13,8 +11,6 @@ export const HistoryComponentLog = ({
   componentId,
   displayName,
 }: HistoryComponentLogProps) => {
-  const intl = useIntl();
-  
   const {
     data: draftHistory,
     isPending: isPendingDraftHistory,
@@ -33,13 +29,6 @@ export const HistoryComponentLog = ({
   if (isPendingDraftHistory || isPendingComponentData || isPendingPublishHistoryGroups) {
     return <LoadingSpinner />
   }
-
-  const createdGroupTitle = intl.formatMessage(
-    messages.createdComponentTitle,
-    {
-      user: componentData?.createdBy ?? intl.formatMessage(messages.historyEntryDefaultUser),
-    },
-  );
   
   return (
     <div className="history-log">
@@ -51,28 +40,20 @@ export const HistoryComponentLog = ({
       )}
       {publishHistoryGroups && publishHistoryGroups.length !== 0 && (
         publishHistoryGroups.map((publishGroup) => {
-          const titleMessage = intl.formatMessage(
-            messages.publishComponentTitle,
-            {
-              user: publishGroup.publishedBy,
-            },
-          )
-
           return (
             <div key={publishGroup.publishLogUuid}>
               <HistoryPublishLogGroup
+                {...publishGroup}
                 itemId={componentId}
-                publishGroupId={publishGroup.publishLogUuid}
-                titleMessage={titleMessage}
-                contributors={publishGroup.contributors}
-                publishedAt={publishGroup.publishedAt}
               />
             </div>
           )
         })
       )}
       <HistoryCreatedLogGroup
-        titleMessage={createdGroupTitle}
+        user={componentData?.createdBy}
+        displayName={componentData?.displayName ?? ''}
+        itemType={componentData?.blockType ?? ''}
         createdAt={componentData?.created ?? ''}
       />
     </div>

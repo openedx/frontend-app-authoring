@@ -1227,12 +1227,14 @@ mockLibraryBlockDraftHistory.data = [
     changedAt: '2026-03-16T11:00:00Z',
     title: 'Electron Arcs',
     action: 'edited',
+    blockType: 'html',
   },
   {
     changedBy: mockContributor('test_user_2'),
     changedAt: '2026-03-13T10:00:00Z',
     title: 'More on Quarks',
     action: 'renamed',
+    blockType: 'html',
   },
 ] satisfies api.LibraryHistoryEntry[];
 mockLibraryBlockDraftHistory.applyMock = () => jest.spyOn(api, 'getLibraryBlockDraftHistory').mockImplementation(mockLibraryBlockDraftHistory);
@@ -1255,6 +1257,8 @@ mockLibraryBlockPublishHistory.usageKeyEmpty = 'lb:Axim:TEST2:html:571fe018-f3ce
 mockLibraryBlockPublishHistory.data = [
   {
     publishLogUuid: 'abc-123',
+    title: 'Protons',
+    blockType: 'html',
     publishedBy: 'author',
     publishedAt: '2026-03-14T10:00:00Z',
     contributors: ['test_user_1', 'test_user_2', 'test_user_3', 'test_user_4', 'test_user_5'].map(mockContributor),
@@ -1280,6 +1284,7 @@ mockLibraryBlockPublishHistoryEntries.data = [
     changedAt: '2026-03-10T09:00:00Z',
     title: 'Protons',
     action: 'edited',
+    blockType: 'html',
   },
 ] satisfies api.LibraryHistoryEntry[];
 mockLibraryBlockPublishHistoryEntries.applyMock = () => jest.spyOn(

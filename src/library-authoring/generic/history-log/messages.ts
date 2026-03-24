@@ -6,30 +6,30 @@ const messages = defineMessages({
     defaultMessage: '{displayName} is a draft',
     description: 'Title for the draft group in the history log section.',
   },
-  publishComponentTitle: {
-    id: 'course-authoring.library-authoring.history.publish.component.title',
-    defaultMessage: '{user} published this component',
-    description: 'Title for the publish group in the history log section for components.',
+  publishTitle: {
+    id: 'course-authoring.library-authoring.history.publish.title',
+    defaultMessage: '{user} published {icon} {displayName}',
+    description: 'Title for the publish group in the history log section.',
   },
   draftTitleDate: {
     id: 'course-authoring.library-authoring.history.draft.date',
     defaultMessage: '{count, plural, one {{count} change} other {{count} changes}} since {date}',
     description: 'Title for the draft group in the history log section.',
   },
-  createdComponentTitle: {
-    id: 'course-authoring.library-authoring.history.created.component.title',
-    defaultMessage: '{user} created this component',
-    description: 'Title for the created group in the history log section for components.',
+  createdTitle: {
+    id: 'course-authoring.library-authoring.history.created.title',
+    defaultMessage: '{user} created {icon} {displayName}',
+    description: 'Title for the created group in the history log section.',
   },
-  historyEditComponentEntry: {
+  historyEditEntry: {
     id: 'course-authoring.library-authoring.history.edit-entry',
-    defaultMessage: '{user} edited this component',
-    description: 'Edit entry of the history log in a component',
+    defaultMessage: '{user} edited {icon} {displayName}',
+    description: 'Edit entry of the history log.',
   },
-  historyRenameComponentEntry: {
+  historyRenameEntry: {
     id: 'course-authoring.library-authoring.history.rename-entry',
-    defaultMessage: '{user} renamed this component',
-    description: 'Rename entry of the history log in a component',
+    defaultMessage: '{user} renamed {icon} {displayName}',
+    description: 'Rename entry of the history log.',
   },
   historyEntryDefaultUser: {
     id: 'course-authoring.library-authoring.history.default-user',
