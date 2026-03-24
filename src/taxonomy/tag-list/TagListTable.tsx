@@ -147,7 +147,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     }
   }, [tagList?.results, tableMode]);
 
-  //RELOAD DATA ON PAGE LOAD
+  // RELOAD DATA ON PAGE LOAD
   // Addresses issue of stale data in taxonomies/tags query on
   // page load without manual page refresh
   useEffect(() => {
@@ -155,7 +155,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId),
     });
     queryClient.invalidateQueries({
-      queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId)
+      queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId),
     });
   }, []);
 
