@@ -229,7 +229,7 @@ describe('<TagListTable />', () => {
     const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(3 + 1); // 3 items plus header
     expect(within(rows[1]).getAllByRole('cell')[1].textContent).toEqual('1');
-  })
+  });
 
   it('should render page correctly with subtags', async () => {
     const expandButton = await screen.findByLabelText('Show Subtags');
@@ -239,32 +239,34 @@ describe('<TagListTable />', () => {
   });
 
   it('should render usage count correctly for sub tag', async () => {
-    //Expand all tags and await for child tag to render
+    // Expand all tags and await for child tag to render
     const expandButton = screen.getAllByText('Expand All')[0];
     fireEvent.click(expandButton);
     const childTag = await screen.findByText('the child tag');
+    expect(childTag).toBeInTheDocument();
 
     const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(5 + 1); // 5 items plus header
     expect(within(rows[2]).getAllByRole('cell')[1].textContent).toEqual('1');
-  })
+  });
 
   it('should render usage count as empty/no content when usage count is "0"', async () => {
     const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(3 + 1); // 3 items plus header
     expect(within(rows[2]).getAllByRole('cell')[1].textContent).toEqual('');
-  })
+  });
 
   it('should render usage count as empty/no when usage count is "null"', async () => {
-    //Expand all tags and await for child tag to render
+    // Expand all tags and await for child tag to render
     const expandButton = screen.getAllByText('Expand All')[0];
     fireEvent.click(expandButton);
     const childTag = await screen.findByText('the child tag');
+    expect(childTag).toBeInTheDocument();
 
     const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(5 + 1); // 5 items plus header
     expect(within(rows[4]).getAllByRole('cell')[1].textContent).toEqual('');
-  })
+  });
 
   it('should not render pagination footer if too few results', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);

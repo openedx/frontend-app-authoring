@@ -50,11 +50,16 @@ interface GetColumnsArgs {
 }
 
 const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
-    const count = asTagListRowData(row).usageCount ?? 0
-    return (count > 0 && <Bubble expandable={true}>
-      {count}
-    </Bubble>)
+  const count = asTagListRowData(row).usageCount ?? 0
+  return (
+    count > 0 && (
+      <Bubble expandable={true}>
+        {count}
+      </Bubble>
+    )
+  );
 };
+
 interface ActionsHeaderProps {
   onStartDraft: () => void;
   setDraftError: (error: string) => void;
