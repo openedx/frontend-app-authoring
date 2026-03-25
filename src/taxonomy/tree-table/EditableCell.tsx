@@ -10,6 +10,19 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import OptionalExpandLink from '../tag-list/OptionalExpandLink';
 
+/**
+ * Props for the EditableCell component.
+ * @interface EditableCellProps
+ * @property {string} [initialValue] - The initial value to display in the cell
+ * @property {function} [onKeyDown] - Callback function triggered on keyboard events
+ * @property {function} [onChange] - Callback function triggered when the input value changes
+ * @property {string} [errorMessage] - Error message to display if validation fails
+ * @property {boolean} [isSaving] - Indicates whether the cell value is currently being saved to the server
+ * @property {boolean} [autoFocus] - If true, the input field will automatically receive focus when the cell
+ * enters edit mode
+ * @property {function} [getInlineValidationMessage] - Function that returns a validation message to be displayed
+ * based on the current input value.
+ */
 interface EditableCellProps {
   initialValue?: string;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -30,24 +43,23 @@ const EditableCell = ({
   autoFocus = false,
 }: EditableCellProps) => {
   const [value, setValue] = useState<string>(initialValue);
+  const [validationMessage, setValidationMessage] = useState<string>('');''
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
 
   useEffect(() => {
-    if (autoFocus) {
-      if (inputRef.current) {
-        inputRef.current.focus();
-        inputRef.current.select();
-      }
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
     }
-  }, [autoFocus]);
+  }, [inputRef.current]); // autoFocus explicitly not a dependency, to avoid unexpected focus change.
 
   useEffect(() => {
     setValue(initialValue);
-  }, [initialValue]);
+    setValidationMessage(getInlineValidationMessage(initialValue));
+  }, []); // initialValue explicitly not a dependency, to avoid overwriting user input.
 
-  const validationMessage = getInlineValidationMessage(value);
   const effectiveErrorMessage = errorMessage || validationMessage;
   const errorMessageId = `${inputId}-error`;
 
@@ -61,6 +73,7 @@ const EditableCell = ({
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
+              setValidationMessage(getInlineValidationMessage(e.target.value));
               onChange(e);
             }}
             size="sm"

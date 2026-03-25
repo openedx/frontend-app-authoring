@@ -33,6 +33,7 @@ export interface QueryOptions {
   pageIndex: number;
   pageSize: number;
   enabled?: boolean;
+  disablePagination?: boolean;
 }
 
 export interface TagData {

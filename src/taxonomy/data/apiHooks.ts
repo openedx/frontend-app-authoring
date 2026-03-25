@@ -13,10 +13,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { camelCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { apiUrls, ALL_TAXONOMIES } from './api';
+import { apiUrls, ALL_TAXONOMIES, getApiErrorMessage } from './api';
 import * as api from './api';
 import type { QueryOptions, TagListData } from './types';
-import { EXPECTED_MAX_TAXONOMY_ITEMS } from './constants';
 
 // Query key patterns. Allows an easy way to clear all data related to a given taxonomy.
 // https://github.com/openedx/frontend-app-admin-portal/blob/2ba315d/docs/decisions/0006-tanstack-react-query.rst
@@ -65,37 +64,6 @@ export const taxonomyQueryKeys = {
    */
   importPlan: (taxonomyId: number, fileId: string) => [...taxonomyQueryKeys.all, 'importPlan', taxonomyId, fileId],
 } satisfies Record<string, (string | number)[] | ((...args: any[]) => (string | number)[])>;
-
-const getApiErrorMessage = (err: unknown): string => {
-  const error = err as { message?: string; response?: { data?: unknown } };
-  const responseData = error?.response?.data;
-
-  if (Array.isArray(responseData)) {
-    const firstMessage = responseData.find((item): item is string => typeof item === 'string' && item.trim().length > 0);
-    if (firstMessage) {
-      return firstMessage;
-    }
-  }
-
-  if (typeof responseData === 'string' && responseData.trim().length > 0) {
-    return responseData;
-  }
-
-  if (responseData && typeof responseData === 'object') {
-    const objectData = responseData as { error?: string; detail?: string; message?: string };
-    if (typeof objectData.error === 'string' && objectData.error.trim().length > 0) {
-      return objectData.error;
-    }
-    if (typeof objectData.detail === 'string' && objectData.detail.trim().length > 0) {
-      return objectData.detail;
-    }
-    if (typeof objectData.message === 'string' && objectData.message.trim().length > 0) {
-      return objectData.message;
-    }
-  }
-
-  return error?.message || 'Unexpected error';
-};
 
 /**
  * Builds the query to get the taxonomy list
@@ -212,13 +180,15 @@ export const useImportPlan = (taxonomyId: number, file: File | null) => useQuery
  * Use the list of tags in a taxonomy.
  */
 export const useTagListData = (taxonomyId: number, options: QueryOptions) => {
-  const { pageIndex, pageSize, enabled = true } = options; // eslint-disable-line
+  const { pageIndex, pageSize, enabled = true, disablePagination = false } = options; // eslint-disable-line
   return useQuery({
     // queryKey: taxonomyQueryKeys.taxonomyTagListPage(taxonomyId, pageIndex, pageSize),
     queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId), // For now, ignore pagination in the query key.
     queryFn: async () => {
       const { data } = await getAuthenticatedHttpClient().get(
-        apiUrls.tagList(taxonomyId, null, null, EXPECTED_MAX_TAXONOMY_ITEMS),
+        apiUrls.tagList(taxonomyId, {
+          pageIndex, pageSize, fullDepth: true, disablePagination,
+        }),
       );
       return camelCaseObject(data) as TagListData;
     },
@@ -239,7 +209,7 @@ export const useSubTags = (taxonomyId: number, parentTagValue: string) => useQue
   },
 });
 
-export const useCreateTag = (taxonomyId: number) => {
+export const useCreateTag = (taxonomyId: number, intl: any) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -250,7 +220,7 @@ export const useCreateTag = (taxonomyId: number) => {
           { tag: value, parent_tag_value: parentTagValue },
         );
       } catch (err) {
-        throw new Error(getApiErrorMessage(err));
+        throw new Error(getApiErrorMessage(err, intl));
       }
     },
     onSuccess: () => {

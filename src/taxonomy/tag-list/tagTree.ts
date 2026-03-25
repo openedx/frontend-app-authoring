@@ -37,6 +37,36 @@ export class TagTree {
     this.buildTree();
   }
 
+  /** Returns a flattened copy of all nodes in the tree. For example,
+   * this array is not nested even though it contains a parent and a child tag:
+   * [
+   *   {
+   *     value: 'parent tag name',
+   *     externalId: null,
+   *     childCount: 2,
+   *     descendantCount: 4,
+   *     depth: 0,
+   *     parentValue: null,
+   *     id: 1,
+   *     subTagsUrl: 'http://example.com',
+   *     canChangeTag: true,
+   *     canDeleteTag: true,
+   *   },
+   *   {
+   *     value: 'child tag name',
+   *     externalId: null,
+   *     childCount: 0,
+   *     descendantCount: 0,
+   *     depth: 1,
+   *     parentValue: 'parent tag name',
+   *     id: 2,
+   *     subTagsUrl: 'http://example.com',
+   *     canChangeTag: true,
+   *     canDeleteTag: true,
+   *   },
+   *  // ... more tags
+   * ]
+   */
   getAllFlattenedAsCopy(): TagTreeNode[] {
     const flatten = (nodes: TagTreeNode[], accumulator: TagTreeNode[] = []): TagTreeNode[] => {
       for (const node of nodes) {

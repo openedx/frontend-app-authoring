@@ -24,6 +24,9 @@ interface TagListTableProps {
   maxDepth: number;
 }
 
+// TODO: Fix and enable pagination on backend and frontend.For now, disable pagination by showing all tags on one page.
+const DISABLE_PAGINATION = true;
+
 const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   // The table has a VIEW, DRAFT, and a PREVIEW mode. It starts in VIEW mode.
   // It switches to DRAFT mode when a user edits or creates a tag.
@@ -33,6 +36,10 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   // success or failure responses.
   // However, the table does not refresh to show the updated data from the backend.
   // This allows us to show the newly created or updated tag in the same place without reordering.
+  //
+  // TODO: Simpler approaches have been suggested. Two options are to just use simple React state:
+  // `isCurrentlyEditingTag` and `lastCreatedTag`, or to use optimistic updates.
+  // For reference, see https://github.com/openedx/frontend-app-authoring/pull/2872#discussion_r2880965005.
   const intl = useIntl();
 
   const [creatingParentId, setCreatingParentId] = useState<RowId | null>(null);
@@ -51,10 +58,10 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   } = useTableModes();
 
   // PAGINATION
-  // TODO: Fix and enable pagination. For now, disable pagination on the api hook side.
+  // TODO: Fix and enable pagination. For now, disable pagination.
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 100,
+    pageSize: 50,
   });
   const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
   const handlePaginationChange = (updater: React.SetStateAction<PaginationState>) => {
@@ -67,9 +74,10 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   // API HOOKS
   const { isLoading, data: tagList } = useTagListData(taxonomyId, {
     ...pagination,
+    disablePagination: DISABLE_PAGINATION,
     enabled: tableMode === TABLE_MODES.VIEW,
   });
-  const createTagMutation = useCreateTag(taxonomyId);
+  const createTagMutation = useCreateTag(taxonomyId, intl);
   const pageCount = tagList?.numPages ?? -1;
 
   // Custom Edit Actions Hook - handles table mode transitions, API calls,
