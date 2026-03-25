@@ -1,15 +1,10 @@
-import React, { useContext, useEffect } from 'react';
+import { getConfig } from '@edx/frontend-platform';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { Button, DataTableContext, Dropdown, useToggle, } from '@openedx/paragon';
+import { Add, Tune } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
 import { PropTypes } from 'prop-types';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
-import {
-  Button,
-  DataTableContext,
-  Dropdown,
-  useToggle,
-} from '@openedx/paragon';
-import { Add, Tune } from '@openedx/paragon/icons';
+import React, { useContext, useEffect } from 'react';
 import messages from '../messages';
 import SortAndFilterModal from './sort-and-filter-modal';
 
@@ -26,11 +21,14 @@ const TableActions = ({
   const intl = useIntl();
   const [isSortOpen, openSort, closeSort] = useToggle(false);
   const { state, clearSelection } = useContext(DataTableContext);
+  const filePickerParams = new URLSearchParams(window.location.search);
 
+  const showFilePicker = Boolean(filePickerParams.get('filePicker')) && Boolean(window.opener);
   // This useEffect saves DataTable state so it can persist after table re-renders due to data reload.
   useEffect(() => {
     setInitialState(state);
   }, [state]);
+
 
   const handleOpenFileSelector = () => {
     fileInputControl.click();
@@ -80,6 +78,18 @@ const TableActions = ({
       <Button iconBefore={Add} onClick={handleOpenFileSelector}>
         {intl.formatMessage(messages.addFilesButtonLabel, { fileType })}
       </Button>
+      {showFilePicker && (
+        <Button
+          className="ml-2"
+          onClick={async () => {
+            window.opener.postMessage({ type: 'org.openedx.assets.selected.v1', data: selectedFlatRows.map(({ original }) => original) }, '*');
+            window.close();
+          }}
+          disabled={selectedFlatRows.length === 0}
+        >
+          Select File(s)
+        </Button>
+      )}
       <SortAndFilterModal {...{ isSortOpen, closeSort, handleSort }} />
     </>
   );
