@@ -835,6 +835,59 @@ describe('<TagListTable /> isolated async subtag tests', () => {
     queryClient.clear();
   });
 
+  describe('<TagListTable /> revisit data freshness', () => {
+    let revisitQueryClient;
+
+    const renderWithRevisitClient = () => render(
+      <AppProvider store={store}>
+        <IntlProvider locale="en" messages={{}}>
+          <QueryClientProvider client={revisitQueryClient}>
+            <TagListTable taxonomyId={1} maxDepth={3} />
+          </QueryClientProvider>
+        </IntlProvider>
+      </AppProvider>,
+    );
+
+    beforeEach(() => {
+      initializeMockApp({
+        authenticatedUser: adminUser,
+      });
+      store = initializeStore();
+      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      revisitQueryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 60_000,
+            retry: false,
+          },
+        },
+      });
+      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+    });
+
+    afterEach(() => {
+      cleanup();
+      revisitQueryClient.clear();
+      axiosMock.restore();
+    });
+
+    it('should refetch once when revisiting the page with fresh cached data', async () => {
+      const firstRender = renderWithRevisitClient();
+      await screen.findByText('root tag 1');
+      await waitFor(() => {
+        expect(axiosMock.history.get.length).toBe(1);
+      });
+
+      firstRender.unmount();
+      renderWithRevisitClient();
+
+      await screen.findByText('root tag 1');
+      await waitFor(() => {
+        expect(axiosMock.history.get.length).toBe(2);
+      });
+    });
+  });
+
   it('shows the spinner before the query is complete', async () => {
     // Simulate an actual slow response from the API:
     let resolveResponse;

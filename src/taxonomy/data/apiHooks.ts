@@ -98,6 +98,7 @@ export const useDeleteTaxonomy = () => {
 export const useTaxonomyDetails = (taxonomyId: number) => useQuery({
   queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId),
   queryFn: () => api.getTaxonomy(taxonomyId),
+  refetchOnMount: 'always',
 });
 
 /**
@@ -195,6 +196,7 @@ export const useTagListData = (taxonomyId: number, options: QueryOptions) => {
       return camelCaseObject(data) as TagListData;
     },
     enabled,
+    refetchOnMount: 'always',
   });
 };
 
@@ -229,9 +231,13 @@ export const useCreateTag = (taxonomyId: number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId),
+        refetchType: 'none',
       });
       // In the metadata, 'tagsCount' (and possibly other fields) will have changed:
-      queryClient.invalidateQueries({ queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId) });
+      queryClient.invalidateQueries({
+        queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId),
+        refetchType: 'none',
+      });
     },
   });
 };
