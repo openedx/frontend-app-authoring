@@ -57,7 +57,6 @@ export const useContentMenuItems = (courseId: string) => {
 
 export const useSettingMenuItems = (courseId: string) => {
   const intl = useIntl();
-  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const { canAccessAdvancedSettings: legacyCanAccessAdvancedSettings } = useSelector(getStudioHomeData);
   const waffleFlags = useWaffleFlags(courseId);
 
@@ -84,24 +83,24 @@ export const useSettingMenuItems = (courseId: string) => {
 
   const items = [
     {
-      href: waffleFlags.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details` : `${studioBaseUrl}/settings/details/${courseId}`,
+      href: `/course/${courseId}/settings/details`,
       title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
     },
     {
-      href: waffleFlags.useNewGradingPage ? `/course/${courseId}/settings/grading` : `${studioBaseUrl}/settings/grading/${courseId}`,
+      href: `/course/${courseId}/settings/grading`,
       title: intl.formatMessage(messages['header.links.grading']),
     },
     {
-      href: waffleFlags.useNewCourseTeamPage ? `/course/${courseId}/course_team` : `${studioBaseUrl}/course_team/${courseId}`,
+      href: `/course/${courseId}/course_team`,
       title: intl.formatMessage(messages['header.links.courseTeam']),
     },
     {
-      href: waffleFlags.useNewGroupConfigurationsPage ? `/course/${courseId}/group_configurations` : `${studioBaseUrl}/group_configurations/${courseId}`,
+      href: `/course/${courseId}/group_configurations`,
       title: intl.formatMessage(messages['header.links.groupConfigurations']),
     },
     ...(canAccessAdvancedSettings
       ? [{
-        href: waffleFlags.useNewAdvancedSettingsPage ? `/course/${courseId}/settings/advanced` : `${studioBaseUrl}/settings/advanced/${courseId}`,
+        href: `/course/${courseId}/settings/advanced`,
         title: intl.formatMessage(messages['header.links.advancedSettings']),
       }] : []
     ),
