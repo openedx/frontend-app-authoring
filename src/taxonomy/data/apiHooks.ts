@@ -209,7 +209,7 @@ export const useSubTags = (taxonomyId: number, parentTagValue: string) => useQue
   },
 });
 
-export const useCreateTag = (taxonomyId: number, intl: any) => {
+export const useCreateTag = (taxonomyId: number, intl?: any) => {
   const queryClient = useQueryClient();
 
   return useMutation({
