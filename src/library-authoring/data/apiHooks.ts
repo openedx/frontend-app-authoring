@@ -125,6 +125,7 @@ export const xblockQueryKeys = {
   draftHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'draftHistory'],
   publishHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory'],
   publishHistoryEntries: (usageKey: string, publishGroupId: string) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory', publishGroupId, 'entries'],
+  creationEntry: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'creationEntry'],
 
   /**
    * Predicate used to invalidate all metadata only (not OLX, fields, assets, etc.).
@@ -1057,6 +1058,16 @@ export const useLibraryBlockPublishHistoryEntries = (
   useQuery({
     queryKey: xblockQueryKeys.publishHistoryEntries(usageKey!, publishGroupId!),
     queryFn: (usageKey && publishGroupId && enabled) ? () => api.getLibraryBlockPublishHistoryEntries(usageKey, publishGroupId) : skipToken,
+  })
+);
+
+/**
+ * Returns the creation entry for a library block.
+ */
+export const useLibraryBlockCreationEntry = (usageKey: string | undefined) => (
+  useQuery({
+    queryKey: xblockQueryKeys.creationEntry(usageKey!),
+    queryFn: usageKey ? () => api.getLibraryBlockCreationEntry(usageKey) : skipToken,
   })
 );
 

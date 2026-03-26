@@ -10,14 +10,14 @@ import {
   mockLibraryBlockDraftHistory,
   mockLibraryBlockPublishHistory,
   mockLibraryBlockPublishHistoryEntries,
-  mockLibraryBlockMetadata,
+  mockLibraryBlockCreationEntry,
 } from '../../data/api.mocks';
 import { HistoryComponentLog } from './HistoryLog';
 
 mockLibraryBlockDraftHistory.applyMock();
 mockLibraryBlockPublishHistory.applyMock();
 mockLibraryBlockPublishHistoryEntries.applyMock();
-mockLibraryBlockMetadata.applyMock();
+mockLibraryBlockCreationEntry.applyMock();
 
 const renderComponent = (componentId: string) => render(
   <HistoryComponentLog componentId={componentId} displayName="Test Component" />,
@@ -43,12 +43,12 @@ describe('<HistoryComponentLog />', () => {
   });
 
   it('shows loading spinner while fetching', () => {
-    renderComponent(mockLibraryBlockMetadata.usageKeyThatNeverLoads);
+    renderComponent(mockLibraryBlockCreationEntry.usageKeyThatNeverLoads);
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders draft history group with entries when they exist', async () => {
-    renderComponent(mockLibraryBlockMetadata.usageKeyNeverPublished);
+    renderComponent(mockLibraryBlockCreationEntry.usageKey);
     const trigger = await findByTextContent(/Test Component is a draft/i);
     expect(trigger).toBeInTheDocument();
     fireEvent.click(trigger);
@@ -57,19 +57,19 @@ describe('<HistoryComponentLog />', () => {
   });
 
   it('does not render draft history group when there are no draft entries', async () => {
-    renderComponent(mockLibraryBlockMetadata.usageKeyPublished);
+    renderComponent(mockLibraryBlockCreationEntry.usageKeyEmpty);
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
     expect(screen.queryByText('Test Component is a draft')).not.toBeInTheDocument();
   });
 
   it('renders publish history group when one exists', async () => {
-    renderComponent(mockLibraryBlockMetadata.usageKeyNeverPublished);
+    renderComponent(mockLibraryBlockCreationEntry.usageKey);
     expect(await findByTextContent(/author published.*Protons/i)).toBeInTheDocument();
     expect(await screen.findByText(/5 authors contributed/i)).toBeInTheDocument();
   });
 
   it('loads and shows publish history entries after expanding the publish group', async () => {
-    renderComponent(mockLibraryBlockMetadata.usageKeyNeverPublished);
+    renderComponent(mockLibraryBlockCreationEntry.usageKey);
     expect(await screen.findByText(/5 authors contributed/i)).toBeInTheDocument();
     const publishTrigger = await findByTextContent(/author published.*Protons/i);
 
@@ -79,13 +79,13 @@ describe('<HistoryComponentLog />', () => {
   });
 
   it('does not render publish history group when list is empty', async () => {
-    renderComponent(mockLibraryBlockMetadata.usageKeyPublished);
+    renderComponent(mockLibraryBlockCreationEntry.usageKeyEmpty);
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
     expect(screen.queryByText(/published/i)).not.toBeInTheDocument();
   });
 
   it('always renders the created group with fallback user when createdBy is null', async () => {
-    renderComponent(mockLibraryBlockMetadata.usageKeyNeverPublished);
+    renderComponent(mockLibraryBlockCreationEntry.usageKey);
     expect(await findByTextContent(/Author created.*Introduction to Testing 1/i)).toBeInTheDocument();
   });
 });

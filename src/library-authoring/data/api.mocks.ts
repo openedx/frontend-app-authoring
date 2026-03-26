@@ -1292,6 +1292,40 @@ mockLibraryBlockPublishHistoryEntries.applyMock = () => jest.spyOn(
   'getLibraryBlockPublishHistoryEntries',
 ).mockImplementation(mockLibraryBlockPublishHistoryEntries);
 
+/**
+ * Mock for `getLibraryBlockCreationEntry()`
+ *
+ * Use `mockLibraryBlockCreationEntry.applyMock()` to apply it to the whole test suite.
+ */
+export async function mockLibraryBlockCreationEntry(usageKey: string): Promise<api.LibraryHistoryEntry> {
+  const thisMock = mockLibraryBlockCreationEntry;
+  switch (usageKey) {
+    case thisMock.usageKeyThatNeverLoads:
+      return new Promise<any>(() => {});
+    case thisMock.usageKey: return thisMock.data;
+    case thisMock.usageKeyEmpty: return thisMock.dataEmpty;
+    default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
+  }
+}
+mockLibraryBlockCreationEntry.usageKeyThatNeverLoads = 'lb:Axim:infiniteLoading:html:123';
+mockLibraryBlockCreationEntry.usageKey = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
+mockLibraryBlockCreationEntry.usageKeyEmpty = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
+mockLibraryBlockCreationEntry.data = {
+  changedBy: mockContributor('author'),
+  changedAt: '2024-01-01T00:00:00Z',
+  title: 'Introduction to Testing 1',
+  blockType: 'html',
+  action: 'created',
+} satisfies api.LibraryHistoryEntry;
+mockLibraryBlockCreationEntry.dataEmpty = {
+  changedBy: mockContributor('Author'),
+  changedAt: '2024-01-01T00:00:00Z',
+  title: 'Introduction to Testing 2',
+  blockType: 'html',
+  action: 'created',
+} satisfies api.LibraryHistoryEntry;
+mockLibraryBlockCreationEntry.applyMock = () => jest.spyOn(api, 'getLibraryBlockCreationEntry').mockImplementation(mockLibraryBlockCreationEntry);
+
 export const mockGetMigrationInfo = {
   applyMock: () => jest.spyOn(api, 'getMigrationInfo').mockResolvedValue(
     camelCaseObject({

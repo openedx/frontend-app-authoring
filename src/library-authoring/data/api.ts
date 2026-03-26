@@ -66,6 +66,11 @@ export const getLibraryBlockPublishHistoryUrl = (usageKey: string) => `${getLibr
 export const getLibraryBlockPublishHistoryEntriesUrl = (usageKey: string, publishGroupId: string) => `${getLibraryBlockMetadataUrl(usageKey)}publish_history/${publishGroupId}/entries/`
 
 /**
+ * Get the URL for the creation entry of a component.
+ */
+export const getLibraryBlockCreationEntryUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}creation_entry/`;
+
+/**
  * Get the URL for content library list API.
  */
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
@@ -948,7 +953,7 @@ export interface LibraryHistoryEntry {
   changedAt: string;
   title: string;
   blockType: string;
-  action: 'edited' | 'renamed';
+  action: 'edited' | 'renamed' | 'created';
 }
 
 /**
@@ -972,6 +977,13 @@ export async function getLibraryBlockPublishHistoryEntries(usageKey: string, pub
  */
 export async function getLibraryBlockDraftHistory(usageKey: string): Promise<LibraryHistoryEntry[]> {
   const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockDraftHistoryUrl(usageKey));
-  console.log(data);
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the creation entry for a library block.
+ */
+export async function getLibraryBlockCreationEntry(usageKey: string): Promise<LibraryHistoryEntry> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockCreationEntryUrl(usageKey));
   return camelCaseObject(data);
 }

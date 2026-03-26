@@ -1,5 +1,9 @@
 import { LoadingSpinner } from "@src/generic/Loading";
-import { useLibraryBlockDraftHistory, useLibraryBlockMetadata, useLibraryBlockPublishHistory } from "@src/library-authoring/data/apiHooks";
+import {
+  useLibraryBlockCreationEntry,
+  useLibraryBlockDraftHistory,
+  useLibraryBlockPublishHistory,
+} from "@src/library-authoring/data/apiHooks";
 import { HistoryCreatedLogGroup, HistoryDraftLogGroup, HistoryPublishLogGroup } from "./HistoryLogGroup";
 
 export interface HistoryComponentLogProps {
@@ -22,11 +26,11 @@ export const HistoryComponentLog = ({
   } = useLibraryBlockPublishHistory(componentId);
 
   const {
-    data: componentData,
-    isPending: isPendingComponentData,
-  } = useLibraryBlockMetadata(componentId);
-  
-  if (isPendingDraftHistory || isPendingComponentData || isPendingPublishHistoryGroups) {
+    data: creationEntry,
+    isPending: isPendingCreationEntry,
+  } = useLibraryBlockCreationEntry(componentId); 
+
+  if (isPendingDraftHistory || isPendingPublishHistoryGroups || isPendingCreationEntry) {
     return <LoadingSpinner />
   }
   
@@ -50,12 +54,14 @@ export const HistoryComponentLog = ({
           )
         })
       )}
-      <HistoryCreatedLogGroup
-        user={componentData?.createdBy}
-        displayName={componentData?.displayName ?? ''}
-        itemType={componentData?.blockType ?? ''}
-        createdAt={componentData?.created ?? ''}
-      />
+      {creationEntry && (
+        <HistoryCreatedLogGroup
+          user={creationEntry.changedBy.username}
+          displayName={creationEntry.title}
+          itemType={creationEntry.blockType}
+          createdAt={creationEntry.changedAt}
+        />
+      )}
     </div>
   );
 };
