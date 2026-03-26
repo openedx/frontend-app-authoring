@@ -1,4 +1,4 @@
-import TagTreeError from './tagTreeError';
+import { TagTreeError } from './errors';
 
 export interface TagData {
   childCount: number;

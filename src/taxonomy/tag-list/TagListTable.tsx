@@ -77,7 +77,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     disablePagination: DISABLE_PAGINATION,
     enabled: tableMode === TABLE_MODES.VIEW,
   });
-  const createTagMutation = useCreateTag(taxonomyId, intl);
+  const createTagMutation = useCreateTag(taxonomyId);
   const pageCount = tagList?.numPages ?? -1;
 
   // Custom Edit Actions Hook - handles table mode transitions, API calls,
@@ -88,7 +88,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     createTagMutation,
     enterPreviewMode,
     setToast,
-    intl,
     setIsCreatingTopTag,
     setCreatingParentId,
     exitDraftWithoutSave,

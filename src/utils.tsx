@@ -350,6 +350,46 @@ export const skipIfUnwantedTarget = (
   onClick(e);
 };
 
+/**
+ * Error message handling for Django-Rest-Framework API responses.
+ * Attempts to extract an error message as a string from an unknown error object.
+ *
+ * DRF errors can come in many different formats, and this is a best-effort attempt to handle them,
+ * but we cannot guarantee to support every possible format.
+ *
+ * Attempts to extract an error message as a string from an unknown error object.
+ */
+export const getApiErrorMessage = (err: unknown): string => {
+  const error = err as { message?: string; response?: { data?: unknown } };
+  const responseData = error?.response?.data;
+
+  if (Array.isArray(responseData)) {
+    const firstMessage = responseData.find((item): item is string => typeof item === 'string' && item.trim().length > 0);
+    if (firstMessage) {
+      return firstMessage;
+    }
+  }
+
+  if (typeof responseData === 'string' && responseData.trim().length > 0) {
+    return responseData;
+  }
+
+  if (responseData && typeof responseData === 'object') {
+    const objectData = responseData as { error?: string; detail?: string; message?: string };
+    if (typeof objectData.error === 'string' && objectData.error.trim().length > 0) {
+      return objectData.error;
+    }
+    if (typeof objectData.detail === 'string' && objectData.detail.trim().length > 0) {
+      return objectData.detail;
+    }
+    if (typeof objectData.message === 'string' && objectData.message.trim().length > 0) {
+      return objectData.message;
+    }
+  }
+
+  return error?.message || 'Unexpected error';
+};
+
 export const BoldText = (chunk: string[]) => <b>{chunk}</b>;
 export const Div = (chunk: string[]) => <div>{chunk}</div>;
 export const Paragraph = (chunk: string[]) => <p>{chunk}</p>;

@@ -48,7 +48,6 @@ describe('useTableModes', () => {
 
 describe('useEditActions', () => {
   const buildActions = (overrides = {}) => {
-    const intl = getIntl();
     const createTagMutation = { mutateAsync: jest.fn() };
     const setTagTree = jest.fn();
     const setDraftError = jest.fn();
@@ -65,7 +64,6 @@ describe('useEditActions', () => {
       createTagMutation: createTagMutation as any,
       enterPreviewMode,
       setToast,
-      intl,
       setIsCreatingTopTag,
       setCreatingParentId,
       exitDraftWithoutSave,

@@ -16,6 +16,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { apiUrls, ALL_TAXONOMIES, getApiErrorMessage } from './api';
 import * as api from './api';
 import type { QueryOptions, TagListData } from './types';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 // Query key patterns. Allows an easy way to clear all data related to a given taxonomy.
 // https://github.com/openedx/frontend-app-admin-portal/blob/2ba315d/docs/decisions/0006-tanstack-react-query.rst
@@ -209,8 +210,9 @@ export const useSubTags = (taxonomyId: number, parentTagValue: string) => useQue
   },
 });
 
-export const useCreateTag = (taxonomyId: number, intl?: any) => {
+export const useCreateTag = (taxonomyId: number) => {
   const queryClient = useQueryClient();
+  const intl = useIntl();
 
   return useMutation({
     mutationFn: async ({ value, parentTagValue }: { value: string, parentTagValue?: string }) => {
