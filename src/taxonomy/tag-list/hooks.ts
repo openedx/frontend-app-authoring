@@ -127,7 +127,7 @@ const useEditActions = ({
         childCount: 0,
         descendantCount: 0,
         subTagsUrl: null,
-        externalId: null,
+        externalId: '',
       }, parentTagValue);
 
       return nextTree;

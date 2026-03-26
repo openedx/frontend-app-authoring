@@ -45,7 +45,7 @@ RootWrapper.propTypes = {
   maxDepth: PropTypes.number,
 };
 
-const tagDefaults = { depth: 0, external_id: null, parent_value: null };
+const tagDefaults = { depth: 0, external_id: '', parent_value: null };
 const mockTagsResponse = {
   next: null,
   previous: null,
