@@ -48,6 +48,8 @@ export const bulkModulestoreMigrateUrl = () => `${getStudioBaseUrl()}/api/module
  */
 export const getPreviewModulestoreMigrationUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migration_preview/`;
 
+export const getCourseSettingsApiUrl = (courseId: string) => `${getStudioBaseUrl()}/api/contentstore/v1/course_settings/${courseId}`;
+
 export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   const baseUrl = getStudioBaseUrl();
   const apiPath = '/api/contentstore/v1/course_waffle_flags';
@@ -223,5 +225,13 @@ export const getUserAgreementApi = (agreementType: string) => `${getConfig().LMS
 export async function getUserAgreement(agreementType: string) {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.get(getUserAgreementApi(agreementType));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get course settings.
+ */
+export async function getCourseSettings(courseId: string): Promise<Record<string, any>> {
+  const { data } = await getAuthenticatedHttpClient().get(getCourseSettingsApiUrl(courseId));
   return camelCaseObject(data);
 }
