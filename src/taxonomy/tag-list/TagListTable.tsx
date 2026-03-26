@@ -44,6 +44,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
 
   const [creatingParentId, setCreatingParentId] = useState<RowId | null>(null);
   const [editingRowId, setEditingRowId] = useState<RowId | null>(null);
+
+  // TODO: change to use the global ToastContext (waiting for UX refinement on that).
   const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
   const [tagTree, setTagTree] = useState<TagTree | null>(null);
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
@@ -79,6 +81,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   });
   const createTagMutation = useCreateTag(taxonomyId);
   const pageCount = tagList?.numPages ?? -1;
+
+  // TODO: to make this more readable, introduce a React context for the TagListTable instead of passing props.
 
   // Custom Edit Actions Hook - handles table mode transitions, API calls,
   // and updating the table without a full data reload when creating or editing tags.

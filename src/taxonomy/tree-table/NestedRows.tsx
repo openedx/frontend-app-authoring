@@ -8,41 +8,35 @@ import type {
 } from './types';
 import { CreateRow } from './CreateRow';
 
-/**
- * Props for the NestedRows component
- * @interface NestedRowsProps
- * @property {TreeRow} parentRow - The parent row object from TanStack React Table
- * @property {string} parentRowValue - The value identifier of the parent row
- * @property {boolean} [isCreating] - Whether a new child row is currently being created for this parent
- * @property {function} [onSaveNewChildRow] - Callback when a new child row is saved (receives value and parentRowValue)
- * @property {function} [onCancelCreation] - Callback when child row creation is cancelled
- * @property {TreeRow[]} [childRowsData] - Array of child row objects to render
- * @property {number} [depth] - Current nesting depth level (used for indentation calculation)
- * @property {string} [draftError] - Error message to display in draft creation form
- * @property {function} [setDraftError] - Setter function for draft error state
- * @property {RowId | null} [creatingParentId] - ID of the row currently in creation mode
- * @property {function} [setCreatingParentId] - Setter function for which row is in creation mode
- * @property {function} setIsCreatingTopRow - Callback to set whether top-level row creation is active
- * @property {CreateRowMutationState} createRowMutation - State object for the row creation mutation
- * (isPending, isError, error)
- * @property {function} validate - Validation function for new row values
- * (receives value and optional 'soft' or 'hard' mode; in 'hard' mode an exception is thrown on validation failure)
- */
-
 interface NestedRowsProps {
+  /** The parent row object from TanStack React Table */
   parentRow: TreeRow;
+  /** The value identifier of the parent row */
   parentRowValue: string;
+  /** Whether a new child row is currently being created for this parent */
   isCreating?: boolean;
+  /** Callback when a new child row is saved (receives value and parentRowValue) */
   onSaveNewChildRow?: (value: string, parentRowValue: string) => void;
+  /** Callback when child row creation is cancelled */
   onCancelCreation?: () => void;
+  /** Array of child row objects to render */
   childRowsData?: TreeRow[];
+  /** Current nesting depth level (used for indentation calculation) */
   depth?: number;
+  /** Error message to display in draft creation form */
   draftError?: string;
+  /** Setter function for draft error state */
   setDraftError?: (error: string) => void;
+  /** ID of the row currently in creation mode */
   creatingParentId?: RowId | null;
+  /** Setter function for which row is in creation mode */
   setCreatingParentId?: (value: RowId | null) => void;
+  /** Callback to set whether top-level row creation is active */
   setIsCreatingTopRow: (isCreating: boolean) => void;
+  /** State object for the row creation mutation (isPending, isError, error) */
   createRowMutation: CreateRowMutationState;
+  /** Validation function for new row values (receives value and optional 'soft' or 'hard' mode;
+   * in 'hard' mode an exception is thrown on validation failure) */
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
 }
 

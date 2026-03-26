@@ -19,6 +19,8 @@ import messages from './messages';
  * `type`: Action type.
  * `targetMode`: The table mode to transition to. Must be one of the allowed transitions defined in `TRANSITION_TABLE`.
  * An invalid transition (e.g. from DRAFT to VIEW) will throw an error to prevent disruptive data refreshes.
+ *
+ * For examples, see: https://react.dev/learn/extracting-state-logic-into-a-reducer#writing-reducers-well
 */
 export interface TableModeAction {
   type: string;
