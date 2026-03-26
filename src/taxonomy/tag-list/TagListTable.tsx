@@ -100,7 +100,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
 
   const columns = useMemo<TreeColumnDef[]>(
     () => getColumns({
-      intl,
       setIsCreatingTopTag,
       setCreatingParentId,
       handleUpdateTag,
@@ -115,7 +114,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       creatingParentId,
     }),
     [
-      intl,
       isCreatingTopTag,
       editingRowId,
       tableMode,
