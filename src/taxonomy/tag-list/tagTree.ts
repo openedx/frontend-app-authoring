@@ -95,6 +95,7 @@ export class TagTree {
     }
   }
 
+  /** For extra robustness, we verify that there are no cycles in the data. (The backend also guarantees this.) */
   private validateNoCycles(items: TagData[]) {
     const parentByValue: { [key: string]: string | null } = {};
     for (const item of items) {

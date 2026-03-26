@@ -1,3 +1,4 @@
+/** Tag list table modes - see explanation in `<TagListTable>` component (`src/taxonomy/tag-list/TagListTable.tsx`) */
 const TABLE_MODES = {
   VIEW: 'view',
   DRAFT: 'draft',

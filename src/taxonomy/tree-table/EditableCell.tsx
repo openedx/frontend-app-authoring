@@ -12,24 +12,21 @@ import OptionalExpandLink from '../tag-list/OptionalExpandLink';
 
 /**
  * Props for the EditableCell component.
- * @interface EditableCellProps
- * @property {string} [initialValue] - The initial value to display in the cell
- * @property {function} [onKeyDown] - Callback function triggered on keyboard events
- * @property {function} [onChange] - Callback function triggered when the input value changes
- * @property {string} [errorMessage] - Error message to display if validation fails
- * @property {boolean} [isSaving] - Indicates whether the cell value is currently being saved to the server
- * @property {boolean} [autoFocus] - If true, the input field will automatically receive focus when the cell
- * enters edit mode
- * @property {function} [getInlineValidationMessage] - Function that returns a validation message to be displayed
- * based on the current input value.
  */
 interface EditableCellProps {
+  /** The initial value to display in the cell */
   initialValue?: string;
+  /** Callback function triggered on keyboard events */
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  /** Callback function triggered when the input value changes */
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Error message to display if validation fails */
   errorMessage?: string;
+  /** Indicates whether the cell value is currently being saved to the server */
   isSaving?: boolean;
+  /** If true, the input field will automatically receive focus when the cell enters edit mode */
   autoFocus?: boolean;
+  /** Function that returns a validation message to be displayed based on the current input value. */
   getInlineValidationMessage?: (value: string) => string;
 }
 
