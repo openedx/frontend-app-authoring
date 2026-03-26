@@ -16,6 +16,7 @@ import {
   useImportTags,
   useImportNewTaxonomy,
 } from './apiHooks';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 let axiosMock;
 
@@ -29,7 +30,9 @@ const queryClient = new QueryClient({
 
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>
-    {children}
+    <IntlProvider locale="en">
+      {children}
+    </IntlProvider>
   </QueryClientProvider>
 );
 
