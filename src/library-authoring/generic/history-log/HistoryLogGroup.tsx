@@ -124,7 +124,7 @@ const HistoryLogGroupEntries = ({
                   {...entryMessage}
                   values={{
                     user: entry.changedBy.username,
-                    displayName: entry.title,
+                    displayName: <span className="history-log-title text-truncate">{entry.title}</span>,
                     icon: <Icon src={getItemIcon(entry.blockType)} />
                   }}
                 />
@@ -155,7 +155,7 @@ export const HistoryCreatedLogGroup = ({
       <HistoryLogGroupTitle
         titleMessage={intl.formatMessage(messages.createdTitle, {
           user: user ?? intl.formatMessage(messages.historyEntryDefaultUser),
-          displayName,
+          displayName: <span className="history-log-title text-truncate">{displayName}</span>,
           icon: <Icon src={getItemIcon(itemType)} />,
         })}
         dateMessage={moment(createdAt).fromNow()}
@@ -176,7 +176,12 @@ export const HistoryDraftLogGroup = ({
       <Collapsible.Advanced>
         <Collapsible.Trigger>
           <HistoryLogGroupTitle
-            titleMessage={intl.formatMessage(messages.draftTitle, { displayName })}
+            titleMessage={intl.formatMessage(
+              messages.draftTitle,
+              {
+                displayName: <span className="history-log-title text-truncate">{displayName}</span>
+              }
+            )}
             dateMessage={intl.formatMessage(
               messages.draftTitleDate,
               {
@@ -250,7 +255,7 @@ export const HistoryPublishLogGroup = ({
               messages.publishTitle,
               {
                 user: publishedBy,
-                displayName: title,
+                displayName: <span className="history-log-title text-truncate">{title}</span>,
                 icon: <Icon src={getItemIcon(blockType)} /> 
               },
             )}

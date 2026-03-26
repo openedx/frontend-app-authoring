@@ -49,7 +49,7 @@ describe('<HistoryComponentLog />', () => {
 
   it('renders draft history group with entries when they exist', async () => {
     renderComponent(mockLibraryBlockMetadata.usageKeyNeverPublished);
-    const trigger = await screen.findByText('Test Component is a draft');
+    const trigger = await findByTextContent(/Test Component is a draft/i);
     expect(trigger).toBeInTheDocument();
     fireEvent.click(trigger);
     expect(await findByTextContent(/test_user_1 edited.*Electron Arcs/i)).toBeInTheDocument();
