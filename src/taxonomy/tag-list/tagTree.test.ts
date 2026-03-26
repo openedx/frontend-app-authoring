@@ -61,7 +61,7 @@ describe('TagTree', () => {
 
   it('creates a new top-level row', () => {
     const tree = new TagTree(rawData);
-    const newRow = {
+    const newRow: TagData = {
       value: 'newTopLevel',
       externalId: 'some-external-id',
       canChangeTag: true,

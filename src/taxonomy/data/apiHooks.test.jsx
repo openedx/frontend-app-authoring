@@ -3,6 +3,7 @@ import React from 'react'; // Required to use JSX syntax without type errors
 
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -16,7 +17,6 @@ import {
   useImportTags,
   useImportNewTaxonomy,
 } from './apiHooks';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 let axiosMock;
 
