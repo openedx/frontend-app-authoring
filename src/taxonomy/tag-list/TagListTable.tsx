@@ -3,7 +3,6 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import type { PaginationState } from '@tanstack/react-table';
 import { useTagListData, useCreateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
@@ -40,7 +39,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   // TODO: Simpler approaches have been suggested. Two options are to just use simple React state:
   // `isCurrentlyEditingTag` and `lastCreatedTag`, or to use optimistic updates.
   // For reference, see https://github.com/openedx/frontend-app-authoring/pull/2872#discussion_r2880965005.
-  const intl = useIntl();
 
   const [creatingParentId, setCreatingParentId] = useState<RowId | null>(null);
   const [editingRowId, setEditingRowId] = useState<RowId | null>(null);

@@ -67,7 +67,7 @@ export const apiUrls = {
     pageIndex, pageSize, fullDepth, disablePagination,
   }: { pageIndex: number | null; pageSize: number | null; fullDepth?: boolean; disablePagination?: boolean }) => {
     if (disablePagination) {
-      return makeUrl(`${taxonomyId}/tags/`, { full_depth_threshold: fullDepth ? MAX_TAXONOMY_ITEMS : 0 });
+      return makeUrl(`${taxonomyId}/tags/`, { full_depth_threshold: fullDepth ? MAX_TAXONOMY_ITEMS : 0, include_counts: 'true' });
     }
     return makeUrl(`${taxonomyId}/tags/`, {
       page: (pageIndex ?? 0) + 1,

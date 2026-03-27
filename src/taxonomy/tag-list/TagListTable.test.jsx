@@ -304,15 +304,6 @@ describe('<TagListTable />', () => {
         expect(within(creatingRow).getByText('Cancel')).toBeInTheDocument();
         expect(within(creatingRow).getByText('Save')).toBeInTheDocument();
       });
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
-      // expect input placeholder text to say "Type tag name"
-      expect(creatingRow.querySelector('input').placeholder).toEqual('Type tag name');
-      // expect the row to include "Cancel" and "Save" buttons
-      expect(within(creatingRow).getByText('Cancel')).toBeInTheDocument();
-      expect(within(creatingRow).getByText('Save')).toBeInTheDocument();
-    });
 
       it('should create a new tag when the draft row is saved', async () => {
         axiosMock.onPost(createTagUrl).reply(201, {
@@ -323,23 +314,6 @@ describe('<TagListTable />', () => {
           _id: 1234,
         });
         const { creatingRow, input } = await openTopLevelDraftRow();
-    it('should create a new tag when the draft row is saved', async () => {
-      axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-      axiosMock.onPost(createTagUrl).reply(201, {
-        ...tagDefaults,
-        value: 'a new tag',
-        child_count: 0,
-        descendant_count: 0,
-        _id: 1234,
-      });
-      render(<RootWrapper />);
-      const tag = await screen.findByText('root tag 1');
-      expect(tag).toBeInTheDocument();
-      const addButton = await screen.findByLabelText('Create Tag');
-      addButton.click();
-      const creatingRow = await screen.findByTestId('creating-top-tag-row');
-      const input = creatingRow.querySelector('input');
-      expect(input).toBeInTheDocument();
 
         fireEvent.change(input, { target: { value: 'a new tag' } });
         const saveButton = within(creatingRow).getByText('Save');
@@ -612,8 +586,8 @@ describe('<TagListTable />', () => {
         const input = draftRow[1].querySelector('input');
         const saveButton = within(draftRow[1]).getByText('Save');
 
-      fireEvent.change(input, { target: { value: 'root tag 1' } });
-      fireEvent.click(saveButton);
+        fireEvent.change(input, { target: { value: 'root tag 1' } });
+        fireEvent.click(saveButton);
 
         expect(await screen.findByText('Tag with this name already exists')).toBeInTheDocument();
       });

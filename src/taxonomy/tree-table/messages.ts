@@ -49,22 +49,6 @@ const messages = defineMessages({
     id: 'course-authoring.tree-table.pagination.page-status',
     defaultMessage: 'Page {currentPage} of {pageCount}',
   },
-  expandAll: {
-    id: 'course-authoring.tree-table.expand-all',
-    defaultMessage: 'Expand All',
-  },
-  collapseAll: {
-    id: 'course-authoring.tree-table.collapse-all',
-    defaultMessage: 'Collapse All',
-  },
-  noResultsFoundMessage: {
-    id: 'course-authoring.tree-table.no-results-found.message',
-    defaultMessage: 'No results found',
-  },
-  searchPlaceholder: {
-    id: 'course-authoring.tree-table.search.placeholder',
-    defaultMessage: 'Search...',
-  },
 });
 
 export default messages;

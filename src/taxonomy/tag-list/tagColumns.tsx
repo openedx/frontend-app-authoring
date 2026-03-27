@@ -50,10 +50,10 @@ interface GetColumnsArgs {
 }
 
 const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
-  const count = asTagListRowData(row).usageCount ?? 0
+  const count = asTagListRowData(row).usageCount ?? 0;
   return (
     count > 0 && (
-      <Bubble expandable={true}>
+      <Bubble expandable>
         {count}
       </Bubble>
     )
@@ -133,7 +133,7 @@ const ActionsMenu = ({ rowData, startSubtagDraft, disableAddSubtag }: ActionsMen
       </Dropdown.Menu>
     </Dropdown>
   );
-}
+};
 
 function getColumns({
   setIsCreatingTopTag,
@@ -148,6 +148,7 @@ function getColumns({
 }: GetColumnsArgs): TreeColumnDef[] {
   const canAddSubtag = (row: Row<TreeRowData>) => row.depth < maxDepth;
   const draftInProgressHintId = 'tag-list-draft-in-progress-hint';
+  const intl = useIntl();
 
   return [
     {
