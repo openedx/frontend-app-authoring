@@ -9,22 +9,50 @@ import type {
 import { CreateRow } from './CreateRow';
 
 interface NestedRowsProps {
+  /** The parent row object from TanStack React Table */
   parentRow: TreeRow;
+  /** The value identifier of the parent row */
   parentRowValue: string;
+  /** Whether a new child row is currently being created for this parent */
   isCreating?: boolean;
+  /** Callback when a new child row is saved (receives value and parentRowValue) */
   onSaveNewChildRow?: (value: string, parentRowValue: string) => void;
+  /** Callback when child row creation is cancelled */
   onCancelCreation?: () => void;
+  /** Array of child row objects to render */
   childRowsData?: TreeRow[];
+  /** Current nesting depth level (used for indentation calculation) */
   depth?: number;
+  /** Error message to display in draft creation form */
   draftError?: string;
+  /** Setter function for draft error state */
   setDraftError?: (error: string) => void;
+  /** ID of the row currently in creation mode */
   creatingParentId?: RowId | null;
+  /** Setter function for which row is in creation mode */
   setCreatingParentId?: (value: RowId | null) => void;
+  /** Callback to set whether top-level row creation is active */
   setIsCreatingTopRow: (isCreating: boolean) => void;
+  /** State object for the row creation mutation (isPending, isError, error) */
   createRowMutation: CreateRowMutationState;
+  /** Validation function for new row values (receives value and optional 'soft' or 'hard' mode;
+   * in 'hard' mode an exception is thrown on validation failure) */
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
 }
 
+/**
+ * NestedRows
+ *
+ * Recursively renders nested child rows within a tree table structure. This component handles:
+ * - Display of child rows when a parent row is expanded
+ * - Indentation based on nesting depth
+ * - Creation of new child rows with validation
+ * - Management of draft state during row creation
+ * - Recursive rendering of grandchild rows and deeper levels
+ *
+ * The component uses the TanStack React Table library to render table cells and manages
+ * the creation flow by displaying a CreateRow form when a parent is in creation mode.
+ */
 const NestedRows = ({
   parentRow,
   parentRowValue,

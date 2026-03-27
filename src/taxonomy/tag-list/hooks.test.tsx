@@ -1,5 +1,5 @@
 import React from 'react';
-import { IntlProvider, useIntl } from '@edx/frontend-platform/i18n';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { act, renderHook } from '@testing-library/react';
 
 import { TagTree } from './tagTree';
@@ -8,11 +8,6 @@ import { useEditActions, useTableModes } from './hooks';
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
-
-const getIntl = () => {
-  const { result } = renderHook(() => useIntl(), { wrapper });
-  return result.current;
-};
 
 describe('useTableModes', () => {
   it('supports valid transitions from view to draft to preview', () => {
@@ -48,7 +43,6 @@ describe('useTableModes', () => {
 
 describe('useEditActions', () => {
   const buildActions = (overrides = {}) => {
-    const intl = getIntl();
     const createTagMutation = { mutateAsync: jest.fn() };
     const setTagTree = jest.fn();
     const setDraftError = jest.fn();
@@ -59,22 +53,23 @@ describe('useEditActions', () => {
     const exitDraftWithoutSave = jest.fn();
     const setEditingRowId = jest.fn();
 
-    const actions = useEditActions({ // eslint-disable-line react-hooks/rules-of-hooks
+    const params = {
       setTagTree,
       setDraftError,
       createTagMutation: createTagMutation as any,
       enterPreviewMode,
       setToast,
-      intl,
       setIsCreatingTopTag,
       setCreatingParentId,
       exitDraftWithoutSave,
       setEditingRowId,
       ...(overrides as any),
-    });
+    };
+
+    const { result } = renderHook(() => useEditActions(params), { wrapper });
 
     return {
-      actions,
+      actions: result.current,
       createTagMutation,
       setTagTree,
       setDraftError,
@@ -108,7 +103,9 @@ describe('useEditActions', () => {
     });
 
     const { actions } = buildActions({ setTagTree });
-    actions.updateTableWithoutDataReload('brand new root');
+    act(() => {
+      actions.updateTableWithoutDataReload('brand new root');
+    });
 
     expect(updatedTree.getTagAsDeepCopy('brand new root')).not.toBeNull();
   });
@@ -121,7 +118,9 @@ describe('useEditActions', () => {
       setEditingRowId,
     } = buildActions();
 
-    await actions.handleUpdateTag('  same value  ', 'same value');
+    await act(async () => {
+      await actions.handleUpdateTag('  same value  ', 'same value');
+    });
 
     expect(enterPreviewMode).not.toHaveBeenCalled();
     expect(setToast).not.toHaveBeenCalled();
@@ -136,13 +135,14 @@ describe('useEditActions', () => {
       setEditingRowId,
     } = buildActions();
 
-    await actions.handleUpdateTag('updated', 'original');
+    await act(async () => {
+      await actions.handleUpdateTag('updated', 'original');
+    });
 
     expect(enterPreviewMode).toHaveBeenCalled();
     expect(setToast).toHaveBeenCalledWith({
       show: true,
       message: 'Tag "updated" updated successfully',
-      variant: 'success',
     });
     expect(setEditingRowId).toHaveBeenCalledWith(null);
   });
@@ -156,13 +156,14 @@ describe('useEditActions', () => {
     } = buildActions();
     createTagMutation.mutateAsync.mockRejectedValue(new Error('server failed'));
 
-    await actions.handleCreateTag('new tag');
+    await act(async () => {
+      await actions.handleCreateTag('new tag');
+    });
 
     expect(setDraftError).toHaveBeenCalledWith('server failed');
     expect(setToast).toHaveBeenCalledWith({
       show: true,
       message: 'Error creating tag: server failed',
-      variant: 'danger',
     });
   });
 });

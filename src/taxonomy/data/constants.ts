@@ -1,8 +1,8 @@
 /**
  * The maximum number of taxonomy items expected.
- * This is used to set `full_depth_threshold` for the tag list API endpoint,
- * which determines when to include the `full_depth` field in the response.
- * Right now we expect to load all tags for a taxonomy in one request,
- * and we just set this number really high to avoid any edge cases.
+ * Used to ensure that we load all nested subtags.
+ * This is set to the maximum value allowed by the backend.
+ * However, if the taxonomy size exceeds this value, the results
+ * will be incomplete because the backend only supports a taxonomy size of 10,000 items or fewer.
  */
-export const EXPECTED_MAX_TAXONOMY_ITEMS = 10000;
+export const MAX_TAXONOMY_ITEMS = 10000;

@@ -1,9 +1,10 @@
-import { TagData, TagTreeNode } from './tagTree';
+import { TagTreeNode } from './tagTree';
+import { TagData } from '../data/types';
 
 export const rawData: TagData[] = [
   {
     value: 'ab',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 2,
     descendantCount: 4,
     depth: 0,
@@ -15,7 +16,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'aaa',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 1,
     descendantCount: 1,
     depth: 1,
@@ -27,7 +28,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'aa',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 2,
@@ -39,7 +40,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'ab2',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 1,
     descendantCount: 1,
     depth: 1,
@@ -51,7 +52,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'S3',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 2,
@@ -63,7 +64,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Brass2',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -75,7 +76,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Celli',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 1,
     descendantCount: 2,
     depth: 0,
@@ -87,7 +88,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'ViolaDaGamba',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 1,
     descendantCount: 1,
     depth: 1,
@@ -99,7 +100,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Soprano',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 2,
@@ -111,7 +112,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Contrabass',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -123,7 +124,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Electrodrum',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -171,7 +172,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Fiddle',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -183,7 +184,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'grand piano',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -195,7 +196,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Horns',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 1,
     descendantCount: 2,
     depth: 0,
@@ -207,7 +208,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'English Horn',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 1,
     descendantCount: 1,
     depth: 1,
@@ -219,7 +220,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Small English Horn',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 2,
@@ -231,7 +232,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Keyboard',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -243,7 +244,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Kid drum',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -255,7 +256,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Mezzosopranocello',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -267,7 +268,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Oriental',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -315,7 +316,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Drum',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 1,
     descendantCount: 1,
     depth: 1,
@@ -327,7 +328,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'bass drum',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 2,
@@ -411,7 +412,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Recorder',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -459,7 +460,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Viola',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 2,
@@ -483,7 +484,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Other strings',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 1,
@@ -543,7 +544,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Subbass',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -555,7 +556,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Trumpets',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -663,7 +664,7 @@ export const rawData: TagData[] = [
   },
   {
     value: 'Xyllophones',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -678,7 +679,7 @@ export const rawData: TagData[] = [
 export const treeRowData: TagTreeNode[] = [
   {
     value: 'ab',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 2,
     descendantCount: 4,
     depth: 0,
@@ -690,7 +691,7 @@ export const treeRowData: TagTreeNode[] = [
     subRows: [
       {
         value: 'aaa',
-        externalId: null,
+        externalId: 'some-external-id',
         childCount: 1,
         descendantCount: 1,
         depth: 1,
@@ -702,7 +703,7 @@ export const treeRowData: TagTreeNode[] = [
         subRows: [
           {
             value: 'aa',
-            externalId: null,
+            externalId: 'some-external-id',
             childCount: 0,
             descendantCount: 0,
             depth: 2,
@@ -716,7 +717,7 @@ export const treeRowData: TagTreeNode[] = [
       },
       {
         value: 'ab2',
-        externalId: null,
+        externalId: 'some-external-id',
         childCount: 1,
         descendantCount: 1,
         depth: 1,
@@ -728,7 +729,7 @@ export const treeRowData: TagTreeNode[] = [
         subRows: [
           {
             value: 'S3',
-            externalId: null,
+            externalId: 'some-external-id',
             childCount: 0,
             descendantCount: 0,
             depth: 2,
@@ -744,7 +745,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Brass2',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -756,7 +757,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Celli',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 1,
     descendantCount: 2,
     depth: 0,
@@ -768,7 +769,7 @@ export const treeRowData: TagTreeNode[] = [
     subRows: [
       {
         value: 'ViolaDaGamba',
-        externalId: null,
+        externalId: 'some-external-id',
         childCount: 1,
         descendantCount: 1,
         depth: 1,
@@ -780,7 +781,7 @@ export const treeRowData: TagTreeNode[] = [
         subRows: [
           {
             value: 'Soprano',
-            externalId: null,
+            externalId: 'some-external-id',
             childCount: 0,
             descendantCount: 0,
             depth: 2,
@@ -796,7 +797,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Contrabass',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -808,7 +809,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Electrodrum',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -858,7 +859,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Fiddle',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -870,7 +871,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'grand piano',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -882,7 +883,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Horns',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 1,
     descendantCount: 2,
     depth: 0,
@@ -894,7 +895,7 @@ export const treeRowData: TagTreeNode[] = [
     subRows: [
       {
         value: 'English Horn',
-        externalId: null,
+        externalId: 'some-external-id',
         childCount: 1,
         descendantCount: 1,
         depth: 1,
@@ -906,7 +907,7 @@ export const treeRowData: TagTreeNode[] = [
         subRows: [
           {
             value: 'Small English Horn',
-            externalId: null,
+            externalId: 'some-external-id',
             childCount: 0,
             descendantCount: 0,
             depth: 2,
@@ -922,7 +923,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Keyboard',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -934,7 +935,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Kid drum',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -946,7 +947,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Mezzosopranocello',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -958,7 +959,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Oriental',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -1008,7 +1009,7 @@ export const treeRowData: TagTreeNode[] = [
       },
       {
         value: 'Drum',
-        externalId: null,
+        externalId: 'some-external-id',
         childCount: 1,
         descendantCount: 1,
         depth: 1,
@@ -1020,7 +1021,7 @@ export const treeRowData: TagTreeNode[] = [
         subRows: [
           {
             value: 'bass drum',
-            externalId: null,
+            externalId: 'some-external-id',
             childCount: 0,
             descendantCount: 0,
             depth: 2,
@@ -1112,7 +1113,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Recorder',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -1160,7 +1161,7 @@ export const treeRowData: TagTreeNode[] = [
           },
           {
             value: 'Viola',
-            externalId: null,
+            externalId: 'some-external-id',
             childCount: 0,
             descendantCount: 0,
             depth: 2,
@@ -1186,7 +1187,7 @@ export const treeRowData: TagTreeNode[] = [
       },
       {
         value: 'Other strings',
-        externalId: null,
+        externalId: 'some-external-id',
         childCount: 0,
         descendantCount: 0,
         depth: 1,
@@ -1250,7 +1251,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Subbass',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -1262,7 +1263,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Trumpets',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,
@@ -1376,7 +1377,7 @@ export const treeRowData: TagTreeNode[] = [
   },
   {
     value: 'Xyllophones',
-    externalId: null,
+    externalId: 'some-external-id',
     childCount: 0,
     descendantCount: 0,
     depth: 0,

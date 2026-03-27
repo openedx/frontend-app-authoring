@@ -50,6 +50,10 @@ const messages = defineMessages({
     defaultMessage: 'Please keep this window open. We\'ll let you know when it\'s done.',
     description: 'Alert message when the taxonomy import is in progress.',
   },
+  unknownErrorMessage: {
+    id: 'course-authoring.taxonomy-list.error.unknown',
+    defaultMessage: 'Unknown error',
+  },
 });
 
 export default messages;

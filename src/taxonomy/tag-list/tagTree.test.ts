@@ -1,10 +1,12 @@
 import { rawData, treeRowData } from './mockData';
 import { TagTree } from './tagTree';
-import TagTreeError from './tagTreeError';
+import { TagTreeError } from './errors';
+import { TagData } from '../data/types';
 
-const newSubtagChildRow = {
+// For testing purposes, we define a new child node that can be added to the tree in various test cases.
+const newChildNode: TagData = {
   value: 'newChild',
-  externalId: null,
+  externalId: 'some-external-id',
   canChangeTag: true,
   canDeleteTag: true,
   id: 8,
@@ -42,13 +44,13 @@ describe('TagTree', () => {
   it('gets a deep copy when getting a node so that direct mutations do not affect the original tree', () => {
     const tree = new TagTree(rawData);
     const node = tree.getTagAsDeepCopy('ab');
-    expect(node?.externalId).toBeNull();
+    expect(node?.externalId).toBe('some-external-id');
 
     if (node) {
       node.externalId = 'modified';
     }
     const originalNode = tree.getTagAsDeepCopy('ab');
-    expect(originalNode?.externalId).toBeNull();
+    expect(originalNode?.externalId).toBe('some-external-id');
   });
 
   it('returns null for non-existent node', () => {
@@ -59,9 +61,9 @@ describe('TagTree', () => {
 
   it('creates a new top-level row', () => {
     const tree = new TagTree(rawData);
-    const newRow = {
+    const newRow: TagData = {
       value: 'newTopLevel',
-      externalId: null,
+      externalId: 'some-external-id',
       canChangeTag: true,
       canDeleteTag: true,
       id: 7,
@@ -77,24 +79,24 @@ describe('TagTree', () => {
 
   it('creates a new child row', () => {
     const tree = new TagTree(rawData);
-    tree.addNode(newSubtagChildRow, 'ab');
+    tree.addNode(newChildNode, 'ab');
     const parentNode = tree.getTagAsDeepCopy('ab');
-    expect(parentNode?.subRows).toContainEqual(newSubtagChildRow);
+    expect(parentNode?.subRows).toContainEqual(newChildNode);
   });
 
   it('edits a node value', () => {
     const tree = new TagTree(rawData);
-    tree.addNode(newSubtagChildRow, 'ab');
+    tree.addNode(newChildNode, 'ab');
     tree.editTagValue('ab', 'editedAb');
     expect(tree.getTagAsDeepCopy('editedAb')).not.toBeNull();
     expect(tree.getTagAsDeepCopy('ab')).toBeNull();
     expect(tree.getTagAsDeepCopy('editedAb')?.value).toBe('editedAb');
-    expect(tree.getTagAsDeepCopy('editedAb')?.subRows).toContainEqual(newSubtagChildRow);
+    expect(tree.getTagAsDeepCopy('editedAb')?.subRows).toContainEqual(newChildNode);
   });
 
   it('deletes a top-level node and its children', () => {
     const tree = new TagTree(rawData);
-    tree.addNode(newSubtagChildRow, 'ab');
+    tree.addNode(newChildNode, 'ab');
     tree.removeNode('ab');
     expect(tree.getTagAsDeepCopy('ab')).toBeNull();
     expect(tree.getTagAsDeepCopy('newChild')).toBeNull();
@@ -102,10 +104,10 @@ describe('TagTree', () => {
 
   it('deletes a child node', () => {
     const tree = new TagTree(rawData);
-    tree.addNode(newSubtagChildRow, 'ab');
+    tree.addNode(newChildNode, 'ab');
     tree.removeNode('newChild', 'ab');
     const parentNode = tree.getTagAsDeepCopy('ab');
-    expect(parentNode?.subRows).not.toContainEqual(newSubtagChildRow);
+    expect(parentNode?.subRows).not.toContainEqual(newChildNode);
   });
 
   it('returns null and leaves tree unchanged when removing a non-existent node', () => {
@@ -132,7 +134,7 @@ describe('TagTree', () => {
     const tree = new TagTree(rawData);
     const rowCountBefore = tree.getAllAsDeepCopy().length;
 
-    tree.addNode(newSubtagChildRow, 'missing-parent');
+    tree.addNode(newChildNode, 'missing-parent');
 
     expect(tree.getAllAsDeepCopy()).toHaveLength(rowCountBefore);
     expect(tree.getTagAsDeepCopy('newChild')).toBeNull();
@@ -142,7 +144,7 @@ describe('TagTree', () => {
     const orphanData = [
       {
         value: 'orphan',
-        externalId: null,
+        externalId: 'some-external-id',
         canChangeTag: true,
         canDeleteTag: true,
         id: 900,
@@ -164,7 +166,7 @@ describe('TagTree', () => {
     const duplicateValueData = [
       {
         value: 'dup',
-        externalId: null,
+        externalId: 'some-external-id',
         canChangeTag: true,
         canDeleteTag: true,
         id: 1001,
@@ -176,7 +178,7 @@ describe('TagTree', () => {
       },
       {
         value: 'dup',
-        externalId: null,
+        externalId: 'some-external-id',
         canChangeTag: true,
         canDeleteTag: true,
         id: 1002,
@@ -195,7 +197,7 @@ describe('TagTree', () => {
     const cyclicData = [
       {
         value: 'a',
-        externalId: null,
+        externalId: 'some-external-id',
         canChangeTag: true,
         canDeleteTag: true,
         id: 1101,
@@ -207,7 +209,7 @@ describe('TagTree', () => {
       },
       {
         value: 'b',
-        externalId: null,
+        externalId: 'some-external-id',
         canChangeTag: true,
         canDeleteTag: true,
         id: 1102,
@@ -232,7 +234,7 @@ describe('TagTree', () => {
     const tree = new TagTree(rawData);
     const newNode = {
       value: 'ab',
-      externalId: null,
+      externalId: 'some-external-id',
       canChangeTag: true,
       canDeleteTag: true,
       id: 999,
@@ -250,7 +252,7 @@ describe('TagTree', () => {
     const tree = new TagTree(rawData);
     const newNode = {
       value: 'new row',
-      externalId: null,
+      externalId: 'some-external-id',
       canChangeTag: true,
       canDeleteTag: true,
       id: 1000,
@@ -266,7 +268,7 @@ describe('TagTree', () => {
     expect(tree.getAllAsDeepCopy()[0]).toEqual(newNode);
     const nextNewNode = {
       value: 'another new row',
-      externalId: null,
+      externalId: 'some-external-id',
       canChangeTag: true,
       canDeleteTag: true,
       id: 1001,
@@ -285,7 +287,7 @@ describe('TagTree', () => {
     const tree = new TagTree(rawData);
     const newChild = {
       value: 'new child',
-      externalId: null,
+      externalId: 'some-external-id',
       canChangeTag: true,
       canDeleteTag: true,
       id: 1002,
@@ -303,7 +305,7 @@ describe('TagTree', () => {
 
     const nextNewChild = {
       value: 'another new child',
-      externalId: null,
+      externalId: 'some-external-id',
       canChangeTag: true,
       canDeleteTag: true,
       id: 1003,

@@ -7,6 +7,7 @@ import {
   getTaxonomyListData,
   getTaxonomy,
   deleteTaxonomy,
+  getApiErrorMessage,
 } from './api';
 
 describe('taxonomy api calls', () => {
@@ -56,5 +57,83 @@ describe('taxonomy api calls', () => {
 
     // Restore the location object of window:
     window.location = origLocation;
+  });
+
+  describe('getApiErrorMessage', () => {
+    it('returns first non-empty string when response data is an array', () => {
+      const err = {
+        response: {
+          data: ['', 'Array error message', 'Another message'],
+        },
+      };
+
+      expect(getApiErrorMessage(err)).toEqual('Array error message');
+    });
+
+    it('returns response data when it is a non-empty string', () => {
+      const err = {
+        response: {
+          data: 'String error message',
+        },
+      };
+
+      expect(getApiErrorMessage(err)).toEqual('String error message');
+    });
+
+    it('prefers object.error over detail and message fields', () => {
+      const err = {
+        response: {
+          data: {
+            error: 'Error field message',
+            detail: 'Detail field message',
+            message: 'Message field message',
+          },
+        },
+      };
+
+      expect(getApiErrorMessage(err)).toEqual('Error field message');
+    });
+
+    it('falls back to object.message then object.detail when needed', () => {
+      const messageErr = {
+        response: {
+          data: {
+            detail: 'Detail field message',
+            message: 'Message field message',
+          },
+        },
+      };
+      const detailErr = {
+        response: {
+          data: {
+            detail: 'Detail field message',
+          },
+        },
+      };
+
+      expect(getApiErrorMessage(messageErr)).toEqual('Message field message');
+      expect(getApiErrorMessage(detailErr)).toEqual('Detail field message');
+    });
+
+    it('falls back to top-level error message when response data is unparseable', () => {
+      const err = {
+        message: 'Top level error message',
+        response: {
+          data: [null, {}, '   '],
+        },
+      };
+
+      expect(getApiErrorMessage(err)).toEqual('Top level error message');
+    });
+
+    it('returns default message when no message is available', () => {
+      const err = {
+        response: {
+          data: null,
+        },
+      };
+
+      expect(getApiErrorMessage(err)).toEqual('Unknown error');
+    });
   });
 });

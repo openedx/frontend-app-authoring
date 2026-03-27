@@ -1,19 +1,5 @@
-import TagTreeError from './tagTreeError';
-
-export interface TagData {
-  childCount: number;
-  descendantCount: number;
-  depth: number;
-  externalId?: string | null;
-  canChangeTag?: boolean;
-  canDeleteTag?: boolean;
-  id: number;
-  parentValue: string | null;
-  subTagsUrl: string | null;
-  value: string;
-  usageCount?: number;
-  _id?: string;
-}
+import { TagTreeError } from './errors';
+import type { TagData } from '../data/types';
 
 export interface TagTreeNode extends TagData {
   subRows?: TagTreeNode[];
@@ -37,10 +23,41 @@ export class TagTree {
     this.buildTree();
   }
 
-  getAllFlattenedAsCopy(): TagTreeNode[] {
-    const flatten = (nodes: TagTreeNode[], accumulator: TagTreeNode[] = []): TagTreeNode[] => {
+  /** Returns a flattened copy of all nodes in the tree.
+   * For example, this array is not nested even though it contains a parent and a child tag:
+   * [
+   *   {
+   *     value: 'parent tag name',
+   *     externalId: null,
+   *     childCount: 2,
+   *     descendantCount: 4,
+   *     depth: 0,
+   *     parentValue: null,
+   *     id: 1,
+   *     subTagsUrl: 'http://example.com',
+   *     canChangeTag: true,
+   *     canDeleteTag: true,
+   *   },
+   *   {
+   *     value: 'child tag name',
+   *     externalId: null,
+   *     childCount: 0,
+   *     descendantCount: 0,
+   *     depth: 1,
+   *     parentValue: 'parent tag name',
+   *     id: 2,
+   *     subTagsUrl: 'http://example.com',
+   *     canChangeTag: true,
+   *     canDeleteTag: true,
+   *   },
+   *  // ... more tags
+   * ]
+   */
+  getAllFlattenedAsCopy(): TagData[] {
+    const flatten = (nodes: TagTreeNode[], accumulator: TagData[] = []): TagData[] => {
       for (const node of nodes) {
-        accumulator.push({ ...node, subRows: undefined });
+        const { subRows, ...tagData } = node;
+        accumulator.push({ ...tagData }); // Create a shallow copy of the tag data without subRows
         if (node.subRows) {
           flatten(node.subRows, accumulator);
         }
@@ -54,21 +71,25 @@ export class TagTree {
     return JSON.parse(JSON.stringify(this.rows));
   }
 
+  /** For extra robustness, we verify that there are no duplicate values
+   * in the data. (The backend also guarantees this.)
+   */
   private validateNoDuplicateValues(items: TagData[]) {
-    // this should be case-sensitive to account for conceivable duplicates that have different cases in the backend.
     const seenValues = new Set<string>();
     for (const item of items) {
-      if (seenValues.has(item.value)) {
-        throw new TagTreeError(`Duplicate tag value found: ${item.value}`);
+      const lowerCaseValue = item.value.toLowerCase();
+      if (seenValues.has(lowerCaseValue)) {
+        throw new TagTreeError(`Duplicate tag value found: ${lowerCaseValue}`);
       }
-      seenValues.add(item.value);
+      seenValues.add(lowerCaseValue);
     }
   }
 
+  /** For extra robustness, we verify that there are no cycles in the data. (The backend also guarantees this.) */
   private validateNoCycles(items: TagData[]) {
     const parentByValue: { [key: string]: string | null } = {};
     for (const item of items) {
-      parentByValue[item.value] = item.parentValue;
+      parentByValue[item.value.toLowerCase()] = item.parentValue ? item.parentValue.toLowerCase() : null;
     }
 
     const visitStatus: { [key: string]: number } = {};
@@ -94,7 +115,7 @@ export class TagTree {
     };
 
     for (const item of items) {
-      if (detectCycle(item.value)) {
+      if (detectCycle(item.value.toLowerCase())) {
         throw new TagTreeError('Cycle detected in tag hierarchy.');
       }
     }

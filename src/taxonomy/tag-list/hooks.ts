@@ -3,6 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { useCreateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
+import { TagListTableError } from './errors';
 import type { RowId } from '../tree-table/types';
 import {
   TABLE_MODES,
@@ -13,6 +14,14 @@ import {
 
 import messages from './messages';
 
+/** Interface for table mode actions for React's `useReducer` hook.
+ *
+ * `type`: Action type.
+ * `targetMode`: The table mode to transition to. Must be one of the allowed transitions defined in `TRANSITION_TABLE`.
+ * An invalid transition (e.g. from DRAFT to VIEW) will throw an error to prevent disruptive data refreshes.
+ *
+ * For examples, see: https://react.dev/learn/extracting-state-logic-into-a-reducer#writing-reducers-well
+*/
 export interface TableModeAction {
   type: string;
   targetMode: string;
@@ -31,8 +40,7 @@ interface UseEditActionsParams {
   setDraftError: React.Dispatch<React.SetStateAction<string>>;
   createTagMutation: ReturnType<typeof useCreateTag>;
   enterPreviewMode: () => void;
-  setToast: React.Dispatch<React.SetStateAction<{ show: boolean; message: string; variant: 'success' | 'danger' }>>;
-  intl: ReturnType<typeof useIntl>;
+  setToast: React.Dispatch<React.SetStateAction<{ show: boolean; message: string; }>>;
   setIsCreatingTopTag: React.Dispatch<React.SetStateAction<boolean>>;
   setCreatingParentId: React.Dispatch<React.SetStateAction<RowId | null>>;
   exitDraftWithoutSave: () => void;
@@ -50,9 +58,17 @@ const getInlineValidationMessage = (value: string, intl: ReturnType<typeof useIn
   return '';
 };
 
+/** Table mode reducer for React's `useReducer` hook.
+ * This will throw an error if an invalid table mode transition is attempted,
+ * as defined in the `TRANSITION_TABLE` constant.
+ *
+ * @param currentMode - The current table mode.
+ * @param action - The action to perform on the table mode.
+ * @returns The new table mode.
+ */
 const tableModeReducer = (currentMode: string, action: TableModeAction): string => {
   if (action?.type !== TABLE_MODE_ACTIONS.TRANSITION) {
-    throw new Error(`Unknown table mode action: ${action?.type}`);
+    throw new TagListTableError(`Unknown table mode action: ${action?.type}`);
   }
 
   const { targetMode } = action;
@@ -60,9 +76,16 @@ const tableModeReducer = (currentMode: string, action: TableModeAction): string 
     return targetMode;
   }
 
-  throw new Error(`Invalid table mode transition from ${currentMode} to ${targetMode}`);
+  throw new TagListTableError(`Invalid table mode transition from ${currentMode} to ${targetMode}`);
 };
 
+/** Simple custom hook providing table modes.
+ * The main purpose of this hook is to manage allowed transitions between table modes
+ * to prevent disruptive data refreshes.
+ * This allows a component to check the current mode and switch to a different mode without risking invalid transitions.
+ * Transitions are defined separately in the `TRANSITION_TABLE` constant,
+ * which makes it easy to understand and update allowed transitions in one place.
+ */
 const useTableModes = (): UseTableModesReturn => {
   const [tableMode, dispatchTableMode] = useReducer(tableModeReducer, TABLE_MODES.VIEW);
 
@@ -86,11 +109,11 @@ const useEditActions = ({
   createTagMutation,
   enterPreviewMode,
   setToast,
-  intl,
   setIsCreatingTopTag,
   setCreatingParentId,
   setEditingRowId,
 }: UseEditActionsParams) => {
+  const intl = useIntl();
   const updateTableWithoutDataReload = (value: string, parentTagValue: string | null = null) => {
     setTagTree((currentTagTree) => {
       const nextTree = currentTagTree || new TagTree([]);
@@ -104,13 +127,17 @@ const useEditActions = ({
         childCount: 0,
         descendantCount: 0,
         subTagsUrl: null,
-        externalId: null,
+        externalId: '',
       }, parentTagValue);
 
       return nextTree;
     });
   };
 
+  /** Validates a tag value and sets a draft error message if invalid.
+   * In 'hard' mode, it will throw an error instead of setting a draft error message;
+   * in 'soft' mode, it will set a draft error message and return false.
+   */
   const validate = (value: string, mode: 'soft' | 'hard' = 'hard'): boolean => {
     const validationError = getInlineValidationMessage(value, intl);
     if (validationError) {
@@ -140,14 +167,13 @@ const useEditActions = ({
       setToast({
         show: true,
         message: intl.formatMessage(messages.tagCreationSuccessMessage, { name: trimmed }),
-        variant: 'success',
       });
       setIsCreatingTopTag(false);
       setCreatingParentId(null);
     } catch (error) {
       const message = intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: (error as Error)?.message });
       setDraftError((error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: '' }));
-      setToast({ show: true, message, variant: 'danger' });
+      setToast({ show: true, message });
     }
   };
 
@@ -158,7 +184,6 @@ const useEditActions = ({
       setToast({
         show: true,
         message: intl.formatMessage(messages.tagUpdateSuccessMessage, { name: trimmed }),
-        variant: 'success',
       });
     }
     setEditingRowId(null);
