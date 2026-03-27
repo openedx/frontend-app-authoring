@@ -1,0 +1,21 @@
+.tree-table-layout-fixed {
+  table-layout: fixed;
+}
+
+.tree-table-create-row-actions-cell {
+  overflow-wrap: anywhere;
+}
+
+.tree-table-overflow-anywhere {
+  overflow-wrap: anywhere;
+}
+
+.tree-table-indent {
+  padding-inline-start: var(--pgn-spacing-spacer-base);
+}
+
+@for $depth from 2 through 10 {
+  .tree-table-indent-#{$depth} {
+    padding-inline-start: calc(var(--pgn-spacing-spacer-base) * #{$depth});
+  }
+}
