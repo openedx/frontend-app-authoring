@@ -35,6 +35,7 @@ export interface CourseDetails {
   org: string;
   description?: string;
   hasChanges: boolean;
+  selfPaced: boolean;
 }
 
 export interface ChecklistType {
@@ -103,17 +104,17 @@ export interface ConfigureSubsectionData {
   releaseDate: string,
   graderType: string,
   dueDate: string,
-  isTimeLimited: boolean,
-  isProctoredExam: boolean,
-  isOnboardingExam: boolean,
-  isPracticeExam: boolean,
-  examReviewRules: string,
-  defaultTimeLimitMin: number,
-  hideAfterDue: string,
+  isTimeLimited?: boolean,
+  isProctoredExam?: boolean,
+  isOnboardingExam?: boolean,
+  isPracticeExam?: boolean,
+  examReviewRules?: string,
+  defaultTimeLimitMin?: number,
+  hideAfterDue: boolean,
   showCorrectness: string,
-  isPrereq: boolean,
-  prereqUsageKey: string,
-  prereqMinScore: number,
+  isPrereq?: boolean,
+  prereqUsageKey?: string,
+  prereqMinScore?: number,
   prereqMinCompletion: number,
 }
 

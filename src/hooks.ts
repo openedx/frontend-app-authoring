@@ -228,3 +228,21 @@ export function useToggleWithValue<T>(defaultValue?: T): [
   const isDefined = useMemo(() => value !== undefined, [value]);
   return [isDefined, value, define, undefine];
 }
+
+/**
+ * Hook to use `useState` and also trigger a callback when the state updates. This is particularly useful for
+ * scenarios where you want to update the UI or perform side effects every time the state changes.
+ * @param defaultValue The default value of the state
+ * @param callback Receives the latest value as argument
+ */
+export function useStateWithCallback<T>(
+  defaultValue?: T,
+  callback?: (val: T | undefined) => void
+): [T | undefined, (val?: T) => void] {
+  const [value, setValue] = useState<T | undefined>(defaultValue);
+  const setValueWithCallback = useCallback((val?: T) => {
+    setValue(val);
+    callback?.(val)
+  }, [callback]);
+  return [value, setValueWithCallback];
+}

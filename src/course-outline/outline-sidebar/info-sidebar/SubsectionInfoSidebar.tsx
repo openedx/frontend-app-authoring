@@ -13,6 +13,7 @@ import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/Ou
 import { InfoSection } from './InfoSection';
 import { PublishButon } from './PublishButon';
 import messages from '../messages';
+import { SubsectionSettings } from './SubsectionSettings';
 
 interface Props {
   subsectionId: string;
@@ -59,7 +60,8 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
           <InfoSection itemId={subsectionId} />
         </Tab>
         <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
-          <div>Settings</div>
+          {/* key is required to reset local state of tab */}
+          <SubsectionSettings key={subsectionId} subsectionId={subsectionId}/>
         </Tab>
       </Tabs>
     </>
