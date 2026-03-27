@@ -20,6 +20,8 @@ import type {
 } from '../tree-table/types';
 import OptionalExpandLink from './OptionalExpandLink';
 
+const EDITABLE_COLUMNS = ['value'];
+
 interface TagListRowData extends TreeRowData {
   depth: number;
   childCount: number;
@@ -40,11 +42,11 @@ interface GetColumnsArgs {
   onStartDraft: () => void;
   setActiveActionMenuRowId: (id: RowId | null) => void;
   hasOpenDraft: boolean;
+  canAddTag: boolean;
   draftError: string;
   setDraftError: (error: string) => void;
   isSavingDraft: boolean;
   maxDepth: number;
-  creatingParentId: RowId | null;
 }
 
 interface ActionsHeaderProps {
@@ -55,6 +57,7 @@ interface ActionsHeaderProps {
   setActiveActionMenuRowId: (id: RowId | null) => void;
   hasOpenDraft: boolean;
   draftInProgressHintId: string;
+  canAddTag: boolean;
 }
 
 const ActionsHeader = ({
@@ -64,6 +67,7 @@ const ActionsHeader = ({
   setEditingRowId,
   setActiveActionMenuRowId,
   hasOpenDraft,
+  canAddTag,
   draftInProgressHintId,
 }: ActionsHeaderProps) => {
   const intl = useIntl();
@@ -82,7 +86,7 @@ const ActionsHeader = ({
           setEditingRowId(null);
           setActiveActionMenuRowId(null);
         }}
-        disabled={hasOpenDraft}
+        disabled={hasOpenDraft || !canAddTag}
         aria-describedby={hasOpenDraft ? draftInProgressHintId : undefined}
       />
     </div>
@@ -93,9 +97,21 @@ interface ActionsMenuProps {
   rowData: TagListRowData;
   startSubtagDraft: () => void;
   disableAddSubtag: boolean;
+  editTag: () => void;
+  disableEditTag: boolean;
+  reachedMaxDepth: (row: Row<TreeRowData>) => boolean;
+  row: Row<TreeRowData>;
 }
 
-const ActionsMenu = ({ rowData, startSubtagDraft, disableAddSubtag }: ActionsMenuProps) => {
+const ActionsMenu = ({
+  rowData,
+  row,
+  startSubtagDraft,
+  disableAddSubtag,
+  editTag,
+  disableEditTag,
+  reachedMaxDepth,
+}: ActionsMenuProps) => {
   const intl = useIntl();
 
   return (
@@ -113,14 +129,21 @@ const ActionsMenu = ({ rowData, startSubtagDraft, disableAddSubtag }: ActionsMen
         <Dropdown.Item
           as={Button}
           onClick={startSubtagDraft}
-          disabled={disableAddSubtag}
+          disabled={reachedMaxDepth(row) || disableAddSubtag}
         >
           {intl.formatMessage(messages.addSubtag)}
+        </Dropdown.Item>
+        <Dropdown.Item
+          as={Button}
+          onClick={editTag}
+          disabled={disableEditTag}
+        >
+          {intl.formatMessage(messages.renameTag)}
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
-}
+};
 
 function getColumns({
   setIsCreatingTopTag,
@@ -129,11 +152,11 @@ function getColumns({
   onStartDraft,
   setActiveActionMenuRowId,
   hasOpenDraft,
+  canAddTag,
   setDraftError,
   maxDepth,
-  creatingParentId,
 }: GetColumnsArgs): TreeColumnDef[] {
-  const canAddSubtag = (row: Row<TreeRowData>) => row.depth < maxDepth;
+  const reachedMaxDepth = (row: Row<TreeRowData>) => row.depth >= maxDepth;
   const draftInProgressHintId = 'tag-list-draft-in-progress-hint';
 
   return [
@@ -164,16 +187,19 @@ function getColumns({
           setActiveActionMenuRowId={setActiveActionMenuRowId}
           hasOpenDraft={hasOpenDraft}
           draftInProgressHintId={draftInProgressHintId}
+          canAddTag={canAddTag}
         />
       ),
       cell: ({ row }) => {
         const rowData = asTagListRowData(row);
 
-        if (rowData.isNew || rowData.isEditing || !canAddSubtag(row)) {
+        if (rowData.isNew || rowData.isEditing) {
           return <div className="d-flex gap-2" />;
         }
 
-        const disableAddSubtag = hasOpenDraft && creatingParentId !== rowData.id;
+        const disableAddSubtag = hasOpenDraft || !canAddTag;
+        const disableEditTag = hasOpenDraft || !canAddTag || row.original.canChangeTag === false;
+
         const startSubtagDraft = () => {
           onStartDraft();
           setDraftError('');
@@ -184,9 +210,26 @@ function getColumns({
           row.toggleExpanded(true);
         };
 
+        const editTag = () => {
+          onStartDraft();
+          setDraftError('');
+          setEditingRowId(`${rowData.id}:${rowData.value}`);
+          setCreatingParentId(null);
+          setIsCreatingTopTag(false);
+          setActiveActionMenuRowId(null);
+        };
+
         return (
           <div className="d-flex align-items-center justify-content-end gap-2">
-            <ActionsMenu rowData={rowData} startSubtagDraft={startSubtagDraft} disableAddSubtag={disableAddSubtag} />
+            <ActionsMenu
+              rowData={rowData}
+              row={row}
+              startSubtagDraft={startSubtagDraft}
+              disableAddSubtag={disableAddSubtag}
+              editTag={editTag}
+              disableEditTag={disableEditTag}
+              reachedMaxDepth={reachedMaxDepth}
+            />
           </div>
         );
       },
@@ -194,4 +237,4 @@ function getColumns({
   ];
 }
 
-export { getColumns };
+export { getColumns, EDITABLE_COLUMNS };
