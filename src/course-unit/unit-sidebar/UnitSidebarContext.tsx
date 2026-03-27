@@ -94,9 +94,11 @@ export const UnitSidebarProvider = ({
   );
 };
 
-export function useUnitSidebarContext(): UnitSidebarContextData {
+export function useUnitSidebarContext(raiseError?: true): UnitSidebarContextData;
+export function useUnitSidebarContext(raiseError?: boolean): UnitSidebarContextData | undefined;
+export function useUnitSidebarContext(raiseError: boolean = true): UnitSidebarContextData | undefined {
   const ctx = useContext(UnitSidebarContext);
-  if (ctx === undefined) {
+  if (ctx === undefined && raiseError) {
     /* istanbul ignore next */
     throw new Error('useUnitSidebarContext() was used in a component without a <UnitSidebarProvider> ancestor.');
   }

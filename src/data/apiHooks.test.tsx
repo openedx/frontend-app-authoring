@@ -29,20 +29,20 @@ describe('useWaffleFlags', () => {
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(() => promise);
 
     render(<FlagComponent />);
-    expect(screen.getByLabelText('isLoading')).toHaveTextContent('loading');
-    expect(screen.getByLabelText('isError')).toHaveTextContent('false');
+    expect(await screen.findByLabelText('isLoading')).toHaveTextContent('loading');
+    expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
     // The default should be enabled, even before we hear back from the server:
-    expect(screen.getByLabelText('useNewCourseOutlinePage')).toHaveTextContent('enabled');
+    expect(await screen.findByLabelText('useNewCourseOutlinePage')).toHaveTextContent('enabled');
 
     // Then, the server responds with a new value:
     resolveResponse([200, { useNewCourseOutlinePage: false }]);
 
     // Now, we're no longer loading and we have the new value:
-    await waitFor(() => {
-      expect(screen.getByLabelText('isLoading')).toHaveTextContent('false');
+    await waitFor(async () => {
+      expect(await screen.findByLabelText('isLoading')).toHaveTextContent('false');
     });
-    expect(screen.getByLabelText('isError')).toHaveTextContent('false');
-    expect(screen.getByLabelText('useNewCourseOutlinePage')).toHaveTextContent('disabled');
+    expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
+    expect(await screen.findByLabelText('useNewCourseOutlinePage')).toHaveTextContent('disabled');
   });
 
   it('uses the default values if there\'s an error', async () => {
@@ -53,20 +53,20 @@ describe('useWaffleFlags', () => {
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(() => promise);
 
     render(<FlagComponent />);
-    expect(screen.getByLabelText('isLoading')).toHaveTextContent('loading');
-    expect(screen.getByLabelText('isError')).toHaveTextContent('false');
+    expect(await screen.findByLabelText('isLoading')).toHaveTextContent('loading');
+    expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
     // The default should be enabled, even before we hear back from the server:
-    expect(screen.getByLabelText('useNewCourseOutlinePage')).toHaveTextContent('enabled');
+    expect(await screen.findByLabelText('useNewCourseOutlinePage')).toHaveTextContent('enabled');
 
     // Then, the server responds with an error
     resolveResponse([500, {}]);
 
     // Now, we're no longer loading, we have an error state, and we still have the default value:
-    await waitFor(() => {
-      expect(screen.getByLabelText('isLoading')).toHaveTextContent('false');
+    await waitFor(async () => {
+      expect(await screen.findByLabelText('isLoading')).toHaveTextContent('false');
     });
-    expect(screen.getByLabelText('isError')).toHaveTextContent('error');
-    expect(screen.getByLabelText('useNewCourseOutlinePage')).toHaveTextContent('enabled');
+    expect(await screen.findByLabelText('isError')).toHaveTextContent('error');
+    expect(await screen.findByLabelText('useNewCourseOutlinePage')).toHaveTextContent('enabled');
   });
 
   it('uses the global flag values while loading the course-specific flags', async () => {
@@ -81,9 +81,9 @@ describe('useWaffleFlags', () => {
 
     // Check the global flag:
     render(<FlagComponent />);
-    await waitFor(() => {
+    await waitFor(async () => {
       // Once it loads the flags from the server, the global 'false' value will override the default 'true':
-      expect(screen.getByLabelText('useNewCourseOutlinePage')).toHaveTextContent('disabled');
+      expect(await screen.findByLabelText('useNewCourseOutlinePage')).toHaveTextContent('disabled');
     });
 
     // Now check the course-specific flag:
@@ -91,16 +91,16 @@ describe('useWaffleFlags', () => {
     render(<FlagComponent courseId={courseId} />);
 
     // Now, the course-specific value is loading but in the meantime we use the global default:
-    expect(screen.getByLabelText('isLoading')).toHaveTextContent('loading');
-    expect(screen.getByLabelText('isError')).toHaveTextContent('false');
-    expect(screen.getByLabelText('useNewCourseOutlinePage')).toHaveTextContent('disabled');
+    expect(await screen.findByLabelText('isLoading')).toHaveTextContent('loading');
+    expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
+    expect(await screen.findByLabelText('useNewCourseOutlinePage')).toHaveTextContent('disabled');
 
     // Now the server responds: the course-specific flag is ON:
     resolveResponse([200, { useNewCourseOutlinePage: true }]);
-    await waitFor(() => {
-      expect(screen.getByLabelText('isLoading')).toHaveTextContent('false');
+    await waitFor(async () => {
+      expect(await screen.findByLabelText('isLoading')).toHaveTextContent('false');
     });
-    expect(screen.getByLabelText('isError')).toHaveTextContent('false');
-    expect(screen.getByLabelText('useNewCourseOutlinePage')).toHaveTextContent('enabled');
+    expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
+    expect(await screen.findByLabelText('useNewCourseOutlinePage')).toHaveTextContent('enabled');
   });
 });
