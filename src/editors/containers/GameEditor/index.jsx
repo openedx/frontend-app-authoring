@@ -763,6 +763,7 @@ export const GameEditor = ({
       onClose={onClose}
       isDirty={() => isDirty}
       validateEntry={validateAllCards}
+      className="game-editor"
     >
       <div className="editor-body h-75 overflow-auto">
         {Object.keys(validationErrors).length > 0 && isAlertVisible && (

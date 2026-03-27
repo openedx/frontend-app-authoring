@@ -56,6 +56,7 @@ interface Props extends EditorComponent {
   onSave?: Function | null;
   saveButtonLabel?: string | null;
   saveButtonAriaLabel?: string | null;
+  className?: string;
 }
 
 const EditorContainer: React.FC<Props> = ({
@@ -68,6 +69,7 @@ const EditorContainer: React.FC<Props> = ({
   onSave: customOnSave = null,
   saveButtonLabel = null,
   saveButtonAriaLabel = null,
+  className = '',
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -171,7 +173,7 @@ const EditorContainer: React.FC<Props> = ({
           />
         </div>
       </ModalDialog.Header>
-      <ModalDialog.Body className="pb-0">
+      <ModalDialog.Body className={className ? `pb-0 ${className}` : 'pb-0'}>
         <div ref={errorAlertRef}>
           <ErrorAlert
             isError={uploadFailed}

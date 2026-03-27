@@ -9,7 +9,6 @@
   padding: 8px 0;
   align-items: flex-start;
   width: 100%;
-  background: var(--extras-white, #FFFFFF);
 }
 
 .terms {
@@ -300,4 +299,8 @@ width: 100%;
 .timer-toggle-button:focus::before,
 .shuffle-toggle-button:focus::before {
 	display: none;
+}
+
+.game-editor {
+  background-color: var(--pgn-color-light-300);
 }
