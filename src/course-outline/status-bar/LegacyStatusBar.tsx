@@ -5,16 +5,16 @@ import {
   Button, Hyperlink, Form, Stack, useToggle,
 } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
+import { type ReactNode } from 'react';
 
-import { ReactNode } from 'react';
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import TagCount from '@src/generic/tag-count';
 import { useHelpUrls } from '@src/help-urls/hooks';
-import { useWaffleFlags } from '@src/data/apiHooks';
 import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
 import { useContentTagsCount } from '@src/generic/data/apiHooks';
 import { getVideoSharingOptionText } from '@src/course-outline/utils';
+
 import messages from './messages';
 
 interface StatusBarItemProps {
@@ -47,7 +47,6 @@ export const LegacyStatusBar = ({
   handleVideoSharingOptionChange,
 }: LegacyStatusBarProps) => {
   const intl = useIntl();
-  const waffleFlags = useWaffleFlags(courseId);
 
   const {
     courseReleaseDate,
@@ -67,7 +66,6 @@ export const LegacyStatusBar = ({
 
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
-  const scheduleDestination = () => new URL(`settings/details/${courseId}#schedule`, getConfig().STUDIO_BASE_URL).href;
 
   const {
     contentHighlights: contentHighlightsUrl,
@@ -88,7 +86,7 @@ export const LegacyStatusBar = ({
         <StatusBarItem title={intl.formatMessage(messages.startDateTitle)}>
           <Link
             className="small"
-            to={waffleFlags.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
+            to={`/course/${courseId}/settings/details/#schedule`}
           >
             {courseReleaseDateObj.isValid() ? (
               <FormattedDate

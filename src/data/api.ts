@@ -76,9 +76,6 @@ export const waffleFlagDefaults = {
   enableCourseOptimizerCheckPrevRunLinks: false,
   useNewHomePage: true,
   useNewCustomPages: true,
-  useNewScheduleDetailsPage: true,
-  useNewAdvancedSettingsPage: true,
-  useNewGradingPage: true,
   useNewUpdatesPage: true,
   useNewImportPage: false,
   useNewExportPage: true,
@@ -86,10 +83,8 @@ export const waffleFlagDefaults = {
   useNewVideoUploadsPage: true,
   useNewCourseOutlinePage: true,
   useNewUnitPage: false,
-  useNewCourseTeamPage: true,
   useNewCertificatesPage: true,
   useNewTextbooksPage: true,
-  useNewGroupConfigurationsPage: true,
   useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
   enableAuthzCourseAuthoring: false,
@@ -206,5 +201,27 @@ export async function getPreviewModulestoreMigration(
   params.append('source_key', sourceKey);
 
   const { data } = await client.get(getPreviewModulestoreMigrationUrl(), { params });
+  return camelCaseObject(data);
+}
+
+export const getUserAgreementRecordApi = (agreementType: string) => `${getConfig().LMS_BASE_URL}/api/agreements/v1/agreement_record/${agreementType}`;
+
+export async function getUserAgreementRecord(agreementType: string) {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(getUserAgreementRecordApi(agreementType));
+  return camelCaseObject(data);
+}
+
+export async function updateUserAgreementRecord(agreementType: string) {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.post(getUserAgreementRecordApi(agreementType));
+  return camelCaseObject(data);
+}
+
+export const getUserAgreementApi = (agreementType: string) => `${getConfig().LMS_BASE_URL}/api/agreements/v1/agreement/${agreementType}/`;
+
+export async function getUserAgreement(agreementType: string) {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(getUserAgreementApi(agreementType));
   return camelCaseObject(data);
 }
