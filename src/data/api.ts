@@ -228,10 +228,43 @@ export async function getUserAgreement(agreementType: string) {
   return camelCaseObject(data);
 }
 
+interface CourseSettingsData {
+  aboutPageEditable: boolean;
+  canShowCertificateAvailableDateField: boolean;
+  courseDisplayName: string;
+  courseDisplayNameWithDefault: string;
+  creditEligibilityEnabled: boolean;
+  enableExtendedCourseDetails: boolean;
+  enrollmentEndEditable: boolean;
+  isCreditCourse: boolean;
+  isEntranceExamsEnabled: boolean;
+  isPrerequisiteCoursesEnabled: boolean;
+  languageOptions: [string, string][];
+  lmsLinkForAboutPage: string;
+  licensingEnabled: boolean;
+  marketingEnabled: boolean;
+  mfeProctoredExamSettingsUrl: string;
+  platformName: string;
+  possiblePreRequisiteCourses: {
+    courseKey: string;
+    displayName: string;
+    lmsLink: string;
+    number: string;
+    org: string;
+    rerunLink: string;
+    run: string;
+    url: string;
+  }
+  shortDescriptionEditable: boolean;
+  showMinGradeWarning: boolean;
+  sidebarHtmlEnabled: boolean;
+  upgradeDeadline: string | null;
+}
+
 /**
  * Get course settings.
  */
-export async function getCourseSettings(courseId: string): Promise<Record<string, any>> {
+export async function getCourseSettings(courseId: string): Promise<CourseSettingsData> {
   const { data } = await getAuthenticatedHttpClient().get(getCourseSettingsApiUrl(courseId));
   return camelCaseObject(data);
 }
