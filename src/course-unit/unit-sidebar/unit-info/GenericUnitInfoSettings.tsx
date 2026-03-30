@@ -9,6 +9,7 @@ import { useMemo } from 'react';
 import configureMessages from '@src/generic/configure-modal/messages';
 import messages from './messages';
 import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
+import { useStateWithCallback } from '@src/hooks';
 
 interface UnitInfoSettingsProps {
   id: string;
@@ -60,6 +61,18 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     });
   };
 
+  const [localState, setLocalState] = useStateWithCallback<{
+    isVisible?: boolean;
+    isDiscussionEnabled?: boolean;
+  }>({
+    isVisible: visibleToStaffOnly,
+    isDiscussionEnabled: discussionEnabled,
+  }, (val) => {
+      if (val) {
+        handleUpdate(!!val.isVisible, null, val.isDiscussionEnabled);
+      }
+  });
+
   const handleSaveGroups = async (data: {
     selectedPartitionIndex: number;
     selectedGroups: any[];
@@ -100,14 +113,14 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
       >
         <ButtonGroup toggle>
           <Button
-            variant={visibleToStaffOnly ? 'outline-primary' : 'primary'}
-            onClick={() => handleUpdate(false, null, discussionEnabled)}
+            variant={localState?.isVisible ? 'outline-primary' : 'primary'}
+            onClick={() => setLocalState((prev) => ({ ...prev, isVisible: false}))}
           >
             <FormattedMessage {...messages.sidebarInfoVisibilityStudentLabel} />
           </Button>
           <Button
-            variant={visibleToStaffOnly ? 'primary' : 'outline-primary'}
-            onClick={() => handleUpdate(true, null, discussionEnabled)}
+            variant={localState?.isVisible ? 'primary' : 'outline-primary'}
+            onClick={() => setLocalState((prev) => ({ ...prev, isVisible: true}))}
           >
             <FormattedMessage {...messages.sidebarInfoVisibilityStaffLabel} />
           </Button>
@@ -143,8 +156,11 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
         title={intl.formatMessage(configureMessages.discussionEnabledSectionTitle)}
       >
         <DiscussionEditComponent
-          discussionEnabled={!!discussionEnabled}
-          handleDiscussionChange={(e) => handleUpdate(visibleToStaffOnly, null, e.target.checked)}
+          discussionEnabled={!!localState?.isDiscussionEnabled}
+          handleDiscussionChange={(e) => setLocalState((prev) => ({
+            ...prev,
+            isDiscussionEnabled: e.target.checked,
+          }))}
         />
       </SidebarSection>
     </SidebarContent>

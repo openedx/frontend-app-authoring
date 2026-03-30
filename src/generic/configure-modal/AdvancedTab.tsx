@@ -303,8 +303,6 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
       setFieldValue('isTimeLimited', true);
       setFieldValue('isOnboardingExam', false);
     } else if (value === 'proctoredExam') {
-      // __AUTO_GENERATED_PRINTF_START__
-      console.log("AdvancedTab#handleChange#if#if#if#if 1"); // __AUTO_GENERATED_PRINTF_END__
       setFieldValue('isProctoredExam', true);
       setFieldValue('isTimeLimited', true);
       setFieldValue('isOnboardingExam', false);
