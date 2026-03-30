@@ -258,7 +258,7 @@ export async function configureCourseSubsection(variables: ConfigureSubsectionDa
         is_time_limited: variables.isTimeLimited,
         is_proctored_enabled: variables.isProctoredExam || variables.isPracticeExam || variables.isOnboardingExam,
         exam_review_rules: variables.examReviewRules,
-        default_time_limit_minutes: variables.defaultTimeLimitMin,
+        default_time_limit_minutes: variables.defaultTimeLimitMinutes,
         is_onboarding_exam: variables.isOnboardingExam,
         start: variables.releaseDate,
       },

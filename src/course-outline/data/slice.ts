@@ -58,8 +58,8 @@ const slice = createSlice({
       state.outlineIndexData = payload;
       state.sectionsList = payload.courseStructure?.childInfo?.children || [];
       state.isCustomRelativeDatesActive = payload.isCustomRelativeDatesActive;
-      state.enableProctoredExams = payload.courseStructure?.enableProctoredExams;
-      state.enableTimedExams = payload.courseStructure?.enableTimedExams;
+      state.enableProctoredExams = true || payload.courseStructure?.enableProctoredExams;
+      state.enableTimedExams = true || payload.courseStructure?.enableTimedExams;
       state.createdOn = payload.createdOn;
     },
     updateOutlineIndexLoadingStatus: (state: CourseOutlineState, { payload }) => {

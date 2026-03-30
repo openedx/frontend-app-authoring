@@ -109,7 +109,7 @@ export interface ConfigureSubsectionData {
   isOnboardingExam?: boolean,
   isPracticeExam?: boolean,
   examReviewRules?: string,
-  defaultTimeLimitMin?: number,
+  defaultTimeLimitMinutes?: number,
   hideAfterDue: boolean,
   showCorrectness: "always" | "never" | "past_due" | "never_but_include_grade",
   isPrereq?: boolean,

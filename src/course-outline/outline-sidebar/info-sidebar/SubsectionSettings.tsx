@@ -112,7 +112,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
           <Form.Control
             as="select"
             defaultValue={itemData?.format}
-            onChange={(e) => setLocalState({ ...localState, graderType: e.target.value })}
+            onChange={(e) => setLocalState((prev) => ({ ...prev, graderType: e.target.value }))}
             data-testid="grader-type-select"
           >
             <option key="notgraded" value="notgraded">
@@ -129,7 +129,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
             value={localState?.dueDate}
             label={intl.formatMessage(messages.subsectionGradingDueDateLabel)}
             controlName="state-date"
-            onChange={(val) => setLocalState({ ...localState, dueDate: val })}
+            onChange={(val) => setLocalState((prev) => ({ ...prev, dueDate: val }))}
             data-testid="due-date-picker"
           />
           <DatepickerControl
@@ -137,7 +137,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
             value={localState?.dueDate}
             label={intl.formatMessage(messages.subsectionGradingDueTimeLabel)}
             controlName="start-time"
-            onChange={(val) => setLocalState({ ...localState, dueDate: val })}
+            onChange={(val) => setLocalState((prev) => ({ ...prev, dueDate: val }))}
           />
         </Stack>
       }
@@ -163,17 +163,17 @@ const VisibilitySection = ({ subsectionId, onChange }: SubProps) => {
       <ButtonGroup toggle>
         <Button
           variant={localState?.isVisibleToStaffOnly ? 'outline-primary' : 'primary'}
-          onClick={() => setLocalState({ ...localState,  isVisibleToStaffOnly: false })}
+          onClick={() => setLocalState((prev) => ({ ...prev,  isVisibleToStaffOnly: false }))}
         >
           <FormattedMessage {...messages.subsectionVisibilityStudentVisible} />
         </Button>
         <Button
           variant={localState?.isVisibleToStaffOnly ? 'primary' : 'outline-primary'}
-          onClick={() => setLocalState({
-            ...localState,
+          onClick={() => setLocalState((prev) => ({
+            ...prev,
             isVisibleToStaffOnly: true,
             hideAfterDue: false,
-          })}
+          }))}
         >
           <FormattedMessage {...messages.subsectionVisibilityStaffOnly} />
         </Button>
@@ -181,11 +181,11 @@ const VisibilitySection = ({ subsectionId, onChange }: SubProps) => {
       {!localState?.isVisibleToStaffOnly && <Form.Checkbox
         checked={localState?.hideAfterDue}
         className="mt-2"
-        onChange={ (e) => setLocalState({
-          ...localState,
+        onChange={ (e) => setLocalState((prev) => ({
+          ...prev,
           hideAfterDue: e.target.checked,
           isVisibleToStaffOnly: false,
-        }) }
+        }))}
       >
         <FormattedMessage {...messages.subsectionVisibilityHideAfterDueLabel} />
       </Form.Checkbox>}
@@ -243,17 +243,22 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
   const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
     {
-      showCorrectness: itemData?.showCorrectness,
+      isProctoredExam: itemData?.isProctoredExam,
+      isTimeLimited: itemData?.isTimeLimited,
+      isOnboardingExam: itemData?.isOnboardingExam,
+      isPracticeExam: itemData?.isPracticeExam,
+      defaultTimeLimitMinutes: itemData?.defaultTimeLimitMinutes,
+      examReviewRules: itemData?.examReviewRules,
     },
-    (val) => onChange(val || {})
+    (val) => onChange(val || {}),
   );
 
   const setFieldValue = (key: keyof ConfigureSubsectionData, value: any) => {
-    setLocalState({
-      ...localState,
+    setLocalState((prev) => ({
+      ...prev,
       [key]: value,
-    })
-  }
+    }));
+  };
 
   return (
     <SidebarSection
@@ -261,12 +266,12 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
     >
       <AdvancedTab
         values={{
-          isProctoredExam: itemData?.isProctoredExam,
-          isTimeLimited: itemData?.isTimeLimited,
-          isOnboardingExam: itemData?.isOnboardingExam,
-          isPracticeExam: itemData?.isPracticeExam,
-          defaultTimeLimitMinutes: itemData?.defaultTimeLimitMinutes,
-          examReviewRules: itemData?.examReviewRules,
+          isProctoredExam: localState?.isProctoredExam,
+          isTimeLimited: localState?.isTimeLimited,
+          isOnboardingExam: localState?.isOnboardingExam,
+          isPracticeExam: localState?.isPracticeExam,
+          defaultTimeLimitMinutes: localState?.defaultTimeLimitMinutes,
+          examReviewRules: localState?.examReviewRules,
         }}
         setFieldValue={setFieldValue}
         prereqs={itemData?.prereqs}
@@ -278,6 +283,8 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
         showReviewRules={itemData?.showReviewRules}
         wasProctoredExam={itemData?.isProctoredExam}
         onlineProctoringRules={itemData?.onlineProctoringRules}
+        hideTitle
+        useBtnGroup
       />
     </SidebarSection>
   );
@@ -306,7 +313,7 @@ export const SubsectionSettings = ({ subsectionId }: Props) => {
       isOnboardingExam: itemData.isOnboardingExam,
       isPracticeExam: itemData.isPracticeExam,
       examReviewRules: itemData.examReviewRules,
-      defaultTimeLimitMin: itemData.defaultTimeLimitMinutes,
+      defaultTimeLimitMinutes: itemData.defaultTimeLimitMinutes,
       hideAfterDue: itemData.hideAfterDue === undefined ? false : itemData.hideAfterDue,
       showCorrectness: itemData.showCorrectness,
       isPrereq: itemData.isPrereq,
