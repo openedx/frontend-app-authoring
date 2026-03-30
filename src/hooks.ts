@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { history } from '@edx/frontend-platform';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { isEqual } from 'lodash';
 
 export const useScrollToHashElement = ({ isLoading }: { isLoading: boolean }) => {
   const [elementWithHash, setElementWithHash] = useState<string | null>(null);
@@ -241,8 +242,16 @@ export function useStateWithCallback<T>(
 ): [T | undefined, (val?: T) => void] {
   const [value, setValue] = useState<T | undefined>(defaultValue);
   const setValueWithCallback = useCallback((val?: T) => {
-    setValue(val);
-    callback?.(val)
+    let hasChanged = false;
+    setValue((prev) => {
+      if (!isEqual(val, prev)) {
+        hasChanged = true;
+      }
+      return val;
+    });
+    if (hasChanged) {
+      callback?.(val)
+    }
   }, [callback]);
   return [value, setValueWithCallback];
 }

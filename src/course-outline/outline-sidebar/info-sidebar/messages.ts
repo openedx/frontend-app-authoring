@@ -66,10 +66,30 @@ const messages = defineMessages({
     defaultMessage: 'Staff Only',
     description: 'Visibility option for staff only in subsection settings sidebar',
   },
+  subsectionVisibilityHideAfterDueLabel: {
+    id: 'course-authoring.course-outline.sidebar.library.subsection-settings.visibility.hideAfterDue',
+    defaultMessage: 'Hide content after due date',
+    description: 'Hide content after due date Checkbox label',
+  },
   subsectionAssessmentResultsTitle: {
     id: 'course-authoring.course-outline.sidebar.library.subsection-settings.assessment-results.title',
     defaultMessage: 'Assessment Results Visibility',
     description: 'Subsection Assessment Results Visibility section title in subsection settings sidebar',
+  },
+  subsectionAssessmentResultsShowBtn: {
+    id: 'course-authoring.course-outline.sidebar.library.subsection-settings.assessment-results.show-btn',
+    defaultMessage: 'Show',
+    description: 'Subsection Assessment Results Visibility section show button text in subsection settings sidebar',
+  },
+  subsectionAssessmentResultsHideBtn: {
+    id: 'course-authoring.course-outline.sidebar.library.subsection-settings.assessment-results.hide-btn',
+    defaultMessage: 'Hide',
+    description: 'Subsection Assessment Results Visibility section hide button text in subsection settings sidebar',
+  },
+  subsectionAssessmentResultsCheckbox: {
+    id: 'course-authoring.course-outline.sidebar.library.subsection-settings.assessment-results.checkbox',
+    defaultMessage: 'Only show results after due date',
+    description: 'Subsection Assessment Results Visibility section checkbox text in subsection settings sidebar',
   },
   subsectionSpecialExamTitle: {
     id: 'course-authoring.course-outline.sidebar.library.subsection-settings.special-exam.title',

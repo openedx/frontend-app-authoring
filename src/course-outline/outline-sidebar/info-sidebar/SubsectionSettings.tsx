@@ -1,14 +1,17 @@
 import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
 import { Button, ButtonGroup, Form, Stack } from "@openedx/paragon";
 import { useConfigureSubsection, useCourseDetails, useCourseItemData } from "@src/course-outline/data/apiHooks";
+import { getProctoredExamsFlag, getTimedExamsFlag } from "@src/course-outline/data/selectors";
 import { ConfigureSubsectionData } from "@src/course-outline/data/types";
 import { useOutlineSidebarContext } from "@src/course-outline/outline-sidebar/OutlineSidebarContext";
 import { useCourseAuthoringContext } from "@src/CourseAuthoringContext";
 import { VisibilityTypes } from "@src/data/constants";
+import AdvancedTab from "@src/generic/configure-modal/AdvancedTab";
 import { DatepickerControl, DATEPICKER_TYPES } from "@src/generic/datepicker-control";
 import { SidebarContent, SidebarSection } from "@src/generic/sidebar"
 import { useStateWithCallback } from "@src/hooks";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import messages from './messages';
 
 interface Props {
@@ -102,7 +105,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
         </Button>
       </ButtonGroup>
       {graded &&
-        <Form.Group>
+        <Form.Group className="mt-2">
           <Form.Label className="x-small">
             <FormattedMessage {...messages.subsectionGradingDropdownLabel} />
           </Form.Label>
@@ -120,7 +123,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
         </Form.Group>
       }
       {!courseDetails?.selfPaced && graded &&
-        <Stack className="mt-3" direction="horizontal" gap={3}>
+        <Stack direction="horizontal" gap={3}>
           <DatepickerControl
             type={DATEPICKER_TYPES.date}
             value={localState?.dueDate}
@@ -138,6 +141,144 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
           />
         </Stack>
       }
+    </SidebarSection>
+  );
+}
+
+const VisibilitySection = ({ subsectionId, onChange }: SubProps) => {
+  const intl = useIntl();
+  const { data: itemData } = useCourseItemData(subsectionId);
+  const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
+    {
+      isVisibleToStaffOnly: itemData?.visibilityState === VisibilityTypes.STAFF_ONLY,
+      hideAfterDue: itemData?.hideAfterDue,
+    },
+    (val) => onChange(val || {})
+  );
+
+  return (
+    <SidebarSection
+      title={intl.formatMessage(messages.subsectionGradingTitle)}
+    >
+      <ButtonGroup toggle>
+        <Button
+          variant={localState?.isVisibleToStaffOnly ? 'outline-primary' : 'primary'}
+          onClick={() => setLocalState({ ...localState,  isVisibleToStaffOnly: false })}
+        >
+          <FormattedMessage {...messages.subsectionVisibilityStudentVisible} />
+        </Button>
+        <Button
+          variant={localState?.isVisibleToStaffOnly ? 'primary' : 'outline-primary'}
+          onClick={() => setLocalState({
+            ...localState,
+            isVisibleToStaffOnly: true,
+            hideAfterDue: false,
+          })}
+        >
+          <FormattedMessage {...messages.subsectionVisibilityStaffOnly} />
+        </Button>
+      </ButtonGroup>
+      {!localState?.isVisibleToStaffOnly && <Form.Checkbox
+        checked={localState?.hideAfterDue}
+        className="mt-2"
+        onChange={ (e) => setLocalState({
+          ...localState,
+          hideAfterDue: e.target.checked,
+          isVisibleToStaffOnly: false,
+        }) }
+      >
+        <FormattedMessage {...messages.subsectionVisibilityHideAfterDueLabel} />
+      </Form.Checkbox>}
+    </SidebarSection>
+  );
+}
+
+const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps) => {
+  const intl = useIntl();
+  const { data: itemData } = useCourseItemData(subsectionId);
+  const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
+    {
+      showCorrectness: itemData?.showCorrectness,
+    },
+    (val) => onChange(val || {})
+  );
+
+  return (
+    <SidebarSection
+      title={intl.formatMessage(messages.subsectionAssessmentResultsTitle)}
+    >
+      <ButtonGroup toggle>
+        <Button
+          variant={localState?.showCorrectness === "always" ? 'primary' : 'outline-primary'}
+          onClick={() => setLocalState({ showCorrectness: "always" })}
+        >
+          <FormattedMessage {...messages.subsectionAssessmentResultsShowBtn} />
+        </Button>
+        <Button
+          variant={["never", "past_due"].includes(localState?.showCorrectness || "") ? 'primary' : 'outline-primary'}
+          onClick={() => {
+            if (localState?.showCorrectness === "always") {
+              setLocalState({ showCorrectness: "never" })
+            }
+          }}
+        >
+          <FormattedMessage {...messages.subsectionAssessmentResultsHideBtn} />
+        </Button>
+      </ButtonGroup>
+      <Form.Checkbox
+        checked={localState?.showCorrectness === "past_due"}
+        className="mt-2"
+        onChange={() => setLocalState({ showCorrectness: "past_due" })}
+      >
+        <FormattedMessage {...messages.subsectionAssessmentResultsCheckbox} />
+      </Form.Checkbox>
+    </SidebarSection>
+  );
+}
+
+const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
+  const intl = useIntl();
+  const { data: itemData } = useCourseItemData(subsectionId);
+  const enableTimedExams = useSelector(getTimedExamsFlag);
+  const enableProctoredExams = useSelector(getProctoredExamsFlag);
+  const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
+    {
+      showCorrectness: itemData?.showCorrectness,
+    },
+    (val) => onChange(val || {})
+  );
+
+  const setFieldValue = (key: keyof ConfigureSubsectionData, value: any) => {
+    setLocalState({
+      ...localState,
+      [key]: value,
+    })
+  }
+
+  return (
+    <SidebarSection
+      title={intl.formatMessage(messages.subsectionSpecialExamTitle)}
+    >
+      <AdvancedTab
+        values={{
+          isProctoredExam: itemData?.isProctoredExam,
+          isTimeLimited: itemData?.isTimeLimited,
+          isOnboardingExam: itemData?.isOnboardingExam,
+          isPracticeExam: itemData?.isPracticeExam,
+          defaultTimeLimitMinutes: itemData?.defaultTimeLimitMinutes,
+          examReviewRules: itemData?.examReviewRules,
+        }}
+        setFieldValue={setFieldValue}
+        prereqs={itemData?.prereqs}
+        releasedToStudents={itemData?.releasedToStudents}
+        wasExamEverLinkedWithExternal={itemData?.wasExamEverLinkedWithExternal}
+        enableProctoredExams={enableProctoredExams}
+        enableTimedExams={enableTimedExams}
+        supportsOnboarding={itemData?.supportsOnboarding}
+        showReviewRules={itemData?.showReviewRules}
+        wasProctoredExam={itemData?.isProctoredExam}
+        onlineProctoringRules={itemData?.onlineProctoringRules}
+      />
     </SidebarSection>
   );
 }
@@ -183,6 +324,18 @@ export const SubsectionSettings = ({ subsectionId }: Props) => {
         onChange={onChange}
       /> }
       <GradingSection
+        subsectionId={subsectionId}
+        onChange={onChange}
+      />
+      <VisibilitySection
+        subsectionId={subsectionId}
+        onChange={onChange}
+      />
+      <AssessmentResultVisibilitySection
+        subsectionId={subsectionId}
+        onChange={onChange}
+      />
+      <SpecialExamSection
         subsectionId={subsectionId}
         onChange={onChange}
       />

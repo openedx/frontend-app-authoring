@@ -111,7 +111,7 @@ export interface ConfigureSubsectionData {
   examReviewRules?: string,
   defaultTimeLimitMin?: number,
   hideAfterDue: boolean,
-  showCorrectness: string,
+  showCorrectness: "always" | "never" | "past_due" | "never_but_include_grade",
   isPrereq?: boolean,
   prereqUsageKey?: string,
   prereqMinScore?: number,

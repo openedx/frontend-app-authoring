@@ -14,7 +14,7 @@ import messages from './messages';
 import PrereqSettings from './PrereqSettings';
 
 interface ValuesProps {
-  isTimeLimited: boolean;
+  isTimeLimited?: boolean;
   defaultTimeLimitMinutes?: number;
   isPrereq?: boolean;
   prereqUsageKey?: string;
