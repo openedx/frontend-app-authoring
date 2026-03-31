@@ -48,6 +48,8 @@ export const bulkModulestoreMigrateUrl = () => `${getStudioBaseUrl()}/api/module
  */
 export const getPreviewModulestoreMigrationUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migration_preview/`;
 
+export const getCourseSettingsApiUrl = (courseId: string) => `${getStudioBaseUrl()}/api/contentstore/v1/course_settings/${courseId}`;
+
 export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   const baseUrl = getStudioBaseUrl();
   const apiPath = '/api/contentstore/v1/course_waffle_flags';
@@ -223,5 +225,46 @@ export const getUserAgreementApi = (agreementType: string) => `${getConfig().LMS
 export async function getUserAgreement(agreementType: string) {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.get(getUserAgreementApi(agreementType));
+  return camelCaseObject(data);
+}
+
+export interface CourseSettingsData {
+  aboutPageEditable: boolean;
+  canShowCertificateAvailableDateField: boolean;
+  courseDisplayName: string;
+  courseDisplayNameWithDefault: string;
+  creditEligibilityEnabled: boolean;
+  enableExtendedCourseDetails: boolean;
+  enrollmentEndEditable: boolean;
+  isCreditCourse: boolean;
+  isEntranceExamsEnabled: boolean;
+  isPrerequisiteCoursesEnabled: boolean;
+  languageOptions: [string, string][];
+  lmsLinkForAboutPage: string;
+  licensingEnabled: boolean;
+  marketingEnabled: boolean;
+  mfeProctoredExamSettingsUrl: string;
+  platformName: string;
+  possiblePreRequisiteCourses: {
+    courseKey: string;
+    displayName: string;
+    lmsLink: string;
+    number: string;
+    org: string;
+    rerunLink: string;
+    run: string;
+    url: string;
+  }
+  shortDescriptionEditable: boolean;
+  showMinGradeWarning: boolean;
+  sidebarHtmlEnabled: boolean;
+  upgradeDeadline: string | null;
+}
+
+/**
+ * Get course settings.
+ */
+export async function getCourseSettings(courseId: string): Promise<CourseSettingsData> {
+  const { data } = await getAuthenticatedHttpClient().get(getCourseSettingsApiUrl(courseId));
   return camelCaseObject(data);
 }
