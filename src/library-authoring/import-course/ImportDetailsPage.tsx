@@ -234,6 +234,7 @@ const ImportDetailsContent = () => {
           stacked
           actions={[
             <Button
+              key="view-content"
               variant="outline-primary"
               iconAfter={ArrowForward}
               onClick={() => navigate(collectionLink())}
@@ -289,6 +290,7 @@ const ImportDetailsContent = () => {
           stacked
           actions={[
             <Button
+              key="retry-btn"
               variant="outline-primary"
               iconAfter={ArrowForward}
               onClick={handleImportCourse}
@@ -330,6 +332,7 @@ const ImportDetailsContent = () => {
           stacked
           actions={[
             <Button
+              key="view-content"
               variant="outline-primary"
               iconAfter={ArrowForward}
               onClick={() => navigate(collectionLink())}

@@ -206,6 +206,7 @@ const AddNewContent = () => {
         <Stack gap={2}>
           {templatesByType.advanced?.templates.map((advancedTypeObj) => (
             <BlockCardButton
+              key={advancedTypeObj.category}
               blockType={advancedTypeObj.category}
               name={advancedTypeObj.displayName}
               onClick={() => handleSelection('advanced', advancedTypeObj.category)}
@@ -223,6 +224,7 @@ const AddNewContent = () => {
         {blockTypes.map((blockTypeObj) => (
           <BlockCardButton
             {...blockTypeObj}
+            key={blockTypeObj.blockType}
             templates={templatesByType[blockTypeObj.blockType].templates}
             onClick={() => handleSelection(blockTypeObj.blockType)}
             onClickTemplate={(boilerplateName: string) => handleSelection(blockTypeObj.blockType, boilerplateName)}

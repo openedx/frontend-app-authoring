@@ -1,4 +1,4 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Alert, Button, Hyperlink } from '@openedx/paragon';
 import { Policy } from '@openedx/paragon/icons';
 import { AgreementGated } from '@src/constants';
@@ -11,7 +11,6 @@ import {
 import messages from './messages';
 
 const AlertAgreement = ({ agreementType }: { agreementType: string }) => {
-  const intl = useIntl();
   const { data, isLoading, isError } = useUserAgreement(agreementType);
   const mutation = useUserAgreementRecordUpdater(agreementType);
   const showAlert = data && !isLoading && !isError;
@@ -30,8 +29,8 @@ const AlertAgreement = ({ agreementType }: { agreementType: string }) => {
       variant="warning"
       icon={Policy}
       actions={[
-        <Hyperlink destination={url}>{intl.formatMessage(messages.learnMoreLinkLabel)}</Hyperlink>,
-        <Button onClick={handleAcceptAgreement}>{intl.formatMessage(messages.agreeButtonLabel)}</Button>,
+        <Hyperlink key="learn-more" destination={url}><FormattedMessage {...messages.learnMoreLinkLabel} /></Hyperlink>,
+        <Button key="agree" onClick={handleAcceptAgreement}><FormattedMessage {...messages.agreeButtonLabel} /></Button>,
       ]}
     >
       <Alert.Heading>{name}</Alert.Heading>

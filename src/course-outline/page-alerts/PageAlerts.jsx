@@ -104,6 +104,7 @@ const PageAlerts = ({
         onClose={onDismiss}
         actions={[
           <Button
+            key="learnMore"
             href={discussionsIncontextLearnmoreUrl}
             target="_blank"
           >
@@ -267,6 +268,7 @@ const PageAlerts = ({
           onClose={onDismiss}
           actions={[
             <Button
+              key="view-files"
               as={Link}
               to={getAssetsUrl()}
             >
@@ -329,6 +331,7 @@ const PageAlerts = ({
           onClose={onDismiss}
           actions={[
             <Button
+              key="view-files"
               as={Link}
               to={getAssetsUrl()}
             >

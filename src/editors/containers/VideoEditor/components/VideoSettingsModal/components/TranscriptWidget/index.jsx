@@ -147,6 +147,7 @@ const TranscriptWidget = ({
           <Form.Group className="border-primary-100 border-bottom">
             {transcripts.map((language, index) => (
               <Transcript
+                key={language}
                 language={language}
                 transcriptUrl={selectedVideoTranscriptUrls[language]}
                 index={index}

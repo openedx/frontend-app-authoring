@@ -42,9 +42,9 @@ const LicenseSelector = ({
           onChange={(e) => onLicenseChange(e.target.value)}
         >
           {Object.entries(LicenseNames).map(([key, text]) => {
-            if (license === key) { return (<option value={LicenseTypes[key]} selected>{text}</option>); }
-            if (key === LicenseTypes.select) { return (<option hidden>{text}</option>); }
-            return (<option value={LicenseTypes[key]}>{text}</option>);
+            if (license === key) { return (<option key={key} value={LicenseTypes[key]} selected>{text}</option>); }
+            if (key === LicenseTypes.select) { return (<option key={key} hidden>{text}</option>); }
+            return (<option key={key} value={LicenseTypes[key]}>{text}</option>);
           })}
         </Form.Control>
         {level !== LicenseLevel.course ? (

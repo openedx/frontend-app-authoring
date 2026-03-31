@@ -81,7 +81,8 @@ const TextbookForm = ({
               render={(arrayHelpers) => (
                 <>
                   {!!values?.chapters.length && values.chapters.map(({ title, url }, index) => (
-                    <div className="form-chapters-fields" data-testid="form-chapters-fields">
+                    // eslint-disable-next-line react/no-array-index-key
+                    <div className="form-chapters-fields" data-testid="form-chapters-fields" key={index}>
                       <Form.Group size="sm" className="form-field">
                         <Form.Label size="sm" className="form-label font-weight-bold required text-black">
                           {intl.formatMessage(messages.chapterTitleLabel)} *

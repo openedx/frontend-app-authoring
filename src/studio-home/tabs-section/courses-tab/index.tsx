@@ -88,6 +88,7 @@ const CardList = ({
               url,
             }) => (
               <CardItem
+                key={courseKey}
                 courseKey={courseKey}
                 onClick={() => onClickCard?.(courseKey)}
                 itemId={courseKey}

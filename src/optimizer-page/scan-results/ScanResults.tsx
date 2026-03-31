@@ -1087,7 +1087,7 @@ const ScanResults: FC<Props> = ({
                 {section.subsections.map((subsection) => (
                   <>
                     {subsection.units.map((unit) => (
-                      <div className="unit">
+                      <div className="unit" key={unit.id}>
                         <BrokenLinkTable
                           unit={unit}
                           linkType="previous"

@@ -90,6 +90,7 @@ const GroupConfigurations = () => {
               {!!teamGroups && teamGroups.length > 0 && (
                 teamGroups.map((teamGroup) => (
                   <TeamGroupsSection
+                    key={teamGroup.id}
                     availableGroup={teamGroup}
                   />
                 ))

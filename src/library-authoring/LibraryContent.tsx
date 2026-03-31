@@ -110,6 +110,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
       })}
       {showPlaceholderBlocks && placeholderData?.hits?.map((item) => (
         <PlaceholderCard
+          key={item.usage_key}
           displayName={item.display_name}
           blockType={item.block_type}
         />

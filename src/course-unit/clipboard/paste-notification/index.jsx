@@ -47,6 +47,7 @@ const PastNotificationAlert = ({ staticFileNotices, courseId }) => {
           icon={WarningIcon}
           dismissible
           actions={[
+            // oxlint-disable-next-line react/jsx-key (Paragon <Alert> adds its own key for action buttons)
             <ActionButton
               courseId={courseId}
               title={intl.formatMessage(messages.hasConflictingErrorsButtonText)}
@@ -87,6 +88,7 @@ const PastNotificationAlert = ({ staticFileNotices, courseId }) => {
           icon={InfoIcon}
           dismissible
           actions={[
+            // oxlint-disable-next-line react/jsx-key (Paragon <Alert> adds its own key for action buttons)
             <ActionButton
               courseId={courseId}
               title={intl.formatMessage(messages.hasNewFilesButtonText)}

@@ -147,7 +147,7 @@ const SortAndFilterModal = ({
             isInline
           >
             {filterOptions.map(({ name, value }) => (
-              <Form.Checkbox {...{ value, key: value }}>{name}</Form.Checkbox>
+              <Form.Checkbox key={value} value={value}>{name}</Form.Checkbox>
             ))}
           </Form.CheckboxSet>
         </Form.Group>

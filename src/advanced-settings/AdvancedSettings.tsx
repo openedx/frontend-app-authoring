@@ -282,7 +282,7 @@ const AdvancedSettings = () => {
           role="dialog"
           actions={[
             !isQueryPending ? (
-              <Button variant="tertiary" onClick={handleResetSettingsValues}>
+              <Button key="cancelBtn" variant="tertiary" onClick={handleResetSettingsValues}>
                 {intl.formatMessage(messages.buttonCancelText)}
               </Button>
             ) : /* istanbul ignore next */ null,

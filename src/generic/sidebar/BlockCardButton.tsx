@@ -52,7 +52,7 @@ export const BlockCardButton = ({
         >
           <Stack direction="horizontal" className="d-flex flex-wrap" gap={2}>
             {templates.map((template) => (
-              <Chip onClick={() => onClickTemplate?.(template.boilerplateName)}>
+              <Chip onClick={() => onClickTemplate?.(template.boilerplateName)} key={template.boilerplateName}>
                 {template.displayName}
               </Chip>
             ))}

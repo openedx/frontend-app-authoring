@@ -95,12 +95,14 @@ const LanguageSelector = ({
         <Dropdown.Menu>
           {Object.entries(videoTranscriptLanguages).map(([lang, text]) => {
             if (language === lang) {
-              return (<Dropdown.Item>{text}<Icon className="text-primary-500" src={Check} /></Dropdown.Item>);
+              return <Dropdown.Item key={lang}>{text}<Icon className="text-primary-500" src={Check} /></Dropdown.Item>;
             }
             if (openLanguages.some(row => row.includes(lang))) {
-              return (<Dropdown.Item onClick={() => onLanguageChange({ newLang: lang })}>{text}</Dropdown.Item>);
+              return (
+                <Dropdown.Item key={lang} onClick={() => onLanguageChange({ newLang: lang })}>{text}</Dropdown.Item>
+              );
             }
-            return (<Dropdown.Item className="disabled">{text}</Dropdown.Item>);
+            return (<Dropdown.Item key={lang} className="disabled">{text}</Dropdown.Item>);
           })}
         </Dropdown.Menu>
       </Dropdown>
