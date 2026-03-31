@@ -3,6 +3,7 @@ import { Button, ButtonGroup, Form, Stack } from "@openedx/paragon";
 import { useConfigureSubsection, useCourseDetails, useCourseItemData } from "@src/course-outline/data/apiHooks";
 import { getProctoredExamsFlag, getTimedExamsFlag } from "@src/course-outline/data/selectors";
 import { ConfigureSubsectionData } from "@src/course-outline/data/types";
+import { ReleaseSection } from "./sharedSettings/ReleaseSection";
 import { useOutlineSidebarContext } from "@src/course-outline/outline-sidebar/OutlineSidebarContext";
 import { useCourseAuthoringContext } from "@src/CourseAuthoringContext";
 import { VisibilityTypes } from "@src/data/constants";
@@ -13,6 +14,7 @@ import { useStateWithCallback } from "@src/hooks";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import messages from './messages';
+import { VisibilitySection } from "./sharedSettings/VisibilitySection";
 
 interface Props {
   subsectionId: string;
@@ -28,39 +30,6 @@ const defaultPrereqScore = (val: string | number | null | undefined) => {
 
 interface SubProps extends Props {
   onChange: (variables: Partial<ConfigureSubsectionData>) => void;
-}
-
-const ReleaseSection = ({ subsectionId, onChange }: SubProps) => {
-  const intl = useIntl();
-  const { data: itemData } = useCourseItemData(subsectionId);
-  const [localState, setLocalState] = useStateWithCallback(
-    itemData?.start,
-    (val) => onChange({ releaseDate: val }),
-  );
-
-  return (
-    <SidebarSection
-      title={intl.formatMessage(messages.subsectionReleaseTitle)}
-    >
-      <Stack className="mt-3" direction="horizontal" gap={3}>
-        <DatepickerControl
-          type={DATEPICKER_TYPES.date}
-          value={localState}
-          label={intl.formatMessage(messages.releaseDateLabel)}
-          controlName="state-date"
-          onChange={setLocalState}
-        />
-        <DatepickerControl
-          type={DATEPICKER_TYPES.time}
-          value={localState}
-          label={intl.formatMessage(messages.releaseTimeLabel)}
-          controlName="start-time"
-          onChange={setLocalState}
-        />
-      </Stack>
-    </SidebarSection>
-
-  )
 }
 
 const GradingSection = ({ subsectionId, onChange }: SubProps) => {
@@ -141,54 +110,6 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
           />
         </Stack>
       }
-    </SidebarSection>
-  );
-}
-
-const VisibilitySection = ({ subsectionId, onChange }: SubProps) => {
-  const intl = useIntl();
-  const { data: itemData } = useCourseItemData(subsectionId);
-  const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
-    {
-      isVisibleToStaffOnly: itemData?.visibilityState === VisibilityTypes.STAFF_ONLY,
-      hideAfterDue: itemData?.hideAfterDue,
-    },
-    (val) => onChange(val || {})
-  );
-
-  return (
-    <SidebarSection
-      title={intl.formatMessage(messages.subsectionGradingTitle)}
-    >
-      <ButtonGroup toggle>
-        <Button
-          variant={localState?.isVisibleToStaffOnly ? 'outline-primary' : 'primary'}
-          onClick={() => setLocalState((prev) => ({ ...prev,  isVisibleToStaffOnly: false }))}
-        >
-          <FormattedMessage {...messages.subsectionVisibilityStudentVisible} />
-        </Button>
-        <Button
-          variant={localState?.isVisibleToStaffOnly ? 'primary' : 'outline-primary'}
-          onClick={() => setLocalState((prev) => ({
-            ...prev,
-            isVisibleToStaffOnly: true,
-            hideAfterDue: false,
-          }))}
-        >
-          <FormattedMessage {...messages.subsectionVisibilityStaffOnly} />
-        </Button>
-      </ButtonGroup>
-      {!localState?.isVisibleToStaffOnly && <Form.Checkbox
-        checked={localState?.hideAfterDue}
-        className="mt-2"
-        onChange={ (e) => setLocalState((prev) => ({
-          ...prev,
-          hideAfterDue: e.target.checked,
-          isVisibleToStaffOnly: false,
-        }))}
-      >
-        <FormattedMessage {...messages.subsectionVisibilityHideAfterDueLabel} />
-      </Form.Checkbox>}
     </SidebarSection>
   );
 }
@@ -327,15 +248,16 @@ export const SubsectionSettings = ({ subsectionId }: Props) => {
   return (
     <SidebarContent>
       { !courseDetails?.selfPaced && <ReleaseSection
-        subsectionId={subsectionId}
-        onChange={onChange}
+        itemId={subsectionId}
+        onChange={(val: string) => onChange({ releaseDate: val })}
       /> }
       <GradingSection
         subsectionId={subsectionId}
         onChange={onChange}
       />
       <VisibilitySection
-        subsectionId={subsectionId}
+        itemId={subsectionId}
+        isSubsection
         onChange={onChange}
       />
       <AssessmentResultVisibilitySection

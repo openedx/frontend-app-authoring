@@ -13,6 +13,7 @@ import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/Ou
 import { InfoSection } from './InfoSection';
 import messages from '../messages';
 import { PublishButon } from './PublishButon';
+import { SectionSettings } from '@src/course-outline/outline-sidebar/info-sidebar/SectionSettings';
 
 interface Props {
   sectionId: string;
@@ -58,7 +59,7 @@ export const SectionSidebar = ({ sectionId }: Props) => {
           <InfoSection itemId={sectionId} />
         </Tab>
         <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
-          <div>Settings</div>
+          <SectionSettings sectionId={sectionId} />
         </Tab>
       </Tabs>
     </>
