@@ -147,8 +147,15 @@ describe('useIframeBehavior', () => {
       window.dispatchEvent(new MessageEvent('message', message));
     });
 
-    expect(window.scrollTo).toHaveBeenCalledWith({ top: 175, left: 0, behavior: 'smooth' });
-    expect(window.scrollY).toBe(100 + document.getElementsByName('xblock-iframe')[0].offsetTop + document.getElementsByName('xblock-iframe')[0]!.parentElement!.offsetTop);
+    expect(window.scrollTo).toHaveBeenCalledWith({
+      top: 150, // The offset does not include the parent element offset
+      left: 0,
+      behavior: 'smooth',
+    });
+    expect(window.scrollY).toBe(
+      100 // Component offset
+      + document.getElementsByName('xblock-iframe')[0].offsetTop, // iframe offset
+    );
   });
 
   it('handles offset message correctly', () => {
