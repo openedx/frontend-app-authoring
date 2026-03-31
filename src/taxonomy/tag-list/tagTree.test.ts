@@ -13,7 +13,6 @@ const newChildNode: TagData = {
   parentValue: 'ab',
   subTagsUrl: null,
   childCount: 0,
-  descendantCount: 0,
   depth: 1,
 };
 
@@ -70,7 +69,6 @@ describe('TagTree', () => {
       parentValue: null,
       subTagsUrl: null,
       childCount: 0,
-      descendantCount: 0,
       depth: 0,
     };
     tree.addNode(newRow, null);
@@ -151,7 +149,6 @@ describe('TagTree', () => {
         parentValue: 'missing-parent',
         subTagsUrl: null,
         childCount: 0,
-        descendantCount: 0,
         depth: 1,
       },
     ];
@@ -173,7 +170,6 @@ describe('TagTree', () => {
         parentValue: null,
         subTagsUrl: null,
         childCount: 0,
-        descendantCount: 0,
         depth: 0,
       },
       {
@@ -185,7 +181,6 @@ describe('TagTree', () => {
         parentValue: null,
         subTagsUrl: null,
         childCount: 0,
-        descendantCount: 0,
         depth: 0,
       },
     ];
@@ -204,7 +199,6 @@ describe('TagTree', () => {
         parentValue: 'b',
         subTagsUrl: null,
         childCount: 1,
-        descendantCount: 1,
         depth: 0,
       },
       {
@@ -216,7 +210,6 @@ describe('TagTree', () => {
         parentValue: 'a',
         subTagsUrl: null,
         childCount: 1,
-        descendantCount: 1,
         depth: 1,
       },
     ];
@@ -241,7 +234,6 @@ describe('TagTree', () => {
       parentValue: null,
       subTagsUrl: null,
       childCount: 0,
-      descendantCount: 0,
       depth: 0,
     };
 
@@ -259,7 +251,6 @@ describe('TagTree', () => {
       parentValue: null,
       subTagsUrl: null,
       childCount: 0,
-      descendantCount: 0,
       depth: 0,
     };
 
@@ -275,7 +266,6 @@ describe('TagTree', () => {
       parentValue: null,
       subTagsUrl: null,
       childCount: 0,
-      descendantCount: 0,
       depth: 0,
     };
     tree.addNode(nextNewNode, null); // Add another top-level node
@@ -294,7 +284,6 @@ describe('TagTree', () => {
       parentValue: 'ab',
       subTagsUrl: null,
       childCount: 0,
-      descendantCount: 0,
       depth: 1,
     };
 
@@ -312,7 +301,6 @@ describe('TagTree', () => {
       parentValue: 'ab',
       subTagsUrl: null,
       childCount: 0,
-      descendantCount: 0,
       depth: 1,
     };
     tree.addNode(nextNewChild, 'ab'); // Add another child to 'ab'

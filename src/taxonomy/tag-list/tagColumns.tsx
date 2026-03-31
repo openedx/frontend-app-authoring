@@ -24,7 +24,6 @@ import OptionalExpandLink from './OptionalExpandLink';
 interface TagListRowData extends TreeRowData {
   depth: number;
   childCount: number;
-  descendantCount: number;
   usageCount?: number;
   isNew?: boolean;
   isEditing?: boolean;
