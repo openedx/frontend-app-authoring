@@ -160,9 +160,7 @@ const expectNoDraftRows = () => {
 
 const openTopLevelDraftRow = async () => {
   const addButton = await screen.findByLabelText('Create Tag');
-  await act(async () => {
-    fireEvent.click(addButton);
-  });
+  fireEvent.click(addButton);
   const creatingRow = await screen.findByTestId('creating-top-row');
   const input = creatingRow.querySelector('input');
   expect(input).toBeInTheDocument();
@@ -172,18 +170,14 @@ const openTopLevelDraftRow = async () => {
 const openActionsMenuForTag = (tagName, actionButtonName = /actions/i) => {
   if (!screen.queryAllByText(tagName)?.length) {
     // expand all
-    const expandButton = screen.queryAllByText('Expand All')?.[0];
-    act(() => {
-      if (expandButton) {
-        fireEvent.click(expandButton);
-      }
-    });
+    const expandButton = screen.queryByRole('button', { name: 'Expand All' });
+    if (expandButton) {
+      fireEvent.click(expandButton);
+    }
   }
   const row = screen.getByText(tagName).closest('tr');
   const actionsButton = within(row).getByRole('button', { name: actionButtonName });
-  act(() => {
-    fireEvent.click(actionsButton);
-  });
+  fireEvent.click(actionsButton);
   return row;
 };
 
@@ -203,8 +197,8 @@ const openSubtagDraftRow = async ({
 
 const openRenameDraftRow = async (tagName = 'root tag 1') => {
   openActionsMenuForTag(tagName);
-  fireEvent.click(screen.getByText('Rename'));
-  const input = screen.getByRole('textbox');
+  fireEvent.click(screen.getByRole('button', { name: /Rename/i }));
+  const input = screen.getByRole('textbox', { name: /type tag name/i });
   const row = input.closest('tr');
   expect(row).toBeInTheDocument();
   const saveButton = within(row).getByText('Save');
@@ -305,7 +299,7 @@ describe('<TagListTable />', () => {
       await waitForRootTag();
 
       openActionsMenuForTag('root tag 1');
-      expect(screen.getByText('Add Subtag')).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Add Subtag' })).toHaveAttribute('aria-disabled', 'true');
       expect(screen.getByLabelText('Create Tag')).toBeDisabled();
     });
 
@@ -332,7 +326,7 @@ describe('<TagListTable />', () => {
         const { creatingRow, input } = await openTopLevelDraftRow();
 
         fireEvent.change(input, { target: { value: 'a new tag' } });
-        const saveButton = within(creatingRow).getByText('Save');
+        const saveButton = within(creatingRow).getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
         await waitFor(() => {
           expect(axiosMock.history.post.length).toBe(1);
@@ -381,7 +375,7 @@ describe('<TagListTable />', () => {
         const { creatingRow, input } = await openTopLevelDraftRow();
 
         fireEvent.change(input, { target: { value: 'a new tag' } });
-        const saveButton = within(creatingRow).getByText('Save');
+        const saveButton = within(creatingRow).getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
         const spinner = await screen.findByRole('status');
         expect(spinner.textContent).toEqual('Saving...');
@@ -398,7 +392,7 @@ describe('<TagListTable />', () => {
         const { creatingRow, input } = await openTopLevelDraftRow();
 
         fireEvent.change(input, { target: { value: 'a new tag' } });
-        const saveButton = within(creatingRow).getByText('Save');
+        const saveButton = within(creatingRow).getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
         let newTag;
         await waitFor(() => {
@@ -425,7 +419,7 @@ describe('<TagListTable />', () => {
         const { creatingRow, input } = await openTopLevelDraftRow();
 
         fireEvent.change(input, { target: { value: 'a new tag' } });
-        const saveButton = within(creatingRow).getByText('Save');
+        const saveButton = within(creatingRow).getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
         const toast = await screen.findByText('Tag "a new tag" created successfully');
         expect(toast).toBeInTheDocument();
@@ -442,7 +436,7 @@ describe('<TagListTable />', () => {
         const { creatingRow, input } = await openTopLevelDraftRow();
 
         fireEvent.change(input, { target: { value: 'xyz tag' } });
-        const saveButton = within(creatingRow).getByText('Save');
+        const saveButton = within(creatingRow).getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
         // no input row should be in the document
         await waitFor(() => {
@@ -464,7 +458,7 @@ describe('<TagListTable />', () => {
         const { creatingRow, input } = await openTopLevelDraftRow();
 
         fireEvent.change(input, { target: { value: 'xyz tag' } });
-        const saveButton = within(creatingRow).getByText('Save');
+        const saveButton = within(creatingRow).getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
         const temporaryRow = await screen.findByText('xyz tag');
         // temporaryRow should be at the top of the table, that is, the first row after the header
@@ -506,7 +500,7 @@ describe('<TagListTable />', () => {
         expect(input).toBeInTheDocument();
 
         fireEvent.change(input, { target: { value: 'Tag A' } });
-        let saveButton = within(creatingRow).getByText('Save');
+        let saveButton = within(creatingRow).getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
         const tagA = await screen.findByText('Tag A');
         expect(tagA).toBeInTheDocument();
@@ -518,7 +512,7 @@ describe('<TagListTable />', () => {
         expect(input).toBeInTheDocument();
 
         fireEvent.change(input, { target: { value: 'Tag B' } });
-        saveButton = within(creatingRow).getByText('Save');
+        saveButton = within(creatingRow).getByRole('button', { name: 'Save' });
         fireEvent.click(saveButton);
         const tagB = await screen.findByText('Tag B');
         expect(tagB).toBeInTheDocument();
@@ -539,7 +533,7 @@ describe('<TagListTable />', () => {
         const draftRow = await screen.findAllByRole('row');
         const input = draftRow[1].querySelector('input');
         expect(input).toBeInTheDocument();
-        const saveButton = within(draftRow[1]).getByText('Save');
+        const saveButton = within(draftRow[1]).getByRole('button', { name: 'Save' });
         expect(saveButton).toBeDisabled();
         fireEvent.change(input, { target: { value: 'a new tag' } });
         expect(saveButton).not.toBeDisabled();
@@ -551,7 +545,7 @@ describe('<TagListTable />', () => {
         const draftRow = await screen.findAllByRole('row');
         const input = draftRow[1].querySelector('input');
         expect(input).toBeInTheDocument();
-        const saveButton = within(draftRow[1]).getByText('Save');
+        const saveButton = within(draftRow[1]).getByRole('button', { name: 'Save' });
         expect(saveButton).toBeDisabled();
         fireEvent.change(input, { target: { value: '   ' } });
         expect(saveButton).toBeDisabled();
@@ -571,7 +565,7 @@ describe('<TagListTable />', () => {
         fireEvent.click(await screen.findByLabelText('Create Tag'));
         const draftRow = await screen.findAllByRole('row');
         const input = draftRow[1].querySelector('input');
-        const saveButton = within(draftRow[1]).getByText('Save');
+        const saveButton = within(draftRow[1]).getByRole('button', { name: 'Save' });
 
         fireEvent.change(input, { target: { value: ' Tag A ' } });
         fireEvent.click(saveButton);
@@ -586,11 +580,9 @@ describe('<TagListTable />', () => {
         fireEvent.click(await screen.findByLabelText('Create Tag'));
         const draftRow = await screen.findAllByRole('row');
         const input = draftRow[1].querySelector('input');
-        const saveButton = within(draftRow[1]).getByText('Save');
+        const saveButton = within(draftRow[1]).getByRole('button', { name: 'Save' });
 
-        await act(async () => {
-          fireEvent.change(input, { target: { value: 'invalid;tag' } });
-        });
+        fireEvent.change(input, { target: { value: 'invalid;tag' } });
 
         expect(saveButton).toBeDisabled();
         expect(screen.getByText(/invalid character/i)).toBeInTheDocument();
@@ -602,7 +594,7 @@ describe('<TagListTable />', () => {
         fireEvent.click(await screen.findByLabelText('Create Tag'));
         const draftRow = await screen.findAllByRole('row');
         const input = draftRow[1].querySelector('input');
-        const saveButton = within(draftRow[1]).getByText('Save');
+        const saveButton = within(draftRow[1]).getByRole('button', { name: 'Save' });
 
         fireEvent.change(input, { target: { value: 'root tag 1' } });
         fireEvent.click(saveButton);
@@ -618,7 +610,7 @@ describe('<TagListTable />', () => {
         fireEvent.click(await screen.findByLabelText('Create Tag'));
         const draftRow = await screen.findAllByRole('row');
         const input = draftRow[1].querySelector('input');
-        const saveButton = within(draftRow[1]).getByText('Save');
+        const saveButton = within(draftRow[1]).getByRole('button', { name: 'Save' });
 
         fireEvent.change(input, { target: { value: 'will fail' } });
         fireEvent.click(saveButton);
@@ -660,7 +652,7 @@ describe('<TagListTable />', () => {
       expect(screen.queryAllByText('Add Subtag').length).toBe(0);
       // user clicks on row actions for root tag 1
       openActionsMenuForTag('root tag 1');
-      expect(screen.getByText('Add Subtag')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Add Subtag' })).toBeInTheDocument();
     });
 
     it('should render an inline add-subtag row with input, placeholder, and action buttons', async () => {
@@ -672,14 +664,14 @@ describe('<TagListTable />', () => {
       const draftRowIndex = rows.findIndex(tableRow => tableRow.querySelector('input'));
       expect(draftRowIndex).toBe(parentRowIndex + 1);
       expect(draftRows[0].querySelector('input')).toBeInTheDocument();
-      expect(within(draftRows[0]).getByText('Cancel')).toBeInTheDocument();
-      expect(within(draftRows[0]).getByText('Save')).toBeInTheDocument();
+      expect(within(draftRows[0]).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+      expect(within(draftRows[0]).getByRole('button', { name: 'Save' })).toBeInTheDocument();
     });
 
     it('should remove add-subtag row and avoid create request when cancelled', async () => {
       const { draftRow, input } = await openSubtagDraftRow({ tagName: 'root tag 1' });
       fireEvent.change(input, { target: { value: 'new subtag' } });
-      fireEvent.click(within(draftRow).getByText('Cancel'));
+      fireEvent.click(within(draftRow).getByRole('button', { name: 'Cancel' }));
 
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(0);
@@ -701,14 +693,12 @@ describe('<TagListTable />', () => {
 
     it('should disable Save and show required-name inline error for empty sub-tag input', async () => {
       openActionsMenuForTag('root tag 1');
-      fireEvent.click(screen.getByText('Add Subtag'));
+      fireEvent.click(screen.getByRole('button', { name: 'Add Subtag' }));
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
-      const saveButton = within(draftRow).getByText('Save');
+      const saveButton = within(draftRow).getByRole('button', { name: 'Save' });
       const input = draftRow.querySelector('input');
-      act(() => {
-        fireEvent.change(input, { target: { value: ' ' } });
-      });
+      fireEvent.change(input, { target: { value: ' ' } });
 
       expect(saveButton).toBeDisabled();
       expect(within(draftRow).getByText(/Name is required/i)).toBeInTheDocument();
@@ -716,11 +706,11 @@ describe('<TagListTable />', () => {
 
     it('should keep Save disabled for whitespace-only sub-tag input', async () => {
       openActionsMenuForTag('root tag 1');
-      fireEvent.click(screen.getByText('Add Subtag'));
+      fireEvent.click(screen.getByRole('button', { name: 'Add Subtag' }));
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
       const input = draftRow.querySelector('input');
-      const saveButton = within(draftRow).getByText('Save');
+      const saveButton = within(draftRow).getByRole('button', { name: 'Save' });
 
       fireEvent.change(input, { target: { value: '   ' } });
       expect(saveButton).toBeDisabled();
@@ -728,11 +718,11 @@ describe('<TagListTable />', () => {
 
     it('should disable Save and show invalid-character error for sub-tag input', async () => {
       openActionsMenuForTag('root tag 1');
-      fireEvent.click(screen.getByText('Add Subtag'));
+      fireEvent.click(screen.getByRole('button', { name: 'Add Subtag' }));
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(row => row.querySelector('input'));
       const input = draftRow.querySelector('input');
-      const saveButton = within(draftRow).getByText('Save');
+      const saveButton = within(draftRow).getByRole('button', { name: 'Save' });
 
       fireEvent.change(input, { target: { value: 'invalid;name' } });
       expect(saveButton).toBeDisabled();
@@ -745,12 +735,12 @@ describe('<TagListTable />', () => {
       });
 
       openActionsMenuForTag('root tag 1');
-      fireEvent.click(screen.getByText('Add Subtag'));
+      fireEvent.click(screen.getByRole('button', { name: 'Add Subtag' }));
       const rows = await screen.findAllByRole('row');
       const draftRow = rows.find(row => row.querySelector('input'));
       const input = draftRow.querySelector('input');
       fireEvent.change(input, { target: { value: 'subtag fail' } });
-      fireEvent.click(within(draftRow).getByText('Save'));
+      fireEvent.click(within(draftRow).getByRole('button', { name: 'Save' }));
 
       await waitFor(() => {
         expect(getDraftRows().length).toBe(1);
@@ -779,9 +769,7 @@ describe('<TagListTable />', () => {
       const { input } = await openRenameDraftRow('root tag 1');
 
       fireEvent.change(input, { target: { value: 'will fail' } });
-      act(() => {
-        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
-      });
+      fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
       let draftRow;
       await waitFor(() => {
@@ -830,8 +818,8 @@ describe('<TagListTable />', () => {
         await waitForRootTag();
 
         openActionsMenuForTag(tagName);
-        expect(screen.getByText('Rename')).toBeInTheDocument();
-        expect(screen.getByText('Rename')).toBeDisabled();
+        expect(screen.getByRole('button', { name: /Rename/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Rename/i })).toHaveAttribute('aria-disabled', 'true');
       });
       it('should disable tag edit buttons if tag includes `can_edit: false`', async () => {
         axiosMock.reset();
@@ -842,22 +830,22 @@ describe('<TagListTable />', () => {
         await waitForRootTag();
 
         openActionsMenuForTag(tagName);
-        expect(screen.getByText('Rename')).toBeInTheDocument();
-        expect(screen.getByText('Rename')).toBeDisabled();
+        expect(screen.getByRole('button', { name: /Rename/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Rename/i })).toHaveAttribute('aria-disabled', 'true');
       });
 
       it('should show tag actions menu', async () => {
         openActionsMenuForTag(tagName);
         expect(screen.getByText('Add Subtag')).toBeInTheDocument();
-        expect(screen.getByText('Rename')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Rename/i })).toBeInTheDocument();
       });
       it('should show editable input and action buttons when Rename is selected from actions menu', async () => {
         const { row } = await openRenameDraftRow(tagName);
         expect(within(row).getByRole('textbox')).toBeInTheDocument();
         // expect the input to be pre-filled with the current tag name
         expect(within(row).getByRole('textbox').value).toEqual(tagName);
-        expect(within(row).getByText('Save')).toBeInTheDocument();
-        expect(within(row).getByText('Cancel')).toBeInTheDocument();
+        expect(within(row).getByRole('button', { name: /Save/i })).toBeInTheDocument();
+        expect(within(row).getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
       });
       it('should disable Save button until the tag name is changed', async () => {
         const { input, saveButton } = await openRenameDraftRow(tagName);
@@ -871,9 +859,7 @@ describe('<TagListTable />', () => {
         const { input } = await openRenameDraftRow(tagName);
 
         fireEvent.change(input, { target: { value: `${tagName} updated` } });
-        act(() => {
-          fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
-        });
+        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
         await waitFor(() => {
           expect(axiosMock.history.patch.length).toBe(1);
@@ -989,8 +975,8 @@ describe('<TagListTable />', () => {
       const grandchildTagRow = screen.getByText('the grandchild tag').closest('tr');
       expect(within(grandchildTagRow).queryByRole('button', { name: /actions/i })).toBeInTheDocument();
       openActionsMenuForTag('the grandchild tag');
-      expect(within(grandchildTagRow).getByText('Rename')).toBeInTheDocument();
-      expect(within(grandchildTagRow).getByText('Add Subtag')).toBeDisabled();
+      expect(within(grandchildTagRow).getByRole('button', { name: /Rename/i })).toBeInTheDocument();
+      expect(within(grandchildTagRow).getByText('Add Subtag')).toHaveAttribute('aria-disabled', 'true');
     });
   });
 });

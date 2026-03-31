@@ -1,5 +1,4 @@
 import {
-  Button,
   Icon,
   IconButton,
   IconButtonWithTooltip,
@@ -127,14 +126,12 @@ const ActionsMenu = ({
       />
       <Dropdown.Menu>
         <Dropdown.Item
-          as={Button}
           onClick={startSubtagDraft}
           disabled={reachedMaxDepth(row) || disableAddSubtag}
         >
           {intl.formatMessage(messages.addSubtag)}
         </Dropdown.Item>
         <Dropdown.Item
-          as={Button}
           onClick={editTag}
           disabled={disableEditTag}
         >
