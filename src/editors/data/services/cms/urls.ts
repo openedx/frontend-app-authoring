@@ -120,7 +120,7 @@ export const courseVideos = (({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/videos/${learningContextId}`
 )) satisfies UrlFunction;
 
-export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
+export const boundHandlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
   `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/${handlerName}/`
 )) satisfies UrlFunction;
 
@@ -128,7 +128,6 @@ export const validateNumericInputUrl = (({ studioEndpointUrl }) => (
   `${studioEndpointUrl}/api/contentstore/v2/validate/numerical-input/`
 )) satisfies UrlFunction;
 
-// There's also a 'handlerUrl', but it's different for some reason. Not sure what one has to do to use the 'v2' URLs.
-export const xblockHandlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
+export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
   `${studioEndpointUrl}/xblock/${blockId}/handler/${handlerName}`
 )) satisfies UrlFunction;

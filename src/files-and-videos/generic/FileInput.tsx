@@ -43,7 +43,7 @@ declare interface FileInputArgs {
   },
   supportedFileFormats?: string | string[] | Record<string, string[]>,
   allowMultiple?: boolean,
-  id: string,
+  id?: string,
 }
 
 const FileInput = ({

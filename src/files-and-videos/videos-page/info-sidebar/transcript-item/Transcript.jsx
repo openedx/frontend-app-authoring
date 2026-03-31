@@ -111,7 +111,7 @@ const Transcript = ({
           )}
         </div>
       )}
-      <FileInput key="transcript-input" fileInput={input} supportedFileFormats={['.srt']} id="transcript-file-input" />
+      <FileInput key="transcript-input" fileInput={input} supportedFileFormats={['.srt']} />
     </>
   );
 };

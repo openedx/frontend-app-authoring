@@ -21,6 +21,8 @@ const defaultProps: (overrides?: Partial<UploadWidgetProps>) => UploadWidgetProp
   label: 'file',
   supportedFileFormats: ['application/pdf'],
   urlFieldName: 'url',
+  blockId: 'pdf-block',
+  isLibrary: false,
   ...overrides,
 });
 
@@ -44,9 +46,9 @@ describe('UploadWidget', () => {
   });
   it('renders', () => {
     const screen = renderWidget({ props: defaultProps(), formikProps: defaultFormikProps() });
-    screen.getByText(messages.fileHint.defaultMessage);
+    screen.getByText(messages.courseFileHint.defaultMessage);
   });
-  it('handles a file upload.', async () => {
+  it('handles a file upload in a course.', async () => {
     const user = userEvent.setup();
     axiosMock.onPost('https://studio.local/assets/course-v1:Org+COURSE+RUN/').withDelayInMs(1000).reply(
       201,
@@ -58,6 +60,29 @@ describe('UploadWidget', () => {
     );
     const screen = renderWidget({ props: defaultProps(), formikProps: defaultFormikProps() });
     const dropdown = screen.getByLabelText(messages.actionsDropdown.defaultMessage);
+    screen.getByText(messages.courseFileHint.defaultMessage);
+    const input = screen.getByLabelText(fileMessage.fileInputAriaLabel.defaultMessage);
+    const spy = jest.spyOn(input, 'click');
+    await user.click(dropdown);
+    await user.click(screen.getByText(messages.replaceFile.defaultMessage));
+    await waitFor(() => expect(spy).toHaveBeenCalled());
+    await user.upload(input, new File(['beep'], 'my-test-pdf.pdf', { type: 'application/pdf' }));
+    await waitFor(() => screen.getByText(messages.uploading.defaultMessage));
+    await waitFor(() => screen.getByText('my-saved-pdf.pdf'));
+  });
+  it('handles a file upload in a library.', async () => {
+    const user = userEvent.setup();
+    axiosMock.onPut('http://localhost:18010/api/libraries/v2/blocks/pdf-block/assets/static/my-test-pdf.pdf').withDelayInMs(1000).reply(
+      201,
+      {
+        asset: {
+          external_url: 'https://studio.local/asset-v1:course-v1:Org+COURSE+RUN+type@asset+block@my-saved-pdf.pdf',
+        },
+      },
+    );
+    const screen = renderWidget({ props: defaultProps({ isLibrary: true }), formikProps: defaultFormikProps() });
+    const dropdown = screen.getByLabelText(messages.actionsDropdown.defaultMessage);
+    screen.getByText(messages.libraryFileHint.defaultMessage);
     const input = screen.getByLabelText(fileMessage.fileInputAriaLabel.defaultMessage);
     const spy = jest.spyOn(input, 'click');
     await user.click(dropdown);
@@ -82,6 +107,10 @@ describe('UploadWidget', () => {
     const input = screen.getByLabelText(fileMessage.fileInputAriaLabel.defaultMessage);
     await user.upload(input, new File(['beep'], 'my-test-pdf.pdf', { type: 'application/pdf' }));
     await waitFor(() => screen.getByText(messages.uploadError.defaultMessage));
+  });
+  it('displays a useful message when the block needs to be saved before you can upload', async () => {
+    const screen = renderWidget({ props: defaultProps({ blockId: '' }), formikProps: defaultFormikProps() });
+    screen.getByText(messages.blockCreationWarning.defaultMessage);
   });
   it('switches to manual mode and back.', async () => {
     const user = userEvent.setup();

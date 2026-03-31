@@ -1,14 +1,14 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { FileInput, useFileInput } from '@src/files-and-videos/generic';
 import {
-  ActionRow, Dropdown, Icon, IconButton, Button, Stack, Form, Col,
+  ActionRow, Dropdown, Icon, IconButton, Button, Stack, Form, Col, Card,
 } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
 import React, { useState } from 'react';
 import { useField } from 'formik';
 import type { AxiosResponse } from 'axios';
 import TextField from '@src/editors/sharedComponents/TextField';
-import { useCourseAssetUpload } from '@src/editors/api';
+import { useAssetUpload } from '@src/editors/api';
 import defaultMessages from './messages';
 
 export interface UploadWidgetProps {
@@ -17,27 +17,30 @@ export interface UploadWidgetProps {
   supportedFileFormats?: string | string[] | Record<string, string[]>,
   urlFieldName: string,
   messages?: typeof defaultMessages
+  blockId: string,
+  isLibrary: boolean,
 }
 
-/* Widget for uploading a file to the course file store. */
+/** Widget for uploading a file to the course (or library block) file store for use in a block. * */
 const UploadWidget = ({
   id,
   label,
   supportedFileFormats,
   urlFieldName,
   messages = defaultMessages,
+  blockId,
+  isLibrary,
 }: UploadWidgetProps) => {
   const intl = useIntl();
   const [manualMode, setManualMode] = useState(false);
   const [urlField, urlFieldMeta, urlFieldControl] = useField(urlFieldName);
   const setSelectedRows = () => undefined;
   const setAddOpen = () => undefined;
-  const mutation = useCourseAssetUpload();
+  const mutation = useAssetUpload({ blockId, isLibrary });
 
   const onAddFile = (files: File[]) => {
     const file = files[0];
-    // This is coded as a hard limit for handout uploads elsewhere-- seems like an arbitrary thing
-    // to have in the frontend, but if that's how it's done...
+    // This needs to be adjustable eventually. See: https://github.com/openedx/frontend-app-authoring/issues/1661
     if (file.size > 20_000_000) {
       urlFieldControl.setError(intl.formatMessage(messages.fileTooLarge));
       return;
@@ -65,13 +68,33 @@ const UploadWidget = ({
     return segment || defaultName;
   };
 
+  if (!blockId) {
+    return (
+      <Card className="bg-light-200">
+        <Card.Section
+          title={(
+            <div className="text-gray-500">
+              {intl.formatMessage(messages.urlFieldLabel)}
+            </div>
+          )}
+        >
+          <div className="d-flex justify-content-around text-gray-700 pb-4 x-small">
+            {intl.formatMessage(messages.blockCreationWarning)}
+          </div>
+        </Card.Section>
+      </Card>
+    );
+  }
+
+  const fileHint = isLibrary ? messages.libraryFileHint : messages.courseFileHint;
+
   return (
     <Form.Group as={Col} controlId={id}>
       {manualMode && <TextField label={intl.formatMessage(messages.urlFieldLabel)} id={id} name="url" />}
       {!manualMode && (
       <>
         <Form.Label htmlFor={id}>{label}</Form.Label>
-        <Form.Control.Feedback><FormattedMessage {...messages.fileHint} /></Form.Control.Feedback>
+        <Form.Control.Feedback><FormattedMessage {...fileHint} /></Form.Control.Feedback>
         <FileInput supportedFileFormats={supportedFileFormats} fileInput={fileInput} id={id} />
         <Stack gap={3}>
           <ActionRow className="border border-gray-300 rounded px-3 py-2">

@@ -354,8 +354,7 @@ export const apiMethods = {
         courseKey: learningContextId,
         has_changes: true,
         id: blockId,
-        metadata: { display_name: title },
-        fields: snakeCaseKeys(content),
+        metadata: { ...snakeCaseKeys(content), display_name: title },
       };
     } else {
       throw new TypeError(`No Block in V2 Editors named /"${blockType}/", Cannot Save Content.`);
@@ -397,7 +396,7 @@ export const apiMethods = {
     blockId,
     handlerName,
   }) => get(
-    urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }),
+    urls.boundHandlerUrl({ studioEndpointUrl, blockId, handlerName }),
   ),
   validateBlockNumericInput: ({
     studioEndpointUrl,

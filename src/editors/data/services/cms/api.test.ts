@@ -23,7 +23,7 @@ jest.mock('./urls', () => ({
     .mockImplementation(
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
     ),
-  handlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
+  boundHandlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
   transcriptXblockV2: jest.fn().mockReturnValue('url.transcriptXblockV2'),
 }));
 
@@ -155,10 +155,10 @@ describe('cms api', () => {
     });
 
     describe('getHandlerUrl', () => {
-      it('should call get with url.handlerUrl', async () => {
+      it('should call get with url.boundHandlerUrl', async () => {
         const handlerName = 'transcript';
         await apiMethods.getHandlerUrl({ studioEndpointUrl, blockId, handlerName });
-        expect(get).toHaveBeenCalledWith(urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }));
+        expect(get).toHaveBeenCalledWith(urls.boundHandlerUrl({ studioEndpointUrl, blockId, handlerName }));
       });
     });
 

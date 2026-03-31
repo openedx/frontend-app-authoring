@@ -14,9 +14,9 @@ const supportedEditors = {
   [blockTypes.video]: VideoEditor,
   [blockTypes.problem]: ProblemEditor,
   [blockTypes.video_upload]: VideoUploadEditor,
+  [blockTypes.pdf]: PdfEditor,
   // ADDED_EDITORS GO BELOW
   [blockTypes.game]: GameEditor,
-  [blockTypes.pdf]: PdfEditor,
 } as const;
 
 export default supportedEditors;

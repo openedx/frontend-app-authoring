@@ -38,7 +38,7 @@ const EditorWrapper: React.FC<PropsWithChildren> = ({ children }) => {
 
 const PdfEditingModal: React.FC<EditorComponent> = (props) => {
   const intl = useIntl();
-  const { fields } = useContext(PdfBlockContext);
+  const { fields, blockId, isLibrary } = useContext(PdfBlockContext);
   const originalState = useRef({ ...fields });
   const { values, setValues } = useFormikContext<PdfState>();
 
@@ -65,6 +65,8 @@ const PdfEditingModal: React.FC<EditorComponent> = (props) => {
             supportedFileFormats="application/pdf"
             urlFieldName="url"
             label={intl.formatMessage(messages.urlFieldLabel)}
+            blockId={blockId}
+            isLibrary={isLibrary}
             id="pdf-url"
           />
         </div>

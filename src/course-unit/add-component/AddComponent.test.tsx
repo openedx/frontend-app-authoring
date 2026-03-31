@@ -1,8 +1,9 @@
 // oxlint-disable unicorn/no-useless-spread
 /* eslint-disable react/prop-types */
-import userEvent from '@testing-library/user-event';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { RenderResult } from '@testing-library/react';
 import {
   act,
   render,
@@ -320,11 +321,13 @@ describe('<AddComponent />', () => {
     });
   });
 
-  it('adds a PDF block from the advanced selection in modal as an mfe-editable block', async () => {
-    const user = userEvent.setup();
-    const {
-      getByRole, queryAllByRole, queryAllByText,
-    } = renderComponent();
+  const createPdfBlock = async (
+    { getByRole, queryAllByRole, user }: {
+      getByRole: RenderResult['getByRole']
+      queryAllByRole: RenderResult['queryAllByRole'],
+      user: UserEvent,
+    },
+  ) => {
     const advancedBtn = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
     });
@@ -337,7 +340,12 @@ describe('<AddComponent />', () => {
     const confirmation = within(dialog).getByText('Select');
     await user.click(confirmation);
     await waitFor(() => expect(queryAllByRole('dialog')).toEqual([]));
-    expect(queryAllByText('PDF')).toEqual([]);
+  };
+
+  it('adds a PDF block from the advanced selection in modal as an mfe-editable block', async () => {
+    const user = userEvent.setup();
+    const { getByRole, queryAllByRole } = renderComponent();
+    await createPdfBlock({ getByRole, queryAllByRole, user });
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       parentLocator: '123',
@@ -345,26 +353,16 @@ describe('<AddComponent />', () => {
     }, expect.any(Function));
   });
 
-  it('adds a PDF block from the advanced selection in modal as a traditional block', async () => {
+  it('adds a PDF block and launches the legacy iframe editor', async () => {
     const user = userEvent.setup();
     mockWaffleFlags({ useNewPdfEditor: false });
     const { getByRole, queryAllByRole } = renderComponent();
-    const advancedBtn = getByRole('button', {
-      name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
-    });
-
-    await user.click(advancedBtn);
-
-    const dialog = getByRole('dialog');
-    const pdfOption = within(dialog).getByLabelText('PDF');
-    await user.click(pdfOption);
-    const confirmation = within(dialog).getByText('Select');
-    await user.click(confirmation);
-    await waitFor(() => expect(queryAllByRole('dialog')).toEqual([]));
+    await createPdfBlock({ getByRole, queryAllByRole, user });
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       parentLocator: '123',
       type: COMPONENT_TYPES.pdf,
+      // Setting the category and not supplying an additional function launches the traditional editor.
       category: COMPONENT_TYPES.pdf,
     });
   });

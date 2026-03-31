@@ -6,11 +6,16 @@ const messages = defineMessages({
     defaultMessage: 'Please enter a valid URL.',
     description: 'Error message when the user inputs a malformed URL.',
   },
-  fileHint: {
-    id: 'authoring.sharedComponents.uploadWidget.fileHint',
+  courseFileHint: {
+    id: 'authoring.sharedComponents.uploadWidget.courseFileHint',
     defaultMessage: 'This is the file your learners will see embedded in your course. Files are immediately '
       + 'uploaded to course assets (Files).',
-    description: 'Hint for PDF file upload.',
+    description: 'Hint for file upload when in a course.',
+  },
+  libraryFileHint: {
+    id: 'authoring.sharedComponents.uploadWidget.libraryFileHint',
+    defaultMessage: 'This is the file your learners will see embedded in your block.',
+    description: 'Hint for file upload when in a library.',
   },
   replaceFile: {
     id: 'authoring.sharedComponents.uploadWidget.replaceFile',
@@ -61,6 +66,12 @@ const messages = defineMessages({
     id: 'authoring.sharedComponents.uploadWidget.urlFieldLabel',
     defaultMessage: 'File URL',
     description: 'Label for the raw URL input mode.',
+  },
+  blockCreationWarning: {
+    id: 'authoring.sharedComponents.uploadWidget.blockCreationWarning',
+    defaultMessage: 'To add a file, save and reopen this block.',
+    description: 'Notification that the user needs to save the block so we have somewhere to put '
+      + 'the file before beginning.',
   },
 });
 

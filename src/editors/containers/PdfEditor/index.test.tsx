@@ -94,7 +94,7 @@ describe('PdfEditor', () => {
     // Slightly different loader to show spinner.
     axiosMock.onGet(
       'https://studio.local/xblock/pdf-block-id/handler/load_pdf',
-    ).withDelayInMs(1000).reply(200, initialPdfState());
+    ).withDelayInMs(200).reply(200, initialPdfState());
     const screen = render();
     screen.getByText(messages.blockLoading.defaultMessage);
     // And then should show the block.
@@ -110,7 +110,7 @@ describe('PdfEditor', () => {
   it('hides the download options if downloads are universally disabled', async () => {
     setBlock({ disableAllDownload: true });
     const screen = render();
-    await waitFor(() => screen.getByText(uploadMessages.fileHint.defaultMessage));
+    await waitFor(() => screen.getByText(uploadMessages.courseFileHint.defaultMessage));
     expect(screen.queryAllByLabelText(downloadMessages.allowDownloadLabel.defaultMessage)).toEqual([]);
   });
   it('submits changes to the cms', async () => {
@@ -126,7 +126,7 @@ describe('PdfEditor', () => {
     const user = userEvent.setup();
     setBlock();
     const screen = render();
-    await waitFor(() => screen.getByText(uploadMessages.fileHint.defaultMessage));
+    await waitFor(() => screen.getByText(uploadMessages.courseFileHint.defaultMessage));
     const dropdown = screen.getByLabelText(uploadMessages.actionsDropdown.defaultMessage);
     await user.click(dropdown);
     const toggle = await waitFor(() => screen.getByText(uploadMessages.manualUrl.defaultMessage));
@@ -137,6 +137,6 @@ describe('PdfEditor', () => {
     await user.click(saveButton);
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual('https://studio.local/xblock/pdf-block-id'));
     const request = axiosMock.history.post[0];
-    expect(JSON.parse(request.data).fields.url).toEqual('https://somewhere.com/stuff.pdf');
+    expect(JSON.parse(request.data).metadata.url).toEqual('https://somewhere.com/stuff.pdf');
   });
 });
