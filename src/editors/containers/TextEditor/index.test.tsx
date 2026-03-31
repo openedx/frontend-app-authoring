@@ -1,5 +1,7 @@
 import React from 'react';
-import { render, screen, initializeMocks } from '@src/testUtils';
+import {
+  render, screen, initializeMocks, waitFor,
+} from '@src/testUtils';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import { TextEditorInternal as TextEditor, mapStateToProps, mapDispatchToProps } from '.';
@@ -67,15 +69,20 @@ describe('TextEditor', () => {
       expect(element?.getAttribute('editorcontenthtml')).toBe('eDiTablE Text');
     });
 
-    test('renders static images with relative paths', () => {
+    test('renders static images with relative paths', async () => {
       const updatedProps = {
         ...props,
+        validateAssetUrl: false,
         blockValue: { data: { data: 'eDiTablE Text with <img src="/static/img.jpg" />' } },
       };
       const { container } = render(<TextEditor {...updatedProps} />);
       const element = container.querySelector('tinymcewidget');
       expect(element).toBeInTheDocument();
-      expect(element?.getAttribute('editorcontenthtml')).toBe('eDiTablE Text with <img src="/asset+org+run+type@asset+block@img.jpg" />');
+      await waitFor(() => {
+        expect(element?.getAttribute('editorcontenthtml')).toBe(
+          'eDiTablE Text with <img src="/asset+org+run+type@asset+block@img.jpg" />',
+        );
+      });
     });
     test('not yet loaded, Spinner appears', () => {
       const { container } = render(<TextEditor {...props} blockFinished={false} />);
