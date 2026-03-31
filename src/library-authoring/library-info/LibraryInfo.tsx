@@ -44,6 +44,11 @@ const LibraryInfo = () => {
           libraryId={libraryId}
           canEditToggle={(!isLoadingUserPermissions && userPermissions?.canManageTeam) || false}
         />
+        {shouldShowAdminConsoleLink && (
+          <Button as={Hyperlink} variant="outline-primary" className="my-3" destination={`${adminConsoleUrl}/authz?scope=${libraryId}`} target="_blank">
+            {intl.formatMessage(messages.libraryTeamButtonTitle)}
+          </Button>
+        )}
         <span className="font-weight-bold">
           {intl.formatMessage(messages.organizationSectionTitle)}
         </span>
@@ -52,11 +57,6 @@ const LibraryInfo = () => {
         </span>
         {shouldShowTeamModalButton && (
           <Button variant="outline-primary" onClick={openLibraryTeamModal}>
-            {intl.formatMessage(messages.libraryTeamButtonTitle)}
-          </Button>
-        )}
-        {shouldShowAdminConsoleLink && (
-          <Button as={Hyperlink} variant="outline-primary" destination={`${adminConsoleUrl}/authz/libraries/${libraryId}`} target="_blank">
             {intl.formatMessage(messages.libraryTeamButtonTitle)}
           </Button>
         )}
