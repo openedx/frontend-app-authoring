@@ -1,6 +1,6 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import NestedRows from './NestedRows';
 
@@ -95,5 +95,36 @@ describe('NestedRows', () => {
 
     expect(setCreatingParentId).toHaveBeenCalledWith(null);
     expect(onCancelCreation).toHaveBeenCalled();
+  });
+
+  it('renders EditRow when editingRowId matches the child row id and value', () => {
+    const nestedChild = makeRow({ id: 2, value: 'child', expanded: true });
+    const parent = makeRow({
+      id: 1,
+      value: 'parent',
+      expanded: true,
+      subRows: [nestedChild],
+    });
+
+    render(
+      <table>
+        <tbody>
+          <NestedRows
+            parentRow={parent as any}
+            parentRowValue="parent"
+            childRowsData={[nestedChild as any]}
+            {...defaultRequiredProps}
+            editingRowId="2:child"
+          />
+        </tbody>
+      </table>,
+      { wrapper },
+    );
+
+    const childInput = screen.getByDisplayValue('child');
+    const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+
+    expect(childInput).toBeInTheDocument();
+    expect(cancelButton).toBeInTheDocument();
   });
 });
