@@ -228,7 +228,7 @@ export async function getUserAgreement(agreementType: string) {
   return camelCaseObject(data);
 }
 
-interface CourseSettingsData {
+export interface CourseSettingsData {
   aboutPageEditable: boolean;
   canShowCertificateAvailableDateField: boolean;
   courseDisplayName: string;
