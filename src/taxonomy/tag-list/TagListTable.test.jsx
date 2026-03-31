@@ -1,25 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
 import {
   render, waitFor, waitForElementToBeRemoved, screen, within,
-  fireEvent, act, cleanup,
-} from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import MockAdapter from 'axios-mock-adapter';
-
-import initializeStore from '../../store';
+  fireEvent, act, cleanup, initializeMocks,
+} from '@src/testUtils';
 import * as apiHooksModule from '../data/apiHooks';
 import * as hooksModule from './hooks';
 import * as treeTableModule from '../tree-table';
 import TagListTable from './TagListTable';
 
-let store;
 let axiosMock;
-const queryClient = new QueryClient();
 const adminUser = {
   userId: 3,
   username: 'abc123',
@@ -29,20 +18,6 @@ const adminUser = {
 const nonAdminUser = {
   ...adminUser,
   administrator: false,
-};
-
-const RootWrapper = ({ maxDepth = 3 }) => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <QueryClientProvider client={queryClient}>
-        <TagListTable taxonomyId={1} maxDepth={maxDepth} />
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>
-);
-
-RootWrapper.propTypes = {
-  maxDepth: PropTypes.number,
 };
 
 const tagDefaults = { depth: 0, external_id: '', parent_value: null };
@@ -138,7 +113,7 @@ const subTagsResponse = {
 const subTagsUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
 const createTagUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/';
 
-const renderTagListTable = (maxDepth = 3) => render(<RootWrapper maxDepth={maxDepth} />);
+const renderTagListTable = (maxDepth = 3) => render(<TagListTable taxonomyId={1} maxDepth={maxDepth} />);
 
 const flushReactUpdates = async () => {
   await act(async () => {
@@ -212,20 +187,8 @@ const openRenameDraftRow = async (tagName = 'root tag 1') => {
 };
 
 describe('<TagListTable />', () => {
-  beforeAll(async () => {
-    initializeMockApp({
-      authenticatedUser: adminUser,
-    });
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-  });
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: adminUser,
-    });
-    store = initializeStore();
-    queryClient.clear();
-    axiosMock.reset();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    ({ axiosMock } = initializeMocks({ user: adminUser }));
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
     renderTagListTable();
@@ -294,7 +257,12 @@ describe('<TagListTable />', () => {
         can_add_tag: false,
       });
       cleanup();
-      queryClient.clear();
+      ({ axiosMock } = initializeMocks({ user: adminUser }));
+      axiosMock.onGet(rootTagsListUrl).reply(200, {
+        ...mockTagsResponse,
+        can_add_tag: false,
+      });
+      axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
       renderTagListTable();
       await waitForRootTag();
 
@@ -640,7 +608,7 @@ describe('<TagListTable />', () => {
     });
 
     it('should hide Add Tag for users without taxonomy edit permissions', async () => {
-      initializeMockApp({ authenticatedUser: nonAdminUser });
+      initializeMocks({ user: nonAdminUser });
       axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
 
       expect(screen.queryByText('Add Tag')).not.toBeInTheDocument();
@@ -749,7 +717,7 @@ describe('<TagListTable />', () => {
     });
 
     it('should hide or disable Add sub-tag actions when user lacks edit permissions', async () => {
-      initializeMockApp({ authenticatedUser: nonAdminUser });
+      initializeMocks({ user: nonAdminUser });
       const addSubtagActions = screen.queryAllByText('Add Subtag');
       if (addSubtagActions.length === 0) {
         expect(addSubtagActions.length).toBe(0);
@@ -813,7 +781,12 @@ describe('<TagListTable />', () => {
           can_add_tag: false,
         });
         cleanup();
-        queryClient.clear();
+        ({ axiosMock } = initializeMocks({ user: adminUser }));
+        axiosMock.onGet(rootTagsListUrl).reply(200, {
+          ...mockTagsResponse,
+          can_add_tag: false,
+        });
+        axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
         renderTagListTable();
         await waitForRootTag();
 
@@ -825,7 +798,9 @@ describe('<TagListTable />', () => {
         axiosMock.reset();
         axiosMock.onGet(rootTagsListUrl).reply(200, mockTagResponseDisallowingEdits);
         cleanup();
-        queryClient.clear();
+        ({ axiosMock } = initializeMocks({ user: adminUser }));
+        axiosMock.onGet(rootTagsListUrl).reply(200, mockTagResponseDisallowingEdits);
+        axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
         renderTagListTable();
         await waitForRootTag();
 
@@ -984,20 +959,8 @@ describe('<TagListTable />', () => {
 // These async creation flows are intentionally isolated because they pass individually
 // but can be flaky when interleaved with the larger suite's async/query timing.
 describe('<TagListTable /> isolated async subtag tests', () => {
-  beforeAll(async () => {
-    initializeMockApp({
-      authenticatedUser: adminUser,
-    });
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-  });
-
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: adminUser,
-    });
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    queryClient.clear();
+    ({ axiosMock } = initializeMocks({ user: adminUser }));
   });
 
   it('shows the spinner before the query is complete', async () => {
@@ -1196,8 +1159,7 @@ describe('<TagListTable /> pagination transition behavior', () => {
   beforeEach(() => {
     tableViewProps = null;
     mockEnterViewMode.mockReset();
-    store = initializeStore();
-    queryClient.clear();
+    initializeMocks({ user: adminUser });
 
     jest.spyOn(apiHooksModule, 'useTagListData').mockReturnValue({
       isLoading: false,
