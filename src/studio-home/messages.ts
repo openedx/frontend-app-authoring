@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.add-new-library.btn.text',
     defaultMessage: 'New library',
   },
+  addRolesPermissionsBtnText: {
+    id: 'course-authoring.studio-home.add-roles-permissions.btn.text',
+    defaultMessage: 'Roles and permissions',
+  },
   homePageLoadFailedMessage: {
     id: 'course-authoring.studio-home.page-load.failed.message',
     defaultMessage: 'Failed to load Studio home. Please try again later.',

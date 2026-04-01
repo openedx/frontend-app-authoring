@@ -61,6 +61,11 @@ const messages = defineMessages({
     defaultMessage: 'Grading',
     description: 'Link to Studio Grading page',
   },
+  'header.links.roles.permissions': {
+    id: 'header.links.roles.permissions',
+    defaultMessage: 'Roles and Permissions',
+    description: 'Link to Studio Roles and Permissions page',
+  },
   'header.links.courseTeam': {
     id: 'header.links.courseTeam',
     defaultMessage: 'Course Team',
