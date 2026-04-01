@@ -208,7 +208,7 @@ const ImportDetailsContent = () => {
       });
       navigate(`../import/${courseImportDetails.source}/${newMigrationTask.uuid}`);
       setDisableReimport(false);
-    } catch (error) {
+    } catch {
       showToast(intl.formatMessage(messages.importCourseCompleteFailedToastMessage, {
         courseName: courseDetails.title,
       }));
