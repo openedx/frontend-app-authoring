@@ -1,4 +1,5 @@
 import {
+  Bubble,
   Button,
   Icon,
   IconButton,
@@ -24,6 +25,7 @@ interface TagListRowData extends TreeRowData {
   depth: number;
   childCount: number;
   descendantCount: number;
+  usageCount?: number;
   isNew?: boolean;
   isEditing?: boolean;
 }
@@ -46,6 +48,17 @@ interface GetColumnsArgs {
   maxDepth: number;
   creatingParentId: RowId | null;
 }
+
+const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
+  const count = asTagListRowData(row).usageCount ?? 0;
+  return (
+    count > 0 && (
+      <Bubble expandable>
+        {count}
+      </Bubble>
+    )
+  );
+};
 
 interface ActionsHeaderProps {
   onStartDraft: () => void;
@@ -120,7 +133,7 @@ const ActionsMenu = ({ rowData, startSubtagDraft, disableAddSubtag }: ActionsMen
       </Dropdown.Menu>
     </Dropdown>
   );
-}
+};
 
 function getColumns({
   setIsCreatingTopTag,
@@ -135,6 +148,7 @@ function getColumns({
 }: GetColumnsArgs): TreeColumnDef[] {
   const canAddSubtag = (row: Row<TreeRowData>) => row.depth < maxDepth;
   const draftInProgressHintId = 'tag-list-draft-in-progress-hint';
+  const intl = useIntl();
 
   return [
     {
@@ -152,6 +166,11 @@ function getColumns({
           </span>
         );
       },
+    },
+    {
+      id: 'count',
+      header: intl.formatMessage(messages.tagListColumnCountHeader),
+      cell: UsageCountDisplay,
     },
     {
       id: 'actions',
