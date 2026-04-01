@@ -713,14 +713,12 @@ describe('<CourseUnit />', () => {
 
     await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
 
-    await waitFor(async () => {
-      const problemButton = screen.getByRole('button', {
-        name: new RegExp(`problem ${addComponentMessages.buttonText.defaultMessage} Problem`, 'i'),
-        hidden: true,
-      });
-
-      await user.click(problemButton);
+    const problemButton = await screen.findByRole('button', {
+      name: new RegExp(`problem ${addComponentMessages.buttonText.defaultMessage} Problem`, 'i'),
+      hidden: true,
     });
+
+    await user.click(problemButton);
 
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))

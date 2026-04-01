@@ -3,22 +3,23 @@ import {
   Button, Container, Layout, StatefulButton,
 } from '@openedx/paragon';
 import { Add as IconAdd, CheckCircle, Warning } from '@openedx/paragon/icons';
-import {
-  useCourseSettings,
-  useGradingSettings,
-  useGradingSettingUpdater,
-} from 'CourseAuthoring/grading-settings/data/apiHooks';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { STATEFUL_BUTTON_STATES } from '../constants';
-import AlertMessage from '../generic/alert-message';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
 
-import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-import SectionSubHeader from '../generic/section-sub-header';
-import SubHeader from '../generic/sub-header/SubHeader';
-import getPageHeadTitle from '../generic/utils';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { STATEFUL_BUTTON_STATES } from '@src/constants';
+import { useCourseSettings } from '@src/data/apiHooks';
+import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import SectionSubHeader from '@src/generic/section-sub-header';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import AlertMessage from '@src/generic/alert-message';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
+import getPageHeadTitle from '@src/generic/utils';
+
+import {
+  useGradingSettings,
+  useGradingSettingUpdater,
+} from './data/apiHooks';
 import AssignmentSection from './assignment-section';
 import CreditSection from './credit-section';
 import DeadlineSection from './deadline-section';

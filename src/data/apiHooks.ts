@@ -14,6 +14,7 @@ import {
   getUserAgreementRecord,
   getWaffleFlags, updateUserAgreementRecord,
   waffleFlagDefaults,
+  getCourseSettings,
 } from './api';
 import { RequestStatus, RequestStatusType } from './constants';
 
@@ -210,5 +211,15 @@ export const useUserAgreement = (agreementType:string) => (
     queryKey: ['agreements', agreementType],
     queryFn: () => getUserAgreement(agreementType),
     retry: false,
+  })
+);
+
+/**
+ * Get the course settings
+ */
+export const useCourseSettings = (courseId: string) => (
+  useQuery({
+    queryKey: ['courseSettings', courseId],
+    queryFn: () => getCourseSettings(courseId),
   })
 );
