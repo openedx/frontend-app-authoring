@@ -87,7 +87,7 @@ export const useIframeBehavior = ({
         if (document.getElementsByName('xblock-iframe')) {
           const iframeElement = document.getElementsByName('xblock-iframe')[0];
           window.scrollTo({
-            top: data.offset + iframeElement!.offsetTop + iframeElement.parentElement!.offsetTop,
+            top: data.offset + iframeElement!.offsetTop,
             left: 0,
             behavior: 'smooth',
           });
