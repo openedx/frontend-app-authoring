@@ -1,9 +1,7 @@
 import type { ReactNode } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Link } from 'react-router-dom';
-import {
-  Breadcrumb, MenuItem, SelectMenu,
-} from '@openedx/paragon';
+import { Breadcrumb, MenuItem, SelectMenu } from '@openedx/paragon';
 import { ContainerType } from '@src/generic/key-utils';
 import type { ContentLibrary } from '../../data/api';
 import messages from './messages';
@@ -37,16 +35,13 @@ const OverflowLinks = ({ children, to, containerType }: OverflowLinksProps) => {
     </MenuItem>
   ));
 
-  const containerTypeName = containerType === ContainerType.Unit
-    ? intl.formatMessage(messages.breadcrumbsSubsectionsDropdown)
-    : intl.formatMessage(messages.breadcrumbsSectionsDropdown);
+  const containerTypeName =
+    containerType === ContainerType.Unit
+      ? intl.formatMessage(messages.breadcrumbsSubsectionsDropdown)
+      : intl.formatMessage(messages.breadcrumbsSectionsDropdown);
 
   return (
-    <SelectMenu
-      className="breadcrumb-menu"
-      variant="link"
-      defaultMessage={`${items.length} ${containerTypeName}`}
-    >
+    <SelectMenu className="breadcrumb-menu" variant="link" defaultMessage={`${items.length} ${containerTypeName}`}>
       {items}
     </SelectMenu>
   );
@@ -69,7 +64,7 @@ export const ParentBreadcrumbs = ({ libraryData, parents, containerType }: Paren
   const intl = useIntl();
   const { id: libraryId, title: libraryTitle } = libraryData;
 
-  const links: Array<{ label: string | string[], to: string | string[], containerType: ContainerType }> = [
+  const links: Array<{ label: string | string[]; to: string | string[]; containerType: ContainerType }> = [
     {
       label: libraryTitle,
       to: `/library/${libraryId}`,
@@ -84,9 +79,7 @@ export const ParentBreadcrumbs = ({ libraryData, parents, containerType }: Paren
     throw new Error('Parents key and displayName arrays must have the same length.');
   }
 
-  const parentType = containerType === ContainerType.Unit
-    ? 'subsection'
-    : 'section';
+  const parentType = containerType === ContainerType.Unit ? 'subsection' : 'section';
 
   if (parentLength === 0 || !parents) {
     // Adding empty breadcrumb to add the last `>` spacer.

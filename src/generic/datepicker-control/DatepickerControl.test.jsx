@@ -29,57 +29,37 @@ describe('<DatepickerControl />', () => {
   };
 
   it('renders without crashing', () => {
-    const { getByText, queryAllByText, getByPlaceholderText } = render(
-      <RootWrapper {...props} />,
-    );
+    const { getByText, queryAllByText, getByPlaceholderText } = render(<RootWrapper {...props} />);
     expect(getByText(props.label)).toBeInTheDocument();
     expect(getByText(props.helpText)).toBeInTheDocument();
     expect(queryAllByText(messages.datepickerUTC.defaultMessage).length).toBe(0);
-    expect(
-      getByPlaceholderText(DATE_FORMAT.toLocaleUpperCase()),
-    ).toBeInTheDocument();
+    expect(getByPlaceholderText(DATE_FORMAT.toLocaleUpperCase())).toBeInTheDocument();
   });
 
   it('calls onChange on datepicker input change', () => {
     const { getByPlaceholderText } = render(<RootWrapper {...props} />);
     const input = getByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
     fireEvent.change(input, { target: { value: '06/16/2023' } });
-    expect(onChangeMock).toHaveBeenCalledWith(
-      convertToStringFromDate('06/16/2023'),
-    );
+    expect(onChangeMock).toHaveBeenCalledWith(convertToStringFromDate('06/16/2023'));
   });
 
   it('renders time picker with accessibility hint', () => {
     const { getByText, getByPlaceholderText } = render(
-      <RootWrapper
-        {...props}
-        type={DATEPICKER_TYPES.time}
-        value="2025-01-01T10:00:00Z"
-        helpText=""
-      />,
+      <RootWrapper {...props} type={DATEPICKER_TYPES.time} value="2025-01-01T10:00:00Z" helpText="" />,
     );
     const input = getByPlaceholderText('HH:MM');
 
-    expect(
-      getByText('Enter time in HH:MM or twelve-hour format, for example 6:00 PM.'),
-    ).toBeInTheDocument();
+    expect(getByText('Enter time in HH:MM or twelve-hour format, for example 6:00 PM.')).toBeInTheDocument();
     expect(input.getAttribute('aria-describedby')).toContain('fooControlName-timehint');
   });
 
   it('renders time picker with accessibility hint and help text', () => {
     const { getByText, getByPlaceholderText } = render(
-      <RootWrapper
-        {...props}
-        type={DATEPICKER_TYPES.time}
-        value="2025-01-01T10:00:00Z"
-        helpText="This is help text"
-      />,
+      <RootWrapper {...props} type={DATEPICKER_TYPES.time} value="2025-01-01T10:00:00Z" helpText="This is help text" />,
     );
     const input = getByPlaceholderText('HH:MM');
 
-    expect(
-      getByText('Enter time in HH:MM or twelve-hour format, for example 6:00 PM.'),
-    ).toBeInTheDocument();
+    expect(getByText('Enter time in HH:MM or twelve-hour format, for example 6:00 PM.')).toBeInTheDocument();
     expect(getByText('This is help text')).toBeInTheDocument();
     expect(input.getAttribute('aria-describedby')).toContain('fooControlName-timehint');
     expect(input.getAttribute('aria-describedby')).toContain('fooControlName-helptext');

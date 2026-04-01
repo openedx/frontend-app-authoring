@@ -1,9 +1,5 @@
-import {
-  useCallback, useContext, useMemo, useState,
-} from 'react';
-import {
-  ActionRow, Button, Icon, ModalDialog, useToggle,
-} from '@openedx/paragon';
+import { useCallback, useContext, useMemo, useState } from 'react';
+import { ActionRow, Button, Icon, ModalDialog, useToggle } from '@openedx/paragon';
 import { Info } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
@@ -29,20 +25,13 @@ const ConfirmationModal = ({
   onClose,
   updateAndRefresh,
 }: {
-  modalType: ConfirmationModalType,
-  onClose: () => void,
-  updateAndRefresh: (accept: boolean, overrideCustomizations: boolean) => void,
+  modalType: ConfirmationModalType;
+  onClose: () => void;
+  updateAndRefresh: (accept: boolean, overrideCustomizations: boolean) => void;
 }) => {
   const intl = useIntl();
 
-  const {
-    title,
-    description,
-    btnLabel,
-    btnVariant,
-    accept,
-    overrideCustomizations,
-  } = useMemo(() => {
+  const { title, description, btnLabel, btnVariant, accept, overrideCustomizations } = useMemo(() => {
     let resultTitle: string | undefined;
     let resultDescription: string | undefined;
     let resutlBtnLabel: string | undefined;
@@ -98,21 +87,21 @@ const ConfirmationModal = ({
 };
 
 export interface LibraryChangesMessageData {
-  displayName: string,
-  downstreamBlockId: string,
-  upstreamBlockId: string,
-  upstreamBlockVersionSynced: number,
-  isLocallyModified?: boolean,
-  isContainer: boolean,
-  blockType?: string | null,
-  isReadyToSyncIndividually?: boolean,
+  displayName: string;
+  downstreamBlockId: string;
+  upstreamBlockId: string;
+  upstreamBlockVersionSynced: number;
+  isLocallyModified?: boolean;
+  isContainer: boolean;
+  blockType?: string | null;
+  isReadyToSyncIndividually?: boolean;
 }
 
 export interface PreviewLibraryXBlockChangesProps {
-  blockData: LibraryChangesMessageData,
-  isModalOpen: boolean,
-  closeModal: () => void,
-  postChange: (accept: boolean) => void,
+  blockData: LibraryChangesMessageData;
+  isModalOpen: boolean;
+  closeModal: () => void;
+  postChange: (accept: boolean) => void;
 }
 
 /**
@@ -133,7 +122,7 @@ export const PreviewLibraryXBlockChanges = ({
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
 
-  const isTextWithLocalChanges = (blockData.blockType === 'html' && blockData.isLocallyModified);
+  const isTextWithLocalChanges = blockData.blockType === 'html' && blockData.isLocallyModified;
 
   const getBody = useCallback(() => {
     if (!blockData) {
@@ -162,60 +151,59 @@ export const PreviewLibraryXBlockChanges = ({
     );
   }, [blockData, isTextWithLocalChanges]);
 
-  const updateAndRefresh = useCallback(async (accept: boolean, overrideCustomizations: boolean) => {
-    // istanbul ignore if: this should never happen
-    if (!blockData) {
-      return;
-    }
+  const updateAndRefresh = useCallback(
+    async (accept: boolean, overrideCustomizations: boolean) => {
+      // istanbul ignore if: this should never happen
+      if (!blockData) {
+        return;
+      }
 
-    const mutation = accept ? acceptChangesMutation : ignoreChangesMutation;
-    const failureMsg = accept ? messages.acceptChangesFailure : messages.ignoreChangesFailure;
+      const mutation = accept ? acceptChangesMutation : ignoreChangesMutation;
+      const failureMsg = accept ? messages.acceptChangesFailure : messages.ignoreChangesFailure;
 
-    try {
-      await mutation.mutateAsync({
-        blockId: blockData.downstreamBlockId,
-        overrideCustomizations,
-      });
-      postChange(accept);
-    } catch {
-      showToast(intl.formatMessage(failureMsg));
-    } finally {
-      closeModal();
-    }
-  }, [blockData]);
+      try {
+        await mutation.mutateAsync({
+          blockId: blockData.downstreamBlockId,
+          overrideCustomizations,
+        });
+        postChange(accept);
+      } catch {
+        showToast(intl.formatMessage(failureMsg));
+      } finally {
+        closeModal();
+      }
+    },
+    [blockData],
+  );
 
   const itemIcon = getItemIcon(blockData.blockType || '');
 
   // Build title
   const defaultTitle = intl.formatMessage(
-    blockData.isContainer
-      ? messages.defaultContainerTitle
-      : messages.defaultComponentTitle,
+    blockData.isContainer ? messages.defaultContainerTitle : messages.defaultComponentTitle,
     {
       itemIcon: <Icon size="lg" src={itemIcon} />,
     },
   );
   const title = blockData.displayName
     ? intl.formatMessage(messages.title, {
-      blockTitle: blockData?.displayName,
-      blockIcon: <Icon size="lg" src={itemIcon} />,
-    })
+        blockTitle: blockData?.displayName,
+        blockIcon: <Icon size="lg" src={itemIcon} />,
+      })
     : defaultTitle;
 
   // Build aria label
   const defaultAriaLabel = intl.formatMessage(
-    blockData.isContainer
-      ? messages.defaultContainerTitle
-      : messages.defaultComponentTitle,
+    blockData.isContainer ? messages.defaultContainerTitle : messages.defaultComponentTitle,
     {
       itemIcon: '',
     },
   );
   const ariaLabel = blockData.displayName
     ? intl.formatMessage(messages.title, {
-      blockTitle: blockData?.displayName,
-      blockIcon: '',
-    })
+        blockTitle: blockData?.displayName,
+        blockIcon: '',
+      })
     : defaultAriaLabel;
 
   return (
@@ -231,29 +219,19 @@ export const PreviewLibraryXBlockChanges = ({
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          <div className="d-flex preview-title">
-            {title}
-          </div>
+          <div className="d-flex preview-title">{title}</div>
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
         {isTextWithLocalChanges && (
-          <AlertMessage
-            show
-            variant="info"
-            icon={Info}
-            title={intl.formatMessage(messages.localEditsAlert)}
-          />
+          <AlertMessage show variant="info" icon={Info} title={intl.formatMessage(messages.localEditsAlert)} />
         )}
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
           {isTextWithLocalChanges ? (
-            <Button
-              variant="tertiary"
-              onClick={() => setConfirmationModalType('update')}
-            >
+            <Button variant="tertiary" onClick={() => setConfirmationModalType('update')}>
               <FormattedMessage {...messages.updateToPublishedLibraryContentButton} />
             </Button>
           ) : (
@@ -263,16 +241,11 @@ export const PreviewLibraryXBlockChanges = ({
             />
           )}
           {isTextWithLocalChanges ? (
-            <Button
-              onClick={() => setConfirmationModalType('keep')}
-            >
+            <Button onClick={() => setConfirmationModalType('keep')}>
               <FormattedMessage {...messages.keepCourseContentButton} />
             </Button>
           ) : (
-            <Button
-              variant="tertiary"
-              onClick={() => setConfirmationModalType('ignore')}
-            >
+            <Button variant="tertiary" onClick={() => setConfirmationModalType('ignore')}>
               <FormattedMessage {...messages.ignoreChangesBtn} />
             </Button>
           )}
@@ -299,19 +272,24 @@ const IframePreviewLibraryXBlockChanges = () => {
 
   const { sendMessageToIframe } = useIframe();
 
-  const receiveMessage = useCallback(({ data }: {
-    data: {
-      payload: LibraryChangesMessageData;
-      type: string;
-    }
-  }) => {
-    const { payload, type } = data;
+  const receiveMessage = useCallback(
+    ({
+      data,
+    }: {
+      data: {
+        payload: LibraryChangesMessageData;
+        type: string;
+      };
+    }) => {
+      const { payload, type } = data;
 
-    if (type === messageTypes.showXBlockLibraryChangesPreview) {
-      setBlockData(payload);
-      openModal();
-    }
-  }, [openModal]);
+      if (type === messageTypes.showXBlockLibraryChangesPreview) {
+        setBlockData(payload);
+        openModal();
+      }
+    },
+    [openModal],
+  );
 
   useEventListener('message', receiveMessage);
 

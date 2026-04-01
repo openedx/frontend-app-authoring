@@ -1,8 +1,4 @@
-import {
-  ActionRow,
-  Button,
-  AlertModal,
-} from '@openedx/paragon';
+import { ActionRow, Button, AlertModal } from '@openedx/paragon';
 import { Warning } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { BoldText } from '@src/utils';
@@ -23,23 +19,17 @@ type UnlinkModalPropsComponent = {
 type UnlinkModalProps = {
   isOpen: boolean;
   close: () => void;
-  onUnlinkSubmit: () => void | Promise<void>,
+  onUnlinkSubmit: () => void | Promise<void>;
 } & (UnlinkModalPropsContainer | UnlinkModalPropsComponent);
 
-export const UnlinkModal = ({
-  displayName,
-  category,
-  isOpen,
-  close,
-  onUnlinkSubmit,
-}: UnlinkModalProps) => {
+export const UnlinkModal = ({ displayName, category, isOpen, close, onUnlinkSubmit }: UnlinkModalProps) => {
   const intl = useIntl();
   if (!category) {
     // On the first render, the initial value for `category` might be undefined.
     return null;
   }
 
-  const isComponent = category === 'component' as const;
+  const isComponent = category === ('component' as const);
 
   const categoryName = intl.formatMessage(messages[`${category}Name` as keyof typeof messages]);
   const childrenCategoryName = !isComponent
@@ -52,10 +42,12 @@ export const UnlinkModal = ({
     categoryName,
     b: BoldText,
   });
-  const modalDescriptionChildren = !isComponent ? intl.formatMessage(messages.descriptionChildren, {
-    categoryName,
-    childrenCategoryName,
-  }) : null;
+  const modalDescriptionChildren = !isComponent
+    ? intl.formatMessage(messages.descriptionChildren, {
+        categoryName,
+        childrenCategoryName,
+      })
+    : null;
 
   return (
     <AlertModal
@@ -64,7 +56,7 @@ export const UnlinkModal = ({
       onClose={close}
       variant="warning"
       icon={Warning}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button
             onClick={(e) => {
@@ -86,7 +78,7 @@ export const UnlinkModal = ({
             label={intl.formatMessage(messages.unlinkButton)}
           />
         </ActionRow>
-      )}
+      }
     >
       <div>
         <p className="mt-2">{modalDescription}</p>

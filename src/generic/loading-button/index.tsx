@@ -1,24 +1,17 @@
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import {
-  StatefulButton,
-} from '@openedx/paragon';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { StatefulButton } from '@openedx/paragon';
 
 interface LoadingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
-  onClick?: (e: any) => (Promise<void> | void);
+  onClick?: (e: any) => Promise<void> | void;
   size?: string;
   variant?: string;
   isLoading?: boolean;
 }
 
 /**
-  * A button that shows a loading spinner when clicked, if the onClick function returns a Promise.
-  */
+ * A button that shows a loading spinner when clicked, if the onClick function returns a Promise.
+ */
 const LoadingButton: React.FC<LoadingButtonProps> = ({
   label,
   onClick,
@@ -30,8 +23,12 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
 }) => {
   // Button state depends on isLoading and disabled flags
   const getState = () => {
-    if (isLoading) { return 'pending'; }
-    if (disabled) { return 'disabled'; }
+    if (isLoading) {
+      return 'pending';
+    }
+    if (disabled) {
+      return 'disabled';
+    }
     return '';
   };
   const [state, setState] = useState(getState);
@@ -43,30 +40,36 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
   const componentMounted = useRef(true);
 
   // This is used to prevent setting the isLoading state after the component has been unmounted.
-  useEffect(() => () => {
-    componentMounted.current = false;
-  }, []);
+  useEffect(
+    () => () => {
+      componentMounted.current = false;
+    },
+    [],
+  );
 
-  const loadingOnClick = useCallback(async (e: any) => {
-    if (disabled) {
-      return;
-    }
-
-    if (!onClick) {
-      return;
-    }
-
-    setState('pending');
-    try {
-      await onClick(e);
-    } catch {
-      // Do nothing
-    } finally {
-      if (componentMounted.current) {
-        setState('');
+  const loadingOnClick = useCallback(
+    async (e: any) => {
+      if (disabled) {
+        return;
       }
-    }
-  }, [componentMounted, onClick]);
+
+      if (!onClick) {
+        return;
+      }
+
+      setState('pending');
+      try {
+        await onClick(e);
+      } catch {
+        // Do nothing
+      } finally {
+        if (componentMounted.current) {
+          setState('');
+        }
+      }
+    },
+    [componentMounted, onClick],
+  );
 
   return (
     <StatefulButton

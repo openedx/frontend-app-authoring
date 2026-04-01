@@ -6,13 +6,9 @@ import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sideb
 import contentMessages from '@src/library-authoring/add-content/messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
-import {
-  Stack, Tab, Tabs,
-} from '@openedx/paragon';
+import { Stack, Tab, Tabs } from '@openedx/paragon';
 import { getItemIcon } from '@src/generic/block-type-utils';
-import {
-  useCallback, useEffect, useMemo, useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ComponentSelectedEvent } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType, normalizeContainerType } from '@src/generic/key-utils';
@@ -42,60 +38,57 @@ const CannotAddContentAlert = () => {
 };
 
 type AddContentButtonProps = {
-  name: string,
-  blockType: ContainerType,
+  name: string;
+  blockType: ContainerType;
 };
 
 /** Add Content Button */
-const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
-  const {
-    courseUsageKey,
-    handleAddBlock,
-    handleAddAndOpenUnit,
-  } = useCourseAuthoringContext();
-  const {
-    currentFlow,
-    stopCurrentFlow,
-    lastEditableSection,
-    lastEditableSubsection,
-    openContainerInfoSidebar,
-  } = useOutlineSidebarContext();
+const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
+  const { courseUsageKey, handleAddBlock, handleAddAndOpenUnit } = useCourseAuthoringContext();
+  const { currentFlow, stopCurrentFlow, lastEditableSection, lastEditableSubsection, openContainerInfoSidebar } =
+    useOutlineSidebarContext();
   let sectionParentId = lastEditableSection?.id;
   let subsectionParentId = lastEditableSubsection?.data?.id;
 
-  const addSection = (onSuccess?: (data: { locator: string; }) => void) => {
-    handleAddBlock.mutate({
-      type: ContainerType.Chapter,
-      parentLocator: courseUsageKey,
-      displayName: COURSE_BLOCK_NAMES.chapter.name,
-    }, {
-      onSuccess: (data: { locator: string; }) => {
-        // istanbul ignore next
-        if (onSuccess) {
-          onSuccess(data);
-        } else {
-          openContainerInfoSidebar(data.locator, undefined, data.locator);
-        }
+  const addSection = (onSuccess?: (data: { locator: string }) => void) => {
+    handleAddBlock.mutate(
+      {
+        type: ContainerType.Chapter,
+        parentLocator: courseUsageKey,
+        displayName: COURSE_BLOCK_NAMES.chapter.name,
       },
-    });
+      {
+        onSuccess: (data: { locator: string }) => {
+          // istanbul ignore next
+          if (onSuccess) {
+            onSuccess(data);
+          } else {
+            openContainerInfoSidebar(data.locator, undefined, data.locator);
+          }
+        },
+      },
+    );
   };
 
-  const addSubsection = (sectionId: string, onSuccess?: (data: { locator: string; }) => void) => {
-    handleAddBlock.mutate({
-      type: ContainerType.Sequential,
-      parentLocator: sectionId,
-      displayName: COURSE_BLOCK_NAMES.sequential.name,
-      sectionId,
-    }, {
-      onSuccess: (data: { locator: string; }) => {
-        // istanbul ignore next
-        if (onSuccess) {
-          onSuccess(data);
-        } else {
-          openContainerInfoSidebar(data.locator, data.locator, sectionId);
-        }
+  const addSubsection = (sectionId: string, onSuccess?: (data: { locator: string }) => void) => {
+    handleAddBlock.mutate(
+      {
+        type: ContainerType.Sequential,
+        parentLocator: sectionId,
+        displayName: COURSE_BLOCK_NAMES.sequential.name,
+        sectionId,
       },
-    });
+      {
+        onSuccess: (data: { locator: string }) => {
+          // istanbul ignore next
+          if (onSuccess) {
+            onSuccess(data);
+          } else {
+            openContainerInfoSidebar(data.locator, data.locator, sectionId);
+          }
+        },
+      },
+    );
   };
 
   const addUnit = (subsectionId: string, sectionId?: string) => {
@@ -121,9 +114,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
         }
         break;
       case 'unit':
-        sectionParentId = (
-          currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId
-        );
+        sectionParentId = currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId;
         subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
         if (subsectionParentId) {
           addUnit(subsectionParentId, sectionParentId);
@@ -156,14 +147,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
 
   const disabled = handleAddBlock.isPending || handleAddAndOpenUnit.isPending;
 
-  return (
-    <BlockCardButton
-      name={name}
-      blockType={blockType}
-      onClick={onCreateContent}
-      disabled={disabled}
-    />
-  );
+  return <BlockCardButton name={name} blockType={blockType} onClick={onCreateContent} disabled={disabled} />;
 };
 
 /** Add New Content Tab Section */
@@ -181,18 +165,12 @@ const AddNewContent = () => {
     }
     return (
       <>
-        <AddContentButton
-          name={intl.formatMessage(contentMessages.sectionButton)}
-          blockType={ContainerType.Section}
-        />
+        <AddContentButton name={intl.formatMessage(contentMessages.sectionButton)} blockType={ContainerType.Section} />
         <AddContentButton
           name={intl.formatMessage(contentMessages.subsectionButton)}
           blockType={ContainerType.Subsection}
         />
-        <AddContentButton
-          name={intl.formatMessage(contentMessages.unitButton)}
-          blockType={ContainerType.Unit}
-        />
+        <AddContentButton name={intl.formatMessage(contentMessages.unitButton)} blockType={ContainerType.Unit} />
       </>
     );
   }, [currentFlow, intl]);
@@ -201,19 +179,12 @@ const AddNewContent = () => {
     return <CannotAddContentAlert />;
   }
 
-  return (
-    <Stack gap={2}>
-      {btns()}
-    </Stack>
-  );
+  return <Stack gap={2}>{btns()}</Stack>;
 };
 
 /** Add Existing Content Tab Section */
 const ShowLibraryContent = () => {
-  const {
-    courseUsageKey,
-    handleAddBlock,
-  } = useCourseAuthoringContext();
+  const { courseUsageKey, handleAddBlock } = useCourseAuthoringContext();
   const {
     isCurrentFlowOn,
     currentFlow,
@@ -227,65 +198,65 @@ const ShowLibraryContent = () => {
   let sectionParentId = lastEditableSection?.id;
   let subsectionParentId = lastEditableSubsection?.data?.id;
 
-  const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
-    switch (blockType) {
-      case 'section':
-        await handleAddBlock.mutateAsync({
-          type: COMPONENT_TYPES.libraryV2,
-          category: ContainerType.Chapter,
-          parentLocator: courseUsageKey,
-          libraryContentKey: usageKey,
-        });
-        break;
-      case 'subsection':
-        sectionParentId = currentFlow?.parentLocator || sectionParentId;
-        if (sectionParentId) {
+  const onComponentSelected: ComponentSelectedEvent = useCallback(
+    async ({ usageKey, blockType }) => {
+      switch (blockType) {
+        case 'section':
           await handleAddBlock.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
-            category: ContainerType.Sequential,
-            parentLocator: sectionParentId,
+            category: ContainerType.Chapter,
+            parentLocator: courseUsageKey,
             libraryContentKey: usageKey,
-            sectionId: sectionParentId,
           });
-        }
-        break;
-      case 'unit':
-        sectionParentId = (
-          currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId
-        );
-        subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
-        if (subsectionParentId) {
-          await handleAddBlock.mutateAsync({
-            type: COMPONENT_TYPES.libraryV2,
-            category: ContainerType.Vertical,
-            parentLocator: subsectionParentId,
-            libraryContentKey: usageKey,
-            sectionId: sectionParentId,
-          });
-        }
-        break;
-      default:
-        // istanbul ignore next: should not happen
-        throw new Error(`Unrecognized block type ${blockType}`);
-    }
-    stopCurrentFlow();
-  }, [
-    courseUsageKey,
-    handleAddBlock,
-    lastEditableSection,
-    lastEditableSubsection,
-    currentFlow,
-    stopCurrentFlow,
-  ]);
+          break;
+        case 'subsection':
+          sectionParentId = currentFlow?.parentLocator || sectionParentId;
+          if (sectionParentId) {
+            await handleAddBlock.mutateAsync({
+              type: COMPONENT_TYPES.libraryV2,
+              category: ContainerType.Sequential,
+              parentLocator: sectionParentId,
+              libraryContentKey: usageKey,
+              sectionId: sectionParentId,
+            });
+          }
+          break;
+        case 'unit':
+          sectionParentId = currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId;
+          subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
+          if (subsectionParentId) {
+            await handleAddBlock.mutateAsync({
+              type: COMPONENT_TYPES.libraryV2,
+              category: ContainerType.Vertical,
+              parentLocator: subsectionParentId,
+              libraryContentKey: usageKey,
+              sectionId: sectionParentId,
+            });
+          }
+          break;
+        default:
+          // istanbul ignore next: should not happen
+          throw new Error(`Unrecognized block type ${blockType}`);
+      }
+      stopCurrentFlow();
+    },
+    [courseUsageKey, handleAddBlock, lastEditableSection, lastEditableSubsection, currentFlow, stopCurrentFlow],
+  );
 
   const allowedBlocks = useMemo(() => {
     const blocks: ContainerType[] = [];
     if (currentFlow?.flowType) {
       return [currentFlow.flowType];
     }
-    if (!selectedContainerState) { blocks.push(ContainerType.Section); }
-    if (lastEditableSection) { blocks.push(ContainerType.Subsection); }
-    if (lastEditableSubsection) { blocks.push(ContainerType.Unit); }
+    if (!selectedContainerState) {
+      blocks.push(ContainerType.Section);
+    }
+    if (lastEditableSection) {
+      blocks.push(ContainerType.Subsection);
+    }
+    if (lastEditableSubsection) {
+      blocks.push(ContainerType.Unit);
+    }
     return blocks;
   }, [lastEditableSection, lastEditableSubsection, currentFlow]);
 
@@ -297,10 +268,7 @@ const ShowLibraryContent = () => {
     <MultiLibraryProvider>
       <ComponentPicker
         showOnlyPublished
-        extraFilter={[
-          `block_type IN ["${allowedBlocks.join('","')}"]`,
-          'type = "library_container"',
-        ]}
+        extraFilter={[`block_type IN ["${allowedBlocks.join('","')}"]`, 'type = "library_container"']}
         visibleTabs={[ContentType.home]}
         FiltersComponent={SidebarFilters}
         onComponentSelected={onComponentSelected}
@@ -321,14 +289,7 @@ const AddTabs = () => {
   }, [isCurrentFlowOn, setKey]);
 
   return (
-    <Tabs
-      variant="tabs"
-      className="mb-4 mx-n4.5"
-      id="add-content-tabs"
-      activeKey={key}
-      onSelect={setKey}
-      mountOnEnter
-    >
+    <Tabs variant="tabs" className="mb-4 mx-n4.5" id="add-content-tabs" activeKey={key} onSelect={setKey} mountOnEnter>
       <Tab eventKey="addNew" title={intl.formatMessage(messages.sidebarTabsAddNew)}>
         <AddNewContent />
       </Tab>
@@ -343,14 +304,8 @@ const AddTabs = () => {
 export const AddSidebar = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
-  const {
-    isCurrentFlowOn,
-    currentFlow,
-    currentItemData,
-    clearSelection,
-    stopCurrentFlow,
-    selectedContainerState,
-  } = useOutlineSidebarContext();
+  const { isCurrentFlowOn, currentFlow, currentItemData, clearSelection, stopCurrentFlow, selectedContainerState } =
+    useOutlineSidebarContext();
   const { data: flowData } = useCourseItemData(currentFlow?.parentLocator);
   const titleAndIcon = useMemo(() => {
     if (isCurrentFlowOn && currentFlow) {
@@ -360,15 +315,7 @@ export const AddSidebar = () => {
       return { title: currentItemData.displayName, icon: getItemIcon(currentItemData.category) };
     }
     return { title: courseDetails?.name || '', icon: SchoolOutline };
-  }, [
-    isCurrentFlowOn,
-    flowData,
-    currentFlow,
-    intl,
-    getItemIcon,
-    currentItemData,
-    courseDetails,
-  ]);
+  }, [isCurrentFlowOn, flowData, currentFlow, intl, getItemIcon, currentItemData, courseDetails]);
 
   const handleBack = () => {
     clearSelection();
@@ -380,7 +327,7 @@ export const AddSidebar = () => {
       <SidebarTitle
         title={titleAndIcon.title}
         icon={titleAndIcon.icon}
-        onBackBtnClick={(selectedContainerState || isCurrentFlowOn) ? handleBack : undefined}
+        onBackBtnClick={selectedContainerState || isCurrentFlowOn ? handleBack : undefined}
       />
       <SidebarContent>
         <SidebarSection>

@@ -19,13 +19,7 @@ export const fileInput = ({ onAddFile }) => {
 };
 
 export const FileInput = ({ fileInput: hook, acceptedFiles }) => (
-  <input
-    accept={acceptedFiles}
-    className="upload d-none"
-    onChange={hook.addFile}
-    ref={hook.ref}
-    type="file"
-  />
+  <input accept={acceptedFiles} className="upload d-none" onChange={hook.addFile} ref={hook.ref} type="file" />
 );
 
 FileInput.propTypes = {

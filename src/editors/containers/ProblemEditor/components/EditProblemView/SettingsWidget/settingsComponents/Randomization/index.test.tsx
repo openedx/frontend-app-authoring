@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import { RandomizationCard } from './index';
 import * as hooks from './hooks';
 
@@ -26,9 +24,10 @@ describe('RandomizationCard', () => {
   describe('behavior', () => {
     it('calls useRandomizationSettingStatus when initialized', () => {
       render(<RandomizationCard {...props} />);
-      expect(hooks.useRandomizationSettingStatus).toHaveBeenCalledWith(
-        { updateSettings: props.updateSettings, randomization: props.randomization },
-      );
+      expect(hooks.useRandomizationSettingStatus).toHaveBeenCalledWith({
+        updateSettings: props.updateSettings,
+        randomization: props.randomization,
+      });
     });
   });
 

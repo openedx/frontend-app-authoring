@@ -6,12 +6,12 @@
     }
 
     .help-sidebar-about-descriptions {
-      font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
+      font: normal var(--pgn-typography-font-weight-normal) 0.875rem/1.5rem var(--pgn-typography-font-family-base);
       color: $text-color-base;
     }
 
     .help-sidebar-about-link {
-      font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
+      font: normal var(--pgn-typography-font-weight-normal) 0.875rem/1.5rem var(--pgn-typography-font-family-base);
     }
   }
 
@@ -26,9 +26,9 @@
   }
 
   .sidebar-link {
-    font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
+    font: normal var(--pgn-typography-font-weight-normal) 0.875rem/1.5rem var(--pgn-typography-font-family-base);
     line-height: 1.5rem;
     color: var(--pgn-color-info-500);
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
 }

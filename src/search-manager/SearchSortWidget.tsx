@@ -16,11 +16,7 @@ export const SearchSortWidget = ({
   disableOptions?: SearchSortOption[];
 }) => {
   const intl = useIntl();
-  const {
-    searchSortOrder,
-    setSearchSortOrder,
-    defaultSearchSortOrder,
-  } = useSearchContext();
+  const { searchSortOrder, setSearchSortOrder, defaultSearchSortOrder } = useSearchContext();
 
   const menuItems = useMemo(
     () => [
@@ -28,10 +24,9 @@ export const SearchSortWidget = ({
         id: 'search-sort-option-most-relevant',
         name: intl.formatMessage(messages.searchSortMostRelevant),
         value: SearchSortOption.RELEVANCE,
-        show: (
-          !disableOptions?.includes(SearchSortOption.RELEVANCE)
-            && defaultSearchSortOrder === SearchSortOption.RELEVANCE
-        ),
+        show:
+          !disableOptions?.includes(SearchSortOption.RELEVANCE) &&
+          defaultSearchSortOrder === SearchSortOption.RELEVANCE,
       },
       {
         id: 'search-sort-option-recently-modified',
@@ -74,15 +69,11 @@ export const SearchSortWidget = ({
   );
 
   const menuHeader = intl.formatMessage(messages.searchSortWidgetLabel);
-  const defaultSortOption = menuItems.find(
-    ({ value }) => (value === defaultSearchSortOrder),
-  );
+  const defaultSortOption = menuItems.find(({ value }) => value === defaultSearchSortOrder);
   const shownMenuItems = menuItems.filter(({ show }) => show);
 
   // Show the currently selected sort option as the toggle button label.
-  const selectedSortOption = shownMenuItems.find(
-    ({ value }) => (value === searchSortOrder),
-  ) ?? defaultSortOption;
+  const selectedSortOption = shownMenuItems.find(({ value }) => value === searchSortOrder) ?? defaultSortOption;
   const toggleLabel = selectedSortOption ? selectedSortOption.name : menuHeader;
 
   return (
@@ -98,7 +89,7 @@ export const SearchSortWidget = ({
         size="sm"
       >
         <Icon src={SwapVert} className="d-inline" />
-        { !iconOnly && <div className="py-0 px-1">{toggleLabel}</div>}
+        {!iconOnly && <div className="py-0 px-1">{toggleLabel}</div>}
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Header>{menuHeader}</Dropdown.Header>
@@ -112,7 +103,7 @@ export const SearchSortWidget = ({
             }}
           >
             {name}
-            {(value === searchSortOrder) && <Icon src={Check} className="ml-2" />}
+            {value === searchSortOrder && <Icon src={Check} className="ml-2" />}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>

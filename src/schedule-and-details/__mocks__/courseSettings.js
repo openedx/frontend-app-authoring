@@ -24,8 +24,7 @@ module.exports = {
     ['en', 'English'],
     ['uk', 'Ukrainian'],
   ],
-  lmsLinkForAboutPage:
-    'http://localhost:18000/courses/course-v1:edX+M12+2T2023/about',
+  lmsLinkForAboutPage: 'http://localhost:18000/courses/course-v1:edX+M12+2T2023/about',
   marketingEnabled: true,
   mfeProctoredExamSettingsUrl: '',
   possiblePreRequisiteCourses: [

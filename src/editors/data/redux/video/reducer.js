@@ -5,10 +5,7 @@ import { StrictDict } from '../../../utils';
 const initialState = {
   videoSource: '',
   videoId: '',
-  fallbackVideos: [
-    '',
-    '',
-  ],
+  fallbackVideos: ['', ''],
   allowVideoDownloads: false,
   allowVideoSharing: {
     level: 'block',
@@ -66,8 +63,4 @@ const actions = StrictDict(video.actions);
 
 const { reducer } = video;
 
-export {
-  actions,
-  initialState,
-  reducer,
-};
+export { actions, initialState, reducer };

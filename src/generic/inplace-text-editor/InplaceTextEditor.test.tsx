@@ -1,19 +1,12 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import {
-  act,
-  fireEvent,
-  render as baseRender,
-  screen,
-} from '@testing-library/react';
+import { act, fireEvent, render as baseRender, screen } from '@testing-library/react';
 import { InplaceTextEditor } from '.';
 
 const mockOnSave = jest.fn();
 
 const RootWrapper = ({ children }: { children: React.ReactNode }) => (
-  <IntlProvider locale="en">
-    {children}
-  </IntlProvider>
+  <IntlProvider locale="en">{children}</IntlProvider>
 );
 const render = (component: React.ReactNode) => baseRender(component, { wrapper: RootWrapper });
 
@@ -102,7 +95,9 @@ describe('<InplaceTextEditor />', () => {
     const newText = screen.getByText('New text');
     expect(newText).toBeInTheDocument();
 
-    await act(async () => { rejecter(new Error('error')); });
+    await act(async () => {
+      rejecter(new Error('error'));
+    });
 
     // Remove pending new text on error
     expect(newText).not.toBeInTheDocument();

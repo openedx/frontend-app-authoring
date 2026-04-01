@@ -1,18 +1,12 @@
-import {
-  InsertDriveFile,
-  Terminal,
-  AudioFile,
-} from '@openedx/paragon/icons';
+import { InsertDriveFile, Terminal, AudioFile } from '@openedx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import FILES_AND_UPLOAD_TYPE_FILTERS from '../../generic/constants';
 
-ensureConfig([
-  'STUDIO_BASE_URL',
-], 'Course Apps API service');
+ensureConfig(['STUDIO_BASE_URL'], 'Course Apps API service');
 
 export const updateFileValues = (files) => {
   const updatedFiles = [];
-  files.forEach(file => {
+  files.forEach((file) => {
     let wrapperType = 'other';
     if (FILES_AND_UPLOAD_TYPE_FILTERS.images.includes(file.contentType)) {
       wrapperType = 'image';
@@ -59,10 +53,10 @@ export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
 };
 
 export const getUploadConflicts = (filesToUpload, assets) => {
-  const filesFound = assets.map(item => item.displayName);
+  const filesFound = assets.map((item) => item.displayName);
   const conflicts = {};
   const newFiles = [];
-  filesToUpload.forEach(file => {
+  filesToUpload.forEach((file) => {
     if (filesFound.includes(file.name)) {
       conflicts[file.name] = file;
     } else {

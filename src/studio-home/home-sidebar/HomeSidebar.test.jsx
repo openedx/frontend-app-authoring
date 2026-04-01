@@ -10,10 +10,7 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
-const {
-  studioName,
-  studioShortName,
-} = studioHomeMock;
+const { studioName, studioShortName } = studioHomeMock;
 
 describe('<HomeSidebar />', () => {
   beforeEach(() => {
@@ -25,7 +22,11 @@ describe('<HomeSidebar />', () => {
 
     const { getByText } = render(<HomeSidebar />);
     expect(getByText(`New to ${studioName}?`)).toBeInTheDocument();
-    expect(getByText(`Click "Looking for help with Studio" at the bottom of the page to access our continually updated documentation and other ${studioShortName} resources.`)).toBeInTheDocument();
+    expect(
+      getByText(
+        `Click "Looking for help with Studio" at the bottom of the page to access our continually updated documentation and other ${studioShortName} resources.`,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('shows mail to get instruction', () => {
@@ -50,7 +51,11 @@ describe('<HomeSidebar />', () => {
 
     const { getByText } = render(<HomeSidebar />);
     expect(getByText(`Can I create courses in ${studioName}?`)).toBeInTheDocument();
-    expect(getByText(`In order to create courses in ${studioName}, you must have course creator privileges to create your own course.`)).toBeInTheDocument();
+    expect(
+      getByText(
+        `In order to create courses in ${studioName}, you must have course creator privileges to create your own course.`,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('shows denied instructions', () => {
@@ -62,6 +67,8 @@ describe('<HomeSidebar />', () => {
 
     const { getByText } = render(<HomeSidebar />);
     expect(getByText(`Can I create courses in ${studioName}?`)).toBeInTheDocument();
-    expect(getByText(`Your request to author courses in ${studioName} has been denied.`, { exact: false })).toBeInTheDocument();
+    expect(
+      getByText(`Your request to author courses in ${studioName} has been denied.`, { exact: false }),
+    ).toBeInTheDocument();
   });
 });

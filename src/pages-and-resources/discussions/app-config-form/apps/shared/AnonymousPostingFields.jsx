@@ -5,11 +5,7 @@ import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 
-const AnonymousPostingFields = ({
-  onBlur,
-  onChange,
-  values,
-}) => {
+const AnonymousPostingFields = ({ onBlur, onChange, values }) => {
   const intl = useIntl();
   return (
     <>

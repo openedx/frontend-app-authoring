@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Dropdown, Form, Collapsible, Icon,
-} from '@openedx/paragon';
+import { Dropdown, Form, Collapsible, Icon } from '@openedx/paragon';
 import { InfoOutline } from '@openedx/paragon/icons';
 
 import { getLabelById } from '../../../utils';
@@ -58,40 +56,27 @@ const CertificateDisplayRow = ({
     onChange(optionId, 'certificatesDisplayBehavior');
   };
 
-  const formattedCertificateBehavior = formatCertificateDisplayBehavior(
-    certificatesDisplayBehavior,
-  );
+  const formattedCertificateBehavior = formatCertificateDisplayBehavior(certificatesDisplayBehavior);
 
-  const certificateDisplayValue = getLabelById(dropdownOptions, formattedCertificateBehavior)
-    || intl.formatMessage(messages.certificateBehaviorDropdownEmpty);
+  const certificateDisplayValue =
+    getLabelById(dropdownOptions, formattedCertificateBehavior) ||
+    intl.formatMessage(messages.certificateBehaviorDropdownEmpty);
 
   const showAvailableDate = formattedCertificateBehavior === CERTIFICATE_DISPLAY_BEHAVIOR.endWithDate;
 
   const renderReadMoreToggle = () => {
     const readMore = [
       {
-        heading: intl.formatMessage(
-          messages.certificateDisplayBehaviorToggleHeading1,
-        ),
-        paragraph: intl.formatMessage(
-          messages.certificateDisplayBehaviorToggleParagraph1,
-        ),
+        heading: intl.formatMessage(messages.certificateDisplayBehaviorToggleHeading1),
+        paragraph: intl.formatMessage(messages.certificateDisplayBehaviorToggleParagraph1),
       },
       {
-        heading: intl.formatMessage(
-          messages.certificateDisplayBehaviorToggleHeading2,
-        ),
-        paragraph: intl.formatMessage(
-          messages.certificateDisplayBehaviorToggleParagraph2,
-        ),
+        heading: intl.formatMessage(messages.certificateDisplayBehaviorToggleHeading2),
+        paragraph: intl.formatMessage(messages.certificateDisplayBehaviorToggleParagraph2),
       },
       {
-        heading: intl.formatMessage(
-          messages.certificateDisplayBehaviorToggleHeading3,
-        ),
-        paragraph: intl.formatMessage(
-          messages.certificateDisplayBehaviorToggleParagraph3,
-        ),
+        heading: intl.formatMessage(messages.certificateDisplayBehaviorToggleHeading3),
+        paragraph: intl.formatMessage(messages.certificateDisplayBehaviorToggleParagraph3),
       },
     ];
 
@@ -103,9 +88,7 @@ const CertificateDisplayRow = ({
         </Collapsible.Trigger>
         <Collapsible.Body className="mt-2.5">
           <p className="x-small text-gray-500">
-            {intl.formatMessage(
-              messages.certificateDisplayBehaviorToggleParagraph,
-            )}
+            {intl.formatMessage(messages.certificateDisplayBehaviorToggleParagraph)}
           </p>
           {readMore.map(({ heading, paragraph }) => (
             <div className="mt-2" key={heading}>
@@ -122,9 +105,7 @@ const CertificateDisplayRow = ({
     <li className="schedule-date-item">
       <div className="schedule-date-item-container">
         <Form.Group className="form-group-custom">
-          <Form.Label>
-            {intl.formatMessage(messages.certificateBehaviorLabel)}
-          </Form.Label>
+          <Form.Label>{intl.formatMessage(messages.certificateBehaviorLabel)}</Form.Label>
           <Dropdown claswsName="bg-white">
             <Dropdown.Toggle id="certificate-behavior-dropdown" variant="outline-primary">
               {certificateDisplayValue}
@@ -137,9 +118,7 @@ const CertificateDisplayRow = ({
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          <Form.Control.Feedback>
-            {intl.formatMessage(messages.certificateBehaviorHelpText)}
-          </Form.Control.Feedback>
+          <Form.Control.Feedback>{intl.formatMessage(messages.certificateBehaviorHelpText)}</Form.Control.Feedback>
           {showAvailableDate && (
             <DatepickerControl
               label={intl.formatMessage(messages.certificateAvailableDateLabel)}
@@ -150,15 +129,9 @@ const CertificateDisplayRow = ({
               controlName="certificateAvailableDate"
             />
           )}
-          {availableDateErrorFeedback && (
-            <span className="schedule-date-item-error">
-              {availableDateErrorFeedback}
-            </span>
-          )}
+          {availableDateErrorFeedback && <span className="schedule-date-item-error">{availableDateErrorFeedback}</span>}
           {displayBehaviorErrorFeedback && (
-            <span className="schedule-date-item-error">
-              {displayBehaviorErrorFeedback}
-            </span>
+            <span className="schedule-date-item-error">{displayBehaviorErrorFeedback}</span>
           )}
           {renderReadMoreToggle()}
         </Form.Group>

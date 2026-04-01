@@ -13,9 +13,7 @@ import { useIndexOfLastVisibleChild } from '../hooks';
 import SequenceNavigationDropdown from './SequenceNavigationDropdown';
 import UnitButton from './UnitButton';
 
-const SequenceNavigationTabs = ({
-  unitIds, unitId, handleCreateNewCourseXBlock, showPasteUnit,
-}) => {
+const SequenceNavigationTabs = ({ unitIds, unitId, handleCreateNewCourseXBlock, showPasteUnit }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,27 +22,30 @@ const SequenceNavigationTabs = ({
   const courseUnit = useSelector(getCourseUnitData);
   const sequenceChildAddable = courseUnit?.ancestorInfo?.ancestors?.[0]?.actions?.childAddable;
 
-  const [
-    indexOfLastVisibleChild,
-    containerRef,
-    invisibleStyle,
-  ] = useIndexOfLastVisibleChild();
+  const [indexOfLastVisibleChild, containerRef, invisibleStyle] = useIndexOfLastVisibleChild();
   const shouldDisplayDropdown = indexOfLastVisibleChild === -1;
 
   const handleAddNewSequenceUnit = () => {
     dispatch(updateQueryPendingStatus(true));
-    handleCreateNewCourseXBlock({ parentLocator: sequenceId, category: 'vertical', displayName: 'Unit' }, ({ courseKey, locator }) => {
-      navigate(`/course/${courseKey}/container/${locator}/${sequenceId}`, courseId);
-      dispatch(changeEditTitleFormOpen(true));
-    });
+    handleCreateNewCourseXBlock(
+      { parentLocator: sequenceId, category: 'vertical', displayName: 'Unit' },
+      ({ courseKey, locator }) => {
+        navigate(`/course/${courseKey}/container/${locator}/${sequenceId}`, courseId);
+        dispatch(changeEditTitleFormOpen(true));
+      },
+    );
   };
 
   const handlePasteNewSequenceUnit = () => {
     dispatch(updateQueryPendingStatus(true));
-    handleCreateNewCourseXBlock({ parentLocator: sequenceId, stagedContent: 'clipboard' }, ({ courseKey, locator }) => {
-      navigate(`/course/${courseKey}/container/${locator}/${sequenceId}`, courseId);
-      dispatch(changeEditTitleFormOpen(true));
-    }, unitId);
+    handleCreateNewCourseXBlock(
+      { parentLocator: sequenceId, stagedContent: 'clipboard' },
+      ({ courseKey, locator }) => {
+        navigate(`/course/${courseKey}/container/${locator}/${sequenceId}`, courseId);
+        dispatch(changeEditTitleFormOpen(true));
+      },
+      unitId,
+    );
   };
 
   return (
@@ -55,21 +56,17 @@ const SequenceNavigationTabs = ({
           style={shouldDisplayDropdown ? invisibleStyle : null}
         >
           {unitIds.map((buttonUnitId) => (
-            <UnitButton
-              key={buttonUnitId}
-              unitId={buttonUnitId}
-              isActive={unitId === buttonUnitId}
-            />
+            <UnitButton key={buttonUnitId} unitId={buttonUnitId} isActive={unitId === buttonUnitId} />
           ))}
           {sequenceChildAddable && (
-          <Button
-            className="sequence-navigation-tabs-action-btn"
-            variant="outline-primary"
-            iconBefore={PlusIcon}
-            onClick={handleAddNewSequenceUnit}
-          >
-            {intl.formatMessage(messages.newUnitBtnText)}
-          </Button>
+            <Button
+              className="sequence-navigation-tabs-action-btn"
+              variant="outline-primary"
+              iconBefore={PlusIcon}
+              onClick={handleAddNewSequenceUnit}
+            >
+              {intl.formatMessage(messages.newUnitBtnText)}
+            </Button>
           )}
           {showPasteUnit && (
             <Button

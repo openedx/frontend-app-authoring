@@ -8,26 +8,17 @@ export interface PageBannerSlotProps {
   children: ReactNode;
 }
 
-const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
-  show,
-  onDismiss,
-  children,
-}) => (
+const PageBannerSlot: React.FC<PageBannerSlotProps> = ({ show, onDismiss, children }) => (
   <PluginSlot
     id="org.openedx.frontend.authoring.page_banner.v1"
     idAliases={['page_banner_slot']}
     pluginProps={{
-      show, onDismiss,
+      show,
+      onDismiss,
     }}
   >
     <div className="align-items-start">
-      <PageBanner
-        show={show}
-        dismissible
-        onDismiss={onDismiss}
-        variant="light"
-        dismissAltText="Close"
-      >
+      <PageBanner show={show} dismissible onDismiss={onDismiss} variant="light" dismissAltText="Close">
         {children}
       </PageBanner>
     </div>

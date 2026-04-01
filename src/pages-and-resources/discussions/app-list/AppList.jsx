@@ -1,17 +1,20 @@
-import React, {
-  useCallback, useEffect, useMemo, useState, useContext,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  CardGrid, Container, breakpoints, Form, ActionRow, AlertModal, Button, StatefulButton,
+  CardGrid,
+  Container,
+  breakpoints,
+  Form,
+  ActionRow,
+  AlertModal,
+  Button,
+  StatefulButton,
 } from '@openedx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useModels } from '../../../generic/model-store';
-import {
-  selectApp, LOADED, LOADING, SAVING, updateValidationStatus,
-} from '../data/slice';
+import { selectApp, LOADED, LOADING, SAVING, updateValidationStatus } from '../data/slice';
 import AppCard from './AppCard';
 import messages from './messages';
 import FeaturesTable from './FeaturesTable';
@@ -26,9 +29,8 @@ const AppList = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { courseId } = useContext(PagesAndResourcesContext);
-  const {
-    appIds, featureIds, status, saveStatus, activeAppId, selectedAppId, enabled, postingRestrictions,
-  } = useSelector(state => state.discussions);
+  const { appIds, featureIds, status, saveStatus, activeAppId, selectedAppId, enabled, postingRestrictions } =
+    useSelector((state) => state.discussions);
   const [discussionTabToggle, setDiscussionTabToggle] = useState(enabled);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
@@ -36,9 +38,10 @@ const AppList = () => {
   const ltiProvider = !['openedx', 'legacy'].includes(activeAppId);
   const isOnSmallScreen = useIsOnSmallScreen();
 
-  const showOneEdxProvider = useMemo(() => apps.filter(app => (
-    activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx'
-  )), [activeAppId]);
+  const showOneEdxProvider = useMemo(
+    () => apps.filter((app) => (activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx')),
+    [activeAppId],
+  );
 
   // This could be a bit confusing.  activeAppId is the ID of the app that is currently configured
   // according to the server.  selectedAppId is the ID of the app that we _want_ to configure here
@@ -67,17 +70,17 @@ const AppList = () => {
     dispatch(selectApp({ appId }));
   }, []);
 
-  const updateSettings = useCallback((enabledDiscussion) => {
-    dispatch(saveProviderConfig(
-      courseId,
-      selectedAppId,
-      {
-        enabled: enabledDiscussion,
-        postingRestrictions:
-        enabledDiscussion ? postingRestrictions : discussionRestriction.ENABLED,
-      },
-    ));
-  }, [courseId, selectedAppId, postingRestrictions]);
+  const updateSettings = useCallback(
+    (enabledDiscussion) => {
+      dispatch(
+        saveProviderConfig(courseId, selectedAppId, {
+          enabled: enabledDiscussion,
+          postingRestrictions: enabledDiscussion ? postingRestrictions : discussionRestriction.ENABLED,
+        }),
+      );
+    },
+    [courseId, selectedAppId, postingRestrictions],
+  );
 
   const handleClose = useCallback(() => {
     setDiscussionTabToggle(enabled);
@@ -88,19 +91,20 @@ const AppList = () => {
     updateSettings(false);
   }, [updateSettings]);
 
-  const handleChange = useCallback((e) => {
-    const toggleVal = e.target.checked;
-    if (!toggleVal) {
-      updateSettings(!toggleVal);
-    } else {
-      setDiscussionTabToggle(!toggleVal);
-    }
-  }, [updateSettings]);
+  const handleChange = useCallback(
+    (e) => {
+      const toggleVal = e.target.checked;
+      if (!toggleVal) {
+        updateSettings(!toggleVal);
+      } else {
+        setDiscussionTabToggle(!toggleVal);
+      }
+    },
+    [updateSettings],
+  );
 
   if (!selectedAppId || status === LOADING) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   if (status === LOADED && apps.length === 0) {
@@ -111,22 +115,21 @@ const AppList = () => {
     );
   }
 
-  const showAppCard = (filteredApps) => filteredApps.map(app => (
-    <AppCard
-      key={app.id}
-      app={app}
-      selected={app.id === selectedAppId}
-      onClick={handleSelectApp}
-      features={features}
-    />
-  ));
+  const showAppCard = (filteredApps) =>
+    filteredApps.map((app) => (
+      <AppCard
+        key={app.id}
+        app={app}
+        selected={app.id === selectedAppId}
+        onClick={handleSelectApp}
+        features={features}
+      />
+    ));
 
   return (
     <div className="my-sm-4" data-testid="appList">
       <div className={!isOnSmallScreen ? 'd-flex flex-row justify-content-between align-items-center' : 'mb-4'}>
-        <h3 className={isOnSmallScreen ? 'mb-3' : 'm-0'}>
-          {intl.formatMessage(messages.heading)}
-        </h3>
+        <h3 className={isOnSmallScreen ? 'mb-3' : 'm-0'}>{intl.formatMessage(messages.heading)}</h3>
         <Form.Switch
           floatLabelLeft
           className="text-primary-500 align-items-center"
@@ -147,17 +150,12 @@ const AppList = () => {
         }}
         className={!isOnSmallScreen && 'mt-5'}
       >
-        {(isGlobalStaff || ltiProvider) ? showAppCard(apps) : showAppCard(showOneEdxProvider)}
+        {isGlobalStaff || ltiProvider ? showAppCard(apps) : showAppCard(showOneEdxProvider)}
       </CardGrid>
       <Responsive minWidth={breakpoints.small.minWidth}>
-        <h3 className="my-sm-5 my-4">
-          {intl.formatMessage(messages.supportedFeatures)}
-        </h3>
+        <h3 className="my-sm-5 my-4">{intl.formatMessage(messages.supportedFeatures)}</h3>
         <div className="app-list-data-table">
-          <FeaturesTable
-            apps={apps}
-            features={features}
-          />
+          <FeaturesTable apps={apps} features={features} />
         </div>
       </Responsive>
       <AlertModal
@@ -166,7 +164,7 @@ const AppList = () => {
         onClose={handleClose}
         isBlocking
         className="hide-discussion-modal"
-        footerNode={(
+        footerNode={
           <ActionRow>
             <Button variant="link" className="text-decoration-none bg-black" onClick={handleClose}>
               {intl.formatMessage(messages.hideDiscussionCancelButton)}
@@ -181,11 +179,9 @@ const AppList = () => {
               onClick={handleOk}
             />
           </ActionRow>
-        )}
+        }
       >
-        <p className="bg-black">
-          {intl.formatMessage(messages.hideDiscussionTabMessage)}
-        </p>
+        <p className="bg-black">{intl.formatMessage(messages.hideDiscussionTabMessage)}</p>
       </AlertModal>
     </div>
   );

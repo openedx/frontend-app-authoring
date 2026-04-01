@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStateWithUrlSearchParam } from '@src/hooks';
 import { LibQueryParamKeys, useLibraryRoutes } from '@src/library-authoring/routes';
@@ -24,10 +17,9 @@ export const COLLECTION_INFO_TABS = {
   Manage: 'manage',
   Details: 'details',
 } as const;
-export type CollectionInfoTab = typeof COLLECTION_INFO_TABS[keyof typeof COLLECTION_INFO_TABS];
-export const isCollectionInfoTab = (tab: string): tab is CollectionInfoTab => (
-  Object.values<string>(COLLECTION_INFO_TABS).includes(tab)
-);
+export type CollectionInfoTab = (typeof COLLECTION_INFO_TABS)[keyof typeof COLLECTION_INFO_TABS];
+export const isCollectionInfoTab = (tab: string): tab is CollectionInfoTab =>
+  Object.values<string>(COLLECTION_INFO_TABS).includes(tab);
 
 export const COMPONENT_INFO_TABS = {
   Preview: 'preview',
@@ -35,10 +27,9 @@ export const COMPONENT_INFO_TABS = {
   Usage: 'usage',
   Details: 'details',
 } as const;
-export type ComponentInfoTab = typeof COMPONENT_INFO_TABS[keyof typeof COMPONENT_INFO_TABS];
-export const isComponentInfoTab = (tab: string): tab is ComponentInfoTab => (
-  Object.values<string>(COMPONENT_INFO_TABS).includes(tab)
-);
+export type ComponentInfoTab = (typeof COMPONENT_INFO_TABS)[keyof typeof COMPONENT_INFO_TABS];
+export const isComponentInfoTab = (tab: string): tab is ComponentInfoTab =>
+  Object.values<string>(COMPONENT_INFO_TABS).includes(tab);
 
 export const CONTAINER_INFO_TABS = {
   Preview: 'preview',
@@ -46,10 +37,9 @@ export const CONTAINER_INFO_TABS = {
   Usage: 'usage',
   Settings: 'settings',
 } as const;
-export type ContainerInfoTab = typeof CONTAINER_INFO_TABS[keyof typeof CONTAINER_INFO_TABS];
-export const isContainerInfoTab = (tab: string): tab is ContainerInfoTab => (
-  Object.values<string>(CONTAINER_INFO_TABS).includes(tab)
-);
+export type ContainerInfoTab = (typeof CONTAINER_INFO_TABS)[keyof typeof CONTAINER_INFO_TABS];
+export const isContainerInfoTab = (tab: string): tab is ContainerInfoTab =>
+  Object.values<string>(CONTAINER_INFO_TABS).includes(tab);
 
 const DEFAULT_TAB = {
   component: COMPONENT_INFO_TABS.Preview,
@@ -58,10 +48,8 @@ const DEFAULT_TAB = {
 };
 
 type SidebarInfoTab = ComponentInfoTab | CollectionInfoTab | ContainerInfoTab;
-const toSidebarInfoTab = (tab: string): SidebarInfoTab | undefined => (
-  isComponentInfoTab(tab) || isCollectionInfoTab(tab) || isContainerInfoTab(tab)
-    ? tab : undefined
-);
+const toSidebarInfoTab = (tab: string): SidebarInfoTab | undefined =>
+  isComponentInfoTab(tab) || isCollectionInfoTab(tab) || isContainerInfoTab(tab) ? tab : undefined;
 
 export interface DefaultTabs {
   component: ComponentInfoTab;
@@ -117,13 +105,8 @@ type SidebarProviderProps = {
 /**
  * React component to provide `SidebarContext`
  */
-export const SidebarProvider = ({
-  children,
-  initialSidebarItemInfo,
-}: SidebarProviderProps) => {
-  const [sidebarItemInfo, setSidebarItemInfo] = useState<SidebarItemInfo | undefined>(
-    initialSidebarItemInfo,
-  );
+export const SidebarProvider = ({ children, initialSidebarItemInfo }: SidebarProviderProps) => {
+  const [sidebarItemInfo, setSidebarItemInfo] = useState<SidebarItemInfo | undefined>(initialSidebarItemInfo);
 
   const [defaultTab, setDefaultTab] = useState<DefaultTabs>(DEFAULT_TAB);
   const [hiddenTabs, setHiddenTabs] = useState<Array<SidebarInfoTab>>([]);
@@ -180,10 +163,13 @@ export const SidebarProvider = ({
   }, []);
 
   const { navigateTo } = useLibraryRoutes();
-  const openItemSidebar = useCallback((selectedItemId: string, type: SidebarBodyItemId, index?: number) => {
-    navigateTo({ selectedItemId, index });
-    setSidebarItemInfo({ id: selectedItemId, type, index });
-  }, [navigateTo, setSidebarItemInfo]);
+  const openItemSidebar = useCallback(
+    (selectedItemId: string, type: SidebarBodyItemId, index?: number) => {
+      navigateTo({ selectedItemId, index });
+      setSidebarItemInfo({ id: selectedItemId, type, index });
+    },
+    [navigateTo, setSidebarItemInfo],
+  );
 
   // Set the initial sidebar state based on the URL parameters and context.
   const { selectedItemId, index: indexParam } = useParams();
@@ -233,10 +219,7 @@ export const SidebarProvider = ({
         component: COMPONENT_INFO_TABS.Manage,
         container: CONTAINER_INFO_TABS.Manage,
       });
-      setHiddenTabs([
-        COMPONENT_INFO_TABS.Preview,
-        CONTAINER_INFO_TABS.Preview,
-      ]);
+      setHiddenTabs([COMPONENT_INFO_TABS.Preview, CONTAINER_INFO_TABS.Preview]);
     } else {
       setDefaultTab(DEFAULT_TAB);
       setHiddenTabs([]);
@@ -281,11 +264,7 @@ export const SidebarProvider = ({
     hiddenTabs,
   ]);
 
-  return (
-    <SidebarContext.Provider value={context}>
-      {children}
-    </SidebarContext.Provider>
-  );
+  return <SidebarContext.Provider value={context}>{children}</SidebarContext.Provider>;
 };
 
 export function useSidebarContext(): SidebarContextData {

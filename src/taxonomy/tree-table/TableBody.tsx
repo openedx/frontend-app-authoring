@@ -7,12 +7,7 @@ import NestedRows from './NestedRows';
 
 import messages from './messages';
 
-import type {
-  CreateRowMutationState,
-  RowId,
-  TreeColumnDef,
-  TreeTable,
-} from './types';
+import type { CreateRowMutationState, RowId, TreeColumnDef, TreeTable } from './types';
 import { CreateRow } from './CreateRow';
 
 interface TableBodyProps {
@@ -83,38 +78,40 @@ const TableBody = ({
         />
       )}
 
-      {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
-        <React.Fragment key={row.id}>
-          <tr>
-            {row.getVisibleCells()
-              .map((cell, index) => (
+      {table
+        .getRowModel()
+        .rows.filter((row) => row.depth === 0)
+        .map((row) => (
+          <React.Fragment key={row.id}>
+            <tr>
+              {row.getVisibleCells().map((cell, index) => (
                 <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
-          </tr>
-          <NestedRows
-            parentRow={row}
-            childRowsData={row.subRows}
-            parentRowValue={String(row.original.value)}
-            isCreating={creatingParentId === row.original.id}
-            onSaveNewChildRow={handleCreateRow}
-            onCancelCreation={() => {
-              setDraftError('');
-              setCreatingParentId(null);
-              exitDraftWithoutSave();
-            }}
-            creatingParentId={creatingParentId}
-            setCreatingParentId={setCreatingParentId}
-            depth={1}
-            draftError={draftError}
-            createRowMutation={createRowMutation}
-            setDraftError={setDraftError}
-            setIsCreatingTopRow={setIsCreatingTopRow}
-            validate={validate}
-          />
-        </React.Fragment>
-      ))}
+            </tr>
+            <NestedRows
+              parentRow={row}
+              childRowsData={row.subRows}
+              parentRowValue={String(row.original.value)}
+              isCreating={creatingParentId === row.original.id}
+              onSaveNewChildRow={handleCreateRow}
+              onCancelCreation={() => {
+                setDraftError('');
+                setCreatingParentId(null);
+                exitDraftWithoutSave();
+              }}
+              creatingParentId={creatingParentId}
+              setCreatingParentId={setCreatingParentId}
+              depth={1}
+              draftError={draftError}
+              createRowMutation={createRowMutation}
+              setDraftError={setDraftError}
+              setIsCreatingTopRow={setIsCreatingTopRow}
+              validate={validate}
+            />
+          </React.Fragment>
+        ))}
     </tbody>
   );
 };

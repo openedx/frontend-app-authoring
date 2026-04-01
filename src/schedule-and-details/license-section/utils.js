@@ -1,8 +1,4 @@
-import {
-  LICENSE_COMMONS_OPTIONS,
-  creativeCommonsLicensesURL,
-  creativeCommonsVersion,
-} from './constants';
+import { LICENSE_COMMONS_OPTIONS, creativeCommonsLicensesURL, creativeCommonsVersion } from './constants';
 
 const generateLicenseURL = (details) => {
   const detailsString = Object.entries(details)

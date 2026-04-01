@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  Button, Card, MailtoLink, Hyperlink,
-} from '@openedx/paragon';
+import { Button, Card, MailtoLink, Hyperlink } from '@openedx/paragon';
 import PageBannerSlot from '@src/plugin-slots/PageBannerSlot';
 import { Email as EmailIcon } from '@openedx/paragon/icons';
 
@@ -79,24 +77,15 @@ const BasicSection = ({
   );
 
   const renderPageBanner = () => (
-    <PageBannerSlot
-      show={showPageBanner}
-      onDismiss={() => setShowPageBanner(false)}
-    >
+    <PageBannerSlot show={showPageBanner} onDismiss={() => setShowPageBanner(false)}>
       <h4 className="text-black">{intl.formatMessage(messages.basicBannerTitle, { platformName })}</h4>
-      <span className="text text-gray-700 text-left">
-        {intl.formatMessage(messages.basicBannerText)}
-      </span>
+      <span className="text text-gray-700 text-left">{intl.formatMessage(messages.basicBannerText)}</span>
     </PageBannerSlot>
   );
 
   const renderCoursePromotion = () => (
     <Card>
-      <Card.Header
-        className="h4 px-3 text-gray-500"
-        title={promotionTitle}
-        size="sm"
-      />
+      <Card.Header className="h4 px-3 text-gray-500" title={promotionTitle} size="sm" />
       <Card.Section className="px-3 py-1">
         <Hyperlink
           destination={lmsLinkForAboutPage}
@@ -129,9 +118,7 @@ const BasicSection = ({
         title={intl.formatMessage(messages.basicTitle)}
         description={intl.formatMessage(messages.basicDescription)}
       />
-      <ul className="basic-info-list">
-        {courseBasicInfo.map(renderBasicInfo)}
-      </ul>
+      <ul className="basic-info-list">{courseBasicInfo.map(renderBasicInfo)}</ul>
       {marketingEnabled ? renderPageBanner() : renderCoursePromotion()}
     </section>
   );

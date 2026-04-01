@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import { GeneralFeedbackCard } from './index';
 import * as hooks from './hooks';
 

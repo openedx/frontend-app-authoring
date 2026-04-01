@@ -1,10 +1,4 @@
-import {
-  fireEvent,
-  render,
-  screen,
-  initializeMocks,
-  within,
-} from '../../testUtils';
+import { fireEvent, render, screen, initializeMocks, within } from '../../testUtils';
 
 import CompareChangesWidget from './CompareChangesWidget';
 

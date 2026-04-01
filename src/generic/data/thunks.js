@@ -7,11 +7,7 @@ import {
   updateCourseRerunData,
   updateSavingStatus,
 } from './slice';
-import {
-  createOrRerunCourse,
-  getOrganizations,
-  getCourseRerun,
-} from './api';
+import { createOrRerunCourse, getOrganizations, getCourseRerun } from './api';
 
 export function fetchOrganizationsQuery() {
   return async (dispatch) => {

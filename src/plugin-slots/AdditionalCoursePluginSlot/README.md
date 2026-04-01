@@ -3,7 +3,8 @@
 ### Slot ID: `org.openedx.frontend.authoring.additional_course_plugin.v1`
 
 ### Slot ID Aliases
-* `additional_course_plugin`
+
+- `additional_course_plugin`
 
 ## Description
 
@@ -34,31 +35,28 @@ const config = {
             id: 'custom_additional_course',
             type: DIRECT_PLUGIN,
             RenderWidget: () => (
-                <Card className={'shadow justify-content-between'} >
-                    <Card.Header
-                        title={'Additional Course'}
-                        subtitle={(
-                        <Badge variant="success" className="mt-1">
-                          slot props course
-                        </Badge>
-                        )}
-                        actions={<Settings />}
-                        size="sm"
-                    />
-                    <Card.Body>
-                        <Card.Section>
-                          Additional course from slot props description. 
-                          Or anything else.
-                        </Card.Section>
-                    </Card.Body>
-                </Card>
+              <Card className={'shadow justify-content-between'}>
+                <Card.Header
+                  title={'Additional Course'}
+                  subtitle={
+                    <Badge variant="success" className="mt-1">
+                      slot props course
+                    </Badge>
+                  }
+                  actions={<Settings />}
+                  size="sm"
+                />
+                <Card.Body>
+                  <Card.Section>Additional course from slot props description. Or anything else.</Card.Section>
+                </Card.Body>
+              </Card>
             ),
           },
         },
-      ]
-    }
+      ],
+    },
   },
-}
+};
 
 export default config;
 ```

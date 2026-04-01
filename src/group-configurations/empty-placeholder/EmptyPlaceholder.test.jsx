@@ -6,11 +6,12 @@ import EmptyPlaceholder from '.';
 
 const onCreateNewGroup = jest.fn();
 
-const renderComponent = () => render(
-  <IntlProvider locale="en">
-    <EmptyPlaceholder onCreateNewGroup={onCreateNewGroup} />
-  </IntlProvider>,
-);
+const renderComponent = () =>
+  render(
+    <IntlProvider locale="en">
+      <EmptyPlaceholder onCreateNewGroup={onCreateNewGroup} />
+    </IntlProvider>,
+  );
 
 describe('<EmptyPlaceholder />', () => {
   it('renders EmptyPlaceholder component correctly', () => {

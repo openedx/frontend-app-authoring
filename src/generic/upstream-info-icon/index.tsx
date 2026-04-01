@@ -1,11 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button, Icon, OverlayTrigger, Tooltip,
-} from '@openedx/paragon';
-import {
-  CallSplit, LinkOff, Newsstand, Sync,
-} from '@openedx/paragon/icons';
+import { Button, Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
+import { CallSplit, LinkOff, Newsstand, Sync } from '@openedx/paragon/icons';
 
 import { BoldText } from '@src/utils';
 import { ReactNode } from 'react';
@@ -22,10 +18,7 @@ export interface UpstreamInfoIconProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'inline';
 }
 
-const UpstreamInfoIconContent = ({
-  upstreamInfo,
-  size,
-}: UpstreamInfoIconProps) => {
+const UpstreamInfoIconContent = ({ upstreamInfo, size }: UpstreamInfoIconProps) => {
   const intl = useIntl();
 
   if (!upstreamInfo) {
@@ -33,13 +26,10 @@ const UpstreamInfoIconContent = ({
   }
 
   let secondIcon: JSX.Element | undefined;
-  let tooltipMessage: string | ReactNode = intl.formatMessage(
-    messages.upstreamLinkTooltip,
-    {
-      upstreamName: upstreamInfo.upstreamName,
-      b: BoldText,
-    },
-  );
+  let tooltipMessage: string | ReactNode = intl.formatMessage(messages.upstreamLinkTooltip, {
+    upstreamName: upstreamInfo.upstreamName,
+    b: BoldText,
+  });
 
   if (upstreamInfo.errorMessage) {
     tooltipMessage = intl.formatMessage(messages.upstreamLinkError);
@@ -52,13 +42,10 @@ const UpstreamInfoIconContent = ({
       />
     );
   } else if (upstreamInfo.readyToSync) {
-    tooltipMessage = intl.formatMessage(
-      messages.upstreamLinkReadyToSyncTooltip,
-      {
-        upstreamName: upstreamInfo.upstreamName,
-        b: BoldText,
-      },
-    );
+    tooltipMessage = intl.formatMessage(messages.upstreamLinkReadyToSyncTooltip, {
+      upstreamName: upstreamInfo.upstreamName,
+      b: BoldText,
+    });
     secondIcon = (
       <Icon
         size={size}
@@ -83,16 +70,14 @@ const UpstreamInfoIconContent = ({
     <OverlayTrigger
       key={`upstream-icon-${upstreamInfo.upstreamRef}`}
       placement="top"
-      overlay={(
+      overlay={
         <Tooltip className="upstream-info-tooltip" id={`upstream-icon-tooltip-${upstreamInfo.upstreamRef}`}>
           {tooltipMessage}
         </Tooltip>
-      )}
+      }
     >
       <div
-        className={
-          `upstream-info-icon size-${secondIcon ? 'two' : 'one'}-${size} ${upstreamInfo.readyToSync ? 'sync-state' : ''} rounded-sm d-flex justify-content-center`
-        }
+        className={`upstream-info-icon size-${secondIcon ? 'two' : 'one'}-${size} ${upstreamInfo.readyToSync ? 'sync-state' : ''} rounded-sm d-flex justify-content-center`}
       >
         <Icon
           title={intl.formatMessage(messages.upstreamLinkOk)}
@@ -122,17 +107,11 @@ export const UpstreamInfoIcon: React.FC<UpstreamInfoIconProps & { openSyncModal:
 
   if (upstreamInfo?.readyToSync) {
     return (
-      <Button
-        variant="tertiary"
-        className="border-0 px-0 py-0"
-        onClick={handleSyncModal}
-      >
+      <Button variant="tertiary" className="border-0 px-0 py-0" onClick={handleSyncModal}>
         <UpstreamInfoIconContent upstreamInfo={upstreamInfo} size={size} />
       </Button>
     );
   }
 
-  return (
-    <UpstreamInfoIconContent upstreamInfo={upstreamInfo} size={size} />
-  );
+  return <UpstreamInfoIconContent upstreamInfo={upstreamInfo} size={size} />;
 };

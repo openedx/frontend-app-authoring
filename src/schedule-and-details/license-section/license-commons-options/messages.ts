@@ -15,7 +15,8 @@ const messages = defineMessages({
   },
   licenseCreativeOptionBYDescription: {
     id: 'course-authoring.schedule-section.license.creative-commons.option.BY.description',
-    defaultMessage: 'Allow others to copy, distribute, display and perform your copyrighted work but only if they give credit the way you request. Currently, this option is required.',
+    defaultMessage:
+      'Allow others to copy, distribute, display and perform your copyrighted work but only if they give credit the way you request. Currently, this option is required.',
   },
   licenseCreativeOptionNCLabel: {
     id: 'course-authoring.schedule-section.license.creative-commons.option.NC.label',
@@ -23,7 +24,8 @@ const messages = defineMessages({
   },
   licenseCreativeOptionNCDescription: {
     id: 'course-authoring.schedule-section.license.creative-commons.option.NC.description',
-    defaultMessage: ' Allow others to copy, distribute, display and perform your work - and derivative works based upon it - but for noncommercial purposes only.',
+    defaultMessage:
+      ' Allow others to copy, distribute, display and perform your work - and derivative works based upon it - but for noncommercial purposes only.',
   },
   licenseCreativeOptionNDLabel: {
     id: 'course-authoring.schedule-section.license.creative-commons.option.ND.label',
@@ -31,7 +33,8 @@ const messages = defineMessages({
   },
   licenseCreativeOptionNDDescription: {
     id: 'course-authoring.schedule-section.license.creative-commons.option.ND.description',
-    defaultMessage: 'Allow others to copy, distribute, display and perform only verbatim copies of your work, not derivative works based upon it. This option is incompatible with "Share Alike".',
+    defaultMessage:
+      'Allow others to copy, distribute, display and perform only verbatim copies of your work, not derivative works based upon it. This option is incompatible with "Share Alike".',
   },
   licenseCreativeOptionSALabel: {
     id: 'course-authoring.schedule-section.license.creative-commons.option.SA.label',
@@ -39,7 +42,8 @@ const messages = defineMessages({
   },
   licenseCreativeOptionSADescription: {
     id: 'course-authoring.schedule-section.license.creative-commons.option.SA.description',
-    defaultMessage: 'Allow others to distribute derivative works only under a license identical to the license that governs your work. This option is incompatible with "No Derivatives".',
+    defaultMessage:
+      'Allow others to distribute derivative works only under a license identical to the license that governs your work. This option is incompatible with "No Derivatives".',
   },
 });
 

@@ -47,15 +47,12 @@ export const COURSE_CREATOR_STATES = {
 } as const;
 
 export const DECODED_ROUTES = {
-  COURSE_UNIT: [
-    '/container/:blockId/:sequenceId',
-    '/container/:blockId',
-  ],
+  COURSE_UNIT: ['/container/:blockId/:sequenceId', '/container/:blockId'],
 };
 
 export const UPLOAD_FILE_MAX_SIZE = 20 * 1024 * 1024; // 100mb
 
-export const COURSE_BLOCK_NAMES = ({
+export const COURSE_BLOCK_NAMES = {
   chapter: { id: 'chapter', name: 'Section' },
   sequential: { id: 'sequential', name: 'Subsection' },
   vertical: { id: 'vertical', name: 'Unit' },
@@ -64,7 +61,7 @@ export const COURSE_BLOCK_NAMES = ({
   component: { id: 'component', name: 'Component' },
   itembank: { id: 'itembank', name: 'Problem Bank' },
   legacyLibraryContent: { id: 'library_content', name: 'Randomized Content Block' },
-});
+};
 
 export const STUDIO_CLIPBOARD_CHANNEL = 'studio_clipboard_channel';
 
@@ -92,9 +89,8 @@ export const REGEX_RULES = {
  * This policy was selected in conference with the edX Security Working Group.
  * Changes to it should be vetted by them (security@edx.org).
  */
-export const IFRAME_FEATURE_POLICY = (
-  'microphone *; camera *; midi *; geolocation *; encrypted-media *; clipboard-write *'
-);
+export const IFRAME_FEATURE_POLICY =
+  'microphone *; camera *; midi *; geolocation *; encrypted-media *; clipboard-write *';
 
 export const iframeStateKeys = {
   iframeHeight: 'iframeHeight',

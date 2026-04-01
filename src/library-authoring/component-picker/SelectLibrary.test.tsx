@@ -1,12 +1,5 @@
-import {
-  initializeMocks,
-  fireEvent,
-  render,
-  screen,
-} from '../../testUtils';
-import {
-  mockGetContentLibraryV2List,
-} from '../data/api.mocks';
+import { initializeMocks, fireEvent, render, screen } from '../../testUtils';
+import { mockGetContentLibraryV2List } from '../data/api.mocks';
 import { LibraryAndComponentPicker } from './ComponentPicker';
 
 describe('<LibraryAndComponentPicker />', () => {

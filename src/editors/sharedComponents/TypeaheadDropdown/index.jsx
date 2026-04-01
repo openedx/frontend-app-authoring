@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Icon,
-  IconButton,
-  Button,
-  ActionRow,
-} from '@openedx/paragon';
+import { Icon, IconButton, Button, ActionRow } from '@openedx/paragon';
 import { Add, ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import { sortBy } from 'lodash';
@@ -43,7 +38,7 @@ class TypeaheadDropdown extends React.Component {
     let { options } = this.props;
 
     if (strToFind.length > 0) {
-      options = options.filter((option) => (option.toLowerCase().includes(strToFind.toLowerCase())));
+      options = options.filter((option) => option.toLowerCase().includes(strToFind.toLowerCase()));
     }
 
     const sortedOptions = sortBy(options, (option) => option.toLowerCase());
@@ -60,7 +55,9 @@ class TypeaheadDropdown extends React.Component {
           className="dropdown-item data-hj-suppress"
           value={value}
           key={value}
-          onClick={(e) => { this.handleItemClick(e); }}
+          onClick={(e) => {
+            this.handleItemClick(e);
+          }}
         >
           {value}
         </button>
@@ -140,12 +137,16 @@ class TypeaheadDropdown extends React.Component {
 
   handleFocus(e) {
     this.setState({ isFocused: true });
-    if (this.props.handleFocus) { this.props.handleFocus(e); }
+    if (this.props.handleFocus) {
+      this.props.handleFocus(e);
+    }
   }
 
   handleOnBlur(e) {
     this.setState({ isFocused: false });
-    if (this.props.handleBlur) { this.props.handleBlur(e); }
+    if (this.props.handleBlur) {
+      this.props.handleBlur(e);
+    }
   }
 
   handleItemClick(e) {
@@ -163,7 +164,9 @@ class TypeaheadDropdown extends React.Component {
         size="sm"
         variant="secondary"
         alt="expand-more"
-        onClick={(e) => { this.handleExpandMore(e); }}
+        onClick={(e) => {
+          this.handleExpandMore(e);
+        }}
       />
     );
   }
@@ -178,7 +181,9 @@ class TypeaheadDropdown extends React.Component {
         size="sm"
         variant="secondary"
         alt="expand-less"
-        onClick={(e) => { this.handleExpandLess(e); }}
+        onClick={(e) => {
+          this.handleExpandLess(e);
+        }}
       />
     );
   }
@@ -189,11 +194,7 @@ class TypeaheadDropdown extends React.Component {
         <div className="muted">{this.props.noOptionsMessage}</div>
         <ActionRow.Spacer />
         {this.props.allowNewOption && (
-          <Button
-            data-testid="add-option-button"
-            iconBefore={Add}
-            onClick={this.props.addNewOption}
-          >
+          <Button data-testid="add-option-button" iconBefore={Add} onClick={this.props.addNewOption}>
             {this.props.newOptionButtonLabel}
           </Button>
         )}
@@ -224,7 +225,7 @@ class TypeaheadDropdown extends React.Component {
             className="dropdown-container mt-2 rounded bg-light-100 box-shadow-centered-1 mr-2"
             style={{ maxHeight: '300px', overflowY: 'scroll' }}
           >
-            { this.state.dropDownItems.length > 0 ? this.state.dropDownItems : dropDownEmptyList }
+            {this.state.dropDownItems.length > 0 ? this.state.dropDownItems : dropDownEmptyList}
           </div>
         </FormGroup>
       </div>

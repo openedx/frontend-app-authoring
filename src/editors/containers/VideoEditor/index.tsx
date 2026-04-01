@@ -1,8 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Spinner,
-} from '@openedx/paragon';
+import { Spinner } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { selectors } from '../../data/redux';
@@ -14,20 +12,14 @@ import VideoEditorModal from './components/VideoEditorModal';
 import { ErrorContext, errorsHook, fetchVideoContent } from './hooks';
 import messages from './messages';
 
-const VideoEditor: React.FC<EditorComponent> = ({
-  onClose,
-  returnFunction,
-}) => {
+const VideoEditor: React.FC<EditorComponent> = ({ onClose, returnFunction }) => {
   const intl = useIntl();
-  const studioViewFinished = useSelector(
-    (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
+  const studioViewFinished = useSelector((state) =>
+    selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
   );
   const isLibrary = useSelector(selectors.app.isLibrary) as boolean;
   const isCreateWorkflow = useSelector(selectors.app.shouldCreateBlock) as boolean;
-  const {
-    error,
-    validateEntry,
-  } = errorsHook();
+  const { error, validateEntry } = errorsHook();
   return (
     <ErrorContext.Provider value={error}>
       <EditorContainer
@@ -37,17 +29,18 @@ const VideoEditor: React.FC<EditorComponent> = ({
         returnFunction={returnFunction}
         validateEntry={validateEntry}
       >
-        {(isCreateWorkflow || studioViewFinished) ? (
+        {isCreateWorkflow || studioViewFinished ? (
           <div className="video-editor">
             <VideoEditorModal {...{ isLibrary, onClose, returnFunction }} />
           </div>
         ) : (
-          <div style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
+          <div
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
           >
             <Spinner
               animation="border"

@@ -1,13 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Dropdown,
-  Icon,
-  IconButton,
-  IconButtonToggle,
-  IconButtonWithTooltip,
-  Stack,
-} from '@openedx/paragon';
+import { Button, Dropdown, Icon, IconButton, IconButtonToggle, IconButtonWithTooltip, Stack } from '@openedx/paragon';
 import { ResizableBox } from '@src/generic/resizable/Resizable';
 import type { MessageDescriptor } from 'react-intl';
 
@@ -88,16 +80,12 @@ export function Sidebar<T extends SidebarPages>({
 }: SidebarProps<T>) {
   const intl = useIntl();
 
-  const {
-    component: SidebarComponent,
-    icon: SidebarIcon,
-    title,
-  } = pages[currentPageKey];
+  const { component: SidebarComponent, icon: SidebarIcon, title } = pages[currentPageKey];
   const activeKey = isOpen ? currentPageKey : undefined;
 
   return (
     <Stack direction="horizontal" className="sidebar align-items-baseline ml-3" gap={2}>
-      {(isOpen && !!currentPageKey) ? (
+      {isOpen && !!currentPageKey ? (
         <ResizableBox>
           <div className="sidebar-content p-3 bg-white border-right">
             <Dropdown data-testid="sidebar-dropdown">
@@ -112,11 +100,7 @@ export function Sidebar<T extends SidebarPages>({
               </Dropdown.Toggle>
               <Dropdown.Menu className="mt-1">
                 {Object.entries(pages).map(([key, page]) => (
-                  <Dropdown.Item
-                    key={key}
-                    onClick={() => setCurrentPageKey(key)}
-                    disabled={page.disabled}
-                  >
+                  <Dropdown.Item key={key} onClick={() => setCurrentPageKey(key)} disabled={page.disabled}>
                     <Stack direction="horizontal" gap={2}>
                       <Icon src={page.icon} />
                       {intl.formatMessage(page.title)}
@@ -138,10 +122,7 @@ export function Sidebar<T extends SidebarPages>({
           onClick={toggle}
           variant="primary"
         />
-        <IconButtonToggle
-          activeValue={activeKey}
-          onChange={setCurrentPageKey}
-        >
+        <IconButtonToggle activeValue={activeKey} onChange={setCurrentPageKey}>
           {Object.entries(pages).map(([key, page]) => {
             const buttonData = {
               value: key,
@@ -162,9 +143,7 @@ export function Sidebar<T extends SidebarPages>({
               );
             }
 
-            return (
-              <IconButton {...buttonData} />
-            );
+            return <IconButton {...buttonData} />;
           })}
         </IconButtonToggle>
       </div>

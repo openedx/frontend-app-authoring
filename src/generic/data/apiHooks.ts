@@ -4,12 +4,11 @@ import { getOrganizations, getTagsCount } from './api';
 /**
  * Builds the query to get a list of available organizations
  */
-export const useOrganizationListData = () => (
+export const useOrganizationListData = () =>
   useQuery({
     queryKey: ['organizationList'],
     queryFn: getOrganizations,
-  })
-);
+  });
 
 /**
  * Builds the query to get tags count of the whole contentId course and
@@ -27,7 +26,7 @@ export const useContentTagsCount = (contentId?: string) => {
   return useQuery({
     queryKey: ['contentTagsCount', contentPattern],
     queryFn: () => getTagsCount(contentPattern),
-    select: (data) => (contentId ? (data[contentId] || 0) : 0), // Return the tags count of the specific contentId
+    select: (data) => (contentId ? data[contentId] || 0 : 0), // Return the tags count of the specific contentId
     enabled: !!contentId,
   });
 };

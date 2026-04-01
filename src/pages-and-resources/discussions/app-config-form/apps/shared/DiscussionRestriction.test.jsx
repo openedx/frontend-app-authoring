@@ -1,8 +1,6 @@
 import React, { createRef } from 'react';
 
-import {
-  act, fireEvent, render, screen, waitFor, within,
-} from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { AppProvider } from '@edx/frontend-platform/react';
 
@@ -46,11 +44,7 @@ describe('Discussion Restriction', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <OpenedXConfigForm
-            onSubmit={onSubmit}
-            formRef={formRef}
-            legacy={legacy}
-          />
+          <OpenedXConfigForm onSubmit={onSubmit} formRef={formRef} legacy={legacy} />
         </IntlProvider>
       </AppProvider>,
     );
@@ -66,21 +60,18 @@ describe('Discussion Restriction', () => {
     store.dispatch(selectApp({ appId: 'legacy' }));
   };
 
-  it(
-    'Successfully displayed three types (OFF, ON and SCHEDULED) for discussion restriction and selected OFF bydefault',
-    async () => {
-      const mockData = legacyApiResponse;
-      mockData.posting_restrictions = 'disabled';
+  it('Successfully displayed three types (OFF, ON and SCHEDULED) for discussion restriction and selected OFF bydefault', async () => {
+    const mockData = legacyApiResponse;
+    mockData.posting_restrictions = 'disabled';
 
-      await mockStore(mockData);
-      renderComponent();
+    await mockStore(mockData);
+    renderComponent();
 
-      expect(screen.queryByTestId('disabled')).toBeInTheDocument();
-      expect(screen.queryByTestId('enabled')).toBeInTheDocument();
-      expect(screen.queryByTestId('scheduled')).toBeInTheDocument();
-      expect(container.querySelector('[data-testid="disabled"].selected-button')).toBeInTheDocument();
-    },
-  );
+    expect(screen.queryByTestId('disabled')).toBeInTheDocument();
+    expect(screen.queryByTestId('enabled')).toBeInTheDocument();
+    expect(screen.queryByTestId('scheduled')).toBeInTheDocument();
+    expect(container.querySelector('[data-testid="disabled"].selected-button')).toBeInTheDocument();
+  });
 
   it.each([
     { eventType: 'OK', description: 'ON option, when user clicks on ok button', selectedOption: 'enabled' },
@@ -91,11 +82,15 @@ describe('Discussion Restriction', () => {
 
     const onButton = screen.queryByTestId('enabled');
 
-    await act(async () => { fireEvent.click(onButton); });
+    await act(async () => {
+      fireEvent.click(onButton);
+    });
 
     const eventButton = await screen.findByText(eventType);
 
-    await act(async () => { fireEvent.click(eventButton); });
+    await act(async () => {
+      fireEvent.click(eventButton);
+    });
 
     await waitFor(() => {
       expect(container.querySelector(`[data-testid= ${selectedOption}].selected-button`)).toBeInTheDocument();
@@ -111,11 +106,15 @@ describe('Discussion Restriction', () => {
 
     const scheduledButton = screen.queryByTestId('scheduled');
 
-    await act(async () => { fireEvent.click(scheduledButton); });
+    await act(async () => {
+      fireEvent.click(scheduledButton);
+    });
 
     const addDatesButton = screen.queryByText('Add restricted dates');
 
-    await act(async () => { fireEvent.click(addDatesButton); });
+    await act(async () => {
+      fireEvent.click(addDatesButton);
+    });
     await waitFor(async () => {
       const startDate = screen.getByTestId('startDate');
       const startTime = screen.getByTestId('startTime');
@@ -136,11 +135,15 @@ describe('Discussion Restriction', () => {
 
       const deleteButton = screen.getByLabelText('Delete Topic');
 
-      await act(async () => { fireEvent.click(deleteButton); });
+      await act(async () => {
+        fireEvent.click(deleteButton);
+      });
 
       const eventButton = screen.getByText(eventType);
 
-      await act(async () => { fireEvent.click(eventButton); });
+      await act(async () => {
+        fireEvent.click(eventButton);
+      });
       await waitFor(() => {
         const configureLabel = screen.queryByText('Configure restricted date range');
 
@@ -178,7 +181,9 @@ describe('Discussion Restriction', () => {
     const restrictionSchedules = screen.queryByTestId('restriction-schedules');
     const expandBtn = within(restrictionSchedules).getByRole('button', { name: 'Expand' });
 
-    await act(async () => { fireEvent.click(expandBtn); });
+    await act(async () => {
+      fireEvent.click(expandBtn);
+    });
 
     let configureLabel = screen.queryByText('Configure restricted date range');
 
@@ -186,7 +191,9 @@ describe('Discussion Restriction', () => {
 
     const collapseBtn = within(restrictionSchedules).getByRole('button', { name: 'Collapse' });
 
-    await act(async () => { fireEvent.click(collapseBtn); });
+    await act(async () => {
+      fireEvent.click(collapseBtn);
+    });
 
     configureLabel = screen.queryByText('Configure restricted date range');
 

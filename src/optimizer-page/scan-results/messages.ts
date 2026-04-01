@@ -35,7 +35,8 @@ const messages = defineMessages({
   },
   lockedInfoTooltip: {
     id: 'course-authoring.course-optimizer.lockedInfoTooltip',
-    defaultMessage: 'These course files are inaccessible for non-enrolled users so we cannot verify if the link can access the file.',
+    defaultMessage:
+      'These course files are inaccessible for non-enrolled users so we cannot verify if the link can access the file.',
   },
   brokenLabel: {
     id: 'course-authoring.course-optimizer.brokenLabel',
@@ -52,7 +53,7 @@ const messages = defineMessages({
   },
   manualInfoTooltip: {
     id: 'course-authoring.course-optimizer.manualInfoTooltip',
-    defaultMessage: 'We couldn\'t verify this link. Please check it manually.',
+    defaultMessage: "We couldn't verify this link. Please check it manually.",
   },
   clearFilters: {
     id: 'course-authoring.course-optimizer.clearFilters',
@@ -68,11 +69,11 @@ const messages = defineMessages({
   },
   updateLinkError: {
     id: 'course-authoring.course-optimizer.updateLinkError',
-    defaultMessage: 'Link couldn\'t be updated.',
+    defaultMessage: "Link couldn't be updated.",
   },
   updateLinksError: {
     id: 'course-authoring.course-optimizer.updateLinksError',
-    defaultMessage: 'Some links couldn\'t be updated.',
+    defaultMessage: "Some links couldn't be updated.",
   },
   updateButton: {
     id: 'course-authoring.scanResults.updateButton',

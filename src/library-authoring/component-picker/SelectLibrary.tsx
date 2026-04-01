@@ -1,12 +1,5 @@
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  Alert,
-  Card,
-  Form,
-  Pagination,
-  SearchField,
-  Stack,
-} from '@openedx/paragon';
+import { Alert, Card, Form, Pagination, SearchField, Stack } from '@openedx/paragon';
 import { useCallback, useState } from 'react';
 
 import Loading from '../../generic/Loading';
@@ -55,12 +48,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: Select
     setCurrentPage(1);
   }, []);
 
-  const {
-    data,
-    isPending,
-    isError,
-    error,
-  } = useContentLibraryV2List({
+  const { data, isPending, isError, error } = useContentLibraryV2List({
     page: currentPage,
     pageSize: 5,
     search: searchQuery,
@@ -77,9 +65,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: Select
   return (
     <Stack gap={2} className="p-5">
       <small className="text-primary-700">
-        <FormattedMessage
-          {...messages[`selectLibraryInfo.${itemType}`]}
-        />
+        <FormattedMessage {...messages[`selectLibraryInfo.${itemType}`]} />
       </small>
       <SearchField
         onSubmit={handleSearch}
@@ -87,7 +73,9 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: Select
         value={searchQuery}
         placeholder={intl.formatMessage(messages.selectLibrarySearchPlaceholder)}
       />
-      {data.results.length === 0 ? (<EmptyState hasSearchQuery={!!searchQuery} />) : (
+      {data.results.length === 0 ? (
+        <EmptyState hasSearchQuery={!!searchQuery} />
+      ) : (
         <>
           <Form.RadioSet
             name="selected-library"
@@ -96,19 +84,16 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: Select
             className="mt-4"
           >
             {data.results.map((library) => (
-              <Card
-                key={library.id}
-                isClickable
-                onClick={() => setSelectedLibrary(library.id)}
-                className="card-item"
-              >
+              <Card key={library.id} isClickable onClick={() => setSelectedLibrary(library.id)} className="card-item">
                 <Card.Header
                   size="sm"
                   title={<span className="card-item-title">{library.title}</span>}
                   subtitle={`${library.org} / ${library.slug}`}
-                  actions={(
-                    <Form.Radio value={library.id} name={`select-library-${library.id}`}>{' '}</Form.Radio>
-                  )}
+                  actions={
+                    <Form.Radio value={library.id} name={`select-library-${library.id}`}>
+                      {' '}
+                    </Form.Radio>
+                  }
                 />
                 <Card.Body>
                   <p>{library.description}</p>

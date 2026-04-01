@@ -38,10 +38,7 @@ export const LegacyMigrationHelpSidebar = () => (
           <FormattedMessage {...messages.helpAndSupportThirdQuestionTitle} />
         </span>
         <span className="x-small">
-          <FormattedMessage
-            {...messages.helpAndSupportThirdQuestionBody}
-            values={{ div: Div, p: Paragraph }}
-          />
+          <FormattedMessage {...messages.helpAndSupportThirdQuestionBody} values={{ div: Div, p: Paragraph }} />
         </span>
       </Stack>
     </Stack>

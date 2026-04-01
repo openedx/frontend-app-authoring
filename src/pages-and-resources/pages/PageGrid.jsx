@@ -4,12 +4,13 @@ import { CardGrid } from '@openedx/paragon';
 import PageCard, { CoursePageShape } from './PageCard';
 
 const PageGrid = ({ pages, pluginSlotComponent, courseId }) => (
-  <CardGrid columnSizes={{
-    xs: 12,
-    sm: 6,
-    lg: 6,
-    xl: 6,
-  }}
+  <CardGrid
+    columnSizes={{
+      xs: 12,
+      sm: 6,
+      lg: 6,
+      xl: 6,
+    }}
   >
     {pages.map((page) => (
       <PageCard page={page} key={page.id} courseId={courseId} />

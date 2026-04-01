@@ -1,16 +1,13 @@
 import type { ToastActionData } from '@src/generic/toast-context';
 import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
-import {
-  fireEvent,
-  render,
-  screen,
-  initializeMocks,
-  waitFor,
-} from '@src/testUtils';
+import { fireEvent, render, screen, initializeMocks, waitFor } from '@src/testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
 import {
-  mockContentLibrary, mockDeleteLibraryBlock, mockLibraryBlockMetadata, mockRestoreLibraryBlock,
+  mockContentLibrary,
+  mockDeleteLibraryBlock,
+  mockLibraryBlockMetadata,
+  mockRestoreLibraryBlock,
 } from '../data/api.mocks';
 import ComponentDeleter from './ComponentDeleter';
 
@@ -28,22 +25,24 @@ const renderArgs = {
   params: { libraryId },
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider>
-        { children }
-      </SidebarProvider>
+      <SidebarProvider>{children}</SidebarProvider>
     </LibraryProvider>
   ),
 };
 
-let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: any; };
+let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: any };
 
 describe('<ComponentDeleter />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     mockShowToast = mocks.mockShowToast;
-    mockSearchResult(hydrateSearchResult([{
-      displayName: 'Introduction to Testing 2',
-    }]));
+    mockSearchResult(
+      hydrateSearchResult([
+        {
+          displayName: 'Introduction to Testing 2',
+        },
+      ]),
+    );
   });
 
   it('should shows a confirmation prompt the card with title and description', async () => {
@@ -87,53 +86,49 @@ describe('<ComponentDeleter />', () => {
 
   it('should show units message if `unitsData` is set with one unit', async () => {
     const mockCancel = jest.fn();
-    mockSearchResult(hydrateSearchResult([{
-      displayName: 'Introduction to Testing 2',
-      units: {
-        displayName: ['Unit 1'],
-        key: ['unit1'],
-      },
-    }]));
-    render(
-      <ComponentDeleter
-        usageKey={usageKey}
-        close={mockCancel}
-      />,
-      renderArgs,
+    mockSearchResult(
+      hydrateSearchResult([
+        {
+          displayName: 'Introduction to Testing 2',
+          units: {
+            displayName: ['Unit 1'],
+            key: ['unit1'],
+          },
+        },
+      ]),
     );
+    render(<ComponentDeleter usageKey={usageKey} close={mockCancel} />, renderArgs);
 
     const modal = await screen.findByRole('dialog', { name: 'Delete Component' });
     expect(modal).toBeVisible();
 
-    expect(await screen.findByText(
-      /by deleting this component, you will also be deleting it from in this library\./i,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(/by deleting this component, you will also be deleting it from in this library\./i),
+    ).toBeInTheDocument();
     expect(screen.getByText(/unit 1/i)).toBeInTheDocument();
   });
 
   it('should show units message if `unitsData` is set with multiple units', async () => {
     const mockCancel = jest.fn();
-    mockSearchResult(hydrateSearchResult([{
-      displayName: 'Introduction to Testing 2',
-      units: {
-        displayName: ['Unit 1', 'Unit 2'],
-        key: ['unit1', 'unit2'],
-      },
-    }]));
-    render(
-      <ComponentDeleter
-        usageKey={usageKey}
-        close={mockCancel}
-      />,
-      renderArgs,
+    mockSearchResult(
+      hydrateSearchResult([
+        {
+          displayName: 'Introduction to Testing 2',
+          units: {
+            displayName: ['Unit 1', 'Unit 2'],
+            key: ['unit1', 'unit2'],
+          },
+        },
+      ]),
     );
+    render(<ComponentDeleter usageKey={usageKey} close={mockCancel} />, renderArgs);
 
     const modal = await screen.findByRole('dialog', { name: 'Delete Component' });
     expect(modal).toBeVisible();
 
-    expect(await screen.findByText(
-      /by deleting this component, you will also be deleting it from in this library\./i,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(/by deleting this component, you will also be deleting it from in this library\./i),
+    ).toBeInTheDocument();
     expect(screen.getByText(/2 units/i)).toBeInTheDocument();
   });
 });

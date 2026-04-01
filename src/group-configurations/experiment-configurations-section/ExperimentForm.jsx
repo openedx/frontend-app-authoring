@@ -1,12 +1,7 @@
 import PropTypes from 'prop-types';
 import { FieldArray, Formik } from 'formik';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Alert,
-  ActionRow,
-  Button,
-  Form,
-} from '@openedx/paragon';
+import { Alert, ActionRow, Button, Form } from '@openedx/paragon';
 import { WarningFilled as WarningFilledIcon } from '@openedx/paragon/icons';
 
 import PromptIfDirty from '../../generic/prompt-if-dirty/PromptIfDirty';
@@ -14,22 +9,12 @@ import ExperimentFormGroups from './ExperimentFormGroups';
 import messages from './messages';
 import { experimentFormValidationSchema } from './validation';
 
-const ExperimentForm = ({
-  isEditMode,
-  initialValues,
-  isUsedInLocation,
-  onCreateClick,
-  onCancelClick,
-  onEditClick,
-}) => {
+const ExperimentForm = ({ isEditMode, initialValues, isUsedInLocation, onCreateClick, onCancelClick, onEditClick }) => {
   const { formatMessage } = useIntl();
   const onSubmitForm = isEditMode ? onEditClick : onCreateClick;
 
   return (
-    <div
-      className="configuration-card"
-      data-testid="experiment-configuration-form"
-    >
+    <div className="configuration-card" data-testid="experiment-configuration-form">
       <div className="configuration-card-header">
         <h3>{formatMessage(messages.experimentConfigurationName)}*</h3>
         {isEditMode && (
@@ -47,21 +32,14 @@ const ExperimentForm = ({
         validateOnBlur={false}
         onSubmit={onSubmitForm}
       >
-        {({
-          values, errors, dirty, handleChange, handleSubmit,
-        }) => (
+        {({ values, errors, dirty, handleChange, handleSubmit }) => (
           <>
-            <Form.Group
-              className="mt-3 configuration-form-group"
-              isInvalid={!!errors.name}
-            >
+            <Form.Group className="mt-3 configuration-form-group" isInvalid={!!errors.name}>
               <Form.Control
                 value={values.name}
                 name="name"
                 onChange={handleChange}
-                placeholder={formatMessage(
-                  messages.experimentConfigurationNamePlaceholder,
-                )}
+                placeholder={formatMessage(messages.experimentConfigurationNamePlaceholder)}
               />
               <Form.Control.Feedback hasIcon={false} type="default">
                 {formatMessage(messages.experimentConfigurationNameFeedback)}
@@ -74,22 +52,16 @@ const ExperimentForm = ({
             </Form.Group>
 
             <Form.Group className="configuration-form-group">
-              <Form.Label>
-                {formatMessage(messages.experimentConfigurationDescription)}
-              </Form.Label>
+              <Form.Label>{formatMessage(messages.experimentConfigurationDescription)}</Form.Label>
               <Form.Control
                 value={values.description}
                 name="description"
                 onChange={handleChange}
-                placeholder={formatMessage(
-                  messages.experimentConfigurationDescriptionPlaceholder,
-                )}
+                placeholder={formatMessage(messages.experimentConfigurationDescriptionPlaceholder)}
                 as="textarea"
               />
               <Form.Control.Feedback hasIcon={false} type="default">
-                {formatMessage(
-                  messages.experimentConfigurationDescriptionFeedback,
-                )}
+                {formatMessage(messages.experimentConfigurationDescriptionFeedback)}
               </Form.Control.Feedback>
             </Form.Group>
 
@@ -107,11 +79,7 @@ const ExperimentForm = ({
             />
 
             {isUsedInLocation && (
-              <Alert
-                variant="warning"
-                icon={WarningFilledIcon}
-                className="my-3"
-              >
+              <Alert variant="warning" icon={WarningFilledIcon} className="my-3">
                 <p>{formatMessage(messages.experimentConfigurationAlert)}</p>
               </Alert>
             )}
@@ -121,9 +89,7 @@ const ExperimentForm = ({
               </Button>
               <Button onClick={handleSubmit}>
                 {formatMessage(
-                  isEditMode
-                    ? messages.experimentConfigurationSave
-                    : messages.experimentConfigurationCreate,
+                  isEditMode ? messages.experimentConfigurationSave : messages.experimentConfigurationCreate,
                 )}
               </Button>
             </ActionRow>

@@ -1,7 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Container, Layout, Stack, Row,
-} from '@openedx/paragon';
+import { Container, Layout, Stack, Row } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { LoadingSpinner } from '../generic/Loading';
@@ -38,10 +36,7 @@ const GroupConfigurations = () => {
     isLoadingDenied,
   } = useGroupConfigurations(courseId);
 
-  document.title = getPageHeadTitle(
-    courseDetails?.name,
-    formatMessage(messages.headingTitle),
-  );
+  document.title = getPageHeadTitle(courseDetails?.name, formatMessage(messages.headingTitle));
 
   if (isLoadingDenied) {
     return (
@@ -71,10 +66,7 @@ const GroupConfigurations = () => {
     <>
       <Container size="xl" className="group-configurations px-4">
         <div className="mt-5" />
-        <SubHeader
-          title={formatMessage(messages.headingTitle)}
-          subtitle={formatMessage(messages.headingSubtitle)}
-        />
+        <SubHeader title={formatMessage(messages.headingTitle)} subtitle={formatMessage(messages.headingSubtitle)} />
         <Layout
           lg={[{ span: 9 }, { span: 3 }]}
           md={[{ span: 9 }, { span: 3 }]}
@@ -83,27 +75,13 @@ const GroupConfigurations = () => {
           xl={[{ span: 9 }, { span: 3 }]}
         >
           <Layout.Element>
-            <Stack
-              gap={3}
-              data-testid="group-configurations-main-content-wrapper"
-            >
-              {!!teamGroups && teamGroups.length > 0 && (
-                teamGroups.map((teamGroup) => (
-                  <TeamGroupsSection
-                    availableGroup={teamGroup}
-                  />
-                ))
-              )}
-              {!!enrollmentTrackGroup && (
-                <EnrollmentTrackGroupsSection
-                  availableGroup={enrollmentTrackGroup}
-                />
-              )}
+            <Stack gap={3} data-testid="group-configurations-main-content-wrapper">
+              {!!teamGroups &&
+                teamGroups.length > 0 &&
+                teamGroups.map((teamGroup) => <TeamGroupsSection availableGroup={teamGroup} />)}
+              {!!enrollmentTrackGroup && <EnrollmentTrackGroupsSection availableGroup={enrollmentTrackGroup} />}
               {!!contentGroup && (
-                <ContentGroupsSection
-                  availableGroup={contentGroup}
-                  contentGroupActions={contentGroupActions}
-                />
+                <ContentGroupsSection availableGroup={contentGroup} contentGroupActions={contentGroupActions} />
               )}
               {shouldShowExperimentGroups && (
                 <ExperimentConfigurationsSection
@@ -125,14 +103,8 @@ const GroupConfigurations = () => {
         </Layout>
       </Container>
       <div className="alert-toast">
-        <SavingErrorAlert
-          savingStatus={savingStatus}
-          errorMessage={errorMessage}
-        />
-        <ProcessingNotification
-          isShow={isShowProcessingNotification}
-          title={processingNotificationTitle}
-        />
+        <SavingErrorAlert savingStatus={savingStatus} errorMessage={errorMessage} />
+        <ProcessingNotification isShow={isShowProcessingNotification} title={processingNotificationTitle} />
       </div>
     </>
   );

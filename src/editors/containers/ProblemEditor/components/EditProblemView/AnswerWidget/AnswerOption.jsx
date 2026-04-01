@@ -1,12 +1,7 @@
 import React, { memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  Collapsible,
-  Icon,
-  IconButton,
-  Form,
-} from '@openedx/paragon';
+import { Collapsible, Icon, IconButton, Form } from '@openedx/paragon';
 import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -21,10 +16,7 @@ import ExpandableTextArea from '../../../../../sharedComponents/ExpandableTextAr
 import { answerRangeFormatRegex } from '../../../data/OLXParser';
 import { useValidateInputBlock } from '../../../data/apiHooks';
 
-const AnswerOption = ({
-  answer,
-  hasSingleAnswer,
-}) => {
+const AnswerOption = ({ answer, hasSingleAnswer }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -46,9 +38,7 @@ const AnswerOption = ({
   const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
   const { data = { isValid: true }, mutate } = useValidateInputBlock();
 
-  const staticRootUrl = isLibrary
-    ? `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`
-    : undefined;
+  const staticRootUrl = isLibrary ? `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/` : undefined;
 
   const validateAnswerRange = (value) => {
     const cleanedValue = value.replace(/^\s+|\s+$/g, '');
@@ -87,12 +77,11 @@ const AnswerOption = ({
               }
             }}
             placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
-
           />
-          {(!data?.isValid) && (
-          <Form.Control.Feedback type="invalid">
-            <FormattedMessage {...messages.answerNumericErrorText} />
-          </Form.Control.Feedback>
+          {!data?.isValid && (
+            <Form.Control.Feedback type="invalid">
+              <FormattedMessage {...messages.answerNumericErrorText} />
+            </Form.Control.Feedback>
           )}
         </Form.Group>
       );
@@ -152,11 +141,11 @@ const AnswerOption = ({
         </Collapsible.Body>
       </div>
       <div className="d-flex flex-row flex-nowrap">
-        <Collapsible.Trigger aria-label={intl.formatMessage(messages.feedbackToggleIconAriaLabel)} className="btn-icon btn-icon-primary btn-icon-md align-items-center">
-          <Icon
-            src={FeedbackOutline}
-            alt={intl.formatMessage(messages.feedbackToggleIconAltText)}
-          />
+        <Collapsible.Trigger
+          aria-label={intl.formatMessage(messages.feedbackToggleIconAriaLabel)}
+          className="btn-icon btn-icon-primary btn-icon-md align-items-center"
+        >
+          <Icon src={FeedbackOutline} alt={intl.formatMessage(messages.feedbackToggleIconAltText)} />
         </Collapsible.Trigger>
         <IconButton
           src={DeleteOutline}

@@ -59,15 +59,12 @@ const testCases = [
 ];
 
 describe('<BlockTypeLabel />', () => {
-  test.each(testCases)(
-    'render BlockTypeLabel for $blockType (count=$count)',
-    ({ blockType, expectedLabel, count }) => {
-      render(
-        <IntlProvider locale="en">
-          <BlockTypeLabel blockType={blockType} count={count} />
-        </IntlProvider>,
-      );
-      expect(screen.getByText(expectedLabel)).toBeInTheDocument();
-    },
-  );
+  test.each(testCases)('render BlockTypeLabel for $blockType (count=$count)', ({ blockType, expectedLabel, count }) => {
+    render(
+      <IntlProvider locale="en">
+        <BlockTypeLabel blockType={blockType} count={count} />
+      </IntlProvider>,
+    );
+    expect(screen.getByText(expectedLabel)).toBeInTheDocument();
+  });
 });

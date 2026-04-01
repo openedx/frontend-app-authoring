@@ -1,6 +1,4 @@
-import {
-  parseLibraryImageData, getLibraryImageAssets, isImage, getFileName,
-} from './formatLibraryImgRequest';
+import { parseLibraryImageData, getLibraryImageAssets, isImage, getFileName } from './formatLibraryImgRequest';
 import { LibraryAssetResponse } from '../../library-authoring/data/api';
 
 const acceptedImgExt = ['jpg'];

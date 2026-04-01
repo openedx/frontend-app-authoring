@@ -1,9 +1,7 @@
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-ensureConfig([
-  'STUDIO_BASE_URL',
-], 'Course Apps API service');
+ensureConfig(['STUDIO_BASE_URL'], 'Course Apps API service');
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getTabHandlerUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v0/tabs/${courseId}`;
@@ -14,8 +12,7 @@ export const getTabHandlerUrl = (courseId) => `${getApiBaseUrl()}/api/contentsto
  * @returns {Promise<[{}]>}
  */
 export async function getCustomPages(courseId) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getTabHandlerUrl(courseId)}`);
+  const { data } = await getAuthenticatedHttpClient().get(`${getTabHandlerUrl(courseId)}`);
   return camelCaseObject(data);
 }
 
@@ -25,8 +22,7 @@ export async function getCustomPages(courseId) {
 
  */
 export async function deleteCustomPage(blockId) {
-  await getAuthenticatedHttpClient()
-    .delete(`${getApiBaseUrl()}/xblock/${blockId}`);
+  await getAuthenticatedHttpClient().delete(`${getApiBaseUrl()}/xblock/${blockId}`);
 }
 
 /**
@@ -37,11 +33,10 @@ export async function deleteCustomPage(blockId) {
 export async function addCustomPage(courseId) {
   const v1CourseId = courseId.substring(7);
   const courseBlockId = `block-${v1CourseId}+type@course+block@course`;
-  const { data } = await getAuthenticatedHttpClient()
-    .put(`${getApiBaseUrl()}/xblock/`, {
-      category: 'static_tab',
-      parent_locator: courseBlockId,
-    });
+  const { data } = await getAuthenticatedHttpClient().put(`${getApiBaseUrl()}/xblock/`, {
+    category: 'static_tab',
+    parent_locator: courseBlockId,
+  });
   return camelCaseObject(data);
 }
 
@@ -51,12 +46,11 @@ export async function addCustomPage(courseId) {
 
  */
 export async function updateCustomPage({ blockId, htmlString, metadata }) {
-  const { data } = await getAuthenticatedHttpClient()
-    .put(`${getApiBaseUrl()}/xblock/${blockId}`, {
-      id: blockId,
-      data: htmlString,
-      metadata,
-    });
+  const { data } = await getAuthenticatedHttpClient().put(`${getApiBaseUrl()}/xblock/${blockId}`, {
+    id: blockId,
+    data: htmlString,
+    metadata,
+  });
   return camelCaseObject(data);
 }
 
@@ -66,6 +60,5 @@ export async function updateCustomPage({ blockId, htmlString, metadata }) {
 
  */
 export async function updateCustomPageOrder(courseId, tabs) {
-  await getAuthenticatedHttpClient()
-    .post(`${getTabHandlerUrl(courseId)}/reorder`, tabs);
+  await getAuthenticatedHttpClient().post(`${getTabHandlerUrl(courseId)}/reorder`, tabs);
 }

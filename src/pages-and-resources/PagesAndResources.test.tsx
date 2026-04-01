@@ -1,6 +1,4 @@
-import {
-  screen, waitFor, initializeMocks, render,
-} from '@src/testUtils';
+import { screen, waitFor, initializeMocks, render } from '@src/testUtils';
 
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
@@ -23,11 +21,12 @@ const mockPlugin = (identifier) => ({
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <PagesAndResources />
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <PagesAndResources />
+    </CourseAuthoringProvider>,
+  );
 
 describe('PagesAndResources', () => {
   beforeEach(() => {
@@ -36,12 +35,14 @@ describe('PagesAndResources', () => {
       ...getConfig(),
       pluginSlots: {
         'org.openedx.frontend.authoring.additional_course_plugin.v1': mockPlugin('additional_course_plugin'),
-        'org.openedx.frontend.authoring.additional_course_content_plugin.v1': mockPlugin('additional_course_content_plugin'),
+        'org.openedx.frontend.authoring.additional_course_content_plugin.v1': mockPlugin(
+          'additional_course_content_plugin',
+        ),
       },
     });
   });
 
-  it('doesn\'t show content permissions section if relevant apps are not enabled', async () => {
+  it("doesn't show content permissions section if relevant apps are not enabled", async () => {
     const initialState = {
       models: {
         courseApps: {},

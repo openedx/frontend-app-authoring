@@ -84,13 +84,11 @@ describe('fetchLinkCheckStatus thunk', () => {
 
   describe('successful request', () => {
     it('should return scan result', async () => {
-      jest
-        .spyOn(api, 'getLinkCheckStatus')
-        .mockResolvedValue({
-          linkCheckStatus: mockApiResponse.LinkCheckStatus,
-          linkCheckOutput: mockApiResponse.LinkCheckOutput,
-          linkCheckCreatedAt: mockApiResponse.LinkCheckCreatedAt,
-        });
+      jest.spyOn(api, 'getLinkCheckStatus').mockResolvedValue({
+        linkCheckStatus: mockApiResponse.LinkCheckStatus,
+        linkCheckOutput: mockApiResponse.LinkCheckOutput,
+        linkCheckCreatedAt: mockApiResponse.LinkCheckCreatedAt,
+      });
 
       await fetchLinkCheckStatus(courseId)(dispatch, getState);
 
@@ -116,11 +114,9 @@ describe('fetchLinkCheckStatus thunk', () => {
     });
 
     it('with link check in progress should set current stage to 1', async () => {
-      jest
-        .spyOn(api, 'getLinkCheckStatus')
-        .mockResolvedValue({
-          linkCheckStatus: LINK_CHECK_STATUSES.IN_PROGRESS,
-        });
+      jest.spyOn(api, 'getLinkCheckStatus').mockResolvedValue({
+        linkCheckStatus: LINK_CHECK_STATUSES.IN_PROGRESS,
+      });
 
       await fetchLinkCheckStatus(courseId)(dispatch, getState);
 
@@ -133,9 +129,7 @@ describe('fetchLinkCheckStatus thunk', () => {
 
   describe('failed request', () => {
     it('should set request status to failed', async () => {
-      jest
-        .spyOn(api, 'getLinkCheckStatus')
-        .mockRejectedValue(new Error('error'));
+      jest.spyOn(api, 'getLinkCheckStatus').mockRejectedValue(new Error('error'));
 
       await fetchLinkCheckStatus(courseId)(dispatch, getState);
 
@@ -160,13 +154,11 @@ describe('fetchLinkCheckStatus thunk', () => {
 
   describe('failed scan', () => {
     it('should set error message', async () => {
-      jest
-        .spyOn(api, 'getLinkCheckStatus')
-        .mockResolvedValue({
-          linkCheckStatus: LINK_CHECK_STATUSES.FAILED,
-          linkCheckOutput: mockApiResponse.LinkCheckOutput,
-          linkCheckCreatedAt: mockApiResponse.LinkCheckCreatedAt,
-        });
+      jest.spyOn(api, 'getLinkCheckStatus').mockResolvedValue({
+        linkCheckStatus: LINK_CHECK_STATUSES.FAILED,
+        linkCheckOutput: mockApiResponse.LinkCheckOutput,
+        linkCheckCreatedAt: mockApiResponse.LinkCheckCreatedAt,
+      });
 
       await fetchLinkCheckStatus(courseId)(dispatch, getState);
 

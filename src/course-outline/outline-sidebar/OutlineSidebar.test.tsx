@@ -1,9 +1,7 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { userEvent } from '@testing-library/user-event';
 
-import {
-  initializeMocks, render, screen, waitFor, within,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, waitFor, within } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 import { OutlineSidebarProvider } from './OutlineSidebarContext';
@@ -22,17 +20,12 @@ const courseId = '123';
 const extraWrapper = ({ children }) => (
   <CourseAuthoringProvider courseId={courseId}>
     <OutlineSidebarPagesProvider>
-      <OutlineSidebarProvider>
-        {children}
-      </OutlineSidebarProvider>
+      <OutlineSidebarProvider>{children}</OutlineSidebarProvider>
     </OutlineSidebarPagesProvider>
   </CourseAuthoringProvider>
 );
 
-const renderComponent = () => render(
-  <OutlineSidebar />,
-  { extraWrapper },
-);
+const renderComponent = () => render(<OutlineSidebar />, { extraWrapper });
 
 describe('<OutlineSidebar>', () => {
   beforeEach(() => {

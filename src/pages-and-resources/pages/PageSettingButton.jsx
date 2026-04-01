@@ -10,30 +10,23 @@ import { useWaffleFlags } from '../../data/apiHooks';
 import messages from '../messages';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 
-const PageSettingButton = ({
-  id,
-  courseId,
-  legacyLink,
-  allowedOperations,
-}) => {
+const PageSettingButton = ({ id, courseId, legacyLink, allowedOperations }) => {
   const { formatMessage } = useIntl();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const navigate = useNavigate();
   const waffleFlags = useWaffleFlags(courseId);
 
   const determineLinkDestination = useMemo(() => {
-    if (!legacyLink) { return null; }
+    if (!legacyLink) {
+      return null;
+    }
 
     if (legacyLink.includes('textbooks')) {
-      return waffleFlags.useNewTextbooksPage
-        ? `/course/${courseId}/${id.replace('_', '-')}`
-        : legacyLink;
+      return waffleFlags.useNewTextbooksPage ? `/course/${courseId}/${id.replace('_', '-')}` : legacyLink;
     }
 
     if (legacyLink.includes('tabs')) {
-      return waffleFlags.useNewCustomPages
-        ? `/course/${courseId}/${id.replace('_', '-')}`
-        : legacyLink;
+      return waffleFlags.useNewCustomPages ? `/course/${courseId}/${id.replace('_', '-')}` : legacyLink;
     }
 
     return null;
@@ -44,12 +37,7 @@ const PageSettingButton = ({
   if (determineLinkDestination) {
     return (
       <Link to={determineLinkDestination}>
-        <IconButton
-          src={ArrowForward}
-          iconAs={Icon}
-          size="inline"
-          alt={formatMessage(messages.settings)}
-        />
+        <IconButton src={ArrowForward} iconAs={Icon} size="inline" alt={formatMessage(messages.settings)} />
       </Link>
     );
   }

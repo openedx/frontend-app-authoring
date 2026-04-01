@@ -10,9 +10,9 @@ import SplitTestSidebarInfo from './SplitTestSidebarInfo';
 import PublishControls from '../unit-sidebar/unit-info/PublishControls';
 
 export type XBlock = {
-  id: string,
-  name: string,
-  blockType: string,
+  id: string;
+  name: string;
+  blockType: string;
 };
 
 export interface LegacySidebarProps {
@@ -29,13 +29,7 @@ export interface LegacySidebarProps {
  * This is an old sidebar replaced by src/course-unit/unit-sidebar/unit-info/UnitInfoSidebar.tsx
  * When the new sidebar is active by default, this sidebar will be removed.
  */
-const LegacySidebar = ({
-  unitTitle,
-  isUnitVerticalType,
-  xBlocks,
-  readOnly,
-  isSplitTestType,
-}: LegacySidebarProps) => {
+const LegacySidebar = ({ unitTitle, isUnitVerticalType, xBlocks, readOnly, isSplitTestType }: LegacySidebarProps) => {
   const { blockId } = useParams();
   const { courseId } = useCourseAuthoringContext();
 

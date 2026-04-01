@@ -1,8 +1,6 @@
 import { CATEGORIES } from './constants';
 import { ITreeNode, IXBlockInfo, IAncestor } from './interfaces';
-import {
-  getXBlockType, findParentIds, isValidCategory, getBreadcrumbs,
-} from './utils';
+import { getXBlockType, findParentIds, isValidCategory, getBreadcrumbs } from './utils';
 import messages from './messages';
 
 const mockFormatMessage = jest.fn((message) => message.defaultMessage);
@@ -147,9 +145,7 @@ describe('getBreadcrumbs utility', () => {
   });
 
   it('returns base category label when category is course', () => {
-    const visitedAncestors: IAncestor[] = [
-      { category: CATEGORIES.KEYS.course, displayName: 'Course Name' },
-    ];
+    const visitedAncestors: IAncestor[] = [{ category: CATEGORIES.KEYS.course, displayName: 'Course Name' }];
 
     const result = getBreadcrumbs(visitedAncestors, mockFormatMessage);
 
@@ -158,9 +154,7 @@ describe('getBreadcrumbs utility', () => {
   });
 
   it('returns empty string if displayName is missing', () => {
-    const visitedAncestors: IAncestor[] = [
-      { category: 'chapter', displayName: '' },
-    ];
+    const visitedAncestors: IAncestor[] = [{ category: 'chapter', displayName: '' }];
 
     const result = getBreadcrumbs(visitedAncestors, mockFormatMessage);
 

@@ -26,7 +26,9 @@ export const useContentMenuItems = (courseId: string) => {
       title: intl.formatMessage(messages['header.links.outline']),
     },
     {
-      href: waffleFlags.useNewUpdatesPage ? `/course/${courseId}/course_info` : `${studioBaseUrl}/course_info/${courseId}`,
+      href: waffleFlags.useNewUpdatesPage
+        ? `/course/${courseId}/course_info`
+        : `${studioBaseUrl}/course_info/${courseId}`,
       title: intl.formatMessage(messages['header.links.updates']),
     },
     {
@@ -66,20 +68,21 @@ export const useSettingMenuItems = (courseId: string) => {
     Otherwise, fallback to existing logic.
   */
   const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions(
+    {
+      canManageAdvancedSettings: {
+        action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
+        scope: courseId,
+      },
     },
-  }, isAuthzEnabled);
+    isAuthzEnabled,
+  );
 
   const authzCanManageAdvancedSettings = isLoadingUserPermissions
     ? false
     : userPermissions?.canManageAdvancedSettings || false;
 
-  const canAccessAdvancedSettings = isAuthzEnabled
-    ? authzCanManageAdvancedSettings
-    : legacyCanAccessAdvancedSettings;
+  const canAccessAdvancedSettings = isAuthzEnabled ? authzCanManageAdvancedSettings : legacyCanAccessAdvancedSettings;
 
   const items = [
     {
@@ -99,11 +102,13 @@ export const useSettingMenuItems = (courseId: string) => {
       title: intl.formatMessage(messages['header.links.groupConfigurations']),
     },
     ...(canAccessAdvancedSettings
-      ? [{
-        href: `/course/${courseId}/settings/advanced`,
-        title: intl.formatMessage(messages['header.links.advancedSettings']),
-      }] : []
-    ),
+      ? [
+          {
+            href: `/course/${courseId}/settings/advanced`,
+            title: intl.formatMessage(messages['header.links.advancedSettings']),
+          },
+        ]
+      : []),
   ];
   if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' || waffleFlags.useNewCertificatesPage) {
     items.push({
@@ -129,24 +134,32 @@ export const useToolsMenuItems = (courseId: string) => {
       title: intl.formatMessage(messages['header.links.exportCourse']),
     },
     ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
-      ? [{
-        href: `${studioBaseUrl}/course/${courseId}#export-tags`,
-        title: intl.formatMessage(messages['header.links.exportTags']),
-      }] : []
-    ),
+      ? [
+          {
+            href: `${studioBaseUrl}/course/${courseId}#export-tags`,
+            title: intl.formatMessage(messages['header.links.exportTags']),
+          },
+        ]
+      : []),
     {
       href: `/course/${courseId}/checklists`,
       title: intl.formatMessage(messages['header.links.checklists']),
     },
-    ...(waffleFlags.enableCourseOptimizer ? [{
-      href: `/course/${courseId}/optimizer`,
-      title: (
-        <>
-          {intl.formatMessage(messages['header.links.optimizer'])}
-          <Badge variant="primary" className="ml-2">{intl.formatMessage(courseOptimizerMessages.new)}</Badge>
-        </>
-      ),
-    }] : []),
+    ...(waffleFlags.enableCourseOptimizer
+      ? [
+          {
+            href: `/course/${courseId}/optimizer`,
+            title: (
+              <>
+                {intl.formatMessage(messages['header.links.optimizer'])}
+                <Badge variant="primary" className="ml-2">
+                  {intl.formatMessage(courseOptimizerMessages.new)}
+                </Badge>
+              </>
+            ),
+          },
+        ]
+      : []),
   ];
 
   return items;

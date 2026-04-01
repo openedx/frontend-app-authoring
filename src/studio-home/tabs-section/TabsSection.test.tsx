@@ -6,14 +6,7 @@ import { userEvent } from '@testing-library/user-event';
 import { executeThunk } from '@src/utils';
 import { mockGetContentLibraryV2List } from '@src/library-authoring/data/api.mocks';
 import contentLibrariesListV2 from '@src/library-authoring/__mocks__/contentLibrariesListV2';
-import {
-  initializeMocks,
-  render as baseRender,
-  fireEvent,
-  screen,
-  act,
-  within,
-} from '@src/testUtils';
+import { initializeMocks, render as baseRender, fireEvent, screen, act, within } from '@src/testUtils';
 import messages from '../messages';
 import tabMessages from './messages';
 import TabsSection from '.';
@@ -50,26 +43,18 @@ export const LocationDisplay = () => {
   return <div data-testid="location-display">{location.pathname}</div>;
 };
 
-const render = (overrideProps = {}) => baseRender(
-  <>
-    <Routes>
-      <Route
-        path="/home"
-        element={tabSectionComponent(overrideProps)}
-      />
-      <Route
-        path="/libraries"
-        element={tabSectionComponent(overrideProps)}
-      />
-      <Route
-        path="/libraries-v1"
-        element={tabSectionComponent(overrideProps)}
-      />
-    </Routes>
-    <LocationDisplay />
-  </>,
-  { routerProps: { initialEntries: ['/home'] } },
-);
+const render = (overrideProps = {}) =>
+  baseRender(
+    <>
+      <Routes>
+        <Route path="/home" element={tabSectionComponent(overrideProps)} />
+        <Route path="/libraries" element={tabSectionComponent(overrideProps)} />
+        <Route path="/libraries-v1" element={tabSectionComponent(overrideProps)} />
+      </Routes>
+      <LocationDisplay />
+    </>,
+    { routerProps: { initialEntries: ['/home'] } },
+  );
 
 describe('<TabsSection />', () => {
   beforeEach(() => {
@@ -135,9 +120,11 @@ describe('<TabsSection />', () => {
 
       expect(screen.getByText(studioHomeMock.courses[0].displayName)).toBeVisible();
 
-      expect(screen.getByText(
-        `${studioHomeMock.courses[0].org} / ${studioHomeMock.courses[0].number} / ${studioHomeMock.courses[0].run}`,
-      )).toBeVisible();
+      expect(
+        screen.getByText(
+          `${studioHomeMock.courses[0].org} / ${studioHomeMock.courses[0].number} / ${studioHomeMock.courses[0].run}`,
+        ),
+      ).toBeVisible();
     });
 
     it('should render default sections when courses are empty', async () => {
@@ -308,9 +295,9 @@ describe('<TabsSection />', () => {
       expect(await within(panel).findByText('Showing 1 of 3')).toBeInTheDocument();
       expect(await within(panel).findByText(migratedContent.displayName)).toBeVisible();
       // Should not show other items.
-      expect(within(panel).queryByText(
-        generateGetStudioHomeLibrariesApiResponse().libraries[0].displayName,
-      )).not.toBeInTheDocument();
+      expect(
+        within(panel).queryByText(generateGetStudioHomeLibrariesApiResponse().libraries[0].displayName),
+      ).not.toBeInTheDocument();
       // reset search
       fireEvent.change(searchField, { target: { value: '' } });
 
@@ -357,14 +344,14 @@ describe('<TabsSection />', () => {
       await screen.findByText('Showing 2 of 2');
 
       expect(screen.getByText(contentLibrariesListV2.results[0].title)).toBeVisible();
-      expect(screen.getByText(
-        `${contentLibrariesListV2.results[0].org} / ${contentLibrariesListV2.results[0].slug}`,
-      )).toBeVisible();
+      expect(
+        screen.getByText(`${contentLibrariesListV2.results[0].org} / ${contentLibrariesListV2.results[0].slug}`),
+      ).toBeVisible();
 
       expect(screen.getByText(contentLibrariesListV2.results[1].title)).toBeVisible();
-      expect(screen.getByText(
-        `${contentLibrariesListV2.results[1].org} / ${contentLibrariesListV2.results[1].slug}`,
-      )).toBeVisible();
+      expect(
+        screen.getByText(`${contentLibrariesListV2.results[1].org} / ${contentLibrariesListV2.results[1].slug}`),
+      ).toBeVisible();
     });
 
     it('should switch to Libraries tab and render specific v1 library details - v1 only mode', async () => {
@@ -409,12 +396,10 @@ describe('<TabsSection />', () => {
     });
 
     it('should open migration library page from v2 libraries tab', async () => {
-      const libraries = generateGetStudioHomeLibrariesApiResponse().libraries.map(
-        library => ({
-          ...library,
-          isMigrated: false,
-        }),
-      );
+      const libraries = generateGetStudioHomeLibrariesApiResponse().libraries.map((library) => ({
+        ...library,
+        isMigrated: false,
+      }));
       const user = userEvent.setup();
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeLibrariesApiResponse());
       await axiosMock.onGet(libraryApiLink).reply(200, { libraries });
@@ -453,14 +438,14 @@ describe('<TabsSection />', () => {
       expect(screen.getAllByText('Page 1, Current Page, of 2')[0]).toBeVisible();
 
       expect(screen.getByText(contentLibrariesListV2.results[0].title)).toBeVisible();
-      expect(screen.getByText(
-        `${contentLibrariesListV2.results[0].org} / ${contentLibrariesListV2.results[0].slug}`,
-      )).toBeVisible();
+      expect(
+        screen.getByText(`${contentLibrariesListV2.results[0].org} / ${contentLibrariesListV2.results[0].slug}`),
+      ).toBeVisible();
 
       expect(screen.getByText(contentLibrariesListV2.results[1].title)).toBeVisible();
-      expect(screen.getByText(
-        `${contentLibrariesListV2.results[1].org} / ${contentLibrariesListV2.results[1].slug}`,
-      )).toBeVisible();
+      expect(
+        screen.getByText(`${contentLibrariesListV2.results[1].org} / ${contentLibrariesListV2.results[1].slug}`),
+      ).toBeVisible();
     });
 
     it('should show a "not found" message if no v2 libraries were loaded', async () => {
@@ -474,9 +459,9 @@ describe('<TabsSection />', () => {
 
       expect(librariesTab).toHaveClass('active');
 
-      expect(await screen.findByText(
-        tabMessages.librariesV2TabLibraryNotFoundAlertMessage.defaultMessage,
-      )).toBeVisible();
+      expect(
+        await screen.findByText(tabMessages.librariesV2TabLibraryNotFoundAlertMessage.defaultMessage),
+      ).toBeVisible();
     });
 
     it('should hide Libraries tab when libraries are disabled', async () => {
@@ -518,19 +503,15 @@ describe('<TabsSection />', () => {
 
       expect(librariesTab).toHaveClass('active');
 
-      expect(await screen.findByText(
-        tabMessages.librariesTabErrorMessage.defaultMessage,
-      )).toBeVisible();
+      expect(await screen.findByText(tabMessages.librariesTabErrorMessage.defaultMessage)).toBeVisible();
     });
 
     [true, false].forEach((isMigrated) => {
       it(`should render v2 libraries migration alert when the libraries have isMigrated=${isMigrated}`, async () => {
-        const libraries = generateGetStudioHomeLibrariesApiResponse().libraries.map(
-          library => ({
-            ...library,
-            isMigrated,
-          }),
-        );
+        const libraries = generateGetStudioHomeLibrariesApiResponse().libraries.map((library) => ({
+          ...library,
+          isMigrated,
+        }));
         const user = userEvent.setup();
         await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeLibrariesApiResponse());
         await axiosMock.onGet(libraryApiLink).reply(200, { libraries });

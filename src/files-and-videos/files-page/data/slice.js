@@ -63,7 +63,7 @@ const slice = createSlice({
       state.assetIds = [];
     },
     deleteAssetSuccess: (state, { payload }) => {
-      state.assetIds = state.assetIds.filter(id => id !== payload.assetId);
+      state.assetIds = state.assetIds.filter((id) => id !== payload.assetId);
     },
     addAssetSuccess: (state, { payload }) => {
       state.assetIds = [payload.assetId, ...state.assetIds];
@@ -100,6 +100,4 @@ export const {
   clearAssetIds,
 } = slice.actions;
 
-export const {
-  reducer,
-} = slice;
+export const { reducer } = slice;

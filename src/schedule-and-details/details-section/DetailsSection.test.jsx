@@ -21,15 +21,11 @@ describe('<DetailsSection />', () => {
   };
 
   it('renders details section successfully', () => {
-    const { getByText, getByRole } = render(
-      <RootWrapper {...props} />,
-    );
+    const { getByText, getByRole } = render(<RootWrapper {...props} />);
     expect(getByText(messages.detailsTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.detailsDescription.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.dropdownHelpText.defaultMessage)).toBeInTheDocument();
-    expect(
-      getByRole('button', { name: courseSettingsMock.languageOptions[1][1] }),
-    ).toBeInTheDocument();
+    expect(getByRole('button', { name: courseSettingsMock.languageOptions[1][1] })).toBeInTheDocument();
   });
 
   it('should call onChange if dropdown value changed', async () => {
@@ -44,17 +40,12 @@ describe('<DetailsSection />', () => {
 
     await waitFor(() => expect(anotherOption));
     fireEvent.click(anotherOption);
-    expect(onChangeMock).toHaveBeenCalledWith(
-      courseSettingsMock.languageOptions[0][0],
-      'language',
-    );
+    expect(onChangeMock).toHaveBeenCalledWith(courseSettingsMock.languageOptions[0][0], 'language');
   });
 
   it('should render an empty option if no option is selected', () => {
     const initialProps = { ...props, language: '' };
     const { getByRole } = render(<RootWrapper {...initialProps} />);
-    expect(
-      getByRole('button', { name: messages.dropdownEmpty.defaultMessage }),
-    ).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.dropdownEmpty.defaultMessage })).toBeInTheDocument();
   });
 });

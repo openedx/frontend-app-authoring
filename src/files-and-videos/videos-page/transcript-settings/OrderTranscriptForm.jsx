@@ -77,24 +77,15 @@ const OrderTranscriptForm = ({
   }
   return (
     <>
-      <ErrorAlert
-        hideHeading={false}
-        isError={!validCieloTranscriptionPlan && cieloHasCredentials}
-      >
+      <ErrorAlert hideHeading={false} isError={!validCieloTranscriptionPlan && cieloHasCredentials}>
         <FormattedMessage {...messages.invalidCielo24TranscriptionPlanMessage} />
       </ErrorAlert>
-      <ErrorAlert
-        hideHeading={false}
-        isError={!validThreePlayTranscriptionPlan && threePlayHasCredentials}
-      >
+      <ErrorAlert hideHeading={false} isError={!validThreePlayTranscriptionPlan && threePlayHasCredentials}>
         <FormattedMessage {...messages.invalid3PlayMediaTranscriptionPlanMessage} />
       </ErrorAlert>
-      <ErrorAlert
-        hideHeading={false}
-        isError={transcriptStatus === RequestStatus.FAILED}
-      >
+      <ErrorAlert hideHeading={false} isError={transcriptStatus === RequestStatus.FAILED}>
         <ul className="p-0">
-          {errorMessages.transcript.map(message => (
+          {errorMessages.transcript.map((message) => (
             <li key={`order-transcript-error-${message}`} style={{ listStyle: 'none' }}>
               {intl.formatMessage(messages.errorAlertMessage, { message })}
             </li>
@@ -111,11 +102,7 @@ const OrderTranscriptForm = ({
           setTranscriptType(e.target.value);
         }}
       >
-        <SelectableBox
-          value="order"
-          aria-label={intl.formatMessage(messages.noneAriaLabel)}
-          className="text-center"
-        >
+        <SelectableBox value="order" aria-label={intl.formatMessage(messages.noneAriaLabel)} className="text-center">
           <FormattedMessage {...messages.noneLabel} />
         </SelectableBox>
         <SelectableBox
@@ -148,12 +135,7 @@ const OrderTranscriptForm = ({
             <div className="mr-1">
               <FormattedMessage {...messages.lastUpdatedMessage} />
             </div>
-            <FormattedDate
-              value={data.modified}
-              year="numeric"
-              month="long"
-              day="2-digit"
-            />
+            <FormattedDate value={data.modified} year="numeric" month="long" day="2-digit" />
           </div>
         )}
       </Stack>

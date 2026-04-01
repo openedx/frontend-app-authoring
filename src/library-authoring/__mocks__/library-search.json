@@ -337,9 +337,7 @@
           "display_name": "Multiple Choice Problem",
           "block_id": "2ace6b9b-6620-413c-a66f-19c797527f34",
           "content": {
-            "problem_types": [
-              "multiplechoiceresponse"
-            ],
+            "problem_types": ["multiplechoiceresponse"],
             "capa_content": "What is the gradient of an inverted hyperspace manifold?cos (x) ey ln(z) i + sin(x)ey ln(z)j + sin(x) ey(1/z)k "
           },
           "tags": {},
@@ -367,9 +365,7 @@
           "display_name": "Single Choice Problem",
           "block_id": "7d7e98ba-3ac9-4aa8-8946-159129b39a28",
           "content": {
-            "problem_types": [
-              "choiceresponse"
-            ],
+            "problem_types": ["choiceresponse"],
             "capa_content": "Blah blah?"
           },
           "tags": {},
@@ -397,9 +393,7 @@
           "display_name": "Numerical Response Problem",
           "block_id": "4e1a72f9-ac93-42aa-a61c-ab5f9698c398",
           "content": {
-            "problem_types": [
-              "numericalresponse"
-            ],
+            "problem_types": ["numericalresponse"],
             "capa_content": "What is 1 + 1?"
           },
           "tags": {},
@@ -427,9 +421,7 @@
           "display_name": "Option Response Problem",
           "block_id": "ad483625-ade2-4712-88d8-c9743abbd291",
           "content": {
-            "problem_types": [
-              "optionresponse"
-            ],
+            "problem_types": ["optionresponse"],
             "capa_content": "What is foobar?"
           },
           "tags": {},
@@ -457,9 +449,7 @@
           "display_name": "String Response Problem",
           "block_id": "b4c859cb-de70-421a-917b-e6e01ce44bd8",
           "content": {
-            "problem_types": [
-              "stringresponse"
-            ],
+            "problem_types": ["stringresponse"],
             "capa_content": "What is your name?"
           },
           "tags": {},

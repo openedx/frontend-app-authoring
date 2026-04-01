@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import LanguageSelector from './LanguageSelector';
 import { selectors } from '../../../../../../data/redux';
 
@@ -25,7 +23,10 @@ describe('LanguageSelector', () => {
     onSelect: jest.fn().mockName('props.OnSelect'),
     index: 1,
     language: lang1Code,
-    openLanguages: [[lang2Code, lang2], [lang3Code, lang3]],
+    openLanguages: [
+      [lang2Code, lang2],
+      [lang3Code, lang3],
+    ],
   };
   beforeEach(() => {
     initializeMocks();

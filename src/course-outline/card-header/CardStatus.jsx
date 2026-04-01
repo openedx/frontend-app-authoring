@@ -7,20 +7,13 @@ import { getItemStatusBadgeContent } from '../utils';
 import messages from './messages';
 import StatusBadge from './StatusBadge';
 
-const CardStatus = ({
-  status,
-  showDiscussionsEnabledBadge,
-}) => {
+const CardStatus = ({ status, showDiscussionsEnabledBadge }) => {
   const intl = useIntl();
   const { badgeTitle, badgeIcon } = getItemStatusBadgeContent(status, messages, intl);
 
   return (
     <>
-      {showDiscussionsEnabledBadge && (
-        <StatusBadge
-          text={intl.formatMessage(messages.discussionEnabledBadgeText)}
-        />
-      )}
+      {showDiscussionsEnabledBadge && <StatusBadge text={intl.formatMessage(messages.discussionEnabledBadgeText)} />}
       {badgeTitle && (
         <StatusBadge
           text={badgeTitle}

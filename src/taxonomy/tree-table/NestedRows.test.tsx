@@ -5,7 +5,9 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import NestedRows from './NestedRows';
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
+  <IntlProvider locale="en" messages={{}}>
+    {children}
+  </IntlProvider>
 );
 
 const makeCell = (id: string, content: string) => ({

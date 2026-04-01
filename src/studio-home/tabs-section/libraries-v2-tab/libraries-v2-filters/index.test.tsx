@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  screen, fireEvent, render, waitFor,
-} from '@testing-library/react';
+import { screen, fireEvent, render, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import LibrariesV2Filters, { LibrariesV2FiltersProps } from '.';
@@ -16,16 +14,17 @@ describe('LibrariesV2Filters', () => {
     </IntlProvider>
   );
 
-  const renderComponent = (overrideProps: Partial<LibrariesV2FiltersProps> = {}) => render(
-    <IntlProviderWrapper>
-      <LibrariesV2Filters
-        filterParams={{}}
-        setFilterParams={setFilterParamsMock}
-        setCurrentPage={setCurrentPageMock}
-        {...overrideProps}
-      />
-    </IntlProviderWrapper>,
-  );
+  const renderComponent = (overrideProps: Partial<LibrariesV2FiltersProps> = {}) =>
+    render(
+      <IntlProviderWrapper>
+        <LibrariesV2Filters
+          filterParams={{}}
+          setFilterParams={setFilterParamsMock}
+          setCurrentPage={setCurrentPageMock}
+          {...overrideProps}
+        />
+      </IntlProviderWrapper>,
+    );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -86,10 +85,12 @@ describe('LibrariesV2Filters', () => {
     fireEvent.click(oldestLibV2sMenuItem);
 
     // Check that setFilterParams is called with the correct payload
-    expect(setFilterParamsMock).toHaveBeenCalledWith(expect.objectContaining({
-      search: undefined,
-      order: 'created',
-    }));
+    expect(setFilterParamsMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        search: undefined,
+        order: 'created',
+      }),
+    );
 
     // Check that setCurrentPage is called with `1`
     expect(setCurrentPageMock).toHaveBeenCalledWith(1);
@@ -108,10 +109,16 @@ describe('LibrariesV2Filters', () => {
     const searchInput = screen.getByRole('searchbox');
     fireEvent.change(searchInput, { target: { value: '   ' } });
 
-    await waitFor(() => expect(setFilterParamsMock).not.toHaveBeenCalledWith(expect.objectContaining({
-      search: '   ',
-      order: 'created',
-    })), { timeout: 500 });
+    await waitFor(
+      () =>
+        expect(setFilterParamsMock).not.toHaveBeenCalledWith(
+          expect.objectContaining({
+            search: '   ',
+            order: 'created',
+          }),
+        ),
+      { timeout: 500 },
+    );
   });
 
   it('should display the loading spinner when isLoading is true', () => {

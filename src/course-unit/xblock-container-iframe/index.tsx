@@ -1,7 +1,5 @@
 import { getConfig } from '@edx/frontend-platform';
-import {
-  FC, useEffect, useState, useMemo, useCallback,
-} from 'react';
+import { FC, useEffect, useState, useMemo, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle, Sheet, StandardModal } from '@openedx/paragon';
 import { useDispatch } from 'react-redux';
@@ -33,13 +31,9 @@ import {
   fetchCourseVerticalChildrenData,
   updateCourseUnitSidebar,
 } from '../data/thunk';
-import {
-  useMessageHandlers,
-} from './hooks';
+import { useMessageHandlers } from './hooks';
 import messages from './messages';
-import {
-  XBlockContainerIframeProps,
-} from './types';
+import { XBlockContainerIframeProps } from './types';
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 import { isUnitPageNewDesignEnabled } from '../utils';
@@ -55,10 +49,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const {
-    setCurrentPageKey,
-    setSelectedComponentId,
-  } = useUnitSidebarContext(!readonly) || {};
+  const { setCurrentPageKey, setSelectedComponentId } = useUnitSidebarContext(!readonly) || {};
 
   // Useful to reload iframe
   const [iframeKey, setIframeKey] = useState(0);
@@ -70,10 +61,9 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const [blockType, setBlockType] = useState<string>('');
   const { useVideoGalleryFlow } = useWaffleFlags(courseId);
   const [newBlockId, setNewBlockId] = useState<string>('');
-  const [
-    accessManagedXBlockData,
-    setAccessManagedXBlockData,
-  ] = useState<AccessManagedXBlockDataTypes | undefined>(undefined);
+  const [accessManagedXBlockData, setAccessManagedXBlockData] = useState<AccessManagedXBlockDataTypes | undefined>(
+    undefined,
+  );
   const [iframeOffset, setIframeOffset] = useState(0);
   const [deleteXBlockId, setDeleteXBlockId] = useState<string | null>(null);
   const [unlinkXBlockId, setUnlinkXBlockId] = useState<string | null>(null);
@@ -93,21 +83,27 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     setIframeRef(iframeRef);
   }, [setIframeRef]);
 
-  const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
-    closeXBlockEditorModal();
-    closeVideoSelectorModal();
-    sendMessageToIframe(messageTypes.refreshXBlock, null);
-  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
+  const onXBlockSave = useCallback(
+    /* istanbul ignore next */ () => {
+      closeXBlockEditorModal();
+      closeVideoSelectorModal();
+      sendMessageToIframe(messageTypes.refreshXBlock, null);
+    },
+    [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe],
+  );
 
-  const handleEditXBlock = useCallback((type: string, id: string) => {
-    setBlockType(type);
-    setNewBlockId(id);
-    if (type === 'video' && useVideoGalleryFlow) {
-      showVideoSelectorModal();
-    } else {
-      showXBlockEditorModal();
-    }
-  }, [showVideoSelectorModal, showXBlockEditorModal]);
+  const handleEditXBlock = useCallback(
+    (type: string, id: string) => {
+      setBlockType(type);
+      setNewBlockId(id);
+      if (type === 'video' && useVideoGalleryFlow) {
+        showVideoSelectorModal();
+      } else {
+        showXBlockEditorModal();
+      }
+    },
+    [showVideoSelectorModal, showXBlockEditorModal],
+  );
 
   const handleDuplicateXBlock = useCallback(
     (usageId: string) => {
@@ -129,7 +125,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const handleManageXBlockAccess = (usageId: string) => {
     openConfigureModal();
     setConfigureXBlockId(usageId);
-    const foundXBlock = courseVerticalChildren?.find(xblock => xblock.blockId === usageId);
+    const foundXBlock = courseVerticalChildren?.find((xblock) => xblock.blockId === usageId);
     if (foundXBlock) {
       setAccessManagedXBlockData(formatAccessManagedXBlockData(foundXBlock, usageId));
     }
@@ -248,10 +244,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   return (
     <>
       {showLegacyEditModal && (
-        <ModalIframe
-          title={intl.formatMessage(messages.legacyEditModalIframeTitle)}
-          src={legacyEditModalUrl}
-        />
+        <ModalIframe title={intl.formatMessage(messages.legacyEditModalIframeTitle)} src={legacyEditModalUrl} />
       )}
       <DeleteModal
         category="component"
@@ -324,12 +317,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         aria-label={intl.formatMessage(messages.xblockIframeLabel, { xblockCount: courseVerticalChildren.length })}
       />
       {configureXBlockId && (
-        <Sheet
-          position="right"
-          show={isManageTagsOpen}
-          onClose={closeManageTagsModal}
-          blocking
-        >
+        <Sheet position="right" show={isManageTagsOpen} onClose={closeManageTagsModal} blocking>
           <ContentTagsDrawer id={configureXBlockId} onClose={closeManageTagsModal} />
         </Sheet>
       )}

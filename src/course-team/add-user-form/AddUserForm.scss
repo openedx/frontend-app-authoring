@@ -1,8 +1,8 @@
 .add-user-form {
   display: flex;
   flex-direction: column;
-  border: .0625rem solid var(--pgn-color-gray-200);
-  border-radius: .375rem;
+  border: 0.0625rem solid var(--pgn-color-gray-200);
+  border-radius: 0.375rem;
   box-shadow: 0 1px 1px var(--pgn-color-gray-200);
   margin-bottom: 1.25rem;
   background-color: var(--pgn-color-white);
@@ -25,8 +25,8 @@
     position: relative;
 
     &::after {
-      margin-left: .3125rem;
-      content: "*";
+      margin-left: 0.3125rem;
+      content: '*';
     }
   }
 
@@ -36,7 +36,7 @@
 
   .pgn__action-row {
     padding: var(--pgn-spacing-spacer-base) 1.875rem;
-    border-top: .0625rem solid var(--pgn-color-gray-200);
+    border-top: 0.0625rem solid var(--pgn-color-gray-200);
     justify-content: flex-start;
   }
 }

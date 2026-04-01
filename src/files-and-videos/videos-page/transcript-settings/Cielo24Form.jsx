@@ -7,12 +7,7 @@ import FormDropdown from './FormDropdown';
 import { getFidelityOptions } from '../data/utils';
 import messages from './messages';
 
-const Cielo24Form = ({
-  hasTranscriptCredentials,
-  data,
-  setData,
-  transcriptionPlan,
-}) => {
+const Cielo24Form = ({ hasTranscriptCredentials, data, setData, transcriptionPlan }) => {
   const intl = useIntl();
   if (hasTranscriptCredentials) {
     const { fidelity } = transcriptionPlan;
@@ -20,9 +15,12 @@ const Cielo24Form = ({
     const turnaroundOptions = transcriptionPlan.turnaround;
     const fidelityOptions = getFidelityOptions(fidelity);
     const sourceLanguageOptions = data.cielo24Fidelity ? fidelity[data.cielo24Fidelity]?.languages : {};
-    const languages = data.cielo24Fidelity === 'PROFESSIONAL' ? sourceLanguageOptions : {
-      [data.videoSourceLanguage]: sourceLanguageOptions[data.videoSourceLanguage],
-    };
+    const languages =
+      data.cielo24Fidelity === 'PROFESSIONAL'
+        ? sourceLanguageOptions
+        : {
+            [data.videoSourceLanguage]: sourceLanguageOptions[data.videoSourceLanguage],
+          };
     return (
       <Stack gap={1}>
         <Form.Group size="sm">

@@ -8,14 +8,10 @@ import type { ContentLibrary } from '../data/api';
 interface CreateLibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  handlePostCreate: (library: ContentLibrary) => void,
+  handlePostCreate: (library: ContentLibrary) => void;
 }
 
-export const CreateLibraryModal = ({
-  isOpen,
-  onClose,
-  handlePostCreate,
-}: CreateLibraryModalProps) => {
+export const CreateLibraryModal = ({ isOpen, onClose, handlePostCreate }: CreateLibraryModalProps) => {
   const intl = useIntl();
   return (
     <ModalDialog
@@ -31,11 +27,7 @@ export const CreateLibraryModal = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        <CreateLibrary
-          handleCancel={onClose}
-          handlePostCreate={handlePostCreate}
-          showInModal
-        />
+        <CreateLibrary handleCancel={onClose} handlePostCreate={handlePostCreate} showInModal />
       </ModalDialog.Body>
     </ModalDialog>
   );

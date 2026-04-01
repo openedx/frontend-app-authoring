@@ -1,11 +1,5 @@
 import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
-import {
-  fireEvent,
-  initializeMocks,
-  render as baseRender,
-  screen,
-  waitFor,
-} from '../../testUtils';
+import { fireEvent, initializeMocks, render as baseRender, screen, waitFor } from '../../testUtils';
 import {
   mockContentLibrary,
   mockLibraryBlockMetadata,
@@ -29,9 +23,8 @@ const render = (
   usageKey: string = mockLibraryBlockMetadata.usageKeyPublished,
   libraryId: string = mockContentLibrary.libraryId,
   showOnlyPublished: boolean = false,
-) => baseRender(
-  <ComponentAdvancedInfo />,
-  {
+) =>
+  baseRender(<ComponentAdvancedInfo />, {
     extraWrapper: ({ children }: { children: React.ReactNode }) => (
       <LibraryProvider libraryId={libraryId}>
         <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
@@ -46,8 +39,7 @@ const render = (
         </PublishedFilterContextProvider>
       </LibraryProvider>
     ),
-  },
-);
+  });
 
 describe('<ComponentAdvancedInfo />', () => {
   beforeEach(() => {

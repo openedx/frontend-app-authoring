@@ -2,10 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
-import {
-  Check as CheckIcon,
-  CalendarMonth as CalendarIcon,
-} from '@openedx/paragon/icons';
+import { Check as CheckIcon, CalendarMonth as CalendarIcon } from '@openedx/paragon/icons';
 
 import messages from './messages';
 
@@ -40,13 +37,9 @@ const GradingTypeAndDueDate = ({
 
   const gradingTypeDiv = () => (
     <div className="d-flex align-items-center mr-1" data-testid="grading-type-div">
-      <span className="sr-only status-grading-label">
-        {intl.formatMessage(messages.gradedAsScreenReaderLabel)}
-      </span>
+      <span className="sr-only status-grading-label">{intl.formatMessage(messages.gradedAsScreenReaderLabel)}</span>
       <Icon className="mr-1" size="sm" src={CheckIcon} />
-      <span className="status-grading-value">
-        {gradingType || intl.formatMessage(messages.ungradedText)}
-      </span>
+      <span className="status-grading-value">{gradingType || intl.formatMessage(messages.ungradedText)}</span>
     </div>
   );
 
@@ -74,27 +67,28 @@ const GradingTypeAndDueDate = ({
     return (
       <>
         <div className="d-flex align-items-center">
-          {gradingTypeDiv()} -
-          <span className="sr-only">{intl.formatMessage(examValue)}</span>
+          {gradingTypeDiv()} -<span className="sr-only">{intl.formatMessage(examValue)}</span>
           <span className="mx-2" data-testid="exam-value-span">
             {intl.formatMessage(examValue)}
           </span>
           {dueDateDiv()}
         </div>
-        {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
+        {showRelativeWeeks && selfPacedRelativeDueWeeksDiv()}
       </>
     );
-  } if ((dueDate && !isSelfPaced) || graded) {
+  }
+  if ((dueDate && !isSelfPaced) || graded) {
     return (
       <>
         <div className="d-flex align-items-center">
           {gradingTypeDiv()}
           {dueDateDiv()}
         </div>
-        {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
+        {showRelativeWeeks && selfPacedRelativeDueWeeksDiv()}
       </>
     );
-  } if (showRelativeWeeks) {
+  }
+  if (showRelativeWeeks) {
     return (
       <>
         {gradingTypeDiv()}

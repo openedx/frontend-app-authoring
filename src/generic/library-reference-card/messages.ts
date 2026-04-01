@@ -14,31 +14,38 @@ const messages = defineMessages({
   hasTopParentBtn: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.has-top-parent-btn',
     defaultMessage: 'View {parentType}',
-    description: 'Text displayed in sidebar library reference card button when a block was reused as part of a parent block',
+    description:
+      'Text displayed in sidebar library reference card button when a block was reused as part of a parent block',
   },
   hasTopParentReadyToSyncText: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.has-top-parent-sync-text',
     defaultMessage: '{name} was reused as part of a {parentType} which has updates available.',
-    description: 'Text displayed in sidebar library reference card when a block has updates available as it was reused as part of a parent block',
+    description:
+      'Text displayed in sidebar library reference card when a block has updates available as it was reused as part of a parent block',
   },
   hasTopParentReadyToSyncBtn: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.has-top-parent-sync-btn',
     defaultMessage: 'Review Updates',
-    description: 'Text displayed in sidebar library reference card button when a block has updates available as it was reused as part of a parent block',
+    description:
+      'Text displayed in sidebar library reference card button when a block has updates available as it was reused as part of a parent block',
   },
   hasTopParentBrokenLinkText: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.has-top-parent-broken-link-text',
-    defaultMessage: '{name} was reused as part of a {parentType} which has a broken link. To receive library updates to this component, unlink the broken link.',
-    description: 'Text displayed in sidebar library reference card when a block was reused as part of a parent block which has a broken link.',
+    defaultMessage:
+      '{name} was reused as part of a {parentType} which has a broken link. To receive library updates to this component, unlink the broken link.',
+    description:
+      'Text displayed in sidebar library reference card when a block was reused as part of a parent block which has a broken link.',
   },
   hasTopParentBrokenLinkBtn: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.has-top-parent-broken-link-btn',
     defaultMessage: 'Unlink {parentType}',
-    description: 'Text displayed in sidebar library reference card button when a block was reused as part of a parent block which has a broken link.',
+    description:
+      'Text displayed in sidebar library reference card button when a block was reused as part of a parent block which has a broken link.',
   },
   topParentBrokenLinkText: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.top-parent-broken-link-text',
-    defaultMessage: 'The link between {name} and the library version has been broken. To edit or make changes, unlink component.',
+    defaultMessage:
+      'The link between {name} and the library version has been broken. To edit or make changes, unlink component.',
     description: 'Text displayed in sidebar library reference card when a block has a broken link.',
   },
   topParentBrokenLinkBtn: {

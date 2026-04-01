@@ -3,7 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import {
-  getCourseModes, getCertificateActivationUrl, getCertificateWebViewUrl, getIsCertificateActive,
+  getCourseModes,
+  getCertificateActivationUrl,
+  getCertificateWebViewUrl,
+  getIsCertificateActive,
 } from '../../../data/selectors';
 import { updateCertificateActiveStatus } from '../../../data/thunks';
 
@@ -24,7 +27,9 @@ const useHeaderButtons = () => {
   };
 
   const previewUrl = useMemo(() => {
-    if (!certificateWebViewUrl) { return ''; }
+    if (!certificateWebViewUrl) {
+      return '';
+    }
 
     const getUrl = () => new URL(certificateWebViewUrl, window.location.origin);
     const url = getUrl();

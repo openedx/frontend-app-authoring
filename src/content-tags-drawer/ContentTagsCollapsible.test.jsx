@@ -1,12 +1,6 @@
 import React, { useMemo } from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import {
-  act,
-  render,
-  fireEvent,
-  screen,
-  within,
-} from '@testing-library/react';
+import { act, render, fireEvent, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import ContentTagsCollapsible from './ContentTagsCollapsible';
@@ -19,37 +13,41 @@ const taxonomyMockData = {
   tagPages: {
     isLoading: false,
     isError: false,
-    data: [{
-      value: 'Tag 1',
-      externalId: null,
-      childCount: 2,
-      depth: 0,
-      parentValue: null,
-      id: 12345,
-      subTagsUrl: null,
-      canChangeTag: false,
-      canDeleteTag: false,
-    }, {
-      value: 'Tag 2',
-      externalId: null,
-      childCount: 0,
-      depth: 0,
-      parentValue: null,
-      id: 12346,
-      subTagsUrl: null,
-      canChangeTag: false,
-      canDeleteTag: false,
-    }, {
-      value: 'Tag 3',
-      externalId: null,
-      childCount: 0,
-      depth: 0,
-      parentValue: null,
-      id: 12347,
-      subTagsUrl: null,
-      canChangeTag: false,
-      canDeleteTag: false,
-    }],
+    data: [
+      {
+        value: 'Tag 1',
+        externalId: null,
+        childCount: 2,
+        depth: 0,
+        parentValue: null,
+        id: 12345,
+        subTagsUrl: null,
+        canChangeTag: false,
+        canDeleteTag: false,
+      },
+      {
+        value: 'Tag 2',
+        externalId: null,
+        childCount: 0,
+        depth: 0,
+        parentValue: null,
+        id: 12346,
+        subTagsUrl: null,
+        canChangeTag: false,
+        canDeleteTag: false,
+      },
+      {
+        value: 'Tag 3',
+        externalId: null,
+        childCount: 0,
+        depth: 0,
+        parentValue: null,
+        id: 12347,
+        subTagsUrl: null,
+        canChangeTag: false,
+        canDeleteTag: false,
+      },
+    ],
   },
 };
 
@@ -59,27 +57,30 @@ const nestedTaxonomyMockData = {
   tagPages: {
     isLoading: false,
     isError: false,
-    data: [{
-      value: 'Tag 1.1',
-      externalId: null,
-      childCount: 0,
-      depth: 1,
-      parentValue: 'Tag 1',
-      id: 12354,
-      subTagsUrl: null,
-      canChangeTag: false,
-      canDeleteTag: false,
-    }, {
-      value: 'Tag 1.2',
-      externalId: null,
-      childCount: 0,
-      depth: 1,
-      parentValue: 'Tag 1',
-      id: 12355,
-      subTagsUrl: null,
-      canChangeTag: false,
-      canDeleteTag: false,
-    }],
+    data: [
+      {
+        value: 'Tag 1.1',
+        externalId: null,
+        childCount: 0,
+        depth: 1,
+        parentValue: 'Tag 1',
+        id: 12354,
+        subTagsUrl: null,
+        canChangeTag: false,
+        canDeleteTag: false,
+      },
+      {
+        value: 'Tag 1.2',
+        externalId: null,
+        childCount: 0,
+        depth: 1,
+        parentValue: 'Tag 1',
+        id: 12355,
+        subTagsUrl: null,
+        canChangeTag: false,
+        canDeleteTag: false,
+      },
+    ],
   },
 };
 
@@ -157,21 +158,24 @@ const ContentTagsCollapsibleComponent = ({
   openCollapsible,
   closeCollapsible,
 }) => {
-  const context = useMemo(() => ({
-    addStagedContentTag,
-    removeStagedContentTag,
-    setStagedTags,
-    removeGlobalStagedContentTag,
-    addRemovedContentTag,
-    deleteRemovedContentTag,
-    globalStagedContentTags,
-    globalStagedRemovedContentTags,
-    setGlobalStagedContentTags,
-    isEditMode,
-    toEditMode,
-    openCollapsible,
-    closeCollapsible,
-  }), []);
+  const context = useMemo(
+    () => ({
+      addStagedContentTag,
+      removeStagedContentTag,
+      setStagedTags,
+      removeGlobalStagedContentTag,
+      addRemovedContentTag,
+      deleteRemovedContentTag,
+      globalStagedContentTags,
+      globalStagedRemovedContentTags,
+      setGlobalStagedContentTags,
+      isEditMode,
+      toEditMode,
+      openCollapsible,
+      closeCollapsible,
+    }),
+    [],
+  );
   return (
     <ContentTagsDrawerContext.Provider value={context}>
       <IntlProvider locale="en" messages={{}}>
@@ -202,7 +206,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   async function getComponent(updatedData) {
-    const componentData = (!updatedData ? data : updatedData);
+    const componentData = !updatedData ? data : updatedData;
 
     return render(
       <ContentTagsCollapsibleComponent
@@ -247,10 +251,7 @@ describe('<ContentTagsCollapsible />', () => {
   it('should render edit mode', async () => {
     await getComponent();
 
-    expect(screen.getAllByRole(
-      'button',
-      { name: /delete/i },
-    ).length).toBe(3);
+    expect(screen.getAllByRole('button', { name: /delete/i }).length).toBe(3);
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
   });
 
@@ -402,11 +403,13 @@ describe('<ContentTagsCollapsible />', () => {
         ],
       },
       globalStagedContentTags: {
-        123: [{
-          value: 'Tag 3',
-          lineage: ['Tag 3'],
-          canDeleteObjecttag: true,
-        }],
+        123: [
+          {
+            value: 'Tag 3',
+            lineage: ['Tag 3'],
+            canDeleteObjecttag: true,
+          },
+        ],
       },
     });
 
@@ -438,10 +441,12 @@ describe('<ContentTagsCollapsible />', () => {
     // Setup component to have staged tags
     const { getByText } = await getComponent({
       ...data,
-      stagedContentTags: [{
-        value: 'Tag%203',
-        label: 'Tag 3',
-      }],
+      stagedContentTags: [
+        {
+          value: 'Tag%203',
+          label: 'Tag 3',
+        },
+      ],
     });
 
     // Click on inline "Add" button and check that the appropriate methods are called
@@ -458,10 +463,12 @@ describe('<ContentTagsCollapsible />', () => {
     // Setup component to have staged tags
     const { container, getByText } = await getComponent({
       ...data,
-      stagedContentTags: [{
-        value: 'Tag%203',
-        label: 'Tag 3',
-      }],
+      stagedContentTags: [
+        {
+          value: 'Tag%203',
+          label: 'Tag 3',
+        },
+      ],
     });
 
     // Click on dropdown with staged tags to expand it
@@ -483,10 +490,12 @@ describe('<ContentTagsCollapsible />', () => {
     // Setup component to have staged tags
     const { container, getByText } = await getComponent({
       ...data,
-      stagedContentTags: [{
-        value: 'Tag%203',
-        label: 'Tag 3',
-      }],
+      stagedContentTags: [
+        {
+          value: 'Tag%203',
+          label: 'Tag 3',
+        },
+      ],
     });
 
     // Click on dropdown with staged tags to expand it
@@ -509,9 +518,7 @@ describe('<ContentTagsCollapsible />', () => {
 
   it('should handle search term change', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-    const {
-      getByText, getByRole, getByDisplayValue,
-    } = await getComponent();
+    const { getByText, getByRole, getByDisplayValue } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
@@ -566,11 +573,7 @@ describe('<ContentTagsCollapsible />', () => {
 
   it('should test keyboard navigation of add tags widget', async () => {
     const user = userEvent.setup({ delay: null });
-    const {
-      getByText,
-      queryByText,
-      queryAllByText,
-    } = await getComponent();
+    const { getByText, queryByText, queryAllByText } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);

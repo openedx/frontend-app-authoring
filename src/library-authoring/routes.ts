@@ -2,14 +2,7 @@
  * Constants and utility hook for the Library Authoring routes.
  */
 import { useCallback, useMemo } from 'react';
-import {
-  generatePath,
-  matchPath,
-  useParams,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
+import { generatePath, matchPath, useParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ContainerType, getBlockType } from '../generic/key-utils';
 
 export const BASE_ROUTE = '/library/:libraryId';
@@ -67,11 +60,11 @@ export enum ContentType {
 export const allLibraryPageTabs: ContentType[] = Object.values(ContentType);
 
 export type NavigateToData = {
-  selectedItemId?: string,
-  collectionId?: string,
-  containerId?: string,
-  contentType?: ContentType,
-  index?: number,
+  selectedItemId?: string;
+  collectionId?: string;
+  containerId?: string;
+  contentType?: ContentType;
+  index?: number;
 };
 
 export type LibraryRoutesData = {
@@ -123,172 +116,169 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       insideSubsection,
       insideUnits,
       insideUnit,
-    ].filter((match) => match).length > 1) {
+    ].filter((match) => match).length > 1
+  ) {
     throw new Error('Cannot be inside more than one route at the same time.');
   }
 
   /** This function is used to navigate to a specific route based on the provided parameters.
    */
-  const navigateTo = useCallback(({
-    selectedItemId,
-    collectionId,
-    containerId,
-    contentType,
-    index,
-  }: NavigateToData = {}) => {
-    const routeParams = {
-      ...params,
-      // Overwrite the params with the provided values.
-      ...((selectedItemId !== undefined) && { selectedItemId }),
-      ...((containerId !== undefined) && { containerId }),
-      ...((collectionId !== undefined) && { collectionId }),
-      ...((index !== undefined) && { index }),
-    };
-    let route: string;
+  const navigateTo = useCallback(
+    ({ selectedItemId, collectionId, containerId, contentType, index }: NavigateToData = {}) => {
+      const routeParams = {
+        ...params,
+        // Overwrite the params with the provided values.
+        ...(selectedItemId !== undefined && { selectedItemId }),
+        ...(containerId !== undefined && { containerId }),
+        ...(collectionId !== undefined && { collectionId }),
+        ...(index !== undefined && { index }),
+      };
+      let route: string;
 
-    if (routeParams.selectedItemId
-     && (['components', 'units', 'sections', 'subsections'].includes(routeParams.selectedItemId || ''))) {
-      // These are not valid selectedItemIds, but routes
-      routeParams.selectedItemId = undefined;
-    }
+      if (
+        routeParams.selectedItemId &&
+        ['components', 'units', 'sections', 'subsections'].includes(routeParams.selectedItemId || '')
+      ) {
+        // These are not valid selectedItemIds, but routes
+        routeParams.selectedItemId = undefined;
+      }
 
-    // Update containerId/collectionId in library context if is not undefined.
-    // Ids can be cleared from route by passing in empty string so we need to set it.
-    if (containerId !== undefined) {
-      routeParams.selectedItemId = undefined;
+      // Update containerId/collectionId in library context if is not undefined.
+      // Ids can be cleared from route by passing in empty string so we need to set it.
+      if (containerId !== undefined) {
+        routeParams.selectedItemId = undefined;
 
-      // If we can have a containerId alongside a routeParams.collectionId,
-      // it means we are inside a collection trying to navigate to a unit/section/subsection,
-      // so we want to clear the collectionId to not have ambiguity.
-      if (routeParams.collectionId !== undefined) {
+        // If we can have a containerId alongside a routeParams.collectionId,
+        // it means we are inside a collection trying to navigate to a unit/section/subsection,
+        // so we want to clear the collectionId to not have ambiguity.
+        if (routeParams.collectionId !== undefined) {
+          routeParams.collectionId = undefined;
+        }
+      } else if (collectionId !== undefined) {
+        routeParams.selectedItemId = undefined;
+      } else if (contentType) {
+        // We are navigating to the library home, so we need to clear the containerId and collectionId
+        routeParams.containerId = undefined;
         routeParams.collectionId = undefined;
       }
-    } else if (collectionId !== undefined) {
-      routeParams.selectedItemId = undefined;
-    } else if (contentType) {
-      // We are navigating to the library home, so we need to clear the containerId and collectionId
-      routeParams.containerId = undefined;
-      routeParams.collectionId = undefined;
-    }
 
-    // The code below determines the best route to navigate to based on the
-    // current pathname and the provided parameters.
-    // Providing contentType overrides the current route so we can change tabs.
-    if (contentType === ContentType.components) {
-      if (!routeParams.selectedItemId?.startsWith('lb:')) {
-        // If the selectedItemId is not a component, we need to set it to undefined
-        routeParams.selectedItemId = undefined;
+      // The code below determines the best route to navigate to based on the
+      // current pathname and the provided parameters.
+      // Providing contentType overrides the current route so we can change tabs.
+      if (contentType === ContentType.components) {
+        if (!routeParams.selectedItemId?.startsWith('lb:')) {
+          // If the selectedItemId is not a component, we need to set it to undefined
+          routeParams.selectedItemId = undefined;
+        }
+        route = ROUTES.COMPONENTS;
+      } else if (contentType === ContentType.collections) {
+        // FIXME: We are using the Collection key, not the full OpaqueKey. So we
+        // can't directly use the selectedItemId to determine if it's a collection.
+        // We need to change this to use the full OpaqueKey in the future.
+        if (routeParams.selectedItemId?.startsWith('lct:') || routeParams.selectedItemId?.startsWith('lb:')) {
+          routeParams.selectedItemId = undefined;
+        }
+        route = ROUTES.COLLECTIONS;
+      } else if (contentType === ContentType.units) {
+        if (!routeParams.selectedItemId?.includes(':unit:')) {
+          // Clear selectedItemId if it is not a unit.
+          routeParams.selectedItemId = undefined;
+        }
+        route = ROUTES.UNITS;
+      } else if (contentType === ContentType.subsections) {
+        if (!routeParams.selectedItemId?.includes(':subsection:')) {
+          // If the selectedItemId is not a subsection, we need to set it to undefined
+          routeParams.selectedItemId = undefined;
+        }
+        route = ROUTES.SUBSECTIONS;
+      } else if (contentType === ContentType.sections) {
+        if (!routeParams.selectedItemId?.includes(':section:')) {
+          // If the selectedItemId is not a section, we need to set it to undefined
+          routeParams.selectedItemId = undefined;
+        }
+        route = ROUTES.SECTIONS;
+      } else if (contentType === ContentType.home) {
+        route = ROUTES.HOME;
+      } else if (routeParams.containerId) {
+        const containerType = getBlockType(routeParams.containerId);
+        switch (containerType) {
+          case ContainerType.Unit:
+            route = ROUTES.UNIT;
+            break;
+          case ContainerType.Subsection:
+            route = ROUTES.SUBSECTION;
+            break;
+          case ContainerType.Section:
+            route = ROUTES.SECTION;
+            break;
+          default:
+            // Fall back to home if unrecognized container type
+            route = ROUTES.HOME;
+            routeParams.containerId = undefined;
+            break;
+        }
+      } else if (routeParams.collectionId) {
+        route = ROUTES.COLLECTION;
+        // From here, we will just stay in the current route
+      } else if (insideComponents) {
+        route = ROUTES.COMPONENTS;
+      } else if (insideCollections) {
+        route = ROUTES.COLLECTIONS;
+      } else if (insideUnits) {
+        route = ROUTES.UNITS;
+      } else if (insideSubsections) {
+        route = ROUTES.SUBSECTIONS;
+      } else if (insideSections) {
+        route = ROUTES.SECTIONS;
+      } else {
+        route = ROUTES.HOME;
       }
-      route = ROUTES.COMPONENTS;
-    } else if (contentType === ContentType.collections) {
-      // FIXME: We are using the Collection key, not the full OpaqueKey. So we
-      // can't directly use the selectedItemId to determine if it's a collection.
-      // We need to change this to use the full OpaqueKey in the future.
-      if (routeParams.selectedItemId?.startsWith('lct:')
-        || routeParams.selectedItemId?.startsWith('lb:')) {
-        routeParams.selectedItemId = undefined;
-      }
-      route = ROUTES.COLLECTIONS;
-    } else if (contentType === ContentType.units) {
-      if (!routeParams.selectedItemId?.includes(':unit:')) {
-        // Clear selectedItemId if it is not a unit.
-        routeParams.selectedItemId = undefined;
-      }
-      route = ROUTES.UNITS;
-    } else if (contentType === ContentType.subsections) {
-      if (!routeParams.selectedItemId?.includes(':subsection:')) {
-        // If the selectedItemId is not a subsection, we need to set it to undefined
-        routeParams.selectedItemId = undefined;
-      }
-      route = ROUTES.SUBSECTIONS;
-    } else if (contentType === ContentType.sections) {
-      if (!routeParams.selectedItemId?.includes(':section:')) {
-        // If the selectedItemId is not a section, we need to set it to undefined
-        routeParams.selectedItemId = undefined;
-      }
-      route = ROUTES.SECTIONS;
-    } else if (contentType === ContentType.home) {
-      route = ROUTES.HOME;
-    } else if (routeParams.containerId) {
-      const containerType = getBlockType(routeParams.containerId);
-      switch (containerType) {
-        case ContainerType.Unit:
-          route = ROUTES.UNIT;
-          break;
-        case ContainerType.Subsection:
-          route = ROUTES.SUBSECTION;
-          break;
-        case ContainerType.Section:
-          route = ROUTES.SECTION;
-          break;
-        default:
-          // Fall back to home if unrecognized container type
-          route = ROUTES.HOME;
-          routeParams.containerId = undefined;
-          break;
-      }
-    } else if (routeParams.collectionId) {
-      route = ROUTES.COLLECTION;
-      // From here, we will just stay in the current route
-    } else if (insideComponents) {
-      route = ROUTES.COMPONENTS;
-    } else if (insideCollections) {
-      route = ROUTES.COLLECTIONS;
-    } else if (insideUnits) {
-      route = ROUTES.UNITS;
-    } else if (insideSubsections) {
-      route = ROUTES.SUBSECTIONS;
-    } else if (insideSections) {
-      route = ROUTES.SECTIONS;
-    } else {
-      route = ROUTES.HOME;
-    }
 
-    // Since index is just the order number of the selectedItemId
-    // clear index if selectedItemId is undefined
-    if (routeParams.selectedItemId === undefined) {
-      routeParams.index = undefined;
-    }
+      // Since index is just the order number of the selectedItemId
+      // clear index if selectedItemId is undefined
+      if (routeParams.selectedItemId === undefined) {
+        routeParams.index = undefined;
+      }
 
-    // Also remove the `sa` (sidebar action) search param if it exists.
-    searchParams.delete(LibQueryParamKeys.SidebarActions);
+      // Also remove the `sa` (sidebar action) search param if it exists.
+      searchParams.delete(LibQueryParamKeys.SidebarActions);
 
-    const newPath = generatePath(BASE_ROUTE + route, routeParams);
-    // Prevent unnecessary navigation if the path is the same.
-    if (newPath !== pathname) {
-      navigate({
-        pathname: newPath,
-        search: searchParams.toString(),
-      });
-    }
-  }, [
-    navigate,
-    params,
-    searchParams,
-    pathname,
-  ]);
+      const newPath = generatePath(BASE_ROUTE + route, routeParams);
+      // Prevent unnecessary navigation if the path is the same.
+      if (newPath !== pathname) {
+        navigate({
+          pathname: newPath,
+          search: searchParams.toString(),
+        });
+      }
+    },
+    [navigate, params, searchParams, pathname],
+  );
 
-  return useMemo(() => ({
-    navigateTo,
-    insideCollection: !!insideCollection,
-    insideCollections: !!insideCollections,
-    insideComponents: !!insideComponents,
-    insideSections: !!insideSections,
-    insideSection: !!insideSection,
-    insideSubsections: !!insideSubsections,
-    insideSubsection: !!insideSubsection,
-    insideUnits: !!insideUnits,
-    insideUnit: !!insideUnit,
-  }), [
-    navigateTo,
-    insideCollection,
-    insideCollections,
-    insideComponents,
-    insideSections,
-    insideSection,
-    insideSubsections,
-    insideSubsection,
-    insideUnits,
-    insideUnit,
-  ]);
+  return useMemo(
+    () => ({
+      navigateTo,
+      insideCollection: !!insideCollection,
+      insideCollections: !!insideCollections,
+      insideComponents: !!insideComponents,
+      insideSections: !!insideSections,
+      insideSection: !!insideSection,
+      insideSubsections: !!insideSubsections,
+      insideSubsection: !!insideSubsection,
+      insideUnits: !!insideUnits,
+      insideUnit: !!insideUnit,
+    }),
+    [
+      navigateTo,
+      insideCollection,
+      insideCollections,
+      insideComponents,
+      insideSections,
+      insideSection,
+      insideSubsections,
+      insideSubsection,
+      insideUnits,
+      insideUnit,
+    ],
+  );
 };

@@ -28,19 +28,13 @@ const mockStore = configureMockStore([thunk]);
  *     will be verified after the thunkAction resolves
  *   @param {[fn]} verifyFn - optional function to be called after dispatch
  */
-export const createTestFetcher = (
-  mockedMethod,
-  thunkAction,
-  args,
-  onDispatch,
-) => (
-  resolveFn,
-  expectedActions,
-) => {
+export const createTestFetcher = (mockedMethod, thunkAction, args, onDispatch) => (resolveFn, expectedActions) => {
   const store = mockStore({});
-  mockedMethod.mockReturnValue(new Promise(resolve => {
-    resolve(new Promise(resolveFn));
-  }));
+  mockedMethod.mockReturnValue(
+    new Promise((resolve) => {
+      resolve(new Promise(resolveFn));
+    }),
+  );
   return store.dispatch(thunkAction(...args)).then(() => {
     onDispatch();
     if (expectedActions !== undefined) {

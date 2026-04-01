@@ -2,9 +2,7 @@
 /* eslint no-eval: 0 */
 
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
-import {
-  get, has, keys, isArray, isEmpty,
-} from 'lodash';
+import { get, has, keys, isArray, isEmpty } from 'lodash';
 import {
   ProblemTypeKeys,
   RichTextProblems,
@@ -95,7 +93,8 @@ export const responseKeys = [
  * [--5,10]
  * []
  */
-export const answerRangeFormatRegex = /^[([]\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*,\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*[)\]]$/m;
+export const answerRangeFormatRegex =
+  /^[([]\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*,\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*[)\]]$/m;
 
 export const stripNonTextTags = ({ input, tag }) => {
   const stripedTags = {};
@@ -173,8 +172,8 @@ export class OLXParser {
    * @return {array} array containing answer objects and possibly an array of grouped feedback
    */
   getPreservedAnswersAndFeedback(problemType, widgetName, option) {
-    const [problemBody] = this.richTextProblem.filter(section => Object.keys(section).includes(problemType));
-    const isChoiceProblem = !([ProblemTypeKeys.NUMERIC, ProblemTypeKeys.TEXTINPUT].includes(problemType));
+    const [problemBody] = this.richTextProblem.filter((section) => Object.keys(section).includes(problemType));
+    const isChoiceProblem = ![ProblemTypeKeys.NUMERIC, ProblemTypeKeys.TEXTINPUT].includes(problemType);
     const preservedAnswers = [];
     let correctAnswerFeedbackTag = option;
     let incorrectAnswerFeedbackTag;
@@ -183,7 +182,7 @@ export class OLXParser {
     }
     const problemBodyArr = problemBody[problemType];
     let hasCorrectAnswerFeedback = isChoiceProblem;
-    problemBodyArr.forEach(subtag => {
+    problemBodyArr.forEach((subtag) => {
       const tagNames = Object.keys(subtag);
       if (!isChoiceProblem && tagNames.includes(correctAnswerFeedbackTag)) {
         preservedAnswers.unshift(subtag[correctAnswerFeedbackTag]);
@@ -194,7 +193,7 @@ export class OLXParser {
       }
       if (tagNames.includes(widgetName)) {
         const currentAnswerArr = subtag[widgetName];
-        currentAnswerArr.forEach(answer => {
+        currentAnswerArr.forEach((answer) => {
           if (Object.keys(answer).includes(correctAnswerFeedbackTag)) {
             preservedAnswers.push(answer[correctAnswerFeedbackTag]);
           }
@@ -223,11 +222,7 @@ export class OLXParser {
    * @return {object} object containing an array of answer objects and possibly an array of grouped feedback
    */
   parseMultipleChoiceAnswers(problemType, widgetName, option) {
-    const preservedAnswers = this.getPreservedAnswersAndFeedback(
-      problemType,
-      widgetName,
-      option,
-    );
+    const preservedAnswers = this.getPreservedAnswersAndFeedback(problemType, widgetName, option);
     const answers = [];
     let data = {};
     const widget = get(this.problem, `${problemType}.${widgetName}`);
@@ -241,17 +236,19 @@ export class OLXParser {
     const choice = get(widget, option);
     const isComplexAnswer = RichTextProblems.includes(problemType);
     if (isEmpty(choice)) {
-      answers.push(
-        {
-          id: indexToLetterMap[answers.length],
-          title: '',
-          correct: true,
-        },
-      );
+      answers.push({
+        id: indexToLetterMap[answers.length],
+        title: '',
+        correct: true,
+      });
     } else if (isArray(choice)) {
       choice.forEach((element, index) => {
-        const preservedAnswer = preservedAnswers[index].filter(answer => !Object.keys(answer).includes(`${option}hint`));
-        const preservedFeedback = preservedAnswers[index].filter(answer => Object.keys(answer).includes(`${option}hint`));
+        const preservedAnswer = preservedAnswers[index].filter(
+          (answer) => !Object.keys(answer).includes(`${option}hint`),
+        );
+        const preservedFeedback = preservedAnswers[index].filter((answer) =>
+          Object.keys(answer).includes(`${option}hint`),
+        );
         let title = String(element['#text']);
 
         if (isComplexAnswer && preservedAnswer) {
@@ -260,18 +257,16 @@ export class OLXParser {
         const correct = element['@_correct'].toLowerCase() === 'true';
         const id = indexToLetterMap[index];
         const feedback = this.getAnswerFeedback(preservedFeedback, `${option}hint`);
-        answers.push(
-          {
-            id,
-            correct,
-            title,
-            ...feedback,
-          },
-        );
+        answers.push({
+          id,
+          correct,
+          title,
+          ...feedback,
+        });
       });
     } else {
-      const preservedAnswer = preservedAnswers[0].filter(answer => !Object.keys(answer).includes(`${option}hint`));
-      const preservedFeedback = preservedAnswers[0].filter(answer => Object.keys(answer).includes(`${option}hint`));
+      const preservedAnswer = preservedAnswers[0].filter((answer) => !Object.keys(answer).includes(`${option}hint`));
+      const preservedFeedback = preservedAnswers[0].filter((answer) => Object.keys(answer).includes(`${option}hint`));
       let title = String(choice['#text']);
 
       if (isComplexAnswer && preservedAnswer) {
@@ -307,7 +302,9 @@ export class OLXParser {
   getAnswerFeedback(preservedFeedback, hintKey) {
     const feedback = {};
     let feedbackKeys = 'selectedFeedback';
-    if (isEmpty(preservedFeedback)) { return feedback; }
+    if (isEmpty(preservedFeedback)) {
+      return feedback;
+    }
 
     preservedFeedback.forEach((feedbackArr) => {
       if (has(feedbackArr, hintKey)) {
@@ -380,8 +377,8 @@ export class OLXParser {
       selectedFeedback: firstFeedback,
     });
 
-    const additionalAnswerFeedback = preservedFeedback.filter(feedback => isArray(feedback));
-    const stringEqualHintFeedback = preservedFeedback.filter(feedback => !isArray(feedback));
+    const additionalAnswerFeedback = preservedFeedback.filter((feedback) => isArray(feedback));
+    const stringEqualHintFeedback = preservedFeedback.filter((feedback) => !isArray(feedback));
 
     // Parsing additional_answer for string response.
     const additionalAnswer = get(stringresponse, 'additional_answer', []);
@@ -520,7 +517,7 @@ export class OLXParser {
     const problemArray = get(this.richTextProblem[0], problemType) || this.richTextProblem;
 
     const questionArray = [];
-    problemArray.forEach(tag => {
+    problemArray.forEach((tag) => {
       const tagName = Object.keys(tag)[0];
       if (!nonQuestionKeys.includes(tagName)) {
         if (tagName === 'script') {
@@ -532,7 +529,7 @@ export class OLXParser {
          should be included in the question. These include but are not limited to tags like <label>,
          <description> and <table> as they often are both valid olx as siblings or children of response
          type tags. */
-        tag[tagName].forEach(subTag => {
+        tag[tagName].forEach((subTag) => {
           const subTagName = Object.keys(subTag)[0];
           if (!nonQuestionKeys.includes(subTagName)) {
             questionArray.push(subTag);
@@ -564,7 +561,7 @@ export class OLXParser {
 
     if (problemTagIndex < this.richTextProblem.length - 1) {
       const olxAfterProblemType = this.richTextProblem.slice(problemTagIndex + 1);
-      Object.values(olxAfterProblemType).forEach(value => {
+      Object.values(olxAfterProblemType).forEach((value) => {
         const currentKey = Object.keys(value)[0];
         const invalidText = currentKey === '#text' && value[currentKey] !== '\n';
         const invalidKey = !nonQuestionKeys.includes(currentKey) && currentKey !== '#text';
@@ -579,7 +576,9 @@ export class OLXParser {
   }
 
   replaceOlxDescriptionTag(questionString) {
-    return questionString.replace(/<description>/gm, '<em class="olx_description">').replace(/<\/description>/gm, '</em>');
+    return questionString
+      .replace(/<description>/gm, '<em class="olx_description">')
+      .replace(/<\/description>/gm, '</em>');
   }
 
   /** getHints()
@@ -592,11 +591,11 @@ export class OLXParser {
     const hintsObject = [];
     if (has(this.problem, 'demandhint.hint')) {
       const preservedProblem = this.richTextProblem;
-      preservedProblem.forEach(obj => {
+      preservedProblem.forEach((obj) => {
         const objKeys = Object.keys(obj);
         if (objKeys.includes('demandhint')) {
           const currentDemandHint = obj.demandhint;
-          currentDemandHint.forEach(hint => {
+          currentDemandHint.forEach((hint) => {
             if (Object.keys(hint).includes('hint')) {
               const hintValue = this.richTextBuilder.build(hint.hint);
               hintsObject.push({
@@ -620,20 +619,22 @@ export class OLXParser {
    * @return {string} string of OLX
    */
   getSolutionExplanation(problemType) {
-    if (!has(this.problem, `${problemType}.solution`) && !has(this.problem, 'solution')) { return null; }
-    const [problemBody] = this.richTextProblem.filter(section => Object.keys(section).includes(problemType));
-    const [solutionBody] = problemBody[problemType].filter(section => Object.keys(section).includes('solution'));
-    const [divBody] = solutionBody.solution.filter(section => Object.keys(section).includes('div'));
+    if (!has(this.problem, `${problemType}.solution`) && !has(this.problem, 'solution')) {
+      return null;
+    }
+    const [problemBody] = this.richTextProblem.filter((section) => Object.keys(section).includes(problemType));
+    const [solutionBody] = problemBody[problemType].filter((section) => Object.keys(section).includes('solution'));
+    const [divBody] = solutionBody.solution.filter((section) => Object.keys(section).includes('div'));
     const solutionArray = [];
     if (divBody && divBody.div) {
-      divBody.div.forEach(tag => {
+      divBody.div.forEach((tag) => {
         const tagText = get(Object.values(tag)[0][0], '#text', '');
         if (tagText.toString().trim() !== 'Explanation') {
           solutionArray.push(tag);
         }
       });
     } else {
-      solutionBody.solution.forEach(tag => {
+      solutionBody.solution.forEach((tag) => {
         const tagText = get(Object.values(tag)[0][0], '#text', '');
         if (tagText.toString().trim() !== 'Explanation') {
           solutionArray.push(tag);
@@ -652,7 +653,9 @@ export class OLXParser {
    * @return {string} string of feedback
    */
   getFeedback(xmlElement) {
-    if (isEmpty(xmlElement)) { return ''; }
+    if (isEmpty(xmlElement)) {
+      return '';
+    }
     const feedbackString = this.richTextBuilder.build(xmlElement);
     return feedbackString;
   }
@@ -666,7 +669,7 @@ export class OLXParser {
    */
   getProblemType() {
     const problemKeys = Object.keys(this.problem);
-    const problemTypeKeys = problemKeys.filter(key => Object.values(ProblemTypeKeys).indexOf(key) !== -1);
+    const problemTypeKeys = problemKeys.filter((key) => Object.values(ProblemTypeKeys).indexOf(key) !== -1);
     if (problemTypeKeys.length === 0) {
       // a blank problem is a problem which contains only `<problem></problem>` as it's olx.
       // blank problems are not given types, so that a type may be selected.
@@ -677,9 +680,10 @@ export class OLXParser {
       return ProblemTypeKeys.ADVANCED;
     }
     // make sure compound problems are treated as advanced
-    if ((problemTypeKeys.length > 1)
-      || (isArray(this.problem[problemTypeKeys[0]])
-        && this.problem[problemTypeKeys[0]].length > 1)) {
+    if (
+      problemTypeKeys.length > 1 ||
+      (isArray(this.problem[problemTypeKeys[0]]) && this.problem[problemTypeKeys[0]].length > 1)
+    ) {
       return ProblemTypeKeys.ADVANCED;
     }
     const problemType = problemTypeKeys[0];
@@ -700,11 +704,10 @@ export class OLXParser {
     2. All the problem's incorrect, if Selected answers are equivalent strings, and there is no other feedback.
     */
     if (problemType === ProblemTypeKeys.SINGLESELECT || problemType === ProblemTypeKeys.DROPDOWN) {
-      const firstIncorrectAnswerText = answers.find(answer => answer.correct === false)?.selectedFeedback;
-      const isAllIncorrectSelectedFeedbackTheSame = answers.every(answer => (answer.correct
-        ? true
-        : answer?.selectedFeedback === firstIncorrectAnswerText
-      ));
+      const firstIncorrectAnswerText = answers.find((answer) => answer.correct === false)?.selectedFeedback;
+      const isAllIncorrectSelectedFeedbackTheSame = answers.every((answer) =>
+        answer.correct ? true : answer?.selectedFeedback === firstIncorrectAnswerText,
+      );
       if (isAllIncorrectSelectedFeedbackTheSame) {
         return firstIncorrectAnswerText;
       }
@@ -783,7 +786,9 @@ export class OLXParser {
     } else {
       settings.tolerance = { value: null, type: 'None' };
     }
-    if (solutionExplanation) { settings.solutionExplanation = solutionExplanation; }
+    if (solutionExplanation) {
+      settings.solutionExplanation = solutionExplanation;
+    }
 
     return {
       question,

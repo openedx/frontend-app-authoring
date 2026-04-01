@@ -14,24 +14,22 @@ import { restrictedDatesStatus as STATUS } from '../../../../data/constants';
 
 const RestrictionSchedules = () => {
   const intl = useIntl();
-  const {
-    values: appConfig,
-    setFieldValue,
-    errors,
-    validateForm,
-  } = useFormikContext();
+  const { values: appConfig, setFieldValue, errors, validateForm } = useFormikContext();
 
   const { restrictedDates } = appConfig;
 
-  const handleOnClose = useCallback((index) => {
-    const updatedRestrictedDates = [...restrictedDates];
-    updatedRestrictedDates[index] = {
-      ...updatedRestrictedDates[index],
-      status: checkStatus(denormalizeRestrictedDate(updatedRestrictedDates[index])),
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    setFieldValue('restrictedDates', updatedRestrictedDates);
-  }, [restrictedDates]);
+  const handleOnClose = useCallback(
+    (index) => {
+      const updatedRestrictedDates = [...restrictedDates];
+      updatedRestrictedDates[index] = {
+        ...updatedRestrictedDates[index],
+        status: checkStatus(denormalizeRestrictedDate(updatedRestrictedDates[index])),
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      setFieldValue('restrictedDates', updatedRestrictedDates);
+    },
+    [restrictedDates],
+  );
 
   const newRestrictedDateItem = {
     id: uuid(),

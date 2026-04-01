@@ -1,9 +1,7 @@
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-ensureConfig([
-  'STUDIO_BASE_URL',
-], 'Course Apps API service');
+ensureConfig(['STUDIO_BASE_URL'], 'Course Apps API service');
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getZendeskrUrl = () => `${getApiBaseUrl()}/zendesk_proxy/v0`;
@@ -17,11 +15,7 @@ export interface AccessibilityFormData {
 /**
  * Posts the form data to zendesk endpoint
  */
-export async function postAccessibilityForm({
-  name,
-  email,
-  message,
-}: AccessibilityFormData) {
+export async function postAccessibilityForm({ name, email, message }: AccessibilityFormData) {
   const data = {
     name,
     tags: ['studio_a11y'],

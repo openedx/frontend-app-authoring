@@ -1,6 +1,4 @@
-import {
-  createContext, useContext, useEffect, useMemo, useState,
-} from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -73,27 +71,26 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
     setFileName(undefined);
   };
 
-  const handleOnProcessUpload = async ({
-    fileData,
-    requestConfig,
-    handleError,
-  }: OnProcessUploadProps) => {
+  const handleOnProcessUpload = async ({ fileData, requestConfig, handleError }: OnProcessUploadProps) => {
     reset();
     const file = fileData.get('file');
     setFileName(file.name);
     setImportTriggered(true);
-    importMutation.mutateAsync({
-      fileData: file,
-      requestConfig,
-      handleError,
-      updateProgress,
-    }).then(() => {
-      const momentData = moment().valueOf();
-      setImportCookie(momentData, file.name);
-      setSuccessDate(momentData);
-    }).catch((error) => {
-      handleError(error);
-    });
+    importMutation
+      .mutateAsync({
+        fileData: file,
+        requestConfig,
+        handleError,
+        updateProgress,
+      })
+      .then(() => {
+        const momentData = moment().valueOf();
+        setImportCookie(momentData, file.name);
+        setSuccessDate(momentData);
+      })
+      .catch((error) => {
+        handleError(error);
+      });
   };
 
   const {
@@ -106,7 +103,9 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
   const errorMessage = importStatusData?.message;
   const anyRequestFailed = isErrorImportStatus || importMutation.isError || Boolean(errorMessage);
   const anyRequestInProgress = isPendingImportStatus || importMutation.isPending;
-  const formattedErrorMessage = anyRequestFailed ? errorMessage || intl.formatMessage(messages.defaultErrorMessage) : '';
+  const formattedErrorMessage = anyRequestFailed
+    ? errorMessage || intl.formatMessage(messages.defaultErrorMessage)
+    : '';
   const isLoadingDenied = importStatusError?.response?.status === 403;
 
   useEffect(() => {
@@ -150,11 +149,7 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
     successDate,
   ]);
 
-  return (
-    <CourseImportContext.Provider value={context}>
-      {children}
-    </CourseImportContext.Provider>
-  );
+  return <CourseImportContext.Provider value={context}>{children}</CourseImportContext.Provider>;
 };
 
 export function useCourseImportContext(): CourseImportContextData {

@@ -1,5 +1,5 @@
 .dropzone-middle {
-  border: 2px dashed #CCCCCC;
+  border: 2px dashed #cccccc;
 
   &.active {
     border: 2px solid #262626; /* change color when active */
@@ -21,11 +21,13 @@
 
   button {
     border: none !important;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
   }
 
   .btn-icon.url-submit-button {
-    &, &:active, &:hover {
+    &,
+    &:active,
+    &:hover {
       background-color: transparent !important;
       border: none !important;
       color: #707070 !important;
@@ -33,6 +35,6 @@
   }
 
   .prompt-button {
-    background: rgba(239 234 247 / .70);
+    background: rgba(239 234 247 / 0.7);
   }
 }

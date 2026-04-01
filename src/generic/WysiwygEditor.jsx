@@ -9,9 +9,7 @@ export const SUPPORTED_TEXT_EDITORS = {
   expandable: 'expandable',
 };
 
-export const WysiwygEditor = ({
-  initialValue, editorType, onChange, minHeight,
-}) => {
+export const WysiwygEditor = ({ initialValue, editorType, onChange, minHeight }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
   const { courseId } = useCourseAuthoringContext();
   const isEquivalentCodeExtraSpaces = (first, second) => {
@@ -27,16 +25,19 @@ export const WysiwygEditor = ({
   };
 
   // default initial string returned onEditorChange if empty input
-  const needToChange = (value) => !isEquivalentCodeQuotes(initialValue, value)
-    && !isEquivalentCodeExtraSpaces(initialValue, value)
-    && (initialValue !== DEFAULT_EMPTY_WYSIWYG_VALUE || value !== '');
+  const needToChange = (value) =>
+    !isEquivalentCodeQuotes(initialValue, value) &&
+    !isEquivalentCodeExtraSpaces(initialValue, value) &&
+    (initialValue !== DEFAULT_EMPTY_WYSIWYG_VALUE || value !== '');
 
   const handleUpdate = (value, editor) => {
     // With bookmarks keep the current cursor position at the end of the line
     // and it inserts new content only at the end of the line.
     const bm = editor.selection.getBookmark();
     const existingContent = editor.getContent({ format: 'raw' });
-    if (needToChange(value)) { onChange(value); }
+    if (needToChange(value)) {
+      onChange(value);
+    }
     editor.setContent(existingContent);
     editor.selection.moveToBookmark(bm);
   };

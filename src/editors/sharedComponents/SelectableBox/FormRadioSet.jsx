@@ -4,17 +4,7 @@ import { useFormGroupContext } from './FormGroupContext';
 import { FormRadioSetContextProvider } from './FormRadioSetContext';
 import FormControlSet from './FormControlSet';
 
-const FormRadioSet = ({
-  children,
-  name,
-  value,
-  defaultValue,
-  isInline,
-  onChange,
-  onFocus,
-  onBlur,
-  ...props
-}) => {
+const FormRadioSet = ({ children, name, value, defaultValue, isInline, onChange, onFocus, onBlur, ...props }) => {
   const { getControlProps, useSetIsControlGroupEffect } = useFormGroupContext();
   useSetIsControlGroupEffect(true);
   const controlProps = getControlProps(props);

@@ -20,10 +20,7 @@ export default {
     due: null,
     relativeWeeksDue: null,
     format: null,
-    courseGraders: [
-      'Homework',
-      'Exam',
-    ],
+    courseGraders: ['Homework', 'Exam'],
     videoSharingEnabled: true,
     videoSharingOptions: 'per-video',
     hasChanges: false,
@@ -60,7 +57,8 @@ export default {
     highlightsEnabledForMessaging: false,
     highlightsEnabled: true,
     highlightsPreviewOnly: false,
-    highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+    highlightsDocUrl:
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
     enableProctoredExams: true,
     enableTimedExams: true,
     childInfo: {
@@ -75,7 +73,8 @@ export default {
           editedOn: 'Aug 23, 2023 at 12:35 UTC',
           published: false,
           publishedOn: 'Aug 23, 2023 at 12:35 UTC',
-          studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40d8a6192ade314473a78242dfeedfbf5b',
+          studioUrl:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40d8a6192ade314473a78242dfeedfbf5b',
           releasedToStudents: false,
           releaseDate: 'Aug 10, 2023 at 22:00 UTC',
           visibilityState: 'staff_only',
@@ -86,10 +85,7 @@ export default {
           due: null,
           relativeWeeksDue: null,
           format: null,
-          courseGraders: [
-            'Homework',
-            'Exam',
-          ],
+          courseGraders: ['Homework', 'Exam'],
           hasChanges: false,
           actions: {
             deletable: true,
@@ -121,13 +117,11 @@ export default {
             },
           ],
           showCorrectness: 'always',
-          highlights: [
-            'New Highlight 1',
-            'New Highlight 4',
-          ],
+          highlights: ['New Highlight 1', 'New Highlight 4'],
           highlightsEnabled: true,
           highlightsPreviewOnly: false,
-          highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+          highlightsDocUrl:
+            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           childInfo: {
             category: 'sequential',
             displayName: 'Subsection',
@@ -140,7 +134,8 @@ export default {
                 editedOn: 'Jul 07, 2023 at 11:14 UTC',
                 published: false,
                 publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40edx_introduction',
+                studioUrl:
+                  '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40edx_introduction',
                 releasedToStudents: false,
                 releaseDate: 'Jan 01, 1970 at 05:00 UTC',
                 visibilityState: 'needs_attention',
@@ -152,14 +147,14 @@ export default {
                 relativeWeeksDue: null,
                 format: null,
                 isPrereq: false,
-                prereqs: [{
-                  blockDisplayName: 'Sample Subsection',
-                  blockUsageKey: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@7f75de8dcc261249250b71925f49810f',
-                }],
-                courseGraders: [
-                  'Homework',
-                  'Exam',
+                prereqs: [
+                  {
+                    blockDisplayName: 'Sample Subsection',
+                    blockUsageKey:
+                      'block-v1:edX+DemoX+Demo_Course+type@sequential+block@7f75de8dcc261249250b71925f49810f',
+                  },
                 ],
+                courseGraders: ['Homework', 'Exam'],
                 hasChanges: true,
                 actions: {
                   deletable: true,
@@ -226,10 +221,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: true,
                       actions: {
                         deletable: true,
@@ -337,7 +329,8 @@ export default {
                 edited_on: 'Dec 05, 2023 at 10:35 UTC',
                 published: true,
                 published_on: 'Dec 05, 2023 at 10:35 UTC',
-                studio_url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%407f75de8dcc261249250b71925f49810f',
+                studio_url:
+                  '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%407f75de8dcc261249250b71925f49810f',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -348,10 +341,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: false,
                 actions: {
                   deletable: true,
@@ -470,7 +460,8 @@ export default {
           editedOn: 'Aug 16, 2023 at 11:52 UTC',
           published: true,
           publishedOn: 'Aug 16, 2023 at 11:52 UTC',
-          studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40graded_interactions',
+          studioUrl:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40graded_interactions',
           releasedToStudents: false,
           releaseDate: 'Nov 09, 2023 at 22:00 UTC',
           visibilityState: 'ready',
@@ -481,10 +472,7 @@ export default {
           due: null,
           relativeWeeksDue: null,
           format: null,
-          courseGraders: [
-            'Homework',
-            'Exam',
-          ],
+          courseGraders: ['Homework', 'Exam'],
           hasChanges: false,
           actions: {
             deletable: true,
@@ -516,12 +504,11 @@ export default {
             },
           ],
           showCorrectness: 'always',
-          highlights: [
-            'New',
-          ],
+          highlights: ['New'],
           highlightsEnabled: true,
           highlightsPreviewOnly: false,
-          highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+          highlightsDocUrl:
+            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           childInfo: {
             category: 'sequential',
             displayName: 'Subsection',
@@ -534,7 +521,8 @@ export default {
                 editedOn: 'Jul 07, 2023 at 11:14 UTC',
                 published: true,
                 publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40simulations',
+                studioUrl:
+                  '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40simulations',
                 releasedToStudents: true,
                 releaseDate: 'Jan 01, 1970 at 05:00 UTC',
                 visibilityState: 'live',
@@ -545,10 +533,7 @@ export default {
                 due: null,
                 relativeWeeksDue: null,
                 format: null,
-                courseGraders: [
-                  'Homework',
-                  'Exam',
-                ],
+                courseGraders: ['Homework', 'Exam'],
                 hasChanges: false,
                 actions: {
                   deletable: true,
@@ -604,7 +589,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d0d804e8863c4a95a659c04d8a2b2bc0',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d0d804e8863c4a95a659c04d8a2b2bc0',
                       releasedToStudents: true,
                       releaseDate: 'Jan 01, 1970 at 05:00 UTC',
                       visibilityState: 'live',
@@ -615,10 +601,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -704,10 +687,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -793,10 +773,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -882,10 +859,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -960,7 +934,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4e592689563243c484af947465eaef0d',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4e592689563243c484af947465eaef0d',
                       releasedToStudents: true,
                       releaseDate: 'Jan 01, 1970 at 05:00 UTC',
                       visibilityState: 'live',
@@ -971,10 +946,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -1080,7 +1052,8 @@ export default {
                 editedOn: 'Jul 07, 2023 at 11:14 UTC',
                 published: true,
                 publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40graded_simulations',
+                studioUrl:
+                  '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40graded_simulations',
                 releasedToStudents: true,
                 releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                 visibilityState: 'live',
@@ -1091,10 +1064,7 @@ export default {
                 due: null,
                 relativeWeeksDue: null,
                 format: 'Homework',
-                courseGraders: [
-                  'Homework',
-                  'Exam',
-                ],
+                courseGraders: ['Homework', 'Exam'],
                 hasChanges: false,
                 actions: {
                   deletable: true,
@@ -1150,7 +1120,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d6cee45205a449369d7ef8f159b22bdf',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d6cee45205a449369d7ef8f159b22bdf',
                       releasedToStudents: true,
                       releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                       visibilityState: 'live',
@@ -1161,10 +1132,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -1250,10 +1218,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -1339,10 +1304,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -1428,10 +1390,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -1506,7 +1465,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@8f89194410954e768bde1764985454a7',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@8f89194410954e768bde1764985454a7',
                       releasedToStudents: true,
                       releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                       visibilityState: 'live',
@@ -1517,10 +1477,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -1626,7 +1583,8 @@ export default {
                 editedOn: 'Jul 07, 2023 at 11:14 UTC',
                 published: true,
                 publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40175e76c4951144a29d46211361266e0e',
+                studioUrl:
+                  '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40175e76c4951144a29d46211361266e0e',
                 releasedToStudents: false,
                 releaseDate: 'Nov 09, 2023 at 22:00 UTC',
                 visibilityState: 'ready',
@@ -1637,10 +1595,7 @@ export default {
                 due: null,
                 relativeWeeksDue: null,
                 format: null,
-                courseGraders: [
-                  'Homework',
-                  'Exam',
-                ],
+                courseGraders: ['Homework', 'Exam'],
                 hasChanges: false,
                 actions: {
                   deletable: true,
@@ -1696,7 +1651,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@fb79dcbad35b466a8c6364f8ffee9050',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@fb79dcbad35b466a8c6364f8ffee9050',
                       releasedToStudents: false,
                       releaseDate: 'Nov 09, 2023 at 22:00 UTC',
                       visibilityState: 'ready',
@@ -1707,10 +1663,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -1847,7 +1800,8 @@ export default {
           editedOn: 'Aug 10, 2023 at 10:40 UTC',
           published: true,
           publishedOn: 'Aug 10, 2023 at 10:40 UTC',
-          studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%401414ffd5143b4b508f739b563ab468b7',
+          studioUrl:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%401414ffd5143b4b508f739b563ab468b7',
           releasedToStudents: false,
           releaseDate: 'Jan 01, 2030 at 05:00 UTC',
           visibilityState: 'needs_attention',
@@ -1858,10 +1812,7 @@ export default {
           due: null,
           relativeWeeksDue: null,
           format: null,
-          courseGraders: [
-            'Homework',
-            'Exam',
-          ],
+          courseGraders: ['Homework', 'Exam'],
           hasChanges: false,
           actions: {
             deletable: true,
@@ -1896,7 +1847,8 @@ export default {
           highlights: [],
           highlightsEnabled: true,
           highlightsPreviewOnly: false,
-          highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+          highlightsDocUrl:
+            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           childInfo: {
             category: 'sequential',
             displayName: 'Subsection',
@@ -1909,7 +1861,8 @@ export default {
                 editedOn: 'Jul 07, 2023 at 11:14 UTC',
                 published: true,
                 publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40workflow',
+                studioUrl:
+                  '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40workflow',
                 releasedToStudents: true,
                 releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                 visibilityState: 'live',
@@ -1920,10 +1873,7 @@ export default {
                 due: null,
                 relativeWeeksDue: null,
                 format: 'Exam',
-                courseGraders: [
-                  'Homework',
-                  'Exam',
-                ],
+                courseGraders: ['Homework', 'Exam'],
                 hasChanges: false,
                 actions: {
                   deletable: true,
@@ -1979,7 +1929,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@934cc32c177d41b580c8413e561346b3',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@934cc32c177d41b580c8413e561346b3',
                       releasedToStudents: true,
                       releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                       visibilityState: 'live',
@@ -1990,10 +1941,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -2079,10 +2027,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -2157,7 +2102,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@b6662b497c094bcc9b870d8270c90c93',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@b6662b497c094bcc9b870d8270c90c93',
                       releasedToStudents: true,
                       releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                       visibilityState: 'live',
@@ -2168,10 +2114,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -2246,7 +2189,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@f91d8d31f7cf48ce990f8d8745ae4cfa',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@f91d8d31f7cf48ce990f8d8745ae4cfa',
                       releasedToStudents: true,
                       releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                       visibilityState: 'live',
@@ -2257,10 +2201,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -2346,10 +2287,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -2435,10 +2373,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -2513,7 +2448,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@1b0e2c2c84884b95b1c99fb678cc964c',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@1b0e2c2c84884b95b1c99fb678cc964c',
                       releasedToStudents: true,
                       releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                       visibilityState: 'live',
@@ -2524,10 +2460,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -2602,7 +2535,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@c7e98fd39a6944edb6b286c32e1150ff',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@c7e98fd39a6944edb6b286c32e1150ff',
                       releasedToStudents: true,
                       releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                       visibilityState: 'live',
@@ -2613,10 +2547,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -2691,7 +2622,8 @@ export default {
                       editedOn: 'Jul 07, 2023 at 11:14 UTC',
                       published: true,
                       publishedOn: 'Jul 07, 2023 at 11:14 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d6eaa391d2be41dea20b8b1bfbcb1c45',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d6eaa391d2be41dea20b8b1bfbcb1c45',
                       releasedToStudents: true,
                       releaseDate: 'Feb 05, 2013 at 00:00 UTC',
                       visibilityState: 'live',
@@ -2702,10 +2634,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,
@@ -2842,7 +2771,8 @@ export default {
           editedOn: 'Aug 23, 2023 at 12:22 UTC',
           published: true,
           publishedOn: 'Aug 23, 2023 at 12:22 UTC',
-          studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%4046e11a7b395f45b9837df6c6ac609004',
+          studioUrl:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%4046e11a7b395f45b9837df6c6ac609004',
           releasedToStudents: false,
           releaseDate: 'Nov 09, 2023 at 22:00 UTC',
           visibilityState: 'ready',
@@ -2853,10 +2783,7 @@ export default {
           due: null,
           relativeWeeksDue: null,
           format: null,
-          courseGraders: [
-            'Homework',
-            'Exam',
-          ],
+          courseGraders: ['Homework', 'Exam'],
           hasChanges: false,
           actions: {
             deletable: true,
@@ -2891,7 +2818,8 @@ export default {
           highlights: [],
           highlightsEnabled: true,
           highlightsPreviewOnly: false,
-          highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+          highlightsDocUrl:
+            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           childInfo: {
             category: 'sequential',
             displayName: 'Subsection',
@@ -2904,7 +2832,8 @@ export default {
                 editedOn: 'Aug 23, 2023 at 11:32 UTC',
                 published: true,
                 publishedOn: 'Aug 23, 2023 at 11:33 UTC',
-                studioUrl: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%401945e9656cbe4abe8f2020c67e9e1f61',
+                studioUrl:
+                  '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%401945e9656cbe4abe8f2020c67e9e1f61',
                 releasedToStudents: false,
                 releaseDate: 'Nov 09, 2023 at 22:00 UTC',
                 visibilityState: 'ready',
@@ -2915,10 +2844,7 @@ export default {
                 due: null,
                 relativeWeeksDue: null,
                 format: null,
-                courseGraders: [
-                  'Homework',
-                  'Exam',
-                ],
+                courseGraders: ['Homework', 'Exam'],
                 hasChanges: false,
                 actions: {
                   deletable: true,
@@ -2974,7 +2900,8 @@ export default {
                       editedOn: 'Aug 23, 2023 at 11:32 UTC',
                       published: true,
                       publishedOn: 'Aug 23, 2023 at 11:33 UTC',
-                      studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@b8149aa5af944aed8eebf9c7dc9f3d0b',
+                      studioUrl:
+                        '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@b8149aa5af944aed8eebf9c7dc9f3d0b',
                       releasedToStudents: false,
                       releaseDate: 'Nov 09, 2023 at 22:00 UTC',
                       visibilityState: 'ready',
@@ -2985,10 +2912,7 @@ export default {
                       due: null,
                       relativeWeeksDue: null,
                       format: null,
-                      courseGraders: [
-                        'Homework',
-                        'Exam',
-                      ],
+                      courseGraders: ['Homework', 'Exam'],
                       hasChanges: false,
                       actions: {
                         deletable: true,

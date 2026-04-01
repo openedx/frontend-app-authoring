@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import classNames from 'classnames';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
@@ -35,8 +30,8 @@ interface UnitCardProps {
   onOpenDeleteModal: () => void;
   onDuplicateSubmit: () => void;
   index: number;
-  getPossibleMoves: (index: number, step: number) => void,
-  onOrderChange: (section: XBlock, moveDetails: any) => void,
+  getPossibleMoves: (index: number, step: number) => void;
+  onOrderChange: (section: XBlock, moveDetails: any) => void;
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean;
   discussionsSettings: {
@@ -67,9 +62,7 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-  const {
-    courseId, getUnitUrl, openUnlinkModal, openPublishModal, setCurrentSelection,
-  } = useCourseAuthoringContext();
+  const { courseId, getUnitUrl, openUnlinkModal, openPublishModal, setCurrentSelection } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
   const { data: subsection = initialSubsectionData } = useCourseItemData(
@@ -169,33 +162,26 @@ const UnitCard = ({
     }
   }, [section, queryClient, courseId]);
 
-  const onClickCard = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      openContainerInfoSidebar(unit.id, subsection.id, section.id);
-    }
-  }, [openContainerInfoSidebar]);
+  const onClickCard = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) {
+        openContainerInfoSidebar(unit.id, subsection.id, section.id);
+      }
+    },
+    [openContainerInfoSidebar],
+  );
 
   const titleComponent = (
     <TitleLink
       title={displayName}
       titleLink={getUnitUrl(id)}
       namePrefix={namePrefix}
-      prefixIcon={(
-        <UpstreamInfoIcon
-          upstreamInfo={upstreamInfo}
-          size="xs"
-          openSyncModal={openSyncModal}
-        />
-      )}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} size="xs" openSyncModal={openSyncModal} />}
     />
   );
 
   const extraActionsComponent = (
-    <CourseOutlineUnitCardExtraActionsSlot
-      unit={unit}
-      subsection={subsection}
-      section={section}
-    />
+    <CourseOutlineUnitCardExtraActionsSlot unit={unit} subsection={subsection} section={section} />
   );
 
   /**
@@ -203,10 +189,12 @@ const UnitCard = ({
   useEffect(() => {
     // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(unit.editedOnRaw))) {
-      queryClient.cancelQueries({
-        queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
-      // eslint-disable-next-line no-console
-      }).catch((error) => console.error('Error cancelling query:', error));
+      queryClient
+        .cancelQueries({
+          queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
+          // eslint-disable-next-line no-console
+        })
+        .catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
   }, [initialData, unit]);
@@ -225,11 +213,8 @@ const UnitCard = ({
     return null;
   }
 
-  const isDraggable = (
-    actions.draggable
-      && (actions.allowMoveUp || actions.allowMoveDown)
-      && !subsection.upstreamInfo?.upstreamRef
-  );
+  const isDraggable =
+    actions.draggable && (actions.allowMoveUp || actions.allowMoveDown) && !subsection.upstreamInfo?.upstreamRef;
 
   return (
     <>
@@ -250,13 +235,10 @@ const UnitCard = ({
         onClick={onClickCard}
       >
         <div
-          className={classNames(
-            'unit-card',
-            {
-              highlight: isScrolledToElement,
-              'outline-card-selected': unit.id === selectedContainerState?.currentId,
-            },
-          )}
+          className={classNames('unit-card', {
+            highlight: isScrolledToElement,
+            'outline-card-selected': unit.id === selectedContainerState?.currentId,
+          })}
           data-testid="unit-card"
           ref={currentRef}
         >
@@ -266,18 +248,23 @@ const UnitCard = ({
             hasChanges={hasChanges}
             cardId={id}
             onClickMenuButton={selectAndTrigger}
-            onClickPublish={() => openPublishModal({
-              value: unit,
-              sectionId: section.id,
-              subsectionId: subsection.id,
-            })}
+            onClickPublish={() =>
+              openPublishModal({
+                value: unit,
+                sectionId: section.id,
+                subsectionId: subsection.id,
+              })
+            }
             onClickConfigure={onOpenConfigureModal}
             onClickDelete={onOpenDeleteModal}
-            onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
-              value: unit,
-              sectionId: section.id,
-              subsectionId: subsection.id,
-            })}
+            onClickUnlink={
+              /* istanbul ignore next */ () =>
+                openUnlinkModal({
+                  value: unit,
+                  sectionId: section.id,
+                  subsectionId: subsection.id,
+                })
+            }
             onClickMoveUp={handleUnitMoveUp}
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}

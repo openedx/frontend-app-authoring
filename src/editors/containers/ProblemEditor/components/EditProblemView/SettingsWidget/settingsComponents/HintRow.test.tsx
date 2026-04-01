@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import HintRow from './HintRow';
 
 jest.mock('../../../../../../sharedComponents/ExpandableTextArea', () => 'ExpandableTextArea');

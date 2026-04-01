@@ -6,9 +6,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import AlertMessage from '../alert-message';
 import messages from './messages';
 
-const InternetConnectionAlert = ({
-  isFailed, isQueryPending, onQueryProcessing, onInternetConnectionFailed,
-}) => {
+const InternetConnectionAlert = ({ isFailed, isQueryPending, onQueryProcessing, onInternetConnectionFailed }) => {
   const intl = useIntl();
   const [showAlert, setShowAlert] = useState(false);
   const [isOnline, setIsOnline] = useState(window.navigator.onLine);
@@ -17,12 +15,12 @@ const InternetConnectionAlert = ({
     const handleOnlineStatus = () => setIsOnline(window.navigator.onLine);
     const events = ['online', 'offline'];
 
-    events.forEach(event => {
+    events.forEach((event) => {
       window.addEventListener(event, handleOnlineStatus);
     });
 
     return () => {
-      events.forEach(event => {
+      events.forEach((event) => {
         window.removeEventListener(event, handleOnlineStatus);
       });
     };
@@ -54,12 +52,8 @@ const InternetConnectionAlert = ({
       title={intl.formatMessage(messages.offlineWarningTitle)}
       description={intl.formatMessage(messages.offlineWarningDescription)}
       aria-hidden="true"
-      aria-labelledby={intl.formatMessage(
-        messages.offlineWarningTitleAriaLabelledBy,
-      )}
-      aria-describedby={intl.formatMessage(
-        messages.offlineWarningDescriptionAriaDescribedBy,
-      )}
+      aria-labelledby={intl.formatMessage(messages.offlineWarningTitleAriaLabelledBy)}
+      aria-describedby={intl.formatMessage(messages.offlineWarningDescriptionAriaDescribedBy)}
     />
   );
 };

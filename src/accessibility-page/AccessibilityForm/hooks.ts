@@ -11,20 +11,14 @@ const useAccessibility = (initialValues: AccessibilityFormData) => {
   const intl = useIntl();
   const [isFormFilled, setFormFilled] = useState(false);
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required(
-      intl.formatMessage(messages.accessibilityPolicyFormValidName),
-    ),
+    name: Yup.string().required(intl.formatMessage(messages.accessibilityPolicyFormValidName)),
     email: Yup.string()
       .email(intl.formatMessage(messages.accessibilityPolicyFormValidEmail))
       .required(intl.formatMessage(messages.accessibilityPolicyFormValidEmail)),
-    message: Yup.string().required(
-      intl.formatMessage(messages.accessibilityPolicyFormValidMessage),
-    ),
+    message: Yup.string().required(intl.formatMessage(messages.accessibilityPolicyFormValidMessage)),
   });
 
-  const {
-    values, errors, touched, handleChange, handleBlur, handleReset,
-  } = useFormik({
+  const { values, errors, touched, handleChange, handleBlur, handleReset } = useFormik({
     initialValues,
     enableReinitialize: true,
     validateOnBlur: false,

@@ -6,37 +6,29 @@ import { FormGroupContextProvider, useFormGroupContext } from './FormGroupContex
 import FormLabel from './FormLabel';
 import FormControlFeedback from './FormControlFeedback';
 
-const CheckboxControl = React.forwardRef(
-  ({ isIndeterminate, ...props }, ref) => {
-    const { getCheckboxControlProps, hasCheckboxSetProvider } = useCheckboxSetContext();
-    const defaultRef = React.useRef();
-    const resolvedRef = ref || defaultRef;
-    const { getControlProps } = useFormGroupContext();
-    let checkboxProps = getControlProps({
-      ...props,
-      className: classNames('pgn__form-checkbox-input', props.className),
-    });
+const CheckboxControl = React.forwardRef(({ isIndeterminate, ...props }, ref) => {
+  const { getCheckboxControlProps, hasCheckboxSetProvider } = useCheckboxSetContext();
+  const defaultRef = React.useRef();
+  const resolvedRef = ref || defaultRef;
+  const { getControlProps } = useFormGroupContext();
+  let checkboxProps = getControlProps({
+    ...props,
+    className: classNames('pgn__form-checkbox-input', props.className),
+  });
 
-    if (hasCheckboxSetProvider) {
-      checkboxProps = getCheckboxControlProps(checkboxProps);
+  if (hasCheckboxSetProvider) {
+    checkboxProps = getCheckboxControlProps(checkboxProps);
+  }
+
+  React.useEffect(() => {
+    // this if(resolvedRef.current) prevents console errors in testing
+    if (resolvedRef.current) {
+      resolvedRef.current.indeterminate = isIndeterminate;
     }
+  }, [resolvedRef, isIndeterminate]);
 
-    React.useEffect(() => {
-      // this if(resolvedRef.current) prevents console errors in testing
-      if (resolvedRef.current) {
-        resolvedRef.current.indeterminate = isIndeterminate;
-      }
-    }, [resolvedRef, isIndeterminate]);
-
-    return (
-      <input
-        type="checkbox"
-        {...checkboxProps}
-        ref={resolvedRef}
-      />
-    );
-  },
-);
+  return <input type="checkbox" {...checkboxProps} ref={resolvedRef} />;
+});
 
 CheckboxControl.propTypes = {
   /** Specifies whether the checkbox should be rendered in indeterminate state. */
@@ -50,58 +42,55 @@ CheckboxControl.defaultProps = {
   className: undefined,
 };
 
-const FormCheckbox = React.forwardRef(({
-  children,
-  className,
-  controlClassName,
-  labelClassName,
-  description,
-  isInvalid,
-  isValid,
-  controlAs,
-  floatLabelLeft,
-  ...props
-}, ref) => {
-  const { hasCheckboxSetProvider } = useCheckboxSetContext();
-  const { hasFormGroupProvider, useSetIsControlGroupEffect, getControlProps } = useFormGroupContext();
-  useSetIsControlGroupEffect(true);
-  const shouldActAsGroup = hasFormGroupProvider && !hasCheckboxSetProvider;
-  const groupProps = shouldActAsGroup ? {
-    ...getControlProps({}),
-    role: 'group',
-  } : {};
+const FormCheckbox = React.forwardRef(
+  (
+    {
+      children,
+      className,
+      controlClassName,
+      labelClassName,
+      description,
+      isInvalid,
+      isValid,
+      controlAs,
+      floatLabelLeft,
+      ...props
+    },
+    ref,
+  ) => {
+    const { hasCheckboxSetProvider } = useCheckboxSetContext();
+    const { hasFormGroupProvider, useSetIsControlGroupEffect, getControlProps } = useFormGroupContext();
+    useSetIsControlGroupEffect(true);
+    const shouldActAsGroup = hasFormGroupProvider && !hasCheckboxSetProvider;
+    const groupProps = shouldActAsGroup
+      ? {
+          ...getControlProps({}),
+          role: 'group',
+        }
+      : {};
 
-  const control = React.createElement(controlAs, { ...props, className: controlClassName, ref });
-  return (
-    <FormGroupContextProvider
-      controlId={props.id}
-      isInvalid={isInvalid}
-      isValid={isValid}
-    >
-      <div
-        className={classNames('pgn__form-checkbox', className, {
-          'pgn__form-control-valid': isValid,
-          'pgn__form-control-invalid': isInvalid,
-          'pgn__form-control-disabled': props.disabled,
-          'pgn__form-control-label-left': !!floatLabelLeft,
-        })}
-        {...groupProps}
-      >
-        {control}
-        <div>
-          <FormLabel className={labelClassName}>
-            {children}
-          </FormLabel>
-          {description && (
-            <FormControlFeedback hasIcon={false}>
-              {description}
-            </FormControlFeedback>
-          )}
+    const control = React.createElement(controlAs, { ...props, className: controlClassName, ref });
+    return (
+      <FormGroupContextProvider controlId={props.id} isInvalid={isInvalid} isValid={isValid}>
+        <div
+          className={classNames('pgn__form-checkbox', className, {
+            'pgn__form-control-valid': isValid,
+            'pgn__form-control-invalid': isInvalid,
+            'pgn__form-control-disabled': props.disabled,
+            'pgn__form-control-label-left': !!floatLabelLeft,
+          })}
+          {...groupProps}
+        >
+          {control}
+          <div>
+            <FormLabel className={labelClassName}>{children}</FormLabel>
+            {description && <FormControlFeedback hasIcon={false}>{description}</FormControlFeedback>}
+          </div>
         </div>
-      </div>
-    </FormGroupContextProvider>
-  );
-});
+      </FormGroupContextProvider>
+    );
+  },
+);
 
 FormCheckbox.propTypes = {
   /** Specifies id of the FormCheckbox component. */

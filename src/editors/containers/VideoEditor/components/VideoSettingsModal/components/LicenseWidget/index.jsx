@@ -1,14 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Stack,
-} from '@openedx/paragon';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { Button, Stack } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
@@ -43,12 +37,12 @@ const LicenseWidget = ({
   const { licenseDescription, levelDescription } = hooks.determineText({ level });
   return (
     <CollapsibleFormWidget
-      subtitle={(
+      subtitle={
         <div>
           <LicenseBlurb license={license} details={details} />
           <div className="x-small mt-2">{levelDescription}</div>
         </div>
-      )}
+      }
       title={intl.formatMessage(messages.title)}
     >
       <Stack gap={4}>
@@ -56,13 +50,9 @@ const LicenseWidget = ({
           <>
             <LicenseSelector license={license} level={level} />
             <LicenseDetails license={license} details={details} level={level} />
-            <LicenseDisplay
-              license={license}
-              details={details}
-              licenseDescription={licenseDescription}
-            />
+            <LicenseDisplay license={license} details={details} licenseDescription={licenseDescription} />
           </>
-        ) : null }
+        ) : null}
         {!licenseType ? (
           <>
             <div className="border-primary-100 border-bottom my-2" />
@@ -76,7 +66,7 @@ const LicenseWidget = ({
               <FormattedMessage {...messages.addLicenseButtonLabel} />
             </Button>
           </>
-        ) : null }
+        ) : null}
       </Stack>
     </CollapsibleFormWidget>
   );

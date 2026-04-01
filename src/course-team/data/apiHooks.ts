@@ -12,12 +12,11 @@ export const courseTeamQueryKeys = {
 /**
  * Hook to fetch the course team for the given courseId
  */
-export const useCourseTeamData = (courseId: string) => (
+export const useCourseTeamData = (courseId: string) =>
   useQuery<api.CourseTeam, AxiosError>({
     queryKey: courseTeamQueryKeys.courseTeam(courseId),
     queryFn: () => api.getCourseTeam(courseId),
-  })
-);
+  });
 
 /**
  * Hook to create a new course team user

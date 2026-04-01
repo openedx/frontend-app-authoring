@@ -5,8 +5,14 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import {
-  render, waitFor, waitForElementToBeRemoved, screen, within,
-  fireEvent, act, cleanup,
+  render,
+  waitFor,
+  waitForElementToBeRemoved,
+  screen,
+  within,
+  fireEvent,
+  act,
+  cleanup,
 } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
@@ -126,7 +132,8 @@ const subTagsResponse = {
     },
   ],
 };
-const subTagsUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
+const subTagsUrl =
+  'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
 const createTagUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/';
 
 const renderTagListTable = (maxDepth = 3) => render(<RootWrapper maxDepth={maxDepth} />);
@@ -143,7 +150,7 @@ const waitForRootTag = async () => {
   return tag;
 };
 
-const getDraftRows = () => screen.getAllByRole('row').filter(row => row.querySelector('input'));
+const getDraftRows = () => screen.getAllByRole('row').filter((row) => row.querySelector('input'));
 
 const expectNoDraftRows = () => {
   expect(getDraftRows().length).toBe(0);
@@ -169,15 +176,11 @@ const openActionsMenuForTag = (tagName, actionButtonName = /actions/i) => {
   return row;
 };
 
-const openSubtagDraftRow = async ({
-  tagName,
-  actionButtonName = /actions/i,
-  addSubtagIndex = 0,
-}) => {
+const openSubtagDraftRow = async ({ tagName, actionButtonName = /actions/i, addSubtagIndex = 0 }) => {
   openActionsMenuForTag(tagName, actionButtonName);
   fireEvent.click(screen.getAllByText('Add Subtag')[addSubtagIndex]);
   const rows = await screen.findAllByRole('row');
-  const draftRow = rows.find(row => row.querySelector('input'));
+  const draftRow = rows.find((row) => row.querySelector('input'));
   const input = draftRow.querySelector('input');
   expect(input).toBeInTheDocument();
   return { rows, draftRow, input };
@@ -206,7 +209,7 @@ describe('<TagListTable />', () => {
     const childTag = await screen.findByText('the child tag');
     expect(childTag).toBeInTheDocument();
     const allCells = screen.getAllByRole('cell');
-    allCells.forEach(cell => {
+    allCells.forEach((cell) => {
       const nestedTr = cell.querySelector('tr');
       expect(nestedTr).toBeNull();
     });
@@ -230,9 +233,11 @@ describe('<TagListTable />', () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     renderTagListTable();
     await waitFor(() => {
-      expect(screen.queryByRole('navigation', {
-        name: /table pagination/i,
-      })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('navigation', {
+          name: /table pagination/i,
+        }),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -278,9 +283,11 @@ describe('<TagListTable />', () => {
         fireEvent.click(saveButton);
         await waitFor(() => {
           expect(axiosMock.history.post.length).toBe(1);
-          expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({
-            tag: 'a new tag',
-          }));
+          expect(axiosMock.history.post[0].data).toEqual(
+            JSON.stringify({
+              tag: 'a new tag',
+            }),
+          );
         });
       });
 
@@ -309,17 +316,23 @@ describe('<TagListTable />', () => {
         });
       });
       it('should show a loading spinner when saving a new tag', async () => {
-        axiosMock.onPost(createTagUrl).reply(() => new Promise(resolve => {
-          setTimeout(() => {
-            resolve([201, {
-              ...tagDefaults,
-              value: 'a new tag',
-              child_count: 0,
-              descendant_count: 0,
-              _id: 1234,
-            }]);
-          }, 100);
-        }));
+        axiosMock.onPost(createTagUrl).reply(
+          () =>
+            new Promise((resolve) => {
+              setTimeout(() => {
+                resolve([
+                  201,
+                  {
+                    ...tagDefaults,
+                    value: 'a new tag',
+                    child_count: 0,
+                    descendant_count: 0,
+                    _id: 1234,
+                  },
+                ]);
+              }, 100);
+            }),
+        );
         const { creatingRow, input } = await openTopLevelDraftRow();
 
         fireEvent.change(input, { target: { value: 'a new tag' } });
@@ -429,15 +442,18 @@ describe('<TagListTable />', () => {
 
       // a bit flaky when ran together with other tests - any way to improve this?
       it('should allow adding multiple tags consecutively without a page refresh', async () => {
-        axiosMock.onPost(createTagUrl).reply(config => {
+        axiosMock.onPost(createTagUrl).reply((config) => {
           const requestData = JSON.parse(config.data);
-          return [201, {
-            ...tagDefaults,
-            value: requestData.tag,
-            child_count: 0,
-            descendant_count: 0,
-            _id: Math.floor(Math.random() * 10000),
-          }];
+          return [
+            201,
+            {
+              ...tagDefaults,
+              value: requestData.tag,
+              child_count: 0,
+              descendant_count: 0,
+              _id: Math.floor(Math.random() * 10000),
+            },
+          ];
         });
         let addButton = await screen.findByLabelText('Create Tag');
         fireEvent.click(addButton);
@@ -465,8 +481,8 @@ describe('<TagListTable />', () => {
 
         // expect Tag B to be above Tag A in the list
         const rows = screen.getAllByRole('row');
-        const tagBRowIndex = rows.findIndex(row => within(row).queryByText('Tag B'));
-        const tagARowIndex = rows.findIndex(row => within(row).queryByText('Tag A'));
+        const tagBRowIndex = rows.findIndex((row) => within(row).queryByText('Tag B'));
+        const tagARowIndex = rows.findIndex((row) => within(row).queryByText('Tag A'));
         expect(tagBRowIndex).toBeLessThan(tagARowIndex);
 
         // no additional get requests should have been made, that is, the table should not have been refreshed
@@ -565,7 +581,7 @@ describe('<TagListTable />', () => {
 
         await waitFor(() => {
           const rows = screen.getAllByRole('row');
-          const draftRows = rows.filter(row => row.querySelector('input'));
+          const draftRows = rows.filter((row) => row.querySelector('input'));
           expect(draftRows.length).toBe(1);
         });
 
@@ -606,11 +622,11 @@ describe('<TagListTable />', () => {
 
       it('should render an inline add-subtag row with input, placeholder, and action buttons', async () => {
         const { rows } = await openSubtagDraftRow({ tagName: 'root tag 1' });
-        const draftRows = rows.filter(tableRow => tableRow.querySelector('input'));
+        const draftRows = rows.filter((tableRow) => tableRow.querySelector('input'));
         expect(draftRows[0].querySelector('input')).toBeInTheDocument();
         // expect the draft row to be directly beneath the parent tag row
-        const parentRowIndex = rows.findIndex(tableRow => within(tableRow).queryByText('root tag 1'));
-        const draftRowIndex = rows.findIndex(tableRow => tableRow.querySelector('input'));
+        const parentRowIndex = rows.findIndex((tableRow) => within(tableRow).queryByText('root tag 1'));
+        const draftRowIndex = rows.findIndex((tableRow) => tableRow.querySelector('input'));
         expect(draftRowIndex).toBe(parentRowIndex + 1);
         expect(draftRows[0].querySelector('input')).toBeInTheDocument();
         expect(within(draftRows[0]).getByText('Cancel')).toBeInTheDocument();
@@ -644,7 +660,7 @@ describe('<TagListTable />', () => {
         openActionsMenuForTag('root tag 1');
         fireEvent.click(screen.getByText('Add Subtag'));
         const rows = await screen.findAllByRole('row');
-        const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
+        const draftRow = rows.find((tableRow) => tableRow.querySelector('input'));
         const saveButton = within(draftRow).getByText('Save');
         const input = draftRow.querySelector('input');
         act(() => {
@@ -659,7 +675,7 @@ describe('<TagListTable />', () => {
         openActionsMenuForTag('root tag 1');
         fireEvent.click(screen.getByText('Add Subtag'));
         const rows = await screen.findAllByRole('row');
-        const draftRow = rows.find(tableRow => tableRow.querySelector('input'));
+        const draftRow = rows.find((tableRow) => tableRow.querySelector('input'));
         const input = draftRow.querySelector('input');
         const saveButton = within(draftRow).getByText('Save');
 
@@ -671,7 +687,7 @@ describe('<TagListTable />', () => {
         openActionsMenuForTag('root tag 1');
         fireEvent.click(screen.getByText('Add Subtag'));
         const rows = await screen.findAllByRole('row');
-        const draftRow = rows.find(row => row.querySelector('input'));
+        const draftRow = rows.find((row) => row.querySelector('input'));
         const input = draftRow.querySelector('input');
         const saveButton = within(draftRow).getByText('Save');
 
@@ -688,7 +704,7 @@ describe('<TagListTable />', () => {
         openActionsMenuForTag('root tag 1');
         fireEvent.click(screen.getByText('Add Subtag'));
         const rows = await screen.findAllByRole('row');
-        const draftRow = rows.find(row => row.querySelector('input'));
+        const draftRow = rows.find((row) => row.querySelector('input'));
         const input = draftRow.querySelector('input');
         fireEvent.change(input, { target: { value: 'subtag fail' } });
         fireEvent.click(within(draftRow).getByText('Save'));
@@ -706,7 +722,7 @@ describe('<TagListTable />', () => {
       if (addSubtagActions.length === 0) {
         expect(addSubtagActions.length).toBe(0);
       } else {
-        addSubtagActions.forEach(action => {
+        addSubtagActions.forEach((action) => {
           expect(action).toBeDisabled();
         });
       }
@@ -770,7 +786,9 @@ describe('<TagListTable /> isolated async subtag tests', () => {
   it('shows the spinner before the query is complete', async () => {
     // Simulate an actual slow response from the API:
     let resolveResponse;
-    const promise = new Promise(resolve => { resolveResponse = resolve; });
+    const promise = new Promise((resolve) => {
+      resolveResponse = resolve;
+    });
     axiosMock.onGet(rootTagsListUrl).reply(() => promise);
     renderTagListTable();
     const spinner = await screen.findByRole('status');

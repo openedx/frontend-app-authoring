@@ -35,7 +35,7 @@ export const groupFeedbackCardHooks = (groupFeedbacks, updateSettings, answersli
   const handleAdd = () => {
     let newId = 0;
     if (!isEmpty(groupFeedbacks)) {
-      newId = Math.max(...groupFeedbacks.map(feedback => feedback.id)) + 1;
+      newId = Math.max(...groupFeedbacks.map((feedback) => feedback.id)) + 1;
     }
     const groupFeedback = { id: newId, answers: [], feedback: '' };
     const modifiedGroupFeedbacks = [...groupFeedbacks, groupFeedback];
@@ -51,19 +51,19 @@ export const groupFeedbackCardHooks = (groupFeedbacks, updateSettings, answersli
 export const groupFeedbackRowHooks = ({ id, groupFeedbacks, updateSettings }) => {
   // Hooks for the answers associated with a groupfeedback
   const addSelectedAnswer = ({ value }) => {
-    const oldGroupFeedback = groupFeedbacks.find(x => x.id === id);
+    const oldGroupFeedback = groupFeedbacks.find((x) => x.id === id);
     const newAnswers = [...oldGroupFeedback.answers, value];
     const newFeedback = { ...oldGroupFeedback, answers: newAnswers };
-    const remainingFeedbacks = groupFeedbacks.filter((item) => (item.id !== id));
+    const remainingFeedbacks = groupFeedbacks.filter((item) => item.id !== id);
     const updatedFeedbackList = [newFeedback, ...remainingFeedbacks].sort((a, b) => a.id - b.id);
 
     updateSettings({ groupFeedbackList: updatedFeedbackList });
   };
   const removedSelectedAnswer = ({ value }) => {
-    const oldGroupFeedback = groupFeedbacks.find(x => x.id === id);
-    const newAnswers = oldGroupFeedback.answers.filter(item => item !== value);
+    const oldGroupFeedback = groupFeedbacks.find((x) => x.id === id);
+    const newAnswers = oldGroupFeedback.answers.filter((item) => item !== value);
     const newFeedback = { ...oldGroupFeedback, answers: newAnswers };
-    const remainingFeedbacks = groupFeedbacks.filter((item) => (item.id !== id));
+    const remainingFeedbacks = groupFeedbacks.filter((item) => item.id !== id);
     const updatedFeedbackList = [newFeedback, ...remainingFeedbacks].sort((a, b) => a.id - b.id);
 
     updateSettings({ groupFeedbackList: updatedFeedbackList });
@@ -79,14 +79,14 @@ export const groupFeedbackRowHooks = ({ id, groupFeedbacks, updateSettings }) =>
 
   // Delete Button
   const handleDelete = () => {
-    const modifiedGroupFeedbacks = groupFeedbacks.filter((item) => (item.id !== id));
+    const modifiedGroupFeedbacks = groupFeedbacks.filter((item) => item.id !== id);
     updateSettings({ groupFeedbackList: modifiedGroupFeedbacks });
   };
 
   // Hooks for the feedback associated with a groupfeedback
   const handleFeedbackChange = (event) => {
     const { value } = event.target;
-    const modifiedGroupFeedback = groupFeedbacks.map(groupFeedback => {
+    const modifiedGroupFeedback = groupFeedbacks.map((groupFeedback) => {
       if (groupFeedback.id === id) {
         return { ...groupFeedback, feedback: value };
       }
@@ -96,6 +96,8 @@ export const groupFeedbackRowHooks = ({ id, groupFeedbacks, updateSettings }) =>
   };
 
   return {
-    handleAnswersSelectedChange, handleFeedbackChange, handleDelete,
+    handleAnswersSelectedChange,
+    handleFeedbackChange,
+    handleDelete,
   };
 };

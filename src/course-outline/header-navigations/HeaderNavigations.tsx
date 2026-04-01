@@ -1,28 +1,24 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, OverlayTrigger, Tooltip } from '@openedx/paragon';
-import {
-  Add as IconAdd,
-  ArrowDropDown as ArrowDownIcon,
-  ArrowDropUp as ArrowUpIcon,
-} from '@openedx/paragon/icons';
+import { Add as IconAdd, ArrowDropDown as ArrowDownIcon, ArrowDropUp as ArrowUpIcon } from '@openedx/paragon/icons';
 
 import { OutlinePageErrors, XBlockActions } from '@src/data/types';
 import messages from './messages';
 
 export interface HeaderNavigationsProps {
-  isReIndexShow: boolean,
-  isSectionsExpanded: boolean,
-  isDisabledReindexButton: boolean,
+  isReIndexShow: boolean;
+  isSectionsExpanded: boolean;
+  isDisabledReindexButton: boolean;
   headerNavigationsActions: {
-    handleNewSection: () => void,
-    handleReIndex: () => void,
-    handleExpandAll: () => void,
-    lmsLink: string,
-  },
-  hasSections: boolean,
-  courseActions: XBlockActions,
-  errors?: OutlinePageErrors,
+    handleNewSection: () => void;
+    handleReIndex: () => void;
+    handleExpandAll: () => void;
+    lmsLink: string;
+  };
+  hasSections: boolean;
+  courseActions: XBlockActions;
+  errors?: OutlinePageErrors;
 }
 
 const HeaderNavigations = ({
@@ -35,20 +31,18 @@ const HeaderNavigations = ({
   errors,
 }: HeaderNavigationsProps) => {
   const intl = useIntl();
-  const {
-    handleNewSection, handleReIndex, handleExpandAll, lmsLink,
-  } = headerNavigationsActions;
+  const { handleNewSection, handleReIndex, handleExpandAll, lmsLink } = headerNavigationsActions;
 
   return (
     <>
       {courseActions.childAddable && (
         <OverlayTrigger
           placement="bottom"
-          overlay={(
+          overlay={
             <Tooltip id={intl.formatMessage(messages.newSectionButtonTooltip)}>
               {intl.formatMessage(messages.newSectionButtonTooltip)}
             </Tooltip>
-          )}
+          }
         >
           <Button
             iconBefore={IconAdd}
@@ -62,11 +56,15 @@ const HeaderNavigations = ({
       {isReIndexShow && (
         <OverlayTrigger
           placement="bottom"
-          overlay={!isDisabledReindexButton ? (
-            <Tooltip id={intl.formatMessage(messages.reindexButtonTooltip)}>
-              {intl.formatMessage(messages.reindexButtonTooltip)}
-            </Tooltip>
-          ) : <React.Fragment key="reindex close" />}
+          overlay={
+            !isDisabledReindexButton ? (
+              <Tooltip id={intl.formatMessage(messages.reindexButtonTooltip)}>
+                {intl.formatMessage(messages.reindexButtonTooltip)}
+              </Tooltip>
+            ) : (
+              <React.Fragment key="reindex close" />
+            )
+          }
         >
           <Button
             onClick={handleReIndex}
@@ -93,17 +91,13 @@ const HeaderNavigations = ({
       )}
       <OverlayTrigger
         placement="bottom"
-        overlay={(
+        overlay={
           <Tooltip id={intl.formatMessage(messages.viewLiveButtonTooltip)}>
             {intl.formatMessage(messages.viewLiveButtonTooltip)}
           </Tooltip>
-        )}
+        }
       >
-        <Button
-          href={lmsLink}
-          target="_blank"
-          variant="outline-primary"
-        >
+        <Button href={lmsLink} target="_blank" variant="outline-primary">
           {intl.formatMessage(messages.viewLiveButton)}
         </Button>
       </OverlayTrigger>

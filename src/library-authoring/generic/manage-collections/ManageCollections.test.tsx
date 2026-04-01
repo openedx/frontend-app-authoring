@@ -3,12 +3,7 @@ import fetchMock from 'fetch-mock-jest';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter/types';
 import { mockContentSearchConfig } from '../../../search-manager/data/api.mock';
-import {
-  initializeMocks,
-  render as baseRender,
-  screen,
-  waitFor,
-} from '../../../testUtils';
+import { initializeMocks, render as baseRender, screen, waitFor } from '../../../testUtils';
 import mockCollectionsResults from '../../__mocks__/collection-search.json';
 import { LibraryProvider } from '../../common/context/LibraryContext';
 import { SidebarProvider } from '../../common/context/SidebarContext';
@@ -25,15 +20,14 @@ mockLibraryBlockMetadata.applyMock();
 mockGetContainerMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 
-const render = (ui: React.ReactElement) => baseRender(ui, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={mockContentLibrary.libraryId}>
-      <SidebarProvider>
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (ui: React.ReactElement) =>
+  baseRender(ui, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={mockContentLibrary.libraryId}>
+        <SidebarProvider>{children}</SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
@@ -53,7 +47,9 @@ describe('<ManageCollections />', () => {
       mockCollectionsResults.results[0].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-      mockCollectionsResults.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      mockCollectionsResults.results[0]?.hits.forEach((hit) => {
+        hit._formatted = { ...hit };
+      });
       return mockCollectionsResults;
     });
   });
@@ -62,14 +58,18 @@ describe('<ManageCollections />', () => {
     const user = userEvent.setup();
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);
     axiosMock.onPatch(url).reply(200);
-    render(<ManageCollections
-      opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
-      collections={[{ title: 'My first collection', key: 'my-first-collection' }]}
-      useUpdateCollectionsHook={useUpdateComponentCollections}
-    />);
+    render(
+      <ManageCollections
+        opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
+        collections={[{ title: 'My first collection', key: 'my-first-collection' }]}
+        useUpdateCollectionsHook={useUpdateComponentCollections}
+      />,
+    );
     const manageBtn = await screen.findByRole('button', { name: 'Manage Collections' });
     await user.click(manageBtn);
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+    });
     expect(screen.queryByRole('search')).toBeInTheDocument();
     const secondCollection = await screen.findByRole('button', { name: 'My second collection' });
     await user.click(secondCollection);
@@ -89,14 +89,18 @@ describe('<ManageCollections />', () => {
     const user = userEvent.setup();
     const url = getLibraryContainerCollectionsUrl(mockGetContainerMetadata.unitIdWithCollections);
     axiosMock.onPatch(url).reply(200);
-    render(<ManageCollections
-      opaqueKey={mockGetContainerMetadata.unitIdWithCollections}
-      collections={[{ title: 'My first collection', key: 'my-first-collection' }]}
-      useUpdateCollectionsHook={useUpdateContainerCollections}
-    />);
+    render(
+      <ManageCollections
+        opaqueKey={mockGetContainerMetadata.unitIdWithCollections}
+        collections={[{ title: 'My first collection', key: 'my-first-collection' }]}
+        useUpdateCollectionsHook={useUpdateContainerCollections}
+      />,
+    );
     const manageBtn = await screen.findByRole('button', { name: 'Manage Collections' });
     await user.click(manageBtn);
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+    });
     expect(screen.queryByRole('search')).toBeInTheDocument();
     const secondCollection = await screen.findByRole('button', { name: 'My second collection' });
     await user.click(secondCollection);
@@ -116,14 +120,18 @@ describe('<ManageCollections />', () => {
     const user = userEvent.setup();
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);
     axiosMock.onPatch(url).reply(400);
-    render(<ManageCollections
-      opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
-      collections={[]}
-      useUpdateCollectionsHook={useUpdateComponentCollections}
-    />);
+    render(
+      <ManageCollections
+        opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
+        collections={[]}
+        useUpdateCollectionsHook={useUpdateComponentCollections}
+      />,
+    );
     const manageBtn = await screen.findByRole('button', { name: 'Add to Collection' });
     await user.click(manageBtn);
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+    });
     expect(screen.queryByRole('search')).toBeInTheDocument();
     const secondCollection = await screen.findByRole('button', { name: 'My second collection' });
     await user.click(secondCollection);
@@ -143,14 +151,18 @@ describe('<ManageCollections />', () => {
     const user = userEvent.setup();
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);
     axiosMock.onPatch(url).reply(400);
-    render(<ManageCollections
-      opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
-      collections={[]}
-      useUpdateCollectionsHook={useUpdateComponentCollections}
-    />);
+    render(
+      <ManageCollections
+        opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
+        collections={[]}
+        useUpdateCollectionsHook={useUpdateComponentCollections}
+      />,
+    );
     const manageBtn = await screen.findByRole('button', { name: 'Add to Collection' });
     await user.click(manageBtn);
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+    });
     expect(screen.queryByRole('search')).toBeInTheDocument();
     const secondCollection = await screen.findByRole('button', { name: 'My second collection' });
     await user.click(secondCollection);

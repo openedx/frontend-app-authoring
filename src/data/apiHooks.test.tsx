@@ -1,10 +1,4 @@
-import {
-  initializeMocks,
-  cleanup,
-  screen,
-  render,
-  waitFor,
-} from '../testUtils';
+import { initializeMocks, cleanup, screen, render, waitFor } from '../testUtils';
 import { useWaffleFlags } from './apiHooks';
 import { getApiWaffleFlagsUrl } from './api';
 
@@ -25,7 +19,9 @@ describe('useWaffleFlags', () => {
     const { axiosMock } = initializeMocks();
     // Simulate an actual slow response from the Waffle Flags REST API:
     let resolveResponse;
-    const promise = new Promise<[number, unknown]>(resolve => { resolveResponse = resolve; });
+    const promise = new Promise<[number, unknown]>((resolve) => {
+      resolveResponse = resolve;
+    });
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(() => promise);
 
     render(<FlagComponent />);
@@ -45,11 +41,13 @@ describe('useWaffleFlags', () => {
     expect(await screen.findByLabelText('useNewCourseOutlinePage')).toHaveTextContent('disabled');
   });
 
-  it('uses the default values if there\'s an error', async () => {
+  it("uses the default values if there's an error", async () => {
     const { axiosMock } = initializeMocks();
     // Simulate an actual slow response from the Waffle Flags REST API:
     let resolveResponse;
-    const promise = new Promise<[number, unknown]>(resolve => { resolveResponse = resolve; });
+    const promise = new Promise<[number, unknown]>((resolve) => {
+      resolveResponse = resolve;
+    });
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(() => promise);
 
     render(<FlagComponent />);
@@ -76,7 +74,9 @@ describe('useWaffleFlags', () => {
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, { useNewCourseOutlinePage: false });
     // Control when we respond with the course-specific flag value:
     let resolveResponse;
-    const promise = new Promise<[number, unknown]>(resolve => { resolveResponse = resolve; });
+    const promise = new Promise<[number, unknown]>((resolve) => {
+      resolveResponse = resolve;
+    });
     axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(() => promise);
 
     // Check the global flag:

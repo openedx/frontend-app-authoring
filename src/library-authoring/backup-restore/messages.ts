@@ -33,7 +33,8 @@ const messages = defineMessages({
   },
   backupDescription: {
     id: 'course-authoring.library-authoring.backup-page.description',
-    defaultMessage: 'Local backups are stored on your machine and are not automatically synced. They will not contain any edit history. You can restore a local backup as a new library on this or another learning site. Anyone who can access the local backup file can view all its content.',
+    defaultMessage:
+      'Local backups are stored on your machine and are not automatically synced. They will not contain any edit history. You can restore a local backup as a new library on this or another learning site. Anyone who can access the local backup file can view all its content.',
     description: 'Description of what library backups are and how they work',
   },
   createBackupButton: {

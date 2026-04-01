@@ -4,16 +4,12 @@ import TinyMceWidget from '../TinyMceWidget';
 import { prepareEditorRef } from '../TinyMceWidget/hooks';
 import './index.scss';
 
-const ExpandableTextArea = ({
-  value,
-  setContent,
-  error,
-  errorMessage,
-  ...props
-}) => {
+const ExpandableTextArea = ({ value, setContent, error, errorMessage, ...props }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
 
-  if (!refReady) { return null; }
+  if (!refReady) {
+    return null;
+  }
   return (
     <>
       <div className="expandable-mce error">
@@ -26,11 +22,7 @@ const ExpandableTextArea = ({
           {...props}
         />
       </div>
-      {error && (
-        <div className="text-danger-500 x-small">
-          {errorMessage}
-        </div>
-      )}
+      {error && <div className="text-danger-500 x-small">{errorMessage}</div>}
     </>
   );
 };

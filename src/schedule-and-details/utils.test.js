@@ -22,22 +22,14 @@ describe('validateScheduleAndDetails', () => {
 
   describe('endDate', () => {
     it('should return without end date errors', () => {
-      const errors = validateScheduleAndDetails(
-        { startDate: '01/01/1998', endDate: '01/01/1999' },
-        false,
-        intl,
-      );
+      const errors = validateScheduleAndDetails({ startDate: '01/01/1998', endDate: '01/01/1999' }, false, intl);
       const hasEndDateError = Object.keys(errors).includes('endDate');
 
       expect(hasEndDateError).toBeFalsy();
     });
 
     it('should return with end date error', () => {
-      const errors = validateScheduleAndDetails(
-        { startDate: '01/01/1998', endDate: '01/01/1997' },
-        false,
-        intl,
-      );
+      const errors = validateScheduleAndDetails({ startDate: '01/01/1998', endDate: '01/01/1997' }, false, intl);
       const hasEndDateError = Object.keys(errors).includes('endDate');
 
       expect(hasEndDateError).toBeTruthy();
@@ -103,33 +95,21 @@ describe('validateScheduleAndDetails', () => {
 
   describe('enrollmentEnd', () => {
     it('should return without enrollment start errors when end dates are equal', () => {
-      const errors = validateScheduleAndDetails(
-        { enrollmentEnd: '01/01/1998', endDate: '01/01/1999' },
-        false,
-        intl,
-      );
+      const errors = validateScheduleAndDetails({ enrollmentEnd: '01/01/1998', endDate: '01/01/1999' }, false, intl);
       const hasEnrollmentEndError = Object.keys(errors).includes('enrollmentEnd');
 
       expect(hasEnrollmentEndError).toBeFalsy();
     });
 
     it('should return without enrollment start error when enrollment end is before course end', () => {
-      const errors = validateScheduleAndDetails(
-        { enrollmentEnd: '01/01/1998', endDate: '01/01/1999' },
-        false,
-        intl,
-      );
+      const errors = validateScheduleAndDetails({ enrollmentEnd: '01/01/1998', endDate: '01/01/1999' }, false, intl);
       const hasEnrollmentEndError = Object.keys(errors).includes('enrollmentEnd');
 
       expect(hasEnrollmentEndError).toBeFalsy();
     });
 
     it('should return with enrollment date error', () => {
-      const errors = validateScheduleAndDetails(
-        { enrollmentEnd: '01/01/1998', endDate: '01/01/1997' },
-        false,
-        intl,
-      );
+      const errors = validateScheduleAndDetails({ enrollmentEnd: '01/01/1998', endDate: '01/01/1997' }, false, intl);
       const hasEnrollmentEndError = Object.keys(errors).includes('enrollmentEnd');
 
       expect(hasEnrollmentEndError).toBeTruthy();
@@ -248,44 +228,28 @@ describe('validateScheduleAndDetails', () => {
 
   describe('entranceExamMinimumScore', () => {
     it('should return without exam minimum score errors', () => {
-      const errors = validateScheduleAndDetails(
-        { entranceExamMinimumScorePct: '25' },
-        false,
-        intl,
-      );
+      const errors = validateScheduleAndDetails({ entranceExamMinimumScorePct: '25' }, false, intl);
       const hasExamMinimumScoreError = Object.keys(errors).includes('entranceExamMinimumScorePct');
 
       expect(hasExamMinimumScoreError).toBeFalsy();
     });
 
     it('should return with exam minimum score error with negative value', () => {
-      const errors = validateScheduleAndDetails(
-        { entranceExamMinimumScorePct: '-1' },
-        false,
-        intl,
-      );
+      const errors = validateScheduleAndDetails({ entranceExamMinimumScorePct: '-1' }, false, intl);
       const hasExamMinimumScoreError = Object.keys(errors).includes('entranceExamMinimumScorePct');
 
       expect(hasExamMinimumScoreError).toBeTruthy();
     });
 
     it('should return with exam minimum score error with value greater than 100', () => {
-      const errors = validateScheduleAndDetails(
-        { entranceExamMinimumScorePct: '230' },
-        false,
-        intl,
-      );
+      const errors = validateScheduleAndDetails({ entranceExamMinimumScorePct: '230' }, false, intl);
       const hasExamMinimumScoreError = Object.keys(errors).includes('entranceExamMinimumScorePct');
 
       expect(hasExamMinimumScoreError).toBeTruthy();
     });
 
     it('should return with exam minimum score error with non-numerical value', () => {
-      const errors = validateScheduleAndDetails(
-        { entranceExamMinimumScorePct: 'test' },
-        false,
-        intl,
-      );
+      const errors = validateScheduleAndDetails({ entranceExamMinimumScorePct: 'test' }, false, intl);
       const hasExamMinimumScoreError = Object.keys(errors).includes('entranceExamMinimumScorePct');
 
       expect(hasExamMinimumScoreError).toBeTruthy();

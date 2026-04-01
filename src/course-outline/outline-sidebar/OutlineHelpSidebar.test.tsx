@@ -16,9 +16,7 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
 }));
 
 const extraWrapper = ({ children }) => (
-  <CourseAuthoringProvider courseId={courseId}>
-    {children}
-  </CourseAuthoringProvider>
+  <CourseAuthoringProvider courseId={courseId}>{children}</CourseAuthoringProvider>
 );
 
 let axiosMock;
@@ -30,9 +28,7 @@ describe('<OutlineSidebar />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(getHelpUrlsApiUrl())
-      .reply(200, helpUrls);
+    axiosMock.onGet(getHelpUrlsApiUrl()).reply(200, helpUrls);
   });
 
   it('render OutlineSidebar component correctly', async () => {

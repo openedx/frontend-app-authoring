@@ -16,8 +16,14 @@ interface InfoMessageProps {
 
 const InfoMessage = (props: InfoMessageProps) => (
   <Stack className="d-flex mt-6 align-items-center">
-    <p className="lead"> <FormattedMessage {...props.title} /> </p>
-    <p className="small text-muted"> <FormattedMessage {...props.subtitle} /> </p>
+    <p className="lead">
+      {' '}
+      <FormattedMessage {...props.title} />{' '}
+    </p>
+    <p className="small text-muted">
+      {' '}
+      <FormattedMessage {...props.subtitle} />{' '}
+    </p>
     <img src={props.image} alt="" />
   </Stack>
 );
@@ -28,12 +34,7 @@ const InfoMessage = (props: InfoMessageProps) => (
  * Otherwise, display the results, which are assumed to be the children prop.
  */
 const EmptyStates: React.FC<{ children: React.ReactElement }> = ({ children }) => {
-  const {
-    canClearFilters: hasFiltersApplied,
-    totalHits,
-    searchKeywords,
-    hasError,
-  } = useSearchContext();
+  const { canClearFilters: hasFiltersApplied, totalHits, searchKeywords, hasError } = useSearchContext();
   const hasQuery = !!searchKeywords;
 
   if (hasError) {
@@ -46,21 +47,11 @@ const EmptyStates: React.FC<{ children: React.ReactElement }> = ({ children }) =
   if (!hasQuery && !hasFiltersApplied) {
     // We haven't started the search yet. Display the "start your search" empty state
     return (
-      <InfoMessage
-        title={messages.emptySearchTitle}
-        subtitle={messages.emptySearchSubtitle}
-        image={EmptySearchImage}
-      />
+      <InfoMessage title={messages.emptySearchTitle} subtitle={messages.emptySearchSubtitle} image={EmptySearchImage} />
     );
   }
   if (totalHits === 0) {
-    return (
-      <InfoMessage
-        title={messages.noResultsTitle}
-        subtitle={messages.noResultsSubtitle}
-        image={NoResultImage}
-      />
-    );
+    return <InfoMessage title={messages.noResultsTitle} subtitle={messages.noResultsSubtitle} image={NoResultImage} />;
   }
 
   return children;

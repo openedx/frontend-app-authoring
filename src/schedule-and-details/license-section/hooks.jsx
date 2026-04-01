@@ -4,13 +4,11 @@ import { LICENSE_TYPE, LICENSE_COMMONS_OPTIONS, creativeCommonsVersion } from '.
 import { generateLicenseURL } from './utils';
 
 const useLicenseDetails = (license, onChange) => {
-  const [licenseType, setLicenseType] = useState(/** @type { string | null } */(null));
+  const [licenseType, setLicenseType] = useState(/** @type { string | null } */ (null));
   const [licenseDetails, setLicenseDetails] = useState({});
   const [licenseURL, setLicenseURL] = useState('');
 
-  const {
-    attribution, nonCommercial, noDerivatives, shareAlike,
-  } = LICENSE_COMMONS_OPTIONS;
+  const { attribution, nonCommercial, noDerivatives, shareAlike } = LICENSE_COMMONS_OPTIONS;
 
   const defaultLicenseDetails = {
     attribution: true,
@@ -56,11 +54,7 @@ const useLicenseDetails = (license, onChange) => {
   }, [license]);
 
   useEffect(() => {
-    setLicenseURL(
-      licenseType === LICENSE_TYPE.creativeCommons
-        ? generateLicenseURL(licenseDetails)
-        : '',
-    );
+    setLicenseURL(licenseType === LICENSE_TYPE.creativeCommons ? generateLicenseURL(licenseDetails) : '');
     updateLicense();
   }, [licenseType, licenseDetails]);
 
@@ -95,9 +89,7 @@ const useLicenseDetails = (license, onChange) => {
 
   const handleChangeLicenseType = (type) => {
     setLicenseType(type);
-    setLicenseDetails(
-      type === LICENSE_TYPE.creativeCommons ? defaultLicenseDetails : {},
-    );
+    setLicenseDetails(type === LICENSE_TYPE.creativeCommons ? defaultLicenseDetails : {});
   };
 
   return {

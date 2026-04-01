@@ -1,7 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Form, Icon, IconButton, Stack,
-} from '@openedx/paragon';
+import { Form, Icon, IconButton, Stack } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
 
@@ -14,32 +12,26 @@ import messages from './messages';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 
 interface UnitVisibilityInfoProps {
-  openVisibleModal: () => void,
-  visibleToStaffOnly: boolean,
+  openVisibleModal: () => void;
+  visibleToStaffOnly: boolean;
   userPartitionInfo?: {
-    selectablePartitions: Record<string, any>[],
-    selectedGroupsLabel: string,
-    selectedPartitionIndex: number,
-  },
+    selectablePartitions: Record<string, any>[];
+    selectedGroupsLabel: string;
+    selectedPartitionIndex: number;
+  };
 }
 
 interface UnitVisibilityInfoContentProps {
-  visibleToStaffOnly: boolean,
+  visibleToStaffOnly: boolean;
   userPartitionInfo?: {
-    selectablePartitions: Record<string, any>[],
-    selectedGroupsLabel: string,
-    selectedPartitionIndex: number,
-  },
+    selectablePartitions: Record<string, any>[];
+    selectedGroupsLabel: string;
+    selectedPartitionIndex: number;
+  };
 }
 
-const LegacyVisibilityInfo = ({
-  visibleToStaffOnly,
-  openVisibleModal,
-}: UnitVisibilityInfoProps) => {
-  const {
-    staffLockFrom,
-    hasExplicitStaffLock,
-  } = useSelector(getCourseUnitData);
+const LegacyVisibilityInfo = ({ visibleToStaffOnly, openVisibleModal }: UnitVisibilityInfoProps) => {
+  const { staffLockFrom, hasExplicitStaffLock } = useSelector(getCourseUnitData);
 
   const { blockId } = useParams();
   const dispatch = useDispatch();
@@ -56,14 +48,16 @@ const LegacyVisibilityInfo = ({
           <h6 className="course-unit-sidebar-visibility-copy">
             <FormattedMessage {...messages.visibilityStaffOnlyTitle} />
           </h6>
-          {/* istanbul ignore next */ !hasExplicitStaffLock && (
-            <span className="course-unit-sidebar-visibility-section mb-2">
-              <FormattedMessage
-                {...messages.visibilityHasExplicitStaffLockText}
-                values={{ sectionName: staffLockFrom }}
-              />
-            </span>
-          )}
+          {
+            /* istanbul ignore next */ !hasExplicitStaffLock && (
+              <span className="course-unit-sidebar-visibility-section mb-2">
+                <FormattedMessage
+                  {...messages.visibilityHasExplicitStaffLockText}
+                  values={{ sectionName: staffLockFrom }}
+                />
+              </span>
+            )
+          }
         </>
       ) : (
         <h6 className="course-unit-sidebar-visibility-copy">
@@ -82,10 +76,7 @@ const LegacyVisibilityInfo = ({
   );
 };
 
-const UnitVisibilityInfoContent = ({
-  visibleToStaffOnly,
-  userPartitionInfo,
-}: UnitVisibilityInfoContentProps) => {
+const UnitVisibilityInfoContent = ({ visibleToStaffOnly, userPartitionInfo }: UnitVisibilityInfoContentProps) => {
   const intl = useIntl();
   const { setCurrentTabKey } = useUnitSidebarContext();
 
@@ -104,12 +95,9 @@ const UnitVisibilityInfoContent = ({
   } else if (hasGroups) {
     if (groupsCount === 1) {
       labelMessages = selectedGroupsLabel;
-      secondLabelMessages = intl.formatMessage(
-        messages.visibilitySingleGroupDetails,
-        {
-          groupName: selectedGroupsLabel,
-        },
-      );
+      secondLabelMessages = intl.formatMessage(messages.visibilitySingleGroupDetails, {
+        groupName: selectedGroupsLabel,
+      });
     } else {
       labelMessages = intl.formatMessage(messages.visibilityAccessRestrictionsTitle);
       secondLabelMessages = intl.formatMessage(messages.visibilityMultipleGroupsDetails);
@@ -119,14 +107,8 @@ const UnitVisibilityInfoContent = ({
   return (
     <>
       <Stack direction="horizontal" gap={2}>
-        {visibleToStaffOnly ? (
-          <Icon src={Lock} />
-        ) : (
-          <Icon src={Groups} />
-        )}
-        <span className="font-weight-bold text-primary-700">
-          {labelMessages}
-        </span>
+        {visibleToStaffOnly ? <Icon src={Lock} /> : <Icon src={Groups} />}
+        <span className="font-weight-bold text-primary-700">{labelMessages}</span>
         <IconButton
           src={Edit}
           alt={intl.formatMessage(messages.visibilityEditButton)}
@@ -139,25 +121,15 @@ const UnitVisibilityInfoContent = ({
   );
 };
 
-const UnitVisibilityInfo = ({
-  openVisibleModal,
-  visibleToStaffOnly,
-  userPartitionInfo,
-}: UnitVisibilityInfoProps) => (
+const UnitVisibilityInfo = ({ openVisibleModal, visibleToStaffOnly, userPartitionInfo }: UnitVisibilityInfoProps) => (
   <>
     <span className="heading-label">
       <FormattedMessage {...messages.visibilityVisibleToTitle} />
     </span>
     {isUnitPageNewDesignEnabled() ? (
-      <UnitVisibilityInfoContent
-        visibleToStaffOnly={visibleToStaffOnly}
-        userPartitionInfo={userPartitionInfo}
-      />
+      <UnitVisibilityInfoContent visibleToStaffOnly={visibleToStaffOnly} userPartitionInfo={userPartitionInfo} />
     ) : (
-      <LegacyVisibilityInfo
-        visibleToStaffOnly={visibleToStaffOnly}
-        openVisibleModal={openVisibleModal}
-      />
+      <LegacyVisibilityInfo visibleToStaffOnly={visibleToStaffOnly} openVisibleModal={openVisibleModal} />
     )}
   </>
 );

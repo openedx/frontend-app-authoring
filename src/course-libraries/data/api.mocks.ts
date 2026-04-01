@@ -65,9 +65,11 @@ export async function mockGetEntityLinksSummaryByDownstreamContext(
     case mockGetEntityLinksSummaryByDownstreamContext.courseKeyEmpty:
       return Promise.resolve([]);
     case mockGetEntityLinksSummaryByDownstreamContext.courseKeyUpToDate:
-      return Promise.resolve(mockGetEntityLinksSummaryByDownstreamContext.response.filter(
-        (o: { readyToSyncCount: number }) => o.readyToSyncCount === 0,
-      ));
+      return Promise.resolve(
+        mockGetEntityLinksSummaryByDownstreamContext.response.filter(
+          (o: { readyToSyncCount: number }) => o.readyToSyncCount === 0,
+        ),
+      );
     default:
       return Promise.resolve(mockGetEntityLinksSummaryByDownstreamContext.response);
   }
@@ -80,7 +82,9 @@ mockGetEntityLinksSummaryByDownstreamContext.courseKeyUpToDate = 'courseKeyUpToD
 mockGetEntityLinksSummaryByDownstreamContext.response = mockSummaryResult;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetEntityLinksSummaryByDownstreamContext.applyMock = () => {
-  jest.spyOn(api, 'getEntityLinksSummaryByDownstreamContext').mockImplementation(mockGetEntityLinksSummaryByDownstreamContext);
+  jest
+    .spyOn(api, 'getEntityLinksSummaryByDownstreamContext')
+    .mockImplementation(mockGetEntityLinksSummaryByDownstreamContext);
 };
 
 /**
@@ -90,11 +94,7 @@ export async function mockFetchIndexDocuments() {
   return mockLinkDetailsFromIndex;
 }
 mockFetchIndexDocuments.applyMock = () => {
-  fetchMock.post(
-    'http://mock.meilisearch.local/multi-search',
-    mockFetchIndexDocuments,
-    { overwriteRoutes: true },
-  );
+  fetchMock.post('http://mock.meilisearch.local/multi-search', mockFetchIndexDocuments, { overwriteRoutes: true });
 };
 
 /**
@@ -109,7 +109,7 @@ mockUseLibBlockMetadata.applyMock = () => {
 
 /**
  * Mock getCourseReadyToMigrateLegacyLibContentBlocks
-*/
+ */
 export async function mockGetReadyToUpdateReferences(
   courseId?: string,
 ): ReturnType<typeof api.getCourseReadyToMigrateLegacyLibContentBlocks> {
@@ -139,7 +139,7 @@ mockGetReadyToUpdateReferences.applyMock = () => {
 
 /**
  * Mock getCourseLegacyLibRefUpdateTaskStatus
-*/
+ */
 export async function mockGetCourseLegacyLibRefUpdateTaskStatus(
   _courseId?: string,
   taskId?: string,
@@ -171,12 +171,14 @@ mockGetCourseLegacyLibRefUpdateTaskStatus.taskInProgress = 'task-pending';
 mockGetCourseLegacyLibRefUpdateTaskStatus.taskComplete = 'task-complete';
 mockGetCourseLegacyLibRefUpdateTaskStatus.taskFailed = 'task-failed';
 mockGetCourseLegacyLibRefUpdateTaskStatus.applyMock = () => {
-  jest.spyOn(api, 'getCourseLegacyLibRefUpdateTaskStatus').mockImplementation(mockGetCourseLegacyLibRefUpdateTaskStatus);
+  jest
+    .spyOn(api, 'getCourseLegacyLibRefUpdateTaskStatus')
+    .mockImplementation(mockGetCourseLegacyLibRefUpdateTaskStatus);
 };
 
 /**
  * Mock getCourseReadyToMigrateLegacyLibContentBlocks
-*/
+ */
 export async function mockMigrateCourseReadyToMigrateLegacyLibContentBlocks(
   courseId?: string,
 ): ReturnType<typeof api.migrateCourseReadyToMigrateLegacyLibContentBlocks> {
@@ -204,8 +206,7 @@ export async function mockMigrateCourseReadyToMigrateLegacyLibContentBlocks(
   }
 }
 mockMigrateCourseReadyToMigrateLegacyLibContentBlocks.applyMock = () => {
-  jest.spyOn(
-    api,
-    'migrateCourseReadyToMigrateLegacyLibContentBlocks',
-  ).mockImplementation(mockMigrateCourseReadyToMigrateLegacyLibContentBlocks);
+  jest
+    .spyOn(api, 'migrateCourseReadyToMigrateLegacyLibContentBlocks')
+    .mockImplementation(mockMigrateCourseReadyToMigrateLegacyLibContentBlocks);
 };

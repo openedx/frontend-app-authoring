@@ -2,12 +2,7 @@ import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import {
-  Container,
-  Button,
-  AlertModal,
-  ActionRow,
-} from '@openedx/paragon';
+import { Container, Button, AlertModal, ActionRow } from '@openedx/paragon';
 
 import PropTypes from 'prop-types';
 import { useEditorContext } from '@src/editors/EditorContext';
@@ -18,9 +13,7 @@ import EditorContainer from '../../../EditorContainer';
 import RawEditor from '../../../../sharedComponents/RawEditor';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
-import {
-  checkIfEditorsDirty, parseState, saveWarningModalToggle, getContent,
-} from './hooks';
+import { checkIfEditorsDirty, parseState, saveWarningModalToggle, getContent } from './hooks';
 
 import './index.scss';
 import messages from './messages';
@@ -61,47 +54,53 @@ const EditProblemView = ({ returnFunction }) => {
   return (
     <ProblemEditorContextProvider editorRef={editorRef}>
       <EditorContainer
-        getContent={() => getContent({
-          problemState,
-          openSaveWarningModal,
-          isAdvancedProblemType,
-          isMarkdownEditorEnabled,
-          editorRef,
-          lmsEndpointUrl,
-        })}
+        getContent={() =>
+          getContent({
+            problemState,
+            openSaveWarningModal,
+            isAdvancedProblemType,
+            isMarkdownEditorEnabled,
+            editorRef,
+            lmsEndpointUrl,
+          })
+        }
         isDirty={checkIfDirty}
         returnFunction={returnFunction}
       >
         <AlertModal
-          title={isAdvancedProblemType
-            ? intl.formatMessage(messages.olxSettingDiscrepancyTitle)
-            : intl.formatMessage(messages.noAnswerTitle)}
+          title={
+            isAdvancedProblemType
+              ? intl.formatMessage(messages.olxSettingDiscrepancyTitle)
+              : intl.formatMessage(messages.noAnswerTitle)
+          }
           isOpen={isSaveWarningModalOpen}
           onClose={closeSaveWarningModal}
-          footerNode={(
+          footerNode={
             <ActionRow>
               <Button variant="tertiary" onClick={closeSaveWarningModal}>
                 <FormattedMessage {...messages.saveWarningModalCancelButtonLabel} />
               </Button>
               <Button
-                onClick={() => saveBlock({
-                  content: parseState({
-                    problem: problemState,
-                    isAdvanced: isAdvancedProblemType,
-                    isMarkdown: isMarkdownEditorEnabled,
-                    ref: editorRef,
-                    lmsEndpointUrl,
-                  })(),
-                  returnFunction,
-                  destination: returnUrl,
-                  dispatch,
-                  analytics,
-                })}
+                onClick={() =>
+                  saveBlock({
+                    content: parseState({
+                      problem: problemState,
+                      isAdvanced: isAdvancedProblemType,
+                      isMarkdown: isMarkdownEditorEnabled,
+                      ref: editorRef,
+                      lmsEndpointUrl,
+                    })(),
+                    returnFunction,
+                    destination: returnUrl,
+                    dispatch,
+                    analytics,
+                  })
+                }
               >
                 <FormattedMessage {...messages.saveWarningModalSaveButtonLabel} />
               </Button>
             </ActionRow>
-        )}
+          }
         >
           {isAdvancedProblemType ? (
             <FormattedMessage {...messages.olxSettingDiscrepancyBodyExplanation} />

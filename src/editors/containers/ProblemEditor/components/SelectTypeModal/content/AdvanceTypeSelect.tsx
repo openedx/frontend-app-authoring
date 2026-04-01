@@ -1,15 +1,6 @@
 import React from 'react';
 
-import {
-  Form,
-  ActionRow,
-  IconButton,
-  Icon,
-  OverlayTrigger,
-  Tooltip,
-  Hyperlink,
-  Col,
-} from '@openedx/paragon';
+import { Form, ActionRow, IconButton, Icon, OverlayTrigger, Tooltip, Hyperlink, Col } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getExternalLinkUrl } from '@edx/frontend-platform';
@@ -26,13 +17,12 @@ interface Props {
   setSelected: React.Dispatch<ProblemType | AdvancedProblemType>;
 }
 
-const AdvanceTypeSelect: React.FC<Props> = ({
-  selected,
-  setSelected,
-}) => {
+const AdvanceTypeSelect: React.FC<Props> = ({ selected, setSelected }) => {
   const intl = useIntl();
 
-  const handleChange = e => { setSelected(e.target.value); };
+  const handleChange = (e) => {
+    setSelected(e.target.value);
+  };
   return (
     <Col xs={12} md={8} className="justify-content-center">
       <Form.Group className="border rounded text-primary-500 p-0">
@@ -49,12 +39,7 @@ const AdvanceTypeSelect: React.FC<Props> = ({
           </Form.Label>
           <ActionRow.Spacer />
         </ActionRow>
-        <Form.RadioSet
-          name="advanceTypes"
-          onChange={handleChange}
-          value={selected}
-          className="px-4"
-        >
+        <Form.RadioSet name="advanceTypes" onChange={handleChange} value={selected} className="px-4">
           {Object.entries(AdvanceProblems).map(([type, problemData]) => {
             if (problemData.status !== '') {
               return (
@@ -65,13 +50,15 @@ const AdvanceTypeSelect: React.FC<Props> = ({
                   <ActionRow.Spacer />
                   <OverlayTrigger
                     placement="right"
-                    overlay={(
+                    overlay={
                       <Tooltip id={`tooltip-adv-${type}`}>
                         <div className="text-left">
-                          {intl.formatMessage(messages.supportStatusTooltipMessage, { supportStatus: problemData.status.replace(' ', '_') })}
+                          {intl.formatMessage(messages.supportStatusTooltipMessage, {
+                            supportStatus: problemData.status.replace(' ', '_'),
+                          })}
                         </div>
                       </Tooltip>
-                    )}
+                    }
                   >
                     <div className="text-gray-500">
                       {intl.formatMessage(messages.problemSupportStatus, { supportStatus: problemData.status })}
@@ -92,7 +79,9 @@ const AdvanceTypeSelect: React.FC<Props> = ({
         </Form.RadioSet>
       </Form.Group>
       <Hyperlink
-        destination={getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/references/course_development/exercise_tools/guide_problem_types.html#advanced-problem-types')}
+        destination={getExternalLinkUrl(
+          'https://docs.openedx.org/en/latest/educators/references/course_development/exercise_tools/guide_problem_types.html#advanced-problem-types',
+        )}
         target="_blank"
       >
         <FormattedMessage {...messages.learnMoreAdvancedButtonLabel} />

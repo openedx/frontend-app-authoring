@@ -7,15 +7,11 @@ import messages from './messages';
 
 const IntroductionVideo = ({ introVideo, onChange }) => {
   const intl = useIntl();
-  const embedVideoUrl = introVideo
-    ? `//www.youtube.com/embed/${introVideo}`
-    : '';
+  const embedVideoUrl = introVideo ? `//www.youtube.com/embed/${introVideo}` : '';
 
   return (
     <Form.Group className="form-group-custom">
-      <Form.Label>
-        {intl.formatMessage(messages.courseIntroductionVideoLabel)}
-      </Form.Label>
+      <Form.Label>{intl.formatMessage(messages.courseIntroductionVideoLabel)}</Form.Label>
       <Card>
         <Card.Body className="embed-video-container">
           <div className="introduction-video">
@@ -36,18 +32,12 @@ const IntroductionVideo = ({ introVideo, onChange }) => {
             placeholder={intl.formatMessage(messages.courseIntroductionVideoPlaceholder)}
             onChange={(e) => onChange(e.target.value, 'introVideo')}
           />
-          <Button
-            variant="outline-primary"
-            onClick={() => onChange('', 'introVideo')}
-            disabled={!introVideo}
-          >
+          <Button variant="outline-primary" onClick={() => onChange('', 'introVideo')} disabled={!introVideo}>
             {intl.formatMessage(messages.courseIntroductionVideoDelete)}
           </Button>
         </Card.Footer>
       </Card>
-      <Form.Control.Feedback>
-        {intl.formatMessage(messages.courseIntroductionVideoHelpText)}
-      </Form.Control.Feedback>
+      <Form.Control.Feedback>{intl.formatMessage(messages.courseIntroductionVideoHelpText)}</Form.Control.Feedback>
     </Form.Group>
   );
 };

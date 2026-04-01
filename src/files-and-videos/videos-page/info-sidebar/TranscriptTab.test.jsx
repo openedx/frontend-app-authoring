@@ -1,16 +1,8 @@
-import {
-  render,
-  act,
-  fireEvent,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { render, act, fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ReactDOM from 'react-dom';
 
-import {
-  initializeMockApp,
-} from '@edx/frontend-platform';
+import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -20,10 +12,7 @@ import initializeStore from '../../../store';
 import { executeThunk } from '../../../utils';
 import { RequestStatus } from '../../../data/constants';
 import TranscriptTab from './TranscriptTab';
-import {
-  courseId,
-  initialState,
-} from '../factories/mockApiResponses';
+import { courseId, initialState } from '../factories/mockApiResponses';
 
 import { getApiBaseUrl } from '../data/api';
 import messages from './messages';
@@ -32,7 +21,7 @@ import transcriptRowMessages from './transcript-item/messages';
 import VideosPageProvider from '../VideosPageProvider';
 import { deleteVideoTranscript } from '../data/thunks';
 
-ReactDOM.createPortal = jest.fn(node => node);
+ReactDOM.createPortal = jest.fn((node) => node);
 
 const defaultProps = {
   id: 'mOckID0',
@@ -91,15 +80,21 @@ describe('TranscriptTab', () => {
     it('should delete empty transcript row', async () => {
       renderComponent(defaultProps);
       const addButton = screen.getByText(messages.uploadButtonLabel.defaultMessage);
-      await act(async () => { fireEvent.click(addButton); });
+      await act(async () => {
+        fireEvent.click(addButton);
+      });
 
       const deleteButton = screen.getByLabelText('delete empty transcript');
-      await act(async () => { fireEvent.click(deleteButton); });
+      await act(async () => {
+        fireEvent.click(deleteButton);
+      });
 
       expect(screen.getByText(transcriptRowMessages.deleteConfirmationHeader.defaultMessage)).toBeVisible();
 
       const confirmButton = screen.getByText(transcriptRowMessages.confirmDeleteLabel.defaultMessage);
-      await act(async () => { fireEvent.click(confirmButton); });
+      await act(async () => {
+        fireEvent.click(confirmButton);
+      });
 
       expect(screen.queryByTestId('transcript-')).toBeNull();
     });
@@ -111,7 +106,9 @@ describe('TranscriptTab', () => {
         renderComponent(defaultProps);
         addButton = screen.getByText(messages.uploadButtonLabel.defaultMessage);
 
-        await act(async () => { fireEvent.click(addButton); });
+        await act(async () => {
+          fireEvent.click(addButton);
+        });
       });
 
       it('should upload new transcript', async () => {
@@ -196,12 +193,15 @@ describe('TranscriptTab', () => {
         axiosMock.onDelete(`${getApiBaseUrl()}/transcript_delete/${courseId}/mOckID0/ar`).reply(204);
         await act(async () => {
           fireEvent.click(confirmButton);
-          await executeThunk(deleteVideoTranscript({
-            language: 'ar',
-            videoId: updatedProps.id,
-            transcripts: updatedProps.transcripts,
-            apiUrl: `/transcript_delete/${courseId}`,
-          }), store.dispatch);
+          await executeThunk(
+            deleteVideoTranscript({
+              language: 'ar',
+              videoId: updatedProps.id,
+              transcripts: updatedProps.transcripts,
+              apiUrl: `/transcript_delete/${courseId}`,
+            }),
+            store.dispatch,
+          );
         });
         const deleteStatus = store.getState().videos.transcriptStatus;
 
@@ -215,12 +215,15 @@ describe('TranscriptTab', () => {
         axiosMock.onDelete(`${getApiBaseUrl()}/transcript_delete/${courseId}/mOckID0/ar`).reply(404);
         await act(async () => {
           fireEvent.click(confirmButton);
-          await executeThunk(deleteVideoTranscript({
-            language: 'ar',
-            videoId: updatedProps.id,
-            transcripts: updatedProps.transcripts,
-            apiUrl: `/transcript_delete/${courseId}`,
-          }), store.dispatch);
+          await executeThunk(
+            deleteVideoTranscript({
+              language: 'ar',
+              videoId: updatedProps.id,
+              transcripts: updatedProps.transcripts,
+              apiUrl: `/transcript_delete/${courseId}`,
+            }),
+            store.dispatch,
+          );
         });
         const deleteStatus = store.getState().videos.transcriptStatus;
 
@@ -239,15 +242,13 @@ describe('TranscriptTab', () => {
         await waitFor(() => {
           fireEvent.click(menuButton);
         });
-        downloadButton = screen.getByText(
-          transcriptRowMessages.downloadTranscript.defaultMessage,
-        ).closest('button');
+        downloadButton = screen.getByText(transcriptRowMessages.downloadTranscript.defaultMessage).closest('button');
       });
 
       it('should download transcript', async () => {
-        axiosMock.onGet(
-          `${getApiBaseUrl()}/transcript_download/?edx_video_id=${updatedProps.id}&language_code=ar`,
-        ).reply(200, 'string of transcript');
+        axiosMock
+          .onGet(`${getApiBaseUrl()}/transcript_download/?edx_video_id=${updatedProps.id}&language_code=ar`)
+          .reply(200, 'string of transcript');
         await act(async () => {
           fireEvent.click(downloadButton);
         });
@@ -258,9 +259,9 @@ describe('TranscriptTab', () => {
 
       it('should show error message', async () => {
         const filename = 'mOckID0.mp4-ar.srt';
-        axiosMock.onGet(
-          `${getApiBaseUrl()}/transcript_download/?edx_video_id=${updatedProps.id}&language_code=ar`,
-        ).reply(404);
+        axiosMock
+          .onGet(`${getApiBaseUrl()}/transcript_download/?edx_video_id=${updatedProps.id}&language_code=ar`)
+          .reply(404);
         await act(async () => {
           fireEvent.click(downloadButton);
         });
@@ -293,9 +294,9 @@ describe('TranscriptTab', () => {
         await waitFor(() => {
           fireEvent.click(menuButton);
         });
-        const replaceButton = screen.getByText(
-          transcriptRowMessages.replaceTranscript.defaultMessage,
-        ).closest('button');
+        const replaceButton = screen
+          .getByText(transcriptRowMessages.replaceTranscript.defaultMessage)
+          .closest('button');
         fireEvent.click(replaceButton);
       });
 

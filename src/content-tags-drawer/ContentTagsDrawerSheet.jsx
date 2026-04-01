@@ -8,9 +8,13 @@ import { ContentTagsDrawerSheetContext } from './common/context';
 const ContentTagsDrawerSheet = ({ id, onClose, showSheet }) => {
   const [blockingSheet, setBlockingSheet] = useState(false);
 
-  const context = useMemo(() => ({
-    blockingSheet, setBlockingSheet,
-  }), [blockingSheet, setBlockingSheet]);
+  const context = useMemo(
+    () => ({
+      blockingSheet,
+      setBlockingSheet,
+    }),
+    [blockingSheet, setBlockingSheet],
+  );
 
   // ContentTagsDrawerSheet is only used when editing Courses/Course Units,
   // so we assume it's ok to edit the object tags too.
@@ -18,17 +22,8 @@ const ContentTagsDrawerSheet = ({ id, onClose, showSheet }) => {
 
   return (
     <ContentTagsDrawerSheetContext.Provider value={context}>
-      <Sheet
-        position="right"
-        show={showSheet}
-        onClose={onClose}
-        blocking={blockingSheet}
-      >
-        <ContentTagsDrawer
-          id={id}
-          onClose={onClose}
-          readOnly={readOnly}
-        />
+      <Sheet position="right" show={showSheet} onClose={onClose} blocking={blockingSheet}>
+        <ContentTagsDrawer id={id} onClose={onClose} readOnly={readOnly} />
       </Sheet>
     </ContentTagsDrawerSheetContext.Provider>
   );

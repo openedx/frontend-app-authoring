@@ -10,17 +10,18 @@ const VideoUploadEditor = ({ onUpload, onClose }) => {
   const [loading, setLoading] = React.useState(false);
   const intl = useIntl();
 
-  return (!loading) ? (
+  return !loading ? (
     <div className="d-flex marked-area flex-column p-3">
       <VideoUploader onUpload={onUpload} onClose={onClose} setLoading={setLoading} />
     </div>
   ) : (
-    <div style={{
-      position: 'absolute',
-      left: '50%',
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
-    }}
+    <div
+      style={{
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+      }}
     >
       <Spinner
         animation="border"

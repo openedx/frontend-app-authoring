@@ -8,12 +8,12 @@ jest.mock('react', () => {
   return {
     updateState,
     useEffect: jest.fn(),
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
+    useState: jest.fn((val) => [{ state: val }, (newVal) => updateState({ val, newVal })]),
   };
 });
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
-  defineMessages: m => m,
+  defineMessages: (m) => m,
 }));
 
 const state = new MockUseState(hooks);

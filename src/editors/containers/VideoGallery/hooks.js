@@ -9,14 +9,9 @@ import messages from './messages';
 import * as appHooks from '../../hooks';
 import { selectors } from '../../data/redux';
 import analyticsEvt from '../../data/constants/analyticsEvt';
-import {
-  filterKeys, filterMessages, sortFunctions, sortKeys, sortMessages,
-} from './utils';
+import { filterKeys, filterMessages, sortFunctions, sortKeys, sortMessages } from './utils';
 
-export const {
-  navigateCallback,
-  navigateTo,
-} = appHooks;
+export const { navigateCallback, navigateTo } = appHooks;
 
 export const useSearchAndSortProps = () => {
   const [searchString, setSearchString] = React.useState('');
@@ -43,13 +38,8 @@ export const useSearchAndSortProps = () => {
   };
 };
 
-export const filterListBySearch = ({
-  searchString,
-  videoList,
-}) => (
-  videoList.filter(({ displayName }) => displayName.toLowerCase()
-    .includes(searchString.toLowerCase()))
-);
+export const filterListBySearch = ({ searchString, videoList }) =>
+  videoList.filter(({ displayName }) => displayName.toLowerCase().includes(searchString.toLowerCase()));
 
 export const filterListByStatus = ({ statusFilter, videoList }) => {
   if (statusFilter === filterKeys.anyStatus) {
@@ -58,17 +48,11 @@ export const filterListByStatus = ({ statusFilter, videoList }) => {
   return videoList.filter(({ status }) => filterKeys[statusFilter] === status);
 };
 
-export const filterListByHideSelectedCourse = ({ videoList }) => (
+export const filterListByHideSelectedCourse = ({ videoList }) =>
   // TODO Missing to implement this
-  videoList
-);
+  videoList;
 
-export const filterList = ({
-  sortBy,
-  filterBy,
-  searchString,
-  videos,
-}) => {
+export const filterList = ({ sortBy, filterBy, searchString, videos }) => {
   let filteredList = module.filterListBySearch({
     searchString,
     videoList: videos,
@@ -83,20 +67,10 @@ export const filterList = ({
   return filteredList.sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]);
 };
 
-export const useVideoListProps = ({
-  searchSortProps,
-  videos,
-  returnFunction,
-}) => {
-  const [highlighted, setHighlighted] = React.useState(/** @type {string | null} */(null));
-  const [
-    showSelectVideoError,
-    setShowSelectVideoError,
-  ] = React.useState(false);
-  const [
-    showSizeError,
-    setShowSizeError,
-  ] = React.useState(false);
+export const useVideoListProps = ({ searchSortProps, videos, returnFunction }) => {
+  const [highlighted, setHighlighted] = React.useState(/** @type {string | null} */ (null));
+  const [showSelectVideoError, setShowSelectVideoError] = React.useState(false);
+  const [showSizeError, setShowSizeError] = React.useState(false);
   const filteredList = module.filterList({
     ...searchSortProps,
     videos,
@@ -157,19 +131,18 @@ export const useVideoUploadHandler = ({ replace, uploadHandler }) => {
   return () => navigateTo(path);
 };
 
-export const useCancelHandler = () => (
+export const useCancelHandler = () =>
   navigateCallback({
     destination: useSelector(selectors.app.returnUrl),
     analytics: useSelector(selectors.app.analytics),
     analyticsEvent: analyticsEvt.videoGalleryCancelClick,
-  })
-);
+  });
 
 export const buildVideos = ({ rawVideos }) => {
   let videos = [];
   const rawVideoList = Object.values(rawVideos);
   if (rawVideoList.length > 0) {
-    videos = rawVideoList.map(video => ({
+    videos = rawVideoList.map((video) => ({
       id: video.edx_video_id,
       displayName: video.client_video_id,
       externalUrl: video.course_video_image_url,
@@ -207,12 +180,7 @@ export const useVideoProps = ({ videos, uploadHandler, returnFunction }) => {
     videos,
     returnFunction,
   });
-  const {
-    galleryError,
-    galleryProps,
-    inputError,
-    selectBtnProps,
-  } = videoList;
+  const { galleryError, galleryProps, inputError, selectBtnProps } = videoList;
   const fileInput = { click: useVideoUploadHandler({ replace: false, uploadHandler }) };
 
   return {

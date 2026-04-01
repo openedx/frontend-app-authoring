@@ -4,8 +4,8 @@ import messages from '../messages';
 const getFilterDisplayName = (column, values) => {
   const displayNames = [];
   const { filterChoices } = column;
-  values.forEach(value => {
-    const [displayName] = filterChoices.filter(choice => choice.value === value);
+  values.forEach((value) => {
+    const [displayName] = filterChoices.filter((choice) => choice.value === value);
     displayNames.push(displayName);
   });
   return displayNames;
@@ -13,12 +13,12 @@ const getFilterDisplayName = (column, values) => {
 
 export const getFilters = (state, columns) => {
   const { filters } = state;
-  const filterableColumns = columns.filter(column => column?.filterChoices);
+  const filterableColumns = columns.filter((column) => column?.filterChoices);
   const allFilters = [];
 
-  filters.forEach(filter => {
+  filters.forEach((filter) => {
     const { id, value } = filter;
-    const [filterColumn] = filterableColumns.filter(column => column.id === id);
+    const [filterColumn] = filterableColumns.filter((column) => column.id === id);
     let currentFilters;
 
     if (filterColumn) {
@@ -35,37 +35,26 @@ export const getFilters = (state, columns) => {
 
 export const removeFilter = (filter, setFilter, setAllFilters, state) => {
   const { filters } = state;
-  const [editedFilter] = filters.filter(currentFilter => currentFilter.value.includes(filter));
+  const [editedFilter] = filters.filter((currentFilter) => currentFilter.value.includes(filter));
 
   let updatedFilterValue;
   if (isArray(editedFilter?.value)) {
-    updatedFilterValue = editedFilter.value.filter(value => value !== filter);
+    updatedFilterValue = editedFilter.value.filter((value) => value !== filter);
   } else {
     updatedFilterValue = filter.includes(editedFilter?.value) ? [] : editedFilter.value;
   }
 
   if (isEmpty(updatedFilterValue)) {
-    const updatedFilters = filters.filter(currentFilter => currentFilter.id !== editedFilter.id);
+    const updatedFilters = filters.filter((currentFilter) => currentFilter.id !== editedFilter.id);
     setAllFilters(updatedFilters);
   } else {
     setFilter(editedFilter.id, updatedFilterValue);
   }
 };
 
-export const getCurrentViewRange = ({
-  filterRowCount,
-  initialRowCount,
-  fileCount,
-  intl,
-}) => {
+export const getCurrentViewRange = ({ filterRowCount, initialRowCount, fileCount, intl }) => {
   if (filterRowCount === initialRowCount) {
-    return intl.formatMessage(
-      messages.rowStatusMessage,
-      { fileCount, rowCount: initialRowCount },
-    );
+    return intl.formatMessage(messages.rowStatusMessage, { fileCount, rowCount: initialRowCount });
   }
-  return intl.formatMessage(
-    messages.rowStatusMessage,
-    { fileCount, rowCount: filterRowCount },
-  );
+  return intl.formatMessage(messages.rowStatusMessage, { fileCount, rowCount: filterRowCount });
 };

@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Icon, IconButton, Dropzone, InputGroup, FormControl,
-} from '@openedx/paragon';
+import { Icon, IconButton, Dropzone, InputGroup, FormControl } from '@openedx/paragon';
 import { ArrowForward, FileUpload, Close } from '@openedx/paragon/icons';
 import { useDispatch } from 'react-redux';
 import { thunkActions } from '../../data/redux';
@@ -23,9 +21,7 @@ const URLUploader = ({ onUpload }) => {
         <span>{intl.formatMessage(messages.dropVideoFileHere)}</span>
         <span className="x-small align-self-center pt-2">{intl.formatMessage(messages.info)}</span>
       </div>
-      <div className="small align-self-center justify-content-center mx-2 text-dark font-weight-normal pt-3">
-        OR
-      </div>
+      <div className="small align-self-center justify-content-center mx-2 text-dark font-weight-normal pt-3">OR</div>
       <div className="zindex-9 video-id-prompt py-3">
         <InputGroup>
           <FormControl
@@ -34,9 +30,13 @@ const URLUploader = ({ onUpload }) => {
             aria-label={intl.formatMessage(messages.pasteURL)}
             aria-describedby="basic-addon2"
             borderless
-            onClick={(event) => { event.stopPropagation(); }}
-            onChange={(event) => { setTextInputValue(event.target.value); }}
-            trailingElement={(
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+            onChange={(event) => {
+              setTextInputValue(event.target.value);
+            }}
+            trailingElement={
               <IconButton
                 className="url-submit-button"
                 alt={intl.formatMessage(messages.submitButtonAltText)}
@@ -50,7 +50,7 @@ const URLUploader = ({ onUpload }) => {
                   }
                 }}
               />
-            )}
+            }
           />
         </InputGroup>
       </div>
@@ -64,11 +64,13 @@ export const VideoUploader = ({ setLoading, onUpload, onClose }) => {
   const goBack = onClose || hooks.useHistoryGoBack();
 
   const handleProcessUpload = ({ fileData }) => {
-    dispatch(thunkActions.video.uploadVideo({
-      supportedFiles: [fileData],
-      setLoadSpinner: setLoading,
-      postUploadRedirect: hooks.onVideoUpload('selectedVideoId', onUpload),
-    }));
+    dispatch(
+      thunkActions.video.uploadVideo({
+        supportedFiles: [fileData],
+        setLoadSpinner: setLoading,
+        postUploadRedirect: hooks.onVideoUpload('selectedVideoId', onUpload),
+      }),
+    );
   };
 
   return (

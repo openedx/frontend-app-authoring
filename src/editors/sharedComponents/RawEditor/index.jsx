@@ -6,34 +6,22 @@ import CodeEditor from '../CodeEditor';
 import { setAssetToStaticUrl } from '../TinyMceWidget/hooks';
 
 function getValue(content) {
-  if (!content) { return null; }
-  if (typeof content === 'string') { return content; }
+  if (!content) {
+    return null;
+  }
+  if (typeof content === 'string') {
+    return content;
+  }
   return content.data?.data;
 }
 
-const RawEditor = ({
-  editorRef,
-  content,
-  lang,
-}) => {
+const RawEditor = ({ editorRef, content, lang }) => {
   const value = getValue(content) || '';
   const staticUpdate = setAssetToStaticUrl({ editorValue: value });
   return (
     <div>
-      {['xml', 'markdown'].includes(lang) ? null : (
-        <Alert variant="danger">
-          You are using the raw {lang} editor.
-        </Alert>
-      )}
-      { value ? (
-        <CodeEditor
-          innerRef={editorRef}
-          value={staticUpdate}
-          lang={lang}
-          data-testid="code-editor"
-        />
-      ) : null}
-
+      {['xml', 'markdown'].includes(lang) ? null : <Alert variant="danger">You are using the raw {lang} editor.</Alert>}
+      {value ? <CodeEditor innerRef={editorRef} value={staticUpdate} lang={lang} data-testid="code-editor" /> : null}
     </div>
   );
 };

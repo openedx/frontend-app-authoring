@@ -1,9 +1,5 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import {
-  getCourseAdvancedSettings,
-  updateCourseAdvancedSettings,
-  getProctoringExamErrors,
-} from './api';
+import { getCourseAdvancedSettings, updateCourseAdvancedSettings, getProctoringExamErrors } from './api';
 
 jest.mock('@edx/frontend-platform/auth', () => ({
   getAuthenticatedHttpClient: jest.fn(),

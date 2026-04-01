@@ -1,9 +1,5 @@
-import {
-  IconButton, Stack, useToggle,
-} from '@openedx/paragon';
-import {
-  ClearFiltersButton, FilterByBlockType, FilterByTags, SearchKeywordsField,
-} from '@src/search-manager';
+import { IconButton, Stack, useToggle } from '@openedx/paragon';
+import { ClearFiltersButton, FilterByBlockType, FilterByTags, SearchKeywordsField } from '@src/search-manager';
 import { FilterList } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
@@ -14,7 +10,7 @@ import { CollectionDropdownFilter } from './CollectionDropdownFilter';
 
 export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
   const intl = useIntl();
-  const [isOn,,, toggle] = useToggle(false);
+  const [isOn, , , toggle] = useToggle(false);
   const { selectedCollections, setSelectedCollections } = useMultiLibraryContext();
 
   return (
@@ -33,15 +29,12 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
         </Stack>
       </Stack>
       {isOn && (
-      <Stack className="flex-wrap" direction="horizontal" gap={2}>
-        {!(onlyOneType) && <FilterByBlockType />}
-        <FilterByTags />
-        <CollectionDropdownFilter />
-        <ClearFiltersButton
-          onClear={() => setSelectedCollections([])}
-          canClear={selectedCollections.length > 0}
-        />
-      </Stack>
+        <Stack className="flex-wrap" direction="horizontal" gap={2}>
+          {!onlyOneType && <FilterByBlockType />}
+          <FilterByTags />
+          <CollectionDropdownFilter />
+          <ClearFiltersButton onClear={() => setSelectedCollections([])} canClear={selectedCollections.length > 0} />
+        </Stack>
       )}
     </Stack>
   );

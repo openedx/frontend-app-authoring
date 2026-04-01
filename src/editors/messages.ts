@@ -23,7 +23,8 @@ const messages = defineMessages({
   },
   libraryBlockEditWarningDescription: {
     id: 'authoring.editorpage.libraryBlockEditWarningDescription',
-    defaultMessage: 'Edits made here will only be reflected in this course. These edits may be overridden later if updates are accepted.',
+    defaultMessage:
+      'Edits made here will only be reflected in this course. These edits may be overridden later if updates are accepted.',
     description: 'Description text for Warning users editing library content in a course.',
   },
   libraryBlockEditWarningLink: {

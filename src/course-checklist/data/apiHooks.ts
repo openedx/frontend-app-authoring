@@ -16,11 +16,7 @@ export const courseChecklistQueryKeys = {
     'bestPractices',
     params,
   ],
-  courseLaunch: (params: CourseLaunchRequest) => [
-    ...courseChecklistQueryKeys.all,
-    'launch',
-    params,
-  ],
+  courseLaunch: (params: CourseLaunchRequest) => [...courseChecklistQueryKeys.all, 'launch', params],
 };
 
 /**
@@ -29,13 +25,12 @@ export const courseChecklistQueryKeys = {
  * It is necessary to update on each mount, because it is not known
  * for sure whether the checklist has been updated or not.
  */
-export const useCourseBestPractices = (params: CourseBestPracticesRequest) => (
+export const useCourseBestPractices = (params: CourseBestPracticesRequest) =>
   useQuery({
     queryKey: courseChecklistQueryKeys.courseBestPractices(params),
     queryFn: () => getCourseBestPractices(params),
     refetchOnMount: 'always',
-  })
-);
+  });
 
 /**
  * Hook to fetch course launch validation.
@@ -43,10 +38,9 @@ export const useCourseBestPractices = (params: CourseBestPracticesRequest) => (
  * It is necessary to update on each mount, because it is not known
  * for sure whether the checklist has been updated or not.
  */
-export const useCourseLaunch = (params: CourseLaunchRequest) => (
+export const useCourseLaunch = (params: CourseLaunchRequest) =>
   useQuery<CourseLaunchData, AxiosError>({
     queryKey: courseChecklistQueryKeys.courseLaunch(params),
     queryFn: () => getCourseLaunch(params),
     refetchOnMount: 'always',
-  })
-);
+  });

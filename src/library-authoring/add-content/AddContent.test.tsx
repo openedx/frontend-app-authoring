@@ -2,22 +2,12 @@ import MockAdapter from 'axios-mock-adapter/types';
 import userEvent from '@testing-library/user-event';
 
 import { mockClipboardEmpty, mockClipboardHtml } from '@src/generic/data/api.mock';
-import {
-  fireEvent,
-  render as baseRender,
-  screen,
-  waitFor,
-  initializeMocks,
-} from '@src/testUtils';
+import { fireEvent, render as baseRender, screen, waitFor, initializeMocks } from '@src/testUtils';
 import * as textEditorHooks from '@src/editors/containers/TextEditor/hooks';
 import editorCmsApi from '@src/editors/data/services/cms/api';
 import { ToastActionData } from '@src/generic/toast-context';
 
-import {
-  mockContentLibrary,
-  mockBlockTypesMetadata,
-  mockXBlockFields,
-} from '../data/api.mocks';
+import { mockContentLibrary, mockBlockTypesMetadata, mockXBlockFields } from '../data/api.mocks';
 import {
   getContentLibraryApiUrl,
   getCreateLibraryBlockUrl,
@@ -37,30 +27,26 @@ jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCs
 
 const { libraryId } = mockContentLibrary;
 const render = (collectionId?: string) => {
-  const params: { libraryId: string, collectionId?: string } = { libraryId, collectionId };
+  const params: { libraryId: string; collectionId?: string } = { libraryId, collectionId };
   return baseRender(<AddContent />, {
     path: '/library/:libraryId/collection/:collectionId?',
     params,
     extraWrapper: ({ children }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-      >
-        { children }
+      <LibraryProvider libraryId={libraryId}>
+        {children}
         <ComponentEditorModal />
       </LibraryProvider>
     ),
   });
 };
 const renderWithContainer = (containerId: string, containerType: 'unit' | 'section' | 'subsection' = 'unit') => {
-  const params: { libraryId: string, containerId?: string } = { libraryId, containerId };
+  const params: { libraryId: string; containerId?: string } = { libraryId, containerId };
   return baseRender(<AddContent />, {
     path: `/library/:libraryId/${containerType}/:containerId?`,
     params,
     extraWrapper: ({ children }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-      >
-        { children }
+      <LibraryProvider libraryId={libraryId}>
+        {children}
         <ComponentEditorModal />
       </LibraryProvider>
     ),
@@ -160,14 +146,10 @@ describe('<AddContent />', () => {
     const url = getCreateLibraryBlockUrl(libraryId);
     const usageKey = mockXBlockFields.usageKeyNewHtml;
     const updateBlockUrl = getXBlockFieldsApiUrl(usageKey);
-    const collectionComponentUrl = getLibraryCollectionItemsApiUrl(
-      libraryId,
-      collectionId,
-    );
+    const collectionComponentUrl = getLibraryCollectionItemsApiUrl(libraryId, collectionId);
     // Mocks for ComponentEditorModal to work in tests.
-    jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => ( // eslint-disable-next-line
-      { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }
-    ));
+    jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => // eslint-disable-next-line
+    ({ data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }));
     axiosMock.onPost(url).reply(200, {
       id: usageKey,
     });
@@ -238,10 +220,7 @@ describe('<AddContent />', () => {
 
     const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
     const collectionId = 'some-collection-id';
-    const collectionComponentUrl = getLibraryCollectionItemsApiUrl(
-      libraryId,
-      collectionId,
-    );
+    const collectionComponentUrl = getLibraryCollectionItemsApiUrl(libraryId, collectionId);
     axiosMock.onPatch(collectionComponentUrl).reply(200);
     axiosMock.onPost(pasteUrl).reply(200, { id: 'some-component-id' });
 
@@ -265,10 +244,7 @@ describe('<AddContent />', () => {
 
     const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
     const collectionId = 'some-collection-id';
-    const collectionComponentUrl = getLibraryCollectionItemsApiUrl(
-      libraryId,
-      collectionId,
-    );
+    const collectionComponentUrl = getLibraryCollectionItemsApiUrl(libraryId, collectionId);
     axiosMock.onPatch(collectionComponentUrl).reply(500);
     axiosMock.onPost(pasteUrl).reply(200, { id: 'some-component-id' });
 
@@ -318,9 +294,7 @@ describe('<AddContent />', () => {
       expectedError: 'There was an error pasting the content: library cannot have more than 100000 components',
       buttonName: /paste from clipboard/i,
     },
-  ])('$label', async ({
-    mockUrl, mockResponse, buttonName, expectedError,
-  }) => {
+  ])('$label', async ({ mockUrl, mockResponse, buttonName, expectedError }) => {
     userEvent.setup();
     axiosMock.onPost(mockUrl).reply(400, mockResponse);
 

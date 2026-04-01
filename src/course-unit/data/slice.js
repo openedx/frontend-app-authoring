@@ -110,6 +110,4 @@ export const {
   updateMovedXBlockParams,
 } = slice.actions;
 
-export const {
-  reducer,
-} = slice;
+export const { reducer } = slice;

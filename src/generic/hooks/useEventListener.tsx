@@ -1,9 +1,6 @@
 import { useEffect, useRef, MutableRefObject } from 'react';
 
-export function useEventListener<K extends keyof WindowEventMap>(
-  type: K,
-  handler: (event: WindowEventMap[K]) => void,
-) {
+export function useEventListener<K extends keyof WindowEventMap>(type: K, handler: (event: WindowEventMap[K]) => void) {
   // We use this ref so that we can hold a reference to the currently active event listener.
   const eventListenerRef = useRef<(event: WindowEventMap[K]) => void | null>(null);
 

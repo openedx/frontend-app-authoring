@@ -4,9 +4,7 @@ import fetchMock from 'fetch-mock-jest';
 
 import mockResult from './__mocks__/block-types.json';
 import { mockContentSearchConfig, mockGetContentHits } from './api.mock';
-import {
-  useGetBlockTypes, useGetContentHits,
-} from './apiHooks';
+import { useGetBlockTypes, useGetContentHits } from './apiHooks';
 
 mockContentSearchConfig.applyMock();
 
@@ -18,18 +16,10 @@ const queryClient = new QueryClient({
   },
 });
 
-const wrapper = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    {children}
-  </QueryClientProvider>
-);
+const wrapper = ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 
 const fetchMockResponse = () => {
-  fetchMock.post(
-    mockContentSearchConfig.multisearchEndpointUrl,
-    () => mockResult,
-    { overwriteRoutes: true },
-  );
+  fetchMock.post(mockContentSearchConfig.multisearchEndpointUrl, () => mockResult, { overwriteRoutes: true });
 };
 
 describe('search manager api hooks', () => {

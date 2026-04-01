@@ -27,7 +27,7 @@
   .pgn__modal-header .pgn__menu-select {
     // The "All courses" / "This course" toggle button
     & > button {
-      min-width: 155px;  // Set a minumum width so it doesn't change size when you change the selection
+      min-width: 155px; // Set a minumum width so it doesn't change size when you change the selection
       // The current Open edX theme makes the search field square but the button round and it looks bad. We need this
       // hacky override until the theme is fixed to be more consistent.
       border-radius: 0;
@@ -43,7 +43,7 @@
     // Fix a bug in Paragon menu dropdowns: the checkbox currently shrinks if the text is too long.
     // https://github.com/openedx/paragon/pull/3019
     // This can be removed once we upgrade Paragon - https://github.com/openedx/frontend-app-course-authoring/pull/933
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       flex-grow: 0;
       flex-shrink: 0;
     }

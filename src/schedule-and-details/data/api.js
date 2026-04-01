@@ -12,9 +12,7 @@ export const getUploadAssetsUrl = (courseId) => `${getApiBaseUrl()}/assets/${cou
  * @returns {Promise<Object>}
  */
 export async function getCourseDetails(courseId) {
-  const { data } = await getAuthenticatedHttpClient().get(
-    `${getCourseDetailsApiUrl(courseId)}`,
-  );
+  const { data } = await getAuthenticatedHttpClient().get(`${getCourseDetailsApiUrl(courseId)}`);
   return camelCaseObject(data);
 }
 

@@ -15,11 +15,7 @@ const LicenseDisplay = ({ licenseType, licenseDetails, licenseURL }) => (
     <p className="small text-gray-700">
       <FormattedMessage {...messages.licenseDisplayParagraph} />
     </p>
-    <LicenseIcons
-      licenseType={licenseType}
-      licenseDetails={licenseDetails}
-      licenseURL={licenseURL}
-    />
+    <LicenseIcons licenseType={licenseType} licenseDetails={licenseDetails} licenseURL={licenseURL} />
   </Form.Group>
 );
 

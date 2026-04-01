@@ -1,12 +1,4 @@
-import {
-  type Dispatch,
-  type SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-} from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { history } from '@edx/frontend-platform';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
@@ -30,7 +22,7 @@ export const useScrollToHashElement = ({ isLoading }: { isLoading: boolean }) =>
   return { elementWithHash };
 };
 
-export const useEscapeClick = ({ onEscape, dependency }: { onEscape: () => void, dependency: any }) => {
+export const useEscapeClick = ({ onEscape, dependency }: { onEscape: () => void; dependency: any }) => {
   useEffect(() => {
     const handleEscapeClick = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -73,7 +65,7 @@ export const useLoadOnScroll = (
       window.addEventListener('scroll', onscroll);
 
       // If the content is less than the screen height, fetch the next page.
-      const hasNoScroll = (document.body.scrollHeight - loadLimit) <= window.innerHeight;
+      const hasNoScroll = document.body.scrollHeight - loadLimit <= window.innerHeight;
       if (hasNoScroll && canFetchNextPage) {
         fetchNextPage();
       }
@@ -82,7 +74,7 @@ export const useLoadOnScroll = (
         window.removeEventListener('scroll', onscroll);
       };
     }
-    return () => { };
+    return () => {};
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 };
 
@@ -145,48 +137,54 @@ export function useStateWithUrlSearchParam<Type>(
   const [searchParams, setSearchParams] = useSearchParams();
   const paramValues = searchParams.getAll(paramName);
 
-  const returnValue: Type | Type[] = (
-    defaultValue instanceof Array
-      ? (paramValues.map(fromString).filter((v) => v !== undefined)) as Type[]
-      : fromString(paramValues[0])
-  ) ?? defaultValue;
+  const returnValue: Type | Type[] =
+    (defaultValue instanceof Array
+      ? (paramValues.map(fromString).filter((v) => v !== undefined) as Type[])
+      : fromString(paramValues[0])) ?? defaultValue;
 
   // Update the url search parameter using:
   type ReturnSetterParams = (
     // a Type value
-    value?: Type | Type[]
-    // or a function that returns a Type from the previous returnValue
-    | ((value: Type | Type[]) => Type | Type[])
+    value?:
+      | Type
+      | Type[]
+      // or a function that returns a Type from the previous returnValue
+      | ((value: Type | Type[]) => Type | Type[]),
   ) => void;
-  const returnSetter: Dispatch<SetStateAction<Type | Type[]>> = useCallback<ReturnSetterParams>((value) => {
-    setSearchParams((/* previous -- see STATE WORKAROUND above */) => {
-      const useValue = value instanceof Function ? value(returnValue) : value;
-      const paramValue: string | string[] | undefined = (
-        useValue instanceof Array
-          ? useValue.map(toString).filter((v) => v !== undefined) as string[]
-          : toString(useValue)
+  const returnSetter: Dispatch<SetStateAction<Type | Type[]>> = useCallback<ReturnSetterParams>(
+    (value) => {
+      setSearchParams(
+        (/* previous -- see STATE WORKAROUND above */) => {
+          const useValue = value instanceof Function ? value(returnValue) : value;
+          const paramValue: string | string[] | undefined =
+            useValue instanceof Array
+              ? (useValue.map(toString).filter((v) => v !== undefined) as string[])
+              : toString(useValue);
+
+          const newSearchParams = new URLSearchParams(locationRef.current.search);
+          if (paramValue === undefined || paramValue === defaultValue) {
+            // If the provided value was invalid (toString returned undefined) or
+            // the same as the defaultValue, remove it from the search params.
+            newSearchParams.delete(paramName);
+          } else if (paramValue instanceof Array) {
+            // Replace paramName with the new list of values.
+            newSearchParams.delete(paramName);
+            paramValue.forEach((v) => v && newSearchParams.append(paramName, v));
+          } else {
+            // Otherwise, just set the new (single) value.
+            newSearchParams.set(paramName, paramValue);
+          }
+
+          // Update locationRef
+          locationRef.current.search = newSearchParams.toString();
+
+          return newSearchParams;
+        },
+        { replace: true },
       );
-
-      const newSearchParams = new URLSearchParams(locationRef.current.search);
-      if (paramValue === undefined || paramValue === defaultValue) {
-        // If the provided value was invalid (toString returned undefined) or
-        // the same as the defaultValue, remove it from the search params.
-        newSearchParams.delete(paramName);
-      } else if (paramValue instanceof Array) {
-        // Replace paramName with the new list of values.
-        newSearchParams.delete(paramName);
-        paramValue.forEach((v) => v && newSearchParams.append(paramName, v));
-      } else {
-        // Otherwise, just set the new (single) value.
-        newSearchParams.set(paramName, paramValue);
-      }
-
-      // Update locationRef
-      locationRef.current.search = newSearchParams.toString();
-
-      return newSearchParams;
-    }, { replace: true });
-  }, [returnValue, setSearchParams]);
+    },
+    [returnValue, setSearchParams],
+  );
 
   // Return the computed value and wrapped set state function
   return [returnValue, returnSetter];
@@ -196,16 +194,11 @@ export function useStateWithUrlSearchParam<Type>(
  * Creates a custom React hook that manages the state of a given value persistently across sessions.
  * The stored value is kept in `window.localStorage`.
  */
-export function useStickyState<T>(
-  defaultValue: T,
-  key: string,
-): [T, React.Dispatch<React.SetStateAction<T>>] {
+export function useStickyState<T>(defaultValue: T, key: string): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [value, setValue] = useState<T>(() => {
     const stickyValue = window.localStorage.getItem(key);
 
-    return stickyValue !== null
-      ? JSON.parse(stickyValue)
-      : defaultValue;
+    return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
   });
 
   useEffect(() => {
@@ -215,9 +208,9 @@ export function useStickyState<T>(
   return [value, setValue];
 }
 
-export function useToggleWithValue<T>(defaultValue?: T): [
-  isDefined: boolean, value: T | undefined, define: ((val: T) => void), undefine: () => void,
-] {
+export function useToggleWithValue<T>(
+  defaultValue?: T,
+): [isDefined: boolean, value: T | undefined, define: (val: T) => void, undefine: () => void] {
   const [value, setValue] = useState<T | undefined>(defaultValue);
   const define = useCallback((val: T) => {
     setValue(val);

@@ -1,17 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import {
-  Alert,
-  Button,
-  Card,
-  Icon,
-  Stack,
-} from '@openedx/paragon';
-import {
-  Add,
-  ArrowBack,
-  ChevronRight,
-  Delete,
-} from '@openedx/paragon/icons';
+import { Alert, Button, Card, Icon, Stack } from '@openedx/paragon';
+import { Add, ArrowBack, ChevronRight, Delete } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
@@ -24,9 +13,7 @@ import { Container, LibraryBlockMetadata } from '@src/library-authoring/data/api
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
-import {
-  ContainerChild, ContainerChildBase, ContainerState, WithState,
-} from './types';
+import { ContainerChild, ContainerChildBase, ContainerState, WithState } from './types';
 import { diffPreviewContainerChildren, isRowClickable } from './utils';
 import messages from './messages';
 
@@ -80,12 +67,16 @@ const CompareContainersWidgetInner = ({
       return [undefined, undefined];
     }
 
-    return diffPreviewContainerChildren(data?.children || [], libData as ContainerChildBase[] || []);
+    return diffPreviewContainerChildren(data?.children || [], (libData as ContainerChildBase[]) || []);
   }, [data, libData]);
 
   const renderBeforeChildren = useCallback(() => {
     if (!result[0] && state !== 'added') {
-      return <div className="m-auto"><LoadingSpinner /></div>;
+      return (
+        <div className="m-auto">
+          <LoadingSpinner />
+        </div>
+      );
     }
 
     if (state === 'added') {
@@ -117,7 +108,11 @@ const CompareContainersWidgetInner = ({
 
   const renderAfterChildren = useCallback(() => {
     if (!result[1] && state !== 'removed') {
-      return <div className="m-auto"><LoadingSpinner /></div>;
+      return (
+        <div className="m-auto">
+          <LoadingSpinner />
+        </div>
+      );
     }
 
     if (state === 'removed') {
@@ -146,26 +141,35 @@ const CompareContainersWidgetInner = ({
     ));
   }, [result]);
 
-  const getTitleComponent = useCallback((title?: string | null) => {
-    if (!title) {
-      return <div className="m-auto"><LoadingSpinner /></div>;
-    }
+  const getTitleComponent = useCallback(
+    (title?: string | null) => {
+      if (!title) {
+        return (
+          <div className="m-auto">
+            <LoadingSpinner />
+          </div>
+        );
+      }
 
-    if (parent.length === 0) {
-      return title;
-    }
-    return (
-      <Stack direction="horizontal" gap={1}>
-        <Button variant="link" className="px-0 text-gray-900" onClick={onBackBtnClick}>
-          {/* We could also use iconBefore={ArrowBack} on the <Button> above but it's a bit too big that way. */}
-          <Icon size="xs" src={ArrowBack} className="mr-1" />
-          {intl.formatMessage(messages.breadcrumbBackLabel)}
-        </Button>
-        <Icon size="md" src={ChevronRight} />
-        <span role="heading" aria-level={3}>{title}</span>
-      </Stack>
-    );
-  }, [parent]);
+      if (parent.length === 0) {
+        return title;
+      }
+      return (
+        <Stack direction="horizontal" gap={1}>
+          <Button variant="link" className="px-0 text-gray-900" onClick={onBackBtnClick}>
+            {/* We could also use iconBefore={ArrowBack} on the <Button> above but it's a bit too big that way. */}
+            <Icon size="xs" src={ArrowBack} className="mr-1" />
+            {intl.formatMessage(messages.breadcrumbBackLabel)}
+          </Button>
+          <Icon size="md" src={ChevronRight} />
+          <span role="heading" aria-level={3}>
+            {title}
+          </span>
+        </Stack>
+      );
+    },
+    [parent],
+  );
 
   let beforeTitle: string | undefined | null = data?.displayName;
   let afterTitle = containerData?.publishedDisplayName;
@@ -222,15 +226,17 @@ export const CompareContainersWidget = ({
   downstreamBlockId,
   isReadyToSyncIndividually = false,
 }: ContainerInfoProps) => {
-  const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps & {
-    state?: ContainerState;
-    parent:(ContainerInfoProps & { state?: ContainerState })[];
-  }>({
-        upstreamBlockId,
-        downstreamBlockId,
-        parent: [],
-        state: 'modified',
-      });
+  const [currentContainerState, setCurrentContainerState] = useState<
+    ContainerInfoProps & {
+      state?: ContainerState;
+      parent: (ContainerInfoProps & { state?: ContainerState })[];
+    }
+  >({
+    upstreamBlockId,
+    downstreamBlockId,
+    parent: [],
+    state: 'modified',
+  });
 
   const { data } = useCourseContainerChildren(downstreamBlockId, true);
   let localUpdateAlertBlockName = '';
@@ -240,8 +246,12 @@ export const CompareContainersWidget = ({
   // We decided not to put this in `CompareContainersWidgetInner` because if you enter a child,
   // the alert would disappear. By keeping this call in CompareContainersWidget,
   // the alert remains in the modal regardless of whether you navigate within the children.
-  if (!isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo
-      && data.upstreamReadyToSyncChildrenInfo.every(value => value.downstreamCustomized.length > 0 && value.blockType === 'html')
+  if (
+    !isReadyToSyncIndividually &&
+    data?.upstreamReadyToSyncChildrenInfo &&
+    data.upstreamReadyToSyncChildrenInfo.every(
+      (value) => value.downstreamCustomized.length > 0 && value.blockType === 'html',
+    )
   ) {
     localUpdateAlertCount = data.upstreamReadyToSyncChildrenInfo.length;
     if (localUpdateAlertCount === 1) {
@@ -258,11 +268,14 @@ export const CompareContainersWidget = ({
       upstreamBlockId: row.id!,
       downstreamBlockId: row.downstreamId!,
       state: row.state,
-      parent: [...prev.parent, {
-        upstreamBlockId: prev.upstreamBlockId,
-        downstreamBlockId: prev.downstreamBlockId,
-        state: prev.state,
-      }],
+      parent: [
+        ...prev.parent,
+        {
+          upstreamBlockId: prev.upstreamBlockId,
+          downstreamBlockId: prev.downstreamBlockId,
+          state: prev.state,
+        },
+      ],
     }));
   };
 

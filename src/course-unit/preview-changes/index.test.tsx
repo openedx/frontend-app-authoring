@@ -1,13 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter/types';
 
-import {
-  act,
-  render as baseRender,
-  screen,
-  initializeMocks,
-  waitFor,
-} from '@src/testUtils';
+import { act, render as baseRender, screen, initializeMocks, waitFor } from '@src/testUtils';
 import { ToastActionData } from '@src/generic/toast-context';
 
 import IframePreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.';
@@ -88,10 +82,7 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     const acceptBtn = await screen.findByRole('button', { name: 'Accept changes' });
     await user.click(acceptBtn);
     await waitFor(() => {
-      expect(mockSendMessageToIframe).toHaveBeenCalledWith(
-        messageTypes.completeXBlockEditing,
-        { locator: usageKey },
-      );
+      expect(mockSendMessageToIframe).toHaveBeenCalledWith(messageTypes.completeXBlockEditing, { locator: usageKey });
       expect(axiosMock.history.post.length).toEqual(1);
       expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
@@ -125,10 +116,7 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     const ignoreConfirmBtn = await screen.findByRole('button', { name: 'Ignore' });
     await user.click(ignoreConfirmBtn);
     await waitFor(() => {
-      expect(mockSendMessageToIframe).toHaveBeenCalledWith(
-        messageTypes.completeXBlockEditing,
-        { locator: usageKey },
-      );
+      expect(mockSendMessageToIframe).toHaveBeenCalledWith(messageTypes.completeXBlockEditing, { locator: usageKey });
       expect(axiosMock.history.delete.length).toEqual(1);
       expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
@@ -159,10 +147,7 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     await user.click(confirmBtn);
 
     await waitFor(() => {
-      expect(mockSendMessageToIframe).toHaveBeenCalledWith(
-        messageTypes.completeXBlockEditing,
-        { locator: usageKey },
-      );
+      expect(mockSendMessageToIframe).toHaveBeenCalledWith(messageTypes.completeXBlockEditing, { locator: usageKey });
       expect(axiosMock.history.post.length).toEqual(1);
       expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
@@ -180,10 +165,7 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     const ignoreConfirmBtn = (await screen.findAllByRole('button', { name: 'Keep course content' }))[0];
     await user.click(ignoreConfirmBtn);
     await waitFor(() => {
-      expect(mockSendMessageToIframe).toHaveBeenCalledWith(
-        messageTypes.completeXBlockEditing,
-        { locator: usageKey },
-      );
+      expect(mockSendMessageToIframe).toHaveBeenCalledWith(messageTypes.completeXBlockEditing, { locator: usageKey });
       expect(axiosMock.history.delete.length).toEqual(1);
       expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });

@@ -1,8 +1,4 @@
-import {
-  initializeMocks,
-  render as baseRender,
-  screen,
-} from '@src/testUtils';
+import { initializeMocks, render as baseRender, screen } from '@src/testUtils';
 import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 
 import { mockContentLibrary, mockGetComponentHierarchy, mockLibraryBlockMetadata } from '../data/api.mocks';
@@ -15,26 +11,25 @@ mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockGetComponentHierarchy.applyMock();
 
-const {
-  libraryId,
-} = mockContentLibrary;
+const { libraryId } = mockContentLibrary;
 
-const render = (usageKey: string) => baseRender(<ComponentUsageTab />, {
-  path: `/library/${libraryId}/components/${usageKey}`,
-  params: { libraryId, selectedItemId: usageKey },
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: usageKey,
-          type: SidebarBodyItemId.ComponentInfo,
-        }}
-      >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (usageKey: string) =>
+  baseRender(<ComponentUsageTab />, {
+    path: `/library/${libraryId}/components/${usageKey}`,
+    params: { libraryId, selectedItemId: usageKey },
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: usageKey,
+            type: SidebarBodyItemId.ComponentInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<ComponentUsageTab />', () => {
   beforeEach(() => {

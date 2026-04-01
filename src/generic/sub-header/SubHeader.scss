@@ -14,7 +14,7 @@
 
   .sub-header-title-subtitle,
   .sub-header-breadcrumbs {
-    font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
+    font: normal var(--pgn-typography-font-weight-normal) 0.875rem/1.5rem var(--pgn-typography-font-family-base);
     display: block;
     color: $text-color-base;
   }
@@ -27,7 +27,7 @@
 }
 
 .sub-header-instructions {
-  font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
+  font: normal var(--pgn-typography-font-weight-normal) 0.875rem/1.5rem var(--pgn-typography-font-family-base);
   color: $text-color-base;
 }
 

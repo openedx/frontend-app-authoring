@@ -4,14 +4,7 @@ import { saveAs } from 'file-saver';
 
 import { camelCaseObject } from '@edx/frontend-platform';
 
-import {
-  render,
-  fireEvent,
-  screen,
-  waitFor,
-  within,
-  initializeMocks,
-} from '@src/testUtils';
+import { render, fireEvent, screen, waitFor, within, initializeMocks } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { executeThunk } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
@@ -42,7 +35,7 @@ import { updateFileValues } from './data/utils';
 let axiosMock;
 let store;
 let file;
-ReactDOM.createPortal = jest.fn(node => node);
+ReactDOM.createPortal = jest.fn((node) => node);
 jest.mock('file-saver');
 
 const renderComponent = () => {
@@ -60,10 +53,7 @@ const renderComponent = () => {
   );
 };
 
-const mockStore = async (
-  status,
-  skipNextPageFetch,
-) => {
+const mockStore = async (status, skipNextPageFetch) => {
   const fetchAssetsUrl = `${getAssetsUrl(courseId)}?page=0`;
   axiosMock.onGet(fetchAssetsUrl).reply(getStatusValue(status), generateFetchAssetApiResponse());
   if (!skipNextPageFetch) {
@@ -210,9 +200,9 @@ describe('FilesAndUploads', () => {
           file = new File(['(⌐□_□)'], 'mOckID6', { type: 'image/png' });
 
           await mockStore(RequestStatus.SUCCESSFUL);
-          axiosMock.onGet(
-            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`,
-          ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
+          axiosMock
+            .onGet(`${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`)
+            .reply(200, { assets: [{ display_name: 'mOckID6' }] });
           const addFilesButton = screen.getByLabelText(messages.fileInputAriaLabel.defaultMessage);
           await user.upload(addFilesButton, file);
           await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
@@ -224,13 +214,14 @@ describe('FilesAndUploads', () => {
           file = new File(['(⌐□_□)'], 'mOckID6', { type: 'image/png' });
 
           await mockStore(RequestStatus.SUCCESSFUL);
-          axiosMock.onGet(
-            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`,
-          ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
+          axiosMock
+            .onGet(`${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`)
+            .reply(200, { assets: [{ display_name: 'mOckID6' }] });
           const { asset: newDefaultAssetResponse } = generateNewAssetApiResponse();
           const responseData = {
             asset: {
-              ...newDefaultAssetResponse, id: 'mOckID6',
+              ...newDefaultAssetResponse,
+              id: 'mOckID6',
             },
           };
 
@@ -257,9 +248,9 @@ describe('FilesAndUploads', () => {
           file = new File(['(⌐□_□)'], 'mOckID6', { type: 'image/png' });
 
           await mockStore(RequestStatus.SUCCESSFUL);
-          axiosMock.onGet(
-            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`,
-          ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
+          axiosMock
+            .onGet(`${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`)
+            .reply(200, { assets: [{ display_name: 'mOckID6' }] });
           const addFilesButton = screen.getByLabelText(messages.fileInputAriaLabel.defaultMessage);
           await user.upload(addFilesButton, file);
           await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
@@ -402,23 +393,27 @@ describe('FilesAndUploads', () => {
 
         const [assetMenuButton] = screen.getAllByTestId('file-menu-dropdown-mOckID1');
 
-        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`)
-          .reply(201, {
-            usage_locations: {
-              mOckID1: [{
+        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, {
+          usage_locations: {
+            mOckID1: [
+              {
                 display_location: 'subsection - unit / block',
                 url: 'base/unit_id#block_id',
-              }],
-            },
-          });
+              },
+            ],
+          },
+        });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
         fireEvent.click(screen.getByText('Info'));
 
-        await executeThunk(getUsagePaths({
-          courseId,
-          asset: { id: 'mOckID1', displayName: 'mOckID1' },
-          setSelectedRows: jest.fn(),
-        }), store.dispatch);
+        await executeThunk(
+          getUsagePaths({
+            courseId,
+            asset: { id: 'mOckID1', displayName: 'mOckID1' },
+            setSelectedRows: jest.fn(),
+          }),
+          store.dispatch,
+        );
         await waitFor(() => {
           expect(screen.getAllByLabelText('mOckID1')[0]).toBeVisible();
         });
@@ -436,21 +431,27 @@ describe('FilesAndUploads', () => {
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usage_locations: { mOckID1: [] } });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
         fireEvent.click(screen.getByText('Info'));
-        await executeThunk(getUsagePaths({
-          courseId,
-          asset: { id: 'mOckID1', displayName: 'mOckID1' },
-          setSelectedRows: jest.fn(),
-        }), store.dispatch);
+        await executeThunk(
+          getUsagePaths({
+            courseId,
+            asset: { id: 'mOckID1', displayName: 'mOckID1' },
+            setSelectedRows: jest.fn(),
+          }),
+          store.dispatch,
+        );
         await waitFor(() => {
           expect(screen.getAllByLabelText('mOckID1')[0]).toBeVisible();
         });
 
         fireEvent.click(screen.getByLabelText('Checkbox'));
-        await executeThunk(updateAssetLock({
-          courseId,
-          assetId: 'mOckID1',
-          locked: false,
-        }), store.dispatch);
+        await executeThunk(
+          updateAssetLock({
+            courseId,
+            assetId: 'mOckID1',
+            locked: false,
+          }),
+          store.dispatch,
+        );
         expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
 
         const updateStatus = store.getState().assets.updatingStatus;
@@ -465,11 +466,14 @@ describe('FilesAndUploads', () => {
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
         fireEvent.click(screen.getByText('Unlock'));
-        await executeThunk(updateAssetLock({
-          courseId,
-          assetId: 'mOckID1',
-          locked: false,
-        }), store.dispatch);
+        await executeThunk(
+          updateAssetLock({
+            courseId,
+            assetId: 'mOckID1',
+            locked: false,
+          }),
+          store.dispatch,
+        );
         await waitFor(() => {
           const updateStatus = store.getState().assets.updatingStatus;
           expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -484,11 +488,14 @@ describe('FilesAndUploads', () => {
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(201, { locked: true });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
         fireEvent.click(screen.getByText('Lock'));
-        await executeThunk(updateAssetLock({
-          courseId,
-          assetId: 'mOckID3',
-          locked: true,
-        }), store.dispatch);
+        await executeThunk(
+          updateAssetLock({
+            courseId,
+            assetId: 'mOckID3',
+            locked: true,
+          }),
+          store.dispatch,
+        );
         await waitFor(() => {
           const updateStatus = store.getState().assets.updatingStatus;
           expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -626,11 +633,14 @@ describe('FilesAndUploads', () => {
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID3/usage`).reply(404);
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
         fireEvent.click(screen.getByText('Info'));
-        await executeThunk(getUsagePaths({
-          courseId,
-          asset: { id: 'mOckID3', displayName: 'mOckID3' },
-          setSelectedRows: jest.fn(),
-        }), store.dispatch);
+        await executeThunk(
+          getUsagePaths({
+            courseId,
+            asset: { id: 'mOckID3', displayName: 'mOckID3' },
+            setSelectedRows: jest.fn(),
+          }),
+          store.dispatch,
+        );
         await waitFor(() => {
           const { usageStatus } = store.getState().assets;
           expect(usageStatus).toEqual(RequestStatus.FAILED);
@@ -645,11 +655,14 @@ describe('FilesAndUploads', () => {
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
         fireEvent.click(screen.getByText('Lock'));
-        await executeThunk(updateAssetLock({
-          courseId,
-          assetId: 'mOckID3',
-          locked: true,
-        }), store.dispatch);
+        await executeThunk(
+          updateAssetLock({
+            courseId,
+            assetId: 'mOckID3',
+            locked: true,
+          }),
+          store.dispatch,
+        );
         await waitFor(() => {
           const updateStatus = store.getState().assets.updatingStatus;
           expect(updateStatus).toEqual(RequestStatus.FAILED);

@@ -34,10 +34,7 @@ describe('SocialShareWidget hooks', () => {
         expect(updateField).toBeCalledWith({ allowVideoSharing: { value: checked } });
       });
       it('event tracking is called', () => {
-        expect(sendTrackEvent).toBeCalledWith(
-          analyticsEvents.socialSharingSettingChanged,
-          { value: checked },
-        );
+        expect(sendTrackEvent).toBeCalledWith(analyticsEvents.socialSharingSettingChanged, { value: checked });
       });
     });
   });

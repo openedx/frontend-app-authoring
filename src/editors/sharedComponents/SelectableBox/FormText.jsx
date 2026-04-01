@@ -51,24 +51,15 @@ const resolveTextType = ({ isInvalid, isValid }) => {
 //   customIcon: undefined,
 // };
 
-const FormText = ({
-  children, type, icon, muted, hasIcon, ...props
-}) => {
-  const className = classNames(
-    props.className,
-    'pgn__form-text',
-    `pgn__form-text-${type}`,
-    {
-      'text-muted': muted,
-    },
-  );
+const FormText = ({ children, type, icon, muted, hasIcon, ...props }) => {
+  const className = classNames(props.className, 'pgn__form-text', `pgn__form-text-${type}`, {
+    'text-muted': muted,
+  });
 
   return (
     <div {...props} className={className}>
       {/* {hasIcon && <FormTextIcon customIcon={icon} type={type} />} */}
-      <div>
-        {children}
-      </div>
+      <div>{children}</div>
     </div>
   );
 };

@@ -10,19 +10,12 @@ import AddComponentButton from '../add-component-btn';
 import messages from '../messages';
 import ModalContainer from './ModalContainer';
 
-const ComponentModalView = ({
-  component,
-  modalParams,
-  handleCreateNewXBlock,
-  isRequestedModalView,
-}) => {
+const ComponentModalView = ({ component, modalParams, handleCreateNewXBlock, isRequestedModalView }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const [moduleTitle, setModuleTitle] = useState('');
   const { open, close, isOpen } = modalParams;
-  const {
-    type, displayName, templates, supportLegend,
-  } = component;
+  const { type, displayName, templates, supportLegend } = component;
   const supportLabels = getXBlockSupportMessages(intl);
 
   const handleSubmit = () => {
@@ -33,11 +26,7 @@ const ComponentModalView = ({
 
   const renderAddComponentButton = () => (
     <li>
-      <AddComponentButton
-        onClick={open}
-        type={type}
-        displayName={displayName}
-      />
+      <AddComponentButton onClick={open} type={type} displayName={displayName} />
     </li>
   );
 
@@ -54,10 +43,7 @@ const ComponentModalView = ({
         hasValue={!moduleTitle.length}
       >
         <Form.Group>
-          <Form.RadioSet
-            name={displayName}
-            onChange={(e) => setModuleTitle(e.target.value)}
-          >
+          <Form.RadioSet name={displayName} onChange={(e) => setModuleTitle(e.target.value)}>
             {templates.map((componentTemplate) => {
               const value = componentTemplate.boilerplateName || componentTemplate.category;
               const isDisplaySupportLabel = supportLegend.showLegend && supportLabels[componentTemplate.supportLevel];
@@ -67,20 +53,17 @@ const ComponentModalView = ({
                   key={componentTemplate.displayName}
                   className="d-flex justify-content-between w-100 mb-2.5 align-items-end"
                 >
-                  <Form.Radio
-                    className="add-component-modal-radio"
-                    value={value}
-                  >
+                  <Form.Radio className="add-component-modal-radio" value={value}>
                     {componentTemplate.displayName}
                   </Form.Radio>
                   {isDisplaySupportLabel && (
                     <OverlayTrigger
                       placement="right"
-                      overlay={(
+                      overlay={
                         <Tooltip id={`${componentTemplate.displayName}-support-tooltip`}>
                           {supportLabels[componentTemplate.supportLevel].tooltip}
                         </Tooltip>
-                      )}
+                      }
                     >
                       <span className="x-small text-gray-500 flex-shrink-0 ml-2">
                         {supportLabels[componentTemplate.supportLevel].label}

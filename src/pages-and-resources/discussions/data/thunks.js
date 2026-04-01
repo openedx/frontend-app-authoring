@@ -1,14 +1,8 @@
 import { addModel, addModels } from '../../../generic/model-store';
 import { getDiscussionsProviders, getDiscussionsSettings, postDiscussionsSettings } from './api';
-import {
-  DENIED, FAILED, loadApps, LOADING, SAVED, SAVING, updateSaveStatus, updateStatus,
-} from './slice';
+import { DENIED, FAILED, loadApps, LOADING, SAVED, SAVING, updateSaveStatus, updateStatus } from './slice';
 
-function updateDiscussionSettingsState({
-  appConfig,
-  discussionTopics,
-  ...discussionSettings
-}) {
+function updateDiscussionSettingsState({ appConfig, discussionTopics, ...discussionSettings }) {
   return async (dispatch) => {
     dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
     dispatch(addModels({ modelType: 'discussionTopics', models: discussionTopics }));
@@ -16,11 +10,7 @@ function updateDiscussionSettingsState({
   };
 }
 
-function updateProviderState({
-  apps,
-  features,
-  activeAppId,
-}) {
+function updateProviderState({ apps, features, activeAppId }) {
   return async (dispatch) => {
     dispatch(addModels({ modelType: 'apps', models: apps }));
     dispatch(addModels({ modelType: 'features', models: features }));

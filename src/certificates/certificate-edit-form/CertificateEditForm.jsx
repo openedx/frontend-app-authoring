@@ -28,9 +28,7 @@ const CertificateEditForm = ({ courseId }) => {
     <>
       {certificates.map((certificate, id) => (
         <Formik initialValues={initialValues[id]} onSubmit={handleCertificateSubmit} key={certificate.id}>
-          {({
-            values, handleChange, handleBlur, resetForm, setFieldValue,
-          }) => (
+          {({ values, handleChange, handleBlur, resetForm, setFieldValue }) => (
             <>
               <Form className="certificates-card-form" data-testid="certificates-edit-form">
                 <Card>
@@ -44,7 +42,7 @@ const CertificateEditForm = ({ courseId }) => {
                       />
                       <FieldArray
                         name="signatories"
-                        render={arrayHelpers => (
+                        render={(arrayHelpers) => (
                           <CertificateSignatories
                             isForm
                             signatories={values.signatories}
@@ -58,20 +56,11 @@ const CertificateEditForm = ({ courseId }) => {
                     </Stack>
                   </Card.Section>
                   <Card.Footer className="justify-content-start">
-                    <Button type="submit">
-                      {intl.formatMessage(commonMessages.saveTooltip)}
-                    </Button>
-                    <Button
-                      variant="outline-primary"
-                      onClick={() => handleCertificateUpdateCancel(resetForm)}
-                    >
+                    <Button type="submit">{intl.formatMessage(commonMessages.saveTooltip)}</Button>
+                    <Button variant="outline-primary" onClick={() => handleCertificateUpdateCancel(resetForm)}>
                       {intl.formatMessage(commonMessages.cardCancel)}
                     </Button>
-                    <Button
-                      className="ml-auto"
-                      variant="tertiary"
-                      onClick={() => confirmOpen(certificate.id)}
-                    >
+                    <Button className="ml-auto" variant="tertiary" onClick={() => confirmOpen(certificate.id)}>
                       {intl.formatMessage(commonMessages.deleteTooltip)}
                     </Button>
                   </Card.Footer>

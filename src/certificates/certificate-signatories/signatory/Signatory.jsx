@@ -1,24 +1,13 @@
 import PropTypes from 'prop-types';
-import {
-  Image, Icon, Stack, IconButtonWithTooltip,
-} from '@openedx/paragon';
-import {
-  EditOutline as EditOutlineIcon,
-} from '@openedx/paragon/icons';
+import { Image, Icon, Stack, IconButtonWithTooltip } from '@openedx/paragon';
+import { EditOutline as EditOutlineIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
 import commonMessages from '../../messages';
 import messages from '../messages';
 
-const Signatory = ({
-  index,
-  name,
-  title,
-  organization,
-  signatureImagePath,
-  handleEdit,
-}) => {
+const Signatory = ({ index, name, title, organization, signatureImagePath, handleEdit }) => {
   const intl = useIntl();
 
   return (
@@ -26,9 +15,15 @@ const Signatory = ({
       <Stack className="signatory__header" gap={3}>
         <h3 className="section-title m-0">{`${intl.formatMessage(messages.signatoryTitle)} ${index + 1}`}</h3>
         <Stack className="signatory__text-fields-stack">
-          <p className="signatory__text"><b>{intl.formatMessage(messages.nameLabel)}</b> {name}</p>
-          <p className="signatory__text"><b>{intl.formatMessage(messages.titleLabel)}</b> {title}</p>
-          <p className="signatory__text"><b>{intl.formatMessage(messages.organizationLabel)}</b> {organization}</p>
+          <p className="signatory__text">
+            <b>{intl.formatMessage(messages.nameLabel)}</b> {name}
+          </p>
+          <p className="signatory__text">
+            <b>{intl.formatMessage(messages.titleLabel)}</b> {title}
+          </p>
+          <p className="signatory__text">
+            <b>{intl.formatMessage(messages.organizationLabel)}</b> {organization}
+          </p>
         </Stack>
       </Stack>
 

@@ -6,10 +6,7 @@ const testState = { some: 'arbitraryValue' };
 const testValue = 'my VALUE';
 
 describe('problem selectors unit tests', () => {
-  const {
-    problemState,
-    simpleSelectors,
-  } = selectors;
+  const { problemState, simpleSelectors } = selectors;
   describe('problemState', () => {
     it('returns the problem data', () => {
       expect(problemState({ ...testState, problem: testValue } as any)).toEqual(testValue);
@@ -38,10 +35,12 @@ describe('problem selectors unit tests', () => {
     test('simple selector completeState equals the entire state', () => {
       const { dependencies, resultFunc: cb } = simpleSelectors[simpleKeys.completeState];
       expect(dependencies).toEqual([problemState]);
-      expect(cb({
-        ...testState,
-        [simpleKeys.completeState]: testValue,
-      } as any)).toEqual({
+      expect(
+        cb({
+          ...testState,
+          [simpleKeys.completeState]: testValue,
+        } as any),
+      ).toEqual({
         ...testState,
         [simpleKeys.completeState]: testValue,
       });

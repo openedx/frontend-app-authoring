@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   selectTypeTitle: {
     id: 'authoring.problemEditor.selectType.title',
     defaultMessage: 'Select problem type',
@@ -120,7 +119,8 @@ const messages = defineMessages({
   },
   textInputDescription: {
     id: 'authoring.problemeditor.problemtype.textinput.description',
-    defaultMessage: 'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
+    defaultMessage:
+      'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
     description: 'Preview description for text input problem type',
   },
   advancedProblemDescription: {
@@ -132,17 +132,20 @@ const messages = defineMessages({
   // Problem Type Instructions
   singleSelectInstruction: {
     id: 'authoring.problemeditor.problemtype.singleselect.instruction',
-    defaultMessage: 'Enter your single select answers below and select which choices are correct. Learners must choose one correct answer.',
+    defaultMessage:
+      'Enter your single select answers below and select which choices are correct. Learners must choose one correct answer.',
     description: 'Instruction for single select problem type',
   },
   multiSelectInstruction: {
     id: 'authoring.problemeditor.problemtype.multiselect.instruction',
-    defaultMessage: 'Enter your multi select answers below and select which choices are correct. Learners must choose all correct answers.',
+    defaultMessage:
+      'Enter your multi select answers below and select which choices are correct. Learners must choose all correct answers.',
     description: 'Instruction for multi-select problem type',
   },
   dropdownInstruction: {
     id: 'authoring.problemeditor.problemtype.dropdown.instruction',
-    defaultMessage: 'Enter your dropdown answers below and select which choice is correct. Learners must select one correct answer.',
+    defaultMessage:
+      'Enter your dropdown answers below and select which choice is correct. Learners must select one correct answer.',
     description: 'Instruction for dropdown problem type',
   },
   numericalInputInstruction: {
@@ -152,7 +155,8 @@ const messages = defineMessages({
   },
   textInputInstruction: {
     id: 'authoring.problemeditor.problemtype.textinput.instruction',
-    defaultMessage: 'Enter your text input answers below and select which choices are correct. Learners must enter one correct answer.',
+    defaultMessage:
+      'Enter your text input answers below and select which choices are correct. Learners must enter one correct answer.',
     description: 'Instruction for text input problem type',
   },
 });

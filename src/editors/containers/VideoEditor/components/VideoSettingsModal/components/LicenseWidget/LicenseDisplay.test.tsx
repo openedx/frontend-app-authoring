@@ -23,12 +23,7 @@ describe('LicenseDisplay', () => {
   });
   it('renders nothing if license is select', () => {
     const { container } = render(
-      <LicenseDisplay
-        license="select"
-        details={defaultDetails}
-        level="course"
-        licenseDescription="Some description"
-      />,
+      <LicenseDisplay license="select" details={defaultDetails} level="course" licenseDescription="Some description" />,
     );
     const reduxProviderDiv = container.querySelector('div[data-testid="redux-provider"]');
     expect(reduxProviderDiv?.innerHTML).toBe('');
@@ -62,14 +57,7 @@ describe('LicenseDisplay', () => {
   });
 
   it('does not render Hyperlink for non-creativeCommons license', () => {
-    render(
-      <LicenseDisplay
-        license="proprietary"
-        details={defaultDetails}
-        level="course"
-        licenseDescription="desc"
-      />,
-    );
+    render(<LicenseDisplay license="proprietary" details={defaultDetails} level="course" licenseDescription="desc" />);
     expect(screen.queryByRole('link', { name: 'View Details' })).toBeNull();
   });
 });

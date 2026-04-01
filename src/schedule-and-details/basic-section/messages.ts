@@ -31,7 +31,8 @@ const messages = defineMessages({
   },
   basicBannerText: {
     id: 'course-authoring.schedule.basic.banner.text',
-    defaultMessage: 'Your course summary page will not be viewable until your course has been announced. To provide content for the page and preview it, follow the instructions provided by your Program Manager. Please note that changes here may take up to a business day to appear on your course summary page.',
+    defaultMessage:
+      'Your course summary page will not be viewable until your course has been announced. To provide content for the page and preview it, follow the instructions provided by your Program Manager. Please note that changes here may take up to a business day to appear on your course summary page.',
   },
   basicPromotionButton: {
     id: 'course-authoring.schedule.basic.promotion.button',

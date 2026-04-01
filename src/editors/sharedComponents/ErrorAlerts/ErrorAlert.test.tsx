@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, fireEvent, initializeMocks,
-} from '../../../testUtils';
+import { render, screen, fireEvent, initializeMocks } from '../../../testUtils';
 import ErrorAlert, { hooks } from './ErrorAlert';
 
 describe('ErrorAlert (integration, no Paragon mocks)', () => {
@@ -39,7 +37,11 @@ describe('ErrorAlert (integration, no Paragon mocks)', () => {
   });
 
   it('renders alert without heading when hideHeading is true', () => {
-    render(<ErrorAlert isError hideHeading>Some error</ErrorAlert>);
+    render(
+      <ErrorAlert isError hideHeading>
+        Some error
+      </ErrorAlert>,
+    );
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(screen.queryByText('Error')).toBeNull();
     expect(screen.getByText('Some error')).toBeInTheDocument();
@@ -47,7 +49,11 @@ describe('ErrorAlert (integration, no Paragon mocks)', () => {
 
   it('calls dismissError when dismiss button is clicked', () => {
     const dismissError = jest.fn();
-    render(<ErrorAlert isError dismissError={dismissError}>Some error</ErrorAlert>);
+    render(
+      <ErrorAlert isError dismissError={dismissError}>
+        Some error
+      </ErrorAlert>,
+    );
     const closeBtn = screen.getByRole('button');
     fireEvent.click(closeBtn);
     expect(dismissError).toHaveBeenCalled();
@@ -74,7 +80,11 @@ describe('ErrorAlert (integration, no Paragon mocks)', () => {
 
   it('dismisses alert when dismiss button is clicked (integration)', () => {
     const dismissError = jest.fn();
-    render(<ErrorAlert isError dismissError={dismissError}>err</ErrorAlert>);
+    render(
+      <ErrorAlert isError dismissError={dismissError}>
+        err
+      </ErrorAlert>,
+    );
     const closeBtn = screen.getByRole('button');
     fireEvent.click(closeBtn);
 

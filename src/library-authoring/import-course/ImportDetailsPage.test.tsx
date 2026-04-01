@@ -1,10 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import {
-  initializeMocks,
-  render as testRender,
-  screen,
-  waitFor,
-} from '@src/testUtils';
+import { initializeMocks, render as testRender, screen, waitFor } from '@src/testUtils';
 import { mockGetMigrationStatus } from '@src/data/api.mocks';
 import { bulkModulestoreMigrateUrl } from '@src/data/api';
 import { useGetContentHits } from '@src/search-manager';
@@ -37,24 +32,18 @@ jest.mock('@src/search-manager', () => ({
   useGetContentHits: jest.fn().mockReturnValue({ isPending: true, data: null }),
 }));
 
-const render = (migrationTaskId: string) => (
-  testRender(
-    <ImportDetailsPage />,
-    {
-      extraWrapper: ({ children }: { children: React.ReactNode }) => (
-        <LibraryProvider libraryId={libraryId}>
-          {children}
-        </LibraryProvider>
-      ),
-      path: '/libraries/:libraryId/import/:courseId/:migrationTaskId',
-      params: {
-        libraryId,
-        migrationTaskId,
-        courseId: '1',
-      },
+const render = (migrationTaskId: string) =>
+  testRender(<ImportDetailsPage />, {
+    extraWrapper: ({ children }: { children: React.ReactNode }) => (
+      <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
+    ),
+    path: '/libraries/:libraryId/import/:courseId/:migrationTaskId',
+    params: {
+      libraryId,
+      migrationTaskId,
+      courseId: '1',
     },
-  )
-);
+  });
 
 describe('<ImportDetailsPage />', () => {
   beforeEach(() => {
@@ -71,9 +60,11 @@ describe('<ImportDetailsPage />', () => {
   it('should render In Progress state', async () => {
     render(mockGetMigrationStatus.migrationIdInProgress);
     expect(await screen.findByText(/test course is being imported/i));
-    expect(screen.getByRole('button', {
-      name: /view imported content/i,
-    })).toBeDisabled();
+    expect(
+      screen.getByRole('button', {
+        name: /view imported content/i,
+      }),
+    ).toBeDisabled();
   });
 
   it('should render Failed state', async () => {
@@ -94,9 +85,9 @@ describe('<ImportDetailsPage />', () => {
   it('should render Succeeded state', async () => {
     mockGetModulestoreMigratedBlocksInfo.applyMockSuccess();
     render(mockGetMigrationStatus.migrationId);
-    expect(await screen.findByText(
-      /test course has been imported to your library in a collection called test collection/i,
-    ));
+    expect(
+      await screen.findByText(/test course has been imported to your library in a collection called test collection/i),
+    );
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
     expect(await screen.findByText('4')).toBeInTheDocument();
 
@@ -148,19 +139,23 @@ describe('<ImportDetailsPage />', () => {
     expect(await screen.findByText(/Components/i)).toBeInTheDocument();
     expect(await screen.findByText('1/2')).toBeInTheDocument();
 
-    expect(await screen.findByText(
-      /66% of course test course has been imported successfully/i,
-    )).toBeInTheDocument();
+    expect(await screen.findByText(/66% of course test course has been imported successfully/i)).toBeInTheDocument();
 
-    expect(await screen.findByRole('cell', {
-      name: /randomized content block/i,
-    })).toBeInTheDocument();
-    expect(await screen.findByRole('cell', {
-      name: 'library_content',
-    })).toBeInTheDocument();
-    expect(await screen.findByRole('cell', {
-      name: /has children, so it is not supported in content libraries/i,
-    })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('cell', {
+        name: /randomized content block/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole('cell', {
+        name: 'library_content',
+      }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole('cell', {
+        name: /has children, so it is not supported in content libraries/i,
+      }),
+    ).toBeInTheDocument();
 
     const viewImportedContentBtn = screen.getByRole('button', {
       name: /view imported content/i,

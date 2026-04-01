@@ -23,7 +23,9 @@ const AlertAgreement = ({ agreementType }: { agreementType: string }) => {
       console.error('Error accepting agreement', e);
     }
   };
-  if (!showAlert) { return null; }
+  if (!showAlert) {
+    return null;
+  }
   const { url, name, summary } = data;
   return (
     <Alert
@@ -40,26 +42,21 @@ const AlertAgreement = ({ agreementType }: { agreementType: string }) => {
   );
 };
 
-const AlertAgreementWrapper = (
-  { agreementType }: { agreementType: string },
-) => {
+const AlertAgreementWrapper = ({ agreementType }: { agreementType: string }) => {
   const { data, isLoading, isError } = useUserAgreementRecord(agreementType);
   const showAlert = !data?.isCurrent && !isLoading && !isError;
-  if (!showAlert) { return null; }
+  if (!showAlert) {
+    return null;
+  }
   return <AlertAgreement agreementType={agreementType} />;
 };
 
-export const AlertAgreementGatedFeature = (
-  { gatingTypes }: { gatingTypes: AgreementGated[] },
-) => {
+export const AlertAgreementGatedFeature = ({ gatingTypes }: { gatingTypes: AgreementGated[] }) => {
   const agreementTypes = getGatingAgreementTypes(gatingTypes);
   return (
     <>
       {agreementTypes.map((agreementType) => (
-        <AlertAgreementWrapper
-          key={agreementType}
-          agreementType={agreementType}
-        />
+        <AlertAgreementWrapper key={agreementType} agreementType={agreementType} />
       ))}
     </>
   );

@@ -13,14 +13,15 @@ const messages = defineMessages({
   },
   description: {
     id: 'course-authoring.course-outline.unlink-modal.description',
-    defaultMessage: 'Are you sure you want to unlink this library {categoryName} reference?'
-      + ' Unlinked blocks cannot be synced. <b>Unlinking is permanent.</b>',
+    defaultMessage:
+      'Are you sure you want to unlink this library {categoryName} reference?' +
+      ' Unlinked blocks cannot be synced. <b>Unlinking is permanent.</b>',
     description: 'Description text in the unlink confirmation modal',
   },
   descriptionChildren: {
     id: 'course-authoring.course-outline.unlink-modal.description-children',
-    defaultMessage: '{childrenCategoryName} contained in this {categoryName} will remain linked to '
-      + 'their library versions.',
+    defaultMessage:
+      '{childrenCategoryName} contained in this {categoryName} will remain linked to ' + 'their library versions.',
     description: 'Description text in the unlink confirmation modal when the item has children',
   },
   unlinkButton: {

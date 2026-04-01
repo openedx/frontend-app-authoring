@@ -4,9 +4,7 @@ describe('getCheckboxFilters', () => {
   describe('switch case default', () => {
     it('should equal array with string test', () => {
       const state = {
-        filters: [
-          { id: 'testId', value: ['testValue'] },
-        ],
+        filters: [{ id: 'testId', value: ['testValue'] }],
       };
       const expected = ['testValue'];
       const actual = getCheckedFilters(state);
@@ -31,12 +29,8 @@ describe('getCheckboxFilters', () => {
 describe('getFilterOptions', () => {
   describe('switch case default', () => {
     it('value attribute should equal test', () => {
-      const columns = [
-        { id: 'other', filterChoices: [{ name: 'Test', value: 'test' }] },
-      ];
-      const expected = [
-        { name: 'Test', value: 'test' },
-      ];
+      const columns = [{ id: 'other', filterChoices: [{ name: 'Test', value: 'test' }] }];
+      const expected = [{ name: 'Test', value: 'test' }];
       const actual = getFilterOptions(columns);
 
       expect(actual).toEqual(expected);
@@ -52,9 +46,7 @@ describe('processFilters', () => {
 
   it('should call setAllFilters with an empty array', () => {
     const filters = [];
-    const columns = [
-      { id: 'locked', filterChoices: [{ name: 'Locked', value: true }] },
-    ];
+    const columns = [{ id: 'locked', filterChoices: [{ name: 'Locked', value: true }] }];
     const expectedParameter = [];
     processFilters(filters, columns, setAllFilters);
 
@@ -64,9 +56,7 @@ describe('processFilters', () => {
   describe('switch case default', () => {
     it('should call setAllFilters with test filter', () => {
       const filters = ['filter'];
-      const columns = [
-        { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
-      ];
+      const columns = [{ id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] }];
       const expectedParameter = [{ id: 'test', value: ['filter'] }];
       processFilters(filters, columns, setAllFilters);
 
@@ -77,9 +67,7 @@ describe('processFilters', () => {
   describe('filter with serach bar', () => {
     it('should call setAllFitlers with displayName filter', () => {
       const filters = [['displayName', 'search']];
-      const columns = [
-        { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
-      ];
+      const columns = [{ id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] }];
       const expectedParameter = [{ id: 'displayName', value: 'search' }];
       processFilters(filters, columns, setAllFilters);
 

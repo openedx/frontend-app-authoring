@@ -1,7 +1,4 @@
-import {
-  getCourseLaunchChecklist,
-  getCourseBestPracticesChecklist,
-} from './getChecklistForStatusBar';
+import { getCourseLaunchChecklist, getCourseBestPracticesChecklist } from './getChecklistForStatusBar';
 
 describe('getChecklistForStatusBar util functions', () => {
   it('getCourseLaunchChecklist', () => {

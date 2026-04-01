@@ -45,42 +45,45 @@ describe('getChecklistValues utility function', () => {
   it('returns only checklist items with filters ALL and SELF_PACED when isSelfPaced is true', () => {
     const filteredChecklist = getChecklistValues({ checklist, ...courseData });
 
-    filteredChecklist.forEach(((
-      item => expect(item.pacingTypeFilter === CHECKLIST_FILTERS.ALL
-        || item.pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED)
-    )));
+    filteredChecklist.forEach((item) =>
+      expect(item.pacingTypeFilter === CHECKLIST_FILTERS.ALL || item.pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED),
+    );
 
-    expect(filteredChecklist.filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length)
-      .toEqual(checklist.filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length);
-    expect(filteredChecklist.filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED).length)
-      .toEqual(checklist.filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED).length);
+    expect(filteredChecklist.filter((item) => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length).toEqual(
+      checklist.filter((item) => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length,
+    );
+    expect(filteredChecklist.filter((item) => item.pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED).length).toEqual(
+      checklist.filter((item) => item.pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED).length,
+    );
   });
 
   it('returns only checklist items with filters ALL and INSTRUCTOR_PACED when isSelfPaced is false', () => {
     courseData.isSelfPaced = false;
     const filteredChecklist = getChecklistValues({ checklist, ...courseData });
 
-    filteredChecklist.forEach(((
-      item => expect(item.pacingTypeFilter === CHECKLIST_FILTERS.ALL
-        || item.pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED)
-    )));
+    filteredChecklist.forEach((item) =>
+      expect(
+        item.pacingTypeFilter === CHECKLIST_FILTERS.ALL || item.pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED,
+      ),
+    );
 
-    expect(filteredChecklist.filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length)
-      .toEqual(checklist.filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length);
-    expect(filteredChecklist
-      .filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED).length)
-      .toEqual(checklist.filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED).length);
+    expect(filteredChecklist.filter((item) => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length).toEqual(
+      checklist.filter((item) => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length,
+    );
+    expect(
+      filteredChecklist.filter((item) => item.pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED).length,
+    ).toEqual(checklist.filter((item) => item.pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED).length);
   });
 
   it('excludes weekly highlights when they are disabled', () => {
     courseData.hasHighlightsEnabled = false;
     const filteredChecklist = getChecklistValues({ checklist, ...courseData });
-    expect(filteredChecklist.filter(item => item.id === 'weeklyHighlights').length).toEqual(0);
+    expect(filteredChecklist.filter((item) => item.id === 'weeklyHighlights').length).toEqual(0);
   });
 
   it('excludes proctoring escalation email when not needed', () => {
     courseData.needsProctoringEscalationEmail = false;
     const filteredChecklist = getChecklistValues({ checklist, ...courseData });
-    expect(filteredChecklist.filter(item => item.id === 'proctoringEmail').length).toEqual(0);
+    expect(filteredChecklist.filter((item) => item.id === 'proctoringEmail').length).toEqual(0);
   });
 });

@@ -1,7 +1,5 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import {
-  initializeMocks, render, screen, waitFor, within,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, waitFor, within } from '@src/testUtils';
 
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
@@ -87,31 +85,32 @@ const unit = {
   },
 } satisfies Partial<XBlock> as XBlock;
 
-const renderComponent = (props?: object) => render(
-  <UnitCard
-    section={section}
-    subsection={subsection}
-    unit={unit}
-    index={1}
-    getPossibleMoves={jest.fn()}
-    onOrderChange={jest.fn()}
-    onOpenDeleteModal={jest.fn()}
-    onOpenConfigureModal={jest.fn()}
-    onDuplicateSubmit={jest.fn()}
-    isSelfPaced={false}
-    isCustomRelativeDatesActive={false}
-    discussionsSettings={{
-      providerType: '',
-      enableGradedUnits: false,
-    }}
-    {...props}
-  />,
-  {
-    path: '/course/:courseId',
-    params: { courseId: '5' },
-    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
-  },
-);
+const renderComponent = (props?: object) =>
+  render(
+    <UnitCard
+      section={section}
+      subsection={subsection}
+      unit={unit}
+      index={1}
+      getPossibleMoves={jest.fn()}
+      onOrderChange={jest.fn()}
+      onOpenDeleteModal={jest.fn()}
+      onOpenConfigureModal={jest.fn()}
+      onDuplicateSubmit={jest.fn()}
+      isSelfPaced={false}
+      isCustomRelativeDatesActive={false}
+      discussionsSettings={{
+        providerType: '',
+        enableGradedUnits: false,
+      }}
+      {...props}
+    />,
+    {
+      path: '/course/:courseId',
+      params: { courseId: '5' },
+      extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
+    },
+  );
 
 describe('<UnitCard />', () => {
   beforeEach(() => {
@@ -203,12 +202,14 @@ describe('<UnitCard />', () => {
     await user.click(menu);
     expect(within(element).queryByTestId('unit-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('unit-card-header__menu-delete-button')).not.toBeInTheDocument();
-    expect(
-      await within(element).findByTestId('unit-card-header__menu-move-up-button'),
-    ).toHaveAttribute('aria-disabled', 'true');
-    expect(
-      await within(element).findByTestId('unit-card-header__menu-move-down-button'),
-    ).toHaveAttribute('aria-disabled', 'true');
+    expect(await within(element).findByTestId('unit-card-header__menu-move-up-button')).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    expect(await within(element).findByTestId('unit-card-header__menu-move-down-button')).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 
   it('shows copy option based on enableCopyPasteUnits flag', async () => {
@@ -315,26 +316,24 @@ describe('<UnitCard />', () => {
       title: '',
     };
 
-    jest
-      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
-      .mockImplementation(() => ({
-        setCurrentPageKey: mockSetCurrentPageKey,
-        currentPageKey: 'info',
-        sidebarPages: {
-          info: testSidebarPage,
-          help: testSidebarPage,
-          add: testSidebarPage,
-        },
-        isOpen: true,
-        open: jest.fn(),
-        toggle: jest.fn(),
-        currentFlow: undefined,
-        startCurrentFlow: jest.fn(),
-        stopCurrentFlow: jest.fn(),
-        openContainerInfoSidebar: jest.fn(),
-        clearSelection: jest.fn(),
-        setSelectedContainerState: mockSetSelectedContainerState,
-      }));
+    jest.spyOn(OutlineSidebarContext, 'useOutlineSidebarContext').mockImplementation(() => ({
+      setCurrentPageKey: mockSetCurrentPageKey,
+      currentPageKey: 'info',
+      sidebarPages: {
+        info: testSidebarPage,
+        help: testSidebarPage,
+        add: testSidebarPage,
+      },
+      isOpen: true,
+      open: jest.fn(),
+      toggle: jest.fn(),
+      currentFlow: undefined,
+      startCurrentFlow: jest.fn(),
+      stopCurrentFlow: jest.fn(),
+      openContainerInfoSidebar: jest.fn(),
+      clearSelection: jest.fn(),
+      setSelectedContainerState: mockSetSelectedContainerState,
+    }));
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',

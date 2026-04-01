@@ -2,24 +2,14 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { FormattedMessage, FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Stack,
-  IconButton,
-  ActionRow,
-  Icon,
-  IconButtonWithTooltip,
-  CheckboxControl,
-} from '@openedx/paragon';
+import { Stack, IconButton, ActionRow, Icon, IconButtonWithTooltip, CheckboxControl } from '@openedx/paragon';
 import { ContentCopy, InfoOutline } from '@openedx/paragon/icons';
 
 import { getFileSizeToClosestByte } from '../../utils';
 import messages from './messages';
 import './FileInfoModalSidebar.scss';
 
-const FileInfoModalSidebar = ({
-  asset,
-  handleLockedAsset,
-}) => {
+const FileInfoModalSidebar = ({ asset, handleLockedAsset }) => {
   const intl = useIntl();
   const [lockedState, setLockedState] = useState(asset?.locked);
   const handleLock = (e) => {
@@ -49,10 +39,7 @@ const FileInfoModalSidebar = ({
         <FormattedMessage {...messages.studioUrlTitle} />
       </div>
       <ActionRow>
-        <div
-          className="files-page-url-truncate"
-          style={{ wordBreak: 'break-word' }}
-        >
+        <div className="files-page-url-truncate" style={{ wordBreak: 'break-word' }}>
           {asset?.portableUrl}
         </div>
         <ActionRow.Spacer />
@@ -92,11 +79,7 @@ const FileInfoModalSidebar = ({
           size="inline"
         />
         <ActionRow.Spacer />
-        <CheckboxControl
-          checked={lockedState}
-          onChange={handleLock}
-          aria-label="Checkbox"
-        />
+        <CheckboxControl checked={lockedState} onChange={handleLock} aria-label="Checkbox" />
       </ActionRow>
     </Stack>
   );

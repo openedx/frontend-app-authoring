@@ -1,9 +1,7 @@
 import { useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import type { UseMutationResult } from '@tanstack/react-query';
-import {
-  Button, Icon, Scrollable, SelectableBox, Stack, StatefulButton, useCheckboxSetValues,
-} from '@openedx/paragon';
+import { Button, Icon, Scrollable, SelectableBox, Stack, StatefulButton, useCheckboxSetValues } from '@openedx/paragon';
 import { Folder } from '@openedx/paragon/icons';
 
 import {
@@ -21,7 +19,7 @@ import messages from './messages';
 
 interface ManageCollectionsProps {
   opaqueKey: string;
-  collections: CollectionMetadata[],
+  collections: CollectionMetadata[];
   useUpdateCollectionsHook: (opaqueKey: string) => UseMutationResult<void, unknown, string[], unknown>;
 }
 
@@ -40,24 +38,25 @@ const CollectionsSelectableBox = ({
   const { hits } = useSearchContext();
   const { showToast } = useContext(ToastContext);
   const collectionKeys = collections.map((collection) => collection.key);
-  const [selectedCollections, {
-    add,
-    remove,
-  }] = useCheckboxSetValues(collectionKeys);
+  const [selectedCollections, { add, remove }] = useCheckboxSetValues(collectionKeys);
   const [btnState, setBtnState] = useState('default');
 
   const updateCollectionsMutation = useUpdateCollectionsHook(opaqueKey);
 
   const handleConfirmation = () => {
     setBtnState('pending');
-    updateCollectionsMutation.mutateAsync(selectedCollections).then(() => {
-      showToast(intl.formatMessage(genericMessages.manageCollectionsSuccess));
-    }).catch(() => {
-      showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
-    }).finally(() => {
-      setBtnState('default');
-      onClose();
-    });
+    updateCollectionsMutation
+      .mutateAsync(selectedCollections)
+      .then(() => {
+        showToast(intl.formatMessage(genericMessages.manageCollectionsSuccess));
+      })
+      .catch(() => {
+        showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
+      })
+      .finally(() => {
+        setBtnState('default');
+        onClose();
+      });
   };
 
   const handleChange = (e) => (e.target.checked ? add(e.target.value) : remove(e.target.value));
@@ -91,11 +90,7 @@ const CollectionsSelectableBox = ({
         </SelectableBox.Set>
       </Scrollable>
       <Stack direction="horizontal" gap={2}>
-        <Button
-          onClick={onClose}
-          className="font-weight-bold"
-          variant="tertiary"
-        >
+        <Button onClick={onClose} className="font-weight-bold" variant="tertiary">
           {intl.formatMessage(messages.manageCollectionsToComponentCancelBtn)}
         </Button>
         <StatefulButton
@@ -126,15 +121,9 @@ const AddToCollectionsDrawer = ({
   }
 
   return (
-    <SearchContextProvider
-      extraFilter={extraFilter}
-      skipUrlUpdate
-      skipBlockTypeFetch
-    >
+    <SearchContextProvider extraFilter={extraFilter} skipUrlUpdate skipBlockTypeFetch>
       <Stack className="mt-2" gap={3}>
-        <FormattedMessage
-          {...messages.manageCollectionsText}
-        />
+        <FormattedMessage {...messages.manageCollectionsText} />
         <Stack gap={1} direction="horizontal">
           <SearchKeywordsField
             className="flex-grow-1"
@@ -155,10 +144,7 @@ const AddToCollectionsDrawer = ({
   );
 };
 
-const EntityCollections = ({ collections, onManageClick }: {
-  collections?: string[];
-  onManageClick: () => void;
-}) => {
+const EntityCollections = ({ collections, onManageClick }: { collections?: string[]; onManageClick: () => void }) => {
   const intl = useIntl();
   const { readOnly } = useOptionalLibraryContext();
 
@@ -169,10 +155,7 @@ const EntityCollections = ({ collections, onManageClick }: {
           <FormattedMessage {...messages.componentNotOrganizedIntoCollection} />
         </span>
         {!readOnly && (
-          <Button
-            onClick={onManageClick}
-            variant="primary"
-          >
+          <Button onClick={onManageClick} variant="primary">
             {intl.formatMessage(messages.manageCollectionsAddBtnText)}
           </Button>
         )}
@@ -183,21 +166,13 @@ const EntityCollections = ({ collections, onManageClick }: {
   return (
     <Stack gap={4} className="mt-2">
       {collections.map((collection) => (
-        <Stack
-          className="border-bottom pb-4 border-gray-100"
-          gap={2}
-          direction="horizontal"
-          key={collection}
-        >
+        <Stack className="border-bottom pb-4 border-gray-100" gap={2} direction="horizontal" key={collection}>
           <Icon src={Folder} />
           <span>{collection}</span>
         </Stack>
       ))}
       {!readOnly && (
-        <Button
-          onClick={onManageClick}
-          variant="outline-primary"
-        >
+        <Button onClick={onManageClick} variant="outline-primary">
           {intl.formatMessage(messages.manageCollectionsText)}
         </Button>
       )}
@@ -209,21 +184,18 @@ const ManageCollections = ({ opaqueKey, collections, useUpdateCollectionsHook }:
   const { sidebarAction, resetSidebarAction, setSidebarAction } = useSidebarContext();
   const collectionNames = collections.map((collection) => collection.title);
 
-  return (
-    sidebarAction === SidebarActions.JumpToManageCollections
-      ? (
-        <AddToCollectionsDrawer
-          opaqueKey={opaqueKey}
-          collections={collections}
-          useUpdateCollectionsHook={useUpdateCollectionsHook}
-          onClose={() => resetSidebarAction()}
-        />
-      ) : (
-        <EntityCollections
-          collections={collectionNames}
-          onManageClick={() => setSidebarAction(SidebarActions.JumpToManageCollections)}
-        />
-      )
+  return sidebarAction === SidebarActions.JumpToManageCollections ? (
+    <AddToCollectionsDrawer
+      opaqueKey={opaqueKey}
+      collections={collections}
+      useUpdateCollectionsHook={useUpdateCollectionsHook}
+      onClose={() => resetSidebarAction()}
+    />
+  ) : (
+    <EntityCollections
+      collections={collectionNames}
+      onManageClick={() => setSidebarAction(SidebarActions.JumpToManageCollections)}
+    />
   );
 };
 

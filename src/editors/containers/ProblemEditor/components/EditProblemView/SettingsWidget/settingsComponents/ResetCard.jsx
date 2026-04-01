@@ -8,11 +8,7 @@ import messages from '../messages';
 import { resetCardHooks } from '../hooks';
 import { selectors } from '../../../../../../data/redux';
 
-const ResetCard = ({
-  showResetButton,
-  defaultValue,
-  updateSettings,
-}) => {
+const ResetCard = ({ showResetButton, defaultValue, updateSettings }) => {
   const intl = useIntl();
   const isLibrary = useSelector(selectors.app.isLibrary);
   const { setResetTrue, setResetFalse } = resetCardHooks(updateSettings);
@@ -21,8 +17,11 @@ const ResetCard = ({
   return (
     <SettingsOption
       title={intl.formatMessage(messages.resetSettingsTitle)}
-      summary={currentResetButton
-        ? intl.formatMessage(messages.resetSettingsTrue) : intl.formatMessage(messages.resetSettingsFalse)}
+      summary={
+        currentResetButton
+          ? intl.formatMessage(messages.resetSettingsTrue)
+          : intl.formatMessage(messages.resetSettingsFalse)
+      }
       className="resetCard"
     >
       <div className="halfSpacedMessage">

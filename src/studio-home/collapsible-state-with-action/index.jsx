@@ -2,16 +2,8 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {
-  Collapsible,
-  Bubble,
-  Icon,
-  StatefulButton,
-} from '@openedx/paragon';
-import {
-  Add as AddIcon,
-  Minus as MinusIcon,
-} from '@openedx/paragon/icons/es5';
+import { Collapsible, Bubble, Icon, StatefulButton } from '@openedx/paragon';
+import { Add as AddIcon, Minus as MinusIcon } from '@openedx/paragon/icons/es5';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../../data/constants';
@@ -23,11 +15,7 @@ import messages from './messages';
 const CollapsibleStateWithAction = ({ state, className }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const {
-    platformName,
-    studioName,
-    studioShortName,
-  } = useSelector(getStudioHomeData);
+  const { platformName, studioName, studioShortName } = useSelector(getStudioHomeData);
   const { courseCreatorSavingStatus } = useSelector(getSavingStatuses);
 
   const requestButtonStates = {
@@ -64,17 +52,11 @@ const CollapsibleStateWithAction = ({ state, className }) => {
         title: intl.formatMessage(messages.unrequestedCollapsibleTitle, {
           studioShortName,
         }),
-        description: intl.formatMessage(
-          messages.unrequestedCollapsibleDescription,
-          { studioName, platformName },
-        ),
+        description: intl.formatMessage(messages.unrequestedCollapsibleDescription, { studioName, platformName }),
       },
       [COURSE_CREATOR_STATES.pending]: {
         title: intl.formatMessage(messages.pendingCollapsibleTitle),
-        description: intl.formatMessage(
-          messages.pendingCollapsibleDescription,
-          { studioName, platformName },
-        ),
+        description: intl.formatMessage(messages.pendingCollapsibleDescription, { studioName, platformName }),
         stateName: intl.formatMessage(messages.pendingCollapsibleState),
         actionTitle: intl.formatMessage(messages.pendingCollapsibleActionTitle),
         actionText: intl.formatMessage(messages.pendingCollapsibleActionText, {
@@ -86,13 +68,7 @@ const CollapsibleStateWithAction = ({ state, className }) => {
     return matchTextAction[state];
   }
 
-  const {
-    title,
-    stateName,
-    actionText,
-    description,
-    actionTitle,
-  } = getTextForStatus();
+  const { title, stateName, actionText, description, actionTitle } = getTextForStatus();
 
   return (
     <Collapsible.Advanced
@@ -104,20 +80,12 @@ const CollapsibleStateWithAction = ({ state, className }) => {
         <span className="flex-grow-1 text-white small">{title}</span>
         <Collapsible.Visible whenClosed>
           <Bubble className="bg-light-700">
-            <Icon
-              src={AddIcon}
-              className="text-gray-700"
-              size="xs"
-            />
+            <Icon src={AddIcon} className="text-gray-700" size="xs" />
           </Bubble>
         </Collapsible.Visible>
         <Collapsible.Visible whenOpen>
           <Bubble className="bg-light-700">
-            <Icon
-              src={MinusIcon}
-              className="text-gray-700"
-              size="xs"
-            />
+            <Icon src={MinusIcon} className="text-gray-700" size="xs" />
           </Bubble>
         </Collapsible.Visible>
       </Collapsible.Trigger>
@@ -132,9 +100,7 @@ const CollapsibleStateWithAction = ({ state, className }) => {
               'bg-warning-100': state === COURSE_CREATOR_STATES.pending,
             })}
           >
-            <span className="d-inline-block text-black font-weight-bold m-2.5">
-              {stateName}
-            </span>
+            <span className="d-inline-block text-black font-weight-bold m-2.5">{stateName}</span>
             <span className="text-gray-700 small">{actionText}</span>
           </div>
         ) : (

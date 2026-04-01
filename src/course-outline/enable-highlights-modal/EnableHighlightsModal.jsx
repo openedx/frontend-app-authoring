@@ -1,23 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, AlertModal, Button, Hyperlink,
-} from '@openedx/paragon';
+import { ActionRow, AlertModal, Button, Hyperlink } from '@openedx/paragon';
 
 import messages from './messages';
 import { useHelpUrls } from '../../help-urls/hooks';
 
-const EnableHighlightsModal = ({
-  onEnableHighlightsSubmit,
-  isOpen,
-  close,
-}) => {
+const EnableHighlightsModal = ({ onEnableHighlightsSubmit, isOpen, close }) => {
   const intl = useIntl();
 
-  const {
-    contentHighlights: contentHighlightsUrl,
-  } = useHelpUrls(['contentHighlights']);
+  const { contentHighlights: contentHighlightsUrl } = useHelpUrls(['contentHighlights']);
 
   return (
     <AlertModal
@@ -26,16 +18,14 @@ const EnableHighlightsModal = ({
       size="lg"
       isOpen={isOpen}
       onClose={close}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button variant="tertiary" onClick={close}>
             {intl.formatMessage(messages.cancelButton)}
           </Button>
-          <Button onClick={onEnableHighlightsSubmit}>
-            {intl.formatMessage(messages.submitButton)}
-          </Button>
+          <Button onClick={onEnableHighlightsSubmit}>{intl.formatMessage(messages.submitButton)}</Button>
         </ActionRow>
-      )}
+      }
     >
       <p className="small">{intl.formatMessage(messages.description_1)}</p>
       <p className="small">

@@ -7,7 +7,8 @@ const messages = defineMessages({
   },
   assignmentTypeNameDescription: {
     id: 'course-authoring.grading-settings.assignment.type-name.description',
-    defaultMessage: 'The general category for this type of assignment, for example, Homework or Midterm Exam. This name is visible to learners.',
+    defaultMessage:
+      'The general category for this type of assignment, for example, Homework or Midterm Exam. This name is visible to learners.',
   },
   assignmentTypeNameErrorMessage1: {
     id: 'course-authoring.grading-settings.assignment.type-name.error.message-1',
@@ -27,7 +28,8 @@ const messages = defineMessages({
   },
   abbreviationDescription: {
     id: 'course-authoring.grading-settings.assignment.abbreviation.description',
-    defaultMessage: "This short name for the assignment type (for example, HW or Midterm) appears next to assignments on a learner's Progress page.",
+    defaultMessage:
+      "This short name for the assignment type (for example, HW or Midterm) appears next to assignments on a learner's Progress page.",
   },
   weightOfTotalGradeTitle: {
     id: 'course-authoring.grading-settings.assignment.weight-of-total-grade.title',
@@ -35,7 +37,8 @@ const messages = defineMessages({
   },
   weightOfTotalGradeDescription: {
     id: 'course-authoring.grading-settings.assignment.weight-of-total-grade.description',
-    defaultMessage: 'The weight of all assignments of this type as a percentage of the total grade, for example, 40. Do not include the percent symbol.',
+    defaultMessage:
+      'The weight of all assignments of this type as a percentage of the total grade, for example, 40. Do not include the percent symbol.',
   },
   weightOfTotalGradeErrorMessage: {
     id: 'course-authoring.grading-settings.assignment.weight-of-total-grade.error.message',
@@ -59,7 +62,8 @@ const messages = defineMessages({
   },
   numberOfDroppableDescription: {
     id: 'course-authoring.grading-settings.assignment.number-of-droppable.description',
-    defaultMessage: 'The number of assignments of this type that will be dropped. The lowest scoring assignments are dropped first.',
+    defaultMessage:
+      'The number of assignments of this type that will be dropped. The lowest scoring assignments are dropped first.',
   },
   numberOfDroppableErrorMessage: {
     id: 'course-authoring.grading-settings.assignment.number-of-droppable.error.message',
@@ -71,7 +75,8 @@ const messages = defineMessages({
   },
   assignmentAlertWarningTitle: {
     id: 'course-authoring.grading-settings.assignment.alert.warning.title',
-    defaultMessage: 'Warning: The number of {type} assignments defined here does not match the current number of {type} assignments in the course:',
+    defaultMessage:
+      'Warning: The number of {type} assignments defined here does not match the current number of {type} assignments in the course:',
   },
   assignmentAlertWarningDescription: {
     id: 'course-authoring.grading-settings.assignment.alert.warning.description',
@@ -79,7 +84,8 @@ const messages = defineMessages({
   },
   assignmentAlertWarningUsageTitle: {
     id: 'course-authoring.grading-settings.assignment.alert.warning.usage.title',
-    defaultMessage: 'Warning: The number of {type} assignments defined here does not match the current number of {type} assignments in the course:',
+    defaultMessage:
+      'Warning: The number of {type} assignments defined here does not match the current number of {type} assignments in the course:',
   },
   assignmentAlertWarningSuccess: {
     id: 'course-authoring.grading-settings.assignment.alert.success.title',

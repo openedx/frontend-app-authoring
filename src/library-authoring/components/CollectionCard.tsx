@@ -1,12 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Dropdown,
-  Icon,
-  IconButton,
-  useToggle,
-} from '@openedx/paragon';
+import { ActionRow, Dropdown, Icon, IconButton, useToggle } from '@openedx/paragon';
 import { Delete, MoreVert } from '@openedx/paragon/icons';
 
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
@@ -22,29 +16,26 @@ import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';
 import messages from './messages';
 
 type CollectionMenuProps = {
-  hit: CollectionHit,
+  hit: CollectionHit;
 };
 
-const CollectionMenu = ({ hit } : CollectionMenuProps) => {
+const CollectionMenu = ({ hit }: CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
   const { readOnly } = useOptionalLibraryContext();
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const { closeLibrarySidebar, sidebarItemInfo } = useSidebarContext();
-  const {
-    contextKey,
-    blockId,
-    type,
-    displayName,
-  } = hit;
+  const { contextKey, blockId, type, displayName } = hit;
 
   const restoreCollectionMutation = useRestoreCollection(contextKey, blockId);
   const restoreCollection = useCallback(() => {
-    restoreCollectionMutation.mutateAsync()
+    restoreCollectionMutation
+      .mutateAsync()
       .then(() => {
         showToast(intl.formatMessage(messages.undoDeleteCollectionToastMessage));
-      }).catch(() => {
+      })
+      .catch(() => {
         showToast(intl.formatMessage(messages.undoDeleteCollectionToastFailed));
       });
   }, []);
@@ -58,13 +49,10 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
     }
     try {
       await deleteCollectionMutation.mutateAsync();
-      showToast(
-        intl.formatMessage(messages.deleteCollectionSuccess),
-        {
-          label: intl.formatMessage(messages.undoDeleteCollectionToastAction),
-          onClick: restoreCollection,
-        },
-      );
+      showToast(intl.formatMessage(messages.deleteCollectionSuccess), {
+        label: intl.formatMessage(messages.undoDeleteCollectionToastAction),
+        onClick: restoreCollection,
+      });
     } catch {
       showToast(intl.formatMessage(messages.deleteCollectionFailed));
     } finally {
@@ -115,52 +103,45 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
 };
 
 type CollectionCardProps = {
-  hit: CollectionHit,
+  hit: CollectionHit;
 };
 
-const CollectionCard = ({ hit } : CollectionCardProps) => {
+const CollectionCard = ({ hit }: CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = usePublishedFilterContext();
   const { setCollectionId } = useOptionalLibraryContext();
   const { openCollectionInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
-  const {
-    type: itemType,
-    blockId: collectionId,
-    formatted,
-    tags,
-    numChildren,
-    published,
-  } = hit;
+  const { type: itemType, blockId: collectionId, formatted, tags, numChildren, published } = hit;
 
-  const numChildrenCount = showOnlyPublished ? (
-    published?.numChildren || 0
-  ) : numChildren;
+  const numChildrenCount = showOnlyPublished ? published?.numChildren || 0 : numChildren;
 
   const { displayName = '', description = '' } = formatted;
 
-  const selected = sidebarItemInfo?.type === SidebarBodyItemId.CollectionInfo
-    && sidebarItemInfo.id === collectionId;
+  const selected = sidebarItemInfo?.type === SidebarBodyItemId.CollectionInfo && sidebarItemInfo.id === collectionId;
 
   const { navigateTo } = useLibraryRoutes();
-  const selectCollection = useCallback((e?: React.MouseEvent) => {
-    const doubleClicked = (e?.detail || 0) > 1;
+  const selectCollection = useCallback(
+    (e?: React.MouseEvent) => {
+      const doubleClicked = (e?.detail || 0) > 1;
 
-    if (!componentPickerMode) {
-      if (doubleClicked) {
-        navigateTo({ collectionId });
+      if (!componentPickerMode) {
+        if (doubleClicked) {
+          navigateTo({ collectionId });
+        } else {
+          openItemSidebar(collectionId, SidebarBodyItemId.CollectionInfo);
+        }
+
+        // In component picker mode, we want to open the sidebar or the collection
+        // without changing the URL
+      } else if (doubleClicked) {
+        setCollectionId?.(collectionId);
       } else {
-        openItemSidebar(collectionId, SidebarBodyItemId.CollectionInfo);
+        openCollectionInfoSidebar(collectionId);
       }
-
-      // In component picker mode, we want to open the sidebar or the collection
-      // without changing the URL
-    } else if (doubleClicked) {
-      setCollectionId?.(collectionId);
-    } else {
-      openCollectionInfoSidebar(collectionId);
-    }
-  }, [collectionId, navigateTo, openItemSidebar, openCollectionInfoSidebar, setCollectionId, componentPickerMode]);
+    },
+    [collectionId, navigateTo, openItemSidebar, openCollectionInfoSidebar, setCollectionId, componentPickerMode],
+  );
 
   return (
     <BaseCard
@@ -169,11 +150,13 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
       description={description}
       tags={tags}
       numChildren={numChildrenCount}
-      actions={!componentPickerMode && (
-        <ActionRow>
-          <CollectionMenu hit={hit} />
-        </ActionRow>
-      )}
+      actions={
+        !componentPickerMode && (
+          <ActionRow>
+            <CollectionMenu hit={hit} />
+          </ActionRow>
+        )
+      }
       onSelect={selectCollection}
       selected={selected}
     />

@@ -1,10 +1,6 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import {
-  render,
-  waitFor,
-  fireEvent,
-} from '@testing-library/react';
+import { render, waitFor, fireEvent } from '@testing-library/react';
 
 import ContentTagsDropDownSelector from './ContentTagsDropDownSelector';
 import { useTaxonomyTagsData } from './data/apiHooks';
@@ -29,7 +25,13 @@ const data = {
 };
 
 const ContentTagsDropDownSelectorComponent = ({
-  taxonomyId, level, lineage, tagsTree, searchTerm, appliedContentTagsTree, stagedContentTagsTree,
+  taxonomyId,
+  level,
+  lineage,
+  tagsTree,
+  searchTerm,
+  appliedContentTagsTree,
+  stagedContentTagsTree,
 }) => (
   <IntlProvider locale="en" messages={{}}>
     <ContentTagsDropDownSelector
@@ -57,7 +59,7 @@ describe('<ContentTagsDropDownSelector />', () => {
   });
 
   async function getComponent(updatedData) {
-    const componentData = (!updatedData ? data : updatedData);
+    const componentData = !updatedData ? data : updatedData;
 
     return render(
       <ContentTagsDropDownSelectorComponent
@@ -84,15 +86,17 @@ describe('<ContentTagsDropDownSelector />', () => {
       tagPages: {
         isLoading: false,
         isError: false,
-        data: [{
-          value: 'Tag 1',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12345,
-          subTagsUrl: null,
-        }],
+        data: [
+          {
+            value: 'Tag 1',
+            externalId: null,
+            childCount: 0,
+            depth: 0,
+            parentValue: null,
+            id: 12345,
+            subTagsUrl: null,
+          },
+        ],
       },
     });
 
@@ -110,15 +114,17 @@ describe('<ContentTagsDropDownSelector />', () => {
       tagPages: {
         isLoading: false,
         isError: false,
-        data: [{
-          value: 'Tag 2',
-          externalId: null,
-          childCount: 1,
-          depth: 0,
-          parentValue: null,
-          id: 12345,
-          subTagsUrl: 'http://localhost:18010/api/content_tagging/v1/taxonomies/4/tags/?parent_tag=Tag%202',
-        }],
+        data: [
+          {
+            value: 'Tag 2',
+            externalId: null,
+            childCount: 1,
+            depth: 0,
+            parentValue: null,
+            id: 12345,
+            subTagsUrl: 'http://localhost:18010/api/content_tagging/v1/taxonomies/4/tags/?parent_tag=Tag%202',
+          },
+        ],
       },
     });
 
@@ -136,15 +142,17 @@ describe('<ContentTagsDropDownSelector />', () => {
       tagPages: {
         isLoading: false,
         isError: false,
-        data: [{
-          value: 'Tag 2',
-          externalId: null,
-          childCount: 1,
-          depth: 0,
-          parentValue: null,
-          id: 12345,
-          subTagsUrl: 'http://localhost:18010/api/content_tagging/v1/taxonomies/4/tags/?parent_tag=Tag%202',
-        }],
+        data: [
+          {
+            value: 'Tag 2',
+            externalId: null,
+            childCount: 1,
+            depth: 0,
+            parentValue: null,
+            id: 12345,
+            subTagsUrl: 'http://localhost:18010/api/content_tagging/v1/taxonomies/4/tags/?parent_tag=Tag%202',
+          },
+        ],
       },
     });
 
@@ -169,15 +177,17 @@ describe('<ContentTagsDropDownSelector />', () => {
       tagPages: {
         isLoading: false,
         isError: false,
-        data: [{
-          value: 'Tag 3',
-          externalId: null,
-          childCount: 0,
-          depth: 1,
-          parentValue: 'Tag 2',
-          id: 12346,
-          subTagsUrl: null,
-        }],
+        data: [
+          {
+            value: 'Tag 3',
+            externalId: null,
+            childCount: 0,
+            depth: 1,
+            parentValue: 'Tag 2',
+            id: 12346,
+            subTagsUrl: null,
+          },
+        ],
       },
     });
 
@@ -197,15 +207,17 @@ describe('<ContentTagsDropDownSelector />', () => {
         isLoading: false,
         isError: false,
         isSuccess: true,
-        data: [{
-          value: 'Tag 1',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12345,
-          subTagsUrl: null,
-        }],
+        data: [
+          {
+            value: 'Tag 1',
+            externalId: null,
+            childCount: 0,
+            depth: 0,
+            parentValue: null,
+            id: 12345,
+            subTagsUrl: null,
+          },
+        ],
       },
     });
 
@@ -217,15 +229,17 @@ describe('<ContentTagsDropDownSelector />', () => {
     });
 
     const updatedSearchTerm = 'test 2';
-    rerender(<ContentTagsDropDownSelectorComponent
-      key={`selector-${data.taxonomyId}`}
-      taxonomyId={data.taxonomyId}
-      level={data.level}
-      tagsTree={data.tagsTree}
-      searchTerm={updatedSearchTerm}
-      appliedContentTagsTree={{}}
-      stagedContentTagsTree={{}}
-    />);
+    rerender(
+      <ContentTagsDropDownSelectorComponent
+        key={`selector-${data.taxonomyId}`}
+        taxonomyId={data.taxonomyId}
+        level={data.level}
+        tagsTree={data.tagsTree}
+        searchTerm={updatedSearchTerm}
+        appliedContentTagsTree={{}}
+        stagedContentTagsTree={{}}
+      />,
+    );
 
     await waitFor(() => {
       expect(useTaxonomyTagsData).toHaveBeenCalledWith(data.taxonomyId, null, 1, updatedSearchTerm);
@@ -233,15 +247,17 @@ describe('<ContentTagsDropDownSelector />', () => {
 
     // Clean search term
     const cleanSearchTerm = '';
-    rerender(<ContentTagsDropDownSelectorComponent
-      key={`selector-${data.taxonomyId}`}
-      taxonomyId={data.taxonomyId}
-      level={data.level}
-      tagsTree={data.tagsTree}
-      searchTerm={cleanSearchTerm}
-      appliedContentTagsTree={{}}
-      stagedContentTagsTree={{}}
-    />);
+    rerender(
+      <ContentTagsDropDownSelectorComponent
+        key={`selector-${data.taxonomyId}`}
+        taxonomyId={data.taxonomyId}
+        level={data.level}
+        tagsTree={data.tagsTree}
+        searchTerm={cleanSearchTerm}
+        appliedContentTagsTree={{}}
+        stagedContentTagsTree={{}}
+      />,
+    );
 
     await waitFor(() => {
       expect(useTaxonomyTagsData).toHaveBeenCalledWith(data.taxonomyId, null, 1, cleanSearchTerm);

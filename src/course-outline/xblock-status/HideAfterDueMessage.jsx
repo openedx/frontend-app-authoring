@@ -2,9 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
-import {
-  VisibilityOff as HideIcon,
-} from '@openedx/paragon/icons';
+import { VisibilityOff as HideIcon } from '@openedx/paragon/icons';
 
 import messages from './messages';
 

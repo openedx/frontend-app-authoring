@@ -15,12 +15,7 @@ import FileInfoModalSidebar from '@src/files-and-videos/files-page/FileInfoModal
 import FileThumbnail from '@src/files-and-videos/files-page/FileThumbnail';
 import FileValidationModal from '@src/files-and-videos/files-page/FileValidationModal';
 import messages from '@src/files-and-videos/files-page/messages';
-import {
-  AccessColumn,
-  ActiveColumn,
-  FileTable,
-  ThumbnailColumn,
-} from '@src/files-and-videos/generic';
+import { AccessColumn, ActiveColumn, FileTable, ThumbnailColumn } from '@src/files-and-videos/generic';
 import { GatedComponentWrapper } from '@src/generic/agreement-gated-feature';
 import { useModels } from '@src/generic/model-store';
 import { DeprecatedReduxState } from '@src/store';
@@ -42,16 +37,19 @@ export const CourseFilesTable = () => {
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id));
-  const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({
-    selectedRows,
-    courseId,
-  }));
+  const handleDownloadFile = (selectedRows) =>
+    dispatch(
+      fetchAssetDownload({
+        selectedRows,
+        courseId,
+      }),
+    );
   const handleAddFile = (files) => {
     handleErrorReset({ errorType: 'add' });
     dispatch(validateAssetFiles(courseId, files));
   };
   const handleFileOverwrite = (close, files) => {
-    Object.values(files).forEach(file => dispatch(addAssetFile(courseId, file, true)));
+    Object.values(files).forEach((file) => dispatch(addAssetFile(courseId, file, true)));
     close();
   };
   const handleLockFile = (fileId, locked) => {
@@ -64,10 +62,11 @@ export const CourseFilesTable = () => {
   };
 
   const thumbnailPreview = (props) => FileThumbnail(props);
-  const infoModalSidebar = (asset) => FileInfoModalSidebar({
-    asset,
-    handleLockedAsset: handleLockFile,
-  });
+  const infoModalSidebar = (asset) =>
+    FileInfoModalSidebar({
+      asset,
+      handleLockedAsset: handleLockFile,
+    });
 
   const assets = useModels('assets', assetIds);
   const data = {

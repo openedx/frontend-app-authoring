@@ -1,7 +1,5 @@
 import { useEffect, useContext, useState } from 'react';
-import {
-  Routes, Route, useNavigate, Link,
-} from 'react-router-dom';
+import { Routes, Route, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppContext, PageWrap } from '@edx/frontend-platform/react';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -31,12 +29,7 @@ import { DeprecatedReduxState } from '@src/store';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { getLoadingStatus, getSavingStatus } from './data/selectors';
-import {
-  addSingleCustomPage,
-  fetchCustomPages,
-  updatePageOrder,
-  updateSingleCustomPage,
-} from './data/thunks';
+import { addSingleCustomPage, fetchCustomPages, updatePageOrder, updateSingleCustomPage } from './data/thunks';
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
 import CustomPageCard from './CustomPageCard';
 import messages from './messages';
@@ -71,7 +64,9 @@ const CustomPages = () => {
 
   const pages = useModels('customPages', customPagesIds);
 
-  const handleAddPage = () => { dispatch(addSingleCustomPage(courseId)); };
+  const handleAddPage = () => {
+    dispatch(addSingleCustomPage(courseId));
+  };
   const handleReorder = () => (newPageOrder) => {
     dispatch(updatePageOrder(courseId, newPageOrder));
   };
@@ -81,11 +76,13 @@ const CustomPages = () => {
       setCurrentPage(null);
       return;
     }
-    dispatch(updateSingleCustomPage({
-      blockId: currentPage,
-      metadata: { displayName: content.metadata.display_name },
-      setCurrentPage,
-    }));
+    dispatch(
+      updateSingleCustomPage({
+        blockId: currentPage,
+        metadata: { displayName: content.metadata.display_name },
+        setCurrentPage,
+      }),
+    );
   };
 
   const addPageStateProps = {
@@ -99,10 +96,12 @@ const CustomPages = () => {
     },
     disabledStates: ['pending'],
   };
-  useEffect(() => { setOrderedPages(pages); }, [customPagesIds, savingStatus]);
+  useEffect(() => {
+    setOrderedPages(pages);
+  }, [customPagesIds, savingStatus]);
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    return (<></>);
+    return <></>;
   }
   if (loadingStatus === RequestStatus.DENIED) {
     return (
@@ -121,7 +120,9 @@ const CustomPages = () => {
             links={[
               {
                 label: 'Content',
-                to: waffleFlags.useNewCourseOutlinePage ? `/course/${courseId}` : `${config.STUDIO_BASE_URL}/course/${courseId}`,
+                to: waffleFlags.useNewCourseOutlinePage
+                  ? `/course/${courseId}`
+                  : `${config.STUDIO_BASE_URL}/course/${courseId}`,
               },
               { label: 'Pages and Resources', to: getPagePath(courseId, 'true', 'tabs') },
             ]}
@@ -132,11 +133,7 @@ const CustomPages = () => {
             <FormattedMessage {...messages.heading} />
           </div>
           <ActionRow.Spacer />
-          <Button
-            iconBefore={Add}
-            onClick={handleAddPage}
-            data-testid="header-add-button"
-          >
+          <Button iconBefore={Add} onClick={handleAddPage} data-testid="header-add-button">
             <FormattedMessage {...messages.addPageHeaderLabel} />
           </Button>
           <Hyperlink
@@ -153,11 +150,26 @@ const CustomPages = () => {
         </ActionRow>
         <hr />
         <Layout
-          lg={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          md={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          sm={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          xs={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          xl={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+          lg={[
+            { span: 9, offset: 0 },
+            { span: 3, offset: 0 },
+          ]}
+          md={[
+            { span: 9, offset: 0 },
+            { span: 3, offset: 0 },
+          ]}
+          sm={[
+            { span: 9, offset: 0 },
+            { span: 3, offset: 0 },
+          ]}
+          xs={[
+            { span: 9, offset: 0 },
+            { span: 3, offset: 0 },
+          ]}
+          xl={[
+            { span: 9, offset: 0 },
+            { span: 3, offset: 0 },
+          ]}
         >
           <Layout.Element>
             <ErrorAlert hideHeading isError={deletePageStatus === RequestStatus.FAILED}>
@@ -184,7 +196,7 @@ const CustomPages = () => {
                     marginBottom: '16px',
                     boxShadow: '0px 1px 5px #ADADAD',
                   }}
-                  actions={(
+                  actions={
                     <CustomPageCard
                       {...{
                         page,
@@ -194,7 +206,7 @@ const CustomPages = () => {
                         setCurrentPage,
                       }}
                     />
-                  )}
+                  }
                 />
               ))}
             </DraggableList>
@@ -226,13 +238,7 @@ const CustomPages = () => {
             <div className="small gray-700">
               <FormattedMessage {...messages.studentViewExplanationBody} />
             </div>
-            <Button
-              data-testid="student-view-example-button"
-              variant="link"
-              size="sm"
-              onClick={open}
-              className="pl-0"
-            >
+            <Button data-testid="student-view-example-button" variant="link" size="sm" onClick={open} className="pl-0">
               <FormattedMessage {...messages.studentViewExampleButton} />
             </Button>
           </Layout.Element>
@@ -259,15 +265,13 @@ const CustomPages = () => {
         <Routes>
           <Route
             path="/editor"
-            element={currentPage && (
-              <PageWrap>
-                <EditModal
-                  courseId={courseId}
-                  pageId={currentPage}
-                  onClose={handleEditClose}
-                />
-              </PageWrap>
-            )}
+            element={
+              currentPage && (
+                <PageWrap>
+                  <EditModal courseId={courseId} pageId={currentPage} onClose={handleEditClose} />
+                </PageWrap>
+              )
+            }
           />
         </Routes>
       </Container>

@@ -23,7 +23,8 @@ const messages = defineMessages({
   },
   stepperExportingDescription: {
     id: 'course-authoring.export.stepper.description.exporting',
-    defaultMessage: 'Creating the export data files (You can now leave this page safely, but avoid making drastic changes to content until this export is complete)',
+    defaultMessage:
+      'Creating the export data files (You can now leave this page safely, but avoid making drastic changes to content until this export is complete)',
   },
   stepperCompressingDescription: {
     id: 'course-authoring.export.stepper.description.compressing',

@@ -3,13 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Button,
-  Icon,
-  IconButton,
-  Stack,
-} from '@openedx/paragon';
+import { ActionRow, Button, Icon, IconButton, Stack } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 
 import messages from './messages';
@@ -24,18 +18,10 @@ const ImportTranscriptCard = ({
     <ActionRow className="h5">
       <FormattedMessage {...messages.importHeader} />
       <ActionRow.Spacer />
-      <IconButton
-        src={Close}
-        iconAs={Icon}
-        onClick={() => setOpen(false)}
-      />
+      <IconButton src={Close} iconAs={Icon} onClick={() => setOpen(false)} />
     </ActionRow>
     <FormattedMessage {...messages.importMessage} />
-    <Button
-      variant="outline-primary"
-      size="sm"
-      onClick={importTranscript}
-    >
+    <Button variant="outline-primary" size="sm" onClick={importTranscript}>
       <FormattedMessage {...messages.importButtonLabel} />
     </Button>
   </Stack>

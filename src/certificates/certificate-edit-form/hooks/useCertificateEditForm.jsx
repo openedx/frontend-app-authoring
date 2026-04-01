@@ -14,7 +14,7 @@ const useCertificateEditForm = (courseId) => {
   const certificates = useSelector(getCertificates);
 
   const handleCertificateSubmit = (values) => {
-    const signatoriesWithoutLocalIds = values.signatories.map(signatory => {
+    const signatoriesWithoutLocalIds = values.signatories.map((signatory) => {
       if (signatory.id && typeof signatory.id === 'string' && signatory.id.startsWith('local-')) {
         const { id, ...rest } = signatory;
         return rest;

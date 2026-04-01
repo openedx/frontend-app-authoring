@@ -33,9 +33,4 @@ export const MOVE_DIRECTIONS = {
   backward: 'backward',
 } as const;
 
-export const BASIC_BLOCK_TYPES = [
-  'course',
-  'chapter',
-  'sequential',
-  'vertical',
-] as const;
+export const BASIC_BLOCK_TYPES = ['course', 'chapter', 'sequential', 'vertical'] as const;

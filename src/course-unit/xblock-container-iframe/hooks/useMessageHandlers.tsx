@@ -37,43 +37,42 @@ export const useMessageHandlers = ({
 }: UseMessageHandlersTypes): MessageHandlersTypes => {
   const { copyToClipboard } = useClipboard();
 
-  return useMemo(() => ({
-    [messageTypes.copyXBlock]: ({ usageId }) => copyToClipboard(usageId),
-    [messageTypes.deleteXBlock]: ({ usageId }) => handleDeleteXBlock(usageId),
-    [messageTypes.unlinkXBlock]: ({ usageId }) => handleUnlinkXBlock(usageId),
-    [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => handleEditXBlock(blockType, usageId),
-    [messageTypes.duplicateXBlock]: ({ usageId }) => handleDuplicateXBlock(usageId),
-    [messageTypes.manageXBlockAccess]: ({ usageId }) => handleManageXBlockAccess(usageId),
-    [messageTypes.scrollToXBlock]: debounce(({ scrollOffset }) => handleScrollToXBlock(scrollOffset), 1000),
-    [messageTypes.toggleCourseXBlockDropdown]: ({
-      courseXBlockDropdownHeight,
-    }) => setIframeOffset(courseXBlockDropdownHeight),
-    [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
-    [messageTypes.closeXBlockEditorModal]: handleCloseLegacyEditorXBlockModal,
-    [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
-    [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
-    [messageTypes.refreshPositions]: handleFinishXBlockDragging,
-    [messageTypes.refreshIframe]: handleRefreshIframe,
-    [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
-    [messageTypes.addNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.adding),
-    [messageTypes.pasteNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.pasting),
-    [messageTypes.copyXBlockLegacy]: /* istanbul ignore next */ () => handleShowProcessingNotification(
-      NOTIFICATION_MESSAGES.copying,
-    ),
-    [messageTypes.hideProcessingNotification]: handleHideProcessingNotification,
-    [messageTypes.handleRedirectToXBlockEditPage]: /* istanbul ignore next */ (payload) => handleEditXBlock(
-      payload.type,
-      payload.locator,
-    ),
-    [messageTypes.xblockSelected]: ({ contentId }) => handleXBlockSelected(contentId),
-  }), [
-    courseId,
-    handleDeleteXBlock,
-    handleUnlinkXBlock,
-    handleDuplicateXBlock,
-    handleManageXBlockAccess,
-    handleScrollToXBlock,
-    copyToClipboard,
-    handleXBlockSelected,
-  ]);
+  return useMemo(
+    () => ({
+      [messageTypes.copyXBlock]: ({ usageId }) => copyToClipboard(usageId),
+      [messageTypes.deleteXBlock]: ({ usageId }) => handleDeleteXBlock(usageId),
+      [messageTypes.unlinkXBlock]: ({ usageId }) => handleUnlinkXBlock(usageId),
+      [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => handleEditXBlock(blockType, usageId),
+      [messageTypes.duplicateXBlock]: ({ usageId }) => handleDuplicateXBlock(usageId),
+      [messageTypes.manageXBlockAccess]: ({ usageId }) => handleManageXBlockAccess(usageId),
+      [messageTypes.scrollToXBlock]: debounce(({ scrollOffset }) => handleScrollToXBlock(scrollOffset), 1000),
+      [messageTypes.toggleCourseXBlockDropdown]: ({ courseXBlockDropdownHeight }) =>
+        setIframeOffset(courseXBlockDropdownHeight),
+      [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
+      [messageTypes.closeXBlockEditorModal]: handleCloseLegacyEditorXBlockModal,
+      [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
+      [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
+      [messageTypes.refreshPositions]: handleFinishXBlockDragging,
+      [messageTypes.refreshIframe]: handleRefreshIframe,
+      [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
+      [messageTypes.addNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.adding),
+      [messageTypes.pasteNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.pasting),
+      [messageTypes.copyXBlockLegacy]: /* istanbul ignore next */ () =>
+        handleShowProcessingNotification(NOTIFICATION_MESSAGES.copying),
+      [messageTypes.hideProcessingNotification]: handleHideProcessingNotification,
+      [messageTypes.handleRedirectToXBlockEditPage]: /* istanbul ignore next */ (payload) =>
+        handleEditXBlock(payload.type, payload.locator),
+      [messageTypes.xblockSelected]: ({ contentId }) => handleXBlockSelected(contentId),
+    }),
+    [
+      courseId,
+      handleDeleteXBlock,
+      handleUnlinkXBlock,
+      handleDuplicateXBlock,
+      handleManageXBlockAccess,
+      handleScrollToXBlock,
+      copyToClipboard,
+      handleXBlockSelected,
+    ],
+  );
 };

@@ -11,26 +11,18 @@ import { localTitleHooks } from './hooks';
 import messages from './messages';
 import EditableHeader from './EditableHeader';
 
-const TitleHeader = ({
-  isInitialized,
-}) => {
+const TitleHeader = ({ isInitialized }) => {
   const intl = useIntl();
-  if (!isInitialized) { return <FormattedMessage {...messages.loading} />; }
+  if (!isInitialized) {
+    return <FormattedMessage {...messages.loading} />;
+  }
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const dispatch = useDispatch();
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const title = useSelector(selectors.app.displayTitle);
 
-  const {
-    inputRef,
-    isEditing,
-    handleChange,
-    handleKeyDown,
-    localTitle,
-    startEditing,
-    cancelEdit,
-    updateTitle,
-  } = localTitleHooks({ dispatch });
+  const { inputRef, isEditing, handleChange, handleKeyDown, localTitle, startEditing, cancelEdit, updateTitle } =
+    localTitleHooks({ dispatch });
 
   if (isEditing) {
     return (
@@ -48,9 +40,7 @@ const TitleHeader = ({
   }
   return (
     <div className="d-flex flex-row align-items-center mt-1">
-      <Truncate.Deprecated>
-        {title}
-      </Truncate.Deprecated>
+      <Truncate.Deprecated>{title}</Truncate.Deprecated>
       <IconButton
         alt={intl.formatMessage(messages.editTitleLabel)}
         iconAs={Icon}

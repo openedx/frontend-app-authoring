@@ -10,17 +10,13 @@ const FormikErrorFeedback = ({ name, children }) => {
 
   return (
     <TransitionReplace>
-      {fieldTouched && fieldError
-        ? (
-          <Form.Control.Feedback type="invalid" hasIcon={false} key={`${name}-error-feedback`}>
-            {fieldError}
-          </Form.Control.Feedback>
-        )
-        : (
-          <React.Fragment key={`${name}-no-error-feedback`}>
-            {children}
-          </React.Fragment>
-        )}
+      {fieldTouched && fieldError ? (
+        <Form.Control.Feedback type="invalid" hasIcon={false} key={`${name}-error-feedback`}>
+          {fieldError}
+        </Form.Control.Feedback>
+      ) : (
+        <React.Fragment key={`${name}-no-error-feedback`}>{children}</React.Fragment>
+      )}
     </TransitionReplace>
   );
 };

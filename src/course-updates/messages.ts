@@ -13,7 +13,8 @@ const messages = defineMessages({
   },
   sectionInfo: {
     id: 'course-authoring.course-updates.section-info',
-    defaultMessage: 'Use course updates to notify students of important dates or exams, highlight particular discussions in the forums, announce schedule changes, and respond to student questions.',
+    defaultMessage:
+      'Use course updates to notify students of important dates or exams, highlight particular discussions in the forums, announce schedule changes, and respond to student questions.',
     description: 'Message describing the use of course updates in a course',
   },
   newUpdateButton: {

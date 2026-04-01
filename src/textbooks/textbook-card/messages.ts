@@ -41,7 +41,8 @@ const descriptions = {
   },
   deleteModalDescription: {
     id: 'course-authoring.textbooks.form.delete-modal.description',
-    defaultMessage: 'Deleting a textbook cannot be undone and once deleted any reference to it in your courseware\'s navigation will also be removed.',
+    defaultMessage:
+      "Deleting a textbook cannot be undone and once deleted any reference to it in your courseware's navigation will also be removed.",
     description: 'Description for the delete modal',
   },
 };

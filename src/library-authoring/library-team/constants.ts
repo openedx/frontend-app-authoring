@@ -19,7 +19,8 @@ export const CHANGE_ROLE_LABEL = {
   [LibraryRole.Admin]: messages.makeMemberAdmin,
   [LibraryRole.Author]: messages.makeMemberAuthor,
   [LibraryRole.Reader]: messages.makeMemberReader,
-  [LibraryRole.Unknown]: { // Won't be used.
+  [LibraryRole.Unknown]: {
+    // Won't be used.
     id: 'library-team-unknown-role',
     defaultMessage: '',
   },

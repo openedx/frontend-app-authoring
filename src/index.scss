@@ -1,42 +1,42 @@
-@use "@openedx/paragon/styles/css/core/custom-media-breakpoints.css" as paragonCustomMediaBreakpoints;
+@use '@openedx/paragon/styles/css/core/custom-media-breakpoints.css' as paragonCustomMediaBreakpoints;
 
-@import "~@edx/frontend-component-header/dist/index";
-@import "assets/scss/variables";
-@import "assets/scss/form";
-@import "assets/scss/utilities";
-@import "assets/scss/animations";
-@import "pages-and-resources/discussions/app-list/AppList";
-@import "advanced-settings/scss/AdvancedSettings";
-@import "grading-settings/scss/GradingSettings";
-@import "studio-home/scss/StudioHome";
-@import "generic/styles";
-@import "schedule-and-details/ScheduleAndDetails";
-@import "course-team/CourseTeam";
-@import "course-updates/CourseUpdates";
-@import "export-page/CourseExportPage";
-@import "import-page/CourseImportPage";
-@import "taxonomy";
-@import "library-authoring";
-@import "files-and-videos";
-@import "content-tags-drawer";
-@import "course-outline/CourseOutline";
-@import "course-unit/CourseUnit";
-@import "course-checklist/CourseChecklist";
-@import "textbooks/Textbooks";
-@import "content-tags-drawer/ContentTagsDropDownSelector";
-@import "content-tags-drawer/ContentTagsCollapsible";
-@import "search-modal";
-@import "search-manager";
-@import "certificates/scss/Certificates";
-@import "group-configurations/GroupConfigurations";
-@import "optimizer-page/scan-results/ScanResults";
-@import "legacy-libraries-migration/";
-@import "container-comparison/";
+@import '~@edx/frontend-component-header/dist/index';
+@import 'assets/scss/variables';
+@import 'assets/scss/form';
+@import 'assets/scss/utilities';
+@import 'assets/scss/animations';
+@import 'pages-and-resources/discussions/app-list/AppList';
+@import 'advanced-settings/scss/AdvancedSettings';
+@import 'grading-settings/scss/GradingSettings';
+@import 'studio-home/scss/StudioHome';
+@import 'generic/styles';
+@import 'schedule-and-details/ScheduleAndDetails';
+@import 'course-team/CourseTeam';
+@import 'course-updates/CourseUpdates';
+@import 'export-page/CourseExportPage';
+@import 'import-page/CourseImportPage';
+@import 'taxonomy';
+@import 'library-authoring';
+@import 'files-and-videos';
+@import 'content-tags-drawer';
+@import 'course-outline/CourseOutline';
+@import 'course-unit/CourseUnit';
+@import 'course-checklist/CourseChecklist';
+@import 'textbooks/Textbooks';
+@import 'content-tags-drawer/ContentTagsDropDownSelector';
+@import 'content-tags-drawer/ContentTagsCollapsible';
+@import 'search-modal';
+@import 'search-manager';
+@import 'certificates/scss/Certificates';
+@import 'group-configurations/GroupConfigurations';
+@import 'optimizer-page/scan-results/ScanResults';
+@import 'legacy-libraries-migration/';
+@import 'container-comparison/';
 
 // To apply the glow effect to the selected Section/Subsection, in the Course Outline
 div.row:has(> div > div.highlight) {
   animation: 5s glow;
-  animation-timing-function: cubic-bezier(1, 0, .72, .04);
+  animation-timing-function: cubic-bezier(1, 0, 0.72, 0.04);
 }
 
 // To apply selection style to selected Section/Subsecion/Units, in the Course Outline
@@ -47,7 +47,7 @@ div.row:has(> div > div.outline-card-selected) {
 // To apply the glow effect to the selected xblock, in the Unit Outline
 div.xblock-highlight {
   animation: 5s glow;
-  animation-timing-function: cubic-bezier(1, 0, .72, .04);
+  animation-timing-function: cubic-bezier(1, 0, 0.72, 0.04);
 }
 
 @keyframes glow {
@@ -73,5 +73,5 @@ mark {
 }
 
 .border-left-purple {
-  border-left: 3px solid #5E35B1 !important;
+  border-left: 3px solid #5e35b1 !important;
 }

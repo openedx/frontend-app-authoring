@@ -1,6 +1,4 @@
-import {
-  render, queryByLabelText, queryByTestId, initializeMocks,
-} from '@src/testUtils';
+import { render, queryByLabelText, queryByTestId, initializeMocks } from '@src/testUtils';
 import { executeThunk } from '@src/utils';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
@@ -38,12 +36,7 @@ describe('AppCard', () => {
   const createComponent = (data) => {
     const wrapper = render(
       <CourseAuthoringProvider courseId={courseId}>
-        <AppCard
-          app={data}
-          onClick={() => jest.fn()}
-          selected={selected}
-          features={[]}
-        />
+        <AppCard app={data} onClick={() => jest.fn()} selected={selected} features={[]} />
       </CourseAuthoringProvider>,
     );
     container = wrapper.container;
@@ -60,20 +53,20 @@ describe('AppCard', () => {
     expect(queryByLabelText(container, labelText, { selector: 'input[type="checkbox"]' })).toBeChecked();
   });
 
-  test.each([
-    [true],
-    [false],
-  ])('providerName and text from the app are displayed with full support %s', async (hasFullSupport) => {
-    const appWithCustomSupport = { ...app, hasFullSupport };
-    const title = appMessages[`appName-${appWithCustomSupport.id}`].defaultMessage;
-    const text = messages[`appDescription-${appWithCustomSupport.id}`].defaultMessage;
+  test.each([[true], [false]])(
+    'providerName and text from the app are displayed with full support %s',
+    async (hasFullSupport) => {
+      const appWithCustomSupport = { ...app, hasFullSupport };
+      const title = appMessages[`appName-${appWithCustomSupport.id}`].defaultMessage;
+      const text = messages[`appDescription-${appWithCustomSupport.id}`].defaultMessage;
 
-    await mockStore(legacyApiResponse);
-    createComponent(appWithCustomSupport);
+      await mockStore(legacyApiResponse);
+      createComponent(appWithCustomSupport);
 
-    expect(queryByTestId(container, 'card-title')).toHaveTextContent(title);
-    expect(queryByTestId(container, 'card-text')).toHaveTextContent(text);
-  });
+      expect(queryByTestId(container, 'card-title')).toHaveTextContent(title);
+      expect(queryByTestId(container, 'card-text')).toHaveTextContent(text);
+    },
+  );
 
   test('full support subtitle shown when hasFullSupport is true', async () => {
     const subtitle = messages.appFullSupport.defaultMessage;

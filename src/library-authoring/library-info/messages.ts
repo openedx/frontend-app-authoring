@@ -73,7 +73,8 @@ const messages = defineMessages({
   },
   discardChangesDescription: {
     id: 'course-authoring.library-authoring.library.discardChangesDescription',
-    defaultMessage: 'Are you sure you want to discard all unpublished changes in this library? This will include changes made by other users',
+    defaultMessage:
+      'Are you sure you want to discard all unpublished changes in this library? This will include changes made by other users',
     description: 'Description text for confirmation modal shown before discard library changes',
   },
   discardChangesDefaultBtnLabel: {

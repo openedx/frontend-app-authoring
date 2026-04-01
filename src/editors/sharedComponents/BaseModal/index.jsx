@@ -1,11 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  ActionRow,
-  ModalDialog,
-  Scrollable,
-} from '@openedx/paragon';
+import { ActionRow, ModalDialog, Scrollable } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
@@ -36,15 +32,11 @@ const BaseModal = ({
     className={className}
   >
     <ModalDialog.Header style={{ zIndex: 1, boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.3)' }}>
-      <ModalDialog.Title>
-        {title}
-      </ModalDialog.Title>
+      <ModalDialog.Title>{title}</ModalDialog.Title>
       {headerComponent}
     </ModalDialog.Header>
     <Scrollable style={bodyStyle}>
-      <ModalDialog.Body>
-        {children}
-      </ModalDialog.Body>
+      <ModalDialog.Body>{children}</ModalDialog.Body>
     </Scrollable>
     <ModalDialog.Footer>
       <ActionRow>

@@ -8,12 +8,12 @@ jest.mock('react', () => {
   return {
     updateState,
     useEffect: jest.fn(),
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
+    useState: jest.fn((val) => [{ state: val }, (newVal) => updateState({ val, newVal })]),
   };
 });
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
-  defineMessages: m => m,
+  defineMessages: (m) => m,
 }));
 
 const state = new MockUseState(hooks);
@@ -69,28 +69,26 @@ describe('groupFeedbackRowHooks', () => {
     test('test associate an answer with the feedback object', () => {
       const mockNewAnswer = 'nEw VAluE';
       output.handleAnswersSelectedChange({ target: { checked: true, value: mockNewAnswer } });
-      expect(updateSettings).toHaveBeenCalledWith(
-        { groupFeedbackList: [{ id: mockId, answers: [mockAnswer, mockNewAnswer], feedback: mockFeedback }] },
-      );
+      expect(updateSettings).toHaveBeenCalledWith({
+        groupFeedbackList: [{ id: mockId, answers: [mockAnswer, mockNewAnswer], feedback: mockFeedback }],
+      });
     });
     test('test unassociate an answer with the feedback object', () => {
       output.handleAnswersSelectedChange({ target: { checked: false, value: mockAnswer } });
-      expect(updateSettings).toHaveBeenCalledWith(
-        { groupFeedbackList: [{ id: mockId, answers: [], feedback: mockFeedback }] },
-      );
+      expect(updateSettings).toHaveBeenCalledWith({
+        groupFeedbackList: [{ id: mockId, answers: [], feedback: mockFeedback }],
+      });
     });
     test('test update feedback text with a groupfeedback', () => {
       const mockNewFeedback = 'nEw fEedBack';
       output.handleFeedbackChange({ target: { checked: false, value: mockNewFeedback } });
-      expect(updateSettings).toHaveBeenCalledWith(
-        { groupFeedbackList: [{ id: mockId, answers: [mockAnswer], feedback: mockNewFeedback }] },
-      );
+      expect(updateSettings).toHaveBeenCalledWith({
+        groupFeedbackList: [{ id: mockId, answers: [mockAnswer], feedback: mockNewFeedback }],
+      });
     });
     test('Delete a Row from the list of feedbacks', () => {
       output.handleDelete();
-      expect(updateSettings).toHaveBeenCalledWith(
-        { groupFeedbackList: [] },
-      );
+      expect(updateSettings).toHaveBeenCalledWith({ groupFeedbackList: [] });
     });
   });
 });

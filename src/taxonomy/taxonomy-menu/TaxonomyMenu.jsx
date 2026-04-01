@@ -1,13 +1,7 @@
 // @ts-check
 import React, { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  useToggle,
-  Button,
-  Dropdown,
-  Icon,
-  IconButton,
-} from '@openedx/paragon';
+import { useToggle, Button, Dropdown, Icon, IconButton } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import { pickBy } from 'lodash';
 import PropTypes from 'prop-types';
@@ -31,9 +25,7 @@ import messages from './messages';
  *   iconMenu?: boolean
  * }>}
  */
-const TaxonomyMenu = ({
-  taxonomy, iconMenu,
-}) => {
+const TaxonomyMenu = ({ taxonomy, iconMenu }) => {
   const intl = useIntl();
   const navigate = useNavigate();
 
@@ -42,17 +34,20 @@ const TaxonomyMenu = ({
 
   const onDeleteTaxonomy = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    deleteTaxonomy({ pk: taxonomy.id }, {
-      onSuccess: () => {
-        if (setToastMessage) {
-          setToastMessage(intl.formatMessage(messages.taxonomyDeleteToast, { name: taxonomy.name }));
-        }
-        navigate('/taxonomies');
+    deleteTaxonomy(
+      { pk: taxonomy.id },
+      {
+        onSuccess: () => {
+          if (setToastMessage) {
+            setToastMessage(intl.formatMessage(messages.taxonomyDeleteToast, { name: taxonomy.name }));
+          }
+          navigate('/taxonomies');
+        },
+        onError: () => {
+          // TODO: display the error to the user
+        },
       },
-      onError: () => {
-        // TODO: display the error to the user
-      },
-    });
+    );
   }, [setToastMessage, taxonomy]);
 
   const [isDeleteDialogOpen, deleteDialogOpen, deleteDialogClose] = useToggle(false);
@@ -61,14 +56,14 @@ const TaxonomyMenu = ({
   const [isManageOrgsModalOpen, manageOrgsModalOpen, manageOrgsModalClose] = useToggle(false);
 
   /**
-    * @typedef {Object} MenuItem
-    * @property {string} title - The title of the menu item
-    * @property {() => void} action - The action to perform when the menu item is clicked
-    * @property {boolean} [show] - Whether or not to show the menu item
-    *
-    * @constant
-    * @type {Record<string, MenuItem>}
-    */
+   * @typedef {Object} MenuItem
+   * @property {string} title - The title of the menu item
+   * @property {() => void} action - The action to perform when the menu item is clicked
+   * @property {boolean} [show] - Whether or not to show the menu item
+   *
+   * @constant
+   * @type {Record<string, MenuItem>}
+   */
   let menuItems = {
     import: {
       title: intl.formatMessage(messages.importMenu),
@@ -107,37 +102,26 @@ const TaxonomyMenu = ({
         />
       )}
       {isExportModalOpen && (
-        <ExportModal
-          isOpen={isExportModalOpen}
-          onClose={exportModalClose}
-          taxonomyId={taxonomy.id}
-        />
+        <ExportModal isOpen={isExportModalOpen} onClose={exportModalClose} taxonomyId={taxonomy.id} />
       )}
       {isImportModalOpen && (
-        <ImportTagsWizard
-          taxonomy={taxonomy}
-          isOpen={isImportModalOpen}
-          onClose={importModalClose}
-          reimport
-        />
+        <ImportTagsWizard taxonomy={taxonomy} isOpen={isImportModalOpen} onClose={importModalClose} reimport />
       )}
       {isManageOrgsModalOpen && (
-        <ManageOrgsModal
-          isOpen={isManageOrgsModalOpen}
-          onClose={manageOrgsModalClose}
-          taxonomyId={taxonomy.id}
-        />
+        <ManageOrgsModal isOpen={isManageOrgsModalOpen} onClose={manageOrgsModalClose} taxonomyId={taxonomy.id} />
       )}
     </>
   );
 
-  const toggleProps = iconMenu ? {
-    as: IconButton,
-    src: MoreVert,
-    iconAs: Icon,
-  } : {
-    as: Button,
-  };
+  const toggleProps = iconMenu
+    ? {
+        as: IconButton,
+        src: MoreVert,
+        iconAs: Icon,
+      }
+    : {
+        as: Button,
+      };
 
   return (
     <Dropdown id={`taxonomy-menu-${taxonomy.id}`} onToggle={(_isOpen, ev) => ev.preventDefault()}>
@@ -157,12 +141,10 @@ const TaxonomyMenu = ({
             key={key}
             data-testid={`taxonomy-menu-${key}`}
             as="button" // Prevents <a> cannot appear as a descendant of <a> warning
-            onClick={
-              (e) => {
-                e.preventDefault();
-                menuItems[key].action();
-              }
-            }
+            onClick={(e) => {
+              e.preventDefault();
+              menuItems[key].action();
+            }}
           >
             {menuItems[key].title}
           </Dropdown.Item>

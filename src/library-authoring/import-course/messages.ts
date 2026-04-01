@@ -53,10 +53,11 @@ const messages = defineMessages({
   },
   helpAndSupportFirstQuestionBody: {
     id: 'course-authoring.library-authoring.import-course.help-and-support.q1.body',
-    defaultMessage: '<p>You can import existing courses into a library in order to reference '
-    + 'course content across courses.</p>'
-    + '<p>Courses with content you or others may want to reuse or reference in the future are '
-    + 'excellent candidates for import.</p>',
+    defaultMessage:
+      '<p>You can import existing courses into a library in order to reference ' +
+      'course content across courses.</p>' +
+      '<p>Courses with content you or others may want to reuse or reference in the future are ' +
+      'excellent candidates for import.</p>',
     description: 'Body of the first question in the Help & Support sidebar',
   },
   helpAndSupportSecondQuestionTitle: {
@@ -66,11 +67,12 @@ const messages = defineMessages({
   },
   helpAndSupportSecondQuestionBody: {
     id: 'course-authoring.library-authoring.import-course.help-and-support.q2.body',
-    defaultMessage: '<p>You can select a course to import and decide whether to import all sections, '
-    + 'subsections, units, or blocks from this course.</p>'
-    + '<p>Not all courses content types can be imported, but this page will convey the status of imports '
-    + 'and share any import errors found while importing your course.</p>'
-    + '<p>For additional details you can review the Library Import documentation.</p>',
+    defaultMessage:
+      '<p>You can select a course to import and decide whether to import all sections, ' +
+      'subsections, units, or blocks from this course.</p>' +
+      '<p>Not all courses content types can be imported, but this page will convey the status of imports ' +
+      'and share any import errors found while importing your course.</p>' +
+      '<p>For additional details you can review the Library Import documentation.</p>',
     description: 'Body of the second question in the Help & Support sidebar',
   },
   importCourseStepperTitle: {
@@ -115,8 +117,9 @@ const messages = defineMessages({
   },
   importCourseInProgressStatusBody: {
     id: 'course-authoring.library-authoring.import-course.review-details.in-progress.body',
-    defaultMessage: '{courseName} is being analyzed for review prior to import. For large courses, this may take some time.'
-                  + ' Please remain on this page.',
+    defaultMessage:
+      '{courseName} is being analyzed for review prior to import. For large courses, this may take some time.' +
+      ' Please remain on this page.',
     description: 'Body of the info card with the in-progress status in the course import modal.',
   },
   importCourseAnalysisSummary: {
@@ -171,7 +174,8 @@ const messages = defineMessages({
   },
   importCourseAnalysisCompleteAllContentBody: {
     id: 'library-authoring.import-course.review-details.analysis-complete.100.body',
-    defaultMessage: 'All course content will imported into a collection in your library called {courseName}. See details below.',
+    defaultMessage:
+      'All course content will imported into a collection in your library called {courseName}. See details below.',
     description: 'Body of the info card when course import analysis is complete and all data can be imported.',
   },
   importCourseAnalysisCompleteSomeContentTitle: {
@@ -181,12 +185,14 @@ const messages = defineMessages({
   },
   importCourseAnalysisCompleteSomeContentBody: {
     id: 'library-authoring.import-course.review-details.analysis-complete.100.body',
-    defaultMessage: '{supportedBlockPercentage}% of course content will be imported into a collection in your library called {courseName}. Some content will not be imported. For details see below.',
+    defaultMessage:
+      '{supportedBlockPercentage}% of course content will be imported into a collection in your library called {courseName}. Some content will not be imported. For details see below.',
     description: 'Body of the info card when course import analysis is complete and some data can be imported.',
   },
   importCourseAnalysisDetailsUnsupportedBlocksBody: {
     id: 'library-authoring.import-course.review-details.analysis-details.unsupportedBlocks.body',
-    defaultMessage: 'Some block types cannot be imported into your library because they’re not yet supported. These blocks will be replaced with a placeholder block in the library. For more information, reference the Help & Support sidebar.',
+    defaultMessage:
+      'Some block types cannot be imported into your library because they’re not yet supported. These blocks will be replaced with a placeholder block in the library. For more information, reference the Help & Support sidebar.',
     description: 'Body of analysis details when some unsupported blocks are present',
   },
   importCourseComponentsUnsupportedInfo: {
@@ -206,7 +212,8 @@ const messages = defineMessages({
   },
   importCourseAnalysisCompleteReimportBody: {
     id: 'library-authoring.import-course.review-details.analysis-complete.reimport.body',
-    defaultMessage: '{courseName} has already been imported into the Library "{libraryName}". If this course is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again.',
+    defaultMessage:
+      '{courseName} has already been imported into the Library "{libraryName}". If this course is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again.',
     description: 'Body of the info card when course import analysis is complete and it was already imported before.',
   },
   importCourseCompleteFailedToastMessage: {
@@ -231,8 +238,9 @@ const messages = defineMessages({
   },
   importSuccessfulBody: {
     id: 'library-authoring.import-course.import-details.import-successful.body',
-    defaultMessage: 'Course {courseName} has been imported successfully.'
-                + ' Imported Course content can be edited and remixed in your Library, and reused in Courses',
+    defaultMessage:
+      'Course {courseName} has been imported successfully.' +
+      ' Imported Course content can be edited and remixed in your Library, and reused in Courses',
     description: 'Body of the import successful card in the import details page',
   },
   importSummaryTitle: {
@@ -287,15 +295,17 @@ const messages = defineMessages({
   },
   importPartialAlertBody: {
     id: 'library-authoring.import-course.import-details.import-partial.alert.title',
-    defaultMessage: '{courseName} has been imported to your library in a collection called {collectionName}.'
-    + ' Some content was not added to your course. See details below.',
+    defaultMessage:
+      '{courseName} has been imported to your library in a collection called {collectionName}.' +
+      ' Some content was not added to your course. See details below.',
     description: 'Body of the alert in the import details page when the migration is in partial import.',
   },
   importPartialBody: {
     id: 'library-authoring.import-course.import-details.import-partial.alert.title',
-    defaultMessage: '<p>{percentage}% of Course {courseName} has been imported successfully.'
-    + ' Imported Course content can be edited and remixed in your Library, and reused in Courses.</p>'
-    + '<p>Details of the import, including reasons some content was not imported are described below</p>',
+    defaultMessage:
+      '<p>{percentage}% of Course {courseName} has been imported successfully.' +
+      ' Imported Course content can be edited and remixed in your Library, and reused in Courses.</p>' +
+      '<p>Details of the import, including reasons some content was not imported are described below</p>',
     description: 'Body of the import details page when the migration is in partial import.',
   },
   importPartialReasonTableBlockName: {
@@ -320,9 +330,10 @@ const messages = defineMessages({
   },
   importBlockedBody: {
     id: 'library-authoring.import-course.review-details.import-blocked.body',
-    defaultMessage: 'This import would exceed the Content Library limit of {limitNumber} items.'
-    + ' To prevent incomplete or lost content, the import has been blocked. For more information,'
-    + ' view the Content Library documentation.',
+    defaultMessage:
+      'This import would exceed the Content Library limit of {limitNumber} items.' +
+      ' To prevent incomplete or lost content, the import has been blocked. For more information,' +
+      ' view the Content Library documentation.',
     description: 'Body for the alert in review details when the import is blocked',
   },
   importNotPossibleTooltip: {

@@ -10,55 +10,40 @@ const onCreateClickMock = jest.fn();
 const onCancelClickMock = jest.fn();
 const onEditClickMock = jest.fn();
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <ContentGroupForm
-      groupNames={contentGroupsMock.groups?.map((group) => group.name)}
-      onCreateClick={onCreateClickMock}
-      onCancelClick={onCancelClickMock}
-      onEditClick={onEditClickMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <ContentGroupForm
+        groupNames={contentGroupsMock.groups?.map((group) => group.name)}
+        onCreateClick={onCreateClickMock}
+        onCancelClick={onCancelClickMock}
+        onEditClick={onEditClickMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ContentGroupForm />', () => {
   it('renders component correctly', () => {
     const { getByText, getByRole, getByTestId } = renderComponent();
 
     expect(getByTestId('content-group-form')).toBeInTheDocument();
-    expect(
-      getByText(messages.newGroupHeader.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByRole('button', { name: messages.cancelButton.defaultMessage }),
-    ).toBeInTheDocument();
-    expect(
-      getByRole('button', { name: messages.createButton.defaultMessage }),
-    ).toBeInTheDocument();
+    expect(getByText(messages.newGroupHeader.defaultMessage)).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.createButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('renders component in edit mode', () => {
-    const {
-      getByText, queryByText, getByRole, getByPlaceholderText,
-    } = renderComponent({
+    const { getByText, queryByText, getByRole, getByPlaceholderText } = renderComponent({
       isEditMode: true,
       overrideValue: 'overrideValue',
     });
-    const newGroupInput = getByPlaceholderText(
-      messages.newGroupInputPlaceholder.defaultMessage,
-    );
+    const newGroupInput = getByPlaceholderText(messages.newGroupInputPlaceholder.defaultMessage);
 
     expect(newGroupInput).toBeInTheDocument();
-    expect(
-      getByText(messages.newGroupHeader.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByRole('button', { name: messages.saveButton.defaultMessage }),
-    ).toBeInTheDocument();
-    expect(
-      queryByText(messages.alertGroupInUsage.defaultMessage),
-    ).not.toBeInTheDocument();
+    expect(getByText(messages.newGroupHeader.defaultMessage)).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
+    expect(queryByText(messages.alertGroupInUsage.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('shows alert if group is used in location with edit mode', () => {
@@ -67,20 +52,14 @@ describe('<ContentGroupForm />', () => {
       overrideValue: 'overrideValue',
       isUsedInLocation: true,
     });
-    expect(
-      getByText(messages.alertGroupInUsage.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.alertGroupInUsage.defaultMessage)).toBeInTheDocument();
   });
 
   it('calls onCreate when the "Create" button is clicked with a valid form', async () => {
     const user = userEvent.setup();
-    const {
-      getByRole, getByPlaceholderText, queryByText,
-    } = renderComponent();
+    const { getByRole, getByPlaceholderText, queryByText } = renderComponent();
     const newGroupNameText = 'New group name';
-    const newGroupInput = getByPlaceholderText(
-      messages.newGroupInputPlaceholder.defaultMessage,
-    );
+    const newGroupInput = getByPlaceholderText(messages.newGroupInputPlaceholder.defaultMessage);
     await user.type(newGroupInput, newGroupNameText);
     const createButton = getByRole('button', {
       name: messages.createButton.defaultMessage,
@@ -91,17 +70,13 @@ describe('<ContentGroupForm />', () => {
     await waitFor(() => {
       expect(onCreateClickMock).toHaveBeenCalledTimes(1);
     });
-    expect(
-      queryByText(messages.requiredError.defaultMessage),
-    ).not.toBeInTheDocument();
+    expect(queryByText(messages.requiredError.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('shows error when the "Create" button is clicked with an invalid form', async () => {
     const user = userEvent.setup();
     const { getByRole, getByPlaceholderText, getByText } = renderComponent();
-    const newGroupInput = getByPlaceholderText(
-      messages.newGroupInputPlaceholder.defaultMessage,
-    );
+    const newGroupInput = getByPlaceholderText(messages.newGroupInputPlaceholder.defaultMessage);
     expect(newGroupInput).toBeInTheDocument();
     await user.clear(newGroupInput);
     const createButton = getByRole('button', {
@@ -111,9 +86,7 @@ describe('<ContentGroupForm />', () => {
     await user.click(createButton);
 
     await waitFor(() => {
-      expect(
-        getByText(messages.requiredError.defaultMessage),
-      ).toBeInTheDocument();
+      expect(getByText(messages.requiredError.defaultMessage)).toBeInTheDocument();
     });
   });
 
@@ -124,9 +97,7 @@ describe('<ContentGroupForm />', () => {
       overrideValue: 'overrideValue',
     });
     const newGroupNameText = 'Updated group name';
-    const newGroupInput = getByPlaceholderText(
-      messages.newGroupInputPlaceholder.defaultMessage,
-    );
+    const newGroupInput = getByPlaceholderText(messages.newGroupInputPlaceholder.defaultMessage);
     await user.type(newGroupInput, newGroupNameText);
     const saveButton = getByRole('button', {
       name: messages.saveButton.defaultMessage,
@@ -135,9 +106,7 @@ describe('<ContentGroupForm />', () => {
     await user.click(saveButton);
 
     await waitFor(() => {
-      expect(
-        queryByText(messages.requiredError.defaultMessage),
-      ).not.toBeInTheDocument();
+      expect(queryByText(messages.requiredError.defaultMessage)).not.toBeInTheDocument();
     });
     expect(onEditClickMock).toHaveBeenCalledTimes(1);
   });
@@ -149,9 +118,7 @@ describe('<ContentGroupForm />', () => {
       overrideValue: contentGroupsMock.groups[0].name,
     });
     const newGroupNameText = contentGroupsMock.groups[2].name;
-    const newGroupInput = getByPlaceholderText(
-      messages.newGroupInputPlaceholder.defaultMessage,
-    );
+    const newGroupInput = getByPlaceholderText(messages.newGroupInputPlaceholder.defaultMessage);
     await user.clear(newGroupInput);
     await user.type(newGroupInput, newGroupNameText);
     const saveButton = getByRole('button', {
@@ -161,9 +128,7 @@ describe('<ContentGroupForm />', () => {
     await user.click(saveButton);
 
     await waitFor(() => {
-      expect(
-        getByText(messages.invalidMessage.defaultMessage),
-      ).toBeInTheDocument();
+      expect(getByText(messages.invalidMessage.defaultMessage)).toBeInTheDocument();
     });
   });
 

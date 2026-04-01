@@ -11,9 +11,7 @@ jest.mock('../../../data/redux', () => ({
   ...jest.requireActual('../../../data/redux'),
   thunkActions: {
     video: {
-      loadVideoData: jest
-        .fn()
-        .mockImplementation(() => ({ type: 'MOCK_ACTION' })),
+      loadVideoData: jest.fn().mockImplementation(() => ({ type: 'MOCK_ACTION' })),
     },
   },
 }));
@@ -66,27 +64,21 @@ describe('VideoUploader', () => {
     });
   });
 
-  const renderComponent = async () => render(
-    <AppProvider store={store} wrapWithRouter={false}>
-      <IntlProvider locale="en">
-        <MemoryRouter
-          initialEntries={[
-            '/some/path?selectedVideoId=id_1&selectedVideoUrl=https://video.com',
-          ]}
-        >
-          <VideoEditorModal isLibrary={false} />
-        </MemoryRouter>
-      </IntlProvider>
-    </AppProvider>,
-  );
+  const renderComponent = async () =>
+    render(
+      <AppProvider store={store} wrapWithRouter={false}>
+        <IntlProvider locale="en">
+          <MemoryRouter initialEntries={['/some/path?selectedVideoId=id_1&selectedVideoUrl=https://video.com']}>
+            <VideoEditorModal isLibrary={false} />
+          </MemoryRouter>
+        </IntlProvider>
+      </AppProvider>,
+    );
 
   it('should render the component and call loadVideoData with correct parameters', async () => {
     await renderComponent();
     await waitFor(() => {
-      expect(thunkActions.video.loadVideoData).toHaveBeenCalledWith(
-        'id_1',
-        'https://video.com',
-      );
+      expect(thunkActions.video.loadVideoData).toHaveBeenCalledWith('id_1', 'https://video.com');
     });
   });
 

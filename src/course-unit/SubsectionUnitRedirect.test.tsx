@@ -1,7 +1,5 @@
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import {
-  initializeMocks, waitFor, render, screen,
-} from '../testUtils';
+import { initializeMocks, waitFor, render, screen } from '../testUtils';
 import SubsectionUnitRedirect from './SubsectionUnitRedirect';
 import { getXBlockApiUrl } from '../course-outline/data/api';
 
@@ -20,11 +18,13 @@ const expectedCourseItemDataWithUnit = {
   },
 };
 
-const expectedCourseItemDataWithoutUnit = [{
-  childInfo: {
-    children: [],
+const expectedCourseItemDataWithoutUnit = [
+  {
+    childInfo: {
+      children: [],
+    },
   },
-}];
+];
 
 const renderSubsectionRedirectPage = () => {
   render(
@@ -44,7 +44,11 @@ jest.mock('react-router-dom', () => {
   const originalModule = jest.requireActual('react-router-dom');
   return {
     ...originalModule,
-    Navigate: ({ to }: { to: string }) => <div data-testid="mock-navigate" data-to={to}>Mocked Navigate</div>,
+    Navigate: ({ to }: { to: string }) => (
+      <div data-testid="mock-navigate" data-to={to}>
+        Mocked Navigate
+      </div>
+    ),
   };
 });
 describe('SubsectionUnitRedirect', () => {
@@ -54,9 +58,7 @@ describe('SubsectionUnitRedirect', () => {
   });
 
   it('navigates to first unit if available', async () => {
-    axiosMock
-      .onGet(getXBlockApiUrl(subsectionId))
-      .reply(200, expectedCourseItemDataWithUnit);
+    axiosMock.onGet(getXBlockApiUrl(subsectionId)).reply(200, expectedCourseItemDataWithUnit);
 
     renderSubsectionRedirectPage();
 
@@ -66,17 +68,13 @@ describe('SubsectionUnitRedirect', () => {
       expect(mockNavigate).toBeInTheDocument();
       expect(mockNavigate).toHaveAttribute(
         'data-to',
-        `/course/${courseId}/container/${encodeURIComponent(
-          'block-v1:edX+DemoX+Demo_Course+type@vertical+block@1',
-        )}`,
+        `/course/${courseId}/container/${encodeURIComponent('block-v1:edX+DemoX+Demo_Course+type@vertical+block@1')}`,
       );
     });
   });
 
   it('navigates to course page with show param if no units present', async () => {
-    axiosMock
-      .onGet(getXBlockApiUrl(subsectionId))
-      .reply(200, expectedCourseItemDataWithoutUnit);
+    axiosMock.onGet(getXBlockApiUrl(subsectionId)).reply(200, expectedCourseItemDataWithoutUnit);
 
     renderSubsectionRedirectPage();
 

@@ -2,14 +2,9 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {
-  useIntl, isRtl, getLocale,
-} from '@edx/frontend-platform/i18n';
+import { useIntl, isRtl, getLocale } from '@edx/frontend-platform/i18n';
 import { Button, useWindowSize, breakpoints } from '@openedx/paragon';
-import {
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-} from '@openedx/paragon/icons';
+import { ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon } from '@openedx/paragon/icons';
 
 import { useModel } from '../../../generic/model-store';
 import { RequestStatus } from '../../../data/constants';
@@ -28,17 +23,17 @@ const SequenceNavigation = ({
 }) => {
   const intl = useIntl();
   const sequenceStatus = useSelector(getSequenceStatus);
-  const {
-    isFirstUnit, isLastUnit, nextLink, previousLink,
-  } = useSequenceNavigationMetadata(courseId, sequenceId, unitId);
+  const { isFirstUnit, isLastUnit, nextLink, previousLink } = useSequenceNavigationMetadata(
+    courseId,
+    sequenceId,
+    unitId,
+  );
   const sequence = useModel('sequences', sequenceId);
 
   const shouldDisplayNotificationTriggerInSequence = useWindowSize().width < breakpoints.small.minWidth;
   const renderUnitButtons = () => {
     if (sequence.unitIds.length === 0 || unitId === null) {
-      return (
-        <div style={{ flexBasis: '100%', minWidth: 0, borderBottom: 'solid 1px #EAEAEA' }} />
-      );
+      return <div style={{ flexBasis: '100%', minWidth: 0, borderBottom: 'solid 1px #EAEAEA' }} />;
     }
 
     return (
@@ -93,15 +88,17 @@ const SequenceNavigation = ({
     return null;
   };
 
-  return sequenceStatus === RequestStatus.SUCCESSFUL && (
-    <nav
-      className={classNames('sequence-navigation d-flex', className)}
-      style={{ width: shouldDisplayNotificationTriggerInSequence ? '90%' : null }}
-    >
-      {renderPreviousButton()}
-      {renderUnitButtons()}
-      {renderNextButton()}
-    </nav>
+  return (
+    sequenceStatus === RequestStatus.SUCCESSFUL && (
+      <nav
+        className={classNames('sequence-navigation d-flex', className)}
+        style={{ width: shouldDisplayNotificationTriggerInSequence ? '90%' : null }}
+      >
+        {renderPreviousButton()}
+        {renderUnitButtons()}
+        {renderNextButton()}
+      </nav>
+    )
   );
 };
 

@@ -1,13 +1,7 @@
 import { setConfig, getConfig } from '@edx/frontend-platform';
 
 import { mockContentTaxonomyTagsData } from '@src/content-tags-drawer/data/api.mocks';
-import {
-  initializeMocks,
-  render as baseRender,
-  screen,
-  waitFor,
-  matchInnerText,
-} from '@src/testUtils';
+import { initializeMocks, render as baseRender, screen, waitFor, matchInnerText } from '@src/testUtils';
 
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarActions, SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
@@ -25,30 +19,28 @@ const mockSearchParam = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
-  useSearchParams: () => [
-    { getAll: (paramName: string) => mockSearchParam(paramName) },
-    () => {},
-  ],
+  useSearchParams: () => [{ getAll: (paramName: string) => mockSearchParam(paramName) }, () => {}],
 }));
 
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockContentTaxonomyTagsData.applyMock();
 
-const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentManagement />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: usageKey,
-          type: SidebarBodyItemId.ComponentInfo,
-        }}
-      >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (usageKey: string, libraryId?: string) =>
+  baseRender(<ComponentManagement />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: usageKey,
+            type: SidebarBodyItemId.ComponentInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<ComponentManagement />', () => {
   beforeEach(() => {
@@ -64,11 +56,7 @@ describe('<ComponentManagement />', () => {
     render(mockLibraryBlockMetadata.usageKeyNeverPublished);
     expect(await screen.findByText('Draft')).toBeInTheDocument();
     expect(await screen.findByText('(Never Published)')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        matchInnerText('SPAN', 'Draft saved on June 20, 2024 at 13:54.'),
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText(matchInnerText('SPAN', 'Draft saved on June 20, 2024 at 13:54.'))).toBeInTheDocument();
   });
 
   it('should render published status', async () => {
@@ -89,21 +77,16 @@ describe('<ComponentManagement />', () => {
       libraryId: mockContentLibrary.libraryIdReadOnly,
       expected: 'read-only',
     },
-  ])(
-    'should render the tagging info as $expected',
-    async ({ libraryId, expected }) => {
-      setConfig({
-        ...getConfig(),
-        ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-      });
-      render(mockLibraryBlockMetadata.usageKeyForTags, libraryId);
-      await waitFor(() => {
-        expect(
-          screen.getByText(`Mocked ${expected} ContentTagsDrawer`),
-        ).toBeInTheDocument();
-      });
-    },
-  );
+  ])('should render the tagging info as $expected', async ({ libraryId, expected }) => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    render(mockLibraryBlockMetadata.usageKeyForTags, libraryId);
+    await waitFor(() => {
+      expect(screen.getByText(`Mocked ${expected} ContentTagsDrawer`)).toBeInTheDocument();
+    });
+  });
 
   it('should not render draft status', async () => {
     setConfig({
@@ -137,9 +120,7 @@ describe('<ComponentManagement />', () => {
     mockSearchParam.mockReturnValue([SidebarActions.JumpToManageCollections]);
     render(mockLibraryBlockMetadata.usageKeyWithCollections);
     expect(await screen.findByText('Collections (1)')).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Manage tags' }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Manage tags' })).not.toBeInTheDocument();
     const tagsSection = await screen.findByRole('button', { name: 'Tags (0)' });
     expect(tagsSection).toHaveAttribute('aria-expanded', 'false');
     const collectionsSection = await screen.findByRole('button', {
@@ -156,9 +137,7 @@ describe('<ComponentManagement />', () => {
     mockSearchParam.mockReturnValue([SidebarActions.JumpToManageTags]);
     render(mockLibraryBlockMetadata.usageKeyForTags);
     expect(await screen.findByText('Collections (0)')).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Manage tags' }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Manage tags' })).not.toBeInTheDocument();
     const tagsSection = await screen.findByRole('button', { name: 'Tags (6)' });
     expect(tagsSection).toHaveAttribute('aria-expanded', 'true');
     const collectionsSection = await screen.findByRole('button', {

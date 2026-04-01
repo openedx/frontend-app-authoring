@@ -7,11 +7,11 @@ const olx = `<problem>
       <choice correct="false"></choice>
     </choicegroup>
   </multiplechoiceresponse>
-</problem>`
+</problem>`;
 
 const markdown = `( ) an incorrect answer
 (x) the correct answer
 ( ) an incorrect answer
-`
+`;
 
 export default { olx, markdown };

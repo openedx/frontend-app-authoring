@@ -1,8 +1,6 @@
 import { camelCaseObject } from '@edx/frontend-platform';
 
-import {
-  initializeMocks, render, screen, within,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, within } from '@src/testUtils';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
 
 import { generateCourseLaunchData } from '../factories/mockApiResponses';
@@ -34,12 +32,10 @@ const renderComponent = (props) => {
 describe('ChecklistSection', () => {
   beforeEach(async () => {
     const { axiosMock } = initializeMocks();
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {
-        useNewCertificatesPage: true,
-        useNewCourseOutlinePage: true,
-      });
+    axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, {
+      useNewCertificatesPage: true,
+      useNewCourseOutlinePage: true,
+    });
   });
 
   it('a heading using the dataHeading prop', () => {
@@ -124,10 +120,7 @@ describe('ChecklistSection', () => {
       const comment = screen.getByTestId('comment-section-gradingPolicy');
       expect(comment.children).toHaveLength(1);
 
-      expect(screen.getByText(
-        'Your current grading policy adds up to',
-        { exact: false },
-      )).toBeVisible();
+      expect(screen.getByText('Your current grading policy adds up to', { exact: false })).toBeVisible();
     });
   });
 
@@ -158,10 +151,7 @@ describe('ChecklistSection', () => {
 
       expect(comment.children).toHaveLength(1);
 
-      expect(screen.getByText(
-        messages.assignmentDeadlinesComment.defaultMessage,
-        { exact: false },
-      )).toBeVisible();
+      expect(screen.getByText(messages.assignmentDeadlinesComment.defaultMessage, { exact: false })).toBeVisible();
 
       expect(assigmentLinks).toHaveLength(2);
 

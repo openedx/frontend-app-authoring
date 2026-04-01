@@ -4,13 +4,7 @@
 /* eslint-disable react/prop-types */
 import React, { useContext } from 'react';
 import Select, { components } from 'react-select';
-import {
-  Collapsible,
-  Button,
-  Spinner,
-  Chip,
-  Icon,
-} from '@openedx/paragon';
+import { Collapsible, Button, Spinner, Chip, Icon } from '@openedx/paragon';
 import { Tag, KeyboardArrowDown, KeyboardArrowUp } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { debounce } from 'lodash';
@@ -51,7 +45,6 @@ const CustomMenu = (props) => {
   return (
     <components.Menu {...props}>
       <div className="bg-white p-3 shadow">
-
         <SelectableBox.Set
           type="checkbox"
           name="tags"
@@ -81,7 +74,7 @@ const CustomMenu = (props) => {
               className="tags-drawer-cancel-button"
               onClick={handleCancelStagedTags}
             >
-              { intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText) }
+              {intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText)}
             </Button>
             <Button
               tabIndex={0}
@@ -91,7 +84,7 @@ const CustomMenu = (props) => {
               disabled={!(value && value.length)}
               onClick={handleCommitStagedTags}
             >
-              { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
+              {intl.formatMessage(messages.collapsibleAddStagedTagsButtonText)}
             </Button>
           </div>
         </div>
@@ -109,12 +102,7 @@ const disableActionKeys = (e) => {
 
 const CustomLoadingIndicator = () => {
   const intl = useIntl();
-  return (
-    <Spinner
-      animation="border"
-      screenReaderText={intl.formatMessage(messages.loadingMessage)}
-    />
-  );
+  return <Spinner animation="border" screenReaderText={intl.formatMessage(messages.loadingMessage)} />;
 };
 
 /**
@@ -122,30 +110,28 @@ const CustomLoadingIndicator = () => {
  * @param {import("react-select").IndicatorsContainerProps&{selectProps: TaxonomySelectProps}} props
  */
 const CustomIndicatorsContainer = (props) => {
-  const {
-    value,
-    handleCommitStagedTags,
-    selectInlineAddRef,
-  } = props.selectProps;
+  const { value, handleCommitStagedTags, selectInlineAddRef } = props.selectProps;
   const intl = useIntl();
   return (
     <components.IndicatorsContainer {...props}>
-      {
-        (value && value.length && (
-          <Button
-            variant="dark"
-            size="sm"
-            className="mt-2 mb-2 rounded-0 inline-add-button"
-            onClick={handleCommitStagedTags}
-            onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
-            ref={selectInlineAddRef}
-            tabIndex={0}
-            onKeyDown={disableActionKeys} // To prevent navigating staged tags when button focused
-          >
-            { intl.formatMessage(messages.collapsibleInlineAddStagedTagsButtonText) }
-          </Button>
-        )) || null
-      }
+      {(value && value.length && (
+        <Button
+          variant="dark"
+          size="sm"
+          className="mt-2 mb-2 rounded-0 inline-add-button"
+          onClick={handleCommitStagedTags}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          ref={selectInlineAddRef}
+          tabIndex={0}
+          onKeyDown={disableActionKeys} // To prevent navigating staged tags when button focused
+        >
+          {intl.formatMessage(messages.collapsibleInlineAddStagedTagsButtonText)}
+        </Button>
+      )) ||
+        null}
       {props.children}
     </components.IndicatorsContainer>
   );
@@ -229,29 +215,19 @@ const CustomIndicatorsContainer = (props) => {
  * @param {TaxonomyData & {contentTags: ContentTagData[]}} props.taxonomyAndTagsData - Taxonomy metadata & applied tags
  * @param {boolean} props.collapsibleState - True if the collapsible is open
  */
-const ContentTagsCollapsible = ({
-  contentId,
-  taxonomyAndTagsData,
-  stagedContentTags,
-  collapsibleState,
-}) => {
+const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData, stagedContentTags, collapsibleState }) => {
   const intl = useIntl();
   const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
-  const selectCancelRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
-  const selectAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
-  const selectInlineAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
-  const selectInlineEditModeRef = React.useRef(/** @type {HTMLButtonElement | null} */(null));
-  const selectRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
+  const selectCancelRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
+  const selectAddRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
+  const selectInlineAddRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
+  const selectInlineEditModeRef = React.useRef(/** @type {HTMLButtonElement | null} */ (null));
+  const selectRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
 
   const [selectMenuIsOpen, setSelectMenuIsOpen] = React.useState(false);
 
-  const {
-    isEditMode,
-    toEditMode,
-    setStagedTags,
-    openCollapsible,
-    closeCollapsible,
-  } = useContext(ContentTagsDrawerContext);
+  const { isEditMode, toEditMode, setStagedTags, openCollapsible, closeCollapsible } =
+    useContext(ContentTagsDrawerContext);
 
   const {
     tagChangeHandler,
@@ -262,57 +238,60 @@ const ContentTagsCollapsible = ({
     checkedTags,
     commitStagedTagsToGlobal,
     updateTags,
-  } = useContentTagsCollapsibleHelper(
-    contentId,
-    stagedContentTags,
-    taxonomyAndTagsData,
-  );
+  } = useContentTagsCollapsibleHelper(contentId, stagedContentTags, taxonomyAndTagsData);
 
   const [searchTerm, setSearchTerm] = React.useState('');
 
-  const handleSelectableBoxChange = React.useCallback((e) => {
-    tagChangeHandler(e.target.value, e.target.checked);
-  }, [tagChangeHandler]);
+  const handleSelectableBoxChange = React.useCallback(
+    (e) => {
+      tagChangeHandler(e.target.value, e.target.checked);
+    },
+    [tagChangeHandler],
+  );
 
   const handleSearch = debounce((term) => {
     setSearchTerm(term.trim());
   }, 500); // Perform search after 500ms
 
-  const handleSearchChange = React.useCallback((value, { action }) => {
-    if (action === 'input-blur') {
-      if (!selectMenuIsOpen) {
-        // Cancel/clear search if focused away from select input and menu closed
-        handleSearch.cancel();
-        setSearchTerm('');
+  const handleSearchChange = React.useCallback(
+    (value, { action }) => {
+      if (action === 'input-blur') {
+        if (!selectMenuIsOpen) {
+          // Cancel/clear search if focused away from select input and menu closed
+          handleSearch.cancel();
+          setSearchTerm('');
+        }
+      } else if (action === 'input-change') {
+        if (value === '') {
+          // No need to debounce when search term cleared. Clear debounce function
+          handleSearch.cancel();
+          setSearchTerm('');
+        } else {
+          handleSearch(value);
+        }
       }
-    } else if (action === 'input-change') {
-      if (value === '') {
-        // No need to debounce when search term cleared. Clear debounce function
-        handleSearch.cancel();
-        setSearchTerm('');
-      } else {
-        handleSearch(value);
-      }
-    }
-  }, [selectMenuIsOpen, setSearchTerm, handleSearch]);
+    },
+    [selectMenuIsOpen, setSearchTerm, handleSearch],
+  );
 
   // onChange handler for react-select component, currently only called when
   // staged tags in the react-select input are removed or fully cleared.
   // The remaining staged tags are passed in as the parameter, so we set the state
   // to the passed in tags
-  const handleStagedTagsMenuChange = React.useCallback((stagedTags) => {
-    // Get tags that were unstaged to remove them from checkbox selector
-    const unstagedTags = stagedContentTags.filter(
-      t1 => !stagedTags.some(t2 => t1.value === t2.value),
-    );
+  const handleStagedTagsMenuChange = React.useCallback(
+    (stagedTags) => {
+      // Get tags that were unstaged to remove them from checkbox selector
+      const unstagedTags = stagedContentTags.filter((t1) => !stagedTags.some((t2) => t1.value === t2.value));
 
-    // Call the `tagChangeHandler` with the unstaged tags to unselect them from the selectbox
-    // and update the staged content tags tree. Since the `handleStagedTagsMenuChange` function is={}
-    // only called when a change occurs in the react-select menu component we know that tags can only be
-    // removed from there, hence the tagChangeHandler is always called with `checked=false`.
-    unstagedTags.forEach(unstagedTag => tagChangeHandler(unstagedTag.value, false));
-    setStagedTags(taxonomyId, stagedTags);
-  }, [taxonomyId, setStagedTags, stagedContentTags, tagChangeHandler]);
+      // Call the `tagChangeHandler` with the unstaged tags to unselect them from the selectbox
+      // and update the staged content tags tree. Since the `handleStagedTagsMenuChange` function is={}
+      // only called when a change occurs in the react-select menu component we know that tags can only be
+      // removed from there, hence the tagChangeHandler is always called with `checked=false`.
+      unstagedTags.forEach((unstagedTag) => tagChangeHandler(unstagedTag.value, false));
+      setStagedTags(taxonomyId, stagedTags);
+    },
+    [taxonomyId, setStagedTags, stagedContentTags, tagChangeHandler],
+  );
 
   const handleCommitStagedTags = React.useCallback(() => {
     commitStagedTagsToGlobal();
@@ -339,14 +318,15 @@ const ContentTagsCollapsible = ({
       setSelectMenuIsOpen(true);
 
       // Determine when to close the menu when navigating with keyboard
-      if (!event.shiftKey) { // Navigating forwards
+      if (!event.shiftKey) {
+        // Navigating forwards
         if (focusedElement === selectAddRef.current) {
           setSelectMenuIsOpen(false);
         } else if (focusedElement === selectCancelRef.current && selectAddRef.current?.disabled) {
           setSelectMenuIsOpen(false);
         }
-      // Navigating backwards
-      // @ts-ignore inputRef actually exists under the current selectRef
+        // Navigating backwards
+        // @ts-ignore inputRef actually exists under the current selectRef
       } else if (event.shiftKey && focusedElement === selectRef.current?.inputRef) {
         setSelectMenuIsOpen(false);
       }
@@ -360,13 +340,16 @@ const ContentTagsCollapsible = ({
   }, [setSelectMenuIsOpen, setSearchTerm]);
 
   // Handles logic to close the select menu when clicking outside
-  const handleOnBlur = React.useCallback((event) => {
-    // Check if a target we are focusing to is an element in our select menu, if not close it
-    const menuClasses = ['dropdown-selector', 'inline-add-button', 'cancel-add-tags-button'];
-    if (!event.relatedTarget || !menuClasses.some(cls => event.relatedTarget.className?.includes(cls))) {
-      setSelectMenuIsOpen(false);
-    }
-  }, [setSelectMenuIsOpen]);
+  const handleOnBlur = React.useCallback(
+    (event) => {
+      // Check if a target we are focusing to is an element in our select menu, if not close it
+      const menuClasses = ['dropdown-selector', 'inline-add-button', 'cancel-add-tags-button'];
+      if (!event.relatedTarget || !menuClasses.some((cls) => event.relatedTarget.className?.includes(cls))) {
+        setSelectMenuIsOpen(false);
+      }
+    },
+    [setSelectMenuIsOpen],
+  );
 
   return (
     <div className="d-flex">
@@ -388,35 +371,34 @@ const ContentTagsCollapsible = ({
         </Collapsible.Trigger>
 
         <Collapsible.Body className="collapsible-body">
-          { Object.keys(appliedContentTagsTree).length === 0 && !isEditMode
-            && (
-              <div className="mb-3" key={taxonomyId}>
-                <p className="text-gray-500">{intl.formatMessage(messages.collapsibleNoTagsAddedText)}
-                  {canTagObject && (
-                    <Button
-                      tabIndex={0}
-                      size="inline"
-                      ref={selectInlineEditModeRef}
-                      variant="link"
-                      className="text-info-500 add-tags-button"
-                      onClick={toEditMode}
-                    >
-                      { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
-                    </Button>
-                  )}
-                </p>
-              </div>
-            )}
-          { Object.keys(appliedContentTagsTree).length !== 0
-            && (
-              <div className="mb-3" key={taxonomyId}>
-                <TagsTree
-                  tags={appliedContentTagsTree}
-                  parentKey={taxonomyId.toString()}
-                  removeTagHandler={removeAppliedTagHandler}
-                />
-              </div>
-            )}
+          {Object.keys(appliedContentTagsTree).length === 0 && !isEditMode && (
+            <div className="mb-3" key={taxonomyId}>
+              <p className="text-gray-500">
+                {intl.formatMessage(messages.collapsibleNoTagsAddedText)}
+                {canTagObject && (
+                  <Button
+                    tabIndex={0}
+                    size="inline"
+                    ref={selectInlineEditModeRef}
+                    variant="link"
+                    className="text-info-500 add-tags-button"
+                    onClick={toEditMode}
+                  >
+                    {intl.formatMessage(messages.collapsibleAddStagedTagsButtonText)}
+                  </Button>
+                )}
+              </p>
+            </div>
+          )}
+          {Object.keys(appliedContentTagsTree).length !== 0 && (
+            <div className="mb-3" key={taxonomyId}>
+              <TagsTree
+                tags={appliedContentTagsTree}
+                parentKey={taxonomyId.toString()}
+                removeTagHandler={removeAppliedTagHandler}
+              />
+            </div>
+          )}
 
           <div className="d-flex taxonomy-tags-selector-menu">
             {isEditMode && (
@@ -433,7 +415,7 @@ const ContentTagsCollapsible = ({
                 menuIsOpen={selectMenuIsOpen}
                 onFocus={onSelectMenuFocus}
                 onKeyDown={handleSelectOnKeyDown}
-                ref={/** @type {React.RefObject} */(selectRef)}
+                ref={/** @type {React.RefObject} */ (selectRef)}
                 isMulti
                 isLoading={updateTags.isPending}
                 isDisabled={updateTags.isPending}
@@ -469,12 +451,7 @@ const ContentTagsCollapsible = ({
         </Collapsible.Body>
       </Collapsible.Advanced>
       <div className="d-flex align-items-start pt-2.5 taxonomy-tags-count-chip">
-        <Chip
-          className="border-0"
-          iconBefore={Tag}
-          iconBeforeAlt="icon-before"
-          disabled={contentTagsCount === 0}
-        >
+        <Chip className="border-0" iconBefore={Tag} iconBeforeAlt="icon-before" disabled={contentTagsCount === 0}>
           {contentTagsCount}
         </Chip>
       </div>

@@ -61,7 +61,7 @@ const slice = createSlice({
       }
     },
     deleteVideoSuccess: (state, { payload }) => {
-      state.videoIds = state.videoIds.filter(id => id !== payload.videoId);
+      state.videoIds = state.videoIds.filter((id) => id !== payload.videoId);
     },
     addVideoById: (state, { payload }) => {
       state.videoIds = [payload.videoId, ...state.videoIds];
@@ -112,6 +112,4 @@ export const {
   failAddVideo,
 } = slice.actions;
 
-export const {
-  reducer,
-} = slice;
+export const { reducer } = slice;

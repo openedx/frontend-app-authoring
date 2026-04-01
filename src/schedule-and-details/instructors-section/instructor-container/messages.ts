@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   instructorNameHelpText: {
     id: 'course-authoring.schedule-section.instructor.name.help-text',
-    defaultMessage: 'Please add the instructor\'s name',
+    defaultMessage: "Please add the instructor's name",
   },
   instructorNameInputPlaceholder: {
     id: 'course-authoring.schedule-section.instructor.name.input.placeholder',
@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   instructorTitleHelpText: {
     id: 'course-authoring.schedule-section.instructor.title.help-text',
-    defaultMessage: 'Please add the instructor\'s title',
+    defaultMessage: "Please add the instructor's title",
   },
   instructorTitleInputPlaceholder: {
     id: 'course-authoring.schedule-section.instructor.title.input.placeholder',
@@ -43,7 +43,7 @@ const messages = defineMessages({
   },
   instructorBioHelpText: {
     id: 'course-authoring.schedule-section.instructor.bio.help-text',
-    defaultMessage: 'Please add the instructor\'s biography',
+    defaultMessage: "Please add the instructor's biography",
   },
   instructorBioInputPlaceholder: {
     id: 'course-authoring.schedule-section.instructor.bio.input.placeholder',

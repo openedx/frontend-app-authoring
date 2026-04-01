@@ -1,8 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Alert, Button, Hyperlink, Truncate,
-} from '@openedx/paragon';
+import { Alert, Button, Hyperlink, Truncate } from '@openedx/paragon';
 import {
   Campaign as CampaignIcon,
   Error as ErrorIcon,
@@ -103,10 +101,7 @@ const PageAlerts = ({
         variant="info"
         onClose={onDismiss}
         actions={[
-          <Button
-            href={discussionsIncontextLearnmoreUrl}
-            target="_blank"
-          >
+          <Button href={discussionsIncontextLearnmoreUrl} target="_blank">
             {intl.formatMessage(messages.discussionNotificationLearnMore)}
           </Button>,
         ]}
@@ -121,31 +116,19 @@ const PageAlerts = ({
   };
 
   const deprecationWarning = () => {
-    const {
-      blocks,
-      deprecatedEnabledBlockTypes,
-    } = deprecatedBlocksInfo || {};
+    const { blocks, deprecatedEnabledBlockTypes } = deprecatedBlocksInfo || {};
 
     if (blocks?.length > 0 || deprecatedEnabledBlockTypes?.length > 0) {
       return (
-        <Alert
-          icon={WarningIcon}
-          variant="warning"
-        >
-          <Alert.Heading>
-            {intl.formatMessage(messages.deprecationWarningTitle)}
-          </Alert.Heading>
+        <Alert icon={WarningIcon} variant="warning">
+          <Alert.Heading>{intl.formatMessage(messages.deprecationWarningTitle)}</Alert.Heading>
           {blocks?.length > 0 && (
             <>
-              <div>
-                {intl.formatMessage(messages.deprecationWarningBlocksText)}
-              </div>
+              <div>{intl.formatMessage(messages.deprecationWarningBlocksText)}</div>
               <ul>
                 {blocks.map(([parentUrl, name]) => (
                   <li key={parentUrl}>
-                    <Hyperlink
-                      destination={parentUrl}
-                    >
+                    <Hyperlink destination={parentUrl}>
                       {name || intl.formatMessage(messages.deprecatedComponentName)}
                     </Hyperlink>
                   </li>
@@ -166,9 +149,7 @@ const PageAlerts = ({
                         target="_blank"
                         showLaunchIcon={false}
                       >
-                        <FormattedMessage
-                          {...messages.advancedSettingLinkText}
-                        />
+                        <FormattedMessage {...messages.advancedSettingLinkText} />
                       </Hyperlink>
                     ),
                   }}
@@ -176,9 +157,7 @@ const PageAlerts = ({
               </div>
               <ul>
                 {deprecatedEnabledBlockTypes.map((name) => (
-                  <li key={name}>
-                    {name}
-                  </li>
+                  <li key={name}>{name}</li>
                 ))}
               </ul>
             </>
@@ -200,46 +179,35 @@ const PageAlerts = ({
           aria-labelledby={intl.formatMessage(advancedSettingsMessages.alertProctoringAriaLabelledby)}
           aria-describedby={intl.formatMessage(advancedSettingsMessages.alertProctoringDescribedby)}
         >
-          <Alert.Heading>
-            {intl.formatMessage(messages.proctoringErrorTitle)}
-          </Alert.Heading>
+          <Alert.Heading>{intl.formatMessage(messages.proctoringErrorTitle)}</Alert.Heading>
           <div className="mb-2">
-            {mfeProctoredExamSettingsUrl
-              ? (
-                <FormattedMessage
-                  {...messages.proctoringErrorText}
-                  values={{
-                    hyperlink: (
-                      <Hyperlink
-                        destination={mfeProctoredExamSettingsUrl}
-                        target="_blank"
-                        showLaunchIcon={false}
-                      >
-                        <FormattedMessage
-                          {...messages.proctoredSettingsLinkText}
-                        />
-                      </Hyperlink>
-                    ),
-                  }}
-                />
-              ) : (
-                <FormattedMessage
-                  {...messages.proctoringErrorText}
-                  values={{
-                    hyperlink: (
-                      <Hyperlink
-                        destination={`${studioBaseUrl}${advanceSettingsUrl}`}
-                        target="_blank"
-                        showLaunchIcon={false}
-                      >
-                        <FormattedMessage
-                          {...messages.advancedSettingLinkText}
-                        />
-                      </Hyperlink>
-                    ),
-                  }}
-                />
-              )}
+            {mfeProctoredExamSettingsUrl ? (
+              <FormattedMessage
+                {...messages.proctoringErrorText}
+                values={{
+                  hyperlink: (
+                    <Hyperlink destination={mfeProctoredExamSettingsUrl} target="_blank" showLaunchIcon={false}>
+                      <FormattedMessage {...messages.proctoredSettingsLinkText} />
+                    </Hyperlink>
+                  ),
+                }}
+              />
+            ) : (
+              <FormattedMessage
+                {...messages.proctoringErrorText}
+                values={{
+                  hyperlink: (
+                    <Hyperlink
+                      destination={`${studioBaseUrl}${advanceSettingsUrl}`}
+                      target="_blank"
+                      showLaunchIcon={false}
+                    >
+                      <FormattedMessage {...messages.advancedSettingLinkText} />
+                    </Hyperlink>
+                  ),
+                }}
+              />
+            )}
           </div>
         </AlertProctoringError>
       );
@@ -256,20 +224,17 @@ const PageAlerts = ({
       return (
         <AlertMessage
           title={intl.formatMessage(messages.newFileAlertTitle, { newFilesLen: pasteFileNotices.newFiles.length })}
-          description={intl.formatMessage(
-            messages.newFileAlertDesc,
-            { newFilesLen: pasteFileNotices.newFiles.length, newFilesStr: pasteFileNotices.newFiles.join(', ') },
-          )}
+          description={intl.formatMessage(messages.newFileAlertDesc, {
+            newFilesLen: pasteFileNotices.newFiles.length,
+            newFilesStr: pasteFileNotices.newFiles.join(', '),
+          })}
           dismissible
           show
           icon={CampaignIcon}
           variant="info"
           onClose={onDismiss}
           actions={[
-            <Button
-              as={Link}
-              to={getAssetsUrl()}
-            >
+            <Button as={Link} to={getAssetsUrl()}>
               {intl.formatMessage(messages.newFileAlertAction)}
             </Button>,
           ]}
@@ -288,10 +253,10 @@ const PageAlerts = ({
       return (
         <AlertMessage
           title={intl.formatMessage(messages.errorFileAlertTitle)}
-          description={intl.formatMessage(
-            messages.errorFileAlertDesc,
-            { errorFilesLen: pasteFileNotices.errorFiles.length, errorFilesStr: pasteFileNotices.errorFiles.join(', ') },
-          )}
+          description={intl.formatMessage(messages.errorFileAlertDesc, {
+            errorFilesLen: pasteFileNotices.errorFiles.length,
+            errorFilesStr: pasteFileNotices.errorFiles.join(', '),
+          })}
           dismissible
           show
           icon={WarningIcon}
@@ -311,27 +276,20 @@ const PageAlerts = ({
     if (pasteFileNotices?.conflictingFiles?.length) {
       return (
         <AlertMessage
-          title={intl.formatMessage(
-            messages.conflictingFileAlertTitle,
-            { conflictingFilesLen: pasteFileNotices.conflictingFiles.length },
-          )}
-          description={intl.formatMessage(
-            messages.conflictingFileAlertDesc,
-            {
-              conflictingFilesLen: pasteFileNotices.conflictingFiles.length,
-              conflictingFilesStr: pasteFileNotices.conflictingFiles.join(', '),
-            },
-          )}
+          title={intl.formatMessage(messages.conflictingFileAlertTitle, {
+            conflictingFilesLen: pasteFileNotices.conflictingFiles.length,
+          })}
+          description={intl.formatMessage(messages.conflictingFileAlertDesc, {
+            conflictingFilesLen: pasteFileNotices.conflictingFiles.length,
+            conflictingFilesStr: pasteFileNotices.conflictingFiles.join(', '),
+          })}
           dismissible
           show
           icon={WarningIcon}
           variant="warning"
           onClose={onDismiss}
           actions={[
-            <Button
-              as={Link}
-              to={getAssetsUrl()}
-            >
+            <Button as={Link} to={getAssetsUrl()}>
               {intl.formatMessage(messages.newFileAlertAction)}
             </Button>,
           ]}
@@ -342,81 +300,68 @@ const PageAlerts = ({
   };
 
   const renderApiErrors = () => {
-    let errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
-      switch (v.type) {
-        case API_ERROR_TYPES.forbidden: {
-          const description = intl.formatMessage(messages.forbiddenAlertBody, {
-            LMS: (
-              <Hyperlink
-                destination={`${getConfig().LMS_BASE_URL}`}
-                target="_blank"
-                showLaunchIcon={false}
-              >
-                {intl.formatMessage(messages.forbiddenAlertLmsUrl)}
-              </Hyperlink>
-            ),
-          });
-          return {
-            key: k,
-            desc: description,
-            title: intl.formatMessage(messages.forbiddenAlert),
-            dismissible: v.dismissible,
-          };
+    let errorList = Object.entries(errors)
+      .filter((obj) => obj[1] !== null)
+      .map(([k, v]) => {
+        switch (v.type) {
+          case API_ERROR_TYPES.forbidden: {
+            const description = intl.formatMessage(messages.forbiddenAlertBody, {
+              LMS: (
+                <Hyperlink destination={`${getConfig().LMS_BASE_URL}`} target="_blank" showLaunchIcon={false}>
+                  {intl.formatMessage(messages.forbiddenAlertLmsUrl)}
+                </Hyperlink>
+              ),
+            });
+            return {
+              key: k,
+              desc: description,
+              title: intl.formatMessage(messages.forbiddenAlert),
+              dismissible: v.dismissible,
+            };
+          }
+          case API_ERROR_TYPES.serverError: {
+            const description = (
+              <Truncate.Deprecated lines={2}>
+                {v.data || intl.formatMessage(messages.serverErrorAlertBody)}
+              </Truncate.Deprecated>
+            );
+            return {
+              key: k,
+              desc: description,
+              title: intl.formatMessage(messages.serverErrorAlert),
+              dismissible: v.dismissible,
+            };
+          }
+          case API_ERROR_TYPES.networkError:
+            return {
+              key: k,
+              title: intl.formatMessage(messages.networkErrorAlert),
+              dismissible: v.dismissible,
+            };
+          default:
+            return {
+              key: k,
+              title: v.data,
+              dismissible: v.dismissible,
+            };
         }
-        case API_ERROR_TYPES.serverError: {
-          const description = (
-            <Truncate.Deprecated lines={2}>
-              {v.data || intl.formatMessage(messages.serverErrorAlertBody)}
-            </Truncate.Deprecated>
-          );
-          return {
-            key: k,
-            desc: description,
-            title: intl.formatMessage(messages.serverErrorAlert),
-            dismissible: v.dismissible,
-          };
-        }
-        case API_ERROR_TYPES.networkError:
-          return {
-            key: k,
-            title: intl.formatMessage(messages.networkErrorAlert),
-            dismissible: v.dismissible,
-          };
-        default:
-          return {
-            key: k,
-            title: v.data,
-            dismissible: v.dismissible,
-          };
-      }
-    });
+      });
     errorList = uniqBy(errorList, 'title');
     if (!errorList?.length) {
       return null;
     }
-    return (
-      errorList.map((msgObj) => (
-        msgObj.dismissible ? (
-          <ErrorAlert
-            isError
-            hideHeading
-            key={msgObj.key}
-            dismissError={() => dispatch(dismissError(msgObj.key))}
-          >
-            <Alert.Heading>{msgObj.title}</Alert.Heading>
-            {msgObj.desc}
-          </ErrorAlert>
-        ) : (
-          <Alert
-            variant="danger"
-            icon={ErrorIcon}
-            key={msgObj.key}
-          >
-            <Alert.Heading>{msgObj.title}</Alert.Heading>
-            {msgObj.desc}
-          </Alert>
-        )
-      ))
+    return errorList.map((msgObj) =>
+      msgObj.dismissible ? (
+        <ErrorAlert isError hideHeading key={msgObj.key} dismissError={() => dispatch(dismissError(msgObj.key))}>
+          <Alert.Heading>{msgObj.title}</Alert.Heading>
+          {msgObj.desc}
+        </ErrorAlert>
+      ) : (
+        <Alert variant="danger" icon={ErrorIcon} key={msgObj.key}>
+          <Alert.Heading>{msgObj.title}</Alert.Heading>
+          {msgObj.desc}
+        </Alert>
+      ),
     );
   };
 
@@ -477,17 +422,19 @@ PageAlerts.propTypes = {
     deprecatedEnabledBlockTypes: PropTypes.arrayOf(PropTypes.string),
     advanceSettingsUrl: PropTypes.string,
   }),
-  proctoringErrors: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string,
-    message: PropTypes.string,
-    model: PropTypes.shape({
-      deprecated: PropTypes.bool,
-      displayName: PropTypes.string,
-      help: PropTypes.string,
-      hideOnEnabledPublisher: PropTypes.bool,
+  proctoringErrors: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string,
+      message: PropTypes.string,
+      model: PropTypes.shape({
+        deprecated: PropTypes.bool,
+        displayName: PropTypes.string,
+        help: PropTypes.string,
+        hideOnEnabledPublisher: PropTypes.bool,
+      }),
+      value: PropTypes.string,
     }),
-    value: PropTypes.string,
-  })),
+  ),
   mfeProctoredExamSettingsUrl: PropTypes.string,
   advanceSettingsUrl: PropTypes.string,
   savingStatus: PropTypes.string,

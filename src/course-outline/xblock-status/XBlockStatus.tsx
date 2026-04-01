@@ -10,15 +10,11 @@ import NeverShowAssessmentResultMessage from './NeverShowAssessmentResultMessage
 
 interface XBlockStatusProps {
   isSelfPaced: boolean;
-  isCustomRelativeDatesActive: boolean,
-  blockData: XBlock | UnitXBlock,
+  isCustomRelativeDatesActive: boolean;
+  blockData: XBlock | UnitXBlock;
 }
 
-const XBlockStatus = ({
-  isSelfPaced,
-  isCustomRelativeDatesActive,
-  blockData,
-}: XBlockStatusProps) => {
+const XBlockStatus = ({ isSelfPaced, isCustomRelativeDatesActive, blockData }: XBlockStatusProps) => {
   const {
     category,
     explanatoryMessage,
@@ -73,9 +69,7 @@ const XBlockStatus = ({
           relativeWeeksDue={relativeWeeksDue}
         />
       )}
-      {hideAfterDue && (
-        <HideAfterDueMessage isSelfPaced={isSelfPaced} />
-      )}
+      {hideAfterDue && <HideAfterDueMessage isSelfPaced={isSelfPaced} />}
       <StatusMessages
         isVertical={isVertical}
         staffOnlyMessage={staffOnlyMessage}
@@ -84,11 +78,7 @@ const XBlockStatus = ({
         userPartitionInfo={userPartitionInfo}
         hasPartitionGroupComponents={hasPartitionGroupComponents}
       />
-      <GradingPolicyAlert
-        graded={graded}
-        gradingType={gradingType}
-        courseGraders={courseGraders}
-      />
+      <GradingPolicyAlert graded={graded} gradingType={gradingType} courseGraders={courseGraders} />
     </div>
   );
 };

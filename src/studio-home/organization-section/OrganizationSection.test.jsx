@@ -56,12 +56,7 @@ describe('<OrganizationSection />', () => {
 
   it('should change path after selecting org', () => {
     const selectedOrgStr = 'edX';
-    const {
-      getByPlaceholderText,
-      getByRole,
-      getByText,
-      getByDisplayValue,
-    } = render(<RootWrapper />);
+    const { getByPlaceholderText, getByRole, getByText, getByDisplayValue } = render(<RootWrapper />);
 
     const orgInput = getByPlaceholderText(messages.organizationInputPlaceholder.defaultMessage);
     act(() => {

@@ -1,14 +1,12 @@
 import React from 'react';
-import {
-  render, screen, fireEvent, initializeMocks,
-} from '../../../../../../../../testUtils';
+import { render, screen, fireEvent, initializeMocks } from '../../../../../../../../testUtils';
 import FeedbackControl from './FeedbackControl';
 
-jest.mock('../../../../../../../sharedComponents/ExpandableTextArea', () => jest.fn(({
-  id, value, setContent, placeholder,
-}) => (
-  <textarea id={id} value={value} placeholder={placeholder} onChange={e => setContent(e.target.value)} />
-)));
+jest.mock('../../../../../../../sharedComponents/ExpandableTextArea', () =>
+  jest.fn(({ id, value, setContent, placeholder }) => (
+    <textarea id={id} value={value} placeholder={placeholder} onChange={(e) => setContent(e.target.value)} />
+  )),
+);
 
 const defaultProps = {
   feedback: 'Initial feedback',
@@ -50,12 +48,7 @@ describe('FeedbackControl', () => {
   });
 
   it('renders with different isLibrary, images, and learningContextId', () => {
-    render(<FeedbackControl
-      {...defaultProps}
-      isLibrary
-      images={{ img1: 'url' }}
-      learningContextId="lc2"
-    />);
+    render(<FeedbackControl {...defaultProps} isLibrary images={{ img1: 'url' }} learningContextId="lc2" />);
     expect(screen.getByRole('textbox', { name: '' })).toBeInTheDocument();
   });
 

@@ -1,12 +1,12 @@
-@import "./breadcrumbs/Breadcrumbs";
-@import "./course-sequence/CourseSequence";
-@import "./add-component/AddComponent";
-@import "./legacy-sidebar/LegacySidebar";
-@import "./unit-sidebar/unit-info/PublishControls";
-@import "./header-title/HeaderTitle";
-@import "./move-modal";
-@import "./preview-changes";
-@import "./xblock-container-iframe";
+@import './breadcrumbs/Breadcrumbs';
+@import './course-sequence/CourseSequence';
+@import './add-component/AddComponent';
+@import './legacy-sidebar/LegacySidebar';
+@import './unit-sidebar/unit-info/PublishControls';
+@import './header-title/HeaderTitle';
+@import './move-modal';
+@import './preview-changes';
+@import './xblock-container-iframe';
 
 .course-unit {
   min-width: 900px;
@@ -23,10 +23,10 @@
 
 .unit-header-status-bar {
   .draft-badge {
-   background-color: #B4610E; 
-   color: white;
+    background-color: #b4610e;
+    color: white;
   }
-  
+
   .badge-label {
     margin-top: 2px;
   }

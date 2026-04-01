@@ -12,7 +12,7 @@ import { useModel } from '../../../generic/model-store';
 
 const AppConfigFormSaveButton = ({ labelText }) => {
   const intl = useIntl();
-  const saveStatus = useSelector(state => state.discussions.saveStatus);
+  const saveStatus = useSelector((state) => state.discussions.saveStatus);
   const { selectedAppId } = useSelector((state) => state.discussions);
 
   const app = useModel('apps', selectedAppId);
@@ -27,9 +27,12 @@ const AppConfigFormSaveButton = ({ labelText }) => {
     // https://developer.mozilla.org/en-US/docs/Web/API/Event/Event
     // cancelable: (optional) a Boolean indicating whether the event can be canceled. The default is false.
     // cancelable: true cancels the untrusted event and safari, chrome cancel the untrusted event by default
-    formRef.current.dispatchEvent(new Event('submit', {
-      cancelable: true, bubbles: true,
-    }));
+    formRef.current.dispatchEvent(
+      new Event('submit', {
+        cancelable: true,
+        bubbles: true,
+      }),
+    );
   }, [formRef]);
 
   return (

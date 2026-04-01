@@ -88,7 +88,8 @@ const messages = defineMessages({
   },
   localChangeInTextAlert: {
     id: 'course-authoring.container-comparison.text-with-local-change.alert',
-    defaultMessage: 'The only change is to {count, plural, one {text block <b>{blockName}</b> which has been edited} other {<b>{count} text blocks</b> which have been edited}} in this course. Accepting will not remove local edits.',
+    defaultMessage:
+      'The only change is to {count, plural, one {text block <b>{blockName}</b> which has been edited} other {<b>{count} text blocks</b> which have been edited}} in this course. Accepting will not remove local edits.',
     description: 'Alert to show if the only change is on text components with local overrides.',
   },
   newContainer: {

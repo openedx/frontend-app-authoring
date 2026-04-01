@@ -7,24 +7,52 @@ import EditProblemView from './index';
 const { saveBlock } = require('../../../../hooks');
 const { saveWarningModalToggle } = require('./hooks');
 
-jest.mock('./AnswerWidget', () => function mockAnswerWidget() {
-  return <div>AnswerWidget</div>;
-});
-jest.mock('./SettingsWidget', () => function mockSettingsWidget() {
-  return <div>SettingsWidget</div>;
-});
-jest.mock('./QuestionWidget', () => function mmockQuestionWidget() {
-  return <div>QuestionWidget</div>;
-});
-jest.mock('../../../EditorContainer', () => function mockEditorContainer({ children }) {
-  return <section>{children}</section>;
-});
-jest.mock('../../../../sharedComponents/RawEditor', () => function mockRawEditor({ lang, content }) {
-  return <div>{lang}:{content}</div>;
-});
-jest.mock('./ExplanationWidget', () => function mockExplanationWidget() {
-  return <div>ExplanationWidget</div>;
-});
+jest.mock(
+  './AnswerWidget',
+  () =>
+    function mockAnswerWidget() {
+      return <div>AnswerWidget</div>;
+    },
+);
+jest.mock(
+  './SettingsWidget',
+  () =>
+    function mockSettingsWidget() {
+      return <div>SettingsWidget</div>;
+    },
+);
+jest.mock(
+  './QuestionWidget',
+  () =>
+    function mmockQuestionWidget() {
+      return <div>QuestionWidget</div>;
+    },
+);
+jest.mock(
+  '../../../EditorContainer',
+  () =>
+    function mockEditorContainer({ children }) {
+      return <section>{children}</section>;
+    },
+);
+jest.mock(
+  '../../../../sharedComponents/RawEditor',
+  () =>
+    function mockRawEditor({ lang, content }) {
+      return (
+        <div>
+          {lang}:{content}
+        </div>
+      );
+    },
+);
+jest.mock(
+  './ExplanationWidget',
+  () =>
+    function mockExplanationWidget() {
+      return <div>ExplanationWidget</div>;
+    },
+);
 jest.mock('../../../../hooks', () => ({
   saveBlock: jest.fn(),
 }));

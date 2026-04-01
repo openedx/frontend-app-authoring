@@ -4,32 +4,17 @@ import { Form, SwitchControl } from '@openedx/paragon';
 
 import './FormSwitchGroup.scss';
 
-const FormSwitchGroup = ({
-  id,
-  name,
-  label,
-  helpText,
-  className,
-  onChange,
-  onBlur,
-  checked,
-  disabled,
-}) => {
+const FormSwitchGroup = ({ id, name, label, helpText, className, onChange, onBlur, checked, disabled }) => {
   const helpTextId = `${id}HelpText`;
 
   // Note that we use controlId here _and_ set some IDs and aria-describedby attributes manually.
   // controlId doesn't cover Form.Switch properly, so controlId is just helping to attach
   // a 'for' attribute to the Label.
   return (
-    <Form.Group
-      controlId={id}
-      className={className}
-    >
+    <Form.Group controlId={id} className={className}>
       <div className="d-flex flex-column">
         <div className="d-flex flex-row justify-content-between align-items-center pb-2">
-          <Form.Label className="h4 text-primary-500 m-0">
-            {label}
-          </Form.Label>
+          <Form.Label className="h4 text-primary-500 m-0">{label}</Form.Label>
           <SwitchControl
             id={id}
             name={name}
@@ -40,10 +25,7 @@ const FormSwitchGroup = ({
             disabled={disabled}
           />
         </div>
-        <Form.Text
-          className="mt-0 text-gray-700 helper-text"
-          id={helpTextId}
-        >
+        <Form.Text className="mt-0 text-gray-700 helper-text" id={helpTextId}>
           {helpText}
         </Form.Text>
       </div>

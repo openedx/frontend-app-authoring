@@ -27,7 +27,8 @@ const messages = defineMessages({
   },
   stepperUnpackingDescription: {
     id: 'course-authoring.import.stepper.description.unpacking',
-    defaultMessage: 'Expanding and preparing folder/file structure (You can now leave this page safely, but avoid making drastic changes to content until this import is complete)',
+    defaultMessage:
+      'Expanding and preparing folder/file structure (You can now leave this page safely, but avoid making drastic changes to content until this import is complete)',
   },
   stepperVerifyingDescription: {
     id: 'course-authoring.import.stepper.description.verifying',
@@ -35,7 +36,8 @@ const messages = defineMessages({
   },
   stepperUpdatingDescription: {
     id: 'course-authoring.import.stepper.description.updating',
-    defaultMessage: 'Integrating your imported content into this course. This process might take longer with larger courses.',
+    defaultMessage:
+      'Integrating your imported content into this course. This process might take longer with larger courses.',
   },
   stepperSuccessDescription: {
     id: 'course-authoring.import.stepper.description.success',

@@ -1,15 +1,5 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Stack,
-  Tab,
-  Tabs,
-  Dropdown,
-  Icon,
-  IconButton,
-  useToggle,
-  Alert,
-} from '@openedx/paragon';
+import { Button, Stack, Tab, Tabs, Dropdown, Icon, IconButton, useToggle, Alert } from '@openedx/paragon';
 import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { InfoOutline, MoreVert } from '@openedx/paragon/icons';
@@ -36,7 +26,7 @@ import { ContainerPublisher } from './ContainerPublisher';
 import { PublishDraftButton, PublishedChip } from '../generic/publish-status-buttons';
 
 type ContainerPreviewProps = {
-  containerId: string,
+  containerId: string;
 };
 
 const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
@@ -71,17 +61,12 @@ const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      {isConfirmingDelete && (
-        <ContainerDeleter
-          close={cancelDelete}
-          containerId={containerId}
-        />
-      )}
+      {isConfirmingDelete && <ContainerDeleter close={cancelDelete} containerId={containerId} />}
     </>
   );
 };
 
-const ContainerPreview = ({ containerId } : ContainerPreviewProps) => {
+const ContainerPreview = ({ containerId }: ContainerPreviewProps) => {
   const containerType = getBlockType(containerId);
   if (containerType === ContainerType.Unit) {
     return <LibraryUnitBlocks unitId={containerId} readOnly />;
@@ -94,9 +79,9 @@ const ContainerActions = ({
   containerType,
   hasUnpublishedChanges,
 }: {
-  containerId: string,
-  containerType: string,
-  hasUnpublishedChanges: boolean,
+  containerId: string;
+  containerType: string;
+  hasUnpublishedChanges: boolean;
 }) => {
   const intl = useIntl();
   const { libraryId } = useOptionalLibraryContext();
@@ -104,17 +89,10 @@ const ContainerActions = ({
   const { insideUnit, insideSubsection, insideSection } = useLibraryRoutes();
   const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
 
-  const showOpenButton = libraryId && !componentPickerMode && !(
-    insideUnit || insideSubsection || insideSection
-  );
+  const showOpenButton = libraryId && !componentPickerMode && !(insideUnit || insideSubsection || insideSection);
 
   if (isPublisherOpen) {
-    return (
-      <ContainerPublisher
-        handleClose={closePublisher}
-        containerId={containerId}
-      />
-    );
+    return <ContainerPublisher handleClose={closePublisher} containerId={containerId} />;
   }
 
   return (
@@ -129,19 +107,16 @@ const ContainerActions = ({
           {intl.formatMessage(messages.openButton)}
         </Button>
       )}
-      {!componentPickerMode && (
-        !hasUnpublishedChanges ? (
+      {!componentPickerMode &&
+        (!hasUnpublishedChanges ? (
           <div className="m-1 flex-grow-1">
             <PublishedChip />
           </div>
         ) : (
           <div className="flex-grow-1">
-            <PublishDraftButton
-              onClick={openPublisher}
-            />
+            <PublishDraftButton onClick={openPublisher} />
           </div>
-        )
-      )}
+        ))}
       {showOpenButton && (
         <div className="mt-1">
           <ContainerMenu containerId={containerId} />
@@ -162,22 +137,14 @@ const ContainerSettings = () => (
 );
 const ContainerInfo = () => {
   const intl = useIntl();
-  const {
-    defaultTab,
-    hiddenTabs,
-    sidebarTab,
-    setSidebarTab,
-    sidebarItemInfo,
-    resetSidebarAction,
-  } = useSidebarContext();
+  const { defaultTab, hiddenTabs, sidebarTab, setSidebarTab, sidebarItemInfo, resetSidebarAction } =
+    useSidebarContext();
   const containerId = sidebarItemInfo?.id;
   const containerType = containerId ? getBlockType(containerId) : undefined;
   const { data: container } = useContainer(containerId);
 
   const defaultContainerTab = defaultTab.container;
-  const tab: ContainerInfoTab = (
-    sidebarTab && isContainerInfoTab(sidebarTab)
-  ) ? sidebarTab : defaultContainerTab;
+  const tab: ContainerInfoTab = sidebarTab && isContainerInfoTab(sidebarTab) ? sidebarTab : defaultContainerTab;
 
   /* istanbul ignore next */
   const handleTabChange = (newTab: ContainerInfoTab) => {
@@ -185,17 +152,20 @@ const ContainerInfo = () => {
     setSidebarTab(newTab);
   };
 
-  const renderTab = useCallback((infoTab: ContainerInfoTab, title: string, component?: React.ReactNode) => {
-    if (hiddenTabs.includes(infoTab)) {
-      // For some reason, returning anything other than empty list breaks the tab style
-      return [];
-    }
-    return (
-      <Tab eventKey={infoTab} title={title}>
-        {component}
-      </Tab>
-    );
-  }, [hiddenTabs, defaultContainerTab, containerId]);
+  const renderTab = useCallback(
+    (infoTab: ContainerInfoTab, title: string, component?: React.ReactNode) => {
+      if (hiddenTabs.includes(infoTab)) {
+        // For some reason, returning anything other than empty list breaks the tab style
+        return [];
+      }
+      return (
+        <Tab eventKey={infoTab} title={title}>
+          {component}
+        </Tab>
+      );
+    },
+    [hiddenTabs, defaultContainerTab, containerId],
+  );
 
   if (!container || !containerId || !containerType) {
     return null;
@@ -220,21 +190,9 @@ const ContainerInfo = () => {
           intl.formatMessage(messages.previewTabTitle),
           <ContainerPreview containerId={containerId} />,
         )}
-        {renderTab(
-          CONTAINER_INFO_TABS.Manage,
-          intl.formatMessage(messages.manageTabTitle),
-          <ContainerOrganize />,
-        )}
-        {renderTab(
-          CONTAINER_INFO_TABS.Usage,
-          intl.formatMessage(messages.usageTabTitle),
-          <ContainerUsage />,
-        )}
-        {renderTab(
-          CONTAINER_INFO_TABS.Settings,
-          intl.formatMessage(messages.settingsTabTitle),
-          <ContainerSettings />,
-        )}
+        {renderTab(CONTAINER_INFO_TABS.Manage, intl.formatMessage(messages.manageTabTitle), <ContainerOrganize />)}
+        {renderTab(CONTAINER_INFO_TABS.Usage, intl.formatMessage(messages.usageTabTitle), <ContainerUsage />)}
+        {renderTab(CONTAINER_INFO_TABS.Settings, intl.formatMessage(messages.settingsTabTitle), <ContainerSettings />)}
       </Tabs>
     </Stack>
   );

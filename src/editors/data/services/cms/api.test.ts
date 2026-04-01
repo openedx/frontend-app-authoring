@@ -1,8 +1,6 @@
 import * as api from './api';
 import * as urls from './urls';
-import {
-  get, post, put, deleteObject,
-} from './utils';
+import { get, post, put, deleteObject } from './utils';
 
 jest.mock('./urls', () => ({
   block: jest.fn().mockReturnValue('urls.block'),
@@ -18,7 +16,8 @@ jest.mock('./urls', () => ({
   courseAdvanceSettings: jest.fn().mockReturnValue('urls.courseAdvanceSettings'),
   replaceTranscript: jest.fn().mockReturnValue('urls.replaceTranscript'),
   videoFeatures: jest.fn().mockReturnValue('urls.videoFeatures'),
-  courseVideos: jest.fn()
+  courseVideos: jest
+    .fn()
     .mockName('urls.courseVideos')
     .mockImplementation(
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
@@ -110,16 +109,15 @@ describe('cms api', () => {
     describe('fetchCourseImages', () => {
       it('should call get with url.courseAssets', async () => {
         await apiMethods.fetchCourseImages({
-          learningContextId, studioEndpointUrl, pageNumber: 0,
+          learningContextId,
+          studioEndpointUrl,
+          pageNumber: 0,
         });
         const params = {
           asset_type: 'Images',
           page: 0,
         };
-        expect(get).toHaveBeenCalledWith(
-          urls.courseAssets({ studioEndpointUrl, learningContextId }),
-          { params },
-        );
+        expect(get).toHaveBeenCalledWith(urls.courseAssets({ studioEndpointUrl, learningContextId }), { params });
       });
     });
     describe('fetchLibraryImages', () => {
@@ -127,9 +125,7 @@ describe('cms api', () => {
         await apiMethods.fetchLibraryImages({
           blockId,
         });
-        expect(get).toHaveBeenCalledWith(
-          urls.libraryAssets({ blockId }),
-        );
+        expect(get).toHaveBeenCalledWith(urls.libraryAssets({ blockId }));
       });
     });
 
@@ -164,14 +160,17 @@ describe('cms api', () => {
 
     describe('normalizeContent', () => {
       test('return value for blockType: html', () => {
-        const content = 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
-        expect(apiMethods.normalizeContent({
-          blockId,
-          blockType: 'html',
-          content,
-          learningContextId,
-          title,
-        })).toEqual({
+        const content =
+          'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
+        expect(
+          apiMethods.normalizeContent({
+            blockId,
+            blockType: 'html',
+            content,
+            learningContextId,
+            title,
+          }),
+        ).toEqual({
           category: 'html',
           courseKey: learningContextId,
           data: content,
@@ -211,13 +210,15 @@ describe('cms api', () => {
           youtubeId,
         });
         jest.spyOn(api, 'processLicense').mockReturnValue(license);
-        expect(apiMethods.normalizeContent({
-          blockId,
-          blockType: 'video',
-          content,
-          learningContextId,
-          title,
-        })).toEqual({
+        expect(
+          apiMethods.normalizeContent({
+            blockId,
+            blockType: 'video',
+            content,
+            learningContextId,
+            title,
+          }),
+        ).toEqual({
           category: 'video',
           courseKey: learningContextId,
           display_name: title,
@@ -242,14 +243,16 @@ describe('cms api', () => {
         jest.restoreAllMocks();
       });
       test('throw error for invalid blockType', () => {
-        // @ts-expect-error because we're not passing 'blockId' or other parameters
-        expect(() => { apiMethods.normalizeContent({ blockType: 'somethingINVALID' }); })
-          .toThrow(TypeError);
+        expect(() => {
+          // @ts-expect-error because we're not passing 'blockId' or other parameters
+          apiMethods.normalizeContent({ blockType: 'somethingINVALID' });
+        }).toThrow(TypeError);
       });
     });
 
     describe('saveBlock', () => {
-      const content = 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
+      const content =
+        'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
       it('should call post with urls.block and normalizeContent', async () => {
         await apiMethods.saveBlock({
           blockId,
@@ -285,10 +288,7 @@ describe('cms api', () => {
           studioEndpointUrl,
           asset,
         });
-        expect(post).toHaveBeenCalledWith(
-          urls.courseAssets({ studioEndpointUrl, learningContextId }),
-          mockFormdata,
-        );
+        expect(post).toHaveBeenCalledWith(urls.courseAssets({ studioEndpointUrl, learningContextId }), mockFormdata);
       });
       it('should call post with urls.libraryAssets and imgdata', async () => {
         learningContextId = 'lib:demo2uX';
@@ -299,10 +299,7 @@ describe('cms api', () => {
           studioEndpointUrl,
           asset,
         });
-        expect(put).toHaveBeenCalledWith(
-          `${urls.libraryAssets({ blockId, assetName: asset.name })}`,
-          mockFormdata,
-        );
+        expect(put).toHaveBeenCalledWith(`${urls.libraryAssets({ blockId, assetName: asset.name })}`, mockFormdata);
       });
     });
 
@@ -313,10 +310,7 @@ describe('cms api', () => {
         await apiMethods.uploadVideo({ data, studioEndpointUrl, learningContextId });
 
         expect(urls.courseVideos).toHaveBeenCalledWith({ studioEndpointUrl, learningContextId });
-        expect(post).toHaveBeenCalledWith(
-          urls.courseVideos({ studioEndpointUrl, learningContextId }),
-          data,
-        );
+        expect(post).toHaveBeenCalledWith(urls.courseVideos({ studioEndpointUrl, learningContextId }), data);
       });
     });
   });
@@ -383,20 +377,24 @@ describe('cms api', () => {
           videoId,
           youTubeId,
         });
-        expect(get).toHaveBeenCalledWith(urls.checkTranscriptsForImport({
-          studioEndpointUrl,
-          parameters: encodeURIComponent(getJSON),
-        }));
+        expect(get).toHaveBeenCalledWith(
+          urls.checkTranscriptsForImport({
+            studioEndpointUrl,
+            parameters: encodeURIComponent(getJSON),
+          }),
+        );
       });
     });
     describe('importTranscript', () => {
       const getJSON = `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"}]}`;
       it('should call get with url.replaceTranscript', async () => {
         await apiMethods.importTranscript({ studioEndpointUrl, blockId, youTubeId });
-        expect(get).toHaveBeenCalledWith(urls.replaceTranscript({
-          studioEndpointUrl,
-          parameters: encodeURIComponent(getJSON),
-        }));
+        expect(get).toHaveBeenCalledWith(
+          urls.replaceTranscript({
+            studioEndpointUrl,
+            parameters: encodeURIComponent(getJSON),
+          }),
+        );
       });
     });
     describe('uploadTranscript', () => {
@@ -414,10 +412,7 @@ describe('cms api', () => {
           videoId,
           language,
         });
-        expect(post).toHaveBeenCalledWith(
-          urls.videoTranscripts({ studioEndpointUrl, blockId }),
-          mockFormdata,
-        );
+        expect(post).toHaveBeenCalledWith(urls.videoTranscripts({ studioEndpointUrl, blockId }), mockFormdata);
       });
     });
     describe('uploadTranscriptV2', () => {
@@ -435,10 +430,7 @@ describe('cms api', () => {
           videoId,
           language,
         });
-        expect(post).toHaveBeenCalledWith(
-          urls.transcriptXblockV2({ transcriptHandlerUrl }),
-          mockFormdata,
-        );
+        expect(post).toHaveBeenCalledWith(urls.transcriptXblockV2({ transcriptHandlerUrl }), mockFormdata);
       });
     });
     describe('transcript delete', () => {
@@ -463,10 +455,7 @@ describe('cms api', () => {
           videoId,
           language,
         });
-        expect(deleteObject).toHaveBeenCalledWith(
-          urls.transcriptXblockV2({ transcriptHandlerUrl }),
-          mockDeleteJSON,
-        );
+        expect(deleteObject).toHaveBeenCalledWith(urls.transcriptXblockV2({ transcriptHandlerUrl }), mockDeleteJSON);
       });
     });
     describe('transcript get', () => {
@@ -502,10 +491,7 @@ describe('cms api', () => {
     const edxVideoId = 'eDXviDEoid';
     const youtubeId = 'yOuTuBeUrL';
     const youtubeUrl = `https://youtu.be/${youtubeId}`;
-    const html5Sources = [
-      'sOuRce1',
-      'sourCE2',
-    ];
+    const html5Sources = ['sOuRce1', 'sourCE2'];
     afterEach(() => {
       jest.restoreAllMocks();
     });
@@ -515,22 +501,26 @@ describe('cms api', () => {
         jest.spyOn(api, 'parseYoutubeId').mockReturnValue(youtubeId);
       });
       it('returns edxVideoId when there are no fallbackVideos', () => {
-        expect(api.processVideoIds({
-          videoUrl: '',
-          fallbackVideos: [],
-          videoId: edxVideoId,
-        })).toEqual({
+        expect(
+          api.processVideoIds({
+            videoUrl: '',
+            fallbackVideos: [],
+            videoId: edxVideoId,
+          }),
+        ).toEqual({
           edxVideoId,
           html5Sources: [],
           youtubeId: '',
         });
       });
       it('returns edxVideoId and html5Sources when there are fallbackVideos', () => {
-        expect(api.processVideoIds({
-          videoUrl: youtubeUrl,
-          fallbackVideos: html5Sources,
-          videoId: edxVideoId,
-        })).toEqual({
+        expect(
+          api.processVideoIds({
+            videoUrl: youtubeUrl,
+            fallbackVideos: html5Sources,
+            videoId: edxVideoId,
+          }),
+        ).toEqual({
           edxVideoId,
           html5Sources,
           youtubeId,
@@ -543,22 +533,26 @@ describe('cms api', () => {
         jest.spyOn(api, 'parseYoutubeId').mockReturnValue(youtubeId);
       });
       it('returns youtubeId when there are no fallbackVideos', () => {
-        expect(api.processVideoIds({
-          videoUrl: youtubeUrl,
-          fallbackVideos: [],
-          videoId: '',
-        })).toEqual({
+        expect(
+          api.processVideoIds({
+            videoUrl: youtubeUrl,
+            fallbackVideos: [],
+            videoId: '',
+          }),
+        ).toEqual({
           edxVideoId: '',
           html5Sources: [],
           youtubeId,
         });
       });
       it('returns youtubeId and html5Sources when there are fallbackVideos', () => {
-        expect(api.processVideoIds({
-          videoUrl: youtubeUrl,
-          fallbackVideos: html5Sources,
-          videoId: '',
-        })).toEqual({
+        expect(
+          api.processVideoIds({
+            videoUrl: youtubeUrl,
+            fallbackVideos: html5Sources,
+            videoId: '',
+          }),
+        ).toEqual({
           edxVideoId: '',
           html5Sources,
           youtubeId,
@@ -571,22 +565,26 @@ describe('cms api', () => {
         jest.spyOn(api, 'parseYoutubeId').mockReturnValue(null);
       });
       it('returns html5Sources when there are no fallbackVideos', () => {
-        expect(api.processVideoIds({
-          videoUrl: html5Sources[0],
-          fallbackVideos: [],
-          videoId: '',
-        })).toEqual({
+        expect(
+          api.processVideoIds({
+            videoUrl: html5Sources[0],
+            fallbackVideos: [],
+            videoId: '',
+          }),
+        ).toEqual({
           edxVideoId: '',
           html5Sources: [html5Sources[0]],
           youtubeId: '',
         });
       });
       it('returns html5Sources when there are fallbackVideos', () => {
-        expect(api.processVideoIds({
-          videoUrl: html5Sources[0],
-          fallbackVideos: [html5Sources[1]],
-          videoId: '',
-        })).toEqual({
+        expect(
+          api.processVideoIds({
+            videoUrl: html5Sources[0],
+            fallbackVideos: [html5Sources[1]],
+            videoId: '',
+          }),
+        ).toEqual({
           edxVideoId: '',
           html5Sources,
           youtubeId: '',

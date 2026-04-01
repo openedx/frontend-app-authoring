@@ -14,9 +14,7 @@ const SaveFormConnectionErrorAlert = () => {
         defaultMessage="We encountered a technical error when applying changes. This might be a temporary issue, so please try again in a few minutes. If the problem persists, please go to the {supportLink} for help."
         values={{
           supportLink: (
-            <Alert.Link href={getConfig().SUPPORT_URL}>
-              {intl.formatMessage(messages.supportText)}
-            </Alert.Link>
+            <Alert.Link href={getConfig().SUPPORT_URL}>{intl.formatMessage(messages.supportText)}</Alert.Link>
           ),
         }}
       />

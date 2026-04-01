@@ -7,8 +7,9 @@ const messages = defineMessages({
   },
   bodyText: {
     id: 'course-authoring.taxonomy-manage-orgs.body.text',
-    defaultMessage: 'Manage which organizations can access the taxonomy by assigning them in the menu below. You can '
-    + 'also choose to assign the taxonomy to all organizations.',
+    defaultMessage:
+      'Manage which organizations can access the taxonomy by assigning them in the menu below. You can ' +
+      'also choose to assign the taxonomy to all organizations.',
   },
   assignOrgs: {
     id: 'course-authoring.taxonomy-manage-orgs.assign-orgs',
@@ -48,8 +49,9 @@ const messages = defineMessages({
   },
   confirmUnassignText: {
     id: 'course-authoring.taxonomy-manage-orgs.confirm-dialog.text',
-    defaultMessage: 'Content authors from unassigned organizations will not be able to tag course content with '
-    + '{taxonomyName}. Are you sure you want to continue?',
+    defaultMessage:
+      'Content authors from unassigned organizations will not be able to tag course content with ' +
+      '{taxonomyName}. Are you sure you want to continue?',
   },
   continueButton: {
     id: 'course-authoring.taxonomy-manage-orgs.confirm-dialog.button.continue',

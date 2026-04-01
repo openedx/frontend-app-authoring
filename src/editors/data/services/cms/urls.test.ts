@@ -49,167 +49,201 @@ describe('cms url methods', () => {
       },
     };
     it('returns the library page when given the v1 library', () => {
-      expect(returnUrl({
-        studioEndpointUrl, unitUrl, learningContextId: libraryLearningContextId, blockId: libraryV1Id,
-      }))
-        .toEqual(`${studioEndpointUrl}/library/${libraryLearningContextId}`);
+      expect(
+        returnUrl({
+          studioEndpointUrl,
+          unitUrl,
+          learningContextId: libraryLearningContextId,
+          blockId: libraryV1Id,
+        }),
+      ).toEqual(`${studioEndpointUrl}/library/${libraryLearningContextId}`);
     });
     // it('throws error when given the v2 library', () => {
     //   expect(() => { returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryV2Id }); })
     //     .toThrow('Return url not available (or needed) for V2 libraries');
     // });
     it('returns empty url when given the v2 library', () => {
-      expect(returnUrl({
-        studioEndpointUrl, unitUrl, learningContextId: libraryV2Id, blockId: libraryV2Id,
-      })).toEqual('');
+      expect(
+        returnUrl({
+          studioEndpointUrl,
+          unitUrl,
+          learningContextId: libraryV2Id,
+          blockId: libraryV2Id,
+        }),
+      ).toEqual('');
     });
     it('returnUrl function should return url with studioEndpointUrl, unitUrl, and blockId', () => {
-      expect(returnUrl({
-        studioEndpointUrl, unitUrl, learningContextId: courseId, blockId,
-      }))
-        .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}#${blockId}`);
+      expect(
+        returnUrl({
+          studioEndpointUrl,
+          unitUrl,
+          learningContextId: courseId,
+          blockId,
+        }),
+      ).toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}#${blockId}`);
     });
     it('returns blank url for v2 block', () => {
-      expect(returnUrl({
-        studioEndpointUrl, unitUrl, learningContextId: courseId, blockId: v2BlockId,
-      }))
-        .toEqual('');
+      expect(
+        returnUrl({
+          studioEndpointUrl,
+          unitUrl,
+          learningContextId: courseId,
+          blockId: v2BlockId,
+        }),
+      ).toEqual('');
     });
     it('throws error if no unit url', () => {
-      expect(returnUrl({
-        studioEndpointUrl, unitUrl: null, learningContextId: courseId, blockId,
-      }))
-        .toEqual('');
+      expect(
+        returnUrl({
+          studioEndpointUrl,
+          unitUrl: null,
+          learningContextId: courseId,
+          blockId,
+        }),
+      ).toEqual('');
     });
     it('returns the library page when given the library', () => {
-      expect(libraryV1({ studioEndpointUrl, learningContextId: libraryV1Id }))
-        .toEqual(`${studioEndpointUrl}/library/${libraryV1Id}`);
+      expect(libraryV1({ studioEndpointUrl, learningContextId: libraryV1Id })).toEqual(
+        `${studioEndpointUrl}/library/${libraryV1Id}`,
+      );
     });
     it('unit function should return url with studioEndpointUrl, unitUrl, and blockId', () => {
-      expect(unit({ studioEndpointUrl, unitUrl, blockId }))
-        .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}#${blockId}`);
+      expect(unit({ studioEndpointUrl, unitUrl, blockId })).toEqual(
+        `${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}#${blockId}`,
+      );
     });
   });
   describe('block', () => {
     it('returns v1 url with studioEndpointUrl and blockId', () => {
-      expect(block({ studioEndpointUrl, blockId }))
-        .toEqual(`${studioEndpointUrl}/xblock/${blockId}`);
+      expect(block({ studioEndpointUrl, blockId })).toEqual(`${studioEndpointUrl}/xblock/${blockId}`);
     });
     it('returns v2 url with studioEndpointUrl and v2BlockId', () => {
-      expect(block({ studioEndpointUrl, blockId: v2BlockId }))
-        .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${v2BlockId}/fields/`);
+      expect(block({ studioEndpointUrl, blockId: v2BlockId })).toEqual(
+        `${studioEndpointUrl}/api/xblock/v2/xblocks/${v2BlockId}/fields/`,
+      );
     });
   });
   describe('blockAncestor', () => {
     it('returns url with studioEndpointUrl, blockId and ancestor query', () => {
-      expect(blockAncestor({ studioEndpointUrl, blockId }))
-        .toEqual(`${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`);
+      expect(blockAncestor({ studioEndpointUrl, blockId })).toEqual(
+        `${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`,
+      );
     });
     it('throws error with studioEndpointUrl, v2 blockId and ancestor query', () => {
-      expect(() => { blockAncestor({ studioEndpointUrl, blockId: v2BlockId }); })
-        .toThrow('Block ancestor not available (and not needed) for V2 blocks');
+      expect(() => {
+        blockAncestor({ studioEndpointUrl, blockId: v2BlockId });
+      }).toThrow('Block ancestor not available (and not needed) for V2 blocks');
     });
   });
   describe('blockStudioView', () => {
     it('returns v1 url with studioEndpointUrl, blockId and studio_view query', () => {
-      expect(blockStudioView({ studioEndpointUrl, blockId }))
-        .toEqual(`${block({ studioEndpointUrl, blockId })}/studio_view`);
+      expect(blockStudioView({ studioEndpointUrl, blockId })).toEqual(
+        `${block({ studioEndpointUrl, blockId })}/studio_view`,
+      );
     });
     it('returns v2 url with studioEndpointUrl, v2 blockId and studio_view query', () => {
-      expect(blockStudioView({ studioEndpointUrl, blockId: v2BlockId }))
-        .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${v2BlockId}/view/studio_view/`);
+      expect(blockStudioView({ studioEndpointUrl, blockId: v2BlockId })).toEqual(
+        `${studioEndpointUrl}/api/xblock/v2/xblocks/${v2BlockId}/view/studio_view/`,
+      );
     });
   });
 
   describe('courseAssets', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
-      expect(courseAssets({ studioEndpointUrl, learningContextId }))
-        .toEqual(`${studioEndpointUrl}/assets/${learningContextId}/`);
+      expect(courseAssets({ studioEndpointUrl, learningContextId })).toEqual(
+        `${studioEndpointUrl}/assets/${learningContextId}/`,
+      );
     });
   });
   describe('thumbnailUpload', () => {
     it('returns url with studioEndpointUrl, learningContextId, and videoId', () => {
-      expect(thumbnailUpload({ studioEndpointUrl, learningContextId, videoId }))
-        .toEqual(`${studioEndpointUrl}/video_images/${learningContextId}/${videoId}`);
+      expect(thumbnailUpload({ studioEndpointUrl, learningContextId, videoId })).toEqual(
+        `${studioEndpointUrl}/video_images/${learningContextId}/${videoId}`,
+      );
     });
   });
   describe('videoTranscripts', () => {
     it('returns url with studioEndpointUrl and blockId', () => {
-      expect(videoTranscripts({ studioEndpointUrl, blockId }))
-        .toEqual(`${block({ studioEndpointUrl, blockId })}/handler/studio_transcript/translation`);
+      expect(videoTranscripts({ studioEndpointUrl, blockId })).toEqual(
+        `${block({ studioEndpointUrl, blockId })}/handler/studio_transcript/translation`,
+      );
     });
   });
   describe('downloadVideoTranscriptURL', () => {
     it('returns url with studioEndpointUrl, blockId and language query', () => {
-      expect(downloadVideoTranscriptURL({ studioEndpointUrl, blockId, language }))
-        .toEqual(`${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`);
+      expect(downloadVideoTranscriptURL({ studioEndpointUrl, blockId, language })).toEqual(
+        `${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`,
+      );
     });
   });
   describe('downloadVideoHandoutUrl', () => {
     it('returns url with studioEndpointUrl and handout', () => {
-      expect(downloadVideoHandoutUrl({ studioEndpointUrl, handout }))
-        .toEqual(`${studioEndpointUrl}${handout}`);
+      expect(downloadVideoHandoutUrl({ studioEndpointUrl, handout })).toEqual(`${studioEndpointUrl}${handout}`);
     });
   });
   describe('courseDetailsUrl', () => {
     it('returns url with studioEndpointUrl and courseKey', () => {
-      expect(courseDetailsUrl({ studioEndpointUrl, learningContextId }))
-        .toEqual(`${studioEndpointUrl}/settings/details/${learningContextId}`);
+      expect(courseDetailsUrl({ studioEndpointUrl, learningContextId })).toEqual(
+        `${studioEndpointUrl}/settings/details/${learningContextId}`,
+      );
     });
   });
   describe('checkTranscriptsForImport', () => {
     it('returns url with studioEndpointUrl and parameters', () => {
-      expect(checkTranscriptsForImport({ studioEndpointUrl, parameters }))
-        .toEqual(`${studioEndpointUrl}/transcripts/check?data=${parameters}`);
+      expect(checkTranscriptsForImport({ studioEndpointUrl, parameters })).toEqual(
+        `${studioEndpointUrl}/transcripts/check?data=${parameters}`,
+      );
     });
   });
   describe('replaceTranscript', () => {
     it('returns url with studioEndpointUrl and parameters', () => {
-      expect(replaceTranscript({ studioEndpointUrl, parameters }))
-        .toEqual(`${studioEndpointUrl}/transcripts/replace?data=${parameters}`);
+      expect(replaceTranscript({ studioEndpointUrl, parameters })).toEqual(
+        `${studioEndpointUrl}/transcripts/replace?data=${parameters}`,
+      );
     });
   });
   describe('courseAdvanceSettings', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
-      expect(courseAdvanceSettings({ studioEndpointUrl, learningContextId }))
-        .toEqual(`${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`);
+      expect(courseAdvanceSettings({ studioEndpointUrl, learningContextId })).toEqual(
+        `${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`,
+      );
     });
   });
   describe('videoFeatures', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
-      expect(videoFeatures({ studioEndpointUrl }))
-        .toEqual(`${studioEndpointUrl}/video_features/`);
+      expect(videoFeatures({ studioEndpointUrl })).toEqual(`${studioEndpointUrl}/video_features/`);
     });
   });
   describe('courseVideos', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
-      expect(courseVideos({ studioEndpointUrl, learningContextId }))
-        .toEqual(`${studioEndpointUrl}/videos/${learningContextId}`);
+      expect(courseVideos({ studioEndpointUrl, learningContextId })).toEqual(
+        `${studioEndpointUrl}/videos/${learningContextId}`,
+      );
     });
   });
   describe('mediaTranscriptURL', () => {
     it('returns url with studioEndpointUrl', () => {
       const transcriptUrl = 'this-is-a-transcript';
-      expect(mediaTranscriptURL({ studioEndpointUrl, transcriptUrl }))
-        .toEqual(`${studioEndpointUrl}${transcriptUrl}`);
+      expect(mediaTranscriptURL({ studioEndpointUrl, transcriptUrl })).toEqual(`${studioEndpointUrl}${transcriptUrl}`);
     });
   });
   describe('handlerUrl', () => {
     it('returns url with studioEndpointUrl, blockId and handlerName', () => {
-      expect(handlerUrl({ studioEndpointUrl, blockId, handlerName }))
-        .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/transcript/`);
+      expect(handlerUrl({ studioEndpointUrl, blockId, handlerName })).toEqual(
+        `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/transcript/`,
+      );
     });
   });
   describe('transcriptXblockV2', () => {
     it('returns url with transcriptHandlerUrl', () => {
-      expect(transcriptXblockV2({ transcriptHandlerUrl }))
-        .toEqual(`${transcriptHandlerUrl}translation`);
+      expect(transcriptXblockV2({ transcriptHandlerUrl })).toEqual(`${transcriptHandlerUrl}translation`);
     });
   });
   describe('downloadVideoTranscriptURLV2', () => {
     it('returns url with transcriptHandlerUrl and language', () => {
-      expect(downloadVideoTranscriptURLV2({ transcriptHandlerUrl, language }))
-        .toEqual(`${transcriptHandlerUrl}translation?language_code=${language}`);
+      expect(downloadVideoTranscriptURLV2({ transcriptHandlerUrl, language })).toEqual(
+        `${transcriptHandlerUrl}translation?language_code=${language}`,
+      );
     });
   });
 });

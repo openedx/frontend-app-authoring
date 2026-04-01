@@ -2,23 +2,16 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Button,
-  ModalDialog,
-  useToggle,
-} from '@openedx/paragon';
+import { ActionRow, Button, ModalDialog, useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
 
 import messages from './messages';
 
-const FileValidationModal = ({
-  handleFileOverwrite,
-}) => {
+const FileValidationModal = ({ handleFileOverwrite }) => {
   const intl = useIntl();
   const [isOpen, open, close] = useToggle();
 
-  const { duplicateFiles } = useSelector(state => state.assets);
+  const { duplicateFiles } = useSelector((state) => state.assets);
 
   useEffect(() => {
     if (!isEmpty(duplicateFiles)) {
@@ -41,7 +34,9 @@ const FileValidationModal = ({
       <ModalDialog.Body>
         <FormattedMessage {...messages.overwriteConfirmMessage} />
         <ul className="mt-2">
-          {Object.keys(duplicateFiles).map(file => <li>{file}</li>)}
+          {Object.keys(duplicateFiles).map((file) => (
+            <li>{file}</li>
+          ))}
         </ul>
       </ModalDialog.Body>
       <ModalDialog.Footer>

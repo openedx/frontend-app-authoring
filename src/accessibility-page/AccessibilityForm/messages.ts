@@ -8,7 +8,8 @@ const messages = defineMessages({
   },
   accessibilityPolicyFormErrorHighVolume: {
     id: 'accessibilityPolicyFormErrorHighVolume',
-    defaultMessage: 'We are currently experiencing high volume. Try again later today or send an email message to {emailLink}.',
+    defaultMessage:
+      'We are currently experiencing high volume. Try again later today or send an email message to {emailLink}.',
     description: 'Error message when site is experiencing high volume that will include an email link',
   },
   accessibilityPolicyFormErrorMissingFields: {
@@ -53,7 +54,8 @@ const messages = defineMessages({
   },
   accessibilityPolicyFormSuccessDetails: {
     id: 'accessibilityPolicyFormSuccessDetails',
-    defaultMessage: 'Thank you for your feedback regarding the accessibility of Studio. We typically respond within one business day ({day_start} to {day_end}, {time_start} to {time_end}).',
+    defaultMessage:
+      'Thank you for your feedback regarding the accessibility of Studio. We typically respond within one business day ({day_start} to {day_end}, {time_start} to {time_end}).',
     description: 'Detailed thank you message when form submission is successful',
   },
   accessibilityPolicyFormValidEmail: {

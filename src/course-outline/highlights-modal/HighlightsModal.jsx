@@ -1,12 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ModalDialog,
-  Button,
-  ActionRow,
-  Hyperlink,
-} from '@openedx/paragon';
+import { ModalDialog, Button, ActionRow, Hyperlink } from '@openedx/paragon';
 import { Formik } from 'formik';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -17,20 +12,14 @@ import { HIGHLIGHTS_FIELD_MAX_LENGTH } from '../constants';
 import { getHighlightsFormValues } from '../utils';
 import messages from './messages';
 
-const HighlightsModal = ({
-  isOpen,
-  onClose,
-  onSubmit,
-}) => {
+const HighlightsModal = ({ isOpen, onClose, onSubmit }) => {
   const intl = useIntl();
   const { currentSelection } = useCourseAuthoringContext();
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
   const { highlights = [], displayName } = currentItemData || {};
   const initialFormValues = getHighlightsFormValues(highlights);
 
-  const {
-    contentHighlights: contentHighlightsUrl,
-  } = useHelpUrls(['contentHighlights']);
+  const { contentHighlights: contentHighlightsUrl } = useHelpUrls(['contentHighlights']);
 
   return (
     <ModalDialog
@@ -58,7 +47,8 @@ const HighlightsModal = ({
                   documentation: (
                     <Hyperlink destination={contentHighlightsUrl} target="_blank" showLaunchIcon={false}>
                       {intl.formatMessage(messages.documentationLink)}
-                    </Hyperlink>),
+                    </Hyperlink>
+                  ),
                 })}
               </p>
               {Object.entries(initialFormValues).map(([key], index) => (

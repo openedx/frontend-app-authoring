@@ -7,9 +7,7 @@
           "display_name": "Dropdown",
           "block_id": "problem3",
           "content": {
-            "problem_types": [
-              "optionresponse"
-            ],
+            "problem_types": ["optionresponse"],
             "capa_content": "asfd sdaf afd"
           },
           "description": "asfd sdaf afd",
@@ -42,9 +40,7 @@
             "display_name": "Dropdown",
             "block_id": "problem3",
             "content": {
-              "problem_types": [
-                "optionresponse"
-              ],
+              "problem_types": ["optionresponse"],
               "capa_content": "asfd sdaf afd"
             },
             "description": "asfd sdaf afd",
@@ -79,9 +75,7 @@
           "display_name": "Dropdown",
           "block_id": "problem6",
           "content": {
-            "problem_types": [
-              "optionresponse"
-            ],
+            "problem_types": ["optionresponse"],
             "capa_content": "asfd sdaf afd"
           },
           "description": "asfd sdaf afd",
@@ -114,9 +108,7 @@
             "display_name": "Dropdown",
             "block_id": "problem6",
             "content": {
-              "problem_types": [
-                "optionresponse"
-              ],
+              "problem_types": ["optionresponse"],
               "capa_content": "asfd sdaf afd"
             },
             "description": "asfd sdaf afd",
@@ -151,9 +143,7 @@
           "display_name": "Dropdown",
           "block_id": "210e356cfa304b0aac591af53f6a6ae0",
           "content": {
-            "problem_types": [
-              "optionresponse"
-            ],
+            "problem_types": ["optionresponse"],
             "capa_content": "asfd sdaf afd"
           },
           "description": "asfd sdaf afd",
@@ -190,9 +180,7 @@
             "display_name": "Dropdown",
             "block_id": "210e356cfa304b0aac591af53f6a6ae0",
             "content": {
-              "problem_types": [
-                "optionresponse"
-              ],
+              "problem_types": ["optionresponse"],
               "capa_content": "asfd sdaf afd"
             },
             "description": "asfd sdaf afd",
@@ -297,9 +285,7 @@
           "display_name": "Dropdown",
           "block_id": "a4455860b03647219ff8b01cde49cf37",
           "content": {
-            "problem_types": [
-              "optionresponse"
-            ],
+            "problem_types": ["optionresponse"],
             "capa_content": "asfd sdaf afd"
           },
           "description": "asfd sdaf afd",
@@ -332,9 +318,7 @@
             "display_name": "Dropdown",
             "block_id": "a4455860b03647219ff8b01cde49cf37",
             "content": {
-              "problem_types": [
-                "optionresponse"
-              ],
+              "problem_types": ["optionresponse"],
               "capa_content": "asfd sdaf afd"
             },
             "description": "asfd sdaf afd",
@@ -369,9 +353,7 @@
           "display_name": "Unit 1",
           "block_id": "20f2c12b8b7f4b4bab7a900576c78ad8",
           "content": {
-            "problem_types": [
-              "optionresponse"
-            ],
+            "problem_types": ["optionresponse"],
             "capa_content": "This is a super unit"
           },
           "description": "This is a super unit",
@@ -400,9 +382,7 @@
             "display_name": "Unit 1",
             "block_id": "20f2c12b8b7f4b4bab7a900576c78ad8",
             "content": {
-              "problem_types": [
-                "optionresponse"
-              ],
+              "problem_types": ["optionresponse"],
               "capa_content": "This is a super unit"
             },
             "description": "This is a super unit",
@@ -433,9 +413,7 @@
           "display_name": "Section 1",
           "block_id": "20f2c12b8b7e4b4cab7a900576c78cv5",
           "content": {
-            "problem_types": [
-              "optionresponse"
-            ],
+            "problem_types": ["optionresponse"],
             "capa_content": "This is a super section"
           },
           "description": "This is a super section",
@@ -456,9 +434,7 @@
             "display_name": "Section 1",
             "block_id": "20f2c12b8b7e4b4cab7a900576c78cv5",
             "content": {
-              "problem_types": [
-                "optionresponse"
-              ],
+              "problem_types": ["optionresponse"],
               "capa_content": "This is a super section"
             },
             "description": "This is a super section",

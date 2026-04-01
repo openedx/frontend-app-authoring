@@ -62,7 +62,6 @@ const CreateRow: React.FC<CreateRowProps> = ({
   };
 
   return (
-
     <tr id="creating-top-row" data-testid="creating-top-row">
       <td colSpan={1} className="py-2 pr-2 pl-0">
         <div className={`tree-table-indent tree-table-indent-${indent}`}>
@@ -75,17 +74,10 @@ const CreateRow: React.FC<CreateRowProps> = ({
           />
         </div>
       </td>
-      <td
-        colSpan={Math.max(columns.length - 1, 1)}
-        className="tree-table-create-row-actions-cell p-2 align-top"
-      >
+      <td colSpan={Math.max(columns.length - 1, 1)} className="tree-table-create-row-actions-cell p-2 align-top">
         <span className="d-flex justify-content-end">
           <span className="mr-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleCancel}
-            >
+            <Button variant="secondary" size="sm" onClick={handleCancel}>
               {intl.formatMessage(messages.cancelButtonLabel)}
             </Button>
           </span>

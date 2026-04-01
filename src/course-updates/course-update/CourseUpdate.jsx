@@ -7,13 +7,7 @@ import { DeleteOutline, EditOutline, Error as ErrorIcon } from '@openedx/paragon
 import { isDateForUpdateValid } from './utils';
 import messages from './messages';
 
-const CourseUpdate = ({
-  dateForUpdate,
-  contentForUpdate,
-  onEdit,
-  onDelete,
-  isDisabledButtons,
-}) => {
+const CourseUpdate = ({ dateForUpdate, contentForUpdate, onEdit, onDelete, isDisabledButtons }) => {
   const intl = useIntl();
 
   return (

@@ -1,4 +1,4 @@
-const getStyles = () => (
+const getStyles = () =>
   `@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap");
 
   .mce-content-body *[contentEditable=false] {
@@ -227,8 +227,7 @@ const getStyles = () => (
   }
   .mce-content-body[dir=rtl][data-mce-placeholder]:not(.mce-visualblocks)::before {
     margin: 0;
-  }`
-);
+  }`;
 
 export { getStyles };
 

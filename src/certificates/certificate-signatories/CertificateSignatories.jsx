@@ -22,12 +22,12 @@ const CertificateSignatories = ({
 }) => {
   const intl = useIntl();
 
-  const {
-    toggleEditSignatory,
-    handleDeleteSignatory,
-    handleCancelUpdateSignatory,
-  } = useEditSignatory({
-    arrayHelpers, editModes, setEditModes, setFieldValue, initialSignatoriesValues,
+  const { toggleEditSignatory, handleDeleteSignatory, handleCancelUpdateSignatory } = useEditSignatory({
+    arrayHelpers,
+    editModes,
+    setEditModes,
+    setFieldValue,
+    initialSignatoriesValues,
   });
 
   const { handleAddSignatory } = useCreateSignatory({ arrayHelpers });
@@ -38,13 +38,9 @@ const CertificateSignatories = ({
       className="certificate-signatories"
     >
       <div>
-        <p className="mb-4.5">
-          {intl.formatMessage(messages.signatoriesRecommendation)}
-        </p>
+        <p className="mb-4.5">{intl.formatMessage(messages.signatoriesRecommendation)}</p>
         <Stack gap="4.5">
-          {signatories.map(({
-            id, name, title, organization, signatureImagePath,
-          }, idx) => (
+          {signatories.map(({ id, name, title, organization, signatureImagePath }, idx) =>
             isForm || editModes[idx] ? (
               <SignatoryForm
                 key={id}
@@ -73,8 +69,8 @@ const CertificateSignatories = ({
                 signatureImagePath={signatureImagePath}
                 handleEdit={() => toggleEditSignatory(idx)}
               />
-            )
-          ))}
+            ),
+          )}
         </Stack>
         {isForm && (
           <>
@@ -105,12 +101,14 @@ CertificateSignatories.defaultProps = {
 CertificateSignatories.propTypes = {
   isForm: PropTypes.bool,
   editModes: PropTypes.objectOf(PropTypes.bool),
-  initialSignatoriesValues: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    organization: PropTypes.string.isRequired,
-    signatureImagePath: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-  })),
+  initialSignatoriesValues: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      organization: PropTypes.string.isRequired,
+      signatureImagePath: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+    }),
+  ),
   handleChange: PropTypes.func,
   handleBlur: PropTypes.func,
   setFieldValue: PropTypes.func,
@@ -119,12 +117,14 @@ CertificateSignatories.propTypes = {
     push: PropTypes.func,
     remove: PropTypes.func,
   }),
-  signatories: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    organization: PropTypes.string.isRequired,
-    signatureImagePath: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-  })).isRequired,
+  signatories: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      organization: PropTypes.string.isRequired,
+      signatureImagePath: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
 };
 
 export default CertificateSignatories;

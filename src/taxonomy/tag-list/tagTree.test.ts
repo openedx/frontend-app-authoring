@@ -324,7 +324,7 @@ describe('TagTree', () => {
   it('returns a flattened list of all nodes including subRows', () => {
     const tree = new TagTree(rawData);
     const flattened = tree.getAllFlattenedAsCopy();
-    const expectedValues = rawData.map(item => item.value);
-    expect(flattened.map(node => node.value)).toEqual(expectedValues);
+    const expectedValues = rawData.map((item) => item.value);
+    expect(flattened.map((node) => node.value)).toEqual(expectedValues);
   });
 });

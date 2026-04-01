@@ -45,30 +45,18 @@ const CourseRerunSideBar = () => {
   ];
 
   return (
-    <HelpSidebar
-      intl={intl}
-      showOtherSettings={false}
-      className="mt-3"
-    >
-      {sidebarMessages.map(({
-        title,
-        description,
-        link,
-        date,
-      }, index) => {
+    <HelpSidebar intl={intl} showOtherSettings={false} className="mt-3">
+      {sidebarMessages.map(({ title, description, link, date }, index) => {
         const isLastSection = index === sidebarMessages.length - 1;
 
         return (
           <div key={uuid()}>
             <h4 className="help-sidebar-about-title">{title}</h4>
-            <p className="help-sidebar-about-descriptions">{description} {date}</p>
+            <p className="help-sidebar-about-descriptions">
+              {description} {date}
+            </p>
             {!!link && (
-              <Hyperlink
-                className="small"
-                destination={link.href || ''}
-                target="_blank"
-                showLaunchIcon={false}
-              >
+              <Hyperlink className="small" destination={link.href || ''} target="_blank" showLaunchIcon={false}>
                 {link.text}
               </Hyperlink>
             )}

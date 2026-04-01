@@ -6,9 +6,7 @@ import { Form, Dropdown } from '@openedx/paragon';
 import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
-const DetailsSection = ({
-  language, languageOptions, onChange,
-}) => {
+const DetailsSection = ({ language, languageOptions, onChange }) => {
   const intl = useIntl();
   const formattedLanguage = () => {
     const result = languageOptions.find((arr) => arr[0] === language);
@@ -29,18 +27,13 @@ const DetailsSection = ({
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {languageOptions.map((option) => (
-              <Dropdown.Item
-                key={option[0]}
-                onClick={() => onChange(option[0], 'language')}
-              >
+              <Dropdown.Item key={option[0]} onClick={() => onChange(option[0], 'language')}>
                 {option[1]}
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
         </Dropdown>
-        <Form.Control.Feedback>
-          {intl.formatMessage(messages.dropdownHelpText)}
-        </Form.Control.Feedback>
+        <Form.Control.Feedback>{intl.formatMessage(messages.dropdownHelpText)}</Form.Control.Feedback>
       </Form.Group>
     </section>
   );
@@ -52,9 +45,7 @@ DetailsSection.defaultProps = {
 
 DetailsSection.propTypes = {
   language: PropTypes.string,
-  languageOptions: PropTypes.arrayOf(
-    PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-  ).isRequired,
+  languageOptions: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string.isRequired).isRequired).isRequired,
   onChange: PropTypes.func.isRequired,
 };
 

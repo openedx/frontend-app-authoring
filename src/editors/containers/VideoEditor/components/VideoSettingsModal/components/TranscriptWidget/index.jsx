@@ -1,20 +1,8 @@
 import React from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
-import {
-  Form,
-  Button,
-  Stack,
-  Icon,
-  OverlayTrigger,
-  Tooltip,
-  ActionRow,
-  Card,
-} from '@openedx/paragon';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { Form, Button, Stack, Icon, OverlayTrigger, Tooltip, ActionRow, Card } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 
 import { thunkActions, actions, selectors } from '../../../../../../data/redux';
@@ -37,7 +25,7 @@ import * as module from './index';
 
 export const hooks = {
   updateErrors: ({ isUploadError, isDeleteError }) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [error, setError] = React.useContext(ErrorContext).transcripts;
     if (isUploadError) {
       setError({ ...error, uploadError: messages.uploadTranscriptError.defaultMessage });
@@ -50,7 +38,7 @@ export const hooks = {
     const languages = [];
     if (transcripts && transcripts.length > 0) {
       const fullTextTranslatedStrings = in8lTranscriptLanguages(intl);
-      transcripts.forEach(transcript => {
+      transcripts.forEach((transcript) => {
         if (!(transcript === '')) {
           languages.push(fullTextTranslatedStrings[transcript]);
         }
@@ -107,13 +95,7 @@ const TranscriptWidget = ({
     return (
       <div className="mr-4 ml-4">
         <Card className="bg-light-200">
-          <Card.Section
-            title={(
-              <div className="text-gray-500">
-                {intl.formatMessage(messages.title)}
-              </div>
-            )}
-          >
+          <Card.Section title={<div className="text-gray-500">{intl.formatMessage(messages.title)}</div>}>
             <div className="d-flex justify-content-around text-gray-700 pb-4 x-small">
               {intl.formatMessage(messages.videoCreationWarning)}
             </div>
@@ -130,27 +112,17 @@ const TranscriptWidget = ({
       subtitle={fullTextLanguages}
       title={intl.formatMessage(messages.title)}
     >
-      <ErrorAlert
-        hideHeading
-        isError={isUploadError}
-      >
+      <ErrorAlert hideHeading isError={isUploadError}>
         <FormattedMessage {...messages.uploadTranscriptError} />
       </ErrorAlert>
-      <ErrorAlert
-        hideHeading
-        isError={isDeleteError}
-      >
+      <ErrorAlert hideHeading isError={isDeleteError}>
         <FormattedMessage {...messages.deleteTranscriptError} />
       </ErrorAlert>
       <Stack gap={3}>
         {hasTranscripts ? (
           <Form.Group className="border-primary-100 border-bottom">
             {transcripts.map((language, index) => (
-              <Transcript
-                language={language}
-                transcriptUrl={selectedVideoTranscriptUrls[language]}
-                index={index}
-              />
+              <Transcript language={language} transcriptUrl={selectedVideoTranscriptUrls[language]} index={index} />
             ))}
             <ActionRow className="mt-3.5">
               <Form.Checkbox
@@ -165,11 +137,11 @@ const TranscriptWidget = ({
               <OverlayTrigger
                 key="top"
                 placement="top"
-                overlay={(
+                overlay={
                   <Tooltip id="tooltip-top">
                     <FormattedMessage {...messages.tooltipMessage} />
                   </Tooltip>
-                )}
+                }
               >
                 <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
               </OverlayTrigger>
@@ -188,9 +160,7 @@ const TranscriptWidget = ({
         ) : (
           <>
             <FormattedMessage {...messages.addFirstTranscript} />
-            {showImportCard && allowTranscriptImport
-              ? <ImportTranscriptCard setOpen={setShowImportCard} />
-              : null}
+            {showImportCard && allowTranscriptImport ? <ImportTranscriptCard setOpen={setShowImportCard} /> : null}
           </>
         )}
         <div className="mt-2">

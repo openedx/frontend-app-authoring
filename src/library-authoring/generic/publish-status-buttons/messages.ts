@@ -9,7 +9,8 @@ const messages = defineMessages({
   publishContainerButton: {
     id: 'course-authoring.library-authoring.publish-status-buttons.publish-draft-button.text',
     defaultMessage: 'Publish Changes {publishStatus}',
-    description: 'Button text to initiate publish the unit/subsection/section/component, showing current publish status',
+    description:
+      'Button text to initiate publish the unit/subsection/section/component, showing current publish status',
   },
   draftChipText: {
     id: 'course-authoring.library-authoring.publish-status.publish-draft-button.draft-chip.text',

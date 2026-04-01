@@ -76,15 +76,18 @@ const messages = defineMessages({
   },
   sectionVisibilityWarning: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.section-visibility-warning',
-    defaultMessage: 'If you make this section visible to learners, learners will be able to see its content after the release date has passed and you have published the section. Only units that are explicitly hidden from learners will remain hidden after you clear this option for the section.',
+    defaultMessage:
+      'If you make this section visible to learners, learners will be able to see its content after the release date has passed and you have published the section. Only units that are explicitly hidden from learners will remain hidden after you clear this option for the section.',
   },
   unitVisibilityWarning: {
     id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-visibility-warning',
-    defaultMessage: 'If the unit was previously published and released to learners, any changes you made to the unit when it was hidden will now be visible to learners.',
+    defaultMessage:
+      'If the unit was previously published and released to learners, any changes you made to the unit when it was hidden will now be visible to learners.',
   },
   subsectionVisibilityWarning: {
     id: 'course-authoring.course-outline.configure-modal.unit-tab.subsection-visibility-warning',
-    defaultMessage: 'If you select an option other than "Hide entire subsection", published units in this subsection will become available to learners unless they are explicitly hidden.',
+    defaultMessage:
+      'If you select an option other than "Hide entire subsection", published units in this subsection will become available to learners unless they are explicitly hidden.',
   },
   unitSelectGroup: {
     id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-select-group',
@@ -145,7 +148,8 @@ const messages = defineMessages({
   },
   hideContentAfterDueDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-content-after-due-description',
-    defaultMessage: 'After the subsection\'s due date has passed, learners can no longer access its content. The subsection is not included in grade calculations.',
+    defaultMessage:
+      "After the subsection's due date has passed, learners can no longer access its content. The subsection is not included in grade calculations.",
   },
   hideContentAfterEnd: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-content-after-end',
@@ -153,7 +157,8 @@ const messages = defineMessages({
   },
   hideContentAfterEndDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-content-after-end-description',
-    defaultMessage: 'After the course\'s end date has passed, learners can no longer access its content. The subsection is not included in grade calculations.',
+    defaultMessage:
+      "After the course's end date has passed, learners can no longer access its content. The subsection is not included in grade calculations.",
   },
   hideEntireSubsection: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-entire-subsection',
@@ -161,7 +166,8 @@ const messages = defineMessages({
   },
   hideEntireSubsectionDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-entire-subsection-description',
-    defaultMessage: 'Learners do not see the subsection in the course outline. The subsection is not included in grade calculations.',
+    defaultMessage:
+      'Learners do not see the subsection in the course outline. The subsection is not included in grade calculations.',
   },
   assessmentResultsVisibility: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.assessment-results-visibility',
@@ -174,7 +180,8 @@ const messages = defineMessages({
   },
   alwaysShowAssessmentResultsDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.always-show-assessment-results-description',
-    defaultMessage: 'When learners submit an answer to an assessment, they immediately see whether the answer is correct or incorrect, and the score received.',
+    defaultMessage:
+      'When learners submit an answer to an assessment, they immediately see whether the answer is correct or incorrect, and the score received.',
     description: 'Always show assessment results option description in visibility tab',
   },
   neverShowAssessmentResults: {
@@ -184,7 +191,8 @@ const messages = defineMessages({
   },
   neverShowAssessmentResultsDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.never-show-assessment-results-description',
-    defaultMessage: 'Learners never see whether their answers to assessments are correct or incorrect, nor the score received.',
+    defaultMessage:
+      'Learners never see whether their answers to assessments are correct or incorrect, nor the score received.',
     description: 'Never show assessment results option description in visibility tab',
   },
   showAssessmentResultsPastDue: {
@@ -194,7 +202,8 @@ const messages = defineMessages({
   },
   showAssessmentResultsPastDueDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.show-assessment-results-past-due-description',
-    defaultMessage: 'Learners do not see whether their answer to assessments were correct or incorrect, nor the score received, until after the due date for the subsection has passed. If the subsection does not have a due date, learners always see their scores when they submit answers to assessments.',
+    defaultMessage:
+      'Learners do not see whether their answer to assessments were correct or incorrect, nor the score received, until after the due date for the subsection has passed. If the subsection does not have a due date, learners always see their scores when they submit answers to assessments.',
     description: 'Show assessment results past due option description in visibility tab',
   },
   neverShowAssessmentResultsButIncludeGrade: {
@@ -204,7 +213,8 @@ const messages = defineMessages({
   },
   neverShowAssessmentResultsButIncludeGradeDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.never-show-assessment-results-but-include-grade-description',
-    defaultMessage: 'Learners do not see question-level correctness or scores before or after the due date. However, once the due date passes, they can see their overall score for the subsection on the Progress page.',
+    defaultMessage:
+      'Learners do not see question-level correctness or scores before or after the due date. However, once the due date passes, they can see their overall score for the subsection on the Progress page.',
     description: 'Never show assessment results but include in grade calculations option description in visibility tab',
   },
   setSpecialExam: {
@@ -221,7 +231,8 @@ const messages = defineMessages({
   },
   timedDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-description',
-    defaultMessage: 'Use a timed exam to limit the time learners can spend on problems in this subsection. Learners must submit answers before the time expires. You can allow additional time for individual learners through the instructor Dashboard.',
+    defaultMessage:
+      'Use a timed exam to limit the time learners can spend on problems in this subsection. Learners must submit answers before the time expires. You can allow additional time for individual learners through the instructor Dashboard.',
   },
   proctoredExam: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.proctoredExam',
@@ -229,7 +240,8 @@ const messages = defineMessages({
   },
   proctoredExamDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.proctored-exam-description',
-    defaultMessage: 'Proctored exams are timed and they record video of each learner taking the exam. The videos are then reviewed to ensure that learners follow all examination rules. Please note that setting this exam as proctored will change the visibility settings to "Hide content after due date."',
+    defaultMessage:
+      'Proctored exams are timed and they record video of each learner taking the exam. The videos are then reviewed to ensure that learners follow all examination rules. Please note that setting this exam as proctored will change the visibility settings to "Hide content after due date."',
   },
   onboardingExam: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.onboardingExam',
@@ -237,7 +249,8 @@ const messages = defineMessages({
   },
   onboardingExamDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.onboarding-exam-description',
-    defaultMessage: 'Use Onboarding to introduce learners to proctoring, verify their identity, and create an onboarding profile. Learners must complete the onboarding profile step prior to taking a proctored exam. Profile reviews take 2+ business days.',
+    defaultMessage:
+      'Use Onboarding to introduce learners to proctoring, verify their identity, and create an onboarding profile. Learners must complete the onboarding profile step prior to taking a proctored exam. Profile reviews take 2+ business days.',
   },
   practiceExam: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.practiceExam',
@@ -245,7 +258,8 @@ const messages = defineMessages({
   },
   practiceExamDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.practice-exam-description',
-    defaultMessage: 'Use a practice proctored exam to introduce learners to the proctoring tools and processes. Results of a practice exam do not affect a learner\'s grade.',
+    defaultMessage:
+      "Use a practice proctored exam to introduce learners to the proctoring tools and processes. Results of a practice exam do not affect a learner's grade.",
   },
   timedExamsDisabledTooltip: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-exams-disabled-tooltip',
@@ -262,11 +276,13 @@ const messages = defineMessages({
   timeLimitPlaceholder: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-limit-placeholder',
     defaultMessage: 'HH:MM',
-    description: 'The placeholder for the time limit input field, two digits for hours and two digits for minutes colons in between',
+    description:
+      'The placeholder for the time limit input field, two digits for hours and two digits for minutes colons in between',
   },
   timeLimitDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-limit-description',
-    defaultMessage: 'Select a time allotment for the exam. If it is over 24 hours, type in the amount of time. You can grant individual learners extra time to complete the exam through the Instructor Dashboard.',
+    defaultMessage:
+      'Select a time allotment for the exam. If it is over 24 hours, type in the amount of time. You can grant individual learners extra time to complete the exam through the Instructor Dashboard.',
   },
   prereqTitle: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.prereqTitle',
@@ -282,7 +298,8 @@ const messages = defineMessages({
   },
   limitAccessDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.limitAccessDescription',
-    defaultMessage: 'Select a prerequisite subsection and enter a minimum score percentage and minimum completion percentage to limit access to this subsection. Allowed values are 0-100',
+    defaultMessage:
+      'Select a prerequisite subsection and enter a minimum score percentage and minimum completion percentage to limit access to this subsection. Allowed values are 0-100',
   },
   noPrerequisiteOption: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.noPrerequisiteOption',
@@ -310,11 +327,13 @@ const messages = defineMessages({
   },
   proctoredExamLockedAndisNotProctoredExamAlert: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.proctoredExamLockedAndisNotProctoredExamAlert',
-    defaultMessage: 'This subsection was released to learners as a proctored exam, but was reverted back to a basic or timed exam. You may not configure it as a proctored exam now. Contact edX Support for assistance.',
+    defaultMessage:
+      'This subsection was released to learners as a proctored exam, but was reverted back to a basic or timed exam. You may not configure it as a proctored exam now. Contact edX Support for assistance.',
   },
   proctoredExamLockedAndisProctoredExamAlert: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.proctoredExamLockedAndisProctoredExamAlert',
-    defaultMessage: 'This proctored exam has been released to learners. You may not convert it to another type of special exam. You may revert this subsection back to being a basic exam by selecting \'None\', or a timed exam, but you will NOT be able to configure it as a proctored exam in the future.',
+    defaultMessage:
+      "This proctored exam has been released to learners. You may not convert it to another type of special exam. You may revert this subsection back to being a basic exam by selecting 'None', or a timed exam, but you will NOT be able to configure it as a proctored exam in the future.",
   },
   reviewRulesLabel: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesLabel',
@@ -322,11 +341,13 @@ const messages = defineMessages({
   },
   reviewRulesDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesDescription',
-    defaultMessage: 'Specify any rules or rule exceptions that the proctoring review team should enforce when reviewing the videos. For example, you could specify that calculators are allowed. These specified rules are visible to learners before the learners start the exam.',
+    defaultMessage:
+      'Specify any rules or rule exceptions that the proctoring review team should enforce when reviewing the videos. For example, you could specify that calculators are allowed. These specified rules are visible to learners before the learners start the exam.',
   },
   reviewRulesDescriptionWithLink: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesDescriptionWithLink',
-    defaultMessage: 'Specify any rules or rule exceptions that the proctoring review team should enforce when reviewing the videos. For example, you could specify that calculators are allowed. These specified rules are visible to learners before the learners start the exam, along with the {hyperlink}.',
+    defaultMessage:
+      'Specify any rules or rule exceptions that the proctoring review team should enforce when reviewing the videos. For example, you could specify that calculators are allowed. These specified rules are visible to learners before the learners start the exam, along with the {hyperlink}.',
   },
   reviewRulesDescriptionLinkText: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesDescriptionLinkText',

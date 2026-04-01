@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   settingsWidgetTitle: {
     id: 'authoring.problemeditor.settings.settingsWidgetTitle',
     defaultMessage: 'Settings',
@@ -64,7 +63,8 @@ const messages = defineMessages({
   },
   resetSettingText: {
     id: 'authoring.problemeditor.settings.reset.text',
-    defaultMessage: "Determines whether a 'Reset' button is shown so the user may reset their answer, generally for use in practice or formative assessments.",
+    defaultMessage:
+      "Determines whether a 'Reset' button is shown so the user may reset their answer, generally for use in practice or formative assessments.",
     description: 'Reset settings card text',
   },
   scoringSettingsTitle: {
@@ -134,7 +134,8 @@ const messages = defineMessages({
   },
   gradingMethodHint: {
     id: 'authoring.problemeditor.settings.scoring.grading.method.hint',
-    defaultMessage: 'Define the grading method for this problem. By default, it is the score of the last submission made by the student.',
+    defaultMessage:
+      'Define the grading method for this problem. By default, it is the score of the last submission made by the student.',
     description: 'Summary text for scoring grading method',
   },
   showAnswerSettingsTitle: {
@@ -189,12 +190,14 @@ const messages = defineMessages({
   },
   'ConfirmSwitchMessage-advanced': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchMessage.advanced',
-    defaultMessage: 'If you use the advanced editor, this problem will be converted to OLX. Depending on what edits you make to the OLX, you may not be able to return to the simple editor.',
+    defaultMessage:
+      'If you use the advanced editor, this problem will be converted to OLX. Depending on what edits you make to the OLX, you may not be able to return to the simple editor.',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
   'ConfirmSwitchMessage-markdown': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchMessage.markdown',
-    defaultMessage: 'Some edits that are possible with the markdown editor are not supported by the simple editor, so you may not be able to change back to the simple editor.',
+    defaultMessage:
+      'Some edits that are possible with the markdown editor are not supported by the simple editor, so you may not be able to change back to the simple editor.',
     description: 'message to confirm that a user wants to use the markdown editor',
   },
   'ConfirmSwitchMessageTitle-advanced': {

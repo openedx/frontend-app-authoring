@@ -1,21 +1,11 @@
-import React, {
-  useState,
-  useMemo,
-  useEffect,
-} from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import type { PaginationState } from '@tanstack/react-table';
 import { useTagListData, useCreateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
 import { TableView } from '../tree-table';
-import type {
-  RowId,
-  TreeColumnDef,
-  TreeRowData,
-} from '../tree-table/types';
-import {
-  TABLE_MODES,
-} from './constants';
+import type { RowId, TreeColumnDef, TreeRowData } from '../tree-table/types';
+import { TABLE_MODES } from './constants';
 import { getColumns } from './tagColumns';
 import { useTableModes, useEditActions } from './hooks';
 
@@ -55,9 +45,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;
 
   // TABLE MODES
-  const {
-    tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode,
-  } = useTableModes();
+  const { tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode } = useTableModes();
 
   // PAGINATION
   // TODO: Fix and enable pagination. For now, disable pagination.
@@ -99,20 +87,21 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   });
 
   const columns = useMemo<TreeColumnDef[]>(
-    () => getColumns({
-      setIsCreatingTopTag,
-      setCreatingParentId,
-      handleUpdateTag,
-      setEditingRowId,
-      onStartDraft: enterDraftMode,
-      setActiveActionMenuRowId,
-      hasOpenDraft,
-      draftError,
-      setDraftError,
-      isSavingDraft: createTagMutation.isPending,
-      maxDepth,
-      creatingParentId,
-    }),
+    () =>
+      getColumns({
+        setIsCreatingTopTag,
+        setCreatingParentId,
+        handleUpdateTag,
+        setEditingRowId,
+        onStartDraft: enterDraftMode,
+        setActiveActionMenuRowId,
+        hasOpenDraft,
+        draftError,
+        setDraftError,
+        isSavingDraft: createTagMutation.isPending,
+        maxDepth,
+        creatingParentId,
+      }),
     [
       isCreatingTopTag,
       editingRowId,

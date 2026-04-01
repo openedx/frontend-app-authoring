@@ -1,30 +1,21 @@
 import PropTypes from 'prop-types';
-import {
-  Icon,
-  OverlayTrigger,
-  Tooltip,
-} from '@openedx/paragon';
+import { Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-const CustomIcon = ({
-  icon,
-  message1,
-  message2,
-  placement = 'top',
-}) => {
+const CustomIcon = ({ icon, message1, message2, placement = 'top' }) => {
   const intl = useIntl();
 
   return (
     <OverlayTrigger
       key="top"
       placement={placement}
-      overlay={(
+      overlay={
         <Tooltip variant="dark" id="tooltip-top" className={placement !== 'top' ? 'ml-3' : ''}>
           {intl.formatMessage(message1)}
           {message1 && <br />}
           {intl.formatMessage(message2)}
         </Tooltip>
-      )}
+      }
     >
       <Icon src={icon} style={{ color: '#000000' }} />
     </OverlayTrigger>

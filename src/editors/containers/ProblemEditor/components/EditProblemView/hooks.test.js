@@ -53,11 +53,11 @@ const toStringMock = () => mockRawOLX;
 const refMock = { current: { state: { doc: { toString: toStringMock } } } };
 const markdownRefMock = { current: { state: { doc: { toString: () => mockRawMarkdown } } } };
 
-jest.mock('../../data/ReactStateOLXParser', () => (
+jest.mock('../../data/ReactStateOLXParser', () =>
   jest.fn().mockImplementation(() => ({
     buildOLX: () => mockBuiltOLX,
-  }))
-));
+  })),
+);
 
 jest.mock('../../../../utils', () => ({
   ...jest.requireActual('../../../../utils'),
@@ -142,12 +142,12 @@ describe('EditProblemView hooks parseState', () => {
     });
   });
   describe('parseState', () => {
-    jest.mock('../../data/ReactStateSettingsParser', () => (
+    jest.mock('../../data/ReactStateSettingsParser', () =>
       jest.fn().mockImplementationOnce(() => ({
         getSettings: () => mockGetSettings,
         parseRawOlxSettings: () => mockParseRawOlxSettings,
-      }))
-    ));
+      })),
+    );
     it('default problem', () => {
       const res = hooks.parseState({
         problem: problemState,
@@ -219,12 +219,18 @@ describe('EditProblemView hooks parseState', () => {
         jest.clearAllMocks();
       });
       it('should call openSaveWarningModal for single select problem with empty title', () => {
-        window.tinymce.editors = { 'answer-A': { getContent: () => '' }, 'answer-B': { getContent: () => 'sOmevALUe' } };
+        window.tinymce.editors = {
+          'answer-A': { getContent: () => '' },
+          'answer-B': { getContent: () => 'sOmevALUe' },
+        };
         const expected = hooks.checkForNoAnswers({
           openSaveWarningModal,
           problem: {
             ...problem,
-            answers: [{ id: 'A', title: '', correct: true }, { id: 'B', title: 'sOmevALUe', correct: false }],
+            answers: [
+              { id: 'A', title: '', correct: true },
+              { id: 'B', title: 'sOmevALUe', correct: false },
+            ],
           },
         });
         expect(openSaveWarningModal).toHaveBeenCalled();
@@ -236,7 +242,10 @@ describe('EditProblemView hooks parseState', () => {
           openSaveWarningModal,
           problem: {
             ...problem,
-            answers: [{ id: 'A', title: 'sOmevALUe', correct: false }, { id: 'B', title: '', correct: false }],
+            answers: [
+              { id: 'A', title: 'sOmevALUe', correct: false },
+              { id: 'B', title: '', correct: false },
+            ],
           },
         });
         expect(openSaveWarningModal).toHaveBeenCalled();
@@ -263,12 +272,12 @@ describe('EditProblemView hooks parseState', () => {
       jest.clearAllMocks();
     });
     it('returns true for setting discrepancies', () => {
-      jest.mock('../../data/ReactStateSettingsParser', () => (
+      jest.mock('../../data/ReactStateSettingsParser', () =>
         jest.fn().mockImplementationOnce(() => ({
           getSettings: () => mockGetSettings,
           parseRawOlxSettings: () => mockParseRawOlxSettingsDiscrepancy,
-        }))
-      ));
+        })),
+      );
       const mockRawOLXWithSettings = '<problem show_reset_button="true">rawOLX</problem>';
       const refMockWithSettings = { current: { state: { doc: { toString: () => mockRawOLXWithSettings } } } };
       const expected = hooks.checkForSettingDiscrepancy({
@@ -280,12 +289,12 @@ describe('EditProblemView hooks parseState', () => {
       expect(expected).toEqual(true);
     });
     it('returns false when there are no setting discrepancies', () => {
-      jest.mock('../../data/ReactStateSettingsParser', () => (
+      jest.mock('../../data/ReactStateSettingsParser', () =>
         jest.fn().mockImplementationOnce(() => ({
           getSettings: () => mockGetSettings,
           parseRawOlxSettings: () => mockParseRawOlxSettings,
-        }))
-      ));
+        })),
+      );
       const expected = hooks.checkForSettingDiscrepancy({
         openSaveWarningModal,
         problem,
@@ -313,7 +322,11 @@ describe('EditProblemView hooks parseState', () => {
     const openSaveWarningModal = jest.fn();
 
     it('default visual save and returns parseState data', () => {
-      const problem = { ...problemState, problemType: ProblemTypeKeys.NUMERIC, answers: [{ id: 'A', title: 'problem', correct: true }] };
+      const problem = {
+        ...problemState,
+        problemType: ProblemTypeKeys.NUMERIC,
+        answers: [{ id: 'A', title: 'problem', correct: true }],
+      };
       const content = hooks.getContent({
         isAdvancedProblemType: false,
         isMarkdownEditorEnabled: false,
@@ -379,7 +392,11 @@ describe('EditProblemView hooks parseState', () => {
       });
     });
     it('should return null', () => {
-      const problem = { ...problemState, problemType: ProblemTypeKeys.NUMERIC, answers: [{ id: 'A', title: '', correct: true }] };
+      const problem = {
+        ...problemState,
+        problemType: ProblemTypeKeys.NUMERIC,
+        answers: [{ id: 'A', title: '', correct: true }],
+      };
       const content = hooks.getContent({
         isAdvancedProblemType: false,
         problemState: problem,

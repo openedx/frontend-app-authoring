@@ -7,7 +7,8 @@ const messages = defineMessages({
   },
   deleteDialogBody: {
     id: 'course-authoring.taxonomy-list.dialog.delete.body',
-    defaultMessage: 'Warning! You are about to delete a taxonomy containing {tagsCount} tags. Assigned organizations will no longer be able to access the taxonomy, and any tags applied to course content will be removed.',
+    defaultMessage:
+      'Warning! You are about to delete a taxonomy containing {tagsCount} tags. Assigned organizations will no longer be able to access the taxonomy, and any tags applied to course content will be removed.',
   },
   deleteDialogConfirmLabel: {
     id: 'course-authoring.taxonomy-list.dialog.delete.confirm.label',

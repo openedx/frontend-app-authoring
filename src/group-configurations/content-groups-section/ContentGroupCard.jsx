@@ -3,17 +3,8 @@ import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Hyperlink,
-  Icon,
-  IconButtonWithTooltip,
-  useToggle,
-} from '@openedx/paragon';
-import {
-  DeleteOutline as DeleteOutlineIcon,
-  EditOutline as EditOutlineIcon,
-} from '@openedx/paragon/icons';
+import { ActionRow, Hyperlink, Icon, IconButtonWithTooltip, useToggle } from '@openedx/paragon';
+import { DeleteOutline as DeleteOutlineIcon, EditOutline as EditOutlineIcon } from '@openedx/paragon/icons';
 
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import TitleButton from '../common/TitleButton';
@@ -21,14 +12,7 @@ import UsageList from '../common/UsageList';
 import ContentGroupForm from './ContentGroupForm';
 import messages from './messages';
 
-const ContentGroupCard = ({
-  group,
-  groupNames,
-  parentGroupId,
-  readOnly,
-  contentGroupActions,
-  handleEditGroup,
-}) => {
+const ContentGroupCard = ({ group, groupNames, parentGroupId, readOnly, contentGroupActions, handleEditGroup }) => {
   const { formatMessage } = useIntl();
   const { courseId } = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -37,22 +21,12 @@ const ContentGroupCard = ({
   const { id, name, usage } = group;
   const isUsedInLocation = !!usage.length;
 
-  const { href: outlineUrl } = new URL(
-    `/course/${courseId}`,
-    getConfig().STUDIO_BASE_URL,
-  );
+  const { href: outlineUrl } = new URL(`/course/${courseId}`, getConfig().STUDIO_BASE_URL);
 
-  const outlineComponentLink = (
-    <Hyperlink destination={outlineUrl}>
-      {formatMessage(messages.courseOutline)}
-    </Hyperlink>
-  );
+  const outlineComponentLink = <Hyperlink destination={outlineUrl}>{formatMessage(messages.courseOutline)}</Hyperlink>;
 
   const guideHowToAdd = (
-    <span
-      className="small text-gray-700"
-      data-testid="configuration-card-usage-empty"
-    >
+    <span className="small text-gray-700" data-testid="configuration-card-usage-empty">
       {formatMessage(messages.emptyContentGroups, { outlineComponentLink })}
     </span>
   );
@@ -80,11 +54,7 @@ const ContentGroupCard = ({
       ) : (
         <div className="configuration-card" data-testid="content-group-card">
           <div className="configuration-card-header">
-            <TitleButton
-              group={group}
-              isExpanded={isExpanded}
-              onTitleClick={handleExpandContent}
-            />
+            <TitleButton group={group} isExpanded={isExpanded} onTitleClick={handleExpandContent} />
             {!readOnly && (
               <ActionRow className="ml-auto d-flex">
                 <IconButtonWithTooltip
@@ -97,11 +67,7 @@ const ContentGroupCard = ({
                 />
                 <IconButtonWithTooltip
                   className="configuration-card-header__delete-tooltip"
-                  tooltipContent={formatMessage(
-                    isUsedInLocation
-                      ? messages.deleteRestriction
-                      : messages.actionDelete,
-                  )}
+                  tooltipContent={formatMessage(isUsedInLocation ? messages.deleteRestriction : messages.actionDelete)}
                   alt={formatMessage(messages.actionDelete)}
                   src={DeleteOutlineIcon}
                   iconAs={Icon}
@@ -113,19 +79,8 @@ const ContentGroupCard = ({
             )}
           </div>
           {isExpanded && (
-            <div
-              className="configuration-card-content"
-              data-testid="content-group-card-content"
-            >
-              {usage?.length ? (
-                <UsageList
-                  className="mt-2.5"
-                  itemList={usage}
-                  key={usage.label}
-                />
-              ) : (
-                guideHowToAdd
-              )}
+            <div className="configuration-card-content" data-testid="content-group-card-content">
+              {usage?.length ? <UsageList className="mt-2.5" itemList={usage} key={usage.label} /> : guideHowToAdd}
             </div>
           )}
         </div>

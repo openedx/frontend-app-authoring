@@ -19,7 +19,8 @@ const messages = defineMessages({
   },
   alertWarningDescriptions: {
     id: 'course-authoring.advanced-settings.alert.warning.descriptions',
-    defaultMessage: 'Your changes will not take effect until you save your progress. Take care with key and value formatting, as validation is not implemented.',
+    defaultMessage:
+      'Your changes will not take effect until you save your progress. Take care with key and value formatting, as validation is not implemented.',
   },
   alertSuccess: {
     id: 'course-authoring.advanced-settings.alert.success',
@@ -27,7 +28,8 @@ const messages = defineMessages({
   },
   alertSuccessDescriptions: {
     id: 'course-authoring.advanced-settings.alert.success.descriptions',
-    defaultMessage: 'No validation is performed on policy keys or value pairs. If you are having difficulties, check your formatting.',
+    defaultMessage:
+      'No validation is performed on policy keys or value pairs. If you are having difficulties, check your formatting.',
   },
   alertProctoringError: {
     id: 'course-authoring.advanced-settings.alert.proctoring.error',

@@ -7,14 +7,7 @@ import EditConfirmationButtons from './EditConfirmationButtons';
 
 import messages from './messages';
 
-const EditableHeader = ({
-  handleChange,
-  updateTitle,
-  handleKeyDown,
-  inputRef,
-  localTitle,
-  cancelEdit,
-}) => {
+const EditableHeader = ({ handleChange, updateTitle, handleKeyDown, inputRef, localTitle, cancelEdit }) => {
   const intl = useIntl();
   return (
     <Form.Group onBlur={(e) => updateTitle(e)}>

@@ -35,9 +35,7 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
   };
   const user = getAuthenticatedUser();
   const { externalLinks } = app;
-  const {
-    handleSubmit, handleChange, handleBlur, values, touched, errors,
-  } = useFormik({
+  const { handleSubmit, handleChange, handleBlur, values, touched, errors } = useFormik({
     initialValues: ltiAppConfig,
     validationSchema: Yup.object().shape({
       consumerKey: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),
@@ -94,7 +92,7 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
             }}
           />
         </p>
-        {(showLTIConfig && piiConfig.piiSharing) && (
+        {showLTIConfig && piiConfig.piiSharing && (
           <>
             <p>{intl.formatMessage(messages.formInstructions)}</p>
             <Form.Group
@@ -115,11 +113,7 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
                 </Form.Control.Feedback>
               )}
             </Form.Group>
-            <Form.Group
-              controlId="consumerSecret"
-              isInvalid={isInvalidConsumerSecret}
-              className="mb-4"
-            >
+            <Form.Group controlId="consumerSecret" isInvalid={isInvalidConsumerSecret} className="mb-4">
               <Form.Control
                 floatingLabel={intl.formatMessage(messages.consumerSecret)}
                 onChange={handleChange}
@@ -147,7 +141,7 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
             </Form.Group>
           </>
         )}
-        {(enablePIISharing) && (
+        {enablePIISharing && (
           <div data-testid="piiSharingFields">
             <Form.Text className="my-2">{intl.formatMessage(messages.piiSharing)}</Form.Text>
             <Form.Group controlId="piiSharing">
@@ -171,11 +165,7 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
           </div>
         )}
       </Form>
-      <AppExternalLinks
-        externalLinks={externalLinks}
-        providerName={providerName}
-        customClasses="small text-muted"
-      />
+      <AppExternalLinks externalLinks={externalLinks} providerName={providerName} customClasses="small text-muted" />
     </Card>
   );
 };

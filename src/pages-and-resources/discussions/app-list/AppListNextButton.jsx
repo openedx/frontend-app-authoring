@@ -10,7 +10,7 @@ import messages from './messages';
 
 const AppListNextButton = () => {
   const intl = useIntl();
-  const { selectedAppId } = useSelector(state => state.discussions);
+  const { selectedAppId } = useSelector((state) => state.discussions);
   const { path: discussionsPath } = useContext(DiscussionsContext);
   const navigate = useNavigate();
 
@@ -19,10 +19,7 @@ const AppListNextButton = () => {
   }, [discussionsPath, selectedAppId]);
 
   return (
-    <Button
-      variant="primary"
-      onClick={handleStartConfig}
-    >
+    <Button variant="primary" onClick={handleStartConfig}>
       {intl.formatMessage(messages.nextButton)}
     </Button>
   );

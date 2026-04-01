@@ -1,8 +1,6 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import type { MessageDescriptor } from 'react-intl';
-import {
-  Bubble, Card, Icon, OverlayTrigger, Stack, Tooltip,
-} from '@openedx/paragon';
+import { Bubble, Card, Icon, OverlayTrigger, Stack, Tooltip } from '@openedx/paragon';
 import { Info, Widgets } from '@openedx/paragon/icons';
 
 import { LoadingSpinner } from '@src/generic/Loading';
@@ -19,9 +17,7 @@ const DisplayNumber = ({ count, isPending }: DisplayNumberProps) => {
   if (isPending) {
     return <LoadingSpinner />;
   }
-  return (
-    <span className="lead">{count}</span>
-  );
+  return <span className="lead">{count}</span>;
 };
 
 interface DisplayNumberComponentProps {
@@ -33,36 +29,33 @@ interface DisplayNumberComponentProps {
   info?: React.ReactNode;
 }
 
-const DisplayNumberComponent = ({
-  count, isPending, icon, typeId, title, info,
-}: DisplayNumberComponentProps) => (
+const DisplayNumberComponent = ({ count, isPending, icon, typeId, title, info }: DisplayNumberComponentProps) => (
   <>
     <div className="d-flex align-items-start">
       <FormattedMessage {...title} />
-      {info
-          && (
-          <OverlayTrigger
-            placement="top"
-            overlay={(
-              <Tooltip variant="light" id={`${typeId}-info`}>
-                {info}
-              </Tooltip>
-            )}
-          >
-            <Bubble className="ml-2 min-1-rem">
-              <Icon size="xs" src={Info} />
-            </Bubble>
-          </OverlayTrigger>
-          )}
+      {info && (
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip variant="light" id={`${typeId}-info`}>
+              {info}
+            </Tooltip>
+          }
+        >
+          <Bubble className="ml-2 min-1-rem">
+            <Icon size="xs" src={Info} />
+          </Bubble>
+        </OverlayTrigger>
+      )}
     </div>
-    {icon
-      ? (
-        <Stack direction="horizontal" gap={3}>
-          <Icon src={icon} />
-          <DisplayNumber count={count} isPending={isPending} />
-        </Stack>
-      )
-      : <DisplayNumber count={count} isPending={isPending} />}
+    {icon ? (
+      <Stack direction="horizontal" gap={3}>
+        <Icon src={icon} />
+        <DisplayNumber count={count} isPending={isPending} />
+      </Stack>
+    ) : (
+      <DisplayNumber count={count} isPending={isPending} />
+    )}
   </>
 );
 
@@ -139,14 +132,16 @@ export const SummaryCard = ({
               icon={Widgets}
               typeId="unsupported"
               title={messages.importCourseComponents}
-              info={unsupportedBlocks ? (
-                <FormattedMessage
-                  {...messages.importCourseComponentsUnsupportedInfo}
-                  values={{
-                    count: unsupportedBlocks,
-                  }}
-                />
-              ) : null}
+              info={
+                unsupportedBlocks ? (
+                  <FormattedMessage
+                    {...messages.importCourseComponentsUnsupportedInfo}
+                    values={{
+                      count: unsupportedBlocks,
+                    }}
+                  />
+                ) : null
+              }
             />
           </Stack>
         </Stack>

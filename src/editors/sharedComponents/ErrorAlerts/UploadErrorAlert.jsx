@@ -4,16 +4,9 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import ErrorAlert from './ErrorAlert';
 
-const UploadErrorAlert = ({
-  message,
-  isUploadError,
-}) => (
-  <ErrorAlert
-    isError={isUploadError}
-  >
-    <FormattedMessage
-      {...message}
-    />
+const UploadErrorAlert = ({ message, isUploadError }) => (
+  <ErrorAlert isError={isUploadError}>
+    <FormattedMessage {...message} />
   </ErrorAlert>
 );
 

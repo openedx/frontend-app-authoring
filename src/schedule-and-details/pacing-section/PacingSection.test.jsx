@@ -46,9 +46,7 @@ describe('<PacingSection />', () => {
     const year = new Date().getFullYear() + 1;
     const pastDate = `${year}-12-31`;
     const initialProps = { ...props, startDate: pastDate };
-    const { getAllByRole, queryAllByText } = render(
-      <RootWrapper {...initialProps} />,
-    );
+    const { getAllByRole, queryAllByText } = render(<RootWrapper {...initialProps} />);
     const radioList = getAllByRole('radio');
     expect(radioList[0].checked).toBeTruthy();
     expect(radioList[0].disabled).toBeFalsy();

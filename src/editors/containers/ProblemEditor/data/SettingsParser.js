@@ -1,6 +1,4 @@
-import {
-  get, isEmpty, isFinite, isNil,
-} from 'lodash';
+import { get, isEmpty, isFinite, isNil } from 'lodash';
 
 import { ShowAnswerTypes, RandomizationTypesKeys } from '../../../data/constants/problem';
 
@@ -9,7 +7,7 @@ export const popuplateItem = (parentObject, itemName, statekey, metadata, defaul
   const item = get(metadata, itemName, null);
 
   // if item is null, undefined, or empty string, use defaultValue
-  const finalValue = (isNil(item) || item === '') ? defaultValue : item;
+  const finalValue = isNil(item) || item === '' ? defaultValue : item;
 
   if (!isNil(finalValue) || allowNull) {
     parent = { ...parentObject, [statekey]: finalValue };

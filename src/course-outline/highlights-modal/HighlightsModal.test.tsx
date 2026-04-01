@@ -1,6 +1,4 @@
-import {
-  initializeMocks, render, fireEvent, act, waitFor,
-} from '@src/testUtils';
+import { initializeMocks, render, fireEvent, act, waitFor } from '@src/testUtils';
 
 import HighlightsModal from './HighlightsModal';
 import messages from './messages';
@@ -43,13 +41,7 @@ jest.mock('../../help-urls/hooks', () => ({
 const onCloseMock = jest.fn();
 const onSubmitMock = jest.fn();
 
-const renderComponent = () => render(
-  <HighlightsModal
-    isOpen
-    onClose={onCloseMock}
-    onSubmit={onSubmitMock}
-  />,
-);
+const renderComponent = () => render(<HighlightsModal isOpen onClose={onCloseMock} onSubmit={onSubmitMock} />);
 
 describe('<HighlightsModal />', () => {
   beforeEach(() => {
@@ -60,7 +52,9 @@ describe('<HighlightsModal />', () => {
     const { getByText, getByRole, getByLabelText } = renderComponent();
 
     expect(getByText(`Highlights for ${currentItemMock.displayName}`)).toBeInTheDocument();
-    expect(getByText(/Enter 3-5 highlights to include in the email message that learners receive for this section/i)).toBeInTheDocument();
+    expect(
+      getByText(/Enter 3-5 highlights to include in the email message that learners receive for this section/i),
+    ).toBeInTheDocument();
     expect(getByText(/For more information and an example of the email template, read our/i)).toBeInTheDocument();
     expect(getByText(messages.documentationLink.defaultMessage)).toBeInTheDocument();
     expect(getByLabelText(messages.highlight.defaultMessage.replace('{index}', '1'))).toBeInTheDocument();

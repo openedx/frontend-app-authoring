@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  logError,
-} from '@edx/frontend-platform/logging';
+import { logError } from '@edx/frontend-platform/logging';
 
 import ErrorPage from './ErrorPage';
 
@@ -33,10 +31,7 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <ErrorPage
-          learningContextId={this.props.learningContextId}
-          studioEndpointUrl={this.props.studioEndpointUrl}
-        />
+        <ErrorPage learningContextId={this.props.learningContextId} studioEndpointUrl={this.props.studioEndpointUrl} />
       );
     }
 

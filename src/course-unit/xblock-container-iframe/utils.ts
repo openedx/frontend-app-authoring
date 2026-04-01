@@ -7,10 +7,7 @@ import { XBlockTypes } from './types';
 /**
  * Formats the XBlock data into a standardized structure for access management.
  */
-export const formatAccessManagedXBlockData = (
-  xblock: XBlockTypes,
-  usageId: string,
-): AccessManagedXBlockDataTypes => ({
+export const formatAccessManagedXBlockData = (xblock: XBlockTypes, usageId: string): AccessManagedXBlockDataTypes => ({
   category: COURSE_BLOCK_NAMES.component.id,
   displayName: xblock.name,
   userPartitionInfo: xblock.userPartitionInfo,
@@ -34,6 +31,5 @@ export const getIframeUrl = (blockId: string): string => `${getConfig().STUDIO_B
  *
  * @returns {string} - The generated URL for editing the XBlock in the legacy modal.
  */
-export const getLegacyEditModalUrl = (
-  blockId: string | null,
-): string => (blockId ? `${getConfig().STUDIO_BASE_URL}/xblock/${blockId}/action/edit` : '');
+export const getLegacyEditModalUrl = (blockId: string | null): string =>
+  blockId ? `${getConfig().STUDIO_BASE_URL}/xblock/${blockId}/action/edit` : '';

@@ -1,14 +1,16 @@
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
-import HeaderNavigations, { HeaderNavigationsProps } from 'CourseAuthoring/course-outline/header-navigations/HeaderNavigations';
+import HeaderNavigations, {
+  HeaderNavigationsProps,
+} from 'CourseAuthoring/course-outline/header-navigations/HeaderNavigations';
 import HeaderActions from 'CourseAuthoring/course-outline/header-navigations/HeaderActions';
 import { isOutlineNewDesignEnabled } from '@src/course-outline/utils';
 
 interface CourseOutlineHeaderActionsSlotProps extends HeaderNavigationsProps {
-  sections: Array<({
-    id: string,
-    displayName: string,
-  })>,
+  sections: Array<{
+    id: string;
+    displayName: string;
+  }>;
 }
 
 const CourseOutlineHeaderActionsSlot = ({
@@ -35,25 +37,19 @@ const CourseOutlineHeaderActionsSlot = ({
       sections,
     }}
   >
-    {isOutlineNewDesignEnabled()
-      ? (
-        <HeaderActions
-          actions={headerNavigationsActions}
-          courseActions={courseActions}
-          errors={errors}
-        />
-      )
-      : (
-        <HeaderNavigations
-          headerNavigationsActions={headerNavigationsActions}
-          isReIndexShow={isReIndexShow}
-          isSectionsExpanded={isSectionsExpanded}
-          isDisabledReindexButton={isDisabledReindexButton}
-          hasSections={hasSections}
-          courseActions={courseActions}
-          errors={errors}
-        />
-      )}
+    {isOutlineNewDesignEnabled() ? (
+      <HeaderActions actions={headerNavigationsActions} courseActions={courseActions} errors={errors} />
+    ) : (
+      <HeaderNavigations
+        headerNavigationsActions={headerNavigationsActions}
+        isReIndexShow={isReIndexShow}
+        isSectionsExpanded={isSectionsExpanded}
+        isDisabledReindexButton={isDisabledReindexButton}
+        hasSections={hasSections}
+        courseActions={courseActions}
+        errors={errors}
+      />
+    )}
   </PluginSlot>
 );
 

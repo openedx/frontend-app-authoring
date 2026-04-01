@@ -1,6 +1,4 @@
-import {
-  initializeMocks, render, screen,
-} from '../../testUtils';
+import { initializeMocks, render, screen } from '../../testUtils';
 import messages from './messages';
 import GradingSidebar from '.';
 

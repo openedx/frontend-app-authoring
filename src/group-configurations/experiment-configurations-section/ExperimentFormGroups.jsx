@@ -2,33 +2,19 @@
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Close as CloseIcon, Add as AddIcon } from '@openedx/paragon/icons';
-import {
-  Form, Icon, IconButtonWithTooltip, Stack, Button,
-} from '@openedx/paragon';
+import { Form, Icon, IconButtonWithTooltip, Stack, Button } from '@openedx/paragon';
 
-import {
-  getNextGroupName,
-  getGroupPercentage,
-  getFormGroupErrors,
-} from './utils';
+import { getNextGroupName, getGroupPercentage, getFormGroupErrors } from './utils';
 import messages from './messages';
 
-const ExperimentFormGroups = ({
-  groups,
-  errors,
-  onChange,
-  onDeleteGroup,
-  onCreateGroup,
-}) => {
+const ExperimentFormGroups = ({ groups, errors, onChange, onDeleteGroup, onCreateGroup }) => {
   const { formatMessage } = useIntl();
   const percentage = getGroupPercentage(groups.length);
   const { arrayErrors, stringError } = getFormGroupErrors(errors);
 
   return (
     <Form.Group className="configuration-form-group">
-      <Form.Label className="font-weight-bold">
-        {formatMessage(messages.experimentConfigurationGroups)}*
-      </Form.Label>
+      <Form.Label className="font-weight-bold">{formatMessage(messages.experimentConfigurationGroups)}*</Form.Label>
       <Form.Control.Feedback className="mt-0">
         {formatMessage(messages.experimentConfigurationGroupsFeedback)}
       </Form.Control.Feedback>
@@ -43,30 +29,16 @@ const ExperimentFormGroups = ({
           const isInvalid = !!fieldError;
 
           return (
-            <Form.Group
-              key={idx}
-              isInvalid={isInvalid}
-              className="configuration-form-group"
-            >
+            <Form.Group key={idx} isInvalid={isInvalid} className="configuration-form-group">
               <Stack className="align-content-between" direction="horizontal">
-                <Form.Control
-                  name={`groups[${idx}].name`}
-                  value={group.name}
-                  onChange={onChange}
-                />
-                <div className="experiment-configuration-form-percentage">
-                  {percentage}
-                </div>
+                <Form.Control name={`groups[${idx}].name`} value={group.name} onChange={onChange} />
+                <div className="experiment-configuration-form-percentage">{percentage}</div>
                 <IconButtonWithTooltip
                   size="sm"
-                  tooltipContent={formatMessage(
-                    messages.experimentConfigurationGroupsTooltip,
-                  )}
+                  tooltipContent={formatMessage(messages.experimentConfigurationGroupsTooltip)}
                   src={CloseIcon}
                   iconAs={Icon}
-                  alt={formatMessage(
-                    messages.experimentConfigurationGroupsTooltip,
-                  )}
+                  alt={formatMessage(messages.experimentConfigurationGroupsTooltip)}
                   onClick={() => onDeleteGroup(idx)}
                 />
               </Stack>
@@ -115,10 +87,7 @@ ExperimentFormGroups.propTypes = {
   onChange: PropTypes.func.isRequired,
   onDeleteGroup: PropTypes.func.isRequired,
   onCreateGroup: PropTypes.func.isRequired,
-  errors: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.shape({ name: PropTypes.string })),
-    PropTypes.string,
-  ]),
+  errors: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.shape({ name: PropTypes.string })), PropTypes.string]),
 };
 
 export default ExperimentFormGroups;

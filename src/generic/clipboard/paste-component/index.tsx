@@ -11,9 +11,7 @@ interface PasteComponentProps {
   className?: string;
 }
 
-const PasteComponent = ({
-  onClick, clipboardData, text, className,
-}: PasteComponentProps) => {
+const PasteComponent = ({ onClick, clipboardData, text, className }: PasteComponentProps) => {
   const [showPopover, togglePopover] = useState(false);
   const popoverElementRef = useRef(null);
 
@@ -38,10 +36,7 @@ const PasteComponent = ({
   return (
     <>
       <PasteButton className={className} onClick={onClick} text={text} />
-      <OverlayTrigger
-        show={showPopover}
-        overlay={renderPopover}
-      >
+      <OverlayTrigger show={showPopover} overlay={renderPopover}>
         <WhatsInClipboard
           handlePopoverToggle={handlePopoverToggle}
           togglePopover={togglePopover}

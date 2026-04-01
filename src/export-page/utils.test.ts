@@ -17,11 +17,7 @@ describe('setExportCookie', () => {
     const date = moment('2023-07-24').valueOf();
     setExportCookie(date);
 
-    expect(cookiesSetMock).toHaveBeenCalledWith(
-      LAST_EXPORT_COOKIE_NAME,
-      { date },
-      { path: '/some-path' },
-    );
+    expect(cookiesSetMock).toHaveBeenCalledWith(LAST_EXPORT_COOKIE_NAME, { date }, { path: '/some-path' });
 
     cookiesSetMock.mockRestore();
   });

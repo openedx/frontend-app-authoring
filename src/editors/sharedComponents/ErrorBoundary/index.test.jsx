@@ -1,9 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import {
-  logError,
-} from '@edx/frontend-platform/logging';
+import { logError } from '@edx/frontend-platform/logging';
 import ErrorBoundary from './index';
 
 jest.mock('@edx/frontend-platform/logging', () => ({
@@ -11,9 +9,13 @@ jest.mock('@edx/frontend-platform/logging', () => ({
 }));
 
 // stubbing this to avoid needing to inject a stubbed intl into an internal component
-jest.mock('./ErrorPage', () => function mockErrorPage() {
-  return <p>Error Page</p>;
-});
+jest.mock(
+  './ErrorPage',
+  () =>
+    function mockErrorPage() {
+      return <p>Error Page</p>;
+    },
+);
 
 describe('ErrorBoundary', () => {
   it('should render children if no error', () => {

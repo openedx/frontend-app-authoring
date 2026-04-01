@@ -16,67 +16,99 @@ const actions = {
 };
 
 export const fetchBlock = () => (dispatch) => {
-  dispatch(requests.fetchBlock({
-    onSuccess: (response) => {
-      dispatch(actions.app.setBlockValue(response));
-      dispatch(actions.app.setShowRawEditor(response));
-    },
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchBlock,
-      error,
-    })),
-  }));
+  dispatch(
+    requests.fetchBlock({
+      onSuccess: (response) => {
+        dispatch(actions.app.setBlockValue(response));
+        dispatch(actions.app.setShowRawEditor(response));
+      },
+      onFailure: (error) =>
+        dispatch(
+          actions.requests.failRequest({
+            requestKey: RequestKeys.fetchBlock,
+            error,
+          }),
+        ),
+    }),
+  );
 };
 
 export const fetchStudioView = () => (dispatch) => {
-  dispatch(requests.fetchStudioView({
-    onSuccess: (response) => dispatch(actions.app.setStudioView(response)),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchStudioView,
-      error,
-    })),
-  }));
+  dispatch(
+    requests.fetchStudioView({
+      onSuccess: (response) => dispatch(actions.app.setStudioView(response)),
+      onFailure: (error) =>
+        dispatch(
+          actions.requests.failRequest({
+            requestKey: RequestKeys.fetchStudioView,
+            error,
+          }),
+        ),
+    }),
+  );
 };
 
 export const fetchUnit = () => (dispatch) => {
-  dispatch(requests.fetchUnit({
-    onSuccess: (response) => dispatch(actions.app.setUnitUrl(response)),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchUnit,
-      error,
-    })),
-  }));
+  dispatch(
+    requests.fetchUnit({
+      onSuccess: (response) => dispatch(actions.app.setUnitUrl(response)),
+      onFailure: (error) =>
+        dispatch(
+          actions.requests.failRequest({
+            requestKey: RequestKeys.fetchUnit,
+            error,
+          }),
+        ),
+    }),
+  );
 };
 
-export const fetchImages = ({ pageNumber }) => (dispatch) => {
-  dispatch(requests.fetchImages({
-    pageNumber,
-    onSuccess: ({ images, imageCount }) => dispatch(actions.app.setImages({ images, imageCount })),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchImages,
-      error,
-    })),
-  }));
-};
+export const fetchImages =
+  ({ pageNumber }) =>
+  (dispatch) => {
+    dispatch(
+      requests.fetchImages({
+        pageNumber,
+        onSuccess: ({ images, imageCount }) => dispatch(actions.app.setImages({ images, imageCount })),
+        onFailure: (error) =>
+          dispatch(
+            actions.requests.failRequest({
+              requestKey: RequestKeys.fetchImages,
+              error,
+            }),
+          ),
+      }),
+    );
+  };
 
 export const fetchVideos = () => (dispatch) => {
-  dispatch(requests.fetchVideos({
-    onSuccess: (response) => dispatch(actions.app.setVideos(response.data.videos)),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchVideos,
-      error,
-    })),
-  }));
+  dispatch(
+    requests.fetchVideos({
+      onSuccess: (response) => dispatch(actions.app.setVideos(response.data.videos)),
+      onFailure: (error) =>
+        dispatch(
+          actions.requests.failRequest({
+            requestKey: RequestKeys.fetchVideos,
+            error,
+          }),
+        ),
+    }),
+  );
 };
 
 export const fetchCourseDetails = () => (dispatch) => {
-  dispatch(requests.fetchCourseDetails({
-    onSuccess: (response) => dispatch(actions.app.setCourseDetails(response)),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchCourseDetails,
-      error,
-    })),
-  }));
+  dispatch(
+    requests.fetchCourseDetails({
+      onSuccess: (response) => dispatch(actions.app.setCourseDetails(response)),
+      onFailure: (error) =>
+        dispatch(
+          actions.requests.failRequest({
+            requestKey: RequestKeys.fetchCourseDetails,
+            error,
+          }),
+        ),
+    }),
+  );
 };
 
 /**
@@ -121,78 +153,96 @@ export const initialize = (data) => (dispatch) => {
  */
 export const saveBlock = (content, returnToUnit) => (dispatch) => {
   dispatch(actions.app.setBlockContent(content));
-  dispatch(requests.saveBlock({
-    content,
-    onSuccess: (response) => {
-      dispatch(actions.app.setSaveResponse(response));
-      const parsedData = JSON.parse(response.config.data);
-      if (parsedData?.has_changes || !('has_changes' in parsedData)) {
-        const storageKey = 'courseRefreshTriggerOnComponentEditSave';
-        sessionStorage.setItem(storageKey, Date.now());
+  dispatch(
+    requests.saveBlock({
+      content,
+      onSuccess: (response) => {
+        dispatch(actions.app.setSaveResponse(response));
+        const parsedData = JSON.parse(response.config.data);
+        if (parsedData?.has_changes || !('has_changes' in parsedData)) {
+          const storageKey = 'courseRefreshTriggerOnComponentEditSave';
+          sessionStorage.setItem(storageKey, Date.now());
 
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: storageKey,
-          newValue: Date.now().toString(),
-        }));
-      }
-      returnToUnit(response.data);
-    },
-  }));
+          window.dispatchEvent(
+            new StorageEvent('storage', {
+              key: storageKey,
+              newValue: Date.now().toString(),
+            }),
+          );
+        }
+        returnToUnit(response.data);
+      },
+    }),
+  );
 };
 
 /**
  * @param {func} onSuccess
  */
 export const createBlock = (content, returnToUnit) => (dispatch, getState) => {
-  dispatch(requests.createBlock({
-    onSuccess: (response) => {
-      dispatch(actions.app.setBlockId(response.id));
-      const newImages = Object.values(selectors.images(getState())).map((image) => image.file);
+  dispatch(
+    requests.createBlock({
+      onSuccess: (response) => {
+        dispatch(actions.app.setBlockId(response.id));
+        const newImages = Object.values(selectors.images(getState())).map((image) => image.file);
 
-      if (newImages.length === 0) {
-        dispatch(saveBlock(content, returnToUnit));
-        return;
-      }
-      dispatch(requests.batchUploadAssets({
-        assets: newImages,
-        content,
-        onSuccess: (updatedContent) => dispatch(saveBlock(updatedContent, returnToUnit)),
-        onFailure: (error) => dispatch(actions.requests.failRequest({
-          requestKey: RequestKeys.batchUploadAssets,
-          error,
-        })),
-      }));
-    },
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.createBlock,
-      error,
-    })),
-  }));
+        if (newImages.length === 0) {
+          dispatch(saveBlock(content, returnToUnit));
+          return;
+        }
+        dispatch(
+          requests.batchUploadAssets({
+            assets: newImages,
+            content,
+            onSuccess: (updatedContent) => dispatch(saveBlock(updatedContent, returnToUnit)),
+            onFailure: (error) =>
+              dispatch(
+                actions.requests.failRequest({
+                  requestKey: RequestKeys.batchUploadAssets,
+                  error,
+                }),
+              ),
+          }),
+        );
+      },
+      onFailure: (error) =>
+        dispatch(
+          actions.requests.failRequest({
+            requestKey: RequestKeys.createBlock,
+            error,
+          }),
+        ),
+    }),
+  );
 };
 
-export const uploadAsset = ({ file, setSelection }) => (dispatch, getState) => {
-  if (selectors.shouldCreateBlock(getState())) {
-    const tempFileURL = URL.createObjectURL(file);
-    const tempImage = {
-      displayName: file.name,
-      url: tempFileURL,
-      externalUrl: tempFileURL,
-      portableUrl: tempFileURL,
-      thumbnail: tempFileURL,
-      id: file.name,
-      locked: false,
-      file,
-    };
-    setSelection(tempImage);
-    dispatch(appActions.setImages({ images: { [file.name]: tempImage }, imageCount: 1 }));
-    return;
-  }
+export const uploadAsset =
+  ({ file, setSelection }) =>
+  (dispatch, getState) => {
+    if (selectors.shouldCreateBlock(getState())) {
+      const tempFileURL = URL.createObjectURL(file);
+      const tempImage = {
+        displayName: file.name,
+        url: tempFileURL,
+        externalUrl: tempFileURL,
+        portableUrl: tempFileURL,
+        thumbnail: tempFileURL,
+        id: file.name,
+        locked: false,
+        file,
+      };
+      setSelection(tempImage);
+      dispatch(appActions.setImages({ images: { [file.name]: tempImage }, imageCount: 1 }));
+      return;
+    }
 
-  dispatch(requests.uploadAsset({
-    asset: file,
-    onSuccess: (response) => setSelection(camelizeKeys(response.data.asset)),
-  }));
-};
+    dispatch(
+      requests.uploadAsset({
+        asset: file,
+        onSuccess: (response) => setSelection(camelizeKeys(response.data.asset)),
+      }),
+    );
+  };
 
 export default StrictDict({
   fetchBlock,

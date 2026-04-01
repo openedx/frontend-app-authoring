@@ -1,7 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Container, Layout,
-} from '@openedx/paragon';
+import { Container, Layout } from '@openedx/paragon';
 
 import { Helmet } from 'react-helmet';
 
@@ -19,12 +17,7 @@ import { useCourseImportContext } from './CourseImportContext';
 const CourseImportPage = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
-  const {
-    importTriggered,
-    anyRequestFailed,
-    anyRequestInProgress,
-    isLoadingDenied,
-  } = useCourseImportContext();
+  const { importTriggered, anyRequestFailed, anyRequestInProgress, isLoadingDenied } = useCourseImportContext();
 
   if (isLoadingDenied) {
     return (

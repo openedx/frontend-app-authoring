@@ -14,14 +14,7 @@ export interface AlignSidebarProps {
  */
 export const AlignSidebar = ({ contentId, title, onBackBtnClick }: AlignSidebarProps) => (
   <div>
-    <SidebarTitle
-      title={title}
-      icon={SchoolOutline}
-      onBackBtnClick={onBackBtnClick}
-    />
-    <ContentTagsDrawer
-      id={contentId}
-      variant="component"
-    />
+    <SidebarTitle title={title} icon={SchoolOutline} onBackBtnClick={onBackBtnClick} />
+    <ContentTagsDrawer id={contentId} variant="component" />
   </div>
 );

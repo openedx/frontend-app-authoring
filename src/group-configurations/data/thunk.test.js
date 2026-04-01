@@ -38,9 +38,9 @@ describe('group configurations thunk', () => {
     axiosMock.onPost(getLegacyApiUrl(courseId)).reply(200, mockResponse);
 
     await executeThunk(thunkActions.createContentGroupQuery(courseId, {}), store.dispatch);
-    const updatedGroup = store.getState()
-      .groupConfigurations.groupConfigurations.allGroupConfigurations
-      .find(group => group.id === mockResponse.id);
+    const updatedGroup = store
+      .getState()
+      .groupConfigurations.groupConfigurations.allGroupConfigurations.find((group) => group.id === mockResponse.id);
     expect(updatedGroup.name).toEqual(mockResponse.name);
   });
   it('dispatches correct actions on editContentGroupQuery', async () => {
@@ -48,9 +48,9 @@ describe('group configurations thunk', () => {
     axiosMock.onPost(getLegacyApiUrl(courseId)).reply(200, mockResponse);
 
     await executeThunk(thunkActions.editContentGroupQuery(courseId, {}), store.dispatch);
-    const updatedGroup = store.getState()
-      .groupConfigurations.groupConfigurations.allGroupConfigurations
-      .find(group => group.id === mockResponse.id);
+    const updatedGroup = store
+      .getState()
+      .groupConfigurations.groupConfigurations.allGroupConfigurations.find((group) => group.id === mockResponse.id);
     expect(updatedGroup.name).toEqual(mockResponse.name);
   });
   it('dispatches correct actions on createExperimentConfigurationQuery', async () => {
@@ -58,9 +58,11 @@ describe('group configurations thunk', () => {
     axiosMock.onPost(getLegacyApiUrl(courseId)).reply(200, mockResponse);
 
     await executeThunk(thunkActions.createExperimentConfigurationQuery(courseId, {}), store.dispatch);
-    const updatedGroup = store.getState()
-      .groupConfigurations.groupConfigurations.experimentGroupConfigurations
-      .find(group => group.id === mockResponse.id);
+    const updatedGroup = store
+      .getState()
+      .groupConfigurations.groupConfigurations.experimentGroupConfigurations.find(
+        (group) => group.id === mockResponse.id,
+      );
     expect(updatedGroup.name).toEqual(mockResponse.name);
   });
   it('dispatches correct actions on editExperimentConfigurationQuery', async () => {
@@ -68,9 +70,11 @@ describe('group configurations thunk', () => {
     axiosMock.onPost(getLegacyApiUrl(courseId)).reply(200, mockResponse);
 
     await executeThunk(thunkActions.editExperimentConfigurationQuery(courseId, {}), store.dispatch);
-    const updatedGroup = store.getState()
-      .groupConfigurations.groupConfigurations.experimentGroupConfigurations
-      .find(group => group.id === mockResponse.id);
+    const updatedGroup = store
+      .getState()
+      .groupConfigurations.groupConfigurations.experimentGroupConfigurations.find(
+        (group) => group.id === mockResponse.id,
+      );
     expect(updatedGroup.name).toEqual(mockResponse.name);
   });
   it('dispatches correct actions on deleteContentGroupQuery', async () => {
@@ -78,18 +82,20 @@ describe('group configurations thunk', () => {
     axiosMock.onDelete(getLegacyApiUrl(courseId)).reply(200, {});
 
     await executeThunk(thunkActions.deleteContentGroupQuery(courseId, groupToDelete.id), store.dispatch);
-    const updatedGroup = store.getState()
-      .groupConfigurations.groupConfigurations.allGroupConfigurations
-      .find(group => group.id === groupToDelete.id);
+    const updatedGroup = store
+      .getState()
+      .groupConfigurations.groupConfigurations.allGroupConfigurations.find((group) => group.id === groupToDelete.id);
     expect(updatedGroup).toBeFalsy();
   });
   it('dispatches correct actions on deleteExperimentConfigurationQuery', async () => {
     const groupToDelete = { id: 276408623, name: 'deleted' };
     axiosMock.onDelete(getLegacyApiUrl(courseId)).reply(200, {});
     await executeThunk(thunkActions.deleteExperimentConfigurationQuery(courseId, groupToDelete.id), store.dispatch);
-    const updatedGroup = store.getState()
-      .groupConfigurations.groupConfigurations.experimentGroupConfigurations
-      .find(group => group.id === groupToDelete.id);
+    const updatedGroup = store
+      .getState()
+      .groupConfigurations.groupConfigurations.experimentGroupConfigurations.find(
+        (group) => group.id === groupToDelete.id,
+      );
     expect(updatedGroup).toBeFalsy();
   });
 });

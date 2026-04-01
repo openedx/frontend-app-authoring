@@ -27,9 +27,7 @@ const TaxonomyCardComponent = ({ original }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
-        <TaxonomyCard
-          original={original}
-        />
+        <TaxonomyCard original={original} />
       </QueryClientProvider>
     </IntlProvider>
   </AppProvider>

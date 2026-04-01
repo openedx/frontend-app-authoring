@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Icon,
-  ModalDialog,
-  Stack,
-  Truncate,
-} from '@openedx/paragon';
+import { Icon, ModalDialog, Stack, Truncate } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 
 import messages from './messages';
@@ -16,19 +11,11 @@ import FileThumbnail from './ThumbnailPreview';
 import { TRANSCRIPT_FAILURE_STATUSES } from '../videos-page/data/constants';
 import AlertMessage from '../../generic/alert-message';
 
-const InfoModal = ({
-  file,
-  isOpen,
-  onClose,
-  thumbnailPreview,
-  usagePathStatus,
-  error,
-  sidebar,
-}) => {
+const InfoModal = ({ file, isOpen, onClose, thumbnailPreview, usagePathStatus, error, sidebar }) => {
   const intl = useIntl();
   const [activeTab, setActiveTab] = useState('fileInfo');
-  const showTranscriptionError = TRANSCRIPT_FAILURE_STATUSES.includes(file?.transcriptionStatus)
-    && activeTab !== 'fileInfo';
+  const showTranscriptionError =
+    TRANSCRIPT_FAILURE_STATUSES.includes(file?.transcriptionStatus) && activeTab !== 'fileInfo';
 
   return (
     <ModalDialog
@@ -53,12 +40,12 @@ const InfoModal = ({
         <hr />
         {showTranscriptionError && (
           <AlertMessage
-            description={(
+            description={
               <div className="row m-0 align-itmes-center">
                 <Icon src={Error} className="text-danger-500 mr-2" />
                 {intl.formatMessage(messages.transcriptionErrorMessage, { error: file.errorDescription })}
               </div>
-            )}
+            }
             variant="danger"
           />
         )}
@@ -83,9 +70,7 @@ const InfoModal = ({
               </div>
             </Stack>
           </div>
-          <div className="col-5">
-            {sidebar(file, activeTab, setActiveTab)}
-          </div>
+          <div className="col-5">{sidebar(file, activeTab, setActiveTab)}</div>
         </div>
       </ModalDialog.Body>
     </ModalDialog>

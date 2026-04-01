@@ -1,7 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import {
-  render, screen, waitFor, initializeMocks,
-} from '../../testUtils';
+import { render, screen, waitFor, initializeMocks } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import CreateContainerModal from './CreateContainerModal';
 import AddContent from '../add-content/AddContent';
@@ -50,15 +48,13 @@ describe('CreateContainerModal container linking', () => {
       collection: '/library/:libraryId/collection/:collectionId',
     };
 
-    const params = { libraryId, ...containerId && { containerId } };
+    const params = { libraryId, ...(containerId && { containerId }) };
 
     return render(content, {
       path: paths[routeType],
       params,
       extraWrapper: ({ children: wrappedChildren }) => (
-        <LibraryProvider libraryId={libraryId}>
-          {wrappedChildren}
-        </LibraryProvider>
+        <LibraryProvider libraryId={libraryId}>{wrappedChildren}</LibraryProvider>
       ),
     });
   }

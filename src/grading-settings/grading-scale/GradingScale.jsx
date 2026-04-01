@@ -10,7 +10,7 @@ import { useRanger } from './react-ranger';
 import { convertGradeData, MAXIMUM_SCALE_LENGTH } from './utils';
 
 const DEFAULT_GRADE_LETTERS = ['A', 'B', 'C', 'D'];
-const getDefaultPassText = intl => intl.formatMessage(messages.defaultPassText);
+const getDefaultPassText = (intl) => intl.formatMessage(messages.defaultPassText);
 
 const GradingScale = ({
   showSavePrompt,
@@ -46,7 +46,7 @@ const GradingScale = ({
   }, [sortedGrades.length]);
 
   useEffect(() => {
-    setGradingData(prevData => ({ ...prevData, gradeCutoffs: convertedResult }));
+    setGradingData((prevData) => ({ ...prevData, gradeCutoffs: convertedResult }));
     setEligibleGrade(eligibleValue?.current);
   }, [JSON.stringify(convertedResult)]);
 
@@ -68,9 +68,7 @@ const GradingScale = ({
       } else {
         const firstSegment = prevSegments[prevSegments.length - 1];
         const secondSegment = prevSegments[prevSegments.length - 2];
-        const newCurrentValue = Math.ceil(
-          (secondSegment.current - secondSegment.previous) / 2,
-        );
+        const newCurrentValue = Math.ceil((secondSegment.current - secondSegment.previous) / 2);
 
         const newSegment = {
           current: firstSegment.current + newCurrentValue,
@@ -95,12 +93,12 @@ const GradingScale = ({
       return updatedGradingSegment;
     });
 
-    const nextIndex = (letters.length % defaultGradeDesignations.length);
+    const nextIndex = letters.length % defaultGradeDesignations.length;
 
     if (gradingSegments.length === 2) {
       setLetters([defaultGradeDesignations[0], defaultGradeDesignations[nextIndex]]);
     } else {
-      setLetters(prevLetters => [...prevLetters, defaultGradeDesignations[nextIndex]]);
+      setLetters((prevLetters) => [...prevLetters, defaultGradeDesignations[nextIndex]]);
     }
   };
 
@@ -108,38 +106,42 @@ const GradingScale = ({
     const gapToSegment = 1;
     const sortedSegments = newGradingSegmentData.sort((currentValue, previousValue) => currentValue - previousValue);
     const newSegmentValue = sortedSegments[sortedSegments.length - 1 - activeHandleIndex];
-    const prevSegmentBoundary = (gradingSegments[activeHandleIndex + 1]
-        && gradingSegments[activeHandleIndex + 1].current) || 0;
+    const prevSegmentBoundary =
+      (gradingSegments[activeHandleIndex + 1] && gradingSegments[activeHandleIndex + 1].current) || 0;
     const nextSegmentBoundary = gradingSegments[activeHandleIndex - 1].current;
 
     showSavePrompt(true);
 
-    setGradingSegments(gradingSegments.map((gradingSegment, idx) => {
-      const upperBoundaryValue = (newSegmentValue < nextSegmentBoundary - gapToSegment)
-        ? newSegmentValue : (nextSegmentBoundary - gapToSegment);
-      const lowerBoundaryValue = (upperBoundaryValue > prevSegmentBoundary + gapToSegment)
-        ? upperBoundaryValue : (prevSegmentBoundary + gapToSegment);
+    setGradingSegments(
+      gradingSegments.map((gradingSegment, idx) => {
+        const upperBoundaryValue =
+          newSegmentValue < nextSegmentBoundary - gapToSegment ? newSegmentValue : nextSegmentBoundary - gapToSegment;
+        const lowerBoundaryValue =
+          upperBoundaryValue > prevSegmentBoundary + gapToSegment
+            ? upperBoundaryValue
+            : prevSegmentBoundary + gapToSegment;
 
-      if (idx === activeHandleIndex - 1) {
-        return {
-          previous: lowerBoundaryValue,
-          current: gradingSegment.current,
-        };
-      }
+        if (idx === activeHandleIndex - 1) {
+          return {
+            previous: lowerBoundaryValue,
+            current: gradingSegment.current,
+          };
+        }
 
-      if (idx === activeHandleIndex) {
-        return {
-          current: lowerBoundaryValue,
-          previous: gradingSegment.previous,
-        };
-      }
+        if (idx === activeHandleIndex) {
+          return {
+            current: lowerBoundaryValue,
+            previous: gradingSegment.previous,
+          };
+        }
 
-      return gradingSegment;
-    }));
+        return gradingSegment;
+      }),
+    );
   };
 
   const removeGradingSegment = (gradingSegmentIndex) => {
-    setGradingSegments(prevSegments => {
+    setGradingSegments((prevSegments) => {
       const updatedSegments = [...prevSegments];
       const removedSegment = updatedSegments.splice(gradingSegmentIndex - 1, 1)[0];
       const previousSegment = updatedSegments[gradingSegmentIndex - 2];
@@ -155,7 +157,7 @@ const GradingScale = ({
     setShowSuccessAlert(false);
     setOverrideInternetConnectionAlert(false);
 
-    setLetters(prevLetters => {
+    setLetters((prevLetters) => {
       const updatedLetters = [...prevLetters];
       updatedLetters.splice(updatedLetters.length - 1, 1);
 
@@ -170,7 +172,7 @@ const GradingScale = ({
     setShowSuccessAlert(false);
     setOverrideInternetConnectionAlert(false);
 
-    setLetters(prevLetters => {
+    setLetters((prevLetters) => {
       const updatedLetters = [...prevLetters];
       const emptyString = '\u200B';
       updatedLetters[idx - 1] = value || emptyString;
@@ -182,20 +184,14 @@ const GradingScale = ({
   const handleSegmentChange = () => {
     setShowSuccessAlert(false);
     setOverrideInternetConnectionAlert(false);
-    setGradingData(prevData => ({ ...prevData, gradeCutoffs: convertedResult }));
+    setGradingData((prevData) => ({ ...prevData, gradeCutoffs: convertedResult }));
   };
 
-  const {
-    getTrackProps,
-    ticks,
-    segments,
-    handles,
-    activeHandleIndex,
-  } = useRanger({
+  const { getTrackProps, ticks, segments, handles, activeHandleIndex } = useRanger({
     min: 0,
     max: MAXIMUM_SCALE_LENGTH,
     stepSize: 1,
-    values: gradingSegments?.map(segment => segment.current),
+    values: gradingSegments?.map((segment) => segment.current),
     onDrag: (segmentDataArray) => updateGradingSegments(segmentDataArray, activeHandleIndex),
     onChange: handleSegmentChange,
   });
@@ -205,7 +201,7 @@ const GradingScale = ({
       <IconButtonWithTooltip
         tooltipPlacement="top"
         tooltipContent={intl.formatMessage(messages.addNewSegmentButtonAltText)}
-        disabled={gradingSegments.length >= (defaultGradeDesignations.length + 1)}
+        disabled={gradingSegments.length >= defaultGradeDesignations.length + 1}
         data-testid="grading-scale-btn-add-segment"
         className="mr-3"
         src={IconAdd}

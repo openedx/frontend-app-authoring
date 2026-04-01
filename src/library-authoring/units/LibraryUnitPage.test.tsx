@@ -5,20 +5,9 @@ import { act } from 'react';
 import { ToastActionData } from '@src/generic/toast-context';
 import { mockClipboardEmpty } from '@src/generic/data/api.mock';
 import { mockContentSearchConfig, mockGetBlockTypes, mockSearchResult } from '@src/search-manager/data/api.mock';
-import {
-  initializeMocks,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '@src/testUtils';
+import { initializeMocks, fireEvent, render, screen, waitFor, within } from '@src/testUtils';
 
-import {
-  getLibraryContainerApiUrl,
-  getLibraryContainerChildrenApiUrl,
-  getXBlockFieldsApiUrl,
-} from '../data/api';
+import { getLibraryContainerApiUrl, getLibraryContainerChildrenApiUrl, getXBlockFieldsApiUrl } from '../data/api';
 import {
   mockContentLibrary,
   mockXBlockFields,
@@ -122,18 +111,15 @@ describe('<LibraryUnitPage />', () => {
 
   it('shows empty unit', async () => {
     renderLibraryUnitPage(mockGetContainerMetadata.unitIdEmpty);
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
     expect(await screen.findByText('This unit is empty')).toBeInTheDocument();
   });
 
   it('can rename unit', async () => {
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
 
-    const editUnitTitleButton = screen.getAllByRole(
-      'button',
-      { name: /edit/i },
-    )[0]; // 0 is the Unit Title, 1 is the first component on the list
+    const editUnitTitleButton = screen.getAllByRole('button', { name: /edit/i })[0]; // 0 is the Unit Title, 1 is the first component on the list
     fireEvent.click(editUnitTitleButton);
 
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.unitId);
@@ -159,12 +145,9 @@ describe('<LibraryUnitPage />', () => {
 
   it('show error if renaming unit fails', async () => {
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
 
-    const editUnitTitleButton = screen.getAllByRole(
-      'button',
-      { name: /edit/i },
-    )[0]; // 0 is the Unit Title, 1 is the first component on the list
+    const editUnitTitleButton = screen.getAllByRole('button', { name: /edit/i })[0]; // 0 is the Unit Title, 1 is the first component on the list
     fireEvent.click(editUnitTitleButton);
 
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.unitId);
@@ -213,7 +196,7 @@ describe('<LibraryUnitPage />', () => {
   it('should open and close component sidebar on component selection', async () => {
     const user = userEvent.setup();
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
     // No Preview tab shown in sidebar
     expect(screen.queryByText('Preview')).not.toBeInTheDocument();
 
@@ -238,15 +221,12 @@ describe('<LibraryUnitPage />', () => {
     const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(200);
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
 
     // Wait loading of the component
     await screen.findByText('text block 0');
 
-    const editButton = screen.getAllByRole(
-      'button',
-      { name: /edit/i },
-    )[1]; // 0 is the Unit Title, 1 is the first component on the list
+    const editButton = screen.getAllByRole('button', { name: /edit/i })[1]; // 0 is the Unit Title, 1 is the first component on the list
     fireEvent.click(editButton);
 
     await waitFor(() => {
@@ -262,9 +242,11 @@ describe('<LibraryUnitPage />', () => {
       expect(axiosMock.history.post.length).toEqual(1);
     });
     expect(axiosMock.history.post[0].url).toEqual(url);
-    expect(axiosMock.history.post[0].data).toStrictEqual(JSON.stringify({
-      metadata: { display_name: 'New Component Title' },
-    }));
+    expect(axiosMock.history.post[0].data).toStrictEqual(
+      JSON.stringify({
+        metadata: { display_name: 'New Component Title' },
+      }),
+    );
     expect(textBox).not.toBeInTheDocument();
     expect(mockShowToast).toHaveBeenCalledWith('Component updated successfully.');
   });
@@ -273,15 +255,12 @@ describe('<LibraryUnitPage />', () => {
     const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(400);
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
 
     // Wait loading of the component
     await screen.findByText('text block 0');
 
-    const editButton = screen.getAllByRole(
-      'button',
-      { name: /edit/i },
-    )[1]; // 0 is the Unit Title, 1 is the first component on the list
+    const editButton = screen.getAllByRole('button', { name: /edit/i })[1]; // 0 is the Unit Title, 1 is the first component on the list
     fireEvent.click(editButton);
 
     await waitFor(() => {
@@ -297,9 +276,11 @@ describe('<LibraryUnitPage />', () => {
       expect(axiosMock.history.post.length).toEqual(1);
     });
     expect(axiosMock.history.post[0].url).toEqual(url);
-    expect(axiosMock.history.post[0].data).toStrictEqual(JSON.stringify({
-      metadata: { display_name: 'New Component Title' },
-    }));
+    expect(axiosMock.history.post[0].data).toStrictEqual(
+      JSON.stringify({
+        metadata: { display_name: 'New Component Title' },
+      }),
+    );
     expect(textBox).not.toBeInTheDocument();
     expect(mockShowToast).toHaveBeenCalledWith('There was an error updating the component.');
   });
@@ -307,12 +288,12 @@ describe('<LibraryUnitPage />', () => {
   it('should call update order api on dragging component', async () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
-    axiosMock
-      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
-      .reply(200);
-    verticalSortableListCollisionDetection.mockReturnValue([{
-      id: 'lb:org1:Demo_course_generated:html:text-1----1',
-    }]);
+    axiosMock.onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId)).reply(200);
+    verticalSortableListCollisionDetection.mockReturnValue([
+      {
+        id: 'lb:org1:Demo_course_generated:html:text-1----1',
+      },
+    ]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
@@ -323,12 +304,12 @@ describe('<LibraryUnitPage />', () => {
   it('should cancel update order api on cancelling dragging component', async () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
-    axiosMock
-      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
-      .reply(200);
-    verticalSortableListCollisionDetection.mockReturnValue([{
-      id: 'lb:org1:Demo_course_generated:html:text-1----1',
-    }]);
+    axiosMock.onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId)).reply(200);
+    verticalSortableListCollisionDetection.mockReturnValue([
+      {
+        id: 'lb:org1:Demo_course_generated:html:text-1----1',
+      },
+    ]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
@@ -339,12 +320,12 @@ describe('<LibraryUnitPage />', () => {
   it('should show toast error message on update order failure', async () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
-    axiosMock
-      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
-      .reply(500);
-    verticalSortableListCollisionDetection.mockReturnValue([{
-      id: 'lb:org1:Demo_course_generated:html:text-1----1',
-    }]);
+    axiosMock.onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId)).reply(500);
+    verticalSortableListCollisionDetection.mockReturnValue([
+      {
+        id: 'lb:org1:Demo_course_generated:html:text-1----1',
+      },
+    ]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });

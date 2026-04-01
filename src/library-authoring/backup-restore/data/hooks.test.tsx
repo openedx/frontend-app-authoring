@@ -21,7 +21,9 @@ describe('backup-restore hooks', () => {
 
   beforeEach(() => {
     initializeMocks();
-    createLibraryBackupSpy = jest.spyOn(api, 'createLibraryBackup').mockImplementation(async () => ({ task_id: 'task-abc' }));
+    createLibraryBackupSpy = jest
+      .spyOn(api, 'createLibraryBackup')
+      .mockImplementation(async () => ({ task_id: 'task-abc' }));
     getLibraryBackupStatusSpy = jest.spyOn(api, 'getLibraryBackupStatus').mockImplementation(async () => ({
       state: LibraryBackupStatus.Pending,
       url: '',

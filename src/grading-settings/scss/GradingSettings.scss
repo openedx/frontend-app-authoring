@@ -1,6 +1,6 @@
-@import "variables";
-@import "../assignment-section/AssignmentSection.scss";
-@import "../grading-scale/GradingScale.scss";
+@import 'variables';
+@import '../assignment-section/AssignmentSection.scss';
+@import '../grading-scale/GradingScale.scss';
 
 .grading {
   .help-sidebar {
@@ -8,12 +8,12 @@
   }
 
   .grading-label {
-    font: normal var(--pgn-typography-font-weight-bold) .75rem/1.25rem var(--pgn-typography-font-family-base);
+    font: normal var(--pgn-typography-font-weight-bold) 0.75rem/1.25rem var(--pgn-typography-font-family-base);
     color: var(--pgn-color-gray-500);
   }
 
   .grading-description {
-    font: normal .75rem/1.5rem var(--pgn-typography-font-family-base);
+    font: normal 0.75rem/1.5rem var(--pgn-typography-font-family-base);
     color: var(--pgn-color-gray-700);
   }
 }

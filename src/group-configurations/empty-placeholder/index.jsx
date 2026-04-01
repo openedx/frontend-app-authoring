@@ -7,12 +7,8 @@ import messages from './messages';
 
 const EmptyPlaceholder = ({ onCreateNewGroup, isExperiment }) => {
   const { formatMessage } = useIntl();
-  const titleMessage = isExperiment
-    ? messages.experimentalTitle
-    : messages.title;
-  const buttonMessage = isExperiment
-    ? messages.experimentalButton
-    : messages.button;
+  const titleMessage = isExperiment ? messages.experimentalTitle : messages.title;
+  const buttonMessage = isExperiment ? messages.experimentalButton : messages.button;
 
   return (
     <div
@@ -20,10 +16,7 @@ const EmptyPlaceholder = ({ onCreateNewGroup, isExperiment }) => {
       data-testid="group-configurations-empty-placeholder"
     >
       <p className="mb-0 small text-gray-700">{formatMessage(titleMessage)}</p>
-      <Button
-        iconBefore={IconAdd}
-        onClick={onCreateNewGroup}
-      >
+      <Button iconBefore={IconAdd} onClick={onCreateNewGroup}>
         {formatMessage(buttonMessage)}
       </Button>
     </div>

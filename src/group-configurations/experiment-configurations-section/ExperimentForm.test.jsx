@@ -13,26 +13,25 @@ const onEditClickMock = jest.fn();
 
 const experimentConfiguration = experimentGroupConfigurationsMock[0];
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <ExperimentForm
-      initialValues={initialExperimentConfiguration}
-      onCreateClick={onCreateClickMock}
-      onCancelClick={onCancelClickMock}
-      onEditClick={onEditClickMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <ExperimentForm
+        initialValues={initialExperimentConfiguration}
+        onCreateClick={onCreateClickMock}
+        onCancelClick={onCancelClickMock}
+        onEditClick={onEditClickMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ExperimentForm />', () => {
   it('renders component correctly', () => {
     const { getByText, getByRole, getByTestId } = renderComponent();
 
     expect(getByTestId('experiment-configuration-form')).toBeInTheDocument();
-    expect(
-      getByText(`${messages.experimentConfigurationName.defaultMessage}*`),
-    ).toBeInTheDocument();
+    expect(getByText(`${messages.experimentConfigurationName.defaultMessage}*`)).toBeInTheDocument();
     expect(
       getByRole('button', {
         name: messages.experimentConfigurationCancel.defaultMessage,
@@ -52,12 +51,7 @@ describe('<ExperimentForm />', () => {
     });
 
     expect(
-      getByText(
-        messages.experimentConfigurationId.defaultMessage.replace(
-          '{id}',
-          experimentConfiguration.id,
-        ),
-      ),
+      getByText(messages.experimentConfigurationId.defaultMessage.replace('{id}', experimentConfiguration.id)),
     ).toBeInTheDocument();
     expect(
       getByRole('button', {
@@ -72,25 +66,16 @@ describe('<ExperimentForm />', () => {
       initialValues: experimentConfiguration,
       isUsedInLocation: true,
     });
-    expect(
-      getByText(messages.experimentConfigurationAlert.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.experimentConfigurationAlert.defaultMessage)).toBeInTheDocument();
   });
 
   it('calls onCreateClick when the "Create" button is clicked with a valid form', async () => {
     const user = userEvent.setup();
     const { getByRole, getByPlaceholderText } = renderComponent();
-    const nameInput = getByPlaceholderText(
-      messages.experimentConfigurationNamePlaceholder.defaultMessage,
-    );
-    const descriptionInput = getByPlaceholderText(
-      messages.experimentConfigurationNamePlaceholder.defaultMessage,
-    );
+    const nameInput = getByPlaceholderText(messages.experimentConfigurationNamePlaceholder.defaultMessage);
+    const descriptionInput = getByPlaceholderText(messages.experimentConfigurationNamePlaceholder.defaultMessage);
     await user.type(nameInput, 'New name of the group configuration');
-    await user.type(
-      descriptionInput,
-      'New description of the group configuration',
-    );
+    await user.type(descriptionInput, 'New description of the group configuration');
     const createButton = getByRole('button', {
       name: messages.experimentConfigurationCreate.defaultMessage,
     });
@@ -105,9 +90,7 @@ describe('<ExperimentForm />', () => {
   it('shows error when the "Create" button is clicked with empty name', async () => {
     const user = userEvent.setup();
     const { getByRole, getByPlaceholderText, getByText } = renderComponent();
-    const nameInput = getByPlaceholderText(
-      messages.experimentConfigurationNamePlaceholder.defaultMessage,
-    );
+    const nameInput = getByPlaceholderText(messages.experimentConfigurationNamePlaceholder.defaultMessage);
     await user.clear(nameInput);
 
     const createButton = getByRole('button', {
@@ -117,9 +100,7 @@ describe('<ExperimentForm />', () => {
     await user.click(createButton);
 
     await waitFor(() => {
-      expect(
-        getByText(messages.experimentConfigurationNameRequired.defaultMessage),
-      ).toBeInTheDocument();
+      expect(getByText(messages.experimentConfigurationNameRequired.defaultMessage)).toBeInTheDocument();
     });
   });
 
@@ -140,9 +121,7 @@ describe('<ExperimentForm />', () => {
     await user.click(createButton);
 
     await waitFor(() => {
-      expect(
-        getByText(messages.experimentConfigurationGroupsRequired.defaultMessage),
-      ).toBeInTheDocument();
+      expect(getByText(messages.experimentConfigurationGroupsRequired.defaultMessage)).toBeInTheDocument();
     });
   });
 
@@ -170,11 +149,7 @@ describe('<ExperimentForm />', () => {
     await user.click(createButton);
 
     await waitFor(() => {
-      expect(
-        getByText(
-          messages.experimentConfigurationGroupsNameUnique.defaultMessage,
-        ),
-      ).toBeInTheDocument();
+      expect(getByText(messages.experimentConfigurationGroupsNameUnique.defaultMessage)).toBeInTheDocument();
     });
   });
 
@@ -199,11 +174,7 @@ describe('<ExperimentForm />', () => {
     await user.click(createButton);
 
     await waitFor(() => {
-      expect(
-        getByText(
-          messages.experimentConfigurationGroupsNameRequired.defaultMessage,
-        ),
-      ).toBeInTheDocument();
+      expect(getByText(messages.experimentConfigurationGroupsNameRequired.defaultMessage)).toBeInTheDocument();
     });
   });
 
@@ -214,9 +185,7 @@ describe('<ExperimentForm />', () => {
       initialValues: experimentConfiguration,
     });
     const newConfigurationNameText = 'Updated experiment configuration name';
-    const nameInput = getByPlaceholderText(
-      messages.experimentConfigurationNamePlaceholder.defaultMessage,
-    );
+    const nameInput = getByPlaceholderText(messages.experimentConfigurationNamePlaceholder.defaultMessage);
     await user.type(nameInput, newConfigurationNameText);
     const saveButton = getByRole('button', {
       name: messages.experimentConfigurationSave.defaultMessage,

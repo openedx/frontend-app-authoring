@@ -25,13 +25,14 @@ jest.mock('universal-cookie', () => {
   return jest.fn(() => Cookie);
 });
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <CourseImportProvider>
-      <CourseImportPage />
-    </CourseImportProvider>
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseImportProvider>
+        <CourseImportPage />
+      </CourseImportProvider>
+    </CourseAuthoringProvider>,
+  );
 
 describe('<CourseImportPage />', () => {
   beforeEach(() => {
@@ -41,12 +42,8 @@ describe('<CourseImportPage />', () => {
     };
     const mocks = initializeMocks({ user });
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(getImportStatusApiUrl(courseId, 'testFileName.test'))
-      .reply(200, { importStatus: 1, message: '' });
-    axiosMock
-      .onGet(getCourseDetailsUrl(courseId, user.username))
-      .reply(200, { courseId, name: courseName });
+    axiosMock.onGet(getImportStatusApiUrl(courseId, 'testFileName.test')).reply(200, { importStatus: 1, message: '' });
+    axiosMock.onGet(getCourseDetailsUrl(courseId, user.username)).reply(200, { courseId, name: courseName });
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });
@@ -99,18 +96,14 @@ describe('<CourseImportPage />', () => {
   });
 
   it('displays an alert and sets status to DENIED when API responds with 403', async () => {
-    axiosMock
-      .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
-      .reply(403);
+    axiosMock.onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz')).reply(403);
     cookies.get.mockReturnValue({ date: 1679787000, fileName: 'testFileName.tar.gz' });
     renderComponent();
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
 
   it('shows an error message upon receiving a 404 response from the API', async () => {
-    axiosMock
-      .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
-      .reply(404);
+    axiosMock.onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz')).reply(404);
     cookies.get.mockReturnValue({ date: 1679787000, fileName: 'testFileName.tar.gz' });
     renderComponent();
     expect(await screen.findByText(messages.defaultErrorMessage.defaultMessage)).toBeInTheDocument();

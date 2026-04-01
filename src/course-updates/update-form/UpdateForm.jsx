@@ -1,51 +1,34 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  ActionRow,
-  Button,
-  Form,
-  Icon,
-} from '@openedx/paragon';
+import { ActionRow, Button, Form, Icon } from '@openedx/paragon';
 import classNames from 'classnames';
 import DatePicker from 'react-datepicker';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Calendar as CalendarIcon, Error as ErrorIcon } from '@openedx/paragon/icons';
 import { Formik } from 'formik';
 
-import {
-  convertToStringFromDate,
-  convertToDateFromString,
-  isValidDate,
-} from '../../utils';
+import { convertToStringFromDate, convertToDateFromString, isValidDate } from '../../utils';
 import { DATE_FORMAT, DEFAULT_EMPTY_WYSIWYG_VALUE } from '../../constants';
 import { WysiwygEditor } from '../../generic/WysiwygEditor';
 import { REQUEST_TYPES } from '../constants';
 import { geUpdateFormSettings } from './utils';
 import messages from './messages';
 
-const UpdateForm = ({
-  close,
-  requestType,
-  onSubmit,
-  courseUpdatesInitialValues,
-  isInnerForm,
-  isFirstUpdate,
-}) => {
+const UpdateForm = ({ close, requestType, onSubmit, courseUpdatesInitialValues, isInnerForm, isFirstUpdate }) => {
   const intl = useIntl();
 
-  const {
-    currentContent,
-    formTitle,
-    validationSchema,
-    contentFieldName,
-    submitButtonText,
-  } = geUpdateFormSettings(requestType, courseUpdatesInitialValues, intl);
+  const { currentContent, formTitle, validationSchema, contentFieldName, submitButtonText } = geUpdateFormSettings(
+    requestType,
+    courseUpdatesInitialValues,
+    intl,
+  );
 
   return (
-    <div className={classNames('update-form', {
-      'update-form__inner': isInnerForm,
-      'update-form__inner-first': isFirstUpdate,
-    })}
+    <div
+      className={classNames('update-form', {
+        'update-form__inner': isInnerForm,
+        'update-form__inner-first': isFirstUpdate,
+      })}
     >
       <Formik
         initialValues={courseUpdatesInitialValues}
@@ -54,12 +37,10 @@ const UpdateForm = ({
         validateOnBlur
         onSubmit={onSubmit}
       >
-        {({
-          values, handleSubmit, isValid, setFieldValue,
-        }) => (
+        {({ values, handleSubmit, isValid, setFieldValue }) => (
           <>
             <h3 className="update-form-title">{formTitle}</h3>
-            {(requestType !== REQUEST_TYPES.edit_handouts) && (
+            {requestType !== REQUEST_TYPES.edit_handouts && (
               <Form.Group className="mb-4 datepicker-field datepicker-custom">
                 <Form.Control.Feedback className="datepicker-float-labels">
                   {intl.formatMessage(messages.updateFormDate)}
@@ -93,7 +74,11 @@ const UpdateForm = ({
                 </div>
                 {!isValid && (
                   <div className="datepicker-field-error">
-                    <Icon src={ErrorIcon} className="text-danger-500" alt={intl.formatMessage(messages.updateFormErrorAltText)} />
+                    <Icon
+                      src={ErrorIcon}
+                      className="text-danger-500"
+                      alt={intl.formatMessage(messages.updateFormErrorAltText)}
+                    />
                     <span className="message-error">{intl.formatMessage(messages.updateFormInValid)}</span>
                   </div>
                 )}
@@ -105,9 +90,11 @@ const UpdateForm = ({
                 data-testid="course-updates-wisiwyg-editor"
                 name={contentFieldName}
                 minHeight={300}
-                onChange={/* istanbul ignore next: we can't test WYSIWYG editors */async (value) => {
-                  await setFieldValue(contentFieldName, value || DEFAULT_EMPTY_WYSIWYG_VALUE);
-                }}
+                onChange={
+                  /* istanbul ignore next: we can't test WYSIWYG editors */ async (value) => {
+                    await setFieldValue(contentFieldName, value || DEFAULT_EMPTY_WYSIWYG_VALUE);
+                  }
+                }
               />
             </Form.Group>
             <ActionRow>

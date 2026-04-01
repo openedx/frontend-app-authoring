@@ -1,28 +1,13 @@
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { isArray, isEmpty } from 'lodash';
-import {
-  ASPECT_RATIO,
-  ASPECT_RATIO_ERROR_MARGIN,
-  MAX_HEIGHT,
-  MAX_WIDTH,
-  MIN_HEIGHT,
-  MIN_WIDTH,
-} from './constants';
+import { ASPECT_RATIO, ASPECT_RATIO_ERROR_MARGIN, MAX_HEIGHT, MAX_WIDTH, MIN_HEIGHT, MIN_WIDTH } from './constants';
 
-ensureConfig([
-  'STUDIO_BASE_URL',
-], 'Course Apps API service');
+ensureConfig(['STUDIO_BASE_URL'], 'Course Apps API service');
 
 export const updateFileValues = (files, isNewFile) => {
   const updatedFiles = [];
-  files.forEach(file => {
-    const {
-      edxVideoId,
-      clientVideoId,
-      created,
-      courseVideoImageUrl,
-      transcripts,
-    } = file;
+  files.forEach((file) => {
+    const { edxVideoId, clientVideoId, created, courseVideoImageUrl, transcripts } = file;
 
     let wrapperType;
     if (clientVideoId.endsWith('.mov')) {
@@ -68,7 +53,7 @@ export const getFormattedDuration = (value) => {
 
 export const getLanguages = (availableLanguages) => {
   const languages = {};
-  availableLanguages?.forEach(language => {
+  availableLanguages?.forEach((language) => {
     const { languageCode, languageText } = language;
     languages[languageCode] = languageText;
   });
@@ -77,14 +62,14 @@ export const getLanguages = (availableLanguages) => {
 
 export const getSortedTranscripts = (languages, transcripts) => {
   const transcriptDisplayNames = [];
-  transcripts.forEach(transcript => {
+  transcripts.forEach((transcript) => {
     const displayName = languages[transcript];
     transcriptDisplayNames.push(displayName);
   });
 
   const sortedTranscripts = transcriptDisplayNames.sort((a, b) => a.localeCompare(b));
   const sortedTranscriptCodes = [];
-  sortedTranscripts.forEach(transcript => {
+  sortedTranscripts.forEach((transcript) => {
     Object.entries(languages).forEach(([key, value]) => {
       if (value === transcript) {
         sortedTranscriptCodes.push(key);
@@ -106,7 +91,7 @@ export const getSupportedFormats = (supportedFileFormats) => {
   Object.entries(supportedFileFormats).forEach(([key, value]) => {
     let format;
     if (isArray(value)) {
-      value.forEach(val => {
+      value.forEach((val) => {
         if (val === '.mov') {
           format = key.replace('*', 'quicktime');
         } else {
@@ -182,7 +167,7 @@ export const resampleImage = ({ image, filename }) => {
 };
 
 export const hasValidDimensions = ({ width, height }) => {
-  const imageAspectRatio = Math.abs((width / height) - ASPECT_RATIO);
+  const imageAspectRatio = Math.abs(width / height - ASPECT_RATIO);
 
   if (width < MIN_WIDTH || height < MIN_HEIGHT) {
     return false;
@@ -193,13 +178,7 @@ export const hasValidDimensions = ({ width, height }) => {
   return true;
 };
 
-export const resampleFile = ({
-  file,
-  dispatch,
-  videoId,
-  courseId,
-  addVideoThumbnail,
-}) => {
+export const resampleFile = ({ file, dispatch, videoId, courseId, addVideoThumbnail }) => {
   const reader = new FileReader();
   const image = new Image();
   reader.onload = () => {
@@ -221,7 +200,7 @@ export const resampleFile = ({
 export const getLanguageOptions = (keys, languages) => {
   const options = {};
   if (keys) {
-    keys.forEach(key => {
+    keys.forEach((key) => {
       options[key] = languages[key];
     });
   }
@@ -274,8 +253,12 @@ export const validateForm = (cieloHasCredentials, threePlayHasCredentials, provi
   switch (provider) {
     case 'Cielo24':
       if (cieloHasCredentials) {
-        return !isEmpty(cielo24Fidelity) && !isEmpty(cielo24Turnaround)
-        && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
+        return (
+          !isEmpty(cielo24Fidelity) &&
+          !isEmpty(cielo24Turnaround) &&
+          !isEmpty(preferredLanguages) &&
+          !isEmpty(videoSourceLanguage)
+        );
       }
       return !isEmpty(apiKey) && !isEmpty(username);
     case '3PlayMedia':

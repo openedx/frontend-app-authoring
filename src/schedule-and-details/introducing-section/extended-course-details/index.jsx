@@ -6,13 +6,7 @@ import { Form } from '@openedx/paragon';
 
 import messages from './messages';
 
-const ExtendedCourseDetails = ({
-  title,
-  subtitle,
-  duration,
-  description,
-  onChange,
-}) => {
+const ExtendedCourseDetails = ({ title, subtitle, duration, description, onChange }) => {
   const intl = useIntl();
   const paramsForExtendedFields = [
     {

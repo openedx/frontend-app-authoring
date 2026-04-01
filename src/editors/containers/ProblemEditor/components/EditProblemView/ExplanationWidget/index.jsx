@@ -27,9 +27,11 @@ const ExplanationWidget = ({
   const solutionContent = newContent || initialContent;
   let staticRootUrl;
   if (isLibrary) {
-    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`;
   }
-  if (!refReady) { return null; }
+  if (!refReady) {
+    return null;
+  }
   return (
     <div className="tinyMceWidget mt-4 text-primary-500">
       <div className="h4 mb-3">

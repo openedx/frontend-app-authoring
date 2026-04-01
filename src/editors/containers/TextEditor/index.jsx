@@ -2,10 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import {
-  Spinner,
-  Toast,
-} from '@openedx/paragon';
+import { Spinner, Toast } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { getConfig } from '@edx/frontend-platform';
@@ -43,19 +40,16 @@ const TextEditor = ({
   const editorContent = newContent || initialContent;
   let staticRootUrl;
   if (isLibrary) {
-    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`;
   }
 
-  if (!refReady) { return null; }
+  if (!refReady) {
+    return null;
+  }
 
   const selectEditor = () => {
     if (showRawEditor) {
-      return (
-        <RawEditor
-          editorRef={editorRef}
-          content={blockValue}
-        />
-      );
+      return <RawEditor editorRef={editorRef} content={blockValue} />;
     }
     return (
       <TinyMceWidget
@@ -85,19 +79,20 @@ const TextEditor = ({
     >
       <div className="editor-body h-75 overflow-auto">
         <Toast show={blockFailed} onClose={hooks.nullMethod}>
-          { intl.formatMessage(messages.couldNotLoadTextContext) }
+          {intl.formatMessage(messages.couldNotLoadTextContext)}
         </Toast>
 
-        {(!blockFinished)
-          ? (
-            <div className="text-center p-6">
-              <Spinner
-                animation="border"
-                className="m-3"
-                screenreadertext={intl.formatMessage(messages.spinnerScreenReaderText)}
-              />
-            </div>
-          ) : (selectEditor())}
+        {!blockFinished ? (
+          <div className="text-center p-6">
+            <Spinner
+              animation="border"
+              className="m-3"
+              screenreadertext={intl.formatMessage(messages.spinnerScreenReaderText)}
+            />
+          </div>
+        ) : (
+          selectEditor()
+        )}
       </div>
     </EditorContainer>
   );
@@ -129,8 +124,9 @@ export const mapStateToProps = (state) => ({
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
   blockId: selectors.app.blockId(state),
   showRawEditor: selectors.app.showRawEditor(state),
-  blockFinished: selectors.app.shouldCreateBlock(state)
-  || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
+  blockFinished:
+    selectors.app.shouldCreateBlock(state) ||
+    selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   learningContextId: selectors.app.learningContextId(state),
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),

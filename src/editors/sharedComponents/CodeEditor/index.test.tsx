@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import { waitFor } from '@testing-library/react';
 import { formatMessage, MockUseState } from '../../testUtils';
 import alphanumericMap from './constants';
@@ -25,14 +23,18 @@ describe('CodeEditor', () => {
         hook.hideBtn();
         expect(state.setState.showBtnEscapeHTML).toHaveBeenCalledWith(false);
       });
-      afterEach(() => { state.restore(); });
+      afterEach(() => {
+        state.restore();
+      });
     });
 
     describe('cleanHTML', () => {
       const dirtyText = `&${Object.keys(alphanumericMap).join('; , &')};`;
       const cleanText = `${Object.values(alphanumericMap).join(' , ')}`;
-      const dirtyTextWithAlt = '<img src="image.png" alt="Description &le; and &ge; &quot;do not convert these to double quotes&quot; 1" /> and &le; and &ge;';
-      const cleanTextWithAlt = '<img src="image.png" alt="Description ≤ and ≥ &quot;do not convert these to double quotes&quot; 1" /> and ≤ and ≥';
+      const dirtyTextWithAlt =
+        '<img src="image.png" alt="Description &le; and &ge; &quot;do not convert these to double quotes&quot; 1" /> and &le; and &ge;';
+      const cleanTextWithAlt =
+        '<img src="image.png" alt="Description ≤ and ≥ &quot;do not convert these to double quotes&quot; 1" /> and ≤ and ≥';
 
       it('escapes alphanumerics and sets them to be literals', () => {
         expect(hooks.cleanHTML({ initialText: dirtyText })).toEqual(cleanText);
@@ -92,12 +94,14 @@ describe('CodeEditor', () => {
       it('returns an array with error object', () => {
         const textArr = ['<problem>', '<p>', '<p>', 'this is some text', '</p>', '</problem>'];
         const expectedDiagnostics = hooks.syntaxChecker({ textArr, lang: 'xml' });
-        const diagnostics = [{
-          from: 9,
-          to: 12,
-          severity: 'error',
-          message: 'SyntaxError: Expected that start and end tag must be identical but "<" found.',
-        }];
+        const diagnostics = [
+          {
+            from: 9,
+            to: 12,
+            severity: 'error',
+            message: 'SyntaxError: Expected that start and end tag must be identical but "<" found.',
+          },
+        ];
         expect(expectedDiagnostics).toEqual(diagnostics);
       });
     });
@@ -120,7 +124,8 @@ describe('CodeEditor', () => {
         };
         const mockBtnRef = { current: null };
         const mockDOMRef = { current: null };
-        const mockUseRef = jest.fn()
+        const mockUseRef = jest
+          .fn()
           .mockImplementationOnce(() => mockDOMRef) // for DOMref
           .mockImplementationOnce(() => mockBtnRef); // for btnRef
 

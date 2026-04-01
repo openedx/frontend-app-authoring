@@ -1,23 +1,10 @@
-import {
-  Button,
-  Icon,
-  IconButton,
-  IconButtonWithTooltip,
-  Dropdown,
-} from '@openedx/paragon';
-import {
-  AddCircle,
-  MoreVert,
-} from '@openedx/paragon/icons';
+import { Button, Icon, IconButton, IconButtonWithTooltip, Dropdown } from '@openedx/paragon';
+import { AddCircle, MoreVert } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import type { Row } from '@tanstack/react-table';
 
 import messages from './messages';
-import type {
-  RowId,
-  TreeColumnDef,
-  TreeRowData,
-} from '../tree-table/types';
+import type { RowId, TreeColumnDef, TreeRowData } from '../tree-table/types';
 import OptionalExpandLink from './OptionalExpandLink';
 
 interface TagListRowData extends TreeRowData {
@@ -28,9 +15,7 @@ interface TagListRowData extends TreeRowData {
   isEditing?: boolean;
 }
 
-const asTagListRowData = (row: Row<TreeRowData>): TagListRowData => (
-  row.original as unknown as TagListRowData
-);
+const asTagListRowData = (row: Row<TreeRowData>): TagListRowData => row.original as unknown as TagListRowData;
 
 interface GetColumnsArgs {
   setIsCreatingTopTag: (isCreating: boolean) => void;
@@ -110,17 +95,13 @@ const ActionsMenu = ({ rowData, startSubtagDraft, disableAddSubtag }: ActionsMen
         size="sm"
       />
       <Dropdown.Menu>
-        <Dropdown.Item
-          as={Button}
-          onClick={startSubtagDraft}
-          disabled={disableAddSubtag}
-        >
+        <Dropdown.Item as={Button} onClick={startSubtagDraft} disabled={disableAddSubtag}>
           {intl.formatMessage(messages.addSubtag)}
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
-}
+};
 
 function getColumns({
   setIsCreatingTopTag,
@@ -141,9 +122,7 @@ function getColumns({
       id: 'valueColumn',
       header: () => <FormattedMessage {...messages.tagListColumnValueHeader} />,
       cell: ({ row }) => {
-        const {
-          value,
-        } = asTagListRowData(row);
+        const { value } = asTagListRowData(row);
 
         return (
           <span className="d-flex align-items-center gap-2">

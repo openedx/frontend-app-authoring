@@ -25,10 +25,8 @@ const AssignmentSection = ({
 }) => {
   const intl = useIntl();
   const [errorList, setErrorList] = useState({});
-  const {
-    type, weight, minCount, dropCount,
-  } = ASSIGNMENT_TYPES;
-  const isFieldsWithoutErrors = Object.values(errorList).every(field => field !== true);
+  const { type, weight, minCount, dropCount } = ASSIGNMENT_TYPES;
+  const isFieldsWithoutErrors = Object.values(errorList).every((field) => field !== true);
 
   if (!isFieldsWithoutErrors) {
     setShowSavePrompt(false);
@@ -44,9 +42,9 @@ const AssignmentSection = ({
 
     setShowSavePrompt(true);
 
-    setGradingData(prevState => ({
+    setGradingData((prevState) => ({
       ...prevState,
-      graders: graders.map(grader => {
+      graders: graders.map((grader) => {
         if (grader.id === assignmentId) {
           return { ...grader, [name]: inputValue };
         }
@@ -73,8 +71,8 @@ const AssignmentSection = ({
     <div className="assignment-items">
       {graders?.map((gradeField) => {
         const courseAssignmentUsage = courseAssignmentLists[gradeField.type];
-        const showDefinedCaseAlert = gradeField.minCount !== courseAssignmentUsage?.length
-            && Boolean(courseAssignmentUsage?.length);
+        const showDefinedCaseAlert =
+          gradeField.minCount !== courseAssignmentUsage?.length && Boolean(courseAssignmentUsage?.length);
         const showNotDefinedCaseAlert = !courseAssignmentUsage?.length && Boolean(gradeField.type);
 
         return (
@@ -143,18 +141,18 @@ const AssignmentSection = ({
                 variant="warning"
                 icon={Warning}
                 title={intl.formatMessage(messages.assignmentAlertWarningUsageTitle, { type: gradeField.type })}
-                description={(
+                description={
                   <>
                     <span className="course-grading-assignment-item-alert-warning-list-label">
                       {courseAssignmentUsage.length} Final assignment(s) found:
                     </span>
                     <ol className="course-grading-assignment-item-alert-warning-list">
-                      {courseAssignmentUsage.map(assignmentItem => (
+                      {courseAssignmentUsage.map((assignmentItem) => (
                         <li key={assignmentItem}>{assignmentItem}</li>
                       ))}
                     </ol>
                   </>
-                )}
+                }
                 aria-hidden="true"
               />
             )}
@@ -164,11 +162,11 @@ const AssignmentSection = ({
                 variant="warning"
                 icon={Warning}
                 title={intl.formatMessage(messages.assignmentAlertWarningTitle, { type: gradeField.type })}
-                description={(
+                description={
                   <span className="course-grading-assignment-item-alert-warning-list-label">
                     {intl.formatMessage(messages.assignmentAlertWarningDescription)}
                   </span>
-                )}
+                }
                 aria-hidden="true"
               />
             )}
@@ -207,9 +205,7 @@ AssignmentSection.propTypes = {
   setShowSavePrompt: PropTypes.func.isRequired,
   setShowSuccessAlert: PropTypes.func.isRequired,
   courseAssignmentLists: PropTypes.shape(defaultAssignmentsPropTypes),
-  graders: PropTypes.arrayOf(
-    PropTypes.shape(defaultAssignmentsPropTypes),
-  ),
+  graders: PropTypes.arrayOf(PropTypes.shape(defaultAssignmentsPropTypes)),
 };
 
 export default AssignmentSection;

@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  Button, Chip, Collapsible, Icon, Stack,
-} from '@openedx/paragon';
+import { Button, Chip, Collapsible, Icon, Stack } from '@openedx/paragon';
 import { getItemIcon } from '../block-type-utils';
 
 export type BlockTemplate = {
@@ -36,25 +34,17 @@ export const BlockCardButton = ({
       <span className={`icon-with-border icon-with-border-${blockType} p-2 rounded`}>
         <Icon size="lg" src={getItemIcon(blockType)} />
       </span>
-      <span className="text-primary-700">
-        {name}
-      </span>
+      <span className="text-primary-700">{name}</span>
     </Stack>
   );
 
   if (templates?.length) {
     return (
       <div data-testid={`${blockType}-collapsible`}>
-        <Collapsible
-          styling="card-lg"
-          className="mx-2 font-weight-bold shadow pl-1 rounded"
-          title={titleComponent}
-        >
+        <Collapsible styling="card-lg" className="mx-2 font-weight-bold shadow pl-1 rounded" title={titleComponent}>
           <Stack direction="horizontal" className="d-flex flex-wrap" gap={2}>
             {templates.map((template) => (
-              <Chip onClick={() => onClickTemplate?.(template.boilerplateName)}>
-                {template.displayName}
-              </Chip>
+              <Chip onClick={() => onClickTemplate?.(template.boilerplateName)}>{template.displayName}</Chip>
             ))}
           </Stack>
         </Collapsible>
@@ -70,9 +60,7 @@ export const BlockCardButton = ({
       disabled={disabled}
     >
       {titleComponent}
-      <div className="mr-1">
-        {actionIcon}
-      </div>
+      <div className="mr-1">{actionIcon}</div>
     </Button>
   );
 };

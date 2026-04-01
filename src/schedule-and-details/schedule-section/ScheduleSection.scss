@@ -23,9 +23,9 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 1.5rem;
-    border-bottom: .063rem solid rgba(0 0 0 / .1);
-    padding-bottom: .625rem;
-    margin-bottom: .375rem;
+    border-bottom: 0.063rem solid rgba(0 0 0 / 0.1);
+    padding-bottom: 0.625rem;
+    margin-bottom: 0.375rem;
     padding-right: 10%;
   }
 
@@ -33,6 +33,6 @@
     margin: 0;
     padding: 0;
     color: var(--pgn-color-form-feedback-invalid);
-    font: normal var(--pgn-typography-font-weight-normal) .75rem/1.25rem var(--pgn-typography-font-family-base);
+    font: normal var(--pgn-typography-font-weight-normal) 0.75rem/1.25rem var(--pgn-typography-font-family-base);
   }
 }

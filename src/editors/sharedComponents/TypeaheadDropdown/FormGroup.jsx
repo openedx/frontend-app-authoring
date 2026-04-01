@@ -5,22 +5,24 @@ import { Form } from '@openedx/paragon';
 
 const FormGroup = (props) => {
   const handleFocus = (e) => {
-    if (props.handleFocus) { props.handleFocus(e); }
+    if (props.handleFocus) {
+      props.handleFocus(e);
+    }
   };
   const handleClick = (e) => {
-    if (props.handleClick) { props.handleClick(e); }
+    if (props.handleClick) {
+      props.handleClick(e);
+    }
   };
   const handleOnBlur = (e) => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
-      if (props.handleBlur) { props.handleBlur(e); }
+      if (props.handleBlur) {
+        props.handleBlur(e);
+      }
     }
   };
   return (
-    <Form.Group
-      isInvalid={!!props.errorMessage}
-      onBlur={handleOnBlur}
-      className={props.className}
-    >
+    <Form.Group isInvalid={!!props.errorMessage} onBlur={handleOnBlur} className={props.className}>
       <Form.Control
         data-testid="formControl"
         aria-invalid={props.errorMessage}
@@ -42,12 +44,7 @@ const FormGroup = (props) => {
       )}
 
       {!isEmpty(props.errorMessage) && (
-        <Form.Control.Feedback
-          type="invalid"
-          key="error"
-          feedback-for={props.name}
-          data-testid="errorMessage"
-        >
+        <Form.Control.Feedback type="invalid" key="error" feedback-for={props.name} data-testid="errorMessage">
           {props.errorMessage}
         </Form.Control.Feedback>
       )}

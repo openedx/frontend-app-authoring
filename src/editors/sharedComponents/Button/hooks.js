@@ -9,10 +9,14 @@ export const getButtonProps = ({ variant, className, Add }) => {
     add: 'tertiary',
   };
   const classes = [variantClasses[variant]];
-  if (className) { classes.push(className); }
+  if (className) {
+    classes.push(className);
+  }
 
   const iconProps = {};
-  if (isVariantAdd(variant)) { iconProps.iconBefore = Add; }
+  if (isVariantAdd(variant)) {
+    iconProps.iconBefore = Add;
+  }
 
   return {
     className: classes.join(' '),

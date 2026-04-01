@@ -47,12 +47,7 @@ const Editor: React.FC<Props> = ({
   }
 
   if (EditorComponent === undefined && blockId) {
-    return (
-      <AdvancedEditor
-        usageKey={blockId}
-        onClose={onClose}
-      />
-    );
+    return <AdvancedEditor usageKey={blockId} onClose={onClose} />;
   }
 
   return <EditorComponent {...{ onClose, returnFunction, extraProps }} />;

@@ -24,15 +24,7 @@ const OptionalExpandLink = ({ row, forceHide = false }: OptionalExpandLinkProps)
 
   if (!canExpand) {
     return (
-      <IconButton
-        src={ExpandMore}
-        alt=""
-        size="sm"
-        className="mr-1 invisible"
-        disabled
-        tabIndex={-1}
-        aria-hidden
-      />
+      <IconButton src={ExpandMore} alt="" size="sm" className="mr-1 invisible" disabled tabIndex={-1} aria-hidden />
     );
   }
 

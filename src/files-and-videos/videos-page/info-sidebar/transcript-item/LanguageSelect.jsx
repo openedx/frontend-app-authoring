@@ -1,24 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  Button,
-  Icon,
-  ModalPopup,
-  Menu,
-  MenuItem,
-  useToggle,
-} from '@openedx/paragon';
+import { Button, Icon, ModalPopup, Menu, MenuItem, useToggle } from '@openedx/paragon';
 import { Check, ExpandMore, ExpandLess } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
 
-const LanguageSelect = ({
-  value,
-  previousSelection,
-  options,
-  handleSelect,
-  placeholderText,
-}) => {
+const LanguageSelect = ({ value, previousSelection, options, handleSelect, placeholderText }) => {
   const currentSelection = isEmpty(value) ? placeholderText : options[value];
 
   const [isOpen, , close, toggle] = useToggle();
@@ -41,26 +28,13 @@ const LanguageSelect = ({
           {currentSelection}
         </Button>
       </div>
-      <ModalPopup
-        placement="bottom-end"
-        positionRef={target}
-        isOpen={isOpen}
-        onClose={close}
-        onEscapeKey={close}
-      >
-        <Menu
-          className="language-select"
-        >
+      <ModalPopup placement="bottom-end" positionRef={target} isOpen={isOpen} onClose={close} onEscapeKey={close}>
+        <Menu className="language-select">
           <div>
             {Object.entries(options).map(([valueKey, text]) => {
               if (valueKey === value) {
                 return (
-                  <MenuItem
-                    as={Button}
-                    variant="tertiary"
-                    size="sm"
-                    key={`${valueKey}-item`}
-                  >
+                  <MenuItem as={Button} variant="tertiary" size="sm" key={`${valueKey}-item`}>
                     <Icon size="inline" src={Check} />
                     <span className="pl-1">{text}</span>
                   </MenuItem>
@@ -83,13 +57,7 @@ const LanguageSelect = ({
                 );
               }
               return (
-                <MenuItem
-                  disabled
-                  variant="tertiary"
-                  as={Button}
-                  size="sm"
-                  key={`${valueKey}-item`}
-                >
+                <MenuItem disabled variant="tertiary" as={Button} size="sm" key={`${valueKey}-item`}>
                   <span className="pl-3">{text}</span>
                 </MenuItem>
               );

@@ -25,9 +25,7 @@ export const InfoSection = ({ itemId }: Props) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { data: itemData } = useCourseItemData(itemId);
-  const { data: componentData } = useGetBlockTypes(
-    [`breadcrumbs.usage_key = "${itemId}"`],
-  );
+  const { data: componentData } = useGetBlockTypes([`breadcrumbs.usage_key = "${itemId}"`]);
   const category = normalizeContainerType(itemData?.category || '');
   const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const { courseId } = useCourseAuthoringContext();
@@ -82,11 +80,7 @@ export const InfoSection = ({ itemId }: Props) => {
           <ContentTagsSnippet contentId={itemId} />
         </SidebarSection>
       </SidebarContent>
-      <ContentTagsDrawerSheet
-        id={itemId}
-        onClose={closeManageTagsDrawer}
-        showSheet={isManageTagsDrawerOpen}
-      />
+      <ContentTagsDrawerSheet id={itemId} onClose={closeManageTagsDrawer} showSheet={isManageTagsDrawerOpen} />
     </>
   );
 };

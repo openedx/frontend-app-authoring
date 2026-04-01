@@ -23,7 +23,7 @@ export const editorRender = (
     initialState = {},
     learningContextId = 'course-v1:Org+COURSE+RUN',
     ...options
-  }: Omit<WrapperOptions, 'extraWrapper'> & { initialState?: PartialEditorState, learningContextId?: string } = {},
+  }: Omit<WrapperOptions, 'extraWrapper'> & { initialState?: PartialEditorState; learningContextId?: string } = {},
 ) => {
   // We might need a way for the test cases to access this store directly. In that case we could allow either an
   // initialState parameter OR an editorStore parameter.
@@ -33,9 +33,7 @@ export const editorRender = (
     ...options,
     extraWrapper: ({ children }) => (
       <EditorContextProvider learningContextId={learningContextId}>
-        <Provider store={store}>
-          {children}
-        </Provider>
+        <Provider store={store}>{children}</Provider>
       </EditorContextProvider>
     ),
   });

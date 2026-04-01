@@ -2,14 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Icon,
-  Row,
-  Pagination,
-  Alert,
-  Button,
-  Form,
-} from '@openedx/paragon';
+import { Icon, Row, Pagination, Alert, Button, Form } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '@src/constants';
@@ -61,11 +54,7 @@ const CardList = ({
   selectedCourseId,
   migrationStatusWidget,
 }: CardListProps) => {
-  const {
-    courses: allCourses,
-    numPages,
-    optimizationEnabled,
-  } = useSelector(getStudioHomeData);
+  const { courses: allCourses, numPages, optimizationEnabled } = useSelector(getStudioHomeData);
   const { filteredCourses: courses } = useCourseImportFilter() || { filteredCourses: allCourses };
 
   const isNotFilteringCourses = !isFiltered && !isLoading;
@@ -76,37 +65,24 @@ const CardList = ({
     <>
       {hasCourses ? (
         <>
-          {courses.map(
-            ({
-              courseKey,
-              displayName,
-              lmsLink,
-              org,
-              rerunLink,
-              number,
-              run,
-              url,
-            }) => (
-              <CardItem
-                courseKey={courseKey}
-                onClick={() => onClickCard?.(courseKey)}
-                itemId={courseKey}
-                displayName={displayName}
-                lmsLink={lmsLink}
-                rerunLink={rerunLink}
-                org={org}
-                number={number}
-                run={run}
-                url={url}
-                selectMode={inSelectMode ? 'single' : undefined}
-                selectPosition={inSelectMode ? 'card' : undefined}
-                isSelected={inSelectMode && selectedCourseId === courseKey}
-                subtitleBeforeWidget={MigrationStatusWidget && (
-                  <MigrationStatusWidget courseId={courseKey} />
-                )}
-              />
-            ),
-          )}
+          {courses.map(({ courseKey, displayName, lmsLink, org, rerunLink, number, run, url }) => (
+            <CardItem
+              courseKey={courseKey}
+              onClick={() => onClickCard?.(courseKey)}
+              itemId={courseKey}
+              displayName={displayName}
+              lmsLink={lmsLink}
+              rerunLink={rerunLink}
+              org={org}
+              number={number}
+              run={run}
+              url={url}
+              selectMode={inSelectMode ? 'single' : undefined}
+              selectPosition={inSelectMode ? 'card' : undefined}
+              isSelected={inSelectMode && selectedCourseId === courseKey}
+              subtitleBeforeWidget={MigrationStatusWidget && <MigrationStatusWidget courseId={courseKey} />}
+            />
+          ))}
 
           {numPages > 1 && (
             <Pagination
@@ -118,13 +94,15 @@ const CardList = ({
             />
           )}
         </>
-      ) : (!optimizationEnabled && isNotFilteringCourses && (
-        <ContactAdministrator
-          hasAbilityToCreateCourse={hasAbilityToCreateCourse}
-          showNewCourseContainer={showNewCourseContainer}
-          onClickNewCourse={onClickNewCourse}
-        />
-      )
+      ) : (
+        !optimizationEnabled &&
+        isNotFilteringCourses && (
+          <ContactAdministrator
+            hasAbilityToCreateCourse={hasAbilityToCreateCourse}
+            showNewCourseContainer={showNewCourseContainer}
+            onClickNewCourse={onClickNewCourse}
+          />
+        )
       )}
 
       {isFiltered && !hasCourses && !isLoading && (
@@ -164,15 +142,9 @@ export const CoursesList: React.FC<Props> = ({
   const dispatch = useDispatch();
   const intl = useIntl();
   const location = useLocation();
-  const {
-    courses: allCourses,
-    coursesCount,
-    courseCreatorStatus,
-  } = useSelector(getStudioHomeData);
+  const { courses: allCourses, coursesCount, courseCreatorStatus } = useSelector(getStudioHomeData);
   const { filteredCourses: courses } = useCourseImportFilter() || { filteredCourses: allCourses };
-  const {
-    courseLoadingStatus,
-  } = useSelector(getLoadingStatuses);
+  const { courseLoadingStatus } = useSelector(getLoadingStatuses);
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const { currentPage, isFiltered } = studioHomeCoursesParams;
   const hasAbilityToCreateCourse = courseCreatorStatus === COURSE_CREATOR_STATES.granted;
@@ -189,11 +161,13 @@ export const CoursesList: React.FC<Props> = ({
 
   const handlePageSelected = (page) => {
     dispatch(fetchStudioHomeData(locationValue, false, { ...studioHomeCoursesParams, page }));
-    dispatch(updateStudioHomeCoursesCustomParams({
-      ...studioHomeCoursesParams,
-      currentPage: page,
-      isFiltered: true,
-    }));
+    dispatch(
+      updateStudioHomeCoursesCustomParams({
+        ...studioHomeCoursesParams,
+        currentPage: page,
+        isFiltered: true,
+      }),
+    );
   };
 
   const handleCleanFilters = () => {
@@ -209,67 +183,56 @@ export const CoursesList: React.FC<Props> = ({
     );
   }
 
-  return (
-    isFailed && !isFiltered ? (
-      <AlertMessage
-        variant="danger"
-        description={(
-          <Row className="m-0 align-items-center">
-            <Icon src={Error} className="text-danger-500 mr-1" />
-            <span data-testid="error-failed-message">{intl.formatMessage(messages.courseTabErrorMessage)}</span>
-          </Row>
-        )}
-      />
-    ) : (
-      <div className="courses-tab-container">
-        <div className="d-flex flex-row align-items-center justify-content-between my-4">
-          {isShowProcessing && <ProcessingCourses />}
-          <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
-          <p data-testid="pagination-info" className="my-0">
-            {intl.formatMessage(messages.coursesPaginationInfo, {
-              length: courses?.length,
-              total: coursesCount,
-            })}
-          </p>
-        </div>
-        {inSelectMode ? (
-          <Form.RadioSet
-            name="select-courses"
-            value={selectedCourseId}
-            onChange={(e) => handleSelect(e.target.value)}
-          >
-            <CardList
-              currentPage={currentPage}
-              onClickCard={handleSelect}
-              handlePageSelected={handlePageSelected}
-              handleCleanFilters={handleCleanFilters}
-              isLoading={isLoading}
-              isFiltered={isFiltered || false}
-              inSelectMode
-              selectedCourseId={selectedCourseId}
-              migrationStatusWidget={cardMigrationStatusWidget}
-            />
-          </Form.RadioSet>
-        ) : (
+  return isFailed && !isFiltered ? (
+    <AlertMessage
+      variant="danger"
+      description={
+        <Row className="m-0 align-items-center">
+          <Icon src={Error} className="text-danger-500 mr-1" />
+          <span data-testid="error-failed-message">{intl.formatMessage(messages.courseTabErrorMessage)}</span>
+        </Row>
+      }
+    />
+  ) : (
+    <div className="courses-tab-container">
+      <div className="d-flex flex-row align-items-center justify-content-between my-4">
+        {isShowProcessing && <ProcessingCourses />}
+        <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
+        <p data-testid="pagination-info" className="my-0">
+          {intl.formatMessage(messages.coursesPaginationInfo, {
+            length: courses?.length,
+            total: coursesCount,
+          })}
+        </p>
+      </div>
+      {inSelectMode ? (
+        <Form.RadioSet name="select-courses" value={selectedCourseId} onChange={(e) => handleSelect(e.target.value)}>
           <CardList
             currentPage={currentPage}
+            onClickCard={handleSelect}
             handlePageSelected={handlePageSelected}
             handleCleanFilters={handleCleanFilters}
             isLoading={isLoading}
             isFiltered={isFiltered || false}
-            hasAbilityToCreateCourse={hasAbilityToCreateCourse}
-            showNewCourseContainer={showNewCourseContainer}
-            onClickNewCourse={onClickNewCourse}
+            inSelectMode
+            selectedCourseId={selectedCourseId}
+            migrationStatusWidget={cardMigrationStatusWidget}
           />
-        )}
+        </Form.RadioSet>
+      ) : (
+        <CardList
+          currentPage={currentPage}
+          handlePageSelected={handlePageSelected}
+          handleCleanFilters={handleCleanFilters}
+          isLoading={isLoading}
+          isFiltered={isFiltered || false}
+          hasAbilityToCreateCourse={hasAbilityToCreateCourse}
+          showNewCourseContainer={showNewCourseContainer}
+          onClickNewCourse={onClickNewCourse}
+        />
+      )}
 
-        {showCollapsible && (
-          <CollapsibleStateWithAction
-            state={courseCreatorStatus!}
-            className="mt-3"
-          />
-        )}
-      </div>
-    )
+      {showCollapsible && <CollapsibleStateWithAction state={courseCreatorStatus!} className="mt-3" />}
+    </div>
   );
 };

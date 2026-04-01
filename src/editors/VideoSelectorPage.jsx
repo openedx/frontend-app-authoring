@@ -5,14 +5,7 @@ import ErrorBoundary from './sharedComponents/ErrorBoundary';
 import VideoSelector from './VideoSelector';
 import store from './data/store';
 
-const VideoSelectorPage = ({
-  blockId,
-  courseId,
-  lmsEndpointUrl,
-  studioEndpointUrl,
-  returnFunction,
-  onCancel,
-}) => (
+const VideoSelectorPage = ({ blockId, courseId, lmsEndpointUrl, studioEndpointUrl, returnFunction, onCancel }) => (
   <Provider store={store}>
     <ErrorBoundary
       {...{

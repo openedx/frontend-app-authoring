@@ -24,7 +24,7 @@ const messages = defineMessages({
   advancedDetailsOLX: {
     id: 'course-authoring.library-authoring.component.advanced.olx',
     defaultMessage: 'OLX Source',
-    description: 'Heading for the component\'s OLX source code',
+    description: "Heading for the component's OLX source code",
   },
   advancedDetailsOLXEditButton: {
     id: 'course-authoring.library-authoring.component.advanced.olx-edit',
@@ -59,7 +59,7 @@ const messages = defineMessages({
   advancedDetailsUsageKey: {
     id: 'course-authoring.library-authoring.component.advanced.usage-key',
     defaultMessage: 'ID (Usage key)',
-    description: 'Heading for the component\'s ID',
+    description: "Heading for the component's ID",
   },
   updateComponentSuccessMsg: {
     id: 'course-authoring.library-authoring.component.update.success',

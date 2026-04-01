@@ -2,7 +2,7 @@
   max-width: 33.6875rem;
 
   .pgn__modal-close-container {
-    transform: translateY(.5rem);
+    transform: translateY(0.5rem);
   }
 
   .publish-modal__header {
@@ -10,6 +10,6 @@
   }
 
   .publish-modal__subsection:not(:last-child) {
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
 }

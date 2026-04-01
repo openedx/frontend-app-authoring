@@ -18,7 +18,7 @@ import PlaceholderCard from './import-course/PlaceholderCard';
  *
  * Use content to:
  *   - 'collections': Suggest to create a collection on empty state.
-*   - Anything else to suggest to add content on empty state.
+ *   - Anything else to suggest to add content on empty state.
  */
 
 type LibraryContentProps = {
@@ -32,16 +32,8 @@ export const LibraryItemCard = {
 };
 
 const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps) => {
-  const {
-    hits,
-    totalHits,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    isPending,
-    isFiltered,
-    usageKey,
-  } = useSearchContext();
+  const { hits, totalHits, isFetchingNextPage, hasNextPage, fetchNextPage, isPending, isFiltered, usageKey } =
+    useSearchContext();
   const { libraryId, openCreateCollectionModal, collectionId } = useOptionalLibraryContext();
   const { openAddContentSidebar, openComponentInfoSidebar } = useSidebarContext();
   const { insideCollection } = useLibraryRoutes();
@@ -61,9 +53,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
   );
   // Fetch unsupported blocks usage_key information from meilisearch index.
   const { data: placeholderData } = useGetContentHits(
-    [
-      `usage_key IN [${placeholderBlocks?.map((block) => `"${block.sourceKey}"`).join(',')}]`,
-    ],
+    [`usage_key IN [${placeholderBlocks?.map((block) => `"${block.sourceKey}"`).join(',')}]`],
     (placeholderBlocks?.length || 0) > 0,
     ['usage_key', 'block_type', 'display_name'],
     placeholderBlocks?.length,
@@ -76,27 +66,22 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     }
   }, [usageKey]);
 
-  useLoadOnScroll(
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-    true,
-  );
+  useLoadOnScroll(hasNextPage, isFetchingNextPage, fetchNextPage, true);
 
   if (isPending) {
     return <LoadingSpinner />;
   }
   if (totalHits === 0) {
     if (contentType === ContentType.collections) {
-      return isFiltered
-        ? <NoSearchResults infoText={messages.noSearchResultsCollections} />
-        : (
-          <NoComponents
-            infoText={messages.noCollections}
-            addBtnText={messages.addCollection}
-            handleBtnClick={openCreateCollectionModal}
-          />
-        );
+      return isFiltered ? (
+        <NoSearchResults infoText={messages.noSearchResultsCollections} />
+      ) : (
+        <NoComponents
+          infoText={messages.noCollections}
+          addBtnText={messages.addCollection}
+          handleBtnClick={openCreateCollectionModal}
+        />
+      );
     }
     return isFiltered ? <NoSearchResults /> : <NoComponents handleBtnClick={openAddContentSidebar} />;
   }
@@ -108,12 +93,10 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
 
         return <CardComponent key={contentHit.id} hit={contentHit} />;
       })}
-      {showPlaceholderBlocks && placeholderData?.hits?.map((item) => (
-        <PlaceholderCard
-          displayName={item.display_name}
-          blockType={item.block_type}
-        />
-      ))}
+      {showPlaceholderBlocks &&
+        placeholderData?.hits?.map((item) => (
+          <PlaceholderCard displayName={item.display_name} blockType={item.block_type} />
+        ))}
     </div>
   );
 };

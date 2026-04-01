@@ -1,21 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Container,
-  Row,
-  TransitionReplace,
-  Toast,
-  Button,
-  ActionRow,
-} from '@openedx/paragon';
+import { Container, Row, TransitionReplace, Toast, Button, ActionRow } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import { CheckCircle as CheckCircleIcon, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useLocation } from 'react-router-dom';
 import { CourseAuthoringOutlineSidebarSlot } from '@src/plugin-slots/CourseAuthoringOutlineSidebarSlot';
 
@@ -37,10 +26,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
-import {
-  getProctoredExamsFlag,
-  getTimedExamsFlag,
-} from './data/selectors';
+import { getProctoredExamsFlag, getTimedExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
@@ -51,11 +37,7 @@ import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import PageAlerts from './page-alerts/PageAlerts';
 import DraggableList from './drag-helper/DraggableList';
-import {
-  canMoveSection,
-  possibleUnitMoves,
-  possibleSubsectionMoves,
-} from './drag-helper/utils';
+import { canMoveSection, possibleUnitMoves, possibleSubsectionMoves } from './drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
@@ -144,11 +126,13 @@ const CourseOutline = () => {
     // Wait for the course data to load before exporting tags.
     if (courseId && courseName && location.hash === '#export-tags') {
       setToastMessage(intl.formatMessage(messages.exportTagsCreatingToastMessage));
-      getTagsExportFile(courseId, courseName).then(() => {
-        setToastMessage(intl.formatMessage(messages.exportTagsSuccessToastMessage));
-      }).catch(() => {
-        setToastMessage(intl.formatMessage(messages.exportTagsErrorToastMessage));
-      });
+      getTagsExportFile(courseId, courseName)
+        .then(() => {
+          setToastMessage(intl.formatMessage(messages.exportTagsSuccessToastMessage));
+        })
+        .catch(() => {
+          setToastMessage(intl.formatMessage(messages.exportTagsErrorToastMessage));
+        });
 
       // Delete `#export-tags` from location
       window.location.href = '#';
@@ -161,10 +145,8 @@ const CourseOutline = () => {
     setSections(() => [...sectionsList]);
   };
 
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
+  const { isShow: isShowProcessingNotification, title: processingNotificationTitle } =
+    useSelector(getProcessingNotification);
 
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
@@ -183,7 +165,7 @@ const CourseOutline = () => {
     }
     setSections((prevSections) => {
       const newSections = arrayMove(prevSections, currentIndex, newIndex);
-      handleSectionDragAndDrop(newSections.map(section => section.id));
+      handleSectionDragAndDrop(newSections.map((section) => section.id));
       return newSections;
     });
   };
@@ -202,7 +184,7 @@ const CourseOutline = () => {
       handleSubsectionDragAndDrop(
         sectionId,
         section.id,
-        newSubsections.map(subsection => subsection.id),
+        newSubsections.map((subsection) => subsection.id),
         restoreSectionList,
       );
     }
@@ -212,9 +194,7 @@ const CourseOutline = () => {
    * Uses details from move information and moves unit
    */
   const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
-    const {
-      fn, args, sectionId, subsectionId,
-    } = moveDetails;
+    const { fn, args, sectionId, subsectionId } = moveDetails;
     if (!args) {
       return;
     }
@@ -225,7 +205,7 @@ const CourseOutline = () => {
         sectionId,
         section.id,
         subsectionId,
-        newUnits.map(unit => unit.id),
+        newUnits.map((unit) => unit.id),
         restoreSectionList,
       );
     }
@@ -304,7 +284,7 @@ const CourseOutline = () => {
             title={courseName}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
             hideBorder
-            headerActions={(
+            headerActions={
               <CourseOutlineHeaderActionsSlot
                 isReIndexShow={isReIndexShow}
                 isSectionsExpanded={isSectionsExpanded}
@@ -315,45 +295,40 @@ const CourseOutline = () => {
                 errors={errors}
                 sections={sections}
               />
-            )}
+            }
           />
-          {showNewActionsBar
-            ? (
-              <StatusBar
-                courseId={courseId}
-                isLoading={isLoading}
-                statusBarData={statusBarData}
-              />
-            ) : (
-              <LegacyStatusBar
-                courseId={courseId}
-                isLoading={isLoading}
-                statusBarData={statusBarData}
-                openEnableHighlightsModal={openEnableHighlightsModal}
-                handleVideoSharingOptionChange={handleVideoSharingOptionChange}
-              />
-            )}
+          {showNewActionsBar ? (
+            <StatusBar courseId={courseId} isLoading={isLoading} statusBarData={statusBarData} />
+          ) : (
+            <LegacyStatusBar
+              courseId={courseId}
+              isLoading={isLoading}
+              statusBarData={statusBarData}
+              openEnableHighlightsModal={openEnableHighlightsModal}
+              handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+            />
+          )}
           <hr className="mt-4 mb-0 w-100 text-light-400" />
           <div className="d-flex align-items-baseline">
             <div className="flex-fill">
               <article>
                 <div>
                   {showNewActionsBar && (
-                  <ActionRow className="mt-3">
-                    {Boolean(sectionsList.length) && (
-                    <Button
-                      variant="outline-primary"
-                      id="expand-collapse-all-button"
-                      data-testid="expand-collapse-all-button"
-                      iconBefore={isSectionsExpanded ? CloseFullscreen : OpenInFull}
-                      onClick={headerNavigationsActions.handleExpandAll}
-                    >
-                      {isSectionsExpanded
-                        ? intl.formatMessage(headerMessages.collapseAllButton)
-                        : intl.formatMessage(headerMessages.expandAllButton)}
-                    </Button>
-                    )}
-                  </ActionRow>
+                    <ActionRow className="mt-3">
+                      {Boolean(sectionsList.length) && (
+                        <Button
+                          variant="outline-primary"
+                          id="expand-collapse-all-button"
+                          data-testid="expand-collapse-all-button"
+                          iconBefore={isSectionsExpanded ? CloseFullscreen : OpenInFull}
+                          onClick={headerNavigationsActions.handleExpandAll}
+                        >
+                          {isSectionsExpanded
+                            ? intl.formatMessage(headerMessages.collapseAllButton)
+                            : intl.formatMessage(headerMessages.expandAllButton)}
+                        </Button>
+                      )}
+                    </ActionRow>
                   )}
                   <section>
                     {!errors?.outlineIndexApi && (
@@ -368,11 +343,7 @@ const CourseOutline = () => {
                               handleSubsectionDragAndDrop={handleSubsectionDragAndDrop}
                               handleUnitDragAndDrop={handleUnitDragAndDrop}
                             >
-                              <SortableContext
-                                id="root"
-                                items={sections}
-                                strategy={verticalListSortingStrategy}
-                              >
+                              <SortableContext id="root" items={sections} strategy={verticalListSortingStrategy}>
                                 {sections.map((section, sectionIndex) => (
                                   <SectionCard
                                     key={section.id}
@@ -476,11 +447,7 @@ const CourseOutline = () => {
                 </div>
               </article>
             </div>
-            <CourseAuthoringOutlineSidebarSlot
-              courseId={courseId}
-              courseName={courseName}
-              sections={sections}
-            />
+            <CourseAuthoringOutlineSidebarSlot courseId={courseId} courseName={courseName} sections={sections} />
           </div>
           <EnableHighlightsModal
             isOpen={isEnableHighlightsModalOpen}
@@ -526,13 +493,13 @@ const CourseOutline = () => {
         <ProcessingNotification
           // Show processing toast if any mutation is running
           isShow={
-            isShowProcessingNotification
-            || handleAddBlock.isPending
-            || handleAddAndOpenUnit.isPending
-            || isConfigureOpPending
-            || isSectionHighlightsUpdatePending
-            || isDuplicatingItem
-            || isPasting
+            isShowProcessingNotification ||
+            handleAddBlock.isPending ||
+            handleAddAndOpenUnit.isPending ||
+            isConfigureOpPending ||
+            isSectionHighlightsUpdatePending ||
+            isDuplicatingItem ||
+            isPasting
           }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}
@@ -544,11 +511,7 @@ const CourseOutline = () => {
         />
       </div>
       {toastMessage && (
-        <Toast
-          show
-          onClose={/* istanbul ignore next */ () => setToastMessage(null)}
-          data-testid="taxonomy-toast"
-        >
+        <Toast show onClose={/* istanbul ignore next */ () => setToastMessage(null)} data-testid="taxonomy-toast">
           {toastMessage}
         </Toast>
       )}

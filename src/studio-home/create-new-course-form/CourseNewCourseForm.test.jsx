@@ -47,9 +47,7 @@ describe('<CourseNewCourseForm />', () => {
   });
 
   it('renders form successfully', () => {
-    const { getByText } = render(
-      <RootWrapper {...props} />,
-    );
+    const { getByText } = render(<RootWrapper {...props} />);
     expect(getByText(messages.createNewCourse.defaultMessage)).toBeInTheDocument();
   });
 });

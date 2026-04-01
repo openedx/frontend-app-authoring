@@ -7,32 +7,26 @@ import ChecklistItemBody from './ChecklistItemBody';
 import ChecklistItemComment from './ChecklistItemComment';
 import { checklistItems } from './utils/courseChecklistData';
 
-const ChecklistSection = ({
-  courseId,
-  dataHeading,
-  data,
-  idPrefix,
-  isLoading,
-}) => {
+const ChecklistSection = ({ courseId, dataHeading, data, idPrefix, isLoading }) => {
   const dataList = checklistItems[idPrefix];
-  const getCompletionCountID = () => (`${idPrefix}-completion-count`);
+  const getCompletionCountID = () => `${idPrefix}-completion-count`;
   const { checklistState } = useChecklistState({ data, dataList });
   const { checks, totalCompletedChecks, values } = checklistState;
 
   return (
     <Container>
-      <h3 aria-describedby={getCompletionCountID()} className="lead">{dataHeading}</h3>
+      <h3 aria-describedby={getCompletionCountID()} className="lead">
+        {dataHeading}
+      </h3>
       {isLoading ? (
         <div className="row justify-content-center" data-testid="loading-spinner">
           <LoadingSpinner />
         </div>
       ) : (
         <>
-          <div data-testid="completion-subheader">
-            {getCompletionCount(checks, totalCompletedChecks)}
-          </div>
+          <div data-testid="completion-subheader">{getCompletionCount(checks, totalCompletedChecks)}</div>
           <Stack gap={3} className="mt-3">
-            {checks.map(check => {
+            {checks.map((check) => {
               const checkId = check.id;
               const isCompleted = values[checkId];
               return (

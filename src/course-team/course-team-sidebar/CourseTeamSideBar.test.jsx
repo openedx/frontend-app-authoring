@@ -39,8 +39,10 @@ describe('<CourseTeamSidebar />', () => {
     const { getByText } = renderComponent({ isOwnershipHint: true });
 
     expect(getByText(messages.ownershipTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(
-      'Every course must have an Admin. If you are the Admin and you want to transfer ownership of the course, click to make another user the Admin, then ask that user to remove you from the Course Team list.',
-    )).toBeInTheDocument();
+    expect(
+      getByText(
+        'Every course must have an Admin. If you are the Admin and you want to transfer ownership of the course, click to make another user the Admin, then ask that user to remove you from the Course Team list.',
+      ),
+    ).toBeInTheDocument();
   });
 });

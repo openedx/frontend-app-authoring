@@ -7,23 +7,23 @@ import { useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
 import messages from './messages';
 
 interface OutOfSyncAlertProps {
-  showAlert: boolean,
-  setShowAlert: React.Dispatch<React.SetStateAction<boolean>>,
-  courseId: string,
+  showAlert: boolean;
+  setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
+  courseId: string;
   onDismiss?: () => void;
   onReview: () => void;
 }
 /**
-* Shows an alert when library components used in the current course were updated and the blocks
-* in course can be updated. Following are the conditions for displaying the alert.
-*
-* * The alert is displayed if components are out of sync.
-* * If the user clicks on dismiss button, the state of dismiss is stored in localstorage of user
-*   in this format: outOfSyncCountAlert-${courseId} = <datetime value in milliseconds>.
-* * If there are not new published components for the course and the user opens outline
-*   in the same browser, they don't see the alert again.
-* * If there is a new published component upstream, the alert is displayed again.
-*/
+ * Shows an alert when library components used in the current course were updated and the blocks
+ * in course can be updated. Following are the conditions for displaying the alert.
+ *
+ * * The alert is displayed if components are out of sync.
+ * * If the user clicks on dismiss button, the state of dismiss is stored in localstorage of user
+ *   in this format: outOfSyncCountAlert-${courseId} = <datetime value in milliseconds>.
+ * * If there are not new published components for the course and the user opens outline
+ *   in the same browser, they don't see the alert again.
+ * * If there is a new published component upstream, the alert is displayed again.
+ */
 export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   showAlert,
   setShowAlert,
@@ -34,7 +34,8 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   const intl = useIntl();
   const { data, isPending } = useEntityLinksSummaryByDownstreamContext(courseId);
   const outOfSyncCount = data?.reduce((count, lib) => count + (lib.readyToSyncCount || 0), 0);
-  const lastPublishedDate = data?.map(lib => new Date(lib.lastPublishedAt || 0).getTime())
+  const lastPublishedDate = data
+    ?.map((lib) => new Date(lib.lastPublishedAt || 0).getTime())
     .reduce((acc, lastPublished) => Math.max(lastPublished, acc), 0);
   const alertKey = `outOfSyncCountAlert-${courseId}`;
 
@@ -66,13 +67,7 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
       icon={Loop}
       variant="info"
       onClose={dismissAlert}
-      actions={[
-        <Button
-          onClick={onReview}
-        >
-          {intl.formatMessage(messages.outOfSyncCountAlertReviewBtn)}
-        </Button>,
-      ]}
+      actions={[<Button onClick={onReview}>{intl.formatMessage(messages.outOfSyncCountAlertReviewBtn)}</Button>]}
     />
   );
 };

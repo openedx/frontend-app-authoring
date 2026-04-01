@@ -1,14 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Form,
-  Icon,
-  IconButton,
-} from '@openedx/paragon';
-import {
-  Locked,
-  Unlocked,
-} from '@openedx/paragon/icons';
+import { Form, Icon, IconButton } from '@openedx/paragon';
+import { Locked, Unlocked } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import * as hooks from './hooks';
@@ -24,17 +17,11 @@ import messages from './messages';
  * @param {func} updateDimensions - update dimensions callback
  * @param {obj} value - local dimension values { height, width }
  */
-const DimensionControls = ({
-  isLocked,
-  lock,
-  setHeight,
-  setWidth,
-  unlock,
-  updateDimensions,
-  value,
-}) => {
+const DimensionControls = ({ isLocked, lock, setHeight, setWidth, unlock, updateDimensions, value }) => {
   const intl = useIntl();
-  if (!value) { return null; }
+  if (!value) {
+    return null;
+  }
   return (
     <Form.Group>
       <Form.Label as="h4">
@@ -58,10 +45,10 @@ const DimensionControls = ({
         <IconButton
           className="d-inline-block"
           alt={
-          isLocked
-            ? intl.formatMessage(messages.unlockDimensionsLabel)
-            : intl.formatMessage(messages.lockDimensionsLabel)
-        }
+            isLocked
+              ? intl.formatMessage(messages.unlockDimensionsLabel)
+              : intl.formatMessage(messages.lockDimensionsLabel)
+          }
           iconAs={Icon}
           src={isLocked ? Locked : Unlocked}
           onClick={isLocked ? unlock : lock}
@@ -76,7 +63,7 @@ DimensionControls.defaultProps = {
     width: '100',
   },
 };
-DimensionControls.propTypes = ({
+DimensionControls.propTypes = {
   value: PropTypes.shape({
     height: PropTypes.string,
     width: PropTypes.string,
@@ -87,6 +74,6 @@ DimensionControls.propTypes = ({
   lock: PropTypes.func.isRequired,
   unlock: PropTypes.func.isRequired,
   updateDimensions: PropTypes.func.isRequired,
-});
+};
 
 export default DimensionControls;

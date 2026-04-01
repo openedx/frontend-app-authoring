@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 export interface SelectedComponent {
   usageKey: string;
@@ -31,7 +25,7 @@ type NoComponentPickerType = {
 
 type BasePickerType = {
   restrictToLibrary: boolean;
-  extraFilter: string[],
+  extraFilter: string[];
   isLoading?: boolean;
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -65,7 +59,7 @@ const ComponentPickerContext = createContext<ComponentPickerContextData | undefi
 type BasePickerProps = {
   restrictToLibrary?: boolean;
   /** Only show published components */
-  extraFilter?: string[],
+  extraFilter?: string[];
 };
 
 export type ComponentPickerSingleProps = BasePickerProps & {
@@ -100,35 +94,37 @@ export const ComponentPickerProvider = ({
   const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>((
-    selectedComponent: SelectedComponent,
-  ) => {
-    setSelectedComponents((prevSelectedComponents) => {
-      // istanbul ignore if: this should never happen
-      if (prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
-        return prevSelectedComponents;
-      }
-      const newSelectedComponents = [...prevSelectedComponents, selectedComponent];
-      onChangeComponentSelection?.(newSelectedComponents);
-      return newSelectedComponents;
-    });
-  }, []);
+  const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>(
+    (selectedComponent: SelectedComponent) => {
+      setSelectedComponents((prevSelectedComponents) => {
+        // istanbul ignore if: this should never happen
+        if (prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
+          return prevSelectedComponents;
+        }
+        const newSelectedComponents = [...prevSelectedComponents, selectedComponent];
+        onChangeComponentSelection?.(newSelectedComponents);
+        return newSelectedComponents;
+      });
+    },
+    [],
+  );
 
-  const removeComponentFromSelectedComponents = useCallback<ComponentSelectedEvent>((
-    selectedComponent: SelectedComponent,
-  ) => {
-    setSelectedComponents((prevSelectedComponents) => {
-      // istanbul ignore if: this should never happen
-      if (!prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
-        return prevSelectedComponents;
-      }
-      const newSelectedComponents = prevSelectedComponents.filter(
-        (component) => component.usageKey !== selectedComponent.usageKey,
-      );
-      onChangeComponentSelection?.(newSelectedComponents);
-      return newSelectedComponents;
-    });
-  }, []);
+  const removeComponentFromSelectedComponents = useCallback<ComponentSelectedEvent>(
+    (selectedComponent: SelectedComponent) => {
+      setSelectedComponents((prevSelectedComponents) => {
+        // istanbul ignore if: this should never happen
+        if (!prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
+          return prevSelectedComponents;
+        }
+        const newSelectedComponents = prevSelectedComponents.filter(
+          (component) => component.usageKey !== selectedComponent.usageKey,
+        );
+        onChangeComponentSelection?.(newSelectedComponents);
+        return newSelectedComponents;
+      });
+    },
+    [],
+  );
 
   const context = useMemo<ComponentPickerContextData>(() => {
     switch (componentPickerMode) {
@@ -169,11 +165,7 @@ export const ComponentPickerProvider = ({
     setIsLoading,
   ]);
 
-  return (
-    <ComponentPickerContext.Provider value={context}>
-      {children}
-    </ComponentPickerContext.Provider>
-  );
+  return <ComponentPickerContext.Provider value={context}>{children}</ComponentPickerContext.Provider>;
 };
 
 export function useComponentPickerContext(): ComponentPickerContextData | NoComponentPickerType {

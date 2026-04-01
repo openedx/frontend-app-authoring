@@ -1,24 +1,9 @@
-import {
-  type ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Alert,
-  Badge,
-  Breadcrumb,
-  Button,
-  Container,
-  Stack,
-  Tab,
-  Tabs,
-} from '@openedx/paragon';
+import { Alert, Badge, Breadcrumb, Button, Container, Stack, Tab, Tabs } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -29,10 +14,7 @@ import SubHeader from '@src/generic/sub-header/SubHeader';
 import Header from '@src/header';
 import NotFoundAlert from '@src/generic/NotFoundAlert';
 import { useStudioHome } from '@src/studio-home/hooks';
-import {
-  SearchContextProvider,
-  TypesFilterData,
-} from '@src/search-manager';
+import { SearchContextProvider, TypesFilterData } from '@src/search-manager';
 import { ToastContext } from '@src/generic/toast-context';
 import migrationMessages from '@src/legacy-libraries-migration/messages';
 
@@ -54,12 +36,7 @@ const HeaderActions = () => {
 
   const { readOnly } = useOptionalLibraryContext();
 
-  const {
-    openAddContentSidebar,
-    openLibrarySidebar,
-    closeLibrarySidebar,
-    sidebarItemInfo,
-  } = useSidebarContext();
+  const { openAddContentSidebar, openLibrarySidebar, closeLibrarySidebar, sidebarItemInfo } = useSidebarContext();
 
   const { componentPickerMode } = useComponentPickerContext();
 
@@ -149,9 +126,7 @@ const LibraryAuthoringPage = ({
 
   // Get migration status every second if applicable
   const migrationId = params.get('migration_task');
-  const {
-    data: migrationStatusData,
-  } = useModulestoreMigrationStatus(migrationId);
+  const { data: migrationStatusData } = useModulestoreMigrationStatus(migrationId);
 
   const {
     isLoadingPage: isLoadingStudioHome,
@@ -159,11 +134,7 @@ const LibraryAuthoringPage = ({
     librariesV2Enabled,
   } = useStudioHome();
 
-  const {
-    componentPickerMode,
-    restrictToLibrary,
-    extraFilter: pickerExtraFilter,
-  } = useComponentPickerContext();
+  const { componentPickerMode, restrictToLibrary, extraFilter: pickerExtraFilter } = useComponentPickerContext();
   const { showOnlyPublished } = usePublishedFilterContext();
   const {
     libraryId,
@@ -219,12 +190,15 @@ const LibraryAuthoringPage = ({
     }
   }, [location.key, getActiveKey]);
 
-  const handleTabChange = useCallback((key: ContentType) => {
-    setActiveKey(key);
-    if (!componentPickerMode) {
-      navigateTo({ contentType: key });
-    }
-  }, [navigateTo]);
+  const handleTabChange = useCallback(
+    (key: ContentType) => {
+      setActiveKey(key);
+      if (!componentPickerMode) {
+        navigateTo({ contentType: key });
+      }
+    },
+    [navigateTo],
+  );
 
   // Verify the migration task status
   if (migrationId && libraryId) {
@@ -232,16 +206,15 @@ const LibraryAuthoringPage = ({
     if (migrationStatusData?.state === 'Succeeded') {
       // Check if any library migrations failed.
       // A `Succeeded` state means that the bulk migration ended, but some libraries might have failed.
-      const failedMigrations = migrationStatusData.parameters.filter(item => item.isFailed);
+      const failedMigrations = migrationStatusData.parameters.filter((item) => item.isFailed);
       if (failedMigrations.length > 1) {
         showToast(intl.formatMessage(migrationMessages.migrationFailedMultiple));
       } else if (failedMigrations.length === 1) {
-        showToast(intl.formatMessage(
-          migrationMessages.migrationFailedOneLibrary,
-          {
+        showToast(
+          intl.formatMessage(migrationMessages.migrationFailedOneLibrary, {
             key: failedMigrations[0].source,
-          },
-        ));
+          }),
+        );
       } else {
         showToast(intl.formatMessage(migrationMessages.migrationSuccess));
       }
@@ -258,10 +231,13 @@ const LibraryAuthoringPage = ({
 
     if (deleteMigrationIdParam) {
       params.delete('migration_task');
-      navigate({
-        pathname: location.pathname,
-        search: params.toString(),
-      }, { replace: true });
+      navigate(
+        {
+          pathname: location.pathname,
+          search: params.toString(),
+        },
+        { replace: true },
+      );
     }
   }
 
@@ -270,28 +246,25 @@ const LibraryAuthoringPage = ({
   }
 
   if (!isLoadingStudioHome && (!librariesV2Enabled || isFailedLoadingStudioHome)) {
-    return (
-      <Alert variant="danger">
-        {intl.formatMessage(messages.librariesV2DisabledError)}
-      </Alert>
-    );
+    return <Alert variant="danger">{intl.formatMessage(messages.librariesV2DisabledError)}</Alert>;
   }
 
   if (libraryId && !libraryData) {
     return <NotFoundAlert />;
   }
 
-  const breadcumbs = componentPickerMode && !restrictToLibrary ? (
-    <Breadcrumb
-      links={[
-        {
-          label: intl.formatMessage(messages.returnToLibrarySelection),
-          onClick: returnToLibrarySelection,
-        },
-      ]}
-      linkAs={Link}
-    />
-  ) : undefined;
+  const breadcumbs =
+    componentPickerMode && !restrictToLibrary ? (
+      <Breadcrumb
+        links={[
+          {
+            label: intl.formatMessage(messages.returnToLibrarySelection),
+            onClick: returnToLibrarySelection,
+          },
+        ]}
+        linkAs={Link}
+      />
+    ) : undefined;
 
   const extraFilter: string[] = [];
   if (libraryId) {
@@ -327,14 +300,15 @@ const LibraryAuthoringPage = ({
 
   // Disable filtering by block/problem type when viewing the Collections/Units/Sections/Subsections tab,
   // or when inside a specific Section or Subsection.
-  const onlyOneType = (
-    insideCollections || insideUnits || insideSections || insideSubsections
-      || insideSection || insideSubsection
-      || !([ContentType.home, ContentType.components].includes(activeKey))
-  );
-  const overrideTypesFilter = onlyOneType
-    ? new TypesFilterData()
-    : undefined;
+  const onlyOneType =
+    insideCollections ||
+    insideUnits ||
+    insideSections ||
+    insideSubsections ||
+    insideSection ||
+    insideSubsection ||
+    ![ContentType.home, ContentType.components].includes(activeKey);
+  const overrideTypesFilter = onlyOneType ? new TypesFilterData() : undefined;
 
   const tabTitles = {
     [ContentType.home]: intl.formatMessage(messages.homeTab),
@@ -352,32 +326,31 @@ const LibraryAuthoringPage = ({
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
-        {libraryData
-          && (
+        {libraryData && (
           <>
-            <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
+            <Helmet>
+              <title>
+                {libraryData.title} | {process.env.SITE_NAME}
+              </title>
+            </Helmet>
             {!componentPickerMode && (
-            <Header
-              number={libraryData.slug}
-              title={libraryData.title}
-              org={libraryData.org}
-              contextId={libraryId}
-              readOnly={readOnly}
-              isLibrary
-              containerProps={{
-                size: undefined,
-              }}
-            />
+              <Header
+                number={libraryData.slug}
+                title={libraryData.title}
+                org={libraryData.org}
+                contextId={libraryId}
+                readOnly={readOnly}
+                isLibrary
+                containerProps={{
+                  size: undefined,
+                }}
+              />
             )}
           </>
-          )}
+        )}
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
-          <SearchContextProvider
-            extraFilter={extraFilter}
-            overrideTypesFilter={overrideTypesFilter}
-          >
-            {libraryData
-              && (
+          <SearchContextProvider extraFilter={extraFilter} overrideTypesFilter={overrideTypesFilter}>
+            {libraryData && (
               <SubHeader
                 title={<SubHeaderTitle title={libraryData.title} />}
                 subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
@@ -385,14 +358,9 @@ const LibraryAuthoringPage = ({
                 headerActions={<HeaderActions />}
                 hideBorder
               />
-              )}
+            )}
             {visibleTabs.length > 1 && (
-              <Tabs
-                variant="tabs"
-                activeKey={activeKey}
-                onSelect={handleTabChange}
-                className="my-3"
-              >
+              <Tabs variant="tabs" activeKey={activeKey} onSelect={handleTabChange} className="my-3">
                 {visibleTabsToRender}
               </Tabs>
             )}

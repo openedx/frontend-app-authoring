@@ -1,11 +1,6 @@
 import { useSelector } from 'react-redux';
 
-import {
-  initializeMocks,
-  fireEvent,
-  render,
-  waitFor,
-} from '@src/testUtils';
+import { initializeMocks, fireEvent, render, waitFor } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { RequestStatus } from '../data/constants';

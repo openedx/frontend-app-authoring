@@ -159,9 +159,7 @@ describe('EditorContainer hooks', () => {
     });
     describe('isInitialized', () => {
       it('forwards selectors.app.isInitialized', () => {
-        expect(hooks.isInitialized()).toEqual(
-          reactRedux.useSelector(selectors.app.isInitialized),
-        );
+        expect(hooks.isInitialized()).toEqual(reactRedux.useSelector(selectors.app.isInitialized));
       });
     });
     describe('saveFailed', () => {
@@ -171,9 +169,7 @@ describe('EditorContainer hooks', () => {
         reactRedux.useSelector.mockReturnValueOnce(testValue);
         expect(hooks.saveFailed()).toEqual(testValue);
         const [[cb]] = reactRedux.useSelector.mock.calls;
-        expect(cb(testState)).toEqual(
-          selectors.requests.isFailed(testState, { requestKey: RequestKeys.saveBlock }),
-        );
+        expect(cb(testState)).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.saveBlock }));
       });
     });
   });

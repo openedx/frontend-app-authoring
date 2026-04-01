@@ -1,15 +1,7 @@
 import { userEvent } from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 
-import {
-  render,
-  act,
-  fireEvent,
-  screen,
-  waitFor,
-  within,
-  initializeMocks,
-} from '@src/testUtils';
+import { render, act, fireEvent, screen, waitFor, within, initializeMocks } from '@src/testUtils';
 import { getHttpClient } from '@edx/frontend-platform/auth';
 import { executeThunk } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
@@ -26,13 +18,7 @@ import {
   initialState,
 } from './factories/mockApiResponses';
 
-import {
-  fetchVideos,
-  deleteVideoFile,
-  getUsagePaths,
-  addVideoThumbnail,
-  fetchVideoDownload,
-} from './data/thunks';
+import { fetchVideos, deleteVideoFile, getUsagePaths, addVideoThumbnail, fetchVideoDownload } from './data/thunks';
 import * as api from './data/api';
 import videoMessages from './messages';
 import messages from '../generic/messages';
@@ -60,9 +46,7 @@ const renderComponent = () => {
   );
 };
 
-const mockStore = async (
-  status,
-) => {
+const mockStore = async (status) => {
   const fetchVideosUrl = getVideosUrl(courseId);
   const videosData = generateFetchVideosApiResponse();
   axiosMock.onGet(fetchVideosUrl).reply(getStatusValue(status), videosData);
@@ -188,13 +172,14 @@ describe('Videos page', () => {
 
       it('should switch table to list view', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
-        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`)
-          .reply(201, {
-            usageLocations: [{
+        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(201, {
+          usageLocations: [
+            {
               display_location: 'subsection - unit / block',
               url: 'base/unit_id#block_id',
-            }],
-          });
+            },
+          ],
+        });
         expect(screen.getByTestId('files-data-table')).toBeVisible();
 
         expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
@@ -274,7 +259,12 @@ describe('Videos page', () => {
             window.dispatchEvent(new Event('beforeunload'));
           });
           await waitFor(() => {
-            expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+            expect(setFailedSpy).toHaveBeenCalledWith(
+              courseId,
+              expect.any(String),
+              expect.any(String),
+              'upload_failed',
+            );
           });
           uploadSpy.mockRestore();
           setFailedSpy.mockRestore();
@@ -311,7 +301,12 @@ describe('Videos page', () => {
           });
           await waitFor(() => {
             const addStatus = store.getState().videos.addingStatus;
-            expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+            expect(setFailedSpy).toHaveBeenCalledWith(
+              courseId,
+              expect.any(String),
+              expect.any(String),
+              'upload_failed',
+            );
 
             expect(addStatus).toEqual(RequestStatus.FAILED);
 
@@ -454,11 +449,12 @@ describe('Videos page', () => {
 
             expect(transcribedCheckboxFilter).toHaveProperty('checked', false);
 
-            expect(within(sortBySizeDescendingButton).getByLabelText('file size descending radio'))
-              .toHaveProperty('checked', false);
+            expect(within(sortBySizeDescendingButton).getByLabelText('file size descending radio')).toHaveProperty(
+              'checked',
+              false,
+            );
 
-            expect(within(sortByNewest).getByLabelText('date added descending radio'))
-              .toHaveProperty('checked', true);
+            expect(within(sortByNewest).getByLabelText('date added descending radio')).toHaveProperty('checked', true);
           });
 
           it('should remove Transcribed filter chip', async () => {
@@ -483,13 +479,14 @@ describe('Videos page', () => {
 
           const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
 
-          axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`)
-            .reply(200, {
-              usageLocations: [{
+          axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(200, {
+            usageLocations: [
+              {
                 display_location: 'subsection - unit / block',
                 url: 'base/unit_id#block_id',
-              }],
-            });
+              },
+            ],
+          });
 
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
@@ -703,10 +700,13 @@ describe('Videos page', () => {
         axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID3/usage`).reply(404);
         fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
         fireEvent.click(screen.getByText('Info'));
-        await executeThunk(getUsagePaths({
-          courseId,
-          video: { id: 'mOckID3', displayName: 'mOckID3' },
-        }), store.dispatch);
+        await executeThunk(
+          getUsagePaths({
+            courseId,
+            video: { id: 'mOckID3', displayName: 'mOckID3' },
+          }),
+          store.dispatch,
+        );
         await waitFor(() => {
           const { usageStatus } = store.getState().videos;
           expect(usageStatus).toEqual(RequestStatus.FAILED);
@@ -729,8 +729,11 @@ describe('Videos page', () => {
 
         axiosMock.onPut(`${getVideosUrl(courseId)}/download`).reply(404);
         fireEvent.click(downloadButton!);
-        // @ts-ignore
-        await executeThunk(fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2', downloadLink: 'test' } }]), store.dispatch);
+        await executeThunk(
+          // @ts-ignore
+          fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2', downloadLink: 'test' } }]),
+          store.dispatch,
+        );
 
         const updateStatus = store.getState().videos.updatingStatus;
         expect(updateStatus).toEqual(RequestStatus.FAILED);

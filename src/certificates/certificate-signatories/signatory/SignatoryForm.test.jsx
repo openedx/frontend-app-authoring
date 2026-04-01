@@ -12,13 +12,15 @@ import SignatoryForm from './SignatoryForm';
 
 let store;
 
-const renderSignatory = (props) => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <SignatoryForm {...props} />
-    </IntlProvider>,
-  </Provider>,
-);
+const renderSignatory = (props) =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <SignatoryForm {...props} />
+      </IntlProvider>
+      ,
+    </Provider>,
+  );
 
 const initialState = {
   certificates: {
@@ -83,10 +85,12 @@ describe('Signatory Component', () => {
   it('opens image upload modal on button click', async () => {
     const user = userEvent.setup();
     const { getByRole, queryByTestId } = renderSignatory(defaultProps);
-    const replaceButton = getByRole(
-      'button',
-      { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModalReplace.defaultMessage) },
-    );
+    const replaceButton = getByRole('button', {
+      name: messages.uploadImageButton.defaultMessage.replace(
+        '{uploadText}',
+        messages.uploadModalReplace.defaultMessage,
+      ),
+    });
 
     expect(queryByTestId('dropzone-container')).not.toBeInTheDocument();
 
@@ -134,14 +138,15 @@ describe('Signatory Component', () => {
 
     const { getByRole, queryByRole } = renderSignatory(newProps);
 
-    const replaceButton = getByRole(
-      'button',
-      { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModalReplace.defaultMessage) },
-    );
-    const uploadButton = queryByRole(
-      'button',
-      { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModal.defaultMessage) },
-    );
+    const replaceButton = getByRole('button', {
+      name: messages.uploadImageButton.defaultMessage.replace(
+        '{uploadText}',
+        messages.uploadModalReplace.defaultMessage,
+      ),
+    });
+    const uploadButton = queryByRole('button', {
+      name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModal.defaultMessage),
+    });
 
     expect(replaceButton).toBeInTheDocument();
     expect(uploadButton).not.toBeInTheDocument();
@@ -156,14 +161,15 @@ describe('Signatory Component', () => {
 
     const { getByRole, queryByRole } = renderSignatory(newProps);
 
-    const uploadButton = getByRole(
-      'button',
-      { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModal.defaultMessage) },
-    );
-    const replaceButton = queryByRole(
-      'button',
-      { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModalReplace.defaultMessage) },
-    );
+    const uploadButton = getByRole('button', {
+      name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModal.defaultMessage),
+    });
+    const replaceButton = queryByRole('button', {
+      name: messages.uploadImageButton.defaultMessage.replace(
+        '{uploadText}',
+        messages.uploadModalReplace.defaultMessage,
+      ),
+    });
 
     expect(uploadButton).toBeInTheDocument();
     expect(replaceButton).not.toBeInTheDocument();

@@ -40,7 +40,6 @@ export interface HelpUrls {
 }
 
 export async function getHelpUrls(): Promise<HelpUrls> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getHelpUrlsApiUrl());
+  const { data } = await getAuthenticatedHttpClient().get(getHelpUrlsApiUrl());
   return camelCaseObject(data);
 }

@@ -11,12 +11,7 @@ import { useOutlineSidebarPagesContext } from './OutlineSidebarPagesContext';
 const OutlineSideBar = () => {
   const isMedium = useMediaQuery({ maxWidth: breakpoints.medium.maxWidth });
 
-  const {
-    currentPageKey,
-    setCurrentPageKey,
-    isOpen,
-    toggle,
-  } = useOutlineSidebarContext();
+  const { currentPageKey, setCurrentPageKey, isOpen, toggle } = useOutlineSidebarContext();
 
   const sidebarPages = useOutlineSidebarPagesContext();
 

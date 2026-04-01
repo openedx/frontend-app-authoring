@@ -5,12 +5,7 @@ import { Stack, Form } from '@openedx/paragon';
 import CertificateSection from '../certificate-section/CertificateSection';
 import messages from './messages';
 
-const CertificateDetailsForm = ({
-  detailsCourseTitle,
-  courseTitleOverride,
-  handleChange,
-  handleBlur,
-}) => {
+const CertificateDetailsForm = ({ detailsCourseTitle, courseTitleOverride, handleChange, handleBlur }) => {
   const intl = useIntl();
   return (
     <CertificateSection

@@ -28,13 +28,15 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
     case mockGetCourseContainerChildren.sectionShowsAlertSingleText:
       blockType = 'subsection';
       displayName = 'Test Title';
-      upstreamReadyToSyncChildrenInfo = [{
-        id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@1',
-        name: 'Html block 11',
-        blockType: 'html',
-        downstreamCustomized: ['display_name'],
-        upstream: 'upstream-id',
-      }];
+      upstreamReadyToSyncChildrenInfo = [
+        {
+          id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@1',
+          name: 'Html block 11',
+          blockType: 'html',
+          downstreamCustomized: ['display_name'],
+          upstream: 'upstream-id',
+        },
+      ];
       break;
     case mockGetCourseContainerChildren.sectionShowsAlertMultipleText:
       blockType = 'subsection';
@@ -59,15 +61,16 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
     case mockGetCourseContainerChildren.unitIdLoading:
     case mockGetCourseContainerChildren.sectionIdLoading:
     case mockGetCourseContainerChildren.subsectionIdLoading:
-      return new Promise(() => { });
+      return new Promise(() => {});
     default:
       blockType = 'section';
       displayName = 'section block 00';
       numChildren = 0;
       break;
   }
-  const children = Array(numChildren).fill(mockGetCourseContainerChildren.childTemplate).map((child, idx) => (
-    {
+  const children = Array(numChildren)
+    .fill(mockGetCourseContainerChildren.childTemplate)
+    .map((child, idx) => ({
       ...child,
       // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
       id: `block-v1:UNIX+UX1+2025_T3+type@${blockType}+block@${idx}`,
@@ -80,8 +83,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
         versionDeclined: null,
         downstreamCustomized: [],
       },
-    }
-  ));
+    }));
   return Promise.resolve({
     canPasteComponent: true,
     isPublished: false,

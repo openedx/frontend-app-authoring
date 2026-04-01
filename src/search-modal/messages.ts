@@ -43,7 +43,7 @@ const messages = defineMessages({
   },
   noResultsTitle: {
     id: 'course-authoring.course-search.noResultsTitle',
-    defaultMessage: 'We didn\'t find anything matching your search',
+    defaultMessage: "We didn't find anything matching your search",
     description: 'Title shown when the search returned no results',
   },
   noResultsSubtitle: {

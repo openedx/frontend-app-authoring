@@ -7,10 +7,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
-const EditConfirmationButtons = ({
-  updateTitle,
-  cancelEdit,
-}) => {
+const EditConfirmationButtons = ({ updateTitle, cancelEdit }) => {
   const intl = useIntl();
   return (
     <ButtonGroup>

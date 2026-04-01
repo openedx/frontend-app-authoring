@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react/jsx-filename-extension */
-import {
-  fireEvent, render, waitFor, screen,
-  initializeMocks,
-} from '@src/testUtils';
+import { fireEvent, render, waitFor, screen, initializeMocks } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import generalMessages from '../messages';
 import scanResultsMessages from './scan-results/messages';
-import CourseOptimizerPage, { pollLinkCheckDuringScan, pollRerunLinkUpdateDuringUpdate, pollRerunLinkUpdateStatus } from './CourseOptimizerPage';
+import CourseOptimizerPage, {
+  pollLinkCheckDuringScan,
+  pollRerunLinkUpdateDuringUpdate,
+  pollRerunLinkUpdateStatus,
+} from './CourseOptimizerPage';
 import { postLinkCheckCourseApiUrl, getLinkCheckStatusApiUrl } from './data/api';
 import {
   mockApiResponse,
@@ -61,7 +62,10 @@ describe('CourseOptimizerPage', () => {
       mockFetchLinkCheckStatus = jest.fn();
       jest.spyOn(thunks, 'fetchLinkCheckStatus').mockImplementation(mockFetchLinkCheckStatus);
       jest.useFakeTimers();
-      jest.spyOn(global, 'setInterval').mockImplementation((cb) => { cb(); return true; });
+      jest.spyOn(global, 'setInterval').mockImplementation((cb) => {
+        cb();
+        return true;
+      });
     });
 
     afterEach(() => {
@@ -114,12 +118,8 @@ describe('CourseOptimizerPage', () => {
       jest.clearAllMocks();
       const mocks = initializeMocks();
       axiosMock = mocks.axiosMock;
-      axiosMock
-        .onPost(postLinkCheckCourseApiUrl(courseId))
-        .reply(200, { LinkCheckStatus: 'In-Progress' });
-      axiosMock
-        .onGet(getLinkCheckStatusApiUrl(courseId))
-        .reply(200, mockApiResponse);
+      axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(200, { LinkCheckStatus: 'In-Progress' });
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponse);
     });
 
     it('should render the component', () => {
@@ -139,9 +139,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should show no broken links found message', async () => {
-      axiosMock
-        .onGet(getLinkCheckStatusApiUrl(courseId))
-        .reply(200, { LinkCheckStatus: 'Succeeded' });
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, { LinkCheckStatus: 'Succeeded' });
       const { getByText } = render(<OptimizerPage />);
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
@@ -151,9 +149,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should show an error state in the scan stepper if request does not go through', async () => {
-      axiosMock
-        .onPost(postLinkCheckCourseApiUrl(courseId))
-        .reply(500);
+      axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(500);
       render(<OptimizerPage />);
       expect(screen.getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       fireEvent.click(screen.getByText(messages.buttonTitle.defaultMessage));
@@ -163,12 +159,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should show only locked links when lockedLinks filter is selected', async () => {
-      const {
-        getByText,
-        getByLabelText,
-        queryByText,
-        container,
-      } = await setupOptimizerPage();
+      const { getByText, getByLabelText, queryByText, container } = await setupOptimizerPage();
       // Check if the modal is opened
       expect(getByText('Locked')).toBeInTheDocument();
       // Select the locked links checkbox
@@ -186,12 +177,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should show only broken links when brokenLinks filter is selected', async () => {
-      const {
-        getByText,
-        getByLabelText,
-        queryByText,
-        container,
-      } = await setupOptimizerPage();
+      const { getByText, getByLabelText, queryByText, container } = await setupOptimizerPage();
       // Check if the modal is opened
       expect(getByText('Broken')).toBeInTheDocument();
       // Select the broken links checkbox
@@ -208,12 +194,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should show only manual links when manualLinks filter is selected and show all links when clicked again', async () => {
-      const {
-        getByText,
-        getByLabelText,
-        queryByText,
-        container,
-      } = await setupOptimizerPage();
+      const { getByText, getByLabelText, queryByText, container } = await setupOptimizerPage();
       // Check if the modal is opened
       expect(getByText('Manual')).toBeInTheDocument();
       // Select the manual links checkbox
@@ -241,12 +222,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should show only manual & locked links when manual & locked Links filters are selected, ignore broken links', async () => {
-      const {
-        getByText,
-        getByLabelText,
-        queryByText,
-        container,
-      } = await setupOptimizerPage();
+      const { getByText, getByLabelText, queryByText, container } = await setupOptimizerPage();
       // Check if the modal is opened
       expect(getByText('Manual')).toBeInTheDocument();
       expect(getByText('Locked')).toBeInTheDocument();
@@ -266,11 +242,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should show all links when all filters are selected', async () => {
-      const {
-        getByText,
-        getByLabelText,
-        container,
-      } = await setupOptimizerPage();
+      const { getByText, getByLabelText, container } = await setupOptimizerPage();
       // Check if the modal is opened
       expect(getByText('Broken')).toBeInTheDocument();
       expect(getByText('Manual')).toBeInTheDocument();
@@ -292,13 +264,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should show only manual links when the broken chip is clicked and show all links when clear filters button is clicked', async () => {
-      const {
-        getByText,
-        getByLabelText,
-        getByTestId,
-        queryByText,
-        container,
-      } = await setupOptimizerPage();
+      const { getByText, getByLabelText, getByTestId, queryByText, container } = await setupOptimizerPage();
       // Select broken & manual link checkboxes
       fireEvent.click(getByLabelText(scanResultsMessages.brokenLabel.defaultMessage));
       fireEvent.click(getByLabelText(scanResultsMessages.manualLabel.defaultMessage));
@@ -338,10 +304,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should show no results found message when filter with no links is selected', async () => {
-      const {
-        getByText,
-        getByLabelText,
-      } = await setupOptimizerPage(mockApiResponseForNoResultFound);
+      const { getByText, getByLabelText } = await setupOptimizerPage(mockApiResponseForNoResultFound);
       // Check if the modal is opened
       expect(getByText('Locked')).toBeInTheDocument();
       // Select the broken links checkbox

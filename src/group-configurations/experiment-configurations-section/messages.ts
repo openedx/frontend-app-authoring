@@ -34,7 +34,8 @@ const messages = defineMessages({
   experimentConfigurationNameRequired: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.name.required',
     defaultMessage: 'Group configuration name is required.',
-    description: 'Error message displayed when the name of the experiment group configuration is required but not provided.',
+    description:
+      'Error message displayed when the name of the experiment group configuration is required but not provided.',
   },
   experimentConfigurationDescription: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.description',
@@ -58,38 +59,45 @@ const messages = defineMessages({
   },
   experimentConfigurationGroupsFeedback: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.groups.feedback',
-    defaultMessage: 'Name of the groups that students will be assigned to, for example, Control, Video, Problems. You must have two or more groups.',
+    defaultMessage:
+      'Name of the groups that students will be assigned to, for example, Control, Video, Problems. You must have two or more groups.',
     description: 'Feedback message for the groups section of an experiment group configuration.',
   },
   experimentConfigurationGroupsNameRequired: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.groups.name.required',
     defaultMessage: 'All groups must have a name.',
-    description: 'Error message displayed when the name of a group within an experiment group configuration is required but not provided.',
+    description:
+      'Error message displayed when the name of a group within an experiment group configuration is required but not provided.',
   },
   experimentConfigurationGroupsNameUnique: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.groups.name.unique',
     defaultMessage: 'All groups must have a unique name.',
-    description: 'Error message displayed when the names of groups within an experiment group configuration are not unique.',
+    description:
+      'Error message displayed when the names of groups within an experiment group configuration are not unique.',
   },
   experimentConfigurationGroupsRequired: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.groups.required',
     defaultMessage: 'There must be at least one group.',
-    description: 'Error message displayed when at least one group is required within an experiment group configuration.',
+    description:
+      'Error message displayed when at least one group is required within an experiment group configuration.',
   },
   experimentConfigurationGroupsTooltip: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.groups.tooltip',
     defaultMessage: 'Delete',
-    description: 'Tooltip message for the delete action within the groups section of an experiment group configuration.',
+    description:
+      'Tooltip message for the delete action within the groups section of an experiment group configuration.',
   },
   experimentConfigurationGroupsAdd: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.groups.add',
     defaultMessage: 'Add another group',
-    description: 'Label for the button to add another group within the groups section of an experiment group configuration.',
+    description:
+      'Label for the button to add another group within the groups section of an experiment group configuration.',
   },
   experimentConfigurationDeleteRestriction: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.delete.restriction',
     defaultMessage: 'Cannot delete when in use by an experiment',
-    description: 'Error message indicating that an experiment group configuration cannot be deleted because it is currently in use by an experiment.',
+    description:
+      'Error message indicating that an experiment group configuration cannot be deleted because it is currently in use by an experiment.',
   },
   experimentConfigurationCancel: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.cancel',
@@ -108,13 +116,17 @@ const messages = defineMessages({
   },
   experimentConfigurationAlert: {
     id: 'course-authoring.group-configurations.experiment-configuration.container.alert',
-    defaultMessage: 'This configuration is currently used in content experiments. If you make changes to the groups, you may need to edit those experiments.',
-    description: 'Alert message indicating that an experiment group configuration is currently used in content experiments and that changes may require editing those experiments.',
+    defaultMessage:
+      'This configuration is currently used in content experiments. If you make changes to the groups, you may need to edit those experiments.',
+    description:
+      'Alert message indicating that an experiment group configuration is currently used in content experiments and that changes may require editing those experiments.',
   },
   emptyExperimentGroup: {
     id: 'course-authoring.group-configurations.experiment-card.empty-experiment-group',
-    defaultMessage: 'This group configuration is not in use. Start by adding a content experiment to any Unit via the {outlineComponentLink}.',
-    description: 'Message displayed when an experiment group configuration is not in use and suggests adding a content experiment.',
+    defaultMessage:
+      'This group configuration is not in use. Start by adding a content experiment to any Unit via the {outlineComponentLink}.',
+    description:
+      'Message displayed when an experiment group configuration is not in use and suggests adding a content experiment.',
   },
   courseOutline: {
     id: 'course-authoring.group-configurations.experiment-card.course-outline',
@@ -139,7 +151,8 @@ const messages = defineMessages({
   deleteRestriction: {
     id: 'course-authoring.group-configurations.experiment-card.delete-restriction',
     defaultMessage: 'Cannot delete when in use by a unit',
-    description: 'Error message indicating that an experiment card cannot be deleted because it is currently in use by a unit.',
+    description:
+      'Error message indicating that an experiment card cannot be deleted because it is currently in use by a unit.',
   },
 });
 

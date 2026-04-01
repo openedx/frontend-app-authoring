@@ -30,19 +30,14 @@ const ContentTagChip = ({ tag }: { tag: Tag }) => {
   }
 
   return (
-    <Chip
-      iconBefore={TagIcon}
-      className="mr-1 tag-snippet-chip small"
-    >
+    <Chip iconBefore={TagIcon} className="mr-1 tag-snippet-chip small">
       {lineageStr}
     </Chip>
   );
 };
 
 export const ContentTagsSnippet = ({ contentId }: ContentTagsSnippetProps) => {
-  const {
-    data,
-  } = useContentTaxonomyTagsData(contentId);
+  const { data } = useContentTaxonomyTagsData(contentId);
 
   if (!data) {
     return null;
@@ -52,9 +47,7 @@ export const ContentTagsSnippet = ({ contentId }: ContentTagsSnippetProps) => {
     <Stack gap={2}>
       {data.taxonomies.map((taxonomy) => (
         <div key={taxonomy.taxonomyId}>
-          <h4 className="font-weight-bold x-small text-muted">
-            {`${taxonomy.name} (${taxonomy.tags.length})`}
-          </h4>
+          <h4 className="font-weight-bold x-small text-muted">{`${taxonomy.name} (${taxonomy.tags.length})`}</h4>
           <div className="d-flex flex-wrap">
             {taxonomy.tags.map((tag) => (
               <ContentTagChip key={tag.value} tag={tag} />

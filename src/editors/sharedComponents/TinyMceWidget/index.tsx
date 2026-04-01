@@ -69,11 +69,7 @@ const TinyMceWidget = ({
         />
       )}
       {editorType === 'text' && (
-        <SourceCodeModal
-          isOpen={isSourceCodeOpen}
-          close={closeSourceCodeModal}
-          editorRef={editorRef}
-        />
+        <SourceCodeModal isOpen={isSourceCodeOpen} close={closeSourceCodeModal} editorRef={editorRef} />
       )}
       <Editor
         id={id}

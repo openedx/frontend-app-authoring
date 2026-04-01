@@ -30,8 +30,12 @@ describe('useSequenceNavigationMetadata', () => {
 
   beforeEach(() => {
     useSelector.mockImplementation((selector) => {
-      if (selector === getCourseSectionVertical) { return { nextUrl: mockNextUrl, prevUrl: mockPrevUrl }; }
-      if (selector === getSequenceIds) { return mockSequenceIds; }
+      if (selector === getCourseSectionVertical) {
+        return { nextUrl: mockNextUrl, prevUrl: mockPrevUrl };
+      }
+      if (selector === getSequenceIds) {
+        return mockSequenceIds;
+      }
       return null;
     });
     useModel.mockReturnValue(mockSequence);
@@ -39,8 +43,8 @@ describe('useSequenceNavigationMetadata', () => {
 
   it('sets isLastUnit to true if no nextUrl is provided', () => {
     useSelector.mockReturnValueOnce({ nextUrl: null, prevUrl: mockPrevUrl });
-    const { result } = renderHook(
-      () => useSequenceNavigationMetadata(mockCourseId, mockCurrentSequenceId, mockCurrentUnitId),
+    const { result } = renderHook(() =>
+      useSequenceNavigationMetadata(mockCourseId, mockCurrentSequenceId, mockCurrentUnitId),
     );
 
     expect(result.current.isLastUnit).toBe(true);
@@ -48,8 +52,8 @@ describe('useSequenceNavigationMetadata', () => {
 
   it('sets isFirstUnit to true if no prevUrl is provided', () => {
     useSelector.mockReturnValueOnce({ nextUrl: mockNextUrl, prevUrl: null });
-    const { result } = renderHook(
-      () => useSequenceNavigationMetadata(mockCourseId, mockCurrentSequenceId, mockCurrentUnitId),
+    const { result } = renderHook(() =>
+      useSequenceNavigationMetadata(mockCourseId, mockCurrentSequenceId, mockCurrentUnitId),
     );
 
     expect(result.current.isFirstUnit).toBe(true);

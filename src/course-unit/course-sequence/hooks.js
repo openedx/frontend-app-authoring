@@ -40,7 +40,10 @@ export function useSequenceNavigationMetadata(courseId, currentSequenceId, curre
   }
 
   return {
-    isFirstUnit, isLastUnit, nextLink, previousLink,
+    isFirstUnit,
+    isLastUnit,
+    nextLink,
+    previousLink,
   };
 }
 
@@ -94,23 +97,26 @@ export function useIndexOfLastVisibleChild() {
     const childNodesArr = Array.prototype.slice.call(containerElementRef.current.children);
     const { nextIndexOfLastVisibleChild } = childNodesArr
       // filter out the overflow element
-      .filter(childNode => childNode !== overflowElementRef.current)
+      .filter((childNode) => childNode !== overflowElementRef.current)
       // sum the widths to find the last visible element's index
-      .reduce((acc, childNode, index) => {
-        // use floor to prevent rounding errors
-        acc.sumWidth += Math.floor(childNode.getBoundingClientRect().width);
-        if (acc.sumWidth <= containingRect.width) {
-          acc.nextIndexOfLastVisibleChild = index;
-        }
-        return acc;
-      }, {
-        // Include the overflow element's width to begin with. Doing this means
-        // sometimes we'll show a dropdown with one item in it when it would fit,
-        // but allowing this case dramatically simplifies the calculations we need
-        // to do above.
-        sumWidth: overflowElementRef.current ? overflowElementRef.current.getBoundingClientRect().width : 0,
-        nextIndexOfLastVisibleChild: -1,
-      });
+      .reduce(
+        (acc, childNode, index) => {
+          // use floor to prevent rounding errors
+          acc.sumWidth += Math.floor(childNode.getBoundingClientRect().width);
+          if (acc.sumWidth <= containingRect.width) {
+            acc.nextIndexOfLastVisibleChild = index;
+          }
+          return acc;
+        },
+        {
+          // Include the overflow element's width to begin with. Doing this means
+          // sometimes we'll show a dropdown with one item in it when it would fit,
+          // but allowing this case dramatically simplifies the calculations we need
+          // to do above.
+          sumWidth: overflowElementRef.current ? overflowElementRef.current.getBoundingClientRect().width : 0,
+          nextIndexOfLastVisibleChild: -1,
+        },
+      );
 
     setIndexOfLastVisibleChild(nextIndexOfLastVisibleChild);
     // eslint-disable-next-line react-hooks/exhaustive-deps

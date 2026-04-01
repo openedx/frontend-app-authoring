@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks,
-} from '@src/testUtils';
+import { render, screen, initializeMocks } from '@src/testUtils';
 import CollapsibleFormWidget from './CollapsibleFormWidget';
 
 describe('CollapsibleFormWidget', () => {
@@ -11,7 +9,7 @@ describe('CollapsibleFormWidget', () => {
     title: 'Sample title',
     fontSize: 'x-small',
   };
-  const testContent = (<p>Some test string</p>);
+  const testContent = <p>Some test string</p>;
 
   beforeEach(() => {
     initializeMocks();

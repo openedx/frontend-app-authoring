@@ -24,23 +24,14 @@ describe('<CertificateDisplayRow />', () => {
   };
 
   it('renders without crashing', () => {
-    const { getByText, getByRole, queryAllByText } = render(
-      <RootWrapper {...props} />,
-    );
+    const { getByText, getByRole, queryAllByText } = render(<RootWrapper {...props} />);
     const buttonReadMore = getByRole('button', {
       name: messages.certificateDisplayBehaviorToggleTitle.defaultMessage,
     });
-    expect(
-      getByText(messages.certificateBehaviorLabel.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByText(messages.certificateBehaviorHelpText.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.certificateBehaviorLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.certificateBehaviorHelpText.defaultMessage)).toBeInTheDocument();
     expect(buttonReadMore).toBeInTheDocument();
-    expect(
-      queryAllByText(messages.certificateAvailableDateLabel.defaultMessage)
-        .length,
-    ).toBe(0);
+    expect(queryAllByText(messages.certificateAvailableDateLabel.defaultMessage).length).toBe(0);
   });
 
   it('shows more text on click button', () => {
@@ -49,21 +40,9 @@ describe('<CertificateDisplayRow />', () => {
       name: messages.certificateDisplayBehaviorToggleTitle.defaultMessage,
     });
     fireEvent.click(buttonReadMore);
-    expect(
-      getByText(
-        messages.certificateDisplayBehaviorToggleHeading1.defaultMessage,
-      ),
-    ).toBeInTheDocument();
-    expect(
-      getByText(
-        messages.certificateDisplayBehaviorToggleHeading2.defaultMessage,
-      ),
-    ).toBeInTheDocument();
-    expect(
-      getByText(
-        messages.certificateDisplayBehaviorToggleHeading3.defaultMessage,
-      ),
-    ).toBeInTheDocument();
+    expect(getByText(messages.certificateDisplayBehaviorToggleHeading1.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.certificateDisplayBehaviorToggleHeading2.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.certificateDisplayBehaviorToggleHeading3.defaultMessage)).toBeInTheDocument();
   });
 
   it('toggles different option', () => {
@@ -72,9 +51,7 @@ describe('<CertificateDisplayRow />', () => {
       name: messages.certificateBehaviorDropdownOption2.defaultMessage,
     });
     fireEvent.click(button);
-    const option = getByText(
-      messages.certificateBehaviorDropdownOption3.defaultMessage,
-    );
+    const option = getByText(messages.certificateBehaviorDropdownOption3.defaultMessage);
     expect(option).toBeInTheDocument();
     fireEvent.click(option);
     const updatedButtonReadMore = screen.getByRole('button', {
@@ -89,8 +66,6 @@ describe('<CertificateDisplayRow />', () => {
       certificatesDisplayBehavior: CERTIFICATE_DISPLAY_BEHAVIOR.endWithDate,
     };
     const { getByText } = render(<RootWrapper {...initialProps} />);
-    expect(
-      getByText(messages.certificateAvailableDateLabel.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.certificateAvailableDateLabel.defaultMessage)).toBeInTheDocument();
   });
 });

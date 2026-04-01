@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react/jsx-filename-extension */
-import {
-  fireEvent, render, waitFor, screen, act,
-} from '@testing-library/react';
+import { fireEvent, render, waitFor, screen, act } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -172,10 +170,13 @@ jest.mock('../../data/apiHooks', () => ({
 jest.mock('../data/thunks', () => ({
   updateSinglePreviousRunLink: jest.fn(() => () => Promise.resolve({ status: 'Succeeded' })),
   updateAllPreviousRunLinks: jest.fn(() => () => Promise.resolve({ status: 'Succeeded' })),
-  fetchRerunLinkUpdateStatus: jest.fn(() => () => Promise.resolve({
-    status: 'Succeeded',
-    results: [{ id: 'course-update-with-prev-links', success: true }],
-  })),
+  fetchRerunLinkUpdateStatus: jest.fn(
+    () => () =>
+      Promise.resolve({
+        status: 'Succeeded',
+        results: [{ id: 'course-update-with-prev-links', success: true }],
+      }),
+  ),
   fetchLinkCheckStatus: jest.fn(() => () => Promise.resolve({})),
 }));
 
@@ -204,13 +205,15 @@ ScanResultsWrapper.propTypes = {
   rerunLinkUpdateResult: PropTypes.oneOfType([
     PropTypes.shape({
       status: PropTypes.string,
-      results: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.string,
-        type: PropTypes.string,
-        original_url: PropTypes.string,
-        success: PropTypes.bool,
-        new_url: PropTypes.string,
-      })),
+      results: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string,
+          type: PropTypes.string,
+          original_url: PropTypes.string,
+          success: PropTypes.bool,
+          new_url: PropTypes.string,
+        }),
+      ),
     }),
     PropTypes.oneOf([null, undefined]),
   ]),
@@ -414,23 +417,25 @@ describe('ScanResults', () => {
       const mockOnErrorStateChange = jest.fn();
 
       thunks.updateSinglePreviousRunLink.mockReturnValue(() => Promise.resolve({ status: 'Succeeded' }));
-      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({
-        status: 'Succeeded',
-        results: [
-          {
-            id: 'course-update-with-prev-links',
-            original_url: 'https://previous.run/link1',
-            success: true,
-            new_url: 'https://updated.run/link1',
-          },
-          {
-            id: 'course-update-with-prev-links',
-            original_url: 'https://previous.run/link2',
-            success: true,
-            new_url: 'https://updated.run/link2',
-          },
-        ],
-      }));
+      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() =>
+        Promise.resolve({
+          status: 'Succeeded',
+          results: [
+            {
+              id: 'course-update-with-prev-links',
+              original_url: 'https://previous.run/link1',
+              success: true,
+              new_url: 'https://updated.run/link1',
+            },
+            {
+              id: 'course-update-with-prev-links',
+              original_url: 'https://previous.run/link2',
+              success: true,
+              new_url: 'https://updated.run/link2',
+            },
+          ],
+        }),
+      );
 
       render(<ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />);
 
@@ -457,10 +462,12 @@ describe('ScanResults', () => {
 
       // Mock failed response - the thunk should still resolve but with failed status
       thunks.updateSinglePreviousRunLink.mockReturnValue(() => Promise.resolve({ status: 'Succeeded' }));
-      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({
-        status: 'Succeeded',
-        results: [{ id: 'course-update-with-prev-links', success: false }], // success: false indicates failure
-      }));
+      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() =>
+        Promise.resolve({
+          status: 'Succeeded',
+          results: [{ id: 'course-update-with-prev-links', success: false }], // success: false indicates failure
+        }),
+      );
 
       render(<ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />);
 
@@ -481,23 +488,25 @@ describe('ScanResults', () => {
       const mockOnErrorStateChange = jest.fn();
 
       thunks.updateAllPreviousRunLinks.mockReturnValue(() => Promise.resolve({ status: 'Succeeded' }));
-      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({
-        status: 'Succeeded',
-        results: [
-          {
-            id: 'course-update-with-prev-links',
-            original_url: 'https://previous.run/link1',
-            success: true,
-            new_url: 'https://updated.run/link1',
-          },
-          {
-            id: 'course-update-with-prev-links',
-            original_url: 'https://previous.run/link2',
-            success: true,
-            new_url: 'https://updated.run/link2',
-          },
-        ],
-      }));
+      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() =>
+        Promise.resolve({
+          status: 'Succeeded',
+          results: [
+            {
+              id: 'course-update-with-prev-links',
+              original_url: 'https://previous.run/link1',
+              success: true,
+              new_url: 'https://updated.run/link1',
+            },
+            {
+              id: 'course-update-with-prev-links',
+              original_url: 'https://previous.run/link2',
+              success: true,
+              new_url: 'https://updated.run/link2',
+            },
+          ],
+        }),
+      );
 
       render(<ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />);
 
@@ -522,23 +531,25 @@ describe('ScanResults', () => {
 
       // Mock partial failure response
       thunks.updateAllPreviousRunLinks.mockReturnValue(() => Promise.resolve({ status: 'Succeeded' }));
-      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({
-        status: 'Succeeded',
-        results: [
-          {
-            id: 'course-update-with-prev-links',
-            original_url: 'https://previous.run/link1',
-            success: true,
-            new_url: 'https://updated.run/link1',
-          },
-          {
-            id: 'course-update-with-prev-links',
-            original_url: 'https://previous.run/link2',
-            success: false,
-            new_url: null,
-          },
-        ],
-      }));
+      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() =>
+        Promise.resolve({
+          status: 'Succeeded',
+          results: [
+            {
+              id: 'course-update-with-prev-links',
+              original_url: 'https://previous.run/link1',
+              success: true,
+              new_url: 'https://updated.run/link1',
+            },
+            {
+              id: 'course-update-with-prev-links',
+              original_url: 'https://previous.run/link2',
+              success: false,
+              new_url: null,
+            },
+          ],
+        }),
+      );
 
       render(<ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />);
 
@@ -601,24 +612,45 @@ describe('ScanResults', () => {
 
       const bulkResults = [
         {
-          id: 'api-1', type: 'course_updates', original_url: 'https://previous.run/link1', success: true, new_url: 'https://updated.run/link1',
+          id: 'api-1',
+          type: 'course_updates',
+          original_url: 'https://previous.run/link1',
+          success: true,
+          new_url: 'https://updated.run/link1',
         },
         {
-          id: 'api-2', type: 'course_updates', original_url: 'https://previous.run/link2', success: true, new_url: 'https://updated.run/link2',
+          id: 'api-2',
+          type: 'course_updates',
+          original_url: 'https://previous.run/link2',
+          success: true,
+          new_url: 'https://updated.run/link2',
         },
         {
-          id: 'api-3', type: 'custom_pages', original_url: 'https://previous.run/link3', success: false, new_url: null,
+          id: 'api-3',
+          type: 'custom_pages',
+          original_url: 'https://previous.run/link3',
+          success: false,
+          new_url: null,
         },
         {
-          id: 'api-4', type: 'custom_pages', original_url: 'https://previous.run/link4', success: true, new_url: 'https://updated.run/link4',
+          id: 'api-4',
+          type: 'custom_pages',
+          original_url: 'https://previous.run/link4',
+          success: true,
+          new_url: 'https://updated.run/link4',
         },
         {
-          id: 'course-update-with-prev-links', original_url: 'https://previous.run/link1', success: true, new_url: 'https://updated.run/link1',
+          id: 'course-update-with-prev-links',
+          original_url: 'https://previous.run/link1',
+          success: true,
+          new_url: 'https://updated.run/link1',
         },
       ];
 
       thunks.updateAllPreviousRunLinks.mockReturnValue(() => Promise.resolve({ status: 'Succeeded' }));
-      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({ status: 'Succeeded', results: bulkResults }));
+      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() =>
+        Promise.resolve({ status: 'Succeeded', results: bulkResults }),
+      );
 
       render(<ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />);
 
@@ -684,21 +716,27 @@ describe('ScanResults', () => {
 
       const bulkResults = [
         {
-          id: 'api-unknown', type: 'unknown_type', original_url: 'https://previous.run/unk', success: true, new_url: 'https://updated.run/unk',
+          id: 'api-unknown',
+          type: 'unknown_type',
+          original_url: 'https://previous.run/unk',
+          success: true,
+          new_url: 'https://updated.run/unk',
         },
         {
-          id: 'course-update-with-prev-links', original_url: 'https://previous.run/link1', success: true, new_url: 'https://updated.run/link1',
+          id: 'course-update-with-prev-links',
+          original_url: 'https://previous.run/link1',
+          success: true,
+          new_url: 'https://updated.run/link1',
         },
       ];
 
       thunks.updateAllPreviousRunLinks.mockReturnValue(() => Promise.resolve({ status: 'Succeeded' }));
-      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({ status: 'Succeeded', results: bulkResults }));
+      thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() =>
+        Promise.resolve({ status: 'Succeeded', results: bulkResults }),
+      );
 
       const { rerender } = render(
-        <ScanResultsWrapper
-          data={mockLinkCheckResultWithPrevious}
-          onErrorStateChange={mockOnErrorStateChange}
-        />,
+        <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
       );
       const updateAllButton = screen.getByTestId('update-all-course');
 
@@ -735,10 +773,7 @@ describe('ScanResults', () => {
       thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({ status: 'Succeeded', results: [] }));
 
       const { rerender } = render(
-        <ScanResultsWrapper
-          data={mockLinkCheckResultWithPrevious}
-          onErrorStateChange={mockOnErrorStateChange}
-        />,
+        <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
       );
       const updateAllButton = screen.getByTestId('update-all-course');
 
@@ -890,10 +925,7 @@ describe('ScanResults', () => {
         thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve(null));
 
         const { rerender } = render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
         const updateAllButton = screen.getByTestId('update-all-course');
 
@@ -920,15 +952,14 @@ describe('ScanResults', () => {
         const mockOnErrorStateChange = jest.fn();
 
         thunks.updateAllPreviousRunLinks.mockReturnValue(() => Promise.resolve({ status: 'Succeeded' }));
-        thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({ status: 'Succeeded', results: [{ id: 'course-update-with-prev-links', success: false }] }));
+        thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() =>
+          Promise.resolve({ status: 'Succeeded', results: [{ id: 'course-update-with-prev-links', success: false }] }),
+        );
 
         window.scrollTo = jest.fn();
 
         const { rerender } = render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
         const updateAllButton = screen.getByTestId('update-all-course');
 
@@ -959,10 +990,7 @@ describe('ScanResults', () => {
         thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({ status: 'Succeeded' }));
 
         const { rerender } = render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
         const updateAllButton = screen.getByTestId('update-all-course');
 
@@ -1199,7 +1227,9 @@ describe('ScanResults', () => {
                           brokenLinks: [],
                           lockedLinks: ['https://locked2.com'],
                           externalForbiddenLinks: [],
-                          previousRunLinks: [{ originalLink: 'https://prev2.com', isUpdated: true, updatedLink: 'https://updated2.com' }],
+                          previousRunLinks: [
+                            { originalLink: 'https://prev2.com', isUpdated: true, updatedLink: 'https://updated2.com' },
+                          ],
                         },
                       ],
                     },
@@ -1403,10 +1433,7 @@ describe('ScanResults', () => {
         const mockOnErrorStateChange = jest.fn();
 
         const { rerender, container } = render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
 
         const updateAllButton = screen.getByTestId('update-all-course');
@@ -1449,7 +1476,7 @@ describe('ScanResults', () => {
         await waitFor(() => {
           const updatedCountEls = container.querySelectorAll('[data-updated-links-count]');
           const anyHasUpdates = Array.from(updatedCountEls).some(
-            el => Number(el.getAttribute('data-updated-links-count')) >= 1,
+            (el) => Number(el.getAttribute('data-updated-links-count')) >= 1,
           );
           expect(anyHasUpdates).toBe(true);
         });
@@ -1556,8 +1583,8 @@ describe('ScanResults', () => {
 
         await waitFor(() => {
           const updatedCountEls = container.querySelectorAll('[data-updated-links-count]');
-          const counts = Array.from(updatedCountEls).map(el => Number(el.getAttribute('data-updated-links-count')));
-          expect(counts.some(c => c >= 1)).toBe(true);
+          const counts = Array.from(updatedCountEls).map((el) => Number(el.getAttribute('data-updated-links-count')));
+          expect(counts.some((c) => c >= 1)).toBe(true);
         });
       });
 
@@ -1613,16 +1640,32 @@ describe('ScanResults', () => {
               new_url: 'https://updated.run/link2-v2',
             },
             {
-              id: 'api-1', type: 'course_updates', original_url: 'https://previous.run/link1', success: true, new_url: 'https://updated.run/link1',
+              id: 'api-1',
+              type: 'course_updates',
+              original_url: 'https://previous.run/link1',
+              success: true,
+              new_url: 'https://updated.run/link1',
             },
             {
-              id: 'api-2', type: 'custom_pages', original_url: 'https://previous.run/link3', success: false, new_url: null,
+              id: 'api-2',
+              type: 'custom_pages',
+              original_url: 'https://previous.run/link3',
+              success: false,
+              new_url: null,
             },
             {
-              id: 'api-3', type: 'custom_pages', original_url: 'https://previous.run/link4', success: false, new_url: null,
+              id: 'api-3',
+              type: 'custom_pages',
+              original_url: 'https://previous.run/link4',
+              success: false,
+              new_url: null,
             },
             {
-              id: 'api-4', type: 'course_updates', original_url: 'https://previous.run/link5', success: false, new_url: null,
+              id: 'api-4',
+              type: 'course_updates',
+              original_url: 'https://previous.run/link5',
+              success: false,
+              new_url: null,
             },
           ],
         };
@@ -1651,20 +1694,17 @@ describe('ScanResults', () => {
         useWaffleFlags.mockReturnValue({ enableCourseOptimizerCheckPrevRunLinks: true });
 
         thunks.updateSinglePreviousRunLink.mockReturnValue(() => Promise.resolve({ status: 'Succeeded' }));
-        thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() => Promise.resolve({
-          status: 'Succeeded',
-          results: [
-            { id: 'course-update-with-prev-links', success: false },
-          ],
-        }));
+        thunks.fetchRerunLinkUpdateStatus.mockReturnValue(() =>
+          Promise.resolve({
+            status: 'Succeeded',
+            results: [{ id: 'course-update-with-prev-links', success: false }],
+          }),
+        );
 
         window.scrollTo = jest.fn();
 
         const { rerender } = render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
 
         const collapsibleTrigger = screen.getByText('Course updates');
@@ -1700,10 +1740,7 @@ describe('ScanResults', () => {
         window.scrollTo = jest.fn();
 
         render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
 
         const updateAllButton = screen.getByTestId('update-all-course');
@@ -1726,10 +1763,7 @@ describe('ScanResults', () => {
         window.scrollTo = jest.fn();
 
         render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
 
         const collapsibleTrigger = screen.getByText('Course updates');
@@ -1750,14 +1784,13 @@ describe('ScanResults', () => {
         const mockOnErrorStateChange = jest.fn();
 
         useWaffleFlags.mockReturnValue({ enableCourseOptimizerCheckPrevRunLinks: true });
-        thunks.updateAllPreviousRunLinks.mockReturnValue(() => { throw new Error('Sync error'); });
+        thunks.updateAllPreviousRunLinks.mockReturnValue(() => {
+          throw new Error('Sync error');
+        });
         window.scrollTo = jest.fn();
 
         render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
 
         const updateAllButton = screen.getByTestId('update-all-course');
@@ -1789,10 +1822,7 @@ describe('ScanResults', () => {
         window.scrollTo = jest.fn();
 
         render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
 
         const updateAllButton = screen.getByTestId('update-all-course');
@@ -1827,10 +1857,7 @@ describe('ScanResults', () => {
         window.scrollTo = jest.fn();
 
         render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
 
         const collapsibleTrigger = screen.getByText('Course updates');
@@ -1907,10 +1934,7 @@ describe('ScanResults', () => {
         window.scrollTo = jest.fn();
 
         const { rerender } = render(
-          <ScanResultsWrapper
-            data={mockLinkCheckResultWithPrevious}
-            onErrorStateChange={mockOnErrorStateChange}
-          />,
+          <ScanResultsWrapper data={mockLinkCheckResultWithPrevious} onErrorStateChange={mockOnErrorStateChange} />,
         );
 
         const collapsibleTrigger = screen.getByText('Course updates');
@@ -1931,9 +1955,12 @@ describe('ScanResults', () => {
           );
         });
 
-        await waitFor(() => {
-          expect(mockOnErrorStateChange).toHaveBeenCalledWith(messages.updateLinkError.defaultMessage);
-        }, { timeout: 5000 });
+        await waitFor(
+          () => {
+            expect(mockOnErrorStateChange).toHaveBeenCalledWith(messages.updateLinkError.defaultMessage);
+          },
+          { timeout: 5000 },
+        );
       });
 
       it('should handle dispatch error in handleUpdateAllCourseLinks catch block', async () => {

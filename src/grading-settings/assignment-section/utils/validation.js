@@ -17,7 +17,7 @@ export const updateAssignmentErrorList = (
   setShowSavePrompt,
   assignmentValue = true,
 ) => {
-  setErrorList(prevState => ({ ...prevState, [`${assignmentName}-${assignmentId}`]: assignmentValue }));
+  setErrorList((prevState) => ({ ...prevState, [`${assignmentName}-${assignmentId}`]: assignmentValue }));
   if (assignmentValue) {
     setShowSavePrompt(false);
   }
@@ -50,7 +50,7 @@ export const validationAssignmentFields = (
   assignmentMinCount,
   assignmentDropCount,
 ) => {
-  const courseGradingTypes = courseGraders?.map(grade => grade.type);
+  const courseGradingTypes = courseGraders?.map((grade) => grade.type);
 
   switch (assignmentName) {
     case assignmentType:
@@ -68,75 +68,30 @@ export const validationAssignmentFields = (
         );
         return;
       }
-      updateAssignmentErrorList(
-        assignmentName,
-        assignmentId,
-        setErrorList,
-        setShowSavePrompt,
-        false,
-      );
+      updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt, false);
       break;
     case weightOfTotalGrade:
       if (assignmentValue < 0 || assignmentValue > 100 || assignmentValue === '-0') {
-        updateAssignmentErrorList(
-          assignmentName,
-          assignmentId,
-          setErrorList,
-          setShowSavePrompt,
-        );
+        updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt);
         return;
       }
-      updateAssignmentErrorList(
-        assignmentName,
-        assignmentId,
-        setErrorList,
-        setShowSavePrompt,
-        false,
-      );
+      updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt, false);
       break;
     case assignmentMinCount:
       if (assignmentValue <= 0 || assignmentValue === '' || assignmentValue === '-0') {
-        updateAssignmentErrorList(
-          assignmentName,
-          assignmentId,
-          setErrorList,
-          setShowSavePrompt,
-        );
+        updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt);
         return;
       }
-      updateAssignmentErrorList(
-        assignmentName,
-        assignmentId,
-        setErrorList,
-        setShowSavePrompt,
-        false,
-      );
+      updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt, false);
       break;
     case assignmentDropCount:
       if (assignmentValue < 0 || assignmentValue === '' || assignmentValue === '-0') {
-        updateAssignmentErrorList(
-          assignmentName,
-          assignmentId,
-          setErrorList,
-          setShowSavePrompt,
-        );
+        updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt);
         return;
       }
-      updateAssignmentErrorList(
-        assignmentName,
-        assignmentId,
-        setErrorList,
-        setShowSavePrompt,
-        false,
-      );
+      updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt, false);
       break;
     default:
-      updateAssignmentErrorList(
-        assignmentName,
-        assignmentId,
-        setErrorList,
-        setShowSavePrompt,
-        false,
-      );
+      updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt, false);
   }
 };

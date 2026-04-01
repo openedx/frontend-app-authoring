@@ -28,9 +28,7 @@ describe('getTextbooks', () => {
     });
 
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock
-      .onGet(getTextbooksApiUrl(courseId))
-      .reply(200, textbooksMock);
+    axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, textbooksMock);
   });
 
   afterEach(() => {
@@ -38,7 +36,10 @@ describe('getTextbooks', () => {
   });
 
   it('should fetch textbooks for a course', async () => {
-    const textbooksData = [{ id: 1, title: 'Textbook 1' }, { id: 2, title: 'Textbook 2' }];
+    const textbooksData = [
+      { id: 1, title: 'Textbook 1' },
+      { id: 2, title: 'Textbook 2' },
+    ];
     axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, textbooksData);
 
     const result = await getTextbooks(courseId);

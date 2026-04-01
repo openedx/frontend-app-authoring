@@ -7,11 +7,12 @@ import RawEditor from '.';
 
 jest.unmock('@openedx/paragon');
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <RawEditor {...props} />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <RawEditor {...props} />
+    </IntlProvider>,
+  );
 describe('RawEditor', () => {
   const defaultProps = {
     editorRef: {
@@ -52,7 +53,8 @@ describe('RawEditor', () => {
   it('updates the assets to static srcs', () => {
     const updatedProps = {
       ...defaultProps,
-      content: 'pick <img src="/asset-v1:org+run+term+type@asset+block@img.jpeg" /> or <img src="/assets/courseware/v1/hash/asset-v1:org+run+term+type@asset+block/img2.jpeg" />',
+      content:
+        'pick <img src="/asset-v1:org+run+term+type@asset+block@img.jpeg" /> or <img src="/assets/courseware/v1/hash/asset-v1:org+run+term+type@asset+block/img2.jpeg" />',
     };
     renderComponent(updatedProps);
     expect(screen.getByText('"/static/img.jpeg"')).toBeVisible();
@@ -61,7 +63,9 @@ describe('RawEditor', () => {
 
     expect(screen.queryByText('"/asset-v1:org+run+term+type@asset+block@img.jpeg"')).toBeNull();
 
-    expect(screen.queryByText('"/assets/courseware/v1/hash/asset-v1:org+run+term+type@asset+block/img2.jpeg"')).toBeNull();
+    expect(
+      screen.queryByText('"/assets/courseware/v1/hash/asset-v1:org+run+term+type@asset+block/img2.jpeg"'),
+    ).toBeNull();
   });
 
   it('renders as expected with lang equal to xml', () => {

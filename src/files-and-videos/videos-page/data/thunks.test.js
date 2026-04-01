@@ -35,9 +35,7 @@ describe('addVideoFile', () => {
     jest.spyOn(api, 'addVideo').mockResolvedValue({
       status: 200,
       data: {
-        files: [
-          { edxVideoId: mockEdxVideoId, uploadUrl: 'a Url' },
-        ],
+        files: [{ edxVideoId: mockEdxVideoId, uploadUrl: 'a Url' }],
       },
     });
     jest.spyOn(api, 'uploadVideo').mockResolvedValue({
@@ -62,9 +60,7 @@ describe('addVideoFile', () => {
     jest.spyOn(api, 'addVideo').mockResolvedValue({
       status: 200,
       data: {
-        files: [
-          { edxVideoId: mockEdxVideoId, uploadUrl: 'a Url' },
-        ],
+        files: [{ edxVideoId: mockEdxVideoId, uploadUrl: 'a Url' }],
       },
     });
     jest.spyOn(api, 'uploadVideo').mockResolvedValue({

@@ -59,9 +59,7 @@ const VideosPage = () => {
           updateFileStatus={updateVideoStatus}
           loadingStatus={loadingStatus}
         />
-        <AlertAgreementGatedFeature
-          gatingTypes={[AgreementGated.UPLOAD, AgreementGated.UPLOAD_VIDEOS]}
-        />
+        <AlertAgreementGatedFeature gatingTypes={[AgreementGated.UPLOAD, AgreementGated.UPLOAD_VIDEOS]} />
         <EditVideoAlertsSlot />
         <h2>{intl.formatMessage(messages.heading)}</h2>
         <CourseVideosSlot />

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { callAllHandlers } from './fieldUtils';
 
-const identityFn = props => props;
+const identityFn = (props) => props;
 
 const FormCheckboxSetContext = React.createContext({
   getCheckboxControlProps: identityFn,
@@ -11,15 +11,7 @@ const FormCheckboxSetContext = React.createContext({
 
 const useCheckboxSetContext = () => useContext(FormCheckboxSetContext);
 
-const FormCheckboxSetContextProvider = ({
-  children,
-  name,
-  onBlur,
-  onFocus,
-  onChange,
-  value,
-  defaultValue,
-}) => {
+const FormCheckboxSetContextProvider = ({ children, name, onBlur, onFocus, onChange, value, defaultValue }) => {
   const isControlled = !defaultValue && Array.isArray(value);
   const getCheckboxControlProps = (checkboxProps) => ({
     ...checkboxProps,
@@ -31,7 +23,7 @@ const FormCheckboxSetContextProvider = ({
     /* istanbul ignore next */
     onChange: checkboxProps.onChange ? callAllHandlers(onChange, checkboxProps.onChange) : onChange,
     checked: isControlled ? value.includes(checkboxProps.value) : undefined,
-    defaultChecked: isControlled ? undefined : (defaultValue && defaultValue.includes(checkboxProps.value)),
+    defaultChecked: isControlled ? undefined : defaultValue && defaultValue.includes(checkboxProps.value),
   });
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
@@ -44,11 +36,7 @@ const FormCheckboxSetContextProvider = ({
     onChange,
     hasCheckboxSetProvider: true,
   };
-  return (
-    <FormCheckboxSetContext.Provider value={contextValue}>
-      {children}
-    </FormCheckboxSetContext.Provider>
-  );
+  return <FormCheckboxSetContext.Provider value={contextValue}>{children}</FormCheckboxSetContext.Provider>;
 };
 
 FormCheckboxSetContextProvider.propTypes = {
@@ -71,7 +59,4 @@ FormCheckboxSetContextProvider.defaultProps = {
 };
 
 export default FormCheckboxSetContext;
-export {
-  useCheckboxSetContext,
-  FormCheckboxSetContextProvider,
-};
+export { useCheckboxSetContext, FormCheckboxSetContextProvider };

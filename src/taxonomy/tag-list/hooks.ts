@@ -5,12 +5,7 @@ import { useCreateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
 import { TagListTableError } from './errors';
 import type { RowId } from '../tree-table/types';
-import {
-  TABLE_MODES,
-  TRANSITION_TABLE,
-  TABLE_MODE_ACTIONS,
-  TAG_NAME_PATTERN,
-} from './constants';
+import { TABLE_MODES, TRANSITION_TABLE, TABLE_MODE_ACTIONS, TAG_NAME_PATTERN } from './constants';
 
 import messages from './messages';
 
@@ -21,7 +16,7 @@ import messages from './messages';
  * An invalid transition (e.g. from DRAFT to VIEW) will throw an error to prevent disruptive data refreshes.
  *
  * For examples, see: https://react.dev/learn/extracting-state-logic-into-a-reducer#writing-reducers-well
-*/
+ */
 export interface TableModeAction {
   type: string;
   targetMode: string;
@@ -40,7 +35,7 @@ interface UseEditActionsParams {
   setDraftError: React.Dispatch<React.SetStateAction<string>>;
   createTagMutation: ReturnType<typeof useCreateTag>;
   enterPreviewMode: () => void;
-  setToast: React.Dispatch<React.SetStateAction<{ show: boolean; message: string; }>>;
+  setToast: React.Dispatch<React.SetStateAction<{ show: boolean; message: string }>>;
   setIsCreatingTopTag: React.Dispatch<React.SetStateAction<boolean>>;
   setCreatingParentId: React.Dispatch<React.SetStateAction<RowId | null>>;
   exitDraftWithoutSave: () => void;
@@ -99,7 +94,11 @@ const useTableModes = (): UseTableModesReturn => {
   const enterViewMode = () => transitionTableMode(TABLE_MODES.VIEW);
 
   return {
-    tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode,
+    tableMode,
+    enterDraftMode,
+    exitDraftWithoutSave,
+    enterPreviewMode,
+    enterViewMode,
   };
 };
 
@@ -119,16 +118,19 @@ const useEditActions = ({
       const nextTree = currentTagTree || new TagTree([]);
       const parentTag = parentTagValue ? nextTree.getTagAsDeepCopy(parentTagValue) : null;
 
-      nextTree.addNode({
-        id: Date.now(),
-        value,
-        parentValue: parentTagValue,
-        depth: parentTag ? parentTag.depth + 1 : 0,
-        childCount: 0,
-        descendantCount: 0,
-        subTagsUrl: null,
-        externalId: '',
-      }, parentTagValue);
+      nextTree.addNode(
+        {
+          id: Date.now(),
+          value,
+          parentValue: parentTagValue,
+          depth: parentTag ? parentTag.depth + 1 : 0,
+          childCount: 0,
+          descendantCount: 0,
+          subTagsUrl: null,
+          externalId: '',
+        },
+        parentTagValue,
+      );
 
       return nextTree;
     });
@@ -172,7 +174,9 @@ const useEditActions = ({
       setCreatingParentId(null);
     } catch (error) {
       const message = intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: (error as Error)?.message });
-      setDraftError((error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: '' }));
+      setDraftError(
+        (error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: '' }),
+      );
       setToast({ show: true, message });
     }
   };

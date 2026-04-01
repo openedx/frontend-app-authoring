@@ -1,25 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Icon,
-  IconButton,
-  ModalPopup,
-  Menu,
-  MenuItem,
-  useToggle,
-} from '@openedx/paragon';
+import { Button, Icon, IconButton, ModalPopup, Menu, MenuItem, useToggle } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
 
 import messages from './messages';
 
-export const TranscriptActionMenu = ({
-  language,
-  launchDeleteConfirmation,
-  handleTranscript,
-  input,
-}) => {
+export const TranscriptActionMenu = ({ language, launchDeleteConfirmation, handleTranscript, input }) => {
   const [isOpen, , close, toggle] = useToggle();
   const [target, setTarget] = useState(null);
   return (
@@ -32,22 +19,9 @@ export const TranscriptActionMenu = ({
         alt="Actions dropdown"
         data-testid={`${language}-transcript-menu`}
       />
-      <ModalPopup
-        placement="bottom-end"
-        positionRef={target}
-        isOpen={isOpen}
-        onClose={close}
-        onEscapeKey={close}
-      >
-        <Menu
-          className="transcript-menu"
-        >
-          <MenuItem
-            as={Button}
-            variant="tertiary"
-            key={`transcript-actions-${language}-replace`}
-            onClick={input.click}
-          >
+      <ModalPopup placement="bottom-end" positionRef={target} isOpen={isOpen} onClose={close} onEscapeKey={close}>
+        <Menu className="transcript-menu">
+          <MenuItem as={Button} variant="tertiary" key={`transcript-actions-${language}-replace`} onClick={input.click}>
             <FormattedMessage {...messages.replaceTranscript} />
           </MenuItem>
           <MenuItem

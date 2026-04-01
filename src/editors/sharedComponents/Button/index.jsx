@@ -6,13 +6,8 @@ import { Add } from '@openedx/paragon/icons';
 import { getButtonProps } from './hooks';
 import './index.scss';
 
-const Button = ({
-  variant, className, text, children, ...props
-}) => (
-  <ParagonButton
-    {...getButtonProps({ variant, className, Add })}
-    {...props}
-  >
+const Button = ({ variant, className, text, children, ...props }) => (
+  <ParagonButton {...getButtonProps({ variant, className, Add })} {...props}>
     {children || text}
   </ParagonButton>
 );

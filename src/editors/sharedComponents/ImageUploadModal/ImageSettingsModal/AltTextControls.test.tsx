@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import AltTextControls from './AltTextControls';
 
 describe('AltTextControls', () => {
@@ -20,7 +18,9 @@ describe('AltTextControls', () => {
 
   test('renders component on screen', () => {
     render(<AltTextControls {...props} />);
-    expect(screen.getByRole('checkbox', { name: 'This image is decorative (no alt text required).' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('checkbox', { name: 'This image is decorative (no alt text required).' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Accessibility' })).toBeInTheDocument();
   });
 

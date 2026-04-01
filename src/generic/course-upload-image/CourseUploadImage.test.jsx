@@ -46,9 +46,7 @@ describe('<CourseUploadImage />', () => {
   });
 
   it('renders successfully', () => {
-    const { getByText, getByPlaceholderText } = render(
-      <RootWrapper {...props} />,
-    );
+    const { getByText, getByPlaceholderText } = render(<RootWrapper {...props} />);
     expect(getByText(props.label)).toBeInTheDocument();
     expect(getByText(props.customHelpText)).toBeInTheDocument();
     expect(getByPlaceholderText(props.customInputPlaceholder)).toBeInTheDocument();
@@ -58,18 +56,13 @@ describe('<CourseUploadImage />', () => {
     const { getByPlaceholderText } = render(<RootWrapper {...props} />);
     const input = getByPlaceholderText(props.customInputPlaceholder);
     fireEvent.change(input, { target: { value: '/assets' } });
-    expect(onChangeMock).toHaveBeenCalledWith(
-      '/assets',
-      props.assetImageField,
-    );
+    expect(onChangeMock).toHaveBeenCalledWith('/assets', props.assetImageField);
   });
 
   it('should change body text if input cleared', () => {
     const initialProps = { ...props, assetImagePath: '' };
     const { getByText } = render(<RootWrapper {...initialProps} />);
-    expect(
-      getByText(messages.uploadImageEmpty.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.uploadImageEmpty.defaultMessage)).toBeInTheDocument();
   });
 
   it('should hide body text if showImageBodyText disabled', () => {

@@ -1,18 +1,7 @@
-import React, {
-  useCallback, useContext, useMemo, useState,
-} from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Breadcrumb,
-  Button,
-  Card,
-  Hyperlink,
-  Icon,
-  Stack,
-  useToggle,
-} from '@openedx/paragon';
+import { ActionRow, Breadcrumb, Button, Card, Hyperlink, Icon, Stack, useToggle } from '@openedx/paragon';
 
 import { tail, keyBy } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
@@ -21,7 +10,12 @@ import messages from './messages';
 import previewChangesMessages from '../course-unit/preview-changes/messages';
 import { invalidateLinksQuery, useEntityLinks } from './data/apiHooks';
 import {
-  SearchContextProvider, SearchKeywordsField, useSearchContext, BlockTypeLabel, Highlight, SearchSortWidget,
+  SearchContextProvider,
+  SearchKeywordsField,
+  useSearchContext,
+  BlockTypeLabel,
+  Highlight,
+  SearchSortWidget,
 } from '../search-manager';
 import { getItemIcon } from '../generic/block-type-utils';
 import type { ContentHit } from '../search-manager/data/api';
@@ -48,15 +42,10 @@ interface ItemCardProps {
   libraryName?: string;
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({
-  info,
-  itemType,
-  actions,
-  libraryName,
-}) => {
+const ItemCard: React.FC<ItemCardProps> = ({ info, itemType, actions, libraryName }) => {
   const intl = useIntl();
   const itemIcon = getItemIcon(info.blockType);
-  const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
+  const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string; usageKey: string }>;
 
   const getItemLink = useCallback(() => {
     let key = info.usageKey;
@@ -77,13 +66,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
   }, [info]);
 
   return (
-    <Card
-      className="my-3 border-light-500 border shadow-none"
-      orientation="horizontal"
-    >
-      <Card.Section
-        className="py-3"
-      >
+    <Card className="my-3 border-light-500 border shadow-none" orientation="horizontal">
+      <Card.Section className="py-3">
         <Stack direction="horizontal" gap={2}>
           <Stack direction="vertical" gap={1}>
             <Stack direction="horizontal" gap={1} className="micro text-gray-500">
@@ -127,11 +111,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   );
 };
 
-const ItemReviewList = ({
-  outOfSyncItems,
-}: {
-  outOfSyncItems: PublishableEntityLink[];
-}) => {
+const ItemReviewList = ({ outOfSyncItems }: { outOfSyncItems: PublishableEntityLink[] }) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
@@ -153,46 +133,50 @@ const ItemReviewList = ({
 
   const downstreamInfo = hits as ContentHit[];
 
-  useLoadOnScroll(
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-    true,
-  );
+  useLoadOnScroll(hasNextPage, isFetchingNextPage, fetchNextPage, true);
 
-  const outOfSyncItemsByKey = useMemo(
-    () => keyBy(outOfSyncItems, 'downstreamUsageKey'),
-    [outOfSyncItems],
-  );
+  const outOfSyncItemsByKey = useMemo(() => keyBy(outOfSyncItems, 'downstreamUsageKey'), [outOfSyncItems]);
   const queryClient = useQueryClient();
 
-  const setSelectedBlockData = useCallback((info: ContentHit) => {
-    setBlockData({
-      displayName: info.displayName,
-      downstreamBlockId: info.usageKey,
-      upstreamBlockId: outOfSyncItemsByKey[info.usageKey].upstreamKey,
-      upstreamBlockVersionSynced: outOfSyncItemsByKey[info.usageKey].versionSynced,
-      isContainer: info.blockType === 'vertical' || info.blockType === 'sequential' || info.blockType === 'chapter',
-      blockType: info.blockType,
-      isLocallyModified: outOfSyncItemsByKey[info.usageKey].downstreamIsModified,
-    });
-  }, [outOfSyncItemsByKey]);
+  const setSelectedBlockData = useCallback(
+    (info: ContentHit) => {
+      setBlockData({
+        displayName: info.displayName,
+        downstreamBlockId: info.usageKey,
+        upstreamBlockId: outOfSyncItemsByKey[info.usageKey].upstreamKey,
+        upstreamBlockVersionSynced: outOfSyncItemsByKey[info.usageKey].versionSynced,
+        isContainer: info.blockType === 'vertical' || info.blockType === 'sequential' || info.blockType === 'chapter',
+        blockType: info.blockType,
+        isLocallyModified: outOfSyncItemsByKey[info.usageKey].downstreamIsModified,
+      });
+    },
+    [outOfSyncItemsByKey],
+  );
 
   // Show preview changes on review
-  const onReview = useCallback((info: ContentHit) => {
-    setSelectedBlockData(info);
-    openPreviewModal();
-  }, [setSelectedBlockData, openPreviewModal]);
+  const onReview = useCallback(
+    (info: ContentHit) => {
+      setSelectedBlockData(info);
+      openPreviewModal();
+    },
+    [setSelectedBlockData, openPreviewModal],
+  );
 
-  const onIgnoreClick = useCallback((info: ContentHit) => {
-    setSelectedBlockData(info);
-    openConfirmModal();
-  }, [setSelectedBlockData, openConfirmModal]);
+  const onIgnoreClick = useCallback(
+    (info: ContentHit) => {
+      setSelectedBlockData(info);
+      openConfirmModal();
+    },
+    [setSelectedBlockData, openConfirmModal],
+  );
 
-  const reloadLinks = useCallback((usageKey: string) => {
-    const courseKey = outOfSyncItemsByKey[usageKey].downstreamContextKey;
-    invalidateLinksQuery(queryClient, courseKey);
-  }, [outOfSyncItemsByKey]);
+  const reloadLinks = useCallback(
+    (usageKey: string) => {
+      const courseKey = outOfSyncItemsByKey[usageKey].downstreamContextKey;
+      invalidateLinksQuery(queryClient, courseKey);
+    },
+    [outOfSyncItemsByKey],
+  );
 
   const postChange = (accept: boolean) => {
     // istanbul ignore if: this should never happen
@@ -201,15 +185,9 @@ const ItemReviewList = ({
     }
     reloadLinks(blockData.downstreamBlockId);
     if (accept) {
-      showToast(intl.formatMessage(
-        messages.updateSingleBlockSuccess,
-        { name: blockData.displayName },
-      ));
+      showToast(intl.formatMessage(messages.updateSingleBlockSuccess, { name: blockData.displayName }));
     } else {
-      showToast(intl.formatMessage(
-        messages.ignoreSingleBlockSuccess,
-        { name: blockData.displayName },
-      ));
+      showToast(intl.formatMessage(messages.ignoreSingleBlockSuccess, { name: blockData.displayName }));
     }
   };
 
@@ -220,10 +198,7 @@ const ItemReviewList = ({
         overrideCustomizations: info.blockType === 'html' && outOfSyncItemsByKey[info.usageKey].downstreamIsModified,
       });
       reloadLinks(info.usageKey);
-      showToast(intl.formatMessage(
-        messages.updateSingleBlockSuccess,
-        { name: info.displayName },
-      ));
+      showToast(intl.formatMessage(messages.updateSingleBlockSuccess, { name: info.displayName }));
     } catch {
       showToast(intl.formatMessage(previewChangesMessages.acceptChangesFailure));
     }
@@ -239,10 +214,7 @@ const ItemReviewList = ({
         blockId: blockData.downstreamBlockId,
       });
       reloadLinks(blockData.downstreamBlockId);
-      showToast(intl.formatMessage(
-        messages.ignoreSingleBlockSuccess,
-        { name: blockData.displayName },
-      ));
+      showToast(intl.formatMessage(messages.ignoreSingleBlockSuccess, { name: blockData.displayName }));
     } catch {
       showToast(intl.formatMessage(previewChangesMessages.ignoreChangesFailure));
     } finally {
@@ -266,7 +238,7 @@ const ItemReviewList = ({
           info={info}
           itemType={outOfSyncItemsByKey[info.usageKey]?.upstreamType}
           libraryName={outOfSyncItemsByKey[info.usageKey]?.upstreamContextTitle}
-          actions={(
+          actions={
             <ActionRow>
               <Button
                 size="sm"
@@ -278,11 +250,7 @@ const ItemReviewList = ({
                 {intl.formatMessage(messages.cardReviewContentBtn)}
               </Button>
               <span className="border border-dark py-3 ml-4 mr-3" />
-              <Button
-                variant="tertiary"
-                size="sm"
-                onClick={() => onIgnoreClick(info)}
-              >
+              <Button variant="tertiary" size="sm" onClick={() => onIgnoreClick(info)}>
                 {intl.formatMessage(messages.cardIgnoreContentBtn)}
               </Button>
               <LoadingButton
@@ -293,7 +261,7 @@ const ItemReviewList = ({
                 className="rounded-0"
               />
             </ActionRow>
-          )}
+          }
         />
       ))}
       {blockData && (
@@ -330,10 +298,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
     useTopLevelParents: true,
   });
 
-  const downstreamKeys = useMemo(
-    () => outOfSyncItems?.map(link => link.downstreamUsageKey),
-    [outOfSyncItems],
-  );
+  const downstreamKeys = useMemo(() => outOfSyncItems?.map((link) => link.downstreamUsageKey), [outOfSyncItems]);
 
   const disableSortOptions = [
     SearchSortOption.RELEVANCE,
@@ -357,15 +322,11 @@ const ReviewTabContent = ({ courseId }: Props) => {
       skipBlockTypeFetch
     >
       <ActionRow>
-        <SearchKeywordsField
-          placeholder={intl.formatMessage(messages.searchPlaceholder)}
-        />
+        <SearchKeywordsField placeholder={intl.formatMessage(messages.searchPlaceholder)} />
         <SearchSortWidget disableOptions={disableSortOptions} />
         <ActionRow.Spacer />
       </ActionRow>
-      <ItemReviewList
-        outOfSyncItems={outOfSyncItems}
-      />
+      <ItemReviewList outOfSyncItems={outOfSyncItems} />
     </SearchContextProvider>
   );
 };

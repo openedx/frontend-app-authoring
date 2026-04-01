@@ -3,58 +3,39 @@ import { nodeContainsChildTags, findNodesAndRemoveTheirParentNodes, tagName } fr
 describe('reactStateOLXHelpers', () => {
   describe('findNodesWithChildTags', () => {
     const node = {
-      div:
-       [
-         {
-           label:
-           [
-             { '#text': 'def' },
-           ],
-         },
-         { '#text': ' ' },
-         {
-           em:
-           [
-             { '#text': 'ghi' },
-           ],
-           ':@': { '@_class': 'olx_description' },
-         },
-         {
-           em:
-           [
-             { '#text': 'jkl' },
-           ],
-         },
-       ],
+      div: [
+        {
+          label: [{ '#text': 'def' }],
+        },
+        { '#text': ' ' },
+        {
+          em: [{ '#text': 'ghi' }],
+          ':@': { '@_class': 'olx_description' },
+        },
+        {
+          em: [{ '#text': 'jkl' }],
+        },
+      ],
     };
 
     const nodeWithNestedLabel = {
-      div:
-       [
-         {
-           div:
-           [{
-             label:
-            [
-              { '#text': 'def' },
-            ],
-           }],
-         },
-         { '#text': ' ' },
-         {
-           em:
-           [
-             { '#text': 'ghi' },
-           ],
-           ':@': { '@_class': 'olx_description' },
-         },
-         {
-           em:
-           [
-             { '#text': 'jkl' },
-           ],
-         },
-       ],
+      div: [
+        {
+          div: [
+            {
+              label: [{ '#text': 'def' }],
+            },
+          ],
+        },
+        { '#text': ' ' },
+        {
+          em: [{ '#text': 'ghi' }],
+          ':@': { '@_class': 'olx_description' },
+        },
+        {
+          em: [{ '#text': 'jkl' }],
+        },
+      ],
     };
 
     it('should return true if node contains specified child tags', () => {
@@ -86,23 +67,24 @@ describe('reactStateOLXHelpers', () => {
   describe('findNodesAndRemoveTheirParentNodes', () => {
     const exampleQuestionObject = [
       {
-        p: [{
-          '#text': 'abc',
-        }],
+        p: [
+          {
+            '#text': 'abc',
+          },
+        ],
       },
       {
-        div:
-        [
+        div: [
           {
-            label:
-            [{ '#text': 'def' }],
+            label: [{ '#text': 'def' }],
           },
           { '#text': ' ' },
           {
-            em:
-            [{
-              '#text': 'ghi',
-            }],
+            em: [
+              {
+                '#text': 'ghi',
+              },
+            ],
             ':@': { '@_class': 'olx_description' },
           },
           { em: [{ '#text': 'Just a generic em tag' }] },
@@ -112,48 +94,59 @@ describe('reactStateOLXHelpers', () => {
 
     const questionObjectWithoutDiv = [
       {
-        p: [{
-          '#text': 'abc',
-        }],
+        p: [
+          {
+            '#text': 'abc',
+          },
+        ],
       },
       {
         label: [{ '#text': 'def' }],
       },
       { '#text': ' ' },
       {
-        em:
-            [{
-              '#text': 'ghi',
-            }],
+        em: [
+          {
+            '#text': 'ghi',
+          },
+        ],
         ':@': { '@_class': 'olx_description' },
       },
       { em: [{ '#text': 'Just a generic em tag' }] },
     ];
 
     it('should remove parent nodes of specified child tags', () => {
-      expect(findNodesAndRemoveTheirParentNodes({
-        arrayOfNodes: exampleQuestionObject,
-        nodesToFind: ['label'],
-        parentsToRemove: ['div'],
-      })).toEqual(questionObjectWithoutDiv);
+      expect(
+        findNodesAndRemoveTheirParentNodes({
+          arrayOfNodes: exampleQuestionObject,
+          nodesToFind: ['label'],
+          parentsToRemove: ['div'],
+        }),
+      ).toEqual(questionObjectWithoutDiv);
     });
 
     it('should not remove anything unless specified in "parentsToRemove"', () => {
-      expect(findNodesAndRemoveTheirParentNodes({
-        arrayOfNodes: exampleQuestionObject,
-        nodesToFind: ['label'],
-        parentsToRemove: ['span'],
-      })).toEqual(exampleQuestionObject);
+      expect(
+        findNodesAndRemoveTheirParentNodes({
+          arrayOfNodes: exampleQuestionObject,
+          nodesToFind: ['label'],
+          parentsToRemove: ['span'],
+        }),
+      ).toEqual(exampleQuestionObject);
     });
   });
 
   describe('tagName', () => {
     it('should return the tag name of the node', () => {
-      expect(tagName({
-        p: [{
-          '#text': 'abc',
-        }],
-      })).toEqual('p');
+      expect(
+        tagName({
+          p: [
+            {
+              '#text': 'abc',
+            },
+          ],
+        }),
+      ).toEqual('p');
     });
 
     it('should throw an error if the node is an array', () => {
@@ -169,14 +162,17 @@ describe('reactStateOLXHelpers', () => {
     });
 
     it('should return correct tagName if the node has text and class properties as well', () => {
-      expect(tagName({
-        ':@': { '@_class': 'olx_description' },
-        '#text': 'abc',
-        em:
-            [{
+      expect(
+        tagName({
+          ':@': { '@_class': 'olx_description' },
+          '#text': 'abc',
+          em: [
+            {
               '#text': 'ghi',
-            }],
-      })).toEqual('em');
+            },
+          ],
+        }),
+      ).toEqual('em');
     });
   });
 });

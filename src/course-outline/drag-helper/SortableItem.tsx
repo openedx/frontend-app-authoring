@@ -2,9 +2,7 @@ import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import {
-  Col, Icon, Row,
-} from '@openedx/paragon';
+import { Col, Icon, Row } from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
 
 import messages from './messages';
@@ -16,7 +14,7 @@ interface SortableItemProps {
     childAddable?: boolean;
     displayName: string;
     status: string;
-  }
+  };
   isDroppable?: boolean;
   isDraggable?: boolean;
   children: React.ReactNode;
@@ -34,15 +32,7 @@ const SortableItem = ({
   onClick,
 }: SortableItemProps) => {
   const intl = useIntl();
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-    setActivatorNodeRef,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, setActivatorNodeRef } = useSortable({
     id,
     data,
     disabled: {
@@ -73,7 +63,9 @@ const SortableItem = ({
       className="mx-0"
       onClick={onClick}
       onKeyDown={(e) => {
-        if (!onClick) { return; }
+        if (!onClick) {
+          return;
+        }
 
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -81,9 +73,7 @@ const SortableItem = ({
         }
       }}
     >
-      <Col className="extend-margin px-0">
-        {children}
-      </Col>
+      <Col className="extend-margin px-0">{children}</Col>
       {isDraggable && (
         <button
           ref={setActivatorNodeRef}

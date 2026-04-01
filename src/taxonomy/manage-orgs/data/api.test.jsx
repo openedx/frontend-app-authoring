@@ -5,11 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import MockAdapter from 'axios-mock-adapter';
 
-import {
-  getManageOrgsApiUrl,
-  useManageOrgs,
-
-} from './api';
+import { getManageOrgsApiUrl, useManageOrgs } from './api';
 
 let axiosMock;
 
@@ -21,11 +17,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const wrapper = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    {children}
-  </QueryClientProvider>
-);
+const wrapper = ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 
 describe('import taxonomy api calls', () => {
   beforeEach(() => {

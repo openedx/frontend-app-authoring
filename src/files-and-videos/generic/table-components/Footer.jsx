@@ -2,9 +2,7 @@ import React, { useContext } from 'react';
 import { DataTableContext, Pagination, TableFooter } from '@openedx/paragon';
 
 const Footer = () => {
-  const {
-    pageOptions, pageCount, gotoPage, state,
-  } = useContext(DataTableContext);
+  const { pageOptions, pageCount, gotoPage, state } = useContext(DataTableContext);
 
   if (pageOptions.length < 2) {
     return null;

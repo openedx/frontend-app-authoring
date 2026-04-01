@@ -16,11 +16,12 @@ let store;
 const courseId = 'course-v1:org+101+101';
 const emptyTextbooksMock = { textbooks: [] };
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <Textbooks />
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <Textbooks />
+    </CourseAuthoringProvider>,
+  );
 
 describe('<Textbooks />', () => {
   beforeEach(async () => {
@@ -28,16 +29,12 @@ describe('<Textbooks />', () => {
 
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(getTextbooksApiUrl(courseId))
-      .reply(200, textbooksMock);
+    axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, textbooksMock);
     await executeThunk(fetchTextbooksQuery(courseId), store.dispatch);
   });
 
   it('renders Textbooks component correctly', async () => {
-    const {
-      getByText, getByRole, getAllByTestId, queryByTestId,
-    } = renderComponent();
+    const { getByText, getByRole, getAllByTestId, queryByTestId } = renderComponent();
 
     await waitFor(() => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
@@ -61,9 +58,7 @@ describe('<Textbooks />', () => {
   });
 
   it('renders Textbooks component with empty placeholder correctly', async () => {
-    axiosMock
-      .onGet(getTextbooksApiUrl(courseId))
-      .reply(200, emptyTextbooksMock);
+    axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, emptyTextbooksMock);
 
     const { getByTestId, queryAllByTestId } = renderComponent();
 
@@ -74,17 +69,13 @@ describe('<Textbooks />', () => {
   });
 
   it('displays an alert and sets status to FAILED when API responds with 403', async () => {
-    axiosMock
-      .onGet(getTextbooksApiUrl(courseId))
-      .reply(403);
+    axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(403);
     await executeThunk(fetchTextbooksQuery(courseId), store.dispatch);
     const { getByTestId } = renderComponent();
 
     await waitFor(() => {
       expect(getByTestId('connectionErrorAlert')).toBeInTheDocument();
-      expect(store.getState().textbooks.loadingStatus).toBe(
-        RequestStatus.FAILED,
-      );
+      expect(store.getState().textbooks.loadingStatus).toBe(RequestStatus.FAILED);
     });
   });
 });

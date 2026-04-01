@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  ActionRow,
-  Card,
-  Form,
-  Icon,
-  IconButton,
-  ModalPopup,
-  useToggle,
-} from '@openedx/paragon';
+import { ActionRow, Card, Form, Icon, IconButton, ModalPopup, useToggle } from '@openedx/paragon';
 import { InfoOutline, Warning } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import { capitalize } from 'lodash';
@@ -60,7 +52,7 @@ const SettingCard = ({
         <Card.Body className="d-flex row m-0 align-items-center">
           <Card.Header
             className="col-6"
-            title={(
+            title={
               <ActionRow>
                 {capitalize(displayName)}
                 <IconButton
@@ -88,7 +80,7 @@ const SettingCard = ({
                 </ModalPopup>
                 <ActionRow.Spacer />
               </ActionRow>
-            )}
+            }
           />
           <Card.Section className="col-6 flex-grow-1">
             <Form.Group className="m-0">
@@ -118,13 +110,7 @@ SettingCard.propTypes = {
     deprecated: PropTypes.bool,
     help: PropTypes.string,
     displayName: PropTypes.string,
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.bool,
-      PropTypes.number,
-      PropTypes.object,
-      PropTypes.array,
-    ]),
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.number, PropTypes.object, PropTypes.array]),
   }).isRequired,
   setEdited: PropTypes.func.isRequired,
   showSaveSettingsPrompt: PropTypes.func.isRequired,

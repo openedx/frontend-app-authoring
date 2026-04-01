@@ -13,7 +13,7 @@ const messages = defineMessages({
   },
   noMembersFound: {
     id: 'course-authoring.library-authoring.library-team.no-members',
-    defaultMessage: 'This library\'s team has no members yet.',
+    defaultMessage: "This library's team has no members yet.",
     description: 'Text to show in the Library Team modal if no team members are found for this library.',
   },
   addTeamMemberButton: {
@@ -33,12 +33,12 @@ const messages = defineMessages({
   },
   addMemberFormTitle: {
     id: 'course-authoring.library-authoring.add-member-form.title',
-    defaultMessage: 'Add a user to your library\'s team',
+    defaultMessage: "Add a user to your library's team",
     description: 'Title of the Library Team modal "Add member" form',
   },
   addMemberFormEmailLabel: {
     id: 'course-authoring.library-authoring.add-member-form.email-label',
-    defaultMessage: 'User\'s email address',
+    defaultMessage: "User's email address",
     description: 'Label for the email field in the Library Team modal "Add member" form',
   },
   addMemberFormEmailPlaceholder: {
@@ -68,11 +68,10 @@ const messages = defineMessages({
   },
   cannotChangeRoleSingleAdmin: {
     id: 'course-authoring.library-authoring.library-team.cannot-changerole-single-admin',
-    defaultMessage: 'Promote another member to Admin to change this user\'s access rights.',
-    description: (
-      'Shown to Library Admins if there\'s only one Admin in the Team,'
-      + ' explaining why this member cannot be changed yet.'
-    ),
+    defaultMessage: "Promote another member to Admin to change this user's access rights.",
+    description:
+      "Shown to Library Admins if there's only one Admin in the Team," +
+      ' explaining why this member cannot be changed yet.',
   },
   makeMemberAdmin: {
     id: 'course-authoring.library-authoring.library-team.make-member-admin',
@@ -112,7 +111,7 @@ const messages = defineMessages({
   roleYou: {
     id: 'course-authoring.library-authoring.library-team.you-role',
     defaultMessage: 'You!',
-    description: 'Label to use when labeling the current user\'s Library role',
+    description: "Label to use when labeling the current user's Library role",
   },
   addMemberSuccess: {
     id: 'course-authoring.library-authoring.library-team.add-member-success',
@@ -127,7 +126,8 @@ const messages = defineMessages({
   addMemberSpecificError: {
     id: 'course-authoring.library-authoring.library-team.add-member-specific-error',
     defaultMessage: 'Error adding Team Member. {message}',
-    description: 'Message shown when an error occurs while adding a Library Team member, including a specific error message.',
+    description:
+      'Message shown when an error occurs while adding a Library Team member, including a specific error message.',
   },
   deleteMemberSuccess: {
     id: 'course-authoring.library-authoring.library-team.delete-member-success',
@@ -152,12 +152,12 @@ const messages = defineMessages({
   updateLibrarySuccess: {
     id: 'course-authoring.library-authoring.library-team.update-library-success',
     defaultMessage: 'Library updated',
-    description: 'Message shown when a Library\'s metadata is successfully updated',
+    description: "Message shown when a Library's metadata is successfully updated",
   },
   updateLibraryError: {
     id: 'course-authoring.library-authoring.library-team.update-library-error',
     defaultMessage: 'Error updating Library',
-    description: 'Message shown when an error occurs while updating a Library\'s metadata',
+    description: "Message shown when an error occurs while updating a Library's metadata",
   },
 });
 

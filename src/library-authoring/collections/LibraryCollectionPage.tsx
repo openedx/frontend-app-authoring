@@ -1,12 +1,6 @@
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Button,
-  Breadcrumb,
-  Container,
-  Icon,
-} from '@openedx/paragon';
+import { ActionRow, Button, Breadcrumb, Container, Icon } from '@openedx/paragon';
 import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
@@ -42,12 +36,8 @@ const HeaderActions = () => {
 
   const { componentPickerMode } = useComponentPickerContext();
   const { collectionId, readOnly } = useOptionalLibraryContext();
-  const {
-    closeLibrarySidebar,
-    openAddContentSidebar,
-    openCollectionInfoSidebar,
-    sidebarItemInfo,
-  } = useSidebarContext();
+  const { closeLibrarySidebar, openAddContentSidebar, openCollectionInfoSidebar, sidebarItemInfo } =
+    useSidebarContext();
   const { navigateTo } = useLibraryRoutes();
 
   // istanbul ignore if: this should never happen
@@ -55,8 +45,8 @@ const HeaderActions = () => {
     throw new Error('it should not be possible to render HeaderActions without a collectionId');
   }
 
-  const infoSidebarIsOpen = sidebarItemInfo?.type === SidebarBodyItemId.CollectionInfo
-    && sidebarItemInfo?.id === collectionId;
+  const infoSidebarIsOpen =
+    sidebarItemInfo?.type === SidebarBodyItemId.CollectionInfo && sidebarItemInfo?.id === collectionId;
 
   const handleOnClickInfoSidebar = () => {
     if (infoSidebarIsOpen) {
@@ -112,12 +102,7 @@ const LibraryCollectionPage = () => {
   } = useOptionalLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
-  const {
-    data: collectionData,
-    isPending: isLoading,
-    isError,
-    error,
-  } = useCollection(libraryId, collectionId);
+  const { data: collectionData, isPending: isLoading, isError, error } = useCollection(libraryId, collectionId);
 
   const { data: libraryData, isPending: isLibLoading } = useContentLibrary(libraryId);
 
@@ -169,7 +154,9 @@ const LibraryCollectionPage = () => {
         },
         {
           label: intl.formatMessage(messages.returnToLibrary),
-          onClick: () => { setCollectionId?.(undefined); },
+          onClick: () => {
+            setCollectionId?.(undefined);
+          },
         },
       ]}
       spacer={<Icon src={ArrowBack} size="sm" />}
@@ -192,7 +179,11 @@ const LibraryCollectionPage = () => {
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
-        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
+        <Helmet>
+          <title>
+            {libraryData.title} | {process.env.SITE_NAME}
+          </title>
+        </Helmet>
         {!componentPickerMode && (
           <Header
             number={libraryData.slug}
@@ -207,9 +198,7 @@ const LibraryCollectionPage = () => {
           />
         )}
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
-          <SearchContextProvider
-            extraFilter={extraFilter}
-          >
+          <SearchContextProvider extraFilter={extraFilter}>
             <SubHeader
               title={<SubHeaderTitle title={collectionData.title} />}
               breadcrumbs={breadcrumbs}

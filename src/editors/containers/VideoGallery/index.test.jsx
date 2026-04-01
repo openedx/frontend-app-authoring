@@ -3,9 +3,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { configureStore } from '@reduxjs/toolkit';
 import '@testing-library/jest-dom';
 import React from 'react';
-import {
-  act, fireEvent, render, screen,
-} from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import * as reactRouterDom from 'react-router-dom';
 import * as reduxThunks from '../../data/redux';
 
@@ -37,7 +35,8 @@ const initialVideos = [
     status_nontranslated: 'In Progress',
     duration: 2,
     transcripts: [],
-  }, {
+  },
+  {
     edx_video_id: 'id_3',
     client_video_id: 'client_id_3',
     course_video_image_url: 'course_video_image_url_3',
@@ -59,7 +58,7 @@ describe('VideoGallery', () => {
     let oldLocation;
     beforeEach(async () => {
       store = configureStore({
-        reducer: (state, action) => ((action && action.newState) ? action.newState : state),
+        reducer: (state, action) => (action && action.newState ? action.newState : state),
         preloadedState: {
           app: {
             videos: initialVideos,
@@ -118,9 +117,7 @@ describe('VideoGallery', () => {
 
     it('displays a list of videos', async () => {
       await renderComponent();
-      initialVideos.forEach(video => (
-        expect(screen.getByText(video.client_video_id)).toBeInTheDocument()
-      ));
+      initialVideos.forEach((video) => expect(screen.getByText(video.client_video_id)).toBeInTheDocument());
     });
     it('renders video upload modal when there are no videos', async () => {
       updateState({ videos: [] });
@@ -137,12 +134,16 @@ describe('VideoGallery', () => {
     ])('videos can be sorted %s', async (sortBy, order) => {
       await renderComponent();
 
-      fireEvent.click(screen.getByRole('button', {
-        name: /By newest/i,
-      }));
-      fireEvent.click(screen.getByRole('link', {
-        name: sortBy,
-      }));
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: /By newest/i,
+        }),
+      );
+      fireEvent.click(
+        screen.getByRole('link', {
+          name: sortBy,
+        }),
+      );
       const videoElements = screen.getAllByRole('button', { name: /client_id/ });
       order.forEach((clientIdSuffix, idx) => {
         expect(videoElements[idx]).toHaveTextContent(`client_id_${clientIdSuffix}`);
@@ -156,16 +157,19 @@ describe('VideoGallery', () => {
     ])('videos can be filtered by status %s', async (filterBy, length, items) => {
       await renderComponent();
       updateState({
-        videos: [...initialVideos, {
-          edx_video_id: 'id_4',
-          client_video_id: 'client_id_4',
-          course_video_image_url: 'course_video_image_url_4',
-          created: '2022-01-07T04:56:58.726Z',
-          status: 'Failed',
-          status_nontranslated: 'Failed',
-          duration: 4,
-          transcripts: [],
-        }],
+        videos: [
+          ...initialVideos,
+          {
+            edx_video_id: 'id_4',
+            client_video_id: 'client_id_4',
+            course_video_image_url: 'course_video_image_url_4',
+            created: '2022-01-07T04:56:58.726Z',
+            status: 'Failed',
+            status_nontranslated: 'Failed',
+            duration: 4,
+            transcripts: [],
+          },
+        ],
       });
 
       act(() => {
@@ -173,16 +177,16 @@ describe('VideoGallery', () => {
       });
 
       act(() => {
-        fireEvent.click(screen.getByRole('button', {
-          name: filterBy,
-        }));
+        fireEvent.click(
+          screen.getByRole('button', {
+            name: filterBy,
+          }),
+        );
       });
 
       const videoElements = await screen.findAllByRole('button', { name: /client_id/ });
       expect(videoElements).toHaveLength(length);
-      items.forEach(clientIdx => (
-        expect(screen.getByText(`client_id_${clientIdx}`)).toBeInTheDocument()
-      ));
+      items.forEach((clientIdx) => expect(screen.getByText(`client_id_${clientIdx}`)).toBeInTheDocument());
     });
 
     it('filters videos by search string', async () => {
@@ -199,14 +203,12 @@ describe('VideoGallery', () => {
       jest.spyOn(reactRouterDom, 'useSearchParams').mockReturnValue([{}, setSearchParams]);
 
       // Mock the uploadVideo thunk to immediately call postUploadRedirect
-      jest.spyOn(reduxThunks.thunkActions.video, 'uploadVideo').mockImplementation(
-        ({ postUploadRedirect }) => () => {
-          if (postUploadRedirect) {
-            postUploadRedirect('http://test.video/url.mp4');
-          }
-          return { type: 'MOCK_UPLOAD_VIDEO' };
-        },
-      );
+      jest.spyOn(reduxThunks.thunkActions.video, 'uploadVideo').mockImplementation(({ postUploadRedirect }) => () => {
+        if (postUploadRedirect) {
+          postUploadRedirect('http://test.video/url.mp4');
+        }
+        return { type: 'MOCK_UPLOAD_VIDEO' };
+      });
 
       await renderComponent();
 

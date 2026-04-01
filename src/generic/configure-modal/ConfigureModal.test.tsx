@@ -7,12 +7,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { AccessManagedXBlockDataTypes } from '@src/data/types';
 import initializeStore from '../../store';
 import ConfigureModal from './ConfigureModal';
-import {
-  currentSectionMock,
-  currentSubsectionMock,
-  currentUnitMock,
-  currentXBlockMock,
-} from './__mocks__';
+import { currentSectionMock, currentSubsectionMock, currentUnitMock, currentXBlockMock } from './__mocks__';
 import messages from './messages';
 
 let store;
@@ -33,19 +28,21 @@ jest.mock('react-router-dom', () => ({
 const onCloseMock = jest.fn();
 const onConfigureSubmitMock = jest.fn();
 
-const renderComponent = () => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <ConfigureModal
-        isOpen
-        onClose={onCloseMock}
-        onConfigureSubmit={onConfigureSubmitMock}
-        currentItemData={currentSectionMock as unknown as AccessManagedXBlockDataTypes}
-        isSelfPaced={false}
-      />
-    </IntlProvider>,
-  </AppProvider>,
-);
+const renderComponent = () =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <ConfigureModal
+          isOpen
+          onClose={onCloseMock}
+          onConfigureSubmit={onConfigureSubmitMock}
+          currentItemData={currentSectionMock as unknown as AccessManagedXBlockDataTypes}
+          isSelfPaced={false}
+        />
+      </IntlProvider>
+      ,
+    </AppProvider>,
+  );
 
 describe('<ConfigureModal /> for Section', () => {
   beforeEach(() => {
@@ -83,20 +80,22 @@ describe('<ConfigureModal /> for Section', () => {
   });
 });
 
-const renderSubsectionComponent = (props?: object) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <ConfigureModal
-        isOpen
-        onClose={onCloseMock}
-        onConfigureSubmit={onConfigureSubmitMock}
-        currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
-        isSelfPaced={false}
-        {...props}
-      />
-    </IntlProvider>,
-  </AppProvider>,
-);
+const renderSubsectionComponent = (props?: object) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <ConfigureModal
+          isOpen
+          onClose={onCloseMock}
+          onConfigureSubmit={onConfigureSubmitMock}
+          currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
+          isSelfPaced={false}
+          {...props}
+        />
+      </IntlProvider>
+      ,
+    </AppProvider>,
+  );
 
 describe('<ConfigureModal /> for Subsection', () => {
   beforeEach(() => {
@@ -173,19 +172,21 @@ describe('<ConfigureModal /> for Subsection', () => {
   });
 });
 
-const renderUnitComponent = (props?: object) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <ConfigureModal
-        isOpen
-        onClose={onCloseMock}
-        onConfigureSubmit={onConfigureSubmitMock}
-        currentItemData={currentUnitMock as unknown as AccessManagedXBlockDataTypes}
-        {...props}
-      />
-    </IntlProvider>,
-  </AppProvider>,
-);
+const renderUnitComponent = (props?: object) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <ConfigureModal
+          isOpen
+          onClose={onCloseMock}
+          onConfigureSubmit={onConfigureSubmitMock}
+          currentItemData={currentUnitMock as unknown as AccessManagedXBlockDataTypes}
+          {...props}
+        />
+      </IntlProvider>
+      ,
+    </AppProvider>,
+  );
 
 describe('<ConfigureModal /> for Unit', () => {
   beforeEach(() => {
@@ -203,9 +204,7 @@ describe('<ConfigureModal /> for Unit', () => {
 
   it('renders unit ConfigureModal component correctly', async () => {
     const user = userEvent.setup();
-    const {
-      getByText, queryByText, getByRole, getByTestId,
-    } = renderUnitComponent();
+    const { getByText, queryByText, getByRole, getByTestId } = renderUnitComponent();
     expect(getByText(`${currentUnitMock.displayName} settings`)).toBeInTheDocument();
     expect(getByText(messages.unitVisibility.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.hideFromLearners.defaultMessage)).toBeInTheDocument();
@@ -218,17 +217,15 @@ describe('<ConfigureModal /> for Unit', () => {
 
     await user.selectOptions(input, '0');
     expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
-    currentUnitMock
-      .userPartitionInfo
-      .selectablePartitions['0'].groups
-      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
+    currentUnitMock.userPartitionInfo.selectablePartitions['0'].groups.forEach((g) =>
+      expect(getByText(g.name)).toBeInTheDocument(),
+    );
 
     await user.selectOptions(input, '1');
     expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
-    currentUnitMock
-      .userPartitionInfo
-      .selectablePartitions['1'].groups
-      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
+    currentUnitMock.userPartitionInfo.selectablePartitions['1'].groups.forEach((g) =>
+      expect(getByText(g.name)).toBeInTheDocument(),
+    );
 
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
@@ -239,20 +236,22 @@ describe('<ConfigureModal /> for Unit', () => {
   });
 });
 
-const renderXBlockComponent = (props?: object) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <ConfigureModal
-        isOpen
-        isXBlockComponent
-        onClose={onCloseMock}
-        onConfigureSubmit={onConfigureSubmitMock}
-        currentItemData={currentXBlockMock as unknown as AccessManagedXBlockDataTypes}
-        {...props}
-      />
-    </IntlProvider>,
-  </AppProvider>,
-);
+const renderXBlockComponent = (props?: object) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <ConfigureModal
+          isOpen
+          isXBlockComponent
+          onClose={onCloseMock}
+          onConfigureSubmit={onConfigureSubmitMock}
+          currentItemData={currentXBlockMock as unknown as AccessManagedXBlockDataTypes}
+          {...props}
+        />
+      </IntlProvider>
+      ,
+    </AppProvider>,
+  );
 
 describe('<ConfigureModal /> for XBlock', () => {
   beforeEach(() => {
@@ -270,9 +269,7 @@ describe('<ConfigureModal /> for XBlock', () => {
 
   it('renders unit ConfigureModal component correctly', async () => {
     const user = userEvent.setup();
-    const {
-      getByText, queryByText, getByRole, getByTestId,
-    } = renderXBlockComponent();
+    const { getByText, queryByText, getByRole, getByTestId } = renderXBlockComponent();
     expect(getByText(`Editing access for: ${currentUnitMock.displayName}`)).toBeInTheDocument();
     expect(queryByText(messages.unitVisibility.defaultMessage)).not.toBeInTheDocument();
     expect(queryByText(messages.hideFromLearners.defaultMessage)).not.toBeInTheDocument();
@@ -284,17 +281,15 @@ describe('<ConfigureModal /> for XBlock', () => {
 
     await user.selectOptions(input, '0');
     expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
-    currentUnitMock
-      .userPartitionInfo
-      .selectablePartitions['0'].groups
-      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
+    currentUnitMock.userPartitionInfo.selectablePartitions['0'].groups.forEach((g) =>
+      expect(getByText(g.name)).toBeInTheDocument(),
+    );
 
     await user.selectOptions(input, '1');
     expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
-    currentUnitMock
-      .userPartitionInfo
-      .selectablePartitions['1'].groups
-      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
+    currentUnitMock.userPartitionInfo.selectablePartitions['1'].groups.forEach((g) =>
+      expect(getByText(g.name)).toBeInTheDocument(),
+    );
 
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
@@ -319,21 +314,22 @@ describe('<ConfigureModal /> with enableTimedExams prop', () => {
     store = initializeStore();
   });
 
-  const renderWithTimedExamsProps = (enableTimedExams = true) => render(
-    <AppProvider store={store}>
-      <IntlProvider locale="en">
-        <ConfigureModal
-          isOpen
-          onClose={onCloseMock}
-          onConfigureSubmit={onConfigureSubmitMock}
-          currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
-          enableTimedExams={enableTimedExams}
-          isSelfPaced={false}
-        />
-      </IntlProvider>
-      ,
-    </AppProvider>,
-  );
+  const renderWithTimedExamsProps = (enableTimedExams = true) =>
+    render(
+      <AppProvider store={store}>
+        <IntlProvider locale="en">
+          <ConfigureModal
+            isOpen
+            onClose={onCloseMock}
+            onConfigureSubmit={onConfigureSubmitMock}
+            currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
+            enableTimedExams={enableTimedExams}
+            isSelfPaced={false}
+          />
+        </IntlProvider>
+        ,
+      </AppProvider>,
+    );
 
   it('passes enableTimedExams=true to AdvancedTab', async () => {
     const user = userEvent.setup();
@@ -344,9 +340,7 @@ describe('<ConfigureModal /> with enableTimedExams prop', () => {
     });
     await user.click(advancedTab);
 
-    expect(
-      getByText(messages.setSpecialExam.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.setSpecialExam.defaultMessage)).toBeInTheDocument();
 
     const noneRadio = getByRole('radio', {
       name: messages.none.defaultMessage,
@@ -368,9 +362,7 @@ describe('<ConfigureModal /> with enableTimedExams prop', () => {
     });
     await user.click(advancedTab);
 
-    expect(
-      getByText(messages.setSpecialExam.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.setSpecialExam.defaultMessage)).toBeInTheDocument();
 
     const noneRadio = getByRole('radio', {
       name: messages.none.defaultMessage,

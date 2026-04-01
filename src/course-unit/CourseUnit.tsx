@@ -66,10 +66,10 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
     text: messages.statusBarDraftNeverPublished,
     icon: DraftIcon,
   } as {
-    variant: string,
-    className?: string,
-    text: MessageDescriptor,
-    icon: React.ComponentType,
+    variant: string;
+    className?: string;
+    text: MessageDescriptor;
+    icon: React.ComponentType;
   };
 
   if (courseUnit.currentlyVisibleToStudents) {
@@ -94,10 +94,7 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
 
   return (
     <Stack direction="horizontal" gap={3}>
-      <Badge
-        variant={visibilityChipData.variant}
-        className={`px-3 py-2 ${visibilityChipData.className || ''}`}
-      >
+      <Badge variant={visibilityChipData.variant} className={`px-3 py-2 ${visibilityChipData.className || ''}`}>
         <Stack direction="horizontal" gap={2}>
           <Icon size="xs" src={visibilityChipData.icon} />
           <span className="badge-label">
@@ -106,10 +103,7 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
         </Stack>
       </Badge>
       {courseUnit.published && courseUnit.hasChanges && (
-        <Badge
-          variant="warning"
-          className="px-3 py-2 draft-badge"
-        >
+        <Badge variant="warning" className="px-3 py-2 draft-badge">
           <Stack direction="horizontal" gap={1}>
             <Icon size="xs" src={DraftIcon} />
             <span className="badge-label">
@@ -134,11 +128,7 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
       {groupsCount > 1 && (
         <OverlayTrigger
           placement="top"
-          overlay={(
-            <Tooltip id="unit-group-access-tooltip">
-              {selectedGroupsLabel}
-            </Tooltip>
-          )}
+          overlay={<Tooltip id="unit-group-access-tooltip">{selectedGroupsLabel}</Tooltip>}
         >
           <Stack direction="horizontal" gap={1}>
             <Icon src={Groups} />
@@ -224,10 +214,8 @@ const CourseUnit = () => {
 
   useScrollToLastPosition();
 
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
+  const { isShow: isShowProcessingNotification, title: processingNotificationTitle } =
+    useSelector(getProcessingNotification);
 
   if (isLoading) {
     return <Loading />;
@@ -254,52 +242,49 @@ const CourseUnit = () => {
                   show={movedXBlockParams.isSuccess}
                   variant="success"
                   icon={CheckCircleIcon}
-                  title={movedXBlockParams.isUndo
-                    ? intl.formatMessage(messages.alertMoveCancelTitle)
-                    : intl.formatMessage(messages.alertMoveSuccessTitle)}
-                  description={movedXBlockParams.isUndo
-                    ? intl.formatMessage(messages.alertMoveCancelDescription, { title: movedXBlockParams.title })
-                    : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
+                  title={
+                    movedXBlockParams.isUndo
+                      ? intl.formatMessage(messages.alertMoveCancelTitle)
+                      : intl.formatMessage(messages.alertMoveSuccessTitle)
+                  }
+                  description={
+                    movedXBlockParams.isUndo
+                      ? intl.formatMessage(messages.alertMoveCancelDescription, { title: movedXBlockParams.title })
+                      : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })
+                  }
                   aria-hidden={movedXBlockParams.isSuccess}
                   dismissible
-                  actions={movedXBlockParams.isUndo ? undefined : [
-                    <Button
-                      onClick={handleRollbackMovedXBlock}
-                      key="xblock-moved-alert-undo-move-button"
-                    >
-                      {intl.formatMessage(messages.undoMoveButton)}
-                    </Button>,
-                    <Button
-                      onClick={handleNavigateToTargetUnit}
-                      key="xblock-moved-alert-new-location-button"
-                    >
-                      {intl.formatMessage(messages.newLocationButton)}
-                    </Button>,
-                  ]}
+                  actions={
+                    movedXBlockParams.isUndo
+                      ? undefined
+                      : [
+                          <Button onClick={handleRollbackMovedXBlock} key="xblock-moved-alert-undo-move-button">
+                            {intl.formatMessage(messages.undoMoveButton)}
+                          </Button>,
+                          <Button onClick={handleNavigateToTargetUnit} key="xblock-moved-alert-new-location-button">
+                            {intl.formatMessage(messages.newLocationButton)}
+                          </Button>,
+                        ]
+                  }
                   onClose={handleCloseXBlockMovedAlert}
                 />
               ) : null}
             </TransitionReplace>
             {courseUnit.upstreamInfo?.upstreamLink && (
               <AlertMessage
-                title={intl.formatMessage(
-                  messages.alertLibraryUnitReadOnlyText,
-                  {
-                    link: (
-                      <Alert.Link
-                        href={courseUnit.upstreamInfo.upstreamLink}
-                      >
-                        {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
-                      </Alert.Link>
-                    ),
-                  },
-                )}
+                title={intl.formatMessage(messages.alertLibraryUnitReadOnlyText, {
+                  link: (
+                    <Alert.Link href={courseUnit.upstreamInfo.upstreamLink}>
+                      {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
+                    </Alert.Link>
+                  ),
+                })}
                 variant="info"
               />
             )}
             <SubHeader
               hideBorder
-              title={(
+              title={
                 <HeaderTitle
                   unitTitle={unitTitle}
                   isTitleEditFormOpen={isTitleEditFormOpen}
@@ -307,26 +292,19 @@ const CourseUnit = () => {
                   handleTitleEditSubmit={handleTitleEditSubmit}
                   handleConfigureSubmit={handleConfigureSubmit}
                 />
-              )}
-              breadcrumbs={(
-                <Breadcrumbs
-                  courseId={courseId}
-                  parentUnitId={sequenceId}
-                />
-              )}
-              headerActions={(
+              }
+              breadcrumbs={<Breadcrumbs courseId={courseId} parentUnitId={sequenceId} />}
+              headerActions={
                 <CourseUnitHeaderActionsSlot
                   category={unitCategory}
                   headerNavigationsActions={headerNavigationsActions}
                   unitTitle={unitTitle}
                   verticalBlocks={courseVerticalChildren.children}
                 />
-              )}
+              }
             />
             <div className="unit-header-status-bar h5 mt-2 mb-4 font-weight-normal">
-              {isUnitPageNewDesignEnabled() && isUnitVerticalType && (
-                <StatusBar courseUnit={courseUnit} />
-              )}
+              {isUnitPageNewDesignEnabled() && isUnitVerticalType && <StatusBar courseUnit={courseUnit} />}
             </div>
             {isUnitVerticalType && (
               <Sequence
@@ -348,10 +326,7 @@ const CourseUnit = () => {
                   />
                 )}
                 {staticFileNotices && (
-                  <PasteNotificationAlert
-                    staticFileNotices={staticFileNotices}
-                    courseId={courseId}
-                  />
+                  <PasteNotificationAlert staticFileNotices={staticFileNotices} courseId={courseId} />
                 )}
                 {blockId && (
                   <XBlockContainerIframe
@@ -363,17 +338,16 @@ const CourseUnit = () => {
                     handleConfigureSubmit={handleConfigureSubmit}
                   />
                 )}
-                {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData
-                  && /* istanbul ignore next */ (
-                    <PasteComponent
-                      clipboardData={sharedClipboardData}
-                      onClick={
-                        /* istanbul ignore next */
-                        () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
-                      }
-                      text={intl.formatMessage(messages.pasteButtonText)}
-                    />
-                  )}
+                {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData && (
+                  /* istanbul ignore next */ <PasteComponent
+                    clipboardData={sharedClipboardData}
+                    onClick={
+                      /* istanbul ignore next */
+                      () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
+                    }
+                    text={intl.formatMessage(messages.pasteButtonText)}
+                  />
+                )}
                 {!readOnly && blockId && (
                   <AddComponent
                     parentLocator={blockId}
@@ -407,14 +381,8 @@ const CourseUnit = () => {
           </section>
         </Container>
         <div className="alert-toast">
-          <ProcessingNotification
-            isShow={isShowProcessingNotification}
-            title={processingNotificationTitle}
-          />
-          <SavingErrorAlert
-            savingStatus={savingStatus}
-            errorMessage={errorMessage}
-          />
+          <ProcessingNotification isShow={isShowProcessingNotification} title={processingNotificationTitle} />
+          <SavingErrorAlert savingStatus={savingStatus} errorMessage={errorMessage} />
         </div>
       </UnitSidebarPagesProvider>
     </UnitSidebarProvider>

@@ -12,20 +12,21 @@ const currentEmailMock = 'user@example.com';
 const errorMessageMock = 'Error text error@example.com';
 const courseNameMock = 'Course Name';
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <InfoModal
-      modalType={MODAL_TYPES.delete}
-      isOpen
-      close={closeMock}
-      onDeleteSubmit={onDeleteSubmitMock}
-      currentEmail={currentEmailMock}
-      errorMessage={errorMessageMock}
-      courseName={courseNameMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <InfoModal
+        modalType={MODAL_TYPES.delete}
+        isOpen
+        close={closeMock}
+        onDeleteSubmit={onDeleteSubmitMock}
+        currentEmail={currentEmailMock}
+        errorMessage={errorMessageMock}
+        courseName={courseNameMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<InfoModal />', () => {
   it('render InfoModal component with type delete correctly', () => {
@@ -34,11 +35,13 @@ describe('<InfoModal />', () => {
     });
 
     expect(getByText(messages.deleteModalTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(
-      messages.deleteModalMessage.defaultMessage
-        .replace('{email}', currentEmailMock)
-        .replace('{courseName}', courseNameMock),
-    )).toBeInTheDocument();
+    expect(
+      getByText(
+        messages.deleteModalMessage.defaultMessage
+          .replace('{email}', currentEmailMock)
+          .replace('{courseName}', courseNameMock),
+      ),
+    ).toBeInTheDocument();
     expect(getByRole('button', { name: messages.deleteModalCancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.deleteModalDeleteButton.defaultMessage })).toBeInTheDocument();
   });
@@ -59,11 +62,13 @@ describe('<InfoModal />', () => {
     });
 
     expect(getByText(messages.warningModalTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(
-      messages.warningModalMessage.defaultMessage
-        .replace('{email}', currentEmailMock)
-        .replace('{courseName}', courseNameMock),
-    )).toBeInTheDocument();
+    expect(
+      getByText(
+        messages.warningModalMessage.defaultMessage
+          .replace('{email}', currentEmailMock)
+          .replace('{courseName}', courseNameMock),
+      ),
+    ).toBeInTheDocument();
     expect(getByRole('button', { name: messages.warningModalReturnButton.defaultMessage })).toBeInTheDocument();
   });
 

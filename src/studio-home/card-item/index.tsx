@@ -1,15 +1,6 @@
-import React, {
-  ReactElement, useCallback, useEffect, useRef,
-} from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Card,
-  Dropdown,
-  Icon,
-  Form,
-  IconButton,
-  Stack,
-} from '@openedx/paragon';
+import { Card, Dropdown, Icon, Form, IconButton, Stack } from '@openedx/paragon';
 import { ArrowForward, MoreHoriz } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -21,29 +12,35 @@ import classNames from 'classnames';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 
-export const PrevToNextName = ({ from, to }: { from: React.ReactNode, to?: React.ReactNode }) => (
+export const PrevToNextName = ({ from, to }: { from: React.ReactNode; to?: React.ReactNode }) => (
   <Stack direction="horizontal" gap={2}>
     <span>{from}</span>
-    {to
-        && (
-        <>
-          <Icon src={ArrowForward} size="xs" className="mb-1" />
-          <span>{to}</span>
-        </>
-        )}
+    {to && (
+      <>
+        <Icon src={ArrowForward} size="xs" className="mb-1" />
+        <span>{to}</span>
+      </>
+    )}
   </Stack>
 );
 
 export const MakeLinkOrSpan = ({
-  when, to, children, className,
+  when,
+  to,
+  children,
+  className,
 }: {
-  when: boolean,
-  to: string,
+  when: boolean;
+  to: string;
   children: React.ReactNode;
-  className?: string,
+  className?: string;
 }) => {
   if (when) {
-    return <Link className={className} to={to}>{children}</Link>;
+    return (
+      <Link className={className} to={to}>
+        {children}
+      </Link>
+    );
   }
   return <span className={className}>{children}</span>;
 };
@@ -65,27 +62,21 @@ const CardTitle: React.FC<CardTitleProps> = ({
   secondaryLink,
   itemId,
 }) => {
-  const getTitle = useCallback(() => (
-    <div style={{ marginTop: selectMode ? '-3px' : '' }}>
-      <PrevToNextName
-        from={(
-          <MakeLinkOrSpan
-            when={!readOnlyItem && !selectMode}
-            to={destinationUrl}
-            className="card-item-title"
-          >
-            {title}
-          </MakeLinkOrSpan>
-          )}
-        to={secondaryLink}
-      />
-    </div>
-  ), [
-    readOnlyItem,
-    destinationUrl,
-    title,
-    selectMode,
-  ]);
+  const getTitle = useCallback(
+    () => (
+      <div style={{ marginTop: selectMode ? '-3px' : '' }}>
+        <PrevToNextName
+          from={
+            <MakeLinkOrSpan when={!readOnlyItem && !selectMode} to={destinationUrl} className="card-item-title">
+              {title}
+            </MakeLinkOrSpan>
+          }
+          to={secondaryLink}
+        />
+      </div>
+    ),
+    [readOnlyItem, destinationUrl, title, selectMode],
+  );
 
   if (selectMode) {
     if (selectMode === 'single') {
@@ -102,10 +93,7 @@ const CardTitle: React.FC<CardTitleProps> = ({
     }
     // Multiple
     return (
-      <Form.Checkbox
-        className="mt-1 ml-1"
-        value={itemId}
-      >
+      <Form.Checkbox className="mt-1 ml-1" value={itemId}>
         {getTitle()}
       </Form.Checkbox>
     );
@@ -120,12 +108,7 @@ interface CardMenuProps {
   lmsLink: string | null;
 }
 
-const CardMenu = ({
-  showMenu,
-  isShowRerunLink,
-  rerunLink,
-  lmsLink,
-}: CardMenuProps) => {
+const CardMenu = ({ showMenu, isShowRerunLink, rerunLink, lmsLink }: CardMenuProps) => {
   const intl = useIntl();
 
   if (!showMenu) {
@@ -142,10 +125,7 @@ const CardMenu = ({
       />
       <Dropdown.Menu>
         {isShowRerunLink && (
-          <Dropdown.Item
-            as={Link}
-            to={rerunLink ?? ''}
-          >
+          <Dropdown.Item as={Link} to={rerunLink ?? ''}>
             <FormattedMessage {...messages.btnReRunText} />
           </Dropdown.Item>
         )}
@@ -162,24 +142,16 @@ const SelectAction = ({
   title,
   selectMode,
 }: {
-  itemId: string,
-  title: string,
+  itemId: string;
+  title: string;
   selectMode: 'single' | 'multiple';
 }) => {
   if (selectMode === 'single') {
-    return (
-      <Form.Radio
-        value={itemId}
-        aria-label={title}
-        name={`select-card-item-${itemId}`}
-      />
-    );
+    return <Form.Radio value={itemId} aria-label={title} name={`select-card-item-${itemId}`} />;
   }
 
   // Multiple
-  return (
-    <Form.Checkbox value={itemId} aria-label={title} />
-  );
+  return <Form.Checkbox value={itemId} aria-label={title} />;
 };
 
 interface BaseProps {
@@ -203,15 +175,16 @@ interface BaseProps {
   scrollIntoView?: boolean;
 }
 
-type Props = BaseProps & (
+type Props = BaseProps &
   /** If we should open this course/library in this MFE, this is the path to the edit page, e.g. '/course/foo' */
-  { path: string, url?: never } |
-  /**
-   * If we might be redirecting to the legacy Studio view, this is the URL to redirect to.
-   * URLs starting with '/' are assumed to be relative to the legacy Studio root.
-   */
-  { url: string, path?: never }
-);
+  (
+    | { path: string; url?: never }
+    /**
+     * If we might be redirecting to the legacy Studio view, this is the URL to redirect to.
+     * URLs starting with '/' are assumed to be relative to the legacy Studio root.
+     */
+    | { url: string; path?: never }
+  );
 
 /**
  * A card on the Studio home page that represents a Course or a Library
@@ -238,28 +211,29 @@ export const CardItem: React.FC<Props> = ({
   cardStatusWidget,
   scrollIntoView = false,
 }) => {
-  const {
-    allowCourseReruns,
-    courseCreatorStatus,
-    rerunCreatorStatus,
-  } = useSelector(getStudioHomeData);
+  const { allowCourseReruns, courseCreatorStatus, rerunCreatorStatus } = useSelector(getStudioHomeData);
   const waffleFlags = useWaffleFlags();
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const destinationUrl: string = path ?? (
-    waffleFlags.useNewCourseOutlinePage && !isLibraries
-      ? url
-      : new URL(url, getConfig().STUDIO_BASE_URL).toString()
-  );
+  const destinationUrl: string =
+    path ??
+    (waffleFlags.useNewCourseOutlinePage && !isLibraries ? url : new URL(url, getConfig().STUDIO_BASE_URL).toString());
   const readOnlyItem = !(lmsLink || rerunLink || url || path);
   const showActionsMenu = !(readOnlyItem || isLibraries || selectMode !== undefined);
-  const isShowRerunLink = allowCourseReruns
-    && rerunCreatorStatus
-    && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
+  const isShowRerunLink =
+    allowCourseReruns && rerunCreatorStatus && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const title = (displayName ?? '').trim().length ? displayName : courseKey;
 
   const getSubtitle = useCallback(() => {
-    let subtitle = isLibraries ? <>{org} / {number}</> : <>{org} / {number} / {run}</>;
+    let subtitle = isLibraries ? (
+      <>
+        {org} / {number}
+      </>
+    ) : (
+      <>
+        {org} / {number} / {run}
+      </>
+    );
     if (subtitleWrapper) {
       subtitle = subtitleWrapper(subtitle);
     }
@@ -291,7 +265,7 @@ export const CardItem: React.FC<Props> = ({
       >
         <Card.Header
           size="sm"
-          title={(
+          title={
             <CardTitle
               readOnlyItem={readOnlyItem || selectMode !== undefined}
               selectMode={selectPosition === 'title' ? selectMode : undefined}
@@ -300,28 +274,22 @@ export const CardItem: React.FC<Props> = ({
               itemId={itemId}
               secondaryLink={titleSecondaryLink}
             />
-          )}
+          }
           subtitle={getSubtitle()}
-          actions={(selectMode && selectPosition === 'card') ? (
-            <SelectAction
-              itemId={itemId}
-              selectMode={selectMode}
-              title={title}
-            />
-          ) : (
-            <CardMenu
-              showMenu={showActionsMenu}
-              isShowRerunLink={isShowRerunLink}
-              rerunLink={rerunLink}
-              lmsLink={lmsLink}
-            />
-          )}
+          actions={
+            selectMode && selectPosition === 'card' ? (
+              <SelectAction itemId={itemId} selectMode={selectMode} title={title} />
+            ) : (
+              <CardMenu
+                showMenu={showActionsMenu}
+                isShowRerunLink={isShowRerunLink}
+                rerunLink={rerunLink}
+                lmsLink={lmsLink}
+              />
+            )
+          }
         />
-        {cardStatusWidget && (
-          <Card.Status className="bg-white pt-0 text-gray-500">
-            {cardStatusWidget}
-          </Card.Status>
-        )}
+        {cardStatusWidget && <Card.Status className="bg-white pt-0 text-gray-500">{cardStatusWidget}</Card.Status>}
       </Card>
     </div>
   );

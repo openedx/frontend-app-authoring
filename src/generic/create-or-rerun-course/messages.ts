@@ -12,11 +12,13 @@ const messages = defineMessages({
   },
   courseDisplayNameCreateHelpText: {
     id: 'course-authoring.create-or-rerun-course.create.display-name.help-text',
-    defaultMessage: 'The public display name for your course. This cannot be changed, but you can set a different display name in advanced settings later.',
+    defaultMessage:
+      'The public display name for your course. This cannot be changed, but you can set a different display name in advanced settings later.',
   },
   courseDisplayNameRerunHelpText: {
     id: 'course-authoring.create-or-rerun-course.rerun.display-name.help-text',
-    defaultMessage: 'The public display name for the new course. (This name is often the same as the original course name.)',
+    defaultMessage:
+      'The public display name for the new course. (This name is often the same as the original course name.)',
   },
   courseOrgLabel: {
     id: 'course-authoring.create-or-rerun-course.org.label',
@@ -32,11 +34,13 @@ const messages = defineMessages({
   },
   courseOrgCreateHelpText: {
     id: 'course-authoring.create-or-rerun-course.create.org.help-text',
-    defaultMessage: 'The name of the organization sponsoring the course. {strong} This cannot be changed, but you can set a different display name in advanced settings later.',
+    defaultMessage:
+      'The name of the organization sponsoring the course. {strong} This cannot be changed, but you can set a different display name in advanced settings later.',
   },
   courseOrgRerunHelpText: {
     id: 'course-authoring.create-or-rerun-course.rerun.org.help-text',
-    defaultMessage: 'The name of the organization sponsoring the new course. (This name is often the same as the original organization name.) {strong}',
+    defaultMessage:
+      'The name of the organization sponsoring the new course. (This name is often the same as the original organization name.) {strong}',
   },
   courseNoteNoSpaceAllowedStrong: {
     id: 'course-authoring.create-or-rerun-course.no-space-allowed.strong',
@@ -60,11 +64,13 @@ const messages = defineMessages({
   },
   courseNumberRerunHelpText: {
     id: 'course-authoring.create-or-rerun-course.rerun.number.help-text',
-    defaultMessage: 'The unique number that identifies the new course within the organization. (This number will be the same as the original course number and cannot be changed.)',
+    defaultMessage:
+      'The unique number that identifies the new course within the organization. (This number will be the same as the original course number and cannot be changed.)',
   },
   courseNotePartCourseURLRequireStrong: {
     id: 'course-authoring.create-or-rerun-course.number.help-text.strong',
-    defaultMessage: 'Note: This is part of your course URL, so no spaces or special characters are allowed and it cannot be changed.',
+    defaultMessage:
+      'Note: This is part of your course URL, so no spaces or special characters are allowed and it cannot be changed.',
   },
   courseRunLabel: {
     id: 'course-authoring.create-or-rerun-course.run.label',
@@ -80,7 +86,8 @@ const messages = defineMessages({
   },
   courseRunRerunHelpText: {
     id: 'course-authoring.create-or-rerun-course.create.rerun.help-text',
-    defaultMessage: 'The term in which the new course will run. (This value is often different than the original course run value.){strong}',
+    defaultMessage:
+      'The term in which the new course will run. (This value is often different than the original course run value.){strong}',
   },
   defaultPlaceholder: {
     id: 'course-authoring.create-or-rerun-course.default-placeholder',

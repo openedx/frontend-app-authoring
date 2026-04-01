@@ -28,15 +28,18 @@ export const PUBLISH_TYPES = {
 } as const;
 
 export const getXBlockSupportMessages = (intl) => ({
-  fs: { // Fully supported
+  fs: {
+    // Fully supported
     label: intl.formatMessage(addComponentMessages.modalComponentSupportLabelFullySupported),
     tooltip: intl.formatMessage(addComponentMessages.modalComponentSupportTooltipFullySupported),
   },
-  ps: { // Provisionally supported
+  ps: {
+    // Provisionally supported
     label: intl.formatMessage(addComponentMessages.modalComponentSupportLabelProvisionallySupported),
     tooltip: intl.formatMessage(addComponentMessages.modalComponentSupportTooltipProvisionallySupported),
   },
-  us: { // Not supported
+  us: {
+    // Not supported
     label: intl.formatMessage(addComponentMessages.modalComponentSupportLabelNotSupported),
     tooltip: intl.formatMessage(addComponentMessages.modalComponentSupportTooltipNotSupported),
   },

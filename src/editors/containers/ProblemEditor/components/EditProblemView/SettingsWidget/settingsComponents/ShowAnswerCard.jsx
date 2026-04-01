@@ -19,11 +19,7 @@ const ShowAnswerCard = ({
   isLibrary,
 }) => {
   const intl = useIntl();
-  const {
-    handleShowAnswerChange,
-    handleAttemptsChange,
-    showAttempts,
-  } = useAnswerSettings(showAnswer, updateSettings);
+  const { handleShowAnswerChange, handleAttemptsChange, showAttempts } = useAnswerSettings(showAnswer, updateSettings);
 
   const currentShowAnswer = showAnswer.on || defaultValue;
 
@@ -36,35 +32,33 @@ const ShowAnswerCard = ({
       </div>
       {!isLibrary && (
         <div className="pb-4">
-          <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#showanswer`} target="_blank">
+          <Hyperlink
+            destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#showanswer`}
+            target="_blank"
+          >
             <FormattedMessage {...messages.advancedSettingsLinkText} />
           </Hyperlink>
         </div>
       )}
       <Form.Group className="pb-0 mb-0">
-        <Form.Control
-          as="select"
-          value={currentShowAnswer}
-          onChange={handleShowAnswerChange}
-        >
+        <Form.Control as="select" value={currentShowAnswer} onChange={handleShowAnswerChange}>
           {Object.values(ShowAnswerTypesKeys).map((answerType) => {
             let optionDisplayName = ShowAnswerTypes[answerType];
             if (answerType === defaultValue) {
-              optionDisplayName = { ...optionDisplayName, defaultMessage: `${optionDisplayName.defaultMessage} (Default)` };
+              optionDisplayName = {
+                ...optionDisplayName,
+                defaultMessage: `${optionDisplayName.defaultMessage} (Default)`,
+              };
             }
             return (
-              <option
-                key={answerType}
-                value={answerType}
-              >
+              <option key={answerType} value={answerType}>
                 {intl.formatMessage(optionDisplayName)}
               </option>
             );
           })}
         </Form.Control>
       </Form.Group>
-      {showAttempts
-        && (
+      {showAttempts && (
         <Form.Group className="pb-0 mb-0 mt-4">
           <Form.Control
             type="number"
@@ -74,7 +68,7 @@ const ShowAnswerCard = ({
             floatingLabel={intl.formatMessage(messages.showAnswerAttemptsInputLabel)}
           />
         </Form.Group>
-        )}
+      )}
     </>
   );
 

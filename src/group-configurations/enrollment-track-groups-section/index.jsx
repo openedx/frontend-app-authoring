@@ -7,11 +7,7 @@ const EnrollmentTrackGroupsSection = ({ availableGroup: { groups, name } }) => (
   <div className="mt-2.5">
     <h2 className="lead text-black mb-3 configuration-section-name">{name}</h2>
     {groups.map((group) => (
-      <ContentGroupCard
-        group={group}
-        key={group.id}
-        readOnly
-      />
+      <ContentGroupCard group={group} key={group.id} readOnly />
     ))}
   </div>
 );

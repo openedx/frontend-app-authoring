@@ -23,7 +23,8 @@ const messages = defineMessages({
   },
   alertWarningDescriptions: {
     id: 'course-authoring.grading-settings.alert.warning.descriptions',
-    defaultMessage: 'Your changes will not take effect until you save your progress. Take care with key and value formatting, as validation is not implemented.',
+    defaultMessage:
+      'Your changes will not take effect until you save your progress. Take care with key and value formatting, as validation is not implemented.',
   },
   alertSuccess: {
     id: 'course-authoring.grading-settings.alert.success',

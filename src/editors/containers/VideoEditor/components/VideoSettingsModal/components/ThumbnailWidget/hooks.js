@@ -73,7 +73,7 @@ export const checkValidDimensions = ({ width, height }) => {
   if (width < constants.MIN_WIDTH || height < height.MIN_WIDTH) {
     return false;
   }
-  const imageAspectRatio = Math.abs((width / height) - constants.ASPECT_RATIO);
+  const imageAspectRatio = Math.abs(width / height - constants.ASPECT_RATIO);
   if (imageAspectRatio >= constants.ASPECT_RATIO_ERROR_MARGIN) {
     return false;
   }
@@ -98,12 +98,15 @@ export const fileInput = ({ setThumbnailSrc, imgRef, fileSizeError }) => {
   const addFile = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
-    if (file && module.checkValidSize({
-      file,
-      onSizeFail: () => {
-        fileSizeError.set();
-      },
-    })) {
+    if (
+      file &&
+      module.checkValidSize({
+        file,
+        onSizeFail: () => {
+          fileSizeError.set();
+        },
+      })
+    ) {
       reader.onload = () => {
         setThumbnailSrc(reader.result);
         const image = imgRef.current;
@@ -141,17 +144,23 @@ export const fileSizeError = () => {
   };
 };
 
-export const deleteThumbnail = ({ dispatch }) => () => {
-  dispatch(actions.video.updateField({ thumbnail: null }));
-  const emptyCanvas = document.createElement('canvas');
-  const ctx = emptyCanvas.getContext('2d');
-  emptyCanvas.width = constants.MAX_WIDTH;
-  emptyCanvas.height = constants.MAX_HEIGHT;
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, emptyCanvas.width, emptyCanvas.height);
-  const file = createResampledFile({ canvasUrl: emptyCanvas.toDataURL(), filename: 'blankThumbnail.png', mimeType: 'image/png' });
-  dispatch(thunkActions.video.uploadThumbnail({ thumbnail: file, emptyCanvas }));
-};
+export const deleteThumbnail =
+  ({ dispatch }) =>
+  () => {
+    dispatch(actions.video.updateField({ thumbnail: null }));
+    const emptyCanvas = document.createElement('canvas');
+    const ctx = emptyCanvas.getContext('2d');
+    emptyCanvas.width = constants.MAX_WIDTH;
+    emptyCanvas.height = constants.MAX_HEIGHT;
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, emptyCanvas.width, emptyCanvas.height);
+    const file = createResampledFile({
+      canvasUrl: emptyCanvas.toDataURL(),
+      filename: 'blankThumbnail.png',
+      mimeType: 'image/png',
+    });
+    dispatch(thunkActions.video.uploadThumbnail({ thumbnail: file, emptyCanvas }));
+  };
 
 export default {
   fileInput,

@@ -1,10 +1,5 @@
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import {
-  initializeMocks,
-  render,
-  waitFor,
-  within,
-} from '../testUtils';
+import { initializeMocks, render, waitFor, within } from '../testUtils';
 import { RequestStatus } from '../data/constants';
 import { executeThunk } from '../utils';
 import { getContentStoreApiUrl } from './data/api';
@@ -22,20 +17,19 @@ const enrollmentTrackGroups = groupConfigurationResponseMock.allGroupConfigurati
 const contentGroups = groupConfigurationResponseMock.allGroupConfigurations[1];
 const teamGroups = groupConfigurationResponseMock.allGroupConfigurations[2];
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <GroupConfigurations />
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <GroupConfigurations />
+    </CourseAuthoringProvider>,
+  );
 
 describe('<GroupConfigurations />', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(getContentStoreApiUrl(courseId))
-      .reply(200, groupConfigurationResponseMock);
+    axiosMock.onGet(getContentStoreApiUrl(courseId)).reply(200, groupConfigurationResponseMock);
     await executeThunk(fetchGroupConfigurationsQuery(courseId), store.dispatch);
   });
 
@@ -48,18 +42,10 @@ describe('<GroupConfigurations />', () => {
       const groupConfigurationsTitle = groupConfigurationsElements[0];
 
       expect(groupConfigurationsTitle).toBeInTheDocument();
-      expect(
-        getByText(messages.headingSubtitle.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        within(mainContent).getByText(contentGroupsMessages.addNewGroup.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        within(mainContent).getByText(experimentMessages.addNewGroup.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        within(mainContent).getByText(experimentMessages.title.defaultMessage),
-      ).toBeInTheDocument();
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      expect(within(mainContent).getByText(contentGroupsMessages.addNewGroup.defaultMessage)).toBeInTheDocument();
+      expect(within(mainContent).getByText(experimentMessages.addNewGroup.defaultMessage)).toBeInTheDocument();
+      expect(within(mainContent).getByText(experimentMessages.title.defaultMessage)).toBeInTheDocument();
       expect(getByText(contentGroups.name)).toBeInTheDocument();
       expect(getByText(enrollmentTrackGroups.name)).toBeInTheDocument();
       expect(getByText(teamGroups.name)).toBeInTheDocument();
@@ -71,36 +57,26 @@ describe('<GroupConfigurations />', () => {
       ...groupConfigurationResponseMock,
       shouldShowEnrollmentTrack: false,
     };
-    axiosMock
-      .onGet(getContentStoreApiUrl(courseId))
-      .reply(200, shouldNotShowEnrollmentTrackResponse);
+    axiosMock.onGet(getContentStoreApiUrl(courseId)).reply(200, shouldNotShowEnrollmentTrackResponse);
 
     const { queryByTestId, findByTestId } = renderComponent();
 
     await findByTestId('group-configurations-main-content-wrapper');
-    expect(
-      queryByTestId('group-configurations-empty-placeholder'),
-    ).not.toBeInTheDocument();
+    expect(queryByTestId('group-configurations-empty-placeholder')).not.toBeInTheDocument();
   });
 
   it('updates loading status if request fails', async () => {
-    axiosMock
-      .onGet(getContentStoreApiUrl(courseId))
-      .reply(404, groupConfigurationResponseMock);
+    axiosMock.onGet(getContentStoreApiUrl(courseId)).reply(404, groupConfigurationResponseMock);
 
     renderComponent();
 
     await executeThunk(fetchGroupConfigurationsQuery(courseId), store.dispatch);
 
-    expect(store.getState().groupConfigurations.loadingStatus).toBe(
-      RequestStatus.FAILED,
-    );
+    expect(store.getState().groupConfigurations.loadingStatus).toBe(RequestStatus.FAILED);
   });
 
   it('displays an alert and sets status to DENIED when API responds with 403', async () => {
-    axiosMock
-      .onGet(getContentStoreApiUrl(courseId))
-      .reply(403);
+    axiosMock.onGet(getContentStoreApiUrl(courseId)).reply(403);
 
     await executeThunk(fetchGroupConfigurationsQuery(courseId), store.dispatch);
 
@@ -108,9 +84,7 @@ describe('<GroupConfigurations />', () => {
 
     await waitFor(() => {
       expect(getByTestId('connectionErrorAlert')).toBeInTheDocument();
-      expect(store.getState().groupConfigurations.loadingStatus).toBe(
-        RequestStatus.DENIED,
-      );
+      expect(store.getState().groupConfigurations.loadingStatus).toBe(RequestStatus.DENIED);
     });
   });
 });

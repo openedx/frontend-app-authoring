@@ -7,11 +7,7 @@ import { groupFeedbackCardHooks, groupFeedbackRowHooks } from './hooks';
 import GroupFeedbackRow from './GroupFeedbackRow';
 import Button from '../../../../../../../sharedComponents/Button';
 
-const GroupFeedbackCard = ({
-  groupFeedbacks,
-  updateSettings,
-  answers,
-}) => {
+const GroupFeedbackCard = ({ groupFeedbacks, updateSettings, answers }) => {
   const intl = useIntl();
   const { summary, handleAdd } = groupFeedbackCardHooks(groupFeedbacks, updateSettings, answers);
   return (
@@ -33,12 +29,7 @@ const GroupFeedbackCard = ({
           {...groupFeedbackRowHooks({ id: groupFeedback.id, groupFeedbacks, updateSettings })}
         />
       ))}
-      <Button
-        className="m-0 p-0 font-weight-bold"
-        variant="add"
-        onClick={handleAdd}
-        size="sm"
-      >
+      <Button className="m-0 p-0 font-weight-bold" variant="add" onClick={handleAdd} size="sm">
         <FormattedMessage {...messages.addGroupFeedbackButtonText} />
       </Button>
     </SettingsOption>
@@ -46,18 +37,22 @@ const GroupFeedbackCard = ({
 };
 
 GroupFeedbackCard.propTypes = {
-  groupFeedbacks: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    feedback: PropTypes.string.isRequired,
-    answers: PropTypes.arrayOf(PropTypes.string).isRequired,
-  })).isRequired,
-  answers: PropTypes.arrayOf(PropTypes.shape({
-    correct: PropTypes.bool,
-    id: PropTypes.string,
-    selectedFeedback: PropTypes.string,
-    title: PropTypes.string,
-    unselectedFeedback: PropTypes.string,
-  })).isRequired,
+  groupFeedbacks: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      feedback: PropTypes.string.isRequired,
+      answers: PropTypes.arrayOf(PropTypes.string).isRequired,
+    }),
+  ).isRequired,
+  answers: PropTypes.arrayOf(
+    PropTypes.shape({
+      correct: PropTypes.bool,
+      id: PropTypes.string,
+      selectedFeedback: PropTypes.string,
+      title: PropTypes.string,
+      unselectedFeedback: PropTypes.string,
+    }),
+  ).isRequired,
   updateSettings: PropTypes.func.isRequired,
 };
 

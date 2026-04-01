@@ -1,13 +1,5 @@
-import React, {
-  useCallback,
-  useState,
-} from 'react';
-import {
-  Form,
-  Icon,
-  IconButton,
-  Stack,
-} from '@openedx/paragon';
+import React, { useCallback, useState } from 'react';
+import { Form, Icon, IconButton, Stack } from '@openedx/paragon';
 import { Edit } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -68,44 +60,32 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
   // If we have the `pendingSaveText` state it means that we are in the process of saving the new text.
   // In that case, we show the new text instead of the original in read-only mode as an optimistic update.
   if (readOnly || pendingSaveText) {
-    return (
-      <div className={`inplace-text-editor-label ${textClassName}`}>
-        {pendingSaveText || text}
-      </div>
-    );
+    return <div className={`inplace-text-editor-label ${textClassName}`}>{pendingSaveText || text}</div>;
   }
 
   return (
-    <Stack
-      direction="horizontal"
-      gap={1}
-      className="inplace-text-editor-with-edit-input"
-    >
-      {inputIsActive
-        ? (
-          <Form.Control
-            autoFocus
-            type="text"
-            aria-label="Text input"
-            defaultValue={text}
-            onBlur={handleOnChangeText}
-            onKeyDown={handleOnKeyDown}
+    <Stack direction="horizontal" gap={1} className="inplace-text-editor-with-edit-input">
+      {inputIsActive ? (
+        <Form.Control
+          autoFocus
+          type="text"
+          aria-label="Text input"
+          defaultValue={text}
+          onBlur={handleOnChangeText}
+          onKeyDown={handleOnKeyDown}
+        />
+      ) : (
+        <>
+          <div className={`inplace-text-editor-label ${textClassName}`}>{text}</div>
+          <IconButton
+            src={Edit}
+            iconAs={Icon}
+            alt={intl.formatMessage(messages.editTextButtonAlt)}
+            onClick={handleEdit}
+            size="sm"
           />
-        )
-        : (
-          <>
-            <div className={`inplace-text-editor-label ${textClassName}`}>
-              {text}
-            </div>
-            <IconButton
-              src={Edit}
-              iconAs={Icon}
-              alt={intl.formatMessage(messages.editTextButtonAlt)}
-              onClick={handleEdit}
-              size="sm"
-            />
-          </>
-        )}
+        </>
+      )}
     </Stack>
   );
 };

@@ -5,7 +5,7 @@ import { ErrorPageInternal as ErrorPage } from './ErrorPage';
 jest.mock('../../data/redux', () => ({
   selectors: {
     app: {
-      unitUrl: jest.fn(state => ({ unitUrl: state })),
+      unitUrl: jest.fn((state) => ({ unitUrl: state })),
     },
   },
 }));

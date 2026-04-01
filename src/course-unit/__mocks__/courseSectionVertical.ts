@@ -10,7 +10,8 @@ export default {
   is_collapsible: false,
   position: 1,
   prev_url: '%2Fcontainer%2Fblock-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40vertical%2Bblock%40vertical_0270f6de40fc',
-  next_url: '%2Fcontainer%2Fblock-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40vertical%2Bblock%404f6c1b4e316a419ab5b6bf30e6c708e9',
+  next_url:
+    '%2Fcontainer%2Fblock-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40vertical%2Bblock%404f6c1b4e316a419ab5b6bf30e6c708e9',
   new_unit_category: 'vertical',
   outline_url: '/course/course-v1:edX+DemoX+Demo_Course?format=concise',
   ancestor_xblocks: [
@@ -367,10 +368,7 @@ export default {
     due: null,
     relative_weeks_due: null,
     format: null,
-    course_graders: [
-      'Homework',
-      'Exam',
-    ],
+    course_graders: ['Homework', 'Exam'],
     has_changes: true,
     actions: {
       deletable: true,
@@ -413,7 +411,8 @@ export default {
           edited_on: 'Jan 04, 2024 at 10:32 UTC',
           published: true,
           published_on: 'Dec 28, 2023 at 10:00 UTC',
-          studio_url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%4019a30717eff543078a5d94ae9d6c18a5',
+          studio_url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%4019a30717eff543078a5d94ae9d6c18a5',
           released_to_students: true,
           release_date: 'Feb 05, 2013 at 05:00 UTC',
           visibility_state: 'needs_attention',
@@ -424,10 +423,7 @@ export default {
           due: null,
           relative_weeks_due: null,
           format: null,
-          course_graders: [
-            'Homework',
-            'Exam',
-          ],
+          course_graders: ['Homework', 'Exam'],
           has_changes: null,
           actions: {
             deletable: true,
@@ -483,7 +479,8 @@ export default {
                 edited_on: 'Jan 04, 2024 at 10:32 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'needs_attention',
@@ -494,10 +491,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: true,
                 actions: {
                   deletable: true,
@@ -567,7 +561,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4f6c1b4e316a419ab5b6bf30e6c708e9',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4f6c1b4e316a419ab5b6bf30e6c708e9',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -578,10 +573,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: false,
                 actions: {
                   deletable: true,
@@ -651,7 +643,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@3dc16db8d14842e38324e95d4030b8a0',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@3dc16db8d14842e38324e95d4030b8a0',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -662,10 +655,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: false,
                 actions: {
                   deletable: true,
@@ -735,7 +725,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4a1bba2a403f40bca5ec245e945b0d76',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4a1bba2a403f40bca5ec245e945b0d76',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -746,10 +737,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: false,
                 actions: {
                   deletable: true,
@@ -819,7 +807,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@256f17a44983429fb1a60802203ee4e0',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@256f17a44983429fb1a60802203ee4e0',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -830,10 +819,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: false,
                 actions: {
                   deletable: true,
@@ -903,7 +889,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@e3601c0abee6427d8c17e6d6f8fdddd1',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@e3601c0abee6427d8c17e6d6f8fdddd1',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -914,10 +901,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: false,
                 actions: {
                   deletable: true,
@@ -987,7 +971,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@a79d59cd72034188a71d388f4954a606',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@a79d59cd72034188a71d388f4954a606',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -998,10 +983,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: false,
                 actions: {
                   deletable: true,
@@ -1071,7 +1053,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@134df56c516a4a0dbb24dd5facef746e',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@134df56c516a4a0dbb24dd5facef746e',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -1082,10 +1065,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: false,
                 actions: {
                   deletable: true,
@@ -1155,7 +1135,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d91b9e5d8bc64d57a1332d06bf2f2193',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d91b9e5d8bc64d57a1332d06bf2f2193',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -1166,10 +1147,7 @@ export default {
                 due: null,
                 relative_weeks_due: null,
                 format: null,
-                course_graders: [
-                  'Homework',
-                  'Exam',
-                ],
+                course_graders: ['Homework', 'Exam'],
                 has_changes: false,
                 actions: {
                   deletable: true,
@@ -1268,7 +1246,8 @@ export default {
           edited_on: 'Jan 04, 2024 at 10:32 UTC',
           published: true,
           published_on: 'Dec 28, 2023 at 10:00 UTC',
-          studio_url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40interactive_demonstrations',
+          studio_url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40interactive_demonstrations',
           released_to_students: true,
           release_date: 'Feb 05, 2013 at 05:00 UTC',
           visibility_state: 'live',
@@ -1279,10 +1258,7 @@ export default {
           due: null,
           relative_weeks_due: null,
           format: null,
-          course_graders: [
-            'Homework',
-            'Exam',
-          ],
+          course_graders: ['Homework', 'Exam'],
           has_changes: null,
           actions: {
             deletable: true,
@@ -1317,7 +1293,8 @@ export default {
           highlights: [],
           highlights_enabled: true,
           highlights_preview_only: false,
-          highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+          highlights_doc_url:
+            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           ancestor_has_staff_lock: false,
           user_partition_info: {
             selectable_partitions: [
@@ -1365,10 +1342,7 @@ export default {
           due: null,
           relative_weeks_due: null,
           format: null,
-          course_graders: [
-            'Homework',
-            'Exam',
-          ],
+          course_graders: ['Homework', 'Exam'],
           has_changes: null,
           actions: {
             deletable: true,
@@ -1403,7 +1377,8 @@ export default {
           highlights_enabled_for_messaging: false,
           highlights_enabled: true,
           highlights_preview_only: false,
-          highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+          highlights_doc_url:
+            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           enable_proctored_exams: false,
           enable_timed_exams: true,
           ancestor_has_staff_lock: false,
@@ -1469,8 +1444,10 @@ export default {
     release_date_from: 'Section "Example Week 1: Getting Started"',
     staff_lock_from: null,
   },
-  draft_preview_link: '//preview.localhost:18000/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
-  published_preview_link: '//localhost:18000/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
+  draft_preview_link:
+    '//preview.localhost:18000/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
+  published_preview_link:
+    '//localhost:18000/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
   show_unit_tags: false,
   user_clipboard: {
     content: null,

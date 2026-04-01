@@ -47,9 +47,7 @@ describe('api.js', () => {
         const mockFetchResponse = Promise.resolve(mockResponseData);
         global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
         const expected = ['Failed to download undefined.'];
-        const actual = await getDownload([
-          { asset: { displayName: 'test1', id: '1' } },
-        ]);
+        const actual = await getDownload([{ asset: { displayName: 'test1', id: '1' } }]);
         expect(actual).toEqual(expected);
       });
     });

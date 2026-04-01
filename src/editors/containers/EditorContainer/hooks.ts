@@ -7,26 +7,14 @@ import { selectors } from '../../data/redux';
 import { StrictDict } from '../../utils';
 import * as appHooks from '../../hooks';
 
-export const {
-  clearSaveError,
-  clearCreateError,
-  navigateCallback,
-  nullMethod,
-  saveBlock,
-  createBlock,
-} = appHooks;
+export const { clearSaveError, clearCreateError, navigateCallback, nullMethod, saveBlock, createBlock } = appHooks;
 
 export const state = StrictDict({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   isCancelConfirmModalOpen: (val) => useState(val),
 });
 
-export const handleSaveClicked = ({
-  dispatch,
-  getContent,
-  validateEntry,
-  returnFunction,
-}) => {
+export const handleSaveClicked = ({ dispatch, getContent, validateEntry, returnFunction }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const returnUrl = useSelector(selectors.app.returnUrl);
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -35,22 +23,24 @@ export const handleSaveClicked = ({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const analytics = useSelector(selectors.app.analytics);
   if (createBlockOnSave) {
-    return () => createBlock({
+    return () =>
+      createBlock({
+        analytics,
+        content: getContent({ dispatch }),
+        destination,
+        dispatch,
+        returnFunction,
+      });
+  }
+  return () =>
+    saveBlock({
       analytics,
       content: getContent({ dispatch }),
       destination,
       dispatch,
       returnFunction,
+      validateEntry,
     });
-  }
-  return () => saveBlock({
-    analytics,
-    content: getContent({ dispatch }),
-    destination,
-    dispatch,
-    returnFunction,
-    validateEntry,
-  });
 };
 
 export const cancelConfirmModalToggle = () => {
@@ -88,17 +78,16 @@ export const handleCancel = ({
 export const isInitialized = () => useSelector(selectors.app.isInitialized);
 
 // eslint-disable-next-line react-hooks/rules-of-hooks
-export const saveFailed = () => useSelector((rootState) => (
-  selectors.requests.isFailed(rootState, { requestKey: RequestKeys.saveBlock })
-));
+export const saveFailed = () =>
+  useSelector((rootState) => selectors.requests.isFailed(rootState, { requestKey: RequestKeys.saveBlock }));
 
 export const createFailed = () => ({
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  createFailed: useSelector((rootState) => (
-    selectors.requests.isFailed(rootState, { requestKey: RequestKeys.createBlock })
-  )),
+  createFailed: useSelector((rootState) =>
+    selectors.requests.isFailed(rootState, { requestKey: RequestKeys.createBlock }),
+  ),
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  createFailedError: useSelector((rootState) => (
-    selectors.requests.error(rootState, { requestKey: RequestKeys.createBlock })
-  )),
+  createFailedError: useSelector((rootState) =>
+    selectors.requests.error(rootState, { requestKey: RequestKeys.createBlock }),
+  ),
 });

@@ -8,7 +8,7 @@ jest.mock('react', () => {
   return {
     ...jest.requireActual('react'),
     updateState,
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
+    useState: jest.fn((val) => [{ state: val }, (newVal) => updateState({ val, newVal })]),
     useCallback: (cb, prereqs) => ({ useCallback: { cb, prereqs } }),
     useEffect: jest.fn(),
   };
@@ -16,7 +16,7 @@ jest.mock('react', () => {
 
 let testMethod;
 const intl = {
-  formatMessage: jest.fn(val => val),
+  formatMessage: jest.fn((val) => val),
 };
 
 const [h, m, s] = [3600000, 60000, 1000];
@@ -100,49 +100,59 @@ describe('Video Settings DurationWidget hooks', () => {
       });
       describe('getTotalLabel', () => {
         it('returns fullVideoLength message when no startTime and no stop Time are set', () => {
-          expect(testMethod.getTotalLabel({
-            durationString: {},
-            subtitle: true,
-            intl,
-          })).toEqual(messages.fullVideoLength);
+          expect(
+            testMethod.getTotalLabel({
+              durationString: {},
+              subtitle: true,
+              intl,
+            }),
+          ).toEqual(messages.fullVideoLength);
         });
         it('returns startAt message for subtitle when only startTime is set', () => {
-          expect(testMethod.getTotalLabel({
-            durationString: {
-              startTime: '00:00:00',
-            },
-            subtitle: true,
-            intl,
-          })).toEqual(messages.startsAt);
+          expect(
+            testMethod.getTotalLabel({
+              durationString: {
+                startTime: '00:00:00',
+              },
+              subtitle: true,
+              intl,
+            }),
+          ).toEqual(messages.startsAt);
         });
         it('returns null for widget (not subtitle) when there only startTime is set', () => {
-          expect(testMethod.getTotalLabel({
-            durationString: {
-              startTime: '00:00:00',
-            },
-            subtitle: false,
-            intl,
-          })).toEqual(null);
+          expect(
+            testMethod.getTotalLabel({
+              durationString: {
+                startTime: '00:00:00',
+              },
+              subtitle: false,
+              intl,
+            }),
+          ).toEqual(null);
         });
         it('returns total message when at least stopTime is set', () => {
-          expect(testMethod.getTotalLabel({
-            durationString: {
-              startTime: '00:00:00',
-              stopTime: '00:00:10',
-            },
-            subtitle: false,
-            intl,
-          })).toEqual(messages.total);
+          expect(
+            testMethod.getTotalLabel({
+              durationString: {
+                startTime: '00:00:00',
+                stopTime: '00:00:10',
+              },
+              subtitle: false,
+              intl,
+            }),
+          ).toEqual(messages.total);
         });
         it('returns custom message when at least stopTime is set and subtitle is true', () => {
-          expect(testMethod.getTotalLabel({
-            durationString: {
-              startTime: '00:00:00',
-              stopTime: '00:00:10',
-            },
-            subtitle: true,
-            intl,
-          })).toEqual(messages.custom);
+          expect(
+            testMethod.getTotalLabel({
+              durationString: {
+                startTime: '00:00:00',
+                stopTime: '00:00:10',
+              },
+              subtitle: true,
+              intl,
+            }),
+          ).toEqual(messages.custom);
         });
       });
     });
@@ -165,12 +175,10 @@ describe('Video Settings DurationWidget hooks', () => {
     });
     it('returns 00:00:00 if given a bad value', () => {
       const badChecks = ['a', '', null, -1];
-      badChecks.forEach(val => expect(testMethod(val)).toEqual('00:00:00'));
+      badChecks.forEach((val) => expect(testMethod(val)).toEqual('00:00:00'));
     });
     it('translates milliseconds into hh:mm:ss format', () => {
-      durationPairs.forEach(
-        ([val, dur]) => expect(testMethod(val)).toEqual(dur),
-      );
+      durationPairs.forEach(([val, dur]) => expect(testMethod(val)).toEqual(dur));
     });
   });
   describe('updateDuration', () => {
@@ -293,15 +301,15 @@ describe('Video Settings DurationWidget hooks', () => {
         'ab:cd:ef', // non-digit characters
         '12:34:567', // characters past max length
       ];
-      badChecks.forEach(val => expect(testMethod(props.duration, props.index, val)).toEqual(props.duration));
+      badChecks.forEach((val) => expect(testMethod(props.duration, props.index, val)).toEqual(props.duration));
     });
-    it('returns duration with an added \':\' after 2 characters when caret is at end', () => {
+    it("returns duration with an added ':' after 2 characters when caret is at end", () => {
       props.duration = { startTime: '0' };
       props.val = '00';
       document.activeElement.selectionStart = props.duration[props.index].length + 1;
       expect(testMethod(props.duration, props.index, props.val)).toEqual({ startTime: '00:' });
     });
-    it('returns duration with an added \':\' after 5 characters when caret is at end', () => {
+    it("returns duration with an added ':' after 5 characters when caret is at end", () => {
       props.duration = { startTime: '00:0' };
       props.val = '00:00';
       document.activeElement.selectionStart = props.duration[props.index].length + 1;
@@ -323,7 +331,7 @@ describe('Video Settings DurationWidget hooks', () => {
       testMethod(props.duration, props.index, props.event);
       expect(blurSpy).toHaveBeenCalled();
     });
-    it('backspace event: returns duration with deleted end character when that character is \':\' and caret is at end', () => {
+    it("backspace event: returns duration with deleted end character when that character is ':' and caret is at end", () => {
       props.duration = { startTime: '00:' };
       props.event = { key: 'Backspace' };
       document.activeElement.selectionStart = props.duration[props.index].length;
@@ -336,7 +344,7 @@ describe('Video Settings DurationWidget hooks', () => {
     });
     it('returns 0 if given a bad duration string', () => {
       const badChecks = ['a', '00:00:1f', '0adg:00:04'];
-      badChecks.forEach(dur => expect(testMethod(dur)).toEqual(0));
+      badChecks.forEach((dur) => expect(testMethod(dur)).toEqual(0));
     });
     it('returns simple durations', () => {
       durationPairs.forEach(([val, dur]) => expect(testMethod(dur)).toEqual(val));

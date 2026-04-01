@@ -10,9 +10,17 @@ const checkboxText = 'SelectableCheckbox';
 const radioType = 'radio';
 const radioText = 'SelectableRadio';
 
-const SelectableCheckbox = (props) => <SelectableBox type={checkboxType} {...props}>{checkboxText}</SelectableBox>;
+const SelectableCheckbox = (props) => (
+  <SelectableBox type={checkboxType} {...props}>
+    {checkboxText}
+  </SelectableBox>
+);
 
-const SelectableRadio = (props) => <SelectableBox type={radioType} {...props}>{radioText}</SelectableBox>;
+const SelectableRadio = (props) => (
+  <SelectableBox type={radioType} {...props}>
+    {radioText}
+  </SelectableBox>
+);
 
 describe('<SelectableBox />', () => {
   describe('correct rendering', () => {
@@ -115,7 +123,9 @@ describe('<SelectableBox />', () => {
     it('ref is passed to onClick function', async () => {
       const user = userEvent.setup();
       let inputRef;
-      const onClick = (ref) => { inputRef = ref; };
+      const onClick = (ref) => {
+        inputRef = ref;
+      };
       render(<SelectableRadio onClick={onClick} />);
       const radio = screen.getByRole('button');
       await user.click(radio);

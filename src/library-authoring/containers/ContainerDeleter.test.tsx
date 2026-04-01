@@ -1,11 +1,5 @@
 import type { ToastActionData } from '@src/generic/toast-context';
-import {
-  fireEvent,
-  render,
-  screen,
-  initializeMocks,
-  waitFor,
-} from '@src/testUtils';
+import { fireEvent, render, screen, initializeMocks, waitFor } from '@src/testUtils';
 import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
 
 import { LibraryProvider } from '../common/context/LibraryContext';
@@ -44,37 +38,32 @@ const renderArgs = {
   params: { libraryId },
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider>
-        { children }
-      </SidebarProvider>
+      <SidebarProvider>{children}</SidebarProvider>
     </LibraryProvider>
   ),
 };
 
-let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: any; };
+let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: any };
 
-[
-  'unit' as const,
-  'section' as const,
-  'subsection' as const,
-].forEach((context) => {
+['unit' as const, 'section' as const, 'subsection' as const].forEach((context) => {
   describe('<ContainerDeleter />', () => {
     beforeEach(() => {
       const mocks = initializeMocks();
       mockShowToast = mocks.mockShowToast;
-      mockSearchResult(hydrateSearchResult([{
-        blockType: context,
-        displayName: `Test ${context}`,
-      }]));
+      mockSearchResult(
+        hydrateSearchResult([
+          {
+            blockType: context,
+            displayName: `Test ${context}`,
+          },
+        ]),
+      );
     });
 
     it(`<${context}> should show a confirmation prompt the card with title and description`, async () => {
       const mockCancel = jest.fn();
       const { containerId } = getContainerDetails(context);
-      render(<ContainerDeleter
-        containerId={containerId}
-        close={mockCancel}
-      />, renderArgs);
+      render(<ContainerDeleter containerId={containerId} close={mockCancel} />, renderArgs);
 
       const modal = await screen.findByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
       expect(modal).toBeVisible();
@@ -118,27 +107,29 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
       if (!parent) {
         return;
       }
-      mockSearchResult(hydrateSearchResult([{
-        [`${parent}s`]: {
-          displayName: [`${parent} 1`],
-          key: [`${parent}1`],
-        },
-        blockType: context,
-      }]));
-
-      render(
-        <ContainerDeleter
-          containerId={containerId}
-          close={mockCancel}
-        />,
-        renderArgs,
+      mockSearchResult(
+        hydrateSearchResult([
+          {
+            [`${parent}s`]: {
+              displayName: [`${parent} 1`],
+              key: [`${parent}1`],
+            },
+            blockType: context,
+          },
+        ]),
       );
+
+      render(<ContainerDeleter containerId={containerId} close={mockCancel} />, renderArgs);
 
       const modal = await screen.findByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
       expect(modal).toBeVisible();
 
-      const textMatch = new RegExp(`By deleting this ${context}, you will also be deleting it from ${parent} 1 in this library.`);
-      expect((await screen.findAllByText((_, element) => textMatch.test(element?.textContent || ''))).length).toBeGreaterThan(0);
+      const textMatch = new RegExp(
+        `By deleting this ${context}, you will also be deleting it from ${parent} 1 in this library.`,
+      );
+      expect(
+        (await screen.findAllByText((_, element) => textMatch.test(element?.textContent || ''))).length,
+      ).toBeGreaterThan(0);
     });
 
     it(`<${context}> should show parents message if parents is set with multiple parents`, async () => {
@@ -147,26 +138,29 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
       if (!parent) {
         return;
       }
-      mockSearchResult(hydrateSearchResult([{
-        [`${parent}s`]: {
-          displayName: [`${parent} 1`, `${parent} 2`],
-          key: [`${parent}1`, `${parent}2`],
-        },
-        blockType: context,
-      }]));
-      render(
-        <ContainerDeleter
-          containerId={containerId}
-          close={mockCancel}
-        />,
-        renderArgs,
+      mockSearchResult(
+        hydrateSearchResult([
+          {
+            [`${parent}s`]: {
+              displayName: [`${parent} 1`, `${parent} 2`],
+              key: [`${parent}1`, `${parent}2`],
+            },
+            blockType: context,
+          },
+        ]),
       );
+      render(<ContainerDeleter containerId={containerId} close={mockCancel} />, renderArgs);
 
       const modal = await screen.findByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
       expect(modal).toBeVisible();
 
-      const textMatch = new RegExp(`By deleting this ${context}, you will also be deleting it from 2 ${parent}s in this library.`, 'i');
-      expect((await screen.findAllByText((_, element) => textMatch.test(element?.textContent || ''))).length).toBeGreaterThan(0);
+      const textMatch = new RegExp(
+        `By deleting this ${context}, you will also be deleting it from 2 ${parent}s in this library.`,
+        'i',
+      );
+      expect(
+        (await screen.findAllByText((_, element) => textMatch.test(element?.textContent || ''))).length,
+      ).toBeGreaterThan(0);
     });
   });
 });

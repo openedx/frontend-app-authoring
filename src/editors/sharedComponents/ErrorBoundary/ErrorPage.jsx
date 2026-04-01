@@ -1,8 +1,6 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  Button, Container, Row, Col,
-} from '@openedx/paragon';
+import { Button, Container, Row, Col } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { isLibraryV1Key } from '../../../generic/key-utils';
@@ -29,24 +27,23 @@ const ErrorPage = ({
     <Container fluid className="py-5 justify-content-center align-items-start text-center">
       <Row>
         <Col>
-          <p className="text-muted">
-            {intl.formatMessage(messages.unexpectedError)}
-          </p>
+          <p className="text-muted">{intl.formatMessage(messages.unexpectedError)}</p>
           {message && (
             <div role="alert" className="my-4">
               <p>{message}</p>
             </div>
           )}
           <Row className="justify-content-center">
-            {learningContextId && (unitUrl && outlineType !== 'library' ? (
-              <Button className="mr-2" variant="outline-primary" onClick={() => navigateTo(unitUrl)}>
-                {intl.formatMessage(messages.returnToUnitPageLabel)}
-              </Button>
-            ) : (
-              <Button className="mr-2" variant="outline-primary" onClick={() => navigateTo(outlineUrl)}>
-                {intl.formatMessage(messages.returnToOutlineLabel, { outlineType })}
-              </Button>
-            ))}
+            {learningContextId &&
+              (unitUrl && outlineType !== 'library' ? (
+                <Button className="mr-2" variant="outline-primary" onClick={() => navigateTo(unitUrl)}>
+                  {intl.formatMessage(messages.returnToUnitPageLabel)}
+                </Button>
+              ) : (
+                <Button className="mr-2" variant="outline-primary" onClick={() => navigateTo(outlineUrl)}>
+                  {intl.formatMessage(messages.returnToOutlineLabel, { outlineType })}
+                </Button>
+              ))}
             <Button className="ml-2" onClick={() => global.location.reload()}>
               {intl.formatMessage(messages.unexpectedErrorButtonLabel)}
             </Button>

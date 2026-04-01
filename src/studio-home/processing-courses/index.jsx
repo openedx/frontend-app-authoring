@@ -19,10 +19,7 @@ const ProcessingCourses = () => {
       <hr />
       <Stack gap={3} className="border-bottom border-light-400 mb-4 px-4 pt-3">
         {inProcessCourseActions.map((course) => (
-          <CourseItem
-            course={course}
-            key={course.courseKey}
-          />
+          <CourseItem course={course} key={course.courseKey} />
         ))}
       </Stack>
     </>

@@ -47,18 +47,10 @@ const CompareChangesWidget = ({
       <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
         <Tab eventKey="old" title={oldTabMessage}>
           <div className="p-2 bg-white">
-            {oldTitle && hasLocalChanges && (
-              <div className="h3 mt-3.5">
-                {oldTitle}
-              </div>
-            )}
+            {oldTitle && hasLocalChanges && <div className="h3 mt-3.5">{oldTitle}</div>}
             <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-8px' } : {}}>
               <IframeProvider>
-                <LibraryBlock
-                  usageKey={oldUsageKey || usageKey}
-                  version={oldVersion}
-                  minHeight="50vh"
-                />
+                <LibraryBlock usageKey={oldUsageKey || usageKey} version={oldVersion} minHeight="50vh" />
               </IframeProvider>
             </div>
           </div>
@@ -66,12 +58,7 @@ const CompareChangesWidget = ({
         <Tab eventKey="new" title={newTabMessage}>
           <div className="p-2 bg-white">
             <IframeProvider>
-              <LibraryBlock
-                usageKey={usageKey}
-                version={newVersion}
-                showTitle={showNewTitle}
-                minHeight="50vh"
-              />
+              <LibraryBlock usageKey={usageKey} version={newVersion} showTitle={showNewTitle} minHeight="50vh" />
             </IframeProvider>
           </div>
         </Tab>

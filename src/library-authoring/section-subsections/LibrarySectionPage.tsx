@@ -21,9 +21,7 @@ import { ContainerEditableTitle, FooterActions, HeaderActions } from '../contain
 export const LibrarySectionPage = () => {
   const intl = useIntl();
   const { libraryId, containerId, readOnly } = useLibraryContext();
-  const {
-    sidebarItemInfo,
-  } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
   if (!containerId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -31,12 +29,7 @@ export const LibrarySectionPage = () => {
   }
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
-  const {
-    data: sectionData,
-    isLoading,
-    isError,
-    error,
-  } = useContainer(containerId);
+  const { data: sectionData, isLoading, isError, error } = useContainer(containerId);
 
   // show loading if containerId or libraryId is not set or section or library data is not fetched from index yet
   if (isLibLoading || isLoading) {
@@ -94,13 +87,13 @@ export const LibrarySectionPage = () => {
             <SubHeader
               title={<SubHeaderTitle title={<ContainerEditableTitle containerId={containerId} />} />}
               breadcrumbs={breadcrumbs}
-              headerActions={(
+              headerActions={
                 <HeaderActions
                   containerKey={containerId}
                   infoBtnText={intl.formatMessage(sectionMessages.infoButtonText)}
                   addContentBtnText={intl.formatMessage(sectionMessages.newContentButton)}
                 />
-              )}
+              }
               hideBorder
             />
           </div>
@@ -115,10 +108,7 @@ export const LibrarySectionPage = () => {
         </Container>
       </div>
       {!!sidebarItemInfo?.type && (
-        <div
-          className="library-authoring-sidebar box-shadow-left-1 bg-white"
-          data-testid="library-sidebar"
-        >
+        <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
           <LibrarySidebar />
         </div>
       )}

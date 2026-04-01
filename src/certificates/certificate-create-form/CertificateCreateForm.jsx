@@ -11,15 +11,11 @@ import useCertificateCreateForm from './hooks/useCertificateCreateForm';
 
 const CertificateCreateForm = ({ courseId }) => {
   const intl = useIntl();
-  const {
-    courseTitle, handleCertificateSubmit, handleFormCancel,
-  } = useCertificateCreateForm(courseId);
+  const { courseTitle, handleCertificateSubmit, handleFormCancel } = useCertificateCreateForm(courseId);
 
   return (
     <Formik initialValues={defaultCertificate} onSubmit={handleCertificateSubmit}>
-      {({
-        values, handleChange, handleBlur, resetForm, setFieldValue,
-      }) => (
+      {({ values, handleChange, handleBlur, resetForm, setFieldValue }) => (
         <Form className="certificates-card-form" data-testid="certificates-create-form">
           <Card>
             <Card.Section>
@@ -32,7 +28,7 @@ const CertificateCreateForm = ({ courseId }) => {
                 />
                 <FieldArray
                   name="signatories"
-                  render={arrayHelpers => (
+                  render={(arrayHelpers) => (
                     <CertificateSignatories
                       isForm
                       signatories={values.signatories}
@@ -46,13 +42,8 @@ const CertificateCreateForm = ({ courseId }) => {
               </Stack>
             </Card.Section>
             <Card.Footer className="justify-content-start">
-              <Button type="submit">
-                {intl.formatMessage(messages.cardCreate)}
-              </Button>
-              <Button
-                variant="tertiary"
-                onClick={() => handleFormCancel(resetForm)}
-              >
+              <Button type="submit">{intl.formatMessage(messages.cardCreate)}</Button>
+              <Button variant="tertiary" onClick={() => handleFormCancel(resetForm)}>
                 {intl.formatMessage(messages.cardCancel)}
               </Button>
             </Card.Footer>

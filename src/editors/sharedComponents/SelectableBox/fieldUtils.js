@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import { useState, useEffect } from 'react';
 import newId from './newId';
 
-const omitUndefinedProperties = (obj = {}) => Object.entries(obj)
-  .reduce((acc, [key, value]) => {
+const omitUndefinedProperties = (obj = {}) =>
+  Object.entries(obj).reduce((acc, [key, value]) => {
     if (value !== undefined) {
       acc[key] = value;
     }
@@ -12,9 +12,7 @@ const omitUndefinedProperties = (obj = {}) => Object.entries(obj)
 
 const callAllHandlers = (...handlers) => {
   const unifiedEventHandler = (event) => {
-    handlers
-      .filter(handler => typeof handler === 'function')
-      .forEach(handler => handler(event));
+    handlers.filter((handler) => typeof handler === 'function').forEach((handler) => handler(event));
   };
   return unifiedEventHandler;
 };
@@ -29,7 +27,7 @@ const useHasValue = ({ defaultValue, value }) => {
 const useIdList = (uniqueIdPrefix, initialList) => {
   const [idList, setIdList] = useState(initialList || []);
   const addId = (idToAdd) => {
-    setIdList(oldIdList => [...oldIdList, idToAdd]);
+    setIdList((oldIdList) => [...oldIdList, idToAdd]);
     return idToAdd;
   };
   const getNewId = () => {
@@ -37,7 +35,7 @@ const useIdList = (uniqueIdPrefix, initialList) => {
     return addId(idToAdd);
   };
   const removeId = (idToRemove) => {
-    setIdList(oldIdList => oldIdList.filter(id => id !== idToRemove));
+    setIdList((oldIdList) => oldIdList.filter((id) => id !== idToRemove));
   };
 
   const useRegisteredId = (explicitlyRegisteredId) => {
@@ -61,10 +59,4 @@ const mergeAttributeValues = (...values) => {
   return mergedValues || undefined;
 };
 
-export {
-  callAllHandlers,
-  useHasValue,
-  mergeAttributeValues,
-  useIdList,
-  omitUndefinedProperties,
-};
+export { callAllHandlers, useHasValue, mergeAttributeValues, useIdList, omitUndefinedProperties };

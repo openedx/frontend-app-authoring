@@ -76,7 +76,7 @@ export const hasDiverseSequences = (subsections) => {
     return false;
   }
   if (totalVisible > 0) {
-    return ((numWithOneBlockType / totalVisible) <= 0.2);
+    return numWithOneBlockType / totalVisible <= 0.2;
   }
 
   return false;

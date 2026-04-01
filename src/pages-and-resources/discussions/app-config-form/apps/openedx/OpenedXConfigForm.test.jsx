@@ -81,11 +81,7 @@ describe('OpenedXConfigForm', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <OpenedXConfigForm
-            onSubmit={onSubmit}
-            formRef={formRef}
-            legacy={legacy}
-          />
+          <OpenedXConfigForm onSubmit={onSubmit} formRef={formRef} legacy={legacy} />
         </IntlProvider>
       </AppProvider>,
     );
@@ -157,14 +153,10 @@ describe('OpenedXConfigForm', () => {
     expect(container.querySelector('#divideByCohorts')).toBeDisabled();
     expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
 
-    divideDiscussionIds.forEach(id => expect(
-      container.querySelector(`#checkbox-${id}`),
-    ).not.toBeInTheDocument());
+    divideDiscussionIds.forEach((id) => expect(container.querySelector(`#checkbox-${id}`)).not.toBeInTheDocument());
 
     // AnonymousPostingFields
-    expect(
-      container.querySelector('#allowAnonymousPostsPeers'),
-    ).toBeInTheDocument();
+    expect(container.querySelector('#allowAnonymousPostsPeers')).toBeInTheDocument();
     expect(container.querySelector('#allowAnonymousPostsPeers')).not.toBeChecked();
 
     // ReportedContentEmailNotifications
@@ -193,59 +185,52 @@ describe('OpenedXConfigForm', () => {
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
-    expect(
-      container.querySelector('#divideCourseTopicsByCohorts'),
-    ).not.toBeInTheDocument();
-    divideDiscussionIds.forEach(id => expect(
-      container.querySelector(`#checkbox-${id}`),
-    ).not.toBeInTheDocument());
+    expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
+    divideDiscussionIds.forEach((id) => expect(container.querySelector(`#checkbox-${id}`)).not.toBeInTheDocument());
 
     // AnonymousPostingFields
-    expect(
-      container.querySelector('#allowAnonymousPostsPeers'),
-    ).toBeInTheDocument();
-    expect(
-      container.querySelector('#allowAnonymousPostsPeers'),
-    ).not.toBeChecked();
+    expect(container.querySelector('#allowAnonymousPostsPeers')).toBeInTheDocument();
+    expect(container.querySelector('#allowAnonymousPostsPeers')).not.toBeChecked();
 
     // ReportedContentEmailNotifications
     expect(container.querySelector('#reportedContentEmailNotifications')).toBeInTheDocument();
     expect(container.querySelector('#reportedContentEmailNotifications')).toBeChecked();
   });
 
-  test(
-    'folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopics are enabled',
-    async () => {
-      await mockStore({
-        ...legacyApiResponse,
-        plugin_configuration: {
-          ...legacyApiResponse.plugin_configuration,
-          allow_anonymous: true,
-          reported_content_email_notifications: true,
-          always_divide_inline_discussions: true,
-          divided_course_wide_discussions: ['13f106c6-6735-4e84-b097-0456cff55960', 'course'],
-        },
-      });
-      createComponent();
-      const { divideDiscussionIds } = defaultAppConfig(['13f106c6-6735-4e84-b097-0456cff55960', 'course']);
+  test('folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopics are enabled', async () => {
+    await mockStore({
+      ...legacyApiResponse,
+      plugin_configuration: {
+        ...legacyApiResponse.plugin_configuration,
+        allow_anonymous: true,
+        reported_content_email_notifications: true,
+        always_divide_inline_discussions: true,
+        divided_course_wide_discussions: ['13f106c6-6735-4e84-b097-0456cff55960', 'course'],
+      },
+    });
+    createComponent();
+    const { divideDiscussionIds } = defaultAppConfig(['13f106c6-6735-4e84-b097-0456cff55960', 'course']);
 
-      // DivisionByGroupFields
-      expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
-      expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
-      expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
-      divideDiscussionIds.forEach(id => {
-        expect(container.querySelector(`#checkbox-${id}`)).not.toBeInTheDocument();
-      });
-    },
-  );
+    // DivisionByGroupFields
+    expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
+    expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
+    expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
+    divideDiscussionIds.forEach((id) => {
+      expect(container.querySelector(`#checkbox-${id}`)).not.toBeInTheDocument();
+    });
+  });
 
   const updateTopicName = async (topicId, topicName) => {
     const topicCard = queryByTestId(container, topicId);
 
-    await act(async () => { await user.click(queryByLabelText(topicCard, 'Expand')); });
+    await act(async () => {
+      await user.click(queryByLabelText(topicCard, 'Expand'));
+    });
     const topicInput = topicCard.querySelector('input');
     topicInput.focus();
-    await act(async () => { fireEvent.change(topicInput, { target: { value: topicName } }); });
+    await act(async () => {
+      fireEvent.change(topicInput, { target: { value: topicName } });
+    });
     topicInput.blur();
 
     return topicCard;
@@ -253,30 +238,35 @@ describe('OpenedXConfigForm', () => {
 
   const assertTopicNameRequiredValidation = (topicCard, expectExists = true) => {
     const error = queryByText(topicCard, messages.discussionTopicRequired.defaultMessage);
-    if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
+    if (expectExists) {
+      expect(error).toBeInTheDocument();
+    } else {
+      expect(error).not.toBeInTheDocument();
+    }
   };
 
   const assertDuplicateTopicNameValidation = async (topicCard, expectExists = true) => {
     const error = queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage);
-    if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
+    if (expectExists) {
+      expect(error).toBeInTheDocument();
+    } else {
+      expect(error).not.toBeInTheDocument();
+    }
   };
 
   const assertHasErrorValidation = (expectExists = true) => {
     expect(store.getState().discussions.hasValidationError).toBe(expectExists);
   };
 
-  test(
-    'show required error on field when leaving empty topic name',
-    async () => {
-      await mockStore(legacyApiResponse);
-      createComponent();
+  test('show required error on field when leaving empty topic name', async () => {
+    await mockStore(legacyApiResponse);
+    createComponent();
 
-      const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
-      await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
-      assertTopicNameRequiredValidation(topicCard);
-      assertHasErrorValidation();
-    },
-  );
+    const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
+    await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
+    assertTopicNameRequiredValidation(topicCard);
+    assertHasErrorValidation();
+  });
 
   test('check field is not collapsible in case of error', async () => {
     await mockStore(legacyApiResponse);
@@ -310,7 +300,9 @@ describe('OpenedXConfigForm', () => {
     test('check duplicate error is removed on fields when name is fixed', async () => {
       const duplicateTopicInput = duplicateTopicCard.querySelector('input');
       duplicateTopicInput.focus();
-      await act(async () => { await user.type(duplicateTopicInput, 'valid'); });
+      await act(async () => {
+        await user.type(duplicateTopicInput, 'valid');
+      });
       duplicateTopicInput.blur();
 
       await waitForElementToBeRemoved(
@@ -326,9 +318,7 @@ describe('OpenedXConfigForm', () => {
       await user.click(
         await findByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
       );
-      await user.click(
-        await findByRole(container, 'button', { name: messages.deleteButton.defaultMessage }),
-      );
+      await user.click(await findByRole(container, 'button', { name: messages.deleteButton.defaultMessage }));
       await waitForElementToBeRemoved(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage));
 
       expect(duplicateTopicCard).not.toBeInTheDocument();

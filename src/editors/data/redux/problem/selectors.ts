@@ -6,18 +6,18 @@ export const problemState = (state: EditorState) => state.problem;
 const mkSimpleSelector = <T>(cb: (problemState: EditorState['problem']) => T) => createSelector([problemState], cb);
 
 export const simpleSelectors = {
-  problemType: mkSimpleSelector(problemData => problemData.problemType),
-  isMarkdownEditorEnabled: mkSimpleSelector(problemData => problemData.isMarkdownEditorEnabled),
-  rawMarkdown: mkSimpleSelector(problemData => problemData.rawMarkdown),
-  generalFeedback: mkSimpleSelector(problemData => problemData.generalFeedback),
-  groupFeedbackList: mkSimpleSelector(problemData => problemData.groupFeedbackList),
-  answers: mkSimpleSelector(problemData => problemData.answers),
-  correctAnswerCount: mkSimpleSelector(problemData => problemData.correctAnswerCount),
-  settings: mkSimpleSelector(problemData => problemData.settings),
-  question: mkSimpleSelector(problemData => problemData.question),
-  defaultSettings: mkSimpleSelector(problemData => problemData.defaultSettings),
-  completeState: mkSimpleSelector(problemData => problemData),
-  isDirty: mkSimpleSelector(problemData => problemData.isDirty),
+  problemType: mkSimpleSelector((problemData) => problemData.problemType),
+  isMarkdownEditorEnabled: mkSimpleSelector((problemData) => problemData.isMarkdownEditorEnabled),
+  rawMarkdown: mkSimpleSelector((problemData) => problemData.rawMarkdown),
+  generalFeedback: mkSimpleSelector((problemData) => problemData.generalFeedback),
+  groupFeedbackList: mkSimpleSelector((problemData) => problemData.groupFeedbackList),
+  answers: mkSimpleSelector((problemData) => problemData.answers),
+  correctAnswerCount: mkSimpleSelector((problemData) => problemData.correctAnswerCount),
+  settings: mkSimpleSelector((problemData) => problemData.settings),
+  question: mkSimpleSelector((problemData) => problemData.question),
+  defaultSettings: mkSimpleSelector((problemData) => problemData.defaultSettings),
+  completeState: mkSimpleSelector((problemData) => problemData),
+  isDirty: mkSimpleSelector((problemData) => problemData.isDirty),
 };
 
 export default simpleSelectors;

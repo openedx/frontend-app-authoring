@@ -47,7 +47,11 @@ describe('<ModalError />', () => {
     const { getByText } = render(<RootWrapper />);
     expect(getByText(/There was/i)).toBeInTheDocument();
     expect(getByText(/2 validation error/i)).toBeInTheDocument();
-    expect(getByText(/while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:/i)).toBeInTheDocument();
+    expect(
+      getByText(
+        /while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:/i,
+      ),
+    ).toBeInTheDocument();
     expect(getByText(messages.modalErrorTitle.defaultMessage)).toBeInTheDocument();
   });
   it('renders correct number of errors', () => {

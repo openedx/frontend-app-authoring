@@ -33,7 +33,7 @@ const slice = createSlice({
       state.certificatesData.certificates.push(action.payload);
     },
     updateCertificateSuccess: /* istanbul ignore next */ (state, action) => {
-      const index = state.certificatesData.certificates.findIndex(c => c.id === action.payload.id);
+      const index = state.certificatesData.certificates.findIndex((c) => c.id === action.payload.id);
       if (index !== -1) {
         state.certificatesData.certificates[index] = action.payload;
       }

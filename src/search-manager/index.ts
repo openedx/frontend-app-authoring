@@ -18,9 +18,4 @@ export {
 } from './data/apiHooks';
 export { TypesFilterData } from './hooks';
 
-export type {
-  CollectionHit,
-  ContainerHit,
-  ContentHit,
-  ContentHitTags,
-} from './data/api';
+export type { CollectionHit, ContainerHit, ContentHit, ContentHitTags } from './data/api';

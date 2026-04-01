@@ -1,29 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  FormattedMessage,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getExternalLinkUrl } from '@edx/frontend-platform';
-import {
-  Stack,
-  Hyperlink,
-} from '@openedx/paragon';
+import { Stack, Hyperlink } from '@openedx/paragon';
 
 import { LicenseTypes } from '../../../../../../data/constants/licenses';
 
 import LicenseBlurb from './LicenseBlurb';
 import messages from './messages';
 
-const LicenseDisplay = ({
-  license,
-  details,
-  licenseDescription,
-}) => {
+const LicenseDisplay = ({ license, details, licenseDescription }) => {
   if (license !== LicenseTypes.select) {
     return (
       <Stack gap={3}>
-        <div className="x-small"><FormattedMessage {...messages.displaySubsectionTitle} /></div>
+        <div className="x-small">
+          <FormattedMessage {...messages.displaySubsectionTitle} />
+        </div>
         <div className="small border border-gray-300 rounded p-4">
           <LicenseBlurb license={license} details={details} />
           <div className="x-small mt-3">{licenseDescription}</div>

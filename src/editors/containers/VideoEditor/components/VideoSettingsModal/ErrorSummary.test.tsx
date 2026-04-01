@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks,
-} from '@src/testUtils';
+import { render, screen, initializeMocks } from '@src/testUtils';
 
 import * as mod from './ErrorSummary';
 

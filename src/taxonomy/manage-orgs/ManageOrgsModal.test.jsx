@@ -3,11 +3,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  fireEvent,
-  render,
-  waitFor,
-} from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
@@ -114,13 +110,9 @@ describe('<ManageOrgsModal />', () => {
 
   it('can assign orgs to taxonomies from the dialog', async () => {
     const onClose = jest.fn();
-    const {
-      queryAllByTestId,
-      getByTestId,
-      getByText,
-      getByRole,
-      queryByRole,
-    } = render(<RootWrapper onClose={onClose} />);
+    const { queryAllByTestId, getByTestId, getByText, getByRole, queryByRole } = render(
+      <RootWrapper onClose={onClose} />,
+    );
 
     // First, org1 and org2 are already added
     await checkDialogRender(getByText);

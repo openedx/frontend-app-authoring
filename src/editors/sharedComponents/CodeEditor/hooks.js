@@ -50,10 +50,7 @@ export const cleanHTML = ({ initialText }) => {
   delete alphanumericMapForAltText.quot;
   Object.keys(altTextMap).forEach((key) => {
     const altTextValue = altTextMap[key];
-    const cleanedAltTextValue = altTextValue.replace(
-      /&(\w+);/g,
-      ($0, $1) => alphanumericMapForAltText[$1] || $0,
-    );
+    const cleanedAltTextValue = altTextValue.replace(/&(\w+);/g, ($0, $1) => alphanumericMapForAltText[$1] || $0);
     altTextMap[key] = cleanedAltTextValue;
   });
 
@@ -92,12 +89,7 @@ export const syntaxChecker = ({ textArr, lang }) => {
   return diagnostics;
 };
 
-export const createCodeMirrorDomNode = ({
-  ref,
-  initialText,
-  upstreamRef,
-  lang,
-}) => {
+export const createCodeMirrorDomNode = ({ ref, initialText, upstreamRef, lang }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const languageExtension = CODEMIRROR_LANGUAGES[lang] ? CODEMIRROR_LANGUAGES[lang]() : xml();
@@ -130,15 +122,13 @@ export const escapeHTMLSpecialChars = ({ ref, hideBtn }) => {
   const text = ref.current.state.doc.toString();
   let pos = 0;
   const changes = [];
-  Object.keys(alphanumericMap).forEach(
-    (escapedKeyword) => {
-      // eslint-disable-next-line no-cond-assign
-      for (let next; (next = text.indexOf(alphanumericMap[escapedKeyword], pos)) > -1;) {
-        changes.push({ from: next, to: next + 1, insert: `&${escapedKeyword};` });
-        pos = next + 1;
-      }
-    },
-  );
+  Object.keys(alphanumericMap).forEach((escapedKeyword) => {
+    // eslint-disable-next-line no-cond-assign
+    for (let next; (next = text.indexOf(alphanumericMap[escapedKeyword], pos)) > -1; ) {
+      changes.push({ from: next, to: next + 1, insert: `&${escapedKeyword};` });
+      pos = next + 1;
+    }
+  });
 
   ref.current.dispatch({ changes });
   hideBtn();

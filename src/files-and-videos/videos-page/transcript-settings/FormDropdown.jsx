@@ -4,13 +4,7 @@ import PropTypes from 'prop-types';
 import { Check } from '@openedx/paragon/icons';
 import { isArray, isEmpty } from 'lodash';
 
-const FormDropdown = ({
-  value,
-  allowMultiple,
-  options,
-  handleSelect,
-  placeholderText,
-}) => {
+const FormDropdown = ({ value, allowMultiple, options, handleSelect, placeholderText }) => {
   let currentSelection;
   if (isEmpty(value)) {
     currentSelection = placeholderText;
@@ -19,9 +13,7 @@ const FormDropdown = ({
   }
 
   return (
-    <Dropdown
-      autoClose={allowMultiple ? 'outside' : true}
-    >
+    <Dropdown autoClose={allowMultiple ? 'outside' : true}>
       <Dropdown.Toggle
         variant="teritary"
         className="border border-gray-700 justify-content-between w-100"
@@ -35,7 +27,12 @@ const FormDropdown = ({
         {Object.entries(options).map(([valueKey, text]) => {
           if (allowMultiple) {
             return (
-              <Dropdown.Item as={Form.Checkbox} checked={value.includes(valueKey)} onChange={(e) => handleSelect([valueKey, e.target.checked])} key={`${valueKey}-item`}>
+              <Dropdown.Item
+                as={Form.Checkbox}
+                checked={value.includes(valueKey)}
+                onChange={(e) => handleSelect([valueKey, e.target.checked])}
+                key={`${valueKey}-item`}
+              >
                 {text}
               </Dropdown.Item>
             );
@@ -43,7 +40,8 @@ const FormDropdown = ({
           if (valueKey === value) {
             return (
               <Dropdown.Item key={`${valueKey}-item`}>
-                <Icon size="inline" src={Check} className="m-n2" /><span className="pl-3">{text}</span>
+                <Icon size="inline" src={Check} className="m-n2" />
+                <span className="pl-3">{text}</span>
               </Dropdown.Item>
             );
           }

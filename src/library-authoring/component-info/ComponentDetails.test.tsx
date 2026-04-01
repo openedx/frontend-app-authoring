@@ -1,10 +1,5 @@
 import { getConfig } from '@edx/frontend-platform';
-import {
-  initializeMocks,
-  render as baseRender,
-  screen,
-  fireEvent,
-} from '@src/testUtils';
+import { initializeMocks, render as baseRender, screen, fireEvent } from '@src/testUtils';
 import { mockFetchIndexDocuments, mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 
 import {
@@ -26,26 +21,25 @@ mockXBlockOLX.applyMock();
 mockGetEntityLinks.applyMock();
 mockFetchIndexDocuments.applyMock();
 
-const {
-  libraryId,
-} = mockContentLibrary;
+const { libraryId } = mockContentLibrary;
 
-const render = (usageKey: string) => baseRender(<ComponentDetails />, {
-  path: `/library/${libraryId}/components/${usageKey}`,
-  params: { libraryId, selectedItemId: usageKey },
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: usageKey,
-          type: SidebarBodyItemId.ComponentInfo,
-        }}
-      >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (usageKey: string) =>
+  baseRender(<ComponentDetails />, {
+    path: `/library/${libraryId}/components/${usageKey}`,
+    params: { libraryId, selectedItemId: usageKey },
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: usageKey,
+            type: SidebarBodyItemId.ComponentInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<ComponentDetails />', () => {
   beforeEach(() => {

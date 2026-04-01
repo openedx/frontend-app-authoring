@@ -11,7 +11,9 @@ const libraryDocsLink = (
   <Hyperlink
     target="_blank"
     showLaunchIcon={false}
-    destination={getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/create_new_library.html')}
+    destination={getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/create_new_library.html',
+    )}
   >
     <FormattedMessage {...messages.alertLibrariesDocLinkText} />
   </Hyperlink>
@@ -26,7 +28,7 @@ export const WelcomeLibrariesV2Alert = () => {
     return null;
   }
 
-  const hasPendingV1Migrations = data.libraries.some(library => !library.isMigrated);
+  const hasPendingV1Migrations = data.libraries.some((library) => !library.isMigrated);
   return (
     <Alert variant="info">
       {hasPendingV1Migrations ? (

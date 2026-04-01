@@ -39,8 +39,7 @@ export default [
     displayName: 'Video Component 3',
     formatted: {
       displayName: 'Video Component 3',
-      content: {
-      },
+      content: {},
     },
     tags: {
       level0: ['1', '2'],

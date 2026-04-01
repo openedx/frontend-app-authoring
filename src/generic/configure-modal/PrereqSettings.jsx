@@ -6,18 +6,9 @@ import messages from './messages';
 
 import FormikControl from '../FormikControl';
 
-const PrereqSettings = ({
-  values,
-  setFieldValue,
-  prereqs,
-}) => {
+const PrereqSettings = ({ values, setFieldValue, prereqs }) => {
   const intl = useIntl();
-  const {
-    isPrereq,
-    prereqUsageKey,
-    prereqMinScore,
-    prereqMinCompletion,
-  } = values;
+  const { isPrereq, prereqUsageKey, prereqMinScore, prereqMinCompletion } = values;
 
   if (isPrereq === null || isPrereq === undefined) {
     return null;
@@ -29,28 +20,20 @@ const PrereqSettings = ({
 
   const prereqSelectionForm = () => (
     <>
-      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.limitAccessTitle} /></h5>
+      <h5 className="mt-4 text-gray-700">
+        <FormattedMessage {...messages.limitAccessTitle} />
+      </h5>
       <hr />
       <Form>
-        <Form.Text><FormattedMessage {...messages.limitAccessDescription} /></Form.Text>
+        <Form.Text>
+          <FormattedMessage {...messages.limitAccessDescription} />
+        </Form.Text>
         <Form.Group controlId="prereqForm.select">
-          <Form.Label>
-            {intl.formatMessage(messages.prerequisiteSelectLabel)}
-          </Form.Label>
-          <Form.Control
-            as="select"
-            defaultValue={prereqUsageKey}
-            onChange={handleSelectChange}
-            role="combobox"
-          >
-            <option value="">
-              {intl.formatMessage(messages.noPrerequisiteOption)}
-            </option>
+          <Form.Label>{intl.formatMessage(messages.prerequisiteSelectLabel)}</Form.Label>
+          <Form.Control as="select" defaultValue={prereqUsageKey} onChange={handleSelectChange} role="combobox">
+            <option value="">{intl.formatMessage(messages.noPrerequisiteOption)}</option>
             {prereqs.map((prereqOption) => (
-              <option
-                key={prereqOption.blockUsageKey}
-                value={prereqOption.blockUsageKey}
-              >
+              <option key={prereqOption.blockUsageKey} value={prereqOption.blockUsageKey}>
                 {prereqOption.blockDisplayName}
               </option>
             ))}
@@ -82,12 +65,14 @@ const PrereqSettings = ({
     </>
   );
 
-  const handleCheckboxChange = e => setFieldValue('isPrereq', e.target.checked);
+  const handleCheckboxChange = (e) => setFieldValue('isPrereq', e.target.checked);
 
   return (
     <>
       {prereqs.length > 0 && prereqSelectionForm()}
-      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.prereqTitle} /></h5>
+      <h5 className="mt-4 text-gray-700">
+        <FormattedMessage {...messages.prereqTitle} />
+      </h5>
       <hr />
       <Form.Checkbox checked={isPrereq} onChange={handleCheckboxChange}>
         <FormattedMessage {...messages.prereqCheckboxLabel} />
@@ -107,10 +92,12 @@ PrereqSettings.propTypes = {
     prereqMinScore: PropTypes.number,
     prereqMinCompletion: PropTypes.number,
   }).isRequired,
-  prereqs: PropTypes.arrayOf(PropTypes.shape({
-    blockUsageKey: PropTypes.string.isRequired,
-    blockDisplayName: PropTypes.string.isRequired,
-  })),
+  prereqs: PropTypes.arrayOf(
+    PropTypes.shape({
+      blockUsageKey: PropTypes.string.isRequired,
+      blockDisplayName: PropTypes.string.isRequired,
+    }),
+  ),
   setFieldValue: PropTypes.func.isRequired,
 };
 

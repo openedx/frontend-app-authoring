@@ -23,9 +23,7 @@ describe('PublicReadToggle', () => {
     mockUseContentLibrary.mockReturnValue({ data: { allowPublicRead: true } });
     mockUseUpdateLibraryMetadata.mockReturnValue({ mutateAsync: jest.fn(), isPending: false });
 
-    render(
-      <PublicReadToggle libraryId="lib1" canEditToggle />,
-    );
+    render(<PublicReadToggle libraryId="lib1" canEditToggle />);
     expect(screen.getByText(messages.publicReadToggleLabel.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.publicReadToggleSubtext.defaultMessage)).toBeInTheDocument();
   });
@@ -34,9 +32,7 @@ describe('PublicReadToggle', () => {
     mockUseContentLibrary.mockReturnValue({ data: { allowPublicRead: true } });
     mockUseUpdateLibraryMetadata.mockReturnValue({ mutateAsync: jest.fn(), isPending: false });
 
-    render(
-      <PublicReadToggle libraryId="lib1" canEditToggle={false} />,
-    );
+    render(<PublicReadToggle libraryId="lib1" canEditToggle={false} />);
     expect(screen.getByRole('switch')).toBeDisabled();
   });
 
@@ -46,16 +42,12 @@ describe('PublicReadToggle', () => {
     mockUseContentLibrary.mockReturnValue({ data: { allowPublicRead: false } });
     mockUseUpdateLibraryMetadata.mockReturnValue({ mutateAsync: mockMutateAsync, isPending: false });
 
-    render(
-      <PublicReadToggle libraryId="lib1" canEditToggle />,
-    );
+    render(<PublicReadToggle libraryId="lib1" canEditToggle />);
     await user.click(screen.getByRole('switch'));
-    expect(mockMutateAsync).toHaveBeenCalledWith(
-      {
-        id: 'lib1',
-        allow_public_read: true,
-      },
-    );
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: 'lib1',
+      allow_public_read: true,
+    });
   });
 
   it('shows error toast when updateLibrary fails', async () => {
@@ -78,18 +70,14 @@ describe('PublicReadToggle', () => {
     mockUseContentLibrary.mockReturnValue({ data: { allowPublicRead: false } });
     mockUseUpdateLibraryMetadata.mockReturnValue({ mutateAsync: mockMutateAsync, isPending: false });
 
-    render(
-      <PublicReadToggle libraryId="lib1" canEditToggle />,
-    );
+    render(<PublicReadToggle libraryId="lib1" canEditToggle />);
 
     await user.click(screen.getByRole('switch'));
 
-    expect(mockMutateAsync).toHaveBeenCalledWith(
-      {
-        id: 'lib1',
-        allow_public_read: true,
-      },
-    );
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: 'lib1',
+      allow_public_read: true,
+    });
 
     expect(mockShowToast).toHaveBeenCalledWith(messages.publicReadToggleDefaultError.defaultMessage);
   });
@@ -101,17 +89,13 @@ describe('PublicReadToggle', () => {
     mockUseContentLibrary.mockReturnValue({ data: { allowPublicRead: false } });
     mockUseUpdateLibraryMetadata.mockReturnValue({ mutateAsync: mockMutateAsync, isPending: false });
 
-    render(
-      <PublicReadToggle libraryId="lib1" canEditToggle />,
-    );
+    render(<PublicReadToggle libraryId="lib1" canEditToggle />);
 
     await user.click(screen.getByRole('switch'));
-    expect(mockMutateAsync).toHaveBeenCalledWith(
-      {
-        id: 'lib1',
-        allow_public_read: true,
-      },
-    );
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: 'lib1',
+      allow_public_read: true,
+    });
     expect(mockShowToast).toHaveBeenCalledWith(messages.publicReadToggleDefaultError.defaultMessage);
   });
 });

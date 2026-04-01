@@ -29,10 +29,7 @@ export const videoDataProps = {
 export const singleVideoData = {
   videoSource: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
   videoId: '7c12381b-6503-4d52-82bd-6ad01b902220',
-  fallbackVideos: [
-    'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-  ],
+  fallbackVideos: ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'],
   allowVideoDownloads: true,
   allowVideoSharing: true,
   thumbnail: 'someString', // filename

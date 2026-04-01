@@ -31,26 +31,15 @@ interface BaseFilter {
 const regexOnlyWhiteSpaces = /^\s+$/;
 
 interface Props {
-  dispatch: Dispatch<any>,
-  locationValue: string,
-  onSubmitSearchField?: () => void,
-  isLoading?: boolean,
+  dispatch: Dispatch<any>;
+  locationValue: string;
+  onSubmitSearchField?: () => void;
+  isLoading?: boolean;
 }
 
-const CoursesFilters = ({
-  dispatch,
-  locationValue = '',
-  onSubmitSearchField,
-  isLoading,
-}: Props) => {
+const CoursesFilters = ({ dispatch, locationValue = '', onSubmitSearchField, isLoading }: Props) => {
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
-  const {
-    order,
-    search,
-    activeOnly,
-    archivedOnly,
-    cleanFilters,
-  } = studioHomeCoursesParams;
+  const { order, search, activeOnly, archivedOnly, cleanFilters } = studioHomeCoursesParams;
   const [inputSearchValue, setInputSearchValue] = useState('');
 
   const intl = useIntl();
@@ -102,12 +91,14 @@ const CoursesFilters = ({
     const hasOnlySpaces = regexOnlyWhiteSpaces.test(searchValueDebounced);
 
     if (valueFormatted !== search && !hasOnlySpaces && !cleanFilters) {
-      dispatch(updateStudioHomeCoursesCustomParams({
-        currentPage: 1,
-        isFiltered: true,
-        cleanFilters: false,
-        ...filterParams,
-      }));
+      dispatch(
+        updateStudioHomeCoursesCustomParams({
+          currentPage: 1,
+          isFiltered: true,
+          cleanFilters: false,
+          ...filterParams,
+        }),
+      );
 
       dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...filterParams }, true));
     }

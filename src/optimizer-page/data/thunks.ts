@@ -51,9 +51,7 @@ export function fetchLinkCheckStatus(courseId) {
     dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const { linkCheckStatus, linkCheckOutput, linkCheckCreatedAt } = await getLinkCheckStatus(
-        courseId,
-      );
+      const { linkCheckStatus, linkCheckOutput, linkCheckCreatedAt } = await getLinkCheckStatus(courseId);
 
       if (LINK_CHECK_IN_PROGRESS_STATUSES.includes(linkCheckStatus)) {
         dispatch(updateLinkCheckInProgress(true));
@@ -64,9 +62,9 @@ export function fetchLinkCheckStatus(courseId) {
       dispatch(updateCurrentStage(SCAN_STAGES[linkCheckStatus]));
 
       if (
-        linkCheckStatus === undefined
-        || linkCheckStatus === null
-        || LINK_CHECK_FAILURE_STATUSES.includes(linkCheckStatus)
+        linkCheckStatus === undefined ||
+        linkCheckStatus === null ||
+        LINK_CHECK_FAILURE_STATUSES.includes(linkCheckStatus)
       ) {
         dispatch(updateError({ msg: 'Link Check Failed' }));
         dispatch(updateIsErrorModalOpen(true));
@@ -85,9 +83,7 @@ export function fetchLinkCheckStatus(courseId) {
       if (error?.response && error?.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
-        dispatch(
-          updateLoadingStatus({ status: RequestStatus.FAILED }),
-        );
+        dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
       }
       return false;
     }
@@ -110,7 +106,12 @@ export function updateAllPreviousRunLinks(courseId: string) {
   };
 }
 
-export function updateSinglePreviousRunLink(courseId: string, linkUrl: string, blockId: string, contentType: string = 'course_updates') {
+export function updateSinglePreviousRunLink(
+  courseId: string,
+  linkUrl: string,
+  blockId: string,
+  contentType: string = 'course_updates',
+) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     try {

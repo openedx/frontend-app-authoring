@@ -1,21 +1,15 @@
 import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
 import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
-import {
-  act,
-  render as baseRender,
-  initializeMocks,
-  screen,
-} from '@src/testUtils';
+import { act, render as baseRender, initializeMocks, screen } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 import { LibraryBackupStatus } from './data/constants';
 import { LibraryBackupPage } from './LibraryBackupPage';
 import messages from './messages';
 
-const render = (libraryId: string = mockContentLibrary.libraryId) => baseRender(<LibraryBackupPage />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
-  ),
-});
+const render = (libraryId: string = mockContentLibrary.libraryId) =>
+  baseRender(<LibraryBackupPage />, {
+    extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>,
+  });
 
 // Mocking i18n to prevent having to generate all dynamic translations for this specific test file
 // Other tests can still use the real implementation as needed
@@ -26,13 +20,14 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
-const mockLibraryData:
-{ data: typeof mockContentLibrary.libraryData | undefined } = { data: mockContentLibrary.libraryData };
+const mockLibraryData: { data: typeof mockContentLibrary.libraryData | undefined } = {
+  data: mockContentLibrary.libraryData,
+};
 
 // TODO: consider using the usual mockContentLibrary.applyMocks pattern after figuring out
 // why it doesn't work here as expected
 jest.mock('@src/library-authoring/data/apiHooks', () => ({
-  useContentLibrary: () => (mockLibraryData),
+  useContentLibrary: () => mockLibraryData,
 }));
 
 // Mutable mocks varied per test
@@ -138,7 +133,9 @@ describe('<LibraryBackupPage />', () => {
       const el = originalCreate(tagName);
       if (tagName === 'a') {
         // Force failure when click is invoked
-        (el as any).click = () => { throw new Error('fail'); };
+        (el as any).click = () => {
+          throw new Error('fail');
+        };
       }
       return el;
     });

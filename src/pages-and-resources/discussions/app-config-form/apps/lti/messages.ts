@@ -41,15 +41,17 @@ const messages = defineMessages({
   },
   staffOnlyConfigInfo: {
     id: 'authoring.discussions.stuffOnlyConfigInfo',
-    defaultMessage: 'To enable {providerName} for your course, please contact their support team at {supportEmail} to learn more about pricing and usage.',
+    defaultMessage:
+      'To enable {providerName} for your course, please contact their support team at {supportEmail} to learn more about pricing and usage.',
   },
   staffOnlyConfigGuide: {
     id: 'authoring.discussions.stuffOnlyConfigGuide',
-    defaultMessage: 'To fully configure {providerName} will also require sharing usernames and emails for learners and course team. Please contact your edX project coordinator to enable PII sharing for this course.',
+    defaultMessage:
+      'To fully configure {providerName} will also require sharing usernames and emails for learners and course team. Please contact your edX project coordinator to enable PII sharing for this course.',
   },
   piiSharing: {
     id: 'authoring.discussions.piiSharing',
-    defaultMessage: 'Optionally share a user\'s username and/or email with the LTI provider:',
+    defaultMessage: "Optionally share a user's username and/or email with the LTI provider:",
   },
   piiShareUsername: {
     id: 'authoring.discussions.piiShareUsername',

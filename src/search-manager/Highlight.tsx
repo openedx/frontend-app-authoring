@@ -11,12 +11,21 @@ const Highlight: React.FC<{ text: string }> = ({ text }) => {
   return (
     <span>
       {parts.map((part, idx) => {
-        if (idx === 0) { return <React.Fragment key={idx}>{part}</React.Fragment>; }
+        if (idx === 0) {
+          return <React.Fragment key={idx}>{part}</React.Fragment>;
+        }
         const endIdx = part.indexOf(HIGHLIGHT_POST_TAG);
-        if (endIdx === -1) { return <React.Fragment key={idx}>{part}</React.Fragment>; }
+        if (endIdx === -1) {
+          return <React.Fragment key={idx}>{part}</React.Fragment>;
+        }
         const highLightPart = part.substring(0, endIdx);
         const otherPart = part.substring(endIdx + HIGHLIGHT_POST_TAG.length);
-        return <React.Fragment key={idx}><mark>{highLightPart}</mark>{otherPart}</React.Fragment>;
+        return (
+          <React.Fragment key={idx}>
+            <mark>{highLightPart}</mark>
+            {otherPart}
+          </React.Fragment>
+        );
       })}
     </span>
   );

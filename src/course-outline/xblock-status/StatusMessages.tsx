@@ -1,21 +1,18 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
-import {
-  Lock as LockIcon,
-  Groups as GroupsIcon,
-} from '@openedx/paragon/icons';
+import { Lock as LockIcon, Groups as GroupsIcon } from '@openedx/paragon/icons';
 
 import { UserPartitionInfoTypes, XBlockPrereqs } from '@src/data/types';
 import messages from './messages';
 
 interface StatusMessagesProps {
   isVertical: boolean;
-  staffOnlyMessage?: boolean,
-  prereq?: string,
-  prereqs?: XBlockPrereqs[],
-  userPartitionInfo?: UserPartitionInfoTypes,
-  hasPartitionGroupComponents?: boolean,
+  staffOnlyMessage?: boolean;
+  prereq?: string;
+  prereqs?: XBlockPrereqs[];
+  userPartitionInfo?: UserPartitionInfoTypes;
+  hasPartitionGroupComponents?: boolean;
 }
 
 interface StatusMessagesText {

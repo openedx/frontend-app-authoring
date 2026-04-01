@@ -8,20 +8,11 @@ import { getPagePath } from '../../../utils';
 import GradeRequirements from '../grade-requirements';
 import messages from './messages';
 
-const EntranceExam = ({
-  errorEffort,
-  isCheckedString,
-  entranceExamMinimumScorePct,
-  onChange,
-}) => {
+const EntranceExam = ({ errorEffort, isCheckedString, entranceExamMinimumScorePct, onChange }) => {
   const { courseId } = useParams();
   const showEntranceExam = isCheckedString === 'true';
   const toggleEntranceExam = () => onChange((!showEntranceExam).toString(), 'entranceExamEnabled');
-  const courseOutlineDestination = getPagePath(
-    courseId,
-    'false',
-    'course',
-  );
+  const courseOutlineDestination = getPagePath(courseId, 'false', 'course');
 
   return (
     <Form.Group className="form-group-custom">
@@ -30,10 +21,7 @@ const EntranceExam = ({
       </Form.Label>
       <Card>
         <Card.Section className="pt-2.5 pb-1 pl-3">
-          <Form.Checkbox
-            checked={showEntranceExam}
-            onChange={toggleEntranceExam}
-          >
+          <Form.Checkbox checked={showEntranceExam} onChange={toggleEntranceExam}>
             <FormattedMessage {...messages.requirementsEntranceCollapseTitle} />
           </Form.Checkbox>
         </Card.Section>
@@ -46,14 +34,8 @@ const EntranceExam = ({
                   {...messages.requirementsEntranceCollapseParagraph}
                   values={{
                     hyperlink: (
-                      <Hyperlink
-                        destination={courseOutlineDestination}
-                        target="_blank"
-                        showLaunchIcon={false}
-                      >
-                        <FormattedMessage
-                          {...messages.requirementsEntranceCollapseHyperlink}
-                        />
+                      <Hyperlink destination={courseOutlineDestination} target="_blank" showLaunchIcon={false}>
+                        <FormattedMessage {...messages.requirementsEntranceCollapseHyperlink} />
                       </Hyperlink>
                     ),
                   }}

@@ -1,7 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, Button, CheckboxFilter, useToggle,
-} from '@openedx/paragon';
+import { ActionRow, Button, CheckboxFilter, useToggle } from '@openedx/paragon';
 import { AgreementGated } from '@src/constants';
 import { RequestStatus } from '@src/data/constants';
 import {
@@ -41,16 +39,8 @@ export const CourseVideosTable = () => {
   const intl = useIntl();
   const { courseId } = useParams() as { courseId: string };
   const dispatch = useDispatch();
-  const [
-    isTranscriptSettingsOpen,
-    openTranscriptSettings,
-    closeTranscriptSettings,
-  ] = useToggle(false);
-  const [
-    isUploadTrackerOpen,
-    openUploadTracker,
-    closeUploadTracker,
-  ] = useToggle(false);
+  const [isTranscriptSettingsOpen, openTranscriptSettings, closeTranscriptSettings] = useToggle(false);
+  const [isUploadTrackerOpen, openUploadTracker, closeUploadTracker] = useToggle(false);
 
   const {
     videoIds,
@@ -120,21 +110,25 @@ export const CourseVideosTable = () => {
     dispatch(addVideoFile(courseId, files, videoIds, uploadingIdsRef));
   };
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
-  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({
-    selectedRows,
-    courseId,
-  }));
+  const handleDownloadFile = (selectedRows) =>
+    dispatch(
+      fetchVideoDownload({
+        selectedRows,
+        courseId,
+      }),
+    );
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
   const handleFileOrder = ({ newFileIdOrder }) => {
     dispatch(updateVideoOrder(courseId, newFileIdOrder));
   };
-  const handleAddThumbnail = (file, videoId) => resampleFile({
-    file,
-    dispatch,
-    courseId,
-    videoId,
-    addVideoThumbnail,
-  });
+  const handleAddThumbnail = (file, videoId) =>
+    resampleFile({
+      file,
+      dispatch,
+      courseId,
+      videoId,
+      addVideoThumbnail,
+    });
 
   const videos = useModels('videos', videoIds);
 
@@ -147,12 +141,13 @@ export const CourseVideosTable = () => {
     usageErrorMessages: errorMessages.usageMetrics,
     fileType: 'video',
   };
-  const thumbnailPreview = (props) => VideoThumbnail({
-    ...props,
-    pageLoadStatus: loadingStatus,
-    handleAddThumbnail,
-    videoImageSettings,
-  });
+  const thumbnailPreview = (props) =>
+    VideoThumbnail({
+      ...props,
+      pageLoadStatus: loadingStatus,
+      handleAddThumbnail,
+      videoImageSettings,
+    });
   const infoModalSidebar = (video, activeTab, setActiveTab) => (
     <VideoInfoModalSidebar video={video} activeTab={activeTab} setActiveTab={setActiveTab} />
   );
@@ -243,41 +238,39 @@ export const CourseVideosTable = () => {
             </Button>
           ) : null}
         </ActionRow>
-        {
-        loadingStatus !== RequestStatus.FAILED && (
-        <>
-          {isVideoTranscriptEnabled && (
-          <TranscriptSettings
-            {...{
-              isTranscriptSettingsOpen,
-              closeTranscriptSettings,
-              handleErrorReset,
-              errorMessages,
-              transcriptStatus,
-              courseId,
-            }}
-          />
-          )}
-          <FileTable
-            {...{
-              courseId,
-              data,
-              handleAddFile,
-              handleDeleteFile,
-              handleDownloadFile,
-              handleUsagePaths,
-              handleErrorReset,
-              handleFileOrder,
-              tableColumns,
-              maxFileSize,
-              thumbnailPreview,
-              infoModalSidebar,
-              files: videos,
-            }}
-          />
-        </>
-        )
-    }
+        {loadingStatus !== RequestStatus.FAILED && (
+          <>
+            {isVideoTranscriptEnabled && (
+              <TranscriptSettings
+                {...{
+                  isTranscriptSettingsOpen,
+                  closeTranscriptSettings,
+                  handleErrorReset,
+                  errorMessages,
+                  transcriptStatus,
+                  courseId,
+                }}
+              />
+            )}
+            <FileTable
+              {...{
+                courseId,
+                data,
+                handleAddFile,
+                handleDeleteFile,
+                handleDownloadFile,
+                handleUsagePaths,
+                handleErrorReset,
+                handleFileOrder,
+                tableColumns,
+                maxFileSize,
+                thumbnailPreview,
+                infoModalSidebar,
+                files: videos,
+              }}
+            />
+          </>
+        )}
         <UploadModal
           {...{
             isUploadTrackerOpen,

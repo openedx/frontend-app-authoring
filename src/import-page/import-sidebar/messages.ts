@@ -7,7 +7,8 @@ const messages = defineMessages({
   },
   description1: {
     id: 'course-authoring.import.sidebar.description1',
-    defaultMessage: 'You may want to run a new version of an existing course, or replace an existing course altogether. Or, you may have developed a course outside {studioShortName}.',
+    defaultMessage:
+      'You may want to run a new version of an existing course, or replace an existing course altogether. Or, you may have developed a course outside {studioShortName}.',
   },
   importedContent: {
     id: 'course-authoring.import.sidebar.importedContent',
@@ -55,7 +56,8 @@ const messages = defineMessages({
   },
   warningDescription: {
     id: 'course-authoring.import.sidebar.warningDescription',
-    defaultMessage: 'If you perform an import while your course is running, and you change the URL names (or url_name nodes) of any problem components, the student data associated with those problem components may be lost. This data includes students\' problem scores.',
+    defaultMessage:
+      "If you perform an import while your course is running, and you change the URL names (or url_name nodes) of any problem components, the student data associated with those problem components may be lost. This data includes students' problem scores.",
   },
   learnMoreButtonTitle: {
     id: 'course-authoring.import.sidebar.learnMoreButtonTitle',

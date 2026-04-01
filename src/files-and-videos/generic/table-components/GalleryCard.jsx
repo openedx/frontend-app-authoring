@@ -1,12 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  ActionRow,
-  Icon,
-  Card,
-  Chip,
-  Truncate,
-} from '@openedx/paragon';
+import { ActionRow, Icon, Card, Chip, Truncate } from '@openedx/paragon';
 import { ClosedCaption } from '@openedx/paragon/icons';
 import FileMenu from '../FileMenu';
 import FileThumbnail from '../ThumbnailPreview';
@@ -30,7 +24,7 @@ const GalleryCard = ({
     <Card className={`${className} w-100 gallery-card`} data-testid={`grid-card-${original.id}`}>
       <Card.Header
         className="pr-0 pt-2 pb-2"
-        actions={(
+        actions={
           <ActionRow>
             <FileMenu
               externalUrl={original.externalUrl}
@@ -40,18 +34,21 @@ const GalleryCard = ({
               portableUrl={original.portableUrl}
               id={original.id}
               fileType={fileType}
-              onDownload={() => handleBulkDownload([{
-                original: {
-                  id: original.id,
-                  displayName:
-                  original.displayName,
-                  downloadLink: original?.downloadLink,
-                },
-              }])}
+              onDownload={() =>
+                handleBulkDownload([
+                  {
+                    original: {
+                      id: original.id,
+                      displayName: original.displayName,
+                      downloadLink: original?.downloadLink,
+                    },
+                  },
+                ])
+              }
               openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
             />
           </ActionRow>
-        )}
+        }
       />
       <Card.Section className="pr-3 pl-3 pt-0 pb-0">
         <div className="row align-items-center justify-content-center m-0">
@@ -73,9 +70,7 @@ const GalleryCard = ({
         </div>
       </Card.Section>
       <Card.Footer className="p-3 pt-4 row m-0 flex-row-reverse justify-content-between align-items-center">
-        <Chip>
-          {original.wrapperType}
-        </Chip>
+        <Chip>{original.wrapperType}</Chip>
         {original.transcripts?.length > 0 && <Icon size="lg" src={ClosedCaption} className="m-0 text-primary-500" />}
       </Card.Footer>
     </Card>

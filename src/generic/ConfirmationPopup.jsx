@@ -15,11 +15,7 @@ const ConfirmationPopup = ({
   sectionClasses,
 }) => (
   <Card className="rounded px-1 mt-4">
-    <Card.Header
-      className="text-primary-500"
-      title={label}
-      size="sm"
-    />
+    <Card.Header className="text-primary-500" title={label} size="sm" />
     <Card.Body>
       <Card.Section className={`text-justify text-muted pt-2 pb-3 ${sectionClasses}`}>{bodyText}</Card.Section>
       <Card.Footer>

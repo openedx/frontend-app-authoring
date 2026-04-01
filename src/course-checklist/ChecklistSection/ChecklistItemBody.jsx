@@ -17,19 +17,14 @@ const getUpdateLinks = (courseId, waffleFlags) => {
   return {
     welcomeMessage: `/course/${courseId}/course_info`,
     gradingPolicy: `/course/${courseId}/settings/grading`,
-    certificate: isLegacyCertificateUrl
-      ? `${baseUrl}/certificates/${courseId}` : `/course/${courseId}/certificates`,
+    certificate: isLegacyCertificateUrl ? `${baseUrl}/certificates/${courseId}` : `/course/${courseId}/certificates`,
     courseDates: `/course/${courseId}/settings/details/#schedule`,
     proctoringEmail: `${baseUrl}/pages-and-resources/proctoring/settings`,
     outline: isLegacyOutlineUrl ? `${baseUrl}/course/${courseId}` : `/course/${courseId}`,
   };
 };
 
-const ChecklistItemBody = ({
-  courseId,
-  checkId,
-  isCompleted,
-}) => {
+const ChecklistItemBody = ({ courseId, checkId, isCompleted }) => {
   const intl = useIntl();
   const waffleFlags = useWaffleFlags(courseId);
   const updateLinks = getUpdateLinks(courseId, waffleFlags);
@@ -64,10 +59,7 @@ const ChecklistItemBody = ({
       </div>
       <ActionRow.Spacer />
       {updateLinks?.[checkId] && (
-        <Link
-          to={updateLinks[checkId]}
-          data-testid="update-link"
-        >
+        <Link to={updateLinks[checkId]} data-testid="update-link">
           <Button size="sm">
             <FormattedMessage {...messages.updateLinkLabel} />
           </Button>

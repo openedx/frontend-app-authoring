@@ -1,7 +1,5 @@
 import { Provider } from 'react-redux';
-import {
-  render, waitFor, within,
-} from '@testing-library/react';
+import { render, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -22,13 +20,14 @@ let axiosMock;
 let store;
 const courseId = 'course-123';
 
-const renderComponent = () => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificatesList courseId="course-123" />
-    </IntlProvider>
-  </Provider>,
-);
+const renderComponent = () =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificatesList courseId="course-123" />
+      </IntlProvider>
+    </Provider>,
+  );
 
 describe('CertificatesList Component', () => {
   beforeEach(async () => {
@@ -42,12 +41,10 @@ describe('CertificatesList Component', () => {
     });
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, {
-        ...certificatesDataMock,
-        certificates: certificatesMock,
-      });
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, {
+      ...certificatesDataMock,
+      certificates: certificatesMock,
+    });
     await executeThunk(fetchCertificates(courseId), store.dispatch);
   });
 
@@ -65,20 +62,22 @@ describe('CertificatesList Component', () => {
 
   it('update certificate', async () => {
     const user = userEvent.setup();
-    const {
-      getByText, queryByText, getByPlaceholderText, getByRole, getAllByLabelText,
-    } = renderComponent();
+    const { getByText, queryByText, getByPlaceholderText, getByRole, getAllByLabelText } = renderComponent();
 
     const signatoryNameValue = 'Updated signatory name';
     const newCertificateData = {
       ...certificatesDataMock,
-      certificates: [{
-        ...certificatesMock[0],
-        signatories: [{
-          ...certificatesMock[0].signatories[0],
-          name: signatoryNameValue,
-        }],
-      }],
+      certificates: [
+        {
+          ...certificatesMock[0],
+          signatories: [
+            {
+              ...certificatesMock[0].signatories[0],
+              name: signatoryNameValue,
+            },
+          ],
+        },
+      ],
     };
 
     const editButtons = getAllByLabelText(messages.editTooltip.defaultMessage);
@@ -91,9 +90,7 @@ describe('CertificatesList Component', () => {
 
     await user.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
 
-    axiosMock
-      .onPost(getUpdateCertificateApiUrl(courseId, certificatesMock.id))
-      .reply(200, newCertificateData);
+    axiosMock.onPost(getUpdateCertificateApiUrl(courseId, certificatesMock.id)).reply(200, newCertificateData);
     await executeThunk(updateCourseCertificate(courseId, newCertificateData), store.dispatch);
 
     await waitFor(() => {
@@ -104,9 +101,7 @@ describe('CertificatesList Component', () => {
 
   it('toggle edit signatory', async () => {
     const user = userEvent.setup();
-    const {
-      getAllByLabelText, queryByPlaceholderText, getByTestId, getByPlaceholderText,
-    } = renderComponent();
+    const { getAllByLabelText, queryByPlaceholderText, getByTestId, getByPlaceholderText } = renderComponent();
     const editButtons = getAllByLabelText(messages.editTooltip.defaultMessage);
 
     expect(editButtons.length).toBe(3);
@@ -117,7 +112,9 @@ describe('CertificatesList Component', () => {
       expect(getByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage)).toBeInTheDocument();
     });
 
-    await user.click(within(getByTestId('signatory-form')).getByRole('button', { name: messages.cardCancel.defaultMessage }));
+    await user.click(
+      within(getByTestId('signatory-form')).getByRole('button', { name: messages.cardCancel.defaultMessage }),
+    );
 
     await waitFor(() => {
       expect(queryByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage)).not.toBeInTheDocument();

@@ -20,11 +20,7 @@ const commonStyle = {
 };
 
 const DragIndicatorBtn = () => (
-  <button
-    key="drag-to-reorder-icon"
-    className="btn-icon btn-icon-secondary btn-icon-md"
-    type="button"
-  >
+  <button key="drag-to-reorder-icon" className="btn-icon btn-icon-secondary btn-icon-md" type="button">
     <span className="btn-icon__icon-container">
       <Icon src={DragIndicator} />
     </span>
@@ -40,10 +36,7 @@ const SectionCard = ({ status, displayName }: ItemProps) => {
   };
 
   return (
-    <Row
-      style={style}
-      className="mx-0 bg-white"
-    >
+    <Row style={style} className="mx-0 bg-white">
       <Col className="extend-margin px-0">
         <div className="item-card-header h3">
           <Icon src={ArrowRight} className="mr-2" />
@@ -64,10 +57,7 @@ const SubsectionCard = ({ status, displayName }: ItemProps) => {
   };
 
   return (
-    <Row
-      style={style}
-      className="mx-0 bg-light-200"
-    >
+    <Row style={style} className="mx-0 bg-light-200">
       <Col className="extend-margin px-0">
         <div className="item-card-header h4 pt-2">
           <Icon src={ArrowRight} className="mr-2" />
@@ -87,14 +77,9 @@ const UnitCard = ({ status, displayName }: ItemProps) => {
   };
 
   return (
-    <Row
-      style={style}
-      className="mx-0 bg-white"
-    >
+    <Row style={style} className="mx-0 bg-white">
       <Col className="extend-margin px-0">
-        <div className="item-card-header h5 pt-3">
-          {displayName}
-        </div>
+        <div className="item-card-header h5 pt-3">{displayName}</div>
       </Col>
       <DragIndicatorBtn />
     </Row>

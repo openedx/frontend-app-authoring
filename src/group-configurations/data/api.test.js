@@ -44,9 +44,7 @@ describe('group configurations API calls', () => {
     const result = await getGroupConfigurations(courseId);
     const expected = camelCaseObject(response);
 
-    expect(axiosMock.history.get[0].url).toEqual(
-      getContentStoreApiUrl(courseId),
-    );
+    expect(axiosMock.history.get[0].url).toEqual(getContentStoreApiUrl(courseId));
     expect(result).toEqual(expected);
   });
 
@@ -55,23 +53,16 @@ describe('group configurations API calls', () => {
     const newContentGroupName = 'content-group-test';
     const updatedContentGroups = {
       ...contentGroups,
-      groups: [
-        ...contentGroups.groups,
-        initialContentGroupObject(newContentGroupName),
-      ],
+      groups: [...contentGroups.groups, initialContentGroupObject(newContentGroupName)],
     };
 
     response.allGroupConfigurations[1] = updatedContentGroups;
-    axiosMock
-      .onPost(getLegacyApiUrl(courseId, contentGroups.id), updatedContentGroups)
-      .reply(200, response);
+    axiosMock.onPost(getLegacyApiUrl(courseId, contentGroups.id), updatedContentGroups).reply(200, response);
 
     const result = await createContentGroup(courseId, updatedContentGroups);
     const expected = camelCaseObject(response);
 
-    expect(axiosMock.history.post[0].url).toEqual(
-      getLegacyApiUrl(courseId, updatedContentGroups.id),
-    );
+    expect(axiosMock.history.post[0].url).toEqual(getLegacyApiUrl(courseId, updatedContentGroups.id));
     expect(result).toEqual(expected);
   });
 
@@ -85,16 +76,12 @@ describe('group configurations API calls', () => {
     };
 
     response.allGroupConfigurations[1] = editedContentGroups;
-    axiosMock
-      .onPost(getLegacyApiUrl(courseId, contentGroups.id), editedContentGroups)
-      .reply(200, response);
+    axiosMock.onPost(getLegacyApiUrl(courseId, contentGroups.id), editedContentGroups).reply(200, response);
 
     const result = await editContentGroup(courseId, editedContentGroups);
     const expected = camelCaseObject(response);
 
-    expect(axiosMock.history.post[0].url).toEqual(
-      getLegacyApiUrl(courseId, editedContentGroups.id),
-    );
+    expect(axiosMock.history.post[0].url).toEqual(getLegacyApiUrl(courseId, editedContentGroups.id));
     expect(result).toEqual(expected);
   });
 
@@ -108,18 +95,12 @@ describe('group configurations API calls', () => {
     };
 
     response.allGroupConfigurations[1] = updatedContentGroups;
-    axiosMock
-      .onDelete(
-        getLegacyApiUrl(courseId, parentGroupId, groupId),
-      )
-      .reply(200, response);
+    axiosMock.onDelete(getLegacyApiUrl(courseId, parentGroupId, groupId)).reply(200, response);
 
     const result = await deleteContentGroup(courseId, parentGroupId, groupId);
     const expected = camelCaseObject(response);
 
-    expect(axiosMock.history.delete[0].url).toEqual(
-      getLegacyApiUrl(courseId, updatedContentGroups.id, groupId),
-    );
+    expect(axiosMock.history.delete[0].url).toEqual(getLegacyApiUrl(courseId, updatedContentGroups.id, groupId));
     expect(result).toEqual(expected);
   });
 
@@ -132,14 +113,9 @@ describe('group configurations API calls', () => {
     ];
 
     response.experimentGroupConfigurations = updatedConfigurations;
-    axiosMock
-      .onPost(getLegacyApiUrl(courseId), updatedConfigurations)
-      .reply(200, response);
+    axiosMock.onPost(getLegacyApiUrl(courseId), updatedConfigurations).reply(200, response);
 
-    const result = await createExperimentConfiguration(
-      courseId,
-      updatedConfigurations,
-    );
+    const result = await createExperimentConfiguration(courseId, updatedConfigurations);
     const expected = camelCaseObject(response);
 
     expect(axiosMock.history.post[0].url).toEqual(getLegacyApiUrl(courseId));

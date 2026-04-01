@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks,
-} from '@src/testUtils';
+import { render, screen, initializeMocks } from '@src/testUtils';
 import { selectors } from '../../../../../../data/redux';
 import { ShowAnswerCardInternal as ShowAnswerCard, mapStateToProps, mapDispatchToProps } from './ShowAnswerCard';
 import * as hooks from '../hooks';
@@ -9,9 +7,9 @@ import * as hooks from '../hooks';
 jest.mock('../../../../../../data/redux', () => ({
   selectors: {
     app: {
-      studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
+      studioEndpointUrl: jest.fn((state) => ({ studioEndpointUrl: state })),
+      learningContextId: jest.fn((state) => ({ learningContextId: state })),
+      isLibrary: jest.fn((state) => ({ isLibrary: state })),
     },
   },
   thunkActions: {

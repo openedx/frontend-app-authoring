@@ -3,13 +3,7 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  CardView,
-  DataTable,
-  Dropzone,
-  TextFilter,
-  useToggle,
-} from '@openedx/paragon';
+import { CardView, DataTable, Dropzone, TextFilter, useToggle } from '@openedx/paragon';
 
 import { RequestStatus } from '../../data/constants';
 import { sortFiles } from './utils';
@@ -17,14 +11,7 @@ import messages from './messages';
 
 import InfoModal from './InfoModal';
 import FileInput, { useFileInput } from './FileInput';
-import {
-  GalleryCard,
-  TableActions,
-  RowStatus,
-  MoreInfoColumn,
-  FilterStatus,
-  Footer,
-} from './table-components';
+import { GalleryCard, TableActions, RowStatus, MoreInfoColumn, FilterStatus, Footer } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 
@@ -68,24 +55,21 @@ const FileTable = ({
     sortBy: [],
   });
 
-  const {
-    loadingStatus,
-    usagePathStatus,
-    usageErrorMessages,
-    encodingsDownloadUrl,
-    supportedFileFormats,
-    fileType,
-  } = data;
-  const defaultCurrentView = (fileType === 'video' && localStorage.getItem('videosCurrentView')) || (fileType === 'file' && localStorage.getItem('filesCurrentView')) || defaultView;
+  const { loadingStatus, usagePathStatus, usageErrorMessages, encodingsDownloadUrl, supportedFileFormats, fileType } =
+    data;
+  const defaultCurrentView =
+    (fileType === 'video' && localStorage.getItem('videosCurrentView')) ||
+    (fileType === 'file' && localStorage.getItem('filesCurrentView')) ||
+    defaultView;
   const [currentView, setCurrentView] = useState(defaultCurrentView);
 
   useEffect(() => {
     if (!isEmpty(selectedRows) && Object.keys(selectedRows[0]).length > 0) {
       const updatedRows = [];
-      selectedRows.forEach(row => {
+      selectedRows.forEach((row) => {
         const currentFile = row.original;
         if (currentFile) {
-          const [updatedFile] = files.filter(file => file.id === currentFile?.id);
+          const [updatedFile] = files.filter((file) => file.id === currentFile?.id);
           updatedRows.push({ original: updatedFile });
         }
       });
@@ -116,8 +100,8 @@ const FileTable = ({
     closeDeleteConfirmation();
     setDeleteOpen();
     handleErrorReset({ errorType: 'delete' });
-    const fileIdsToDelete = selectedRows.map(row => row.original.id);
-    fileIdsToDelete.forEach(id => handleDeleteFile(id));
+    const fileIdsToDelete = selectedRows.map((row) => row.original.id);
+    fileIdsToDelete.forEach((id) => handleDeleteFile(id));
   };
 
   const handleBulkDownload = useCallback(async (selectedFlatRows) => {
@@ -173,17 +157,18 @@ const FileTable = ({
   const moreInfoColumn = {
     id: 'moreInfo',
     Header: '',
-    Cell: ({ row }) => MoreInfoColumn({
-      row,
-      handleLock: handleLockFile,
-      handleBulkDownload,
-      handleOpenFileInfo,
-      handleOpenDeleteConfirmation,
-      fileType,
-    }),
+    Cell: ({ row }) =>
+      MoreInfoColumn({
+        row,
+        handleLock: handleLockFile,
+        handleBulkDownload,
+        handleOpenFileInfo,
+        handleOpenDeleteConfirmation,
+        fileType,
+      }),
   };
 
-  const hasMoreInfoColumn = tableColumns.filter(col => col.id === 'moreInfo').length === 1;
+  const hasMoreInfoColumn = tableColumns.filter((col) => col.id === 'moreInfo').length === 1;
   if (!hasMoreInfoColumn) {
     tableColumns.push({ ...moreInfoColumn });
   }
@@ -237,8 +222,15 @@ const FileTable = ({
           <div data-testid="files-data-table" className="bg-light-200">
             <DataTable.TableControlBar />
             <hr className="mb-5 border-light-700" />
-            { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
-            { currentView === 'list' && <DataTable.Table /> }
+            {currentView === 'card' && (
+              <CardView
+                CardComponent={fileCard}
+                columnSizes={columnSizes}
+                selectionPlacement="left"
+                skeletonCardCount={6}
+              />
+            )}
+            {currentView === 'list' && <DataTable.Table />}
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
             <Footer />
           </div>
@@ -295,7 +287,6 @@ const FileTable = ({
           sidebar={infoModalSidebar}
         />
       )}
-
     </div>
   );
 };
@@ -319,10 +310,12 @@ FileTable.propTypes = {
   handleLockFile: PropTypes.func,
   handleErrorReset: PropTypes.func.isRequired,
   handleFileOrder: PropTypes.func.isRequired,
-  tableColumns: PropTypes.arrayOf(PropTypes.shape({
-    Header: PropTypes.string,
-    accessor: PropTypes.string,
-  })).isRequired,
+  tableColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      Header: PropTypes.string,
+      accessor: PropTypes.string,
+    }),
+  ).isRequired,
   maxFileSize: PropTypes.number.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
   infoModalSidebar: PropTypes.func.isRequired,

@@ -53,8 +53,9 @@ const messages = defineMessages({
   },
   selectLibraryNoLibrariesMessage: {
     id: 'course-authoring.library-authoring.pick-components.select-library.no-libraries.message',
-    defaultMessage: 'You don\'t have any libraries created yet, or you don\'t have access to any libraries. To '
-      + 'create a new library, go to Studio Home or contact your system administrator.',
+    defaultMessage:
+      "You don't have any libraries created yet, or you don't have access to any libraries. To " +
+      'create a new library, go to Studio Home or contact your system administrator.',
     description: 'The message for the no libraries state in the select library component',
   },
   selectLibraryNextButton: {

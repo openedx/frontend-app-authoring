@@ -10,12 +10,7 @@ const ContainerInfoHeader = () => {
     throw new Error('containerId is required');
   }
 
-  return (
-    <ContainerEditableTitle
-      containerId={containerId}
-      textClassName="font-weight-bold m-1.5"
-    />
-  );
+  return <ContainerEditableTitle containerId={containerId} textClassName="font-weight-bold m-1.5" />;
 };
 
 export default ContainerInfoHeader;

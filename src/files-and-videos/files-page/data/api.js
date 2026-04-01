@@ -3,9 +3,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import saveAs from 'file-saver';
 
-ensureConfig([
-  'STUDIO_BASE_URL',
-], 'Course Apps API service');
+ensureConfig(['STUDIO_BASE_URL'], 'Course Apps API service');
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getAssetsUrl = (courseId) => `${getApiBaseUrl()}/assets/${courseId}/`;
@@ -17,8 +15,7 @@ export const getAssetsUrl = (courseId) => `${getApiBaseUrl()}/assets/${courseId}
  */
 export async function getAssets(courseId, page) {
   const nextPage = page || 0;
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getAssetsUrl(courseId)}?page=${nextPage}`);
+  const { data } = await getAuthenticatedHttpClient().get(`${getAssetsUrl(courseId)}?page=${nextPage}`);
   return camelCaseObject(data);
 }
 
@@ -28,10 +25,9 @@ export async function getAssets(courseId, page) {
  * @returns {Promise<[{}]>}
  */
 export async function getAssetDetails({ courseId, filenames, fileCount }) {
-  const params = new URLSearchParams(filenames.map(filename => ['display_name', filename]));
+  const params = new URLSearchParams(filenames.map((filename) => ['display_name', filename]));
   params.append('page_size', fileCount);
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getAssetsUrl(courseId)}?${params}`);
+  const { data } = await getAuthenticatedHttpClient().get(`${getAssetsUrl(courseId)}?${params}`);
   return camelCaseObject(data);
 }
 
@@ -65,12 +61,12 @@ export async function getDownload(selectedRows, courseId) {
         }
       }),
     );
-    const definedAssets = assetFetcher.filter(asset => asset.value !== null);
+    const definedAssets = assetFetcher.filter((asset) => asset.value !== null);
     if (definedAssets.length > 0) {
       definedAssets.forEach((assetBlob, index) => {
         folder.file(assetNames[index], assetBlob.value, { blob: true });
       });
-      await zip.generateAsync({ type: 'blob' }).then(content => {
+      await zip.generateAsync({ type: 'blob' }).then((content) => {
         saveAs(content, `${courseId}-assets-${date}.zip`);
       });
     }
@@ -93,8 +89,7 @@ export async function getDownload(selectedRows, courseId) {
 
  */
 export async function getAssetUsagePaths({ courseId, assetId }) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getAssetsUrl(courseId)}${assetId}/usage`);
+  const { data } = await getAuthenticatedHttpClient().get(`${getAssetsUrl(courseId)}${assetId}/usage`);
   const { usage_locations: usageLocations } = data;
   return { usageLocations };
 }
@@ -105,8 +100,7 @@ export async function getAssetUsagePaths({ courseId, assetId }) {
 
  */
 export async function deleteAsset(courseId, assetId) {
-  await getAuthenticatedHttpClient()
-    .delete(`${getAssetsUrl(courseId)}${assetId}`);
+  await getAuthenticatedHttpClient().delete(`${getAssetsUrl(courseId)}${assetId}`);
 }
 
 /**
@@ -117,8 +111,7 @@ export async function deleteAsset(courseId, assetId) {
 export async function addAsset(courseId, file) {
   const formData = new FormData();
   formData.append('file', file);
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getAssetsUrl(courseId), formData);
+  const { data } = await getAuthenticatedHttpClient().post(getAssetsUrl(courseId), formData);
   return camelCaseObject(data);
 }
 
@@ -128,9 +121,8 @@ export async function addAsset(courseId, file) {
 
  */
 export async function updateLockStatus({ assetId, courseId, locked }) {
-  const { data } = await getAuthenticatedHttpClient()
-    .put(`${getAssetsUrl(courseId)}${assetId}`, {
-      locked,
-    });
+  const { data } = await getAuthenticatedHttpClient().put(`${getAssetsUrl(courseId)}${assetId}`, {
+    locked,
+  });
   return camelCaseObject(data);
 }

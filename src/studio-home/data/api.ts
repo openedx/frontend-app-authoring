@@ -16,7 +16,9 @@ export async function getStudioHomeData(): Promise<object> {
 
 /** Get list of courses from the deprecated non-paginated API */
 export async function getStudioHomeCourses(search: string) {
-  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/contentstore/v1/home/courses${search}`);
+  const { data } = await getAuthenticatedHttpClient().get(
+    `${getApiBaseUrl()}/api/contentstore/v1/home/courses${search}`,
+  );
   return camelCaseObject(data);
 }
 /**
@@ -27,7 +29,10 @@ export async function getStudioHomeCourses(search: string) {
  */
 export async function getStudioHomeCoursesV2(search: string, customParams: object): Promise<object> {
   const customParamsFormat = snakeCaseObject(customParams);
-  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/contentstore/v2/home/courses${search}`, { params: customParamsFormat });
+  const { data } = await getAuthenticatedHttpClient().get(
+    `${getApiBaseUrl()}/api/contentstore/v2/home/courses${search}`,
+    { params: customParamsFormat },
+  );
   return camelCaseObject(data);
 }
 
@@ -56,7 +61,7 @@ export async function getStudioHomeLibraries(): Promise<LibrariesV1ListData> {
 
 /**
  * Handle course notification requests.
-*/
+ */
 export async function handleCourseNotification(url: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient().delete(getCourseNotificationUrl(url));
   return camelCaseObject(data);

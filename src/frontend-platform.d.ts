@@ -3,7 +3,6 @@
 // (whichever comes first).
 
 declare module '@edx/frontend-platform/i18n' {
-
   // eslint-disable-next-line import/no-extraneous-dependencies
   export {
     createIntl,

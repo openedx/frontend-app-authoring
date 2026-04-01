@@ -9,50 +9,30 @@ import { getPublishInfo } from '../utils';
 import messages from '../messages';
 import ReleaseInfoComponent from './ReleaseInfoComponent';
 
-const SidebarBody = ({
-  releaseLabel,
-  displayUnitLocation,
-  locationId,
-  visibleToStaffOnly,
-}) => {
+const SidebarBody = ({ releaseLabel, displayUnitLocation, locationId, visibleToStaffOnly }) => {
   const intl = useIntl();
-  const {
-    editedOn,
-    editedBy,
-    hasChanges,
-    publishedBy,
-    publishedOn,
-  } = useSelector(getCourseUnitData);
+  const { editedOn, editedBy, hasChanges, publishedBy, publishedOn } = useSelector(getCourseUnitData);
 
   return (
-    <Card.Body className={classNames('course-unit-sidebar-date', {
-      'is-stuff-only': visibleToStaffOnly,
-    })}
+    <Card.Body
+      className={classNames('course-unit-sidebar-date', {
+        'is-stuff-only': visibleToStaffOnly,
+      })}
     >
       <Stack>
         {displayUnitLocation ? (
           <span>
-            <h5 className="course-unit-sidebar-date-stage m-0">
-              {intl.formatMessage(messages.unitLocationTitle)}
-            </h5>
-            <p className="m-0 font-weight-bold">
-              {locationId}
-            </p>
+            <h5 className="course-unit-sidebar-date-stage m-0">{intl.formatMessage(messages.unitLocationTitle)}</h5>
+            <p className="m-0 font-weight-bold">{locationId}</p>
           </span>
         ) : (
           <>
-            <span>
-              {getPublishInfo(intl, hasChanges, editedBy, editedOn, publishedBy, publishedOn)}
-            </span>
+            <span>{getPublishInfo(intl, hasChanges, editedBy, editedOn, publishedBy, publishedOn)}</span>
             <span className="mt-3.5">
-              <h5 className="course-unit-sidebar-date-stage m-0">
-                {releaseLabel}
-              </h5>
+              <h5 className="course-unit-sidebar-date-stage m-0">{releaseLabel}</h5>
               <ReleaseInfoComponent />
             </span>
-            <p className="mt-3.5 mb-0">
-              {intl.formatMessage(messages.sidebarBodyNote)}
-            </p>
+            <p className="mt-3.5 mb-0">{intl.formatMessage(messages.sidebarBodyNote)}</p>
           </>
         )}
       </Stack>

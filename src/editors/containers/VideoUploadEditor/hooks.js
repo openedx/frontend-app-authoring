@@ -7,9 +7,7 @@ import { selectors, thunkActions } from '../../data/redux';
 import store from '../../data/store';
 import * as appHooks from '../../hooks';
 
-export const {
-  navigateTo,
-} = appHooks;
+export const { navigateTo } = appHooks;
 
 export const postUploadRedirect = (storeState, uploadType = 'selectedVideoUrl', onUpload = null) => {
   const learningContextId = selectors.app.learningContextId(storeState);
@@ -27,20 +25,17 @@ export const onVideoUpload = (uploadType, onUpload) => {
   return module.postUploadRedirect(storeState, uploadType, onUpload);
 };
 
-export const useUploadVideo = async ({
-  dispatch,
-  supportedFiles,
-  setLoadSpinner,
-  postUploadRedirectFunction,
-}) => {
-  dispatch(thunkActions.video.uploadVideo({
-    supportedFiles,
-    setLoadSpinner,
-    postUploadRedirectFunction,
-  }));
+export const useUploadVideo = async ({ dispatch, supportedFiles, setLoadSpinner, postUploadRedirectFunction }) => {
+  dispatch(
+    thunkActions.video.uploadVideo({
+      supportedFiles,
+      setLoadSpinner,
+      postUploadRedirectFunction,
+    }),
+  );
 };
 
-export const useHistoryGoBack = () => (() => window.history.back());
+export const useHistoryGoBack = () => () => window.history.back();
 
 export default {
   postUploadRedirect,

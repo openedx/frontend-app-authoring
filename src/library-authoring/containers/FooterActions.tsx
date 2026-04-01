@@ -11,11 +11,7 @@ interface FooterActionsProps {
   addExistingContentBtnText: string;
 }
 
-export const FooterActions = ({
-  addContentType,
-  addContentBtnText,
-  addExistingContentBtnText,
-}: FooterActionsProps) => {
+export const FooterActions = ({ addContentType, addContentBtnText, addExistingContentBtnText }: FooterActionsProps) => {
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const { openAddContentSidebar } = useSidebarContext();
   const { readOnly, setCreateContainerModalType } = useOptionalLibraryContext();
@@ -51,10 +47,7 @@ export const FooterActions = ({
         >
           {addExistingContentBtnText}
         </Button>
-        <PickLibraryContentModal
-          isOpen={isAddLibraryContentModalOpen}
-          onClose={closeAddLibraryContentModal}
-        />
+        <PickLibraryContentModal isOpen={isAddLibraryContentModalOpen} onClose={closeAddLibraryContentModal} />
       </div>
     </div>
   );

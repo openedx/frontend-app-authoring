@@ -1,10 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Stack,
-  Tab,
-  Tabs,
-} from '@openedx/paragon';
+import { Stack, Tab, Tabs } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -48,9 +44,7 @@ const TabsSection = ({
     }
 
     if (pname.includes('/libraries')) {
-      return librariesV2Enabled
-        ? TABS_LIST.libraries
-        : TABS_LIST.legacyLibraries;
+      return librariesV2Enabled ? TABS_LIST.libraries : TABS_LIST.legacyLibraries;
     }
 
     // Default to courses tab
@@ -69,11 +63,7 @@ const TabsSection = ({
   const visibleTabs = useMemo(() => {
     const tabs: JSX.Element[] = [];
     tabs.push(
-      <Tab
-        key={TABS_LIST.courses}
-        eventKey={TABS_LIST.courses}
-        title={intl.formatMessage(messages.coursesTabTitle)}
-      >
+      <Tab key={TABS_LIST.courses} eventKey={TABS_LIST.courses} title={intl.formatMessage(messages.coursesTabTitle)}>
         <CoursesList
           showNewCourseContainer={showNewCourseContainer}
           onClickNewCourse={onClickNewCourse}
@@ -87,11 +77,11 @@ const TabsSection = ({
         <Tab
           key={TABS_LIST.libraries}
           eventKey={TABS_LIST.libraries}
-          title={(
+          title={
             <Stack gap={2} direction="horizontal">
               {intl.formatMessage(messages.librariesTabTitle)}
             </Stack>
-          )}
+          }
         >
           <div>
             <WelcomeLibrariesV2Alert />
@@ -106,16 +96,9 @@ const TabsSection = ({
         <Tab
           key={TABS_LIST.legacyLibraries}
           eventKey={TABS_LIST.legacyLibraries}
-          title={intl.formatMessage(
-            librariesV2Enabled
-              ? messages.legacyLibrariesTabTitle
-              : messages.librariesTabTitle,
-          )}
+          title={intl.formatMessage(librariesV2Enabled ? messages.legacyLibrariesTabTitle : messages.librariesTabTitle)}
         >
-          <LibrariesList
-            migrationFilter={migrationFilter}
-            setMigrationFilter={setMigrationFilter}
-          />
+          <LibrariesList migrationFilter={migrationFilter} setMigrationFilter={setMigrationFilter} />
         </Tab>,
       );
     }
@@ -147,12 +130,7 @@ const TabsSection = ({
   };
 
   return (
-    <Tabs
-      className="studio-home-tabs"
-      variant="tabs"
-      activeKey={tabKey}
-      onSelect={handleSelectTab}
-    >
+    <Tabs className="studio-home-tabs" variant="tabs" activeKey={tabKey} onSelect={handleSelectTab}>
       {visibleTabs}
     </Tabs>
   );

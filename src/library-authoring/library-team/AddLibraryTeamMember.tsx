@@ -1,9 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Form,
-  ActionRow,
-} from '@openedx/paragon';
+import { Button, Form, ActionRow } from '@openedx/paragon';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -11,9 +7,12 @@ import messages from './messages';
 import FormikControl from '../../generic/FormikControl';
 import { EXAMPLE_USER_EMAIL } from './constants';
 
-const AddLibraryTeamMember = ({ onSubmit, onCancel }: {
-  onSubmit: ({ email } : { email: string }) => void,
-  onCancel: () => void,
+const AddLibraryTeamMember = ({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: ({ email }: { email: string }) => void;
+  onCancel: () => void;
 }) => {
   const intl = useIntl();
 
@@ -22,11 +21,9 @@ const AddLibraryTeamMember = ({ onSubmit, onCancel }: {
       <Formik
         initialValues={{ email: '' }}
         onSubmit={onSubmit}
-        validationSchema={
-          Yup.object().shape({
-            email: Yup.string().required('Email required').email('Invalid email'),
-          })
-        }
+        validationSchema={Yup.object().shape({
+          email: Yup.string().required('Email required').email('Invalid email'),
+        })}
         validateOnBlur
       >
         {({ handleSubmit, values }) => (
@@ -47,11 +44,7 @@ const AddLibraryTeamMember = ({ onSubmit, onCancel }: {
               <Button variant="tertiary" size="sm" onClick={onCancel}>
                 {intl.formatMessage(messages.cancelButton)}
               </Button>
-              <Button
-                size="sm"
-                type="submit"
-                disabled={!values.email.length}
-              >
+              <Button size="sm" type="submit" disabled={!values.email.length}>
                 {intl.formatMessage(messages.addMemberFormSubmitButton)}
               </Button>
             </ActionRow>

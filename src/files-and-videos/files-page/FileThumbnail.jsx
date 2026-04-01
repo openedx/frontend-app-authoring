@@ -1,20 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Icon,
-  Image,
-} from '@openedx/paragon';
+import { Icon, Image } from '@openedx/paragon';
 import { getSrc } from './data/utils';
 import messages from './messages';
 
-const FileThumbnail = ({
-  thumbnail,
-  wrapperType,
-  externalUrl,
-  displayName,
-  imageSize,
-}) => {
+const FileThumbnail = ({ thumbnail, wrapperType, externalUrl, displayName, imageSize }) => {
   const intl = useIntl();
 
   const src = getSrc({
@@ -40,10 +31,7 @@ const FileThumbnail = ({
           alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
         />
       ) : (
-        <div
-          className="row justify-content-center align-items-center m-0 border rounded"
-          style={imageSize}
-        >
+        <div className="row justify-content-center align-items-center m-0 border rounded" style={imageSize}>
           <Icon src={src} style={{ height: '48px', width: '48px' }} />
         </div>
       )}

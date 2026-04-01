@@ -1,7 +1,5 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  Button, Card, Icon, Stack,
-} from '@openedx/paragon';
+import { Button, Card, Icon, Stack } from '@openedx/paragon';
 import { Cached, LinkOff, Newsstand } from '@openedx/paragon/icons';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
@@ -57,18 +55,10 @@ const HasTopParentTextAndButton = ({
     }
     const category = getBlockType(upstreamInfo.topLevelParentKey) as ContainerType;
     if ([ContainerType.Chapter, ContainerType.Section].includes(category)) {
-      return goToParent(
-        upstreamInfo.topLevelParentKey,
-        undefined,
-        upstreamInfo.topLevelParentKey,
-      );
+      return goToParent(upstreamInfo.topLevelParentKey, undefined, upstreamInfo.topLevelParentKey);
     }
     // Only possible option is sequential or subsection
-    return goToParent(
-      upstreamInfo.topLevelParentKey,
-      upstreamInfo.topLevelParentKey,
-      sectionId,
-    );
+    return goToParent(upstreamInfo.topLevelParentKey, upstreamInfo.topLevelParentKey, sectionId);
   };
 
   if (!upstreamInfo?.topLevelParentKey) {
@@ -84,12 +74,7 @@ const HasTopParentTextAndButton = ({
     return (
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.hasTopParentBrokenLinkText} values={messageValues} />
-        <Button
-          variant="outline-primary"
-          iconBefore={LinkOff}
-          disabled={isPending}
-          onClick={handleUnlinkClick}
-        >
+        <Button variant="outline-primary" iconBefore={LinkOff} disabled={isPending} onClick={handleUnlinkClick}>
           <FormattedMessage {...messages.hasTopParentBrokenLinkBtn} values={messageValues} />
         </Button>
       </Stack>
@@ -100,11 +85,7 @@ const HasTopParentTextAndButton = ({
     return (
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.hasTopParentReadyToSyncText} values={messageValues} />
-        <Button
-          variant="outline-primary"
-          iconBefore={Cached}
-          onClick={handleSyncClick}
-        >
+        <Button variant="outline-primary" iconBefore={Cached} onClick={handleSyncClick}>
           <FormattedMessage {...messages.hasTopParentReadyToSyncBtn} values={messageValues} />
         </Button>
       </Stack>
@@ -114,22 +95,14 @@ const HasTopParentTextAndButton = ({
   return (
     <Stack direction="vertical" gap={2}>
       <FormattedMessage {...messages.hasTopParentText} values={messageValues} />
-      <Button
-        variant="outline-primary"
-        onClick={handleGoToParent}
-      >
+      <Button variant="outline-primary" onClick={handleGoToParent}>
         <FormattedMessage {...messages.hasTopParentBtn} values={messageValues} />
       </Button>
     </Stack>
   );
 };
 
-const TopLevelTextAndButton = ({
-  blockData,
-  displayName,
-  openSyncModal,
-  sectionId,
-}: SubProps) => {
+const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal, sectionId }: SubProps) => {
   const { upstreamInfo } = blockData;
   const { openUnlinkModal } = useCourseAuthoringContext();
   const messageValues = {
@@ -152,11 +125,7 @@ const TopLevelTextAndButton = ({
     return (
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.topParentBrokenLinkText} values={messageValues} />
-        <Button
-          variant="outline-primary"
-          iconBefore={LinkOff}
-          onClick={handleUnlinkClick}
-        >
+        <Button variant="outline-primary" iconBefore={LinkOff} onClick={handleUnlinkClick}>
           <FormattedMessage {...messages.topParentBrokenLinkBtn} />
         </Button>
       </Stack>
@@ -167,11 +136,7 @@ const TopLevelTextAndButton = ({
     return (
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.topParentReadyToSyncText} values={messageValues} />
-        <Button
-          variant="outline-primary"
-          iconBefore={Cached}
-          onClick={handleSyncClick}
-        >
+        <Button variant="outline-primary" iconBefore={Cached} onClick={handleSyncClick}>
           <FormattedMessage {...messages.topParentReadyToSyncBtn} values={messageValues} />
         </Button>
       </Stack>
@@ -179,9 +144,7 @@ const TopLevelTextAndButton = ({
   }
 
   if ((upstreamInfo?.downstreamCustomized.length || 0) > 0) {
-    return (
-      <FormattedMessage {...messages.topParentModifiedText} values={messageValues} />
-    );
+    return <FormattedMessage {...messages.topParentModifiedText} values={messageValues} />;
   }
 
   return null;
@@ -190,7 +153,7 @@ const TopLevelTextAndButton = ({
 interface Props {
   itemId?: string;
   sectionId?: string;
-  postChange: (accept: boolean) => void,
+  postChange: (accept: boolean) => void;
   goToParent: (containerId: string, subsectionId?: string, sectionId?: string) => void;
 }
 
@@ -198,12 +161,7 @@ interface Props {
  * Libray reference card to show info and actions about
  * upstream link of an item.
  */
-export const LibraryReferenceCard = ({
-  itemId,
-  sectionId,
-  postChange,
-  goToParent,
-}: Props) => {
+export const LibraryReferenceCard = ({ itemId, sectionId, postChange, goToParent }: Props) => {
   const { data: itemData, isPending } = useCourseItemData(itemId);
   const [isSyncModalOpen, syncModalData, openSyncModal, closeSyncModal] = useToggleWithValue<XBlock>();
 
@@ -233,7 +191,9 @@ export const LibraryReferenceCard = ({
           <Stack gap={3}>
             <Stack direction="horizontal" gap={2}>
               <Icon src={Newsstand} />
-              <h4 className="mb-0"><FormattedMessage {...messages.libraryReferenceCardText} /></h4>
+              <h4 className="mb-0">
+                <FormattedMessage {...messages.libraryReferenceCardText} />
+              </h4>
             </Stack>
             <TopLevelTextAndButton
               blockData={itemData}

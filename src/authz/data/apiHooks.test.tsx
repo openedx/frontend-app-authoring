@@ -31,13 +31,9 @@ const singlePermission = {
   },
 };
 
-const mockValidSinglePermission = [
-  { action: 'example.read', scope: 'lib:example-org:test-lib', allowed: true },
-];
+const mockValidSinglePermission = [{ action: 'example.read', scope: 'lib:example-org:test-lib', allowed: true }];
 
-const mockInvalidSinglePermission = [
-  { action: 'example.read', scope: 'lib:example-org:test-lib', allowed: false },
-];
+const mockInvalidSinglePermission = [{ action: 'example.read', scope: 'lib:example-org:test-lib', allowed: false }];
 
 const mockEmptyPermissions = [
   // No permissions returned

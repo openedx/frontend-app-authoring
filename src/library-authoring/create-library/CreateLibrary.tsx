@@ -12,11 +12,7 @@ import {
   Spinner,
   StatefulButton,
 } from '@openedx/paragon';
-import {
-  AccessTime,
-  Widgets,
-  PersonOutline,
-} from '@openedx/paragon/icons';
+import { AccessTime, Widgets, PersonOutline } from '@openedx/paragon/icons';
 import AlertError from '@src/generic/alert-error';
 import classNames from 'classnames';
 import { Formik } from 'formik';
@@ -50,9 +46,9 @@ export const CreateLibrary = ({
   handleCancel,
   handlePostCreate,
 }: {
-  showInModal?: boolean,
-  handleCancel?: () => void,
-  handlePostCreate?: (library: ContentLibrary) => void,
+  showInModal?: boolean;
+  handleCancel?: () => void;
+  handlePostCreate?: (library: ContentLibrary) => void;
 }) => {
   const intl = useIntl();
   const navigate = useNavigate();
@@ -65,36 +61,18 @@ export const CreateLibrary = ({
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [restoreTaskId, setRestoreTaskId] = useState<string>('');
 
-  const {
-    mutate,
-    data,
-    isPending,
-    isError,
-    error,
-  } = useCreateLibraryV2();
+  const { mutate, data, isPending, isError, error } = useCreateLibraryV2();
 
   const restoreMutation = useCreateLibraryRestore();
-  const {
-    data: restoreStatus,
-  } = useGetLibraryRestoreStatus(restoreTaskId);
+  const { data: restoreStatus } = useGetLibraryRestoreStatus(restoreTaskId);
+
+  const { data: allOrganizations, isLoading: isOrganizationListLoading } = useOrganizationListData();
 
   const {
-    data: allOrganizations,
-    isLoading: isOrganizationListLoading,
-  } = useOrganizationListData();
-
-  const {
-    studioHomeData: {
-      allowedOrganizationsForLibraries,
-      allowToCreateNewOrg,
-    },
+    studioHomeData: { allowedOrganizationsForLibraries, allowToCreateNewOrg },
   } = useStudioHome();
 
-  const organizations = (
-    allowToCreateNewOrg
-      ? allOrganizations
-      : allowedOrganizationsForLibraries
-  ) || [];
+  const organizations = (allowToCreateNewOrg ? allOrganizations : allowedOrganizationsForLibraries) || [];
 
   const handleOnClickCancel = () => {
     if (handleCancel) {
@@ -110,37 +88,33 @@ export const CreateLibrary = ({
   }, []);
 
   // Handle file upload
-  const handleFileUpload = useCallback(({
-    fileData,
-    handleError,
-  }: {
-    fileData: FormData;
-    requestConfig: any;
-    handleError: any;
-  }) => {
-    const file = fileData.get('file') as File;
-    if (file) {
-      // Validate file type using the same extensions as the dropzone
-      const fileName = file.name.toLowerCase();
-      const isValidFile = VALID_ARCHIVE_EXTENSIONS.some(ext => fileName.endsWith(ext));
+  const handleFileUpload = useCallback(
+    ({ fileData, handleError }: { fileData: FormData; requestConfig: any; handleError: any }) => {
+      const file = fileData.get('file') as File;
+      if (file) {
+        // Validate file type using the same extensions as the dropzone
+        const fileName = file.name.toLowerCase();
+        const isValidFile = VALID_ARCHIVE_EXTENSIONS.some((ext) => fileName.endsWith(ext));
 
-      if (isValidFile) {
-        setUploadedFile(file);
-        // Immediately start the restore process
-        restoreMutation.mutate(file, {
-          onSuccess: (response) => {
-            setRestoreTaskId(response.taskId);
-          },
-          onError: (restoreError) => {
-            handleError(restoreError);
-          },
-        });
-      } else {
-        // Call handleError for invalid file types
-        handleError(new Error(intl.formatMessage(messages.invalidFileTypeError)));
+        if (isValidFile) {
+          setUploadedFile(file);
+          // Immediately start the restore process
+          restoreMutation.mutate(file, {
+            onSuccess: (response) => {
+              setRestoreTaskId(response.taskId);
+            },
+            onError: (restoreError) => {
+              handleError(restoreError);
+            },
+          });
+        } else {
+          // Call handleError for invalid file types
+          handleError(new Error(intl.formatMessage(messages.invalidFileTypeError)));
+        }
       }
-    }
-  }, [restoreMutation, intl]);
+    },
+    [restoreMutation, intl],
+  );
 
   if (data) {
     if (handlePostCreate) {
@@ -152,19 +126,18 @@ export const CreateLibrary = ({
 
   return (
     <>
-      {!showInModal && (<Header isHiddenMainMenu />)}
+      {!showInModal && <Header isHiddenMainMenu />}
       <Container size="md" className="p-4 mt-3">
         {!showInModal && (
           <SubHeader
             title={intl.formatMessage(messages.createLibrary)}
-            headerActions={!isFromArchive ? (
-              <Button
-                variant="outline-primary"
-                onClick={handleCreateFromArchive}
-              >
-                {intl.formatMessage(messages.createFromArchiveButton)}
-              </Button>
-            ) : null}
+            headerActions={
+              !isFromArchive ? (
+                <Button variant="outline-primary" onClick={handleCreateFromArchive}>
+                  {intl.formatMessage(messages.createFromArchiveButton)}
+                </Button>
+              ) : null
+            }
           />
         )}
 
@@ -191,10 +164,7 @@ export const CreateLibrary = ({
                   backgroundColor: '#f8f9fa',
                 }}
               >
-                <Spinner
-                  animation="border"
-                  screenReaderText={intl.formatMessage(messages.uploadingStatus)}
-                />
+                <Spinner animation="border" screenReaderText={intl.formatMessage(messages.uploadingStatus)} />
               </div>
             )}
 
@@ -221,19 +191,17 @@ export const CreateLibrary = ({
                           })}
                         </span>
                       </div>
-                      {
-                        (restoreStatus.result.createdBy?.email && restoreStatus.result.createdOnServer) && (
-                          <div className="d-flex align-items-md-center gap-2">
-                            <Icon src={PersonOutline} className="mr-2" style={{ width: '20px', height: '20px' }} />
-                            <span className="x-small">
-                              {intl.formatMessage(messages.archiveRestoredCreatedBy, {
-                                createdBy: restoreStatus.result.createdBy?.email,
-                                server: restoreStatus.result.createdOnServer,
-                              })}
-                            </span>
-                          </div>
-                        )
-                      }
+                      {restoreStatus.result.createdBy?.email && restoreStatus.result.createdOnServer && (
+                        <div className="d-flex align-items-md-center gap-2">
+                          <Icon src={PersonOutline} className="mr-2" style={{ width: '20px', height: '20px' }} />
+                          <span className="x-small">
+                            {intl.formatMessage(messages.archiveRestoredCreatedBy, {
+                              createdBy: restoreStatus.result.createdBy?.email,
+                              server: restoreStatus.result.createdOnServer,
+                            })}
+                          </span>
+                        </div>
+                      )}
                       <div className="d-flex align-items-md-center gap-2">
                         <Icon src={AccessTime} className="mr-2" style={{ width: '20px', height: '20px' }} />
                         <span className="x-small">
@@ -253,11 +221,9 @@ export const CreateLibrary = ({
 
         {(restoreTaskId || isError || restoreMutation.isError) && (
           <div className="mb-4">
-            {(restoreStatus?.state === LibraryRestoreStatus.Pending
-            || restoreStatus?.state === LibraryRestoreStatus.InProgress) && (
-              <Alert variant="info">
-                {intl.formatMessage(messages.restoreInProgress)}
-              </Alert>
+            {(restoreStatus?.state === LibraryRestoreStatus.Pending ||
+              restoreStatus?.state === LibraryRestoreStatus.InProgress) && (
+              <Alert variant="info">{intl.formatMessage(messages.restoreInProgress)}</Alert>
             )}
             {(restoreStatus?.state === LibraryRestoreStatus.Failed || restoreMutation.isError) && (
               <Alert variant="danger">
@@ -274,10 +240,7 @@ export const CreateLibrary = ({
                   </div>
                 )}
                 {restoreMutation.isError && (
-                  <div>
-                    {restoreMutation.error?.message
-                      || intl.formatMessage(messages.genericErrorMessage)}
-                  </div>
+                  <div>{restoreMutation.error?.message || intl.formatMessage(messages.genericErrorMessage)}</div>
                 )}
               </Alert>
             )}
@@ -290,25 +253,16 @@ export const CreateLibrary = ({
             org: '',
             slug: '',
           }}
-          validationSchema={
-            Yup.object().shape({
-              title: Yup.string()
-                .required(intl.formatMessage(messages.requiredFieldError)),
-              org: Yup.string()
-                .required(intl.formatMessage(messages.requiredFieldError))
-                .matches(
-                  specialCharsRule,
-                  intl.formatMessage(messages.disallowedCharsError),
-                )
-                .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
-              slug: Yup.string()
-                .required(intl.formatMessage(messages.requiredFieldError))
-                .matches(
-                  validSlugIdRegex,
-                  intl.formatMessage(messages.invalidSlugError),
-                ),
-            })
-          }
+          validationSchema={Yup.object().shape({
+            title: Yup.string().required(intl.formatMessage(messages.requiredFieldError)),
+            org: Yup.string()
+              .required(intl.formatMessage(messages.requiredFieldError))
+              .matches(specialCharsRule, intl.formatMessage(messages.disallowedCharsError))
+              .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
+            slug: Yup.string()
+              .required(intl.formatMessage(messages.requiredFieldError))
+              .matches(validSlugIdRegex, intl.formatMessage(messages.invalidSlugError)),
+          })}
           onSubmit={(values) => {
             const submitData = { ...values } as CreateContentLibraryArgs;
 
@@ -336,16 +290,18 @@ export const CreateLibrary = ({
                 <Form.Autosuggest
                   name="org"
                   isLoading={isOrganizationListLoading}
-                  onChange={(event) => formikProps.setFieldValue(
-                    'org',
-                    allowToCreateNewOrg
-                      ? (event.selectionId || event.userProvidedText)
-                      : event.selectionId,
-                  )}
+                  onChange={(event) =>
+                    formikProps.setFieldValue(
+                      'org',
+                      allowToCreateNewOrg ? event.selectionId || event.userProvidedText : event.selectionId,
+                    )
+                  }
                   placeholder={intl.formatMessage(messages.orgPlaceholder)}
                 >
                   {organizations.map((org) => (
-                    <Form.AutosuggestOption key={org} id={org}>{org}</Form.AutosuggestOption>
+                    <Form.AutosuggestOption key={org} id={org}>
+                      {org}
+                    </Form.AutosuggestOption>
                   ))}
                 </Form.Autosuggest>
                 <FormikErrorFeedback name="org">
@@ -361,19 +317,13 @@ export const CreateLibrary = ({
                 className=""
                 controlClasses="pb-2"
               />
-              <ActionRow className={
-                classNames(
-                  {
-                    'justify-content-start': !showInModal,
-                    'justify-content-end': showInModal,
-                  },
-                )
-              }
+              <ActionRow
+                className={classNames({
+                  'justify-content-start': !showInModal,
+                  'justify-content-end': showInModal,
+                })}
               >
-                <Button
-                  variant="outline-primary"
-                  onClick={handleOnClickCancel}
-                >
+                <Button variant="outline-primary" onClick={handleOnClickCancel}>
                   {intl.formatMessage(messages.cancelCreateLibraryButton)}
                 </Button>
                 <StatefulButton
@@ -391,10 +341,9 @@ export const CreateLibrary = ({
             </Form>
           )}
         </Formik>
-        {isError && (<AlertError error={error} />)}
-
+        {isError && <AlertError error={error} />}
       </Container>
-      {!showInModal && (<StudioFooterSlot />)}
+      {!showInModal && <StudioFooterSlot />}
     </>
   );
 };

@@ -15,11 +15,11 @@ jest.mock('react', () => {
   const updateState = jest.fn();
   return {
     useEffect: jest.fn(),
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
+    useState: jest.fn((val) => [{ state: val }, (newVal) => updateState({ val, newVal })]),
   };
 });
 jest.mock('@edx/frontend-platform/i18n', () => ({
-  defineMessages: m => m,
+  defineMessages: (m) => m,
 }));
 jest.mock('../../../../../data/redux', () => ({
   actions: {
@@ -64,14 +64,16 @@ describe('Answer Options Hooks', () => {
         answer,
         dispatch,
       })();
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.deleteAnswer({
-        id: answer.id,
-        correct: answer.correct,
-        editorState: {
-          answers: { A: 'string' },
-          hints: [],
-        },
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.problem.deleteAnswer({
+          id: answer.id,
+          correct: answer.correct,
+          editorState: {
+            answers: { A: 'string' },
+            hints: [],
+          },
+        }),
+      );
     });
   });
   describe('setAnswer', () => {
@@ -81,11 +83,13 @@ describe('Answer Options Hooks', () => {
       const dispatch = useDispatch();
       const payload = { random: 'string' };
       module.setAnswer({ answer, hasSingleAnswer, dispatch })(payload);
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.updateAnswer({
-        id: answer.id,
-        hasSingleAnswer,
-        ...payload,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.problem.updateAnswer({
+          id: answer.id,
+          hasSingleAnswer,
+          ...payload,
+        }),
+      );
     });
   });
   describe('setAnswerTitle', () => {
@@ -101,11 +105,13 @@ describe('Answer Options Hooks', () => {
         dispatch,
         problemType,
       })(updatedTitle);
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.updateAnswer({
-        id: answer.id,
-        hasSingleAnswer,
-        title: updatedTitle.target.value,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.problem.updateAnswer({
+          id: answer.id,
+          hasSingleAnswer,
+          title: updatedTitle.target.value,
+        }),
+      );
     });
     test('it dispatches actions.problem.updateAnswer for single select problem', () => {
       const answer = { id: 'A' };
@@ -119,11 +125,13 @@ describe('Answer Options Hooks', () => {
         dispatch,
         problemType,
       })(updatedTitle, false);
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.updateAnswer({
-        id: answer.id,
-        hasSingleAnswer,
-        title: updatedTitle,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.problem.updateAnswer({
+          id: answer.id,
+          hasSingleAnswer,
+          title: updatedTitle,
+        }),
+      );
       expect(dispatch).toHaveBeenCalledWith(actions.problem.setDirty(false));
     });
   });
@@ -134,11 +142,13 @@ describe('Answer Options Hooks', () => {
       const dispatch = useDispatch();
       const value = 'string';
       module.setSelectedFeedback({ answer, hasSingleAnswer, dispatch })(value);
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.updateAnswer({
-        id: answer.id,
-        hasSingleAnswer,
-        selectedFeedback: value,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.problem.updateAnswer({
+          id: answer.id,
+          hasSingleAnswer,
+          selectedFeedback: value,
+        }),
+      );
     });
   });
   describe('setUnselectedFeedback', () => {
@@ -148,11 +158,13 @@ describe('Answer Options Hooks', () => {
       const dispatch = useDispatch();
       const value = 'string';
       module.setUnselectedFeedback({ answer, hasSingleAnswer, dispatch })(value);
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.updateAnswer({
-        id: answer.id,
-        hasSingleAnswer,
-        unselectedFeedback: value,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.problem.updateAnswer({
+          id: answer.id,
+          hasSingleAnswer,
+          unselectedFeedback: value,
+        }),
+      );
     });
   });
   describe('useFeedback hook', () => {
@@ -179,14 +191,18 @@ describe('Answer Options Hooks', () => {
     test('toggleFeedback with selected feedback', () => {
       const key = state.keys.isFeedbackVisible;
       output = module.useFeedback(answerWithOnlyFeedback);
-      windowSpy.mockImplementation(() => ({ tinymce: { editors: { 'selectedFeedback-A': { getContent: () => 'string' } } } }));
+      windowSpy.mockImplementation(() => ({
+        tinymce: { editors: { 'selectedFeedback-A': { getContent: () => 'string' } } },
+      }));
       output.toggleFeedback(false);
       expect(state.setState[key]).toHaveBeenCalledWith(true);
     });
     test('toggleFeedback with unselected feedback', () => {
       const key = state.keys.isFeedbackVisible;
       output = module.useFeedback(answerWithOnlyFeedback);
-      windowSpy.mockImplementation(() => ({ tinymce: { editors: { 'unselectedFeedback-A': { getContent: () => 'string' } } } }));
+      windowSpy.mockImplementation(() => ({
+        tinymce: { editors: { 'unselectedFeedback-A': { getContent: () => 'string' } } },
+      }));
       output.toggleFeedback(false);
       expect(state.setState[key]).toHaveBeenCalledWith(true);
     });

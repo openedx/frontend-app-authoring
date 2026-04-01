@@ -201,23 +201,20 @@ describe('TinyMCE Embed IFrame Plugin', () => {
     onChangeFunction(apiMock, field);
 
     const [generalTab, advancedTab] = pluginConfig.body.tabs;
-    const generalTabExpected = generalTab.items.filter(
-      (item) => item.type !== 'sizeinput',
-    );
+    const generalTabExpected = generalTab.items.filter((item) => item.type !== 'sizeinput');
 
-    const expectedTabs = [
-      { title: generalTab.title, items: generalTabExpected, type: generalTab.type },
-      advancedTab,
-    ];
+    const expectedTabs = [{ title: generalTab.title, items: generalTabExpected, type: generalTab.type }, advancedTab];
 
     const expectedBody = {
       type: pluginConfig.body.type,
       tabs: expectedTabs,
     };
 
-    expect(apiMock.redial).toHaveBeenCalledWith(expect.objectContaining({
-      body: expectedBody,
-    }));
+    expect(apiMock.redial).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expectedBody,
+      }),
+    );
   });
 
   test('adds sizeinput to generalTab items when sizeType is inline', () => {
@@ -293,7 +290,9 @@ describe('TinyMCE Embed IFrame Plugin', () => {
     expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining('height="800px"'));
     expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining(`name="${dataMock.name}"`));
     expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining(`title="${dataMock.title}"`));
-    expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining(`longdesc="${dataMock.longDescriptionURL}"`));
+    expect(editorMock.insertContent).toHaveBeenCalledWith(
+      expect.stringContaining(`longdesc="${dataMock.longDescriptionURL}"`),
+    );
     expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining('scrolling="yes"'));
 
     expect(apiMock.close).toHaveBeenCalled();

@@ -2,12 +2,7 @@ import PropTypes from 'prop-types';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Alert,
-  ActionRow,
-  Button,
-  Form,
-} from '@openedx/paragon';
+import { Alert, ActionRow, Button, Form } from '@openedx/paragon';
 
 import { WarningFilled as WarningFilledIcon } from '@openedx/paragon/icons';
 
@@ -50,17 +45,12 @@ const ContentGroupForm = ({
         validateOnBlur={false}
         onSubmit={onSubmitForm}
       >
-        {({
-          values, errors, dirty, handleChange, handleSubmit,
-        }) => {
+        {({ values, errors, dirty, handleChange, handleSubmit }) => {
           const isInvalid = !!errors.newGroupName;
 
           return (
             <>
-              <Form.Group
-                className="mt-3 mb-4 configuration-form-group"
-                isInvalid={isInvalid}
-              >
+              <Form.Group className="mt-3 mb-4 configuration-form-group" isInvalid={isInvalid}>
                 <Form.Control
                   value={values.newGroupName}
                   name="newGroupName"
@@ -74,11 +64,7 @@ const ContentGroupForm = ({
                 )}
               </Form.Group>
               {isUsedInLocation && (
-                <Alert
-                  variant="warning"
-                  icon={WarningFilledIcon}
-                  className="my-3"
-                >
+                <Alert variant="warning" icon={WarningFilledIcon} className="my-3">
                   <p>{formatMessage(messages.alertGroupInUsage)}</p>
                 </Alert>
               )}
@@ -87,9 +73,7 @@ const ContentGroupForm = ({
                   {formatMessage(messages.cancelButton)}
                 </Button>
                 <Button onClick={handleSubmit}>
-                  {formatMessage(
-                    isEditMode ? messages.saveButton : messages.createButton,
-                  )}
+                  {formatMessage(isEditMode ? messages.saveButton : messages.createButton)}
                 </Button>
               </ActionRow>
               <PromptIfDirty dirty={dirty} />

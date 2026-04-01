@@ -24,9 +24,7 @@ const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>>
   controlClasses = 'pb-2',
   ...params
 }) => {
-  const {
-    touched, errors, handleChange, handleBlur, setFieldError,
-  } = useFormikContext();
+  const { touched, errors, handleChange, handleBlur, setFieldError } = useFormikContext();
   const fieldTouched = getIn(touched, name);
   const fieldError = getIn(errors, name);
   const handleFocus = (e) => setFieldError(e.target.name, undefined);

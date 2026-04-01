@@ -31,7 +31,8 @@ const messages = defineMessages({
   },
   section_3_descriptions_1: {
     id: 'course-authoring.course-outline.sidebar.section-3.descriptions-1',
-    defaultMessage: 'Select the Configure icon for a section or subsection to set its release date. When you configure a subsection, you can also set the grading policy and due date.',
+    defaultMessage:
+      'Select the Configure icon for a section or subsection to set its release date. When you configure a subsection, you can also set the grading policy and due date.',
   },
   section_3_link: {
     id: 'course-authoring.course-outline.sidebar.section-3.link',
@@ -47,7 +48,8 @@ const messages = defineMessages({
   },
   section_4_descriptions_2: {
     id: 'course-authoring.course-outline.sidebar.section-4.descriptions-2',
-    defaultMessage: 'To make a section, subsection, or unit unavailable to learners, select the Configure icon for that level, then select the appropriate {hide} option. Grades for hidden sections, subsections, and units are not included in grade calculations.',
+    defaultMessage:
+      'To make a section, subsection, or unit unavailable to learners, select the Configure icon for that level, then select the appropriate {hide} option. Grades for hidden sections, subsections, and units are not included in grade calculations.',
   },
   section_4_descriptions_2_hide: {
     id: 'course-authoring.course-outline.sidebar.section-4.descriptions-2.hide',
@@ -55,7 +57,8 @@ const messages = defineMessages({
   },
   section_4_descriptions_3: {
     id: 'course-authoring.course-outline.sidebar.section-4.descriptions-3',
-    defaultMessage: 'To hide the content of a subsection from learners after the subsection due date has passed, select the Configure icon for a subsection, then select {hide}. Grades for the subsection remain included in grade calculations.',
+    defaultMessage:
+      'To hide the content of a subsection from learners after the subsection due date has passed, select the Configure icon for a subsection, then select {hide}. Grades for the subsection remain included in grade calculations.',
   },
   section_4_descriptions_3_hide: {
     id: 'course-authoring.course-outline.sidebar.section-4.descriptions-3.hide',

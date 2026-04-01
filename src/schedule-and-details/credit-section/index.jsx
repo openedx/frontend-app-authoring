@@ -15,9 +15,10 @@ const CreditSection = ({ creditRequirements }) => {
   };
 
   const renderRequirementValue = (requirementValue, key) => {
-    const displayValue = key === 'grade'
-      ? `${(parseFloat(requirementValue.criteria.minGrade) || 0) * 100}%`
-      : requirementValue.displayName;
+    const displayValue =
+      key === 'grade'
+        ? `${(parseFloat(requirementValue.criteria.minGrade) || 0) * 100}%`
+        : requirementValue.displayName;
     return (
       <span className="small text-black" key={requirementValue.name}>
         {displayValue}
@@ -33,9 +34,7 @@ const CreditSection = ({ creditRequirements }) => {
         <ul className="credit-info-list">
           {creditRequirementsKeys.map((key) => (
             <li key={key}>
-              <h4 className="mb-0 text-black">
-                {CREDIT_REQUIREMENTS_TYPES[key]}
-              </h4>
+              <h4 className="mb-0 text-black">{CREDIT_REQUIREMENTS_TYPES[key]}</h4>
               <div className="d-flex flex-column">
                 {creditRequirements[key].map((value) => renderRequirementValue(value, key))}
               </div>

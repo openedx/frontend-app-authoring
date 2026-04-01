@@ -1,7 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button, Container, Layout, StatefulButton,
-} from '@openedx/paragon';
+import { Button, Container, Layout, StatefulButton } from '@openedx/paragon';
 import { Add as IconAdd, CheckCircle, Warning } from '@openedx/paragon/icons';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
@@ -16,10 +14,7 @@ import AlertMessage from '@src/generic/alert-message';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import getPageHeadTitle from '@src/generic/utils';
 
-import {
-  useGradingSettings,
-  useGradingSettingUpdater,
-} from './data/apiHooks';
+import { useGradingSettings, useGradingSettingUpdater } from './data/apiHooks';
 import AssignmentSection from './assignment-section';
 import CreditSection from './credit-section';
 import DeadlineSection from './deadline-section';
@@ -74,11 +69,7 @@ const GradingSettings = () => {
     handleRemoveAssignment,
   } = useUpdateGradingData(courseGradingDetails, setOverrideInternetConnectionAlert, setShowSuccessAlert);
 
-  const {
-    gradeLetters,
-    gradeValues,
-    sortedGrades,
-  } = useConvertGradeCutoffs(gradeCutoffs);
+  const { gradeLetters, gradeValues, sortedGrades } = useConvertGradeCutoffs(gradeCutoffs);
 
   useEffect(() => {
     if (savingStatus) {
@@ -205,9 +196,7 @@ const GradingSettings = () => {
                   </section>
                   <section>
                     <header className="row justify-content-between align-items-center mt-4 mx-0 mb-2">
-                      <h2 className="lead">
-                        {intl.formatMessage(messages.assignmentTypeSectionTitle)}
-                      </h2>
+                      <h2 className="lead">{intl.formatMessage(messages.assignmentTypeSectionTitle)}</h2>
                       <span className="small text-gray-700">
                         {intl.formatMessage(messages.assignmentTypeSectionDescription)}
                       </span>
@@ -220,11 +209,7 @@ const GradingSettings = () => {
                       courseAssignmentLists={courseAssignmentLists}
                       setShowSuccessAlert={setShowSuccessAlert}
                     />
-                    <Button
-                      variant="primary"
-                      iconBefore={IconAdd}
-                      onClick={handleAddAssignment}
-                    >
+                    <Button variant="primary" iconBefore={IconAdd} onClick={handleAddAssignment}>
                       {intl.formatMessage(messages.addNewAssignmentTypeBtn)}
                     </Button>
                   </section>

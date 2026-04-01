@@ -1,20 +1,9 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import {
-  Form,
-  IconButtonWithTooltip,
-  ActionRow,
-  Icon,
-  Button,
-  Tooltip,
-  OverlayTrigger,
-} from '@openedx/paragon';
+import { Form, IconButtonWithTooltip, ActionRow, Icon, Button, Tooltip, OverlayTrigger } from '@openedx/paragon';
 import { DeleteOutline, InfoOutline, Add } from '@openedx/paragon/icons';
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import * as widgetHooks from '../hooks';
 import * as hooks from './hooks';
@@ -49,21 +38,14 @@ const VideoSourceWidget = () => {
     previousVideoId: videoId.formValue,
     setAlert: videoIdChangeAlert.set,
   });
-  const {
-    addFallbackVideo,
-    deleteFallbackVideo,
-  } = hooks.fallbackHooks({ fallbackVideos: fallbackVideos.formValue, dispatch });
+  const { addFallbackVideo, deleteFallbackVideo } = hooks.fallbackHooks({
+    fallbackVideos: fallbackVideos.formValue,
+    dispatch,
+  });
 
   return (
-    <CollapsibleFormWidget
-      fontSize="x-small"
-      title={intl.formatMessage(messages.titleLabel)}
-    >
-      <ErrorAlert
-        dismissError={videoIdChangeAlert.dismiss}
-        hideHeading
-        isError={videoIdChangeAlert.show}
-      >
+    <CollapsibleFormWidget fontSize="x-small" title={intl.formatMessage(messages.titleLabel)}>
+      <ErrorAlert dismissError={videoIdChangeAlert.dismiss} hideHeading isError={videoIdChangeAlert.show}>
         <FormattedMessage {...messages.videoIdChangeAlert} />
       </ErrorAlert>
 
@@ -97,27 +79,29 @@ const VideoSourceWidget = () => {
       <div className="mt-3">
         <FormattedMessage {...messages.fallbackVideoMessage} />
       </div>
-      {fallbackVideos.formValue.length > 0 ? fallbackVideos.formValue.map((videoUrl, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <Form.Row className="mt-3.5 mx-0 flex-nowrap" key={`${index}-${videoUrl}`}>
-          <Form.Group>
-            <Form.Control
-              floatingLabel={intl.formatMessage(messages.fallbackVideoLabel)}
-              onChange={fallbackVideos.onChange(index)}
-              value={fallbackVideos.local[index]}
-              onBlur={fallbackVideos.onBlur(index)}
-            />
-            <IconButtonWithTooltip
-              tooltipPlacement="top"
-              tooltipContent={intl.formatMessage(messages.deleteFallbackVideo)}
-              src={DeleteOutline}
-              iconAs={Icon}
-              alt={intl.formatMessage(messages.deleteFallbackVideo)}
-              onClick={() => deleteFallbackVideo(index)}
-            />
-          </Form.Group>
-        </Form.Row>
-      )) : null}
+      {fallbackVideos.formValue.length > 0
+        ? fallbackVideos.formValue.map((videoUrl, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <Form.Row className="mt-3.5 mx-0 flex-nowrap" key={`${index}-${videoUrl}`}>
+              <Form.Group>
+                <Form.Control
+                  floatingLabel={intl.formatMessage(messages.fallbackVideoLabel)}
+                  onChange={fallbackVideos.onChange(index)}
+                  value={fallbackVideos.local[index]}
+                  onBlur={fallbackVideos.onBlur(index)}
+                />
+                <IconButtonWithTooltip
+                  tooltipPlacement="top"
+                  tooltipContent={intl.formatMessage(messages.deleteFallbackVideo)}
+                  src={DeleteOutline}
+                  iconAs={Icon}
+                  alt={intl.formatMessage(messages.deleteFallbackVideo)}
+                  onClick={() => deleteFallbackVideo(index)}
+                />
+              </Form.Group>
+            </Form.Row>
+          ))
+        : null}
       <ActionRow className="mt-4.5">
         <Form.Group>
           <Form.Checkbox
@@ -132,11 +116,11 @@ const VideoSourceWidget = () => {
           <OverlayTrigger
             key="top"
             placement="top"
-            overlay={(
+            overlay={
               <Tooltip id="tooltip-top">
                 <FormattedMessage {...messages.allowDownloadTooltipMessage} />
               </Tooltip>
-            )}
+            }
           >
             <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
           </OverlayTrigger>

@@ -51,27 +51,21 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
 
   // Fetch from database
   const { data: contentData, isSuccess: isContentDataLoaded } = useContentData(contentId, fetchMetadata);
-  const {
-    data: contentTaxonomyTagsData,
-    isSuccess: isContentTaxonomyTagsLoaded,
-  } = useContentTaxonomyTagsData(contentId);
+  const { data: contentTaxonomyTagsData, isSuccess: isContentTaxonomyTagsLoaded } =
+    useContentTaxonomyTagsData(contentId);
   const { data: taxonomyListData, isSuccess: isTaxonomyListLoaded } = useTaxonomyList(org);
 
   // Tags fetched from database
   const { fetchedTaxonomies, fetchedOtherTaxonomies } = React.useMemo(() => {
     const sortTaxonomies = (taxonomiesList) => {
-      const taxonomiesWithData = taxonomiesList.filter(
-        (t) => t.contentTags.length !== 0,
-      );
+      const taxonomiesWithData = taxonomiesList.filter((t) => t.contentTags.length !== 0);
 
       // Count implicit tags per taxonomy.
       // TODO This count is also calculated individually
       // in ContentTagsCollapsible. It should only be calculated once.
       const tagsCountBytaxonomy = {};
       taxonomiesWithData.forEach((tax) => {
-        tagsCountBytaxonomy[tax.id] = new Set(
-          tax.contentTags.flatMap(item => item.lineage),
-        ).size;
+        tagsCountBytaxonomy[tax.id] = new Set(tax.contentTags.flatMap((item) => item.lineage)).size;
       });
 
       // Sort taxonomies with data by implicit count
@@ -82,9 +76,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
       // Empty taxonomies sorted by name.
       // Since the query returns sorted by name,
       // it is not necessary to do another sorting here.
-      const emptyTaxonomies = taxonomiesList.filter(
-        (t) => t.contentTags.length === 0,
-      );
+      const emptyTaxonomies = taxonomiesList.filter((t) => t.contentTags.length === 0);
 
       return [...sortedTaxonomiesWithData, ...emptyTaxonomies];
     };
@@ -94,7 +86,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
       const taxonomiesList = taxonomyListData.results.map((taxonomy) => ({
         ...taxonomy,
         canTagObject: taxonomy.canTagObject && canTagObject,
-        contentTags: /** @type {ContentTagData[]} */([]),
+        contentTags: /** @type {ContentTagData[]} */ ([]),
       }));
 
       const contentTaxonomies = contentTaxonomyTagsData.taxonomies;
@@ -123,8 +115,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
 
       // Delete Language taxonomy if is empty
       const filteredTaxonomies = taxonomiesList.filter(
-        (taxonomy) => taxonomy.exportId !== languageExportId
-          || taxonomy.contentTags.length !== 0,
+        (taxonomy) => taxonomy.exportId !== languageExportId || taxonomy.contentTags.length !== 0,
       );
 
       return {
@@ -139,73 +130,97 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   }, [taxonomyListData, contentTaxonomyTagsData]);
 
   // Add a content tags to the staged tags for a taxonomy
-  const addStagedContentTag = React.useCallback((taxonomyId, addedTag) => {
-    setStagedContentTags(prevStagedContentTags => {
-      const updatedStagedContentTags = {
-        ...prevStagedContentTags,
-        [taxonomyId]: [...(prevStagedContentTags[taxonomyId] ?? []), addedTag],
-      };
-      return updatedStagedContentTags;
-    });
-  }, [setStagedContentTags]);
+  const addStagedContentTag = React.useCallback(
+    (taxonomyId, addedTag) => {
+      setStagedContentTags((prevStagedContentTags) => {
+        const updatedStagedContentTags = {
+          ...prevStagedContentTags,
+          [taxonomyId]: [...(prevStagedContentTags[taxonomyId] ?? []), addedTag],
+        };
+        return updatedStagedContentTags;
+      });
+    },
+    [setStagedContentTags],
+  );
 
   // Remove a content tag from the staged tags for a taxonomy
-  const removeStagedContentTag = React.useCallback((taxonomyId, tagValue) => {
-    setStagedContentTags(prevStagedContentTags => ({
-      ...prevStagedContentTags,
-      [taxonomyId]: prevStagedContentTags[taxonomyId].filter((t) => t.value !== tagValue),
-    }));
-  }, [setStagedContentTags]);
+  const removeStagedContentTag = React.useCallback(
+    (taxonomyId, tagValue) => {
+      setStagedContentTags((prevStagedContentTags) => ({
+        ...prevStagedContentTags,
+        [taxonomyId]: prevStagedContentTags[taxonomyId].filter((t) => t.value !== tagValue),
+      }));
+    },
+    [setStagedContentTags],
+  );
 
   // Remove a content tag from the global staged tags for a taxonomy
-  const removeGlobalStagedContentTag = React.useCallback((taxonomyId, tagValue) => {
-    setGlobalStagedContentTags(prevContentTags => ({
-      ...prevContentTags,
-      [taxonomyId]: prevContentTags[taxonomyId].filter((t) => t.value !== tagValue),
-    }));
-  }, [setGlobalStagedContentTags]);
+  const removeGlobalStagedContentTag = React.useCallback(
+    (taxonomyId, tagValue) => {
+      setGlobalStagedContentTags((prevContentTags) => ({
+        ...prevContentTags,
+        [taxonomyId]: prevContentTags[taxonomyId].filter((t) => t.value !== tagValue),
+      }));
+    },
+    [setGlobalStagedContentTags],
+  );
 
   // Add a content tags to the removed tags for a taxonomy
-  const addRemovedContentTag = React.useCallback((taxonomyId, addedTag) => {
-    setGlobalStagedRemovedContentTags(prevContentTags => {
-      const updatedStagedContentTags = {
-        ...prevContentTags,
-        [taxonomyId]: [...(prevContentTags[taxonomyId] ?? []), addedTag],
-      };
-      return updatedStagedContentTags;
-    });
-  }, [setGlobalStagedRemovedContentTags]);
+  const addRemovedContentTag = React.useCallback(
+    (taxonomyId, addedTag) => {
+      setGlobalStagedRemovedContentTags((prevContentTags) => {
+        const updatedStagedContentTags = {
+          ...prevContentTags,
+          [taxonomyId]: [...(prevContentTags[taxonomyId] ?? []), addedTag],
+        };
+        return updatedStagedContentTags;
+      });
+    },
+    [setGlobalStagedRemovedContentTags],
+  );
 
   // Remove a content tag from the removed tags for a taxonomy
-  const deleteRemovedContentTag = React.useCallback((taxonomyId, tagValue) => {
-    setGlobalStagedRemovedContentTags(prevContentTags => ({
-      ...prevContentTags,
-      [taxonomyId]: prevContentTags[taxonomyId].filter((t) => t !== tagValue),
-    }));
-  }, [setGlobalStagedRemovedContentTags]);
+  const deleteRemovedContentTag = React.useCallback(
+    (taxonomyId, tagValue) => {
+      setGlobalStagedRemovedContentTags((prevContentTags) => ({
+        ...prevContentTags,
+        [taxonomyId]: prevContentTags[taxonomyId].filter((t) => t !== tagValue),
+      }));
+    },
+    [setGlobalStagedRemovedContentTags],
+  );
 
   // Sets the staged content tags for taxonomy to the provided list of tags
-  const setStagedTags = React.useCallback((taxonomyId, tagsList) => {
-    setStagedContentTags(prevStagedContentTags => ({ ...prevStagedContentTags, [taxonomyId]: tagsList }));
-  }, [setStagedContentTags]);
+  const setStagedTags = React.useCallback(
+    (taxonomyId, tagsList) => {
+      setStagedContentTags((prevStagedContentTags) => ({ ...prevStagedContentTags, [taxonomyId]: tagsList }));
+    },
+    [setStagedContentTags],
+  );
 
   // Open a collapsible of a taxonomy
   /* istanbul ignore next */
-  const openCollapsible = React.useCallback((taxonomyId) => {
-    setColapsibleStates(prevStates => ({
-      ...prevStates,
-      [taxonomyId]: true,
-    }));
-  }, [setColapsibleStates]);
+  const openCollapsible = React.useCallback(
+    (taxonomyId) => {
+      setColapsibleStates((prevStates) => ({
+        ...prevStates,
+        [taxonomyId]: true,
+      }));
+    },
+    [setColapsibleStates],
+  );
 
   // Close a collapsible of a taxonomy
   /* istanbul ignore next */
-  const closeCollapsible = React.useCallback((taxonomyId) => {
-    setColapsibleStates(prevStates => ({
-      ...prevStates,
-      [taxonomyId]: false,
-    }));
-  }, [setColapsibleStates]);
+  const closeCollapsible = React.useCallback(
+    (taxonomyId) => {
+      setColapsibleStates((prevStates) => ({
+        ...prevStates,
+        [taxonomyId]: false,
+      }));
+    },
+    [setColapsibleStates],
+  );
 
   const openAllCollapsible = React.useCallback(() => {
     const updatedState = {};
@@ -259,16 +274,22 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
     const tagsAddedList = Object.values(globalStagedContentTags);
     const tagsRemovedList = Object.values(globalStagedRemovedContentTags);
 
-    const tagsAdded = tagsAddedList.length === 1 ? tagsAddedList[0].length : tagsAddedList.reduce(
-      /* istanbul ignore next */
-      (acc, curr) => acc + curr.length,
-      0,
-    );
-    const tagsRemoved = tagsRemovedList.length === 1 ? tagsRemovedList[0].length : tagsRemovedList.reduce(
-      /* istanbul ignore next */
-      (acc, curr) => acc + curr.length,
-      0,
-    );
+    const tagsAdded =
+      tagsAddedList.length === 1
+        ? tagsAddedList[0].length
+        : tagsAddedList.reduce(
+            /* istanbul ignore next */
+            (acc, curr) => acc + curr.length,
+            0,
+          );
+    const tagsRemoved =
+      tagsRemovedList.length === 1
+        ? tagsRemovedList[0].length
+        : tagsRemovedList.reduce(
+            /* istanbul ignore next */
+            (acc, curr) => acc + curr.length,
+            0,
+          );
     return {
       tagsAdded,
       tagsRemoved,
@@ -282,26 +303,14 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
 
     let message;
     if (tagsAdded && tagsRemoved) {
-      message = `${intl.formatMessage(
-        messages.tagsSaveToastTextTypeAdded,
-        { tagsAdded },
-      )
-      } ${
-        intl.formatMessage(
-          messages.tagsSaveToastTextTypeRemoved,
-          { tagsRemoved },
-        )
-      }`;
-    } else if (tagsAdded) {
-      message = intl.formatMessage(
-        messages.tagsSaveToastTextTypeAdded,
-        { tagsAdded },
-      );
-    } else if (tagsRemoved) {
-      message = intl.formatMessage(
+      message = `${intl.formatMessage(messages.tagsSaveToastTextTypeAdded, { tagsAdded })} ${intl.formatMessage(
         messages.tagsSaveToastTextTypeRemoved,
         { tagsRemoved },
-      );
+      )}`;
+    } else if (tagsAdded) {
+      message = intl.formatMessage(messages.tagsSaveToastTextTypeAdded, { tagsAdded });
+    } else if (tagsRemoved) {
+      message = intl.formatMessage(messages.tagsSaveToastTextTypeRemoved, { tagsRemoved });
     }
     setToastMessage(message);
   }, [setToastMessage, countTags]);
@@ -321,13 +330,12 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   // Updates `tagsByTaxonomy` merged fetched tags, global staged tags
   // and global removed staged tags.
   React.useEffect(() => {
-    const mergedTags = cloneDeep(fetchedTaxonomies).reduce((acc, obj) => (
-      { ...acc, [obj.id]: obj }
-    ), {});
+    const mergedTags = cloneDeep(fetchedTaxonomies).reduce((acc, obj) => ({ ...acc, [obj.id]: obj }), {});
 
-    const mergedOtherTaxonomies = cloneDeep(fetchedOtherTaxonomies).reduce((acc, obj) => (
-      { ...acc, [obj.id]: obj }
-    ), {});
+    const mergedOtherTaxonomies = cloneDeep(fetchedOtherTaxonomies).reduce(
+      (acc, obj) => ({ ...acc, [obj.id]: obj }),
+      {},
+    );
 
     Object.keys(globalStagedContentTags).forEach((taxonomyId) => {
       if (mergedTags[taxonomyId]) {
@@ -336,10 +344,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
         const stagedLineages = globalStagedContentTags[taxonomyId].map((t) => t.lineage.slice(0, -1)).flat();
         const fetchedTags = mergedTags[taxonomyId].contentTags.filter((t) => !stagedLineages.includes(t.value));
 
-        mergedTags[taxonomyId].contentTags = [
-          ...fetchedTags,
-          ...globalStagedContentTags[taxonomyId],
-        ];
+        mergedTags[taxonomyId].contentTags = [...fetchedTags, ...globalStagedContentTags[taxonomyId]];
       }
     });
 
@@ -357,7 +362,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
 
     // It is constructed this way to maintain the order
     // of the list `fetchedTaxonomies`
-    const mergedTagsArray = fetchedTaxonomies.map(obj => mergedTags[obj.id]);
+    const mergedTagsArray = fetchedTaxonomies.map((obj) => mergedTags[obj.id]);
 
     setTagsByTaxonomy(mergedTagsArray);
     setOtherTaxonomies(Object.values(mergedOtherTaxonomies));
@@ -371,10 +376,10 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
         const tagsAddedList = Object.values(globalStagedContentTags);
         const tagsRemovedList = Object.values(globalStagedRemovedContentTags);
 
-        if (tagsAddedList.some(tags => tags.length > 0)) {
+        if (tagsAddedList.some((tags) => tags.length > 0)) {
           return true;
         }
-        if (tagsRemovedList.some(tags => tags.length > 0)) {
+        if (tagsRemovedList.some((tags) => tags.length > 0)) {
           return true;
         }
         return false;
@@ -386,25 +391,20 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
         setBlockingSheet(false);
       }
     }
-  }, [
-    fetchedTaxonomies,
-    fetchedOtherTaxonomies,
-    globalStagedContentTags,
-    globalStagedRemovedContentTags,
-  ]);
+  }, [fetchedTaxonomies, fetchedOtherTaxonomies, globalStagedContentTags, globalStagedRemovedContentTags]);
 
   const commitGlobalStagedTags = React.useCallback(() => {
     const tagsData = [];
     tagsByTaxonomy.forEach((tags) => {
       tagsData.push({
         taxonomy: tags.id,
-        tags: tags.contentTags.map(t => t.value),
+        tags: tags.contentTags.map((t) => t.value),
       });
     });
     otherTaxonomies.forEach((tags) => {
       tagsData.push({
         taxonomy: tags.id,
-        tags: tags.contentTags.map(t => t.value),
+        tags: tags.contentTags.map((t) => t.value),
       });
     });
     updateTags.mutate({ tagsData });

@@ -11,17 +11,15 @@ interface Props {
   editorRef?: React.MutableRefObject<EditorAccessor | undefined>;
 }
 
-export const CodeEditor: React.FC<Props> = ({
-  readOnly = false,
-  children = '',
-  editorRef,
-}) => {
+export const CodeEditor: React.FC<Props> = ({ readOnly = false, children = '', editorRef }) => {
   const divRef = React.useRef<HTMLDivElement>(null);
   const language = React.useMemo(() => new Compartment(), []);
   const tabSize = React.useMemo(() => new Compartment(), []);
 
   React.useEffect(() => {
-    if (!divRef.current) { return; }
+    if (!divRef.current) {
+      return;
+    }
     const state = EditorState.create({
       doc: children,
       extensions: [

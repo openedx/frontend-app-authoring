@@ -25,7 +25,7 @@ export const FeedbackBox = ({
     learningContextId,
   };
 
-  return ((problemType === ProblemTypeKeys.MULTISELECT) ? (
+  return problemType === ProblemTypeKeys.MULTISELECT ? (
     <div className="bg-light-300 p-4 mt-3 rounded text-primary-500">
       <FeedbackControl
         key={`selectedfeedback-${answer.id}`}
@@ -58,7 +58,7 @@ export const FeedbackBox = ({
         {...props}
       />
     </div>
-  ));
+  );
 };
 FeedbackBox.propTypes = {
   answer: answerOptionProps.isRequired,

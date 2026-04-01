@@ -15,7 +15,8 @@ const messages = defineMessages({
   },
   dropdownHelpText: {
     id: 'course-authoring.schedule-section.details.dropdown.help-text',
-    defaultMessage: 'Identify the course language here. This is used to assist users find courses that are taught in a specific language. It is also used to localize the \'From:\' field in bulk emails.',
+    defaultMessage:
+      "Identify the course language here. This is used to assist users find courses that are taught in a specific language. It is also used to localize the 'From:' field in bulk emails.",
   },
   dropdownEmpty: {
     id: 'course-authoring.schedule-section.details.dropdown.empty',

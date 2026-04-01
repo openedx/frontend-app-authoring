@@ -1,9 +1,5 @@
-import {
-  FormattedMessage, FormattedDate, FormattedTime, useIntl,
-} from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, Alert, Form, Stack, StatefulButton,
-} from '@openedx/paragon';
+import { FormattedMessage, FormattedDate, FormattedTime, useIntl } from '@edx/frontend-platform/i18n';
+import { ActionRow, Alert, Form, Stack, StatefulButton } from '@openedx/paragon';
 
 import { STATEFUL_BUTTON_STATES } from '@src/constants';
 import useAccessibility from './hooks';
@@ -11,16 +7,8 @@ import messages from './messages';
 
 const AccessibilityForm = ({ accessibilityEmail }: { accessibilityEmail: string }) => {
   const intl = useIntl();
-  const {
-    errors,
-    values,
-    isFormFilled,
-    mutation,
-    handleBlur,
-    handleChange,
-    hasErrorField,
-    savingStatus,
-  } = useAccessibility({ name: '', email: '', message: '' });
+  const { errors, values, isFormFilled, mutation, handleBlur, handleChange, hasErrorField, savingStatus } =
+    useAccessibility({ name: '', email: '', message: '' });
 
   const formFields = [
     {
@@ -70,10 +58,10 @@ const AccessibilityForm = ({ accessibilityEmail }: { accessibilityEmail: string 
               <FormattedMessage
                 {...messages.accessibilityPolicyFormSuccessDetails}
                 values={{
-                  day_start: (<FormattedDate value={start} weekday="long" />),
-                  time_start: (<FormattedTime value={start} timeZoneName="short" />),
-                  day_end: (<FormattedDate value={end} weekday="long" />),
-                  time_end: (<FormattedTime value={end} timeZoneName="short" />),
+                  day_start: <FormattedDate value={start} weekday="long" />,
+                  time_start: <FormattedTime value={start} timeZoneName="short" />,
+                  day_end: <FormattedDate value={end} weekday="long" />,
+                  time_end: <FormattedTime value={end} timeZoneName="short" />,
                 }}
               />
             </div>
@@ -118,11 +106,7 @@ const AccessibilityForm = ({ accessibilityEmail }: { accessibilityEmail: string 
           key="save-button"
           onClick={handleSubmit}
           disabled={!isFormFilled}
-          state={
-            savingStatus === 'pending'
-              ? STATEFUL_BUTTON_STATES.pending
-              : STATEFUL_BUTTON_STATES.default
-          }
+          state={savingStatus === 'pending' ? STATEFUL_BUTTON_STATES.pending : STATEFUL_BUTTON_STATES.default}
           {...createButtonState}
         />
       </ActionRow>

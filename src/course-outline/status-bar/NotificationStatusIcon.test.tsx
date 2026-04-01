@@ -13,9 +13,7 @@ jest.mock('./hooks.ts', () => ({
   }),
 }));
 
-const renderComponent = () => render(
-  <NotificationStatusIcon />,
-);
+const renderComponent = () => render(<NotificationStatusIcon />);
 
 describe('NotificationStatusIcon', () => {
   beforeEach(() => {

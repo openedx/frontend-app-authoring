@@ -1,10 +1,6 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  useCallback, useContext, useEffect, useState,
-} from 'react';
-import {
-  ActionRow, Badge, Icon, Stack,
-} from '@openedx/paragon';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { ActionRow, Badge, Icon, Stack } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
 import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
 import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
@@ -13,11 +9,7 @@ import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
 import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { useOptionalLibraryContext } from '../common/context/LibraryContext';
-import {
-  useContainerChildren,
-  useUpdateContainer,
-  useUpdateContainerChildren,
-} from '../data/apiHooks';
+import { useContainerChildren, useUpdateContainer, useUpdateContainerChildren } from '../data/apiHooks';
 import { messages, subsectionMessages, sectionMessages } from './messages';
 import containerMessages from '../containers/messages';
 import { Container } from '../data/api';
@@ -43,9 +35,7 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
   index?: number;
 }
 
-const ContainerRow = ({
-  containerKey, container, readOnly, index,
-}: ContainerRowProps) => {
+const ContainerRow = ({ containerKey, container, readOnly, index }: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
@@ -97,27 +87,16 @@ const ContainerRow = ({
         className="stop-event-propagation"
       >
         {!showOnlyPublished && container.hasUnpublishedChanges && (
-          <Badge
-            className="px-2 py-1"
-            variant="warning"
-          >
+          <Badge className="px-2 py-1" variant="warning">
             <Stack direction="horizontal" gap={1}>
               <Icon size="xs" src={Description} />
               <FormattedMessage {...messages.draftChipText} />
             </Stack>
           </Badge>
         )}
-        <TagCount
-          size="sm"
-          count={container.tagsCount}
-          onClick={readOnly ? undefined : jumpToManageTags}
-        />
+        <TagCount size="sm" count={container.tagsCount} onClick={readOnly ? undefined : jumpToManageTags} />
         {!readOnly && (
-          <ContainerMenu
-            containerKey={container.originalId}
-            displayName={container.displayName}
-            index={index}
-          />
+          <ContainerMenu containerKey={container.originalId} displayName={container.displayName} index={index} />
         )}
       </Stack>
     </>
@@ -136,18 +115,21 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
   const containerType = getBlockType(containerKey);
-  const handleReorder = useCallback(() => async (newOrder?: LibraryContainerMetadataWithUniqueId[]) => {
-    if (!newOrder) {
-      return;
-    }
-    const childrenKeys = newOrder.map((o) => o.originalId);
-    try {
-      await orderMutator.mutateAsync(childrenKeys);
-      showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    } catch {
-      showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
-    }
-  }, [orderMutator]);
+  const handleReorder = useCallback(
+    () => async (newOrder?: LibraryContainerMetadataWithUniqueId[]) => {
+      if (!newOrder) {
+        return;
+      }
+      const childrenKeys = newOrder.map((o) => o.originalId);
+      try {
+        await orderMutator.mutateAsync(childrenKeys);
+        showToast(intl.formatMessage(messages.orderUpdatedMsg));
+      } catch {
+        showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
+      }
+    },
+    [orderMutator],
+  );
 
   const {
     data: children,
@@ -170,33 +152,35 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     return setOrderedChildren(newChildren || []);
   }, [children, setOrderedChildren]);
 
-  const handleChildClick = useCallback((
-    child: LibraryContainerMetadataWithUniqueId,
-    numberOfClicks: number,
-    index: number,
-  ) => {
-    if (readOnly) {
-      // don't allow interaction if rendered as preview
-      return;
-    }
-    const doubleClicked = numberOfClicks > 1;
-    if (!doubleClicked) {
-      openItemSidebar(child.originalId, SidebarBodyItemId.ContainerInfo, index);
-    } else {
-      navigateTo({ containerId: child.originalId });
-    }
-  }, [openItemSidebar, navigateTo, readOnly]);
+  const handleChildClick = useCallback(
+    (child: LibraryContainerMetadataWithUniqueId, numberOfClicks: number, index: number) => {
+      if (readOnly) {
+        // don't allow interaction if rendered as preview
+        return;
+      }
+      const doubleClicked = numberOfClicks > 1;
+      if (!doubleClicked) {
+        openItemSidebar(child.originalId, SidebarBodyItemId.ContainerInfo, index);
+      } else {
+        navigateTo({ containerId: child.originalId });
+      }
+    },
+    [openItemSidebar, navigateTo, readOnly],
+  );
 
-  const getComponentStyle = useCallback((childId: string) => {
-    const style: { marginBottom: string, borderRadius: string, outline?: string } = {
-      marginBottom: '1rem',
-      borderRadius: '8px',
-    };
-    if (activeDraggingId === childId) {
-      style.outline = '2px dashed gray';
-    }
-    return style;
-  }, [activeDraggingId]);
+  const getComponentStyle = useCallback(
+    (childId: string) => {
+      const style: { marginBottom: string; borderRadius: string; outline?: string } = {
+        marginBottom: '1rem',
+        borderRadius: '8px',
+      };
+      if (activeDraggingId === childId) {
+        style.outline = '2px dashed gray';
+      }
+      return style;
+    },
+    [activeDraggingId],
+  );
 
   if (isLoading) {
     return <Loading />;
@@ -246,17 +230,18 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               }
             }}
             disabled={readOnly || libReadOnly}
-            cardClassName={sidebarItemInfo?.id === child.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined}
-            actions={(
+            cardClassName={
+              sidebarItemInfo?.id === child.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined
+            }
+            actions={
               <ContainerRow
                 containerKey={containerKey}
                 container={child}
                 readOnly={readOnly || libReadOnly}
                 index={index}
               />
-            )}
+            }
           />
-
         ))}
       </DraggableList>
     </div>

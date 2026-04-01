@@ -1,34 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Button,
-  DataTableContext,
-  Form,
-  ModalDialog,
-  useCheckboxSetValues,
-} from '@openedx/paragon';
+import { ActionRow, Button, DataTableContext, Form, ModalDialog, useCheckboxSetValues } from '@openedx/paragon';
 import messages from './messages';
 // SelectableBox in paragon has a bug only visible on stage where you can't change selection. So we override it
 import SelectableBox from '../../../../editors/sharedComponents/SelectableBox';
 import { getCheckedFilters, getFilterOptions, processFilters } from './utils';
 
-const SortAndFilterModal = ({
-  isSortOpen,
-  closeSort,
-  handleSort,
-}) => {
+const SortAndFilterModal = ({ isSortOpen, closeSort, handleSort }) => {
   const intl = useIntl();
-  const {
-    state, setAllFilters, columns, gotoPage,
-  } = useContext(DataTableContext);
+  const { state, setAllFilters, columns, gotoPage } = useContext(DataTableContext);
   const filterOptions = getFilterOptions(columns);
   const currentFilters = getCheckedFilters(state);
   const [sortBy, setSortBy] = useState('dateAdded,desc');
-  const [filterBy, {
-    add, remove, set, clear,
-  }] = useCheckboxSetValues(currentFilters);
+  const [filterBy, { add, remove, set, clear }] = useCheckboxSetValues(currentFilters);
 
   useEffect(() => {
     const updatedFilters = getCheckedFilters(state);
@@ -140,12 +125,7 @@ const SortAndFilterModal = ({
           <FormattedMessage {...messages.filterByHeader} />
         </div>
         <Form.Group>
-          <Form.CheckboxSet
-            name="filters"
-            onChange={handleFilterUpdate}
-            value={filterBy}
-            isInline
-          >
+          <Form.CheckboxSet name="filters" onChange={handleFilterUpdate} value={filterBy} isInline>
             {filterOptions.map(({ name, value }) => (
               <Form.Checkbox {...{ value, key: value }}>{name}</Form.Checkbox>
             ))}
@@ -161,10 +141,7 @@ const SortAndFilterModal = ({
           <ModalDialog.CloseButton variant="tertiary">
             <FormattedMessage {...messages.cancelButtonLabel} />
           </ModalDialog.CloseButton>
-          <Button
-            variant="primary"
-            onClick={handleApply}
-          >
+          <Button variant="primary" onClick={handleApply}>
             <FormattedMessage {...messages.applySortButton} />
           </Button>
         </ActionRow>

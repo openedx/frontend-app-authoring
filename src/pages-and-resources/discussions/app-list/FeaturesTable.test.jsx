@@ -22,7 +22,8 @@ describe('FeaturesTable', () => {
         featureIds: ['discussion-page', 'basic-configuration'],
         hasFullSupport: false,
         id: 'piazza',
-      }];
+      },
+    ];
 
     features = [
       { id: 'discussion-page', featureSupportType: 'basic' },
@@ -33,10 +34,7 @@ describe('FeaturesTable', () => {
 
     const wrapper = render(
       <IntlProvider locale="en">
-        <FeaturesTable
-          apps={apps}
-          features={features}
-        />
+        <FeaturesTable apps={apps} features={features} />
       </IntlProvider>,
     );
     container = wrapper.container;
@@ -54,7 +52,7 @@ describe('FeaturesTable', () => {
 
   test('apps columns receive a check for each feature they support', () => {
     features.forEach((feature) => {
-      apps.forEach(app => {
+      apps.forEach((app) => {
         if (app.featureIds.includes(feature.id)) {
           const columnId = `${app.id}-${feature.id.replaceAll('.', '-')}`;
           const columnCell = queryByTestId(container, columnId);
@@ -67,7 +65,7 @@ describe('FeaturesTable', () => {
 
   test('apps columns receive a dash for each unsupported feature', () => {
     features.forEach((feature) => {
-      apps.forEach(app => {
+      apps.forEach((app) => {
         if (!app.featureIds.includes(feature.id)) {
           const columnId = `${app.id}-${feature.id.replaceAll('.', '-')}`;
           const columnCell = queryByTestId(container, columnId);

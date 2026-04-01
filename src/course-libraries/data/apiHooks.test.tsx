@@ -3,8 +3,16 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 import { renderHook, waitFor } from '@testing-library/react';
-import { courseLegacyLibraryContentBlocks, courseLegacyLibraryContentTaskStatus, getEntityLinksByDownstreamContextUrl } from './api';
-import { useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions, useCourseLegacyLibReadyToMigrateBlocks, useEntityLinks } from './apiHooks';
+import {
+  courseLegacyLibraryContentBlocks,
+  courseLegacyLibraryContentTaskStatus,
+  getEntityLinksByDownstreamContextUrl,
+} from './api';
+import {
+  useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions,
+  useCourseLegacyLibReadyToMigrateBlocks,
+  useEntityLinks,
+} from './apiHooks';
 
 let axiosMock: MockAdapter;
 
@@ -16,11 +24,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const wrapper = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    {children}
-  </QueryClientProvider>
-);
+const wrapper = ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 
 describe('course libraries api hooks', () => {
   beforeEach(() => {

@@ -23,13 +23,10 @@ const DurationWidget = ({
   updateField,
 }) => {
   const intl = useIntl();
-  const {
-    unsavedDuration,
-    onBlur,
-    onChange,
-    onKeyDown,
-    getTotalLabel,
-  } = hooks.durationWidget({ duration, updateField });
+  const { unsavedDuration, onBlur, onChange, onKeyDown, getTotalLabel } = hooks.durationWidget({
+    duration,
+    updateField,
+  });
 
   const timeKeys = keyStore(duration);
 

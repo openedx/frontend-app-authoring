@@ -2,9 +2,7 @@ import moment, { Moment } from 'moment/moment';
 import { FormattedDate, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Badge, Icon, Stack } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
-import {
-  Cached, ChecklistRtl, Description, Event,
-} from '@openedx/paragon/icons';
+import { Cached, ChecklistRtl, Description, Event } from '@openedx/paragon/icons';
 
 import type { ChecklistType, CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { useEntityLinksSummaryByDownstreamContext } from '@src/course-libraries/data/apiHooks';
@@ -13,7 +11,7 @@ import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
 
-const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Moment }) => {
+const CourseBadge = ({ startDate, endDate }: { startDate: Moment; endDate: Moment }) => {
   const now = moment().utc();
   switch (true) {
     case !startDate.isValid():
@@ -48,10 +46,7 @@ const UnpublishedBadgeStatus = ({ courseId }: { courseId: string }) => {
     return null;
   }
   return (
-    <Badge
-      className="px-2 py-2 bg-draft-status text-gray-700 font-weight-normal"
-      variant="light"
-    >
+    <Badge className="px-2 py-2 bg-draft-status text-gray-700 font-weight-normal" variant="light">
       <Stack direction="horizontal" gap={2}>
         <Icon size="xs" src={Description} />
         <FormattedMessage {...messages.unpublishedBadgeText} />
@@ -70,23 +65,20 @@ const LibraryUpdates = ({ courseId }: { courseId: string }) => {
   }
 
   return (
-    <Link
-      className="small text-gray-700"
-      to={url}
-    >
+    <Link className="small text-gray-700" to={url}>
       <Stack direction="horizontal" gap={2}>
         <Icon size="sm" src={Cached} />
-        <FormattedMessage
-          {...messages.libraryUpdatesText}
-          values={{ count: outOfSyncCount }}
-        />
+        <FormattedMessage {...messages.libraryUpdatesText} values={{ count: outOfSyncCount }} />
       </Stack>
     </Link>
   );
 };
 
 const CourseDates = ({
-  startDate, endDate, startDateRaw, datesLink,
+  startDate,
+  endDate,
+  startDateRaw,
+  datesLink,
 }: {
   startDate: Moment;
   endDate: Moment;
@@ -96,10 +88,7 @@ const CourseDates = ({
   if (!startDate.isValid()) {
     // Returns string contained in startDate, i.e. `Set Date`
     return (
-      <Link
-        className="small"
-        to={datesLink}
-      >
+      <Link className="small" to={datesLink}>
         <Stack direction="horizontal" gap={2}>
           <Icon size="sm" className="mb-1" src={Event} />
           {startDateRaw}
@@ -109,27 +98,14 @@ const CourseDates = ({
   }
 
   return (
-    <Link
-      className="small text-gray-700"
-      to={datesLink}
-    >
+    <Link className="small text-gray-700" to={datesLink}>
       <Stack direction="horizontal" gap={2}>
         <Icon size="sm" className="mb-1" src={Event} />
-        <FormattedDate
-          value={startDate.toISOString()}
-          year="numeric"
-          month="short"
-          day="2-digit"
-        />
+        <FormattedDate value={startDate.toISOString()} year="numeric" month="short" day="2-digit" />
         {endDate.isValid() && (
           <>
             {' - '}
-            <FormattedDate
-              value={endDate.toISOString()}
-              year="numeric"
-              month="short"
-              day="2-digit"
-            />
+            <FormattedDate value={endDate.toISOString()} year="numeric" month="short" day="2-digit" />
           </>
         )}
       </Stack>
@@ -137,10 +113,7 @@ const CourseDates = ({
   );
 };
 
-const Checklists = ({ courseId, checklist }: {
-  courseId: string;
-  checklist: ChecklistType;
-}) => {
+const Checklists = ({ courseId, checklist }: { courseId: string; checklist: ChecklistType }) => {
   const {
     completedCourseLaunchChecks,
     completedCourseBestPracticesChecks,
@@ -157,10 +130,7 @@ const Checklists = ({ courseId, checklist }: {
 
   const checkListTitle = `${completed}/${total}`;
   return (
-    <Link
-      className="small text-primary-500 d-flex"
-      to={`/course/${courseId}/checklists`}
-    >
+    <Link className="small text-primary-500 d-flex" to={`/course/${courseId}/checklists`}>
       <Icon src={ChecklistRtl} size="md" className="mr-2" />
       {checkListTitle} <FormattedMessage {...messages.checklistCompleted} />
     </Link>
@@ -173,16 +143,8 @@ export interface StatusBarProps {
   statusBarData: CourseOutlineStatusBar;
 }
 
-export const StatusBar = ({
-  statusBarData,
-  isLoading,
-  courseId,
-}: StatusBarProps) => {
-  const {
-    endDate,
-    courseReleaseDate,
-    checklist,
-  } = statusBarData;
+export const StatusBar = ({ statusBarData, isLoading, courseId }: StatusBarProps) => {
+  const { endDate, courseReleaseDate, checklist } = statusBarData;
 
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
   const endDateObj = moment.utc(endDate);

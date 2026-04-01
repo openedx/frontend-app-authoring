@@ -1,8 +1,6 @@
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import { getApiWaffleFlagsUrl } from './data/api';
-import {
-  screen, initializeMocks, render, waitFor,
-} from './testUtils';
+import { screen, initializeMocks, render, waitFor } from './testUtils';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesMockText = 'Pages And Resources';
@@ -53,16 +51,11 @@ describe('<CourseAuthoringRoutes>', () => {
       username: 'username',
     };
     const { axiosMock } = initializeMocks({ user });
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {});
+    axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, {});
   });
 
   it('renders the PagesAndResources component when the pages and resources route is active', async () => {
-    render(
-      <CourseAuthoringRoutes />,
-      { routerProps: { initialEntries: ['/pages-and-resources'] } },
-    );
+    render(<CourseAuthoringRoutes />, { routerProps: { initialEntries: ['/pages-and-resources'] } });
     await waitFor(() => {
       expect(screen.getByText(pagesAndResourcesMockText)).toBeVisible();
       expect(mockComponentFn).toHaveBeenCalled();
@@ -70,10 +63,7 @@ describe('<CourseAuthoringRoutes>', () => {
   });
 
   it('renders the EditorContainer component when the course editor route is active', async () => {
-    render(
-      <CourseAuthoringRoutes />,
-      { routerProps: { initialEntries: ['/editor/video/block-id'] } },
-    );
+    render(<CourseAuthoringRoutes />, { routerProps: { initialEntries: ['/editor/video/block-id'] } });
     await waitFor(() => {
       expect(screen.queryByText(editorContainerMockText)).toBeInTheDocument();
       expect(screen.queryByText(pagesAndResourcesMockText)).not.toBeInTheDocument();
@@ -86,10 +76,7 @@ describe('<CourseAuthoringRoutes>', () => {
   });
 
   it('renders the VideoSelectorContainer component when the course videos route is active', async () => {
-    render(
-      <CourseAuthoringRoutes />,
-      { routerProps: { initialEntries: ['/editor/course-videos/block-id'] } },
-    );
+    render(<CourseAuthoringRoutes />, { routerProps: { initialEntries: ['/editor/course-videos/block-id'] } });
     await waitFor(() => {
       expect(screen.queryByText(videoSelectorContainerMockText)).toBeInTheDocument();
       expect(screen.queryByText(pagesAndResourcesMockText)).not.toBeInTheDocument();

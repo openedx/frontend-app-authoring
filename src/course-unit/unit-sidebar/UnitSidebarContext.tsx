@@ -1,6 +1,4 @@
-import {
-  createContext, useCallback, useContext, useMemo, useState,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { SidebarPage } from '@src/generic/sidebar';
 import { useToggle } from '@openedx/paragon';
 import { useStateWithUrlSearchParam } from '@src/hooks';
@@ -25,13 +23,7 @@ interface UnitSidebarContextData {
 
 const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(undefined);
 
-export const UnitSidebarProvider = ({
-  children,
-  readOnly,
-}: {
-  children?: React.ReactNode,
-  readOnly: boolean,
-}) => {
+export const UnitSidebarProvider = ({ children, readOnly }: { children?: React.ReactNode; readOnly: boolean }) => {
   const { sendMessageToIframe } = useIframe();
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<UnitSidebarPageKeys>(
     'info',
@@ -41,24 +33,24 @@ export const UnitSidebarProvider = ({
   );
   const [currentTabKey, setCurrentTabKey] = useState<string>();
   const [selectedComponentId, setSelectedComponentId] = useState<string>();
-  const [isOpen, open,, toggle] = useToggle(true);
+  const [isOpen, open, , toggle] = useToggle(true);
 
-  const setCurrentPageKey = useCallback(/* istanbul ignore next */ (
-    pageKey: UnitSidebarPageKeys,
-    componentId?: string | null,
-  ) => {
-    // Reset tab
-    setCurrentTabKey(undefined);
-    setCurrentPageKeyState(pageKey);
-    if (componentId !== undefined) {
-      setSelectedComponentId(componentId === null ? undefined : componentId);
-    }
-    if (componentId === null) {
-      // Deselect the component
-      sendMessageToIframe(messageTypes.clearSelection, null);
-    }
-    open();
-  }, [open]);
+  const setCurrentPageKey = useCallback(
+    /* istanbul ignore next */ (pageKey: UnitSidebarPageKeys, componentId?: string | null) => {
+      // Reset tab
+      setCurrentTabKey(undefined);
+      setCurrentPageKeyState(pageKey);
+      if (componentId !== undefined) {
+        setSelectedComponentId(componentId === null ? undefined : componentId);
+      }
+      if (componentId === null) {
+        // Deselect the component
+        sendMessageToIframe(messageTypes.clearSelection, null);
+      }
+      open();
+    },
+    [open],
+  );
 
   const context = useMemo<UnitSidebarContextData>(
     () => ({
@@ -87,11 +79,7 @@ export const UnitSidebarProvider = ({
     ],
   );
 
-  return (
-    <UnitSidebarContext.Provider value={context}>
-      {children}
-    </UnitSidebarContext.Provider>
-  );
+  return <UnitSidebarContext.Provider value={context}>{children}</UnitSidebarContext.Provider>;
 };
 
 export function useUnitSidebarContext(raiseError?: true): UnitSidebarContextData;

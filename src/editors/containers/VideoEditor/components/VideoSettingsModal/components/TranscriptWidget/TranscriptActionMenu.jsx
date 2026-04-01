@@ -17,13 +17,17 @@ import * as module from './TranscriptActionMenu';
 import messages from './messages';
 
 export const hooks = {
-  replaceFileCallback: ({ language, dispatch }) => (file) => {
-    dispatch(thunkActions.video.replaceTranscript({
-      newFile: file,
-      newFilename: file.name,
-      language,
-    }));
-  },
+  replaceFileCallback:
+    ({ language, dispatch }) =>
+    (file) => {
+      dispatch(
+        thunkActions.video.replaceTranscript({
+          newFile: file,
+          newFilename: file.name,
+          language,
+        }),
+      );
+    },
 };
 
 const TranscriptActionMenu = ({
@@ -48,10 +52,7 @@ const TranscriptActionMenu = ({
         alt="Actions dropdown"
       />
       <Dropdown.Menu className="video_transcript Action Menu">
-        <Dropdown.Item
-          key={`transcript-actions-${index}-replace`}
-          onClick={input.click}
-        >
+        <Dropdown.Item key={`transcript-actions-${index}-replace`} onClick={input.click}>
           <FormattedMessage {...messages.replaceTranscript} />
         </Dropdown.Item>
         <Dropdown.Item key={`transcript-actions-${index}-download`} href={downloadLink}>

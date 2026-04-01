@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, fireEvent, initializeMocks,
-} from '@src/testUtils';
+import { render, screen, fireEvent, initializeMocks } from '@src/testUtils';
 import { ImportTranscriptCardInternal as ImportTranscriptCard } from './ImportTranscriptCard';
 
 jest.mock('../../../../../../data/redux', () => ({
@@ -21,11 +19,11 @@ describe('ImportTranscriptCard (RTL)', () => {
   });
 
   it('renders header, message, and button', () => {
-    render(
-      <ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />,
-    );
+    render(<ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />);
     expect(screen.getByText('Import transcript from YouTube?')).toBeInTheDocument();
-    expect(screen.getByText('We found transcript for this video on YouTube. Would you like to import it now?')).toBeInTheDocument();
+    expect(
+      screen.getByText('We found transcript for this video on YouTube. Would you like to import it now?'),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Import Transcript' })).toBeInTheDocument();
   });
 
@@ -40,9 +38,7 @@ describe('ImportTranscriptCard (RTL)', () => {
   });
 
   it('calls importTranscript when import button is clicked', () => {
-    render(
-      <ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />,
-    );
+    render(<ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />);
     const importBtn = screen.getByRole('button', { name: 'Import Transcript' });
     fireEvent.click(importBtn);
     expect(mockImportTranscript).toHaveBeenCalled();

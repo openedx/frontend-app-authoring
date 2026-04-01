@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, fireEvent, act, screen,
-} from '@testing-library/react';
+import { render, fireEvent, act, screen } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { configureStore } from '@reduxjs/toolkit';
@@ -23,7 +21,7 @@ describe('VideoUploader', () => {
 
   beforeEach(async () => {
     store = configureStore({
-      reducer: (state, action) => ((action && action.newState) ? action.newState : state),
+      reducer: (state, action) => (action && action.newState ? action.newState : state),
       preloadedState: {
         app: {
           learningContextId: 'course-v1:test+test+test',
@@ -42,13 +40,15 @@ describe('VideoUploader', () => {
     });
   });
 
-  const renderComponent = async (storeParam, setLoadingMockParam) => render(
-    <AppProvider store={storeParam}>
-      <IntlProvider locale="en">
-        <VideoUploader setLoading={setLoadingMockParam} />
-      </IntlProvider>,
-    </AppProvider>,
-  );
+  const renderComponent = async (storeParam, setLoadingMockParam) =>
+    render(
+      <AppProvider store={storeParam}>
+        <IntlProvider locale="en">
+          <VideoUploader setLoading={setLoadingMockParam} />
+        </IntlProvider>
+        ,
+      </AppProvider>,
+    );
 
   afterEach(() => {
     jest.clearAllMocks();

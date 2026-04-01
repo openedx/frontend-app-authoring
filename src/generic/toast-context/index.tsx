@@ -44,28 +44,37 @@ export const ToastProvider = (props: ToastProviderProps) => {
     setToastAction(undefined);
   }, []);
 
-  React.useEffect(() => () => {
-    // Cleanup function to avoid updating state on unmounted component
-    resetState();
-  }, []);
+  React.useEffect(
+    () => () => {
+      // Cleanup function to avoid updating state on unmounted component
+      resetState();
+    },
+    [],
+  );
 
-  const showToast = React.useCallback((message, action?: ToastActionData) => {
-    setToastMessage(message);
-    setToastAction(action);
-  }, [setToastMessage, setToastAction]);
+  const showToast = React.useCallback(
+    (message, action?: ToastActionData) => {
+      setToastMessage(message);
+      setToastAction(action);
+    },
+    [setToastMessage, setToastAction],
+  );
   const closeToast = React.useCallback(() => resetState(), [setToastMessage, setToastAction]);
 
-  const context = React.useMemo(() => ({
-    toastMessage,
-    toastAction,
-    showToast,
-    closeToast,
-  }), [toastMessage, toastAction, showToast, closeToast]);
+  const context = React.useMemo(
+    () => ({
+      toastMessage,
+      toastAction,
+      showToast,
+      closeToast,
+    }),
+    [toastMessage, toastAction, showToast, closeToast],
+  );
 
   return (
     <ToastContext.Provider value={context}>
       {props.children}
-      { toastMessage && (
+      {toastMessage && (
         <ProcessingNotification
           isShow={toastMessage !== null}
           title={toastMessage}

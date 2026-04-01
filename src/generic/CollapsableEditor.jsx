@@ -75,8 +75,7 @@ CollapsableEditor.defaultProps = {
   onDelete: null,
   defaultOpen: undefined,
   open: undefined,
-  onClose: () => {
-  },
+  onClose: () => {},
 };
 
 export default React.memo(CollapsableEditor);

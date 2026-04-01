@@ -31,13 +31,14 @@ const defaultProps = {
   onlineProctoringRules: '',
 };
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <Formik initialValues={defaultProps.values} onSubmit={() => {}}>
-      <AdvancedTab {...defaultProps} {...props} />
-    </Formik>
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <Formik initialValues={defaultProps.values} onSubmit={() => {}}>
+        <AdvancedTab {...defaultProps} {...props} />
+      </Formik>
+    </IntlProvider>,
+  );
 
 describe('<AdvancedTab /> with enableTimedExams prop', () => {
   beforeEach(() => {
@@ -49,9 +50,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       renderComponent();
 
       expect(screen.getByText('Set as a special exam')).toBeInTheDocument();
-      const headingContainer = screen.getByText(
-        'Set as a special exam',
-      ).parentElement;
+      const headingContainer = screen.getByText('Set as a special exam').parentElement;
       expect(headingContainer.querySelector('svg')).not.toBeInTheDocument();
 
       const noneRadio = screen.getByLabelText('None');
@@ -92,9 +91,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
     it('shows tooltip icon next to heading', () => {
       renderComponent(disabledProps);
 
-      const questionIcon = screen
-        .getByText('Set as a special exam')
-        .parentElement.querySelector('svg');
+      const questionIcon = screen.getByText('Set as a special exam').parentElement.querySelector('svg');
       expect(questionIcon).toBeInTheDocument();
       expect(questionIcon).toHaveClass('ml-2', 'text-gray-500');
     });
@@ -103,16 +100,10 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       const user = userEvent.setup();
       renderComponent(disabledProps);
 
-      const questionIcon = screen
-        .getByText('Set as a special exam')
-        .parentElement.querySelector('svg');
+      const questionIcon = screen.getByText('Set as a special exam').parentElement.querySelector('svg');
       await user.hover(questionIcon);
 
-      expect(
-        await screen.findByText(
-          messages.timedExamsDisabledTooltip.defaultMessage,
-        ),
-      ).toBeInTheDocument();
+      expect(await screen.findByText(messages.timedExamsDisabledTooltip.defaultMessage)).toBeInTheDocument();
     });
 
     it('prevents user from interacting with disabled options', async () => {
@@ -135,18 +126,14 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
     it('does not show tooltip icon when enableTimedExams is true', () => {
       renderComponent({ enableTimedExams: true });
 
-      const headingContainer = screen.getByText(
-        'Set as a special exam',
-      ).parentElement;
+      const headingContainer = screen.getByText('Set as a special exam').parentElement;
       expect(headingContainer.querySelector('svg')).not.toBeInTheDocument();
     });
 
     it('shows tooltip icon with proper classes', () => {
       renderComponent(disabledProps);
 
-      const questionIcon = screen
-        .getByText('Set as a special exam')
-        .parentElement.querySelector('svg');
+      const questionIcon = screen.getByText('Set as a special exam').parentElement.querySelector('svg');
       expect(questionIcon).toHaveClass('ml-2', 'text-gray-500');
     });
   });
@@ -171,9 +158,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       expect(screen.getByLabelText('None')).toBeDisabled();
       expect(screen.getByLabelText('Timed')).toBeDisabled();
 
-      const questionIcon = screen
-        .getByText('Set as a special exam')
-        .parentElement.querySelector('svg');
+      const questionIcon = screen.getByText('Set as a special exam').parentElement.querySelector('svg');
       expect(questionIcon).toBeInTheDocument();
     });
   });
@@ -256,10 +241,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
 
         expect(mockSetFieldValue).toHaveBeenCalledWith('isProctoredExam', true);
         expect(mockSetFieldValue).toHaveBeenCalledWith('isTimeLimited', true);
-        expect(mockSetFieldValue).toHaveBeenCalledWith(
-          'isOnboardingExam',
-          false,
-        );
+        expect(mockSetFieldValue).toHaveBeenCalledWith('isOnboardingExam', false);
         expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', false);
       }
     });
@@ -296,10 +278,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       if (onboardingRadio) {
         await user.click(onboardingRadio);
 
-        expect(mockSetFieldValue).toHaveBeenCalledWith(
-          'isOnboardingExam',
-          true,
-        );
+        expect(mockSetFieldValue).toHaveBeenCalledWith('isOnboardingExam', true);
         expect(mockSetFieldValue).toHaveBeenCalledWith('isProctoredExam', true);
         expect(mockSetFieldValue).toHaveBeenCalledWith('isTimeLimited', true);
         expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', false);
@@ -413,10 +392,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
         await user.clear(timeInput);
         await user.type(timeInput, '01:30');
 
-        expect(mockSetFieldValue).toHaveBeenCalledWith(
-          'defaultTimeLimitMinutes',
-          90,
-        );
+        expect(mockSetFieldValue).toHaveBeenCalledWith('defaultTimeLimitMinutes', 90);
       }
     });
 
@@ -481,9 +457,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       });
 
       expect(
-        screen.getByText(
-          messages.proctoredExamLockedAndisNotProctoredExamAlert.defaultMessage,
-        ),
+        screen.getByText(messages.proctoredExamLockedAndisNotProctoredExamAlert.defaultMessage),
       ).toBeInTheDocument();
     });
 
@@ -494,11 +468,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
         wasProctoredExam: true,
       });
 
-      expect(
-        screen.getByText(
-          messages.proctoredExamLockedAndisProctoredExamAlert.defaultMessage,
-        ),
-      ).toBeInTheDocument();
+      expect(screen.getByText(messages.proctoredExamLockedAndisProctoredExamAlert.defaultMessage)).toBeInTheDocument();
     });
 
     it('does not show warnings when exam is not locked', () => {
@@ -508,14 +478,10 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       });
 
       expect(
-        screen.queryByText(
-          messages.proctoredExamLockedAndisNotProctoredExamAlert.defaultMessage,
-        ),
+        screen.queryByText(messages.proctoredExamLockedAndisNotProctoredExamAlert.defaultMessage),
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByText(
-          messages.proctoredExamLockedAndisProctoredExamAlert.defaultMessage,
-        ),
+        screen.queryByText(messages.proctoredExamLockedAndisProctoredExamAlert.defaultMessage),
       ).not.toBeInTheDocument();
     });
   });
@@ -532,9 +498,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
         },
       });
 
-      expect(
-        screen.getByText(messages.reviewRulesLabel.defaultMessage),
-      ).toBeInTheDocument();
+      expect(screen.getByText(messages.reviewRulesLabel.defaultMessage)).toBeInTheDocument();
     });
 
     it('does not show review rules when showReviewRules is false', () => {
@@ -546,9 +510,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
         },
       });
 
-      expect(
-        screen.queryByText(messages.reviewRulesLabel.defaultMessage),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(messages.reviewRulesLabel.defaultMessage)).not.toBeInTheDocument();
     });
 
     it('shows review rules with online proctoring link when available', () => {
@@ -563,9 +525,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
         },
       });
 
-      expect(
-        screen.getByText(messages.reviewRulesLabel.defaultMessage),
-      ).toBeInTheDocument();
+      expect(screen.getByText(messages.reviewRulesLabel.defaultMessage)).toBeInTheDocument();
       const link = screen.queryByText('example.com/rules');
       if (link) {
         expect(link).toBeInTheDocument();
@@ -590,13 +550,8 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       const textArea = screen.getByRole('textbox');
       await user.type(textArea, 'New review rules');
 
-      expect(mockSetFieldValue).toHaveBeenCalledWith(
-        'examReviewRules',
-        expect.any(String),
-      );
-      const examRulesCalls = mockSetFieldValue.mock.calls.filter(
-        (call) => call[0] === 'examReviewRules',
-      );
+      expect(mockSetFieldValue).toHaveBeenCalledWith('examReviewRules', expect.any(String));
+      const examRulesCalls = mockSetFieldValue.mock.calls.filter((call) => call[0] === 'examReviewRules');
       expect(examRulesCalls.length).toBeGreaterThan(0);
       const lastExamRulesCall = examRulesCalls[examRulesCalls.length - 1];
       expect(lastExamRulesCall[1]).toContain('s');

@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Form, IconButton, useToggle,
-} from '@openedx/paragon';
-import {
-  EditOutline as EditIcon,
-  Settings as SettingsIcon,
-} from '@openedx/paragon/icons';
+import { Form, IconButton, useToggle } from '@openedx/paragon';
+import { EditOutline as EditIcon, Settings as SettingsIcon } from '@openedx/paragon/icons';
 
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
@@ -82,7 +77,9 @@ const HeaderTitle = ({
             }}
           />
         </Form.Group>
-      ) : unitTitle}
+      ) : (
+        unitTitle
+      )}
       <IconButton
         alt={intl.formatMessage(messages.altButtonEdit)}
         className="ml-1 flex-shrink-0 edit-button"

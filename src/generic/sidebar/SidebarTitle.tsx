@@ -20,11 +20,7 @@ interface SidebarTitleProps {
  * This is meant to standardize the look and feel of the sidebar section titles,
  * so that it can be reused across different parts of the application.
  */
-export const SidebarTitle = ({
-  title,
-  icon,
-  onBackBtnClick,
-}: SidebarTitleProps) => {
+export const SidebarTitle = ({ title, icon, onBackBtnClick }: SidebarTitleProps) => {
   const intl = useIntl();
   return (
     <>

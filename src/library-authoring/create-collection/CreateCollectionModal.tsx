@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  ActionRow,
-  Form,
-  ModalDialog,
-} from '@openedx/paragon';
+import { ActionRow, Form, ModalDialog } from '@openedx/paragon';
 import { useNavigate } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
@@ -18,22 +14,21 @@ import { ToastContext } from '../../generic/toast-context';
 const CreateCollectionModal = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const {
-    libraryId,
-    isCreateCollectionModalOpen,
-    closeCreateCollectionModal,
-  } = useLibraryContext();
+  const { libraryId, isCreateCollectionModalOpen, closeCreateCollectionModal } = useLibraryContext();
   const create = useCreateLibraryCollection(libraryId);
   const { showToast } = React.useContext(ToastContext);
 
   const handleCreate = React.useCallback((values) => {
-    create.mutateAsync(values).then((data) => {
-      closeCreateCollectionModal();
-      navigate(`/library/${libraryId}/collection/${data.key}`);
-      showToast(intl.formatMessage(messages.createCollectionSuccess));
-    }).catch(() => {
-      showToast(intl.formatMessage(messages.createCollectionError));
-    });
+    create
+      .mutateAsync(values)
+      .then((data) => {
+        closeCreateCollectionModal();
+        navigate(`/library/${libraryId}/collection/${data.key}`);
+        showToast(intl.formatMessage(messages.createCollectionSuccess));
+      })
+      .catch(() => {
+        showToast(intl.formatMessage(messages.createCollectionError));
+      });
   }, []);
 
   return (
@@ -47,9 +42,7 @@ const CreateCollectionModal = () => {
       isOverflowVisible
     >
       <ModalDialog.Header>
-        <ModalDialog.Title>
-          {intl.formatMessage(messages.createCollectionModalTitle)}
-        </ModalDialog.Title>
+        <ModalDialog.Title>{intl.formatMessage(messages.createCollectionModalTitle)}</ModalDialog.Title>
       </ModalDialog.Header>
 
       <Formik
@@ -57,13 +50,10 @@ const CreateCollectionModal = () => {
           title: '',
           description: '',
         }}
-        validationSchema={
-          Yup.object().shape({
-            title: Yup.string()
-              .required(intl.formatMessage(messages.createCollectionModalNameInvalid)),
-            description: Yup.string(),
-          })
-        }
+        validationSchema={Yup.object().shape({
+          title: Yup.string().required(intl.formatMessage(messages.createCollectionModalNameInvalid)),
+          description: Yup.string(),
+        })}
         onSubmit={handleCreate}
       >
         {(formikProps) => (
@@ -71,11 +61,11 @@ const CreateCollectionModal = () => {
             <ModalDialog.Body className="mw-sm">
               <FormikControl
                 name="title"
-                label={(
+                label={
                   <Form.Label className="font-weight-bold h3">
                     {intl.formatMessage(messages.createCollectionModalNameLabel)}
                   </Form.Label>
-                )}
+                }
                 value={formikProps.values.title}
                 placeholder={intl.formatMessage(messages.createCollectionModalNamePlaceholder)}
                 controlClasses="pb-2"
@@ -83,18 +73,14 @@ const CreateCollectionModal = () => {
               <FormikControl
                 name="description"
                 as="textarea"
-                label={(
+                label={
                   <Form.Label className="font-weight-bold h3">
                     {intl.formatMessage(messages.createCollectionModalDescriptionLabel)}
                   </Form.Label>
-                )}
+                }
                 value={formikProps.values.description}
                 placeholder={intl.formatMessage(messages.createCollectionModalDescriptionPlaceholder)}
-                help={(
-                  <Form.Text>
-                    {intl.formatMessage(messages.createCollectionModalDescriptionDetails)}
-                  </Form.Text>
-                )}
+                help={<Form.Text>{intl.formatMessage(messages.createCollectionModalDescriptionDetails)}</Form.Text>}
                 controlClasses="pb-2"
                 rows="5"
               />

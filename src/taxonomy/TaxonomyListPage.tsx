@@ -12,10 +12,7 @@ import {
   MenuItem,
   useToggle,
 } from '@openedx/paragon';
-import {
-  Add,
-  Check,
-} from '@openedx/paragon/icons';
+import { Add, Check } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Helmet } from 'react-helmet';
@@ -36,19 +33,12 @@ const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean }) => {
 
   return (
     <>
-      {isImportModalOpen && (
-        <ImportTagsWizard
-          isOpen={isImportModalOpen}
-          onClose={importModalClose}
-        />
-      )}
+      {isImportModalOpen && <ImportTagsWizard isOpen={isImportModalOpen} onClose={importModalClose} />}
       <OverlayTrigger
         placement="top"
-        overlay={(
-          <Tooltip id="download-template-tooltip">
-            {intl.formatMessage(messages.downloadTemplateButtonHint)}
-          </Tooltip>
-        )}
+        overlay={
+          <Tooltip id="download-template-tooltip">{intl.formatMessage(messages.downloadTemplateButtonHint)}</Tooltip>
+        }
       >
         <Dropdown id="download-template-dropdown">
           <Dropdown.Toggle
@@ -59,16 +49,10 @@ const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean }) => {
             {intl.formatMessage(messages.downloadTemplateButtonLabel)}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item
-              href={apiUrls.taxonomyTemplate('csv')}
-              data-testid="taxonomy-download-template-csv"
-            >
+            <Dropdown.Item href={apiUrls.taxonomyTemplate('csv')} data-testid="taxonomy-download-template-csv">
               {intl.formatMessage(messages.downloadTemplateButtonCSVLabel)}
             </Dropdown.Item>
-            <Dropdown.Item
-              href={apiUrls.taxonomyTemplate('json')}
-              data-testid="taxonomy-download-template-json"
-            >
+            <Dropdown.Item href={apiUrls.taxonomyTemplate('json')} data-testid="taxonomy-download-template-json">
               {intl.formatMessage(messages.downloadTemplateButtonJSONLabel)}
             </Dropdown.Item>
           </Dropdown.Menu>
@@ -95,7 +79,7 @@ const OrganizationFilterSelector = ({
   isOrganizationListLoaded: boolean;
   organizationListData?: string[];
   selectedOrgFilter: string;
-  setSelectedOrgFilter: (org: string) => void,
+  setSelectedOrgFilter: (org: string) => void;
 }) => {
   const intl = useIntl();
   const isOrgSelected = (value) => (value === selectedOrgFilter ? <Check /> : null);
@@ -106,7 +90,7 @@ const OrganizationFilterSelector = ({
       iconAfter={() => isOrgSelected(ALL_TAXONOMIES)}
       onClick={() => setSelectedOrgFilter(ALL_TAXONOMIES)}
     >
-      { isOrgSelected(ALL_TAXONOMIES)
+      {isOrgSelected(ALL_TAXONOMIES)
         ? intl.formatMessage(messages.orgInputSelectDefaultValue)
         : intl.formatMessage(messages.orgAllValue)}
     </MenuItem>,
@@ -116,12 +100,12 @@ const OrganizationFilterSelector = ({
       iconAfter={() => isOrgSelected(UNASSIGNED)}
       onClick={() => setSelectedOrgFilter(UNASSIGNED)}
     >
-      { intl.formatMessage(messages.orgUnassignedValue) }
+      {intl.formatMessage(messages.orgUnassignedValue)}
     </MenuItem>,
   ];
 
   if (isOrganizationListLoaded && organizationListData) {
-    organizationListData.forEach(org => (
+    organizationListData.forEach((org) =>
       selectOptions.push(
         <MenuItem
           key={`${org}-taxonomies`}
@@ -131,8 +115,8 @@ const OrganizationFilterSelector = ({
         >
           {org}
         </MenuItem>,
-      )
-    ));
+      ),
+    );
   }
 
   return (
@@ -142,14 +126,11 @@ const OrganizationFilterSelector = ({
       defaultMessage={intl.formatMessage(messages.orgInputSelectDefaultValue)}
       data-testid="taxonomy-orgs-filter-selector"
     >
-      { isOrganizationListLoaded
-        ? selectOptions
-        : (
-          <Spinner
-            animation="border"
-            screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
-          />
-        )}
+      {isOrganizationListLoaded ? (
+        selectOptions
+      ) : (
+        <Spinner animation="border" screenReaderText={intl.formatMessage(messages.usageLoadingMessage)} />
+      )}
     </SelectMenu>
   );
 };
@@ -158,15 +139,9 @@ export const TaxonomyListPage = () => {
   const intl = useIntl();
   const [selectedOrgFilter, setSelectedOrgFilter] = useState<string>(ALL_TAXONOMIES);
 
-  const {
-    data: organizationListData,
-    isSuccess: isOrganizationListLoaded,
-  } = useOrganizationListData();
+  const { data: organizationListData, isSuccess: isOrganizationListLoaded } = useOrganizationListData();
 
-  const {
-    data: taxonomyListData,
-    isSuccess: isLoaded,
-  } = useTaxonomyList(selectedOrgFilter);
+  const { data: taxonomyListData, isSuccess: isLoaded } = useTaxonomyList(selectedOrgFilter);
   const canAddTaxonomy = taxonomyListData?.canAddTaxonomy ?? false;
 
   const getOrgSelect = () => (
@@ -224,18 +199,12 @@ export const TaxonomyListPage = () => {
                 },
               ]}
             >
-              <CardView
-                className="bg-light-400 p-5"
-                CardComponent={(row) => TaxonomyCard(row)}
-              />
+              <CardView className="bg-light-400 p-5" CardComponent={(row) => TaxonomyCard(row)} />
             </DataTable>
           )}
           {!isLoaded && (
             <Container className="d-flex justify-content-center mt-6">
-              <Spinner
-                animation="border"
-                screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
-              />
+              <Spinner animation="border" screenReaderText={intl.formatMessage(messages.usageLoadingMessage)} />
             </Container>
           )}
         </Container>

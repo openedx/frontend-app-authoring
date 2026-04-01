@@ -1,13 +1,7 @@
 import React from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  ActionRow,
-  Button,
-  Icon,
-  ModalDialog,
-  IconButton,
-} from '@openedx/paragon';
+import { ActionRow, Button, Icon, ModalDialog, IconButton } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 
 import { EditorModalBody, EditorModalWrapper, FooterWrapper } from '../../../../EditorContainer';
@@ -23,11 +17,7 @@ interface Props {
   onClose: (() => void) | null;
 }
 
-const SelectTypeWrapper: React.FC<Props> = ({
-  children,
-  onClose = null,
-  selected,
-}) => {
+const SelectTypeWrapper: React.FC<Props> = ({ children, onClose = null, selected }) => {
   const handleCancel = containerHooks.handleCancel({ onClose });
   const intl = useIntl();
   const defaultSettings = useSelector(selectors.problem.defaultSettings);
@@ -50,9 +40,7 @@ const SelectTypeWrapper: React.FC<Props> = ({
           </div>
         </ModalDialog.Title>
       </ModalDialog.Header>
-      <EditorModalBody>
-        {children}
-      </EditorModalBody>
+      <EditorModalBody>{children}</EditorModalBody>
       <FooterWrapper>
         <ModalDialog.Footer className="border-top-0">
           <ActionRow>

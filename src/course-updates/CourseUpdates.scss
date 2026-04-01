@@ -1,19 +1,19 @@
-@import "./course-handouts/CourseHandouts";
-@import "./course-update/CourseUpdate";
-@import "./update-form/UpdateForm";
+@import './course-handouts/CourseHandouts';
+@import './course-update/CourseUpdate';
+@import './update-form/UpdateForm';
 
 .updates-container {
   box-shadow: var(--pgn-elevation-box-shadow-centered-1);
   display: grid;
   grid-template-columns: 65% 35%;
-  border: .0625rem solid var(--pgn-color-gray-200);
-  border-radius: .375rem;
+  border: 0.0625rem solid var(--pgn-color-gray-200);
+  border-radius: 0.375rem;
   background: var(--pgn-color-white);
   overflow: hidden;
 }
 
 .updates-handouts-container {
-  border-left: .0625rem solid var(--pgn-color-gray-200);
+  border-left: 0.0625rem solid var(--pgn-color-gray-200);
   padding: 1.875rem;
   background: var(--pgn-color-white);
 }

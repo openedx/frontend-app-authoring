@@ -1,9 +1,7 @@
 import moment from 'moment/moment';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform/config';
-import {
-  Button, Hyperlink, Form, Stack, useToggle,
-} from '@openedx/paragon';
+import { Button, Hyperlink, Form, Stack, useToggle } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 import { type ReactNode } from 'react';
 
@@ -18,25 +16,23 @@ import { getVideoSharingOptionText } from '@src/course-outline/utils';
 import messages from './messages';
 
 interface StatusBarItemProps {
-  title: string,
-  children: ReactNode,
+  title: string;
+  children: ReactNode;
 }
 
 const StatusBarItem = ({ title, children }: StatusBarItemProps) => (
   <div className="d-flex flex-column justify-content-between">
     <h5>{title}</h5>
-    <div className="d-flex align-items-center">
-      {children}
-    </div>
+    <div className="d-flex align-items-center">{children}</div>
   </div>
 );
 
 export interface LegacyStatusBarProps {
-  courseId: string,
-  isLoading: boolean,
-  openEnableHighlightsModal: () => void,
-  handleVideoSharingOptionChange: (value: string) => void,
-  statusBarData: CourseOutlineStatusBar,
+  courseId: string;
+  isLoading: boolean;
+  openEnableHighlightsModal: () => void;
+  handleVideoSharingOptionChange: (value: string) => void;
+  statusBarData: CourseOutlineStatusBar;
 }
 
 export const LegacyStatusBar = ({
@@ -67,10 +63,10 @@ export const LegacyStatusBar = ({
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
 
-  const {
-    contentHighlights: contentHighlightsUrl,
-    socialSharing: socialSharingUrl,
-  } = useHelpUrls(['contentHighlights', 'socialSharing']);
+  const { contentHighlights: contentHighlightsUrl, socialSharing: socialSharingUrl } = useHelpUrls([
+    'contentHighlights',
+    'socialSharing',
+  ]);
 
   const { data: courseTagCount } = useContentTagsCount(courseId);
 
@@ -82,12 +78,14 @@ export const LegacyStatusBar = ({
 
   return (
     <>
-      <Stack direction="horizontal" gap={3.5} className="d-flex align-items-stretch outline-status-bar" data-testid="outline-status-bar">
+      <Stack
+        direction="horizontal"
+        gap={3.5}
+        className="d-flex align-items-stretch outline-status-bar"
+        data-testid="outline-status-bar"
+      >
         <StatusBarItem title={intl.formatMessage(messages.startDateTitle)}>
-          <Link
-            className="small"
-            to={`/course/${courseId}/settings/details/#schedule`}
-          >
+          <Link className="small" to={`/course/${courseId}/settings/details/#schedule`}>
             {courseReleaseDateObj.isValid() ? (
               <FormattedDate
                 value={courseReleaseDateObj.toISOString()}
@@ -97,7 +95,9 @@ export const LegacyStatusBar = ({
                 hour="numeric"
                 minute="numeric"
               />
-            ) : courseReleaseDate}
+            ) : (
+              courseReleaseDate
+            )}
           </Link>
         </StatusBarItem>
         <StatusBarItem title={intl.formatMessage(messages.pacingTypeTitle)}>
@@ -108,10 +108,7 @@ export const LegacyStatusBar = ({
           </span>
         </StatusBarItem>
         <StatusBarItem title={intl.formatMessage(messages.checklistTitle)}>
-          <Link
-            className="small"
-            to={`/course/${courseId}/checklists`}
-          >
+          <Link className="small" to={`/course/${courseId}/checklists`}>
             {checkListTitle} {intl.formatMessage(messages.checklistCompleted)}
           </Link>
         </StatusBarItem>
@@ -126,12 +123,7 @@ export const LegacyStatusBar = ({
                 {intl.formatMessage(messages.highlightEmailsButton)}
               </Button>
             )}
-            <Hyperlink
-              className="small ml-2"
-              destination={contentHighlightsUrl}
-              target="_blank"
-              showLaunchIcon={false}
-            >
+            <Hyperlink className="small ml-2" destination={contentHighlightsUrl} target="_blank" showLaunchIcon={false}>
               {intl.formatMessage(messages.highlightEmailsLink)}
             </Hyperlink>
           </div>
@@ -140,26 +132,16 @@ export const LegacyStatusBar = ({
           <StatusBarItem title={intl.formatMessage(messages.courseTagsTitle)}>
             <div className="d-flex align-items-center">
               <TagCount count={courseTagCount || 0} />
-              { /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-              <a
-                className="small ml-2"
-                href="#"
-                onClick={openManageTagsDrawer}
-              >
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a className="small ml-2" href="#" onClick={openManageTagsDrawer}>
                 {intl.formatMessage(messages.courseManageTagsLink)}
               </a>
             </div>
           </StatusBarItem>
         )}
         {videoSharingEnabled && (
-          <Form.Group
-            size="sm"
-            className="d-flex flex-column justify-content-between m-0"
-          >
-            <Form.Label
-              className="h5"
-            >{intl.formatMessage(messages.videoSharingTitle)}
-            </Form.Label>
+          <Form.Group size="sm" className="d-flex flex-column justify-content-between m-0">
+            <Form.Label className="h5">{intl.formatMessage(messages.videoSharingTitle)}</Form.Label>
             <div className="d-flex align-items-center">
               <Form.Control
                 as="select"
@@ -167,25 +149,16 @@ export const LegacyStatusBar = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleVideoSharingOptionChange(e.target.value)}
               >
                 {Object.values(VIDEO_SHARING_OPTIONS).map((option) => (
-                  <option
-                    key={option}
-                    value={option}
-                  >
+                  <option key={option} value={option}>
                     {getVideoSharingOptionText(option, messages, intl)}
                   </option>
                 ))}
               </Form.Control>
-              <Hyperlink
-                className="small"
-                destination={socialSharingUrl}
-                target="_blank"
-                showLaunchIcon={false}
-              >
+              <Hyperlink className="small" destination={socialSharingUrl} target="_blank" showLaunchIcon={false}>
                 {intl.formatMessage(messages.videoSharingLink)}
               </Hyperlink>
             </div>
           </Form.Group>
-
         )}
       </Stack>
       <ContentTagsDrawerSheet

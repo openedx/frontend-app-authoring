@@ -10,30 +10,19 @@ interface HelpSidebarLinkProps {
   title: string;
 }
 
-const HelpSidebarLink = ({
-  as = 'li',
-  isNewPage = true,
-  pathToPage,
-  title,
-}: HelpSidebarLinkProps) => {
+const HelpSidebarLink = ({ as = 'li', isNewPage = true, pathToPage, title }: HelpSidebarLinkProps) => {
   const TagElement = as;
   if (isNewPage) {
     return (
       <TagElement className="sidebar-link">
-        <Link to={pathToPage}>
-          {title}
-        </Link>
+        <Link to={pathToPage}>{title}</Link>
       </TagElement>
     );
   }
 
   return (
     <TagElement className="sidebar-link">
-      <Hyperlink
-        destination={pathToPage}
-        target="_blank"
-        showLaunchIcon={false}
-      >
+      <Hyperlink destination={pathToPage} target="_blank" showLaunchIcon={false}>
         {title}
       </Hyperlink>
     </TagElement>

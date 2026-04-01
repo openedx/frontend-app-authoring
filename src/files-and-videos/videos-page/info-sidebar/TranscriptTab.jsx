@@ -9,31 +9,18 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import ErrorAlert from '../../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { getLanguages, getSortedTranscripts } from '../data/utils';
 import Transcript from './transcript-item';
-import {
-  deleteVideoTranscript,
-  downloadVideoTranscript,
-  resetErrors,
-  uploadVideoTranscript,
-} from '../data/thunks';
+import { deleteVideoTranscript, downloadVideoTranscript, resetErrors, uploadVideoTranscript } from '../data/thunks';
 import { RequestStatus } from '../../../data/constants';
 import messages from './messages';
 
-const TranscriptTab = ({
-  video,
-}) => {
+const TranscriptTab = ({ video }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const divRef = useRef(null);
-  const { transcriptStatus, errors } = useSelector(state => state.videos);
-  const {
-    transcriptAvailableLanguages,
-    videoTranscriptSettings,
-  } = useSelector(state => state.videos.pageSettings);
-  const {
-    transcriptDeleteHandlerUrl,
-    transcriptUploadHandlerUrl,
-    transcriptDownloadHandlerUrl,
-  } = videoTranscriptSettings;
+  const { transcriptStatus, errors } = useSelector((state) => state.videos);
+  const { transcriptAvailableLanguages, videoTranscriptSettings } = useSelector((state) => state.videos.pageSettings);
+  const { transcriptDeleteHandlerUrl, transcriptUploadHandlerUrl, transcriptDownloadHandlerUrl } =
+    videoTranscriptSettings;
   const { transcripts, id, displayName } = video;
   const languages = getLanguages(transcriptAvailableLanguages);
   let sortedTranscripts = getSortedTranscripts(languages, transcripts);
@@ -53,11 +40,7 @@ const TranscriptTab = ({
   };
 
   const handleTranscript = (data, actionType) => {
-    const {
-      language,
-      newLanguage,
-      file,
-    } = data;
+    const { language, newLanguage, file } = data;
     dispatch(resetErrors({ errorType: 'transcript' }));
     switch (actionType) {
       case 'delete':
@@ -66,31 +49,37 @@ const TranscriptTab = ({
           updatedSelection.shift();
           setPreviousSelection(updatedSelection);
         } else {
-          dispatch(deleteVideoTranscript({
-            language,
-            videoId: id,
-            apiUrl: transcriptDeleteHandlerUrl,
-            transcripts,
-          }));
+          dispatch(
+            deleteVideoTranscript({
+              language,
+              videoId: id,
+              apiUrl: transcriptDeleteHandlerUrl,
+              transcripts,
+            }),
+          );
         }
         break;
       case 'download':
-        dispatch(downloadVideoTranscript({
-          filename: `${displayName}-${language}.srt`,
-          language,
-          videoId: id,
-          apiUrl: transcriptDownloadHandlerUrl,
-        }));
+        dispatch(
+          downloadVideoTranscript({
+            filename: `${displayName}-${language}.srt`,
+            language,
+            videoId: id,
+            apiUrl: transcriptDownloadHandlerUrl,
+          }),
+        );
         break;
       case 'upload':
-        dispatch(uploadVideoTranscript({
-          language,
-          videoId: id,
-          apiUrl: transcriptUploadHandlerUrl,
-          newLanguage,
-          file,
-          transcripts,
-        }));
+        dispatch(
+          uploadVideoTranscript({
+            language,
+            videoId: id,
+            apiUrl: transcriptUploadHandlerUrl,
+            newLanguage,
+            file,
+            transcripts,
+          }),
+        );
         break;
       default:
         break;
@@ -105,14 +94,14 @@ const TranscriptTab = ({
           isError={transcriptStatus === RequestStatus.FAILED && !isEmpty(errors.transcript)}
         >
           <ul className="p-0">
-            {errors.transcript.map(message => (
+            {errors.transcript.map((message) => (
               <li key={`transcript-error-${message}`} style={{ listStyle: 'none' }}>
                 {intl.formatMessage(messages.errorAlertMessage, { message })}
               </li>
             ))}
           </ul>
         </ErrorAlert>
-        {previousSelection.map(transcript => (
+        {previousSelection.map((transcript) => (
           <Transcript
             {...{
               languages,

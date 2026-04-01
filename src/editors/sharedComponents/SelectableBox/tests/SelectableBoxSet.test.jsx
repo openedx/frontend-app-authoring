@@ -24,17 +24,29 @@ const SelectableBoxSet = (props) => (
 
 const SelectableCheckboxSet = (props) => (
   <SelectableBox.Set name={radioType} type={checkboxType} ariaLabel={ariaLabel} {...props}>
-    <SelectableBox value={1} type={checkboxType}>{checkboxText(1)}</SelectableBox>
-    <SelectableBox value={2} type={checkboxType}>{checkboxText(2)}</SelectableBox>
-    <SelectableBox value={3} type={checkboxType}>{checkboxText(3)}</SelectableBox>
+    <SelectableBox value={1} type={checkboxType}>
+      {checkboxText(1)}
+    </SelectableBox>
+    <SelectableBox value={2} type={checkboxType}>
+      {checkboxText(2)}
+    </SelectableBox>
+    <SelectableBox value={3} type={checkboxType}>
+      {checkboxText(3)}
+    </SelectableBox>
   </SelectableBox.Set>
 );
 
 const SelectableRadioSet = (props) => (
   <SelectableBox.Set name={radioType} type={radioType} ariaLabel={ariaLabel} {...props}>
-    <SelectableBox value={1} type={radioType}>{radioText(1)}</SelectableBox>
-    <SelectableBox value={2} type={radioType}>{radioText(2)}</SelectableBox>
-    <SelectableBox value={3} type={radioType}>{radioText(3)}</SelectableBox>
+    <SelectableBox value={1} type={radioType}>
+      {radioText(1)}
+    </SelectableBox>
+    <SelectableBox value={2} type={radioType}>
+      {radioText(2)}
+    </SelectableBox>
+    <SelectableBox value={3} type={radioType}>
+      {radioText(3)}
+    </SelectableBox>
   </SelectableBox.Set>
 );
 
@@ -46,7 +58,7 @@ describe('<SelectableBox.Set />', () => {
       [1, 2, 3].forEach((item) => expect(screen.getByText(`SelectableRadio${item}`)).toBeInTheDocument());
     });
     it('forwards props', () => {
-      render((<SelectableRadioSet name="testName" data-testid="test-radio-set-name" />));
+      render(<SelectableRadioSet name="testName" data-testid="test-radio-set-name" />);
       expect(screen.getByTestId('test-radio-set-name')).toBeInTheDocument();
     });
     it('correct render when type prop is changed', () => {
@@ -58,9 +70,7 @@ describe('<SelectableBox.Set />', () => {
       expect(screen.getByTestId('checkbox-set')).toBeInTheDocument();
     });
     it('renders with children', () => {
-      render(
-        <SelectableCheckboxSet name="testName">{checkboxText(1)}</SelectableCheckboxSet>,
-      );
+      render(<SelectableCheckboxSet name="testName">{checkboxText(1)}</SelectableCheckboxSet>);
       expect(screen.getByText(checkboxText(1))).toBeInTheDocument();
     });
     it('renders with on change event', async () => {
@@ -90,19 +100,16 @@ describe('<SelectableBox.Set />', () => {
       expect(selectableBoxSet).toHaveClass(`pgn__selectable_box-set--${columns}`);
     });
     it('renders with an aria-label attribute', () => {
-      render((<SelectableRadioSet name="testName" ariaLabel="test-radio-set-label" />));
+      render(<SelectableRadioSet name="testName" ariaLabel="test-radio-set-label" />);
       expect(screen.getByLabelText('test-radio-set-label')).toBeInTheDocument();
     });
     it('renders with an aria-labelledby attribute', () => {
-      render((
+      render(
         <>
           <h2 id="test-radio-set-label">Radio Set Label text</h2>
-          <SelectableRadioSet
-            name="testName"
-            ariaLabelledby="test-radio-set-label"
-          />
-        </>
-      ));
+          <SelectableRadioSet name="testName" ariaLabelledby="test-radio-set-label" />
+        </>,
+      );
       expect(screen.getByLabelText('Radio Set Label text')).toBeInTheDocument();
     });
   });

@@ -1,7 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, Button, Form, IconButton, ModalDialog,
-} from '@openedx/paragon';
+import { ActionRow, Button, Form, IconButton, ModalDialog } from '@openedx/paragon';
 import { Settings } from '@openedx/paragon/icons';
 import { useState } from 'react';
 import { useCourseImportFilter } from './context';
@@ -44,9 +42,7 @@ const FilterModal = ({ show, onClose, handleSave }: FilterModalProps) => {
       isOpen={show}
     >
       <ModalDialog.Header>
-        <ModalDialog.Title>
-          {intl.formatMessage(messages.modalTitle)}
-        </ModalDialog.Title>
+        <ModalDialog.Title>{intl.formatMessage(messages.modalTitle)}</ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
         <Form.Checkbox checked={isChecked} onChange={handleChange}>
@@ -55,12 +51,8 @@ const FilterModal = ({ show, onClose, handleSave }: FilterModalProps) => {
       </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
-          <ModalDialog.CloseButton variant="tertiary">
-            {intl.formatMessage(messages.cancelBtn)}
-          </ModalDialog.CloseButton>
-          <Button onClick={submit}>
-            {intl.formatMessage(messages.saveBtn)}
-          </Button>
+          <ModalDialog.CloseButton variant="tertiary">{intl.formatMessage(messages.cancelBtn)}</ModalDialog.CloseButton>
+          <Button onClick={submit}>{intl.formatMessage(messages.saveBtn)}</Button>
         </ActionRow>
       </ModalDialog.Footer>
     </ModalDialog>

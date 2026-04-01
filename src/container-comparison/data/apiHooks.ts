@@ -20,11 +20,10 @@ export const containerComparisonQueryKeys = {
   },
 };
 
-export const useCourseContainerChildren = (usageKey?: string, getUpstreamInfo?: boolean) => (
+export const useCourseContainerChildren = (usageKey?: string, getUpstreamInfo?: boolean) =>
   useQuery({
     enabled: !!usageKey,
     queryFn: () => getCourseContainerChildren(usageKey!, getUpstreamInfo),
     // If we first get data with a valid `usageKey` and then the `usageKey` changes to undefined, an error occurs.
     queryKey: containerComparisonQueryKeys.container(getUpstreamInfo || false, usageKey),
-  })
-);
+  });

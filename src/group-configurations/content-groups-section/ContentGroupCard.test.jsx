@@ -21,28 +21,25 @@ const contentGroup = contentGroupsMock.groups[0];
 const contentGroupWithUsages = contentGroupsMock.groups[1];
 const contentGroupWithOnlyOneUsage = contentGroupsMock.groups[2];
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <ContentGroupCard
-      group={contentGroup}
-      groupNames={contentGroupsMock.groups?.map((group) => group.name)}
-      parentGroupId={contentGroupsMock.id}
-      contentGroupActions={contentGroupActions}
-      handleEditGroup={handleEditGroupMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <ContentGroupCard
+        group={contentGroup}
+        groupNames={contentGroupsMock.groups?.map((group) => group.name)}
+        parentGroupId={contentGroupsMock.id}
+        contentGroupActions={contentGroupActions}
+        handleEditGroup={handleEditGroupMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ContentGroupCard />', () => {
   it('renders component correctly', () => {
     const { getByText, getByTestId } = renderComponent();
     expect(getByText(contentGroup.name)).toBeInTheDocument();
-    expect(
-      getByText(
-        commonMessages.titleId.defaultMessage.replace('{id}', contentGroup.id),
-      ),
-    ).toBeInTheDocument();
+    expect(getByText(commonMessages.titleId.defaultMessage.replace('{id}', contentGroup.id))).toBeInTheDocument();
     expect(getByText(rootMessages.notInUse.defaultMessage)).toBeInTheDocument();
     expect(getByTestId('content-group-card-header-edit')).toBeInTheDocument();
     expect(getByTestId('content-group-card-header-delete')).toBeInTheDocument();
@@ -50,15 +47,11 @@ describe('<ContentGroupCard />', () => {
 
   it('expands/collapses the container group content on title click', async () => {
     const user = userEvent.setup();
-    const {
-      getByText, queryByTestId, getByTestId, queryByText,
-    } = renderComponent();
+    const { getByText, queryByTestId, getByTestId, queryByText } = renderComponent();
     const cardTitle = getByTestId('configuration-card-header-button');
     await user.click(cardTitle);
     expect(queryByTestId('content-group-card-content')).toBeInTheDocument();
-    expect(
-      queryByText(rootMessages.notInUse.defaultMessage),
-    ).not.toBeInTheDocument();
+    expect(queryByText(rootMessages.notInUse.defaultMessage)).not.toBeInTheDocument();
 
     await user.click(cardTitle);
     expect(queryByTestId('content-group-card-content')).not.toBeInTheDocument();
@@ -84,9 +77,7 @@ describe('<ContentGroupCard />', () => {
   it('renders group controls without access to units', async () => {
     const user = userEvent.setup();
     const { queryByText, getByTestId } = renderComponent();
-    expect(
-      queryByText(commonMessages.accessTo.defaultMessage),
-    ).not.toBeInTheDocument();
+    expect(queryByText(commonMessages.accessTo.defaultMessage)).not.toBeInTheDocument();
 
     const cardTitle = getByTestId('configuration-card-header-button');
     await user.click(cardTitle);

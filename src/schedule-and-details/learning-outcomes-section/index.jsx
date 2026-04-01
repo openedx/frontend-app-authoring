@@ -28,10 +28,7 @@ const LearningOutcomesSection = ({ learningInfo, onChange }) => {
   };
 
   const renderLearningOutcomeItem = (text, idx) => (
-    <Form.Group
-      className="form-group-custom align-items-center d-flex"
-      key={idx}
-    >
+    <Form.Group className="form-group-custom align-items-center d-flex" key={idx}>
       <Form.Label isInline>
         {intl.formatMessage(messages.outcomesLabelIncrement)} {idx + 1}
       </Form.Label>
@@ -40,10 +37,7 @@ const LearningOutcomesSection = ({ learningInfo, onChange }) => {
         placeholder={intl.formatMessage(messages.outcomesInputPlaceholder)}
         onChange={(e) => handleInputChange(e.target.value, idx)}
       />
-      <Button
-        variant="outline-primary"
-        onClick={() => handleDelete(idx)}
-      >
+      <Button variant="outline-primary" onClick={() => handleDelete(idx)}>
         {intl.formatMessage(messages.outcomesDelete)}
       </Button>
     </Form.Group>
@@ -55,9 +49,7 @@ const LearningOutcomesSection = ({ learningInfo, onChange }) => {
         title={intl.formatMessage(messages.outcomesTitle)}
         description={intl.formatMessage(messages.outcomesDescription)}
       />
-      <ul className="learning-outcomes-list">
-        {learningInfo.map(renderLearningOutcomeItem)}
-      </ul>
+      <ul className="learning-outcomes-list">{learningInfo.map(renderLearningOutcomeItem)}</ul>
       <Button iconBefore={AddIcon} variant="primary" onClick={handleAdd}>
         {intl.formatMessage(messages.outcomesAdd)}
       </Button>

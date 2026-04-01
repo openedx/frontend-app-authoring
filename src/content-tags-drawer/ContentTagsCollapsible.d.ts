@@ -18,9 +18,9 @@ export interface TaxonomySelectProps {
   appliedContentTagsTree: Record<string, TagTreeEntry>;
   stagedContentTagsTree: Record<string, TagTreeEntry>;
   checkedTags: string[];
-  selectCancelRef: Ref,
-  selectAddRef: Ref,
-  selectInlineAddRef: Ref,
+  selectCancelRef: Ref;
+  selectAddRef: Ref;
+  selectInlineAddRef: Ref;
   handleCommitStagedTags: () => void;
   handleCancelStagedTags: () => void;
   handleSelectableBoxChange: React.ChangeEventHandler;
@@ -34,18 +34,21 @@ export interface TaxonomySelectProps {
 // rather than using the custom <Select> Props (selectProps).
 declare module 'react-select/base' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  export interface Props<Option, IsMulti extends boolean, Group extends GroupBase<Option>> extends TaxonomySelectProps {
-  }
+  export interface Props<
+    Option,
+    IsMulti extends boolean,
+    Group extends GroupBase<Option>,
+  > extends TaxonomySelectProps {}
 }
 
 export type TagTree = {
   [key: string]: {
-    children: TagTree,
-    canChangeObjecttag: boolean,
-    canDeleteObjecttag: boolean,
-    explicit: boolean,
-    isCopied: boolean,
-  }
+    children: TagTree;
+    canChangeObjecttag: boolean;
+    canDeleteObjecttag: boolean;
+    explicit: boolean;
+    isCopied: boolean;
+  };
 };
 
 export default ContentTagsCollapsible;

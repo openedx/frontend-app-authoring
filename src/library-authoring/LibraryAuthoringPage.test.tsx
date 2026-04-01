@@ -1,14 +1,7 @@
 import { getConfig } from '@edx/frontend-platform';
 import fetchMock from 'fetch-mock-jest';
 import { Helmet } from 'react-helmet';
-import {
-  fireEvent,
-  initializeMocks,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '@src/testUtils';
+import { fireEvent, initializeMocks, render, screen, waitFor, within } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { mockGetMigrationStatus } from '@src/data/api.mocks';
 import mockEmptyResult from '@src/search-modal/__mocks__/empty-search-result.json';
@@ -41,7 +34,7 @@ const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
 /**
  * Returns 0 components from the search query.
-*/
+ */
 const returnEmptyResult = (_url, req) => {
   const requestData = JSON.parse(req.body?.toString() ?? '');
   const query = requestData?.queries[0]?.q ?? '';
@@ -50,7 +43,9 @@ const returnEmptyResult = (_url, req) => {
   mockEmptyResult.results[0].query = query;
   // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
   // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-  mockEmptyResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+  mockEmptyResult.results[0]?.hits.forEach((hit) => {
+    hit._formatted = { ...hit };
+  });
   return mockEmptyResult;
 };
 
@@ -80,7 +75,9 @@ describe('<LibraryAuthoringPage />', () => {
       newMockResult.results[0].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-      newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      newMockResult.results[0]?.hits.forEach((hit) => {
+        hit._formatted = { ...hit };
+      });
       return newMockResult;
     });
   });
@@ -94,7 +91,9 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Ensure the search endpoint is called:
     // Call 1: To fetch searchable/filterable/sortable library data
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+    });
   };
 
   it('shows the spinner before the query is complete', () => {
@@ -192,7 +191,9 @@ describe('<LibraryAuthoringPage />', () => {
     // Update search mock so it returns no results:
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
     render(<LibraryLayout />, { path, params: { libraryId } });
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+    });
 
     expect(await screen.findByText('Content library')).toBeInTheDocument();
     expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
@@ -208,13 +209,17 @@ describe('<LibraryAuthoringPage />', () => {
     expect(await screen.findByText('Content library')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+    });
 
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'noresults' } });
 
     // Ensure the search endpoint is called again, only once more since the recently modified call
     // should not be impacted by the search
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post');
+    });
 
     expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
 
@@ -337,7 +342,7 @@ describe('<LibraryAuthoringPage />', () => {
 
     expect(await screen.findByTitle('Sort search results')).toBeInTheDocument();
 
-    const testSortOption = (async (optionText, sortBy, isDefault) => {
+    const testSortOption = async (optionText, sortBy, isDefault) => {
       // Open the drop-down menu
       fireEvent.click(screen.getByTitle('Sort search results'));
 
@@ -352,7 +357,7 @@ describe('<LibraryAuthoringPage />', () => {
       let bodyText;
       // Did the search happen with the expected sort option?
       if (Array.isArray(sortBy)) {
-        bodyText = `"sort":[${sortBy.map(item => `"${item}"`).join(',')}]`;
+        bodyText = `"sort":[${sortBy.map((item) => `"${item}"`).join(',')}]`;
       } else {
         bodyText = sortBy ? `"sort":["${sortBy}"]` : '"sort":[]';
       }
@@ -372,7 +377,7 @@ describe('<LibraryAuthoringPage />', () => {
       // Is the selected sort option shown in the toggle button (if not default)
       // as well as in the drop-down menu?
       expect(screen.getAllByText(optionText).length).toEqual(isDefault ? 1 : 2);
-    });
+    };
 
     await testSortOption('Title, A-Z', 'display_name:asc', false);
     await testSortOption('Title, Z-A', 'display_name:desc', false);
@@ -479,7 +484,7 @@ describe('<LibraryAuthoringPage />', () => {
     await renderLibraryPage();
 
     // Click on the first collection
-    fireEvent.click((await screen.findByText('Collection 1')));
+    fireEvent.click(await screen.findByText('Collection 1'));
 
     const sidebar = screen.getByTestId('library-sidebar');
 
@@ -498,7 +503,7 @@ describe('<LibraryAuthoringPage />', () => {
     await renderLibraryPage();
 
     // Click on the first unit
-    fireEvent.click((await screen.findByText('Test Unit')));
+    fireEvent.click(await screen.findByText('Test Unit'));
 
     const sidebar = screen.getByTestId('library-sidebar');
 
@@ -517,7 +522,7 @@ describe('<LibraryAuthoringPage />', () => {
     await renderLibraryPage();
 
     // Click on the first collection
-    fireEvent.click((await screen.findByText('Collection 1')));
+    fireEvent.click(await screen.findByText('Collection 1'));
 
     // Click on the Details tab
     fireEvent.click(screen.getByRole('tab', { name: 'Details' }));
@@ -532,7 +537,7 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Preview' }));
 
     // Switch back to the collection
-    fireEvent.click((await screen.findByText('Collection 1')));
+    fireEvent.click(await screen.findByText('Collection 1'));
 
     // The Details (default) tab should be selected because the collection does not have a Preview tab
     expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
@@ -550,13 +555,17 @@ describe('<LibraryAuthoringPage />', () => {
     await renderLibraryPage();
 
     // Ensure the search endpoint is called
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+    });
     const filterButton = screen.getByRole('button', { name: /type/i });
     fireEvent.click(filterButton);
 
     const problemFilterCheckbox = screen.getByRole('checkbox', { name: /problem/i });
     const problemFilterMenuItem = problemFilterCheckbox.parentElement; // div.pgn__menu-item
-    const showProbTypesSubmenuBtn = problemFilterMenuItem!.querySelector('button[aria-label="Open problem types filters"]');
+    const showProbTypesSubmenuBtn = problemFilterMenuItem!.querySelector(
+      'button[aria-label="Open problem types filters"]',
+    );
     expect(showProbTypesSubmenuBtn).not.toBeNull();
     fireEvent.click(showProbTypesSubmenuBtn!);
 
@@ -586,7 +595,9 @@ describe('<LibraryAuthoringPage />', () => {
     await renderLibraryPage();
 
     // Ensure the search endpoint is called
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+    });
     const filterButton = screen.getByRole('button', { name: /type/i });
     fireEvent.click(filterButton);
 
@@ -817,7 +828,9 @@ describe('<LibraryAuthoringPage />', () => {
     expect(axiosMock.history.post[0].url).toBe(url);
     expect(axiosMock.history.post[0].data).toContain(`"display_name":"${title}"`);
     expect(axiosMock.history.post[0].data).toContain(`"container_type":"${containerType}"`);
-    expect(mockShowToast).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`${containerType} created successfully`, 'i')));
+    expect(mockShowToast).toHaveBeenCalledWith(
+      expect.stringMatching(new RegExp(`${containerType} created successfully`, 'i')),
+    );
   });
 
   test.each([
@@ -1061,9 +1074,7 @@ describe('<LibraryAuthoringPage />', () => {
     });
 
     render(<LibraryLayout />, { path, params: { libraryId: mockContentLibrary.libraryId } });
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'This page cannot be shown: Libraries v2 are disabled.',
-    );
+    expect(await screen.findByRole('alert')).toHaveTextContent('This page cannot be shown: Libraries v2 are disabled.');
   });
 
   it('Should show success in migration legacy libraries', async () => {
@@ -1076,7 +1087,9 @@ describe('<LibraryAuthoringPage />', () => {
       },
     });
 
-    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('The migration of legacy libraries has been completed successfully.'));
+    await waitFor(() =>
+      expect(mockShowToast).toHaveBeenCalledWith('The migration of legacy libraries has been completed successfully.'),
+    );
   });
 
   it('Should show fail in migration legacy libraries', async () => {
@@ -1115,6 +1128,8 @@ describe('<LibraryAuthoringPage />', () => {
       },
     });
 
-    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('The legacy library with this key has failed: legacy-lib-1'));
+    await waitFor(() =>
+      expect(mockShowToast).toHaveBeenCalledWith('The legacy library with this key has failed: legacy-lib-1'),
+    );
   });
 });

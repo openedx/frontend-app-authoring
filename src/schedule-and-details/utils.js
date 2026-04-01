@@ -2,12 +2,7 @@ import { CERTIFICATE_DISPLAY_BEHAVIOR } from './schedule-section/certificate-dis
 import { defaultEntranceExamMinimumScorePct } from './constants';
 import messages from './messages';
 
-const isDateBeforeOrEqual = (
-  dateFormer,
-  dateLatter,
-  allowEqual = false,
-  checkExists = true,
-) => {
+const isDateBeforeOrEqual = (dateFormer, dateLatter, allowEqual = false, checkExists = true) => {
   if (checkExists && (!dateFormer || !dateLatter)) {
     return false;
   }
@@ -54,10 +49,7 @@ const validateScheduleAndDetails = (courseDetails, canShowCertificateAvailableDa
     errors.enrollmentEnd = intl.formatMessage(messages.errorMessage2);
   }
 
-  if (
-    certificatesDisplayBehavior === CERTIFICATE_DISPLAY_BEHAVIOR.endWithDate
-    && !certificateAvailableDate
-  ) {
+  if (certificatesDisplayBehavior === CERTIFICATE_DISPLAY_BEHAVIOR.endWithDate && !certificateAvailableDate) {
     errors.certificateAvailableDate = intl.formatMessage(messages.errorMessage1);
   }
 

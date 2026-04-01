@@ -5,11 +5,4 @@ import StatusColumn from './StatusColumn';
 import ThumbnailColumn from './ThumbnailColumn';
 import TranscriptColumn from './TranscriptColumn';
 
-export {
-  AccessColumn,
-  ActiveColumn,
-  MoreInfoColumn,
-  StatusColumn,
-  ThumbnailColumn,
-  TranscriptColumn,
-};
+export { AccessColumn, ActiveColumn, MoreInfoColumn, StatusColumn, ThumbnailColumn, TranscriptColumn };

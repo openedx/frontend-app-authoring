@@ -1,13 +1,6 @@
 import { FC } from 'react';
-import {
-  Collapsible,
-  Icon,
-} from '@openedx/paragon';
-import {
-  ArrowRight,
-  ArrowDropDown,
-  LinkOff,
-} from '@openedx/paragon/icons';
+import { Collapsible, Icon } from '@openedx/paragon';
+import { ArrowRight, ArrowDropDown, LinkOff } from '@openedx/paragon/icons';
 import CustomIcon from './CustomIcon';
 import messages from './messages';
 import lockedIcon from './lockedIcon';
@@ -81,11 +74,11 @@ const SectionCollapsible: FC<Props> = ({
       <Collapsible
         className="section-collapsible-item-container"
         styling={styling}
-        title={(
+        title={
           <p className="flex-grow-1 section-collapsible-item">
             <strong>{collapsibleTitle}</strong>
           </p>
-        )}
+        }
         iconWhenClosed=""
         iconWhenOpen=""
         open={isOpen}

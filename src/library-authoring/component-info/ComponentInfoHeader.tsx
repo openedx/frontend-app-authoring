@@ -21,9 +21,7 @@ const ComponentInfoHeader = () => {
   if (!usageKey) {
     throw new Error('usageKey is required');
   }
-  const {
-    data: xblockFields,
-  } = useXBlockFields(usageKey, showOnlyPublished ? 'published' : 'draft');
+  const { data: xblockFields } = useXBlockFields(usageKey, showOnlyPublished ? 'published' : 'draft');
 
   const updateMutation = useUpdateXBlockFields(usageKey);
   const { showToast } = useContext(ToastContext);

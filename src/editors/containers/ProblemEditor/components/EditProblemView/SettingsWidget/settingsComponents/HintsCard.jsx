@@ -8,18 +8,13 @@ import { hintsCardHooks, hintsRowHooks } from '../hooks';
 import HintRow from './HintRow';
 import Button from '../../../../../../sharedComponents/Button';
 
-const HintsCard = ({
-  hints,
-  problemType,
-  updateSettings,
-  images,
-  isLibrary,
-  learningContextId,
-}) => {
+const HintsCard = ({ hints, problemType, updateSettings, images, isLibrary, learningContextId }) => {
   const intl = useIntl();
   const { summary, handleAdd } = hintsCardHooks(hints, updateSettings);
 
-  if (problemType === ProblemTypeKeys.ADVANCED) { return null; }
+  if (problemType === ProblemTypeKeys.ADVANCED) {
+    return null;
+  }
 
   return (
     <SettingsOption
@@ -41,12 +36,7 @@ const HintsCard = ({
           }}
         />
       ))}
-      <Button
-        className="m-0 p-0 font-weight-bold"
-        variant="add"
-        onClick={handleAdd}
-        size="sm"
-      >
+      <Button className="m-0 p-0 font-weight-bold" variant="add" onClick={handleAdd} size="sm">
         <FormattedMessage {...messages.addHintButtonText} />
       </Button>
     </SettingsOption>
@@ -54,10 +44,12 @@ const HintsCard = ({
 };
 
 HintsCard.propTypes = {
-  hints: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-  })).isRequired,
+  hints: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
   problemType: PropTypes.string.isRequired,
   updateSettings: PropTypes.func.isRequired,
   images: PropTypes.shape({}).isRequired,

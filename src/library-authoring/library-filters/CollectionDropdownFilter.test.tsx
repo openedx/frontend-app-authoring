@@ -1,8 +1,6 @@
 import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
 import { useGetContentHits } from '@src/search-manager';
-import {
-  initializeMocks, render, screen,
-} from '@src/testUtils';
+import { initializeMocks, render, screen } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 import { CollectionDropdownFilter } from './CollectionDropdownFilter';
 
@@ -83,14 +81,16 @@ describe('CollectionDropdownFilter', () => {
     (useGetContentHits as jest.Mock).mockReturnValue({
       isPending: false,
       data: {
-        hits: [{
-          display_name: 'Test collection',
-          block_id: 'test-collection',
-        },
-        {
-          display_name: 'Sample Taxonomy Course',
-          block_id: 'sample-taxonomy-course',
-        }],
+        hits: [
+          {
+            display_name: 'Test collection',
+            block_id: 'test-collection',
+          },
+          {
+            display_name: 'Sample Taxonomy Course',
+            block_id: 'sample-taxonomy-course',
+          },
+        ],
         estimatedTotalHits: 0,
       },
     });
@@ -112,14 +112,16 @@ describe('CollectionDropdownFilter', () => {
     (useGetContentHits as jest.Mock).mockReturnValue({
       isPending: false,
       data: {
-        hits: [{
-          display_name: 'Test collection',
-          block_id: 'test-collection',
-        },
-        {
-          display_name: 'Sample Taxonomy Course',
-          block_id: 'sample-taxonomy-course',
-        }],
+        hits: [
+          {
+            display_name: 'Test collection',
+            block_id: 'test-collection',
+          },
+          {
+            display_name: 'Sample Taxonomy Course',
+            block_id: 'sample-taxonomy-course',
+          },
+        ],
         estimatedTotalHits: 0,
       },
     });
@@ -132,10 +134,7 @@ describe('CollectionDropdownFilter', () => {
     await user.click(item);
     const passedFunction = mockCollectionsSetValue.mock.calls[0][0];
     // Should remove it from list if already selected, i.e., it means user unselected it.
-    expect(passedFunction([
-      'test-collection',
-      'sample-taxonomy-course',
-    ])).toEqual(['sample-taxonomy-course']);
+    expect(passedFunction(['test-collection', 'sample-taxonomy-course'])).toEqual(['sample-taxonomy-course']);
   });
 
   it('should update label to collection if one is selected', async () => {
@@ -143,14 +142,16 @@ describe('CollectionDropdownFilter', () => {
     (useGetContentHits as jest.Mock).mockReturnValue({
       isPending: false,
       data: {
-        hits: [{
-          display_name: 'Test collection',
-          block_id: 'test-collection',
-        },
-        {
-          display_name: 'Sample Taxonomy Course',
-          block_id: 'sample-taxonomy-course',
-        }],
+        hits: [
+          {
+            display_name: 'Test collection',
+            block_id: 'test-collection',
+          },
+          {
+            display_name: 'Sample Taxonomy Course',
+            block_id: 'sample-taxonomy-course',
+          },
+        ],
         estimatedTotalHits: 0,
       },
     });
@@ -173,14 +174,16 @@ describe('CollectionDropdownFilter', () => {
     (useGetContentHits as jest.Mock).mockReturnValue({
       isPending: false,
       data: {
-        hits: [{
-          display_name: 'Test collection',
-          block_id: 'test-collection',
-        },
-        {
-          display_name: 'Sample Taxonomy Course',
-          block_id: 'sample-taxonomy-course',
-        }],
+        hits: [
+          {
+            display_name: 'Test collection',
+            block_id: 'test-collection',
+          },
+          {
+            display_name: 'Sample Taxonomy Course',
+            block_id: 'sample-taxonomy-course',
+          },
+        ],
         estimatedTotalHits: 0,
       },
     });

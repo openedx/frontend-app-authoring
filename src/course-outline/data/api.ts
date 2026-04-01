@@ -13,9 +13,8 @@ import {
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getCourseOutlineIndexApiUrl = (
-  courseId: string,
-) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
+export const getCourseOutlineIndexApiUrl = (courseId: string) =>
+  `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
 
 export const getCourseDetailsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_details/${courseId}`;
 
@@ -24,9 +23,9 @@ export const getCourseBestPracticesApiUrl = ({
   excludeGraded,
   all,
 }: {
-  courseId: string,
-  excludeGraded: boolean,
-  all: boolean,
+  courseId: string;
+  excludeGraded: boolean;
+  all: boolean;
 }) => `${getApiBaseUrl()}/api/courses/v1/quality/${courseId}/?exclude_graded=${excludeGraded}&all=${all}`;
 
 export const getCourseLaunchApiUrl = ({
@@ -34,12 +33,13 @@ export const getCourseLaunchApiUrl = ({
   gradedOnly,
   validateOras,
   all,
-}:{
-  courseId: string,
-  gradedOnly: boolean,
-  validateOras: boolean,
-  all: boolean,
-}) => `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
+}: {
+  courseId: string;
+  gradedOnly: boolean;
+  validateOras: boolean;
+  all: boolean;
+}) =>
+  `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
 export const getCourseBlockApiUrl = (courseId: string) => {
   const formattedCourseId = courseId.split('course-v1:')[1];
@@ -50,10 +50,14 @@ export const getCourseReindexApiUrl = (reindexLink: string) => `${getApiBaseUrl(
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
-export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
-export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
-export const courseLegacyLibraryContentBlocks = (courseId: string) => `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
-export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) => `${courseLegacyLibraryContentBlocks(courseId)}${taskId}/`;
+export const exportTags = (courseId: string) =>
+  `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
+export const createDiscussionsTopicsUrl = (courseId: string) =>
+  `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
+export const courseLegacyLibraryContentBlocks = (courseId: string) =>
+  `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
+export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) =>
+  `${courseLegacyLibraryContentBlocks(courseId)}${taskId}/`;
 
 /**
  * Get course outline index.
@@ -61,8 +65,7 @@ export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: s
  * @returns {Promise<CourseOutline>}
  */
 export async function getCourseOutlineIndex(courseId: string): Promise<CourseOutline> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseOutlineIndexApiUrl(courseId));
+  const { data } = await getAuthenticatedHttpClient().get(getCourseOutlineIndexApiUrl(courseId));
 
   return camelCaseObject(data);
 }
@@ -73,8 +76,7 @@ export async function getCourseOutlineIndex(courseId: string): Promise<CourseOut
  * @returns {Promise<CourseDetails>}
  */
 export async function getCourseDetails(courseId: string): Promise<CourseDetails> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseDetailsApiUrl(courseId));
+  const { data } = await getAuthenticatedHttpClient().get(getCourseDetailsApiUrl(courseId));
 
   return camelCaseObject(data);
 }
@@ -85,8 +87,7 @@ export async function getCourseDetails(courseId: string): Promise<CourseDetails>
  * @returns {Promise<Array|Object>}
  */
 export async function createDiscussionsTopics(courseId: string): Promise<Array<any> | object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(createDiscussionsTopicsUrl(courseId));
+  const { data } = await getAuthenticatedHttpClient().post(createDiscussionsTopicsUrl(courseId));
   return camelCaseObject(data);
 }
 
@@ -104,14 +105,15 @@ export async function getCourseBestPractices({
   excludeGraded: boolean;
   all: boolean;
 }): Promise<{
-    isSelfPaced: boolean;
-    sections: any;
-    subsection: any;
-    units: any;
-    videos: any;
-  }> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseBestPracticesApiUrl({ courseId, excludeGraded, all }));
+  isSelfPaced: boolean;
+  sections: any;
+  subsection: any;
+  units: any;
+  videos: any;
+}> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getCourseBestPracticesApiUrl({ courseId, excludeGraded, all }),
+  );
 
   return camelCaseObject(data);
 }
@@ -138,11 +140,20 @@ export async function getCourseLaunch({
   gradedOnly,
   validateOras,
   all,
-}: { courseId: string; gradedOnly: boolean; validateOras: boolean; all: boolean; }): Promise<CourseLaunchData> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseLaunchApiUrl({
-      courseId, gradedOnly, validateOras, all,
-    }));
+}: {
+  courseId: string;
+  gradedOnly: boolean;
+  validateOras: boolean;
+  all: boolean;
+}): Promise<CourseLaunchData> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getCourseLaunchApiUrl({
+      courseId,
+      gradedOnly,
+      validateOras,
+      all,
+    }),
+  );
 
   return camelCaseObject(data);
 }
@@ -153,13 +164,12 @@ export async function getCourseLaunch({
  * @returns {Promise<Object>}
  */
 export async function enableCourseHighlightsEmails(courseId: string): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseBlockApiUrl(courseId), {
-      publish: 'republish',
-      metadata: {
-        highlights_enabled_for_messaging: true,
-      },
-    });
+  const { data } = await getAuthenticatedHttpClient().post(getCourseBlockApiUrl(courseId), {
+    publish: 'republish',
+    metadata: {
+      highlights_enabled_for_messaging: true,
+    },
+  });
 
   return data;
 }
@@ -170,8 +180,7 @@ export async function enableCourseHighlightsEmails(courseId: string): Promise<ob
  * @returns {Promise<Object>}
  */
 export async function restartIndexingOnCourse(reindexLink: string): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseReindexApiUrl(reindexLink));
+  const { data } = await getAuthenticatedHttpClient().get(getCourseReindexApiUrl(reindexLink));
 
   return camelCaseObject(data);
 }
@@ -180,8 +189,7 @@ export async function restartIndexingOnCourse(reindexLink: string): Promise<obje
  * Get course Xblock
  */
 export async function getCourseItem<T = XBlock>(itemId: string): Promise<T> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getXBlockApiUrl(itemId));
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockApiUrl(itemId));
   return camelCaseObject(data);
 }
 
@@ -191,17 +199,13 @@ export async function getCourseItem<T = XBlock>(itemId: string): Promise<T> {
  * @param {Array<string>} highlights
  * @returns {Promise<Object>}
  */
-export async function updateCourseSectionHighlights(
-  sectionId: string,
-  highlights: Array<string>,
-): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(sectionId), {
-      publish: 'republish',
-      metadata: {
-        highlights,
-      },
-    });
+export async function updateCourseSectionHighlights(sectionId: string, highlights: Array<string>): Promise<object> {
+  const { data } = await getAuthenticatedHttpClient().post(getCourseItemApiUrl(sectionId), {
+    publish: 'republish',
+    metadata: {
+      highlights,
+    },
+  });
 
   return data;
 }
@@ -210,10 +214,9 @@ export async function updateCourseSectionHighlights(
  * Publish course item
  */
 export async function publishCourseItem(itemId: string): Promise<CourseItemUpdateResult> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(itemId), {
-      publish: 'make_public',
-    });
+  const { data } = await getAuthenticatedHttpClient().post(getCourseItemApiUrl(itemId), {
+    publish: 'make_public',
+  });
 
   return data;
 }
@@ -222,15 +225,14 @@ export async function publishCourseItem(itemId: string): Promise<CourseItemUpdat
  * Configure course section
  */
 export async function configureCourseSection(variables: ConfigureSectionData): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(variables.sectionId), {
-      publish: 'republish',
-      metadata: {
-        // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-        start: variables.startDatetime,
-      },
-    });
+  const { data } = await getAuthenticatedHttpClient().post(getCourseItemApiUrl(variables.sectionId), {
+    publish: 'republish',
+    metadata: {
+      // The backend expects metadata.visible_to_staff_only to either true or null
+      visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+      start: variables.startDatetime,
+    },
+  });
 
   return data;
 }
@@ -239,29 +241,28 @@ export async function configureCourseSection(variables: ConfigureSectionData): P
  * Configure course subsection
  */
 export async function configureCourseSubsection(variables: ConfigureSubsectionData): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(variables.itemId), {
-      publish: 'republish',
-      graderType: variables.graderType,
-      isPrereq: variables.isPrereq,
-      prereqUsageKey: variables.prereqUsageKey,
-      prereqMinScore: variables.prereqMinScore,
-      prereqMinCompletion: variables.prereqMinCompletion,
-      metadata: {
-        // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-        due: variables.dueDate,
-        hide_after_due: variables.hideAfterDue,
-        show_correctness: variables.showCorrectness,
-        is_practice_exam: variables.isPracticeExam,
-        is_time_limited: variables.isTimeLimited,
-        is_proctored_enabled: variables.isProctoredExam || variables.isPracticeExam || variables.isOnboardingExam,
-        exam_review_rules: variables.examReviewRules,
-        default_time_limit_minutes: variables.defaultTimeLimitMin,
-        is_onboarding_exam: variables.isOnboardingExam,
-        start: variables.releaseDate,
-      },
-    });
+  const { data } = await getAuthenticatedHttpClient().post(getCourseItemApiUrl(variables.itemId), {
+    publish: 'republish',
+    graderType: variables.graderType,
+    isPrereq: variables.isPrereq,
+    prereqUsageKey: variables.prereqUsageKey,
+    prereqMinScore: variables.prereqMinScore,
+    prereqMinCompletion: variables.prereqMinCompletion,
+    metadata: {
+      // The backend expects metadata.visible_to_staff_only to either true or null
+      visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+      due: variables.dueDate,
+      hide_after_due: variables.hideAfterDue,
+      show_correctness: variables.showCorrectness,
+      is_practice_exam: variables.isPracticeExam,
+      is_time_limited: variables.isTimeLimited,
+      is_proctored_enabled: variables.isProctoredExam || variables.isPracticeExam || variables.isOnboardingExam,
+      exam_review_rules: variables.examReviewRules,
+      default_time_limit_minutes: variables.defaultTimeLimitMin,
+      is_onboarding_exam: variables.isOnboardingExam,
+      start: variables.releaseDate,
+    },
+  });
   return data;
 }
 
@@ -269,16 +270,15 @@ export async function configureCourseSubsection(variables: ConfigureSubsectionDa
  * Configure course unit
  */
 export async function configureCourseUnit(variables: ConfigureUnitData): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(variables.unitId), {
-      publish: 'republish',
-      metadata: {
-        // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-        group_access: variables.groupAccess,
-        discussion_enabled: variables.discussionEnabled,
-      },
-    });
+  const { data } = await getAuthenticatedHttpClient().post(getCourseItemApiUrl(variables.unitId), {
+    publish: 'republish',
+    metadata: {
+      // The backend expects metadata.visible_to_staff_only to either true or null
+      visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+      group_access: variables.groupAccess,
+      discussion_enabled: variables.discussionEnabled,
+    },
+  });
 
   return data;
 }
@@ -286,16 +286,18 @@ export async function configureCourseUnit(variables: ConfigureUnitData): Promise
 /**
  * Edit course section
  */
-export async function editItemDisplayName({ itemId, displayName }: {
+export async function editItemDisplayName({
+  itemId,
+  displayName,
+}: {
   itemId: string;
   displayName: string;
 }): Promise<CourseItemUpdateResult> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(itemId), {
-      metadata: {
-        display_name: displayName,
-      },
-    });
+  const { data } = await getAuthenticatedHttpClient().post(getCourseItemApiUrl(itemId), {
+    metadata: {
+      display_name: displayName,
+    },
+  });
 
   return data;
 }
@@ -306,8 +308,7 @@ export async function editItemDisplayName({ itemId, displayName }: {
  * @returns {Promise<Object>}
  */
 export async function deleteCourseItem(itemId: string): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .delete(getCourseItemApiUrl(itemId));
+  const { data } = await getAuthenticatedHttpClient().delete(getCourseItemApiUrl(itemId));
 
   return data;
 }
@@ -315,29 +316,31 @@ export async function deleteCourseItem(itemId: string): Promise<object> {
 /**
  * Duplicate course section
  */
-export async function duplicateCourseItem(itemId: string, parentId: string): Promise<{
+export async function duplicateCourseItem(
+  itemId: string,
+  parentId: string,
+): Promise<{
   courseKey: string;
   locator: string;
 }> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getXBlockBaseApiUrl(), {
-      duplicate_source_locator: itemId,
-      parent_locator: parentId,
-    });
+  const { data } = await getAuthenticatedHttpClient().post(getXBlockBaseApiUrl(), {
+    duplicate_source_locator: itemId,
+    parent_locator: parentId,
+  });
 
   return data;
 }
 
 export type CreateCourseXBlockType = {
-  type: string,
+  type: string;
   /** The category of the XBlock. Defaults to the type if not provided. */
-  category?: string,
-  parentLocator: string,
-  displayName?: string,
-  boilerplate?: string,
-  stagedContent?: string,
+  category?: string;
+  parentLocator: string;
+  displayName?: string;
+  boilerplate?: string;
+  stagedContent?: string;
   /** component key from library if being imported. */
-  libraryContentKey?: string,
+  libraryContentKey?: string;
 };
 
 /**
@@ -363,8 +366,7 @@ export async function createCourseXblock({
     library_content_key: libraryContentKey,
   };
 
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getXBlockBaseApiUrl(), body);
+  const { data } = await getAuthenticatedHttpClient().post(getXBlockBaseApiUrl(), body);
 
   return data;
 }
@@ -374,12 +376,11 @@ export async function createCourseXblock({
  * @param {string} courseId
  * @param {Array<string>} children list of sections id's
  * @returns {Promise<Object>}
-*/
+ */
 export async function setSectionOrderList(courseId: string, children: Array<string>): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .put(getCourseBlockApiUrl(courseId), {
-      children,
-    });
+  const { data } = await getAuthenticatedHttpClient().put(getCourseBlockApiUrl(courseId), {
+    children,
+  });
 
   return data;
 }
@@ -389,12 +390,11 @@ export async function setSectionOrderList(courseId: string, children: Array<stri
  * @param {string} itemId Subsection or unit ID
  * @param {Array<string>} children list of sections id's
  * @returns {Promise<Object>}
-*/
+ */
 export async function setCourseItemOrderList(itemId: string, children: Array<string>): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .put(getCourseItemApiUrl(itemId), {
-      children,
-    });
+  const { data } = await getAuthenticatedHttpClient().put(getCourseItemApiUrl(itemId), {
+    children,
+  });
 
   return data;
 }
@@ -404,17 +404,13 @@ export async function setCourseItemOrderList(itemId: string, children: Array<str
  * @param {string} courseId
  * @param {string} videoSharingOption
  * @returns {Promise<Object>}
-*/
-export async function setVideoSharingOption(
-  courseId: string,
-  videoSharingOption: string,
-): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseBlockApiUrl(courseId), {
-      metadata: {
-        video_sharing_options: videoSharingOption,
-      },
-    });
+ */
+export async function setVideoSharingOption(courseId: string, videoSharingOption: string): Promise<object> {
+  const { data } = await getAuthenticatedHttpClient().post(getCourseBlockApiUrl(courseId), {
+    metadata: {
+      video_sharing_options: videoSharingOption,
+    },
+  });
 
   return data;
 }
@@ -423,18 +419,17 @@ export async function setVideoSharingOption(
  * Paste block to clipboard
  * @param {string} parentLocator
  * @returns {Promise<Object>}
-*/
+ */
 export async function pasteBlock(parentLocator: string): Promise<{
   locator: string;
   courseKey: string;
   staticFileNotices: StaticFileNotices;
   upstreamRef: string;
 }> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getXBlockBaseApiUrl(), {
-      parent_locator: parentLocator,
-      staged_content: 'clipboard',
-    });
+  const { data } = await getAuthenticatedHttpClient().post(getXBlockBaseApiUrl(), {
+    parent_locator: parentLocator,
+    staged_content: 'clipboard',
+  });
 
   return camelCaseObject(data);
 }
@@ -443,10 +438,9 @@ export async function pasteBlock(parentLocator: string): Promise<{
  * Dismiss notification
  * @param {string} url
  * @returns void
-*/
+ */
 export async function dismissNotification(url: string) {
-  await getAuthenticatedHttpClient()
-    .delete(url);
+  await getAuthenticatedHttpClient().delete(url);
 }
 
 /**

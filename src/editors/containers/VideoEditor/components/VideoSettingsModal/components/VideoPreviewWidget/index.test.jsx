@@ -1,8 +1,4 @@
-import {
-  initializeMocks,
-  render,
-  screen,
-} from '../../../../../../../testUtils';
+import { initializeMocks, render, screen } from '../../../../../../../testUtils';
 
 import { VideoPreviewWidget } from '.';
 
@@ -64,13 +60,7 @@ describe('VideoPreviewWidget', () => {
 
     test('does not render hyperlink when videoSource is empty', () => {
       render(
-        <VideoPreviewWidget
-          videoSource=""
-          intl={mockIntl}
-          transcripts={[]}
-          blockTitle="Test Video"
-          thumbnail=""
-        />,
+        <VideoPreviewWidget videoSource="" intl={mockIntl} transcripts={[]} blockTitle="Test Video" thumbnail="" />,
       );
 
       const hyperlink = screen.queryByRole('link');

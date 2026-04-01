@@ -5,7 +5,7 @@ const value2 = 'vALue2';
 const key1 = 'Key1';
 const key2 = 'keY2';
 
-jest.spyOn(window, 'Error').mockImplementation(error => ({ stack: error }));
+jest.spyOn(window, 'Error').mockImplementation((error) => ({ stack: error }));
 
 describe('StrictDict', () => {
   let consoleError;
@@ -17,7 +17,7 @@ describe('StrictDict', () => {
     windowError = window.Error;
     window.console.error = jest.fn();
     window.console.log = jest.fn();
-    window.Error = jest.fn(error => ({ stack: error }));
+    window.Error = jest.fn((error) => ({ stack: error }));
   });
   afterAll(() => {
     window.console.error = consoleError;

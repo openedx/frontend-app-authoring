@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import {
-  Container, Button, Layout, StatefulButton, TransitionReplace,
-} from '@openedx/paragon';
+import { Container, Button, Layout, StatefulButton, TransitionReplace } from '@openedx/paragon';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -42,12 +40,15 @@ const AdvancedSettings = () => {
 
   const waffleFlags = useWaffleFlags(courseId);
   const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions(
+    {
+      canManageAdvancedSettings: {
+        action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
+        scope: courseId,
+      },
     },
-  }, isAuthzEnabled);
+    isAuthzEnabled,
+  );
 
   const {
     data: advancedSettingsData = {},
@@ -55,17 +56,11 @@ const AdvancedSettings = () => {
     failureReason: settingsStatusError,
   } = useCourseAdvancedSettings(courseId);
 
-  const {
-    data: proctoringExamErrors = {},
-  } = useProctoringExamErrors(courseId);
+  const { data: proctoringExamErrors = {} } = useProctoringExamErrors(courseId);
 
   const updateMutation = useUpdateCourseAdvancedSettings(courseId);
 
-  const {
-    isPending: isQueryPending,
-    isSuccess: isQuerySuccess,
-    error: queryError,
-  } = updateMutation;
+  const { isPending: isQueryPending, isSuccess: isQuerySuccess, error: queryError } = updateMutation;
 
   const isLoading = isPendingSettingsStatus || (isAuthzEnabled && isLoadingUserPermissions);
   const updateSettingsButtonState = {
@@ -76,10 +71,7 @@ const AdvancedSettings = () => {
     disabledStates: ['pending'],
   };
 
-  const {
-    proctoringErrors,
-    mfeProctoredExamSettingsUrl,
-  } = proctoringExamErrors;
+  const { proctoringErrors, mfeProctoredExamSettingsUrl } = proctoringExamErrors;
 
   useEffect(() => {
     if (isQuerySuccess) {
@@ -145,9 +137,8 @@ const AdvancedSettings = () => {
   };
 
   // Show permission denied alert when authz is enabled and user doesn't have permission
-  const authzIsEnabledAndNoPermission = isAuthzEnabled
-    && !isLoadingUserPermissions
-    && !userPermissions?.canManageAdvancedSettings;
+  const authzIsEnabledAndNoPermission =
+    isAuthzEnabled && !isLoadingUserPermissions && !userPermissions?.canManageAdvancedSettings;
 
   if (authzIsEnabledAndNoPermission) {
     return <PermissionDeniedAlert />;
@@ -156,13 +147,11 @@ const AdvancedSettings = () => {
   return (
     <>
       <Helmet>
-        <title>
-          {getPageHeadTitle(courseDetails?.name ?? '', intl.formatMessage(messages.headingTitle))}
-        </title>
+        <title>{getPageHeadTitle(courseDetails?.name ?? '', intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
       <Container size="xl" className="advanced-settings px-4">
         <div className="setting-header mt-5">
-          {(proctoringErrors?.length > 0) && (
+          {proctoringErrors?.length > 0 && (
             <AlertProctoringError
               icon={Info}
               proctoringErrorsData={proctoringErrors}
@@ -212,7 +201,7 @@ const AdvancedSettings = () => {
                       <FormattedMessage
                         id="course-authoring.advanced-settings.policies.description"
                         defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
-                        values={{ notice: <strong>Warning:  </strong> }}
+                        values={{ notice: <strong>Warning: </strong> }}
                       />
                     </div>
                     <div className="setting-items-deprecated-setting">
@@ -225,9 +214,9 @@ const AdvancedSettings = () => {
                           id="course-authoring.advanced-settings.deprecated.button.text"
                           defaultMessage="{visibility} deprecated settings"
                           values={{
-                            visibility:
-                              showDeprecated ? intl.formatMessage(messages.deprecatedButtonHideText)
-                                : intl.formatMessage(messages.deprecatedButtonShowText),
+                            visibility: showDeprecated
+                              ? intl.formatMessage(messages.deprecatedButtonHideText)
+                              : intl.formatMessage(messages.deprecatedButtonShowText),
                           }}
                         />
                       </Button>
@@ -258,10 +247,7 @@ const AdvancedSettings = () => {
               </article>
             </Layout.Element>
             <Layout.Element>
-              <SettingsSidebar
-                courseId={courseId}
-                proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
-              />
+              <SettingsSidebar courseId={courseId} proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl} />
             </Layout.Element>
           </Layout>
         </section>

@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  Stack,
-  Icon,
-  IconButton,
-} from '@openedx/paragon';
+import { Stack, Icon, IconButton } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -11,7 +7,10 @@ import { AddContent, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { ContainerInfoHeader, ContainerInfo } from '../containers';
 import {
-  COMPONENT_INFO_TABS, SidebarActions, SidebarBodyItemId, useSidebarContext,
+  COMPONENT_INFO_TABS,
+  SidebarActions,
+  SidebarBodyItemId,
+  useSidebarContext,
 } from '../common/context/SidebarContext';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
@@ -28,12 +27,7 @@ import messages from '../messages';
  */
 const LibrarySidebar = () => {
   const intl = useIntl();
-  const {
-    sidebarAction,
-    setSidebarTab,
-    sidebarItemInfo,
-    closeLibrarySidebar,
-  } = useSidebarContext();
+  const { sidebarAction, setSidebarTab, sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
   const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
   const jumpToTags = sidebarAction === SidebarActions.JumpToManageTags;
 
@@ -64,7 +58,7 @@ const LibrarySidebar = () => {
     unknown: null,
   };
 
-  const buildBody = () : React.ReactNode => bodyComponentMap[sidebarItemInfo?.type || 'unknown'];
+  const buildBody = (): React.ReactNode => bodyComponentMap[sidebarItemInfo?.type || 'unknown'];
   const buildHeader = (): React.ReactNode => headerComponentMap[sidebarItemInfo?.type || 'unknown'];
 
   return (
@@ -80,9 +74,7 @@ const LibrarySidebar = () => {
           size="inline"
         />
       </Stack>
-      <div>
-        {buildBody()}
-      </div>
+      <div>{buildBody()}</div>
     </Stack>
   );
 };

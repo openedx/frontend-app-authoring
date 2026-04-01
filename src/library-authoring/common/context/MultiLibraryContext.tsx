@@ -20,23 +20,17 @@ export const MultiLibraryProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   }, [selectedLibraries, setSelectedCollections]);
 
-  const context = React.useMemo(() => ({
-    selectedLibraries,
-    setSelectedLibraries,
-    selectedCollections,
-    setSelectedCollections,
-  }), [
-    selectedLibraries,
-    setSelectedLibraries,
-    selectedCollections,
-    setSelectedCollections,
-  ]);
-
-  return (
-    <Context.Provider value={context}>
-      {children}
-    </Context.Provider>
+  const context = React.useMemo(
+    () => ({
+      selectedLibraries,
+      setSelectedLibraries,
+      selectedCollections,
+      setSelectedCollections,
+    }),
+    [selectedLibraries, setSelectedLibraries, selectedCollections, setSelectedCollections],
   );
+
+  return <Context.Provider value={context}>{children}</Context.Provider>;
 };
 
 export const useMultiLibraryContext = (): MultiLibraryContextProps => {

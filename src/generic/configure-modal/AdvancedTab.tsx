@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import {
-  Alert,
-  Form,
-  Hyperlink,
-  OverlayTrigger,
-  Tooltip,
-} from '@openedx/paragon';
+import { Alert, Form, Hyperlink, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { Warning as WarningIcon, Question } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
@@ -58,14 +52,8 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
   showReviewRules = false,
   onlineProctoringRules = '',
 }) => {
-  const {
-    isTimeLimited,
-    isProctoredExam,
-    isOnboardingExam,
-    isPracticeExam,
-    defaultTimeLimitMinutes,
-    examReviewRules,
-  } = values;
+  const { isTimeLimited, isProctoredExam, isOnboardingExam, isPracticeExam, defaultTimeLimitMinutes, examReviewRules } =
+    values;
   let examTypeValue = 'none';
 
   const intl = useIntl();
@@ -106,9 +94,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
     return `${hhs}:${mms}`;
   };
 
-  const [timeLimit, setTimeLimit] = useState(
-    formatHour(defaultTimeLimitMinutes),
-  );
+  const [timeLimit, setTimeLimit] = useState(formatHour(defaultTimeLimitMinutes));
   const showReviewRulesDiv = showReviewRules && isProctoredExam && !isPracticeExam && !isOnboardingExam;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,16 +145,12 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
       <>
         {proctoredExamLockedIn && !wasProctoredExam && (
           <Alert variant="warning" icon={WarningIcon}>
-            <FormattedMessage
-              {...messages.proctoredExamLockedAndisNotProctoredExamAlert}
-            />
+            <FormattedMessage {...messages.proctoredExamLockedAndisNotProctoredExamAlert} />
           </Alert>
         )}
         {proctoredExamLockedIn && wasProctoredExam && (
           <Alert variant="warning" icon={WarningIcon}>
-            <FormattedMessage
-              {...messages.proctoredExamLockedAndisProctoredExamAlert}
-            />
+            <FormattedMessage {...messages.proctoredExamLockedAndisProctoredExamAlert} />
           </Alert>
         )}
       </>
@@ -184,25 +166,18 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
         {!enableTimedExams && (
           <OverlayTrigger
             placement="top"
-            overlay={(
+            overlay={
               <Tooltip id={messages.timedExamsDisabledTooltip.id}>
                 <FormattedMessage {...messages.timedExamsDisabledTooltip} />
               </Tooltip>
-            )}
+            }
           >
-            <Question
-              className="ml-2 text-gray-500"
-              style={{ cursor: 'help' }}
-            />
+            <Question className="ml-2 text-gray-500" style={{ cursor: 'help' }} />
           </OverlayTrigger>
         )}
       </div>
       <hr />
-      <Form.RadioSet
-        name="specialExam"
-        onChange={handleChange}
-        value={examTypeValue}
-      >
+      <Form.RadioSet name="specialExam" onChange={handleChange} value={examTypeValue}>
         {renderAlerts()}
         <Form.Radio value="none" disabled={!enableTimedExams}>
           <FormattedMessage {...messages.none} />
@@ -219,18 +194,14 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
           <>
             <Form.Radio
               value="proctoredExam"
-              description={
-                <FormattedMessage {...messages.proctoredExamDescription} />
-              }
+              description={<FormattedMessage {...messages.proctoredExamDescription} />}
               controlClassName="mw-1-25rem"
             >
               <FormattedMessage {...messages.proctoredExam} />
             </Form.Radio>
             {supportsOnboarding ? (
               <Form.Radio
-                description={
-                  <FormattedMessage {...messages.onboardingExamDescription} />
-                }
+                description={<FormattedMessage {...messages.onboardingExamDescription} />}
                 value="onboardingExam"
                 controlClassName="mw-1-25rem"
               >
@@ -240,9 +211,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
               <Form.Radio
                 value="practiceExam"
                 controlClassName="mw-1-25rem"
-                description={
-                  <FormattedMessage {...messages.practiceExamDescription} />
-                }
+                description={<FormattedMessage {...messages.practiceExamDescription} />}
               >
                 <FormattedMessage {...messages.practiceExam} />
               </Form.Radio>
@@ -287,14 +256,8 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 {...messages.reviewRulesDescriptionWithLink}
                 values={{
                   hyperlink: (
-                    <Hyperlink
-                      destination={onlineProctoringRules}
-                      target="_blank"
-                      showLaunchIcon={false}
-                    >
-                      <FormattedMessage
-                        {...messages.reviewRulesDescriptionLinkText}
-                      />
+                    <Hyperlink destination={onlineProctoringRules} target="_blank" showLaunchIcon={false}>
+                      <FormattedMessage {...messages.reviewRulesDescriptionLinkText} />
                     </Hyperlink>
                   ),
                 }}
@@ -305,11 +268,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
           </Form.Text>
         </div>
       )}
-      <PrereqSettings
-        values={values}
-        setFieldValue={setFieldValue}
-        prereqs={prereqs}
-      />
+      <PrereqSettings values={values} setFieldValue={setFieldValue} prereqs={prereqs} />
     </>
   );
 };

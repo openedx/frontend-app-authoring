@@ -35,7 +35,7 @@ export const state = StrictDict({
   /* eslint-enable react-hooks/rules-of-hooks */
 });
 
-export const errorsHook = (): { error: ErrorContextData, validateEntry: () => boolean } => {
+export const errorsHook = (): { error: ErrorContextData; validateEntry: () => boolean } => {
   const [durationErrors, setDurationErrors] = state.durationErrors({});
   const [handoutErrors, setHandoutErrors] = state.handoutErrors({});
   const [licenseErrors, setLicenseErrors] = state.licenseErrors({});
@@ -53,17 +53,30 @@ export const errorsHook = (): { error: ErrorContextData, validateEntry: () => bo
       videoSource: [videoSourceErrors, setVideoSourceErrors],
     },
     validateEntry: () => {
-      if (Object.keys(durationErrors).length > 0) { return false; }
-      if (Object.keys(handoutErrors).length > 0) { return false; }
-      if (Object.keys(licenseErrors).length > 0) { return false; }
-      if (Object.keys(thumbnailErrors).length > 0) { return false; }
-      if (Object.keys(transcriptsErrors).length > 0) { return false; }
-      if (Object.keys(videoSourceErrors).length > 0) { return false; }
+      if (Object.keys(durationErrors).length > 0) {
+        return false;
+      }
+      if (Object.keys(handoutErrors).length > 0) {
+        return false;
+      }
+      if (Object.keys(licenseErrors).length > 0) {
+        return false;
+      }
+      if (Object.keys(thumbnailErrors).length > 0) {
+        return false;
+      }
+      if (Object.keys(transcriptsErrors).length > 0) {
+        return false;
+      }
+      if (Object.keys(videoSourceErrors).length > 0) {
+        return false;
+      }
       return true;
     },
   };
 };
 
-export const fetchVideoContent = () => ({ dispatch }) => (
-  dispatch(thunkActions.video.saveVideoData())
-);
+export const fetchVideoContent =
+  () =>
+  ({ dispatch }) =>
+    dispatch(thunkActions.video.saveVideoData());

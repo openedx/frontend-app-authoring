@@ -32,42 +32,34 @@ export const hooks = {
   }),
 };
 
-export const ThumbEditor = (
-  {
-    onClose,
-    // redux
-    blockValue,
-    lmsEndpointUrl,
-    blockFailed,
-    blockFinished,
-    initializeEditor,
-  },
-) => {
+export const ThumbEditor = ({
+  onClose,
+  // redux
+  blockValue,
+  lmsEndpointUrl,
+  blockFailed,
+  blockFinished,
+  initializeEditor,
+}) => {
   const intl = useIntl();
   return (
-    <EditorContainer
-      getContent={module.hooks.getContent}
-      onClose={onClose}
-    >
+    <EditorContainer getContent={module.hooks.getContent} onClose={onClose}>
       <div className="editor-body h-75 overflow-auto">
-        {!blockFinished
-          ? (
-            <div className="text-center p-6">
-              <Spinner
-                animation="border"
-                className="m-3"
-                // Use a messages.js file for intl messages.
-                screenreadertext={intl.formatMessage('Loading Spinner')}
-              />
-            </div>
-          )
-          : (
-            <p>
-              Your Editor Goes here.
-              You can get at the xblock data with the blockValue field.
-              here is what is in your xblock:  {JSON.stringify(blockValue)}
-            </p>
-          )}
+        {!blockFinished ? (
+          <div className="text-center p-6">
+            <Spinner
+              animation="border"
+              className="m-3"
+              // Use a messages.js file for intl messages.
+              screenreadertext={intl.formatMessage('Loading Spinner')}
+            />
+          </div>
+        ) : (
+          <p>
+            Your Editor Goes here. You can get at the xblock data with the blockValue field. here is what is in your
+            xblock: {JSON.stringify(blockValue)}
+          </p>
+        )}
       </div>
     </EditorContainer>
   );

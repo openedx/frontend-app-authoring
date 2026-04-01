@@ -13,27 +13,15 @@ const ImportStepper = () => {
   const intl = useIntl();
 
   const { courseId } = useCourseAuthoringContext();
-  const {
-    progress,
-    currentStage,
-    formattedErrorMessage,
-    anyRequestFailed,
-    successDate,
-  } = useCourseImportContext();
+  const { progress, currentStage, formattedErrorMessage, anyRequestFailed, successDate } = useCourseImportContext();
 
-  const handleRedirectCourseOutline = () => window.location.replace(`${getConfig().STUDIO_BASE_URL}/course/${courseId}`);
+  const handleRedirectCourseOutline = () =>
+    window.location.replace(`${getConfig().STUDIO_BASE_URL}/course/${courseId}`);
 
   const successTitle = intl.formatMessage(messages.stepperSuccessTitle);
   let successTitleComponent;
   const localizedSuccessDate = successDate ? (
-    <FormattedDate
-      value={successDate}
-      year="2-digit"
-      month="2-digit"
-      day="2-digit"
-      hour="numeric"
-      minute="numeric"
-    />
+    <FormattedDate value={successDate} year="2-digit" month="2-digit" day="2-digit" hour="numeric" minute="numeric" />
   ) : null;
   if (localizedSuccessDate && currentStage === IMPORT_STAGES.SUCCESS) {
     successTitleComponent = (
@@ -48,19 +36,23 @@ const ImportStepper = () => {
       title: intl.formatMessage(messages.stepperUploadingTitle),
       description: intl.formatMessage(messages.stepperUploadingDescription),
       key: IMPORT_STAGES.UPLOADING,
-    }, {
+    },
+    {
       title: intl.formatMessage(messages.stepperUnpackingTitle),
       description: intl.formatMessage(messages.stepperUnpackingDescription),
       key: IMPORT_STAGES.UNPACKING,
-    }, {
+    },
+    {
       title: intl.formatMessage(messages.stepperVerifyingTitle),
       description: intl.formatMessage(messages.stepperVerifyingDescription),
       key: IMPORT_STAGES.VERIFYING,
-    }, {
+    },
+    {
       title: intl.formatMessage(messages.stepperUpdatingTitle),
       description: intl.formatMessage(messages.stepperUpdatingDescription),
       key: IMPORT_STAGES.UPDATING,
-    }, {
+    },
+    {
       title: successTitle,
       description: intl.formatMessage(messages.stepperSuccessDescription),
       key: IMPORT_STAGES.SUCCESS,
@@ -79,7 +71,9 @@ const ImportStepper = () => {
         errorMessage={formattedErrorMessage}
       />
       {currentStage === IMPORT_STAGES.SUCCESS && (
-        <Button className="ml-5.5 mt-n2.5" onClick={handleRedirectCourseOutline}>{intl.formatMessage(messages.viewOutlineButton)}</Button>
+        <Button className="ml-5.5 mt-n2.5" onClick={handleRedirectCourseOutline}>
+          {intl.formatMessage(messages.viewOutlineButton)}
+        </Button>
       )}
     </section>
   );

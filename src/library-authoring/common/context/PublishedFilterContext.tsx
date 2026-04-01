@@ -12,11 +12,7 @@ export const PublishedFilterContextProvider: React.FC<PublishedFilterContextProp
 }) => {
   const context = React.useMemo(() => ({ showOnlyPublished }), [showOnlyPublished]);
 
-  return (
-    <Context.Provider value={context}>
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={context}>{children}</Context.Provider>;
 };
 
 export const usePublishedFilterContext = (): PublishedFilterContextProps => {

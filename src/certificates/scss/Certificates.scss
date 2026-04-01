@@ -1,4 +1,4 @@
-@import "variables";
+@import 'variables';
 
 .certificates {
   .section-title {
@@ -6,7 +6,7 @@
   }
 
   .sub-header-actions {
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
 
   .certificate-details {
@@ -47,7 +47,7 @@
       position: absolute;
       top: 0;
       right: 0;
-      margin: .75rem;
+      margin: 0.75rem;
     }
 
     .signatory__fields-container {
@@ -97,7 +97,7 @@
 
   .signatory__image {
     display: flex;
-    margin: .625rem auto;
+    margin: 0.625rem auto;
     max-width: 23.5rem;
     width: 100%;
   }
@@ -105,7 +105,7 @@
   .certificates-card-form {
     .pgn__form-control-description,
     .pgn__form-text {
-      margin-top: .62rem;
+      margin-top: 0.62rem;
     }
   }
 }

@@ -24,7 +24,7 @@ export const sortFiles = (files, sortType) => {
       return 0;
     });
   }
-  const sortedIds = sortedFiles.map(file => file.id);
+  const sortedIds = sortedFiles.map((file) => file.id);
   if (direction === 'asc') {
     return sortedIds.reverse();
   }

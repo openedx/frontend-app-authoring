@@ -7,17 +7,13 @@ import { getXBlockAssetsApiUrl } from '../../../../library-authoring/data/api';
  */
 type UrlFunction = (args: Record<string, string>) => string;
 
-export const libraryV1 = ({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/library/${learningContextId}`
-);
+export const libraryV1 = ({ studioEndpointUrl, learningContextId }) =>
+  `${studioEndpointUrl}/library/${learningContextId}`;
 
-export const unit = ({ studioEndpointUrl, unitUrl, blockId }) => (
-  `${studioEndpointUrl}/container/${unitUrl.data.ancestors[0]?.id}#${blockId}`
-);
+export const unit = ({ studioEndpointUrl, unitUrl, blockId }) =>
+  `${studioEndpointUrl}/container/${unitUrl.data.ancestors[0]?.id}#${blockId}`;
 
-export const returnUrl = ({
-  studioEndpointUrl, unitUrl, learningContextId, blockId,
-}): string => {
+export const returnUrl = ({ studioEndpointUrl, unitUrl, learningContextId, blockId }): string => {
   // Is this a v1 library?
   if (isLibraryV1Key(learningContextId)) {
     // when the learning context is a v1 library, return to the library page
@@ -39,11 +35,10 @@ export const returnUrl = ({
   return '';
 };
 
-export const block = (({ studioEndpointUrl, blockId }) => (
+export const block = (({ studioEndpointUrl, blockId }) =>
   blockId.startsWith('lb:')
     ? `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/fields/`
-    : `${studioEndpointUrl}/xblock/${blockId}`
-)) satisfies UrlFunction;
+    : `${studioEndpointUrl}/xblock/${blockId}`) satisfies UrlFunction;
 
 export const blockAncestor = (({ studioEndpointUrl, blockId }) => {
   if (blockId.includes('block-v1')) {
@@ -52,78 +47,59 @@ export const blockAncestor = (({ studioEndpointUrl, blockId }) => {
   throw new Error('Block ancestor not available (and not needed) for V2 blocks');
 }) satisfies UrlFunction;
 
-export const blockStudioView = (({ studioEndpointUrl, blockId }) => (
+export const blockStudioView = (({ studioEndpointUrl, blockId }) =>
   blockId.includes('block-v1')
     ? `${block({ studioEndpointUrl, blockId })}/studio_view`
-    : `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/view/studio_view/`
-)) satisfies UrlFunction;
+    : `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/view/studio_view/`) satisfies UrlFunction;
 
-export const courseAssets = (({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/assets/${learningContextId}/`
-)) satisfies UrlFunction;
+export const courseAssets = (({ studioEndpointUrl, learningContextId }) =>
+  `${studioEndpointUrl}/assets/${learningContextId}/`) satisfies UrlFunction;
 
-export const libraryAssets = (({ blockId, assetName }) => (
+export const libraryAssets = (({ blockId, assetName }) =>
   assetName
     ? `${getXBlockAssetsApiUrl(blockId)}static/${encodeURI(assetName)}`
-    : `${getXBlockAssetsApiUrl(blockId)}`
-)) satisfies UrlFunction;
+    : `${getXBlockAssetsApiUrl(blockId)}`) satisfies UrlFunction;
 
-export const thumbnailUpload = (({ studioEndpointUrl, learningContextId, videoId }) => (
-  `${studioEndpointUrl}/video_images/${learningContextId}/${videoId}`
-)) satisfies UrlFunction;
+export const thumbnailUpload = (({ studioEndpointUrl, learningContextId, videoId }) =>
+  `${studioEndpointUrl}/video_images/${learningContextId}/${videoId}`) satisfies UrlFunction;
 
-export const videoTranscripts = (({ studioEndpointUrl, blockId }) => (
-  `${block({ studioEndpointUrl, blockId })}/handler/studio_transcript/translation`
-)) satisfies UrlFunction;
+export const videoTranscripts = (({ studioEndpointUrl, blockId }) =>
+  `${block({ studioEndpointUrl, blockId })}/handler/studio_transcript/translation`) satisfies UrlFunction;
 
-export const downloadVideoTranscriptURL = (({ studioEndpointUrl, blockId, language }) => (
-  `${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`
-)) satisfies UrlFunction;
+export const downloadVideoTranscriptURL = (({ studioEndpointUrl, blockId, language }) =>
+  `${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`) satisfies UrlFunction;
 
-export const transcriptXblockV2 = (({ transcriptHandlerUrl }) => (
-  `${transcriptHandlerUrl}translation`
-)) satisfies UrlFunction;
+export const transcriptXblockV2 = (({ transcriptHandlerUrl }) =>
+  `${transcriptHandlerUrl}translation`) satisfies UrlFunction;
 
-export const downloadVideoTranscriptURLV2 = (({ transcriptHandlerUrl, language }) => (
-  `${transcriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`
-)) satisfies UrlFunction;
+export const downloadVideoTranscriptURLV2 = (({ transcriptHandlerUrl, language }) =>
+  `${transcriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`) satisfies UrlFunction;
 
-export const mediaTranscriptURL = (({ studioEndpointUrl, transcriptUrl }) => (
-  `${studioEndpointUrl}${transcriptUrl}`
-)) satisfies UrlFunction;
+export const mediaTranscriptURL = (({ studioEndpointUrl, transcriptUrl }) =>
+  `${studioEndpointUrl}${transcriptUrl}`) satisfies UrlFunction;
 
-export const downloadVideoHandoutUrl = (({ studioEndpointUrl, handout }) => (
-  `${studioEndpointUrl}${handout}`
-)) satisfies UrlFunction;
+export const downloadVideoHandoutUrl = (({ studioEndpointUrl, handout }) =>
+  `${studioEndpointUrl}${handout}`) satisfies UrlFunction;
 
-export const courseDetailsUrl = (({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/settings/details/${learningContextId}`
-)) satisfies UrlFunction;
+export const courseDetailsUrl = (({ studioEndpointUrl, learningContextId }) =>
+  `${studioEndpointUrl}/settings/details/${learningContextId}`) satisfies UrlFunction;
 
-export const checkTranscriptsForImport = (({ studioEndpointUrl, parameters }) => (
-  `${studioEndpointUrl}/transcripts/check?data=${parameters}`
-)) satisfies UrlFunction;
+export const checkTranscriptsForImport = (({ studioEndpointUrl, parameters }) =>
+  `${studioEndpointUrl}/transcripts/check?data=${parameters}`) satisfies UrlFunction;
 
-export const replaceTranscript = (({ studioEndpointUrl, parameters }) => (
-  `${studioEndpointUrl}/transcripts/replace?data=${parameters}`
-)) satisfies UrlFunction;
+export const replaceTranscript = (({ studioEndpointUrl, parameters }) =>
+  `${studioEndpointUrl}/transcripts/replace?data=${parameters}`) satisfies UrlFunction;
 
-export const courseAdvanceSettings = (({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`
-)) satisfies UrlFunction;
+export const courseAdvanceSettings = (({ studioEndpointUrl, learningContextId }) =>
+  `${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`) satisfies UrlFunction;
 
-export const videoFeatures = (({ studioEndpointUrl }) => (
-  `${studioEndpointUrl}/video_features/`
-)) satisfies UrlFunction;
+export const videoFeatures = (({ studioEndpointUrl }) => `${studioEndpointUrl}/video_features/`) satisfies UrlFunction;
 
-export const courseVideos = (({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/videos/${learningContextId}`
-)) satisfies UrlFunction;
+export const courseVideos = (({ studioEndpointUrl, learningContextId }) =>
+  `${studioEndpointUrl}/videos/${learningContextId}`) satisfies UrlFunction;
 
-export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
-  `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/${handlerName}/`
-)) satisfies UrlFunction;
+export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) =>
+  `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/${handlerName}/`) satisfies UrlFunction;
 
-export const validateNumericInputUrl = (({ studioEndpointUrl }) => (
-  `${studioEndpointUrl}/api/contentstore/v2/validate/numerical-input/`
-)) satisfies UrlFunction;
+export const validateNumericInputUrl = (({ studioEndpointUrl }) =>
+  `${studioEndpointUrl}/api/contentstore/v2/validate/numerical-input/`) satisfies UrlFunction;

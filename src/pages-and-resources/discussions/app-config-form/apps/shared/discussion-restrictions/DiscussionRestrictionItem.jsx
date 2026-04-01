@@ -17,46 +17,46 @@ import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
 import ConfirmationPopup from '../../../../../../generic/ConfirmationPopup';
 import CollapseCardHeading from './CollapseCardHeading';
 
-const DiscussionRestrictionItem = ({
-  restrictedDate,
-  onDelete,
-  hasError,
-  onClose,
-  fieldNameCommonBase,
-}) => {
+const DiscussionRestrictionItem = ({ restrictedDate, onDelete, hasError, onClose, fieldNameCommonBase }) => {
   const restrictedDateError = !restrictedDate.startDate || !restrictedDate.endDate || hasError;
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState(restrictedDateError);
   const { setFieldTouched } = useFormikContext();
   const intl = useIntl();
 
-  const handleToggle = useCallback((isOpen) => {
-    if (!isOpen && hasError) {
-      return setCollapseOpen(true);
-    }
-    return setCollapseOpen(isOpen);
-  }, [hasError]);
+  const handleToggle = useCallback(
+    (isOpen) => {
+      if (!isOpen && hasError) {
+        return setCollapseOpen(true);
+      }
+      return setCollapseOpen(isOpen);
+    },
+    [hasError],
+  );
 
   const handleOnClose = useCallback(() => {
-    ['startDate', 'startTime', 'endDate', 'endTime'].forEach(field => (
-      setFieldTouched(`${fieldNameCommonBase}.${field}`, true)
-    ));
+    ['startDate', 'startTime', 'endDate', 'endTime'].forEach((field) =>
+      setFieldTouched(`${fieldNameCommonBase}.${field}`, true),
+    );
     if (!hasError) {
       onClose();
     }
   }, [hasError, onClose]);
 
-  const getHeading = useCallback((isOpen) => (
-    <CollapseCardHeading
-      isOpen={isOpen}
-      expandHeadingText={intl.formatMessage(messages.configureRestrictedDates)}
-      collapseHeadingText={formatRestrictedDates(restrictedDate)}
-      badgeVariant={badgeVariant[restrictedDate.status]}
-      badgeStatus={intl.formatMessage(messages.restrictedDatesStatus, {
-        status: startCase(toLower(restrictedDate.status)),
-      })}
-    />
-  ), [restrictedDate]);
+  const getHeading = useCallback(
+    (isOpen) => (
+      <CollapseCardHeading
+        isOpen={isOpen}
+        expandHeadingText={intl.formatMessage(messages.configureRestrictedDates)}
+        collapseHeadingText={formatRestrictedDates(restrictedDate)}
+        badgeVariant={badgeVariant[restrictedDate.status]}
+        badgeStatus={intl.formatMessage(messages.restrictedDatesStatus, {
+          status: startCase(toLower(restrictedDate.status)),
+        })}
+      />
+    ),
+    [restrictedDate],
+  );
 
   const handleShowDeletePopup = useCallback(() => {
     setShowDeletePopup(true);
@@ -69,9 +69,11 @@ const DiscussionRestrictionItem = ({
   if (showDeletePopup) {
     return (
       <ConfirmationPopup
-        label={restrictedDate.status === constants.ACTIVE
-          ? intl.formatMessage(messages.activeRestrictedDatesDeletionLabel)
-          : intl.formatMessage(messages.restrictedDatesDeletionLabel)}
+        label={
+          restrictedDate.status === constants.ACTIVE
+            ? intl.formatMessage(messages.activeRestrictedDatesDeletionLabel)
+            : intl.formatMessage(messages.restrictedDatesDeletionLabel)
+        }
         bodyText={intl.formatMessage(deleteRestrictedDatesHelperText[restrictedDate.status])}
         onConfirm={onDelete}
         confirmLabel={intl.formatMessage(messages.deleteButton)}

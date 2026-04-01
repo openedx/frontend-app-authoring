@@ -10,7 +10,8 @@ export const rawData: TagData[] = [
     depth: 0,
     parentValue: null,
     id: 31,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ab&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ab&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -22,7 +23,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'ab',
     id: 49,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=aaa&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=aaa&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -46,7 +48,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'ab',
     id: 50,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ab2&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ab2&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -82,7 +85,8 @@ export const rawData: TagData[] = [
     depth: 0,
     parentValue: null,
     id: 34,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Celli&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Celli&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -94,7 +98,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'Celli',
     id: 42,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ViolaDaGamba&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ViolaDaGamba&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -142,7 +147,8 @@ export const rawData: TagData[] = [
     depth: 0,
     parentValue: null,
     id: 3,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Electronic+instruments&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Electronic+instruments&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -202,7 +208,8 @@ export const rawData: TagData[] = [
     depth: 0,
     parentValue: null,
     id: 55,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Horns&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Horns&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -214,7 +221,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'Horns',
     id: 56,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=English+Horn&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=English+Horn&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -286,7 +294,8 @@ export const rawData: TagData[] = [
     depth: 0,
     parentValue: null,
     id: 2,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Percussion+instruments&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Percussion+instruments&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -298,7 +307,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'Percussion instruments',
     id: 10,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Chordophone&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Chordophone&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -322,7 +332,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'Percussion instruments',
     id: 45,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Drum&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Drum&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -346,7 +357,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'Percussion instruments',
     id: 5,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Idiophone&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Idiophone&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -382,7 +394,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'Percussion instruments',
     id: 6,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Membranophone&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Membranophone&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -394,7 +407,8 @@ export const rawData: TagData[] = [
     depth: 2,
     parentValue: 'Membranophone',
     id: 7,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Caj%C3%B3n&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Caj%C3%B3n&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -430,7 +444,8 @@ export const rawData: TagData[] = [
     depth: 0,
     parentValue: null,
     id: 4,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=String+instruments&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=String+instruments&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -442,7 +457,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'String instruments',
     id: 18,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Bowed+strings&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Bowed+strings&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -502,7 +518,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'String instruments',
     id: 14,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Plucked+strings&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Plucked+strings&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -574,7 +591,8 @@ export const rawData: TagData[] = [
     depth: 0,
     parentValue: null,
     id: 1,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Wind+instruments&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Wind+instruments&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -586,7 +604,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'Wind instruments',
     id: 11,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Brass&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Brass&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -622,7 +641,8 @@ export const rawData: TagData[] = [
     depth: 1,
     parentValue: 'Wind instruments',
     id: 12,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Woodwinds&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Woodwinds&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
   },
@@ -685,7 +705,8 @@ export const treeRowData: TagTreeNode[] = [
     depth: 0,
     parentValue: null,
     id: 31,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ab&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ab&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
     subRows: [
@@ -697,7 +718,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'ab',
         id: 49,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=aaa&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=aaa&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -723,7 +745,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'ab',
         id: 50,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ab2&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ab2&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -763,7 +786,8 @@ export const treeRowData: TagTreeNode[] = [
     depth: 0,
     parentValue: null,
     id: 34,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Celli&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Celli&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
     subRows: [
@@ -775,7 +799,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'Celli',
         id: 42,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ViolaDaGamba&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=ViolaDaGamba&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -827,7 +852,8 @@ export const treeRowData: TagTreeNode[] = [
     depth: 0,
     parentValue: null,
     id: 3,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Electronic+instruments&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Electronic+instruments&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
     subRows: [
@@ -889,7 +915,8 @@ export const treeRowData: TagTreeNode[] = [
     depth: 0,
     parentValue: null,
     id: 55,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Horns&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Horns&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
     subRows: [
@@ -901,7 +928,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'Horns',
         id: 56,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=English+Horn&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=English+Horn&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -977,7 +1005,8 @@ export const treeRowData: TagTreeNode[] = [
     depth: 0,
     parentValue: null,
     id: 2,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Percussion+instruments&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Percussion+instruments&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
     subRows: [
@@ -989,7 +1018,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'Percussion instruments',
         id: 10,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Chordophone&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Chordophone&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -1015,7 +1045,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'Percussion instruments',
         id: 45,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Drum&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Drum&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -1041,7 +1072,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'Percussion instruments',
         id: 5,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Idiophone&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Idiophone&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -1079,7 +1111,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'Percussion instruments',
         id: 6,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Membranophone&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Membranophone&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -1091,7 +1124,8 @@ export const treeRowData: TagTreeNode[] = [
             depth: 2,
             parentValue: 'Membranophone',
             id: 7,
-            subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Caj%C3%B3n&full_depth_threshold=1000',
+            subTagsUrl:
+              'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Caj%C3%B3n&full_depth_threshold=1000',
             canChangeTag: true,
             canDeleteTag: true,
           },
@@ -1131,7 +1165,8 @@ export const treeRowData: TagTreeNode[] = [
     depth: 0,
     parentValue: null,
     id: 4,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=String+instruments&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=String+instruments&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
     subRows: [
@@ -1143,7 +1178,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'String instruments',
         id: 18,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Bowed+strings&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Bowed+strings&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -1205,7 +1241,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'String instruments',
         id: 14,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Plucked+strings&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Plucked+strings&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -1281,7 +1318,8 @@ export const treeRowData: TagTreeNode[] = [
     depth: 0,
     parentValue: null,
     id: 1,
-    subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Wind+instruments&full_depth_threshold=1000',
+    subTagsUrl:
+      'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Wind+instruments&full_depth_threshold=1000',
     canChangeTag: true,
     canDeleteTag: true,
     subRows: [
@@ -1293,7 +1331,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'Wind instruments',
         id: 11,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Brass&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Brass&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [
@@ -1331,7 +1370,8 @@ export const treeRowData: TagTreeNode[] = [
         depth: 1,
         parentValue: 'Wind instruments',
         id: 12,
-        subTagsUrl: 'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Woodwinds&full_depth_threshold=1000',
+        subTagsUrl:
+          'http://studio.local.openedx.io:8001/api/content_tagging/v1/taxonomies/1/tags/?parent_tag=Woodwinds&full_depth_threshold=1000',
         canChangeTag: true,
         canDeleteTag: true,
         subRows: [

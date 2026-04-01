@@ -1,8 +1,6 @@
 import userEvent from '@testing-library/user-event';
 
-import {
-  fireEvent, initializeMocks, render, screen, waitFor,
-} from '@src/testUtils';
+import { fireEvent, initializeMocks, render, screen, waitFor } from '@src/testUtils';
 import HeaderNavigations, { HeaderNavigationsProps } from './HeaderNavigations';
 import messages from './messages';
 
@@ -24,17 +22,18 @@ const courseActions = {
   duplicable: true,
 };
 
-const renderComponent = (props?: Partial<HeaderNavigationsProps>) => render(
-  <HeaderNavigations
-    headerNavigationsActions={headerNavigationsActions}
-    isSectionsExpanded={false}
-    isDisabledReindexButton={false}
-    isReIndexShow
-    hasSections
-    courseActions={courseActions}
-    {...props}
-  />,
-);
+const renderComponent = (props?: Partial<HeaderNavigationsProps>) =>
+  render(
+    <HeaderNavigations
+      headerNavigationsActions={headerNavigationsActions}
+      isSectionsExpanded={false}
+      isDisabledReindexButton={false}
+      isReIndexShow
+      hasSections
+      courseActions={courseActions}
+      {...props}
+    />,
+  );
 
 describe('<HeaderNavigations />', () => {
   beforeEach(() => {
@@ -124,7 +123,7 @@ describe('<HeaderNavigations />', () => {
       isDisabledReindexButton: true,
     });
     await user.pointer({
-      target: (await screen.findByRole('button', { name: messages.reindexButton.defaultMessage })),
+      target: await screen.findByRole('button', { name: messages.reindexButton.defaultMessage }),
     });
     await waitFor(() => {
       expect(screen.queryByText(messages.reindexButtonTooltip.defaultMessage)).not.toBeInTheDocument();

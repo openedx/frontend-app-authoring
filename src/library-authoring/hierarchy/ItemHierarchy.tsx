@@ -21,37 +21,22 @@ const HierarchyRow = ({
   willPublish = false,
   publishMessage = undefined,
 }: {
-  containerType: ContainerType,
-  text: string,
-  selected: boolean,
-  showArrow: boolean,
-  willPublish?: boolean,
-  publishMessage?: MessageDescriptor,
+  containerType: ContainerType;
+  text: string;
+  selected: boolean;
+  showArrow: boolean;
+  willPublish?: boolean;
+  publishMessage?: MessageDescriptor;
 }) => (
   <Stack>
-    <Container
-      className={classNames('hierarchy-row', { selected })}
-    >
-      <Stack
-        direction="horizontal"
-        gap={2}
-      >
+    <Container className={classNames('hierarchy-row', { selected })}>
+      <Stack direction="horizontal" gap={2}>
         <div className="icon">
-          <Icon
-            src={getItemIcon(containerType)}
-            screenReaderText={containerType}
-            title={containerType}
-          />
+          <Icon src={getItemIcon(containerType)} screenReaderText={containerType} title={containerType} />
         </div>
-        <div className="text text-truncate">
-          {text}
-        </div>
+        <div className="text text-truncate">{text}</div>
         {publishMessage && (
-          <Stack
-            direction="horizontal"
-            gap={2}
-            className="publish-status"
-          >
+          <Stack direction="horizontal" gap={2} className="publish-status">
             <Icon src={willPublish ? Check : Description} />
             <FormattedMessage {...(willPublish ? messages.willPublishChipText : publishMessage)} />
           </Stack>
@@ -59,23 +44,14 @@ const HierarchyRow = ({
       </Stack>
     </Container>
     {showArrow && (
-      <div
-        className={classNames('hierarchy-arrow', { selected })}
-      >
-        <Icon
-          src={ArrowDownward}
-          screenReaderText={' '}
-        />
+      <div className={classNames('hierarchy-arrow', { selected })}>
+        <Icon src={ArrowDownward} screenReaderText={' '} />
       </div>
     )}
   </Stack>
 );
 
-export const ItemHierarchy = ({
-  showPublishStatus = false,
-}: {
-  showPublishStatus?: boolean,
-}) => {
+export const ItemHierarchy = ({ showPublishStatus = false }: { showPublishStatus?: boolean }) => {
   const intl = useIntl();
   const { sidebarItemInfo } = useSidebarContext();
   const itemId = sidebarItemInfo?.id;
@@ -85,11 +61,7 @@ export const ItemHierarchy = ({
     throw new Error('itemId is required');
   }
 
-  const {
-    data,
-    isPending,
-    isError,
-  } = useLibraryItemHierarchy(itemId);
+  const { data, isPending, isError } = useLibraryItemHierarchy(itemId);
 
   if (isPending) {
     return <Loading />;
@@ -100,12 +72,7 @@ export const ItemHierarchy = ({
     return null;
   }
 
-  const {
-    sections,
-    subsections,
-    units,
-    components,
-  } = data;
+  const { sections, subsections, units, components } = data;
 
   // Returns a message describing the publish status of the given hierarchy row.
   const publishMessage = (contents: ItemHierarchyMember[]) => {
@@ -124,9 +91,7 @@ export const ItemHierarchy = ({
   };
 
   // Returns True if any of the items in the list match the currently selected item.
-  const selected = (contents: ItemHierarchyMember[]): boolean => (
-    contents.some((item) => item.id === itemId)
-  );
+  const selected = (contents: ItemHierarchyMember[]): boolean => contents.some((item) => item.id === itemId);
 
   // Use the "selected" status to determine the selected row.
   // If showPublishStatus, that row and its children will be marked "willPublish".
@@ -145,13 +110,10 @@ export const ItemHierarchy = ({
       {showSections && (
         <HierarchyRow
           containerType={ContainerType.Section}
-          text={intl.formatMessage(
-            messages.hierarchySections,
-            {
-              displayName: sections[0].displayName,
-              count: sections.length,
-            },
-          )}
+          text={intl.formatMessage(messages.hierarchySections, {
+            displayName: sections[0].displayName,
+            count: sections.length,
+          })}
           showArrow={showSubsections}
           selected={selectedSections}
           willPublish={selectedSections}
@@ -161,13 +123,10 @@ export const ItemHierarchy = ({
       {showSubsections && (
         <HierarchyRow
           containerType={ContainerType.Subsection}
-          text={intl.formatMessage(
-            messages.hierarchySubsections,
-            {
-              displayName: subsections[0].displayName,
-              count: subsections.length,
-            },
-          )}
+          text={intl.formatMessage(messages.hierarchySubsections, {
+            displayName: subsections[0].displayName,
+            count: subsections.length,
+          })}
           showArrow={showUnits}
           selected={selectedSubsections}
           willPublish={selectedSubsections || selectedSections}
@@ -177,13 +136,10 @@ export const ItemHierarchy = ({
       {showUnits && (
         <HierarchyRow
           containerType={ContainerType.Unit}
-          text={intl.formatMessage(
-            messages.hierarchyUnits,
-            {
-              displayName: units[0].displayName,
-              count: units.length,
-            },
-          )}
+          text={intl.formatMessage(messages.hierarchyUnits, {
+            displayName: units[0].displayName,
+            count: units.length,
+          })}
           showArrow={showComponents}
           selected={selectedUnits}
           willPublish={selectedUnits || selectedSubsections || selectedSections}
@@ -193,13 +149,10 @@ export const ItemHierarchy = ({
       {showComponents && (
         <HierarchyRow
           containerType={ContainerType.Components}
-          text={intl.formatMessage(
-            messages.hierarchyComponents,
-            {
-              displayName: components[0].displayName,
-              count: components.length,
-            },
-          )}
+          text={intl.formatMessage(messages.hierarchyComponents, {
+            displayName: components[0].displayName,
+            count: components.length,
+          })}
           showArrow={false}
           selected={selectedComponents}
           willPublish={selectedComponents || selectedUnits || selectedSubsections || selectedSections}

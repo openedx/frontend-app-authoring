@@ -137,11 +137,13 @@ const messages = defineMessages({
       This action cannot be undone and may break your course if the {fileNumber, plural, one {{fileType} is} other {{fileType}s are}}
       used in the course content, advanced settings, updates, or schedule and details.
     `,
-    description: 'Message presented to user listing the number of files they are attempting to delete in the delete confirmation modal',
+    description:
+      'Message presented to user listing the number of files they are attempting to delete in the delete confirmation modal',
   },
   deleteConfirmationUsageMessage: {
     id: 'course-authoring.files-and-uploads.deleteConfirmation.usage-message',
-    defaultMessage: 'The following {fileNumber, plural, one {{fileType} is} other {{fileType}s are}} used in course content. Consider updating the content before deleting.',
+    defaultMessage:
+      'The following {fileNumber, plural, one {{fileType} is} other {{fileType}s are}} used in course content. Consider updating the content before deleting.',
     description: 'Message listing where the files the user is attempting to delete are used in the course',
   },
   deleteFileButtonLabel: {

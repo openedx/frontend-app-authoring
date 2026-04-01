@@ -28,6 +28,6 @@ import { useLayoutEffect, useState } from 'react';
 export const useLoadBearingHook = (id: string): void => {
   const setValue = useState(0)[1];
   useLayoutEffect(() => {
-    setValue(currentValue => currentValue + 1);
+    setValue((currentValue) => currentValue + 1);
   }, [id]);
 };

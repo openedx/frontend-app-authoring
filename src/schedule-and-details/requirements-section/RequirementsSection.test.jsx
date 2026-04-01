@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, fireEvent, act,
-} from '@testing-library/react';
+import { render, fireEvent, act } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { courseDetailsMock, courseSettingsMock } from '../__mocks__';
@@ -24,19 +22,10 @@ const RootWrapper = (props) => (
     <RequirementsSection {...props} />
   </IntlProvider>
 );
-const {
-  effort,
-  entranceExamEnabled,
-  preRequisiteCourses,
-  entranceExamMinimumScorePct,
-} = courseDetailsMock;
+const { effort, entranceExamEnabled, preRequisiteCourses, entranceExamMinimumScorePct } = courseDetailsMock;
 
-const {
-  aboutPageEditable,
-  isEntranceExamsEnabled,
-  possiblePreRequisiteCourses,
-  isPrerequisiteCoursesEnabled,
-} = courseSettingsMock;
+const { aboutPageEditable, isEntranceExamsEnabled, possiblePreRequisiteCourses, isPrerequisiteCoursesEnabled } =
+  courseSettingsMock;
 
 const props = {
   effort,
@@ -53,9 +42,7 @@ const props = {
 
 describe('<RequirementsSection />', () => {
   it('renders successfully', () => {
-    const {
-      getByText, getByLabelText, getByDisplayValue, getAllByRole,
-    } = render(<RootWrapper {...props} />);
+    const { getByText, getByLabelText, getByDisplayValue, getAllByRole } = render(<RootWrapper {...props} />);
     const checkboxList = getAllByRole('checkbox');
     expect(getByText(messages.requirementsTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.requirementsDescription.defaultMessage)).toBeInTheDocument();

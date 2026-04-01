@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import {
-  Button,
-  Icon,
-  Stack, StandardModal, Tab, Tabs, useToggle,
-} from '@openedx/paragon';
+import { Button, Icon, Stack, StandardModal, Tab, Tabs, useToggle } from '@openedx/paragon';
 import { ChevronLeft, ChevronRight } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -57,12 +53,12 @@ const AddNewContent = () => {
 
   // Build problem templates
   const problemTemplates: BlockTemplate[] = [];
-  Object.values(ProblemTypeKeys).map((key) => (
+  Object.values(ProblemTypeKeys).map((key) =>
     problemTemplates.push({
       displayName: intl.formatMessage(problemMessages[`problemType.${key}.title`]),
       boilerplateName: key,
-    })
-  ));
+    }),
+  );
 
   // Pre-process block templates
   const templatesByType = componentTemplates.reduce((acc, item) => {
@@ -100,69 +96,81 @@ const AddNewContent = () => {
 
   const handleCreateXBlock = useHandleCreateNewCourseXBlock({ blockId });
 
-  const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
-    closeXBlockEditorModal();
-    closeVideoSelectorModal();
-    sendMessageToIframe(messageTypes.refreshXBlock, null);
-    dispatch(fetchCourseSectionVerticalData(blockId, parentSubsectionId));
-  }, [closeXBlockEditorModal, sendMessageToIframe]);
+  const onXBlockSave = useCallback(
+    /* istanbul ignore next */ () => {
+      closeXBlockEditorModal();
+      closeVideoSelectorModal();
+      sendMessageToIframe(messageTypes.refreshXBlock, null);
+      dispatch(fetchCourseSectionVerticalData(blockId, parentSubsectionId));
+    },
+    [closeXBlockEditorModal, sendMessageToIframe],
+  );
 
-  const onXBlockCancel = useCallback(/* istanbul ignore next */ () => {
-    closeXBlockEditorModal();
-    closeVideoSelectorModal();
-    dispatch(fetchCourseSectionVerticalData(blockId, parentSubsectionId));
-  }, [closeXBlockEditorModal, sendMessageToIframe, blockId, parentSubsectionId]);
+  const onXBlockCancel = useCallback(
+    /* istanbul ignore next */ () => {
+      closeXBlockEditorModal();
+      closeVideoSelectorModal();
+      dispatch(fetchCourseSectionVerticalData(blockId, parentSubsectionId));
+    },
+    [closeXBlockEditorModal, sendMessageToIframe, blockId, parentSubsectionId],
+  );
 
   /* eslint-disable no-void */
-  const handleSelection = useCallback((type: string, moduleName?: string) => {
-    switch (type) {
-      case COMPONENT_TYPES.dragAndDrop:
-        void handleCreateXBlock({ type, parentLocator: blockId });
-        break;
-      case COMPONENT_TYPES.problem:
-        void handleCreateXBlock({ type, parentLocator: blockId }, ({ locator }) => {
-          setEditorExtraProps({ problemType: moduleName });
-          setBlockType(type);
-          setNewBlockId(locator);
-          showXBlockEditorModal();
-        });
-        break;
-      case COMPONENT_TYPES.video:
-        void handleCreateXBlock(
-          { type, parentLocator: blockId },
-          /* istanbul ignore next */ ({ locator }) => {
+  const handleSelection = useCallback(
+    (type: string, moduleName?: string) => {
+      switch (type) {
+        case COMPONENT_TYPES.dragAndDrop:
+          void handleCreateXBlock({ type, parentLocator: blockId });
+          break;
+        case COMPONENT_TYPES.problem:
+          void handleCreateXBlock({ type, parentLocator: blockId }, ({ locator }) => {
+            setEditorExtraProps({ problemType: moduleName });
             setBlockType(type);
             setNewBlockId(locator);
-            if (useVideoGalleryFlow) {
-              showVideoSelectorModal();
-            } else {
+            showXBlockEditorModal();
+          });
+          break;
+        case COMPONENT_TYPES.video:
+          void handleCreateXBlock(
+            { type, parentLocator: blockId },
+            /* istanbul ignore next */ ({ locator }) => {
+              setBlockType(type);
+              setNewBlockId(locator);
+              if (useVideoGalleryFlow) {
+                showVideoSelectorModal();
+              } else {
+                showXBlockEditorModal();
+              }
+            },
+          );
+          break;
+        case COMPONENT_TYPES.openassessment:
+          void handleCreateXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
+          break;
+        case COMPONENT_TYPES.html:
+          void handleCreateXBlock(
+            {
+              type,
+              boilerplate: moduleName,
+              parentLocator: blockId,
+            },
+            /* istanbul ignore next */ ({ locator }) => {
+              setBlockType(type);
+              setNewBlockId(locator);
               showXBlockEditorModal();
-            }
-          },
-        );
-        break;
-      case COMPONENT_TYPES.openassessment:
-        void handleCreateXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
-        break;
-      case COMPONENT_TYPES.html:
-        void handleCreateXBlock({
-          type,
-          boilerplate: moduleName,
-          parentLocator: blockId,
-        }, /* istanbul ignore next */ ({ locator }) => {
-          setBlockType(type);
-          setNewBlockId(locator);
-          showXBlockEditorModal();
-        });
-        break;
-      case COMPONENT_TYPES.advanced:
-        void handleCreateXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
-        break;
-      /* istanbul ignore next */
-      default:
-        break;
-    }
-  }, [blockId]);
+            },
+          );
+          break;
+        case COMPONENT_TYPES.advanced:
+          void handleCreateXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+          break;
+        /* istanbul ignore next */
+        default:
+          break;
+      }
+    },
+    [blockId],
+  );
 
   const blockTypes = [
     {
@@ -192,12 +200,7 @@ const AddNewContent = () => {
     return (
       <Stack>
         <Stack className="mb-2 text-primary-500" direction="horizontal" gap={1}>
-          <Button
-            className="text-primary-500"
-            variant="tertiary"
-            iconBefore={ChevronLeft}
-            onClick={closeAdvancedPage}
-          >
+          <Button className="text-primary-500" variant="tertiary" iconBefore={ChevronLeft} onClick={closeAdvancedPage}>
             <FormattedMessage {...messages.sidebarAddBackButton} />
           </Button>
           <Icon src={ChevronRight} />
@@ -288,14 +291,17 @@ const AddLibraryContent = () => {
 
   const handleCreateXBlock = useHandleCreateNewCourseXBlock({ blockId });
 
-  const handleSelection = useCallback(async (selection: SelectedComponent) => {
-    await handleCreateXBlock({
-      type: COMPONENT_TYPES.libraryV2,
-      category: selection.blockType,
-      parentLocator: blockId,
-      libraryContentKey: selection.usageKey,
-    });
-  }, [blockId]);
+  const handleSelection = useCallback(
+    async (selection: SelectedComponent) => {
+      await handleCreateXBlock({
+        type: COMPONENT_TYPES.libraryV2,
+        category: selection.blockType,
+        parentLocator: blockId,
+        libraryContentKey: selection.usageKey,
+      });
+    },
+    [blockId],
+  );
 
   return (
     <MultiLibraryProvider>
@@ -317,10 +323,7 @@ export const AddSidebar = () => {
   const intl = useIntl();
   const unitData = useSelector(getCourseUnitData);
 
-  const {
-    currentTabKey,
-    setCurrentTabKey,
-  } = useUnitSidebarContext();
+  const { currentTabKey, setCurrentTabKey } = useUnitSidebarContext();
 
   useEffect(() => {
     if (currentTabKey === undefined) {
@@ -331,10 +334,7 @@ export const AddSidebar = () => {
 
   return (
     <div>
-      <SidebarTitle
-        title={unitData.displayName}
-        icon={getItemIcon('unit')}
-      />
+      <SidebarTitle title={unitData.displayName} icon={getItemIcon('unit')} />
       <SidebarContent>
         <SidebarSection>
           <Tabs
@@ -343,18 +343,12 @@ export const AddSidebar = () => {
             activeKey={currentTabKey}
             onSelect={setCurrentTabKey}
           >
-            <Tab
-              eventKey="add-new"
-              title={intl.formatMessage(messages.sidebarAddNewTab)}
-            >
+            <Tab eventKey="add-new" title={intl.formatMessage(messages.sidebarAddNewTab)}>
               <div className="mt-4">
                 <AddNewContent />
               </div>
             </Tab>
-            <Tab
-              eventKey="add-existing"
-              title={intl.formatMessage(messages.sidebarAddExistingTab)}
-            >
+            <Tab eventKey="add-existing" title={intl.formatMessage(messages.sidebarAddExistingTab)}>
               <div className="mt-4">
                 <AddLibraryContent />
               </div>

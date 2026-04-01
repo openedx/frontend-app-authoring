@@ -43,7 +43,9 @@ describe('useIframeBehavior', () => {
 
   it('scrolls to previous position on video fullscreen exit', () => {
     const mockWindowTopOffset = 100;
-    jest.spyOn(iframeBehaviorState, 'windowTopOffset').mockImplementation(() => [mockWindowTopOffset, setWindowTopOffset]);
+    jest
+      .spyOn(iframeBehaviorState, 'windowTopOffset')
+      .mockImplementation(() => [mockWindowTopOffset, setWindowTopOffset]);
     renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
@@ -81,9 +83,14 @@ describe('useIframeBehavior', () => {
 
   it('handles xblock-event message correctly', () => {
     const onBlockNotification = jest.fn();
-    renderHook(() => useIframeBehavior({
-      id, iframeUrl, iframeRef, onBlockNotification,
-    }));
+    renderHook(() =>
+      useIframeBehavior({
+        id,
+        iframeUrl,
+        iframeRef,
+        onBlockNotification,
+      }),
+    );
 
     const messageEvent = new MessageEvent('message', {
       data: {
@@ -148,7 +155,11 @@ describe('useIframeBehavior', () => {
     });
 
     expect(window.scrollTo).toHaveBeenCalledWith({ top: 175, left: 0, behavior: 'smooth' });
-    expect(window.scrollY).toBe(100 + document.getElementsByName('xblock-iframe')[0].offsetTop + document.getElementsByName('xblock-iframe')[0]!.parentElement!.offsetTop);
+    expect(window.scrollY).toBe(
+      100 +
+        document.getElementsByName('xblock-iframe')[0].offsetTop +
+        document.getElementsByName('xblock-iframe')[0]!.parentElement!.offsetTop,
+    );
   });
 
   it('handles offset message correctly', () => {

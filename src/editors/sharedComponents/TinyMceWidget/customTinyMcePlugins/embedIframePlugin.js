@@ -100,9 +100,7 @@ function tinyMCEEmbedIframePlugin(editor) {
             },
           } = defaultConfig;
 
-          generalTab.items = generalTab.items.filter(
-            (item) => item.type !== 'sizeinput',
-          );
+          generalTab.items = generalTab.items.filter((item) => item.type !== 'sizeinput');
 
           defaultConfig.initialData = { ...fields, sizeType };
           api.redial(defaultConfig);
@@ -145,9 +143,7 @@ function tinyMCEEmbedIframePlugin(editor) {
           },
         };
         if (data.source) {
-          const {
-            size, sizeType, name, title, longDescriptionURL, border, scrollbar,
-          } = data;
+          const { size, sizeType, name, title, longDescriptionURL, border, scrollbar } = data;
           const { width, height } = sizeTypes[sizeType] || { width: size.width, height: size.height };
 
           const pxRegex = /^\d+px$/;
@@ -175,9 +171,10 @@ function tinyMCEEmbedIframePlugin(editor) {
 
           iframeCode += '></iframe>';
 
-          iframeCode = `<div class="tiny-pageembed" style="width: ${widthFormat}; height: ${heightFormat}">`
-            + `${iframeCode}`
-            + '</div>';
+          iframeCode =
+            `<div class="tiny-pageembed" style="width: ${widthFormat}; height: ${heightFormat}">` +
+            `${iframeCode}` +
+            '</div>';
 
           editor.insertContent(iframeCode);
         }

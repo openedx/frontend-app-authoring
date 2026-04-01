@@ -27,11 +27,7 @@ interface Props {
   returnFunction?: (prevPath?: string) => (newData: Record<string, any> | undefined) => void;
 }
 
-const EditorContainer: React.FC<Props> = ({
-  learningContextId,
-  onClose,
-  returnFunction,
-}) => {
+const EditorContainer: React.FC<Props> = ({ learningContextId, onClose, returnFunction }) => {
   const intl = useIntl();
   const { blockType, blockId } = useParams();
   const location = useLocation();

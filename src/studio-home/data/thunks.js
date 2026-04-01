@@ -19,12 +19,7 @@ import {
  * useQuery() to load the "studio home" data, and another that calls useQuery() to
  * load the course list.
  */
-function fetchStudioHomeData(
-  search,
-  hasHomeData,
-  requestParams = {},
-  shouldFetchCourses = true,
-) {
+function fetchStudioHomeData(search, hasHomeData, requestParams = {}, shouldFetchCourses = true) {
   return async (dispatch) => {
     dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.IN_PROGRESS }));
 
@@ -84,9 +79,4 @@ function requestCourseCreatorQuery() {
   };
 }
 
-export {
-  fetchStudioHomeData,
-  fetchOnlyStudioHomeData,
-  requestCourseCreatorQuery,
-  handleDeleteNotificationQuery,
-};
+export { fetchStudioHomeData, fetchOnlyStudioHomeData, requestCourseCreatorQuery, handleDeleteNotificationQuery };

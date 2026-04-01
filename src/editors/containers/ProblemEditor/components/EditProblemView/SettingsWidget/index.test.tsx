@@ -47,20 +47,17 @@ describe('SettingsWidget', () => {
     correctAnswerCount: 0,
     groupFeedbackList: [],
     showMarkdownEditorButton: false,
-
   };
 
   const editorRef = { current: null };
 
-  const renderSettingsWidget = (
-    overrideProps = {},
-    options = {},
-  ) => editorRender(
-    <ProblemEditorContextProvider editorRef={editorRef}>
-      <SettingsWidget {...props} {...overrideProps} />
-    </ProblemEditorContextProvider>,
-    options,
-  );
+  const renderSettingsWidget = (overrideProps = {}, options = {}) =>
+    editorRender(
+      <ProblemEditorContextProvider editorRef={editorRef}>
+        <SettingsWidget {...props} {...overrideProps} />
+      </ProblemEditorContextProvider>,
+      options,
+    );
 
   beforeEach(() => {
     initializeMocks();

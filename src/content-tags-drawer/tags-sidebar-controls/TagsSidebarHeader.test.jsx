@@ -29,7 +29,11 @@ const RootWrapper = () => (
 describe('<TagsSidebarHeader>', () => {
   it('should render count only after query is complete', async () => {
     let resolvePromise;
-    mockGetTagsCount.mockReturnValueOnce(new Promise((resolve) => { resolvePromise = resolve; }));
+    mockGetTagsCount.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolvePromise = resolve;
+      }),
+    );
     render(<RootWrapper />);
     expect(screen.getByRole('heading', { name: /unit tags/i })).toBeInTheDocument();
     expect(screen.queryByText('17')).not.toBeInTheDocument();

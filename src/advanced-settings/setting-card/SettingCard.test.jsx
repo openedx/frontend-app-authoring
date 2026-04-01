@@ -17,12 +17,7 @@ const settingData = {
   value: 'Setting Value',
 };
 
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea
-    {...props}
-    onFocus={() => {}}
-  />
-)));
+jest.mock('react-textarea-autosize', () => jest.fn((props) => <textarea {...props} onFocus={() => {}} />));
 
 const RootWrapper = () => (
   <IntlProvider locale="en">

@@ -2,18 +2,9 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import MockAdapter from 'axios-mock-adapter';
 import userEvent from '@testing-library/user-event';
-import {
-  initializeMocks,
-  render,
-  screen,
-  waitFor,
-} from '../../testUtils';
+import { initializeMocks, render, screen, waitFor } from '../../testUtils';
 import { mockContentLibrary, mockGetLibraryTeam } from '../data/api.mocks';
-import {
-  getContentLibraryApiUrl,
-  getLibraryTeamApiUrl,
-  getLibraryTeamMemberApiUrl,
-} from '../data/api';
+import { getContentLibraryApiUrl, getLibraryTeamApiUrl, getLibraryTeamMemberApiUrl } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { ToastProvider } from '../../generic/toast-context';
 import LibraryTeam from './LibraryTeam';
@@ -104,32 +95,31 @@ describe('<LibraryTeam />', () => {
       },
       expectYou: false,
     },
-  ])(
-    'allows $label users to edit library team members',
-    async ({ user: authenticatedUser, expectYou }) => {
-      initializeMockApp({ authenticatedUser });
-      await renderLibraryTeam();
+  ])('allows $label users to edit library team members', async ({ user: authenticatedUser, expectYou }) => {
+    initializeMockApp({ authenticatedUser });
+    await renderLibraryTeam();
 
-      const youLabel = screen.queryByText('You!');
-      if (expectYou) {
-        expect(youLabel).toBeInTheDocument();
-      } else {
-        expect(youLabel).not.toBeInTheDocument();
-      }
+    const youLabel = screen.queryByText('You!');
+    if (expectYou) {
+      expect(youLabel).toBeInTheDocument();
+    } else {
+      expect(youLabel).not.toBeInTheDocument();
+    }
 
-      // Single Admin user cannot be demoted or deleted.
-      expect(screen.getByText('Promote another member to Admin to change this user\'s access rights.')).toBeInTheDocument();
+    // Single Admin user cannot be demoted or deleted.
+    expect(
+      screen.getByText("Promote another member to Admin to change this user's access rights."),
+    ).toBeInTheDocument();
 
-      // Author + Reader can be made Admin
-      expect(screen.getAllByRole('button', { name: 'Make Admin' }).length).toBe(2);
-      // Reader can be made Author
-      expect(screen.getByRole('button', { name: 'Make Author' })).toBeInTheDocument();
-      // Author can be made Reader
-      expect(screen.getByRole('button', { name: 'Make Reader' })).toBeInTheDocument();
-      // Author + Reader can be deleted
-      expect(screen.getAllByRole('button', { name: 'Delete team member' }).length).toBe(2);
-    },
-  );
+    // Author + Reader can be made Admin
+    expect(screen.getAllByRole('button', { name: 'Make Admin' }).length).toBe(2);
+    // Reader can be made Author
+    expect(screen.getByRole('button', { name: 'Make Author' })).toBeInTheDocument();
+    // Author can be made Reader
+    expect(screen.getByRole('button', { name: 'Make Reader' })).toBeInTheDocument();
+    // Author + Reader can be deleted
+    expect(screen.getAllByRole('button', { name: 'Delete team member' }).length).toBe(2);
+  });
 
   it('allows library to be made "public read"', async () => {
     const user = userEvent.setup();
@@ -143,9 +133,7 @@ describe('<LibraryTeam />', () => {
 
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
-      expect(axiosMock.history.patch[0].data).toBe(
-        '{"allow_public_read":true}',
-      );
+      expect(axiosMock.history.patch[0].data).toBe('{"allow_public_read":true}');
     });
   });
 
@@ -168,7 +156,7 @@ describe('<LibraryTeam />', () => {
 
     addButton = screen.getByRole('button', { name: 'New team member' });
     await user.click(addButton);
-    const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
+    const emailInput = screen.getByRole('textbox', { name: "User's email address" });
     await user.click(emailInput);
     await user.type(emailInput, 'another@user.tld');
 
@@ -195,7 +183,7 @@ describe('<LibraryTeam />', () => {
 
     const addButton = screen.getByRole('button', { name: 'New team member' });
     await user.click(addButton);
-    const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
+    const emailInput = screen.getByRole('textbox', { name: "User's email address" });
     await user.click(emailInput);
     await user.type(emailInput, 'another@user.tld');
 
@@ -206,9 +194,7 @@ describe('<LibraryTeam />', () => {
       expect(axiosMock.history.post.length).toEqual(1);
     });
 
-    expect(await screen.findByText(
-      'Error adding Team Member. This is a specific error.',
-    )).toBeInTheDocument();
+    expect(await screen.findByText('Error adding Team Member. This is a specific error.')).toBeInTheDocument();
   });
 
   it('shows error when specific error (Array)', async () => {
@@ -221,7 +207,7 @@ describe('<LibraryTeam />', () => {
 
     const addButton = screen.getByRole('button', { name: 'New team member' });
     await user.click(addButton);
-    const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
+    const emailInput = screen.getByRole('textbox', { name: "User's email address" });
     await user.click(emailInput);
     await user.type(emailInput, 'another@user.tld');
 
@@ -232,9 +218,7 @@ describe('<LibraryTeam />', () => {
       expect(axiosMock.history.post.length).toEqual(1);
     });
 
-    expect(await screen.findByText(
-      'Error adding Team Member. This is a specific error.',
-    )).toBeInTheDocument();
+    expect(await screen.findByText('Error adding Team Member. This is a specific error.')).toBeInTheDocument();
   });
 
   it('shows error', async () => {
@@ -247,7 +231,7 @@ describe('<LibraryTeam />', () => {
 
     const addButton = screen.getByRole('button', { name: 'New team member' });
     await user.click(addButton);
-    const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
+    const emailInput = screen.getByRole('textbox', { name: "User's email address" });
     await user.click(emailInput);
     await user.type(emailInput, 'another@user.tld');
 

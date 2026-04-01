@@ -16,11 +16,12 @@ describe('SwitchEditorCard - markdown', () => {
   };
   const editorRef = { current: null };
 
-  const renderSwitchEditorCard = (overrideProps = {}) => editorRender(
-    <ProblemEditorContextProvider editorRef={editorRef}>
-      <SwitchEditorCard {...baseProps} {...overrideProps} />
-    </ProblemEditorContextProvider>,
-  );
+  const renderSwitchEditorCard = (overrideProps = {}) =>
+    editorRender(
+      <ProblemEditorContextProvider editorRef={editorRef}>
+        <SwitchEditorCard {...baseProps} {...overrideProps} />
+      </ProblemEditorContextProvider>,
+    );
 
   beforeEach(() => {
     initializeMocks();
@@ -63,7 +64,7 @@ describe('SwitchEditorCard - markdown', () => {
 
   test('renders nothing for advanced problemType', () => {
     const { container } = renderSwitchEditorCard({ problemType: 'advanced' });
-    const reduxWrapper = (container.firstChild as HTMLElement | null);
+    const reduxWrapper = container.firstChild as HTMLElement | null;
     expect(reduxWrapper?.innerHTML).toBe('');
   });
 });

@@ -1,10 +1,4 @@
-import {
-  fireEvent,
-  render,
-  initializeMocks,
-  screen,
-  waitFor,
-} from '@src/testUtils';
+import { fireEvent, render, initializeMocks, screen, waitFor } from '@src/testUtils';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
@@ -16,13 +10,14 @@ const courseId = '123';
 
 let axiosMock;
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <CourseImportProvider>
-      <FileSection />
-    </CourseImportProvider>
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseImportProvider>
+        <FileSection />
+      </CourseImportProvider>
+    </CourseAuthoringProvider>,
+  );
 
 describe('<FileSection />', () => {
   beforeEach(() => {

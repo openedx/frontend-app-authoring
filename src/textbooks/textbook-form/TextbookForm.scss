@@ -6,7 +6,7 @@
   background-color: var(--pgn-color-white);
   padding: var(--pgn-spacing-spacer-4);
   margin-bottom: var(--pgn-spacing-spacer-4);
-  border-radius: .5rem;
+  border-radius: 0.5rem;
 
   .form-field {
     margin-bottom: 0;
@@ -60,7 +60,6 @@
   }
 
   .modal-preview-text {
-    font-size: .875rem;
+    font-size: 0.875rem;
   }
 }
-

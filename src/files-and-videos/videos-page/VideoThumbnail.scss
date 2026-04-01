@@ -7,15 +7,15 @@
 }
 
 .video-thumbnail .thumbnail-overlay {
-  background: rgba(0 0 0 / .7);
+  background: rgba(0 0 0 / 0.7);
   position: absolute;
   height: 99%;
   width: 100%;
   inset: 0;
   opacity: 0;
-  -webkit-transition: all .4s ease-in-out 0s;
-  -moz-transition: all .4s ease-in-out 0s;
-  transition: all .4s ease-in-out 0s;
+  -webkit-transition: all 0.4s ease-in-out 0s;
+  -moz-transition: all 0.4s ease-in-out 0s;
+  transition: all 0.4s ease-in-out 0s;
 }
 
 .status-badge {
@@ -46,9 +46,9 @@
   -webkit-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  -webkit-transition: all .3s ease-in-out 0s;
-  -moz-transition: all .3s ease-in-out 0s;
-  transition: all .3s ease-in-out 0s;
+  -webkit-transition: all 0.3s ease-in-out 0s;
+  -moz-transition: all 0.3s ease-in-out 0s;
+  transition: all 0.3s ease-in-out 0s;
 }
 
 .video-thumbnail:hover .add-thumbnail {

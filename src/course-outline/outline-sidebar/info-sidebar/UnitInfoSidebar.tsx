@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button, Stack, Tab, Tabs,
-} from '@openedx/paragon';
-import {
-  OpenInFull,
-} from '@openedx/paragon/icons';
+import { Button, Stack, Tab, Tabs } from '@openedx/paragon';
+import { OpenInFull } from '@openedx/paragon/icons';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
 
@@ -64,9 +60,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
         >
           {intl.formatMessage(messages.openUnitPage)}
         </Button>
-        {unitData?.hasChanges && (
-          <PublishButon onClick={handlePublish} />
-        )}
+        {unitData?.hasChanges && <PublishButon onClick={handlePublish} />}
       </Stack>
       <Tabs
         variant="tabs"

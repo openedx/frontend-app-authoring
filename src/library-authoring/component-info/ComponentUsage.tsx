@@ -15,20 +15,21 @@ interface ComponentUsageProps {
   usageKey: string;
 }
 
-type ComponentUsageTree = Record<string, {
-  key: string,
-  contextName: string,
-  links: {
-    [usageKey: string]: {
-      displayName: string,
-      url: string,
-    },
-  },
-}>;
+type ComponentUsageTree = Record<
+  string,
+  {
+    key: string;
+    contextName: string;
+    links: {
+      [usageKey: string]: {
+        displayName: string;
+        url: string;
+      };
+    };
+  }
+>;
 
-const getContainerUrl = (usageKey: string) => (
-  `${getConfig().STUDIO_BASE_URL}/container/${usageKey}`
-);
+const getContainerUrl = (usageKey: string) => `${getConfig().STUDIO_BASE_URL}/container/${usageKey}`;
 
 export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
   const {
@@ -39,7 +40,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
   } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
 
   const downstreamKeys = useMemo(
-    () => dataDownstreamLinks?.map(link => link.downstreamUsageKey) || [],
+    () => dataDownstreamLinks?.map((link) => link.downstreamUsageKey) || [],
     [dataDownstreamLinks],
   );
 
@@ -63,7 +64,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
   }
 
   const componentUsage = downstreamHits.reduce<ComponentUsageTree>((acc, hit) => {
-    const link = hit.breadcrumbs.at(-1) as { displayName: string, usageKey: string };
+    const link = hit.breadcrumbs.at(-1) as { displayName: string; usageKey: string };
     // istanbul ignore if: this should never happen. it is a type guard for the breadcrumb last item
     if (!link?.usageKey) {
       return acc;
@@ -95,23 +96,17 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
 
   return (
     <>
-      {
-        componentUsageList.map((context) => (
-          <Collapsible key={context.key} title={context.contextName} styling="basic">
-            <Stack>
-              {Object.keys(context.links).map((downstreamUsageKey: string) => (
-                <Hyperlink
-                  key={downstreamUsageKey}
-                  destination={context.links[downstreamUsageKey].url}
-                  target="_blank"
-                >
-                  {context.links[downstreamUsageKey].displayName}
-                </Hyperlink>
-              ))}
-            </Stack>
-          </Collapsible>
-        ))
-      }
+      {componentUsageList.map((context) => (
+        <Collapsible key={context.key} title={context.contextName} styling="basic">
+          <Stack>
+            {Object.keys(context.links).map((downstreamUsageKey: string) => (
+              <Hyperlink key={downstreamUsageKey} destination={context.links[downstreamUsageKey].url} target="_blank">
+                {context.links[downstreamUsageKey].displayName}
+              </Hyperlink>
+            ))}
+          </Stack>
+        </Collapsible>
+      ))}
     </>
   );
 };

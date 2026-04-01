@@ -41,11 +41,13 @@ export const checkboxesOLXWithFeedbackAndHintsOLX = {
   hints: [
     {
       id: 0,
-      value: '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
+      value:
+        '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
     },
     {
       id: 1,
-      value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
+      value:
+        '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
     },
   ],
   solutionExplanation: `
@@ -61,8 +63,10 @@ export const checkboxesOLXWithFeedbackAndHintsOLX = {
         id: 'A',
         title: `<p>a correct answer</p>\n        \n        \n      `,
         correct: true,
-        selectedFeedback: '<p>You can specify optional feedback that appears after the learner selects and submits this answer.</p>',
-        unselectedFeedback: '<p>You can specify optional feedback that appears after the learner clears and submits this answer.</p>',
+        selectedFeedback:
+          '<p>You can specify optional feedback that appears after the learner selects and submits this answer.</p>',
+        unselectedFeedback:
+          '<p>You can specify optional feedback that appears after the learner clears and submits this answer.</p>',
       },
       {
         id: 'B',
@@ -85,26 +89,19 @@ export const checkboxesOLXWithFeedbackAndHintsOLX = {
     groupFeedbackList: [
       {
         id: 0,
-        answers: [
-          'A',
-          'B',
-          'D',
-        ],
-        feedback: 'You can specify optional feedback for a combination of answers which appears after the specified set of answers is submitted.',
+        answers: ['A', 'B', 'D'],
+        feedback:
+          'You can specify optional feedback for a combination of answers which appears after the specified set of answers is submitted.',
       },
       {
         id: 1,
-        answers: [
-          'A',
-          'B',
-          'C',
-          'D',
-        ],
+        answers: ['A', 'B', 'C', 'D'],
         feedback: 'You can specify optional feedback for one, several, or all answer combinations.',
       },
     ],
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  question:
+    '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
   buildOLX: `<problem>
     <choiceresponse>
       <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
@@ -202,12 +199,15 @@ export const multipleChoiceSingleAnswer = {
         id: 'A',
         title: `<p>a correct answer</p><div><img src="#"></img>image with <strong>caption</strong>.</div>\n        \n        \n      `,
         correct: true,
-        selectedFeedback: '<p>You can specify optional feedback that appears after the learner selects and submits this answer.</p>',
-        unselectedFeedback: '<p>You can specify optional feedback that appears after the learner clears and submits this answer.</p>',
+        selectedFeedback:
+          '<p>You can specify optional feedback that appears after the learner selects and submits this answer.</p>',
+        unselectedFeedback:
+          '<p>You can specify optional feedback that appears after the learner clears and submits this answer.</p>',
       },
     ],
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  question:
+    '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
   buildOLX: `<problem>
   <multiplechoiceresponse>
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
@@ -254,14 +254,17 @@ export const dropdownOLXWithFeedbackAndHintsOLX = {
   <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
 </demandhint>
 </problem>`,
-  hints: [{
-    id: 0,
-    value: '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
-  },
-  {
-    id: 1,
-    value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
-  },
+  hints: [
+    {
+      id: 0,
+      value:
+        '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
+    },
+    {
+      id: 1,
+      value:
+        '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
+    },
   ],
   data: {
     answers: [
@@ -269,7 +272,8 @@ export const dropdownOLXWithFeedbackAndHintsOLX = {
         id: 'A',
         title: 'an incorrect answer',
         correct: false,
-        selectedFeedback: '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
+        selectedFeedback:
+          '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
       },
       {
         id: 'B',
@@ -284,7 +288,8 @@ export const dropdownOLXWithFeedbackAndHintsOLX = {
       },
     ],
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  question:
+    '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
   buildOLX: `<problem>
   <optionresponse>
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
@@ -329,14 +334,17 @@ export const multipleChoiceWithFeedbackAndHintsOLX = {
   <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
 </demandhint>
 </problem>`,
-  hints: [{
-    id: 0,
-    value: '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
-  },
-  {
-    id: 1,
-    value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
-  },
+  hints: [
+    {
+      id: 0,
+      value:
+        '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
+    },
+    {
+      id: 1,
+      value:
+        '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
+    },
   ],
   solutionExplanation: '<p>You can add a solution</p>',
   data: {
@@ -345,7 +353,8 @@ export const multipleChoiceWithFeedbackAndHintsOLX = {
         id: 'A',
         title: '<p>an incorrect answer</p>',
         correct: false,
-        selectedFeedback: '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
+        selectedFeedback:
+          '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
       },
       {
         id: 'B',
@@ -360,7 +369,8 @@ export const multipleChoiceWithFeedbackAndHintsOLX = {
       },
     ],
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em class="olx_description">You can add an optional tip or note related to the prompt like this.</em><em>Just a generic em tag</em>',
+  question:
+    '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em class="olx_description">You can add an optional tip or note related to the prompt like this.</em><em>Just a generic em tag</em>',
   buildOLX: `<problem>
   <multiplechoiceresponse>
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
@@ -407,14 +417,17 @@ export const numericInputWithFeedbackAndHintsOLX = {
   <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
 </demandhint>
 </problem>`,
-  hints: [{
-    id: 0,
-    value: '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
-  },
-  {
-    id: 1,
-    value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
-  },
+  hints: [
+    {
+      id: 0,
+      value:
+        '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
+    },
+    {
+      id: 1,
+      value:
+        '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
+    },
   ],
   data: {
     answers: [
@@ -422,7 +435,8 @@ export const numericInputWithFeedbackAndHintsOLX = {
         id: 'A',
         title: '100',
         correct: true,
-        selectedFeedback: '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
+        selectedFeedback:
+          '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
         isAnswerRange: false,
         tolerance: '5',
       },
@@ -431,11 +445,13 @@ export const numericInputWithFeedbackAndHintsOLX = {
         title: '200',
         correct: true,
         isAnswerRange: false,
-        selectedFeedback: '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
+        selectedFeedback:
+          '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
       },
     ],
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  question:
+    '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
   buildOLX: `<problem>
   <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
   <label>Add the question text, or prompt, here. This text is required.</label>
@@ -471,12 +487,14 @@ export const numericInputWithAnswerRangeOLX = {
         id: 'A',
         title: '[32,-1.3)',
         correct: true,
-        selectedFeedback: '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
+        selectedFeedback:
+          '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
         isAnswerRange: true,
       },
     ],
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  question:
+    '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
   buildOLX: `<problem>
   <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
   <label>Add the question text, or prompt, here. This text is required.</label>
@@ -504,14 +522,17 @@ export const textInputWithFeedbackAndHintsOLX = {
   <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
 </demandhint>
 </problem>`,
-  hints: [{
-    id: 0,
-    value: '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
-  },
-  {
-    id: 1,
-    value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
-  },
+  hints: [
+    {
+      id: 0,
+      value:
+        '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
+    },
+    {
+      id: 1,
+      value:
+        '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
+    },
   ],
   data: {
     answers: [
@@ -519,7 +540,8 @@ export const textInputWithFeedbackAndHintsOLX = {
         id: 'A',
         title: 'the correct answer',
         correct: true,
-        selectedFeedback: '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
+        selectedFeedback:
+          '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
       },
       {
         id: 'B',
@@ -578,14 +600,17 @@ export const textInputWithFeedbackInIncorrectAnswerOnlyOLX = {
   <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
 </demandhint>
 </problem>`,
-  hints: [{
-    id: 0,
-    value: '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
-  },
-  {
-    id: 1,
-    value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
-  },
+  hints: [
+    {
+      id: 0,
+      value:
+        '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
+    },
+    {
+      id: 1,
+      value:
+        '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
+    },
   ],
   data: {
     answers: [
@@ -659,14 +684,17 @@ export const textInputWithFeedbackAndHintsOLXWithMultipleAnswers = {
   <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
 </demandhint>
 </problem>`,
-  hints: [{
-    id: 0,
-    value: '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
-  },
-  {
-    id: 1,
-    value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
-  },
+  hints: [
+    {
+      id: 0,
+      value:
+        '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
+    },
+    {
+      id: 1,
+      value:
+        '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
+    },
   ],
   data: {
     answers: [
@@ -702,7 +730,8 @@ export const textInputWithFeedbackAndHintsOLXWithMultipleAnswers = {
       },
     },
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  question:
+    '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
   buildOLX: `<problem>
   <stringresponse answer="the correct answer" type="ci">
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
@@ -833,8 +862,7 @@ export const shuffleProblemOLX = {
 };
 
 export const labelDescriptionQuestionOLX = {
-  rawOLX:
-`<problem display_name="Eggs b) - Choosing a System" markdown="null" max_attempts="3" weight="0.5">
+  rawOLX: `<problem display_name="Eggs b) - Choosing a System" markdown="null" max_attempts="3" weight="0.5">
   <p style="text-align: center;"><img height="274" width="" src="/static/boiling_eggs_water_system.png" alt="boiling eggs: water system"/></p>
   <multiplechoiceresponse>
   <label>Taking the system as just the <b>water</b>, as indicated by the red dashed line, what would be the correct expression for the first law of thermodynamics applied to this system?</label>
@@ -859,8 +887,7 @@ export const labelDescriptionQuestionOLX = {
 };
 
 export const htmlEntityTestOLX = {
-  rawOLX:
-  `<problem>
+  rawOLX: `<problem>
   <multiplechoiceresponse>
   <p>What is the content of the register x2 after executing the following three lines of instructions?</p>
   <p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions <br />0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br />0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br />0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>
@@ -1224,7 +1251,7 @@ export const parseOutExplanationTests = {
         
         
         <p>solution meat</p>
-      `
+      `,
 };
 
 export const multiSelectPartialCredit = {
@@ -1239,8 +1266,8 @@ export const multiSelectPartialCredit = {
         <choice correct="true">tomato</choice>
       </checkboxgroup>
     </choiceresponse>
-  </problem>`
-}
+  </problem>`,
+};
 
 export const singleSelectPartialCredit = {
   rawOLX: `<problem>
@@ -1253,8 +1280,8 @@ export const singleSelectPartialCredit = {
         <choice correct="partial" point_value="0.25">The vegetable peeler</choice>
       </choicegroup>
     </multiplechoiceresponse>
-  </problem>`
-}
+  </problem>`,
+};
 
 export const numericalProblemPartialCredit = {
   rawOLX: `<problem>
@@ -1264,8 +1291,8 @@ export const numericalProblemPartialCredit = {
       <formulaequationinput/>
       <responseparam type="tolerance" default="1%" partial_range="3"/>
     </numericalresponse>
-  </problem>`
-}
+  </problem>`,
+};
 
 export const unexpectOlxAfterProblemTypeTags = {
   rawOLX: `<problem>
@@ -1282,5 +1309,5 @@ export const unexpectOlxAfterProblemTypeTags = {
       <hint><p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p></hint>
       <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
     </demandhint>
-  </problem>`
-}
+  </problem>`,
+};

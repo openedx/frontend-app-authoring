@@ -43,7 +43,8 @@ const messages = defineMessages({
   },
   confirmationDescription: {
     id: 'authoring.course-unit.preview-changes.confirmation-dialog-description',
-    defaultMessage: 'Would you like to permanently ignore this updated version? If so, you won\'t be able to update this until a newer version is published (in the library).',
+    defaultMessage:
+      "Would you like to permanently ignore this updated version? If so, you won't be able to update this until a newer version is published (in the library).",
     description: 'Preview changes confirmation dialog description text when user clicks on ignore changes.',
   },
   confirmationConfirmBtn: {
@@ -68,7 +69,8 @@ const messages = defineMessages({
   },
   updateToPublishedLibraryContentBody: {
     id: 'course-authoring.review-tab.preview.update-to-published.modal.body',
-    defaultMessage: 'Updating this block will discard local changes. Any edits made within this course will be discarded, and cannot be recovered',
+    defaultMessage:
+      'Updating this block will discard local changes. Any edits made within this course will be discarded, and cannot be recovered',
     description: 'Body of the modal to update a content to the published library content',
   },
   updateToPublishedLibraryContentConfirm: {
@@ -88,7 +90,8 @@ const messages = defineMessages({
   },
   keepCourseContentBody: {
     id: 'course-authoring.review-tab.preview.keep-course-content.modal.body',
-    defaultMessage: 'This will keep the locally edited course content. If the component is published again in its library, you can choose to update to published library content',
+    defaultMessage:
+      'This will keep the locally edited course content. If the component is published again in its library, you can choose to update to published library content',
     description: 'Body of the modal to keep the content of a course component',
   },
 });

@@ -1,10 +1,6 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
-import {
-  AddCircleOutline,
-  CheckBoxIcon,
-  CheckBoxOutlineBlank,
-} from '@openedx/paragon/icons';
+import { AddCircleOutline, CheckBoxIcon, CheckBoxOutlineBlank } from '@openedx/paragon/icons';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import messages from './messages';
@@ -49,12 +45,7 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
 
   if (componentPickerMode === 'single') {
     return (
-      <Button
-        variant="outline-primary"
-        iconBefore={AddCircleOutline}
-        disabled={isLoading}
-        onClick={onClick}
-      >
+      <Button variant="outline-primary" iconBefore={AddCircleOutline} disabled={isLoading} onClick={onClick}>
         <FormattedMessage {...messages.componentPickerSingleSelectTitle} />
       </Button>
     );

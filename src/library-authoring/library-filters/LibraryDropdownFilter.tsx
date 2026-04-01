@@ -1,7 +1,5 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ButtonGroup, Dropdown, Form, OverlayTrigger, Scrollable, SearchField, Tooltip,
-} from '@openedx/paragon';
+import { ButtonGroup, Dropdown, Form, OverlayTrigger, Scrollable, SearchField, Tooltip } from '@openedx/paragon';
 import { Newsstand } from '@openedx/paragon/icons';
 import Loading from '@src/generic/Loading';
 import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
@@ -32,10 +30,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
   }
 
   return (
-    <Scrollable
-      className="m-0 p-0"
-      style={{ maxHeight: '25vh' }}
-    >
+    <Scrollable className="m-0 p-0" style={{ maxHeight: '25vh' }}>
       {data.map((library) => (
         <Dropdown.Item
           key={library.id}
@@ -45,9 +40,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
           className="py-2 my-1 overflow-auto"
           checked={selectedLibraries.includes(library.id)}
         >
-          <div>
-            {truncate(library.title, { length: 50 })}
-          </div>
+          <div>{truncate(library.title, { length: 50 })}</div>
         </Dropdown.Item>
       ))}
     </Scrollable>
@@ -88,19 +81,14 @@ export const LibraryDropdownFilter = () => {
   }, [label, selectedLibraries, data]);
 
   return (
-    <Dropdown
-      id="library-filter-dropdown"
-      as={ButtonGroup}
-      autoClose="outside"
-      className="flex-fill mw-xs"
-    >
+    <Dropdown id="library-filter-dropdown" as={ButtonGroup} autoClose="outside" className="flex-fill mw-xs">
       <OverlayTrigger
         placement="auto"
-        overlay={(
+        overlay={
           <Tooltip variant="light" id="library-filter-tooltip">
             {label}
           </Tooltip>
-        )}
+        }
       >
         <Dropdown.Toggle
           id="library-filter-dropdown-toggle"

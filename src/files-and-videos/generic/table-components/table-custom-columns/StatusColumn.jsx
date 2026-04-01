@@ -16,11 +16,7 @@ const StatusColumn = ({ row }) => {
     return null;
   }
 
-  return (
-    <Badge variant="light">
-      {isFailed ? failedText : status}
-    </Badge>
-  );
+  return <Badge variant="light">{isFailed ? failedText : status}</Badge>;
 };
 
 StatusColumn.propTypes = {

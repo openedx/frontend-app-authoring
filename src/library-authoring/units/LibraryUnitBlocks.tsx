@@ -1,12 +1,8 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, Badge, Icon, Stack,
-} from '@openedx/paragon';
+import { ActionRow, Badge, Icon, Stack } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
-import {
-  useCallback, useContext, useEffect, useState,
-} from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { blockTypes } from '@src/editors/data/constants/app';
 import DraggableList, { SortableItem } from '@src/generic/DraggableList';
 
@@ -23,11 +19,7 @@ import { usePublishedFilterContext } from '@src/library-authoring/common/context
 import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
-import {
-  useContainerChildren,
-  useUpdateContainerChildren,
-  useUpdateXBlockFields,
-} from '../data/apiHooks';
+import { useContainerChildren, useUpdateContainerChildren, useUpdateXBlockFields } from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
@@ -90,11 +82,7 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
 
   return (
     <>
-      <Stack
-        direction="horizontal"
-        gap={2}
-        className="font-weight-bold stop-event-propagation"
-      >
+      <Stack direction="horizontal" gap={2} className="font-weight-bold stop-event-propagation">
         <Icon src={getItemIcon(block.blockType)} />
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
@@ -103,16 +91,9 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
         />
       </Stack>
       <ActionRow.Spacer />
-      <Stack
-        direction="horizontal"
-        gap={3}
-        className="stop-event-propagation"
-      >
+      <Stack direction="horizontal" gap={3} className="stop-event-propagation">
         {!showOnlyPublished && block.hasUnpublishedChanges && (
-          <Badge
-            className="px-2 py-1"
-            variant="warning"
-          >
+          <Badge className="px-2 py-1" variant="warning">
             <Stack direction="horizontal" gap={1}>
               <Icon size="xs" src={Description} />
               <FormattedMessage {...messages.draftChipText} />
@@ -127,30 +108,27 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
 };
 
 /** ComponentBlock to render preview of given component under Unit */
-const ComponentBlock = ({
-  block, readOnly, isDragging, index,
-}: ComponentBlockProps) => {
+const ComponentBlock = ({ block, readOnly, isDragging, index }: ComponentBlockProps) => {
   const { openComponentEditor } = useOptionalLibraryContext();
   const { showOnlyPublished } = usePublishedFilterContext();
 
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
 
-  const handleComponentSelection = useCallback((numberOfClicks: number) => {
-    if (readOnly) {
-      // don't allow interaction if rendered as preview
-      return;
-    }
-    openItemSidebar(
-      block.originalId,
-      SidebarBodyItemId.ComponentInfo,
-      index,
-    );
-    const canEdit = canEditComponent(block.originalId);
-    if (numberOfClicks > 1 && canEdit) {
-      // Open editor on double click.
-      openComponentEditor?.(block.originalId);
-    }
-  }, [block, openItemSidebar, canEditComponent, openComponentEditor, readOnly]);
+  const handleComponentSelection = useCallback(
+    (numberOfClicks: number) => {
+      if (readOnly) {
+        // don't allow interaction if rendered as preview
+        return;
+      }
+      openItemSidebar(block.originalId, SidebarBodyItemId.ComponentInfo, index);
+      const canEdit = canEditComponent(block.originalId);
+      if (numberOfClicks > 1 && canEdit) {
+        // Open editor on double click.
+        openComponentEditor?.(block.originalId);
+      }
+    },
+    [block, openItemSidebar, canEditComponent, openComponentEditor, readOnly],
+  );
 
   useEffect(() => {
     if (block.isNew) {
@@ -197,7 +175,9 @@ const ComponentBlock = ({
           }
         }}
         disabled={readOnly}
-        cardClassName={sidebarItemInfo?.id === block.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined}
+        cardClassName={
+          sidebarItemInfo?.id === block.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined
+        }
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
@@ -222,8 +202,8 @@ const ComponentBlock = ({
 interface LibraryUnitBlocksProps {
   unitId: string;
   /** set to true if it is rendered as preview
-  * This disables drag and drop, title edit and menus
-  */
+   * This disables drag and drop, title edit and menus
+   */
   readOnly?: boolean;
 }
 
@@ -247,18 +227,21 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
     error,
   } = useContainerChildren<LibraryBlockMetadata>(unitId, showOnlyPublished);
 
-  const handleReorder = useCallback(() => async (newOrder?: LibraryBlockMetadataWithUniqueId[]) => {
-    if (!newOrder) {
-      return;
-    }
-    const usageKeys = newOrder.map((o) => o.originalId);
-    try {
-      await orderMutator.mutateAsync(usageKeys);
-      showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    } catch {
-      showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
-    }
-  }, [orderMutator]);
+  const handleReorder = useCallback(
+    () => async (newOrder?: LibraryBlockMetadataWithUniqueId[]) => {
+      if (!newOrder) {
+        return;
+      }
+      const usageKeys = newOrder.map((o) => o.originalId);
+      try {
+        await orderMutator.mutateAsync(usageKeys);
+        showToast(intl.formatMessage(messages.orderUpdatedMsg));
+      } catch {
+        showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
+      }
+    },
+    [orderMutator],
+  );
 
   useEffect(() => {
     // Create new ids which are unique using index.

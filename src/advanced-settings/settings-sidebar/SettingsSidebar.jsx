@@ -7,11 +7,7 @@ import { HelpSidebar } from '../../generic/help-sidebar';
 import messages from './messages';
 
 const SettingsSidebar = ({ courseId, proctoredExamSettingsUrl = '' }) => (
-  <HelpSidebar
-    courseId={courseId}
-    proctoredExamSettingsUrl={proctoredExamSettingsUrl}
-    showOtherSettings
-  >
+  <HelpSidebar courseId={courseId} proctoredExamSettingsUrl={proctoredExamSettingsUrl} showOtherSettings>
     <h4 className="help-sidebar-about-title">
       <FormattedMessage {...messages.about} />
     </h4>

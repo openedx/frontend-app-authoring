@@ -19,11 +19,11 @@ jest.mock('react', () => ({
 }));
 
 jest.mock('./handlers', () => ({
-  handleIndexEvent: jest.fn(args => ({ handleIndexEvent: args })),
-  handleIndexTransformEvent: jest.fn(args => ({ handleIndexTransformEvent: args })),
-  onValue: jest.fn(cb => ({ onValue: cb })),
-  onChecked: jest.fn(cb => ({ onChecked: cb })),
-  onEvent: jest.fn(cb => ({ onEvent: cb })),
+  handleIndexEvent: jest.fn((args) => ({ handleIndexEvent: args })),
+  handleIndexTransformEvent: jest.fn((args) => ({ handleIndexTransformEvent: args })),
+  onValue: jest.fn((cb) => ({ onValue: cb })),
+  onChecked: jest.fn((cb) => ({ onChecked: cb })),
+  onEvent: jest.fn((cb) => ({ onEvent: cb })),
 }));
 
 jest.mock('../../../../../data/redux', () => ({
@@ -59,7 +59,7 @@ const state = new MockUseState(hooks);
 const testValue = 'my-test-value';
 const testValue2 = 'my-test-value-2';
 const testKey = keys.selectors.handout;
-const dispatch = jest.fn(val => ({ dispatch: val }));
+const dispatch = jest.fn((val) => ({ dispatch: val }));
 
 let out;
 
@@ -93,9 +93,7 @@ describe('Video Settings modal hooks', () => {
       it('returns a new array with the given index replaced', () => {
         const testArray = ['0', '1', '2', '3', '4'];
         const oldArray = [...testArray];
-        expect(hooks.updatedArray(testArray, 3, testValue)).toEqual(
-          ['0', '1', '2', testValue, '4'],
-        );
+        expect(hooks.updatedArray(testArray, 3, testValue)).toEqual(['0', '1', '2', testValue, '4']);
         expect(testArray).toEqual(oldArray);
       });
     });
@@ -103,9 +101,7 @@ describe('Video Settings modal hooks', () => {
       it('returns a new object with the given index replaced', () => {
         const testObj = { some: 'data', [testKey]: testValue };
         const oldObj = { ...testObj };
-        expect(hooks.updatedObject(testObj, testKey, testValue2)).toEqual(
-          { ...testObj, [testKey]: testValue2 },
-        );
+        expect(hooks.updatedObject(testObj, testKey, testValue2)).toEqual({ ...testObj, [testKey]: testValue2 });
         expect(testObj).toEqual(oldObj);
       });
     });
@@ -115,9 +111,11 @@ describe('Video Settings modal hooks', () => {
       });
       it('returns memoized callback that dispaches updateField with val on the given key', () => {
         hooks.updateFormField({ dispatch, key: testKey }).useCallback.cb(testValue);
-        expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
-          [testKey]: testValue,
-        }));
+        expect(dispatch).toHaveBeenCalledWith(
+          actions.video.updateField({
+            [testKey]: testValue,
+          }),
+        );
       });
     });
     describe('valueHooks', () => {
@@ -140,12 +138,9 @@ describe('Video Settings modal hooks', () => {
         });
       });
       describe('returned object', () => {
-        const mockUpdateFormField = (args) => jest.fn(
-          (val) => ({ updateFormField: { args, val } }),
-        );
+        const mockUpdateFormField = (args) => jest.fn((val) => ({ updateFormField: { args, val } }));
         beforeEach(() => {
-          jest.spyOn(hooks, keys.hooks.updateFormField)
-            .mockImplementationOnce(mockUpdateFormField);
+          jest.spyOn(hooks, keys.hooks.updateFormField).mockImplementationOnce(mockUpdateFormField);
           out = hooks.valueHooks({ dispatch, key: testKey });
         });
         test('formValue from selectors.video[key]', () => {
@@ -160,9 +155,7 @@ describe('Video Settings modal hooks', () => {
           });
         });
         test('setFormValue forwarded from module', () => {
-          expect(out.setFormValue(testValue)).toEqual(
-            mockUpdateFormField({ dispatch, key: testKey })(testValue),
-          );
+          expect(out.setFormValue(testValue)).toEqual(mockUpdateFormField({ dispatch, key: testKey })(testValue));
         });
         describe('setAll', () => {
           it('returns a memoized callback based on setLocal and setFormValue', () => {
@@ -227,8 +220,7 @@ describe('Video Settings modal hooks', () => {
         const mockUpdatedArray = (...args) => ({ updatedArray: args });
         let arraySpy;
         beforeEach(() => {
-          arraySpy = jest.spyOn(hooks, keys.hooks.updatedArray)
-            .mockImplementation(mockUpdatedArray);
+          arraySpy = jest.spyOn(hooks, keys.hooks.updatedArray).mockImplementation(mockUpdatedArray);
           out = hooks.arrayWidget({ dispatch, key: testKey });
         });
         afterEach(() => {
@@ -239,26 +231,28 @@ describe('Video Settings modal hooks', () => {
           expect(out.local).toEqual(widgetValues.local);
         });
         it('overrides onChange with handleIndexTransformEvent', () => {
-          expect(out.onChange).toEqual(handlers.handleIndexTransformEvent({
-            handler: handlers.onValue,
-            setter: widgetValues.setLocal,
-            transform: arraySpy,
-            local: widgetValues.local,
-          }));
+          expect(out.onChange).toEqual(
+            handlers.handleIndexTransformEvent({
+              handler: handlers.onValue,
+              setter: widgetValues.setLocal,
+              transform: arraySpy,
+              local: widgetValues.local,
+            }),
+          );
         });
         it('overrides onBlur with handleIndexTransformEvent', () => {
-          expect(out.onBlur).toEqual(handlers.handleIndexTransformEvent({
-            handler: handlers.onValue,
-            setter: widgetValues.setAll,
-            transform: arraySpy,
-            local: widgetValues.local,
-          }));
+          expect(out.onBlur).toEqual(
+            handlers.handleIndexTransformEvent({
+              handler: handlers.onValue,
+              setter: widgetValues.setAll,
+              transform: arraySpy,
+              local: widgetValues.local,
+            }),
+          );
         });
         it('adds onClear event that calls setAll with empty string', () => {
           out.onClear(testKey)();
-          expect(widgetValues.setAll).toHaveBeenCalledWith(
-            arraySpy(widgetValues.local, testKey, ''),
-          );
+          expect(widgetValues.setAll).toHaveBeenCalledWith(arraySpy(widgetValues.local, testKey, ''));
         });
       });
       describe('objectWidget', () => {
@@ -270,20 +264,24 @@ describe('Video Settings modal hooks', () => {
           expect(out.local).toEqual(widgetValues.local);
         });
         it('overrides onChange with handleIndexTransformEvent', () => {
-          expect(out.onChange).toEqual(handlers.handleIndexTransformEvent({
-            handler: handlers.onValue,
-            setter: widgetValues.setLocal,
-            transform: hooks.updatedObject,
-            local: widgetValues.local,
-          }));
+          expect(out.onChange).toEqual(
+            handlers.handleIndexTransformEvent({
+              handler: handlers.onValue,
+              setter: widgetValues.setLocal,
+              transform: hooks.updatedObject,
+              local: widgetValues.local,
+            }),
+          );
         });
         it('overrides onBlur with handleIndexTransformEvent', () => {
-          expect(out.onBlur).toEqual(handlers.handleIndexTransformEvent({
-            handler: handlers.onValue,
-            setter: widgetValues.setAll,
-            transform: hooks.updatedObject,
-            local: widgetValues.local,
-          }));
+          expect(out.onBlur).toEqual(
+            handlers.handleIndexTransformEvent({
+              handler: handlers.onValue,
+              setter: widgetValues.setAll,
+              transform: hooks.updatedObject,
+              local: widgetValues.local,
+            }),
+          );
         });
       });
     });
@@ -291,19 +289,21 @@ describe('Video Settings modal hooks', () => {
       describe('returned object', () => {
         test('shaped to the fields object, where each value is called with key and dispatch', () => {
           const testKeys = ['1', '24', '23gsa'];
-          const fieldMethods = [
-            jest.fn(v => ({ v1: v })),
-            jest.fn(v => ({ v2: v })),
-            jest.fn(v => ({ v3: v })),
-          ];
-          const fields = testKeys.reduce((obj, key, index) => ({
-            ...obj,
-            [key]: fieldMethods[index],
-          }), {});
-          const expected = testKeys.reduce((obj, key, index) => ({
-            ...obj,
-            [key]: fieldMethods[index]({ key, dispatch }),
-          }), {});
+          const fieldMethods = [jest.fn((v) => ({ v1: v })), jest.fn((v) => ({ v2: v })), jest.fn((v) => ({ v3: v }))];
+          const fields = testKeys.reduce(
+            (obj, key, index) => ({
+              ...obj,
+              [key]: fieldMethods[index],
+            }),
+            {},
+          );
+          const expected = testKeys.reduce(
+            (obj, key, index) => ({
+              ...obj,
+              [key]: fieldMethods[index]({ key, dispatch }),
+            }),
+            {},
+          );
           expect(hooks.widgetValues({ fields, dispatch })).toMatchObject(expected);
         });
       });

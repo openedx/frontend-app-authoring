@@ -18,11 +18,7 @@ describe('setImportCookie', () => {
     const fileName = 'testFileName.test';
     setImportCookie(date, fileName);
 
-    expect(cookiesSetMock).toHaveBeenCalledWith(
-      LAST_IMPORT_COOKIE_NAME,
-      { date, fileName },
-      { path: '/some-path' },
-    );
+    expect(cookiesSetMock).toHaveBeenCalledWith(LAST_IMPORT_COOKIE_NAME, { date, fileName }, { path: '/some-path' });
 
     cookiesSetMock.mockRestore();
   });

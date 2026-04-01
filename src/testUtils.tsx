@@ -15,13 +15,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, type RenderResult } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
-import {
-  generatePath,
-  MemoryRouter,
-  MemoryRouterProps,
-  Route,
-  Routes,
-} from 'react-router-dom';
+import { generatePath, MemoryRouter, MemoryRouterProps, Route, Routes } from 'react-router-dom';
 
 import * as authzApi from '@src/authz/data/api';
 import { ToastContext, type ToastContextData } from './generic/toast-context';
@@ -53,7 +47,7 @@ export interface RouteOptions {
 }
 
 export interface WrapperOptions {
-  extraWrapper?: React.FunctionComponent<{ children: React.ReactNode; }>;
+  extraWrapper?: React.FunctionComponent<{ children: React.ReactNode }>;
 }
 
 /**
@@ -88,12 +82,7 @@ export interface WrapperOptions {
  * });
  * ```
  */
-const RouterAndRoute: React.FC<RouteOptions> = ({
-  children,
-  path = '/',
-  params = {},
-  routerProps = {},
-}) => {
+const RouterAndRoute: React.FC<RouteOptions> = ({ children, path = '/', params = {}, routerProps = {} }) => {
   if (Object.entries(params).length > 0 || path !== '/') {
     const newRouterProps = { ...routerProps };
     if (!routerProps.initialEntries) {
@@ -113,9 +102,7 @@ const RouterAndRoute: React.FC<RouteOptions> = ({
       </MemoryRouter>
     );
   }
-  return (
-    <MemoryRouter {...routerProps}>{children}</MemoryRouter>
-  );
+  return <MemoryRouter {...routerProps}>{children}</MemoryRouter>;
 };
 
 function makeWrapper({ extraWrapper, ...routeArgs }: WrapperOptions & RouteOptions = {}) {
@@ -157,9 +144,12 @@ const defaultUser = {
  *
  * Returns the new `axiosMock` in case you need to mock out axios requests.
  */
-export function initializeMocks({ user = defaultUser, initialState = undefined }: {
-  user?: { userId: number, username: string },
-  initialState?: Partial<DeprecatedReduxState>,
+export function initializeMocks({
+  user = defaultUser,
+  initialState = undefined,
+}: {
+  user?: { userId: number; username: string };
+  initialState?: Partial<DeprecatedReduxState>;
 } = {}) {
   initializeMockApp({
     authenticatedUser: user,
@@ -212,7 +202,7 @@ export * from '@testing-library/react';
 export { customRender as render, makeWrapper };
 
 /** Simulate a real Axios error (such as we'd see in response to a 404) */
-export function createAxiosError({ code, message, path }: { code: number, message: string, path: string }) {
+export function createAxiosError({ code, message, path }: { code: number; message: string; path: string }) {
   const request = { path };
   const config = { headers: new AxiosHeaders() };
   const error = new AxiosError(
@@ -245,9 +235,5 @@ const getInnerText = (element: Element | null): string => {
     .join(' ');
 };
 
-export const matchInnerText = (
-  nodeName: string,
-  textToMatch: string,
-) => (_: string, element: Element | null) => !!element
-    && element.nodeName === nodeName
-    && getInnerText(element) === textToMatch;
+export const matchInnerText = (nodeName: string, textToMatch: string) => (_: string, element: Element | null) =>
+  !!element && element.nodeName === nodeName && getInnerText(element) === textToMatch;

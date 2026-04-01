@@ -1,6 +1,4 @@
-import {
-  act, fireEvent, render, screen, initializeMocks,
-} from '@src/testUtils';
+import { act, fireEvent, render, screen, initializeMocks } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getCourseSettingsApiUrl } from '@src/data/api';
 
@@ -27,14 +25,9 @@ describe('<GradingSettings />', () => {
     Object.defineProperty(window, 'scrollTo', { value: jest.fn(), writable: true });
 
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(getGradingSettingsApiUrl(courseId))
-      .reply(200, gradingSettings);
-    axiosMock
-      .onPost(getGradingSettingsApiUrl(courseId))
-      .reply(200, {});
-    axiosMock.onGet(getCourseSettingsApiUrl(courseId))
-      .reply(200, {});
+    axiosMock.onGet(getGradingSettingsApiUrl(courseId)).reply(200, gradingSettings);
+    axiosMock.onPost(getGradingSettingsApiUrl(courseId)).reply(200, {});
+    axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, {});
     render(<RootWrapper />);
   });
 

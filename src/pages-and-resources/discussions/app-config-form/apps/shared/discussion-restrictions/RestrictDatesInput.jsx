@@ -17,19 +17,20 @@ const RestrictDatesInput = ({
   fieldNameCommonBase,
   dataTestId,
 }) => {
-  const {
-    handleChange, handleBlur, errors, touched,
-  } = useFormikContext();
+  const { handleChange, handleBlur, errors, touched } = useFormikContext();
 
   const [inFocus, setInFocus] = useState(false);
   const fieldError = getIn(errors, `${fieldNameCommonBase}.${fieldName}`);
   const fieldTouched = getIn(touched, `${fieldNameCommonBase}.${fieldName}`);
   const isInvalidInput = Boolean(!inFocus && fieldError && fieldTouched);
 
-  const handleFocusOut = useCallback((event) => {
-    handleBlur(event);
-    setInFocus(false);
-  }, [handleBlur, setInFocus]);
+  const handleFocusOut = useCallback(
+    (event) => {
+      handleBlur(event);
+      setInFocus(false);
+    },
+    [handleBlur, setInFocus],
+  );
 
   const handleSetFocus = useCallback(() => {
     setInFocus(true);

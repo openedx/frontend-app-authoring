@@ -301,10 +301,12 @@ export const generateEmptyApiResponse = () => ({
 });
 
 export const generateNewVideoApiResponse = () => ({
-  files: [{
-    edx_video_id: 'mOckID4',
-    upload_url: 'http://testing.org',
-  }],
+  files: [
+    {
+      edx_video_id: 'mOckID4',
+      upload_url: 'http://testing.org',
+    },
+  ],
 });
 
 export const getStatusValue = (status) => {

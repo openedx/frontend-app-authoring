@@ -7,7 +7,8 @@ const messages = defineMessages({
   },
   gradingSidebarAbout1: {
     id: 'course-authoring.grading-settings.sidebar.about.text-1',
-    defaultMessage: 'You can use the slider under Overall Grade Range to specify whether your course is pass/fail or graded by letter, and to establish the thresholds for each grade.',
+    defaultMessage:
+      'You can use the slider under Overall Grade Range to specify whether your course is pass/fail or graded by letter, and to establish the thresholds for each grade.',
   },
   gradingSidebarAbout2: {
     id: 'course-authoring.grading-settings.sidebar.about.text-2',
@@ -15,7 +16,8 @@ const messages = defineMessages({
   },
   gradingSidebarAbout3: {
     id: 'course-authoring.grading-settings.sidebar.about.text-3',
-    defaultMessage: 'You can also create assignment types, such as homework, labs, quizzes, and exams, and specify how much of a student\'s grade each assignment type is worth.',
+    defaultMessage:
+      "You can also create assignment types, such as homework, labs, quizzes, and exams, and specify how much of a student's grade each assignment type is worth.",
   },
 });
 

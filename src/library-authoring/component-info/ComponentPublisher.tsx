@@ -18,10 +18,7 @@ type ComponentPublisherProps = {
  * @param componentId - The unique identifier of the component.
  * @param handleClose - Function to handle close the publisher.
  */
-export const ComponentPublisher = ({
-  componentId,
-  handleClose,
-}: ComponentPublisherProps) => {
+export const ComponentPublisher = ({ componentId, handleClose }: ComponentPublisherProps) => {
   const intl = useIntl();
   const publishComponent = usePublishComponent(componentId);
   const { showToast } = useContext(ToastContext);
@@ -36,11 +33,5 @@ export const ComponentPublisher = ({
     handleClose();
   }, [publishComponent, showToast, intl]);
 
-  return (
-    <ItemHierarchyPublisher
-      itemId={componentId}
-      handleClose={handleClose}
-      handlePublish={handlePublish}
-    />
-  );
+  return <ItemHierarchyPublisher itemId={componentId} handleClose={handleClose} handlePublish={handlePublish} />;
 };

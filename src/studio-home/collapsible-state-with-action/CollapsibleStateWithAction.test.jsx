@@ -1,8 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  render, fireEvent, waitFor,
-} from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -23,13 +21,10 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
-let store; let
-  axiosMock;
+let store;
+let axiosMock;
 
-const {
-  studioName,
-  studioShortName,
-} = studioHomeMock;
+const { studioName, studioShortName } = studioHomeMock;
 
 const RootWrapper = (props) => (
   <AppProvider store={store}>
@@ -64,7 +59,9 @@ describe('<CollapsibleStateWithAction />', () => {
 
     const { getByText, queryByText } = render(<RootWrapper {...props} />);
     expect(getByText(`Becoming a course creator in ${studioShortName}`)).toBeInTheDocument();
-    expect(queryByText(`${studioName} is a hosted solution for our xConsortium partners and selected guests.`)).not.toBeInTheDocument();
+    expect(
+      queryByText(`${studioName} is a hosted solution for our xConsortium partners and selected guests.`),
+    ).not.toBeInTheDocument();
   });
 
   it('renders collapsible pending state successfully closed', () => {

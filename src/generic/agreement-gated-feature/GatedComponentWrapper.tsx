@@ -1,21 +1,18 @@
 import { AgreementGated } from '@src/constants';
-import {
-  getGatingAgreementTypes,
-  useUserAgreementRecords,
-} from '@src/data/apiHooks';
+import { getGatingAgreementTypes, useUserAgreementRecords } from '@src/data/apiHooks';
 
 interface GatedComponentWrapperProps {
   gatingTypes: AgreementGated[];
   children: React.ReactElement;
 }
 
-export const GatedComponentWrapper = (
-  { gatingTypes, children }: GatedComponentWrapperProps,
-) => {
+export const GatedComponentWrapper = ({ gatingTypes, children }: GatedComponentWrapperProps) => {
   const agreementTypes = getGatingAgreementTypes(gatingTypes);
   const results = useUserAgreementRecords(agreementTypes);
   const isNotGated = results.every((result) => !!result?.data?.isCurrent);
-  return isNotGated ? children : (
+  return isNotGated ? (
+    children
+  ) : (
     <div
       aria-disabled
       style={{

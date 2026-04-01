@@ -7,7 +7,8 @@ const messages = defineMessages({
   },
   alertUnpublishedVersion: {
     id: 'course-authoring.course-unit.general.alert.unpublished-version.description',
-    defaultMessage: 'Note: The last published version of this unit is live. By publishing changes you will change the student experience.',
+    defaultMessage:
+      'Note: The last published version of this unit is live. By publishing changes you will change the student experience.',
   },
   pasteButtonText: {
     id: 'course-authoring.course-unit.paste-component.btn.text',
@@ -31,7 +32,8 @@ const messages = defineMessages({
   alertMoveCancelDescription: {
     id: 'course-authoring.course-unit.alert.xblock.move.cancel.description',
     defaultMessage: '{title} has been moved back to its original location',
-    description: 'Description for the alert when moving an XBlock is cancelled and the XBlock is moved back to its original location',
+    description:
+      'Description for the alert when moving an XBlock is cancelled and the XBlock is moved back to its original location',
   },
   undoMoveButton: {
     id: 'course-authoring.course-unit.alert.xblock.move.undo.btn.text',

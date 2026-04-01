@@ -28,12 +28,8 @@
           "org": "Axim",
           "access_id": 15,
           "collections": {
-            "display_name": [
-              "My first collection"
-            ],
-            "key": [
-              "my-first-collection"
-            ]
+            "display_name": ["My first collection"],
+            "key": ["my-first-collection"]
           },
           "published": {
             "display_name": "Introduction to Testing",
@@ -62,12 +58,8 @@
           "org": "Axim",
           "access_id": 15,
           "collections": {
-            "display_name": [
-              "My first collection"
-            ],
-            "key": [
-              "my-first-collection"
-            ]
+            "display_name": ["My first collection"],
+            "key": ["my-first-collection"]
           },
           "published": {
             "display_name": "Second Text Component",
@@ -97,14 +89,8 @@
           "org": "Axim",
           "access_id": 15,
           "collections": {
-            "display_name": [
-              "My first collection",
-              "My second collection"
-            ],
-            "key": [
-              "my-first-collection",
-              "my-second-collection"
-            ]
+            "display_name": ["My first collection", "My second collection"],
+            "key": ["my-first-collection", "my-second-collection"]
           },
           "published": {
             "display_name": "Third Text component",
@@ -134,12 +120,8 @@
           "org": "Axim",
           "access_id": 15,
           "collections": {
-            "display_name": [
-              "My first collection"
-            ],
-            "key": [
-              "my-first-collection"
-            ]
+            "display_name": ["My first collection"],
+            "key": ["my-first-collection"]
           },
           "published": {
             "display_name": "Text 4",
@@ -169,12 +151,8 @@
           "org": "Axim",
           "access_id": 15,
           "collections": {
-            "display_name": [
-              "My first collection"
-            ],
-            "key": [
-              "my-first-collection"
-            ]
+            "display_name": ["My first collection"],
+            "key": ["my-first-collection"]
           },
           "published": {
             "display_name": "Blank Problem",

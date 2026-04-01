@@ -18,15 +18,15 @@ jest.mock('../../data/redux', () => ({
   },
   selectors: {
     app: {
-      blockValue: jest.fn(state => ({ blockValue: state })),
-      shouldCreateBlock: jest.fn(state => ({ shouldCreateBlock: state })),
-      lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
-      studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
-      showRawEditor: jest.fn(state => ({ showRawEditor: state })),
-      images: jest.fn(state => ({ images: state })),
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
-      blockId: jest.fn(state => ({ blockId: state })),
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
+      blockValue: jest.fn((state) => ({ blockValue: state })),
+      shouldCreateBlock: jest.fn((state) => ({ shouldCreateBlock: state })),
+      lmsEndpointUrl: jest.fn((state) => ({ lmsEndpointUrl: state })),
+      studioEndpointUrl: jest.fn((state) => ({ studioEndpointUrl: state })),
+      showRawEditor: jest.fn((state) => ({ showRawEditor: state })),
+      images: jest.fn((state) => ({ images: state })),
+      isLibrary: jest.fn((state) => ({ isLibrary: state })),
+      blockId: jest.fn((state) => ({ blockId: state })),
+      learningContextId: jest.fn((state) => ({ learningContextId: state })),
     },
     requests: {
       isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),
@@ -75,7 +75,9 @@ describe('TextEditor', () => {
       const { container } = render(<TextEditor {...updatedProps} />);
       const element = container.querySelector('tinymcewidget');
       expect(element).toBeInTheDocument();
-      expect(element?.getAttribute('editorcontenthtml')).toBe('eDiTablE Text with <img src="/asset+org+run+type@asset+block@img.jpg" />');
+      expect(element?.getAttribute('editorcontenthtml')).toBe(
+        'eDiTablE Text with <img src="/asset+org+run+type@asset+block@img.jpg" />',
+      );
     });
     test('not yet loaded, Spinner appears', () => {
       const { container } = render(<TextEditor {...props} blockFinished={false} />);
@@ -96,30 +98,24 @@ describe('TextEditor', () => {
     // type set to any to prevent warning on not matchig expected type on the selectors
     const testState: any = { A: 'pple', B: 'anana', C: 'ucumber' };
     test('blockValue from app.blockValue', () => {
-      expect(
-        mapStateToProps(testState).blockValue,
-      ).toEqual(selectors.app.blockValue(testState));
+      expect(mapStateToProps(testState).blockValue).toEqual(selectors.app.blockValue(testState));
     });
     test('blockFailed from requests.isFailed', () => {
-      expect(
-        mapStateToProps(testState).blockFailed,
-      ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.fetchBlock }));
+      expect(mapStateToProps(testState).blockFailed).toEqual(
+        selectors.requests.isFailed(testState, { requestKey: RequestKeys.fetchBlock }),
+      );
     });
     test('blockFinished from requests.isFinished', () => {
-      expect(
-        mapStateToProps(testState).blockFinished,
-      ).toEqual(selectors.app.shouldCreateBlock(testState)
-      || selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }));
+      expect(mapStateToProps(testState).blockFinished).toEqual(
+        selectors.app.shouldCreateBlock(testState) ||
+          selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }),
+      );
     });
     test('learningContextId from app.learningContextId', () => {
-      expect(
-        mapStateToProps(testState).learningContextId,
-      ).toEqual(selectors.app.learningContextId(testState));
+      expect(mapStateToProps(testState).learningContextId).toEqual(selectors.app.learningContextId(testState));
     });
     test('images from app.images', () => {
-      expect(
-        mapStateToProps(testState).images,
-      ).toEqual(selectors.app.images(testState));
+      expect(mapStateToProps(testState).images).toEqual(selectors.app.images(testState));
     });
   });
 

@@ -25,7 +25,8 @@ const messages = defineMessages({
   },
   modalDiscardUnitChangesDescription: {
     id: 'course-authoring.course-unit.modal.discard-unit-changes.description',
-    defaultMessage: 'Are you sure you want to revert to the last published version of the unit? You cannot undo this action.',
+    defaultMessage:
+      'Are you sure you want to revert to the last published version of the unit? You cannot undo this action.',
   },
   modalMakeVisibilityTitle: {
     id: 'course-authoring.course-unit.modal.make-visibility.title',
@@ -41,7 +42,8 @@ const messages = defineMessages({
   },
   modalMakeVisibilityDescription: {
     id: 'course-authoring.course-unit.modal.make-visibility.description',
-    defaultMessage: 'If the unit was previously published and released to students, any changes you made to the unit when it was hidden will now be visible to students. Do you want to proceed?',
+    defaultMessage:
+      'If the unit was previously published and released to students, any changes you made to the unit when it was hidden will now be visible to students. Do you want to proceed?',
   },
   visibilityVisibleToTitle: {
     id: 'course-authoring.course-unit.visibility.visible-to.title',

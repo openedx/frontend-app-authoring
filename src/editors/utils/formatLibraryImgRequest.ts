@@ -1,13 +1,13 @@
 import { LibraryAssetResponse } from '../../library-authoring/data/api';
 
 type GalleryImageData = {
-  displayName: string,
-  url: string,
-  externalUrl: string,
-  portableUrl: string,
-  thumbnail: string,
-  id: string,
-  locked: boolean,
+  displayName: string;
+  url: string;
+  externalUrl: string;
+  portableUrl: string;
+  thumbnail: string;
+  id: string;
+  locked: boolean;
 };
 
 /**
@@ -36,7 +36,7 @@ export const getFileName = (data: LibraryAssetResponse): string => data.path.rep
  * const isImg = isImage(data); // Returns true
  */
 
-export const isImage = (data: LibraryAssetResponse, acceptedImgExt:string[]): boolean => {
+export const isImage = (data: LibraryAssetResponse, acceptedImgExt: string[]): boolean => {
   const ext = data.path.split('.').pop()?.toLowerCase() ?? ''; // Extract and lowercase the file extension
   return ext !== '' && acceptedImgExt.includes(ext);
 };
@@ -100,11 +100,15 @@ export const parseLibraryImageData = (data: LibraryAssetResponse): GalleryImageD
 
 export const getLibraryImageAssets = (
   librariesAssets: Array<LibraryAssetResponse>,
-  acceptedImgExt:string[],
-): Record<string, GalleryImageData> => librariesAssets.reduce((obj, file) => {
-  if (isImage(file, acceptedImgExt)) {
-    const imageData = parseLibraryImageData(file);
-    return { ...obj, [imageData.displayName]: imageData };
-  }
-  return obj;
-}, {} as Record<string, GalleryImageData>);
+  acceptedImgExt: string[],
+): Record<string, GalleryImageData> =>
+  librariesAssets.reduce(
+    (obj, file) => {
+      if (isImage(file, acceptedImgExt)) {
+        const imageData = parseLibraryImageData(file);
+        return { ...obj, [imageData.displayName]: imageData };
+      }
+      return obj;
+    },
+    {} as Record<string, GalleryImageData>,
+  );

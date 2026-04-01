@@ -57,7 +57,8 @@ export const generateGetStudioCoursesApiResponseV2 = () => ({
       {
         courseKey: 'course-v1:HarvardX+123+2023',
         displayName: 'Managing Risk in the Information Age',
-        lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+        lmsLink:
+          '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
         number: '123',
         org: 'HarvardX',
         rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
@@ -161,8 +162,10 @@ export const generateGetStudioHomeLibrariesV2ApiResponse = () => ({
 });
 
 export const generateNewVideoApiResponse = () => ({
-  files: [{
-    edx_video_id: 'mOckID4',
-    upload_url: 'http://testing.org',
-  }],
+  files: [
+    {
+      edx_video_id: 'mOckID4',
+      upload_url: 'http://testing.org',
+    },
+  ],
 });

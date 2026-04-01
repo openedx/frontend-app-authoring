@@ -4,17 +4,14 @@ import PropTypes from 'prop-types';
 export const CustomPagesContext = React.createContext({});
 
 const CustomPagesProvider = ({ courseId, children }) => {
-  const contextValue = useMemo(() => ({
-    courseId,
-    path: `/course/${courseId}/custom-pages`,
-  }), []);
-  return (
-    <CustomPagesContext.Provider
-      value={contextValue}
-    >
-      {children}
-    </CustomPagesContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      courseId,
+      path: `/course/${courseId}/custom-pages`,
+    }),
+    [],
   );
+  return <CustomPagesContext.Provider value={contextValue}>{children}</CustomPagesContext.Provider>;
 };
 
 CustomPagesProvider.propTypes = {

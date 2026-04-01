@@ -1,6 +1,4 @@
-import {
-  render, screen, fireEvent,
-} from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import messages from './messages';
 import { ToleranceTypes } from './constants';
@@ -10,32 +8,40 @@ import { formatMessage } from '../../../../../../../testUtils';
 jest.mock('@edx/frontend-platform/i18n', () => ({
   __esmodule: true,
   ...jest.requireActual('@edx/frontend-platform/i18n'),
-  FormattedMessage: jest.fn(({ defaultMessage }) => (
-    <div>{ defaultMessage }</div>
-  )),
+  FormattedMessage: jest.fn(({ defaultMessage }) => <div>{defaultMessage}</div>),
   useIntl: () => ({
     formatMessage: (message) => message.defaultMessage,
   }),
 }));
 
 // eslint-disable-next-line react/prop-types
-jest.mock('../../SettingsOption', () => function mockSettingsOption({ children, summary }) {
-  return <div className="SettingsOption" data-testid="Settings-Option">{summary}{children}</div>;
-});
+jest.mock(
+  '../../SettingsOption',
+  () =>
+    function mockSettingsOption({ children, summary }) {
+      return (
+        <div className="SettingsOption" data-testid="Settings-Option">
+          {summary}
+          {children}
+        </div>
+      );
+    },
+);
 
 jest.mock('@openedx/paragon', () => ({
-  Alert: jest.fn(({ children }) => (
-    <div className="PGN-Alert">{children}</div>)),
+  Alert: jest.fn(({ children }) => <div className="PGN-Alert">{children}</div>),
   Form: {
-    Control: jest.fn(({
-      children, onChange, as, value, disabled,
-    }) => {
+    Control: jest.fn(({ children, onChange, as, value, disabled }) => {
       if (as === 'select') {
-        return (<select className="PGN-Form-Control" data-testid="select" onChange={onChange} disabled={disabled}>{children}</select>);
+        return (
+          <select className="PGN-Form-Control" data-testid="select" onChange={onChange} disabled={disabled}>
+            {children}
+          </select>
+        );
       }
-      return (<input type="number" data-testid="input" onChange={onChange} value={value} />);
+      return <input type="number" data-testid="input" onChange={onChange} value={value} />;
     }),
-    Group: jest.fn(({ children }) => (<div className="PGN-Form-Group">{children}</div>)),
+    Group: jest.fn(({ children }) => <div className="PGN-Form-Group">{children}</div>),
   },
 }));
 
@@ -54,14 +60,15 @@ describe('ToleranceCard', () => {
   };
 
   const props = {
-    answers: [{
-      id: 'A',
-      correct: true,
-      selectedFeedback: '',
-      title: 'An Answer',
-      isAnswerRange: false,
-      unselectedFeedback: '',
-    },
+    answers: [
+      {
+        id: 'A',
+        correct: true,
+        selectedFeedback: '',
+        title: 'An Answer',
+        isAnswerRange: false,
+        unselectedFeedback: '',
+      },
     ],
     updateSettings: jest.fn(),
     intl: {
@@ -90,14 +97,15 @@ describe('ToleranceCard', () => {
 
     it('If there is an answer range, show message and disable dropdown.', () => {
       const rangeprops = {
-        answers: [{
-          id: 'A',
-          correct: true,
-          selectedFeedback: '',
-          title: 'An Answer',
-          isAnswerRange: true,
-          unselectedFeedback: '',
-        },
+        answers: [
+          {
+            id: 'A',
+            correct: true,
+            selectedFeedback: '',
+            title: 'An Answer',
+            isAnswerRange: true,
+            unselectedFeedback: '',
+          },
         ],
         updateSettings: jest.fn(),
         intl: {
@@ -105,32 +113,30 @@ describe('ToleranceCard', () => {
         },
       };
 
-      render(<ToleranceCard
-        tolerance={mockToleranceNumber}
-        {...rangeprops}
-      />);
+      render(<ToleranceCard tolerance={mockToleranceNumber} {...rangeprops} />);
       const NumberText = screen.getByText(messages.toleranceAnswerRangeWarning.defaultMessage);
       expect(NumberText).toBeDefined();
       expect(screen.getByTestId('select').getAttributeNames().includes('disabled')).toBeTruthy();
     });
     it('If there are multiple correct answers, show multiple correct answers warning message and disable dropdown.', () => {
       const rangeprops = {
-        answers: [{
-          id: 'A',
-          correct: true,
-          selectedFeedback: '',
-          title: 'An Answer A',
-          isAnswerRange: false,
-          unselectedFeedback: '',
-        },
-        {
-          id: 'B',
-          correct: true,
-          selectedFeedback: '',
-          title: 'An Answer B',
-          isAnswerRange: false,
-          unselectedFeedback: '',
-        },
+        answers: [
+          {
+            id: 'A',
+            correct: true,
+            selectedFeedback: '',
+            title: 'An Answer A',
+            isAnswerRange: false,
+            unselectedFeedback: '',
+          },
+          {
+            id: 'B',
+            correct: true,
+            selectedFeedback: '',
+            title: 'An Answer B',
+            isAnswerRange: false,
+            unselectedFeedback: '',
+          },
         ],
         updateSettings: jest.fn(),
         intl: {
@@ -138,11 +144,7 @@ describe('ToleranceCard', () => {
         },
       };
 
-      render(<ToleranceCard
-        tolerance={mockToleranceNumber}
-        correctAnswerCount={2}
-        {...rangeprops}
-      />);
+      render(<ToleranceCard tolerance={mockToleranceNumber} correctAnswerCount={2} {...rangeprops} />);
       const warningMessage = screen.getByText(messages.toleranceMultipleAnswersWarning.defaultMessage);
       expect(warningMessage).toBeDefined();
       expect(screen.getByTestId('select').getAttributeNames().includes('disabled')).toBeTruthy();
@@ -153,7 +155,7 @@ describe('ToleranceCard', () => {
       const { container } = render(<ToleranceCard tolerance={mockToleranceNull} {...props} />);
       const options = container.querySelectorAll('option');
       expect(options.length).toBe(3);
-      Object.keys(ToleranceTypes).forEach(type => {
+      Object.keys(ToleranceTypes).forEach((type) => {
         expect(screen.getAllByText(ToleranceTypes[type].message.defaultMessage)).toBeDefined();
       });
     });

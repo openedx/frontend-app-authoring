@@ -7,15 +7,9 @@ import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 import ConfirmationPopup from '../../../../../generic/ConfirmationPopup';
 
-const InContextDiscussionFields = ({
-  onBlur,
-  onChange,
-  values,
-}) => {
+const InContextDiscussionFields = ({ onBlur, onChange, values }) => {
   const intl = useIntl();
-  const {
-    setFieldValue,
-  } = useFormikContext();
+  const { setFieldValue } = useFormikContext();
 
   const [showPopup, setShowPopup] = useState(false);
   const handleConfirmation = () => {
@@ -27,31 +21,33 @@ const InContextDiscussionFields = ({
   return (
     <>
       <h5 className="text-gray-500 mt-4">{intl.formatMessage(messages.visibilityInContext)}</h5>
-      {showPopup
-        ? (
-          <ConfirmationPopup
-            label={values.enableGradedUnits
+      {showPopup ? (
+        <ConfirmationPopup
+          label={
+            values.enableGradedUnits
               ? intl.formatMessage(messages.cancelEnableDiscussionsLabel)
-              : intl.formatMessage(messages.confirmEnableDiscussionsLabel)}
-            bodyText={values.enableGradedUnits
+              : intl.formatMessage(messages.confirmEnableDiscussionsLabel)
+          }
+          bodyText={
+            values.enableGradedUnits
               ? intl.formatMessage(messages.cancelEnableDiscussions)
-              : intl.formatMessage(messages.confirmEnableDiscussions)}
-            onConfirm={handleConfirmation}
-            confirmLabel={intl.formatMessage(messages.confirm)}
-            onCancel={() => setShowPopup(false)}
-            cancelLabel={intl.formatMessage(messages.cancelButton)}
-          />
-        )
-        : (
-          <FormSwitchGroup
-            onChange={() => setShowPopup(true)}
-            onBlur={onBlur}
-            id="enableGradedUnits"
-            checked={values.enableGradedUnits}
-            label={intl.formatMessage(messages.gradedUnitPagesLabel)}
-            helpText={intl.formatMessage(messages.gradedUnitPagesHelp)}
-          />
-        )}
+              : intl.formatMessage(messages.confirmEnableDiscussions)
+          }
+          onConfirm={handleConfirmation}
+          confirmLabel={intl.formatMessage(messages.confirm)}
+          onCancel={() => setShowPopup(false)}
+          cancelLabel={intl.formatMessage(messages.cancelButton)}
+        />
+      ) : (
+        <FormSwitchGroup
+          onChange={() => setShowPopup(true)}
+          onBlur={onBlur}
+          id="enableGradedUnits"
+          checked={values.enableGradedUnits}
+          label={intl.formatMessage(messages.gradedUnitPagesLabel)}
+          helpText={intl.formatMessage(messages.gradedUnitPagesHelp)}
+        />
+      )}
       <AppConfigFormDivider />
       <FormSwitchGroup
         onChange={onChange}

@@ -6,7 +6,8 @@ export default {
   edited_on: 'Nov 22, 2023 at 07:45 UTC',
   published: true,
   published_on: 'Nov 22, 2023 at 07:45 UTC',
-  studio_url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40d0e78d363a424da6be5c22704c34f7a7',
+  studio_url:
+    '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40d0e78d363a424da6be5c22704c34f7a7',
   released_to_students: true,
   release_date: 'Feb 05, 2013 at 05:00 UTC',
   visibility_state: 'live',
@@ -17,10 +18,7 @@ export default {
   due: null,
   relative_weeks_due: null,
   format: null,
-  course_graders: [
-    'Homework',
-    'Exam',
-  ],
+  course_graders: ['Homework', 'Exam'],
   has_changes: false,
   actions: {
     deletable: true,
@@ -55,7 +53,8 @@ export default {
   highlights: [],
   highlights_enabled: true,
   highlights_preview_only: false,
-  highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+  highlights_doc_url:
+    'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
   child_info: {
     category: 'sequential',
     display_name: 'Subsection',

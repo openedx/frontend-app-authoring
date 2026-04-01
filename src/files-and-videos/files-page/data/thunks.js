@@ -2,12 +2,7 @@ import { isEmpty } from 'lodash';
 import { camelCaseObject } from '@edx/frontend-platform';
 
 import { RequestStatus } from '../../../data/constants';
-import {
-  addModel,
-  addModels,
-  removeModel,
-  updateModel,
-} from '../../../generic/model-store';
+import { addModel, addModels, removeModel, updateModel } from '../../../generic/model-store';
 import {
   getAssets,
   getAssetUsagePaths,
@@ -43,9 +38,11 @@ export function fetchAdditionalAssets(courseId, totalCount) {
         const { assets } = await getAssets(courseId, page);
         const parsedAssets = updateFileValues(assets);
         dispatch(addModels({ modelType: 'assets', models: parsedAssets }));
-        dispatch(setAssetIds({
-          assetIds: assets.map(asset => asset.id),
-        }));
+        dispatch(
+          setAssetIds({
+            assetIds: assets.map((asset) => asset.id),
+          }),
+        );
         remainingAssetCount -= 50;
         page += 1;
       } catch {
@@ -66,9 +63,11 @@ export function fetchAssets(courseId) {
       const { assets, totalCount } = await getAssets(courseId);
       const parsedAssets = updateFileValues(assets);
       dispatch(addModels({ modelType: 'assets', models: parsedAssets }));
-      dispatch(setAssetIds({
-        assetIds: assets.map(asset => asset.id),
-      }));
+      dispatch(
+        setAssetIds({
+          assetIds: assets.map((asset) => asset.id),
+        }),
+      );
       if (totalCount > 50) {
         dispatch(fetchAdditionalAssets(courseId, totalCount - 50));
       }
@@ -115,14 +114,18 @@ export function addAssetFile(courseId, file, isOverwrite) {
     try {
       const { asset } = await addAsset(courseId, file);
       const [parsedAssets] = updateFileValues([asset]);
-      dispatch(addModel({
-        modelType: 'assets',
-        model: { ...parsedAssets },
-      }));
+      dispatch(
+        addModel({
+          modelType: 'assets',
+          model: { ...parsedAssets },
+        }),
+      );
       if (!isOverwrite) {
-        dispatch(addAssetSuccess({
-          assetId: asset.id,
-        }));
+        dispatch(
+          addAssetSuccess({
+            assetId: asset.id,
+          }),
+        );
       }
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -144,18 +147,18 @@ export function validateAssetFiles(courseId, files) {
 
     try {
       const filenames = [];
-      files.forEach(file => filenames.push(file.name));
+      files.forEach((file) => filenames.push(file.name));
       await getAssetDetails({ courseId, filenames, fileCount: filenames.length }).then(({ assets }) => {
         const [conflicts, newFiles] = getUploadConflicts(files, assets);
         if (!isEmpty(newFiles)) {
-          newFiles.forEach(file => dispatch(addAssetFile(courseId, file)));
+          newFiles.forEach((file) => dispatch(addAssetFile(courseId, file)));
         }
         if (!isEmpty(conflicts)) {
           dispatch(updateDuplicateFiles({ files: conflicts }));
         }
       });
     } catch {
-      files.forEach(file => dispatch(updateErrors({ error: 'add', message: `Failed to validate ${file.name}.` })));
+      files.forEach((file) => dispatch(updateErrors({ error: 'add', message: `Failed to validate ${file.name}.` })));
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
   };
@@ -168,14 +171,16 @@ export function updateAssetLock({ assetId, courseId, locked }) {
     try {
       await updateLockStatus({ assetId, courseId, locked });
       const lockStatus = locked ? 'locked' : 'public';
-      dispatch(updateModel({
-        modelType: 'assets',
-        model: {
-          id: assetId,
-          locked,
-          lockStatus,
-        },
-      }));
+      dispatch(
+        updateModel({
+          modelType: 'assets',
+          model: {
+            id: assetId,
+            locked,
+            lockStatus,
+          },
+        }),
+      );
       dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.SUCCESSFUL }));
     } catch {
       const lockStatus = locked ? 'lock' : 'unlock';
@@ -186,7 +191,9 @@ export function updateAssetLock({ assetId, courseId, locked }) {
 }
 
 export function resetErrors({ errorType }) {
-  return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
+  return (dispatch) => {
+    dispatch(clearErrors({ error: errorType }));
+  };
 }
 
 export function getUsagePaths({ asset, courseId }) {
@@ -196,17 +203,21 @@ export function getUsagePaths({ asset, courseId }) {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
       const assetLocations = usageLocations[asset.id];
       const activeStatus = assetLocations?.length > 0 ? 'active' : 'inactive';
-      dispatch(updateModel({
-        modelType: 'assets',
-        model: {
-          id: asset.id,
-          usageLocations: camelCaseObject(assetLocations),
-          activeStatus,
-        },
-      }));
+      dispatch(
+        updateModel({
+          modelType: 'assets',
+          model: {
+            id: asset.id,
+            usageLocations: camelCaseObject(assetLocations),
+            activeStatus,
+          },
+        }),
+      );
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
     } catch {
-      dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));
+      dispatch(
+        updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }),
+      );
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
     }
   };
@@ -219,7 +230,7 @@ export function fetchAssetDownload({ selectedRows, courseId }) {
     if (isEmpty(errors)) {
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
     } else {
-      errors.forEach(error => {
+      errors.forEach((error) => {
         dispatch(updateErrors({ error: 'download', message: error }));
       });
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));

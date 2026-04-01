@@ -23,15 +23,23 @@ export const sortFunctions = StrictDict({
   nameAscending: (a, b) => {
     const nameA = a.displayName.toLowerCase();
     const nameB = b.displayName.toLowerCase();
-    if (nameA < nameB) { return -1; }
-    if (nameB < nameA) { return 1; }
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameB < nameA) {
+      return 1;
+    }
     return b.dateAdded - a.dateAdded;
   },
   nameDescending: (a, b) => {
     const nameA = a.displayName.toLowerCase();
     const nameB = b.displayName.toLowerCase();
-    if (nameA < nameB) { return 1; }
-    if (nameB < nameA) { return -1; }
+    if (nameA < nameB) {
+      return 1;
+    }
+    if (nameB < nameA) {
+      return -1;
+    }
     return b.dateAdded - a.dateAdded;
   },
 });

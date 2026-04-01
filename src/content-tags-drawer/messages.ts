@@ -44,7 +44,8 @@ const messages = defineMessages({
   },
   taxonomyTagActionInstructionsAriaLabel: {
     id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.tag-action-instructions.aria.label',
-    defaultMessage: '{tagState} Tag: {tag}. Use the arrow keys to move among the tags in this taxonomy. Press space to select a tag.',
+    defaultMessage:
+      '{tagState} Tag: {tag}. Use the arrow keys to move among the tags in this taxonomy. Press space to select a tag.',
   },
   taxonomyTagActionsAriaLabel: {
     id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.tag-actions.aria.label',
@@ -126,7 +127,8 @@ const messages = defineMessages({
   },
   otherTagsDescription: {
     id: 'course-authoring.content-tags-drawer.other-tags.description',
-    defaultMessage: 'These tags are already applied, but you can\'t add new ones as you don\'t have access to their taxonomies.',
+    defaultMessage:
+      "These tags are already applied, but you can't add new ones as you don't have access to their taxonomies.",
     description: 'Description of "Other tags" subsection in tags drawer',
   },
   emptyDrawerContent: {

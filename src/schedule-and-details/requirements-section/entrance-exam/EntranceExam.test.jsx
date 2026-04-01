@@ -1,6 +1,4 @@
-import {
-  render, screen, waitFor,
-} from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -44,7 +42,9 @@ describe('<EntranceExam />', () => {
     onChangeMock.mockClear();
     const ui = render(<RootWrapper {...props} />);
     const user = userEvent.setup();
-    const checkbox = screen.getByRole('checkbox', { name: 'Require students to pass an exam before beginning the course.' });
+    const checkbox = screen.getByRole('checkbox', {
+      name: 'Require students to pass an exam before beginning the course.',
+    });
 
     expect(checkbox).toBeChecked();
     expect(screen.queryByText('Grade requirements')).toBeInTheDocument();

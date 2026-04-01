@@ -21,13 +21,10 @@ import OpenedXConfigFormProvider from './OpenedXConfigFormProvider';
 
 setupYupExtensions();
 
-const OpenedXConfigForm = ({
-  onSubmit, formRef, legacy,
-}) => {
+const OpenedXConfigForm = ({ onSubmit, formRef, legacy }) => {
   const intl = useIntl();
-  const {
-    selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds, postingRestrictions,
-  } = useSelector(state => state.discussions);
+  const { selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds, postingRestrictions } =
+    useSelector((state) => state.discussions);
   const appConfigObj = useModel('appConfigs', selectedAppId);
   const discussionTopicsModel = useModels('discussionTopics', discussionTopicIds);
   const legacyAppConfig = {
@@ -48,10 +45,12 @@ const OpenedXConfigForm = ({
 
   const [validDiscussionTopics, setValidDiscussionTopics] = useState(discussionTopicsModel);
   // These fields are only used for the new provider and aren't supported for legacy.
-  const additionalFields = legacy ? {} : {
-    enabledGradedUnits: Yup.bool().default(false),
-    groupAtSubsection: Yup.bool().default(false),
-  };
+  const additionalFields = legacy
+    ? {}
+    : {
+        enabledGradedUnits: Yup.bool().default(false),
+        groupAtSubsection: Yup.bool().default(false),
+      };
   const validationSchema = Yup.object().shape({
     // eslint-disable-next-line react/forbid-prop-types
     restrictedDates: Yup.array(
@@ -67,10 +66,7 @@ const OpenedXConfigForm = ({
             // oxlint-disable-next-line unicorn/no-thenable
             then: Yup.string().compare(intl.formatMessage(messages.restrictedEndDateInPast), 'date'),
           }),
-        startTime: Yup.string().checkFormat(
-          intl.formatMessage(messages.restrictedStartTimeInValidFormat),
-          'time',
-        ),
+        startTime: Yup.string().checkFormat(intl.formatMessage(messages.restrictedStartTimeInValidFormat), 'time'),
         endTime: Yup.string()
           .checkFormat(intl.formatMessage(messages.restrictedEndTimeInValidFormat), 'time')
           .when('startTime', {
@@ -96,16 +92,17 @@ const OpenedXConfigForm = ({
       validationSchema={validationSchema}
       onSubmit={(values) => onSubmit(values)}
     >
-      {({
-        handleSubmit, handleChange, handleBlur, values, errors, touched,
-      }) => {
+      {({ handleSubmit, handleChange, handleBlur, values, errors, touched }) => {
         const { discussionTopics, restrictedDates } = values;
-        const discussionTopicErrors = discussionTopics.map((value, index) => checkFieldErrors(touched, errors, `discussionTopics.${index}`, 'name'));
+        const discussionTopicErrors = discussionTopics.map((value, index) =>
+          checkFieldErrors(touched, errors, `discussionTopics.${index}`, 'name'),
+        );
         const restrictedDatesErrors = restrictedDates.map(
-          (value, index) => checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'startDate')
-            || checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'endDate')
-            || checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'startTime')
-            || checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'endTime'),
+          (value, index) =>
+            checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'startDate') ||
+            checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'endDate') ||
+            checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'startTime') ||
+            checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'endTime'),
         );
 
         const contextValue = {
@@ -114,9 +111,7 @@ const OpenedXConfigForm = ({
           discussionTopicErrors,
           postingRestrictions,
           restrictedDatesErrors,
-          isFormInvalid:
-            discussionTopicErrors.some((error) => error)
-            || restrictedDatesErrors.some((error) => error),
+          isFormInvalid: discussionTopicErrors.some((error) => error) || restrictedDatesErrors.some((error) => error),
         };
 
         return (
@@ -125,18 +120,13 @@ const OpenedXConfigForm = ({
               <Form ref={formRef} onSubmit={handleSubmit}>
                 <h3 className="text-primary-500 my-3">{intl.formatMessage(messages[`appName-${selectedAppId}`])}</h3>
                 <AppConfigFormDivider thick />
-                {!legacy
-                  && (
-                    <>
-                      <InContextDiscussionFields onBlur={handleBlur} onChange={handleChange} values={values} />
-                      <AppConfigFormDivider thick />
-                    </>
-                  )}
-                <AnonymousPostingFields
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  values={values}
-                />
+                {!legacy && (
+                  <>
+                    <InContextDiscussionFields onBlur={handleBlur} onChange={handleChange} values={values} />
+                    <AppConfigFormDivider thick />
+                  </>
+                )}
+                <AnonymousPostingFields onBlur={handleBlur} onChange={handleChange} values={values} />
                 <AppConfigFormDivider thick />
                 <DiscussionTopics />
                 <AppConfigFormDivider thick />

@@ -19,7 +19,7 @@ jest.mock('./requests', () => ({
 }));
 
 jest.mock('../../../utils', () => ({
-  camelizeKeys: (args) => ([{ camelizeKeys: args }]),
+  camelizeKeys: (args) => [{ camelizeKeys: args }],
   ...jest.requireActual('../../../utils'),
 }));
 
@@ -54,10 +54,12 @@ describe('app thunkActions', () => {
     it('dispatches failRequest with fetchBlock requestKey on failure', () => {
       dispatch.mockClear();
       dispatchedAction.fetchBlock.onFailure(testValue);
-      expect(dispatch).toHaveBeenCalledWith(actions.requests.failRequest({
-        requestKey: RequestKeys.fetchBlock,
-        error: testValue,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.requests.failRequest({
+          requestKey: RequestKeys.fetchBlock,
+          error: testValue,
+        }),
+      );
     });
   });
 
@@ -77,10 +79,12 @@ describe('app thunkActions', () => {
     it('dispatches failRequest with fetchStudioView requestKey on failure', () => {
       dispatch.mockClear();
       dispatchedAction.fetchStudioView.onFailure(testValue);
-      expect(dispatch).toHaveBeenCalledWith(actions.requests.failRequest({
-        requestKey: RequestKeys.fetchStudioView,
-        error: testValue,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.requests.failRequest({
+          requestKey: RequestKeys.fetchStudioView,
+          error: testValue,
+        }),
+      );
     });
   });
 
@@ -100,10 +104,12 @@ describe('app thunkActions', () => {
     it('dispatches failRequest with fetchUnit requestKey on failure', () => {
       dispatch.mockClear();
       dispatchedAction.fetchUnit.onFailure(testValue);
-      expect(dispatch).toHaveBeenCalledWith(actions.requests.failRequest({
-        requestKey: RequestKeys.fetchUnit,
-        error: testValue,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.requests.failRequest({
+          requestKey: RequestKeys.fetchUnit,
+          error: testValue,
+        }),
+      );
     });
   });
   describe('fetchImages', () => {
@@ -122,10 +128,12 @@ describe('app thunkActions', () => {
     it('dispatches failRequest with fetchImages requestKey on failure', () => {
       dispatch.mockClear();
       dispatchedAction.fetchImages.onFailure(testValue);
-      expect(dispatch).toHaveBeenCalledWith(actions.requests.failRequest({
-        requestKey: RequestKeys.fetchImages,
-        error: testValue,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.requests.failRequest({
+          requestKey: RequestKeys.fetchImages,
+          error: testValue,
+        }),
+      );
     });
   });
   describe('fetchVideos', () => {
@@ -144,10 +152,12 @@ describe('app thunkActions', () => {
     it('dispatches failRequest with fetchVideos requestKey on failure', () => {
       dispatch.mockClear();
       dispatchedAction.fetchVideos.onFailure(testValue);
-      expect(dispatch).toHaveBeenCalledWith(actions.requests.failRequest({
-        requestKey: RequestKeys.fetchVideos,
-        error: testValue,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.requests.failRequest({
+          requestKey: RequestKeys.fetchVideos,
+          error: testValue,
+        }),
+      );
     });
   });
   describe('fetchCourseDetails', () => {
@@ -166,22 +176,17 @@ describe('app thunkActions', () => {
     it('dispatches failRequest with fetchCourseDetails requestKey on failure', () => {
       dispatch.mockClear();
       dispatchedAction.fetchCourseDetails.onFailure(testValue);
-      expect(dispatch).toHaveBeenCalledWith(actions.requests.failRequest({
-        requestKey: RequestKeys.fetchCourseDetails,
-        error: testValue,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.requests.failRequest({
+          requestKey: RequestKeys.fetchCourseDetails,
+          error: testValue,
+        }),
+      );
     });
   });
   describe('initialize without block type defined', () => {
     it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
-      const {
-        fetchBlock,
-        fetchUnit,
-        fetchStudioView,
-        fetchImages,
-        fetchVideos,
-        fetchCourseDetails,
-      } = thunkActions;
+      const { fetchBlock, fetchUnit, fetchStudioView, fetchImages, fetchVideos, fetchCourseDetails } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
@@ -220,14 +225,7 @@ describe('app thunkActions', () => {
   });
   describe('initialize with block type html', () => {
     it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
-      const {
-        fetchBlock,
-        fetchUnit,
-        fetchStudioView,
-        fetchImages,
-        fetchVideos,
-        fetchCourseDetails,
-      } = thunkActions;
+      const { fetchBlock, fetchUnit, fetchStudioView, fetchImages, fetchVideos, fetchCourseDetails } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
@@ -258,14 +256,7 @@ describe('app thunkActions', () => {
   });
   describe('initialize with block type problem', () => {
     it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
-      const {
-        fetchBlock,
-        fetchUnit,
-        fetchStudioView,
-        fetchImages,
-        fetchVideos,
-        fetchCourseDetails,
-      } = thunkActions;
+      const { fetchBlock, fetchUnit, fetchStudioView, fetchImages, fetchVideos, fetchCourseDetails } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
@@ -296,14 +287,7 @@ describe('app thunkActions', () => {
   });
   describe('initialize with block type video', () => {
     it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
-      const {
-        fetchBlock,
-        fetchUnit,
-        fetchStudioView,
-        fetchImages,
-        fetchVideos,
-        fetchCourseDetails,
-      } = thunkActions;
+      const { fetchBlock, fetchUnit, fetchStudioView, fetchImages, fetchVideos, fetchCourseDetails } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
@@ -381,20 +365,22 @@ describe('app thunkActions', () => {
     test('onFailure: dispatches failRequest', () => {
       const error = new Error('fail create a new component');
       dispatchedAction.createBlock.onFailure(error);
-      expect(dispatch).toHaveBeenCalledWith(actions.requests.failRequest({
-        requestKey: RequestKeys.createBlock,
-        error,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.requests.failRequest({
+          requestKey: RequestKeys.createBlock,
+          error,
+        }),
+      );
     });
     test('should call batchUploadAssets if the block has images', () => {
-      mockImageData.map(image => ({ ...image, file: 'file' }));
+      mockImageData.map((image) => ({ ...image, file: 'file' }));
       getState.mockReturnValueOnce({ app: { blockId: '', images: mockImageData } });
       const data = { id: 'block-id' };
       dispatchedAction.createBlock.onSuccess(data);
       expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockId(data.id));
       expect(dispatch.mock.calls[2][0]).toEqual({
         [RequestKeys.batchUploadAssets]: {
-          assets: mockImageData.map(image => image.file),
+          assets: mockImageData.map((image) => image.file),
           content: { data: expect.any(Object) },
           onSuccess: expect.any(Function),
           onFailure: expect.any(Function),

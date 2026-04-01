@@ -15,9 +15,9 @@ jest.mock('./hooks', () => ({
     value: 'alternative Taxes',
   }),
   dimensionHooks: () => ({
-    onImgLoad: jest.fn(
-      (selection) => ({ 'hooks.dimensions.onImgLoad.callback': { selection } }),
-    ).mockName('hooks.dimensions.onImgLoad'),
+    onImgLoad: jest
+      .fn((selection) => ({ 'hooks.dimensions.onImgLoad.callback': { selection } }))
+      .mockName('hooks.dimensions.onImgLoad'),
     value: { width: 12, height: 13 },
   }),
   onSaveClick: (args) => ({ 'hooks.onSaveClick': args }),

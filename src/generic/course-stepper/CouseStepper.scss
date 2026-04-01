@@ -3,7 +3,7 @@
     display: flex;
     gap: var(--pgn-spacing-spacer-base);
     padding: 1.25rem 0;
-    opacity: .5;
+    opacity: 0.5;
 
     &:not(:last-child) {
       border-bottom: 1px solid var(--pgn-color-gray-200);
@@ -14,7 +14,7 @@
 
       & svg {
         position: absolute;
-        top: .875rem;
+        top: 0.875rem;
         left: 1.25rem;
       }
     }
@@ -24,7 +24,7 @@
     }
 
     .course-stepper__step-title {
-      margin-bottom: .25rem;
+      margin-bottom: 0.25rem;
     }
 
     .course-stepper__step-percent {

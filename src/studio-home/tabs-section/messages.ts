@@ -69,10 +69,11 @@ const messages = defineMessages({
   },
   alertDescriptionV1: {
     id: 'studio-home.libraries.migrate-alert.description-v1',
-    defaultMessage: 'In a future release, legacy libraries will no longer be supported.'
-      + ' The new libraries experience allows you to author sections, subsections, units,'
-      + ' and components to reuse across your courses. Content from legacy libraries can be'
-      + ' migrated to the new experience.',
+    defaultMessage:
+      'In a future release, legacy libraries will no longer be supported.' +
+      ' The new libraries experience allows you to author sections, subsections, units,' +
+      ' and components to reuse across your courses. Content from legacy libraries can be' +
+      ' migrated to the new experience.',
     description: 'Description for the alert message to migrate legacy libraries on legacy libraries tab.',
   },
   alertReviewButton: {
@@ -102,10 +103,11 @@ const messages = defineMessages({
   },
   alertDescriptionV2: {
     id: 'studio-home.libraries.migrate-alert.description-v2',
-    defaultMessage: 'Welcome to the new Content Libraries experience! Libraries have been redesigned'
-      + ' from the ground up, making it much easier to reuse content. You can create, organize and manage'
-      + ' new content, reuse your content in as many courses as you\'d like, publish updates, and create/randomize'
-      + ' Problem Banks. See {link} for details.',
+    defaultMessage:
+      'Welcome to the new Content Libraries experience! Libraries have been redesigned' +
+      ' from the ground up, making it much easier to reuse content. You can create, organize and manage' +
+      " new content, reuse your content in as many courses as you'd like, publish updates, and create/randomize" +
+      ' Problem Banks. See {link} for details.',
     description: 'Description for the alert message while there are no libraries pending migration on v2 tab.',
   },
   alertDescriptionV2MigrationPending: {

@@ -9,11 +9,7 @@ describe('SupportedFeature', () => {
   let container;
 
   beforeEach(() => {
-    const wrapper = render(
-      <SupportedFeature
-        name={name}
-      />,
-    );
+    const wrapper = render(<SupportedFeature name={name} />);
     container = wrapper.container;
   });
 

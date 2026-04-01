@@ -6,7 +6,8 @@ export default {
   edited_on: 'Dec 05, 2023 at 10:35 UTC',
   published: true,
   published_on: 'Dec 05, 2023 at 10:35 UTC',
-  studio_url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40b713bc2830f34f6f87554028c3068729',
+  studio_url:
+    '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40b713bc2830f34f6f87554028c3068729',
   released_to_students: true,
   release_date: 'Feb 05, 2013 at 05:00 UTC',
   visibility_state: 'live',
@@ -17,10 +18,7 @@ export default {
   due: null,
   relative_weeks_due: null,
   format: null,
-  course_graders: [
-    'Homework',
-    'Exam',
-  ],
+  course_graders: ['Homework', 'Exam'],
   has_changes: false,
   actions: {
     deletable: true,

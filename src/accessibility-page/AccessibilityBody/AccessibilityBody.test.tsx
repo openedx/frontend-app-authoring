@@ -1,18 +1,9 @@
-import {
-  initializeMocks,
-  render,
-  screen,
-} from '@src/testUtils';
+import { initializeMocks, render, screen } from '@src/testUtils';
 
 import AccessibilityBody from './index';
 
 const renderComponent = () => {
-  render(
-    <AccessibilityBody
-      communityAccessibilityLink="http://example.com"
-      email="example@example.com"
-    />,
-  );
+  render(<AccessibilityBody communityAccessibilityLink="http://example.com" email="example@example.com" />);
 };
 
 describe('<AccessibilityBody />', () => {

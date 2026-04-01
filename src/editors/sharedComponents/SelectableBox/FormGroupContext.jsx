@@ -1,13 +1,11 @@
-import React, {
-  useState, useEffect, useMemo, useCallback,
-} from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import newId from './newId';
 import { useIdList, omitUndefinedProperties } from './fieldUtils';
 import { FORM_CONTROL_SIZES } from './constants';
 
-const identityFn = props => props;
+const identityFn = (props) => props;
 const noop = () => {};
 
 const FormGroupContext = React.createContext({
@@ -28,39 +26,31 @@ const useStateEffect = (initialState) => {
   return [state, useSetStateEffect];
 };
 
-const FormGroupContextProvider = ({
-  children,
-  controlId: explicitControlId,
-  isInvalid,
-  isValid,
-  size,
-}) => {
+const FormGroupContextProvider = ({ children, controlId: explicitControlId, isInvalid, isValid, size }) => {
   const controlId = useMemo(() => explicitControlId || newId('form-field'), [explicitControlId]);
   const [describedByIds, registerDescriptorId] = useIdList(controlId);
   const [labelledByIds, registerLabelerId] = useIdList(controlId);
   const [isControlGroup, useSetIsControlGroupEffect] = useStateEffect(false);
 
-  const getControlProps = useCallback((controlProps) => {
-    // labelledByIds from the list above should only be added to a control
-    // if it the control is a group. We prefer adding a condition here because:
-    //    - Hooks cannot be called inside conditionals
-    //    - The getLabelProps function below is forced to generate an id
-    //      whether it is needed or not.
-    //    - This is what allows consumers of Paragon to use <Form.Label>
-    //      interchangeably between ControlGroup type controls and regular Controls
-    const labelledByIdsForControl = isControlGroup ? labelledByIds : undefined;
-    return omitUndefinedProperties({
-      ...controlProps,
-      'aria-describedby': classNames(controlProps['aria-describedby'], describedByIds) || undefined,
-      'aria-labelledby': classNames(controlProps['aria-labelledby'], labelledByIdsForControl) || undefined,
-      id: controlId,
-    });
-  }, [
-    isControlGroup,
-    describedByIds,
-    labelledByIds,
-    controlId,
-  ]);
+  const getControlProps = useCallback(
+    (controlProps) => {
+      // labelledByIds from the list above should only be added to a control
+      // if it the control is a group. We prefer adding a condition here because:
+      //    - Hooks cannot be called inside conditionals
+      //    - The getLabelProps function below is forced to generate an id
+      //      whether it is needed or not.
+      //    - This is what allows consumers of Paragon to use <Form.Label>
+      //      interchangeably between ControlGroup type controls and regular Controls
+      const labelledByIdsForControl = isControlGroup ? labelledByIds : undefined;
+      return omitUndefinedProperties({
+        ...controlProps,
+        'aria-describedby': classNames(controlProps['aria-describedby'], describedByIds) || undefined,
+        'aria-labelledby': classNames(controlProps['aria-labelledby'], labelledByIdsForControl) || undefined,
+        id: controlId,
+      });
+    },
+    [isControlGroup, describedByIds, labelledByIds, controlId],
+  );
 
   const getLabelProps = (labelProps) => {
     const id = registerLabelerId(labelProps?.id);
@@ -89,11 +79,7 @@ const FormGroupContextProvider = ({
     hasFormGroupProvider: true,
   };
 
-  return (
-    <FormGroupContext.Provider value={contextValue}>
-      {children}
-    </FormGroupContext.Provider>
-  );
+  return <FormGroupContext.Provider value={contextValue}>{children}</FormGroupContext.Provider>;
 };
 
 FormGroupContextProvider.propTypes = {
@@ -101,10 +87,7 @@ FormGroupContextProvider.propTypes = {
   controlId: PropTypes.string,
   isInvalid: PropTypes.bool,
   isValid: PropTypes.bool,
-  size: PropTypes.oneOf([
-    FORM_CONTROL_SIZES.SMALL,
-    FORM_CONTROL_SIZES.LARGE,
-  ]),
+  size: PropTypes.oneOf([FORM_CONTROL_SIZES.SMALL, FORM_CONTROL_SIZES.LARGE]),
 };
 
 FormGroupContextProvider.defaultProps = {
@@ -114,8 +97,4 @@ FormGroupContextProvider.defaultProps = {
   size: undefined,
 };
 
-export {
-  FormGroupContext,
-  FormGroupContextProvider,
-  useFormGroupContext,
-};
+export { FormGroupContext, FormGroupContextProvider, useFormGroupContext };

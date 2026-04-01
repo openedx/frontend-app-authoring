@@ -3,17 +3,8 @@ import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Hyperlink,
-  Icon,
-  IconButtonWithTooltip,
-  useToggle,
-} from '@openedx/paragon';
-import {
-  DeleteOutline as DeleteOutlineIcon,
-  EditOutline as EditOutlineIcon,
-} from '@openedx/paragon/icons';
+import { ActionRow, Hyperlink, Icon, IconButtonWithTooltip, useToggle } from '@openedx/paragon';
+import { DeleteOutline as DeleteOutlineIcon, EditOutline as EditOutlineIcon } from '@openedx/paragon/icons';
 
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import TitleButton from '../common/TitleButton';
@@ -23,12 +14,7 @@ import ExperimentForm from './ExperimentForm';
 import messages from './messages';
 import { initialExperimentConfiguration } from './constants';
 
-const ExperimentCard = ({
-  configuration,
-  experimentConfigurationActions,
-  isExpandedByDefault,
-  onCreate,
-}) => {
+const ExperimentCard = ({ configuration, experimentConfigurationActions, isExpandedByDefault, onCreate }) => {
   const { formatMessage } = useIntl();
   const { courseId } = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -39,27 +25,15 @@ const ExperimentCard = ({
     setIsExpanded(isExpandedByDefault);
   }, [isExpandedByDefault]);
 
-  const {
-    id, groups: groupsControl, description, usage,
-  } = configuration;
+  const { id, groups: groupsControl, description, usage } = configuration;
   const isUsedInLocation = !!usage?.length;
 
-  const { href: outlineUrl } = new URL(
-    `/course/${courseId}`,
-    getConfig().STUDIO_BASE_URL,
-  );
+  const { href: outlineUrl } = new URL(`/course/${courseId}`, getConfig().STUDIO_BASE_URL);
 
-  const outlineComponentLink = (
-    <Hyperlink destination={outlineUrl}>
-      {formatMessage(messages.courseOutline)}
-    </Hyperlink>
-  );
+  const outlineComponentLink = <Hyperlink destination={outlineUrl}>{formatMessage(messages.courseOutline)}</Hyperlink>;
 
   const guideHowToAdd = (
-    <span
-      className="small text-gray-700"
-      data-testid="experiment-configuration-card-usage-empty"
-    >
+    <span className="small text-gray-700" data-testid="experiment-configuration-card-usage-empty">
       {formatMessage(messages.emptyExperimentGroup, { outlineComponentLink })}
     </span>
   );
@@ -70,9 +44,7 @@ const ExperimentCard = ({
     groups: configuration.groups.map((group, idx) => ({ ...group, idx })),
   };
 
-  const formValues = isEditMode
-    ? configurationGroupsWithIndexField
-    : initialExperimentConfiguration;
+  const formValues = isEditMode ? configurationGroupsWithIndexField : initialExperimentConfiguration;
 
   const handleDeleteConfiguration = () => {
     experimentConfigurationActions.handleDelete(id);
@@ -95,11 +67,7 @@ const ExperimentCard = ({
           onEditClick={handleEditConfiguration}
         />
       ) : (
-        <div
-          className="configuration-card"
-          data-testid="configuration-card"
-          id={id}
-        >
+        <div className="configuration-card" data-testid="configuration-card" id={id}>
           <div className="configuration-card-header">
             <TitleButton
               group={configuration}
@@ -119,9 +87,7 @@ const ExperimentCard = ({
               <IconButtonWithTooltip
                 className="configuration-card-header__delete-tooltip"
                 tooltipContent={formatMessage(
-                  isUsedInLocation
-                    ? messages.experimentConfigurationDeleteRestriction
-                    : messages.actionDelete,
+                  isUsedInLocation ? messages.experimentConfigurationDeleteRestriction : messages.actionDelete,
                 )}
                 alt={formatMessage(messages.actionDelete)}
                 src={DeleteOutlineIcon}
@@ -133,21 +99,10 @@ const ExperimentCard = ({
             </ActionRow>
           </div>
           {isExpanded && (
-            <div
-              className="configuration-card-content"
-              data-testid="configuration-card-content"
-            >
+            <div className="configuration-card-content" data-testid="configuration-card-content">
               <span className="x-small text-gray-500">{description}</span>
               <ExperimentCardGroup groups={groupsControl} />
-              {usage?.length ? (
-                <UsageList
-                  className="mt-2.5"
-                  itemList={usage}
-                  isExperiment
-                />
-              ) : (
-                guideHowToAdd
-              )}
+              {usage?.length ? <UsageList className="mt-2.5" itemList={usage} isExperiment /> : guideHowToAdd}
             </div>
           )}
         </div>

@@ -18,16 +18,14 @@ const TagCount: React.FC<TagCountProps> = ({ count, onClick, size }: TagCountPro
   );
 
   return (
-    <div className={
-      classNames('generic-tag-count d-flex', { 'zero-count': count === 0 })
-    }
-    >
-      { onClick ? (
+    <div className={classNames('generic-tag-count d-flex', { 'zero-count': count === 0 })}>
+      {onClick ? (
         <Button variant="tertiary" onClick={onClick}>
           {renderContent()}
         </Button>
-      )
-        : renderContent()}
+      ) : (
+        renderContent()
+      )}
     </div>
   );
 };

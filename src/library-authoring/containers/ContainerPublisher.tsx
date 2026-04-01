@@ -18,10 +18,7 @@ type ContainerPublisherProps = {
  * @param containerId - The unique identifier of the container.
  * @param handleClose - Function to handle close the publisher.
  */
-export const ContainerPublisher = ({
-  containerId,
-  handleClose,
-}: ContainerPublisherProps) => {
+export const ContainerPublisher = ({ containerId, handleClose }: ContainerPublisherProps) => {
   const intl = useIntl();
   const publishContainer = usePublishContainer(containerId);
   const { showToast } = useContext(ToastContext);
@@ -36,11 +33,5 @@ export const ContainerPublisher = ({
     handleClose();
   }, [publishContainer, showToast]);
 
-  return (
-    <ItemHierarchyPublisher
-      itemId={containerId}
-      handleClose={handleClose}
-      handlePublish={handlePublish}
-    />
-  );
+  return <ItemHierarchyPublisher itemId={containerId} handleClose={handleClose} handlePublish={handlePublish} />;
 };

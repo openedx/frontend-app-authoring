@@ -13,12 +13,7 @@ import {
   editTextbookSuccess,
   deleteTextbookSuccess,
 } from './slice';
-import {
-  getTextbooks,
-  createTextbook,
-  editTextbook,
-  deleteTextbook,
-} from './api';
+import { getTextbooks, createTextbook, editTextbook, deleteTextbook } from './api';
 
 export function fetchTextbooksQuery(courseId) {
   return async (dispatch) => {

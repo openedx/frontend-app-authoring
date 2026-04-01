@@ -12,10 +12,7 @@ const testState = { some: 'arbitraryValue' };
 const testValue = 'my VALUE';
 
 describe('app selectors unit tests', () => {
-  const {
-    appSelector,
-    simpleSelectors,
-  } = selectors;
+  const { appSelector, simpleSelectors } = selectors;
   describe('appSelector', () => {
     it('returns the app data', () => {
       expect(appSelector({ ...testState, app: testValue } as any as EditorState)).toEqual(testValue);
@@ -67,17 +64,22 @@ describe('app selectors unit tests', () => {
         data: {
           ancestors: [
             {
-              id: 'unit id', display_name: 'Unit', category: 'vertical' as const, has_children: true,
-            }],
+              id: 'unit id',
+              display_name: 'Unit',
+              category: 'vertical' as const,
+              has_children: true,
+            },
+          ],
         },
       };
       const learningContextId = 'some learning context';
       const blockId = 'block-v1 some v1 block id';
-      expect(
-        cb(unitUrl, studioEndpointUrl, learningContextId, blockId),
-      ).toEqual(
+      expect(cb(unitUrl, studioEndpointUrl, learningContextId, blockId)).toEqual(
         urls.returnUrl({
-          unitUrl, studioEndpointUrl, learningContextId, blockId,
+          unitUrl,
+          studioEndpointUrl,
+          learningContextId,
+          blockId,
         }),
       );
     });
@@ -133,10 +135,7 @@ describe('app selectors unit tests', () => {
   describe('displayTitle', () => {
     const title = 'tItLe';
     it('is memoized based on blockType and blockTitle', () => {
-      expect(selectors.displayTitle.dependencies).toEqual([
-        simpleSelectors.blockType,
-        simpleSelectors.blockTitle,
-      ]);
+      expect(selectors.displayTitle.dependencies).toEqual([simpleSelectors.blockType, simpleSelectors.blockTitle]);
     });
     it('returns null if blockType is null', () => {
       expect(selectors.displayTitle.resultFunc(null, title)).toEqual(null);
@@ -157,10 +156,7 @@ describe('app selectors unit tests', () => {
     const learningContextIdLibrary = 'library-v1:name';
     const learningContextIdCourse = 'course-v1:name';
     it('is memoized based on isLibrary', () => {
-      expect(selectors.isLibrary.dependencies).toEqual([
-        simpleSelectors.learningContextId,
-        simpleSelectors.blockId,
-      ]);
+      expect(selectors.isLibrary.dependencies).toEqual([simpleSelectors.learningContextId, simpleSelectors.blockId]);
     });
     describe('blockId is null', () => {
       it('should return false when learningContextId null', () => {

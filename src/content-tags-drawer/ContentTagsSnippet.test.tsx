@@ -1,17 +1,11 @@
-import {
-  render, screen, waitFor, initializeMocks,
-} from '@src/testUtils';
+import { render, screen, waitFor, initializeMocks } from '@src/testUtils';
 
 import { mockContentTaxonomyTagsData } from './data/api.mocks';
 import { ContentTagsSnippet } from './ContentTagsSnippet';
 
 mockContentTaxonomyTagsData.applyMock();
 
-const {
-  otherTagsId,
-  largeTagsId,
-  veryLongTagsId,
-} = mockContentTaxonomyTagsData;
+const { otherTagsId, largeTagsId, veryLongTagsId } = mockContentTaxonomyTagsData;
 
 describe('<ContentTagsSnippet />', () => {
   beforeEach(() => {

@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { ActionRow, Button, StandardModal } from '@openedx/paragon';
 
@@ -33,18 +28,17 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     componentPicker: ComponentPicker,
   } = useLibraryContext();
 
-  const {
-    insideCollection, insideUnit, insideSection, insideSubsection,
-  } = useLibraryRoutes();
+  const { insideCollection, insideUnit, insideSection, insideSubsection } = useLibraryRoutes();
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const updateContainerChildrenMutation = useAddItemsToContainer(containerId);
 
   const { showToast } = useContext(ToastContext);
 
-  const contentMessages = useMemo(() => (
-    getContentMessages(insideSection, insideSubsection, insideUnit)
-  ), [insideSection, insideSubsection, insideUnit]);
+  const contentMessages = useMemo(
+    () => getContentMessages(insideSection, insideSubsection, insideUnit),
+    [insideSection, insideSubsection, insideUnit],
+  );
 
   const [selectedContent, setSelectedComponents] = useState<SelectedComponent[]>([]);
 
@@ -52,7 +46,8 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     const usageKeys = selectedContent.map(({ usageKey }) => usageKey);
     onClose();
     if (insideCollection && collectionId) {
-      updateCollectionItemsMutation.mutateAsync(usageKeys)
+      updateCollectionItemsMutation
+        .mutateAsync(usageKeys)
         .then(() => {
           showToast(intl.formatMessage(genericMessages.manageCollectionsSuccess));
         })
@@ -60,7 +55,8 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
           showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
         });
     } else if ((insideSection || insideSubsection || insideUnit) && containerId) {
-      updateContainerChildrenMutation.mutateAsync(usageKeys)
+      updateContainerChildrenMutation
+        .mutateAsync(usageKeys)
         .then(() => {
           showToast(intl.formatMessage(messages.successAssociateComponentToContainerMessage));
         })
@@ -68,14 +64,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
           showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));
         });
     }
-  }, [
-    selectedContent,
-    insideSection,
-    insideSubsection,
-    insideUnit,
-    collectionId,
-    containerId,
-  ]);
+  }, [selectedContent, insideSection, insideSubsection, insideUnit, collectionId, containerId]);
 
   // determine filter an visibleTabs based on current location
   let extraFilter = ['NOT type = "collection"'];
@@ -90,11 +79,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     visibleTabs = [ContentType.units];
   } else if (insideUnit) {
     // show only components
-    extraFilter = [
-      'NOT block_type = "unit"',
-      'NOT block_type = "subsection"',
-      'NOT block_type = "section"',
-    ];
+    extraFilter = ['NOT block_type = "unit"', 'NOT block_type = "subsection"', 'NOT block_type = "section"'];
     visibleTabs = [ContentType.components];
   }
 
@@ -110,23 +95,17 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
       size="xl"
       isOpen={isOpen}
       onClose={onClose}
-      footerNode={(
+      footerNode={
         <ActionRow>
-          <FormattedMessage
-            {...contentMessages.selectedContent}
-            values={{ count: selectedContent.length }}
-          />
+          <FormattedMessage {...contentMessages.selectedContent} values={{ count: selectedContent.length }} />
           <ActionRow.Spacer />
           <Button variant="primary" onClick={onSubmit}>
             {intl.formatMessage(contentMessages.addToButton)}
           </Button>
         </ActionRow>
-      )}
+      }
     >
-      <LibraryProvider
-        libraryId={libraryId}
-        skipUrlUpdate
-      >
+      <LibraryProvider libraryId={libraryId} skipUrlUpdate>
         <ComponentPicker
           libraryId={libraryId}
           componentPickerMode="multiple"

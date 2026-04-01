@@ -7,7 +7,7 @@ import * as hooks from './hooks';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
-  useRef: jest.fn(val => ({ current: val })),
+  useRef: jest.fn((val) => ({ current: val })),
   useEffect: jest.fn(),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
 }));
@@ -82,7 +82,8 @@ describe('VideoEditorHandout hooks', () => {
       const eventFailure = { target: { files: [{ name: testValue, size: 20000001 }] } };
       it('image fails to upload if file size is greater than 2000000', () => {
         const checkValidFileSize = false;
-        spies.checkValidFileSize = jest.spyOn(hooks, hookKeys.checkValidFileSize)
+        spies.checkValidFileSize = jest
+          .spyOn(hooks, hookKeys.checkValidFileSize)
           .mockReturnValueOnce(checkValidFileSize);
         hook.addFile(eventFailure);
         expect(spies.checkValidFileSize.mock.calls.length).toEqual(1);
@@ -90,7 +91,8 @@ describe('VideoEditorHandout hooks', () => {
       });
       it('dispatches updateField action with the first target file', () => {
         const checkValidFileSize = true;
-        spies.checkValidFileSize = jest.spyOn(hooks, hookKeys.checkValidFileSize)
+        spies.checkValidFileSize = jest
+          .spyOn(hooks, hookKeys.checkValidFileSize)
           .mockReturnValueOnce(checkValidFileSize);
         hook.addFile(eventSuccess);
         expect(spies.checkValidFileSize.mock.calls.length).toEqual(1);

@@ -1,8 +1,4 @@
-import {
-  ActionRow,
-  Button,
-  AlertModal,
-} from '@openedx/paragon';
+import { ActionRow, Button, AlertModal } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
@@ -48,7 +44,7 @@ const DeleteModal = ({
       onClose={close}
       variant={variant}
       icon={icon}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button
             variant={cancelButtonVariant}
@@ -70,7 +66,7 @@ const DeleteModal = ({
             label={defaultBtnLabel}
           />
         </ActionRow>
-      )}
+      }
     >
       <div>{modalDescription}</div>
     </AlertModal>

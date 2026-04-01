@@ -4,16 +4,9 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import ErrorAlert from './ErrorAlert';
 
-const FetchErrorAlert = ({
-  message,
-  isFetchError,
-}) => (
-  <ErrorAlert
-    isError={isFetchError}
-  >
-    <FormattedMessage
-      {...message}
-    />
+const FetchErrorAlert = ({ message, isFetchError }) => (
+  <ErrorAlert isError={isFetchError}>
+    <FormattedMessage {...message} />
   </ErrorAlert>
 );
 
@@ -24,7 +17,6 @@ FetchErrorAlert.propTypes = {
     description: PropTypes.string,
   }).isRequired,
   isFetchError: PropTypes.bool.isRequired,
-
 };
 
 export default FetchErrorAlert;

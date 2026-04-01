@@ -23,14 +23,14 @@
     .organization-section-form-label {
       color: var(--pgn-color-gray-700);
       margin-bottom: 0;
-      margin-right: .75rem;
+      margin-right: 0.75rem;
     }
 
     .organization-section-form-control {
       border-color: var(--pgn-color-gray-500);
 
       .form-control {
-        font-size: .875rem;
+        font-size: 0.875rem;
         line-height: 1.5rem;
         height: 2.75rem;
       }
@@ -43,7 +43,7 @@
   margin-bottom: 1.625rem;
 
   .nav-link {
-    border-bottom: .125rem solid var(--pgn-color-light-400);
+    border-bottom: 0.125rem solid var(--pgn-color-light-400);
   }
 
   .nav-link.active {
@@ -63,7 +63,7 @@
   }
 
   .pgn__card-header {
-    padding: .9375rem 1.25rem;
+    padding: 0.9375rem 1.25rem;
 
     .pgn__card-header-content {
       margin: 0;
@@ -81,11 +81,11 @@
   .card-item-title {
     font: normal var(--pgn-typography-font-weight-semi-bold) 1.125rem/1.75rem var(--pgn-typography-font-family-base);
     color: var(--pgn-color-black);
-    margin-bottom: .1875rem;
+    margin-bottom: 0.1875rem;
   }
 
   .pgn__card-header-subtitle-md {
-    font: normal var(--pgn-typography-font-weight-normal) .75rem/1.25rem var(--pgn-typography-font-family-base);
+    font: normal var(--pgn-typography-font-weight-normal) 0.75rem/1.25rem var(--pgn-typography-font-family-base);
     color: var(--pgn-color-gray-700);
     margin: 0;
   }

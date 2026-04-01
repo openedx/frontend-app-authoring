@@ -12,7 +12,10 @@ describe('getErrorDetails', () => {
     const error = { response: { data: 'some data', status: 500 } };
     const result = getErrorDetails(error);
     expect(result).toEqual({
-      dismissible: true, data: '"some data"', status: 500, type: API_ERROR_TYPES.serverError,
+      dismissible: true,
+      data: '"some data"',
+      status: 500,
+      type: API_ERROR_TYPES.serverError,
     });
   });
 

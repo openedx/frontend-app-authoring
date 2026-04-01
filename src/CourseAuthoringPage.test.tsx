@@ -19,19 +19,14 @@ jest.mock('react-router-dom', () => ({
 let axiosMock;
 let store;
 
-const renderComponent = children => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    {children}
-  </CourseAuthoringProvider>,
-);
+const renderComponent = (children) =>
+  render(<CourseAuthoringProvider courseId={courseId}>{children}</CourseAuthoringProvider>);
 
 beforeEach(async () => {
   const mocks = initializeMocks();
   store = mocks.reduxStore;
   axiosMock = mocks.axiosMock;
-  axiosMock
-    .onGet(getApiWaffleFlagsUrl(courseId))
-    .reply(200, {});
+  axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, {});
 });
 
 describe('Editor Pages Load no header', () => {
@@ -48,8 +43,7 @@ describe('Editor Pages Load no header', () => {
     const wrapper = renderComponent(
       <CourseAuthoringPage>
         <PagesAndResources />
-      </CourseAuthoringPage>
-      ,
+      </CourseAuthoringPage>,
     );
     expect(wrapper.queryByRole('status')).not.toBeInTheDocument();
   });
@@ -59,8 +53,7 @@ describe('Editor Pages Load no header', () => {
     const wrapper = renderComponent(
       <CourseAuthoringPage>
         <PagesAndResources />
-      </CourseAuthoringPage>
-      ,
+      </CourseAuthoringPage>,
     );
     expect(wrapper.queryByRole('status')).toBeInTheDocument();
   });
@@ -70,16 +63,12 @@ describe('Course authoring page', () => {
   const lmsApiBaseUrl = getConfig().LMS_BASE_URL;
   const courseDetailApiUrl = `${lmsApiBaseUrl}/api/courses/v1/courses`;
   const mockStoreNotFound = async () => {
-    axiosMock.onGet(
-      `${courseDetailApiUrl}/${courseId}?username=abc123`,
-    ).reply(404, {
+    axiosMock.onGet(`${courseDetailApiUrl}/${courseId}?username=abc123`).reply(404, {
       response: { status: 404 },
     });
   };
   const mockStoreError = async () => {
-    axiosMock.onGet(
-      `${courseDetailApiUrl}/${courseId}?username=abc123`,
-    ).reply(500, {
+    axiosMock.onGet(`${courseDetailApiUrl}/${courseId}?username=abc123`).reply(500, {
       response: { status: 500 },
     });
   };
@@ -98,8 +87,7 @@ describe('Course authoring page', () => {
     const wrapper = renderComponent(
       <CourseAuthoringPage>
         <div data-testid={contentTestId} />
-      </CourseAuthoringPage>
-      ,
+      </CourseAuthoringPage>,
     );
     expect(await wrapper.findByTestId(contentTestId)).toBeInTheDocument();
     expect(wrapper.queryByTestId('notFoundAlert')).not.toBeInTheDocument();
@@ -108,9 +96,7 @@ describe('Course authoring page', () => {
     const studioApiBaseUrl = getConfig().STUDIO_BASE_URL;
     const courseAppsApiUrl = `${studioApiBaseUrl}/api/course_apps/v1/apps`;
 
-    axiosMock.onGet(
-      `${courseAppsApiUrl}/${courseId}`,
-    ).reply(403);
+    axiosMock.onGet(`${courseAppsApiUrl}/${courseId}`).reply(403);
     await executeThunk(fetchCourseApps(courseId), store.dispatch);
   };
   test('renders PermissionDeniedAlert when courseAppsApiStatus is DENIED', async () => {

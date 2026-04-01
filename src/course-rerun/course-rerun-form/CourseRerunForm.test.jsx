@@ -53,6 +53,11 @@ describe('<CourseRerunForm />', () => {
 
   it('renders description successfully', () => {
     const { getByText } = render(<RootWrapper {...props} />);
-    expect(getByText('Provide identifying information for this re-run of the course. The original course is not affected in any way by a re-run', { exact: false })).toBeInTheDocument();
+    expect(
+      getByText(
+        'Provide identifying information for this re-run of the course. The original course is not affected in any way by a re-run',
+        { exact: false },
+      ),
+    ).toBeInTheDocument();
   });
 });

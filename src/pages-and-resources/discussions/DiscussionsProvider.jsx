@@ -5,13 +5,7 @@ export const DiscussionsContext = React.createContext({});
 
 const DiscussionsProvider = ({ children, path }) => {
   const contextValue = useMemo(() => ({ path }), []);
-  return (
-    <DiscussionsContext.Provider
-      value={contextValue}
-    >
-      {children}
-    </DiscussionsContext.Provider>
-  );
+  return <DiscussionsContext.Provider value={contextValue}>{children}</DiscussionsContext.Provider>;
 };
 
 DiscussionsProvider.propTypes = {

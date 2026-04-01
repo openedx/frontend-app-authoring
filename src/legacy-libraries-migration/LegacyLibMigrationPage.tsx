@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,13 +28,7 @@ import { LegacyMigrationHelpSidebar } from './LegacyMigrationHelpSidebar';
 
 export type MigrationStep = 'select-libraries' | 'select-destination' | 'confirmation-view';
 
-const ExitModal = ({
-  isExitModalOpen,
-  closeExitModal,
-}: {
-  isExitModalOpen: boolean,
-  closeExitModal: () => void,
-}) => {
+const ExitModal = ({ isExitModalOpen, closeExitModal }: { isExitModalOpen: boolean; closeExitModal: () => void }) => {
   const intl = useIntl();
   const navigate = useNavigate();
 
@@ -94,9 +83,11 @@ export const LegacyLibMigrationPage = () => {
           createCollections: true,
           repeatHandlingStrategy: 'fork',
         });
-        showToast(intl.formatMessage(messages.migrationInProgress, {
-          count: legacyLibraries.length,
-        }));
+        showToast(
+          intl.formatMessage(messages.migrationInProgress, {
+            count: legacyLibraries.length,
+          }),
+        );
         navigate(`/library/${destinationLibrary.id}?migration_task=${migrationTask.uuid}`);
       } catch {
         showToast(intl.formatMessage(messages.migrationFailed));
@@ -155,35 +146,32 @@ export const LegacyLibMigrationPage = () => {
     }
   }, [legacyLibraries, currentStep, destinationLibrary]);
 
-  const handleUpdateLegacyLibraries = useCallback((library: LibraryV1Data, action: 'add' | 'remove') => {
-    if (action === 'add') {
-      setLegacyLibraries([...legacyLibraries, library]);
-    } else {
-      setLegacyLibraries(legacyLibraries.filter(item => item.libraryKey !== library.libraryKey));
-    }
-  }, [legacyLibraries, setLegacyLibraries]);
+  const handleUpdateLegacyLibraries = useCallback(
+    (library: LibraryV1Data, action: 'add' | 'remove') => {
+      if (action === 'add') {
+        setLegacyLibraries([...legacyLibraries, library]);
+      } else {
+        setLegacyLibraries(legacyLibraries.filter((item) => item.libraryKey !== library.libraryKey));
+      }
+    },
+    [legacyLibraries, setLegacyLibraries],
+  );
 
-  const legacyLibrariesIds = useMemo(() => legacyLibraries.map(item => item.libraryKey), [legacyLibraries]);
+  const legacyLibrariesIds = useMemo(() => legacyLibraries.map((item) => item.libraryKey), [legacyLibraries]);
 
   return (
     <>
       <Helmet>
-        <title>
-          {intl.formatMessage(messages.siteTitle)}
-        </title>
+        <title>{intl.formatMessage(messages.siteTitle)}</title>
       </Helmet>
       <Header isHiddenMainMenu />
       <div className="legacy-library-migration-page">
-        <Layout
-          xs={[{ span: 9 }, { span: 3 }]}
-        >
+        <Layout xs={[{ span: 9 }, { span: 3 }]}>
           <Layout.Element>
             <div className="flex-fill">
               <Container className="migration-container d-flex flex-column px-6 mt-5 mb-5">
                 <div className="migration-content">
-                  <SubHeader
-                    title={intl.formatMessage(messages.siteTitle)}
-                  />
+                  <SubHeader title={intl.formatMessage(messages.siteTitle)} />
                   <Stepper activeKey={currentStep}>
                     <Stepper.Header />
                     <Stepper.Step
@@ -209,15 +197,9 @@ export const LegacyLibMigrationPage = () => {
                         legacyLibCount={legacyLibraries.length}
                       />
                     </Stepper.Step>
-                    <Stepper.Step
-                      eventKey="confirmation-view"
-                      title={intl.formatMessage(messages.confirmStepTitle)}
-                    >
+                    <Stepper.Step eventKey="confirmation-view" title={intl.formatMessage(messages.confirmStepTitle)}>
                       {destinationLibrary && (
-                        <ConfirmationView
-                          destination={destinationLibrary}
-                          legacyLibraries={legacyLibraries}
-                        />
+                        <ConfirmationView destination={destinationLibrary} legacyLibraries={legacyLibraries} />
                       )}
                     </Stepper.Step>
                   </Stepper>
@@ -253,10 +235,7 @@ export const LegacyLibMigrationPage = () => {
           </Layout.Element>
         </Layout>
       </div>
-      <ExitModal
-        isExitModalOpen={isExitModalOpen}
-        closeExitModal={closeExitModal}
-      />
+      <ExitModal isExitModalOpen={isExitModalOpen} closeExitModal={closeExitModal} />
     </>
   );
 };

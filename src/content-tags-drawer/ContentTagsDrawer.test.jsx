@@ -1,11 +1,4 @@
-import {
-  fireEvent,
-  initializeMocks,
-  render,
-  waitFor,
-  screen,
-  within,
-} from '../testUtils';
+import { fireEvent, initializeMocks, render, waitFor, screen, within } from '../testUtils';
 import ContentTagsDrawer from './ContentTagsDrawer';
 import messages from './messages';
 import { ContentTagsDrawerSheetContext } from './common/context';
@@ -155,9 +148,11 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.click(editTagsButton);
 
     // Show delete tag buttons
-    expect(screen.getAllByRole('button', {
-      name: /delete/i,
-    }).length).toBe(2);
+    expect(
+      screen.getAllByRole('button', {
+        name: /delete/i,
+      }).length,
+    ).toBe(2);
 
     // Show add a tag select
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
@@ -178,9 +173,11 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.click(manageTagsButton);
 
     // Show delete tag buttons
-    expect(screen.getAllByRole('button', {
-      name: /delete/i,
-    }).length).toBe(2);
+    expect(
+      screen.getAllByRole('button', {
+        name: /delete/i,
+      }).length,
+    ).toBe(2);
 
     // Show add a tag select
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
@@ -198,9 +195,11 @@ describe('<ContentTagsDrawer />', () => {
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // Show delete tag buttons
-    expect(screen.getAllByRole('button', {
-      name: /delete/i,
-    }).length).toBe(2);
+    expect(
+      screen.getAllByRole('button', {
+        name: /delete/i,
+      }).length,
+    ).toBe(2);
 
     // Show add a tag select
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
@@ -344,9 +343,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test clearing staged tags for a taxonomy', async () => {
-    const {
-      container,
-    } = renderDrawer(stagedTagsId);
+    const { container } = renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // To edit mode
@@ -694,11 +691,7 @@ describe('<ContentTagsDrawer />', () => {
     await waitFor(() => expect(axiosMock.history.put[0].url).toEqual(url));
   });
 
-  [
-    'lct:org:lib:unit:1',
-    'lib-collection:org:lib:1',
-    'lb:org:lib:html:1',
-  ].forEach((containerId) => {
+  ['lct:org:lib:unit:1', 'lib-collection:org:lib:1', 'lb:org:lib:html:1'].forEach((containerId) => {
     it(`should invalidate children query when update child tag when containerId is ${containerId}`, async () => {
       const newPath = '/container/:containerId/';
       const { axiosMock, queryClient } = initializeMocks();
@@ -720,14 +713,7 @@ describe('<ContentTagsDrawer />', () => {
       await waitFor(() => expect(axiosMock.history.put[0].url).toEqual(url));
       expect(mockInvalidateQueries).toHaveBeenCalledTimes(5);
       expect(mockInvalidateQueries).toHaveBeenNthCalledWith(5, {
-        queryKey: [
-          'contentLibrary',
-          'lib:org:lib',
-          'content',
-          'container',
-          containerId,
-          'children',
-        ],
+        queryKey: ['contentLibrary', 'lib:org:lib', 'content', 'container', containerId, 'children'],
       });
     });
   });

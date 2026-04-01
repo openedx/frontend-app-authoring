@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, fireEvent, initializeMocks,
-} from '../../../testUtils';
+import { render, screen, fireEvent, initializeMocks } from '../../../testUtils';
 import GalleryCard from './GalleryCard';
 
 jest.mock('../../utils', () => ({
@@ -10,9 +8,10 @@ jest.mock('../../utils', () => ({
 
 jest.mock(
   '../../containers/VideoEditor/components/VideoSettingsModal/components/VideoPreviewWidget/LanguageNamesWidget',
-  () => function mockLanguageNamesWidget({ transcripts }) {
-    return <div>Languages: {transcripts && transcripts.join(', ')}</div>;
-  },
+  () =>
+    function mockLanguageNamesWidget({ transcripts }) {
+      return <div>Languages: {transcripts && transcripts.join(', ')}</div>;
+    },
 );
 
 const baseAsset = {

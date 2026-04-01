@@ -6,11 +6,7 @@ import { RequestStatus } from '../data/constants';
 import { getLoadingDetailsStatus, getLoadingSettingsStatus, getSavingStatus } from './data/selectors';
 import { validateScheduleAndDetails, updateWithDefaultValues } from './utils';
 
-const useLoadValuesPrompt = (
-  courseId,
-  fetchCourseDetailsQuery,
-  fetchCourseSettingsQuery,
-) => {
+const useLoadValuesPrompt = (courseId, fetchCourseDetailsQuery, fetchCourseSettingsQuery) => {
   const dispatch = useDispatch();
   const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
   const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);

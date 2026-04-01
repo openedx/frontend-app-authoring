@@ -39,14 +39,10 @@ describe('TextEditor hooks', () => {
         },
       };
       const spies = {};
-      spies.visualHtml = jest.spyOn(
-        tinyMceHooks,
-        tinyMceHookKeys.setAssetToStaticUrl,
-      ).mockReturnValueOnce(visualContent);
-      spies.rawHtml = jest.spyOn(
-        tinyMceHooks,
-        tinyMceHookKeys.setAssetToStaticUrl,
-      ).mockReturnValueOnce(rawContent);
+      spies.visualHtml = jest
+        .spyOn(tinyMceHooks, tinyMceHookKeys.setAssetToStaticUrl)
+        .mockReturnValueOnce(visualContent);
+      spies.rawHtml = jest.spyOn(tinyMceHooks, tinyMceHookKeys.setAssetToStaticUrl).mockReturnValueOnce(rawContent);
       test('returns correct content based on showRawEditor equals false', () => {
         const getContent = module.getContent({ editorRef, showRawEditor: false })();
         expect(spies.visualHtml.mock.calls.length).toEqual(1);

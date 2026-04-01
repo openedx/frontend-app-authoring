@@ -1,18 +1,18 @@
-@import "./status-bar/StatusBar";
-@import "./section-card/SectionCard";
-@import "./subsection-card/SubsectionCard";
-@import "./unit-card/UnitCard";
-@import "./card-header/CardHeader";
-@import "./empty-placeholder/EmptyPlaceholder";
-@import "./highlights-modal/HighlightsModal";
-@import "./publish-modal/PublishModal";
-@import "./xblock-status/XBlockStatus";
-@import "./drag-helper/SortableItem";
+@import './status-bar/StatusBar';
+@import './section-card/SectionCard';
+@import './subsection-card/SubsectionCard';
+@import './unit-card/UnitCard';
+@import './card-header/CardHeader';
+@import './empty-placeholder/EmptyPlaceholder';
+@import './highlights-modal/HighlightsModal';
+@import './publish-modal/PublishModal';
+@import './xblock-status/XBlockStatus';
+@import './drag-helper/SortableItem';
 
 .border-dashed {
   border: dashed;
 }
 
 .bg-draft-status {
-  background-color: #F4B57B;
+  background-color: #f4b57b;
 }

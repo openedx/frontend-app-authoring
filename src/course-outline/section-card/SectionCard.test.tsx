@@ -1,7 +1,5 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import {
-  act, fireEvent, initializeMocks, render, screen, waitFor, within,
-} from '@src/testUtils';
+import { act, fireEvent, initializeMocks, render, screen, waitFor, within } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
@@ -84,41 +82,40 @@ const section = {
   },
 } satisfies Partial<XBlock> as XBlock;
 
-const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <SectionCard
-    section={section}
-    index={1}
-    canMoveItem={jest.fn()}
-    onOrderChange={jest.fn()}
-    onOpenHighlightsModal={jest.fn()}
-    onOpenDeleteModal={jest.fn()}
-    onOpenConfigureModal={jest.fn()}
-    onDuplicateSubmit={jest.fn()}
-    isSectionsExpanded
-    isSelfPaced={false}
-    isCustomRelativeDatesActive={false}
-    {...props}
-  >
-    <span>children</span>
-  </SectionCard>,
-  {
-    path: '/course/:courseId',
-    params: { courseId: '5' },
-    routerProps: {
-      initialEntries: [entry],
+const renderComponent = (props?: object, entry = '/course/:courseId') =>
+  render(
+    <SectionCard
+      section={section}
+      index={1}
+      canMoveItem={jest.fn()}
+      onOrderChange={jest.fn()}
+      onOpenHighlightsModal={jest.fn()}
+      onOpenDeleteModal={jest.fn()}
+      onOpenConfigureModal={jest.fn()}
+      onDuplicateSubmit={jest.fn()}
+      isSectionsExpanded
+      isSelfPaced={false}
+      isCustomRelativeDatesActive={false}
+      {...props}
+    >
+      <span>children</span>
+    </SectionCard>,
+    {
+      path: '/course/:courseId',
+      params: { courseId: '5' },
+      routerProps: {
+        initialEntries: [entry],
+      },
+      extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
     },
-    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
-  },
-);
+  );
 let axiosMock;
 
 describe('<SectionCard />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, section);
+    axiosMock.onGet(getXBlockApiUrl(section.id)).reply(200, section);
   });
 
   it('render SectionCard component correctly', () => {
@@ -143,7 +140,7 @@ describe('<SectionCard />', () => {
     expect(screen.getByTestId('section-card-header')).toBeInTheDocument();
 
     // The card is not selected
-    expect((await screen.findByTestId('section-card'))).not.toHaveClass('outline-card-selected');
+    expect(await screen.findByTestId('section-card')).not.toHaveClass('outline-card-selected');
 
     // Get the <Row> that contains the card and click it to select the card
     const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
@@ -178,17 +175,15 @@ describe('<SectionCard />', () => {
   });
 
   it('hides add new, duplicate & delete option based on childAddable, duplicable & deletable action flag', async () => {
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, {
-        ...section,
-        actions: {
-          draggable: true,
-          childAddable: false,
-          deletable: false,
-          duplicable: false,
-        },
-      });
+    axiosMock.onGet(getXBlockApiUrl(section.id)).reply(200, {
+      ...section,
+      actions: {
+        draggable: true,
+        childAddable: false,
+        deletable: false,
+        duplicable: false,
+      },
+    });
     renderComponent({
       section: {
         ...section,
@@ -326,26 +321,24 @@ describe('<SectionCard />', () => {
       title: '',
     };
 
-    jest
-      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
-      .mockImplementation(() => ({
-        setCurrentPageKey: mockSetCurrentPageKey,
-        currentPageKey: 'info',
-        sidebarPages: {
-          info: testSidebarPage,
-          help: testSidebarPage,
-          add: testSidebarPage,
-        },
-        isOpen: true,
-        open: jest.fn(),
-        toggle: jest.fn(),
-        currentFlow: undefined,
-        startCurrentFlow: jest.fn(),
-        stopCurrentFlow: jest.fn(),
-        openContainerInfoSidebar: jest.fn(),
-        clearSelection: jest.fn(),
-        setSelectedContainerState: mockSetSelectedContainerState,
-      }));
+    jest.spyOn(OutlineSidebarContext, 'useOutlineSidebarContext').mockImplementation(() => ({
+      setCurrentPageKey: mockSetCurrentPageKey,
+      currentPageKey: 'info',
+      sidebarPages: {
+        info: testSidebarPage,
+        help: testSidebarPage,
+        add: testSidebarPage,
+      },
+      isOpen: true,
+      open: jest.fn(),
+      toggle: jest.fn(),
+      currentFlow: undefined,
+      startCurrentFlow: jest.fn(),
+      stopCurrentFlow: jest.fn(),
+      openContainerInfoSidebar: jest.fn(),
+      clearSelection: jest.fn(),
+      setSelectedContainerState: mockSetSelectedContainerState,
+    }));
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',

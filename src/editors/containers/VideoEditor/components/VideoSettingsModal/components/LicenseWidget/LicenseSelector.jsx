@@ -1,16 +1,8 @@
 import React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Form,
-  Icon,
-  IconButtonWithTooltip,
-} from '@openedx/paragon';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { ActionRow, Form, Icon, IconButtonWithTooltip } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
@@ -42,9 +34,17 @@ const LicenseSelector = ({
           onChange={(e) => onLicenseChange(e.target.value)}
         >
           {Object.entries(LicenseNames).map(([key, text]) => {
-            if (license === key) { return (<option value={LicenseTypes[key]} selected>{text}</option>); }
-            if (key === LicenseTypes.select) { return (<option hidden>{text}</option>); }
-            return (<option value={LicenseTypes[key]}>{text}</option>);
+            if (license === key) {
+              return (
+                <option value={LicenseTypes[key]} selected>
+                  {text}
+                </option>
+              );
+            }
+            if (key === LicenseTypes.select) {
+              return <option hidden>{text}</option>;
+            }
+            return <option value={LicenseTypes[key]}>{text}</option>;
           })}
         </Form.Control>
         {level !== LicenseLevel.course ? (
@@ -61,7 +61,7 @@ const LicenseSelector = ({
               tooltipContent={<FormattedMessage {...messages.deleteLicenseSelection} />}
             />
           </>
-        ) : null }
+        ) : null}
       </ActionRow>
       <div className="x-small mt-3">{levelDescription}</div>
       {license === LicenseTypes.select ? null : <div className="border-primary-100 mt-3 border-bottom" />}

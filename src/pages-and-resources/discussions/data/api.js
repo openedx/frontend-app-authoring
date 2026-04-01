@@ -15,9 +15,7 @@ import {
 } from '../app-config-form/utils';
 import { restrictedDatesStatus as constants } from './constants';
 
-ensureConfig([
-  'STUDIO_BASE_URL',
-], 'Course Apps API service');
+ensureConfig(['STUDIO_BASE_URL'], 'Course Apps API service');
 
 function normalizeLtiConfig(data) {
   if (!data || Object.keys(data).length < 1) {
@@ -157,14 +155,8 @@ function normalizeSettings(data) {
 
 export function denormalizeRestrictedDate(restrictedPeriod) {
   return [
-    mergeDateTime(
-      normalizeDate(restrictedPeriod.startDate),
-      normalizeTime(startOfDayTime(restrictedPeriod.startTime)),
-    ),
-    mergeDateTime(
-      normalizeDate(restrictedPeriod.endDate),
-      normalizeTime(endOfDayTime(restrictedPeriod.endTime)),
-    ),
+    mergeDateTime(normalizeDate(restrictedPeriod.startDate), normalizeTime(startOfDayTime(restrictedPeriod.startTime))),
+    mergeDateTime(normalizeDate(restrictedPeriod.endDate), normalizeTime(endOfDayTime(restrictedPeriod.endTime))),
   ];
 }
 
@@ -188,9 +180,9 @@ function denormalizeData(courseId, appId, data) {
     pluginConfiguration.group_at_subsection = data.groupAtSubsection;
   }
   if (data.restrictedDates?.length) {
-    pluginConfiguration.discussion_blackouts = data.restrictedDates.map((restrictedDates) => (
-      denormalizeRestrictedDate(restrictedDates)
-    ));
+    pluginConfiguration.discussion_blackouts = data.restrictedDates.map((restrictedDates) =>
+      denormalizeRestrictedDate(restrictedDates),
+    );
   } else if (data.restrictedDates?.length === 0) {
     pluginConfiguration.discussion_blackouts = [];
   }
@@ -203,7 +195,8 @@ function denormalizeData(courseId, appId, data) {
   }
   if ('divideCourseTopicsByCohorts' in data) {
     pluginConfiguration.divided_course_wide_discussions = data.divideCourseTopicsByCohorts
-      ? data.divideDiscussionIds : [];
+      ? data.divideDiscussionIds
+      : [];
   }
 
   const ltiConfiguration = {};
@@ -261,8 +254,7 @@ export function getDiscussionsSettingsUrl(courseId) {
 }
 
 export async function getDiscussionsProviders(courseId) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getDiscussionsProvidersUrl(courseId));
+  const { data } = await getAuthenticatedHttpClient().get(getDiscussionsProvidersUrl(courseId));
 
   return normalizeProviders(data);
 }
@@ -273,8 +265,7 @@ export async function getDiscussionsSettings(courseId, providerId = null) {
     params.params = { provider_id: providerId };
   }
   const url = getDiscussionsSettingsUrl(courseId);
-  const { data } = await getAuthenticatedHttpClient()
-    .get(url, params);
+  const { data } = await getAuthenticatedHttpClient().get(url, params);
   return normalizeSettings(data);
 }
 

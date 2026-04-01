@@ -7,24 +7,20 @@ import { getConfig } from '@edx/frontend-platform';
 import { useWaffleFlags } from '../../data/apiHooks';
 import messages from './messages';
 
-const ChecklistItemComment = ({
-  courseId,
-  checkId,
-  data,
-}) => {
+const ChecklistItemComment = ({ courseId, checkId, data }) => {
   const waffleFlags = useWaffleFlags(courseId);
 
-  const getPathToCourseOutlinePage = (assignmentId) => (waffleFlags.useNewCourseOutlinePage
-    ? `/course/${courseId}#${assignmentId}` : `${getConfig().STUDIO_BASE_URL}/course/${courseId}#${assignmentId}`);
+  const getPathToCourseOutlinePage = (assignmentId) =>
+    waffleFlags.useNewCourseOutlinePage
+      ? `/course/${courseId}#${assignmentId}`
+      : `${getConfig().STUDIO_BASE_URL}/course/${courseId}#${assignmentId}`;
 
   const commentWrapper = (comment) => (
     <div className="row m-0 mt-3 pt-3 border-top align-items-center" data-identifier="comment">
       <div className="mr-4">
         <Icon src={ModeComment} size="lg" style={{ height: '32px', width: '32px' }} />
       </div>
-      <div className="small">
-        {comment}
-      </div>
+      <div className="small">{comment}</div>
     </div>
   );
 
@@ -37,29 +33,20 @@ const ChecklistItemComment = ({
       <FormattedMessage
         {...messages.gradingPolicyComment}
         values={{
-          percent: (
-            <FormattedNumber
-              maximumFractionDigits={2}
-              minimumFractionDigits={2}
-              value={weightSumPercentage}
-            />
-          ),
+          percent: <FormattedNumber maximumFractionDigits={2} minimumFractionDigits={2} value={weightSumPercentage} />,
         }}
       />
     );
-    return (showGradingCommentSection ? (
-      commentWrapper(comment)
-    ) : null);
+    return showGradingCommentSection ? commentWrapper(comment) : null;
   }
 
   if (checkId === 'assignmentDeadlines') {
-    const showDeadlinesCommentSection = Object.keys(data).length > 0
-    && (
-      data.assignments.assignmentsWithDatesBeforeStart.length > 0
-      || data?.assignments.assignmentsWithDatesAfterEnd.length > 0
-      || data?.assignments.assignmentsWithOraDatesBeforeStart.length > 0
-      || data?.assignments.assignmentsWithOraDatesAfterEnd.length > 0
-    );
+    const showDeadlinesCommentSection =
+      Object.keys(data).length > 0 &&
+      (data.assignments.assignmentsWithDatesBeforeStart.length > 0 ||
+        data?.assignments.assignmentsWithDatesAfterEnd.length > 0 ||
+        data?.assignments.assignmentsWithOraDatesBeforeStart.length > 0 ||
+        data?.assignments.assignmentsWithOraDatesAfterEnd.length > 0);
 
     const allGradedAssignmentsOutsideDateRange = [].concat(
       data?.assignments.assignmentsWithDatesBeforeStart,
@@ -70,33 +57,27 @@ const ChecklistItemComment = ({
 
     // de-dupe in case one assignment has multiple violations
     const assignmentsMap = new Map();
-    allGradedAssignmentsOutsideDateRange.forEach(
-      (assignment) => { assignmentsMap.set(assignment.id, assignment); },
-    );
+    allGradedAssignmentsOutsideDateRange.forEach((assignment) => {
+      assignmentsMap.set(assignment.id, assignment);
+    });
     const gradedAssignmentsOutsideDateRange = [];
-    assignmentsMap.forEach(
-      (value) => {
-        gradedAssignmentsOutsideDateRange.push(value);
-      },
-    );
+    assignmentsMap.forEach((value) => {
+      gradedAssignmentsOutsideDateRange.push(value);
+    });
 
     const comment = (
       <>
         <FormattedMessage {...messages.assignmentDeadlinesComment} />
         <ul className="assignment-list">
-          {gradedAssignmentsOutsideDateRange.map(assignment => (
+          {gradedAssignmentsOutsideDateRange.map((assignment) => (
             <li className="assignment-list-item" key={assignment.id}>
-              <Link to={getPathToCourseOutlinePage(assignment.id)}>
-                {assignment.displayName}
-              </Link>
+              <Link to={getPathToCourseOutlinePage(assignment.id)}>{assignment.displayName}</Link>
             </li>
           ))}
         </ul>
       </>
     );
-    return (showDeadlinesCommentSection ? (
-      commentWrapper(comment)
-    ) : null);
+    return showDeadlinesCommentSection ? commentWrapper(comment) : null;
   }
 
   return null;

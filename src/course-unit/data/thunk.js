@@ -46,14 +46,18 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
       const courseSectionVerticalData = await getVerticalData(courseId);
       dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
       dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.SUCCESSFUL }));
-      dispatch(updateModel({
-        modelType: 'sequences',
-        model: courseSectionVerticalData.sequence || [],
-      }));
-      dispatch(updateModels({
-        modelType: 'units',
-        models: courseSectionVerticalData.units || [],
-      }));
+      dispatch(
+        updateModel({
+          modelType: 'sequences',
+          model: courseSectionVerticalData.sequence || [],
+        }),
+      );
+      dispatch(
+        updateModels({
+          modelType: 'units',
+          models: courseSectionVerticalData.units || [],
+        }),
+      );
       dispatch(fetchStaticFileNoticesSuccess(JSON.parse(localStorage.getItem('staticFileNotices'))));
       localStorage.removeItem('staticFileNotices');
       dispatch(fetchSequenceSuccess({ sequenceId }));
@@ -77,14 +81,18 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
           const courseSectionVerticalData = await getVerticalData(itemId);
           dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
           dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(updateModel({
-            modelType: 'sequences',
-            model: courseSectionVerticalData.sequence || [],
-          }));
-          dispatch(updateModels({
-            modelType: 'units',
-            models: courseSectionVerticalData.units || [],
-          }));
+          dispatch(
+            updateModel({
+              modelType: 'sequences',
+              model: courseSectionVerticalData.sequence || [],
+            }),
+          );
+          dispatch(
+            updateModels({
+              modelType: 'units',
+              models: courseSectionVerticalData.units || [],
+            }),
+          );
           dispatch(fetchSequenceSuccess({ sequenceId }));
           dispatch(hideProcessingNotification());
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
@@ -113,25 +121,21 @@ export function editCourseUnitVisibilityAndData(
     dispatch(showProcessingNotification(notification));
 
     try {
-      await handleCourseUnitVisibilityAndData(
-        itemId,
-        type,
-        isVisible,
-        isDiscussionEnabled,
-        groupAccess,
-      ).then(async (result) => {
-        if (result) {
-          if (callback) {
-            callback();
+      await handleCourseUnitVisibilityAndData(itemId, type, isVisible, isDiscussionEnabled, groupAccess).then(
+        async (result) => {
+          if (result) {
+            if (callback) {
+              callback();
+            }
+            const courseSectionVerticalData = await getVerticalData(blockId);
+            dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
+            const courseVerticalChildrenData = await getCourseContainerChildren(blockId);
+            dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
+            dispatch(hideProcessingNotification());
+            dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           }
-          const courseSectionVerticalData = await getVerticalData(blockId);
-          dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
-          const courseVerticalChildrenData = await getCourseContainerChildren(blockId);
-          dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
-          dispatch(hideProcessingNotification());
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-        }
-      });
+        },
+      );
     } catch (error) {
       dispatch(hideProcessingNotification());
       handleResponseErrors(error, dispatch, updateSavingStatus);
@@ -192,14 +196,9 @@ export function fetchCourseVerticalChildrenData(itemId, isSplitTestType, skipPag
     try {
       const courseVerticalChildrenData = await getCourseContainerChildren(itemId);
       if (isSplitTestType) {
-        const blockIds = courseVerticalChildrenData.children.map(child => child.blockId);
-        const childrenDataArray = await Promise.all(
-          blockIds.map(blockId => getCourseContainerChildren(blockId)),
-        );
-        const allChildren = childrenDataArray.reduce(
-          (acc, data) => acc.concat(data.children || []),
-          [],
-        );
+        const blockIds = courseVerticalChildrenData.children.map((child) => child.blockId);
+        const childrenDataArray = await Promise.all(blockIds.map((blockId) => getCourseContainerChildren(blockId)));
+        const allChildren = childrenDataArray.reduce((acc, data) => acc.concat(data.children || []), []);
         courseVerticalChildrenData.children = [...courseVerticalChildrenData.children, ...allChildren];
       }
       dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));

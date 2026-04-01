@@ -7,11 +7,7 @@ import messages from '../../messages';
 
 const ReportedContentEmailNotifications = () => {
   const intl = useIntl();
-  const {
-    handleChange,
-    handleBlur,
-    values,
-  } = useFormikContext();
+  const { handleChange, handleBlur, values } = useFormikContext();
 
   return (
     <div>

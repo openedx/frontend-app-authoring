@@ -6,9 +6,7 @@ import { useEffect, useMemo } from 'react';
 import { Tag } from '@openedx/paragon/icons';
 import { ContentTagsSnippet } from '@src/content-tags-drawer';
 import configureMessages from '@src/generic/configure-modal/messages';
-import {
-  Button, ButtonGroup, Tab, Tabs,
-} from '@openedx/paragon';
+import { Button, ButtonGroup, Tab, Tabs } from '@openedx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
@@ -35,30 +33,23 @@ const UnitInfoDetails = () => {
     throw new Error('Error: route is missing blockId.');
   }
 
-  const componentData: Record<string, number> = useMemo(() => (
-    // @ts-ignore
-    courseVerticalChildren.children.reduce<Record<string, number>>(
-      (acc, { blockType }) => {
+  const componentData: Record<string, number> = useMemo(
+    () =>
+      // @ts-ignore
+      courseVerticalChildren.children.reduce<Record<string, number>>((acc, { blockType }) => {
         acc[blockType] = (acc[blockType] ?? 0) + 1;
         return acc;
-      },
-      {},
-    )
-  ), [courseVerticalChildren.children]);
+      }, {}),
+    [courseVerticalChildren.children],
+  );
 
   return (
     <SidebarContent>
       <PublishControls blockId={blockId} hideCopyButton />
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarSectionSummary)}
-        icon={getItemIcon('unit')}
-      >
+      <SidebarSection title={intl.formatMessage(messages.sidebarSectionSummary)} icon={getItemIcon('unit')}>
         {componentData && <ComponentCountSnippet componentData={componentData} />}
       </SidebarSection>
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarSectionTaxonomies)}
-        icon={Tag}
-      >
+      <SidebarSection title={intl.formatMessage(messages.sidebarSectionTaxonomies)} icon={Tag}>
         <ContentTagsSnippet contentId={blockId} />
       </SidebarSection>
     </SidebarContent>
@@ -74,12 +65,7 @@ const UnitInfoSettings = () => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const { sendMessageToIframe } = useIframe();
-  const {
-    id,
-    visibilityState,
-    discussionEnabled,
-    userPartitionInfo,
-  } = useSelector(getCourseUnitData);
+  const { id, visibilityState, discussionEnabled, userPartitionInfo } = useSelector(getCourseUnitData);
 
   const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
 
@@ -89,22 +75,24 @@ const UnitInfoSettings = () => {
     isDiscussionEnabled: boolean,
   ) => {
     // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-    await dispatch(editCourseUnitVisibilityAndData(
-      id,
-      PUBLISH_TYPES.republish,
-      isVisible,
-      groupAccess,
-      isDiscussionEnabled,
-      () => sendMessageToIframe(messageTypes.refreshXBlock, null),
-      id,
-    ));
+    await dispatch(
+      editCourseUnitVisibilityAndData(
+        id,
+        PUBLISH_TYPES.republish,
+        isVisible,
+        groupAccess,
+        isDiscussionEnabled,
+        () => sendMessageToIframe(messageTypes.refreshXBlock, null),
+        id,
+      ),
+    );
   };
 
   const handleSaveGroups = async (data, { resetForm }) => {
     const groupAccess = {};
     if (data.selectedPartitionIndex >= 0) {
       const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
-      groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
+      groupAccess[partitionId] = data.selectedGroups.map((g) => parseInt(g, 10));
     }
     await handleUpdate(visibleToStaffOnly, groupAccess, discussionEnabled);
     resetForm({ values: data });
@@ -113,28 +101,27 @@ const UnitInfoSettings = () => {
   /* istanbul ignore next */
   const getSelectedGroups = () => {
     if (userPartitionInfo?.selectedPartitionIndex >= 0) {
-      return userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]
-        ?.groups
-        .filter(({ selected }) => selected)
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-        .map(({ id }) => `${id}`)
-        || [];
+      return (
+        userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]?.groups
+          .filter(({ selected }) => selected)
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          .map(({ id }) => `${id}`) || []
+      );
     }
     return [];
   };
 
-  const initialValues = useMemo(() => (
-    {
+  const initialValues = useMemo(
+    () => ({
       selectedPartitionIndex: userPartitionInfo?.selectedPartitionIndex,
       selectedGroups: getSelectedGroups(),
-    }
-  ), [userPartitionInfo]);
+    }),
+    [userPartitionInfo],
+  );
 
   return (
     <SidebarContent>
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarInfoVisibilityTitle)}
-      >
+      <SidebarSection title={intl.formatMessage(messages.sidebarInfoVisibilityTitle)}>
         <ButtonGroup toggle>
           <Button
             variant={visibleToStaffOnly ? 'outline-primary' : 'primary'}
@@ -150,16 +137,9 @@ const UnitInfoSettings = () => {
           </Button>
         </ButtonGroup>
       </SidebarSection>
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarInfoAccessTitle)}
-      >
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSaveGroups}
-        >
-          {({
-            values, setFieldValue, dirty,
-          }) => (
+      <SidebarSection title={intl.formatMessage(messages.sidebarInfoAccessTitle)}>
+        <Formik initialValues={initialValues} onSubmit={handleSaveGroups}>
+          {({ values, setFieldValue, dirty }) => (
             <Form>
               <AccessEditComponent
                 selectedPartitionIndex={values.selectedPartitionIndex}
@@ -176,9 +156,7 @@ const UnitInfoSettings = () => {
           )}
         </Formik>
       </SidebarSection>
-      <SidebarSection
-        title={intl.formatMessage(configureMessages.discussionEnabledSectionTitle)}
-      >
+      <SidebarSection title={intl.formatMessage(configureMessages.discussionEnabledSectionTitle)}>
         <DiscussionEditComponent
           discussionEnabled={discussionEnabled}
           handleDiscussionChange={(e) => handleUpdate(visibleToStaffOnly, null, e.target.checked)}
@@ -194,10 +172,7 @@ const UnitInfoSettings = () => {
 export const UnitInfoSidebar = () => {
   const intl = useIntl();
   const currentItemData = useSelector(getCourseUnitData);
-  const {
-    currentTabKey,
-    setCurrentTabKey,
-  } = useUnitSidebarContext();
+  const { currentTabKey, setCurrentTabKey } = useUnitSidebarContext();
 
   useEffect(() => {
     // Set default Tab key
@@ -206,28 +181,14 @@ export const UnitInfoSidebar = () => {
 
   return (
     <>
-      <SidebarTitle
-        title={currentItemData.displayName}
-        icon={getItemIcon('unit')}
-      />
-      <Tabs
-        id="unit-info-sidebar-tabs"
-        className="my-2 mx-n3.5"
-        activeKey={currentTabKey}
-        onSelect={setCurrentTabKey}
-      >
-        <Tab
-          eventKey="details"
-          title={intl.formatMessage(messages.sidebarInfoDetailsTab)}
-        >
+      <SidebarTitle title={currentItemData.displayName} icon={getItemIcon('unit')} />
+      <Tabs id="unit-info-sidebar-tabs" className="my-2 mx-n3.5" activeKey={currentTabKey} onSelect={setCurrentTabKey}>
+        <Tab eventKey="details" title={intl.formatMessage(messages.sidebarInfoDetailsTab)}>
           <div className="mt-4">
             <UnitInfoDetails />
           </div>
         </Tab>
-        <Tab
-          eventKey="settings"
-          title={intl.formatMessage(messages.sidebarInfoSettingsTab)}
-        >
+        <Tab eventKey="settings" title={intl.formatMessage(messages.sidebarInfoSettingsTab)}>
           <div className="mt-4">
             <UnitInfoSettings />
           </div>

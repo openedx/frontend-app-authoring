@@ -1,6 +1,4 @@
-import {
-  useCallback, useEffect, useRef, useState,
-} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
@@ -41,16 +39,9 @@ import {
   getSequenceStatus,
   getStaticFileNotices,
 } from './data/selectors';
-import {
-  changeEditTitleFormOpen,
-  updateMovedXBlockParams,
-  updateQueryPendingStatus,
-} from './data/slice';
+import { changeEditTitleFormOpen, updateMovedXBlockParams, updateQueryPendingStatus } from './data/slice';
 
-export const useCourseUnit = ({
-  courseId,
-  blockId,
-}: { courseId: string, blockId: string }) => {
+export const useCourseUnit = ({ courseId, blockId }: { courseId: string; blockId: string }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { sendMessageToIframe } = useIframe();
@@ -79,10 +70,9 @@ export const useCourseUnit = ({
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
   const isUnitLegacyLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
   const isSplitTestType = unitCategory === COURSE_BLOCK_NAMES.splitTest.id;
-  const isProblemBankType = [
-    COURSE_BLOCK_NAMES.legacyLibraryContent.id,
-    COURSE_BLOCK_NAMES.itembank.id,
-  ].includes(unitCategory);
+  const isProblemBankType = [COURSE_BLOCK_NAMES.legacyLibraryContent.id, COURSE_BLOCK_NAMES.itembank.id].includes(
+    unitCategory,
+  );
 
   const headerNavigationsActions = {
     handleViewLive: () => {
@@ -101,15 +91,17 @@ export const useCourseUnit = ({
   };
 
   const handleConfigureSubmit = (variables: ConfigureUnitData & { closeModalFn?: () => void }) => {
-    dispatch(editCourseUnitVisibilityAndData(
-      variables.unitId,
-      PUBLISH_TYPES.republish,
-      variables.isVisibleToStaffOnly,
-      variables.groupAccess,
-      variables.discussionEnabled,
-      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: variables.unitId }),
-      blockId,
-    ));
+    dispatch(
+      editCourseUnitVisibilityAndData(
+        variables.unitId,
+        PUBLISH_TYPES.republish,
+        variables.isVisibleToStaffOnly,
+        variables.groupAccess,
+        variables.discussionEnabled,
+        () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: variables.unitId }),
+        blockId,
+      ),
+    );
     variables.closeModalFn?.();
   };
 
@@ -126,10 +118,13 @@ export const useCourseUnit = ({
       const path = `/course/${courseId}/container/${blockId}/${id}`;
       const options = { replace: true };
       if (searchParams.size) {
-        navigate({
-          pathname: path,
-          search: `?${searchParams}`,
-        }, options);
+        navigate(
+          {
+            pathname: path,
+            search: `?${searchParams}`,
+          },
+          options,
+        );
       } else {
         navigate(path, options);
       }
@@ -144,14 +139,11 @@ export const useCourseUnit = ({
       await dispatch(deleteUnitItemQuery(blockId, XBlockId, sendMessageToIframe));
     },
     handleDuplicate: (XBlockId: string) => {
-      dispatch(duplicateUnitItemQuery(
-        blockId,
-        XBlockId,
-        (courseKey: string, locator: string) => sendMessageToIframe(
-          messageTypes.completeXBlockDuplicating,
-          { courseKey, locator },
+      dispatch(
+        duplicateUnitItemQuery(blockId, XBlockId, (courseKey: string, locator: string) =>
+          sendMessageToIframe(messageTypes.completeXBlockDuplicating, { courseKey, locator }),
         ),
-      ));
+      );
     },
     handleUnlink: async (XBlockId: string) => {
       await unlinkDownstream({
@@ -164,20 +156,20 @@ export const useCourseUnit = ({
   };
 
   const handleRollbackMovedXBlock = () => {
-    const {
-      sourceLocator, targetParentLocator, title, currentParentLocator,
-    } = movedXBlockParams;
-    dispatch(patchUnitItemQuery({
-      sourceLocator,
-      targetParentLocator,
-      title,
-      currentParentLocator,
-      isMoving: false,
-      callbackFn: () => {
-        sendMessageToIframe(messageTypes.rollbackMovedXBlock, { locator: sourceLocator });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-    }));
+    const { sourceLocator, targetParentLocator, title, currentParentLocator } = movedXBlockParams;
+    dispatch(
+      patchUnitItemQuery({
+        sourceLocator,
+        targetParentLocator,
+        title,
+        currentParentLocator,
+        isMoving: false,
+        callbackFn: () => {
+          sendMessageToIframe(messageTypes.rollbackMovedXBlock, { locator: sourceLocator });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+      }),
+    );
   };
 
   const handleCloseXBlockMovedAlert = () => {
@@ -188,24 +180,27 @@ export const useCourseUnit = ({
     navigate(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
   };
 
-  const receiveMessage = useCallback(({ data }) => {
-    const { payload, type } = data;
+  const receiveMessage = useCallback(
+    ({ data }) => {
+      const { payload, type } = data;
 
-    if (type === messageTypes.handleViewXBlockContent) {
-      const { usageId } = payload;
-      navigate(`/course/${courseId}/container/${usageId}/${sequenceId}`);
-    }
+      if (type === messageTypes.handleViewXBlockContent) {
+        const { usageId } = payload;
+        navigate(`/course/${courseId}/container/${usageId}/${sequenceId}`);
+      }
 
-    if (type === messageTypes.handleViewGroupConfigurations) {
-      const { usageId } = payload;
-      const groupId = usageId.split('#').pop();
-      navigate(`/course/${courseId}/group_configurations#${groupId}`);
-    }
+      if (type === messageTypes.handleViewGroupConfigurations) {
+        const { usageId } = payload;
+        const groupId = usageId.split('#').pop();
+        navigate(`/course/${courseId}/group_configurations#${groupId}`);
+      }
 
-    if (type === messageTypes.showComponentTemplates) {
-      setAddComponentTemplateData(camelCaseObject(payload));
-    }
-  }, [courseId, sequenceId]);
+      if (type === messageTypes.showComponentTemplates) {
+        setAddComponentTemplateData(camelCaseObject(payload));
+      }
+    },
+    [courseId, sequenceId],
+  );
 
   useEventListener('message', receiveMessage);
 
@@ -294,10 +289,9 @@ export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string })
   const { sendMessageToIframe } = useIframe();
 
   // oxlint-disable typescript-eslint(await-thenable)
-  return async (body: object, callback?: (args: { courseKey: string, locator: string }) => void) => (
+  return async (body: object, callback?: (args: { courseKey: string; locator: string }) => void) =>
     // eslint-disable-next-line @typescript-eslint/return-await
-    await dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
-  );
+    await dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe));
 };
 
 /**
@@ -327,14 +321,17 @@ export const useScrollToLastPosition = (storageKey = 'createXBlockLastYPosition'
     }
   }, [storageKey]);
 
-  const handleMessage = useCallback((event) => {
-    if (event.data?.type === iframeMessageTypes.resize) {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+  const handleMessage = useCallback(
+    (event) => {
+      if (event.data?.type === iframeMessageTypes.resize) {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(scrollToLastPosition, 1000);
       }
-      timeoutRef.current = setTimeout(scrollToLastPosition, 1000);
-    }
-  }, [scrollToLastPosition]);
+    },
+    [scrollToLastPosition],
+  );
 
   useEffect(() => {
     if (!hasLastPosition) {

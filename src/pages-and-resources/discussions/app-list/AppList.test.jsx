@@ -1,8 +1,5 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
-import {
-  render, screen, within, queryAllByRole, waitFor, fireEvent,
-  initializeMocks,
-} from '@src/testUtils';
+import { render, screen, within, queryAllByRole, waitFor, fireEvent, initializeMocks } from '@src/testUtils';
 import { act } from 'react-dom/test-utils';
 import { breakpoints } from '@openedx/paragon';
 import userEvent from '@testing-library/user-event';
@@ -12,11 +9,7 @@ import { executeThunk } from '@src/utils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from '../data/api';
 import { fetchDiscussionSettings, fetchProviders } from '../data/thunks';
-import {
-  generateProvidersApiResponse,
-  piazzaApiResponse,
-  legacyApiResponse,
-} from '../factories/mockApiResponses';
+import { generateProvidersApiResponse, piazzaApiResponse, legacyApiResponse } from '../factories/mockApiResponses';
 import AppList from './AppList';
 import messages from './messages';
 
@@ -26,8 +19,7 @@ let store;
 let container;
 
 const mockStore = async (mockResponse, provider) => {
-  axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
-    .reply(200, generateProvidersApiResponse(false, provider));
+  axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false, provider));
   axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, mockResponse);
   await executeThunk(fetchProviders(courseId), store.dispatch);
   await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
@@ -114,8 +106,9 @@ describe('AppList', () => {
 
     test('hides the FeaturesList at desktop sizes', async () => {
       renderComponent();
-      await waitFor(() => expect(screen.queryByText(messages['supportedFeatureList-mobile-show'].defaultMessage))
-        .not.toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.queryByText(messages['supportedFeatureList-mobile-show'].defaultMessage)).not.toBeInTheDocument(),
+      );
     });
 
     test('displays the FeaturesList at mobile sizes', async () => {
@@ -123,8 +116,9 @@ describe('AppList', () => {
 
       await waitFor(async () => {
         const appCount = await store.getState().discussions.appIds.length;
-        expect(screen.queryAllByText(messages['supportedFeatureList-mobile-show'].defaultMessage))
-          .toHaveLength(appCount);
+        expect(screen.queryAllByText(messages['supportedFeatureList-mobile-show'].defaultMessage)).toHaveLength(
+          appCount,
+        );
       });
     });
 

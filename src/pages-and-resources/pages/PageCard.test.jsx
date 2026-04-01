@@ -1,12 +1,7 @@
 import { getConfig } from '@edx/frontend-platform';
 
 import { getApiWaffleFlagsUrl } from '@src/data/api';
-import {
-  initializeMocks,
-  screen,
-  render,
-  waitFor,
-} from '@src/testUtils';
+import { initializeMocks, screen, render, waitFor } from '@src/testUtils';
 
 import PageGrid from './PageGrid';
 
@@ -47,12 +42,10 @@ describe('LiveSettings', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {
-        useNewCertificatesPage: true,
-        useNewCourseOutlinePage: true,
-      });
+    axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, {
+      useNewCertificatesPage: true,
+      useNewCourseOutlinePage: true,
+    });
   });
 
   it('should render three cards', async () => {

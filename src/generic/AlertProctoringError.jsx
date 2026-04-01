@@ -19,17 +19,19 @@ const AlertProctoringError = ({ proctoringErrorsData, children, ...props }) => (
 AlertProctoringError.propTypes = {
   variant: PropTypes.string,
   children: PropTypes.node,
-  proctoringErrorsData: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string,
-    message: PropTypes.string,
-    model: PropTypes.shape({
-      deprecated: PropTypes.bool,
-      displayName: PropTypes.string,
-      help: PropTypes.string,
-      hideOnEnabledPublisher: PropTypes.bool,
+  proctoringErrorsData: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string,
+      message: PropTypes.string,
+      model: PropTypes.shape({
+        deprecated: PropTypes.bool,
+        displayName: PropTypes.string,
+        help: PropTypes.string,
+        hideOnEnabledPublisher: PropTypes.bool,
+      }),
+      value: PropTypes.string,
     }),
-    value: PropTypes.string,
-  })).isRequired,
+  ).isRequired,
 };
 
 AlertProctoringError.defaultProps = {

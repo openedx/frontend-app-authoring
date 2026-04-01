@@ -47,7 +47,8 @@ const messages = defineMessages({
   },
   studentViewExplanationBody: {
     id: 'course-authoring.custom-pages.studentViewExplanation.body',
-    defaultMessage: 'Students see the default and custom pages at the top of your course and use the links to navigate.',
+    defaultMessage:
+      'Students see the default and custom pages at the top of your course and use the links to navigate.',
   },
   studentViewExampleButton: {
     id: 'course-authoring.custom-pages.studentViewExampleButton.label',
@@ -59,7 +60,8 @@ const messages = defineMessages({
   },
   studentViewModalBody: {
     id: 'course-authoring.custom-pages.studentViewModal.Body',
-    defaultMessage: "Pages appear in your course's top navigation bar. The default pages (Home, Course, Discussion, Wiki, and Progress) are followed by textbooks and custom pages.",
+    defaultMessage:
+      "Pages appear in your course's top navigation bar. The default pages (Home, Course, Discussion, Wiki, and Progress) are followed by textbooks and custom pages.",
   },
   newPageTitle: {
     id: 'course-authoring.custom-pages.page.newPage.title',

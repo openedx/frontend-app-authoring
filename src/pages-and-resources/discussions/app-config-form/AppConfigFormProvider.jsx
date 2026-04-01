@@ -7,13 +7,7 @@ const AppConfigFormProvider = ({ children }) => {
   const formRef = React.createRef();
   const contextValue = useMemo(() => ({ formRef }), []);
 
-  return (
-    <AppConfigFormContext.Provider
-      value={contextValue}
-    >
-      {children}
-    </AppConfigFormContext.Provider>
-  );
+  return <AppConfigFormContext.Provider value={contextValue}>{children}</AppConfigFormContext.Provider>;
 };
 
 AppConfigFormProvider.propTypes = {

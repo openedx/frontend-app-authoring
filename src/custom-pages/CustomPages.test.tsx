@@ -1,12 +1,6 @@
 import ReactDOM from 'react-dom';
 
-import {
-  initializeMocks,
-  fireEvent,
-  screen,
-  act,
-  render,
-} from '@src/testUtils';
+import { initializeMocks, fireEvent, screen, act, render } from '@src/testUtils';
 import { executeThunk } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
@@ -19,18 +13,14 @@ import {
   courseId,
 } from './factories/mockApiResponses';
 
-import {
-  addSingleCustomPage,
-  fetchCustomPages,
-  updatePageOrder,
-} from './data/thunks';
+import { addSingleCustomPage, fetchCustomPages, updatePageOrder } from './data/thunks';
 import { getApiBaseUrl, getTabHandlerUrl } from './data/api';
 import messages from './messages';
 
 let axiosMock;
 let store;
 // @ts-ignore
-ReactDOM.createPortal = jest.fn(node => node);
+ReactDOM.createPortal = jest.fn((node) => node);
 
 const renderComponent = () => {
   render(
@@ -59,12 +49,10 @@ describe('CustomPages', () => {
     const mocks = initializeMocks();
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {
-        useNewCertificatesPage: true,
-        useNewCourseOutlinePage: true,
-      });
+    axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, {
+      useNewCertificatesPage: true,
+      useNewCourseOutlinePage: true,
+    });
   });
   it('should ', async () => {
     renderComponent();
@@ -88,7 +76,9 @@ describe('CustomPages', () => {
     await mockStore(RequestStatus.SUCCESSFUL);
     const addButton = screen.getByTestId('body-add-button');
     expect(addButton).toBeVisible();
-    await act(async () => { fireEvent.click(addButton); });
+    await act(async () => {
+      fireEvent.click(addButton);
+    });
     const addStatus = store.getState().customPages.addingStatus;
     expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
   });

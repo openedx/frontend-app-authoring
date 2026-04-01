@@ -21,7 +21,7 @@ export function useProblemEditorContext() {
   return ctx;
 }
 
-export const ProblemEditorContextProvider: React.FC<{ children: React.ReactNode; } & ProblemEditorContextInit> = ({
+export const ProblemEditorContextProvider: React.FC<{ children: React.ReactNode } & ProblemEditorContextInit> = ({
   children,
   editorRef = null,
 }) => {

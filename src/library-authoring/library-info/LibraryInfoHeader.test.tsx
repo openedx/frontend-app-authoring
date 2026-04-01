@@ -1,12 +1,6 @@
 import type MockAdapter from 'axios-mock-adapter';
 
-import {
-  fireEvent,
-  render as baseRender,
-  screen,
-  waitFor,
-  initializeMocks,
-} from '@src/testUtils';
+import { fireEvent, render as baseRender, screen, waitFor, initializeMocks } from '@src/testUtils';
 
 import { mockContentLibrary } from '../data/api.mocks';
 import { getContentLibraryApiUrl } from '../data/api';
@@ -15,9 +9,10 @@ import LibraryInfoHeader from './LibraryInfoHeader';
 
 const { libraryId: mockLibraryId, libraryIdReadOnly, libraryData } = mockContentLibrary;
 
-const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryInfoHeader />, {
-  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{ children }</LibraryProvider>,
-});
+const render = (libraryId: string = mockLibraryId) =>
+  baseRender(<LibraryInfoHeader />, {
+    extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>,
+  });
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;

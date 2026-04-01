@@ -1,11 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  initializeMocks,
-} from '@src/testUtils';
+import { render, screen, fireEvent, waitFor, initializeMocks } from '@src/testUtils';
 
 import { EXAMPLE_USER_EMAIL } from '../constants';
 import AddUserForm from './AddUserForm';
@@ -23,12 +17,7 @@ jest.mock('react-router-dom', () => ({
 const onSubmitMock = jest.fn();
 const onCancelMock = jest.fn();
 
-const renderComponent = () => render(
-  <AddUserForm
-    onSubmit={onSubmitMock}
-    onCancel={onCancelMock}
-  />,
-);
+const renderComponent = () => render(<AddUserForm onSubmit={onSubmitMock} onCancel={onCancelMock} />);
 
 describe('<AddUserForm />', () => {
   beforeEach(() => {
@@ -40,8 +29,9 @@ describe('<AddUserForm />', () => {
 
     expect(screen.getByText(messages.formTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.formLabel.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(messages.formPlaceholder.defaultMessage
-      .replace('{email}', EXAMPLE_USER_EMAIL))).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(messages.formPlaceholder.defaultMessage.replace('{email}', EXAMPLE_USER_EMAIL)),
+    ).toBeInTheDocument();
     expect(screen.getByText(messages.cancelButton.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.addUserButton.defaultMessage)).toBeInTheDocument();
   });
@@ -50,7 +40,9 @@ describe('<AddUserForm />', () => {
     const user = userEvent.setup();
     renderComponent();
 
-    const emailInput = screen.getByPlaceholderText(messages.formPlaceholder.defaultMessage.replace('{email}', EXAMPLE_USER_EMAIL));
+    const emailInput = screen.getByPlaceholderText(
+      messages.formPlaceholder.defaultMessage.replace('{email}', EXAMPLE_USER_EMAIL),
+    );
     const addUserButton = screen.getByRole('button', { name: messages.addUserButton.defaultMessage });
 
     fireEvent.change(emailInput, { target: { value: EXAMPLE_USER_EMAIL } });

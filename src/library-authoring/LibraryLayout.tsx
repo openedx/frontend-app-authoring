@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Outlet,
-  Route,
-  Routes,
-  useParams,
-} from 'react-router-dom';
+import { Outlet, Route, Routes, useParams } from 'react-router-dom';
 
 import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryBackupPage } from './backup-restore';
@@ -24,9 +19,7 @@ import { ImportStepperPage } from './import-course/stepper/ImportStepperPage';
 import { ImportDetailsPage } from './import-course/ImportDetailsPage';
 
 const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const {
-    libraryId, collectionId, containerId,
-  } = useParams();
+  const { libraryId, collectionId, containerId } = useParams();
 
   if (libraryId === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -36,9 +29,9 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
   return (
     <LibraryProvider
       /** NOTE: We need to pass the collectionId or containerId as key to the LibraryProvider to force a re-render
-        * when we navigate to a collection or container page. This is necessary to make the back/forward navigation
-        * work correctly, as the LibraryProvider needs to rebuild the state from the URL.
-        * */
+       * when we navigate to a collection or container page. This is necessary to make the back/forward navigation
+       * work correctly, as the LibraryProvider needs to rebuild the state from the URL.
+       * */
       key={collectionId || containerId}
       libraryId={libraryId}
       /** NOTE: The component picker modal to use. We need to pass it as a reference instead of
@@ -61,52 +54,19 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
 const LibraryLayout = () => (
   <Routes>
     <Route element={<LibraryLayoutWrapper />}>
-      {[
-        ROUTES.HOME,
-        ROUTES.COMPONENTS,
-        ROUTES.COLLECTIONS,
-        ROUTES.UNITS,
-        ROUTES.SECTIONS,
-        ROUTES.SUBSECTIONS,
-      ].map((route) => (
-        <Route
-          key={route}
-          path={route}
-          Component={LibraryAuthoringPage}
-        />
-      ))}
-      <Route
-        path={ROUTES.COLLECTION}
-        Component={LibraryCollectionPage}
-      />
-      <Route
-        path={ROUTES.SECTION}
-        Component={LibrarySectionPage}
-      />
-      <Route
-        path={ROUTES.SUBSECTION}
-        Component={LibrarySubsectionPage}
-      />
-      <Route
-        path={ROUTES.UNIT}
-        Component={LibraryUnitPage}
-      />
-      <Route
-        path={ROUTES.BACKUP}
-        Component={LibraryBackupPage}
-      />
-      <Route
-        path={ROUTES.IMPORT}
-        Component={CourseImportHomePage}
-      />
-      <Route
-        path={ROUTES.IMPORT_COURSE}
-        Component={ImportStepperPage}
-      />
-      <Route
-        path={ROUTES.IMPORT_COURSE_DETAILS}
-        Component={ImportDetailsPage}
-      />
+      {[ROUTES.HOME, ROUTES.COMPONENTS, ROUTES.COLLECTIONS, ROUTES.UNITS, ROUTES.SECTIONS, ROUTES.SUBSECTIONS].map(
+        (route) => (
+          <Route key={route} path={route} Component={LibraryAuthoringPage} />
+        ),
+      )}
+      <Route path={ROUTES.COLLECTION} Component={LibraryCollectionPage} />
+      <Route path={ROUTES.SECTION} Component={LibrarySectionPage} />
+      <Route path={ROUTES.SUBSECTION} Component={LibrarySubsectionPage} />
+      <Route path={ROUTES.UNIT} Component={LibraryUnitPage} />
+      <Route path={ROUTES.BACKUP} Component={LibraryBackupPage} />
+      <Route path={ROUTES.IMPORT} Component={CourseImportHomePage} />
+      <Route path={ROUTES.IMPORT_COURSE} Component={ImportStepperPage} />
+      <Route path={ROUTES.IMPORT_COURSE_DETAILS} Component={ImportDetailsPage} />
     </Route>
   </Routes>
 );

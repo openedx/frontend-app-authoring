@@ -17,12 +17,7 @@ export default {
   due: null,
   relativeWeeksDue: null,
   format: null,
-  courseGraders: [
-    'Homework',
-    'Lab',
-    'Midterm Exam',
-    'Final Exam',
-  ],
+  courseGraders: ['Homework', 'Lab', 'Midterm Exam', 'Final Exam'],
   hasChanges: true,
   actions: {
     deletable: true,

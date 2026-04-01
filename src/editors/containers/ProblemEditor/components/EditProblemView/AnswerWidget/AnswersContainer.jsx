@@ -26,27 +26,16 @@ const AnswersContainer = ({ problemType }) => {
   return (
     <div className="answers-container border border-light-700 rounded py-4 pl-4 pr-3">
       {answers.map((answer) => (
-        <AnswerOption
-          key={answer.id}
-          hasSingleAnswer={hasSingleAnswer}
-          answer={answer}
-        />
+        <AnswerOption key={answer.id} hasSingleAnswer={hasSingleAnswer} answer={answer} />
       ))}
 
       {problemType !== ProblemTypeKeys.NUMERIC ? (
-        <Button
-          variant="add"
-          onClick={addAnswer}
-        >
+        <Button variant="add" onClick={addAnswer}>
           <FormattedMessage {...messages.addAnswerButtonText} />
         </Button>
       ) : (
         <Dropdown>
-          <Dropdown.Toggle
-            id="Add-Answer-Or-Answer-Range"
-            variant="tertiary"
-            className="pl-0"
-          >
+          <Dropdown.Toggle id="Add-Answer-Or-Answer-Range" variant="tertiary" className="pl-0">
             <Icon src={Add} />
             <FormattedMessage {...messages.addAnswerButtonText} />
           </Dropdown.Toggle>

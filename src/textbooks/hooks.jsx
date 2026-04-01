@@ -6,18 +6,8 @@ import { useToggle } from '@openedx/paragon';
 
 import { updateSavingStatus } from './data/slice';
 import { RequestStatus } from '../data/constants';
-import {
-  getTextbooksData,
-  getLoadingStatus,
-  getSavingStatus,
-  getErrorMessage,
-} from './data/selectors';
-import {
-  createTextbookQuery,
-  fetchTextbooksQuery,
-  editTextbookQuery,
-  deleteTextbookQuery,
-} from './data/thunk';
+import { getTextbooksData, getLoadingStatus, getSavingStatus, getErrorMessage } from './data/selectors';
+import { createTextbookQuery, fetchTextbooksQuery, editTextbookQuery, deleteTextbookQuery } from './data/thunk';
 import messages from './messages';
 
 const useTextbooks = (courseId, waffleFlags) => {

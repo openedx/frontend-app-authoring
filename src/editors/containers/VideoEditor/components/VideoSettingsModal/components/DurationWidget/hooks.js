@@ -23,40 +23,33 @@ export const durationWidget = ({ duration, updateField }) => {
 
   return {
     unsavedDuration,
-    onBlur: (index) => (
-      (e) => module.updateDuration({
+    onBlur: (index) => (e) =>
+      module.updateDuration({
         duration,
         setDuration,
         unsavedDuration,
         setUnsavedDuration,
         index,
         inputString: e.target.value,
-      })
-    ),
-    onChange: (index) => (
-      (e) => setUnsavedDuration(module.onDurationChange(unsavedDuration, index, e.target.value))
-    ),
-    onKeyDown: (index) => (
-      (e) => setUnsavedDuration(module.onDurationKeyDown(unsavedDuration, index, e))
-    ),
+      }),
+    onChange: (index) => (e) => setUnsavedDuration(module.onDurationChange(unsavedDuration, index, e.target.value)),
+    onKeyDown: (index) => (e) => setUnsavedDuration(module.onDurationKeyDown(unsavedDuration, index, e)),
     getTotalLabel: ({ durationString, subtitle, intl }) => {
       if (!durationString.stopTime) {
         if (!durationString.startTime) {
           return intl.formatMessage(messages.fullVideoLength);
         }
         if (subtitle) {
-          return intl.formatMessage(
-            messages.startsAt,
-            { startTime: module.durationStringFromValue(durationString.startTime) },
-          );
+          return intl.formatMessage(messages.startsAt, {
+            startTime: module.durationStringFromValue(durationString.startTime),
+          });
         }
         return null;
       }
       const total = durationString.stopTime - (durationString.startTime || 0);
-      return intl.formatMessage(
-        subtitle ? messages.custom : messages.total,
-        { total: module.durationStringFromValue(total) },
-      );
+      return intl.formatMessage(subtitle ? messages.custom : messages.total, {
+        total: module.durationStringFromValue(total),
+      });
     },
   };
 };
@@ -104,14 +97,7 @@ export const durationStringFromValue = (value) => {
  * @return {func} - callback to update duration unsavedDurationly and in redux
  *   updateDuration(args)(index, durationString)
  */
-export const updateDuration = ({
-  duration,
-  unsavedDuration,
-  setDuration,
-  setUnsavedDuration,
-  index,
-  inputString,
-}) => {
+export const updateDuration = ({ duration, unsavedDuration, setDuration, setUnsavedDuration, index, inputString }) => {
   let newDurationString = inputString;
   let newValue = module.valueFromDuration(newDurationString);
   // maxTime is 23:59:59 or 86399 seconds
@@ -142,12 +128,12 @@ export const updateDuration = ({
     newValue = 1000;
   }
   // stopTime must be at least 1 second after startTime, except 0 means no custom stopTime
-  if (index === 'stopTime' && newValue > 0 && newValue < (duration.startTime + 1000)) {
+  if (index === 'stopTime' && newValue > 0 && newValue < duration.startTime + 1000) {
     newValue = duration.startTime + 1000;
   }
   // startTime must be at least 1 second before stopTime, except when stopTime is less than a second
   // (stopTime should only be less than a second if it's zero, but we're being paranoid)
-  if (index === 'startTime' && duration.stopTime >= 1000 && newValue > (duration.stopTime - 1000)) {
+  if (index === 'startTime' && duration.stopTime >= 1000 && newValue > duration.stopTime - 1000) {
     newValue = duration.stopTime - 1000;
   }
   newDurationString = module.durationStringFromValue(newValue);
@@ -223,12 +209,12 @@ export const valueFromDuration = (duration) => {
   if (!matches) {
     return 0;
   }
-  matches = matches.slice(1).filter(v => v !== undefined);
+  matches = matches.slice(1).filter((v) => v !== undefined);
   if (matches.length < 3) {
     for (let i = 0; i <= 3 - matches.length; i++) {
       matches.unshift(0);
     }
   }
-  const [hours, minutes, seconds] = matches.map(x => parseInt(x, 10) || 0);
+  const [hours, minutes, seconds] = matches.map((x) => parseInt(x, 10) || 0);
   return ((hours * 60 + minutes) * 60 + seconds) * 1000;
 };

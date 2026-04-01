@@ -19,14 +19,12 @@ export const useVideoList = ({ fetchVideos }) => {
   return videos;
 };
 
-export const useOnSelectClick = ({ setSelection, videos }) => () => setSelection(videos[0]);
+export const useOnSelectClick =
+  ({ setSelection, videos }) =>
+  () =>
+    setSelection(videos[0]);
 
-export const SelectVideoModal = ({
-  fetchVideos,
-  isOpen,
-  close,
-  setSelection,
-}) => {
+export const SelectVideoModal = ({ fetchVideos, isOpen, close, setSelection }) => {
   const intl = useIntl();
   const videos = useVideoList({ fetchVideos });
   const onSelectClick = useOnSelectClick({
@@ -39,14 +37,14 @@ export const SelectVideoModal = ({
       isOpen={isOpen}
       close={close}
       title={intl.formatMessage(messages.selectVideoModalTitle)}
-      confirmAction={<Button variant="primary" onClick={onSelectClick}>Next</Button>}
+      confirmAction={
+        <Button variant="primary" onClick={onSelectClick}>
+          Next
+        </Button>
+      }
     >
       {/* Content selection */}
-      {videos && (videos.map(
-        img => (
-          <div key={img.externalUrl}>{img.externalUrl}</div>
-        ),
-      ))}
+      {videos && videos.map((img) => <div key={img.externalUrl}>{img.externalUrl}</div>)}
     </BaseModal>
   );
 };

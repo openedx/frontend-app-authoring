@@ -1,25 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Alert,
-  Button,
-  Hyperlink,
-  ModalDialog,
-  Scrollable,
-} from '@openedx/paragon';
+import { ActionRow, Alert, Button, Hyperlink, ModalDialog, Scrollable } from '@openedx/paragon';
 import { WarningFilled } from '@openedx/paragon/icons';
 import messages from '../messages';
 import UploadProgressList from './UploadProgressList';
 import { RequestStatus } from '../../../data/constants';
 
-const UploadModal = ({
-  isUploadTrackerOpen,
-  handleUploadCancel,
-  currentUploadingIdsRef,
-  addVideoStatus,
-}) => {
+const UploadModal = ({ isUploadTrackerOpen, handleUploadCancel, currentUploadingIdsRef, addVideoStatus }) => {
   const intl = useIntl();
   const videosPagePath = '';
   const { uploadData, uploadCount } = currentUploadingIdsRef;
@@ -38,18 +26,11 @@ const UploadModal = ({
         <ModalDialog.Title className="mb-3">
           {intl.formatMessage(messages.videoUploadTrackerModalTitle)}
         </ModalDialog.Title>
-        <Alert
-          variant="warning"
-          icon={WarningFilled}
-        >
-          <Alert.Heading>
-            {intl.formatMessage(messages.videoUploadTrackerAlertTitle)}
-          </Alert.Heading>
+        <Alert variant="warning" icon={WarningFilled}>
+          <Alert.Heading>{intl.formatMessage(messages.videoUploadTrackerAlertTitle)}</Alert.Heading>
           {intl.formatMessage(messages.videoUploadTrackerAlertBodyMessage)}
           <div className="mt-3">
-            <span className="font-weight-bold">
-              {intl.formatMessage(messages.videoUploadTrackerAlertEditMessage)}
-            </span>
+            <span className="font-weight-bold">{intl.formatMessage(messages.videoUploadTrackerAlertEditMessage)}</span>
             <Hyperlink
               className="ml-2"
               destination={videosPagePath}
@@ -59,10 +40,7 @@ const UploadModal = ({
           </div>
         </Alert>
         <div className="my-4 text-primary-500">
-          {intl.formatMessage(
-            messages.videoUploadTrackerModalBody,
-            { uploadCount },
-          )}
+          {intl.formatMessage(messages.videoUploadTrackerModalBody, { uploadCount })}
         </div>
       </ModalDialog.Header>
       <Scrollable>

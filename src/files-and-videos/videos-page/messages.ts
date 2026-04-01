@@ -78,7 +78,8 @@ const messages = defineMessages({
   },
   videoUploadTrackerModalBody: {
     id: 'course-authoring.files-and-videos.video-upload-tracker-modal.body.message',
-    defaultMessage: 'The following ({uploadCount}) {uploadCount, plural, one {video is} other {videos are}} being uploaded:',
+    defaultMessage:
+      'The following ({uploadCount}) {uploadCount, plural, one {video is} other {videos are}} being uploaded:',
     description: 'Message for upload tracker modal body',
   },
   videoUploadTrackerAlertCancelLabel: {

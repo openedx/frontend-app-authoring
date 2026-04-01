@@ -1,9 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Container,
-  Layout,
-} from '@openedx/paragon';
+import { Button, Container, Layout } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -84,45 +80,39 @@ const CourseTeam = () => {
                   <SubHeader
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
-                    headerActions={isAllowActions ? (
-                      <Button
-                        variant="primary"
-                        iconBefore={IconAdd}
-                        size="sm"
-                        onClick={openForm}
-                        disabled={isFormVisible}
-                      >
-                        {intl.formatMessage(messages.addNewMemberButton)}
-                      </Button>
-                    ) : undefined}
+                    headerActions={
+                      isAllowActions ? (
+                        <Button
+                          variant="primary"
+                          iconBefore={IconAdd}
+                          size="sm"
+                          onClick={openForm}
+                          disabled={isFormVisible}
+                        >
+                          {intl.formatMessage(messages.addNewMemberButton)}
+                        </Button>
+                      ) : undefined
+                    }
                   />
                   <section className="course-team-section">
                     <div className="members-container">
-                      {isFormVisible && (
-                        <AddUserForm
-                          onSubmit={handleAddUserSubmit}
-                          onCancel={hideForm}
-                        />
-                      )}
-                      {courseTeamUsers.length ? courseTeamUsers.map(({ username, role, email }) => (
-                        <CourseTeamMember
-                          key={email}
-                          userName={username}
-                          role={role}
-                          email={email}
-                          currentUserEmail={currentUserEmail || ''}
-                          isAllowActions={isAllowActions}
-                          isHideActions={role === USER_ROLES.admin && isSingleAdmin}
-                          onChangeRole={handleChangeRoleUserSubmit}
-                          onDelete={handleOpenDeleteModal}
-                        />
-                      )) : null}
-                      {isShowAddTeamMember && (
-                        <AddTeamMember
-                          onFormOpen={openForm}
-                          isButtonDisable={isFormVisible}
-                        />
-                      )}
+                      {isFormVisible && <AddUserForm onSubmit={handleAddUserSubmit} onCancel={hideForm} />}
+                      {courseTeamUsers.length
+                        ? courseTeamUsers.map(({ username, role, email }) => (
+                            <CourseTeamMember
+                              key={email}
+                              userName={username}
+                              role={role}
+                              email={email}
+                              currentUserEmail={currentUserEmail || ''}
+                              isAllowActions={isAllowActions}
+                              isHideActions={role === USER_ROLES.admin && isSingleAdmin}
+                              onChangeRole={handleChangeRoleUserSubmit}
+                              onDelete={handleOpenDeleteModal}
+                            />
+                          ))
+                        : null}
+                      {isShowAddTeamMember && <AddTeamMember onFormOpen={openForm} isButtonDisable={isFormVisible} />}
                     </div>
                     {isShowInitialSidebar && (
                       <div className="sidebar-container">
@@ -147,12 +137,7 @@ const CourseTeam = () => {
               </article>
             </Layout.Element>
             <Layout.Element>
-              {isShowUserFilledSidebar && (
-                <CourseTeamSideBar
-                  courseId={courseId}
-                  isOwnershipHint={isOwnershipHint}
-                />
-              )}
+              {isShowUserFilledSidebar && <CourseTeamSideBar courseId={courseId} isOwnershipHint={isOwnershipHint} />}
             </Layout.Element>
           </Layout>
         </section>

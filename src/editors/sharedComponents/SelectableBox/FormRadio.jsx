@@ -24,9 +24,7 @@ const RadioControl = React.forwardRef((props, ref) => {
     }
   };
 
-  return (
-    <input {...{ ...radioProps, onChange }} type="radio" ref={ref} />
-  );
+  return <input {...{ ...radioProps, onChange }} type="radio" ref={ref} />;
 });
 
 RadioControl.propTypes = {
@@ -37,42 +35,25 @@ RadioControl.defaultProps = {
   className: undefined,
 };
 
-const FormRadio = React.forwardRef(({
-  children,
-  className,
-  controlClassName,
-  labelClassName,
-  description,
-  isInvalid,
-  isValid,
-  ...props
-}, ref) => (
-  <FormGroupContextProvider
-    controlId={props.id}
-    isInvalid={isInvalid}
-    isValid={isValid}
-  >
-    <div
-      className={classNames('pgn__form-radio', className, {
-        'pgn__form-control-valid': isValid,
-        'pgn__form-control-invalid': isInvalid,
-        'pgn__form-control-disabled': props.disabled,
-      })}
-    >
-      <RadioControl ref={ref} className={controlClassName} {...props} />
-      <div>
-        <FormLabel className={labelClassName}>
-          {children}
-        </FormLabel>
-        {description && (
-          <FormControlFeedback hasIcon={false}>
-            {description}
-          </FormControlFeedback>
-        )}
+const FormRadio = React.forwardRef(
+  ({ children, className, controlClassName, labelClassName, description, isInvalid, isValid, ...props }, ref) => (
+    <FormGroupContextProvider controlId={props.id} isInvalid={isInvalid} isValid={isValid}>
+      <div
+        className={classNames('pgn__form-radio', className, {
+          'pgn__form-control-valid': isValid,
+          'pgn__form-control-invalid': isInvalid,
+          'pgn__form-control-disabled': props.disabled,
+        })}
+      >
+        <RadioControl ref={ref} className={controlClassName} {...props} />
+        <div>
+          <FormLabel className={labelClassName}>{children}</FormLabel>
+          {description && <FormControlFeedback hasIcon={false}>{description}</FormControlFeedback>}
+        </div>
       </div>
-    </div>
-  </FormGroupContextProvider>
-));
+    </FormGroupContextProvider>
+  ),
+);
 
 FormRadio.propTypes = {
   /** Specifies id of the FormRadio component. */

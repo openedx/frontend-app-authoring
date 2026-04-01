@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { Button, useWindowSize } from '@openedx/paragon';
 import messages from './messages';
@@ -12,11 +9,7 @@ import BaseModal from '../BaseModal';
 
 import CodeEditor from '../CodeEditor';
 
-const SourceCodeModal = ({
-  isOpen,
-  close,
-  editorRef,
-}) => {
+const SourceCodeModal = ({ isOpen, close, editorRef }) => {
   const { saveBtnProps, value, ref } = hooks.prepareSourceCodeModal({ editorRef, close });
   const { height } = useWindowSize();
   const intl = useIntl();
@@ -25,14 +18,14 @@ const SourceCodeModal = ({
     <BaseModal
       close={close}
       size="xl"
-      confirmAction={(
+      confirmAction={
         <Button {...saveBtnProps} variant="primary">
           <FormattedMessage {...messages.saveButtonLabel} />
         </Button>
-            )}
+      }
       isOpen={isOpen}
       title={intl.formatMessage(messages.titleLabel)}
-      bodyStyle={{ maxHeight: (height - 180) }}
+      bodyStyle={{ maxHeight: height - 180 }}
     >
       <div className="px-4.5 pt-2.5">
         <CodeEditor

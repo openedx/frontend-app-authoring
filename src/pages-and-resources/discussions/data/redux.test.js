@@ -7,9 +7,7 @@ import initializeStore from '../../../store';
 import { executeThunk } from '../../../utils';
 import { generateProvidersApiResponse, legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
 import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from './api';
-import {
-  DENIED, FAILED, SAVED, LOADED, selectApp, updateValidationStatus,
-} from './slice';
+import { DENIED, FAILED, SAVED, LOADED, selectApp, updateValidationStatus } from './slice';
 import { fetchDiscussionSettings, fetchProviders, saveProviderConfig } from './thunks';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
@@ -28,29 +26,18 @@ const featuresState = {
   'wcag-2.1': {
     id: 'wcag-2.1',
     featureSupportType: 'partial',
-
   },
   'basic-configuration': {
     id: 'basic-configuration',
     featureSupportType: 'common',
-
   },
 };
 
-const featureIds = [
-  'discussion-page',
-  'embedded-course-sections',
-  'wcag-2.1',
-  'basic-configuration',
-];
+const featureIds = ['discussion-page', 'embedded-course-sections', 'wcag-2.1', 'basic-configuration'];
 
 const legacyApp = {
   id: 'legacy',
-  featureIds: [
-    'discussion-page',
-    'embedded-course-sections',
-    'wcag-2.1',
-  ],
+  featureIds: ['discussion-page', 'embedded-course-sections', 'wcag-2.1'],
   externalLinks: {
     learnMore: '',
     configuration: '',
@@ -66,12 +53,7 @@ const legacyApp = {
 const piazzaApp = {
   id: 'piazza',
   adminOnlyConfig: false,
-  featureIds: [
-    'discussion-page',
-    'embedded-course-sections',
-    'wcag-2.1',
-    'basic-configuration',
-  ],
+  featureIds: ['discussion-page', 'embedded-course-sections', 'wcag-2.1', 'basic-configuration'],
   externalLinks: {
     learnMore: '',
     configuration: '',
@@ -102,14 +84,8 @@ describe('Data layer integration tests', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     store = initializeStore();
-    divideDiscussionIds = [
-      '13f106c6-6735-4e84-b097-0456cff55960',
-      'course',
-    ];
-    discussionTopicIds = [
-      '13f106c6-6735-4e84-b097-0456cff55960',
-      'course',
-    ];
+    divideDiscussionIds = ['13f106c6-6735-4e84-b097-0456cff55960', 'course'];
+    discussionTopicIds = ['13f106c6-6735-4e84-b097-0456cff55960', 'course'];
   });
 
   afterEach(() => {
@@ -161,16 +137,18 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchProviders(courseId), store.dispatch);
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
 
-      expect(store.getState().discussions).toEqual(expect.objectContaining({
-        appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
-        featureIds,
-        activeAppId: 'piazza',
-        selectedAppId: null,
-        status: LOADED,
-        saveStatus: SAVED,
-        hasValidationError: false,
-        discussionTopicIds: [],
-      }));
+      expect(store.getState().discussions).toEqual(
+        expect.objectContaining({
+          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
+          featureIds,
+          activeAppId: 'piazza',
+          selectedAppId: null,
+          status: LOADED,
+          saveStatus: SAVED,
+          hasValidationError: false,
+          discussionTopicIds: [],
+        }),
+      );
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
       expect(store.getState().models.features).toEqual(featuresState);
@@ -197,16 +175,18 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchProviders(courseId), store.dispatch);
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
 
-      expect(store.getState().discussions).toEqual(expect.objectContaining({
-        appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
-        featureIds,
-        activeAppId: 'piazza',
-        selectedAppId: null,
-        status: LOADED,
-        saveStatus: SAVED,
-        hasValidationError: false,
-        discussionTopicIds: [],
-      }));
+      expect(store.getState().discussions).toEqual(
+        expect.objectContaining({
+          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
+          featureIds,
+          activeAppId: 'piazza',
+          selectedAppId: null,
+          status: LOADED,
+          saveStatus: SAVED,
+          hasValidationError: false,
+          discussionTopicIds: [],
+        }),
+      );
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
       expect(store.getState().models.features).toEqual(featuresState);
@@ -225,17 +205,19 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchProviders(courseId), store.dispatch);
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
 
-      expect(store.getState().discussions).toEqual(expect.objectContaining({
-        appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
-        featureIds,
-        activeAppId: 'legacy',
-        selectedAppId: null,
-        status: LOADED,
-        saveStatus: SAVED,
-        hasValidationError: false,
-        discussionTopicIds,
-        divideDiscussionIds: [],
-      }));
+      expect(store.getState().discussions).toEqual(
+        expect.objectContaining({
+          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
+          featureIds,
+          activeAppId: 'legacy',
+          selectedAppId: null,
+          status: LOADED,
+          saveStatus: SAVED,
+          hasValidationError: false,
+          discussionTopicIds,
+          divideDiscussionIds: [],
+        }),
+      );
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
       expect(store.getState().models.features).toEqual(featuresState);
@@ -284,7 +266,10 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchProviders(courseId), store.dispatch);
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator), store.dispatch);
+      await executeThunk(
+        saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator),
+        store.dispatch,
+      );
 
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
@@ -307,7 +292,10 @@ describe('Data layer integration tests', () => {
       // We call fetchProviders and selectApp here too just to get us into a real state.
       await executeThunk(fetchProviders(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator), store.dispatch);
+      await executeThunk(
+        saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator),
+        store.dispatch,
+      );
 
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
@@ -327,41 +315,46 @@ describe('Data layer integration tests', () => {
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
       // Note: if this test is failing, it's likely because the POSTed data has changed and no longer exactly matches
       // the expected data in the mock below.
-      axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
-        context_key: courseId,
-        lti_configuration: {
-          lti_1p1_client_key: 'new_consumer_key',
-          lti_1p1_client_secret: 'new_consumer_secret',
-          lti_1p1_launch_url: 'http://localhost/new_launch_url',
-          version: 'lti_1p1',
-        },
-        plugin_configuration: {},
-        provider_type: 'piazza',
-      }).reply(200, {
-        ...piazzaApiResponse, // This uses the existing configuration but with a replacement
-        // lti_configuration that matches what we tried to save.
-        lti_configuration: {
-          lti_1p1_client_key: 'new_consumer_key',
-          lti_1p1_client_secret: 'new_consumer_secret',
-          lti_1p1_launch_url: 'https://localhost/new_launch_url',
-          version: 'lti_1p1',
-        },
-      });
+      axiosMock
+        .onPost(getDiscussionsSettingsUrl(courseId), {
+          context_key: courseId,
+          lti_configuration: {
+            lti_1p1_client_key: 'new_consumer_key',
+            lti_1p1_client_secret: 'new_consumer_secret',
+            lti_1p1_launch_url: 'http://localhost/new_launch_url',
+            version: 'lti_1p1',
+          },
+          plugin_configuration: {},
+          provider_type: 'piazza',
+        })
+        .reply(200, {
+          ...piazzaApiResponse, // This uses the existing configuration but with a replacement
+          // lti_configuration that matches what we tried to save.
+          lti_configuration: {
+            lti_1p1_client_key: 'new_consumer_key',
+            lti_1p1_client_secret: 'new_consumer_secret',
+            lti_1p1_launch_url: 'https://localhost/new_launch_url',
+            version: 'lti_1p1',
+          },
+        });
 
       // We call fetchProviders and selectApp here too just to get us into a real state.
       await executeThunk(fetchProviders(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveProviderConfig(
-        courseId,
-        'piazza',
-        {
-          consumerKey: 'new_consumer_key',
-          consumerSecret: 'new_consumer_secret',
-          launchUrl: 'http://localhost/new_launch_url',
-        },
-        pagesAndResourcesPath,
-        mockedNavigator,
-      ), store.dispatch);
+      await executeThunk(
+        saveProviderConfig(
+          courseId,
+          'piazza',
+          {
+            consumerKey: 'new_consumer_key',
+            consumerSecret: 'new_consumer_secret',
+            launchUrl: 'http://localhost/new_launch_url',
+          },
+          pagesAndResourcesPath,
+          mockedNavigator,
+        ),
+        store.dispatch,
+      );
 
       await waitFor(() => {
         expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
@@ -390,75 +383,74 @@ describe('Data layer integration tests', () => {
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, legacyApiResponse);
       // Note: if this test is failing, it's likely because the POSTed data has changed and no longer exactly matches
       // the expected data in the mock below.
-      axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
-        context_key: courseId,
-        lti_configuration: {},
-        plugin_configuration: {
-          allow_anonymous: true,
-          allow_anonymous_to_peers: true,
-          reported_content_email_notifications: true,
-          always_divide_inline_discussions: true,
-          discussion_blackouts: [],
-          division_scheme: DivisionSchemes.COHORT,
-          discussion_topics: {
-            Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
-            General: { id: 'course' },
+      axiosMock
+        .onPost(getDiscussionsSettingsUrl(courseId), {
+          context_key: courseId,
+          lti_configuration: {},
+          plugin_configuration: {
+            allow_anonymous: true,
+            allow_anonymous_to_peers: true,
+            reported_content_email_notifications: true,
+            always_divide_inline_discussions: true,
+            discussion_blackouts: [],
+            division_scheme: DivisionSchemes.COHORT,
+            discussion_topics: {
+              Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
+              General: { id: 'course' },
+            },
+            divided_course_wide_discussions: ['13f106c6-6735-4e84-b097-0456cff55960', 'course'],
           },
-          divided_course_wide_discussions: [
-            '13f106c6-6735-4e84-b097-0456cff55960',
-            'course',
-          ],
-        },
-        provider_type: 'legacy',
-      }).reply(200, {
-        ...legacyApiResponse, // This uses the existing configuration but with a replacement
-        // plugin_configuration that matches what we tried to save.
-        plugin_configuration: {
-          allow_anonymous: true,
-          allow_anonymous_to_peers: true,
-          reported_content_email_notifications: true,
-          always_divide_inline_discussions: true,
-          discussion_blackouts: [],
-          division_scheme: DivisionSchemes.COHORT,
-          discussion_topics: {
-            Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
-            General: { id: 'course' },
+          provider_type: 'legacy',
+        })
+        .reply(200, {
+          ...legacyApiResponse, // This uses the existing configuration but with a replacement
+          // plugin_configuration that matches what we tried to save.
+          plugin_configuration: {
+            allow_anonymous: true,
+            allow_anonymous_to_peers: true,
+            reported_content_email_notifications: true,
+            always_divide_inline_discussions: true,
+            discussion_blackouts: [],
+            division_scheme: DivisionSchemes.COHORT,
+            discussion_topics: {
+              Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
+              General: { id: 'course' },
+            },
+            divided_course_wide_discussions: ['13f106c6-6735-4e84-b097-0456cff55960', 'course'],
           },
-          divided_course_wide_discussions: [
-            '13f106c6-6735-4e84-b097-0456cff55960',
-            'course',
-          ],
-        },
-      });
+        });
 
       // We call fetchProviders and selectApp here too just to get us into a real state.
       await executeThunk(fetchProviders(courseId), store.dispatch);
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'legacy' }));
-      await executeThunk(saveProviderConfig(
-        courseId,
-        'legacy',
-        {
-          allowAnonymousPosts: true,
-          allowAnonymousPostsPeers: true,
-          reportedContentEmailNotifications: true,
-          restrictedDates: [],
-          // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
-          // but we technically send it to the thunk, so here it is.
-          divideByCohorts: true,
-          allowDivisionsByUnit: true,
-          alwaysDivideInlineDiscussions: true,
-          divideCourseTopicsByCohorts: true,
-          divisionScheme: DivisionSchemes.COHORT,
-          divideDiscussionIds,
-          discussionTopics: [
-            { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
-            { name: 'General', id: 'course' },
-          ],
-        },
-        pagesAndResourcesPath,
-        mockedNavigator,
-      ), store.dispatch);
+      await executeThunk(
+        saveProviderConfig(
+          courseId,
+          'legacy',
+          {
+            allowAnonymousPosts: true,
+            allowAnonymousPostsPeers: true,
+            reportedContentEmailNotifications: true,
+            restrictedDates: [],
+            // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
+            // but we technically send it to the thunk, so here it is.
+            divideByCohorts: true,
+            allowDivisionsByUnit: true,
+            alwaysDivideInlineDiscussions: true,
+            divideCourseTopicsByCohorts: true,
+            divisionScheme: DivisionSchemes.COHORT,
+            divideDiscussionIds,
+            discussionTopics: [
+              { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
+              { name: 'General', id: 'course' },
+            ],
+          },
+          pagesAndResourcesPath,
+          mockedNavigator,
+        ),
+        store.dispatch,
+      );
       await waitFor(() => {
         expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
         expect(store.getState().discussions).toEqual(

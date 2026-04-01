@@ -16,10 +16,7 @@ const CourseChecklist = () => {
   const { courseId, courseDetails } = useCourseAuthoringContext();
   const enableQuality = getConfig().ENABLE_CHECKLIST_QUALITY === 'true';
 
-  const {
-    data: bestPracticeData,
-    isPending: isPendingBestPacticeData,
-  } = useCourseBestPractices({ courseId });
+  const { data: bestPracticeData, isPending: isPendingBestPacticeData } = useCourseBestPractices({ courseId });
 
   const {
     data: launchData,

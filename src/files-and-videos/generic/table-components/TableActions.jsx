@@ -3,12 +3,7 @@ import { isEmpty } from 'lodash';
 import { PropTypes } from 'prop-types';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
-import {
-  Button,
-  DataTableContext,
-  Dropdown,
-  useToggle,
-} from '@openedx/paragon';
+import { Button, DataTableContext, Dropdown, useToggle } from '@openedx/paragon';
 import { Add, Tune } from '@openedx/paragon/icons';
 import messages from '../messages';
 import SortAndFilterModal from './sort-and-filter-modal';
@@ -43,26 +38,16 @@ const TableActions = ({
         <FormattedMessage {...messages.sortButtonLabel} />
       </Button>
       <Dropdown className="mx-2">
-        <Dropdown.Toggle
-          id="actions-menu-toggle"
-          alt="actions-menu-toggle"
-          variant="outline-primary"
-        >
+        <Dropdown.Toggle id="actions-menu-toggle" alt="actions-menu-toggle" variant="outline-primary">
           <FormattedMessage {...messages.actionsButtonLabel} />
         </Dropdown.Toggle>
         <Dropdown.Menu>
           {encodingsDownloadUrl ? (
-            <Dropdown.Item
-              download
-              href={`${getConfig().STUDIO_BASE_URL}${encodingsDownloadUrl}`}
-            >
+            <Dropdown.Item download href={`${getConfig().STUDIO_BASE_URL}${encodingsDownloadUrl}`}>
               <FormattedMessage {...messages.downloadEncodingsTitle} />
             </Dropdown.Item>
           ) : null}
-          <Dropdown.Item
-            onClick={() => handleBulkDownload(selectedFlatRows)}
-            disabled={isEmpty(selectedFlatRows)}
-          >
+          <Dropdown.Item onClick={() => handleBulkDownload(selectedFlatRows)} disabled={isEmpty(selectedFlatRows)}>
             <FormattedMessage {...messages.downloadTitle} />
           </Dropdown.Item>
           <Dropdown.Divider />

@@ -118,6 +118,4 @@ export const {
   resetStudioHomeCoursesCustomParams,
 } = slice.actions;
 
-export const {
-  reducer,
-} = slice;
+export const { reducer } = slice;

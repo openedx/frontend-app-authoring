@@ -2,14 +2,7 @@ import type MockAdapter from 'axios-mock-adapter';
 import fetchMock from 'fetch-mock-jest';
 
 import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
-import {
-  initializeMocks,
-  fireEvent,
-  render as baseRender,
-  screen,
-  waitFor,
-  within,
-} from '../../testUtils';
+import { initializeMocks, fireEvent, render as baseRender, screen, waitFor, within } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import * as api from '../data/api';
@@ -29,20 +22,21 @@ const { description: originalDescription } = mockGetCollectionMetadata.collectio
 
 const library = mockContentLibrary.libraryData;
 
-const render = () => baseRender(<CollectionDetails />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={library.id}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: collectionId,
-          type: SidebarBodyItemId.CollectionInfo,
-        }}
-      >
-        { children }
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = () =>
+  baseRender(<CollectionDetails />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={library.id}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: collectionId,
+            type: SidebarBodyItemId.CollectionInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<CollectionDetails />', () => {
   beforeEach(() => {

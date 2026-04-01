@@ -1,22 +1,25 @@
 import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  getConfig, initializeMockApp, setConfig,
-} from '@edx/frontend-platform';
+import { getConfig, initializeMockApp, setConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
 import {
-  act, findByRole, fireEvent, getByRole, queryByLabelText, queryByRole, queryByTestId, queryByText,
-  render, screen, waitFor, waitForElementToBeRemoved,
+  act,
+  findByRole,
+  fireEvent,
+  getByRole,
+  queryByLabelText,
+  queryByRole,
+  queryByTestId,
+  queryByText,
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
-import {
-  Routes,
-  Route,
-  MemoryRouter,
-  useLocation,
-} from 'react-router-dom';
+import { Routes, Route, MemoryRouter, useLocation } from 'react-router-dom';
 import initializeStore from '@src/store';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getCourseDetailsUrl } from '@src/data/api';
@@ -47,7 +50,7 @@ const queryClient = new QueryClient({
 });
 
 // Modal creates a portal. Overriding ReactDOM.createPortal allows portals to be tested in jest.
-ReactDOM.createPortal = jest.fn(node => node);
+ReactDOM.createPortal = jest.fn((node) => node);
 
 const LocationDisplay = () => {
   const location = useLocation();
@@ -64,11 +67,19 @@ function renderComponent(route) {
               <Routes>
                 <Route
                   path={`/course/${courseId}/pages-and-resources/discussion/configure/:appId`}
-                  element={<PageWrap><DiscussionsSettings /></PageWrap>}
+                  element={
+                    <PageWrap>
+                      <DiscussionsSettings />
+                    </PageWrap>
+                  }
                 />
                 <Route
                   path={`/course/${courseId}/pages-and-resources/discussion`}
-                  element={<PageWrap><DiscussionsSettings /></PageWrap>}
+                  element={
+                    <PageWrap>
+                      <DiscussionsSettings />
+                    </PageWrap>
+                  }
                 />
               </Routes>
               <LocationDisplay />
@@ -97,17 +108,13 @@ describe('DiscussionsSettings', () => {
 
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock
-      .onGet(getCourseDetailsUrl(courseId, username))
-      .reply(200, { courseId, name: 'Course Test' });
+    axiosMock.onGet(getCourseDetailsUrl(courseId, username)).reply(200, { courseId, name: 'Course Test' });
   });
 
   describe('with successful network connections', () => {
     beforeEach(() => {
-      axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
-        .reply(200, generateProvidersApiResponse(false));
-      axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
-        .reply(200, generatePiazzaApiResponse(true));
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false));
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, generatePiazzaApiResponse(true));
     });
 
     test('sets selection step from routes', async () => {
@@ -223,7 +230,9 @@ describe('DiscussionsSettings', () => {
     });
 
     test('requires confirmation if changing provider', async () => {
-      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(200, courseDetailResponse);
+      axiosMock
+        .onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`)
+        .reply(200, courseDetailResponse);
 
       renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
       // This is an important line that ensures the spinner has been removed - and thus our main
@@ -243,7 +252,9 @@ describe('DiscussionsSettings', () => {
     });
 
     test('can cancel confirmation', async () => {
-      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(200, courseDetailResponse);
+      axiosMock
+        .onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`)
+        .reply(200, courseDetailResponse);
 
       renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
       // This is an important line that ensures the spinner has been removed - and thus our main
@@ -293,7 +304,9 @@ describe('DiscussionsSettings', () => {
 
       const alert = queryByRole(container, 'alert');
       expect(alert).toBeInTheDocument();
-      expect(alert.textContent).toEqual(expect.stringContaining('We encountered a technical error when loading this page.'));
+      expect(alert.textContent).toEqual(
+        expect.stringContaining('We encountered a technical error when loading this page.'),
+      );
       expect(alert.innerHTML).toEqual(expect.stringContaining(getConfig().SUPPORT_URL));
     });
   });
@@ -306,10 +319,8 @@ describe('DiscussionsSettings', () => {
         SUPPORT_URL: 'http://support.edx.org',
       });
 
-      axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
-        .reply(200, generateProvidersApiResponse());
-      axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
-        .reply(200, piazzaApiResponse);
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).networkError();
     });
 
@@ -326,7 +337,9 @@ describe('DiscussionsSettings', () => {
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
       const alert = await findByRole(container, 'alert');
       expect(alert).toBeInTheDocument();
-      expect(alert.textContent).toEqual(expect.stringContaining('We encountered a technical error when applying changes.'));
+      expect(alert.textContent).toEqual(
+        expect.stringContaining('We encountered a technical error when applying changes.'),
+      );
       expect(alert.innerHTML).toEqual(expect.stringContaining(getConfig().SUPPORT_URL));
     });
   });
@@ -351,8 +364,7 @@ describe('DiscussionsSettings', () => {
 
   describe('with permission denied error for postAppConfig API requests', () => {
     beforeEach(() => {
-      axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
-        .reply(200, generateProvidersApiResponse());
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).reply(403);
     });
@@ -373,7 +385,11 @@ describe('DiscussionsSettings', () => {
       // Confirm route is correct
       // We don't technically leave the route in this case, though the modal is hidden.
       const locationDisplay = await screen.findByTestId('location-display');
-      await waitFor(() => expect(locationDisplay.textContent).toEqual(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`));
+      await waitFor(() =>
+        expect(locationDisplay.textContent).toEqual(
+          `/course/${courseId}/pages-and-resources/discussion/configure/piazza`,
+        ),
+      );
 
       const alert = await findByRole(container, 'alert');
       expect(alert).toBeInTheDocument();
@@ -401,10 +417,8 @@ describe.each([
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
-    axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
-      .reply(200, generateProvidersApiResponse(isAdminOnlyConfig));
-    axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
-      .reply(200, generatePiazzaApiResponse(true));
+    axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(isAdminOnlyConfig));
+    axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, generatePiazzaApiResponse(true));
   });
 
   test(`successfully advances to settings step for lti when adminOnlyConfig=${isAdminOnlyConfig} and user ${isAdmin ? 'is' : 'is not'} admin `, async () => {
@@ -437,57 +451,56 @@ describe.each([
   });
 });
 
-describe.each([
-  { piiSharingAllowed: false },
-  { piiSharingAllowed: true },
-])('PII sharing fields test', ({ piiSharingAllowed }) => {
-  const enablePIISharing = false;
+describe.each([{ piiSharingAllowed: false }, { piiSharingAllowed: true }])(
+  'PII sharing fields test',
+  ({ piiSharingAllowed }) => {
+    const enablePIISharing = false;
 
-  beforeEach(() => {
-    const username = 'abc123';
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username,
-        administrator: true,
-        roles: [],
-      },
+    beforeEach(() => {
+      const username = 'abc123';
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 3,
+          username,
+          administrator: true,
+          roles: [],
+        },
+      });
+
+      store = initializeStore();
+      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false));
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, generatePiazzaApiResponse(piiSharingAllowed));
+      axiosMock.onGet(getCourseDetailsUrl(courseId, username)).reply(200, { courseId, name: 'Course Test' });
     });
 
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    test(`${
+      piiSharingAllowed
+        ? 'shows PII share username/email field when piiSharingAllowed is true'
+        : 'hides PII share username/email field when piiSharingAllowed is false'
+    }`, async () => {
+      const user = userEvent.setup();
+      renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
 
-    axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
-      .reply(200, generateProvidersApiResponse(false));
-    axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
-      .reply(200, generatePiazzaApiResponse(piiSharingAllowed));
-    axiosMock
-      .onGet(getCourseDetailsUrl(courseId, username))
-      .reply(200, { courseId, name: 'Course Test' });
-  });
+      let spinner = await screen.findByRole('status');
+      await waitFor(() => {
+        expect(spinner).not.toBeInTheDocument();
+      });
 
-  test(`${piiSharingAllowed ? 'shows PII share username/email field when piiSharingAllowed is true'
-    : 'hides PII share username/email field when piiSharingAllowed is false'}`, async () => {
-    const user = userEvent.setup();
-    renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
+      await user.click(screen.getByLabelText('Select Piazza'));
+      await user.click(screen.getByText(messages.nextButton.defaultMessage));
 
-    let spinner = await screen.findByRole('status');
-    await waitFor(() => {
-      expect(spinner).not.toBeInTheDocument();
+      await waitFor(() => {
+        spinner = screen.queryByRole('status');
+        expect(spinner).not.toBeInTheDocument();
+      });
+
+      if (enablePIISharing) {
+        expect(queryByTestId(container, 'piiSharingFields')).toBeInTheDocument();
+      } else {
+        expect(queryByTestId(container, 'piiSharingFields')).not.toBeInTheDocument();
+      }
     });
-
-    await user.click(screen.getByLabelText('Select Piazza'));
-    await user.click(screen.getByText(messages.nextButton.defaultMessage));
-
-    await waitFor(() => {
-      spinner = screen.queryByRole('status');
-      expect(spinner).not.toBeInTheDocument();
-    });
-
-    if (enablePIISharing) {
-      expect(queryByTestId(container, 'piiSharingFields')).toBeInTheDocument();
-    } else {
-      expect(queryByTestId(container, 'piiSharingFields')).not.toBeInTheDocument();
-    }
-  });
-});
+  },
+);

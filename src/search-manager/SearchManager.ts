@@ -8,11 +8,7 @@ import React from 'react';
 import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
-import {
-  type HitType,
-  SearchSortOption,
-  forceArray, PublishStatus,
-} from './data/api';
+import { type HitType, SearchSortOption, forceArray, PublishStatus } from './data/api';
 import { TypesFilterData, useStateOrUrlSearchParam } from './hooks';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 import { getBlockType } from '../generic/key-utils';
@@ -52,20 +48,14 @@ export interface SearchContextData {
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
 
 export const SearchContextProvider: React.FC<{
-  extraFilter?: Filter,
-  overrideTypesFilter?: TypesFilterData,
-  overrideSearchSortOrder?: SearchSortOption
-  children: React.ReactNode,
-  closeSearchModal?: () => void,
-  skipBlockTypeFetch?: boolean,
-  skipUrlUpdate?: boolean,
-}> = ({
-  overrideTypesFilter,
-  overrideSearchSortOrder,
-  skipBlockTypeFetch,
-  skipUrlUpdate,
-  ...props
-}) => {
+  extraFilter?: Filter;
+  overrideTypesFilter?: TypesFilterData;
+  overrideSearchSortOrder?: SearchSortOption;
+  children: React.ReactNode;
+  closeSearchModal?: () => void;
+  skipBlockTypeFetch?: boolean;
+  skipUrlUpdate?: boolean;
+}> = ({ overrideTypesFilter, overrideSearchSortOrder, skipBlockTypeFetch, skipUrlUpdate, ...props }) => {
   // Search parameters can be set via the query string
   // E.g. ?q=draft+text
   // TODO -- how to sanitize search terms?
@@ -92,9 +82,8 @@ export const SearchContextProvider: React.FC<{
   // Tags can be almost any string value (see openedx-learning's RESERVED_TAG_CHARS)
   // and multiple tags may be selected together.
   // E.g ?tag=Skills+>+Abilities&tag=Skills+>+Knowledge
-  const sanitizeTag = (value: string | null | undefined): string | undefined => (
-    (value && /^[^\t;]+$/.test(value)) ? value : undefined
-  );
+  const sanitizeTag = (value: string | null | undefined): string | undefined =>
+    value && /^[^\t;]+$/.test(value) ? value : undefined;
   const [tagsFilter, setTagsFilter] = useStateOrUrlSearchParam<string>(
     [],
     'tag',
@@ -148,7 +137,7 @@ export const SearchContextProvider: React.FC<{
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
   const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
-  let sort: SearchSortOption[] = (searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse]);
+  let sort: SearchSortOption[] = searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse];
   // Adding `SearchSortOption.RECENTLY_MODIFIED` as second sort when
   // selecting `SearchSortOption.RECENTLY_PUBLISHED`.
   // This is to sort the never published components by recently modified that
@@ -157,13 +146,9 @@ export const SearchContextProvider: React.FC<{
     sort = union(sort, [SearchSortOption.RECENTLY_MODIFIED]);
   }
 
-  const canClearFilters = (
-    !typesFilter.isEmpty()
-    || tagsFilter.length > 0
-    || publishStatusFilter.length > 0
-    || !!usageKey
-  );
-  const isFiltered = canClearFilters || (searchKeywords !== '');
+  const canClearFilters =
+    !typesFilter.isEmpty() || tagsFilter.length > 0 || publishStatusFilter.length > 0 || !!usageKey;
+  const isFiltered = canClearFilters || searchKeywords !== '';
   const clearFilters = React.useCallback(() => {
     setTypesFilter((types) => types.clear());
     setTagsFilter([]);
@@ -190,31 +175,35 @@ export const SearchContextProvider: React.FC<{
     skipBlockTypeFetch,
   });
 
-  return React.createElement(SearchContext.Provider, {
-    value: {
-      client,
-      indexName,
-      searchKeywords,
-      setSearchKeywords,
-      publishStatusFilter,
-      setPublishStatusFilter,
-      typesFilter,
-      setTypesFilter,
-      tagsFilter,
-      setTagsFilter,
-      extraFilter,
-      isFiltered,
-      canClearFilters,
-      clearFilters,
-      searchSortOrder,
-      setSearchSortOrder,
-      defaultSearchSortOrder,
-      closeSearchModal: props.closeSearchModal ?? (() => { }),
-      hasError: hasConnectionError || result.isError,
-      usageKey,
-      ...result,
+  return React.createElement(
+    SearchContext.Provider,
+    {
+      value: {
+        client,
+        indexName,
+        searchKeywords,
+        setSearchKeywords,
+        publishStatusFilter,
+        setPublishStatusFilter,
+        typesFilter,
+        setTypesFilter,
+        tagsFilter,
+        setTagsFilter,
+        extraFilter,
+        isFiltered,
+        canClearFilters,
+        clearFilters,
+        searchSortOrder,
+        setSearchSortOrder,
+        defaultSearchSortOrder,
+        closeSearchModal: props.closeSearchModal ?? (() => {}),
+        hasError: hasConnectionError || result.isError,
+        usageKey,
+        ...result,
+      },
     },
-  }, props.children);
+    props.children,
+  );
 };
 
 export const useSearchContext = () => {

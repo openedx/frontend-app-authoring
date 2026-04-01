@@ -16,13 +16,7 @@ import messages from './messages';
  * @param {func} setValue - update alt-text value
  * @param {string} value - current alt-text value
  */
-const AltTextControls = ({
-  isDecorative,
-  setIsDecorative,
-  setValue,
-  validation,
-  value,
-}) => {
+const AltTextControls = ({ isDecorative, setIsDecorative, setValue, validation, value }) => {
   const intl = useIntl();
   return (
     <Form.Group className="mt-4.5">
@@ -38,8 +32,7 @@ const AltTextControls = ({
         type="input"
         value={value}
       />
-      {validation.show
-      && (
+      {validation.show && (
         <Form.Control.Feedback type="invalid">
           <FormattedMessage {...messages.altTextLocalFeedback} />
         </Form.Control.Feedback>

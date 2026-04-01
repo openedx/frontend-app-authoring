@@ -1,9 +1,4 @@
-import {
-  fireEvent,
-  screen,
-  render,
-  waitFor,
-} from '@testing-library/react';
+import { fireEvent, screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ReactDOM from 'react-dom';
 
@@ -37,7 +32,7 @@ jest.mock('react-router-dom', () => ({
 
 let axiosMock;
 let store;
-ReactDOM.createPortal = jest.fn(node => node);
+ReactDOM.createPortal = jest.fn((node) => node);
 
 const onClickCancelMock = jest.fn();
 
@@ -105,8 +100,12 @@ describe('<CreateOrRerunCourseForm />', () => {
     render(<RootWrapper {...props} />);
     await mockStore();
     expect(screen.getByText(messages.courseDisplayNameCreateHelpText.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText('The name of the organization sponsoring the course.', { exact: false })).toBeInTheDocument();
-    expect(screen.getByText('The unique number that identifies your course within your organization.', { exact: false })).toBeInTheDocument();
+    expect(
+      screen.getByText('The name of the organization sponsoring the course.', { exact: false }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('The unique number that identifies your course within your organization.', { exact: false }),
+    ).toBeInTheDocument();
     expect(screen.getByText('The term in which your course will run.', { exact: false })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.createButton.defaultMessage })).toBeInTheDocument();
   });
@@ -117,9 +116,19 @@ describe('<CreateOrRerunCourseForm />', () => {
     await mockStore();
 
     expect(screen.getByText(messages.courseDisplayNameRerunHelpText.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText('The name of the organization sponsoring the new course. (This name is often the same as the original organization name.)', { exact: false })).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'The name of the organization sponsoring the new course. (This name is often the same as the original organization name.)',
+        { exact: false },
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByText(messages.courseNumberRerunHelpText.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText('The term in which the new course will run. (This value is often different than the original course run value.)', { exact: false })).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'The term in which the new course will run. (This value is often different than the original course run value.)',
+        { exact: false },
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.rerunCreateButton.defaultMessage })).toBeInTheDocument();
   });
 
@@ -208,7 +217,9 @@ describe('<CreateOrRerunCourseForm />', () => {
     await mockStore();
     const numberInput = screen.getByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
 
-    fireEvent.change(numberInput, { target: { value: 'long-name-which-is-longer-than-65-characters-to-check-for-errors' } });
+    fireEvent.change(numberInput, {
+      target: { value: 'long-name-which-is-longer-than-65-characters-to-check-for-errors' },
+    });
 
     await waitFor(() => {
       expect(screen.getByText(messages.totalLengthError.defaultMessage)).toBeInTheDocument();

@@ -1,15 +1,7 @@
 import React, { useEffect } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Icon,
-  IconButton,
-  ModalDialog,
-  ModalCloseButton,
-  Stack,
-  useToggle,
-} from '@openedx/paragon';
+import { ActionRow, Icon, IconButton, ModalDialog, ModalCloseButton, Stack, useToggle } from '@openedx/paragon';
 import { Close, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 
 import { LibraryBlock } from '../library-authoring/LibraryBlock';
@@ -23,8 +15,8 @@ import { IframeProvider } from '../generic/hooks/context/iFrameContext';
 import editorModalWrapperMessages from './containers/EditorContainer/messages';
 
 interface AdvancedEditorProps {
-  usageKey: string,
-  onClose: (() => void) | null,
+  usageKey: string;
+  onClose: (() => void) | null;
 }
 
 const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
@@ -64,16 +56,10 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
       <EditorModalWrapper onClose={openCancelConfirmModal} fullscreen={isFullscreen}>
         <ModalDialog.Header>
           <ActionRow>
-            <ModalDialog.Title>
-              {intl.formatMessage(editorModalWrapperMessages.modalTitle)}
-            </ModalDialog.Title>
+            <ModalDialog.Title>{intl.formatMessage(editorModalWrapperMessages.modalTitle)}</ModalDialog.Title>
             <ActionRow.Spacer />
             <Stack direction="horizontal" reversed gap={1}>
-              <ModalCloseButton
-                as={IconButton}
-                src={Close}
-                iconAs={Icon}
-              />
+              <ModalCloseButton as={IconButton} src={Close} iconAs={Icon} />
               <IconButton
                 src={isFullscreen ? CloseFullscreen : OpenInFull}
                 iconAs={Icon}
@@ -84,12 +70,7 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
           </ActionRow>
         </ModalDialog.Header>
         <IframeProvider>
-          <LibraryBlock
-            usageKey={usageKey}
-            view="studio_view"
-            scrolling="yes"
-            minHeight="70vh"
-          />
+          <LibraryBlock usageKey={usageKey} view="studio_view" scrolling="yes" minHeight="70vh" />
         </IframeProvider>
       </EditorModalWrapper>
       <CancelConfirmModal

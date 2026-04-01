@@ -1,15 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getExternalLinkUrl } from '@edx/frontend-platform';
-import {
-  Hyperlink,
-  Form,
-} from '@openedx/paragon';
+import { Hyperlink, Form } from '@openedx/paragon';
 
 import { selectors, actions } from '../../../../../../data/redux';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
@@ -31,7 +25,9 @@ const SocialShareWidget = ({
   const intl = useIntl();
   const isSetByCourse = allowVideoSharing.level === 'course';
   const videoSharingEnabled = isLibrary ? videoSharingEnabledForAll : videoSharingEnabledForCourse;
-  const learnMoreLink = videoSharingLearnMoreLink || getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html');
+  const learnMoreLink =
+    videoSharingLearnMoreLink ||
+    getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html');
   const onSocialSharingCheckboxChange = hooks.useTrackSocialSharingChange({ updateField });
 
   const getSubtitle = () => {
@@ -41,12 +37,8 @@ const SocialShareWidget = ({
     return intl.formatMessage(messages.disabledSubtitle);
   };
 
-  return (videoSharingEnabled ? (
-    <CollapsibleFormWidget
-      fontSize="x-small"
-      title={intl.formatMessage(messages.title)}
-      subtitle={getSubtitle()}
-    >
+  return videoSharingEnabled ? (
+    <CollapsibleFormWidget fontSize="x-small" title={intl.formatMessage(messages.title)} subtitle={getSubtitle()}>
       <div>
         <FormattedMessage {...messages.socialSharingDescription} />
       </div>
@@ -56,9 +48,7 @@ const SocialShareWidget = ({
         disabled={isSetByCourse}
         onChange={onSocialSharingCheckboxChange}
       >
-        <div className="small text-gray-700">
-          {intl.formatMessage(messages.socialSharingCheckboxLabel)}
-        </div>
+        <div className="small text-gray-700">{intl.formatMessage(messages.socialSharingCheckboxLabel)}</div>
       </Form.Checkbox>
       {isSetByCourse && (
         <>
@@ -76,7 +66,7 @@ const SocialShareWidget = ({
         </Hyperlink>
       </div>
     </CollapsibleFormWidget>
-  ) : null);
+  ) : null;
 };
 
 SocialShareWidget.defaultProps = {

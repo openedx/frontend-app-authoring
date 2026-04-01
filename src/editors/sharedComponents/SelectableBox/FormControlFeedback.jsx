@@ -10,11 +10,7 @@ const FormControlFeedback = ({ children, ...props }) => {
   const className = classNames('pgn__form-control-description', props.className);
   const textType = props.type || resolveTextType({ isInvalid, isValid });
   return (
-    <FormText
-      {...descriptorProps}
-      className={className}
-      type={textType}
-    >
+    <FormText {...descriptorProps} className={className} type={textType}>
       {children}
     </FormText>
   );

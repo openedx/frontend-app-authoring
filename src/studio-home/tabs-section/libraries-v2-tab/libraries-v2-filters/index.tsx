@@ -9,8 +9,8 @@ import messages from '../../messages';
 export interface LibrariesV2FiltersProps {
   isPending?: boolean;
   isFiltered?: boolean;
-  filterParams: { search?: string | undefined, order?: string };
-  setFilterParams: React.Dispatch<React.SetStateAction<{ search: string | undefined, order: string }>>;
+  filterParams: { search?: string | undefined; order?: string };
+  setFilterParams: React.Dispatch<React.SetStateAction<{ search: string | undefined; order: string }>>;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -46,7 +46,7 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
     return orders[filterType] || 'title';
   };
 
-  const getFilterTypeData = (baseFilters: { search: string | undefined; order: string; }) => ({
+  const getFilterTypeData = (baseFilters: { search: string | undefined; order: string }) => ({
     sortLibrariesV2AZ: { ...baseFilters, order: 'title' },
     sortLibrariesV2ZA: { ...baseFilters, order: '-title' },
     sortLibrariesV2Newest: { ...baseFilters, order: '-created' },
@@ -68,20 +68,23 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
     setCurrentPage(1);
   };
 
-  const handleSearchLibrariesV2 = useCallback((searchValue: string) => {
-    const valueFormatted = searchValue.trim();
-    const updatedFilterParams = {
-      search: valueFormatted.length > 0 ? valueFormatted : undefined,
-      order,
-    };
+  const handleSearchLibrariesV2 = useCallback(
+    (searchValue: string) => {
+      const valueFormatted = searchValue.trim();
+      const updatedFilterParams = {
+        search: valueFormatted.length > 0 ? valueFormatted : undefined,
+        order,
+      };
 
-    // Check if the search is different from the current search and it's not only spaces
-    if (valueFormatted !== search || valueFormatted) {
-      setSearch(valueFormatted);
-      setFilterParams(updatedFilterParams);
-      setCurrentPage(1);
-    }
-  }, [order, search]);
+      // Check if the search is different from the current search and it's not only spaces
+      if (valueFormatted !== search || valueFormatted) {
+        setSearch(valueFormatted);
+        setFilterParams(updatedFilterParams);
+        setCurrentPage(1);
+      }
+    },
+    [order, search],
+  );
 
   return (
     <div className="d-flex">

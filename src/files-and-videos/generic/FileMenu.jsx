@@ -1,11 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Dropdown,
-  IconButton,
-  Icon,
-} from '@openedx/paragon';
+import { Dropdown, IconButton, Icon } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
 import messages from './messages';
 
@@ -33,21 +29,15 @@ const FileMenu = ({
       />
       <Dropdown.Menu>
         {fileType === 'video' ? (
-          <Dropdown.Item
-            onClick={() => navigator.clipboard.writeText(id)}
-          >
+          <Dropdown.Item onClick={() => navigator.clipboard.writeText(id)}>
             {intl.formatMessage(messages.copyVideoIdTitle)}
           </Dropdown.Item>
         ) : (
           <>
-            <Dropdown.Item
-              onClick={/* istanbul ignore next */() => navigator.clipboard.writeText(portableUrl)}
-            >
+            <Dropdown.Item onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(portableUrl)}>
               {intl.formatMessage(messages.copyStudioUrlTitle)}
             </Dropdown.Item>
-            <Dropdown.Item
-              onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(externalUrl)}
-            >
+            <Dropdown.Item onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(externalUrl)}>
               {intl.formatMessage(messages.copyWebUrlTitle)}
             </Dropdown.Item>
             <Dropdown.Item onClick={handleLock}>
@@ -55,17 +45,10 @@ const FileMenu = ({
             </Dropdown.Item>
           </>
         )}
-        <Dropdown.Item onClick={onDownload}>
-          {intl.formatMessage(messages.downloadTitle)}
-        </Dropdown.Item>
-        <Dropdown.Item onClick={openAssetInfo}>
-          {intl.formatMessage(messages.infoTitle)}
-        </Dropdown.Item>
+        <Dropdown.Item onClick={onDownload}>{intl.formatMessage(messages.downloadTitle)}</Dropdown.Item>
+        <Dropdown.Item onClick={openAssetInfo}>{intl.formatMessage(messages.infoTitle)}</Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item
-          data-testid="open-delete-confirmation-button"
-          onClick={openDeleteConfirmation}
-        >
+        <Dropdown.Item data-testid="open-delete-confirmation-button" onClick={openDeleteConfirmation}>
           {intl.formatMessage(messages.deleteTitle)}
         </Dropdown.Item>
       </Dropdown.Menu>

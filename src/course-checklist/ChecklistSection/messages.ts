@@ -8,7 +8,8 @@ const messages = defineMessages({
   },
   welcomeMessageLongDescription: {
     id: 'welcomeMessageLongDescription',
-    defaultMessage: 'Personally welcome learners into your course and prepare learners for a positive course experience.',
+    defaultMessage:
+      'Personally welcome learners into your course and prepare learners for a positive course experience.',
     description: 'Description for a section that prompts a user to enter a welcome message for a course',
   },
   gradingPolicyShortDescription: {
@@ -18,13 +19,14 @@ const messages = defineMessages({
   },
   gradingPolicyLongDescription: {
     id: 'gradingPolicyLongDescription',
-    defaultMessage: 'Establish your grading policy, including assignment types and passing score. All assignments add up to 100%.',
+    defaultMessage:
+      'Establish your grading policy, including assignment types and passing score. All assignments add up to 100%.',
     description: 'Description for a section that prompts a user to enter a grading policy for a course',
   },
   gradingPolicyComment: {
     id: 'gradingPolicyComment',
     defaultMessage: 'Your current grading policy adds up to {percent}%.',
-    description: 'Description for a section that displays a course\'s grading policy total',
+    description: "Description for a section that displays a course's grading policy total",
   },
   certificateShortDescription: {
     id: 'certificateShortDescription',
@@ -33,7 +35,8 @@ const messages = defineMessages({
   },
   certificateLongDescription: {
     id: 'certificateLongDescription',
-    defaultMessage: 'Make sure that all text is correct, signatures have been uploaded, and the certificate has been activated.',
+    defaultMessage:
+      'Make sure that all text is correct, signatures have been uploaded, and the certificate has been activated.',
     description: 'Description for a section that prompts a user to create a course completion certificate',
   },
   courseDatesShortDescription: {
@@ -59,7 +62,8 @@ const messages = defineMessages({
   assignmentDeadlinesComment: {
     id: 'assignmentDeadlinesComment',
     defaultMessage: 'The following assignments have deadlines that do not fall between course start and end date:',
-    description: 'Description for a section that displays which assignments are outside of a course\'s start and end date',
+    description:
+      "Description for a section that displays which assignments are outside of a course's start and end date",
   },
   videoDurationShortDescription: {
     id: 'videoDurationShortDescription',
@@ -68,7 +72,8 @@ const messages = defineMessages({
   },
   videoDurationLongDescription: {
     id: 'videoDurationLongDescription',
-    defaultMessage: 'Learners engage best with short videos followed by opportunities to practice. Ensure that 80% or more of course videos are less than 10 minutes long.',
+    defaultMessage:
+      'Learners engage best with short videos followed by opportunities to practice. Ensure that 80% or more of course videos are less than 10 minutes long.',
     description: 'Description for a section that prompts a user to follow best practices for video length',
   },
   diverseSequencesShortDescription: {
@@ -78,8 +83,10 @@ const messages = defineMessages({
   },
   diverseSequencesLongDescription: {
     id: 'diverseSequencesLongDescription',
-    defaultMessage: 'Research shows that a diverse content experience drives learner engagement. We recommend that 80% or more of your learning sequences or subsections include multiple content types (such as video, discussion, or problem).',
-    description: 'Description for a section that prompts a user to follow best practices diverse sequences of educational content',
+    defaultMessage:
+      'Research shows that a diverse content experience drives learner engagement. We recommend that 80% or more of your learning sequences or subsections include multiple content types (such as video, discussion, or problem).',
+    description:
+      'Description for a section that prompts a user to follow best practices diverse sequences of educational content',
   },
   weeklyHighlightsShortDescription: {
     id: 'weeklyHighlightsShortDescription',
@@ -98,7 +105,8 @@ const messages = defineMessages({
   },
   unitDepthLongDescription: {
     id: 'unitDepthLongDescription',
-    defaultMessage: 'Breaking up course content into manageable pieces promotes learner engagement. We recommend units contain no more than three components.',
+    defaultMessage:
+      'Breaking up course content into manageable pieces promotes learner engagement. We recommend units contain no more than three components.',
     description: 'Description for a section that prompts a user to follow best practices for course unit depth',
   },
   proctoringEmailShortDescription: {
@@ -108,7 +116,8 @@ const messages = defineMessages({
   },
   proctoringEmailLongDescription: {
     id: 'proctoringEmailLongDescription',
-    defaultMessage: 'The selected proctoring provider requires an escalation email. Ensure learners and Support can contact your course team regarding proctoring issues (e.g. appeals, exam resets, etc).',
+    defaultMessage:
+      'The selected proctoring provider requires an escalation email. Ensure learners and Support can contact your course team regarding proctoring issues (e.g. appeals, exam resets, etc).',
     description: 'Description for a section that prompts the user to add a proctoring escalation email for the course',
   },
   updateLinkLabel: {

@@ -3,9 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { getGradingValues, getSortedGrades } from './grading-scale/utils';
 
-const useConvertGradeCutoffs = (
-  gradeCutoffs,
-) => {
+const useConvertGradeCutoffs = (gradeCutoffs) => {
   const gradeLetters = gradeCutoffs && Object.keys(gradeCutoffs);
   const gradeValues = gradeCutoffs && getGradingValues(gradeCutoffs);
   const sortedGrades = gradeCutoffs && getSortedGrades(gradeValues);
@@ -22,12 +20,7 @@ const useUpdateGradingData = (gradingSettingsData, setOverrideInternetConnection
   const [gradingData, setGradingData] = useState({});
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const resetDataRef = useRef(false);
-  const {
-    gradeCutoffs = {},
-    gracePeriod = { hours: '', minutes: '' },
-    minimumGradeCredit,
-    graders,
-  } = gradingData;
+  const { gradeCutoffs = {}, gracePeriod = { hours: '', minutes: '' }, minimumGradeCredit, graders } = gradingData;
 
   useEffect(() => {
     if (gradingSettingsData !== undefined) {
@@ -44,16 +37,19 @@ const useUpdateGradingData = (gradingSettingsData, setOverrideInternetConnection
   };
 
   const handleAddAssignment = () => {
-    setGradingData(prevState => ({
+    setGradingData((prevState) => ({
       ...prevState,
-      graders: [...prevState.graders, {
-        id: uniqueId,
-        dropCount: 0,
-        minCount: 1,
-        shortLabel: '',
-        type: '',
-        weight: 0,
-      }],
+      graders: [
+        ...prevState.graders,
+        {
+          id: uniqueId,
+          dropCount: 0,
+          minCount: 1,
+          shortLabel: '',
+          type: '',
+          weight: 0,
+        },
+      ],
     }));
     setShowSuccessAlert(false);
   };

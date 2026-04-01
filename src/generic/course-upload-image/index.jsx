@@ -5,15 +5,7 @@ import { useParams } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { FileUpload as FileUploadIcon } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
-import {
-  Form,
-  Dropzone,
-  Image,
-  Hyperlink,
-  Card,
-  Icon,
-  IconButton,
-} from '@openedx/paragon';
+import { Form, Dropzone, Image, Hyperlink, Card, Icon, IconButton } from '@openedx/paragon';
 
 import { uploadAssets } from './data/api';
 import messages from './messages';
@@ -58,11 +50,7 @@ const CourseUploadImage = ({
 
   const inputComponent = assetImagePath ? (
     <div className="image-preview">
-      <Image
-        src={imageAbsolutePath().href}
-        alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
-        fluid
-      />
+      <Image src={imageAbsolutePath().href} alt={intl.formatMessage(messages.uploadImageDropzoneAlt)} fluid />
     </div>
   ) : (
     <>
@@ -87,11 +75,7 @@ const CourseUploadImage = ({
         {...messages.uploadImageBodyFilled}
         values={{
           hyperlink: (
-            <Hyperlink
-              destination={assetsUrl().href}
-              target="_blank"
-              showLaunchIcon={false}
-            >
+            <Hyperlink destination={assetsUrl().href} target="_blank" showLaunchIcon={false}>
               {intl.formatMessage(messages.uploadImageFilesAndUploads)}
             </Hyperlink>
           ),
@@ -99,9 +83,7 @@ const CourseUploadImage = ({
       />
     </span>
   ) : (
-    <span className="x-small text-gray-700">
-      {intl.formatMessage(messages.uploadImageEmpty)}
-    </span>
+    <span className="x-small text-gray-700">{intl.formatMessage(messages.uploadImageEmpty)}</span>
   );
 
   return (
@@ -124,8 +106,8 @@ const CourseUploadImage = ({
             value={assetImagePath}
             onChange={(e) => handleChangeImageAsset(e.target.value)}
             placeholder={
-              customInputPlaceholder
-              || intl.formatMessage(messages.uploadImageInputPlaceholder, {
+              customInputPlaceholder ||
+              intl.formatMessage(messages.uploadImageInputPlaceholder, {
                 identifierFieldText,
               })
             }
@@ -133,8 +115,8 @@ const CourseUploadImage = ({
         </Card.Footer>
       </Card>
       <Form.Control.Feedback>
-        {customHelpText
-          || intl.formatMessage(messages.uploadImageHelpText, {
+        {customHelpText ||
+          intl.formatMessage(messages.uploadImageHelpText, {
             identifierFieldText,
           })}
       </Form.Control.Feedback>

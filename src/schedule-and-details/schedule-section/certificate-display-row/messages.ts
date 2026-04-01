@@ -19,7 +19,8 @@ const messages = defineMessages({
   },
   certificateDisplayBehaviorToggleParagraph: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.paragraph',
-    defaultMessage: 'In all configurations of this setting, certificates are generated for learners as soon as they achieve the passing threshold in the course (which can occur before a final assignment based on course design).',
+    defaultMessage:
+      'In all configurations of this setting, certificates are generated for learners as soon as they achieve the passing threshold in the course (which can occur before a final assignment based on course design).',
   },
   certificateDisplayBehaviorToggleHeading1: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.heading-1',
@@ -27,7 +28,8 @@ const messages = defineMessages({
   },
   certificateDisplayBehaviorToggleParagraph1: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.paragraph-1',
-    defaultMessage: 'Learners can access their certificate as soon as they achieve a passing grade above the course grade threshold. Note: learners can achieve a passing grade before encountering all assignments in some course configurations.',
+    defaultMessage:
+      'Learners can access their certificate as soon as they achieve a passing grade above the course grade threshold. Note: learners can achieve a passing grade before encountering all assignments in some course configurations.',
   },
   certificateDisplayBehaviorToggleHeading2: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.heading-2',
@@ -35,7 +37,8 @@ const messages = defineMessages({
   },
   certificateDisplayBehaviorToggleParagraph2: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.paragraph-2',
-    defaultMessage: 'Learners with passing grades can access their certificate once the end date of the course has elapsed.',
+    defaultMessage:
+      'Learners with passing grades can access their certificate once the end date of the course has elapsed.',
   },
   certificateDisplayBehaviorToggleHeading3: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.heading-3',
@@ -43,7 +46,8 @@ const messages = defineMessages({
   },
   certificateDisplayBehaviorToggleParagraph3: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.paragraph-3',
-    defaultMessage: 'Learners with passing grades can access their certificate after the date that you set has elapsed.',
+    defaultMessage:
+      'Learners with passing grades can access their certificate after the date that you set has elapsed.',
   },
   certificateBehaviorDropdownOption1: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.dropdown.option-1',

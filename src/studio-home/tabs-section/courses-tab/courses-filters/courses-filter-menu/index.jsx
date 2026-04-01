@@ -5,12 +5,7 @@ import { Icon, Dropdown } from '@openedx/paragon';
 import { Check } from '@openedx/paragon/icons';
 import { getStudioHomeCoursesParams } from '../../../../data/selectors';
 
-const CoursesFilterMenu = ({
-  id: idProp,
-  menuItems,
-  onItemMenuSelected,
-  defaultItemSelectedText,
-}) => {
+const CoursesFilterMenu = ({ id: idProp, menuItems, onItemMenuSelected, defaultItemSelectedText }) => {
   const [itemMenuSelected, setItemMenuSelected] = useState(defaultItemSelectedText);
   const { cleanFilters } = useSelector(getStudioHomeCoursesParams);
   const handleCourseTypeSelected = (name, value) => {
@@ -18,9 +13,8 @@ const CoursesFilterMenu = ({
     onItemMenuSelected(value);
   };
 
-  const courseTypeSelectedIcon = (itemValue) => (itemValue === itemMenuSelected ? (
-    <Icon src={Check} className="ml-2" data-testid="menu-item-icon" />
-  ) : null);
+  const courseTypeSelectedIcon = (itemValue) =>
+    itemValue === itemMenuSelected ? <Icon src={Check} className="ml-2" data-testid="menu-item-icon" /> : null;
 
   useEffect(() => {
     if (cleanFilters) {
@@ -41,11 +35,7 @@ const CoursesFilterMenu = ({
       </Dropdown.Toggle>
       <Dropdown.Menu>
         {menuItems.map(({ id, name, value }) => (
-          <Dropdown.Item
-            key={id}
-            onClick={() => handleCourseTypeSelected(name, value)}
-            data-testid={`item-menu-${id}`}
-          >
+          <Dropdown.Item key={id} onClick={() => handleCourseTypeSelected(name, value)} data-testid={`item-menu-${id}`}>
             {name} {courseTypeSelectedIcon(name)}
           </Dropdown.Item>
         ))}

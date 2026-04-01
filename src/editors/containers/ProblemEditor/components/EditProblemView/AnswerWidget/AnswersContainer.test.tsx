@@ -1,9 +1,7 @@
 import React from 'react';
 
 import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
-import {
-  render, screen, fireEvent, initializeMocks,
-} from '@src/testUtils';
+import { render, screen, fireEvent, initializeMocks } from '@src/testUtils';
 import { actions } from '@src/editors/data/redux';
 import AnswersContainer from './AnswersContainer';
 
@@ -34,9 +32,12 @@ jest.mock('../../../../../data/redux', () => ({
 
 // Mock AnswerOption and Button components
 jest.mock('./AnswerOption', () => jest.fn(({ answer }) => <div>AnswerOption-{answer.id}</div>));
-jest.mock(
-  '../../../../../sharedComponents/Button',
-  () => jest.fn(({ children, ...props }) => <button type="button" {...props}>{children}</button>),
+jest.mock('../../../../../sharedComponents/Button', () =>
+  jest.fn(({ children, ...props }) => (
+    <button type="button" {...props}>
+      {children}
+    </button>
+  )),
 );
 
 // Mock hooks

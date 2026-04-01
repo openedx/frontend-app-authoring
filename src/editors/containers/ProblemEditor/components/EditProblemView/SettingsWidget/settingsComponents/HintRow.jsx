@@ -1,25 +1,12 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Container,
-  Icon,
-  IconButton,
-} from '@openedx/paragon';
+import { ActionRow, Container, Icon, IconButton } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import messages from '../messages';
 import ExpandableTextArea from '../../../../../../sharedComponents/ExpandableTextArea';
 
-const HintRow = ({
-  value,
-  handleChange,
-  handleDelete,
-  id,
-  images,
-  isLibrary,
-  learningContextId,
-}) => {
+const HintRow = ({ value, handleChange, handleDelete, id, images, isLibrary, learningContextId }) => {
   const intl = useIntl();
   return (
     <ActionRow className="mb-4">

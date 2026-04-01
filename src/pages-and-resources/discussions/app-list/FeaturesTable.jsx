@@ -12,15 +12,13 @@ import './FeaturesTable.scss';
 
 const FeaturesTable = ({ apps, features }) => {
   const intl = useIntl();
-  const {
-    basic, partial, full, common,
-  } = groupBy(features, (feature) => feature.featureSupportType);
+  const { basic, partial, full, common } = groupBy(features, (feature) => feature.featureSupportType);
 
   const createRow = (feature) => {
     const appCheckmarkCells = {};
     // DataTable wants 'data' to be    an array of objects where each property of an object
     // represents a cell in that row, identified by its key.
-    apps.forEach(app => {
+    apps.forEach((app) => {
       // If our app's set of feature Ids includes this feature, return a checkmark.
       // i.e, if this app has the current feature, check it!
       if (FEATURE_TYPES.includes(feature)) {
@@ -32,11 +30,11 @@ const FeaturesTable = ({ apps, features }) => {
             key={`${app.id}&${feature.id}`}
             data-testid={`${app.id}-${feature.id.replaceAll('.', '-')}`}
           >
-            {
-              app.featureIds.includes(feature.id)
-                ? <Check id="check-icon" className="text-success-500" />
-                : <Remove id="remove-icon" className="text-light-700" />
-            }
+            {app.featureIds.includes(feature.id) ? (
+              <Check id="check-icon" className="text-success-500" />
+            ) : (
+              <Remove id="remove-icon" className="text-light-700" />
+            )}
           </div>
         );
       }
@@ -44,11 +42,10 @@ const FeaturesTable = ({ apps, features }) => {
 
     return {
       feature: FEATURE_TYPES.includes(feature) ? (
-        <span className="font-weight-bold">
-          {intl.formatMessage(messages[`featureType-${feature}`])}
-        </span>
-      )
-        : intl.formatMessage(messages[`featureName-${feature.id}`]),
+        <span className="font-weight-bold">{intl.formatMessage(messages[`featureType-${feature}`])}</span>
+      ) : (
+        intl.formatMessage(messages[`featureName-${feature.id}`])
+      ),
       // 'feature' is the identifier for cells in the first column.
       // This is spreading the app IDs from appCheckmarkCells into the return array, creating
       // one object with 'feature' and the app.id keys from above.  The values are the JSX
@@ -60,18 +57,16 @@ const FeaturesTable = ({ apps, features }) => {
   return (
     <DataTable
       itemCount={features.length}
-      data={
-        [
-          { ...createRow('basic') },
-          ...basic.map((feature) => createRow(feature)),
-          { ...createRow('partial') },
-          ...partial.map((feature) => createRow(feature)),
-          { ...createRow('full') },
-          ...full.map((feature) => createRow(feature)),
-          { ...createRow('common') },
-          ...common.map((feature) => createRow(feature)),
-        ]
-      }
+      data={[
+        { ...createRow('basic') },
+        ...basic.map((feature) => createRow(feature)),
+        { ...createRow('partial') },
+        ...partial.map((feature) => createRow(feature)),
+        { ...createRow('full') },
+        ...full.map((feature) => createRow(feature)),
+        { ...createRow('common') },
+        ...common.map((feature) => createRow(feature)),
+      ]}
       columns={[
         {
           Header: '',
@@ -79,7 +74,7 @@ const FeaturesTable = ({ apps, features }) => {
         },
         // We're converting our apps array into a bunch of objects with "Header" and "accessor"
         // keys, like DataTable expects.
-        ...apps.map(app => ({
+        ...apps.map((app) => ({
           Header: intl.formatMessage(appMessages[`appName-${app.id}`]),
           accessor: app.id,
         })),

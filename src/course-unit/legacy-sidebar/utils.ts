@@ -1,9 +1,4 @@
-import {
-  AccessTimeFilled,
-  CheckCircle as CheckCircleIcon,
-  Description,
-  Lock,
-} from '@openedx/paragon/icons';
+import { AccessTimeFilled, CheckCircle as CheckCircleIcon, Description, Lock } from '@openedx/paragon/icons';
 
 import type { IntlShape } from 'react-intl';
 

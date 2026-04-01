@@ -3,14 +3,7 @@ import { PropTypes } from 'prop-types';
 import ThumbnailPreview from '../../ThumbnailPreview';
 
 const ThumbnailColumn = ({ row, thumbnailPreview }) => {
-  const {
-    thumbnail,
-    wrapperType,
-    externalUrl,
-    displayName,
-    id,
-    status,
-  } = row.original;
+  const { thumbnail, wrapperType, externalUrl, displayName, id, status } = row.original;
   return (
     <ThumbnailPreview
       {...{

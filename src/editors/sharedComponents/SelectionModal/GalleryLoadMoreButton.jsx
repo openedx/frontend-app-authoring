@@ -3,12 +3,7 @@ import PropTypes from 'prop-types';
 import { Icon, StatefulButton } from '@openedx/paragon';
 import { ExpandMore, SpinnerSimple } from '@openedx/paragon/icons';
 
-const GalleryLoadMoreButton = ({
-  assetCount,
-  displayListLength,
-  fetchNextPage,
-  isLoaded,
-}) => {
+const GalleryLoadMoreButton = ({ assetCount, displayListLength, fetchNextPage, isLoaded }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const handlePageChange = () => {
@@ -32,11 +27,7 @@ const GalleryLoadMoreButton = ({
   return (
     <div className="row justify-content-center py-3">
       {displayListLength !== assetCount && (
-        <StatefulButton
-          {...buttonProps}
-          onClick={handlePageChange}
-          state={buttonState}
-        />
+        <StatefulButton {...buttonProps} onClick={handlePageChange} state={buttonState} />
       )}
     </div>
   );

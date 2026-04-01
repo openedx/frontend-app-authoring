@@ -4,11 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../data/constants';
 import { updateSavingStatus } from '../generic/data/slice';
-import {
-  getSavingStatus,
-  getCourseRerunData,
-  getCourseData,
-} from '../generic/data/selectors';
+import { getSavingStatus, getCourseRerunData, getCourseData } from '../generic/data/selectors';
 import { fetchCourseRerunQuery, fetchOrganizationsQuery } from '../generic/data/thunks';
 import { fetchStudioHomeData } from '../studio-home/data/thunks';
 
@@ -19,12 +15,7 @@ const useCourseRerun = (courseId) => {
   const courseData = useSelector(getCourseData);
   const courseRerunData = useSelector(getCourseRerunData);
 
-  const {
-    displayName = '',
-    org = '',
-    run = '',
-    number = '',
-  } = courseRerunData;
+  const { displayName = '', org = '', run = '', number = '' } = courseRerunData;
   const originalCourseData = `${org} ${number} ${run}`;
   const initialFormValues = {
     displayName,

@@ -30,7 +30,7 @@ const FilesPage = () => {
     deletingStatus: deleteAssetStatus,
     updatingStatus: updateAssetStatus,
     errors: errorMessages,
-  } = useSelector(state => state.assets);
+  } = useSelector((state) => state.assets);
 
   useEffect(() => {
     dispatch(fetchAssets(courseId));
@@ -57,16 +57,10 @@ const FilesPage = () => {
           updateFileStatus={updateAssetStatus}
           loadingStatus={loadingStatus}
         />
-        <AlertAgreementGatedFeature
-          gatingTypes={[AgreementGated.UPLOAD, AgreementGated.UPLOAD_FILES]}
-        />
+        <AlertAgreementGatedFeature gatingTypes={[AgreementGated.UPLOAD, AgreementGated.UPLOAD_FILES]} />
         <EditFileAlertsSlot />
-        <div className="h2">
-          {intl.formatMessage(messages.heading)}
-        </div>
-        {loadingStatus !== RequestStatus.FAILED && (
-          <CourseFilesSlot />
-        )}
+        <div className="h2">{intl.formatMessage(messages.heading)}</div>
+        {loadingStatus !== RequestStatus.FAILED && <CourseFilesSlot />}
       </Container>
     </FilesPageProvider>
   );

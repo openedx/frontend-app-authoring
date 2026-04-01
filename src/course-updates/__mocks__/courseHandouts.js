@@ -17,10 +17,7 @@ module.exports = {
   due: null,
   relative_weeks_due: null,
   format: null,
-  course_graders: [
-    'Homework',
-    'Exam',
-  ],
+  course_graders: ['Homework', 'Exam'],
   has_changes: null,
   actions: {
     deletable: true,

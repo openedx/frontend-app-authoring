@@ -1,6 +1,4 @@
-import {
-  render, fireEvent, screen, waitFor,
-} from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { courseDetailsMock } from '../../__mocks__';

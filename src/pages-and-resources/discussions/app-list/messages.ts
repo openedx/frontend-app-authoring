@@ -53,7 +53,8 @@ const messages = defineMessages({
   },
   'appDescription-legacy': {
     id: 'authoring.discussions.appList.appDescription-legacy',
-    defaultMessage: 'Start conversations with other learners, ask questions, and interact with other learners in the course.',
+    defaultMessage:
+      'Start conversations with other learners, ask questions, and interact with other learners in the course.',
     description: 'A description of the Legacy edX Discussions app.',
   },
   // New provider
@@ -75,27 +76,32 @@ const messages = defineMessages({
   },
   'appDescription-piazza': {
     id: 'authoring.discussions.appList.appDescription-piazza',
-    defaultMessage: 'Piazza is designed to connect students, TAs, and professors so every student can get the help they need when they need it.',
+    defaultMessage:
+      'Piazza is designed to connect students, TAs, and professors so every student can get the help they need when they need it.',
     description: 'A description of the Piazza app.',
   },
   'appDescription-yellowdig': {
     id: 'authoring.discussions.appList.appDescription-yellowdig',
-    defaultMessage: 'Yellowdig offers educators a gameful learning digital solution to improve student engagement by building learning communities for any course modality.',
+    defaultMessage:
+      'Yellowdig offers educators a gameful learning digital solution to improve student engagement by building learning communities for any course modality.',
     description: 'A description of the Yellowdig app.',
   },
   'appDescription-inscribe': {
     id: 'authoring.discussions.appList.appDescription-inscribe',
-    defaultMessage: 'InScribe leverages the power of community + artificial intelligence to connect individuals to the answers, resources, and people they need to succeed.',
+    defaultMessage:
+      'InScribe leverages the power of community + artificial intelligence to connect individuals to the answers, resources, and people they need to succeed.',
     description: 'A description of the inscibe app.',
   },
   'appDescription-discourse': {
     id: 'authoring.discussions.appList.appDescription-discourse',
-    defaultMessage: 'Discourse is modern forum software for your community. Use it as a mailing list, discussion forum, long-form chat room, and more!',
+    defaultMessage:
+      'Discourse is modern forum software for your community. Use it as a mailing list, discussion forum, long-form chat room, and more!',
     description: 'A description of the discourse app.',
   },
   'appDescription-ed-discuss': {
     id: 'authoring.discussions.appList.appDescription-ed-discus',
-    defaultMessage: 'Ed Discussion helps scale class communication in a beautiful and intuitive interface. Questions reach and benefit the whole class. Less emails, more time saved.',
+    defaultMessage:
+      'Ed Discussion helps scale class communication in a beautiful and intuitive interface. Questions reach and benefit the whole class. Less emails, more time saved.',
     description: 'A description of the Ed discus app.',
   },
   // Features
@@ -251,7 +257,8 @@ const messages = defineMessages({
   },
   hideDiscussionTabMessage: {
     id: 'authoring.discussions.hide-tab-message',
-    defaultMessage: 'The discussion tab will no longer be visible to learners in the LMS. Additionally, posting to the discussion forums will be disabled. Are you sure you want to proceed?',
+    defaultMessage:
+      'The discussion tab will no longer be visible to learners in the LMS. Additionally, posting to the discussion forums will be disabled. Are you sure you want to proceed?',
     description: 'Help message to hide discussion tab',
   },
   hideDiscussionOkButton: {

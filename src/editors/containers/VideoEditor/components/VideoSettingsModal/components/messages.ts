@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   expandAltText: {
     id: 'authoring.videoeditor.expand',
     defaultMessage: 'Expand',
@@ -12,7 +11,7 @@ const messages = defineMessages({
   },
   validateErrorTitle: {
     id: 'authoring.videoeditor.validate.error.title',
-    defaultMessage: 'We couldn\'t add your video.',
+    defaultMessage: "We couldn't add your video.",
     description: 'Title of validation error.',
   },
   validateErrorBody: {
@@ -63,7 +62,8 @@ const messages = defineMessages({
   custom: {
     id: 'authoring.videoeditor.duration.custom',
     defaultMessage: 'Custom: {total}',
-    description: 'Text describing a video with custom start time and custom stop time, or just a custom stop time for a collapsed widget',
+    description:
+      'Text describing a video with custom start time and custom stop time, or just a custom stop time for a collapsed widget',
   },
   noTranscriptsAdded: {
     id: 'authoring.videoeditor.transcripts.empty',

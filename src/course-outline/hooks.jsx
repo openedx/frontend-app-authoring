@@ -23,12 +23,7 @@ import {
   useUpdateCourseSectionHighlights,
 } from '@src/course-outline/data/apiHooks';
 import { COURSE_BLOCK_NAMES } from './constants';
-import {
-  deleteSection,
-  deleteSubsection,
-  deleteUnit,
-  updateSavingStatus,
-} from './data/slice';
+import { deleteSection, deleteSubsection, deleteUnit, updateSavingStatus } from './data/slice';
 import {
   getLoadingStatus,
   getOutlineIndexData,
@@ -56,13 +51,8 @@ import {
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
-  const {
-    handleAddBlock,
-    setCurrentSelection,
-    currentSelection,
-    currentUnlinkModalData,
-    closeUnlinkModal,
-  } = useCourseAuthoringContext();
+  const { handleAddBlock, setCurrentSelection, currentSelection, currentUnlinkModalData, closeUnlinkModal } =
+    useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
   const {
@@ -148,10 +138,8 @@ const useCourseOutline = ({ courseId }) => {
     openHighlightsModal();
   };
 
-  const {
-    mutate: updateCourseSectionHighlights,
-    isPending: isSectionHighlightsUpdatePending,
-  } = useUpdateCourseSectionHighlights();
+  const { mutate: updateCourseSectionHighlights, isPending: isSectionHighlightsUpdatePending } =
+    useUpdateCourseSectionHighlights();
   const handleHighlightsFormSubmit = (highlights) => {
     const dataToSend = Object.values(highlights).filter(Boolean);
     updateCourseSectionHighlights({
@@ -177,29 +165,23 @@ const useCourseOutline = ({ courseId }) => {
       return;
     }
 
-    await unlinkDownstream({
-      downstreamBlockId: currentUnlinkModalData.value.id,
-      sectionId: currentUnlinkModalData.sectionId,
-      subsectionId: currentUnlinkModalData.subsectionId,
-    }, {
-      onSuccess: () => {
-        closeUnlinkModal();
+    await unlinkDownstream(
+      {
+        downstreamBlockId: currentUnlinkModalData.value.id,
+        sectionId: currentUnlinkModalData.sectionId,
+        subsectionId: currentUnlinkModalData.subsectionId,
       },
-    });
+      {
+        onSuccess: () => {
+          closeUnlinkModal();
+        },
+      },
+    );
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
 
-  const {
-    mutate: configureCourseSection,
-    isPending: isSectionConfigurePending,
-  } = useConfigureSection();
-  const {
-    mutate: configureCourseSubsection,
-    isPending: isSubsectionConfigurePending,
-  } = useConfigureSubsection();
-  const {
-    mutate: configureCourseUnit,
-    isPending: isUnitConfigurePending,
-  } = useConfigureUnit();
+  const { mutate: configureCourseSection, isPending: isSectionConfigurePending } = useConfigureSection();
+  const { mutate: configureCourseSubsection, isPending: isSubsectionConfigurePending } = useConfigureSubsection();
+  const { mutate: configureCourseUnit, isPending: isUnitConfigurePending } = useConfigureUnit();
   const isConfigureOpPending = isSectionConfigurePending || isSubsectionConfigurePending || isUnitConfigurePending;
   const handleConfigureItemSubmit = (variables) => {
     const category = getBlockType(currentSelection.currentId);
@@ -252,10 +234,13 @@ const useCourseOutline = ({ courseId }) => {
         await deleteMutation.mutateAsync(
           { itemId: currentSelection.currentId, sectionId: currentSelection.sectionId },
           {
-            onSettled: () => dispatch(deleteSubsection({
-              itemId: currentSelection.currentId,
-              sectionId: currentSelection.sectionId,
-            })),
+            onSettled: () =>
+              dispatch(
+                deleteSubsection({
+                  itemId: currentSelection.currentId,
+                  sectionId: currentSelection.sectionId,
+                }),
+              ),
           },
         );
         break;
@@ -267,11 +252,14 @@ const useCourseOutline = ({ courseId }) => {
             sectionId: currentSelection.sectionId,
           },
           {
-            onSettled: () => dispatch(deleteUnit({
-              itemId: currentSelection.currentId,
-              subsectionId: currentSelection.subsectionId,
-              sectionId: currentSelection.sectionId,
-            })),
+            onSettled: () =>
+              dispatch(
+                deleteUnit({
+                  itemId: currentSelection.currentId,
+                  subsectionId: currentSelection.subsectionId,
+                  sectionId: currentSelection.sectionId,
+                }),
+              ),
           },
         );
         break;
@@ -296,10 +284,7 @@ const useCourseOutline = ({ courseId }) => {
     deleteSubsection,
   ]);
 
-  const {
-    mutate: duplicateItem,
-    isPending: isDuplicatingItem,
-  } = useDuplicateItem(courseId);
+  const { mutate: duplicateItem, isPending: isDuplicatingItem } = useDuplicateItem(courseId);
   const handleDuplicateSectionSubmit = () => {
     duplicateItem({
       itemId: currentSelection?.currentId,
@@ -335,45 +320,16 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(dismissNotificationQuery(`${getConfig().STUDIO_BASE_URL}${notificationDismissUrl}`));
   };
 
-  const handleSectionDragAndDrop = (
-    sectionListIds,
-    restoreSectionList,
-  ) => {
-    dispatch(setSectionOrderListQuery(
-      courseId,
-      sectionListIds,
-      restoreSectionList,
-    ));
+  const handleSectionDragAndDrop = (sectionListIds, restoreSectionList) => {
+    dispatch(setSectionOrderListQuery(courseId, sectionListIds, restoreSectionList));
   };
 
-  const handleSubsectionDragAndDrop = (
-    sectionId,
-    prevSectionId,
-    subsectionListIds,
-    restoreSectionList,
-  ) => {
-    dispatch(setSubsectionOrderListQuery(
-      sectionId,
-      prevSectionId,
-      subsectionListIds,
-      restoreSectionList,
-    ));
+  const handleSubsectionDragAndDrop = (sectionId, prevSectionId, subsectionListIds, restoreSectionList) => {
+    dispatch(setSubsectionOrderListQuery(sectionId, prevSectionId, subsectionListIds, restoreSectionList));
   };
 
-  const handleUnitDragAndDrop = (
-    sectionId,
-    prevSectionId,
-    subsectionId,
-    unitListIds,
-    restoreSectionList,
-  ) => {
-    dispatch(setUnitOrderListQuery(
-      sectionId,
-      subsectionId,
-      prevSectionId,
-      unitListIds,
-      restoreSectionList,
-    ));
+  const handleUnitDragAndDrop = (sectionId, prevSectionId, subsectionId, unitListIds, restoreSectionList) => {
+    dispatch(setUnitOrderListQuery(sectionId, subsectionId, prevSectionId, unitListIds, restoreSectionList));
   };
 
   useEffect(() => {

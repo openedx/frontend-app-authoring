@@ -15,11 +15,7 @@ const SidebarHeader = ({ title, visibilityState, displayUnitLocation }) => {
   return (
     <Stack className="course-unit-sidebar-header" direction="horizontal" gap={2}>
       {!displayUnitLocation && (
-        <Icon
-          className="course-unit-sidebar-header-icon"
-          svgAttrs={{ color: colorVariant }}
-          src={iconSrc}
-        />
+        <Icon className="course-unit-sidebar-header-icon" svgAttrs={{ color: colorVariant }} src={iconSrc} />
       )}
       <h3 className="course-unit-sidebar-header-title m-0">
         {displayUnitLocation ? intl.formatMessage(messages.sidebarHeaderUnitLocationTitle) : title}

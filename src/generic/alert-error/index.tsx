@@ -1,7 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Alert,
-} from '@openedx/paragon';
+import { Alert } from '@openedx/paragon';
 import messages from './messages';
 
 export interface AlertErrorProps {
@@ -33,11 +31,7 @@ const AlertError: React.FC<AlertErrorProps> = ({ error, title, onDismiss }) => {
       {title && <Alert.Heading>{title}</Alert.Heading>}
       {error instanceof Object && 'message' in error ? String(error.message) : String(error)}
       <br />
-      {errorDetails && (
-        <pre>
-          {errorDetails}
-        </pre>
-      )}
+      {errorDetails && <pre>{errorDetails}</pre>}
     </Alert>
   );
 };

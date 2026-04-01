@@ -13,18 +13,13 @@ import HistoryWidget from '../generic/history-widget';
 import messages from './messages';
 
 interface BlockCountProps {
-  count: number,
-  blockType?: string,
-  label: React.ReactNode,
-  className?: string,
+  count: number;
+  blockType?: string;
+  label: React.ReactNode;
+  className?: string;
 }
 
-const BlockCount = ({
-  count,
-  blockType,
-  label,
-  className,
-}: BlockCountProps) => {
+const BlockCount = ({ count, blockType, label, className }: BlockCountProps) => {
   const icon = blockType && getItemIcon(blockType);
   return (
     <Stack className={classNames('text-center', className)}>
@@ -69,7 +64,8 @@ const CollectionStatsWidget = () => {
     );
   }
 
-  const otherBlocksCount = Object.entries(blockTypes).filter(([blockType]) => !blockSlots.includes(blockType))
+  const otherBlocksCount = Object.entries(blockTypes)
+    .filter(([blockType]) => !blockSlots.includes(blockType))
     .reduce((acc, [, count]) => acc + count, 0);
 
   return (
@@ -129,25 +125,24 @@ const CollectionDetails = () => {
     if (!libraryId || newDescription === collection.description) {
       return;
     }
-    updateMutation.mutateAsync({
-      libraryId,
-      collectionId,
-      data: { description: newDescription },
-    }).then(() => {
-      showToast(intl.formatMessage(messages.updateCollectionSuccessMsg));
-    }).catch(() => {
-      showToast(intl.formatMessage(messages.updateCollectionErrorMsg));
-    });
+    updateMutation
+      .mutateAsync({
+        libraryId,
+        collectionId,
+        data: { description: newDescription },
+      })
+      .then(() => {
+        showToast(intl.formatMessage(messages.updateCollectionSuccessMsg));
+      })
+      .catch(() => {
+        showToast(intl.formatMessage(messages.updateCollectionErrorMsg));
+      });
   };
 
   return (
-    <Stack
-      gap={3}
-    >
+    <Stack gap={3}>
       <div>
-        <h3 className="h5">
-          {intl.formatMessage(messages.detailsTabDescriptionTitle)}
-        </h3>
+        <h3 className="h5">{intl.formatMessage(messages.detailsTabDescriptionTitle)}</h3>
         {!readOnly ? (
           <textarea
             className="form-control"
@@ -155,22 +150,18 @@ const CollectionDetails = () => {
             onChange={(e) => setDescription(e.target.value)}
             onBlur={onSubmit}
           />
-        ) : collection.description}
+        ) : (
+          collection.description
+        )}
       </div>
       <div>
-        <h3 className="h5">
-          {intl.formatMessage(messages.detailsTabStatsTitle)}
-        </h3>
+        <h3 className="h5">{intl.formatMessage(messages.detailsTabStatsTitle)}</h3>
         <CollectionStatsWidget />
       </div>
       <hr className="w-100" />
       <div>
-        <h3 className="h5">
-          {intl.formatMessage(messages.detailsTabHistoryTitle)}
-        </h3>
-        <HistoryWidget
-          {...collection}
-        />
+        <h3 className="h5">{intl.formatMessage(messages.detailsTabHistoryTitle)}</h3>
+        <HistoryWidget {...collection} />
       </div>
     </Stack>
   );

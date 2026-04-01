@@ -6,9 +6,10 @@
  * @param {func} transform - transform method taking an index and a new value
  * @return {func} - event handler creator for index-tied values
  */
-export const handleIndexEvent = ({ handler, transform }) => (index) => (
-  handler(val => transform(index, val))
-);
+export const handleIndexEvent =
+  ({ handler, transform }) =>
+  (index) =>
+    handler((val) => transform(index, val));
 
 /**
  * handleIndexTransformEvent({ handler, setter, local, transform })
@@ -20,14 +21,10 @@ export const handleIndexEvent = ({ handler, transform }) => (index) => (
  * @param {func} transform - transform method taking an index and a new value
  * @return {func} - event handler creator for index-tied values with separate setter and transforms
  */
-export const handleIndexTransformEvent = ({
-  handler,
-  local,
-  setter,
-  transform,
-}) => (index) => (
-  handler(val => setter(transform(local, index, val)))
-);
+export const handleIndexTransformEvent =
+  ({ handler, local, setter, transform }) =>
+  (index) =>
+    handler((val) => setter(transform(local, index, val)));
 
 /**
  * onValue(handler)

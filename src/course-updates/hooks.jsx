@@ -28,9 +28,7 @@ const useCourseUpdates = ({ courseId }) => {
   const courseUpdates = useSelector(getCourseUpdates);
   const courseHandouts = useSelector(getCourseHandouts);
 
-  const courseUpdatesInitialValues = requestType === REQUEST_TYPES.edit_handouts
-    ? courseHandouts
-    : currentUpdate;
+  const courseUpdatesInitialValues = requestType === REQUEST_TYPES.edit_handouts ? courseHandouts : currentUpdate;
 
   const handleOpenUpdateForm = (type, courseUpdate) => {
     setRequestType(type);
@@ -100,7 +98,7 @@ const useCourseUpdates = ({ courseId }) => {
     courseHandouts,
     courseUpdatesInitialValues,
     isMainFormOpen: isUpdateFormOpen && requestType !== REQUEST_TYPES.edit_update,
-    isInnerFormOpen: (id) => (isUpdateFormOpen && currentUpdate.id === id && requestType === REQUEST_TYPES.edit_update),
+    isInnerFormOpen: (id) => isUpdateFormOpen && currentUpdate.id === id && requestType === REQUEST_TYPES.edit_update,
     isUpdateFormOpen,
     isDeleteModalOpen,
     closeUpdateForm,

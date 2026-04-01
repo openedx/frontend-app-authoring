@@ -6,10 +6,7 @@ import SettingsOption from '../SettingsOption';
 import messages from '../messages';
 import { timerCardHooks } from '../hooks';
 
-const TimerCard = ({
-  timeBetween,
-  updateSettings,
-}) => {
+const TimerCard = ({ timeBetween, updateSettings }) => {
   const intl = useIntl();
   const { handleChange } = timerCardHooks(updateSettings);
 

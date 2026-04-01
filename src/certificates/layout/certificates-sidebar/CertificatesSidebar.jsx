@@ -12,10 +12,7 @@ const CertificatesSidebar = ({ courseId }) => {
   const intl = useIntl();
   const { certificates: learnMoreCertificates } = useHelpUrls(['certificates']);
   return (
-    <HelpSidebar
-      courseId={courseId}
-      showOtherSettings
-    >
+    <HelpSidebar courseId={courseId} showOtherSettings>
       {getSidebarData({ messages, intl }).map(({ title, paragraphs }, id) => (
         <SidebarBlock
           key={title}

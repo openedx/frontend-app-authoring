@@ -1,9 +1,7 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig, ensureConfig } from '@edx/frontend-platform';
 
-ensureConfig([
-  'STUDIO_BASE_URL',
-], 'Studio API service');
+ensureConfig(['STUDIO_BASE_URL'], 'Studio API service');
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 

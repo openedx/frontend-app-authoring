@@ -25,10 +25,7 @@ export const getXBlockType = (category: string): string => {
  * @param {string} targetId - The ID of the target element for which to find the parent IDs.
  * @returns {string[]}  - An array of IDs representing the path from the root to the target element.
  */
-export const findParentIds = (
-  tree: ITreeNode | undefined,
-  targetId: string,
-): string[] => {
+export const findParentIds = (tree: ITreeNode | undefined, targetId: string): string[] => {
   let path: string[] = [];
 
   function traverse(node: ITreeNode | undefined, id: string, currentPath: string[]): boolean {
@@ -63,28 +60,25 @@ export const findParentIds = (
  * @param {Object} targetParentInfo - Target parent information.
  * @returns {boolean} - Returns true if moving is valid.
  */
-export const isValidCategory = (
-  sourceParentInfo: IXBlockInfo,
-  targetParentInfo: IXBlockInfo,
-): boolean => {
+export const isValidCategory = (sourceParentInfo: IXBlockInfo, targetParentInfo: IXBlockInfo): boolean => {
   let { category: sourceParentCategory } = sourceParentInfo;
   let { category: targetParentCategory } = targetParentInfo;
   const { hasChildren: sourceParentHasChildren } = sourceParentInfo;
   const { hasChildren: targetParentHasChildren } = targetParentInfo;
 
   if (
-    sourceParentHasChildren
-      && sourceParentCategory
-      && !(BASIC_BLOCK_TYPES as readonly string[]).includes(sourceParentCategory)
+    sourceParentHasChildren &&
+    sourceParentCategory &&
+    !(BASIC_BLOCK_TYPES as readonly string[]).includes(sourceParentCategory)
   ) {
     sourceParentCategory = CATEGORIES.KEYS.vertical;
   }
 
   if (
-    targetParentHasChildren
-      && targetParentCategory
-      && !(BASIC_BLOCK_TYPES as readonly string[]).includes(targetParentCategory)
-      && targetParentCategory !== CATEGORIES.KEYS.split_test
+    targetParentHasChildren &&
+    targetParentCategory &&
+    !(BASIC_BLOCK_TYPES as readonly string[]).includes(targetParentCategory) &&
+    targetParentCategory !== CATEGORIES.KEYS.split_test
   ) {
     targetParentCategory = CATEGORIES.KEYS.vertical;
   }
@@ -98,10 +92,7 @@ export const isValidCategory = (
  * @param {Function} formatMessage - Intl formatting function.
  * @returns {Array} - Array of breadcrumb elements.
  */
-export const getBreadcrumbs = (
-  visitedAncestors: IAncestor[],
-  formatMessage: any,
-): string[] => {
+export const getBreadcrumbs = (visitedAncestors: IAncestor[], formatMessage: any): string[] => {
   if (!Array.isArray(visitedAncestors)) {
     return [];
   }

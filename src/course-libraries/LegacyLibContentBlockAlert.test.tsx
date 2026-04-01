@@ -5,9 +5,7 @@ import LegacyLibContentBlockAlert from './LegacyLibContentBlockAlert';
 import * as apiMocks from './data/api.mocks';
 
 const renderComponent = (courseId: string) => {
-  render(
-    <LegacyLibContentBlockAlert courseId={courseId} />,
-  );
+  render(<LegacyLibContentBlockAlert courseId={courseId} />);
 };
 
 apiMocks.mockGetReadyToUpdateReferences.applyMock();

@@ -9,42 +9,37 @@ import { getSidebarData } from './utils';
 import messages from './messages';
 
 const GroupConfigurationSidebar = ({
-  courseId, shouldShowExperimentGroups, shouldShowContentGroup, shouldShowEnrollmentTrackGroup,
+  courseId,
+  shouldShowExperimentGroups,
+  shouldShowContentGroup,
+  shouldShowEnrollmentTrackGroup,
 }) => {
   const intl = useIntl();
   const urls = useHelpUrls(['groupConfigurations', 'enrollmentTracks', 'contentGroups']);
   const sidebarData = getSidebarData({
-    messages, intl, shouldShowExperimentGroups, shouldShowContentGroup, shouldShowEnrollmentTrackGroup,
+    messages,
+    intl,
+    shouldShowExperimentGroups,
+    shouldShowContentGroup,
+    shouldShowEnrollmentTrackGroup,
   });
 
   return (
-    <HelpSidebar
-      courseId={courseId}
-      showOtherSettings
-      className="mt-4"
-    >
-      {sidebarData
-        .map(({ title, paragraphs, urlKey }, idx) => (
-          <Fragment key={title}>
-            <h4 className="help-sidebar-about-title">
-              {title}
-            </h4>
-            {paragraphs.map((text) => (
-              <p key={text} className="help-sidebar-about-descriptions">
-                {text}
-              </p>
-            ))}
-            <Hyperlink
-              target="_blank"
-              showLaunchIcon={false}
-              href={urls[urlKey]}
-              className="mt-2 mb-3.5 sidebar-link"
-            >
-              {intl.formatMessage(messages.learnMoreBtn)}
-            </Hyperlink>
-            {idx !== sidebarData.length - 1 && <hr />}
-          </Fragment>
-        ))}
+    <HelpSidebar courseId={courseId} showOtherSettings className="mt-4">
+      {sidebarData.map(({ title, paragraphs, urlKey }, idx) => (
+        <Fragment key={title}>
+          <h4 className="help-sidebar-about-title">{title}</h4>
+          {paragraphs.map((text) => (
+            <p key={text} className="help-sidebar-about-descriptions">
+              {text}
+            </p>
+          ))}
+          <Hyperlink target="_blank" showLaunchIcon={false} href={urls[urlKey]} className="mt-2 mb-3.5 sidebar-link">
+            {intl.formatMessage(messages.learnMoreBtn)}
+          </Hyperlink>
+          {idx !== sidebarData.length - 1 && <hr />}
+        </Fragment>
+      ))}
     </HelpSidebar>
   );
 };

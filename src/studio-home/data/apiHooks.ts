@@ -9,10 +9,9 @@ export const studioHomeQueryKeys = {
   librariesV1: () => [...studioHomeQueryKeys.all, 'librariesV1'],
 };
 
-export const useLibrariesV1Data = (enabled: boolean = true) => (
+export const useLibrariesV1Data = (enabled: boolean = true) =>
   useQuery({
     queryKey: studioHomeQueryKeys.librariesV1(),
     queryFn: getStudioHomeLibraries,
     enabled,
-  })
-);
+  });

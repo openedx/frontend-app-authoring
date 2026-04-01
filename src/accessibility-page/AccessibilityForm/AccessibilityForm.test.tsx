@@ -1,8 +1,4 @@
-import {
-  initializeMocks,
-  render,
-  screen,
-} from '@src/testUtils';
+import { initializeMocks, render, screen } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 
 import AccessibilityForm from './index';
@@ -16,9 +12,7 @@ const defaultProps = {
 };
 
 const renderComponent = () => {
-  render(
-    <AccessibilityForm {...defaultProps} />,
-  );
+  render(<AccessibilityForm {...defaultProps} />);
 };
 
 describe('<AccessibilityPolicyForm />', () => {
@@ -63,9 +57,10 @@ describe('<AccessibilityPolicyForm />', () => {
 
     it('renders in progress state', async () => {
       axiosMock.onPost(getZendeskrUrl()).reply(
-        () => new Promise(() => {
-          // always in pending
-        }),
+        () =>
+          new Promise(() => {
+            // always in pending
+          }),
       );
 
       await user.click(submitButton);
@@ -82,7 +77,7 @@ describe('<AccessibilityPolicyForm />', () => {
 
       expect(screen.getByText(messages.accessibilityPolicyFormSuccess.defaultMessage)).toBeVisible();
 
-      formSections.forEach(input => {
+      formSections.forEach((input) => {
         expect(input.value).toBe('');
       });
     });
@@ -96,7 +91,7 @@ describe('<AccessibilityPolicyForm />', () => {
 
       expect(screen.getByTestId('rate-limit-alert')).toBeVisible();
 
-      formSections.forEach(input => {
+      formSections.forEach((input) => {
         expect(input.value).not.toBe('');
       });
     });

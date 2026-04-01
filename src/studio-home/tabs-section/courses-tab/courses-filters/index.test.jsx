@@ -1,8 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  screen, fireEvent, render, waitFor,
-} from '@testing-library/react';
+import { screen, fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -23,15 +21,12 @@ describe('CoursesFilters', () => {
     </IntlProvider>
   );
 
-  const renderComponent = (overrideProps = {}) => render(
-    <IntlProviderWrapper>
-      <CoursesFilters
-        dispatch={dispatchMock}
-        {...overrideProps}
-      />
-    </IntlProviderWrapper>,
-
-  );
+  const renderComponent = (overrideProps = {}) =>
+    render(
+      <IntlProviderWrapper>
+        <CoursesFilters dispatch={dispatchMock} {...overrideProps} />
+      </IntlProviderWrapper>,
+    );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -106,17 +101,20 @@ describe('CoursesFilters', () => {
     fireEvent.click(activeCoursesMenuItem);
 
     // Check that updateStudioHomeCoursesCustomParams is called with the correct payload
-    expect(dispatchMock).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      payload: {
-        currentPage: 1,
-        search: '',
-        order: 'display_name',
-        isFiltered: true,
-        archivedOnly: undefined,
-        activeOnly: true,
-        cleanFilters: false,
-      },
-    }));
+    expect(dispatchMock).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        payload: {
+          currentPage: 1,
+          search: '',
+          order: 'display_name',
+          isFiltered: true,
+          archivedOnly: undefined,
+          activeOnly: true,
+          cleanFilters: false,
+        },
+      }),
+    );
   });
 
   it('should handle search input submission', async () => {

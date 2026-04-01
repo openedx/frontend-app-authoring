@@ -1,12 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import {
-  Button,
-  Card,
-  Container,
-  Layout,
-  Stack,
-} from '@openedx/paragon';
+import { Button, Card, Container, Layout, Stack } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -57,7 +51,9 @@ export const CourseImportHomePage = () => {
   return (
     <div className="d-flex flex-column vh-100 course-import">
       <Helmet>
-        <title>{libraryData.title} | {process.env.SITE_NAME}</title>
+        <title>
+          {libraryData.title} | {process.env.SITE_NAME}
+        </title>
       </Helmet>
       <Header
         number={libraryData.slug}
@@ -87,13 +83,12 @@ export const CourseImportHomePage = () => {
                   <FormattedMessage {...messages.courseImportPreviousImports} />
                 </h3>
                 {courseImports.map((courseImport) => (
-                  <ImportedCourseCard
-                    key={courseImport.source.key}
-                    courseImport={courseImport}
-                  />
+                  <ImportedCourseCard key={courseImport.source.key} courseImport={courseImport} />
                 ))}
               </Stack>
-            ) : (<EmptyState />)}
+            ) : (
+              <EmptyState />
+            )}
           </Layout.Element>
           <Layout.Element>
             <HelpSidebar />

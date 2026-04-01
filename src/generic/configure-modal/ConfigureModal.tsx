@@ -1,13 +1,6 @@
 import * as Yup from 'yup';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ModalDialog,
-  Button,
-  ActionRow,
-  Form,
-  Tab,
-  Tabs,
-} from '@openedx/paragon';
+import { ModalDialog, Button, ActionRow, Form, Tab, Tabs } from '@openedx/paragon';
 import { Formik } from 'formik';
 
 import { VisibilityTypes } from '@src/data/constants';
@@ -20,15 +13,15 @@ import AdvancedTab from './AdvancedTab';
 import { UnitTab } from './UnitTab';
 
 interface Props {
-  isOpen: boolean,
+  isOpen: boolean;
   onClose: () => void;
-  onConfigureSubmit: (args: object) => void,
-  enableProctoredExams?: boolean,
-  enableTimedExams?: boolean,
-  currentItemData?: AccessManagedXBlockDataTypes,
-  isXBlockComponent?: boolean,
-  isSelfPaced?: boolean,
-  isOverflowVisible?: boolean,
+  onConfigureSubmit: (args: object) => void;
+  enableProctoredExams?: boolean;
+  enableTimedExams?: boolean;
+  currentItemData?: AccessManagedXBlockDataTypes;
+  isXBlockComponent?: boolean;
+  isSelfPaced?: boolean;
+  isOverflowVisible?: boolean;
 }
 
 const ConfigureModal = ({
@@ -81,11 +74,11 @@ const ConfigureModal = ({
 
   const getSelectedGroups = () => {
     if ((userPartitionInfo?.selectedPartitionIndex || 0) >= 0) {
-      return userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]
-        ?.groups
-        .filter(({ selected }) => selected)
-        .map(({ id }) => `${id}`)
-        || [];
+      return (
+        userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]?.groups
+          .filter(({ selected }) => selected)
+          .map(({ id }) => `${id}`) || []
+      );
     }
     return [];
   };
@@ -131,20 +124,14 @@ const ConfigureModal = ({
     showCorrectness: Yup.string().required(),
     isPrereq: Yup.boolean(),
     prereqUsageKey: Yup.string().nullable(true),
-    prereqMinScore: Yup.number().min(
-      0,
-      intl.formatMessage(messages.minScoreError),
-    ).max(
-      100,
-      intl.formatMessage(messages.minScoreError),
-    ).nullable(true),
-    prereqMinCompletion: Yup.number().min(
-      0,
-      intl.formatMessage(messages.minScoreError),
-    ).max(
-      100,
-      intl.formatMessage(messages.minScoreError),
-    ).nullable(true),
+    prereqMinScore: Yup.number()
+      .min(0, intl.formatMessage(messages.minScoreError))
+      .max(100, intl.formatMessage(messages.minScoreError))
+      .nullable(true),
+    prereqMinCompletion: Yup.number()
+      .min(0, intl.formatMessage(messages.minScoreError))
+      .max(100, intl.formatMessage(messages.minScoreError))
+      .nullable(true),
     selectedPartitionIndex: Yup.number().integer(),
     selectedGroups: Yup.array().of(Yup.string()),
     discussionEnabled: Yup.boolean(),
@@ -195,7 +182,7 @@ const ConfigureModal = ({
         // groupAccess should be {partitionId: [group1, group2]} or {} if selectedPartitionIndex === -1
         if (data.selectedPartitionIndex >= 0) {
           const partitionId = userPartitionInfo!.selectablePartitions[data.selectedPartitionIndex].id;
-          groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
+          groupAccess[partitionId] = data.selectedGroups.map((g) => parseInt(g, 10));
         }
         onConfigureSubmit({
           isVisibleToStaffOnly: data.isVisibleToStaffOnly,
@@ -304,9 +291,7 @@ const ConfigureModal = ({
     >
       <div data-testid="configure-modal">
         <ModalDialog.Header className="configure-modal__header">
-          <ModalDialog.Title>
-            {dialogTitle}
-          </ModalDialog.Title>
+          <ModalDialog.Title>{dialogTitle}</ModalDialog.Title>
         </ModalDialog.Header>
         <Formik
           initialValues={initialValues}
@@ -315,9 +300,7 @@ const ConfigureModal = ({
           validateOnBlur
           validateOnChange
         >
-          {({
-            values, handleSubmit, setFieldValue,
-          }) => (
+          {({ values, handleSubmit, setFieldValue }) => (
             <Form onSubmit={handleSubmit}>
               <ModalDialog.Body className="configure-modal__body">
                 <Form.Group size="sm" className="form-field">
@@ -329,10 +312,7 @@ const ConfigureModal = ({
                   <ModalDialog.CloseButton variant="tertiary">
                     {intl.formatMessage(messages.cancelButton)}
                   </ModalDialog.CloseButton>
-                  <Button
-                    data-testid="configure-save-button"
-                    type="submit"
-                  >
+                  <Button data-testid="configure-save-button" type="submit">
                     {intl.formatMessage(messages.saveButton)}
                   </Button>
                 </ActionRow>

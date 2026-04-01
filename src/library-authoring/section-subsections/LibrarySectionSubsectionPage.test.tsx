@@ -3,18 +3,8 @@ import type MockAdapter from 'axios-mock-adapter';
 import { QueryClient } from '@tanstack/react-query';
 
 import { act } from 'react';
-import {
-  initializeMocks,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '../../testUtils';
-import {
-  getLibraryContainerApiUrl,
-  getLibraryContainerChildrenApiUrl,
-  getLibraryContainersApiUrl,
-} from '../data/api';
+import { initializeMocks, fireEvent, render, screen, waitFor } from '../../testUtils';
+import { getLibraryContainerApiUrl, getLibraryContainerChildrenApiUrl, getLibraryContainersApiUrl } from '../data/api';
 import {
   mockContentLibrary,
   mockXBlockFields,
@@ -85,37 +75,31 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     childId?: string,
   ) => {
     const libId = libraryId || mockContentLibrary.libraryId;
-    const defaultId = cType === ContainerType.Section
-      ? mockGetContainerMetadata.sectionId
-      : mockGetContainerMetadata.subsectionId;
+    const defaultId =
+      cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
     const cId = containerId || defaultId;
     render(<LibraryLayout />, {
       path,
       routerProps: {
-        initialEntries: [childId
-          ? `/library/${libId}/${cType}/${cId}/${childId}`
-          : `/library/${libId}/${cType}/${cId}`,
+        initialEntries: [
+          childId ? `/library/${libId}/${cType}/${cId}/${childId}` : `/library/${libId}/${cType}/${cId}`,
         ],
       },
     });
   };
 
-  [
-    ContainerType.Section,
-    ContainerType.Subsection,
-  ].forEach((cType) => {
-    const childType = cType === ContainerType.Section
-      ? ContainerType.Subsection
-      : ContainerType.Unit;
+  [ContainerType.Section, ContainerType.Subsection].forEach((cType) => {
+    const childType = cType === ContainerType.Section ? ContainerType.Subsection : ContainerType.Unit;
     let typeNamespace = 'lct';
     if (cType === ContainerType.Unit) {
       typeNamespace = 'lb';
     }
     it(`shows the spinner before the query is complete in ${cType} page`, async () => {
       // This mock will never return data about the collection (it loads forever):
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionIdLoading
-        : mockGetContainerMetadata.subsectionIdLoading;
+      const cId =
+        cType === ContainerType.Section
+          ? mockGetContainerMetadata.sectionIdLoading
+          : mockGetContainerMetadata.subsectionIdLoading;
       renderLibrarySectionPage(cId, undefined, cType);
       const spinner = screen.getByRole('status');
       expect(spinner.textContent).toEqual('Loading...');
@@ -123,18 +107,18 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
 
     it(`shows an error component if no ${cType} returned`, async () => {
       // This mock will simulate incorrect section id
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionIdError
-        : mockGetContainerMetadata.subsectionIdError;
+      const cId =
+        cType === ContainerType.Section
+          ? mockGetContainerMetadata.sectionIdError
+          : mockGetContainerMetadata.subsectionIdError;
       renderLibrarySectionPage(cId, undefined, cType);
       const errorMessage = 'Not found';
       expect(await screen.findByRole('alert')).toHaveTextContent(errorMessage);
     });
 
     it(`shows ${cType} data`, async () => {
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionId
-        : mockGetContainerMetadata.subsectionId;
+      const cId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
       // Container title -- on main page + sidebar
@@ -152,9 +136,10 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`shows ${cType} data with no children`, async () => {
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionIdEmpty
-        : mockGetContainerMetadata.subsectionIdEmpty;
+      const cId =
+        cType === ContainerType.Section
+          ? mockGetContainerMetadata.sectionIdEmpty
+          : mockGetContainerMetadata.subsectionIdEmpty;
       renderLibrarySectionPage(cId, undefined, cType);
       expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
       // Container title -- rendered on main page + sidebar
@@ -168,17 +153,13 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`can rename ${cType}`, async () => {
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionId
-        : mockGetContainerMetadata.subsectionId;
+      const cId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
       expect((await screen.findAllByText(`Test ${cType}`))[0]).toBeInTheDocument();
 
-      const editContainerTitleButton = (await screen.findAllByRole(
-        'button',
-        { name: /edit/i },
-      ))[0]; // 0 is the Section/Subsection Title, 1 is the first child on the list
+      const editContainerTitleButton = (await screen.findAllByRole('button', { name: /edit/i }))[0]; // 0 is the Section/Subsection Title, 1 is the first child on the list
       fireEvent.click(editContainerTitleButton);
 
       const url = getLibraryContainerApiUrl(cId);
@@ -201,17 +182,13 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`show error if renaming ${cType} fails`, async () => {
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionId
-        : mockGetContainerMetadata.subsectionId;
+      const cId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
       expect((await screen.findAllByText(`Test ${cType}`))[0]).toBeInTheDocument();
 
-      const editContainerTitleButton = (await screen.findAllByRole(
-        'button',
-        { name: /edit/i },
-      ))[0]; // 0 is the Section/subsection Title, 1 is the first child on the list
+      const editContainerTitleButton = (await screen.findAllByRole('button', { name: /edit/i }))[0]; // 0 is the Section/subsection Title, 1 is the first child on the list
       fireEvent.click(editContainerTitleButton);
 
       const url = getLibraryContainerApiUrl(cId);
@@ -268,10 +245,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       // Wait loading of the children
       await screen.findByText(`${childType} block 0`);
 
-      const editButton = (await screen.findAllByRole(
-        'button',
-        { name: /edit/i },
-      ))[1]; // 0 is the Section Title, 1 is the first subsection on the list
+      const editButton = (await screen.findAllByRole('button', { name: /edit/i }))[1]; // 0 is the Section Title, 1 is the first subsection on the list
       fireEvent.click(editButton);
 
       expect(await screen.findByRole('textbox', { name: /text input/i })).toBeInTheDocument();
@@ -285,9 +259,11 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
         expect(axiosMock.history.patch.length).toEqual(1);
       });
       expect(axiosMock.history.patch[0].url).toEqual(url);
-      expect(axiosMock.history.patch[0].data).toStrictEqual(JSON.stringify({
-        display_name: `New ${childType} Title`,
-      }));
+      expect(axiosMock.history.patch[0].data).toStrictEqual(
+        JSON.stringify({
+          display_name: `New ${childType} Title`,
+        }),
+      );
       expect(textBox).not.toBeInTheDocument();
       expect(mockShowToast).toHaveBeenCalledWith('Container updated successfully.');
       expect(mockSetQueryData).toHaveBeenCalledTimes(1);
@@ -301,10 +277,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       // Wait loading of the children
       await screen.findByText(`${childType} block 0`);
 
-      const editButton = screen.getAllByRole(
-        'button',
-        { name: /edit/i },
-      )[1]; // 0 is the Section Title, 1 is the first subsection on the list
+      const editButton = screen.getAllByRole('button', { name: /edit/i })[1]; // 0 is the Section Title, 1 is the first subsection on the list
       fireEvent.click(editButton);
 
       expect(await screen.findByRole('textbox', { name: /text input/i })).toBeInTheDocument();
@@ -318,25 +291,26 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
         expect(axiosMock.history.patch.length).toEqual(1);
       });
       expect(axiosMock.history.patch[0].url).toEqual(url);
-      expect(axiosMock.history.patch[0].data).toStrictEqual(JSON.stringify({
-        display_name: `New ${childType} Title`,
-      }));
+      expect(axiosMock.history.patch[0].data).toStrictEqual(
+        JSON.stringify({
+          display_name: `New ${childType} Title`,
+        }),
+      );
       expect(textBox).not.toBeInTheDocument();
       expect(mockShowToast).toHaveBeenCalledWith('Failed to update container.');
     });
 
     it(`should call update order api on dragging children in ${cType} page`, async () => {
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionId
-        : mockGetContainerMetadata.subsectionId;
+      const cId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
-      axiosMock
-        .onPatch(getLibraryContainerChildrenApiUrl(cId))
-        .reply(200);
-      verticalSortableListCollisionDetection.mockReturnValue([{
-        id: `${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-1----1`,
-      }]);
+      axiosMock.onPatch(getLibraryContainerChildrenApiUrl(cId)).reply(200);
+      verticalSortableListCollisionDetection.mockReturnValue([
+        {
+          id: `${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-1----1`,
+        },
+      ]);
       await act(async () => {
         fireEvent.keyDown(firstDragHandle, { code: 'Space' });
       });
@@ -345,17 +319,16 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`should cancel update order api on cancelling dragging component in ${cType} page`, async () => {
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionId
-        : mockGetContainerMetadata.subsectionId;
+      const cId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
-      axiosMock
-        .onPatch(getLibraryContainerChildrenApiUrl(cId))
-        .reply(200);
-      verticalSortableListCollisionDetection.mockReturnValue([{
-        id: `${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-1----1`,
-      }]);
+      axiosMock.onPatch(getLibraryContainerChildrenApiUrl(cId)).reply(200);
+      verticalSortableListCollisionDetection.mockReturnValue([
+        {
+          id: `${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-1----1`,
+        },
+      ]);
       await act(async () => {
         fireEvent.keyDown(firstDragHandle, { code: 'Space' });
       });
@@ -364,17 +337,16 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`should show toast error message on update order failure in ${cType} page`, async () => {
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionId
-        : mockGetContainerMetadata.subsectionId;
+      const cId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
-      axiosMock
-        .onPatch(getLibraryContainerChildrenApiUrl(cId))
-        .reply(500);
-      verticalSortableListCollisionDetection.mockReturnValue([{
-        id: `${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-1----1`,
-      }]);
+      axiosMock.onPatch(getLibraryContainerChildrenApiUrl(cId)).reply(500);
+      verticalSortableListCollisionDetection.mockReturnValue([
+        {
+          id: `${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-1----1`,
+        },
+      ]);
       await act(async () => {
         fireEvent.keyDown(firstDragHandle, { code: 'Space' });
       });
@@ -416,19 +388,13 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     it(`"add new" button should add ${childType} to the ${cType}`, async () => {
       const user = userEvent.setup();
       const { libraryId } = mockContentLibrary;
-      const containerId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionId
-        : mockGetContainerMetadata.subsectionId;
-      const childId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.subsectionId
-        : mockGetContainerMetadata.unitId;
+      const containerId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
+      const childId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.subsectionId : mockGetContainerMetadata.unitId;
 
-      axiosMock
-        .onPost(getLibraryContainersApiUrl(libraryId))
-        .reply(200, { id: childId });
-      axiosMock
-        .onPost(getLibraryContainerChildrenApiUrl(containerId))
-        .reply(200);
+      axiosMock.onPost(getLibraryContainersApiUrl(libraryId)).reply(200, { id: childId });
+      axiosMock.onPost(getLibraryContainerChildrenApiUrl(containerId)).reply(200);
       renderLibrarySectionPage(containerId, libraryId, cType);
 
       const addChild = await screen.findByRole('button', { name: new RegExp(`add new ${childType}`, 'i') });
@@ -439,11 +405,13 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       await waitFor(() => {
         expect(axiosMock.history.post.length).toEqual(2);
       });
-      expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({
-        can_stand_alone: false,
-        container_type: childType,
-        display_name: `New ${childType} Title`,
-      }));
+      expect(axiosMock.history.post[0].data).toEqual(
+        JSON.stringify({
+          can_stand_alone: false,
+          container_type: childType,
+          display_name: `New ${childType} Title`,
+        }),
+      );
       expect(axiosMock.history.post[1].data).toEqual(JSON.stringify({ usage_keys: [childId] }));
       expect(textBox).not.toBeInTheDocument();
       const childTypeTitle = childType.charAt(0).toUpperCase() + childType.slice(1);
@@ -453,19 +421,13 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     it(`"add new" button should show error when adding ${childType} to the ${cType}`, async () => {
       const user = userEvent.setup();
       const { libraryId } = mockContentLibrary;
-      const containerId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionId
-        : mockGetContainerMetadata.subsectionId;
-      const childId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.subsectionId
-        : mockGetContainerMetadata.unitId;
+      const containerId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
+      const childId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.subsectionId : mockGetContainerMetadata.unitId;
 
-      axiosMock
-        .onPost(getLibraryContainersApiUrl(libraryId))
-        .reply(200, { id: childId });
-      axiosMock
-        .onPost(getLibraryContainerChildrenApiUrl(containerId))
-        .reply(500);
+      axiosMock.onPost(getLibraryContainersApiUrl(libraryId)).reply(200, { id: childId });
+      axiosMock.onPost(getLibraryContainerChildrenApiUrl(containerId)).reply(500);
       renderLibrarySectionPage(containerId, libraryId, cType);
 
       const addChild = await screen.findByRole('button', { name: new RegExp(`add new ${childType}`, 'i') });
@@ -476,11 +438,13 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       await waitFor(() => {
         expect(axiosMock.history.post.length).toEqual(2);
       });
-      expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({
-        can_stand_alone: false,
-        container_type: childType,
-        display_name: `New ${childType} Title`,
-      }));
+      expect(axiosMock.history.post[0].data).toEqual(
+        JSON.stringify({
+          can_stand_alone: false,
+          container_type: childType,
+          display_name: `New ${childType} Title`,
+        }),
+      );
       expect(axiosMock.history.post[1].data).toEqual(JSON.stringify({ usage_keys: [childId] }));
       expect(textBox).not.toBeInTheDocument();
       expect(mockShowToast).toHaveBeenCalledWith(`There is an error when creating the library ${childType}`);
@@ -501,9 +465,8 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`should open manage tags on click tag count in ${cType} page`, async () => {
-      const cId = cType === ContainerType.Section
-        ? mockGetContainerMetadata.sectionId
-        : mockGetContainerMetadata.subsectionId;
+      const cId =
+        cType === ContainerType.Section ? mockGetContainerMetadata.sectionId : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       // check all children components are rendered.
       expect((await screen.findAllByText(`${childType} block 0`))[0]).toBeInTheDocument();
@@ -514,10 +477,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       fireEvent.click(tagCountButton);
 
       expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
-      await waitFor(
-        () => expect(screen.getByRole('tab', { name: /manage/i })).toHaveClass('active'),
-        { timeout: 300 },
-      );
+      await waitFor(() => expect(screen.getByRole('tab', { name: /manage/i })).toHaveClass('active'), { timeout: 300 });
     });
   });
 });

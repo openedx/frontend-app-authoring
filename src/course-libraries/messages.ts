@@ -58,7 +58,8 @@ const messages = defineMessages({
   },
   outOfSyncCountAlertTitle: {
     id: 'course-authoring.course-libraries.libcard.out-of-sync.alert.title',
-    defaultMessage: '{outOfSyncCount, plural, one {# library component is} other {# library components are}} out of sync. Review updates to accept or ignore changes',
+    defaultMessage:
+      '{outOfSyncCount, plural, one {# library component is} other {# library components are}} out of sync. Review updates to accept or ignore changes',
     description: 'Alert message shown when library components are out of sync',
   },
   reviewUpdatesBtn: {
@@ -74,7 +75,8 @@ const messages = defineMessages({
   librariesV2DisabledError: {
     id: 'course-authoring.course-libraries.alert.error.libraries.v2.disabled',
     defaultMessage: 'This page cannot be shown: Libraries v2 are disabled.',
-    description: 'Error message shown to users when trying to load a libraries V2 page while libraries v2 are disabled.',
+    description:
+      'Error message shown to users when trying to load a libraries V2 page while libraries v2 are disabled.',
   },
   cardReviewContentBtn: {
     id: 'course-authoring.course-libraries.review-tab.libcard.review-btn-text',
@@ -98,7 +100,8 @@ const messages = defineMessages({
   },
   ignoreSingleBlockSuccess: {
     id: 'course-authoring.course-libraries.review-tab.libcard.ignore-success-toast',
-    defaultMessage: '"{name}" will remain out of sync with library content. You will be notified when this component is updated again.',
+    defaultMessage:
+      '"{name}" will remain out of sync with library content. You will be notified when this component is updated again.',
     description: 'Success toast message when a component update is ignored.',
   },
   searchPlaceholder: {
@@ -123,12 +126,14 @@ const messages = defineMessages({
   },
   legacyLibReadyToMigrateAlertTitle: {
     id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.title',
-    defaultMessage: 'This course contains {count, plural, one {# legacy library reference} other {# legacy library references}}',
+    defaultMessage:
+      'This course contains {count, plural, one {# legacy library reference} other {# legacy library references}}',
     description: 'Title of alert shown when course contains legacy library content references',
   },
   legacyLibReadyToMigrateAlertDescription: {
     id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.description',
-    defaultMessage: 'Legacy library references will no longer be supported and need to be updated to receive future changes.',
+    defaultMessage:
+      'Legacy library references will no longer be supported and need to be updated to receive future changes.',
     description: 'Description of alert shown when course contains legacy library content references',
   },
   legacyLibReadyToMigrateAlertLearnMoreBtn: {

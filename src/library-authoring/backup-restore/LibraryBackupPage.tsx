@@ -1,14 +1,5 @@
-import {
-  Alert,
-  Button,
-  Container,
-} from '@openedx/paragon';
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { Alert, Button, Container } from '@openedx/paragon';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -34,26 +25,32 @@ export const LibraryBackupPage = () => {
   const backupStatus = useGetLibraryBackupStatus(libraryId, taskId);
 
   // Clean up timeout on unmount
-  useEffect(() => () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-  }, []);
+  useEffect(
+    () => () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    },
+    [],
+  );
 
-  const handleDownload = useCallback((url: string) => {
-    try {
-      // Create a temporary anchor element for better download handling
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${libraryData?.slug || 'library'}-backup.tar.gz`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch {
-      // Fallback to window.location.href if the above fails
-      window.location.href = url;
-    }
-  }, [libraryData?.slug]);
+  const handleDownload = useCallback(
+    (url: string) => {
+      try {
+        // Create a temporary anchor element for better download handling
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${libraryData?.slug || 'library'}-backup.tar.gz`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch {
+        // Fallback to window.location.href if the above fails
+        window.location.href = url;
+      }
+    },
+    [libraryData?.slug],
+  );
 
   const handleDownloadBackup = useCallback(() => {
     // If backup is ready, download it immediately
@@ -98,10 +95,9 @@ export const LibraryBackupPage = () => {
   }, [backupStatus.data?.state]);
 
   const backupState = backupStatus.data?.state;
-  const isBackupInProgress = isMutationInProgress || (taskId && (
-    backupState === LibraryBackupStatus.Pending
-    || backupState === LibraryBackupStatus.Exporting
-  ));
+  const isBackupInProgress =
+    isMutationInProgress ||
+    (taskId && (backupState === LibraryBackupStatus.Pending || backupState === LibraryBackupStatus.Exporting));
   const hasBackupFailed = backupState === LibraryBackupStatus.Failed;
   const hasBackupSucceeded = backupState === LibraryBackupStatus.Succeeded;
 
@@ -118,7 +114,8 @@ export const LibraryBackupPage = () => {
         return intl.formatMessage(messages.backupPending);
       }
       return backupState === LibraryBackupStatus.Pending
-        ? intl.formatMessage(messages.backupPending) : intl.formatMessage(messages.backupExporting);
+        ? intl.formatMessage(messages.backupPending)
+        : intl.formatMessage(messages.backupExporting);
     }
     if (hasBackupSucceeded && backupStatus.data?.url) {
       return intl.formatMessage(messages.downloadReadyButton);
@@ -137,7 +134,9 @@ export const LibraryBackupPage = () => {
     <div className="d-flex">
       <div className="flex-grow-1">
         <Helmet>
-          <title>{libraryData.title} | {process.env.SITE_NAME}</title>
+          <title>
+            {libraryData.title} | {process.env.SITE_NAME}
+          </title>
         </Helmet>
         <Header
           number={libraryData.slug}
@@ -162,9 +161,7 @@ export const LibraryBackupPage = () => {
           {/* Error Messages */}
           {hasBackupFailed && (
             <div className="px-4">
-              <Alert variant="danger">
-                {intl.formatMessage(messages.backupFailedError)}
-              </Alert>
+              <Alert variant="danger">{intl.formatMessage(messages.backupFailedError)}</Alert>
             </div>
           )}
           {mutationError && (

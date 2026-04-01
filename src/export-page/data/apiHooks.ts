@@ -1,8 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AxiosError } from 'axios';
-import {
-  useQueryClient, skipToken, useMutation, useQuery,
-} from '@tanstack/react-query';
+import { useQueryClient, skipToken, useMutation, useQuery } from '@tanstack/react-query';
 
 import { getExportStatus, startCourseExporting, type ExportStatusData } from './api';
 
@@ -23,24 +21,18 @@ export const useInvalidateExportStatus = (courseId: string) => {
 /**
  * Returns a mutation to start exporting a course.
  */
-export const useStartCourseExporting = (courseId: string) => (
+export const useStartCourseExporting = (courseId: string) =>
   useMutation({
     mutationFn: () => startCourseExporting(courseId),
-  })
-);
+  });
 
 /**
  * Get the export status for a given course.
  * Only fetch while `stopRefetch` is false.
  */
-export const useExportStatus = (
-  courseId: string,
-  stopRefetch: boolean,
-  enabled: boolean,
-) => (
+export const useExportStatus = (courseId: string, stopRefetch: boolean, enabled: boolean) =>
   useQuery<ExportStatusData, AxiosError>({
     queryKey: exportQueryKeys.exportStatus(courseId),
     queryFn: enabled ? () => getExportStatus(courseId) : skipToken,
-    refetchInterval: (enabled && !stopRefetch) ? 3000 : false,
-  })
-);
+    refetchInterval: enabled && !stopRefetch ? 3000 : false,
+  });

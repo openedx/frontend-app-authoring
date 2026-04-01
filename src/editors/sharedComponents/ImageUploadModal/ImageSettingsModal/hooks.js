@@ -42,14 +42,14 @@ export const dimKeys = StrictDict({
 export const findGcd = (a, b) => {
   const gcd = b ? findGcd(b, a % b) : a;
 
-  if (gcd === 1 || [a, b].some(v => !Number.isInteger(v / gcd))) {
+  if (gcd === 1 || [a, b].some((v) => !Number.isInteger(v / gcd))) {
     return 1;
   }
 
   return gcd;
 };
 
-const checkEqual = (d1, d2) => (d1.height === d2.height && d1.width === d2.width);
+const checkEqual = (d1, d2) => d1.height === d2.height && d1.width === d2.width;
 
 /**
  * getValidDimensions({ dimensions, local, locked })
@@ -59,12 +59,7 @@ const checkEqual = (d1, d2) => (d1.height === d2.height && d1.width === d2.width
  * @param {obj} locked - locked dimensions
  * @return {obj} - output dimensions after move ({ height, width })
  */
-export const getValidDimensions = ({
-  dimensions,
-  local,
-  isLocked,
-  lockAspectRatio,
-}) => {
+export const getValidDimensions = ({ dimensions, local, isLocked, lockAspectRatio }) => {
   // if lock is not active, just return new dimensions.
   // If lock is active, but dimensions have not changed, also just return new dimensions.
   if (!isLocked || checkEqual(local, dimensions)) {
@@ -74,9 +69,10 @@ export const getValidDimensions = ({
   const out = {};
 
   // changed key is value of local height if that has changed, otherwise width.
-  const keys = (local.height !== dimensions.height)
-    ? { changed: dimKeys.height, other: dimKeys.width }
-    : { changed: dimKeys.width, other: dimKeys.height };
+  const keys =
+    local.height !== dimensions.height
+      ? { changed: dimKeys.height, other: dimKeys.width }
+      : { changed: dimKeys.width, other: dimKeys.height };
 
   out[keys.changed] = local[keys.changed];
   out[keys.other] = Math.round((local[keys.changed] * lockAspectRatio[keys.other]) / lockAspectRatio[keys.changed]);
@@ -187,32 +183,31 @@ export const dimensionHooks = (altTextHook) => {
     }
   };
 
-  const {
-    initializeLock,
-    isLocked,
-    lock,
-    lockAspectRatio,
-    unlock,
-  } = module.dimensionLockHooks({ dimensions });
+  const { initializeLock, isLocked, lock, lockAspectRatio, unlock } = module.dimensionLockHooks({ dimensions });
 
   return {
-    onImgLoad: (selection) => ({ target: img }) => {
-      const imageDims = { height: img.naturalHeight, width: img.naturalWidth };
-      setAll(selection.height ? selection : imageDims);
-      initializeLock(selection.height ? selection : imageDims);
-    },
+    onImgLoad:
+      (selection) =>
+      ({ target: img }) => {
+        const imageDims = { height: img.naturalHeight, width: img.naturalWidth };
+        setAll(selection.height ? selection : imageDims);
+        initializeLock(selection.height ? selection : imageDims);
+      },
     isLocked,
     lock,
     unlock,
     value: local,
     setHeight,
     setWidth,
-    updateDimensions: () => setAll(module.getValidDimensions({
-      dimensions,
-      local,
-      isLocked,
-      lockAspectRatio,
-    })),
+    updateDimensions: () =>
+      setAll(
+        module.getValidDimensions({
+          dimensions,
+          local,
+          isLocked,
+          lockAspectRatio,
+        }),
+      ),
   };
 };
 
@@ -295,11 +290,7 @@ export const onCheckboxChange = (handleValue) => (e) => handleValue(e.target.che
  * @param {bool} isDecorative - is the image decorative?
  * @param {func} onAltTextFail - called if alt text validation fails
  */
-export const checkFormValidation = ({
-  altText,
-  isDecorative,
-  onAltTextFail,
-}) => {
+export const checkFormValidation = ({ altText, isDecorative, onAltTextFail }) => {
   if (!isDecorative && altText === '') {
     onAltTextFail();
     return false;
@@ -315,29 +306,28 @@ export const checkFormValidation = ({
  * @param {bool} isDecorative - is the image decorative?
  * @param {func} saveToEditor - save method for submitting image settings.
  */
-export const onSaveClick = ({
-  altText,
-  dimensions,
-  isDecorative,
-  saveToEditor,
-}) => () => {
-  if (module.checkFormValidation({
-    altText: altText.value,
-    isDecorative,
-    onAltTextFail: () => {
-      altText.error.set();
-      altText.validation.set();
-    },
-  })) {
-    altText.error.dismiss();
-    altText.validation.dismiss();
-    // Replaces double quotes with &quot; to prevent the alt text from being truncated
-    // or breaking the image tag structure.
-    const altTextValue = altText.value.replace(/"/g, '&quot;');
-    saveToEditor({
-      altText: altTextValue,
-      dimensions,
-      isDecorative,
-    });
-  }
-};
+export const onSaveClick =
+  ({ altText, dimensions, isDecorative, saveToEditor }) =>
+  () => {
+    if (
+      module.checkFormValidation({
+        altText: altText.value,
+        isDecorative,
+        onAltTextFail: () => {
+          altText.error.set();
+          altText.validation.set();
+        },
+      })
+    ) {
+      altText.error.dismiss();
+      altText.validation.dismiss();
+      // Replaces double quotes with &quot; to prevent the alt text from being truncated
+      // or breaking the image tag structure.
+      const altTextValue = altText.value.replace(/"/g, '&quot;');
+      saveToEditor({
+        altText: altTextValue,
+        dimensions,
+        isDecorative,
+      });
+    }
+  };

@@ -68,7 +68,7 @@ describe('convertMarkdownToXml', () => {
       const markdown = '[[Apple, Banana, (Orange)]]';
       const result = convertMarkdownToXml(markdown);
       expect(result).toContain('<optionresponse>');
-      expect(result).toContain('<optioninput options="(\'Apple\',\'Banana\',\'Orange\')" correct="Orange"/>');
+      expect(result).toContain("<optioninput options=\"('Apple','Banana','Orange')\" correct=\"Orange\"/>");
       expect(result).toContain('</optionresponse>');
     });
 
@@ -214,7 +214,8 @@ describe('convertMarkdownToXml', () => {
   describe('explanations and code blocks', () => {
     it('should convert explanations', () => {
       const markdown = '[explanation]\nThis is an explanation\n[/explanation]';
-      const expected = '<solution>\n<div class="detailed-solution">\n<p>Explanation</p>\n\n<p>This is an explanation</p>\n</div>\n</solution>';
+      const expected =
+        '<solution>\n<div class="detailed-solution">\n<p>Explanation</p>\n\n<p>This is an explanation</p>\n</div>\n</solution>';
       const result = convertMarkdownToXml(markdown);
       expect(normalizeWhitespace(result)).toContain(normalizeWhitespace(expected));
     });
@@ -268,7 +269,9 @@ Paris is the capital and most populous city of France.
       expect(result).toContain('<description>Choose the correct answer</description>');
       expect(result).toContain('<multiplechoiceresponse>');
       expect(result).toContain('<choicegroup type="MultipleChoice">');
-      expect(result).toContain('<choice correct="true">Paris <choicehint>Correct! Paris is indeed the capital of France.</choicehint>\n</choice>');
+      expect(result).toContain(
+        '<choice correct="true">Paris <choicehint>Correct! Paris is indeed the capital of France.</choicehint>\n</choice>',
+      );
       expect(result).toContain('<solution>');
       expect(result).toContain('<demandhint>');
       expect(result).toContain('<hint>Need a hint? Think about the Eiffel Tower!</hint>');

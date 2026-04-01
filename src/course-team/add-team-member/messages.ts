@@ -7,7 +7,8 @@ const messages = defineMessages({
   },
   description: {
     id: 'course-authoring.course-team.add-team-member.description',
-    defaultMessage: 'Adding team members makes course authoring collaborative. Users must be signed up for Studio and have an active account.',
+    defaultMessage:
+      'Adding team members makes course authoring collaborative. Users must be signed up for Studio and have an active account.',
   },
   button: {
     id: 'course-authoring.course-team.add-team-member.button',

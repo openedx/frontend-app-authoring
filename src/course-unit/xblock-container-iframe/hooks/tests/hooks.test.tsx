@@ -30,9 +30,7 @@ describe('useMessageHandlers', () => {
   const wrapper = ({ children }) => (
     <Provider store={store}>
       <IntlProvider locale="en">
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       </IntlProvider>
     </Provider>
   );

@@ -1,7 +1,5 @@
 import { getConfig } from '@edx/frontend-platform';
-import {
-  createContext, useContext, useMemo, useState,
-} from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { useSelector } from 'react-redux';
@@ -56,35 +54,24 @@ type CourseAuthoringProviderProps = {
   courseId: string;
 };
 
-export const CourseAuthoringProvider = ({
-  children,
-  courseId,
-}: CourseAuthoringProviderProps) => {
+export const CourseAuthoringProvider = ({ children, courseId }: CourseAuthoringProviderProps) => {
   const navigate = useNavigate();
   const waffleFlags = useWaffleFlags();
   const { data: courseDetails, status: courseDetailStatus } = useCourseDetails(courseId);
   const canChangeProviders = getAuthenticatedUser().administrator || new Date(courseDetails?.start ?? 0) > new Date();
   const { courseStructure } = useSelector(getOutlineIndexData);
   const { id: courseUsageKey } = courseStructure || {};
-  const [
-    isUnlinkModalOpen,
-    currentUnlinkModalData,
-    openUnlinkModal,
-    closeUnlinkModal,
-  ] = useToggleWithValue<ModalState>();
-  const [
-    isPublishModalOpen,
-    currentPublishModalData,
-    openPublishModal,
-    closePublishModal,
-  ] = useToggleWithValue<ModalState>();
+  const [isUnlinkModalOpen, currentUnlinkModalData, openUnlinkModal, closeUnlinkModal] =
+    useToggleWithValue<ModalState>();
+  const [isPublishModalOpen, currentPublishModalData, openPublishModal, closePublishModal] =
+    useToggleWithValue<ModalState>();
   /**
-  * This will hold the state of current item that is being operated on,
-  * For example:
-  *  - the details of container that is being edited.
-  *  - the details of container of which see more dropdown is open.
-  * It is mostly used in modals which should be soon be replaced with its equivalent in sidebar.
-  */
+   * This will hold the state of current item that is being operated on,
+   * For example:
+   *  - the details of container that is being edited.
+   *  - the details of container of which see more dropdown is open.
+   * It is mostly used in modals which should be soon be replaced with its equivalent in sidebar.
+   */
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
 
   const getUnitUrl = (locator: string) => {
@@ -108,65 +95,66 @@ export const CourseAuthoringProvider = ({
     }
   };
   /**
-  * import a unit block from library and redirect user to this unit page.
-  */
+   * import a unit block from library and redirect user to this unit page.
+   */
   const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const handleAddBlock = useCreateCourseBlock(courseId);
 
-  const context = useMemo<CourseAuthoringContextData>(() => ({
-    courseId,
-    courseUsageKey,
-    courseDetails,
-    courseDetailStatus,
-    canChangeProviders,
-    handleAddBlock,
-    handleAddAndOpenUnit,
-    getUnitUrl,
-    openUnitPage,
-    isUnlinkModalOpen,
-    openUnlinkModal,
-    closeUnlinkModal,
-    currentUnlinkModalData,
-    isPublishModalOpen,
-    currentPublishModalData,
-    openPublishModal,
-    closePublishModal,
-    currentSelection,
-    setCurrentSelection,
-  }), [
-    courseId,
-    courseUsageKey,
-    courseDetails,
-    courseDetailStatus,
-    canChangeProviders,
-    handleAddBlock,
-    handleAddAndOpenUnit,
-    getUnitUrl,
-    openUnitPage,
-    isUnlinkModalOpen,
-    openUnlinkModal,
-    closeUnlinkModal,
-    currentUnlinkModalData,
-    isPublishModalOpen,
-    currentPublishModalData,
-    openPublishModal,
-    closePublishModal,
-    currentSelection,
-    setCurrentSelection,
-  ]);
-
-  return (
-    <CourseAuthoringContext.Provider value={context}>
-      {children}
-    </CourseAuthoringContext.Provider>
+  const context = useMemo<CourseAuthoringContextData>(
+    () => ({
+      courseId,
+      courseUsageKey,
+      courseDetails,
+      courseDetailStatus,
+      canChangeProviders,
+      handleAddBlock,
+      handleAddAndOpenUnit,
+      getUnitUrl,
+      openUnitPage,
+      isUnlinkModalOpen,
+      openUnlinkModal,
+      closeUnlinkModal,
+      currentUnlinkModalData,
+      isPublishModalOpen,
+      currentPublishModalData,
+      openPublishModal,
+      closePublishModal,
+      currentSelection,
+      setCurrentSelection,
+    }),
+    [
+      courseId,
+      courseUsageKey,
+      courseDetails,
+      courseDetailStatus,
+      canChangeProviders,
+      handleAddBlock,
+      handleAddAndOpenUnit,
+      getUnitUrl,
+      openUnitPage,
+      isUnlinkModalOpen,
+      openUnlinkModal,
+      closeUnlinkModal,
+      currentUnlinkModalData,
+      isPublishModalOpen,
+      currentPublishModalData,
+      openPublishModal,
+      closePublishModal,
+      currentSelection,
+      setCurrentSelection,
+    ],
   );
+
+  return <CourseAuthoringContext.Provider value={context}>{children}</CourseAuthoringContext.Provider>;
 };
 
 export function useCourseAuthoringContext(): CourseAuthoringContextData {
   const ctx = useContext(CourseAuthoringContext);
   if (ctx === undefined) {
     /* istanbul ignore next */
-    throw new Error('useCourseAuthoringContext() was used in a component without a <CourseAuthoringProvider> ancestor.');
+    throw new Error(
+      'useCourseAuthoringContext() was used in a component without a <CourseAuthoringProvider> ancestor.',
+    );
   }
   return ctx;
 }

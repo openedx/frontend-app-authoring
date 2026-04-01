@@ -1,12 +1,7 @@
 import * as reactRedux from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 
-import {
-  fireEvent,
-  initializeMocks,
-  render,
-  screen,
-} from '@src/testUtils';
+import { fireEvent, initializeMocks, render, screen } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import messages from '../messages';
 import { trimSlashes } from './utils';
@@ -59,9 +54,7 @@ describe('<CardItem />', () => {
   it('should hide rerun button if disallowed', () => {
     const props = studioHomeMock.archivedCourses[0];
     // Update our mocked redux data:
-    jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => (
-      { ...studioHomeMock, allowCourseReruns: false }
-    ));
+    jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({ ...studioHomeMock, allowCourseReruns: false }));
     const { queryByText } = render(<CardItem {...props} />);
     expect(queryByText(messages.btnReRunText.defaultMessage)).not.toBeInTheDocument();
   });

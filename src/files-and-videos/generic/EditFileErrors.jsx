@@ -29,11 +29,9 @@ const EditFileErrors = ({
         dismissError={/* istanbul ignore next */ () => resetErrors({ errorType: 'add' })}
         isError={addFileStatus === RequestStatus.FAILED}
       >
-        <Alert.Heading>
-          {intl.formatMessage(messages.uploadErrorAlertTitle)}
-        </Alert.Heading>
+        <Alert.Heading>{intl.formatMessage(messages.uploadErrorAlertTitle)}</Alert.Heading>
         <ul className="p-0">
-          {errorMessages.add.map(message => (
+          {errorMessages.add.map((message) => (
             <li key={`add-error-${message}`} style={{ listStyle: 'none' }}>
               {intl.formatMessage(messages.errorAlertMessage, { message })}
             </li>
@@ -46,7 +44,7 @@ const EditFileErrors = ({
         isError={deleteFileStatus === RequestStatus.FAILED}
       >
         <ul className="p-0">
-          {errorMessages.delete.map(message => (
+          {errorMessages.delete.map((message) => (
             <li key={`delete-error-${message}`} style={{ listStyle: 'none' }}>
               {intl.formatMessage(messages.errorAlertMessage, { message })}
             </li>
@@ -59,17 +57,17 @@ const EditFileErrors = ({
         isError={updateFileStatus === RequestStatus.FAILED}
       >
         <ul className="p-0">
-          {errorMessages.lock?.map(message => (
+          {errorMessages.lock?.map((message) => (
             <li key={`lock-error-${message}`} style={{ listStyle: 'none' }}>
               {intl.formatMessage(messages.errorAlertMessage, { message })}
             </li>
           ))}
-          {errorMessages.download.map(message => (
+          {errorMessages.download.map((message) => (
             <li key={`download-error-${message}`} style={{ listStyle: 'none' }}>
               {intl.formatMessage(messages.errorAlertMessage, { message })}
             </li>
           ))}
-          {errorMessages.thumbnail?.map(message => (
+          {errorMessages.thumbnail?.map((message) => (
             <li key={`add-thumbnail-error-${message}`} style={{ listStyle: 'none' }}>
               {intl.formatMessage(messages.errorAlertMessage, { message })}
             </li>

@@ -15,11 +15,12 @@ let axiosMock;
 let store;
 const courseId = 'course-123';
 
-const renderComponent = (props) => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <Certificates {...props} />
-  </CourseAuthoringProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <Certificates {...props} />
+    </CourseAuthoringProvider>,
+  );
 
 describe('Certificates', () => {
   beforeEach(async () => {
@@ -35,9 +36,7 @@ describe('Certificates', () => {
       hasCertificateModes: false,
     };
 
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, noModesMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, noModesMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
     const { getByText, queryByRole } = renderComponent();
@@ -56,9 +55,7 @@ describe('Certificates', () => {
       hasCertificateModes: false,
     };
 
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, noModesMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, noModesMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
     const { getByText, queryByText } = renderComponent();
@@ -75,9 +72,7 @@ describe('Certificates', () => {
       certificates: [],
     };
 
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, noCertificatesMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, noCertificatesMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
     const { getByText, queryByText } = renderComponent();
@@ -89,9 +84,7 @@ describe('Certificates', () => {
   });
 
   it('renders CertificatesList when there are modes and certificates', async () => {
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, certificatesDataMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, certificatesDataMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
     const { getByText, queryByText, getByTestId } = renderComponent();
@@ -111,9 +104,7 @@ describe('Certificates', () => {
       certificates: [],
     };
 
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, noCertificatesMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, noCertificatesMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
     const user = userEvent.setup();
@@ -133,9 +124,7 @@ describe('Certificates', () => {
   });
 
   it('renders CertificateEditForm when there is componentMode = MODE_STATES.editAll', async () => {
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, certificatesDataMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, certificatesDataMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
     const user = userEvent.setup();
@@ -155,9 +144,7 @@ describe('Certificates', () => {
   });
 
   it('renders placeholder if request fails', async () => {
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(403, certificatesDataMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(403, certificatesDataMock);
 
     const { getByTestId } = renderComponent();
 
@@ -167,9 +154,7 @@ describe('Certificates', () => {
   });
 
   it('updates loading status if request fails', async () => {
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(404, certificatesDataMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(404, certificatesDataMock);
 
     renderComponent();
 

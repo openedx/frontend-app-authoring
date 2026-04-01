@@ -8,23 +8,11 @@ import messages from './messages';
 const GradingSidebar = ({ courseId, proctoredExamSettingsUrl }) => {
   const intl = useIntl();
   return (
-    <HelpSidebar
-      courseId={courseId}
-      showOtherSettings
-      proctoredExamSettingsUrl={proctoredExamSettingsUrl}
-    >
-      <h4 className="help-sidebar-about-title">
-        {intl.formatMessage(messages.gradingSidebarTitle)}
-      </h4>
-      <p className="help-sidebar-about-descriptions">
-        {intl.formatMessage(messages.gradingSidebarAbout1)}
-      </p>
-      <p className="help-sidebar-about-descriptions">
-        {intl.formatMessage(messages.gradingSidebarAbout2)}
-      </p>
-      <p className="help-sidebar-about-descriptions">
-        {intl.formatMessage(messages.gradingSidebarAbout3)}
-      </p>
+    <HelpSidebar courseId={courseId} showOtherSettings proctoredExamSettingsUrl={proctoredExamSettingsUrl}>
+      <h4 className="help-sidebar-about-title">{intl.formatMessage(messages.gradingSidebarTitle)}</h4>
+      <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.gradingSidebarAbout1)}</p>
+      <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.gradingSidebarAbout2)}</p>
+      <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.gradingSidebarAbout3)}</p>
     </HelpSidebar>
   );
 };

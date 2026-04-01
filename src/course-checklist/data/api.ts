@@ -13,9 +13,8 @@ export const getCourseBestPracticesApiUrl = ({
   courseId,
   excludeGraded = true,
   all = true,
-}: CourseBestPracticesRequest) => (
-  `${getApiBaseUrl()}/api/courses/v1/quality/${courseId}/?exclude_graded=${excludeGraded}&all=${all}`
-);
+}: CourseBestPracticesRequest) =>
+  `${getApiBaseUrl()}/api/courses/v1/quality/${courseId}/?exclude_graded=${excludeGraded}&all=${all}`;
 
 export interface CourseLaunchRequest {
   courseId: string;
@@ -29,9 +28,8 @@ export const getCourseLaunchApiUrl = ({
   gradedOnly = true,
   validateOras = true,
   all = true,
-}: CourseLaunchRequest) => (
-  `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`
-);
+}: CourseLaunchRequest) =>
+  `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
 export interface CourseBestPractices {
   isSelfPaced: boolean;
@@ -49,8 +47,9 @@ export async function getCourseBestPractices({
   excludeGraded,
   all,
 }: CourseBestPracticesRequest): Promise<CourseBestPractices> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseBestPracticesApiUrl({ courseId, excludeGraded, all }));
+  const { data } = await getAuthenticatedHttpClient().get(
+    getCourseBestPracticesApiUrl({ courseId, excludeGraded, all }),
+  );
 
   return camelCaseObject(data);
 }
@@ -89,10 +88,14 @@ export async function getCourseLaunch({
   validateOras,
   all,
 }: CourseLaunchRequest): Promise<CourseLaunchData> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseLaunchApiUrl({
-      courseId, gradedOnly, validateOras, all,
-    }));
+  const { data } = await getAuthenticatedHttpClient().get(
+    getCourseLaunchApiUrl({
+      courseId,
+      gradedOnly,
+      validateOras,
+      all,
+    }),
+  );
 
   return camelCaseObject(data);
 }

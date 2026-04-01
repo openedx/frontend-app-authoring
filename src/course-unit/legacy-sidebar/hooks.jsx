@@ -4,9 +4,7 @@ import { getUnitReleaseStatus, UNIT_VISIBILITY_STATES } from '../constants';
 import messages from './messages';
 import { extractCourseUnitId } from './utils';
 
-const useCourseUnitData = ({
-  hasChanges, published, visibilityState, id,
-}) => {
+const useCourseUnitData = ({ hasChanges, published, visibilityState, id }) => {
   const intl = useIntl();
   const releaseStatus = getUnitReleaseStatus(intl);
   const locationId = extractCourseUnitId(id);
@@ -16,8 +14,9 @@ const useCourseUnitData = ({
     [UNIT_VISIBILITY_STATES.live]: messages.sidebarTitlePublishedAndLive,
     // eslint-disable-next-line no-nested-ternary
     default: published
-      ? (hasChanges ? messages.sidebarTitleDraftUnpublishedChanges
-        : messages.sidebarTitlePublishedNotYetReleased)
+      ? hasChanges
+        ? messages.sidebarTitleDraftUnpublishedChanges
+        : messages.sidebarTitlePublishedNotYetReleased
       : messages.sidebarTitleDraftNeverPublished,
   };
 
@@ -25,9 +24,7 @@ const useCourseUnitData = ({
     [UNIT_VISIBILITY_STATES.staffOnly]: 'only-staff',
     [UNIT_VISIBILITY_STATES.live]: 'live',
     // eslint-disable-next-line no-nested-ternary
-    default: published
-      ? (hasChanges ? 'draft' : 'published')
-      : 'draft',
+    default: published ? (hasChanges ? 'draft' : 'published') : 'draft',
   };
 
   const releaseLabels = {

@@ -1,8 +1,8 @@
 .dropdown-certificate {
   .dropdown-certificate-label {
-    font: normal var(--pgn-typography-font-weight-bold) .75rem/1.25rem var(--pgn-typography-font-family-base);
+    font: normal var(--pgn-typography-font-weight-bold) 0.75rem/1.25rem var(--pgn-typography-font-family-base);
     color: var(--pgn-color-gray-500);
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
 
   .dropdown-certificate-control {
@@ -32,8 +32,8 @@
   }
 
   .pgn__form-control-description {
-    font: normal var(--pgn-typography-font-weight-normal) .75rem/1.25rem var(--pgn-typography-font-family-base);
+    font: normal var(--pgn-typography-font-weight-normal) 0.75rem/1.25rem var(--pgn-typography-font-family-base);
     color: var(--pgn-color-gray-500);
-    margin-top: .5rem;
+    margin-top: 0.5rem;
   }
 }

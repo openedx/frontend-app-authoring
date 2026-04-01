@@ -4,7 +4,7 @@ import * as module from './hooks';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
-  useRef: jest.fn(val => ({ current: val })),
+  useRef: jest.fn((val) => ({ current: val })),
   useEffect: jest.fn(),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
 }));
@@ -13,11 +13,10 @@ describe('SourceCodeModal hooks', () => {
   const mockContent = 'sOmEMockHtML';
   const mockSetContent = jest.fn();
   const mockEditorRef = {
-    current:
-          {
-            setContent: mockSetContent,
-            getContent: jest.fn(() => mockContent),
-          },
+    current: {
+      setContent: mockSetContent,
+      getContent: jest.fn(() => mockContent),
+    },
   };
   const mockClose = jest.fn();
   test('getSaveBtnProps', () => {
@@ -48,9 +47,7 @@ describe('SourceCodeModal hooks', () => {
     const spyRef = jest.spyOn(React, 'useRef').mockReturnValueOnce(mockRef);
     const mockButton = 'mOcKBuTton';
 
-    const spyButtons = jest.spyOn(module, 'getSaveBtnProps').mockImplementation(
-      () => mockButton,
-    );
+    const spyButtons = jest.spyOn(module, 'getSaveBtnProps').mockImplementation(() => mockButton);
 
     const result = module.prepareSourceCodeModal(props);
     expect(spyRef).toHaveBeenCalled();

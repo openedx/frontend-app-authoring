@@ -1,17 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import {
-  ActionRow,
-  Button,
-  Icon,
-  IconButton,
-  ModalDialog,
-  Spinner,
-  Stack,
-  Toast,
-  useToggle,
-} from '@openedx/paragon';
+import { ActionRow, Button, Icon, IconButton, ModalDialog, Spinner, Stack, Toast, useToggle } from '@openedx/paragon';
 import { Close, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
@@ -31,13 +21,11 @@ interface WrapperProps {
   children: React.ReactNode;
 }
 
-export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void, fullscreen?: boolean }> = (
-  {
-    children,
-    onClose,
-    fullscreen = false,
-  },
-) => {
+export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void; fullscreen?: boolean }> = ({
+  children,
+  onClose,
+  fullscreen = false,
+}) => {
   const intl = useIntl();
 
   const title = intl.formatMessage(messages.modalTitle);
@@ -55,7 +43,9 @@ export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void, 
   );
 };
 
-export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => <ModalDialog.Body className="pb-0">{children}</ModalDialog.Body>;
+export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => (
+  <ModalDialog.Body className="pb-0">{children}</ModalDialog.Body>
+);
 
 // eslint-disable-next-line react/jsx-no-useless-fragment
 export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => <>{children}</>;
@@ -170,9 +160,7 @@ const EditorContainer: React.FC<Props> = ({
           </ActionRow>
         </div>
       </ModalDialog.Header>
-      <EditorModalBody>
-        {isInitialized && children}
-      </EditorModalBody>
+      <EditorModalBody>{isInitialized && children}</EditorModalBody>
       <FooterWrapper>
         <ModalDialog.Footer className="shadow-sm">
           <ActionRow>
@@ -188,9 +176,11 @@ const EditorContainer: React.FC<Props> = ({
               onClick={onSave}
               disabled={disableSave}
             >
-              {disableSave
-                ? <Spinner animation="border" className="mr-3" />
-                : <FormattedMessage {...messages.saveButtonLabel} />}
+              {disableSave ? (
+                <Spinner animation="border" className="mr-3" />
+              ) : (
+                <FormattedMessage {...messages.saveButtonLabel} />
+              )}
             </Button>
           </ActionRow>
         </ModalDialog.Footer>

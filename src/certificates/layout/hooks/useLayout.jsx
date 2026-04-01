@@ -9,10 +9,8 @@ const useLayout = () => {
   const savingStatus = useSelector(getSavingStatus);
   const errorMessage = useSelector(getErrorMessage);
 
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
+  const { isShow: isShowProcessingNotification, title: processingNotificationTitle } =
+    useSelector(getProcessingNotification);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {

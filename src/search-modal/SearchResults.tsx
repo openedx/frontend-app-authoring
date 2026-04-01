@@ -14,12 +14,7 @@ import messages from './messages';
  */
 const SearchResults: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const {
-    hits,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useSearchContext();
+  const { hits, hasNextPage, isFetchingNextPage, fetchNextPage } = useSearchContext();
 
   const labels = {
     default: intl.formatMessage(messages.showMoreResults),
@@ -28,19 +23,20 @@ const SearchResults: React.FC<Record<never, never>> = () => {
 
   return (
     <>
-      {hits.filter((hit): hit is ContentHit => hit.type !== 'collection').map(
-        (hit) => <SearchResult key={hit.id} hit={hit} />,
-      )}
-      {hasNextPage
-        ? (
-          <StatefulButton
-            className="mt-2"
-            variant="primary"
-            state={isFetchingNextPage ? 'pending' : 'default'}
-            labels={labels}
-            onClick={fetchNextPage}
-          />
-        ) : null}
+      {hits
+        .filter((hit): hit is ContentHit => hit.type !== 'collection')
+        .map((hit) => (
+          <SearchResult key={hit.id} hit={hit} />
+        ))}
+      {hasNextPage ? (
+        <StatefulButton
+          className="mt-2"
+          variant="primary"
+          state={isFetchingNextPage ? 'pending' : 'default'}
+          labels={labels}
+          onClick={fetchNextPage}
+        />
+      ) : null}
     </>
   );
 };

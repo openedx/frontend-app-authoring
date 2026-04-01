@@ -2,14 +2,7 @@ import fetchMock from 'fetch-mock-jest';
 import { cloneDeep } from 'lodash';
 import MockAdapter from 'axios-mock-adapter/types';
 
-import {
-  fireEvent,
-  initializeMocks,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '../../testUtils';
+import { fireEvent, initializeMocks, render, screen, waitFor, within } from '../../testUtils';
 import mockResult from '../__mocks__/collection-search.json';
 import {
   mockContentLibrary,
@@ -21,10 +14,7 @@ import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager
 import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import { LibraryLayout } from '..';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
-import {
-  getLibraryCollectionItemsApiUrl,
-  getLibraryContainersApiUrl,
-} from '../data/api';
+import { getLibraryCollectionItemsApiUrl, getLibraryContainersApiUrl } from '../data/api';
 
 let axiosMock: MockAdapter;
 let mockShowToast;
@@ -68,7 +58,9 @@ describe('<LibraryCollectionPage />', () => {
       mockResultCopy.results[0].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-      mockResultCopy.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      mockResultCopy.results[0]?.hits.forEach((hit) => {
+        hit._formatted = { ...hit };
+      });
       const collectionQueryId = requestData?.queries[0]?.filter?.[2]?.split('collections.key = "')[1].split('"')[0];
       switch (collectionQueryId) {
         case mockCollection.collectionNeverLoads:
@@ -100,7 +92,9 @@ describe('<LibraryCollectionPage />', () => {
     });
 
     if (![mockCollection.collectionNeverLoads, mockCollection.collectionEmpty].includes(colId)) {
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+      await waitFor(() => {
+        expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+      });
     }
   };
 
@@ -183,7 +177,9 @@ describe('<LibraryCollectionPage />', () => {
 
     // Ensure the search endpoint is called again, only once more since the recently modified call
     // should not be impacted by the search
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post');
+    });
 
     expect(screen.queryByText('No matching components found in this collection.')).toBeInTheDocument();
   });
@@ -261,7 +257,7 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(await screen.findByTitle('Sort search results')).toBeInTheDocument();
 
-    const testSortOption = (async (optionText, sortBy, isDefault) => {
+    const testSortOption = async (optionText, sortBy, isDefault) => {
       // Open the drop-down menu
       fireEvent.click(screen.getByTitle('Sort search results'));
 
@@ -276,7 +272,7 @@ describe('<LibraryCollectionPage />', () => {
       let bodyText;
       // Did the search happen with the expected sort option?
       if (Array.isArray(sortBy)) {
-        bodyText = `"sort":[${sortBy.map(item => `"${item}"`).join(',')}]`;
+        bodyText = `"sort":[${sortBy.map((item) => `"${item}"`).join(',')}]`;
       } else {
         bodyText = sortBy ? `"sort":["${sortBy}"]` : '"sort":[]';
       }
@@ -296,7 +292,7 @@ describe('<LibraryCollectionPage />', () => {
       // Is the selected sort option shown in the toggle button (if not default)
       // as well as in the drop-down menu?
       expect(screen.getAllByText(optionText).length).toEqual(isDefault ? 1 : 2);
-    });
+    };
 
     await testSortOption('Title, A-Z', 'display_name:asc', false);
     await testSortOption('Title, Z-A', 'display_name:desc', false);
@@ -355,10 +351,7 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   it('should remove component from collection and hides sidebar', async () => {
-    const url = getLibraryCollectionItemsApiUrl(
-      mockContentLibrary.libraryId,
-      mockCollection.collectionId,
-    );
+    const url = getLibraryCollectionItemsApiUrl(mockContentLibrary.libraryId, mockCollection.collectionId);
     axiosMock.onDelete(url).reply(204);
     const displayName = 'Introduction to Testing';
     await renderLibraryCollectionPage();
@@ -381,10 +374,7 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   it('should show error when remove component from collection', async () => {
-    const url = getLibraryCollectionItemsApiUrl(
-      mockContentLibrary.libraryId,
-      mockCollection.collectionId,
-    );
+    const url = getLibraryCollectionItemsApiUrl(mockContentLibrary.libraryId, mockCollection.collectionId);
     axiosMock.onDelete(url).reply(404);
     await renderLibraryCollectionPage();
 
@@ -400,10 +390,7 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   it('should remove unit from collection and hides sidebar', async () => {
-    const url = getLibraryCollectionItemsApiUrl(
-      mockContentLibrary.libraryId,
-      mockCollection.collectionId,
-    );
+    const url = getLibraryCollectionItemsApiUrl(mockContentLibrary.libraryId, mockCollection.collectionId);
     axiosMock.onDelete(url).reply(204);
     const displayName = 'Test Unit';
     await renderLibraryCollectionPage();
@@ -452,10 +439,7 @@ describe('<LibraryCollectionPage />', () => {
       slug: 'this-is-a-test',
       title: containerTitle,
     });
-    const collectionUrl = getLibraryCollectionItemsApiUrl(
-      mockContentLibrary.libraryId,
-      mockCollection.collectionId,
-    );
+    const collectionUrl = getLibraryCollectionItemsApiUrl(mockContentLibrary.libraryId, mockCollection.collectionId);
     axiosMock.onPatch(collectionUrl).reply(200);
 
     expect(await screen.findByRole('heading', { name: /Test Collection/i })).toBeInTheDocument();
@@ -487,7 +471,9 @@ describe('<LibraryCollectionPage />', () => {
     expect(axiosMock.history.post[0].url).toBe(containerUrl);
     expect(axiosMock.history.post[0].data).toContain(`"display_name":"${containerTitle}"`);
     expect(axiosMock.history.post[0].data).toContain(`"container_type":"${containerType}"`);
-    expect(mockShowToast).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`${containerType} created successfully`, 'i')));
+    expect(mockShowToast).toHaveBeenCalledWith(
+      expect.stringMatching(new RegExp(`${containerType} created successfully`, 'i')),
+    );
 
     // Check that the unit was added to the collection
     expect(axiosMock.history.patch.length).toBe(1);

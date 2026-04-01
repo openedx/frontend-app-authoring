@@ -147,11 +147,7 @@ describe('<ModalDropzone />', () => {
     );
     const dropzoneInput = getByTestId('dropzone-container').querySelector('input[type=file]');
 
-    const fileToUpload = new File(
-      [new ArrayBuffer(maxSizeInBytes + 1)],
-      'test-file.png',
-      { type: 'image/png' },
-    );
+    const fileToUpload = new File([new ArrayBuffer(maxSizeInBytes + 1)], 'test-file.png', { type: 'image/png' });
 
     await user.upload(dropzoneInput, fileToUpload);
 

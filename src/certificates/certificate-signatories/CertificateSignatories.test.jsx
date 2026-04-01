@@ -24,13 +24,15 @@ jest.mock('./hooks/useEditSignatory');
 
 jest.mock('./hooks/useCreateSignatory');
 
-const renderComponent = (props) => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificateSignatories {...props} />
-    </IntlProvider>,
-  </Provider>,
-);
+const renderComponent = (props) =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificateSignatories {...props} />
+      </IntlProvider>
+      ,
+    </Provider>,
+  );
 
 const defaultProps = {
   signatories: signatoriesMock,
@@ -81,7 +83,7 @@ describe('CertificateSignatories', () => {
   it('renders signatory components for each signatory', () => {
     const { getByText } = renderComponent({ ...defaultProps, isForm: false });
 
-    signatoriesMock.forEach(signatory => {
+    signatoriesMock.forEach((signatory) => {
       expect(getByText(signatory.name)).toBeInTheDocument();
       expect(getByText(signatory.title)).toBeInTheDocument();
       expect(getByText(signatory.organization)).toBeInTheDocument();

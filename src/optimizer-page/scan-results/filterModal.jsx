@@ -44,18 +44,35 @@ const FilterModal = ({
     <ModalPopup isOpen={isOpen} onClose={onClose} positionRef={positionRef} placement="bottom-end">
       <div className="filter-modal bg-white rounded shadow-sm w-175">
         <Form.Group>
-          <Form.CheckboxSet
-            name="course-optimizer-filter"
-            onChange={handleCheckboxChange}
-            value={filterBy}
-          >
+          <Form.CheckboxSet name="course-optimizer-filter" onChange={handleCheckboxChange} value={filterBy}>
             {filterOptions.map(({ name, value }) => (
               <Form.Checkbox {...{ value, key: value }}>
                 <span style={{ display: 'flex', gap: '90px' }}>
                   {name}
-                  { value === 'brokenLinks' && <CustomIcon icon={LinkOff} message1={messages.brokenLabel} message2={messages.brokenInfoTooltip} placement="right-end" /> }
-                  { value === 'externalForbiddenLinks' && <CustomIcon icon={ManualIcon} message1={messages.manualLabel} message2={messages.manualInfoTooltip} placement="right-end" /> }
-                  { value === 'lockedLinks' && <CustomIcon icon={LockedIcon} message1={messages.lockedLabel} message2={messages.lockedInfoTooltip} placement="right-end" /> }
+                  {value === 'brokenLinks' && (
+                    <CustomIcon
+                      icon={LinkOff}
+                      message1={messages.brokenLabel}
+                      message2={messages.brokenInfoTooltip}
+                      placement="right-end"
+                    />
+                  )}
+                  {value === 'externalForbiddenLinks' && (
+                    <CustomIcon
+                      icon={ManualIcon}
+                      message1={messages.manualLabel}
+                      message2={messages.manualInfoTooltip}
+                      placement="right-end"
+                    />
+                  )}
+                  {value === 'lockedLinks' && (
+                    <CustomIcon
+                      icon={LockedIcon}
+                      message1={messages.lockedLabel}
+                      message2={messages.lockedInfoTooltip}
+                      placement="right-end"
+                    />
+                  )}
                 </span>
               </Form.Checkbox>
             ))}
@@ -73,10 +90,12 @@ FilterModal.propTypes = {
   positionRef: PropTypes.shape({
     current: PropTypes.instanceOf(Element),
   }),
-  filterOptions: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-  })).isRequired,
+  filterOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
   initialFilters: PropTypes.shape({
     brokenLinks: PropTypes.bool.isRequired,
     lockedLinks: PropTypes.bool.isRequired,

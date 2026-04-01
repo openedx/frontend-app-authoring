@@ -69,7 +69,8 @@ const messages = defineMessages({
   collectionsTempPlaceholder: {
     id: 'course-authoring.library-authoring.collections-temp-placeholder',
     defaultMessage: 'Coming soon!',
-    description: 'Temp placeholder for the collections container. This will be replaced with the actual collection list.',
+    description:
+      'Temp placeholder for the collections container. This will be replaced with the actual collection list.',
   },
   createLibraryTempPlaceholder: {
     id: 'course-authoring.library-authoring.create-library-temp-placeholder',
@@ -124,7 +125,8 @@ const messages = defineMessages({
   librariesV2DisabledError: {
     id: 'authoring.alert.error.libraries.v2.disabled',
     defaultMessage: 'This page cannot be shown: Libraries v2 are disabled.',
-    description: 'Error message shown to users when trying to load a libraries V2 page while libraries v2 are disabled.',
+    description:
+      'Error message shown to users when trying to load a libraries V2 page while libraries v2 are disabled.',
   },
 });
 

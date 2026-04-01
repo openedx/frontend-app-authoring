@@ -19,7 +19,8 @@ const messages = defineMessages({
   },
   description: {
     id: 'course-authoring.course-optimizer.description',
-    defaultMessage: 'This tool will scan your course for broken links, and any links that point to pages in your previous course run. Unpublished changes will not be included in the scan. Note that this process will take more time for larger courses.',
+    defaultMessage:
+      'This tool will scan your course for broken links, and any links that point to pages in your previous course run. Unpublished changes will not be included in the scan. Note that this process will take more time for larger courses.',
   },
   card1Title: {
     id: 'course-authoring.course-optimizer.card1.title',
@@ -43,7 +44,8 @@ const messages = defineMessages({
   },
   scanningStepDescription: {
     id: 'course-authoring.course-optimizer.scanning-step.description',
-    defaultMessage: 'Scanning for broken links in your course (You can now leave this page safely, but avoid making drastic changes to content until the scan is complete)',
+    defaultMessage:
+      'Scanning for broken links in your course (You can now leave this page safely, but avoid making drastic changes to content until the scan is complete)',
   },
   successStepTitle: {
     id: 'course-authoring.course-optimizer.success-step.title',

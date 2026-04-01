@@ -7,25 +7,25 @@
     padding: 0;
     flex: 1 1 0;
     height: 1.5rem;
-    margin-right: .25rem;
+    margin-right: 0.25rem;
     background: transparent;
     color: var(--pgn-color-black);
 
-      .truncate-1-line {
-        -webkit-line-clamp: 1;  /* stylelint-disable-line value-no-vendor-prefix */
-        line-clamp: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;  /* stylelint-disable-line value-no-vendor-prefix */
-        min-width: 100px;
-        -webkit-box-orient: vertical;  /* stylelint-disable-line value-no-vendor-prefix */
-      }
+    .truncate-1-line {
+      -webkit-line-clamp: 1; /* stylelint-disable-line value-no-vendor-prefix */
+      line-clamp: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
+      min-width: 100px;
+      -webkit-box-orient: vertical; /* stylelint-disable-line value-no-vendor-prefix */
+    }
   }
 
   .item-card-button-icon {
     opacity: 0;
-    transition: opacity .3s linear;
-    margin-right: .5rem;
+    transition: opacity 0.3s linear;
+    margin-right: 0.5rem;
 
     &:focus {
       opacity: 1;

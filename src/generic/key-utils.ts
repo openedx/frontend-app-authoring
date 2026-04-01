@@ -23,7 +23,7 @@ export function getBlockType(usageKey: string): string {
 /**
  * Parses a library key and returns the organization and library name as an object.
  */
-export function parseLibraryKey(libraryKey: string): { org: string, lib: string } {
+export function parseLibraryKey(libraryKey: string): { org: string; lib: string } {
   const splitKey = libraryKey?.split(':') || [];
   if (splitKey.length !== 3) {
     throw new Error(`Invalid libraryKey: ${libraryKey}`);
@@ -86,7 +86,7 @@ export function isBlockV1Key(usageKey: string | undefined | null): boolean {
 /**
  * Build a collection usage key from library V2 context key and collection Id.
  * This Collection Usage Key is only used on tagging.
-*/
+ */
 export const buildCollectionUsageKey = (learningContextKey: string, collectionId: string) => {
   if (!isLibraryKey(learningContextKey)) {
     return '';

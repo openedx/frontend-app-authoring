@@ -1,8 +1,8 @@
-@import "files-and-videos/videos-page/transcript-settings/TranscriptSettings";
-@import "files-and-videos/videos-page/VideoThumbnail";
-@import "files-and-videos/videos-page/info-sidebar/transcript-item/LanguageSelect";
-@import "files-and-videos/videos-page/info-sidebar/transcript-item/TranscriptMenu";
-@import "files-and-videos/generic/table-components/GalleryCard";
+@import 'files-and-videos/videos-page/transcript-settings/TranscriptSettings';
+@import 'files-and-videos/videos-page/VideoThumbnail';
+@import 'files-and-videos/videos-page/info-sidebar/transcript-item/LanguageSelect';
+@import 'files-and-videos/videos-page/info-sidebar/transcript-item/TranscriptMenu';
+@import 'files-and-videos/generic/table-components/GalleryCard';
 
 .files-table {
   #table-filters-dropdown {

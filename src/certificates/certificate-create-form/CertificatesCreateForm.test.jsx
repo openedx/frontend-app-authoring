@@ -1,6 +1,4 @@
-import {
-  render, waitFor, within,
-} from '@testing-library/react';
+import { render, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -23,13 +21,14 @@ const courseId = 'course-123';
 let store;
 let axiosMock;
 
-const renderComponent = () => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificateCreateForm courseId={courseId} />
-    </IntlProvider>
-  </Provider>,
-);
+const renderComponent = () =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificateCreateForm courseId={courseId} />
+      </IntlProvider>
+    </Provider>,
+  );
 
 const initialState = {
   certificates: {
@@ -53,12 +52,10 @@ describe('CertificateCreateForm', () => {
     });
     store = initializeStore(initialState);
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, {
-        ...certificatesDataMock,
-        certificates: [],
-      });
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, {
+      ...certificatesDataMock,
+      certificates: [],
+    });
     await executeThunk(fetchCertificates(courseId), store.dispatch);
   });
 
@@ -78,13 +75,17 @@ describe('CertificateCreateForm', () => {
     const newCertificateData = {
       ...certificatesDataMock,
       courseTitle: courseTitleOverrideValue,
-      certificates: [{
-        ...certificatesDataMock.certificates[0],
-        signatories: [{
-          ...certificatesDataMock.certificates[0].signatories[0],
-          name: signatoryNameValue,
-        }],
-      }],
+      certificates: [
+        {
+          ...certificatesDataMock.certificates[0],
+          signatories: [
+            {
+              ...certificatesDataMock.certificates[0].signatories[0],
+              name: signatoryNameValue,
+            },
+          ],
+        },
+      ],
     };
 
     const user = userEvent.setup();
@@ -95,15 +96,10 @@ describe('CertificateCreateForm', () => {
       getByPlaceholderText(detailsMessages.detailsCourseTitleOverride.defaultMessage),
       courseTitleOverrideValue,
     );
-    await user.type(
-      getByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage),
-      signatoryNameValue,
-    );
+    await user.type(getByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage), signatoryNameValue);
     await user.click(getByRole('button', { name: messages.cardCreate.defaultMessage }));
 
-    axiosMock.onPost(
-      getCertificateApiUrl(courseId),
-    ).reply(200, newCertificateData);
+    axiosMock.onPost(getCertificateApiUrl(courseId)).reply(200, newCertificateData);
     await executeThunk(createCourseCertificate(courseId, newCertificateData), store.dispatch);
 
     await waitFor(() => {
@@ -133,9 +129,7 @@ describe('CertificateCreateForm', () => {
 
   it('add and delete signatory', async () => {
     const user = userEvent.setup();
-    const {
-      getAllByRole, queryAllByRole, getByText, getByRole,
-    } = renderComponent();
+    const { getAllByRole, queryAllByRole, getByText, getByRole } = renderComponent();
 
     const addSignatoryBtn = getByText(signatoryMessages.addSignatoryButton.defaultMessage);
 

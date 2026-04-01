@@ -1,25 +1,19 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import {
-  createEvent,
-  fireEvent,
-  render,
-  screen,
-} from '@testing-library/react';
+import { createEvent, fireEvent, render, screen } from '@testing-library/react';
 
 import { EditableCell } from './EditableCell';
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
+  <IntlProvider locale="en" messages={{}}>
+    {children}
+  </IntlProvider>
 );
 
 describe('EditableCell', () => {
   it('renders inline validation message when provided by validator', () => {
     render(
-      <EditableCell
-        initialValue="bad;value"
-        getInlineValidationMessage={() => 'Invalid character in tag name'}
-      />,
+      <EditableCell initialValue="bad;value" getInlineValidationMessage={() => 'Invalid character in tag name'} />,
       { wrapper },
     );
 

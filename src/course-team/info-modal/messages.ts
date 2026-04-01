@@ -31,7 +31,8 @@ const messages = defineMessages({
   },
   warningModalMessage: {
     id: 'course-authoring.course-team.warning-modal.message',
-    defaultMessage: '{email} is already on the {courseName} team. Recheck the email address if you want to add a new member.',
+    defaultMessage:
+      '{email} is already on the {courseName} team. Recheck the email address if you want to add a new member.',
   },
   warningModalReturnButton: {
     id: 'course-authoring.course-team.warning-modal.button.return',

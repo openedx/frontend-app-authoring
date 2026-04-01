@@ -9,7 +9,8 @@ const stepsMock = [
   },
   {
     title: 'Exporting',
-    description: 'Creating the export data files (You can now leave this page safely, but avoid making drastic changes to content until this export is complete',
+    description:
+      'Creating the export data files (You can now leave this page safely, but avoid making drastic changes to content until this export is complete',
   },
   {
     title: 'Compressing',
@@ -21,9 +22,7 @@ const stepsMock = [
   },
 ];
 
-const renderComponent = (props) => render(
-  <CourseStepper steps={stepsMock} {...props} />,
-);
+const renderComponent = (props) => render(<CourseStepper steps={stepsMock} {...props} />);
 
 describe('<CourseStepper />', () => {
   beforeEach(() => {
@@ -93,10 +92,7 @@ describe('<CourseStepper />', () => {
 
   it('renders titleComponent instead of title when provided', () => {
     const customTitle = <span data-testid="custom-title">Custom Title Component</span>;
-    const stepsWithTitleComponent = [
-      { ...stepsMock[0], titleComponent: customTitle },
-      ...stepsMock.slice(1),
-    ];
+    const stepsWithTitleComponent = [{ ...stepsMock[0], titleComponent: customTitle }, ...stepsMock.slice(1)];
 
     renderComponent({ steps: stepsWithTitleComponent, activeKey: 0 });
 

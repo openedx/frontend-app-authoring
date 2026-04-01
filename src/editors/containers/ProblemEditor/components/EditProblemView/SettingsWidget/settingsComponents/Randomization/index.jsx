@@ -7,11 +7,7 @@ import messages from './messages';
 import { useRandomizationSettingStatus } from './hooks';
 import { RandomizationTypesKeys, RandomizationTypes } from '../../../../../../../data/constants/problem';
 
-export const RandomizationCard = ({
-  randomization,
-  defaultValue,
-  updateSettings,
-}) => {
+export const RandomizationCard = ({ randomization, defaultValue, updateSettings }) => {
   const intl = useIntl();
   const curretRandomization = randomization || defaultValue;
   const { summary, handleChange } = useRandomizationSettingStatus({
@@ -24,29 +20,17 @@ export const RandomizationCard = ({
       summary={intl.formatMessage(summary.message)}
       none={!randomization}
     >
-      <div className="mb-3">
-        {intl.formatMessage(messages.randomizationSettingText, { randomization })}
-      </div>
+      <div className="mb-3">{intl.formatMessage(messages.randomizationSettingText, { randomization })}</div>
 
       <Form.Group>
-        <Form.Control
-          as="select"
-          value={curretRandomization}
-          onChange={handleChange}
-        >
-          {
-            Object.values(RandomizationTypesKeys).map((randomizationType) => (
-              <option
-                key={randomizationType}
-                value={randomizationType}
-              >
-                {intl.formatMessage(RandomizationTypes[randomizationType])}
-              </option>
-            ))
-          }
+        <Form.Control as="select" value={curretRandomization} onChange={handleChange}>
+          {Object.values(RandomizationTypesKeys).map((randomizationType) => (
+            <option key={randomizationType} value={randomizationType}>
+              {intl.formatMessage(RandomizationTypes[randomizationType])}
+            </option>
+          ))}
         </Form.Control>
       </Form.Group>
-
     </SettingsOption>
   );
 };

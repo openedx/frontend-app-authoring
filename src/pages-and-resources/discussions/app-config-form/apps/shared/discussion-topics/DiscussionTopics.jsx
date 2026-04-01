@@ -12,17 +12,10 @@ import { filterItemFromObject } from '../../../utils';
 
 const DiscussionTopics = () => {
   const intl = useIntl();
-  const {
-    values: appConfig,
-    validateForm,
-    setFieldValue,
-  } = useFormikContext();
+  const { values: appConfig, validateForm, setFieldValue } = useFormikContext();
   const { discussionTopics, divideDiscussionIds } = appConfig;
-  const {
-    discussionTopicErrors,
-    validDiscussionTopics,
-    setValidDiscussionTopics,
-  } = useContext(OpenedXConfigFormContext);
+  const { discussionTopicErrors, validDiscussionTopics, setValidDiscussionTopics } =
+    useContext(OpenedXConfigFormContext);
 
   const handleTopicDelete = async (topicIndex, topicId, remove) => {
     await remove(topicIndex);
@@ -30,21 +23,24 @@ const DiscussionTopics = () => {
     setValidDiscussionTopics(filterItemFromObject(validDiscussionTopics, 'id', topicId));
   };
 
-  const handleOnFocus = useCallback((id, hasError) => {
-    if (hasError) {
-      setValidDiscussionTopics(currentValidTopics => filterItemFromObject(currentValidTopics, 'id', id));
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      setFieldValue('divideDiscussionIds', filterItemFromObject(divideDiscussionIds, 'id', id));
-    } else {
-      setValidDiscussionTopics(currentValidTopics => {
-        const allDiscussionTopics = [...currentValidTopics, ...discussionTopics.filter(topic => topic.id === id)];
-        const allValidTopics = removeElements(allDiscussionTopics, topic => topic.name !== '');
-        return uniqBy(allValidTopics, 'id');
-      });
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      setFieldValue('divideDiscussionIds', uniq([...divideDiscussionIds, id]));
-    }
-  }, [divideDiscussionIds, discussionTopics]);
+  const handleOnFocus = useCallback(
+    (id, hasError) => {
+      if (hasError) {
+        setValidDiscussionTopics((currentValidTopics) => filterItemFromObject(currentValidTopics, 'id', id));
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        setFieldValue('divideDiscussionIds', filterItemFromObject(divideDiscussionIds, 'id', id));
+      } else {
+        setValidDiscussionTopics((currentValidTopics) => {
+          const allDiscussionTopics = [...currentValidTopics, ...discussionTopics.filter((topic) => topic.id === id)];
+          const allValidTopics = removeElements(allDiscussionTopics, (topic) => topic.name !== '');
+          return uniqBy(allValidTopics, 'id');
+        });
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        setFieldValue('divideDiscussionIds', uniq([...divideDiscussionIds, id]));
+      }
+    },
+    [divideDiscussionIds, discussionTopics],
+  );
 
   const addNewTopic = (push) => {
     const payload = { name: '', id: uuid() };
@@ -53,15 +49,9 @@ const DiscussionTopics = () => {
 
   return (
     <>
-      <h5 className="text-gray-500 mt-4 mb-2">
-        {intl.formatMessage(messages.discussionTopics)}
-      </h5>
-      <label className="text-primary-500 mb-1 h4">
-        {intl.formatMessage(messages.discussionTopicsLabel)}
-      </label>
-      <div className="small mb-4 text-muted">
-        {intl.formatMessage(messages.discussionTopicsHelp)}
-      </div>
+      <h5 className="text-gray-500 mt-4 mb-2">{intl.formatMessage(messages.discussionTopics)}</h5>
+      <label className="text-primary-500 mb-1 h4">{intl.formatMessage(messages.discussionTopicsLabel)}</label>
+      <div className="small mb-4 text-muted">{intl.formatMessage(messages.discussionTopicsHelp)}</div>
       <div>
         <FieldArray
           name="discussionTopics"

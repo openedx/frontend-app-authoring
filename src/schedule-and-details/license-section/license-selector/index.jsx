@@ -1,13 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  Form,
-  ButtonGroup,
-  Button,
-  OverlayTrigger,
-  Tooltip,
-} from '@openedx/paragon';
+import { Form, ButtonGroup, Button, OverlayTrigger, Tooltip } from '@openedx/paragon';
 
 import { LICENSE_TYPE } from '../constants';
 import messages from './messages';
@@ -30,14 +24,9 @@ const LicenseSelector = ({ licenseType, onChangeLicenseType }) => {
     return (
       <OverlayTrigger
         key={type}
-        overlay={
-          <Tooltip id={`tooltip-${type}`}>{LICENSE_BUTTON_GROUP_LABELS[type].tooltip}</Tooltip>
-        }
+        overlay={<Tooltip id={`tooltip-${type}`}>{LICENSE_BUTTON_GROUP_LABELS[type].tooltip}</Tooltip>}
       >
-        <Button
-          variant={isActive ? 'primary' : 'outline-primary'}
-          onClick={() => onChangeLicenseType(type, 'license')}
-        >
+        <Button variant={isActive ? 'primary' : 'outline-primary'} onClick={() => onChangeLicenseType(type, 'license')}>
           {LICENSE_BUTTON_GROUP_LABELS[type].label}
         </Button>
       </OverlayTrigger>

@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  screen, initializeMocks,
-} from '@src/testUtils';
+import { screen, initializeMocks } from '@src/testUtils';
 import { editorRender } from '@src/editors/editorTestRender';
 import * as hooks from './hooks';
 import TinyMceWidget from '.';
@@ -23,7 +21,7 @@ jest.mock('../ImageUploadModal', () => 'ImageUploadModal');
 jest.mock('../SourceCodeModal', () => 'SourceCodeModal');
 
 jest.mock('./hooks', () => ({
-  editorConfig: jest.fn(args => ({ editorConfig: args })),
+  editorConfig: jest.fn((args) => ({ editorConfig: args })),
   imgModalToggle: jest.fn(() => ({
     isImgOpen: true,
     openImgModal: jest.fn().mockName('openModal'),

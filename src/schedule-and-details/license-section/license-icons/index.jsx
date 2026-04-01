@@ -3,9 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Icon, Stack, Hyperlink } from '@openedx/paragon';
-import {
-  Attribution, Copyright, Cc, Nd, Nc, Sa,
-} from '@openedx/paragon/icons';
+import { Attribution, Copyright, Cc, Nd, Nc, Sa } from '@openedx/paragon/icons';
 
 import ApplyWrapper from '../../../generic/ApplyWrapper';
 import { LICENSE_TYPE } from '../constants';
@@ -15,11 +13,7 @@ const LicenseIcons = ({ licenseType, licenseDetails, licenseURL }) => (
   <ApplyWrapper
     condition={licenseURL}
     wrapper={(children) => (
-      <Hyperlink
-        destination={licenseURL}
-        target="_blank"
-        showLaunchIcon={false}
-      >
+      <Hyperlink destination={licenseURL} target="_blank" showLaunchIcon={false}>
         {children}
       </Hyperlink>
     )}
@@ -34,39 +28,19 @@ const LicenseIcons = ({ licenseType, licenseDetails, licenseURL }) => (
         />
       )}
       {licenseType === LICENSE_TYPE.creativeCommons && (
-        <Icon
-          src={Cc}
-          className="mr-1 text-gray-700"
-          style={{ height: '1.5rem', width: '1.5rem' }}
-        />
+        <Icon src={Cc} className="mr-1 text-gray-700" style={{ height: '1.5rem', width: '1.5rem' }} />
       )}
       {licenseDetails?.attribution && (
-        <Icon
-          src={Attribution}
-          className="mr-1 text-gray-700"
-          style={{ height: '1.5rem', width: '1.5rem' }}
-        />
+        <Icon src={Attribution} className="mr-1 text-gray-700" style={{ height: '1.5rem', width: '1.5rem' }} />
       )}
       {licenseDetails?.nonCommercial && (
-        <Icon
-          src={Nc}
-          className="mr-1 text-gray-700"
-          style={{ height: '1.5rem', width: '1.5rem' }}
-        />
+        <Icon src={Nc} className="mr-1 text-gray-700" style={{ height: '1.5rem', width: '1.5rem' }} />
       )}
       {licenseDetails?.noDerivatives && (
-        <Icon
-          src={Nd}
-          className="mr-1 text-gray-700"
-          style={{ height: '1.5rem', width: '1.5rem' }}
-        />
+        <Icon src={Nd} className="mr-1 text-gray-700" style={{ height: '1.5rem', width: '1.5rem' }} />
       )}
       {licenseDetails?.shareAlike && (
-        <Icon
-          src={Sa}
-          className="mr-1 text-gray-700"
-          style={{ height: '1.5rem', width: '1.5rem' }}
-        />
+        <Icon src={Sa} className="mr-1 text-gray-700" style={{ height: '1.5rem', width: '1.5rem' }} />
       )}
       {[LICENSE_TYPE.allRightsReserved, null].includes(licenseType) && (
         <span className="small text-gray-700">

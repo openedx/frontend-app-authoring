@@ -13,55 +13,41 @@ describe('courseCheckValidators utility functions', () => {
 
   describe('hasGradingPolicy', () => {
     it('returns true when sum of weights is 1', () => {
-      expect(validators.hasGradingPolicy(
-        { hasGradingPolicy: true, sumOfWeights: 1 },
-      )).toEqual(true);
+      expect(validators.hasGradingPolicy({ hasGradingPolicy: true, sumOfWeights: 1 })).toEqual(true);
     });
 
     it('returns true when sum of weights is not 1 due to floating point approximation (1.00004)', () => {
-      expect(validators.hasGradingPolicy(
-        { hasGradingPolicy: true, sumOfWeights: 1.00004 },
-      )).toEqual(true);
+      expect(validators.hasGradingPolicy({ hasGradingPolicy: true, sumOfWeights: 1.00004 })).toEqual(true);
     });
 
     it('returns false when sum of weights is not 1', () => {
-      expect(validators.hasGradingPolicy(
-        { hasGradingPolicy: true, sumOfWeights: 2 },
-      )).toEqual(false);
+      expect(validators.hasGradingPolicy({ hasGradingPolicy: true, sumOfWeights: 2 })).toEqual(false);
     });
 
     it('returns true when hasGradingPolicy is true', () => {
-      expect(validators.hasGradingPolicy(
-        { hasGradingPolicy: true, sumOfWeights: 1 },
-      )).toEqual(true);
+      expect(validators.hasGradingPolicy({ hasGradingPolicy: true, sumOfWeights: 1 })).toEqual(true);
     });
 
     it('returns false when hasGradingPolicy is false', () => {
-      expect(validators.hasGradingPolicy(
-        { hasGradingPolicy: false, sumOfWeights: 1 },
-      )).toEqual(false);
+      expect(validators.hasGradingPolicy({ hasGradingPolicy: false, sumOfWeights: 1 })).toEqual(false);
     });
   });
 
   describe('hasCertificate', () => {
     it('returns true when certificates are activated and course run has a certificate', () => {
-      expect(validators.hasCertificate({ isActivated: true, hasCertificate: true }))
-        .toEqual(true);
+      expect(validators.hasCertificate({ isActivated: true, hasCertificate: true })).toEqual(true);
     });
 
     it('returns false when certificates are not activated and course run has a certificate', () => {
-      expect(validators.hasCertificate({ isActivated: false, hasCertificate: true }))
-        .toEqual(false);
+      expect(validators.hasCertificate({ isActivated: false, hasCertificate: true })).toEqual(false);
     });
 
     it('returns false when certificates are activated and course run does not have a certificate', () => {
-      expect(validators.hasCertificate({ isActivated: true, hasCertificate: false }))
-        .toEqual(false);
+      expect(validators.hasCertificate({ isActivated: true, hasCertificate: false })).toEqual(false);
     });
 
     it('returns false when certificates are not activated and course run does not have a certificate', () => {
-      expect(validators.hasCertificate({ isActivated: false, hasCertificate: false }))
-        .toEqual(false);
+      expect(validators.hasCertificate({ isActivated: false, hasCertificate: false })).toEqual(false);
     });
   });
 
@@ -85,77 +71,86 @@ describe('courseCheckValidators utility functions', () => {
 
   describe('hasAssignmentDeadlines', () => {
     it('returns true when a course run has start and end date and all assignments are within range', () => {
-      expect(validators.hasAssignmentDeadlines(
-        {
-          assignmentsWithDatesBeforeStart: 0,
-          assignmentsWithDatesAfterEnd: 0,
-          assignmentsWithOraDatesAfterEnd: 0,
-          assignmentsWithOraDatesBeforeStart: 0,
-        },
-        {
-          hasStartDate: true,
-          hasEndDate: true,
-        },
-      )).toEqual(true);
+      expect(
+        validators.hasAssignmentDeadlines(
+          {
+            assignmentsWithDatesBeforeStart: 0,
+            assignmentsWithDatesAfterEnd: 0,
+            assignmentsWithOraDatesAfterEnd: 0,
+            assignmentsWithOraDatesBeforeStart: 0,
+          },
+          {
+            hasStartDate: true,
+            hasEndDate: true,
+          },
+        ),
+      ).toEqual(true);
     });
 
     it('returns false when a course run has no start and no end date', () => {
-      expect(validators.hasAssignmentDeadlines(
-        {},
-        {
-          hasStartDate: false,
-          hasEndDate: false,
-        },
-      )).toEqual(false);
+      expect(
+        validators.hasAssignmentDeadlines(
+          {},
+          {
+            hasStartDate: false,
+            hasEndDate: false,
+          },
+        ),
+      ).toEqual(false);
     });
 
     it('returns false when a course has start and end date and no assignments', () => {
-      expect(validators.hasAssignmentDeadlines(
-        {
-          totalNumber: 0,
-        },
-        {
-          hasStartDate: true,
-          hasEndDate: true,
-        },
-      )).toEqual(false);
+      expect(
+        validators.hasAssignmentDeadlines(
+          {
+            totalNumber: 0,
+          },
+          {
+            hasStartDate: true,
+            hasEndDate: true,
+          },
+        ),
+      ).toEqual(false);
     });
 
     it('returns false when a course run has start and end date and assignments before start', () => {
-      expect(validators.hasAssignmentDeadlines(
-        {
-          assignmentsWithDatesBeforeStart: ['test'],
-          assignmentsWithDatesAfterEnd: 0,
-          assignmentsWithOraDatesAfterEnd: 0,
-          assignmentsWithOraDatesBeforeStart: 0,
-        },
-        {
-          hasStartDate: true,
-          hasEndDate: true,
-        },
-      )).toEqual(false);
+      expect(
+        validators.hasAssignmentDeadlines(
+          {
+            assignmentsWithDatesBeforeStart: ['test'],
+            assignmentsWithDatesAfterEnd: 0,
+            assignmentsWithOraDatesAfterEnd: 0,
+            assignmentsWithOraDatesBeforeStart: 0,
+          },
+          {
+            hasStartDate: true,
+            hasEndDate: true,
+          },
+        ),
+      ).toEqual(false);
     });
 
     it('returns false when a course run has start and end date and assignments after end', () => {
-      expect(validators.hasAssignmentDeadlines(
-        {
-          assignmentsWithDatesBeforeStart: 0,
-          assignmentsWithDatesAfterEnd: ['test'],
-          assignmentsWithOraDatesAfterEnd: 0,
-          assignmentsWithOraDatesBeforeStart: 0,
-        },
-        {
-          hasStartDate: true,
-          hasEndDate: true,
-        },
-      )).toEqual(false);
+      expect(
+        validators.hasAssignmentDeadlines(
+          {
+            assignmentsWithDatesBeforeStart: 0,
+            assignmentsWithDatesAfterEnd: ['test'],
+            assignmentsWithOraDatesAfterEnd: 0,
+            assignmentsWithOraDatesBeforeStart: 0,
+          },
+          {
+            hasStartDate: true,
+            hasEndDate: true,
+          },
+        ),
+      ).toEqual(false);
     });
   });
 
-  it(
-    'returns false when a course run has start and end date and an ora with a date before start',
-    () => {
-      expect(validators.hasAssignmentDeadlines(
+  it('returns false when a course run has start and end date and an ora with a date before start', () => {
+    expect(
+      validators.hasAssignmentDeadlines(
         {
           assignmentsWithDatesBeforeStart: 0,
           assignmentsWithDatesAfterEnd: 0,
@@ -166,14 +161,13 @@ describe('courseCheckValidators utility functions', () => {
           hasStartDate: true,
           hasEndDate: true,
         },
-      )).toEqual(false);
-    },
-  );
+      ),
+    ).toEqual(false);
+  });
 
-  it(
-    'returns false when a course run has start and end date and an ora with a date after end',
-    () => {
-      expect(validators.hasAssignmentDeadlines(
+  it('returns false when a course run has start and end date and an ora with a date after end', () => {
+    expect(
+      validators.hasAssignmentDeadlines(
         {
           assignmentsWithDatesBeforeStart: 0,
           assignmentsWithDatesAfterEnd: 0,
@@ -184,9 +178,9 @@ describe('courseCheckValidators utility functions', () => {
           hasStartDate: true,
           hasEndDate: true,
         },
-      )).toEqual(false);
-    },
-  );
+      ),
+    ).toEqual(false);
+  });
 
   describe('hasShortVideoDuration', () => {
     it('returns false if course run has no videos', () => {
@@ -194,20 +188,17 @@ describe('courseCheckValidators utility functions', () => {
     });
 
     it('returns true if course run videos have a median duration <= to 600', () => {
-      expect(validators.hasShortVideoDuration({ totalNumber: 1, durations: { median: 100 } }))
-        .toEqual(true);
+      expect(validators.hasShortVideoDuration({ totalNumber: 1, durations: { median: 100 } })).toEqual(true);
     });
 
     it('returns true if course run videos have a median duration > to 600', () => {
-      expect(validators.hasShortVideoDuration({ totalNumber: 10, durations: { median: 700 } }))
-        .toEqual(false);
+      expect(validators.hasShortVideoDuration({ totalNumber: 10, durations: { median: 700 } })).toEqual(false);
     });
   });
 
   describe('hasDiverseSequences', () => {
     it('returns true if < 20% of visible subsections have more than one block type', () => {
-      expect(validators.hasDiverseSequences({ totalVisible: 10, numWithOneBlockType: 1 }))
-        .toEqual(true);
+      expect(validators.hasDiverseSequences({ totalVisible: 10, numWithOneBlockType: 1 })).toEqual(true);
     });
 
     it('returns false if no visible subsections', () => {
@@ -215,13 +206,11 @@ describe('courseCheckValidators utility functions', () => {
     });
 
     it('returns false if >= 20% of visible subsections have more than one block type', () => {
-      expect(validators.hasDiverseSequences({ totalVisible: 10, numWithOneBlockType: 3 }))
-        .toEqual(false);
+      expect(validators.hasDiverseSequences({ totalVisible: 10, numWithOneBlockType: 3 })).toEqual(false);
     });
 
     it('return false if < 0 visible subsections', () => {
-      expect(validators.hasDiverseSequences({ totalVisible: -1, numWithOneBlockType: 1 }))
-        .toEqual(false);
+      expect(validators.hasDiverseSequences({ totalVisible: -1, numWithOneBlockType: 1 })).toEqual(false);
     });
   });
 

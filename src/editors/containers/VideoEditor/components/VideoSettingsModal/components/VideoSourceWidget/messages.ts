@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   titleLabel: {
     id: 'authoring.videoeditor.videoSource.title.label',
     defaultMessage: 'Video source',
@@ -30,7 +29,8 @@ const messages = defineMessages({
   },
   videoIdChangeAlert: {
     id: 'authoring.videoeditor.videoIdChangeAlert.message',
-    defaultMessage: 'The Video ID field has changed, please check the Video URL and fallback URL values and update them if necessary.',
+    defaultMessage:
+      'The Video ID field has changed, please check the Video URL and fallback URL values and update them if necessary.',
     description: 'Body message for the alert that appears when the video id has been changed.',
   },
   fallbackVideoTitle: {

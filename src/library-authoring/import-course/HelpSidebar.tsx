@@ -20,10 +20,7 @@ export const HelpSidebar = () => (
           <FormattedMessage {...messages.helpAndSupportFirstQuestionTitle} />
         </span>
         <span className="x-small">
-          <FormattedMessage
-            {...messages.helpAndSupportFirstQuestionBody}
-            values={{ p: Paragraph }}
-          />
+          <FormattedMessage {...messages.helpAndSupportFirstQuestionBody} values={{ p: Paragraph }} />
         </span>
       </Stack>
       <hr />
@@ -32,10 +29,7 @@ export const HelpSidebar = () => (
           <FormattedMessage {...messages.helpAndSupportSecondQuestionTitle} />
         </span>
         <span className="x-small">
-          <FormattedMessage
-            {...messages.helpAndSupportSecondQuestionBody}
-            values={{ p: Paragraph }}
-          />
+          <FormattedMessage {...messages.helpAndSupportSecondQuestionBody} values={{ p: Paragraph }} />
         </span>
       </Stack>
     </Stack>

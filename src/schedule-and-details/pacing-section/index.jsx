@@ -6,9 +6,7 @@ import { Form } from '@openedx/paragon';
 import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
-const PacingSection = ({
-  selfPaced, startDate, onChange,
-}) => {
+const PacingSection = ({ selfPaced, startDate, onChange }) => {
   const intl = useIntl();
   const canTogglePace = new Date() <= new Date(startDate);
 
@@ -20,9 +18,7 @@ const PacingSection = ({
       />
       <Form.Group>
         {!canTogglePace && (
-          <Form.Label className="text pt-3">
-            {intl.formatMessage(messages.pacingRestriction)}
-          </Form.Label>
+          <Form.Label className="text pt-3">{intl.formatMessage(messages.pacingRestriction)}</Form.Label>
         )}
         <Form.RadioSet
           name="selfPaced"

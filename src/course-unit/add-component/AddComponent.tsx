@@ -2,9 +2,7 @@ import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, Button, StandardModal, useToggle,
-} from '@openedx/paragon';
+import { ActionRow, Button, StandardModal, useToggle } from '@openedx/paragon';
 
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
@@ -23,37 +21,37 @@ import ComponentModalView from './add-component-modals/ComponentModalView';
 import { getCourseSectionVertical, getCourseUnitData } from '../data/selectors';
 
 type ComponentTemplateData = {
-  displayName: string,
-  category?: string,
-  type: string,
-  beta?: boolean,
+  displayName: string;
+  category?: string;
+  type: string;
+  beta?: boolean;
   templates: Array<{
-    boilerplateName?: string,
-    category?: string,
-    displayName: string,
-    supportLevel?: string | boolean,
-  }>,
+    boilerplateName?: string;
+    category?: string;
+    displayName: string;
+    supportLevel?: string | boolean;
+  }>;
   supportLegend: {
-    allowUnsupportedXblocks?: boolean,
-    documentationLabel?: string,
-    showLegend?: boolean,
-  },
+    allowUnsupportedXblocks?: boolean;
+    documentationLabel?: string;
+    showLegend?: boolean;
+  };
 };
 
 export interface AddComponentProps {
-  isSplitTestType?: boolean,
-  isUnitVerticalType?: boolean,
-  parentLocator: string,
+  isSplitTestType?: boolean;
+  isUnitVerticalType?: boolean;
+  parentLocator: string;
   handleCreateNewCourseXBlock: (
     args: object,
-    callback?: (args: { courseKey: string, locator: string }) => void
-  ) => void,
-  isProblemBankType?: boolean,
+    callback?: (args: { courseKey: string; locator: string }) => void,
+  ) => void;
+  isProblemBankType?: boolean;
   addComponentTemplateData?: {
-    blockId: string,
-    parentLocator?: string,
-    model: ComponentTemplateData,
-  },
+    blockId: string;
+    parentLocator?: string;
+    model: ComponentTemplateData;
+  };
 }
 
 const AddComponent = ({
@@ -88,15 +86,18 @@ const AddComponent = ({
   const courseUnit = useSelector(getCourseUnitData);
   const sequenceId = courseUnit?.ancestorInfo?.ancestors?.[0]?.id;
 
-  const receiveMessage = useCallback(({ data: { type, payload } }) => {
-    if (type === messageTypes.showMultipleComponentPicker) {
-      showSelectLibraryContentModal();
-    }
-    if (type === messageTypes.showSingleComponentPicker) {
-      setUsageId(payload.usageId);
-      showAddLibraryContentModal();
-    }
-  }, [showSelectLibraryContentModal, showAddLibraryContentModal, setUsageId]);
+  const receiveMessage = useCallback(
+    ({ data: { type, payload } }) => {
+      if (type === messageTypes.showMultipleComponentPicker) {
+        showSelectLibraryContentModal();
+      }
+      if (type === messageTypes.showSingleComponentPicker) {
+        setUsageId(payload.usageId);
+        showAddLibraryContentModal();
+      }
+    },
+    [showSelectLibraryContentModal, showAddLibraryContentModal, setUsageId],
+  );
 
   useEventListener('message', receiveMessage);
 
@@ -105,29 +106,38 @@ const AddComponent = ({
     closeSelectLibraryContentModal();
   }, [selectedComponents]);
 
-  const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
-    closeXBlockEditorModal();
-    closeVideoSelectorModal();
-    sendMessageToIframe(messageTypes.refreshXBlock, null);
-    dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
-  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
+  const onXBlockSave = useCallback(
+    /* istanbul ignore next */ () => {
+      closeXBlockEditorModal();
+      closeVideoSelectorModal();
+      sendMessageToIframe(messageTypes.refreshXBlock, null);
+      dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
+    },
+    [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe],
+  );
 
-  const onXBlockCancel = useCallback(/* istanbul ignore next */ () => {
-    // ignoring tests because it triggers when someone closes the editor which has a separate store
-    closeXBlockEditorModal();
-    closeVideoSelectorModal();
-    dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
-  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe, blockId, sequenceId]);
+  const onXBlockCancel = useCallback(
+    /* istanbul ignore next */ () => {
+      // ignoring tests because it triggers when someone closes the editor which has a separate store
+      closeXBlockEditorModal();
+      closeVideoSelectorModal();
+      dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
+    },
+    [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe, blockId, sequenceId],
+  );
 
-  const handleLibraryV2Selection = useCallback((selection: SelectedComponent) => {
-    handleCreateNewCourseXBlock({
-      type: COMPONENT_TYPES.libraryV2,
-      category: selection.blockType,
-      parentLocator: usageId || blockId,
-      libraryContentKey: selection.usageKey,
-    });
-    closeAddLibraryContentModal();
-  }, [usageId]);
+  const handleLibraryV2Selection = useCallback(
+    (selection: SelectedComponent) => {
+      handleCreateNewCourseXBlock({
+        type: COMPONENT_TYPES.libraryV2,
+        category: selection.blockType,
+        parentLocator: usageId || blockId,
+        libraryContentKey: selection.usageKey,
+      });
+      closeAddLibraryContentModal();
+    },
+    [usageId],
+  );
 
   const handleCreateNewXBlock = (type: string, moduleName?: string) => {
     switch (type) {
@@ -158,8 +168,8 @@ const AddComponent = ({
           },
         );
         break;
-        // TODO: The library functional will be a bit different of current legacy (CMS)
-        //  behaviour and this ticket is on hold (blocked by other development team).
+      // TODO: The library functional will be a bit different of current legacy (CMS)
+      //  behaviour and this ticket is on hold (blocked by other development team).
       case COMPONENT_TYPES.library:
         handleCreateNewCourseXBlock({ type, category: 'library_content', parentLocator: blockId });
         break;
@@ -176,16 +186,19 @@ const AddComponent = ({
         handleCreateNewCourseXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
         break;
       case COMPONENT_TYPES.html:
-        handleCreateNewCourseXBlock({
-          type,
-          boilerplate: moduleName,
-          parentLocator: blockId,
-        }, /* istanbul ignore next */ ({ courseKey, locator }) => {
-          setCourseId(courseKey);
-          setBlockType(type);
-          setNewBlockId(locator);
-          showXBlockEditorModal();
-        });
+        handleCreateNewCourseXBlock(
+          {
+            type,
+            boilerplate: moduleName,
+            parentLocator: blockId,
+          },
+          /* istanbul ignore next */ ({ courseKey, locator }) => {
+            setCourseId(courseKey);
+            setBlockType(type);
+            setNewBlockId(locator);
+            showXBlockEditorModal();
+          },
+        );
         break;
       default:
     }
@@ -200,7 +213,7 @@ const AddComponent = ({
             <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center">
               {componentTemplates.map((component: ComponentTemplateData) => {
                 const { type, displayName, beta } = component;
-                let modalParams: { open: () => void, close: () => void, isOpen: boolean };
+                let modalParams: { open: () => void; close: () => void; isOpen: boolean };
 
                 if (!component.templates.length) {
                   return null;

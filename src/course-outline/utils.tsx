@@ -1,9 +1,6 @@
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 import { getConfig } from '@edx/frontend-platform';
-import {
-  CheckCircle as CheckCircleIcon,
-  Lock as LockIcon,
-} from '@openedx/paragon/icons';
+import { CheckCircle as CheckCircleIcon, Lock as LockIcon } from '@openedx/paragon/icons';
 
 import DraftIcon from '@src/generic/DraftIcon';
 import { VisibilityTypes } from '@src/data/constants';
@@ -140,14 +137,14 @@ const getHighlightsFormValues = (currentHighlights: Array<string>): any => {
 
   const formValues = currentHighlights.length
     ? Object.entries(initialFormValues).reduce((result, [key], index) => {
-      if (currentHighlights[index]) {
-        return {
-          ...result,
-          [key]: currentHighlights[index],
-        };
-      }
-      return result;
-    }, initialFormValues)
+        if (currentHighlights[index]) {
+          return {
+            ...result,
+            [key]: currentHighlights[index],
+          };
+        }
+        return result;
+      }, initialFormValues)
     : initialFormValues;
 
   return formValues;
@@ -156,11 +153,7 @@ const getHighlightsFormValues = (currentHighlights: Array<string>): any => {
 /**
  * Method to scroll into view port, if it's outside the viewport
  */
-const scrollToElement = (
-  target: HTMLElement,
-  alignWithTop: boolean = false,
-  highlight: boolean = false,
-) => {
+const scrollToElement = (target: HTMLElement, alignWithTop: boolean = false, highlight: boolean = false) => {
   if (target.getBoundingClientRect().bottom > window.innerHeight) {
     // if alignWithTop is set, the top of the target will be aligned to the top of visible area
     // of the scrollable ancestor, Otherwise, the bottom of the target will be aligned to the
@@ -208,9 +201,8 @@ const getVideoSharingOptionText = (
 /**
  * Returns `true` if the new design for the course outline is enabled
  */
-const isOutlineNewDesignEnabled = () => (
-  getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true'
-);
+const isOutlineNewDesignEnabled = () =>
+  getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
 
 export {
   getItemStatus,

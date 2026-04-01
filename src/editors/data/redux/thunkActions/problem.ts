@@ -35,11 +35,13 @@ export const switchToAdvancedEditor = (editorRef) => (dispatch, getState) => {
     rawOLX = new ReactStateOLXParser({ problem, editorObject }).buildOLX();
   }
 
-  dispatch(actions.problem.updateField({
-    problemType: ProblemTypeKeys.ADVANCED,
-    rawOLX,
-    isMarkdownEditorEnabled: false,
-  }));
+  dispatch(
+    actions.problem.updateField({
+      problemType: ProblemTypeKeys.ADVANCED,
+      rawOLX,
+      isMarkdownEditorEnabled: false,
+    }),
+  );
 };
 
 export const switchToMarkdownEditor = () => (dispatch) => {
@@ -83,63 +85,68 @@ export const getDataFromOlx = ({ rawOLX, rawSettings, defaultSettings }) => {
   return { settings: parsedSettings };
 };
 
-export const loadProblem = ({
-  rawOLX, rawSettings, defaultSettings, isMarkdownEditorEnabled,
-}) => (dispatch) => {
-  if (isBlankProblem({ rawOLX })) {
-    dispatch(actions.problem.setEnableTypeSelection(camelizeKeys(defaultSettings)));
-  } else {
-    dispatch(actions.problem.load({
-      ...getDataFromOlx({ rawOLX, rawSettings, defaultSettings }),
-      rawMarkdown: rawSettings.markdown,
-      isMarkdownEditorEnabled,
-    }));
-  }
-};
+export const loadProblem =
+  ({ rawOLX, rawSettings, defaultSettings, isMarkdownEditorEnabled }) =>
+  (dispatch) => {
+    if (isBlankProblem({ rawOLX })) {
+      dispatch(actions.problem.setEnableTypeSelection(camelizeKeys(defaultSettings)));
+    } else {
+      dispatch(
+        actions.problem.load({
+          ...getDataFromOlx({ rawOLX, rawSettings, defaultSettings }),
+          rawMarkdown: rawSettings.markdown,
+          isMarkdownEditorEnabled,
+        }),
+      );
+    }
+  };
 
-export const fetchAdvancedSettings = ({
-  rawOLX,
-  rawSettings,
-  isMarkdownEditorEnabled,
-}) => (dispatch) => new Promise((resolve) => {
-  const advancedProblemSettingKeys = ['max_attempts', 'showanswer', 'show_reset_button', 'rerandomize'];
+export const fetchAdvancedSettings =
+  ({ rawOLX, rawSettings, isMarkdownEditorEnabled }) =>
+  (dispatch) =>
+    new Promise((resolve) => {
+      const advancedProblemSettingKeys = ['max_attempts', 'showanswer', 'show_reset_button', 'rerandomize'];
 
-  dispatch(requests.fetchAdvancedSettings({
-    onSuccess: (response) => {
-      const defaultSettings = {};
+      dispatch(
+        requests.fetchAdvancedSettings({
+          onSuccess: (response) => {
+            const defaultSettings = {};
 
-      Object.entries(response.data as Record<string, any>).forEach(([key, value]) => {
-        if (advancedProblemSettingKeys.includes(key)) {
-          defaultSettings[key] = value.value;
-        }
-      });
+            Object.entries(response.data as Record<string, any>).forEach(([key, value]) => {
+              if (advancedProblemSettingKeys.includes(key)) {
+                defaultSettings[key] = value.value;
+              }
+            });
 
-      dispatch(actions.problem.updateField({
-        defaultSettings: camelizeKeys(defaultSettings),
-      }));
+            dispatch(
+              actions.problem.updateField({
+                defaultSettings: camelizeKeys(defaultSettings),
+              }),
+            );
 
-      loadProblem({
-        rawOLX,
-        rawSettings,
-        defaultSettings,
-        isMarkdownEditorEnabled,
-      })(dispatch);
+            loadProblem({
+              rawOLX,
+              rawSettings,
+              defaultSettings,
+              isMarkdownEditorEnabled,
+            })(dispatch);
 
-      resolve(true);
-    },
+            resolve(true);
+          },
 
-    onFailure: () => {
-      loadProblem({
-        rawOLX,
-        rawSettings,
-        defaultSettings: {},
-        isMarkdownEditorEnabled,
-      })(dispatch);
+          onFailure: () => {
+            loadProblem({
+              rawOLX,
+              rawSettings,
+              defaultSettings: {},
+              isMarkdownEditorEnabled,
+            })(dispatch);
 
-      resolve(false);
-    },
-  }));
-});
+            resolve(false);
+          },
+        }),
+      );
+    });
 
 export const initializeProblem = (blockValue) => (dispatch, getState) => {
   const rawOLX = get(blockValue, 'data.data', '');
@@ -151,14 +158,22 @@ export const initializeProblem = (blockValue) => (dispatch, getState) => {
     // So proceed with loading the problem.
     // Though first we need to fake the request or else the problem type selection UI won't display:
     dispatch(actions.requests.completeRequest({ requestKey: RequestKeys.fetchAdvancedSettings, response: {} }));
-    return dispatch(loadProblem({
-      rawOLX, rawSettings, defaultSettings: {}, isMarkdownEditorEnabled,
-    }));
+    return dispatch(
+      loadProblem({
+        rawOLX,
+        rawSettings,
+        defaultSettings: {},
+        isMarkdownEditorEnabled,
+      }),
+    );
   }
   // Load the defaults (for max_attempts, etc.) from the course's advanced settings, then proceed:
   return dispatch(fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled }));
 };
 
 export default {
-  initializeProblem, switchEditor, switchToAdvancedEditor, fetchAdvancedSettings,
+  initializeProblem,
+  switchEditor,
+  switchToAdvancedEditor,
+  fetchAdvancedSettings,
 };

@@ -1,8 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Form, TransitionReplace, Hyperlink, Alert,
-} from '@openedx/paragon';
+import { Form, TransitionReplace, Hyperlink, Alert } from '@openedx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 import { FieldArray, useFormikContext } from 'formik';
 import size from 'lodash/size';
@@ -15,19 +13,9 @@ import { OpenedXConfigFormContext } from '../openedx/OpenedXConfigFormProvider';
 const DivisionByGroupFields = () => {
   const intl = useIntl();
   const { validDiscussionTopics } = useContext(OpenedXConfigFormContext);
-  const {
-    handleChange,
-    handleBlur,
-    values: appConfig,
-    setFieldValue,
-  } = useFormikContext();
-  const {
-    divideDiscussionIds,
-    discussionTopics,
-    divideByCohorts,
-    divideCourseTopicsByCohorts,
-    cohortsEnabled,
-  } = appConfig;
+  const { handleChange, handleBlur, values: appConfig, setFieldValue } = useFormikContext();
+  const { divideDiscussionIds, discussionTopics, divideByCohorts, divideCourseTopicsByCohorts, cohortsEnabled } =
+    appConfig;
 
   const { courseId } = useParams();
   const { config } = useContext(AppContext);
@@ -37,7 +25,10 @@ const DivisionByGroupFields = () => {
     if (divideByCohorts) {
       if (!divideCourseTopicsByCohorts && size(discussionTopics) !== size(divideDiscussionIds)) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        setFieldValue('divideDiscussionIds', discussionTopics.map(topic => topic.id));
+        setFieldValue(
+          'divideDiscussionIds',
+          discussionTopics.map((topic) => topic.id),
+        );
       }
     } else {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -45,10 +36,7 @@ const DivisionByGroupFields = () => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       setFieldValue('divideCourseTopicsByCohorts', false);
     }
-  }, [
-    divideByCohorts,
-    divideCourseTopicsByCohorts,
-  ]);
+  }, [divideByCohorts, divideCourseTopicsByCohorts]);
 
   const handleCheckBoxToggle = (event, push, remove) => {
     const { checked, value } = event.target;
@@ -70,11 +58,8 @@ const DivisionByGroupFields = () => {
 
   return (
     <>
-      <h5 className="text-gray-500 mb-4 mt-4">
-        {intl.formatMessage(messages.divisionByGroup)}
-      </h5>
-      {!cohortsEnabled
-      && (
+      <h5 className="text-gray-500 mb-4 mt-4">{intl.formatMessage(messages.divisionByGroup)}</h5>
+      {!cohortsEnabled && (
         <Alert className="bg-light-200 font-weight-normal h5" id="alert">
           {intl.formatMessage(messages.cohortsEnabled)}
           <Hyperlink destination={learningCourseURL} target="_blank">
@@ -93,7 +78,7 @@ const DivisionByGroupFields = () => {
         disabled={!cohortsEnabled}
       />
       <TransitionReplace>
-        {(divideByCohorts && cohortsEnabled) ? (
+        {divideByCohorts && cohortsEnabled ? (
           <React.Fragment key="open">
             <AppConfigFormDivider />
             <FormSwitchGroup
@@ -118,17 +103,13 @@ const DivisionByGroupFields = () => {
                           onBlur={handleBlur}
                           defaultValue={divideDiscussionIds}
                         >
-                          {validDiscussionTopics.map((topic) => (
+                          {validDiscussionTopics.map((topic) =>
                             topic.name ? (
-                              <Form.Checkbox
-                                key={`checkbox-${topic.id}`}
-                                id={`checkbox-${topic.id}`}
-                                value={topic.id}
-                              >
+                              <Form.Checkbox key={`checkbox-${topic.id}`} id={`checkbox-${topic.id}`} value={topic.id}>
                                 {topic.name}
                               </Form.Checkbox>
-                            ) : null
-                          ))}
+                            ) : null,
+                          )}
                         </Form.CheckboxSet>
                       </Form.Group>
                     )}

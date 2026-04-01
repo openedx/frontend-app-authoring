@@ -7,7 +7,8 @@ const messages = defineMessages({
   },
   description1: {
     id: 'course-authoring.export.sidebar.description1',
-    defaultMessage: 'You may want to edit the XML in your course directly, outside of {studioShortName}. You may want to create a backup copy of your course. Or, you may want to create a copy of your course that you can later import into another course instance and customize.',
+    defaultMessage:
+      'You may want to edit the XML in your course directly, outside of {studioShortName}. You may want to create a backup copy of your course. Or, you may want to create a copy of your course that you can later import into another course instance and customize.',
   },
   exportedContent: {
     id: 'course-authoring.export.sidebar.exportedContent',
@@ -55,7 +56,8 @@ const messages = defineMessages({
   },
   openDownloadFileDescription: {
     id: 'course-authoring.export.sidebar.openDownloadFileDescription',
-    defaultMessage: 'Use an archive program to extract the data from the .tar.gz file. Extracted data includes the course.xml file, as well as subfolders that contain course content.',
+    defaultMessage:
+      'Use an archive program to extract the data from the .tar.gz file. Extracted data includes the course.xml file, as well as subfolders that contain course content.',
   },
   learnMoreButtonTitle: {
     id: 'course-authoring.export.sidebar.learnMoreButtonTitle',

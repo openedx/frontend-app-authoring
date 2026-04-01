@@ -6,7 +6,9 @@ import { TagTree } from './tagTree';
 import { useEditActions, useTableModes } from './hooks';
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
+  <IntlProvider locale="en" messages={{}}>
+    {children}
+  </IntlProvider>
 );
 
 describe('useTableModes', () => {
@@ -111,12 +113,7 @@ describe('useEditActions', () => {
   });
 
   it('does not transition to preview when update value is unchanged after trimming', async () => {
-    const {
-      actions,
-      enterPreviewMode,
-      setToast,
-      setEditingRowId,
-    } = buildActions();
+    const { actions, enterPreviewMode, setToast, setEditingRowId } = buildActions();
 
     await act(async () => {
       await actions.handleUpdateTag('  same value  ', 'same value');
@@ -128,12 +125,7 @@ describe('useEditActions', () => {
   });
 
   it('shows success toast and enters preview when update value changes', async () => {
-    const {
-      actions,
-      enterPreviewMode,
-      setToast,
-      setEditingRowId,
-    } = buildActions();
+    const { actions, enterPreviewMode, setToast, setEditingRowId } = buildActions();
 
     await act(async () => {
       await actions.handleUpdateTag('updated', 'original');
@@ -148,12 +140,7 @@ describe('useEditActions', () => {
   });
 
   it('keeps draft open and shows failure toast when createTag request fails', async () => {
-    const {
-      actions,
-      createTagMutation,
-      setDraftError,
-      setToast,
-    } = buildActions();
+    const { actions, createTagMutation, setDraftError, setToast } = buildActions();
     createTagMutation.mutateAsync.mockRejectedValue(new Error('server failed'));
 
     await act(async () => {

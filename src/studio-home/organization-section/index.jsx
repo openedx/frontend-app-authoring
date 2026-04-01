@@ -43,9 +43,7 @@ const OrganizationSection = () => {
 
   return (
     <div className="organization-section">
-      <h3 className="organization-section-title">
-        {intl.formatMessage(messages.organizationTitle)}
-      </h3>
+      <h3 className="organization-section-title">{intl.formatMessage(messages.organizationTitle)}</h3>
       <Form.Group className="organization-section-form d-flex align-items-baseline">
         <FormLabel isInline className="organization-section-form-label">
           {intl.formatMessage(messages.organizationLabel)}
@@ -64,9 +62,7 @@ const OrganizationSection = () => {
           floatingLabel=""
         />
       </Form.Group>
-      <Button onClick={handleSubmit}>
-        {intl.formatMessage(messages.organizationSubmitBtnText)}
-      </Button>
+      <Button onClick={handleSubmit}>{intl.formatMessage(messages.organizationSubmitBtnText)}</Button>
     </div>
   );
 };

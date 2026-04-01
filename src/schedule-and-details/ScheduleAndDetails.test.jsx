@@ -1,11 +1,5 @@
 // @ts-check
-import {
-  act,
-  initializeMocks,
-  render,
-  waitFor,
-  fireEvent,
-} from '@src/testUtils';
+import { act, initializeMocks, render, waitFor, fireEvent } from '@src/testUtils';
 import { executeThunk } from '@src/utils';
 import genericMessages from '@src/generic/help-sidebar/messages';
 import { DATE_FORMAT } from '@src/constants';
@@ -46,30 +40,25 @@ jest.mock('../editors/sharedComponents/TinyMceWidget', () => ({
 }));
 
 // Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea {...props} onFocus={() => {}} onBlur={() => {}} />
-)));
-
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <ScheduleAndDetails />
-  </CourseAuthoringProvider>,
+jest.mock('react-textarea-autosize', () =>
+  jest.fn((props) => <textarea {...props} onFocus={() => {}} onBlur={() => {}} />),
 );
+
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <ScheduleAndDetails />
+    </CourseAuthoringProvider>,
+  );
 
 describe('<ScheduleAndDetails />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     store = mocks.reduxStore;
-    axiosMock
-      .onGet(getCourseDetailsApiUrl(courseId))
-      .reply(200, courseDetailsMock);
-    axiosMock
-      .onGet(getCourseSettingsApiUrl(courseId))
-      .reply(200, courseSettingsMock);
-    axiosMock
-      .onPut(getCourseDetailsApiUrl(courseId))
-      .reply(200);
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, courseDetailsMock);
+    axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, courseSettingsMock);
+    axiosMock.onPut(getCourseDetailsApiUrl(courseId)).reply(200);
   });
 
   it('should render without errors', async () => {
@@ -77,19 +66,11 @@ describe('<ScheduleAndDetails />', () => {
     await waitFor(() => {
       const scheduleAndDetailElements = getAllByText(messages.headingTitle.defaultMessage);
       const scheduleAndDetailTitle = scheduleAndDetailElements[0];
-      expect(
-        getByText(pacingMessages.pacingTitle.defaultMessage),
-      ).toBeInTheDocument();
+      expect(getByText(pacingMessages.pacingTitle.defaultMessage)).toBeInTheDocument();
       expect(scheduleAndDetailTitle).toBeInTheDocument();
-      expect(
-        getByText(basicMessages.basicTitle.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        getByText(creditMessages.creditTitle.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        getByText(scheduleMessages.scheduleTitle.defaultMessage),
-      ).toBeInTheDocument();
+      expect(getByText(basicMessages.basicTitle.defaultMessage)).toBeInTheDocument();
+      expect(getByText(creditMessages.creditTitle.defaultMessage)).toBeInTheDocument();
+      expect(getByText(scheduleMessages.scheduleTitle.defaultMessage)).toBeInTheDocument();
       expect(
         getByRole('navigation', {
           name: genericMessages.sidebarTitleOther.defaultMessage,
@@ -104,15 +85,11 @@ describe('<ScheduleAndDetails />', () => {
       creditEligibilityEnabled: false,
       isCreditCourse: false,
     };
-    axiosMock
-      .onGet(getCourseSettingsApiUrl(courseId))
-      .reply(200, updatedResponse);
+    axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, updatedResponse);
 
     const { queryAllByText } = renderComponent();
     await waitFor(() => {
-      expect(
-        queryAllByText(creditMessages.creditTitle.defaultMessage).length,
-      ).toBe(0);
+      expect(queryAllByText(creditMessages.creditTitle.defaultMessage).length).toBe(0);
     });
   });
 
@@ -125,9 +102,7 @@ describe('<ScheduleAndDetails />', () => {
     // @ts-ignore
     fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
 
-    expect(
-      getByText(messages.alertWarning.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.alertWarning.defaultMessage)).toBeInTheDocument();
   });
 
   it('should display a success message when course details saves', async () => {
@@ -137,9 +112,7 @@ describe('<ScheduleAndDetails />', () => {
   });
 
   it('should display an error when GET CourseDetails fails', async () => {
-    axiosMock
-      .onGet(getCourseDetailsApiUrl(courseId))
-      .reply(404, 'error');
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(404, 'error');
     const { getByText } = renderComponent();
     await waitFor(() => {
       expect(getByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
@@ -147,9 +120,7 @@ describe('<ScheduleAndDetails />', () => {
   });
 
   it('should display an error when GET CourseSettings fails', async () => {
-    axiosMock
-      .onGet(getCourseSettingsApiUrl(courseId))
-      .reply(404, 'error');
+    axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(404, 'error');
     const { getByText } = renderComponent();
     await waitFor(() => {
       expect(getByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
@@ -157,9 +128,7 @@ describe('<ScheduleAndDetails />', () => {
   });
 
   it('should display an error when PUT CourseDetails fails', async () => {
-    axiosMock
-      .onPut(getCourseDetailsApiUrl(courseId))
-      .reply(404, 'error');
+    axiosMock.onPut(getCourseDetailsApiUrl(courseId)).reply(404, 'error');
     const { getByText } = renderComponent();
     await act(async () => {
       await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);

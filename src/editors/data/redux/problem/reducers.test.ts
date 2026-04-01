@@ -25,9 +25,7 @@ describe('problem reducer', () => {
         });
       });
     };
-    [
-      ['updateQuestion', 'question'] as const,
-    ].map(args => setterTest(...args));
+    [['updateQuestion', 'question'] as const].map((args) => setterTest(...args));
     describe('setEnableTypeSelection', () => {
       it('sets given problemType to null', () => {
         const payload = {
@@ -116,10 +114,12 @@ describe('problem reducer', () => {
           ...numericTestState,
           correctAnswerCount: 1,
           isDirty: true,
-          answers: [{
-            ...answer,
-            correct: true,
-          }],
+          answers: [
+            {
+              ...answer,
+              correct: true,
+            },
+          ],
         });
       });
     });
@@ -145,16 +145,20 @@ describe('problem reducer', () => {
     describe('updateAnswer', () => {
       it('sets answers, as well as setting the correctAnswerCount ', () => {
         const answer = { id: 'A', correct: true };
-        expect(reducer(
-          {
-            ...testingState,
-            answers: [{
-              id: 'A',
-              correct: false,
-            }],
-          },
-          actions.updateAnswer(answer),
-        )).toEqual({
+        expect(
+          reducer(
+            {
+              ...testingState,
+              answers: [
+                {
+                  id: 'A',
+                  correct: false,
+                },
+              ],
+            },
+            actions.updateAnswer(answer),
+          ),
+        ).toEqual({
           ...testingState,
           correctAnswerCount: 1,
           isDirty: true,
@@ -181,25 +185,29 @@ describe('problem reducer', () => {
           correct: false,
           editorState: 'empty',
         };
-        expect(reducer(
-          {
-            ...testingState,
-            correctAnswerCount: 0,
-            answers: [{ id: 'A', correct: false }],
-          },
-          actions.deleteAnswer(payload),
-        )).toEqual({
+        expect(
+          reducer(
+            {
+              ...testingState,
+              correctAnswerCount: 0,
+              answers: [{ id: 'A', correct: false }],
+            },
+            actions.deleteAnswer(payload),
+          ),
+        ).toEqual({
           ...testingState,
           isDirty: true,
           correctAnswerCount: 0,
-          answers: [{
-            id: 'A',
-            title: '',
-            selectedFeedback: '',
-            unselectedFeedback: '',
-            correct: false,
-            isAnswerRange: false,
-          }],
+          answers: [
+            {
+              id: 'A',
+              title: '',
+              selectedFeedback: '',
+              unselectedFeedback: '',
+              correct: false,
+              isAnswerRange: false,
+            },
+          ],
         });
       });
       it('sets answers and correctAnswerCount', () => {
@@ -215,26 +223,30 @@ describe('problem reducer', () => {
             answers: { A: 'mockA' },
           },
         };
-        expect(reducer(
-          {
-            ...testingState,
-            correctAnswerCount: 1,
-            answers: [
-              { id: 'A', correct: false },
-              { id: 'B', correct: true },
-            ],
-          },
-          actions.deleteAnswer(payload),
-        )).toEqual({
+        expect(
+          reducer(
+            {
+              ...testingState,
+              correctAnswerCount: 1,
+              answers: [
+                { id: 'A', correct: false },
+                { id: 'B', correct: true },
+              ],
+            },
+            actions.deleteAnswer(payload),
+          ),
+        ).toEqual({
           ...testingState,
           correctAnswerCount: 1,
           isDirty: true,
-          answers: [{
-            id: 'A',
-            correct: true,
-            selectedFeedback: '',
-            unselectedFeedback: '',
-          }],
+          answers: [
+            {
+              id: 'A',
+              correct: true,
+              selectedFeedback: '',
+              unselectedFeedback: '',
+            },
+          ],
         });
       });
       it('sets answers and correctAnswerCount with editorState for RichTextProblems', () => {
@@ -254,29 +266,33 @@ describe('problem reducer', () => {
             answers: { A: 'editorAnsA', B: 'editorAnsB' },
           },
         };
-        expect(reducer(
-          {
-            ...testingState,
-            problemType: ProblemTypeKeys.SINGLESELECT,
-            correctAnswerCount: 1,
-            answers: [
-              { id: 'A', correct: false },
-              { id: 'B', correct: true },
-            ],
-          },
-          actions.deleteAnswer(payload),
-        )).toEqual({
+        expect(
+          reducer(
+            {
+              ...testingState,
+              problemType: ProblemTypeKeys.SINGLESELECT,
+              correctAnswerCount: 1,
+              answers: [
+                { id: 'A', correct: false },
+                { id: 'B', correct: true },
+              ],
+            },
+            actions.deleteAnswer(payload),
+          ),
+        ).toEqual({
           ...testingState,
           problemType: ProblemTypeKeys.SINGLESELECT,
           isDirty: true,
           correctAnswerCount: 1,
-          answers: [{
-            id: 'A',
-            correct: true,
-            title: 'editorAnsB',
-            selectedFeedback: '',
-            unselectedFeedback: '',
-          }],
+          answers: [
+            {
+              id: 'A',
+              correct: true,
+              title: 'editorAnsB',
+              selectedFeedback: '',
+              unselectedFeedback: '',
+            },
+          ],
         });
       });
       it('sets selectedFeedback and unselectedFeedback with editorState', () => {
@@ -297,26 +313,30 @@ describe('problem reducer', () => {
             unselectedFeedback: { A: 'editUnselFA', B: 'editUnselFB' },
           },
         };
-        expect(reducer(
-          {
-            ...testingState,
-            correctAnswerCount: 1,
-            answers: [
-              { id: 'A', correct: false },
-              { id: 'B', correct: true },
-            ],
-          },
-          actions.deleteAnswer(payload),
-        )).toEqual({
+        expect(
+          reducer(
+            {
+              ...testingState,
+              correctAnswerCount: 1,
+              answers: [
+                { id: 'A', correct: false },
+                { id: 'B', correct: true },
+              ],
+            },
+            actions.deleteAnswer(payload),
+          ),
+        ).toEqual({
           ...testingState,
           correctAnswerCount: 1,
           isDirty: true,
-          answers: [{
-            id: 'A',
-            correct: true,
-            selectedFeedback: 'editSelFB',
-            unselectedFeedback: 'editUnselFB',
-          }],
+          answers: [
+            {
+              id: 'A',
+              correct: true,
+              selectedFeedback: 'editSelFB',
+              unselectedFeedback: 'editUnselFB',
+            },
+          ],
         });
       });
       it('calls editor setContent to set answer and feedback fields', () => {
@@ -372,43 +392,51 @@ describe('problem reducer', () => {
             answer: { A: 'aNSwERA', B: 'anSWeRB' },
           },
         };
-        expect(reducer(
-          {
-            ...testingState,
-            correctAnswerCount: 1,
-            answers: [
-              { id: 'A', correct: false },
-              { id: 'B', correct: true },
-              { id: 'C', correct: false },
-            ],
-            groupFeedbackList: [{
-              id: 0,
-              answers: ['A', 'C'],
-              feedback: 'fake feedback',
-            }],
-          },
-          actions.deleteAnswer(payload),
-        )).toEqual({
+        expect(
+          reducer(
+            {
+              ...testingState,
+              correctAnswerCount: 1,
+              answers: [
+                { id: 'A', correct: false },
+                { id: 'B', correct: true },
+                { id: 'C', correct: false },
+              ],
+              groupFeedbackList: [
+                {
+                  id: 0,
+                  answers: ['A', 'C'],
+                  feedback: 'fake feedback',
+                },
+              ],
+            },
+            actions.deleteAnswer(payload),
+          ),
+        ).toEqual({
           ...testingState,
           correctAnswerCount: 1,
           isDirty: true,
-          answers: [{
-            id: 'A',
-            correct: true,
-            selectedFeedback: '',
-            unselectedFeedback: '',
-          },
-          {
-            id: 'B',
-            correct: false,
-            selectedFeedback: '',
-            unselectedFeedback: '',
-          }],
-          groupFeedbackList: [{
-            id: 0,
-            answers: ['B'],
-            feedback: 'fake feedback',
-          }],
+          answers: [
+            {
+              id: 'A',
+              correct: true,
+              selectedFeedback: '',
+              unselectedFeedback: '',
+            },
+            {
+              id: 'B',
+              correct: false,
+              selectedFeedback: '',
+              unselectedFeedback: '',
+            },
+          ],
+          groupFeedbackList: [
+            {
+              id: 0,
+              answers: ['B'],
+              feedback: 'fake feedback',
+            },
+          ],
         });
       });
       it('if you delete an answer range, it will be replaced with a blank answer', () => {
@@ -422,46 +450,54 @@ describe('problem reducer', () => {
           correct: true,
           editorState: 'mockEditoRStAte',
         };
-        expect(reducer(
-          {
-            ...testingState,
-            problemType: ProblemTypeKeys.NUMERIC,
-            correctAnswerCount: 1,
-            answers: [{
-              id: 'A',
-              correct: false,
-              selectedFeedback: '',
-              title: '',
-              isAnswerRange: true,
-              unselectedFeedback: '',
-            }],
-          },
-          actions.deleteAnswer(payload),
-        )).toEqual({
+        expect(
+          reducer(
+            {
+              ...testingState,
+              problemType: ProblemTypeKeys.NUMERIC,
+              correctAnswerCount: 1,
+              answers: [
+                {
+                  id: 'A',
+                  correct: false,
+                  selectedFeedback: '',
+                  title: '',
+                  isAnswerRange: true,
+                  unselectedFeedback: '',
+                },
+              ],
+            },
+            actions.deleteAnswer(payload),
+          ),
+        ).toEqual({
           ...testingState,
           problemType: ProblemTypeKeys.NUMERIC,
           correctAnswerCount: 1,
           isDirty: true,
-          answers: [{
-            id: 'A',
-            title: '',
-            selectedFeedback: '',
-            unselectedFeedback: '',
-            correct: true,
-            isAnswerRange: false,
-          }],
+          answers: [
+            {
+              id: 'A',
+              title: '',
+              selectedFeedback: '',
+              unselectedFeedback: '',
+              correct: true,
+              isAnswerRange: false,
+            },
+          ],
         });
       });
     });
     describe('setDirty', () => {
       it('sets isDirty flag', () => {
-        expect(reducer(
-          {
-            ...testingState,
-            isDirty: false,
-          },
-          actions.setDirty(false),
-        )).toEqual({
+        expect(
+          reducer(
+            {
+              ...testingState,
+              isDirty: false,
+            },
+            actions.setDirty(false),
+          ),
+        ).toEqual({
           ...testingState,
           isDirty: false,
         });

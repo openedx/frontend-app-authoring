@@ -19,41 +19,36 @@ const messages = defineMessages({
   hierarchySections: {
     id: 'course-authoring.library-authoring.container-sidebar.hierarchy-sections',
     defaultMessage: '{count, plural, one {{displayName}} other {{count} Sections}}',
-    description: (
-      'Text used for the section part of the hierarchy: show the displayName when there is one, or '
-      + 'the count when there is more than one.'
-    ),
+    description:
+      'Text used for the section part of the hierarchy: show the displayName when there is one, or ' +
+      'the count when there is more than one.',
   },
   hierarchySubsections: {
     id: 'course-authoring.library-authoring.container-sidebar.hierarchy-subsections',
     defaultMessage: '{count, plural, one {{displayName}} other {{count} Subsections}}',
-    description: (
-      'Text used for the subsection part of the hierarchy: show the displayName when there is one, or '
-      + 'the count when there is more than one.'
-    ),
+    description:
+      'Text used for the subsection part of the hierarchy: show the displayName when there is one, or ' +
+      'the count when there is more than one.',
   },
   hierarchyUnits: {
     id: 'course-authoring.library-authoring.container-sidebar.hierarchy-units',
     defaultMessage: '{count, plural, one {{displayName}} other {{count} Units}}',
-    description: (
-      'Text used for the unit part of the hierarchy: show the displayName when there is one, or '
-      + 'the count when there is more than one.'
-    ),
+    description:
+      'Text used for the unit part of the hierarchy: show the displayName when there is one, or ' +
+      'the count when there is more than one.',
   },
   hierarchyComponents: {
     id: 'course-authoring.library-authoring.container-sidebar.hierarchy-components',
     defaultMessage: '{count, plural, one {{displayName}} other {{count} Components}}',
-    description: (
-      'Text used for the components part of the hierarchy: show the displayName when there is one, or '
-      + 'the count when there is more than one.'
-    ),
+    description:
+      'Text used for the components part of the hierarchy: show the displayName when there is one, or ' +
+      'the count when there is more than one.',
   },
   publishSectionWithChildrenWarning: {
     id: 'course-authoring.library-authoring.section-sidebar.hierarchy-publisher.publish-warning',
-    defaultMessage: (
-      'This section and the {childCount, plural, one {subsection} other {subsections}}'
-      + ' it contains will all be <highlight>published</highlight>.'
-    ),
+    defaultMessage:
+      'This section and the {childCount, plural, one {subsection} other {subsections}}' +
+      ' it contains will all be <highlight>published</highlight>.',
     description: 'Content details shown before publishing a section that contains subsections',
   },
   publishSectionWarning: {
@@ -63,10 +58,9 @@ const messages = defineMessages({
   },
   publishSubsectionWithChildrenWarning: {
     id: 'course-authoring.library-authoring.subsection-sidebar.hierarchy-publisher.publish-warning',
-    defaultMessage: (
-      'This subsection and the {childCount, plural, one {unit} other {units}}'
-      + ' it contains will all be <highlight>published</highlight>.'
-    ),
+    defaultMessage:
+      'This subsection and the {childCount, plural, one {unit} other {units}}' +
+      ' it contains will all be <highlight>published</highlight>.',
     description: 'Content details shown before publishing a subsection that contains units',
   },
   publishSubsectionWarning: {
@@ -76,10 +70,9 @@ const messages = defineMessages({
   },
   publishUnitWithChildrenWarning: {
     id: 'course-authoring.library-authoring.unit-sidebar.hierarchy-publisher.publish-warning',
-    defaultMessage: (
-      'This unit and the {childCount, plural, one {component} other {components}}'
-      + ' it contains will all be <highlight>published</highlight>.'
-    ),
+    defaultMessage:
+      'This unit and the {childCount, plural, one {component} other {components}}' +
+      ' it contains will all be <highlight>published</highlight>.',
     description: 'Content details shown before publishing a unit that contains components',
   },
   publishUnitWarning: {
@@ -89,18 +82,16 @@ const messages = defineMessages({
   },
   publishSubsectionWithParentWarning: {
     id: 'course-authoring.library-authoring.subsection-sidebar.hierarchy-publisher.publish-parent-warning',
-    defaultMessage: (
-      'Its {parentCount, plural, one {parent section} other {parent sections}}'
-      + ' will be <highlight>draft</highlight>.'
-    ),
+    defaultMessage:
+      'Its {parentCount, plural, one {parent section} other {parent sections}}' +
+      ' will be <highlight>draft</highlight>.',
     description: 'Parent details shown before publishing a unit that has one or more parent subsections',
   },
   publishUnitWithParentWarning: {
     id: 'course-authoring.library-authoring.unit-sidebar.hierarchy-publisher.publish-parent-warning',
-    defaultMessage: (
-      'Its {parentCount, plural, one {parent subsection} other {parent subsections}}'
-      + ' will be <highlight>draft</highlight>.'
-    ),
+    defaultMessage:
+      'Its {parentCount, plural, one {parent subsection} other {parent subsections}}' +
+      ' will be <highlight>draft</highlight>.',
     description: 'Parent details shown before publishing a unit that has one or more parent subsections',
   },
   publishConfirmHeading: {
@@ -130,10 +121,8 @@ const messages = defineMessages({
   },
   publishComponentsWithParentWarning: {
     id: 'course-authoring.library-authoring.component-sidebar.hierarchy-publisher.publish-parent-warning',
-    defaultMessage: (
-      'Its {parentCount, plural, one {parent unit} other {parent units}}'
-      + ' will be <highlight>draft</highlight>.'
-    ),
+    defaultMessage:
+      'Its {parentCount, plural, one {parent unit} other {parent units}}' + ' will be <highlight>draft</highlight>.',
     description: 'Parent details shown before publishing a component that has one or more parent units',
   },
 });

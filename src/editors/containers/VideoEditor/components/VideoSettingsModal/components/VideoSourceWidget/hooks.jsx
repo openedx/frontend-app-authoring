@@ -15,17 +15,21 @@ export const sourceHooks = ({ dispatch, previousVideoId, setAlert }) => ({
 
     const youTubeId = parseYoutubeId(videoUrl);
     if (youTubeId) {
-      dispatch(requests.checkTranscriptsForImport({
-        videoId,
-        youTubeId,
-        onSuccess: (response) => {
-          if (response.data.command === 'import') {
-            dispatch(actions.video.updateField({
-              allowTranscriptImport: true,
-            }));
-          }
-        },
-      }));
+      dispatch(
+        requests.checkTranscriptsForImport({
+          videoId,
+          youTubeId,
+          onSuccess: (response) => {
+            if (response.data.command === 'import') {
+              dispatch(
+                actions.video.updateField({
+                  allowTranscriptImport: true,
+                }),
+              );
+            }
+          },
+        }),
+      );
     }
   },
   updateVideoId: (e) => {

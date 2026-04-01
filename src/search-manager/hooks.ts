@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  type FromStringFn,
-  type ToStringFn,
-  useStateWithUrlSearchParam,
-} from '../hooks';
+import { type FromStringFn, type ToStringFn, useStateWithUrlSearchParam } from '../hooks';
 
 /**
  * Typed hook that returns useState if skipUrlUpdate,
@@ -58,11 +54,8 @@ export class TypesFilterData {
 
   #problems = new Set<string>();
 
-  static #sanitizeType = (value: string | null | undefined): string | undefined => (
-    (value && /^[a-z0-9._-]+$/.test(value))
-      ? value
-      : undefined
-  );
+  static #sanitizeType = (value: string | null | undefined): string | undefined =>
+    value && /^[a-z0-9._-]+$/.test(value) ? value : undefined;
 
   static #sep1 = ','; // separates the individual types
 
@@ -79,10 +72,9 @@ export class TypesFilterData {
     if (this.isEmpty()) {
       return undefined;
     }
-    return [
-      [...this.#blocks].join(TypesFilterData.#sep1),
-      [...this.#problems].join(TypesFilterData.#sep1),
-    ].join(TypesFilterData.#sep2);
+    return [[...this.#blocks].join(TypesFilterData.#sep1), [...this.#problems].join(TypesFilterData.#sep1)].join(
+      TypesFilterData.#sep2,
+    );
   }
 
   // Returns true if there are no block or problem types.
@@ -90,7 +82,7 @@ export class TypesFilterData {
     return !(this.#blocks.size || this.#problems.size);
   }
 
-  get blocks() : Set<string> {
+  get blocks(): Set<string> {
     return this.#blocks;
   }
 
@@ -104,9 +96,12 @@ export class TypesFilterData {
     return this;
   }
 
-  union({ blocks, problems }: {
-    blocks?: string[] | Set<string> | string | undefined,
-    problems?: string[] | Set<string> | string | undefined,
+  union({
+    blocks,
+    problems,
+  }: {
+    blocks?: string[] | Set<string> | string | undefined;
+    problems?: string[] | Set<string> | string | undefined;
   }): void {
     let newBlocks: string[];
     if (!blocks) {

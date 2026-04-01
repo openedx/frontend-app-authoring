@@ -8,12 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { REGEX_RULES } from '../../constants';
 import { RequestStatus, MAX_TOTAL_LENGTH, TOTAL_LENGTH_KEY } from '../../data/constants';
 import { getStudioHomeData } from '../../studio-home/data/selectors';
-import {
-  getRedirectUrlObj,
-  getOrganizations,
-  getPostErrors,
-  getSavingStatus,
-} from '../data/selectors';
+import { getRedirectUrlObj, getOrganizations, getPostErrors, getSavingStatus } from '../data/selectors';
 import { updateSavingStatus, updatePostErrors } from '../data/slice';
 import { fetchOrganizationsQuery } from '../data/thunks';
 import messages from './messages';
@@ -26,51 +21,37 @@ const useCreateOrRerunCourse = (initialValues) => {
   const createOrRerunCourseSavingStatus = useSelector(getSavingStatus);
   const allOrganizations = useSelector(getOrganizations);
   const postErrors = useSelector(getPostErrors);
-  const {
-    canCreateOrganizations,
-    allowedOrganizations,
-  } = useSelector(getStudioHomeData);
+  const { canCreateOrganizations, allowedOrganizations } = useSelector(getStudioHomeData);
   const [isFormFilled, setFormFilled] = useState(false);
   const [showErrorBanner, setShowErrorBanner] = useState(false);
   const organizations = canCreateOrganizations ? allOrganizations : allowedOrganizations;
 
   const { specialCharsRule, noSpaceRule } = REGEX_RULES;
-  const validationSchema = Yup.object().shape({
-    displayName: Yup.string().required(
-      intl.formatMessage(messages.requiredFieldError),
-    ),
-    org: Yup.string()
-      .required(intl.formatMessage(messages.requiredFieldError))
-      .matches(
-        specialCharsRule,
-        intl.formatMessage(messages.disallowedCharsError),
-      )
-      .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
-    number: Yup.string()
-      .required(intl.formatMessage(messages.requiredFieldError))
-      .matches(
-        specialCharsRule,
-        intl.formatMessage(messages.disallowedCharsError),
-      )
-      .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
-    run: Yup.string()
-      .required(intl.formatMessage(messages.requiredFieldError))
-      .matches(
-        specialCharsRule,
-        intl.formatMessage(messages.disallowedCharsError),
-      )
-      .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
-  }).test(TOTAL_LENGTH_KEY, intl.formatMessage(messages.totalLengthError), function validateTotalLength() {
-    const { org, number, run } = this?.options.originalValue || {};
-    if ((org?.length || 0) + (number?.length || 0) + (run?.length || 0) > MAX_TOTAL_LENGTH) {
-      return this.createError({ path: TOTAL_LENGTH_KEY, message: intl.formatMessage(messages.totalLengthError) });
-    }
-    return true;
-  });
+  const validationSchema = Yup.object()
+    .shape({
+      displayName: Yup.string().required(intl.formatMessage(messages.requiredFieldError)),
+      org: Yup.string()
+        .required(intl.formatMessage(messages.requiredFieldError))
+        .matches(specialCharsRule, intl.formatMessage(messages.disallowedCharsError))
+        .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
+      number: Yup.string()
+        .required(intl.formatMessage(messages.requiredFieldError))
+        .matches(specialCharsRule, intl.formatMessage(messages.disallowedCharsError))
+        .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
+      run: Yup.string()
+        .required(intl.formatMessage(messages.requiredFieldError))
+        .matches(specialCharsRule, intl.formatMessage(messages.disallowedCharsError))
+        .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
+    })
+    .test(TOTAL_LENGTH_KEY, intl.formatMessage(messages.totalLengthError), function validateTotalLength() {
+      const { org, number, run } = this?.options.originalValue || {};
+      if ((org?.length || 0) + (number?.length || 0) + (run?.length || 0) > MAX_TOTAL_LENGTH) {
+        return this.createError({ path: TOTAL_LENGTH_KEY, message: intl.formatMessage(messages.totalLengthError) });
+      }
+      return true;
+    });
 
-  const {
-    values, errors, touched, handleChange, handleBlur, setFieldValue,
-  } = useFormik({
+  const { values, errors, touched, handleChange, handleBlur, setFieldValue } = useFormik({
     initialValues,
     enableReinitialize: true,
     validateOnBlur: false,

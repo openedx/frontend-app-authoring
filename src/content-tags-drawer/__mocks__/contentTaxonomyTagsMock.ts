@@ -8,9 +8,7 @@ export default {
         tags: [
           {
             value: 'flat taxonomy tag 3856',
-            lineage: [
-              'flat taxonomy tag 3856',
-            ],
+            lineage: ['flat taxonomy tag 3856'],
           },
         ],
       },

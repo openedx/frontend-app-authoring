@@ -18,7 +18,8 @@ const messages = defineMessages({
   },
   warningBody: {
     id: 'course-authoring.library-authoring.create-legacy-library.warning.body',
-    defaultMessage: 'Legacy libraries will be unsupported in Willow. Any content you create in a legacy library will soon need to be migrated. Consider using the {libraryLink} instead.',
+    defaultMessage:
+      'Legacy libraries will be unsupported in Willow. Any content you create in a legacy library will soon need to be migrated. Consider using the {libraryLink} instead.',
     description: 'Warning to discourage users from creating a new Legacy Library',
   },
   warningLibraryFeature: {

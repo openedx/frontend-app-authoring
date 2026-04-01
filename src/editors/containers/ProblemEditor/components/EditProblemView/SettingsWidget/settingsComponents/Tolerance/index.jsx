@@ -9,29 +9,36 @@ import { ToleranceTypes } from './constants';
 // eslint-disable-next-line no-unused-vars
 export const isAnswerRangeSet = ({ answers }) => !!answers[0].isAnswerRange;
 
-export const handleToleranceTypeChange = ({ updateSettings, tolerance, answers }) => (event) => {
-  if (!isAnswerRangeSet({ answers })) {
-    let value;
-    if (event.target.value === ToleranceTypes.none.type) {
-      value = null;
-    } else {
-      value = tolerance.value || 0;
+export const handleToleranceTypeChange =
+  ({ updateSettings, tolerance, answers }) =>
+  (event) => {
+    if (!isAnswerRangeSet({ answers })) {
+      let value;
+      if (event.target.value === ToleranceTypes.none.type) {
+        value = null;
+      } else {
+        value = tolerance.value || 0;
+      }
+      const newTolerance = {
+        type: ToleranceTypes[Object.keys(ToleranceTypes)[event.target.selectedIndex]].type,
+        value,
+      };
+      updateSettings({ tolerance: newTolerance });
     }
-    const newTolerance = { type: ToleranceTypes[Object.keys(ToleranceTypes)[event.target.selectedIndex]].type, value };
-    updateSettings({ tolerance: newTolerance });
-  }
-};
+  };
 
-export const handleToleranceValueChange = ({ updateSettings, tolerance, answers }) => (event) => {
-  if (!isAnswerRangeSet({ answers })) {
-    let value = parseFloat(event.target.value);
-    if (value < 0) {
-      value = 0;
+export const handleToleranceValueChange =
+  ({ updateSettings, tolerance, answers }) =>
+  (event) => {
+    if (!isAnswerRangeSet({ answers })) {
+      let value = parseFloat(event.target.value);
+      if (value < 0) {
+        value = 0;
+      }
+      const newTolerance = { value, type: tolerance.type };
+      updateSettings({ tolerance: newTolerance });
     }
-    const newTolerance = { value, type: tolerance.type };
-    updateSettings({ tolerance: newTolerance });
-  }
-};
+  };
 
 export const getSummary = ({ tolerance, intl }) => {
   switch (tolerance?.type) {
@@ -46,17 +53,14 @@ export const getSummary = ({ tolerance, intl }) => {
   }
 };
 
-export const ToleranceCard = ({
-  tolerance,
-  answers,
-  updateSettings,
-  correctAnswerCount,
-}) => {
+export const ToleranceCard = ({ tolerance, answers, updateSettings, correctAnswerCount }) => {
   const intl = useIntl();
   const isAnswerRange = isAnswerRangeSet({ answers });
   const hasMultipleCorrectAnswers = correctAnswerCount > 1;
   let summary = getSummary({ tolerance, intl });
-  useEffect(() => { summary = getSummary({ tolerance, intl }); }, [tolerance]);
+  useEffect(() => {
+    summary = getSummary({ tolerance, intl });
+  }, [tolerance]);
   useEffect(() => {
     if (hasMultipleCorrectAnswers) {
       updateSettings({ tolerance: { value: null, type: ToleranceTypes.none.type } });
@@ -69,24 +73,16 @@ export const ToleranceCard = ({
       summary={summary}
       none={tolerance.type === ToleranceTypes.none.type}
     >
-      { isAnswerRange
-       && (
-       <Alert
-         variant="info"
-       >
-         <FormattedMessage {...messages.toleranceAnswerRangeWarning} />
-       </Alert>
-       )}
-      {
-        hasMultipleCorrectAnswers
-        && (
-          <Alert
-            variant="info"
-          >
-            <FormattedMessage {...messages.toleranceMultipleAnswersWarning} />
-          </Alert>
-        )
-      }
+      {isAnswerRange && (
+        <Alert variant="info">
+          <FormattedMessage {...messages.toleranceAnswerRangeWarning} />
+        </Alert>
+      )}
+      {hasMultipleCorrectAnswers && (
+        <Alert variant="info">
+          <FormattedMessage {...messages.toleranceMultipleAnswersWarning} />
+        </Alert>
+      )}
       <div className="mb-3">
         <span>
           <FormattedMessage {...messages.toleranceSettingText} />
@@ -100,16 +96,12 @@ export const ToleranceCard = ({
           value={tolerance.type}
         >
           {Object.keys(ToleranceTypes).map((toleranceType) => (
-            <option
-              key={toleranceType.type}
-              value={toleranceType.type}
-            >
+            <option key={toleranceType.type} value={toleranceType.type}>
               {intl.formatMessage(ToleranceTypes[toleranceType].message)}
             </option>
           ))}
         </Form.Control>
-        { tolerance?.type !== ToleranceTypes.none.type && (!isAnswerRange || !hasMultipleCorrectAnswers)
-          && (
+        {tolerance?.type !== ToleranceTypes.none.type && (!isAnswerRange || !hasMultipleCorrectAnswers) && (
           <Form.Control
             className="mt-4"
             type="number"
@@ -119,9 +111,8 @@ export const ToleranceCard = ({
             onChange={handleToleranceValueChange({ updateSettings, tolerance, answers })}
             floatingLabel={intl.formatMessage(messages.toleranceValueInputLabel)}
           />
-          )}
+        )}
       </Form.Group>
-
     </SettingsOption>
   );
 };
@@ -132,12 +123,14 @@ ToleranceCard.propTypes = {
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.any]),
   }).isRequired,
   correctAnswerCount: PropTypes.number.isRequired,
-  answers: PropTypes.arrayOf(PropTypes.shape({
-    correct: PropTypes.bool,
-    id: PropTypes.string,
-    selectedFeedback: PropTypes.string,
-    title: PropTypes.string,
-    unselectedFeedback: PropTypes.string,
-  })).isRequired,
+  answers: PropTypes.arrayOf(
+    PropTypes.shape({
+      correct: PropTypes.bool,
+      id: PropTypes.string,
+      selectedFeedback: PropTypes.string,
+      title: PropTypes.string,
+      unselectedFeedback: PropTypes.string,
+    }),
+  ).isRequired,
   updateSettings: PropTypes.func.isRequired,
 };

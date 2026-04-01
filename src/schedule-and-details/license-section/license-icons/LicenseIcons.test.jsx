@@ -28,12 +28,7 @@ describe('<LicenseIcons />', () => {
 
   it('renders some right reserved successfully', () => {
     const initialProps = { ...props, licenseType: LICENSE_TYPE.creativeCommons };
-    const {
-      getByText,
-      queryAllByText,
-      queryAllByRole,
-      getByRole,
-    } = render(<RootWrapper {...initialProps} />);
+    const { getByText, queryAllByText, queryAllByRole, getByRole } = render(<RootWrapper {...initialProps} />);
     expect(getByText(messages.creativeCommonsReservedLabel.defaultMessage)).toBeInTheDocument();
     expect(queryAllByText(messages.allRightReservedLabel.defaultMessage).length).toBe(0);
     expect(queryAllByRole('img', { hidden: true }).length).toBe(1);
@@ -45,7 +40,10 @@ describe('<LicenseIcons />', () => {
       ...props,
       licenseType: LICENSE_TYPE.creativeCommons,
       licenseDetails: {
-        attribution: true, nonCommercial: true, noDerivatives: false, shareAlike: false,
+        attribution: true,
+        nonCommercial: true,
+        noDerivatives: false,
+        shareAlike: false,
       },
     };
     const { getByText, queryAllByRole, debug } = render(<RootWrapper {...initialProps} />);

@@ -33,9 +33,7 @@ const TestComponentToClose = () => {
 let store;
 const RootWrapper = ({ children }: WraperProps) => (
   <AppProvider store={store}>
-    <ToastProvider>
-      {children}
-    </ToastProvider>
+    <ToastProvider>{children}</ToastProvider>
   </AppProvider>
 );
 
@@ -58,19 +56,31 @@ describe('<ToastProvider />', () => {
   });
 
   it('should show toast', async () => {
-    render(<RootWrapper><TestComponentToShow /></RootWrapper>);
+    render(
+      <RootWrapper>
+        <TestComponentToShow />
+      </RootWrapper>,
+    );
     expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
   });
 
   it('should close toast after 5000ms', async () => {
-    render(<RootWrapper><TestComponentToShow /></RootWrapper>);
+    render(
+      <RootWrapper>
+        <TestComponentToShow />
+      </RootWrapper>,
+    );
     expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
     jest.advanceTimersByTime(6000);
     expect(screen.queryByText('This is the Toast!')).not.toBeInTheDocument();
   });
 
   it('should close toast', async () => {
-    render(<RootWrapper><TestComponentToClose /></RootWrapper>);
+    render(
+      <RootWrapper>
+        <TestComponentToClose />
+      </RootWrapper>,
+    );
     expect(await screen.findByText('Content')).toBeInTheDocument();
     expect(screen.queryByText('This is the Toast!')).not.toBeInTheDocument();
   });

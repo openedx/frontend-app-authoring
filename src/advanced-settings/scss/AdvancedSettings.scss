@@ -1,4 +1,4 @@
-@import "variables";
+@import 'variables';
 
 .advanced-settings {
   .help-sidebar {
@@ -31,7 +31,7 @@
   position: fixed;
   bottom: 0;
   width: 100%;
-  padding: 0 .625rem;
+  padding: 0 0.625rem;
   z-index: var(--pgn-elevation-modal-zindex);
 }
 
@@ -54,7 +54,7 @@
   }
 
   .pgn__card-status {
-    padding: .625rem;
+    padding: 0.625rem;
   }
 
   .pgn__card-header-content {
@@ -72,7 +72,7 @@
     }
 
     .setting-sidebar-supplementary-about-descriptions {
-      font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
+      font: normal var(--pgn-typography-font-weight-normal) 0.875rem/1.5rem var(--pgn-typography-font-family-base);
       color: $text-color-base;
     }
   }
@@ -81,10 +81,10 @@
     list-style: none;
 
     .setting-sidebar-supplementary-other-link {
-      font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
+      font: normal var(--pgn-typography-font-weight-normal) 0.875rem/1.5rem var(--pgn-typography-font-family-base);
       line-height: 1.5rem;
       color: var(--pgn-color-info-500);
-      margin-bottom: .5rem;
+      margin-bottom: 0.5rem;
     }
   }
 
@@ -115,7 +115,7 @@
   max-width: 200px;
   color: var(--pgn-color-white);
   background-color: var(--pgn-color-black);
-  filter: drop-shadow(0 2px 4px rgba(0 0 0 / .15));
+  filter: drop-shadow(0 2px 4px rgba(0 0 0 / 0.15));
   font-weight: 400;
 }
 

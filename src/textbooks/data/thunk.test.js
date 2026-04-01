@@ -2,12 +2,7 @@ import {
   hideProcessingNotification,
   showProcessingNotification,
 } from '../../generic/processing-notification/data/slice';
-import {
-  fetchTextbooksQuery,
-  createTextbookQuery,
-  editTextbookQuery,
-  deleteTextbookQuery,
-} from './thunk';
+import { fetchTextbooksQuery, createTextbookQuery, editTextbookQuery, deleteTextbookQuery } from './thunk';
 import {
   fetchTextbooks,
   updateLoadingStatus,
@@ -18,9 +13,7 @@ import {
 } from './slice';
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
-import {
-  getTextbooks, createTextbook, editTextbook, deleteTextbook,
-} from './api';
+import { getTextbooks, createTextbook, editTextbook, deleteTextbook } from './api';
 
 jest.mock('./api', () => ({
   getTextbooks: jest.fn(),

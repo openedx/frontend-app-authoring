@@ -50,35 +50,38 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
     if (!childrenUsageIds) {
       return;
     }
-    updateContainerChildrenMutation.mutateAsync(childrenUsageIds).then(() => {
-      showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
-    }).catch(() => {
-      showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
-    });
+    updateContainerChildrenMutation
+      .mutateAsync(childrenUsageIds)
+      .then(() => {
+        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
+      })
+      .catch(() => {
+        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
+      });
   };
 
   const showSuccessToast = () => {
-    showToast(
-      intl.formatMessage(messages.removeComponentFromContainerSuccess),
-      {
-        label: intl.formatMessage(messages.undoRemoveComponentFromContainerToastAction),
-        onClick: restoreComponent,
-      },
-    );
+    showToast(intl.formatMessage(messages.removeComponentFromContainerSuccess), {
+      label: intl.formatMessage(messages.undoRemoveComponentFromContainerToastAction),
+      onClick: restoreComponent,
+    });
   };
 
   const showFailureToast = () => showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
 
   const removeFromContainer = () => {
-    removeContainerItemMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarItemInfo?.id === usageKey) {
-        // Close sidebar if current component is open
-        closeLibrarySidebar();
-      }
-      showSuccessToast();
-    }).catch(() => {
-      showFailureToast();
-    });
+    removeContainerItemMutation
+      .mutateAsync([usageKey])
+      .then(() => {
+        if (sidebarItemInfo?.id === usageKey) {
+          // Close sidebar if current component is open
+          closeLibrarySidebar();
+        }
+        showSuccessToast();
+      })
+      .catch(() => {
+        showFailureToast();
+      });
 
     close();
   };
@@ -88,20 +91,23 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
       return;
     }
     const updatedKeys = childrenUsageIds.filter((childId, idx) => childId !== usageKey || idx !== index);
-    updateContainerChildrenMutation.mutateAsync(updatedKeys).then(() => {
-      // istanbul ignore if
-      if (sidebarItemInfo?.id === usageKey && sidebarItemInfo?.index === index) {
-        // Close sidebar if current component is open
-        closeLibrarySidebar();
-      }
-      // Already tested as part of removeFromContainer
-      // istanbul ignore next
-      showSuccessToast();
-    }).catch(() => {
-      // Already tested as part of removeFromContainer
-      // istanbul ignore next
-      showFailureToast();
-    });
+    updateContainerChildrenMutation
+      .mutateAsync(updatedKeys)
+      .then(() => {
+        // istanbul ignore if
+        if (sidebarItemInfo?.id === usageKey && sidebarItemInfo?.index === index) {
+          // Close sidebar if current component is open
+          closeLibrarySidebar();
+        }
+        // Already tested as part of removeFromContainer
+        // istanbul ignore next
+        showSuccessToast();
+      })
+      .catch(() => {
+        // Already tested as part of removeFromContainer
+        // istanbul ignore next
+        showFailureToast();
+      });
 
     close();
   };

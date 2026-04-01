@@ -1,7 +1,5 @@
 import ReactStateSettingsParser from './ReactStateSettingsParser';
-import {
-  checklistWithFeebackHints,
-} from './mockData/problemTestData';
+import { checklistWithFeebackHints } from './mockData/problemTestData';
 
 describe('Test State to Settings Parser', () => {
   test('Test settings parsed from react state', () => {

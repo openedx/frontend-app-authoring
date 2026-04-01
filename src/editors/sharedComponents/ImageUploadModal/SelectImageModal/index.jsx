@@ -20,14 +20,7 @@ const SelectImageModal = ({
   isLibrary,
   imageCount,
 }) => {
-  const {
-    galleryError,
-    inputError,
-    fileInput,
-    galleryProps,
-    searchSortProps,
-    selectBtnProps,
-  } = hooks.imgHooks({
+  const { galleryError, inputError, fileInput, galleryProps, searchSortProps, selectBtnProps } = hooks.imgHooks({
     setSelection,
     clearSelection,
     images: images.current,

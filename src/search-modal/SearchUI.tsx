@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  MenuItem,
-  ModalDialog,
-  SelectMenu,
-} from '@openedx/paragon';
+import { MenuItem, ModalDialog, SelectMenu } from '@openedx/paragon';
 import { Check } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
@@ -20,9 +16,9 @@ import SearchResults from './SearchResults';
 import messages from './messages';
 
 const SearchUI: React.FC<{
-  courseId?: string,
-  autoFocus?: boolean,
-  closeSearchModal?: () => void,
+  courseId?: string;
+  autoFocus?: boolean;
+  closeSearchModal?: () => void;
 }> = (props) => {
   const hasCourseId = Boolean(props.courseId);
   const [searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
@@ -32,21 +28,17 @@ const SearchUI: React.FC<{
 
   return (
     <SearchContextProvider
-      extraFilter={[
-        'type = "course_block"',
-        ...(searchThisCourse ? [`context_key = "${props.courseId}"`] : []),
-      ]}
+      extraFilter={['type = "course_block"', ...(searchThisCourse ? [`context_key = "${props.courseId}"`] : [])]}
       closeSearchModal={props.closeSearchModal}
     >
       {/* We need to override z-index here or the <Dropdown.Menu> appears behind the <ModalDialog.Body>
-        * But it can't be more then 9 because the close button has z-index 10. */}
+       * But it can't be more then 9 because the close button has z-index 10. */}
       <ModalDialog.Header style={{ zIndex: 9 }} className="border-bottom">
-        <ModalDialog.Title><FormattedMessage {...messages.title} /></ModalDialog.Title>
+        <ModalDialog.Title>
+          <FormattedMessage {...messages.title} />
+        </ModalDialog.Title>
         <div className="d-flex mt-3">
-          <SearchKeywordsField
-            className="flex-grow-1 mr-2"
-            autoFocus={props.autoFocus}
-          />
+          <SearchKeywordsField className="flex-grow-1 mr-2" autoFocus={props.autoFocus} />
           <SelectMenu variant="primary">
             <MenuItem
               onClick={switchToThisCourse}
@@ -70,7 +62,9 @@ const SearchUI: React.FC<{
           <FilterByTags />
           <ClearFiltersButton />
           <div className="flex-grow-1" />
-          <div className="text-muted x-small align-middle"><Stats /></div>
+          <div className="text-muted x-small align-middle">
+            <Stats />
+          </div>
         </div>
       </ModalDialog.Header>
       <ModalDialog.Body className="h-[calc(100vh-200px)]">

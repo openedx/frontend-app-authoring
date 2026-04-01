@@ -1,17 +1,9 @@
-import {
-  render,
-  screen,
-  initializeMocks,
-} from '@src/testUtils';
+import { render, screen, initializeMocks } from '@src/testUtils';
 import '@testing-library/jest-dom';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getCourseLaunchApiUrl, getCourseBestPracticesApiUrl } from './data/api';
-import {
-  courseId,
-  generateCourseLaunchData,
-  generateCourseBestPracticesData,
-} from './factories/mockApiResponses';
+import { courseId, generateCourseLaunchData, generateCourseBestPracticesData } from './factories/mockApiResponses';
 import messages from './messages';
 import CourseChecklist from './index';
 
@@ -105,7 +97,10 @@ describe('CourseChecklistPage', () => {
 
     it('displays an alert and sets status to DENIED when API responds with 403', async () => {
       const courseLaunchApiUrl = getCourseLaunchApiUrl({
-        courseId, gradedOnly: true, validateOras: true, all: true,
+        courseId,
+        gradedOnly: true,
+        validateOras: true,
+        all: true,
       });
       axiosMock.onGet(courseLaunchApiUrl).reply(403);
 

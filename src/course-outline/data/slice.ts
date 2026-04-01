@@ -127,24 +127,17 @@ const slice = createSlice({
       state.sectionsList = [...sectionsList];
     },
     addSection: (state: CourseOutlineState, { payload }) => {
-      state.sectionsList = [
-        ...state.sectionsList,
-        payload,
-      ];
+      state.sectionsList = [...state.sectionsList, payload];
     },
     deleteSection: (state: CourseOutlineState, { payload }) => {
-      state.sectionsList = state.sectionsList.filter(
-        ({ id }) => id !== payload.itemId,
-      );
+      state.sectionsList = state.sectionsList.filter(({ id }) => id !== payload.itemId);
     },
     deleteSubsection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => {
         if (section.id !== payload.sectionId) {
           return section;
         }
-        section.childInfo.children = section.childInfo.children.filter(
-          ({ id }) => id !== payload.itemId,
-        );
+        section.childInfo.children = section.childInfo.children.filter(({ id }) => id !== payload.itemId);
         return section;
       });
     },
@@ -157,9 +150,7 @@ const slice = createSlice({
           if (subsection.id !== payload.subsectionId) {
             return subsection;
           }
-          subsection.childInfo.children = subsection.childInfo.children.filter(
-            ({ id }) => id !== payload.itemId,
-          );
+          subsection.childInfo.children = subsection.childInfo.children.filter(({ id }) => id !== payload.itemId);
           return subsection;
         });
         return section;
@@ -197,6 +188,4 @@ export const {
   dismissError,
 } = slice.actions;
 
-export const {
-  reducer,
-} = slice;
+export const { reducer } = slice;

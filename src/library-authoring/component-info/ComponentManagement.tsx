@@ -2,9 +2,7 @@ import React, { useEffect } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Collapsible, Icon, Stack } from '@openedx/paragon';
-import {
-  BookOpen, ExpandLess, ExpandMore, Tag,
-} from '@openedx/paragon/icons';
+import { BookOpen, ExpandLess, ExpandMore, Tag } from '@openedx/paragon/icons';
 
 import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
@@ -56,7 +54,7 @@ const ComponentManagement = () => {
     }
     let result = 0;
     componentTags.taxonomies.forEach((taxonomy) => {
-      const countedTags : string[] = [];
+      const countedTags: string[] = [];
       taxonomy.tags.forEach((tagData) => {
         tagData.lineage.forEach((tag) => {
           if (!countedTags.includes(tag)) {
@@ -81,43 +79,30 @@ const ComponentManagement = () => {
 
   return (
     <Stack gap={3}>
-      <StatusWidget
-        {...componentMetadata}
-      />
-      {[true, 'true'].includes(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES)
-        && (
-          <Collapsible.Advanced
-            open={tagsCollapseIsOpen}
-            className="collapsible-card border-0"
+      <StatusWidget {...componentMetadata} />
+      {[true, 'true'].includes(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES) && (
+        <Collapsible.Advanced open={tagsCollapseIsOpen} className="collapsible-card border-0">
+          <Collapsible.Trigger
+            onClick={() => setTagsCollapseOpen((prev) => !prev)}
+            className="collapsible-trigger d-flex justify-content-between p-2"
           >
-            <Collapsible.Trigger
-              onClick={() => setTagsCollapseOpen((prev) => !prev)}
-              className="collapsible-trigger d-flex justify-content-between p-2"
-            >
-              <Stack gap={1} direction="horizontal">
-                <Icon src={Tag} />
-                {intl.formatMessage(messages.manageTabTagsTitle, { count: tagsCount })}
-              </Stack>
-              <Collapsible.Visible whenClosed>
-                <Icon src={ExpandMore} />
-              </Collapsible.Visible>
-              <Collapsible.Visible whenOpen>
-                <Icon src={ExpandLess} />
-              </Collapsible.Visible>
-            </Collapsible.Trigger>
-            <Collapsible.Body className="collapsible-body">
-              <ContentTagsDrawer
-                id={usageKey}
-                variant="component"
-                readOnly={readOnly}
-              />
-            </Collapsible.Body>
-          </Collapsible.Advanced>
-        )}
-      <Collapsible.Advanced
-        open={collectionsCollapseIsOpen}
-        className="collapsible-card border-0"
-      >
+            <Stack gap={1} direction="horizontal">
+              <Icon src={Tag} />
+              {intl.formatMessage(messages.manageTabTagsTitle, { count: tagsCount })}
+            </Stack>
+            <Collapsible.Visible whenClosed>
+              <Icon src={ExpandMore} />
+            </Collapsible.Visible>
+            <Collapsible.Visible whenOpen>
+              <Icon src={ExpandLess} />
+            </Collapsible.Visible>
+          </Collapsible.Trigger>
+          <Collapsible.Body className="collapsible-body">
+            <ContentTagsDrawer id={usageKey} variant="component" readOnly={readOnly} />
+          </Collapsible.Body>
+        </Collapsible.Advanced>
+      )}
+      <Collapsible.Advanced open={collectionsCollapseIsOpen} className="collapsible-card border-0">
         <Collapsible.Trigger
           onClick={() => setCollectionsCollapseOpen((prev) => !prev)}
           className="collapsible-trigger d-flex justify-content-between p-2"

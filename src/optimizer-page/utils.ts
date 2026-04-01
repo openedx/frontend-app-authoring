@@ -45,26 +45,17 @@ export const isDataEmpty = (data: LinkCheckResult | null): boolean => {
 
   // Check sections
   if (data.sections && data.sections.length > 0) {
-    const hasAnyLinks = data.sections.some(
-      (section) => section.subsections.some(
-        (subsection) => subsection.units.some(
-          (unit) => unit.blocks.some(
-            (block) => {
-              const hasBrokenLinks = block.brokenLinks && block.brokenLinks.length > 0;
-              const hasLockedLinks = block.lockedLinks && block.lockedLinks.length > 0;
-              const hasExternalForbiddenLinks = block.externalForbiddenLinks
-                      && block.externalForbiddenLinks.length > 0;
-              const hasPreviousRunLinks = block.previousRunLinks
-                      && block.previousRunLinks.length > 0;
+    const hasAnyLinks = data.sections.some((section) =>
+      section.subsections.some((subsection) =>
+        subsection.units.some((unit) =>
+          unit.blocks.some((block) => {
+            const hasBrokenLinks = block.brokenLinks && block.brokenLinks.length > 0;
+            const hasLockedLinks = block.lockedLinks && block.lockedLinks.length > 0;
+            const hasExternalForbiddenLinks = block.externalForbiddenLinks && block.externalForbiddenLinks.length > 0;
+            const hasPreviousRunLinks = block.previousRunLinks && block.previousRunLinks.length > 0;
 
-              return (
-                hasBrokenLinks
-                      || hasLockedLinks
-                      || hasExternalForbiddenLinks
-                      || hasPreviousRunLinks
-              );
-            },
-          ),
+            return hasBrokenLinks || hasLockedLinks || hasExternalForbiddenLinks || hasPreviousRunLinks;
+          }),
         ),
       ),
     );
@@ -76,10 +67,13 @@ export const isDataEmpty = (data: LinkCheckResult | null): boolean => {
 
   // Check course updates
   if (data.courseUpdates && data.courseUpdates.length > 0) {
-    const hasAnyLinks = data.courseUpdates.some((update) => (update.brokenLinks && update.brokenLinks.length > 0)
-      || (update.lockedLinks && update.lockedLinks.length > 0)
-      || (update.externalForbiddenLinks && update.externalForbiddenLinks.length > 0)
-      || (update.previousRunLinks && update.previousRunLinks.length > 0));
+    const hasAnyLinks = data.courseUpdates.some(
+      (update) =>
+        (update.brokenLinks && update.brokenLinks.length > 0) ||
+        (update.lockedLinks && update.lockedLinks.length > 0) ||
+        (update.externalForbiddenLinks && update.externalForbiddenLinks.length > 0) ||
+        (update.previousRunLinks && update.previousRunLinks.length > 0),
+    );
     if (hasAnyLinks) {
       return false;
     }
@@ -87,10 +81,13 @@ export const isDataEmpty = (data: LinkCheckResult | null): boolean => {
 
   // Check custom pages
   if (data.customPages && data.customPages.length > 0) {
-    const hasAnyLinks = data.customPages.some((page) => (page.brokenLinks && page.brokenLinks.length > 0)
-      || (page.lockedLinks && page.lockedLinks.length > 0)
-      || (page.externalForbiddenLinks && page.externalForbiddenLinks.length > 0)
-      || (page.previousRunLinks && page.previousRunLinks.length > 0));
+    const hasAnyLinks = data.customPages.some(
+      (page) =>
+        (page.brokenLinks && page.brokenLinks.length > 0) ||
+        (page.lockedLinks && page.lockedLinks.length > 0) ||
+        (page.externalForbiddenLinks && page.externalForbiddenLinks.length > 0) ||
+        (page.previousRunLinks && page.previousRunLinks.length > 0),
+    );
     if (hasAnyLinks) {
       return false;
     }

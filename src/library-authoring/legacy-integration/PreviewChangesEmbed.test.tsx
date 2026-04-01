@@ -1,11 +1,5 @@
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
-import {
-  fireEvent,
-  render,
-  screen,
-  initializeMocks,
-  within,
-} from '../../testUtils';
+import { fireEvent, render, screen, initializeMocks, within } from '../../testUtils';
 
 import PreviewChangesEmbed from './PreviewChangesEmbed';
 

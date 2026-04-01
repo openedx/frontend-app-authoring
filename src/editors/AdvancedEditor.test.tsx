@@ -1,17 +1,10 @@
 import { getConfig } from '@edx/frontend-platform';
 
-import {
-  render,
-  initializeMocks,
-  waitFor,
-  screen,
-  act,
-  fireEvent,
-} from '../testUtils';
+import { render, initializeMocks, waitFor, screen, act, fireEvent } from '../testUtils';
 import AdvancedEditor from './AdvancedEditor';
 
 jest.mock('./containers/EditorContainer', () => ({
-  EditorModalWrapper: jest.fn(() => (<div>Advanced Editor Iframe</div>)),
+  EditorModalWrapper: jest.fn(() => <div>Advanced Editor Iframe</div>),
 }));
 const onCloseMock = jest.fn();
 

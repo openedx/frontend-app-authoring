@@ -3,19 +3,29 @@ import PropTypes from 'prop-types';
 import { ActionRow, AlertModal, Button } from '@openedx/paragon';
 
 const ModalNotification = ({
-  isOpen, title, message, handleCancel, handleAction, cancelButtonText, actionButtonText, variant, icon,
+  isOpen,
+  title,
+  message,
+  handleCancel,
+  handleAction,
+  cancelButtonText,
+  actionButtonText,
+  variant,
+  icon,
 }) => (
   <AlertModal
     title={title}
     isOpen={isOpen}
     variant={variant}
     icon={icon}
-    footerNode={(
+    footerNode={
       <ActionRow>
-        <Button variant="tertiary" onClick={handleCancel}>{cancelButtonText}</Button>
+        <Button variant="tertiary" onClick={handleCancel}>
+          {cancelButtonText}
+        </Button>
         <Button onClick={handleAction}>{actionButtonText}</Button>
       </ActionRow>
-    )}
+    }
   >
     <p>{message}</p>
   </AlertModal>

@@ -34,11 +34,12 @@ describe('useEventListener', () => {
   it('should update event listener when handler changes', () => {
     const handler1 = jest.fn();
     const handler2 = jest.fn();
-    const { rerender } = renderHook(({ handler }: {
-      handler: (event: Event) => void
-    }) => useEventListener('click', handler), {
-      initialProps: { handler: handler1 },
-    });
+    const { rerender } = renderHook(
+      ({ handler }: { handler: (event: Event) => void }) => useEventListener('click', handler),
+      {
+        initialProps: { handler: handler1 },
+      },
+    );
 
     rerender({ handler: handler2 });
 
@@ -48,9 +49,7 @@ describe('useEventListener', () => {
 
   it('should update event listener when type changes', () => {
     const handler = jest.fn();
-    const { rerender } = renderHook(({ type }: {
-      type: keyof WindowEventMap
-    }) => useEventListener(type, handler), {
+    const { rerender } = renderHook(({ type }: { type: keyof WindowEventMap }) => useEventListener(type, handler), {
       initialProps: { type: 'click' },
     });
 

@@ -1,11 +1,6 @@
 import React from 'react';
 import { ArrowDropDown } from '@openedx/paragon/icons';
-import {
-  Badge,
-  Button,
-  ModalPopup,
-  useToggle,
-} from '@openedx/paragon';
+import { Badge, Button, ModalPopup, useToggle } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
@@ -25,7 +20,7 @@ const SearchFilterWidget: React.FC<{
   appliedFilters: { label: React.ReactNode }[];
   label: React.ReactNode;
   children: React.ReactNode;
-  clearFilter: () => void,
+  clearFilter: () => void;
   icon: React.ComponentType;
   skipLabelUpdate?: boolean;
   btnSize?: 'sm' | 'md' | 'lg';
@@ -53,35 +48,27 @@ const SearchFilterWidget: React.FC<{
           {props.label}
           {!props.skipLabelUpdate && appliedFilters.length >= 1 ? <>: {appliedFilters[0].label}</> : null}
           {!props.skipLabelUpdate && appliedFilters.length > 1 ? (
-            <>,&nbsp;<Badge variant="secondary">+{appliedFilters.length - 1}</Badge></>
+            <>
+              ,&nbsp;<Badge variant="secondary">+{appliedFilters.length - 1}</Badge>
+            </>
           ) : null}
         </Button>
       </div>
-      <ModalPopup
-        positionRef={target}
-        isOpen={isOpen}
-        onClose={close}
-      >
-        <div
-          className="bg-white rounded shadow"
-          style={{ textAlign: 'start' }}
-        >
+      <ModalPopup positionRef={target} isOpen={isOpen} onClose={close}>
+        <div className="bg-white rounded shadow" style={{ textAlign: 'start' }}>
           {props.children}
 
-          {
-            !!appliedFilters.length
-            && (
-              <div className="d-flex justify-content-end">
-                <Button
-                  onClick={clearAndClose}
-                  variant="link"
-                  className="text-info-500 text-decoration-none clear-filter-button"
-                >
-                  { intl.formatMessage(messages.clearFilter) }
-                </Button>
-              </div>
-            )
-          }
+          {!!appliedFilters.length && (
+            <div className="d-flex justify-content-end">
+              <Button
+                onClick={clearAndClose}
+                variant="link"
+                className="text-info-500 text-decoration-none clear-filter-button"
+              >
+                {intl.formatMessage(messages.clearFilter)}
+              </Button>
+            </div>
+          )}
         </div>
       </ModalPopup>
     </>

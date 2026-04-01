@@ -1,22 +1,22 @@
 .pacing-section {
   .pgn__form-group {
     p.pgn__form-label {
-      font: normal .875rem/1.5rem var(--pgn-typography-font-family-base);
+      font: normal 0.875rem/1.5rem var(--pgn-typography-font-family-base);
     }
 
     label.pgn__form-label {
-      font: normal var(--pgn-typography-font-weight-bold) .75rem/1.25rem var(--pgn-typography-font-family-base);
+      font: normal var(--pgn-typography-font-weight-bold) 0.75rem/1.25rem var(--pgn-typography-font-family-base);
       color: $text-color-weak;
     }
 
     .pgn__form-control-description {
-      font: normal .75rem/1.5rem var(--pgn-typography-font-family-base);
+      font: normal 0.75rem/1.5rem var(--pgn-typography-font-family-base);
       color: var(--pgn-color-black);
     }
   }
 
   input.pgn__form-radio-input {
-    padding: .5rem;
+    padding: 0.5rem;
     height: var(--pgn-spacing-spacer-base);
     width: var(--pgn-spacing-spacer-base);
   }

@@ -15,12 +15,7 @@ const AddTeamMember = ({ onFormOpen, isButtonDisable }) => {
         <h3 className="add-team-member-title font-weight-bold">{intl.formatMessage(messages.title)}</h3>
         <span className="text-gray-500 small">{intl.formatMessage(messages.description)}</span>
       </div>
-      <Button
-        variant="primary"
-        iconBefore={IconAdd}
-        onClick={onFormOpen}
-        disabled={isButtonDisable}
-      >
+      <Button variant="primary" iconBefore={IconAdd} onClick={onFormOpen} disabled={isButtonDisable}>
         {intl.formatMessage(messages.button)}
       </Button>
     </div>

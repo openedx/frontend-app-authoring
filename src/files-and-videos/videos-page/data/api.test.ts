@@ -4,7 +4,12 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 
 import {
-  getDownload, getVideosUrl, getAllUsagePaths, getCourseVideosApiUrl, uploadVideo, sendVideoUploadStatus,
+  getDownload,
+  getVideosUrl,
+  getAllUsagePaths,
+  getCourseVideosApiUrl,
+  uploadVideo,
+  sendVideoUploadStatus,
 } from './api';
 
 jest.mock('file-saver');
@@ -44,34 +49,39 @@ describe('api.js', () => {
       });
       it('should not throw error when blob returns null', async () => {
         const expected = [];
-        const actual = await getDownload([
-          { original: { displayName: 'test1', downloadLink: 'test1.com' } },
-          { original: { displayName: 'test2', id: '2', downloadLink: 'test2.com' } },
-        ], 'SoMEiD');
+        const actual = await getDownload(
+          [
+            { original: { displayName: 'test1', downloadLink: 'test1.com' } },
+            { original: { displayName: 'test2', id: '2', downloadLink: 'test2.com' } },
+          ],
+          'SoMEiD',
+        );
         expect(actual).toEqual(expected);
       });
       it('should return error if row does not contain .original attribute', async () => {
         const expected = ['Cannot find download file for video.'];
-        const actual = await getDownload([
-          { asset: { displayName: 'test1', id: '1' } },
-          { original: { displayName: 'test2', id: '2', downloadLink: 'test1.com' } },
-        ], 'SoMEiD');
+        const actual = await getDownload(
+          [
+            { asset: { displayName: 'test1', id: '1' } },
+            { original: { displayName: 'test2', id: '2', downloadLink: 'test1.com' } },
+          ],
+          'SoMEiD',
+        );
         expect(actual).toEqual(expected);
       });
     });
     describe('selectedRows length equals one', () => {
       it('should return error if original does not contain .downloadLink attribute', async () => {
         const expected = ['Cannot find download file for test2.'];
-        const actual = await getDownload([
-          { original: { displayName: 'test2', id: '2' } },
-        ], 'SoMEiD');
+        const actual = await getDownload([{ original: { displayName: 'test2', id: '2' } }], 'SoMEiD');
         expect(actual).toEqual(expected);
       });
       it('should return error if row does not contain .original ancestor', async () => {
         const expected = ['Failed to download video.'];
-        const actual = await getDownload([
-          { asset: { displayName: 'test1', id: '1', download_link: 'test1.com' } },
-        ], 'SoMEiD');
+        const actual = await getDownload(
+          [{ asset: { displayName: 'test1', id: '1', download_link: 'test1.com' } }],
+          'SoMEiD',
+        );
         expect(actual).toEqual(expected);
       });
     });
@@ -85,24 +95,21 @@ describe('api.js', () => {
       expect(actual).toEqual(expected);
     });
     it('pushes an empty usageLocations field when video api call fails', async () => {
-      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`)
-        .reply(404);
+      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`).reply(404);
       const expected = [];
       const actual = await getAllUsagePaths({ courseId, videoIds });
       expect(actual).toEqual(expected);
     });
     it('sets activeStatus to active', async () => {
       const usageLocations = [{ link: '/test', name: 'test' }];
-      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`)
-        .reply(200, { usageLocations });
+      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`).reply(200, { usageLocations });
       const expected = [{ id: videoIds[0], usageLocations, activeStatus: 'active' }];
       const actual = await getAllUsagePaths({ courseId, videoIds });
       expect(actual).toEqual(expected);
     });
     it('sets activeStatus to inactive', async () => {
       const usageLocations = [];
-      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`)
-        .reply(200, { usageLocations });
+      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`).reply(200, { usageLocations });
       const expected = [{ id: videoIds[0], usageLocations, activeStatus: 'inactive' }];
       const actual = await getAllUsagePaths({ courseId, videoIds });
       expect(actual).toEqual(expected);
@@ -133,7 +140,10 @@ describe('api.js', () => {
         const loaded = total * progress;
         if (config.onUploadProgress) {
           config.onUploadProgress({
-            loaded, total, bytes: loaded, lengthComputable: true,
+            loaded,
+            total,
+            bytes: loaded,
+            lengthComputable: true,
           });
         }
         return [200, expectedResult];
@@ -151,14 +161,8 @@ describe('api.js', () => {
       const mockStatus = 'Im mElTinG';
       const mockMessage = 'DinG DOng The WiCked WiTCH isDead';
       const expectedResult = 'Something';
-      axiosMock.onPost(`${getCourseVideosApiUrl(mockCourseId)}`)
-        .reply(200, expectedResult);
-      const actual = await sendVideoUploadStatus(
-        mockCourseId,
-        mockEdxVideoId,
-        mockMessage,
-        mockStatus,
-      );
+      axiosMock.onPost(`${getCourseVideosApiUrl(mockCourseId)}`).reply(200, expectedResult);
+      const actual = await sendVideoUploadStatus(mockCourseId, mockEdxVideoId, mockMessage, mockStatus);
       expect(actual.data).toEqual(expectedResult);
       jest.clearAllMocks();
     });

@@ -21,38 +21,21 @@ describe('<IntroductionVideo />', () => {
   };
 
   it('renders successfully', () => {
-    const {
-      getByText, getByPlaceholderText, getByRole, getByTitle,
-    } = render(
-      <RootWrapper {...props} />,
-    );
-    expect(
-      getByText(messages.courseIntroductionVideoLabel.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByText(messages.courseIntroductionVideoHelpText.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByPlaceholderText(messages.courseIntroductionVideoPlaceholder.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByRole('button', { name: messages.courseIntroductionVideoDelete.defaultMessage }),
-    ).toBeInTheDocument();
+    const { getByText, getByPlaceholderText, getByRole, getByTitle } = render(<RootWrapper {...props} />);
+    expect(getByText(messages.courseIntroductionVideoLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.courseIntroductionVideoHelpText.defaultMessage)).toBeInTheDocument();
+    expect(getByPlaceholderText(messages.courseIntroductionVideoPlaceholder.defaultMessage)).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.courseIntroductionVideoDelete.defaultMessage })).toBeInTheDocument();
     expect(getByTitle(messages.courseIntroductionVideoLabel.defaultMessage)).toBeInTheDocument();
   });
 
   it('should call onChange if video input id changed', async () => {
     const { getByPlaceholderText } = render(<RootWrapper {...props} />);
-    const input = getByPlaceholderText(
-      messages.courseIntroductionVideoPlaceholder.defaultMessage,
-    );
+    const input = getByPlaceholderText(messages.courseIntroductionVideoPlaceholder.defaultMessage);
     act(() => {
       fireEvent.change(input, { target: { value: '/assets' } });
     });
-    expect(onChangeMock).toHaveBeenCalledWith(
-      '/assets',
-      'introVideo',
-    );
+    expect(onChangeMock).toHaveBeenCalledWith('/assets', 'introVideo');
   });
 
   it('should clear video input if button delete clicked', () => {

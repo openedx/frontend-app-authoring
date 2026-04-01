@@ -1,11 +1,7 @@
 import React from 'react';
 import { Alert } from '@openedx/paragon';
 
-interface Props
-  extends Omit<
-  React.ComponentPropsWithoutRef<typeof Alert>,
-  'title' | 'description'
-  > {
+interface Props extends Omit<React.ComponentPropsWithoutRef<typeof Alert>, 'title' | 'description'> {
   title?: string | React.ReactNode;
   description?: string | React.ReactNode;
 }

@@ -7,10 +7,7 @@ import { RequestStatus } from '../../data/constants';
 import AlertMessage from '../alert-message';
 import messages from './messages';
 
-const SavingErrorAlert = ({
-  savingStatus,
-  errorMessage,
-}) => {
+const SavingErrorAlert = ({ savingStatus, errorMessage }) => {
   const intl = useIntl();
   const [showAlert, setShowAlert] = useState(false);
   const [isOnline, setIsOnline] = useState(window.navigator.onLine);
@@ -42,16 +39,10 @@ const SavingErrorAlert = ({
       data-testid="saving-error-alert"
       icon={WarningIcon}
       title={intl.formatMessage(messages.warningTitle)}
-      description={
-        errorMessage || intl.formatMessage(messages.warningDescription)
-      }
+      description={errorMessage || intl.formatMessage(messages.warningDescription)}
       aria-hidden="true"
-      aria-labelledby={intl.formatMessage(
-        messages.warningTitleAriaLabelledBy,
-      )}
-      aria-describedby={intl.formatMessage(
-        messages.warningDescriptionAriaDescribedBy,
-      )}
+      aria-labelledby={intl.formatMessage(messages.warningTitleAriaLabelledBy)}
+      aria-describedby={intl.formatMessage(messages.warningDescriptionAriaDescribedBy)}
     />
   );
 };

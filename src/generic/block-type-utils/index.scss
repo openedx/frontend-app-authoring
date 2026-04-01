@@ -1,35 +1,35 @@
 :root {
   --content-library-component-default-color: #646464;
-  --content-library-component-default-color-light: #7E7E7E;
+  --content-library-component-default-color-light: #7e7e7e;
   --content-library-component-default-color-light-focus: #979797;
-  --content-library-component-default-color-dark: #3E3E3E;
-  --content-library-component-primary-color: #005C9E;
-  --content-library-component-primary-color-light: #007AD1;
-  --content-library-component-primary-color-light-focus: #0597FF;
-  --content-library-component-primary-color-dark: #002F52;
-  --content-library-component-html-color: #9747FF;
-  --content-library-component-html-color-light: #B47AFF;
-  --content-library-component-html-color-light-focus: #D1ADFF;
-  --content-library-component-html-color-dark: #6C00FA;
-  --content-library-component-video-color: #358F0A;
-  --content-library-component-video-color-light: #47BF0D;
-  --content-library-component-video-color-light-focus: #58EE11;
-  --content-library-component-video-color-dark: #1B4805;
-  --content-library-collection-color: #FFCD29;
-  --content-library-collection-color-light: #FFD95C;
-  --content-library-collection-color-light-focus: #FFDF75;
-  --content-library-collection-color-dark: #DCA800;
-  --content-library-container-unit-color: #0B8E77;
-  --content-library-container-unit-color-light: #0FBD9F;
-  --content-library-container-unit-color-light-focus: #12EDC6;
-  --content-library-container-unit-color-dark: #06473C;
-  --content-library-container-subsection-color: #EA3E3E;
-  --content-library-container-subsection-color-light: #EF6C6C;
-  --content-library-container-subsection-color-light-focus: #F49A9A;
-  --content-library-container-subsection-color-dark: #C61616;
-  --content-library-container-section-color: #45009E;
-  --content-library-container-section-color-light: #5B00D1;
-  --content-library-container-section-color-light-focus: #7205FF;
+  --content-library-component-default-color-dark: #3e3e3e;
+  --content-library-component-primary-color: #005c9e;
+  --content-library-component-primary-color-light: #007ad1;
+  --content-library-component-primary-color-light-focus: #0597ff;
+  --content-library-component-primary-color-dark: #002f52;
+  --content-library-component-html-color: #9747ff;
+  --content-library-component-html-color-light: #b47aff;
+  --content-library-component-html-color-light-focus: #d1adff;
+  --content-library-component-html-color-dark: #6c00fa;
+  --content-library-component-video-color: #358f0a;
+  --content-library-component-video-color-light: #47bf0d;
+  --content-library-component-video-color-light-focus: #58ee11;
+  --content-library-component-video-color-dark: #1b4805;
+  --content-library-collection-color: #ffcd29;
+  --content-library-collection-color-light: #ffd95c;
+  --content-library-collection-color-light-focus: #ffdf75;
+  --content-library-collection-color-dark: #dca800;
+  --content-library-container-unit-color: #0b8e77;
+  --content-library-container-unit-color-light: #0fbd9f;
+  --content-library-container-unit-color-light-focus: #12edc6;
+  --content-library-container-unit-color-dark: #06473c;
+  --content-library-container-subsection-color: #ea3e3e;
+  --content-library-container-subsection-color-light: #ef6c6c;
+  --content-library-container-subsection-color-light-focus: #f49a9a;
+  --content-library-container-subsection-color-dark: #c61616;
+  --content-library-container-section-color: #45009e;
+  --content-library-container-section-color-light: #5b00d1;
+  --content-library-container-section-color-light-focus: #7205ff;
   --content-library-container-section-color-dark: #240052;
 }
 
@@ -41,7 +41,9 @@
   }
 
   .btn-icon {
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-component-primary-color-dark);
     }
   }
@@ -50,7 +52,9 @@
     background-color: var(--content-library-component-primary-color-light);
     border: 0;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-component-primary-color-light-focus);
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
@@ -70,7 +74,9 @@
   }
 
   .btn-icon {
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-component-html-color-dark);
     }
   }
@@ -79,7 +85,9 @@
     background-color: var(--content-library-component-html-color-light);
     border: 0;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-component-html-color-light-focus);
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
@@ -99,7 +107,9 @@
   }
 
   .btn-icon {
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-collection-color-dark);
     }
   }
@@ -108,7 +118,9 @@
     background-color: var(--content-library-collection-color-light);
     border: 0;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-collection-color-light-focus);
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
@@ -128,7 +140,9 @@
   }
 
   .btn-icon {
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-component-video-color-dark);
     }
   }
@@ -137,7 +151,9 @@
     background-color: var(--content-library-component-video-color-light);
     border: 0;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-component-video-color-light-focus);
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
@@ -157,7 +173,9 @@
   }
 
   .btn-icon {
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-container-unit-color-dark);
     }
   }
@@ -166,7 +184,9 @@
     background-color: var(--content-library-container-unit-color-light);
     border: 0;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-container-unit-color-light-focus);
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
@@ -186,7 +206,9 @@
   }
 
   .btn-icon {
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-container-subsection-color-dark);
     }
   }
@@ -195,7 +217,9 @@
     background-color: var(--content-library-container-subsection-color-light);
     border: 0;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-container-subsection-color-light-focus);
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
@@ -215,7 +239,9 @@
   }
 
   .btn-icon {
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-container-section-color-dark);
     }
   }
@@ -225,7 +251,9 @@
     border: 0;
     color: white;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-container-section-color-light-focus);
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
@@ -245,7 +273,9 @@
   }
 
   .btn-icon {
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-component-default-color-dark);
     }
   }
@@ -254,7 +284,9 @@
     background-color: var(--content-library-component-default-color-light);
     border: 0;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
       background-color: var(--content-library-component-default-color-light-focus);
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
@@ -285,7 +317,7 @@
   }
 }
 
-.icon-with-border-section {  
+.icon-with-border-section {
   border: 1px solid var(--content-library-container-section-color);
 
   .pgn__icon {
@@ -293,7 +325,7 @@
   }
 }
 
-.icon-with-border-subsection {  
+.icon-with-border-subsection {
   border: 1px solid var(--content-library-container-subsection-color);
 
   .pgn__icon {
@@ -301,7 +333,7 @@
   }
 }
 
-.icon-with-border-unit {  
+.icon-with-border-unit {
   border: 1px solid var(--content-library-container-unit-color);
 
   .pgn__icon {
@@ -309,7 +341,7 @@
   }
 }
 
-.icon-with-border-html {  
+.icon-with-border-html {
   border: 1px solid var(--content-library-component-html-color);
 
   .pgn__icon {
@@ -317,7 +349,7 @@
   }
 }
 
-.icon-with-border-video {  
+.icon-with-border-video {
   border: 1px solid var(--content-library-component-video-color);
 
   .pgn__icon {

@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Button,
-  Toast,
-  Card,
-  ActionRow,
-  Pagination,
-  Alert,
-  Icon,
-} from '@openedx/paragon';
+import { Button, Toast, Card, ActionRow, Pagination, Alert, Icon } from '@openedx/paragon';
 
 import {
   useReactTable,
@@ -22,13 +14,7 @@ import { ArrowDropUpDown, Info } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import TableBody from './TableBody';
 import './TableView.scss';
-import type {
-  CreateRowMutationState,
-  RowId,
-  ToastState,
-  TreeColumnDef,
-  TreeRowData,
-} from './types';
+import type { CreateRowMutationState, RowId, ToastState, TreeColumnDef, TreeRowData } from './types';
 import messages from './messages';
 
 interface TableViewProps {
@@ -99,10 +85,10 @@ const TableView = ({
     <>
       {isError && showError && (
         <Alert variant="danger" icon={Info} dismissible onClose={() => setShowError(false)}>
-          <Alert.Heading>
-            {intl.formatMessage(messages.errorSavingTitle)}
-          </Alert.Heading>
-          {intl.formatMessage(messages.errorSavingMessage, { errorMessage: draftError || intl.formatMessage(messages.errorSavingMessage, { errorMessage: '' }) })}
+          <Alert.Heading>{intl.formatMessage(messages.errorSavingTitle)}</Alert.Heading>
+          {intl.formatMessage(messages.errorSavingMessage, {
+            errorMessage: draftError || intl.formatMessage(messages.errorSavingMessage, { errorMessage: '' }),
+          })}
         </Alert>
       )}
       <Card className="tag-list-card">
@@ -124,23 +110,16 @@ const TableView = ({
               </Button>
             </ActionRow>
           </div>
-          <table
-            className="table w-100 tag-list-table tree-table-layout-fixed"
-          >
+          <table className="table w-100 tag-list-table tree-table-layout-fixed">
             <thead className="bg-light-400">
-              {table.getHeaderGroups().map(headerGroup => (
+              {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header, index) => (
                     <th
                       key={header.id}
                       className={`p-2 text-left ${index === 0 ? 'pl-2.5' : 'tree-table-actions-column'}`}
                     >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </th>
                   ))}
                 </tr>

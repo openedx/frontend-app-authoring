@@ -1,7 +1,5 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ButtonGroup, Dropdown, Form, OverlayTrigger, Scrollable, SearchField, Tooltip,
-} from '@openedx/paragon';
+import { ButtonGroup, Dropdown, Form, OverlayTrigger, Scrollable, SearchField, Tooltip } from '@openedx/paragon';
 import { Folder } from '@openedx/paragon/icons';
 import Loading from '@src/generic/Loading';
 import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
@@ -31,10 +29,7 @@ const CollectionItems = ({ isPending, data, onChange }: CollectionItemsProps) =>
   }
 
   return (
-    <Scrollable
-      className="m-0 p-0"
-      style={{ maxHeight: '25vh' }}
-    >
+    <Scrollable className="m-0 p-0" style={{ maxHeight: '25vh' }}>
       {data.map((collection) => (
         <Dropdown.Item
           key={collection.block_id}
@@ -44,9 +39,7 @@ const CollectionItems = ({ isPending, data, onChange }: CollectionItemsProps) =>
           className="py-2 my-1 overflow-auto"
           checked={selectedCollections.includes(collection.block_id)}
         >
-          <div>
-            {truncate(collection.display_name, { length: 50 })}
-          </div>
+          <div>{truncate(collection.display_name, { length: 50 })}</div>
         </Dropdown.Item>
       ))}
     </Scrollable>
@@ -59,11 +52,7 @@ export const CollectionDropdownFilter = () => {
   const { selectedLibraries, selectedCollections, setSelectedCollections } = useMultiLibraryContext();
   const [label, setLabel] = useState(intl.formatMessage(messages.librariesFilterBtnText));
   const { data: baseData, isPending } = useGetContentHits(
-    [
-      'type = "collection"',
-      `context_key = "${selectedLibraries[0]}"`,
-      'last_published IS NOT NULL',
-    ],
+    ['type = "collection"', `context_key = "${selectedLibraries[0]}"`, 'last_published IS NOT NULL'],
     selectedLibraries.length === 1,
     ['block_id', 'display_name'],
     100,
@@ -107,13 +96,13 @@ export const CollectionDropdownFilter = () => {
     >
       <OverlayTrigger
         placement="auto"
-        overlay={(
+        overlay={
           <Tooltip variant="light" id="library-filter-tooltip">
             {selectedLibraries.length !== 1
               ? intl.formatMessage(messages.collectionFilterBtnHelp)
               : label || intl.formatMessage(messages.collectionFilterBtnText)}
           </Tooltip>
-        )}
+        }
       >
         <Dropdown.Toggle
           id="collection-filter-dropdown-toggle"
@@ -122,11 +111,7 @@ export const CollectionDropdownFilter = () => {
           disabled={selectedLibraries.length !== 1}
           size="sm"
         >
-          {!label && (
-          <span className="sr-only">
-            {intl.formatMessage(messages.collectionFilterBtnText)}
-          </span>
-          )}
+          {!label && <span className="sr-only">{intl.formatMessage(messages.collectionFilterBtnText)}</span>}
           {truncate(label, { length: 30 })}
         </Dropdown.Toggle>
       </OverlayTrigger>

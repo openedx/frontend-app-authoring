@@ -43,23 +43,21 @@ const ModalDropzone = ({
     handleCancel,
     handleSelectFile,
   } = useModalDropzone({
-    onChange, onCancel, onClose, fileTypes, onSavingStatus, onSelectFile,
+    onChange,
+    onCancel,
+    onClose,
+    fileTypes,
+    onSavingStatus,
+    onSelectFile,
   });
 
-  const invalidSizeMore = invalidFileSizeMore || intl.formatMessage(
-    messages.uploadImageDropzoneInvalidSizeMore,
-    { maxSize: maxSize / (1000 * 1000) },
-  );
+  const invalidSizeMore =
+    invalidFileSizeMore ||
+    intl.formatMessage(messages.uploadImageDropzoneInvalidSizeMore, { maxSize: maxSize / (1000 * 1000) });
 
   const inputComponent = previewUrl ? (
     <div>
-      {previewComponent || (
-        <Image
-          src={previewUrl}
-          alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
-          fluid
-        />
-      )}
+      {previewComponent || <Image src={previewUrl} alt={intl.formatMessage(messages.uploadImageDropzoneAlt)} fluid />}
     </div>
   ) : (
     <>
@@ -87,9 +85,7 @@ const ModalDropzone = ({
       className="modal-dropzone"
     >
       <ModalDialog.Header>
-        <ModalDialog.Title>
-          {modalTitle}
-        </ModalDialog.Title>
+        <ModalDialog.Title>{modalTitle}</ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
         <Form.Group className="form-group-custom w-100">

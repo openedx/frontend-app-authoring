@@ -10,41 +10,34 @@ import {
   StatefulButton,
   useToggle,
 } from '@openedx/paragon';
-import {
-  DeleteOutline,
-  EditOutline,
-  SpinnerSimple,
-  Visibility,
-  VisibilityOff,
-} from '@openedx/paragon/icons';
+import { DeleteOutline, EditOutline, SpinnerSimple, Visibility, VisibilityOff } from '@openedx/paragon/icons';
 import { useNavigate } from 'react-router-dom';
 import { deleteSingleCustomPage, updateCustomPageVisibility } from './data/thunks';
 import messages from './messages';
 import { CustomPagesContext } from './CustomPagesProvider';
 
-const CustomPageCard = ({
-  page,
-  dispatch,
-  deletePageStatus,
-  setCurrentPage,
-}) => {
+const CustomPageCard = ({ page, dispatch, deletePageStatus, setCurrentPage }) => {
   const intl = useIntl();
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
   const { path: customPagesPath } = useContext(CustomPagesContext);
   const navigate = useNavigate();
 
   const handleDelete = () => {
-    dispatch(deleteSingleCustomPage({
-      blockId: page.id,
-      closeConfirmation: closeDeleteConfirmation,
-    }));
+    dispatch(
+      deleteSingleCustomPage({
+        blockId: page.id,
+        closeConfirmation: closeDeleteConfirmation,
+      }),
+    );
   };
 
   const toggleVisibility = () => {
-    dispatch(updateCustomPageVisibility({
-      blockId: page.id,
-      metadata: { course_staff_only: !page.courseStaffOnly },
-    }));
+    dispatch(
+      updateCustomPageVisibility({
+        blockId: page.id,
+        metadata: { course_staff_only: !page.courseStaffOnly },
+      }),
+    );
   };
   const handleEditOpen = () => {
     setCurrentPage(page.id);
@@ -104,14 +97,14 @@ const CustomPageCard = ({
         title={intl.formatMessage(messages.deleteConfirmationTitle)}
         isOpen={isDeleteConfirmationOpen}
         onClose={closeDeleteConfirmation}
-        footerNode={(
+        footerNode={
           <ActionRow>
             <Button variant="tertiary" onClick={closeDeleteConfirmation}>
               {intl.formatMessage(messages.cancelButtonLabel)}
             </Button>
             <StatefulButton onClick={handleDelete} state={deletePageStatus} {...deletePageStateProps} />
           </ActionRow>
-        )}
+        }
       >
         {intl.formatMessage(messages.deleteConfirmationMessage)}
       </AlertModal>

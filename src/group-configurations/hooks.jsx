@@ -3,12 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RequestStatus } from '../data/constants';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
-import {
-  getGroupConfigurationsData,
-  getLoadingStatus,
-  getSavingStatus,
-  getErrorMessage,
-} from './data/selectors';
+import { getGroupConfigurationsData, getLoadingStatus, getSavingStatus, getErrorMessage } from './data/selectors';
 import { updateSavingStatuses } from './data/slice';
 import {
   createContentGroupQuery,
@@ -26,10 +21,8 @@ const useGroupConfigurations = (courseId) => {
   const loadingStatus = useSelector(getLoadingStatus);
   const savingStatus = useSelector(getSavingStatus);
   const errorMessage = useSelector(getErrorMessage);
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
+  const { isShow: isShowProcessingNotification, title: processingNotificationTitle } =
+    useSelector(getProcessingNotification);
 
   const handleInternetConnectionFailed = () => {
     dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
@@ -57,22 +50,18 @@ const useGroupConfigurations = (courseId) => {
 
   const experimentConfigurationActions = {
     handleCreate: (configuration, callbackToClose) => {
-      dispatch(
-        createExperimentConfigurationQuery(courseId, configuration),
-      ).then((result) => {
+      dispatch(createExperimentConfigurationQuery(courseId, configuration)).then((result) => {
         if (result) {
           callbackToClose();
         }
       });
     },
     handleEdit: (configuration, callbackToClose) => {
-      dispatch(editExperimentConfigurationQuery(courseId, configuration)).then(
-        (result) => {
-          if (result) {
-            callbackToClose();
-          }
-        },
-      );
+      dispatch(editExperimentConfigurationQuery(courseId, configuration)).then((result) => {
+        if (result) {
+          callbackToClose();
+        }
+      });
     },
     handleDelete: (configurationId) => {
       dispatch(deleteExperimentConfigurationQuery(courseId, configurationId));

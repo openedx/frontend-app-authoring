@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   generalFeebackSettingTitle: {
     id: 'authoring.problemeditor.settings.generalFeebackSettingTitle',
     defaultMessage: 'General Feedback',
@@ -14,7 +13,8 @@ const messages = defineMessages({
   },
   generalFeedbackDescription: {
     id: 'authoring.problemeditor.settings.generalFeedbackInputDescription',
-    defaultMessage: 'Enter the feedback to appear when a student submits a wrong answer. This will be overridden if you add answer-specific feedback.',
+    defaultMessage:
+      'Enter the feedback to appear when a student submits a wrong answer. This will be overridden if you add answer-specific feedback.',
     description: 'description for general feedback input, clariying useage',
   },
   noGeneralFeedbackSummary: {

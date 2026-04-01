@@ -1,27 +1,16 @@
 import React from 'react';
-import {
-  ActionRow, Form, Icon, IconButton, Row,
-} from '@openedx/paragon';
+import { ActionRow, Form, Icon, IconButton, Row } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from '../../messages';
 
-const GroupFeedbackRow = ({
-  value,
-  handleAnswersSelectedChange,
-  handleFeedbackChange,
-  handleDelete,
-  answers,
-}) => {
+const GroupFeedbackRow = ({ value, handleAnswersSelectedChange, handleFeedbackChange, handleDelete, answers }) => {
   const intl = useIntl();
   return (
     <div className="mb-4">
       <ActionRow className="mb-2">
-        <Form.Control
-          value={value.feedback}
-          onChange={handleFeedbackChange}
-        />
+        <Form.Control value={value.feedback} onChange={handleFeedbackChange} />
         <div className="d-flex flex-row flex-nowrap">
           <IconButton
             src={DeleteOutline}
@@ -32,10 +21,7 @@ const GroupFeedbackRow = ({
           />
         </div>
       </ActionRow>
-      <Form.CheckboxSet
-        onChange={handleAnswersSelectedChange}
-        value={value.answers}
-      >
+      <Form.CheckboxSet onChange={handleAnswersSelectedChange} value={value.answers}>
         <Row className="mx-0">
           {answers.map((letter) => (
             <Form.Checkbox
@@ -44,9 +30,7 @@ const GroupFeedbackRow = ({
               checked={value.answers.indexOf(letter.id)}
               isValid={value.answers.indexOf(letter.id) >= 0}
             >
-              <div className="x-small">
-                {letter.id}
-              </div>
+              <div className="x-small">{letter.id}</div>
             </Form.Checkbox>
           ))}
         </Row>
@@ -56,13 +40,15 @@ const GroupFeedbackRow = ({
 };
 
 GroupFeedbackRow.propTypes = {
-  answers: PropTypes.arrayOf(PropTypes.shape({
-    correct: PropTypes.bool,
-    id: PropTypes.string,
-    selectedFeedback: PropTypes.string,
-    title: PropTypes.string,
-    unselectedFeedback: PropTypes.string,
-  })).isRequired,
+  answers: PropTypes.arrayOf(
+    PropTypes.shape({
+      correct: PropTypes.bool,
+      id: PropTypes.string,
+      selectedFeedback: PropTypes.string,
+      title: PropTypes.string,
+      unselectedFeedback: PropTypes.string,
+    }),
+  ).isRequired,
   handleAnswersSelectedChange: PropTypes.func.isRequired,
   handleFeedbackChange: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,

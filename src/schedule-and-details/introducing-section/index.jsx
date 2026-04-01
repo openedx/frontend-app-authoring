@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  useIntl,
-  FormattedMessage,
-} from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@openedx/paragon';
 
 import CourseUploadImage from '../../generic/course-upload-image';
@@ -39,11 +36,7 @@ const IntroducingSection = ({
       defaultMessage="Introductions, prerequisites, FAQs that are used on {hyperlink} (formatted in HTML)"
       values={{
         hyperlink: (
-          <Hyperlink
-            destination={lmsLinkForAboutPage}
-            target="_blank"
-            showLaunchIcon={false}
-          >
+          <Hyperlink destination={lmsLinkForAboutPage} target="_blank" showLaunchIcon={false}>
             {intl.formatMessage(messages.courseAboutHyperlink)}
           </Hyperlink>
         ),
@@ -57,11 +50,7 @@ const IntroducingSection = ({
       defaultMessage="Custom sidebar content for {hyperlink} (formatted in HTML)"
       values={{
         hyperlink: (
-          <Hyperlink
-            destination={lmsLinkForAboutPage}
-            target="_blank"
-            showLaunchIcon={false}
-          >
+          <Hyperlink destination={lmsLinkForAboutPage} target="_blank" showLaunchIcon={false}>
             {intl.formatMessage(messages.courseAboutHyperlink)}
           </Hyperlink>
         ),
@@ -88,32 +77,23 @@ const IntroducingSection = ({
       )}
       {shortDescriptionEditable && (
         <Form.Group className="form-group-custom">
-          <Form.Label>
-            {intl.formatMessage(messages.courseShortDescriptionLabel)}
-          </Form.Label>
+          <Form.Label>{intl.formatMessage(messages.courseShortDescriptionLabel)}</Form.Label>
           <Form.Control
             as="textarea"
             value={shortDescription}
             name="shortDescription"
             onChange={(e) => onChange(e.target.value, 'shortDescription')}
-            aria-label={intl.formatMessage(
-              messages.courseShortDescriptionAriaLabel,
-            )}
+            aria-label={intl.formatMessage(messages.courseShortDescriptionAriaLabel)}
             maxLength={150}
           />
-          <Form.Control.Feedback>
-            {intl.formatMessage(messages.courseShortDescriptionHelpText)}
-          </Form.Control.Feedback>
+          <Form.Control.Feedback>{intl.formatMessage(messages.courseShortDescriptionHelpText)}</Form.Control.Feedback>
         </Form.Group>
       )}
       {aboutPageEditable && (
         <>
           <Form.Group className="form-group-custom">
             <Form.Label>{intl.formatMessage(messages.courseOverviewLabel)}</Form.Label>
-            <WysiwygEditor
-              initialValue={overview}
-              onChange={(value) => onChange(value, 'overview')}
-            />
+            <WysiwygEditor initialValue={overview} onChange={(value) => onChange(value, 'overview')} />
             <Form.Control.Feedback>{overviewHelpText}</Form.Control.Feedback>
           </Form.Group>
           {sidebarHtmlEnabled && (
@@ -159,9 +139,7 @@ const IntroducingSection = ({
           />
         </>
       )}
-      {aboutPageEditable && (
-        <IntroductionVideo introVideo={introVideo} onChange={onChange} />
-      )}
+      {aboutPageEditable && <IntroductionVideo introVideo={introVideo} onChange={onChange} />}
     </section>
   );
 };

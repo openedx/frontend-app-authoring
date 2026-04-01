@@ -1,12 +1,7 @@
 import React, { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import {
-  Button,
-  Container,
-  Form,
-  useToggle,
-} from '@openedx/paragon';
+import { Button, Container, Form, useToggle } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
 
 import AlertError from '../../generic/alert-error';
@@ -28,29 +23,15 @@ import { LibraryRole } from './constants';
 import messages from './messages';
 
 const LibraryTeam: React.FC<Record<never, never>> = () => {
-  const {
-    libraryId,
-  } = useLibraryContext();
+  const { libraryId } = useLibraryContext();
 
   const intl = useIntl();
 
-  const {
-    data: libraryData,
-    isLoading: isLibraryLoading,
-  } = useContentLibrary(libraryId);
+  const { data: libraryData, isLoading: isLibraryLoading } = useContentLibrary(libraryId);
 
-  const {
-    data: libraryTeamMembers,
-    isLoading: isTeamLoading,
-    isError,
-    error,
-  } = useLibraryTeam(libraryId);
+  const { data: libraryTeamMembers, isLoading: isTeamLoading, isError, error } = useLibraryTeam(libraryId);
 
-  const [
-    isAddLibraryTeamMemberOpen,
-    openAddLibraryTeamMember,
-    closeAddLibraryTeamMember,
-  ] = useToggle(false);
+  const [isAddLibraryTeamMemberOpen, openAddLibraryTeamMember, closeAddLibraryTeamMember] = useToggle(false);
 
   const { showToast } = useContext(ToastContext);
 
@@ -58,30 +39,37 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
   const onAddMember = useCallback(
     (data: { email: string }) => {
       const { email } = data;
-      addMember.mutateAsync({
-        libraryId,
-        email,
-        // New members are created as Readers
-        accessLevel: LibraryRole.Reader.toString() as LibraryAccessLevel,
-      }).then(() => {
-        showToast(intl.formatMessage(messages.addMemberSuccess));
-      }).catch((addMemberError) => {
-        const errorData = typeof addMemberError === 'object' ? addMemberError.response?.data : undefined;
-        if (errorData && 'email' in errorData) {
-          const errorEmail = errorData.email;
-          if (typeof errorEmail === 'string') {
-            showToast(intl.formatMessage(messages.addMemberSpecificError, {
-              message: errorEmail,
-            }));
+      addMember
+        .mutateAsync({
+          libraryId,
+          email,
+          // New members are created as Readers
+          accessLevel: LibraryRole.Reader.toString() as LibraryAccessLevel,
+        })
+        .then(() => {
+          showToast(intl.formatMessage(messages.addMemberSuccess));
+        })
+        .catch((addMemberError) => {
+          const errorData = typeof addMemberError === 'object' ? addMemberError.response?.data : undefined;
+          if (errorData && 'email' in errorData) {
+            const errorEmail = errorData.email;
+            if (typeof errorEmail === 'string') {
+              showToast(
+                intl.formatMessage(messages.addMemberSpecificError, {
+                  message: errorEmail,
+                }),
+              );
+            } else {
+              showToast(
+                intl.formatMessage(messages.addMemberSpecificError, {
+                  message: errorEmail[0],
+                }),
+              );
+            }
           } else {
-            showToast(intl.formatMessage(messages.addMemberSpecificError, {
-              message: errorEmail[0],
-            }));
+            showToast(intl.formatMessage(messages.addMemberError));
           }
-        } else {
-          showToast(intl.formatMessage(messages.addMemberError));
-        }
-      });
+        });
       closeAddLibraryTeamMember();
     },
     [libraryId, libraryTeamMembers],
@@ -90,15 +78,18 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
   const updateMember = useUpdateLibraryTeamMember(libraryId);
   const onChangeRole = useCallback(
     (username: string, role: LibraryRole) => {
-      updateMember.mutateAsync({
-        libraryId,
-        username,
-        accessLevel: role.toString() as LibraryAccessLevel,
-      }).then(() => {
-        showToast(intl.formatMessage(messages.updateMemberSuccess));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.updateMemberError));
-      });
+      updateMember
+        .mutateAsync({
+          libraryId,
+          username,
+          accessLevel: role.toString() as LibraryAccessLevel,
+        })
+        .then(() => {
+          showToast(intl.formatMessage(messages.updateMemberSuccess));
+        })
+        .catch(() => {
+          showToast(intl.formatMessage(messages.updateMemberError));
+        });
     },
     [libraryId, libraryTeamMembers],
   );
@@ -106,14 +97,17 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
   const deleteMember = useDeleteLibraryTeamMember(libraryId);
   const onDeleteRole = useCallback(
     (username: string) => {
-      deleteMember.mutateAsync({
-        libraryId,
-        username,
-      }).then(() => {
-        showToast(intl.formatMessage(messages.deleteMemberSuccess));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.deleteMemberError));
-      });
+      deleteMember
+        .mutateAsync({
+          libraryId,
+          username,
+        })
+        .then(() => {
+          showToast(intl.formatMessage(messages.deleteMemberSuccess));
+        })
+        .catch(() => {
+          showToast(intl.formatMessage(messages.deleteMemberError));
+        });
     },
     [libraryId, libraryTeamMembers],
   );
@@ -123,14 +117,17 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
     (event) => {
       const allowPublicRead = event.target.checked;
       if (libraryData && allowPublicRead !== libraryData.allowPublicRead) {
-        updateLibrary.mutateAsync({
-          id: libraryId,
-          allow_public_read: allowPublicRead,
-        }).then(() => {
-          showToast(intl.formatMessage(messages.updateLibrarySuccess));
-        }).catch(() => {
-          showToast(intl.formatMessage(messages.updateLibraryError));
-        });
+        updateLibrary
+          .mutateAsync({
+            id: libraryId,
+            allow_public_read: allowPublicRead,
+          })
+          .then(() => {
+            showToast(intl.formatMessage(messages.updateLibrarySuccess));
+          })
+          .catch(() => {
+            showToast(intl.formatMessage(messages.updateLibraryError));
+          });
       }
     },
     [libraryData],
@@ -141,31 +138,23 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
   }
 
   const { email: currentUserEmail, administrator: isGlobalStaff } = getAuthenticatedUser();
-  const isLibraryAdmin = libraryTeamMembers ? (
-    libraryTeamMembers.filter(
-      ({ email, accessLevel }) => (
-        accessLevel === LibraryRole.Admin.toString() && email === currentUserEmail
-      ),
-    ).length === 1
-  ) : false;
+  const isLibraryAdmin = libraryTeamMembers
+    ? libraryTeamMembers.filter(
+        ({ email, accessLevel }) => accessLevel === LibraryRole.Admin.toString() && email === currentUserEmail,
+      ).length === 1
+    : false;
   const canChangeRoles = libraryData ? libraryData.canEditLibrary && (isLibraryAdmin || isGlobalStaff) : false;
 
   // Is there only one Admin member in the Team? We'll prevent that user from being demoted/deleted.
-  const singleAdmin = libraryTeamMembers ? (
-    libraryTeamMembers.filter(
-      ({ accessLevel }) => accessLevel === LibraryRole.Admin.toString(),
-    ).length === 1
-  ) : false;
+  const singleAdmin = libraryTeamMembers
+    ? libraryTeamMembers.filter(({ accessLevel }) => accessLevel === LibraryRole.Admin.toString()).length === 1
+    : false;
 
   return (
     <Container size="xl" className="library-team px-4">
       {!isAddLibraryTeamMemberOpen && (
         <div className="d-flex flex-column flex-md-row justify-content-between">
-          <Form.Group
-            size="sm"
-            controlId="form-allow-public-read"
-            className="form-field"
-          >
+          <Form.Group size="sm" controlId="form-allow-public-read" className="form-field">
             <Form.Switch
               id="form-allow-public-read"
               aria-describedby="form-allow-public-read-help"
@@ -184,12 +173,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
           </Form.Group>
           {canChangeRoles && (
             <div className="ml-2 mb-2">
-              <Button
-                size="sm"
-                variant="primary"
-                iconBefore={IconAdd}
-                onClick={openAddLibraryTeamMember}
-              >
+              <Button size="sm" variant="primary" iconBefore={IconAdd} onClick={openAddLibraryTeamMember}>
                 <FormattedMessage {...messages.addTeamMemberButton} />
               </Button>
             </div>
@@ -197,10 +181,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
         </div>
       )}
       {canChangeRoles && isAddLibraryTeamMemberOpen && (
-        <AddLibraryTeamMember
-          onSubmit={onAddMember}
-          onCancel={closeAddLibraryTeamMember}
-        />
+        <AddLibraryTeamMember onSubmit={onAddMember} onCancel={closeAddLibraryTeamMember} />
       )}
       <section className="library-team-section mt-3">
         <div className="members-container">
@@ -218,7 +199,9 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
                 onDeleteRole={onDeleteRole}
               />
             ))
-          ) : <FormattedMessage {...messages.noMembersFound} />}
+          ) : (
+            <FormattedMessage {...messages.noMembersFound} />
+          )}
         </div>
       </section>
       {isError && <AlertError error={error} />}

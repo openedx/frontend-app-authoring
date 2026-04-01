@@ -64,46 +64,42 @@ const CourseStepper = ({
 
   return (
     <div className="course-stepper">
-      {steps.length ? steps.map(({ title, description, titleComponent }, index) => {
-        const {
-          stepIcon,
-          isPercentShow,
-          isErrorMessageShow,
-          isActiveClass,
-          isDoneClass,
-          isErrorClass,
-        } = getStepperSettings(index);
+      {steps.length
+        ? steps.map(({ title, description, titleComponent }, index) => {
+            const { stepIcon, isPercentShow, isErrorMessageShow, isActiveClass, isDoneClass, isErrorClass } =
+              getStepperSettings(index);
 
-        return (
-          <div
-            className={classNames('course-stepper__step', {
-              active: isActiveClass,
-              done: isDoneClass,
-              error: isErrorClass,
-            })}
-            key={title}
-            data-testid="course-stepper__step"
-          >
-            <div className="course-stepper__step-icon">
-              <Icon src={stepIcon} data-testid={`${title}-icon`} />
-            </div>
-            <div className="course-stepper__step-info">
-              <h3 className="h4 title course-stepper__step-title font-weight-600">{titleComponent ?? title}</h3>
-              {isPercentShow && (
-                <p
-                  className="course-stepper__step-percent font-weight-400"
-                  data-testid="course-stepper__step-percent"
-                >
-                  {percent}%
-                </p>
-              )}
-              <p className="course-stepper__step-description font-weight-400">
-                {isErrorMessageShow ? errorMessage : description}
-              </p>
-            </div>
-          </div>
-        );
-      }) : null}
+            return (
+              <div
+                className={classNames('course-stepper__step', {
+                  active: isActiveClass,
+                  done: isDoneClass,
+                  error: isErrorClass,
+                })}
+                key={title}
+                data-testid="course-stepper__step"
+              >
+                <div className="course-stepper__step-icon">
+                  <Icon src={stepIcon} data-testid={`${title}-icon`} />
+                </div>
+                <div className="course-stepper__step-info">
+                  <h3 className="h4 title course-stepper__step-title font-weight-600">{titleComponent ?? title}</h3>
+                  {isPercentShow && (
+                    <p
+                      className="course-stepper__step-percent font-weight-400"
+                      data-testid="course-stepper__step-percent"
+                    >
+                      {percent}%
+                    </p>
+                  )}
+                  <p className="course-stepper__step-description font-weight-400">
+                    {isErrorMessageShow ? errorMessage : description}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        : null}
     </div>
   );
 };

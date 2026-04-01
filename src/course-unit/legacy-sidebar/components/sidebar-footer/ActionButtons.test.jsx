@@ -22,15 +22,16 @@ let axiosMock;
 let queryClient;
 const courseId = '123';
 
-const renderComponent = (props = {}) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <QueryClientProvider client={queryClient}>
-        <ActionButtons {...props} />
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <QueryClientProvider client={queryClient}>
+          <ActionButtons {...props} />
+        </QueryClientProvider>
+      </IntlProvider>
+    </AppProvider>,
+  );
 
 describe('<ActionButtons />', () => {
   beforeEach(async () => {
@@ -45,21 +46,15 @@ describe('<ActionButtons />', () => {
 
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock
-      .onGet(getCourseSectionVerticalApiUrl(courseId))
-      .reply(200, {
-        ...courseSectionVerticalMock,
-        xblock_info: {
-          ...courseSectionVerticalMock.xblock_info,
-          enable_copy_paste_units: true,
-        },
-      });
-    axiosMock
-      .onPost(getClipboardUrl())
-      .reply(200, clipboardUnit);
-    axiosMock
-      .onGet(getClipboardUrl())
-      .reply(200, clipboardUnit);
+    axiosMock.onGet(getCourseSectionVerticalApiUrl(courseId)).reply(200, {
+      ...courseSectionVerticalMock,
+      xblock_info: {
+        ...courseSectionVerticalMock.xblock_info,
+        enable_copy_paste_units: true,
+      },
+    });
+    axiosMock.onPost(getClipboardUrl()).reply(200, clipboardUnit);
+    axiosMock.onGet(getClipboardUrl()).reply(200, clipboardUnit);
 
     queryClient = new QueryClient();
 

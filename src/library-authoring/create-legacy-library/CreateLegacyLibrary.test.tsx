@@ -2,12 +2,7 @@ import React from 'react';
 import type MockAdapter from 'axios-mock-adapter';
 import userEvent from '@testing-library/user-event';
 
-import {
-  initializeMocks,
-  render,
-  screen,
-  waitFor,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, waitFor } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
@@ -34,9 +29,7 @@ jest.mock('@src/generic/data/apiHooks', () => ({
 describe('<CreateLegacyLibrary />', () => {
   beforeEach(() => {
     axiosMock = initializeMocks().axiosMock;
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(undefined))
-      .reply(200, {});
+    axiosMock.onGet(getApiWaffleFlagsUrl(undefined)).reply(200, {});
     Object.defineProperty(window, 'location', {
       value: { assign: jest.fn() },
     });

@@ -8,13 +8,7 @@ interface PasteButtonProps {
 }
 
 const PasteButton = ({ onClick, text, className }: PasteButtonProps) => (
-  <Button
-    className={className}
-    iconBefore={ContentCopyIcon}
-    variant="outline-primary"
-    block
-    onClick={onClick}
-  >
+  <Button className={className} iconBefore={ContentCopyIcon} variant="outline-primary" block onClick={onClick}>
     {text}
   </Button>
 );

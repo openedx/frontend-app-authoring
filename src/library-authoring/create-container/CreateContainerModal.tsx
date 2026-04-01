@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  ActionRow,
-  Form,
-  ModalDialog,
-} from '@openedx/paragon';
+import { ActionRow, Form, ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -19,19 +15,9 @@ import { useLibraryRoutes } from '../routes';
 /** Common modal to create section, subsection or unit in library */
 const CreateContainerModal = () => {
   const intl = useIntl();
-  const {
-    collectionId,
-    libraryId,
-    containerId,
-    createContainerModalType,
-    setCreateContainerModalType,
-  } = useLibraryContext();
-  const {
-    navigateTo,
-    insideCollection,
-    insideSection,
-    insideSubsection,
-  } = useLibraryRoutes();
+  const { collectionId, libraryId, containerId, createContainerModalType, setCreateContainerModalType } =
+    useLibraryContext();
+  const { navigateTo, insideCollection, insideSection, insideSubsection } = useLibraryRoutes();
   const create = useCreateLibraryContainer(libraryId);
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const updateContainerItemsMutation = useAddItemsToContainer(containerId);
@@ -72,41 +58,44 @@ const CreateContainerModal = () => {
   /** Call close for section, subsection and unit as the operation is idempotent */
   const handleClose = () => setCreateContainerModalType(undefined);
 
-  const handleCreate = React.useCallback(async (values) => {
-    try {
-      const canStandAlone = !(insideCollection || insideSection || insideSubsection);
-      const container = await create.mutateAsync({
-        canStandAlone,
-        containerType: createContainerModalType,
-        ...values,
-      });
+  const handleCreate = React.useCallback(
+    async (values) => {
+      try {
+        const canStandAlone = !(insideCollection || insideSection || insideSubsection);
+        const container = await create.mutateAsync({
+          canStandAlone,
+          containerType: createContainerModalType,
+          ...values,
+        });
 
-      // Navigate to the new container
-      navigateTo({ containerId: container.id });
+        // Navigate to the new container
+        navigateTo({ containerId: container.id });
 
-      // Link container to parent after navigating -- we may still show an
-      // error if this linking fails, but at least the user can see that
-      // the container was created.
-      if (collectionId && insideCollection) {
-        await updateCollectionItemsMutation.mutateAsync([container.id]);
-      } else if (containerId && (insideSection || insideSubsection)) {
-        await updateContainerItemsMutation.mutateAsync([container.id]);
+        // Link container to parent after navigating -- we may still show an
+        // error if this linking fails, but at least the user can see that
+        // the container was created.
+        if (collectionId && insideCollection) {
+          await updateCollectionItemsMutation.mutateAsync([container.id]);
+        } else if (containerId && (insideSection || insideSubsection)) {
+          await updateContainerItemsMutation.mutateAsync([container.id]);
+        }
+
+        showToast(labels.successMsg);
+      } catch {
+        showToast(labels.errorMsg);
+      } finally {
+        handleClose();
       }
-
-      showToast(labels.successMsg);
-    } catch {
-      showToast(labels.errorMsg);
-    } finally {
-      handleClose();
-    }
-  }, [
-    createContainerModalType,
-    handleClose,
-    labels,
-    navigateTo,
-    updateCollectionItemsMutation,
-    updateContainerItemsMutation,
-  ]);
+    },
+    [
+      createContainerModalType,
+      handleClose,
+      labels,
+      navigateTo,
+      updateCollectionItemsMutation,
+      updateContainerItemsMutation,
+    ],
+  );
 
   return (
     <ModalDialog
@@ -118,21 +107,16 @@ const CreateContainerModal = () => {
       isOverflowVisible={false}
     >
       <ModalDialog.Header>
-        <ModalDialog.Title>
-          {labels.modalTitle}
-        </ModalDialog.Title>
+        <ModalDialog.Title>{labels.modalTitle}</ModalDialog.Title>
       </ModalDialog.Header>
 
       <Formik
         initialValues={{
           displayName: '',
         }}
-        validationSchema={
-          Yup.object().shape({
-            displayName: Yup.string()
-              .required(labels.validationError),
-          })
-        }
+        validationSchema={Yup.object().shape({
+          displayName: Yup.string().required(labels.validationError),
+        })}
         onSubmit={handleCreate}
       >
         {(formikProps) => (
@@ -140,11 +124,7 @@ const CreateContainerModal = () => {
             <ModalDialog.Body className="mw-sm">
               <FormikControl
                 name="displayName"
-                label={(
-                  <Form.Label className="font-weight-bold h3">
-                    {labels.nameLabel}
-                  </Form.Label>
-                )}
+                label={<Form.Label className="font-weight-bold h3">{labels.nameLabel}</Form.Label>}
                 value={formikProps.values.displayName}
                 placeholder={labels.placeholder}
                 controlClasses="pb-2"

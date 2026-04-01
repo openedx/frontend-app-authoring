@@ -50,56 +50,30 @@ export const libraryAuthoringQueryKeys = {
     'list',
     ...(customParams ? [customParams] : []),
   ],
-  libraryTeam: (libraryId?: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    'list',
-    libraryId,
-  ],
+  libraryTeam: (libraryId?: string) => [...libraryAuthoringQueryKeys.all, 'list', libraryId],
   collection: (libraryId?: string, collectionId?: string) => [
     ...libraryAuthoringQueryKeys.contentLibraryContent(libraryId),
     'collection',
     collectionId,
   ],
-  blockTypes: (libraryId?: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    'blockTypes',
-    libraryId,
-  ],
-  allContainers: (libraryId?: string) => [
-    ...libraryAuthoringQueryKeys.contentLibraryContent(libraryId),
-    'container',
-  ],
+  blockTypes: (libraryId?: string) => [...libraryAuthoringQueryKeys.all, 'blockTypes', libraryId],
+  allContainers: (libraryId?: string) => [...libraryAuthoringQueryKeys.contentLibraryContent(libraryId), 'container'],
   container: (containerId?: string) => {
     const baseKey = containerId
       ? libraryAuthoringQueryKeys.allContainers(getLibraryId(containerId))
       : [...libraryAuthoringQueryKeys.all, 'container'];
-    return [
-      ...baseKey,
-      containerId,
-    ];
+    return [...baseKey, containerId];
   },
-  containerChildren: (containerId: string) => [
-    ...libraryAuthoringQueryKeys.container(containerId),
-    'children',
-  ],
+  containerChildren: (containerId: string) => [...libraryAuthoringQueryKeys.container(containerId), 'children'],
   containerHierarchy: (containerId?: string) => {
     if (containerId) {
-      return [
-        'hierarchy',
-        ...libraryAuthoringQueryKeys.container(containerId),
-      ];
+      return ['hierarchy', ...libraryAuthoringQueryKeys.container(containerId)];
     }
     return ['hierarchy'];
   },
-  courseImports: (libraryId: string) => [
-    ...libraryAuthoringQueryKeys.contentLibrary(libraryId),
-    'courseImports',
-  ],
+  courseImports: (libraryId: string) => [...libraryAuthoringQueryKeys.contentLibrary(libraryId), 'courseImports'],
   allMigrationInfo: () => [...libraryAuthoringQueryKeys.all, 'migrationInfo'],
-  migrationInfo: (sourceKeys: string[]) => [
-    ...libraryAuthoringQueryKeys.allMigrationInfo(),
-    ...sourceKeys,
-  ],
+  migrationInfo: (sourceKeys: string[]) => [...libraryAuthoringQueryKeys.allMigrationInfo(), ...sourceKeys],
   migrationBlocksInfo: (libraryId: string, collectionId?: string, isFailed?: boolean) => [
     ...libraryAuthoringQueryKeys.allMigrationInfo(),
     libraryId,
@@ -115,7 +89,11 @@ export const xblockQueryKeys = {
    */
   xblock: (usageKey?: string) => [...xblockQueryKeys.all, usageKey],
   /** Fields (i.e. the content, display name, etc.) of an XBlock */
-  xblockFields: (usageKey: string, version: VersionSpec = 'draft') => [...xblockQueryKeys.xblock(usageKey), 'fields', version],
+  xblockFields: (usageKey: string, version: VersionSpec = 'draft') => [
+    ...xblockQueryKeys.xblock(usageKey),
+    'fields',
+    version,
+  ],
   /** OLX (XML representation of the fields/content) */
   xblockOLX: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'OLX'],
   /** assets (static files) */
@@ -131,10 +109,7 @@ export const xblockQueryKeys = {
   allComponentMetadata: (query: Query) => query.queryKey[0] === 'xblock' && query.queryKey[2] === 'componentMetadata',
   componentHierarchy: (usageKey?: string) => {
     if (usageKey) {
-      return [
-        'hierarchy',
-        ...xblockQueryKeys.xblock(usageKey),
-      ];
+      return ['hierarchy', ...xblockQueryKeys.xblock(usageKey)];
     }
     return ['hierarchy'];
   },
@@ -163,12 +138,11 @@ export function invalidateComponentData(queryClient: QueryClient, contentLibrary
 /**
  * Hook to fetch a content library by its ID.
  */
-export const useContentLibrary = (libraryId: string | undefined) => (
+export const useContentLibrary = (libraryId: string | undefined) =>
   useQuery({
     queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId),
     queryFn: libraryId ? () => api.getContentLibrary(libraryId!) : skipToken,
-  })
-);
+  });
 
 /**
  * Use this mutation to create a block in a library
@@ -230,10 +204,7 @@ export const useUpdateLibraryMetadata = () => {
       return { previousLibraryData, newLibraryData };
     },
     onError: (_err, data, context) => {
-      queryClient.setQueryData(
-        libraryAuthoringQueryKeys.contentLibrary(data.id),
-        context?.previousLibraryData,
-      );
+      queryClient.setQueryData(libraryAuthoringQueryKeys.contentLibrary(data.id), context?.previousLibraryData);
     },
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.id) });
@@ -245,13 +216,13 @@ export const useUpdateLibraryMetadata = () => {
  * Builds the query to fetch list of V2 Libraries
  */
 export function useContentLibraryV2List(
-  customParams: api.GetLibrariesV2CustomParamsPagination
+  customParams: api.GetLibrariesV2CustomParamsPagination,
 ): UseQueryResult<api.LibrariesV2Response, Error>;
 export function useContentLibraryV2List(
-  customParams: api.GetLibrariesV2CustomParamsNoPagination
+  customParams: api.GetLibrariesV2CustomParamsNoPagination,
 ): UseQueryResult<api.ContentLibrary[], Error>;
 export function useContentLibraryV2List(
-  customParams: api.GetLibrariesV2CustomParams
+  customParams: api.GetLibrariesV2CustomParams,
 ): UseQueryResult<api.LibrariesV2Response | api.ContentLibrary[], Error>;
 export function useContentLibraryV2List(
   customParams: api.GetLibrariesV2CustomParams,
@@ -296,24 +267,22 @@ export const useRevertLibraryChanges = () => {
 /**
  * Hook to fetch a content library's team members
  */
-export const useLibraryTeam = (libraryId?: string) => (
+export const useLibraryTeam = (libraryId?: string) =>
   useQuery({
     queryKey: libraryAuthoringQueryKeys.libraryTeam(libraryId),
     queryFn: () => api.getLibraryTeam(libraryId!),
     enabled: libraryId !== undefined,
-  })
-);
+  });
 
 /**
  * Hook to fetch the list of XBlock types that can be added to this library.
  */
-export const useBlockTypesMetadata = (libraryId?: string) => (
+export const useBlockTypesMetadata = (libraryId?: string) =>
   useQuery({
     queryKey: libraryAuthoringQueryKeys.blockTypes(libraryId),
     queryFn: () => api.getBlockTypes(libraryId!),
     enabled: libraryId !== undefined,
-  })
-);
+  });
 
 /**
  * Hook to add a new member to a content library's team
@@ -371,21 +340,19 @@ export const useLibraryPasteClipboard = () => {
   });
 };
 
-export const useLibraryBlockMetadata = (usageId: string | undefined) => (
+export const useLibraryBlockMetadata = (usageId: string | undefined) =>
   useQuery({
     queryKey: xblockQueryKeys.componentMetadata(usageId!),
     queryFn: () => api.getLibraryBlockMetadata(usageId!),
     enabled: !!usageId,
-  })
-);
+  });
 
-export const useXBlockFields = (usageKey: string, version: VersionSpec = 'draft') => (
+export const useXBlockFields = (usageKey: string, version: VersionSpec = 'draft') =>
   useQuery({
     queryKey: xblockQueryKeys.xblockFields(usageKey, version),
     queryFn: () => api.getXBlockFields(usageKey, version),
     enabled: !!usageKey,
-  })
-);
+  });
 
 export const useUpdateXBlockFields = (usageKey: string) => {
   const contentLibraryId = getLibraryId(usageKey);
@@ -415,10 +382,7 @@ export const useUpdateXBlockFields = (usageKey: string) => {
       return { previousBlockData };
     },
     onError: (_err, _data, context) => {
-      queryClient.setQueryData(
-        xblockQueryKeys.xblockFields(usageKey),
-        context?.previousBlockData,
-      );
+      queryClient.setQueryData(xblockQueryKeys.xblockFields(usageKey), context?.previousBlockData);
     },
     onSettled: () => {
       invalidateComponentData(queryClient, contentLibraryId, usageKey);
@@ -440,13 +404,12 @@ export const useCreateLibraryCollection = (libraryId: string) => {
 };
 
 /** Get the OLX source of a library component */
-export const useXBlockOLX = (usageKey: string, version: VersionSpec) => (
+export const useXBlockOLX = (usageKey: string, version: VersionSpec) =>
   useQuery({
     queryKey: xblockQueryKeys.xblockOLX(usageKey),
     queryFn: () => api.getXBlockOLX(usageKey, version),
     enabled: !!usageKey,
-  })
-);
+  });
 
 /**
  * Update the OLX of a library component (advanced feature)
@@ -496,13 +459,12 @@ export const useLibraryItemHierarchy = (key: string) => {
 };
 
 /** Get the list of assets (static files) attached to a library component */
-export const useXBlockAssets = (usageKey: string) => (
+export const useXBlockAssets = (usageKey: string) =>
   useQuery({
     queryKey: xblockQueryKeys.xblockAssets(usageKey),
     queryFn: () => api.getXBlockAssets(usageKey),
     enabled: !!usageKey,
-  })
-);
+  });
 
 /** Refresh the list of assets (static files) attached to a library component */
 export const useInvalidateXBlockAssets = (usageKey: string) => {
@@ -528,14 +490,11 @@ export const useDeleteXBlockAsset = (usageKey: string) => {
 /**
  * Get the metadata for a collection in a library
  */
-export const useCollection = (libraryId?: string, collectionId?: string) => (
+export const useCollection = (libraryId?: string, collectionId?: string) =>
   useQuery({
     queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),
-    queryFn: (!!libraryId && !!collectionId)
-      ? () => api.getCollectionMetadata(libraryId!, collectionId!)
-      : skipToken,
-  })
-);
+    queryFn: !!libraryId && !!collectionId ? () => api.getCollectionMetadata(libraryId!, collectionId!) : skipToken,
+  });
 
 /**
  * Use this mutation to update the fields of a collection in a library
@@ -543,13 +502,15 @@ export const useCollection = (libraryId?: string, collectionId?: string) => (
 export const useUpdateCollection = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ libraryId, collectionId, data }:{
+    mutationFn: async ({
+      libraryId,
+      collectionId,
+      data,
+    }: {
       libraryId: string;
       collectionId: string;
       data: api.UpdateCollectionComponentsRequest;
-    }) => (
-      api.updateCollectionMetadata(libraryId, collectionId, data)
-    ),
+    }) => api.updateCollectionMetadata(libraryId, collectionId, data),
     onMutate: (variables) => {
       const collectionQueryKey = libraryAuthoringQueryKeys.collection(variables.libraryId, variables.collectionId);
       const previousData = queryClient.getQueryData(collectionQueryKey) as api.CollectionMetadata;
@@ -673,13 +634,12 @@ export const useCreateLibraryContainer = (libraryId: string) => {
 /**
  * Get the metadata for a container in a library
  */
-export const useContainer = (containerId?: string) => (
+export const useContainer = (containerId?: string) =>
   useQuery({
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.container(containerId!),
     queryFn: () => api.getContainerMetadata(containerId!),
-  })
-);
+  });
 
 /**
  * Use this mutation to update the fields of a container in a library.
@@ -708,9 +668,10 @@ export const useUpdateContainer = (containerId: string, affectedParentContainerI
         const childrenQueryKey = libraryAuthoringQueryKeys.containerChildren(affectedParentContainerId);
         childrenPreviousData = queryClient.getQueryData(childrenQueryKey) as api.Container[];
         if (childrenPreviousData) {
-          queryClient.setQueryData(childrenQueryKey, childrenPreviousData.map(item => (
-            item.id === containerId ? { ...item, ...data } : item
-          )));
+          queryClient.setQueryData(
+            childrenQueryKey,
+            childrenPreviousData.map((item) => (item.id === containerId ? { ...item, ...data } : item)),
+          );
         }
       }
 
@@ -770,45 +731,42 @@ export const useRestoreContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = <ChildType extends {
-  id: string;
-  isNew?: boolean;
-} = api.LibraryBlockMetadata | api.Container>(
-    containerId?: string,
-    published: boolean = false,
-  ) => (
-    useQuery({
-      enabled: !!containerId,
-      queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
-      queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published),
-      structuralSharing: (oldData: ChildType[], newData: ChildType[]) => {
+export const useContainerChildren = <
+  ChildType extends {
+    id: string;
+    isNew?: boolean;
+  } = api.LibraryBlockMetadata | api.Container,
+>(
+  containerId?: string,
+  published: boolean = false,
+) =>
+  useQuery({
+    enabled: !!containerId,
+    queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
+    queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published),
+    structuralSharing: (oldData: ChildType[], newData: ChildType[]) => {
       // This just sets `isNew` flag to new children components
-        if (oldData) {
-          const oldDataIds = oldData.map((obj) => obj.id);
-          // eslint-disable-next-line no-param-reassign
-          newData = newData.map((newObj) => {
-            if (!oldDataIds.includes(newObj.id)) {
+      if (oldData) {
+        const oldDataIds = oldData.map((obj) => obj.id);
+        // eslint-disable-next-line no-param-reassign
+        newData = newData.map((newObj) => {
+          if (!oldDataIds.includes(newObj.id)) {
             // Set isNew = true if we have new child on refetch
             // eslint-disable-next-line no-param-reassign
-              newObj.isNew = true;
-            }
-            return newObj;
-          });
-        }
-        return replaceEqualDeep(oldData, newData);
-      },
-    })
-  );
+            newObj.isNew = true;
+          }
+          return newObj;
+        });
+      }
+      return replaceEqualDeep(oldData, newData);
+    },
+  });
 
 /**
  * If you work with `useContentFromSearchIndex`, you can use this
  * function to get the query key, usually to invalidate the query.
  */
-const getSearchQueryKeyFromContent = (
-  contentIds: string[],
-  client?: MeiliSearch,
-  indexName?: string,
-) => (
+const getSearchQueryKeyFromContent = (contentIds: string[], client?: MeiliSearch, indexName?: string) =>
   buildSearchQueryKey({
     client,
     indexName,
@@ -819,8 +777,7 @@ const getSearchQueryKeyFromContent = (
     publishStatusFilter: [],
     tagsFilter: [],
     sort: [],
-  })
-);
+  });
 
 /**
  * Use this mutation to add items to a container
@@ -939,8 +896,8 @@ export const useRemoveContainerChildren = (containerId?: string) => {
 };
 
 /**
-  * Use this mutation to publish changes to a container and any children within it
-  */
+ * Use this mutation to publish changes to a container and any children within it
+ */
 export const usePublishContainer = (containerId: string) => {
   const queryClient = useQueryClient();
   const libraryId = getLibraryId(containerId);
@@ -989,22 +946,20 @@ export const useContentFromSearchIndex = (contentIds: string[]) => {
 /**
  * Returns the course imports which had this library as destination.
  */
-export const useCourseImports = (libraryId: string) => (
+export const useCourseImports = (libraryId: string) =>
   useQuery({
     queryKey: libraryAuthoringQueryKeys.courseImports(libraryId),
     queryFn: () => api.getCourseImports(libraryId),
-  })
-);
+  });
 
 /**
  * Returns the migration info of a given source list
  */
-export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true) => (
+export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true) =>
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationInfo(sourcesKeys),
     queryFn: enabled ? () => api.getMigrationInfo(sourcesKeys) : skipToken,
-  })
-);
+  });
 
 /**
  * Returns the migration blocks info of a given library
@@ -1015,14 +970,10 @@ export const useMigrationBlocksInfo = (
   isFailed?: boolean,
   taskUuid?: string,
   enabled = true,
-) => (
+) =>
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationBlocksInfo(libraryId, collectionId, isFailed),
-    queryFn: enabled ? () => api.getModulestoreMigrationBlocksInfo(
-      libraryId,
-      collectionId,
-      isFailed,
-      taskUuid,
-    ) : skipToken,
-  })
-);
+    queryFn: enabled
+      ? () => api.getModulestoreMigrationBlocksInfo(libraryId, collectionId, isFailed, taskUuid)
+      : skipToken,
+  });

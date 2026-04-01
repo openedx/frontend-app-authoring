@@ -11,7 +11,7 @@ import messages from './messages';
 jest.mock('../../../../../../data/redux', () => ({
   actions: {
     video: {
-      updateField: jest.fn(args => ({ updateField: args })).mockName('actions.video.updateField'),
+      updateField: jest.fn((args) => ({ updateField: args })).mockName('actions.video.updateField'),
     },
   },
 }));

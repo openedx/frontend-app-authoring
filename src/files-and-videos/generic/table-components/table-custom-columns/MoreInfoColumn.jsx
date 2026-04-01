@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { PropTypes } from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Icon,
-  IconButton,
-  ModalPopup,
-  Menu,
-  MenuItem,
-  useToggle,
-} from '@openedx/paragon';
+import { Button, Icon, IconButton, ModalPopup, Menu, MenuItem, useToggle } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
 
 import messages from '../../messages';
@@ -26,33 +18,12 @@ const MoreInfoColumn = ({
   const [isOpen, , close, toggle] = useToggle();
   const [target, setTarget] = useState(null);
 
-  const {
-    externalUrl,
-    locked,
-    portableUrl,
-    id,
-    displayName,
-    downloadLink,
-  } = row.original;
+  const { externalUrl, locked, portableUrl, id, displayName, downloadLink } = row.original;
   return (
     <>
-      <IconButton
-        src={MoreHoriz}
-        iconAs={Icon}
-        onClick={toggle}
-        ref={setTarget}
-        alt="More info icon button"
-      />
-      <ModalPopup
-        placement="bottom-end"
-        positionRef={target}
-        isOpen={isOpen}
-        onClose={close}
-        onEscapeKey={close}
-      >
-        <Menu
-          className="more-info-menu"
-        >
+      <IconButton src={MoreHoriz} iconAs={Icon} onClick={toggle} ref={setTarget} alt="More info icon button" />
+      <ModalPopup placement="bottom-end" positionRef={target} isOpen={isOpen} onClose={close} onEscapeKey={close}>
+        <Menu className="more-info-menu">
           {fileType === 'video' ? (
             <MenuItem
               as={Button}
@@ -89,11 +60,7 @@ const MoreInfoColumn = ({
               >
                 {intl.formatMessage(messages.copyWebUrlTitle)}
               </MenuItem>
-              <MenuItem
-                as={Button}
-                variant="tertiary"
-                onClick={() => handleLock(id, !locked)}
-              >
+              <MenuItem as={Button} variant="tertiary" onClick={() => handleLock(id, !locked)}>
                 {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
               </MenuItem>
             </>
@@ -101,17 +68,11 @@ const MoreInfoColumn = ({
           <MenuItem
             as={Button}
             variant="tertiary"
-            onClick={() => handleBulkDownload(
-              [{ original: { id, displayName, downloadLink } }],
-            )}
+            onClick={() => handleBulkDownload([{ original: { id, displayName, downloadLink } }])}
           >
             {intl.formatMessage(messages.downloadTitle)}
           </MenuItem>
-          <MenuItem
-            as={Button}
-            variant="tertiary"
-            onClick={() => handleOpenFileInfo(row.original)}
-          >
+          <MenuItem as={Button} variant="tertiary" onClick={() => handleOpenFileInfo(row.original)}>
             {intl.formatMessage(messages.infoTitle)}
           </MenuItem>
           <hr className="my-2" />

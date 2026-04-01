@@ -2,14 +2,7 @@ import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { createPortal } from 'react-dom';
 
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragOverlay,
-} from '@dnd-kit/core';
+import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
 import {
   arrayMove,
   SortableContext,
@@ -19,15 +12,7 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { verticalSortableListCollisionDetection } from './verticalSortableList';
 
-const DraggableList = ({
-  itemList,
-  setState,
-  updateOrder,
-  children,
-  renderOverlay,
-  activeId,
-  setActiveId,
-}) => {
+const DraggableList = ({ itemList, setState, updateOrder, children, renderOverlay, activeId, setActiveId }) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -35,26 +20,32 @@ const DraggableList = ({
     }),
   );
 
-  const handleDragEnd = useCallback((event) => {
-    const { active, over } = event;
-    if (active.id !== over.id) {
-      let updatedArray;
-      setState(() => {
-        const [activeElement] = itemList.filter(item => item.id === active.id);
-        const [overElement] = itemList.filter(item => item.id === over.id);
-        const oldIndex = itemList.indexOf(activeElement);
-        const newIndex = itemList.indexOf(overElement);
-        updatedArray = arrayMove(itemList, oldIndex, newIndex);
-        return updatedArray;
-      });
-      updateOrder()(updatedArray);
-    }
-    setActiveId?.(null);
-  }, [updateOrder, setActiveId]);
+  const handleDragEnd = useCallback(
+    (event) => {
+      const { active, over } = event;
+      if (active.id !== over.id) {
+        let updatedArray;
+        setState(() => {
+          const [activeElement] = itemList.filter((item) => item.id === active.id);
+          const [overElement] = itemList.filter((item) => item.id === over.id);
+          const oldIndex = itemList.indexOf(activeElement);
+          const newIndex = itemList.indexOf(overElement);
+          updatedArray = arrayMove(itemList, oldIndex, newIndex);
+          return updatedArray;
+        });
+        updateOrder()(updatedArray);
+      }
+      setActiveId?.(null);
+    },
+    [updateOrder, setActiveId],
+  );
 
-  const handleDragStart = useCallback((event) => {
-    setActiveId?.(event.active.id);
-  }, [setActiveId]);
+  const handleDragStart = useCallback(
+    (event) => {
+      setActiveId?.(event.active.id);
+    },
+    [setActiveId],
+  );
 
   const handleDragCancel = useCallback(() => {
     setActiveId?.(null);
@@ -71,18 +62,10 @@ const DraggableList = ({
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <SortableContext
-        items={itemList}
-        strategy={verticalListSortingStrategy}
-      >
+      <SortableContext items={itemList} strategy={verticalListSortingStrategy}>
         {children}
       </SortableContext>
-      {renderOverlay && createPortal(
-        <DragOverlay>
-          {renderOverlay(activeId)}
-        </DragOverlay>,
-        document.body,
-      )}
+      {renderOverlay && createPortal(<DragOverlay>{renderOverlay(activeId)}</DragOverlay>, document.body)}
     </DndContext>
   );
 };
@@ -94,9 +77,11 @@ DraggableList.defaultProps = {
 };
 
 DraggableList.propTypes = {
-  itemList: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-  })).isRequired,
+  itemList: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
   setState: PropTypes.func.isRequired,
   updateOrder: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,

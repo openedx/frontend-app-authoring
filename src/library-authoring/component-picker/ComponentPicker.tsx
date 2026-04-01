@@ -20,7 +20,7 @@ import { ContentType, allLibraryPageTabs } from '../routes';
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection?: () => void;
-  visibleTabs: ContentType[],
+  visibleTabs: ContentType[];
   FiltersComponent?: React.ComponentType<FiltersProps>;
 }
 
@@ -54,12 +54,12 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
 };
 
 type PickerProps = {
-  showOnlyPublished?: boolean,
-  extraFilter?: string[],
-  visibleTabs?: ContentType[],
-  componentPickerMode?: 'single' | 'multiple',
-  onComponentSelected?: ComponentSelectedEvent,
-  onChangeComponentSelection?: ComponentSelectionChangedEvent,
+  showOnlyPublished?: boolean;
+  extraFilter?: string[];
+  visibleTabs?: ContentType[];
+  componentPickerMode?: 'single' | 'multiple';
+  onComponentSelected?: ComponentSelectedEvent;
+  onChangeComponentSelection?: ComponentSelectionChangedEvent;
   FiltersComponent?: React.ComponentType<FiltersProps>;
 };
 
@@ -87,29 +87,28 @@ export const ComponentPicker = ({
 
   const restrictToLibrary = !!libraryId;
 
-  const componentPickerProviderProps = componentPickerMode === 'single' ? {
-    componentPickerMode,
-    onComponentSelected,
-    restrictToLibrary,
-  } : {
-    componentPickerMode,
-    onChangeComponentSelection,
-    restrictToLibrary,
-  };
+  const componentPickerProviderProps =
+    componentPickerMode === 'single'
+      ? {
+          componentPickerMode,
+          onComponentSelected,
+          restrictToLibrary,
+        }
+      : {
+          componentPickerMode,
+          onChangeComponentSelection,
+          restrictToLibrary,
+        };
 
   return (
     <PublishedFilterContextProvider showOnlyPublished={calcShowOnlyPublished}>
-      <ComponentPickerProvider
-        {...componentPickerProviderProps}
-        extraFilter={extraFilter}
-      >
+      <ComponentPickerProvider {...componentPickerProviderProps} extraFilter={extraFilter}>
         <SidebarProvider>
-          { calcShowOnlyPublished
-            && (
-              <Alert variant="info" className="m-2">
-                <FormattedMessage {...messages.pickerInfoBanner} />
-              </Alert>
-            )}
+          {calcShowOnlyPublished && (
+            <Alert variant="info" className="m-2">
+              <FormattedMessage {...messages.pickerInfoBanner} />
+            </Alert>
+          )}
           <InnerComponentPicker
             returnToLibrarySelection={returnToLibrarySelection}
             visibleTabs={visibleTabs}
@@ -148,9 +147,7 @@ export const LibraryAndComponentPicker: React.FC<PickerProps> = ({
   };
 
   return (
-    <Stepper
-      activeKey={currentStep}
-    >
+    <Stepper activeKey={currentStep}>
       <Stepper.Step eventKey="select-library" title="Select a library">
         <SelectLibrary
           selectedLibrary={selectedLibrary}
@@ -159,10 +156,7 @@ export const LibraryAndComponentPicker: React.FC<PickerProps> = ({
         />
       </Stepper.Step>
       <Stepper.Step eventKey="pick-components" title="Pick some components">
-        <LibraryProvider
-          libraryId={selectedLibrary!}
-          skipUrlUpdate
-        >
+        <LibraryProvider libraryId={selectedLibrary!} skipUrlUpdate>
           <ComponentPicker
             showOnlyPublished={showOnlyPublished}
             returnToLibrarySelection={returnToLibrarySelection}

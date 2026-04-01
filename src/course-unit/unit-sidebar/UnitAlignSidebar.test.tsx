@@ -16,13 +16,14 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ blockId: 'unit-id-1' }),
 }));
 
-const renderComponent = () => render(
-  <IframeProvider>
-    <UnitSidebarProvider readOnly={false}>
-      <UnitAlignSidebar />
-    </UnitSidebarProvider>
-  </IframeProvider>,
-);
+const renderComponent = () =>
+  render(
+    <IframeProvider>
+      <UnitSidebarProvider readOnly={false}>
+        <UnitAlignSidebar />
+      </UnitSidebarProvider>
+    </IframeProvider>,
+  );
 
 describe('OutlineAlignSidebar', () => {
   beforeEach(() => {
@@ -35,8 +36,6 @@ describe('OutlineAlignSidebar', () => {
     const drawer = screen.getByTestId('content-tags-drawer');
 
     expect(drawer).toBeInTheDocument();
-    expect(drawer).toHaveTextContent(
-      'drawer-mock-unit-id-1-component',
-    );
+    expect(drawer).toHaveTextContent('drawer-mock-unit-id-1-component');
   });
 });

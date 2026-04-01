@@ -22,11 +22,7 @@ const CoursePageShape = PropTypes.shape({
 
 export { CoursePageShape };
 
-const PageCard = ({
-  page,
-  settingButton,
-  courseId,
-}) => {
+const PageCard = ({ page, settingButton, courseId }) => {
   const { formatMessage } = useIntl();
   const isDesktop = useIsDesktop();
 
@@ -41,18 +37,18 @@ const PageCard = ({
     >
       <Card.Header
         title={page.name}
-        subtitle={page.enabled && (
-          <Badge variant="success" className="mt-1">
-            {formatMessage(messages.enabled)}
-          </Badge>
-        )}
+        subtitle={
+          page.enabled && (
+            <Badge variant="success" className="mt-1">
+              {formatMessage(messages.enabled)}
+            </Badge>
+          )
+        }
         actions={<div className="mt-1">{SettingButton}</div>}
         size="sm"
       />
       <Card.Body>
-        <Card.Section>
-          {page.description}
-        </Card.Section>
+        <Card.Section>{page.description}</Card.Section>
       </Card.Body>
     </Card>
   );

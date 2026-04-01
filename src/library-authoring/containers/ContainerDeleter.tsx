@@ -15,43 +15,33 @@ import { useContentFromSearchIndex, useDeleteContainer, useRestoreContainer } fr
 import messages from './messages';
 
 type ContainerDeleterProps = {
-  close: () => void,
-  containerId: string,
+  close: () => void;
+  containerId: string;
 };
 
 type ContainerParents = {
-  displayName?: string[],
-  key?: string[],
+  displayName?: string[];
+  key?: string[];
 };
 
 const getOtherParentContainers = (containerParents?: ContainerParents, currentParentId?: string) => {
   const currentParentIndex = containerParents?.key?.findIndex((id) => id === currentParentId);
-  return containerParents?.displayName?.filter(
-    (_, index) => index !== currentParentIndex,
-  );
+  return containerParents?.displayName?.filter((_, index) => index !== currentParentIndex);
 };
 
-const ContainerDeleter = ({
-  close,
-  containerId,
-}: ContainerDeleterProps) => {
+const ContainerDeleter = ({ close, containerId }: ContainerDeleterProps) => {
   const intl = useIntl();
-  const {
-    sidebarItemInfo,
-    closeLibrarySidebar,
-  } = useSidebarContext();
-  const {
-    containerId: parentContainerId,
-  } = useOptionalLibraryContext();
+  const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
+  const { containerId: parentContainerId } = useOptionalLibraryContext();
   const deleteContainerMutation = useDeleteContainer(containerId);
   const restoreContainerMutation = useRestoreContainer(containerId);
   const { showToast } = useContext(ToastContext);
   const { hits, isPending } = useContentFromSearchIndex([containerId]);
   const containerData = (hits as ContainerHit[])?.[0];
-  const {
-    data: dataDownstreamLinks,
-    isPending: isPendingLinks,
-  } = useEntityLinks({ upstreamKey: containerId, contentType: 'containers' });
+  const { data: dataDownstreamLinks, isPending: isPendingLinks } = useEntityLinks({
+    upstreamKey: containerId,
+    contentType: 'containers',
+  });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
   const messageMap = useMemo(() => {
@@ -74,10 +64,9 @@ const ContainerDeleter = ({
         otherParentContainers = getOtherParentContainers(containerData?.sections, parentContainerId);
         otherParentCount = otherParentContainers?.length || 0;
         if (otherParentCount === 1) {
-          parentMessage = intl.formatMessage(
-            messages.deleteSubsectionParentMessage,
-            { parentName: <b>{containerData?.sections?.displayName?.[0]}</b> },
-          );
+          parentMessage = intl.formatMessage(messages.deleteSubsectionParentMessage, {
+            parentName: <b>{containerData?.sections?.displayName?.[0]}</b>,
+          });
         } else if (otherParentCount > 1) {
           parentMessage = intl.formatMessage(messages.deleteSubsectionMultipleParentMessage, {
             parentCount: <b>{otherParentCount}</b>,
@@ -96,10 +85,9 @@ const ContainerDeleter = ({
         otherParentContainers = getOtherParentContainers(containerData?.subsections, parentContainerId);
         otherParentCount = otherParentContainers?.length || 0;
         if (otherParentCount === 1) {
-          parentMessage = intl.formatMessage(
-            messages.deleteUnitParentMessage,
-            { parentName: <b>{otherParentContainers?.[0]}</b> },
-          );
+          parentMessage = intl.formatMessage(messages.deleteUnitParentMessage, {
+            parentName: <b>{otherParentContainers?.[0]}</b>,
+          });
         } else if (otherParentCount > 1) {
           parentMessage = intl.formatMessage(messages.deleteUnitMultipleParentMessage, {
             parentCount: <b>{otherParentCount}</b>,
@@ -152,22 +140,23 @@ const ContainerDeleter = ({
   }, [messageMap]);
 
   const onDelete = useCallback(async () => {
-    await deleteContainerMutation.mutateAsync().then(() => {
-      if (sidebarItemInfo?.id === containerId) {
-        closeLibrarySidebar();
-      }
-      showToast(
-        messageMap.deleteSuccess,
-        {
+    await deleteContainerMutation
+      .mutateAsync()
+      .then(() => {
+        if (sidebarItemInfo?.id === containerId) {
+          closeLibrarySidebar();
+        }
+        showToast(messageMap.deleteSuccess, {
           label: intl.formatMessage(messages.undoDeleteContainerToastAction),
           onClick: restoreComponent,
-        },
-      );
-    }).catch(() => {
-      showToast(messageMap.deleteError);
-    }).finally(() => {
-      close();
-    });
+        });
+      })
+      .catch(() => {
+        showToast(messageMap.deleteError);
+      })
+      .finally(() => {
+        close();
+      });
   }, [sidebarItemInfo, showToast, deleteContainerMutation, messageMap]);
 
   // istanbul ignore if: loading state

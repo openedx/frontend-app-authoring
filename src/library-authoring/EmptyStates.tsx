@@ -1,8 +1,6 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import type { MessageDescriptor } from 'react-intl';
-import {
-  Button, Stack,
-} from '@openedx/paragon';
+import { Button, Stack } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 import { ClearFiltersButton } from '../search-manager';
 import messages from './messages';
@@ -31,11 +29,7 @@ export const NoComponents = ({
   );
 };
 
-export const NoSearchResults = ({
-  infoText = messages.noSearchResults,
-}: {
-  infoText?: MessageDescriptor;
-}) => (
+export const NoSearchResults = ({ infoText = messages.noSearchResults }: { infoText?: MessageDescriptor }) => (
   <Stack direction="horizontal" gap={3} className="my-6 justify-content-center">
     <FormattedMessage {...infoText} />
     <ClearFiltersButton variant="primary" size="md" />

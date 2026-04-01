@@ -18,7 +18,8 @@ const messages = defineMessages({
   },
   detailsCourseTitleOverrideDescription: {
     id: 'course-authoring.certificates.details.course.title.override.description',
-    defaultMessage: 'Specify an alternative to the official course title to display on certificates. Leave blank to use the official course title.',
+    defaultMessage:
+      'Specify an alternative to the official course title to display on certificates. Leave blank to use the official course title.',
     description: 'Helper text under the course title override input field',
   },
   detailsCourseNumber: {
@@ -44,12 +45,15 @@ const messages = defineMessages({
   editCertificateConfirmationTitle: {
     id: 'course-authoring.certificates.details.confirm.edit',
     defaultMessage: 'Edit this certificate?',
-    description: 'Title for the confirmation modal when a user attempts to edit an already activated (live) certificate',
+    description:
+      'Title for the confirmation modal when a user attempts to edit an already activated (live) certificate',
   },
   editCertificateMessage: {
     id: 'course-authoring.certificates.details.confirm.edit.message',
-    defaultMessage: 'This certificate has already been activated and is live. Are you sure you want to continue editing?',
-    description: 'Message warning users about the implications of editing a certificate that is already live, prompting for confirmation',
+    defaultMessage:
+      'This certificate has already been activated and is live. Are you sure you want to continue editing?',
+    description:
+      'Message warning users about the implications of editing a certificate that is already live, prompting for confirmation',
   },
 });
 

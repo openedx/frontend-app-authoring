@@ -56,7 +56,7 @@ describe('InfoSidebar component', () => {
   it('shows the settings link for the course', async () => {
     const user = userEvent.setup();
     renderComponent();
-    await user.click((await screen.findByRole('tab', { name: 'Settings' })));
+    await user.click(await screen.findByRole('tab', { name: 'Settings' }));
     const links = await screen.findAllByRole('link');
     expect(links).toHaveLength(5);
     expect(links[0]).toHaveTextContent('Schedule & details');
@@ -71,9 +71,7 @@ describe('InfoSidebar component', () => {
     const courseSettingsData = {
       mfeProctoredExamSettingsUrl: 'https://example.com/proctored-exam-settings',
     };
-    axiosMock
-      .onGet(getCourseSettingsApiUrl(courseId))
-      .reply(200, courseSettingsData);
+    axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, courseSettingsData);
     renderComponent();
     await user.click(await screen.findByRole('tab', { name: 'Settings' }));
     expect(await screen.findByRole('link', { name: 'Proctored exam settings' })).toBeInTheDocument();
@@ -90,9 +88,7 @@ describe('InfoSidebar component', () => {
       category: 'chapter',
       hasChanges: true,
     };
-    axiosMock
-      .onGet(getXBlockApiUrl(selectedContainerState.currentId))
-      .reply(200, data);
+    axiosMock.onGet(getXBlockApiUrl(selectedContainerState.currentId)).reply(200, data);
     renderComponent();
     expect(await screen.findByText('section name')).toBeInTheDocument();
     expect(await screen.findByText('Section Content Summary')).toBeInTheDocument();
@@ -117,9 +113,7 @@ describe('InfoSidebar component', () => {
       category: 'sequential',
       hasChanges: true,
     };
-    axiosMock
-      .onGet(getXBlockApiUrl(selectedContainerState.currentId))
-      .reply(200, data);
+    axiosMock.onGet(getXBlockApiUrl(selectedContainerState.currentId)).reply(200, data);
     renderComponent();
     expect(await screen.findByText('subsection name')).toBeInTheDocument();
     expect(await screen.findByText('Subsection Content Summary')).toBeInTheDocument();
@@ -145,9 +139,7 @@ describe('InfoSidebar component', () => {
       category: 'vertical',
       hasChanges: true,
     };
-    axiosMock
-      .onGet(getXBlockApiUrl(selectedContainerState.currentId))
-      .reply(200, data);
+    axiosMock.onGet(getXBlockApiUrl(selectedContainerState.currentId)).reply(200, data);
     renderComponent();
     expect(await screen.findByText('unit name')).toBeInTheDocument();
     expect(await screen.findByText('Unit Content Summary')).toBeInTheDocument();

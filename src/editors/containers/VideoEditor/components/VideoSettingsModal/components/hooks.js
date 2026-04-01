@@ -1,18 +1,10 @@
-import {
-  useCallback,
-  useState,
-  useEffect,
-} from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import { StrictDict, keyStore } from '../../../../../utils';
 import { actions, selectors } from '../../../../../data/redux';
 
-import {
-  handleIndexTransformEvent,
-  onValue,
-  onChecked,
-} from './handlers';
+import { handleIndexTransformEvent, onValue, onChecked } from './handlers';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
 // should be re-thought and cleaned up to avoid this pattern.
@@ -41,10 +33,7 @@ export const state = StrictDict(
 
     selectorKeys.licenseType,
     selectorKeys.licenseDetails,
-  ].reduce(
-    (obj, key) => ({ ...obj, [key]: (val) => useState(val) }),
-    {},
-  ),
+  ].reduce((obj, key) => ({ ...obj, [key]: (val) => useState(val) }), {}),
 );
 
 /**
@@ -79,10 +68,8 @@ export const updatedObject = (obj, index, val) => ({ ...obj, [index]: val });
  * @return {func} - callback taking a value and updating the video redux field
  */
 // eslint-disable-next-line react-hooks/rules-of-hooks
-export const updateFormField = ({ dispatch, key }) => useCallback(
-  (val) => dispatch(actions.video.updateField({ [key]: val })),
-  [],
-);
+export const updateFormField = ({ dispatch, key }) =>
+  useCallback((val) => dispatch(actions.video.updateField({ [key]: val })), []);
 
 /**
  * valueHooks({ dispatch, key })
@@ -145,13 +132,7 @@ export const valueHooks = ({ dispatch, key }) => {
  *   onBlur - handle input blur by updating local and redux states
  */
 export const genericWidget = ({ dispatch, key }) => {
-  const {
-    formValue,
-    local,
-    setLocal,
-    setFormValue,
-    setAll,
-  } = module.valueHooks({ dispatch, key });
+  const { formValue, local, setLocal, setFormValue, setAll } = module.valueHooks({ dispatch, key });
   return {
     formValue,
     local,
@@ -251,10 +232,11 @@ export const objectWidget = ({ dispatch, key }) => {
  * @param {func} dispatch - redux dispatch method
  * @return {object} - { <key>: <widgetFn({ key, dispatch })> }
  */
-export const widgetValues = ({ fields, dispatch }) => Object.keys(fields).reduce(
-  (obj, key) => ({
-    ...obj,
-    [key]: fields[key]({ key, dispatch }),
-  }),
-  {},
-);
+export const widgetValues = ({ fields, dispatch }) =>
+  Object.keys(fields).reduce(
+    (obj, key) => ({
+      ...obj,
+      [key]: fields[key]({ key, dispatch }),
+    }),
+    {},
+  );

@@ -11,13 +11,13 @@ jest.mock('../../../../../../data/redux', () => ({
   },
   selectors: {
     app: {
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
+      isLibrary: jest.fn((state) => ({ isLibrary: state })),
     },
     video: {
-      licenseType: jest.fn(state => ({ licenseType: state })),
-      licenseDetails: jest.fn(state => ({ licenseDetails: state })),
-      courseLicenseType: jest.fn(state => ({ courseLicenseType: state })),
-      courseLicenseDetails: jest.fn(state => ({ courseLicenseDetails: state })),
+      licenseType: jest.fn((state) => ({ licenseType: state })),
+      licenseDetails: jest.fn((state) => ({ licenseDetails: state })),
+      courseLicenseType: jest.fn((state) => ({ courseLicenseType: state })),
+      courseLicenseDetails: jest.fn((state) => ({ courseLicenseDetails: state })),
     },
   },
 }));

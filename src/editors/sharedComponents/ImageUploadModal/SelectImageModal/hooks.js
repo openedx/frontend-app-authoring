@@ -37,29 +37,22 @@ export const searchAndSortHooks = () => {
   };
 };
 
-export const filteredList = ({ searchString, imageList }) => (
-  imageList.filter(({ displayName }) => displayName?.toLowerCase().includes(searchString?.toLowerCase()))
-);
+export const filteredList = ({ searchString, imageList }) =>
+  imageList.filter(({ displayName }) => displayName?.toLowerCase().includes(searchString?.toLowerCase()));
 
-export const displayList = ({ sortBy, searchString, images }) => (
-  module.filteredList({
-    searchString,
-    imageList: images,
-  }).sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]));
+export const displayList = ({ sortBy, searchString, images }) =>
+  module
+    .filteredList({
+      searchString,
+      imageList: images,
+    })
+    .sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]);
 
-export const imgListHooks = ({
-  searchSortProps,
-  setSelection,
-  images,
-  imageCount,
-}) => {
+export const imgListHooks = ({ searchSortProps, setSelection, images, imageCount }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const dispatch = useDispatch();
   const [highlighted, setHighlighted] = module.state.highlighted(null);
-  const [
-    showSelectImageError,
-    setShowSelectImageError,
-  ] = module.state.showSelectImageError(false);
+  const [showSelectImageError, setShowSelectImageError] = module.state.showSelectImageError(false);
   const [showSizeError, setShowSizeError] = module.state.showSizeError(false);
   const list = module.displayList({ ...searchSortProps, images });
 
@@ -92,7 +85,7 @@ export const imgListHooks = ({
     selectBtnProps: {
       onClick: () => {
         if (highlighted) {
-          const highlightedImage = images.find(image => image.id === highlighted);
+          const highlightedImage = images.find((image) => image.id === highlighted);
           setSelection(highlightedImage);
         } else {
           setShowSelectImageError(true);
@@ -102,11 +95,7 @@ export const imgListHooks = ({
   };
 };
 
-export const checkValidFileSize = ({
-  selectedFile,
-  clearSelection,
-  onSizeFail,
-}) => {
+export const checkValidFileSize = ({ selectedFile, clearSelection, onSizeFail }) => {
   // Check if the file size is greater than 10 MB, upload size limit
   if (selectedFile.size > 10000000) {
     clearSelection();
@@ -124,13 +113,16 @@ export const fileInputHooks = ({ setSelection, clearSelection, imgList }) => {
   const click = () => ref.current.click();
   const addFile = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile && module.checkValidFileSize({
-      selectedFile,
-      clearSelection,
-      onSizeFail: () => {
-        imgList.inputError.set();
-      },
-    })) {
+    if (
+      selectedFile &&
+      module.checkValidFileSize({
+        selectedFile,
+        clearSelection,
+        onSizeFail: () => {
+          imgList.inputError.set();
+        },
+      })
+    ) {
       dispatch(
         thunkActions.app.uploadAsset({
           file: selectedFile,
@@ -147,12 +139,7 @@ export const fileInputHooks = ({ setSelection, clearSelection, imgList }) => {
   };
 };
 
-export const imgHooks = ({
-  setSelection,
-  clearSelection,
-  images,
-  imageCount,
-}) => {
+export const imgHooks = ({ setSelection, clearSelection, images, imageCount }) => {
   const searchSortProps = module.searchAndSortHooks();
   const imgList = module.imgListHooks({
     setSelection,
@@ -165,12 +152,7 @@ export const imgHooks = ({
     clearSelection,
     imgList,
   });
-  const {
-    galleryError,
-    galleryProps,
-    inputError,
-    selectBtnProps,
-  } = imgList;
+  const { galleryError, galleryProps, inputError, selectBtnProps } = imgList;
 
   return {
     galleryError,

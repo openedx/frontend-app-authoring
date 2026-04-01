@@ -28,17 +28,13 @@ const config = {
           widget: {
             id: 'test-alert',
             type: DIRECT_PLUGIN,
-            RenderWidget: () => (
-              <Alert variant="warning">
-                This is a test alert
-              </Alert>
-            )
-          }
+            RenderWidget: () => <Alert variant="warning">This is a test alert</Alert>,
+          },
         },
-      ]
-    }
+      ],
+    },
   },
-}
+};
 
 export default config;
 ```

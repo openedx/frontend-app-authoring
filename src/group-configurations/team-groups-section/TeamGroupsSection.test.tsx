@@ -4,16 +4,9 @@ import { initializeMocks, render } from '@src/testUtils';
 import { teamGroupsMock } from '@src/group-configurations/__mocks__';
 import TeamGroupsSection from '.';
 
-const renderComponent = (
-  props: Partial<React.ComponentProps<typeof TeamGroupsSection>> = {},
-) => {
+const renderComponent = (props: Partial<React.ComponentProps<typeof TeamGroupsSection>> = {}) => {
   initializeMocks();
-  return render(
-    <TeamGroupsSection
-      availableGroup={teamGroupsMock}
-      {...props}
-    />,
-  );
+  return render(<TeamGroupsSection availableGroup={teamGroupsMock} {...props} />);
 };
 
 describe('<TeamGroupsSection />', () => {
@@ -21,9 +14,7 @@ describe('<TeamGroupsSection />', () => {
     const { getByText, getAllByTestId } = renderComponent();
 
     expect(getByText(teamGroupsMock.name)).toBeInTheDocument();
-    expect(getAllByTestId('content-group-card')).toHaveLength(
-      teamGroupsMock.groups.length,
-    );
+    expect(getAllByTestId('content-group-card')).toHaveLength(teamGroupsMock.groups.length);
   });
 
   it('renders the team group name as a heading', () => {

@@ -8,7 +8,7 @@
       display: none;
     }
 
-    [aria-expanded="true"] .pgn__icon {
+    [aria-expanded='true'] .pgn__icon {
       transform: scale(1, -1);
     }
   }

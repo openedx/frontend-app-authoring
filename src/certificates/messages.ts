@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
   noCertificatesText: {
     id: 'course-authoring.certificates.nocertificate.text',
-    defaultMessage: 'You haven\'t added any certificates to this course yet.',
+    defaultMessage: "You haven't added any certificates to this course yet.",
   },
   setupCertificateBtn: {
     id: 'course-authoring.certificates.setup.certificate.button',

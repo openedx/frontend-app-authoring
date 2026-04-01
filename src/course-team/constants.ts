@@ -4,7 +4,7 @@ export const MODAL_TYPES = {
   warning: 'warning',
 } as const;
 
-export type ModalType = typeof MODAL_TYPES[keyof typeof MODAL_TYPES];
+export type ModalType = (typeof MODAL_TYPES)[keyof typeof MODAL_TYPES];
 
 export const BADGE_STATES = {
   admin: 'primary-700',

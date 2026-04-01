@@ -30,10 +30,13 @@ describe('<LearningOutcomesSection />', () => {
     const addButton = getByRole('button', { name: messages.outcomesAdd.defaultMessage });
     expect(onChangeMock).not.toHaveBeenCalled();
     fireEvent.click(addButton);
-    expect(onChangeMock).toHaveBeenCalledWith([
-      props.learningInfo[0],
-      '', // <-- new
-    ], 'learningInfo');
+    expect(onChangeMock).toHaveBeenCalledWith(
+      [
+        props.learningInfo[0],
+        '', // <-- new
+      ],
+      'learningInfo',
+    );
 
     // FIXME: the following doesn't happen, because this is a controlled component and only changes
     // when the props change (in response to 'onChange'). This needs to be tested at a higher level,

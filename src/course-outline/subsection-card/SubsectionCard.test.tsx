@@ -1,8 +1,6 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import {
-  act, fireEvent, initializeMocks, render, screen, waitFor, within,
-} from '@src/testUtils';
+import { act, fireEvent, initializeMocks, render, screen, waitFor, within } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
@@ -113,33 +111,34 @@ const section: XBlock = {
   },
 } satisfies Partial<XBlock> as XBlock;
 
-const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <SubsectionCard
-    section={section}
-    subsection={subsection}
-    index={1}
-    isSelfPaced={false}
-    getPossibleMoves={jest.fn()}
-    onOrderChange={jest.fn()}
-    onOpenDeleteModal={jest.fn()}
-    isCustomRelativeDatesActive={false}
-    onDuplicateSubmit={jest.fn()}
-    onOpenConfigureModal={jest.fn()}
-    onPasteClick={jest.fn()}
-    isSectionsExpanded={false}
-    {...props}
-  >
-    <span>children</span>
-  </SubsectionCard>,
-  {
-    path: '/course/:courseId',
-    params: { courseId: '5' },
-    routerProps: {
-      initialEntries: [entry],
+const renderComponent = (props?: object, entry = '/course/:courseId') =>
+  render(
+    <SubsectionCard
+      section={section}
+      subsection={subsection}
+      index={1}
+      isSelfPaced={false}
+      getPossibleMoves={jest.fn()}
+      onOrderChange={jest.fn()}
+      onOpenDeleteModal={jest.fn()}
+      isCustomRelativeDatesActive={false}
+      onDuplicateSubmit={jest.fn()}
+      onOpenConfigureModal={jest.fn()}
+      onPasteClick={jest.fn()}
+      isSectionsExpanded={false}
+      {...props}
+    >
+      <span>children</span>
+    </SubsectionCard>,
+    {
+      path: '/course/:courseId',
+      params: { courseId: '5' },
+      routerProps: {
+        initialEntries: [entry],
+      },
+      extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
     },
-    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
-  },
-);
+  );
 
 describe('<SubsectionCard />', () => {
   beforeEach(() => {
@@ -249,12 +248,14 @@ describe('<SubsectionCard />', () => {
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByTestId('subsection-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('subsection-card-header__menu-delete-button')).not.toBeInTheDocument();
-    expect(
-      await within(element).findByTestId('subsection-card-header__menu-move-up-button'),
-    ).toHaveAttribute('aria-disabled', 'true');
-    expect(
-      await within(element).findByTestId('subsection-card-header__menu-move-down-button'),
-    ).toHaveAttribute('aria-disabled', 'true');
+    expect(await within(element).findByTestId('subsection-card-header__menu-move-up-button')).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    expect(await within(element).findByTestId('subsection-card-header__menu-move-down-button')).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 
   it('renders live status', async () => {
@@ -423,26 +424,24 @@ describe('<SubsectionCard />', () => {
       title: '',
     };
 
-    jest
-      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
-      .mockImplementation(() => ({
-        setCurrentPageKey: mockSetCurrentPageKey,
-        currentPageKey: 'info',
-        sidebarPages: {
-          info: testSidebarPage,
-          help: testSidebarPage,
-          add: testSidebarPage,
-        },
-        isOpen: true,
-        open: jest.fn(),
-        toggle: jest.fn(),
-        currentFlow: undefined,
-        startCurrentFlow: jest.fn(),
-        stopCurrentFlow: jest.fn(),
-        openContainerInfoSidebar: jest.fn(),
-        clearSelection: jest.fn(),
-        setSelectedContainerState: mockSetSelectedContainerState,
-      }));
+    jest.spyOn(OutlineSidebarContext, 'useOutlineSidebarContext').mockImplementation(() => ({
+      setCurrentPageKey: mockSetCurrentPageKey,
+      currentPageKey: 'info',
+      sidebarPages: {
+        info: testSidebarPage,
+        help: testSidebarPage,
+        add: testSidebarPage,
+      },
+      isOpen: true,
+      open: jest.fn(),
+      toggle: jest.fn(),
+      currentFlow: undefined,
+      startCurrentFlow: jest.fn(),
+      stopCurrentFlow: jest.fn(),
+      openContainerInfoSidebar: jest.fn(),
+      clearSelection: jest.fn(),
+      setSelectedContainerState: mockSetSelectedContainerState,
+    }));
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',

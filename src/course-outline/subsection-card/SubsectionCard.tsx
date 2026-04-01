@@ -1,6 +1,4 @@
-import {
-  useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
-} from 'react';
+import { useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
@@ -30,23 +28,19 @@ import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SubsectionCardProps {
-  section: XBlock,
-  subsection: XBlock,
-  children: ReactNode
-  isSectionsExpanded: boolean,
-  isSelfPaced: boolean,
-  isCustomRelativeDatesActive: boolean,
-  onOpenDeleteModal: () => void,
-  onDuplicateSubmit: () => void,
-  index: number,
-  getPossibleMoves: (index: number, step: number) => void,
-  onOrderChange: (section: XBlock, moveDetails: any) => void,
-  onOpenConfigureModal: () => void,
-  onPasteClick: (
-    parentLocator: string,
-    subsectionId: string,
-    sectionId: string
-  ) => void,
+  section: XBlock;
+  subsection: XBlock;
+  children: ReactNode;
+  isSectionsExpanded: boolean;
+  isSelfPaced: boolean;
+  isCustomRelativeDatesActive: boolean;
+  onOpenDeleteModal: () => void;
+  onDuplicateSubmit: () => void;
+  index: number;
+  getPossibleMoves: (index: number, step: number) => void;
+  onOrderChange: (section: XBlock, moveDetails: any) => void;
+  onOpenConfigureModal: () => void;
+  onPasteClick: (parentLocator: string, subsectionId: string, sectionId: string) => void;
 }
 
 const SubsectionCard = ({
@@ -73,9 +67,7 @@ const SubsectionCard = ({
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const {
-    courseId, openUnlinkModal, openPublishModal, setCurrentSelection,
-  } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal, openPublishModal, setCurrentSelection } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
@@ -147,10 +139,12 @@ const SubsectionCard = ({
   useEffect(() => {
     // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(subsection.editedOnRaw))) {
-      queryClient.cancelQueries({
-        queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
-      // eslint-disable-next-line no-console
-      }).catch((error) => console.error('Error cancelling query:', error));
+      queryClient
+        .cancelQueries({
+          queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
+          // eslint-disable-next-line no-console
+        })
+        .catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
   }, [initialData, subsection]);
@@ -200,21 +194,12 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={(
-        <UpstreamInfoIcon
-          upstreamInfo={upstreamInfo}
-          size="sm"
-          openSyncModal={openSyncModal}
-        />
-      )}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} size="sm" openSyncModal={openSyncModal} />}
     />
   );
 
   const extraActionsComponent = (
-    <CourseOutlineSubsectionCardExtraActionsSlot
-      subsection={subsection}
-      section={section}
-    />
+    <CourseOutlineSubsectionCardExtraActionsSlot subsection={subsection} section={section} />
   );
 
   useEffect(() => {
@@ -238,22 +223,24 @@ const SubsectionCard = ({
   useEffect(() => {
     // If the locatorId is set/changed, we need to make sure that the subsection is expanded
     // if it contains the result, in order to scroll to it
-    setIsExpanded((prevState) => (containsSearchResult() || prevState));
+    setIsExpanded((prevState) => containsSearchResult() || prevState);
   }, [locatorId, setIsExpanded]);
 
-  const isDraggable = (
-    actions.draggable
-      && (actions.allowMoveUp || actions.allowMoveDown)
-      && !(isHeaderVisible === false)
-      && !section.upstreamInfo?.upstreamRef
-  );
+  const isDraggable =
+    actions.draggable &&
+    (actions.allowMoveUp || actions.allowMoveDown) &&
+    !(isHeaderVisible === false) &&
+    !section.upstreamInfo?.upstreamRef;
 
-  const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
-    if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(subsection.id, subsection.id, section.id);
-      setIsExpanded(true);
-    }
-  }, [openContainerInfoSidebar]);
+  const onClickCard = useCallback(
+    (e: React.MouseEvent, preventNodeEvents: boolean) => {
+      if (!preventNodeEvents || e.target === e.currentTarget) {
+        openContainerInfoSidebar(subsection.id, subsection.id, section.id);
+        setIsExpanded(true);
+      }
+    },
+    [openContainerInfoSidebar],
+  );
 
   return (
     <>
@@ -275,13 +262,10 @@ const SubsectionCard = ({
         onClick={(e) => onClickCard(e, true)}
       >
         <div
-          className={classNames(
-            'subsection-card',
-            {
-              highlight: isScrolledToElement,
-              'outline-card-selected': subsection.id === selectedContainerState?.currentId,
-            },
-          )}
+          className={classNames('subsection-card', {
+            highlight: isScrolledToElement,
+            'outline-card-selected': subsection.id === selectedContainerState?.currentId,
+          })}
           data-testid="subsection-card"
           ref={currentRef}
         >
@@ -295,10 +279,13 @@ const SubsectionCard = ({
                 onClickMenuButton={handleClickMenuButton}
                 onClickPublish={() => openPublishModal({ value: subsection, sectionId: section.id })}
                 onClickDelete={onOpenDeleteModal}
-                onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
-                  value: subsection,
-                  sectionId: section.id,
-                })}
+                onClickUnlink={
+                  /* istanbul ignore next */ () =>
+                    openUnlinkModal({
+                      value: subsection,
+                      sectionId: section.id,
+                    })
+                }
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
@@ -314,11 +301,9 @@ const SubsectionCard = ({
                 extraActionsComponent={extraActionsComponent}
                 readyToSync={upstreamInfo?.readyToSync}
               />
-              {
-                /* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
+              {/* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
                 `SortableItem` component handles that for the whole `SubsectionCard`.
-                This `onClick` allows the user to select the Card by clicking on white areas of this component. */
-              }
+                This `onClick` allows the user to select the Card by clicking on white areas of this component. */}
               <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
                 className="subsection-card__content item-children"
                 data-testid="subsection-card__content"
@@ -335,7 +320,7 @@ const SubsectionCard = ({
               </div>
             </>
           )}
-          {(isExpanded) && (
+          {isExpanded && (
             <div
               data-testid="subsection-card__units"
               className={classNames('subsection-card__units', { 'item-children': isDraggable })}

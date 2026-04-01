@@ -2,11 +2,11 @@
 title: 'SelectableBox'
 type: 'component'
 components:
-- SelectableBox
-- SelectableBoxSet
+  - SelectableBox
+  - SelectableBoxSet
 categories:
-- Forms
-- Content
+  - Forms
+  - Content
 status: 'New'
 designStatus: 'Done'
 devStatus: 'In progress'
@@ -15,11 +15,11 @@ notes: |
 
 A box that has selection states. It can be used as an alternative to a radio button or checkbox set.
 
-The ``SelectableBox`` can contain any kind of content as long as it is not clickable. In other words, there should be no clickable targets distinct from selection.
+The `SelectableBox` can contain any kind of content as long as it is not clickable. In other words, there should be no clickable targets distinct from selection.
 
 ## Basic Usage
 
-As ``Checkbox``
+As `Checkbox`
 
 ```jsx live
 () => {
@@ -27,13 +27,13 @@ As ``Checkbox``
   const allCheeseOptions = ['swiss', 'cheddar', 'pepperjack'];
   const [checkedCheeses, { add, remove, set, clear }] = useCheckboxSetValues(['swiss']);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     e.target.checked ? add(e.target.value) : remove(e.target.value);
   };
-  
+
   const isInvalid = () => checkedCheeses.includes('swiss');
   const isExtraSmall = useMediaQuery({ maxWidth: breakpoints.extraSmall.maxWidth });
-  
+
   return (
     <div className="bg-light-200 p-3">
       <SelectableBox.Set
@@ -65,7 +65,7 @@ As ``Checkbox``
       </SelectableBox.Set>
     </div>
   );
-}
+};
 ```
 
 ## As Radio
@@ -74,7 +74,7 @@ As ``Checkbox``
 () => {
   const type = 'radio';
   const [value, setValue] = useState('green');
-  const handleChange = e => setValue(e.target.value);
+  const handleChange = (e) => setValue(e.target.value);
   const isExtraSmall = useMediaQuery({ maxWidth: breakpoints.extraSmall.maxWidth });
 
   return (
@@ -102,10 +102,12 @@ As ``Checkbox``
       </SelectableBox>
     </SelectableBox.Set>
   );
-}
+};
 ```
+
 ## As Checkbox
-As ``Checkbox`` with ``isIndeterminate``
+
+As `Checkbox` with `isIndeterminate`
 
 ```jsx live
 () => {
@@ -113,12 +115,12 @@ As ``Checkbox`` with ``isIndeterminate``
   const allCheeseOptions = ['swiss', 'cheddar', 'pepperjack'];
   const [checkedCheeses, { add, remove, set, clear }] = useCheckboxSetValues(['swiss']);
 
-  const allChecked = allCheeseOptions.every(value => checkedCheeses.includes(value));
-  const someChecked = allCheeseOptions.some(value => checkedCheeses.includes(value));
+  const allChecked = allCheeseOptions.every((value) => checkedCheeses.includes(value));
+  const someChecked = allCheeseOptions.some((value) => checkedCheeses.includes(value));
   const isIndeterminate = someChecked && !allChecked;
   const isExtraSmall = useMediaQuery({ maxWidth: breakpoints.small.maxWidth });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     e.target.checked ? add(e.target.value) : remove(e.target.value);
   };
 
@@ -163,10 +165,10 @@ As ``Checkbox`` with ``isIndeterminate``
       </SelectableBox.Set>
     </>
   );
-}
+};
 ```
 
-As ``Checkbox`` with ``ariaLabelledby``
+As `Checkbox` with `ariaLabelledby`
 
 ```jsx live
 () => {
@@ -174,12 +176,12 @@ As ``Checkbox`` with ``ariaLabelledby``
   const allCheeseOptions = ['swiss', 'cheddar', 'pepperjack'];
   const [checkedCheeses, { add, remove, set, clear }] = useCheckboxSetValues(['swiss']);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     e.target.checked ? add(e.target.value) : remove(e.target.value);
   };
-  
+
   const isExtraSmall = useMediaQuery({ maxWidth: breakpoints.extraSmall.maxWidth });
-  
+
   return (
     <div className="bg-light-200 p-3">
       <h3 id="cheese selection" className="mb-4">
@@ -194,22 +196,16 @@ As ``Checkbox`` with ``ariaLabelledby``
         ariaLabelledby="cheese selection"
       >
         <SelectableBox value="swiss" inputHidden={false} type={type} aria-label="swiss checkbox">
-          <h3>
-            Swiss
-          </h3>
+          <h3>Swiss</h3>
         </SelectableBox>
         <SelectableBox value="cheddar" inputHidden={false} type={type} aria-label="cheddar checkbox">
-          <h3>
-            Cheddar
-          </h3>
+          <h3>Cheddar</h3>
         </SelectableBox>
         <SelectableBox value="pepperjack" inputHidden={false} type={type} aria-label="pepperjack checkbox">
-          <h3>
-            Pepperjack
-          </h3>
+          <h3>Pepperjack</h3>
         </SelectableBox>
       </SelectableBox.Set>
     </div>
   );
-}
+};
 ```

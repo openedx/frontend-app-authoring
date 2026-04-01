@@ -26,16 +26,12 @@ const config = {
         {
           op: PLUGIN_OPERATIONS.Wrap,
           widgetId: 'default_contents',
-          wrapper: ({component}) =>  (
-            <div style={{border:'thick dashed red'}}>
-            {component}
-            </div>
-          )
+          wrapper: ({ component }) => <div style={{ border: 'thick dashed red' }}>{component}</div>,
         },
-      ]
-    }
+      ],
+    },
   },
-}
+};
 
 export default config;
 ```

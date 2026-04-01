@@ -12,13 +12,10 @@ import { useLicenseDetails } from './hooks';
 
 const LicenseSection = ({ license, onChange }) => {
   const intl = useIntl();
-  const {
-    licenseURL,
-    licenseType,
-    licenseDetails,
-    handleToggleCheckbox,
-    handleChangeLicenseType,
-  } = useLicenseDetails(license, onChange);
+  const { licenseURL, licenseType, licenseDetails, handleToggleCheckbox, handleChangeLicenseType } = useLicenseDetails(
+    license,
+    onChange,
+  );
 
   return (
     <section className="section-container license-section">
@@ -26,21 +23,11 @@ const LicenseSection = ({ license, onChange }) => {
         title={intl.formatMessage(messages.licenseTitle)}
         description={intl.formatMessage(messages.licenseDescription)}
       />
-      <LicenseSelector
-        licenseType={licenseType}
-        onChangeLicenseType={handleChangeLicenseType}
-      />
+      <LicenseSelector licenseType={licenseType} onChangeLicenseType={handleChangeLicenseType} />
       {licenseType === LICENSE_TYPE.creativeCommons && (
-        <LicenseCommonsOptions
-          licenseDetails={licenseDetails}
-          onToggleCheckbox={handleToggleCheckbox}
-        />
+        <LicenseCommonsOptions licenseDetails={licenseDetails} onToggleCheckbox={handleToggleCheckbox} />
       )}
-      <LicenseDisplay
-        licenseURL={licenseURL}
-        licenseType={licenseType}
-        licenseDetails={licenseDetails}
-      />
+      <LicenseDisplay licenseURL={licenseURL} licenseType={licenseType} licenseDetails={licenseDetails} />
     </section>
   );
 };

@@ -2,10 +2,7 @@ import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
 
 import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
-import {
-  initializeMocks, render as baseRender, screen, waitFor,
-  fireEvent,
-} from '@src/testUtils';
+import { initializeMocks, render as baseRender, screen, waitFor, fireEvent } from '@src/testUtils';
 import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
@@ -24,31 +21,32 @@ let mockShowToast;
 const mockNavigate = jest.fn();
 const libraryId = 'lib:Axim:TEST';
 
-const getContainerHitSample = (containerType: ContainerType = ContainerType.Unit) => ({
-  id: `lctorg1democourse-${containerType}-display-name-123`,
-  type: 'library_container',
-  contextKey: libraryId,
-  usageKey: `lct:org1:Demo_Course:${containerType}:${containerType}-display-name-123`,
-  org: 'org1',
-  blockId: `${containerType}-display-name-123`,
-  blockType: containerType,
-  breadcrumbs: [{ displayName: 'Demo Lib' }],
-  displayName: `${containerType} Display Name`,
-  formatted: {
-    displayName: `${containerType} Display Formated Name`,
-    published: {
-      displayName: `Published ${containerType} Display Name`,
+const getContainerHitSample = (containerType: ContainerType = ContainerType.Unit) =>
+  ({
+    id: `lctorg1democourse-${containerType}-display-name-123`,
+    type: 'library_container',
+    contextKey: libraryId,
+    usageKey: `lct:org1:Demo_Course:${containerType}:${containerType}-display-name-123`,
+    org: 'org1',
+    blockId: `${containerType}-display-name-123`,
+    blockType: containerType,
+    breadcrumbs: [{ displayName: 'Demo Lib' }],
+    displayName: `${containerType} Display Name`,
+    formatted: {
+      displayName: `${containerType} Display Formated Name`,
+      published: {
+        displayName: `Published ${containerType} Display Name`,
+      },
     },
-  },
-  created: 1722434322294,
-  modified: 1722434322294,
-  numChildren: 2,
-  published: {
-    numChildren: 1,
-  },
-  tags: {},
-  publishStatus: PublishStatus.Published,
-} as ContainerHit);
+    created: 1722434322294,
+    modified: 1722434322294,
+    numChildren: 2,
+    published: {
+      numChildren: 1,
+    },
+    tags: {},
+    publishStatus: PublishStatus.Published,
+  }) as ContainerHit;
 
 mockContentLibrary.applyMock();
 mockContentSearchConfig.applyMock();
@@ -61,11 +59,9 @@ jest.mock('react-router-dom', () => ({
 const render = (
   ui: React.ReactElement,
   showOnlyPublished: boolean = false,
-  containerContext?: { type: ContainerType, id: string },
+  containerContext?: { type: ContainerType; id: string },
 ) => {
-  const path = containerContext
-    ? `/library/:libraryId/${containerContext.type}/:containerId`
-    : '/library/:libraryId';
+  const path = containerContext ? `/library/:libraryId/${containerContext.type}/:containerId` : '/library/:libraryId';
   const params: Record<string, string> = containerContext
     ? { libraryId, containerId: containerContext.id }
     : { libraryId };
@@ -75,9 +71,7 @@ const render = (
     params,
     extraWrapper: ({ children }) => (
       <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
-        <LibraryProvider libraryId={libraryId}>
-          {children}
-        </LibraryProvider>
+        <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
       </PublishedFilterContextProvider>
     ),
   });
@@ -198,9 +192,13 @@ describe('<ContainerCard />', () => {
     const user = userEvent.setup();
     axiosMock.onDelete(getLibraryContainerApiUrl(getContainerHitSample().usageKey)).reply(200);
     // Mock the search result to get the display name of the container on the Modal
-    mockSearchResult(hydrateSearchResult([{
-      displayName: 'unit Display Name',
-    }]));
+    mockSearchResult(
+      hydrateSearchResult([
+        {
+          displayName: 'unit Display Name',
+        },
+      ]),
+    );
 
     render(<ContainerCard hit={getContainerHitSample()} />);
 
@@ -273,7 +271,9 @@ describe('<ContainerCard />', () => {
     const containerWith5Children = {
       ...getContainerHitSample(),
       content: {
-        childUsageKeys: Array(5).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+        childUsageKeys: Array(5)
+          .fill('')
+          .map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
       },
     } satisfies ContainerHit;
     render(<ContainerCard hit={containerWith5Children} />);
@@ -286,7 +286,9 @@ describe('<ContainerCard />', () => {
     const containerWith6Children = {
       ...getContainerHitSample(),
       content: {
-        childUsageKeys: Array(6).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+        childUsageKeys: Array(6)
+          .fill('')
+          .map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
       },
     } satisfies ContainerHit;
     render(<ContainerCard hit={containerWith6Children} />);
@@ -299,18 +301,19 @@ describe('<ContainerCard />', () => {
     const containerWithPublishedChildren = {
       ...getContainerHitSample(),
       content: {
-        childUsageKeys: Array(6).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+        childUsageKeys: Array(6)
+          .fill('')
+          .map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
       },
       published: {
         content: {
-          childUsageKeys: Array(2).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+          childUsageKeys: Array(2)
+            .fill('')
+            .map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
         },
       },
     } satisfies ContainerHit;
-    render(
-      <ContainerCard hit={containerWithPublishedChildren} />,
-      true,
-    );
+    render(<ContainerCard hit={containerWithPublishedChildren} />, true);
 
     expect((await screen.findAllByTitle(/lb:org1:Demo_course:html:text-*/)).length).toBe(2);
     expect(screen.queryByText('+2')).not.toBeInTheDocument();
@@ -331,26 +334,25 @@ describe('<ContainerCard />', () => {
       displayName: 'Published section Display Name',
       expected: /contains subsection 0, subsection 1\./i,
     },
-  ])('$label', ({
-    containerType,
-    childrenType,
-    displayName,
-    expected,
-  }) => {
+  ])('$label', ({ containerType, childrenType, displayName, expected }) => {
     const containerWithChildren = {
       ...getContainerHitSample(containerType),
       content: {
-        childUsageKeys: Array(6).fill('').map(
-          (_child, idx) => `lct:org1:Demo_Course:${childrenType}:${childrenType}-${idx}`,
-        ),
-        childDisplayNames: Array(6).fill('').map((_child, idx) => `${childrenType} ${idx}`),
+        childUsageKeys: Array(6)
+          .fill('')
+          .map((_child, idx) => `lct:org1:Demo_Course:${childrenType}:${childrenType}-${idx}`),
+        childDisplayNames: Array(6)
+          .fill('')
+          .map((_child, idx) => `${childrenType} ${idx}`),
       },
       published: {
         content: {
-          childUsageKeys: Array(2).fill('').map(
-            (_child, idx) => `lct:org1:Demo_Course:${childrenType}:${childrenType}-${idx}`,
-          ),
-          childDisplayNames: Array(2).fill('').map((_child, idx) => `${childrenType} ${idx}`),
+          childUsageKeys: Array(2)
+            .fill('')
+            .map((_child, idx) => `lct:org1:Demo_Course:${childrenType}:${childrenType}-${idx}`),
+          childDisplayNames: Array(2)
+            .fill('')
+            .map((_child, idx) => `${childrenType} ${idx}`),
         },
       },
     } satisfies ContainerHit;
@@ -376,19 +378,16 @@ describe('<ContainerCard />', () => {
       displayName: 'section Display Formated Name',
       expected: /contains subsection 0, subsection 1\./i,
     },
-  ])('$label', ({
-    containerType,
-    childrenType,
-    displayName,
-    expected,
-  }) => {
+  ])('$label', ({ containerType, childrenType, displayName, expected }) => {
     const containerWithChildren = {
       ...getContainerHitSample(containerType),
       content: {
-        childUsageKeys: Array(2).fill('').map(
-          (_child, idx) => `lct:org1:Demo_Course:${childrenType}:${childrenType}-${idx}`,
-        ),
-        childDisplayNames: Array(2).fill('').map((_child, idx) => `${childrenType} ${idx}`),
+        childUsageKeys: Array(2)
+          .fill('')
+          .map((_child, idx) => `lct:org1:Demo_Course:${childrenType}:${childrenType}-${idx}`),
+        childDisplayNames: Array(2)
+          .fill('')
+          .map((_child, idx) => `${childrenType} ${idx}`),
       },
     } satisfies ContainerHit;
     render(<ContainerCard hit={containerWithChildren} />);
@@ -431,9 +430,7 @@ describe('<ContainerCard />', () => {
       parentId: mockGetContainerMetadata.sectionId,
       expectedRemoveText: 'Remove from section',
     },
-  ])('$label', async ({
-    containerType, parentType, parentId, expectedRemoveText,
-  }) => {
+  ])('$label', async ({ containerType, parentType, parentId, expectedRemoveText }) => {
     const containerHit = getContainerHitSample(containerType);
     axiosMock.onDelete(getLibraryContainerChildrenApiUrl(parentId)).reply(200);
     axiosMock.onGet(getLibraryContainerApiUrl(parentId)).reply(200, {
@@ -441,11 +438,7 @@ describe('<ContainerCard />', () => {
       displayName: 'Parent Container Display Name',
     });
     const user = userEvent.setup();
-    render(
-      <ContainerCard hit={containerHit} />,
-      false,
-      { type: parentType, id: parentId },
-    );
+    render(<ContainerCard hit={containerHit} />, false, { type: parentType, id: parentId });
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
@@ -468,65 +461,61 @@ describe('<ContainerCard />', () => {
     expect(mockShowToast).toHaveBeenCalled();
   });
 
-  test.each([
-    ContainerType.Unit,
-    ContainerType.Subsection,
-    ContainerType.Section,
-  ])('should be able to copy %s', async (containerType) => {
-    const containerHit = getContainerHitSample(containerType);
-    const url = getLibraryContainerCopyApiUrl(containerHit.usageKey);
-    axiosMock.onPost(url).reply(200);
-    const user = userEvent.setup();
-    render(<ContainerCard hit={containerHit} />);
+  test.each([ContainerType.Unit, ContainerType.Subsection, ContainerType.Section])(
+    'should be able to copy %s',
+    async (containerType) => {
+      const containerHit = getContainerHitSample(containerType);
+      const url = getLibraryContainerCopyApiUrl(containerHit.usageKey);
+      axiosMock.onPost(url).reply(200);
+      const user = userEvent.setup();
+      render(<ContainerCard hit={containerHit} />);
 
-    // Open menu
-    expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
-    await user.click(screen.getByTestId('container-card-menu-toggle'));
+      // Open menu
+      expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
+      await user.click(screen.getByTestId('container-card-menu-toggle'));
 
-    // Click on Copy Item
-    const copyMenuItem = screen.getByRole('button', { name: 'Copy to clipboard' });
-    expect(copyMenuItem).toBeInTheDocument();
-    await user.click(copyMenuItem);
+      // Click on Copy Item
+      const copyMenuItem = screen.getByRole('button', { name: 'Copy to clipboard' });
+      expect(copyMenuItem).toBeInTheDocument();
+      await user.click(copyMenuItem);
 
-    await waitFor(() => {
-      expect(axiosMock.history.post.length).toBe(1);
-    });
-    expect(axiosMock.history.post[0].url).toEqual(url);
-  });
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+      });
+      expect(axiosMock.history.post[0].url).toEqual(url);
+    },
+  );
 
-  test.each([
-    ContainerType.Unit,
-    ContainerType.Subsection,
-    ContainerType.Section,
-  ])('should not show delete and add to collection buttons when library is read-only for %s', async (containerType) => {
-    const containerHit = getContainerHitSample(containerType);
-    const user = userEvent.setup();
+  test.each([ContainerType.Unit, ContainerType.Subsection, ContainerType.Section])(
+    'should not show delete and add to collection buttons when library is read-only for %s',
+    async (containerType) => {
+      const containerHit = getContainerHitSample(containerType);
+      const user = userEvent.setup();
 
-    // Render with read-only library
-    baseRender(<ContainerCard hit={containerHit} />, {
-      path: '/library/:libraryId',
-      params: { libraryId: mockContentLibrary.libraryIdReadOnly },
-      extraWrapper: ({ children }) => (
-        <LibraryProvider libraryId={mockContentLibrary.libraryIdReadOnly}>
-          {children}
-        </LibraryProvider>
-      ),
-    });
+      // Render with read-only library
+      baseRender(<ContainerCard hit={containerHit} />, {
+        path: '/library/:libraryId',
+        params: { libraryId: mockContentLibrary.libraryIdReadOnly },
+        extraWrapper: ({ children }) => (
+          <LibraryProvider libraryId={mockContentLibrary.libraryIdReadOnly}>{children}</LibraryProvider>
+        ),
+      });
 
-    // Open menu
-    const menu = await screen.findByTestId('container-card-menu-toggle');
-    expect(menu).toBeInTheDocument();
-    await user.click(menu);
+      // Open menu
+      const menu = await screen.findByTestId('container-card-menu-toggle');
+      expect(menu).toBeInTheDocument();
+      await user.click(menu);
 
-    // Delete and Add to collection buttons should not be visible in readonly mode
-    const deleteOption = screen.queryByRole('button', { name: 'Delete' });
-    expect(deleteOption).not.toBeInTheDocument();
+      // Delete and Add to collection buttons should not be visible in readonly mode
+      const deleteOption = screen.queryByRole('button', { name: 'Delete' });
+      expect(deleteOption).not.toBeInTheDocument();
 
-    const addToCollectionOption = screen.queryByRole('button', { name: 'Add to collection' });
-    expect(addToCollectionOption).not.toBeInTheDocument();
+      const addToCollectionOption = screen.queryByRole('button', { name: 'Add to collection' });
+      expect(addToCollectionOption).not.toBeInTheDocument();
 
-    // Copy button should still be visible
-    const copyOption = screen.queryByRole('button', { name: 'Copy to clipboard' });
-    expect(copyOption).toBeInTheDocument();
-  });
+      // Copy button should still be visible
+      const copyOption = screen.queryByRole('button', { name: 'Copy to clipboard' });
+      expect(copyOption).toBeInTheDocument();
+    },
+  );
 });

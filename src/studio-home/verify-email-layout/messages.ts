@@ -11,7 +11,8 @@ const messages = defineMessages({
   },
   bannerDescription: {
     id: 'course-authoring.studio-home.verify-email.banner.description',
-    defaultMessage: 'Almost there! In order to complete your sign up we need you to verify your email address ({email}). An activation message and next steps should be waiting for you there.',
+    defaultMessage:
+      'Almost there! In order to complete your sign up we need you to verify your email address ({email}). An activation message and next steps should be waiting for you there.',
   },
   sidebarTitle: {
     id: 'course-authoring.studio-home.verify-email.sidebar.title',
@@ -19,7 +20,8 @@ const messages = defineMessages({
   },
   sidebarDescription: {
     id: 'course-authoring.studio-home.verify-email.sidebar.description',
-    defaultMessage: 'Please check your Junk or Spam folders in case our email isn\'t in your INBOX. Still can\'t find the verification email? Request help via the link below.',
+    defaultMessage:
+      "Please check your Junk or Spam folders in case our email isn't in your INBOX. Still can't find the verification email? Request help via the link below.",
   },
 });
 

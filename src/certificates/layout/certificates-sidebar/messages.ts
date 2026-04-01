@@ -8,12 +8,14 @@ const messages = defineMessages({
   },
   workingWithCertificatesFirstParagraph: {
     id: 'course-authoring.certificates.sidebar.working-with-certificates.first-paragraph',
-    defaultMessage: 'Specify a course title to use on the certificate if the course\'s official title is too long to be displayed well.',
+    defaultMessage:
+      "Specify a course title to use on the certificate if the course's official title is too long to be displayed well.",
     description: 'Instructions for specifying a course title for the certificate',
   },
   workingWithCertificatesSecondParagraph: {
     id: 'course-authoring.certificates.sidebar.working-with-certificates.second-paragraph',
-    defaultMessage: 'For verified certificates, specify between one and four signatories and upload the associated images. To edit or delete a certificate before it is activated, hover over the top right corner of the form and select {strongText} or the delete icon.',
+    defaultMessage:
+      'For verified certificates, specify between one and four signatories and upload the associated images. To edit or delete a certificate before it is activated, hover over the top right corner of the form and select {strongText} or the delete icon.',
     description: 'Details on how to specify signatories for verified certificates and edit or delete certificates',
   },
   workingWithCertificatesSecondParagraph_strong: {
@@ -38,7 +40,8 @@ const messages = defineMessages({
   },
   issuingCertificatesFirstParagraph: {
     id: 'course-authoring.certificates.sidebar.issuing-certificates.first-paragraph',
-    defaultMessage: 'To begin issuing course certificates, a course team member with either the Staff or Admin role selects {strongText}. Only course team members with these roles can edit or delete an activated certificate.',
+    defaultMessage:
+      'To begin issuing course certificates, a course team member with either the Staff or Admin role selects {strongText}. Only course team members with these roles can edit or delete an activated certificate.',
     description: 'Instructions for issuing course certificates and the roles required to edit or delete certificates',
   },
   issuingCertificatesFirstParagraph_strong: {
@@ -48,7 +51,8 @@ const messages = defineMessages({
   },
   issuingCertificatesSecondParagraph: {
     id: 'course-authoring.certificates.sidebar.issuing-certificates.second-paragraph',
-    defaultMessage: '{strongText} delete certificates after a course has started; learners who have already earned certificates will no longer be able to access them.',
+    defaultMessage:
+      '{strongText} delete certificates after a course has started; learners who have already earned certificates will no longer be able to access them.',
     description: 'A warning against deleting certificates once a course has started, noting the impact on learners',
   },
   issuingCertificatesSecondParagraph_strong: {

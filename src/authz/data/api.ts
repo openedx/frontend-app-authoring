@@ -23,10 +23,7 @@ export const validateUserPermissions = async (
   // Convert the API response back into the expected answer format
   const result: PermissionValidationAnswer = {};
   data.forEach((item: { action: string; scope?: string; allowed: boolean }) => {
-    const key = Object.keys(query).find(
-      (k) => query[k].action === item.action
-        && query[k].scope === item.scope,
-    );
+    const key = Object.keys(query).find((k) => query[k].action === item.action && query[k].scope === item.scope);
     if (key) {
       result[key] = item.allowed;
     }

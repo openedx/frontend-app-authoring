@@ -13,12 +13,7 @@ import {
   Stepper,
   Form,
 } from '@openedx/paragon';
-import {
-  DeleteOutline,
-  Download,
-  InsertDriveFile,
-  Warning,
-} from '@openedx/paragon/icons';
+import { DeleteOutline, Download, InsertDriveFile, Warning } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 
 import LoadingButton from '../../generic/loading-button';
@@ -29,7 +24,12 @@ import { getTaxonomyExportFile, apiUrls } from '../data/api';
 import { useImportTags, useImportPlan, useImportNewTaxonomy } from '../data/apiHooks';
 import messages from './messages';
 
-const linebreak = <> <br /> <br /> </>;
+const linebreak = (
+  <>
+    {' '}
+    <br /> <br />{' '}
+  </>
+);
 
 const TaxonomyProp = PropTypes.shape({
   id: PropTypes.number.isRequired,
@@ -70,20 +70,19 @@ ExportStep.propTypes = {
   taxonomy: TaxonomyProp.isRequired,
 };
 
-const UploadStep = ({
-  file,
-  setFile,
-  importPlanError,
-  reimport,
-}) => {
+const UploadStep = ({ file, setFile, importPlanError, reimport }) => {
   const intl = useIntl();
 
   const csvTemplateUrl = (
-    <a href={apiUrls.taxonomyTemplate('csv')} download>{intl.formatMessage(messages.csvTemplateTitle)}</a>
+    <a href={apiUrls.taxonomyTemplate('csv')} download>
+      {intl.formatMessage(messages.csvTemplateTitle)}
+    </a>
   );
 
   const jsonTemplateUrl = (
-    <a href={apiUrls.taxonomyTemplate('json')} download>{intl.formatMessage(messages.jsonTemplateTitle)}</a>
+    <a href={apiUrls.taxonomyTemplate('json')} download>
+      {intl.formatMessage(messages.jsonTemplateTitle)}
+    </a>
   );
 
   /** @type {(args: {fileData: FormData}) => void} */
@@ -97,16 +96,20 @@ const UploadStep = ({
   };
 
   return (
-    <Stepper.Step eventKey="upload" title={intl.formatMessage(messages.importWizardStepperUploadStepTitle)} hasError={!!importPlanError}>
+    <Stepper.Step
+      eventKey="upload"
+      title={intl.formatMessage(messages.importWizardStepperUploadStepTitle)}
+      hasError={!!importPlanError}
+    >
       <Stack gap={3} data-testid="upload-step">
-        <p>{
-          reimport
+        <p>
+          {reimport
             ? intl.formatMessage(messages.importWizardStepReuploadBody, { br: linebreak })
-            : intl.formatMessage(
-              messages.importWizardStepUploadBody,
-              { csvTemplateUrl, jsonTemplateUrl, br: linebreak },
-            )
-        }
+            : intl.formatMessage(messages.importWizardStepUploadBody, {
+                csvTemplateUrl,
+                jsonTemplateUrl,
+                br: linebreak,
+              })}
         </p>
         <div>
           {!file ? (
@@ -171,10 +174,7 @@ UploadStep.defaultProps = {
   reimport: false,
 };
 
-const PopulateStep = ({
-  taxonomyPopulateData,
-  setTaxonomyPopulateData,
-}) => {
+const PopulateStep = ({ taxonomyPopulateData, setTaxonomyPopulateData }) => {
   const intl = useIntl();
 
   const handleNameChange = (e) => {
@@ -193,11 +193,11 @@ const PopulateStep = ({
     <Stepper.Step eventKey="populate" title={intl.formatMessage(messages.importWizardStepperPopulateStepTitle)}>
       <Stack gap={3} data-testid="populate-step">
         <Form.Group>
-          <Form.Label>{ intl.formatMessage(messages.importWizardStepPopulateTaxonomyName) }</Form.Label>
+          <Form.Label>{intl.formatMessage(messages.importWizardStepPopulateTaxonomyName)}</Form.Label>
           <Form.Control value={taxonomyPopulateData.taxonomyName} onChange={handleNameChange} />
         </Form.Group>
         <Form.Group>
-          <Form.Label>{ intl.formatMessage(messages.importWizardStepPopulateTaxonomyDesc) }</Form.Label>
+          <Form.Label>{intl.formatMessage(messages.importWizardStepPopulateTaxonomyDesc)}</Form.Label>
           <Form.Control
             as="textarea"
             autoResize
@@ -227,7 +227,11 @@ const PlanStep = ({ importPlan }) => {
         {intl.formatMessage(messages.importWizardStepPlanBody, { br: linebreak, changeCount: importPlan?.length })}
         <ul className="h-200px" style={{ overflow: 'scroll' }}>
           {importPlan?.length ? (
-            importPlan.map((line) => <li key={line} data-testid="plan-action">{line}</li>)
+            importPlan.map((line) => (
+              <li key={line} data-testid="plan-action">
+                {line}
+              </li>
+            ))
           ) : (
             <li>{intl.formatMessage(messages.importWizardStepPlanNoChanges)}</li>
           )}
@@ -251,10 +255,7 @@ const ConfirmStep = ({ importPlan }) => {
   return (
     <Stepper.Step eventKey="confirm" title={intl.formatMessage(messages.importWizardStepperConfirmStepTitle)}>
       <Stack data-testid="confirm-step">
-        {intl.formatMessage(
-          messages.importWizardStepConfirmBody,
-          { br: linebreak, changeCount: importPlan?.length },
-        )}
+        {intl.formatMessage(messages.importWizardStepConfirmBody, { br: linebreak, changeCount: importPlan?.length })}
       </Stack>
     </Stepper.Step>
   );
@@ -278,12 +279,7 @@ DefaultModalHeader.propTypes = {
   children: PropTypes.string.isRequired,
 };
 
-const ImportTagsWizard = ({
-  taxonomy,
-  isOpen,
-  onClose,
-  reimport,
-}) => {
+const ImportTagsWizard = ({ taxonomy, isOpen, onClose, reimport }) => {
   const intl = useIntl();
   const { setToastMessage, setAlertError } = useContext(TaxonomyContext);
 
@@ -337,9 +333,9 @@ const ImportTagsWizard = ({
     planArrayTemp = planArrayTemp.slice(2); // Removes the first two lines
     planArrayTemp = planArrayTemp.slice(0, -1); // Removes the last line
     const planArray = planArrayTemp
-      .filter((line) => !(line.includes('No changes'))) // Removes the "No changes" lines
+      .filter((line) => !line.includes('No changes')) // Removes the "No changes" lines
       .map((line) => line.split(':')[1].trim()); // Get only the action message
-    return /** @type {string[]} */(planArray);
+    return /** @type {string[]} */ (planArray);
   }, [importPlanResult.data]);
 
   const importTagsMutation = useImportTags();
@@ -383,21 +379,9 @@ const ImportTagsWizard = ({
         {intl.formatMessage(messages.importWizardStepExportTitle, { name: taxonomy?.name })}
       </DefaultModalHeader>
     ),
-    upload: (
-      <DefaultModalHeader>
-        {intl.formatMessage(messages.importWizardStepUploadTitle)}
-      </DefaultModalHeader>
-    ),
-    populate: (
-      <DefaultModalHeader>
-        {intl.formatMessage(messages.importWizardStepPopulateTitle)}
-      </DefaultModalHeader>
-    ),
-    plan: (
-      <DefaultModalHeader>
-        {intl.formatMessage(messages.importWizardStepPlanTitle)}
-      </DefaultModalHeader>
-    ),
+    upload: <DefaultModalHeader>{intl.formatMessage(messages.importWizardStepUploadTitle)}</DefaultModalHeader>,
+    populate: <DefaultModalHeader>{intl.formatMessage(messages.importWizardStepPopulateTitle)}</DefaultModalHeader>,
+    plan: <DefaultModalHeader>{intl.formatMessage(messages.importWizardStepPlanTitle)}</DefaultModalHeader>,
     confirm: (
       <ModalDialog.Header className="bg-warning-100">
         <Stack gap={2} direction="horizontal">
@@ -411,18 +395,9 @@ const ImportTagsWizard = ({
   };
 
   return (
-    <Container
-      onClick={(e) => e.stopPropagation() /* This prevents calling onClick handler from the parent */}
-    >
-      <ModalDialog
-        title=""
-        isOpen={isOpen}
-        isBlocking
-        onClose={onClose}
-        size="lg"
-        isOverflowVisible
-      >
-        {(isDialogDisabled) && (
+    <Container onClick={(e) => e.stopPropagation() /* This prevents calling onClick handler from the parent */}>
+      <ModalDialog title="" isOpen={isOpen} isBlocking onClose={onClose} size="lg" isOverflowVisible>
+        {isDialogDisabled && (
           // This div is used to prevent the user from interacting with the dialog while the import is happening
           <div className="position-absolute w-100 h-100 d-block zindex-9" />
         )}
@@ -437,7 +412,7 @@ const ImportTagsWizard = ({
             <UploadStep
               file={file}
               setFile={setFile}
-              importPlanError={/** @type {Error|undefined} */(importPlanResult.error)?.message}
+              importPlanError={/** @type {Error|undefined} */ (importPlanResult.error)?.message}
               reimport={reimport}
             />
             <PopulateStep
@@ -451,7 +426,6 @@ const ImportTagsWizard = ({
           <hr className="mx-4" />
 
           <ModalDialog.Footer>
-
             <Stepper.ActionRow eventKey="export">
               <Button variant="tertiary" onClick={onClose} data-testid="cancel-button">
                 {intl.formatMessage(messages.importWizardButtonCancel)}
@@ -462,32 +436,28 @@ const ImportTagsWizard = ({
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="upload">
-              {
-                reimport
-                && (
-                  <Button variant="outline-primary" onClick={() => setCurrentStep('export')} data-testid="back-button">
-                    {intl.formatMessage(messages.importWizardButtonPrevious)}
-                  </Button>
-                )
-              }
+              {reimport && (
+                <Button variant="outline-primary" onClick={() => setCurrentStep('export')} data-testid="back-button">
+                  {intl.formatMessage(messages.importWizardButtonPrevious)}
+                </Button>
+              )}
               <Stepper.ActionRow.Spacer />
               <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              {
-                importPlanResult.isLoading ? <LoadingSpinner />
-                  : (
-                    <LoadingButton
-                      label={
-                        reimport
-                          ? intl.formatMessage(messages.importWizardButtonImport)
-                          : intl.formatMessage(messages.importWizardButtonContinue)
-                      }
-                      disabled={!file || importPlanResult.isLoading || !!importPlanResult.error}
-                      onClick={reimport ? generatePlan : populateData}
-                    />
-                  )
-              }
+              {importPlanResult.isLoading ? (
+                <LoadingSpinner />
+              ) : (
+                <LoadingButton
+                  label={
+                    reimport
+                      ? intl.formatMessage(messages.importWizardButtonImport)
+                      : intl.formatMessage(messages.importWizardButtonContinue)
+                  }
+                  disabled={!file || importPlanResult.isLoading || !!importPlanResult.error}
+                  onClick={reimport ? generatePlan : populateData}
+                />
+              )}
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="populate">
@@ -504,7 +474,6 @@ const ImportTagsWizard = ({
                 onClick={importNewTaxonomy}
                 data-testid="import-button"
               />
-
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="plan">
@@ -515,20 +484,21 @@ const ImportTagsWizard = ({
               <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <Button disabled={!importPlan?.length} onClick={() => setCurrentStep('confirm')} data-testid="continue-button">
+              <Button
+                disabled={!importPlan?.length}
+                onClick={() => setCurrentStep('confirm')}
+                data-testid="continue-button"
+              >
                 {intl.formatMessage(messages.importWizardButtonContinue)}
               </Button>
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="confirm">
-              {
-                reimport
-                && (
-                  <Button variant="outline-primary" onClick={() => setCurrentStep('plan')} data-testid="back-button">
-                    {intl.formatMessage(messages.importWizardButtonPrevious)}
-                  </Button>
-                )
-              }
+              {reimport && (
+                <Button variant="outline-primary" onClick={() => setCurrentStep('plan')} data-testid="back-button">
+                  {intl.formatMessage(messages.importWizardButtonPrevious)}
+                </Button>
+              )}
               <Stepper.ActionRow.Spacer />
               <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
@@ -538,7 +508,6 @@ const ImportTagsWizard = ({
                 onClick={confirmImportTags}
               />
             </Stepper.ActionRow>
-
           </ModalDialog.Footer>
         </Stepper>
       </ModalDialog>

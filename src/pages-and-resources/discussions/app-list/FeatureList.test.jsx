@@ -1,8 +1,6 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import {
-  render, queryAllByText, queryByText, getByRole,
-} from '@testing-library/react';
+import { render, queryAllByText, queryByText, getByRole } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FeaturesList from './FeaturesList';
 import messages from './messages';
@@ -20,9 +18,7 @@ describe('FeaturesList', () => {
     user = userEvent.setup();
     const wrapper = render(
       <IntlProvider locale="en">
-        <FeaturesList
-          app={app}
-        />
+        <FeaturesList app={app} />
       </IntlProvider>,
     );
     container = wrapper.container;
@@ -43,7 +39,7 @@ describe('FeaturesList', () => {
     await user.click(button);
     app.featureIds.forEach((id) => {
       const featureNodes = queryAllByText(container, messages[`featureName-${id}`].defaultMessage);
-      expect(featureNodes.map(node => node.closest('div'))).toHaveLength(1);
+      expect(featureNodes.map((node) => node.closest('div'))).toHaveLength(1);
     });
   });
 

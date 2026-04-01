@@ -1,11 +1,5 @@
 import { snakeCaseObject } from '@edx/frontend-platform';
-import {
-  render,
-  screen,
-  initializeMocks,
-  fireEvent,
-  waitFor,
-} from '../../../testUtils';
+import { render, screen, initializeMocks, fireEvent, waitFor } from '../../../testUtils';
 import editorCmsApi from '../../data/services/cms/api';
 
 import EditorPage from '../../EditorPage';
@@ -14,9 +8,8 @@ import * as hooks from './hooks';
 // Mock this plugins component:
 jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 // Always mock out the "fetch course images" endpoint:
-jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => ( // eslint-disable-next-line
-  { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }
-));
+jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => // eslint-disable-next-line
+({ data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }));
 // Mock out the 'get ancestors' API:
 
 const isDirtyMock = jest.fn();
@@ -52,12 +45,14 @@ describe('EditorContainer', () => {
     jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
       status: 200,
       data: {
-        ancestors: [{
-          id: 'block-v1:Org+TS100+24+type@vertical+block@parent',
-          display_name: 'You-Knit? The Test Unit',
-          category: 'vertical',
-          has_children: true,
-        }],
+        ancestors: [
+          {
+            id: 'block-v1:Org+TS100+24+type@vertical+block@parent',
+            display_name: 'You-Knit? The Test Unit',
+            category: 'vertical',
+            has_children: true,
+          },
+        ],
       },
     }));
   });
@@ -67,9 +62,9 @@ describe('EditorContainer', () => {
   });
 
   test('it displays a confirmation dialog when closing the editor modal if data is changed', async () => {
-    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
-      { status: 200, data: snakeCaseObject(fieldsHtml) }
-    ));
+    jest
+      .spyOn(editorCmsApi, 'fetchBlockById')
+      .mockImplementationOnce(async () => ({ status: 200, data: snakeCaseObject(fieldsHtml) }));
 
     isDirtyMock.mockReturnValue(true);
     render(<EditorPage {...defaultPropsHtml} />);
@@ -106,9 +101,9 @@ describe('EditorContainer', () => {
   });
 
   test('it does not display any confirmation dialog when closing the editor modal if data is not changed', async () => {
-    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
-      { status: 200, data: snakeCaseObject(fieldsHtml) }
-    ));
+    jest
+      .spyOn(editorCmsApi, 'fetchBlockById')
+      .mockImplementationOnce(async () => ({ status: 200, data: snakeCaseObject(fieldsHtml) }));
 
     isDirtyMock.mockReturnValue(false);
     render(<EditorPage {...defaultPropsHtml} />);
@@ -133,7 +128,12 @@ describe('EditorContainer', () => {
   test('it disables the save button until the fields have been loaded', async () => {
     // Mock that loading the block data has begun but not completed yet:
     let resolver: (result: { data: any }) => void;
-    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(() => new Promise((r) => { resolver = r; }));
+    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(
+      () =>
+        new Promise((r) => {
+          resolver = r;
+        }),
+    );
 
     render(<EditorPage {...defaultPropsHtml} />);
 
@@ -150,9 +150,9 @@ describe('EditorContainer', () => {
   });
 
   test('beforeunload event is triggered on page unload if data is changed', async () => {
-    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
-      { status: 200, data: snakeCaseObject(fieldsHtml) }
-    ));
+    jest
+      .spyOn(editorCmsApi, 'fetchBlockById')
+      .mockImplementationOnce(async () => ({ status: 200, data: snakeCaseObject(fieldsHtml) }));
 
     isDirtyMock.mockReturnValue(true);
     render(<EditorPage {...defaultPropsHtml} />);
@@ -173,6 +173,8 @@ describe('EditorContainer', () => {
   test('should display an alert when is an error saving the changes', async () => {
     jest.spyOn(hooks, 'saveFailed').mockImplementation(() => true);
     render(<EditorPage {...defaultPropsHtml} />);
-    expect(await screen.findByText(/Error: Content save failed. Please check recent changes and try again later./i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Error: Content save failed. Please check recent changes and try again later./i),
+    ).toBeInTheDocument();
   });
 });

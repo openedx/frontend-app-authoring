@@ -19,7 +19,8 @@ const messages = defineMessages({
   },
   courseShortDescriptionHelpText: {
     id: 'course-authoring.schedule-section.introducing.course-short-description.help-text',
-    defaultMessage: 'Appears on the course catalog page when students roll over the course name. Limit to ~150 characters',
+    defaultMessage:
+      'Appears on the course catalog page when students roll over the course name. Limit to ~150 characters',
   },
   courseOverviewLabel: {
     id: 'course-authoring.schedule-section.introducing.course-overview.label',

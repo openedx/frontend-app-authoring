@@ -5,7 +5,7 @@ import { ModalDialog } from '@openedx/paragon';
 import messages from './messages';
 import SearchUI from './SearchUI';
 
-const SearchModal: React.FC<{ courseId?: string, isOpen: boolean, onClose: () => void }> = ({ courseId, ...props }) => {
+const SearchModal: React.FC<{ courseId?: string; isOpen: boolean; onClose: () => void }> = ({ courseId, ...props }) => {
   const intl = useIntl();
   const title = intl.formatMessage(messages.title);
 
@@ -21,11 +21,7 @@ const SearchModal: React.FC<{ courseId?: string, isOpen: boolean, onClose: () =>
       isFullscreenOnMobile
       className="courseware-search-modal"
     >
-      <SearchUI
-        courseId={courseId}
-        closeSearchModal={props.onClose}
-        autoFocus
-      />
+      <SearchUI courseId={courseId} closeSearchModal={props.onClose} autoFocus />
     </ModalDialog>
   );
 };

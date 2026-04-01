@@ -9,16 +9,14 @@ import { flatten } from 'lodash';
  * @returns {void}
  */
 function flattenSubNodes(node, subNodes, options = { recursive: false }) {
-  const values = Array.isArray(node) ? (
-    flatten(node.map(n => Object.values(n)))
-  ) : Object.values(node);
+  const values = Array.isArray(node) ? flatten(node.map((n) => Object.values(n))) : Object.values(node);
 
-  values.forEach(value => {
+  values.forEach((value) => {
     if (Array.isArray(value)) {
       subNodes.push(...value);
 
       if (options.recursive) {
-        value.forEach(nestedNode => {
+        value.forEach((nestedNode) => {
           flattenSubNodes(nestedNode, subNodes, options);
         });
       }
@@ -67,7 +65,7 @@ function flattenSubNodes(node, subNodes, options = { recursive: false }) {
 export function nodeContainsChildTags(node, tagNames, options = { recursive: false }) {
   const subNodes = [];
   flattenSubNodes(node, subNodes, options);
-  const res = subNodes.some(subNode => tagNames.includes(Object.keys(subNode)[0]));
+  const res = subNodes.some((subNode) => tagNames.includes(Object.keys(subNode)[0]));
   return res;
 }
 
@@ -79,7 +77,7 @@ export function tagName(node) {
   if (Array.isArray(node)) {
     throw new TypeError('function tagName does not accept arrays as input');
   }
-  return Object.keys(node).find(key => key.match(/^[a-zA-Z].*/));
+  return Object.keys(node).find((key) => key.match(/^[a-zA-Z].*/));
 }
 
 /**
@@ -94,11 +92,7 @@ export function tagName(node) {
  *
  * @returns {object} - an array of nodes
  */
-export function findNodesAndRemoveTheirParentNodes({
-  arrayOfNodes,
-  nodesToFind,
-  parentsToRemove,
-}) {
+export function findNodesAndRemoveTheirParentNodes({ arrayOfNodes, nodesToFind, parentsToRemove }) {
   const result = [];
   arrayOfNodes.forEach((node) => {
     const containsRelevantSubnodes = nodeContainsChildTags(node, nodesToFind);

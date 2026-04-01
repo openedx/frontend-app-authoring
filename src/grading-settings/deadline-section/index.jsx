@@ -8,9 +8,7 @@ import { DEFAULT_TIME_STAMP, TIME_FORMAT } from '../../constants';
 import { formatTime, timerValidation } from './utils';
 import messages from './messages';
 
-const DeadlineSection = ({
-  setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert,
-}) => {
+const DeadlineSection = ({ setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert }) => {
   const intl = useIntl();
   const timeStampValue = gracePeriod
     ? `${formatTime(gracePeriod.hours)}:${formatTime(gracePeriod.minutes)}`
@@ -29,7 +27,7 @@ const DeadlineSection = ({
     setNewDeadlineValue(value);
 
     if (timerValidation(value, setShowSavePrompt, setIsError)) {
-      setGradingData(prevData => ({
+      setGradingData((prevData) => ({
         ...prevData,
         gracePeriod: {
           hours: +hours,
@@ -41,13 +39,12 @@ const DeadlineSection = ({
   };
 
   return (
-    <Form.Group className={classNames('w-50 form-group-custom', {
-      'form-group-custom_isInvalid': isError,
-    })}
+    <Form.Group
+      className={classNames('w-50 form-group-custom', {
+        'form-group-custom_isInvalid': isError,
+      })}
     >
-      <Form.Label className="grading-label">
-        {intl.formatMessage(messages.gracePeriodOnDeadlineLabel)}
-      </Form.Label>
+      <Form.Label className="grading-label">{intl.formatMessage(messages.gracePeriodOnDeadlineLabel)}</Form.Label>
       <Form.Control
         data-testid="deadline-period-input"
         value={newDeadlineValue}

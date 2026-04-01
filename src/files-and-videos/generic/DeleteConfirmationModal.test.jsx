@@ -1,8 +1,4 @@
-import {
-  render,
-  screen,
-  within,
-} from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import DeleteConfirmationModal from './DeleteConfirmationModal';
@@ -11,16 +7,21 @@ const defaultProps = {
   isDeleteConfirmationOpen: true,
   closeDeleteConfirmation: jest.fn(),
   handleBulkDelete: jest.fn(),
-  selectedRows: [{
-    original: {
-      displayName: 'test',
-      activeStatus: 'active',
-      id: 'file-test',
-      usageLocations: [{
-        displayLocation: 'unit', url: 'unit/url',
-      }],
+  selectedRows: [
+    {
+      original: {
+        displayName: 'test',
+        activeStatus: 'active',
+        id: 'file-test',
+        usageLocations: [
+          {
+            displayLocation: 'unit',
+            url: 'unit/url',
+          },
+        ],
+      },
     },
-  }],
+  ],
   fileType: 'file',
 };
 
@@ -43,10 +44,7 @@ describe('DeleteConfirmationModal', () => {
   it('should show number of files in title', () => {
     const props = {
       ...defaultProps,
-      selectedRows: [
-        ...defaultProps.selectedRows,
-        { original: { displayName: 'test 2', activeStatus: 'inactive' } },
-      ],
+      selectedRows: [...defaultProps.selectedRows, { original: { displayName: 'test 2', activeStatus: 'inactive' } }],
     };
 
     renderComponent(props);

@@ -6,10 +6,7 @@ import SettingsOption from '../../SettingsOption';
 import messages from './messages';
 import { generalFeedbackHooks } from './hooks';
 
-export const GeneralFeedbackCard = ({
-  generalFeedback,
-  updateSettings,
-}) => {
+export const GeneralFeedbackCard = ({ generalFeedback, updateSettings }) => {
   const intl = useIntl();
   const { summary, handleChange } = generalFeedbackHooks(generalFeedback, updateSettings);
   return (

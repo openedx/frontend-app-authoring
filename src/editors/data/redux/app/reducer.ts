@@ -67,8 +67,4 @@ const actions = StrictDict(app.actions);
 
 const { reducer } = app;
 
-export {
-  actions,
-  initialState,
-  reducer,
-};
+export { actions, initialState, reducer };

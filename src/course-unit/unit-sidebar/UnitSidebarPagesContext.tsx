@@ -90,15 +90,13 @@ export const UnitSidebarPagesProvider = ({ children }: UnitSidebarPagesProviderP
     [readOnly, hasComponentSelected],
   );
 
-  return (
-    <UnitSidebarPagesContext.Provider value={sidebarPages}>
-      {children}
-    </UnitSidebarPagesContext.Provider>
-  );
+  return <UnitSidebarPagesContext.Provider value={sidebarPages}>{children}</UnitSidebarPagesContext.Provider>;
 };
 
 export const useUnitSidebarPagesContext = (): UnitSidebarPages => {
   const ctx = useContext(UnitSidebarPagesContext);
-  if (ctx === undefined) { throw new Error('useUnitSidebarPages must be used within an UnitSidebarPagesProvider'); }
+  if (ctx === undefined) {
+    throw new Error('useUnitSidebarPages must be used within an UnitSidebarPagesProvider');
+  }
   return ctx;
 };

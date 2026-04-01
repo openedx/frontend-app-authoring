@@ -3,7 +3,8 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   uploadImageHelpText: {
     id: 'course-authoring.schedule-section.introducing.upload-image.help-text',
-    defaultMessage: 'Please provide a valid path and name to your {identifierFieldText} (Note: only JPEG or PNG format supported)',
+    defaultMessage:
+      'Please provide a valid path and name to your {identifierFieldText} (Note: only JPEG or PNG format supported)',
   },
   uploadImageFilesAndUploads: {
     id: 'course-authoring.schedule-section.introducing.upload-image.file-and-uploads',
@@ -19,7 +20,8 @@ const messages = defineMessages({
   },
   uploadImageEmpty: {
     id: 'course-authoring.schedule-section.introducing.upload-image.empty',
-    defaultMessage: 'Your course currently does not have an image. Please upload one (JPEG or PNG format, and minimum suggested dimensions are 375px wide by 200px tall)',
+    defaultMessage:
+      'Your course currently does not have an image. Please upload one (JPEG or PNG format, and minimum suggested dimensions are 375px wide by 200px tall)',
   },
   uploadImageIconAlt: {
     id: 'course-authoring.schedule-section.introducing.upload-image.icon-alt',

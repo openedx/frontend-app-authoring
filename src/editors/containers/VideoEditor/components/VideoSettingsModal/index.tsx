@@ -23,11 +23,7 @@ interface Props {
   onClose?: (() => void) | null;
 }
 
-const VideoSettingsModal: React.FC<Props> = ({
-  onReturn,
-  isLibrary,
-  onClose,
-}) => (
+const VideoSettingsModal: React.FC<Props> = ({ onReturn, isLibrary, onClose }) => (
   <>
     {!isLibrary && (
       <Button
@@ -47,9 +43,7 @@ const VideoSettingsModal: React.FC<Props> = ({
     <ErrorSummary />
     <ConnectedVideoPreviewWidget />
     <VideoSourceWidget />
-    {!isLibrary && (
-      <SocialShareWidget />
-    )}
+    {!isLibrary && <SocialShareWidget />}
     <ThumbnailWidget />
     <TranscriptWidget />
     <DurationWidget />

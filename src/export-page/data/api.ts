@@ -11,17 +11,15 @@ export interface ExportStatusData {
   exportError?: {
     rawErrorMsg?: string;
     editUnitUrl?: string;
-  }
+  };
 }
 
 export async function startCourseExporting(courseId: string): Promise<ExportStatusData> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(postExportCourseApiUrl(courseId));
+  const { data } = await getAuthenticatedHttpClient().post(postExportCourseApiUrl(courseId));
   return camelCaseObject(data);
 }
 
 export async function getExportStatus(courseId: string): Promise<ExportStatusData> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getExportStatusApiUrl(courseId));
+  const { data } = await getAuthenticatedHttpClient().get(getExportStatusApiUrl(courseId));
   return camelCaseObject(data);
 }

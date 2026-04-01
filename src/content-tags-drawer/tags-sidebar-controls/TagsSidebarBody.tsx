@@ -1,7 +1,5 @@
 import { useState, useMemo } from 'react';
-import {
-  Card, Stack, Button, Collapsible, Icon,
-} from '@openedx/paragon';
+import { Card, Stack, Button, Collapsible, Icon } from '@openedx/paragon';
 import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
@@ -15,7 +13,7 @@ import TagsTree from '../TagsTree';
 import { TagTree } from '../ContentTagsCollapsible';
 
 interface TagsSidebarBodyProps {
-  readOnly: boolean
+  readOnly: boolean;
 }
 
 const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
@@ -24,14 +22,13 @@ const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
   const contentId = useParams().blockId;
   const onClose = () => setShowManageTags(false);
 
-  const {
-    data: contentTaxonomyTagsData,
-    isSuccess: isContentTaxonomyTagsLoaded,
-  } = useContentTaxonomyTagsData(contentId || '');
+  const { data: contentTaxonomyTagsData, isSuccess: isContentTaxonomyTagsLoaded } = useContentTaxonomyTagsData(
+    contentId || '',
+  );
 
   const buildTagsTree = (contentTags: Tag[]) => {
     const resultTree: TagTree = {};
-    contentTags.forEach(item => {
+    contentTags.forEach((item) => {
       let currentLevel = resultTree;
 
       item.lineage.forEach((key) => {
@@ -67,33 +64,29 @@ const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
 
   return (
     <>
-      <Card.Body
-        className="course-unit-sidebar-date tags-sidebar-body pl-2.5"
-      >
+      <Card.Body className="course-unit-sidebar-date tags-sidebar-body pl-2.5">
         <Stack>
-          { isContentTaxonomyTagsLoaded
-            ? (
-              <Stack>
-                {tree.map((taxonomy) => (
-                  <div key={taxonomy.name}>
-                    <Collapsible
-                      className="tags-sidebar-taxonomy border-0 .font-weight-bold"
-                      styling="card"
-                      title={taxonomy.name}
-                      iconWhenClosed={<Icon src={ArrowDropDown} />}
-                      iconWhenOpen={<Icon src={ArrowDropUp} />}
-                    >
-                      <TagsTree tags={taxonomy.tags} parentKey={taxonomy.name} />
-                    </Collapsible>
-                  </div>
-                ))}
-              </Stack>
-            )
-            : (
-              <div className="d-flex justify-content-center">
-                <LoadingSpinner />
-              </div>
-            )}
+          {isContentTaxonomyTagsLoaded ? (
+            <Stack>
+              {tree.map((taxonomy) => (
+                <div key={taxonomy.name}>
+                  <Collapsible
+                    className="tags-sidebar-taxonomy border-0 .font-weight-bold"
+                    styling="card"
+                    title={taxonomy.name}
+                    iconWhenClosed={<Icon src={ArrowDropDown} />}
+                    iconWhenOpen={<Icon src={ArrowDropUp} />}
+                  >
+                    <TagsTree tags={taxonomy.tags} parentKey={taxonomy.name} />
+                  </Collapsible>
+                </div>
+              ))}
+            </Stack>
+          ) : (
+            <div className="d-flex justify-content-center">
+              <LoadingSpinner />
+            </div>
+          )}
 
           <Button
             className="mt-3 ml-2"
@@ -106,11 +99,7 @@ const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
           </Button>
         </Stack>
       </Card.Body>
-      <ContentTagsDrawerSheet
-        id={contentId}
-        onClose={onClose}
-        showSheet={showManageTags}
-      />
+      <ContentTagsDrawerSheet id={contentId} onClose={onClose} showSheet={showManageTags} />
     </>
   );
 };

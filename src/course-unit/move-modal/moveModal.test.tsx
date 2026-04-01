@@ -1,10 +1,5 @@
 import MockAdapter from 'axios-mock-adapter';
-import {
-  render,
-  screen,
-  waitFor,
-  within,
-} from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
@@ -32,21 +27,22 @@ const subsections: IXBlock[] = sections[1]?.childInfo?.children || [];
 const units: IXBlock[] = subsections[1]?.childInfo?.children || [];
 const components: IXBlock[] = units[0]?.childInfo?.children || [];
 
-const renderComponent = (props?: any) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <IframeProvider>
-        <MoveModal
-          isOpenModal
-          closeModal={closeModalMockFn}
-          openModal={openModalMockFn}
-          courseId={courseId}
-          {...props}
-        />
-      </IframeProvider>
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props?: any) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <IframeProvider>
+          <MoveModal
+            isOpenModal
+            closeModal={closeModalMockFn}
+            openModal={openModalMockFn}
+            courseId={courseId}
+            {...props}
+          />
+        </IframeProvider>
+      </IntlProvider>
+    </AppProvider>,
+  );
 
 describe('<MoveModal />', () => {
   beforeEach(async () => {
@@ -62,16 +58,12 @@ describe('<MoveModal />', () => {
     window.scrollTo = scrollToMockFn;
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock
-      .onGet(getCourseOutlineInfoUrl(courseId))
-      .reply(200, courseOutlineInfoMock);
+    axiosMock.onGet(getCourseOutlineInfoUrl(courseId)).reply(200, courseOutlineInfoMock);
     await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
   });
 
   it('renders loading indicator correctly', async () => {
-    axiosMock
-      .onGet(getCourseOutlineInfoUrl(courseId))
-      .reply(200, null);
+    axiosMock.onGet(getCourseOutlineInfoUrl(courseId)).reply(200, null);
     await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
     const { getByText } = renderComponent();
@@ -85,9 +77,7 @@ describe('<MoveModal />', () => {
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
     expect(getByText(messages.moveModalTitle.defaultMessage.replace(' {displayName}', ''))).toBeInTheDocument();
-    expect(
-      within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage),
-    ).toBeInTheDocument();
+    expect(within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage)).toBeInTheDocument();
     expect(
       within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSections.defaultMessage),
     ).toBeInTheDocument();
@@ -104,9 +94,7 @@ describe('<MoveModal />', () => {
     const breadcrumbs: HTMLElement = screen.getByLabelText('Course Outline breadcrumb');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
-    expect(
-      within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage),
-    ).toBeInTheDocument();
+    expect(within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage)).toBeInTheDocument();
     expect(
       within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSections.defaultMessage),
     ).toBeInTheDocument();
@@ -162,9 +150,9 @@ describe('<MoveModal />', () => {
         within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSubsections.defaultMessage),
       ).toBeInTheDocument();
       expect(within(breadcrumbs).getByText(sections[1].displayName)).toBeInTheDocument();
-      subsections.forEach((subsection) => (
-        expect(getByRole('button', { name: new RegExp(subsection.displayName, 'i') })).toBeInTheDocument()
-      ));
+      subsections.forEach((subsection) =>
+        expect(getByRole('button', { name: new RegExp(subsection.displayName, 'i') })).toBeInTheDocument(),
+      );
     });
   });
 
@@ -183,11 +171,13 @@ describe('<MoveModal />', () => {
     });
 
     await waitFor(() => {
-      expect(getByText(
-        messages.moveModalEmptyCategoryText.defaultMessage
-          .replace('{category}', 'unit')
-          .replace('{categoryText}', 'components'),
-      )).toBeInTheDocument();
+      expect(
+        getByText(
+          messages.moveModalEmptyCategoryText.defaultMessage
+            .replace('{category}', 'unit')
+            .replace('{categoryText}', 'components'),
+        ),
+      ).toBeInTheDocument();
     });
   });
 });

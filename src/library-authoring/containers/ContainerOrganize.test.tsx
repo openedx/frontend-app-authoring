@@ -1,12 +1,7 @@
 import { setConfig, getConfig } from '@edx/frontend-platform';
 
 import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
-import {
-  initializeMocks,
-  render as baseRender,
-  screen,
-  waitFor,
-} from '../../testUtils';
+import { initializeMocks, render as baseRender, screen, waitFor } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
@@ -29,20 +24,21 @@ const render = ({
 }: {
   libraryId?: string;
   containerId?: string;
-}) => baseRender(<ContainerOrganize />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: containerId,
-          type: SidebarBodyItemId.ComponentInfo,
-        }}
-      >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+}) =>
+  baseRender(<ContainerOrganize />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: containerId,
+            type: SidebarBodyItemId.ComponentInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<ContainerOrganize />', () => {
   beforeEach(() => {
@@ -58,19 +54,16 @@ describe('<ContainerOrganize />', () => {
       libraryId: mockContentLibrary.libraryIdReadOnly,
       expected: 'read-only',
     },
-  ])(
-    'should render the tagging info as $expected',
-    async ({ libraryId, expected }) => {
-      setConfig({
-        ...getConfig(),
-        ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-      });
-      render({ libraryId });
-      await waitFor(() => {
-        expect(screen.getByText(`Mocked ${expected} ContentTagsDrawer`)).toBeInTheDocument();
-      });
-    },
-  );
+  ])('should render the tagging info as $expected', async ({ libraryId, expected }) => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    render({ libraryId });
+    await waitFor(() => {
+      expect(screen.getByText(`Mocked ${expected} ContentTagsDrawer`)).toBeInTheDocument();
+    });
+  });
 
   it('should render tag count in tagging info', async () => {
     setConfig({

@@ -6,9 +6,7 @@ import { RequestStatus } from '../../data/constants';
 import { uploadAssets } from './data/api';
 import messages from './messages';
 
-const useModalDropzone = ({
-  onChange, onCancel, onClose, fileTypes, onSavingStatus, onSelectFile,
-}) => {
+const useModalDropzone = ({ onChange, onCancel, onClose, fileTypes, onSavingStatus, onSelectFile }) => {
   const { courseId } = useParams();
   const intl = useIntl();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -21,10 +19,10 @@ const useModalDropzone = ({
   const imageValidator = (file) => {
     const fileType = file.name.split('.').pop().toLowerCase();
 
-    const extensionsList = fileTypes.map(type => `.${type.toLowerCase()}`).join(', ');
-    const typesList = fileTypes.map(type => type.toUpperCase()).join(', ');
+    const extensionsList = fileTypes.map((type) => `.${type.toLowerCase()}`).join(', ');
+    const typesList = fileTypes.map((type) => type.toUpperCase()).join(', ');
 
-    if (!fileTypes.map(type => type.toLowerCase()).includes(fileType)) {
+    if (!fileTypes.map((type) => type.toLowerCase()).includes(fileType)) {
       return intl.formatMessage(messages.uploadImageValidationText, {
         types: typesList,
         extensions: extensionsList,
@@ -47,8 +45,8 @@ const useModalDropzone = ({
    *    "* /*": [".pdf", ".docx"]
    *  }
    */
-  const constructAcceptObject = (types) => types
-    .reduce((acc, type) => {
+  const constructAcceptObject = (types) =>
+    types.reduce((acc, type) => {
       // eslint-disable-next-line no-nested-ternary
       const mimeType = type === 'pdf' ? 'application/pdf' : VALID_IMAGE_TYPES.includes(type) ? 'image/*' : '*/*';
       if (!acc[mimeType]) {
@@ -88,7 +86,9 @@ const useModalDropzone = ({
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) { return; }
+    if (!selectedFile) {
+      return;
+    }
 
     onSavingStatus(RequestStatus.PENDING);
 

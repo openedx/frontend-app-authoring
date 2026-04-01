@@ -9,7 +9,7 @@ const messages = defineMessages({
   a11yBodyPageHeader: {
     id: 'a11yBodyPageHeader',
     defaultMessage: 'Individualized Accessibility Process for Course Creators',
-    description: 'Heading for studio\'s accessibility policy page.',
+    description: "Heading for studio's accessibility policy page.",
   },
   a11yBodyIntroGraph: {
     id: 'a11yBodyIntroGraph',
@@ -18,7 +18,7 @@ const messages = defineMessages({
       disabilities. To that end, we have adopted a {communityAccessibilityLink} and this process to allow course team creators
       and authors to request assistance if they are unable to develop and post content on our platform via Studio because of their
       disabilities.`,
-    description: 'Introductory paragraph outlining why we care about accessibility, and what we\'re doing about it.',
+    description: "Introductory paragraph outlining why we care about accessibility, and what we're doing about it.",
   },
   a11yBodyStepsHeader: {
     id: 'a11yBodyStepsHeader',
@@ -38,16 +38,19 @@ const messages = defineMessages({
     defaultMessage: `Thereafter, we will communicate with you on a weekly basis regarding our evaluation, decision, and progress in
       implementing the accessibility solution. We will notify you when implementation of your accessibility solution is complete and
       will follow-up with you as may be necessary to see if the solution was effective.`,
-    description: 'Paragraph outlining how we will follow-up with you during and after implementing an accessibility solution.',
+    description:
+      'Paragraph outlining how we will follow-up with you during and after implementing an accessibility solution.',
   },
   a11yBodyOngoingSupport: {
     id: 'a11yBodyOngoingSupport',
-    defaultMessage: 'EdX will provide ongoing technical support as needed and will address any additional issues that arise after the initial course creation.',
+    defaultMessage:
+      'EdX will provide ongoing technical support as needed and will address any additional issues that arise after the initial course creation.',
     description: 'A statement of ongoing support.',
   },
   a11yBodyA11yFeedback: {
     id: 'a11yBodyA11yFeedback',
-    defaultMessage: 'Please direct any questions or suggestions on how to improve the accessibility of Studio to {emailElement} or use the form below. We welcome your feedback.',
+    defaultMessage:
+      'Please direct any questions or suggestions on how to improve the accessibility of Studio to {emailElement} or use the form below. We welcome your feedback.',
     description: 'Contact information heading for those with accessibility issues or suggestions.',
   },
   a11yBodyEmailHeading: {
@@ -72,12 +75,14 @@ const messages = defineMessages({
   },
   a11yBodyTimeConstraints: {
     id: 'a11yBodyTimeConstraints',
-    defaultMessage: 'how soon you need access and for how long (e.g., a planned course start date or in connection with a course-related deadline such as a final essay).',
+    defaultMessage:
+      'how soon you need access and for how long (e.g., a planned course start date or in connection with a course-related deadline such as a final essay).',
     description: 'Time contstraint information.',
   },
   a11yBodyReceipt: {
     id: 'a11yBodyReceipt',
-    defaultMessage: 'The edX Support Team will respond to confirm receipt and forward your request to the edX Partner Manager for your institution and the edX Website Accessibility Specialist.',
+    defaultMessage:
+      'The edX Support Team will respond to confirm receipt and forward your request to the edX Partner Manager for your institution and the edX Website Accessibility Specialist.',
     description: 'Paragraph outlining what steps edX will take immediately.',
   },
   a11yBodyExtraInfo: {
@@ -88,17 +93,20 @@ const messages = defineMessages({
   },
   a11yBodyFixesListHeader: {
     id: 'a11yBodyFixesListHeader',
-    defaultMessage: 'EdX will assist you promptly and thoroughly so that you are able to create content on the CMS within your time constraints.  Such efforts may include, but are not limited to:',
+    defaultMessage:
+      'EdX will assist you promptly and thoroughly so that you are able to create content on the CMS within your time constraints.  Such efforts may include, but are not limited to:',
     description: 'Heading for list of ways we might be able to assist.',
   },
   a11yBodyThirdParty: {
     id: 'a11yBodyThirdParty',
-    defaultMessage: 'Purchasing a third-party tool or software for use on an individual basis to assist your use of Studio;',
+    defaultMessage:
+      'Purchasing a third-party tool or software for use on an individual basis to assist your use of Studio;',
     description: 'Buy third-party software.',
   },
   a11yBodyContractor: {
     id: 'a11yBodyContractor',
-    defaultMessage: 'Engaging a trained independent contractor to provide real-time visual, verbal and physical assistance; or',
+    defaultMessage:
+      'Engaging a trained independent contractor to provide real-time visual, verbal and physical assistance; or',
     description: 'Hire a contractor.',
   },
   a11yBodyCodeFix: {

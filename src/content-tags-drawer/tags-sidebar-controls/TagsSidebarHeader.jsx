@@ -12,21 +12,12 @@ const TagsSidebarHeader = () => {
   const intl = useIntl();
   const contentId = useParams().blockId;
 
-  const {
-    data: contentTagsCount,
-    isSuccess: isContentTagsCountLoaded,
-  } = useContentTagsCount(contentId);
+  const { data: contentTagsCount, isSuccess: isContentTagsCountLoaded } = useContentTagsCount(contentId);
 
   return (
-    <Stack
-      className="course-unit-sidebar-header justify-content-between pb-1"
-      direction="horizontal"
-    >
-      <h3 className="course-unit-sidebar-header-title m-0">
-        {intl.formatMessage(messages.tagsSidebarTitle)}
-      </h3>
-      { isContentTagsCountLoaded
-        && <TagCount count={contentTagsCount} />}
+    <Stack className="course-unit-sidebar-header justify-content-between pb-1" direction="horizontal">
+      <h3 className="course-unit-sidebar-header-title m-0">{intl.formatMessage(messages.tagsSidebarTitle)}</h3>
+      {isContentTagsCountLoaded && <TagCount count={contentTagsCount} />}
     </Stack>
   );
 };

@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import { getConfig } from '@edx/frontend-platform';
@@ -114,35 +108,34 @@ export const CourseExportProvider = ({ children }: CourseExportProviderProps) =>
     setSuccessDate(momentDate);
   };
 
-  const context = useMemo<CourseExportContextData>(() => ({
-    currentStage,
-    exportTriggered,
-    fetchExportErrorMessage,
-    errorUnitUrl,
-    anyRequestFailed,
-    isLoadingDenied,
-    anyRequestInProgress,
-    successDate,
-    handleStartExportingCourse,
-    downloadPath,
-  }), [
-    currentStage,
-    exportTriggered,
-    fetchExportErrorMessage,
-    errorUnitUrl,
-    anyRequestFailed,
-    isLoadingDenied,
-    anyRequestInProgress,
-    successDate,
-    handleStartExportingCourse,
-    downloadPath,
-  ]);
-
-  return (
-    <CourseExportContext.Provider value={context}>
-      {children}
-    </CourseExportContext.Provider>
+  const context = useMemo<CourseExportContextData>(
+    () => ({
+      currentStage,
+      exportTriggered,
+      fetchExportErrorMessage,
+      errorUnitUrl,
+      anyRequestFailed,
+      isLoadingDenied,
+      anyRequestInProgress,
+      successDate,
+      handleStartExportingCourse,
+      downloadPath,
+    }),
+    [
+      currentStage,
+      exportTriggered,
+      fetchExportErrorMessage,
+      errorUnitUrl,
+      anyRequestFailed,
+      isLoadingDenied,
+      anyRequestInProgress,
+      successDate,
+      handleStartExportingCourse,
+      downloadPath,
+    ],
   );
+
+  return <CourseExportContext.Provider value={context}>{children}</CourseExportContext.Provider>;
 };
 
 export function useCourseExportContext(): CourseExportContextData {

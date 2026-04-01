@@ -86,14 +86,7 @@ describe('component utils', () => {
       });
     }
 
-    for (const input of [
-      '',
-      undefined,
-      null,
-      'not a key',
-      'lb:foo',
-      'lb:org:lib:html:id',
-    ]) {
+    for (const input of ['', undefined, null, 'not a key', 'lb:foo', 'lb:org:lib:html:id']) {
       it(`throws an exception for library key '${input}'`, () => {
         expect(() => parseLibraryKey(input as any)).toThrow(`Invalid libraryKey: ${input}`);
       });

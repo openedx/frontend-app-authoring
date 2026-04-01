@@ -8,15 +8,7 @@ export const SCHEDULE_ROW_TYPES = {
   dropdown: 'dropdown',
 };
 
-export const ScheduleRow = ({
-  value,
-  labels,
-  helpText,
-  readonly,
-  controlName,
-  errorFeedback,
-  onChange,
-}) => (
+export const ScheduleRow = ({ value, labels, helpText, readonly, controlName, errorFeedback, onChange }) => (
   <li className="schedule-date-item">
     <div className="schedule-date-item-container">
       <DatepickerControl
@@ -40,9 +32,7 @@ export const ScheduleRow = ({
         showUTC
       />
     </div>
-    {errorFeedback && (
-      <span className="schedule-date-item-error">{errorFeedback}</span>
-    )}
+    {errorFeedback && <span className="schedule-date-item-error">{errorFeedback}</span>}
   </li>
 );
 

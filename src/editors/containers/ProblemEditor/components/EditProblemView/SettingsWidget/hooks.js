@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import {
-  includes, isEmpty, isFinite, isNaN, isNil,
-} from 'lodash';
+import { includes, isEmpty, isFinite, isNaN, isNil } from 'lodash';
 import {
   ProblemTypeKeys,
   ProblemTypes,
@@ -62,14 +60,14 @@ export const hintsCardHooks = (hints, updateSettings) => {
     if (hintsNumber === 0) {
       setSummary({ message: messages.noHintSummary, values: {} });
     } else {
-      setSummary({ message: messages.hintSummary, values: { hint: hints[0].value, count: (hintsNumber - 1) } });
+      setSummary({ message: messages.hintSummary, values: { hint: hints[0].value, count: hintsNumber - 1 } });
     }
   }, [hints]);
 
   const handleAdd = () => {
     let newId = 0;
     if (!isEmpty(hints)) {
-      newId = Math.max(...hints.map(hint => hint.id)) + 1;
+      newId = Math.max(...hints.map((hint) => hint.id)) + 1;
     }
     const hint = { id: newId, value: '' };
     const modifiedHints = [...hints, hint];
@@ -84,7 +82,7 @@ export const hintsCardHooks = (hints, updateSettings) => {
 
 export const hintsRowHooks = (id, hints, updateSettings) => {
   const handleChange = (value) => {
-    const modifiedHints = hints.map(hint => {
+    const modifiedHints = hints.map((hint) => {
       if (hint.id === id) {
         return { ...hint, value };
       }
@@ -94,7 +92,7 @@ export const hintsRowHooks = (id, hints, updateSettings) => {
   };
 
   const handleDelete = () => {
-    const modifiedHints = hints.filter((hint) => (hint.id !== id));
+    const modifiedHints = hints.filter((hint) => hint.id !== id);
     updateSettings({ hints: modifiedHints });
   };
 
@@ -191,9 +189,7 @@ export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
 export const useAnswerSettings = (showAnswer, updateSettings) => {
   const [showAttempts, setShowAttempts] = module.state.showAttempts(false);
 
-  const numberOfAttemptsChoice = [
-    ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
-  ];
+  const numberOfAttemptsChoice = [ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS];
 
   useEffect(() => {
     setShowAttempts(includes(numberOfAttemptsChoice, showAnswer.on));
@@ -247,7 +243,7 @@ export const typeRowHooks = ({
     if (RichTextProblems.includes(problemType)) {
       currentAnswerTitles = editorContent.answers;
     }
-    answers.forEach(answer => {
+    answers.forEach((answer) => {
       const title = currentAnswerTitles?.[answer.id] || answer.title;
       if (answer.correct) {
         updateAnswer({
@@ -274,7 +270,7 @@ export const typeRowHooks = ({
     if (RichTextProblems.includes(problemType)) {
       currentAnswerTitles = editorContent.answers;
     }
-    answers.forEach(answer => {
+    answers.forEach((answer) => {
       const title = currentAnswerTitles ? currentAnswerTitles[answer.id] : answer.title;
       updateAnswer({
         ...answer,
@@ -289,7 +285,7 @@ export const typeRowHooks = ({
   const convertToPlainText = () => {
     const { selectedFeedback, unselectedFeedback, ...editorContent } = fetchEditorContent({ format: 'text' });
     const currentAnswerTitles = editorContent.answers;
-    answers.forEach(answer => {
+    answers.forEach((answer) => {
       updateAnswer({
         ...answer,
         selectedFeedback,
@@ -327,9 +323,7 @@ export const typeRowHooks = ({
       : ProblemTypes[problemType].title;
 
     if (blockTitle === currentTitle) {
-      const newTitle = localizedProblemTypes
-        ? localizedProblemTypes[typeKey].title
-        : ProblemTypes[typeKey].title;
+      const newTitle = localizedProblemTypes ? localizedProblemTypes[typeKey].title : ProblemTypes[typeKey].title;
       setBlockTitle(newTitle);
     }
     updateField({ problemType: typeKey });
@@ -339,10 +333,7 @@ export const typeRowHooks = ({
   };
 };
 
-export const handleConfirmEditorSwitch = ({
-  switchEditor,
-  setConfirmOpen,
-}) => {
+export const handleConfirmEditorSwitch = ({ switchEditor, setConfirmOpen }) => {
   switchEditor();
   setConfirmOpen(false);
   window.scrollTo({

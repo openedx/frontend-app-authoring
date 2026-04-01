@@ -1,18 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Card,
-  Icon,
-} from '@openedx/paragon';
-import {
-  ArrowForwardIos,
-  Check,
-  Error,
-  Folder,
-  IncompleteCircle,
-  Warning,
-} from '@openedx/paragon/icons';
+import { Button, Card, Icon } from '@openedx/paragon';
+import { ArrowForwardIos, Check, Error, Folder, IncompleteCircle, Warning } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 
 import { type CourseImport } from '../data/api';
@@ -45,11 +34,7 @@ const STATE_ICON_COLOR_CLASS = {
 };
 
 const StateIcon = ({ state }: { state: CourseImport['state'] }) => (
-  <Icon
-    src={STATE_ICON[state]}
-    size="sm"
-    className={classNames('mr-2', STATE_ICON_COLOR_CLASS[state])}
-  />
+  <Icon src={STATE_ICON[state]} size="sm" className={classNames('mr-2', STATE_ICON_COLOR_CLASS[state])} />
 );
 
 export const ImportedCourseCard = ({ courseImport }: ImportedCourseCardProps) => {

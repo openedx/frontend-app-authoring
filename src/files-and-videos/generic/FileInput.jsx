@@ -4,11 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { getSupportedFormats } from '../videos-page/data/utils';
 import messages from './messages';
 
-export const useFileInput = ({
-  onAddFile,
-  setSelectedRows,
-  setAddOpen,
-}) => {
+export const useFileInput = ({ onAddFile, setSelectedRows, setAddOpen }) => {
   const ref = React.useRef();
   const click = () => ref.current.click();
   const addFile = (e) => {
@@ -50,10 +46,7 @@ FileInput.propTypes = {
       PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
     ]),
   }).isRequired,
-  supportedFileFormats: PropTypes.oneOfType([
-    PropTypes.shape({}),
-    PropTypes.arrayOf(PropTypes.string),
-  ]),
+  supportedFileFormats: PropTypes.oneOfType([PropTypes.shape({}), PropTypes.arrayOf(PropTypes.string)]),
   allowMultiple: PropTypes.bool,
 };
 

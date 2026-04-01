@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Card,
-  Button,
-  Icon,
-  IconButton,
-  useToggle,
-} from '@openedx/paragon';
+import { Card, Button, Icon, IconButton, useToggle } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { isEmpty } from 'lodash';
@@ -15,12 +9,7 @@ import TranscriptMenu from './TranscriptMenu';
 import messages from './messages';
 import { FileInput, useFileInput } from '../../../generic';
 
-const Transcript = ({
-  languages,
-  transcript,
-  previousSelection,
-  handleTranscript,
-}) => {
+const Transcript = ({ languages, transcript, previousSelection, handleTranscript }) => {
   const intl = useIntl();
   const [isConfirmationOpen, openConfirmation, closeConfirmation] = useToggle();
   const [newLanguage, setNewLanguage] = useState(transcript);
@@ -33,11 +22,14 @@ const Transcript = ({
   const input = useFileInput({
     onAddFile: (files) => {
       const [file] = files;
-      handleTranscript({
-        file,
-        language,
-        newLanguage,
-      }, 'upload');
+      handleTranscript(
+        {
+          file,
+          language,
+          newLanguage,
+        },
+        'upload',
+      );
     },
     setSelectedRows: () => {},
     setAddOpen: () => {},
@@ -54,7 +46,7 @@ const Transcript = ({
     <>
       {isConfirmationOpen ? (
         <Card className="my-2">
-          <Card.Header className="h3" title={(<FormattedMessage {...messages.deleteConfirmationHeader} />)} />
+          <Card.Header className="h3" title={<FormattedMessage {...messages.deleteConfirmationHeader} />} />
           <Card.Body>
             <Card.Section>
               <FormattedMessage {...messages.deleteConfirmationMessage} />
@@ -90,13 +82,8 @@ const Transcript = ({
             previousSelection={previousSelection}
             handleSelect={updateLangauge}
           />
-          { transcript === '' ? (
-            <IconButton
-              iconAs={Icon}
-              src={DeleteOutline}
-              onClick={openConfirmation}
-              alt="delete empty transcript"
-            />
+          {transcript === '' ? (
+            <IconButton iconAs={Icon} src={DeleteOutline} onClick={openConfirmation} alt="delete empty transcript" />
           ) : (
             <TranscriptMenu
               {...{

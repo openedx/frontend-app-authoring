@@ -3,7 +3,7 @@ const getLocatorSafeName = ({ displayName }) => {
   return locatorSafeName;
 };
 
-export const getStaticUrl = ({ displayName }) => (`/static/${getLocatorSafeName({ displayName })}`);
+export const getStaticUrl = ({ displayName }) => `/static/${getLocatorSafeName({ displayName })}`;
 
 export const getRelativeUrl = ({ courseId, displayName }) => {
   if (displayName) {

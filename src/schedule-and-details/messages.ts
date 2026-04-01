@@ -31,11 +31,11 @@ const messages = defineMessages({
   },
   alertWarning: {
     id: 'course-authoring.schedule.alert.warning',
-    defaultMessage: 'You\'ve made some changes',
+    defaultMessage: "You've made some changes",
   },
   alertWarningOnSaveWithError: {
     id: 'course-authoring.schedule.alert.warning.save.error',
-    defaultMessage: 'You\'ve made some changes, but there are some errors',
+    defaultMessage: "You've made some changes, but there are some errors",
   },
   alertWarningDescriptions: {
     id: 'course-authoring.schedule.alert.warning.descriptions',
@@ -83,7 +83,8 @@ const messages = defineMessages({
   },
   errorMessage1: {
     id: 'course-authoring.schedule.schedule-section.error-message-1',
-    defaultMessage: 'The certificates display behavior must be \'A date after the course end date\' if certificate available date is set.',
+    defaultMessage:
+      "The certificates display behavior must be 'A date after the course end date' if certificate available date is set.",
   },
   errorMessage2: {
     id: 'course-authoring.schedule.schedule-section.error-message-2',

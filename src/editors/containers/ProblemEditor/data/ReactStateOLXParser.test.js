@@ -79,7 +79,8 @@ describe('Check React State OLXParser problem', () => {
       problem,
       editorObject: multipleChoiceWithFeedbackAndHints,
     });
-    stateParser.editorObject.question = '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>\n<div><label>Add the question text, or prompt, here. This text is required.</label> <em class="olx_description">You can add an optional tip or note related to the prompt like this. </em><em>Just a generic em tag</em></div>';
+    stateParser.editorObject.question =
+      '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>\n<div><label>Add the question text, or prompt, here. This text is required.</label> <em class="olx_description">You can add an optional tip or note related to the prompt like this. </em><em>Just a generic em tag</em></div>';
 
     it('parser should not delete <em> tags', () => {
       const buildOLX = stateParser.buildOLX();
@@ -88,15 +89,23 @@ describe('Check React State OLXParser problem', () => {
 
     it('addQuestion method should add a question to the problemState correctly', () => {
       const received = stateParser.addQuestion();
-      expect(received).toEqual(
-        [
-          { p: [{ '#text': 'You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.' }] },
-          { label: [{ '#text': 'Add the question text, or prompt, here. This text is required.' }] },
-          { '#text': ' ' },
-          { em: [{ '#text': 'You can add an optional tip or note related to the prompt like this. ' }], ':@': { '@_class': 'olx_description' } },
-          { em: [{ '#text': 'Just a generic em tag' }] },
-        ],
-      );
+      expect(received).toEqual([
+        {
+          p: [
+            {
+              '#text':
+                'You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.',
+            },
+          ],
+        },
+        { label: [{ '#text': 'Add the question text, or prompt, here. This text is required.' }] },
+        { '#text': ' ' },
+        {
+          em: [{ '#text': 'You can add an optional tip or note related to the prompt like this. ' }],
+          ':@': { '@_class': 'olx_description' },
+        },
+        { em: [{ '#text': 'Just a generic em tag' }] },
+      ]);
     });
   });
 
@@ -129,7 +138,9 @@ describe('Check React State OLXParser problem', () => {
       editorObject: textInputWithFeedbackAndHintsWithMultipleAnswers,
     });
     const buildOLX = stateParser.buildOLX();
-    expect(buildOLX.replace(/\s/g, '')).toEqual(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.buildOLX.replace(/\s/g, ''));
+    expect(buildOLX.replace(/\s/g, '')).toEqual(
+      textInputWithFeedbackAndHintsOLXWithMultipleAnswers.buildOLX.replace(/\s/g, ''),
+    );
   });
   describe('encode/decode', () => {
     test('does not change hex values to dec and does not remove leading 0s', () => {

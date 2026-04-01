@@ -2,12 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form } from '@openedx/paragon';
 
-const Checker = ({
-  hasSingleAnswer,
-  answer,
-  setAnswer,
-  disabled,
-}) => {
+const Checker = ({ hasSingleAnswer, answer, setAnswer, disabled }) => {
   let CheckerType = Form.Checkbox;
   if (hasSingleAnswer) {
     CheckerType = Form.Radio;
@@ -22,11 +17,7 @@ const Checker = ({
         isValid={answer.correct}
         disabled={disabled}
       />
-      <Form.Label
-        className="pt-2"
-      >
-        {answer.id}
-      </Form.Label>
+      <Form.Label className="pt-2">{answer.id}</Form.Label>
     </>
   );
 };

@@ -1,10 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Tab,
-  Tabs,
-  useToggle,
-} from '@openedx/paragon';
+import { Tab, Tabs, useToggle } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 
 import { useUserPermissions } from '@src/authz/data/apiHooks';
@@ -24,18 +20,13 @@ const DetailsTab = () => {
   const intl = useIntl();
 
   const { courseId } = useCourseAuthoringContext();
-  const { data: componentData } = useGetBlockTypes(
-    [`context_key = "${courseId}"`],
-  );
+  const { data: componentData } = useGetBlockTypes([`context_key = "${courseId}"`]);
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
 
   return (
     <>
       <SidebarContent>
-        <SidebarSection
-          title={intl.formatMessage(messages.sidebarSectionSummary)}
-          icon={SchoolOutline}
-        >
+        <SidebarSection title={intl.formatMessage(messages.sidebarSectionSummary)} icon={SchoolOutline}>
           {componentData && <ComponentCountSnippet componentData={componentData} />}
         </SidebarSection>
         <SidebarSection
@@ -51,11 +42,7 @@ const DetailsTab = () => {
           <ContentTagsSnippet contentId={courseId} />
         </SidebarSection>
       </SidebarContent>
-      <ContentTagsDrawerSheet
-        id={courseId}
-        onClose={closeManageTagsDrawer}
-        showSheet={isManageTagsDrawerOpen}
-      />
+      <ContentTagsDrawerSheet id={courseId} onClose={closeManageTagsDrawer} showSheet={isManageTagsDrawerOpen} />
     </>
   );
 };
@@ -65,13 +52,7 @@ const SettingsTab = () => {
   const { courseId } = useCourseAuthoringContext();
   const { data: courseSettingsData } = useCourseSettings(courseId);
 
-  const {
-    grading,
-    courseTeam,
-    advancedSettings,
-    scheduleAndDetails,
-    groupConfigurations,
-  } = otherLinkURLParams;
+  const { grading, courseTeam, advancedSettings, scheduleAndDetails, groupConfigurations } = otherLinkURLParams;
   const waffleFlags = useWaffleFlags(courseId);
 
   const proctoredExamSettingsUrl = courseSettingsData?.mfeProctoredExamSettingsUrl;
@@ -81,12 +62,15 @@ const SettingsTab = () => {
     If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
   */
   const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions(
+    {
+      canManageAdvancedSettings: {
+        action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
+        scope: courseId,
+      },
     },
-  }, isAuthzEnabled);
+    isAuthzEnabled,
+  );
 
   // If it's still loading, don't show the Advanced Settings link, otherwise, use the permission to decide
   const authzCanManageAdvancedSettings = isLoadingUserPermissions
@@ -97,15 +81,11 @@ const SettingsTab = () => {
   const canManageAdvancedSettings = isAuthzEnabled ? authzCanManageAdvancedSettings : true;
 
   return (
-    <SidebarSection
-      title={intl.formatMessage(messages.settingsTabText)}
-    >
+    <SidebarSection title={intl.formatMessage(messages.settingsTabText)}>
       <HelpSidebarLink
         as="span"
         pathToPage={`/course/${courseId}/${scheduleAndDetails}`}
-        title={intl.formatMessage(
-          helpSidebarMessages.sidebarLinkToScheduleAndDetails,
-        )}
+        title={intl.formatMessage(helpSidebarMessages.sidebarLinkToScheduleAndDetails)}
         isNewPage
       />
       <HelpSidebarLink
@@ -138,9 +118,7 @@ const SettingsTab = () => {
         <HelpSidebarLink
           as="span"
           pathToPage={proctoredExamSettingsUrl}
-          title={intl.formatMessage(
-            helpSidebarMessages.sidebarLinkToProctoredExamSettings,
-          )}
+          title={intl.formatMessage(helpSidebarMessages.sidebarLinkToProctoredExamSettings)}
           isNewPage
         />
       )}
@@ -155,16 +133,8 @@ export const CourseInfoSidebar = () => {
 
   return (
     <>
-      <SidebarTitle
-        title={courseDetails?.title || ''}
-        icon={SchoolOutline}
-      />
-      <Tabs
-        variant="tabs"
-        className="my-2 mx-n3.5"
-        id="course-info-tabs"
-        mountOnEnter
-      >
+      <SidebarTitle title={courseDetails?.title || ''} icon={SchoolOutline} />
+      <Tabs variant="tabs" className="my-2 mx-n3.5" id="course-info-tabs" mountOnEnter>
         <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
           <DetailsTab />
         </Tab>

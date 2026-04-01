@@ -1,7 +1,5 @@
 import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
-import {
-  initializeMocks, render, screen, waitFor,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, waitFor } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 import mockResult from '@src/library-authoring/__mocks__/library-search.json';
 import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
@@ -12,10 +10,7 @@ import {
   mockGetContentLibraryV2List,
   mockLibraryBlockMetadata,
 } from '@src/library-authoring/data/api.mocks';
-import {
-  type OutlineFlow,
-  OutlineSidebarProvider,
-} from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { type OutlineFlow, OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
 import { XBlock } from '@src/data/types';
@@ -76,15 +71,14 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   }),
 }));
 
-const renderComponent = () => render(<AddSidebar />, {
-  extraWrapper: ({ children }) => (
-    <CourseAuthoringProvider courseId="some-course">
-      <OutlineSidebarProvider>
-        {children}
-      </OutlineSidebarProvider>
-    </CourseAuthoringProvider>
-  ),
-});
+const renderComponent = () =>
+  render(<AddSidebar />, {
+    extraWrapper: ({ children }) => (
+      <CourseAuthoringProvider courseId="some-course">
+        <OutlineSidebarProvider>{children}</OutlineSidebarProvider>
+      </CourseAuthoringProvider>
+    ),
+  });
 const searchResult = {
   ...mockResult,
   results: [
@@ -115,7 +109,9 @@ describe('AddSidebar', () => {
       newMockResult.results[0].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-      newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      newMockResult.results[0]?.hits.forEach((hit) => {
+        hit._formatted = { ...hit };
+      });
       return newMockResult;
     });
     outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -161,7 +157,8 @@ describe('AddSidebar', () => {
     const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
     const lastSection = sectionList[3];
     const lastSubsection = lastSection.childInfo.children[0];
-    axiosMock.onPost(getXBlockBaseApiUrl())
+    axiosMock
+      .onPost(getXBlockBaseApiUrl())
       .reply(200, { locator: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential45d4d95a' });
     renderComponent();
 
@@ -170,26 +167,38 @@ describe('AddSidebar', () => {
     const subsection = await screen.findByRole('button', { name: 'Subsection' });
     const unit = await screen.findByRole('button', { name: 'Unit' });
     await user.click(section);
-    expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'chapter',
-      category: 'chapter',
-      parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
-      displayName: 'Section',
-    })));
+    expect(axiosMock.history.post[0].data).toEqual(
+      JSON.stringify(
+        snakeCaseKeys({
+          type: 'chapter',
+          category: 'chapter',
+          parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
+          displayName: 'Section',
+        }),
+      ),
+    );
     await user.click(subsection);
-    expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'sequential',
-      category: 'sequential',
-      parentLocator: lastSection.id,
-      displayName: 'Subsection',
-    })));
+    expect(axiosMock.history.post[1].data).toEqual(
+      JSON.stringify(
+        snakeCaseKeys({
+          type: 'sequential',
+          category: 'sequential',
+          parentLocator: lastSection.id,
+          displayName: 'Subsection',
+        }),
+      ),
+    );
     await user.click(unit);
-    expect(axiosMock.history.post[2].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'vertical',
-      category: 'vertical',
-      parentLocator: lastSubsection.id,
-      displayName: 'Unit',
-    })));
+    expect(axiosMock.history.post[2].data).toEqual(
+      JSON.stringify(
+        snakeCaseKeys({
+          type: 'vertical',
+          category: 'vertical',
+          parentLocator: lastSubsection.id,
+          displayName: 'Unit',
+        }),
+      ),
+    );
   });
 
   it('creates parent section if required', async () => {
@@ -197,29 +206,35 @@ describe('AddSidebar', () => {
     // the course is empty
     outlineChildren = [];
     const sectionId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chapter123';
-    axiosMock.onPost(getXBlockBaseApiUrl())
-      .reply(200, { locator: sectionId });
-    axiosMock.onGet(getXBlockApiUrl(sectionId))
-      .reply(200, {});
+    axiosMock.onPost(getXBlockBaseApiUrl()).reply(200, { locator: sectionId });
+    axiosMock.onGet(getXBlockApiUrl(sectionId)).reply(200, {});
     renderComponent();
 
     const subsection = await screen.findByRole('button', { name: 'Subsection' });
     await user.click(subsection);
     await waitFor(() => expect(axiosMock.history.post.length).toBeGreaterThan(1));
     // should add a section first
-    expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'chapter',
-      category: 'chapter',
-      parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
-      displayName: 'Section',
-    })));
+    expect(axiosMock.history.post[0].data).toEqual(
+      JSON.stringify(
+        snakeCaseKeys({
+          type: 'chapter',
+          category: 'chapter',
+          parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
+          displayName: 'Section',
+        }),
+      ),
+    );
     // then subsection
-    expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'sequential',
-      category: 'sequential',
-      parentLocator: sectionId,
-      displayName: 'Subsection',
-    })));
+    expect(axiosMock.history.post[1].data).toEqual(
+      JSON.stringify(
+        snakeCaseKeys({
+          type: 'sequential',
+          category: 'sequential',
+          parentLocator: sectionId,
+          displayName: 'Subsection',
+        }),
+      ),
+    );
   });
 
   it('creates parent section and subsection if required', async () => {
@@ -247,14 +262,10 @@ describe('AddSidebar', () => {
       parentLocator: subsectionId,
       displayName: 'Unit',
     });
-    axiosMock.onPost(getXBlockBaseApiUrl(), sectionBody)
-      .reply(200, { locator: sectionId });
-    axiosMock.onPost(getXBlockBaseApiUrl(), subsectionBody)
-      .reply(200, { locator: subsectionId });
-    axiosMock.onPost(getXBlockBaseApiUrl(), unitBody)
-      .reply(200, { locator: unitId });
-    axiosMock.onGet(getXBlockApiUrl(sectionId))
-      .reply(200, {});
+    axiosMock.onPost(getXBlockBaseApiUrl(), sectionBody).reply(200, { locator: sectionId });
+    axiosMock.onPost(getXBlockBaseApiUrl(), subsectionBody).reply(200, { locator: subsectionId });
+    axiosMock.onPost(getXBlockBaseApiUrl(), unitBody).reply(200, { locator: unitId });
+    axiosMock.onGet(getXBlockApiUrl(sectionId)).reply(200, {});
     renderComponent();
 
     const unit = await screen.findByRole('button', { name: 'Unit' });
@@ -272,7 +283,8 @@ describe('AddSidebar', () => {
     const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
     const lastSection = sectionList[3];
     const lastSubsection = lastSection.childInfo.children[0];
-    axiosMock.onPost(getXBlockBaseApiUrl())
+    axiosMock
+      .onPost(getXBlockBaseApiUrl())
       .reply(200, { locator: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential45d4d95a' });
     renderComponent();
     // Check existing tab content
@@ -282,28 +294,40 @@ describe('AddSidebar', () => {
     const addBtns = await screen.findAllByRole('button', { name: 'Add' });
     // first one is unit as per mock
     await user.click(addBtns[0]);
-    expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'library_v2',
-      category: 'vertical',
-      parentLocator: lastSubsection.id,
-      libraryContentKey: searchResult.results[0].hits[0].usage_key,
-    })));
+    expect(axiosMock.history.post[0].data).toEqual(
+      JSON.stringify(
+        snakeCaseKeys({
+          type: 'library_v2',
+          category: 'vertical',
+          parentLocator: lastSubsection.id,
+          libraryContentKey: searchResult.results[0].hits[0].usage_key,
+        }),
+      ),
+    );
     // second one is subsection as per mock
     await user.click(addBtns[1]);
-    expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'library_v2',
-      category: 'sequential',
-      parentLocator: lastSection.id,
-      libraryContentKey: searchResult.results[0].hits[1].usage_key,
-    })));
+    expect(axiosMock.history.post[1].data).toEqual(
+      JSON.stringify(
+        snakeCaseKeys({
+          type: 'library_v2',
+          category: 'sequential',
+          parentLocator: lastSection.id,
+          libraryContentKey: searchResult.results[0].hits[1].usage_key,
+        }),
+      ),
+    );
     // third one is section as per mock
     await user.click(addBtns[2]);
-    expect(axiosMock.history.post[2].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'library_v2',
-      category: 'chapter',
-      parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
-      libraryContentKey: searchResult.results[0].hits[2].usage_key,
-    })));
+    expect(axiosMock.history.post[2].data).toEqual(
+      JSON.stringify(
+        snakeCaseKeys({
+          type: 'library_v2',
+          category: 'chapter',
+          parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
+          libraryContentKey: searchResult.results[0].hits[2].usage_key,
+        }),
+      ),
+    );
   });
 
   ['section', 'subsection', 'unit'].forEach((category) => {
@@ -321,7 +345,9 @@ describe('AddSidebar', () => {
       // Check existing tab content
       await user.click(await screen.findByRole('tab', { name: 'Add Existing' }));
       // Check existing tab content is rendered by default
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+      await waitFor(() => {
+        expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+      });
       expect(fetchMock).toHaveLastFetched((_url, req) => {
         const requestData = JSON.parse((req.body ?? '') as string);
         const requestedFilter = requestData?.queries[0].filter;
@@ -370,9 +396,13 @@ describe('AddSidebar', () => {
     // render existing tab as well
     await user.click(await screen.findByRole('tab', { name: 'Add Existing' }));
     // One in new tab and one in existing tab
-    expect((await screen.findAllByText(
-      `${currentItemData.displayName} is a library section. Content cannot be added to Library referenced sections.`,
-    )).length).toEqual(2);
+    expect(
+      (
+        await screen.findAllByText(
+          `${currentItemData.displayName} is a library section. Content cannot be added to Library referenced sections.`,
+        )
+      ).length,
+    ).toEqual(2);
   });
 
   it('back button is rendered and works', async () => {

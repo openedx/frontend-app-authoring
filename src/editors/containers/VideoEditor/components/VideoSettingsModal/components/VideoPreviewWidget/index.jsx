@@ -1,7 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Collapsible, Image, Stack, Hyperlink,
-} from '@openedx/paragon';
+import { Collapsible, Image, Stack, Hyperlink } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -12,23 +10,14 @@ import LanguageNamesWidget from './LanguageNamesWidget';
 import videoThumbnail from '../../../../../../data/images/videoThumbnail.svg';
 
 // Exporting to test this component separately
-export const VideoPreviewWidget = ({
-  thumbnail,
-  videoSource,
-  transcripts,
-  blockTitle,
-}) => {
+export const VideoPreviewWidget = ({ thumbnail, videoSource, transcripts, blockTitle }) => {
   const intl = useIntl();
   const imgRef = React.useRef();
   const videoType = intl.formatMessage(hooks.getVideoType(videoSource));
   const thumbnailImage = thumbnail || videoThumbnail;
 
   return (
-    <Collapsible.Advanced
-      className="collapsible-card rounded mx-4 my-3 px-4"
-      defaultOpen
-      open
-    >
+    <Collapsible.Advanced className="collapsible-card rounded mx-4 my-3 px-4" defaultOpen open>
       <Collapsible.Body className="collapsible-body rounded px-0 py-4">
         <div className="d-flex flex-row">
           <Image

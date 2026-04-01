@@ -5,7 +5,9 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { CreateRow } from './CreateRow';
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
+  <IntlProvider locale="en" messages={{}}>
+    {children}
+  </IntlProvider>
 );
 
 const baseProps = () => ({

@@ -22,10 +22,7 @@ describe('app reducer', () => {
           learningContextId: 'OTHERid',
           blockType: 'someTYPE',
         };
-        expect(reducer(
-          testingState,
-          actions.initialize({ ...data, other: 'field' }),
-        )).toEqual({
+        expect(reducer(testingState, actions.initialize({ ...data, other: 'field' }))).toEqual({
           ...testingState,
           ...data,
         });
@@ -50,7 +47,7 @@ describe('app reducer', () => {
       ['setSaveResponse', 'saveResponse'],
       ['setVideos', 'videos'],
       ['setCourseDetails', 'courseDetails'],
-    ].map(args => setterTest(...args));
+    ].map((args) => setterTest(...args));
     describe('setShowRawEditor', () => {
       it('sets showRawEditor', () => {
         const blockValue = { data: { metadata: { editor: 'raw' } } };

@@ -65,7 +65,8 @@ const messages = defineMessages({
   },
   unitLocationDescription: {
     id: 'course-authoring.course-unit.unit-location.description',
-    defaultMessage: 'To create a link to this unit from an HTML component in this course, enter /jump_to_id/{id} as the URL value',
+    defaultMessage:
+      'To create a link to this unit from an HTML component in this course, enter /jump_to_id/{id} as the URL value',
   },
   actionButtonPublishTitle: {
     id: 'course-authoring.course-unit.action-buttons.publish.title',
@@ -103,7 +104,8 @@ const messages = defineMessages({
   },
   sidebarSplitTestComponentAdded: {
     id: 'course-authoring.course-unit.split-test.sidebar.add-component.component-added',
-    defaultMessage: 'The new component is added at the bottom of the page or group. You can then edit and move the component.',
+    defaultMessage:
+      'The new component is added at the bottom of the page or group. You can then edit and move the component.',
     description: 'Instruction text indicating that the component has been added and can be moved or edited',
   },
   sidebarSplitTestEditComponentTitle: {
@@ -144,7 +146,8 @@ const messages = defineMessages({
   sidebarSplitTestLearnMoreLinkLabel: {
     id: 'course-authoring.course-unit.split-test.sidebar.learn-more-link.label',
     defaultMessage: 'Learn more about component containers',
-    description: 'Text for a link that directs users to more information about component containers in the split test setup.',
+    description:
+      'Text for a link that directs users to more information about component containers in the split test setup.',
   },
 });
 

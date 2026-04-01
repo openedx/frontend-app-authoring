@@ -13,14 +13,8 @@ const collision = (dropppableContainer?: DroppableContainer) => ({
 
 // Look for the first (/ furthest up / highest) droppable container that is at least
 // 50% covered by the top edge of the dragging container.
-const highestDroppableContainerMajorityCovered: CollisionDetection = ({
-  droppableContainers,
-  collisionRect,
-}) => {
-  const ascendingDroppabaleContainers = sortBy(
-    droppableContainers,
-    (c) => c?.rect.current?.top,
-  );
+const highestDroppableContainerMajorityCovered: CollisionDetection = ({ droppableContainers, collisionRect }) => {
+  const ascendingDroppabaleContainers = sortBy(droppableContainers, (c) => c?.rect.current?.top);
 
   for (const droppableContainer of ascendingDroppabaleContainers) {
     const {
@@ -28,8 +22,7 @@ const highestDroppableContainerMajorityCovered: CollisionDetection = ({
     } = droppableContainer;
 
     if (droppableRect) {
-      const coveredPercentage = (droppableRect.top + droppableRect.height - collisionRect.top)
-        / droppableRect.height;
+      const coveredPercentage = (droppableRect.top + droppableRect.height - collisionRect.top) / droppableRect.height;
 
       if (coveredPercentage > 0.5) {
         return [collision(droppableContainer)];
@@ -43,14 +36,8 @@ const highestDroppableContainerMajorityCovered: CollisionDetection = ({
 
 // Look for the last (/ furthest down / lowest) droppable container that is at least
 // 50% covered by the bottom edge of the dragging container.
-const lowestDroppableContainerMajorityCovered: CollisionDetection = ({
-  droppableContainers,
-  collisionRect,
-}) => {
-  const descendingDroppabaleContainers = sortBy(
-    droppableContainers,
-    (c) => c?.rect.current?.top,
-  ).reverse();
+const lowestDroppableContainerMajorityCovered: CollisionDetection = ({ droppableContainers, collisionRect }) => {
+  const descendingDroppabaleContainers = sortBy(droppableContainers, (c) => c?.rect.current?.top).reverse();
 
   for (const droppableContainer of descendingDroppabaleContainers) {
     const {
@@ -70,9 +57,7 @@ const lowestDroppableContainerMajorityCovered: CollisionDetection = ({
   return [collision(descendingDroppabaleContainers[0])];
 };
 
-export const verticalSortableListCollisionDetection: CollisionDetection = (
-  args,
-) => {
+export const verticalSortableListCollisionDetection: CollisionDetection = (args) => {
   if (args.collisionRect.top < (args.active.rect.current?.initial?.top ?? 0)) {
     return highestDroppableContainerMajorityCovered(args);
   }

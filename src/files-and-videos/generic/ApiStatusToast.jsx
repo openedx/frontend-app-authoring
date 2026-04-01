@@ -4,14 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Toast } from '@openedx/paragon';
 import messages from './messages';
 
-const ApiStatusToast = ({
-  actionType,
-  selectedRowCount,
-  isOpen,
-  setClose,
-  setSelectedRows,
-  fileType,
-}) => {
+const ApiStatusToast = ({ actionType, selectedRowCount, isOpen, setClose, setSelectedRows, fileType }) => {
   const intl = useIntl();
   const handleClose = () => {
     setSelectedRows([]);
@@ -19,10 +12,7 @@ const ApiStatusToast = ({
   };
 
   return (
-    <Toast
-      show={isOpen}
-      onClose={handleClose}
-    >
+    <Toast show={isOpen} onClose={handleClose}>
       {intl.formatMessage(messages.apiStatusToastMessage, { actionType, selectedRowCount, fileType })}
     </Toast>
   );

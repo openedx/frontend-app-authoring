@@ -31,7 +31,7 @@ const messages = defineMessages({
   },
   errorSavingTitle: {
     id: 'course-authoring.pages-resources.app-settings-modal.save-error.title',
-    defaultMessage: 'We couldn\'t apply your changes.',
+    defaultMessage: "We couldn't apply your changes.",
   },
   errorSavingMessage: {
     id: 'course-authoring.pages-resources.app-settings-modal.save-error.message',

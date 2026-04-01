@@ -33,7 +33,8 @@ const mockImage = {
   portableUrl: '/static/DALL_E_2023-03-10.png',
   thumbnail: '/asset-v1:TestX+Test01+Test0101+type@thumbnail+block@DALL_E_2023-03-10.jpg',
   locked: false,
-  staticFullUrl: '/assets/courseware/v1/af2bf9ac70804e54c534107160a8e51e/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png',
+  staticFullUrl:
+    '/assets/courseware/v1/af2bf9ac70804e54c534107160a8e51e/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png',
   id: 'asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png',
   width: 100,
   height: 150,
@@ -95,50 +96,50 @@ describe('ImageUploadModal', () => {
 
       beforeEach(() => {
         output = hooks.createSaveCallback({
-          close, settings, images, editorRef, setSelection, selection, lmsEndpointUrl,
+          close,
+          settings,
+          images,
+          editorRef,
+          setSelection,
+          selection,
+          lmsEndpointUrl,
         });
       });
       afterEach(() => {
         jest.clearAllMocks();
       });
-      test(
-        `It creates a callback, that when called, inserts to the editor, sets the selection to the current element,
-        adds new image to the images ref, and calls close`,
-        () => {
-          const imgTagResult = '<img src="sOmEuRl.cOm" alt="aLt tExt" />';
-          jest.spyOn(hooks, hookKeys.imgTag)
-            .mockImplementationOnce((props) => {
-              if (!props) { return ''; }
-              // Return a string as the real imgTag would
-              return `<img src="${props.selection?.externalUrl ?? ''}" alt="${props.settings?.altText ?? ''}" />`;
-            });
+      test(`It creates a callback, that when called, inserts to the editor, sets the selection to the current element,
+        adds new image to the images ref, and calls close`, () => {
+        const imgTagResult = '<img src="sOmEuRl.cOm" alt="aLt tExt" />';
+        jest.spyOn(hooks, hookKeys.imgTag).mockImplementationOnce((props) => {
+          if (!props) {
+            return '';
+          }
+          // Return a string as the real imgTag would
+          return `<img src="${props.selection?.externalUrl ?? ''}" alt="${props.settings?.altText ?? ''}" />`;
+        });
 
-          expect(execCommandMock).not.toBeCalled();
-          expect(setSelection).not.toBeCalled();
-          expect(close).not.toBeCalled();
-          expect(images.current).toEqual([mockImage]);
+        expect(execCommandMock).not.toBeCalled();
+        expect(setSelection).not.toBeCalled();
+        expect(close).not.toBeCalled();
+        expect(images.current).toEqual([mockImage]);
 
-          output(settings);
+        output(settings);
 
-          expect(execCommandMock).toBeCalledWith(
-            tinyMCEKeys.commands.insertContent,
-            false,
-            imgTagResult,
-          );
-          expect(setSelection).toBeCalledWith(newImage);
-          expect(updateImageDimensionsSpy.mock.calls.length).toBe(1);
-          expect(updateImageDimensionsSpy).toBeCalledWith({
-            images: [mockImage],
-            url: selection.externalUrl,
-            width: settings.dimensions.width,
-            height: settings.dimensions.height,
-          });
-          expect(updateImageDimensionsSpy.mock.results[0].value.foundMatch).toBe(false);
-          expect(images.current).toEqual([mockImage, newImage]);
-          expect(close).toBeCalled();
-          expect(setSelection).toBeCalledWith(null);
-        },
-      );
+        expect(execCommandMock).toBeCalledWith(tinyMCEKeys.commands.insertContent, false, imgTagResult);
+        expect(setSelection).toBeCalledWith(newImage);
+        expect(updateImageDimensionsSpy.mock.calls.length).toBe(1);
+        expect(updateImageDimensionsSpy).toBeCalledWith({
+          images: [mockImage],
+          url: selection.externalUrl,
+          width: settings.dimensions.width,
+          height: settings.dimensions.height,
+        });
+        expect(updateImageDimensionsSpy.mock.results[0].value.foundMatch).toBe(false);
+        expect(images.current).toEqual([mockImage, newImage]);
+        expect(close).toBeCalled();
+        expect(setSelection).toBeCalledWith(null);
+      });
     });
     describe('onClose', () => {
       it('takes and calls clearSelection and close callbacks', () => {
@@ -176,7 +177,7 @@ describe('ImageUploadModal', () => {
       expect(container.querySelector('ImageSettingsModal')).toBeInTheDocument();
     });
     test('snapshot: selection has no externalUrl (Select Image Modal)', () => {
-      const { container } = render(<ImageUploadModal {...props} selection={{ }} />);
+      const { container } = render(<ImageUploadModal {...props} selection={{}} />);
       expect(container.querySelector('SelectImageModal')).toBeInTheDocument();
     });
     test('snapshot: no selection (Select Image Modal)', () => {

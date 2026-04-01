@@ -1,37 +1,18 @@
-import {
-  FormattedDate,
-  FormattedMessage,
-  FormattedTime,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Container,
-  Icon,
-  Stack,
-  StatefulButton,
-} from '@openedx/paragon';
+import { FormattedDate, FormattedMessage, FormattedTime, useIntl } from '@edx/frontend-platform/i18n';
+import { Button, Container, Icon, Stack, StatefulButton } from '@openedx/paragon';
 import { SpinnerSimple } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import messages from './messages';
 
 const CustomFormattedDate = ({ date }: { date: string }) => (
   <b>
-    <FormattedDate
-      value={date}
-      year="numeric"
-      month="long"
-      day="2-digit"
-    />
+    <FormattedDate value={date} year="numeric" month="long" day="2-digit" />
   </b>
 );
 
 const CustomFormattedTime = ({ date }: { date: string }) => (
   <b>
-    <FormattedTime
-      value={date}
-      hour12={false}
-    />
+    <FormattedTime value={date} hour12={false} />
   </b>
 );
 
@@ -97,21 +78,21 @@ type StatusWidgedProps = {
 };
 
 /**
-  * This component displays the status of an entity (published, draft, etc.) and allows the user to publish
-  * or discard changes.
-  *
-  * This component doesn't handle fetching the data or any other side effects. It only displays the status
-  * and provides the buttons to commit or revert changes.
-  *
-  * @example
-  * ```tsx
-  * const { data: libraryData } = useContentLibrary(libraryId);
-  * const onCommit = () => { commitChanges(libraryId); };
-  * const onRevert = () => { revertChanges(libraryId); };
-  *
-  * return <StatusWidget {...libraryData} onCommit={onCommit} onRevert={onRevert} />;
-  * ```
-  */
+ * This component displays the status of an entity (published, draft, etc.) and allows the user to publish
+ * or discard changes.
+ *
+ * This component doesn't handle fetching the data or any other side effects. It only displays the status
+ * and provides the buttons to commit or revert changes.
+ *
+ * @example
+ * ```tsx
+ * const { data: libraryData } = useContentLibrary(libraryId);
+ * const onCommit = () => { commitChanges(libraryId); };
+ * const onRevert = () => { revertChanges(libraryId); };
+ *
+ * return <StatusWidget {...libraryData} onCommit={onCommit} onRevert={onRevert} />;
+ * ```
+ */
 const StatusWidget = ({
   lastPublished,
   hasUnpublishedChanges,
@@ -141,13 +122,13 @@ const StatusWidget = ({
     isPublished = false;
     statusMessage = intl.formatMessage(messages.draftStatusLabel);
     extraStatusMessage = intl.formatMessage(messages.neverPublishedLabel);
-    bodyMessage = (<DraftBodyMessage {...{ lastDraftCreatedBy, lastDraftCreated, created }} />);
+    bodyMessage = <DraftBodyMessage {...{ lastDraftCreatedBy, lastDraftCreated, created }} />;
   } else if (hasUnpublishedChanges || hasUnpublishedDeletes) {
     // Entity is on Draft state
     isPublished = false;
     statusMessage = intl.formatMessage(messages.draftStatusLabel);
     extraStatusMessage = intl.formatMessage(messages.unpublishedStatusLabel);
-    bodyMessage = (<DraftBodyMessage {...{ lastDraftCreatedBy, lastDraftCreated, created }} />);
+    bodyMessage = <DraftBodyMessage {...{ lastDraftCreatedBy, lastDraftCreated, created }} />;
   } else {
     // Entity is published
     isPublished = true;
@@ -184,25 +165,18 @@ const StatusWidget = ({
 
   return (
     <Stack>
-      <Container className={classNames('status-widget', {
-        'draft-status': !isPublished,
-        'published-status': isPublished,
-      })}
+      <Container
+        className={classNames('status-widget', {
+          'draft-status': !isPublished,
+          'published-status': isPublished,
+        })}
       >
-        <span className="font-weight-bold">
-          {statusMessage}
-        </span>
-        { extraStatusMessage && (
-          <span className="ml-1">
-            {extraStatusMessage}
-          </span>
-        )}
+        <span className="font-weight-bold">{statusMessage}</span>
+        {extraStatusMessage && <span className="ml-1">{extraStatusMessage}</span>}
       </Container>
       <Container className="mt-3">
         <Stack gap={3}>
-          <span>
-            {bodyMessage}
-          </span>
+          <span>{bodyMessage}</span>
           {onCommit && (
             <StatefulButton
               variant="primary"

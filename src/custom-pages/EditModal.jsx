@@ -4,11 +4,7 @@ import { getConfig } from '@edx/frontend-platform';
 
 import EditorPage from '../editors/EditorPage';
 
-const EditModal = ({
-  pageId,
-  courseId,
-  onClose,
-}) => (
+const EditModal = ({ pageId, courseId, onClose }) => (
   <div
     style={{
       position: 'fixed',

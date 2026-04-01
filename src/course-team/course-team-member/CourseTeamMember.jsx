@@ -1,13 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Badge,
-  Button,
-  Icon,
-  IconButtonWithTooltip,
-  MailtoLink,
-} from '@openedx/paragon';
+import { Badge, Button, Icon, IconButtonWithTooltip, MailtoLink } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 
 import messages from './messages';
@@ -31,9 +25,7 @@ const CourseTeamMember = ({
     <div className="course-team-member" data-testid="course-team-member">
       <div className="member-info">
         <Badge className={`badge-current-user bg-${badgeColor} text-light-100`}>
-          {isAdminRole
-            ? intl.formatMessage(messages.roleAdmin)
-            : intl.formatMessage(messages.roleStaff)}
+          {isAdminRole ? intl.formatMessage(messages.roleAdmin) : intl.formatMessage(messages.roleStaff)}
           {currentUserEmail === email && (
             <span className="badge-current-user x-small text-light-500">{intl.formatMessage(messages.roleYou)}</span>
           )}
@@ -42,8 +34,8 @@ const CourseTeamMember = ({
         <MailtoLink to={email}>{email}</MailtoLink>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {isAllowActions && (
-        !isHideActions ? (
+      {isAllowActions &&
+        (!isHideActions ? (
           <div className="member-actions">
             <Button
               variant={isAdminRole ? 'tertiary' : 'primary'}
@@ -65,8 +57,7 @@ const CourseTeamMember = ({
           <div className="member-hint text-right">
             <span>{intl.formatMessage(messages.hint)}</span>
           </div>
-        )
-      )}
+        ))}
     </div>
   );
 };

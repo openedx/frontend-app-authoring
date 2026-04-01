@@ -20,10 +20,7 @@ export const parseHandoutName = ({ handout }) => {
   return 'None';
 };
 
-export const checkValidFileSize = ({
-  file,
-  onSizeFail,
-}) => {
+export const checkValidFileSize = ({ file, onSizeFail }) => {
   // Check if the file size is greater than 20 MB, upload size limit
   if (file.size > 20000000) {
     onSizeFail();
@@ -40,15 +37,20 @@ export const fileInput = ({ fileSizeError }) => {
   const click = () => ref.current.click();
   const addFile = (e) => {
     const file = e.target.files[0];
-    if (file && module.checkValidFileSize({
-      file,
-      onSizeFail: () => {
-        fileSizeError.set();
-      },
-    })) {
-      dispatch(thunkActions.video.uploadHandout({
+    if (
+      file &&
+      module.checkValidFileSize({
         file,
-      }));
+        onSizeFail: () => {
+          fileSizeError.set();
+        },
+      })
+    ) {
+      dispatch(
+        thunkActions.video.uploadHandout({
+          file,
+        }),
+      );
     }
   };
   return {

@@ -1,6 +1,4 @@
-import {
-  fireEvent, render, screen, waitFor,
-} from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { courseDetailsMock } from '../__mocks__';
@@ -12,13 +10,9 @@ const onChangeMock = jest.fn();
 const courseIdMock = 'course-id-bar';
 
 // Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea
-    {...props}
-    onFocus={() => {}}
-    onBlur={() => {}}
-  />
-)));
+jest.mock('react-textarea-autosize', () =>
+  jest.fn((props) => <textarea {...props} onFocus={() => {}} onBlur={() => {}} />),
+);
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
@@ -83,10 +77,9 @@ describe('<InstructorsSection />', () => {
     expect(onChangeMock).toHaveBeenCalledWith({ instructors: [] }, 'instructorInfo');
     rerender(<RootWrapper {...props} instructors={[]} />);
     await waitFor(() => {
-      const deleteButtons = screen.queryAllByRole(
-        'button',
-        { name: instructorMessages.instructorDelete.defaultMessage },
-      );
+      const deleteButtons = screen.queryAllByRole('button', {
+        name: instructorMessages.instructorDelete.defaultMessage,
+      });
       expect(deleteButtons.length).toBe(0);
     });
   });
@@ -96,14 +89,19 @@ describe('<InstructorsSection />', () => {
     const inputName = screen.getByPlaceholderText(instructorMessages.instructorNameInputPlaceholder.defaultMessage);
     fireEvent.change(inputName, { target: { value: 'abc' } });
 
-    expect(onChangeMock).toHaveBeenCalledWith({
-      instructors: [{
-        bio: props.instructors[0].bio,
-        image: props.instructors[0].image,
-        name: 'abc',
-        organization: props.instructors[0].organization,
-        title: props.instructors[0].title,
-      }],
-    }, 'instructorInfo');
+    expect(onChangeMock).toHaveBeenCalledWith(
+      {
+        instructors: [
+          {
+            bio: props.instructors[0].bio,
+            image: props.instructors[0].image,
+            name: 'abc',
+            organization: props.instructors[0].organization,
+            title: props.instructors[0].title,
+          },
+        ],
+      },
+      'instructorInfo',
+    );
   });
 });

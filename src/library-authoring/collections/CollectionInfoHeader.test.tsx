@@ -1,13 +1,7 @@
 import type MockAdapter from 'axios-mock-adapter';
 import userEvent from '@testing-library/user-event';
 
-import {
-  initializeMocks,
-  fireEvent,
-  render as baseRender,
-  screen,
-  waitFor,
-} from '../../testUtils';
+import { initializeMocks, fireEvent, render as baseRender, screen, waitFor } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockGetCollectionMetadata } from '../data/api.mocks';
@@ -20,27 +14,25 @@ let mockShowToast: (message: string) => void;
 mockGetCollectionMetadata.applyMock();
 mockContentLibrary.applyMock();
 
-const {
-  libraryId: mockLibraryId,
-  libraryIdReadOnly,
-} = mockContentLibrary;
+const { libraryId: mockLibraryId, libraryIdReadOnly } = mockContentLibrary;
 
 const { collectionId } = mockGetCollectionMetadata;
 
-const render = (libraryId: string = mockLibraryId) => baseRender(<CollectionInfoHeader />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: collectionId,
-          type: SidebarBodyItemId.CollectionInfo,
-        }}
-      >
-        { children }
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (libraryId: string = mockLibraryId) =>
+  baseRender(<CollectionInfoHeader />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: collectionId,
+            type: SidebarBodyItemId.CollectionInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<CollectionInfoHeader />', () => {
   beforeEach(() => {

@@ -67,7 +67,8 @@ const messages = defineMessages({
   },
   scheduleUpgradeDeadlineDateHelpText: {
     id: 'course-authoring.schedule.schedule-section.upgrade-deadline.date.help-text',
-    defaultMessage: 'Last day students can upgrade to a verified enrollment. Contact your {platformName} partner manager to update these settings.',
+    defaultMessage:
+      'Last day students can upgrade to a verified enrollment. Contact your {platformName} partner manager to update these settings.',
   },
   scheduleUpgradeDeadlineTimeLabel: {
     id: 'course-authoring.schedule.schedule-section.upgrade-deadline.time.label',

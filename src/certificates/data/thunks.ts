@@ -6,13 +6,7 @@ import {
 } from '../../generic/processing-notification/data/slice';
 import { handleResponseErrors } from '../../generic/saving-error-alert';
 import { NOTIFICATION_MESSAGES } from '../../constants';
-import {
-  getCertificates,
-  createCertificate,
-  updateCertificate,
-  deleteCertificate,
-  updateActiveStatus,
-} from './api';
+import { getCertificates, createCertificate, updateCertificate, deleteCertificate, updateActiveStatus } from './api';
 import {
   fetchCertificatesSuccess,
   updateLoadingStatus,
@@ -100,9 +94,9 @@ export function updateCertificateActiveStatus(courseId, path, activationStatus) 
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
 
-    dispatch(showProcessingNotification(
-      activationStatus ? ACTIVATION_MESSAGES.activating : ACTIVATION_MESSAGES.deactivating,
-    ));
+    dispatch(
+      showProcessingNotification(activationStatus ? ACTIVATION_MESSAGES.activating : ACTIVATION_MESSAGES.deactivating),
+    );
 
     try {
       await updateActiveStatus(path, activationStatus);

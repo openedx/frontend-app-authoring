@@ -4,7 +4,37 @@ import { ProblemTypeKeys } from '../../../data/constants/problem';
 import { ToleranceTypes } from '../components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';
 import { findNodesAndRemoveTheirParentNodes } from './reactStateOLXHelpers';
 
-const HtmlBlockTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'pre', 'blockquote', 'ol', 'ul', 'li', 'dl', 'dt', 'dd', 'hr', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'colgroup', 'col', 'address', 'fieldset', 'legend'];
+const HtmlBlockTags = [
+  'p',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'div',
+  'pre',
+  'blockquote',
+  'ol',
+  'ul',
+  'li',
+  'dl',
+  'dt',
+  'dd',
+  'hr',
+  'table',
+  'thead',
+  'caption',
+  'tbody',
+  'tr',
+  'th',
+  'td',
+  'colgroup',
+  'col',
+  'address',
+  'fieldset',
+  'legend',
+];
 
 class ReactStateOLXParser {
   constructor(problemState) {
@@ -56,7 +86,7 @@ class ReactStateOLXParser {
     if (hints.length < 1) {
       return hintsArray;
     }
-    hints.forEach(hint => {
+    hints.forEach((hint) => {
       if (hint.length > 0) {
         const parsedHint = this.richTextParser.parse(hint);
         hintsArray.push({
@@ -77,16 +107,22 @@ class ReactStateOLXParser {
    */
   addSolution() {
     const { solution } = this.editorObject;
-    if (!solution || solution.length <= 0) { return []; }
+    if (!solution || solution.length <= 0) {
+      return [];
+    }
     const solutionTitle = { p: [{ '#text': 'Explanation' }] };
     const parsedSolution = this.richTextParser.parse(solution);
     const withWrapper = [solutionTitle, ...parsedSolution];
-    const solutionObject = [{
-      solution: [{
-        ':@': { '@_class': 'detailed-solution' },
-        div: [...withWrapper],
-      }],
-    }];
+    const solutionObject = [
+      {
+        solution: [
+          {
+            ':@': { '@_class': 'detailed-solution' },
+            div: [...withWrapper],
+          },
+        ],
+      },
+    ];
     return solutionObject;
   }
 
@@ -235,12 +271,11 @@ class ReactStateOLXParser {
     const demandhint = this.addHints();
     const solution = this.addSolution();
 
-    const problemBodyArr = [{
-      [problemType]: [
-        { [widget]: widgetObject },
-        ...solution,
-      ],
-    }];
+    const problemBodyArr = [
+      {
+        [problemType]: [{ [widget]: widgetObject }, ...solution],
+      },
+    ];
 
     const questionString = this.richTextBuilder.build(question);
     const hintString = this.richTextBuilder.build(demandhint);

@@ -1,6 +1,4 @@
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import Checker from '.';
 
 const props = {

@@ -30,26 +30,17 @@ const OutlineHelpSideBar = () => {
 
   return (
     <>
-      <SidebarTitle
-        title={courseDetails?.title || ''}
-        icon={SchoolOutline}
-      />
+      <SidebarTitle title={courseDetails?.title || ''} icon={SchoolOutline} />
       <SidebarContent>
         {sidebarMessages.map(({ title, descriptions, link }) => (
-          <SidebarSection
-            key={title}
-            title={title}
-          >
+          <SidebarSection key={title} title={title}>
             {descriptions.map((description) => (
-              <p className="x-small" key={description}>{description}</p>
+              <p className="x-small" key={description}>
+                {description}
+              </p>
             ))}
             {!!link?.href && (
-              <Hyperlink
-                className="x-small"
-                destination={link.href}
-                target="_blank"
-                showLaunchIcon={false}
-              >
+              <Hyperlink className="x-small" destination={link.href} target="_blank" showLaunchIcon={false}>
                 {link.text}
               </Hyperlink>
             )}

@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import {
-  Image, Icon, Stack, IconButtonWithTooltip, FormLabel, Form, Button, useToggle,
-} from '@openedx/paragon';
+import { Image, Icon, Stack, IconButtonWithTooltip, FormLabel, Form, Button, useToggle } from '@openedx/paragon';
 import { DeleteOutline as DeleteOutlineIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -71,14 +69,11 @@ const SignatoryForm = ({
     },
   ];
 
-  const uploadReplaceText = intl.formatMessage(
-    messages.uploadImageButton,
-    {
-      uploadText: signatureImagePath
-        ? intl.formatMessage(messages.uploadModalReplace)
-        : intl.formatMessage(messages.uploadModal),
-    },
-  );
+  const uploadReplaceText = intl.formatMessage(messages.uploadImageButton, {
+    uploadText: signatureImagePath
+      ? intl.formatMessage(messages.uploadModalReplace)
+      : intl.formatMessage(messages.uploadModal),
+  });
 
   return (
     <div className="bg-light-200 p-2.5 signatory-form" data-testid="signatory-form">
@@ -135,13 +130,8 @@ const SignatoryForm = ({
       </Stack>
       {isEdit && (
         <Stack direction="horizontal" gap="2" className="mt-4">
-          <Button type="submit">
-            {intl.formatMessage(commonMessages.saveTooltip)}
-          </Button>
-          <Button
-            variant="outline-primary"
-            onClick={() => handleCancelUpdateSignatory()}
-          >
+          <Button type="submit">{intl.formatMessage(commonMessages.saveTooltip)}</Button>
+          <Button variant="outline-primary" onClick={() => handleCancelUpdateSignatory()}>
             {intl.formatMessage(commonMessages.cardCancel)}
           </Button>
         </Stack>

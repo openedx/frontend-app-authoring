@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import ScoringCard from './ScoringCard';
 import { selectors } from '../../../../../../data/redux';
 import { GradingMethodKeys } from '../../../../../../data/constants/problem';

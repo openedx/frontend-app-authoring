@@ -13,13 +13,13 @@ jest.mock('@src/editors/data/redux', () => ({
   },
   selectors: {
     app: {
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
-      images: jest.fn(state => ({ images: state })),
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
-      blockId: jest.fn(state => ({ blockId: state })),
+      learningContextId: jest.fn((state) => ({ learningContextId: state })),
+      images: jest.fn((state) => ({ images: state })),
+      isLibrary: jest.fn((state) => ({ isLibrary: state })),
+      blockId: jest.fn((state) => ({ blockId: state })),
     },
     problem: {
-      question: jest.fn(state => ({ question: state })),
+      question: jest.fn((state) => ({ question: state })),
     },
   },
   thunkActions: {
@@ -37,7 +37,7 @@ jest.mock('@src/editors/sharedComponents/TinyMceWidget/hooks', () => ({
   })),
 }));
 
-jest.mock('@src/editors/sharedComponents/TinyMceWidget', () => ('TinyMceWidget'));
+jest.mock('@src/editors/sharedComponents/TinyMceWidget', () => 'TinyMceWidget');
 
 describe('QuestionWidget', () => {
   const props = {

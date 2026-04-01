@@ -75,7 +75,7 @@ export const updateXBlockBlockIdToId = (data: object): object => {
 
   const updatedData: Record<string, any> = {};
 
-  Object.keys(data).forEach(key => {
+  Object.keys(data).forEach((key) => {
     const value = data[key];
 
     if (key === 'children' || key === 'selectablePartitions' || key === 'groups') {
@@ -102,8 +102,5 @@ export const updateXBlockBlockIdToId = (data: object): object => {
  * @param unit - uses the 'upstreamInfo' object if found.
  * @returns True if readOnly, False if editable.
  */
-export const isUnitImportedFromLib = ({ upstreamInfo }: XBlock): boolean => (
-  !!upstreamInfo
-  && !!upstreamInfo.upstreamRef
-  && upstreamInfo.upstreamRef.startsWith('lct:')
-);
+export const isUnitImportedFromLib = ({ upstreamInfo }: XBlock): boolean =>
+  !!upstreamInfo && !!upstreamInfo.upstreamRef && upstreamInfo.upstreamRef.startsWith('lct:');

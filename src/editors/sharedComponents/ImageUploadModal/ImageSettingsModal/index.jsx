@@ -23,13 +23,7 @@ import ErrorAlert from '../../ErrorAlerts/ErrorAlert';
  * @param {func} saveToEditor - save the current settings to the editor
  * @param {func} returnToSelection - return to image selection
  */
-const ImageSettingsModal = ({
-  close,
-  isOpen,
-  returnToSelection,
-  saveToEditor,
-  selection,
-}) => {
+const ImageSettingsModal = ({ close, isOpen, returnToSelection, saveToEditor, selection }) => {
   const intl = useIntl();
   const altText = hooks.altTextHooks(selection.altText);
   const dimensions = hooks.dimensionHooks(altText);
@@ -42,30 +36,18 @@ const ImageSettingsModal = ({
   return (
     <BaseModal
       close={close}
-      confirmAction={(
-        <Button
-          variant="primary"
-          onClick={onSaveClick}
-        >
+      confirmAction={
+        <Button variant="primary" onClick={onSaveClick}>
           <FormattedMessage {...messages.saveButtonLabel} />
         </Button>
-      )}
+      }
       isOpen={isOpen}
       title={intl.formatMessage(messages.titleLabel)}
     >
-      <ErrorAlert
-        dismissError={altText.error.dismiss}
-        hideHeading
-        isError={altText.error.show}
-      >
+      <ErrorAlert dismissError={altText.error.dismiss} hideHeading isError={altText.error.show}>
         <FormattedMessage {...messages.altTextError} />
       </ErrorAlert>
-      <Button
-        iconBefore={ArrowBackIos}
-        onClick={returnToSelection}
-        size="inline"
-        variant="link"
-      >
+      <Button iconBefore={ArrowBackIos} onClick={returnToSelection} size="inline" variant="link">
         <FormattedMessage {...messages.replaceImageButtonLabel} />
       </Button>
       <br />

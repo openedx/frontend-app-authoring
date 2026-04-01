@@ -1,7 +1,5 @@
 import { mockContentLibrary, mockGetContentLibraryV2List } from '@src/library-authoring/data/api.mocks';
-import {
-  initializeMocks, render, screen, waitFor,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, waitFor } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 import { LibraryDropdownFilter } from './LibraryDropdownFilter';
 
@@ -76,10 +74,9 @@ describe('LibraryDropdownFilter', () => {
     await user.click(item);
     const passedFunction = mockSetValue.mock.calls[0][0];
     // Should remove it from list if already selected, i.e., it means user unselected it.
-    expect(passedFunction([
-      'lib:SampleTaxonomyOrg1:TL1',
+    expect(passedFunction(['lib:SampleTaxonomyOrg1:TL1', 'lib:SampleTaxonomyOrg1:TL2'])).toEqual([
       'lib:SampleTaxonomyOrg1:TL2',
-    ])).toEqual(['lib:SampleTaxonomyOrg1:TL2']);
+    ]);
   });
 
   it('should update label to library if one is selected', async () => {
@@ -112,17 +109,25 @@ describe('LibraryDropdownFilter', () => {
     const searchInput = await screen.findByPlaceholderText('Search Library Name');
     await user.type(searchInput, 'Test Library');
 
-    await waitFor(() => expect(mockApi).toHaveBeenLastCalledWith({
-      pagination: false,
-      search: 'Test Library',
-    }), { timeout: 600 });
+    await waitFor(
+      () =>
+        expect(mockApi).toHaveBeenLastCalledWith({
+          pagination: false,
+          search: 'Test Library',
+        }),
+      { timeout: 600 },
+    );
 
     const clearBtn = await screen.findByRole('button', { name: 'clear search' });
     await user.click(clearBtn);
 
-    await waitFor(() => expect(mockApi).toHaveBeenLastCalledWith({
-      pagination: false,
-      search: '',
-    }), { timeout: 600 });
+    await waitFor(
+      () =>
+        expect(mockApi).toHaveBeenLastCalledWith({
+          pagination: false,
+          search: '',
+        }),
+      { timeout: 600 },
+    );
   });
 });

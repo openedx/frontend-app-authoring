@@ -8,9 +8,7 @@ import { UnitSidebar } from './UnitInfoSidebar';
 export const InfoSidebar = () => {
   const { selectedContainerState } = useOutlineSidebarContext();
   if (!selectedContainerState) {
-    return (
-      <CourseInfoSidebar />
-    );
+    return <CourseInfoSidebar />;
   }
   const itemType = getBlockType(selectedContainerState.currentId);
 

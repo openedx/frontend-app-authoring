@@ -7,13 +7,10 @@ export const useTrackSocialSharingChange = ({ updateField }) => {
   const analytics = useSelector(selectors.app.analytics);
   const allowVideoSharing = useSelector(selectors.video.allowVideoSharing);
   return (event) => {
-    sendTrackEvent(
-      analyticsEvents.socialSharingSettingChanged,
-      {
-        ...analytics,
-        value: event.target.checked,
-      },
-    );
+    sendTrackEvent(analyticsEvents.socialSharingSettingChanged, {
+      ...analytics,
+      value: event.target.checked,
+    });
     updateField({
       allowVideoSharing: {
         ...allowVideoSharing,

@@ -2,22 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-const FormControlSet = ({
-  as,
-  className,
-  isInline,
-  children,
-  ...props
-}) => React.createElement(as, {
-  className: classNames(
-    className,
+const FormControlSet = ({ as, className, isInline, children, ...props }) =>
+  React.createElement(
+    as,
     {
-      'pgn__form-control-set': !isInline,
-      'pgn__form-control-set-inline': isInline,
+      className: classNames(className, {
+        'pgn__form-control-set': !isInline,
+        'pgn__form-control-set-inline': isInline,
+      }),
+      ...props,
     },
-  ),
-  ...props,
-}, children);
+    children,
+  );
 
 FormControlSet.propTypes = {
   /** Specifies the base element */

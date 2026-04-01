@@ -1,12 +1,6 @@
 import type MockAdapter from 'axios-mock-adapter';
 
-import {
-  fireEvent,
-  render as baseRender,
-  screen,
-  waitFor,
-  initializeMocks,
-} from '../../testUtils';
+import { fireEvent, render as baseRender, screen, waitFor, initializeMocks } from '../../testUtils';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getXBlockFieldsVersionApiUrl, getXBlockFieldsApiUrl } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';
@@ -23,20 +17,21 @@ const xBlockFields = {
   },
 };
 
-const render = (libraryId: string = mockLibraryId) => baseRender(<ComponentInfoHeader />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: usageKey,
-          type: SidebarBodyItemId.ComponentInfo,
-        }}
-      >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (libraryId: string = mockLibraryId) =>
+  baseRender(<ComponentInfoHeader />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: usageKey,
+            type: SidebarBodyItemId.ComponentInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;
@@ -91,9 +86,11 @@ describe('<ComponentInfoHeader />', () => {
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
       expect(axiosMock.history.post[0].url).toEqual(url);
-      expect(axiosMock.history.post[0].data).toStrictEqual(JSON.stringify({
-        metadata: { display_name: 'New component name' },
-      }));
+      expect(axiosMock.history.post[0].data).toStrictEqual(
+        JSON.stringify({
+          metadata: { display_name: 'New component name' },
+        }),
+      );
       expect(mockShowToast).toHaveBeenCalledWith('Component updated successfully.');
     });
   });
@@ -134,9 +131,11 @@ describe('<ComponentInfoHeader />', () => {
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
       expect(axiosMock.history.post[0].url).toEqual(url);
-      expect(axiosMock.history.post[0].data).toStrictEqual(JSON.stringify({
-        metadata: { display_name: 'New component name' },
-      }));
+      expect(axiosMock.history.post[0].data).toStrictEqual(
+        JSON.stringify({
+          metadata: { display_name: 'New component name' },
+        }),
+      );
 
       expect(mockShowToast).toHaveBeenCalledWith('There was an error updating the component.');
     });

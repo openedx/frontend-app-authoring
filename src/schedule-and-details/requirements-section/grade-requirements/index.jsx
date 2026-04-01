@@ -6,11 +6,7 @@ import { Form, Stack } from '@openedx/paragon';
 
 import messages from './messages';
 
-const GradeRequirements = ({
-  errorEffort,
-  entranceExamMinimumScorePct,
-  onChange,
-}) => (
+const GradeRequirements = ({ errorEffort, entranceExamMinimumScorePct, onChange }) => (
   <Form.Group
     className={classNames('form-group-custom', {
       'form-group-custom_isInvalid': errorEffort,
@@ -29,11 +25,7 @@ const GradeRequirements = ({
         trailingElement="%"
       />
     </Stack>
-    {errorEffort && (
-      <Form.Control.Feedback className="feedback-error">
-        {errorEffort}
-      </Form.Control.Feedback>
-    )}
+    {errorEffort && <Form.Control.Feedback className="feedback-error">{errorEffort}</Form.Control.Feedback>}
     <Form.Control.Feedback>
       <FormattedMessage {...messages.requirementsEntranceCollapseHelpText} />
     </Form.Control.Feedback>

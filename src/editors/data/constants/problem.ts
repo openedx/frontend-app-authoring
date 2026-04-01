@@ -17,7 +17,7 @@ export const ProblemTypeKeys = StrictDict({
   TEXTINPUT: 'stringresponse',
   ADVANCED: 'advanced',
 } as const);
-export type ProblemType = typeof ProblemTypeKeys[keyof typeof ProblemTypeKeys];
+export type ProblemType = (typeof ProblemTypeKeys)[keyof typeof ProblemTypeKeys];
 
 /**
  * Get problem types with internationalized strings.
@@ -42,7 +42,9 @@ export const getProblemTypes = (formatMessage) => ({
     preview: singleSelect,
     previewDescription: formatMessage(problemMessages.singleSelectDescription),
     description: formatMessage(problemMessages.singleSelectInstruction),
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_multi_select.html'),
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_multi_select.html',
+    ),
     prev: ProblemTypeKeys.TEXTINPUT,
     next: ProblemTypeKeys.MULTISELECT,
     template: basicProblemTemplates.singleSelect.olx,
@@ -53,7 +55,9 @@ export const getProblemTypes = (formatMessage) => ({
     preview: multiSelect,
     previewDescription: formatMessage(problemMessages.multiSelectDescription),
     description: formatMessage(problemMessages.multiSelectInstruction),
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_multi_select.html'),
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_multi_select.html',
+    ),
     next: ProblemTypeKeys.DROPDOWN,
     prev: ProblemTypeKeys.SINGLESELECT,
     template: basicProblemTemplates.multiSelect.olx,
@@ -64,7 +68,9 @@ export const getProblemTypes = (formatMessage) => ({
     preview: dropdown,
     previewDescription: formatMessage(problemMessages.dropdownDescription),
     description: formatMessage(problemMessages.dropdownInstruction),
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_dropdown.html'),
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_dropdown.html',
+    ),
     next: ProblemTypeKeys.NUMERIC,
     prev: ProblemTypeKeys.MULTISELECT,
     template: basicProblemTemplates.dropdown.olx,
@@ -75,7 +81,9 @@ export const getProblemTypes = (formatMessage) => ({
     preview: numericalInput,
     previewDescription: formatMessage(problemMessages.numericalInputDescription),
     description: formatMessage(problemMessages.numericalInputInstruction),
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/manage_numerical_input_problem.html'),
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/manage_numerical_input_problem.html',
+    ),
     next: ProblemTypeKeys.TEXTINPUT,
     prev: ProblemTypeKeys.DROPDOWN,
     template: basicProblemTemplates.numeric.olx,
@@ -86,7 +94,9 @@ export const getProblemTypes = (formatMessage) => ({
     preview: textInput,
     previewDescription: formatMessage(problemMessages.textInputDescription),
     description: formatMessage(problemMessages.textInputInstruction),
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_text_input.html'),
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_text_input.html',
+    ),
     prev: ProblemTypeKeys.NUMERIC,
     next: ProblemTypeKeys.SINGLESELECT,
     template: basicProblemTemplates.textInput.olx,
@@ -94,7 +104,7 @@ export const getProblemTypes = (formatMessage) => ({
   },
   [ProblemTypeKeys.ADVANCED]: {
     title: formatMessage(problemMessages.advancedProblemTitle),
-    preview: ('<div />'),
+    preview: '<div />',
     description: formatMessage(problemMessages.advancedProblemDescription),
     helpLink: 'something.com',
   },
@@ -105,8 +115,11 @@ export const ProblemTypes = StrictDict({
     title: 'Single select',
     preview: singleSelect,
     previewDescription: 'Learners must select the correct answer from a list of possible options.',
-    description: 'Enter your single select answers below and select which choices are correct. Learners must choose one correct answer.',
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_multi_select.html'),
+    description:
+      'Enter your single select answers below and select which choices are correct. Learners must choose one correct answer.',
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_multi_select.html',
+    ),
     prev: ProblemTypeKeys.TEXTINPUT,
     next: ProblemTypeKeys.MULTISELECT,
     template: basicProblemTemplates.singleSelect.olx,
@@ -116,8 +129,11 @@ export const ProblemTypes = StrictDict({
     title: 'Multi-select',
     preview: multiSelect,
     previewDescription: 'Learners must select all correct answers from a list of possible options.',
-    description: 'Enter your multi select answers below and select which choices are correct. Learners must choose all correct answers.',
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_multi_select.html'),
+    description:
+      'Enter your multi select answers below and select which choices are correct. Learners must choose all correct answers.',
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_multi_select.html',
+    ),
     next: ProblemTypeKeys.DROPDOWN,
     prev: ProblemTypeKeys.SINGLESELECT,
     template: basicProblemTemplates.multiSelect.olx,
@@ -127,8 +143,11 @@ export const ProblemTypes = StrictDict({
     title: 'Dropdown',
     preview: dropdown,
     previewDescription: 'Learners must select the correct answer from a list of possible options',
-    description: 'Enter your dropdown answers below and select which choice is correct. Learners must select one correct answer.',
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_dropdown.html'),
+    description:
+      'Enter your dropdown answers below and select which choice is correct. Learners must select one correct answer.',
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_dropdown.html',
+    ),
     next: ProblemTypeKeys.NUMERIC,
     prev: ProblemTypeKeys.MULTISELECT,
     template: basicProblemTemplates.dropdown.olx,
@@ -139,7 +158,9 @@ export const ProblemTypes = StrictDict({
     preview: numericalInput,
     previewDescription: 'Specify one or more correct numeric answers, submitted in a response field.',
     description: 'Enter correct numerical input answers below. Learners must enter one correct answer.',
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/manage_numerical_input_problem.html'),
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/manage_numerical_input_problem.html',
+    ),
     next: ProblemTypeKeys.TEXTINPUT,
     prev: ProblemTypeKeys.DROPDOWN,
     template: basicProblemTemplates.numeric.olx,
@@ -148,9 +169,13 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.TEXTINPUT]: {
     title: 'Text input',
     preview: textInput,
-    previewDescription: 'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
-    description: 'Enter your text input answers below and select which choices are correct. Learners must enter one correct answer.',
-    helpLink: getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_text_input.html'),
+    previewDescription:
+      'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
+    description:
+      'Enter your text input answers below and select which choices are correct. Learners must enter one correct answer.',
+    helpLink: getExternalLinkUrl(
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_text_input.html',
+    ),
     prev: ProblemTypeKeys.NUMERIC,
     next: ProblemTypeKeys.SINGLESELECT,
     template: basicProblemTemplates.textInput.olx,
@@ -158,7 +183,7 @@ export const ProblemTypes = StrictDict({
   },
   [ProblemTypeKeys.ADVANCED]: {
     title: 'Advanced Problem',
-    preview: ('<div />'),
+    preview: '<div />',
     description: 'An Advanced Problem Type',
     helpLink: 'something.com',
   },
@@ -173,7 +198,7 @@ export const AdvanceProblemKeys = StrictDict({
   FORMULA: 'formularesponse',
   PROBLEMWITHHINT: 'problemwithhint',
 } as const);
-export type AdvancedProblemType = typeof AdvanceProblemKeys[keyof typeof AdvanceProblemKeys];
+export type AdvancedProblemType = (typeof AdvanceProblemKeys)[keyof typeof AdvanceProblemKeys];
 
 export function isAdvancedProblemType(pt: ProblemType | AdvancedProblemType): pt is AdvancedProblemType {
   return Object.values(AdvanceProblemKeys).includes(pt as any);
@@ -371,7 +396,7 @@ export const GradingMethodKeys = StrictDict({
   FIRST_SCORE: 'first_score',
 });
 
-export type GradingMethodKey = typeof GradingMethodKeys[keyof typeof GradingMethodKeys];
+export type GradingMethodKey = (typeof GradingMethodKeys)[keyof typeof GradingMethodKeys];
 
 export const GradingMethod = StrictDict({
   [GradingMethodKeys.LAST_SCORE]: {
@@ -415,15 +440,18 @@ export const ignoredOlxAttributes = [
 ] as const;
 
 // Useful for the block creation workflow.
-export const problemTitles = new Set([...Object.values(ProblemTypes).map((problem) => problem.title),
-  ...Object.values(AdvanceProblems).map((problem) => problem.title)]);
+export const problemTitles = new Set([
+  ...Object.values(ProblemTypes).map((problem) => problem.title),
+  ...Object.values(AdvanceProblems).map((problem) => problem.title),
+]);
 
 /**
  * Get problem titles with internationalization support
  * @param {Function} formatMessage - The intl.formatMessage function
  * @returns {Set<string>} Set of localized problem titles
  */
-export const getProblemTitles = (formatMessage) => new Set([
-  ...Object.values(getProblemTypes(formatMessage)).map((problem) => problem.title),
-  ...Object.values(getAdvanceProblems(formatMessage)).map((problem) => problem.title),
-]);
+export const getProblemTitles = (formatMessage) =>
+  new Set([
+    ...Object.values(getProblemTypes(formatMessage)).map((problem) => problem.title),
+    ...Object.values(getAdvanceProblems(formatMessage)).map((problem) => problem.title),
+  ]);

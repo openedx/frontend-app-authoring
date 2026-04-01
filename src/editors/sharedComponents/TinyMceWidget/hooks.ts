@@ -1,9 +1,4 @@
-import {
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-} from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
@@ -43,7 +38,9 @@ export const imageMatchRegex = /asset-v1.(.*).type.(.*).block.(.*)/;
  * matches two strings by comparing their regex capture groups using the `imageMatchRegex`
  */
 export const matchImageStringsByIdentifiers = (a, b) => {
-  if (!a || !b || !(typeof a === 'string') || !(typeof b === 'string')) { return null; }
+  if (!a || !b || !(typeof a === 'string') || !(typeof b === 'string')) {
+    return null;
+  }
   const matchA = JSON.stringify(a.match(imageMatchRegex)?.slice?.(1));
   const matchB = JSON.stringify(b.match(imageMatchRegex)?.slice?.(1));
   return matchA && matchA === matchB;
@@ -104,19 +101,14 @@ export const parseContentForLabels = ({ editor, updateContent }) => {
   }
 };
 
-export const replaceStaticWithAsset = ({
-  initialContent,
-  learningContextId,
-  editorType,
-  lmsEndpointUrl,
-}) => {
+export const replaceStaticWithAsset = ({ initialContent, learningContextId, editorType, lmsEndpointUrl }) => {
   let content = initialContent;
   let hasChanges = false;
-  const srcs = content.split(/(src="|src=&quot;|href="|href=&quot)/g).filter(
-    src => src.startsWith('/static') || src.startsWith('/asset'),
-  );
+  const srcs = content
+    .split(/(src="|src=&quot;|href="|href=&quot)/g)
+    .filter((src) => src.startsWith('/static') || src.startsWith('/asset'));
   if (!isEmpty(srcs)) {
-    srcs.forEach(src => {
+    srcs.forEach((src) => {
       const currentContent = content;
       let staticFullUrl;
       const isStatic = src.startsWith('/static/');
@@ -126,7 +118,8 @@ export const replaceStaticWithAsset = ({
       // vs /static/images/filename.ext pattern (should NOT be converted)
       // /static/images/ are direct links to images stored in static, not course assets
       // we have dummy images there for course content that should not be converted to assets
-      const isDirectStaticFile = (isStatic || assetSrc.startsWith('/asset')) && !assetSrc.substring(8).includes('images/');
+      const isDirectStaticFile =
+        (isStatic || assetSrc.startsWith('/asset')) && !assetSrc.substring(8).includes('images/');
 
       const staticName = assetSrc.substring(8);
       const assetName = parseAssetName(src);
@@ -158,7 +151,9 @@ export const replaceStaticWithAsset = ({
         hasChanges = true;
       }
     });
-    if (hasChanges) { return content; }
+    if (hasChanges) {
+      return content;
+    }
   }
   return false;
 };
@@ -176,9 +171,7 @@ export const replaceStaticWithAsset = ({
  *
  * @returns {Object} { result, foundMatch }
  */
-export function updateImageDimensions({
-  images, url, width, height,
-}) {
+export function updateImageDimensions({ images, url, width, height }) {
   let foundMatch = false;
 
   const result = images.map((image) => {
@@ -194,23 +187,26 @@ export function updateImageDimensions({
   return { result, foundMatch };
 }
 
-export const getImageResizeHandler = ({ editor, imagesRef, setImage }) => () => {
-  const {
-    src, alt, width, height,
-  } = editor.selection.getNode();
+export const getImageResizeHandler =
+  ({ editor, imagesRef, setImage }) =>
+  () => {
+    const { src, alt, width, height } = editor.selection.getNode();
 
-  // eslint-disable-next-line no-param-reassign
-  imagesRef.current = updateImageDimensions({
-    images: imagesRef.current, url: src, width, height,
-  }).result;
+    // eslint-disable-next-line no-param-reassign
+    imagesRef.current = updateImageDimensions({
+      images: imagesRef.current,
+      url: src,
+      width,
+      height,
+    }).result;
 
-  setImage({
-    externalUrl: src,
-    altText: alt,
-    width,
-    height,
-  });
-};
+    setImage({
+      externalUrl: src,
+      altText: alt,
+      width,
+      height,
+    });
+  };
 
 /**
  * Fix TinyMCE editors used in Paragon modals, by re-parenting their modal <div>
@@ -247,152 +243,173 @@ export const reparentTinyMceModals = /* istanbul ignore next */ () => {
 };
 
 export const detectImageMatchingError = ({ matchingImages, tinyMceHTML }) => {
-  if (!matchingImages.length) { return true; }
-  if (matchingImages.length > 1) { return true; }
+  if (!matchingImages.length) {
+    return true;
+  }
+  if (matchingImages.length > 1) {
+    return true;
+  }
 
-  if (!matchImageStringsByIdentifiers(matchingImages[0].id, tinyMceHTML.src)) { return true; }
-  if (!matchingImages[0].width || !matchingImages[0].height) { return true; }
-  if (matchingImages[0].width !== tinyMceHTML.width) { return true; }
-  if (matchingImages[0].height !== tinyMceHTML.height) { return true; }
+  if (!matchImageStringsByIdentifiers(matchingImages[0].id, tinyMceHTML.src)) {
+    return true;
+  }
+  if (!matchingImages[0].width || !matchingImages[0].height) {
+    return true;
+  }
+  if (matchingImages[0].width !== tinyMceHTML.width) {
+    return true;
+  }
+  if (matchingImages[0].height !== tinyMceHTML.height) {
+    return true;
+  }
 
   return false;
 };
 
-export const openModalWithSelectedImage = ({
-  editor, images, setImage, openImgModal,
-}) => () => {
-  const tinyMceHTML = editor.selection.getNode();
-  const { src: mceSrc } = tinyMceHTML;
+export const openModalWithSelectedImage =
+  ({ editor, images, setImage, openImgModal }) =>
+  () => {
+    const tinyMceHTML = editor.selection.getNode();
+    const { src: mceSrc } = tinyMceHTML;
 
-  const matchingImages = images.current.filter(image => matchImageStringsByIdentifiers(image.id, mceSrc));
+    const matchingImages = images.current.filter((image) => matchImageStringsByIdentifiers(image.id, mceSrc));
 
-  const imageMatchingErrorDetected = detectImageMatchingError({ tinyMceHTML, matchingImages });
+    const imageMatchingErrorDetected = detectImageMatchingError({ tinyMceHTML, matchingImages });
 
-  const width = imageMatchingErrorDetected ? null : matchingImages[0]?.width;
-  const height = imageMatchingErrorDetected ? null : matchingImages[0]?.height;
+    const width = imageMatchingErrorDetected ? null : matchingImages[0]?.width;
+    const height = imageMatchingErrorDetected ? null : matchingImages[0]?.height;
 
-  setImage({
-    externalUrl: tinyMceHTML.src,
-    altText: tinyMceHTML.alt,
-    width,
-    height,
-  });
-
-  openImgModal();
-};
-
-export const setupCustomBehavior = ({
-  updateContent,
-  openImgModal,
-  openSourceCodeModal,
-  editorType,
-  images,
-  setImage,
-  lmsEndpointUrl,
-  learningContextId,
-}) => (editor) => {
-  // image upload button
-  editor.ui.registry.addButton(tinyMCE.buttons.imageUploadButton, {
-    icon: 'image',
-    tooltip: 'Add Image',
-    onAction: openImgModal,
-  });
-  // editing an existing image
-  editor.ui.registry.addButton(tinyMCE.buttons.editImageSettings, {
-    icon: 'image',
-    tooltip: 'Edit Image Settings',
-    onAction: openModalWithSelectedImage({
-      editor, images, setImage, openImgModal,
-    }),
-  });
-  // overriding the code plugin's icon with 'HTML' text
-  editor.ui.registry.addButton(tinyMCE.buttons.code, {
-    text: 'HTML',
-    tooltip: 'Source code',
-    onAction: openSourceCodeModal,
-  });
-  // add a custom simple inline code block formatter.
-  const setupCodeFormatting = (api) => {
-    editor.formatter.formatChanged(
-      'code',
-      (active) => api.setActive(active),
-    );
-  };
-  const toggleCodeFormatting = () => {
-    editor.formatter.toggle('code');
-    editor.undoManager.add();
-    editor.focus();
-  };
-  editor.ui.registry.addToggleButton(tinyMCE.buttons.codeBlock, {
-    icon: 'sourcecode',
-    tooltip: 'Code Block',
-    onAction: toggleCodeFormatting,
-    onSetup: setupCodeFormatting,
-  });
-  // add a custom simple inline label formatter.
-  const toggleLabelFormatting = () => {
-    editor.execCommand('mceToggleFormat', false, 'label');
-  };
-  editor.ui.registry.addIcon('textToSpeech', tinyMCE.textToSpeechIcon);
-  editor.ui.registry.addButton('customLabelButton', {
-    icon: 'textToSpeech',
-    text: 'Label',
-    tooltip: 'Apply a "Question" label to specific text, recognized by screen readers. Recommended to improve accessibility.',
-    onAction: toggleLabelFormatting,
-  });
-  if (editorType === 'expandable') {
-    editor.on('init', () => {
-      const initialContent = editor.getContent();
-      const newContent = replaceStaticWithAsset({
-        initialContent,
-        editorType,
-        lmsEndpointUrl,
-        learningContextId,
-      });
-      // istanbul ignore if
-      if (newContent) {
-        // update content but mark as not dirty as user did not change anything
-        updateContent(newContent, false);
-        editor.setDirty(false);
-      }
+    setImage({
+      externalUrl: tinyMceHTML.src,
+      altText: tinyMceHTML.alt,
+      width,
+      height,
     });
-  }
 
-  editor.on('init', /* istanbul ignore next */ () => {
-    // Check if this editor is inside a (Paragon) modal.
-    // The way we get the editor's root <div> depends on whether or not this particular editor is using an iframe:
-    const editorDiv = editor.bodyElement ?? editor.container;
-    if (editorDiv?.closest('.pgn__modal')) {
-      // This editor is inside a Paragon modal. Use this hack to avoid interference with TinyMCE's own modal popups:
-      reparentTinyMceModals();
-      editor.on('selectionchange', reparentTinyMceModals);
-    }
-  });
+    openImgModal();
+  };
 
-  editor.on('ExecCommand', /* istanbul ignore next */ (e) => {
-    if (editorType === 'text' && e.command === 'mceFocus') {
-      const initialContent = editor.getContent();
-      const newContent = replaceStaticWithAsset({
-        initialContent,
-        editorType,
-        lmsEndpointUrl,
-        learningContextId,
+export const setupCustomBehavior =
+  ({
+    updateContent,
+    openImgModal,
+    openSourceCodeModal,
+    editorType,
+    images,
+    setImage,
+    lmsEndpointUrl,
+    learningContextId,
+  }) =>
+  (editor) => {
+    // image upload button
+    editor.ui.registry.addButton(tinyMCE.buttons.imageUploadButton, {
+      icon: 'image',
+      tooltip: 'Add Image',
+      onAction: openImgModal,
+    });
+    // editing an existing image
+    editor.ui.registry.addButton(tinyMCE.buttons.editImageSettings, {
+      icon: 'image',
+      tooltip: 'Edit Image Settings',
+      onAction: openModalWithSelectedImage({
+        editor,
+        images,
+        setImage,
+        openImgModal,
+      }),
+    });
+    // overriding the code plugin's icon with 'HTML' text
+    editor.ui.registry.addButton(tinyMCE.buttons.code, {
+      text: 'HTML',
+      tooltip: 'Source code',
+      onAction: openSourceCodeModal,
+    });
+    // add a custom simple inline code block formatter.
+    const setupCodeFormatting = (api) => {
+      editor.formatter.formatChanged('code', (active) => api.setActive(active));
+    };
+    const toggleCodeFormatting = () => {
+      editor.formatter.toggle('code');
+      editor.undoManager.add();
+      editor.focus();
+    };
+    editor.ui.registry.addToggleButton(tinyMCE.buttons.codeBlock, {
+      icon: 'sourcecode',
+      tooltip: 'Code Block',
+      onAction: toggleCodeFormatting,
+      onSetup: setupCodeFormatting,
+    });
+    // add a custom simple inline label formatter.
+    const toggleLabelFormatting = () => {
+      editor.execCommand('mceToggleFormat', false, 'label');
+    };
+    editor.ui.registry.addIcon('textToSpeech', tinyMCE.textToSpeechIcon);
+    editor.ui.registry.addButton('customLabelButton', {
+      icon: 'textToSpeech',
+      text: 'Label',
+      tooltip:
+        'Apply a "Question" label to specific text, recognized by screen readers. Recommended to improve accessibility.',
+      onAction: toggleLabelFormatting,
+    });
+    if (editorType === 'expandable') {
+      editor.on('init', () => {
+        const initialContent = editor.getContent();
+        const newContent = replaceStaticWithAsset({
+          initialContent,
+          editorType,
+          lmsEndpointUrl,
+          learningContextId,
+        });
+        // istanbul ignore if
+        if (newContent) {
+          // update content but mark as not dirty as user did not change anything
+          updateContent(newContent, false);
+          editor.setDirty(false);
+        }
       });
-      if (newContent) {
-        // Use setTimeout to ensure the update happens after current execution
-        setTimeout(() => {
-          editor.setContent(newContent);
-        }, 0);
-      }
     }
-    if (e.command === 'RemoveFormat') {
-      editor.formatter.remove('blockquote');
-      editor.formatter.remove('label');
-    }
-  });
-  // after resizing an image in the editor, synchronize React state and ref
-  editor.on('ObjectResized', getImageResizeHandler({ editor, imagesRef: images, setImage }));
-};
+
+    editor.on(
+      'init',
+      /* istanbul ignore next */ () => {
+        // Check if this editor is inside a (Paragon) modal.
+        // The way we get the editor's root <div> depends on whether or not this particular editor is using an iframe:
+        const editorDiv = editor.bodyElement ?? editor.container;
+        if (editorDiv?.closest('.pgn__modal')) {
+          // This editor is inside a Paragon modal. Use this hack to avoid interference with TinyMCE's own modal popups:
+          reparentTinyMceModals();
+          editor.on('selectionchange', reparentTinyMceModals);
+        }
+      },
+    );
+
+    editor.on(
+      'ExecCommand',
+      /* istanbul ignore next */ (e) => {
+        if (editorType === 'text' && e.command === 'mceFocus') {
+          const initialContent = editor.getContent();
+          const newContent = replaceStaticWithAsset({
+            initialContent,
+            editorType,
+            lmsEndpointUrl,
+            learningContextId,
+          });
+          if (newContent) {
+            // Use setTimeout to ensure the update happens after current execution
+            setTimeout(() => {
+              editor.setContent(newContent);
+            }, 0);
+          }
+        }
+        if (e.command === 'RemoveFormat') {
+          editor.formatter.remove('blockquote');
+          editor.formatter.remove('label');
+        }
+      },
+    );
+    // after resizing an image in the editor, synchronize React state and ref
+    editor.on('ObjectResized', getImageResizeHandler({ editor, imagesRef: images, setImage }));
+  };
 
 // imagetools_cors_hosts needs a protocol-sanatized url
 export const removeProtocolFromUrl = (url) => url.replace(/^https?:\/\//, '');
@@ -419,14 +436,11 @@ export const editorConfig = ({
   const studioEndpointUrl = getConfig().STUDIO_BASE_URL;
 
   const baseURL = staticRootUrl || lmsEndpointUrl;
-  const {
-    toolbar,
-    config,
-    plugins,
-    imageToolbar,
-    quickbarsInsertToolbar,
-    quickbarsSelectionToolbar,
-  } = pluginConfig({ placeholder, editorType, enableImageUpload });
+  const { toolbar, config, plugins, imageToolbar, quickbarsInsertToolbar, quickbarsSelectionToolbar } = pluginConfig({
+    placeholder,
+    editorType,
+    enableImageUpload,
+  });
   const isLocaleRtl = isRtl(getLocale());
   return {
     onInit: (_evt, editor) => {
@@ -444,7 +458,7 @@ export const editorConfig = ({
       min_height: minHeight,
       max_height: maxHeight,
       contextmenu: 'link table',
-      directionality: isLocaleRtl ? 'rtl' as const : 'ltr' as const,
+      directionality: isLocaleRtl ? ('rtl' as const) : ('ltr' as const),
       document_base_url: baseURL,
       imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
       imagetools_toolbar: imageToolbar,
@@ -516,7 +530,7 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
    * For example, /assets/course/<asset hash>/filename gets converted to /static/filename. This is
    * important for rerunning courses and importing/exporting course as the /static/ part of the url
    * allows the asset to be mapped to the new course run.
-  */
+   */
 
   // TODO: should probably move this to when the assets are being looped through in the off chance that
   // some of the text in the editor contains the lmsEndpointUrl
@@ -524,31 +538,35 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
   let content = editorValue.replace(regExLmsEndpointUrl, '');
 
   const assetSrcs = typeof content === 'string' ? content.split(/(src="|src=&quot;|href="|href=&quot)/g) : [];
-  assetSrcs.filter(src => src.startsWith('/asset')).forEach(src => {
-    const nameFromEditorSrc = parseAssetName(src);
-    const portableUrl = getStaticUrl({ displayName: nameFromEditorSrc });
-    const currentSrc = src.substring(0, src.search(/("|&quot;)/));
-    const updatedContent = content.replace(currentSrc, portableUrl);
-    content = updatedContent;
-  });
+  assetSrcs
+    .filter((src) => src.startsWith('/asset'))
+    .forEach((src) => {
+      const nameFromEditorSrc = parseAssetName(src);
+      const portableUrl = getStaticUrl({ displayName: nameFromEditorSrc });
+      const currentSrc = src.substring(0, src.search(/("|&quot;)/));
+      const updatedContent = content.replace(currentSrc, portableUrl);
+      content = updatedContent;
+    });
 
   const updatedStaticUrls: string[] = [];
-  assetSrcs.filter(src => src.startsWith('static/')).forEach(src => {
-    // Before storing assets we make sure that library static assets points again to
-    // `/static/dummy.jpg` instead of using the relative url `static/dummy.jpg`
-    const nameFromEditorSrc = parseAssetName(src);
-    const portableUrl = `/${nameFromEditorSrc}`;
-    if (updatedStaticUrls.includes(portableUrl)) {
-      // If same image is used multiple times in the same src,
-      // replace all occurence once and do not process them again.
-      return;
-    }
-    // track updated urls to process only once.
-    updatedStaticUrls.push(portableUrl);
-    const currentSrc = src.substring(0, src.search(/("|&quot;)/));
-    const updatedContent = content.replaceAll(currentSrc, portableUrl);
-    content = updatedContent;
-  });
+  assetSrcs
+    .filter((src) => src.startsWith('static/'))
+    .forEach((src) => {
+      // Before storing assets we make sure that library static assets points again to
+      // `/static/dummy.jpg` instead of using the relative url `static/dummy.jpg`
+      const nameFromEditorSrc = parseAssetName(src);
+      const portableUrl = `/${nameFromEditorSrc}`;
+      if (updatedStaticUrls.includes(portableUrl)) {
+        // If same image is used multiple times in the same src,
+        // replace all occurence once and do not process them again.
+        return;
+      }
+      // track updated urls to process only once.
+      updatedStaticUrls.push(portableUrl);
+      const currentSrc = src.substring(0, src.search(/("|&quot;)/));
+      const updatedContent = content.replaceAll(currentSrc, portableUrl);
+      content = updatedContent;
+    });
   return content;
 };
 

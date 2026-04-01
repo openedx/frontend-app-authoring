@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  useLocation,
-} from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import Header from './header';
 import NotFoundAlert from './generic/NotFoundAlert';
@@ -35,14 +33,10 @@ const CourseAuthoringPage = ({ children }: Props) => {
   const isEditor = pathname.includes('/editor');
 
   if (courseDetailStatus === RequestStatus.NOT_FOUND && !isEditor) {
-    return (
-      <NotFoundAlert />
-    );
+    return <NotFoundAlert />;
   }
   if (courseAppsApiStatus === RequestStatus.DENIED) {
-    return (
-      <PermissionDeniedAlert />
-    );
+    return <PermissionDeniedAlert />;
   }
   return (
     <div>
@@ -50,19 +44,19 @@ const CourseAuthoringPage = ({ children }: Props) => {
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
-      {inProgress ? !isEditor && <Loading />
-        : (!isEditor && (
-          <Header
-            number={courseNumber}
-            org={courseOrg}
-            title={courseTitle}
-            contextId={courseId}
-            containerProps={{
-              size: 'fluid',
-            }}
-          />
-        )
-        )}
+      {inProgress
+        ? !isEditor && <Loading />
+        : !isEditor && (
+            <Header
+              number={courseNumber}
+              org={courseOrg}
+              title={courseTitle}
+              contextId={courseId}
+              containerProps={{
+                size: 'fluid',
+              }}
+            />
+          )}
       {children}
       {!inProgress && !isEditor && <StudioFooterSlot />}
     </div>

@@ -21,16 +21,11 @@ const RequirementsSection = ({
   onChange,
 }) => {
   const intl = useIntl();
-  const selectedItem = possiblePreRequisiteCourses?.find(
-    (course) => course.courseKey === preRequisiteCourses[0],
-  );
+  const selectedItem = possiblePreRequisiteCourses?.find((course) => course.courseKey === preRequisiteCourses[0]);
   const formattedSelectedItem = selectedItem?.displayName || intl.formatMessage(messages.dropdownEmptyText);
 
   const renderPrerequisiteDropdown = () => (
-    <Form.Group
-      className="form-group-custom dropdown-prerequisite"
-      controlId="prerequisiteDropdown"
-    >
+    <Form.Group className="form-group-custom dropdown-prerequisite" controlId="prerequisiteDropdown">
       <Form.Label>{intl.formatMessage(messages.dropdownLabel)}</Form.Label>
       <Dropdown className="bg-white">
         <Dropdown.Toggle id="prerequisiteDropdown" variant="outline-primary">
@@ -44,18 +39,13 @@ const RequirementsSection = ({
             {intl.formatMessage(messages.dropdownEmptyText)}
           </Dropdown.Item>
           {possiblePreRequisiteCourses.map((course) => (
-            <Dropdown.Item
-              key={course.courseKey}
-              onClick={() => onChange([course.courseKey], 'preRequisiteCourses')}
-            >
+            <Dropdown.Item key={course.courseKey} onClick={() => onChange([course.courseKey], 'preRequisiteCourses')}>
               {course.displayName}
             </Dropdown.Item>
           ))}
         </Dropdown.Menu>
       </Dropdown>
-      <Form.Control.Feedback>
-        {intl.formatMessage(messages.dropdownHelpText)}
-      </Form.Control.Feedback>
+      <Form.Control.Feedback>{intl.formatMessage(messages.dropdownHelpText)}</Form.Control.Feedback>
     </Form.Group>
   );
 
@@ -67,17 +57,13 @@ const RequirementsSection = ({
       />
       {aboutPageEditable && (
         <Form.Group className="form-group-custom">
-          <Form.Label>
-            {intl.formatMessage(messages.timepickerLabel)}
-          </Form.Label>
+          <Form.Label>{intl.formatMessage(messages.timepickerLabel)}</Form.Label>
           <Form.Control
             value={effort || ''}
             placeholder={TIME_FORMAT.toUpperCase()}
             onChange={(e) => onChange(e.target.value, 'effort')}
           />
-          <Form.Control.Feedback>
-            {intl.formatMessage(messages.timepickerHelpText)}
-          </Form.Control.Feedback>
+          <Form.Control.Feedback>{intl.formatMessage(messages.timepickerHelpText)}</Form.Control.Feedback>
         </Form.Group>
       )}
       {isPrerequisiteCoursesEnabled && renderPrerequisiteDropdown()}
@@ -119,9 +105,7 @@ RequirementsSection.propTypes = {
   preRequisiteCourses: PropTypes.arrayOf(PropTypes.string),
   entranceExamEnabled: PropTypes.string,
   isEntranceExamsEnabled: PropTypes.bool.isRequired,
-  possiblePreRequisiteCourses: PropTypes.arrayOf(
-    PropTypes.shape(preRequisitesCourse),
-  ).isRequired,
+  possiblePreRequisiteCourses: PropTypes.arrayOf(PropTypes.shape(preRequisitesCourse)).isRequired,
   entranceExamMinimumScorePct: PropTypes.string,
   isPrerequisiteCoursesEnabled: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,

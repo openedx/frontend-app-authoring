@@ -13,12 +13,7 @@ import useLayout from './hooks/useLayout';
 const MainLayout = ({ courseId, showHeaderButtons, children }) => {
   const intl = useIntl();
 
-  const {
-    errorMessage,
-    savingStatus,
-    isShowProcessingNotification,
-    processingNotificationTitle,
-  } = useLayout();
+  const { errorMessage, savingStatus, isShowProcessingNotification, processingNotificationTitle } = useLayout();
 
   return (
     <>
@@ -39,9 +34,7 @@ const MainLayout = ({ courseId, showHeaderButtons, children }) => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
-              <article role="main">
-                {children}
-              </article>
+              <article role="main">{children}</article>
             </Layout.Element>
             <Layout.Element>
               <CertificatesSidebar courseId={courseId} />
@@ -50,14 +43,8 @@ const MainLayout = ({ courseId, showHeaderButtons, children }) => {
         </section>
       </Container>
       <div className="certificates alert-toast">
-        <ProcessingNotification
-          isShow={isShowProcessingNotification}
-          title={processingNotificationTitle}
-        />
-        <SavingErrorAlert
-          savingStatus={savingStatus}
-          errorMessage={errorMessage}
-        />
+        <ProcessingNotification isShow={isShowProcessingNotification} title={processingNotificationTitle} />
+        <SavingErrorAlert savingStatus={savingStatus} errorMessage={errorMessage} />
       </div>
     </>
   );

@@ -23,10 +23,12 @@ describe('<VerifyEmailLayout />', () => {
       }),
     ).toBeInTheDocument();
 
-    expect(getByText(
-      `Almost there! In order to complete your sign up we need you to verify your email address (${fakeAuthenticatedUser.email}). An activation message and next steps should be waiting for you there.`,
-      { exact: false },
-    )).toBeInTheDocument();
+    expect(
+      getByText(
+        `Almost there! In order to complete your sign up we need you to verify your email address (${fakeAuthenticatedUser.email}). An activation message and next steps should be waiting for you there.`,
+        { exact: false },
+      ),
+    ).toBeInTheDocument();
 
     expect(getByText(messages.sidebarTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.sidebarDescription.defaultMessage)).toBeInTheDocument();

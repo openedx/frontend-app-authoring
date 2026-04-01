@@ -93,7 +93,8 @@ const messages = defineMessages({
   },
   overwriteConfirmMessage: {
     id: 'course-authoring.files-and-videos.overwrite.modal.confirmation-message',
-    defaultMessage: 'Some of the uploaded files already exist in this course. Do you want to overwrite the following files?',
+    defaultMessage:
+      'Some of the uploaded files already exist in this course. Do you want to overwrite the following files?',
     description: 'The message displayed in the modal shown when uploading files with pre-existing names',
   },
   overwriteModalTitle: {

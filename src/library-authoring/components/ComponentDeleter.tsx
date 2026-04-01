@@ -9,11 +9,7 @@ import { ToastContext } from '@src/generic/toast-context';
 import { type ContentHit } from '@src/search-manager';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useOptionalLibraryContext } from '../common/context/LibraryContext';
-import {
-  useContentFromSearchIndex,
-  useDeleteLibraryBlock,
-  useRestoreLibraryBlock,
-} from '../data/apiHooks';
+import { useContentFromSearchIndex, useDeleteLibraryBlock, useRestoreLibraryBlock } from '../data/apiHooks';
 import messages from './messages';
 
 interface Props {
@@ -29,7 +25,10 @@ const ComponentDeleter = ({ usageKey, close }: Props) => {
   const sidebarComponentUsageKey = sidebarItemInfo?.id;
 
   const restoreComponentMutation = useRestoreLibraryBlock();
-  const { data: dataDownstreamLinks, isPending: isPendingLinks } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
+  const { data: dataDownstreamLinks, isPending: isPendingLinks } = useEntityLinks({
+    upstreamKey: usageKey,
+    contentType: 'components',
+  });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
   const restoreComponent = useCallback(async () => {
@@ -44,13 +43,10 @@ const ComponentDeleter = ({ usageKey, close }: Props) => {
   const deleteComponentMutation = useDeleteLibraryBlock();
   const doDelete = React.useCallback(async () => {
     await deleteComponentMutation.mutateAsync({ usageKey });
-    showToast(
-      intl.formatMessage(messages.deleteComponentSuccess),
-      {
-        label: intl.formatMessage(messages.undoDeleteCollectionToastAction),
-        onClick: restoreComponent,
-      },
-    );
+    showToast(intl.formatMessage(messages.deleteComponentSuccess), {
+      label: intl.formatMessage(messages.undoDeleteCollectionToastAction),
+      onClick: restoreComponent,
+    });
     close();
     // Close the sidebar if it's still open showing the deleted component:
     if (usageKey === sidebarComponentUsageKey) {
@@ -68,9 +64,7 @@ const ComponentDeleter = ({ usageKey, close }: Props) => {
   }
 
   const currentUnitIndex = componentHit?.units?.key?.findIndex((id) => id === currentUnitId);
-  const otherUnits = componentHit?.units?.displayName?.filter(
-    (_, index) => index !== currentUnitIndex,
-  );
+  const otherUnits = componentHit?.units?.displayName?.filter((_, index) => index !== currentUnitIndex);
   let unitsMessage: string | undefined;
   const otherUnitsLength = otherUnits?.length ?? 0;
   if (otherUnitsLength === 1) {

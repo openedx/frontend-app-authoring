@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { callAllHandlers } from './fieldUtils';
 
-const identityFn = props => props;
+const identityFn = (props) => props;
 
 const FormRadioSetContext = React.createContext({
   getRadioControlProps: identityFn,
@@ -11,15 +11,7 @@ const FormRadioSetContext = React.createContext({
 
 const useRadioSetContext = () => useContext(FormRadioSetContext);
 
-const FormRadioSetContextProvider = ({
-  children,
-  name,
-  onBlur,
-  onFocus,
-  onChange,
-  value,
-  defaultValue,
-}) => {
+const FormRadioSetContextProvider = ({ children, name, onBlur, onFocus, onChange, value, defaultValue }) => {
   const handleChange = (...args) => {
     onChange(...args);
   };
@@ -47,11 +39,7 @@ const FormRadioSetContextProvider = ({
     onChange,
     hasRadioSetProvider: true,
   };
-  return (
-    <FormRadioSetContext.Provider value={contextValue}>
-      {children}
-    </FormRadioSetContext.Provider>
-  );
+  return <FormRadioSetContext.Provider value={contextValue}>{children}</FormRadioSetContext.Provider>;
 };
 
 FormRadioSetContextProvider.propTypes = {
@@ -73,7 +61,4 @@ FormRadioSetContextProvider.defaultProps = {
 };
 
 export default FormRadioSetContext;
-export {
-  useRadioSetContext,
-  FormRadioSetContextProvider,
-};
+export { useRadioSetContext, FormRadioSetContextProvider };

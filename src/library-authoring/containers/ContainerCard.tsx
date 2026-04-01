@@ -1,13 +1,6 @@
 import { ReactNode, useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Dropdown,
-  Icon,
-  IconButton,
-  useToggle,
-  Stack,
-} from '@openedx/paragon';
+import { ActionRow, Dropdown, Icon, IconButton, useToggle, Stack } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { ComponentIcon } from '@src/generic/block-type-utils';
@@ -19,7 +12,11 @@ import { useRunOnNextRender } from '@src/utils';
 
 import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
-import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
+import {
+  SidebarActions,
+  SidebarBodyItemId,
+  useSidebarContext,
+} from '@src/library-authoring/common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import { useLibraryRoutes } from '@src/library-authoring/routes';
 import BaseCard from '@src/library-authoring/components/BaseCard';
@@ -35,40 +32,32 @@ type ContainerMenuProps = {
   index?: number;
 };
 
-export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, displayName, index }: ContainerMenuProps) => {
   const intl = useIntl();
-  const {
-    libraryId, collectionId, containerId, readOnly,
-  } = useOptionalLibraryContext();
-  const {
-    sidebarItemInfo,
-    closeLibrarySidebar,
-    setSidebarAction,
-  } = useSidebarContext();
+  const { libraryId, collectionId, containerId, readOnly } = useOptionalLibraryContext();
+  const { sidebarItemInfo, closeLibrarySidebar, setSidebarAction } = useSidebarContext();
   const { copyToClipboard } = useClipboard();
 
   const { showToast } = useContext(ToastContext);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
   const [isConfirmingRemove, confirmRemove, cancelRemove] = useToggle(false);
-  const {
-    navigateTo,
-    insideCollection,
-    insideSection,
-    insideSubsection,
-  } = useLibraryRoutes();
+  const { navigateTo, insideCollection, insideSection, insideSubsection } = useLibraryRoutes();
 
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
 
   const handleRemoveFromCollection = () => {
-    removeComponentsMutation.mutateAsync([containerKey]).then(() => {
-      if (sidebarItemInfo?.id === containerKey) {
-      // Close sidebar if current component is open
-        closeLibrarySidebar();
-      }
-      showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
-    }).catch(() => {
-      showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
-    });
+    removeComponentsMutation
+      .mutateAsync([containerKey])
+      .then(() => {
+        if (sidebarItemInfo?.id === containerKey) {
+          // Close sidebar if current component is open
+          closeLibrarySidebar();
+        }
+        showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
+      })
+      .catch(() => {
+        showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
+      });
   };
 
   const handleRemove = () => {
@@ -142,19 +131,9 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
           )}
         </Dropdown.Menu>
       </Dropdown>
-      {isConfirmingDelete && (
-        <ContainerDeleter
-          close={cancelDelete}
-          containerId={containerKey}
-        />
-      )}
+      {isConfirmingDelete && <ContainerDeleter close={cancelDelete} containerId={containerKey} />}
       {isConfirmingRemove && (
-        <ContainerRemover
-          close={cancelRemove}
-          containerKey={containerKey}
-          displayName={displayName}
-          index={index}
-        />
+        <ContainerRemover close={cancelRemove} containerKey={containerKey} displayName={displayName} index={index} />
       )}
     </>
   );
@@ -169,78 +148,59 @@ const UnitcardPreview = ({ childKeys, showMaxChildren = 5 }: UnitCardPreviewProp
   const hiddenChildren = childKeys.length - showMaxChildren;
   return (
     <Stack direction="horizontal" gap={2}>
-      {
-        childKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
-          const blockType = getBlockType(usageKey);
-          let blockPreview: ReactNode;
+      {childKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
+        const blockType = getBlockType(usageKey);
+        let blockPreview: ReactNode;
 
-          if (idx < showMaxChildren - 1 || hiddenChildren <= 0) {
-            // Show the first N-1 blocks as item icons
-            // (or all N blocks if no hidden children)
-            blockPreview = (
-              <ComponentIcon
-                blockType={blockType}
-                iconTitle={usageKey}
-              />
-            );
-          } else {
-            // Container has more blocks than can fit in the preview, so show "+N"
-            blockPreview = (
-              <FormattedMessage
-                {...messages.containerPreviewMoreBlocks}
-                values={{ count: hiddenChildren + 1 }}
-              />
-            );
-          }
-          return (
-            <div
-              // A container can have multiple instances of the same block
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${usageKey}-${idx}`}
-            >
-              {blockPreview}
-            </div>
+        if (idx < showMaxChildren - 1 || hiddenChildren <= 0) {
+          // Show the first N-1 blocks as item icons
+          // (or all N blocks if no hidden children)
+          blockPreview = <ComponentIcon blockType={blockType} iconTitle={usageKey} />;
+        } else {
+          // Container has more blocks than can fit in the preview, so show "+N"
+          blockPreview = (
+            <FormattedMessage {...messages.containerPreviewMoreBlocks} values={{ count: hiddenChildren + 1 }} />
           );
-        })
-      }
+        }
+        return (
+          <div
+            // A container can have multiple instances of the same block
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${usageKey}-${idx}`}
+          >
+            {blockPreview}
+          </div>
+        );
+      })}
     </Stack>
   );
 };
 
 type ContainerCardPreviewProps = {
-  hit: ContainerHit,
+  hit: ContainerHit;
 };
 
 const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
   const intl = useIntl();
   const { showOnlyPublished } = usePublishedFilterContext();
-  const {
-    blockType: itemType,
-    published,
-    content,
-  } = hit;
+  const { blockType: itemType, published, content } = hit;
 
   if (itemType === 'unit') {
-    const childKeys: Array<string> = (
-      showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
-    ) ?? [];
+    const childKeys: Array<string> =
+      (showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys) ?? [];
 
     return <UnitcardPreview childKeys={childKeys} />;
   }
   // TODO Section highlights
 
-  const childNames: Array<string> = (
-    showOnlyPublished ? published?.content?.childDisplayNames : content?.childDisplayNames
-  ) ?? [];
+  const childNames: Array<string> =
+    (showOnlyPublished ? published?.content?.childDisplayNames : content?.childDisplayNames) ?? [];
 
   if (childNames.length > 0) {
     // Preview with a truncated text with all children display names
-    const childrenText = intl.formatMessage(
-      messages.containerPreviewText,
-      {
-        children: childNames.join(', '),
-      },
-    );
+    const childrenText = intl.formatMessage(messages.containerPreviewText, {
+      children: childNames.join(', '),
+    });
 
     return (
       <div className="container-card-preview-text">
@@ -253,48 +213,39 @@ const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
 };
 
 type ContainerCardProps = {
-  hit: ContainerHit,
+  hit: ContainerHit;
 };
 
-const ContainerCard = ({ hit } : ContainerCardProps) => {
+const ContainerCard = ({ hit }: ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = usePublishedFilterContext();
   const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
-  const {
-    blockType: itemType,
-    formatted,
-    tags,
-    numChildren,
-    published,
-    publishStatus,
-    usageKey: containerKey,
-  } = hit;
+  const { blockType: itemType, formatted, tags, numChildren, published, publishStatus, usageKey: containerKey } = hit;
 
-  const numChildrenCount = showOnlyPublished ? (
-    published?.numChildren || 0
-  ) : numChildren;
+  const numChildrenCount = showOnlyPublished ? published?.numChildren || 0 : numChildren;
 
-  const displayName: string = (
-    showOnlyPublished ? formatted.published?.displayName : formatted.displayName
-  ) ?? '';
+  const displayName: string = (showOnlyPublished ? formatted.published?.displayName : formatted.displayName) ?? '';
 
   const selected = sidebarItemInfo?.id === containerKey;
 
   const { navigateTo } = useLibraryRoutes();
 
-  const selectContainer = useCallback((e?: React.MouseEvent) => {
-    const doubleClicked = (e?.detail || 0) > 1;
-    if (componentPickerMode) {
-      // In component picker mode, we want to open the sidebar
-      // without changing the URL
-      openContainerInfoSidebar(containerKey);
-    } else if (!doubleClicked) {
-      openItemSidebar(containerKey, SidebarBodyItemId.ContainerInfo);
-    } else {
-      navigateTo({ containerId: containerKey });
-    }
-  }, [containerKey, openContainerInfoSidebar, openItemSidebar, navigateTo]);
+  const selectContainer = useCallback(
+    (e?: React.MouseEvent) => {
+      const doubleClicked = (e?.detail || 0) > 1;
+      if (componentPickerMode) {
+        // In component picker mode, we want to open the sidebar
+        // without changing the URL
+        openContainerInfoSidebar(containerKey);
+      } else if (!doubleClicked) {
+        openItemSidebar(containerKey, SidebarBodyItemId.ContainerInfo);
+      } else {
+        navigateTo({ containerId: containerKey });
+      }
+    },
+    [containerKey, openContainerInfoSidebar, openItemSidebar, navigateTo],
+  );
 
   return (
     <BaseCard
@@ -303,7 +254,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
       preview={<ContainerCardPreview hit={hit} />}
       tags={tags}
       numChildren={numChildrenCount}
-      actions={(
+      actions={
         <ActionRow>
           {componentPickerMode ? (
             <AddComponentWidget usageKey={containerKey} blockType={itemType} />
@@ -311,7 +262,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
             <ContainerMenu containerKey={containerKey} displayName={displayName} />
           )}
         </ActionRow>
-      )}
+      }
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
       onSelect={selectContainer}
       selected={selected}

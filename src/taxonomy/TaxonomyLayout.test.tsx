@@ -14,11 +14,7 @@ const MockChildComponent = () => {
 
   return (
     <div data-testid="mock-content">
-      <button
-        type="button"
-        onClick={() => setToastMessage!(toastMessage)}
-        data-testid="taxonomy-show-toast"
-      >
+      <button type="button" onClick={() => setToastMessage!(toastMessage)} data-testid="taxonomy-show-toast">
         Show Toast
       </button>
       <button

@@ -3,10 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Button, Stack } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import BaseModal from '../BaseModal';
 import SearchSort from './SearchSort';
@@ -37,13 +34,7 @@ const SelectionModal = ({
   isLibrary,
 }) => {
   const intl = useIntl();
-  const {
-    confirmMsg,
-    uploadButtonMsg,
-    titleMsg,
-    fetchError,
-    uploadError,
-  } = modalMessages;
+  const { confirmMsg, uploadButtonMsg, titleMsg, fetchError, uploadError } = modalMessages;
 
   let background = '#FFFFFF';
   let showGallery = true;
@@ -62,15 +53,15 @@ const SelectionModal = ({
   return (
     <BaseModal
       close={close}
-      confirmAction={(
+      confirmAction={
         <Button {...selectBtnProps} variant="primary">
           <FormattedMessage {...confirmMsg} />
         </Button>
-      )}
+      }
       isOpen={isOpen}
       size={size}
       isFullscreenScroll={isFullscreenScroll}
-      footerAction={(
+      footerAction={
         <Button
           className="text-primary-500"
           iconBefore={Add}
@@ -82,14 +73,16 @@ const SelectionModal = ({
         >
           <FormattedMessage {...uploadButtonMsg} />
         </Button>
-      )}
+      }
       title={intl.formatMessage(titleMsg)}
       bodyStyle={{ background }}
-      headerComponent={!isLibrary && (
-        <div style={{ margin: '18px 0' }}>
-          <SearchSort {...searchSortProps} />
-        </div>
-      )}
+      headerComponent={
+        !isLibrary && (
+          <div style={{ margin: '18px 0' }}>
+            <SearchSort {...searchSortProps} />
+          </div>
+        )
+      }
       className="selection-modal"
     >
       {/*
@@ -100,20 +93,12 @@ const SelectionModal = ({
         {/* Error Alerts */}
         <FetchErrorAlert isFetchError={isFetchError} message={fetchError} />
         <UploadErrorAlert isUploadError={isUploadError} message={uploadError} />
-        <ErrorAlert
-          dismissError={inputError.dismiss}
-          hideHeading
-          isError={inputError.show}
-        >
+        <ErrorAlert dismissError={inputError.dismiss} hideHeading isError={inputError.show}>
           <FormattedMessage {...inputError.message} />
         </ErrorAlert>
 
         {/* User Feedback Alerts */}
-        <ErrorAlert
-          dismissError={galleryError.dismiss}
-          hideHeading
-          isError={galleryError.show}
-        >
+        <ErrorAlert dismissError={galleryError.dismiss} hideHeading isError={galleryError.show}>
           <FormattedMessage {...galleryError.message} />
         </ErrorAlert>
         {showGallery && <Gallery {...galleryPropsValues} />}

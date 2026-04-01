@@ -6,8 +6,8 @@
 .unit-header-title {
   .edit-button {
     opacity: 0;
-    transition: opacity .3s linear;
-    margin-right: .5rem;
+    transition: opacity 0.3s linear;
+    margin-right: 0.5rem;
 
     &:focus {
       opacity: 1;

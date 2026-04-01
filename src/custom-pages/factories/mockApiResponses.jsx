@@ -8,9 +8,7 @@ export const initialState = {
     status: 'sucessful',
   },
   customPages: {
-    customPagesIds: [
-      'mOckID1',
-    ],
+    customPagesIds: ['mOckID1'],
     loadingStatus: 'successful',
     savingStatus: '',
     deletingStatus: '',
@@ -29,33 +27,30 @@ export const initialState = {
   },
 };
 
-export const generateFetchPageApiResponse = () => ([{
-  type: 'static_tab',
-  title: null,
-  is_hideable: false,
-  is_hidden: false,
-  is_movable: true,
-  course_staff_only: false,
-  name: 'test',
-  tab_id: 'static_tab_1',
-  settings: {
-    url_slug: '1',
+export const generateFetchPageApiResponse = () => [
+  {
+    type: 'static_tab',
+    title: null,
+    is_hideable: false,
+    is_hidden: false,
+    is_movable: true,
+    course_staff_only: false,
+    name: 'test',
+    tab_id: 'static_tab_1',
+    settings: {
+      url_slug: '1',
+    },
+    id: 'mOckID1',
   },
-  id: 'mOckID1',
-}]);
+];
 
-export const generateXblockData = (
-  blockId,
-) => ({
+export const generateXblockData = (blockId) => ({
   id: blockId,
   display_name: 'test',
   data: '<p>test</p>',
 });
 
-export const generateUpdateVisibilityApiResponse = (
-  blockId,
-  visibility,
-) => ({
+export const generateUpdateVisibilityApiResponse = (blockId, visibility) => ({
   id: blockId,
   metadata: { display_name: 'test', course_staff_only: visibility },
 });

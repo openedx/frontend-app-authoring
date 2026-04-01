@@ -12,9 +12,7 @@ const renderComponent = () => render(<TextbookSidebar courseId={courseId} />);
 describe('<TextbookSidebar />', () => {
   beforeEach(async () => {
     const { axiosMock } = initializeMocks();
-    axiosMock
-      .onGet(getHelpUrlsApiUrl())
-      .reply(200, helpUrls);
+    axiosMock.onGet(getHelpUrlsApiUrl()).reply(200, helpUrls);
   });
 
   it('renders TextbookSidebar component correctly', async () => {

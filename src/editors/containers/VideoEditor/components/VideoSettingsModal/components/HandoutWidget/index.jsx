@@ -2,14 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import {
-  Button,
-  Stack,
-  Icon,
-  IconButton,
-  Dropdown,
-  ActionRow,
-} from '@openedx/paragon';
+import { Button, Stack, Icon, IconButton, Dropdown, ActionRow } from '@openedx/paragon';
 import { FileUpload, MoreHoriz } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
@@ -42,18 +35,14 @@ const HandoutWidget = ({
   const handoutName = hooks.parseHandoutName({ handout });
   const downloadLink = getHandoutDownloadUrl({ handout });
 
-  return (!isLibrary ? (
+  return !isLibrary ? (
     <CollapsibleFormWidget
       fontSize="x-small"
       isError={Object.keys(error).length !== 0}
       title={intl.formatMessage(messages.titleLabel)}
       subtitle={handoutName}
     >
-      <ErrorAlert
-        dismissError={fileSizeError.dismiss}
-        hideHeading
-        isError={fileSizeError.show}
-      >
+      <ErrorAlert dismissError={fileSizeError.dismiss} hideHeading isError={fileSizeError.show}>
         <FormattedMessage {...messages.fileSizeError} />
       </ErrorAlert>
       <UploadErrorAlert isUploadError={isUploadError} message={messages.uploadHandoutError} />
@@ -73,10 +62,7 @@ const HandoutWidget = ({
                 alt="Actions dropdown"
               />
               <Dropdown.Menu className="video_handout Action Menu">
-                <Dropdown.Item
-                  key="handout-actions-replace"
-                  onClick={fileInput.click}
-                >
+                <Dropdown.Item key="handout-actions-replace" onClick={fileInput.click}>
                   <FormattedMessage {...messages.replaceHandout} />
                 </Dropdown.Item>
                 <Dropdown.Item key="handout-actions-download" target="_blank" href={downloadLink}>
@@ -105,7 +91,7 @@ const HandoutWidget = ({
         </Stack>
       )}
     </CollapsibleFormWidget>
-  ) : null);
+  ) : null;
 };
 
 HandoutWidget.propTypes = {

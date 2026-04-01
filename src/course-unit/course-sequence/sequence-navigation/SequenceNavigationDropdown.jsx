@@ -24,7 +24,7 @@ const SequenceNavigationDropdown = ({
         })}
       </Dropdown.Toggle>
       <Dropdown.Menu className="w-100">
-        {unitIds.map(buttonUnitId => (
+        {unitIds.map((buttonUnitId) => (
           <Dropdown.Item
             as={UnitButton}
             className="w-100"
@@ -34,12 +34,7 @@ const SequenceNavigationDropdown = ({
             unitId={buttonUnitId}
           />
         ))}
-        <Button
-          as={Dropdown.Item}
-          variant="outline-primary"
-          iconBefore={PlusIcon}
-          onClick={handleAddNewSequenceUnit}
-        >
+        <Button as={Dropdown.Item} variant="outline-primary" iconBefore={PlusIcon} onClick={handleAddNewSequenceUnit}>
           {intl.formatMessage(messages.newUnitBtnText)}
         </Button>
         {showPasteUnit && (

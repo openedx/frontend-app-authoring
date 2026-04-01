@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  fireEvent, render, screen, waitFor, initializeMocks,
-} from '@src/testUtils';
+import { fireEvent, render, screen, waitFor, initializeMocks } from '@src/testUtils';
 import DimensionControls from './DimensionControls';
 import * as hooks from './hooks';
 
@@ -9,7 +7,7 @@ const WrappedDimensionControls = () => {
   const dimensions = hooks.dimensionHooks('altText');
 
   useEffect(() => {
-    dimensions.onImgLoad({ })({ target: { naturalWidth: 1517, naturalHeight: 803 } });
+    dimensions.onImgLoad({})({ target: { naturalWidth: 1517, naturalHeight: 803 } });
   }, []);
 
   return <DimensionControls {...dimensions} />;
@@ -19,7 +17,7 @@ const UnlockedDimensionControls = () => {
   const dimensions = hooks.dimensionHooks('altText');
 
   useEffect(() => {
-    dimensions.onImgLoad({ })({ target: { naturalWidth: 1517, naturalHeight: 803 } });
+    dimensions.onImgLoad({})({ target: { naturalWidth: 1517, naturalHeight: 803 } });
     dimensions.unlock();
   }, []);
 

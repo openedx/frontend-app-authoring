@@ -6,13 +6,13 @@
 
 ### Plugin Props:
 
-* `courseId` - String.
-* `blockId` - String. The usage id of the current unit being viewed / edited.
-* `unitTitle` - String. The name of the current unit being viewed / edited.
-* `xBlocks` - Array of Objects. List of XBlocks in the Unit. Object structure defined in `index.tsx`.
-* `readOnly` - Boolean. True if the user should not be able to edit the contents of the unit.
-* `isUnitVerticalType` - Boolean. If the unit category is `vertical`.
-* `isSplitTestType` - Boolean. If the unit category is `split_test`.
+- `courseId` - String.
+- `blockId` - String. The usage id of the current unit being viewed / edited.
+- `unitTitle` - String. The name of the current unit being viewed / edited.
+- `xBlocks` - Array of Objects. List of XBlocks in the Unit. Object structure defined in `index.tsx`.
+- `readOnly` - Boolean. True if the user should not be able to edit the contents of the unit.
+- `isUnitVerticalType` - Boolean. If the unit category is `vertical`.
+- `isSplitTestType` - Boolean. If the unit category is `split_test`.
 
 ## Description
 
@@ -36,13 +36,11 @@ const config = {
         {
           op: PLUGIN_OPERATIONS.Wrap,
           widgetId: 'default_contents',
-          wrapper: ({ component }) => (
-            <div style={{ border: 'thick dashed red' }}>{component}</div>
-          ),
+          wrapper: ({ component }) => <div style={{ border: 'thick dashed red' }}>{component}</div>,
         },
       ],
     },
-  }
+  },
 };
 export default config;
 ```
@@ -52,16 +50,17 @@ export default config;
 ![Screenshot of the unit sidebar with an extra component listing all the problem blocks](./images/unit_sidebar_with_problem_blocks_list.png)
 
 ```js
-import { PLUGIN_OPERATIONS, DIRECT_PLUGIN  } from '@openedx/frontend-plugin-framework';
+import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
 
-const ProblemBlocks = ({unitTitle, xBlocks}) => (
+const ProblemBlocks = ({ unitTitle, xBlocks }) => (
   <>
     <h4 className="h4">{unitTitle}: Problem Blocks</h4>
     <ul>
       {xBlocks
-        .filter(block => block.blockType === "problem")
-        .map(block => <li key={block.id}>{block.displayName}</li>)
-      }
+        .filter((block) => block.blockType === 'problem')
+        .map((block) => (
+          <li key={block.id}>{block.displayName}</li>
+        ))}
     </ul>
   </>
 );
@@ -73,16 +72,16 @@ const config = {
       plugins: [
         {
           op: PLUGIN_OPERATIONS.Insert,
-          widget:{
+          widget: {
             id: 'problem-blocks-list',
             priority: 1,
             type: DIRECT_PLUGIN,
             RenderWidget: ProblemBlocks,
-          }
+          },
         },
       ],
     },
-  }
+  },
 };
 export default config;
 ```

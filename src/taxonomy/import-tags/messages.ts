@@ -31,11 +31,12 @@ const messages = defineMessages({
   },
   importWizardStepExportBody: {
     id: 'course-authoring.import-tags.wizard.step-export.body',
-    defaultMessage: 'To update this taxonomy you need to import a new CSV or JSON file. The current taxonomy will '
-      + 'be completely replaced by the contents of the imported file (e.g. if a tag in the current taxonomy is not '
-      + 'present in the imported file, it will be removed - both from the taxonomy and from any tagged course '
-      + 'content).'
-      + '{br}You may wish to export the taxonomy in its current state before importing the new file.',
+    defaultMessage:
+      'To update this taxonomy you need to import a new CSV or JSON file. The current taxonomy will ' +
+      'be completely replaced by the contents of the imported file (e.g. if a tag in the current taxonomy is not ' +
+      'present in the imported file, it will be removed - both from the taxonomy and from any tagged course ' +
+      'content).' +
+      '{br}You may wish to export the taxonomy in its current state before importing the new file.',
   },
   importWizardStepExportCSVButton: {
     id: 'course-authoring.import-tags.wizard.step-export.button-csv',
@@ -55,16 +56,18 @@ const messages = defineMessages({
   },
   importWizardStepUploadBody: {
     id: 'course-authoring.import-tags.wizard.step-upload.body',
-    defaultMessage: 'You can upload a CSV or JSON file to create a new taxonomy. You may use any spreadsheet tool '
-    + '(for CSV files), or any text editor (for JSON files) to create the file that you wish to import. '
-    + 'For an example of the required format, download the {csvTemplateUrl} or {jsonTemplateUrl}.'
-    + '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
+    defaultMessage:
+      'You can upload a CSV or JSON file to create a new taxonomy. You may use any spreadsheet tool ' +
+      '(for CSV files), or any text editor (for JSON files) to create the file that you wish to import. ' +
+      'For an example of the required format, download the {csvTemplateUrl} or {jsonTemplateUrl}.' +
+      '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
   },
   importWizardStepReuploadBody: {
     id: 'course-authoring.import-tags.wizard.step-reupload.body',
-    defaultMessage: 'You may use any spreadsheet tool (for CSV files), or any text editor (for JSON files) to create '
-    + 'the file that you wish to import.'
-    + '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
+    defaultMessage:
+      'You may use any spreadsheet tool (for CSV files), or any text editor (for JSON files) to create ' +
+      'the file that you wish to import.' +
+      '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
   },
   csvTemplateTitle: {
     id: 'course-authoring.import-tags.wizard.step-upload.csv-template',
@@ -92,9 +95,10 @@ const messages = defineMessages({
   },
   importWizardStepPlanBody: {
     id: 'course-authoring.import-tags.wizard.step-plan.body',
-    defaultMessage: 'Importing this file will make {changeCount} updates to the existing taxonomy. '
-    + 'The content of the imported file will replace any existing values that do not match the new values.'
-    + '{br}Importing this file will cause the following updates:',
+    defaultMessage:
+      'Importing this file will make {changeCount} updates to the existing taxonomy. ' +
+      'The content of the imported file will replace any existing values that do not match the new values.' +
+      '{br}Importing this file will cause the following updates:',
   },
   importWizardStepPlanNoChanges: {
     id: 'course-authoring.import-tags.wizard.step-plan.no-changes',
@@ -106,9 +110,10 @@ const messages = defineMessages({
   },
   importWizardStepConfirmBody: {
     id: 'course-authoring.import-tags.wizard.step-confirm.body',
-    defaultMessage: 'Warning! You are about to make {changeCount} changes to the existing taxonomy. Any tags applied '
-    + 'to course content will be updated or removed. This cannot be undone.'
-    + '{br}Are you sure you want to continue importing this file?',
+    defaultMessage:
+      'Warning! You are about to make {changeCount} changes to the existing taxonomy. Any tags applied ' +
+      'to course content will be updated or removed. This cannot be undone.' +
+      '{br}Are you sure you want to continue importing this file?',
   },
   promptTaxonomyName: {
     id: 'course-authoring.import-tags.prompt.taxonomy-name',
@@ -120,7 +125,8 @@ const messages = defineMessages({
   },
   promptTaxonomyExportId: {
     id: 'course-authoring.import-tags.prompt.taxonomy-export-id',
-    defaultMessage: "Enter a Export ID for the new taxonomy. Should only contain alphanumeric characters or '_' '-' '.'",
+    defaultMessage:
+      "Enter a Export ID for the new taxonomy. Should only contain alphanumeric characters or '_' '-' '.'",
   },
   promptTaxonomyExportIdRequired: {
     id: 'course-authoring.import-tags.prompt.taxonomy-export-id.required',

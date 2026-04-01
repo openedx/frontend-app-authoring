@@ -27,12 +27,10 @@ interface SidebarContentProps {
  * </SidebarContent>
  * ```
  */
-export const SidebarContent = ({ children } : SidebarContentProps) => {
+export const SidebarContent = ({ children }: SidebarContentProps) => {
   // Flatten the array and filter out empty children to correctly render
   // the hr element between each child.
-  const nonEmptyChildren = Array.isArray(children)
-    ? children.flat(Infinity).filter(child => !!child)
-    : [children];
+  const nonEmptyChildren = Array.isArray(children) ? children.flat(Infinity).filter((child) => !!child) : [children];
 
   return (
     <Stack gap={1} className="px-3 py-1">

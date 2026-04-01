@@ -10,11 +10,7 @@ const alertClassName = 'custom-class';
 
 const RootWrapper = () => (
   <IntlProvider locale="en">
-    <AlertMessage
-      title={alertTitle}
-      description={alertDescription}
-      className={alertClassName}
-    />
+    <AlertMessage title={alertTitle} description={alertDescription} className={alertClassName} />
   </IntlProvider>
 );
 

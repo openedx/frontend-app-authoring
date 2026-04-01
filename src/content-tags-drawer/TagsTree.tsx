@@ -1,8 +1,6 @@
 import React, { useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Icon, Stack, IconButton, OverlayTrigger, Tooltip,
-} from '@openedx/paragon';
+import { Icon, Stack, IconButton, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { Tag, Close, Lock } from '@openedx/paragon/icons';
 import messages from './messages';
 import { ContentTagsDrawerContext } from './common/context';
@@ -11,20 +9,13 @@ import { TagTree } from './ContentTagsCollapsible';
 const LibraryLockIcon = ({ key }: { key: string }) => (
   <OverlayTrigger
     placement="top"
-    overlay={(
-      <Tooltip
-        id={`tooltip-lock-${key}`}
-      >
+    overlay={
+      <Tooltip id={`tooltip-lock-${key}`}>
         <FormattedMessage {...messages.libraryLockIconTooltip} />
       </Tooltip>
-    )}
+    }
   >
-    <Icon
-      src={Lock}
-      size="xs"
-      className="ml-1"
-      data-testid="lock-icon"
-    />
+    <Icon src={Lock} size="xs" className="ml-1" data-testid="lock-icon" />
   </OverlayTrigger>
 );
 
@@ -149,33 +140,36 @@ const TagsTree = ({
       {Object.keys(tags).map((key) => (
         <div className="mt-1.5 mb-1.5" key={key}>
           <div className="d-flex pl-2.5" key={key}>
-            {
-              tabsNumberArray.map((index) => <span className="d-inline-block ml-4" key={`${key}-${index}`} />)
-            }
+            {tabsNumberArray.map((index) => (
+              <span className="d-inline-block ml-4" key={`${key}-${index}`} />
+            ))}
             <TagComponent
               value={key}
               canDelete={isEditMode && tags[key].canDeleteObjecttag}
               explicit={tags[key].explicit}
               lineage={[...lineage, encodeURIComponent(key)]}
               removeTagHandler={removeTagHandler}
-              afterComponent={isEditMode && tags[key].explicit && tags[key].isCopied && (
-                // So far, `isCopied` is only used to check if the tag has been imported from a library.
-                // If another function is added to `isCopied`, this may change.
-                <LibraryLockIcon key={key} />
-              )}
+              afterComponent={
+                isEditMode &&
+                tags[key].explicit &&
+                tags[key].isCopied && (
+                  // So far, `isCopied` is only used to check if the tag has been imported from a library.
+                  // If another function is added to `isCopied`, this may change.
+                  <LibraryLockIcon key={key} />
+                )
+              }
             />
           </div>
-          { tags[key].children
-            && (
-              <TagsTree
-                tags={tags[key].children}
-                rootDepth={rootDepth + 1}
-                parentKey={key}
-                lineage={[...lineage, encodeURIComponent(key)]}
-                removeTagHandler={removeTagHandler}
-                afterTagsComponent={afterTagsComponent}
-              />
-            )}
+          {tags[key].children && (
+            <TagsTree
+              tags={tags[key].children}
+              rootDepth={rootDepth + 1}
+              parentKey={key}
+              lineage={[...lineage, encodeURIComponent(key)]}
+              removeTagHandler={removeTagHandler}
+              afterTagsComponent={afterTagsComponent}
+            />
+          )}
         </div>
       ))}
     </div>

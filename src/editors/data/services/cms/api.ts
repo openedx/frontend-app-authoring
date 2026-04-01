@@ -2,9 +2,7 @@ import type { AxiosRequestConfig } from 'axios';
 import { camelizeKeys } from '../../../utils';
 import { isLibraryKey } from '../../../../generic/key-utils';
 import * as urls from './urls';
-import {
-  get, post, put, deleteObject,
-} from './utils';
+import { get, post, put, deleteObject } from './utils';
 import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 
 const fetchByUnitIdOptions: AxiosRequestConfig = {};
@@ -41,13 +39,12 @@ export const loadImage = (imageData) => ({
   dateAdded: new Date(imageData.dateAdded.replace(' at', '')).getTime(),
 });
 
-export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
-  (obj, image) => ({ ...obj, [image.id]: loadImage(image) }),
-  {},
-);
+export const loadImages = (rawImages) =>
+  camelizeKeys(rawImages).reduce((obj, image) => ({ ...obj, [image.id]: loadImage(image) }), {});
 
 export const parseYoutubeId = (src: string): string | null => {
-  const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
+  const youtubeRegex =
+    /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
   const match = src.match(youtubeRegex);
   if (!match) {
     return null;
@@ -59,7 +56,11 @@ export const processVideoIds = ({
   videoId,
   videoUrl,
   fallbackVideos,
-}: { videoId: string, videoUrl: string, fallbackVideos: string[] }) => {
+}: {
+  videoId: string;
+  videoUrl: string;
+  fallbackVideos: string[];
+}) => {
   let youtubeId: string | null = '';
   const html5Sources: string[] = [];
 
@@ -93,10 +94,10 @@ export const isEdxVideo = (src: string): boolean => {
 export const processLicense = (licenseType, licenseDetails) => {
   if (licenseType === 'creative-commons') {
     return 'creative-commons: ver=4.0'.concat(
-      (licenseDetails.attribution ? ' BY' : ''),
-      (licenseDetails.noncommercial ? ' NC' : ''),
-      (licenseDetails.noDerivatives ? ' ND' : ''),
-      (licenseDetails.shareAlike ? ' SA' : ''),
+      licenseDetails.attribution ? ' BY' : '',
+      licenseDetails.noncommercial ? ' NC' : '',
+      licenseDetails.noDerivatives ? ' ND' : '',
+      licenseDetails.shareAlike ? ' SA' : '',
     );
   }
   if (licenseType === 'all-rights-reserved') {
@@ -106,17 +107,12 @@ export const processLicense = (licenseType, licenseDetails) => {
 };
 
 export const apiMethods = {
-  fetchBlockById: ({ blockId, studioEndpointUrl }): Promise<{ data: FieldsResponse }> => get(
-    urls.block({ blockId, studioEndpointUrl }),
-  ),
+  fetchBlockById: ({ blockId, studioEndpointUrl }): Promise<{ data: FieldsResponse }> =>
+    get(urls.block({ blockId, studioEndpointUrl })),
   /** A better name for this would be 'get ancestors of block' */
-  fetchByUnitId: ({ blockId, studioEndpointUrl }): Promise<{ data: AncestorsResponse }> => get(
-    urls.blockAncestor({ studioEndpointUrl, blockId }),
-    fetchByUnitIdOptions,
-  ),
-  fetchStudioView: ({ blockId, studioEndpointUrl }) => get(
-    urls.blockStudioView({ studioEndpointUrl, blockId }),
-  ),
+  fetchByUnitId: ({ blockId, studioEndpointUrl }): Promise<{ data: AncestorsResponse }> =>
+    get(urls.blockAncestor({ studioEndpointUrl, blockId }), fetchByUnitIdOptions),
+  fetchStudioView: ({ blockId, studioEndpointUrl }) => get(urls.blockStudioView({ studioEndpointUrl, blockId })),
   fetchCourseImages: ({
     learningContextId,
     studioEndpointUrl,
@@ -126,62 +122,30 @@ export const apiMethods = {
       asset_type: 'Images',
       page: pageNumber,
     };
-    return get(
-      `${urls.courseAssets({ studioEndpointUrl, learningContextId })}`,
-      { params },
-    );
+    return get(`${urls.courseAssets({ studioEndpointUrl, learningContextId })}`, { params });
   },
-  fetchLibraryImages: ({ blockId }) => get(
-    `${urls.libraryAssets({ blockId })}`,
-  ),
-  fetchVideos: ({ studioEndpointUrl, learningContextId }) => get(
-    urls.courseVideos({ studioEndpointUrl, learningContextId }),
-  ),
-  fetchCourseDetails: ({ studioEndpointUrl, learningContextId }) => get(
-    urls.courseDetailsUrl({ studioEndpointUrl, learningContextId }),
-  ),
-  fetchAdvancedSettings: ({ studioEndpointUrl, learningContextId }) => get(
-    urls.courseAdvanceSettings({ studioEndpointUrl, learningContextId }),
-  ),
-  uploadAsset: ({
-    blockId,
-    learningContextId,
-    studioEndpointUrl,
-    asset,
-  }) => {
+  fetchLibraryImages: ({ blockId }) => get(`${urls.libraryAssets({ blockId })}`),
+  fetchVideos: ({ studioEndpointUrl, learningContextId }) =>
+    get(urls.courseVideos({ studioEndpointUrl, learningContextId })),
+  fetchCourseDetails: ({ studioEndpointUrl, learningContextId }) =>
+    get(urls.courseDetailsUrl({ studioEndpointUrl, learningContextId })),
+  fetchAdvancedSettings: ({ studioEndpointUrl, learningContextId }) =>
+    get(urls.courseAdvanceSettings({ studioEndpointUrl, learningContextId })),
+  uploadAsset: ({ blockId, learningContextId, studioEndpointUrl, asset }) => {
     const data = new FormData();
     data.append('file', asset);
     if (isLibraryKey(learningContextId)) {
       data.set('content', asset);
-      return put(
-        `${urls.libraryAssets({ blockId, assetName: asset.name })}`,
-        data,
-      );
+      return put(`${urls.libraryAssets({ blockId, assetName: asset.name })}`, data);
     }
-    return post(
-      urls.courseAssets({ studioEndpointUrl, learningContextId }),
-      data,
-    );
+    return post(urls.courseAssets({ studioEndpointUrl, learningContextId }), data);
   },
-  uploadThumbnail: ({
-    studioEndpointUrl,
-    learningContextId,
-    videoId,
-    thumbnail,
-  }) => {
+  uploadThumbnail: ({ studioEndpointUrl, learningContextId, videoId, thumbnail }) => {
     const data = new FormData();
     data.append('file', thumbnail);
-    return post(
-      urls.thumbnailUpload({ studioEndpointUrl, learningContextId, videoId }),
-      data,
-    );
+    return post(urls.thumbnailUpload({ studioEndpointUrl, learningContextId, videoId }), data);
   },
-  checkTranscriptsForImport: ({
-    studioEndpointUrl,
-    blockId,
-    youTubeId,
-    videoId,
-  }) => {
+  checkTranscriptsForImport: ({ studioEndpointUrl, blockId, youTubeId, videoId }) => {
     const getJSON = `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"},{"mode":"edx_video_id","type":"edx_video_id","video":"${videoId}"}]}`;
     return get(
       urls.checkTranscriptsForImport({
@@ -190,11 +154,7 @@ export const apiMethods = {
       }),
     );
   },
-  importTranscript: ({
-    studioEndpointUrl,
-    blockId,
-    youTubeId,
-  }) => {
+  importTranscript: ({ studioEndpointUrl, blockId, youTubeId }) => {
     const getJSON = `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"}]}`;
     return get(
       urls.replaceTranscript({
@@ -203,86 +163,37 @@ export const apiMethods = {
       }),
     );
   },
-  getTranscript: ({
-    studioEndpointUrl,
-    language,
-    blockId,
-    videoId,
-  }) => {
+  getTranscript: ({ studioEndpointUrl, language, blockId, videoId }) => {
     const getJSON = { data: { lang: language, edx_video_id: videoId } };
-    return get(
-      `${urls.videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`,
-      getJSON,
-    );
+    return get(`${urls.videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`, getJSON);
   },
-  getTranscriptV2: ({
-    handlerUrl,
-    language,
-    videoId,
-  }) => {
+  getTranscriptV2: ({ handlerUrl, language, videoId }) => {
     const getJSON = { data: { lang: language, edx_video_id: videoId } };
-    return get(
-      `${urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl })}?language_code=${language}`,
-      getJSON,
-    );
+    return get(`${urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl })}?language_code=${language}`, getJSON);
   },
-  deleteTranscript: ({
-    studioEndpointUrl,
-    language,
-    blockId,
-    videoId,
-  }) => {
+  deleteTranscript: ({ studioEndpointUrl, language, blockId, videoId }) => {
     const deleteJSON = { data: { lang: language, edx_video_id: videoId } };
-    return deleteObject(
-      urls.videoTranscripts({ studioEndpointUrl, blockId }),
-      deleteJSON,
-    );
+    return deleteObject(urls.videoTranscripts({ studioEndpointUrl, blockId }), deleteJSON);
   },
-  deleteTranscriptV2: ({
-    handlerUrl,
-    language,
-    videoId,
-  }) => {
+  deleteTranscriptV2: ({ handlerUrl, language, videoId }) => {
     const deleteJSON = { data: { lang: language, edx_video_id: videoId } };
-    return deleteObject(
-      urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
-      deleteJSON,
-    );
+    return deleteObject(urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl }), deleteJSON);
   },
-  uploadTranscript: ({
-    blockId,
-    studioEndpointUrl,
-    transcript,
-    videoId,
-    language,
-    newLanguage = null,
-  }) => {
+  uploadTranscript: ({ blockId, studioEndpointUrl, transcript, videoId, language, newLanguage = null }) => {
     const data = new FormData();
     data.append('file', transcript);
     data.append('edx_video_id', videoId);
     data.append('language_code', language);
     data.append('new_language_code', newLanguage || language);
-    return post(
-      urls.videoTranscripts({ studioEndpointUrl, blockId }),
-      data,
-    );
+    return post(urls.videoTranscripts({ studioEndpointUrl, blockId }), data);
   },
-  uploadTranscriptV2: ({
-    handlerUrl,
-    transcript,
-    videoId,
-    language,
-    newLanguage = null,
-  }) => {
+  uploadTranscriptV2: ({ handlerUrl, transcript, videoId, language, newLanguage = null }) => {
     const data = new FormData();
     data.append('file', transcript);
     data.append('edx_video_id', videoId);
     data.append('language_code', language);
     data.append('new_language_code', newLanguage || language);
-    return post(
-      urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
-      data,
-    );
+    return post(urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl }), data);
   },
   normalizeContent: ({
     blockId,
@@ -291,11 +202,11 @@ export const apiMethods = {
     learningContextId,
     title,
   }: {
-    blockId: string,
-    blockType: string,
-    content: any, // string for 'html' blocks, otherwise Record<string, any>
-    learningContextId: string,
-    title: string,
+    blockId: string;
+    blockType: string;
+    content: any; // string for 'html' blocks, otherwise Record<string, any>
+    learningContextId: string;
+    title: string;
   }) => {
     let response = {};
     if (blockType === 'html') {
@@ -317,11 +228,7 @@ export const apiMethods = {
         metadata: { display_name: title, ...content.settings },
       };
     } else if (blockType === 'video') {
-      const {
-        html5Sources,
-        edxVideoId,
-        youtubeId,
-      } = processVideoIds({
+      const { html5Sources, edxVideoId, youtubeId } = processVideoIds({
         videoId: content.videoId,
         videoUrl: content.videoSource,
         fallbackVideos: content.fallbackVideos,
@@ -353,50 +260,24 @@ export const apiMethods = {
     }
     return { ...response };
   },
-  saveBlock: ({
-    blockId,
-    blockType,
-    content,
-    learningContextId,
-    studioEndpointUrl,
-    title,
-  }) => post(
-    urls.block({ studioEndpointUrl, blockId }),
-    apiMethods.normalizeContent({
-      blockType,
-      content,
-      blockId,
-      learningContextId,
-      title,
-    }),
-  ),
-  fetchVideoFeatures: ({
-    studioEndpointUrl,
-  }) => get(
-    urls.videoFeatures({ studioEndpointUrl }),
-  ),
-  uploadVideo: ({
-    data,
-    studioEndpointUrl,
-    learningContextId,
-  }) => post(
-    urls.courseVideos({ studioEndpointUrl, learningContextId }),
-    data,
-  ),
-  getHandlerUrl: ({
-    studioEndpointUrl,
-    blockId,
-    handlerName,
-  }) => get(
-    urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }),
-  ),
-  validateBlockNumericInput: ({
-    studioEndpointUrl,
-    data,
-  }) => post(
-    urls.validateNumericInputUrl({ studioEndpointUrl }),
-    data,
-  ),
+  saveBlock: ({ blockId, blockType, content, learningContextId, studioEndpointUrl, title }) =>
+    post(
+      urls.block({ studioEndpointUrl, blockId }),
+      apiMethods.normalizeContent({
+        blockType,
+        content,
+        blockId,
+        learningContextId,
+        title,
+      }),
+    ),
+  fetchVideoFeatures: ({ studioEndpointUrl }) => get(urls.videoFeatures({ studioEndpointUrl })),
+  uploadVideo: ({ data, studioEndpointUrl, learningContextId }) =>
+    post(urls.courseVideos({ studioEndpointUrl, learningContextId }), data),
+  getHandlerUrl: ({ studioEndpointUrl, blockId, handlerName }) =>
+    get(urls.handlerUrl({ studioEndpointUrl, blockId, handlerName })),
+  validateBlockNumericInput: ({ studioEndpointUrl, data }) =>
+    post(urls.validateNumericInputUrl({ studioEndpointUrl }), data),
 };
 
 export default apiMethods;

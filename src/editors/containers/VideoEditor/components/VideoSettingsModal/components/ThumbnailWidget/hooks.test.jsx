@@ -8,7 +8,7 @@ import * as hooks from './hooks';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
-  useRef: jest.fn(val => ({ current: val })),
+  useRef: jest.fn((val) => ({ current: val })),
   useEffect: jest.fn(),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
 }));
@@ -43,19 +43,26 @@ describe('state hooks', () => {
 
 describe('createResampledFile', () => {
   it('should return resampled file object', () => {
-    hook = hooks.createResampledFile({ canvasUrl: 'data:MimETYpe,sOMEUrl', filename: testValue, mimeType: 'sOmEuiMAge' });
+    hook = hooks.createResampledFile({
+      canvasUrl: 'data:MimETYpe,sOMEUrl',
+      filename: testValue,
+      mimeType: 'sOmEuiMAge',
+    });
     expect(hook).toEqual(resampledFile);
   });
 });
 describe('resampleImage', () => {
   it('should return filename and file', () => {
-    const spy = jest.spyOn(hooks, hookKeys.createResampledFile)
-      .mockReturnValueOnce(resampledFile);
+    const spy = jest.spyOn(hooks, hookKeys.createResampledFile).mockReturnValueOnce(resampledFile);
     const image = document.createElement('img');
     image.height = '800';
     image.width = '800';
     hook = hooks.resampleImage({ image, filename: testValue });
-    expect(spy).toHaveBeenCalledWith({ canvasUrl: 'data:image/png;base64,00', filename: testValue, mimeType: 'image/png' });
+    expect(spy).toHaveBeenCalledWith({
+      canvasUrl: 'data:image/png;base64,00',
+      filename: testValue,
+      mimeType: 'image/png',
+    });
     expect(spy.mock.calls.length).toEqual(1);
     expect(spy).toHaveReturnedWith(resampledFile);
     expect(hook).toEqual(['data:image/png;base64,00', resampledFile]);
@@ -113,8 +120,7 @@ describe('fileInput', () => {
     const eventFailure = { target: { files: [maxFileFail] } };
     it('image fails to upload if file size is greater than 1000000', () => {
       const checkValidSize = false;
-      spies.checkValidSize = jest.spyOn(hooks, hookKeys.checkValidSize)
-        .mockReturnValueOnce(checkValidSize);
+      spies.checkValidSize = jest.spyOn(hooks, hookKeys.checkValidSize).mockReturnValueOnce(checkValidSize);
       hook.addFile(eventFailure);
       expect(spies.checkValidSize.mock.calls.length).toEqual(1);
       expect(spies.checkValidSize).toHaveReturnedWith(false);
@@ -122,8 +128,7 @@ describe('fileInput', () => {
     it('dispatches updateField action with the first target file', () => {
       const dispatch = useDispatch(); // Access the mock 'dispatch()' set up in setupEditorTest
       const checkValidSize = true;
-      spies.checkValidSize = jest.spyOn(hooks, hookKeys.checkValidSize)
-        .mockReturnValueOnce(checkValidSize);
+      spies.checkValidSize = jest.spyOn(hooks, hookKeys.checkValidSize).mockReturnValueOnce(checkValidSize);
       hook.addFile(eventSuccess);
       expect(spies.checkValidSize).toHaveReturnedWith(true);
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({ thumbnail: ' ' }));
@@ -139,9 +144,12 @@ describe('fileInput', () => {
     const testFile = new File([selectedFileSuccess], 'sOMEUrl.jpg');
     hooks.deleteThumbnail({ dispatch })();
     expect(dispatch).toHaveBeenNthCalledWith(1, actions.video.updateField({ thumbnail: null }));
-    expect(dispatch).toHaveBeenNthCalledWith(2, thunkActions.video.uploadThumbnail({
-      thumbnail: testFile,
-      emptyCanvas: true,
-    }));
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      thunkActions.video.uploadThumbnail({
+        thumbnail: testFile,
+        emptyCanvas: true,
+      }),
+    );
   });
 });

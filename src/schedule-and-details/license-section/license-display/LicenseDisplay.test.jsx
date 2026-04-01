@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render,
-} from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { LICENSE_TYPE } from '../constants';

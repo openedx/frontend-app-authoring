@@ -1,8 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { getConfig } from '@edx/frontend-platform';
-import {
-  initializeMocks, waitFor, render,
-} from '../../testUtils';
+import { initializeMocks, waitFor, render } from '../../testUtils';
 
 import { executeThunk } from '../../utils';
 import { getCourseSectionVerticalApiUrl } from '../data/api';
@@ -31,9 +29,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const renderComponent = () => render(
-  <Breadcrumbs courseId={courseId} parentUnitId={parentUnitId} />,
-);
+const renderComponent = () => render(<Breadcrumbs courseId={courseId} parentUnitId={parentUnitId} />);
 
 describe('<Breadcrumbs />', () => {
   beforeEach(async () => {
@@ -41,17 +37,11 @@ describe('<Breadcrumbs />', () => {
     axiosMock = mocks.axiosMock;
     reduxStore = mocks.reduxStore;
 
-    axiosMock
-      .onGet(getCourseSectionVerticalApiUrl(courseId))
-      .reply(200, courseSectionVerticalMock);
+    axiosMock.onGet(getCourseSectionVerticalApiUrl(courseId)).reply(200, courseSectionVerticalMock);
     await executeThunk(fetchCourseSectionVerticalData(courseId), reduxStore.dispatch);
-    axiosMock
-      .onGet(getCourseSectionVerticalApiUrl(courseId))
-      .reply(200, courseSectionVerticalMock);
+    axiosMock.onGet(getCourseSectionVerticalApiUrl(courseId)).reply(200, courseSectionVerticalMock);
     await executeThunk(fetchCourseSectionVerticalData(courseId), reduxStore.dispatch);
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, { useNewCourseOutlinePage: true });
+    axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, { useNewCourseOutlinePage: true });
   });
 
   it('render Breadcrumbs component correctly', async () => {
@@ -64,28 +54,26 @@ describe('<Breadcrumbs />', () => {
   });
 
   it('render Breadcrumbs with many ancestors items correctly', async () => {
-    axiosMock
-      .onGet(getCourseSectionVerticalApiUrl(courseId))
-      .reply(200, {
-        ...courseSectionVerticalMock,
-        ancestor_xblocks: [
-          {
-            children: [
-              {
-                ...courseSectionVerticalMock.ancestor_xblocks[0],
-                display_name: 'Some module unit 1',
-              },
-              {
-                ...courseSectionVerticalMock.ancestor_xblocks[1],
-                display_name: 'Some module unit 2',
-              },
-            ],
-            title: 'Some module',
-            is_last: false,
-          },
-          ...courseSectionVerticalMock.ancestor_xblocks,
-        ],
-      });
+    axiosMock.onGet(getCourseSectionVerticalApiUrl(courseId)).reply(200, {
+      ...courseSectionVerticalMock,
+      ancestor_xblocks: [
+        {
+          children: [
+            {
+              ...courseSectionVerticalMock.ancestor_xblocks[0],
+              display_name: 'Some module unit 1',
+            },
+            {
+              ...courseSectionVerticalMock.ancestor_xblocks[1],
+              display_name: 'Some module unit 2',
+            },
+          ],
+          title: 'Some module',
+          is_last: false,
+        },
+        ...courseSectionVerticalMock.ancestor_xblocks,
+      ],
+    });
     await executeThunk(fetchCourseSectionVerticalData(courseId), reduxStore.dispatch);
     const { getByText } = renderComponent();
 
@@ -96,7 +84,7 @@ describe('<Breadcrumbs />', () => {
     });
   });
 
-  it('render Breadcrumbs\'s dropdown menus correctly', async () => {
+  it("render Breadcrumbs's dropdown menus correctly", async () => {
     const user = userEvent.setup();
     const { getByText, queryAllByTestId } = renderComponent();
 
@@ -137,7 +125,13 @@ describe('<Breadcrumbs />', () => {
   it('navigates using the new course outline page when the waffle flag is enabled', async () => {
     const user = userEvent.setup();
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { ancestor_xblocks: [{ children: [{ display_name, url }] }] } = courseSectionVerticalMock;
+    const {
+      ancestor_xblocks: [
+        {
+          children: [{ display_name, url }],
+        },
+      ],
+    } = courseSectionVerticalMock;
     const { getByText, getByRole } = renderComponent();
 
     const dropdownBtn = getByText(breadcrumbsExpected.section.displayName);
@@ -151,10 +145,14 @@ describe('<Breadcrumbs />', () => {
   it('falls back to window.location.href when the waffle flag is disabled', async () => {
     const user = userEvent.setup();
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { ancestor_xblocks: [{ children: [{ display_name, url }] }] } = courseSectionVerticalMock;
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, { useNewCourseOutlinePage: false });
+    const {
+      ancestor_xblocks: [
+        {
+          children: [{ display_name, url }],
+        },
+      ],
+    } = courseSectionVerticalMock;
+    axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, { useNewCourseOutlinePage: false });
 
     const { getByText, getByRole } = renderComponent();
 

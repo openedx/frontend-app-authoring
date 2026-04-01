@@ -68,7 +68,8 @@ const messages = defineMessages({
   },
   containerSettingsMsg: {
     id: 'course-authoring.library-authoring.container.settings.alert.message',
-    defaultMessage: 'Section settings cannot be configured within Libraries and must be set within a course. In a future release, Libraries may support configuring some settings.',
+    defaultMessage:
+      'Section settings cannot be configured within Libraries and must be set within a course. In a future release, Libraries may support configuring some settings.',
     description: 'Temporary message for settings tab being',
   },
   menuOpen: {
@@ -113,7 +114,8 @@ const messages = defineMessages({
   },
   deleteSectionCourseMessage: {
     id: 'course-authoring.library-authoring.section.delete-parent-message',
-    defaultMessage: 'This section is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
+    defaultMessage:
+      'This section is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a section',
   },
   deleteSubsectionParentMessage: {
@@ -123,7 +125,8 @@ const messages = defineMessages({
   },
   deleteSubsectionMultipleParentMessage: {
     id: 'course-authoring.library-authoring.subsection.delete-multiple-parent-message',
-    defaultMessage: 'By deleting this subsection, you will also be deleting it from {parentCount} Sections in this library.',
+    defaultMessage:
+      'By deleting this subsection, you will also be deleting it from {parentCount} Sections in this library.',
     description: 'Parent usage details shown before deleting a subsection part of multiple sections',
   },
   deleteSubsectionWarningTitle: {
@@ -133,7 +136,8 @@ const messages = defineMessages({
   },
   deleteSubsectionCourseMessage: {
     id: 'course-authoring.library-authoring.subsection.delete-course-message',
-    defaultMessage: 'This subsection is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
+    defaultMessage:
+      'This subsection is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a subsection',
   },
   deleteUnitParentMessage: {
@@ -143,7 +147,8 @@ const messages = defineMessages({
   },
   deleteUnitMultipleParentMessage: {
     id: 'course-authoring.library-authoring.unit.delete-multiple-parent-message',
-    defaultMessage: 'By deleting this unit, you will also be deleting it from {parentCount} Subsections in this library.',
+    defaultMessage:
+      'By deleting this unit, you will also be deleting it from {parentCount} Subsections in this library.',
     description: 'Parent usage details shown before deleting a unit part of multiple subsections',
   },
   deleteUnitWarningTitle: {
@@ -153,12 +158,14 @@ const messages = defineMessages({
   },
   deleteUnitCourseMessage: {
     id: 'course-authoring.library-authoring.unit.delete-course-usage-message',
-    defaultMessage: 'This unit is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
+    defaultMessage:
+      'This unit is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a unit',
   },
   deleteContainerConfirm: {
     id: 'course-authoring.library-authoring.container.delete-confirmation-text',
-    defaultMessage: 'Are you sure you want to permanently delete {containerName}? This cannot be undone and will remove it from your library. {message}',
+    defaultMessage:
+      'Are you sure you want to permanently delete {containerName}? This cannot be undone and will remove it from your library. {message}',
     description: 'Confirmation text to display before deleting a container',
   },
   deleteUnitSuccess: {

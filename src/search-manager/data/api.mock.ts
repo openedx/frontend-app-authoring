@@ -17,9 +17,8 @@ export async function mockContentSearchConfig(): ReturnType<typeof api.getConten
 }
 mockContentSearchConfig.multisearchEndpointUrl = 'http://mock.meilisearch.local/multi-search';
 mockContentSearchConfig.searchEndpointUrl = 'http://mock.meilisearch.local/indexes/studio/search';
-mockContentSearchConfig.applyMock = () => (
-  jest.spyOn(api, 'getContentSearchConfig').mockImplementation(mockContentSearchConfig)
-);
+mockContentSearchConfig.applyMock = () =>
+  jest.spyOn(api, 'getContentSearchConfig').mockImplementation(mockContentSearchConfig);
 
 /**
  * Mock all future Meilisearch searches with the given response.
@@ -34,19 +33,25 @@ export function mockSearchResult(
   mockResponse: MultiSearchResponse,
   filterFn?: (requestData: any) => MultiSearchResponse,
 ) {
-  fetchMock.post(mockContentSearchConfig.multisearchEndpointUrl, (_url, req) => {
-    const requestData = JSON.parse((req.body ?? '') as string);
-    const query = requestData?.queries[0]?.q ?? '';
-    // We have to replace the query (search keywords) in the mock results with the actual query,
-    // because otherwise Instantsearch will update the UI and change the query,
-    // leading to unexpected results in the test cases.
-    const newMockResponse = { ...mockResponse };
-    newMockResponse.results[0].query = query;
-    // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
-    // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-    mockResponse.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
-    return filterFn?.(requestData) || newMockResponse;
-  }, { overwriteRoutes: true });
+  fetchMock.post(
+    mockContentSearchConfig.multisearchEndpointUrl,
+    (_url, req) => {
+      const requestData = JSON.parse((req.body ?? '') as string);
+      const query = requestData?.queries[0]?.q ?? '';
+      // We have to replace the query (search keywords) in the mock results with the actual query,
+      // because otherwise Instantsearch will update the UI and change the query,
+      // leading to unexpected results in the test cases.
+      const newMockResponse = { ...mockResponse };
+      newMockResponse.results[0].query = query;
+      // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
+      // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+      mockResponse.results[0]?.hits.forEach((hit) => {
+        hit._formatted = { ...hit };
+      });
+      return filterFn?.(requestData) || newMockResponse;
+    },
+    { overwriteRoutes: true },
+  );
 }
 
 /** Helper to create a full MultiSearchResponse object from an array of hits.
@@ -71,9 +76,7 @@ export const hydrateSearchResult: (hits: any[]) => MultiSearchResponse = (hits) 
 /**
  * Mock the block types returned by the API.
  */
-export async function mockGetBlockTypes(
-  mockResponse: 'noBlocks' | 'someBlocks' | 'moreBlocks',
-) {
+export async function mockGetBlockTypes(mockResponse: 'noBlocks' | 'someBlocks' | 'moreBlocks') {
   const mockResponseMap = {
     noBlocks: {},
     someBlocks: { problem: 1, html: 2 },
@@ -97,19 +100,13 @@ export async function mockFetchIndexDocuments() {
 }
 
 mockFetchIndexDocuments.applyMock = () => {
-  fetchMock.post(
-    mockContentSearchConfig.multisearchEndpointUrl,
-    mockFetchIndexDocuments,
-    { overwriteRoutes: true },
-  );
+  fetchMock.post(mockContentSearchConfig.multisearchEndpointUrl, mockFetchIndexDocuments, { overwriteRoutes: true });
 };
 
 /**
  * Mock the useGetContentHits
  */
-export function mockGetContentHits(
-  mockResponse: 'noHits' | 'someHits',
-) {
+export function mockGetContentHits(mockResponse: 'noHits' | 'someHits') {
   fetchMock.post(mockContentSearchConfig.searchEndpointUrl, () => {
     const mockResponseMap = {
       noHits: {

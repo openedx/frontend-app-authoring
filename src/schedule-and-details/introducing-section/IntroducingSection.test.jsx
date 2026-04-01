@@ -32,17 +32,9 @@ const RootWrapper = (props) => (
   </CourseAuthoringProvider>
 );
 
-const {
-  overview,
-  introVideo,
-  aboutSidebarHtml,
-  shortDescription,
-  courseImageAssetPath,
-} = courseDetailsMock;
+const { overview, introVideo, aboutSidebarHtml, shortDescription, courseImageAssetPath } = courseDetailsMock;
 
-const {
-  aboutPageEditable, sidebarHtmlEnabled, shortDescriptionEditable, lmsLinkForAboutPage,
-} = courseSettingsMock;
+const { aboutPageEditable, sidebarHtmlEnabled, shortDescriptionEditable, lmsLinkForAboutPage } = courseSettingsMock;
 
 const props = {
   intl: {},

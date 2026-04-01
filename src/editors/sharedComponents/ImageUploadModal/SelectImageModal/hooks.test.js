@@ -10,7 +10,7 @@ import { sortFunctions, sortKeys } from './utils';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
-  useRef: jest.fn(val => ({ current: val })),
+  useRef: jest.fn((val) => ({ current: val })),
   useEffect: jest.fn(),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
 }));
@@ -51,8 +51,12 @@ describe('SelectImageModal hooks', () => {
   });
 
   describe('using state', () => {
-    beforeEach(() => { state.mock(); });
-    afterEach(() => { state.restore(); });
+    beforeEach(() => {
+      state.mock();
+    });
+    afterEach(() => {
+      state.restore();
+    });
 
     describe('searchAndSortHooks', () => {
       beforeEach(() => {
@@ -82,21 +86,16 @@ describe('SelectImageModal hooks', () => {
       });
     });
     describe('filteredList', () => {
-      const matching = [
-        'test',
-        'TEst',
-        'eeees',
-        'essSSSS',
-      ];
+      const matching = ['test', 'TEst', 'eeees', 'essSSSS'];
       const notMatching = ['bad', 'other', 'bad stuff'];
       const searchString = 'eS';
       test('returns list filtered lowercase by displayName', () => {
-        const filter = jest.fn(cb => ({ filter: cb }));
+        const filter = jest.fn((cb) => ({ filter: cb }));
         hook = hooks.filteredList({ searchString, imageList: { filter } });
         expect(filter).toHaveBeenCalled();
         const [[filterCb]] = filter.mock.calls;
-        matching.forEach(val => expect(filterCb({ displayName: val })).toEqual(true));
-        notMatching.forEach(val => expect(filterCb({ displayName: val })).toEqual(false));
+        matching.forEach((val) => expect(filterCb({ displayName: val })).toEqual(true));
+        notMatching.forEach((val) => expect(filterCb({ displayName: val })).toEqual(false));
       });
     });
     describe('displayList', () => {
@@ -104,14 +103,11 @@ describe('SelectImageModal hooks', () => {
         images: ['data1', 'data2', 'other distinct data'],
         sortBy: sortKeys.dateNewest,
         searchString: 'test search string',
-
       };
       const load = (loadProps = {}) => {
-        jest.spyOn(hooks, hookKeys.filteredList).mockImplementationOnce(
-          ({ searchString, imageList }) => ({
-            sort: (cb) => ({ filteredList: { searchString, imageList }, sort: { cb } }),
-          }),
-        );
+        jest.spyOn(hooks, hookKeys.filteredList).mockImplementationOnce(({ searchString, imageList }) => ({
+          sort: (cb) => ({ filteredList: { searchString, imageList }, sort: { cb } }),
+        }));
         hook = hooks.displayList({ ...props, ...loadProps });
       };
       it('returns a sorted filtered list, based on the searchString and imageList values', () => {
@@ -120,7 +116,7 @@ describe('SelectImageModal hooks', () => {
         expect(hook.filteredList.imageList).toEqual(Object.values(props.images));
       });
       describe('sort behavior', () => {
-        Object.keys(sortKeys).forEach(key => {
+        Object.keys(sortKeys).forEach((key) => {
           test(`it sorts by ${key} when selected`, () => {
             load({ sortBy: sortKeys[key] });
             expect(hook.sort).toEqual({ cb: sortFunctions[key] });
@@ -180,10 +176,12 @@ describe('SelectImageModal hooks', () => {
           expect(state.setState.highlighted).toHaveBeenCalledWith(testValue);
         });
         test('displayList returns displayListhook called with searchSortProps and images', () => {
-          expect(hook.galleryProps.displayList).toEqual(displayList({
-            ...props.searchSortProps,
-            images: props.images,
-          }));
+          expect(hook.galleryProps.displayList).toEqual(
+            displayList({
+              ...props.searchSortProps,
+              images: props.images,
+            }),
+          );
         });
       });
       describe('galleryError', () => {
@@ -253,7 +251,8 @@ describe('SelectImageModal hooks', () => {
       const eventFailure = { target: { files: [testValueInvalidImage] } };
       it('image fails to upload if file size is greater than 1000000', () => {
         const checkValidFileSize = false;
-        spies.checkValidFileSize = jest.spyOn(hooks, hookKeys.checkValidFileSize)
+        spies.checkValidFileSize = jest
+          .spyOn(hooks, hookKeys.checkValidFileSize)
           .mockReturnValueOnce(checkValidFileSize);
         hook.addFile(eventFailure);
         expect(spies.checkValidFileSize.mock.calls.length).toEqual(1);
@@ -261,15 +260,18 @@ describe('SelectImageModal hooks', () => {
       });
       it('dispatches uploadAsset thunkAction with the first target file and setSelection', () => {
         const checkValidFileSize = true;
-        spies.checkValidFileSize = jest.spyOn(hooks, hookKeys.checkValidFileSize)
+        spies.checkValidFileSize = jest
+          .spyOn(hooks, hookKeys.checkValidFileSize)
           .mockReturnValueOnce(checkValidFileSize);
         hook.addFile(eventSuccess);
         expect(spies.checkValidFileSize.mock.calls.length).toEqual(1);
         expect(spies.checkValidFileSize).toHaveReturnedWith(true);
-        expect(dispatch).toHaveBeenCalledWith(thunkActions.app.uploadAsset({
-          file: testValue,
-          setSelection,
-        }));
+        expect(dispatch).toHaveBeenCalledWith(
+          thunkActions.app.uploadAsset({
+            file: testValue,
+            setSelection,
+          }),
+        );
       });
     });
   });
@@ -287,21 +289,23 @@ describe('SelectImageModal hooks', () => {
     const clearSelection = jest.fn();
     const spies = {};
     beforeEach(() => {
-      spies.imgList = jest.spyOn(hooks, hookKeys.imgListHooks)
-        .mockReturnValueOnce(imgListHooks);
-      spies.search = jest.spyOn(hooks, hookKeys.searchAndSortHooks)
-        .mockReturnValueOnce(searchAndSortHooks);
-      spies.file = jest.spyOn(hooks, hookKeys.fileInputHooks)
-        .mockReturnValueOnce(fileInputHooks);
+      spies.imgList = jest.spyOn(hooks, hookKeys.imgListHooks).mockReturnValueOnce(imgListHooks);
+      spies.search = jest.spyOn(hooks, hookKeys.searchAndSortHooks).mockReturnValueOnce(searchAndSortHooks);
+      spies.file = jest.spyOn(hooks, hookKeys.fileInputHooks).mockReturnValueOnce(fileInputHooks);
       hook = hooks.imgHooks({
-        setSelection, clearSelection, images, imageCount,
+        setSelection,
+        clearSelection,
+        images,
+        imageCount,
       });
     });
     it('forwards fileInputHooks as fileInput, called with uploadAsset prop', () => {
       expect(hook.fileInput).toEqual(fileInputHooks);
       expect(spies.file.mock.calls.length).toEqual(1);
       expect(spies.file).toHaveBeenCalledWith({
-        setSelection, clearSelection, imgList: imgListHooks,
+        setSelection,
+        clearSelection,
+        imgList: imgListHooks,
       });
     });
     it('initializes imgListHooks with setSelection,searchAndSortHooks, and images', () => {
@@ -317,7 +321,9 @@ describe('SelectImageModal hooks', () => {
       expect(hook.searchSortProps).toEqual(searchAndSortHooks);
       expect(spies.file.mock.calls.length).toEqual(1);
       expect(spies.file).toHaveBeenCalledWith({
-        setSelection, clearSelection, imgList: imgListHooks,
+        setSelection,
+        clearSelection,
+        imgList: imgListHooks,
       });
     });
     it('forwards galleryProps and selectBtnProps from the image list hooks', () => {

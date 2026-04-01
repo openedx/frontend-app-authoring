@@ -19,15 +19,8 @@ export const SelectDestinationView = ({
 }: SelectDestinationViewProps) => (
   <Container>
     <Alert variant="info">
-      <FormattedMessage
-        {...messages.selectDestinationAlert}
-        values={{ count: legacyLibCount }}
-      />
+      <FormattedMessage {...messages.selectDestinationAlert} values={{ count: legacyLibCount }} />
     </Alert>
-    <LibrariesV2List
-      selectedLibraryId={destinationId}
-      handleSelect={setDestinationId}
-      showCreateLibrary
-    />
+    <LibrariesV2List selectedLibraryId={destinationId} handleSelect={setDestinationId} showCreateLibrary />
   </Container>
 );

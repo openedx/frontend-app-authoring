@@ -10,8 +10,8 @@ jest.mock('react', () => {
   const updateState = jest.fn();
   return {
     updateState,
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
-    createRef: jest.fn(val => ({ ref: val })),
+    useState: jest.fn((val) => [{ state: val }, (newVal) => updateState({ val, newVal })]),
+    createRef: jest.fn((val) => ({ ref: val })),
   };
 });
 
@@ -44,8 +44,12 @@ describe('TitleHeader hooks', () => {
     state.testGetter(state.keys.localTitle);
   });
   describe('non-state hooks', () => {
-    beforeEach(() => { state.mock(); });
-    afterEach(() => { state.restore(); });
+    beforeEach(() => {
+      state.mock();
+    });
+    afterEach(() => {
+      state.restore();
+    });
 
     describe('isEditing', () => {
       beforeEach(() => {
@@ -119,7 +123,7 @@ describe('TitleHeader hooks', () => {
           localTitle: values.localTitle,
           cancelEdit: values.cancelEdit,
         })),
-        handleKeyDown: jest.fn(args => ({ handleKeyDown: args })),
+        handleKeyDown: jest.fn((args) => ({ handleKeyDown: args })),
       };
       beforeEach(() => {
         oldHooks = hooks.hooks;

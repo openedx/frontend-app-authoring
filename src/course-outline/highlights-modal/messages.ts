@@ -7,7 +7,8 @@ const messages = defineMessages({
   },
   description: {
     id: 'course-authoring.course-outline.highlights-modal.description',
-    defaultMessage: 'Enter 3-5 highlights to include in the email message that learners receive for this section (250 character limit). For more information and an example of the email template, read our {documentation}.',
+    defaultMessage:
+      'Enter 3-5 highlights to include in the email message that learners receive for this section (250 character limit). For more information and an example of the email template, read our {documentation}.',
   },
   documentationLink: {
     id: 'course-authoring.course-outline.highlights-modal.documentation-link',

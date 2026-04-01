@@ -38,11 +38,11 @@ jest.mock('./requests', () => ({
 
 jest.mock('../../../utils', () => ({
   ...jest.requireActual('../../../utils'),
-  removeItemOnce: (args) => (args),
+  removeItemOnce: (args) => args,
 }));
 
 jest.mock('../../services/cms/api', () => ({
-  parseYoutubeId: (args) => (args),
+  parseYoutubeId: (args) => args,
 }));
 
 const thunkActionsKeys = keyStore(thunkActions);
@@ -147,40 +147,26 @@ describe('video thunkActions', () => {
           sa: false,
         },
       ]);
-      jest.spyOn(thunkActions, thunkActionsKeys.parseTranscripts).mockReturnValue(
-        testMetadata.transcripts,
-      );
+      jest.spyOn(thunkActions, thunkActionsKeys.parseTranscripts).mockReturnValue(testMetadata.transcripts);
     });
     afterEach(() => {
       jest.restoreAllMocks();
     });
     it('dispatches fetchVideoFeatures action', () => {
       thunkActions.loadVideoData()(dispatch, getState);
-      [
-        [dispatchedLoad],
-        [dispatchedAction1],
-        [dispatchedAction2],
-      ] = dispatch.mock.calls;
+      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
       expect(dispatchedLoad).not.toEqual(undefined);
       expect(dispatchedAction1.fetchVideoFeatures).not.toEqual(undefined);
     });
     it('dispatches checkTranscriptsForImport action', () => {
       thunkActions.loadVideoData()(dispatch, getState);
-      [
-        [dispatchedLoad],
-        [dispatchedAction1],
-        [dispatchedAction2],
-      ] = dispatch.mock.calls;
+      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
       expect(dispatchedLoad).not.toEqual(undefined);
       expect(dispatchedAction2.checkTranscriptsForImport).not.toEqual(undefined);
     });
     it('dispatches actions.video.load', () => {
       thunkActions.loadVideoData()(dispatch, getState);
-      [
-        [dispatchedLoad],
-        [dispatchedAction1],
-        [dispatchedAction2],
-      ] = dispatch.mock.calls;
+      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
       expect(dispatchedLoad.load).toEqual({
         videoSource: 'videOsOurce',
         videoId: 'videOiD',
@@ -230,11 +216,7 @@ describe('video thunkActions', () => {
         },
       }));
       thunkActions.loadVideoData(mockSelectedVideoId, null)(dispatch, getState);
-      [
-        [dispatchedLoad],
-        [dispatchedAction1],
-        [dispatchedAction2],
-      ] = dispatch.mock.calls;
+      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
       expect(dispatchedLoad.load).toEqual({
         videoSource: 'videOsOurce',
         videoId: 'videOiD',
@@ -285,11 +267,7 @@ describe('video thunkActions', () => {
         },
       }));
       thunkActions.loadVideoData('ThisIsAVideoId2', null)(dispatch, getState);
-      [
-        [dispatchedLoad],
-        [dispatchedAction1],
-        [dispatchedAction2],
-      ] = dispatch.mock.calls;
+      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
       expect(dispatchedLoad.load).toEqual({
         videoSource: 'videOsOurce',
         videoId: 'videOiD',
@@ -330,11 +308,7 @@ describe('video thunkActions', () => {
     });
     it('dispatches actions.video.load with selectedVideoUrl', () => {
       thunkActions.loadVideoData(null, mockSelectedVideoUrl)(dispatch, getState);
-      [
-        [dispatchedLoad],
-        [dispatchedAction1],
-        [dispatchedAction2],
-      ] = dispatch.mock.calls;
+      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
       expect(dispatchedLoad.load).toEqual({
         videoSource: mockSelectedVideoUrl,
         videoId: 'videOiD',
@@ -375,22 +349,22 @@ describe('video thunkActions', () => {
     });
     it('dispatches actions.video.updateField on success', () => {
       thunkActions.loadVideoData()(dispatch, getState);
-      [
-        [dispatchedLoad],
-        [dispatchedAction1],
-        [dispatchedAction2],
-      ] = dispatch.mock.calls;
+      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
       dispatch.mockClear();
       dispatchedAction1.fetchVideoFeatures.onSuccess(mockVideoFeatures);
-      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
-        allowThumbnailUpload: mockVideoFeatures.data.allowThumbnailUpload,
-        videoSharingEnabledForAll: mockVideoFeatures.data.videoSharingEnabled,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.video.updateField({
+          allowThumbnailUpload: mockVideoFeatures.data.allowThumbnailUpload,
+          videoSharingEnabledForAll: mockVideoFeatures.data.videoSharingEnabled,
+        }),
+      );
       dispatch.mockClear();
       dispatchedAction2.checkTranscriptsForImport.onSuccess(mockAllowTranscriptImport);
-      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
-        allowTranscriptImport: true,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.video.updateField({
+          allowTranscriptImport: true,
+        }),
+      );
     });
   });
   describe('determineVideoSources', () => {
@@ -400,11 +374,13 @@ describe('video thunkActions', () => {
     const html5Sources = ['htmLOne', 'hTMlTwo', 'htMLthrEE'];
     describe('when edx id, youtube id and source values are null', () => {
       it('returns empty strings for ids and an empty array for sources', () => {
-        expect(thunkActions.determineVideoSources({
-          edxVideoId: null,
-          youtubeId: null,
-          html5Sources: null,
-        })).toEqual({
+        expect(
+          thunkActions.determineVideoSources({
+            edxVideoId: null,
+            youtubeId: null,
+            html5Sources: null,
+          }),
+        ).toEqual({
           videoUrl: '',
           videoId: '',
           fallbackVideos: [],
@@ -413,11 +389,13 @@ describe('video thunkActions', () => {
     });
     describe('when there is an edx video id, youtube id and html5 sources', () => {
       it('returns all three with the youtube id wrapped in url', () => {
-        expect(thunkActions.determineVideoSources({
-          edxVideoId,
-          youtubeId,
-          html5Sources,
-        })).toEqual({
+        expect(
+          thunkActions.determineVideoSources({
+            edxVideoId,
+            youtubeId,
+            html5Sources,
+          }),
+        ).toEqual({
           videoUrl: youtubeUrl,
           videoId: edxVideoId,
           fallbackVideos: html5Sources,
@@ -426,11 +404,13 @@ describe('video thunkActions', () => {
     });
     describe('when there is only an edx video id', () => {
       it('returns the edx video id for video source', () => {
-        expect(thunkActions.determineVideoSources({
-          edxVideoId,
-          youtubeId: '',
-          html5Sources: '',
-        })).toEqual({
+        expect(
+          thunkActions.determineVideoSources({
+            edxVideoId,
+            youtubeId: '',
+            html5Sources: '',
+          }),
+        ).toEqual({
           videoUrl: '',
           videoId: edxVideoId,
           fallbackVideos: [],
@@ -439,11 +419,13 @@ describe('video thunkActions', () => {
     });
     describe('when there is no edx video id', () => {
       it('returns the youtube url for video source and html5 sources for fallback videos', () => {
-        expect(thunkActions.determineVideoSources({
-          edxVideoId: '',
-          youtubeId,
-          html5Sources,
-        })).toEqual({
+        expect(
+          thunkActions.determineVideoSources({
+            edxVideoId: '',
+            youtubeId,
+            html5Sources,
+          }),
+        ).toEqual({
           videoUrl: youtubeUrl,
           videoId: '',
           fallbackVideos: html5Sources,
@@ -452,22 +434,26 @@ describe('video thunkActions', () => {
     });
     describe('when there is no edx video id and no youtube id', () => {
       it('returns the first html5 source for video url and the rest for fallback videos', () => {
-        expect(thunkActions.determineVideoSources({
-          edxVideoId: '',
-          youtubeId: '',
-          html5Sources,
-        })).toEqual({
+        expect(
+          thunkActions.determineVideoSources({
+            edxVideoId: '',
+            youtubeId: '',
+            html5Sources,
+          }),
+        ).toEqual({
           videoUrl: 'htmLOne',
           videoId: '',
           fallbackVideos: ['hTMlTwo', 'htMLthrEE'],
         });
       });
       it('returns the html5 source for video source and an array with 2 empty values for fallback videos', () => {
-        expect(thunkActions.determineVideoSources({
-          edxVideoId: '',
-          youtubeId: '',
-          html5Sources: ['htmlOne'],
-        })).toEqual({
+        expect(
+          thunkActions.determineVideoSources({
+            edxVideoId: '',
+            youtubeId: '',
+            html5Sources: ['htmlOne'],
+          }),
+        ).toEqual({
           videoUrl: 'htmlOne',
           videoId: '',
           fallbackVideos: [],
@@ -476,11 +462,13 @@ describe('video thunkActions', () => {
     });
     describe('when there is no edx video id, no youtube id and no html5 sources', () => {
       it('returns an empty string for video source and an array with 2 empty values for fallback videos', () => {
-        expect(thunkActions.determineVideoSources({
-          edxVideoId: '',
-          youtubeId: '',
-          html5Sources: [],
-        })).toEqual({
+        expect(
+          thunkActions.determineVideoSources({
+            edxVideoId: '',
+            youtubeId: '',
+            html5Sources: [],
+          }),
+        ).toEqual({
           videoUrl: '',
           videoId: '',
           fallbackVideos: [],
@@ -489,62 +477,71 @@ describe('video thunkActions', () => {
     });
   });
   describe('parseTranscripts', () => {
-    const testStudioViewDataWithTranscripts = 'de descarga debajo del video.&#34;, &#34;value&#34;: &#34;&#34;, &#34;type&#34;: &#34;Generic&#34;, &#34;options&#34;: []}, &#34;transcripts&#34;: {&#34;explicitly_set&#34;: false, &#34;default_value&#34;: {}, &#34;field_name&#34;: &#34;transcripts&#34;, &#34;display_name&#34;: &#34;Idiomas de transcripci\\u00f3n&#34;, &#34;help&#34;: &#34;A\\u00f1ada transcripciones en diferentes idiomas. Haga clic a continuaci\\u00f3n para especificar un idioma y subir un archivo .srt de transcripci\\u00f3n para dicho idioma.&#34;, &#34;value&#34;: {&#34;aa&#34;: &#34;non_existent_dummy_file_name&#34;, &#34;ab&#34;: &#34;non_existent_dummy_file_name&#34;, &#34;ba&#34;: &#34;non_existent_dummy_file_name&#34;, &#34;en&#34;: &#34;external video-en.txt&#34;}, &#34;type&#34;: &#34;VideoTranslations&#34;, &#34;options&#34;: [], &#34;custom&#34;: true, &#34;languages&#34;: [{&#34;label&#34;: &#34;Abkhazian&#34;, &#34;code&#34;: &#34;ab&#34;}], &#34;urlRoot&#34;: &#34;/xblock/block-v1:GalileoX+XS_Mate001+3T2022+type@video+block@20bc09f5522d430f8e43c2bc377b348c/handler/studio_transcript/translation&#34;}, &#34;youtube_id_0_75&#34;: {';
-    const testStudioViewData = 'de descarga debajo del video.&#34;, &#34;value&#34;: &#34;&#34;, &#34;type&#34;: &#34;Generic&#34;, &#34;options&#34;: []}, &#34;transcripts&#34;: {&#34;explicitly_set&#34;: false, &#34;default_value&#34;: {}, &#34;field_name&#34;: &#34;transcripts&#34;, &#34;display_name&#34;: &#34;Idiomas de transcripci\\u00f3n&#34;, &#34;help&#34;: &#34;A\\u00f1ada transcripciones en diferentes idiomas. Haga clic a continuaci\\u00f3n para especificar un idioma y subir un archivo .srt de transcripci\\u00f3n para dicho idioma.&#34;, &#34;value&#34;: {}, &#34;type&#34;: &#34;VideoTranslations&#34;, &#34;options&#34;: [], &#34;custom&#34;: true, &#34;languages&#34;: [{&#34;label&#34;: &#34;Abkhazian&#34;, &#34;code&#34;: &#34;ab&#34;}], &#34;urlRoot&#34;: &#34;/xblock/block-v1:GalileoX+XS_Mate001+3T2022+type@video+block@20bc09f5522d430f8e43c2bc377b348c/handler/studio_transcript/translation&#34;}, &#34;youtube_id_0_75&#34;: {';
+    const testStudioViewDataWithTranscripts =
+      'de descarga debajo del video.&#34;, &#34;value&#34;: &#34;&#34;, &#34;type&#34;: &#34;Generic&#34;, &#34;options&#34;: []}, &#34;transcripts&#34;: {&#34;explicitly_set&#34;: false, &#34;default_value&#34;: {}, &#34;field_name&#34;: &#34;transcripts&#34;, &#34;display_name&#34;: &#34;Idiomas de transcripci\\u00f3n&#34;, &#34;help&#34;: &#34;A\\u00f1ada transcripciones en diferentes idiomas. Haga clic a continuaci\\u00f3n para especificar un idioma y subir un archivo .srt de transcripci\\u00f3n para dicho idioma.&#34;, &#34;value&#34;: {&#34;aa&#34;: &#34;non_existent_dummy_file_name&#34;, &#34;ab&#34;: &#34;non_existent_dummy_file_name&#34;, &#34;ba&#34;: &#34;non_existent_dummy_file_name&#34;, &#34;en&#34;: &#34;external video-en.txt&#34;}, &#34;type&#34;: &#34;VideoTranslations&#34;, &#34;options&#34;: [], &#34;custom&#34;: true, &#34;languages&#34;: [{&#34;label&#34;: &#34;Abkhazian&#34;, &#34;code&#34;: &#34;ab&#34;}], &#34;urlRoot&#34;: &#34;/xblock/block-v1:GalileoX+XS_Mate001+3T2022+type@video+block@20bc09f5522d430f8e43c2bc377b348c/handler/studio_transcript/translation&#34;}, &#34;youtube_id_0_75&#34;: {';
+    const testStudioViewData =
+      'de descarga debajo del video.&#34;, &#34;value&#34;: &#34;&#34;, &#34;type&#34;: &#34;Generic&#34;, &#34;options&#34;: []}, &#34;transcripts&#34;: {&#34;explicitly_set&#34;: false, &#34;default_value&#34;: {}, &#34;field_name&#34;: &#34;transcripts&#34;, &#34;display_name&#34;: &#34;Idiomas de transcripci\\u00f3n&#34;, &#34;help&#34;: &#34;A\\u00f1ada transcripciones en diferentes idiomas. Haga clic a continuaci\\u00f3n para especificar un idioma y subir un archivo .srt de transcripci\\u00f3n para dicho idioma.&#34;, &#34;value&#34;: {}, &#34;type&#34;: &#34;VideoTranslations&#34;, &#34;options&#34;: [], &#34;custom&#34;: true, &#34;languages&#34;: [{&#34;label&#34;: &#34;Abkhazian&#34;, &#34;code&#34;: &#34;ab&#34;}], &#34;urlRoot&#34;: &#34;/xblock/block-v1:GalileoX+XS_Mate001+3T2022+type@video+block@20bc09f5522d430f8e43c2bc377b348c/handler/studio_transcript/translation&#34;}, &#34;youtube_id_0_75&#34;: {';
     const testBadStudioViewData = 'tHiSiSaBAdDaTa';
     it('returns an array of languages given a JSON string', () => {
-      expect(thunkActions.parseTranscripts({
-        transcriptsData: testStudioViewDataWithTranscripts,
-      })).toEqual(['aa', 'ab', 'ba', 'en']);
+      expect(
+        thunkActions.parseTranscripts({
+          transcriptsData: testStudioViewDataWithTranscripts,
+        }),
+      ).toEqual(['aa', 'ab', 'ba', 'en']);
     });
     it('returns an empty array when there are no transcripts', () => {
-      expect(thunkActions.parseTranscripts({
-        transcriptsData: testStudioViewData,
-      })).toEqual([]);
+      expect(
+        thunkActions.parseTranscripts({
+          transcriptsData: testStudioViewData,
+        }),
+      ).toEqual([]);
     });
     it('returns an empty array given an unparsable JSON string', () => {
-      expect(thunkActions.parseTranscripts({
-        transcriptsData: testBadStudioViewData,
-      })).toEqual([]);
+      expect(
+        thunkActions.parseTranscripts({
+          transcriptsData: testBadStudioViewData,
+        }),
+      ).toEqual([]);
     });
   });
   describe('parseLicense', () => {
     const emptyLicenseData = null;
     const noLicense = 'sOMeHTml data-metadata &#34;license&#34; &#34;value&#34;= null, &#34;type&#34;';
     it('returns expected values for a license with no course license', () => {
-      expect(thunkActions.parseLicense({
-        licenseData: emptyLicenseData,
-        level: 'sOMElevEL',
-      })).toEqual([
-        null,
-        {},
-      ]);
+      expect(
+        thunkActions.parseLicense({
+          licenseData: emptyLicenseData,
+          level: 'sOMElevEL',
+        }),
+      ).toEqual([null, {}]);
     });
     it('returns expected values for a license with no block license', () => {
-      expect(thunkActions.parseLicense({
-        licenseData: noLicense,
-        level: 'block',
-      })).toEqual([
-        null,
-        {},
-      ]);
+      expect(
+        thunkActions.parseLicense({
+          licenseData: noLicense,
+          level: 'block',
+        }),
+      ).toEqual([null, {}]);
     });
     it('returns expected values for a license with all rights reserved', () => {
-      const license = 'sOMeHTml data-metadata &#34;license&#34; &#34;value&#34;: &#34;all-rights-reserved&#34;, &#34;type&#34;';
-      expect(thunkActions.parseLicense({
-        licenseData: license,
-        level: 'block',
-      })).toEqual([
-        'all-rights-reserved',
-        {},
-      ]);
+      const license =
+        'sOMeHTml data-metadata &#34;license&#34; &#34;value&#34;: &#34;all-rights-reserved&#34;, &#34;type&#34;';
+      expect(
+        thunkActions.parseLicense({
+          licenseData: license,
+          level: 'block',
+        }),
+      ).toEqual(['all-rights-reserved', {}]);
     });
     it('returns expected type and options for creative commons', () => {
-      const license = 'sOMeHTml data-metadata &#34;license&#34; &#34;value&#34;: &#34;creative-commons: ver=4.0 BY NC ND&#34;, &#34;type&#34;';
-      expect(thunkActions.parseLicense({
-        licenseData: license,
-        level: 'block',
-      })).toEqual([
+      const license =
+        'sOMeHTml data-metadata &#34;license&#34; &#34;value&#34;: &#34;creative-commons: ver=4.0 BY NC ND&#34;, &#34;type&#34;';
+      expect(
+        thunkActions.parseLicense({
+          licenseData: license,
+          level: 'block',
+        }),
+      ).toEqual([
         'creative-commons',
         {
           by: true,
@@ -730,8 +727,10 @@ describe('video thunkActions', () => {
   describe('replaceTranscript', () => {
     const spies = {};
     beforeEach(() => {
-      spies.uploadTranscript = jest.spyOn(thunkActions, 'uploadTranscript')
-        .mockReturnValue(testReplaceUpload).mockName('uploadTranscript');
+      spies.uploadTranscript = jest
+        .spyOn(thunkActions, 'uploadTranscript')
+        .mockReturnValue(testReplaceUpload)
+        .mockName('uploadTranscript');
       thunkActions.replaceTranscript({
         newFile: mockFile,
         newFilename: mockFilename,
@@ -769,9 +768,7 @@ describe('uploadVideo', () => {
 
   it('dispatch uploadVideo action with right data', async () => {
     const data = {
-      files: [
-        { file_name: 'file1.mp4', content_type: 'video/mp4' },
-      ],
+      files: [{ file_name: 'file1.mp4', content_type: 'video/mp4' }],
     };
 
     thunkActions.uploadVideo({ supportedFiles, setLoadSpinner, postUploadRedirect })(dispatch);
@@ -786,9 +783,7 @@ describe('uploadVideo', () => {
     const mockFetchResponse = Promise.resolve({ data: mockResponseData, ok: true });
     global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
     const response = {
-      files: [
-        { file_name: 'file1.mp4', upload_url: 'http://example.com/put_video1' },
-      ],
+      files: [{ file_name: 'file1.mp4', upload_url: 'http://example.com/put_video1' }],
     };
     const mockRequestResponse = { data: response };
     thunkActions.uploadVideo({ supportedFiles, setLoadSpinner, postUploadRedirect })(dispatch);
@@ -811,15 +806,15 @@ describe('uploadVideo', () => {
     const mockFetchResponse = Promise.resolve({ data: mockResponseData });
     global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
     const response = {
-      files: [
-        { file_name: 'file2.gif', upload_url: 'http://example.com/put_video2' },
-      ],
+      files: [{ file_name: 'file2.gif', upload_url: 'http://example.com/put_video2' }],
     };
     const mockRequestResponse = { data: response };
     const spyConsoleError = jest.spyOn(console, 'error');
 
     thunkActions.uploadVideo({ supportedFiles, setLoadSpinner, postUploadRedirect })(dispatch);
     dispatchedAction.uploadVideo.onSuccess(mockRequestResponse);
-    expect(spyConsoleError).toHaveBeenCalledWith('Could not find file object with name "file2.gif" in supportedFiles array.');
+    expect(spyConsoleError).toHaveBeenCalledWith(
+      'Could not find file object with name "file2.gif" in supportedFiles array.',
+    );
   });
 });

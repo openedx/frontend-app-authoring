@@ -4,17 +4,7 @@ import { useFormGroupContext } from './FormGroupContext';
 import { FormCheckboxSetContextProvider } from './FormCheckboxSetContext';
 import FormControlSet from './FormControlSet';
 
-const FormCheckboxSet = ({
-  children,
-  name,
-  value,
-  defaultValue,
-  isInline,
-  onChange,
-  onFocus,
-  onBlur,
-  ...props
-}) => {
+const FormCheckboxSet = ({ children, name, value, defaultValue, isInline, onChange, onFocus, onBlur, ...props }) => {
   const { getControlProps, useSetIsControlGroupEffect } = useFormGroupContext();
   useSetIsControlGroupEffect(true);
   const controlProps = getControlProps(props);

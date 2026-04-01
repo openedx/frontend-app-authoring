@@ -1,26 +1,17 @@
-import React, {
-  useCallback, useContext, useEffect, useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Container,
-  ModalDialog,
-} from '@openedx/paragon';
+import { ActionRow, Container, ModalDialog } from '@openedx/paragon';
 
 import Loading from '../../../generic/Loading';
 import PermissionDeniedAlert from '../../../generic/PermissionDeniedAlert';
 import SaveFormConnectionErrorAlert from '../../../generic/SaveFormConnectionErrorAlert';
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
-import {
-  DENIED,
-  FAILED, LOADED, LOADING, selectApp,
-} from '../data/slice';
+import { DENIED, FAILED, LOADED, LOADING, selectApp } from '../data/slice';
 import { fetchDiscussionSettings, saveProviderConfig } from '../data/thunks';
 import OpenedXConfigForm from './apps/openedx';
 import LtiConfigForm from './apps/lti';
@@ -28,9 +19,7 @@ import AppConfigFormProvider, { AppConfigFormContext } from './AppConfigFormProv
 import AppConfigFormSaveButton from './AppConfigFormSaveButton';
 import messages from './messages';
 
-const AppConfigForm = ({
-  courseId,
-}) => {
+const AppConfigForm = ({ courseId }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -39,9 +28,7 @@ const AppConfigForm = ({
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const { appId: routeAppId } = useParams();
   const [isLoading, setLoading] = useState(true);
-  const {
-    activeAppId, selectedAppId, status, saveStatus,
-  } = useSelector(state => state.discussions);
+  const { activeAppId, selectedAppId, status, saveStatus } = useSelector((state) => state.discussions);
 
   const [confirmationDialogVisible, setConfirmationDialogVisible] = useState(false);
 
@@ -63,28 +50,27 @@ const AppConfigForm = ({
   }, [selectedAppId, routeAppId, status]);
 
   // This is a callback that gets called after the form has been submitted successfully.
-  const handleSubmit = useCallback((values) => {
-    const needsConfirmation = (activeAppId !== selectedAppId);
-    if (needsConfirmation && !confirmationDialogVisible) {
-      setConfirmationDialogVisible(true);
-    } else {
-      setConfirmationDialogVisible(false);
-      // Note that when this action succeeds, we redirect to pagesAndResourcesPath in the thunk.
-      dispatch(saveProviderConfig(courseId, selectedAppId, values, pagesAndResourcesPath, navigate));
-    }
-  }, [activeAppId, confirmationDialogVisible, courseId, selectedAppId]);
+  const handleSubmit = useCallback(
+    (values) => {
+      const needsConfirmation = activeAppId !== selectedAppId;
+      if (needsConfirmation && !confirmationDialogVisible) {
+        setConfirmationDialogVisible(true);
+      } else {
+        setConfirmationDialogVisible(false);
+        // Note that when this action succeeds, we redirect to pagesAndResourcesPath in the thunk.
+        dispatch(saveProviderConfig(courseId, selectedAppId, values, pagesAndResourcesPath, navigate));
+      }
+    },
+    [activeAppId, confirmationDialogVisible, courseId, selectedAppId],
+  );
 
   if (!selectedAppId || status === LOADING || isLoading) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   let alert = null;
   if (saveStatus === FAILED) {
-    alert = (
-      <SaveFormConnectionErrorAlert />
-    );
+    alert = <SaveFormConnectionErrorAlert />;
   }
   if (saveStatus === DENIED) {
     alert = <PermissionDeniedAlert />;
@@ -92,28 +78,11 @@ const AppConfigForm = ({
 
   let form;
   if (selectedAppId === 'legacy') {
-    form = (
-      <OpenedXConfigForm
-        formRef={formRef}
-        onSubmit={handleSubmit}
-        legacy
-      />
-    );
+    form = <OpenedXConfigForm formRef={formRef} onSubmit={handleSubmit} legacy />;
   } else if (selectedAppId === 'openedx') {
-    form = (
-      <OpenedXConfigForm
-        formRef={formRef}
-        onSubmit={handleSubmit}
-        legacy={false}
-      />
-    );
+    form = <OpenedXConfigForm formRef={formRef} onSubmit={handleSubmit} legacy={false} />;
   } else {
-    form = (
-      <LtiConfigForm
-        formRef={formRef}
-        onSubmit={handleSubmit}
-      />
-    );
+    form = <LtiConfigForm formRef={formRef} onSubmit={handleSubmit} />;
   }
 
   return (
@@ -136,9 +105,7 @@ const AppConfigForm = ({
         </ModalDialog.Body>
         <ModalDialog.Footer>
           <ActionRow>
-            <ModalDialog.CloseButton variant="tertiary">
-              {intl.formatMessage(messages.cancel)}
-            </ModalDialog.CloseButton>
+            <ModalDialog.CloseButton variant="tertiary">{intl.formatMessage(messages.cancel)}</ModalDialog.CloseButton>
             <AppConfigFormSaveButton labelText={intl.formatMessage(messages.ok)} />
           </ActionRow>
         </ModalDialog.Footer>

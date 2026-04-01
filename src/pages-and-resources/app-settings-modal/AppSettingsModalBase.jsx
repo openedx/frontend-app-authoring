@@ -6,16 +6,7 @@ import React from 'react';
 
 import messages from './messages';
 
-const AppSettingsModalBase = ({
-  title,
-  onClose,
-  variant,
-  isMobile,
-  children,
-  footer,
-  disclaimer,
-  isOpen,
-}) => {
+const AppSettingsModalBase = ({ title, onClose, variant, isMobile, children, footer, disclaimer, isOpen }) => {
   const { formatMessage } = useIntl();
   return (
     <ModalDialog
@@ -35,9 +26,7 @@ const AppSettingsModalBase = ({
       <ModalDialog.Footer className="p-4">
         {disclaimer}
         <ActionRow>
-          <ModalDialog.CloseButton variant="tertiary">
-            {formatMessage(messages.cancel)}
-          </ModalDialog.CloseButton>
+          <ModalDialog.CloseButton variant="tertiary">{formatMessage(messages.cancel)}</ModalDialog.CloseButton>
           {footer}
         </ActionRow>
       </ModalDialog.Footer>

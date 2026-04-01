@@ -13,28 +13,25 @@ export const TaxonomyLayout = () => {
   // Use `setToastMessage` to show the alert.
   const [alertError, setAlertError] = useState<AlertErrorProps | null>(null);
 
-  const context = useMemo(() => ({
-    toastMessage, setToastMessage, alertError, setAlertError,
-  }), []);
+  const context = useMemo(
+    () => ({
+      toastMessage,
+      setToastMessage,
+      alertError,
+      setAlertError,
+    }),
+    [],
+  );
 
   return (
     <TaxonomyContext.Provider value={context}>
       <div className="bg-light-400">
         <Header isHiddenMainMenu />
-        { alertError && (
-          <AlertError
-            {...alertError}
-            onDismiss={() => setAlertError(null)}
-          />
-        )}
+        {alertError && <AlertError {...alertError} onDismiss={() => setAlertError(null)} />}
         <Outlet />
         <StudioFooterSlot />
         {toastMessage && (
-          <Toast
-            show
-            onClose={() => setToastMessage(null)}
-            data-testid="taxonomy-toast"
-          >
+          <Toast show onClose={() => setToastMessage(null)} data-testid="taxonomy-toast">
             {toastMessage}
           </Toast>
         )}

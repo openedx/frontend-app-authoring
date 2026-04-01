@@ -23,13 +23,9 @@ jest.mock('react-router', () => ({
 }));
 
 // Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea
-    {...props}
-    onFocus={() => {}}
-    onBlur={() => {}}
-  />
-)));
+jest.mock('react-textarea-autosize', () =>
+  jest.fn((props) => <textarea {...props} onFocus={() => {}} onBlur={() => {}} />),
+);
 
 const RootWrapper = (props) => (
   <IntlProvider locale="en">
@@ -61,46 +57,22 @@ describe('<InstructorContainer />', () => {
   });
 
   it('renders successfully', () => {
-    const { getByText, getByPlaceholderText } = render(
-      <RootWrapper {...props} />,
-    );
-    expect(
-      getByText(messages.instructorNameLabel.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByText(messages.instructorTitleLabel.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByText(messages.instructorOrganizationLabel.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByText(messages.instructorBioLabel.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByText(messages.instructorPhotoLabel.defaultMessage),
-    ).toBeInTheDocument();
+    const { getByText, getByPlaceholderText } = render(<RootWrapper {...props} />);
+    expect(getByText(messages.instructorNameLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.instructorTitleLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.instructorOrganizationLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.instructorBioLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.instructorPhotoLabel.defaultMessage)).toBeInTheDocument();
 
-    expect(
-      getByPlaceholderText(messages.instructorNameInputPlaceholder.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByPlaceholderText(messages.instructorTitleInputPlaceholder.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByPlaceholderText(messages.instructorOrganizationInputPlaceholder.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByPlaceholderText(messages.instructorBioInputPlaceholder.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByPlaceholderText(messages.instructorPhotoInputPlaceholder.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByPlaceholderText(messages.instructorNameInputPlaceholder.defaultMessage)).toBeInTheDocument();
+    expect(getByPlaceholderText(messages.instructorTitleInputPlaceholder.defaultMessage)).toBeInTheDocument();
+    expect(getByPlaceholderText(messages.instructorOrganizationInputPlaceholder.defaultMessage)).toBeInTheDocument();
+    expect(getByPlaceholderText(messages.instructorBioInputPlaceholder.defaultMessage)).toBeInTheDocument();
+    expect(getByPlaceholderText(messages.instructorPhotoInputPlaceholder.defaultMessage)).toBeInTheDocument();
   });
 
   it('should display input values', () => {
-    const { getByDisplayValue } = render(
-      <RootWrapper {...props} />,
-    );
+    const { getByDisplayValue } = render(<RootWrapper {...props} />);
 
     expect(getByDisplayValue(props.instructor.name)).toBeInTheDocument();
     expect(getByDisplayValue(props.instructor.title)).toBeInTheDocument();

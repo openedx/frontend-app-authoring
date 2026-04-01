@@ -37,9 +37,7 @@ export const mockNestedComponent = (name, contents) => {
   Object.defineProperty(fn, 'name', { value: name });
   Object.keys(contents).forEach((nestedName) => {
     const value = contents[nestedName];
-    fn[nestedName] = typeof value !== 'object'
-      ? value
-      : mockNestedComponent(`${name}.${nestedName}`, value);
+    fn[nestedName] = typeof value !== 'object' ? value : mockNestedComponent(`${name}.${nestedName}`, value);
   });
   return fn;
 };
@@ -54,13 +52,14 @@ export const mockNestedComponent = (name, contents) => {
  *     IconButton: 'IconButton',
  *   })
  */
-export const mockNestedComponents = (mapping) => Object.entries(mapping).reduce(
-  (obj, [name, value]) => ({
-    ...obj,
-    [name]: mockNestedComponent(name, value),
-  }),
-  {},
-);
+export const mockNestedComponents = (mapping) =>
+  Object.entries(mapping).reduce(
+    (obj, [name, value]) => ({
+      ...obj,
+      [name]: mockNestedComponent(name, value),
+    }),
+    {},
+  );
 
 /**
  * Mock utility for working with useState in a hooks module.
@@ -132,10 +131,7 @@ export class MockUseState {
    * @return {object} - StrictDict of state object keys
    */
   get keys() {
-    return StrictDict(Object.keys(this.hooks.state).reduce(
-      (obj, key) => ({ ...obj, [key]: key }),
-      {},
-    ));
+    return StrictDict(Object.keys(this.hooks.state).reduce((obj, key) => ({ ...obj, [key]: key }), {}));
   }
 
   /**
@@ -143,8 +139,8 @@ export class MockUseState {
    */
   mock() {
     this.oldState = this.hooks.state;
-    Object.keys(this.keys).forEach(key => {
-      this.hooks.state[key] = jest.fn(val => {
+    Object.keys(this.keys).forEach((key) => {
+      this.hooks.state[key] = jest.fn((val) => {
         this.stateVals[key] = val;
         return [val, this.setState[key]];
       });
@@ -152,7 +148,7 @@ export class MockUseState {
     this.setState = Object.keys(this.keys).reduce(
       (obj, key) => ({
         ...obj,
-        [key]: jest.fn(val => {
+        [key]: jest.fn((val) => {
           this.hooks.state[key] = val;
         }),
       }),

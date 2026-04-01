@@ -1,12 +1,8 @@
-import React, {
-  useCallback, useContext, useEffect, useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Alert, Button, FullscreenModal, Stepper,
-} from '@openedx/paragon';
+import { Alert, Button, FullscreenModal, Stepper } from '@openedx/paragon';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
@@ -29,7 +25,7 @@ const DiscussionsSettings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
-  const { status, hasValidationError } = useSelector(state => state.discussions);
+  const { status, hasValidationError } = useSelector((state) => state.discussions);
   const { courseId, courseDetails, canChangeProviders } = useCourseAuthoringContext();
 
   useEffect(() => {
@@ -96,36 +92,26 @@ const DiscussionsSettings = () => {
             isOpen
             beforeBodyNode={<Stepper.Header className="border-bottom border-light" />}
             isOverflowVisible={false}
-            footerNode={(
+            footerNode={
               <>
                 <Stepper.ActionRow eventKey={SELECTION_STEP}>
                   <AppList.NextButton />
                 </Stepper.ActionRow>
                 <Stepper.ActionRow eventKey={SETTINGS_STEP}>
                   <div className="d-flex w-100 justify-content-between">
-                    <Button
-                      variant="outline-primary"
-                      onClick={handleBack}
-                    >
+                    <Button variant="outline-primary" onClick={handleBack}>
                       {intl.formatMessage(messages.backButton)}
                     </Button>
                     <AppConfigForm.SaveButton />
                   </div>
                 </Stepper.ActionRow>
               </>
-            )}
+            }
           >
-            <Stepper.Step
-              eventKey={SELECTION_STEP}
-              title={intl.formatMessage(messages.providerSelection)}
-            >
-              {
-                !canChangeProviders && (
-                  <Alert variant="warning">
-                    {intl.formatMessage(messages.noProviderSwitchAfterCourseStarted)}
-                  </Alert>
-                )
-              }
+            <Stepper.Step eventKey={SELECTION_STEP} title={intl.formatMessage(messages.providerSelection)}>
+              {!canChangeProviders && (
+                <Alert variant="warning">{intl.formatMessage(messages.noProviderSwitchAfterCourseStarted)}</Alert>
+              )}
               <AppList />
             </Stepper.Step>
             <Stepper.Step
@@ -134,9 +120,7 @@ const DiscussionsSettings = () => {
               description={hasValidationError ? intl.formatMessage(messages.Incomplete) : ''}
               hasError={hasValidationError}
             >
-              <AppConfigForm
-                courseId={courseId}
-              />
+              <AppConfigForm courseId={courseId} />
             </Stepper.Step>
           </FullscreenModal>
         </Stepper>

@@ -11,19 +11,17 @@ import {
 } from './api';
 
 describe('taxonomy api calls', () => {
-  it.each([
-    undefined,
-    'All taxonomies',
-    'Unassigned',
-    'testOrg',
-  ])('should get taxonomy list data for \'%s\' org filter', async (org) => {
-    const { axiosMock } = initializeMocks();
-    axiosMock.onGet(apiUrls.taxonomyList(org)).reply(200, taxonomyListMock);
-    const result = await getTaxonomyListData(org);
+  it.each([undefined, 'All taxonomies', 'Unassigned', 'testOrg'])(
+    "should get taxonomy list data for '%s' org filter",
+    async (org) => {
+      const { axiosMock } = initializeMocks();
+      axiosMock.onGet(apiUrls.taxonomyList(org)).reply(200, taxonomyListMock);
+      const result = await getTaxonomyListData(org);
 
-    expect(axiosMock.history.get[0].url).toEqual(apiUrls.taxonomyList(org));
-    expect(result).toEqual(taxonomyListMock);
-  });
+      expect(axiosMock.history.get[0].url).toEqual(apiUrls.taxonomyList(org));
+      expect(result).toEqual(taxonomyListMock);
+    },
+  );
 
   it('should delete a taxonomy', async () => {
     const { axiosMock } = initializeMocks();

@@ -5,7 +5,7 @@ import * as hooks from './hooks';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
-  useRef: jest.fn(val => ({ current: val })),
+  useRef: jest.fn((val) => ({ current: val })),
   useEffect: jest.fn(),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
 }));

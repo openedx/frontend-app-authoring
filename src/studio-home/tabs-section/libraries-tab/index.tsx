@@ -1,9 +1,6 @@
 import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, Form, Icon, Menu, MenuItem, Pagination, Row, SearchField,
-  Stack,
-} from '@openedx/paragon';
+import { ActionRow, Form, Icon, Menu, MenuItem, Pagination, Row, SearchField, Stack } from '@openedx/paragon';
 import { Error, FilterList, AccessTime } from '@openedx/paragon/icons';
 
 import { LoadingSpinner } from '@src/generic/Loading';
@@ -22,14 +19,14 @@ const CardList = ({
   inSelectMode,
   selectedIds,
 }: {
-  data: LibraryV1Data[],
-  inSelectMode: boolean,
+  data: LibraryV1Data[];
+  inSelectMode: boolean;
   selectedIds?: string[];
 }) => (
   // eslint-disable-next-line react/jsx-no-useless-fragment
   <>
-    {
-      data?.map(({
+    {data?.map(
+      ({
         displayName,
         org,
         number,
@@ -53,7 +50,11 @@ const CardList = ({
         const subtitleWrapper = (subtitle) => (
           <PrevToNextName
             from={subtitle}
-            to={<>{migratedToKeyObj?.org} / {migratedToKeyObj?.lib}</>}
+            to={
+              <>
+                {migratedToKeyObj?.org} / {migratedToKeyObj?.lib}
+              </>
+            }
           />
         );
 
@@ -70,41 +71,37 @@ const CardList = ({
             selectPosition={inSelectMode ? 'title' : undefined}
             isSelected={selectedIds?.includes(libraryKey)}
             subtitleWrapper={isMigrated ? subtitleWrapper : null}
-            titleSecondaryLink={(isMigrated && migratedToTitle) ? (
-              <MakeLinkOrSpan
-                when={!inSelectMode}
-                to={`/library/${migratedToKey}`}
-                className="card-item-title"
-              >
-                {migratedToTitle}
-              </MakeLinkOrSpan>
-            ) : null}
-            cardStatusWidget={(isMigrated && migratedToKey) ? (
-              <Stack direction="horizontal" gap={2}>
-                <Icon src={AccessTime} size="sm" className="mb-1" />
-                <FormattedMessage {...messages.libraryMigrationStatusText} />
-                <b>
-                  <MakeLinkOrSpan
-                    when
-                    to={collectionLink()}
-                    className="text-info-500"
-                  >
-                    {migratedToTitle}
-                  </MakeLinkOrSpan>
-                </b>
-              </Stack>
-            ) : null}
+            titleSecondaryLink={
+              isMigrated && migratedToTitle ? (
+                <MakeLinkOrSpan when={!inSelectMode} to={`/library/${migratedToKey}`} className="card-item-title">
+                  {migratedToTitle}
+                </MakeLinkOrSpan>
+              ) : null
+            }
+            cardStatusWidget={
+              isMigrated && migratedToKey ? (
+                <Stack direction="horizontal" gap={2}>
+                  <Icon src={AccessTime} size="sm" className="mb-1" />
+                  <FormattedMessage {...messages.libraryMigrationStatusText} />
+                  <b>
+                    <MakeLinkOrSpan when to={collectionLink()} className="text-info-500">
+                      {migratedToTitle}
+                    </MakeLinkOrSpan>
+                  </b>
+                </Stack>
+              ) : null
+            }
           />
         );
-      })
-    }
+      },
+    )}
   </>
 );
 
 function findInValues<T extends {}>(arr: T[] | undefined, searchValue: string) {
-  return arr?.filter(o => Object.values(o).some(value => String(value).toLowerCase().includes(
-    String(searchValue).toLowerCase().trim(),
-  )));
+  return arr?.filter((o) =>
+    Object.values(o).some((value) => String(value).toLowerCase().includes(String(searchValue).toLowerCase().trim())),
+  );
 }
 
 export enum Filter {
@@ -133,33 +130,42 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
     // Update label to display selected filter item, i.e., Migrated or Unmigrated
     label = filterLabels[filters[0]];
     // Only update appliedFilters if a single option is selected else show clear state.
-    appliedFilters = filters.map(filter => ({ label: filterLabels[filter] }));
+    appliedFilters = filters.map((filter) => ({ label: filterLabels[filter] }));
   }
 
-  const toggleFilter = useCallback((filter: Filter) => {
-    setFilters((oldList: Filter[]) => {
-      if (oldList.includes(filter)) {
-        const newList = oldList.filter(m => m !== filter);
-        if (newList.length === 0) {
-          return BaseFilterState;
+  const toggleFilter = useCallback(
+    (filter: Filter) => {
+      setFilters((oldList: Filter[]) => {
+        if (oldList.includes(filter)) {
+          const newList = oldList.filter((m) => m !== filter);
+          if (newList.length === 0) {
+            return BaseFilterState;
+          }
+          return newList;
         }
-        return newList;
-      }
-      // istanbul ignore next
-      return [...oldList, filter];
-    });
-  }, [setFilters]);
+        // istanbul ignore next
+        return [...oldList, filter];
+      });
+    },
+    [setFilters],
+  );
 
-  const menuItems = useCallback(() => BaseFilterState.map((item) => (
-    <MenuItem
-      key={item}
-      as={Form.Checkbox}
-      value={item}
-      onChange={() => { toggleFilter(item); }}
-    >
-      {filterLabels[item]}
-    </MenuItem>
-  )), [toggleFilter, BaseFilterState]);
+  const menuItems = useCallback(
+    () =>
+      BaseFilterState.map((item) => (
+        <MenuItem
+          key={item}
+          as={Form.Checkbox}
+          value={item}
+          onChange={() => {
+            toggleFilter(item);
+          }}
+        >
+          {filterLabels[item]}
+        </MenuItem>
+      )),
+    [toggleFilter, BaseFilterState],
+  );
 
   return (
     <SearchFilterWidget
@@ -170,10 +176,7 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
       skipLabelUpdate
     >
       <Form.Group className="mb-0">
-        <Form.CheckboxSet
-          name="publish-status-filter"
-          value={filters}
-        >
+        <Form.CheckboxSet name="publish-status-filter" value={filters}>
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {menuItems()}
           </Menu>
@@ -219,23 +222,26 @@ export const LibrariesList = ({
   const currentPageData = filteredData.slice((currentPage - 1) * perPage, currentPage * perPage);
   const inSelectMode = handleCheck !== undefined;
 
-  const allChecked = filteredData.every(value => selectedIds?.includes(value.libraryKey));
-  const someChecked = filteredData.some(value => selectedIds?.includes(value.libraryKey));
+  const allChecked = filteredData.every((value) => selectedIds?.includes(value.libraryKey));
+  const someChecked = filteredData.some((value) => selectedIds?.includes(value.libraryKey));
   const checkboxIsIndeterminate = someChecked && !allChecked;
 
-  const handleChangeCheckboxSet = useCallback((event) => {
-    if (handleCheck) {
-      const libraryId = event.target.value;
-      const library = currentPageData.find((item) => item.libraryKey === libraryId);
-      if (library) {
-        if (event.target.checked) {
-          handleCheck(library, 'add');
-        } else {
-          handleCheck(library, 'remove');
+  const handleChangeCheckboxSet = useCallback(
+    (event) => {
+      if (handleCheck) {
+        const libraryId = event.target.value;
+        const library = currentPageData.find((item) => item.libraryKey === libraryId);
+        if (library) {
+          if (event.target.checked) {
+            handleCheck(library, 'add');
+          } else {
+            handleCheck(library, 'remove');
+          }
         }
       }
-    }
-  }, [handleCheck, currentPageData]);
+    },
+    [handleCheck, currentPageData],
+  );
 
   const handleSelectAll = useCallback(() => {
     if (checkboxIsIndeterminate || selectedIds?.length === 0) {
@@ -257,19 +263,19 @@ export const LibrariesList = ({
     return (
       <AlertMessage
         variant="danger"
-        description={(
+        description={
           <Row className="m-0 align-items-center">
             <Icon src={Error} className="text-danger-500 mr-1" />
             <span>{intl.formatMessage(messages.librariesTabErrorMessage)}</span>
           </Row>
-        )}
+        }
       />
     );
   }
 
   return (
     <>
-      {!hideMigationAlert && (<MigrateLegacyLibrariesAlert />)}
+      {!hideMigationAlert && <MigrateLegacyLibrariesAlert />}
       <div className="courses-tab">
         <ActionRow className="my-3">
           {inSelectMode && (
@@ -292,46 +298,31 @@ export const LibrariesList = ({
           />
           <MigrationFilter filters={migrationFilter} setFilters={setMigrationFilter} />
           <ActionRow.Spacer />
-          {!isPending && !isError
-            && (
-              <>
-                {intl.formatMessage(messages.coursesPaginationInfo, {
-                  length: currentPageData?.length,
-                  total: data?.libraries.length,
-                })}
-              </>
-            )}
+          {!isPending && !isError && (
+            <>
+              {intl.formatMessage(messages.coursesPaginationInfo, {
+                length: currentPageData?.length,
+                total: data?.libraries.length,
+              })}
+            </>
+          )}
         </ActionRow>
         {inSelectMode ? (
-          <Form.CheckboxSet
-            name="libraries-list-checkboxset"
-            onChange={handleChangeCheckboxSet}
-            value={selectedIds}
-          >
-            <CardList
-              data={currentPageData}
-              inSelectMode={inSelectMode}
-              selectedIds={selectedIds}
-            />
+          <Form.CheckboxSet name="libraries-list-checkboxset" onChange={handleChangeCheckboxSet} value={selectedIds}>
+            <CardList data={currentPageData} inSelectMode={inSelectMode} selectedIds={selectedIds} />
           </Form.CheckboxSet>
         ) : (
-          <CardList
-            data={currentPageData}
-            inSelectMode={inSelectMode}
+          <CardList data={currentPageData} inSelectMode={inSelectMode} />
+        )}
+        {totalPages > 1 && (
+          <Pagination
+            className="d-flex justify-content-center"
+            paginationLabel="pagination navigation"
+            pageCount={totalPages}
+            currentPage={currentPage}
+            onPageSelect={setCurrentPage}
           />
         )}
-        {
-          totalPages > 1
-            && (
-              <Pagination
-                className="d-flex justify-content-center"
-                paginationLabel="pagination navigation"
-                pageCount={totalPages}
-                currentPage={currentPage}
-                onPageSelect={setCurrentPage}
-              />
-            )
-        }
       </div>
     </>
   );

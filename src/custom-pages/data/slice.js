@@ -29,7 +29,7 @@ const slice = createSlice({
       state.deletingStatus = payload.status;
     },
     deleteCustomPageSuccess: (state, { payload }) => {
-      state.customPagesIds = state.customPagesIds.filter(id => id !== payload.customPageId);
+      state.customPagesIds = state.customPagesIds.filter((id) => id !== payload.customPageId);
     },
     addCustomPageSuccess: (state, { payload }) => {
       state.customPagesIds = [...state.customPagesIds, payload.customPageId];
@@ -48,6 +48,4 @@ export const {
   updateAddingStatus,
 } = slice.actions;
 
-export const {
-  reducer,
-} = slice;
+export const { reducer } = slice;

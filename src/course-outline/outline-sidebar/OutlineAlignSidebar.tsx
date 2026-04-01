@@ -7,10 +7,7 @@ import { useOutlineSidebarContext } from './OutlineSidebarContext';
  * Align sidebar for course or selected containers.
  */
 export const OutlineAlignSidebar = () => {
-  const {
-    courseId,
-    setCurrentSelection,
-  } = useCourseAuthoringContext();
+  const { courseId, setCurrentSelection } = useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
   const sidebarContentId = selectedContainerState?.currentId || courseId;
@@ -31,7 +28,7 @@ export const OutlineAlignSidebar = () => {
           : contentData?.courseDisplayNameWithDefault || ''
       }
       contentId={sidebarContentId}
-      onBackBtnClick={(sidebarContentId !== courseId) ? handleBack : undefined}
+      onBackBtnClick={sidebarContentId !== courseId ? handleBack : undefined}
     />
   );
 };

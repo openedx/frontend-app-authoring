@@ -1,7 +1,5 @@
 import { useSelector } from 'react-redux';
-import {
-  Container, Button, Layout, StatefulButton,
-} from '@openedx/paragon';
+import { Container, Button, Layout, StatefulButton } from '@openedx/paragon';
 import {
   CheckCircle as CheckCircleIcon,
   ErrorOutline as ErrorOutlineIcon,
@@ -18,11 +16,7 @@ import getPageHeadTitle from '@src/generic/utils';
 import { useScrollToHashElement } from '@src/hooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
-import {
-  fetchCourseSettingsQuery,
-  fetchCourseDetailsQuery,
-  updateCourseDetailsQuery,
-} from './data/thunks';
+import { fetchCourseSettingsQuery, fetchCourseDetailsQuery, updateCourseDetailsQuery } from './data/thunks';
 import {
   getCourseSettings,
   getCourseDetails,
@@ -49,8 +43,8 @@ const ScheduleAndDetails = () => {
   const courseDetails = useSelector(getCourseDetails);
   const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
   const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
-  const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
-    || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
+  const isLoading =
+    loadingDetailsStatus === RequestStatus.IN_PROGRESS || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
 
   const { courseId, courseDetails: course } = useCourseAuthoringContext();
   document.title = getPageHeadTitle(course?.name || '', intl.formatMessage(messages.headingTitle));
@@ -77,13 +71,7 @@ const ScheduleAndDetails = () => {
     canShowCertificateAvailableDateField,
   } = courseSettings;
 
-  const {
-    showLoadFailedAlert,
-  } = useLoadValuesPrompt(
-    courseId,
-    fetchCourseDetailsQuery,
-    fetchCourseSettingsQuery,
-  );
+  const { showLoadFailedAlert } = useLoadValuesPrompt(courseId, fetchCourseDetailsQuery, fetchCourseSettingsQuery);
 
   const {
     errorFields,
@@ -99,12 +87,7 @@ const ScheduleAndDetails = () => {
     handleUpdateValues,
     handleQueryProcessing,
     handleInternetConnectionFailed,
-  } = useSaveValuesPrompt(
-    courseId,
-    updateCourseDetailsQuery,
-    canShowCertificateAvailableDateField,
-    courseDetails,
-  );
+  } = useSaveValuesPrompt(courseId, updateCourseDetailsQuery, canShowCertificateAvailableDateField, courseDetails);
 
   const {
     org,
@@ -185,12 +168,8 @@ const ScheduleAndDetails = () => {
             icon={CheckCircleIcon}
             title={intl.formatMessage(messages.alertSuccess)}
             aria-hidden="true"
-            aria-labelledby={intl.formatMessage(
-              messages.alertSuccessAriaLabelledby,
-            )}
-            aria-describedby={intl.formatMessage(
-              messages.alertSuccessAriaDescribedby,
-            )}
+            aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+            aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
           />
           <AlertMessage
             show={showLoadFailedAlert}
@@ -198,12 +177,8 @@ const ScheduleAndDetails = () => {
             icon={ErrorOutlineIcon}
             title={intl.formatMessage(messages.alertLoadFail)}
             aria-hidden="true"
-            aria-labelledby={intl.formatMessage(
-              messages.alertFailAriaLabelledby,
-            )}
-            aria-describedby={intl.formatMessage(
-              messages.alertFailAriaDescribedby,
-            )}
+            aria-labelledby={intl.formatMessage(messages.alertFailAriaLabelledby)}
+            aria-describedby={intl.formatMessage(messages.alertFailAriaDescribedby)}
           />
           <AlertMessage
             show={showFailedAlert}
@@ -211,20 +186,12 @@ const ScheduleAndDetails = () => {
             icon={ErrorOutlineIcon}
             title={intl.formatMessage(messages.alertFail)}
             aria-hidden="true"
-            aria-labelledby={intl.formatMessage(
-              messages.alertFailAriaLabelledby,
-            )}
-            aria-describedby={intl.formatMessage(
-              messages.alertFailAriaDescribedby,
-            )}
+            aria-labelledby={intl.formatMessage(messages.alertFailAriaLabelledby)}
+            aria-describedby={intl.formatMessage(messages.alertFailAriaDescribedby)}
           />
           <header>
-            <span className="small text-gray-700">
-              {intl.formatMessage(messages.headingSubtitle)}
-            </span>
-            <h2 className="mb-4 pb-1">
-              {intl.formatMessage(messages.headingTitle)}
-            </h2>
+            <span className="small text-gray-700">{intl.formatMessage(messages.headingSubtitle)}</span>
+            <h2 className="mb-4 pb-1">{intl.formatMessage(messages.headingTitle)}</h2>
           </header>
         </div>
         <section className="setting-items mb-4">
@@ -247,16 +214,8 @@ const ScheduleAndDetails = () => {
                     courseDisplayName={courseDisplayName}
                     platformName={platformName}
                   />
-                  {showCreditSection && (
-                    <CreditSection
-                      creditRequirements={courseSettings?.creditRequirements}
-                    />
-                  )}
-                  <PacingSection
-                    selfPaced={selfPaced}
-                    startDate={startDate}
-                    onChange={handleValuesChange}
-                  />
+                  {showCreditSection && <CreditSection creditRequirements={courseSettings?.creditRequirements} />}
+                  <PacingSection selfPaced={selfPaced} startDate={startDate} onChange={handleValuesChange} />
                   <ScheduleSection
                     endDate={endDate}
                     startDate={startDate}
@@ -299,14 +258,8 @@ const ScheduleAndDetails = () => {
                   />
                   {enableExtendedCourseDetails && (
                     <>
-                      <LearningOutcomesSection
-                        learningInfo={learningInfo}
-                        onChange={handleValuesChange}
-                      />
-                      <InstructorsSection
-                        instructors={instructorInfo?.instructors}
-                        onChange={handleValuesChange}
-                      />
+                      <LearningOutcomesSection learningInfo={learningInfo} onChange={handleValuesChange} />
+                      <InstructorsSection instructors={instructorInfo?.instructors} onChange={handleValuesChange} />
                     </>
                   )}
                   {showRequirementsSection && (
@@ -319,26 +272,16 @@ const ScheduleAndDetails = () => {
                       isEntranceExamsEnabled={isEntranceExamsEnabled}
                       possiblePreRequisiteCourses={possiblePreRequisiteCourses}
                       entranceExamMinimumScorePct={entranceExamMinimumScorePct}
-                      isPrerequisiteCoursesEnabled={
-                        isPrerequisiteCoursesEnabled
-                      }
+                      isPrerequisiteCoursesEnabled={isPrerequisiteCoursesEnabled}
                       onChange={handleValuesChange}
                     />
                   )}
-                  {licensingEnabled && (
-                    <LicenseSection
-                      license={license}
-                      onChange={handleValuesChange}
-                    />
-                  )}
+                  {licensingEnabled && <LicenseSection license={license} onChange={handleValuesChange} />}
                 </div>
               </article>
             </Layout.Element>
             <Layout.Element>
-              <ScheduleSidebar
-                courseId={courseId}
-                proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
-              />
+              <ScheduleSidebar courseId={courseId} proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl} />
             </Layout.Element>
           </Layout>
         </section>
@@ -355,20 +298,12 @@ const ScheduleAndDetails = () => {
         <AlertMessage
           show={showModifiedAlert}
           aria-hidden={showModifiedAlert}
-          aria-labelledby={intl.formatMessage(
-            messages.alertWarningAriaLabelledby,
-          )}
-          aria-describedby={intl.formatMessage(
-            messages.alertWarningAriaDescribedby,
-          )}
+          aria-labelledby={intl.formatMessage(messages.alertWarningAriaLabelledby)}
+          aria-describedby={intl.formatMessage(messages.alertWarningAriaDescribedby)}
           role="dialog"
           actions={[
             !isQueryPending && (
-              <Button
-                key="cancel-button"
-                variant="tertiary"
-                onClick={handleResetValues}
-              >
+              <Button key="cancel-button" variant="tertiary" onClick={handleResetValues}>
                 {intl.formatMessage(messages.buttonCancelText)}
               </Button>
             ),
@@ -376,11 +311,7 @@ const ScheduleAndDetails = () => {
               key="save-button"
               onClick={handleUpdateValues}
               disabled={hasErrors}
-              state={
-                isQueryPending
-                  ? STATEFUL_BUTTON_STATES.pending
-                  : STATEFUL_BUTTON_STATES.default
-              }
+              state={isQueryPending ? STATEFUL_BUTTON_STATES.pending : STATEFUL_BUTTON_STATES.default}
               {...updateValuesButtonState}
             />,
           ].filter(Boolean)}

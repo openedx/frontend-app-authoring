@@ -7,12 +7,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { USER_ROLES } from '../constants';
 import messages from './messages';
 import { MODAL_TYPES, type ModalType } from './constants';
-import {
-  useChangeRoleTeamUser,
-  useCourseTeamData,
-  useCreateTeamUser,
-  useDeleteTeamUser,
-} from './data/apiHooks';
+import { useChangeRoleTeamUser, useCourseTeamData, useCreateTeamUser, useDeleteTeamUser } from './data/apiHooks';
 
 const useCourseTeam = () => {
   const intl = useIntl();
@@ -60,11 +55,14 @@ const useCourseTeam = () => {
       return;
     }
 
-    addUserMutation.mutateAsync(email).then(() => {
-      hideForm();
-    }).catch(() => {
-      handleOpenInfoModal(MODAL_TYPES.error, email);
-    });
+    addUserMutation
+      .mutateAsync(email)
+      .then(() => {
+        hideForm();
+      })
+      .catch(() => {
+        handleOpenInfoModal(MODAL_TYPES.error, email);
+      });
   };
 
   const handleDeleteUserSubmit = () => {

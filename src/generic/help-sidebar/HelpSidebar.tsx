@@ -27,13 +27,7 @@ const HelpSidebar = ({
 }: HelpSidebarProps) => {
   const intl = useIntl();
   const { pathname } = useLocation();
-  const {
-    grading,
-    courseTeam,
-    advancedSettings,
-    scheduleAndDetails,
-    groupConfigurations,
-  } = otherLinkURLParams;
+  const { grading, courseTeam, advancedSettings, scheduleAndDetails, groupConfigurations } = otherLinkURLParams;
   const waffleFlags = useWaffleFlags(courseId);
 
   const showOtherLink = (params) => !pathname.includes(params);
@@ -43,12 +37,15 @@ const HelpSidebar = ({
     If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
   */
   const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions(
+    {
+      canManageAdvancedSettings: {
+        action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
+        scope: courseId,
+      },
     },
-  }, isAuthzEnabled);
+    isAuthzEnabled,
+  );
 
   // If it's still loading, don't show the Advanced Settings link, otherwise, use the permission to decide
   const authzCanManageAdvancedSettings = isLoadingUserPermissions
@@ -65,20 +62,13 @@ const HelpSidebar = ({
         <>
           <hr />
           <div className="help-sidebar-other">
-            <h4 className="help-sidebar-other-title">
-              {intl.formatMessage(messages.sidebarTitleOther)}
-            </h4>
-            <nav
-              className="help-sidebar-other-links"
-              aria-label={intl.formatMessage(messages.sidebarTitleOther)}
-            >
+            <h4 className="help-sidebar-other-title">{intl.formatMessage(messages.sidebarTitleOther)}</h4>
+            <nav className="help-sidebar-other-links" aria-label={intl.formatMessage(messages.sidebarTitleOther)}>
               <ul className="p-0 mb-0">
                 {showOtherLink(scheduleAndDetails) && (
                   <HelpSidebarLink
                     pathToPage={`/course/${courseId}/${scheduleAndDetails}`}
-                    title={intl.formatMessage(
-                      messages.sidebarLinkToScheduleAndDetails,
-                    )}
+                    title={intl.formatMessage(messages.sidebarLinkToScheduleAndDetails)}
                     isNewPage
                   />
                 )}
@@ -99,9 +89,7 @@ const HelpSidebar = ({
                 {showOtherLink(groupConfigurations) && (
                   <HelpSidebarLink
                     pathToPage={`/course/${courseId}/${groupConfigurations}`}
-                    title={intl.formatMessage(
-                      messages.sidebarLinkToGroupConfigurations,
-                    )}
+                    title={intl.formatMessage(messages.sidebarLinkToGroupConfigurations)}
                     isNewPage
                   />
                 )}
@@ -115,9 +103,7 @@ const HelpSidebar = ({
                 {proctoredExamSettingsUrl && (
                   <HelpSidebarLink
                     pathToPage={proctoredExamSettingsUrl}
-                    title={intl.formatMessage(
-                      messages.sidebarLinkToProctoredExamSettings,
-                    )}
+                    title={intl.formatMessage(messages.sidebarLinkToProctoredExamSettings)}
                   />
                 )}
               </ul>

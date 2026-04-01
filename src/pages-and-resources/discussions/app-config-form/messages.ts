@@ -3,12 +3,9 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   configurationChangeConsequence: {
     id: 'authoring.discussions.configurationChangeConsequences',
-    defaultMessage:
-      'Students will lose access to any active or previous'
-      + ' discussion posts for your course.',
+    defaultMessage: 'Students will lose access to any active or previous' + ' discussion posts for your course.',
     description:
-      'Describes that, as a consequence of changing configuration,'
-      + ' students will lose access posts on the course.',
+      'Describes that, as a consequence of changing configuration,' + ' students will lose access posts on the course.',
   },
   configureApp: {
     id: 'authoring.discussions.configure.app',
@@ -50,12 +47,14 @@ const messages = defineMessages({
   },
   confirmEnableDiscussions: {
     id: 'authoring.discussions.confirmEnableDiscussions',
-    defaultMessage: 'Enabling this toggle will automatically enable discussion on all units in graded subsections, that are not timed exams.',
+    defaultMessage:
+      'Enabling this toggle will automatically enable discussion on all units in graded subsections, that are not timed exams.',
     description: 'Asks the user whether he/she really wants to enable discussions on units in graded subsections.',
   },
   cancelEnableDiscussions: {
     id: 'authoring.discussions.cancelEnableDiscussions',
-    defaultMessage: 'Disabling this toggle will automatically disable discussion on all units in graded subsections. Discussion topics containing at least 1 thread will be listed and accessible under “Archived” in Topics tab on the Discussions page.',
+    defaultMessage:
+      'Disabling this toggle will automatically disable discussion on all units in graded subsections. Discussion topics containing at least 1 thread will be listed and accessible under “Archived” in Topics tab on the Discussions page.',
     description: 'Asks the user whether he/she really wants to disable discussions on units in graded subsections.',
   },
   backButton: {
@@ -122,7 +121,8 @@ const messages = defineMessages({
   divideByCohortsLabel: {
     id: 'authoring.discussions.builtIn.divideByCohorts.label',
     defaultMessage: 'Divide discussions by cohorts',
-    description: 'Label for a switch that enables dividing discussions by cohorts.  allowDivisionByUnit, divideCourseWideTopics, divideGeneralTopic, and divideQuestionsForTAs are only used if this setting is true.',
+    description:
+      'Label for a switch that enables dividing discussions by cohorts.  allowDivisionByUnit, divideCourseWideTopics, divideGeneralTopic, and divideQuestionsForTAs are only used if this setting is true.',
   },
   divideByCohortsHelp: {
     id: 'authoring.discussions.builtIn.divideByCohorts.help',
@@ -147,7 +147,8 @@ const messages = defineMessages({
   divideQuestionsForTAsTopic: {
     id: 'authoring.discussions.builtIn.divideQuestionsForTAsTopic.label',
     defaultMessage: 'Questions for the TAs',
-    description: 'Label for a checkbox allowing a user to divide the Questions for the TAs (TA stands for "teaching assistant") course wide topic by cohorts.',
+    description:
+      'Label for a checkbox allowing a user to divide the Questions for the TAs (TA stands for "teaching assistant") course wide topic by cohorts.',
   },
   cohortsEnabled: {
     id: 'authoring.discussions.builtIn.cohortsEnabled.label',
@@ -178,7 +179,8 @@ const messages = defineMessages({
   },
   groupInContextSubsectionHelp: {
     id: 'authoring.discussions.builtIn.groupInContextSubsection.help',
-    defaultMessage: 'Learners will be able to view any post in the sub-section no matter which unit page they are viewing. While this is not recommended, if your course has short learning sequences or low enrollment grouping may increase engagement.',
+    defaultMessage:
+      'Learners will be able to view any post in the sub-section no matter which unit page they are viewing. While this is not recommended, if your course has short learning sequences or low enrollment grouping may increase engagement.',
   },
 
   // Anonymous posting fields
@@ -200,7 +202,8 @@ const messages = defineMessages({
   },
   allowAnonymousPostsPeersHelp: {
     id: 'authoring.discussions.builtIn.allowAnonymousPeers.help',
-    defaultMessage: 'Learners will be able to post anonymously to other peers but all posts will be visible to course staff.',
+    defaultMessage:
+      'Learners will be able to post anonymously to other peers but all posts will be visible to course staff.',
   },
 
   // Reported Email Notifications
@@ -214,7 +217,8 @@ const messages = defineMessages({
   },
   reportedContentEmailNotificationsHelp: {
     id: 'authoring.discussions.builtIn.reportedContentEmailNotifications.help',
-    defaultMessage: 'Discussion Admins, Moderators, Community TAs and Group Community TAs (only for their own cohort) will receive an email notification when content is reported.',
+    defaultMessage:
+      'Discussion Admins, Moderators, Community TAs and Group Community TAs (only for their own cohort) will receive an email notification when content is reported.',
   },
 
   // Discussion Topics
@@ -229,7 +233,8 @@ const messages = defineMessages({
   },
   discussionTopicsHelp: {
     id: 'authoring.discussions.discussionTopics.help',
-    defaultMessage: 'Discussions can include general topics not contained to the course structure. All courses have a general topic by default.',
+    defaultMessage:
+      'Discussions can include general topics not contained to the course structure. All courses have a general topic by default.',
     description: 'Help text for adding new discussion topics that in general discussion topic section.',
   },
   discussionTopicRequired: {
@@ -385,7 +390,8 @@ const messages = defineMessages({
   },
   activeRestrictedDatesDeletionHelp: {
     id: 'authoring.discussions.activeRestrictedDatesDeletion.help',
-    defaultMessage: 'These restricted dates are currently active. If deleted, learners will be able to post in discussions during these dates. Are you sure you want to proceed?',
+    defaultMessage:
+      'These restricted dates are currently active. If deleted, learners will be able to post in discussions during these dates. Are you sure you want to proceed?',
     description: 'Help text for delete a active restricted dates from restricted dates section.',
   },
   completeRestrictedDatesDeletionHelp: {

@@ -72,10 +72,7 @@ const ScoringCard = ({
           {Object.values(GradingMethodKeys).map((gradingMethod) => {
             const optionDisplayName = GradingMethod[gradingMethod];
             return (
-              <option
-                key={gradingMethod}
-                value={gradingMethod}
-              >
+              <option key={gradingMethod} value={gradingMethod}>
                 {intl.formatMessage(optionDisplayName)}
               </option>
             );
@@ -123,7 +120,10 @@ const ScoringCard = ({
         </Form.Checkbox>
       </Form.Group>
       {!isLibrary && (
-        <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#max_attempts`} target="_blank">
+        <Hyperlink
+          destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#max_attempts`}
+          target="_blank"
+        >
           <FormattedMessage {...messages.advancedSettingsLinkText} />
         </Hyperlink>
       )}

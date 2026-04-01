@@ -7,23 +7,18 @@ import { Form } from '@openedx/paragon';
 import { ASSIGNMENT_TYPES, DUPLICATE_ASSIGNMENT_NAME } from '../utils/enum';
 import messages from '../messages';
 
-const AssignmentTypeName = ({
-  value,
-  errorEffort,
-  onChange,
-}) => {
+const AssignmentTypeName = ({ value, errorEffort, onChange }) => {
   const intl = useIntl();
   const initialAssignmentName = useRef(value);
 
   return (
     <li className="course-grading-assignment-type-name">
-      <Form.Group className={classNames('form-group-custom', {
-        'form-group-custom_isInvalid': errorEffort,
-      })}
+      <Form.Group
+        className={classNames('form-group-custom', {
+          'form-group-custom_isInvalid': errorEffort,
+        })}
       >
-        <Form.Label className="grading-label">
-          {intl.formatMessage(messages.assignmentTypeNameTitle)}
-        </Form.Label>
+        <Form.Label className="grading-label">{intl.formatMessage(messages.assignmentTypeNameTitle)}</Form.Label>
         <Form.Control
           data-testid="assignment-type-name-input"
           type="text"

@@ -19,10 +19,7 @@ const multiDims = {
 
 const state = new MockUseState(hooks);
 
-const hookKeys = StrictDict(Object.keys(hooks).reduce(
-  (obj, key) => ({ ...obj, [key]: key }),
-  {},
-));
+const hookKeys = StrictDict(Object.keys(hooks).reduce((obj, key) => ({ ...obj, [key]: key }), {}));
 
 let hook;
 
@@ -30,12 +27,13 @@ const testVal = 'MY test VALUE';
 
 describe('state values', () => {
   const testStateMethod = (key) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     expect(hooks.state[key](testVal)).toEqual(React.useState(testVal));
   };
   test('provides altText state value', () => testStateMethod(state.keys.altText));
   test('provides dimensions state value', () => testStateMethod(state.keys.dimensions));
-  test('provides showAltTextDismissibleError state value', () => testStateMethod(state.keys.showAltTextDismissibleError));
+  test('provides showAltTextDismissibleError state value', () =>
+    testStateMethod(state.keys.showAltTextDismissibleError));
   test('provides showAltTextSubmissionError state value', () => testStateMethod(state.keys.showAltTextSubmissionError));
   test('provides isDecorative state value', () => testStateMethod(state.keys.isDecorative));
   test('provides isLocked state value', () => testStateMethod(state.keys.isLocked));
@@ -50,59 +48,64 @@ describe('ImageSettingsModal hooks', () => {
   describe('dimensions-related hooks', () => {
     describe('getValidDimensions', () => {
       it('returns local dimensions if not locked', () => {
-        expect(hooks.getValidDimensions({
-          dimensions: simpleDims,
-          local: reducedDims,
-          isLocked: false,
-          lockAspectRatio: simpleDims,
-        })).toEqual(reducedDims);
+        expect(
+          hooks.getValidDimensions({
+            dimensions: simpleDims,
+            local: reducedDims,
+            isLocked: false,
+            lockAspectRatio: simpleDims,
+          }),
+        ).toEqual(reducedDims);
       });
       it('returns local dimensions if the same as stored', () => {
-        expect(hooks.getValidDimensions({
-          dimensions: simpleDims,
-          local: simpleDims,
-          isLocked: true,
-          lockAspectRatio: reducedDims,
-        })).toEqual(simpleDims);
+        expect(
+          hooks.getValidDimensions({
+            dimensions: simpleDims,
+            local: simpleDims,
+            isLocked: true,
+            lockAspectRatio: reducedDims,
+          }),
+        ).toEqual(simpleDims);
       });
       describe('valid change when aspect ratio is locked', () => {
-        describe(
-          'keeps changed dimension and keeps the other dimension proportional but rounded',
-          () => {
-            const [w, h] = [7, 13];
+        describe('keeps changed dimension and keeps the other dimension proportional but rounded', () => {
+          const [w, h] = [7, 13];
 
-            const testDimensions = (newDimensions, expected) => {
-              const dimensions = { width: w, height: h };
-              expect(hooks.getValidDimensions({
+          const testDimensions = (newDimensions, expected) => {
+            const dimensions = { width: w, height: h };
+            expect(
+              hooks.getValidDimensions({
                 dimensions,
                 local: { width: newDimensions[0], height: newDimensions[1] },
                 lockAspectRatio: { ...dimensions },
                 isLocked: true,
-              })).toEqual({ width: expected[0], height: expected[1] });
-            };
+              }),
+            ).toEqual({ width: expected[0], height: expected[1] });
+          };
 
-            it('if width is increased, increases and rounds height to stay proportional', () => {
-              testDimensions([8, h], [8, 15]);
-            });
-            it('if height is increased, increases and rounds width to stay proportional', () => {
-              testDimensions([w, 25], [13, 25]);
-            });
-            it('if width is decreased, decreases and rounds height to stay proportional', () => {
-              testDimensions([6, h], [6, 11]);
-            });
-            it('if height is decreased, decreases and rounds width to stay proportional', () => {
-              testDimensions([7, 10], [5, 10]);
-            });
-          },
-        );
+          it('if width is increased, increases and rounds height to stay proportional', () => {
+            testDimensions([8, h], [8, 15]);
+          });
+          it('if height is increased, increases and rounds width to stay proportional', () => {
+            testDimensions([w, 25], [13, 25]);
+          });
+          it('if width is decreased, decreases and rounds height to stay proportional', () => {
+            testDimensions([6, h], [6, 11]);
+          });
+          it('if height is decreased, decreases and rounds width to stay proportional', () => {
+            testDimensions([7, 10], [5, 10]);
+          });
+        });
       });
       it('calculates new dimensions proportionally and correctly when lock is active', () => {
-        expect(hooks.getValidDimensions({
-          dimensions: { width: 1517, height: 803 },
-          local: { width: 758, height: 803 },
-          isLocked: true,
-          lockAspectRatio: { width: 1517, height: 803 },
-        })).toEqual({ width: 758, height: 401 });
+        expect(
+          hooks.getValidDimensions({
+            dimensions: { width: 1517, height: 803 },
+            local: { width: 758, height: 803 },
+            isLocked: true,
+            lockAspectRatio: { width: 1517, height: 803 },
+          }),
+        ).toEqual({ width: 758, height: 401 });
       });
     });
     describe('dimensionLockHooks', () => {

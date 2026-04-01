@@ -1,11 +1,7 @@
 import React from 'react';
 import { getConfig, getPath } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Icon,
-  IconButton,
-  Stack,
-} from '@openedx/paragon';
+import { Icon, IconButton, Stack } from '@openedx/paragon';
 import { OpenInNew } from '@openedx/paragon/icons';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +12,7 @@ import messages from './messages';
 
 /**
  * Returns the URL Suffix for library/library component hit
-*/
+ */
 function getLibraryComponentUrlSuffix(hit: ContentHit): string {
   const { contextKey } = hit;
   return `library/${contextKey}`;
@@ -24,7 +20,7 @@ function getLibraryComponentUrlSuffix(hit: ContentHit): string {
 
 /**
  * Returns the URL Suffix for a unit hit
-*/
+ */
 function getUnitUrlSuffix(hit: ContentHit): string {
   const { contextKey, usageKey } = hit;
   return `course/${contextKey}/container/${usageKey}`;
@@ -32,7 +28,7 @@ function getUnitUrlSuffix(hit: ContentHit): string {
 
 /**
  * Returns the URL Suffix for a unit component hit
-*/
+ */
 function getUnitComponentUrlSuffix(hit: ContentHit): string {
   const { breadcrumbs, contextKey, usageKey } = hit;
   if (breadcrumbs.length > 1) {
@@ -59,7 +55,7 @@ function getUnitComponentUrlSuffix(hit: ContentHit): string {
 
 /**
  * Returns the URL Suffix for a course component hit
-*/
+ */
 function getCourseComponentUrlSuffix(hit: ContentHit): string {
   const { contextKey, usageKey } = hit;
   return `course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
@@ -67,7 +63,7 @@ function getCourseComponentUrlSuffix(hit: ContentHit): string {
 
 /**
  * Returns the URL Suffix for the search hit param
-*/
+ */
 function getUrlSuffix(hit: ContentHit): string {
   const { blockType, breadcrumbs } = hit;
 
@@ -80,8 +76,9 @@ function getUrlSuffix(hit: ContentHit): string {
   if (breadcrumbs.length > 1) {
     const parent = breadcrumbs[breadcrumbs.length - 1];
 
-    if ('usageKey' in parent && (
-      parent.usageKey.includes('type@vertical') || parent.usageKey.includes('type@library_content'))
+    if (
+      'usageKey' in parent &&
+      (parent.usageKey.includes('type@vertical') || parent.usageKey.includes('type@library_content'))
     ) {
       return getUnitComponentUrlSuffix(hit);
     }
@@ -101,29 +98,32 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
   /**
    * Returns the URL for the context of the hit
    */
-  const getContextUrl = React.useCallback((newWindow = false) => {
-    const { contextKey } = hit;
+  const getContextUrl = React.useCallback(
+    (newWindow = false) => {
+      const { contextKey } = hit;
 
-    if (contextKey.startsWith('course-v1:')) {
-      const urlSuffix = getUrlSuffix(hit);
+      if (contextKey.startsWith('course-v1:')) {
+        const urlSuffix = getUrlSuffix(hit);
 
-      if (newWindow) {
-        return `${getPath(getConfig().PUBLIC_PATH)}${urlSuffix}`;
+        if (newWindow) {
+          return `${getPath(getConfig().PUBLIC_PATH)}${urlSuffix}`;
+        }
+        return `/${urlSuffix}`;
       }
-      return `/${urlSuffix}`;
-    }
 
-    if (isLibraryKey(contextKey)) {
-      const urlSuffix = getLibraryComponentUrlSuffix(hit);
-      if (newWindow) {
-        return `${getPath(getConfig().PUBLIC_PATH)}${urlSuffix}`;
+      if (isLibraryKey(contextKey)) {
+        const urlSuffix = getLibraryComponentUrlSuffix(hit);
+        if (newWindow) {
+          return `${getPath(getConfig().PUBLIC_PATH)}${urlSuffix}`;
+        }
+        return `/${urlSuffix}`;
       }
-      return `/${urlSuffix}`;
-    }
 
-    // istanbul ignore next - This case should never be reached
-    return undefined;
-  }, [hit]);
+      // istanbul ignore next - This case should never be reached
+      return undefined;
+    },
+    [hit],
+  );
 
   /**
    * Opens the context of the hit in a new window
@@ -141,30 +141,33 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
   /**
    * Navigates to the context of the hit
    */
-  const navigateToContext = React.useCallback((e: React.MouseEvent | React.KeyboardEvent): void => {
-    e.stopPropagation();
-    const redirectUrl = getContextUrl();
+  const navigateToContext = React.useCallback(
+    (e: React.MouseEvent | React.KeyboardEvent): void => {
+      e.stopPropagation();
+      const redirectUrl = getContextUrl();
 
-    /* istanbul ignore next */
-    if (!redirectUrl) {
-      // This case is for the library authoring MFE
-      return;
-    }
+      /* istanbul ignore next */
+      if (!redirectUrl) {
+        // This case is for the library authoring MFE
+        return;
+      }
 
-    if ('key' in e && e.key !== 'Enter' && e.key !== ' ') {
-      return;
-    }
+      if ('key' in e && e.key !== 'Enter' && e.key !== ' ') {
+        return;
+      }
 
-    /* istanbul ignore next */
-    if (redirectUrl.startsWith('http')) {
-      // This case is for the library authoring MFE
-      window.location.href = redirectUrl;
-      return;
-    }
+      /* istanbul ignore next */
+      if (redirectUrl.startsWith('http')) {
+        // This case is for the library authoring MFE
+        window.location.href = redirectUrl;
+        return;
+      }
 
-    navigate(redirectUrl);
-    closeSearchModal();
-  }, [getContextUrl]);
+      navigate(redirectUrl);
+      closeSearchModal();
+    },
+    [getContextUrl],
+  );
 
   return (
     <Stack
@@ -185,9 +188,7 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
           <Highlight text={hit.formatted.content?.htmlContent ?? ''} />
           <Highlight text={hit.formatted.content?.capaContent ?? ''} />
         </div>
-        <div className="text-muted x-small">
-          {hit.breadcrumbs.map(bc => bc.displayName).join(' / ')}
-        </div>
+        <div className="text-muted x-small">{hit.breadcrumbs.map((bc) => bc.displayName).join(' / ')}</div>
       </Stack>
       <IconButton
         className="flex-shrink-0"

@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useId,
-  useRef,
-} from 'react';
+import React, { useState, useEffect, useId, useRef } from 'react';
 
 import { Form } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';

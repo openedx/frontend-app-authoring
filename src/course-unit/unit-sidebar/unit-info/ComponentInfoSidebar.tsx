@@ -29,14 +29,9 @@ export const ComponentInfoSidebar = () => {
   const { sendMessageToIframe } = useIframe();
   const unitData = useSelector(getCourseUnitData);
   const { courseId } = useCourseAuthoringContext();
-  const sectionId = unitData?.ancestorInfo?.ancestors?.find(
-    (ancestor) => ancestor.category === 'chapter',
-  )?.id;
+  const sectionId = unitData?.ancestorInfo?.ancestors?.find((ancestor) => ancestor.category === 'chapter')?.id;
 
-  const {
-    selectedComponentId,
-    setCurrentPageKey,
-  } = useUnitSidebarContext();
+  const { selectedComponentId, setCurrentPageKey } = useUnitSidebarContext();
 
   const { data: contentData } = useContentData(selectedComponentId) as { data: XBlockData | undefined };
 
@@ -71,10 +66,7 @@ export const ComponentInfoSidebar = () => {
         postChange={handlePostChange}
       />
       <SidebarContent>
-        <SidebarSection
-          title={intl.formatMessage(messages.sidebarSectionTaxonomies)}
-          icon={Tag}
-        >
+        <SidebarSection title={intl.formatMessage(messages.sidebarSectionTaxonomies)} icon={Tag}>
           <ContentTagsSnippet contentId={selectedComponentId || ''} />
         </SidebarSection>
       </SidebarContent>

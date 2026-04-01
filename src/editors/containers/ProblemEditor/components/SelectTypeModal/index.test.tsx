@@ -1,8 +1,4 @@
-import {
-  fireEvent,
-  screen,
-  initializeMocks,
-} from '@src/testUtils';
+import { fireEvent, screen, initializeMocks } from '@src/testUtils';
 import { editorRender } from '@src/editors/editorTestRender';
 import * as hooks from './hooks';
 import SelectTypeModal from '.';
@@ -16,9 +12,7 @@ describe('SelectTypeModal', () => {
     const mockSelect = jest.fn();
     jest.spyOn(hooks, 'onSelect').mockImplementation(mockSelect);
     // This is a new-style test, unlike most of the old snapshot-based editor tests.
-    editorRender(
-      <SelectTypeModal onClose={mockClose} />,
-    );
+    editorRender(<SelectTypeModal onClose={mockClose} />);
 
     // First we see the menu of problem types:
     expect(await screen.findByRole('button', { name: 'Numerical input' })).toBeInTheDocument();

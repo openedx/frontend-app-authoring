@@ -65,40 +65,36 @@ export const fetchEditorContent = ({ format }) => {
   return editorObject;
 };
 
-export const parseState = ({
-  problem,
-  isAdvanced,
-  isMarkdownEditorEnabled,
-  ref,
-  lmsEndpointUrl,
-}) => () => {
-  // Constructs the save payload by parsing the current state of the problem editor.
-  // If the Markdown editor is enabled, the editor content is converted to OLX using convertMarkdownToXml.
-  // For advanced problems, raw editor content is used as OLX; for visual ones, it's built via ReactStateOLXParser.
-  // Settings are then parsed from the OLX and returned alongside the OLX content,
-  // including markdown incase of markdown editor.
-  const contentString = ref?.current?.state.doc.toString();
-  const rawOLX = isMarkdownEditorEnabled ? convertMarkdownToXml(contentString) : contentString;
-  let reactBuiltOlx;
-  if (!isMarkdownEditorEnabled) {
-    const editorObject = fetchEditorContent({ format: '' });
-    const reactOLXParser = new ReactStateOLXParser({ problem, editorObject });
-    reactBuiltOlx = setAssetToStaticUrl({ editorValue: reactOLXParser.buildOLX(), lmsEndpointUrl });
-  }
-  const reactSettingsParser = new ReactStateSettingsParser({ problem, rawOLX });
-  const settings = isAdvanced ? reactSettingsParser.parseRawOlxSettings() : reactSettingsParser.getSettings();
-  return {
-    settings: {
-      ...settings,
-      // If the save action isn’t triggered from the Markdown editor, the Markdown content might be outdated. Since the
-      // Markdown editor shouldn't be displayed in future in this case, we’re sending `null` instead.
-      // TODO: Implement OLX-to-Markdown conversion to properly handle this scenario.
-      markdown: isMarkdownEditorEnabled ? contentString : null,
-      markdown_edited: isMarkdownEditorEnabled,
-    },
-    olx: isAdvanced || isMarkdownEditorEnabled ? rawOLX : reactBuiltOlx,
+export const parseState =
+  ({ problem, isAdvanced, isMarkdownEditorEnabled, ref, lmsEndpointUrl }) =>
+  () => {
+    // Constructs the save payload by parsing the current state of the problem editor.
+    // If the Markdown editor is enabled, the editor content is converted to OLX using convertMarkdownToXml.
+    // For advanced problems, raw editor content is used as OLX; for visual ones, it's built via ReactStateOLXParser.
+    // Settings are then parsed from the OLX and returned alongside the OLX content,
+    // including markdown incase of markdown editor.
+    const contentString = ref?.current?.state.doc.toString();
+    const rawOLX = isMarkdownEditorEnabled ? convertMarkdownToXml(contentString) : contentString;
+    let reactBuiltOlx;
+    if (!isMarkdownEditorEnabled) {
+      const editorObject = fetchEditorContent({ format: '' });
+      const reactOLXParser = new ReactStateOLXParser({ problem, editorObject });
+      reactBuiltOlx = setAssetToStaticUrl({ editorValue: reactOLXParser.buildOLX(), lmsEndpointUrl });
+    }
+    const reactSettingsParser = new ReactStateSettingsParser({ problem, rawOLX });
+    const settings = isAdvanced ? reactSettingsParser.parseRawOlxSettings() : reactSettingsParser.getSettings();
+    return {
+      settings: {
+        ...settings,
+        // If the save action isn’t triggered from the Markdown editor, the Markdown content might be outdated. Since the
+        // Markdown editor shouldn't be displayed in future in this case, we’re sending `null` instead.
+        // TODO: Implement OLX-to-Markdown conversion to properly handle this scenario.
+        markdown: isMarkdownEditorEnabled ? contentString : null,
+        markdown_edited: isMarkdownEditorEnabled,
+      },
+      olx: isAdvanced || isMarkdownEditorEnabled ? rawOLX : reactBuiltOlx,
+    };
   };
-};
 
 export const checkForNoAnswers = ({ openSaveWarningModal, problem }) => {
   const simpleTextAreaProblems = [ProblemTypeKeys.DROPDOWN, ProblemTypeKeys.NUMERIC, ProblemTypeKeys.TEXTINPUT];
@@ -109,7 +105,7 @@ export const checkForNoAnswers = ({ openSaveWarningModal, problem }) => {
 
   const hasTitle = () => {
     const titles = [];
-    answers.forEach(answer => {
+    answers.forEach((answer) => {
       const title = simpleTextAreaProblems.includes(problemType) ? answer.title : answerTitles[answer.id];
       if (title?.length > 0) {
         titles.push(title);
@@ -123,7 +119,7 @@ export const checkForNoAnswers = ({ openSaveWarningModal, problem }) => {
 
   const hasCorrectAnswer = () => {
     let correctAnswer;
-    answers.forEach(answer => {
+    answers.forEach((answer) => {
       if (answer.correct) {
         const title = simpleTextAreaProblems.includes(problemType) ? answer.title : answerTitles[answer.id];
         if (title?.length > 0) {
@@ -148,9 +144,7 @@ export const checkForNoAnswers = ({ openSaveWarningModal, problem }) => {
   return false;
 };
 
-export const checkForSettingDiscrepancy = ({
-  problem, ref, openSaveWarningModal, isMarkdownEditorEnabled,
-}) => {
+export const checkForSettingDiscrepancy = ({ problem, ref, openSaveWarningModal, isMarkdownEditorEnabled }) => {
   const contentString = ref?.current?.state.doc.toString();
   const rawOLX = isMarkdownEditorEnabled ? convertMarkdownToXml(contentString) : contentString;
   const reactSettingsParser = new ReactStateSettingsParser({ problem, rawOLX });
@@ -180,16 +174,22 @@ export const getContent = ({
   lmsEndpointUrl,
 }) => {
   const problem = problemState;
-  const hasNoAnswers = isAdvancedProblemType || isMarkdownEditorEnabled ? false : checkForNoAnswers({
-    problem,
-    openSaveWarningModal,
-  });
-  const hasMismatchedSettings = isAdvancedProblemType || isMarkdownEditorEnabled ? checkForSettingDiscrepancy({
-    ref: editorRef,
-    problem,
-    openSaveWarningModal,
-    isMarkdownEditorEnabled,
-  }) : false;
+  const hasNoAnswers =
+    isAdvancedProblemType || isMarkdownEditorEnabled
+      ? false
+      : checkForNoAnswers({
+          problem,
+          openSaveWarningModal,
+        });
+  const hasMismatchedSettings =
+    isAdvancedProblemType || isMarkdownEditorEnabled
+      ? checkForSettingDiscrepancy({
+          ref: editorRef,
+          problem,
+          openSaveWarningModal,
+          isMarkdownEditorEnabled,
+        })
+      : false;
   if (!hasNoAnswers && !hasMismatchedSettings) {
     const data = parseState({
       isAdvanced: isAdvancedProblemType,

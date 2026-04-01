@@ -18,9 +18,7 @@ type PublishDraftButtonProps = {
  *
  * @param onClick - Callback invoked when the button is clicked.
  */
-export const PublishDraftButton = ({
-  onClick,
-}: PublishDraftButtonProps) => {
+export const PublishDraftButton = ({ onClick }: PublishDraftButtonProps) => {
   const intl = useIntl();
   const { readOnly } = useOptionalLibraryContext();
 
@@ -34,11 +32,7 @@ export const PublishDraftButton = ({
       <FormattedMessage
         {...messages.publishContainerButton}
         values={{
-          publishStatus: (
-            <span className="font-weight-500">
-              ({intl.formatMessage(messages.draftChipText)})
-            </span>
-          ),
+          publishStatus: <span className="font-weight-500">({intl.formatMessage(messages.draftChipText)})</span>,
         }}
       />
     </Button>

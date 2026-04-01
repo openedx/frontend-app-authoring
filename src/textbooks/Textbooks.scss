@@ -1,6 +1,6 @@
-@import "./empty-placeholder/EmptyPlaceholder";
-@import "./textbook-card/TextbookCard";
-@import "./textbook-form/TextbookForm";
+@import './empty-placeholder/EmptyPlaceholder';
+@import './textbook-card/TextbookCard';
+@import './textbook-form/TextbookForm';
 
 .alert-toast {
   z-index: var(--pgn-elevation-tooltip-zindex) !important;

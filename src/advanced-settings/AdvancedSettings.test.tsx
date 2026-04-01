@@ -2,12 +2,7 @@ import userEvent from '@testing-library/user-event';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
-import {
-  render as baseRender,
-  fireEvent,
-  initializeMocks,
-  screen,
-} from '@src/testUtils';
+import { render as baseRender, fireEvent, initializeMocks, screen } from '@src/testUtils';
 import { advancedSettingsMock } from './__mocks__';
 import { getCourseAdvancedSettingsApiUrl } from './data/api';
 import AdvancedSettings from './AdvancedSettings';
@@ -18,31 +13,25 @@ const mockPathname = '/foo-bar';
 const courseId = '123';
 
 // Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea
-    {...props}
-    onFocus={() => { }}
-  />
-)));
+jest.mock('react-textarea-autosize', () => jest.fn((props) => <textarea {...props} onFocus={() => {}} />));
 
 jest.mock('@src/authz/data/apiHooks', () => ({
   useUserPermissions: jest.fn(),
 }));
 
-const render = () => baseRender(
-  <CourseAuthoringProvider courseId={courseId}>
-    <AdvancedSettings />
-  </CourseAuthoringProvider>,
-  { path: mockPathname },
-);
+const render = () =>
+  baseRender(
+    <CourseAuthoringProvider courseId={courseId}>
+      <AdvancedSettings />
+    </CourseAuthoringProvider>,
+    { path: mockPathname },
+  );
 
 describe('<AdvancedSettings />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
-      .reply(200, advancedSettingsMock);
+    axiosMock.onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`).reply(200, advancedSettingsMock);
 
     jest.mocked(useUserPermissions).mockReturnValue({
       isLoading: false,
@@ -51,9 +40,7 @@ describe('<AdvancedSettings />', () => {
   });
 
   it('should render placeholder when settings fetch returns 403', async () => {
-    axiosMock
-      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
-      .reply(403);
+    axiosMock.onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`).reply(403);
     render();
     expect(await screen.findByText(/Under Construction/i)).toBeInTheDocument();
   });
@@ -61,11 +48,15 @@ describe('<AdvancedSettings />', () => {
   it('should render without errors', async () => {
     render();
     expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(messages.headingTitle.defaultMessage, {
-      selector: 'h2.sub-header-title',
-    })).toBeInTheDocument();
+    expect(
+      screen.getByText(messages.headingTitle.defaultMessage, {
+        selector: 'h2.sub-header-title',
+      }),
+    ).toBeInTheDocument();
     expect(screen.getByText(messages.policy.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i),
+    ).toBeInTheDocument();
   });
 
   it('should render setting element', async () => {
@@ -138,15 +129,13 @@ describe('<AdvancedSettings />', () => {
     const textarea = await screen.findByLabelText(/Advanced Module List/i);
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
     expect(textarea).toHaveValue('[3, 2, 1]');
-    axiosMock
-      .onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`)
-      .reply(200, {
-        ...advancedSettingsMock,
-        advancedModules: {
-          ...advancedSettingsMock.advancedModules,
-          value: [3, 2, 1],
-        },
-      });
+    axiosMock.onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`).reply(200, {
+      ...advancedSettingsMock,
+      advancedModules: {
+        ...advancedSettingsMock.advancedModules,
+        value: [3, 2, 1],
+      },
+    });
     await user.click(screen.getByText('Save changes'));
     expect(screen.getByText('Your policy changes have been saved.')).toBeInTheDocument();
   });
@@ -156,9 +145,7 @@ describe('<AdvancedSettings />', () => {
     render();
     const textarea = await screen.findByLabelText(/Advanced Module List/i);
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
-    axiosMock
-      .onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`)
-      .reply(500);
+    axiosMock.onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`).reply(500);
     await user.click(screen.getByText('Save changes'));
     expect(await screen.findByText('Validation error while saving')).toBeInTheDocument();
   });
@@ -171,11 +158,15 @@ describe('<AdvancedSettings />', () => {
     } as unknown as ReturnType<typeof useUserPermissions>);
     render();
     expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(messages.headingTitle.defaultMessage, {
-      selector: 'h2.sub-header-title',
-    })).toBeInTheDocument();
+    expect(
+      screen.getByText(messages.headingTitle.defaultMessage, {
+        selector: 'h2.sub-header-title',
+      }),
+    ).toBeInTheDocument();
     expect(screen.getByText(messages.policy.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i),
+    ).toBeInTheDocument();
   });
 
   it('should show permission alert when authz.enable_course_authoring flag is enabled and the user is not authorized', async () => {

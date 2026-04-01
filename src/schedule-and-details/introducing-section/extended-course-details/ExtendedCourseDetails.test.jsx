@@ -7,13 +7,9 @@ import messages from './messages';
 import ExtendedCourseDetails from '.';
 
 // Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea
-    {...props}
-    onFocus={() => {}}
-    onBlur={() => {}}
-  />
-)));
+jest.mock('react-textarea-autosize', () =>
+  jest.fn((props) => <textarea {...props} onFocus={() => {}} onBlur={() => {}} />),
+);
 
 const onChangeMock = jest.fn();
 
@@ -46,9 +42,7 @@ describe('<ExtendedCourseDetails />', () => {
   });
 
   it('should display input values', () => {
-    const { getByDisplayValue } = render(
-      <RootWrapper {...props} />,
-    );
+    const { getByDisplayValue } = render(<RootWrapper {...props} />);
 
     expect(getByDisplayValue(props.title)).toBeInTheDocument();
     expect(getByDisplayValue(props.subtitle)).toBeInTheDocument();

@@ -4,13 +4,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  act,
-  fireEvent,
-  render,
-  waitFor,
-  screen,
-} from '@testing-library/react';
+import { act, fireEvent, render, waitFor, screen } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
@@ -114,9 +108,9 @@ describe('<ImportTagsWizard />', () => {
 
   it.each(['success', 'error'])('can upload taxonomies from the reimport dialog (%p)', async (expectedResult) => {
     const onClose = jest.fn();
-    const {
-      findByTestId, findByText, getByRole, getAllByTestId, getByTestId, getByText,
-    } = render(<RootWrapper taxonomy={sampleTaxonomy} onClose={onClose} reimport />);
+    const { findByTestId, findByText, getByRole, getAllByTestId, getByTestId, getByText } = render(
+      <RootWrapper taxonomy={sampleTaxonomy} onClose={onClose} reimport />,
+    );
 
     expect(await findByTestId('export-step')).toBeInTheDocument();
 
@@ -173,14 +167,15 @@ describe('<ImportTagsWizard />', () => {
     expect(errorAlert).not.toBeInTheDocument();
 
     // Now simulate uploading a correct file.
-    const expectedPlan = 'Import plan for Test import taxonomy\n'
-    + '--------------------------------\n'
-    + '#1: Create a new tag with values (external_id=tag_1, value=Tag 1, parent_id=None).\n'
-    + '#2: Create a new tag with values (external_id=tag_2, value=Tag 2, parent_id=None).\n'
-    + '#3: Create a new tag with values (external_id=tag_3, value=Tag 3, parent_id=None).\n'
-    + '#4: Create a new tag with values (external_id=tag_4, value=Tag 4, parent_id=None).\n'
-    + '#5: Delete tag (external_id=old_tag_1)\n'
-    + '#6: Delete tag (external_id=old_tag_2)\n';
+    const expectedPlan =
+      'Import plan for Test import taxonomy\n' +
+      '--------------------------------\n' +
+      '#1: Create a new tag with values (external_id=tag_1, value=Tag 1, parent_id=None).\n' +
+      '#2: Create a new tag with values (external_id=tag_2, value=Tag 2, parent_id=None).\n' +
+      '#3: Create a new tag with values (external_id=tag_3, value=Tag 3, parent_id=None).\n' +
+      '#4: Create a new tag with values (external_id=tag_4, value=Tag 4, parent_id=None).\n' +
+      '#5: Delete tag (external_id=old_tag_1)\n' +
+      '#6: Delete tag (external_id=old_tag_2)\n';
     axiosMock.onPut(planImportUrl).replyOnce(200, { plan: expectedPlan });
     fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [makeJson('example3.json')], types: ['Files'] } });
 
@@ -224,7 +219,9 @@ describe('<ImportTagsWizard />', () => {
       expect(confirmButton).not.toHaveAttribute('aria-disabled', 'true');
     });
 
-    act(() => { fireEvent.click(confirmButton); });
+    act(() => {
+      fireEvent.click(confirmButton);
+    });
 
     if (expectedResult === 'success') {
       // Toast message shown
@@ -246,9 +243,9 @@ describe('<ImportTagsWizard />', () => {
 
   it.each(['success', 'error'])('can upload new taxonomies from the dialog (%p)', async (expectedResult) => {
     const onClose = jest.fn();
-    const {
-      findByTestId, getByRole, getByTestId, getByText, queryByTestId,
-    } = render(<RootWrapper taxonomy={null} onClose={onClose} />);
+    const { findByTestId, getByRole, getByTestId, getByText, queryByTestId } = render(
+      <RootWrapper taxonomy={null} onClose={onClose} />,
+    );
 
     // Check that there is no export step
     expect(queryByTestId('export-step')).not.toBeInTheDocument();
@@ -333,7 +330,9 @@ describe('<ImportTagsWizard />', () => {
       expect(getByRole('button', { name: 'Import' })).not.toHaveAttribute('aria-disabled', 'true');
     });
 
-    act(() => { fireEvent.click(getByRole('button', { name: 'Import' })); });
+    act(() => {
+      fireEvent.click(getByRole('button', { name: 'Import' }));
+    });
 
     if (expectedResult === 'success') {
       // Toast message shown

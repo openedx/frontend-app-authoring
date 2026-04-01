@@ -4,48 +4,38 @@ import classNames from 'classnames';
 import { getInputType } from './utils';
 // import { requiredWhenNot } from '../utils/propTypes';
 
-const INPUT_TYPES = [
-  'radio',
-  'checkbox',
-];
+const INPUT_TYPES = ['radio', 'checkbox'];
 
 const DEFAULT_COLUMNS_NUMBER = 2;
 
-const SelectableBoxSet = React.forwardRef(({
-  children,
-  name,
-  value,
-  defaultValue,
-  onChange,
-  type,
-  columns,
-  className,
-  ariaLabel,
-  ariaLabelledby,
-  ...props
-}, ref) => {
-  const inputType = getInputType('SelectableBoxSet', type);
+const SelectableBoxSet = React.forwardRef(
+  (
+    { children, name, value, defaultValue, onChange, type, columns, className, ariaLabel, ariaLabelledby, ...props },
+    ref,
+  ) => {
+    const inputType = getInputType('SelectableBoxSet', type);
 
-  return React.createElement(
-    inputType,
-    {
-      name,
-      value,
-      defaultValue,
-      onChange,
-      ref,
-      className: classNames(
-        'pgn__selectable_box-set',
-        `pgn__selectable_box-set--${columns || DEFAULT_COLUMNS_NUMBER}`,
-        className,
-      ),
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledby,
-      ...props,
-    },
-    children,
-  );
-});
+    return React.createElement(
+      inputType,
+      {
+        name,
+        value,
+        defaultValue,
+        onChange,
+        ref,
+        className: classNames(
+          'pgn__selectable_box-set',
+          `pgn__selectable_box-set--${columns || DEFAULT_COLUMNS_NUMBER}`,
+          className,
+        ),
+        'aria-label': ariaLabel,
+        'aria-labelledby': ariaLabelledby,
+        ...props,
+      },
+      children,
+    );
+  },
+);
 
 SelectableBoxSet.propTypes = {
   /** Specifies a name for the group of `SelectableBox`'es. */

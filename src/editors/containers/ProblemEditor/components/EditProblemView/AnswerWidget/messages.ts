@@ -74,7 +74,8 @@ const messages = defineMessages({
   },
   answerRangeHelperText: {
     id: 'authoring.answerwidget.answer.answerRangeHelperText',
-    defaultMessage: 'Enter min and max values separated by a comma. Use a bracket to include the number next to it in the range, or a parenthesis to exclude the number. For example, to identify the correct answers as 5, 6, or 7, but not 8, specify [5,8).',
+    defaultMessage:
+      'Enter min and max values separated by a comma. Use a bracket to include the number next to it in the range, or a parenthesis to exclude the number. For example, to identify the correct answers as 5, 6, or 7, but not 8, specify [5,8).',
     description: 'Helper text describing usage of answer ranges',
   },
   answerRangeErrorText: {
@@ -84,7 +85,8 @@ const messages = defineMessages({
   },
   answerNumericErrorText: {
     id: 'authoring.answerwidget.answer.answerNumericErrorText',
-    defaultMessage: 'Error: This input type only supports numeric answers. Did you mean to make a Text input or Math expression input problem?',
+    defaultMessage:
+      'Error: This input type only supports numeric answers. Did you mean to make a Text input or Math expression input problem?',
     description: 'Error message when user provides wrong format',
   },
 });

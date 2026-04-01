@@ -1,14 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  ActionRow, Dropdown, Form, Icon, IconButton, SelectMenu, MenuItem,
-} from '@openedx/paragon';
+import { ActionRow, Dropdown, Form, Icon, IconButton, SelectMenu, MenuItem } from '@openedx/paragon';
 import { Check, Close, Search } from '@openedx/paragon/icons';
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import './index.scss';
@@ -38,32 +33,32 @@ const SearchSort = ({
           onChange={onSearchChange}
           placeholder={intl.formatMessage(messages.searchPlaceholder)}
           trailingElement={
-            searchString
-              ? (
-                <IconButton
-                  alt={intl.formatMessage(messages.clearSearch)}
-                  iconAs={Icon}
-                  invertColors
-                  isActive
-                  onClick={clearSearchString}
-                  size="sm"
-                  src={Close}
-                />
-              )
-              : <Icon src={Search} />
+            searchString ? (
+              <IconButton
+                alt={intl.formatMessage(messages.clearSearch)}
+                iconAs={Icon}
+                invertColors
+                isActive
+                onClick={clearSearchString}
+                size="sm"
+                src={Close}
+              />
+            ) : (
+              <Icon src={Search} />
+            )
           }
           value={searchString}
         />
       </Form.Group>
 
-      { !showSwitch && <ActionRow.Spacer /> }
+      {!showSwitch && <ActionRow.Spacer />}
       <SelectMenu variant="link" className="search-sort-menu">
-        {Object.keys(sortKeys).map(key => (
+        {Object.keys(sortKeys).map((key) => (
           <MenuItem
             key={key}
             onClick={onSortClick(key)}
             defaultSelected={key === sortBy}
-            iconAfter={(key === sortBy) ? Check : null}
+            iconAfter={key === sortBy ? Check : null}
           >
             <span className="search-sort-menu-by">
               <FormattedMessage {...messages.sortBy} />
@@ -74,41 +69,36 @@ const SearchSort = ({
         ))}
       </SelectMenu>
 
-      { onFilterClick && (
-      <Dropdown>
-        <Dropdown.Toggle
-          data-testid="dropdown-filter"
-          className="text-gray-700"
-          id="gallery-filter-button"
-          variant="tertiary"
-        >
-          <FormattedMessage {...filterMessages[filterBy]} />
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          {Object.keys(filterKeys).map(key => (
-            <Dropdown.Item data-testid={`dropdown-filter-${key}`} key={key} onClick={onFilterClick(key)}>
-              <FormattedMessage {...filterMessages[key]} />
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
-      </Dropdown>
+      {onFilterClick && (
+        <Dropdown>
+          <Dropdown.Toggle
+            data-testid="dropdown-filter"
+            className="text-gray-700"
+            id="gallery-filter-button"
+            variant="tertiary"
+          >
+            <FormattedMessage {...filterMessages[filterBy]} />
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {Object.keys(filterKeys).map((key) => (
+              <Dropdown.Item data-testid={`dropdown-filter-${key}`} key={key} onClick={onFilterClick(key)}>
+                <FormattedMessage {...filterMessages[key]} />
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
       )}
 
-      { showSwitch && (
+      {showSwitch && (
         <>
           <ActionRow.Spacer />
-          <Form.SwitchSet
-            name="switch"
-            onChange={onSwitchClick}
-            isInline
-          >
+          <Form.SwitchSet name="switch" onChange={onSwitchClick} isInline>
             <Form.Switch className="text-gray-700" value="switch-value" floatLabelLeft>
               <FormattedMessage {...switchMessage} />
             </Form.Switch>
           </Form.SwitchSet>
         </>
       )}
-
     </ActionRow>
   );
 };

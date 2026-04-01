@@ -1,14 +1,13 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import * as reactredux from 'react-redux';
 import { formatMessage } from '../../../../../../testUtils';
 import ResetCard from './ResetCard';
 import * as hooks from '../hooks';
 
 describe('ResetCard', () => {
-  const resetText = "Determines whether a 'Reset' button is shown so the user may reset their answer, generally for use in practice or formative assessments.";
+  const resetText =
+    "Determines whether a 'Reset' button is shown so the user may reset their answer, generally for use in practice or formative assessments.";
   const props = {
     showResetButton: false,
     updateSettings: jest.fn().mockName('args.updateSettings'),
@@ -53,7 +52,9 @@ describe('ResetCard', () => {
       expect(resetOption).toBeInTheDocument();
       fireEvent.click(resetOption);
       expect(screen.getByText(resetText)).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: 'Set a default value in advanced settings in a new tab' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('link', { name: 'Set a default value in advanced settings in a new tab' }),
+      ).toBeInTheDocument();
     });
 
     test('do not render link when isLibrary is true', () => {
@@ -63,7 +64,9 @@ describe('ResetCard', () => {
       expect(resetOption).toBeInTheDocument();
       fireEvent.click(resetOption);
       expect(screen.getByText(resetText)).toBeInTheDocument();
-      expect(screen.queryByRole('link', { name: 'Set a default value in advanced settings in a new tab' })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('link', { name: 'Set a default value in advanced settings in a new tab' }),
+      ).not.toBeInTheDocument();
     });
   });
 });

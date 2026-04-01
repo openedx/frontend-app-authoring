@@ -24,13 +24,15 @@ export default function validateAdvancedSettingsData(settingObj, setErrorFields,
 
       if (isValid) {
         try {
-          targetSettingValue = `"${ targetSettingValue.trim() }"`;
+          targetSettingValue = `"${targetSettingValue.trim()}"`;
           JSON.parse(targetSettingValue);
           setEditedSettings((prevEditedSettings) => ({
             ...prevEditedSettings,
             [settingName]: targetSettingValue,
           }));
-        } catch { /* empty */ }
+        } catch {
+          /* empty */
+        }
       }
 
       pushDataToErrorArray(settingName);

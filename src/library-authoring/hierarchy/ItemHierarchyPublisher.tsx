@@ -1,11 +1,7 @@
 import { type ReactNode } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Button,
-  Container,
-} from '@openedx/paragon';
+import { ActionRow, Button, Container } from '@openedx/paragon';
 
 import LoadingButton from '@src/generic/loading-button';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
@@ -21,19 +17,11 @@ type ItemHierarchyPublisherProps = {
   handlePublish: () => void;
 };
 
-export const ItemHierarchyPublisher = ({
-  itemId,
-  handleClose,
-  handlePublish,
-}: ItemHierarchyPublisherProps) => {
+export const ItemHierarchyPublisher = ({ itemId, handleClose, handlePublish }: ItemHierarchyPublisherProps) => {
   const intl = useIntl();
   const itemType = getBlockType(itemId);
 
-  const {
-    data: hierarchy,
-    isPending,
-    isError,
-  } = useLibraryItemHierarchy(itemId);
+  const { data: hierarchy, isPending, isError } = useLibraryItemHierarchy(itemId);
 
   if (isPending) {
     return <Loading />;
@@ -72,13 +60,10 @@ export const ItemHierarchyPublisher = ({
         noChildMessage = messages.publishComponentWarning;
         break;
     }
-    return intl.formatMessage(
-      childCount ? childMessage : noChildMessage,
-      {
-        childCount,
-        highlight,
-      },
-    );
+    return intl.formatMessage(childCount ? childMessage : noChildMessage, {
+      childCount,
+      highlight,
+    });
   };
 
   const parentWarningMessage = () => {
@@ -105,11 +90,11 @@ export const ItemHierarchyPublisher = ({
   };
 
   return (
-    <Container
-      className="p-3 status-box draft-status"
-    >
+    <Container className="p-3 status-box draft-status">
       <h4>{intl.formatMessage(messages.publishConfirmHeading)}</h4>
-      <p>{childWarningMessage()} {parentWarningMessage()}</p>
+      <p>
+        {childWarningMessage()} {parentWarningMessage()}
+      </p>
       <ItemHierarchy showPublishStatus />
       <ActionRow>
         <Button

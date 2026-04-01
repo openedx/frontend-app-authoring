@@ -1,13 +1,7 @@
 import type MockAdapter from 'axios-mock-adapter';
 import userEvent from '@testing-library/user-event';
 
-import {
-  initializeMocks,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, waitFor, within } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { mockGetContentLibraryV2List } from '@src/library-authoring/data/api.mocks';
 import { mockGetStudioHomeLibraries } from '@src/studio-home/data/api.mocks';
@@ -38,9 +32,7 @@ jest.mock('@src/generic/data/apiHooks', () => ({
   }),
 }));
 
-const renderPage = () => (
-  render(<LegacyLibMigrationPage />, { path })
-);
+const renderPage = () => render(<LegacyLibMigrationPage />, { path });
 
 describe('<LegacyLibMigrationPage />', () => {
   beforeEach(() => {
@@ -244,9 +236,9 @@ describe('<LegacyLibMigrationPage />', () => {
 
     await user.click(nextButton);
     const alert = await screen.findByRole('alert');
-    expect(await within(alert).findByText(
-      /All content from the legacy library you selected will be migrated to/,
-    )).toBeInTheDocument();
+    expect(
+      await within(alert).findByText(/All content from the legacy library you selected will be migrated to/),
+    ).toBeInTheDocument();
 
     const backButton = screen.getByRole('button', { name: /back/i });
     await user.click(backButton);
@@ -353,15 +345,15 @@ describe('<LegacyLibMigrationPage />', () => {
 
     // Should show alert of ConfirmationView
     const alert = await screen.findByRole('alert');
-    expect(await within(alert).findByText(
-      /All content from the 3 legacy libraries you selected will be migrated to/,
-    )).toBeInTheDocument();
+    expect(
+      await within(alert).findByText(/All content from the 3 legacy libraries you selected will be migrated to/),
+    ).toBeInTheDocument();
     expect(screen.getByText('MBA')).toBeInTheDocument();
     expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
     expect(screen.getByText('MBA 1')).toBeInTheDocument();
-    expect(screen.getByText(
-      /Previously migrated library. Any problem bank links were already moved will be migrated to/i,
-    )).toBeInTheDocument();
+    expect(
+      screen.getByText(/Previously migrated library. Any problem bank links were already moved will be migrated to/i),
+    ).toBeInTheDocument();
 
     const confirmButton = screen.getByRole('button', { name: /confirm/i });
     confirmButton.click();
@@ -410,16 +402,17 @@ describe('<LegacyLibMigrationPage />', () => {
 
     // Should show alert of ConfirmationView
     const alert = await screen.findByRole('alert');
-    expect(await within(alert).findByText(
-      /All content from the 3 legacy libraries you selected will be migrated to/,
-      { exact: false },
-    )).toBeInTheDocument();
+    expect(
+      await within(alert).findByText(/All content from the 3 legacy libraries you selected will be migrated to/, {
+        exact: false,
+      }),
+    ).toBeInTheDocument();
     expect(screen.getByText('MBA')).toBeInTheDocument();
     expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
     expect(screen.getByText('MBA 1')).toBeInTheDocument();
-    expect(screen.getByText(
-      /Previously migrated library. Any problem bank links were already moved will be migrated to/i,
-    )).toBeInTheDocument();
+    expect(
+      screen.getByText(/Previously migrated library. Any problem bank links were already moved will be migrated to/i),
+    ).toBeInTheDocument();
 
     const confirmButton = screen.getByRole('button', { name: /confirm/i });
     confirmButton.click();

@@ -2,9 +2,7 @@ import { getCurrentViewRange, getFilters, removeFilter } from './utils';
 
 describe('getCurrentViewRange', () => {
   const intl = {
-    formatMessage: (name, { fileCount, rowCount }) => (
-      `Showing ${fileCount} of ${rowCount}`
-    ),
+    formatMessage: (name, { fileCount, rowCount }) => `Showing ${fileCount} of ${rowCount}`,
   };
 
   it('should return with intials row count', () => {
@@ -45,15 +43,25 @@ describe('getFilters', () => {
   });
 
   it('should return filter object for text search with filters', () => {
-    const state = { filters: [{ id: 'test', value: ['unknown'] }, { id: 'validColumn', value: ['filter1'] }] };
-    const columns = [{
-      id: 'validColumn',
-      filterChoices: [
-        { name: 'Filter 1', value: 'filter1' },
-        { name: 'Filter 2', value: 'filter2' },
+    const state = {
+      filters: [
+        { id: 'test', value: ['unknown'] },
+        { id: 'validColumn', value: ['filter1'] },
       ],
-    }];
-    const expected = [{ name: 'unknown', value: 'unknown' }, { name: 'Filter 1', value: 'filter1' }];
+    };
+    const columns = [
+      {
+        id: 'validColumn',
+        filterChoices: [
+          { name: 'Filter 1', value: 'filter1' },
+          { name: 'Filter 2', value: 'filter2' },
+        ],
+      },
+    ];
+    const expected = [
+      { name: 'unknown', value: 'unknown' },
+      { name: 'Filter 1', value: 'filter1' },
+    ];
     const actual = getFilters(state, columns);
 
     expect(actual).toEqual(expected);
@@ -61,13 +69,15 @@ describe('getFilters', () => {
 
   it('should return filter object for no text search with filters', () => {
     const state = { filters: [{ id: 'validColumn', value: ['filter1'] }] };
-    const columns = [{
-      id: 'validColumn',
-      filterChoices: [
-        { name: 'Filter 1', value: 'filter1' },
-        { name: 'Filter 2', value: 'filter2' },
-      ],
-    }];
+    const columns = [
+      {
+        id: 'validColumn',
+        filterChoices: [
+          { name: 'Filter 1', value: 'filter1' },
+          { name: 'Filter 2', value: 'filter2' },
+        ],
+      },
+    ];
     const expected = [{ name: 'Filter 1', value: 'filter1' }];
     const acutal = getFilters(state, columns);
 
@@ -86,9 +96,7 @@ describe('removeFilter', () => {
   describe('state filter.value is an array', () => {
     it('should call setAllFilters', () => {
       const state = {
-        filters: [
-          { id: 'test', value: ['filter1'] },
-        ],
+        filters: [{ id: 'test', value: ['filter1'] }],
       };
       const filter = 'filter1';
       removeFilter(filter, setFilter, setAllFilters, state);
@@ -98,9 +106,7 @@ describe('removeFilter', () => {
 
     it('should call setFilter', () => {
       const state = {
-        filters: [
-          { id: 'test', value: ['filter1', 'filter2'] },
-        ],
+        filters: [{ id: 'test', value: ['filter1', 'filter2'] }],
       };
       const filter = 'filter1';
       removeFilter(filter, setFilter, setAllFilters, state);
@@ -111,9 +117,7 @@ describe('removeFilter', () => {
   describe('state filter.value is not an array', () => {
     it('should call setAllFilters', () => {
       const state = {
-        filters: [
-          { id: 'test', value: 'filter1' },
-        ],
+        filters: [{ id: 'test', value: 'filter1' }],
       };
       const filter = 'filter1';
       removeFilter(filter, setFilter, setAllFilters, state);

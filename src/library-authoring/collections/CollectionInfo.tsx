@@ -1,10 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Stack,
-  Tab,
-  Tabs,
-} from '@openedx/paragon';
+import { Button, Stack, Tab, Tabs } from '@openedx/paragon';
 import { useCallback } from 'react';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
@@ -29,9 +24,8 @@ const CollectionInfo = () => {
   const { libraryId, setCollectionId } = useOptionalLibraryContext();
   const { sidebarItemInfo, sidebarTab, setSidebarTab } = useSidebarContext();
 
-  const tab: CollectionInfoTab = (
-    sidebarTab && isCollectionInfoTab(sidebarTab)
-  ) ? sidebarTab : COLLECTION_INFO_TABS.Details;
+  const tab: CollectionInfoTab =
+    sidebarTab && isCollectionInfoTab(sidebarTab) ? sidebarTab : COLLECTION_INFO_TABS.Details;
 
   const collectionId = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen
@@ -56,11 +50,7 @@ const CollectionInfo = () => {
     <Stack>
       {showOpenCollectionButton && (
         <div className="d-flex flex-wrap">
-          <Button
-            onClick={handleOpenCollection}
-            variant="outline-primary"
-            className="m-1 text-nowrap flex-grow-1"
-          >
+          <Button onClick={handleOpenCollection} variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
             {intl.formatMessage(messages.openCollectionButton)}
           </Button>
         </div>
@@ -73,10 +63,7 @@ const CollectionInfo = () => {
         onSelect={setSidebarTab}
       >
         <Tab eventKey={COMPONENT_INFO_TABS.Manage} title={intl.formatMessage(messages.manageTabTitle)}>
-          <ContentTagsDrawer
-            id={collectionUsageKey}
-            variant="component"
-          />
+          <ContentTagsDrawer id={collectionUsageKey} variant="component" />
         </Tab>
         <Tab eventKey={COMPONENT_INFO_TABS.Details} title={intl.formatMessage(messages.detailsTabTitle)}>
           <CollectionDetails />

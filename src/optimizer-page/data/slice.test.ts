@@ -25,9 +25,18 @@ import {
 } from './slice';
 
 describe('courseOptimizer slice', () => {
-  let store: EnhancedStore<CourseOptimizerState, UnknownAction, Tuple<[StoreEnhancer<{
-    dispatch: ThunkDispatch<CourseOptimizerState, undefined, UnknownAction>;
-  }>, StoreEnhancer]>>;
+  let store: EnhancedStore<
+    CourseOptimizerState,
+    UnknownAction,
+    Tuple<
+      [
+        StoreEnhancer<{
+          dispatch: ThunkDispatch<CourseOptimizerState, undefined, UnknownAction>;
+        }>,
+        StoreEnhancer,
+      ]
+    >
+  >;
 
   beforeEach(() => {
     store = configureStore({ reducer });

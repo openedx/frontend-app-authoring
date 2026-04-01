@@ -1,16 +1,11 @@
-import {
-  render, screen, fireEvent, waitFor, initializeMocks,
-} from '@src/testUtils';
+import { render, screen, fireEvent, waitFor, initializeMocks } from '@src/testUtils';
 import { UpstreamInfoIcon, UpstreamInfoIconProps } from '.';
 
 type UpstreamInfo = UpstreamInfoIconProps['upstreamInfo'];
 const mockOpenSyncModal = jest.fn();
 
-const renderComponent = (upstreamInfo?: UpstreamInfo) => (
-  render(
-    <UpstreamInfoIcon upstreamInfo={upstreamInfo} openSyncModal={mockOpenSyncModal} />,
-  )
-);
+const renderComponent = (upstreamInfo?: UpstreamInfo) =>
+  render(<UpstreamInfoIcon upstreamInfo={upstreamInfo} openSyncModal={mockOpenSyncModal} />);
 
 describe('<UpstreamInfoIcon>', () => {
   beforeEach(() => {

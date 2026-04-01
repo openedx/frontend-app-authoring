@@ -27,7 +27,8 @@ const messages = defineMessages({
   },
   defaultSection_1_Description: {
     id: 'course-authoring.studio-home.default-section-1.description',
-    defaultMessage: 'The course creator must give you access to the course. Contact the course creator or administrator for the course you are helping to author.',
+    defaultMessage:
+      'The course creator must give you access to the course. Contact the course creator or administrator for the course you are helping to author.',
   },
   defaultSection_2_Title: {
     id: 'course-authoring.studio-home.default-section-2.title',

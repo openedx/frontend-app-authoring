@@ -8,21 +8,18 @@ export const PagesAndResourcesContext = React.createContext<PagesAndResourcesCon
 
 interface PagesAndResourcesProviderProps {
   courseId: string;
-  children: React.ReactNode,
+  children: React.ReactNode;
 }
 
 const PagesAndResourcesProvider = ({ courseId, children }: PagesAndResourcesProviderProps) => {
-  const contextValue = useMemo(() => ({
-    courseId,
-    path: `/course/${courseId}/pages-and-resources`,
-  }), []);
-  return (
-    <PagesAndResourcesContext.Provider
-      value={contextValue}
-    >
-      {children}
-    </PagesAndResourcesContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      courseId,
+      path: `/course/${courseId}/pages-and-resources`,
+    }),
+    [],
   );
+  return <PagesAndResourcesContext.Provider value={contextValue}>{children}</PagesAndResourcesContext.Provider>;
 };
 
 export default PagesAndResourcesProvider;

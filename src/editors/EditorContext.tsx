@@ -33,20 +33,23 @@ export function useEditorContext() {
   return ctx;
 }
 
-export const EditorContextProvider: React.FC<{ children: React.ReactNode; } & EditorContextInit> = ({
+export const EditorContextProvider: React.FC<{ children: React.ReactNode } & EditorContextInit> = ({
   children,
   learningContextId,
 }) => {
   const courseIdIfCourse = isCourseKey(learningContextId) ? learningContextId : undefined;
   const isMarkdownEditorEnabledForContext = useWaffleFlags(courseIdIfCourse).useReactMarkdownEditor;
 
-  const ctx: EditorContext = React.useMemo(() => ({
-    learningContextId,
-    isMarkdownEditorEnabledForContext,
-  }), [
-    // Dependencies - make sure we update the context object if any of these values change:
-    learningContextId,
-    isMarkdownEditorEnabledForContext,
-  ]);
+  const ctx: EditorContext = React.useMemo(
+    () => ({
+      learningContextId,
+      isMarkdownEditorEnabledForContext,
+    }),
+    [
+      // Dependencies - make sure we update the context object if any of these values change:
+      learningContextId,
+      isMarkdownEditorEnabledForContext,
+    ],
+  );
   return <context.Provider value={ctx}>{children}</context.Provider>;
 };

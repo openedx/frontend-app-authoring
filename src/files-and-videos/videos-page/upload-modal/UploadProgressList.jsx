@@ -25,14 +25,10 @@ const UploadProgressList = ({ videosList }) => (
         <Stack role="listitem" gap={2} direction="horizontal" className="mb-3 small" key={id}>
           <span>{bulletNumber}</span>
           <div className="col-5 pl-0">
-            <Truncate.Deprecated>
-              {video.name}
-            </Truncate.Deprecated>
+            <Truncate.Deprecated>{video.name}</Truncate.Deprecated>
           </div>
           <div className="col-6 p-0">
-            <span className="row m-0 justify-content-end font-weight-bold">
-              {getVideoStatus(video.status)}
-            </span>
+            <span className="row m-0 justify-content-end font-weight-bold">{getVideoStatus(video.status)}</span>
           </div>
           <UploadStatusIcon status={video.status} />
         </Stack>
@@ -42,14 +38,13 @@ const UploadProgressList = ({ videosList }) => (
 );
 
 UploadProgressList.propTypes = {
-  videosList: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    uploadPercentage: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]).isRequired,
-  })).isRequired,
+  videosList: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired,
+      uploadPercentage: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    }),
+  ).isRequired,
 };
 
 export default UploadProgressList;

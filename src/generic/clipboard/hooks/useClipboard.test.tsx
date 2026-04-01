@@ -1,12 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 
-import {
-  clipboardSection,
-  clipboardSubsection,
-  clipboardUnit,
-  clipboardXBlock,
-} from '@src/__mocks__';
+import { clipboardSection, clipboardSubsection, clipboardUnit, clipboardXBlock } from '@src/__mocks__';
 import { initializeMocks, makeWrapper } from '@src/testUtils';
 import { getClipboardUrl } from '@src/generic/data/api';
 import useClipboard, { _testingOverrideBroadcastChannel } from './useClipboard';
@@ -23,8 +18,12 @@ const xblockId = 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4dd
 
 let broadcastMockListener: (x: unknown) => void | undefined;
 const clipboardBroadcastChannelMock = {
-  postMessage: (message: unknown) => { broadcastMockListener(message); },
-  addEventListener: (_eventName: string, handler: typeof broadcastMockListener) => { broadcastMockListener = handler; },
+  postMessage: (message: unknown) => {
+    broadcastMockListener(message);
+  },
+  addEventListener: (_eventName: string, handler: typeof broadcastMockListener) => {
+    broadcastMockListener = handler;
+  },
   removeEventListener: jest.fn(),
 };
 _testingOverrideBroadcastChannel(clipboardBroadcastChannelMock as any);
@@ -44,9 +43,7 @@ describe('useClipboard', () => {
     it('returns falsy flags if canEdit = false', async () => {
       const { result, rerender } = renderHook(() => useClipboard(false), { wrapper: makeWrapper() });
 
-      axiosMock
-        .onPost(getClipboardUrl())
-        .reply(200, clipboardUnit);
+      axiosMock.onPost(getClipboardUrl()).reply(200, clipboardUnit);
 
       await result.current.copyToClipboard(unitId);
 
@@ -64,9 +61,7 @@ describe('useClipboard', () => {
     it('returns flag to display the Paste Unit button', async () => {
       const { result, rerender } = renderHook(() => useClipboard(true), { wrapper: makeWrapper() });
 
-      axiosMock
-        .onPost(getClipboardUrl())
-        .reply(200, clipboardUnit);
+      axiosMock.onPost(getClipboardUrl()).reply(200, clipboardUnit);
 
       await result.current.copyToClipboard(unitId);
 
@@ -81,9 +76,7 @@ describe('useClipboard', () => {
     it('returns flag to display the Paste Subsection button', async () => {
       const { result, rerender } = renderHook(() => useClipboard(true), { wrapper: makeWrapper() });
 
-      axiosMock
-        .onPost(getClipboardUrl())
-        .reply(200, clipboardSubsection);
+      axiosMock.onPost(getClipboardUrl()).reply(200, clipboardSubsection);
 
       await result.current.copyToClipboard(subsectionId);
 
@@ -98,9 +91,7 @@ describe('useClipboard', () => {
     it('returns flag to display the Paste Section button', async () => {
       const { result, rerender } = renderHook(() => useClipboard(true), { wrapper: makeWrapper() });
 
-      axiosMock
-        .onPost(getClipboardUrl())
-        .reply(200, clipboardSection);
+      axiosMock.onPost(getClipboardUrl()).reply(200, clipboardSection);
 
       await result.current.copyToClipboard(sectionId);
 
@@ -115,9 +106,7 @@ describe('useClipboard', () => {
     it('returns flag to display the Paste XBlock button', async () => {
       const { result, rerender } = renderHook(() => useClipboard(true), { wrapper: makeWrapper() });
 
-      axiosMock
-        .onPost(getClipboardUrl())
-        .reply(200, clipboardXBlock);
+      axiosMock.onPost(getClipboardUrl()).reply(200, clipboardXBlock);
 
       await result.current.copyToClipboard(xblockId);
 
@@ -155,9 +144,7 @@ describe('useClipboard', () => {
   it('shows the current status while copying to clipboard', async () => {
     const { result, rerender } = renderHook(() => useClipboard(true), { wrapper: makeWrapper() });
 
-    axiosMock
-      .onPost(getClipboardUrl())
-      .networkError();
+    axiosMock.onPost(getClipboardUrl()).networkError();
 
     await result.current.copyToClipboard(unitId);
 

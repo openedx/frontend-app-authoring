@@ -19,13 +19,14 @@ let axiosMock;
 let store;
 const courseId = 'course-123';
 
-const renderComponent = (props) => render(
-  <Provider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <HeaderButtons {...props} />
-    </IntlProvider>
-  </Provider>,
-);
+const renderComponent = (props) =>
+  render(
+    <Provider store={store} messages={{}}>
+      <IntlProvider locale="en">
+        <HeaderButtons {...props} />
+      </IntlProvider>
+    </Provider>,
+  );
 
 const initialState = {
   certificates: {
@@ -46,9 +47,7 @@ describe('HeaderButtons Component', () => {
     });
     store = initializeStore(initialState);
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, certificatesDataMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, certificatesDataMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
   });
 
@@ -82,13 +81,9 @@ describe('HeaderButtons Component', () => {
     const activationButton = getByRole('button', { name: messages.headingActionsActivate.defaultMessage });
     await user.click(activationButton);
 
-    axiosMock.onPost(
-      getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
-    ).reply(200);
+    axiosMock.onPost(getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id)).reply(200);
     await executeThunk(updateCertificateActiveStatus(courseId), store.dispatch);
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, newCertificateData);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, newCertificateData);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
     await waitFor(() => {
@@ -100,9 +95,7 @@ describe('HeaderButtons Component', () => {
 
   it('deactivates certificate when button is clicked', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, { ...certificatesDataMock, isActive: true });
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, { ...certificatesDataMock, isActive: true });
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
     const newCertificateData = {
@@ -115,13 +108,9 @@ describe('HeaderButtons Component', () => {
     const deactivateButton = getByRole('button', { name: messages.headingActionsDeactivate.defaultMessage });
     await user.click(deactivateButton);
 
-    axiosMock.onPost(
-      getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
-    ).reply(200);
+    axiosMock.onPost(getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id)).reply(200);
     await executeThunk(updateCertificateActiveStatus(courseId), store.dispatch);
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, newCertificateData);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, newCertificateData);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
     await waitFor(() => {

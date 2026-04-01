@@ -15,8 +15,10 @@ describe('<TagCount>', () => {
 
   it('should render a button with onClick', () => {
     render(<TagCount count={17} onClick={() => {}} />);
-    expect(screen.getByRole('button', {
-      name: /17/i,
-    }));
+    expect(
+      screen.getByRole('button', {
+        name: /17/i,
+      }),
+    );
   });
 });

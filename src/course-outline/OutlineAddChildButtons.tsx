@@ -1,6 +1,4 @@
-import {
-  Button, Col, IconButton, Row, Stack, StandardModal, useToggle,
-} from '@openedx/paragon';
+import { Button, Col, IconButton, Row, Stack, StandardModal, useToggle } from '@openedx/paragon';
 import { Add as IconAdd, Close, Newsstand } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
@@ -27,10 +25,7 @@ import messages from './messages';
 const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
   const intl = useIntl();
   const { isCurrentFlowOn, currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
-  const {
-    handleAddBlock,
-    handleAddAndOpenUnit,
-  } = useCourseAuthoringContext();
+  const { handleAddBlock, handleAddAndOpenUnit } = useCourseAuthoringContext();
 
   if (!isCurrentFlowOn || currentFlow?.parentLocator !== parentLocator) {
     return null;
@@ -51,22 +46,12 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
   };
 
   return (
-    <Row
-      className="mx-0 py-3 px-4 border-dashed border-gray-500 shadow-lg rounded bg-white w-100"
-    >
+    <Row className="mx-0 py-3 px-4 border-dashed border-gray-500 shadow-lg rounded bg-white w-100">
       <Col className="py-3">
         <Stack direction="horizontal" gap={3}>
-          {(handleAddAndOpenUnit.isPending || handleAddBlock.isPending) && (
-            <LoadingSpinner />
-          )}
+          {(handleAddAndOpenUnit.isPending || handleAddBlock.isPending) && <LoadingSpinner />}
           <h3 className="mb-0">{getTitle()}</h3>
-          <IconButton
-            src={Close}
-            alt="Close"
-            onClick={stopCurrentFlow}
-            variant="dark"
-            className="ml-auto"
-          />
+          <IconButton src={Close} alt="Close" onClick={stopCurrentFlow} variant="dark" className="ml-auto" />
         </Stack>
       </Col>
     </Row>
@@ -106,11 +91,7 @@ const NewOutlineAddChildButtons = ({
   // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
-  const {
-    courseUsageKey,
-    handleAddBlock,
-    handleAddAndOpenUnit,
-  } = useCourseAuthoringContext();
+  const { courseUsageKey, handleAddBlock, handleAddAndOpenUnit } = useCourseAuthoringContext();
   const { startCurrentFlow } = useOutlineSidebarContext();
   let messageMap = {
     newButton: messages.newUnitButton,
@@ -126,11 +107,12 @@ const NewOutlineAddChildButtons = ({
         newButton: messages.newSectionButton,
         importButton: messages.useSectionFromLibraryButton,
       };
-      onNewCreateContent = () => handleAddBlock.mutateAsync({
-        type: ContainerType.Chapter,
-        parentLocator: courseUsageKey,
-        displayName: COURSE_BLOCK_NAMES.chapter.name,
-      });
+      onNewCreateContent = () =>
+        handleAddBlock.mutateAsync({
+          type: ContainerType.Chapter,
+          parentLocator: courseUsageKey,
+          displayName: COURSE_BLOCK_NAMES.chapter.name,
+        });
       flowType = ContainerType.Section;
       break;
     case ContainerType.Subsection:
@@ -138,12 +120,13 @@ const NewOutlineAddChildButtons = ({
         newButton: messages.newSubsectionButton,
         importButton: messages.useSubsectionFromLibraryButton,
       };
-      onNewCreateContent = () => handleAddBlock.mutateAsync({
-        type: ContainerType.Sequential,
-        parentLocator,
-        displayName: COURSE_BLOCK_NAMES.sequential.name,
-        sectionId: parentLocator,
-      });
+      onNewCreateContent = () =>
+        handleAddBlock.mutateAsync({
+          type: ContainerType.Sequential,
+          parentLocator,
+          displayName: COURSE_BLOCK_NAMES.sequential.name,
+          sectionId: parentLocator,
+        });
       flowType = ContainerType.Subsection;
       break;
     case ContainerType.Unit:
@@ -151,12 +134,13 @@ const NewOutlineAddChildButtons = ({
         newButton: messages.newUnitButton,
         importButton: messages.useUnitFromLibraryButton,
       };
-      onNewCreateContent = () => handleAddAndOpenUnit.mutateAsync({
-        type: ContainerType.Vertical,
-        parentLocator,
-        displayName: COURSE_BLOCK_NAMES.vertical.name,
-        sectionId: grandParentLocator,
-      });
+      onNewCreateContent = () =>
+        handleAddAndOpenUnit.mutateAsync({
+          type: ContainerType.Vertical,
+          parentLocator,
+          displayName: COURSE_BLOCK_NAMES.vertical.name,
+          sectionId: grandParentLocator,
+        });
       flowType = ContainerType.Unit;
       break;
     default:
@@ -165,20 +149,15 @@ const NewOutlineAddChildButtons = ({
   }
 
   /**
-  * Starts add flow in sidebar when `Use content from library` button is clicked.
-  */
+   * Starts add flow in sidebar when `Use content from library` button is clicked.
+   */
   const onUseLibraryContent = useCallback(async () => {
     startCurrentFlow({
       flowType,
       parentLocator,
       grandParentLocator,
     });
-  }, [
-    childType,
-    parentLocator,
-    grandParentLocator,
-    startCurrentFlow,
-  ]);
+  }, [childType, parentLocator, grandParentLocator, startCurrentFlow]);
 
   return (
     <>
@@ -232,16 +211,8 @@ const LegacyOutlineAddChildButtons = ({
   // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
-  const {
-    courseUsageKey,
-    handleAddBlock,
-    handleAddAndOpenUnit,
-  } = useCourseAuthoringContext();
-  const [
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
-  ] = useToggle(false);
+  const { courseUsageKey, handleAddBlock, handleAddAndOpenUnit } = useCourseAuthoringContext();
+  const [isAddLibrarySectionModalOpen, openAddLibrarySectionModal, closeAddLibrarySectionModal] = useToggle(false);
   let messageMap = {
     newButton: messages.newUnitButton,
     importButton: messages.useUnitFromLibraryButton,
@@ -259,17 +230,19 @@ const LegacyOutlineAddChildButtons = ({
         importButton: messages.useSectionFromLibraryButton,
         modalTitle: messages.sectionPickerModalTitle,
       };
-      onNewCreateContent = () => handleAddBlock.mutateAsync({
-        type: ContainerType.Chapter,
-        parentLocator: courseUsageKey,
-        displayName: COURSE_BLOCK_NAMES.chapter.name,
-      });
-      onUseLibraryContent = (selected: SelectedComponent) => handleAddBlock.mutateAsync({
-        type: COMPONENT_TYPES.libraryV2,
-        category: ContainerType.Chapter,
-        parentLocator: courseUsageKey,
-        libraryContentKey: selected.usageKey,
-      });
+      onNewCreateContent = () =>
+        handleAddBlock.mutateAsync({
+          type: ContainerType.Chapter,
+          parentLocator: courseUsageKey,
+          displayName: COURSE_BLOCK_NAMES.chapter.name,
+        });
+      onUseLibraryContent = (selected: SelectedComponent) =>
+        handleAddBlock.mutateAsync({
+          type: COMPONENT_TYPES.libraryV2,
+          category: ContainerType.Chapter,
+          parentLocator: courseUsageKey,
+          libraryContentKey: selected.usageKey,
+        });
       visibleTabs = [ContentType.sections];
       query = ['block_type = "section"'];
       break;
@@ -279,19 +252,21 @@ const LegacyOutlineAddChildButtons = ({
         importButton: messages.useSubsectionFromLibraryButton,
         modalTitle: messages.subsectionPickerModalTitle,
       };
-      onNewCreateContent = () => handleAddBlock.mutateAsync({
-        type: ContainerType.Sequential,
-        parentLocator,
-        displayName: COURSE_BLOCK_NAMES.sequential.name,
-        sectionId: parentLocator,
-      });
-      onUseLibraryContent = (selected: SelectedComponent) => handleAddBlock.mutateAsync({
-        type: COMPONENT_TYPES.libraryV2,
-        category: ContainerType.Sequential,
-        parentLocator,
-        libraryContentKey: selected.usageKey,
-        sectionId: parentLocator,
-      });
+      onNewCreateContent = () =>
+        handleAddBlock.mutateAsync({
+          type: ContainerType.Sequential,
+          parentLocator,
+          displayName: COURSE_BLOCK_NAMES.sequential.name,
+          sectionId: parentLocator,
+        });
+      onUseLibraryContent = (selected: SelectedComponent) =>
+        handleAddBlock.mutateAsync({
+          type: COMPONENT_TYPES.libraryV2,
+          category: ContainerType.Sequential,
+          parentLocator,
+          libraryContentKey: selected.usageKey,
+          sectionId: parentLocator,
+        });
       visibleTabs = [ContentType.subsections];
       query = ['block_type = "subsection"'];
       break;
@@ -301,19 +276,21 @@ const LegacyOutlineAddChildButtons = ({
         importButton: messages.useUnitFromLibraryButton,
         modalTitle: messages.unitPickerModalTitle,
       };
-      onNewCreateContent = () => handleAddAndOpenUnit.mutateAsync({
-        type: ContainerType.Vertical,
-        parentLocator,
-        displayName: COURSE_BLOCK_NAMES.vertical.name,
-        sectionId: grandParentLocator,
-      });
-      onUseLibraryContent = (selected: SelectedComponent) => handleAddAndOpenUnit.mutateAsync({
-        type: COMPONENT_TYPES.libraryV2,
-        category: ContainerType.Vertical,
-        parentLocator,
-        libraryContentKey: selected.usageKey,
-        sectionId: grandParentLocator,
-      });
+      onNewCreateContent = () =>
+        handleAddAndOpenUnit.mutateAsync({
+          type: ContainerType.Vertical,
+          parentLocator,
+          displayName: COURSE_BLOCK_NAMES.vertical.name,
+          sectionId: grandParentLocator,
+        });
+      onUseLibraryContent = (selected: SelectedComponent) =>
+        handleAddAndOpenUnit.mutateAsync({
+          type: COMPONENT_TYPES.libraryV2,
+          category: ContainerType.Vertical,
+          parentLocator,
+          libraryContentKey: selected.usageKey,
+          sectionId: grandParentLocator,
+        });
       visibleTabs = [ContentType.units];
       query = ['block_type = "unit"'];
       break;
@@ -379,13 +356,9 @@ const LegacyOutlineAddChildButtons = ({
 const OutlineAddChildButtons = (props: NewChildButtonsProps) => {
   const showNewActionsBar = isOutlineNewDesignEnabled();
   if (showNewActionsBar) {
-    return (
-      <NewOutlineAddChildButtons {...props} />
-    );
+    return <NewOutlineAddChildButtons {...props} />;
   }
-  return (
-    <LegacyOutlineAddChildButtons {...props} />
-  );
+  return <LegacyOutlineAddChildButtons {...props} />;
 };
 
 export default OutlineAddChildButtons;

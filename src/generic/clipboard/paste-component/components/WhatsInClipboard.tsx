@@ -11,9 +11,7 @@ interface WhatsInClipboardProps {
   popoverElementRef: React.RefObject<HTMLDivElement>;
 }
 
-const WhatsInClipboard = ({
-  handlePopoverToggle, togglePopover, popoverElementRef,
-}: WhatsInClipboardProps) => {
+const WhatsInClipboard = ({ handlePopoverToggle, togglePopover, popoverElementRef }: WhatsInClipboardProps) => {
   const intl = useIntl();
   const triggerElementRef = useRef(null);
 
@@ -33,10 +31,7 @@ const WhatsInClipboard = ({
       onFocus={() => togglePopover(true)}
       onBlur={() => togglePopover(false)}
     >
-      <Icon
-        className="whats-in-clipboard-icon mr-1"
-        src={QuestionIcon}
-      />
+      <Icon className="whats-in-clipboard-icon mr-1" src={QuestionIcon} />
       <p
         /* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */
         tabIndex={0}

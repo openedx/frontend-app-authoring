@@ -22,13 +22,10 @@ const ScheduleSection = ({
   onChange,
 }) => {
   const intl = useIntl();
-  const enrollmentEndHelpText = intl.formatMessage(
-    messages.scheduleEnrollmentEndDateHelpText,
-  );
-  const enrollmentEndHelpTexRestricted = intl.formatMessage(
-    messages.scheduleEnrollmentEndDateRestrictedHelpText,
-    { platformName },
-  );
+  const enrollmentEndHelpText = intl.formatMessage(messages.scheduleEnrollmentEndDateHelpText);
+  const enrollmentEndHelpTexRestricted = intl.formatMessage(messages.scheduleEnrollmentEndDateRestrictedHelpText, {
+    platformName,
+  });
   const computedEnrollmentEndHelpText = `${enrollmentEndHelpText} ${
     !enrollmentEndEditable ? enrollmentEndHelpTexRestricted : ''
   }`;
@@ -96,12 +93,9 @@ const ScheduleSection = ({
       ],
       value: upgradeDeadline,
       rowType: SCHEDULE_ROW_TYPES.datetime,
-      helpText: intl.formatMessage(
-        messages.scheduleUpgradeDeadlineDateHelpText,
-        {
-          platformName,
-        },
-      ),
+      helpText: intl.formatMessage(messages.scheduleUpgradeDeadlineDateHelpText, {
+        platformName,
+      }),
       readonly: true,
       controlName: 'upgradeDeadline',
       errorFeedback: errorFields?.upgradeDeadline,
@@ -120,22 +114,10 @@ const ScheduleSection = ({
           .map((fieldProps) => {
             if (fieldProps.rowType === SCHEDULE_ROW_TYPES.datetime) {
               const { skip, rowType, ...restProps } = fieldProps;
-              return (
-                <ScheduleRow
-                  {...restProps}
-                  key={fieldProps.controlName}
-                  onChange={onChange}
-                />
-              );
+              return <ScheduleRow {...restProps} key={fieldProps.controlName} onChange={onChange} />;
             }
             const { rowType, key, ...restProps } = fieldProps;
-            return (
-              <CertificateDisplayRow
-                {...restProps}
-                key={key}
-                onChange={onChange}
-              />
-            );
+            return <CertificateDisplayRow {...restProps} key={key} onChange={onChange} />;
           })}
       </ul>
     </section>

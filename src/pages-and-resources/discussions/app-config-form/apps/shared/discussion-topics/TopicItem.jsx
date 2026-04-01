@@ -4,26 +4,15 @@ import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button, Card, Form,
-} from '@openedx/paragon';
+import { Button, Card, Form } from '@openedx/paragon';
 
 import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
 import messages from '../../../messages';
 import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
-const TopicItem = ({
-  index,
-  id,
-  name,
-  onDelete,
-  hasError,
-  onFocus,
-}) => {
+const TopicItem = ({ index, id, name, onDelete, hasError, onFocus }) => {
   const intl = useIntl();
-  const {
-    handleChange, handleBlur, errors,
-  } = useFormikContext();
+  const { handleChange, handleBlur, errors } = useFormikContext();
   const [inFocus, setInFocus] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState(!name || hasError);
@@ -38,17 +27,12 @@ const TopicItem = ({
       return (
         <div className="h4 py-2 mr-auto">
           {intl.formatMessage(messages.renameGeneralTopic)}
-          <div className="small text-muted mt-2">
-            {intl.formatMessage(messages.generalTopicHelp)}
-          </div>
+          <div className="small text-muted mt-2">{intl.formatMessage(messages.generalTopicHelp)}</div>
         </div>
       );
-    } if (isOpen) {
-      return (
-        <span className="h4 py-2 mr-auto">
-          {intl.formatMessage(messages.configureAdditionalTopic)}
-        </span>
-      );
+    }
+    if (isOpen) {
+      return <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.configureAdditionalTopic)}</span>;
     }
     return <span className="py-2">{name}</span>;
   };
@@ -84,11 +68,7 @@ const TopicItem = ({
           <Button variant="tertiary" onClick={() => setShowDeletePopup(false)}>
             {intl.formatMessage(messages.cancelButton)}
           </Button>
-          <Button
-            variant="outline-brand"
-            className="ml-2"
-            onClick={onDelete}
-          >
+          <Button variant="outline-brand" className="ml-2" onClick={onDelete}>
             {intl.formatMessage(messages.deleteButton)}
           </Button>
         </Card.Footer>
@@ -96,42 +76,38 @@ const TopicItem = ({
     </Card>
   );
 
-  return showDeletePopup
-    ? deleteTopicPopup
-    : (
-      <CollapsableEditor
-        open={collapseIsOpen}
-        onToggle={handleToggle}
-        title={getHeading(collapseIsOpen)}
-        onDelete={isGeneralTopic ? null : deleteDiscussionTopic}
-        expandAlt={intl.formatMessage(messages.expandAltText)}
-        collapseAlt={intl.formatMessage(messages.collapseAltText)}
-        deleteAlt={intl.formatMessage(messages.deleteAltText)}
-        data-testid={id}
-      >
-        <Form.Group
-          controlId={`discussionTopics.${index}.name`}
-          isInvalid={hasError && !inFocus}
-          className="m-2"
-        >
-          <Form.Control
-            floatingLabel="Topic name"
-            onChange={handleChange}
-            onBlur={(event) => handleFocusOut(event)}
-            value={name}
-            controlClassName="bg-white"
-            onFocus={() => setInFocus(true)}
-          />
-          <FieldFeedback
-            errorCondition={hasError && !inFocus}
-            feedbackCondition={inFocus}
-            feedbackMessage={intl.formatMessage(messages.addTopicHelpText)}
-            errorMessage={errors?.discussionTopics?.[index]?.name || ''}
-            transitionClasses="mt-1"
-          />
-        </Form.Group>
-      </CollapsableEditor>
-    );
+  return showDeletePopup ? (
+    deleteTopicPopup
+  ) : (
+    <CollapsableEditor
+      open={collapseIsOpen}
+      onToggle={handleToggle}
+      title={getHeading(collapseIsOpen)}
+      onDelete={isGeneralTopic ? null : deleteDiscussionTopic}
+      expandAlt={intl.formatMessage(messages.expandAltText)}
+      collapseAlt={intl.formatMessage(messages.collapseAltText)}
+      deleteAlt={intl.formatMessage(messages.deleteAltText)}
+      data-testid={id}
+    >
+      <Form.Group controlId={`discussionTopics.${index}.name`} isInvalid={hasError && !inFocus} className="m-2">
+        <Form.Control
+          floatingLabel="Topic name"
+          onChange={handleChange}
+          onBlur={(event) => handleFocusOut(event)}
+          value={name}
+          controlClassName="bg-white"
+          onFocus={() => setInFocus(true)}
+        />
+        <FieldFeedback
+          errorCondition={hasError && !inFocus}
+          feedbackCondition={inFocus}
+          feedbackMessage={intl.formatMessage(messages.addTopicHelpText)}
+          errorMessage={errors?.discussionTopics?.[index]?.name || ''}
+          transitionClasses="mt-1"
+        />
+      </Form.Group>
+    </CollapsableEditor>
+  );
 };
 
 TopicItem.propTypes = {

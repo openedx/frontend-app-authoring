@@ -82,57 +82,37 @@ describe('validateForm', () => {
   describe('provider equals Cielo24', () => {
     describe('with credentials', () => {
       it('should return false', () => {
-        const isValid = validateForm(
-          true,
-          false,
-          'Cielo24',
-          {
-            cielo24Fidelity: 'test-fidelity',
-            cielo24Turnaround: 'test-turnaround',
-            preferredLanguages: [],
-            videoSourceLanguage: 'test-source',
-          },
-        );
+        const isValid = validateForm(true, false, 'Cielo24', {
+          cielo24Fidelity: 'test-fidelity',
+          cielo24Turnaround: 'test-turnaround',
+          preferredLanguages: [],
+          videoSourceLanguage: 'test-source',
+        });
         expect(isValid).toBeFalsy();
       });
       it('should return true', () => {
-        const isValid = validateForm(
-          true,
-          false,
-          'Cielo24',
-          {
-            cielo24Fidelity: 'test-fidelity',
-            cielo24Turnaround: 'test-turnaround',
-            preferredLanguages: ['test-language'],
-            videoSourceLanguage: 'test-source',
-          },
-        );
+        const isValid = validateForm(true, false, 'Cielo24', {
+          cielo24Fidelity: 'test-fidelity',
+          cielo24Turnaround: 'test-turnaround',
+          preferredLanguages: ['test-language'],
+          videoSourceLanguage: 'test-source',
+        });
         expect(isValid).toBeTruthy();
       });
     });
     describe('with no credentials', () => {
       it('should return false', () => {
-        const isValid = validateForm(
-          false,
-          false,
-          'Cielo24',
-          {
-            apiKey: 'test-key',
-            username: '',
-          },
-        );
+        const isValid = validateForm(false, false, 'Cielo24', {
+          apiKey: 'test-key',
+          username: '',
+        });
         expect(isValid).toBeFalsy();
       });
       it('should return true', () => {
-        const isValid = validateForm(
-          false,
-          false,
-          'Cielo24',
-          {
-            apiKey: 'test-key',
-            username: 'test-username',
-          },
-        );
+        const isValid = validateForm(false, false, 'Cielo24', {
+          apiKey: 'test-key',
+          username: 'test-username',
+        });
         expect(isValid).toBeTruthy();
       });
     });
@@ -140,78 +120,48 @@ describe('validateForm', () => {
   describe('provider equals 3PlayMedia', () => {
     describe('with credentials', () => {
       it('should return false', () => {
-        const isValid = validateForm(
-          false,
-          true,
-          '3PlayMedia',
-          {
-            threePlayTurnaround: 'test-turnaround',
-            preferredLanguages: ['test-language'],
-            videoSourceLanguage: '',
-          },
-        );
+        const isValid = validateForm(false, true, '3PlayMedia', {
+          threePlayTurnaround: 'test-turnaround',
+          preferredLanguages: ['test-language'],
+          videoSourceLanguage: '',
+        });
         expect(isValid).toBeFalsy();
       });
       it('should return true', () => {
-        const isValid = validateForm(
-          true,
-          true,
-          '3PlayMedia',
-          {
-            threePlayTurnaround: 'test-turnaround',
-            preferredLanguages: ['test-language'],
-            videoSourceLanguage: 'test-source',
-          },
-        );
+        const isValid = validateForm(true, true, '3PlayMedia', {
+          threePlayTurnaround: 'test-turnaround',
+          preferredLanguages: ['test-language'],
+          videoSourceLanguage: 'test-source',
+        });
         expect(isValid).toBeTruthy();
       });
     });
     describe('with no credentials', () => {
       it('should return false', () => {
-        const isValid = validateForm(
-          true,
-          false,
-          '3PlayMedia',
-          {
-            apiKey: 'test-key',
-            username: '',
-          },
-        );
+        const isValid = validateForm(true, false, '3PlayMedia', {
+          apiKey: 'test-key',
+          username: '',
+        });
         expect(isValid).toBeFalsy();
       });
       it('should return true', () => {
-        const isValid = validateForm(
-          false,
-          false,
-          '3PlayMedia',
-          {
-            apiKey: 'test-key',
-            apiSecretKey: 'test-username',
-          },
-        );
+        const isValid = validateForm(false, false, '3PlayMedia', {
+          apiKey: 'test-key',
+          apiSecretKey: 'test-username',
+        });
         expect(isValid).toBeTruthy();
       });
     });
   });
   describe('provider equals order', () => {
     it('should return true', () => {
-      const isValid = validateForm(
-        false,
-        false,
-        'order',
-        {},
-      );
+      const isValid = validateForm(false, false, 'order', {});
       expect(isValid).toBeTruthy();
     });
   });
   describe('provider equals null', () => {
     it('should return false', () => {
-      const isValid = validateForm(
-        false,
-        false,
-        null,
-        {},
-      );
+      const isValid = validateForm(false, false, null, {});
       expect(isValid).toBeFalsy();
     });
   });

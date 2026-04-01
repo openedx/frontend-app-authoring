@@ -1,11 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Form,
-  ActionRow,
-} from '@openedx/paragon';
+import { Button, Form, ActionRow } from '@openedx/paragon';
 import { Formik } from 'formik';
 
 import messages from './messages';
@@ -17,11 +13,7 @@ const AddUserForm = ({ onSubmit, onCancel }) => {
 
   return (
     <div className="add-user-form" data-testid="add-user-form">
-      <Formik
-        initialValues={{ email: '' }}
-        onSubmit={onSubmit}
-        validateOnBlur
-      >
+      <Formik initialValues={{ email: '' }} onSubmit={onSubmit} validateOnBlur>
         {({ handleSubmit, values }) => (
           <>
             <Form.Group size="sm" className="form-field">
@@ -42,12 +34,7 @@ const AddUserForm = ({ onSubmit, onCancel }) => {
               <Button variant="tertiary" size="sm" onClick={onCancel}>
                 {intl.formatMessage(messages.cancelButton)}
               </Button>
-              <Button
-                size="sm"
-                onClick={handleSubmit}
-                disabled={!values.email.length}
-                type="submit"
-              >
+              <Button size="sm" onClick={handleSubmit} disabled={!values.email.length} type="submit">
                 {intl.formatMessage(messages.addUserButton)}
               </Button>
             </ActionRow>

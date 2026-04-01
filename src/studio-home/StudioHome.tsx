@@ -1,12 +1,5 @@
 import React, { useCallback } from 'react';
-import {
-  Button,
-  Container,
-  Icon,
-  Layout,
-  MailtoLink,
-  Row,
-} from '@openedx/paragon';
+import { Button, Container, Icon, Layout, MailtoLink, Row } from '@openedx/paragon';
 import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
@@ -50,13 +43,8 @@ const StudioHome = () => {
   const v1LibraryTab = librariesV1Enabled && location?.pathname.split('/').pop() === 'libraries-v1';
   const showV2LibraryURL = librariesV2Enabled && !v1LibraryTab;
 
-  const {
-    userIsActive,
-    studioShortName,
-    studioRequestEmail,
-    showNewLibraryButton,
-    showNewLibraryV2Button,
-  } = studioHomeData;
+  const { userIsActive, studioShortName, studioRequestEmail, showNewLibraryButton, showNewLibraryV2Button } =
+    studioHomeData;
 
   const getHeaderButtons = useCallback(() => {
     const headerButtons: JSX.Element[] = [];
@@ -95,12 +83,7 @@ const StudioHome = () => {
       };
 
       headerButtons.push(
-        <Button
-          variant="outline-primary"
-          iconBefore={AddIcon}
-          size="sm"
-          onClick={newLibraryClick}
-        >
+        <Button variant="outline-primary" iconBefore={AddIcon} size="sm" onClick={newLibraryClick}>
           {intl.formatMessage(messages.addNewLibraryBtnText)}
         </Button>,
       );
@@ -111,7 +94,7 @@ const StudioHome = () => {
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {
-    return (<Loading />);
+    return <Loading />;
   }
 
   const getMainBody = () => {
@@ -119,12 +102,12 @@ const StudioHome = () => {
       return (
         <AlertMessage
           variant="danger"
-          description={(
+          description={
             <Row className="m-0 align-items-center">
               <Icon src={Error} className="text-danger-500 mr-1" />
               <span>{intl.formatMessage(messages.homePageLoadFailedMessage)}</span>
             </Row>
-          )}
+          }
         />
       );
     }
@@ -178,10 +161,7 @@ const StudioHome = () => {
         </section>
       </Container>
       <div className="alert-toast">
-        <InternetConnectionAlert
-          isFailed={anyQueryIsFailed}
-          isQueryPending={anyQueryIsPending}
-        />
+        <InternetConnectionAlert isFailed={anyQueryIsFailed} isQueryPending={anyQueryIsPending} />
       </div>
       <StudioFooterSlot />
     </>

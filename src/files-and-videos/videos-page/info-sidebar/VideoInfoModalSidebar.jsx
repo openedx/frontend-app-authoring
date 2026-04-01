@@ -1,42 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Tabs,
-  Tab,
-} from '@openedx/paragon';
+import { Tabs, Tab } from '@openedx/paragon';
 import InfoTab from './InfoTab';
 import TranscriptTab from './TranscriptTab';
 import messages from './messages';
 import { TRANSCRIPT_FAILURE_STATUSES } from '../data/constants';
 
-const VideoInfoModalSidebar = ({
-  video,
-  activeTab,
-  setActiveTab,
-}) => {
+const VideoInfoModalSidebar = ({ video, activeTab, setActiveTab }) => {
   const intl = useIntl();
 
   return (
-    <Tabs
-      id="controlled-info-sidebar-tab"
-      activeKey={activeTab}
-      onSelect={(tab) => setActiveTab(tab)}
-    >
+    <Tabs id="controlled-info-sidebar-tab" activeKey={activeTab} onSelect={(tab) => setActiveTab(tab)}>
       <Tab eventKey="fileInfo" title={intl.formatMessage(messages.infoTabTitle)}>
         <InfoTab {...{ video }} />
       </Tab>
       <Tab
         eventKey="fileTranscripts"
-        title={intl.formatMessage(
-          messages.transcriptTabTitle,
-          { transcriptCount: video.transcripts.length },
-        )}
-        notification={TRANSCRIPT_FAILURE_STATUSES.includes(video.transcriptionStatus) && (
-        <span>
-          <span className="sr-only">{intl.formatMessage(messages.notificationScreenReaderText)}</span>
-        </span>
-        )}
+        title={intl.formatMessage(messages.transcriptTabTitle, { transcriptCount: video.transcripts.length })}
+        notification={
+          TRANSCRIPT_FAILURE_STATUSES.includes(video.transcriptionStatus) && (
+            <span>
+              <span className="sr-only">{intl.formatMessage(messages.notificationScreenReaderText)}</span>
+            </span>
+          )
+        }
       >
         <TranscriptTab {...{ video }} />
       </Tab>

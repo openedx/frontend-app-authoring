@@ -10,7 +10,7 @@ import * as hooks from './hooks';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
-  useRef: jest.fn(val => ({ current: val })),
+  useRef: jest.fn((val) => ({ current: val })),
   useEffect: jest.fn(),
   useState: jest.fn(() => [false, jest.fn()]),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
@@ -60,11 +60,7 @@ describe('hooks', () => {
       hooks.useInitializeApp({ dispatch, data: fakeData });
       expect(dispatch).not.toHaveBeenCalledWith(fakeData);
       const [cb, prereqs] = useEffect.mock.calls[0];
-      expect(prereqs).toStrictEqual([
-        fakeData.blockId,
-        fakeData.studioEndpointUrl,
-        fakeData.learningContextId,
-      ]);
+      expect(prereqs).toStrictEqual([fakeData.blockId, fakeData.studioEndpointUrl, fakeData.learningContextId]);
       cb();
       expect(dispatch).toHaveBeenCalledWith(thunkActions.app.initialize(fakeData));
     });
@@ -156,14 +152,16 @@ describe('hooks', () => {
         analytics,
         dispatch,
       });
-      expect(dispatch).toHaveBeenCalledWith(thunkActions.app.saveBlock(
-        content,
-        navigateCallback({
-          destination,
-          analyticsEvent: analyticsEvt.editorSaveClick,
-          analytics,
-        }),
-      ));
+      expect(dispatch).toHaveBeenCalledWith(
+        thunkActions.app.saveBlock(
+          content,
+          navigateCallback({
+            destination,
+            analyticsEvent: analyticsEvt.editorSaveClick,
+            analytics,
+          }),
+        ),
+      );
     });
   });
 
@@ -195,14 +193,16 @@ describe('hooks', () => {
         analytics,
         dispatch,
       });
-      expect(dispatch).toHaveBeenCalledWith(thunkActions.app.createBlock(
-        content,
-        navigateCallback({
-          destination,
-          analyticsEvent: analyticsEvt.editorSaveClick,
-          analytics,
-        }),
-      ));
+      expect(dispatch).toHaveBeenCalledWith(
+        thunkActions.app.createBlock(
+          content,
+          navigateCallback({
+            destination,
+            analyticsEvent: analyticsEvt.editorSaveClick,
+            analytics,
+          }),
+        ),
+      );
     });
   });
 
@@ -210,9 +210,11 @@ describe('hooks', () => {
     it('dispatches actions.requests.clearRequest with saveBlock requestKey', () => {
       const dispatch = jest.fn();
       hooks.clearSaveError({ dispatch })();
-      expect(dispatch).toHaveBeenCalledWith(actions.requests.clearRequest({
-        requestKey: RequestKeys.saveBlock,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.requests.clearRequest({
+          requestKey: RequestKeys.saveBlock,
+        }),
+      );
     });
   });
 
@@ -220,9 +222,11 @@ describe('hooks', () => {
     it('dispatches actions.requests.clearRequest with createBlock requestKey', () => {
       const dispatch = jest.fn();
       hooks.clearCreateError({ dispatch })();
-      expect(dispatch).toHaveBeenCalledWith(actions.requests.clearRequest({
-        requestKey: RequestKeys.createBlock,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.requests.clearRequest({
+          requestKey: RequestKeys.createBlock,
+        }),
+      );
     });
   });
 });

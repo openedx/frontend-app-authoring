@@ -1,16 +1,7 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Tab,
-  Tabs,
-  Stack,
-  useToggle,
-} from '@openedx/paragon';
-import {
-  CheckBoxIcon,
-  CheckBoxOutlineBlank,
-} from '@openedx/paragon/icons';
+import { Button, Tab, Tabs, Stack, useToggle } from '@openedx/paragon';
+import { CheckBoxIcon, CheckBoxOutlineBlank } from '@openedx/paragon/icons';
 import { getBlockType } from '@src/generic/key-utils';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
@@ -106,8 +97,8 @@ const ComponentActions = ({
   componentId,
   hasUnpublishedChanges,
 }: {
-  componentId: string,
-  hasUnpublishedChanges: boolean,
+  componentId: string;
+  hasUnpublishedChanges: boolean;
 }) => {
   const intl = useIntl();
   const { openComponentEditor } = useOptionalLibraryContext();
@@ -117,12 +108,7 @@ const ComponentActions = ({
   const { sidebarItemInfo } = useSidebarContext();
 
   if (isPublisherOpen) {
-    return (
-      <ComponentPublisher
-        handleClose={closePublisher}
-        componentId={componentId}
-      />
-    );
+    return <ComponentPublisher handleClose={closePublisher} componentId={componentId} />;
   }
 
   return (
@@ -140,9 +126,7 @@ const ComponentActions = ({
             <PublishedChip />
           </div>
         ) : (
-          <PublishDraftButton
-            onClick={openPublisher}
-          />
+          <PublishDraftButton onClick={openPublisher} />
         )}
       </div>
       <div className="mt-2">
@@ -156,20 +140,10 @@ const ComponentInfo = () => {
   const intl = useIntl();
   const { readOnly } = useOptionalLibraryContext();
 
-  const {
-    sidebarTab,
-    setSidebarTab,
-    sidebarItemInfo,
-    defaultTab,
-    hiddenTabs,
-    resetSidebarAction,
-  } = useSidebarContext();
+  const { sidebarTab, setSidebarTab, sidebarItemInfo, defaultTab, hiddenTabs, resetSidebarAction } =
+    useSidebarContext();
 
-  const tab: ComponentInfoTab = (
-    isComponentInfoTab(sidebarTab)
-      ? sidebarTab
-      : defaultTab.component
-  );
+  const tab: ComponentInfoTab = isComponentInfoTab(sidebarTab) ? sidebarTab : defaultTab.component;
 
   const handleTabChange = (newTab: ComponentInfoTab) => {
     resetSidebarAction();
@@ -186,26 +160,24 @@ const ComponentInfo = () => {
   const hasUnpublishedChanges = componentMetadata?.hasUnpublishedChanges || false;
 
   // TODO: refactor sidebar Tabs to handle rendering and disabledTabs in one place.
-  const renderTab = React.useCallback((infoTab: ComponentInfoTab, component: React.ReactNode, title: string) => {
-    if (hiddenTabs.includes(infoTab)) {
-      // For some reason, returning anything other than empty list breaks the tab style
-      return [];
-    }
-    return (
-      <Tab eventKey={infoTab} title={title}>
-        {component}
-      </Tab>
-    );
-  }, [hiddenTabs, defaultTab.component]);
+  const renderTab = React.useCallback(
+    (infoTab: ComponentInfoTab, component: React.ReactNode, title: string) => {
+      if (hiddenTabs.includes(infoTab)) {
+        // For some reason, returning anything other than empty list breaks the tab style
+        return [];
+      }
+      return (
+        <Tab eventKey={infoTab} title={title}>
+          {component}
+        </Tab>
+      );
+    },
+    [hiddenTabs, defaultTab.component],
+  );
 
   return (
     <Stack>
-      {!readOnly && (
-        <ComponentActions
-          componentId={componentId}
-          hasUnpublishedChanges={hasUnpublishedChanges}
-        />
-      )}
+      {!readOnly && <ComponentActions componentId={componentId} hasUnpublishedChanges={hasUnpublishedChanges} />}
       <AddComponentWidget />
       <Tabs
         variant="tabs"

@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   title: {
     id: 'authoring.videoeditor.license.title',
     defaultMessage: 'License',
@@ -74,7 +73,8 @@ const messages = defineMessages({
   },
   defaultLicenseDescription: {
     id: 'authoring.videoeditor.license.defaultLicenseDescription.message',
-    defaultMessage: 'When a video has a different license than the course as a whole, learners see the license at the bottom right of the video player.',
+    defaultMessage:
+      'When a video has a different license than the course as a whole, learners see the license at the bottom right of the video player.',
     description: 'Message explaining where video specific licenses are seen by users',
   },
   attributionCheckboxLabel: {
@@ -84,7 +84,8 @@ const messages = defineMessages({
   },
   attributionSectionDescription: {
     id: 'authoring.videoeditor.license.attributionSectionDescription',
-    defaultMessage: 'Allow others to copy, distribute, display and perform your copyrighted work but only if they give credit the way you request. Currently, this option is required.',
+    defaultMessage:
+      'Allow others to copy, distribute, display and perform your copyrighted work but only if they give credit the way you request. Currently, this option is required.',
     description: 'Attribution card section defining attribution license',
   },
   noncommercialCheckboxLabel: {
@@ -94,7 +95,8 @@ const messages = defineMessages({
   },
   noncommercialSectionDescription: {
     id: 'authoring.videoeditor.license.noncommercialSectionDescription',
-    defaultMessage: 'Allow others to copy, distribute, display and perform your work - and derivative works based upon it - but for noncommercial purposes only.',
+    defaultMessage:
+      'Allow others to copy, distribute, display and perform your work - and derivative works based upon it - but for noncommercial purposes only.',
     description: 'Noncommercial card section defining noncommercial license',
   },
   noDerivativesCheckboxLabel: {
@@ -104,7 +106,8 @@ const messages = defineMessages({
   },
   noDerivativesSectionDescription: {
     id: 'authoring.videoeditor.license.noDerivativesSectionDescription',
-    defaultMessage: 'Allow others to copy, distribute, display and perform only verbatim copies of your work, not derivative works based upon it. This option is incompatible with "Share Alike".',
+    defaultMessage:
+      'Allow others to copy, distribute, display and perform only verbatim copies of your work, not derivative works based upon it. This option is incompatible with "Share Alike".',
     description: 'No Derivatives card section defining no derivatives license',
   },
   shareAlikeCheckboxLabel: {
@@ -114,7 +117,8 @@ const messages = defineMessages({
   },
   shareAlikeSectionDescription: {
     id: 'authoring.videoeditor.license.shareAlikeSectionDescription',
-    defaultMessage: 'Allow others to distribute derivative works only under a license identical to the license that governs your work. This option is incompatible with "No Derivatives".',
+    defaultMessage:
+      'Allow others to distribute derivative works only under a license identical to the license that governs your work. This option is incompatible with "No Derivatives".',
     description: 'Share Alike card section defining no derivatives license',
   },
   allRightsReservedSectionMessage: {

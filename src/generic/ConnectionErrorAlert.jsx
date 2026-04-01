@@ -13,9 +13,7 @@ const ConnectionErrorAlert = () => {
         {...messages.connectionError}
         values={{
           supportLink: (
-            <Alert.Link href={getConfig().SUPPORT_URL}>
-              {intl.formatMessage(messages.supportText)}
-            </Alert.Link>
+            <Alert.Link href={getConfig().SUPPORT_URL}>{intl.formatMessage(messages.supportText)}</Alert.Link>
           ),
         }}
       />

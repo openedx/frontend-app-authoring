@@ -1,9 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  Button,
-} from '@openedx/paragon';
+import { Button } from '@openedx/paragon';
 
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
@@ -11,16 +9,15 @@ import './index.scss';
 
 import * as hooks from './hooks';
 
-const CodeEditor = ({
-  innerRef,
-  value,
-  lang,
-}) => {
+const CodeEditor = ({ innerRef, value, lang }) => {
   const intl = useIntl();
   const DOMref = useRef();
   const btnRef = useRef();
   hooks.createCodeMirrorDomNode({
-    ref: DOMref, initialText: value, upstreamRef: innerRef, lang,
+    ref: DOMref,
+    initialText: value,
+    upstreamRef: innerRef,
+    lang,
   });
   const { showBtnEscapeHTML, hideBtn } = hooks.prepareShowBtnEscapeHTML();
 

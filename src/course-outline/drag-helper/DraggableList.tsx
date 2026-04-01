@@ -16,44 +16,35 @@ import {
   DragStartEvent,
   CollisionDetection,
 } from '@dnd-kit/core';
-import {
-  arrayMove,
-  sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable';
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 import { createPortal } from 'react-dom';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { XBlock } from '@src/data/types';
 import DragContextProvider from './DragContextProvider';
-import {
-  moveSubsectionOver,
-  moveUnitOver,
-  moveSubsection,
-  moveUnit,
-  dragHelpers,
-} from './utils';
+import { moveSubsectionOver, moveUnitOver, moveSubsection, moveUnit, dragHelpers } from './utils';
 import CourseItemOverlay from './CourseItemOverlay';
 
 interface DraggableListProps {
-  items: XBlock[],
-  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>,
-  restoreSectionList: () => void,
-  handleSectionDragAndDrop: (sectionListIds: string[], restoreSectionList: () => void) => void,
+  items: XBlock[];
+  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
+  restoreSectionList: () => void;
+  handleSectionDragAndDrop: (sectionListIds: string[], restoreSectionList: () => void) => void;
   handleSubsectionDragAndDrop: (
     sectionId: string,
     prevSectionId: string,
     subsectionListIds: string[],
     restoreSectionList: () => void,
-  ) => void,
+  ) => void;
   handleUnitDragAndDrop: (
     sectionId: string,
     prevSectionId: string,
     subsectionId: string,
     unitListIds: string[],
     restoreSectionList: () => void,
-  ) => void,
-  children: React.ReactNode,
+  ) => void;
+  children: React.ReactNode;
 }
 
 interface ItemInfoType {
@@ -143,16 +134,11 @@ const DraggableList = ({
   // See https://github.com/openedx/frontend-app-course-authoring/pull/859#discussion_r1519199622
   // for more details.
   /* istanbul ignore next */
-  const subsectionDragOver = (
-    active: Active,
-    over: Over,
-    activeInfo: ItemInfoType,
-    overInfo: ItemInfoType,
-  ) => {
+  const subsectionDragOver = (active: Active, over: Over, activeInfo: ItemInfoType, overInfo: ItemInfoType) => {
     if (
-      activeInfo.parent?.id === overInfo.parent?.id
-      || activeInfo.parent?.id === overInfo.item.id
-      || (activeInfo.category === overInfo.category && !overInfo.parent?.actions.childAddable)
+      activeInfo.parent?.id === overInfo.parent?.id ||
+      activeInfo.parent?.id === overInfo.item.id ||
+      (activeInfo.category === overInfo.category && !overInfo.parent?.actions.childAddable)
     ) {
       return;
     }
@@ -187,16 +173,11 @@ const DraggableList = ({
   };
 
   /* istanbul ignore next */
-  const unitDragOver = (
-    active: Active,
-    over: Over,
-    activeInfo: ItemInfoType,
-    overInfo: ItemInfoType,
-  ) => {
+  const unitDragOver = (active: Active, over: Over, activeInfo: ItemInfoType, overInfo: ItemInfoType) => {
     if (
-      activeInfo.parent?.id === overInfo.parent?.id
-      || activeInfo.parent?.id === overInfo.item.id
-      || (activeInfo.parent?.category === overInfo.category && !overInfo.item.actions.childAddable)
+      activeInfo.parent?.id === overInfo.parent?.id ||
+      activeInfo.parent?.id === overInfo.item.id ||
+      (activeInfo.parent?.category === overInfo.category && !overInfo.item.actions.childAddable)
     ) {
       return;
     }
@@ -286,8 +267,8 @@ const DraggableList = ({
     }
 
     if (
-      activeInfo.category !== overInfo.category
-      || (activeInfo.parent && activeInfo.parentIndex !== overInfo.parentIndex)
+      activeInfo.category !== overInfo.category ||
+      (activeInfo.parent && activeInfo.parentIndex !== overInfo.parentIndex)
     ) {
       return;
     }
@@ -297,7 +278,10 @@ const DraggableList = ({
         case COURSE_BLOCK_NAMES.chapter.id:
           setSections((prev) => {
             const result = arrayMove(prev, activeInfo.index, overInfo.index);
-            handleSectionDragAndDrop(result.map(section => section.id), restoreSectionList);
+            handleSectionDragAndDrop(
+              result.map((section) => section.id),
+              restoreSectionList,
+            );
             return result;
           });
           break;
@@ -312,7 +296,7 @@ const DraggableList = ({
             handleSubsectionDragAndDrop(
               activeInfo.parent!.id,
               prevContainerInfo.current!,
-              result.map(subsection => subsection.id),
+              result.map((subsection) => subsection.id),
               restoreSectionList,
             );
             return prevCopy;
@@ -331,7 +315,7 @@ const DraggableList = ({
               activeInfo.grandParent!.id,
               prevContainerInfo.current!,
               activeInfo.parent!.id,
-              result.map(unit => unit.id),
+              result.map((unit) => unit.id),
               restoreSectionList,
             );
             return prevCopy;
@@ -353,39 +337,36 @@ const DraggableList = ({
     // Get the dragged element data
     const { displayName, category, status } = active.data.current;
     // Create a simple clone of the item to use in the overlay
-    setDraggedItemClone(
-      <CourseItemOverlay
-        displayName={displayName}
-        category={category}
-        status={status}
-      />,
-    );
+    setDraggedItemClone(<CourseItemOverlay displayName={displayName} category={category} status={status} />);
   };
 
-  const customClosestCorners: CollisionDetection = ({
-    active, droppableContainers, droppableRects, ...args
-  }) => {
+  const customClosestCorners: CollisionDetection = ({ active, droppableContainers, droppableRects, ...args }) => {
     const activeCategory = active.data?.current?.category;
-    const filteredContainers = droppableContainers.filter(
-      (container) => {
-        switch (activeCategory) {
-          case COURSE_BLOCK_NAMES.chapter.id:
-            return container.data?.current?.category === activeCategory;
-          case COURSE_BLOCK_NAMES.sequential.id:
-            return (container.data?.current?.category === COURSE_BLOCK_NAMES.chapter.id
-              && container.data?.current?.childAddable)
-              || (container.data?.current?.category === activeCategory);
-          case COURSE_BLOCK_NAMES.vertical.id:
-            return (container.data?.current?.category === COURSE_BLOCK_NAMES.sequential.id
-              && container.data?.current?.childAddable)
-              || (container.data?.current?.category === activeCategory);
-          default:
-            return true;
-        }
-      },
-    );
+    const filteredContainers = droppableContainers.filter((container) => {
+      switch (activeCategory) {
+        case COURSE_BLOCK_NAMES.chapter.id:
+          return container.data?.current?.category === activeCategory;
+        case COURSE_BLOCK_NAMES.sequential.id:
+          return (
+            (container.data?.current?.category === COURSE_BLOCK_NAMES.chapter.id &&
+              container.data?.current?.childAddable) ||
+            container.data?.current?.category === activeCategory
+          );
+        case COURSE_BLOCK_NAMES.vertical.id:
+          return (
+            (container.data?.current?.category === COURSE_BLOCK_NAMES.sequential.id &&
+              container.data?.current?.childAddable) ||
+            container.data?.current?.category === activeCategory
+          );
+        default:
+          return true;
+      }
+    });
     return closestCorners({
-      active, droppableContainers: filteredContainers, droppableRects, ...args,
+      active,
+      droppableContainers: filteredContainers,
+      droppableRects,
+      ...args,
     });
   };
 
@@ -403,12 +384,7 @@ const DraggableList = ({
       <DragContextProvider activeId={activeId} overId={currentOverId}>
         {children}
       </DragContextProvider>
-      {createPortal(
-        <DragOverlay>
-          {draggedItemClone && activeId ? draggedItemClone : null}
-        </DragOverlay>,
-        document.body,
-      )}
+      {createPortal(<DragOverlay>{draggedItemClone && activeId ? draggedItemClone : null}</DragOverlay>, document.body)}
     </DndContext>
   );
 };

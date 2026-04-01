@@ -22,32 +22,27 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <ExperimentConfigurationsSection
-      availableGroups={experimentGroupConfigurationsMock}
-      experimentConfigurationActions={experimentConfigurationActions}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <ExperimentConfigurationsSection
+        availableGroups={experimentGroupConfigurationsMock}
+        experimentConfigurationActions={experimentConfigurationActions}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ExperimentConfigurationsSection />', () => {
   it('renders component correctly', () => {
     const { getByText, getByRole, getAllByTestId } = renderComponent();
     expect(getByText(messages.title.defaultMessage)).toBeInTheDocument();
-    expect(
-      getByRole('button', { name: messages.addNewGroup.defaultMessage }),
-    ).toBeInTheDocument();
-    expect(getAllByTestId('configuration-card')).toHaveLength(
-      experimentGroupConfigurationsMock.length,
-    );
+    expect(getByRole('button', { name: messages.addNewGroup.defaultMessage })).toBeInTheDocument();
+    expect(getAllByTestId('configuration-card')).toHaveLength(experimentGroupConfigurationsMock.length);
   });
 
   it('renders empty section', () => {
     const { getByTestId } = renderComponent({ availableGroups: [] });
-    expect(
-      getByTestId('group-configurations-empty-placeholder'),
-    ).toBeInTheDocument();
+    expect(getByTestId('group-configurations-empty-placeholder')).toBeInTheDocument();
   });
 });

@@ -1,6 +1,4 @@
-import {
-  createContext, ReactNode, useContext, useEffect, useMemo, useState,
-} from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { getLoadingStatuses, getStudioHomeCoursesParams, getStudioHomeData } from '@src/studio-home/data/selectors';
@@ -35,11 +33,8 @@ export const CourseImportFilterProvider = ({ handleSelect, selectedCourseId, chi
   const { currentPage } = studioHomeCoursesParams;
   const { courseLoadingStatus } = useSelector(getLoadingStatuses);
   const isCourseListLoading = courseLoadingStatus === RequestStatus.IN_PROGRESS;
-  const allVisibleCourseIds = courses?.map(item => item.courseKey) || [];
-  const {
-    data: migrationInfoData,
-    isPending,
-  } = useMigrationInfo(allVisibleCourseIds, allVisibleCourseIds.length > 0);
+  const allVisibleCourseIds = courses?.map((item) => item.courseKey) || [];
+  const { data: migrationInfoData, isPending } = useMigrationInfo(allVisibleCourseIds, allVisibleCourseIds.length > 0);
 
   const processedMigrationInfo: Record<string, string[]> = useMemo(() => {
     const result = {};
@@ -48,21 +43,28 @@ export const CourseImportFilterProvider = ({ handleSelect, selectedCourseId, chi
         // The map key in `migrationInfoData` is in camelCase.
         // In the processed map, we use the key in its original form.
         if (libraries.length !== 0) {
-          result[libraries[0]?.sourceKey] = libraries.map(item => item.targetKey);
+          result[libraries[0]?.sourceKey] = libraries.map((item) => item.targetKey);
         }
       }
     }
     return result;
   }, [migrationInfoData]);
 
-  const filteredCourses: any[] = useMemo(() => (hidePreviouslyImportedCourses && libraryId
-    ? courses?.filter(course => !processedMigrationInfo[course.courseKey]?.includes(libraryId))
-    : courses), [hidePreviouslyImportedCourses, libraryId, processedMigrationInfo, courses]);
+  const filteredCourses: any[] = useMemo(
+    () =>
+      hidePreviouslyImportedCourses && libraryId
+        ? courses?.filter((course) => !processedMigrationInfo[course.courseKey]?.includes(libraryId))
+        : courses,
+    [hidePreviouslyImportedCourses, libraryId, processedMigrationInfo, courses],
+  );
 
   useEffect(() => {
     // Filter the courses based on selected course id and handle the selection change
-    if (!isCourseListLoading && !isPending
-      && filteredCourses.findIndex(course => course.courseKey === selectedCourseId) === -1) {
+    if (
+      !isCourseListLoading &&
+      !isPending &&
+      filteredCourses.findIndex((course) => course.courseKey === selectedCourseId) === -1
+    ) {
       handleSelect?.('');
     }
   }, [filteredCourses, selectedCourseId, handleSelect]);
@@ -79,31 +81,23 @@ export const CourseImportFilterProvider = ({ handleSelect, selectedCourseId, chi
     // HACK: If there are no courses that were not imported in the current page, then we need to fetch
     // the next page of courses.
     // FIXME: This workaround causes page flicker when the next page has also has no courses that were not imported.
-    if ((numPages > currentPage) && filteredCourses.length === 0 && !isCourseListLoading) {
+    if (numPages > currentPage && filteredCourses.length === 0 && !isCourseListLoading) {
       dispatch(fetchStudioHomeData(undefined, false, { ...studioHomeCoursesParams, page: currentPage + 1 }));
       dispatch(updateStudioHomeCoursesCustomParams({ ...studioHomeCoursesParams, currentPage: currentPage + 1 }));
     }
-  }, [
-    numPages,
-    filteredCourses,
-    courses,
-    dispatch,
-    courseLoadingStatus,
-    studioHomeCoursesParams,
-  ]);
+  }, [numPages, filteredCourses, courses, dispatch, courseLoadingStatus, studioHomeCoursesParams]);
 
-  const value = useMemo(() => ({
-    processedMigrationInfo,
-    hidePreviouslyImportedCourses,
-    setHidePreviouslyImportedCourses,
-    filteredCourses,
-  }), [processedMigrationInfo, hidePreviouslyImportedCourses, setHidePreviouslyImportedCourses]);
-
-  return (
-    <CourseImportFilterContext.Provider value={value}>
-      {children}
-    </CourseImportFilterContext.Provider>
+  const value = useMemo(
+    () => ({
+      processedMigrationInfo,
+      hidePreviouslyImportedCourses,
+      setHidePreviouslyImportedCourses,
+      filteredCourses,
+    }),
+    [processedMigrationInfo, hidePreviouslyImportedCourses, setHidePreviouslyImportedCourses],
   );
+
+  return <CourseImportFilterContext.Provider value={value}>{children}</CourseImportFilterContext.Provider>;
 };
 
 export const useCourseImportFilter = () => useContext(CourseImportFilterContext);

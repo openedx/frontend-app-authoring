@@ -2,23 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Form,
-  Icon,
-  Stack,
-  TransitionReplace,
-} from '@openedx/paragon';
+import { Form, Icon, Stack, TransitionReplace } from '@openedx/paragon';
 import { Check } from '@openedx/paragon/icons';
 import FormDropdown from './FormDropdown';
 import { getLanguageOptions } from '../data/utils';
 import messages from './messages';
 
-const ThreePlayMediaForm = ({
-  hasTranscriptCredentials,
-  data,
-  setData,
-  transcriptionPlan,
-}) => {
+const ThreePlayMediaForm = ({ hasTranscriptCredentials, data, setData, transcriptionPlan }) => {
   const intl = useIntl();
   if (hasTranscriptCredentials) {
     const selectedLanguages = data.preferredLanguages ? data.preferredLanguages : [];
@@ -83,7 +73,7 @@ const ThreePlayMediaForm = ({
               />
               <Form.Control.Feedback>
                 <ul className="m-0 p-0">
-                  {selectedLanguages.map(language => (
+                  {selectedLanguages.map((language) => (
                     <li className="row align-items-center m-0 pt-2" key={language}>
                       <Icon src={Check} size="xs" /> <span>{languages[language]}</span>
                     </li>
@@ -91,7 +81,7 @@ const ThreePlayMediaForm = ({
                 </ul>
               </Form.Control.Feedback>
             </Form.Group>
-          ) : null }
+          ) : null}
         </TransitionReplace>
       </Stack>
     );

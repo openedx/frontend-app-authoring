@@ -1,6 +1,4 @@
-const useEditSignatory = ({
-  arrayHelpers, editModes, setEditModes, setFieldValue, initialSignatoriesValues,
-}) => {
+const useEditSignatory = ({ arrayHelpers, editModes, setEditModes, setFieldValue, initialSignatoriesValues }) => {
   const handleDeleteSignatory = (id) => {
     arrayHelpers.remove(id);
 
@@ -12,7 +10,7 @@ const useEditSignatory = ({
   };
 
   const toggleEditSignatory = (id) => {
-    setEditModes(prev => ({
+    setEditModes((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
@@ -20,7 +18,7 @@ const useEditSignatory = ({
 
   const handleCancelUpdateSignatory = (id) => {
     const signatoryInitialValues = initialSignatoriesValues[id];
-    Object.keys(signatoryInitialValues).forEach(fieldKey => {
+    Object.keys(signatoryInitialValues).forEach((fieldKey) => {
       const fieldName = `signatories[${id}].${fieldKey}`;
       setFieldValue(fieldName, signatoryInitialValues[fieldKey]);
     });

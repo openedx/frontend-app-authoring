@@ -27,18 +27,20 @@ jest.mock('../../help-urls/hooks', () => ({
 const onEnableHighlightsSubmitMock = jest.fn();
 const closeMock = jest.fn();
 
-const renderComponent = (props) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <EnableHighlightsModal
-        isOpen
-        close={closeMock}
-        onEnableHighlightsSubmit={onEnableHighlightsSubmitMock}
-        {...props}
-      />
-    </IntlProvider>,
-  </AppProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <EnableHighlightsModal
+          isOpen
+          close={closeMock}
+          onEnableHighlightsSubmit={onEnableHighlightsSubmitMock}
+          {...props}
+        />
+      </IntlProvider>
+      ,
+    </AppProvider>,
+  );
 
 describe('<EnableHighlightsModal />', () => {
   beforeEach(() => {

@@ -56,12 +56,8 @@ describe('LibraryReferenceCard', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onGet(getXBlockApiUrl(sectionData.id))
-      .reply(200, sectionData);
-    axiosMock
-      .onGet(getXBlockApiUrl(itemData.id))
-      .reply(200, itemData);
+    axiosMock.onGet(getXBlockApiUrl(sectionData.id)).reply(200, sectionData);
+    axiosMock.onGet(getXBlockApiUrl(itemData.id)).reply(200, itemData);
   });
 
   it('renders the LibraryReferenceCard normally', async () => {
@@ -85,9 +81,7 @@ describe('LibraryReferenceCard', () => {
         errorMessage: 'some error',
       },
     };
-    axiosMock
-      .onGet(getXBlockApiUrl(itemData.id))
-      .reply(200, data);
+    axiosMock.onGet(getXBlockApiUrl(itemData.id)).reply(200, data);
     render(
       <LibraryReferenceCard
         itemId={itemData.id}
@@ -96,9 +90,11 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `The link between ${itemData.displayName} and the library version has been broken. To edit or make changes, unlink component.`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        `The link between ${itemData.displayName} and the library version has been broken. To edit or make changes, unlink component.`,
+      ),
+    ).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Unlink from library' }));
     expect(mockUseCourseAuthoringContext().openUnlinkModal).toHaveBeenCalledWith({
@@ -109,15 +105,13 @@ describe('LibraryReferenceCard', () => {
 
   it('renders the LibraryReferenceCard ready to sync', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getXBlockApiUrl(itemData.id))
-      .reply(200, {
-        ...itemData,
-        upstreamInfo: {
-          ...itemData.upstreamInfo,
-          readyToSync: true,
-        },
-      });
+    axiosMock.onGet(getXBlockApiUrl(itemData.id)).reply(200, {
+      ...itemData,
+      upstreamInfo: {
+        ...itemData.upstreamInfo,
+        readyToSync: true,
+      },
+    });
     render(
       <LibraryReferenceCard
         itemId={itemData.id}
@@ -126,24 +120,20 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} has available updates`,
-    )).toBeInTheDocument();
+    expect(await screen.findByText(`${itemData.displayName} has available updates`)).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Review Updates' }));
     expect(mockOpenSyncModal).toHaveBeenCalled();
   });
 
   it('renders the LibraryReferenceCard customized text', async () => {
-    axiosMock
-      .onGet(getXBlockApiUrl(itemData.id))
-      .reply(200, {
-        ...itemData,
-        upstreamInfo: {
-          ...itemData.upstreamInfo,
-          downstreamCustomized: ['displayName'],
-        },
-      });
+    axiosMock.onGet(getXBlockApiUrl(itemData.id)).reply(200, {
+      ...itemData,
+      upstreamInfo: {
+        ...itemData.upstreamInfo,
+        downstreamCustomized: ['displayName'],
+      },
+    });
     render(
       <LibraryReferenceCard
         itemId={itemData.id}
@@ -152,23 +142,19 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} has been modified in this course.`,
-    )).toBeInTheDocument();
+    expect(await screen.findByText(`${itemData.displayName} has been modified in this course.`)).toBeInTheDocument();
   });
 
   it('renders the LibraryReferenceCard with top level error message', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getXBlockApiUrl(itemData.id))
-      .reply(200, {
-        ...itemData,
-        upstreamInfo: {
-          ...itemData.upstreamInfo,
-          topLevelParentKey: sectionData.upstreamInfo.downstreamKey,
-          errorMessage: 'some error',
-        },
-      });
+    axiosMock.onGet(getXBlockApiUrl(itemData.id)).reply(200, {
+      ...itemData,
+      upstreamInfo: {
+        ...itemData.upstreamInfo,
+        topLevelParentKey: sectionData.upstreamInfo.downstreamKey,
+        errorMessage: 'some error',
+      },
+    });
     render(
       <LibraryReferenceCard
         itemId={itemData.id}
@@ -177,9 +163,11 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} was reused as part of a section which has a broken link. To receive library updates to this component, unlink the broken link.`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        `${itemData.displayName} was reused as part of a section which has a broken link. To receive library updates to this component, unlink the broken link.`,
+      ),
+    ).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Unlink section' }));
     // should call unlink with parent section data
@@ -191,15 +179,13 @@ describe('LibraryReferenceCard', () => {
 
   it('renders the LibraryReferenceCard with top level ready to sync', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getXBlockApiUrl(itemData.id))
-      .reply(200, {
-        ...itemData,
-        upstreamInfo: {
-          ...itemData.upstreamInfo,
-          topLevelParentKey: sectionData.upstreamInfo.downstreamKey,
-        },
-      });
+    axiosMock.onGet(getXBlockApiUrl(itemData.id)).reply(200, {
+      ...itemData,
+      upstreamInfo: {
+        ...itemData.upstreamInfo,
+        topLevelParentKey: sectionData.upstreamInfo.downstreamKey,
+      },
+    });
     const parentData = {
       ...sectionData,
       upstreamInfo: {
@@ -207,9 +193,7 @@ describe('LibraryReferenceCard', () => {
         readyToSync: true,
       },
     };
-    axiosMock
-      .onGet(getXBlockApiUrl(sectionData.id))
-      .reply(200, parentData);
+    axiosMock.onGet(getXBlockApiUrl(sectionData.id)).reply(200, parentData);
     render(
       <LibraryReferenceCard
         itemId={itemData.id}
@@ -218,9 +202,9 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} was reused as part of a section which has updates available.`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(`${itemData.displayName} was reused as part of a section which has updates available.`),
+    ).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Review Updates' }));
     expect(mockOpenSyncModal).toHaveBeenCalledWith(parentData);
@@ -228,15 +212,13 @@ describe('LibraryReferenceCard', () => {
 
   it('renders the LibraryReferenceCard with top level go to parent option', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getXBlockApiUrl(itemData.id))
-      .reply(200, {
-        ...itemData,
-        upstreamInfo: {
-          ...itemData.upstreamInfo,
-          topLevelParentKey: sectionData.upstreamInfo.downstreamKey,
-        },
-      });
+    axiosMock.onGet(getXBlockApiUrl(itemData.id)).reply(200, {
+      ...itemData,
+      upstreamInfo: {
+        ...itemData.upstreamInfo,
+        topLevelParentKey: sectionData.upstreamInfo.downstreamKey,
+      },
+    });
     render(
       <LibraryReferenceCard
         itemId={itemData.id}
@@ -245,15 +227,9 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} was reused as part of a section.`,
-    )).toBeInTheDocument();
+    expect(await screen.findByText(`${itemData.displayName} was reused as part of a section.`)).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'View section' }));
-    expect(mockOpenContainerInfoSidebar).toHaveBeenCalledWith(
-      sectionData.id,
-      undefined,
-      sectionData.id,
-    );
+    expect(mockOpenContainerInfoSidebar).toHaveBeenCalledWith(sectionData.id, undefined, sectionData.id);
   });
 });

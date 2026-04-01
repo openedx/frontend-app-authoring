@@ -1,14 +1,7 @@
-import {
-  initializeMocks,
-  render as testRender,
-  screen,
-} from '@src/testUtils';
+import { initializeMocks, render as testRender, screen } from '@src/testUtils';
 
 import { LibraryProvider } from '../common/context/LibraryContext';
-import {
-  mockContentLibrary,
-  mockGetCourseImports,
-} from '../data/api.mocks';
+import { mockContentLibrary, mockGetCourseImports } from '../data/api.mocks';
 import { CourseImportHomePage } from './CourseImportHomePage';
 
 mockContentLibrary.applyMock();
@@ -20,20 +13,14 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const render = (libraryId: string) => (
-  testRender(
-    <CourseImportHomePage />,
-    {
-      extraWrapper: ({ children }: { children: React.ReactNode }) => (
-        <LibraryProvider libraryId={libraryId}>
-          {children}
-        </LibraryProvider>
-      ),
-      path: '/libraries/:libraryId/import',
-      params: { libraryId },
-    },
-  )
-);
+const render = (libraryId: string) =>
+  testRender(<CourseImportHomePage />, {
+    extraWrapper: ({ children }: { children: React.ReactNode }) => (
+      <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
+    ),
+    path: '/libraries/:libraryId/import',
+    params: { libraryId },
+  });
 
 describe('<CourseImportHomePage>', () => {
   beforeEach(() => {

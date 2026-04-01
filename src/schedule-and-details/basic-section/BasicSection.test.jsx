@@ -27,12 +27,8 @@ describe('<BasicSection />', () => {
   it('renders basic section successfully', () => {
     const { getByText } = render(<RootWrapper {...props} />);
     expect(getByText(messages.basicTitle.defaultMessage)).toBeInTheDocument();
-    expect(
-      getByText(messages.basicDescription.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByText(messages.courseOrganization.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.basicDescription.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.courseOrganization.defaultMessage)).toBeInTheDocument();
     expect(getByText(props.org)).toBeInTheDocument();
     expect(getByText(messages.courseNumber.defaultMessage)).toBeInTheDocument();
     expect(getByText(props.courseNumber)).toBeInTheDocument();
@@ -42,28 +38,20 @@ describe('<BasicSection />', () => {
 
   it('shows the page banner if the marketingEnabled is true', () => {
     const { getByText, queryAllByText } = render(<RootWrapper {...props} />);
-    expect(
-      getByText(`Promoting your course with ${props.platformName}`),
-    ).toBeInTheDocument();
-    expect(
-      getByText(messages.basicBannerText.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(`Promoting your course with ${props.platformName}`)).toBeInTheDocument();
+    expect(getByText(messages.basicBannerText.defaultMessage)).toBeInTheDocument();
     expect(queryAllByText('Course summary page').length).toBe(0);
   });
 
   it('shows the course promotion if the marketingEnabled is false', () => {
     const initialProps = { ...props, marketingEnabled: false };
-    const { getByText, getByRole, queryAllByText } = render(
-      <RootWrapper {...initialProps} />,
-    );
+    const { getByText, getByRole, queryAllByText } = render(<RootWrapper {...initialProps} />);
     const inviteButton = getByRole('button', {
       name: messages.basicPromotionButton.defaultMessage,
     });
 
     expect(getByText(/Course Summary Page/i)).toBeInTheDocument();
-    expect(
-      getByText(/(for student enrollment and access)/i),
-    ).toBeInTheDocument();
+    expect(getByText(/(for student enrollment and access)/i)).toBeInTheDocument();
     expect(getByText(props.lmsLinkForAboutPage)).toBeInTheDocument();
     expect(inviteButton).toBeInTheDocument();
     expect(queryAllByText(`Promoting your course with ${props.platformName}`).length).toBe(0);

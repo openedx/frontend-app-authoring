@@ -10,14 +10,16 @@ jest.mock('@src/editors/data/redux', () => ({
   },
   selectors: {
     video: {
-      getHandoutDownloadUrl: jest.fn(args => ({ getHandoutDownloadUrl: args })).mockName('selectors.video.getHandoutDownloadUrl'),
-      handout: jest.fn(state => ({ handout: state })),
+      getHandoutDownloadUrl: jest
+        .fn((args) => ({ getHandoutDownloadUrl: args }))
+        .mockName('selectors.video.getHandoutDownloadUrl'),
+      handout: jest.fn((state) => ({ handout: state })),
     },
     app: {
-      isLibrary: jest.fn(args => ({ isLibrary: args })),
+      isLibrary: jest.fn((args) => ({ isLibrary: args })),
     },
     requests: {
-      isFailed: jest.fn(args => ({ isFailed: args })),
+      isFailed: jest.fn((args) => ({ isFailed: args })),
     },
   },
 }));

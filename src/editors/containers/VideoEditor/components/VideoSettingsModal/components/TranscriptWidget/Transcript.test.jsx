@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, fireEvent, screen, initializeMocks,
-} from 'CourseAuthoring/testUtils';
+import { render, fireEvent, screen, initializeMocks } from 'CourseAuthoring/testUtils';
 import { TranscriptInternal, hooks } from './Transcript';
 
 jest.mock('./TranscriptActionMenu', () => jest.fn(() => <div>TranscriptActionMenu</div>));

@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   // index
   titleLabel: {
     id: 'authoring.texteditor.imagesettingsmodal.titleLabel',

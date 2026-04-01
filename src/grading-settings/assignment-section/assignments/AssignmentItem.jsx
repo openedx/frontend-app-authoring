@@ -22,9 +22,10 @@ const AssignmentItem = ({
   trailingElement,
 }) => (
   <li className={className}>
-    <Form.Group className={classNames('form-group-custom', {
-      'form-group-custom_isInvalid': errorEffort,
-    })}
+    <Form.Group
+      className={classNames('form-group-custom', {
+        'form-group-custom_isInvalid': errorEffort,
+      })}
     >
       <Form.Label className="grading-label">{title}</Form.Label>
       <Form.Control
@@ -38,9 +39,7 @@ const AssignmentItem = ({
         isInvalid={errorEffort}
         trailingElement={trailingElement}
       />
-      <Form.Control.Feedback className="grading-description">
-        {descriptions}
-      </Form.Control.Feedback>
+      <Form.Control.Feedback className="grading-description">{descriptions}</Form.Control.Feedback>
       {errorEffort && (
         <Form.Control.Feedback className="feedback-error" type="invalid">
           {errorMsg}

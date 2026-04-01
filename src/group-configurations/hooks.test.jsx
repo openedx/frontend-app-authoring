@@ -45,9 +45,7 @@ let dispatch;
 
 const wrapper = ({ children }) => (
   <Provider store={store}>
-    <IntlProvider locale="en">
-      {children}
-    </IntlProvider>
+    <IntlProvider locale="en">{children}</IntlProvider>
   </Provider>
 );
 
@@ -64,9 +62,7 @@ describe('useGroupConfigurations', () => {
 
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock
-      .onGet(getContentStoreApiUrl(courseId))
-      .reply(200, groupConfigurationResponseMock);
+    axiosMock.onGet(getContentStoreApiUrl(courseId)).reply(200, groupConfigurationResponseMock);
     dispatch = jest.fn().mockImplementation(() => Promise.resolve(true));
     useDispatch.mockReturnValue(dispatch);
   });

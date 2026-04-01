@@ -1,24 +1,14 @@
 // @ts-check
 import React, { useState } from 'react';
-import {
-  ActionRow,
-  Button,
-  Container,
-  Form,
-  ModalDialog,
-} from '@openedx/paragon';
+import { ActionRow, Button, Container, Form, ModalDialog } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { getTaxonomyExportFile } from '../data/api';
 
-const ExportModal = ({
-  taxonomyId,
-  isOpen,
-  onClose,
-}) => {
+const ExportModal = ({ taxonomyId, isOpen, onClose }) => {
   const intl = useIntl();
-  const [outputFormat, setOutputFormat] = useState(/** @type {'csv'|'json'} */('csv'));
+  const [outputFormat, setOutputFormat] = useState(/** @type {'csv'|'json'} */ ('csv'));
 
   const onClickExport = React.useCallback(() => {
     onClose();
@@ -38,30 +28,16 @@ const ExportModal = ({
         className="taxonomy-export-modal"
       >
         <ModalDialog.Header>
-          <ModalDialog.Title>
-            {intl.formatMessage(messages.exportModalTitle)}
-          </ModalDialog.Title>
+          <ModalDialog.Title>{intl.formatMessage(messages.exportModalTitle)}</ModalDialog.Title>
         </ModalDialog.Header>
         <ModalDialog.Body className="pb-5 mt-2">
           <Form.Group>
-            <Form.Label>
-              {intl.formatMessage(messages.exportModalBodyDescription)}
-            </Form.Label>
-            <Form.RadioSet
-              name="export-format"
-              value={outputFormat}
-              onChange={(e) => setOutputFormat(e.target.value)}
-            >
-              <Form.Radio
-                key={`export-csv-format-${taxonomyId}`}
-                value="csv"
-              >
+            <Form.Label>{intl.formatMessage(messages.exportModalBodyDescription)}</Form.Label>
+            <Form.RadioSet name="export-format" value={outputFormat} onChange={(e) => setOutputFormat(e.target.value)}>
+              <Form.Radio key={`export-csv-format-${taxonomyId}`} value="csv">
                 {intl.formatMessage(messages.taxonomyCSVFormat)}
               </Form.Radio>
-              <Form.Radio
-                key={`export-json-format-${taxonomyId}`}
-                value="json"
-              >
+              <Form.Radio key={`export-json-format-${taxonomyId}`} value="json">
                 {intl.formatMessage(messages.taxonomyJSONFormat)}
               </Form.Radio>
             </Form.RadioSet>
@@ -72,11 +48,7 @@ const ExportModal = ({
             <ModalDialog.CloseButton variant="tertiary">
               {intl.formatMessage(messages.taxonomyModalsCancelLabel)}
             </ModalDialog.CloseButton>
-            <Button
-              variant="primary"
-              onClick={onClickExport}
-              data-testid={`export-button-${taxonomyId}`}
-            >
+            <Button variant="primary" onClick={onClickExport} data-testid={`export-button-${taxonomyId}`}>
               {intl.formatMessage(messages.exportModalSubmitButtonLabel)}
             </Button>
           </ActionRow>

@@ -6,18 +6,7 @@ import * as healthValidators from './courseChecklistValidators';
  * Perform a minor refactoring of the functions while preserving their original functionality.
  */
 const getChecklistValidatedValue = (data, id) => {
-  const {
-    updates,
-    grades,
-    certificates,
-    dates,
-    assignments,
-    videos,
-    subsections,
-    sections,
-    units,
-    proctoring,
-  } = data;
+  const { updates, grades, certificates, dates, assignments, videos, subsections, sections, units, proctoring } = data;
 
   switch (id) {
     case 'welcomeMessage':
@@ -55,21 +44,22 @@ const getChecklistValues = ({
   let filteredCheckList;
 
   if (isSelfPaced) {
-    filteredCheckList = checklist.filter(({ pacingTypeFilter }) => pacingTypeFilter === CHECKLIST_FILTERS.ALL
-      || pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED);
+    filteredCheckList = checklist.filter(
+      ({ pacingTypeFilter }) =>
+        pacingTypeFilter === CHECKLIST_FILTERS.ALL || pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED,
+    );
   } else {
-    filteredCheckList = checklist.filter(({ pacingTypeFilter }) => pacingTypeFilter === CHECKLIST_FILTERS.ALL
-      || pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED);
+    filteredCheckList = checklist.filter(
+      ({ pacingTypeFilter }) =>
+        pacingTypeFilter === CHECKLIST_FILTERS.ALL || pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED,
+    );
   }
 
-  filteredCheckList = filteredCheckList.filter(({ id }) => id !== 'certificate'
-    || hasCertificatesEnabled);
+  filteredCheckList = filteredCheckList.filter(({ id }) => id !== 'certificate' || hasCertificatesEnabled);
 
-  filteredCheckList = filteredCheckList.filter(({ id }) => id !== 'weeklyHighlights'
-    || hasHighlightsEnabled);
+  filteredCheckList = filteredCheckList.filter(({ id }) => id !== 'weeklyHighlights' || hasHighlightsEnabled);
 
-  filteredCheckList = filteredCheckList.filter(({ id }) => id !== 'proctoringEmail'
-    || needsProctoringEscalationEmail);
+  filteredCheckList = filteredCheckList.filter(({ id }) => id !== 'proctoringEmail' || needsProctoringEscalationEmail);
 
   return filteredCheckList;
 };

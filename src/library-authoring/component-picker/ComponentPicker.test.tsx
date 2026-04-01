@@ -1,13 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
-import {
-  initializeMocks,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '../../testUtils';
+import { initializeMocks, fireEvent, render, screen, waitFor, within } from '../../testUtils';
 import mockResult from '../__mocks__/library-search.json';
 import mockCollectionResult from '../__mocks__/collection-search.json';
 import {
@@ -114,11 +107,14 @@ describe('<LibraryAndComponentPicker />', () => {
     // Click the add component from the component card
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add' })[0]);
 
-    expect(postMessageSpy).toHaveBeenCalledWith({
-      usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-      type: 'pickerComponentSelected',
-      category: 'html',
-    }, '*');
+    expect(postMessageSpy).toHaveBeenCalledWith(
+      {
+        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+        type: 'pickerComponentSelected',
+        category: 'html',
+      },
+      '*',
+    );
   });
 
   it('should pick component using the component sidebar', async () => {
@@ -142,11 +138,14 @@ describe('<LibraryAndComponentPicker />', () => {
     // Click the add component from the component sidebar
     fireEvent.click(within(sidebar).getByRole('button', { name: 'Add to Course' }));
 
-    expect(postMessageSpy).toHaveBeenCalledWith({
-      usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-      type: 'pickerComponentSelected',
-      category: 'html',
-    }, '*');
+    expect(postMessageSpy).toHaveBeenCalledWith(
+      {
+        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+        type: 'pickerComponentSelected',
+        category: 'html',
+      },
+      '*',
+    );
   });
 
   it('should open the unit sidebar', async () => {
@@ -160,7 +159,7 @@ describe('<LibraryAndComponentPicker />', () => {
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
 
     // Click on the unit card to open the sidebar
-    fireEvent.click((await screen.findByText('Published Test Unit')));
+    fireEvent.click(await screen.findByText('Published Test Unit'));
 
     const sidebar = await screen.findByTestId('library-sidebar');
     expect(sidebar).toBeInTheDocument();
@@ -223,11 +222,14 @@ describe('<LibraryAndComponentPicker />', () => {
     // Click the add component from the component card
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add' })[0]);
 
-    expect(postMessageSpy).toHaveBeenCalledWith({
-      usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-      type: 'pickerComponentSelected',
-      category: 'html',
-    }, '*');
+    expect(postMessageSpy).toHaveBeenCalledWith(
+      {
+        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+        type: 'pickerComponentSelected',
+        category: 'html',
+      },
+      '*',
+    );
   });
 
   it('should pick component inside a collection using the sidebar', async () => {
@@ -266,11 +268,14 @@ describe('<LibraryAndComponentPicker />', () => {
     // Click the add component from the collection sidebar
     fireEvent.click(within(collectionSidebar).getByRole('button', { name: 'Add to Course' }));
 
-    expect(postMessageSpy).toHaveBeenCalledWith({
-      usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-      type: 'pickerComponentSelected',
-      category: 'html',
-    }, '*');
+    expect(postMessageSpy).toHaveBeenCalledWith(
+      {
+        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+        type: 'pickerComponentSelected',
+        category: 'html',
+      },
+      '*',
+    );
   });
 
   it('should return to library selection', async () => {
@@ -302,38 +307,44 @@ describe('<LibraryAndComponentPicker />', () => {
 
     // Select the first component
     fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
-    await waitFor(() => expect(onChange).toHaveBeenCalledWith([
-      {
-        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-        blockType: 'html',
-      },
-    ]));
+    await waitFor(() =>
+      expect(onChange).toHaveBeenCalledWith([
+        {
+          usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+          blockType: 'html',
+        },
+      ]),
+    );
 
     onChange.mockClear();
 
     // Select another component
     fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[1]);
-    await waitFor(() => expect(onChange).toHaveBeenCalledWith([
-      {
-        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-        blockType: 'html',
-      },
-      {
-        blockType: 'html',
-        usageKey: 'lb:Axim:TEST:html:73a22298-bcd9-4f4c-ae34-0bc2b0612480',
-      },
-    ]));
+    await waitFor(() =>
+      expect(onChange).toHaveBeenCalledWith([
+        {
+          usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+          blockType: 'html',
+        },
+        {
+          blockType: 'html',
+          usageKey: 'lb:Axim:TEST:html:73a22298-bcd9-4f4c-ae34-0bc2b0612480',
+        },
+      ]),
+    );
 
     onChange.mockClear();
 
     // Deselect the first component
     fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
-    await waitFor(() => expect(onChange).toHaveBeenCalledWith([
-      {
-        blockType: 'html',
-        usageKey: 'lb:Axim:TEST:html:73a22298-bcd9-4f4c-ae34-0bc2b0612480',
-      },
-    ]));
+    await waitFor(() =>
+      expect(onChange).toHaveBeenCalledWith([
+        {
+          blockType: 'html',
+          usageKey: 'lb:Axim:TEST:html:73a22298-bcd9-4f4c-ae34-0bc2b0612480',
+        },
+      ]),
+    );
   });
 
   it('should pick multilpe components using the component sidebar', async () => {
@@ -358,12 +369,14 @@ describe('<LibraryAndComponentPicker />', () => {
     // Click the select component from the component sidebar
     fireEvent.click(within(sidebar).getByRole('button', { name: 'Select' }));
 
-    await waitFor(() => expect(onChange).toHaveBeenCalledWith([
-      {
-        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-        blockType: 'html',
-      },
-    ]));
+    await waitFor(() =>
+      expect(onChange).toHaveBeenCalledWith([
+        {
+          usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+          blockType: 'html',
+        },
+      ]),
+    );
 
     onChange.mockClear();
 

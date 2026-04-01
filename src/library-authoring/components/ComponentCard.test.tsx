@@ -1,11 +1,5 @@
 import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
-import {
-  fireEvent,
-  render as baseRender,
-  screen,
-  waitFor,
-  initializeMocks,
-} from '../../testUtils';
+import { fireEvent, render as baseRender, screen, waitFor, initializeMocks } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
 import { getClipboardUrl } from '../../generic/data/api';
@@ -50,17 +44,16 @@ const contentHit: ContentHit = {
 };
 
 const { libraryId } = mockContentLibrary;
-const render = (libId: string = libraryId) => baseRender(<ComponentCard hit={contentHit} />, {
-  path: '/library/:libraryId',
-  params: { libraryId: libId },
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libId}>
-      <SidebarProvider>
-        { children }
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (libId: string = libraryId) =>
+  baseRender(<ComponentCard hit={contentHit} />, {
+    path: '/library/:libraryId',
+    params: { libraryId: libId },
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libId}>
+        <SidebarProvider>{children}</SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<ComponentCard />', () => {
   beforeEach(() => {
@@ -88,9 +81,7 @@ describe('<ComponentCard />', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
 
     expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(
-      JSON.stringify({ usage_key: contentHit.usageKey }),
-    );
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({ usage_key: contentHit.usageKey }));
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith('Copying');
@@ -112,9 +103,7 @@ describe('<ComponentCard />', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
 
     expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(
-      JSON.stringify({ usage_key: contentHit.usageKey }),
-    );
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({ usage_key: contentHit.usageKey }));
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith('Copying');

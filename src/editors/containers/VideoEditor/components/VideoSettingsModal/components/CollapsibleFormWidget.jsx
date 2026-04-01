@@ -14,13 +14,7 @@ import messages from './messages';
  *   <div>My Widget</div>
  * </CollapsibleFormWidget>
  */
-const CollapsibleFormWidget = ({
-  children,
-  isError,
-  subtitle,
-  title,
-  fontSize,
-}) => {
+const CollapsibleFormWidget = ({ children, isError, subtitle, title, fontSize }) => {
   const intl = useIntl();
   return (
     <Collapsible.Advanced
@@ -39,19 +33,27 @@ const CollapsibleFormWidget = ({
           </div>
           <div className="d-flex flex-row align-self-start">
             {isError && <Icon className="alert-icon" src={InfoOutline} />}
-            <IconButton alt={intl.formatMessage(messages.expandAltText)} src={ExpandMore} iconAs={Icon} variant="dark" />
+            <IconButton
+              alt={intl.formatMessage(messages.expandAltText)}
+              src={ExpandMore}
+              iconAs={Icon}
+              variant="dark"
+            />
           </div>
         </Collapsible.Visible>
         <Collapsible.Visible whenOpen>
           <div className="d-flex flex-grow-1 w-75 x-small">{title}</div>
           <div className="align-self-start">
-            <IconButton alt={intl.formatMessage(messages.collapseAltText)} src={ExpandLess} iconAs={Icon} variant="dark" />
+            <IconButton
+              alt={intl.formatMessage(messages.collapseAltText)}
+              src={ExpandLess}
+              iconAs={Icon}
+              variant="dark"
+            />
           </div>
         </Collapsible.Visible>
       </Collapsible.Trigger>
-      <Collapsible.Body className={`collapsible-body rounded px-0 ${fontSize} pb-4`}>
-        {children}
-      </Collapsible.Body>
+      <Collapsible.Body className={`collapsible-body rounded px-0 ${fontSize} pb-4`}>{children}</Collapsible.Body>
     </Collapsible.Advanced>
   );
 };

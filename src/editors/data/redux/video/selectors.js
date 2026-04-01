@@ -44,20 +44,15 @@ export const simpleSelectors = [
   stateKeys.courseLicenseDetails,
   stateKeys.allowThumbnailUpload,
   stateKeys.allowTranscriptImport,
-].reduce((obj, key) => ({ ...obj, [key]: state => state.video[key] }), {});
+].reduce((obj, key) => ({ ...obj, [key]: (state) => state.video[key] }), {});
 
-export const openLanguages = createSelector(
-  [module.simpleSelectors.transcripts],
-  (transcripts) => {
-    if (!transcripts) {
-      return videoTranscriptLanguages;
-    }
-    const open = Object.keys(videoTranscriptLanguages).filter(
-      (lang) => !transcripts.includes(lang),
-    );
-    return open;
-  },
-);
+export const openLanguages = createSelector([module.simpleSelectors.transcripts], (transcripts) => {
+  if (!transcripts) {
+    return videoTranscriptLanguages;
+  }
+  const open = Object.keys(videoTranscriptLanguages).filter((lang) => !transcripts.includes(lang));
+  return open;
+});
 
 /* istanbul ignore next */
 export const getTranscriptDownloadUrl = createSelector(
@@ -67,35 +62,40 @@ export const getTranscriptDownloadUrl = createSelector(
     AppSelectors.isLibrary,
     simpleSelectors.transcriptHandlerUrl,
   ],
-  (studioEndpointUrl, blockId, isLibrary, transcriptHandlerUrl) => ({ language }) => {
-    if (isLibrary) {
-      return downloadVideoTranscriptURLV2({
-        transcriptHandlerUrl,
+  (studioEndpointUrl, blockId, isLibrary, transcriptHandlerUrl) =>
+    ({ language }) => {
+      if (isLibrary) {
+        return downloadVideoTranscriptURLV2({
+          transcriptHandlerUrl,
+          language,
+        });
+      }
+      return downloadVideoTranscriptURL({
+        studioEndpointUrl,
+        blockId,
         language,
       });
-    }
-    return downloadVideoTranscriptURL({
-      studioEndpointUrl,
-      blockId,
-      language,
-    });
-  },
+    },
 );
 
 export const buildTranscriptUrl = createSelector(
   [AppSelectors.simpleSelectors.studioEndpointUrl],
-  (studioEndpointUrl) => ({ transcriptUrl }) => mediaTranscriptURL({
-    studioEndpointUrl,
-    transcriptUrl,
-  }),
+  (studioEndpointUrl) =>
+    ({ transcriptUrl }) =>
+      mediaTranscriptURL({
+        studioEndpointUrl,
+        transcriptUrl,
+      }),
 );
 
 export const getHandoutDownloadUrl = createSelector(
   [AppSelectors.simpleSelectors.studioEndpointUrl],
-  (studioEndpointUrl) => ({ handout }) => downloadVideoHandoutUrl({
-    studioEndpointUrl,
-    handout,
-  }),
+  (studioEndpointUrl) =>
+    ({ handout }) =>
+      downloadVideoHandoutUrl({
+        studioEndpointUrl,
+        handout,
+      }),
 );
 
 export const videoSettings = createSelector(
@@ -130,24 +130,22 @@ export const videoSettings = createSelector(
     handout,
     licenseType,
     licenseDetails,
-  ) => (
-    {
-      videoSource,
-      videoId,
-      fallbackVideos,
-      allowVideoDownloads,
-      allowVideoSharing,
-      thumbnail,
-      transcripts,
-      selectedVideoTranscriptUrls,
-      allowTranscriptDownloads,
-      duration,
-      showTranscriptByDefault,
-      handout,
-      licenseType,
-      licenseDetails,
-    }
-  ),
+  ) => ({
+    videoSource,
+    videoId,
+    fallbackVideos,
+    allowVideoDownloads,
+    allowVideoSharing,
+    thumbnail,
+    transcripts,
+    selectedVideoTranscriptUrls,
+    allowTranscriptDownloads,
+    duration,
+    showTranscriptByDefault,
+    handout,
+    licenseType,
+    licenseDetails,
+  }),
 );
 
 export default {

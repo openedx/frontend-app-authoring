@@ -15,21 +15,11 @@ describe('<ScheduleSection />', () => {
     </IntlProvider>
   );
 
-  const {
-    platformName,
-    upgradeDeadline,
-    enrollmentEndEditable,
-    canShowCertificateAvailableDateField,
-  } = courseSettingsMock;
+  const { platformName, upgradeDeadline, enrollmentEndEditable, canShowCertificateAvailableDateField } =
+    courseSettingsMock;
 
-  const {
-    endDate,
-    startDate,
-    enrollmentEnd,
-    enrollmentStart,
-    certificateAvailableDate,
-    certificatesDisplayBehavior,
-  } = courseDetailsMock;
+  const { endDate, startDate, enrollmentEnd, enrollmentStart, certificateAvailableDate, certificatesDisplayBehavior } =
+    courseDetailsMock;
 
   const props = {
     intl: {},

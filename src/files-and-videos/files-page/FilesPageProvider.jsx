@@ -4,17 +4,14 @@ import PropTypes from 'prop-types';
 export const FilesPageContext = React.createContext({});
 
 const FilesPageProvider = ({ courseId, children }) => {
-  const contextValue = useMemo(() => ({
-    courseId,
-    path: `/course/${courseId}/assets`,
-  }), []);
-  return (
-    <FilesPageContext.Provider
-      value={contextValue}
-    >
-      {children}
-    </FilesPageContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      courseId,
+      path: `/course/${courseId}/assets`,
+    }),
+    [],
   );
+  return <FilesPageContext.Provider value={contextValue}>{children}</FilesPageContext.Provider>;
 };
 
 FilesPageProvider.propTypes = {

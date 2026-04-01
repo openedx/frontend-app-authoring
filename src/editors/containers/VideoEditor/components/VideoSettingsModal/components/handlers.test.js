@@ -1,8 +1,8 @@
 import * as handlers from './handlers';
 
-const handler = jest.fn(cb => ({ handler: cb }));
+const handler = jest.fn((cb) => ({ handler: cb }));
 const transform = jest.fn((...args) => ({ transform: args }));
-const setter = jest.fn(val => ({ setter: val }));
+const setter = jest.fn((val) => ({ setter: val }));
 const index = 'test-index';
 const val = 'TEST value';
 const local = 'local-test-value';
@@ -13,9 +13,7 @@ describe('Video Settings Modal event handler methods', () => {
   describe('handleIndexEvent', () => {
     describe('returned method', () => {
       it('takes index and calls handler with transform handler based on index', () => {
-        expect(
-          handlers.handleIndexEvent({ handler, transform })(index).handler(val),
-        ).toEqual(transform(index, val));
+        expect(handlers.handleIndexEvent({ handler, transform })(index).handler(val)).toEqual(transform(index, val));
       });
     });
   });
@@ -23,12 +21,14 @@ describe('Video Settings Modal event handler methods', () => {
     describe('returned method', () => {
       it('takes index and calls handler with setter(transform(local, index, val))', () => {
         expect(
-          handlers.handleIndexTransformEvent({
-            handler,
-            setter,
-            local,
-            transform,
-          })(index).handler(val),
+          handlers
+            .handleIndexTransformEvent({
+              handler,
+              setter,
+              local,
+              transform,
+            })(index)
+            .handler(val),
         ).toEqual(setter(transform(local, index, val)));
       });
     });

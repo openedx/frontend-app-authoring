@@ -29,11 +29,7 @@
             }
           ],
           "tags": {
-            "taxonomy": [
-              "ESDC Skills and Competencies",
-              "FlatTaxonomy",
-              "TwoLevelTaxonomy"
-            ],
+            "taxonomy": ["ESDC Skills and Competencies", "FlatTaxonomy", "TwoLevelTaxonomy"],
             "level0": [
               "ESDC Skills and Competencies > Personal Attributes",
               "ESDC Skills and Competencies > Work Context",

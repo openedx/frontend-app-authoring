@@ -20,14 +20,14 @@
 
   .settingsOption {
     .pgn__form-checkbox .pgn__form-label {
-      min-width: .8rem;
+      min-width: 0.8rem;
     }
   }
 }
 
 .tinyMceWidget {
   .tox-tinymce {
-    border-radius: .375rem;
+    border-radius: 0.375rem;
   }
 
   .tox {
@@ -48,23 +48,23 @@
       content: '';
       position: relative;
       left: 5px;
-      border: 1px solid #EAE6E5;
+      border: 1px solid #eae6e5;
       height: 24px;
     }
   }
 }
 
 .pgn__modal-body-content {
-  .editor-body{
+  .editor-body {
     overflow: visible !important;
   }
 
   .tox-tinymce,
-  .tox-editor-container{
+  .tox-editor-container {
     overflow: visible;
   }
 
-  .tox-editor-header{
+  .tox-editor-header {
     position: sticky;
     top: -3px;
   }

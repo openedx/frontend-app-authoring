@@ -1,13 +1,7 @@
 import type MockAdapter from 'axios-mock-adapter';
 import { mergeConfig } from '@edx/frontend-platform';
 
-import {
-  fireEvent,
-  render as baseRender,
-  screen,
-  waitFor,
-  initializeMocks,
-} from '@src/testUtils';
+import { fireEvent, render as baseRender, screen, waitFor, initializeMocks } from '@src/testUtils';
 import { validateUserPermissions } from '@src/authz/data/api';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getCommitLibraryChangesUrl } from '../data/api';
@@ -28,9 +22,10 @@ const {
   libraryData,
 } = mockContentLibrary;
 
-const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryInfo />, {
-  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>,
-});
+const render = (libraryId: string = mockLibraryId) =>
+  baseRender(<LibraryInfo />, {
+    extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>,
+  });
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;
@@ -150,16 +145,14 @@ describe('<LibraryInfo />', () => {
   });
 
   it('should publish library 2', async () => {
-    const useCommitLibraryChangesSpy = jest
-      .spyOn(apiHooks, 'useCommitLibraryChanges')
-      .mockReturnValue(
-        // @ts-ignore
-        {
-          mutate: jest.fn(),
-          mutateAsync: jest.fn(),
-          status: 'pending',
-        },
-      );
+    const useCommitLibraryChangesSpy = jest.spyOn(apiHooks, 'useCommitLibraryChanges').mockReturnValue(
+      // @ts-ignore
+      {
+        mutate: jest.fn(),
+        mutateAsync: jest.fn(),
+        status: 'pending',
+      },
+    );
 
     render();
 
@@ -291,7 +284,7 @@ describe('<LibraryInfo />', () => {
     expect(screen.getByText('Settings')).toBeInTheDocument();
   });
 
-  it('renders PublicReadToggle when user can manage team', async () => { 
+  it('renders PublicReadToggle when user can manage team', async () => {
     render();
     const allowSwitch = await screen.findByRole('switch', { name: /allow public read/i });
     expect(allowSwitch).toBeInTheDocument();

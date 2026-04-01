@@ -14,56 +14,64 @@ export const state = StrictDict({
   isFeedbackVisible: (val) => useState(val),
 });
 
-export const removeAnswer = ({
-  answer,
-  dispatch,
-}) => () => {
-  dispatch(actions.problem.deleteAnswer({
-    id: answer.id,
-    correct: answer.correct,
-    editorState: fetchEditorContent({ format: '' }),
-  }));
-};
+export const removeAnswer =
+  ({ answer, dispatch }) =>
+  () => {
+    dispatch(
+      actions.problem.deleteAnswer({
+        id: answer.id,
+        correct: answer.correct,
+        editorState: fetchEditorContent({ format: '' }),
+      }),
+    );
+  };
 
-export const setAnswer = ({ answer, hasSingleAnswer, dispatch }) => (payload) => {
-  dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, ...payload }));
-};
+export const setAnswer =
+  ({ answer, hasSingleAnswer, dispatch }) =>
+  (payload) => {
+    dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, ...payload }));
+  };
 
-export const setAnswerTitle = ({
-  answer,
-  hasSingleAnswer,
-  dispatch,
-  problemType,
-}) => (updatedTitle, isDirty) => {
-  let title = updatedTitle;
-  if ([ProblemTypeKeys.TEXTINPUT, ProblemTypeKeys.NUMERIC, ProblemTypeKeys.DROPDOWN].includes(problemType)) {
-    title = updatedTitle.target.value;
-  }
-  dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, title }));
-  if (isDirty !== undefined) {
-    dispatch(actions.problem.setDirty(isDirty));
-  }
-};
+export const setAnswerTitle =
+  ({ answer, hasSingleAnswer, dispatch, problemType }) =>
+  (updatedTitle, isDirty) => {
+    let title = updatedTitle;
+    if ([ProblemTypeKeys.TEXTINPUT, ProblemTypeKeys.NUMERIC, ProblemTypeKeys.DROPDOWN].includes(problemType)) {
+      title = updatedTitle.target.value;
+    }
+    dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, title }));
+    if (isDirty !== undefined) {
+      dispatch(actions.problem.setDirty(isDirty));
+    }
+  };
 
-export const setSelectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (value) => {
-  if (value) {
-    dispatch(actions.problem.updateAnswer({
-      id: answer.id,
-      hasSingleAnswer,
-      selectedFeedback: value,
-    }));
-  }
-};
+export const setSelectedFeedback =
+  ({ answer, hasSingleAnswer, dispatch }) =>
+  (value) => {
+    if (value) {
+      dispatch(
+        actions.problem.updateAnswer({
+          id: answer.id,
+          hasSingleAnswer,
+          selectedFeedback: value,
+        }),
+      );
+    }
+  };
 
-export const setUnselectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (value) => {
-  if (value) {
-    dispatch(actions.problem.updateAnswer({
-      id: answer.id,
-      hasSingleAnswer,
-      unselectedFeedback: value,
-    }));
-  }
-};
+export const setUnselectedFeedback =
+  ({ answer, hasSingleAnswer, dispatch }) =>
+  (value) => {
+    if (value) {
+      dispatch(
+        actions.problem.updateAnswer({
+          id: answer.id,
+          hasSingleAnswer,
+          unselectedFeedback: value,
+        }),
+      );
+    }
+  };
 
 export const useFeedback = (answer) => {
   const [isFeedbackVisible, setIsFeedbackVisible] = module.state.isFeedbackVisible(false);
@@ -89,14 +97,13 @@ export const useFeedback = (answer) => {
   };
 };
 
-export const isSingleAnswerProblem = (problemType) => (
-  problemType === ProblemTypeKeys.SINGLESELECT || problemType === ProblemTypeKeys.DROPDOWN
-);
+export const isSingleAnswerProblem = (problemType) =>
+  problemType === ProblemTypeKeys.SINGLESELECT || problemType === ProblemTypeKeys.DROPDOWN;
 
 export const useAnswerContainer = ({ answers, updateField }) => {
   useEffect(() => {
     let answerCount = 0;
-    answers.forEach(answer => {
+    answers.forEach((answer) => {
       if (answer.correct) {
         answerCount += 1;
       }
@@ -106,5 +113,11 @@ export const useAnswerContainer = ({ answers, updateField }) => {
 };
 
 export default {
-  state, removeAnswer, setAnswer, setAnswerTitle, useFeedback, isSingleAnswerProblem, useAnswerContainer,
+  state,
+  removeAnswer,
+  setAnswer,
+  setAnswerTitle,
+  useFeedback,
+  isSingleAnswerProblem,
+  useAnswerContainer,
 };

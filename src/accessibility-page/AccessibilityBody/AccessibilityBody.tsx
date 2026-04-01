@@ -7,8 +7,8 @@ const AccessibilityBody = ({
   communityAccessibilityLink,
   email,
 }: {
-  communityAccessibilityLink: string,
-  email: string,
+  communityAccessibilityLink: string;
+  email: string;
 }) => (
   <div className="mt-5">
     <header>
@@ -22,10 +22,7 @@ const AccessibilityBody = ({
           {...messages.a11yBodyIntroGraph}
           values={{
             communityAccessibilityLink: (
-              <Hyperlink
-                destination={communityAccessibilityLink}
-                data-testid="accessibility-page-link"
-              >
+              <Hyperlink destination={communityAccessibilityLink} data-testid="accessibility-page-link">
                 Website Accessibility Policy
               </Hyperlink>
             ),
@@ -41,10 +38,7 @@ const AccessibilityBody = ({
             {...messages.a11yBodyEmailHeading}
             values={{
               emailElement: (
-                <MailtoLink
-                  to={email}
-                  data-testid="email-element"
-                >
+                <MailtoLink to={email} data-testid="email-element">
                   {email}
                 </MailtoLink>
               ),
@@ -77,10 +71,7 @@ const AccessibilityBody = ({
           {...messages.a11yBodyA11yFeedback}
           values={{
             emailElement: (
-              <MailtoLink
-                to={email}
-                data-testid="email-element"
-              >
+              <MailtoLink to={email} data-testid="email-element">
                 {email}
               </MailtoLink>
             ),

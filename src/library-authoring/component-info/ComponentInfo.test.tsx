@@ -1,9 +1,4 @@
-import {
-  initializeMocks,
-  render,
-  screen,
-  waitFor,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, waitFor } from '@src/testUtils';
 import { mockContentSearchConfig, mockFetchIndexDocuments } from '@src/search-manager/data/api.mock';
 
 import {
@@ -71,10 +66,7 @@ describe('<ComponentInfo> Sidebar', () => {
 
   it('should show a working "Edit" button for a normal component', async () => {
     initializeMocks();
-    render(
-      <ComponentInfo />,
-      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyPublished),
-    );
+    render(<ComponentInfo />, withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyPublished));
 
     const editButton = await screen.findByRole('button', { name: /Edit component/ });
     await waitFor(() => expect(editButton).not.toBeDisabled());

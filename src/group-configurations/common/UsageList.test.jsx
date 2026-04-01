@@ -8,11 +8,12 @@ import messages from './messages';
 
 const usages = contentGroupsMock.groups[1]?.usage;
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <UsageList itemList={usages} {...props} />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <UsageList itemList={usages} {...props} />
+    </IntlProvider>,
+  );
 
 describe('<UsageList />', () => {
   it('renders component correctly', () => {
@@ -27,8 +28,6 @@ describe('<UsageList />', () => {
 
   it('renders experiment component correctly', () => {
     const { getByText } = renderComponent({ isExperiment: true });
-    expect(
-      getByText(messages.experimentAccessTo.defaultMessage),
-    ).toBeInTheDocument();
+    expect(getByText(messages.experimentAccessTo.defaultMessage)).toBeInTheDocument();
   });
 });

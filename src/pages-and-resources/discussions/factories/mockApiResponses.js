@@ -26,11 +26,7 @@ export const generateProvidersApiResponse = (piazzaAdminOnlyConfig = false, acti
   ],
   available: {
     legacy: {
-      features: [
-        'discussion-page',
-        'embedded-course-sections',
-        'wcag-2.1',
-      ],
+      features: ['discussion-page', 'embedded-course-sections', 'wcag-2.1'],
       external_links: {
         learn_more: '',
         configuration: '',
@@ -43,12 +39,7 @@ export const generateProvidersApiResponse = (piazzaAdminOnlyConfig = false, acti
       admin_only_config: false,
     },
     openedx: {
-      features: [
-        'basic-configuration',
-        'discussion-page',
-        'embedded-course-sections',
-        'wcag-2.1',
-      ],
+      features: ['basic-configuration', 'discussion-page', 'embedded-course-sections', 'wcag-2.1'],
       external_links: {
         learn_more: '',
         configuration: '',
@@ -80,12 +71,7 @@ export const generateProvidersApiResponse = (piazzaAdminOnlyConfig = false, acti
       admin_only_config: piazzaAdminOnlyConfig,
     },
     discourse: {
-      features: [
-        'discussion-page',
-        'embedded-course-sections',
-        'wcag-2.1',
-        'lti-advanced-sharing-mode',
-      ],
+      features: ['discussion-page', 'embedded-course-sections', 'wcag-2.1', 'lti-advanced-sharing-mode'],
       external_links: {
         learn_more: '',
         configuration: '',
@@ -126,11 +112,7 @@ export const generateLegacyApiResponse = () => ({
     active: 'legacy',
     available: {
       legacy: {
-        features: [
-          'discussion-page',
-          'embedded-course-sections',
-          'wcag-2.1',
-        ],
+        features: ['discussion-page', 'embedded-course-sections', 'wcag-2.1'],
         external_links: {
           learn_more: '',
           configuration: '',
@@ -173,8 +155,7 @@ export const emptyAppApiResponse = {
   plugin_configuration: {},
   providers: {
     active: 'legacy',
-    available: {
-    },
+    available: {},
   },
 };
 
@@ -211,7 +192,8 @@ export const courseDetailResponse = {
   name: 'Demonstration Course',
   number: 'DemoX',
   org: 'edX',
-  overview: '<section class="about">\n   <h2>About This Course</h2>\n   <p>Include your long course description here. The long course description should contain 150-400 words.</p>\n\n   <p>This is paragraph 2 of the long course description. Add more paragraphs as needed. Make sure to enclose them in paragraph tags.</p>\n </section>\n\n <section class="prerequisites">\n   <h2>Prerequisites</h2>\n   <p>Add information about course prerequisites here.</p>\n </section>\n\n <section class="course-staff">\n   <h2>Course Staff</h2>\n   <article class="teacher">\n     <div class="teacher-image">\n       <img src="/static/images/pl-faculty.png" align="left" style="margin:0 20 px 0">\n     </div>\n\n     <h3>Staff Member #1</h3>\n     <p>Biography of instructor/staff member #1</p>\n   </article>\n\n   <article class="teacher">\n     <div class="teacher-image">\n       <img src="/static/images/pl-faculty.png" align="left" style="margin:0 20 px 0">\n     </div>\n\n     <h3>Staff Member #2</h3>\n     <p>Biography of instructor/staff member #2</p>\n   </article>\n </section>\n\n <section class="faq">\n   <section class="responses">\n     <h2>Frequently Asked Questions</h2>\n     <article class="response">\n       <h3>What web browser should I use?</h3>\n       <p>The Open edX platform works best with current versions of Chrome, Firefox or Safari, or with Internet Explorer version 9 and above.</p>\n\n       <p>See our <a href="https://docs.openedx.org/en/latest/developers/references/developer_guide/testing/browsers.html#browsers">list of supported browsers</a> for the most up-to-date information.</p>\n     </article>\n\n     <article class="response">\n       <h3>Question #2</h3>\n       <p>Your answer would be displayed here.</p>\n     </article>\n   </section>\n </section>\n',
+  overview:
+    '<section class="about">\n   <h2>About This Course</h2>\n   <p>Include your long course description here. The long course description should contain 150-400 words.</p>\n\n   <p>This is paragraph 2 of the long course description. Add more paragraphs as needed. Make sure to enclose them in paragraph tags.</p>\n </section>\n\n <section class="prerequisites">\n   <h2>Prerequisites</h2>\n   <p>Add information about course prerequisites here.</p>\n </section>\n\n <section class="course-staff">\n   <h2>Course Staff</h2>\n   <article class="teacher">\n     <div class="teacher-image">\n       <img src="/static/images/pl-faculty.png" align="left" style="margin:0 20 px 0">\n     </div>\n\n     <h3>Staff Member #1</h3>\n     <p>Biography of instructor/staff member #1</p>\n   </article>\n\n   <article class="teacher">\n     <div class="teacher-image">\n       <img src="/static/images/pl-faculty.png" align="left" style="margin:0 20 px 0">\n     </div>\n\n     <h3>Staff Member #2</h3>\n     <p>Biography of instructor/staff member #2</p>\n   </article>\n </section>\n\n <section class="faq">\n   <section class="responses">\n     <h2>Frequently Asked Questions</h2>\n     <article class="response">\n       <h3>What web browser should I use?</h3>\n       <p>The Open edX platform works best with current versions of Chrome, Firefox or Safari, or with Internet Explorer version 9 and above.</p>\n\n       <p>See our <a href="https://docs.openedx.org/en/latest/developers/references/developer_guide/testing/browsers.html#browsers">list of supported browsers</a> for the most up-to-date information.</p>\n     </article>\n\n     <article class="response">\n       <h3>Question #2</h3>\n       <p>Your answer would be displayed here.</p>\n     </article>\n   </section>\n </section>\n',
   pacing: 'instructor',
   short_description: null,
   start: '2013-02-05T05:00:00Z',

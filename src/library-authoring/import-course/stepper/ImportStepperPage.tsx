@@ -2,10 +2,7 @@ import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, Button, Chip, Container, Layout, OverlayTrigger, Stepper,
-  Tooltip,
-} from '@openedx/paragon';
+import { ActionRow, Button, Chip, Container, Layout, OverlayTrigger, Stepper, Tooltip } from '@openedx/paragon';
 
 import { CoursesList, MigrationStatusProps } from '@src/studio-home/tabs-section/courses-tab';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
@@ -27,9 +24,7 @@ import { HelpSidebar } from '../HelpSidebar';
 
 type MigrationStep = 'select-course' | 'review-details';
 
-export const MigrationStatus = ({
-  courseId,
-}: MigrationStatusProps) => {
+export const MigrationStatus = ({ courseId }: MigrationStatusProps) => {
   const { libraryId } = useLibraryContext();
   const { processedMigrationInfo } = useCourseImportFilter() || {};
 
@@ -40,10 +35,7 @@ export const MigrationStatus = ({
   }
 
   return (
-    <div
-      key={`${courseId}-${processedMigrationInfo?.[courseId].join('-')}`}
-      className="previously-migrated-chip"
-    >
+    <div key={`${courseId}-${processedMigrationInfo?.[courseId].join('-')}`} className="previously-migrated-chip">
       <Chip>
         <FormattedMessage {...messages.previouslyImported} />
       </Chip>
@@ -63,10 +55,10 @@ export const ImportStepperPage = () => {
   // TODO: Modify single migration API to allow create collection
   const migrate = useBulkModulestoreMigrate();
 
-  const {
-    data: previewMigrationData,
-    isPending: isPreviewMigrationPending,
-  } = usePreviewMigration(libraryId, selectedCourseId);
+  const { data: previewMigrationData, isPending: isPreviewMigrationPending } = usePreviewMigration(
+    libraryId,
+    selectedCourseId,
+  );
 
   const analysisCompleted = !isPreviewMigrationPending;
   const importIsBlocked = previewMigrationData?.state === 'block_limit_reached';
@@ -86,9 +78,11 @@ export const ImportStepperPage = () => {
       });
       navigate(`../import/${selectedCourseId}/${migrationTask.uuid}`);
     } catch (error) {
-      showToast(intl.formatMessage(messages.importCourseCompleteFailedToastMessage, {
-        courseName: courseData?.title,
-      }));
+      showToast(
+        intl.formatMessage(messages.importCourseCompleteFailedToastMessage, {
+          courseName: courseData?.title,
+        }),
+      );
     }
   };
 
@@ -100,7 +94,9 @@ export const ImportStepperPage = () => {
     <div className="import-course-stepper d-flex">
       <div className="flex-grow-1">
         <Helmet>
-          <title>{libraryData.title} | {process.env.SITE_NAME}</title>
+          <title>
+            {libraryData.title} | {process.env.SITE_NAME}
+          </title>
         </Helmet>
         <Header
           number={libraryData.slug}
@@ -115,10 +111,7 @@ export const ImportStepperPage = () => {
         />
         <Container className="mt-4">
           <div className="px-4 bg-light-200 border-bottom">
-            <SubHeader
-              title={intl.formatMessage(messages.importCourseStepperTitle)}
-              hideBorder
-            />
+            <SubHeader title={intl.formatMessage(messages.importCourseStepperTitle)} hideBorder />
           </div>
           <Layout xs={[{ span: 9 }, { span: 3 }]}>
             <Layout.Element>
@@ -129,10 +122,7 @@ export const ImportStepperPage = () => {
                     eventKey="select-course"
                     title={intl.formatMessage(messages.importCourseSelectCourseStep)}
                   >
-                    <CourseImportFilterProvider
-                      selectedCourseId={selectedCourseId}
-                      handleSelect={setSelectedCourseId}
-                    >
+                    <CourseImportFilterProvider selectedCourseId={selectedCourseId} handleSelect={setSelectedCourseId}>
                       <CoursesList
                         selectedCourseId={selectedCourseId}
                         handleSelect={setSelectedCourseId}
@@ -154,10 +144,7 @@ export const ImportStepperPage = () => {
                     <Button variant="outline-primary" onClick={() => navigate('../import')}>
                       <FormattedMessage {...messages.importCourseCalcel} />
                     </Button>
-                    <Button
-                      onClick={() => setCurrentStep('review-details')}
-                      disabled={!selectedCourseId}
-                    >
+                    <Button onClick={() => setCurrentStep('review-details')} disabled={!selectedCourseId}>
                       <FormattedMessage {...messages.importCourseNext} />
                     </Button>
                   </ActionRow>
@@ -169,11 +156,11 @@ export const ImportStepperPage = () => {
                     {importIsBlocked ? (
                       <OverlayTrigger
                         placement="top"
-                        overlay={(
+                        overlay={
                           <Tooltip id="tooltip-import-course-button">
                             <FormattedMessage {...messages.importNotPossibleTooltip} />
                           </Tooltip>
-                        )}
+                        }
                       >
                         <Button variant="primary" disabled>
                           <FormattedMessage {...messages.importCourseButton} />

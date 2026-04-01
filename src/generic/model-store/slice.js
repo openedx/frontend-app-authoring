@@ -34,11 +34,11 @@ const slice = createSlice({
     },
     addModels: (state, { payload }) => {
       const { modelType, models } = payload;
-      models.forEach(model => add(state, modelType, model));
+      models.forEach((model) => add(state, modelType, model));
     },
     addModelsMap: (state, { payload }) => {
       const { modelType, modelsMap } = payload;
-      Object.values(modelsMap).forEach(model => add(state, modelType, model));
+      Object.values(modelsMap).forEach((model) => add(state, modelType, model));
     },
     updateModel: (state, { payload }) => {
       const { modelType, model } = payload;
@@ -46,11 +46,11 @@ const slice = createSlice({
     },
     updateModels: (state, { payload }) => {
       const { modelType, models } = payload;
-      models.forEach(model => update(state, modelType, model));
+      models.forEach((model) => update(state, modelType, model));
     },
     updateModelsMap: (state, { payload }) => {
       const { modelType, modelsMap } = payload;
-      Object.values(modelsMap).forEach(model => update(state, modelType, model));
+      Object.values(modelsMap).forEach((model) => update(state, modelType, model));
     },
     removeModel: (state, { payload }) => {
       const { modelType, id } = payload;
@@ -58,7 +58,7 @@ const slice = createSlice({
     },
     removeModels: (state, { payload }) => {
       const { modelType, ids } = payload;
-      ids.forEach(id => remove(state, modelType, id));
+      ids.forEach((id) => remove(state, modelType, id));
     },
   },
 });

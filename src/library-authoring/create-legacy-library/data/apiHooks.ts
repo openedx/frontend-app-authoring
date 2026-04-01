@@ -1,7 +1,4 @@
-import {
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { studioHomeQueryKeys } from '@src/studio-home/data/apiHooks';
 import { createLibraryV1 } from './api';

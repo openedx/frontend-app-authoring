@@ -11,13 +11,13 @@ export const LoadingSpinner = ({ size }: LoadingSpinnerProps) => (
     role="status"
     variant="primary"
     size={size}
-    screenReaderText={(
+    screenReaderText={
       <FormattedMessage
         id="authoring.loading"
         defaultMessage="Loading..."
         description="Screen-reader message for when a page is loading."
       />
-    )}
+    }
   />
 );
 

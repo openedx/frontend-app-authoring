@@ -49,7 +49,8 @@ const messages = defineMessages({
   alertGroupInUsage: {
     id: 'course-authoring.group-configurations.content-groups.edit-group.alert-group-in-usage',
     defaultMessage: 'This content group is used in one or more units.',
-    description: 'Alert message displayed when attempting to delete a content group that is currently in use by one or more units.',
+    description:
+      'Alert message displayed when attempting to delete a content group that is currently in use by one or more units.',
   },
   deleteRestriction: {
     id: 'course-authoring.group-configurations.content-groups.delete-restriction',
@@ -59,7 +60,8 @@ const messages = defineMessages({
   emptyContentGroups: {
     id: 'course-authoring.group-configurations.container.empty-content-groups',
     defaultMessage: 'In the {outlineComponentLink}, use this group to control access to a component.',
-    description: 'Message displayed when there are no content groups available, suggesting how to use them within the course outline.',
+    description:
+      'Message displayed when there are no content groups available, suggesting how to use them within the course outline.',
   },
   courseOutline: {
     id: 'course-authoring.group-configurations.container.course-outline',

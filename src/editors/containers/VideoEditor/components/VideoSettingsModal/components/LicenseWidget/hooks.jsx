@@ -50,32 +50,36 @@ export const determineText = ({ level }) => {
   };
 };
 
-export const onSelectLicense = ({
-  dispatch,
-}) => (license) => {
-  switch (license) {
-    case LicenseTypes.allRightsReserved:
-      dispatch(actions.video.updateField({
-        licenseType: LicenseTypes.allRightsReserved,
-        licenseDetails: {},
-      }));
-      break;
-    case LicenseTypes.creativeCommons:
-      dispatch(actions.video.updateField({
-        licenseType: LicenseTypes.creativeCommons,
-        licenseDetails: {
-          attribution: true,
-          noncommercial: true,
-          noDerivatives: true,
-          shareAlike: false,
-        },
-      }));
-      break;
-    default:
-      dispatch(actions.video.updateField({ licenseType: LicenseTypes.select }));
-      break;
-  }
-};
+export const onSelectLicense =
+  ({ dispatch }) =>
+  (license) => {
+    switch (license) {
+      case LicenseTypes.allRightsReserved:
+        dispatch(
+          actions.video.updateField({
+            licenseType: LicenseTypes.allRightsReserved,
+            licenseDetails: {},
+          }),
+        );
+        break;
+      case LicenseTypes.creativeCommons:
+        dispatch(
+          actions.video.updateField({
+            licenseType: LicenseTypes.creativeCommons,
+            licenseDetails: {
+              attribution: true,
+              noncommercial: true,
+              noDerivatives: true,
+              shareAlike: false,
+            },
+          }),
+        );
+        break;
+      default:
+        dispatch(actions.video.updateField({ licenseType: LicenseTypes.select }));
+        break;
+    }
+  };
 
 export default {
   determineLicense,

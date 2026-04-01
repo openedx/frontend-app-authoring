@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useToggle } from '@openedx/paragon';
 
 import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
@@ -42,7 +35,7 @@ interface OutlineSidebarContextData {
   /** Stores last section that allows adding subsections inside it. */
   lastEditableSection?: XBlock;
   /** Stores last subsection that allows adding units inside it and its parent sectionId */
-  lastEditableSubsection?: { data?: XBlock, sectionId?: string };
+  lastEditableSubsection?: { data?: XBlock; sectionId?: string };
   /** XBlock data of selectedContainerState.currentId */
   currentItemData?: XBlock;
 }
@@ -54,7 +47,7 @@ const getLastEditableItem = (blockList: Array<XBlock>) => findLast(blockList, (i
 const getLastEditableSubsection = (
   blockList: Array<XBlock>,
   startIndex?: number,
-): { data: XBlock, sectionId: string } | undefined => {
+): { data: XBlock; sectionId: string } | undefined => {
   const lastSectionIndex = findLastIndex(blockList, (item) => item.actions.childAddable, startIndex);
   if (lastSectionIndex !== -1) {
     const lastSubsectionIndex = findLastIndex(
@@ -81,31 +74,26 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     (value: string) => value as OutlineSidebarPageKeys,
     (value: OutlineSidebarPageKeys) => value,
   );
-  const [
-    isCurrentFlowOn,
-    currentFlow,
-    setCurrentFlow,
-    stopCurrentFlow,
-  ] = useToggleWithValue<OutlineFlow>();
+  const [isCurrentFlowOn, currentFlow, setCurrentFlow, stopCurrentFlow] = useToggleWithValue<OutlineFlow>();
   const [isOpen, open, , toggle] = useToggle(true);
 
   /**
-  * Use this to store the selected container's information and should always contain full ancestor info.
-  * If selected container is a section, set containerId and sectionId to same value and subsectionId should
-  * be undefined.
-  * If selected container is a subsection, set containerId and subsectionId to same value and sectionId
-  * should be set to its parent section id.
-  * If selected container is an unit, set containerId as unitId, subsectionId as its parent subsection's id
-  * and sectionId should be set to its top parent section's id.
-  */
+   * Use this to store the selected container's information and should always contain full ancestor info.
+   * If selected container is a section, set containerId and sectionId to same value and subsectionId should
+   * be undefined.
+   * If selected container is a subsection, set containerId and subsectionId to same value and sectionId
+   * should be set to its parent section id.
+   * If selected container is an unit, set containerId as unitId, subsectionId as its parent subsection's id
+   * and sectionId should be set to its top parent section's id.
+   */
   const [selectedContainerState, setSelectedContainerState] = useState<SelectionState | undefined>();
   const { setCurrentSelection } = useCourseAuthoringContext();
 
   /**
-  * Set currentSelection to same as selectedContainerState whenever
-  * selectedContainerState or currentPageKey changes.
-  * This allows us to reset the currentSelection.
-  */
+   * Set currentSelection to same as selectedContainerState whenever
+   * selectedContainerState or currentPageKey changes.
+   * This allows us to reset the currentSelection.
+   */
   useEffect(() => {
     // To allow tag buttons on other cards to jump to align page and not loose its selection
     if (currentPageKey !== 'align') {
@@ -113,36 +101,41 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     }
   }, [currentPageKey, selectedContainerState]);
 
-  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
-    setCurrentPageKeyState(pageKey);
-    stopCurrentFlow();
-    open();
-  }, [open, stopCurrentFlow]);
+  const setCurrentPageKey = useCallback(
+    (pageKey: OutlineSidebarPageKeys) => {
+      setCurrentPageKeyState(pageKey);
+      stopCurrentFlow();
+      open();
+    },
+    [open, stopCurrentFlow],
+  );
 
-  const openContainerInfoSidebar = useCallback((
-    containerId: string,
-    subsectionId?: string,
-    sectionId?: string,
-  ) => {
-    if (isOutlineNewDesignEnabled()) {
-      setSelectedContainerState({ currentId: containerId, subsectionId, sectionId });
-      setCurrentPageKey('info');
-    }
-  }, [setSelectedContainerState, setCurrentPageKey]);
+  const openContainerInfoSidebar = useCallback(
+    (containerId: string, subsectionId?: string, sectionId?: string) => {
+      if (isOutlineNewDesignEnabled()) {
+        setSelectedContainerState({ currentId: containerId, subsectionId, sectionId });
+        setCurrentPageKey('info');
+      }
+    },
+    [setSelectedContainerState, setCurrentPageKey],
+  );
 
   const clearSelection = useCallback(() => {
     setSelectedContainerState(undefined);
   }, [selectedContainerState]);
 
   /**
-  * Starts add content flow.
-  * The sidebar enters an add content flow which allows user to add content in a specific container.
-  * A placeholder container is added in the location when the flow is started.
-  */
-  const startCurrentFlow = useCallback((flow: OutlineFlow) => {
-    setCurrentPageKey('add');
-    setCurrentFlow(flow);
-  }, [setCurrentFlow, setCurrentPageKey]);
+   * Starts add content flow.
+   * The sidebar enters an add content flow which allows user to add content in a specific container.
+   * A placeholder container is added in the location when the flow is started.
+   */
+  const startCurrentFlow = useCallback(
+    (flow: OutlineFlow) => {
+      setCurrentPageKey('add');
+      setCurrentFlow(flow);
+    },
+    [setCurrentFlow, setCurrentPageKey],
+  );
 
   const { data: currentItemData } = useCourseItemData<XBlock>(selectedContainerState?.currentId);
   const sectionsList = useSelector(getSectionsList);
@@ -216,11 +209,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     ],
   );
 
-  return (
-    <OutlineSidebarContext.Provider value={context}>
-      {children}
-    </OutlineSidebarContext.Provider>
-  );
+  return <OutlineSidebarContext.Provider value={context}>{children}</OutlineSidebarContext.Provider>;
 };
 
 export function useOutlineSidebarContext(): OutlineSidebarContextData {

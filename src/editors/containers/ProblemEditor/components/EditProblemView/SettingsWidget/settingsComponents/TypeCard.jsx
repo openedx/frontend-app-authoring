@@ -18,9 +18,11 @@ const TypeCard = ({
 }) => {
   const intl = useIntl();
   const localizedProblemTypes = getProblemTypes(intl.formatMessage);
-  const problemTypeKeysArray = Object.values(ProblemTypeKeys).filter(key => key !== ProblemTypeKeys.ADVANCED);
+  const problemTypeKeysArray = Object.values(ProblemTypeKeys).filter((key) => key !== ProblemTypeKeys.ADVANCED);
 
-  if (problemType === ProblemTypeKeys.ADVANCED) { return null; }
+  if (problemType === ProblemTypeKeys.ADVANCED) {
+    return null;
+  }
 
   return (
     <SettingsOption
@@ -37,7 +39,7 @@ const TypeCard = ({
           label={localizedProblemTypes[typeKey].title}
           selected={typeKey !== problemType}
           problemType={problemType}
-          lastRow={(i + 1) === problemTypeKeysArray.length}
+          lastRow={i + 1 === problemTypeKeysArray.length}
           setBlockTitle={setBlockTitle}
           updateField={updateField}
           updateAnswer={updateAnswer}
@@ -48,13 +50,15 @@ const TypeCard = ({
 };
 
 TypeCard.propTypes = {
-  answers: PropTypes.arrayOf(PropTypes.shape({
-    correct: PropTypes.bool,
-    id: PropTypes.string,
-    selectedFeedback: PropTypes.string,
-    title: PropTypes.string,
-    unselectedFeedback: PropTypes.string,
-  })).isRequired,
+  answers: PropTypes.arrayOf(
+    PropTypes.shape({
+      correct: PropTypes.bool,
+      id: PropTypes.string,
+      selectedFeedback: PropTypes.string,
+      title: PropTypes.string,
+      unselectedFeedback: PropTypes.string,
+    }),
+  ).isRequired,
   blockTitle: PropTypes.string.isRequired,
   correctAnswerCount: PropTypes.number.isRequired,
   problemType: PropTypes.string.isRequired,

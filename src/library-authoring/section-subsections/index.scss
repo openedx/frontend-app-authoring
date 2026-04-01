@@ -27,6 +27,8 @@
   }
 
   .pgn__card.clickable:hover {
-    box-shadow: 0 .125rem .25rem rgb(0 0 0 / .15), 0 .125rem .5rem rgb(0 0 0 / .15);
+    box-shadow:
+      0 0.125rem 0.25rem rgb(0 0 0 / 0.15),
+      0 0.125rem 0.5rem rgb(0 0 0 / 0.15);
   }
 }

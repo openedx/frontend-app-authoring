@@ -10,18 +10,19 @@ const onDeleteMock = jest.fn();
 const dateForUpdateMock = 'May 1, 2023';
 const contentForUpdateMock = 'Update Content';
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <CourseUpdate
-      dateForUpdate={dateForUpdateMock}
-      contentForUpdate={contentForUpdateMock}
-      onEdit={onEditMock}
-      onDelete={onDeleteMock}
-      isDisabledButtons={false}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <CourseUpdate
+        dateForUpdate={dateForUpdateMock}
+        contentForUpdate={contentForUpdateMock}
+        onEdit={onEditMock}
+        onDelete={onDeleteMock}
+        isDisabledButtons={false}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<CourseUpdate />', () => {
   it('render CourseUpdate component correctly', () => {

@@ -1,19 +1,13 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  DataTableContext, Button, Row, Chip,
-} from '@openedx/paragon';
+import { DataTableContext, Button, Row, Chip } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 import { getFilters, removeFilter } from './utils';
 
-const FilterStatus = ({
-  className, variant, size, clearFiltersText, buttonClassName,
-}) => {
+const FilterStatus = ({ className, variant, size, clearFiltersText, buttonClassName }) => {
   const intl = useIntl();
-  const {
-    state, setAllFilters, setFilter, RowStatusComponent, columns,
-  } = useContext(DataTableContext);
+  const { state, setAllFilters, setFilter, RowStatusComponent, columns } = useContext(DataTableContext);
 
   if (!setAllFilters) {
     return null;
@@ -40,21 +34,16 @@ const FilterStatus = ({
             {name}
           </Chip>
         ))}
-        <Button
-          className={buttonClassName}
-          variant={variant}
-          size={size}
-          onClick={() => setAllFilters([])}
-        >
-          {clearFiltersText === undefined
-            ? (
-              <FormattedMessage
-                id="pgn.DataTable.FilterStatus.clearFiltersText"
-                defaultMessage="Clear filters"
-                description="A text that appears on the `Clear filters` button"
-              />
-            )
-            : clearFiltersText}
+        <Button className={buttonClassName} variant={variant} size={size} onClick={() => setAllFilters([])}>
+          {clearFiltersText === undefined ? (
+            <FormattedMessage
+              id="pgn.DataTable.FilterStatus.clearFiltersText"
+              defaultMessage="Clear filters"
+              description="A text that appears on the `Clear filters` button"
+            />
+          ) : (
+            clearFiltersText
+          )}
         </Button>
       </Row>
     </div>

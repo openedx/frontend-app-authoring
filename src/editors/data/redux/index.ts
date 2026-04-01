@@ -61,9 +61,9 @@ export interface EditorState {
         data: string | Record<string, any>;
         metadata: Record<string, any>;
         [otherKey: string]: any;
-      },
+      };
       // There are other fields; this is an AxiosResponse object. But we don't want to rely on those details.
-    },
+    };
     unitUrl: null | {
       data: {
         ancestors: {
@@ -73,9 +73,9 @@ export interface EditorState {
           has_children: boolean;
           unit_level_discussions?: boolean;
         }[];
-      },
+      };
       // There are other fields; this is an AxiosResponse object. But we don't want to rely on those details.
-    },
+    };
     blockContent: null;
     studioView: null;
     saveResponse: null;
@@ -86,33 +86,39 @@ export interface EditorState {
     studioEndpointUrl: string | null;
     /** e.g. "http://local.openedx.io:8000" TODO: move to EditorContext */
     lmsEndpointUrl: string | null;
-    images: Record<string, {
-      id: string;
-      displayName: string; // e.g. "nHLVaDX6mro-unsplash.jpg"
-      contentType: string; // e.g. "image/jpeg"
-      dateAdded: number; // e.g. 1694629800000,
-      /** e.g. "/asset-v1:Org+TS100+24+type@asset+block@jaromir-kavan-nHLVaDX6mro-unsplash.jpg" */
-      url: string;
-      /** e.g. "http://local.openedx.io:8000/asset-v1:Org+TS100+24+type@asset+block@blah.jpg" */
-      externalUrl: string;
-      /** e.g. "/static/jaromir-kavan-nHLVaDX6mro-unsplash.jpg" */
-      portableUrl: string;
-      /** e.g. e.g. "/asset-v1:Org+TS100+24+type@thumbnail+block@jaromir-kavan-nHLVaDX6mro-unsplash.jpg" */
-      thumbnail: string;
-      locked: boolean;
-      staticFullUrl: string;
-      fileSize: number;
-      usageLocations: { displayLocation: string; url: string; }[];
-    }>;
+    images: Record<
+      string,
+      {
+        id: string;
+        displayName: string; // e.g. "nHLVaDX6mro-unsplash.jpg"
+        contentType: string; // e.g. "image/jpeg"
+        dateAdded: number; // e.g. 1694629800000,
+        /** e.g. "/asset-v1:Org+TS100+24+type@asset+block@jaromir-kavan-nHLVaDX6mro-unsplash.jpg" */
+        url: string;
+        /** e.g. "http://local.openedx.io:8000/asset-v1:Org+TS100+24+type@asset+block@blah.jpg" */
+        externalUrl: string;
+        /** e.g. "/static/jaromir-kavan-nHLVaDX6mro-unsplash.jpg" */
+        portableUrl: string;
+        /** e.g. e.g. "/asset-v1:Org+TS100+24+type@thumbnail+block@jaromir-kavan-nHLVaDX6mro-unsplash.jpg" */
+        thumbnail: string;
+        locked: boolean;
+        staticFullUrl: string;
+        fileSize: number;
+        usageLocations: { displayLocation: string; url: string }[];
+      }
+    >;
     imageCount: number;
     videos: Record<string, any>;
     courseDetails: Record<string, any>;
     showRawEditor: boolean;
-  },
-  requests: Record<keyof typeof RequestKeys, {
-    status: keyof typeof RequestStates;
-    response: AxiosResponse;
-  }>
+  };
+  requests: Record<
+    keyof typeof RequestKeys,
+    {
+      status: keyof typeof RequestStates;
+      response: AxiosResponse;
+    }
+  >;
   video: {
     videoSource: string; // default: ""
     videoId: string; // default: ""
@@ -131,26 +137,26 @@ export interface EditorState {
       startTime: string;
       stopTime: string;
       total: string;
-    },
+    };
     showTranscriptByDefault: boolean;
-    handout: null,
-    licenseType: null,
+    handout: null;
+    licenseType: null;
     licenseDetails: {
       attribution: boolean;
       noncommercial: boolean;
       noDerivatives: boolean;
       shareAlike: boolean;
-    },
+    };
     courseLicenseType: string | null;
     courseLicenseDetails: {
       attribution: boolean;
       noncommercial: boolean;
       noDerivatives: boolean;
       shareAlike: boolean;
-    },
+    };
     allowThumbnailUpload: boolean | null; // TODO: why is this null?
     allowTranscriptImport: boolean;
-  },
+  };
   problem: {
     /** Has the user made changes to this problem since opening the editor? */
     isDirty: boolean;
@@ -175,27 +181,27 @@ export interface EditorState {
       randomization: any; // Not sure what type this field has
       scoring: {
         weight: number;
-        attempts: { unlimited: boolean; number: number | null; };
+        attempts: { unlimited: boolean; number: number | null };
         gradingMethod: GradingMethodKey;
-      },
+      };
       hints: any[];
       timeBetween: number;
       showAnswer: {
         on: string;
         afterAttempts: number;
-      },
+      };
       showResetButton: boolean | null;
       solutionExplanation: string;
       tolerance: {
         value: number | null;
         type: 'Percent' | 'Number' | 'None';
-      }
-    }
-  },
+      };
+    };
+  };
   game: {
     settings: Record<string, any>;
     exampleValue: 'this is an example value from the redux state';
-  }
+  };
 }
 
 export { actions, selectors };

@@ -5,12 +5,7 @@ import Cookies from 'universal-cookie';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getCourseDetailsUrl } from '@src/data/api';
-import {
-  initializeMocks,
-  render,
-  screen,
-  waitFor,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, waitFor } from '@src/testUtils';
 import stepperMessages from './export-stepper/messages';
 import modalErrorMessages from './export-modal-error/messages';
 import { getExportStatusApiUrl, postExportCourseApiUrl } from './data/api';
@@ -33,13 +28,14 @@ jest.mock('universal-cookie', () => {
   return jest.fn(() => mCookie);
 });
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <CourseExportProvider>
-      <CourseExportPage />
-    </CourseExportProvider>
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseExportProvider>
+        <CourseExportPage />
+      </CourseExportProvider>
+    </CourseAuthoringProvider>,
+  );
 
 describe('<CourseExportPage />', () => {
   beforeEach(() => {
@@ -49,15 +45,9 @@ describe('<CourseExportPage />', () => {
     };
     const mocks = initializeMocks({ user });
     axiosMock = mocks.axiosMock;
-    axiosMock
-      .onPost(postExportCourseApiUrl(courseId))
-      .reply(200, exportPageMock);
-    axiosMock
-      .onGet(getCourseDetailsUrl(courseId, user.username))
-      .reply(200, { courseId, name: courseName });
-    axiosMock
-      .onGet(getExportStatusApiUrl(courseId))
-      .reply(200, { exportStatus: EXPORT_STAGES.PREPARING });
+    axiosMock.onPost(postExportCourseApiUrl(courseId)).reply(200, exportPageMock);
+    axiosMock.onGet(getCourseDetailsUrl(courseId, user.username)).reply(200, { courseId, name: courseName });
+    axiosMock.onGet(getExportStatusApiUrl(courseId)).reply(200, { exportStatus: EXPORT_STAGES.PREPARING });
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });
@@ -93,16 +83,21 @@ describe('<CourseExportPage />', () => {
   });
 
   it('should show modal error', async () => {
-    axiosMock
-      .onGet(getExportStatusApiUrl(courseId))
-      .reply(200, { exportStatus: EXPORT_STAGES.EXPORTING, exportError: { rawErrorMsg: 'test error', editUnitUrl: 'http://test-url.test' } });
+    axiosMock.onGet(getExportStatusApiUrl(courseId)).reply(200, {
+      exportStatus: EXPORT_STAGES.EXPORTING,
+      exportError: { rawErrorMsg: 'test error', editUnitUrl: 'http://test-url.test' },
+    });
     const user = userEvent.setup();
     const { container } = renderComponent();
     const startExportButton = container.querySelector('.btn-primary')!;
     await user.click(startExportButton);
     // eslint-disable-next-line no-promise-executor-return
     await new Promise((r) => setTimeout(r, 3500));
-    expect(screen.getByText(/There has been a failure to export to XML at least one component. It is recommended that you go to the edit page and repair the error before attempting another export. Please check that all components on the page are valid and do not display any error messages. The raw error message is: test error/i));
+    expect(
+      screen.getByText(
+        /There has been a failure to export to XML at least one component. It is recommended that you go to the edit page and repair the error before attempting another export. Please check that all components on the page are valid and do not display any error messages. The raw error message is: test error/i,
+      ),
+    );
     const closeModalWindowButton = screen.getByText('Return to export');
     await user.click(closeModalWindowButton);
     expect(screen.queryByText(modalErrorMessages.errorCancelButtonUnit.defaultMessage)).not.toBeInTheDocument();
@@ -142,9 +137,7 @@ describe('<CourseExportPage />', () => {
   });
 
   it('displays an alert and sets status to DENIED when API responds with 403', async () => {
-    axiosMock
-      .onGet(getExportStatusApiUrl(courseId))
-      .reply(403);
+    axiosMock.onGet(getExportStatusApiUrl(courseId)).reply(403);
     const user = userEvent.setup();
     const { container } = renderComponent();
     const startExportButton = container.querySelector('.btn-primary')!;
@@ -153,9 +146,7 @@ describe('<CourseExportPage />', () => {
   });
 
   it('does not show a connection error alert upon receiving a 404 response from the API', async () => {
-    axiosMock
-      .onGet(getExportStatusApiUrl(courseId))
-      .reply(404);
+    axiosMock.onGet(getExportStatusApiUrl(courseId)).reply(404);
     const user = userEvent.setup();
     const { container } = renderComponent();
     const startExportButton = container.querySelector('.btn-primary')!;

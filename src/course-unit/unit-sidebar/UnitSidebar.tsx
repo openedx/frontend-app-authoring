@@ -6,7 +6,7 @@ import { UnitSidebarPageKeys, useUnitSidebarContext } from './UnitSidebarContext
 import { useUnitSidebarPagesContext } from './UnitSidebarPagesContext';
 
 export type UnitSidebarProps = {
-  legacySidebarProps: LegacySidebarProps,
+  legacySidebarProps: LegacySidebarProps;
 };
 
 /**
@@ -15,20 +15,12 @@ export type UnitSidebarProps = {
 export const UnitSidebar = ({
   legacySidebarProps, // Can be deleted when the legacy sidebar is deprecated
 }: UnitSidebarProps) => {
-  const {
-    currentPageKey,
-    setCurrentPageKey,
-    setCurrentTabKey,
-    isOpen,
-    toggle,
-  } = useUnitSidebarContext();
+  const { currentPageKey, setCurrentPageKey, setCurrentTabKey, isOpen, toggle } = useUnitSidebarContext();
 
   const sidebarPages = useUnitSidebarPagesContext();
 
   if (!isUnitPageNewDesignEnabled()) {
-    return (
-      <LegacySidebar {...legacySidebarProps} />
-    );
+    return <LegacySidebar {...legacySidebarProps} />;
   }
 
   const handleChangePage = (key: UnitSidebarPageKeys) => {

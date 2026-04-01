@@ -15,10 +15,10 @@ jest.mock('@src/editors/data/redux', () => ({
       problemType: jest.fn().mockReturnValue(''),
     },
     app: {
-      images: jest.fn(state => ({ images: state })),
+      images: jest.fn((state) => ({ images: state })),
       isLibrary: jest.fn().mockReturnValue(true),
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
-      blockId: jest.fn(state => ({ blockId: state })),
+      learningContextId: jest.fn((state) => ({ learningContextId: state })),
+      blockId: jest.fn((state) => ({ blockId: state })),
     },
   },
   thunkActions: {
@@ -111,7 +111,9 @@ describe('AnswerOption', () => {
     const myProps = { ...props, answer: { ...answerWithOnlyFeedback, isAnswerRange: false } };
     render(<AnswerOption {...myProps} />);
     expect(
-      screen.getByText('Error: This input type only supports numeric answers. Did you mean to make a Text input or Math expression input problem?'),
+      screen.getByText(
+        'Error: This input type only supports numeric answers. Did you mean to make a Text input or Math expression input problem?',
+      ),
     ).toBeInTheDocument();
   });
 });

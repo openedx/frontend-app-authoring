@@ -20,12 +20,7 @@ const ComponentDetails = () => {
     throw new Error('usageKey is required');
   }
 
-  const {
-    data: componentMetadata,
-    isError,
-    error,
-    isPending,
-  } = useLibraryBlockMetadata(usageKey);
+  const { data: componentMetadata, isError, error, isPending } = useLibraryBlockMetadata(usageKey);
 
   if (isError) {
     return <AlertError error={error} />;

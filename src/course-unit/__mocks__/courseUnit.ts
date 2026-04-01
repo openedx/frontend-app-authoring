@@ -17,10 +17,7 @@ export default {
   due: null,
   relative_weeks_due: null,
   format: null,
-  course_graders: [
-    'Homework',
-    'Exam',
-  ],
+  course_graders: ['Homework', 'Exam'],
   has_changes: false,
   actions: {
     deletable: true,

@@ -43,9 +43,8 @@ export const apiUrls = {
    * @param taxonomyId The ID of the taxonomy
    * @param format Which format to use for the export
    */
-  exportTaxonomy: (taxonomyId: number, format: 'json' | 'csv') => (
-    makeUrl(`${taxonomyId}/export/`, { output_format: format, download: 1 })
-  ),
+  exportTaxonomy: (taxonomyId: number, format: 'json' | 'csv') =>
+    makeUrl(`${taxonomyId}/export/`, { output_format: format, download: 1 }),
   /**
    * The the URL of the downloadable template file that shows how to format a
    * taxonomy file.
@@ -63,9 +62,15 @@ export const apiUrls = {
    * @param fullDepth Whether to return max levels of child tags,
    * with results limited by the MAX_TAXONOMY_ITEMS constant.
    */
-  tagList: (taxonomyId: number, {
-    pageIndex, pageSize, fullDepth, disablePagination,
-  }: { pageIndex: number | null; pageSize: number | null; fullDepth?: boolean; disablePagination?: boolean }) => {
+  tagList: (
+    taxonomyId: number,
+    {
+      pageIndex,
+      pageSize,
+      fullDepth,
+      disablePagination,
+    }: { pageIndex: number | null; pageSize: number | null; fullDepth?: boolean; disablePagination?: boolean },
+  ) => {
     if (disablePagination) {
       return makeUrl(`${taxonomyId}/tags/`, { full_depth_threshold: fullDepth ? MAX_TAXONOMY_ITEMS : 0 });
     }
@@ -78,11 +83,12 @@ export const apiUrls = {
   /**
    * Get _all_ tags below a given parent tag. This may be replaced with something more scalable in the future.
    */
-  allSubtagsOf: (taxonomyId: number, parentTagValue: string) => makeUrl(`${taxonomyId}/tags/`, {
-    // Load as deeply as we can
-    full_depth_threshold: MAX_TAXONOMY_ITEMS,
-    parent_tag: parentTagValue,
-  }),
+  allSubtagsOf: (taxonomyId: number, parentTagValue: string) =>
+    makeUrl(`${taxonomyId}/tags/`, {
+      // Load as deeply as we can
+      full_depth_threshold: MAX_TAXONOMY_ITEMS,
+      parent_tag: parentTagValue,
+    }),
   /** URL to create a new taxonomy from an import file. */
   createTaxonomyFromImport: () => makeUrl('import/'),
   /** URL to import tags into an existing taxonomy */
@@ -143,7 +149,9 @@ export const getApiErrorMessage = (err: unknown, intl?: any): string => {
   // `POST /api/content_tagging/v1/taxonomies/:id/tags/ with a duplicate tag name returns
   // `["Tag with value 'abblue' already exists for taxonomy."]` as response body.
   if (Array.isArray(responseData)) {
-    const firstMessage = responseData.find((item): item is string => typeof item === 'string' && item.trim().length > 0);
+    const firstMessage = responseData.find(
+      (item): item is string => typeof item === 'string' && item.trim().length > 0,
+    );
     if (firstMessage) {
       return firstMessage;
     }

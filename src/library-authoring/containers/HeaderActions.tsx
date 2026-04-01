@@ -11,18 +11,9 @@ interface HeaderActionsProps {
   addContentBtnText: string;
 }
 
-export const HeaderActions = ({
-  containerKey,
-  infoBtnText,
-  addContentBtnText,
-}: HeaderActionsProps) => {
+export const HeaderActions = ({ containerKey, infoBtnText, addContentBtnText }: HeaderActionsProps) => {
   const { readOnly } = useOptionalLibraryContext();
-  const {
-    closeLibrarySidebar,
-    sidebarItemInfo,
-    openContainerInfoSidebar,
-    openAddContentSidebar,
-  } = useSidebarContext();
+  const { closeLibrarySidebar, sidebarItemInfo, openContainerInfoSidebar, openAddContentSidebar } = useSidebarContext();
   const { navigateTo } = useLibraryRoutes();
 
   const infoSidebarIsOpen = sidebarItemInfo?.id === containerKey;

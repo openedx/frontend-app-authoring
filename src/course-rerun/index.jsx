@@ -1,12 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Container,
-  Layout,
-  Stack,
-  ActionRow,
-  Button,
-} from '@openedx/paragon';
+import { Container, Layout, Stack, ActionRow, Button } from '@openedx/paragon';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 
 import { useNavigate, useParams } from 'react-router-dom';
@@ -24,13 +18,7 @@ import { useCourseRerun } from './hooks';
 const CourseRerun = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const {
-    intl,
-    displayName,
-    savingStatus,
-    initialFormValues,
-    originalCourseData,
-  } = useCourseRerun(courseId);
+  const { intl, displayName, savingStatus, initialFormValues, originalCourseData } = useCourseRerun(courseId);
   const { organizationLoadingStatus } = useSelector(getLoadingStatuses);
 
   if (organizationLoadingStatus === RequestStatus.IN_PROGRESS) {
@@ -72,10 +60,7 @@ const CourseRerun = () => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
-              <CourseRerunForm
-                initialFormValues={initialFormValues}
-                onClickCancel={handleRerunCourseCancel}
-              />
+              <CourseRerunForm initialFormValues={initialFormValues} onClickCancel={handleRerunCourseCancel} />
             </Layout.Element>
             <Layout.Element>
               <CourseRerunSideBar />

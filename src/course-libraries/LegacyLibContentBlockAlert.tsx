@@ -1,8 +1,6 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Hyperlink } from '@openedx/paragon';
-import {
-  useContext, useEffect, useMemo, useState,
-} from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { UserTaskStatus } from '@src/data/constants';
 import AlertMessage from '@src/generic/alert-message';
 import LoadingButton from '@src/generic/loading-button';
@@ -15,7 +13,7 @@ import {
 import messages from './messages';
 
 interface Props {
-  courseId: string,
+  courseId: string;
 }
 
 const LegacyLibContentBlockAlert = ({ courseId }: Props) => {
@@ -25,7 +23,8 @@ const LegacyLibContentBlockAlert = ({ courseId }: Props) => {
   const { data, isPending, refetch } = useCourseLegacyLibReadyToMigrateBlocks(courseId);
   const { mutateAsync } = useMigrateCourseLegacyLibReadyToMigrateBlocks(courseId);
   const taskStatus = useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions(courseId, taskId);
-  const learnMoreUrl = 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/migrate_legacy_libraries.html#id8';
+  const learnMoreUrl =
+    'https://docs.openedx.org/en/latest/educators/how-tos/course_development/migrate_legacy_libraries.html#id8';
 
   useEffect(() => {
     if (taskStatus.data?.state === UserTaskStatus.Succeeded) {
@@ -33,8 +32,10 @@ const LegacyLibContentBlockAlert = ({ courseId }: Props) => {
       setTaskId(undefined);
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       refetch();
-    } else if (taskStatus.data?.state === UserTaskStatus.Failed
-      || taskStatus.data?.state === UserTaskStatus.Cancelled) {
+    } else if (
+      taskStatus.data?.state === UserTaskStatus.Failed ||
+      taskStatus.data?.state === UserTaskStatus.Cancelled
+    ) {
       showToast(intl.formatMessage(messages.legacyLibReadyToMigrateTaskFailed));
       setTaskId(undefined);
       // eslint-disable-next-line @typescript-eslint/no-floating-promises

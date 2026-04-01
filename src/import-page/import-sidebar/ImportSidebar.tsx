@@ -36,11 +36,7 @@ const ImportSidebar = () => {
       <h4 className="help-sidebar-about-title">{intl.formatMessage(messages.warningTitle)}</h4>
       <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.warningDescription)}</p>
       <hr />
-      <Hyperlink
-        className="small"
-        destination={importLearnMoreUrl}
-        target="_blank"
-      >
+      <Hyperlink className="small" destination={importLearnMoreUrl} target="_blank">
         {intl.formatMessage(messages.learnMoreButtonTitle)}
       </Hyperlink>
     </HelpSidebar>

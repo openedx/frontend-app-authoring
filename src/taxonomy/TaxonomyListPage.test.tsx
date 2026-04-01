@@ -1,24 +1,21 @@
 import type MockAdapter from 'axios-mock-adapter';
-import {
-  fireEvent,
-  initializeMocks,
-  render as baseRender,
-  waitFor,
-} from '../testUtils';
+import { fireEvent, initializeMocks, render as baseRender, waitFor } from '../testUtils';
 
 import { apiUrls } from './data/api';
 import { TaxonomyListPage } from './TaxonomyListPage';
 import { TaxonomyContext } from './common/context';
 
-const taxonomies = [{
-  id: 1,
-  name: 'Taxonomy',
-  description: 'This is a description',
-  showSystemBadge: false,
-  canChangeTaxonomy: true,
-  canDeleteTaxonomy: true,
-  tagsCount: 0,
-}];
+const taxonomies = [
+  {
+    id: 1,
+    name: 'Taxonomy',
+    description: 'This is a description',
+    showSystemBadge: false,
+    canChangeTaxonomy: true,
+    canDeleteTaxonomy: true,
+    tagsCount: 0,
+  },
+];
 const organizationsListUrl = 'http://localhost:18010/organizations';
 const listTaxonomiesUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/?enabled=true';
 const listTaxonomiesUnassignedUrl = `${listTaxonomiesUrl}&unassigned=true`;
@@ -33,11 +30,10 @@ const context = {
   setAlertError: jest.fn(),
 };
 
-const render = (ui: React.ReactElement) => baseRender(ui, {
-  extraWrapper: ({ children }) => (
-    <TaxonomyContext.Provider value={context}> { children } </TaxonomyContext.Provider>
-  ),
-});
+const render = (ui: React.ReactElement) =>
+  baseRender(ui, {
+    extraWrapper: ({ children }) => <TaxonomyContext.Provider value={context}> {children} </TaxonomyContext.Provider>,
+  });
 let axiosMock: MockAdapter;
 
 describe('<TaxonomyListPage />', () => {
@@ -63,7 +59,9 @@ describe('<TaxonomyListPage />', () => {
   it('shows the data table after the query is complete', async () => {
     axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: taxonomies, canAddTaxonomy: false });
     const { getByTestId, queryByText } = render(<TaxonomyListPage />);
-    await waitFor(() => { expect(queryByText('Loading')).toEqual(null); });
+    await waitFor(() => {
+      expect(queryByText('Loading')).toEqual(null);
+    });
     expect(getByTestId('taxonomy-card-1')).toBeInTheDocument();
   });
 
@@ -71,7 +69,9 @@ describe('<TaxonomyListPage />', () => {
     axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: taxonomies, canAddTaxonomy: false });
     const { findByRole, queryByText } = render(<TaxonomyListPage />);
     // Wait until data has been loaded and rendered:
-    await waitFor(() => { expect(queryByText('Loading')).toEqual(null); });
+    await waitFor(() => {
+      expect(queryByText('Loading')).toEqual(null);
+    });
     const templateMenu = await findByRole('button', { name: 'Download template' });
     fireEvent.click(templateMenu);
     const templateButton = await findByRole('link', { name: `${fileFormat.toUpperCase()} template` });
@@ -85,7 +85,9 @@ describe('<TaxonomyListPage />', () => {
 
     const { queryByText, getByRole } = render(<TaxonomyListPage />);
     // Wait until data has been loaded and rendered:
-    await waitFor(() => { expect(queryByText('Loading')).toEqual(null); });
+    await waitFor(() => {
+      expect(queryByText('Loading')).toEqual(null);
+    });
     const importButton = getByRole('button', { name: 'Import' });
     expect(importButton).toBeDisabled();
   });
@@ -96,7 +98,9 @@ describe('<TaxonomyListPage />', () => {
     const { getByRole, getByText } = render(<TaxonomyListPage />);
     const importButton = getByRole('button', { name: 'Import' });
     // Once the API response is received and rendered, the Import button should be enabled:
-    await waitFor(() => { expect(importButton).not.toBeDisabled(); });
+    await waitFor(() => {
+      expect(importButton).not.toBeDisabled();
+    });
     fireEvent.click(importButton);
 
     expect(getByText('Upload file')).toBeInTheDocument();
@@ -104,27 +108,25 @@ describe('<TaxonomyListPage />', () => {
 
   it('should show all "All taxonomies", "Unassigned" and org names in taxonomy org filter', async () => {
     axiosMock.onGet(listTaxonomiesUrl).reply(200, {
-      results: [{
-        id: 1,
-        name: 'Taxonomy',
-        description: 'This is a description',
-        showSystemBadge: false,
-        canChangeTaxonomy: false,
-        canDeleteTaxonomy: false,
-        tagsCount: 0,
-      }],
+      results: [
+        {
+          id: 1,
+          name: 'Taxonomy',
+          description: 'This is a description',
+          showSystemBadge: false,
+          canChangeTaxonomy: false,
+          canDeleteTaxonomy: false,
+          tagsCount: 0,
+        },
+      ],
       canAddTaxonomy: false,
     });
 
-    const {
-      getByTestId,
-      getByText,
-      getByRole,
-      getAllByText,
-      queryByText,
-    } = render(<TaxonomyListPage />);
+    const { getByTestId, getByText, getByRole, getAllByText, queryByText } = render(<TaxonomyListPage />);
     // Wait until data has been loaded and rendered:
-    await waitFor(() => { expect(queryByText('Loading')).toEqual(null); });
+    await waitFor(() => {
+      expect(queryByText('Loading')).toEqual(null);
+    });
 
     expect(getByTestId('taxonomy-orgs-filter-selector')).toBeInTheDocument();
     // Check that the default filter is set to 'All taxonomies' when page is loaded
@@ -167,12 +169,7 @@ describe('<TaxonomyListPage />', () => {
       results: [{ name: 'Org2 Taxonomy C', ...defaults }],
     });
 
-    const {
-      getByRole,
-      getByText,
-      queryByText,
-      findByRole,
-    } = render(<TaxonomyListPage />);
+    const { getByRole, getByText, queryByText, findByRole } = render(<TaxonomyListPage />);
 
     // Open the taxonomies org filter select menu
     const taxonomiesFilterSelectMenu = getByRole('button', { name: 'All taxonomies' });

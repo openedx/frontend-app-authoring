@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  render,
-  screen,
-  initializeMocks,
-  fireEvent,
-} from '@src/testUtils';
+import { render, screen, initializeMocks, fireEvent } from '@src/testUtils';
 import GroupFeedbackRow from './GroupFeedbackRow';
 
 describe('GroupFeedbackRow', () => {
@@ -15,7 +10,7 @@ describe('GroupFeedbackRow', () => {
     { id: '4', text: 'Answer 4', isCorrect: false },
   ];
   const props = {
-    value: { id: 1, answers: answers.map(a => a.id), feedback: 'sOmE FeEDBACK' },
+    value: { id: 1, answers: answers.map((a) => a.id), feedback: 'sOmE FeEDBACK' },
     answers,
     handleAnswersSelectedChange: jest.fn(),
     handleFeedbackChange: jest.fn(),

@@ -38,7 +38,9 @@ const TypeRow = ({
     <>
       <Button onClick={onClick} className="d-flex p-0 flex-row justify-content-between w-100">
         <span className="small text-primary-500">{label}</span>
-        <span hidden={selected}><Icon src={Check} className="text-success" /></span>
+        <span hidden={selected}>
+          <Icon src={Check} className="text-success" />
+        </span>
       </Button>
       <hr className={lastRow ? 'd-none' : 'd-block'} />
     </>
@@ -46,13 +48,15 @@ const TypeRow = ({
 };
 
 TypeRow.propTypes = {
-  answers: PropTypes.arrayOf(PropTypes.shape({
-    correct: PropTypes.bool,
-    id: PropTypes.string,
-    selectedFeedback: PropTypes.string,
-    title: PropTypes.string,
-    unselectedFeedback: PropTypes.string,
-  })).isRequired,
+  answers: PropTypes.arrayOf(
+    PropTypes.shape({
+      correct: PropTypes.bool,
+      id: PropTypes.string,
+      selectedFeedback: PropTypes.string,
+      title: PropTypes.string,
+      unselectedFeedback: PropTypes.string,
+    }),
+  ).isRequired,
   blockTitle: PropTypes.string.isRequired,
   correctAnswerCount: PropTypes.number.isRequired,
   typeKey: PropTypes.string.isRequired,

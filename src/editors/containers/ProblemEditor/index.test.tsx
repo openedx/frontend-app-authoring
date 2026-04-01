@@ -7,16 +7,26 @@ import ProblemEditor from './index';
 import messages from './messages';
 
 // Mock child components for easy selection
-jest.mock('./components/SelectTypeModal', () => function mockSelectTypeModal(props: any) {
-  return <div>SelectTypeModal {props.onClose && 'withOnClose'}</div>;
-});
-jest.mock('./components/EditProblemView', () => function mockEditProblemView(props: any) {
-  return <div>EditProblemView {props.onClose && 'withOnClose'} {props.returnFunction && 'withReturnFunction'}</div>;
-});
-// Mock the initializeProblem method:
-jest.spyOn(thunkActions.problem, 'initializeProblem').mockImplementation(
-  () => () => Promise.resolve(),
+jest.mock(
+  './components/SelectTypeModal',
+  () =>
+    function mockSelectTypeModal(props: any) {
+      return <div>SelectTypeModal {props.onClose && 'withOnClose'}</div>;
+    },
 );
+jest.mock(
+  './components/EditProblemView',
+  () =>
+    function mockEditProblemView(props: any) {
+      return (
+        <div>
+          EditProblemView {props.onClose && 'withOnClose'} {props.returnFunction && 'withReturnFunction'}
+        </div>
+      );
+    },
+);
+// Mock the initializeProblem method:
+jest.spyOn(thunkActions.problem, 'initializeProblem').mockImplementation(() => () => Promise.resolve());
 
 describe('ProblemEditor', () => {
   const baseProps = {
@@ -91,7 +101,6 @@ describe('ProblemEditor', () => {
       requests: {
         fetchBlock: { status: 'completed' },
         fetchAdvancedSettings: { status: 'completed' },
-
       },
     };
     editorRender(<ProblemEditor {...baseProps} />, { initialState });
@@ -109,7 +118,6 @@ describe('ProblemEditor', () => {
         fetchBlock: { status: 'completed' },
         fetchAdvancedSettings: { status: 'completed' },
       },
-
     };
 
     editorRender(<ProblemEditor {...baseProps} />, { initialState });

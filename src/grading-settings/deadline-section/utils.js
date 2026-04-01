@@ -5,7 +5,7 @@
  * @returns {string} - formatted time string.
  */
 export function formatTime(time) {
-  return (time >= 10 ? time.toString() : `0${time}`);
+  return time >= 10 ? time.toString() : `0${time}`;
 }
 
 /**

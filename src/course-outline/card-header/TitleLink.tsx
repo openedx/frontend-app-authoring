@@ -8,16 +8,9 @@ interface TitleLinkProps {
   prefixIcon?: React.ReactNode;
 }
 
-const TitleLink = ({
-  title,
-  titleLink,
-  namePrefix,
-  prefixIcon,
-}: TitleLinkProps) => (
+const TitleLink = ({ title, titleLink, namePrefix, prefixIcon }: TitleLinkProps) => (
   <>
-    <div className="mr-2">
-      {prefixIcon}
-    </div>
+    <div className="mr-2">{prefixIcon}</div>
     <Button
       as={Link}
       variant="tertiary"
@@ -26,9 +19,7 @@ const TitleLink = ({
       to={titleLink}
       title={title}
     >
-      <span className={`${namePrefix}-card-title truncate-1-line mb-0 text-left`}>
-        {title}
-      </span>
+      <span className={`${namePrefix}-card-title truncate-1-line mb-0 text-left`}>{title}</span>
     </Button>
   </>
 );

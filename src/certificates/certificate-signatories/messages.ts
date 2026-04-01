@@ -8,8 +8,10 @@ const messages = defineMessages({
   },
   signatoriesRecommendation: {
     id: 'course-authoring.certificates.signatories.recommendation',
-    defaultMessage: 'It is strongly recommended that you include four or fewer signatories. If you include additional signatories, preview the certificate in Print View to ensure the certificate will print correctly on one page.',
-    description: 'A recommendation for the number of signatories to include on a certificate, emphasizing the importance of testing the print layout',
+    defaultMessage:
+      'It is strongly recommended that you include four or fewer signatories. If you include additional signatories, preview the certificate in Print View to ensure the certificate will print correctly on one page.',
+    description:
+      'A recommendation for the number of signatories to include on a certificate, emphasizing the importance of testing the print layout',
   },
   signatoriesSectionTitle: {
     id: 'course-authoring.certificates.signatories.section.title',
@@ -53,7 +55,8 @@ const messages = defineMessages({
   },
   titleDescription: {
     id: 'course-authoring.certificates.signatories.title.description',
-    defaultMessage: 'Titles more than 100 characters may prevent students from printing their certificate on a single page.',
+    defaultMessage:
+      'Titles more than 100 characters may prevent students from printing their certificate on a single page.',
     description: 'Helper text under the title input field',
   },
   organizationLabel: {
@@ -104,7 +107,8 @@ const messages = defineMessages({
   deleteSignatoryConfirmation: {
     id: 'course-authoring.certificates.signatories.confirm-modal',
     defaultMessage: 'Delete "{name}" from the list of signatories?',
-    description: 'Title for the confirmation modal when a user attempts to delete a signatory, where "{name}" is the name of the signatory to be deleted',
+    description:
+      'Title for the confirmation modal when a user attempts to delete a signatory, where "{name}" is the name of the signatory to be deleted',
   },
   deleteSignatoryConfirmationMessage: {
     id: 'course-authoring.certificates.signatories.confirm-modal.message',

@@ -3,13 +3,7 @@ import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  Collapsible,
-  Icon, IconButton,
-  Sheet,
-  TransitionReplace,
-} from '@openedx/paragon';
+import { ActionRow, Collapsible, Icon, IconButton, Sheet, TransitionReplace } from '@openedx/paragon';
 import { ChevronLeft, ChevronRight, Close } from '@openedx/paragon/icons';
 import { AdditionalTranslationsComponentSlot } from '../../../plugin-slots/AdditionalTranslationsComponentSlot';
 import OrderTranscriptForm from './OrderTranscriptForm';
@@ -21,19 +15,11 @@ import {
   updateTranscriptPreference,
 } from '../data/thunks';
 
-const TranscriptSettings = ({
-  isTranscriptSettingsOpen,
-  closeTranscriptSettings,
-  courseId,
-}) => {
+const TranscriptSettings = ({ isTranscriptSettingsOpen, closeTranscriptSettings, courseId }) => {
   const dispatch = useDispatch();
-  const { errors: errorMessages, pageSettings, transcriptStatus } = useSelector(state => state.videos);
-  const {
-    activeTranscriptPreferences,
-    transcriptCredentials,
-    videoTranscriptSettings,
-    isAiTranslationsEnabled,
-  } = pageSettings;
+  const { errors: errorMessages, pageSettings, transcriptStatus } = useSelector((state) => state.videos);
+  const { activeTranscriptPreferences, transcriptCredentials, videoTranscriptSettings, isAiTranslationsEnabled } =
+    pageSettings;
   const { transcriptionPlans } = videoTranscriptSettings || {};
   const [transcriptType, setTranscriptType] = useState(null);
   const [isAiTranslations, setIsAiTranslations] = useState(false);
@@ -51,12 +37,7 @@ const TranscriptSettings = ({
   };
 
   return (
-    <Sheet
-      position="right"
-      blocking
-      show={isTranscriptSettingsOpen}
-      onClose={closeTranscriptSettings}
-    >
+    <Sheet position="right" blocking show={isTranscriptSettingsOpen} onClose={closeTranscriptSettings}>
       <div>
         {!isAiTranslations && (
           <>
@@ -81,7 +62,7 @@ const TranscriptSettings = ({
               <IconButton size="sm" iconAs={Icon} src={Close} onClick={closeTranscriptSettings} alt="close settings" />
             </ActionRow>
             <TransitionReplace>
-              { transcriptType ? (
+              {transcriptType ? (
                 <div key="transcript-settings">
                   <OrderTranscriptForm
                     {...{
@@ -99,12 +80,8 @@ const TranscriptSettings = ({
                 </div>
               ) : (
                 <div key="transcript-type-selection" className="mt-3">
-                  <Collapsible.Advanced
-                    onOpen={() => setTranscriptType('order')}
-                  >
-                    <Collapsible.Trigger
-                      className="row m-0 justify-content-between align-items-center"
-                    >
+                  <Collapsible.Advanced onOpen={() => setTranscriptType('order')}>
+                    <Collapsible.Trigger className="row m-0 justify-content-between align-items-center">
                       <FormattedMessage {...messages.orderTranscriptsTitle} />
                       <Icon src={ChevronRight} />
                     </Collapsible.Trigger>

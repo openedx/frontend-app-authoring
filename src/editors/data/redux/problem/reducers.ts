@@ -62,7 +62,7 @@ const problem = createSlice({
     updateAnswer: (state, { payload }) => {
       const { id, hasSingleAnswer, ...answer } = payload;
       let { correctAnswerCount } = state;
-      const answers = state.answers.map(obj => {
+      const answers = state.answers.map((obj) => {
         if (obj.id === id) {
           if (has(answer, 'correct') && payload.correct) {
             correctAnswerCount += 1;
@@ -94,53 +94,59 @@ const problem = createSlice({
           ...state,
           correctAnswerCount: state.problemType === ProblemTypeKeys.NUMERIC ? 1 : 0,
           isDirty: true,
-          answers: [{
-            id: 'A',
-            title: '',
-            selectedFeedback: '',
-            unselectedFeedback: '',
-            correct: state.problemType === ProblemTypeKeys.NUMERIC,
-            isAnswerRange: false,
-          }],
+          answers: [
+            {
+              id: 'A',
+              title: '',
+              selectedFeedback: '',
+              unselectedFeedback: '',
+              correct: state.problemType === ProblemTypeKeys.NUMERIC,
+              isAnswerRange: false,
+            },
+          ],
         };
       }
-      const answers = state.answers.filter(obj => obj.id !== id).map((answer, index) => {
-        const newId = indexToLetterMap[index];
-        if (answer.id === newId) {
-          return answer;
-        }
-        let newAnswer = {
-          ...answer,
-          id: newId,
-          selectedFeedback: editorState.selectedFeedback ? editorState.selectedFeedback[answer.id] : '',
-          unselectedFeedback: editorState.unselectedFeedback ? editorState.unselectedFeedback[answer.id] : '',
-        };
-        if (RichTextProblems.includes(state.problemType as any)) {
-          newAnswer = {
-            ...newAnswer,
-            title: editorState.answers[answer.id],
+      const answers = state.answers
+        .filter((obj) => obj.id !== id)
+        .map((answer, index) => {
+          const newId = indexToLetterMap[index];
+          if (answer.id === newId) {
+            return answer;
+          }
+          let newAnswer = {
+            ...answer,
+            id: newId,
+            selectedFeedback: editorState.selectedFeedback ? editorState.selectedFeedback[answer.id] : '',
+            unselectedFeedback: editorState.unselectedFeedback ? editorState.unselectedFeedback[answer.id] : '',
           };
-          if (EditorsArray[`answer-${newId}`]) {
-            EditorsArray[`answer-${newId}`].setContent(newAnswer.title ?? '');
+          if (RichTextProblems.includes(state.problemType as any)) {
+            newAnswer = {
+              ...newAnswer,
+              title: editorState.answers[answer.id],
+            };
+            if (EditorsArray[`answer-${newId}`]) {
+              EditorsArray[`answer-${newId}`].setContent(newAnswer.title ?? '');
+            }
           }
-        }
-        // Note: The following assumes selectedFeedback and unselectedFeedback is using ExpandedTextArea
-        //   Content only needs to be set here when the 'next' feedback fields are shown.
-        if (EditorsArray[`selectedFeedback-${newId}`]) {
-          EditorsArray[`selectedFeedback-${newId}`].setContent(newAnswer.selectedFeedback ?? '');
-        }
-        if (EditorsArray[`unselectedFeedback-${newId}`]) {
-          EditorsArray[`unselectedFeedback-${newId}`].setContent(newAnswer.unselectedFeedback ?? '');
-        }
-        return newAnswer;
-      });
-      const groupFeedbackList = state.groupFeedbackList.map(feedback => {
-        const newAnswers = feedback.answers.filter(obj => obj !== id).map(letter => {
-          if (letter.charCodeAt(0) > id.charCodeAt(0)) {
-            return String.fromCharCode(letter.charCodeAt(0) - 1);
+          // Note: The following assumes selectedFeedback and unselectedFeedback is using ExpandedTextArea
+          //   Content only needs to be set here when the 'next' feedback fields are shown.
+          if (EditorsArray[`selectedFeedback-${newId}`]) {
+            EditorsArray[`selectedFeedback-${newId}`].setContent(newAnswer.selectedFeedback ?? '');
           }
-          return letter;
+          if (EditorsArray[`unselectedFeedback-${newId}`]) {
+            EditorsArray[`unselectedFeedback-${newId}`].setContent(newAnswer.unselectedFeedback ?? '');
+          }
+          return newAnswer;
         });
+      const groupFeedbackList = state.groupFeedbackList.map((feedback) => {
+        const newAnswers = feedback.answers
+          .filter((obj) => obj !== id)
+          .map((letter) => {
+            if (letter.charCodeAt(0) > id.charCodeAt(0)) {
+              return String.fromCharCode(letter.charCodeAt(0) - 1);
+            }
+            return letter;
+          });
         return { ...feedback, answers: newAnswers };
       });
       return {
@@ -169,10 +175,7 @@ const problem = createSlice({
         correctAnswerCount += 1;
       }
 
-      const answers = [
-        ...currAnswers,
-        newOption,
-      ];
+      const answers = [...currAnswers, newOption];
       return {
         ...state,
         correctAnswerCount,
@@ -207,7 +210,15 @@ const problem = createSlice({
       },
       isDirty: true,
     }),
-    load: (state, { payload: { settings: { scoring, showAnswer, ...settings }, ...payload } }) => ({
+    load: (
+      state,
+      {
+        payload: {
+          settings: { scoring, showAnswer, ...settings },
+          ...payload
+        },
+      },
+    ) => ({
       ...state,
       settings: {
         ...state.settings,
@@ -242,8 +253,4 @@ const actions = StrictDict(problem.actions);
 
 const { reducer } = problem;
 
-export {
-  actions,
-  initialState,
-  reducer,
-};
+export { actions, initialState, reducer };

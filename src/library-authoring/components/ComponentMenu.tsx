@@ -1,11 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Dropdown,
-  Icon,
-  IconButton,
-  useToggle,
-} from '@openedx/paragon';
+import { Dropdown, Icon, IconButton, useToggle } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { useClipboard } from '@src/generic/clipboard';
@@ -13,7 +8,11 @@ import { getBlockType } from '@src/generic/key-utils';
 import { ToastContext } from '@src/generic/toast-context';
 
 import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
-import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
+import {
+  SidebarActions,
+  SidebarBodyItemId,
+  useSidebarContext,
+} from '@src/library-authoring/common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import containerMessages from '@src/library-authoring/containers/messages';
 import { useLibraryRoutes } from '@src/library-authoring/routes';
@@ -30,20 +29,9 @@ interface Props {
 
 export const ComponentMenu = ({ usageKey, index }: Props) => {
   const intl = useIntl();
-  const {
-    libraryId,
-    collectionId,
-    containerId,
-    openComponentEditor,
-    readOnly,
-  } = useOptionalLibraryContext();
+  const { libraryId, collectionId, containerId, openComponentEditor, readOnly } = useOptionalLibraryContext();
 
-  const {
-    sidebarItemInfo,
-    closeLibrarySidebar,
-    setSidebarAction,
-    openItemSidebar,
-  } = useSidebarContext();
+  const { sidebarItemInfo, closeLibrarySidebar, setSidebarAction, openItemSidebar } = useSidebarContext();
   const { insideCollection } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
@@ -59,15 +47,18 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
   };
 
   const removeFromCollection = () => {
-    removeCollectionComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarItemInfo?.id === usageKey) {
-        // Close sidebar if current component is open
-        closeLibrarySidebar();
-      }
-      showToast(intl.formatMessage(containerMessages.removeComponentFromCollectionSuccess));
-    }).catch(() => {
-      showToast(intl.formatMessage(containerMessages.removeComponentFromCollectionFailure));
-    });
+    removeCollectionComponentsMutation
+      .mutateAsync([usageKey])
+      .then(() => {
+        if (sidebarItemInfo?.id === usageKey) {
+          // Close sidebar if current component is open
+          closeLibrarySidebar();
+        }
+        showToast(intl.formatMessage(containerMessages.removeComponentFromCollectionSuccess));
+      })
+      .catch(() => {
+        showToast(intl.formatMessage(containerMessages.removeComponentFromCollectionFailure));
+      });
   };
 
   const handleEdit = useCallback(() => {
@@ -84,11 +75,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
   const showManageCollections = useCallback(() => {
     openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
     scheduleJumpToCollection();
-  }, [
-    scheduleJumpToCollection,
-    usageKey,
-    openItemSidebar,
-  ]);
+  }, [scheduleJumpToCollection, usageKey, openItemSidebar]);
 
   const containerType = containerId ? getBlockType(containerId) : 'collection';
 
@@ -139,19 +126,8 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
           </Dropdown.Item>
         )}
       </Dropdown.Menu>
-      {isDeleteModalOpen && (
-        <ComponentDeleter
-          usageKey={usageKey}
-          close={closeDeleteModal}
-        />
-      )}
-      {isRemoveModalOpen && (
-        <ComponentRemover
-          usageKey={usageKey}
-          index={index}
-          close={closeRemoveModal}
-        />
-      )}
+      {isDeleteModalOpen && <ComponentDeleter usageKey={usageKey} close={closeDeleteModal} />}
+      {isRemoveModalOpen && <ComponentRemover usageKey={usageKey} index={index} close={closeRemoveModal} />}
     </Dropdown>
   );
 };

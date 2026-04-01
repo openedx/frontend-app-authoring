@@ -28,11 +28,7 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
       size="xl"
       className="component-preview-modal"
     >
-      <LibraryBlock
-        usageKey={usageKey}
-        version={showOnlyPublished ? 'published' : undefined}
-        minHeight="60vh"
-      />
+      <LibraryBlock usageKey={usageKey} version={showOnlyPublished ? 'published' : undefined} minHeight="60vh" />
     </StandardModal>
   );
 };
@@ -66,16 +62,14 @@ const ComponentPreview = () => {
         </Button>
         {
           // key=modified below is used to auto-refresh the preview when changes are made, e.g. via OLX editor
-          componentMetadata
-            ? (
-              <LibraryBlock
-                usageKey={usageKey}
-                key={componentMetadata.modified}
-                version={showOnlyPublished ? 'published' : undefined}
-                minHeight="60vh"
-              />
-            )
-            : null
+          componentMetadata ? (
+            <LibraryBlock
+              usageKey={usageKey}
+              key={componentMetadata.modified}
+              version={showOnlyPublished ? 'published' : undefined}
+              minHeight="60vh"
+            />
+          ) : null
         }
       </div>
       <ModalComponentPreview isOpen={isModalOpen} close={closeModal} usageKey={usageKey} />

@@ -1,9 +1,4 @@
-import {
-  fireEvent,
-  screen,
-  render as defaultRender,
-  waitFor,
-} from '@testing-library/react';
+import { fireEvent, screen, render as defaultRender, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { UnlinkModal } from './UnlinkModal';
@@ -12,28 +7,25 @@ import messages from './messages';
 const onUnlinkSubmitMock = jest.fn();
 const closeMock = jest.fn();
 
-const renderforContainer = () => defaultRender(
-  <IntlProvider locale="en">
-    <UnlinkModal
-      isOpen
-      close={closeMock}
-      category="chapter"
-      displayName="Introduction to Testing"
-      onUnlinkSubmit={onUnlinkSubmitMock}
-    />
-  </IntlProvider>,
-);
+const renderforContainer = () =>
+  defaultRender(
+    <IntlProvider locale="en">
+      <UnlinkModal
+        isOpen
+        close={closeMock}
+        category="chapter"
+        displayName="Introduction to Testing"
+        onUnlinkSubmit={onUnlinkSubmitMock}
+      />
+    </IntlProvider>,
+  );
 
-const renderforComponent = () => defaultRender(
-  <IntlProvider locale="en">
-    <UnlinkModal
-      isOpen
-      close={closeMock}
-      category="component"
-      onUnlinkSubmit={onUnlinkSubmitMock}
-    />
-  </IntlProvider>,
-);
+const renderforComponent = () =>
+  defaultRender(
+    <IntlProvider locale="en">
+      <UnlinkModal isOpen close={closeMock} category="component" onUnlinkSubmit={onUnlinkSubmitMock} />
+    </IntlProvider>,
+  );
 
 describe('<UnlinkModal />', () => {
   it('render UnlinkModal component correctly for containers', () => {
@@ -53,9 +45,7 @@ describe('<UnlinkModal />', () => {
 
     expect(screen.getByText('Unlink this component?')).toBeInTheDocument();
     expect(screen.getByText(/are you sure you want to unlink this library Component reference/i)).toBeInTheDocument();
-    expect(
-      screen.queryByText(/will remain linked to their library versions./i),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/will remain linked to their library versions./i)).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.unlinkButton.defaultMessage })).toBeInTheDocument();
   });

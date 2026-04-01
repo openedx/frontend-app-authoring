@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import {
-  initializeMocks, render, screen, within,
-} from '@src/testUtils';
+import { initializeMocks, render, screen, within } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 
 import { useToggle } from '@openedx/paragon';
@@ -36,13 +34,7 @@ const TestSidebar = () => {
   const [pageKey, setPageKey] = useState<keyof typeof pages>('page1');
 
   return (
-    <Sidebar
-      pages={pages}
-      currentPageKey={pageKey}
-      setCurrentPageKey={setPageKey}
-      isOpen={isOpen}
-      toggle={toggle}
-    />
+    <Sidebar pages={pages} currentPageKey={pageKey} setCurrentPageKey={setPageKey} isOpen={isOpen} toggle={toggle} />
   );
 };
 

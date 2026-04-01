@@ -20,11 +20,6 @@ const slice = createSlice({
   },
 });
 
-export const {
-  showProcessingNotification,
-  hideProcessingNotification,
-} = slice.actions;
+export const { showProcessingNotification, hideProcessingNotification } = slice.actions;
 
-export const {
-  reducer,
-} = slice;
+export const { reducer } = slice;

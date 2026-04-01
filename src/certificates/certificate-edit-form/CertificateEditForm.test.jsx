@@ -1,7 +1,5 @@
 import { Provider } from 'react-redux';
-import {
-  render, waitFor, within,
-} from '@testing-library/react';
+import { render, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -23,13 +21,14 @@ let axiosMock;
 let store;
 const courseId = 'course-123';
 
-const renderComponent = () => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificateEditForm courseId="course-123" />
-    </IntlProvider>
-  </Provider>,
-);
+const renderComponent = () =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificateEditForm courseId="course-123" />
+      </IntlProvider>
+    </Provider>,
+  );
 
 const initialState = {
   certificates: {
@@ -50,9 +49,7 @@ describe('CertificateEditForm Component', () => {
     });
     store = initializeStore(initialState);
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock
-      .onGet(getCertificatesApiUrl(courseId))
-      .reply(200, certificatesDataMock);
+    axiosMock.onGet(getCertificatesApiUrl(courseId)).reply(200, certificatesDataMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
   });
 
@@ -62,13 +59,17 @@ describe('CertificateEditForm Component', () => {
     const newCertificateData = {
       ...certificatesDataMock,
       courseTitle: courseTitleOverrideValue,
-      certificates: [{
-        ...certificatesDataMock.certificates[0],
-        signatories: [{
-          ...certificatesDataMock.certificates[0].signatories[0],
-          name: signatoryNameValue,
-        }],
-      }],
+      certificates: [
+        {
+          ...certificatesDataMock.certificates[0],
+          signatories: [
+            {
+              ...certificatesDataMock.certificates[0].signatories[0],
+              name: signatoryNameValue,
+            },
+          ],
+        },
+      ],
     };
     const user = userEvent.setup();
     const { getByDisplayValue, getByRole, getByPlaceholderText } = renderComponent();
@@ -80,23 +81,21 @@ describe('CertificateEditForm Component', () => {
 
     await user.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
 
-    axiosMock.onPost(
-      getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
-    ).reply(200, newCertificateData);
+    axiosMock
+      .onPost(getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id))
+      .reply(200, newCertificateData);
     await executeThunk(updateCourseCertificate(courseId, newCertificateData), store.dispatch);
 
     await waitFor(() => {
-      expect(getByDisplayValue(
-        certificatesDataMock.certificates[0].courseTitle + courseTitleOverrideValue,
-      )).toBeInTheDocument();
+      expect(
+        getByDisplayValue(certificatesDataMock.certificates[0].courseTitle + courseTitleOverrideValue),
+      ).toBeInTheDocument();
     });
   });
 
   it('deletes a certificate and updates the store', async () => {
     const user = userEvent.setup();
-    axiosMock.onDelete(
-      getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
-    ).reply(200);
+    axiosMock.onDelete(getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id)).reply(200);
 
     const { getByRole } = renderComponent();
 
@@ -114,9 +113,7 @@ describe('CertificateEditForm Component', () => {
 
   it('updates loading status if delete fails', async () => {
     const user = userEvent.setup();
-    axiosMock.onDelete(
-      getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
-    ).reply(404);
+    axiosMock.onDelete(getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id)).reply(404);
 
     const { getByRole } = renderComponent();
 

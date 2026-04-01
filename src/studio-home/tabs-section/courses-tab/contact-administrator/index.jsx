@@ -8,18 +8,13 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { getStudioHomeData } from '../../../data/selectors';
 import messages from '../../../messages';
 
-const ContactAdministrator = ({
-  hasAbilityToCreateCourse, showNewCourseContainer, onClickNewCourse,
-}) => {
+const ContactAdministrator = ({ hasAbilityToCreateCourse, showNewCourseContainer, onClickNewCourse }) => {
   const intl = useIntl();
   const { studioShortName } = useSelector(getStudioHomeData);
 
   return (
     <Card variant="muted">
-      <Card.Section
-        title={intl.formatMessage(messages.defaultSection_1_Title, { studioShortName })}
-        className="small"
-      >
+      <Card.Section title={intl.formatMessage(messages.defaultSection_1_Title, { studioShortName })} className="small">
         {intl.formatMessage(messages.defaultSection_1_Description)}
       </Card.Section>
       {hasAbilityToCreateCourse && (
@@ -28,7 +23,7 @@ const ContactAdministrator = ({
           <Card.Section
             className="small"
             title={intl.formatMessage(messages.defaultSection_2_Title)}
-            actions={(
+            actions={
               <Button
                 iconBefore={AddIcon}
                 variant="outline-primary"
@@ -38,7 +33,7 @@ const ContactAdministrator = ({
               >
                 {intl.formatMessage(messages.btnAddNewCourseText)}
               </Button>
-            )}
+            }
           >
             {intl.formatMessage(messages.defaultSection_2_Description)}
           </Card.Section>

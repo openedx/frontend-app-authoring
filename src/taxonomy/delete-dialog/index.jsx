@@ -1,25 +1,12 @@
 // @ts-check
 import React, { useCallback, useState } from 'react';
-import {
-  ActionRow,
-  Button,
-  Container,
-  Form,
-  ModalDialog,
-  Icon,
-} from '@openedx/paragon';
+import { ActionRow, Button, Container, Form, ModalDialog, Icon } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Warning } from '@openedx/paragon/icons';
 import messages from './messages';
 
-const DeleteDialog = ({
-  taxonomyName,
-  tagsCount,
-  isOpen,
-  onClose,
-  onDelete,
-}) => {
+const DeleteDialog = ({ taxonomyName, tagsCount, isOpen, onClose, onDelete }) => {
   const intl = useIntl();
   const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(true);
   const deleteLabel = intl.formatMessage(messages.deleteDialogConfirmDeleteLabel);
@@ -56,18 +43,14 @@ const DeleteDialog = ({
           </ModalDialog.Title>
         </ModalDialog.Header>
         <ModalDialog.Body>
-          <div className="mb-4">
-            {intl.formatMessage(messages.deleteDialogBody, { tagsCount })}
-          </div>
+          <div className="mb-4">{intl.formatMessage(messages.deleteDialogBody, { tagsCount })}</div>
           <Form.Group>
             <Form.Label>
               {intl.formatMessage(messages.deleteDialogConfirmLabel, {
                 deleteLabel: <b>{deleteLabel}</b>,
               })}
             </Form.Label>
-            <Form.Control
-              onChange={handleInputChange}
-            />
+            <Form.Control onChange={handleInputChange} />
           </Form.Group>
         </ModalDialog.Body>
         <ModalDialog.Footer>

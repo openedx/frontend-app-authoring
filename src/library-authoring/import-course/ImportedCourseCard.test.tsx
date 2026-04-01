@@ -1,16 +1,9 @@
 import userEvent from '@testing-library/user-event';
 
-import {
-  initializeMocks,
-  render as testRender,
-  screen,
-} from '@src/testUtils';
+import { initializeMocks, render as testRender, screen } from '@src/testUtils';
 
 import { LibraryProvider } from '../common/context/LibraryContext';
-import {
-  mockContentLibrary,
-  mockGetCourseImports,
-} from '../data/api.mocks';
+import { mockContentLibrary, mockGetCourseImports } from '../data/api.mocks';
 import { type CourseImport } from '../data/api';
 import { ImportedCourseCard } from './ImportedCourseCard';
 
@@ -23,20 +16,14 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const render = (courseImport: CourseImport) => (
-  testRender(
-    <ImportedCourseCard courseImport={courseImport} />,
-    {
-      extraWrapper: ({ children }: { children: React.ReactNode }) => (
-        <LibraryProvider libraryId={mockContentLibrary.libraryId}>
-          {children}
-        </LibraryProvider>
-      ),
-      path: '/libraries/:libraryId/import-course',
-      params: { libraryId },
-    },
-  )
-);
+const render = (courseImport: CourseImport) =>
+  testRender(<ImportedCourseCard courseImport={courseImport} />, {
+    extraWrapper: ({ children }: { children: React.ReactNode }) => (
+      <LibraryProvider libraryId={mockContentLibrary.libraryId}>{children}</LibraryProvider>
+    ),
+    path: '/libraries/:libraryId/import-course',
+    params: { libraryId },
+  });
 
 describe('<ImportedCourseCard>', () => {
   beforeEach(() => {
@@ -64,12 +51,10 @@ describe('<ImportedCourseCard>', () => {
 
     const collectionLink = await screen.findByText(succeedImportWithCollection.targetCollection.title);
     await userEvent.click(collectionLink);
-    expect(mockNavigate).toHaveBeenCalledWith(
-      {
-        pathname: `/library/${libraryId}/collection/${succeedImportWithCollection.targetCollection.key}`,
-        search: '',
-      },
-    );
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: `/library/${libraryId}/collection/${succeedImportWithCollection.targetCollection.key}`,
+      search: '',
+    });
   });
 
   it('should render a card for a failed import', () => {

@@ -27,9 +27,7 @@ let store;
 const RequiredProviders = ({ children }) => (
   <IntlProvider locale="en" messages={{}}>
     <AppProvider store={store}>
-      <PagesAndResourcesProvider courseId="course-v1:foo+bar+baz">
-        {children}
-      </PagesAndResourcesProvider>
+      <PagesAndResourcesProvider courseId="course-v1:foo+bar+baz">{children}</PagesAndResourcesProvider>
     </AppProvider>
   </IntlProvider>
 );
@@ -52,10 +50,7 @@ describe('SettingsComponent', () => {
   test('renders LazyLoadedComponent when provided with props', async () => {
     useParams.mockImplementation(() => ({ appId: 'wiki' }));
 
-    render(
-      <SettingsComponent url="/some-url" />,
-      { wrapper: RequiredProviders },
-    );
+    render(<SettingsComponent url="/some-url" />, { wrapper: RequiredProviders });
 
     await screen.findByText('Configure wiki');
 
@@ -96,10 +91,7 @@ describe('SettingsComponent', () => {
     // Specify an invalid course app, with no matching plugin:
     useParams.mockImplementation(() => ({ appId: 'invalid-plugin' }));
 
-    const rendered = render(
-      <SettingsComponent url="/some-url" />,
-      { wrapper: RequiredProviders },
-    );
+    const rendered = render(<SettingsComponent url="/some-url" />, { wrapper: RequiredProviders });
 
     const errorMessage = 'An error occurred when loading the configuration UI';
     await waitFor(() => expect(rendered.container).toHaveTextContent(errorMessage));

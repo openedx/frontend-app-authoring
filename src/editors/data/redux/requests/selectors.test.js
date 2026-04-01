@@ -15,21 +15,17 @@ describe('request selectors', () => {
   describe('basic selectors', () => {
     describe('requestStatus', () => {
       it('returns the state associated with the given requestKey', () => {
-        expect(
-          selectors.requestStatus(
-            { requests: { [testKey]: testValue } },
-            { requestKey: testKey },
-          ),
-        ).toEqual(testValue);
+        expect(selectors.requestStatus({ requests: { [testKey]: testValue } }, { requestKey: testKey })).toEqual(
+          testValue,
+        );
       });
     });
     describe('statusSelector', () => {
       it('returns a state selector that applies a fn against request state by requestKey', () => {
         const myMethod = ({ data }) => ({ myData: data });
-        expect(selectors.statusSelector(myMethod)(
-          { requests: { [testKey]: { data: testValue } } },
-          { requestKey: testKey },
-        )).toEqual({ myData: testValue });
+        expect(
+          selectors.statusSelector(myMethod)({ requests: { [testKey]: { data: testValue } } }, { requestKey: testKey }),
+        ).toEqual({ myData: testValue });
       });
     });
     describe('state selectors', () => {
@@ -64,9 +60,7 @@ describe('request selectors', () => {
           expect(selectors.errorStatus({})).toEqual(undefined);
           expect(selectors.errorStatus({ error: {} })).toEqual(undefined);
           expect(selectors.errorStatus({ error: { response: {} } })).toEqual(undefined);
-          expect(selectors.errorStatus(
-            { error: { response: { status: testValue } } },
-          )).toEqual(testValue);
+          expect(selectors.errorStatus({ error: { response: { status: testValue } } })).toEqual(testValue);
         });
       });
       describe('errorCode', () => {
@@ -74,9 +68,7 @@ describe('request selectors', () => {
           expect(selectors.errorCode({})).toEqual(undefined);
           expect(selectors.errorCode({ error: {} })).toEqual(undefined);
           expect(selectors.errorCode({ error: { response: {} } })).toEqual(undefined);
-          expect(selectors.errorCode(
-            { error: { response: { data: testValue } } },
-          )).toEqual(testValue);
+          expect(selectors.errorCode({ error: { response: { data: testValue } } })).toEqual(testValue);
         });
       });
     });
@@ -95,7 +87,7 @@ describe('request selectors', () => {
       let connectedSelectors;
       beforeEach(() => {
         statusSelector = selectors.statusSelector;
-        selectors.statusSelector = jest.fn(key => ({ statusSelector: key }));
+        selectors.statusSelector = jest.fn((key) => ({ statusSelector: key }));
         connectedSelectors = selectors.connectedStatusSelectors();
       });
       afterEach(() => {
@@ -108,16 +100,9 @@ describe('request selectors', () => {
           });
         });
       };
-      [
-        'isInactive',
-        'isPending',
-        'isCompleted',
-        'isFailed',
-        'error',
-        'errorCode',
-        'errorStatus',
-        'data',
-      ].map(testStatusSelector);
+      ['isInactive', 'isPending', 'isCompleted', 'isFailed', 'error', 'errorCode', 'errorStatus', 'data'].map(
+        testStatusSelector,
+      );
     });
   });
 });

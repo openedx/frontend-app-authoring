@@ -4,14 +4,7 @@ import PropTypes from 'prop-types';
 import VideoGallery from './containers/VideoGallery';
 import * as hooks from './hooks';
 
-const VideoSelector = ({
-  blockId,
-  learningContextId,
-  lmsEndpointUrl,
-  studioEndpointUrl,
-  returnFunction,
-  onCancel,
-}) => {
+const VideoSelector = ({ blockId, learningContextId, lmsEndpointUrl, studioEndpointUrl, returnFunction, onCancel }) => {
   const dispatch = useDispatch();
   const loading = hooks.useInitializeApp({
     dispatch,
@@ -26,9 +19,7 @@ const VideoSelector = ({
   if (loading) {
     return null;
   }
-  return (
-    <VideoGallery returnFunction={returnFunction} onCancel={onCancel} />
-  );
+  return <VideoGallery returnFunction={returnFunction} onCancel={onCancel} />;
 };
 
 VideoSelector.propTypes = {

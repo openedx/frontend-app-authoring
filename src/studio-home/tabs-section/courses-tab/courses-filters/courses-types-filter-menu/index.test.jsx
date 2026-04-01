@@ -21,14 +21,12 @@ describe('CoursesTypesFilterMenu', () => {
 
   const onItemMenuSelectedMock = jest.fn();
 
-  const renderComponent = (overrideProps = {}) => render(
-    <IntlProviderWrapper>
-      <CoursesTypesFilterMenu
-        onItemMenuSelected={onItemMenuSelectedMock}
-        {...overrideProps}
-      />
-    </IntlProviderWrapper>,
-  );
+  const renderComponent = (overrideProps = {}) =>
+    render(
+      <IntlProviderWrapper>
+        <CoursesTypesFilterMenu onItemMenuSelected={onItemMenuSelectedMock} {...overrideProps} />
+      </IntlProviderWrapper>,
+    );
 
   beforeEach(() => {
     jest.clearAllMocks();

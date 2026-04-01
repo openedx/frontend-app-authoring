@@ -1,18 +1,8 @@
 import React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
-import {
-  Image,
-  Stack,
-  Button,
-  Icon,
-  IconButtonWithTooltip,
-  Alert,
-} from '@openedx/paragon';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { Image, Stack, Button, Icon, IconButtonWithTooltip, Alert } from '@openedx/paragon';
 import { DeleteOutline, FileUpload } from '@openedx/paragon/icons';
 
 import { selectors } from '../../../../../../data/redux';
@@ -59,18 +49,14 @@ const ThumbnailWidget = ({
     }
     return intl.formatMessage(messages.unavailableSubtitle);
   };
-  return (!isLibrary && edxVideo ? (
+  return !isLibrary && edxVideo ? (
     <CollapsibleFormWidget
       fontSize="x-small"
       isError={Object.keys(error).length !== 0}
       title={intl.formatMessage(messages.title)}
       subtitle={getSubtitle()}
     >
-      <ErrorAlert
-        dismissError={fileSizeError.dismiss}
-        hideHeading
-        isError={fileSizeError.show}
-      >
+      <ErrorAlert dismissError={fileSizeError.dismiss} hideHeading isError={fileSizeError.show}>
         <FormattedMessage {...messages.fileSizeError} />
       </ErrorAlert>
       {!allowThumbnailUpload && (
@@ -120,7 +106,7 @@ const ThumbnailWidget = ({
         </Stack>
       )}
     </CollapsibleFormWidget>
-  ) : null);
+  ) : null;
 };
 
 ThumbnailWidget.propTypes = {

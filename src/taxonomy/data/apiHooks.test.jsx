@@ -11,12 +11,7 @@ import MockAdapter from 'axios-mock-adapter';
 
 import { apiUrls } from './api';
 
-import {
-  useCreateTag,
-  useImportPlan,
-  useImportTags,
-  useImportNewTaxonomy,
-} from './apiHooks';
+import { useCreateTag, useImportPlan, useImportTags, useImportNewTaxonomy } from './apiHooks';
 
 let axiosMock;
 
@@ -30,9 +25,7 @@ const queryClient = new QueryClient({
 
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>
-    <IntlProvider locale="en">
-      {children}
-    </IntlProvider>
+    <IntlProvider locale="en">{children}</IntlProvider>
   </QueryClientProvider>
 );
 

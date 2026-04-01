@@ -5,10 +5,10 @@
 }
 
 .shadow {
-  box-shadow: 0 .125rem .25rem rgb(0 0 0 / .3) !important;
+  box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 0.3) !important;
 }
 
-[dir="rtl"] {
+[dir='rtl'] {
   .desktop-card,
   .mobile-card {
     .pgn__card-header-actions .pgn__hyperlink .btn-icon {

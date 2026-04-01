@@ -10,7 +10,7 @@ describe('requests reducer', () => {
     const arbitraryKey = 'ArbItrAryKey';
     const requestsList = [RequestKeys.fetchUnit, RequestKeys.fetchBlock, RequestKeys.saveBlock, arbitraryKey];
 
-    requestsList.forEach(requestKey => {
+    requestsList.forEach((requestKey) => {
       describe(`${requestKey} lifecycle`, () => {
         const testAction = (action, args, expected) => {
           const testingState = {
@@ -27,18 +27,10 @@ describe('requests reducer', () => {
           testAction('startRequest', requestKey, { status: RequestStates.pending });
         });
         test('completeRequest sets completed status and loads response', () => {
-          testAction(
-            'completeRequest',
-            { requestKey },
-            { status: RequestStates.completed },
-          );
+          testAction('completeRequest', { requestKey }, { status: RequestStates.completed });
         });
         test('failRequest sets failed state and loads error', () => {
-          testAction(
-            'failRequest',
-            { requestKey },
-            { status: RequestStates.failed },
-          );
+          testAction('failRequest', { requestKey }, { status: RequestStates.failed });
         });
         test('clearRequest clears request state', () => {
           testAction('clearRequest', { requestKey }, {});

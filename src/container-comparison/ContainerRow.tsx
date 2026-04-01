@@ -1,11 +1,7 @@
-import {
-  ActionRow, Card, Icon, Stack,
-} from '@openedx/paragon';
+import { ActionRow, Card, Icon, Stack } from '@openedx/paragon';
 import type { MessageDescriptor } from 'react-intl';
 import { useMemo } from 'react';
-import {
-  Cached, ChevronRight, Delete, Done, Plus,
-} from '@openedx/paragon/icons';
+import { Cached, ChevronRight, Delete, Done, Plus } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { ContainerType } from '@src/generic/key-utils';
@@ -30,9 +26,7 @@ interface StateContext {
   message2?: MessageDescriptor;
 }
 
-const ContainerRow = ({
-  title, containerType, state, side, originalName, onClick,
-}: ContainerRowProps) => {
+const ContainerRow = ({ title, containerType, state, side, originalName, onClick }: ContainerRowProps) => {
   const isClickable = isRowClickable(state, containerType as ContainerType);
   const stateContext: StateContext = useMemo(() => {
     let message: MessageDescriptor | undefined;
@@ -51,13 +45,18 @@ const ContainerRow = ({
         message = side === 'Before' ? messages.renamedDiffBeforeMessage : messages.renamedUpdatedDiffAfterMessage;
         return { className: 'bg-light-300 text-light-300 ', icon: Done, message };
       case 'locallyContentUpdated':
-        message = side === 'Before' ? messages.locallyContentUpdatedBeforeMessage : messages.locallyContentUpdatedAfterMessage;
+        message =
+          side === 'Before' ? messages.locallyContentUpdatedBeforeMessage : messages.locallyContentUpdatedAfterMessage;
         return { className: 'bg-light-300 text-light-300 ', icon: Done, message };
       case 'locallyRenamedAndContentUpdated':
         message = side === 'Before' ? messages.renamedDiffBeforeMessage : messages.renamedUpdatedDiffAfterMessage;
-        message2 = side === 'Before' ? messages.locallyContentUpdatedBeforeMessage : messages.locallyContentUpdatedAfterMessage;
+        message2 =
+          side === 'Before' ? messages.locallyContentUpdatedBeforeMessage : messages.locallyContentUpdatedAfterMessage;
         return {
-          className: 'bg-light-300 text-light-300 ', icon: Done, message, message2,
+          className: 'bg-light-300 text-light-300 ',
+          icon: Done,
+          message,
+          message2,
         };
       case 'moved':
         message = side === 'Before' ? messages.movedDiffBeforeMessage : messages.movedDiffAfterMessage;
@@ -79,19 +78,13 @@ const ContainerRow = ({
       className="mb-2 rounded shadow-sm border border-light-100"
     >
       <Stack direction="horizontal" gap={0}>
-        <div
-          className={`px-1 align-self-stretch align-content-center rounded-left ${stateContext.className}`}
-        >
+        <div className={`px-1 align-self-stretch align-content-center rounded-left ${stateContext.className}`}>
           <Icon size="sm" src={stateContext.icon} />
         </div>
         <ActionRow className="p-2">
           <Stack direction="vertical" gap={2}>
             <Stack direction="horizontal" gap={2}>
-              <Icon
-                src={getItemIcon(containerType)}
-                screenReaderText={containerType}
-                title={title}
-              />
+              <Icon src={getItemIcon(containerType)} screenReaderText={containerType} title={title} />
               <span className="small font-weight-bold">{title}</span>
             </Stack>
             {stateContext.message ? (

@@ -1,6 +1,4 @@
-import {
-  useCallback, useEffect, useState, useMemo,
-} from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
@@ -14,16 +12,15 @@ import { getCourseOutlineInfoQuery, patchUnitItemQuery } from '../data/thunk';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import { messageTypes } from '../constants';
 import { CATEGORIES, MOVE_DIRECTIONS } from './constants';
-import {
-  findParentIds, getBreadcrumbs, getXBlockType, isValidCategory,
-} from './utils';
-import {
-  IState, IUseMoveModalParams, IUseMoveModalReturn, IXBlockInfo,
-} from './interfaces';
+import { findParentIds, getBreadcrumbs, getXBlockType, isValidCategory } from './utils';
+import { IState, IUseMoveModalParams, IUseMoveModalReturn, IXBlockInfo } from './interfaces';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useMoveModal = ({
-  isOpenModal, closeModal, openModal, courseId,
+  isOpenModal,
+  closeModal,
+  openModal,
+  courseId,
 }: IUseMoveModalParams): IUseMoveModalReturn => {
   const { blockId } = useParams<{ blockId: string }>();
   const intl = useIntl();
@@ -32,13 +29,16 @@ export const useMoveModal = ({
   const courseOutlineInfo = useSelector(getCourseOutlineInfo);
   const courseOutlineInfoLoadingStatus = useSelector(getCourseOutlineInfoLoadingStatus);
 
-  const initialValues = useMemo<IState>(() => ({
-    childrenInfo: { children: courseOutlineInfo.childInfo?.children ?? [], category: CATEGORIES.KEYS.section },
-    parentInfo: { parent: courseOutlineInfo, category: CATEGORIES.KEYS.course },
-    isValidMove: false,
-    sourceXBlockInfo: { current: {} as IXBlockInfo, parent: {} as IXBlockInfo },
-    visitedAncestors: [courseOutlineInfo],
-  }), [courseOutlineInfo]);
+  const initialValues = useMemo<IState>(
+    () => ({
+      childrenInfo: { children: courseOutlineInfo.childInfo?.children ?? [], category: CATEGORIES.KEYS.section },
+      parentInfo: { parent: courseOutlineInfo, category: CATEGORIES.KEYS.course },
+      isValidMove: false,
+      sourceXBlockInfo: { current: {} as IXBlockInfo, parent: {} as IXBlockInfo },
+      visitedAncestors: [courseOutlineInfo],
+    }),
+    [courseOutlineInfo],
+  );
 
   const [state, setState] = useState<IState>(initialValues);
 
@@ -49,76 +49,90 @@ export const useMoveModal = ({
     [courseOutlineInfo, state.sourceXBlockInfo.current.id],
   );
 
-  const receiveMessage = useCallback(({ data }: { data: any }) => {
-    const { payload, type } = data;
+  const receiveMessage = useCallback(
+    ({ data }: { data: any }) => {
+      const { payload, type } = data;
 
-    if (type === messageTypes.showMoveXBlockModal) {
-      setState((prevState) => ({
-        ...prevState,
-        sourceXBlockInfo: {
-          current: payload.sourceXBlockInfo,
-          parent: payload.sourceParentXBlockInfo,
-        },
-      }));
-      openModal();
-    }
-  }, [openModal]);
+      if (type === messageTypes.showMoveXBlockModal) {
+        setState((prevState) => ({
+          ...prevState,
+          sourceXBlockInfo: {
+            current: payload.sourceXBlockInfo,
+            parent: payload.sourceParentXBlockInfo,
+          },
+        }));
+        openModal();
+      }
+    },
+    [openModal],
+  );
 
   useEventListener('message', receiveMessage);
 
-  const updateParentItemsData = useCallback((direction?: string, newParentIndex?: string) => {
-    setState((prevState: IState) => {
-      if (!direction) {
-        return {
-          ...prevState,
-          parentInfo: {
-            parent: initialValues.parentInfo.parent,
-            category: initialValues.parentInfo.category,
-          },
-          visitedAncestors: [initialValues.parentInfo.parent],
-        };
-      }
+  const updateParentItemsData = useCallback(
+    (direction?: string, newParentIndex?: string) => {
+      setState((prevState: IState) => {
+        if (!direction) {
+          return {
+            ...prevState,
+            parentInfo: {
+              parent: initialValues.parentInfo.parent,
+              category: initialValues.parentInfo.category,
+            },
+            visitedAncestors: [initialValues.parentInfo.parent],
+          };
+        }
 
-      if (
-        direction === MOVE_DIRECTIONS.forward && newParentIndex !== undefined
-        && prevState.childrenInfo.children[newParentIndex]
-      ) {
-        const newParent = prevState.childrenInfo.children[newParentIndex];
-        return {
-          ...prevState,
-          parentInfo: {
-            parent: newParent,
-            category: prevState.parentInfo.category,
-          },
-          visitedAncestors: [...prevState.visitedAncestors, newParent],
-        };
-      }
+        if (
+          direction === MOVE_DIRECTIONS.forward &&
+          newParentIndex !== undefined &&
+          prevState.childrenInfo.children[newParentIndex]
+        ) {
+          const newParent = prevState.childrenInfo.children[newParentIndex];
+          return {
+            ...prevState,
+            parentInfo: {
+              parent: newParent,
+              category: prevState.parentInfo.category,
+            },
+            visitedAncestors: [...prevState.visitedAncestors, newParent],
+          };
+        }
 
-      if (
-        direction === MOVE_DIRECTIONS.backward && newParentIndex !== undefined
-        && prevState.visitedAncestors[newParentIndex]
-      ) {
-        return {
-          ...prevState,
-          parentInfo: {
-            parent: prevState.visitedAncestors[newParentIndex],
-            category: prevState.parentInfo.category,
-          },
-          visitedAncestors: prevState.visitedAncestors.slice(0, parseInt(newParentIndex, 10) + 1),
-        };
-      }
+        if (
+          direction === MOVE_DIRECTIONS.backward &&
+          newParentIndex !== undefined &&
+          prevState.visitedAncestors[newParentIndex]
+        ) {
+          return {
+            ...prevState,
+            parentInfo: {
+              parent: prevState.visitedAncestors[newParentIndex],
+              category: prevState.parentInfo.category,
+            },
+            visitedAncestors: prevState.visitedAncestors.slice(0, parseInt(newParentIndex, 10) + 1),
+          };
+        }
 
-      return prevState;
-    });
-  }, [initialValues]);
+        return prevState;
+      });
+    },
+    [initialValues],
+  );
 
-  const handleXBlockClick = useCallback((newParentIndex: string) => {
-    updateParentItemsData(MOVE_DIRECTIONS.forward, newParentIndex);
-  }, [updateParentItemsData]);
+  const handleXBlockClick = useCallback(
+    (newParentIndex: string) => {
+      updateParentItemsData(MOVE_DIRECTIONS.forward, newParentIndex);
+    },
+    [updateParentItemsData],
+  );
 
-  const handleBreadcrumbsClick = useCallback((newParentIndex: string) => {
-    updateParentItemsData(MOVE_DIRECTIONS.backward, newParentIndex);
-  }, [updateParentItemsData]);
+  const handleBreadcrumbsClick = useCallback(
+    (newParentIndex: string) => {
+      updateParentItemsData(MOVE_DIRECTIONS.backward, newParentIndex);
+    },
+    [updateParentItemsData],
+  );
 
   const updateChildrenItemsData = useCallback(() => {
     setState((prevState: IState) => ({
@@ -130,13 +144,15 @@ export const useMoveModal = ({
     }));
   }, []);
 
-  const getCategoryText = useCallback(() => (
-    intl.formatMessage(CATEGORIES.TEXT[state.childrenInfo.category]) || ''
-  ), [intl, state.childrenInfo.category]);
+  const getCategoryText = useCallback(
+    () => intl.formatMessage(CATEGORIES.TEXT[state.childrenInfo.category]) || '',
+    [intl, state.childrenInfo.category],
+  );
 
-  const breadcrumbs = useMemo(() => (
-    getBreadcrumbs(state.visitedAncestors, intl.formatMessage)
-  ), [state.visitedAncestors]);
+  const breadcrumbs = useMemo(
+    () => getBreadcrumbs(state.visitedAncestors, intl.formatMessage),
+    [state.visitedAncestors],
+  );
 
   const setDisplayedXBlocksCategories = useCallback(() => {
     setState((prevState) => {
@@ -165,31 +181,37 @@ export const useMoveModal = ({
     closeModal();
   }, [initialValues, closeModal]);
 
-  const enableMoveOperation = useCallback((targetParentXBlockInfo: IXBlockInfo) => {
-    const isValid = isValidCategory(state.sourceXBlockInfo.parent, targetParentXBlockInfo)
-      && state.sourceXBlockInfo.parent.id !== targetParentXBlockInfo.id // different parent
-      && state.sourceXBlockInfo.current.id !== targetParentXBlockInfo.id; // different source item
+  const enableMoveOperation = useCallback(
+    (targetParentXBlockInfo: IXBlockInfo) => {
+      const isValid =
+        isValidCategory(state.sourceXBlockInfo.parent, targetParentXBlockInfo) &&
+        state.sourceXBlockInfo.parent.id !== targetParentXBlockInfo.id && // different parent
+        state.sourceXBlockInfo.current.id !== targetParentXBlockInfo.id; // different source item
 
-    setState((prevState) => ({
-      ...prevState,
-      isValidMove: isValid,
-    }));
-  }, [isValidCategory, state.sourceXBlockInfo]);
+      setState((prevState) => ({
+        ...prevState,
+        isValidMove: isValid,
+      }));
+    },
+    [isValidCategory, state.sourceXBlockInfo],
+  );
 
   const handleMoveXBlock = useCallback(() => {
     const lastAncestor = state.visitedAncestors[state.visitedAncestors.length - 1];
-    dispatch(patchUnitItemQuery({
-      sourceLocator: state.sourceXBlockInfo.current.id,
-      targetParentLocator: lastAncestor.id,
-      title: state.sourceXBlockInfo.current.displayName,
-      currentParentLocator: blockId,
-      isMoving: true,
-      callbackFn: (sourceLocator: string) => {
-        sendMessageToIframe(messageTypes.completeXBlockMoving, { locator: sourceLocator });
-        closeModal();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-    }));
+    dispatch(
+      patchUnitItemQuery({
+        sourceLocator: state.sourceXBlockInfo.current.id,
+        targetParentLocator: lastAncestor.id,
+        title: state.sourceXBlockInfo.current.displayName,
+        currentParentLocator: blockId,
+        isMoving: true,
+        callbackFn: (sourceLocator: string) => {
+          sendMessageToIframe(messageTypes.completeXBlockMoving, { locator: sourceLocator });
+          closeModal();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+      }),
+    );
   }, [state, dispatch, blockId, closeModal]);
 
   useEffect(() => {
@@ -211,8 +233,12 @@ export const useMoveModal = ({
       enableMoveOperation(state.parentInfo.parent);
     }
   }, [
-    state.parentInfo, isOpenModal, courseOutlineInfoLoadingStatus, updateChildrenItemsData,
-    setDisplayedXBlocksCategories, enableMoveOperation,
+    state.parentInfo,
+    isOpenModal,
+    courseOutlineInfoLoadingStatus,
+    updateChildrenItemsData,
+    setDisplayedXBlocksCategories,
+    enableMoveOperation,
   ]);
 
   return {

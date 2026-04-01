@@ -22,9 +22,7 @@ const CertificatesList = ({ courseId }) => {
     <>
       {certificates.map((certificate, idx) => (
         <Formik initialValues={initialValues[idx]} onSubmit={handleSubmit} key={certificate.id}>
-          {({
-            values, handleChange, handleBlur, setFieldValue,
-          }) => (
+          {({ values, handleChange, handleBlur, setFieldValue }) => (
             <Form className="certificates-card-form" data-testid="certificates-list">
               <Card>
                 <Card.Section>
@@ -38,7 +36,7 @@ const CertificatesList = ({ courseId }) => {
                     />
                     <FieldArray
                       name="signatories"
-                      render={arrayHelpers => (
+                      render={(arrayHelpers) => (
                         <CertificateSignatories
                           signatories={values.signatories}
                           arrayHelpers={arrayHelpers}

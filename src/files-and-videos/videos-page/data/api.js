@@ -4,9 +4,7 @@ import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform
 import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 import { isEmpty } from 'lodash';
 
-ensureConfig([
-  'STUDIO_BASE_URL',
-], 'Course Apps API service');
+ensureConfig(['STUDIO_BASE_URL'], 'Course Apps API service');
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getVideosUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/videos/${courseId}`;
@@ -18,8 +16,7 @@ export const getCourseVideosApiUrl = (courseId) => `${getApiBaseUrl()}/videos/${
  * @returns {Promise<Record<string, any>>}
  */
 export async function getVideos(courseId) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getVideosUrl(courseId));
+  const { data } = await getAuthenticatedHttpClient().get(getVideosUrl(courseId));
   const { video_transcript_settings: videoTranscriptSettings } = data;
   const { transcription_plans: transcriptionPlans } = videoTranscriptSettings;
   return {
@@ -34,12 +31,13 @@ export async function getVideos(courseId) {
 export async function getAllUsagePaths({ courseId, videoIds }) {
   // Hack: pass 'videoId' into the 'config' object; it will be ignored by axios
   // but allows us to read it out later to easily get the videoId per result.
-  const apiPromises = videoIds.map(id => getAuthenticatedHttpClient()
-    .get(`${getVideosUrl(courseId)}/${id}/usage`, { videoId: id }));
+  const apiPromises = videoIds.map((id) =>
+    getAuthenticatedHttpClient().get(`${getVideosUrl(courseId)}/${id}/usage`, { videoId: id }),
+  );
   const updatedUsageLocations = [];
   const results = await Promise.allSettled(apiPromises);
 
-  results.forEach(result => {
+  results.forEach((result) => {
     const value = camelCaseObject(result.value);
     if (value) {
       const { usageLocations } = value.data;
@@ -57,35 +55,23 @@ export async function getAllUsagePaths({ courseId, videoIds }) {
  * @returns {Promise<[{}]>}
  */
 export async function fetchVideoList(courseId) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseVideosApiUrl(courseId));
+  const { data } = await getAuthenticatedHttpClient().get(getCourseVideosApiUrl(courseId));
   return camelCaseObject(data);
 }
 
 export async function deleteTranscript({ videoId, language, apiUrl }) {
-  await getAuthenticatedHttpClient()
-    .delete(`${getApiBaseUrl()}${apiUrl}/${videoId}/${language}`);
+  await getAuthenticatedHttpClient().delete(`${getApiBaseUrl()}${apiUrl}/${videoId}/${language}`);
 }
 
-export async function downloadTranscript({
-  videoId,
-  language,
-  apiUrl,
-  filename,
-}) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getApiBaseUrl()}${apiUrl}?edx_video_id=${videoId}&language_code=${language}`);
+export async function downloadTranscript({ videoId, language, apiUrl, filename }) {
+  const { data } = await getAuthenticatedHttpClient().get(
+    `${getApiBaseUrl()}${apiUrl}?edx_video_id=${videoId}&language_code=${language}`,
+  );
   const file = new Blob([data], { type: 'text/plain;charset=utf-8' });
   saveAs(file, filename);
 }
 
-export async function uploadTranscript({
-  videoId,
-  newLanguage,
-  apiUrl,
-  file,
-  language,
-}) {
+export async function uploadTranscript({ videoId, newLanguage, apiUrl, file, language }) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('edx_video_id', videoId);
@@ -99,7 +85,7 @@ export async function getDownload(selectedRows, courseId) {
   let file;
   let filename;
   if (selectedRows?.length > 1) {
-    const downloadLinks = selectedRows.map(row => {
+    const downloadLinks = selectedRows.map((row) => {
       const video = row.original;
       try {
         const url = video.downloadLink;
@@ -112,8 +98,9 @@ export async function getDownload(selectedRows, courseId) {
     });
     if (!isEmpty(downloadLinks)) {
       const json = { files: downloadLinks };
-      const { data } = await getAuthenticatedHttpClient()
-        .put(`${getVideosUrl(courseId)}/download`, json, { responseType: 'arraybuffer' });
+      const { data } = await getAuthenticatedHttpClient().put(`${getVideosUrl(courseId)}/download`, json, {
+        responseType: 'arraybuffer',
+      });
 
       const date = new Date().toString();
       filename = `${courseId}-videos-${date}`;
@@ -145,8 +132,7 @@ export async function getDownload(selectedRows, courseId) {
 
  */
 export async function getVideoUsagePaths({ courseId, videoId }) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getVideosUrl(courseId)}/${videoId}/usage`);
+  const { data } = await getAuthenticatedHttpClient().get(`${getVideosUrl(courseId)}/${videoId}/usage`);
   return camelCaseObject(data);
 }
 
@@ -156,8 +142,7 @@ export async function getVideoUsagePaths({ courseId, videoId }) {
 
  */
 export async function deleteVideo(courseId, videoId) {
-  await getAuthenticatedHttpClient()
-    .delete(`${getCourseVideosApiUrl(courseId)}/${videoId}`);
+  await getAuthenticatedHttpClient().delete(`${getCourseVideosApiUrl(courseId)}/${videoId}`);
 }
 
 /**
@@ -168,8 +153,10 @@ export async function deleteVideo(courseId, videoId) {
 export async function addThumbnail({ courseId, videoId, file }) {
   const formData = new FormData();
   formData.append('file', file);
-  const { data } = await getAuthenticatedHttpClient()
-    .post(`${getApiBaseUrl()}/video_images/${courseId}/${videoId}`, formData);
+  const { data } = await getAuthenticatedHttpClient().post(
+    `${getApiBaseUrl()}/video_images/${courseId}/${videoId}`,
+    formData,
+  );
   return camelCaseObject(data);
 }
 
@@ -182,34 +169,20 @@ export async function addVideo(courseId, file, controller) {
   const postJson = {
     files: [{ file_name: file.name, content_type: file.type }],
   };
-  return getAuthenticatedHttpClient().post(
-    getCourseVideosApiUrl(courseId),
-    postJson,
-    { signal: controller?.signal },
-  );
+  return getAuthenticatedHttpClient().post(getCourseVideosApiUrl(courseId), postJson, { signal: controller?.signal });
 }
 
-export async function sendVideoUploadStatus(
-  courseId,
-  edxVideoId,
-  message,
-  status,
-) {
-  return getAuthenticatedHttpClient()
-    .post(getCourseVideosApiUrl(courseId), [{
+export async function sendVideoUploadStatus(courseId, edxVideoId, message, status) {
+  return getAuthenticatedHttpClient().post(getCourseVideosApiUrl(courseId), [
+    {
       edxVideoId,
       message,
       status,
-    }]);
+    },
+  ]);
 }
 
-export async function uploadVideo(
-  uploadUrl,
-  uploadFile,
-  uploadingIdsRef,
-  videoId,
-  controller,
-) {
+export async function uploadVideo(uploadUrl, uploadFile, uploadingIdsRef, videoId, controller) {
   const currentUpload = uploadingIdsRef.current.uploadData[videoId];
   return getHttpClient().put(uploadUrl, uploadFile, {
     headers: {
@@ -252,18 +225,15 @@ export async function setTranscriptPreferences(courseId, preferences) {
     three_play_turnaround: threePlayTurnaround,
   };
 
-  const { data } = await getAuthenticatedHttpClient()
-    .post(`${getApiBaseUrl()}/transcript_preferences/${courseId}`, postJson);
+  const { data } = await getAuthenticatedHttpClient().post(
+    `${getApiBaseUrl()}/transcript_preferences/${courseId}`,
+    postJson,
+  );
   return camelCaseObject(data);
 }
 
 export async function setTranscriptCredentials(courseId, formFields) {
-  const {
-    apiKey,
-    global,
-    provider,
-    ...otherFields
-  } = formFields;
+  const { apiKey, global, provider, ...otherFields } = formFields;
   const postJson = {
     api_key: apiKey,
     global,
@@ -277,6 +247,5 @@ export async function setTranscriptCredentials(courseId, formFields) {
     const { username } = otherFields;
     postJson.username = username;
   }
-  await getAuthenticatedHttpClient()
-    .post(`${getApiBaseUrl()}/transcript_credentials/${courseId}`, postJson);
+  await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}/transcript_credentials/${courseId}`, postJson);
 }

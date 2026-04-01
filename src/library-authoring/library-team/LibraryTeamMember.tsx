@@ -1,30 +1,12 @@
 import React from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Badge,
-  Button,
-  Icon,
-  IconButtonWithTooltip,
-  MailtoLink,
-} from '@openedx/paragon';
+import { Badge, Button, Icon, IconButtonWithTooltip, MailtoLink } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 
 import messages from './messages';
-import {
-  LibraryRole,
-  ROLE_LABEL,
-  CHANGE_ROLE_LABEL,
-  ROLE_BADGE_VARIANT,
-  ROLE_BUTTON_VARIANT,
-} from './constants';
+import { LibraryRole, ROLE_LABEL, CHANGE_ROLE_LABEL, ROLE_BADGE_VARIANT, ROLE_BUTTON_VARIANT } from './constants';
 
-const MemberBadge = ({
-  role,
-  isCurrentUser,
-}: {
-  role: LibraryRole,
-  isCurrentUser: boolean,
-}) => {
+const MemberBadge = ({ role, isCurrentUser }: { role: LibraryRole; isCurrentUser: boolean }) => {
   const roleMessage = ROLE_LABEL[role] ?? ROLE_LABEL[LibraryRole.Unknown];
   const variant = ROLE_BADGE_VARIANT[role] ?? ROLE_BADGE_VARIANT[LibraryRole.Unknown];
 
@@ -50,21 +32,21 @@ const LibraryTeamMember = ({
   onChangeRole,
   onDeleteRole,
 }: {
-  username: string,
-  email: string,
-  accessLevel: string,
-  canChangeRoles: boolean,
-  isCurrentUser: boolean,
-  isSingleAdmin: boolean,
-  onChangeRole: (username: string, role: LibraryRole) => void,
-  onDeleteRole: (username: string) => void,
+  username: string;
+  email: string;
+  accessLevel: string;
+  canChangeRoles: boolean;
+  isCurrentUser: boolean;
+  isSingleAdmin: boolean;
+  onChangeRole: (username: string, role: LibraryRole) => void;
+  onDeleteRole: (username: string) => void;
 }) => {
   const intl = useIntl();
 
   const role: LibraryRole = Object.values(LibraryRole).find((value) => value === accessLevel) ?? LibraryRole.Unknown;
-  const availableRoles: LibraryRole[] = Object.values(LibraryRole).filter((value) => (
-    value !== accessLevel && value !== LibraryRole.Unknown
-  ));
+  const availableRoles: LibraryRole[] = Object.values(LibraryRole).filter(
+    (value) => value !== accessLevel && value !== LibraryRole.Unknown,
+  );
 
   // Don't allow the only Admin user to be demoted or deleted
   const canChangeThisMember = canChangeRoles && !isSingleAdmin;
@@ -79,16 +61,18 @@ const LibraryTeamMember = ({
       </div>
       {canChangeThisMember ? (
         <div className="member-actions w-100 d-flex mt-2 justify-content-between">
-          {availableRoles && availableRoles.length && availableRoles.map((newRole) => (
-            <Button
-              size="sm"
-              key={newRole}
-              variant={ROLE_BUTTON_VARIANT[newRole]}
-              onClick={() => onChangeRole(username, newRole)}
-            >
-              {intl.formatMessage(CHANGE_ROLE_LABEL[newRole])}
-            </Button>
-          ))}
+          {availableRoles &&
+            availableRoles.length &&
+            availableRoles.map((newRole) => (
+              <Button
+                size="sm"
+                key={newRole}
+                variant={ROLE_BUTTON_VARIANT[newRole]}
+                onClick={() => onChangeRole(username, newRole)}
+              >
+                {intl.formatMessage(CHANGE_ROLE_LABEL[newRole])}
+              </Button>
+            ))}
 
           <IconButtonWithTooltip
             src={DeleteOutline}

@@ -7,13 +7,13 @@ jest.mock('../../../../../data/redux', () => ({
   default: jest.fn(),
   selectors: {
     problem: {
-      settings: jest.fn(state => ({ question: state })),
+      settings: jest.fn((state) => ({ question: state })),
     },
     app: {
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
-      images: jest.fn(state => ({ images: state })),
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
-      blockId: jest.fn(state => ({ blockId: state })),
+      learningContextId: jest.fn((state) => ({ learningContextId: state })),
+      images: jest.fn((state) => ({ images: state })),
+      isLibrary: jest.fn((state) => ({ isLibrary: state })),
+      blockId: jest.fn((state) => ({ blockId: state })),
     },
   },
   thunkActions: {

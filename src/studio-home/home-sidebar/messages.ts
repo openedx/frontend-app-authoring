@@ -7,7 +7,8 @@ const messages = defineMessages({
   },
   aboutDescription: {
     id: 'course-authoring.studio-home.sidebar.about.description',
-    defaultMessage: 'Click "Looking for help with Studio" at the bottom of the page to access our continually updated documentation and other {studioShortName} resources.',
+    defaultMessage:
+      'Click "Looking for help with Studio" at the bottom of the page to access our continually updated documentation and other {studioShortName} resources.',
   },
   studioHomeLinkToGettingStarted: {
     id: 'course-authoring.studio-home.sidebar.about.getting-started',
@@ -31,7 +32,8 @@ const messages = defineMessages({
   },
   sidebarDescription3: {
     id: 'course-authoring.studio-home.sidebar.about.description-3',
-    defaultMessage: 'In order to create courses in {studioName}, you must have course creator privileges to create your own course.',
+    defaultMessage:
+      'In order to create courses in {studioName}, you must have course creator privileges to create your own course.',
   },
   sidebarHeader4: {
     id: 'course-authoring.studio-home.sidebar.about.header-4',

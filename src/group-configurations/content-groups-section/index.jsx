@@ -10,10 +10,7 @@ import ContentGroupForm from './ContentGroupForm';
 import { initialContentGroupObject } from './utils';
 import messages from './messages';
 
-const ContentGroupsSection = ({
-  availableGroup,
-  contentGroupActions,
-}) => {
+const ContentGroupsSection = ({ availableGroup, contentGroupActions }) => {
   const { formatMessage } = useIntl();
   const [isNewGroupVisible, openNewGroup, hideNewGroup] = useToggle(false);
   const { id: parentGroupId, groups, name } = availableGroup;
@@ -22,10 +19,7 @@ const ContentGroupsSection = ({
   const handleCreateNewGroup = (values) => {
     const updatedContentGroups = {
       ...availableGroup,
-      groups: [
-        ...availableGroup.groups,
-        initialContentGroupObject(values.newGroupName),
-      ],
+      groups: [...availableGroup.groups, initialContentGroupObject(values.newGroupName)],
     };
     contentGroupActions.handleCreate(updatedContentGroups, hideNewGroup);
   };
@@ -40,9 +34,7 @@ const ContentGroupsSection = ({
 
   return (
     <div className="mt-2.5">
-      <h2 className="lead text-black mb-3 configuration-section-name">
-        {name}
-      </h2>
+      <h2 className="lead text-black mb-3 configuration-section-name">{name}</h2>
       {groups?.length ? (
         <>
           {groups.map((group) => (
@@ -56,28 +48,16 @@ const ContentGroupsSection = ({
             />
           ))}
           {!isNewGroupVisible && (
-            <Button
-              className="mt-4"
-              variant="outline-primary"
-              onClick={openNewGroup}
-              iconBefore={AddIcon}
-              block
-            >
+            <Button className="mt-4" variant="outline-primary" onClick={openNewGroup} iconBefore={AddIcon} block>
               {formatMessage(messages.addNewGroup)}
             </Button>
           )}
         </>
       ) : (
-        !isNewGroupVisible && (
-          <EmptyPlaceholder onCreateNewGroup={openNewGroup} />
-        )
+        !isNewGroupVisible && <EmptyPlaceholder onCreateNewGroup={openNewGroup} />
       )}
       {isNewGroupVisible && (
-        <ContentGroupForm
-          groupNames={groupNames}
-          onCreateClick={handleCreateNewGroup}
-          onCancelClick={hideNewGroup}
-        />
+        <ContentGroupForm groupNames={groupNames} onCreateClick={handleCreateNewGroup} onCancelClick={hideNewGroup} />
       )}
     </div>
   );

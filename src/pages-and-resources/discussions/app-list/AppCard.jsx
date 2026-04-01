@@ -2,17 +2,13 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import Responsive from 'react-responsive';
-import {
-  Card, CheckboxControl, breakpoints,
-} from '@openedx/paragon';
+import { Card, CheckboxControl, breakpoints } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import appMessages from '../app-config-form/messages';
 import FeaturesList from './FeaturesList';
 
-const AppCard = ({
-  app, onClick, selected, features,
-}) => {
+const AppCard = ({ app, onClick, selected, features }) => {
   const intl = useIntl();
   const { canChangeProviders } = useCourseAuthoringContext();
   const supportText = app.hasFullSupport
@@ -26,14 +22,21 @@ const AppCard = ({
       onKeyPress={() => canChangeProviders && onClick(app.id)}
       role="radio"
       aria-checked={selected}
-      className={classNames({
-        'border-primary': selected,
-      }, 'w-100')}
+      className={classNames(
+        {
+          'border-primary': selected,
+        },
+        'w-100',
+      )}
     >
       <Card.Header
         title={<div data-testid="card-title">{intl.formatMessage(appMessages[`appName-${app.id}`])}</div>}
-        subtitle={<div className="h6 text-muted" data-testid="card-subtitle">{supportText}</div>}
-        actions={(
+        subtitle={
+          <div className="h6 text-muted" data-testid="card-subtitle">
+            {supportText}
+          </div>
+        }
+        actions={
           <div className="mt-2.5">
             <CheckboxControl
               checked={selected}
@@ -44,7 +47,7 @@ const AppCard = ({
               })}
             />
           </div>
-        )}
+        }
         size="sm"
       />
       <Card.Body>
@@ -52,10 +55,7 @@ const AppCard = ({
           <Card.Section className="pt-2">
             {intl.formatMessage(messages[`appDescription-${app.id}`])}
             <Responsive maxWidth={breakpoints.extraSmall.maxWidth}>
-              <FeaturesList
-                features={features}
-                app={app}
-              />
+              <FeaturesList features={features} app={app} />
             </Responsive>
           </Card.Section>
         </div>

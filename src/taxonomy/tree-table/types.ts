@@ -1,8 +1,4 @@
-import type {
-  ColumnDef,
-  Row,
-  Table,
-} from '@tanstack/react-table';
+import type { ColumnDef, Row, Table } from '@tanstack/react-table';
 
 export type RowId = string | number;
 

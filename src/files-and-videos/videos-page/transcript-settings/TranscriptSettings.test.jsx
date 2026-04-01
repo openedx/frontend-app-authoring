@@ -1,14 +1,6 @@
-import {
-  render,
-  fireEvent,
-  screen,
-  waitFor,
-  within,
-} from '@testing-library/react';
+import { render, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-  initializeMockApp,
-} from '@edx/frontend-platform';
+import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -16,10 +8,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import initializeStore from '../../../store';
 import { RequestStatus } from '../../../data/constants';
 import TranscriptSettings from './TranscriptSettings';
-import {
-  courseId,
-  initialState,
-} from '../factories/mockApiResponses';
+import { courseId, initialState } from '../factories/mockApiResponses';
 import { getApiBaseUrl } from '../data/api';
 import messages from './messages';
 import VideosProvider from '../VideosPageProvider';
@@ -605,7 +594,9 @@ describe('TranscriptSettings', () => {
         });
         expect(updateButton).not.toHaveAttribute('disabled');
 
-        axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404, { error: 'Invalid turnaround.' });
+        axiosMock
+          .onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`)
+          .reply(404, { error: 'Invalid turnaround.' });
         fireEvent.click(updateButton);
         await waitFor(() => {
           const { transcriptStatus } = store.getState().videos;

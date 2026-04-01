@@ -19,7 +19,7 @@ const CreditSection = ({
   const handleCreditChange = (e) => {
     const { value } = e.target;
 
-    setGradingData(prevData => ({
+    setGradingData((prevData) => ({
       ...prevData,
       minimumGradeCredit: value / 100,
     }));
@@ -41,9 +41,7 @@ const CreditSection = ({
         'form-group-custom_isInvalid': errorEffort,
       })}
     >
-      <Form.Label className="grading-label">
-        {intl.formatMessage(messages.creditEligibilityLabel)}
-      </Form.Label>
+      <Form.Label className="grading-label">{intl.formatMessage(messages.creditEligibilityLabel)}</Form.Label>
       <Form.Control
         data-testid="minimum-grade-credit-input"
         type="number"
