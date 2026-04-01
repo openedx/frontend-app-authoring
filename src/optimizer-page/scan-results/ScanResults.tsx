@@ -23,7 +23,7 @@ import { useDispatch } from 'react-redux';
 import messages from './messages';
 import SectionCollapsible from './SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
-import { LinkCheckResult } from '../types';
+import type { LinkCheckResult, Section } from '../types';
 import { countBrokenLinks, isDataEmpty } from '../utils';
 import FilterModal from './filterModal';
 import { useWaffleFlags } from '../../data/apiHooks';
@@ -131,7 +131,7 @@ const ScanResults: FC<Props> = ({
   }, [data?.courseUpdates, data?.customPages, intl]);
 
   // Combine renderable sections with regular sections
-  const allSections = useMemo(
+  const allSections: Section[] = useMemo(
     () => [...renderableSections, ...(sections || [])],
     [renderableSections, sections],
   );
