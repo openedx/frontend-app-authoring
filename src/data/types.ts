@@ -57,17 +57,17 @@ export interface UpstreamChildrenInfo {
 }
 
 export interface UpstreamInfo {
-  readyToSync: boolean,
-  upstreamRef: string,
-  upstreamName: string,
-  versionSynced: number,
-  versionAvailable: number | null,
-  versionDeclined: number | null,
-  errorMessage: string | null,
-  downstreamCustomized: string[],
-  topLevelParentKey?: string,
-  readyToSyncChildren?: UpstreamChildrenInfo[],
-  isReadyToSyncIndividually?: boolean,
+  readyToSync: boolean;
+  upstreamRef: string;
+  upstreamName: string;
+  versionSynced: number;
+  versionAvailable: number | null;
+  versionDeclined: number | null;
+  errorMessage: string | null;
+  downstreamCustomized: string[];
+  topLevelParentKey?: string;
+  readyToSyncChildren?: UpstreamChildrenInfo[];
+  isReadyToSyncIndividually?: boolean;
 }
 
 export interface XBlockBase {
@@ -142,10 +142,10 @@ interface OutlineError {
 }
 
 export interface OutlinePageErrors {
-  outlineIndexApi?: OutlineError | null,
-  reindexApi?: OutlineError | null,
-  sectionLoadingApi?: OutlineError | null,
-  courseLaunchApi?: OutlineError | null,
+  outlineIndexApi?: OutlineError | null;
+  reindexApi?: OutlineError | null;
+  sectionLoadingApi?: OutlineError | null;
+  courseLaunchApi?: OutlineError | null;
 }
 
 export interface UsageKeyBlock {

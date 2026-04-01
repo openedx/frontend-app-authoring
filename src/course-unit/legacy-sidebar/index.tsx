@@ -10,9 +10,9 @@ import SplitTestSidebarInfo from './SplitTestSidebarInfo';
 import PublishControls from '../unit-sidebar/unit-info/PublishControls';
 
 export type XBlock = {
-  id: string,
-  name: string,
-  blockType: string,
+  id: string;
+  name: string;
+  blockType: string;
 };
 
 export interface LegacySidebarProps {

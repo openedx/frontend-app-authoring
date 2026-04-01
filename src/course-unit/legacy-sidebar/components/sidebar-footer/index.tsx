@@ -5,11 +5,11 @@ import messages from '../../messages';
 import ActionButtons from './ActionButtons';
 
 interface SidebarFooterProps {
-  locationId?: string,
-  displayUnitLocation?: boolean,
-  openDiscardModal: () => void,
-  handlePublishing: () => void,
-  hideCopyButton?: boolean,
+  locationId?: string;
+  displayUnitLocation?: boolean;
+  openDiscardModal: () => void;
+  handlePublishing: () => void;
+  hideCopyButton?: boolean;
 }
 
 const SidebarFooter = ({

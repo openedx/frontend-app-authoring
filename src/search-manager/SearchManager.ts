@@ -52,13 +52,13 @@ export interface SearchContextData {
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
 
 export const SearchContextProvider: React.FC<{
-  extraFilter?: Filter,
-  overrideTypesFilter?: TypesFilterData,
-  overrideSearchSortOrder?: SearchSortOption
-  children: React.ReactNode,
-  closeSearchModal?: () => void,
-  skipBlockTypeFetch?: boolean,
-  skipUrlUpdate?: boolean,
+  extraFilter?: Filter;
+  overrideTypesFilter?: TypesFilterData;
+  overrideSearchSortOrder?: SearchSortOption;
+  children: React.ReactNode;
+  closeSearchModal?: () => void;
+  skipBlockTypeFetch?: boolean;
+  skipUrlUpdate?: boolean;
 }> = ({
   overrideTypesFilter,
   overrideSearchSortOrder,

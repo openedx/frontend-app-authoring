@@ -9,7 +9,7 @@ import messages from './messages';
 
 export const hooks = {
   state: {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     isDismissed: (val) => React.useState(val),
   },
   dismissalHooks: ({ dismissError, isError }) => {

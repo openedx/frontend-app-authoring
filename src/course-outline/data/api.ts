@@ -24,9 +24,9 @@ export const getCourseBestPracticesApiUrl = ({
   excludeGraded,
   all,
 }: {
-  courseId: string,
-  excludeGraded: boolean,
-  all: boolean,
+  courseId: string;
+  excludeGraded: boolean;
+  all: boolean;
 }) => `${getApiBaseUrl()}/api/courses/v1/quality/${courseId}/?exclude_graded=${excludeGraded}&all=${all}`;
 
 export const getCourseLaunchApiUrl = ({
@@ -34,10 +34,10 @@ export const getCourseLaunchApiUrl = ({
   gradedOnly,
   validateOras,
   all,
-}:{
-  courseId: string,
-  gradedOnly: boolean,
-  validateOras: boolean,
+}: {
+  courseId: string;
+  gradedOnly: boolean;
+  validateOras: boolean;
   all: boolean,
 }) => `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
@@ -329,15 +329,15 @@ export async function duplicateCourseItem(itemId: string, parentId: string): Pro
 }
 
 export type CreateCourseXBlockType = {
-  type: string,
+  type: string;
   /** The category of the XBlock. Defaults to the type if not provided. */
-  category?: string,
-  parentLocator: string,
-  displayName?: string,
-  boilerplate?: string,
-  stagedContent?: string,
+  category?: string;
+  parentLocator: string;
+  displayName?: string;
+  boilerplate?: string;
+  stagedContent?: string;
   /** component key from library if being imported. */
-  libraryContentKey?: string,
+  libraryContentKey?: string;
 };
 
 /**
@@ -374,7 +374,7 @@ export async function createCourseXblock({
  * @param {string} courseId
  * @param {Array<string>} children list of sections id's
  * @returns {Promise<Object>}
-*/
+ */
 export async function setSectionOrderList(courseId: string, children: Array<string>): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .put(getCourseBlockApiUrl(courseId), {
@@ -389,7 +389,7 @@ export async function setSectionOrderList(courseId: string, children: Array<stri
  * @param {string} itemId Subsection or unit ID
  * @param {Array<string>} children list of sections id's
  * @returns {Promise<Object>}
-*/
+ */
 export async function setCourseItemOrderList(itemId: string, children: Array<string>): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .put(getCourseItemApiUrl(itemId), {
@@ -404,7 +404,7 @@ export async function setCourseItemOrderList(itemId: string, children: Array<str
  * @param {string} courseId
  * @param {string} videoSharingOption
  * @returns {Promise<Object>}
-*/
+ */
 export async function setVideoSharingOption(
   courseId: string,
   videoSharingOption: string,
@@ -423,7 +423,7 @@ export async function setVideoSharingOption(
  * Paste block to clipboard
  * @param {string} parentLocator
  * @returns {Promise<Object>}
-*/
+ */
 export async function pasteBlock(parentLocator: string): Promise<{
   locator: string;
   courseKey: string;
@@ -443,7 +443,7 @@ export async function pasteBlock(parentLocator: string): Promise<{
  * Dismiss notification
  * @param {string} url
  * @returns void
-*/
+ */
 export async function dismissNotification(url: string) {
   await getAuthenticatedHttpClient()
     .delete(url);

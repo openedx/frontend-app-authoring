@@ -9,16 +9,16 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 interface SortableItemProps {
-  id: string,
-  children?: React.ReactNode,
-  actions: React.ReactNode,
-  actionStyle?: {},
-  componentStyle?: {},
-  isClickable?: boolean,
-  onClick?: MouseEventHandler,
-  onKeyDown?: KeyboardEventHandler,
-  disabled?: boolean,
-  cardClassName?: string,
+  id: string;
+  children?: React.ReactNode;
+  actions: React.ReactNode;
+  actionStyle?: {};
+  componentStyle?: {};
+  isClickable?: boolean;
+  onClick?: MouseEventHandler;
+  onKeyDown?: KeyboardEventHandler;
+  disabled?: boolean;
+  cardClassName?: string;
 }
 
 const SortableItem = ({

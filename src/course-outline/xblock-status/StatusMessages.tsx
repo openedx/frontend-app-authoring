@@ -11,11 +11,11 @@ import messages from './messages';
 
 interface StatusMessagesProps {
   isVertical: boolean;
-  staffOnlyMessage?: boolean,
-  prereq?: string,
-  prereqs?: XBlockPrereqs[],
-  userPartitionInfo?: UserPartitionInfoTypes,
-  hasPartitionGroupComponents?: boolean,
+  staffOnlyMessage?: boolean;
+  prereq?: string;
+  prereqs?: XBlockPrereqs[];
+  userPartitionInfo?: UserPartitionInfoTypes;
+  hasPartitionGroupComponents?: boolean;
 }
 
 interface StatusMessagesText {

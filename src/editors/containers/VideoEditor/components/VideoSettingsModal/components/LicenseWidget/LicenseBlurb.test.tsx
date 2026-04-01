@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks,
-} from '@src/testUtils';
+import { render, screen, initializeMocks } from '@src/testUtils';
 
 import LicenseBlurb from './LicenseBlurb';
 
@@ -13,7 +11,6 @@ describe('LicenseBlurb', () => {
       noncommercial: false,
       noDerivatives: false,
       shareAlike: false,
-
     },
   };
 

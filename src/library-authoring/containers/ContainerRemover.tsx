@@ -17,10 +17,10 @@ import { Container } from '@src/library-authoring/data/api';
 import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 
 type ContainerRemoverProps = {
-  close: () => void,
-  containerKey: string,
-  displayName: string,
-  index?: number,
+  close: () => void;
+  containerKey: string;
+  displayName: string;
+  index?: number;
 };
 
 const ContainerRemover = ({

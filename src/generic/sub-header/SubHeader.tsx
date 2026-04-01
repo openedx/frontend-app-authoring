@@ -7,7 +7,7 @@ interface SubHeaderProps {
   breadcrumbs?: ReactElement | ReactElement[] | string | null;
   contentTitle?: string;
   description?: string;
-  instruction?: ReactElement | string,
+  instruction?: ReactElement | string;
   headerActions?: ReactElement | ReactElement[] | null;
   titleActions?: ReactElement | ReactElement[] | null;
   hideBorder?: boolean;

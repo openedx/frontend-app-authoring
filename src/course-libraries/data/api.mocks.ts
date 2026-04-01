@@ -109,7 +109,7 @@ mockUseLibBlockMetadata.applyMock = () => {
 
 /**
  * Mock getCourseReadyToMigrateLegacyLibContentBlocks
-*/
+ */
 export async function mockGetReadyToUpdateReferences(
   courseId?: string,
 ): ReturnType<typeof api.getCourseReadyToMigrateLegacyLibContentBlocks> {
@@ -139,7 +139,7 @@ mockGetReadyToUpdateReferences.applyMock = () => {
 
 /**
  * Mock getCourseLegacyLibRefUpdateTaskStatus
-*/
+ */
 export async function mockGetCourseLegacyLibRefUpdateTaskStatus(
   _courseId?: string,
   taskId?: string,
@@ -176,7 +176,7 @@ mockGetCourseLegacyLibRefUpdateTaskStatus.applyMock = () => {
 
 /**
  * Mock getCourseReadyToMigrateLegacyLibContentBlocks
-*/
+ */
 export async function mockMigrateCourseReadyToMigrateLegacyLibContentBlocks(
   courseId?: string,
 ): ReturnType<typeof api.migrateCourseReadyToMigrateLegacyLibContentBlocks> {

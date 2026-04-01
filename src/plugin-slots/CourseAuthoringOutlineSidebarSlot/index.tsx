@@ -21,10 +21,10 @@ export const CourseAuthoringOutlineSidebarSlot = ({
 );
 
 type Section = {
-  id: string,
-  displayName: string,
-  graded: boolean,
-  category: string,
+  id: string;
+  displayName: string;
+  graded: boolean;
+  category: string;
 };
 
 interface CourseAuthoringOutlineSidebarSlotProps {

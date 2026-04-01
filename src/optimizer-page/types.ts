@@ -47,7 +47,7 @@ export interface LinkCheckResult {
 }
 
 export interface Filters {
-  brokenLinks: boolean,
-  lockedLinks: boolean,
-  externalForbiddenLinks: boolean,
+  brokenLinks: boolean;
+  lockedLinks: boolean;
+  externalForbiddenLinks: boolean;
 }

@@ -12,7 +12,7 @@ import BaseCard from './BaseCard';
 import { ComponentMenu } from './ComponentMenu';
 
 type ComponentCardProps = {
-  hit: ContentHit,
+  hit: ContentHit;
 };
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {

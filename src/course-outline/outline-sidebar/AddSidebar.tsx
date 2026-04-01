@@ -42,8 +42,8 @@ const CannotAddContentAlert = () => {
 };
 
 type AddContentButtonProps = {
-  name: string,
-  blockType: ContainerType,
+  name: string;
+  blockType: ContainerType;
 };
 
 /** Add Content Button */

@@ -13,10 +13,10 @@ import HistoryWidget from '../generic/history-widget';
 import messages from './messages';
 
 interface BlockCountProps {
-  count: number,
-  blockType?: string,
-  label: React.ReactNode,
-  className?: string,
+  count: number;
+  blockType?: string;
+  label: React.ReactNode;
+  className?: string;
 }
 
 const BlockCount = ({

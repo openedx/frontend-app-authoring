@@ -16,7 +16,7 @@ interface SortableItemProps {
     childAddable?: boolean;
     displayName: string;
     status: string;
-  }
+  };
   isDroppable?: boolean;
   isDraggable?: boolean;
   children: React.ReactNode;

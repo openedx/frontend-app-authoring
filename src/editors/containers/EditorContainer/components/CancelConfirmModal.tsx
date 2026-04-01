@@ -4,9 +4,9 @@ import BaseModal from '../../../sharedComponents/BaseModal';
 import messages from '../messages';
 
 interface CancelConfirmModalProps {
-  isOpen: boolean,
-  closeCancelConfirmModal: () => void,
-  onCloseEditor: (() => void) | null,
+  isOpen: boolean;
+  closeCancelConfirmModal: () => void;
+  onCloseEditor: (() => void) | null;
 }
 
 const CancelConfirmModal = ({

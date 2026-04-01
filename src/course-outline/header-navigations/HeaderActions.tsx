@@ -14,10 +14,10 @@ import messages from './messages';
 
 export interface HeaderActionsProps {
   actions: {
-    lmsLink: string,
-  },
-  courseActions: XBlockActions,
-  errors?: OutlinePageErrors,
+    lmsLink: string;
+  };
+  courseActions: XBlockActions;
+  errors?: OutlinePageErrors;
 }
 
 const HeaderActions = ({

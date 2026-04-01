@@ -165,8 +165,8 @@ const NewOutlineAddChildButtons = ({
   }
 
   /**
-  * Starts add flow in sidebar when `Use content from library` button is clicked.
-  */
+   * Starts add flow in sidebar when `Use content from library` button is clicked.
+   */
   const onUseLibraryContent = useCallback(async () => {
     startCurrentFlow({
       flowType,

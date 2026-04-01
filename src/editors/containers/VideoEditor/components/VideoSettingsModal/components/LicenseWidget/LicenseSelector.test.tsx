@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, fireEvent, screen, initializeMocks,
-} from '@src/testUtils';
+import { render, fireEvent, screen, initializeMocks } from '@src/testUtils';
 import { LicenseSelectorInternal } from './LicenseSelector';
 import * as hooks from './hooks';
 

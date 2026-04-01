@@ -79,12 +79,12 @@ export const CourseAuthoringProvider = ({
     closePublishModal,
   ] = useToggleWithValue<ModalState>();
   /**
-  * This will hold the state of current item that is being operated on,
-  * For example:
-  *  - the details of container that is being edited.
-  *  - the details of container of which see more dropdown is open.
-  * It is mostly used in modals which should be soon be replaced with its equivalent in sidebar.
-  */
+   * This will hold the state of current item that is being operated on,
+   * For example:
+   *  - the details of container that is being edited.
+   *  - the details of container of which see more dropdown is open.
+   * It is mostly used in modals which should be soon be replaced with its equivalent in sidebar.
+   */
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
 
   const getUnitUrl = (locator: string) => {
@@ -108,8 +108,8 @@ export const CourseAuthoringProvider = ({
     }
   };
   /**
-  * import a unit block from library and redirect user to this unit page.
-  */
+   * import a unit block from library and redirect user to this unit page.
+   */
   const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const handleAddBlock = useCreateCourseBlock(courseId);
 
