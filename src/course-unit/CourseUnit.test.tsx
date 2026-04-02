@@ -81,7 +81,7 @@ let store;
 let mockShowToast;
 let mockCloseToast;
 const courseId = '123';
-const blockId = '567890';
+const blockId = 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@123';
 const sequenceId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
 const unitDisplayName = courseSectionVerticalMock.xblock_info.display_name;
 const mockedUsedNavigate = jest.fn();
@@ -104,8 +104,8 @@ const postXBlockBody = {
   staged_content: 'clipboard',
 };
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: () => ({ blockId, sequenceId }),
   useNavigate: () => mockedUsedNavigate,
 }));
@@ -380,19 +380,17 @@ describe('<CourseUnit />', () => {
     await user.click(publishBtn);
 
     // check if the sidebar status is Published and Live
-    waitFor(() => {
-      expect(screen.getByText(
-        legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage,
-      )).toBeInTheDocument();
-    });
+    expect(await screen.findByText(
+      legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage,
+    )).toBeInTheDocument();
     expect(await screen.findByText(
       unitInfoMessages.publishLastPublished.defaultMessage
         .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
         .replace('{publishedBy}', userName),
     )).toBeInTheDocument();
-    waitFor(() => {
-      expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
-    });
+    expect(screen.queryByRole('button', {
+      name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage,
+    })).not.toBeInTheDocument();
     expect(await screen.findByText(unitDisplayName)).toBeInTheDocument();
 
     axiosMock
@@ -576,11 +574,9 @@ describe('<CourseUnit />', () => {
     );
 
     // after duplicate the xblock, the sidebar status changes to Draft (unpublished changes)
-    await waitFor(async () => {
-      expect(await screen.findByText(
-        legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
-      )).toBeInTheDocument();
-    });
+    expect(await screen.findByText(
+      legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
+    )).toBeInTheDocument();
     expect(await screen.findByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();

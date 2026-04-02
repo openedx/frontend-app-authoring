@@ -14,7 +14,7 @@ import messages from './messages';
 import UnitVisibilityInfo from './UnitVisibilityInfo';
 
 interface PublishControlsProps {
-  blockId?: string,
+  blockId: string,
   hideCopyButton?: boolean,
 }
 
@@ -48,42 +48,36 @@ const PublishControls = ({
 
   const handleCourseUnitVisibility = () => {
     closeVisibleModal();
-    if (blockId) {
-      publishMutation.mutate({
-        unitId: blockId,
-        type: PUBLISH_TYPES.republish,
-        isVisibleToStaffOnly: false,
-        groupAccess: null,
-      });
-    }
+    publishMutation.mutate({
+      unitId: blockId,
+      type: PUBLISH_TYPES.republish,
+      isVisibleToStaffOnly: false,
+      groupAccess: null,
+    });
   };
 
   const handleCourseUnitDiscardChanges = () => {
     closeDiscardModal();
-    if (blockId) {
-      publishMutation.mutate(
-        {
-          unitId: blockId,
-          type: PUBLISH_TYPES.discardChanges,
-          isVisibleToStaffOnly: false,
-          groupAccess: null,
-        },
-        {
-          onSuccess: () => sendMessageToIframe(messageTypes.refreshXBlock, null),
-        },
-      );
-    }
+    publishMutation.mutate(
+      {
+        unitId: blockId,
+        type: PUBLISH_TYPES.discardChanges,
+        isVisibleToStaffOnly: false,
+        groupAccess: null,
+      },
+      {
+        onSuccess: () => sendMessageToIframe(messageTypes.refreshXBlock, null),
+      },
+    );
   };
 
   const handleCourseUnitPublish = () => {
-    if (blockId) {
-      publishMutation.mutate({
-        unitId: blockId,
-        type: PUBLISH_TYPES.makePublic,
-        isVisibleToStaffOnly: false,
-        groupAccess: null,
-      });
-    }
+    publishMutation.mutate({
+      unitId: blockId,
+      type: PUBLISH_TYPES.makePublic,
+      isVisibleToStaffOnly: false,
+      groupAccess: null,
+    });
   };
 
   return (
