@@ -9,7 +9,7 @@ import {
   IconButton,
 } from '@openedx/paragon';
 import { Edit as EditIcon } from '@openedx/paragon/icons';
-import { Formik } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -92,70 +92,82 @@ export const HighlightsForm = ({
   initialValues,
   onDirtyChange,
 }: HighlightsFormProps) => {
+  return (
+    <Formik initialValues={initialValues} onSubmit={onSubmit}>
+      <HighlightsFormInner
+        initialValues={initialValues}
+        onCancel={onCancel}
+        onDirtyChange={onDirtyChange}
+      />
+    </Formik>
+  );
+};
+
+// Separate component so hooks can be used at the top level of a component
+const HighlightsFormInner = ({
+  initialValues,
+  onCancel,
+  onDirtyChange,
+}: Pick<HighlightsFormProps, 'onCancel' | 'onDirtyChange' | 'initialValues'>) => {
   const intl = useIntl();
   const { contentHighlights: contentHighlightsUrl } = useHelpUrls([
     'contentHighlights',
   ]);
 
-  return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      {({
-        values, dirty, handleSubmit, resetForm,
-      }) => {
-        // Notify parent of dirty state changes
-        useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
+  const { values, dirty, handleSubmit, resetForm } = useFormikContext<HighlightData>();
 
-        return (
-          <Form onSubmit={handleSubmit}>
-            <div className="highlights-form">
-              <p className="mb-4.5 pb-2">
-                {intl.formatMessage(messages.description, {
-                  documentation: (
-                    <Hyperlink
-                      destination={contentHighlightsUrl}
-                      target="_blank"
-                      showLaunchIcon={false}
-                    >
-                      {intl.formatMessage(messages.documentationLink)}
-                    </Hyperlink>
-                  ),
-                })}
-              </p>
-              <div className="highlights-form__fields">
-                {Object.entries(initialValues).map(([key], index) => (
-                  <FormikControl
-                    key={key}
-                    name={key}
-                    value={values[key]}
-                    floatingLabel={intl.formatMessage(messages.highlight, {
-                      index: index + 1,
-                    })}
-                    maxLength={HIGHLIGHTS_FIELD_MAX_LENGTH}
-                    as="textarea"
-                  />
-                ))}
-              </div>
-              <div className="highlights-form__actions">
-                <Button
-                  variant="tertiary"
-                  onClick={() => {
-                    resetForm();
-                    onCancel?.();
-                  }}
-                >
-                  {intl.formatMessage(messages.cancelButton)}
-                </Button>
-                <Button disabled={!dirty} type="submit">
-                  {intl.formatMessage(messages.saveButton)}
-                </Button>
-              </div>
-            </div>
-          </Form>
-        );
-      }}
-    </Formik>
+  // Notify parent of dirty state changes
+  useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
+
+  return (
+    <Form onSubmit={handleSubmit}>
+      <div className="highlights-form">
+        <p className="mb-4.5 pb-2">
+          {intl.formatMessage(messages.description, {
+            documentation: (
+              <Hyperlink
+                destination={contentHighlightsUrl}
+                target="_blank"
+                showLaunchIcon={false}
+              >
+                {intl.formatMessage(messages.documentationLink)}
+              </Hyperlink>
+            ),
+          })}
+        </p>
+        <div className="highlights-form__fields">
+          {Object.entries(initialValues).map(([key], index) => (
+            <FormikControl
+              key={key}
+              name={key}
+              value={values[key]}
+              floatingLabel={intl.formatMessage(messages.highlight, {
+                index: index + 1,
+              })}
+              maxLength={HIGHLIGHTS_FIELD_MAX_LENGTH}
+              as="textarea"
+            />
+          ))}
+        </div>
+        <div className="highlights-form__actions">
+          <Button
+            variant="tertiary"
+            onClick={() => {
+              resetForm();
+              onCancel?.();
+            }}
+          >
+            {intl.formatMessage(messages.cancelButton)}
+          </Button>
+          <Button disabled={!dirty} type="submit">
+            {intl.formatMessage(messages.saveButton)}
+          </Button>
+        </div>
+      </div>
+    </Form>
   );
-};
+}
+
 
 const HighlightsViewCard = ({
   highlights,
@@ -185,8 +197,8 @@ const HighlightsViewCard = ({
       />
       <Card.Body>
         <ExpandableCard maxHeight={400}>
-          {nonEmptyHighlights.map((highlight, index) => (
-            <p key={index}>{highlight}</p>
+          {nonEmptyHighlights.map((highlight) => (
+            <p key={highlight}>{highlight}</p>
           ))}
         </ExpandableCard>
       </Card.Body>
