@@ -60,6 +60,7 @@ interface BrokenLinkTableWrapperProps {
   linkType?: 'broken' | 'previous';
   sectionId?: string;
   updatedLinks?: string[];
+  courseId?: string;
 }
 
 const BrokenLinkTableWrapper: React.FC<BrokenLinkTableWrapperProps> = ({
@@ -74,6 +75,7 @@ const BrokenLinkTableWrapper: React.FC<BrokenLinkTableWrapperProps> = ({
         unit={unit || createMockUnit([createMockBlock()])}
         onUpdateLink={onUpdateLink || mockOnUpdateLink}
         filters={filters}
+        courseId={courseId}
         {...props}
       />
     </IntlProvider>
@@ -601,6 +603,7 @@ describe('BrokenLinkTable', () => {
       intlWrapper(
         <BrokenLinkTable
           unit={mockUnitWithPreviousRunLinks}
+          courseId="course-v1:TestX+Test101+2024"
           linkType="previous"
         />,
       );
@@ -630,6 +633,7 @@ describe('BrokenLinkTable', () => {
       const { container } = intlWrapper(
         <BrokenLinkTable
           unit={unitWithoutPreviousRunLinks}
+          courseId="course-v1:TestX+Test101+2024"
           linkType="previous"
         />,
       );
@@ -656,6 +660,7 @@ describe('BrokenLinkTable', () => {
       intlWrapper(
         <BrokenLinkTable
           unit={unitWithNoDisplayName}
+          courseId="course-v1:TestX+Test101+2024"
           linkType="previous"
         />,
       );
@@ -670,6 +675,7 @@ describe('BrokenLinkTable', () => {
       intlWrapper(
         <BrokenLinkTable
           unit={mockUnitWithBrokenLinks}
+          courseId="course-v1:TestX+Test101+2024"
           filters={mockFilters}
           linkType="broken"
         />,
@@ -683,6 +689,7 @@ describe('BrokenLinkTable', () => {
       const { container } = intlWrapper(
         <BrokenLinkTable
           unit={mockUnitWithBrokenLinks}
+          courseId="course-v1:TestX+Test101+2024"
           linkType="broken"
         />,
       );

@@ -159,7 +159,7 @@ const LinksCol: FC<{
 
 interface BrokenLinkTableProps {
   unit: Unit;
-  courseId?: string;
+  courseId: string;
   filters?: Filters;
   linkType?: 'broken' | 'previous';
   onUpdateLink?: (link: string, blockId: string, sectionId?: string) => Promise<boolean>;
@@ -184,12 +184,6 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
   updatedLinkMap = {},
   updatedLinkInProgress = {},
 }) => {
-  const getBlockUrl = (block: Unit['blocks'][0]) => (
-    courseId && unit.id && block.id
-      ? buildBlockContainerUrl(courseId, unit.id, block.id)
-      : block.url
-  );
-
   const brokenLinkList = unit.blocks.reduce(
     (
       acc: TableData,
@@ -217,7 +211,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
             return {
               Links: (
                 <LinksCol
-                  block={{ url: getBlockUrl(block), displayName: block.displayName || 'Go to block', id: block.id }}
+                  block={{ url: buildBlockContainerUrl(courseId, unit.id, block.id), displayName: block.displayName || 'Go to block', id: block.id }}
                   href={displayLink}
                   showIcon={false}
                   showUpdateButton
@@ -246,7 +240,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
         const blockBrokenLinks = block.brokenLinks.map((link) => ({
           Links: (
             <LinksCol
-              block={{ url: getBlockUrl(block), displayName: block.displayName || 'Go to block' }}
+              block={{ url: buildBlockContainerUrl(courseId, unit.id, block.id), displayName: block.displayName || 'Go to block' }}
               href={link}
               linkType={BROKEN}
             />
@@ -262,7 +256,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
         const blockLockedLinks = block.lockedLinks.map((link) => ({
           Links: (
             <LinksCol
-              block={{ url: getBlockUrl(block), displayName: block.displayName || 'Go to block' }}
+              block={{ url: buildBlockContainerUrl(courseId, unit.id, block.id), displayName: block.displayName || 'Go to block' }}
               href={link}
               linkType={LOCKED}
             />
@@ -279,7 +273,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
         const externalForbiddenLinks = block.externalForbiddenLinks.map((link) => ({
           Links: (
             <LinksCol
-              block={{ url: getBlockUrl(block), displayName: block.displayName || 'Go to block' }}
+              block={{ url: buildBlockContainerUrl(courseId, unit.id, block.id), displayName: block.displayName || 'Go to block' }}
               href={link}
               linkType={MANUAL}
             />

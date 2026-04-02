@@ -1,6 +1,6 @@
 import { createCorrectInternalRoute } from '../utils';
 import { LinkCheckResult } from './types';
- 
+
 export const buildBlockContainerUrl = (
   courseId: string,
   unitId: string,
