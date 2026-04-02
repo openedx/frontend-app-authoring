@@ -37,20 +37,22 @@ const DraggableList = ({
 
   const handleDragEnd = useCallback((event) => {
     const { active, over } = event;
-    if (active.id !== over.id) {
+    if (over && active.id !== over.id) {
       let updatedArray;
-      setState(() => {
-        const [activeElement] = itemList.filter(item => item.id === active.id);
-        const [overElement] = itemList.filter(item => item.id === over.id);
-        const oldIndex = itemList.indexOf(activeElement);
-        const newIndex = itemList.indexOf(overElement);
-        updatedArray = arrayMove(itemList, oldIndex, newIndex);
+      // Use the functional updater to access the latest state, avoiding stale closure
+      // on itemList when items are added/removed between renders.
+      setState((prevList) => {
+        const [activeElement] = prevList.filter(item => item.id === active.id);
+        const [overElement] = prevList.filter(item => item.id === over.id);
+        const oldIndex = prevList.indexOf(activeElement);
+        const newIndex = prevList.indexOf(overElement);
+        updatedArray = arrayMove(prevList, oldIndex, newIndex);
         return updatedArray;
       });
       updateOrder()(updatedArray);
     }
     setActiveId?.(null);
-  }, [updateOrder, setActiveId]);
+  }, [setState, updateOrder, setActiveId]);
 
   const handleDragStart = useCallback((event) => {
     setActiveId?.(event.active.id);

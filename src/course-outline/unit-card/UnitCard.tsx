@@ -22,7 +22,7 @@ import { useWaffleFlags } from '@src/data/apiHooks';
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
-import { setCourseItemOrderList } from '@src/course-outline/data/api';
+import { setCourseItemOrderList, pasteBlock } from '@src/course-outline/data/api';
 import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
@@ -42,7 +42,9 @@ import EditorPage from '@src/editors/EditorPage';
 import supportedEditors from '@src/editors/supportedEditors';
 import DraggableList, { SortableItem as GenericSortableItem } from '@src/generic/DraggableList';
 import { ToastContext } from '@src/generic/toast-context';
-import { useUnitHandler } from './data/hooks';
+import { useUnitHandler, useComponentTemplates } from './data/hooks';
+import AddComponentWidget from './AddComponentWidget';
+import type { CreatedXBlockInfo } from './AddComponentWidget';
 import messages from './messages';
 
 interface UnitCardProps {
@@ -106,7 +108,7 @@ const UnitCard = ({
   const previousComponentsOrder = useRef<any[]>([]);
   const namePrefix = 'unit';
 
-  const { copyToClipboard } = useClipboard();
+  const { copyToClipboard, showPasteXBlock } = useClipboard();
   const { courseId } = useParams();
   const queryClient = useQueryClient();
   const { showToast } = useContext(ToastContext);
@@ -133,6 +135,14 @@ const UnitCard = ({
     error: componentsError,
     refetch: refetchUnitData,
   } = useUnitHandler(id, isExpanded && waffleFlags.enableUnitExpandedView);
+
+  // Fetch component templates separately via the existing container_handler API.
+  // Templates are course-level (same for every unit), so cached per courseId.
+  const { data: componentTemplates } = useComponentTemplates(
+    id,
+    courseId || '',
+    isExpanded && waffleFlags.enableUnitExpandedView && waffleFlags.enableOutlineComponentCreation,
+  );
 
   const blockSyncData = useMemo(() => {
     if (!upstreamInfo?.readyToSync) {
@@ -197,6 +207,22 @@ const UnitCard = ({
   const handleCopyClick = () => {
     copyToClipboard(id);
   };
+
+  const handlePreviewClick = useCallback(() => {
+    const lmsBaseUrl = getConfig().LMS_BASE_URL;
+    const previewUrl = `${lmsBaseUrl}/courses/${courseId}/jump_to/${id}?preview=1`;
+    window.open(previewUrl, '_blank');
+  }, [courseId, id]);
+
+  const handlePasteComponent = useCallback(async () => {
+    try {
+      await pasteBlock(id);
+      dispatch(fetchCourseSectionQuery([section.id]));
+      await refetchUnitData();
+    } catch {
+      showToast(intl.formatMessage(messages.addComponentError));
+    }
+  }, [id, section.id, dispatch, refetchUnitData, showToast, intl]);
 
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
@@ -421,6 +447,7 @@ const UnitCard = ({
             hasChanges={hasChanges}
             cardId={id}
             onClickMenuButton={handleClickMenuButton}
+            onClickPreview={handlePreviewClick}
             onClickPublish={onOpenPublishModal}
             onClickConfigure={onOpenConfigureModal}
             onClickEdit={openForm}
@@ -572,6 +599,30 @@ const UnitCard = ({
                   </div>
                 );
               })()}
+              {waffleFlags.enableOutlineComponentCreation
+                && componentTemplates
+                && componentTemplates.length > 0 && (
+                <div className="mt-3 mb-0" data-testid="add-component-widget">
+                  <AddComponentWidget
+                    unitId={id}
+                    componentTemplates={componentTemplates}
+                    showPasteXBlock={!!showPasteXBlock}
+                    onPasteComponent={handlePasteComponent}
+                    onComponentCreated={async (info: CreatedXBlockInfo) => {
+                      dispatch(fetchCourseSectionQuery([section.id]));
+                      await refetchUnitData();
+                      const editorBlockType = info.category || info.type;
+                      if (supportsMFEEditor(editorBlockType)) {
+                        // MFE editor available (html, video, problem, games, etc.)
+                        handleShowMFEEditor(editorBlockType, info.locator);
+                      } else {
+                        // No MFE editor — open the legacy Studio editor in an iframe
+                        handleShowLegacyEditModal(info.locator);
+                      }
+                    }}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>

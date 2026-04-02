@@ -37,6 +37,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.button.edit.alt',
     defaultMessage: 'Rename',
   },
+  menuPreview: {
+    id: 'course-authoring.course-outline.card.menu.preview',
+    defaultMessage: 'Preview',
+  },
   menuPublish: {
     id: 'course-authoring.course-outline.card.menu.publish',
     defaultMessage: 'Publish',

@@ -7,10 +7,16 @@ import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { XBlock } from '@src/data/types';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
+import componentMessages from './messages';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
 const mockUseUnitHandler = jest.fn();
+const mockUseComponentTemplates = jest.fn();
+const mockCreateXBlock = jest.fn();
+const mockPasteBlock = jest.fn();
+const mockCopyToClipboard = jest.fn();
+const mockShowPasteXBlock = { current: false };
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -23,7 +29,43 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 
 jest.mock('./data/hooks', () => ({
   useUnitHandler: (...args: unknown[]) => mockUseUnitHandler(...args),
+  useComponentTemplates: (...args: unknown[]) => mockUseComponentTemplates(...args),
+  useCreateXBlockInUnit: () => ({
+    mutateAsync: mockCreateXBlock,
+    isPending: false,
+  }),
 }));
+
+// Mock pasteBlock API call used by handlePasteComponent
+jest.mock('@src/course-outline/data/api', () => ({
+  ...jest.requireActual('@src/course-outline/data/api'),
+  pasteBlock: (...args: unknown[]) => mockPasteBlock(...args),
+  setCourseItemOrderList: jest.fn(),
+}));
+
+// Mock useClipboard hook to control showPasteXBlock
+jest.mock('@src/generic/clipboard', () => ({
+  useClipboard: () => ({
+    copyToClipboard: mockCopyToClipboard,
+    showPasteXBlock: mockShowPasteXBlock.current,
+  }),
+}));
+
+// Mock fetchCourseSectionQuery thunk (returns a plain action object)
+jest.mock('@src/course-outline/data/thunk', () => ({
+  ...jest.requireActual('@src/course-outline/data/thunk'),
+  fetchCourseSectionQuery: jest.fn(() => ({ type: 'MOCK_FETCH_SECTION' })),
+}));
+
+// Mock EditorPage to avoid heavy editor dependencies
+jest.mock('@src/editors/EditorPage', () => function MockEditorPage() {
+  return <div data-testid="mock-editor-page" />;
+});
+
+// Mock ModalIframe to simplify legacy editor testing
+jest.mock('@src/generic/modal-iframe', () => function MockModalIframe({ title }: { title: string }) {
+  return <div data-testid="mock-modal-iframe">{title}</div>;
+});
 
 const section = {
   id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
@@ -109,13 +151,21 @@ const renderComponent = (props?: object) => render(
 );
 
 describe('<UnitCard />', () => {
+  let mockShowToast: jest.Mock;
+
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    mockShowToast = mocks.mockShowToast as jest.Mock;
     mockWaffleFlags({ enableUnitExpandedView: true });
     mockUseUnitHandler.mockReset();
     mockUseUnitHandler.mockReturnValue({
-      data: undefined, isLoading: false, isError: false, error: null,
+      data: undefined, isLoading: false, isError: false, error: null, refetch: jest.fn(),
     });
+    mockUseComponentTemplates.mockReset();
+    mockUseComponentTemplates.mockReturnValue({ data: undefined });
+    mockPasteBlock.mockReset();
+    mockCreateXBlock.mockReset();
+    mockShowPasteXBlock.current = false;
   });
 
   it('render UnitCard component correctly', async () => {
@@ -253,6 +303,7 @@ describe('<UnitCard />', () => {
       isLoading: false,
       isError: true,
       error: new Error(errorMessage),
+      refetch: jest.fn(),
     });
 
     renderComponent();
@@ -282,6 +333,7 @@ describe('<UnitCard />', () => {
         isLoading: false,
         isError: false,
         error: null,
+        refetch: jest.fn(),
       });
 
       renderComponent();
@@ -339,6 +391,334 @@ describe('<UnitCard />', () => {
 
       const prevented = !editButton.dispatchEvent(clickEvent);
       expect(prevented).toBe(false);
+    });
+  });
+
+  describe('preview button', () => {
+    it('shows Preview option in the kebab menu', async () => {
+      const { findByTestId } = renderComponent();
+      const element = await findByTestId('unit-card');
+      const menu = await within(element).findByTestId('unit-card-header__menu-button');
+      await act(async () => fireEvent.click(menu));
+
+      const previewButton = within(element).getByTestId('unit-card-header__menu-preview-button');
+      expect(previewButton).toBeInTheDocument();
+      expect(previewButton).toHaveTextContent(cardMessages.menuPreview.defaultMessage);
+    });
+
+    it('opens the correct LMS preview URL in a new tab', async () => {
+      const windowOpenSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+      const { findByTestId } = renderComponent();
+      const element = await findByTestId('unit-card');
+      const menu = await within(element).findByTestId('unit-card-header__menu-button');
+      await act(async () => fireEvent.click(menu));
+
+      const previewButton = within(element).getByTestId('unit-card-header__menu-preview-button');
+      await act(async () => fireEvent.click(previewButton));
+
+      const expectedUrl = `${getConfig().LMS_BASE_URL}/courses/5/jump_to/${unit.id}?preview=1`;
+      expect(windowOpenSpy).toHaveBeenCalledWith(expectedUrl, '_blank');
+      windowOpenSpy.mockRestore();
+    });
+  });
+
+  describe('add component widget', () => {
+    const componentTemplates = [
+      {
+        type: 'html',
+        displayName: 'Text',
+        templates: [{ displayName: 'Text', category: 'html', boilerplateName: undefined }],
+        supportLegend: {},
+      },
+    ];
+
+    it('renders AddComponentWidget when enableOutlineComponentCreation flag is true', async () => {
+      mockWaffleFlags({ enableUnitExpandedView: true, enableOutlineComponentCreation: true });
+      mockUseUnitHandler.mockReturnValue({
+        data: { components: [] },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: jest.fn(),
+      });
+      mockUseComponentTemplates.mockReturnValue({ data: componentTemplates });
+
+      renderComponent();
+
+      // Expand the unit
+      const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+      fireEvent.click(expandButton);
+
+      expect(await screen.findByTestId('add-component-widget')).toBeInTheDocument();
+    });
+
+    it('hides AddComponentWidget when enableOutlineComponentCreation flag is false', async () => {
+      mockWaffleFlags({ enableUnitExpandedView: true, enableOutlineComponentCreation: false });
+      mockUseUnitHandler.mockReturnValue({
+        data: { components: [] },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: jest.fn(),
+      });
+      mockUseComponentTemplates.mockReturnValue({ data: componentTemplates });
+
+      renderComponent();
+
+      // Expand the unit
+      const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+      fireEvent.click(expandButton);
+
+      // Wait for components area to render, then check widget is absent
+      await waitFor(() => {
+        expect(screen.queryByTestId('add-component-widget')).not.toBeInTheDocument();
+      });
+    });
+
+    it('hides AddComponentWidget when there are no component templates', async () => {
+      mockWaffleFlags({ enableUnitExpandedView: true, enableOutlineComponentCreation: true });
+      mockUseUnitHandler.mockReturnValue({
+        data: { components: [] },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: jest.fn(),
+      });
+      mockUseComponentTemplates.mockReturnValue({ data: [] });
+
+      renderComponent();
+
+      const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+      fireEvent.click(expandButton);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('add-component-widget')).not.toBeInTheDocument();
+      });
+    });
+
+    it('passes showPasteXBlock=true to AddComponentWidget when clipboard has content', async () => {
+      // Enable the clipboard paste indicator
+      mockShowPasteXBlock.current = true;
+      mockWaffleFlags({ enableUnitExpandedView: true, enableOutlineComponentCreation: true });
+      mockUseUnitHandler.mockReturnValue({
+        data: {
+          components: [],
+        },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: jest.fn(),
+      });
+      mockUseComponentTemplates.mockReturnValue({
+        data: [{
+          type: 'html',
+          displayName: 'Text',
+          templates: [{ displayName: 'Text', category: 'html', boilerplateName: undefined }],
+          supportLegend: {},
+        }],
+      });
+
+      renderComponent();
+
+      // Expand the unit to show AddComponentWidget
+      const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+      fireEvent.click(expandButton);
+
+      // Open the add-component dropdown
+      const toggle = await screen.findByText(componentMessages.addComponentButton.defaultMessage);
+      await act(async () => fireEvent.click(toggle));
+
+      // Paste option should be visible when showPasteXBlock is true
+      expect(screen.getByTestId('add-component-item-paste')).toBeInTheDocument();
+    });
+
+    it('does not show paste option when clipboard is empty', async () => {
+      // Clipboard has no pasteable content
+      mockShowPasteXBlock.current = false;
+      mockWaffleFlags({ enableUnitExpandedView: true, enableOutlineComponentCreation: true });
+      mockUseUnitHandler.mockReturnValue({
+        data: {
+          components: [],
+        },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: jest.fn(),
+      });
+      mockUseComponentTemplates.mockReturnValue({
+        data: [{
+          type: 'html',
+          displayName: 'Text',
+          templates: [{ displayName: 'Text', category: 'html', boilerplateName: undefined }],
+          supportLegend: {},
+        }],
+      });
+
+      renderComponent();
+
+      // Expand the unit
+      const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+      fireEvent.click(expandButton);
+
+      // Open the dropdown
+      const toggle = await screen.findByText(componentMessages.addComponentButton.defaultMessage);
+      await act(async () => fireEvent.click(toggle));
+
+      // Paste option should NOT be visible
+      expect(screen.queryByTestId('add-component-item-paste')).not.toBeInTheDocument();
+    });
+
+    it('opens MFE editor after creating an MFE-supported component (e.g. html)', async () => {
+      // Simulate createXBlock returning a locator for an html component
+      mockCreateXBlock.mockResolvedValueOnce({
+        locator: 'block-v1:test+type@html+block@new1',
+        courseKey: 'course-v1:test+T1+2025',
+      });
+      mockWaffleFlags({ enableUnitExpandedView: true, enableOutlineComponentCreation: true });
+      mockUseUnitHandler.mockReturnValue({
+        data: {
+          components: [],
+        },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: jest.fn(),
+      });
+      mockUseComponentTemplates.mockReturnValue({
+        data: [{
+          type: 'html',
+          displayName: 'Text',
+          templates: [{ displayName: 'Text', category: 'html', boilerplateName: undefined }],
+          supportLegend: {},
+        }],
+      });
+
+      renderComponent();
+
+      // Expand unit
+      const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+      fireEvent.click(expandButton);
+
+      // Open dropdown and click the HTML component type
+      const toggle = await screen.findByText(componentMessages.addComponentButton.defaultMessage);
+      await act(async () => fireEvent.click(toggle));
+      await act(async () => fireEvent.click(screen.getByTestId('add-component-item-html')));
+
+      // The MFE editor modal should appear (mocked EditorPage inside .editor-page div)
+      await waitFor(() => {
+        expect(screen.getByTestId('mock-editor-page')).toBeInTheDocument();
+      });
+    });
+
+    it('opens legacy editor after creating a non-MFE component (e.g. openassessment)', async () => {
+      // Simulate createXBlock returning a locator for an ORA component
+      mockCreateXBlock.mockResolvedValueOnce({
+        locator: 'block-v1:test+type@openassessment+block@new2',
+        courseKey: 'course-v1:test+T1+2025',
+      });
+      mockWaffleFlags({ enableUnitExpandedView: true, enableOutlineComponentCreation: true });
+      mockUseUnitHandler.mockReturnValue({
+        data: {
+          components: [],
+        },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: jest.fn(),
+      });
+      mockUseComponentTemplates.mockReturnValue({
+        data: [{
+          type: 'openassessment',
+          displayName: 'Open Response',
+          templates: [{
+            displayName: 'Open Response Assessment',
+            category: 'openassessment',
+            boilerplateName: undefined,
+          }],
+          supportLegend: {},
+        }],
+      });
+
+      renderComponent();
+
+      // Expand unit
+      const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+      fireEvent.click(expandButton);
+
+      // Open dropdown and click the ORA component type
+      const toggle = await screen.findByText(componentMessages.addComponentButton.defaultMessage);
+      await act(async () => fireEvent.click(toggle));
+      await act(async () => fireEvent.click(screen.getByTestId('add-component-item-openassessment')));
+
+      // Legacy editor modal (iframe) should appear — MockModalIframe renders with a title
+      await waitFor(() => {
+        expect(screen.getByTestId('mock-modal-iframe')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('handlePasteComponent', () => {
+    const componentTemplates = [{
+      type: 'html',
+      displayName: 'Text',
+      templates: [{ displayName: 'Text', category: 'html', boilerplateName: undefined }],
+      supportLegend: {},
+    }];
+
+    // Helper to expand the unit and open the add-component dropdown with paste enabled
+    const setupPasteScenario = async () => {
+      mockShowPasteXBlock.current = true;
+      mockWaffleFlags({ enableUnitExpandedView: true, enableOutlineComponentCreation: true });
+      mockUseUnitHandler.mockReturnValue({
+        data: { components: [] },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: jest.fn(),
+      });
+      mockUseComponentTemplates.mockReturnValue({ data: componentTemplates });
+
+      renderComponent();
+
+      // Expand the unit
+      const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+      fireEvent.click(expandButton);
+
+      // Open the add-component dropdown
+      const toggle = await screen.findByText(componentMessages.addComponentButton.defaultMessage);
+      await act(async () => fireEvent.click(toggle));
+    };
+
+    it('calls pasteBlock and refreshes data on successful paste', async () => {
+      // pasteBlock resolves successfully
+      mockPasteBlock.mockResolvedValueOnce({ locator: 'block-v1:pasted' });
+
+      await setupPasteScenario();
+
+      // Click the paste option
+      const pasteItem = screen.getByTestId('add-component-item-paste');
+      await act(async () => fireEvent.click(pasteItem));
+
+      // pasteBlock should be called with the unit id
+      await waitFor(() => {
+        expect(mockPasteBlock).toHaveBeenCalledWith(unit.id);
+      });
+    });
+
+    it('shows an error toast when pasteBlock fails', async () => {
+      // pasteBlock rejects with an error
+      mockPasteBlock.mockRejectedValueOnce(new Error('Paste failed'));
+
+      await setupPasteScenario();
+
+      // Click the paste option
+      const pasteItem = screen.getByTestId('add-component-item-paste');
+      await act(async () => fireEvent.click(pasteItem));
+
+      // Error toast should be called with the addComponentError message
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledWith(componentMessages.addComponentError.defaultMessage);
+      });
     });
   });
 });

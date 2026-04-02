@@ -93,5 +93,22 @@
         }
       }
     }
+
+    /* Add Component dropdown button and menu –
+       sized to match the xblock component cards above */
+
+    .add-component-toggle {
+      border: 1px solid var(--pgn-color-light-400);
+      padding: 20px 16px;
+
+      // Hide the default Paragon caret since we render our own ArrowDropDown icon
+      &::after {
+        display: none;
+      }
+    }
+
+    .add-component-dropdown-menu {
+      max-height: 400px;
+    }
   }
 }

@@ -36,6 +36,46 @@ const messages = defineMessages({
     defaultMessage: 'Failed to save component',
     description: 'Error message shown when component save fails',
   },
+  addComponentButton: {
+    id: 'course-authoring.course-outline.unit.add-component-button',
+    defaultMessage: 'Add component',
+    description: 'Label for the button to add a new component to a unit from the outline',
+  },
+  addComponentError: {
+    id: 'course-authoring.course-outline.unit.add-component-error',
+    defaultMessage: 'Failed to add component. Please try again.',
+    description: 'Error message shown when adding a component from the outline fails',
+  },
+  pasteComponent: {
+    id: 'course-authoring.course-outline.unit.paste-component',
+    defaultMessage: 'Paste component',
+    description: 'Label for the paste component option in the add component dropdown',
+  },
+  supportPartiallySupported: {
+    id: 'course-authoring.course-outline.unit.support-partially-supported',
+    defaultMessage: 'Partially supported',
+    description: 'Label shown next to advanced components that are partially supported',
+  },
+  supportNotSupported: {
+    id: 'course-authoring.course-outline.unit.support-not-supported',
+    defaultMessage: 'Not supported',
+    description: 'Label shown next to advanced components that are not supported',
+  },
+  templateModalTitle: {
+    id: 'course-authoring.course-outline.unit.template-modal-title',
+    defaultMessage: 'Add {componentTitle} component',
+    description: 'Title for the modal that lets the user pick a specific template when a component type has multiple sub-types',
+  },
+  templateModalCancel: {
+    id: 'course-authoring.course-outline.unit.template-modal-cancel',
+    defaultMessage: 'Cancel',
+    description: 'Cancel button in the template selection modal',
+  },
+  templateModalSelect: {
+    id: 'course-authoring.course-outline.unit.template-modal-select',
+    defaultMessage: 'Select',
+    description: 'Submit button in the template selection modal',
+  },
 });
 
 export default messages;

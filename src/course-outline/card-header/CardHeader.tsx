@@ -47,6 +47,7 @@ interface CardHeaderProps {
   onClickDuplicate: () => void;
   onClickMoveUp: () => void;
   onClickMoveDown: () => void;
+  onClickPreview?: () => void;
   onClickCopy?: () => void;
   titleComponent: ReactNode;
   namePrefix: string;
@@ -89,6 +90,7 @@ const CardHeader = ({
   onClickDuplicate,
   onClickMoveUp,
   onClickMoveDown,
+  onClickPreview,
   onClickCopy,
   titleComponent,
   namePrefix,
@@ -220,6 +222,14 @@ const CardHeader = ({
               iconAs={Icon}
             />
             <Dropdown.Menu>
+              {isVertical && onClickPreview && (
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-preview-button`}
+                  onClick={onClickPreview}
+                >
+                  {intl.formatMessage(messages.menuPreview)}
+                </Dropdown.Item>
+              )}
               {isSequential && proctoringExamConfigurationLink && (
                 <Dropdown.Item
                   as={Hyperlink}
