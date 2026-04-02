@@ -75,9 +75,7 @@ describe('UploadWidget', () => {
     axiosMock.onPut('http://localhost:18010/api/libraries/v2/blocks/pdf-block/assets/static/my-test-pdf.pdf').withDelayInMs(1000).reply(
       201,
       {
-        asset: {
-          external_url: 'https://studio.local/asset-v1:course-v1:Org+COURSE+RUN+type@asset+block@my-saved-pdf.pdf',
-        },
+        url: 'https://studio.local/asset-v1:course-v1:Org+COURSE+RUN+type@asset+block@my-saved-pdf.pdf',
       },
     );
     const screen = renderWidget({ props: defaultProps({ isLibrary: true }), formikProps: defaultFormikProps() });
@@ -136,6 +134,13 @@ describe('UploadWidget', () => {
       props: defaultProps(),
       formikProps: defaultFormikProps({ initialValues: { url: 'http://example.com///' } }),
     });
-    screen.getByText('Unknown Filename');
+    screen.getByText(messages.defaultName.defaultMessage);
+  });
+  it('provides a sensible message when the file field is blank', () => {
+    const screen = renderWidget({
+      props: defaultProps(),
+      formikProps: defaultFormikProps({ initialValues: { url: '' } }),
+    });
+    screen.getByText(messages.emptyLabel.defaultMessage);
   });
 });

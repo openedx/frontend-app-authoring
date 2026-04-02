@@ -21,6 +21,11 @@ export interface UploadWidgetProps {
   isLibrary: boolean,
 }
 
+type LibraryAsset = { url: string };
+type CourseAsset = { asset: { external_url: string } };
+
+declare type AssetResponse = AxiosResponse<CourseAsset> | AxiosResponse<LibraryAsset>;
+
 /** Widget for uploading a file to the course (or library block) file store for use in a block. * */
 const UploadWidget = ({
   id,
@@ -45,8 +50,12 @@ const UploadWidget = ({
       urlFieldControl.setError(intl.formatMessage(messages.fileTooLarge));
       return;
     }
-    mutation.mutateAsync(file).then((result: AxiosResponse<{ asset: { external_url: string } }>) => {
-      void urlFieldControl.setValue(result.data.asset.external_url); // eslint-disable-line no-void
+    mutation.mutateAsync(file).then((result: AssetResponse) => {
+      if (isLibrary) {
+        void urlFieldControl.setValue((result.data as LibraryAsset).url); // eslint-disable-line no-void
+      } else {
+        void urlFieldControl.setValue((result.data as CourseAsset).asset.external_url); // eslint-disable-line no-void
+      }
     }).catch(() => {
       urlFieldControl.setError(intl.formatMessage(messages.uploadError));
     }).finally(() => {
@@ -56,6 +65,9 @@ const UploadWidget = ({
   const fileInput = useFileInput({ onAddFile, setSelectedRows, setAddOpen });
 
   const deriveFileName = (rawName: string) => {
+    if (!rawName.trim()) {
+      return intl.formatMessage(messages.emptyLabel);
+    }
     const segments = rawName.split('/').reverse();
     const defaultName = intl.formatMessage(messages.defaultName);
     let segment = segments[0] || '';
@@ -68,6 +80,8 @@ const UploadWidget = ({
     return segment || defaultName;
   };
 
+  // TODO: In cases where the blockId is not set, don't upload immediately, but find a way to do it post-save,
+  // preventing the need for this dance.
   if (!blockId) {
     return (
       <Card className="bg-light-200">

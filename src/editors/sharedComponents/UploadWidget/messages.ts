@@ -47,6 +47,11 @@ const messages = defineMessages({
     defaultMessage: 'Unknown Filename',
     description: "Default 'file name' shown if one can't be determined.",
   },
+  emptyLabel: {
+    id: 'authoring.sharedComponents.uploadWidget.defaultName',
+    defaultMessage: 'No file attached',
+    description: 'Shown in the filename section when the field is blank.',
+  },
   uploading: {
     id: 'authoring.sharedComponents.uploadWidget.uploading',
     defaultMessage: 'Uploading...',
