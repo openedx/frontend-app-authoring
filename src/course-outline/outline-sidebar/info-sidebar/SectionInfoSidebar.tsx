@@ -42,7 +42,7 @@ export const SectionSidebar = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !sectionData) {
     return <Loading />;
   }
 
@@ -56,12 +56,13 @@ export const SectionSidebar = () => {
   return (
     <>
       <SidebarTitle
-        title={sectionData?.displayName || ''}
-        icon={getItemIcon(sectionData?.category || '')}
+        title={sectionData.displayName || ''}
+        icon={getItemIcon(sectionData.category || '')}
         onBackBtnClick={clearSelection}
         menuProps={{
           itemId: sectionId,
           index: index ?? -1,
+          actions: sectionData.actions || {},
           canMoveItem: canMoveSection(sections),
           onClickDuplicate: handleDuplicateSectionSubmit,
           onClickMoveUp: () => handleMove(-1),
@@ -69,7 +70,7 @@ export const SectionSidebar = () => {
           onClickUnlink: () => openUnlinkModal({ value: sectionData, sectionId }),
           onClickDelete: openDeleteModal,
           onClickViewLibrary: () => {
-            const upstreamRef = sectionData?.upstreamInfo?.upstreamRef;
+            const upstreamRef = sectionData.upstreamInfo?.upstreamRef;
             if (upstreamRef) {
               const libId = getLibraryId(upstreamRef);
               navigate(`/library/${libId}/section/${upstreamRef}`);
@@ -77,7 +78,7 @@ export const SectionSidebar = () => {
           },
         }}
       />
-      {sectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
+      {sectionData.hasChanges && <PublishButon onClick={handlePublish} />}
       <Tabs
         variant="tabs"
         className="my-2 mx-n3.5"

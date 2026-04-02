@@ -46,9 +46,14 @@ export const SubsectionSidebar = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !subsectionData) {
     return <Loading />;
   }
+  
+  // re-create actions object for customizations
+  const actions = { ...subsectionData.actions };
+  actions.deletable = actions.deletable && !section?.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !section?.upstreamInfo?.upstreamRef;
 
   const getPossibleMoves = section ? possibleSubsectionMoves(
     [...sections],
@@ -102,6 +107,7 @@ export const SubsectionSidebar = () => {
         menuProps={{
           itemId: subsectionId,
           index: index ?? -1,
+          actions,
           canMoveItem: canMoveSubsection,
           onClickDuplicate: handleDuplicateSubsectionSubmit,
           onClickMoveUp: () => handleMove(-1),

@@ -40,6 +40,7 @@ export const UnitSidebar = () => {
   } = selectedContainerState ?? {};
   const { data: unitData, isLoading } = useCourseItemData(unitId);
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
+  const { data: subsection } = useCourseItemData<XBlock>(selectedContainerState?.subsectionId);
   const {
     openPublishModal,
     getUnitUrl,
@@ -51,6 +52,9 @@ export const UnitSidebar = () => {
     openUnlinkModal,
   } = useCourseAuthoringContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
+  const subsectionIndex = section?.childInfo?.children?.findIndex(
+    (s) => s.id === selectedContainerState?.subsectionId,
+  ) ?? -1;
   const { copyToClipboard } = useClipboard();
   const { showToast } = useContext(ToastContext);
 
@@ -64,14 +68,13 @@ export const UnitSidebar = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !unitData) {
     return <Loading />;
   }
-
-  const subsectionIndex = section && selectedContainerState?.subsectionId
-    ? section.childInfo.children.findIndex((s) => s.id === selectedContainerState.subsectionId)
-    : -1;
-  const subsection = subsectionIndex !== -1 ? section?.childInfo.children[subsectionIndex] : undefined;
+  // re-create actions object for customizations
+  const actions = { ...unitData.actions };
+  actions.deletable = actions.deletable && !subsection?.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !subsection?.upstreamInfo?.upstreamRef;
 
   // Build move calculator only when all ancestor context is available
   const getPossibleMoves = (section && subsection && subsectionIndex !== -1)
@@ -88,7 +91,7 @@ export const UnitSidebar = () => {
   const canMoveUnit = (oldIndex: number, step: number) => {
     if (getPossibleMoves) {
       const moveDetails = getPossibleMoves(oldIndex, step);
-      return !isEmpty(moveDetails);
+      return !isEmpty(moveDetails) && !subsection?.upstreamInfo?.upstreamRef;
     }
     /* istanbul ignore next */
     return false;
@@ -159,8 +162,9 @@ export const UnitSidebar = () => {
         menuProps={{
           itemId: unitId,
           index: index ?? -1,
+          actions,
           canMoveItem: canMoveUnit,
-          onClickDuplicate: handleDuplicateUnitSubmit,
+          onClickDuplicate: unitData?.actions?.duplicable ? handleDuplicateUnitSubmit : undefined,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () => openUnlinkModal({

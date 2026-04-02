@@ -329,6 +329,7 @@ describe('InfoSidebar component', () => {
         };
         axiosMock.onGet(getXBlockApiUrl(unitId)).reply(200, draggableUnitData);
         axiosMock.onGet(getXBlockApiUrl(chId)).reply(200, mockSections[0]);
+        axiosMock.onGet(getXBlockApiUrl(seqId)).reply(200, mockSections[0].childInfo.children[0]);
         renderComponent();
         await screen.findByText(draggableUnitData.displayName);
         await screen.findByRole('button', { name: 'Item Menu' });
@@ -365,6 +366,28 @@ describe('InfoSidebar component', () => {
           expect.objectContaining({ index: 2, subsectionId: seqId, sectionId: chId }),
         );
       });
+    });
+
+    it('hides Delete and Duplicate when subsection has upstreamRef', async () => {
+      const user = userEvent.setup();
+      const subsectionId = 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@seq1';
+      selectedContainerState = {
+        currentId: unitId,
+        subsectionId,
+        sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
+      };
+      axiosMock.onGet(getXBlockApiUrl(unitId)).reply(200, unitData);
+      axiosMock.onGet(getXBlockApiUrl(subsectionId)).reply(200, {
+        id: subsectionId,
+        upstreamInfo: { upstreamRef: 'lb:org:lib:sequential:sub-id' },
+      });
+      renderComponent();
+      await screen.findByText(unitData.displayName);
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      await user.click(menuToggle);
+
+      expect(screen.queryByText('Delete')).not.toBeInTheDocument();
+      expect(screen.queryByText('Duplicate')).not.toBeInTheDocument();
     });
   });
 

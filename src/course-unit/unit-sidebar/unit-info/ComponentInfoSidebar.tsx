@@ -19,6 +19,7 @@ import { getLibraryId } from '@src/generic/key-utils';
 import { useUnlinkDownstream, UnlinkModal } from '@src/generic/unlink-modal';
 import { useClipboard } from '@src/generic/clipboard';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import Loading from '@src/generic/Loading';
 import { deleteUnitItemQuery, duplicateUnitItemQuery, fetchCourseVerticalChildrenData } from '@src/course-unit/data/thunk';
 
 import { useUnitSidebarContext } from '../UnitSidebarContext';
@@ -56,6 +57,15 @@ export const ComponentInfoSidebar = () => {
       setCurrentPageKey('info', null);
     }
   }, [movedXBlockParams]);
+
+  if (!componentItemData) {
+    return <Loading />;
+  }
+
+  // re-create actions object for customizations
+  const actions = { ...componentItemData.actions };
+  actions.deletable = actions.deletable && !unitData?.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !unitData?.upstreamInfo?.upstreamRef;
 
   // istanbul ignore next
   const handleBack = () => {
@@ -149,6 +159,7 @@ export const ComponentInfoSidebar = () => {
         menuProps={{
           itemId: selectedComponentId || '',
           index: 0,
+          actions,
           onClickDuplicate: handleDuplicate,
           onClickUnlink: openUnlinkModal,
           onClickDelete: openDeleteModal,
@@ -160,7 +171,7 @@ export const ComponentInfoSidebar = () => {
             }
           },
           onClickCopy: () => copyToClipboard(selectedComponentId ?? ''),
-          onClickMove: handleMove,
+          onClickMove: !unitData?.upstreamInfo?.upstreamRef ? handleMove : undefined,
         }}
       />
       <LibraryReferenceCard

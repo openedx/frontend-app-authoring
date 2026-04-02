@@ -26,7 +26,7 @@ import { ToastContext } from '@src/generic/toast-context';
 import { UnlinkModal, useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useQueryClient } from '@tanstack/react-query';
-import { courseOutlineQueryKeys, useDeleteCourseItem } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useDeleteCourseItem } from '@src/course-outline/data/apiHooks';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 
 /**
@@ -219,13 +219,18 @@ export const UnitInfoSidebar = () => {
   const { mutateAsync: deleteCourseItem } = useDeleteCourseItem();
   const queryClient = useQueryClient();
 
-  const sequenceId = currentItemData?.ancestorInfo?.ancestors?.[0]?.id;
+  const subsectionId = currentItemData?.ancestorInfo?.ancestors?.[0]?.id;
   const sectionId = currentItemData?.ancestorInfo?.ancestors?.[1]?.id;
+  const { data: subsection } = useCourseItemData(subsectionId);
+  // re-create actions object for customizations
+  const actions = { ...currentItemData.actions };
+  actions.deletable = actions.deletable && !subsection?.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !subsection?.upstreamInfo?.upstreamRef;
 
   const handleDeleteSubmit = async () => {
     await deleteCourseItem({
       itemId: currentItemData.id,
-      subsectionId: sequenceId,
+      subsectionId,
       sectionId,
     }, {
       onSuccess: () => {
@@ -238,13 +243,13 @@ export const UnitInfoSidebar = () => {
   const handleUnlinkSubmit = async () => {
     await unlinkDownstream({
       downstreamBlockId: currentItemData.id,
-      subsectionId: sequenceId,
+      subsectionId,
       sectionId,
     }, {
       onSuccess: () => {
         closeUnlinkModal();
         queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(currentItemData.id) });
-        dispatch(fetchCourseSectionVerticalData(currentItemData.id, sequenceId));
+        dispatch(fetchCourseSectionVerticalData(currentItemData.id, subsectionId));
       },
     });
   };
@@ -286,6 +291,7 @@ export const UnitInfoSidebar = () => {
         menuProps={{
           itemId: currentItemData.id,
           index: -1,
+          actions,
           onClickUnlink: openUnlinkModal,
           onClickDelete: openDeleteModal,
           onClickViewLibrary: () => {

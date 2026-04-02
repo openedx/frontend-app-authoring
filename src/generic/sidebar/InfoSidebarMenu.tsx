@@ -14,10 +14,12 @@ import {
 } from '@openedx/paragon/icons';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import messages from './messages';
+import { XBlockActions } from '@src/data/types';
 
 export interface InfoSidebarMenuProps {
   itemId: string;
   index: number;
+  actions: XBlockActions;
   onClickUnlink: () => void;
   onClickDelete: () => void;
   onClickViewLibrary: () => void;
@@ -33,6 +35,7 @@ export interface InfoSidebarMenuProps {
 export const InfoSidebarMenu = ({
   itemId,
   index,
+  actions,
   onClickDuplicate,
   onClickMoveUp,
   onClickMoveDown,
@@ -51,7 +54,7 @@ export const InfoSidebarMenu = ({
     return null;
   }
 
-  const { actions, upstreamInfo } = item;
+  const { upstreamInfo } = item;
 
   return (
     <Dropdown>
