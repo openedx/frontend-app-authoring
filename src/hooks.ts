@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { history } from '@edx/frontend-platform';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { debounce, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 export const useScrollToHashElement = ({ isLoading }: { isLoading: boolean }) => {
   const [elementWithHash, setElementWithHash] = useState<string | null>(null);

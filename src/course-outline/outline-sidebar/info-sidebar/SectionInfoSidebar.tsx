@@ -58,8 +58,11 @@ export const SectionSidebar = ({ sectionId }: Props) => {
         <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
           <InfoSection itemId={sectionId} />
         </Tab>
-        <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
-          <SectionSettings sectionId={sectionId} />
+        <Tab
+          eventKey="settings"
+          title={intl.formatMessage(messages.settingsTabText)}
+        >
+          <SectionSettings key={sectionId} sectionId={sectionId} />
         </Tab>
       </Tabs>
     </>

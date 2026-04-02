@@ -5,8 +5,12 @@ import {
   ActionRow,
   Hyperlink,
   Form,
+  Card,
+  IconButton,
 } from '@openedx/paragon';
+import { Edit as EditIcon } from '@openedx/paragon/icons';
 import { Formik } from 'formik';
+import { useEffect, useState } from 'react';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
@@ -15,8 +19,11 @@ import FormikControl from '../../generic/FormikControl';
 import { HIGHLIGHTS_FIELD_MAX_LENGTH } from '../constants';
 import { getHighlightsFormValues } from '../utils';
 import messages from './messages';
+import { ExpandableCard } from '@src/generic/expandable-card/ExpandableCard';
+import { useBlocker } from 'react-router';
+import PromptIfDirty from '@src/generic/prompt-if-dirty/PromptIfDirty';
 
-interface Highlights {
+export interface HighlightData {
   highlight_1: string;
   highlight_2: string;
   highlight_3: string;
@@ -24,79 +31,273 @@ interface Highlights {
   highlight_5: string;
 }
 
-interface FormProps {
-  onSubmit: (highlights: Highlights) => void;
+type DisplayMode = 'empty' | 'viewing' | 'editing';
+
+interface HighlightsFormProps {
+  onSubmit: (highlights: HighlightData) => void;
+  onCancel?: () => void;
+  initialValues: HighlightData;
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
-interface Props extends FormProps {
-  isOpen: boolean,
-  onClose: () => void,
-};
+interface HighlightsCardProps {
+  sectionId: string;
+  onSubmit: (highlights: HighlightData) => void;
+}
 
-export const HighlightsForm = ({ onSubmit }: FormProps) => {
+const ConfirmNavigationModal = ({
+  isOpen,
+  onConfirm,
+  onCancel,
+}: {
+  isOpen: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) => {
   const intl = useIntl();
-  const { currentSelection } = useCourseAuthoringContext();
-  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
-  const { highlights = [] } = currentItemData || {};
-  const initialFormValues = getHighlightsFormValues(highlights);
-
-  const {
-    contentHighlights: contentHighlightsUrl,
-  } = useHelpUrls(['contentHighlights']);
 
   return (
-    <Formik initialValues={initialFormValues} onSubmit={onSubmit}>
-      {({ values, dirty, handleSubmit }) => (
+    <ModalDialog
+      title={intl.formatMessage(messages.unsavedChangesTitle)}
+      isOpen={isOpen}
+      onClose={onCancel}
+      hasCloseButton
+      isOverflowVisible={false}
+    >
+      <ModalDialog.Header>
+        <ModalDialog.Title>
+          {intl.formatMessage(messages.unsavedChangesTitle)}
+        </ModalDialog.Title>
+      </ModalDialog.Header>
+      <ModalDialog.Body>
+        <p>{intl.formatMessage(messages.unsavedChangesMessage)}</p>
+      </ModalDialog.Body>
+      <ModalDialog.Footer>
+        <ActionRow>
+          <Button variant="tertiary" onClick={onCancel}>
+            {intl.formatMessage(messages.keepEditingButton)}
+          </Button>
+          <Button variant="primary" onClick={onConfirm}>
+            {intl.formatMessage(messages.discardChangesButton)}
+          </Button>
+        </ActionRow>
+      </ModalDialog.Footer>
+    </ModalDialog>
+  );
+};
+
+export const HighlightsForm = ({
+  onSubmit,
+  onCancel,
+  initialValues,
+  onDirtyChange,
+}: HighlightsFormProps) => {
+  const intl = useIntl();
+  const { contentHighlights: contentHighlightsUrl } = useHelpUrls([
+    'contentHighlights',
+  ]);
+
+  return (
+    <Formik initialValues={initialValues} onSubmit={onSubmit}>
+      {({ values, dirty, handleSubmit, resetForm }) => {
+         // Notify parent of dirty state changes
+        useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
+
+        return (
         <Form onSubmit={handleSubmit}>
-          <ModalDialog.Body>
+          <div className="highlights-form">
             <p className="mb-4.5 pb-2">
               {intl.formatMessage(messages.description, {
                 documentation: (
-                  <Hyperlink destination={contentHighlightsUrl} target="_blank" showLaunchIcon={false}>
+                  <Hyperlink
+                    destination={contentHighlightsUrl}
+                    target="_blank"
+                    showLaunchIcon={false}
+                  >
                     {intl.formatMessage(messages.documentationLink)}
-                  </Hyperlink>),
+                  </Hyperlink>
+                ),
               })}
             </p>
-            {Object.entries(initialFormValues).map(([key], index) => (
-              <FormikControl
-                key={key}
-                name={key}
-                value={values[key]}
-                floatingLabel={intl.formatMessage(messages.highlight, { index: index + 1 })}
-                maxLength={HIGHLIGHTS_FIELD_MAX_LENGTH}
-                as="textarea"
-              />
-            ))}
-          </ModalDialog.Body>
-          <ModalDialog.Footer className="pt-1">
-            <ActionRow>
-              <ModalDialog.CloseButton variant="tertiary">
+            <div className="highlights-form__fields">
+              {Object.entries(initialValues).map(([key], index) => (
+                <FormikControl
+                  key={key}
+                  name={key}
+                  value={values[key]}
+                  floatingLabel={intl.formatMessage(messages.highlight, {
+                    index: index + 1,
+                  })}
+                  maxLength={HIGHLIGHTS_FIELD_MAX_LENGTH}
+                  as="textarea"
+                />
+              ))}
+            </div>
+            <div className="highlights-form__actions">
+              <Button
+                variant="tertiary"
+                onClick={() => {
+                  resetForm();
+                  onCancel?.();
+                }}
+              >
                 {intl.formatMessage(messages.cancelButton)}
-              </ModalDialog.CloseButton>
+              </Button>
               <Button disabled={!dirty} type="submit">
                 {intl.formatMessage(messages.saveButton)}
               </Button>
-            </ActionRow>
-          </ModalDialog.Footer>
+            </div>
+          </div>
         </Form>
-      )}
+      ) }}
     </Formik>
   );
-}
+};
 
+const HighlightsViewCard = ({
+  highlights,
+  onEdit,
+}: {
+  highlights: string[];
+  onEdit: () => void;
+}) => {
+  const intl = useIntl();
+  const nonEmptyHighlights = highlights.filter((h) => h?.trim());
+
+  return (
+    <Card>
+      <Card.Header
+        title={intl.formatMessage(messages.highlightsTitle)}
+        size="sm"
+        actions={
+          <ActionRow>
+            <IconButton
+              size="sm"
+              src={EditIcon}
+              onClick={onEdit}
+              alt={intl.formatMessage(messages.editButton)}
+            />
+          </ActionRow>
+        }/>
+      <Card.Body>
+        <ExpandableCard maxHeight={400}>
+          {nonEmptyHighlights.map((highlight, index) => (
+            <p key={index}>{highlight}</p>
+          ))}
+        </ExpandableCard>
+      </Card.Body>
+    </Card>
+  );
+};
+
+const HighlightsEmptyState = ({ onAdd }: { onAdd: () => void }) => {
+  const intl = useIntl();
+
+  return (
+    <Button block onClick={onAdd}>
+      {intl.formatMessage(messages.addHighlightsButton)}
+    </Button>
+  );
+};
+
+export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => {
+  const { data: currentItemData } = useCourseItemData(sectionId);
+  const { highlights = [] } = currentItemData || {};
+
+  const [mode, setMode] = useState<DisplayMode>(
+    highlights.length > 0 && highlights.some((h) => h?.trim()) ? 'viewing' : 'empty'
+  );
+
+  const [formDirty, setFormDirty] = useState(false);
+
+  const initialFormValues = getHighlightsFormValues(highlights);
+  const blocker = useBlocker(formDirty);
+
+  const handleAddClick = () => {
+    setMode('editing');
+    setFormDirty(false);
+  };
+
+  const handleEditClick = () => {
+    setMode('editing');
+    setFormDirty(false);
+  };
+
+  const handleFormSubmit = async (values: HighlightData) => {
+    // Call parent onSubmit
+    onSubmit(values);
+    setFormDirty(false);
+    setMode(
+      Object.values(values).some((v) => v?.trim()) ? 'viewing' : 'empty'
+    );
+  };
+
+  const handleFormCancel = () => {
+    setFormDirty(false);
+    setMode(
+      highlights.some((h) => h?.trim()) ? 'viewing' : 'empty'
+    );
+  };
+
+  const handleConfirmNavigation = () => {
+    setFormDirty(false);
+    blocker.proceed?.();
+  };
+
+  return (
+    <>
+      <ConfirmNavigationModal
+        isOpen={blocker.state === "blocked"}
+        onConfirm={handleConfirmNavigation}
+        onCancel={() => {
+          blocker.reset?.();
+        }}
+      />
+
+      {mode === 'empty' && <HighlightsEmptyState onAdd={handleAddClick} />}
+
+      {mode === 'viewing' && (
+        <HighlightsViewCard
+          highlights={highlights}
+          onEdit={handleEditClick}
+        />
+      )}
+
+      {mode === 'editing' && (
+        <HighlightsForm
+          initialValues={initialFormValues}
+          onSubmit={handleFormSubmit}
+          onCancel={handleFormCancel}
+          onDirtyChange={setFormDirty}
+        />
+      )}
+      <PromptIfDirty dirty={formDirty} />
+    </>
+  );
+};
+
+// Keep the modal version for backward compatibility
 const HighlightsModal = ({
   isOpen,
   onClose,
   onSubmit,
-}: Props) => {
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (highlights: HighlightData) => void;
+}) => {
   const intl = useIntl();
   const { currentSelection } = useCourseAuthoringContext();
-  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
+  const { data: currentItemData } = useCourseItemData(
+    currentSelection?.currentId
+  );
   const { displayName } = currentItemData || {};
+  const { highlights = [] } = currentItemData || {};
+  const initialFormValues = getHighlightsFormValues(highlights);
 
   return (
     <ModalDialog
-      title={displayName || ""}
+      title={displayName || ''}
       className="highlights-modal"
       isOpen={isOpen}
       onClose={onClose}
@@ -110,10 +311,16 @@ const HighlightsModal = ({
             title: displayName,
           })}
         </ModalDialog.Title>
-        <HighlightsForm onSubmit={onSubmit} />
       </ModalDialog.Header>
+      <ModalDialog.Body>
+        <HighlightsForm
+          initialValues={initialFormValues}
+          onSubmit={onSubmit}
+        />
+      </ModalDialog.Body>
     </ModalDialog>
   );
 };
 
 export default HighlightsModal;
+
