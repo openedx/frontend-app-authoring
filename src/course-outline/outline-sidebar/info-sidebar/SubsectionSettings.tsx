@@ -27,7 +27,7 @@ const defaultPrereqScore = (val: string | number | null | undefined) => {
     return 100;
   }
   const parsed = parseFloat(val.toString());
-  return isNaN(parsed) ? 100 : parsed;
+  return Number.isNaN(parsed) ? 100 : parsed;
 };
 
 interface SubProps extends Props {
@@ -226,7 +226,7 @@ export const SubsectionSettings = ({ subsectionId }: Props) => {
     if (isPending || !itemData) {
       return;
     }
-    return mutate({
+    mutate({
       itemId: subsectionId,
       sectionId: selectedContainerState?.sectionId,
       isVisibleToStaffOnly: itemData.visibilityState === VisibilityTypes.STAFF_ONLY,

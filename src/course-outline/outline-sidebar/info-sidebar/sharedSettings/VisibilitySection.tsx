@@ -28,6 +28,7 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
     },
     (val) => {
       if (val && !isSubsection) {
+        // eslint-disable-next-line no-param-reassign
         val.hideAfterDue = undefined;
       }
       return onChange(val || {});

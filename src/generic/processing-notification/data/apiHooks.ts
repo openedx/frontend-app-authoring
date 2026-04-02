@@ -5,7 +5,8 @@ import { NOTIFICATION_MESSAGES } from '@src/constants';
 
 
 /**
- * Wraps useMutation to add a processing notification when the mutation is initiated and removes it when the mutation is settled.
+ * Wraps useMutation to add a processing notification when the mutation is initiated and removes it
+ * when the mutation is settled.
  */
 export const useMutationWithProcessingNotification = <
   TData = unknown,

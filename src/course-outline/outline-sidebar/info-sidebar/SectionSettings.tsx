@@ -37,7 +37,7 @@ export const SectionSettings = ({ sectionId }: Props) => {
     if (isPending || !itemData) {
       return;
     }
-    return mutate({
+    mutate({
       sectionId,
       isVisibleToStaffOnly: itemData.visibilityState === VisibilityTypes.STAFF_ONLY,
       startDatetime: itemData.start,

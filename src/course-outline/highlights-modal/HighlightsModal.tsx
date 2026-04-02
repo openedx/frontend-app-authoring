@@ -86,23 +86,6 @@ const ConfirmNavigationModal = ({
   );
 };
 
-export const HighlightsForm = ({
-  onSubmit,
-  onCancel,
-  initialValues,
-  onDirtyChange,
-}: HighlightsFormProps) => {
-  return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      <HighlightsFormInner
-        initialValues={initialValues}
-        onCancel={onCancel}
-        onDirtyChange={onDirtyChange}
-      />
-    </Formik>
-  );
-};
-
 // Separate component so hooks can be used at the top level of a component
 const HighlightsFormInner = ({
   initialValues,
@@ -114,7 +97,9 @@ const HighlightsFormInner = ({
     'contentHighlights',
   ]);
 
-  const { values, dirty, handleSubmit, resetForm } = useFormikContext<HighlightData>();
+  const {
+    values, dirty, handleSubmit, resetForm,
+  } = useFormikContext<HighlightData>();
 
   // Notify parent of dirty state changes
   useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
@@ -166,8 +151,22 @@ const HighlightsFormInner = ({
       </div>
     </Form>
   );
-}
+};
 
+export const HighlightsForm = ({
+  onSubmit,
+  onCancel,
+  initialValues,
+  onDirtyChange,
+}: HighlightsFormProps) => (
+  <Formik initialValues={initialValues} onSubmit={onSubmit}>
+    <HighlightsFormInner
+      initialValues={initialValues}
+      onCancel={onCancel}
+      onDirtyChange={onDirtyChange}
+    />
+  </Formik>
+);
 
 const HighlightsViewCard = ({
   highlights,

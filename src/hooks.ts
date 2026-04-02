@@ -253,7 +253,9 @@ export function useStateWithCallback<T>(
 
   useEffect(() => {
     // Only run if data actually changed
-    if (isEqual(data, prevDataRef.current)) { return; }
+    if (isEqual(data, prevDataRef.current)) {
+      return () => {};
+    }
 
     prevDataRef.current = data;
 

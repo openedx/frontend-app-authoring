@@ -1,4 +1,6 @@
-import { createContext, useContext, useState } from 'react';
+import {
+  createContext, useContext, useMemo, useState,
+} from 'react';
 
 interface ProcessingNotificationContextData {
   show: boolean;
@@ -14,17 +16,22 @@ const ProcessingNotificationContext = createContext<ProcessingNotificationContex
   setMessage: () => {},
 });
 
-export const ProcessingNotificationContextProvider = ({ children }) => {
+export const ProcessingNotificationContextProvider = ({ children }: { children?: React.ReactNode }) => {
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState('');
+  const values = useMemo(() => ({
+    show,
+    setShow,
+    message,
+    setMessage,
+  }), [
+    show,
+    setShow,
+    message,
+    setMessage,
+  ]);
   return (
-    <ProcessingNotificationContext.Provider value={{
-      show,
-      setShow,
-      message,
-      setMessage,
-    }}
-    >
+    <ProcessingNotificationContext.Provider value={values}>
       {children}
     </ProcessingNotificationContext.Provider>
   );

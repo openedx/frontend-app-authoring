@@ -33,7 +33,8 @@ export const ExpandableCard = ({
   const showLessLabelText = showLessLabel || intl.formatMessage(messages.showLess);
 
   useEffect(() => {
-    const element = contentRef.current; if (!element) { return; }
+    const element = contentRef.current;
+    if (!element) { return () => {}; }
     const checkNeedsExpansion = () => {
       setNeedsExpansion(element.scrollHeight > maxHeight);
     };
