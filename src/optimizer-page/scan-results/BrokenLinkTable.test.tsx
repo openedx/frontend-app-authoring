@@ -150,7 +150,7 @@ describe('BrokenLinkTable', () => {
         createMockBlock(['https://example.com/broken-link']),
       ]);
 
-      render(<BrokenLinkTableWrapper unit={unitWithBrokenLink} />);
+      render(<BrokenLinkTableWrapper courseId="course-v1:TestX+Test101+2024" unit={unitWithBrokenLink} />);
 
       expect(screen.getByText('https://example.com/broken-link')).toBeInTheDocument();
     });
@@ -712,14 +712,17 @@ describe('BrokenLinkTable', () => {
         createMockBlock(['https://broken.com/link1']),
       ]);
 
-      render(<BrokenLinkTableWrapper unit={unit} />);
+      render(<BrokenLinkTableWrapper courseId="course-v1:TestX+Test101+2024" unit={unit} />);
 
       const goToAnchor = screen.getByText('Test Block');
 
       fireEvent.click(goToAnchor);
 
       await waitFor(() => {
-        expect(window.open).toHaveBeenCalledWith('https://example.com/block', '_blank');
+        expect(window.open).toHaveBeenCalledWith(
+          'http://localhost/course/course-v1:TestX+Test101+2024/container/unit-1#block-1',
+          '_blank',
+        );
       });
     });
 
@@ -728,7 +731,7 @@ describe('BrokenLinkTable', () => {
         createMockBlock(['https://broken.com/link1']),
       ]);
 
-      render(<BrokenLinkTableWrapper unit={unit} />);
+      render(<BrokenLinkTableWrapper courseId="course-v1:TestX+Test101+2024" unit={unit} />);
 
       const hrefAnchor = screen.getByText('https://broken.com/link1');
 
@@ -748,6 +751,8 @@ BrokenLinkTableWrapper.propTypes = {
   filters: PropTypes.any,
   linkType: PropTypes.oneOf(['broken', 'previous']),
   sectionId: PropTypes.string,
+  courseId: PropTypes.string,
+
   updatedLinks: PropTypes.any,
 };
 /* eslint-enable react/forbid-prop-types */
