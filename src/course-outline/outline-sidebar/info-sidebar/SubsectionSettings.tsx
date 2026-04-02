@@ -22,7 +22,7 @@ interface Props {
   subsectionId: string;
 }
 
-export const defaultPrereqScore = (val: string | number | null | undefined) => {
+const defaultPrereqScore = (val: string | number | null | undefined) => {
   if (val === null || val === undefined) {
     return 100;
   }

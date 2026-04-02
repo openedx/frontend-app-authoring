@@ -1,6 +1,7 @@
 import { initializeMocks, render, screen } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
-import MockAdapter from 'axios-mock-adapter/types';
+
+import { SectionSettings } from './SectionSettings';
 
 const sectionId = 'section-1';
 
@@ -9,7 +10,12 @@ jest.mock('@src/course-outline/highlights-modal/HighlightsModal', () => ({
   __esModule: true,
   HighlightsCard: ({ onSubmit }: any) => (
     <div>
-      <button type="button" onClick={() => onSubmit({ highlight_1: 'one', highlight_2: '', highlight_3: 'two', highlight_4: '', highlight_5: '' })}>
+      <button
+        type="button"
+        onClick={() => onSubmit({
+          highlight_1: 'one', highlight_2: '', highlight_3: 'two', highlight_4: '', highlight_5: '',
+        })}
+      >
         Submit Highlights
       </button>
     </div>
@@ -53,14 +59,9 @@ jest.mock('@src/CourseAuthoringContext', () => ({
 
 const apiHooks = jest.requireMock('@src/course-outline/data/apiHooks') as any;
 
-import { SectionSettings } from './SectionSettings';
-
 describe('SectionSettings', () => {
-  let axiosMock: MockAdapter
-
   beforeEach(() => {
-    const mocks = initializeMocks();
-    axiosMock = mocks.axiosMock;
+    initializeMocks();
     configureMutate.mockReset();
     highlightsMutate.mockReset();
   });

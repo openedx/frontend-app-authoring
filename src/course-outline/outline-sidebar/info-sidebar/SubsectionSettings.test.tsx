@@ -1,18 +1,20 @@
 import { initializeMocks, render, screen } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
+
+import { SubsectionSettings } from './SubsectionSettings';
 
 const subsectionId = 'sub-1';
 
 // Make useStateWithCallback synchronous so callbacks call mutate immediately
 jest.mock('@src/hooks', () => ({
   useStateWithCallback: (defaultValue: any, cb?: any) => {
-    const React = require('react');
-    const [state, setState] = React.useState(defaultValue);
+    const [state, setState] = useState(defaultValue);
     const wrappedSetState = (val: any) => {
       const newVal = typeof val === 'function' ? val(state) : val;
       setState(newVal);
       // call callback synchronously like the implementation would after debounce
-      if (cb) cb(newVal);
+      if (cb) { cb(newVal); }
     };
     return [state, wrappedSetState];
   },
@@ -27,8 +29,6 @@ jest.mock('@src/generic/datepicker-control', () => ({
     </button>
   ),
 }));
-
-import { SubsectionSettings, defaultPrereqScore } from './SubsectionSettings';
 
 // Mock nested components: ReleaseSection, VisibilitySection, AdvancedTab
 jest.mock('./sharedSettings/ReleaseSection', () => ({
@@ -81,13 +81,29 @@ describe('SubsectionSettings', () => {
 
   it('renders sections and calls mutate with combined payloads', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    apiHooks.useCourseItemData.mockReturnValue({ data: {
-      visibilityState: 'staff_only', start: '2022-01-01', format: null, due: null,
-      isTimeLimited: false, isProctoredExam: false, isOnboardingExam: false, isPracticeExam: false,
-      examReviewRules: null, defaultTimeLimitMinutes: null, hideAfterDue: undefined,
-      showCorrectness: undefined, isPrereq: false, prereq: null, prereqMinScore: null, prereqMinCompletion: null,
-      courseGraders: ['g1', 'g2'], graded: true,
-    }, isPending: false });
+    apiHooks.useCourseItemData.mockReturnValue({
+      data: {
+        visibilityState: 'staff_only',
+        start: '2022-01-01',
+        format: null,
+        due: null,
+        isTimeLimited: false,
+        isProctoredExam: false,
+        isOnboardingExam: false,
+        isPracticeExam: false,
+        examReviewRules: null,
+        defaultTimeLimitMinutes: null,
+        hideAfterDue: undefined,
+        showCorrectness: undefined,
+        isPrereq: false,
+        prereq: null,
+        prereqMinScore: null,
+        prereqMinCompletion: null,
+        courseGraders: ['g1', 'g2'],
+        graded: true,
+      },
+      isPending: false,
+    });
 
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
@@ -112,13 +128,29 @@ describe('SubsectionSettings', () => {
   it('handles grading select, assessment result toggles and prereq parsing', async () => {
     // Use a new itemData shape where graded is false so clicking Graded shows controls
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    apiHooks.useCourseItemData.mockReturnValue({ data: {
-      visibilityState: 'staff_only', start: '2022-01-01', format: null, due: null,
-      isTimeLimited: false, isProctoredExam: false, isOnboardingExam: false, isPracticeExam: false,
-      examReviewRules: null, defaultTimeLimitMinutes: null, hideAfterDue: undefined,
-      showCorrectness: undefined, isPrereq: false, prereq: null, prereqMinScore: '50', prereqMinCompletion: null,
-      courseGraders: ['g1', 'g2'], graded: false,
-    }, isPending: false });
+    apiHooks.useCourseItemData.mockReturnValue({
+      data: {
+        visibilityState: 'staff_only',
+        start: '2022-01-01',
+        format: null,
+        due: null,
+        isTimeLimited: false,
+        isProctoredExam: false,
+        isOnboardingExam: false,
+        isPracticeExam: false,
+        examReviewRules: null,
+        defaultTimeLimitMinutes: null,
+        hideAfterDue: undefined,
+        showCorrectness: undefined,
+        isPrereq: false,
+        prereq: null,
+        prereqMinScore: '50',
+        prereqMinCompletion: null,
+        courseGraders: ['g1', 'g2'],
+        graded: false,
+      },
+      isPending: false,
+    });
 
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
@@ -175,13 +207,29 @@ describe('SubsectionSettings', () => {
 
   it('parses non-numeric prereqMinScore to default 100', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    apiHooks.useCourseItemData.mockReturnValue({ data: {
-      visibilityState: 'staff_only', start: '2022-01-01', format: null, due: null,
-      isTimeLimited: false, isProctoredExam: false, isOnboardingExam: false, isPracticeExam: false,
-      examReviewRules: null, defaultTimeLimitMinutes: null, hideAfterDue: undefined,
-      showCorrectness: undefined, isPrereq: false, prereq: null, prereqMinScore: 'abc', prereqMinCompletion: 'xyz',
-      courseGraders: ['g1', 'g2'], graded: true,
-    }, isPending: false });
+    apiHooks.useCourseItemData.mockReturnValue({
+      data: {
+        visibilityState: 'staff_only',
+        start: '2022-01-01',
+        format: null,
+        due: null,
+        isTimeLimited: false,
+        isProctoredExam: false,
+        isOnboardingExam: false,
+        isPracticeExam: false,
+        examReviewRules: null,
+        defaultTimeLimitMinutes: null,
+        hideAfterDue: undefined,
+        showCorrectness: undefined,
+        isPrereq: false,
+        prereq: null,
+        prereqMinScore: 'abc',
+        prereqMinCompletion: 'xyz',
+        courseGraders: ['g1', 'g2'],
+        graded: true,
+      },
+      isPending: false,
+    });
 
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
