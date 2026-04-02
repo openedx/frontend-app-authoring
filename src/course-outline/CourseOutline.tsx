@@ -337,7 +337,6 @@ const CourseOutline = () => {
                                           section={section}
                                           subsection={subsection}
                                           index={subsectionIndex}
-                                          sectionIndex={sectionIndex}
                                           getPossibleMoves={possibleSubsectionMoves(
                                             [...sections],
                                             sectionIndex,
@@ -364,7 +363,6 @@ const CourseOutline = () => {
                                                 unit={unit}
                                                 subsection={subsection}
                                                 section={section}
-                                                sectionIndex={sectionIndex}
                                                 isSelfPaced={statusBarData.isSelfPaced}
                                                 isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                                 index={unitIndex}

@@ -27,6 +27,7 @@ import messages from '../messages';
 import { InfoSection } from './InfoSection';
 import { useClipboard } from '@src/generic/clipboard';
 import { ToastContext } from '@src/generic/toast-context';
+import { XBlock } from '@src/data/types';
 
 export const UnitSidebar = () => {
   const intl = useIntl();
@@ -38,6 +39,7 @@ export const UnitSidebar = () => {
     index,
   } = selectedContainerState ?? {};
   const { data: unitData, isLoading } = useCourseItemData(unitId);
+  const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const {
     openPublishModal,
     getUnitUrl,
@@ -48,6 +50,7 @@ export const UnitSidebar = () => {
     openDeleteModal,
     openUnlinkModal,
   } = useCourseAuthoringContext();
+  const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
   const { copyToClipboard } = useClipboard();
   const { showToast } = useContext(ToastContext);
 
@@ -65,9 +68,6 @@ export const UnitSidebar = () => {
     return <Loading />;
   }
 
-  // Resolve section and subsection from selectedContainerState indices
-  const sectionIndex = selectedContainerState?.sectionIndex;
-  const section = sectionIndex !== undefined ? sections[sectionIndex] : undefined;
   const subsectionIndex = section && selectedContainerState?.subsectionId
     ? section.childInfo.children.findIndex((s) => s.id === selectedContainerState.subsectionId)
     : -1;
@@ -118,7 +118,6 @@ export const UnitSidebar = () => {
         setSelectedContainerState(selectedContainerState ? {
           ...selectedContainerState,
           sectionId: newSectionId,
-          sectionIndex: newSectionIndex,
           subsectionId: newSubsectionId,
           index: newIndex,
         } : undefined);

@@ -11,14 +11,10 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
-import { useQueryClient } from '@tanstack/react-query';
 import {
-  courseOutlineQueryKeys,
   useConfigureSection,
   useConfigureSubsection,
   useConfigureUnit,
-  useDeleteCourseItem,
-  useDuplicateItem,
   usePasteItem,
   useUpdateCourseSectionHighlights,
 } from '@src/course-outline/data/apiHooks';
@@ -248,7 +244,6 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   useEffect(() => {
-    dispatch(fetchCourseOutlineIndexQuery(courseId));
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
     dispatch(fetchCourseLaunchQuery({ courseId }));
   }, [courseId]);

@@ -169,7 +169,6 @@ export type SelectionState = {
   sectionId?: string;
   subsectionId?: string;
   index?: number;
-  sectionIndex?: number;
 };
 
 export type AccessManagedXBlockDataTypes = {

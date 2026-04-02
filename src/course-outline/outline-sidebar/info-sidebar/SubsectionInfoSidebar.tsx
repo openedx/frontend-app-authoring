@@ -13,6 +13,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getLibraryId } from '@src/generic/key-utils';
 import { possibleSubsectionMoves } from '@src/course-outline/drag-helper/utils';
+import { XBlock } from '@src/data/types';
 
 import { InfoSection } from './InfoSection';
 import { PublishButon } from './PublishButon';
@@ -23,8 +24,9 @@ export const SubsectionSidebar = () => {
   const navigate = useNavigate();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
-  const { subsectionId = '', index, sectionIndex } = selectedContainerState ?? {};
+  const { subsectionId = '', index } = selectedContainerState ?? {};
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
+  const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const {
     openPublishModal,
     handleDuplicateSubsectionSubmit,
@@ -33,6 +35,7 @@ export const SubsectionSidebar = () => {
     openDeleteModal,
     openUnlinkModal,
   } = useCourseAuthoringContext();
+  const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
 
   const handlePublish = () => {
     if (selectedContainerState?.sectionId && subsectionData?.hasChanges) {
@@ -46,8 +49,6 @@ export const SubsectionSidebar = () => {
   if (isLoading) {
     return <Loading />;
   }
-
-  const section = sectionIndex !== undefined ? sections[sectionIndex] : undefined;
 
   const getPossibleMoves = section ? possibleSubsectionMoves(
     [...sections],
@@ -86,7 +87,6 @@ export const SubsectionSidebar = () => {
         setSelectedContainerState(selectedContainerState ? {
           ...selectedContainerState,
           sectionId: newSectionId,
-          sectionIndex: newSectionIndex,
           index: newIndex,
         } : undefined);
       }

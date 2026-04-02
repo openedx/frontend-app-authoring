@@ -300,6 +300,7 @@ describe('InfoSidebar component', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const makeMovableUnit = (id: string): any => ({
         id,
+        category: 'vertical',
         actions: { draggable: true },
         childInfo: { children: [] },
       });
@@ -312,9 +313,9 @@ describe('InfoSidebar component', () => {
               id: seqId,
               childInfo: {
                 children: [
-                  makeMovableUnit('unit0'),
+                  makeMovableUnit('block-v1:UNIX+UX1+2025_T3+type@vertical+block@unit0'),
                   makeMovableUnit(unitId),
-                  makeMovableUnit('unit2'),
+                  makeMovableUnit('block-v1:UNIX+UX1+2025_T3+type@vertical+block@unit2'),
                 ],
               },
             }],
@@ -324,10 +325,10 @@ describe('InfoSidebar component', () => {
           currentId: unitId,
           subsectionId: seqId,
           sectionId: chId,
-          sectionIndex: 0,
           index: 1,
         };
         axiosMock.onGet(getXBlockApiUrl(unitId)).reply(200, draggableUnitData);
+        axiosMock.onGet(getXBlockApiUrl(chId)).reply(200, mockSections[0]);
         renderComponent();
         await screen.findByText(draggableUnitData.displayName);
         await screen.findByRole('button', { name: 'Item Menu' });
@@ -469,6 +470,7 @@ describe('InfoSidebar component', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const makeMovableSubsection = (id: string): any => ({
         id,
+        category: 'sequential',
         actions: { draggable: true, childAddable: true },
         childInfo: { children: [] },
       });
@@ -480,9 +482,9 @@ describe('InfoSidebar component', () => {
           upstreamInfo: null,
           childInfo: {
             children: [
-              makeMovableSubsection('sub0'),
+              makeMovableSubsection('block-v1:UNIX+UX1+2025_T3+type@sequential+block@sub0'),
               makeMovableSubsection(subsectionId),
-              makeMovableSubsection('sub2'),
+              makeMovableSubsection('block-v1:UNIX+UX1+2025_T3+type@sequential+block@sub2'),
             ],
           },
         }];
@@ -490,10 +492,10 @@ describe('InfoSidebar component', () => {
           currentId: subsectionId,
           subsectionId,
           sectionId: chId,
-          sectionIndex: 0,
           index: 1,
         };
         axiosMock.onGet(getXBlockApiUrl(subsectionId)).reply(200, draggableSubsectionData);
+        axiosMock.onGet(getXBlockApiUrl(chId)).reply(200, mockSections[0]);
         renderComponent();
         await screen.findByText(draggableSubsectionData.displayName);
         await screen.findByRole('button', { name: 'Item Menu' });
@@ -511,7 +513,7 @@ describe('InfoSidebar component', () => {
 
         expect(updateSubsectionOrderByIndex).toHaveBeenCalled();
         expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
-          expect.objectContaining({ index: 0, sectionId: chId, sectionIndex: 0 }),
+          expect.objectContaining({ index: 0, sectionId: chId }),
         );
       });
 
@@ -527,7 +529,7 @@ describe('InfoSidebar component', () => {
 
         expect(updateSubsectionOrderByIndex).toHaveBeenCalled();
         expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
-          expect.objectContaining({ index: 2, sectionId: chId, sectionIndex: 0 }),
+          expect.objectContaining({ index: 2, sectionId: chId }),
         );
       });
     });

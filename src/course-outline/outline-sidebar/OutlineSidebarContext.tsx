@@ -42,7 +42,6 @@ interface OutlineSidebarContextData {
     subsectionId?: string,
     sectionId?: string,
     index?: number,
-    sectionIndex?: number,
   ) => void;
   clearSelection: () => void;
   /** Stores last section that allows adding subsections inside it. */
@@ -130,17 +129,13 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     subsectionId?: string,
     sectionId?: string,
     index?: number,
-    sectionIndex?: number,
   ) => {
     if (isOutlineNewDesignEnabled()) {
-      console.log("EEEEEEEEEEEEEEe");
-      console.log(sectionIndex);
       setSelectedContainerState({
         currentId: containerId,
         subsectionId,
         sectionId,
         index,
-        sectionIndex,
       });
       setCurrentPageKey('info');
     }
