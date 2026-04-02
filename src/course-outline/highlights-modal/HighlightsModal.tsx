@@ -220,7 +220,7 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
   const { highlights = [] } = currentItemData || {};
 
   const [mode, setMode] = useState<DisplayMode>(
-    highlights.length > 0 && highlights.some((h) => h?.trim()) ? 'viewing' : 'empty',
+    highlights.some((h) => h?.trim()) ? 'viewing' : 'empty',
   );
 
   const [formDirty, setFormDirty] = useState(false);
