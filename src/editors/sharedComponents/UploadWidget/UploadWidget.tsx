@@ -21,7 +21,7 @@ export interface UploadWidgetProps {
   isLibrary: boolean,
 }
 
-type LibraryAsset = { url: string };
+type LibraryAsset = { path: string };
 type CourseAsset = { asset: { external_url: string } };
 
 declare type AssetResponse = AxiosResponse<CourseAsset> | AxiosResponse<LibraryAsset>;
@@ -52,7 +52,7 @@ const UploadWidget = ({
     }
     mutation.mutateAsync(file).then((result: AssetResponse) => {
       if (isLibrary) {
-        void urlFieldControl.setValue((result.data as LibraryAsset).url); // eslint-disable-line no-void
+        void urlFieldControl.setValue((result.data as LibraryAsset).path); // eslint-disable-line no-void
       } else {
         void urlFieldControl.setValue((result.data as CourseAsset).asset.external_url); // eslint-disable-line no-void
       }
