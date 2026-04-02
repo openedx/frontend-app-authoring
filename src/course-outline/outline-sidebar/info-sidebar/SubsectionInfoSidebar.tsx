@@ -61,7 +61,7 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
         </Tab>
         <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
           {/* key is required to reset local state of tab */}
-          <SubsectionSettings key={subsectionId} subsectionId={subsectionId}/>
+          <SubsectionSettings key={subsectionId} subsectionId={subsectionId} />
         </Tab>
       </Tabs>
     </>

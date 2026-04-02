@@ -1,10 +1,10 @@
-import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
-import { Button, ButtonGroup, Form } from "@openedx/paragon";
-import { useCourseItemData } from "@src/course-outline/data/apiHooks";
-import { ConfigureSubsectionData } from "@src/course-outline/data/types";
-import { VisibilityTypes } from "@src/data/constants";
-import { SidebarSection } from "@src/generic/sidebar";
-import { useStateWithCallback } from "@src/hooks";
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { Button, ButtonGroup, Form } from '@openedx/paragon';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { ConfigureSubsectionData } from '@src/course-outline/data/types';
+import { VisibilityTypes } from '@src/data/constants';
+import { SidebarSection } from '@src/generic/sidebar';
+import { useStateWithCallback } from '@src/hooks';
 import messages from '../messages';
 
 interface Props<T = Partial<ConfigureSubsectionData>> {
@@ -30,8 +30,8 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
       if (val && !isSubsection) {
         val.hideAfterDue = undefined;
       }
-      return onChange(val || {})
-    }
+      return onChange(val || {});
+    },
   );
 
   return (
@@ -41,7 +41,7 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
       <ButtonGroup toggle>
         <Button
           variant={localState?.isVisibleToStaffOnly ? 'outline-primary' : 'primary'}
-          onClick={() => setLocalState((prev) => ({ ...prev,  isVisibleToStaffOnly: false }))}
+          onClick={() => setLocalState((prev) => ({ ...prev, isVisibleToStaffOnly: false }))}
         >
           <FormattedMessage {...messages.subsectionVisibilityStudentVisible} />
         </Button>
@@ -56,18 +56,19 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
           <FormattedMessage {...messages.subsectionVisibilityStaffOnly} />
         </Button>
       </ButtonGroup>
-      {isSubsection && !localState?.isVisibleToStaffOnly && <Form.Checkbox
+      {isSubsection && !localState?.isVisibleToStaffOnly && (
+      <Form.Checkbox
         checked={localState?.hideAfterDue}
         className="mt-2"
-        onChange={ (e) => setLocalState((prev) => ({
+        onChange={(e) => setLocalState((prev) => ({
           ...prev,
           hideAfterDue: e.target.checked,
           isVisibleToStaffOnly: false,
         }))}
       >
         <FormattedMessage {...messages.subsectionVisibilityHideAfterDueLabel} />
-      </Form.Checkbox>}
+      </Form.Checkbox>
+      )}
     </SidebarSection>
   );
-}
-
+};

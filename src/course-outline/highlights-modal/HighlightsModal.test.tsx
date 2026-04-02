@@ -105,6 +105,7 @@ describe('<HighlightsForm />', () => {
   it('renders 5 highlight fields and buttons', async () => {
     render(<HighlightsForm {...defaultProps} />);
 
+    /* eslint-disable no-await-in-loop */
     for (let i = 1; i <= 5; i++) {
       expect(await screen.findByLabelText(new RegExp(`Highlight ${i}`))).toBeInTheDocument();
     }
@@ -226,7 +227,7 @@ describe('<HighlightsCard />', () => {
       <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
     );
 
-    await user.click(await screen.findByLabelText(messages.editButton.defaultMessage ));
+    await user.click(await screen.findByLabelText(messages.editButton.defaultMessage));
 
     const cancelBtn = await screen.findByRole('button', { name: messages.cancelButton.defaultMessage });
     await user.click(cancelBtn);
@@ -240,7 +241,7 @@ describe('<HighlightsCard />', () => {
       <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
     );
 
-    await user.click(await screen.findByLabelText(messages.editButton.defaultMessage ));
+    await user.click(await screen.findByLabelText(messages.editButton.defaultMessage));
 
     const field = await screen.findByLabelText(/Highlight 1/);
     fireEvent.change(field, { target: { value: 'Updated' } });
@@ -257,7 +258,7 @@ describe('<HighlightsCard />', () => {
       <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
     );
 
-    await user.click(await screen.findByLabelText(messages.editButton.defaultMessage ));
+    await user.click(await screen.findByLabelText(messages.editButton.defaultMessage));
 
     const field = await screen.findByLabelText(/Highlight 1/);
     fireEvent.change(field, { target: { value: 'Updated' } });
@@ -265,7 +266,7 @@ describe('<HighlightsCard />', () => {
     const saveBtn = await screen.findByRole('button', { name: messages.saveButton.defaultMessage });
     await user.click(saveBtn);
 
-    const editBtn = await screen.findByLabelText(messages.editButton.defaultMessage );
+    const editBtn = await screen.findByLabelText(messages.editButton.defaultMessage);
     expect(editBtn).toBeInTheDocument();
   });
 
@@ -289,7 +290,7 @@ describe('<HighlightsCard />', () => {
       <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
     );
 
-    await user.click(await screen.findByLabelText(messages.editButton.defaultMessage ));
+    await user.click(await screen.findByLabelText(messages.editButton.defaultMessage));
 
     const field1 = await screen.findByLabelText(/Highlight 1/);
     const field2 = await screen.findByLabelText(/Highlight 2/);
@@ -320,4 +321,3 @@ describe('<HighlightsCard />', () => {
     expect(blockerMock.state).toBe('blocked');
   });
 });
-

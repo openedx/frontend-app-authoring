@@ -13,10 +13,10 @@ import { useIframe } from '@src/generic/hooks/context/hooks';
 import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
 import { messageTypes } from '@src/course-unit/constants';
 import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 import PublishControls from './PublishControls';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
-import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 
 /**
  * Component to show unit details: Publish status, Component counts and Content Tags.

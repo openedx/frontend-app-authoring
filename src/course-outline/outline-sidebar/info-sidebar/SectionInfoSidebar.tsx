@@ -10,10 +10,10 @@ import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { SectionSettings } from '@src/course-outline/outline-sidebar/info-sidebar/SectionSettings';
 import { InfoSection } from './InfoSection';
 import messages from '../messages';
 import { PublishButon } from './PublishButon';
-import { SectionSettings } from '@src/course-outline/outline-sidebar/info-sidebar/SectionSettings';
 
 interface Props {
   sectionId: string;

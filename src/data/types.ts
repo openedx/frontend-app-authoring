@@ -97,7 +97,7 @@ export interface XBlockBase {
   actions: XBlockActions;
   explanatoryMessage?: string;
   userPartitions: UserPartitionTypes[];
-  showCorrectness: "always" | "never" | "past_due" | "never_but_include_grade",
+  showCorrectness: 'always' | 'never' | 'past_due' | 'never_but_include_grade',
   highlights: string[];
   highlightsEnabled: boolean;
   highlightsPreviewOnly: boolean;

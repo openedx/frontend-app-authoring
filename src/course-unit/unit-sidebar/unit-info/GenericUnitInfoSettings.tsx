@@ -7,9 +7,9 @@ import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { Form, Formik } from 'formik';
 import { useMemo } from 'react';
 import configureMessages from '@src/generic/configure-modal/messages';
-import messages from './messages';
 import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
 import { useStateWithCallback } from '@src/hooks';
+import messages from './messages';
 
 interface UnitInfoSettingsProps {
   id: string;
@@ -68,9 +68,9 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     isVisible: visibleToStaffOnly,
     isDiscussionEnabled: discussionEnabled,
   }, (val) => {
-      if (val) {
-        handleUpdate(!!val.isVisible, null, val.isDiscussionEnabled);
-      }
+    if (val) {
+      handleUpdate(!!val.isVisible, null, val.isDiscussionEnabled);
+    }
   });
 
   const handleSaveGroups = async (data: {
@@ -114,13 +114,13 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
         <ButtonGroup toggle>
           <Button
             variant={localState?.isVisible ? 'outline-primary' : 'primary'}
-            onClick={() => setLocalState((prev) => ({ ...prev, isVisible: false}))}
+            onClick={() => setLocalState((prev) => ({ ...prev, isVisible: false }))}
           >
             <FormattedMessage {...messages.sidebarInfoVisibilityStudentLabel} />
           </Button>
           <Button
             variant={localState?.isVisible ? 'primary' : 'outline-primary'}
-            onClick={() => setLocalState((prev) => ({ ...prev, isVisible: true}))}
+            onClick={() => setLocalState((prev) => ({ ...prev, isVisible: true }))}
           >
             <FormattedMessage {...messages.sidebarInfoVisibilityStaffLabel} />
           </Button>

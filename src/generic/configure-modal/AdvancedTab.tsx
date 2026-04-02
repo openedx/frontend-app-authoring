@@ -107,21 +107,21 @@ const RadioForm = ({
               <FormattedMessage {...messages.onboardingExam} />
             </Form.Radio>
           ) : (
-              <Form.Radio
-                value="practiceExam"
-                controlClassName="mw-1-25rem"
-                description={
-                  <FormattedMessage {...messages.practiceExamDescription} />
+            <Form.Radio
+              value="practiceExam"
+              controlClassName="mw-1-25rem"
+              description={
+                <FormattedMessage {...messages.practiceExamDescription} />
                 }
-              >
-                <FormattedMessage {...messages.practiceExam} />
-              </Form.Radio>
-            )}
+            >
+              <FormattedMessage {...messages.practiceExam} />
+            </Form.Radio>
+          )}
         </>
       )}
     </Form.RadioSet>
   );
-}
+};
 
 const ButtonGroupForm = ({
   handleChange,
@@ -130,93 +130,91 @@ const ButtonGroupForm = ({
   enableTimedExams,
   enableProctoredExams,
   supportsOnboarding,
-}: SelectorProps) => {
-  return (
-    <>
-      {renderAlerts()}
-      <ButtonGroup
-        toggle
-        vertical={enableTimedExams && (enableProctoredExams || supportsOnboarding)}
+}: SelectorProps) => (
+  <>
+    {renderAlerts()}
+    <ButtonGroup
+      toggle
+      vertical={enableTimedExams && (enableProctoredExams || supportsOnboarding)}
+    >
+      <Button
+        disabled={!enableTimedExams}
+        variant={examTypeValue === 'none' ? 'primary' : 'outline-primary'}
+        onClick={() => handleChange('none')}
+      >
+        <FormattedMessage {...messages.none} />
+      </Button>
+      <OverlayTrigger
+        placement="top"
+        overlay={(
+          <Tooltip id="timeDescription">
+            <FormattedMessage {...messages.timedDescription} />
+          </Tooltip>
+          )}
       >
         <Button
           disabled={!enableTimedExams}
-          variant={examTypeValue === "none" ? 'primary' : 'outline-primary'}
-          onClick={() => handleChange("none")}
+          variant={examTypeValue === 'timed' ? 'primary' : 'outline-primary'}
+          onClick={() => handleChange('timed')}
         >
-          <FormattedMessage {...messages.none} />
+          <FormattedMessage {...messages.timed} />
         </Button>
+      </OverlayTrigger>
+      {enableProctoredExams && (
+      <>
         <OverlayTrigger
-          placement={"top"}
-          overlay={
-            <Tooltip id="timeDescription">
-              <FormattedMessage {...messages.timedDescription} />
+          placement="top"
+          overlay={(
+            <Tooltip id="proctoredExamDescription">
+              <FormattedMessage {...messages.proctoredExamDescription} />
             </Tooltip>
-          }
+              )}
         >
           <Button
-            disabled={!enableTimedExams}
-            variant={examTypeValue === "timed" ? 'primary' : 'outline-primary'}
-            onClick={() => handleChange("timed")}
+            variant={examTypeValue === 'proctoredExam' ? 'primary' : 'outline-primary'}
+            onClick={() => handleChange('proctoredExam')}
           >
-            <FormattedMessage {...messages.timed} />
+            <FormattedMessage {...messages.proctoredExam} />
           </Button>
         </OverlayTrigger>
-        {enableProctoredExams && (
-          <>
-            <OverlayTrigger
-              placement={"top"}
-              overlay={
-                <Tooltip id="proctoredExamDescription">
-                  <FormattedMessage {...messages.proctoredExamDescription} />
-                </Tooltip>
-              }
+        {supportsOnboarding ? (
+          <OverlayTrigger
+            placement="top"
+            overlay={(
+              <Tooltip id="onboardingExamDescription">
+                <FormattedMessage {...messages.onboardingExamDescription} />
+              </Tooltip>
+                )}
+          >
+            <Button
+              variant={examTypeValue === 'onboardingExam' ? 'primary' : 'outline-primary'}
+              onClick={() => handleChange('onboardingExam')}
             >
-              <Button
-                variant={examTypeValue === "proctoredExam" ? 'primary' : 'outline-primary'}
-                onClick={() => handleChange("proctoredExam")}
-              >
-                <FormattedMessage {...messages.proctoredExam} />
-              </Button>
-            </OverlayTrigger>
-            {supportsOnboarding ? (
-              <OverlayTrigger
-                placement={"top"}
-                overlay={
-                  <Tooltip id="onboardingExamDescription">
-                    <FormattedMessage {...messages.onboardingExamDescription} />
-                  </Tooltip>
-                }
-              >
-                <Button
-                  variant={examTypeValue === "onboardingExam" ? 'primary' : 'outline-primary'}
-                  onClick={() => handleChange("onboardingExam")}
-                >
-                  <FormattedMessage {...messages.onboardingExam} />
-                </Button>
-              </OverlayTrigger>
-            ) : (
-                <OverlayTrigger
-                  placement={"top"}
-                  overlay={
-                    <Tooltip id="practiceExamDescription">
-                      <FormattedMessage {...messages.practiceExamDescription} />
-                    </Tooltip>
-                  }
-                >
-                  <Button
-                    variant={examTypeValue === "practiceExam" ? 'primary' : 'outline-primary'}
-                    onClick={() => handleChange("practiceExam")}
-                  >
-                    <FormattedMessage {...messages.practiceExam} />
-                  </Button>
-                </OverlayTrigger>
-              )}
-          </>
+              <FormattedMessage {...messages.onboardingExam} />
+            </Button>
+          </OverlayTrigger>
+        ) : (
+          <OverlayTrigger
+            placement="top"
+            overlay={(
+              <Tooltip id="practiceExamDescription">
+                <FormattedMessage {...messages.practiceExamDescription} />
+              </Tooltip>
+                  )}
+          >
+            <Button
+              variant={examTypeValue === 'practiceExam' ? 'primary' : 'outline-primary'}
+              onClick={() => handleChange('practiceExam')}
+            >
+              <FormattedMessage {...messages.practiceExam} />
+            </Button>
+          </OverlayTrigger>
         )}
-      </ButtonGroup>
-    </>
-  );
-}
+      </>
+      )}
+    </ButtonGroup>
+  </>
+);
 
 const AdvancedTab: React.FC<AdvancedTabProps> = ({
   values,
@@ -352,49 +350,55 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
 
   return (
     <>
-      {(!hideTitle || !enableTimedExams) &&
+      {(!hideTitle || !enableTimedExams)
+        && (
         <>
           <div className="d-flex align-items-center">
-            {!hideTitle && <h5 className="text-gray-700 mb-0">
+            {!hideTitle && (
+            <h5 className="text-gray-700 mb-0">
               <FormattedMessage {...messages.setSpecialExam} />
-            </h5>}
+            </h5>
+            )}
             {!enableTimedExams && (
-              <OverlayTrigger
-                placement="top"
-                overlay={(
-                  <Tooltip id={messages.timedExamsDisabledTooltip.id}>
-                    <FormattedMessage {...messages.timedExamsDisabledTooltip} />
-                  </Tooltip>
+            <OverlayTrigger
+              placement="top"
+              overlay={(
+                <Tooltip id={messages.timedExamsDisabledTooltip.id}>
+                  <FormattedMessage {...messages.timedExamsDisabledTooltip} />
+                </Tooltip>
                 )}
-              >
-                <Question
-                  className="ml-2 text-gray-500"
-                  style={{ cursor: 'help' }}
-                />
-              </OverlayTrigger>
+            >
+              <Question
+                className="ml-2 text-gray-500"
+                style={{ cursor: 'help' }}
+              />
+            </OverlayTrigger>
             )}
           </div>
           <hr />
         </>
-      }
-      {useBtnGroup ?
-        <ButtonGroupForm
-          handleChange={handleChange}
-          examTypeValue={examTypeValue}
-          renderAlerts={renderAlerts}
-          enableTimedExams={enableTimedExams}
-          enableProctoredExams={enableProctoredExams}
-          supportsOnboarding={supportsOnboarding}
-        />
-        : <RadioForm
-          handleChange={handleChange}
-          examTypeValue={examTypeValue}
-          renderAlerts={renderAlerts}
-          enableTimedExams={enableTimedExams}
-          enableProctoredExams={enableProctoredExams}
-          supportsOnboarding={supportsOnboarding}
-        />
-      }
+        )}
+      {useBtnGroup
+        ? (
+          <ButtonGroupForm
+            handleChange={handleChange}
+            examTypeValue={examTypeValue}
+            renderAlerts={renderAlerts}
+            enableTimedExams={enableTimedExams}
+            enableProctoredExams={enableProctoredExams}
+            supportsOnboarding={supportsOnboarding}
+          />
+        )
+        : (
+          <RadioForm
+            handleChange={handleChange}
+            examTypeValue={examTypeValue}
+            renderAlerts={renderAlerts}
+            enableTimedExams={enableTimedExams}
+            enableProctoredExams={enableProctoredExams}
+            supportsOnboarding={supportsOnboarding}
+          />
+        )}
       {isTimeLimited && (
         <div className="mt-3" data-testid="advanced-tab-hours-picker-wrapper">
           <Form.Group>

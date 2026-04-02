@@ -9,9 +9,9 @@ import { messageTypes, PUBLISH_TYPES } from '@src/course-unit/constants';
 import { SidebarFooter, SidebarHeader } from '@src/course-unit/legacy-sidebar/components';
 import useCourseUnitData from '@src/course-unit/legacy-sidebar/hooks';
 import ReleaseInfoComponent from '@src/course-unit/legacy-sidebar/components/ReleaseInfoComponent';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 import messages from './messages';
 import UnitVisibilityInfo from './UnitVisibilityInfo';
-import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 
 interface PublishControlsProps {
   blockId?: string,
@@ -70,7 +70,7 @@ const PublishControls = ({
         },
         {
           onSuccess: () => sendMessageToIframe(messageTypes.refreshXBlock, null),
-        }
+        },
       );
     }
   };

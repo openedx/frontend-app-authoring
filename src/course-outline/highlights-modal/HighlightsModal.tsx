@@ -14,14 +14,14 @@ import { useEffect, useState } from 'react';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { ExpandableCard } from '@src/generic/expandable-card/ExpandableCard';
+import { useBlocker } from 'react-router';
+import PromptIfDirty from '@src/generic/prompt-if-dirty/PromptIfDirty';
 import { useHelpUrls } from '../../help-urls/hooks';
 import FormikControl from '../../generic/FormikControl';
 import { HIGHLIGHTS_FIELD_MAX_LENGTH } from '../constants';
 import { getHighlightsFormValues } from '../utils';
 import messages from './messages';
-import { ExpandableCard } from '@src/generic/expandable-card/ExpandableCard';
-import { useBlocker } from 'react-router';
-import PromptIfDirty from '@src/generic/prompt-if-dirty/PromptIfDirty';
 
 export interface HighlightData {
   highlight_1: string;
@@ -99,57 +99,60 @@ export const HighlightsForm = ({
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      {({ values, dirty, handleSubmit, resetForm }) => {
-         // Notify parent of dirty state changes
+      {({
+        values, dirty, handleSubmit, resetForm,
+      }) => {
+        // Notify parent of dirty state changes
         useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
 
         return (
-        <Form onSubmit={handleSubmit}>
-          <div className="highlights-form">
-            <p className="mb-4.5 pb-2">
-              {intl.formatMessage(messages.description, {
-                documentation: (
-                  <Hyperlink
-                    destination={contentHighlightsUrl}
-                    target="_blank"
-                    showLaunchIcon={false}
-                  >
-                    {intl.formatMessage(messages.documentationLink)}
-                  </Hyperlink>
-                ),
-              })}
-            </p>
-            <div className="highlights-form__fields">
-              {Object.entries(initialValues).map(([key], index) => (
-                <FormikControl
-                  key={key}
-                  name={key}
-                  value={values[key]}
-                  floatingLabel={intl.formatMessage(messages.highlight, {
-                    index: index + 1,
-                  })}
-                  maxLength={HIGHLIGHTS_FIELD_MAX_LENGTH}
-                  as="textarea"
-                />
-              ))}
+          <Form onSubmit={handleSubmit}>
+            <div className="highlights-form">
+              <p className="mb-4.5 pb-2">
+                {intl.formatMessage(messages.description, {
+                  documentation: (
+                    <Hyperlink
+                      destination={contentHighlightsUrl}
+                      target="_blank"
+                      showLaunchIcon={false}
+                    >
+                      {intl.formatMessage(messages.documentationLink)}
+                    </Hyperlink>
+                  ),
+                })}
+              </p>
+              <div className="highlights-form__fields">
+                {Object.entries(initialValues).map(([key], index) => (
+                  <FormikControl
+                    key={key}
+                    name={key}
+                    value={values[key]}
+                    floatingLabel={intl.formatMessage(messages.highlight, {
+                      index: index + 1,
+                    })}
+                    maxLength={HIGHLIGHTS_FIELD_MAX_LENGTH}
+                    as="textarea"
+                  />
+                ))}
+              </div>
+              <div className="highlights-form__actions">
+                <Button
+                  variant="tertiary"
+                  onClick={() => {
+                    resetForm();
+                    onCancel?.();
+                  }}
+                >
+                  {intl.formatMessage(messages.cancelButton)}
+                </Button>
+                <Button disabled={!dirty} type="submit">
+                  {intl.formatMessage(messages.saveButton)}
+                </Button>
+              </div>
             </div>
-            <div className="highlights-form__actions">
-              <Button
-                variant="tertiary"
-                onClick={() => {
-                  resetForm();
-                  onCancel?.();
-                }}
-              >
-                {intl.formatMessage(messages.cancelButton)}
-              </Button>
-              <Button disabled={!dirty} type="submit">
-                {intl.formatMessage(messages.saveButton)}
-              </Button>
-            </div>
-          </div>
-        </Form>
-      ) }}
+          </Form>
+        );
+      }}
     </Formik>
   );
 };
@@ -169,7 +172,7 @@ const HighlightsViewCard = ({
       <Card.Header
         title={intl.formatMessage(messages.highlightsTitle)}
         size="sm"
-        actions={
+        actions={(
           <ActionRow>
             <IconButton
               size="sm"
@@ -178,7 +181,8 @@ const HighlightsViewCard = ({
               alt={intl.formatMessage(messages.editButton)}
             />
           </ActionRow>
-        }/>
+        )}
+      />
       <Card.Body>
         <ExpandableCard maxHeight={400}>
           {nonEmptyHighlights.map((highlight, index) => (
@@ -205,7 +209,7 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
   const { highlights = [] } = currentItemData || {};
 
   const [mode, setMode] = useState<DisplayMode>(
-    highlights.length > 0 && highlights.some((h) => h?.trim()) ? 'viewing' : 'empty'
+    highlights.length > 0 && highlights.some((h) => h?.trim()) ? 'viewing' : 'empty',
   );
 
   const [formDirty, setFormDirty] = useState(false);
@@ -228,14 +232,14 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
     onSubmit(values);
     setFormDirty(false);
     setMode(
-      Object.values(values).some((v) => v?.trim()) ? 'viewing' : 'empty'
+      Object.values(values).some((v) => v?.trim()) ? 'viewing' : 'empty',
     );
   };
 
   const handleFormCancel = () => {
     setFormDirty(false);
     setMode(
-      highlights.some((h) => h?.trim()) ? 'viewing' : 'empty'
+      highlights.some((h) => h?.trim()) ? 'viewing' : 'empty',
     );
   };
 
@@ -248,7 +252,7 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
   return (
     <>
       <ConfirmNavigationModal
-        isOpen={blocker.state === "blocked"}
+        isOpen={blocker.state === 'blocked'}
         onConfirm={handleConfirmNavigation}
         onCancel={/* istanbul ignore next */() => {
           blocker.reset?.();
@@ -290,7 +294,7 @@ const HighlightsModal = ({
   const intl = useIntl();
   const { currentSelection } = useCourseAuthoringContext();
   const { data: currentItemData } = useCourseItemData(
-    currentSelection?.currentId
+    currentSelection?.currentId,
   );
   const { displayName } = currentItemData || {};
   const { highlights = [] } = currentItemData || {};
@@ -325,4 +329,3 @@ const HighlightsModal = ({
 };
 
 export default HighlightsModal;
-

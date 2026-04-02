@@ -38,8 +38,8 @@ export const useConfigureUnitWithPageUpdates = () => {
     ...mutationFn,
     mutate: (mutationArgs: ConfigureUnitData & ParentIds, options?: UseMutationOptions<
       object,
-      DefaultError,
-      ConfigureUnitData & ParentIds
+    DefaultError,
+    ConfigureUnitData & ParentIds
     >) => mutationFn.mutate(mutationArgs, {
       ...options,
       onSuccess: async (...onMutateArgs) => {
@@ -51,4 +51,4 @@ export const useConfigureUnitWithPageUpdates = () => {
       },
     }),
   };
-}
+};

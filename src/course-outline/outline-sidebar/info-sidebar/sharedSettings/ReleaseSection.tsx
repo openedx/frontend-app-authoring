@@ -1,9 +1,9 @@
-import { useIntl } from "@edx/frontend-platform/i18n";
-import { Stack } from "@openedx/paragon";
-import { useCourseItemData } from "@src/course-outline/data/apiHooks";
-import { DatepickerControl, DATEPICKER_TYPES } from "@src/generic/datepicker-control";
-import { SidebarSection } from "@src/generic/sidebar";
-import { useStateWithCallback } from "@src/hooks";
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { Stack } from '@openedx/paragon';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
+import { SidebarSection } from '@src/generic/sidebar';
+import { useStateWithCallback } from '@src/hooks';
 import messages from '../messages';
 
 interface Props {
@@ -41,5 +41,5 @@ export const ReleaseSection = ({ itemId, onChange }: Props) => {
       </Stack>
     </SidebarSection>
 
-  )
-}
+  );
+};

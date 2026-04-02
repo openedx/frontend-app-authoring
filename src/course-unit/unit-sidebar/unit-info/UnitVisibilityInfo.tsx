@@ -9,9 +9,9 @@ import { getCourseUnitData } from '@src/course-unit/data/selectors';
 import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { isUnitPageNewDesignEnabled } from '@src/course-unit/utils';
 import { Edit, Groups, Lock } from '@openedx/paragon/icons';
+import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
 import messages from './messages';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
-import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
 
 interface UnitVisibilityInfoProps {
   openVisibleModal: () => void,

@@ -24,6 +24,7 @@ import EditorPage from '@src/editors/EditorPage';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ConfigureUnitData } from '@src/course-outline/data/types';
 import { AccessManagedXBlockDataTypes } from '@src/data/types';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 import { messageTypes, PUBLISH_TYPES } from '../constants';
 import {
   fetchCourseSectionVerticalData,
@@ -40,7 +41,6 @@ import {
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 import { isUnitPageNewDesignEnabled } from '../utils';
-import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId,

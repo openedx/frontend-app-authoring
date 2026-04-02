@@ -1,20 +1,22 @@
-import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
-import { Button, ButtonGroup, Form, Stack } from "@openedx/paragon";
-import { useConfigureSubsection, useCourseDetails, useCourseItemData } from "@src/course-outline/data/apiHooks";
-import { getProctoredExamsFlag, getTimedExamsFlag } from "@src/course-outline/data/selectors";
-import { ConfigureSubsectionData } from "@src/course-outline/data/types";
-import { ReleaseSection } from "./sharedSettings/ReleaseSection";
-import { useOutlineSidebarContext } from "@src/course-outline/outline-sidebar/OutlineSidebarContext";
-import { useCourseAuthoringContext } from "@src/CourseAuthoringContext";
-import { VisibilityTypes } from "@src/data/constants";
-import AdvancedTab from "@src/generic/configure-modal/AdvancedTab";
-import { DatepickerControl, DATEPICKER_TYPES } from "@src/generic/datepicker-control";
-import { SidebarContent, SidebarSection } from "@src/generic/sidebar"
-import { useStateWithCallback } from "@src/hooks";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import {
+  Button, ButtonGroup, Form, Stack,
+} from '@openedx/paragon';
+import { useConfigureSubsection, useCourseDetails, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { getProctoredExamsFlag, getTimedExamsFlag } from '@src/course-outline/data/selectors';
+import { ConfigureSubsectionData } from '@src/course-outline/data/types';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { VisibilityTypes } from '@src/data/constants';
+import AdvancedTab from '@src/generic/configure-modal/AdvancedTab';
+import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
+import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
+import { useStateWithCallback } from '@src/hooks';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { ReleaseSection } from './sharedSettings/ReleaseSection';
 import messages from './messages';
-import { VisibilitySection } from "./sharedSettings/VisibilitySection";
+import { VisibilitySection } from './sharedSettings/VisibilitySection';
 
 interface Props {
   subsectionId: string;
@@ -43,13 +45,13 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
       graderType: itemData?.format,
       dueDate: itemData?.due || '',
     },
-    (val) => onChange(val || {})
+    (val) => onChange(val || {}),
   );
 
   const setUngraded = () => {
     setGraded(false);
-    onChange({ graderType: "notgraded" });
-  }
+    onChange({ graderType: 'notgraded' });
+  };
 
   const createOptions = () => itemData?.courseGraders?.map((option) => (
     <option key={option} value={option}> {option} </option>
@@ -73,7 +75,8 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
           <FormattedMessage {...messages.subsectionGradingGradedBtn} />
         </Button>
       </ButtonGroup>
-      {graded &&
+      {graded
+        && (
         <Form.Group className="mt-2">
           <Form.Label className="x-small">
             <FormattedMessage {...messages.subsectionGradingDropdownLabel} />
@@ -90,8 +93,9 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
             {createOptions()}
           </Form.Control>
         </Form.Group>
-      }
-      {!courseDetails?.selfPaced && graded &&
+        )}
+      {!courseDetails?.selfPaced && graded
+        && (
         <Stack direction="horizontal" gap={3}>
           <DatepickerControl
             type={DATEPICKER_TYPES.date}
@@ -109,10 +113,10 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
             onChange={(val) => setLocalState((prev) => ({ ...prev, dueDate: val }))}
           />
         </Stack>
-      }
+        )}
     </SidebarSection>
   );
-}
+};
 
 const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps) => {
   const intl = useIntl();
@@ -121,7 +125,7 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
     {
       showCorrectness: itemData?.showCorrectness,
     },
-    (val) => onChange(val || {})
+    (val) => onChange(val || {}),
   );
 
   return (
@@ -130,16 +134,16 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
     >
       <ButtonGroup toggle>
         <Button
-          variant={localState?.showCorrectness === "always" ? 'primary' : 'outline-primary'}
-          onClick={() => setLocalState({ showCorrectness: "always" })}
+          variant={localState?.showCorrectness === 'always' ? 'primary' : 'outline-primary'}
+          onClick={() => setLocalState({ showCorrectness: 'always' })}
         >
           <FormattedMessage {...messages.subsectionAssessmentResultsShowBtn} />
         </Button>
         <Button
-          variant={["never", "past_due"].includes(localState?.showCorrectness || "") ? 'primary' : 'outline-primary'}
+          variant={['never', 'past_due'].includes(localState?.showCorrectness || '') ? 'primary' : 'outline-primary'}
           onClick={() => {
-            if (localState?.showCorrectness === "always") {
-              setLocalState({ showCorrectness: "never" })
+            if (localState?.showCorrectness === 'always') {
+              setLocalState({ showCorrectness: 'never' });
             }
           }}
         >
@@ -147,15 +151,15 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
         </Button>
       </ButtonGroup>
       <Form.Checkbox
-        checked={localState?.showCorrectness === "past_due"}
+        checked={localState?.showCorrectness === 'past_due'}
         className="mt-2"
-        onChange={() => setLocalState({ showCorrectness: "past_due" })}
+        onChange={() => setLocalState({ showCorrectness: 'past_due' })}
       >
         <FormattedMessage {...messages.subsectionAssessmentResultsCheckbox} />
       </Form.Checkbox>
     </SidebarSection>
   );
-}
+};
 
 const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
   const intl = useIntl();
@@ -209,7 +213,7 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
       />
     </SidebarSection>
   );
-}
+};
 
 export const SubsectionSettings = ({ subsectionId }: Props) => {
   const { courseId } = useCourseAuthoringContext();
@@ -242,15 +246,17 @@ export const SubsectionSettings = ({ subsectionId }: Props) => {
       prereqMinScore: defaultPrereqScore(itemData.prereqMinScore),
       prereqMinCompletion: defaultPrereqScore(itemData.prereqMinCompletion),
       ...variables,
-    })
-  }
+    });
+  };
 
   return (
     <SidebarContent>
-      { !courseDetails?.selfPaced && <ReleaseSection
+      { !courseDetails?.selfPaced && (
+      <ReleaseSection
         itemId={subsectionId}
         onChange={(val: string) => onChange({ releaseDate: val })}
-      /> }
+      />
+      ) }
       <GradingSection
         subsectionId={subsectionId}
         onChange={onChange}
@@ -269,6 +275,5 @@ export const SubsectionSettings = ({ subsectionId }: Props) => {
         onChange={onChange}
       />
     </SidebarContent>
-  )
-}
-
+  );
+};

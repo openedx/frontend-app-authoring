@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@openedx/paragon';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from './messages';
 import classNames from 'classnames';
+import messages from './messages';
 
 interface ExpandableCardProps {
   children: React.ReactNode;
@@ -33,7 +33,7 @@ export const ExpandableCard = ({
   const showLessLabelText = showLessLabel || intl.formatMessage(messages.showLess);
 
   useEffect(() => {
-    const element = contentRef.current; if (!element) return;
+    const element = contentRef.current; if (!element) { return; }
     const checkNeedsExpansion = () => {
       setNeedsExpansion(element.scrollHeight > maxHeight);
     };
@@ -47,7 +47,7 @@ export const ExpandableCard = ({
 
   useEffect(() => {
     if (contentRef.current) {
-      const scrollHeight = contentRef.current.scrollHeight;
+      const { scrollHeight } = contentRef.current;
       setNeedsExpansion(scrollHeight > maxHeight);
     }
   }, [children, maxHeight]);
@@ -56,8 +56,8 @@ export const ExpandableCard = ({
     <div>
       <div
         ref={contentRef}
-        className={classNames("p-3" ,{
-          "overflow-hidden": !isExpanded,
+        className={classNames('p-3', {
+          'overflow-hidden': !isExpanded,
         })}
         style={{
           maxHeight: isExpanded ? 'none' : `${maxHeight}px`,
@@ -71,7 +71,7 @@ export const ExpandableCard = ({
           <Button
             variant="tertiary"
             block
-            iconAfter={isExpanded ? KeyboardArrowUp :KeyboardArrowDown}
+            iconAfter={isExpanded ? KeyboardArrowUp : KeyboardArrowDown}
             onClick={() => setIsExpanded(!isExpanded)}
             className="py-1"
           >

@@ -22,6 +22,7 @@ import {
   usePasteItem,
   useUpdateCourseSectionHighlights,
 } from '@src/course-outline/data/apiHooks';
+import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   deleteSection,
@@ -53,7 +54,6 @@ import {
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
-import { PUBLISH_TYPES } from '@src/course-unit/constants';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();

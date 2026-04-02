@@ -14,6 +14,7 @@ import {
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
+import { ProcessingNotificationContextProvider } from '@src/generic/processing-notification/context';
 import messages from './i18n';
 
 import {
@@ -37,7 +38,6 @@ import { ContentType } from './library-authoring/routes';
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
 import { LegacyLibMigrationPage } from './legacy-libraries-migration/LegacyLibMigrationPage';
-import { ProcessingNotificationContextProvider } from '@src/generic/processing-notification/context';
 
 const queryClient = new QueryClient({
   defaultOptions: {

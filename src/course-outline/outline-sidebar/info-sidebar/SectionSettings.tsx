@@ -1,11 +1,13 @@
-import { useConfigureSection, useCourseDetails, useCourseItemData, useUpdateCourseSectionHighlights } from "@src/course-outline/data/apiHooks";
-import { ReleaseSection } from "./sharedSettings/ReleaseSection";
-import { useCourseAuthoringContext } from "@src/CourseAuthoringContext";
-import { SidebarContent } from "@src/generic/sidebar"
-import { ConfigureSectionData } from "@src/course-outline/data/types";
-import { VisibilityTypes } from "@src/data/constants";
-import { VisibilitySection } from "./sharedSettings/VisibilitySection";
-import { HighlightData, HighlightsCard } from "@src/course-outline/highlights-modal/HighlightsModal";
+import {
+  useConfigureSection, useCourseDetails, useCourseItemData, useUpdateCourseSectionHighlights,
+} from '@src/course-outline/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { SidebarContent } from '@src/generic/sidebar';
+import { ConfigureSectionData } from '@src/course-outline/data/types';
+import { VisibilityTypes } from '@src/data/constants';
+import { HighlightData, HighlightsCard } from '@src/course-outline/highlights-modal/HighlightsModal';
+import { VisibilitySection } from './sharedSettings/VisibilitySection';
+import { ReleaseSection } from './sharedSettings/ReleaseSection';
 
 interface Props {
   sectionId: string;
@@ -16,14 +18,14 @@ const Highlights = ({ sectionId }: Props) => {
   const onSubmit = (highlights: HighlightData) => {
     const dataToSend = Object.values(highlights).filter(Boolean);
     mutate({
-      sectionId: sectionId,
+      sectionId,
       highlights: dataToSend,
     });
   };
   return (
     <HighlightsCard sectionId={sectionId} onSubmit={onSubmit} />
   );
-}
+};
 
 export const SectionSettings = ({ sectionId }: Props) => {
   const { courseId } = useCourseAuthoringContext();
@@ -36,25 +38,26 @@ export const SectionSettings = ({ sectionId }: Props) => {
       return;
     }
     return mutate({
-      sectionId: sectionId,
+      sectionId,
       isVisibleToStaffOnly: itemData.visibilityState === VisibilityTypes.STAFF_ONLY,
       startDatetime: itemData.start,
       ...variables,
-    })
-  }
+    });
+  };
 
   return (
     <SidebarContent>
       <Highlights sectionId={sectionId} />
-      { !courseDetails?.selfPaced && <ReleaseSection
+      { !courseDetails?.selfPaced && (
+      <ReleaseSection
         itemId={sectionId}
         onChange={(val: string) => onChange({ startDatetime: val })}
-      /> }
+      />
+      ) }
       <VisibilitySection
         itemId={sectionId}
         onChange={onChange}
       />
     </SidebarContent>
-  )
-}
-
+  );
+};

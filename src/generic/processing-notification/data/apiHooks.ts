@@ -22,7 +22,7 @@ export const useMutationWithProcessingNotification = <
       showToast(NOTIFICATION_MESSAGES.saving, undefined, 15000);
 
       // Call original onMutate if it exists
-      return await originalOptions.onMutate?.(...onMutateArgs);
+      return originalOptions.onMutate?.(...onMutateArgs);
     },
     onSettled: async (...onSettledArgs) => {
       // Call original onSettled if it exists
@@ -31,5 +31,5 @@ export const useMutationWithProcessingNotification = <
       // Always hide processing notification
       closeToast();
     },
-  })
-}
+  });
+};

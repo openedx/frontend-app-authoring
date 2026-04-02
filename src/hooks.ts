@@ -253,11 +253,11 @@ export function useStateWithCallback<T>(
 
   useEffect(() => {
     // Only run if data actually changed
-    if (isEqual(data, prevDataRef.current)) return;
+    if (isEqual(data, prevDataRef.current)) { return; }
 
     prevDataRef.current = data;
 
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) { clearTimeout(timeoutRef.current); }
 
     timeoutRef.current = setTimeout(() => {
       callbackRef.current?.(data);

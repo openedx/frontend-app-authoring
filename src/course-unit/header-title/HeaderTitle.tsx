@@ -12,13 +12,13 @@ import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { ConfigureUnitData } from '@src/course-outline/data/types';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { messageTypes, PUBLISH_TYPES } from '@src/course-unit/constants';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
 import { isUnitPageNewDesignEnabled } from '../utils';
-import { useIframe } from '@src/generic/hooks/context/hooks';
-import { messageTypes, PUBLISH_TYPES } from '@src/course-unit/constants';
-import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 
 type HeaderTitleProps = {
   unitTitle: string;
@@ -62,7 +62,7 @@ const HeaderTitle = ({
     }, {
       onSuccess: () => sendMessageToIframe(
         messageTypes.completeManageXBlockAccess,
-        { locator: currentItemData.id }
+        { locator: currentItemData.id },
       ),
       onSettled: () => closeConfigureModal(),
     });
