@@ -3,13 +3,17 @@ import {
 } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 
-import HighlightsModal, { HighlightsCard, HighlightsForm } from './HighlightsModal';
+import * as apiHooks from '@src/course-outline/data/apiHooks';
+import * as routerDom from 'react-router-dom';
+import type { UseQueryResult } from '@tanstack/react-query';
+import { XBlockBase } from '@src/data/types';
 import messages from './messages';
+import HighlightsModal, { HighlightsCard, HighlightsForm } from './HighlightsModal';
 
 const currentItemMock = {
   highlights: ['Highlight 1', 'Highlight 2'],
   displayName: 'Test Section',
-};
+} as XBlockBase;
 
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
@@ -20,7 +24,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseItemData: jest.fn(() => ({
     data: currentItemMock,
-  })),
+  } as unknown as UseQueryResult<XBlockBase, Error>)),
 }));
 
 jest.mock('react-router', () => ({
@@ -105,10 +109,10 @@ describe('<HighlightsForm />', () => {
   it('renders 5 highlight fields and buttons', async () => {
     render(<HighlightsForm {...defaultProps} />);
 
-    /* eslint-disable no-await-in-loop */
-    for (let i = 1; i <= 5; i++) {
-      expect(await screen.findByLabelText(new RegExp(`Highlight ${i}`))).toBeInTheDocument();
-    }
+    const queries = Array.from({ length: 5 }, (_, i) => screen.findByLabelText(new RegExp(`Highlight ${i + 1}`)));
+    const fields = await Promise.all(queries);
+    fields.forEach((field) => expect(field).toBeInTheDocument());
+
     expect(await screen.findByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
   });
 
@@ -166,8 +170,9 @@ describe('<HighlightsForm />', () => {
 describe('<HighlightsCard />', () => {
   beforeEach(() => {
     initializeMocks();
-    const { useCourseItemData } = require('@src/course-outline/data/apiHooks');
-    useCourseItemData.mockReturnValue({ data: currentItemMock });
+    jest.mocked(apiHooks.useCourseItemData).mockReturnValue({
+      data: currentItemMock,
+    } as unknown as UseQueryResult<XBlockBase, Error>);
   });
 
   it('renders viewing mode with highlights', async () => {
@@ -180,10 +185,9 @@ describe('<HighlightsCard />', () => {
   });
 
   it('renders empty state when no highlights exist', async () => {
-    const { useCourseItemData } = require('@src/course-outline/data/apiHooks');
-    useCourseItemData.mockReturnValue({
+    jest.mocked(apiHooks.useCourseItemData).mockReturnValue({
       data: { highlights: [], displayName: 'Test' },
-    });
+    } as unknown as UseQueryResult<XBlockBase, Error>);
 
     render(
       <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
@@ -206,10 +210,9 @@ describe('<HighlightsCard />', () => {
 
   it('transitions to editing mode on add button click', async () => {
     const user = userEvent.setup();
-    const { useCourseItemData } = require('@src/course-outline/data/apiHooks');
-    useCourseItemData.mockReturnValue({
+    jest.mocked(apiHooks.useCourseItemData).mockReturnValue({
       data: { highlights: [], displayName: 'Test' },
-    });
+    } as unknown as UseQueryResult<XBlockBase, Error>);
 
     render(
       <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
@@ -271,10 +274,9 @@ describe('<HighlightsCard />', () => {
   });
 
   it('displays only non-empty highlights in view mode', async () => {
-    const { useCourseItemData } = require('@src/course-outline/data/apiHooks');
-    useCourseItemData.mockReturnValue({
+    jest.mocked(apiHooks.useCourseItemData).mockReturnValue({
       data: { highlights: ['H1', '', 'H3', '', ''], displayName: 'Test' },
-    });
+    } as unknown as UseQueryResult<XBlockBase, Error>);
 
     render(
       <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
@@ -306,13 +308,12 @@ describe('<HighlightsCard />', () => {
   });
 
   it('handles navigation blocking when form is dirty', () => {
-    const { useBlocker } = require('react-router-dom');
     const blockerMock = {
       state: 'blocked',
       proceed: jest.fn(),
       reset: jest.fn(),
     };
-    useBlocker.mockReturnValue(blockerMock);
+    (routerDom.useBlocker as jest.Mock).mockReturnValue(blockerMock);
 
     render(
       <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
