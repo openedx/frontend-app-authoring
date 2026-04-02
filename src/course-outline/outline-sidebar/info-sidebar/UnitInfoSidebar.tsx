@@ -117,7 +117,6 @@ export const UnitSidebar = ({ unitId }: Props) => {
               isUnitVerticalType={false}
               unitXBlockActions={{ handleDelete: () => {}, handleDuplicate: () => {}, handleUnlink: () => {} }}
               courseVerticalChildren={[]}
-              handleConfigureSubmit={() => {}}
               readonly
             />
           </IframeProvider>
