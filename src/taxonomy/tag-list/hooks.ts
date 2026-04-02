@@ -125,7 +125,6 @@ const useEditActions = ({
         parentValue: parentTagValue,
         depth: parentTag ? parentTag.depth + 1 : 0,
         childCount: 0,
-        descendantCount: 0,
         subTagsUrl: null,
         externalId: '',
       }, parentTagValue);

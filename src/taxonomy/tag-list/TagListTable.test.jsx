@@ -58,7 +58,6 @@ const mockTagsResponse = {
       ...tagDefaults,
       value: 'root tag 1',
       child_count: 1,
-      descendant_count: 14,
       _id: 1001,
       sub_tags_url: '/request/to/load/subtags/1',
       usage_count: 1,
@@ -67,7 +66,6 @@ const mockTagsResponse = {
       ...tagDefaults,
       value: 'root tag 2',
       child_count: 1,
-      descendant_count: 10,
       _id: 1002,
       sub_tags_url: '/request/to/load/subtags/2',
       usage_count: 0,
@@ -76,7 +74,6 @@ const mockTagsResponse = {
       ...tagDefaults,
       value: 'root tag 3',
       child_count: 1,
-      descendant_count: 5,
       _id: 1003,
       sub_tags_url: '/request/to/load/subtags/3',
       usage_count: 3,
@@ -310,7 +307,6 @@ describe('<TagListTable />', () => {
           ...tagDefaults,
           value: 'a new tag',
           child_count: 0,
-          descendant_count: 0,
           _id: 1234,
         });
         const { creatingRow, input } = await openTopLevelDraftRow();
@@ -357,7 +353,6 @@ describe('<TagListTable />', () => {
               ...tagDefaults,
               value: 'a new tag',
               child_count: 0,
-              descendant_count: 0,
               _id: 1234,
             }]);
           }, 100);
@@ -376,7 +371,6 @@ describe('<TagListTable />', () => {
           ...tagDefaults,
           value: 'a new tag',
           child_count: 0,
-          descendant_count: 0,
           _id: 1234,
         });
         const { creatingRow, input } = await openTopLevelDraftRow();
@@ -403,7 +397,6 @@ describe('<TagListTable />', () => {
           ...tagDefaults,
           value: 'a new tag',
           child_count: 0,
-          descendant_count: 0,
           _id: 1234,
         });
         const { creatingRow, input } = await openTopLevelDraftRow();
@@ -420,7 +413,6 @@ describe('<TagListTable />', () => {
           ...tagDefaults,
           value: 'xyz tag',
           child_count: 0,
-          descendant_count: 0,
           _id: 1234,
         });
         const { creatingRow, input } = await openTopLevelDraftRow();
@@ -442,7 +434,6 @@ describe('<TagListTable />', () => {
           ...tagDefaults,
           value: 'xyz tag',
           child_count: 0,
-          descendant_count: 0,
           _id: 1234,
         });
         const { creatingRow, input } = await openTopLevelDraftRow();
@@ -477,7 +468,6 @@ describe('<TagListTable />', () => {
             ...tagDefaults,
             value: requestData.tag,
             child_count: 0,
-            descendant_count: 0,
             _id: Math.floor(Math.random() * 10000),
           }];
         });
@@ -546,7 +536,6 @@ describe('<TagListTable />', () => {
           ...tagDefaults,
           value: 'Tag A',
           child_count: 0,
-          descendant_count: 0,
           _id: 4567,
         });
 
@@ -837,7 +826,6 @@ describe('<TagListTable /> isolated async subtag tests', () => {
         ...tagDefaults,
         value: 'child-new',
         child_count: 0,
-        descendant_count: 0,
         _id: 2222,
         parent_value: 'root tag 1',
       });
@@ -858,7 +846,6 @@ describe('<TagListTable /> isolated async subtag tests', () => {
         ...tagDefaults,
         value: 'child appears immediately',
         child_count: 0,
-        descendant_count: 0,
         _id: 3333,
         parent_value: 'root tag 1',
       });
@@ -879,7 +866,6 @@ describe('<TagListTable /> isolated async subtag tests', () => {
         ...tagDefaults,
         value: 'nested child',
         child_count: 0,
-        descendant_count: 0,
         _id: 4444,
         parent_value: 'the child tag',
       });
@@ -903,7 +889,6 @@ describe('<TagListTable /> isolated async subtag tests', () => {
         ...tagDefaults,
         value: 'nested child appears immediately',
         child_count: 0,
-        descendant_count: 0,
         _id: 5555,
         parent_value: 'the child tag',
       });
@@ -928,7 +913,6 @@ describe('<TagListTable /> isolated async subtag tests', () => {
         ...tagDefaults,
         value: 'great grandchild',
         child_count: 0,
-        descendant_count: 0,
         _id: 6666,
         parent_value: 'the grandchild tag',
       });
@@ -951,7 +935,6 @@ describe('<TagListTable /> isolated async subtag tests', () => {
         ...tagDefaults,
         value: 'great grandchild appears immediately',
         child_count: 0,
-        descendant_count: 0,
         _id: 7777,
         parent_value: 'the grandchild tag',
       });
