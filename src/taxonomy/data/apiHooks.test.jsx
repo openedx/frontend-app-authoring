@@ -3,6 +3,7 @@ import React from 'react'; // Required to use JSX syntax without type errors
 
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -11,6 +12,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { apiUrls } from './api';
 
 import {
+  useCreateTag,
   useImportPlan,
   useImportTags,
   useImportNewTaxonomy,
@@ -28,7 +30,9 @@ const queryClient = new QueryClient({
 
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>
-    {children}
+    <IntlProvider locale="en">
+      {children}
+    </IntlProvider>
   </QueryClientProvider>
 );
 
@@ -104,5 +108,13 @@ describe('import taxonomy api calls', () => {
     });
     expect(result.current.error).toEqual(Error('test error'));
     expect(axiosMock.history.put[0].url).toEqual(apiUrls.tagsPlanImport(1));
+  });
+
+  it('should surface duplicate tag error returned as an array', async () => {
+    const duplicateError = "Tag with value 'ab' already exists for taxonomy.";
+    axiosMock.onPost(apiUrls.createTag(1)).reply(400, [duplicateError]);
+    const { result } = renderHook(() => useCreateTag(1), { wrapper });
+
+    await expect(result.current.mutateAsync({ value: 'ab' })).rejects.toEqual(Error(duplicateError));
   });
 });

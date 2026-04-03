@@ -1,8 +1,7 @@
-import PropTypes from 'prop-types';
+import { type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
 
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { COURSE_PERMISSIONS } from '@src/authz/constants';
@@ -11,13 +10,21 @@ import { otherLinkURLParams } from './constants';
 import messages from './messages';
 import HelpSidebarLink from './HelpSidebarLink';
 
+interface HelpSidebarProps {
+  courseId: string;
+  showOtherSettings?: boolean;
+  proctoredExamSettingsUrl?: string;
+  children: ReactNode;
+  className?: string;
+}
+
 const HelpSidebar = ({
   courseId,
-  showOtherSettings,
-  proctoredExamSettingsUrl,
+  showOtherSettings = false,
+  proctoredExamSettingsUrl = '',
   children,
   className,
-}) => {
+}: HelpSidebarProps) => {
   const intl = useIntl();
   const { pathname } = useLocation();
   const {
@@ -30,16 +37,6 @@ const HelpSidebar = ({
   const waffleFlags = useWaffleFlags(courseId);
 
   const showOtherLink = (params) => !pathname.includes(params);
-  const generateLegacyURL = (urlParameter) => {
-    const referObj = new URL(`${urlParameter}/${courseId}`, getConfig().STUDIO_BASE_URL);
-    return referObj.href;
-  };
-
-  const scheduleAndDetailsDestination = generateLegacyURL(scheduleAndDetails);
-  const gradingDestination = generateLegacyURL(grading);
-  const courseTeamDestination = generateLegacyURL(courseTeam);
-  const advancedSettingsDestination = generateLegacyURL(advancedSettings);
-  const groupConfigurationsDestination = generateLegacyURL(groupConfigurations);
 
   /*
     AuthZ for Course Authoring
@@ -78,46 +75,41 @@ const HelpSidebar = ({
               <ul className="p-0 mb-0">
                 {showOtherLink(scheduleAndDetails) && (
                   <HelpSidebarLink
-                    pathToPage={waffleFlags.useNewScheduleDetailsPage
-                      ? `/course/${courseId}/${scheduleAndDetails}` : scheduleAndDetailsDestination}
+                    pathToPage={`/course/${courseId}/${scheduleAndDetails}`}
                     title={intl.formatMessage(
                       messages.sidebarLinkToScheduleAndDetails,
                     )}
-                    isNewPage={waffleFlags.useNewScheduleDetailsPage}
+                    isNewPage
                   />
                 )}
                 {showOtherLink(grading) && (
                   <HelpSidebarLink
-                    pathToPage={waffleFlags.useNewGradingPage
-                      ? `/course/${courseId}/${grading}` : gradingDestination}
+                    pathToPage={`/course/${courseId}/${grading}`}
                     title={intl.formatMessage(messages.sidebarLinkToGrading)}
-                    isNewPage={waffleFlags.useNewGradingPage}
+                    isNewPage
                   />
                 )}
                 {showOtherLink(courseTeam) && (
                   <HelpSidebarLink
-                    pathToPage={waffleFlags.useNewCourseTeamPage
-                      ? `/course/${courseId}/${courseTeam}` : courseTeamDestination}
+                    pathToPage={`/course/${courseId}/${courseTeam}`}
                     title={intl.formatMessage(messages.sidebarLinkToCourseTeam)}
-                    isNewPage={waffleFlags.useNewCourseTeamPage}
+                    isNewPage
                   />
                 )}
                 {showOtherLink(groupConfigurations) && (
                   <HelpSidebarLink
-                    pathToPage={waffleFlags.useNewGroupConfigurationsPage
-                      ? `/course/${courseId}/${groupConfigurations}` : groupConfigurationsDestination}
+                    pathToPage={`/course/${courseId}/${groupConfigurations}`}
                     title={intl.formatMessage(
                       messages.sidebarLinkToGroupConfigurations,
                     )}
-                    isNewPage={waffleFlags.useNewGroupConfigurationsPage}
+                    isNewPage
                   />
                 )}
                 {showOtherLink(advancedSettings) && canManageAdvancedSettings && (
                   <HelpSidebarLink
-                    pathToPage={waffleFlags.useNewAdvancedSettingsPage
-                      ? `/course/${courseId}/${advancedSettings}` : advancedSettingsDestination}
+                    pathToPage={`/course/${courseId}/${advancedSettings}`}
                     title={intl.formatMessage(messages.sidebarLinkToAdvancedSettings)}
-                    isNewPage={waffleFlags.useNewAdvancedSettingsPage}
+                    isNewPage
                   />
                 )}
                 {proctoredExamSettingsUrl && (
@@ -135,21 +127,6 @@ const HelpSidebar = ({
       )}
     </aside>
   );
-};
-
-HelpSidebar.defaultProps = {
-  proctoredExamSettingsUrl: '',
-  className: undefined,
-  courseId: undefined,
-  showOtherSettings: false,
-};
-
-HelpSidebar.propTypes = {
-  courseId: PropTypes.string,
-  showOtherSettings: PropTypes.bool,
-  proctoredExamSettingsUrl: PropTypes.string,
-  children: PropTypes.node.isRequired,
-  className: PropTypes.string,
 };
 
 export default HelpSidebar;

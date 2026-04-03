@@ -32,16 +32,19 @@ export interface TaxonomyListData {
 export interface QueryOptions {
   pageIndex: number;
   pageSize: number;
+  enabled?: boolean;
+  disablePagination?: boolean;
 }
 
 export interface TagData {
   childCount: number;
-  descendantCount: number;
   depth: number;
   externalId: string;
   id: number;
   parentValue: string | null;
   subTagsUrl: string | null;
+  canChangeTag?: boolean;
+  canDeleteTag?: boolean;
   /** Unique ID for this tag, also its display text */
   value: string;
   usageCount?: number;

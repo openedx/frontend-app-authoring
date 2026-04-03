@@ -246,5 +246,20 @@ const messages = defineMessages({
     defaultMessage: 'Remove',
     description: 'Button to confirm removal of a container from its parent',
   },
+  publicReadToggleLabel: {
+    id: 'course-authoring.library-authoring.public.read.toggle.label',
+    defaultMessage: 'Allow public read',
+    description: 'Library label toggle to allow public read',
+  },
+  publicReadToggleSubtext: {
+    id: 'course-authoring.library-authoring.public.read.toggle.subtext',
+    defaultMessage: 'Allows reuse of library content in courses.',
+    description: 'Library description toggle to allow public read',
+  },
+  publicReadToggleDefaultError: {
+    id: 'course-authoring.library-authoring.public.read.toggle.default.error.message',
+    defaultMessage: 'Something went wrong on our end. Please try again later.',
+    description: 'Public read toggle default error message',
+  },
 });
 export default messages;

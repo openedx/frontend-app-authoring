@@ -19,6 +19,7 @@ import { TaxonomyMenu } from '../taxonomy-menu';
 import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
 import { useTaxonomyDetails } from '../data/apiHooks';
 import SystemDefinedBadge from '../system-defined-badge';
+import { TAXONOMY_MAX_DEPTH } from './constants';
 
 const TaxonomyDetailPage = () => {
   const intl = useIntl();
@@ -88,7 +89,7 @@ const TaxonomyDetailPage = () => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
-              <TagListTable taxonomyId={taxonomyId} />
+              <TagListTable taxonomyId={taxonomyId} maxDepth={TAXONOMY_MAX_DEPTH} />
             </Layout.Element>
             <Layout.Element>
               <TaxonomyDetailSideCard taxonomy={taxonomy} />

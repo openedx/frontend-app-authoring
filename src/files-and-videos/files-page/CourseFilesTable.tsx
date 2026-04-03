@@ -1,5 +1,6 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { CheckboxFilter } from '@openedx/paragon';
+import { AgreementGated, UPLOAD_FILE_MAX_SIZE } from '@src/constants';
 import {
   addAssetFile,
   deleteAssetFile,
@@ -20,13 +21,13 @@ import {
   FileTable,
   ThumbnailColumn,
 } from '@src/files-and-videos/generic';
+import { GatedComponentWrapper } from '@src/generic/agreement-gated-feature';
 import { useModels } from '@src/generic/model-store';
 import { DeprecatedReduxState } from '@src/store';
 import { getFileSizeToClosestByte } from '@src/utils';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { UPLOAD_FILE_MAX_SIZE } from '@src/constants';
 
 export const CourseFilesTable = () => {
   const intl = useIntl();
@@ -159,26 +160,28 @@ export const CourseFilesTable = () => {
     return null;
   }
   return (
-    <>
-      <FileTable
-        {...{
-          courseId,
-          data,
-          handleAddFile,
-          handleDeleteFile,
-          handleDownloadFile,
-          handleLockFile,
-          handleUsagePaths,
-          handleErrorReset,
-          handleFileOrder,
-          tableColumns,
-          maxFileSize,
-          thumbnailPreview,
-          infoModalSidebar,
-          files: assets,
-        }}
-      />
-      <FileValidationModal {...{ handleFileOverwrite }} />
-    </>
+    <GatedComponentWrapper gatingTypes={[AgreementGated.UPLOAD, AgreementGated.UPLOAD_FILES]}>
+      <>
+        <FileTable
+          {...{
+            courseId,
+            data,
+            handleAddFile,
+            handleDeleteFile,
+            handleDownloadFile,
+            handleLockFile,
+            handleUsagePaths,
+            handleErrorReset,
+            handleFileOrder,
+            tableColumns,
+            maxFileSize,
+            thumbnailPreview,
+            infoModalSidebar,
+            files: assets,
+          }}
+        />
+        <FileValidationModal {...{ handleFileOverwrite }} />
+      </>
+    </GatedComponentWrapper>
   );
 };

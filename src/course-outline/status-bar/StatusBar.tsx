@@ -1,16 +1,15 @@
 import moment, { Moment } from 'moment/moment';
 import { FormattedDate, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform/config';
 import { Badge, Icon, Stack } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
-
-import type { ChecklistType, CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import {
   Cached, ChecklistRtl, Description, Event,
 } from '@openedx/paragon/icons';
-import { useWaffleFlags } from '@src/data/apiHooks';
+
+import type { ChecklistType, CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { useEntityLinksSummaryByDownstreamContext } from '@src/course-libraries/data/apiHooks';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
+
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
 
@@ -179,8 +178,6 @@ export const StatusBar = ({
   isLoading,
   courseId,
 }: StatusBarProps) => {
-  const waffleFlags = useWaffleFlags(courseId);
-
   const {
     endDate,
     courseReleaseDate,
@@ -189,7 +186,6 @@ export const StatusBar = ({
 
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
   const endDateObj = moment.utc(endDate);
-  const scheduleDestination = () => new URL(`settings/details/${courseId}#schedule`, getConfig().STUDIO_BASE_URL).href;
 
   if (isLoading) {
     return null;
@@ -203,7 +199,7 @@ export const StatusBar = ({
         startDate={courseReleaseDateObj}
         endDate={endDateObj}
         startDateRaw={courseReleaseDate}
-        datesLink={waffleFlags.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
+        datesLink={`/course/${courseId}/settings/details/#schedule`}
       />
       <Checklists courseId={courseId} checklist={checklist} />
       <LibraryUpdates courseId={courseId} />
