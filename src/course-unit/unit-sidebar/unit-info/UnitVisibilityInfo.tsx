@@ -9,9 +9,9 @@ import { getCourseUnitData } from '@src/course-unit/data/selectors';
 import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { isUnitPageNewDesignEnabled } from '@src/course-unit/utils';
 import { Edit, Groups, Lock } from '@openedx/paragon/icons';
-import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
 import messages from './messages';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 
 interface UnitVisibilityInfoProps {
   openVisibleModal: () => void,
@@ -42,7 +42,7 @@ const LegacyVisibilityInfo = ({
   } = useSelector(getCourseUnitData);
 
   const { blockId } = useParams();
-  const publishMutation = useConfigureUnit();
+  const publishMutation = useConfigureUnitWithPageUpdates();
 
   const handleCourseUnitVisibility = () => {
     /* istanbul ignore next */

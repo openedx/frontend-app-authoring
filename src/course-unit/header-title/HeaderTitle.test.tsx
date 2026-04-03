@@ -9,6 +9,7 @@ import { fetchCourseSectionVerticalData } from '../data/thunk';
 import { courseSectionVerticalMock } from '../__mocks__';
 import HeaderTitle from './HeaderTitle';
 import messages from './messages';
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 
 const blockId = '123';
 const unitTitle = 'Getting Started';
@@ -20,14 +21,16 @@ let store;
 let axiosMock;
 
 const renderComponent = (props?: any) => render(
-  <HeaderTitle
-    unitTitle={unitTitle}
-    isTitleEditFormOpen={isTitleEditFormOpen}
-    handleTitleEdit={handleTitleEdit}
-    handleTitleEditSubmit={handleTitleEditSubmit}
-    handleConfigureSubmit={handleConfigureSubmit}
-    {...props}
-  />,
+  <IframeProvider>
+    <HeaderTitle
+      unitTitle={unitTitle}
+      isTitleEditFormOpen={isTitleEditFormOpen}
+      handleTitleEdit={handleTitleEdit}
+      handleTitleEditSubmit={handleTitleEditSubmit}
+      handleConfigureSubmit={handleConfigureSubmit}
+      {...props}
+    />,
+  </IframeProvider>
 );
 
 describe('<HeaderTitle />', () => {

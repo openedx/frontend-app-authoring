@@ -270,21 +270,23 @@ export async function configureCourseSubsection(variables: ConfigureSubsectionDa
  * Configure course unit
  */
 export async function configureCourseUnit(variables: ConfigureUnitData): Promise<object> {
+  const body = {
+    publish: variables.groupAccess ? null : variables.type,
+    ...(variables.type === PUBLISH_TYPES.republish ? {
+      metadata: {
+        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+        ...(variables.discussionEnabled !== undefined && {
+          discussion_enabled: variables.discussionEnabled,
+        }),
+        ...(variables.groupAccess != null && { group_access: variables.groupAccess }),
+      },
+    } : {}),
+  };
+  const url = getCourseItemApiUrl(variables.unitId);
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(variables.unitId), {
-      publish: variables.groupAccess ? null : variables.type,
-      ...(variables.type === PUBLISH_TYPES.republish ? {
-        metadata: {
-          visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-          ...(variables.discussionEnabled !== undefined && {
-            discussion_enabled: variables.discussionEnabled,
-          }),
-          ...(variables.groupAccess != null && { group_access: variables.groupAccess }),
-        },
-      } : {}),
-    });
+    .post(url, body);
 
-  return data;
+  return camelCaseObject(data);
 }
 
 /**
