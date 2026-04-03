@@ -1,8 +1,11 @@
-import { RequestStatus } from '../../data/constants';
+import {
+  getCourseSettings,
+} from '@src/data/api';
+import { RequestStatus } from '@src/data/constants';
+
 import {
   getCourseDetails,
   updateCourseDetails,
-  getCourseSettings,
 } from './api';
 import {
   updateSavingStatus,

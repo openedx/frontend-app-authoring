@@ -9,10 +9,11 @@ import {
 import { executeThunk } from '@src/utils';
 import genericMessages from '@src/generic/help-sidebar/messages';
 import { DATE_FORMAT } from '@src/constants';
+import { getCourseSettingsApiUrl } from '@src/data/api';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseDetailsMock, courseSettingsMock } from './__mocks__';
-import { getCourseDetailsApiUrl, getCourseSettingsApiUrl } from './data/api';
+import { getCourseDetailsApiUrl } from './data/api';
 import { updateCourseDetailsQuery } from './data/thunks';
 import creditMessages from './credit-section/messages';
 import pacingMessages from './pacing-section/messages';

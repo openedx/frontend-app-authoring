@@ -2,14 +2,16 @@ import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Alert,
   Container,
   Form,
   Button,
   StatefulButton,
   ActionRow,
 } from '@openedx/paragon';
+import { Warning } from '@openedx/paragon/icons';
 import { Formik } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import * as Yup from 'yup';
 import classNames from 'classnames';
 
@@ -100,6 +102,20 @@ export const CreateLegacyLibrary = ({
             title={intl.formatMessage(legacyMessages.createLibrary)}
           />
         )}
+        <Alert variant="warning" icon={Warning}>
+          <Alert.Heading>{intl.formatMessage(legacyMessages.warningTitle)}</Alert.Heading>
+          {intl.formatMessage(legacyMessages.warningBody, {
+            libraryLink: (
+              <Alert.Link
+                as={Link}
+                // @ts-ignore
+                to="/libraries"
+              >
+                {intl.formatMessage(legacyMessages.warningLibraryFeature)}
+              </Alert.Link>
+            ),
+          })}
+        </Alert>
         <Formik
           initialValues={{
             displayName: '',

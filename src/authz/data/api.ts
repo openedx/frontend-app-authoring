@@ -5,7 +5,9 @@ import {
   PermissionValidationRequestItem,
   PermissionValidationResponseItem,
 } from '@src/authz/types';
-import { getApiUrl } from './utils';
+import { getConfig } from '@edx/frontend-platform';
+
+export const getAuthzApiUrl = (path: string) => `${getConfig().STUDIO_BASE_URL}/api/authz/${path || ''}`;
 
 export const validateUserPermissions = async (
   query: PermissionValidationQuery,
@@ -14,7 +16,7 @@ export const validateUserPermissions = async (
   const request: PermissionValidationRequestItem[] = Object.values(query);
 
   const { data }: { data: PermissionValidationResponseItem[] } = await getAuthenticatedHttpClient().post(
-    getApiUrl('/api/authz/v1/permissions/validate/me'),
+    getAuthzApiUrl('v1/permissions/validate/me'),
     request,
   );
 

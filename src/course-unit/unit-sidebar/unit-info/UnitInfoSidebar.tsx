@@ -205,7 +205,7 @@ export const UnitInfoSidebar = () => {
   }, []);
 
   return (
-    <div>
+    <>
       <SidebarTitle
         title={currentItemData.displayName}
         icon={getItemIcon('unit')}
@@ -233,6 +233,6 @@ export const UnitInfoSidebar = () => {
           </div>
         </Tab>
       </Tabs>
-    </div>
+    </>
   );
 };

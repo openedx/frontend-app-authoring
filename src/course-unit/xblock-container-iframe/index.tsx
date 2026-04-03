@@ -55,7 +55,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const {
     setCurrentPageKey,
     setSelectedComponentId,
-  } = useUnitSidebarContext();
+  } = useUnitSidebarContext(!readonly) || {};
+
   const {
     showToast,
     closeToast,
@@ -139,7 +140,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const onDeleteSubmit = async () => {
     if (deleteXBlockId) {
       await unitXBlockActions.handleDelete(deleteXBlockId);
-      setSelectedComponentId(undefined);
+      setSelectedComponentId?.(undefined);
       closeDeleteModal();
     }
   };
@@ -193,7 +194,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const handleOpenManageTagsModal = (id: string) => {
     if (isUnitPageNewDesignEnabled()) {
-      setCurrentPageKey('align', id);
+      setCurrentPageKey?.('align', id);
       sendMessageToIframe(messageTypes.selectXblock, { locator: id });
     } else {
       // Legacy manage tags modal
@@ -220,7 +221,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   };
 
   const handleXBlockSelected = (id) => {
-    setCurrentPageKey('info', id);
+    setCurrentPageKey?.('info', id);
   };
 
   const messageHandlers = useMessageHandlers({

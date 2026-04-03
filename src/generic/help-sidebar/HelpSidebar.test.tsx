@@ -1,9 +1,9 @@
-// @ts-check
-
 import { waitFor } from '@testing-library/react';
+
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
-import { initializeMocks, render } from '../../testUtils';
+import { initializeMocks, render } from '@src/testUtils';
+
 import messages from './messages';
 import { HelpSidebar } from '.';
 

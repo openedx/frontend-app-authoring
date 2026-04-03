@@ -484,6 +484,11 @@ const CourseOutline = () => {
           isOpen={isConfigureModalOpen}
           onClose={handleConfigureModalClose}
           onConfigureSubmit={handleConfigureItemSubmit}
+          /**
+           * Only sections need overflow visible (for the Release date datepicker, fixed in #2901);
+           * enabling it for subsection/unit modals causes the Visibility tab background to clip.
+           */
+          isOverflowVisible={itemCategory === COURSE_BLOCK_NAMES.chapter.id}
           currentItemData={currentItemData}
           enableProctoredExams={enableProctoredExams}
           enableTimedExams={enableTimedExams}

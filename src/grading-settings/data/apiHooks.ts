@@ -1,17 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getCourseSettings, getGradingSettings, sendGradingSettings } from './api';
+import { getGradingSettings, sendGradingSettings } from './api';
 
 export const useGradingSettings = (courseId: string) => (
   useQuery({
     queryKey: ['gradingSettings', courseId],
     queryFn: () => getGradingSettings(courseId),
-  })
-);
-
-export const useCourseSettings = (courseId: string) => (
-  useQuery({
-    queryKey: ['courseSettings', courseId],
-    queryFn: () => getCourseSettings(courseId),
   })
 );
 

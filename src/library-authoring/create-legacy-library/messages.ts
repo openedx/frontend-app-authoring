@@ -11,6 +11,21 @@ const messages = defineMessages({
     defaultMessage: 'Legacy library name',
     description: 'Label for the title field when creating a legacy library.',
   },
+  warningTitle: {
+    id: 'course-authoring.library-authoring.create-legacy-library.warning.title',
+    defaultMessage: 'You are creating content in a deprecated format',
+    description: 'Warning to discourage users from creating a new Legacy Library',
+  },
+  warningBody: {
+    id: 'course-authoring.library-authoring.create-legacy-library.warning.body',
+    defaultMessage: 'Legacy libraries will be unsupported in Willow. Any content you create in a legacy library will soon need to be migrated. Consider using the {libraryLink} instead.',
+    description: 'Warning to discourage users from creating a new Legacy Library',
+  },
+  warningLibraryFeature: {
+    id: 'course-authoring.library-authoring.create-legacy-library.warning.library-feature',
+    defaultMessage: 'Library feature',
+    description: 'Link to the Libraries feature page',
+  },
   createLibraryButton: {
     id: 'course-authoring.library-authoring.create-legacy-library.form.create-library.button',
     defaultMessage: 'Create legacy library',
