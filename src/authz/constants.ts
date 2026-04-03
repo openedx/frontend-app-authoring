@@ -17,4 +17,7 @@ export const CONTENT_LIBRARY_PERMISSIONS = {
 
 export const COURSE_PERMISSIONS = {
   MANAGE_ADVANCED_SETTINGS: 'courses.manage_advanced_settings',
+
+  VIEW_COURSE_UPDATES: 'courses.view_course_updates',
+  MANAGE_COURSE_UPDATES: 'courses.manage_course_updates',
 };
