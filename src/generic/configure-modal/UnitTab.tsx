@@ -105,7 +105,8 @@ export const AccessEditComponent = ({
         ))}
       </Form.Control>
 
-      {selectedPartitionIndex !== undefined && selectedPartitionIndex >= 0 && userPartitionInfo?.selectablePartitions.length && (
+      {selectedPartitionIndex !== undefined
+        && selectedPartitionIndex >= 0 && userPartitionInfo?.selectablePartitions.length && (
         <Form.Group controlId="select-groups-checkboxes">
           <Form.Label><FormattedMessage {...messages.unitSelectGroup} /></Form.Label>
           <div

@@ -4,12 +4,12 @@ import { initializeMocks, render, screen } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 import { executeThunk } from '@src/utils';
 
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { getCourseSectionVerticalApiUrl } from '../data/api';
 import { fetchCourseSectionVerticalData } from '../data/thunk';
 import { courseSectionVerticalMock } from '../__mocks__';
 import HeaderTitle from './HeaderTitle';
 import messages from './messages';
-import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 
 const blockId = '123';
 const unitTitle = 'Getting Started';
@@ -30,7 +30,7 @@ const renderComponent = (props?: any) => render(
       handleConfigureSubmit={handleConfigureSubmit}
       {...props}
     />,
-  </IframeProvider>
+  </IframeProvider>,
 );
 
 describe('<HeaderTitle />', () => {

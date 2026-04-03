@@ -33,6 +33,7 @@ import {
 } from '@src/library-authoring/data/api.mocks';
 
 import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
+import { getCourseItemApiUrl } from '@src/course-outline/data/api';
 import {
   getCourseSectionVerticalApiUrl,
   getCourseVerticalChildrenApiUrl,
@@ -75,7 +76,6 @@ import headerNavigationsMessages from './header-navigations/messages';
 import legacySidebarMessages from './legacy-sidebar/messages';
 import unitInfoMessages from './unit-sidebar/unit-info/messages';
 import messages from './messages';
-import { getCourseItemApiUrl } from '@src/course-outline/data/api';
 
 let axiosMock;
 let store;
@@ -516,7 +516,9 @@ describe('<CourseUnit />', () => {
     );
 
     // check if the sidebar status is Published and Live
-    expect(await screen.findByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage),
+    ).toBeInTheDocument();
     expect(await screen.findByText(
       unitInfoMessages.publishLastPublished.defaultMessage
         .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
@@ -568,7 +570,9 @@ describe('<CourseUnit />', () => {
     expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-    expect(await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage),
+    ).toBeInTheDocument();
     expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
     expect(await screen.findByText(
       unitInfoMessages.publishInfoDraftSaved.defaultMessage
@@ -749,7 +753,9 @@ describe('<CourseUnit />', () => {
     expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-    expect(await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage),
+    ).toBeInTheDocument();
     expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
     expect(await screen.findByText(
       unitInfoMessages.publishInfoDraftSaved.defaultMessage
@@ -941,7 +947,9 @@ describe('<CourseUnit />', () => {
     expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-    expect(await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage),
+    ).toBeInTheDocument();
     expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
     expect(await screen.findByText(
       unitInfoMessages.publishInfoDraftSaved.defaultMessage
@@ -992,7 +1000,9 @@ describe('<CourseUnit />', () => {
     await user.click(publishButton);
 
     // check if the sidebar status is Published and Live
-    expect(await screen.findByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage),
+    ).toBeInTheDocument();
     expect(await screen.findByText(
       unitInfoMessages.publishLastPublished.defaultMessage
         .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
@@ -1029,7 +1039,9 @@ describe('<CourseUnit />', () => {
     expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-    expect(await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage),
+    ).toBeInTheDocument();
     expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
     expect(await screen.findByText(
       unitInfoMessages.publishInfoDraftSaved.defaultMessage
@@ -1120,17 +1132,13 @@ describe('<CourseUnit />', () => {
   it('should toggle visibility from sidebar and update course unit state accordingly', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
-    let courseUnitSidebar;
-    let draftUnpublishedChangesHeading;
-    let visibilityCheckbox;
+    const courseUnitSidebar = await screen.findByTestId('course-unit-sidebar');
 
-    courseUnitSidebar = await screen.findByTestId('course-unit-sidebar');
-
-    draftUnpublishedChangesHeading = await within(courseUnitSidebar)
+    const draftUnpublishedChangesHeading = await within(courseUnitSidebar)
       .findByText(legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage);
     expect(draftUnpublishedChangesHeading).toBeInTheDocument();
 
-    visibilityCheckbox = await within(courseUnitSidebar)
+    const visibilityCheckbox = await within(courseUnitSidebar)
       .findByLabelText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage);
     expect(visibilityCheckbox).not.toBeChecked();
 
@@ -1193,7 +1201,7 @@ describe('<CourseUnit />', () => {
       name: unitInfoMessages.modalMakeVisibilityActionButtonText.defaultMessage,
     }));
 
-    await waitFor(async() => {
+    await waitFor(async () => {
       expect(visibilityCheckbox).not.toBeChecked();
     });
     expect(draftUnpublishedChangesHeading).toBeInTheDocument();
@@ -1306,10 +1314,6 @@ describe('<CourseUnit />', () => {
   it('should toggle visibility from header configure modal and update course unit state accordingly', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
-    let modalVisibilityCheckbox;
-    let configureModal;
-    let restrictAccessSelect;
-
     expect(await within(await screen.findByTestId('course-unit-sidebar'))
       .findByLabelText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).not.toBeChecked();
 
@@ -1317,8 +1321,8 @@ describe('<CourseUnit />', () => {
     expect(headerConfigureBtn).toBeInTheDocument();
 
     await user.click(headerConfigureBtn);
-    configureModal = await screen.findByTestId('configure-modal');
-    restrictAccessSelect = await within(configureModal)
+    const configureModal = await screen.findByTestId('configure-modal');
+    const restrictAccessSelect = await within(configureModal)
       .findByRole('combobox', { name: configureModalMessages.restrictAccessTo.defaultMessage });
     expect(await within(configureModal)
       .findByText(configureModalMessages.unitVisibility.defaultMessage)).toBeInTheDocument();
@@ -1327,7 +1331,7 @@ describe('<CourseUnit />', () => {
     expect(restrictAccessSelect).toBeInTheDocument();
     expect(restrictAccessSelect).toHaveValue('-1');
 
-    modalVisibilityCheckbox = await within(configureModal)
+    const modalVisibilityCheckbox = await within(configureModal)
       .findByRole('checkbox', { name: configureModalMessages.hideFromLearners.defaultMessage });
     expect(modalVisibilityCheckbox).not.toBeChecked();
 
@@ -2476,7 +2480,6 @@ describe('<CourseUnit />', () => {
         },
       });
 
-
     // Move to settings and change visibility to all
     const editVisibilityButton = await screen.findByRole('button', { name: /edit visibility/i });
     await user.click(editVisibilityButton);
@@ -2487,7 +2490,7 @@ describe('<CourseUnit />', () => {
     await user.click(detailsTab);
 
     expect(
-      await screen.findByRole('heading', { name: /draft \(unpublished changes\)/i })
+      await screen.findByRole('heading', { name: /draft \(unpublished changes\)/i }),
     ).toBeInTheDocument();
   });
 
