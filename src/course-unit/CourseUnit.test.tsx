@@ -952,9 +952,7 @@ describe('<CourseUnit />', () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
 
-    await waitFor(async () => {
-      await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage }));
-    });
+    await user.click(await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage }));
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {
@@ -975,23 +973,22 @@ describe('<CourseUnit />', () => {
 
     await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
 
-    await waitFor(async () => {
-      // check if the sidebar status is Published and Live
+    // check if the sidebar status is Published and Live
+    await waitFor(() => {
       expect(screen.getByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(
-        unitInfoMessages.publishLastPublished.defaultMessage
-          .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
-          .replace('{publishedBy}', userName),
-      )).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
-
-      const videoButton = screen.getByRole('button', {
-        name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
-        hidden: true,
-      });
-
-      await user.click(videoButton);
     });
+    expect(screen.getByText(
+      unitInfoMessages.publishLastPublished.defaultMessage
+        .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
+        .replace('{publishedBy}', userName),
+    )).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
+
+    const videoButton = screen.getByRole('button', {
+      name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
+      hidden: true,
+    });
+    await user.click(videoButton);
 
     /** TODO -- fix this test.
     await waitFor(() => {
@@ -3459,6 +3456,10 @@ describe('<CourseUnit />', () => {
           xblock_info: {
             ...courseSectionVerticalMock.xblock_info,
             upstream_info: { upstream_ref: upstreamRef },
+            actions: {
+              ...courseSectionVerticalMock.xblock_info.actions,
+              unlinkable: true,
+            },
           },
         });
       await executeThunk(fetchCourseSectionVerticalData(blockId, courseId), store.dispatch);
