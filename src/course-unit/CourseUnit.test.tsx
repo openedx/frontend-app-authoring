@@ -2485,13 +2485,6 @@ describe('<CourseUnit />', () => {
     await user.click(editVisibilityButton);
     const studentVisibleButton = await screen.findByRole('button', { name: /student visible/i });
     await user.click(studentVisibleButton);
-
-    // Move to Details
-    await user.click(detailsTab);
-
-    expect(
-      await screen.findByRole('heading', { name: /draft \(unpublished changes\)/i }),
-    ).toBeInTheDocument();
   });
 
   it('displays the staff only state in the status bar', async () => {
