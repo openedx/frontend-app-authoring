@@ -637,7 +637,11 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
 
     it('handles none button click', async () => {
       const user = userEvent.setup();
-      renderComponent({ useBtnGroup: true, setFieldValue: mockSetFieldValue, values: { ...defaultProps.values, isTimeLimited: true } });
+      renderComponent({
+        useBtnGroup: true,
+        setFieldValue: mockSetFieldValue,
+        values: { ...defaultProps.values, isTimeLimited: true },
+      });
 
       const noneBtn = screen.getByRole('button', { name: 'None' });
       expect(noneBtn).toBeInTheDocument();
@@ -667,7 +671,9 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
 
     it('shows practice button and handles practice click', async () => {
       const user = userEvent.setup();
-      renderComponent({ useBtnGroup: true, enableProctoredExams: true, supportsOnboarding: false, setFieldValue: mockSetFieldValue });
+      renderComponent({
+        useBtnGroup: true, enableProctoredExams: true, supportsOnboarding: false, setFieldValue: mockSetFieldValue,
+      });
 
       const practiceBtn = screen.getByRole('button', { name: 'Practice proctored' });
       expect(practiceBtn).toBeInTheDocument();
@@ -682,7 +688,9 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
 
     it('handles onboarding button click', async () => {
       const user = userEvent.setup();
-      renderComponent({ useBtnGroup: true, enableProctoredExams: true, supportsOnboarding: true, setFieldValue: mockSetFieldValue });
+      renderComponent({
+        useBtnGroup: true, enableProctoredExams: true, supportsOnboarding: true, setFieldValue: mockSetFieldValue,
+      });
 
       const onboardingBtn = screen.getByRole('button', { name: 'Onboarding' });
       expect(onboardingBtn).toBeInTheDocument();
