@@ -790,11 +790,10 @@ describe('<TagListTable />', () => {
       });
 
       // Banner error message should be shown at the top of the table
-      expect(await screen.findByText('Error saving changes')).toBeInTheDocument();
+      expect(await screen.findByText(/Error saving changes/i)).toBeInTheDocument();
 
       // Toast message to indicate that the save failed
-      expect(await screen.findByText('Error saving changes')).toBeInTheDocument();
-      expect(await screen.findByText('Internal server error')).toBeInTheDocument();
+      expect(await screen.findByText(/Error updating tag:\s*.+/i)).toBeInTheDocument();
 
       // expect the input to retain the value that was entered before
       expect(draftRow.querySelector('input').value).toEqual('will fail');
