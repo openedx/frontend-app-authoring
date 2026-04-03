@@ -52,7 +52,11 @@ const UploadWidget = ({
     }
     mutation.mutateAsync(file).then((result: AssetResponse) => {
       if (isLibrary) {
-        void urlFieldControl.setValue((result.data as LibraryAsset).path); // eslint-disable-line no-void
+        // This will be a path like /static/something.pdf. Some post-processing in the LMS's views converts
+        // the URL to the appropriate one after rendering the fragment.
+        //
+        // It is not clear how this would work in the case of a React-based student view.
+        void urlFieldControl.setValue(`/${ (result.data as LibraryAsset).path}`); // eslint-disable-line no-void
       } else {
         void urlFieldControl.setValue((result.data as CourseAsset).asset.external_url); // eslint-disable-line no-void
       }

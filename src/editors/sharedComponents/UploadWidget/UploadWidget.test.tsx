@@ -75,7 +75,7 @@ describe('UploadWidget', () => {
     axiosMock.onPut('http://localhost:18010/api/libraries/v2/blocks/pdf-block/assets/static/my-test-pdf.pdf').withDelayInMs(1000).reply(
       201,
       {
-        path: 'static/my-saved-pdf.pdf',
+        path: '/static/my-saved-pdf.pdf',
       },
     );
     const screen = renderWidget({ props: defaultProps({ isLibrary: true }), formikProps: defaultFormikProps() });
