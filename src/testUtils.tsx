@@ -13,7 +13,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, type RenderResult } from '@testing-library/react';
+import { render, screen, type RenderResult } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import {
   generatePath,
@@ -245,9 +245,36 @@ const getInnerText = (element: Element | null): string => {
     .join(' ');
 };
 
+/**
+ * Returns a matcher for `getByText`/`findByText` that checks exact text match and element type.
+ * - Requires specifying the element's nodeName (e.g. 'P', 'DIV').
+ * - Uses exact string comparison (no regex).
+ *
+ * For partial/regex matching when text is split across child elements,
+ * use `findByDeepTextContent` instead.
+ */
 export const matchInnerText = (
   nodeName: string,
   textToMatch: string,
 ) => (_: string, element: Element | null) => !!element
     && element.nodeName === nodeName
     && getInnerText(element) === textToMatch;
+
+/**
+ * Finds the innermost element whose full textContent (normalized whitespace) matches a regex.
+ * Unlike `matchInnerText`, this:
+ * - Accepts a `RegExp` for partial/pattern matching.
+ * - Does NOT require specifying the element type.
+ * - Normalizes whitespace (collapses multiple spaces/newlines into one).
+ * - Returns the deepest matching element (excludes elements where a direct child also matches).
+ *
+ * Useful when text is split across child elements (e.g. by an icon or inline tag).
+ */
+export const findByDeepTextContent = (pattern: RegExp) => screen.findByText((_, el) => {
+  if (!el) return false;
+  const normalizedText = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
+  if (!pattern.test(normalizedText)) return false;
+  return !Array.from(el.children).some(
+    (child) => pattern.test(((child as Element).textContent ?? '').replace(/\s+/g, ' ').trim()),
+  );
+});

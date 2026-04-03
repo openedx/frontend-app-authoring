@@ -1,9 +1,10 @@
+import { userEvent } from '@testing-library/user-event';
 import {
   initializeMocks,
   render,
   screen,
   waitFor,
-  fireEvent,
+  findByDeepTextContent,
 } from '@src/testUtils';
 
 import {
@@ -11,7 +12,7 @@ import {
   mockLibraryBlockPublishHistory,
   mockLibraryBlockPublishHistoryEntries,
   mockLibraryBlockCreationEntry,
-} from '../../data/api.mocks';
+} from '@src/library-authoring/data/api.mocks';
 import { HistoryComponentLog } from './HistoryLog';
 
 mockLibraryBlockDraftHistory.applyMock();
@@ -23,19 +24,6 @@ const renderComponent = (componentId: string) => render(
   <HistoryComponentLog componentId={componentId} displayName="Test Component" />,
 );
 
-/**
- * Finds the innermost element whose full textContent (normalized whitespace) matches the given regex.
- * Useful when text is split across child elements (e.g. by an icon).
- * Requiring that no direct child also matches ensures we get the deepest matching element.
- */
-const findByTextContent = (pattern: RegExp) => screen.findByText((_, el) => {
-  if (!el) return false;
-  const normalizedText = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
-  if (!pattern.test(normalizedText)) return false;
-  return !Array.from(el.children).some(
-    (child) => pattern.test((child.textContent ?? '').replace(/\s+/g, ' ').trim()),
-  );
-});
 
 describe('<HistoryComponentLog />', () => {
   beforeEach(() => {
@@ -48,12 +36,13 @@ describe('<HistoryComponentLog />', () => {
   });
 
   it('renders draft history group with entries when they exist', async () => {
+    const user = userEvent.setup();
     renderComponent(mockLibraryBlockCreationEntry.usageKey);
-    const trigger = await findByTextContent(/Test Component is a draft/i);
+    const trigger = await findByDeepTextContent(/Test Component is a draft/i);
     expect(trigger).toBeInTheDocument();
-    fireEvent.click(trigger);
-    expect(await findByTextContent(/test_user_1 edited.*Electron Arcs/i)).toBeInTheDocument();
-    expect(await findByTextContent(/test_user_2 renamed.*More on Quarks/i)).toBeInTheDocument();
+    await user.click(trigger);
+    expect(await findByDeepTextContent(/test_user_1 edited.*Electron Arcs/i)).toBeInTheDocument();
+    expect(await findByDeepTextContent(/test_user_2 renamed.*More on Quarks/i)).toBeInTheDocument();
   });
 
   it('does not render draft history group when there are no draft entries', async () => {
@@ -64,17 +53,18 @@ describe('<HistoryComponentLog />', () => {
 
   it('renders publish history group when one exists', async () => {
     renderComponent(mockLibraryBlockCreationEntry.usageKey);
-    expect(await findByTextContent(/author published.*Protons/i)).toBeInTheDocument();
+    expect(await findByDeepTextContent(/author published.*Protons/i)).toBeInTheDocument();
     expect(await screen.findByText(/5 authors contributed/i)).toBeInTheDocument();
   });
 
   it('loads and shows publish history entries after expanding the publish group', async () => {
+    const user = userEvent.setup();
     renderComponent(mockLibraryBlockCreationEntry.usageKey);
     expect(await screen.findByText(/5 authors contributed/i)).toBeInTheDocument();
-    const publishTrigger = await findByTextContent(/author published.*Protons/i);
+    const publishTrigger = await findByDeepTextContent(/author published.*Protons/i);
 
-    fireEvent.click(publishTrigger);
-    expect(await findByTextContent(/test_user edited.*Protons/i)).toBeInTheDocument();
+    await user.click(publishTrigger);
+    expect(await findByDeepTextContent(/test_user edited.*Protons/i)).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText(/5 authors contributed/i)).not.toBeInTheDocument());
   });
 
@@ -86,6 +76,6 @@ describe('<HistoryComponentLog />', () => {
 
   it('always renders the created group with fallback user when createdBy is null', async () => {
     renderComponent(mockLibraryBlockCreationEntry.usageKey);
-    expect(await findByTextContent(/Author created.*Introduction to Testing 1/i)).toBeInTheDocument();
+    expect(await findByDeepTextContent(/Author created.*Introduction to Testing 1/i)).toBeInTheDocument();
   });
 });

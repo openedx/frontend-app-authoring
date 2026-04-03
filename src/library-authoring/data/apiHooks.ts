@@ -1030,7 +1030,7 @@ export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true)
 /**
  * Returns the draft history of a library block.
  */
-export const useLibraryBlockDraftHistory = (usageKey: string | undefined) => (
+export const useLibraryBlockDraftHistory = (usageKey?: string) => (
   useQuery({
     queryKey: xblockQueryKeys.draftHistory(usageKey!),
     queryFn: usageKey ? () => api.getLibraryBlockDraftHistory(usageKey) : skipToken,
@@ -1040,7 +1040,7 @@ export const useLibraryBlockDraftHistory = (usageKey: string | undefined) => (
 /**
  * Returns the publish history of a library block.
  */
-export const useLibraryBlockPublishHistory = (usageKey: string | undefined) => (
+export const useLibraryBlockPublishHistory = (usageKey?: string) => (
   useQuery({
     queryKey: xblockQueryKeys.publishHistory(usageKey!),
     queryFn: usageKey ? () => api.getLibraryBlockPublishHistory(usageKey) : skipToken,
@@ -1051,8 +1051,8 @@ export const useLibraryBlockPublishHistory = (usageKey: string | undefined) => (
  * Returns the entries for a publish history group of a library block.
  */
 export const useLibraryBlockPublishHistoryEntries = (
-  usageKey: string | undefined,
-  publishGroupId: string | undefined,
+  usageKey?: string,
+  publishGroupId?: string,
   enabled: boolean = true,
 ) => (
   useQuery({
@@ -1064,7 +1064,7 @@ export const useLibraryBlockPublishHistoryEntries = (
 /**
  * Returns the creation entry for a library block.
  */
-export const useLibraryBlockCreationEntry = (usageKey: string | undefined) => (
+export const useLibraryBlockCreationEntry = (usageKey?: string ) => (
   useQuery({
     queryKey: xblockQueryKeys.creationEntry(usageKey!),
     queryFn: usageKey ? () => api.getLibraryBlockCreationEntry(usageKey) : skipToken,
