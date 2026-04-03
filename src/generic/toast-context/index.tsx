@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import ProcessingNotification from '../processing-notification';
 
@@ -10,7 +10,12 @@ export interface ToastActionData {
 export interface ToastContextData {
   toastMessage: string | null;
   toastAction?: ToastActionData;
-  showToast: (message: string, action?: ToastActionData) => void;
+  toastDelay?: number;
+  showToast: (
+    message: string,
+    action?: ToastActionData,
+    delay?: number,
+  ) => void;
   closeToast: () => void;
 }
 
@@ -29,6 +34,13 @@ export const ToastContext = React.createContext<ToastContextData>({
   closeToast: () => {},
 });
 
+// TODO: Temporary solution. Module-level references to showToast and closeToast, kept in sync by ToastProvider.
+// This allows calling them from outside React (e.g. Redux thunks)
+// without violating the Rules of Hooks.
+// This approach is used in Redux thunks as a workaround and will be migrated to React Query soon.
+let internalShowToast: ToastContextData['showToast'] = () => {};
+let internalCloseToast: ToastContextData['closeToast'] = () => {};
+
 /**
  * React component to provide `ToastContext` to the app
  */
@@ -37,11 +49,15 @@ export const ToastProvider = (props: ToastProviderProps) => {
   // see: https://github.com/open-craft/frontend-app-course-authoring/pull/38#discussion_r1638990647
 
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
-  const [toastAction, setToastAction] = React.useState<ToastActionData | undefined>(undefined);
+  const [toastAction, setToastAction] = React.useState<ToastActionData>();
+  const [toastDelay, setToastDelay] = React.useState<number>();
 
   const resetState = React.useCallback(() => {
     setToastMessage(null);
     setToastAction(undefined);
+    // Set Toast delay by default, currently,
+    // it is not possible to disable the timer in Paragon's toast menu.
+    setToastDelay(undefined);
   }, []);
 
   React.useEffect(() => () => {
@@ -49,18 +65,36 @@ export const ToastProvider = (props: ToastProviderProps) => {
     resetState();
   }, []);
 
-  const showToast = React.useCallback((message, action?: ToastActionData) => {
+  const showToast = React.useCallback((
+    message,
+    action?: ToastActionData,
+    delay?: number,
+  ) => {
     setToastMessage(message);
     setToastAction(action);
+    setToastDelay(delay);
   }, [setToastMessage, setToastAction]);
   const closeToast = React.useCallback(() => resetState(), [setToastMessage, setToastAction]);
+
+  // Keep the module-level references up to date whenever the callbacks change.
+  React.useEffect(() => {
+    internalShowToast = showToast;
+    internalCloseToast = closeToast;
+  }, [showToast, closeToast]);
 
   const context = React.useMemo(() => ({
     toastMessage,
     toastAction,
+    toastDelay,
     showToast,
     closeToast,
-  }), [toastMessage, toastAction, showToast, closeToast]);
+  }), [
+    toastMessage,
+    toastAction,
+    toastDelay,
+    showToast,
+    closeToast,
+  ]);
 
   return (
     <ToastContext.Provider value={context}>
@@ -70,9 +104,37 @@ export const ToastProvider = (props: ToastProviderProps) => {
           isShow={toastMessage !== null}
           title={toastMessage}
           action={toastAction}
+          delay={toastDelay}
           close={closeToast}
         />
       )}
     </ToastContext.Provider>
   );
 };
+
+export function useToastContext(): ToastContextData {
+  const ctx = useContext(ToastContext);
+  if (ctx === undefined) {
+    /* istanbul ignore next */
+    throw new Error('useToastContext() was used in a component without a <ToastProvider> ancestor.');
+  }
+  return ctx;
+}
+
+/**
+ * Imperative API for triggering a toast notification from outside React
+ * (e.g. Redux thunks, plain async functions). Requires that a <ToastProvider>
+ * is mounted in the tree before this is called.
+ */
+export function showToastOutsideReact(message: string, action?: ToastActionData) {
+  internalShowToast(message, action);
+}
+
+/**
+ * Imperative API for closing the active toast from outside React
+ * (e.g. Redux thunks, plain async functions). Requires that a <ToastProvider>
+ * is mounted in the tree before this is called.
+ */
+export function closeToastOutsideReact() {
+  internalCloseToast();
+}
