@@ -1,5 +1,5 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button, ButtonGroup } from '@openedx/paragon';
+import { Button, ButtonGroup, useToggle } from '@openedx/paragon';
 import { PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
 import { UserPartitionInfoTypes } from '@src/data/types';
 import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
@@ -9,6 +9,8 @@ import { useMemo } from 'react';
 import configureMessages from '@src/generic/configure-modal/messages';
 import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
 import { useStateWithCallback } from '@src/hooks';
+import ModalNotification from '@src/generic/modal-notification';
+import { InfoOutline } from '@openedx/paragon/icons';
 import messages from './messages';
 
 interface UnitInfoSettingsProps {
@@ -41,6 +43,7 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
 
   const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
   const mutateFn = configureHook();
+  const [isVisibleModalOpen, openVisibleModal, closeVisibleModal] = useToggle(false);
 
   const handleUpdate = (
     isVisible: boolean,
@@ -99,6 +102,11 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     return [];
   };
 
+  const setStudentVisible = () => {
+    closeVisibleModal();
+    setLocalState((prev) => ({ ...prev, isVisible: false }));
+  };
+
   const initialValues = useMemo(() => (
     {
       selectedPartitionIndex: userPartitionInfo?.selectedPartitionIndex,
@@ -107,62 +115,74 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
   ), [userPartitionInfo]);
 
   return (
-    <SidebarContent>
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarInfoVisibilityTitle)}
-      >
-        <ButtonGroup toggle>
-          <Button
-            variant={localState?.isVisible ? 'outline-primary' : 'primary'}
-            onClick={() => setLocalState((prev) => ({ ...prev, isVisible: false }))}
-          >
-            <FormattedMessage {...messages.sidebarInfoVisibilityStudentLabel} />
-          </Button>
-          <Button
-            variant={localState?.isVisible ? 'primary' : 'outline-primary'}
-            onClick={() => setLocalState((prev) => ({ ...prev, isVisible: true }))}
-          >
-            <FormattedMessage {...messages.sidebarInfoVisibilityStaffLabel} />
-          </Button>
-        </ButtonGroup>
-      </SidebarSection>
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarInfoAccessTitle)}
-      >
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSaveGroups}
+    <>
+      <SidebarContent>
+        <SidebarSection
+          title={intl.formatMessage(messages.sidebarInfoVisibilityTitle)}
         >
-          {({
-            values, setFieldValue, dirty,
-          }) => (
-            <Form>
-              <AccessEditComponent
-                selectedPartitionIndex={values.selectedPartitionIndex}
-                setFieldValue={setFieldValue}
-                userPartitionInfo={userPartitionInfo}
-                selectedGroups={values.selectedGroups}
-              />
-              {dirty && (
-                <Button className="mt-3" type="submit" variant="primary">
-                  <FormattedMessage {...messages.visibilitySaveGroupsButton} />
-                </Button>
-              )}
-            </Form>
-          )}
-        </Formik>
-      </SidebarSection>
-      <SidebarSection
-        title={intl.formatMessage(configureMessages.discussionEnabledSectionTitle)}
-      >
-        <DiscussionEditComponent
-          discussionEnabled={!!localState?.isDiscussionEnabled}
-          handleDiscussionChange={(e) => setLocalState((prev) => ({
-            ...prev,
-            isDiscussionEnabled: e.target.checked,
-          }))}
-        />
-      </SidebarSection>
-    </SidebarContent>
+          <ButtonGroup toggle>
+            <Button
+              variant={localState?.isVisible ? 'outline-primary' : 'primary'}
+              onClick={openVisibleModal}
+            >
+              <FormattedMessage {...messages.sidebarInfoVisibilityStudentLabel} />
+            </Button>
+            <Button
+              variant={localState?.isVisible ? 'primary' : 'outline-primary'}
+              onClick={() => setLocalState((prev) => ({ ...prev, isVisible: true }))}
+            >
+              <FormattedMessage {...messages.sidebarInfoVisibilityStaffLabel} />
+            </Button>
+          </ButtonGroup>
+        </SidebarSection>
+        <SidebarSection
+          title={intl.formatMessage(messages.sidebarInfoAccessTitle)}
+        >
+          <Formik
+            initialValues={initialValues}
+            onSubmit={handleSaveGroups}
+          >
+            {({
+              values, setFieldValue, dirty,
+            }) => (
+              <Form>
+                <AccessEditComponent
+                  selectedPartitionIndex={values.selectedPartitionIndex}
+                  setFieldValue={setFieldValue}
+                  userPartitionInfo={userPartitionInfo}
+                  selectedGroups={values.selectedGroups}
+                />
+                {dirty && (
+                  <Button className="mt-3" type="submit" variant="primary">
+                    <FormattedMessage {...messages.visibilitySaveGroupsButton} />
+                  </Button>
+                )}
+              </Form>
+            )}
+          </Formik>
+        </SidebarSection>
+        <SidebarSection
+          title={intl.formatMessage(configureMessages.discussionEnabledSectionTitle)}
+        >
+          <DiscussionEditComponent
+            discussionEnabled={!!localState?.isDiscussionEnabled}
+            handleDiscussionChange={(e) => setLocalState((prev) => ({
+              ...prev,
+              isDiscussionEnabled: e.target.checked,
+            }))}
+          />
+        </SidebarSection>
+      </SidebarContent>
+      <ModalNotification
+        title={intl.formatMessage(messages.modalMakeVisibilityTitle)}
+        isOpen={isVisibleModalOpen}
+        actionButtonText={intl.formatMessage(messages.modalMakeVisibilityActionButtonText)}
+        cancelButtonText={intl.formatMessage(messages.modalMakeVisibilityCancelButtonText)}
+        handleAction={setStudentVisible}
+        handleCancel={closeVisibleModal}
+        message={intl.formatMessage(messages.modalMakeVisibilityDescription)}
+        icon={InfoOutline}
+      />
+    </>
   );
 };
