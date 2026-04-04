@@ -31,8 +31,8 @@ const closeFormMock = jest.fn();
 
 const mockGetTagsCount = jest.fn();
 
-jest.mock('../../generic/data/api', () => ({
-  ...jest.requireActual('../../generic/data/api'),
+jest.mock('@src/generic/data/api', () => ({
+  ...jest.requireActual('@src/generic/data/api'),
   getTagsCount: () => mockGetTagsCount(),
 }));
 
@@ -230,7 +230,7 @@ describe('<CardHeader />', () => {
     fireEvent.click(manageTagsMenuItem);
 
     // Check if the drawer is open
-    expect(screen.getAllByText('Manage tags').length).toBe(2);
+    expect(screen.getAllByText('Manage tags').length).toBe(1);
   });
 
   it('calls onClickMenu when the edit button is clicked', async () => {

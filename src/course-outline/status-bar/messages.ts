@@ -30,21 +30,15 @@ const messages = defineMessages({
     defaultMessage: '{count, plural, one {{count} notification} other {{count} notifications}}',
     description: 'Metadata notifications text in course outline',
   },
-  highlightEmailsTitle: {
-    id: 'course-authoring.course-outline.status-bar.highlight-emails',
-    defaultMessage: 'Course highlight emails',
-  },
   highlightEmailsButton: {
     id: 'course-authoring.course-outline.status-bar.highlight-emails.button',
-    defaultMessage: 'Enable now',
+    defaultMessage: 'Enable highlights emails',
+    description: 'Enable highlights emails button in course outline',
   },
   highlightEmailsEnabled: {
     id: 'course-authoring.course-outline.status-bar.highlight-emails.enabled',
-    defaultMessage: 'Enabled',
-  },
-  highlightEmailsLink: {
-    id: 'course-authoring.course-outline.status-bar.highlight-emails.link',
-    defaultMessage: 'Learn more',
+    defaultMessage: 'Highlights emails enabled',
+    description: 'Message displayed when highlights emails are enabled',
   },
   courseTagsTitle: {
     id: 'course-authoring.course-outline.status-bar.course-tags',
@@ -55,26 +49,6 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.status-bar.course-manage-tags-link',
     defaultMessage: 'Manage tags',
     description: 'Opens the drawer to edit content tags',
-  },
-  videoSharingTitle: {
-    id: 'course-authoring.course-outline.status-bar.video-sharing.title',
-    defaultMessage: 'Video Sharing',
-  },
-  videoSharingLink: {
-    id: 'course-authoring.course-outline.status-bar.video-sharing.link',
-    defaultMessage: 'Learn more',
-  },
-  videoSharingPerVideoText: {
-    id: 'course-authoring.course-outline.status-bar.video-sharing.perVideo.text',
-    defaultMessage: 'Per Video',
-  },
-  videoSharingAllOffText: {
-    id: 'course-authoring.course-outline.status-bar.video-sharing.allOff.text',
-    defaultMessage: 'No Videos',
-  },
-  videoSharingAllOnText: {
-    id: 'course-authoring.course-outline.status-bar.video-sharing.allOn.text',
-    defaultMessage: 'All Videos',
   },
   unpublishedBadgeText: {
     id: 'course-authoring.course-outline.status-bar.unpublished.badge.text',

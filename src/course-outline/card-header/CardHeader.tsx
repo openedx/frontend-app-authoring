@@ -25,7 +25,6 @@ import {
 } from '@openedx/paragon/icons';
 
 import { useContentTagsCount } from '@src/generic/data/apiHooks';
-import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import TagCount from '@src/generic/tag-count';
 import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
@@ -111,20 +110,13 @@ const CardHeader = ({
   const [searchParams] = useSearchParams();
   const [titleValue, setTitleValue] = useState(title);
   const cardHeaderRef = useRef(null);
-  const [isLegacyManageTagsDrawerOpen, openLegacyTagsDrawer, closeLegacyTagsDrawer] = useToggle(false);
   const { setCurrentPageKey } = useOutlineSidebarContext();
 
   const openManageTagsDrawer = useCallback(() => {
-    const showNewSidebar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
-    const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
-    if (showNewSidebar && showAlignSidebar) {
-      setCurrentPageKey('align');
-      onClickMenuButton();
-      onClickManageTags?.();
-    } else {
-      openLegacyTagsDrawer();
-    }
-  }, [setCurrentPageKey, openLegacyTagsDrawer, cardId]);
+    setCurrentPageKey('align');
+    onClickMenuButton();
+    onClickManageTags?.();
+  }, [setCurrentPageKey, cardId]);
   const { courseId } = useCourseAuthoringContext();
   const { currentSelection } = useCourseOutlineContext();
   const [isFormOpen, openForm, closeForm] = useToggle(false);
@@ -358,11 +350,6 @@ const CardHeader = ({
           </Dropdown>
         </div>
       </div>
-      <ContentTagsDrawerSheet
-        id={cardId}
-        onClose={/* istanbul ignore next */ () => closeLegacyTagsDrawer()}
-        showSheet={isLegacyManageTagsDrawerOpen}
-      />
     </>
   );
 };

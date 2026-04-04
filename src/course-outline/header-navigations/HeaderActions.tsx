@@ -22,18 +22,30 @@ export interface HeaderActionsProps {
     lmsLink: string;
   };
   courseActions: XBlockActions;
+  headerNavigationsActions: {
+    handleNewSection: () => void;
+    handleReIndex: () => void;
+    handleExpandAll: () => void;
+    lmsLink: string;
+  };
+  isReIndexShow: boolean;
+  isDisabledReindexButton: boolean;
   errors?: OutlinePageErrors;
 }
 
 const HeaderActions = ({
   actions,
   courseActions,
+  headerNavigationsActions,
+  isReIndexShow,
+  isDisabledReindexButton,
   errors,
 }: HeaderActionsProps) => {
   const intl = useIntl();
   const { lmsLink } = actions;
 
   const { clearSelection, open, setCurrentPageKey } = useOutlineSidebarContext();
+  const { handleReIndex } = headerNavigationsActions;
 
   const handleCourseInfoClick = () => {
     clearSelection();
@@ -59,6 +71,27 @@ const HeaderActions = ({
           {intl.formatMessage(messages.courseInfoButton)}
         </Button>
       </OverlayTrigger>
+      {isReIndexShow && (
+        <OverlayTrigger
+          placement="bottom"
+          overlay={!isDisabledReindexButton ?
+            (
+              <Tooltip id={intl.formatMessage(messages.reindexButtonTooltip)}>
+                {intl.formatMessage(messages.reindexButtonTooltip)}
+              </Tooltip>
+            ) :
+            <></>}
+        >
+          <Button
+            onClick={handleReIndex}
+            data-testid="course-reindex"
+            variant="outline-primary"
+            disabled={isDisabledReindexButton}
+          >
+            {intl.formatMessage(messages.reindexButton)}
+          </Button>
+        </OverlayTrigger>
+      )}
       {courseActions.childAddable && (
         <OverlayTrigger
           placement="bottom"

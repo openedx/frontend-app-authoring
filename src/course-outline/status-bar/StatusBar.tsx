@@ -1,6 +1,15 @@
 import moment, { Moment } from 'moment/moment';
-import { FormattedDate, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Badge, Icon, Stack } from '@openedx/paragon';
+import {
+  FormattedDate,
+  FormattedMessage,
+  useIntl,
+} from '@edx/frontend-platform/i18n';
+import {
+  Badge,
+  Button,
+  Icon,
+  Stack,
+} from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 import {
   Cached,
@@ -173,20 +182,44 @@ const Checklists = ({ courseId, checklist }: {
   );
 };
 
+const Highlights = ({ highlightsEnabledForMessaging, openEnableHighlightsModal }: {
+  highlightsEnabledForMessaging: boolean;
+  openEnableHighlightsModal: () => void;
+}) => {
+  const intl = useIntl();
+
+  if (highlightsEnabledForMessaging) {
+    return (
+      <span data-testid="highlights-enabled-span" className="small">
+        {intl.formatMessage(messages.highlightEmailsEnabled)}
+      </span>
+    );
+  } else {
+    return (
+      <Button data-testid="highlights-enable-button" size="sm" onClick={openEnableHighlightsModal}>
+        {intl.formatMessage(messages.highlightEmailsButton)}
+      </Button>
+    );
+  }
+};
+
 export interface StatusBarProps {
   courseId: string;
   isLoading: boolean;
   statusBarData: CourseOutlineStatusBar;
+  openEnableHighlightsModal: () => void;
 }
 
 export const StatusBar = ({
   statusBarData,
   isLoading,
   courseId,
+  openEnableHighlightsModal,
 }: StatusBarProps) => {
   const {
     endDate,
     courseReleaseDate,
+    highlightsEnabledForMessaging,
     checklist,
   } = statusBarData;
 
@@ -209,6 +242,10 @@ export const StatusBar = ({
       />
       <Checklists courseId={courseId} checklist={checklist} />
       <LibraryUpdates courseId={courseId} />
+      <Highlights
+        highlightsEnabledForMessaging={highlightsEnabledForMessaging}
+        openEnableHighlightsModal={openEnableHighlightsModal}
+      />
       <NotificationStatusIcon />
     </Stack>
   );

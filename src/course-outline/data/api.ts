@@ -455,26 +455,6 @@ export async function setCourseItemOrderList(itemId: string, children: Array<str
 }
 
 /**
- * Set video sharing setting
- * @param {string} courseId
- * @param {string} videoSharingOption
- * @returns {Promise<Object>}
- */
-export async function setVideoSharingOption(
-  courseId: string,
-  videoSharingOption: string,
-): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseBlockApiUrl(courseId), {
-      metadata: {
-        video_sharing_options: videoSharingOption,
-      },
-    });
-
-  return data;
-}
-
-/**
  * Paste block to clipboard
  * @param {string} parentLocator
  * @returns {Promise<Object>}

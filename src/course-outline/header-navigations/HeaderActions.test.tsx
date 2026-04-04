@@ -12,6 +12,9 @@ import messages from './messages';
 import HeaderActions, { HeaderActionsProps } from './HeaderActions';
 
 const headerNavigationsActions = {
+  handleNewSection: jest.fn(),
+  handleReIndex: jest.fn(),
+  handleExpandAll: jest.fn(),
   lmsLink: '',
 };
 
@@ -37,6 +40,9 @@ const renderComponent = (props?: Partial<HeaderActionsProps>) =>
     <HeaderActions
       actions={headerNavigationsActions}
       courseActions={courseActions}
+      headerNavigationsActions={headerNavigationsActions}
+      isReIndexShow
+      isDisabledReindexButton
       {...props}
     />,
     {
@@ -89,5 +95,36 @@ describe('<HeaderActions />', () => {
 
     // Check if the current page change is called
     expect(setCurrentPageKeyMock).toHaveBeenCalledWith('info');
+  });
+
+  it('render reindex button and call the correct handlers when clicking', async () => {
+    renderComponent({
+      isReIndexShow: true,
+      isDisabledReindexButton: false,
+    });
+
+    const reindexButton = await screen.findByRole('button', { name: messages.reindexButton.defaultMessage });
+    expect(reindexButton).toBeInTheDocument();
+
+    fireEvent.click(reindexButton);
+    expect(headerNavigationsActions.handleReIndex).toHaveBeenCalledTimes(1);
+  });
+
+  it('render reindex button when isDisabledReindexButton is true', async () => {
+    renderComponent({
+      isReIndexShow: true,
+      isDisabledReindexButton: true,
+    });
+
+    expect(await screen.findByRole('button', { name: messages.reindexButton.defaultMessage })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: messages.reindexButton.defaultMessage })).toBeDisabled();
+  });
+
+  it('hide reindex button', async () => {
+    renderComponent({
+      isReIndexShow: false,
+    });
+
+    expect(screen.queryByRole('button', { name: messages.reindexButton.defaultMessage })).not.toBeInTheDocument();
   });
 });

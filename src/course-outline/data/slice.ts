@@ -2,7 +2,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { RequestStatus } from '@src/data/constants';
-import { VIDEO_SHARING_OPTIONS } from '../constants';
 import { CourseOutlineState } from './types';
 
 const initialState = {
@@ -32,7 +31,6 @@ const initialState = {
       completedCourseBestPracticesChecks: 0,
     },
     videoSharingEnabled: false,
-    videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo,
   },
   sectionsList: [],
   isCustomRelativeDatesActive: false,

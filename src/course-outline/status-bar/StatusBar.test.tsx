@@ -1,4 +1,3 @@
-import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { initializeMocks, render, screen } from '@src/testUtils';
 import { StatusBar, StatusBarProps } from './StatusBar';
@@ -17,9 +16,8 @@ const statusBarData: CourseOutlineStatusBar = {
     totalCourseBestPracticesChecks: 4,
     completedCourseBestPracticesChecks: 1,
   },
-  highlightsEnabledForMessaging: true,
+  highlightsEnabledForMessaging: false,
   videoSharingEnabled: true,
-  videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
 };
 
 jest.mock('@src/course-libraries/data/apiHooks', () => ({
@@ -36,6 +34,7 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
     isLoading: false,
   }),
 }));
+const mockOpenEnableHighlightsModal = jest.fn();
 
 const renderComponent = (props?: Partial<StatusBarProps>) =>
   render(
@@ -43,6 +42,7 @@ const renderComponent = (props?: Partial<StatusBarProps>) =>
       courseId={courseId}
       isLoading={isLoading}
       statusBarData={statusBarData}
+      openEnableHighlightsModal={mockOpenEnableHighlightsModal}
       {...props}
     />,
   );
@@ -116,5 +116,25 @@ describe('<StatusBar />', () => {
     // wait for render
     expect(await screen.findByText('Feb 05, 2013 - Apr 09, 2013')).toBeInTheDocument();
     expect(screen.queryByText(`9/9 ${messages.checklistCompleted.defaultMessage}`)).toBeNull();
+  });
+
+  it('calls openEnableHighlightsModal when the button is clicked', async () => {
+    renderComponent();
+
+    const button = await screen.findByRole('button', { name: 'Enable highlights emails' });
+    expect(button).toBeInTheDocument();
+
+    button.click();
+    expect(mockOpenEnableHighlightsModal).toHaveBeenCalled();
+  });
+
+  it('shows a message when email highlights are enabled', async () => {
+    renderComponent({
+      statusBarData: {
+        ...statusBarData,
+        highlightsEnabledForMessaging: true,
+      },
+    });
+    expect(await screen.findByText(messages.highlightEmailsEnabled.defaultMessage)).toBeInTheDocument();
   });
 });

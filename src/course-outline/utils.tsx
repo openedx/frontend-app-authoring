@@ -1,5 +1,4 @@
 import type { IntlShape, MessageDescriptor } from 'react-intl';
-import { getConfig } from '@edx/frontend-platform';
 import {
   CheckCircle as CheckCircleIcon,
   Lock as LockIcon,
@@ -8,7 +7,7 @@ import {
 import DraftIcon from '@src/generic/DraftIcon';
 import { VisibilityTypes } from '@src/data/constants';
 import { ValueOf } from '@src/types';
-import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
+import { ITEM_BADGE_STATUS } from './constants';
 
 export type ItemBadgeStatusValue = ValueOf<typeof ITEM_BADGE_STATUS>;
 /**
@@ -183,41 +182,4 @@ const scrollToElement = (
   }
 };
 
-/**
- * Get video sharing dropdown translated options.
- * @param {string} id - option id
- * @returns {string} - text to display
- */
-const getVideoSharingOptionText = (
-  id: ValueOf<typeof VIDEO_SHARING_OPTIONS>,
-  messages: Record<string, MessageDescriptor>,
-  intl: IntlShape,
-): string => {
-  switch (id) {
-    case VIDEO_SHARING_OPTIONS.perVideo:
-      return intl.formatMessage(messages.videoSharingPerVideoText);
-    case VIDEO_SHARING_OPTIONS.allOn:
-      return intl.formatMessage(messages.videoSharingAllOnText);
-    case VIDEO_SHARING_OPTIONS.allOff:
-      return intl.formatMessage(messages.videoSharingAllOffText);
-    default:
-      return '';
-  }
-};
-
-/**
- * Returns `true` if the new design for the course outline is enabled
- */
-const isOutlineNewDesignEnabled = () => (
-  getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true'
-);
-
-export {
-  getItemStatus,
-  getItemStatusBadgeContent,
-  getItemStatusBorder,
-  getHighlightsFormValues,
-  getVideoSharingOptionText,
-  scrollToElement,
-  isOutlineNewDesignEnabled,
-};
+export { getItemStatus, getItemStatusBadgeContent, getItemStatusBorder, getHighlightsFormValues, scrollToElement };

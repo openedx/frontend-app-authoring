@@ -52,7 +52,6 @@ export interface CourseOutlineStatusBar {
   isSelfPaced: boolean;
   checklist: ChecklistType;
   videoSharingEnabled: boolean;
-  videoSharingOptions: string;
 }
 
 export interface CourseOutlineState {

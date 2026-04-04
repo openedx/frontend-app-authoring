@@ -39,7 +39,6 @@ import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseReindexQuery,
-  setVideoSharingOptionQuery,
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
@@ -224,10 +223,6 @@ const useCourseOutline = ({ courseId }) => {
     handleConfigureModalClose();
   };
 
-  const handleVideoSharingOptionChange = (value) => {
-    dispatch(setVideoSharingOptionQuery(courseId, value));
-  };
-
   const handleDismissNotification = () => {
     dispatch(dismissNotificationQuery(`${getConfig().STUDIO_BASE_URL}${notificationDismissUrl}`));
   };
@@ -282,7 +277,6 @@ const useCourseOutline = ({ courseId }) => {
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
-    handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,
     discussionsSettings,
