@@ -56,6 +56,7 @@ const messages = defineMessages({
     defaultMessage: 'Manage tags',
     description: 'Opens the drawer to edit content tags',
   },
+  /* FIXME: do we moved the video sharing option?
   videoSharingTitle: {
     id: 'course-authoring.course-outline.status-bar.video-sharing.title',
     defaultMessage: 'Video Sharing',
@@ -76,6 +77,7 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.status-bar.video-sharing.allOn.text',
     defaultMessage: 'All Videos',
   },
+  */
   unpublishedBadgeText: {
     id: 'course-authoring.course-outline.status-bar.unpublished.badge.text',
     defaultMessage: 'Unpublished Changes',

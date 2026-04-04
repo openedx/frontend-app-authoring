@@ -4,8 +4,6 @@ import {
   IconButton,
   Row,
   Stack,
-  StandardModal,
-  useToggle,
 } from '@openedx/paragon';
 import { Add as IconAdd, Close, Newsstand } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -18,10 +16,6 @@ import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContex
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { LibraryAndComponentPicker, type SelectedComponent } from '@src/library-authoring';
-import { ContentType } from '@src/library-authoring/routes';
-import { isOutlineNewDesignEnabled } from '@src/course-outline/utils';
 import messages from './messages';
 
 /**
@@ -76,7 +70,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string; }) => {
   );
 };
 
-interface BaseProps {
+interface ChildButtonsProps {
   handleNewButtonClick?: () => void;
   onClickCard?: (e: React.MouseEvent) => void;
   childType: ContainerType;
@@ -87,13 +81,8 @@ interface BaseProps {
   grandParentLocator?: string;
 }
 
-interface NewChildButtonsProps extends BaseProps {
-  handleUseFromLibraryClick?: () => void;
-}
-
-const NewOutlineAddChildButtons = ({
+const OutlineAddChildButtons = ({
   handleNewButtonClick,
-  handleUseFromLibraryClick,
   onClickCard,
   childType,
   btnVariant = 'outline-primary',
@@ -101,7 +90,7 @@ const NewOutlineAddChildButtons = ({
   btnSize,
   parentLocator,
   grandParentLocator,
-}: NewChildButtonsProps) => {
+}: ChildButtonsProps) => {
   // WARNING: Do not use "useStudioHome" to get "librariesV2Enabled" flag below,
   // as it has a useEffect that fetches course waffle flags whenever
   // location.search is updated. Course search updates location.search when
@@ -207,7 +196,7 @@ const NewOutlineAddChildButtons = ({
             iconBefore={Newsstand}
             block
             size={btnSize}
-            onClick={handleUseFromLibraryClick || onUseLibraryContent}
+            onClick={onUseLibraryContent}
           >
             {intl.formatMessage(messageMap.importButton)}
           </Button>
@@ -215,185 +204,6 @@ const NewOutlineAddChildButtons = ({
       </Stack>
     </>
   );
-};
-
-/**
- * Legacy component for adding child blocks in Studio.
- * Uses the old flow of opening a modal to allow user to select content from library.
- */
-const LegacyOutlineAddChildButtons = ({
-  handleNewButtonClick,
-  childType,
-  btnVariant = 'outline-primary',
-  btnClasses = 'mt-4 border-gray-500 rounded-0',
-  btnSize,
-  parentLocator,
-  grandParentLocator,
-  onClickCard,
-}: BaseProps) => {
-  // WARNING: Do not use "useStudioHome" to get "librariesV2Enabled" flag below,
-  // as it has a useEffect that fetches course waffle flags whenever
-  // location.search is updated. Course search updates location.search when
-  // user types, which will then trigger the useEffect and reload the page.
-  // See https://github.com/openedx/frontend-app-authoring/pull/1938.
-  const { librariesV2Enabled } = useSelector(getStudioHomeData);
-  const intl = useIntl();
-  const { courseUsageKey } = useCourseAuthoringContext();
-  const {
-    handleAddBlock,
-    handleAddAndOpenUnit,
-  } = useCourseOutlineContext();
-  const [
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
-  ] = useToggle(false);
-  let messageMap = {
-    newButton: messages.newUnitButton,
-    importButton: messages.useUnitFromLibraryButton,
-    modalTitle: messages.unitPickerModalTitle,
-  };
-  let onNewCreateContent: () => Promise<void>;
-  let onUseLibraryContent: (selected: SelectedComponent) => Promise<void>;
-  let visibleTabs: ContentType[] = [];
-  let query: string[] = [];
-
-  switch (childType) {
-    case ContainerType.Section:
-      messageMap = {
-        newButton: messages.newSectionButton,
-        importButton: messages.useSectionFromLibraryButton,
-        modalTitle: messages.sectionPickerModalTitle,
-      };
-      onNewCreateContent = () =>
-        handleAddBlock.mutateAsync({
-          type: ContainerType.Chapter,
-          parentLocator: courseUsageKey,
-          displayName: COURSE_BLOCK_NAMES.chapter.name,
-        });
-      onUseLibraryContent = (selected: SelectedComponent) =>
-        handleAddBlock.mutateAsync({
-          type: COMPONENT_TYPES.libraryV2,
-          category: ContainerType.Chapter,
-          parentLocator: courseUsageKey,
-          libraryContentKey: selected.usageKey,
-        });
-      visibleTabs = [ContentType.sections];
-      query = ['block_type = "section"'];
-      break;
-    case ContainerType.Subsection:
-      messageMap = {
-        newButton: messages.newSubsectionButton,
-        importButton: messages.useSubsectionFromLibraryButton,
-        modalTitle: messages.subsectionPickerModalTitle,
-      };
-      onNewCreateContent = () =>
-        handleAddBlock.mutateAsync({
-          type: ContainerType.Sequential,
-          parentLocator,
-          displayName: COURSE_BLOCK_NAMES.sequential.name,
-          sectionId: parentLocator,
-        });
-      onUseLibraryContent = (selected: SelectedComponent) =>
-        handleAddBlock.mutateAsync({
-          type: COMPONENT_TYPES.libraryV2,
-          category: ContainerType.Sequential,
-          parentLocator,
-          libraryContentKey: selected.usageKey,
-          sectionId: parentLocator,
-        });
-      visibleTabs = [ContentType.subsections];
-      query = ['block_type = "subsection"'];
-      break;
-    case ContainerType.Unit:
-      messageMap = {
-        newButton: messages.newUnitButton,
-        importButton: messages.useUnitFromLibraryButton,
-        modalTitle: messages.unitPickerModalTitle,
-      };
-      onNewCreateContent = () =>
-        handleAddAndOpenUnit.mutateAsync({
-          type: ContainerType.Vertical,
-          parentLocator,
-          displayName: COURSE_BLOCK_NAMES.vertical.name,
-          sectionId: grandParentLocator,
-        });
-      onUseLibraryContent = (selected: SelectedComponent) =>
-        handleAddAndOpenUnit.mutateAsync({
-          type: COMPONENT_TYPES.libraryV2,
-          category: ContainerType.Vertical,
-          parentLocator,
-          libraryContentKey: selected.usageKey,
-          sectionId: grandParentLocator,
-        });
-      visibleTabs = [ContentType.units];
-      query = ['block_type = "unit"'];
-      break;
-    default:
-      // istanbul ignore next: unreachable
-      throw new Error(`Unrecognized block type ${childType}`);
-  }
-
-  const handleOnComponentSelected = (selected: SelectedComponent) => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    onUseLibraryContent(selected);
-    closeAddLibrarySectionModal();
-  };
-
-  return (
-    <>
-      <Stack direction="horizontal" gap={3} onClick={onClickCard}>
-        <Button
-          className={btnClasses}
-          variant={btnVariant}
-          iconBefore={IconAdd}
-          size={btnSize}
-          block
-          onClick={handleNewButtonClick || onNewCreateContent}
-        >
-          {intl.formatMessage(messageMap.newButton)}
-        </Button>
-        {librariesV2Enabled && (
-          <Button
-            className={btnClasses}
-            variant={btnVariant}
-            iconBefore={Newsstand}
-            block
-            size={btnSize}
-            onClick={openAddLibrarySectionModal}
-          >
-            {intl.formatMessage(messageMap.importButton)}
-          </Button>
-        )}
-      </Stack>
-      <StandardModal
-        title={intl.formatMessage(messageMap.modalTitle)}
-        isOpen={isAddLibrarySectionModalOpen}
-        onClose={closeAddLibrarySectionModal}
-        isOverflowVisible={false}
-        size="xl"
-      >
-        <LibraryAndComponentPicker
-          showOnlyPublished
-          extraFilter={query}
-          componentPickerMode="single"
-          onComponentSelected={handleOnComponentSelected}
-          visibleTabs={visibleTabs}
-        />
-      </StandardModal>
-    </>
-  );
-};
-
-/**
- * Wrapper component that displays the correct component based on the configuration.
- */
-const OutlineAddChildButtons = (props: NewChildButtonsProps) => {
-  const showNewActionsBar = isOutlineNewDesignEnabled();
-  if (showNewActionsBar) {
-    return <NewOutlineAddChildButtons {...props} />;
-  }
-  return <LegacyOutlineAddChildButtons {...props} />;
 };
 
 export default OutlineAddChildButtons;

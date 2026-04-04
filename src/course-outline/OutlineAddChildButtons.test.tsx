@@ -1,5 +1,4 @@
 import userEvent from '@testing-library/user-event';
-import { getConfig, setConfig } from '@edx/frontend-platform';
 import { ContainerType } from '@src/generic/key-utils';
 import {
   initializeMocks,
@@ -57,24 +56,15 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   describe(`<OutlineAddChildButtons> for ${containerType}`, () => {
     beforeEach(() => {
       initializeMocks();
-      setConfig({
-        ...getConfig(),
-        ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
-      });
     });
 
     it('renders and behaves correctly', async () => {
       const newClickHandler = jest.fn();
-      const useFromLibClickHandler = jest.fn();
-      render(
-        <OutlineAddChildButtons
-          handleNewButtonClick={newClickHandler}
-          handleUseFromLibraryClick={useFromLibClickHandler}
-          childType={containerType}
-          parentLocator=""
-        />,
-        { extraWrapper: OutlineSidebarProvider },
-      );
+      render(<OutlineAddChildButtons
+        handleNewButtonClick={newClickHandler}
+        childType={containerType}
+        parentLocator=""
+      />, { extraWrapper: OutlineSidebarProvider });
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
       expect(newBtn).toBeInTheDocument();
@@ -83,7 +73,11 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
       await userEvent.click(newBtn);
       await waitFor(() => expect(newClickHandler).toHaveBeenCalled());
       await userEvent.click(useBtn);
-      await waitFor(() => expect(useFromLibClickHandler).toHaveBeenCalled());
+
+      expect(startCurrentFlow).toHaveBeenCalledWith({
+        flowType: containerType,
+        parentLocator: '',
+      });
     });
 
     it('calls appropriate new handlers', async () => {

@@ -139,7 +139,7 @@ const App = () => {
 };
 
 subscribe(APP_READY, () => {
-  const root = createRoot(document.getElementById('root'));
+  const root = createRoot(document.getElementById('root')!);
 
   root.render(
     <StrictMode>
@@ -149,7 +149,7 @@ subscribe(APP_READY, () => {
 });
 
 subscribe(APP_INIT_ERROR, (error) => {
-  const root = createRoot(document.getElementById('root'));
+  const root = createRoot(document.getElementById('root')!);
 
   root.render(
     <StrictMode>
@@ -184,8 +184,6 @@ initialize({
           process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN || 'false',
         ENABLE_CERTIFICATE_PAGE: process.env.ENABLE_CERTIFICATE_PAGE || 'false',
         ENABLE_COURSE_IMPORT_IN_LIBRARY: process.env.ENABLE_COURSE_IMPORT_IN_LIBRARY || 'false',
-        ENABLE_UNIT_PAGE_NEW_DESIGN: process.env.ENABLE_UNIT_PAGE_NEW_DESIGN || 'false',
-        ENABLE_COURSE_OUTLINE_NEW_DESIGN: process.env.ENABLE_COURSE_OUTLINE_NEW_DESIGN || 'false',
         ENABLE_TAGGING_TAXONOMY_PAGES: process.env.ENABLE_TAGGING_TAXONOMY_PAGES || 'false',
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
         ENABLE_GRADING_METHOD_IN_PROBLEMS: process.env.ENABLE_GRADING_METHOD_IN_PROBLEMS === 'true',
