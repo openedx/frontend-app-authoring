@@ -42,6 +42,7 @@ interface TableViewProps {
   isCreatingTopRow: boolean;
   draftError: string;
   createRowMutation: CreateRowMutationState;
+  updateRowMutation: CreateRowMutationState;
   toast: ToastState;
   setToast: React.Dispatch<React.SetStateAction<ToastState>>;
   setIsCreatingTopRow: (isCreating: boolean) => void;
@@ -51,6 +52,9 @@ interface TableViewProps {
   setCreatingParentId: (id: RowId | null) => void;
   setDraftError: (error: string) => void;
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
+  handleUpdateRow: (value: string, originalValue: string) => void;
+  editingRowId: RowId | null;
+  setEditingRowId: (id: RowId | null) => void;
 }
 
 const TableView = ({
@@ -64,6 +68,7 @@ const TableView = ({
   isCreatingTopRow,
   draftError,
   createRowMutation,
+  updateRowMutation,
   handleCreateRow,
   toast,
   setToast,
@@ -73,6 +78,9 @@ const TableView = ({
   setCreatingParentId,
   setDraftError,
   validate,
+  handleUpdateRow,
+  editingRowId,
+  setEditingRowId,
 }: TableViewProps) => {
   const intl = useIntl();
 
@@ -93,11 +101,12 @@ const TableView = ({
   const currentPageIndex = table.getState().pagination.pageIndex + 1;
 
   const { isError } = createRowMutation;
+  const { isError: isUpdateError } = updateRowMutation;
   const [showError, setShowError] = React.useState(true);
 
   return (
     <>
-      {isError && showError && (
+      {(isError || isUpdateError) && showError && (
         <Alert variant="danger" icon={Info} dismissible onClose={() => setShowError(false)}>
           <Alert.Heading>
             {intl.formatMessage(messages.errorSavingTitle)}
@@ -157,9 +166,13 @@ const TableView = ({
               setCreatingParentId={setCreatingParentId}
               setDraftError={setDraftError}
               createRowMutation={createRowMutation}
+              updateRowMutation={updateRowMutation}
               table={table}
               isLoading={isLoading}
               validate={validate}
+              handleUpdateRow={handleUpdateRow}
+              editingRowId={editingRowId}
+              setEditingRowId={setEditingRowId}
             />
           </table>
         </Card.Section>

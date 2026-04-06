@@ -29,6 +29,7 @@ const baseProps = () => ({
   isCreatingTopRow: false,
   draftError: '',
   createRowMutation: { isPending: false, isError: false },
+  updateRowMutation: { isPending: false, isError: false },
   toast: { show: false, message: '', variant: 'success' },
   setToast: jest.fn(),
   setIsCreatingTopRow: jest.fn(),
@@ -38,6 +39,9 @@ const baseProps = () => ({
   setCreatingParentId: jest.fn(),
   setDraftError: jest.fn(),
   validate: jest.fn(() => true),
+  handleUpdateRow: jest.fn(),
+  editingRowId: null,
+  setEditingRowId: jest.fn(),
 });
 
 describe('TableView', () => {

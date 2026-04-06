@@ -4,7 +4,7 @@ import React, {
   useEffect,
 } from 'react';
 import type { PaginationState } from '@tanstack/react-table';
-import { useTagListData, useCreateTag } from '../data/apiHooks';
+import { useTagListData, useCreateTag, useUpdateTag } from '../data/apiHooks';
 import { TagTree } from './tagTree';
 import { TableView } from '../tree-table';
 import type {
@@ -78,6 +78,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     enabled: tableMode === TABLE_MODES.VIEW,
   });
   const createTagMutation = useCreateTag(taxonomyId);
+  const updateTagMutation = useUpdateTag(taxonomyId);
   const pageCount = tagList?.numPages ?? -1;
 
   // TODO: to make this more readable, introduce a React context for the TagListTable instead of passing props.
@@ -88,6 +89,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     setTagTree,
     setDraftError,
     createTagMutation,
+    updateTagMutation,
     enterPreviewMode,
     setToast,
     setIsCreatingTopTag,
@@ -105,19 +107,19 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       onStartDraft: enterDraftMode,
       setActiveActionMenuRowId,
       hasOpenDraft,
+      canAddTag: tagList?.canAddTag !== false,
       draftError,
       setDraftError,
       isSavingDraft: createTagMutation.isPending,
       maxDepth,
-      creatingParentId,
     }),
     [
       isCreatingTopTag,
-      editingRowId,
       tableMode,
       activeActionMenuRowId,
       hasOpenDraft,
       creatingParentId,
+      tagList?.canAddTag,
       draftError,
       createTagMutation.isPending,
       maxDepth,
@@ -155,7 +157,9 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
         isCreatingTopRow: isCreatingTopTag,
         draftError,
         createRowMutation: createTagMutation,
+        updateRowMutation: updateTagMutation,
         handleCreateRow: handleCreateTag,
+        handleUpdateRow: handleUpdateTag,
         toast,
         setToast,
         setIsCreatingTopRow: setIsCreatingTopTag,
@@ -164,6 +168,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
         setCreatingParentId,
         setDraftError,
         validate,
+        editingRowId,
+        setEditingRowId,
       }}
     />
   );
