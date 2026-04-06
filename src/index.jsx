@@ -14,7 +14,6 @@ import {
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
-import { ProcessingNotificationContextProvider } from '@src/generic/processing-notification/context';
 import messages from './i18n';
 
 import {
@@ -122,10 +121,8 @@ const App = () => {
     <AppProvider store={initializeStore()} wrapWithRouter={false}>
       <ToastProvider>
         <QueryClientProvider client={queryClient}>
-          <ProcessingNotificationContextProvider>
-            <Head />
-            <RouterProvider router={router} />
-          </ProcessingNotificationContextProvider>
+          <Head />
+          <RouterProvider router={router} />
         </QueryClientProvider>
       </ToastProvider>
     </AppProvider>

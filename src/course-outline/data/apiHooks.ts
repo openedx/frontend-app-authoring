@@ -16,7 +16,7 @@ import { useToastContext } from '@src/generic/toast-context';
 import { ParentIds } from '@src/generic/types';
 import {
   QueryClient,
-  skipToken, useQuery, useQueryClient,
+  skipToken, useMutation, useQuery, useQueryClient,
 } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import {
@@ -253,8 +253,8 @@ export const useConfigureSubsection = () => {
 
 export const useConfigureUnit = () => {
   const queryClient = useQueryClient();
-  const { showToast } = useToastContext();
-  return useMutationWithProcessingNotification({
+  const { showToast, closeToast } = useToastContext();
+  return useMutation({
     mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
     onMutate: (variables) => {
       const msg = getNotificationMessage(variables.type, variables.isVisibleToStaffOnly, true);
@@ -264,6 +264,7 @@ export const useConfigureUnit = () => {
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.unitId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      closeToast();
     },
   });
 };
