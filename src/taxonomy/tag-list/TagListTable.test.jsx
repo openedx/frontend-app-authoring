@@ -816,25 +816,6 @@ describe('<TagListTable />', () => {
       beforeEach(async () => {
         axiosMock.resetHistory();
       });
-      it('should disable tag edit buttons if the taxonomy includes `can_add_tag: false`', async () => {
-        axiosMock.onGet(rootTagsListUrl).reply(200, {
-          ...mockTagsResponse,
-          can_add_tag: false,
-        });
-        cleanup();
-        ({ axiosMock } = initializeMocks({ user: adminUser }));
-        axiosMock.onGet(rootTagsListUrl).reply(200, {
-          ...mockTagsResponse,
-          can_add_tag: false,
-        });
-        axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
-        renderTagListTable();
-        await waitForRootTag();
-
-        openActionsMenuForTag(tagName);
-        expect(screen.getByRole('button', { name: /Rename/i })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Rename/i })).toHaveAttribute('aria-disabled', 'true');
-      });
       it('should disable tag edit buttons if tag includes `can_edit: false`', async () => {
         axiosMock.reset();
         axiosMock.onGet(rootTagsListUrl).reply(200, mockTagResponseDisallowingEdits);

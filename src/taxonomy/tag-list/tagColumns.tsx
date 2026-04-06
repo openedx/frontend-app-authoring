@@ -212,13 +212,8 @@ function getColumns({
           return <div className="d-flex gap-2" />;
         }
 
-        // Editing is forbidden when it is prevented on the tag item.
-        // In the case of the taxonomy as a whole, there is only a `canAddTag` property,
-        // and we interpret that to mean the taxonomy as a whole should not change.
-        const editingForbidden = !canAddTag || row.original.canChangeTag === false;
-
         const disableAddSubtag = hasOpenDraft || !canAddTag;
-        const disableEditTag = hasOpenDraft || editingForbidden;
+        const disableEditTag = hasOpenDraft || row.original.canChangeTag === false;
 
         const startSubtagDraft = () => {
           onStartDraft();

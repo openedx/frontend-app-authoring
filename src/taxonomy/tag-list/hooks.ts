@@ -183,6 +183,7 @@ const useEditActions = ({
       setIsCreatingTopTag(false);
       setCreatingParentId(null);
     } catch (error) {
+      console.log("Error! Error!")
       const message = intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: (error as Error)?.message });
       setDraftError((error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: '' }));
       setToast({ show: true, message });
