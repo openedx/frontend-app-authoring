@@ -1,8 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
-import { DefaultError } from '@tanstack/query-core';
+import { useMutation, DefaultError } from '@tanstack/react-query';
 import { useToastContext } from '@src/generic/toast-context';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
-
 
 /**
  * Wraps useMutation to add a processing notification when the mutation is initiated and removes it
