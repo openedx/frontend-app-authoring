@@ -33,6 +33,7 @@ import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeade
 import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from './CourseOutlineContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
@@ -70,10 +71,12 @@ const CourseOutline = () => {
   const {
     courseId,
     courseUsageKey,
-    handleAddBlock,
-    handleAddAndOpenUnit,
     isUnlinkModalOpen,
     closeUnlinkModal,
+  } = useCourseAuthoringContext();
+  const {
+    handleAddBlock,
+    handleAddAndOpenUnit,
     currentSelection,
     sections,
     restoreSectionList,
@@ -81,7 +84,7 @@ const CourseOutline = () => {
     updateSectionOrderByIndex,
     updateSubsectionOrderByIndex,
     updateUnitOrderByIndex,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
 
   const {
     courseName,

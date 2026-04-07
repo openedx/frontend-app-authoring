@@ -8,6 +8,7 @@ import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/sel
 import { RequestStatus } from '@src/data/constants';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from './CourseOutlineContext';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
@@ -45,12 +46,11 @@ import {
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
+  const { currentUnlinkModalData, closeUnlinkModal } = useCourseAuthoringContext();
   const {
     handleAddBlock,
     setCurrentSelection,
     currentSelection,
-    currentUnlinkModalData,
-    closeUnlinkModal,
     isDuplicatingItem,
     isDeleteModalOpen,
     openDeleteModal,
@@ -62,7 +62,7 @@ const useCourseOutline = ({ courseId }) => {
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
   const handleDeleteItemSubmit = getHandleDeleteItemSubmit(() => {

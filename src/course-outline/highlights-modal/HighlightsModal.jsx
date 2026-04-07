@@ -9,7 +9,7 @@ import {
 } from '@openedx/paragon';
 import { Formik } from 'formik';
 
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useHelpUrls } from '../../help-urls/hooks';
 import FormikControl from '../../generic/FormikControl';
@@ -23,7 +23,7 @@ const HighlightsModal = ({
   onSubmit,
 }) => {
   const intl = useIntl();
-  const { currentSelection } = useCourseAuthoringContext();
+  const { currentSelection } = useCourseOutlineContext();
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
   const { highlights = [], displayName } = currentItemData || {};
   const initialFormValues = getHighlightsFormValues(highlights);

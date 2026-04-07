@@ -16,6 +16,7 @@ import {
   OutlineSidebarProvider,
   OutlineSidebarPagesProvider,
 } from './course-outline';
+import { CourseOutlineProvider } from './course-outline/CourseOutlineContext';
 import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
@@ -66,11 +67,13 @@ const CourseAuthoringRoutes = () => {
             path="/"
             element={(
               <PageWrap>
-                <OutlineSidebarPagesProvider>
-                  <OutlineSidebarProvider>
-                    <CourseOutline />
-                  </OutlineSidebarProvider>
-                </OutlineSidebarPagesProvider>
+                <CourseOutlineProvider>
+                  <OutlineSidebarPagesProvider>
+                    <OutlineSidebarProvider>
+                      <CourseOutline />
+                    </OutlineSidebarProvider>
+                  </OutlineSidebarPagesProvider>
+                </CourseOutlineProvider>
               </PageWrap>
             )}
           />

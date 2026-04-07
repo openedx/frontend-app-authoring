@@ -28,7 +28,13 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
     getUnitUrl: (id: string) => `/some/${id}`,
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     setCurrentSelection,
+    openPublishModal: jest.fn(),
   }),
 }));
 

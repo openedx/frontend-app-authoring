@@ -17,6 +17,11 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId: 5,
     courseUsageKey: 'course-usage-key',
     courseDetails: { name: 'Test course' },
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     currentSelection: { currentId: 1 },
   }),
 }));

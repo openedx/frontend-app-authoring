@@ -10,6 +10,7 @@ import { SidebarTitle } from '@src/generic/sidebar';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getLibraryId } from '@src/generic/key-utils';
 import { InfoSection } from './InfoSection';
@@ -24,14 +25,14 @@ export const SectionSidebar = () => {
   const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
   const { sectionId = '', index } = selectedContainerState ?? {};
   const { data: sectionData, isLoading } = useCourseItemData(sectionId);
+  const { openUnlinkModal } = useCourseAuthoringContext();
   const {
     openPublishModal,
     handleDuplicateSectionSubmit,
     sections,
     updateSectionOrderByIndex,
     openDeleteModal,
-    openUnlinkModal,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
 
   const handlePublish = () => {
     if (sectionData?.hasChanges) {

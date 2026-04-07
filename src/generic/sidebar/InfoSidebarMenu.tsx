@@ -32,29 +32,30 @@ export interface InfoSidebarMenuProps {
   onClickMove?: () => void;
 }
 
-export const InfoSidebarMenu = ({
-  itemId,
-  index,
-  actions,
-  onClickDuplicate,
-  onClickMoveUp,
-  onClickMoveDown,
-  canMoveItem,
-  onClickUnlink,
-  onClickDelete,
-  onClickViewLibrary,
-  onClickCopy,
-  onClickCopyLocation,
-  onClickMove,
-}: InfoSidebarMenuProps) => {
+export const InfoSidebarMenu = (props: InfoSidebarMenuProps) => {
   const intl = useIntl();
+  const {
+    itemId,
+    index,
+    actions,
+    onClickDuplicate,
+    onClickMoveUp,
+    onClickMoveDown,
+    canMoveItem,
+    onClickUnlink,
+    onClickDelete,
+    onClickViewLibrary,
+    onClickCopy,
+    onClickCopyLocation,
+    onClickMove,
+  } = props;
   const { data: item } = useCourseItemData(itemId);
 
   if (item === undefined) {
     return null;
   }
 
-  const { upstreamInfo } = item;
+  const { upstreamInfo } = item;  
 
   return (
     <Dropdown>

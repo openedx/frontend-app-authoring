@@ -5,6 +5,7 @@ import {
   initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 
 import { OutlineSidebarProvider } from './OutlineSidebarContext';
 import { OutlineSidebarPagesProvider } from './OutlineSidebarPagesContext';
@@ -23,11 +24,13 @@ const courseId = '123';
 
 const extraWrapper = ({ children }) => (
   <CourseAuthoringProvider courseId={courseId}>
-    <OutlineSidebarPagesProvider>
-      <OutlineSidebarProvider>
-        {children}
-      </OutlineSidebarProvider>
-    </OutlineSidebarPagesProvider>
+    <CourseOutlineProvider>
+      <OutlineSidebarPagesProvider>
+        <OutlineSidebarProvider>
+          {children}
+        </OutlineSidebarProvider>
+      </OutlineSidebarPagesProvider>
+    </CourseOutlineProvider>
   </CourseAuthoringProvider>
 );
 

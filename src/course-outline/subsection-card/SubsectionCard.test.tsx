@@ -30,9 +30,15 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     handleAddAndOpenUnit: handleOnAddUnitFromLibrary,
     handleAddBlock: {},
     setCurrentSelection,
+    openPublishModal: jest.fn(),
   }),
 }));
 

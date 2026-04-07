@@ -11,6 +11,7 @@ import { ContentTagsSnippet } from '@src/content-tags-drawer';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { messageTypes } from '@src/course-unit/constants';
+import { dispatchShowMoveXBlockModal } from '@src/course-unit/iframeEvents';
 import { LibraryReferenceCard } from '@src/generic/library-reference-card/LibraryReferenceCard';
 import { getCourseUnitData, getMovedXBlockParams } from '@src/course-unit/data/selectors';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -131,23 +132,18 @@ export const ComponentInfoSidebar = () => {
     if (!selectedComponentId || !unitData?.id) {
       return;
     }
-    window.dispatchEvent(new MessageEvent('message', {
-      data: {
-        type: messageTypes.showMoveXBlockModal,
-        payload: {
-          sourceXBlockInfo: {
-            id: selectedComponentId,
-            displayName: componentItemData?.displayName ?? '',
-            category: componentItemData?.category ?? '',
-          },
-          sourceParentXBlockInfo: {
-            id: unitData.id,
-            displayName: unitData.displayName ?? '',
-            category: 'vertical',
-          },
-        },
+    dispatchShowMoveXBlockModal(
+      {
+        id: selectedComponentId,
+        displayName: componentItemData?.displayName ?? '',
+        category: componentItemData?.category ?? '',
       },
-    }));
+      {
+        id: unitData.id,
+        displayName: unitData.displayName ?? '',
+        category: 'vertical',
+      },
+    );
   };
 
   return (

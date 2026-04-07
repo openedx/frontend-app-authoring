@@ -16,10 +16,12 @@ import { SidebarTitle } from '@src/generic/sidebar';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import XBlockContainerIframe from '@src/course-unit/xblock-container-iframe';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { getLibraryId } from '@src/generic/key-utils';
+import { extractCourseUnitId } from '@src/course-unit/legacy-sidebar/utils';
 import { possibleUnitMoves } from '@src/course-outline/drag-helper/utils';
 import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
@@ -41,16 +43,14 @@ export const UnitSidebar = () => {
   const { data: unitData, isLoading } = useCourseItemData(unitId);
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const { data: subsection } = useCourseItemData<XBlock>(selectedContainerState?.subsectionId);
+  const { getUnitUrl, courseId, openUnlinkModal } = useCourseAuthoringContext();
   const {
     openPublishModal,
-    getUnitUrl,
-    courseId,
     handleDuplicateUnitSubmit,
     sections,
     updateUnitOrderByIndex,
     openDeleteModal,
-    openUnlinkModal,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
   const subsectionIndex = section?.childInfo?.children?.findIndex(
     (s) => s.id === selectedContainerState?.subsectionId,
@@ -129,9 +129,7 @@ export const UnitSidebar = () => {
   };
 
   const handleCopyLocation = () => {
-    // Extract the location ID: the part after "block@" at the end of the usage key
-    // e.g. "block-v1:org+course+run+type@vertical+block@abc123" → "abc123"
-    const locationId = unitId.match(/block@(.+)$/)?.[1];
+    const locationId = extractCourseUnitId(unitId);
     if (!locationId) {
       /* istanbul ignore next */
       return;

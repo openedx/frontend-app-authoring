@@ -1,33 +1,37 @@
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
-import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 import { useContext, useEffect, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Tag } from '@openedx/paragon/icons';
-import { ContentTagsSnippet } from '@src/content-tags-drawer';
-import configureMessages from '@src/generic/configure-modal/messages';
 import {
   Button, ButtonGroup, Tab, Tabs,
 } from '@openedx/paragon';
 import { useToggle } from '@openedx/paragon';
-import { useDispatch, useSelector } from 'react-redux';
+
+import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
+import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
+import { ContentTagsSnippet } from '@src/content-tags-drawer';
+import configureMessages from '@src/generic/configure-modal/messages';
+
 import { useIframe } from '@src/generic/hooks/context/hooks';
-import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
-import { Form, Formik } from 'formik';
-import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
-import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
-import { editCourseUnitVisibilityAndData, fetchCourseSectionVerticalData } from '@src/course-unit/data/thunk';
-import PublishControls from './PublishControls';
-import { useUnitSidebarContext } from '../UnitSidebarContext';
-import messages from './messages';
 import { getLibraryId } from '@src/generic/key-utils';
 import { useClipboard } from '@src/generic/clipboard';
 import { ToastContext } from '@src/generic/toast-context';
 import { UnlinkModal, useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useQueryClient } from '@tanstack/react-query';
-import { courseOutlineQueryKeys, useCourseItemData, useDeleteCourseItem } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData, useDeleteCourseItem } from '@src/course-outline/data/apiHooks';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
+import { Form, Formik } from 'formik';
+import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
+import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
+import { editCourseUnitVisibilityAndData, fetchCourseSectionVerticalData } from '@src/course-unit/data/thunk';
+
+import { extractCourseUnitId } from '@src/course-unit/legacy-sidebar/utils';
+import PublishControls from './PublishControls';
+import { useUnitSidebarContext } from '../UnitSidebarContext';
+import messages from './messages';
 
 /**
  * Component to show unit details: Publish status, Component counts and Content Tags.
@@ -217,7 +221,6 @@ export const UnitInfoSidebar = () => {
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
   const { mutateAsync: deleteCourseItem } = useDeleteCourseItem();
-  const queryClient = useQueryClient();
 
   const subsectionId = currentItemData?.ancestorInfo?.ancestors?.[0]?.id;
   const sectionId = currentItemData?.ancestorInfo?.ancestors?.[1]?.id;
@@ -248,7 +251,6 @@ export const UnitInfoSidebar = () => {
     }, {
       onSuccess: () => {
         closeUnlinkModal();
-        queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(currentItemData.id) });
         dispatch(fetchCourseSectionVerticalData(currentItemData.id, subsectionId));
       },
     });
@@ -260,9 +262,7 @@ export const UnitInfoSidebar = () => {
   }, []);
 
   const handleCopyLocation = () => {
-    // Extract the location ID: the part after "block@" at the end of the usage key
-    // e.g. "block-v1:org+course+run+type@vertical+block@abc123" → "abc123"
-    const locationId = currentItemData.id.match(/block@(.+)$/)?.[1];
+    const locationId = extractCourseUnitId(currentItemData.id);
     if (!locationId) {
       return;
     }

@@ -20,6 +20,7 @@ import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
 import { XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { snakeCaseKeys } from '@src/editors/utils';
 import { getXBlockApiUrl, getXBlockBaseApiUrl } from '@src/course-outline/data/api';
 import MockAdapter from 'axios-mock-adapter/types';
@@ -33,7 +34,6 @@ mockLibraryBlockMetadata.applyMock();
 mockGetContainerMetadata.applyMock();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
-const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   ...jest.requireActual('@src/CourseAuthoringContext'),
   useCourseAuthoringContext: () => ({
@@ -41,8 +41,13 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId: 5,
     courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
     courseDetails: { name: 'Test course' },
-    setCurrentSelection,
   }),
+}));
+
+jest.mock('@src/course-outline/data/apiHooks', () => ({
+  ...jest.requireActual('@src/course-outline/data/apiHooks'),
+  useDuplicateItem: jest.fn().mockReturnValue({ mutate: jest.fn(), isPending: false }),
+  useDeleteCourseItem: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
 }));
 
 let outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -79,9 +84,11 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
 const renderComponent = () => render(<AddSidebar />, {
   extraWrapper: ({ children }) => (
     <CourseAuthoringProvider courseId="some-course">
-      <OutlineSidebarProvider>
-        {children}
-      </OutlineSidebarProvider>
+      <CourseOutlineProvider>
+        <OutlineSidebarProvider>
+          {children}
+        </OutlineSidebarProvider>
+      </CourseOutlineProvider>
     </CourseAuthoringProvider>
   ),
 });

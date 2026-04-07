@@ -10,7 +10,7 @@ import { useToggle } from '@openedx/paragon';
 
 import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
 import { SelectionState, XBlock } from '@src/data/types';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
@@ -104,7 +104,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   * and sectionId should be set to its top parent section's id.
   */
   const [selectedContainerState, setSelectedContainerState] = useState<SelectionState | undefined>();
-  const { setCurrentSelection } = useCourseAuthoringContext();
+  const { setCurrentSelection } = useCourseOutlineContext();
 
   /**
   * Set currentSelection to same as selectedContainerState whenever

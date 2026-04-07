@@ -10,6 +10,7 @@ import { SidebarTitle } from '@src/generic/sidebar';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getLibraryId } from '@src/generic/key-utils';
 import { possibleSubsectionMoves } from '@src/course-outline/drag-helper/utils';
@@ -27,14 +28,14 @@ export const SubsectionSidebar = () => {
   const { subsectionId = '', index } = selectedContainerState ?? {};
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
+  const { openUnlinkModal } = useCourseAuthoringContext();
   const {
     openPublishModal,
     handleDuplicateSubsectionSubmit,
     sections,
     updateSubsectionOrderByIndex,
     openDeleteModal,
-    openUnlinkModal,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
 
   const handlePublish = () => {

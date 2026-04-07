@@ -153,6 +153,8 @@ export const moveUnit = (
  */
 export const canMoveSection = (sections: XBlock[]) => (id: number, step: number) => {
   if (id === -1) {
+    // id is -1 when the section's position in the list is unknown (e.g. index prop is undefined),
+    // which is passed as a sentinel value via `index ?? -1` at the call site.
     return false;
   }
   const newId = id + step;

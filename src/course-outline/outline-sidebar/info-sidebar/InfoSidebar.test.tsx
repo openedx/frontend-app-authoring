@@ -50,12 +50,17 @@ jest.mock('react-router-dom', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId,
+    openUnlinkModal,
+    getUnitUrl: jest.fn(),
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     setCurrentSelection: jest.fn(),
     openPublishModal,
     openDeleteModal,
-    openUnlinkModal,
     handleDuplicateUnitSubmit,
-    getUnitUrl: jest.fn(),
     sections: mockSections,
     updateUnitOrderByIndex,
     handleDuplicateSectionSubmit,

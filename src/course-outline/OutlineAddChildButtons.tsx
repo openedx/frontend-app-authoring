@@ -8,6 +8,7 @@ import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
@@ -30,7 +31,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
   const {
     handleAddBlock,
     handleAddAndOpenUnit,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
 
   if (!isCurrentFlowOn || currentFlow?.parentLocator !== parentLocator) {
     return null;
@@ -106,11 +107,11 @@ const NewOutlineAddChildButtons = ({
   // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
+  const { courseUsageKey } = useCourseAuthoringContext();
   const {
-    courseUsageKey,
     handleAddBlock,
     handleAddAndOpenUnit,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
   const { startCurrentFlow } = useOutlineSidebarContext();
   let messageMap = {
     newButton: messages.newUnitButton,
@@ -232,11 +233,11 @@ const LegacyOutlineAddChildButtons = ({
   // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
+  const { courseUsageKey } = useCourseAuthoringContext();
   const {
-    courseUsageKey,
     handleAddBlock,
     handleAddAndOpenUnit,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
   const [
     isAddLibrarySectionModalOpen,
     openAddLibrarySectionModal,
