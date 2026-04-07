@@ -89,19 +89,25 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
       await userEvent.click(newBtn);
       switch (containerType) {
         case ContainerType.Section:
-          await waitFor(() => expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith({
-            type: ContainerType.Chapter,
-            parentLocator: courseUsageKey,
-            displayName: 'Section',
-          }));
+          await waitFor(() => expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith(
+            {
+              type: ContainerType.Chapter,
+              parentLocator: courseUsageKey,
+              displayName: 'Section',
+            },
+            expect.objectContaining({ onSuccess: expect.any(Function) }),
+          ));
           break;
         case ContainerType.Subsection:
-          await waitFor(() => expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith({
-            type: ContainerType.Sequential,
-            parentLocator,
-            displayName: 'Subsection',
-            sectionId: parentLocator,
-          }));
+          await waitFor(() => expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith(
+            {
+              type: ContainerType.Sequential,
+              parentLocator,
+              displayName: 'Subsection',
+              sectionId: parentLocator,
+            },
+            expect.objectContaining({ onSuccess: expect.any(Function) }),
+          ));
           break;
         case ContainerType.Unit:
           await waitFor(() => expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
