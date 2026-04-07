@@ -30,23 +30,19 @@ import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SubsectionCardProps {
-  section: XBlock,
-  subsection: XBlock,
-  children: ReactNode
-  isSectionsExpanded: boolean,
-  isSelfPaced: boolean,
-  isCustomRelativeDatesActive: boolean,
-  onOpenDeleteModal: () => void,
-  onDuplicateSubmit: () => void,
-  index: number,
-  getPossibleMoves: (index: number, step: number) => void,
-  onOrderChange: (section: XBlock, moveDetails: any) => void,
-  onOpenConfigureModal: () => void,
-  onPasteClick: (
-    parentLocator: string,
-    subsectionId: string,
-    sectionId: string
-  ) => void,
+  section: XBlock;
+  subsection: XBlock;
+  children: ReactNode;
+  isSectionsExpanded: boolean;
+  isSelfPaced: boolean;
+  isCustomRelativeDatesActive: boolean;
+  onOpenDeleteModal: () => void;
+  onDuplicateSubmit: () => void;
+  index: number;
+  getPossibleMoves: (index: number, step: number) => void;
+  onOrderChange: (section: XBlock, moveDetails: any) => void;
+  onOpenConfigureModal: () => void;
+  onPasteClick: (parentLocator: string, subsectionId: string, sectionId: string) => void;
 }
 
 const SubsectionCard = ({

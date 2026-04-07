@@ -16,7 +16,7 @@ import messages from './messages';
 
 /**
  * Returns the URL Suffix for library/library component hit
-*/
+ */
 function getLibraryComponentUrlSuffix(hit: ContentHit): string {
   const { contextKey } = hit;
   return `library/${contextKey}`;
@@ -24,7 +24,7 @@ function getLibraryComponentUrlSuffix(hit: ContentHit): string {
 
 /**
  * Returns the URL Suffix for a unit hit
-*/
+ */
 function getUnitUrlSuffix(hit: ContentHit): string {
   const { contextKey, usageKey } = hit;
   return `course/${contextKey}/container/${usageKey}`;
@@ -32,7 +32,7 @@ function getUnitUrlSuffix(hit: ContentHit): string {
 
 /**
  * Returns the URL Suffix for a unit component hit
-*/
+ */
 function getUnitComponentUrlSuffix(hit: ContentHit): string {
   const { breadcrumbs, contextKey, usageKey } = hit;
   if (breadcrumbs.length > 1) {
@@ -59,7 +59,7 @@ function getUnitComponentUrlSuffix(hit: ContentHit): string {
 
 /**
  * Returns the URL Suffix for a course component hit
-*/
+ */
 function getCourseComponentUrlSuffix(hit: ContentHit): string {
   const { contextKey, usageKey } = hit;
   return `course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
@@ -67,7 +67,7 @@ function getCourseComponentUrlSuffix(hit: ContentHit): string {
 
 /**
  * Returns the URL Suffix for the search hit param
-*/
+ */
 function getUrlSuffix(hit: ContentHit): string {
   const { blockType, breadcrumbs } = hit;
 

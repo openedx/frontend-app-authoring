@@ -41,9 +41,9 @@ export const CreateLegacyLibrary = ({
   handleCancel,
   handlePostCreate,
 }: {
-  showInModal?: boolean,
-  handleCancel?: () => void,
-  handlePostCreate?: (library: LibraryV1Data) => void,
+  showInModal?: boolean;
+  handleCancel?: () => void;
+  handlePostCreate?: (library: LibraryV1Data) => void;
 }) => {
   const intl = useIntl();
   const navigate = useNavigate();

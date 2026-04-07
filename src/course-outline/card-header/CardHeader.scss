@@ -11,15 +11,15 @@
     background: transparent;
     color: var(--pgn-color-black);
 
-      .truncate-1-line {
-        -webkit-line-clamp: 1;  /* stylelint-disable-line value-no-vendor-prefix */
-        line-clamp: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;  /* stylelint-disable-line value-no-vendor-prefix */
-        min-width: 100px;
-        -webkit-box-orient: vertical;  /* stylelint-disable-line value-no-vendor-prefix */
-      }
+    .truncate-1-line {
+      -webkit-line-clamp: 1; /* stylelint-disable-line value-no-vendor-prefix */
+      line-clamp: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
+      min-width: 100px;
+      -webkit-box-orient: vertical; /* stylelint-disable-line value-no-vendor-prefix */
+    }
   }
 
   .item-card-button-icon {

@@ -61,9 +61,9 @@ export interface EditorState {
         data: string | Record<string, any>;
         metadata: Record<string, any>;
         [otherKey: string]: any;
-      },
+      };
       // There are other fields; this is an AxiosResponse object. But we don't want to rely on those details.
-    },
+    };
     unitUrl: null | {
       data: {
         ancestors: {
@@ -73,9 +73,9 @@ export interface EditorState {
           has_children: boolean;
           unit_level_discussions?: boolean;
         }[];
-      },
+      };
       // There are other fields; this is an AxiosResponse object. But we don't want to rely on those details.
-    },
+    };
     blockContent: null;
     studioView: null;
     saveResponse: null;
@@ -108,7 +108,7 @@ export interface EditorState {
     videos: Record<string, any>;
     courseDetails: Record<string, any>;
     showRawEditor: boolean;
-  },
+  };
   requests: Record<keyof typeof RequestKeys, {
     status: keyof typeof RequestStates;
     response: AxiosResponse;
@@ -131,26 +131,26 @@ export interface EditorState {
       startTime: string;
       stopTime: string;
       total: string;
-    },
+    };
     showTranscriptByDefault: boolean;
-    handout: null,
-    licenseType: null,
+    handout: null;
+    licenseType: null;
     licenseDetails: {
       attribution: boolean;
       noncommercial: boolean;
       noDerivatives: boolean;
       shareAlike: boolean;
-    },
+    };
     courseLicenseType: string | null;
     courseLicenseDetails: {
       attribution: boolean;
       noncommercial: boolean;
       noDerivatives: boolean;
       shareAlike: boolean;
-    },
+    };
     allowThumbnailUpload: boolean | null; // TODO: why is this null?
     allowTranscriptImport: boolean;
-  },
+  };
   problem: {
     /** Has the user made changes to this problem since opening the editor? */
     isDirty: boolean;
@@ -175,27 +175,27 @@ export interface EditorState {
       randomization: any; // Not sure what type this field has
       scoring: {
         weight: number;
-        attempts: { unlimited: boolean; number: number | null; };
+        attempts: { unlimited: boolean; number: number | null };
         gradingMethod: GradingMethodKey;
-      },
+      };
       hints: any[];
       timeBetween: number;
       showAnswer: {
         on: string;
         afterAttempts: number;
-      },
+      };
       showResetButton: boolean | null;
       solutionExplanation: string;
       tolerance: {
         value: number | null;
         type: 'Percent' | 'Number' | 'None';
-      }
-    }
-  },
+      };
+    };
+  };
   game: {
     settings: Record<string, any>;
     exampleValue: 'this is an example value from the redux state';
-  }
+  };
 }
 
 export { actions, selectors };

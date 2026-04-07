@@ -23,8 +23,8 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
-let store; let
-  axiosMock;
+let store;
+let axiosMock;
 
 const {
   studioName,

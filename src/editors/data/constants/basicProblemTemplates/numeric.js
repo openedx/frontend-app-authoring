@@ -4,8 +4,8 @@ const olx = `<problem>
     <responseparam type="tolerance" default="5"/>
     <formulaequationinput/>
   </numericalresponse>
-</problem>`
+</problem>`;
 
-const markdown = `= 100 +-5`
+const markdown = `= 100 +-5`;
 
 export default { olx, markdown };

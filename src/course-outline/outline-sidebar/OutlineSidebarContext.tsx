@@ -90,22 +90,22 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const [isOpen, open, , toggle] = useToggle(true);
 
   /**
-  * Use this to store the selected container's information and should always contain full ancestor info.
-  * If selected container is a section, set containerId and sectionId to same value and subsectionId should
-  * be undefined.
-  * If selected container is a subsection, set containerId and subsectionId to same value and sectionId
-  * should be set to its parent section id.
-  * If selected container is an unit, set containerId as unitId, subsectionId as its parent subsection's id
-  * and sectionId should be set to its top parent section's id.
-  */
+   * Use this to store the selected container's information and should always contain full ancestor info.
+   * If selected container is a section, set containerId and sectionId to same value and subsectionId should
+   * be undefined.
+   * If selected container is a subsection, set containerId and subsectionId to same value and sectionId
+   * should be set to its parent section id.
+   * If selected container is an unit, set containerId as unitId, subsectionId as its parent subsection's id
+   * and sectionId should be set to its top parent section's id.
+   */
   const [selectedContainerState, setSelectedContainerState] = useState<SelectionState | undefined>();
   const { setCurrentSelection } = useCourseAuthoringContext();
 
   /**
-  * Set currentSelection to same as selectedContainerState whenever
-  * selectedContainerState or currentPageKey changes.
-  * This allows us to reset the currentSelection.
-  */
+   * Set currentSelection to same as selectedContainerState whenever
+   * selectedContainerState or currentPageKey changes.
+   * This allows us to reset the currentSelection.
+   */
   useEffect(() => {
     // To allow tag buttons on other cards to jump to align page and not loose its selection
     if (currentPageKey !== 'align') {
@@ -135,10 +135,10 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   }, [selectedContainerState]);
 
   /**
-  * Starts add content flow.
-  * The sidebar enters an add content flow which allows user to add content in a specific container.
-  * A placeholder container is added in the location when the flow is started.
-  */
+   * Starts add content flow.
+   * The sidebar enters an add content flow which allows user to add content in a specific container.
+   * A placeholder container is added in the location when the flow is started.
+   */
   const startCurrentFlow = useCallback((flow: OutlineFlow) => {
     setCurrentPageKey('add');
     setCurrentFlow(flow);

@@ -11,39 +11,39 @@ import messages from './messages';
 export type UserPartitionInfo = {
   selectablePartitions: {
     groups: {
-      deleted: boolean,
-      id: number,
-      name: string,
-      selected: boolean,
-    }[],
-    id: number,
-    name: string,
-    scheme: string,
-  }[],
-  selectedGroupsLabel?: string,
-  selectedPartitionIndex: number,
+      deleted: boolean;
+      id: number;
+      name: string;
+      selected: boolean;
+    }[];
+    id: number;
+    name: string;
+    scheme: string;
+  }[];
+  selectedGroupsLabel?: string;
+  selectedPartitionIndex: number;
 };
 
 export interface UnitTabProps {
-  isXBlockComponent: boolean,
-  category?: string,
+  isXBlockComponent: boolean;
+  category?: string;
   values: {
-    isVisibleToStaffOnly: boolean,
-    discussionEnabled: boolean,
-    selectedPartitionIndex: number,
-    selectedGroups: string[],
-  },
-  setFieldValue: (key: string, value: any) => void,
-  showWarning: boolean,
-  userPartitionInfo?: UserPartitionInfo,
+    isVisibleToStaffOnly: boolean;
+    discussionEnabled: boolean;
+    selectedPartitionIndex: number;
+    selectedGroups: string[];
+  };
+  setFieldValue: (key: string, value: any) => void;
+  showWarning: boolean;
+  userPartitionInfo?: UserPartitionInfo;
 }
 
 export const DiscussionEditComponent = ({
   discussionEnabled,
   handleDiscussionChange,
 }: {
-  discussionEnabled: boolean,
-  handleDiscussionChange: (e: any) => void,
+  discussionEnabled: boolean;
+  handleDiscussionChange: (e: any) => void;
 }) => (
   <>
     <Form.Checkbox checked={discussionEnabled} onChange={handleDiscussionChange}>

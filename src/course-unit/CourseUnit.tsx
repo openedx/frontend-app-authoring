@@ -63,10 +63,10 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
     text: messages.statusBarDraftNeverPublished,
     icon: DraftIcon,
   } as {
-    variant: string,
-    className?: string,
-    text: MessageDescriptor,
-    icon: React.ComponentType,
+    variant: string;
+    className?: string;
+    text: MessageDescriptor;
+    icon: React.ComponentType;
   };
 
   if (courseUnit.currentlyVisibleToStudents) {

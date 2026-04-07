@@ -35,8 +35,8 @@ interface UnitCardProps {
   onOpenDeleteModal: () => void;
   onDuplicateSubmit: () => void;
   index: number;
-  getPossibleMoves: (index: number, step: number) => void,
-  onOrderChange: (section: XBlock, moveDetails: any) => void,
+  getPossibleMoves: (index: number, step: number) => void;
+  onOrderChange: (section: XBlock, moveDetails: any) => void;
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean;
   discussionsSettings: {

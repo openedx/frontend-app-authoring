@@ -17,7 +17,7 @@ export interface PaginatedData<T> {
   count: number;
   numPages: number;
   currentPage: number;
-  results: T,
+  results: T;
 }
 
 export interface BasePublishableEntityLink {

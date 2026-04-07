@@ -1,13 +1,13 @@
 import { LibraryAssetResponse } from '../../library-authoring/data/api';
 
 type GalleryImageData = {
-  displayName: string,
-  url: string,
-  externalUrl: string,
-  portableUrl: string,
-  thumbnail: string,
-  id: string,
-  locked: boolean,
+  displayName: string;
+  url: string;
+  externalUrl: string;
+  portableUrl: string;
+  thumbnail: string;
+  id: string;
+  locked: boolean;
 };
 
 /**

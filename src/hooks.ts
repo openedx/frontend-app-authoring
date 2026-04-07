@@ -82,7 +82,7 @@ export const useLoadOnScroll = (
         window.removeEventListener('scroll', onscroll);
       };
     }
-    return () => { };
+    return () => {};
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 };
 

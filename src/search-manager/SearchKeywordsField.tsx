@@ -9,9 +9,9 @@ import { useSearchContext } from './SearchManager';
  * The "main" input field where users type in search keywords. The search happens as they type (no need to press enter).
  */
 const SearchKeywordsField: React.FC<{
-  className?: string,
-  placeholder?: string,
-  autoFocus?: boolean,
+  className?: string;
+  placeholder?: string;
+  autoFocus?: boolean;
 }> = (props) => {
   const intl = useIntl();
   const { searchKeywords, setSearchKeywords, usageKey } = useSearchContext();
@@ -21,7 +21,7 @@ const SearchKeywordsField: React.FC<{
   const handleSearch = React.useCallback(
     debounce((term) => setSearchKeywords(term.trim()), 400),
     [searchKeywords],
-  );// Perform search after 500ms
+  ); // Perform search after 500ms
 
   return (
     <SearchField.Advanced

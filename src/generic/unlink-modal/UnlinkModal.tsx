@@ -23,7 +23,7 @@ type UnlinkModalPropsComponent = {
 type UnlinkModalProps = {
   isOpen: boolean;
   close: () => void;
-  onUnlinkSubmit: () => void | Promise<void>,
+  onUnlinkSubmit: () => void | Promise<void>;
 } & (UnlinkModalPropsContainer | UnlinkModalPropsComponent);
 
 export const UnlinkModal = ({

@@ -36,7 +36,7 @@ import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarConte
 interface CardHeaderProps {
   title: string;
   status: string;
-  cardId: string,
+  cardId: string;
   hasChanges: boolean;
   onClickPublish: () => void;
   onClickConfigure: () => void;
@@ -51,8 +51,8 @@ interface CardHeaderProps {
   onClickManageTags?: () => void;
   titleComponent: ReactNode;
   namePrefix: string;
-  proctoringExamConfigurationLink?: string,
-  actions: XBlockActions,
+  proctoringExamConfigurationLink?: string;
+  actions: XBlockActions;
   enableCopyPasteUnits?: boolean;
   isVertical?: boolean;
   isSequential?: boolean;
@@ -64,10 +64,10 @@ interface CardHeaderProps {
   parentInfo?: {
     graded: boolean;
     isTimeLimited?: boolean;
-  },
+  };
   // An optional component that is rendered before the dropdown. This is used by the Subsection
   // and Unit card components to render their plugin slots.
-  extraActionsComponent?: ReactNode,
+  extraActionsComponent?: ReactNode;
   onClickSync?: () => void;
   readyToSync?: boolean;
 }

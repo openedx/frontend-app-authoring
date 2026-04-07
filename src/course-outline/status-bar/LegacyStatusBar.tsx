@@ -18,8 +18,8 @@ import { getVideoSharingOptionText } from '@src/course-outline/utils';
 import messages from './messages';
 
 interface StatusBarItemProps {
-  title: string,
-  children: ReactNode,
+  title: string;
+  children: ReactNode;
 }
 
 const StatusBarItem = ({ title, children }: StatusBarItemProps) => (
@@ -32,11 +32,11 @@ const StatusBarItem = ({ title, children }: StatusBarItemProps) => (
 );
 
 export interface LegacyStatusBarProps {
-  courseId: string,
-  isLoading: boolean,
-  openEnableHighlightsModal: () => void,
-  handleVideoSharingOptionChange: (value: string) => void,
-  statusBarData: CourseOutlineStatusBar,
+  courseId: string;
+  isLoading: boolean;
+  openEnableHighlightsModal: () => void;
+  handleVideoSharingOptionChange: (value: string) => void;
+  statusBarData: CourseOutlineStatusBar;
 }
 
 export const LegacyStatusBar = ({

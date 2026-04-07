@@ -23,37 +23,37 @@ import ComponentModalView from './add-component-modals/ComponentModalView';
 import { getCourseSectionVertical, getCourseUnitData } from '../data/selectors';
 
 type ComponentTemplateData = {
-  displayName: string,
-  category?: string,
-  type: string,
-  beta?: boolean,
+  displayName: string;
+  category?: string;
+  type: string;
+  beta?: boolean;
   templates: Array<{
-    boilerplateName?: string,
-    category?: string,
-    displayName: string,
-    supportLevel?: string | boolean,
-  }>,
+    boilerplateName?: string;
+    category?: string;
+    displayName: string;
+    supportLevel?: string | boolean;
+  }>;
   supportLegend: {
-    allowUnsupportedXblocks?: boolean,
-    documentationLabel?: string,
-    showLegend?: boolean,
-  },
+    allowUnsupportedXblocks?: boolean;
+    documentationLabel?: string;
+    showLegend?: boolean;
+  };
 };
 
 export interface AddComponentProps {
-  isSplitTestType?: boolean,
-  isUnitVerticalType?: boolean,
-  parentLocator: string,
+  isSplitTestType?: boolean;
+  isUnitVerticalType?: boolean;
+  parentLocator: string;
   handleCreateNewCourseXBlock: (
     args: object,
-    callback?: (args: { courseKey: string, locator: string }) => void
-  ) => void,
-  isProblemBankType?: boolean,
+    callback?: (args: { courseKey: string; locator: string }) => void,
+  ) => void;
+  isProblemBankType?: boolean;
   addComponentTemplateData?: {
-    blockId: string,
-    parentLocator?: string,
-    model: ComponentTemplateData,
-  },
+    blockId: string;
+    parentLocator?: string;
+    model: ComponentTemplateData;
+  };
 }
 
 const AddComponent = ({
@@ -200,7 +200,7 @@ const AddComponent = ({
             <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center">
               {componentTemplates.map((component: ComponentTemplateData) => {
                 const { type, displayName, beta } = component;
-                let modalParams: { open: () => void, close: () => void, isOpen: boolean };
+                let modalParams: { open: () => void; close: () => void; isOpen: boolean };
 
                 if (!component.templates.length) {
                   return null;

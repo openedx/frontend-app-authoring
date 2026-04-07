@@ -2,7 +2,7 @@ import TagsSidebarHeader from './TagsSidebarHeader';
 import TagsSidebarBody from './TagsSidebarBody';
 
 interface TagsSidebarControlsProps {
-  readOnly: boolean,
+  readOnly: boolean;
 }
 
 const TagsSidebarControls = ({ readOnly }: TagsSidebarControlsProps) => (

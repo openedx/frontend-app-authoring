@@ -8,9 +8,9 @@ import { useClipboard } from '@src/generic/clipboard';
 import messages from '../../messages';
 
 interface ActionButtonsProps {
-  openDiscardModal: () => void,
-  handlePublishing: () => void,
-  hideCopyButton?: boolean,
+  openDiscardModal: () => void;
+  handlePublishing: () => void;
+  hideCopyButton?: boolean;
 }
 
 const ActionButtons = ({

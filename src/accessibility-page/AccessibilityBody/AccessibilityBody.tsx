@@ -7,8 +7,8 @@ const AccessibilityBody = ({
   communityAccessibilityLink,
   email,
 }: {
-  communityAccessibilityLink: string,
-  email: string,
+  communityAccessibilityLink: string;
+  email: string;
 }) => (
   <div className="mt-5">
     <header>

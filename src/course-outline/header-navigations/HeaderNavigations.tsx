@@ -11,18 +11,18 @@ import { OutlinePageErrors, XBlockActions } from '@src/data/types';
 import messages from './messages';
 
 export interface HeaderNavigationsProps {
-  isReIndexShow: boolean,
-  isSectionsExpanded: boolean,
-  isDisabledReindexButton: boolean,
+  isReIndexShow: boolean;
+  isSectionsExpanded: boolean;
+  isDisabledReindexButton: boolean;
   headerNavigationsActions: {
-    handleNewSection: () => void,
-    handleReIndex: () => void,
-    handleExpandAll: () => void,
-    lmsLink: string,
-  },
-  hasSections: boolean,
-  courseActions: XBlockActions,
-  errors?: OutlinePageErrors,
+    handleNewSection: () => void;
+    handleReIndex: () => void;
+    handleExpandAll: () => void;
+    lmsLink: string;
+  };
+  hasSections: boolean;
+  courseActions: XBlockActions;
+  errors?: OutlinePageErrors;
 }
 
 const HeaderNavigations = ({

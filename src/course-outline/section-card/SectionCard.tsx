@@ -28,18 +28,18 @@ import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SectionCardProps {
-  section: XBlock,
-  isSelfPaced: boolean,
-  isCustomRelativeDatesActive: boolean,
-  children: ReactNode,
-  onOpenHighlightsModal: (section: XBlock) => void,
-  onOpenConfigureModal: () => void,
-  onOpenDeleteModal: () => void,
-  onDuplicateSubmit: () => void,
-  isSectionsExpanded: boolean,
-  index: number,
-  canMoveItem: (oldIndex: number, newIndex: number) => boolean,
-  onOrderChange: (oldIndex: number, newIndex: number) => void,
+  section: XBlock;
+  isSelfPaced: boolean;
+  isCustomRelativeDatesActive: boolean;
+  children: ReactNode;
+  onOpenHighlightsModal: (section: XBlock) => void;
+  onOpenConfigureModal: () => void;
+  onOpenDeleteModal: () => void;
+  onDuplicateSubmit: () => void;
+  isSectionsExpanded: boolean;
+  index: number;
+  canMoveItem: (oldIndex: number, newIndex: number) => boolean;
+  onOrderChange: (oldIndex: number, newIndex: number) => void;
 }
 
 const SectionCard = ({
