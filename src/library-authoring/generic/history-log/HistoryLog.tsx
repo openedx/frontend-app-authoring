@@ -49,6 +49,7 @@ export const HistoryComponentLog = ({ componentId }: { componentId: string; }) =
     <div className="history-log">
       {draftHistory && draftHistory.length !== 0 && (
         <HistoryDraftLogGroup
+          itemId={componentId}
           displayName={componentMetadata?.displayName || ''}
           entries={draftHistory}
         />

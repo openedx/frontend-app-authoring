@@ -45,24 +45,26 @@ const CompareChangesWidget = ({
   return (
     <div className="bg-white p-2">
       <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
-        <Tab eventKey="old" title={oldTabMessage}>
-          <div className="p-2 bg-white">
-            {oldTitle && hasLocalChanges && (
-              <div className="h3 mt-3.5">
-                {oldTitle}
+        {oldVersion !== 0 &&
+          <Tab eventKey="old" title={oldTabMessage}>
+            <div className="p-2 bg-white">
+              {oldTitle && hasLocalChanges && (
+                <div className="h3 mt-3.5">
+                  {oldTitle}
+                </div>
+              )}
+              <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-8px' } : {}}>
+                <IframeProvider>
+                  <LibraryBlock
+                    usageKey={oldUsageKey || usageKey}
+                    version={oldVersion}
+                    minHeight="50vh"
+                  />
+                </IframeProvider>
               </div>
-            )}
-            <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-8px' } : {}}>
-              <IframeProvider>
-                <LibraryBlock
-                  usageKey={oldUsageKey || usageKey}
-                  version={oldVersion}
-                  minHeight="50vh"
-                />
-              </IframeProvider>
             </div>
-          </div>
-        </Tab>
+          </Tab>
+        }
         <Tab eventKey="new" title={newTabMessage}>
           <div className="p-2 bg-white">
             <IframeProvider>
