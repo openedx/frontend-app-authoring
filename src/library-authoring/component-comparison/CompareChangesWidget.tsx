@@ -1,5 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Card, Stack, Tab, Tabs } from '@openedx/paragon';
+import { Card, Scrollable, Stack, Tab, Tabs } from '@openedx/paragon';
 import classNames from 'classnames';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 
@@ -49,7 +49,10 @@ const CompareChangesWidget = ({
 
   const oldBlock = oldVersion !== 0 && (
     <Card className={classNames('flex-1 min-w-0', { 'border-0': !sideBySide })}>
-      <Card.Body className="p-4 bg-white">
+      <Card.Body
+        className="p-4 bg-white overflow-auto"
+        style={{ height: '70vh' }}
+      >
         {sideBySide && (
           <h3 className="w-100 text-center mb-4">
             {oldTabMessage}
@@ -67,6 +70,7 @@ const CompareChangesWidget = ({
               version={oldVersion}
               minHeight="50vh"
               showTitle={showTitle}
+              addHeight={40}
             />
           </IframeProvider>
         </div>
@@ -76,7 +80,10 @@ const CompareChangesWidget = ({
 
   const newBlock = (
     <Card className={classNames('flex-1 min-w-0', { 'border-0': !sideBySide })}>
-      <Card.Body className="p-4 bg-white">
+      <Card.Body
+        className="p-4 bg-white overflow-auto"
+        style={{ height: '70vh' }}
+      >
         {sideBySide && (
           <h3 className="w-100 text-center mb-4">
             {newTabMessage}
@@ -88,6 +95,7 @@ const CompareChangesWidget = ({
             version={newVersion}
             showTitle={showNewTitle || showTitle}
             minHeight="50vh"
+            addHeight={40}
           />
         </IframeProvider>
       </Card.Body>
