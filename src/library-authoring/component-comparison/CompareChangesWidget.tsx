@@ -1,5 +1,6 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Tab, Tabs } from '@openedx/paragon';
+import { Card, Stack, Tab, Tabs } from '@openedx/paragon';
+import classNames from 'classnames';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 
 import { LibraryBlock, type VersionSpec } from '../LibraryBlock';
@@ -14,6 +15,8 @@ interface Props {
   showNewTitle?: boolean;
   hasLocalChanges?: boolean;
   oldUsageKey?: string;
+  sideBySide?: boolean;
+  showTitle?: boolean;
 }
 
 /**
@@ -32,6 +35,8 @@ const CompareChangesWidget = ({
   showNewTitle = false,
   oldUsageKey,
   hasLocalChanges = false,
+  sideBySide = false,
+  showTitle = false,
 }: Props) => {
   const intl = useIntl();
 
@@ -42,42 +47,66 @@ const CompareChangesWidget = ({
     ? intl.formatMessage(messages.publishedLibraryContentTitle)
     : intl.formatMessage(messages.newVersionTitle);
 
+  const oldBlock = oldVersion !== 0 && (
+    <Card className={classNames('flex-1 min-w-0', { 'border-0': !sideBySide })}>
+      <Card.Body className="p-4 bg-white">
+        {sideBySide && (
+          <h3 className="w-100 text-center mb-4">
+            {oldTabMessage}
+          </h3>
+        )}
+        {oldTitle && hasLocalChanges && (
+          <div className="h3 mt-3.5">
+            {oldTitle}
+          </div>
+        )}
+        <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-8px' } : {}}>
+          <IframeProvider>
+            <LibraryBlock
+              usageKey={oldUsageKey || usageKey}
+              version={oldVersion}
+              minHeight="50vh"
+              showTitle={showTitle}
+            />
+          </IframeProvider>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+
+  const newBlock = (
+    <Card className={classNames('flex-1 min-w-0', { 'border-0': !sideBySide })}>
+      <Card.Body className="p-4 bg-white">
+        {sideBySide && (
+          <h3 className="w-100 text-center mb-4">
+            {newTabMessage}
+          </h3>
+        )}
+        <IframeProvider>
+          <LibraryBlock
+            usageKey={usageKey}
+            version={newVersion}
+            showTitle={showNewTitle || showTitle}
+            minHeight="50vh"
+          />
+        </IframeProvider>
+      </Card.Body>
+    </Card>
+  );
+
   return (
     <div className="bg-white p-2">
-      <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
-        {oldVersion !== 0 &&
-          <Tab eventKey="old" title={oldTabMessage}>
-            <div className="p-2 bg-white">
-              {oldTitle && hasLocalChanges && (
-                <div className="h3 mt-3.5">
-                  {oldTitle}
-                </div>
-              )}
-              <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-8px' } : {}}>
-                <IframeProvider>
-                  <LibraryBlock
-                    usageKey={oldUsageKey || usageKey}
-                    version={oldVersion}
-                    minHeight="50vh"
-                  />
-                </IframeProvider>
-              </div>
-            </div>
-          </Tab>
-        }
-        <Tab eventKey="new" title={newTabMessage}>
-          <div className="p-2 bg-white">
-            <IframeProvider>
-              <LibraryBlock
-                usageKey={usageKey}
-                version={newVersion}
-                showTitle={showNewTitle}
-                minHeight="50vh"
-              />
-            </IframeProvider>
-          </div>
-        </Tab>
-      </Tabs>
+      {sideBySide ? (
+        <Stack direction='horizontal' gap={2}>
+          {oldBlock}
+          {newBlock}
+        </Stack>
+      ) : (
+        <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
+          {oldBlock && <Tab eventKey="old" title={oldTabMessage}>{oldBlock}</Tab>}
+          <Tab eventKey="new" title={newTabMessage}>{newBlock}</Tab>
+        </Tabs>
+      )}
     </div>
   );
 };
