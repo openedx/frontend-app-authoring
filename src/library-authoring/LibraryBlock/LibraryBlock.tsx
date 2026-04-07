@@ -50,6 +50,11 @@ export const LibraryBlock = ({
 
   const intl = useIntl();
   const params = new URLSearchParams();
+
+  if (version === 0) {
+    return null;
+  }
+
   if (version) {
     params.set('version', version.toString());
   }

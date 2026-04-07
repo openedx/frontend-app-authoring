@@ -56,6 +56,21 @@ const messages = defineMessages({
     defaultMessage: '{count} {count, plural, one {author} other {authors}} contributed',
     description: 'Contributors count in a publish history group',
   },
+  previewChangesTitle: {
+    id: 'course-authoring.library-authoring.history.preview-changes.title',
+    defaultMessage: 'Preview changes: {title}',
+    description: 'Title for the modal that previews changes for a history entry.',
+  },
+  moreActions: {
+    id: 'course-authoring.library-authoring.history.more-actions',
+    defaultMessage: 'More actions',
+    description: 'Dropdown label for history log actions.',
+  },
+  showThisVersion: {
+    id: 'course-authoring.library-authoring.history.show-this-version',
+    defaultMessage: 'Show this version',
+    description: 'Action to open the version comparison modal for a history entry.',
+  },
 });
 
 export default messages;
