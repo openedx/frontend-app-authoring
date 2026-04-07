@@ -13,16 +13,16 @@ import {
 import { FileUpload, MoreHoriz } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
-import { actions, selectors } from '../../../../../../data/redux';
-import * as hooks from './hooks';
-import messages from './messages';
+import { actions, selectors } from '@src/editors/data/redux';
 
-import { FileInput } from '../../../../../../sharedComponents/FileInput';
-import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
-import UploadErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/UploadErrorAlert';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
-import { ErrorContext } from '../../../../hooks';
-import { RequestKeys } from '../../../../../../data/constants/requests';
+import { FileInput } from '@src/editors/sharedComponents/FileInput';
+import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import UploadErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/UploadErrorAlert';
+import CollapsibleFormWidget from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
+import { ErrorContext } from '@src/editors/containers/VideoEditor/hooks';
+import { RequestKeys } from '@src/editors/data/constants/requests';
+import messages from './messages';
+import * as hooks from './hooks';
 
 /**
  * Collapsible Form widget controlling video handouts

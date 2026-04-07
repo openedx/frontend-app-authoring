@@ -82,6 +82,14 @@ export default {
           tab: 'common',
           support_level: true,
         },
+        {
+          display_name: 'PDF',
+          category: 'pdf',
+          boilerplate_name: null,
+          hinted: false,
+          tab: 'common',
+          support_level: true,
+        },
       ],
       display_name: 'Advanced',
       support_legend: {

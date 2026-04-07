@@ -1,10 +1,7 @@
 import { logError } from '@edx/frontend-platform/logging';
 import { RequestStatus } from '@src/data/constants';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
-import {
-  hideProcessingNotification,
-  showProcessingNotification,
-} from '@src/generic/processing-notification/data/slice';
+import { showToastOutsideReact, closeToastOutsideReact } from '@src/generic/toast-context';
 import {
   getCourseBestPracticesChecklist,
   getCourseLaunchChecklist,
@@ -142,16 +139,17 @@ export function fetchCourseBestPracticesQuery({
 export function enableCourseHighlightsEmailsQuery(courseId: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       await enableCourseHighlightsEmails(courseId);
       dispatch(fetchCourseOutlineIndexQuery(courseId));
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-      dispatch(hideProcessingNotification());
     } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    } finally {
+      closeToastOutsideReact();
     }
   };
 }
@@ -159,17 +157,17 @@ export function enableCourseHighlightsEmailsQuery(courseId: string) {
 export function setVideoSharingOptionQuery(courseId: string, option: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       await setVideoSharingOption(courseId, option);
       dispatch(updateStatusBar({ videoSharingOptions: option }));
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-      dispatch(hideProcessingNotification());
     } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      dispatch(hideProcessingNotification());
+    } finally {
+      closeToastOutsideReact();
     }
   };
 }
@@ -227,20 +225,20 @@ function setBlockOrderListQuery(
 ) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       await apiFn(parentId, blockIds).then(async (result) => {
         if (result) {
           successCallback();
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
         }
       });
     } catch {
       restoreCallback();
-      dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    } finally {
+      closeToastOutsideReact();
     }
   };
 }

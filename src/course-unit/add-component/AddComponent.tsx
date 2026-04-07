@@ -83,7 +83,7 @@ const AddComponent = ({
   const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
-  const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
+  const { useVideoGalleryFlow, useNewPdfEditor } = useWaffleFlags(courseId ?? undefined);
 
   const courseUnit = useSelector(getCourseUnitData);
   const sequenceId = courseUnit?.ancestorInfo?.ancestors?.[0]?.id;
@@ -170,7 +170,28 @@ const AddComponent = ({
         showAddLibraryContentModal();
         break;
       case COMPONENT_TYPES.advanced:
-        handleCreateNewCourseXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        // TODO: The 'advanced components' concept warrants examination.
+        // 'Advanced' is a bucket where we chuck all the blocks that are
+        // uncommon, or third-party installs. Until now, none of these have
+        // had special editors in this MFE. This is the first.
+        // The fact that advanced modules are handled as a special category
+        // *in code* and not just in UI seems like a mistake in retrospect.
+        //
+        // There will be more of these, and soon.
+        if (moduleName === COMPONENT_TYPES.pdf && useNewPdfEditor) {
+          handleCreateNewCourseXBlock(
+            { type: moduleName, parentLocator: blockId },
+            /* istanbul ignore next */
+            ({ courseKey, locator }) => {
+              setCourseId(courseKey);
+              setBlockType(moduleName);
+              setNewBlockId(locator);
+              showXBlockEditorModal();
+            },
+          );
+        } else {
+          handleCreateNewCourseXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        }
         break;
       case COMPONENT_TYPES.openassessment:
         handleCreateNewCourseXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });

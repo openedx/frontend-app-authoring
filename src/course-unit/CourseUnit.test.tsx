@@ -18,7 +18,7 @@ import {
   screen,
 } from '@src/testUtils';
 import mockResult from '@src/library-authoring/__mocks__/library-search.json';
-import { IFRAME_FEATURE_POLICY } from '@src/constants';
+import { IFRAME_FEATURE_POLICY, NOTIFICATION_MESSAGES } from '@src/constants';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import pasteComponentMessages from '@src/generic/clipboard/paste-component/messages';
 import { getClipboardUrl } from '@src/generic/data/api';
@@ -80,6 +80,8 @@ import messages from './messages';
 
 let axiosMock;
 let store;
+let mockShowToast;
+let mockCloseToast;
 const courseId = '123';
 const blockId = '567890';
 const sequenceId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
@@ -148,6 +150,8 @@ describe('<CourseUnit />', () => {
     window.scrollTo = jest.fn();
     global.localStorage.clear();
     store = mocks.reduxStore;
+    mockShowToast = mocks.mockShowToast;
+    mockCloseToast = mocks.mockCloseToast;
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getClipboardUrl())
@@ -2153,26 +2157,26 @@ describe('<CourseUnit />', () => {
     });
 
     it('displays processing notification on receiving post message', async () => {
-      const { getByText, queryByText } = render(<RootWrapper />);
+      render(<RootWrapper />);
 
       await waitFor(() => {
         simulatePostMessageEvent(messageTypes.addNewComponent);
-        expect(getByText(('Adding'))).toBeInTheDocument();
+        expect(mockShowToast).toHaveBeenCalledWith(NOTIFICATION_MESSAGES.adding);
       });
 
       await waitFor(() => {
         simulatePostMessageEvent(messageTypes.hideProcessingNotification);
-        expect(queryByText(('Adding'))).not.toBeInTheDocument();
+        expect(mockCloseToast).toHaveBeenCalled();
       });
 
       await waitFor(() => {
         simulatePostMessageEvent(messageTypes.pasteNewComponent);
-        expect(getByText(('Pasting'))).toBeInTheDocument();
+        expect(mockShowToast).toHaveBeenCalledWith(NOTIFICATION_MESSAGES.pasting);
       });
 
       await waitFor(() => {
         simulatePostMessageEvent(messageTypes.hideProcessingNotification);
-        expect(queryByText(('Pasting'))).not.toBeInTheDocument();
+        expect(mockCloseToast).toHaveBeenCalledTimes(2);
       });
     });
 

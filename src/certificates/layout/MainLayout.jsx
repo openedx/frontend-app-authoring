@@ -3,7 +3,6 @@ import { Container, Layout } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { SavingErrorAlert } from '../../generic/saving-error-alert';
-import ProcessingNotification from '../../generic/processing-notification';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import messages from '../messages';
 import CertificatesSidebar from './certificates-sidebar/CertificatesSidebar';
@@ -16,8 +15,6 @@ const MainLayout = ({ courseId, showHeaderButtons, children }) => {
   const {
     errorMessage,
     savingStatus,
-    isShowProcessingNotification,
-    processingNotificationTitle,
   } = useLayout();
 
   return (
@@ -50,10 +47,6 @@ const MainLayout = ({ courseId, showHeaderButtons, children }) => {
         </section>
       </Container>
       <div className="certificates alert-toast">
-        <ProcessingNotification
-          isShow={isShowProcessingNotification}
-          title={processingNotificationTitle}
-        />
         <SavingErrorAlert
           savingStatus={savingStatus}
           errorMessage={errorMessage}

@@ -11,8 +11,8 @@ import {
   Form,
 } from '@openedx/paragon';
 
-import { selectors, actions } from '../../../../../../data/redux';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import { selectors, actions } from '@src/editors/data/redux';
+import CollapsibleFormWidget from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import messages from './messages';
 import * as hooks from './hooks';
 

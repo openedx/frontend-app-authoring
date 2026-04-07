@@ -17,9 +17,9 @@ import messages from './messages';
 const CollapsibleFormWidget = ({
   children,
   isError,
-  subtitle,
+  subtitle = '',
   title,
-  fontSize,
+  fontSize = '',
 }) => {
   const intl = useIntl();
   return (
@@ -54,11 +54,6 @@ const CollapsibleFormWidget = ({
       </Collapsible.Body>
     </Collapsible.Advanced>
   );
-};
-
-CollapsibleFormWidget.defaultProps = {
-  subtitle: null,
-  fontSize: '',
 };
 
 CollapsibleFormWidget.propTypes = {

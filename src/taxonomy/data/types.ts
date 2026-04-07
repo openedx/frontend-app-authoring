@@ -58,6 +58,7 @@ export interface TagListData {
   next: string;
   numPages: number;
   previous: string;
+  canAddTag?: boolean;
   results: TagData[];
   start: number;
 }

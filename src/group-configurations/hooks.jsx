@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RequestStatus } from '../data/constants';
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import {
   getGroupConfigurationsData,
   getLoadingStatus,
@@ -26,10 +25,6 @@ const useGroupConfigurations = (courseId) => {
   const loadingStatus = useSelector(getLoadingStatus);
   const savingStatus = useSelector(getSavingStatus);
   const errorMessage = useSelector(getErrorMessage);
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
 
   const handleInternetConnectionFailed = () => {
     dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
@@ -91,8 +86,6 @@ const useGroupConfigurations = (courseId) => {
     experimentConfigurationActions,
     errorMessage,
     groupConfigurations,
-    isShowProcessingNotification,
-    processingNotificationTitle,
     handleInternetConnectionFailed,
   };
 };

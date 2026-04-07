@@ -7,18 +7,15 @@ import {
   Row,
 } from '@openedx/paragon';
 import { Add as AddIcon } from '@openedx/paragon/icons';
-import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { useWaffleFlags } from '../data/apiHooks';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { LoadingSpinner } from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-import ProcessingNotification from '../generic/processing-notification';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import TextbookCard from './textbook-card/TextbooksCard';
 import TextbookSidebar from './textbook-sidebar/TextbookSidebar';
@@ -47,11 +44,6 @@ const Textbooks = () => {
     handleTextbookEditFormSubmit,
     handleTextbookDeleteSubmit,
   } = useTextbooks(courseId, waffleFlags);
-
-  const {
-    isShow: showProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
 
   if (isLoadingFailed) {
     return (
@@ -139,10 +131,6 @@ const Textbooks = () => {
           </Layout>
         </section>
       </Container>
-      <ProcessingNotification
-        isShow={showProcessingNotification}
-        title={processingNotificationTitle}
-      />
       <div className="alert-toast">
         <SavingErrorAlert
           savingStatus={savingStatus}

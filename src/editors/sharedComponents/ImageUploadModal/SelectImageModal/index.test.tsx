@@ -9,7 +9,7 @@ jest.mock('../../SelectionModal/Gallery', () => 'Gallery');
 jest.mock('../../SelectionModal/SearchSort', () => 'SearchSort');
 jest.mock('../../ErrorAlerts/FetchErrorAlert', () => 'FetchErrorAlert');
 jest.mock('../../ErrorAlerts/UploadErrorAlert', () => 'UploadErrorAlert');
-jest.mock('../..//ErrorAlerts/ErrorAlert', () => 'ErrorAlert');
+jest.mock('../../ErrorAlerts/ErrorAlert', () => 'ErrorAlert');
 jest.mock('../../SelectionModal', () => 'SelectionModal');
 
 jest.mock('./hooks', () => ({

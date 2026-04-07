@@ -1,5 +1,5 @@
 import type { AxiosRequestConfig } from 'axios';
-import { camelizeKeys } from '../../../utils';
+import { snakeCaseKeys, camelizeKeys } from '@src/editors/utils';
 import { isLibraryKey } from '../../../../generic/key-utils';
 import * as urls from './urls';
 import {
@@ -348,6 +348,14 @@ export const apiMethods = {
           license: processLicense(content.licenseType, content.licenseDetails),
         },
       };
+    } else if (blockType === 'pdf') {
+      response = {
+        category: blockType,
+        courseKey: learningContextId,
+        has_changes: true,
+        id: blockId,
+        metadata: { ...snakeCaseKeys(content), display_name: title },
+      };
     } else {
       throw new TypeError(`No Block in V2 Editors named /"${blockType}/", Cannot Save Content.`);
     }
@@ -388,7 +396,7 @@ export const apiMethods = {
     blockId,
     handlerName,
   }) => get(
-    urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }),
+    urls.boundHandlerUrl({ studioEndpointUrl, blockId, handlerName }),
   ),
   validateBlockNumericInput: ({
     studioEndpointUrl,

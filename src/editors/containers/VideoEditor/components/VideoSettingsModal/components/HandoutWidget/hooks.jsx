@@ -69,4 +69,6 @@ export const fileSizeError = () => {
   };
 };
 
-export default { fileInput, fileSizeError, parseHandoutName };
+export default {
+  fileInput, fileSizeError, parseHandoutName, checkValidFileSize,
+};

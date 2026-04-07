@@ -7,10 +7,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle, Sheet, StandardModal } from '@openedx/paragon';
 import { useDispatch } from 'react-redux';
 
-import {
-  hideProcessingNotification,
-  showProcessingNotification,
-} from '@src/generic/processing-notification/data/slice';
+import { useToastContext } from '@src/generic/toast-context';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import ModalIframe from '@src/generic/modal-iframe';
@@ -63,6 +60,11 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     setCurrentPageKey,
     setSelectedComponentId,
   } = useUnitSidebarContext(!readonly) || {};
+
+  const {
+    showToast,
+    closeToast,
+  } = useToastContext();
 
   // Useful to reload iframe
   const [iframeKey, setIframeKey] = useState(0);
@@ -221,13 +223,13 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const handleShowProcessingNotification = (variant: string) => {
     if (variant) {
-      dispatch(showProcessingNotification(variant));
+      showToast(variant);
     }
   };
 
   const handleHideProcessingNotification = () => {
     dispatch(fetchCourseVerticalChildrenData(blockId, true, true));
-    dispatch(hideProcessingNotification());
+    closeToast();
   };
 
   const handleRefreshIframe = () => {

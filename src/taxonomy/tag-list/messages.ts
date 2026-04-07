@@ -57,6 +57,14 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.hide-subtags.button-label',
     defaultMessage: 'Hide Subtags',
   },
+  tagUpdateErrorMessage: {
+    id: 'course-authoring.tag-list.update-error',
+    defaultMessage: 'Error updating tag: {errorMessage}',
+  },
+  renameTag: {
+    id: 'course-authoring.tag-list.rename-tag',
+    defaultMessage: 'Rename',
+  },
 });
 
 export default messages;

@@ -19,10 +19,8 @@ import { useLocation } from 'react-router-dom';
 import { CourseAuthoringOutlineSidebarSlot } from '@src/plugin-slots/CourseAuthoringOutlineSidebarSlot';
 
 import { LoadingSpinner } from '@src/generic/Loading';
-import { getProcessingNotification } from '@src/generic/processing-notification/data/selectors';
 import { RequestStatus } from '@src/data/constants';
 import SubHeader from '@src/generic/sub-header/SubHeader';
-import ProcessingNotification from '@src/generic/processing-notification';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
@@ -30,7 +28,6 @@ import { UnlinkModal } from '@src/generic/unlink-modal';
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
-import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from './CourseOutlineContext';
@@ -102,7 +99,6 @@ const CourseOutline = () => {
     isDisabledReindexButton,
     isHighlightsModalOpen,
     isConfigureModalOpen,
-    isConfigureOpPending,
     isDeleteModalOpen,
     closeHighlightsModal,
     handleConfigureModalClose,
@@ -115,17 +111,14 @@ const CourseOutline = () => {
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
-    isSectionHighlightsUpdatePending,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
-    isDuplicatingItem,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
-    isPasting,
     notificationDismissUrl,
     discussionsSettings,
     discussionsIncontextLearnmoreUrl,
@@ -162,11 +155,6 @@ const CourseOutline = () => {
     }
   }, [location, courseId, courseName]);
 
-
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
 
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
@@ -464,20 +452,6 @@ const CourseOutline = () => {
         />
       </Container>
       <div className="alert-toast">
-        <ProcessingNotification
-          // Show processing toast if any mutation is running
-          isShow={
-            isShowProcessingNotification
-            || handleAddBlock.isPending
-            || handleAddAndOpenUnit.isPending
-            || isConfigureOpPending
-            || isSectionHighlightsUpdatePending
-            || isDuplicatingItem
-            || isPasting
-          }
-          // HACK: Use saving as default title till we have a need for better messages
-          title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}
-        />
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}
           isQueryPending={savingStatus === RequestStatus.PENDING}

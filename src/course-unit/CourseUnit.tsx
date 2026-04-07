@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import type { MessageDescriptor } from 'react-intl';
 import {
@@ -26,13 +25,11 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import DraftIcon from '@src/generic/DraftIcon';
 import { CourseAuthoringUnitSidebarSlot } from '../plugin-slots/CourseAuthoringUnitSidebarSlot';
 
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';
 import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
 import { PasteComponent } from '../generic/clipboard';
-import ProcessingNotification from '../generic/processing-notification';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import Loading from '../generic/Loading';
@@ -224,11 +221,6 @@ const CourseUnit = () => {
 
   useScrollToLastPosition();
 
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
-
   if (isLoading) {
     return <Loading />;
   }
@@ -407,10 +399,6 @@ const CourseUnit = () => {
           </section>
         </Container>
         <div className="alert-toast">
-          <ProcessingNotification
-            isShow={isShowProcessingNotification}
-            title={processingNotificationTitle}
-          />
           <SavingErrorAlert
             savingStatus={savingStatus}
             errorMessage={errorMessage}
