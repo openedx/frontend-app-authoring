@@ -11,10 +11,10 @@ import {
 } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 
-import { actions, selectors } from '../../../../../../data/redux';
+import { actions, selectors } from '@src/editors/data/redux';
+import CollapsibleFormWidget from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import * as hooks from './hooks';
 import messages from './messages';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import LicenseBlurb from './LicenseBlurb';
 import LicenseSelector from './LicenseSelector';
 import LicenseDetails from './LicenseDetails';

@@ -87,6 +87,7 @@ export const waffleFlagDefaults = {
   useNewUnitPage: false,
   useNewCertificatesPage: true,
   useNewTextbooksPage: true,
+  useNewPdfEditor: true,
   useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
   enableAuthzCourseAuthoring: false,

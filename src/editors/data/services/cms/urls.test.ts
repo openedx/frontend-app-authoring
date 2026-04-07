@@ -17,7 +17,7 @@ import {
   mediaTranscriptURL,
   videoFeatures,
   courseVideos,
-  handlerUrl,
+  boundHandlerUrl,
   transcriptXblockV2,
   downloadVideoTranscriptURLV2,
 } from './urls';
@@ -36,7 +36,7 @@ describe('cms url methods', () => {
   const videoId = '123-SOmeVidEOid-213';
   const parameters = 'SomEParAMEterS';
   const handlerName = 'transcript';
-  const transcriptHandlerUrl = handlerUrl({ studioEndpointUrl, blockId, handlerName });
+  const transcriptHandlerUrl = boundHandlerUrl({ studioEndpointUrl, blockId, handlerName });
 
   describe('return to learning context urls', () => {
     const unitUrl = {
@@ -196,7 +196,7 @@ describe('cms url methods', () => {
   });
   describe('handlerUrl', () => {
     it('returns url with studioEndpointUrl, blockId and handlerName', () => {
-      expect(handlerUrl({ studioEndpointUrl, blockId, handlerName }))
+      expect(boundHandlerUrl({ studioEndpointUrl, blockId, handlerName }))
         .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/transcript/`);
     });
   });

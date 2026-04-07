@@ -15,17 +15,16 @@ import {
 } from '@openedx/paragon';
 import { DeleteOutline, FileUpload } from '@openedx/paragon/icons';
 
-import { selectors } from '../../../../../../data/redux';
-import { isEdxVideo } from '../../../../../../data/services/cms/api';
+import { selectors } from '@src/editors/data/redux';
+import { isEdxVideo } from '@src/editors/data/services/cms/api';
 
-import { acceptedImgKeys } from './constants';
-import * as hooks from './hooks';
+import CollapsibleFormWidget from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
+import { FileInput } from '@src/editors/sharedComponents/FileInput';
+import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import { ErrorContext } from '@src/editors/containers/VideoEditor/hooks';
 import messages from './messages';
-
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
-import { FileInput } from '../../../../../../sharedComponents/FileInput';
-import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
-import { ErrorContext } from '../../../../hooks';
+import * as hooks from './hooks';
+import { acceptedImgKeys } from './constants';
 
 /**
  * Collapsible Form widget controlling video thumbnail
