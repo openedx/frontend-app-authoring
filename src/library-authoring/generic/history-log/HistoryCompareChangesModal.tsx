@@ -5,6 +5,7 @@ import CompareChangesWidget from '@src/library-authoring/component-comparison/Co
 import { type VersionSpec } from '@src/library-authoring/LibraryBlock';
 
 import messages from './messages';
+import classNames from 'classnames';
 
 interface HistoryCompareChangesModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface HistoryCompareChangesModalProps {
   oldTitle?: string;
   oldVersion?: VersionSpec;
   newVersion?: VersionSpec;
+  sideBySide?: boolean;
 }
 
 const HistoryCompareChangesModal = ({
@@ -22,6 +24,7 @@ const HistoryCompareChangesModal = ({
   oldTitle,
   oldVersion,
   newVersion = 'published',
+  sideBySide = true,
 }: HistoryCompareChangesModalProps) => {
   const intl = useIntl();
   const title = intl.formatMessage(messages.previewChangesTitle, { title: oldTitle });
@@ -31,6 +34,7 @@ const HistoryCompareChangesModal = ({
       isOpen={isOpen}
       onClose={onClose}
       size="xl"
+      className={classNames({'w-xl-100 mw-xl': sideBySide})}
       title={title}
       isOverflowVisible={false}
     >
@@ -43,6 +47,8 @@ const HistoryCompareChangesModal = ({
           oldTitle={oldTitle}
           oldVersion={oldVersion}
           newVersion={newVersion}
+          sideBySide={sideBySide}
+          showTitle
         />
       </ModalDialog.Body>
     </ModalDialog>
