@@ -22,7 +22,7 @@ const AssignmentSection = ({
   setGradingData,
   courseAssignmentLists,
   setShowSuccessAlert,
-  isEditable,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const [errorList, setErrorList] = useState({});
@@ -206,7 +206,6 @@ const AssignmentSection = ({
 AssignmentSection.defaultProps = {
   courseAssignmentLists: undefined,
   graders: undefined,
-  isEditable: true,
 };
 
 AssignmentSection.propTypes = {

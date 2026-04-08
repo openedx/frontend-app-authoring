@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { MAXIMUM_SCALE_LENGTH } from '../utils';
 
 const GradingScaleHandle = ({
-  idx, value, gradingSegments, getHandleProps, isEditable,
+  idx, value, gradingSegments, getHandleProps, isEditable = true,
 }) => (
   <button
     key={value}
@@ -18,10 +18,6 @@ const GradingScaleHandle = ({
     })}
   />
 );
-
-GradingScaleHandle.defaultProps = {
-  isEditable: true,
-};
 
 GradingScaleHandle.propTypes = {
   idx: PropTypes.number.isRequired,

@@ -9,7 +9,7 @@ import { formatTime, timerValidation } from './utils';
 import messages from './messages';
 
 const DeadlineSection = ({
-  setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert, isEditable,
+  setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert, isEditable = true,
 }) => {
   const intl = useIntl();
   const timeStampValue = gracePeriod
@@ -69,7 +69,6 @@ const DeadlineSection = ({
 
 DeadlineSection.defaultProps = {
   gracePeriod: null,
-  isEditable: true,
 };
 
 DeadlineSection.propTypes = {

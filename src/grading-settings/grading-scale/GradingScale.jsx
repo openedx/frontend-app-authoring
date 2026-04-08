@@ -23,7 +23,7 @@ const GradingScale = ({
   setOverrideInternetConnectionAlert,
   setEligibleGrade,
   defaultGradeDesignations,
-  isEditable,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const [gradingSegments, setGradingSegments] = useState(sortedGrades);
@@ -267,7 +267,6 @@ GradingScale.propTypes = {
 
 GradingScale.defaultProps = {
   defaultGradeDesignations: DEFAULT_GRADE_LETTERS,
-  isEditable: true,
 };
 
 export default GradingScale;

@@ -12,7 +12,7 @@ const CreditSection = ({
   minimumGradeCredit,
   setGradingData,
   setShowSuccessAlert,
-  isEditable,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const [errorEffort, setErrorEffort] = useState(false);
@@ -64,10 +64,6 @@ const CreditSection = ({
       )}
     </Form.Group>
   );
-};
-
-CreditSection.defaultProps = {
-  isEditable: true,
 };
 
 CreditSection.propTypes = {
