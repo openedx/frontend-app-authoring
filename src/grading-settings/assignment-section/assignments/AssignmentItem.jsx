@@ -20,7 +20,7 @@ const AssignmentItem = ({
   secondErrorMsg,
   gradeField,
   trailingElement,
-  disabled,
+  disabled = false,
 }) => (
   <li className={className}>
     <Form.Group
@@ -67,7 +67,6 @@ AssignmentItem.defaultProps = {
   errorEffort: false,
   gradeField: undefined,
   trailingElement: undefined,
-  disabled: false,
 };
 
 AssignmentItem.propTypes = {

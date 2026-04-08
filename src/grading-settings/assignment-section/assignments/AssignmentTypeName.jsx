@@ -11,7 +11,7 @@ const AssignmentTypeName = ({
   value,
   errorEffort,
   onChange,
-  disabled,
+  disabled = false,
 }) => {
   const intl = useIntl();
   const initialAssignmentName = useRef(value);
@@ -63,7 +63,6 @@ const AssignmentTypeName = ({
 
 AssignmentTypeName.defaultProps = {
   errorEffort: false,
-  disabled: false,
 };
 
 AssignmentTypeName.propTypes = {

@@ -13,7 +13,7 @@ const DeadlineSection = ({
   gracePeriod,
   setGradingData,
   setShowSuccessAlert,
-  isEditable,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const timeStampValue = gracePeriod
@@ -74,7 +74,6 @@ const DeadlineSection = ({
 
 DeadlineSection.defaultProps = {
   gracePeriod: null,
-  isEditable: true,
 };
 
 DeadlineSection.propTypes = {

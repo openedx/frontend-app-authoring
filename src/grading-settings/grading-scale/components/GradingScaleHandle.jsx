@@ -8,7 +8,7 @@ const GradingScaleHandle = ({
   value,
   gradingSegments,
   getHandleProps,
-  isEditable,
+  isEditable = true,
 }) => (
   <button
     key={value}
@@ -25,10 +25,6 @@ const GradingScaleHandle = ({
     })}
   />
 );
-
-GradingScaleHandle.defaultProps = {
-  isEditable: true,
-};
 
 GradingScaleHandle.propTypes = {
   idx: PropTypes.number.isRequired,
