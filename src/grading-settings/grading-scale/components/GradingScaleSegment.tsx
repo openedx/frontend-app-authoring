@@ -18,6 +18,7 @@ interface GradingScaleSegmentProps {
   letters: [string],
   gradingSegments: RangeSegment[],
   removeGradingSegment: (idx: number) => void,
+  isEditable?: boolean,
 }
 
 const GradingScaleSegment = ({
@@ -28,6 +29,7 @@ const GradingScaleSegment = ({
   letters,
   gradingSegments,
   removeGradingSegment,
+  isEditable = true,
 }: GradingScaleSegmentProps) => {
   const intl = useIntl();
   const prevValue = gradingSegments[idx === 0 ? 0 : idx - 1]?.previous ?? 0;
@@ -51,7 +53,7 @@ const GradingScaleSegment = ({
           data-testid="grading-scale-segment-input"
           value={getLettersOnShortScale(idx, letters, intl)}
           onChange={e => handleLetterChange(e, idx)}
-          disabled={idx === gradingSegments.length}
+          disabled={!isEditable || idx === gradingSegments.length}
         />
         )}
         {gradingSegments.length > 2 && (
@@ -60,7 +62,7 @@ const GradingScaleSegment = ({
           data-testid="grading-scale-segment-input"
           value={getLettersOnLongScale(idx, letters, gradingSegments)}
           onChange={e => handleLetterChange(e, idx)}
-          disabled={idx === gradingSegments.length}
+          disabled={!isEditable || idx === gradingSegments.length}
         />
         )}
         <span data-testid="grading-scale-segment-number" className="grading-scale-segment-content-number m-0">
@@ -74,6 +76,7 @@ const GradingScaleSegment = ({
             data-testid="grading-scale-btn-remove"
             type="button"
             onClick={() => removeGradingSegment(idx)}
+            disabled={!isEditable}
           >
             {intl.formatMessage(messages.removeSegmentButtonText)}
           </Button>

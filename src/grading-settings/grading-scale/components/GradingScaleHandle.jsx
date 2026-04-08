@@ -4,20 +4,24 @@ import PropTypes from 'prop-types';
 import { MAXIMUM_SCALE_LENGTH } from '../utils';
 
 const GradingScaleHandle = ({
-  idx, value, gradingSegments, getHandleProps,
+  idx, value, gradingSegments, getHandleProps, isEditable,
 }) => (
   <button
     key={value}
     className="grading-scale-segment-btn-resize"
     type="button"
-    disabled={gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH}
+    disabled={!isEditable || gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH}
     {...getHandleProps({
-      style: gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH ? {
+      style: (!isEditable || gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH) ? {
         cursor: 'default', display: 'none',
       } : { cursor: 'e-resize' },
     })}
   />
 );
+
+GradingScaleHandle.defaultProps = {
+  isEditable: true,
+};
 
 GradingScaleHandle.propTypes = {
   idx: PropTypes.number.isRequired,
@@ -29,6 +33,7 @@ GradingScaleHandle.propTypes = {
       previous: PropTypes.number.isRequired,
     }),
   ).isRequired,
+  isEditable: PropTypes.bool,
 };
 
 export default GradingScaleHandle;

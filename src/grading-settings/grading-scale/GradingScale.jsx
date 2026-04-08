@@ -23,6 +23,7 @@ const GradingScale = ({
   setOverrideInternetConnectionAlert,
   setEligibleGrade,
   defaultGradeDesignations,
+  isEditable,
 }) => {
   const intl = useIntl();
   const [gradingSegments, setGradingSegments] = useState(sortedGrades);
@@ -205,7 +206,7 @@ const GradingScale = ({
       <IconButtonWithTooltip
         tooltipPlacement="top"
         tooltipContent={intl.formatMessage(messages.addNewSegmentButtonAltText)}
-        disabled={gradingSegments.length >= (defaultGradeDesignations.length + 1)}
+        disabled={!isEditable || gradingSegments.length >= (defaultGradeDesignations.length + 1)}
         data-testid="grading-scale-btn-add-segment"
         className="mr-3"
         src={IconAdd}
@@ -227,6 +228,7 @@ const GradingScale = ({
             idx={idx}
             handleLetterChange={handleLetterChange}
             letters={letters}
+            isEditable={isEditable}
           />
         ))}
         {handles.map(({ value, getHandleProps }, idx) => (
@@ -236,6 +238,7 @@ const GradingScale = ({
             gradingSegments={gradingSegments}
             value={value}
             idx={idx}
+            isEditable={isEditable}
           />
         ))}
       </div>
@@ -259,10 +262,12 @@ GradingScale.propTypes = {
   ).isRequired,
   setEligibleGrade: PropTypes.func.isRequired,
   defaultGradeDesignations: PropTypes.arrayOf(PropTypes.string),
+  isEditable: PropTypes.bool,
 };
 
 GradingScale.defaultProps = {
   defaultGradeDesignations: DEFAULT_GRADE_LETTERS,
+  isEditable: true,
 };
 
 export default GradingScale;

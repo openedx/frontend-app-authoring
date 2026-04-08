@@ -9,7 +9,7 @@ import { formatTime, timerValidation } from './utils';
 import messages from './messages';
 
 const DeadlineSection = ({
-  setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert,
+  setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert, isEditable,
 }) => {
   const intl = useIntl();
   const timeStampValue = gracePeriod
@@ -53,6 +53,7 @@ const DeadlineSection = ({
         value={newDeadlineValue}
         onChange={handleDeadlineChange}
         placeholder={TIME_FORMAT.toUpperCase()}
+        disabled={!isEditable}
       />
       <Form.Control.Feedback className="grading-description">
         {intl.formatMessage(messages.gracePeriodOnDeadlineDescription)}
@@ -68,6 +69,7 @@ const DeadlineSection = ({
 
 DeadlineSection.defaultProps = {
   gracePeriod: null,
+  isEditable: true,
 };
 
 DeadlineSection.propTypes = {
@@ -78,6 +80,7 @@ DeadlineSection.propTypes = {
     hours: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     minutes: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }),
+  isEditable: PropTypes.bool,
 };
 
 export default DeadlineSection;
