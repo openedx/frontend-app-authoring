@@ -34,7 +34,24 @@ type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
 export interface DeprecatedReduxState {
   customPages: Record<string, any>;
   discussions: Record<string, any>;
-  assets: Record<string, any>;
+  assets: {
+    assetIds: string[];
+    loadingStatus: RequestStatusType;
+    duplicateFiles: string[];
+    updatingStatus: string;
+    addingStatus: string;
+    deletingStatus: string;
+    usageStatus: string;
+    errors: {
+      add: string[];
+      delete: string[];
+      lock: string[];
+      download: string[];
+      usageMetrics: string[];
+      loading:string;
+
+    };
+  };
   pagesAndResources: Record<string, any>;
   scheduleAndDetails: Record<string, any>;
   studioHome: InferState<typeof studioHomeReducer>;
