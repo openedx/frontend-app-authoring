@@ -20,6 +20,7 @@ const AssignmentItem = ({
   secondErrorMsg,
   gradeField,
   trailingElement,
+  disabled,
 }) => (
   <li className={className}>
     <Form.Group
@@ -38,6 +39,7 @@ const AssignmentItem = ({
         value={value}
         isInvalid={errorEffort}
         trailingElement={trailingElement}
+        disabled={disabled}
       />
       <Form.Control.Feedback className="grading-description">
         {descriptions}
@@ -65,6 +67,7 @@ AssignmentItem.defaultProps = {
   errorEffort: false,
   gradeField: undefined,
   trailingElement: undefined,
+  disabled: false,
 };
 
 AssignmentItem.propTypes = {
@@ -82,6 +85,7 @@ AssignmentItem.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   gradeField: PropTypes.shape(defaultAssignmentsPropTypes),
   trailingElement: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 export default AssignmentItem;
