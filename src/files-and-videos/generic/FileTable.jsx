@@ -1,4 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { FilesPageContext } from '@src/files-and-videos/files-page/FilesPageProvider';
+import {
+  useCallback, useContext, useEffect, useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
@@ -11,7 +14,7 @@ import {
   useToggle,
 } from '@openedx/paragon';
 
-import { RequestStatus } from '../../data/constants';
+import { RequestStatus } from '@src/data/constants';
 import { sortFiles } from './utils';
 import messages from './messages';
 
@@ -79,6 +82,7 @@ const FileTable = ({
   const defaultCurrentView = (fileType === 'video' && localStorage.getItem('videosCurrentView')) ||
     (fileType === 'file' && localStorage.getItem('filesCurrentView')) || defaultView;
   const [currentView, setCurrentView] = useState(defaultCurrentView);
+  const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
 
   useEffect(() => {
     if (!isEmpty(selectedRows) && Object.keys(selectedRows[0]).length > 0) {
@@ -189,6 +193,7 @@ const FileTable = ({
   if (!hasMoreInfoColumn) {
     tableColumns.push({ ...moreInfoColumn });
   }
+  const maxSelectedRows = filePickerOptions?.multiSelect === false ? 1 : undefined;
 
   return (
     <div className="files-table">
@@ -198,6 +203,7 @@ const FileTable = ({
         isSortable
         isSelectable
         isPaginated
+        maxSelectedRows={maxSelectedRows}
         defaultColumnValues={{ Filter: TextFilter }}
         dataViewToggleOptions={{
           isDataViewToggleEnabled: true,

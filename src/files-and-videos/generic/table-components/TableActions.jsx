@@ -1,7 +1,10 @@
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button, DataTableContext, Dropdown, useToggle, } from '@openedx/paragon';
+import {
+  Button, DataTableContext, Dropdown, useToggle,
+} from '@openedx/paragon';
 import { Add, Tune } from '@openedx/paragon/icons';
+import FilesPageProvider, { FilesPageContext } from '@src/files-and-videos/files-page/FilesPageProvider';
 import { isEmpty } from 'lodash';
 import { PropTypes } from 'prop-types';
 import React, { useContext, useEffect } from 'react';
@@ -21,14 +24,14 @@ const TableActions = ({
   const intl = useIntl();
   const [isSortOpen, openSort, closeSort] = useToggle(false);
   const { state, clearSelection } = useContext(DataTableContext);
-  const filePickerParams = new URLSearchParams(window.location.search);
 
-  const showFilePicker = Boolean(filePickerParams.get('filePicker')) && Boolean(window.opener);
+  const { filePickerMode } = useContext(FilesPageContext);
+  // If window.opener is not available, show the user some error message.
+  const showFilePicker = filePickerMode; // && Boolean(window.opener);
   // This useEffect saves DataTable state so it can persist after table re-renders due to data reload.
   useEffect(() => {
     setInitialState(state);
   }, [state]);
-
 
   const handleOpenFileSelector = () => {
     fileInputControl.click();
