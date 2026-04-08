@@ -1,5 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Card, Scrollable, Stack, Tab, Tabs } from '@openedx/paragon';
+import { Card, Stack, Tab, Tabs } from '@openedx/paragon';
 import classNames from 'classnames';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 
