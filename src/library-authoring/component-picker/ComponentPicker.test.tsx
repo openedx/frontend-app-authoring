@@ -18,8 +18,9 @@ import {
   mockGetContainerMetadata,
 } from '../data/api.mocks';
 
-import { LibraryAndComponentPicker } from './ComponentPicker';
-import { ContentType } from '../routes';
+import { ComponentPicker, LibraryAndComponentPicker } from './ComponentPicker';
+import { ContentType, allLibraryPageTabs } from '../routes';
+import { LibraryProvider } from '../common/context/LibraryContext';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -447,5 +448,72 @@ describe('<LibraryAndComponentPicker />', () => {
     // because there are many components with that text on the screen, but that's not the important thing.
     expect(screen.getByText(/modified since publish/i)).toBeInTheDocument();
     expect(screen.queryByText(/never published/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('<ComponentPicker restrictOpenInfoSidebar />', () => {
+  const { libraryId } = mockContentLibrary;
+
+  const renderPicker = (restrictOpenInfoSidebar: boolean) => render(
+    <LibraryProvider libraryId={libraryId}>
+      <ComponentPicker
+        componentPickerMode="single"
+        restrictOpenInfoSidebar={restrictOpenInfoSidebar}
+        visibleTabs={allLibraryPageTabs}
+      />
+    </LibraryProvider>,
+  );
+
+  beforeEach(() => {
+    initializeMocks();
+    mockSearchResult({ ...mockResult });
+  });
+
+  it('should open component info sidebar on card click when restrictOpenInfoSidebar is false', async () => {
+    const user = userEvent.setup();
+    renderPicker(false);
+
+    const [componentCard] = await screen.findAllByText('Introduction to Testing');
+
+    // Click on the component card body
+    await user.click(componentCard);
+
+    // Sidebar should open
+    expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
+  });
+
+  it('should not open component info sidebar on card click when restrictOpenInfoSidebar is true', async () => {
+    const user = userEvent.setup();
+    renderPicker(true);
+
+    const [componentCard] = await screen.findAllByText('Introduction to Testing');
+
+    // Click on the component card body
+    await user.click(componentCard);
+
+    // Sidebar should NOT open
+    expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument();
+  });
+
+  it('should open container info sidebar on card click when restrictOpenInfoSidebar is false', async () => {
+    const user = userEvent.setup();
+    renderPicker(false);
+
+    // Click on the unit card body
+    await user.click(await screen.findByText('Published Test Unit'));
+
+    // Sidebar should open
+    expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
+  });
+
+  it('should not open container info sidebar on card click when restrictOpenInfoSidebar is true', async () => {
+    const user = userEvent.setup();
+    renderPicker(true);
+
+    // Click on the unit card body
+    await user.click(await screen.findByText('Published Test Unit'));
+
+    // Sidebar should NOT open
+    expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument();
   });
 });

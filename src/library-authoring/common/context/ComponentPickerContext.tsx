@@ -24,6 +24,7 @@ type NoComponentPickerType = {
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
   restrictToLibrary?: never;
+  restrictOpenInfoSidebar?: never;
   extraFilter?: never;
   isLoading?: never;
   setIsLoading?: never;
@@ -31,6 +32,7 @@ type NoComponentPickerType = {
 
 type BasePickerType = {
   restrictToLibrary: boolean;
+  restrictOpenInfoSidebar: boolean;
   extraFilter: string[],
   isLoading?: boolean;
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -64,6 +66,7 @@ const ComponentPickerContext = createContext<ComponentPickerContextData | undefi
 
 type BasePickerProps = {
   restrictToLibrary?: boolean;
+  restrictOpenInfoSidebar?: boolean;
   /** Only show published components */
   extraFilter?: string[],
 };
@@ -93,6 +96,7 @@ export const ComponentPickerProvider = ({
   children,
   componentPickerMode,
   restrictToLibrary = false,
+  restrictOpenInfoSidebar = false,
   onComponentSelected,
   onChangeComponentSelection,
   extraFilter,
@@ -136,6 +140,7 @@ export const ComponentPickerProvider = ({
         return {
           componentPickerMode,
           restrictToLibrary,
+          restrictOpenInfoSidebar,
           onComponentSelected,
           extraFilter: extraFilter || [],
           isLoading,
@@ -145,6 +150,7 @@ export const ComponentPickerProvider = ({
         return {
           componentPickerMode,
           restrictToLibrary,
+          restrictOpenInfoSidebar,
           selectedComponents,
           addComponentToSelectedComponents,
           removeComponentFromSelectedComponents,

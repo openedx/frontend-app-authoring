@@ -304,6 +304,7 @@ const ShowLibraryContent = () => {
         visibleTabs={[ContentType.home]}
         FiltersComponent={SidebarFilters}
         onComponentSelected={onComponentSelected}
+        restrictOpenInfoSidebar
       />
     </MultiLibraryProvider>
   );

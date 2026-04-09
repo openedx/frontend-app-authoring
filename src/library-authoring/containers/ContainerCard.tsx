@@ -257,7 +257,7 @@ type ContainerCardProps = {
 };
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
-  const { componentPickerMode } = useComponentPickerContext();
+  const { componentPickerMode, restrictOpenInfoSidebar } = useComponentPickerContext();
   const { showOnlyPublished } = usePublishedFilterContext();
   const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
@@ -286,6 +286,10 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const selectContainer = useCallback((e?: React.MouseEvent) => {
     const doubleClicked = (e?.detail || 0) > 1;
     if (componentPickerMode) {
+      if (restrictOpenInfoSidebar) {
+        // Do nothing on select
+        return;
+      }
       // In component picker mode, we want to open the sidebar
       // without changing the URL
       openContainerInfoSidebar(containerKey);
