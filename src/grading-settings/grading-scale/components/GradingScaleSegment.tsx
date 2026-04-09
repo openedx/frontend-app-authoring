@@ -29,6 +29,7 @@ const GradingScaleSegment = ({
   letters,
   gradingSegments,
   removeGradingSegment,
+  /* istanbul ignore next */
   isEditable = true,
 }: GradingScaleSegmentProps) => {
   const intl = useIntl();

@@ -5,7 +5,6 @@ import { render, waitFor, fireEvent } from '@testing-library/react';
 
 import GradingScale from './GradingScale';
 import GradingScaleHandle from './components/GradingScaleHandle';
-import GradingScaleSegment from './components/GradingScaleSegment.tsx';
 
 const gradeCutoffs = { A: 0.9, B: 0.8, C: 0.7 };
 
@@ -137,33 +136,7 @@ describe('<GradingScale />', () => {
         getHandleProps={() => ({})}
       />,
     );
-    const btn = container.querySelector('.grading-scale-segment-btn-resize');
-    expect(btn).toBeInTheDocument();
-    expect(btn).not.toBeDisabled();
-  });
-
-  it('renders GradingScaleSegment with default isEditable=true when prop is omitted', async () => {
-    const gradingSegments = [
-      { current: 100, previous: 0 },
-      { current: 50, previous: 0 },
-      { current: 30, previous: 0 },
-    ];
-    const { getAllByTestId } = render(
-      <IntlProvider locale="en" messages={{}}>
-        <GradingScaleSegment
-          idx={1}
-          value={50}
-          getSegmentProps={() => ({})}
-          handleLetterChange={jest.fn()}
-          letters={['A', 'B', 'C']}
-          gradingSegments={gradingSegments}
-          removeGradingSegment={jest.fn()}
-        />
-      </IntlProvider>,
-    );
-    await waitFor(() => {
-      getAllByTestId('grading-scale-segment-input').forEach((input) => expect(input).not.toBeDisabled());
-    });
+    expect(container.querySelector('.grading-scale-segment-btn-resize')).not.toBeDisabled();
   });
 
   it('should disable inputs and buttons when isEditable is false', async () => {

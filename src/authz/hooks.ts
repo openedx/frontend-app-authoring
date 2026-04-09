@@ -2,15 +2,9 @@ import { useWaffleFlags } from '@src/data/apiHooks';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { PermissionValidationQuery, PermissionValidationAnswer } from '@src/authz/types';
 
-/**
- * Return type for the useUserPermissionsWithAuthzCourse hook
- */
 interface UseUserPermissionsWithAuthzCourseReturn {
-  /** Whether permissions are currently loading */
   isLoading: boolean;
-  /** Object containing permission results with boolean values */
   permissions: PermissionValidationAnswer;
-  /** Whether authorization is enabled for the course */
   isAuthzEnabled: boolean;
 }
 
@@ -58,16 +52,13 @@ export const useUserPermissionsWithAuthzCourse = (
     data: userPermissions,
   } = useUserPermissions(permissions, isAuthzEnabled);
 
-  // Build permission results object
   const permissionResults: PermissionValidationAnswer = {};
 
   if (isAuthzEnabled && !isLoadingUserPermissions) {
-    // Authz is enabled and permissions loaded, use actual permission values with fallback to false
     Object.keys(permissions).forEach((permissionKey: string) => {
       permissionResults[permissionKey] = userPermissions?.[permissionKey] ?? false;
     });
   } else if (!isLoadingUserPermissions) {
-    // Authz is disabled, default all to true
     Object.keys(permissions).forEach((permissionKey: string) => {
       permissionResults[permissionKey] = true;
     });
