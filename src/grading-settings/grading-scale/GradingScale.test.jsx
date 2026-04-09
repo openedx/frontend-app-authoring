@@ -4,6 +4,8 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { render, waitFor, fireEvent } from '@testing-library/react';
 
 import GradingScale from './GradingScale';
+import GradingScaleHandle from './components/GradingScaleHandle';
+import GradingScaleSegment from './components/GradingScaleSegment.tsx';
 
 const gradeCutoffs = { A: 0.9, B: 0.8, C: 0.7 };
 
@@ -119,6 +121,73 @@ describe('<GradingScale />', () => {
       expect(segmentInputs[0]).toHaveValue('Fail');
       fireEvent.change(segmentInputs[1], { target: { value: 'Test' } });
       expect(segmentInputs[1]).toHaveValue('Test');
+    });
+  });
+
+  it('renders GradingScaleHandle with default isEditable=true when prop is omitted', () => {
+    const gradingSegments = [
+      { current: 90, previous: 0 },
+      { current: 100, previous: 90 },
+    ];
+    const { container } = render(
+      <GradingScaleHandle
+        idx={0}
+        value={90}
+        gradingSegments={gradingSegments}
+        getHandleProps={() => ({})}
+      />,
+    );
+    const btn = container.querySelector('.grading-scale-segment-btn-resize');
+    expect(btn).toBeInTheDocument();
+    expect(btn).not.toBeDisabled();
+  });
+
+  it('renders GradingScaleSegment with default isEditable=true when prop is omitted', async () => {
+    const gradingSegments = [
+      { current: 100, previous: 0 },
+      { current: 50, previous: 0 },
+      { current: 30, previous: 0 },
+    ];
+    const { getAllByTestId } = render(
+      <IntlProvider locale="en" messages={{}}>
+        <GradingScaleSegment
+          idx={1}
+          value={50}
+          getSegmentProps={() => ({})}
+          handleLetterChange={jest.fn()}
+          letters={['A', 'B', 'C']}
+          gradingSegments={gradingSegments}
+          removeGradingSegment={jest.fn()}
+        />
+      </IntlProvider>,
+    );
+    await waitFor(() => {
+      getAllByTestId('grading-scale-segment-input').forEach((input) => expect(input).not.toBeDisabled());
+    });
+  });
+
+  it('should disable inputs and buttons when isEditable is false', async () => {
+    const { getAllByTestId, queryAllByTestId } = render(
+      <IntlProvider locale="en" messages={{}}>
+        <GradingScale
+          gradeCutoffs={gradeCutoffs}
+          gradeLetters={gradeLetters}
+          sortedGrades={sortedGrades}
+          resetDataRef={{ current: false }}
+          showSavePrompt={jest.fn()}
+          setShowSuccessAlert={jest.fn()}
+          setGradingData={jest.fn()}
+          setOverrideInternetConnectionAlert={jest.fn()}
+          setEligibleGrade={jest.fn()}
+          isEditable={false}
+        />
+      </IntlProvider>,
+    );
+    await waitFor(() => {
+      const segmentInputs = getAllByTestId('grading-scale-segment-input');
+      segmentInputs.forEach((input) => expect(input).toBeDisabled());
+      const removeButtons = queryAllByTestId('grading-scale-btn-remove');
+      removeButtons.forEach((btn) => expect(btn).toBeDisabled());
     });
   });
 
