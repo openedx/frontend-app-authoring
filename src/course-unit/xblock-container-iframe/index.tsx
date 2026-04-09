@@ -221,7 +221,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   };
 
   const handleXBlockSelected = (id) => {
-    setCurrentPageKey?.('info', id);
+    // Open the block in the current tab
+    setCurrentPageKey?.(undefined, id);
   };
 
   const messageHandlers = useMessageHandlers({

@@ -58,7 +58,7 @@ const SectionCard = ({
 }: SectionCardProps) => {
   const currentRef = useRef(null);
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const {
@@ -257,10 +257,10 @@ const SectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(section.id, undefined, section.id);
+      openContainerSidebar(section.id, undefined, section.id);
       setIsExpanded(true);
     }
-  }, [openContainerInfoSidebar]);
+  }, [openContainerSidebar]);
 
   return (
     <>

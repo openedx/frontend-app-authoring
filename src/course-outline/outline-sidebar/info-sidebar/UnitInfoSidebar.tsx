@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button, Stack, Tab, Tabs,
@@ -28,10 +28,27 @@ interface Props {
 
 export const UnitSidebar = ({ unitId }: Props) => {
   const intl = useIntl();
-  const [tab, setTab] = useState<'preview' | 'info' | 'settings'>('info');
   const { data: unitData, isLoading } = useCourseItemData(unitId);
-  const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
+  const {
+    selectedContainerState,
+    clearSelection,
+    currentTabKey,
+    setCurrentTabKey,
+  } = useOutlineSidebarContext();
   const { openPublishModal, getUnitUrl, courseId } = useCourseAuthoringContext();
+  const availableTabs = {
+    preview: 'preview',
+    info: 'info',
+    settings: 'settings',
+  };
+
+  useEffect(() => {
+    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
+      // Set default Tab key
+      setCurrentTabKey('preview');
+    }
+  }, [currentTabKey, setCurrentTabKey]);
+
 
   const handlePublish = () => {
     if (unitData?.hasChanges) {
@@ -72,12 +89,12 @@ export const UnitSidebar = ({ unitId }: Props) => {
         variant="tabs"
         className="my-2 mx-n3.5"
         id="add-content-tabs"
-        activeKey={tab}
-        onSelect={setTab}
+        activeKey={currentTabKey}
+        onSelect={setCurrentTabKey}
         mountOnEnter
       >
         <Tab
-          eventKey="preview"
+          eventKey={availableTabs.preview}
           title={intl.formatMessage(messages.previewTabText)}
           // To make sure that data is fresh
           unmountOnExit
@@ -94,10 +111,10 @@ export const UnitSidebar = ({ unitId }: Props) => {
             />
           </IframeProvider>
         </Tab>
-        <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
+        <Tab eventKey={availableTabs.info} title={intl.formatMessage(messages.infoTabText)}>
           <InfoSection itemId={unitId} />
         </Tab>
-        <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
+        <Tab eventKey={availableTabs.settings} title={intl.formatMessage(messages.settingsTabText)}>
           <div>Settings</div>
         </Tab>
       </Tabs>

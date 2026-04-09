@@ -67,7 +67,7 @@ const SubsectionCard = ({
   const currentRef = useRef(null);
   const intl = useIntl();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
@@ -250,10 +250,10 @@ const SubsectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(subsection.id, subsection.id, section.id);
+      openContainerSidebar(subsection.id, subsection.id, section.id);
       setIsExpanded(true);
     }
-  }, [openContainerInfoSidebar]);
+  }, [openContainerSidebar]);
 
   return (
     <>

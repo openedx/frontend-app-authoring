@@ -19,6 +19,8 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import messages from '../messages';
+import { useOutlineSidebarContext } from '../OutlineSidebarContext';
+import { useEffect } from 'react';
 
 const DetailsTab = () => {
   const intl = useIntl();
@@ -152,6 +154,14 @@ export const CourseInfoSidebar = () => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
   const { data: courseDetails } = useCourseDetails(courseId);
+  const { currentTabKey, setCurrentTabKey } = useOutlineSidebarContext();
+
+  useEffect(() => {
+    if (!currentTabKey) {
+      // Set default Tab key
+      setCurrentTabKey('info');
+    }
+  }, [currentTabKey, setCurrentTabKey]);
 
   return (
     <>
@@ -164,6 +174,8 @@ export const CourseInfoSidebar = () => {
         className="my-2 mx-n3.5"
         id="course-info-tabs"
         mountOnEnter
+        activeKey={currentTabKey}
+        onSelect={setCurrentTabKey}
       >
         <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
           <DetailsTab />

@@ -320,6 +320,8 @@ describe('<UnitCard />', () => {
       .mockImplementation(() => ({
         setCurrentPageKey: mockSetCurrentPageKey,
         currentPageKey: 'info',
+        currentTabKey: 'info',
+        setCurrentTabKey: jest.fn(),
         sidebarPages: {
           info: testSidebarPage,
           help: testSidebarPage,
@@ -331,6 +333,7 @@ describe('<UnitCard />', () => {
         currentFlow: undefined,
         startCurrentFlow: jest.fn(),
         stopCurrentFlow: jest.fn(),
+        openContainerSidebar: jest.fn(),
         openContainerInfoSidebar: jest.fn(),
         clearSelection: jest.fn(),
         setSelectedContainerState: mockSetSelectedContainerState,

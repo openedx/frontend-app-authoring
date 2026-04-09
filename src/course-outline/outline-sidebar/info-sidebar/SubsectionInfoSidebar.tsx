@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 
@@ -20,11 +20,21 @@ interface Props {
 
 export const SubsectionSidebar = ({ subsectionId }: Props) => {
   const intl = useIntl();
-  const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
   const { selectedContainerState } = useOutlineSidebarContext();
   const { openPublishModal } = useCourseAuthoringContext();
-  const { clearSelection } = useOutlineSidebarContext();
+  const { clearSelection, currentTabKey, setCurrentTabKey } = useOutlineSidebarContext();
+  const availableTabs = {
+    info: 'info',
+    settings: 'settings',
+  };
+
+  useEffect(() => {
+    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
+      // Set default Tab key
+      setCurrentTabKey('info');
+    }
+  }, [currentTabKey, setCurrentTabKey]);
 
   const handlePublish = () => {
     if (selectedContainerState?.sectionId && subsectionData?.hasChanges) {
@@ -51,14 +61,14 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
         variant="tabs"
         className="my-2 mx-n3.5"
         id="add-content-tabs"
-        activeKey={tab}
-        onSelect={setTab}
+        activeKey={currentTabKey}
+        onSelect={setCurrentTabKey}
         mountOnEnter
       >
-        <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
+        <Tab eventKey={availableTabs.info} title={intl.formatMessage(messages.infoTabText)}>
           <InfoSection itemId={subsectionId} />
         </Tab>
-        <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
+        <Tab eventKey={availableTabs.settings} title={intl.formatMessage(messages.settingsTabText)}>
           <div>Settings</div>
         </Tab>
       </Tabs>

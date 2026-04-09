@@ -32,12 +32,18 @@ interface OutlineSidebarContextData {
   currentFlow?: OutlineFlow;
   startCurrentFlow: (flow: OutlineFlow) => void;
   stopCurrentFlow: () => void;
+  currentTabKey?: string;
+  setCurrentTabKey: (tabKey: string | undefined) => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
   selectedContainerState?: SelectionState;
   setSelectedContainerState: (selectedContainerState?: SelectionState) => void;
   openContainerInfoSidebar: (containerId: string, subsectionId?: string, sectionId?: string) => void;
+  /**
+   * Opens the sidebar for a new container and keeps the current sidebar page
+   */
+  openContainerSidebar: (containerId: string, subsectionId?: string, sectionId?: string) => void;
   clearSelection: () => void;
   /** Stores last section that allows adding subsections inside it. */
   lastEditableSection?: XBlock;
@@ -88,6 +94,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     stopCurrentFlow,
   ] = useToggleWithValue<OutlineFlow>();
   const [isOpen, open, , toggle] = useToggle(true);
+  const [currentTabKey, setCurrentTabKey] = useState<string>();
 
   /**
   * Use this to store the selected container's information and should always contain full ancestor info.
@@ -115,6 +122,8 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
 
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);
+    // Reset tab
+    setCurrentTabKey(undefined)
     stopCurrentFlow();
     open();
   }, [open, stopCurrentFlow]);
@@ -129,6 +138,16 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       setCurrentPageKey('info');
     }
   }, [setSelectedContainerState, setCurrentPageKey]);
+
+  const openContainerSidebar = useCallback((
+    containerId: string,
+    subsectionId?: string,
+    sectionId?: string,
+  ) => {
+    if (isOutlineNewDesignEnabled()) {
+      setSelectedContainerState({ currentId: containerId, subsectionId, sectionId });
+    }
+  }, [setSelectedContainerState]);
 
   const clearSelection = useCallback(() => {
     setSelectedContainerState(undefined);
@@ -185,12 +204,15 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       currentFlow,
       startCurrentFlow,
       stopCurrentFlow,
+      currentTabKey,
+      setCurrentTabKey,
       isOpen,
       open,
       toggle,
       selectedContainerState,
       setSelectedContainerState,
       openContainerInfoSidebar,
+      openContainerSidebar,
       clearSelection,
       lastEditableSection,
       lastEditableSubsection,
@@ -203,12 +225,15 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       currentFlow,
       startCurrentFlow,
       stopCurrentFlow,
+      currentTabKey,
+      setCurrentTabKey,
       isOpen,
       open,
       toggle,
       selectedContainerState,
       setSelectedContainerState,
       openContainerInfoSidebar,
+      openContainerSidebar,
       clearSelection,
       lastEditableSection,
       lastEditableSubsection,

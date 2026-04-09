@@ -14,7 +14,7 @@ export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
 
 interface UnitSidebarContextData {
   currentPageKey: UnitSidebarPageKeys;
-  setCurrentPageKey: (pageKey: UnitSidebarPageKeys, componentId?: string | null) => void;
+  setCurrentPageKey: (pageKey?: UnitSidebarPageKeys, componentId?: string | null) => void;
   currentTabKey?: string;
   setCurrentTabKey: (tabKey: string | undefined) => void;
   selectedComponentId?: string;
@@ -54,12 +54,17 @@ export const UnitSidebarProvider = ({
   const isVertical = currentItemData?.category === 'vertical';
 
   const setCurrentPageKey = useCallback(/* istanbul ignore next */ (
-    pageKey: UnitSidebarPageKeys,
+    pageKey?: UnitSidebarPageKeys,
     componentId?: string | null,
   ) => {
     // Reset tab
     setCurrentTabKey(undefined);
-    setCurrentPageKeyState(pageKey);
+    if (pageKey) {
+      setCurrentPageKeyState(pageKey);
+    } else if (componentId && currentPageKey === 'add') {
+      // Components do not have add sidebar, in this case, open the info by default
+      setCurrentPageKeyState('info');
+    }
     if (componentId !== undefined) {
       setSelectedComponentId(componentId === null ? undefined : componentId);
     }
@@ -68,7 +73,7 @@ export const UnitSidebarProvider = ({
       sendMessageToIframe(messageTypes.clearSelection, null);
     }
     open();
-  }, [open]);
+  }, [open, currentPageKey]);
 
   const context = useMemo<UnitSidebarContextData>(
     () => ({

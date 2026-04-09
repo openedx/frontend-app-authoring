@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 
@@ -20,10 +20,20 @@ interface Props {
 
 export const SectionSidebar = ({ sectionId }: Props) => {
   const intl = useIntl();
-  const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { data: sectionData, isLoading } = useCourseItemData(sectionId);
   const { openPublishModal } = useCourseAuthoringContext();
-  const { clearSelection } = useOutlineSidebarContext();
+  const { clearSelection, currentTabKey, setCurrentTabKey } = useOutlineSidebarContext();
+  const availableTabs = {
+    info: 'info',
+    settings: 'settings',
+  };
+
+  useEffect(() => {
+    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
+      // Set default Tab key
+      setCurrentTabKey('info');
+    }
+  }, [currentTabKey, setCurrentTabKey]);
 
   const handlePublish = () => {
     if (sectionData?.hasChanges) {
@@ -50,14 +60,14 @@ export const SectionSidebar = ({ sectionId }: Props) => {
         variant="tabs"
         className="my-2 mx-n3.5"
         id="add-content-tabs"
-        activeKey={tab}
-        onSelect={setTab}
+        activeKey={currentTabKey}
+        onSelect={setCurrentTabKey}
         mountOnEnter
       >
-        <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
+        <Tab eventKey={availableTabs.info} title={intl.formatMessage(messages.infoTabText)}>
           <InfoSection itemId={sectionId} />
         </Tab>
-        <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
+        <Tab eventKey={availableTabs.settings} title={intl.formatMessage(messages.settingsTabText)}>
           <div>Settings</div>
         </Tab>
       </Tabs>
