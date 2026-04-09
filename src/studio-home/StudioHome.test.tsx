@@ -1,4 +1,5 @@
 import * as reactRedux from 'react-redux';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 
 import {
   fireEvent,
@@ -89,6 +90,18 @@ describe('<StudioHome />', () => {
       render(<StudioHome />, { path: '/home' });
       const header = getHeaderElement();
       within(header).getByRole('button', { name: 'New course' }); // will error if not found
+    });
+
+    it('should render roles and permissions button', async () => {
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
+      });
+
+      render(<StudioHome />, { path: '/home' });
+      const header = getHeaderElement();
+      const rolesButton = within(header).getByRole('link', { name: 'Roles and permissions' });
+      expect(rolesButton).toHaveAttribute('href', 'https://admin-console.example.com/authz');
     });
 
     it('should show verify email layout if user inactive', async () => {

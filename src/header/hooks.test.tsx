@@ -100,7 +100,7 @@ describe('header utils', () => {
         ENABLE_CERTIFICATE_PAGE: 'true',
       });
       const actualItems = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      expect(actualItems).toHaveLength(6);
+      expect(actualItems).toHaveLength(7);
     });
     it('when certificate page disabled should not include certificates option', () => {
       setConfig({
@@ -108,7 +108,7 @@ describe('header utils', () => {
         ENABLE_CERTIFICATE_PAGE: 'false',
       });
       const actualItems = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      expect(actualItems).toHaveLength(5);
+      expect(actualItems).toHaveLength(6);
     });
     it('when user has access to advanced settings should include advanced settings option', () => {
       const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current.map((item) => item.title);
@@ -161,6 +161,19 @@ describe('header utils', () => {
       await waitFor(() => {
         const actualItemsTitle = result.current.map((item) => item.title);
         expect(actualItemsTitle).not.toContain('Advanced Settings');
+      });
+    });
+
+    it('should include roles and permissions option', () => {
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'http://admin-console.example.com',
+      });
+      const actualItems = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const rolesPermissionsItem = actualItems.find(item => item.title === 'Roles and Permissions');
+      expect(rolesPermissionsItem).toEqual({
+        href: 'http://admin-console.example.com/authz?scope=course-123',
+        title: 'Roles and Permissions',
       });
     });
   });

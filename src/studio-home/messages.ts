@@ -16,6 +16,7 @@ const messages = defineMessages({
   addRolesPermissionsBtnText: {
     id: 'course-authoring.studio-home.add-roles-permissions.btn.text',
     defaultMessage: 'Roles and permissions',
+    description: 'Text for the button that links to the Admin Console Roles and Permissions page.',
   },
   homePageLoadFailedMessage: {
     id: 'course-authoring.studio-home.page-load.failed.message',
