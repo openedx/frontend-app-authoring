@@ -225,7 +225,21 @@ describe('header utils', () => {
   });
 
   describe('useLibrarySettingsMenuItems', () => {
+    let originalConfig: any;
+
+    beforeEach(() => {
+      originalConfig = { ...getConfig() };
+    });
+
+    afterEach(() => {
+      setConfig(originalConfig);
+    });
+
     it('should contain team access url', () => {
+      const configWithoutAdminConsole = { ...getConfig() };
+      delete configWithoutAdminConsole.ADMIN_CONSOLE_URL;
+      setConfig(configWithoutAdminConsole);
+
       const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false), { wrapper: createWrapper() }).result.current;
       expect(items).toContainEqual({ title: 'Library Team', href: 'http://localhost/?sa=manage-team' });
     });
