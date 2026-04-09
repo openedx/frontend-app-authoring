@@ -167,6 +167,22 @@ const SectionCard = ({
     setIsExpanded((prevState) => containsSearchResult() || prevState);
   }, [locatorId, setIsExpanded]);
 
+  useEffect(() => {
+    // If a new child (subsection/unit) was just created and its scroll target is inside this
+    // section, expand so that SubsectionCard mounts and can scroll to it.
+    if (!scrollState?.id) {
+      return;
+    }
+    const subsections = section.childInfo?.children ?? [];
+    const isScrollTargetInSection = subsections.some(
+      (sub) => sub.id === scrollState.id
+        || sub.childInfo?.children?.some((unit) => unit.id === scrollState.id),
+    );
+    if (isScrollTargetInSection) {
+      setIsExpanded(true);
+    }
+  }, [scrollState?.id]);
+
   const handleOnPostChangeSync = useCallback(() => {
     queryClient.invalidateQueries({
       queryKey: courseOutlineQueryKeys.courseItemId(section.id),

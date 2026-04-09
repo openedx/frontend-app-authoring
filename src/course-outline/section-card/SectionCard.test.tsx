@@ -6,6 +6,7 @@ import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import SectionCard from './SectionCard';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
@@ -25,7 +26,7 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
-    courseId: 5,
+    courseId: '5',
     setCurrentSelection,
   }),
 }));
@@ -111,11 +112,13 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
   },
 );
 let axiosMock;
+let queryClient;
 
 describe('<SectionCard />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
+    queryClient = mocks.queryClient;
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, section);
@@ -247,6 +250,27 @@ describe('<SectionCard />', () => {
     const newSubsectionButton = screen.queryByRole('button', { name: 'New subsection' });
     expect(cardSubsections).toBeNull();
     expect(newSubsectionButton).toBeNull();
+  });
+
+  it('expands collapsed section when scrollState targets a child subsection', async () => {
+    queryClient.setQueryData(courseOutlineQueryKeys.scrollToCourseItemId('5'), { id: subsection.id });
+    renderComponent({ isSectionsExpanded: false });
+
+    expect(await screen.findByTestId('section-card__subsections')).toBeInTheDocument();
+  });
+
+  it('expands collapsed section when scrollState targets a unit inside a child subsection', async () => {
+    queryClient.setQueryData(courseOutlineQueryKeys.scrollToCourseItemId('5'), { id: unit.id });
+    renderComponent({ isSectionsExpanded: false });
+
+    expect(await screen.findByTestId('section-card__subsections')).toBeInTheDocument();
+  });
+
+  it('does not expand collapsed section when scrollState targets an unrelated id', async () => {
+    queryClient.setQueryData(courseOutlineQueryKeys.scrollToCourseItemId('5'), { id: 'unrelated-id' });
+    renderComponent({ isSectionsExpanded: false });
+
+    expect(screen.queryByTestId('section-card__subsections')).toBeNull();
   });
 
   it('should sync section changes from upstream', async () => {
