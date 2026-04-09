@@ -6,6 +6,8 @@ import { useToggle } from '@openedx/paragon';
 import { useStateWithUrlSearchParam } from '@src/hooks';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { messageTypes } from '../constants';
+import { useSelector } from 'react-redux';
+import { getCourseUnitData } from '../data/selectors';
 
 export type UnitSidebarPageKeys = 'info' | 'add' | 'align';
 export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
@@ -21,6 +23,11 @@ interface UnitSidebarContextData {
   open: () => void;
   toggle: () => void;
   readOnly: boolean;
+  /*
+   * There are other blocks that use the same unit screen and sidebars.
+   * For example: Conditional block.
+   */
+  isVertical: boolean;
 }
 
 const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(undefined);
@@ -42,6 +49,9 @@ export const UnitSidebarProvider = ({
   const [currentTabKey, setCurrentTabKey] = useState<string>();
   const [selectedComponentId, setSelectedComponentId] = useState<string>();
   const [isOpen, open,, toggle] = useToggle(true);
+
+  const currentItemData = useSelector(getCourseUnitData);
+  const isVertical = currentItemData?.category === 'vertical';
 
   const setCurrentPageKey = useCallback(/* istanbul ignore next */ (
     pageKey: UnitSidebarPageKeys,
@@ -72,6 +82,7 @@ export const UnitSidebarProvider = ({
       open,
       toggle,
       readOnly,
+      isVertical,
     }),
     [
       currentPageKey,
@@ -84,6 +95,7 @@ export const UnitSidebarProvider = ({
       open,
       toggle,
       readOnly,
+      isVertical,
     ],
   );
 

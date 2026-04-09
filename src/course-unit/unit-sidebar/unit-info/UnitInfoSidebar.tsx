@@ -28,6 +28,7 @@ import messages from './messages';
 const UnitInfoDetails = () => {
   const intl = useIntl();
   const { blockId } = useParams();
+  const { isVertical } = useUnitSidebarContext();
   const courseVerticalChildren = useSelector(getCourseVerticalChildren);
 
   if (blockId === undefined) {
@@ -48,9 +49,14 @@ const UnitInfoDetails = () => {
 
   return (
     <SidebarContent>
-      <PublishControls blockId={blockId} hideCopyButton />
+      {isVertical && (
+        <PublishControls blockId={blockId} hideCopyButton />
+      )}
       <SidebarSection
-        title={intl.formatMessage(messages.sidebarSectionSummary)}
+        title={isVertical
+          ? intl.formatMessage(messages.sidebarSectionSummary)
+          : intl.formatMessage(messages.sidebarSectionSummaryDefault)
+        }
         icon={getItemIcon('unit')}
       >
         {componentData && <ComponentCountSnippet componentData={componentData} />}
