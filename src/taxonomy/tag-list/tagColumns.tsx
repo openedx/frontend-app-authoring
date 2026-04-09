@@ -12,7 +12,6 @@ import {
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import type { Row } from '@tanstack/react-table';
 
-import type { IntlShape } from 'react-intl';
 import messages from './messages';
 import type {
   RowId,
