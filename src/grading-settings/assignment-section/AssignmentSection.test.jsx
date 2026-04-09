@@ -3,6 +3,8 @@ import { render, waitFor, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import AssignmentSection from '.';
+import AssignmentItem from './assignments/AssignmentItem';
+import AssignmentTypeName from './assignments/AssignmentTypeName';
 import messages from './messages';
 
 const testObj = {};
@@ -108,6 +110,45 @@ describe('<AssignmentSection />', () => {
       expect(getByText(messages.totalNumberErrorMessage.defaultMessage)).toBeInTheDocument();
     });
   });
+  it('should disable all inputs and delete button when isEditable is false', async () => {
+    const { getAllByRole, getByText } = render(<RootWrapper isEditable={false} />);
+    await waitFor(() => {
+      const inputs = getAllByRole('textbox').concat(getAllByRole('spinbutton'));
+      inputs.forEach((input) => expect(input).toBeDisabled());
+      const deleteBtn = getByText(messages.assignmentDeleteButton.defaultMessage).closest('button');
+      expect(deleteBtn).toBeDisabled();
+    });
+  });
+
+  it('renders AssignmentItem with default disabled=false when prop is omitted', () => {
+    const { getByTestId } = render(
+      <IntlProvider locale="en">
+        <ul>
+          <AssignmentItem
+            title="Test"
+            descriptions="Test description"
+            type="text"
+            name="shortLabel"
+            className="test-class"
+            onChange={jest.fn()}
+          />
+        </ul>
+      </IntlProvider>,
+    );
+    expect(getByTestId('assignment-shortLabel-input')).not.toBeDisabled();
+  });
+
+  it('renders AssignmentTypeName with default disabled=false when prop is omitted', () => {
+    const { getByTestId } = render(
+      <IntlProvider locale="en">
+        <ul>
+          <AssignmentTypeName value="Homework" onChange={jest.fn()} />
+        </ul>
+      </IntlProvider>,
+    );
+    expect(getByTestId('assignment-type-name-input')).not.toBeDisabled();
+  });
+
   it('checking correct error msg if total weight have negative number', async () => {
     const { getByText, getByTestId } = render(<RootWrapper />);
     await waitFor(() => {
