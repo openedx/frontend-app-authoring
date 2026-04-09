@@ -143,17 +143,14 @@ describe('<GradingSettings />', () => {
 });
 
 describe('<GradingSettings /> permissions', () => {
-  const setupMocks = () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
     const mocks = initializeMocks();
     Object.defineProperty(window, 'scrollTo', { value: jest.fn(), writable: true });
     const { axiosMock: mock } = mocks;
     mock.onGet(getGradingSettingsApiUrl(courseId)).reply(200, gradingSettings);
     mock.onPost(getGradingSettingsApiUrl(courseId)).reply(200, {});
     mock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, {});
-    return mock;
-  };
-
-  beforeEach(() => {
     jest.mocked(useUserPermissionsWithAuthzCourse).mockReturnValue({
       isLoading: false,
       permissions: { canViewGradingSettings: true, canEditGradingSettings: true },
@@ -162,14 +159,12 @@ describe('<GradingSettings /> permissions', () => {
 
   it('should render normally when authz flag is disabled (no regression)', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: false });
-    setupMocks();
     render(<RootWrapper />);
     expect(await screen.findAllByText(messages.headingTitle.defaultMessage)).not.toHaveLength(0);
   });
 
   it('should render normally when user has view and edit permissions', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    setupMocks();
     render(<RootWrapper />);
     expect(await screen.findAllByText(messages.headingTitle.defaultMessage)).not.toHaveLength(0);
   });
@@ -180,7 +175,6 @@ describe('<GradingSettings /> permissions', () => {
       isLoading: false,
       permissions: { canViewGradingSettings: false, canEditGradingSettings: false },
     });
-    setupMocks();
     render(<RootWrapper />);
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
   });
@@ -191,7 +185,6 @@ describe('<GradingSettings /> permissions', () => {
       isLoading: false,
       permissions: { canViewGradingSettings: true, canEditGradingSettings: false },
     });
-    setupMocks();
     render(<RootWrapper />);
     const segmentInputs = await screen.findAllByTestId('grading-scale-segment-input');
     segmentInputs.forEach((input) => expect(input).toBeDisabled());
@@ -203,7 +196,6 @@ describe('<GradingSettings /> permissions', () => {
       isLoading: false,
       permissions: { canViewGradingSettings: true, canEditGradingSettings: false },
     });
-    setupMocks();
     render(<RootWrapper />);
     const segmentInputs = await screen.findAllByTestId('grading-scale-segment-input');
     // Trigger a change to show the save alert
