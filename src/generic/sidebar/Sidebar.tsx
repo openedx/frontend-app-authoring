@@ -96,7 +96,7 @@ export function Sidebar<T extends SidebarPages>({
   const activeKey = isOpen ? currentPageKey : undefined;
 
   return (
-    <Stack direction="horizontal" className="sidebar align-items-baseline ml-3" gap={2}>
+    <Stack direction="horizontal" className="sidebar align-items-baseline ml-3" data-testid="sidebar" gap={2}>
       {(isOpen && !!currentPageKey) ?
         (
           <ResizableBox>

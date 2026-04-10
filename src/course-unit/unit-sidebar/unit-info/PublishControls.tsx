@@ -35,7 +35,6 @@ const PublishControls = ({
   const { sendMessageToIframe } = useIframe();
 
   const [isDiscardModalOpen, openDiscardModal, closeDiscardModal] = useToggle(false);
-  const [isVisibleModalOpen, openVisibleModal, closeVisibleModal] = useToggle(false);
 
   const {
     editedOn,
@@ -45,16 +44,6 @@ const PublishControls = ({
   } = unitData;
 
   const publishMutation = useConfigureUnitWithPageUpdates();
-
-  const handleCourseUnitVisibility = () => {
-    closeVisibleModal();
-    publishMutation.mutate({
-      unitId: blockId,
-      type: PUBLISH_TYPES.republish,
-      isVisibleToStaffOnly: false,
-      groupAccess: null,
-    });
-  };
 
   const handleCourseUnitDiscardChanges = () => {
     closeDiscardModal();
@@ -147,7 +136,6 @@ const PublishControls = ({
         </Stack>
         <div>
           <UnitVisibilityInfo
-            openVisibleModal={openVisibleModal}
             visibleToStaffOnly={visibleToStaffOnly}
             userPartitionInfo={unitData.userPartitionInfo}
           />
@@ -167,16 +155,6 @@ const PublishControls = ({
         handleAction={handleCourseUnitDiscardChanges}
         handleCancel={closeDiscardModal}
         message={intl.formatMessage(messages.modalDiscardUnitChangesDescription)}
-        icon={InfoOutlineIcon}
-      />
-      <ModalNotification
-        title={intl.formatMessage(messages.modalMakeVisibilityTitle)}
-        isOpen={isVisibleModalOpen}
-        actionButtonText={intl.formatMessage(messages.modalMakeVisibilityActionButtonText)}
-        cancelButtonText={intl.formatMessage(messages.modalMakeVisibilityCancelButtonText)}
-        handleAction={handleCourseUnitVisibility}
-        handleCancel={closeVisibleModal}
-        message={intl.formatMessage(messages.modalMakeVisibilityDescription)}
         icon={InfoOutlineIcon}
       />
     </div>

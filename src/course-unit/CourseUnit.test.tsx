@@ -178,7 +178,7 @@ describe('<CourseUnit />', () => {
     const currentSubSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
 
     const unitHeaderTitle = await screen.findByTestId('unit-header-title');
-    expect(await screen.findByText(unitDisplayName)).toBeInTheDocument();
+    expect(within(unitHeaderTitle).getByText(unitDisplayName)).toBeInTheDocument();
     expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage }))
       .toBeInTheDocument();
     expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage }))
@@ -286,7 +286,7 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    const courseUnitSidebar = await screen.findByTestId('course-unit-sidebar');
+    const courseUnitSidebar = screen.getByTestId('sidebar');
     expect(
       within(courseUnitSidebar).getByText(legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage),
     ).toBeInTheDocument();
@@ -318,7 +318,7 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    const courseUnitSidebar = await screen.findByTestId('course-unit-sidebar');
+    const courseUnitSidebar = screen.getByTestId('sidebar');
     expect(
       within(courseUnitSidebar).getByText(legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage),
     ).toBeInTheDocument();
@@ -1200,7 +1200,7 @@ describe('<CourseUnit />', () => {
   it('should toggle visibility from sidebar and update course unit state accordingly', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
-    const courseUnitSidebar = await screen.findByTestId('course-unit-sidebar');
+    const courseUnitSidebar = await screen.findByTestId('sidebar');
 
     const draftUnpublishedChangesHeading = await within(courseUnitSidebar)
       .findByText(legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage);
@@ -1296,7 +1296,7 @@ describe('<CourseUnit />', () => {
     let publishBtn;
 
     await waitFor(async () => {
-      courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
+      courseUnitSidebar = screen.getByTestId('sidebar');
       publishBtn = within(courseUnitSidebar).queryByRole('button', {
         name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage,
       });
@@ -1348,7 +1348,7 @@ describe('<CourseUnit />', () => {
     let discardChangesBtn;
 
     await waitFor(async () => {
-      courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
+      courseUnitSidebar = screen.getByTestId('sidebar');
 
       const draftUnpublishedChangesHeading = within(courseUnitSidebar)
         .getByText(legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage);
@@ -1421,7 +1421,7 @@ describe('<CourseUnit />', () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
     expect(
-      await within(await screen.findByTestId('course-unit-sidebar'))
+      await within(await screen.findByTestId('sidebar'))
         .findByLabelText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage),
     ).not.toBeChecked();
 
@@ -1481,15 +1481,15 @@ describe('<CourseUnit />', () => {
     await user.click(modalSaveBtn);
 
     expect(
-      await within(await screen.findByTestId('course-unit-sidebar'))
+      await within(await screen.findByTestId('sidebar'))
         .findByLabelText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage),
     ).toBeChecked();
     expect(
-      await within(await screen.findByTestId('course-unit-sidebar'))
+      await within(await screen.findByTestId('sidebar'))
         .findByText(legacySidebarMessages.sidebarTitleVisibleToStaffOnly.defaultMessage),
     ).toBeInTheDocument();
     expect(
-      await within(await screen.findByTestId('course-unit-sidebar'))
+      await within(await screen.findByTestId('sidebar'))
         .findByText(unitInfoMessages.visibilityStaffOnlyTitle.defaultMessage),
     ).toBeInTheDocument();
   });
@@ -2217,40 +2217,6 @@ describe('<CourseUnit />', () => {
     });
   };
 
-  const checkRenderVisibilityModal = async (headingMessageId) => {
-    const user = userEvent.setup();
-    const { findByRole, getByTestId } = render(<RootWrapper />);
-    let configureModal;
-    let restrictAccessSelect;
-
-    const headerConfigureBtn = await findByRole('button', { name: /settings/i });
-    await user.click(headerConfigureBtn);
-
-    await waitFor(() => {
-      configureModal = getByTestId('configure-modal');
-      restrictAccessSelect = within(configureModal)
-        .getByRole('combobox', { name: configureModalMessages.restrictAccessTo.defaultMessage });
-      expect(
-        within(configureModal)
-          .getByRole('heading', { name: configureModalMessages[headingMessageId].defaultMessage }),
-      ).toBeInTheDocument();
-      expect(
-        within(configureModal)
-          .queryByText(configureModalMessages.unitVisibility.defaultMessage),
-      ).not.toBeInTheDocument();
-      expect(
-        within(configureModal)
-          .getByText(configureModalMessages.restrictAccessTo.defaultMessage),
-      ).toBeInTheDocument();
-      expect(restrictAccessSelect).toBeInTheDocument();
-      expect(restrictAccessSelect).toHaveValue('-1');
-    });
-
-    const modalSaveBtn = within(configureModal)
-      .getByRole('button', { name: configureModalMessages.saveButton.defaultMessage });
-    await user.click(modalSaveBtn);
-  };
-
   describe('Library Content page', () => {
     const newUnitId = '12345';
 
@@ -2312,10 +2278,6 @@ describe('<CourseUnit />', () => {
         expect(queryByRole('heading', { name: /unit location/i })).not.toBeInTheDocument();
       });
     });
-
-    it('should display visibility modal correctly', async () => (
-      checkRenderVisibilityModal('libraryContentAccess')
-    ));
 
     it('opens legacy edit modal on edit button click', checkLegacyEditModalOnEditMessage);
   });
@@ -2389,7 +2351,7 @@ describe('<CourseUnit />', () => {
 
       await waitFor(() => {
         const unitHeaderTitle = screen.getByTestId('unit-header-title');
-        expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
+        expect(within(unitHeaderTitle).getByText(unitDisplayName)).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage }))
           .toBeInTheDocument();
         expect(
@@ -2470,10 +2432,6 @@ describe('<CourseUnit />', () => {
       });
     });
 
-    it('should display visibility modal correctly', async () => (
-      checkRenderVisibilityModal('splitTestAccess')
-    ));
-
     it('opens legacy edit modal on edit button click', checkLegacyEditModalOnEditMessage);
   });
 
@@ -2547,7 +2505,7 @@ describe('<CourseUnit />', () => {
     expect(editButton).toBeEnabled();
 
     // The "Publish" button should still be enabled
-    const courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
+    const courseUnitSidebar = screen.getByTestId('sidebar');
     const publishButton = within(courseUnitSidebar).getByRole(
       'button',
       { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage },
@@ -2559,11 +2517,7 @@ describe('<CourseUnit />', () => {
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();
   });
 
-  it('renders new unit info/settings sidebar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
+  it('renders unit info/settings sidebar', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
 
@@ -2588,10 +2542,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('displays the live state in the status bar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -2684,11 +2634,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('displays the staff only state in the status bar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
-
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -2708,10 +2653,6 @@ describe('<CourseUnit />', () => {
 
   it('should disable discussions in the settings sidebar', async () => {
     const user = userEvent.setup();
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     render(<RootWrapper />);
 
     axiosMock
@@ -2756,11 +2697,6 @@ describe('<CourseUnit />', () => {
 
   it('should update the group access in the unit sidebar', async () => {
     const user = userEvent.setup();
-
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     render(<RootWrapper />);
 
     axiosMock
@@ -2836,10 +2772,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('should one group in the visibility field in the unit sidebar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     render(<RootWrapper />);
 
     axiosMock
@@ -2891,10 +2823,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('should multiple groups in the visibility field in the unit sidebar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     render(<RootWrapper />);
 
     axiosMock
@@ -2951,10 +2879,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('should render never published state in the unit sidebar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     render(<RootWrapper />);
 
     axiosMock
@@ -2981,10 +2905,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('displays the scheduled state in the status bar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -3001,10 +2921,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('displays the draft changes state in the status bar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -3021,10 +2937,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('displays discussions enabled label in the status bar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -3040,10 +2952,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('displays group access with one group in the status bar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -3087,10 +2995,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('displays group access with multiple groups in the status bar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -3137,7 +3041,6 @@ describe('<CourseUnit />', () => {
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
     });
 
     render(<RootWrapper />);
@@ -3168,11 +3071,6 @@ describe('<CourseUnit />', () => {
     };
 
     beforeEach(async () => {
-      setConfig({
-        ...getConfig(),
-        ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-      });
-
       // The Meilisearch client-side API uses fetch, not Axios.
       fetchMock.mockReset();
       fetchMock.post(searchEndpoint, (_url, req) => {
@@ -3418,10 +3316,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('not render add sidebar in units from libraries (read-only)', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
     render(<RootWrapper />);
 
     axiosMock
@@ -3454,15 +3348,6 @@ describe('<CourseUnit />', () => {
   });
 
   it('opens the component info sidebar on postMessage event', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
-
-    axiosMock
-      .onGet(getXBlockApiUrl(mockContentData.textXBlock))
-      .reply(200, mockContentData.textXBlockData);
-
     render(<RootWrapper />);
 
     await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);

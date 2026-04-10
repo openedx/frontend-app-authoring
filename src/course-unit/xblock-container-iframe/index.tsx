@@ -8,7 +8,7 @@ import {
   useCallback,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useToggle, Sheet, StandardModal } from '@openedx/paragon';
+import { useToggle, StandardModal } from '@openedx/paragon';
 import { useDispatch } from 'react-redux';
 
 import { useToastContext } from '@src/generic/toast-context';
@@ -17,7 +17,6 @@ import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import ModalIframe from '@src/generic/modal-iframe';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { IFRAME_FEATURE_POLICY } from '@src/constants';
-import ContentTagsDrawer from '@src/content-tags-drawer/ContentTagsDrawer';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { useIframeBehavior } from '@src/generic/hooks/useIframeBehavior';
 import { useIframeContent } from '@src/generic/hooks/useIframeContent';
@@ -45,7 +44,6 @@ import {
 } from './types';
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
-import { isUnitPageNewDesignEnabled } from '../utils';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 import { contentTagsQueryKeys } from '@src/content-tags-drawer/data/apiHooks';
 
@@ -89,7 +87,6 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const [unlinkXBlockId, setUnlinkXBlockId] = useState<string | null>(null);
   const [configureXBlockId, setConfigureXBlockId] = useState<string | null>(null);
   const [showLegacyEditModal, setShowLegacyEditModal] = useState<boolean>(false);
-  const [isManageTagsOpen, openManageTagsModal, closeManageTagsModal] = useToggle(false);
 
   const iframeUrl = useMemo(() => getIframeUrl(blockId), [blockId]);
   const legacyEditModalUrl = useMemo(() => getLegacyEditModalUrl(configureXBlockId), [configureXBlockId]);
@@ -219,14 +216,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   };
 
   const handleOpenManageTagsModal = (id: string) => {
-    if (isUnitPageNewDesignEnabled()) {
-      setCurrentPageKey?.('align', id);
-      sendMessageToIframe(messageTypes.selectXblock, { locator: id });
-    } else {
-      // Legacy manage tags modal
-      setConfigureXBlockId(id);
-      openManageTagsModal();
-    }
+    setCurrentPageKey?.('align', id);
+    sendMessageToIframe(messageTypes.selectXblock, { locator: id });
   };
 
   const handleShowProcessingNotification = (variant: string) => {
@@ -351,16 +342,6 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         className="xblock-container-iframe"
         aria-label={intl.formatMessage(messages.xblockIframeLabel, { xblockCount: courseVerticalChildren.length })}
       />
-      {configureXBlockId && (
-        <Sheet
-          position="right"
-          show={isManageTagsOpen}
-          onClose={closeManageTagsModal}
-          blocking
-        >
-          <ContentTagsDrawer id={configureXBlockId} onClose={closeManageTagsModal} />
-        </Sheet>
-      )}
     </>
   );
 };

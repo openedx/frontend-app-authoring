@@ -1,23 +1,16 @@
 import { useSelector } from 'react-redux';
 import {
-  Form,
   Icon,
   IconButton,
   Stack,
 } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { useParams } from 'react-router-dom';
 
-import { getCourseUnitData } from '@src/course-unit/data/selectors';
-import { PUBLISH_TYPES } from '@src/course-unit/constants';
-import { isUnitPageNewDesignEnabled } from '@src/course-unit/utils';
 import { Edit, Groups, Lock } from '@openedx/paragon/icons';
-import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 import messages from './messages';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 
 interface UnitVisibilityInfoProps {
-  openVisibleModal: () => void;
   visibleToStaffOnly: boolean;
   userPartitionInfo?: {
     selectablePartitions: Record<string, any>[];
@@ -34,65 +27,6 @@ interface UnitVisibilityInfoContentProps {
     selectedPartitionIndex: number;
   };
 }
-
-const LegacyVisibilityInfo = ({
-  visibleToStaffOnly,
-  openVisibleModal,
-}: UnitVisibilityInfoProps) => {
-  const {
-    staffLockFrom,
-    hasExplicitStaffLock,
-  } = useSelector(getCourseUnitData);
-
-  const { blockId } = useParams();
-  const publishMutation = useConfigureUnitWithPageUpdates();
-
-  const handleCourseUnitVisibility = () => {
-    /* istanbul ignore next */
-    if (blockId) {
-      publishMutation.mutate({
-        unitId: blockId,
-        type: PUBLISH_TYPES.republish,
-        isVisibleToStaffOnly: true,
-        groupAccess: null,
-      });
-    }
-  };
-
-  return (
-    <>
-      {visibleToStaffOnly ?
-        (
-          <>
-            <h6 className="course-unit-sidebar-visibility-copy">
-              <FormattedMessage {...messages.visibilityStaffOnlyTitle} />
-            </h6>
-            {/* istanbul ignore next */ !hasExplicitStaffLock && (
-              <span className="course-unit-sidebar-visibility-section mb-2">
-                <FormattedMessage
-                  {...messages.visibilityHasExplicitStaffLockText}
-                  values={{ sectionName: staffLockFrom }}
-                />
-              </span>
-            )}
-          </>
-        ) :
-        (
-          <h6 className="course-unit-sidebar-visibility-copy">
-            <FormattedMessage {...messages.visibilityStaffAndLearnersTitle} />
-          </h6>
-        )}
-      <Form.Checkbox
-        className="course-unit-sidebar-visibility-checkbox"
-        checked={hasExplicitStaffLock}
-        onChange={hasExplicitStaffLock ? null : handleCourseUnitVisibility}
-        onClick={hasExplicitStaffLock ? openVisibleModal : null}
-      >
-        <FormattedMessage {...messages.visibilityCheckboxTitle} />
-      </Form.Checkbox>
-    </>
-  );
-};
 
 const UnitVisibilityInfoContent = ({
   visibleToStaffOnly,
@@ -148,7 +82,6 @@ const UnitVisibilityInfoContent = ({
 };
 
 const UnitVisibilityInfo = ({
-  openVisibleModal,
   visibleToStaffOnly,
   userPartitionInfo,
 }: UnitVisibilityInfoProps) => (
@@ -156,19 +89,10 @@ const UnitVisibilityInfo = ({
     <span className="heading-label">
       <FormattedMessage {...messages.visibilityVisibleToTitle} />
     </span>
-    {isUnitPageNewDesignEnabled() ?
-      (
-        <UnitVisibilityInfoContent
-          visibleToStaffOnly={visibleToStaffOnly}
-          userPartitionInfo={userPartitionInfo}
-        />
-      ) :
-      (
-        <LegacyVisibilityInfo
-          visibleToStaffOnly={visibleToStaffOnly}
-          openVisibleModal={openVisibleModal}
-        />
-      )}
+    <UnitVisibilityInfoContent
+      visibleToStaffOnly={visibleToStaffOnly}
+      userPartitionInfo={userPartitionInfo}
+    />
   </>
 );
 

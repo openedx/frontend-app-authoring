@@ -24,15 +24,7 @@ export const CourseAuthoringUnitSidebarSlot = (
       isSplitTestType,
     }}
   >
-    <UnitSidebar
-      legacySidebarProps={{
-        unitTitle,
-        xBlocks,
-        readOnly,
-        isUnitVerticalType,
-        isSplitTestType,
-      }}
-    />
+    <UnitSidebar />
   </PluginSlot>
 );
 

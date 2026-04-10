@@ -47,7 +47,6 @@ import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActions
 import { UnitSidebarProvider } from './unit-sidebar/UnitSidebarContext';
 import { UnitSidebarPagesProvider } from './unit-sidebar/UnitSidebarPagesContext';
 import { UNIT_VISIBILITY_STATES } from './constants';
-import { isUnitPageNewDesignEnabled } from './utils';
 
 const StatusBar = ({ courseUnit }: { courseUnit: any; }) => {
   const { selectedPartitionIndex, selectedGroupsLabel } = courseUnit.userPartitionInfo ?? {};
@@ -314,7 +313,7 @@ const CourseUnit = () => {
               }
             />
             <div className="unit-header-status-bar h5 mt-2 mb-4 font-weight-normal">
-              {isUnitPageNewDesignEnabled() && isUnitVerticalType && <StatusBar courseUnit={courseUnit} />}
+              {isUnitVerticalType && <StatusBar courseUnit={courseUnit} />}
             </div>
             {isUnitVerticalType && (
               <Sequence

@@ -13,7 +13,6 @@ import {
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 
 import messages from './messages';
-import { isUnitPageNewDesignEnabled } from '../utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 
 type HeaderNavigationActions = {
@@ -43,8 +42,6 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
 
   const { setCurrentPageKey, readOnly } = useUnitSidebarContext();
 
-  const showNewDesignButtons = isUnitPageNewDesignEnabled();
-
   return (
     <nav className="header-navigations ml-auto flex-shrink-0">
       {
@@ -54,26 +51,24 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
       }
       {category === COURSE_BLOCK_NAMES.vertical.id && (
         <Stack direction="horizontal" gap={3}>
-          {showNewDesignButtons && (
-            <>
+          <>
+            <Button
+              variant="outline-primary"
+              iconBefore={InfoOutline}
+              onClick={() => setCurrentPageKey('info', null)}
+            >
+              {intl.formatMessage(messages.infoButton)}
+            </Button>
+            {!readOnly && (
               <Button
                 variant="outline-primary"
-                iconBefore={InfoOutline}
-                onClick={() => setCurrentPageKey('info', null)}
+                iconBefore={Add}
+                onClick={() => setCurrentPageKey('add', null)}
               >
-                {intl.formatMessage(messages.infoButton)}
+                {intl.formatMessage(messages.addButton)}
               </Button>
-              {!readOnly && (
-                <Button
-                  variant="outline-primary"
-                  iconBefore={Add}
-                  onClick={() => setCurrentPageKey('add', null)}
-                >
-                  {intl.formatMessage(messages.addButton)}
-                </Button>
-              )}
-            </>
-          )}
+            )}
+          </>
           <ButtonGroup>
             <Button
               variant="outline-primary"

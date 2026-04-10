@@ -51,7 +51,6 @@ describe('<HeaderTitle />', () => {
 
     expect(screen.getByText(unitTitle)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeInTheDocument();
   });
 
   it('render HeaderTitle with open edit form', () => {
@@ -62,7 +61,6 @@ describe('<HeaderTitle />', () => {
     expect(screen.getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toHaveValue(unitTitle);
     expect(screen.getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeEnabled();
-    expect(screen.getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeEnabled();
   });
 
   it('Units sourced from upstream show a enabled edit button', async () => {
@@ -85,7 +83,6 @@ describe('<HeaderTitle />', () => {
     renderComponent();
 
     expect(screen.getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeEnabled();
-    expect(screen.getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeEnabled();
   });
 
   it('calls toggle edit title form by clicking on Edit button', async () => {

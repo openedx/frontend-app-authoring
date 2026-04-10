@@ -80,11 +80,6 @@ describe('<HeaderNavigations />', () => {
   });
 
   it('click Info button should open info sidebar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
-
     const user = userEvent.setup();
     renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
 
@@ -96,11 +91,6 @@ describe('<HeaderNavigations />', () => {
   });
 
   it('click Add button should open add sidebar', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
-    });
-
     const user = userEvent.setup();
     renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
 

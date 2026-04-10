@@ -11,11 +11,6 @@ const messages = defineMessages({
     defaultMessage: 'Edit field',
     description: 'The unit edit button aria label',
   },
-  altButtonSettings: {
-    id: 'course-authoring.course-unit.heading.button.settings.alt',
-    defaultMessage: 'Settings',
-    description: 'The unit settings button text',
-  },
   definedVisibilityMessage: {
     id: 'course-authoring.course-unit.heading.visibility.defined.message',
     defaultMessage: 'Access to this unit is restricted to: {selectedGroupsLabel}',
