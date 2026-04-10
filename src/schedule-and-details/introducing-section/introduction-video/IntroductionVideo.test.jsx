@@ -62,4 +62,18 @@ describe('<IntroductionVideo />', () => {
     fireEvent.click(button);
     expect(onChangeMock).toHaveBeenCalledWith('', 'introVideo');
   });
+
+  it('disables input and delete button when isEditable is false', () => {
+    const initialProps = { ...props, introVideo: 'BvgNgTPTkSo', isEditable: false };
+    const { getByPlaceholderText, getByRole } = render(<RootWrapper {...initialProps} />);
+    expect(getByPlaceholderText(messages.courseIntroductionVideoPlaceholder.defaultMessage)).toBeDisabled();
+    expect(getByRole('button', { name: messages.courseIntroductionVideoDelete.defaultMessage })).toBeDisabled();
+  });
+
+  it('enables input and delete button when isEditable is true', () => {
+    const initialProps = { ...props, introVideo: 'BvgNgTPTkSo', isEditable: true };
+    const { getByPlaceholderText, getByRole } = render(<RootWrapper {...initialProps} />);
+    expect(getByPlaceholderText(messages.courseIntroductionVideoPlaceholder.defaultMessage)).not.toBeDisabled();
+    expect(getByRole('button', { name: messages.courseIntroductionVideoDelete.defaultMessage })).not.toBeDisabled();
+  });
 });

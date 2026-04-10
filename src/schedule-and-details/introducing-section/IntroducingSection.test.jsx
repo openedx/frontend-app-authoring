@@ -83,4 +83,14 @@ describe('<IntroducingSection />', () => {
     expect(queryAllByText(messages.courseOverviewLabel.defaultMessage).length).toBe(0);
     expect(queryAllByText(messages.courseAboutSidebarLabel.defaultMessage).length).toBe(0);
   });
+
+  it('disables the short description textarea when isEditable is false', () => {
+    const { getByLabelText } = render(<RootWrapper {...props} isEditable={false} />);
+    expect(getByLabelText(messages.courseShortDescriptionLabel.defaultMessage)).toBeDisabled();
+  });
+
+  it('enables the short description textarea when isEditable is true', () => {
+    const { getByLabelText } = render(<RootWrapper {...props} isEditable />);
+    expect(getByLabelText(messages.courseShortDescriptionLabel.defaultMessage)).not.toBeDisabled();
+  });
 });

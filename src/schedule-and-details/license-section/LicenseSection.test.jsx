@@ -25,4 +25,16 @@ describe('<LicenseSection />', () => {
     expect(getByText(messages.licenseTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.licenseDescription.defaultMessage)).toBeInTheDocument();
   });
+
+  it('disables license type buttons when isEditable is false', () => {
+    const { getAllByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    const buttons = getAllByRole('button');
+    buttons.forEach((button) => expect(button).toBeDisabled());
+  });
+
+  it('enables license type buttons when isEditable is true', () => {
+    const { getAllByRole } = render(<RootWrapper {...props} isEditable />);
+    const buttons = getAllByRole('button');
+    buttons.forEach((button) => expect(button).not.toBeDisabled());
+  });
 });

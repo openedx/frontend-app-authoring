@@ -64,4 +64,16 @@ describe('<ExtendedCourseDetails />', () => {
     });
     expect(onChangeMock).toHaveBeenCalledWith('abc', 'title');
   });
+
+  it('disables all inputs when isEditable is false', () => {
+    const { getAllByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    const inputs = getAllByRole('textbox');
+    inputs.forEach((input) => expect(input).toBeDisabled());
+  });
+
+  it('enables all inputs when isEditable is true', () => {
+    const { getAllByRole } = render(<RootWrapper {...props} isEditable />);
+    const inputs = getAllByRole('textbox');
+    inputs.forEach((input) => expect(input).not.toBeDisabled());
+  });
 });

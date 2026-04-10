@@ -66,4 +66,18 @@ describe('<LearningOutcomesSection />', () => {
 
     expect(onChangeMock).toHaveBeenCalledWith(['abc'], 'learningInfo');
   });
+
+  it('disables input, delete button and add button when isEditable is false', () => {
+    const { getByPlaceholderText, getByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    expect(getByPlaceholderText(messages.outcomesInputPlaceholder.defaultMessage)).toBeDisabled();
+    expect(getByRole('button', { name: messages.outcomesDelete.defaultMessage })).toBeDisabled();
+    expect(getByRole('button', { name: messages.outcomesAdd.defaultMessage })).toBeDisabled();
+  });
+
+  it('enables input, delete button and add button when isEditable is true', () => {
+    const { getByPlaceholderText, getByRole } = render(<RootWrapper {...props} isEditable />);
+    expect(getByPlaceholderText(messages.outcomesInputPlaceholder.defaultMessage)).not.toBeDisabled();
+    expect(getByRole('button', { name: messages.outcomesDelete.defaultMessage })).not.toBeDisabled();
+    expect(getByRole('button', { name: messages.outcomesAdd.defaultMessage })).not.toBeDisabled();
+  });
 });

@@ -106,4 +106,14 @@ describe('<InstructorsSection />', () => {
       }],
     }, 'instructorInfo');
   });
+
+  it('disables add button when isEditable is false', () => {
+    render(<RootWrapper {...props} isEditable={false} />);
+    expect(screen.getByRole('button', { name: messages.instructorAdd.defaultMessage })).toBeDisabled();
+  });
+
+  it('enables add button when isEditable is true', () => {
+    render(<RootWrapper {...props} isEditable />);
+    expect(screen.getByRole('button', { name: messages.instructorAdd.defaultMessage })).not.toBeDisabled();
+  });
 });
