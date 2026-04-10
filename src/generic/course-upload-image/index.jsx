@@ -27,6 +27,7 @@ const CourseUploadImage = ({
   identifierFieldText,
   showImageBodyText,
   customInputPlaceholder,
+  disabled,
   onChange,
 }) => {
   const { courseId } = useParams();
@@ -109,13 +110,16 @@ const CourseUploadImage = ({
       <Form.Label>{label}</Form.Label>
       <Card>
         <Card.Body className="image-body">
-          <Dropzone
-            onProcessUpload={handleProcessUpload}
-            inputComponent={inputComponent}
-            accept={{
-              'image/*': ['.png', '.jpeg'],
-            }}
-          />
+          <div style={disabled ? { pointerEvents: 'none' } : undefined}>
+            <Dropzone
+              onProcessUpload={handleProcessUpload}
+              inputComponent={inputComponent}
+              accept={{
+                'image/*': ['.png', '.jpeg'],
+              }}
+              disabled={disabled}
+            />
+          </div>
           {showImageBodyText && cardImageTextBody}
         </Card.Body>
         <Card.Divider />
@@ -129,6 +133,7 @@ const CourseUploadImage = ({
                 identifierFieldText,
               })
             }
+            disabled={disabled}
           />
         </Card.Footer>
       </Card>
@@ -150,6 +155,7 @@ CourseUploadImage.defaultProps = {
   showImageBodyText: false,
   identifierFieldText: '',
   customInputPlaceholder: '',
+  disabled: false,
 };
 
 CourseUploadImage.propTypes = {
@@ -161,6 +167,7 @@ CourseUploadImage.propTypes = {
   showImageBodyText: PropTypes.bool,
   identifierFieldText: PropTypes.string,
   customInputPlaceholder: PropTypes.string,
+  disabled: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

@@ -21,6 +21,7 @@ const CertificateDisplayRow = ({
   availableDateErrorFeedback,
   certificatesDisplayBehavior,
   displayBehaviorErrorFeedback,
+  isEditable,
   onChange,
 }) => {
   const intl = useIntl();
@@ -126,12 +127,12 @@ const CertificateDisplayRow = ({
             {intl.formatMessage(messages.certificateBehaviorLabel)}
           </Form.Label>
           <Dropdown claswsName="bg-white">
-            <Dropdown.Toggle id="certificate-behavior-dropdown" variant="outline-primary">
+            <Dropdown.Toggle id="certificate-behavior-dropdown" variant="outline-primary" disabled={!isEditable}>
               {certificateDisplayValue}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {dropdownOptions.map(({ id, label }) => (
-                <Dropdown.Item key={id} onClick={() => handleOnChange(id)}>
+                <Dropdown.Item key={id} onClick={isEditable ? () => handleOnChange(id) : undefined}>
                   {label}
                 </Dropdown.Item>
               ))}
@@ -148,6 +149,7 @@ const CertificateDisplayRow = ({
               onChange={(date) => onChange(date, 'certificateAvailableDate')}
               isInvalid={!!availableDateErrorFeedback}
               controlName="certificateAvailableDate"
+              readonly={!isEditable}
             />
           )}
           {availableDateErrorFeedback && (
@@ -172,6 +174,7 @@ CertificateDisplayRow.defaultProps = {
   availableDateErrorFeedback: '',
   certificatesDisplayBehavior: '',
   displayBehaviorErrorFeedback: '',
+  isEditable: true,
 };
 
 CertificateDisplayRow.propTypes = {
@@ -179,6 +182,7 @@ CertificateDisplayRow.propTypes = {
   availableDateErrorFeedback: PropTypes.string,
   certificatesDisplayBehavior: PropTypes.string,
   displayBehaviorErrorFeedback: PropTypes.string,
+  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

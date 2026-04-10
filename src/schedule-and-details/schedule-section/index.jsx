@@ -19,6 +19,7 @@ const ScheduleSection = ({
   certificateAvailableDate,
   certificatesDisplayBehavior,
   canShowCertificateAvailableDateField,
+  isEditable,
   onChange,
 }) => {
   const intl = useIntl();
@@ -44,6 +45,7 @@ const ScheduleSection = ({
       helpText: intl.formatMessage(messages.scheduleCourseStartDateHelpText),
       controlName: 'startDate',
       errorFeedback: errorFields?.startDate,
+      readonly: !isEditable,
     },
     {
       labels: [
@@ -55,6 +57,7 @@ const ScheduleSection = ({
       helpText: intl.formatMessage(messages.scheduleCourseEndDateHelpText),
       controlName: 'endDate',
       errorFeedback: errorFields?.endDate,
+      readonly: !isEditable,
     },
     {
       skip: !canShowCertificateAvailableDateField,
@@ -64,6 +67,7 @@ const ScheduleSection = ({
       availableDateErrorFeedback: errorFields?.certificateAvailableDate,
       certificatesDisplayBehavior,
       displayBehaviorErrorFeedback: errorFields?.certificatesDisplayBehavior,
+      isEditable,
     },
     {
       labels: [
@@ -75,6 +79,7 @@ const ScheduleSection = ({
       helpText: intl.formatMessage(messages.scheduleEnrollmentStartDateHelpText),
       controlName: 'enrollmentStart',
       errorFeedback: errorFields?.enrollmentStart,
+      readonly: !isEditable,
     },
     {
       labels: [
@@ -84,7 +89,7 @@ const ScheduleSection = ({
       value: enrollmentEnd,
       rowType: SCHEDULE_ROW_TYPES.datetime,
       helpText: computedEnrollmentEndHelpText,
-      readonly: !enrollmentEndEditable,
+      readonly: !enrollmentEndEditable || !isEditable,
       controlName: 'enrollmentEnd',
       errorFeedback: errorFields?.enrollmentEnd,
     },
@@ -133,6 +138,7 @@ const ScheduleSection = ({
               <CertificateDisplayRow
                 {...restProps}
                 key={key}
+                isEditable={isEditable}
                 onChange={onChange}
               />
             );
@@ -150,6 +156,7 @@ ScheduleSection.defaultProps = {
   enrollmentStart: '',
   upgradeDeadline: '',
   certificateAvailableDate: '',
+  isEditable: true,
 };
 
 ScheduleSection.propTypes = {
@@ -164,6 +171,7 @@ ScheduleSection.propTypes = {
   certificateAvailableDate: PropTypes.string,
   certificatesDisplayBehavior: PropTypes.string.isRequired,
   canShowCertificateAvailableDateField: PropTypes.bool.isRequired,
+  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

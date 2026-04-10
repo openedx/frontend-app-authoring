@@ -9,7 +9,7 @@ import InstructorContainer from './instructor-container';
 import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
-const InstructorsSection = ({ instructors, onChange }) => {
+const InstructorsSection = ({ instructors, isEditable, onChange }) => {
   const intl = useIntl();
   const newInstructor = {
     bio: '',
@@ -64,12 +64,13 @@ const InstructorsSection = ({ instructors, onChange }) => {
             instructor={instructor}
             key={uuid}
             idx={idx}
+            isEditable={isEditable}
             onDelete={handleDelete}
             onChange={handleChange}
           />
         ))}
       </ul>
-      <Button iconBefore={AddIcon} variant="primary" onClick={handleAdd}>
+      <Button iconBefore={AddIcon} variant="primary" onClick={handleAdd} disabled={!isEditable}>
         {intl.formatMessage(messages.instructorAdd)}
       </Button>
     </section>
@@ -78,6 +79,7 @@ const InstructorsSection = ({ instructors, onChange }) => {
 
 InstructorsSection.defaultProps = {
   instructors: [],
+  isEditable: true,
 };
 
 InstructorsSection.propTypes = {
@@ -90,6 +92,7 @@ InstructorsSection.propTypes = {
       title: PropTypes.string,
     }),
   ),
+  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 
