@@ -7,12 +7,11 @@ import { getProctoredExamsFlag, getTimedExamsFlag } from '@src/course-outline/da
 import { ConfigureSubsectionData } from '@src/course-outline/data/types';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { VisibilityTypes } from '@src/data/constants';
 import AdvancedTab from '@src/generic/configure-modal/AdvancedTab';
 import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useStateWithCallback } from '@src/hooks';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ReleaseSection } from './sharedSettings/ReleaseSection';
 import messages from './messages';
@@ -166,17 +165,30 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
   const { data: itemData } = useCourseItemData(subsectionId);
   const enableTimedExams = useSelector(getTimedExamsFlag);
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
-  const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
-    {
+  const getLatestLocalState = useCallback(() => {
+    return {
       isProctoredExam: itemData?.isProctoredExam,
       isTimeLimited: itemData?.isTimeLimited,
       isOnboardingExam: itemData?.isOnboardingExam,
       isPracticeExam: itemData?.isPracticeExam,
       defaultTimeLimitMinutes: itemData?.defaultTimeLimitMinutes,
       examReviewRules: itemData?.examReviewRules,
-    },
-    (val) => onChange(val || {}),
+      isPrereq: itemData?.isPrereq,
+      prereqMinScore: defaultPrereqScore(itemData?.prereqMinScore),
+      prereqMinCompletion: defaultPrereqScore(itemData?.prereqMinCompletion),
+      prereqUsageKey: itemData?.prereq,
+    };
+  }, [itemData]);
+
+  const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
+    getLatestLocalState(),
+    (val) => onChange(val || {})
   );
+
+  useEffect(() => {
+    if (!itemData) return;
+    setLocalState({ value: getLatestLocalState(), skipCallback: true });
+  }, [itemData]);
 
   const setFieldValue = (key: keyof ConfigureSubsectionData, value: any) => {
     setLocalState((prev) => ({
@@ -190,14 +202,7 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
       title={intl.formatMessage(messages.subsectionSpecialExamTitle)}
     >
       <AdvancedTab
-        values={{
-          isProctoredExam: localState?.isProctoredExam,
-          isTimeLimited: localState?.isTimeLimited,
-          isOnboardingExam: localState?.isOnboardingExam,
-          isPracticeExam: localState?.isPracticeExam,
-          defaultTimeLimitMinutes: localState?.defaultTimeLimitMinutes,
-          examReviewRules: localState?.examReviewRules,
-        }}
+        values={localState || {}}
         setFieldValue={setFieldValue}
         prereqs={itemData?.prereqs}
         releasedToStudents={itemData?.releasedToStudents}
@@ -226,25 +231,10 @@ export const SubsectionSettings = ({ subsectionId }: Props) => {
     if (isPending || !itemData) {
       return;
     }
+
     mutate({
       itemId: subsectionId,
       sectionId: selectedContainerState?.sectionId,
-      isVisibleToStaffOnly: itemData.visibilityState === VisibilityTypes.STAFF_ONLY,
-      releaseDate: itemData.start,
-      graderType: itemData.format == null ? 'notgraded' : itemData.format,
-      dueDate: itemData.due == null ? '' : itemData.due,
-      isTimeLimited: itemData.isTimeLimited,
-      isProctoredExam: itemData.isProctoredExam,
-      isOnboardingExam: itemData.isOnboardingExam,
-      isPracticeExam: itemData.isPracticeExam,
-      examReviewRules: itemData.examReviewRules,
-      defaultTimeLimitMinutes: itemData.defaultTimeLimitMinutes,
-      hideAfterDue: itemData.hideAfterDue === undefined ? false : itemData.hideAfterDue,
-      showCorrectness: itemData.showCorrectness,
-      isPrereq: itemData.isPrereq,
-      prereqUsageKey: itemData.prereq,
-      prereqMinScore: defaultPrereqScore(itemData.prereqMinScore),
-      prereqMinCompletion: defaultPrereqScore(itemData.prereqMinCompletion),
       ...variables,
     });
   };

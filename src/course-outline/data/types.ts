@@ -100,22 +100,22 @@ export interface ConfigureSectionData {
 
 export interface ConfigureSubsectionData {
   itemId: string,
-  isVisibleToStaffOnly: boolean,
-  releaseDate: string,
-  graderType: string,
-  dueDate: string,
+  isVisibleToStaffOnly?: boolean,
+  releaseDate?: string,
+  graderType?: string,
+  dueDate?: string,
   isTimeLimited?: boolean,
   isProctoredExam?: boolean,
   isOnboardingExam?: boolean,
   isPracticeExam?: boolean,
   examReviewRules?: string,
   defaultTimeLimitMinutes?: number,
-  hideAfterDue: boolean,
-  showCorrectness: 'always' | 'never' | 'past_due' | 'never_but_include_grade',
+  hideAfterDue?: boolean,
+  showCorrectness?: 'always' | 'never' | 'past_due' | 'never_but_include_grade',
   isPrereq?: boolean,
   prereqUsageKey?: string,
   prereqMinScore?: number,
-  prereqMinCompletion: number,
+  prereqMinCompletion?: number,
 }
 
 export interface ConfigureUnitData {

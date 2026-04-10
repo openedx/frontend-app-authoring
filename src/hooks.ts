@@ -230,9 +230,18 @@ export function useToggleWithValue<T>(defaultValue?: T): [
   return [isDefined, value, define, undefine];
 }
 
+type SetStateWithCallbackAction<T> = React.SetStateAction<T | undefined> | {
+  value: React.SetStateAction<T | undefined>;
+  skipCallback?: boolean;
+};
+
 /**
  * Hook to use `useState` and also trigger a callback when the state updates. This is particularly useful for
  * scenarios where you want to update the UI or perform side effects every time the state changes.
+ *
+ * The returned setter also accepts `{ value, skipCallback }` to optionally suppress the callback for a
+ * specific update.
+ *
  * @param defaultValue The default value of the state
  * @param callback Receives the latest value as argument
  * @param delay Time in milliseconds before the callback is triggered after state update (defaults to 500 ms)
@@ -241,10 +250,11 @@ export function useStateWithCallback<T>(
   defaultValue?: T,
   callback?: (val: T | undefined) => void,
   delay = 500,
-): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] {
+): [T | undefined, React.Dispatch<SetStateWithCallbackAction<T>>] {
   const [data, setData] = useState(defaultValue);
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const callbackRef = useRef(callback);
+  const skipCallbackRef = useRef(false);
   const prevDataRef = useRef(defaultValue); // Track previous value
 
   useEffect(() => {
@@ -259,6 +269,11 @@ export function useStateWithCallback<T>(
 
     prevDataRef.current = data;
 
+    if (skipCallbackRef.current) {
+      skipCallbackRef.current = false;
+      return () => {};
+    }
+
     if (timeoutRef.current) { clearTimeout(timeoutRef.current); }
 
     timeoutRef.current = setTimeout(() => {
@@ -268,5 +283,16 @@ export function useStateWithCallback<T>(
     return () => clearTimeout(timeoutRef.current);
   }, [data, delay]);
 
-  return [data, setData];
+  const setDataWithCallback = (value: SetStateWithCallbackAction<T>) => {
+    if (typeof value === 'object' && value !== null && 'value' in value) {
+      skipCallbackRef.current = !!value.skipCallback;
+      setData(value.value);
+      return;
+    }
+
+    skipCallbackRef.current = false;
+    setData(value as React.SetStateAction<T | undefined>);
+  };
+
+  return [data, setDataWithCallback];
 }

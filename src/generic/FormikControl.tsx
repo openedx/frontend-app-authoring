@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form } from '@openedx/paragon';
-import { getIn, useFormikContext } from 'formik';
+import { FormikContextType, getIn, useFormikContext } from 'formik';
 import FormikErrorFeedback from './FormikErrorFeedback';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
   className?: string;
   controlClasses?: string;
   value: string | number;
+  setFieldValue?: (name: string, value: any) => void;
 }
 
 // Because <Form.Control> is only typed as 'any' in Paragon so far, the props of the following become 'any' :/
@@ -22,14 +23,24 @@ const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>>
   help = <></>,
   className = '',
   controlClasses = 'pb-2',
+  setFieldValue,
   ...params
 }) => {
-  const {
-    touched, errors, handleChange, handleBlur, setFieldError,
-  } = useFormikContext();
-  const fieldTouched = getIn(touched, name);
-  const fieldError = getIn(errors, name);
-  const handleFocus = (e) => setFieldError(e.target.name, undefined);
+  let formikContext: FormikContextType<unknown> | null;
+  try {
+    formikContext = useFormikContext();
+  } catch (e) {
+    formikContext = null;
+  }
+
+  const fieldTouched = formikContext ? getIn(formikContext.touched, name) : false;
+  const fieldError = formikContext ? getIn(formikContext.errors, name) : undefined;
+  const handleFocus = formikContext ? (
+    e: { target: { name: any; } }
+  ) => formikContext?.setFieldError(e.target.name, undefined) : undefined;
+  const handleBlur = formikContext ? formikContext.handleBlur : undefined;
+  const handleChange = formikContext ? formikContext.handleChange : undefined;
+  const formikSetFieldValue = formikContext ? formikContext.setFieldValue : undefined;
 
   return (
     <Form.Group className={className}>
@@ -38,14 +49,28 @@ const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>>
         {...params}
         name={name}
         className={controlClasses}
-        onChange={handleChange}
+        onChange={(e: { target: { value: any; }; }) => {
+          if (setFieldValue) {
+            setFieldValue(name, e.target.value);
+            return;
+          }
+          if (handleChange) {
+            handleChange(e);
+            return;
+          }
+          if (formikSetFieldValue) {
+            formikSetFieldValue(name, e.target.value);
+          }
+        }}
         onBlur={handleBlur}
         onFocus={handleFocus}
         isInvalid={!!fieldTouched && !!fieldError}
       />
-      <FormikErrorFeedback name={name}>
-        <Form.Text>{help}</Form.Text>
-      </FormikErrorFeedback>
+      {formikContext && (
+        <FormikErrorFeedback name={name}>
+          <Form.Text>{help}</Form.Text>
+        </FormikErrorFeedback>
+      )}
     </Form.Group>
   );
 };

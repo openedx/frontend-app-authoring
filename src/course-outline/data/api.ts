@@ -239,28 +239,28 @@ export async function configureCourseSection(variables: ConfigureSectionData): P
 /**
  * Configure course subsection
  */
-export async function configureCourseSubsection(variables: ConfigureSubsectionData): Promise<object> {
+export async function configureCourseSubsection(variables: Partial<ConfigureSubsectionData> & Pick<ConfigureSubsectionData, 'itemId'>): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(variables.itemId), {
       publish: 'republish',
-      graderType: variables.graderType,
-      isPrereq: variables.isPrereq,
-      prereqUsageKey: variables.prereqUsageKey,
-      prereqMinScore: variables.prereqMinScore,
-      prereqMinCompletion: variables.prereqMinCompletion,
+      ...(variables.graderType !== undefined && { graderType: variables.graderType }),
+      ...(variables.isPrereq !== undefined && { isPrereq: variables.isPrereq }),
+      ...(variables.prereqUsageKey !== undefined && { prereqUsageKey: variables.prereqUsageKey }),
+      ...(variables.prereqMinScore !== undefined && { prereqMinScore: variables.prereqMinScore }),
+      ...(variables.prereqMinCompletion !== undefined && { prereqMinCompletion: variables.prereqMinCompletion }),
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-        due: variables.dueDate,
-        hide_after_due: variables.hideAfterDue,
-        show_correctness: variables.showCorrectness,
-        is_practice_exam: variables.isPracticeExam,
-        is_time_limited: variables.isTimeLimited,
-        is_proctored_enabled: variables.isProctoredExam || variables.isPracticeExam || variables.isOnboardingExam,
-        exam_review_rules: variables.examReviewRules,
-        default_time_limit_minutes: variables.defaultTimeLimitMinutes,
-        is_onboarding_exam: variables.isOnboardingExam,
-        start: variables.releaseDate,
+        ...(variables.isVisibleToStaffOnly !== undefined && { visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null }),
+        ...(variables.dueDate !== undefined && { due: variables.dueDate }),
+        ...(variables.hideAfterDue !== undefined && { hide_after_due: variables.hideAfterDue }),
+        ...(variables.showCorrectness !== undefined && { show_correctness: variables.showCorrectness }),
+        ...(variables.isPracticeExam !== undefined && { is_practice_exam: variables.isPracticeExam }),
+        ...(variables.isTimeLimited !== undefined && { is_time_limited: variables.isTimeLimited }),
+        ...(variables.isProctoredExam !== undefined || variables.isPracticeExam !== undefined || variables.isOnboardingExam !== undefined ? { is_proctored_enabled: variables.isProctoredExam || variables.isPracticeExam || variables.isOnboardingExam } : {}),
+        ...(variables.examReviewRules !== undefined && { exam_review_rules: variables.examReviewRules }),
+        ...(variables.defaultTimeLimitMinutes !== undefined && { default_time_limit_minutes: variables.defaultTimeLimitMinutes }),
+        ...(variables.isOnboardingExam !== undefined && { is_onboarding_exam: variables.isOnboardingExam }),
+        ...(variables.releaseDate !== undefined && { start: variables.releaseDate }),
       },
     });
   return data;
