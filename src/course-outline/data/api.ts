@@ -14,6 +14,10 @@ import {
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
+const pickDefined = <T extends Record<string, any>>(obj: T) => Object.fromEntries(
+  Object.entries(obj).filter(([, value]) => value !== undefined),
+);
+
 export const getCourseOutlineIndexApiUrl = (
   courseId: string,
 ) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
@@ -239,30 +243,58 @@ export async function configureCourseSection(variables: ConfigureSectionData): P
 /**
  * Configure course subsection
  */
-export async function configureCourseSubsection(variables: Partial<ConfigureSubsectionData> & Pick<ConfigureSubsectionData, 'itemId'>): Promise<object> {
+export async function configureCourseSubsection(
+  variables: Partial<ConfigureSubsectionData> & Pick<ConfigureSubsectionData, 'itemId'>,
+): Promise<object> {
+  const {
+    itemId,
+    isVisibleToStaffOnly,
+    dueDate,
+    hideAfterDue,
+    showCorrectness,
+    isPracticeExam,
+    isTimeLimited,
+    isProctoredExam,
+    isOnboardingExam,
+    examReviewRules,
+    defaultTimeLimitMinutes,
+    releaseDate,
+    graderType,
+    isPrereq,
+    prereqUsageKey,
+    prereqMinScore,
+    prereqMinCompletion,
+  } = variables;
+
+  const metadata = pickDefined({
+    visible_to_staff_only: isVisibleToStaffOnly === undefined ? undefined : isVisibleToStaffOnly ? true : null,
+    due: dueDate,
+    hide_after_due: hideAfterDue,
+    show_correctness: showCorrectness,
+    is_practice_exam: isPracticeExam,
+    is_time_limited: isTimeLimited,
+    is_proctored_enabled: (isProctoredExam !== undefined || isPracticeExam !== undefined || isOnboardingExam !== undefined)
+      ? (isProctoredExam || isPracticeExam || isOnboardingExam)
+      : undefined,
+    exam_review_rules: examReviewRules,
+    default_time_limit_minutes: defaultTimeLimitMinutes,
+    is_onboarding_exam: isOnboardingExam,
+    start: releaseDate,
+  });
+
+  const body = pickDefined({
+    publish: 'republish',
+    graderType,
+    isPrereq,
+    prereqUsageKey,
+    prereqMinScore,
+    prereqMinCompletion,
+    metadata,
+  });
+
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(variables.itemId), {
-      publish: 'republish',
-      ...(variables.graderType !== undefined && { graderType: variables.graderType }),
-      ...(variables.isPrereq !== undefined && { isPrereq: variables.isPrereq }),
-      ...(variables.prereqUsageKey !== undefined && { prereqUsageKey: variables.prereqUsageKey }),
-      ...(variables.prereqMinScore !== undefined && { prereqMinScore: variables.prereqMinScore }),
-      ...(variables.prereqMinCompletion !== undefined && { prereqMinCompletion: variables.prereqMinCompletion }),
-      metadata: {
-        // The backend expects metadata.visible_to_staff_only to either true or null
-        ...(variables.isVisibleToStaffOnly !== undefined && { visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null }),
-        ...(variables.dueDate !== undefined && { due: variables.dueDate }),
-        ...(variables.hideAfterDue !== undefined && { hide_after_due: variables.hideAfterDue }),
-        ...(variables.showCorrectness !== undefined && { show_correctness: variables.showCorrectness }),
-        ...(variables.isPracticeExam !== undefined && { is_practice_exam: variables.isPracticeExam }),
-        ...(variables.isTimeLimited !== undefined && { is_time_limited: variables.isTimeLimited }),
-        ...(variables.isProctoredExam !== undefined || variables.isPracticeExam !== undefined || variables.isOnboardingExam !== undefined ? { is_proctored_enabled: variables.isProctoredExam || variables.isPracticeExam || variables.isOnboardingExam } : {}),
-        ...(variables.examReviewRules !== undefined && { exam_review_rules: variables.examReviewRules }),
-        ...(variables.defaultTimeLimitMinutes !== undefined && { default_time_limit_minutes: variables.defaultTimeLimitMinutes }),
-        ...(variables.isOnboardingExam !== undefined && { is_onboarding_exam: variables.isOnboardingExam }),
-        ...(variables.releaseDate !== undefined && { start: variables.releaseDate }),
-      },
-    });
+    .post(getCourseItemApiUrl(itemId), body);
+
   return data;
 }
 

@@ -165,28 +165,26 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
   const { data: itemData } = useCourseItemData(subsectionId);
   const enableTimedExams = useSelector(getTimedExamsFlag);
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
-  const getLatestLocalState = useCallback(() => {
-    return {
-      isProctoredExam: itemData?.isProctoredExam,
-      isTimeLimited: itemData?.isTimeLimited,
-      isOnboardingExam: itemData?.isOnboardingExam,
-      isPracticeExam: itemData?.isPracticeExam,
-      defaultTimeLimitMinutes: itemData?.defaultTimeLimitMinutes,
-      examReviewRules: itemData?.examReviewRules,
-      isPrereq: itemData?.isPrereq,
-      prereqMinScore: defaultPrereqScore(itemData?.prereqMinScore),
-      prereqMinCompletion: defaultPrereqScore(itemData?.prereqMinCompletion),
-      prereqUsageKey: itemData?.prereq,
-    };
-  }, [itemData]);
+  const getLatestLocalState = useCallback(() => ({
+    isProctoredExam: itemData?.isProctoredExam,
+    isTimeLimited: itemData?.isTimeLimited,
+    isOnboardingExam: itemData?.isOnboardingExam,
+    isPracticeExam: itemData?.isPracticeExam,
+    defaultTimeLimitMinutes: itemData?.defaultTimeLimitMinutes,
+    examReviewRules: itemData?.examReviewRules,
+    isPrereq: itemData?.isPrereq,
+    prereqMinScore: defaultPrereqScore(itemData?.prereqMinScore),
+    prereqMinCompletion: defaultPrereqScore(itemData?.prereqMinCompletion),
+    prereqUsageKey: itemData?.prereq,
+  }), [itemData]);
 
   const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
     getLatestLocalState(),
-    (val) => onChange(val || {})
+    (val) => onChange(val || {}),
   );
 
   useEffect(() => {
-    if (!itemData) return;
+    if (!itemData) { return; }
     setLocalState({ value: getLatestLocalState(), skipCallback: true });
   }, [itemData]);
 

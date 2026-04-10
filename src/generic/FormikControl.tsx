@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form } from '@openedx/paragon';
-import { FormikContextType, getIn, useFormikContext } from 'formik';
+import { getIn, useFormikContext } from 'formik';
 import FormikErrorFeedback from './FormikErrorFeedback';
 
 interface Props {
@@ -26,17 +26,12 @@ const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>>
   setFieldValue,
   ...params
 }) => {
-  let formikContext: FormikContextType<unknown> | null;
-  try {
-    formikContext = useFormikContext();
-  } catch (e) {
-    formikContext = null;
-  }
+  const formikContext = useFormikContext() || null;
 
   const fieldTouched = formikContext ? getIn(formikContext.touched, name) : false;
   const fieldError = formikContext ? getIn(formikContext.errors, name) : undefined;
   const handleFocus = formikContext ? (
-    e: { target: { name: any; } }
+    e: { target: { name: any; } },
   ) => formikContext?.setFieldError(e.target.name, undefined) : undefined;
   const handleBlur = formikContext ? formikContext.handleBlur : undefined;
   const handleChange = formikContext ? formikContext.handleChange : undefined;
@@ -49,7 +44,7 @@ const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>>
         {...params}
         name={name}
         className={controlClasses}
-        onChange={(e: { target: { value: any; }; }) => {
+        onChange={async (e: { target: { value: any; }; }) => {
           if (setFieldValue) {
             setFieldValue(name, e.target.value);
             return;
@@ -59,7 +54,7 @@ const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>>
             return;
           }
           if (formikSetFieldValue) {
-            formikSetFieldValue(name, e.target.value);
+            await formikSetFieldValue(name, e.target.value);
           }
         }}
         onBlur={handleBlur}

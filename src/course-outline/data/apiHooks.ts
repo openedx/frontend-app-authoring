@@ -9,7 +9,9 @@ import {
 import { getNotificationMessage } from '@src/course-unit/data/utils';
 import { createGlobalState } from '@src/data/apiHooks';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
-import { ContainerType, getBlockType, getCourseKey, normalizeContainerType } from '@src/generic/key-utils';
+import {
+  ContainerType, getBlockType, getCourseKey, normalizeContainerType,
+} from '@src/generic/key-utils';
 import { useMutationWithProcessingNotification } from '@src/generic/processing-notification/data/apiHooks';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { useToastContext } from '@src/generic/toast-context';
@@ -244,7 +246,7 @@ export const useConfigureSubsection = () => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
     mutationFn: (
-      variables: Partial<ConfigureSubsectionData> & Pick<ConfigureSubsectionData, 'itemId'> & ParentIds
+      variables: Partial<ConfigureSubsectionData> & Pick<ConfigureSubsectionData, 'itemId'> & ParentIds,
     ) => configureCourseSubsection(variables),
     onSettled: async (_data, _err, variables) => {
       const courseKey = getCourseKey(variables.itemId);
@@ -253,16 +255,18 @@ export const useConfigureSubsection = () => {
       if (variables.isPrereq !== undefined) {
         const subsectionItemQueries = queryClient.getQueryCache().findAll({
           predicate: (query) => {
-            const queryKey = query.queryKey;
+            const { queryKey } = query;
             return Array.isArray(queryKey)
               && queryKey.length >= 3
               && queryKey[0] === courseOutlineQueryKeys.all[0]
               && queryKey[1] === courseKey
               && typeof queryKey[2] === 'string'
-              && normalizeContainerType(getBlockType(queryKey[2], 'empty')) === ContainerType.Subsection
+              && normalizeContainerType(getBlockType(queryKey[2], 'empty')) === ContainerType.Subsection;
           },
         });
-        await Promise.all(subsectionItemQueries.map((query) => queryClient.invalidateQueries({ queryKey: query.queryKey })));
+        await Promise.all(subsectionItemQueries.map((query) => queryClient.invalidateQueries({
+          queryKey: query.queryKey,
+        })));
       }
     },
   });
