@@ -145,7 +145,7 @@ describe('SubsectionSettings', () => {
         isPrereq: false,
         prereq: null,
         prereqMinScore: '50',
-        prereqMinCompletion: null,
+        prereqMinCompletion: '75',
         courseGraders: ['g1', 'g2'],
         graded: false,
       },
@@ -161,8 +161,7 @@ describe('SubsectionSettings', () => {
     // Change grader select to 'g1'
     const select = await screen.findByTestId('grader-type-select');
     await user.selectOptions(select as HTMLSelectElement, 'g1');
-    // Ensure mutate was called with parsed prereqMinScore as number
-    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, graderType: 'g1', prereqMinScore: 50 }));
+    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, graderType: 'g1' }));
 
     // Click date and time pickers to set dueDate
     await user.click(await screen.findByTestId('due-date-picker'));
@@ -205,7 +204,7 @@ describe('SubsectionSettings', () => {
     expect(mutate).not.toHaveBeenCalled();
   });
 
-  it('parses non-numeric prereqMinScore to default 100', async () => {
+  it('sends only changed fields to api when grading changes', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
     apiHooks.useCourseItemData.mockReturnValue({
       data: {
@@ -234,10 +233,13 @@ describe('SubsectionSettings', () => {
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
 
-    // Trigger an onChange via Graded button (which will call onChange through our mocked useStateWithCallback)
     await user.click(await screen.findByRole('button', { name: 'Ungraded' }));
-    // We expect mutate to have been called at least once; find a call that contains prereqMinScore: 100
-    const calledWith100 = mutate.mock.calls.some((call) => call[0] && call[0].prereqMinScore === 100);
-    expect(calledWith100).toBe(true);
+
+    expect(mutate).toHaveBeenCalledTimes(2);
+    expect(mutate).toHaveBeenLastCalledWith({
+      itemId: subsectionId,
+      sectionId: 'section-abc',
+      graderType: 'notgraded',
+    });
   });
 });

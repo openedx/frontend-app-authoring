@@ -247,7 +247,7 @@ type SetStateWithCallbackAction<T> = React.SetStateAction<T | undefined> | {
  * @param delay Time in milliseconds before the callback is triggered after state update (defaults to 500 ms)
  */
 export function useStateWithCallback<T>(
-  defaultValue?: T,
+  defaultValue?: T | (() => T | undefined),
   callback?: (val: T | undefined) => void,
   delay = 500,
 ): [T | undefined, React.Dispatch<SetStateWithCallbackAction<T>>] {

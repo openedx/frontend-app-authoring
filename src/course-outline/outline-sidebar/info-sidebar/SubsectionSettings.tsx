@@ -179,7 +179,7 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
   }), [itemData]);
 
   const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
-    getLatestLocalState(),
+    getLatestLocalState,
     (val) => onChange(val || {}),
   );
 
