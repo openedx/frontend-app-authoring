@@ -183,7 +183,9 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
       <Form.Checkbox
         checked={localState?.showCorrectness === 'past_due'}
         className="mt-2"
-        onChange={() => setLocalState({ showCorrectness: 'past_due' })}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalState({
+          showCorrectness: e.target.checked ? 'past_due': 'never',
+        })}
       >
         <FormattedMessage {...messages.subsectionAssessmentResultsCheckbox} />
       </Form.Checkbox>
