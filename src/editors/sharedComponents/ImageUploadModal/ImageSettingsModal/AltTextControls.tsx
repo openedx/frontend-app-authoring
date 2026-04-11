@@ -1,72 +1,51 @@
+import { useFormikContext } from 'formik';
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { Form } from '@openedx/paragon';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { ImageConfig } from './types';
 
-import * as hooks from './hooks';
 import messages from './messages';
 
-/**
- * Wrapper for alt-text input and isDecorative checkbox control
- * @param {obj} errorProps - props for error handling
- *   {bool} isValid - are alt-text fields valid for saving?
- * @param {bool} isDecorative - is the image decorative?
- * @param {func} setIsDecorative - handle isDecorative change event
- * @param {func} setValue - update alt-text value
- * @param {string} value - current alt-text value
- */
-const AltTextControls = ({
-  isDecorative,
-  setIsDecorative,
-  setValue,
-  validation,
-  value,
-}) => {
+const AltTextControls = () => {
   const intl = useIntl();
+  const formik = useFormikContext<ImageConfig>();
   return (
-    <Form.Group className="mt-4.5">
-      <Form.Label as="h4">
-        <FormattedMessage {...messages.accessibilityLabel} />
-      </Form.Label>
-      <Form.Control
-        className="mt-4.5"
-        disabled={isDecorative}
-        floatingLabel={intl.formatMessage(messages.altTextFloatingLabel)}
-        isInvalid={validation.show}
-        onChange={hooks.onInputChange(setValue)}
-        type="input"
-        value={value}
-      />
-      {validation.show
-      && (
-        <Form.Control.Feedback type="invalid">
-          <FormattedMessage {...messages.altTextLocalFeedback} />
-        </Form.Control.Feedback>
-      )}
-      <Form.Checkbox
-        checked={isDecorative}
-        className="mt-4.5 decorative-control-label"
-        onChange={hooks.onCheckboxChange(setIsDecorative)}
-      >
+    <>
+      <Form.Group className="mt-1.5">
         <Form.Label>
-          <FormattedMessage {...messages.decorativeAltTextCheckboxLabel} />
+          {intl.formatMessage(messages.accessibilityLabel)}
         </Form.Label>
-      </Form.Checkbox>
-    </Form.Group>
+        <Form.Control
+          name="altText"
+          className="mt-1.5"
+          floatingLabel={intl.formatMessage(messages.altTextFloatingLabel)}
+          disabled={formik.values.isDecorative}
+          isInvalid={Boolean(formik.errors.altText)}
+          onChange={formik.handleChange}
+          type="input"
+          value={formik.values.altText}
+        />
+        {formik.errors.altText && (
+        <Form.Control.Feedback type="invalid">
+          {formik.errors.altText}
+        </Form.Control.Feedback>
+        )}
+      </Form.Group>
+      <Form.Group>
+        <Form.Checkbox
+          name="isDecorative"
+          checked={formik.values.isDecorative}
+          className="mt-2.5 decorative-control-label"
+          onChange={formik.handleChange}
+        >
+          <Form.Label>
+            {intl.formatMessage(messages.decorativeAltTextCheckboxLabel)}
+          </Form.Label>
+        </Form.Checkbox>
+      </Form.Group>
+    </>
   );
-};
-AltTextControls.propTypes = {
-  error: PropTypes.shape({
-    show: PropTypes.bool,
-  }).isRequired,
-  isDecorative: PropTypes.bool.isRequired,
-  setValue: PropTypes.func.isRequired,
-  setIsDecorative: PropTypes.func.isRequired,
-  validation: PropTypes.shape({
-    show: PropTypes.bool,
-  }).isRequired,
-  value: PropTypes.string.isRequired,
 };
 
 export const AltTextControlsInternal = AltTextControls; // For testing only

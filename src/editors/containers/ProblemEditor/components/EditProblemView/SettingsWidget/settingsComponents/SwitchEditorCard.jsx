@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Card } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import { thunkActions } from '@src/editors/data/redux';
@@ -15,6 +15,7 @@ const SwitchEditorCard = ({
   editorType,
   problemType,
 }) => {
+  const intl = useIntl();
   const [isConfirmOpen, setConfirmOpen] = React.useState(false);
   const dispatch = useDispatch();
   const { editorRef } = useProblemEditorContext();
@@ -25,7 +26,7 @@ const SwitchEditorCard = ({
       <BaseModal
         isOpen={isConfirmOpen}
         close={() => { setConfirmOpen(false); }}
-        title={<FormattedMessage {...messages[`ConfirmSwitchMessageTitle-${editorType}`]} />}
+        title={intl.formatMessage(messages[`ConfirmSwitchMessageTitle-${editorType}`])}
         confirmAction={(
           <Button
             /* istanbul ignore next */

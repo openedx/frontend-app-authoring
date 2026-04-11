@@ -1,5 +1,5 @@
+import { useFormikContext } from 'formik';
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Form,
   Icon,
@@ -9,84 +9,90 @@ import {
   Locked,
   Unlocked,
 } from '@openedx/paragon/icons';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import {
+  ImageConfig, OrigImageDimensions,
+} from './types';
 
-import * as hooks from './hooks';
 import messages from './messages';
 
 /**
  * Wrapper for image dimension inputs and the lock checkbox.
- * @param {bool} isLocked - are dimensions locked
- * @param {func} lock - lock dimensions
- * @param {func} setHeight - updates dimensions based on new height
- * @param {func} setWidth - updates dimensions based on new width
- * @param {func} unlock - unlock dimensions
- * @param {func} updateDimensions - update dimensions callback
- * @param {obj} value - local dimension values { height, width }
+ * @param {ImageDimensions} originalDimensions - original dimensions of the image
  */
-const DimensionControls = ({
-  isLocked,
-  lock,
-  setHeight,
-  setWidth,
-  unlock,
-  updateDimensions,
-  value,
-}) => {
+const DimensionControls = ({ originalDimensions }: { originalDimensions: OrigImageDimensions }) => {
+  const { width: originalWidth, height: originalHeight } = originalDimensions;
   const intl = useIntl();
-  if (!value) { return null; }
+  const formik = useFormikContext<ImageConfig>();
+  if (!(originalWidth && originalHeight)) {
+    return null;
+  }
+  const handleUpdateDimensions = async ({ target }) => {
+    const { name } = target;
+    let { value } = target;
+    // If dimensions are locked just set the value and return.
+    await formik.setFieldValue(name, value);
+    if (!formik.values.isLocked) {
+      return;
+    }
+    // For percentages, both values need to be ratio is locked
+    if (value.trim().endsWith('%')) {
+      await formik.setFieldValue('width', value);
+      await formik.setFieldValue('height', value);
+      return;
+    }
+    if (!value) {
+      return;
+    }
+    // For numerical values we calculate the other dimension based on the original ratio.
+    value = parseInt(value, 10);
+    if (name === 'height') {
+      await formik.setFieldValue('width', Math.round((value / originalHeight) * originalWidth));
+    } else if (name === 'width') {
+      await formik.setFieldValue('height', Math.round((value / originalWidth) * originalHeight));
+    }
+  };
   return (
-    <Form.Group>
-      <Form.Label as="h4">
-        <FormattedMessage {...messages.imageDimensionsLabel} />
+    <>
+      <Form.Label>
+        {intl.formatMessage(messages.imageDimensionsLabel)}
       </Form.Label>
-      <div className="mt-4.5">
-        <Form.Control
-          className="dimension-input"
-          value={value.width}
-          onChange={hooks.onInputChange(setWidth)}
-          onBlur={updateDimensions}
-          floatingLabel={intl.formatMessage(messages.widthFloatingLabel)}
-        />
-        <Form.Control
-          className="dimension-input"
-          value={value.height}
-          onChange={hooks.onInputChange(setHeight)}
-          onBlur={updateDimensions}
-          floatingLabel={intl.formatMessage(messages.heightFloatingLabel)}
-        />
+      <div className="mb-4.5 d-flex">
+        <Form.Group>
+          <Form.Control
+            name="width"
+            className="dimension-input"
+            value={formik.values.width}
+            onChange={handleUpdateDimensions}
+            onBlur={formik.handleBlur}
+            floatingLabel={intl.formatMessage(messages.widthFloatingLabel)}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Control
+            name="height"
+            className="dimension-input"
+            value={formik.values.height}
+            onChange={handleUpdateDimensions}
+            onBlur={formik.handleBlur}
+            floatingLabel={intl.formatMessage(messages.heightFloatingLabel)}
+          />
+        </Form.Group>
         <IconButton
+          name="isLocked"
           className="d-inline-block"
           alt={
-          isLocked
-            ? intl.formatMessage(messages.unlockDimensionsLabel)
-            : intl.formatMessage(messages.lockDimensionsLabel)
+            formik.values.isLocked
+              ? intl.formatMessage(messages.unlockDimensionsLabel)
+              : intl.formatMessage(messages.lockDimensionsLabel)
         }
           iconAs={Icon}
-          src={isLocked ? Locked : Unlocked}
-          onClick={isLocked ? unlock : lock}
+          src={formik.values.isLocked ? Locked : Unlocked}
+          onClick={() => formik.setFieldValue('isLocked', !formik.values.isLocked)}
         />
       </div>
-    </Form.Group>
+    </>
   );
 };
-DimensionControls.defaultProps = {
-  value: {
-    height: '100',
-    width: '100',
-  },
-};
-DimensionControls.propTypes = ({
-  value: PropTypes.shape({
-    height: PropTypes.string,
-    width: PropTypes.string,
-  }),
-  setHeight: PropTypes.func.isRequired,
-  setWidth: PropTypes.func.isRequired,
-  isLocked: PropTypes.bool.isRequired,
-  lock: PropTypes.func.isRequired,
-  unlock: PropTypes.func.isRequired,
-  updateDimensions: PropTypes.func.isRequired,
-});
 
 export default DimensionControls;
