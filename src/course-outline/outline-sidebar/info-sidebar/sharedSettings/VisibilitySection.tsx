@@ -61,7 +61,7 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
       <Form.Checkbox
         checked={localState?.hideAfterDue}
         className="mt-2"
-        onChange={(e) => setLocalState((prev) => ({
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalState((prev) => ({
           ...prev,
           hideAfterDue: e.target.checked,
           isVisibleToStaffOnly: false,
