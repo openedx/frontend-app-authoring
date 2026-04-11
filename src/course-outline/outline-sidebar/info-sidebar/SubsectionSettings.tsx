@@ -11,7 +11,9 @@ import AdvancedTab from '@src/generic/configure-modal/AdvancedTab';
 import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useStateWithCallback } from '@src/hooks';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { ReleaseSection } from './sharedSettings/ReleaseSection';
 import messages from './messages';

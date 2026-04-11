@@ -130,7 +130,9 @@ describe('SubsectionSettings', () => {
   it('handles grading select and due date/time changes', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
     apiHooks.useCourseItemData.mockReturnValue({
-      data: { ...baseItemData, graded: false, prereqMinScore: '50', prereqMinCompletion: '75' },
+      data: {
+        ...baseItemData, graded: false, prereqMinScore: '50', prereqMinCompletion: '75',
+      },
       isPending: false,
     });
 
@@ -178,7 +180,14 @@ describe('SubsectionSettings', () => {
 
   it('does not call mutate when item data is pending', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    apiHooks.useCourseItemData.mockReturnValue({ data: { ...baseItemData, start: null, graded: false }, isPending: true });
+    apiHooks.useCourseItemData.mockReturnValue({
+      data: {
+        ...baseItemData,
+        start: null,
+        graded: false,
+      },
+      isPending: true,
+    });
 
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
@@ -189,7 +198,9 @@ describe('SubsectionSettings', () => {
 
   it('resets grading local state when itemData changes', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    const firstItemData = { ...baseItemData, format: 'g1', due: '2024-01-01', graded: true };
+    const firstItemData = {
+      ...baseItemData, format: 'g1', due: '2024-01-01', graded: true,
+    };
     const secondItemData = { ...firstItemData, format: 'g2', due: '2024-02-02' };
 
     apiHooks.useCourseItemData.mockReturnValue({ data: firstItemData, isPending: false });

@@ -267,13 +267,20 @@ export async function configureCourseSubsection(
   } = variables;
 
   const metadata = pickDefined({
-    visible_to_staff_only: isVisibleToStaffOnly === undefined ? undefined : isVisibleToStaffOnly ? true : null,
+    visible_to_staff_only: (() => {
+      if (isVisibleToStaffOnly === undefined) {
+        return undefined;
+      }
+      return isVisibleToStaffOnly ? true : null;
+    })(),
     due: dueDate,
     hide_after_due: hideAfterDue,
     show_correctness: showCorrectness,
     is_practice_exam: isPracticeExam,
     is_time_limited: isTimeLimited,
-    is_proctored_enabled: (isProctoredExam !== undefined || isPracticeExam !== undefined || isOnboardingExam !== undefined)
+    is_proctored_enabled: (
+      isProctoredExam !== undefined || isPracticeExam !== undefined || isOnboardingExam !== undefined
+    )
       ? (isProctoredExam || isPracticeExam || isOnboardingExam)
       : undefined,
     exam_review_rules: examReviewRules,
