@@ -11,7 +11,7 @@ import AdvancedTab from '@src/generic/configure-modal/AdvancedTab';
 import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useStateWithCallback } from '@src/hooks';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ReleaseSection } from './sharedSettings/ReleaseSection';
 import messages from './messages';
@@ -46,6 +46,23 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
     },
     (val) => onChange(val || {}),
   );
+  const didMountRef = useRef(false);
+
+  useEffect(() => {
+    const nextState = {
+      graderType: itemData?.format,
+      dueDate: itemData?.due || '',
+    };
+
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+
+    if (localState?.graderType !== nextState.graderType || localState?.dueDate !== nextState.dueDate) {
+      setLocalState(nextState);
+    }
+  }, [itemData?.format, itemData?.due]);
 
   const setUngraded = () => {
     setGraded(false);
@@ -126,6 +143,18 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
     },
     (val) => onChange(val || {}),
   );
+  const didMountRef = useRef(false);
+
+  useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+
+    if (localState?.showCorrectness !== itemData?.showCorrectness) {
+      setLocalState({ showCorrectness: itemData?.showCorrectness });
+    }
+  }, [itemData?.showCorrectness]);
 
   return (
     <SidebarSection
@@ -182,6 +211,21 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
     getLatestLocalState,
     (val) => onChange(val || {}),
   );
+  const didMountRef = useRef(false);
+
+  useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+
+    const nextState = getLatestLocalState();
+    const hasChanges = Object.keys(nextState).some((key) => (localState as any)?.[key] !== (nextState as any)[key]);
+
+    if (hasChanges) {
+      setLocalState({ value: nextState, skipCallback: true });
+    }
+  }, [getLatestLocalState]);
 
   const setFieldValue = (key: keyof ConfigureSubsectionData, value: any) => {
     setLocalState((prev) => ({

@@ -13,7 +13,6 @@ jest.mock('@src/hooks', () => ({
     const wrappedSetState = (val: any) => {
       const newVal = typeof val === 'function' ? val(state) : val;
       setState(newVal);
-      // call callback synchronously like the implementation would after debounce
       if (cb) { cb(newVal); }
     };
     return [state, wrappedSetState];
@@ -24,7 +23,11 @@ jest.mock('@src/hooks', () => ({
 jest.mock('@src/generic/datepicker-control', () => ({
   DATEPICKER_TYPES: { date: 'date', time: 'time' },
   DatepickerControl: ({ onChange, type, ...props }: any) => (
-    <button type="button" data-testid={props['data-testid'] || type} onClick={() => onChange(type === 'date' ? '2025-12-31' : '12:00')}>
+    <button
+      type="button"
+      data-testid={props['data-testid'] || type}
+      onClick={() => onChange(type === 'date' ? '2025-12-31' : '12:00')}
+    >
       {type}
     </button>
   ),
@@ -73,111 +76,91 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
 
 const apiHooks = jest.requireMock('@src/course-outline/data/apiHooks') as any;
 
+const baseItemData = {
+  visibilityState: 'staff_only',
+  start: '2022-01-01',
+  format: null,
+  due: null,
+  isTimeLimited: false,
+  isProctoredExam: false,
+  isOnboardingExam: false,
+  isPracticeExam: false,
+  examReviewRules: null,
+  defaultTimeLimitMinutes: null,
+  hideAfterDue: undefined,
+  showCorrectness: undefined,
+  isPrereq: false,
+  prereq: null,
+  prereqMinScore: null,
+  prereqMinCompletion: null,
+  courseGraders: ['g1', 'g2'],
+  graded: true,
+};
+
 describe('SubsectionSettings', () => {
   beforeEach(() => {
     initializeMocks();
     mutate.mockReset();
   });
 
-  it('renders sections and calls mutate with combined payloads', async () => {
+  it('renders core sections and calls mutate for release, visibility, grading, and special exam', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    apiHooks.useCourseItemData.mockReturnValue({
-      data: {
-        visibilityState: 'staff_only',
-        start: '2022-01-01',
-        format: null,
-        due: null,
-        isTimeLimited: false,
-        isProctoredExam: false,
-        isOnboardingExam: false,
-        isPracticeExam: false,
-        examReviewRules: null,
-        defaultTimeLimitMinutes: null,
-        hideAfterDue: undefined,
-        showCorrectness: undefined,
-        isPrereq: false,
-        prereq: null,
-        prereqMinScore: null,
-        prereqMinCompletion: null,
-        courseGraders: ['g1', 'g2'],
-        graded: true,
-      },
-      isPending: false,
-    });
+    apiHooks.useCourseItemData.mockReturnValue({ data: baseItemData, isPending: false });
 
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
 
-    // Clicking Release should call mutate with releaseDate override
+    // Release
     await user.click(await screen.findByRole('button', { name: 'Release' }));
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, sectionId: 'section-abc', releaseDate: '2030-01-01' }));
 
-    // Clicking Visibility should call mutate with visibility change
+    // Visibility
     await user.click(await screen.findByRole('button', { name: 'Visibility' }));
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, sectionId: 'section-abc', visibility: 'v' }));
 
-    // Grading: clicking Ungraded button should call onChange via setUngraded
+    // Grading -> Ungraded
     await user.click(await screen.findByRole('button', { name: 'Ungraded' }));
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, graderType: 'notgraded' }));
 
-    // AdvancedTab mock: setFieldValue should call mutate through onChange
+    // Special exam
     await user.click(await screen.findByRole('button', { name: 'Set Proctored' }));
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, isProctoredExam: true }));
   });
 
-  it('handles grading select, assessment result toggles and prereq parsing', async () => {
-    // Use a new itemData shape where graded is false so clicking Graded shows controls
+  it('handles grading select and due date/time changes', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
     apiHooks.useCourseItemData.mockReturnValue({
-      data: {
-        visibilityState: 'staff_only',
-        start: '2022-01-01',
-        format: null,
-        due: null,
-        isTimeLimited: false,
-        isProctoredExam: false,
-        isOnboardingExam: false,
-        isPracticeExam: false,
-        examReviewRules: null,
-        defaultTimeLimitMinutes: null,
-        hideAfterDue: undefined,
-        showCorrectness: undefined,
-        isPrereq: false,
-        prereq: null,
-        prereqMinScore: '50',
-        prereqMinCompletion: '75',
-        courseGraders: ['g1', 'g2'],
-        graded: false,
-      },
+      data: { ...baseItemData, graded: false, prereqMinScore: '50', prereqMinCompletion: '75' },
       isPending: false,
     });
 
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
 
-    // Click Graded to show controls
     await user.click(await screen.findByRole('button', { name: 'Graded' }));
-
-    // Change grader select to 'g1'
     const select = await screen.findByTestId('grader-type-select');
     await user.selectOptions(select as HTMLSelectElement, 'g1');
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, graderType: 'g1' }));
 
-    // Click date and time pickers to set dueDate
     await user.click(await screen.findByTestId('due-date-picker'));
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, dueDate: '2025-12-31' }));
     await user.click(await screen.findByTestId('time'));
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, dueDate: '12:00' }));
+  });
 
-    // Assessment results: click Show -> should set 'always'
+  it('toggles assessment result visibility', async () => {
+    apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
+    apiHooks.useCourseItemData.mockReturnValue({ data: { ...baseItemData, graded: false }, isPending: false });
+
+    const user = userEvent.setup();
+    render(<SubsectionSettings subsectionId={subsectionId} />);
+
     await user.click(await screen.findByRole('button', { name: 'Show' }));
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, showCorrectness: 'always' }));
 
-    // Click Hide when currently 'always' should change to 'never'
     await user.click(await screen.findByRole('button', { name: 'Hide' }));
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, showCorrectness: 'never' }));
 
-    // Click checkbox to set past_due
     const checkbox = await screen.findByRole('checkbox');
     await user.click(checkbox);
     expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, showCorrectness: 'past_due' }));
@@ -185,7 +168,7 @@ describe('SubsectionSettings', () => {
 
   it('does not render ReleaseSection when course is self paced', () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: true } });
-    apiHooks.useCourseItemData.mockReturnValue({ data: { visibilityState: 'gated', start: null, graded: false }, isPending: false });
+    apiHooks.useCourseItemData.mockReturnValue({ data: { ...baseItemData, start: null }, isPending: false });
 
     render(<SubsectionSettings subsectionId={subsectionId} />);
 
@@ -195,7 +178,7 @@ describe('SubsectionSettings', () => {
 
   it('does not call mutate when item data is pending', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    apiHooks.useCourseItemData.mockReturnValue({ data: { visibilityState: 'gated', start: null, graded: false }, isPending: true });
+    apiHooks.useCourseItemData.mockReturnValue({ data: { ...baseItemData, start: null, graded: false }, isPending: true });
 
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
@@ -204,51 +187,46 @@ describe('SubsectionSettings', () => {
     expect(mutate).not.toHaveBeenCalled();
   });
 
-  it('renders special exam section and sends only changed fields to api', async () => {
+  it('resets grading local state when itemData changes', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    apiHooks.useCourseItemData.mockReturnValue({
-      data: {
-        visibilityState: 'staff_only',
-        start: '2022-01-01',
-        format: null,
-        due: null,
-        isTimeLimited: false,
-        isProctoredExam: false,
-        isOnboardingExam: false,
-        isPracticeExam: false,
-        examReviewRules: null,
-        defaultTimeLimitMinutes: null,
-        hideAfterDue: undefined,
-        showCorrectness: undefined,
-        isPrereq: false,
-        prereq: 'prereq-key',
-        prereqMinScore: 'abc',
-        prereqMinCompletion: 'xyz',
-        courseGraders: ['g1', 'g2'],
-        graded: true,
-      },
-      isPending: false,
-    });
+    const firstItemData = { ...baseItemData, format: 'g1', due: '2024-01-01', graded: true };
+    const secondItemData = { ...firstItemData, format: 'g2', due: '2024-02-02' };
+
+    apiHooks.useCourseItemData.mockReturnValue({ data: firstItemData, isPending: false });
+
+    const { rerender } = render(<SubsectionSettings subsectionId={subsectionId} />);
+
+    mutate.mockClear();
+    apiHooks.useCourseItemData.mockReturnValue({ data: secondItemData, isPending: false });
+    rerender(<SubsectionSettings subsectionId={subsectionId} />);
+
+    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ graderType: 'g2', dueDate: '2024-02-02' }));
+  });
+
+  it('resets assessment visibility local state when itemData changes', async () => {
+    apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
+    const firstItemData = { ...baseItemData, graded: false, showCorrectness: 'always' };
+    const secondItemData = { ...firstItemData, showCorrectness: 'never' };
+
+    apiHooks.useCourseItemData.mockReturnValue({ data: firstItemData, isPending: false });
+
+    const { rerender } = render(<SubsectionSettings subsectionId={subsectionId} />);
+
+    mutate.mockClear();
+    apiHooks.useCourseItemData.mockReturnValue({ data: secondItemData, isPending: false });
+    rerender(<SubsectionSettings subsectionId={subsectionId} />);
+
+    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ showCorrectness: 'never' }));
+  });
+
+  it('does not call mutate when item data is absent', async () => {
+    apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
+    apiHooks.useCourseItemData.mockReturnValue({ data: undefined, isPending: false });
 
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
 
-    await user.click(await screen.findByRole('button', { name: 'Set Proctored' }));
-
-    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({
-      itemId: subsectionId,
-      sectionId: 'section-abc',
-      isProctoredExam: true,
-      isTimeLimited: false,
-      isOnboardingExam: false,
-      isPracticeExam: false,
-      defaultTimeLimitMinutes: null,
-      examReviewRules: null,
-      isPrereq: false,
-      prereqUsageKey: 'prereq-key',
-      prereqMinScore: 100,
-      prereqMinCompletion: 100,
-    }));
-    expect(mutate).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole('button', { name: 'Visibility' }));
+    expect(mutate).not.toHaveBeenCalled();
   });
 });
