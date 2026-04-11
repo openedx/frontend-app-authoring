@@ -275,6 +275,7 @@ export const useConfigureSubsection = () => {
 export const useConfigureUnit = () => {
   const queryClient = useQueryClient();
   const { showToast, closeToast } = useToastContext();
+  // We are not using useMutationWithProcessingNotification to set custom processing notification message
   return useMutation({
     mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
     onMutate: (variables) => {
