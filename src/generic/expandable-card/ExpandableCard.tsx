@@ -46,13 +46,6 @@ export const ExpandableCard = ({
     return () => resizeObserver.disconnect();
   }, [maxHeight, children]);
 
-  useEffect(() => {
-    if (contentRef.current) {
-      const { scrollHeight } = contentRef.current;
-      setNeedsExpansion(scrollHeight > maxHeight);
-    }
-  }, [children, maxHeight]);
-
   return (
     <div>
       <div
