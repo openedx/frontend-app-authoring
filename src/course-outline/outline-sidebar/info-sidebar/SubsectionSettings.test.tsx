@@ -204,7 +204,7 @@ describe('SubsectionSettings', () => {
     expect(mutate).not.toHaveBeenCalled();
   });
 
-  it('sends only changed fields to api when grading changes', async () => {
+  it('renders special exam section and sends only changed fields to api', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
     apiHooks.useCourseItemData.mockReturnValue({
       data: {
@@ -221,7 +221,7 @@ describe('SubsectionSettings', () => {
         hideAfterDue: undefined,
         showCorrectness: undefined,
         isPrereq: false,
-        prereq: null,
+        prereq: 'prereq-key',
         prereqMinScore: 'abc',
         prereqMinCompletion: 'xyz',
         courseGraders: ['g1', 'g2'],
@@ -233,13 +233,22 @@ describe('SubsectionSettings', () => {
     const user = userEvent.setup();
     render(<SubsectionSettings subsectionId={subsectionId} />);
 
-    await user.click(await screen.findByRole('button', { name: 'Ungraded' }));
+    await user.click(await screen.findByRole('button', { name: 'Set Proctored' }));
 
-    expect(mutate).toHaveBeenCalledTimes(2);
-    expect(mutate).toHaveBeenLastCalledWith({
+    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({
       itemId: subsectionId,
       sectionId: 'section-abc',
-      graderType: 'notgraded',
-    });
+      isProctoredExam: true,
+      isTimeLimited: false,
+      isOnboardingExam: false,
+      isPracticeExam: false,
+      defaultTimeLimitMinutes: null,
+      examReviewRules: null,
+      isPrereq: false,
+      prereqUsageKey: 'prereq-key',
+      prereqMinScore: 100,
+      prereqMinCompletion: 100,
+    }));
+    expect(mutate).toHaveBeenCalledTimes(1);
   });
 });
