@@ -456,6 +456,7 @@ describe('TinyMceEditor hooks', () => {
           altText: mockNode.alt,
           width: mockImage.width,
           height: mockImage.height,
+          classList: [],
         });
       });
 
@@ -484,6 +485,7 @@ describe('TinyMceEditor hooks', () => {
             altText: mockNode.alt,
             width: null,
             height: null,
+            classList: [],
           });
         });
       });

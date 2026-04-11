@@ -22,6 +22,7 @@ const settings = {
     width: 2022,
     height: 1619,
   },
+  classList: [],
 };
 
 const mockImage = {
@@ -56,25 +57,28 @@ describe('ImageUploadModal', () => {
         alt: settings.altText,
         width: settings.dimensions.width,
         height: settings.dimensions.height,
+        class: ''
       };
-      const testImgTag = (args) => {
+      const testImgTag = ({expected, settings}) => {
         const output = hooks.imgTag({
-          settings: args.settings,
+          settings,
           selection,
           lmsEndpointUrl: 'sOmE',
           editorType: 'tinyMCE',
           isLibrary: true,
         });
-        expect(output).toEqual(`<img ${propsString(args.expected)} />`);
+        expect(output).toEqual(`<img ${propsString(expected)} />`);
       };
-      test('It returns a html string which matches an image tag', () => {
+      test.each([
+          [ settings, expected ],
+          [ {...settings, isDecorative: true}, {...expected, alt: ''} ],
+          [ {...settings, classList: []}, {...expected} ],
+          [ {...settings, classList: null}, {...expected} ],
+          [ {...settings, classList: undefined}, {...expected} ],
+          [ {...settings, classList: ['class1', 'class2']}, {...expected, class: 'class1 class2'} ],
+          [ {...settings, title: "some title"}, {...expected, title: 'some title'} ],
+      ])('It returns a html string which matches an image tag', (settings, expected) => {
         testImgTag({ settings, expected });
-      });
-      test('If isDecorative is true, alt text is an empty string', () => {
-        testImgTag({
-          settings: { ...settings, isDecorative: true },
-          expected: { ...expected, alt: '' },
-        });
       });
     });
     describe('createSaveCallback', () => {
