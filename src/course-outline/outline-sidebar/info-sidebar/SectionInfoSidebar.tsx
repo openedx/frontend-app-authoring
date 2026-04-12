@@ -10,6 +10,7 @@ import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { SectionSettings } from '@src/course-outline/outline-sidebar/info-sidebar/SectionSettings';
 import { InfoSection } from './InfoSection';
 import messages from '../messages';
 import { PublishButon } from './PublishButon';
@@ -57,8 +58,11 @@ export const SectionSidebar = ({ sectionId }: Props) => {
         <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
           <InfoSection itemId={sectionId} />
         </Tab>
-        <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
-          <div>Settings</div>
+        <Tab
+          eventKey="settings"
+          title={intl.formatMessage(messages.settingsTabText)}
+        >
+          <SectionSettings key={sectionId} sectionId={sectionId} />
         </Tab>
       </Tabs>
     </>

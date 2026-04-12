@@ -1,4 +1,5 @@
 import { XBlock, XBlockActions } from '@src/data/types';
+import { PUBLISH_TYPES } from '@src/course-unit/constants';
 
 export interface CourseStructure {
   highlightsEnabledForMessaging: boolean,
@@ -34,6 +35,7 @@ export interface CourseDetails {
   org: string;
   description?: string;
   hasChanges: boolean;
+  selfPaced: boolean;
 }
 
 export interface ChecklistType {
@@ -98,29 +100,30 @@ export interface ConfigureSectionData {
 
 export interface ConfigureSubsectionData {
   itemId: string,
-  isVisibleToStaffOnly: boolean,
-  releaseDate: string,
-  graderType: string,
-  dueDate: string,
-  isTimeLimited: boolean,
-  isProctoredExam: boolean,
-  isOnboardingExam: boolean,
-  isPracticeExam: boolean,
-  examReviewRules: string,
-  defaultTimeLimitMin: number,
-  hideAfterDue: string,
-  showCorrectness: string,
-  isPrereq: boolean,
-  prereqUsageKey: string,
-  prereqMinScore: number,
-  prereqMinCompletion: number,
+  isVisibleToStaffOnly?: boolean,
+  releaseDate?: string,
+  graderType?: string,
+  dueDate?: string,
+  isTimeLimited?: boolean,
+  isProctoredExam?: boolean,
+  isOnboardingExam?: boolean,
+  isPracticeExam?: boolean,
+  examReviewRules?: string,
+  defaultTimeLimitMinutes?: number,
+  hideAfterDue?: boolean,
+  showCorrectness?: 'always' | 'never' | 'past_due' | 'never_but_include_grade',
+  isPrereq?: boolean,
+  prereqUsageKey?: string,
+  prereqMinScore?: number,
+  prereqMinCompletion?: number,
 }
 
 export interface ConfigureUnitData {
-  unitId: string,
-  isVisibleToStaffOnly: boolean,
-  groupAccess: object,
-  discussionEnabled: boolean,
+  unitId: string;
+  isVisibleToStaffOnly: boolean;
+  type: typeof PUBLISH_TYPES[keyof typeof PUBLISH_TYPES];
+  groupAccess: Record<string, any> | null,
+  discussionEnabled?: boolean;
 }
 
 export type StaticFileNotices = {

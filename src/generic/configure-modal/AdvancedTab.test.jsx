@@ -612,4 +612,95 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       expect(screen.getByText('Set as a special exam')).toBeInTheDocument();
     });
   });
+
+  describe('ButtonGroupForm (useBtnGroup)', () => {
+    const mockSetFieldValue = jest.fn();
+
+    beforeEach(() => {
+      mockSetFieldValue.mockClear();
+    });
+
+    it('handles timed button click', async () => {
+      const user = userEvent.setup();
+      renderComponent({ useBtnGroup: true, setFieldValue: mockSetFieldValue });
+
+      const timedBtn = screen.getByRole('button', { name: 'Timed' });
+      expect(timedBtn).toBeInTheDocument();
+
+      await user.click(timedBtn);
+
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isTimeLimited', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isOnboardingExam', false);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', false);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isProctoredExam', false);
+    });
+
+    it('handles none button click', async () => {
+      const user = userEvent.setup();
+      renderComponent({
+        useBtnGroup: true,
+        setFieldValue: mockSetFieldValue,
+        values: { ...defaultProps.values, isTimeLimited: true },
+      });
+
+      const noneBtn = screen.getByRole('button', { name: 'None' });
+      expect(noneBtn).toBeInTheDocument();
+
+      await user.click(noneBtn);
+
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isTimeLimited', false);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isOnboardingExam', false);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', false);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isProctoredExam', false);
+    });
+
+    it('handles proctored button click', async () => {
+      const user = userEvent.setup();
+      renderComponent({ useBtnGroup: true, enableProctoredExams: true, setFieldValue: mockSetFieldValue });
+
+      const proctoredBtn = screen.getByRole('button', { name: 'Proctored' });
+      expect(proctoredBtn).toBeInTheDocument();
+
+      await user.click(proctoredBtn);
+
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isProctoredExam', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isTimeLimited', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isOnboardingExam', false);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', false);
+    });
+
+    it('shows practice button and handles practice click', async () => {
+      const user = userEvent.setup();
+      renderComponent({
+        useBtnGroup: true, enableProctoredExams: true, supportsOnboarding: false, setFieldValue: mockSetFieldValue,
+      });
+
+      const practiceBtn = screen.getByRole('button', { name: 'Practice proctored' });
+      expect(practiceBtn).toBeInTheDocument();
+
+      await user.click(practiceBtn);
+
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isProctoredExam', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isTimeLimited', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isOnboardingExam', false);
+    });
+
+    it('handles onboarding button click', async () => {
+      const user = userEvent.setup();
+      renderComponent({
+        useBtnGroup: true, enableProctoredExams: true, supportsOnboarding: true, setFieldValue: mockSetFieldValue,
+      });
+
+      const onboardingBtn = screen.getByRole('button', { name: 'Onboarding' });
+      expect(onboardingBtn).toBeInTheDocument();
+
+      await user.click(onboardingBtn);
+
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isOnboardingExam', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isProctoredExam', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isTimeLimited', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', false);
+    });
+  });
 });

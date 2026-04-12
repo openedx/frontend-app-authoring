@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.schedule-section.alt-text',
     defaultMessage: 'Calendar for datepicker input',
   },
+  timeAltText: {
+    id: 'course-authoring.schedule.schedule-section.alt-time-text',
+    defaultMessage: 'Time input',
+  },
   datepickerUTC: {
     id: 'course-authoring.schedule.schedule-section.datepicker.utc',
     defaultMessage: 'UTC',

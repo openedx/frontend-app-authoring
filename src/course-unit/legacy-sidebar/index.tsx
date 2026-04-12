@@ -39,6 +39,10 @@ const LegacySidebar = ({
   const { blockId } = useParams();
   const { courseId } = useCourseAuthoringContext();
 
+  if (!blockId) {
+    return null;
+  }
+
   return (
     <Stack gap={3} className="px-4 mw-sm">
       {isUnitVerticalType && (
