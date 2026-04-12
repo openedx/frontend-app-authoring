@@ -13,6 +13,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getLibraryId } from '@src/generic/key-utils';
+import { SectionSettings } from '@src/course-outline/outline-sidebar/info-sidebar/SectionSettings';
 import { InfoSection } from './InfoSection';
 import messages from '../messages';
 import { PublishButon } from './PublishButon';
@@ -91,8 +92,11 @@ export const SectionSidebar = () => {
         <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
           <InfoSection itemId={sectionId} />
         </Tab>
-        <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
-          <div>Settings</div>
+        <Tab
+          eventKey="settings"
+          title={intl.formatMessage(messages.settingsTabText)}
+        >
+          <SectionSettings key={sectionId} sectionId={sectionId} />
         </Tab>
       </Tabs>
     </>

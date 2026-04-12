@@ -19,6 +19,7 @@ import { XBlock } from '@src/data/types';
 import { InfoSection } from './InfoSection';
 import { PublishButon } from './PublishButon';
 import messages from '../messages';
+import { SubsectionSettings } from './SubsectionSettings';
 
 export const SubsectionSidebar = () => {
   const intl = useIntl();
@@ -140,7 +141,8 @@ export const SubsectionSidebar = () => {
           <InfoSection itemId={subsectionId} />
         </Tab>
         <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
-          <div>Settings</div>
+          {/* key is required to reset local state of tab */}
+          <SubsectionSettings key={subsectionId} subsectionId={subsectionId} />
         </Tab>
       </Tabs>
     </>

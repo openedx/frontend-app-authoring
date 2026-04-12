@@ -19,6 +19,7 @@ import {
   usePasteItem,
   useUpdateCourseSectionHighlights,
 } from '@src/course-outline/data/apiHooks';
+import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   updateSavingStatus,
@@ -191,15 +192,9 @@ const useCourseOutline = ({ courseId }) => {
     });
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
 
-  const {
-    mutate: configureCourseSection,
-  } = useConfigureSection();
-  const {
-    mutate: configureCourseSubsection,
-  } = useConfigureSubsection();
-  const {
-    mutate: configureCourseUnit,
-  } = useConfigureUnit();
+  const { mutate: configureCourseSection } = useConfigureSection();
+  const { mutate: configureCourseSubsection } = useConfigureSubsection();
+  const { mutate: configureCourseUnit } = useConfigureUnit();
   const handleConfigureItemSubmit = (variables) => {
     const category = getBlockType(currentSelection.currentId);
     switch (category) {
@@ -220,6 +215,7 @@ const useCourseOutline = ({ courseId }) => {
         configureCourseUnit({
           unitId: currentSelection?.currentId,
           sectionId: currentSelection?.sectionId,
+          type: PUBLISH_TYPES.republish,
           ...variables,
         });
         break;

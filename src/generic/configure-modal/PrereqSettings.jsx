@@ -61,6 +61,7 @@ const PrereqSettings = ({
             <FormikControl
               name="prereqMinScore"
               value={prereqMinScore}
+              setFieldValue={(field, value) => setFieldValue(field, value === '' ? '' : Number(value))}
               label={<Form.Label>{intl.formatMessage(messages.minScoreLabel)}</Form.Label>}
               controlClassName="text-right"
               controlClasses="w-7rem"
@@ -70,6 +71,7 @@ const PrereqSettings = ({
             <FormikControl
               name="prereqMinCompletion"
               value={prereqMinCompletion}
+              setFieldValue={(field, value) => setFieldValue(field, value === '' ? '' : Number(value))}
               label={<Form.Label>{intl.formatMessage(messages.minCompletionLabel)}</Form.Label>}
               controlClassName="text-right"
               controlClasses="w-7rem"

@@ -33,6 +33,7 @@ describe('component utils', () => {
     for (const input of ['', undefined, null, 'not a key', 'lb:foo', 'block-v1:foo']) {
       it(`throws an exception for usage key '${input}'`, () => {
         expect(() => getBlockType(input as any)).toThrow(`Invalid usageKey: ${input}`);
+        expect(getBlockType(input as any, 'empty')).toBe('');
       });
     }
   });

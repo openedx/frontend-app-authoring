@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { history } from '@edx/frontend-platform';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { isEqual } from 'lodash';
 
 export const useScrollToHashElement = ({ isLoading }: { isLoading: boolean }) => {
   const [elementWithHash, setElementWithHash] = useState<string | null>(null);
@@ -227,4 +228,71 @@ export function useToggleWithValue<T>(defaultValue?: T): [
   }, []);
   const isDefined = useMemo(() => value !== undefined, [value]);
   return [isDefined, value, define, undefine];
+}
+
+type SetStateWithCallbackAction<T> = React.SetStateAction<T | undefined> | {
+  value: React.SetStateAction<T | undefined>;
+  skipCallback?: boolean;
+};
+
+/**
+ * Hook to use `useState` and also trigger a callback when the state updates. This is particularly useful for
+ * scenarios where you want to update the UI or perform side effects every time the state changes.
+ *
+ * The returned setter also accepts `{ value, skipCallback }` to optionally suppress the callback for a
+ * specific update.
+ *
+ * @param defaultValue The default value of the state
+ * @param callback Receives the latest value as argument
+ * @param delay Time in milliseconds before the callback is triggered after state update (defaults to 500 ms)
+ */
+export function useStateWithCallback<T>(
+  defaultValue?: T | (() => T | undefined),
+  callback?: (val: T | undefined) => void,
+  delay = 500,
+): [T | undefined, React.Dispatch<SetStateWithCallbackAction<T>>] {
+  const [data, setData] = useState(defaultValue);
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const callbackRef = useRef(callback);
+  const skipCallbackRef = useRef(false);
+  const prevDataRef = useRef(defaultValue); // Track previous value
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    // Only run if data actually changed
+    if (isEqual(data, prevDataRef.current)) {
+      return () => {};
+    }
+
+    prevDataRef.current = data;
+
+    if (skipCallbackRef.current) {
+      skipCallbackRef.current = false;
+      return () => {};
+    }
+
+    if (timeoutRef.current) { clearTimeout(timeoutRef.current); }
+
+    timeoutRef.current = setTimeout(() => {
+      callbackRef.current?.(data);
+    }, delay);
+
+    return () => clearTimeout(timeoutRef.current);
+  }, [data, delay]);
+
+  const setDataWithCallback = (value: SetStateWithCallbackAction<T>) => {
+    if (typeof value === 'object' && value !== null && 'value' in value) {
+      skipCallbackRef.current = !!value.skipCallback;
+      setData(value.value);
+      return;
+    }
+
+    skipCallbackRef.current = false;
+    setData(value as React.SetStateAction<T | undefined>);
+  };
+
+  return [data, setDataWithCallback];
 }

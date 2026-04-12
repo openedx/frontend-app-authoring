@@ -480,7 +480,7 @@ describe('<CreateLibrary />', () => {
         expect(screen.getByText('TestOrg / test-archive')).toBeInTheDocument();
         // Testing the archive details summary
         expect(screen.getByText(/Contains 8 sections, 12 subsections, 20 units, 15 components/i)).toBeInTheDocument();
-        expect(screen.getByText(/Created on instance test.com/i)).toBeInTheDocument();
+        expect(screen.getByText(/Backup created on instance test.com/i)).toBeInTheDocument();
         expect(screen.getByText(/by user test@example.com/i)).toBeInTheDocument();
       });
     });
@@ -537,7 +537,7 @@ describe('<CreateLibrary />', () => {
       await waitFor(() => {
         // Testing the archive details summary without instance and user email
         expect(screen.getByText(/Contains 8 sections, 12 subsections, 20 units, 15 components/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Created on instance/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Backup created on instance/i)).not.toBeInTheDocument();
         expect(screen.queryByText(/by user/i)).not.toBeInTheDocument();
       });
     });

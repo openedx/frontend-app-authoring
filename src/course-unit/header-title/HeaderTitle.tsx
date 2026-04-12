@@ -12,6 +12,9 @@ import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { ConfigureUnitData } from '@src/course-outline/data/types';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { messageTypes, PUBLISH_TYPES } from '@src/course-unit/constants';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
@@ -22,7 +25,6 @@ type HeaderTitleProps = {
   isTitleEditFormOpen: boolean;
   handleTitleEdit: () => void;
   handleTitleEditSubmit: (title: string) => void;
-  handleConfigureSubmit: (variables: ConfigureUnitData & { closeModalFn?: () => void }) => void;
 };
 
 /**
@@ -37,7 +39,6 @@ const HeaderTitle = ({
   isTitleEditFormOpen,
   handleTitleEdit,
   handleTitleEditSubmit,
-  handleConfigureSubmit,
 }: HeaderTitleProps) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -51,11 +52,19 @@ const HeaderTitle = ({
     COURSE_BLOCK_NAMES.component.id,
   ].includes(currentItemData.category);
 
+  const configureFn = useConfigureUnitWithPageUpdates();
+  const { sendMessageToIframe } = useIframe();
   const onConfigureSubmit = (variables: Omit<ConfigureUnitData, 'unitId'>) => {
-    handleConfigureSubmit({
+    configureFn.mutate({
       ...variables,
+      type: PUBLISH_TYPES.republish,
       unitId: currentItemData.id,
-      closeModalFn: closeConfigureModal,
+    }, {
+      onSuccess: () => sendMessageToIframe(
+        messageTypes.completeManageXBlockAccess,
+        { locator: currentItemData.id },
+      ),
+      onSettled: () => closeConfigureModal(),
     });
   };
 

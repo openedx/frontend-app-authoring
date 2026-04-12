@@ -13,7 +13,7 @@ import { getItemIcon } from '@src/generic/block-type-utils';
 
 import { SidebarTitle } from '@src/generic/sidebar';
 
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -23,6 +23,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getLibraryId } from '@src/generic/key-utils';
 import { extractCourseUnitId } from '@src/course-unit/legacy-sidebar/utils';
 import { possibleUnitMoves } from '@src/course-outline/drag-helper/utils';
+import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
+import { useQueryClient } from '@tanstack/react-query';
 import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
 import messages from '../messages';
@@ -30,6 +32,36 @@ import { InfoSection } from './InfoSection';
 import { useClipboard } from '@src/generic/clipboard';
 import { ToastContext } from '@src/generic/toast-context';
 import { XBlock } from '@src/data/types';
+interface Props {
+  unitId: string;
+}
+
+const UnitSettingsTab = ({ unitId }: Props) => {
+  const queryClient = useQueryClient();
+  const { data: unitData, isPending } = useCourseItemData(unitId);
+  const { selectedContainerState } = useOutlineSidebarContext();
+
+  if (isPending || !unitData) {
+    return <Loading />;
+  }
+
+  const onUpdate = () => {
+    queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(unitId) });
+  };
+
+  return (
+    <GenericUnitInfoSettings
+      key={unitData.id}
+      id={unitData.id}
+      visibilityState={unitData.visibilityState}
+      discussionEnabled={unitData.discussionEnabled}
+      userPartitionInfo={unitData.userPartitionInfo}
+      updateCallback={onUpdate}
+      subsectionId={selectedContainerState?.subsectionId}
+      sectionId={selectedContainerState?.sectionId}
+    />
+  );
+};
 
 export const UnitSidebar = () => {
   const intl = useIntl();
@@ -40,7 +72,7 @@ export const UnitSidebar = () => {
     currentId: unitId = /* istanbul ignore next */ '',
     index,
   } = selectedContainerState ?? {};
-  const { data: unitData, isLoading } = useCourseItemData(unitId);
+  const { data: unitData, isPending } = useCourseItemData(unitId);
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const { data: subsection } = useCourseItemData<XBlock>(selectedContainerState?.subsectionId);
   const { getUnitUrl, courseId, openUnlinkModal } = useCourseAuthoringContext();
@@ -68,7 +100,7 @@ export const UnitSidebar = () => {
     }
   };
 
-  if (isLoading || !unitData) {
+  if (isPending || !unitData) {
     return <Loading />;
   }
   // re-create actions object for customizations
@@ -199,7 +231,7 @@ export const UnitSidebar = () => {
       <Tabs
         variant="tabs"
         className="my-2 mx-n3.5"
-        id="add-content-tabs"
+        id="unit-content-tabs"
         activeKey={tab}
         onSelect={setTab}
         mountOnEnter
@@ -217,7 +249,6 @@ export const UnitSidebar = () => {
               isUnitVerticalType={false}
               unitXBlockActions={{ handleDelete: () => {}, handleDuplicate: () => {}, handleUnlink: () => {} }}
               courseVerticalChildren={[]}
-              handleConfigureSubmit={() => {}}
               readonly
             />
           </IframeProvider>
@@ -226,7 +257,7 @@ export const UnitSidebar = () => {
           <InfoSection itemId={unitId} />
         </Tab>
         <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
-          <div>Settings</div>
+          <UnitSettingsTab unitId={unitId} />
         </Tab>
       </Tabs>
     </>

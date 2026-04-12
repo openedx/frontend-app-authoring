@@ -3,7 +3,10 @@
  * @param usageKey e.g. `lb:org:lib:html:id`, `block-v1:org+type@html+block@1`
  * @returns The block type as a string
  */
-export function getBlockType(usageKey: string): string {
+export function getBlockType(
+  usageKey: string,
+  onInvalid: 'empty' | 'error' = 'error',
+): string {
   if (usageKey) {
     if (usageKey.startsWith('lb:') || usageKey.startsWith('lct:')) {
       const blockType = usageKey.split(':')[3];
@@ -17,6 +20,11 @@ export function getBlockType(usageKey: string): string {
       }
     }
   }
+
+  if (onInvalid === 'empty') {
+    return '';
+  }
+
   throw new Error(`Invalid usageKey: ${usageKey}`);
 }
 
