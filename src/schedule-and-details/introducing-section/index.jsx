@@ -30,6 +30,7 @@ const IntroducingSection = ({
   shortDescriptionEditable,
   enableExtendedCourseDetails,
   videoThumbnailImageAssetPath,
+  isEditable,
   onChange,
 }) => {
   const intl = useIntl();
@@ -83,6 +84,7 @@ const IntroducingSection = ({
           subtitle={subtitle}
           duration={duration}
           description={description}
+          isEditable={isEditable}
           onChange={onChange}
         />
       )}
@@ -100,6 +102,7 @@ const IntroducingSection = ({
               messages.courseShortDescriptionAriaLabel,
             )}
             maxLength={150}
+            disabled={!isEditable}
           />
           <Form.Control.Feedback>
             {intl.formatMessage(messages.courseShortDescriptionHelpText)}
@@ -113,6 +116,7 @@ const IntroducingSection = ({
             <WysiwygEditor
               initialValue={overview}
               onChange={(value) => onChange(value, 'overview')}
+              disabled={!isEditable}
             />
             <Form.Control.Feedback>{overviewHelpText}</Form.Control.Feedback>
           </Form.Group>
@@ -122,6 +126,7 @@ const IntroducingSection = ({
               <WysiwygEditor
                 initialValue={aboutSidebarHtml}
                 onChange={(value) => onChange(value, 'aboutSidebarHtml')}
+                disabled={!isEditable}
               />
               <Form.Control.Feedback>{aboutSidebarHelpText}</Form.Control.Feedback>
             </Form.Group>
@@ -133,6 +138,7 @@ const IntroducingSection = ({
             assetImageField="courseImageAssetPath"
             imageNameField="courseImageName"
             showImageBodyText
+            disabled={!isEditable}
             onChange={onChange}
           />
         </>
@@ -146,6 +152,7 @@ const IntroducingSection = ({
             assetImageField="bannerImageAssetPath"
             imageNameField="bannerImageName"
             showImageBodyText
+            disabled={!isEditable}
             onChange={onChange}
           />
           <CourseUploadImage
@@ -155,12 +162,13 @@ const IntroducingSection = ({
             assetImageField="videoThumbnailImageAssetPath"
             imageNameField="videoThumbnailImageName"
             showImageBodyText
+            disabled={!isEditable}
             onChange={onChange}
           />
         </>
       )}
       {aboutPageEditable && (
-        <IntroductionVideo introVideo={introVideo} onChange={onChange} />
+        <IntroductionVideo introVideo={introVideo} isEditable={isEditable} onChange={onChange} />
       )}
     </section>
   );
@@ -178,6 +186,7 @@ IntroducingSection.defaultProps = {
   bannerImageAssetPath: '',
   videoThumbnailImageAssetPath: '',
   overview: '',
+  isEditable: true,
 };
 
 IntroducingSection.propTypes = {
@@ -197,6 +206,7 @@ IntroducingSection.propTypes = {
   shortDescriptionEditable: PropTypes.bool.isRequired,
   enableExtendedCourseDetails: PropTypes.bool.isRequired,
   videoThumbnailImageAssetPath: PropTypes.string,
+  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

@@ -10,7 +10,7 @@ import CourseUploadImage from '../../../generic/course-upload-image';
 import messages from './messages';
 
 const InstructorContainer = ({
-  instructor, idx, onDelete, onChange,
+  instructor, idx, isEditable, onDelete, onChange,
 }) => {
   const intl = useIntl();
   return (
@@ -26,6 +26,7 @@ const InstructorContainer = ({
                 value={instructor?.name}
                 placeholder={intl.formatMessage(messages.instructorNameInputPlaceholder)}
                 onChange={(e) => onChange(e.target.value, idx, 'name')}
+                disabled={!isEditable}
               />
               <Form.Text>
                 {intl.formatMessage(messages.instructorNameHelpText)}
@@ -40,6 +41,7 @@ const InstructorContainer = ({
                 value={instructor?.title}
                 placeholder={intl.formatMessage(messages.instructorTitleInputPlaceholder)}
                 onChange={(e) => onChange(e.target.value, idx, 'title')}
+                disabled={!isEditable}
               />
               <Form.Text>
                 {intl.formatMessage(messages.instructorTitleHelpText)}
@@ -54,6 +56,7 @@ const InstructorContainer = ({
                 value={instructor?.organization}
                 placeholder={intl.formatMessage(messages.instructorOrganizationInputPlaceholder)}
                 onChange={(e) => onChange(e.target.value, idx, 'organization')}
+                disabled={!isEditable}
               />
               <Form.Text>
                 {intl.formatMessage(messages.instructorOrganizationHelpText)}
@@ -70,6 +73,7 @@ const InstructorContainer = ({
                 value={instructor?.bio}
                 placeholder={intl.formatMessage(messages.instructorBioInputPlaceholder)}
                 onChange={(e) => onChange(e.target.value, idx, 'bio')}
+                disabled={!isEditable}
               />
               <Form.Text>
                 {intl.formatMessage(messages.instructorBioHelpText)}
@@ -85,6 +89,7 @@ const InstructorContainer = ({
                 messages.instructorPhotoInputPlaceholder,
               )}
               customHelpText={intl.formatMessage(messages.instructorPhotoHelpText)}
+              disabled={!isEditable}
               onChange={(value, field) => onChange(value, idx, field)}
             />
           </Form.Row>
@@ -92,7 +97,7 @@ const InstructorContainer = ({
       </Card.Body>
       <Card.Divider />
       <Card.Footer className="p-0 mt-2.5">
-        <Button variant="outline-primary" onClick={() => onDelete(idx)}>
+        <Button variant="outline-primary" onClick={() => onDelete(idx)} disabled={!isEditable}>
           {intl.formatMessage(messages.instructorDelete)}
         </Button>
       </Card.Footer>
@@ -102,6 +107,7 @@ const InstructorContainer = ({
 
 InstructorContainer.defaultProps = {
   instructor: {},
+  isEditable: true,
 };
 
 InstructorContainer.propTypes = {
@@ -113,6 +119,7 @@ InstructorContainer.propTypes = {
     title: PropTypes.string,
   }),
   idx: PropTypes.number.isRequired,
+  isEditable: PropTypes.bool,
   onDelete: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
 };

@@ -57,4 +57,16 @@ describe('<EntranceExam />', () => {
       expect(screen.queryByText('Grade requirements')).not.toBeInTheDocument();
     });
   });
+
+  it('disables checkbox when isEditable is false', () => {
+    render(<RootWrapper {...props} isEditable={false} />);
+    const checkbox = screen.getByRole('checkbox');
+    expect(checkbox).toBeDisabled();
+  });
+
+  it('enables checkbox when isEditable is true', () => {
+    render(<RootWrapper {...props} isEditable />);
+    const checkbox = screen.getByRole('checkbox');
+    expect(checkbox).not.toBeDisabled();
+  });
 });

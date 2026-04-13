@@ -11,6 +11,7 @@ const AssignmentTypeName = ({
   value,
   errorEffort,
   onChange,
+  disabled = false,
 }) => {
   const intl = useIntl();
   const initialAssignmentName = useRef(value);
@@ -31,6 +32,7 @@ const AssignmentTypeName = ({
           onChange={onChange}
           value={value}
           isInvalid={Boolean(errorEffort)}
+          disabled={disabled}
         />
         <Form.Control.Feedback className="grading-description">
           {intl.formatMessage(messages.assignmentTypeNameDescription)}
@@ -66,6 +68,7 @@ AssignmentTypeName.propTypes = {
   onChange: PropTypes.func.isRequired,
   errorEffort: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
+  disabled: PropTypes.bool,
 };
 
 export default AssignmentTypeName;

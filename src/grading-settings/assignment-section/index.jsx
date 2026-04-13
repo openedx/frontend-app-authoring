@@ -22,6 +22,7 @@ const AssignmentSection = ({
   setGradingData,
   courseAssignmentLists,
   setShowSuccessAlert,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const [errorList, setErrorList] = useState({});
@@ -84,6 +85,7 @@ const AssignmentSection = ({
                 value={gradeField.type}
                 errorEffort={errorList[`${type}-${gradeField.id}`]}
                 onChange={(e) => handleAssignmentChange(e, gradeField.id)}
+                disabled={!isEditable}
               />
               <AssignmentItem
                 className="course-grading-assignment-abbreviation"
@@ -93,6 +95,7 @@ const AssignmentSection = ({
                 name="shortLabel"
                 value={gradeField.shortLabel}
                 onChange={(e) => handleAssignmentChange(e, gradeField.id)}
+                disabled={!isEditable}
               />
               <AssignmentItem
                 className="course-grading-assignment-total-grade"
@@ -107,6 +110,7 @@ const AssignmentSection = ({
                 onChange={(e) => handleAssignmentChange(e, gradeField.id)}
                 errorEffort={errorList[`${weight}-${gradeField.id}`]}
                 trailingElement="%"
+                disabled={!isEditable}
               />
               <AssignmentItem
                 className="course-grading-assignment-total-number"
@@ -119,6 +123,7 @@ const AssignmentSection = ({
                 value={gradeField.minCount}
                 onChange={(e) => handleAssignmentChange(e, gradeField.id)}
                 errorEffort={errorList[`${minCount}-${gradeField.id}`]}
+                disabled={!isEditable}
               />
               <AssignmentItem
                 className="course-grading-assignment-number-droppable"
@@ -135,6 +140,7 @@ const AssignmentSection = ({
                   type: gradeField.type,
                 })}
                 errorEffort={errorList[`${dropCount}-${gradeField.id}`]}
+                disabled={!isEditable}
               />
             </ol>
             {showDefinedCaseAlert && (
@@ -186,6 +192,7 @@ const AssignmentSection = ({
               variant="outline-primary"
               size="sm"
               onClick={() => handleRemoveAssignment(gradeField.id)}
+              disabled={!isEditable}
             >
               {intl.formatMessage(messages.assignmentDeleteButton)}
             </Button>
@@ -210,6 +217,7 @@ AssignmentSection.propTypes = {
   graders: PropTypes.arrayOf(
     PropTypes.shape(defaultAssignmentsPropTypes),
   ),
+  isEditable: PropTypes.bool,
 };
 
 export default AssignmentSection;

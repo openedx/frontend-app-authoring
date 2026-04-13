@@ -58,4 +58,23 @@ describe('<LicenseSelector />', () => {
     expect(buttonFirst).toHaveClass('btn btn-outline-primary');
     expect(buttonSecond).toHaveClass('btn btn-outline-primary');
   });
+
+  it('disables both buttons when isEditable is false', () => {
+    const { getByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    expect(getByRole('button', { name: messages.licenseChoice1.defaultMessage })).toBeDisabled();
+    expect(getByRole('button', { name: messages.licenseChoice2.defaultMessage })).toBeDisabled();
+  });
+
+  it('does not call onChangeLicenseType when clicked while isEditable is false', () => {
+    onChangeLicenseTypeMock.mockClear();
+    const { getByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    fireEvent.click(getByRole('button', { name: messages.licenseChoice2.defaultMessage }));
+    expect(onChangeLicenseTypeMock).not.toHaveBeenCalled();
+  });
+
+  it('enables both buttons when isEditable is true', () => {
+    const { getByRole } = render(<RootWrapper {...props} isEditable />);
+    expect(getByRole('button', { name: messages.licenseChoice1.defaultMessage })).not.toBeDisabled();
+    expect(getByRole('button', { name: messages.licenseChoice2.defaultMessage })).not.toBeDisabled();
+  });
 });

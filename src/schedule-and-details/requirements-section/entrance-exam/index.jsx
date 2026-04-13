@@ -12,6 +12,7 @@ const EntranceExam = ({
   errorEffort,
   isCheckedString,
   entranceExamMinimumScorePct,
+  isEditable,
   onChange,
 }) => {
   const { courseId } = useParams();
@@ -33,6 +34,7 @@ const EntranceExam = ({
           <Form.Checkbox
             checked={showEntranceExam}
             onChange={toggleEntranceExam}
+            disabled={!isEditable}
           >
             <FormattedMessage {...messages.requirementsEntranceCollapseTitle} />
           </Form.Checkbox>
@@ -62,6 +64,7 @@ const EntranceExam = ({
               <GradeRequirements
                 errorEffort={errorEffort}
                 entranceExamMinimumScorePct={entranceExamMinimumScorePct}
+                isEditable={isEditable}
                 onChange={onChange}
               />
             </Card.Body>
@@ -76,12 +79,14 @@ EntranceExam.defaultProps = {
   errorEffort: '',
   isCheckedString: '',
   entranceExamMinimumScorePct: '',
+  isEditable: true,
 };
 
 EntranceExam.propTypes = {
   errorEffort: PropTypes.string,
   isCheckedString: PropTypes.string,
   entranceExamMinimumScorePct: PropTypes.string,
+  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

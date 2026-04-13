@@ -57,4 +57,26 @@ describe('<DetailsSection />', () => {
       getByRole('button', { name: messages.dropdownEmpty.defaultMessage }),
     ).toBeInTheDocument();
   });
+
+  it('disables the language dropdown toggle when isEditable is false', () => {
+    const { getByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    const toggle = getByRole('button', { name: courseSettingsMock.languageOptions[1][1] });
+    expect(toggle).toBeDisabled();
+  });
+
+  it('does not call onChange when dropdown item clicked while isEditable is false', () => {
+    onChangeMock.mockClear();
+    const { getByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    // Toggle is disabled, so clicking it does not open the dropdown
+    const toggle = getByRole('button', { name: courseSettingsMock.languageOptions[1][1] });
+    expect(toggle).toBeDisabled();
+    fireEvent.click(toggle);
+    expect(onChangeMock).not.toHaveBeenCalled();
+  });
+
+  it('enables the language dropdown when isEditable is true', () => {
+    const { getByRole } = render(<RootWrapper {...props} isEditable />);
+    const toggle = getByRole('button', { name: courseSettingsMock.languageOptions[1][1] });
+    expect(toggle).not.toBeDisabled();
+  });
 });

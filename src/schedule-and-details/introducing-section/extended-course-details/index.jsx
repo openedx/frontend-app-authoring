@@ -11,6 +11,7 @@ const ExtendedCourseDetails = ({
   subtitle,
   duration,
   description,
+  isEditable,
   onChange,
 }) => {
   const intl = useIntl();
@@ -61,6 +62,7 @@ const ExtendedCourseDetails = ({
             maxLength={param.maxLength}
             onChange={(e) => onChange(e.target.value, param.controlName)}
             aria-label={param.ariaLabel}
+            disabled={!isEditable}
           />
           <Form.Control.Feedback>{param.helpText}</Form.Control.Feedback>
         </Form.Group>
@@ -74,6 +76,7 @@ ExtendedCourseDetails.defaultProps = {
   subtitle: '',
   duration: '',
   description: '',
+  isEditable: true,
 };
 
 ExtendedCourseDetails.propTypes = {
@@ -81,6 +84,7 @@ ExtendedCourseDetails.propTypes = {
   subtitle: PropTypes.string,
   duration: PropTypes.string,
   description: PropTypes.string,
+  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 
