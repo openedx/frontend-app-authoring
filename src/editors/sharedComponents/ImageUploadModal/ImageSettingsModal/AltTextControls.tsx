@@ -12,13 +12,24 @@ const AltTextControls = () => {
   const formik = useFormikContext<ImageConfig>();
   return (
     <>
-      <Form.Group className="mt-1.5">
-        <Form.Label>
-          {intl.formatMessage(messages.accessibilityLabel)}
-        </Form.Label>
+      <Form.Label className="mb-0">
+        {intl.formatMessage(messages.accessibilityLabel)}
+      </Form.Label>
+      <Form.Group className="mb-1">
+        <Form.Checkbox
+          name="isDecorative"
+          checked={formik.values.isDecorative}
+          className="mt-2.5 decorative-control-label"
+          onChange={formik.handleChange}
+        >
+          <Form.Label>
+            {intl.formatMessage(messages.decorativeAltTextCheckboxLabel)}
+          </Form.Label>
+        </Form.Checkbox>
+      </Form.Group>
+      <Form.Group>
         <Form.Control
           name="altText"
-          className="mt-1.5"
           floatingLabel={intl.formatMessage(messages.altTextFloatingLabel)}
           disabled={formik.values.isDecorative}
           isInvalid={Boolean(formik.errors.altText)}
@@ -31,18 +42,6 @@ const AltTextControls = () => {
           {formik.errors.altText}
         </Form.Control.Feedback>
         )}
-      </Form.Group>
-      <Form.Group>
-        <Form.Checkbox
-          name="isDecorative"
-          checked={formik.values.isDecorative}
-          className="mt-2.5 decorative-control-label"
-          onChange={formik.handleChange}
-        >
-          <Form.Label>
-            {intl.formatMessage(messages.decorativeAltTextCheckboxLabel)}
-          </Form.Label>
-        </Form.Checkbox>
       </Form.Group>
     </>
   );
