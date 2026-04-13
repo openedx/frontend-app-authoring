@@ -106,12 +106,13 @@ const TableBody = ({
               updateRowMutation={updateRowMutation}
               columns={columns}
               validate={validate}
+              row={row}
             />
           ) : (
             <tr>
               {row.getVisibleCells()
-                .map((cell, index) => (
-                  <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
+                .map((cell) => (
+                  <td key={cell.id} className="p-1">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}

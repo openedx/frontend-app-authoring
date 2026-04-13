@@ -5,6 +5,8 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { EditableCell } from './EditableCell';
 import type { CreateRowMutationState, TreeColumnDef } from './types';
 import messages from './messages';
+import { Row } from '@tanstack/react-table';
+import { UsageCountDisplay } from '../tag-list/UsageCountDisplay';
 
 interface DraftRowProps {
   draftError: string;
@@ -18,6 +20,7 @@ interface DraftRowProps {
   requireValueChangeToEnableSave?: boolean;
   rowTestId?: string;
   rowId?: string;
+  row?: any;
 }
 
 interface CreateRowProps {
@@ -42,6 +45,7 @@ interface EditRowProps {
   columns: TreeColumnDef[];
   indent?: number;
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
+  row: any;
 }
 
 const DraftRow: React.FC<DraftRowProps> = ({
@@ -56,6 +60,8 @@ const DraftRow: React.FC<DraftRowProps> = ({
   requireValueChangeToEnableSave = false,
   rowTestId,
   rowId,
+  row,
+
 }) => {
   const [rowValue, setRowValue] = useState(initialValue);
   const [saveDisabled, setSaveDisabled] = useState(true);
@@ -91,10 +97,12 @@ const DraftRow: React.FC<DraftRowProps> = ({
     }
   };
 
+  const indentClass = indent > 0 ? `tree-table-indent tree-table-indent-${indent}` : '';
+
   return (
     <tr id={rowId} data-testid={rowTestId}>
       <td colSpan={1} className="py-2 pr-2 pl-0">
-        <div className={`tree-table-indent tree-table-indent-${indent}`}>
+        <div className={indentClass}>
           <EditableCell
             initialValue={initialValue}
             errorMessage={draftError}
@@ -105,8 +113,11 @@ const DraftRow: React.FC<DraftRowProps> = ({
           />
         </div>
       </td>
+      <td colSpan={1} aria-label="Usage Count">
+        {row ? <UsageCountDisplay row={row} /> : null}
+      </td>
       <td
-        colSpan={Math.max(columns.length - 1, 1)}
+        colSpan={1}
         className="tree-table-create-row-actions-cell p-2 align-top"
       >
         <span className="d-flex justify-content-end">
@@ -181,6 +192,7 @@ const EditRow: React.FC<EditRowProps> = ({
   columns,
   indent = 0,
   validate,
+  row,
 }) => {
   const handleCancel = () => {
     setDraftError('');
@@ -198,6 +210,7 @@ const EditRow: React.FC<EditRowProps> = ({
       indent={indent}
       validate={validate}
       requireValueChangeToEnableSave
+      row={row}
     />
   );
 };

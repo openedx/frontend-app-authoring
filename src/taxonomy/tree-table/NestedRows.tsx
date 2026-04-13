@@ -126,6 +126,7 @@ const NestedRows = ({
                 columns={columns}
                 indent={indent}
                 validate={validate}
+                row={row}
               />
             ) : (
               <tr>
@@ -137,7 +138,7 @@ const NestedRows = ({
                     return (
                       <td
                         key={cell.id}
-                        className={`p-1 align-top tree-table-overflow-anywhere ${isFirstColumn ? '' : 'tree-table-actions-column'}`}
+                        className={`p-1 align-top tree-table-overflow-anywhere`}
                       >
                         {isFirstColumn ? (
                           <div className={`tree-table-indent tree-table-indent-${indent}`}>{content}</div>

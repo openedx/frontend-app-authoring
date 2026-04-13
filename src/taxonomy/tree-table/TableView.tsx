@@ -142,7 +142,7 @@ const TableView = ({
                   {headerGroup.headers.map((header, index) => (
                     <th
                       key={header.id}
-                      className={`p-2 text-left ${index === 0 ? 'pl-2.5' : 'tree-table-actions-column'}`}
+                      className={`p-2 text-left ${index === 0 ? 'pl-2.5' : ''}`}
                     >
                       {header.isPlaceholder
                         ? null
