@@ -28,7 +28,6 @@ import { UnlinkModal } from '@src/generic/unlink-modal';
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
-import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from './CourseOutlineContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
@@ -72,8 +71,6 @@ const CourseOutline = () => {
     closeUnlinkModal,
   } = useCourseAuthoringContext();
   const {
-    handleAddBlock,
-    handleAddAndOpenUnit,
     currentSelection,
     sections,
     restoreSectionList,
