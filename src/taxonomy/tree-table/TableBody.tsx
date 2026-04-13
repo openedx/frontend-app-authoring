@@ -13,7 +13,8 @@ import type {
   TreeColumnDef,
   TreeTable,
 } from './types';
-import { CreateRow, EditRow } from './CreateRow';
+import CreateRow from './CreateRow';
+import EditRow from './EditRow';
 
 interface TableBodyProps {
   columns: TreeColumnDef[];
@@ -86,7 +87,6 @@ const TableBody = ({
           setIsCreatingTopRow={setIsCreatingTopRow}
           exitDraftWithoutSave={exitDraftWithoutSave}
           createRowMutation={createRowMutation}
-          columns={columns}
           validate={validate}
         />
       )}
@@ -104,7 +104,6 @@ const TableBody = ({
                 exitDraftWithoutSave();
               }}
               updateRowMutation={updateRowMutation}
-              columns={columns}
               validate={validate}
               row={row}
             />

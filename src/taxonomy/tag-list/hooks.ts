@@ -13,6 +13,8 @@ import {
 } from './constants';
 
 import messages from './messages';
+import globalMessages from '../../messages';
+import { AxiosError } from 'axios';
 
 /** Interface for table mode actions for React's `useReducer` hook.
  *
@@ -163,6 +165,26 @@ const useEditActions = ({
     return true;
   };
 
+  const getErrorMessage = (error: unknown): string => {
+    let errorMessage: string = '';
+    if (error instanceof AxiosError) {
+      const responseData = error.response?.data;
+      const tagError = Object.entries(responseData)?.find((errItem: [string, unknown]) => (
+        ['tag', 'value', 'updated_tag_value'].includes(errItem[0].toLowerCase())
+      ));
+
+      const errorMessages = tagError ? tagError[1] : (
+        (error as Error).message || intl.formatMessage(globalMessages.unknownError)
+      );
+      errorMessage = Array.isArray(errorMessages) ? errorMessages.join('; ') : String(errorMessages);
+    } else {
+      errorMessage = (error as Error).message || intl.formatMessage(globalMessages.unknownError);
+    }
+
+    errorMessage = errorMessage.replace(/\.$/, ''); // Remove trailing period for better message formatting
+    return errorMessage;
+  };
+
   const handleCreateTag = async (value: string, parentTagValue?: string) => {
     const trimmed = value.trim();
 
@@ -182,9 +204,9 @@ const useEditActions = ({
       setIsCreatingTopTag(false);
       setCreatingParentId(null);
     } catch (error) {
-      const message = intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: (error as Error)?.message });
-      setDraftError((error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: '' }));
-      setToast({ show: true, message });
+      const errorMessage = getErrorMessage(error);
+      setDraftError(errorMessage);
+      setToast({ show: true, message: intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage }) });
     }
   };
 
@@ -211,9 +233,9 @@ const useEditActions = ({
         message: intl.formatMessage(messages.tagUpdateSuccessMessage, { name: trimmed }),
       });
     } catch (error) {
-      const message = intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage: (error as Error)?.message });
-      setDraftError((error as Error)?.message || intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage: '' }));
-      setToast({ show: true, message });
+      const errorMessage = getErrorMessage(error);
+      setDraftError(errorMessage);
+      setToast({ show: true, message: intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage }) });
     }
   };
 

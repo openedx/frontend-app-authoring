@@ -15,7 +15,6 @@ const baseProps = () => ({
   setIsCreatingTopRow: jest.fn(),
   exitDraftWithoutSave: jest.fn(),
   createRowMutation: { isPending: false },
-  columns: [{ id: 'value' }],
   validate: jest.fn((value: string) => value.trim().length > 0),
 });
 
