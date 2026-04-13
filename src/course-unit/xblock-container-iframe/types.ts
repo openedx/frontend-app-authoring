@@ -1,4 +1,3 @@
-import { ConfigureUnitData } from '@src/course-outline/data/types';
 import { UserPartitionTypes } from '@src/data/types';
 
 export interface XBlockActionsTypes {
@@ -34,9 +33,8 @@ export interface XBlockContainerIframeProps {
   unitXBlockActions: {
     handleDelete: (XBlockId: string | null) => Promise<void> | void;
     handleDuplicate: (XBlockId: string | null) => void;
-    handleUnlink: (XBlockId: string | null) => void;
+    handleUnlink: (XBlockId: string | null) => Promise<void> | void;
   };
   courseVerticalChildren: Array<XBlockTypes>;
-  handleConfigureSubmit: (variables: ConfigureUnitData & { closeModalFn?: () => void }) => void;
   readonly?: boolean;
 }

@@ -9,27 +9,27 @@ import {
 } from './utils';
 
 describe('getSupportedFormats', () => {
-  it('should return null', () => {
+  it('should return undefined', () => {
     const supportedFileFormats = getSupportedFormats('');
-    expect(supportedFileFormats).toBeNull();
+    expect(supportedFileFormats).toBeUndefined();
   });
   it('should return provided supportedFileFormats', () => {
-    const expected = ['image/png', 'video/mp4'];
+    const expected = 'image/png, video/mp4';
     const actual = getSupportedFormats(expected);
     expect(expected).toEqual(actual);
   });
   it('should return array of valid file types', () => {
-    const expected = ['image/png'];
+    const expected = 'image/png';
     const actual = getSupportedFormats({ 'image/*': '.png' });
     expect(expected).toEqual(actual);
   });
   it('should return video/quicktime for .mov', () => {
-    const expected = ['video/quicktime'];
+    const expected = 'video/quicktime';
     const actual = getSupportedFormats({ 'video/*': '.mov' });
     expect(expected).toEqual(actual);
   });
   it('should return array of valid file types', () => {
-    const expected = ['video/mp4', 'video/quicktime'];
+    const expected = 'video/mp4, video/quicktime';
     const actual = getSupportedFormats({ 'video/*': ['.mp4', '.mov'] });
     expect(expected).toEqual(actual);
   });

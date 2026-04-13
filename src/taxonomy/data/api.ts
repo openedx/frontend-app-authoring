@@ -67,12 +67,13 @@ export const apiUrls = {
     pageIndex, pageSize, fullDepth, disablePagination,
   }: { pageIndex: number | null; pageSize: number | null; fullDepth?: boolean; disablePagination?: boolean }) => {
     if (disablePagination) {
-      return makeUrl(`${taxonomyId}/tags/`, { full_depth_threshold: fullDepth ? MAX_TAXONOMY_ITEMS : 0 });
+      return makeUrl(`${taxonomyId}/tags/`, { full_depth_threshold: fullDepth ? MAX_TAXONOMY_ITEMS : 0, include_counts: 'true' });
     }
     return makeUrl(`${taxonomyId}/tags/`, {
       page: (pageIndex ?? 0) + 1,
       page_size: pageSize ?? 10,
       full_depth_threshold: fullDepth ? MAX_TAXONOMY_ITEMS : 0,
+      include_counts: 'true',
     });
   },
   /**
@@ -90,6 +91,7 @@ export const apiUrls = {
   /** URL to plan (preview what would happen) a taxonomy import */
   tagsPlanImport: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/import/plan/`),
   createTag: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/`),
+  updateTag: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/`),
 } satisfies Record<string, (...args: any[]) => string>;
 
 /**

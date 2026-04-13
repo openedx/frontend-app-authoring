@@ -13,10 +13,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { camelCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { apiUrls, ALL_TAXONOMIES, getApiErrorMessage } from './api';
 import * as api from './api';
 import type { QueryOptions, TagListData } from './types';
-import { useIntl } from '@edx/frontend-platform/i18n';
 
 // Query key patterns. Allows an easy way to clear all data related to a given taxonomy.
 // https://github.com/openedx/frontend-app-admin-portal/blob/2ba315d/docs/decisions/0006-tanstack-react-query.rst
@@ -97,6 +97,7 @@ export const useDeleteTaxonomy = () => {
 export const useTaxonomyDetails = (taxonomyId: number) => useQuery({
   queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId),
   queryFn: () => api.getTaxonomy(taxonomyId),
+  refetchOnMount: 'always',
 });
 
 /**
@@ -194,6 +195,7 @@ export const useTagListData = (taxonomyId: number, options: QueryOptions) => {
       return camelCaseObject(data) as TagListData;
     },
     enabled,
+    refetchOnMount: 'always',
   });
 };
 
@@ -223,6 +225,34 @@ export const useCreateTag = (taxonomyId: number) => {
         );
       } catch (err) {
         throw new Error(getApiErrorMessage(err, intl));
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId),
+        refetchType: 'none',
+      });
+      // In the metadata, 'tagsCount' (and possibly other fields) will have changed:
+      queryClient.invalidateQueries({
+        queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId),
+        refetchType: 'none',
+      });
+    },
+  });
+};
+
+export const useUpdateTag = (taxonomyId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ value, originalValue }: { value: string, originalValue: string }) => {
+      try {
+        await getAuthenticatedHttpClient().patch(
+          apiUrls.updateTag(taxonomyId),
+          { tag: originalValue, updated_tag_value: value },
+        );
+      } catch (err) {
+        throw new Error(getApiErrorMessage(err));
       }
     },
     onSuccess: () => {

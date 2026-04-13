@@ -9,13 +9,13 @@ import {
 import { usePublishCourseItem } from '@src/course-outline/data/apiHooks';
 import type { UnitXBlock, XBlock } from '@src/data/types';
 import LoadingButton from '@src/generic/loading-button';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import messages from './messages';
 import { COURSE_BLOCK_NAMES } from '../constants';
 
 const PublishModal = () => {
   const intl = useIntl();
-  const { isPublishModalOpen, currentPublishModalData, closePublishModal } = useCourseAuthoringContext();
+  const { isPublishModalOpen, currentPublishModalData, closePublishModal } = useCourseOutlineContext();
   const {
     id, displayName, category,
   } = currentPublishModalData?.value || {};

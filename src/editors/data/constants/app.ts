@@ -7,4 +7,5 @@ export const blockTypes = StrictDict({
   // ADDED_EDITORS GO BELOW
   video_upload: 'video_upload',
   game: 'game',
+  pdf: 'pdf',
 });

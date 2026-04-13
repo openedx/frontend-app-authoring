@@ -1,21 +1,30 @@
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { useParams } from 'react-router-dom';
+import { useContext, useEffect, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { Tag } from '@openedx/paragon/icons';
 import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
-import { useEffect, useMemo } from 'react';
-import { Tag } from '@openedx/paragon/icons';
 import { ContentTagsSnippet } from '@src/content-tags-drawer';
-import configureMessages from '@src/generic/configure-modal/messages';
 import {
-  Button, ButtonGroup, Tab, Tabs,
+  Tab, Tabs, useToggle,
 } from '@openedx/paragon';
-import { useDispatch, useSelector } from 'react-redux';
 import { useIframe } from '@src/generic/hooks/context/hooks';
-import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
-import { Form, Formik } from 'formik';
+import { getLibraryId } from '@src/generic/key-utils';
+import { useClipboard } from '@src/generic/clipboard';
+import { ToastContext } from '@src/generic/toast-context';
+import { UnlinkModal, useUnlinkDownstream } from '@src/generic/unlink-modal';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import {
+  useCourseItemData, useDeleteCourseItem,
+} from '@src/course-outline/data/apiHooks';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
-import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
-import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
+import { messageTypes } from '@src/course-unit/constants';
+import { fetchCourseSectionVerticalData } from '@src/course-unit/data/thunk';
+import { extractCourseUnitId } from '@src/course-unit/legacy-sidebar/utils';
+import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
 import PublishControls from './PublishControls';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
@@ -70,9 +79,7 @@ const UnitInfoDetails = () => {
  *
  * It's using in the settings tab of the unit info sidebar.
  */
-const UnitInfoSettings = () => {
-  const dispatch = useDispatch();
-  const intl = useIntl();
+export const UnitInfoSettings = () => {
   const { sendMessageToIframe } = useIframe();
   const {
     id,
@@ -81,110 +88,19 @@ const UnitInfoSettings = () => {
     userPartitionInfo,
   } = useSelector(getCourseUnitData);
 
-  const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
-
-  const handleUpdate = async (
-    isVisible: boolean,
-    groupAccess: Record<string, any> | null,
-    isDiscussionEnabled: boolean,
-  ) => {
-    // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-    await dispatch(editCourseUnitVisibilityAndData(
-      id,
-      PUBLISH_TYPES.republish,
-      isVisible,
-      groupAccess,
-      isDiscussionEnabled,
-      () => sendMessageToIframe(messageTypes.refreshXBlock, null),
-      id,
-    ));
+  const updateCallback = () => {
+    sendMessageToIframe(messageTypes.refreshXBlock, null);
   };
-
-  const handleSaveGroups = async (data, { resetForm }) => {
-    const groupAccess = {};
-    if (data.selectedPartitionIndex >= 0) {
-      const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
-      groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
-    }
-    await handleUpdate(visibleToStaffOnly, groupAccess, discussionEnabled);
-    resetForm({ values: data });
-  };
-
-  /* istanbul ignore next */
-  const getSelectedGroups = () => {
-    if (userPartitionInfo?.selectedPartitionIndex >= 0) {
-      return userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]
-        ?.groups
-        .filter(({ selected }) => selected)
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-        .map(({ id }) => `${id}`)
-        || [];
-    }
-    return [];
-  };
-
-  const initialValues = useMemo(() => (
-    {
-      selectedPartitionIndex: userPartitionInfo?.selectedPartitionIndex,
-      selectedGroups: getSelectedGroups(),
-    }
-  ), [userPartitionInfo]);
 
   return (
-    <SidebarContent>
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarInfoVisibilityTitle)}
-      >
-        <ButtonGroup toggle>
-          <Button
-            variant={visibleToStaffOnly ? 'outline-primary' : 'primary'}
-            onClick={() => handleUpdate(false, null, discussionEnabled)}
-          >
-            <FormattedMessage {...messages.sidebarInfoVisibilityStudentLabel} />
-          </Button>
-          <Button
-            variant={visibleToStaffOnly ? 'primary' : 'outline-primary'}
-            onClick={() => handleUpdate(true, null, discussionEnabled)}
-          >
-            <FormattedMessage {...messages.sidebarInfoVisibilityStaffLabel} />
-          </Button>
-        </ButtonGroup>
-      </SidebarSection>
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarInfoAccessTitle)}
-      >
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSaveGroups}
-        >
-          {({
-            values, setFieldValue, dirty,
-          }) => (
-            <Form>
-              <AccessEditComponent
-                selectedPartitionIndex={values.selectedPartitionIndex}
-                setFieldValue={setFieldValue}
-                userPartitionInfo={userPartitionInfo}
-                selectedGroups={values.selectedGroups}
-              />
-              {dirty && (
-                <Button className="mt-3" type="submit" variant="primary">
-                  <FormattedMessage {...messages.visibilitySaveGroupsButton} />
-                </Button>
-              )}
-            </Form>
-          )}
-        </Formik>
-      </SidebarSection>
-      <SidebarSection
-        title={intl.formatMessage(configureMessages.discussionEnabledSectionTitle)}
-      >
-        <DiscussionEditComponent
-          discussionEnabled={discussionEnabled}
-          handleDiscussionChange={(e) => handleUpdate(visibleToStaffOnly, null, e.target.checked)}
-        />
-      </SidebarSection>
-    </SidebarContent>
+    <GenericUnitInfoSettings
+      id={id}
+      visibilityState={visibilityState}
+      discussionEnabled={discussionEnabled}
+      userPartitionInfo={userPartitionInfo}
+      updateCallback={updateCallback}
+      configureHook={useConfigureUnitWithPageUpdates}
+    />
   );
 };
 
@@ -193,22 +109,104 @@ const UnitInfoSettings = () => {
  */
 export const UnitInfoSidebar = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { copyToClipboard } = useClipboard();
   const currentItemData = useSelector(getCourseUnitData);
   const {
     currentTabKey,
     setCurrentTabKey,
   } = useUnitSidebarContext();
+  const { showToast } = useContext(ToastContext);
+  const { courseId } = useCourseAuthoringContext();
+
+  const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
+  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
+  const { mutateAsync: deleteCourseItem } = useDeleteCourseItem();
+
+  const subsectionId = currentItemData?.ancestorInfo?.ancestors?.[0]?.id;
+  const sectionId = currentItemData?.ancestorInfo?.ancestors?.[1]?.id;
+  const { data: subsection } = useCourseItemData(subsectionId);
+  // re-create actions object for customizations
+  const actions = { ...currentItemData.actions };
+  actions.deletable = actions.deletable && !subsection?.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !subsection?.upstreamInfo?.upstreamRef;
+
+  const handleDeleteSubmit = async () => {
+    await deleteCourseItem({
+      itemId: currentItemData.id,
+      subsectionId,
+      sectionId,
+    }, {
+      onSuccess: () => {
+        closeDeleteModal();
+        navigate(`/course/${courseId}`);
+      },
+    });
+  };
+
+  const handleUnlinkSubmit = async () => {
+    await unlinkDownstream({
+      downstreamBlockId: currentItemData.id,
+      subsectionId,
+      sectionId,
+    }, {
+      onSuccess: () => {
+        closeUnlinkModal();
+        dispatch(fetchCourseSectionVerticalData(currentItemData.id, subsectionId));
+      },
+    });
+  };
 
   useEffect(() => {
     // Set default Tab key
     setCurrentTabKey('details');
   }, []);
 
+  const handleCopyLocation = () => {
+    const locationId = extractCourseUnitId(currentItemData.id);
+    if (!locationId) {
+      return;
+    }
+
+    if (navigator.clipboard) {
+      // Modern approach: requires HTTPS (secure context)
+      void navigator.clipboard.writeText(locationId);
+    } else /* istanbul ignore next */ {
+      // Fallback for HTTP (non-secure) dev environments
+      // Note: execCommand is deprecated but still widely supported as fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = locationId;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy'); // eslint-disable-line deprecation/deprecation
+      document.body.removeChild(textarea);
+    }
+    showToast(intl.formatMessage(messages.locationCopiedText));
+  };
+
   return (
     <>
       <SidebarTitle
         title={currentItemData.displayName}
         icon={getItemIcon('unit')}
+        menuProps={{
+          itemId: currentItemData.id,
+          index: -1,
+          actions,
+          onClickUnlink: openUnlinkModal,
+          onClickDelete: openDeleteModal,
+          onClickViewLibrary: () => {
+            const upstreamRef = currentItemData?.upstreamInfo?.upstreamRef;
+            if (upstreamRef) {
+              const libId = getLibraryId(upstreamRef);
+              navigate(`/library/${libId}/unit/${upstreamRef}`);
+            }
+          },
+          onClickCopy: () => copyToClipboard(currentItemData.id),
+          onClickCopyLocation: handleCopyLocation,
+        }}
       />
       <Tabs
         id="unit-info-sidebar-tabs"
@@ -233,6 +231,19 @@ export const UnitInfoSidebar = () => {
           </div>
         </Tab>
       </Tabs>
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        close={closeDeleteModal}
+        onDeleteSubmit={handleDeleteSubmit}
+        category="unit"
+      />
+      <UnlinkModal
+        isOpen={isUnlinkModalOpen}
+        close={closeUnlinkModal}
+        onUnlinkSubmit={handleUnlinkSubmit}
+        displayName={currentItemData.displayName}
+        category="vertical"
+      />
     </>
   );
 };

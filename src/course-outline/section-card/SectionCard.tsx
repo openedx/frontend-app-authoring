@@ -21,6 +21,7 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
@@ -61,9 +62,8 @@ const SectionCard = ({
   const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
-  const {
-    courseId, openUnlinkModal, openPublishModal, setCurrentSelection,
-  } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const { openPublishModal, setCurrentSelection } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
@@ -199,6 +199,7 @@ const SectionCard = ({
     setCurrentSelection({
       currentId: section.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -206,6 +207,7 @@ const SectionCard = ({
     setSelectedContainerState({
       currentId: section.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -241,7 +243,8 @@ const SectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(section.id, undefined, section.id);
+      openContainerInfoSidebar(section.id, undefined, section.id, index);
+      handleClickMenuButton();
       setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);

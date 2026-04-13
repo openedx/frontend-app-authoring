@@ -38,7 +38,6 @@ export interface QueryOptions {
 
 export interface TagData {
   childCount: number;
-  descendantCount: number;
   depth: number;
   externalId: string;
   id: number;
@@ -59,6 +58,7 @@ export interface TagListData {
   next: string;
   numPages: number;
   previous: string;
+  canAddTag?: boolean;
   results: TagData[];
   start: number;
 }

@@ -8,6 +8,17 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
 
+const defaultRequiredProps = {
+  setIsCreatingTopRow: jest.fn(),
+  createRowMutation: {},
+  updateRowMutation: {},
+  handleUpdateRow: jest.fn(),
+  editingRowId: null,
+  setEditingRowId: jest.fn(),
+  exitDraftWithoutSave: jest.fn(),
+  validate: () => true,
+};
+
 const makeCell = (id: string, content: string) => ({
   id,
   column: { columnDef: { cell: () => content } },
@@ -41,9 +52,7 @@ describe('NestedRows', () => {
           <NestedRows
             parentRow={parent as any}
             parentRowValue="parent"
-            setIsCreatingTopRow={jest.fn()}
-            createRowMutation={{}}
-            validate={() => true}
+            {...defaultRequiredProps}
           />
         </tbody>
       </table>,
@@ -74,9 +83,8 @@ describe('NestedRows', () => {
             creatingParentId={2}
             setCreatingParentId={setCreatingParentId}
             onCancelCreation={onCancelCreation}
-            setIsCreatingTopRow={jest.fn()}
+            {...defaultRequiredProps}
             createRowMutation={{ isPending: false }}
-            validate={() => true}
           />
         </tbody>
       </table>,
@@ -87,5 +95,36 @@ describe('NestedRows', () => {
 
     expect(setCreatingParentId).toHaveBeenCalledWith(null);
     expect(onCancelCreation).toHaveBeenCalled();
+  });
+
+  it('renders EditRow when editingRowId matches the child row id and value', () => {
+    const nestedChild = makeRow({ id: 2, value: 'child', expanded: true });
+    const parent = makeRow({
+      id: 1,
+      value: 'parent',
+      expanded: true,
+      subRows: [nestedChild],
+    });
+
+    render(
+      <table>
+        <tbody>
+          <NestedRows
+            parentRow={parent as any}
+            parentRowValue="parent"
+            childRowsData={[nestedChild as any]}
+            {...defaultRequiredProps}
+            editingRowId="2:child"
+          />
+        </tbody>
+      </table>,
+      { wrapper },
+    );
+
+    const childInput = screen.getByDisplayValue('child');
+    const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+
+    expect(childInput).toBeInTheDocument();
+    expect(cancelButton).toBeInTheDocument();
   });
 });

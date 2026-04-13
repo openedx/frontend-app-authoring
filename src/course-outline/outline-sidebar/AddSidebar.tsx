@@ -5,6 +5,7 @@ import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sideb
 
 import contentMessages from '@src/library-authoring/add-content/messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
 import {
   Stack, Tab, Tabs,
@@ -48,11 +49,11 @@ type AddContentButtonProps = {
 
 /** Add Content Button */
 const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
+  const { courseUsageKey } = useCourseAuthoringContext();
   const {
-    courseUsageKey,
     handleAddBlock,
     handleAddAndOpenUnit,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
   const {
     currentFlow,
     stopCurrentFlow,
@@ -210,10 +211,8 @@ const AddNewContent = () => {
 
 /** Add Existing Content Tab Section */
 const ShowLibraryContent = () => {
-  const {
-    courseUsageKey,
-    handleAddBlock,
-  } = useCourseAuthoringContext();
+  const { courseUsageKey } = useCourseAuthoringContext();
+  const { handleAddBlock } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
     currentFlow,

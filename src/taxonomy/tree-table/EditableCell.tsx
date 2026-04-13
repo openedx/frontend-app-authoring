@@ -48,7 +48,6 @@ const EditableCell = ({
   useEffect(() => {
     if (autoFocus && inputRef.current) {
       inputRef.current.focus();
-      inputRef.current.select();
     }
   }, [inputRef.current]); // autoFocus explicitly not a dependency, to avoid unexpected focus change.
 

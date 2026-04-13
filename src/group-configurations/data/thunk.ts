@@ -1,10 +1,7 @@
 import { RequestStatus } from '@src/data/constants';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
-import {
-  hideProcessingNotification,
-  showProcessingNotification,
-} from '@src/generic/processing-notification/data/slice';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
+import { showToastOutsideReact, closeToastOutsideReact } from '@src/generic/toast-context';
 import {
   getGroupConfigurations,
   createContentGroup,
@@ -45,7 +42,7 @@ export function fetchGroupConfigurationsQuery(courseId) {
 export function createContentGroupQuery(courseId, group) {
   return async (dispatch) => {
     dispatch(updateSavingStatuses({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       const data = await createContentGroup(courseId, group);
@@ -55,7 +52,7 @@ export function createContentGroupQuery(courseId, group) {
     } catch (error) {
       return handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -63,7 +60,7 @@ export function createContentGroupQuery(courseId, group) {
 export function editContentGroupQuery(courseId, group) {
   return async (dispatch) => {
     dispatch(updateSavingStatuses({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       const data = await editContentGroup(courseId, group);
@@ -73,7 +70,7 @@ export function editContentGroupQuery(courseId, group) {
     } catch (error) {
       return handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -81,7 +78,7 @@ export function editContentGroupQuery(courseId, group) {
 export function deleteContentGroupQuery(courseId, parentGroupId, groupId) {
   return async (dispatch) => {
     dispatch(updateSavingStatuses({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.deleting);
 
     try {
       await deleteContentGroup(courseId, parentGroupId, groupId);
@@ -90,7 +87,7 @@ export function deleteContentGroupQuery(courseId, parentGroupId, groupId) {
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -98,7 +95,7 @@ export function deleteContentGroupQuery(courseId, parentGroupId, groupId) {
 export function createExperimentConfigurationQuery(courseId, newConfiguration) {
   return async (dispatch) => {
     dispatch(updateSavingStatuses({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       const configuration = await createExperimentConfiguration(
@@ -111,7 +108,7 @@ export function createExperimentConfigurationQuery(courseId, newConfiguration) {
     } catch (error) {
       return handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -122,7 +119,7 @@ export function editExperimentConfigurationQuery(
 ) {
   return async (dispatch) => {
     dispatch(updateSavingStatuses({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       const configuration = await editExperimentConfiguration(
@@ -135,7 +132,7 @@ export function editExperimentConfigurationQuery(
     } catch (error) {
       return handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -143,7 +140,7 @@ export function editExperimentConfigurationQuery(
 export function deleteExperimentConfigurationQuery(courseId, configurationId) {
   return async (dispatch) => {
     dispatch(updateSavingStatuses({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.deleting);
 
     try {
       await deleteExperimentConfiguration(courseId, configurationId);
@@ -152,7 +149,7 @@ export function deleteExperimentConfigurationQuery(courseId, configurationId) {
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }

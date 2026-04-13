@@ -11,6 +11,7 @@ import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
+import { CourseOutlineProvider } from '../CourseOutlineContext';
 
 const onExpandMock = jest.fn();
 const onClickMenuButtonMock = jest.fn();
@@ -87,9 +88,11 @@ const renderComponent = (props?: object, entry = '/') => {
       },
       extraWrapper: ({ children }) => (
         <CourseAuthoringProvider courseId={courseId}>
-          <OutlineSidebarProvider>
-            {children}
-          </OutlineSidebarProvider>
+          <CourseOutlineProvider>
+            <OutlineSidebarProvider>
+              {children}
+            </OutlineSidebarProvider>
+          </CourseOutlineProvider>
         </CourseAuthoringProvider>
       ),
     },

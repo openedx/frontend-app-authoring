@@ -14,14 +14,12 @@ import { useEventListener } from '@src/generic/hooks';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { COURSE_BLOCK_NAMES, iframeMessageTypes } from '@src/constants';
 
-import { ConfigureUnitData } from '@src/course-outline/data/types';
-import { messageTypes, PUBLISH_TYPES } from './constants';
+import { messageTypes } from './constants';
 import {
   createNewCourseXBlock,
   deleteUnitItemQuery,
   duplicateUnitItemQuery,
   editCourseItemQuery,
-  editCourseUnitVisibilityAndData,
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
   getCourseOutlineInfoQuery,
@@ -98,19 +96,6 @@ export const useCourseUnit = ({
 
   const handleTitleEdit = () => {
     dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
-  };
-
-  const handleConfigureSubmit = (variables: ConfigureUnitData & { closeModalFn?: () => void }) => {
-    dispatch(editCourseUnitVisibilityAndData(
-      variables.unitId,
-      PUBLISH_TYPES.republish,
-      variables.isVisibleToStaffOnly,
-      variables.groupAccess,
-      variables.discussionEnabled,
-      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: variables.unitId }),
-      blockId,
-    ));
-    variables.closeModalFn?.();
   };
 
   const handleTitleEditSubmit = (displayName) => {
@@ -274,7 +259,6 @@ export const useCourseUnit = ({
     headerNavigationsActions,
     handleTitleEdit,
     handleTitleEditSubmit,
-    handleConfigureSubmit,
     courseVerticalChildren,
     canPasteComponent,
     isMoveModalOpen,

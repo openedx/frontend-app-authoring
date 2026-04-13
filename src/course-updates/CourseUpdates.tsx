@@ -9,8 +9,6 @@ import {
 import { Add as AddIcon, ErrorOutline as ErrorIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 
-import { getProcessingNotification } from '@src/generic/processing-notification/data/selectors';
-import ProcessingNotification from '@src/generic/processing-notification';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
@@ -52,11 +50,6 @@ const CourseUpdates = () => {
     handleOpenDeleteForm,
     handleDeleteUpdateSubmit,
   } = useCourseUpdates({ courseId });
-
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
 
   const loadingStatuses = useSelector(getLoadingStatuses);
   const savingStatuses = useSelector(getSavingStatuses);
@@ -224,12 +217,6 @@ const CourseUpdates = () => {
                         close={closeDeleteModal}
                         onDeleteSubmit={handleDeleteUpdateSubmit}
                       />
-                      {isShowProcessingNotification && (
-                        <ProcessingNotification
-                          isShow={isShowProcessingNotification}
-                          title={processingNotificationTitle}
-                        />
-                      )}
                     </div>
                   </section>
                 </div>

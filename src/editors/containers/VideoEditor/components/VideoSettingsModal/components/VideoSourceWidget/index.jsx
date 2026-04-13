@@ -16,12 +16,11 @@ import {
   useIntl,
 } from '@edx/frontend-platform/i18n';
 
+import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import CollapsibleFormWidget from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import * as widgetHooks from '../hooks';
 import * as hooks from './hooks';
 import messages from './messages';
-
-import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
 
 /**
  * Collapsible Form widget controlling video source as well as fallback sources

@@ -17,18 +17,18 @@ import {
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 
-import { thunkActions, actions, selectors } from '../../../../../../data/redux';
-import messages from './messages';
+import { thunkActions, actions, selectors } from '@src/editors/data/redux';
 
-import { RequestKeys } from '../../../../../../data/constants/requests';
-import { in8lTranscriptLanguages } from '../../../../../../data/constants/video';
+import { RequestKeys } from '@src/editors/data/constants/requests';
+import { in8lTranscriptLanguages } from '@src/editors/data/constants/video';
 
-import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import CollapsibleFormWidget from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 
+import { ErrorContext } from '@src/editors/containers/VideoEditor/hooks';
 import ImportTranscriptCard from './ImportTranscriptCard';
 import Transcript from './Transcript';
-import { ErrorContext } from '../../../../hooks';
+import messages from './messages';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
 // should be re-thought and cleaned up to avoid this pattern.

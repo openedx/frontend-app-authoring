@@ -1,5 +1,6 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { XBlock } from '@src/data/types';
 import {
   CourseOutline,
@@ -12,6 +13,10 @@ import {
 } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
+
+const pickDefined = <T extends Record<string, any>>(obj: T) => Object.fromEntries(
+  Object.entries(obj).filter(([, value]) => value !== undefined),
+);
 
 export const getCourseOutlineIndexApiUrl = (
   courseId: string,
@@ -238,30 +243,65 @@ export async function configureCourseSection(variables: ConfigureSectionData): P
 /**
  * Configure course subsection
  */
-export async function configureCourseSubsection(variables: ConfigureSubsectionData): Promise<object> {
+export async function configureCourseSubsection(
+  variables: Partial<ConfigureSubsectionData> & Pick<ConfigureSubsectionData, 'itemId'>,
+): Promise<object> {
+  const {
+    itemId,
+    isVisibleToStaffOnly,
+    dueDate,
+    hideAfterDue,
+    showCorrectness,
+    isPracticeExam,
+    isTimeLimited,
+    isProctoredExam,
+    isOnboardingExam,
+    examReviewRules,
+    defaultTimeLimitMinutes,
+    releaseDate,
+    graderType,
+    isPrereq,
+    prereqUsageKey,
+    prereqMinScore,
+    prereqMinCompletion,
+  } = variables;
+
+  const metadata = pickDefined({
+    visible_to_staff_only: (() => {
+      if (isVisibleToStaffOnly === undefined) {
+        return undefined;
+      }
+      return isVisibleToStaffOnly ? true : null;
+    })(),
+    due: dueDate,
+    hide_after_due: hideAfterDue,
+    show_correctness: showCorrectness,
+    is_practice_exam: isPracticeExam,
+    is_time_limited: isTimeLimited,
+    is_proctored_enabled: (
+      isProctoredExam !== undefined || isPracticeExam !== undefined || isOnboardingExam !== undefined
+    )
+      ? (isProctoredExam || isPracticeExam || isOnboardingExam)
+      : undefined,
+    exam_review_rules: examReviewRules,
+    default_time_limit_minutes: defaultTimeLimitMinutes,
+    is_onboarding_exam: isOnboardingExam,
+    start: releaseDate,
+  });
+
+  const body = pickDefined({
+    publish: 'republish',
+    graderType,
+    isPrereq,
+    prereqUsageKey,
+    prereqMinScore,
+    prereqMinCompletion,
+    metadata,
+  });
+
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(variables.itemId), {
-      publish: 'republish',
-      graderType: variables.graderType,
-      isPrereq: variables.isPrereq,
-      prereqUsageKey: variables.prereqUsageKey,
-      prereqMinScore: variables.prereqMinScore,
-      prereqMinCompletion: variables.prereqMinCompletion,
-      metadata: {
-        // The backend expects metadata.visible_to_staff_only to either true or null
-        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-        due: variables.dueDate,
-        hide_after_due: variables.hideAfterDue,
-        show_correctness: variables.showCorrectness,
-        is_practice_exam: variables.isPracticeExam,
-        is_time_limited: variables.isTimeLimited,
-        is_proctored_enabled: variables.isProctoredExam || variables.isPracticeExam || variables.isOnboardingExam,
-        exam_review_rules: variables.examReviewRules,
-        default_time_limit_minutes: variables.defaultTimeLimitMin,
-        is_onboarding_exam: variables.isOnboardingExam,
-        start: variables.releaseDate,
-      },
-    });
+    .post(getCourseItemApiUrl(itemId), body);
+
   return data;
 }
 
@@ -269,18 +309,23 @@ export async function configureCourseSubsection(variables: ConfigureSubsectionDa
  * Configure course unit
  */
 export async function configureCourseUnit(variables: ConfigureUnitData): Promise<object> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(variables.unitId), {
-      publish: 'republish',
+  const body = {
+    publish: variables.groupAccess ? null : variables.type,
+    ...(variables.type === PUBLISH_TYPES.republish ? {
       metadata: {
-        // The backend expects metadata.visible_to_staff_only to either true or null
         visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-        group_access: variables.groupAccess,
-        discussion_enabled: variables.discussionEnabled,
+        ...(variables.discussionEnabled !== undefined && {
+          discussion_enabled: variables.discussionEnabled,
+        }),
+        ...(variables.groupAccess != null && { group_access: variables.groupAccess }),
       },
-    });
+    } : {}),
+  };
+  const url = getCourseItemApiUrl(variables.unitId);
+  const { data } = await getAuthenticatedHttpClient()
+    .post(url, body);
 
-  return data;
+  return camelCaseObject(data);
 }
 
 /**

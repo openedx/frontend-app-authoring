@@ -202,6 +202,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
     reduxStore,
     axiosMock,
     mockShowToast: mockToastContext.showToast,
+    mockCloseToast: mockToastContext.closeToast,
     mockToastAction: mockToastContext.toastAction,
     queryClient,
     validateUserPermissionsMock,

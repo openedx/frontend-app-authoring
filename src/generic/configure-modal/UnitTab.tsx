@@ -54,7 +54,7 @@ export const DiscussionEditComponent = ({
 );
 
 export interface AccessEditComponentProps {
-  selectedPartitionIndex: number,
+  selectedPartitionIndex?: number,
   setFieldValue: (key: string, value: any) => void,
   userPartitionInfo?: UserPartitionInfo,
   selectedGroups: string[],
@@ -105,7 +105,8 @@ export const AccessEditComponent = ({
         ))}
       </Form.Control>
 
-      {selectedPartitionIndex >= 0 && userPartitionInfo?.selectablePartitions.length && (
+      {selectedPartitionIndex !== undefined
+        && selectedPartitionIndex >= 0 && userPartitionInfo?.selectablePartitions.length && (
         <Form.Group controlId="select-groups-checkboxes">
           <Form.Label><FormattedMessage {...messages.unitSelectGroup} /></Form.Label>
           <div

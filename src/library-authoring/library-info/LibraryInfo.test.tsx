@@ -291,7 +291,7 @@ describe('<LibraryInfo />', () => {
     expect(screen.getByText('Settings')).toBeInTheDocument();
   });
 
-  it('renders PublicReadToggle when user can manage team', async () => { 
+  it('renders PublicReadToggle when user can manage team', async () => {
     render();
     const allowSwitch = await screen.findByRole('switch', { name: /allow public read/i });
     expect(allowSwitch).toBeInTheDocument();
