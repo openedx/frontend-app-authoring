@@ -1,5 +1,4 @@
 import {
-  Bubble,
   Icon,
   IconButton,
   IconButtonWithTooltip,
@@ -18,17 +17,11 @@ import type {
   TreeColumnDef,
   TreeRowData,
 } from '../tree-table/types';
+import { TagListRowData } from './types';
 import OptionalExpandLink from './OptionalExpandLink';
+import UsageCountDisplay from './UsageCountDisplay';
 
 const EDITABLE_COLUMNS = ['value'];
-
-interface TagListRowData extends TreeRowData {
-  depth: number;
-  childCount: number;
-  usageCount?: number;
-  isNew?: boolean;
-  isEditing?: boolean;
-}
 
 const asTagListRowData = (row: Row<TreeRowData>): TagListRowData => (
   row.original as unknown as TagListRowData
@@ -48,17 +41,6 @@ interface GetColumnsArgs {
   isSavingDraft: boolean;
   maxDepth: number;
 }
-
-const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
-  const count = asTagListRowData(row).usageCount ?? 0;
-  return (
-    count > 0 && (
-      <Bubble expandable>
-        {count}
-      </Bubble>
-    )
-  );
-};
 
 interface ActionsHeaderProps {
   onStartDraft: () => void;

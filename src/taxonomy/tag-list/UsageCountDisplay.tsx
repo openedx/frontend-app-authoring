@@ -5,20 +5,13 @@ import type { Row } from '@tanstack/react-table';
 import type {
   TreeRowData,
 } from '../tree-table/types';
-
-interface TagListRowData extends TreeRowData {
-  depth: number;
-  childCount: number;
-  usageCount?: number;
-  isNew?: boolean;
-  isEditing?: boolean;
-}
+import { TagListRowData } from './types';
 
 const asTagListRowData = (row: Row<TreeRowData>): TagListRowData => (
   row.original as unknown as TagListRowData
 );
 
-export const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
+const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
   const count = asTagListRowData(row).usageCount ?? 0;
   return (
     count > 0 && (
@@ -28,3 +21,5 @@ export const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
     )
   );
 };
+
+export default UsageCountDisplay;
