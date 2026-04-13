@@ -65,6 +65,11 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
     courseUsageKey: 'course-usage-key',
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     isPublishModalOpen: true,
     currentPublishModalData: { value: currentItemMock },
     closePublishModal: onCloseMock,

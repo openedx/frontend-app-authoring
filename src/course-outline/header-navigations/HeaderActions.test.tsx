@@ -3,7 +3,7 @@ import {
   fireEvent, initializeMocks, render, screen,
 } from '@src/testUtils';
 
-import { OutlineSidebarProvider } from '@src/course-outline';
+import { CourseOutlineProvider, OutlineSidebarProvider } from '@src/course-outline';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import HeaderActions, { HeaderActionsProps } from './HeaderActions';
@@ -38,9 +38,11 @@ const renderComponent = (props?: Partial<HeaderActionsProps>) => render(
   {
     extraWrapper: ({ children }) => (
       <CourseAuthoringProvider courseId="1">
-        <OutlineSidebarProvider>
-          {children}
-        </OutlineSidebarProvider>
+        <CourseOutlineProvider>
+          <OutlineSidebarProvider>
+            {children}
+          </OutlineSidebarProvider>
+        </CourseOutlineProvider>
       </CourseAuthoringProvider>
     ),
   },

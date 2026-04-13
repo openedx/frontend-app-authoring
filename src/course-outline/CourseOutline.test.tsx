@@ -18,6 +18,7 @@ import {
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import { userEvent } from '@testing-library/user-event';
+import { CourseOutlineProvider } from './CourseOutlineContext';
 import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
 import { OutlineSidebarPagesProvider } from './outline-sidebar/OutlineSidebarPagesContext';
 import {
@@ -144,11 +145,13 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const renderComponent = () => render(
   <CourseAuthoringProvider courseId={courseId}>
-    <OutlineSidebarPagesProvider>
-      <OutlineSidebarProvider>
-        <CourseOutline />
-      </OutlineSidebarProvider>
-    </OutlineSidebarPagesProvider>
+    <CourseOutlineProvider>
+      <OutlineSidebarPagesProvider>
+        <OutlineSidebarProvider>
+          <CourseOutline />
+        </OutlineSidebarProvider>
+      </OutlineSidebarPagesProvider>
+    </CourseOutlineProvider>
   </CourseAuthoringProvider>,
 );
 

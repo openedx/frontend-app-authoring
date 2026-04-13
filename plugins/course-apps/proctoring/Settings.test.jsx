@@ -74,6 +74,8 @@ describe('ProctoredExamSettings', () => {
       provider: null,
     });
 
+    axiosMock.onGet(/course_index/).reply(200, { sections: [] });
+
     axiosMock.onGet(
       StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
     ).reply(200, {

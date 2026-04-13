@@ -10,7 +10,7 @@ import { useToggle } from '@openedx/paragon';
 
 import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
 import { SelectionState, XBlock } from '@src/data/types';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
@@ -37,7 +37,12 @@ interface OutlineSidebarContextData {
   toggle: () => void;
   selectedContainerState?: SelectionState;
   setSelectedContainerState: (selectedContainerState?: SelectionState) => void;
-  openContainerInfoSidebar: (containerId: string, subsectionId?: string, sectionId?: string) => void;
+  openContainerInfoSidebar: (
+    containerId: string,
+    subsectionId?: string,
+    sectionId?: string,
+    index?: number,
+  ) => void;
   clearSelection: () => void;
   /** Stores last section that allows adding subsections inside it. */
   lastEditableSection?: XBlock;
@@ -99,7 +104,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   * and sectionId should be set to its top parent section's id.
   */
   const [selectedContainerState, setSelectedContainerState] = useState<SelectionState | undefined>();
-  const { setCurrentSelection } = useCourseAuthoringContext();
+  const { setCurrentSelection } = useCourseOutlineContext();
 
   /**
   * Set currentSelection to same as selectedContainerState whenever
@@ -123,9 +128,15 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     containerId: string,
     subsectionId?: string,
     sectionId?: string,
+    index?: number,
   ) => {
     if (isOutlineNewDesignEnabled()) {
-      setSelectedContainerState({ currentId: containerId, subsectionId, sectionId });
+      setSelectedContainerState({
+        currentId: containerId,
+        subsectionId,
+        sectionId,
+        index,
+      });
       setCurrentPageKey('info');
     }
   }, [setSelectedContainerState, setCurrentPageKey]);

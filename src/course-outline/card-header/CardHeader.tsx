@@ -27,6 +27,7 @@ import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
 import { useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
@@ -120,7 +121,8 @@ const CardHeader = ({
       openLegacyTagsDrawer();
     }
   }, [setCurrentPageKey, openLegacyTagsDrawer, cardId]);
-  const { courseId, currentSelection } = useCourseAuthoringContext();
+  const { courseId } = useCourseAuthoringContext();
+  const { currentSelection } = useCourseOutlineContext();
   const [isFormOpen, openForm, closeForm] = useToggle(false);
 
   // Use studio url as base if proctoringExamConfigurationLink is a relative link

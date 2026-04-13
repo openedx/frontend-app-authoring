@@ -23,6 +23,11 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId: 5,
     courseUsageKey,
     getUnitUrl: (id: string) => `/some/${id}`,
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     handleAddAndOpenUnit,
     handleAddBlock,
     setCurrentSelection,

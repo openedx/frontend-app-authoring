@@ -28,7 +28,13 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
     getUnitUrl: (id: string) => `/some/${id}`,
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     setCurrentSelection,
+    openPublishModal: jest.fn(),
   }),
 }));
 
@@ -357,11 +363,13 @@ describe('<UnitCard />', () => {
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
     });
     expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
     });
   });
 });

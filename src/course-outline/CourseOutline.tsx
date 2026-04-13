@@ -12,7 +12,6 @@ import { Helmet } from 'react-helmet';
 import { CheckCircle as CheckCircleIcon, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import {
-  arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
@@ -31,6 +30,7 @@ import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
 import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from './CourseOutlineContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
@@ -70,15 +70,24 @@ const CourseOutline = () => {
     courseUsageKey,
     isUnlinkModalOpen,
     closeUnlinkModal,
-    currentSelection,
   } = useCourseAuthoringContext();
+  const {
+    handleAddBlock,
+    handleAddAndOpenUnit,
+    currentSelection,
+    sections,
+    restoreSectionList,
+    setSections,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
+  } = useCourseOutlineContext();
 
   const {
     courseName,
     savingStatus,
     statusBarData,
     courseActions,
-    sectionsList,
     isCustomRelativeDatesActive,
     isLoading,
     isLoadingDenied,
@@ -146,11 +155,6 @@ const CourseOutline = () => {
     }
   }, [location, courseId, courseName]);
 
-  const [sections, setSections] = useState<XBlock[]>(sectionsList);
-
-  const restoreSectionList = () => {
-    setSections(() => [...sectionsList]);
-  };
 
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
@@ -159,67 +163,6 @@ const CourseOutline = () => {
 
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
   const enableTimedExams = useSelector(getTimedExamsFlag);
-
-  /**
-   * Move section to new index
-   */
-  const updateSectionOrderByIndex = (currentIndex: number, newIndex: number) => {
-    if (currentIndex === newIndex) {
-      return;
-    }
-    setSections((prevSections) => {
-      const newSections = arrayMove(prevSections, currentIndex, newIndex);
-      handleSectionDragAndDrop(newSections.map(section => section.id));
-      return newSections;
-    });
-  };
-
-  /**
-   * Uses details from move information and moves subsection
-   */
-  const updateSubsectionOrderByIndex = (section: XBlock, moveDetails) => {
-    const { fn, args, sectionId } = moveDetails;
-    if (!args) {
-      return;
-    }
-    const [sectionsCopy, newSubsections] = fn(...args);
-    if (newSubsections && sectionId) {
-      setSections(sectionsCopy);
-      handleSubsectionDragAndDrop(
-        sectionId,
-        section.id,
-        newSubsections.map(subsection => subsection.id),
-        restoreSectionList,
-      );
-    }
-  };
-
-  /**
-   * Uses details from move information and moves unit
-   */
-  const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
-    const {
-      fn, args, sectionId, subsectionId,
-    } = moveDetails;
-    if (!args) {
-      return;
-    }
-    const [sectionsCopy, newUnits] = fn(...args);
-    if (newUnits && sectionId && subsectionId) {
-      setSections(sectionsCopy);
-      handleUnitDragAndDrop(
-        sectionId,
-        section.id,
-        subsectionId,
-        newUnits.map(unit => unit.id),
-        restoreSectionList,
-      );
-    }
-  };
-
-  useEffect(() => {
-    setSections(sectionsList);
-  }, [sectionsList]);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -296,7 +239,7 @@ const CourseOutline = () => {
                 isSectionsExpanded={isSectionsExpanded}
                 headerNavigationsActions={headerNavigationsActions}
                 isDisabledReindexButton={isDisabledReindexButton}
-                hasSections={Boolean(sectionsList.length)}
+                hasSections={Boolean(sections.length)}
                 courseActions={courseActions}
                 errors={errors}
                 sections={sections}
@@ -326,7 +269,7 @@ const CourseOutline = () => {
                 <div>
                   {showNewActionsBar && (
                   <ActionRow className="mt-3">
-                    {Boolean(sectionsList.length) && (
+                    {Boolean(sections.length) && (
                     <Button
                       variant="outline-primary"
                       id="expand-collapse-all-button"
