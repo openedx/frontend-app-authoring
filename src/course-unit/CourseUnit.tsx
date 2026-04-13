@@ -273,14 +273,12 @@ const CourseUnit = () => {
             </TransitionReplace>
             {courseUnit.upstreamInfo?.upstreamLink && (
               <AlertMessage
-                title={intl.formatMessage(
+                description={intl.formatMessage(
                   messages.alertLibraryUnitReadOnlyText,
                   {
                     link: (
-                      <Alert.Link
-                        href={courseUnit.upstreamInfo.upstreamLink}
-                      >
-                        {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
+                      <Alert.Link href={courseUnit.upstreamInfo.upstreamLink}>
+                        <FormattedMessage {...messages.alertLibraryUnitReadOnlyLinkText} />
                       </Alert.Link>
                     ),
                   },

@@ -259,7 +259,7 @@ const GradingSettings = () => {
           role="dialog"
           actions={[
             !isQueryPending && (
-              <Button variant="tertiary" onClick={handleResetPageData}>
+              <Button key="cancel" variant="tertiary" onClick={handleResetPageData}>
                 {intl.formatMessage(messages.buttonCancelText)}
               </Button>
             ),

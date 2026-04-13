@@ -16,6 +16,7 @@ import EnrollmentTrackGroupsSection from './enrollment-track-groups-section';
 import GroupConfigurationSidebar from './group-configuration-sidebar';
 import { useGroupConfigurations } from './hooks';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
+import { AvailableGroup } from './types';
 
 const GroupConfigurations = () => {
   const { formatMessage } = useIntl();
@@ -36,7 +37,7 @@ const GroupConfigurations = () => {
   } = useGroupConfigurations(courseId);
 
   document.title = getPageHeadTitle(
-    courseDetails?.name,
+    courseDetails?.name ?? '',
     formatMessage(messages.headingTitle),
   );
 
@@ -56,13 +57,13 @@ const GroupConfigurations = () => {
     );
   }
 
-  const enrollmentTrackGroup = shouldShowEnrollmentTrack
+  const enrollmentTrackGroup: AvailableGroup = shouldShowEnrollmentTrack
     ? allGroupConfigurations.find((group) => group.scheme === 'enrollment_track')
     : null;
 
-  const contentGroup = allGroupConfigurations.find((group) => group.scheme === 'cohort');
+  const contentGroup: AvailableGroup[] = allGroupConfigurations.find((group) => group.scheme === 'cohort');
 
-  const teamGroups = allGroupConfigurations.filter((group) => group.scheme === 'team');
+  const teamGroups: AvailableGroup[] = allGroupConfigurations.filter((group) => group.scheme === 'team');
 
   return (
     <>
@@ -87,6 +88,7 @@ const GroupConfigurations = () => {
               {!!teamGroups && teamGroups.length > 0 && (
                 teamGroups.map((teamGroup) => (
                   <TeamGroupsSection
+                    key={teamGroup.id}
                     availableGroup={teamGroup}
                   />
                 ))

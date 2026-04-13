@@ -40,6 +40,7 @@ const GroupFeedbackRow = ({
           {answers.map((letter) => (
             <Form.Checkbox
               className="mr-4 mt-1"
+              key={letter.id}
               value={letter.id}
               checked={value.answers.indexOf(letter.id)}
               isValid={value.answers.indexOf(letter.id) >= 0}

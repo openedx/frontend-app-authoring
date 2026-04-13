@@ -166,6 +166,7 @@ const CourseUpdates = () => {
                           {courseUpdates.map((courseUpdate, index) => (
                             isInnerFormOpen(courseUpdate.id) ? (
                               <UpdateForm
+                                key={courseUpdate.id}
                                 close={closeUpdateForm}
                                 requestType={requestType}
                                 isInnerForm
@@ -175,6 +176,7 @@ const CourseUpdates = () => {
                               />
                             ) : (
                               <CourseUpdate
+                                key={courseUpdate.id}
                                 dateForUpdate={courseUpdate.date}
                                 contentForUpdate={courseUpdate.content}
                                 onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_update, courseUpdate)}

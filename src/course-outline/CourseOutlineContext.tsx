@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { arrayMove } from '@dnd-kit/sortable';
 
-import { SelectionState, type UnitXBlock, type XBlock } from '@src/data/types';
+import { SelectionState, type XBlock } from '@src/data/types';
 import { useToggleWithValue } from '@src/hooks';
 import { getBlockType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from '@src/constants';

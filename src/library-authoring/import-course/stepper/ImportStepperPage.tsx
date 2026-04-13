@@ -85,7 +85,7 @@ export const ImportStepperPage = () => {
         compositionLevel: 'section',
       });
       navigate(`../import/${selectedCourseId}/${migrationTask.uuid}`);
-    } catch (error) {
+    } catch {
       showToast(intl.formatMessage(messages.importCourseCompleteFailedToastMessage, {
         courseName: courseData?.title,
       }));

@@ -9,7 +9,7 @@ import {
 } from '@openedx/paragon';
 
 import { Check } from '@openedx/paragon/icons';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { thunkActions, selectors } from '../../../../../../data/redux';
 import { videoTranscriptLanguages } from '../../../../../../data/constants/video';
@@ -47,9 +47,8 @@ export const hooks = {
 const LanguageSelector = ({
   index, // For a unique id for the form control
   language,
-  // Redux
-  openLanguages, // Only allow those languages not already associated with a transcript to be selected
 }) => {
+  const openLanguages = useSelector(selectors.video.openLanguages);
   const intl = useIntl();
   const [localLang, setLocalLang] = React.useState(language);
   const input = fileInput({ onAddFile: hooks.addFileCallback({ dispatch: useDispatch(), localLang }) });
@@ -95,12 +94,14 @@ const LanguageSelector = ({
         <Dropdown.Menu>
           {Object.entries(videoTranscriptLanguages).map(([lang, text]) => {
             if (language === lang) {
-              return (<Dropdown.Item>{text}<Icon className="text-primary-500" src={Check} /></Dropdown.Item>);
+              return <Dropdown.Item key={lang}>{text}<Icon className="text-primary-500" src={Check} /></Dropdown.Item>;
             }
             if (openLanguages.some(row => row.includes(lang))) {
-              return (<Dropdown.Item onClick={() => onLanguageChange({ newLang: lang })}>{text}</Dropdown.Item>);
+              return (
+                <Dropdown.Item key={lang} onClick={() => onLanguageChange({ newLang: lang })}>{text}</Dropdown.Item>
+              );
             }
-            return (<Dropdown.Item className="disabled">{text}</Dropdown.Item>);
+            return (<Dropdown.Item key={lang} className="disabled">{text}</Dropdown.Item>);
           })}
         </Dropdown.Menu>
       </Dropdown>
@@ -109,21 +110,9 @@ const LanguageSelector = ({
   );
 };
 
-LanguageSelector.defaultProps = {
-  openLanguages: [],
-};
-
 LanguageSelector.propTypes = {
-  openLanguages: PropTypes.arrayOf(PropTypes.string),
   index: PropTypes.number.isRequired,
   language: PropTypes.string.isRequired,
 };
 
-export const mapStateToProps = (state) => ({
-  openLanguages: selectors.video.openLanguages(state),
-});
-
-export const mapDispatchToProps = {};
-
-export const LanguageSelectorInternal = LanguageSelector; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(LanguageSelector);
+export default LanguageSelector;

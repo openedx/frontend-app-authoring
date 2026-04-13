@@ -3,9 +3,17 @@
   "categories": {
     "correctness": "warn"
   },
+  "plugins": ["react"],
   "rules": {
-    "eslint/no-unused-vars": "off",
-    "typescript/unbound-method": "off", // 🛑 TEMPORARY
+    "eslint/no-unused-vars": ["warn", {
+      // Allow using {ignoredProp, ...keepTheRest} to omit a prop like 'ignoredProp' from an object.
+      "ignoreRestSiblings": true,
+    }],
+    // We disable exhaustive-deps because: it's noisy, and we often include extra deps when we want a memoized thing to
+    // re-calculate after some change, even if we're not using that thing in the calculation.
+    "react-hooks/exhaustive-deps": "off",
+    // Rule of hooks is useful, but not on by default:
+    "react/rules-of-hooks": "warn",
     "typescript/no-floating-promises": ["error", {
       "allowForKnownSafeCalls": [
         // queryClient.invalidateQueries returns a promise that can be awaited

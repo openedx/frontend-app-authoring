@@ -163,7 +163,7 @@ export function Sidebar<T extends SidebarPages>({
             }
 
             return (
-              <IconButton {...buttonData} />
+              <IconButton key={key} {...buttonData} />
             );
           })}
         </IconButtonToggle>

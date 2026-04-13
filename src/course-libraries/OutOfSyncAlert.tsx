@@ -67,9 +67,7 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
       variant="info"
       onClose={dismissAlert}
       actions={[
-        <Button
-          onClick={onReview}
-        >
+        <Button key="review-btn" onClick={onReview}>
           {intl.formatMessage(messages.outOfSyncCountAlertReviewBtn)}
         </Button>,
       ]}
