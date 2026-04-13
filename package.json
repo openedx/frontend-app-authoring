@@ -116,6 +116,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "axios-mock-adapter": "2.1.0",
+    "dprint": "^0.54.0",
     "eslint-import-resolver-webpack": "^0.13.8",
     "fetch-mock-jest": "^1.5.1",
     "jest-canvas-mock": "^2.5.2",
