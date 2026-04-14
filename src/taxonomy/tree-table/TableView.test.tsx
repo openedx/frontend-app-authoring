@@ -48,6 +48,7 @@ describe('TableView', () => {
   it('shows and dismisses save error banner', () => {
     const props = baseProps();
     props.createRowMutation = { isPending: false, isError: true };
+    props.draftError = 'Request failed with status code 500';
 
     render(<TableView {...props} />, { wrapper });
 
