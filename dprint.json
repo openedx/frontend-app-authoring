@@ -27,7 +27,8 @@
     "jest.config.js",
     "env.config.*",
     "example.env.config.*",
-    "module.config.js"
+    "module.config.js",
+    "**/messages.{ts,js}"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.95.15.wasm",
