@@ -2,7 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Icon, IconButton, Dropzone, InputGroup, FormControl,
+  Icon,
+  IconButton,
+  Dropzone,
+  InputGroup,
+  FormControl,
 } from '@openedx/paragon';
 import { ArrowForward, FileUpload, Close } from '@openedx/paragon/icons';
 import { useDispatch } from 'react-redux';
@@ -34,9 +38,13 @@ const URLUploader = ({ onUpload }) => {
             aria-label={intl.formatMessage(messages.pasteURL)}
             aria-describedby="basic-addon2"
             borderless
-            onClick={(event) => { event.stopPropagation(); }}
-            onChange={(event) => { setTextInputValue(event.target.value); }}
-            trailingElement={(
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+            onChange={(event) => {
+              setTextInputValue(event.target.value);
+            }}
+            trailingElement={
               <IconButton
                 className="url-submit-button"
                 alt={intl.formatMessage(messages.submitButtonAltText)}
@@ -50,7 +58,7 @@ const URLUploader = ({ onUpload }) => {
                   }
                 }}
               />
-            )}
+            }
           />
         </InputGroup>
       </div>

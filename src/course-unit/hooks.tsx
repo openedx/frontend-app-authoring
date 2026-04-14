@@ -1,5 +1,8 @@
 import {
-  useCallback, useEffect, useRef, useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -48,7 +51,7 @@ import {
 export const useCourseUnit = ({
   courseId,
   blockId,
-}: { courseId: string, blockId: string }) => {
+}: { courseId: string; blockId: string; }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { sendMessageToIframe } = useIframe();
@@ -132,10 +135,11 @@ export const useCourseUnit = ({
       dispatch(duplicateUnitItemQuery(
         blockId,
         XBlockId,
-        (courseKey: string, locator: string) => sendMessageToIframe(
-          messageTypes.completeXBlockDuplicating,
-          { courseKey, locator },
-        ),
+        (courseKey: string, locator: string) =>
+          sendMessageToIframe(
+            messageTypes.completeXBlockDuplicating,
+            { courseKey, locator },
+          ),
       ));
     },
     handleUnlink: async (XBlockId: string) => {
@@ -150,7 +154,10 @@ export const useCourseUnit = ({
 
   const handleRollbackMovedXBlock = () => {
     const {
-      sourceLocator, targetParentLocator, title, currentParentLocator,
+      sourceLocator,
+      targetParentLocator,
+      title,
+      currentParentLocator,
     } = movedXBlockParams;
     dispatch(patchUnitItemQuery({
       sourceLocator,
@@ -273,12 +280,12 @@ export const useCourseUnit = ({
   };
 };
 
-export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string }) => {
+export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string; }) => {
   const dispatch = useDispatch();
   const { sendMessageToIframe } = useIframe();
 
   // oxlint-disable typescript-eslint(await-thenable)
-  return async (body: object, callback?: (args: { courseKey: string, locator: string }) => void) => (
+  return async (body: object, callback?: (args: { courseKey: string; locator: string; }) => void) => (
     // eslint-disable-next-line @typescript-eslint/return-await
     await dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
   );

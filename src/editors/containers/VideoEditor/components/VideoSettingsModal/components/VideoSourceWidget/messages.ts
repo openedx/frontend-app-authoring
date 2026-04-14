@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   titleLabel: {
     id: 'authoring.videoeditor.videoSource.title.label',
     defaultMessage: 'Video source',

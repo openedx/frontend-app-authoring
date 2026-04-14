@@ -12,7 +12,9 @@ interface WhatsInClipboardProps {
 }
 
 const WhatsInClipboard = ({
-  handlePopoverToggle, togglePopover, popoverElementRef,
+  handlePopoverToggle,
+  togglePopover,
+  popoverElementRef,
 }: WhatsInClipboardProps) => {
   const intl = useIntl();
   const triggerElementRef = useRef(null);

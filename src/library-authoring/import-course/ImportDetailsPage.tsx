@@ -3,7 +3,11 @@ import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Stack, Container, Alert, Layout, Button,
+  Stack,
+  Container,
+  Alert,
+  Layout,
+  Button,
   DataTable,
 } from '@openedx/paragon';
 
@@ -11,7 +15,10 @@ import Header from '@src/header';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import {
-  ArrowForward, CheckCircle, Info, WarningFilled,
+  ArrowForward,
+  CheckCircle,
+  Info,
+  WarningFilled,
 } from '@openedx/paragon/icons';
 import Loading from '@src/generic/Loading';
 import { ToastContext } from '@src/generic/toast-context';
@@ -225,7 +232,8 @@ const ImportDetailsContent = () => {
       <Stack gap={3}>
         <Helmet>
           <title>
-            {libraryData?.title || ''} | {intl.formatMessage(messages.importSuccessfulAlertTitle)} | {process.env.SITE_NAME}
+            {libraryData?.title || ''} | {intl.formatMessage(messages.importSuccessfulAlertTitle)} |{' '}
+            {process.env.SITE_NAME}
           </title>
         </Helmet>
         <Alert
@@ -256,7 +264,9 @@ const ImportDetailsContent = () => {
             />
           </p>
         </Alert>
-        <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
+        <h4>
+          <FormattedMessage {...messages.importSummaryTitle} />
+        </h4>
         <SummaryCard
           totalBlocks={migrationSummary.totalBlocks}
           totalComponents={migrationSummary.components}
@@ -276,7 +286,8 @@ const ImportDetailsContent = () => {
         </p>
       </Stack>
     );
-  } if (migrationStatus === 'Failed') {
+  }
+  if (migrationStatus === 'Failed') {
     return (
       <Stack gap={3}>
         <Helmet>
@@ -312,18 +323,22 @@ const ImportDetailsContent = () => {
             />
           </p>
         </Alert>
-        <h4><FormattedMessage {...messages.importFailedDetailsSectionTitle} /></h4>
+        <h4>
+          <FormattedMessage {...messages.importFailedDetailsSectionTitle} />
+        </h4>
         <p>
           <FormattedMessage {...messages.importFailedDetailsSectionBody} />
         </p>
       </Stack>
     );
-  } if (migrationStatus === 'Partial Succeeded') {
+  }
+  if (migrationStatus === 'Partial Succeeded') {
     return (
       <Stack gap={3}>
         <Helmet>
           <title>
-            {libraryData?.title || ''} | {intl.formatMessage(messages.importPartialAlertTitle)} | {process.env.SITE_NAME}
+            {libraryData?.title || ''} | {intl.formatMessage(messages.importPartialAlertTitle)} |{' '}
+            {process.env.SITE_NAME}
           </title>
         </Helmet>
         <Alert
@@ -354,7 +369,9 @@ const ImportDetailsContent = () => {
             />
           </p>
         </Alert>
-        <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
+        <h4>
+          <FormattedMessage {...messages.importSummaryTitle} />
+        </h4>
         <SummaryCard
           totalBlocks={migrationSummary.totalBlocks}
           totalComponents={migrationSummary.components}
@@ -387,7 +404,6 @@ const ImportDetailsContent = () => {
               {
                 Header: intl.formatMessage(messages.importPartialReasonTableBlockName),
                 accessor: 'blockName',
-
               },
               {
                 Header: intl.formatMessage(messages.importPartialReasonTableBlockType),
@@ -411,7 +427,9 @@ const ImportDetailsContent = () => {
   return (
     // In Progress
     <Stack gap={3}>
-      <h4><FormattedMessage {...messages.importInProgressTitle} /></h4>
+      <h4>
+        <FormattedMessage {...messages.importInProgressTitle} />
+      </h4>
       <p>
         <FormattedMessage
           {...messages.importInProgressBody}
@@ -420,7 +438,9 @@ const ImportDetailsContent = () => {
           }}
         />
       </p>
-      <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
+      <h4>
+        <FormattedMessage {...messages.importSummaryTitle} />
+      </h4>
       <SummaryCard isPending />
       <div className="w-100 d-flex justify-content-end">
         <Button

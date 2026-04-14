@@ -17,7 +17,9 @@ const PublishModal = () => {
   const intl = useIntl();
   const { isPublishModalOpen, currentPublishModalData, closePublishModal } = useCourseOutlineContext();
   const {
-    id, displayName, category,
+    id,
+    displayName,
+    category,
   } = currentPublishModalData?.value || {};
   const categoryName = COURSE_BLOCK_NAMES[category || '']?.name.toLowerCase();
   const childInfo = (currentPublishModalData?.value && 'childInfo' in currentPublishModalData.value)
@@ -63,26 +65,28 @@ const PublishModal = () => {
           let grandChildren = 'childInfo' in child ? child.childInfo?.children : undefined;
           grandChildren = grandChildren?.filter(grandChild => grandChild.hasChanges);
 
-          return grandChildren?.length ? (
-            <React.Fragment key={child.id}>
-              <span className="small text-gray-400">{child.displayName}</span>
-              {grandChildren.map((grandChild) => (
-                <div
-                  key={grandChild.id}
-                  className="small border border-light-400 p-2 publish-modal__subsection"
-                >
-                  {grandChild.displayName}
-                </div>
-              ))}
-            </React.Fragment>
-          ) : (
-            <div
-              key={child.id}
-              className="small border border-light-400 p-2 publish-modal__subsection"
-            >
-              {child.displayName}
-            </div>
-          );
+          return grandChildren?.length ?
+            (
+              <React.Fragment key={child.id}>
+                <span className="small text-gray-400">{child.displayName}</span>
+                {grandChildren.map((grandChild) => (
+                  <div
+                    key={grandChild.id}
+                    className="small border border-light-400 p-2 publish-modal__subsection"
+                  >
+                    {grandChild.displayName}
+                  </div>
+                ))}
+              </React.Fragment>
+            ) :
+            (
+              <div
+                key={child.id}
+                className="small border border-light-400 p-2 publish-modal__subsection"
+              >
+                {child.displayName}
+              </div>
+            );
         })}
       </ModalDialog.Body>
       <ModalDialog.Footer className="pt-1">
@@ -95,7 +99,6 @@ const PublishModal = () => {
             onClick={onPublishSubmit}
             label={intl.formatMessage(messages.publishButton)}
           />
-
         </ActionRow>
       </ModalDialog.Footer>
     </ModalDialog>

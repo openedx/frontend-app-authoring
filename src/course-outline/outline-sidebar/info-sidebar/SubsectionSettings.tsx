@@ -1,6 +1,9 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, ButtonGroup, Form, Stack,
+  Button,
+  ButtonGroup,
+  Form,
+  Stack,
 } from '@openedx/paragon';
 import { useConfigureSubsection, useCourseDetails, useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { getProctoredExamsFlag, getTimedExamsFlag } from '@src/course-outline/data/selectors';
@@ -12,7 +15,10 @@ import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-con
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useStateWithCallback } from '@src/hooks';
 import {
-  useCallback, useEffect, useRef, useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useSelector } from 'react-redux';
 import { ReleaseSection } from './sharedSettings/ReleaseSection';
@@ -71,9 +77,8 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
     onChange({ graderType: 'notgraded' });
   };
 
-  const createOptions = () => itemData?.courseGraders?.map((option) => (
-    <option key={option} value={option}> {option} </option>
-  ));
+  const createOptions = () =>
+    itemData?.courseGraders?.map((option) => <option key={option} value={option}>{option}</option>);
 
   return (
     <SidebarSection
@@ -95,42 +100,42 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
       </ButtonGroup>
       {graded
         && (
-        <Form.Group className="mt-2">
-          <Form.Label className="x-small">
-            <FormattedMessage {...messages.subsectionGradingDropdownLabel} />
-          </Form.Label>
-          <Form.Control
-            as="select"
-            defaultValue={itemData?.format}
-            onChange={(e) => setLocalState((prev) => ({ ...prev, graderType: e.target.value }))}
-            data-testid="grader-type-select"
-          >
-            <option key="notgraded" value="notgraded">
-              {intl.formatMessage(messages.subsectionGradingDropdownPlaceholder)}
-            </option>
-            {createOptions()}
-          </Form.Control>
-        </Form.Group>
+          <Form.Group className="mt-2">
+            <Form.Label className="x-small">
+              <FormattedMessage {...messages.subsectionGradingDropdownLabel} />
+            </Form.Label>
+            <Form.Control
+              as="select"
+              defaultValue={itemData?.format}
+              onChange={(e) => setLocalState((prev) => ({ ...prev, graderType: e.target.value }))}
+              data-testid="grader-type-select"
+            >
+              <option key="notgraded" value="notgraded">
+                {intl.formatMessage(messages.subsectionGradingDropdownPlaceholder)}
+              </option>
+              {createOptions()}
+            </Form.Control>
+          </Form.Group>
         )}
       {!courseDetails?.selfPaced && graded
         && (
-        <Stack direction="horizontal" gap={3}>
-          <DatepickerControl
-            type={DATEPICKER_TYPES.date}
-            value={localState?.dueDate}
-            label={intl.formatMessage(messages.subsectionGradingDueDateLabel)}
-            controlName="state-date"
-            onChange={(val) => setLocalState((prev) => ({ ...prev, dueDate: val }))}
-            data-testid="due-date-picker"
-          />
-          <DatepickerControl
-            type={DATEPICKER_TYPES.time}
-            value={localState?.dueDate}
-            label={intl.formatMessage(messages.subsectionGradingDueTimeLabel)}
-            controlName="start-time"
-            onChange={(val) => setLocalState((prev) => ({ ...prev, dueDate: val }))}
-          />
-        </Stack>
+          <Stack direction="horizontal" gap={3}>
+            <DatepickerControl
+              type={DATEPICKER_TYPES.date}
+              value={localState?.dueDate}
+              label={intl.formatMessage(messages.subsectionGradingDueDateLabel)}
+              controlName="state-date"
+              onChange={(val) => setLocalState((prev) => ({ ...prev, dueDate: val }))}
+              data-testid="due-date-picker"
+            />
+            <DatepickerControl
+              type={DATEPICKER_TYPES.time}
+              value={localState?.dueDate}
+              label={intl.formatMessage(messages.subsectionGradingDueTimeLabel)}
+              controlName="start-time"
+              onChange={(val) => setLocalState((prev) => ({ ...prev, dueDate: val }))}
+            />
+          </Stack>
         )}
     </SidebarSection>
   );
@@ -183,9 +188,10 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
       <Form.Checkbox
         checked={localState?.showCorrectness === 'past_due'}
         className="mt-2"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalState({
-          showCorrectness: e.target.checked ? 'past_due' : 'never',
-        })}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setLocalState({
+            showCorrectness: e.target.checked ? 'past_due' : 'never',
+          })}
       >
         <FormattedMessage {...messages.subsectionAssessmentResultsCheckbox} />
       </Form.Checkbox>
@@ -282,12 +288,12 @@ export const SubsectionSettings = ({ subsectionId }: Props) => {
 
   return (
     <SidebarContent>
-      { !courseDetails?.selfPaced && (
-      <ReleaseSection
-        itemId={subsectionId}
-        onChange={(val: string) => onChange({ releaseDate: val })}
-      />
-      ) }
+      {!courseDetails?.selfPaced && (
+        <ReleaseSection
+          itemId={subsectionId}
+          onChange={(val: string) => onChange({ releaseDate: val })}
+        />
+      )}
       <GradingSection
         subsectionId={subsectionId}
         onChange={onChange}

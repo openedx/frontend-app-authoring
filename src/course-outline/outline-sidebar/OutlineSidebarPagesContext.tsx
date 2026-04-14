@@ -1,7 +1,10 @@
 import { createContext, useContext, useMemo } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import {
-  HelpOutline, Info, Plus, Tag,
+  HelpOutline,
+  Info,
+  Plus,
+  Tag,
 } from '@openedx/paragon/icons';
 
 import type { SidebarPage } from '@src/generic/sidebar';
@@ -95,6 +98,10 @@ export const OutlineSidebarPagesProvider = ({ children }: OutlineSidebarPagesPro
 export const useOutlineSidebarPagesContext = (): OutlineSidebarPages => {
   const ctx = useContext(OutlineSidebarPagesContext);
   // istanbul ignore if: this should never happen
-  if (ctx === undefined) { throw new Error('useOutlineSidebarPages must be used within an OutlineSidebarPagesProvider'); }
+  if (ctx === undefined) {
+    throw new Error(
+      'useOutlineSidebarPages must be used within an OutlineSidebarPagesProvider',
+    );
+  }
   return ctx;
 };

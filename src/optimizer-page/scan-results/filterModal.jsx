@@ -53,9 +53,30 @@ const FilterModal = ({
               <Form.Checkbox key={value} value={value}>
                 <span style={{ display: 'flex', gap: '90px' }}>
                   {name}
-                  { value === 'brokenLinks' && <CustomIcon icon={LinkOff} message1={messages.brokenLabel} message2={messages.brokenInfoTooltip} placement="right-end" /> }
-                  { value === 'externalForbiddenLinks' && <CustomIcon icon={ManualIcon} message1={messages.manualLabel} message2={messages.manualInfoTooltip} placement="right-end" /> }
-                  { value === 'lockedLinks' && <CustomIcon icon={LockedIcon} message1={messages.lockedLabel} message2={messages.lockedInfoTooltip} placement="right-end" /> }
+                  {value === 'brokenLinks' && (
+                    <CustomIcon
+                      icon={LinkOff}
+                      message1={messages.brokenLabel}
+                      message2={messages.brokenInfoTooltip}
+                      placement="right-end"
+                    />
+                  )}
+                  {value === 'externalForbiddenLinks' && (
+                    <CustomIcon
+                      icon={ManualIcon}
+                      message1={messages.manualLabel}
+                      message2={messages.manualInfoTooltip}
+                      placement="right-end"
+                    />
+                  )}
+                  {value === 'lockedLinks' && (
+                    <CustomIcon
+                      icon={LockedIcon}
+                      message1={messages.lockedLabel}
+                      message2={messages.lockedInfoTooltip}
+                      placement="right-end"
+                    />
+                  )}
                 </span>
               </Form.Checkbox>
             ))}

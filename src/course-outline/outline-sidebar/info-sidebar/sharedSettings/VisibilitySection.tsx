@@ -48,27 +48,29 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
         </Button>
         <Button
           variant={localState?.isVisibleToStaffOnly ? 'primary' : 'outline-primary'}
-          onClick={() => setLocalState((prev) => ({
-            ...prev,
-            isVisibleToStaffOnly: true,
-            hideAfterDue: false,
-          }))}
+          onClick={() =>
+            setLocalState((prev) => ({
+              ...prev,
+              isVisibleToStaffOnly: true,
+              hideAfterDue: false,
+            }))}
         >
           <FormattedMessage {...messages.subsectionVisibilityStaffOnly} />
         </Button>
       </ButtonGroup>
       {isSubsection && !localState?.isVisibleToStaffOnly && (
-      <Form.Checkbox
-        checked={localState?.hideAfterDue}
-        className="mt-2"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalState((prev) => ({
-          ...prev,
-          hideAfterDue: e.target.checked,
-          isVisibleToStaffOnly: false,
-        }))}
-      >
-        <FormattedMessage {...messages.subsectionVisibilityHideAfterDueLabel} />
-      </Form.Checkbox>
+        <Form.Checkbox
+          checked={localState?.hideAfterDue}
+          className="mt-2"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setLocalState((prev) => ({
+              ...prev,
+              hideAfterDue: e.target.checked,
+              isVisibleToStaffOnly: false,
+            }))}
+        >
+          <FormattedMessage {...messages.subsectionVisibilityHideAfterDueLabel} />
+        </Form.Checkbox>
       )}
     </SidebarSection>
   );

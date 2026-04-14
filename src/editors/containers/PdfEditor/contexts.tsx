@@ -1,5 +1,8 @@
 import React, {
-  createContext, useEffect, useMemo, useState,
+  createContext,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useQueryClient } from '@tanstack/react-query';
@@ -8,21 +11,21 @@ import { selectors } from '@src/editors/data/redux';
 import { useBlockHandlerData } from './api';
 
 export interface PdfState {
-  displayName: string,
-  url: string,
-  allowDownload: boolean,
-  sourceText: string,
-  sourceUrl: string,
+  displayName: string;
+  url: string;
+  allowDownload: boolean;
+  sourceText: string;
+  sourceUrl: string;
   // Note: Not a field, so can't be set.
-  disableAllDownload: boolean,
+  disableAllDownload: boolean;
 }
 
 declare interface PdfBlockContextInterface {
-  fields: PdfState,
-  fetchError: Error | null,
-  isPending: boolean,
-  blockId: string,
-  isLibrary: boolean,
+  fields: PdfState;
+  fetchError: Error | null;
+  isPending: boolean;
+  blockId: string;
+  isLibrary: boolean;
 }
 
 export const initialPdfState: () => PdfState = () => ({
@@ -42,13 +45,16 @@ export const PdfBlockContext = createContext<PdfBlockContextInterface>({
   isLibrary: false,
 });
 
-export const PdfBlockContextProvider: React.FC<{ blockId: string, children: React.ReactNode }> = (
+export const PdfBlockContextProvider: React.FC<{ blockId: string; children: React.ReactNode; }> = (
   { blockId, children },
 ) => {
   const [uniqueId] = useState(() => uuidv4());
   const defaultData = useMemo(initialPdfState, []);
   const { data, error, isPending } = useBlockHandlerData<PdfState>({
-    blockId, uniqueId, handlerName: 'load_pdf', defaultData,
+    blockId,
+    uniqueId,
+    handlerName: 'load_pdf',
+    defaultData,
   });
   const isLibrary = useSelector(selectors.app.isLibrary);
 
@@ -82,7 +88,5 @@ export const PdfBlockContextProvider: React.FC<{ blockId: string, children: Reac
     isLibrary,
   }), [data, error, isPending]);
 
-  return (
-    <PdfBlockContext.Provider value={value}>{children}</PdfBlockContext.Provider>
-  );
+  return <PdfBlockContext.Provider value={value}>{children}</PdfBlockContext.Provider>;
 };

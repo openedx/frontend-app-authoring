@@ -1,6 +1,9 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Container, Layout, Stack, Row,
+  Container,
+  Layout,
+  Stack,
+  Row,
 } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 

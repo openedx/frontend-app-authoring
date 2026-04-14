@@ -41,7 +41,12 @@ HighlightedText.defaultProps = {
 };
 
 const ContentTagsDropDownSelector = ({
-  taxonomyId, level, lineage, appliedContentTagsTree, stagedContentTagsTree, searchTerm,
+  taxonomyId,
+  level,
+  lineage,
+  appliedContentTagsTree,
+  stagedContentTagsTree,
+  searchTerm,
 }) => {
   const intl = useIntl();
 
@@ -93,14 +98,14 @@ const ContentTagsDropDownSelector = ({
     lineage.forEach(t => {
       appliedTraversal = appliedTraversal[t]?.children || {};
     });
-    const isAppliedImplicit = (appliedTraversal[tag.value] && !appliedTraversal[tag.value].explicit);
+    const isAppliedImplicit = appliedTraversal[tag.value] && !appliedTraversal[tag.value].explicit;
 
     // Traverse the staged tags tree using the lineage
     let stagedTraversal = stagedContentTagsTree;
     lineage.forEach(t => {
       stagedTraversal = stagedTraversal[t]?.children || {};
     });
-    const isStagedImplicit = (stagedTraversal[tag.value] && !stagedTraversal[tag.value].explicit);
+    const isStagedImplicit = stagedTraversal[tag.value] && !stagedTraversal[tag.value].explicit;
 
     return isAppliedImplicit || isStagedImplicit || false;
   };
@@ -229,15 +234,17 @@ const ContentTagsDropDownSelector = ({
   };
 
   return (
-    <div style={{ marginLeft: `${level * 1 }rem` }}>
-      {tagPages.isLoading ? (
-        <div className="d-flex justify-content-center align-items-center flex-row">
-          <Spinner
-            animation="border"
-            screenReaderText={intl.formatMessage(messages.loadingTagsDropdownMessage)}
-          />
-        </div>
-      ) : null }
+    <div style={{ marginLeft: `${level * 1}rem` }}>
+      {tagPages.isLoading ?
+        (
+          <div className="d-flex justify-content-center align-items-center flex-row">
+            <Spinner
+              animation="border"
+              screenReaderText={intl.formatMessage(messages.loadingTagsDropdownMessage)}
+            />
+          </div>
+        ) :
+        null}
       {tagPages.isError ? 'Error...' : null /* TODO: show a proper error message */}
 
       {tagPages.data?.map((tagData, i) => (
@@ -254,29 +261,30 @@ const ContentTagsDropDownSelector = ({
               className="d-flex dropdown-selector-tag-actions"
               // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
               tabIndex={isTopOfTagTreeDropdown(i) ? 0 : -1} // Only enable tab into top of dropdown tree to set focus
-              onKeyDown={(e) => handleKeyBoardNav(e, tagData.childCount > 0)}
-              aria-label={
-                intl.formatMessage(
-                  (isTopOfTagTreeDropdown(i)
-                    ? messages.taxonomyTagActionInstructionsAriaLabel
-                    : messages.taxonomyTagActionsAriaLabel),
-                  { tag: tagData.value, tagState: getTagState(tagData) },
-                )
-              }
+              onKeyDown={(e) =>
+                handleKeyBoardNav(e, tagData.childCount > 0)}
+              aria-label={intl.formatMessage(
+                isTopOfTagTreeDropdown(i)
+                  ? messages.taxonomyTagActionInstructionsAriaLabel
+                  : messages.taxonomyTagActionsAriaLabel,
+                { tag: tagData.value, tagState: getTagState(tagData) },
+              )}
             >
               <SelectableBox
                 inputHidden={false}
                 type="checkbox"
                 className="d-flex align-items-center taxonomy-tags-selectable-box"
                 data-selectable-box="taxonomy-tags"
-                value={[...lineage, tagData.value].map(t => encodeURIComponent(t)).join(',')}
+                value={[...lineage, tagData.value].map(t =>
+                  encodeURIComponent(t)
+                ).join(',')}
                 isIndeterminate={isApplied(tagData) || isImplicit(tagData)}
                 disabled={isApplied(tagData) || isImplicit(tagData)}
                 tabIndex="-1"
               >
                 <HighlightedText text={tagData.value} highlight={searchTerm} />
               </SelectableBox>
-              { tagData.childCount > 0
+              {tagData.childCount > 0
                 && (
                   <div className="d-flex align-items-center taxonomy-tags-arrow-drop-down">
                     <Icon
@@ -287,10 +295,9 @@ const ContentTagsDropDownSelector = ({
                   </div>
                 )}
             </div>
-
           </div>
 
-          { tagData.childCount > 0 && isOpen(tagData.value) && (
+          {tagData.childCount > 0 && isOpen(tagData.value) && (
             <ContentTagsDropDownSelector
               taxonomyId={taxonomyId}
               level={level + 1}
@@ -300,11 +307,10 @@ const ContentTagsDropDownSelector = ({
               searchTerm={searchTerm}
             />
           )}
-
         </div>
       ))}
 
-      { hasMorePages
+      {hasMorePages
         ? (
           <div>
             <Button
@@ -320,14 +326,13 @@ const ContentTagsDropDownSelector = ({
         )
         : null}
 
-      { tagPages.data.length === 0 && !tagPages.isLoading && (
+      {tagPages.data.length === 0 && !tagPages.isLoading && (
         <div className="d-flex justify-content-center muted-text">
-          { searchTerm
+          {searchTerm
             ? <FormattedMessage {...messages.noTagsFoundMessage} values={{ searchTerm }} />
             : <FormattedMessage {...messages.noTagsInTaxonomyMessage} />}
         </div>
       )}
-
     </div>
   );
 };

@@ -1,6 +1,9 @@
 import { useEffect, useContext, useState } from 'react';
 import {
-  Routes, Route, useNavigate, Link,
+  Routes,
+  Route,
+  useNavigate,
+  Link,
 } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppContext, PageWrap } from '@edx/frontend-platform/react';
@@ -71,7 +74,9 @@ const CustomPages = () => {
 
   const pages = useModels('customPages', customPagesIds);
 
-  const handleAddPage = () => { dispatch(addSingleCustomPage(courseId)); };
+  const handleAddPage = () => {
+    dispatch(addSingleCustomPage(courseId));
+  };
   const handleReorder = () => (newPageOrder) => {
     dispatch(updatePageOrder(courseId, newPageOrder));
   };
@@ -99,10 +104,12 @@ const CustomPages = () => {
     },
     disabledStates: ['pending'],
   };
-  useEffect(() => { setOrderedPages(pages); }, [customPagesIds, savingStatus]);
+  useEffect(() => {
+    setOrderedPages(pages);
+  }, [customPagesIds, savingStatus]);
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    return (<></>);
+    return <></>;
   }
   if (loadingStatus === RequestStatus.DENIED) {
     return (
@@ -121,7 +128,9 @@ const CustomPages = () => {
             links={[
               {
                 label: 'Content',
-                to: waffleFlags.useNewCourseOutlinePage ? `/course/${courseId}` : `${config.STUDIO_BASE_URL}/course/${courseId}`,
+                to: waffleFlags.useNewCourseOutlinePage
+                  ? `/course/${courseId}`
+                  : `${config.STUDIO_BASE_URL}/course/${courseId}`,
               },
               { label: 'Pages and Resources', to: getPagePath(courseId, 'true', 'tabs') },
             ]}
@@ -184,7 +193,7 @@ const CustomPages = () => {
                     marginBottom: '16px',
                     boxShadow: '0px 1px 5px #ADADAD',
                   }}
-                  actions={(
+                  actions={
                     <CustomPageCard
                       {...{
                         page,
@@ -194,7 +203,7 @@ const CustomPages = () => {
                         setCurrentPage,
                       }}
                     />
-                  )}
+                  }
                 />
               ))}
             </DraggableList>

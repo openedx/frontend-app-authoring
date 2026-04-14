@@ -23,8 +23,8 @@ import { IframeProvider } from '../generic/hooks/context/iFrameContext';
 import editorModalWrapperMessages from './containers/EditorContainer/messages';
 
 interface AdvancedEditorProps {
-  usageKey: string,
-  onClose: (() => void) | null,
+  usageKey: string;
+  onClose: (() => void) | null;
 }
 
 const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {

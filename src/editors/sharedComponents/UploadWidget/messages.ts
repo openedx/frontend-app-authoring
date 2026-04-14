@@ -30,7 +30,7 @@ const messages = defineMessages({
   manualUrl: {
     id: 'authoring.sharedComponents.uploadWidget.manualUrl',
     defaultMessage: 'Manually specify URL',
-    description: "Dropdown menu item to switch to manually inputting a URL for a file's location.",
+    description: 'Dropdown menu item to switch to manually inputting a URL for a file\'s location.',
   },
   simpleMode: {
     id: 'authoring.sharedComponents.uploadWidget.simpleMode',
@@ -45,7 +45,7 @@ const messages = defineMessages({
   defaultName: {
     id: 'authoring.sharedComponents.uploadWidget.defaultName',
     defaultMessage: 'Unknown Filename',
-    description: "Default 'file name' shown if one can't be determined.",
+    description: 'Default \'file name\' shown if one can\'t be determined.',
   },
   emptyLabel: {
     id: 'authoring.sharedComponents.uploadWidget.defaultName',
@@ -55,12 +55,12 @@ const messages = defineMessages({
   uploading: {
     id: 'authoring.sharedComponents.uploadWidget.uploading',
     defaultMessage: 'Uploading...',
-    description: "Uploading status message to let the user know we're working on their request.",
+    description: 'Uploading status message to let the user know we\'re working on their request.',
   },
   uploadError: {
     id: 'authoring.sharedComponents.uploadWidget.uploadError',
     defaultMessage: 'There was an error uploading your file. Please try again later or contact support if the issue persists.',
-    description: "Error message to show if there's been a problem with the file upload.",
+    description: 'Error message to show if there\'s been a problem with the file upload.',
   },
   actionsDropdown: {
     id: 'authoring.sharedComponents.uploadWidget.actionsDropdown',

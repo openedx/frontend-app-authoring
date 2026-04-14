@@ -30,7 +30,10 @@ const LiveSettings = ({
   const { courseId } = useCourseAuthoringContext();
   const availableProviders = useSelector((state) => state.live.appIds);
   const {
-    piiSharingAllowed, selectedAppId, enabled, status,
+    piiSharingAllowed,
+    selectedAppId,
+    enabled,
+    status,
   } = useSelector(state => state.live);
 
   const appConfig = useModel('liveAppConfigs', selectedAppId);
@@ -52,15 +55,18 @@ const LiveSettings = ({
   const validationSchema = {
     enabled: Yup.boolean(),
     consumerKey: Yup.string().when(['provider', 'tierType'], {
-      is: (provider, tier) => provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
+      is: (provider, tier) =>
+        provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
       then: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),
     }),
     consumerSecret: Yup.string().when(['provider', 'tierType'], {
-      is: (provider, tier) => provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
+      is: (provider, tier) =>
+        provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
       then: Yup.string().notRequired(intl.formatMessage(messages.consumerSecretRequired)),
     }),
     launchUrl: Yup.string().when(['provider', 'tierType'], {
-      is: (provider, tier) => provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
+      is: (provider, tier) =>
+        provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
       then: Yup.string().required(intl.formatMessage(messages.launchUrlRequired)),
     }),
     launchEmail: Yup.string(),
@@ -96,9 +102,7 @@ const LiveSettings = ({
       enableReinitialize
     >
       {({ values, setFieldValue }) => (
-        (status === RequestStatus.IN_PROGRESS) ? (
-          <Loading />
-        ) : (
+        (status === RequestStatus.IN_PROGRESS) ? <Loading /> : (
           <>
             <h4 className="my-3">{intl.formatMessage(messages.selectProvider)}</h4>
             <SelectableBox.Set
@@ -118,7 +122,8 @@ const LiveSettings = ({
                 </SelectableBox>
               ))}
             </SelectableBox.Set>
-            {values.provider === 'zoom' ? <ZoomSettings values={values} />
+            {values.provider === 'zoom' ?
+              <ZoomSettings values={values} />
               : (
                 <BBBSettings
                   values={values}

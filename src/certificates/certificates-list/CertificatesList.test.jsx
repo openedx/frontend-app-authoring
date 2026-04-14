@@ -1,6 +1,8 @@
 import { Provider } from 'react-redux';
 import {
-  render, waitFor, within,
+  render,
+  waitFor,
+  within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -22,13 +24,14 @@ let axiosMock;
 let store;
 const courseId = 'course-123';
 
-const renderComponent = () => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificatesList courseId="course-123" />
-    </IntlProvider>
-  </Provider>,
-);
+const renderComponent = () =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificatesList courseId="course-123" />
+      </IntlProvider>
+    </Provider>,
+  );
 
 describe('CertificatesList Component', () => {
   beforeEach(async () => {
@@ -66,7 +69,11 @@ describe('CertificatesList Component', () => {
   it('update certificate', async () => {
     const user = userEvent.setup();
     const {
-      getByText, queryByText, getByPlaceholderText, getByRole, getAllByLabelText,
+      getByText,
+      queryByText,
+      getByPlaceholderText,
+      getByRole,
+      getAllByLabelText,
     } = renderComponent();
 
     const signatoryNameValue = 'Updated signatory name';
@@ -105,7 +112,10 @@ describe('CertificatesList Component', () => {
   it('toggle edit signatory', async () => {
     const user = userEvent.setup();
     const {
-      getAllByLabelText, queryByPlaceholderText, getByTestId, getByPlaceholderText,
+      getAllByLabelText,
+      queryByPlaceholderText,
+      getByTestId,
+      getByPlaceholderText,
     } = renderComponent();
     const editButtons = getAllByLabelText(messages.editTooltip.defaultMessage);
 
@@ -117,7 +127,9 @@ describe('CertificatesList Component', () => {
       expect(getByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage)).toBeInTheDocument();
     });
 
-    await user.click(within(getByTestId('signatory-form')).getByRole('button', { name: messages.cardCancel.defaultMessage }));
+    await user.click(
+      within(getByTestId('signatory-form')).getByRole('button', { name: messages.cardCancel.defaultMessage }),
+    );
 
     await waitFor(() => {
       expect(queryByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage)).not.toBeInTheDocument();

@@ -44,7 +44,7 @@ const STATE_ICON_COLOR_CLASS = {
   'In Progress': undefined,
 };
 
-const StateIcon = ({ state }: { state: CourseImport['state'] }) => (
+const StateIcon = ({ state }: { state: CourseImport['state']; }) => (
   <Icon
     src={STATE_ICON[state]}
     size="sm"
@@ -65,9 +65,7 @@ export const ImportedCourseCard = ({ courseImport }: ImportedCourseCardProps) =>
           </Link>
           <div className="d-inline-flex small align-items-center">
             <StateIcon state={courseImport.state} />
-            {courseImport.state === 'Failed' ? (
-              <FormattedMessage {...messages.courseImportTextFailed} />
-            ) : (
+            {courseImport.state === 'Failed' ? <FormattedMessage {...messages.courseImportTextFailed} /> : (
               <>
                 {Math.round(courseImport.progress * 100)}
                 <FormattedMessage {...messages.courseImportTextProgress} />

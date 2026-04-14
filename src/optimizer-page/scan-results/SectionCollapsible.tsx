@@ -44,7 +44,9 @@ const SectionCollapsible: FC<Props> = ({
   isPreviousRunLinks = false,
   className,
 }) => {
-  const styling = `card-lg open-section-rounded ${hasPrevAndIsOpen ? 'closed-section-rounded-top' : ''} ${hasNextAndIsOpen ? 'closed-section-rounded-bottom' : ''}`;
+  const styling = `card-lg open-section-rounded ${hasPrevAndIsOpen ? 'closed-section-rounded-top' : ''} ${
+    hasNextAndIsOpen ? 'closed-section-rounded-bottom' : ''
+  }`;
   const collapsibleTitle = (
     <div className={className}>
       <div className="section-collapsible-header-item">
@@ -52,26 +54,28 @@ const SectionCollapsible: FC<Props> = ({
         <p className="section-title">{title}</p>
       </div>
       <div className="section-collapsible-header-actions">
-        {isPreviousRunLinks ? (
-          <div className="section-collapsible-header-action-item">
-            <p>{previousRunLinksCount > 0 ? previousRunLinksCount : '-'}</p>
-          </div>
-        ) : (
-          <>
+        {isPreviousRunLinks ?
+          (
             <div className="section-collapsible-header-action-item">
-              <CustomIcon icon={LinkOff} message1={messages.brokenLabel} message2={messages.brokenInfoTooltip} />
-              <p>{brokenNumber}</p>
+              <p>{previousRunLinksCount > 0 ? previousRunLinksCount : '-'}</p>
             </div>
-            <div className="section-collapsible-header-action-item">
-              <CustomIcon icon={ManualIcon} message1={messages.manualLabel} message2={messages.manualInfoTooltip} />
-              <p>{manualNumber}</p>
-            </div>
-            <div className="section-collapsible-header-action-item">
-              <CustomIcon icon={lockedIcon} message1={messages.lockedLabel} message2={messages.lockedInfoTooltip} />
-              <p>{lockedNumber}</p>
-            </div>
-          </>
-        )}
+          ) :
+          (
+            <>
+              <div className="section-collapsible-header-action-item">
+                <CustomIcon icon={LinkOff} message1={messages.brokenLabel} message2={messages.brokenInfoTooltip} />
+                <p>{brokenNumber}</p>
+              </div>
+              <div className="section-collapsible-header-action-item">
+                <CustomIcon icon={ManualIcon} message1={messages.manualLabel} message2={messages.manualInfoTooltip} />
+                <p>{manualNumber}</p>
+              </div>
+              <div className="section-collapsible-header-action-item">
+                <CustomIcon icon={lockedIcon} message1={messages.lockedLabel} message2={messages.lockedInfoTooltip} />
+                <p>{lockedNumber}</p>
+              </div>
+            </>
+          )}
       </div>
     </div>
   );
@@ -81,11 +85,11 @@ const SectionCollapsible: FC<Props> = ({
       <Collapsible
         className="section-collapsible-item-container"
         styling={styling}
-        title={(
+        title={
           <p className="flex-grow-1 section-collapsible-item">
             <strong>{collapsibleTitle}</strong>
           </p>
-        )}
+        }
         iconWhenClosed=""
         iconWhenOpen=""
         open={isOpen}

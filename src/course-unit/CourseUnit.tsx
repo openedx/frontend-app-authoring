@@ -49,7 +49,7 @@ import { UnitSidebarPagesProvider } from './unit-sidebar/UnitSidebarPagesContext
 import { UNIT_VISIBILITY_STATES } from './constants';
 import { isUnitPageNewDesignEnabled } from './utils';
 
-const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
+const StatusBar = ({ courseUnit }: { courseUnit: any; }) => {
   const { selectedPartitionIndex, selectedGroupsLabel } = courseUnit.userPartitionInfo ?? {};
   const hasGroups = selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex) && selectedGroupsLabel;
   let groupsCount = 0;
@@ -63,10 +63,10 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
     text: messages.statusBarDraftNeverPublished,
     icon: DraftIcon,
   } as {
-    variant: string,
-    className?: string,
-    text: MessageDescriptor,
-    icon: React.ComponentType,
+    variant: string;
+    className?: string;
+    text: MessageDescriptor;
+    icon: React.ComponentType;
   };
 
   if (courseUnit.currentlyVisibleToStudents) {
@@ -131,11 +131,11 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
       {groupsCount > 1 && (
         <OverlayTrigger
           placement="top"
-          overlay={(
+          overlay={
             <Tooltip id="unit-group-access-tooltip">
               {selectedGroupsLabel}
             </Tooltip>
-          )}
+          }
         >
           <Stack direction="horizontal" gap={1}>
             <Icon src={Groups} />
@@ -238,38 +238,40 @@ const CourseUnit = () => {
         <Container fluid className="course-unit px-4">
           <section className="course-unit-container mb-4 mt-5">
             <TransitionReplace>
-              {movedXBlockParams.isSuccess ? (
-                <AlertMessage
-                  key="xblock-moved-alert"
-                  data-testid="xblock-moved-alert"
-                  show={movedXBlockParams.isSuccess}
-                  variant="success"
-                  icon={CheckCircleIcon}
-                  title={movedXBlockParams.isUndo
-                    ? intl.formatMessage(messages.alertMoveCancelTitle)
-                    : intl.formatMessage(messages.alertMoveSuccessTitle)}
-                  description={movedXBlockParams.isUndo
-                    ? intl.formatMessage(messages.alertMoveCancelDescription, { title: movedXBlockParams.title })
-                    : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
-                  aria-hidden={movedXBlockParams.isSuccess}
-                  dismissible
-                  actions={movedXBlockParams.isUndo ? undefined : [
-                    <Button
-                      onClick={handleRollbackMovedXBlock}
-                      key="xblock-moved-alert-undo-move-button"
-                    >
-                      {intl.formatMessage(messages.undoMoveButton)}
-                    </Button>,
-                    <Button
-                      onClick={handleNavigateToTargetUnit}
-                      key="xblock-moved-alert-new-location-button"
-                    >
-                      {intl.formatMessage(messages.newLocationButton)}
-                    </Button>,
-                  ]}
-                  onClose={handleCloseXBlockMovedAlert}
-                />
-              ) : null}
+              {movedXBlockParams.isSuccess ?
+                (
+                  <AlertMessage
+                    key="xblock-moved-alert"
+                    data-testid="xblock-moved-alert"
+                    show={movedXBlockParams.isSuccess}
+                    variant="success"
+                    icon={CheckCircleIcon}
+                    title={movedXBlockParams.isUndo
+                      ? intl.formatMessage(messages.alertMoveCancelTitle)
+                      : intl.formatMessage(messages.alertMoveSuccessTitle)}
+                    description={movedXBlockParams.isUndo
+                      ? intl.formatMessage(messages.alertMoveCancelDescription, { title: movedXBlockParams.title })
+                      : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
+                    aria-hidden={movedXBlockParams.isSuccess}
+                    dismissible
+                    actions={movedXBlockParams.isUndo ? undefined : [
+                      <Button
+                        onClick={handleRollbackMovedXBlock}
+                        key="xblock-moved-alert-undo-move-button"
+                      >
+                        {intl.formatMessage(messages.undoMoveButton)}
+                      </Button>,
+                      <Button
+                        onClick={handleNavigateToTargetUnit}
+                        key="xblock-moved-alert-new-location-button"
+                      >
+                        {intl.formatMessage(messages.newLocationButton)}
+                      </Button>,
+                    ]}
+                    onClose={handleCloseXBlockMovedAlert}
+                  />
+                ) :
+                null}
             </TransitionReplace>
             {courseUnit.upstreamInfo?.upstreamLink && (
               <AlertMessage
@@ -288,33 +290,31 @@ const CourseUnit = () => {
             )}
             <SubHeader
               hideBorder
-              title={(
+              title={
                 <HeaderTitle
                   unitTitle={unitTitle}
                   isTitleEditFormOpen={isTitleEditFormOpen}
                   handleTitleEdit={handleTitleEdit}
                   handleTitleEditSubmit={handleTitleEditSubmit}
                 />
-              )}
-              breadcrumbs={(
+              }
+              breadcrumbs={
                 <Breadcrumbs
                   courseId={courseId}
                   parentUnitId={sequenceId}
                 />
-              )}
-              headerActions={(
+              }
+              headerActions={
                 <CourseUnitHeaderActionsSlot
                   category={unitCategory}
                   headerNavigationsActions={headerNavigationsActions}
                   unitTitle={unitTitle}
                   verticalBlocks={courseVerticalChildren.children}
                 />
-              )}
+              }
             />
             <div className="unit-header-status-bar h5 mt-2 mb-4 font-weight-normal">
-              {isUnitPageNewDesignEnabled() && isUnitVerticalType && (
-                <StatusBar courseUnit={courseUnit} />
-              )}
+              {isUnitPageNewDesignEnabled() && isUnitVerticalType && <StatusBar courseUnit={courseUnit} />}
             </div>
             {isUnitVerticalType && (
               <Sequence

@@ -16,7 +16,7 @@ import { LibraryRestoreStatus } from './restoreConstants';
 mockContentLibrary.applyMock();
 const { axiosMock, queryClient } = initializeMocks();
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <QueryClientProvider client={queryClient}>
     {children}
   </QueryClientProvider>
@@ -134,7 +134,9 @@ describe('create library apiHooks', () => {
       });
 
       expect(result.current.data).toEqual(expectedResult);
-      expect(axiosMock.history.get[0].url).toEqual(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`);
+      expect(axiosMock.history.get[0].url).toEqual(
+        `http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`,
+      );
     });
 
     it('should not make request when taskId is empty', async () => {
@@ -173,7 +175,9 @@ describe('create library apiHooks', () => {
       });
 
       expect(result.current.data).toEqual(expectedResult);
-      expect(axiosMock.history.get[0].url).toEqual(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`);
+      expect(axiosMock.history.get[0].url).toEqual(
+        `http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`,
+      );
     });
 
     it('should handle in-progress status with refetch interval', async () => {
@@ -192,7 +196,10 @@ describe('create library apiHooks', () => {
         errorLog: null,
       };
 
-      axiosMock.onGet(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`).reply(200, inProgressResult);
+      axiosMock.onGet(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`).reply(
+        200,
+        inProgressResult,
+      );
 
       const { result } = renderHook(() => useGetLibraryRestoreStatus(taskId), { wrapper });
 
@@ -201,7 +208,9 @@ describe('create library apiHooks', () => {
       });
 
       expect(result.current.data).toEqual(expectedResult);
-      expect(axiosMock.history.get[0].url).toEqual(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`);
+      expect(axiosMock.history.get[0].url).toEqual(
+        `http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`,
+      );
     });
 
     it('should handle failed status', async () => {
@@ -229,7 +238,9 @@ describe('create library apiHooks', () => {
       });
 
       expect(result.current.data).toEqual(expectedResult);
-      expect(axiosMock.history.get[0].url).toEqual(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`);
+      expect(axiosMock.history.get[0].url).toEqual(
+        `http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`,
+      );
     });
 
     it('should handle API error', async () => {
@@ -244,7 +255,9 @@ describe('create library apiHooks', () => {
       });
 
       expect(result.current.data).toBeUndefined();
-      expect(axiosMock.history.get[0].url).toEqual(`http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`);
+      expect(axiosMock.history.get[0].url).toEqual(
+        `http://localhost:18010/api/libraries/v2/restore/?task_id=${taskId}`,
+      );
     });
   });
 });

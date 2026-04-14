@@ -7,7 +7,9 @@ import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-util
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 import { ContentTagsSnippet } from '@src/content-tags-drawer';
 import {
-  Tab, Tabs, useToggle,
+  Tab,
+  Tabs,
+  useToggle,
 } from '@openedx/paragon';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { getLibraryId } from '@src/generic/key-utils';
@@ -16,7 +18,8 @@ import { ToastContext } from '@src/generic/toast-context';
 import { UnlinkModal, useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import {
-  useCourseItemData, useDeleteCourseItem,
+  useCourseItemData,
+  useDeleteCourseItem,
 } from '@src/course-outline/data/apiHooks';
 import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
@@ -173,7 +176,7 @@ export const UnitInfoSidebar = () => {
     if (navigator.clipboard) {
       // Modern approach: requires HTTPS (secure context)
       void navigator.clipboard.writeText(locationId);
-    } else /* istanbul ignore next */ {
+    } /* istanbul ignore next */ else {
       // Fallback for HTTP (non-secure) dev environments
       // Note: execCommand is deprecated but still widely supported as fallback
       const textarea = document.createElement('textarea');

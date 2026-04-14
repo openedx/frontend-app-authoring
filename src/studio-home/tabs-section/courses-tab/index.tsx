@@ -74,59 +74,58 @@ const CardList = ({
 
   return (
     <>
-      {hasCourses ? (
-        <>
-          {courses.map(
-            ({
-              courseKey,
-              displayName,
-              lmsLink,
-              org,
-              rerunLink,
-              number,
-              run,
-              url,
-            }) => (
-              <CardItem
-                key={courseKey}
-                courseKey={courseKey}
-                onClick={() => onClickCard?.(courseKey)}
-                itemId={courseKey}
-                displayName={displayName}
-                lmsLink={lmsLink}
-                rerunLink={rerunLink}
-                org={org}
-                number={number}
-                run={run}
-                url={url}
-                selectMode={inSelectMode ? 'single' : undefined}
-                selectPosition={inSelectMode ? 'card' : undefined}
-                isSelected={inSelectMode && selectedCourseId === courseKey}
-                subtitleBeforeWidget={MigrationStatusWidget && (
-                  <MigrationStatusWidget courseId={courseKey} />
-                )}
-              />
-            ),
-          )}
+      {hasCourses ?
+        (
+          <>
+            {courses.map(
+              ({
+                courseKey,
+                displayName,
+                lmsLink,
+                org,
+                rerunLink,
+                number,
+                run,
+                url,
+              }) => (
+                <CardItem
+                  key={courseKey}
+                  courseKey={courseKey}
+                  onClick={() => onClickCard?.(courseKey)}
+                  itemId={courseKey}
+                  displayName={displayName}
+                  lmsLink={lmsLink}
+                  rerunLink={rerunLink}
+                  org={org}
+                  number={number}
+                  run={run}
+                  url={url}
+                  selectMode={inSelectMode ? 'single' : undefined}
+                  selectPosition={inSelectMode ? 'card' : undefined}
+                  isSelected={inSelectMode && selectedCourseId === courseKey}
+                  subtitleBeforeWidget={MigrationStatusWidget && <MigrationStatusWidget courseId={courseKey} />}
+                />
+              ),
+            )}
 
-          {numPages > 1 && (
-            <Pagination
-              className="d-flex justify-content-center w-100"
-              paginationLabel="pagination navigation"
-              pageCount={numPages}
-              currentPage={currentPage}
-              onPageSelect={handlePageSelected}
-            />
-          )}
-        </>
-      ) : (!optimizationEnabled && isNotFilteringCourses && (
-        <ContactAdministrator
-          hasAbilityToCreateCourse={hasAbilityToCreateCourse}
-          showNewCourseContainer={showNewCourseContainer}
-          onClickNewCourse={onClickNewCourse}
-        />
-      )
-      )}
+            {numPages > 1 && (
+              <Pagination
+                className="d-flex justify-content-center w-100"
+                paginationLabel="pagination navigation"
+                pageCount={numPages}
+                currentPage={currentPage}
+                onPageSelect={handlePageSelected}
+              />
+            )}
+          </>
+        ) :
+        (!optimizationEnabled && isNotFilteringCourses && (
+          <ContactAdministrator
+            hasAbilityToCreateCourse={hasAbilityToCreateCourse}
+            showNewCourseContainer={showNewCourseContainer}
+            onClickNewCourse={onClickNewCourse}
+          />
+        ))}
 
       {isFiltered && !hasCourses && !isLoading && (
         <Alert className="mt-4">
@@ -211,66 +210,70 @@ export const CoursesList: React.FC<Props> = ({
   }
 
   return (
-    isFailed && !isFiltered ? (
-      <AlertMessage
-        variant="danger"
-        description={(
-          <Row className="m-0 align-items-center">
-            <Icon src={Error} className="text-danger-500 mr-1" />
-            <span data-testid="error-failed-message">{intl.formatMessage(messages.courseTabErrorMessage)}</span>
-          </Row>
-        )}
-      />
-    ) : (
-      <div className="courses-tab-container">
-        <div className="d-flex flex-row align-items-center justify-content-between my-4">
-          {isShowProcessing && <ProcessingCourses />}
-          <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
-          <p data-testid="pagination-info" className="my-0">
-            {intl.formatMessage(messages.coursesPaginationInfo, {
-              length: courses?.length,
-              total: coursesCount,
-            })}
-          </p>
-        </div>
-        {inSelectMode ? (
-          <Form.RadioSet
-            name="select-courses"
-            value={selectedCourseId}
-            onChange={(e) => handleSelect(e.target.value)}
-          >
-            <CardList
-              currentPage={currentPage}
-              onClickCard={handleSelect}
-              handlePageSelected={handlePageSelected}
-              handleCleanFilters={handleCleanFilters}
-              isLoading={isLoading}
-              isFiltered={isFiltered || false}
-              inSelectMode
-              selectedCourseId={selectedCourseId}
-              migrationStatusWidget={cardMigrationStatusWidget}
-            />
-          </Form.RadioSet>
-        ) : (
-          <CardList
-            currentPage={currentPage}
-            handlePageSelected={handlePageSelected}
-            handleCleanFilters={handleCleanFilters}
-            isLoading={isLoading}
-            isFiltered={isFiltered || false}
-            hasAbilityToCreateCourse={hasAbilityToCreateCourse}
-            showNewCourseContainer={showNewCourseContainer}
-            onClickNewCourse={onClickNewCourse}
-          />
-        )}
+    isFailed && !isFiltered ?
+      (
+        <AlertMessage
+          variant="danger"
+          description={
+            <Row className="m-0 align-items-center">
+              <Icon src={Error} className="text-danger-500 mr-1" />
+              <span data-testid="error-failed-message">{intl.formatMessage(messages.courseTabErrorMessage)}</span>
+            </Row>
+          }
+        />
+      ) :
+      (
+        <div className="courses-tab-container">
+          <div className="d-flex flex-row align-items-center justify-content-between my-4">
+            {isShowProcessing && <ProcessingCourses />}
+            <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
+            <p data-testid="pagination-info" className="my-0">
+              {intl.formatMessage(messages.coursesPaginationInfo, {
+                length: courses?.length,
+                total: coursesCount,
+              })}
+            </p>
+          </div>
+          {inSelectMode ?
+            (
+              <Form.RadioSet
+                name="select-courses"
+                value={selectedCourseId}
+                onChange={(e) => handleSelect(e.target.value)}
+              >
+                <CardList
+                  currentPage={currentPage}
+                  onClickCard={handleSelect}
+                  handlePageSelected={handlePageSelected}
+                  handleCleanFilters={handleCleanFilters}
+                  isLoading={isLoading}
+                  isFiltered={isFiltered || false}
+                  inSelectMode
+                  selectedCourseId={selectedCourseId}
+                  migrationStatusWidget={cardMigrationStatusWidget}
+                />
+              </Form.RadioSet>
+            ) :
+            (
+              <CardList
+                currentPage={currentPage}
+                handlePageSelected={handlePageSelected}
+                handleCleanFilters={handleCleanFilters}
+                isLoading={isLoading}
+                isFiltered={isFiltered || false}
+                hasAbilityToCreateCourse={hasAbilityToCreateCourse}
+                showNewCourseContainer={showNewCourseContainer}
+                onClickNewCourse={onClickNewCourse}
+              />
+            )}
 
-        {showCollapsible && (
-          <CollapsibleStateWithAction
-            state={courseCreatorStatus!}
-            className="mt-3"
-          />
-        )}
-      </div>
-    )
+          {showCollapsible && (
+            <CollapsibleStateWithAction
+              state={courseCreatorStatus!}
+              className="mt-3"
+            />
+          )}
+        </div>
+      )
   );
 };

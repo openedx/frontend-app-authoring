@@ -29,11 +29,18 @@ export const simpleSelectors = {
 };
 
 export const returnUrl = createSelector(
-  [simpleSelectors.unitUrl, simpleSelectors.studioEndpointUrl, simpleSelectors.learningContextId,
-    simpleSelectors.blockId],
+  [
+    simpleSelectors.unitUrl,
+    simpleSelectors.studioEndpointUrl,
+    simpleSelectors.learningContextId,
+    simpleSelectors.blockId,
+  ],
   (unitUrl, studioEndpointUrl, learningContextId, blockId) => (
     urls.returnUrl({
-      studioEndpointUrl, unitUrl, learningContextId, blockId,
+      studioEndpointUrl,
+      unitUrl,
+      learningContextId,
+      blockId,
     })
   ),
 );
@@ -55,9 +62,7 @@ export const isLibrary = createSelector(
 );
 
 export const shouldCreateBlock = createSelector(
-  [simpleSelectors.blockId,
-    simpleSelectors.blockType,
-  ],
+  [simpleSelectors.blockId, simpleSelectors.blockType],
   (blockId, blockType) => {
     if (blockId === '' && blockType) {
       return true;

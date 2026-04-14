@@ -9,9 +9,9 @@ import type { LibraryV1Data } from '@src/studio-home/data/api';
 export const getContentLibraryV1CreateApiUrl = () => `${getConfig().STUDIO_BASE_URL}/library/`;
 
 export interface CreateContentLibraryV1Args {
-  displayName: string,
-  org: string,
-  number: string,
+  displayName: string;
+  org: string;
+  number: string;
 }
 
 /**

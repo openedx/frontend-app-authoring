@@ -11,12 +11,13 @@ import { useWaffleFlags } from '../../data/apiHooks';
 import { getCourseSectionVertical } from '../data/selectors';
 import { adoptCourseSectionUrl, subsectionFirstUnitEditUrl } from '../utils';
 
-const Breadcrumbs = ({ courseId, parentUnitId }: { courseId: string, parentUnitId: string }) => {
+const Breadcrumbs = ({ courseId, parentUnitId }: { courseId: string; parentUnitId: string; }) => {
   const { ancestorXblocks = [] } = useSelector(getCourseSectionVertical);
   const waffleFlags = useWaffleFlags(courseId);
 
   const getPathToCourseOutlinePage = (url) => (waffleFlags.useNewCourseOutlinePage
-    ? url : `${getConfig().STUDIO_BASE_URL}${url}`);
+    ? url :
+    `${getConfig().STUDIO_BASE_URL}${url}`);
 
   const getPathToCourseUnitPage = (url) => (waffleFlags.useNewUnitPage
     ? adoptCourseSectionUrl({ url, courseId, parentUnitId })
@@ -38,7 +39,7 @@ const Breadcrumbs = ({ courseId, parentUnitId }: { courseId: string, parentUnitI
   }
 
   const hasChildWithUrl = (children = []) => (
-    !!children.filter((child : any) => child?.url).length
+    !!children.filter((child: any) => child?.url).length
   );
 
   return (
@@ -50,42 +51,44 @@ const Breadcrumbs = ({ courseId, parentUnitId }: { courseId: string, parentUnitI
             // eslint-disable-next-line react/no-array-index-key
             key={`${title}-${index}`}
           >
-            {hasChildWithUrl(children) ? (
-              <Dropdown>
-                <Dropdown.Toggle
-                  id="breadcrumbs-dropdown-section"
-                  variant="link"
-                  className="p-0 text-primary small"
-                >
+            {hasChildWithUrl(children) ?
+              (
+                <Dropdown>
+                  <Dropdown.Toggle
+                    id="breadcrumbs-dropdown-section"
+                    variant="link"
+                    className="p-0 text-primary small"
+                  >
+                    <span className="small text-gray-700">
+                      {title}
+                    </span>
+                    <Icon
+                      src={ArrowDropDownIcon}
+                      className="text-primary ml-1"
+                    />
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {children.map(({ url, displayName, usageKey }) => (
+                      <Dropdown.Item
+                        as={Link}
+                        key={url}
+                        to={getPathToCoursePage(index, url, usageKey)}
+                        className="small"
+                        data-testid={`breadcrumbs-dropdown-item-level-${index}`}
+                      >
+                        {displayName}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              ) :
+              (
+                <span className="p-0 text-primary small btn btn-link text-decoration-none">
                   <span className="small text-gray-700">
                     {title}
                   </span>
-                  <Icon
-                    src={ArrowDropDownIcon}
-                    className="text-primary ml-1"
-                  />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {children.map(({ url, displayName, usageKey }) => (
-                    <Dropdown.Item
-                      as={Link}
-                      key={url}
-                      to={getPathToCoursePage(index, url, usageKey)}
-                      className="small"
-                      data-testid={`breadcrumbs-dropdown-item-level-${index}`}
-                    >
-                      {displayName}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            ) : (
-              <span className="p-0 text-primary small btn btn-link text-decoration-none">
-                <span className="small text-gray-700">
-                  {title}
                 </span>
-              </span>
-            )}
+              )}
             {!isLast && (
               <Icon
                 src={ChevronRightIcon}

@@ -22,15 +22,16 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <ExperimentConfigurationsSection
-      availableGroups={experimentGroupConfigurationsMock}
-      experimentConfigurationActions={experimentConfigurationActions}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <ExperimentConfigurationsSection
+        availableGroups={experimentGroupConfigurationsMock}
+        experimentConfigurationActions={experimentConfigurationActions}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ExperimentConfigurationsSection />', () => {
   it('renders component correctly', () => {

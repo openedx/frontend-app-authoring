@@ -1,6 +1,9 @@
 import { useWindowSize } from '@openedx/paragon';
 import React, {
-  useRef, useState, useCallback, useMemo,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
 } from 'react';
 
 const MIN_WIDTH = 440; // px
@@ -8,7 +11,7 @@ const MIN_WIDTH = 440; // px
 interface ResizableBoxProps {
   children: React.ReactNode;
   minWidth?: number;
-  maxWidth?: number
+  maxWidth?: number;
 }
 
 /**

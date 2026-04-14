@@ -40,6 +40,5 @@ export const ReleaseSection = ({ itemId, onChange }: Props) => {
         />
       </Stack>
     </SidebarSection>
-
   );
 };

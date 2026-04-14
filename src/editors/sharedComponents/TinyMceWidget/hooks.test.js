@@ -49,7 +49,8 @@ const mockImage = {
   portableUrl: '/static/DALL_E_2023-03-10.png',
   thumbnail: '/asset-v1:TestX+Test01+Test0101+type@thumbnail+block@DALL_E_2023-03-10.jpg',
   locked: false,
-  staticFullUrl: '/assets/courseware/v1/af2bf9ac70804e54c534107160a8e51e/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png',
+  staticFullUrl:
+    '/assets/courseware/v1/af2bf9ac70804e54c534107160a8e51e/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png',
   id: 'asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png',
   width: initialContentWidth,
   height: initialContentHeight,
@@ -85,8 +86,12 @@ describe('TinyMceEditor hooks', () => {
   });
 
   describe('non-state hooks', () => {
-    beforeEach(() => { state.mock(); });
-    afterEach(() => { state.restore(); });
+    beforeEach(() => {
+      state.mock();
+    });
+    afterEach(() => {
+      state.restore();
+    });
 
     describe('detectImageMatchingError', () => {
       it('should detect an error if the matchingImages array is empty', () => {
@@ -150,18 +155,26 @@ describe('TinyMceEditor hooks', () => {
         expect(addIcon.mock.calls).toEqual([['textToSpeech', tinyMCE.textToSpeechIcon]]);
         expect(addButton.mock.calls).toEqual([
           [tinyMCE.buttons.imageUploadButton, { icon: 'image', tooltip: 'Add Image', onAction: openImgModal }],
-          [tinyMCE.buttons.editImageSettings, { icon: 'image', tooltip: 'Edit Image Settings', onAction: expectedSettingsAction }],
+          [tinyMCE.buttons.editImageSettings, {
+            icon: 'image',
+            tooltip: 'Edit Image Settings',
+            onAction: expectedSettingsAction,
+          }],
           [tinyMCE.buttons.code, { text: 'HTML', tooltip: 'Source code', onAction: openSourceCodeModal }],
           ['customLabelButton', {
             icon: 'textToSpeech',
             text: 'Label',
-            tooltip: 'Apply a "Question" label to specific text, recognized by screen readers. Recommended to improve accessibility.',
+            tooltip:
+              'Apply a "Question" label to specific text, recognized by screen readers. Recommended to improve accessibility.',
             onAction: toggleLabelFormatting,
           }],
         ]);
         expect(addToggleButton.mock.calls).toEqual([
           [tinyMCE.buttons.codeBlock, {
-            icon: 'sourcecode', tooltip: 'Code Block', onAction: toggleCodeFormatting, onSetup: setupCodeFormatting,
+            icon: 'sourcecode',
+            tooltip: 'Code Block',
+            onAction: toggleCodeFormatting,
+            onSetup: setupCodeFormatting,
           }],
         ]);
         expect(openImgModal).not.toHaveBeenCalled();
@@ -171,9 +184,14 @@ describe('TinyMceEditor hooks', () => {
 
     describe('parseContentForLabels', () => {
       test('it calls getContent and updateQuestion for some content', () => {
-        const editor = { getContent: jest.fn(() => '<p><label>Some question label</label></p><p>some content <label>around a label</label> followed by more text</p><img src="/static/soMEImagEURl1.jpeg"/>') };
+        const editor = {
+          getContent: jest.fn(() =>
+            '<p><label>Some question label</label></p><p>some content <label>around a label</label> followed by more text</p><img src="/static/soMEImagEURl1.jpeg"/>'
+          ),
+        };
         const updateContent = jest.fn();
-        const content = '<p><label>Some question label</label></p><p>some content </p><p><label>around a label</label></p><p> followed by more text</p><img src="/static/soMEImagEURl1.jpeg"/>';
+        const content =
+          '<p><label>Some question label</label></p><p>some content </p><p><label>around a label</label></p><p> followed by more text</p><img src="/static/soMEImagEURl1.jpeg"/>';
         module.parseContentForLabels({ editor, updateContent });
         expect(editor.getContent).toHaveBeenCalled();
         expect(updateContent).toHaveBeenCalledWith(content);
@@ -189,17 +207,20 @@ describe('TinyMceEditor hooks', () => {
     });
 
     describe('replaceStaticWithAsset', () => {
-      const initialContent = `<img src="/static/soMEImagEURl1.jpeg"/><a href="/assets/v1/${baseAssetUrl}/test.pdf">test</a><img src="/${baseAssetUrl}@correct.png" /><img src="/${baseAssetUrl}/correct.png" />`;
+      const initialContent =
+        `<img src="/static/soMEImagEURl1.jpeg"/><a href="/assets/v1/${baseAssetUrl}/test.pdf">test</a><img src="/${baseAssetUrl}@correct.png" /><img src="/${baseAssetUrl}/correct.png" />`;
       const learningContextId = 'course-v1:org+test+run';
       const lmsEndpointUrl = getConfig().LMS_BASE_URL;
       it('returns updated src for text editor to update content', () => {
-        const expected = `<img src="/${baseAssetUrl}@soMEImagEURl1.jpeg"/><a href="/${baseAssetUrl}@test.pdf">test</a><img src="/${baseAssetUrl}@correct.png" /><img src="/${baseAssetUrl}@correct.png" />`;
+        const expected =
+          `<img src="/${baseAssetUrl}@soMEImagEURl1.jpeg"/><a href="/${baseAssetUrl}@test.pdf">test</a><img src="/${baseAssetUrl}@correct.png" /><img src="/${baseAssetUrl}@correct.png" />`;
         const actual = module.replaceStaticWithAsset({ initialContent, learningContextId });
         expect(actual).toEqual(expected);
       });
       it('returns updated src with absolute url for expandable editor to update content', () => {
         const editorType = 'expandable';
-        const expected = `<img src="${lmsEndpointUrl}/${baseAssetUrl}@soMEImagEURl1.jpeg"/><a href="${lmsEndpointUrl}/${baseAssetUrl}@test.pdf">test</a><img src="${lmsEndpointUrl}/${baseAssetUrl}@correct.png" /><img src="${lmsEndpointUrl}/${baseAssetUrl}@correct.png" />`;
+        const expected =
+          `<img src="${lmsEndpointUrl}/${baseAssetUrl}@soMEImagEURl1.jpeg"/><a href="${lmsEndpointUrl}/${baseAssetUrl}@test.pdf">test</a><img src="${lmsEndpointUrl}/${baseAssetUrl}@correct.png" /><img src="${lmsEndpointUrl}/${baseAssetUrl}@correct.png" />`;
         const actual = module.replaceStaticWithAsset({
           initialContent,
           editorType,
@@ -214,7 +235,8 @@ describe('TinyMceEditor hooks', () => {
         expect(actual).toBeFalsy();
       });
       it('does not convert static URLs with subdirectories but converts direct static files', () => {
-        const contentWithSubdirectory = '<img src="/static/images/placeholder-faculty.png"/><img src="/static/example.jpg"/>';
+        const contentWithSubdirectory =
+          '<img src="/static/images/placeholder-faculty.png"/><img src="/static/example.jpg"/>';
         const expected = `<img src="/static/images/placeholder-faculty.png"/><img src="/${baseAssetUrl}@example.jpg"/>`;
         const actual = module.replaceStaticWithAsset({
           initialContent: contentWithSubdirectory,
@@ -225,7 +247,8 @@ describe('TinyMceEditor hooks', () => {
     });
     describe('setAssetToStaticUrl', () => {
       it('returns content with updated img links', () => {
-        const editorValue = `<img src="/${baseAssetUrl}/soME_ImagE_URl1"/> <a href="/${baseAssetUrl}@soMEImagEURl">testing link</a>`;
+        const editorValue =
+          `<img src="/${baseAssetUrl}/soME_ImagE_URl1"/> <a href="/${baseAssetUrl}@soMEImagEURl">testing link</a>`;
         const lmsEndpointUrl = getConfig().LMS_BASE_URL;
         const content = module.setAssetToStaticUrl({ editorValue, lmsEndpointUrl });
         expect(content).toEqual('<img src="/static/soME_ImagE_URl1"/> <a href="/static/soMEImagEURl">testing link</a>');
@@ -416,7 +439,10 @@ describe('TinyMceEditor hooks', () => {
       beforeEach(() => {
         editor = { selection: { getNode: () => mockNodeWithInitialContentDimensions } };
         module.openModalWithSelectedImage({
-          editor, images: mockImagesRef, openImgModal, setImage,
+          editor,
+          images: mockImagesRef,
+          openImgModal,
+          setImage,
         })();
       });
 
@@ -441,7 +467,10 @@ describe('TinyMceEditor hooks', () => {
         beforeEach(() => {
           editor = { selection: { getNode: () => mockNode } };
           module.openModalWithSelectedImage({
-            editor, images: mockImagesRef, openImgModal, setImage,
+            editor,
+            images: mockImagesRef,
+            openImgModal,
+            setImage,
           })();
         });
 
@@ -568,7 +597,10 @@ describe('TinyMceEditor hooks', () => {
 
       it('updates dimensions of correct image in images array', () => {
         const { result, foundMatch } = module.updateImageDimensions({
-          images, url: mockNode.src, width: 123, height: 321,
+          images,
+          url: mockNode.src,
+          width: 123,
+          height: 321,
         });
         const imageToHaveBeenUpdated = result.find(img => img.id === mockImage.id);
         const imageToHaveBeenUnchanged = result.find(img => img.id === unchangedImg.id);
@@ -583,7 +615,10 @@ describe('TinyMceEditor hooks', () => {
 
       it('does not update images if id is not found', () => {
         const { result, foundMatch } = module.updateImageDimensions({
-          images, url: 'not_found', width: 123, height: 321,
+          images,
+          url: 'not_found',
+          width: 123,
+          height: 321,
         });
         expect(result.find(img => img.width === 123 || img.height === 321)).toBeFalsy();
         expect(foundMatch).toBe(false);

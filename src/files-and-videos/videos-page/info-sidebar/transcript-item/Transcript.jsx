@@ -52,65 +52,69 @@ const Transcript = ({
 
   return (
     <>
-      {isConfirmationOpen ? (
-        <Card className="my-2">
-          <Card.Header className="h3" title={(<FormattedMessage {...messages.deleteConfirmationHeader} />)} />
-          <Card.Body>
-            <Card.Section>
-              <FormattedMessage {...messages.deleteConfirmationMessage} />
-            </Card.Section>
-            <Card.Footer>
-              <Button size="sm" variant="tertiary" className="mb-2 mb-sm-0" onClick={closeConfirmation}>
-                <FormattedMessage {...messages.cancelDeleteLabel} />
-              </Button>
-              <Button
-                variant="danger"
-                className="mb-2 mb-sm-0"
-                size="sm"
-                onClick={() => {
-                  handleTranscript({ language: transcript }, 'delete');
-                  closeConfirmation();
-                }}
-              >
-                <FormattedMessage {...messages.confirmDeleteLabel} />
-              </Button>
-            </Card.Footer>
-          </Card.Body>
-        </Card>
-      ) : (
-        <div
-          className="row m-0 align-items-center justify-content-between"
-          key={`transcript-${language}`}
-          data-testid={`transcript-${language}`}
-        >
-          <LanguageSelect
-            options={languages}
-            value={newLanguage}
-            placeholderText={intl.formatMessage(messages.languageSelectPlaceholder)}
-            previousSelection={previousSelection}
-            handleSelect={updateLangauge}
-          />
-          { transcript === '' ? (
-            <IconButton
-              iconAs={Icon}
-              src={DeleteOutline}
-              onClick={openConfirmation}
-              alt="delete empty transcript"
+      {isConfirmationOpen ?
+        (
+          <Card className="my-2">
+            <Card.Header className="h3" title={<FormattedMessage {...messages.deleteConfirmationHeader} />} />
+            <Card.Body>
+              <Card.Section>
+                <FormattedMessage {...messages.deleteConfirmationMessage} />
+              </Card.Section>
+              <Card.Footer>
+                <Button size="sm" variant="tertiary" className="mb-2 mb-sm-0" onClick={closeConfirmation}>
+                  <FormattedMessage {...messages.cancelDeleteLabel} />
+                </Button>
+                <Button
+                  variant="danger"
+                  className="mb-2 mb-sm-0"
+                  size="sm"
+                  onClick={() => {
+                    handleTranscript({ language: transcript }, 'delete');
+                    closeConfirmation();
+                  }}
+                >
+                  <FormattedMessage {...messages.confirmDeleteLabel} />
+                </Button>
+              </Card.Footer>
+            </Card.Body>
+          </Card>
+        ) :
+        (
+          <div
+            className="row m-0 align-items-center justify-content-between"
+            key={`transcript-${language}`}
+            data-testid={`transcript-${language}`}
+          >
+            <LanguageSelect
+              options={languages}
+              value={newLanguage}
+              placeholderText={intl.formatMessage(messages.languageSelectPlaceholder)}
+              previousSelection={previousSelection}
+              handleSelect={updateLangauge}
             />
-          ) : (
-            <TranscriptMenu
-              {...{
-                language,
-                newLanguage,
-                setNewLanguage,
-                handleTranscript,
-                input,
-                launchDeleteConfirmation: openConfirmation,
-              }}
-            />
-          )}
-        </div>
-      )}
+            {transcript === '' ?
+              (
+                <IconButton
+                  iconAs={Icon}
+                  src={DeleteOutline}
+                  onClick={openConfirmation}
+                  alt="delete empty transcript"
+                />
+              ) :
+              (
+                <TranscriptMenu
+                  {...{
+                    language,
+                    newLanguage,
+                    setNewLanguage,
+                    handleTranscript,
+                    input,
+                    launchDeleteConfirmation: openConfirmation,
+                  }}
+                />
+              )}
+          </div>
+        )}
       <FileInput key="transcript-input" fileInput={input} supportedFileFormats={['.srt']} />
     </>
   );

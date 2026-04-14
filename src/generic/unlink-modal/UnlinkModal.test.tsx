@@ -12,28 +12,30 @@ import messages from './messages';
 const onUnlinkSubmitMock = jest.fn();
 const closeMock = jest.fn();
 
-const renderforContainer = () => defaultRender(
-  <IntlProvider locale="en">
-    <UnlinkModal
-      isOpen
-      close={closeMock}
-      category="chapter"
-      displayName="Introduction to Testing"
-      onUnlinkSubmit={onUnlinkSubmitMock}
-    />
-  </IntlProvider>,
-);
+const renderforContainer = () =>
+  defaultRender(
+    <IntlProvider locale="en">
+      <UnlinkModal
+        isOpen
+        close={closeMock}
+        category="chapter"
+        displayName="Introduction to Testing"
+        onUnlinkSubmit={onUnlinkSubmitMock}
+      />
+    </IntlProvider>,
+  );
 
-const renderforComponent = () => defaultRender(
-  <IntlProvider locale="en">
-    <UnlinkModal
-      isOpen
-      close={closeMock}
-      category="component"
-      onUnlinkSubmit={onUnlinkSubmitMock}
-    />
-  </IntlProvider>,
-);
+const renderforComponent = () =>
+  defaultRender(
+    <IntlProvider locale="en">
+      <UnlinkModal
+        isOpen
+        close={closeMock}
+        category="component"
+        onUnlinkSubmit={onUnlinkSubmitMock}
+      />
+    </IntlProvider>,
+  );
 
 describe('<UnlinkModal />', () => {
   it('render UnlinkModal component correctly for containers', () => {

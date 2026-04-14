@@ -48,7 +48,7 @@ const DeleteModal = ({
       onClose={close}
       variant={variant}
       icon={icon}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button
             variant={cancelButtonVariant}
@@ -70,7 +70,7 @@ const DeleteModal = ({
             label={defaultBtnLabel}
           />
         </ActionRow>
-      )}
+      }
     >
       <div>{modalDescription}</div>
     </AlertModal>

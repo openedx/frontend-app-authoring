@@ -68,7 +68,9 @@ describe('<LibraryCollectionPage />', () => {
       mockResultCopy.results[0].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-      mockResultCopy.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      mockResultCopy.results[0]?.hits.forEach((hit) => {
+        hit._formatted = { ...hit };
+      });
       const collectionQueryId = requestData?.queries[0]?.filter?.[2]?.split('collections.key = "')[1].split('"')[0];
       switch (collectionQueryId) {
         case mockCollection.collectionNeverLoads:
@@ -100,7 +102,9 @@ describe('<LibraryCollectionPage />', () => {
     });
 
     if (![mockCollection.collectionNeverLoads, mockCollection.collectionEmpty].includes(colId)) {
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+      await waitFor(() => {
+        expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+      });
     }
   };
 
@@ -183,7 +187,9 @@ describe('<LibraryCollectionPage />', () => {
 
     // Ensure the search endpoint is called again, only once more since the recently modified call
     // should not be impacted by the search
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => {
+      expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post');
+    });
 
     expect(screen.queryByText('No matching components found in this collection.')).toBeInTheDocument();
   });
@@ -261,7 +267,7 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(await screen.findByTitle('Sort search results')).toBeInTheDocument();
 
-    const testSortOption = (async (optionText, sortBy, isDefault) => {
+    const testSortOption = async (optionText, sortBy, isDefault) => {
       // Open the drop-down menu
       fireEvent.click(screen.getByTitle('Sort search results'));
 
@@ -296,7 +302,7 @@ describe('<LibraryCollectionPage />', () => {
       // Is the selected sort option shown in the toggle button (if not default)
       // as well as in the drop-down menu?
       expect(screen.getAllByText(optionText).length).toEqual(isDefault ? 1 : 2);
-    });
+    };
 
     await testSortOption('Title, A-Z', 'display_name:asc', false);
     await testSortOption('Title, Z-A', 'display_name:desc', false);
@@ -487,7 +493,9 @@ describe('<LibraryCollectionPage />', () => {
     expect(axiosMock.history.post[0].url).toBe(containerUrl);
     expect(axiosMock.history.post[0].data).toContain(`"display_name":"${containerTitle}"`);
     expect(axiosMock.history.post[0].data).toContain(`"container_type":"${containerType}"`);
-    expect(mockShowToast).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`${containerType} created successfully`, 'i')));
+    expect(mockShowToast).toHaveBeenCalledWith(
+      expect.stringMatching(new RegExp(`${containerType} created successfully`, 'i')),
+    );
 
     // Check that the unit was added to the collection
     expect(axiosMock.history.patch.length).toBe(1);

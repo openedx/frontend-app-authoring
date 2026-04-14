@@ -1,5 +1,11 @@
 import {
-  useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  ReactNode,
+  useMemo,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -31,23 +37,23 @@ import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SubsectionCardProps {
-  section: XBlock,
-  subsection: XBlock,
-  children: ReactNode
-  isSectionsExpanded: boolean,
-  isSelfPaced: boolean,
-  isCustomRelativeDatesActive: boolean,
-  onOpenDeleteModal: () => void,
-  onDuplicateSubmit: () => void,
-  index: number,
-  getPossibleMoves: (index: number, step: number) => void,
-  onOrderChange: (section: XBlock, moveDetails: any) => void,
-  onOpenConfigureModal: () => void,
+  section: XBlock;
+  subsection: XBlock;
+  children: ReactNode;
+  isSectionsExpanded: boolean;
+  isSelfPaced: boolean;
+  isCustomRelativeDatesActive: boolean;
+  onOpenDeleteModal: () => void;
+  onDuplicateSubmit: () => void;
+  index: number;
+  getPossibleMoves: (index: number, step: number) => void;
+  onOrderChange: (section: XBlock, moveDetails: any) => void;
+  onOpenConfigureModal: () => void;
   onPasteClick: (
     parentLocator: string,
     subsectionId: string,
-    sectionId: string
-  ) => void,
+    sectionId: string,
+  ) => void;
 }
 
 const SubsectionCard = ({
@@ -149,7 +155,7 @@ const SubsectionCard = ({
     if (moment(initialData.editedOnRaw).isAfter(moment(subsection.editedOnRaw))) {
       queryClient.cancelQueries({
         queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
       }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
@@ -202,13 +208,13 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={(
+      prefixIcon={
         <UpstreamInfoIcon
           upstreamInfo={upstreamInfo}
           size="sm"
           openSyncModal={openSyncModal}
         />
-      )}
+      }
     />
   );
 
@@ -243,12 +249,10 @@ const SubsectionCard = ({
     setIsExpanded((prevState) => (containsSearchResult() || prevState));
   }, [locatorId, setIsExpanded]);
 
-  const isDraggable = (
-    actions.draggable
-      && (actions.allowMoveUp || actions.allowMoveDown)
-      && !(isHeaderVisible === false)
-      && !section.upstreamInfo?.upstreamRef
-  );
+  const isDraggable = actions.draggable
+    && (actions.allowMoveUp || actions.allowMoveDown)
+    && !(isHeaderVisible === false)
+    && !section.upstreamInfo?.upstreamRef;
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
@@ -298,10 +302,11 @@ const SubsectionCard = ({
                 onClickMenuButton={handleClickMenuButton}
                 onClickPublish={() => openPublishModal({ value: subsection, sectionId: section.id })}
                 onClickDelete={onOpenDeleteModal}
-                onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
-                  value: subsection,
-                  sectionId: section.id,
-                })}
+                onClickUnlink={/* istanbul ignore next */ () =>
+                  openUnlinkModal({
+                    value: subsection,
+                    sectionId: section.id,
+                  })}
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
@@ -338,7 +343,7 @@ const SubsectionCard = ({
               </div>
             </>
           )}
-          {(isExpanded) && (
+          {isExpanded && (
             <div
               data-testid="subsection-card__units"
               className={classNames('subsection-card__units', { 'item-children': isDraggable })}

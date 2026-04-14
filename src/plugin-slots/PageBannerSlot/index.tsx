@@ -17,7 +17,8 @@ const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
     id="org.openedx.frontend.authoring.page_banner.v1"
     idAliases={['page_banner_slot']}
     pluginProps={{
-      show, onDismiss,
+      show,
+      onDismiss,
     }}
   >
     <div className="align-items-start">

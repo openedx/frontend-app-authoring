@@ -21,12 +21,12 @@ const HierarchyRow = ({
   willPublish = false,
   publishMessage = undefined,
 }: {
-  containerType: ContainerType,
-  text: string,
-  selected: boolean,
-  showArrow: boolean,
-  willPublish?: boolean,
-  publishMessage?: MessageDescriptor,
+  containerType: ContainerType;
+  text: string;
+  selected: boolean;
+  showArrow: boolean;
+  willPublish?: boolean;
+  publishMessage?: MessageDescriptor;
 }) => (
   <Stack>
     <Container
@@ -74,7 +74,7 @@ const HierarchyRow = ({
 export const ItemHierarchy = ({
   showPublishStatus = false,
 }: {
-  showPublishStatus?: boolean,
+  showPublishStatus?: boolean;
 }) => {
   const intl = useIntl();
   const { sidebarItemInfo } = useSidebarContext();

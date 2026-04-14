@@ -2,7 +2,11 @@ import { getConfig, setConfig } from '@edx/frontend-platform';
 import { userEvent } from '@testing-library/user-event';
 
 import {
-  initializeMocks, render, screen, waitFor, within,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
+  within,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
@@ -34,10 +38,11 @@ const extraWrapper = ({ children }) => (
   </CourseAuthoringProvider>
 );
 
-const renderComponent = () => render(
-  <OutlineSidebar />,
-  { extraWrapper },
-);
+const renderComponent = () =>
+  render(
+    <OutlineSidebar />,
+    { extraWrapper },
+  );
 
 describe('<OutlineSidebar>', () => {
   beforeEach(() => {

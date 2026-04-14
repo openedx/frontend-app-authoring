@@ -3,7 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import {
-  getCourseModes, getCertificateActivationUrl, getCertificateWebViewUrl, getIsCertificateActive,
+  getCourseModes,
+  getCertificateActivationUrl,
+  getCertificateWebViewUrl,
+  getIsCertificateActive,
 } from '../../../data/selectors';
 import { updateCertificateActiveStatus } from '../../../data/thunks';
 

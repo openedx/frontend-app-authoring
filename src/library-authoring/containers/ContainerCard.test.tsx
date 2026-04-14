@@ -3,7 +3,10 @@ import type MockAdapter from 'axios-mock-adapter';
 
 import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
 import {
-  initializeMocks, render as baseRender, screen, waitFor,
+  initializeMocks,
+  render as baseRender,
+  screen,
+  waitFor,
   fireEvent,
 } from '@src/testUtils';
 import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
@@ -61,7 +64,7 @@ jest.mock('react-router-dom', () => ({
 const render = (
   ui: React.ReactElement,
   showOnlyPublished: boolean = false,
-  containerContext?: { type: ContainerType, id: string },
+  containerContext?: { type: ContainerType; id: string; },
 ) => {
   const path = containerContext
     ? `/library/:libraryId/${containerContext.type}/:containerId`
@@ -432,7 +435,10 @@ describe('<ContainerCard />', () => {
       expectedRemoveText: 'Remove from section',
     },
   ])('$label', async ({
-    containerType, parentType, parentId, expectedRemoveText,
+    containerType,
+    parentType,
+    parentId,
+    expectedRemoveText,
   }) => {
     const containerHit = getContainerHitSample(containerType);
     axiosMock.onDelete(getLibraryContainerChildrenApiUrl(parentId)).reply(200);

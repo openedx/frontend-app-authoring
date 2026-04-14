@@ -2,13 +2,14 @@ import classNames from 'classnames';
 import { useState, useEffect } from 'react';
 import newId from './newId';
 
-const omitUndefinedProperties = (obj = {}) => Object.entries(obj)
-  .reduce((acc, [key, value]) => {
-    if (value !== undefined) {
-      acc[key] = value;
-    }
-    return acc;
-  }, {});
+const omitUndefinedProperties = (obj = {}) =>
+  Object.entries(obj)
+    .reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
 
 const callAllHandlers = (...handlers) => {
   const unifiedEventHandler = (event) => {
@@ -61,10 +62,4 @@ const mergeAttributeValues = (...values) => {
   return mergedValues || undefined;
 };
 
-export {
-  callAllHandlers,
-  useHasValue,
-  mergeAttributeValues,
-  useIdList,
-  omitUndefinedProperties,
-};
+export { callAllHandlers, useHasValue, mergeAttributeValues, useIdList, omitUndefinedProperties };

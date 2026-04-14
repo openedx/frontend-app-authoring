@@ -7,11 +7,14 @@ import { isUnitImportedFromLib, normalizeCourseSectionVerticalData, updateXBlock
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getXBlockBaseApiUrl = (itemId: string) => `${getStudioBaseUrl()}/xblock/${itemId}`;
-export const getCourseSectionVerticalApiUrl = (itemId: string) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
-export const getCourseVerticalChildrenApiUrl = (itemId: string, getUpstreamInfo: boolean = false) => `${getStudioBaseUrl()}/api/contentstore/v1/container/${itemId}/children?get_upstream_info=${getUpstreamInfo}`;
+export const getCourseSectionVerticalApiUrl = (itemId: string) =>
+  `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
+export const getCourseVerticalChildrenApiUrl = (itemId: string, getUpstreamInfo: boolean = false) =>
+  `${getStudioBaseUrl()}/api/contentstore/v1/container/${itemId}/children?get_upstream_info=${getUpstreamInfo}`;
 export const getCourseOutlineInfoUrl = (courseId: string) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
-export const libraryBlockChangesUrl = (blockId: string) => `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
+export const libraryBlockChangesUrl = (blockId: string) =>
+  `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
 
 /**
  * Edit course unit display name.
@@ -107,8 +110,8 @@ export async function acceptLibraryBlockChanges({
   blockId,
   overrideCustomizations = false,
 }: {
-  blockId: string,
-  overrideCustomizations?: boolean,
+  blockId: string;
+  overrideCustomizations?: boolean;
 }) {
   await getAuthenticatedHttpClient()
     .post(libraryBlockChangesUrl(blockId), { override_customizations: overrideCustomizations });
@@ -117,7 +120,7 @@ export async function acceptLibraryBlockChanges({
 /**
  * Ignore the changes from upstream library block in course
  */
-export async function ignoreLibraryBlockChanges({ blockId } : { blockId: string }) {
+export async function ignoreLibraryBlockChanges({ blockId }: { blockId: string; }) {
   await getAuthenticatedHttpClient()
     .delete(libraryBlockChangesUrl(blockId));
 }

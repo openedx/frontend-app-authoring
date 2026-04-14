@@ -22,15 +22,15 @@ const BasicTab = ({
 
   const onChangeGraderType = (e) => setFieldValue('graderType', e.target.value);
 
-  const createOptions = () => courseGraders.map((option) => (
-    <option key={option} value={option}> {option} </option>
-  ));
+  const createOptions = () => courseGraders.map((option) => <option key={option} value={option}>{option}</option>);
 
   return (
     <>
       {!isSelfPaced && (
         <>
-          <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.releaseDateAndTime} /></h5>
+          <h5 className="mt-4 text-gray-700">
+            <FormattedMessage {...messages.releaseDateAndTime} />
+          </h5>
           <hr />
           <div data-testid="release-date-stack">
             <Stack className="mt-3" direction="horizontal" gap={5}>
@@ -52,49 +52,51 @@ const BasicTab = ({
           </div>
         </>
       )}
-      {
-        isSubsection && (
-          <div>
-            <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.grading} /></h5>
-            <hr />
-            <Form.Group>
-              <Form.Label><FormattedMessage {...messages.gradeAs} /></Form.Label>
-              <Form.Control
-                as="select"
-                defaultValue={graderType}
-                onChange={onChangeGraderType}
-                data-testid="grader-type-select"
-              >
-                <option key="notgraded" value="notgraded">
-                  {intl.formatMessage(messages.notGradedTypeOption)}
-                </option>
-                {createOptions()}
-              </Form.Control>
-            </Form.Group>
-            {!isSelfPaced && (
-              <div data-testid="due-date-stack">
-                <Stack className="mt-3" direction="horizontal" gap={5}>
-                  <DatepickerControl
-                    type={DATEPICKER_TYPES.date}
-                    value={dueDate}
-                    label={intl.formatMessage(messages.dueDate)}
-                    controlName="state-date"
-                    onChange={(val) => setFieldValue('dueDate', val)}
-                    data-testid="due-date-picker"
-                  />
-                  <DatepickerControl
-                    type={DATEPICKER_TYPES.time}
-                    value={dueDate}
-                    label={intl.formatMessage(messages.dueTimeUTC)}
-                    controlName="start-time"
-                    onChange={(val) => setFieldValue('dueDate', val)}
-                  />
-                </Stack>
-              </div>
-            )}
-          </div>
-        )
-      }
+      {isSubsection && (
+        <div>
+          <h5 className="mt-4 text-gray-700">
+            <FormattedMessage {...messages.grading} />
+          </h5>
+          <hr />
+          <Form.Group>
+            <Form.Label>
+              <FormattedMessage {...messages.gradeAs} />
+            </Form.Label>
+            <Form.Control
+              as="select"
+              defaultValue={graderType}
+              onChange={onChangeGraderType}
+              data-testid="grader-type-select"
+            >
+              <option key="notgraded" value="notgraded">
+                {intl.formatMessage(messages.notGradedTypeOption)}
+              </option>
+              {createOptions()}
+            </Form.Control>
+          </Form.Group>
+          {!isSelfPaced && (
+            <div data-testid="due-date-stack">
+              <Stack className="mt-3" direction="horizontal" gap={5}>
+                <DatepickerControl
+                  type={DATEPICKER_TYPES.date}
+                  value={dueDate}
+                  label={intl.formatMessage(messages.dueDate)}
+                  controlName="state-date"
+                  onChange={(val) => setFieldValue('dueDate', val)}
+                  data-testid="due-date-picker"
+                />
+                <DatepickerControl
+                  type={DATEPICKER_TYPES.time}
+                  value={dueDate}
+                  label={intl.formatMessage(messages.dueTimeUTC)}
+                  controlName="start-time"
+                  onChange={(val) => setFieldValue('dueDate', val)}
+                />
+              </Stack>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };

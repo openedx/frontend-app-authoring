@@ -33,12 +33,13 @@ const Gallery = ({
 
   if (!isLoaded && !allowLazyLoad) {
     return (
-      <div style={{
-        position: 'absolute',
-        left: '50%',
-        top: '50%',
-        transform: 'translate(-50%, -50%)',
-      }}
+      <div
+        style={{
+          position: 'absolute',
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
       >
         <Spinner
           animation="border"
@@ -78,7 +79,7 @@ const Gallery = ({
             showId={showIdsOnCards}
             thumbnailFallback={thumbnailFallback}
           />
-        )) }
+        ))}
       </SelectableBox.Set>
       {(allowLazyLoad && !isLibrary) && (
         <GalleryLoadMoreButton

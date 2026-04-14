@@ -32,13 +32,13 @@ const config = {
               <Alert variant="warning">
                 This is a test alert
               </Alert>
-            )
-          }
+            ),
+          },
         },
-      ]
-    }
+      ],
+    },
   },
-}
+};
 
 export default config;
 ```

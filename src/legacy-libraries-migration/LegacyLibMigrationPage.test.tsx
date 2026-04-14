@@ -244,9 +244,11 @@ describe('<LegacyLibMigrationPage />', () => {
 
     await user.click(nextButton);
     const alert = await screen.findByRole('alert');
-    expect(await within(alert).findByText(
-      /All content from the legacy library you selected will be migrated to/,
-    )).toBeInTheDocument();
+    expect(
+      await within(alert).findByText(
+        /All content from the legacy library you selected will be migrated to/,
+      ),
+    ).toBeInTheDocument();
 
     const backButton = screen.getByRole('button', { name: /back/i });
     await user.click(backButton);
@@ -353,9 +355,11 @@ describe('<LegacyLibMigrationPage />', () => {
 
     // Should show alert of ConfirmationView
     const alert = await screen.findByRole('alert');
-    expect(await within(alert).findByText(
-      /All content from the 3 legacy libraries you selected will be migrated to/,
-    )).toBeInTheDocument();
+    expect(
+      await within(alert).findByText(
+        /All content from the 3 legacy libraries you selected will be migrated to/,
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByText('MBA')).toBeInTheDocument();
     expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
     expect(screen.getByText('MBA 1')).toBeInTheDocument();
@@ -410,10 +414,12 @@ describe('<LegacyLibMigrationPage />', () => {
 
     // Should show alert of ConfirmationView
     const alert = await screen.findByRole('alert');
-    expect(await within(alert).findByText(
-      /All content from the 3 legacy libraries you selected will be migrated to/,
-      { exact: false },
-    )).toBeInTheDocument();
+    expect(
+      await within(alert).findByText(
+        /All content from the 3 legacy libraries you selected will be migrated to/,
+        { exact: false },
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByText('MBA')).toBeInTheDocument();
     expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
     expect(screen.getByText('MBA 1')).toBeInTheDocument();

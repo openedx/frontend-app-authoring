@@ -11,7 +11,7 @@ interface PlaceHolderCardProps {
 const PlaceholderCard = ({ blockType, displayName, description }: PlaceHolderCardProps) => {
   const intl = useIntl();
   const defaultDescription = intl.formatMessage(messages.placeholderCardDescription);
-  const truncatedDescription = description ? `${description.substring(0, 40) }...` : defaultDescription;
+  const truncatedDescription = description ? `${description.substring(0, 40)}...` : defaultDescription;
   /* istanbul ignore next */
   return (
     <BaseCard

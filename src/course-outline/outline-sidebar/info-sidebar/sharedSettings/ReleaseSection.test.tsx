@@ -22,7 +22,10 @@ jest.mock('@src/hooks', () => ({
 jest.mock('@src/generic/datepicker-control', () => ({
   DATEPICKER_TYPES: { date: 'date', time: 'time' },
   DatepickerControl: ({ onChange, type }: any) => (
-    <button type="button" onClick={() => onChange(type === 'date' ? '2025-12-31' : '12:00')}>
+    <button
+      type="button"
+      onClick={() => onChange(type === 'date' ? '2025-12-31' : '12:00')}
+    >
       {type}
     </button>
   ),

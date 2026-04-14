@@ -12,7 +12,10 @@ import { Info } from '@openedx/paragon/icons';
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';
 import React, {
-  useContext, useEffect, useRef, useState,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
@@ -111,13 +114,11 @@ const AppSettingsModal = ({
           enabled: !!appInfo?.enabled,
           ...initialValues,
         }}
-        validationSchema={
-          Yup.object()
-            .shape({
-              enabled: Yup.boolean(),
-              ...validationSchema,
-            })
-        }
+        validationSchema={Yup.object()
+          .shape({
+            enabled: Yup.boolean(),
+            ...validationSchema,
+          })}
         onSubmit={handleFormSubmit}
         enableReinitialize={enableReinitialize}
       >
@@ -129,7 +130,7 @@ const AppSettingsModal = ({
               onClose={onClose}
               variant={modalVariant}
               isMobile={isMobile}
-              footer={(
+              footer={
                 <StatefulButton
                   labels={{
                     default: formatMessage(messages.save),
@@ -139,7 +140,7 @@ const AppSettingsModal = ({
                   state={submitButtonState}
                   onClick={handleFormikSubmit(formikProps)}
                 />
-              )}
+              }
             >
               {saveError && (
                 <Alert variant="danger" icon={Info} ref={alertRef}>
@@ -156,7 +157,7 @@ const AppSettingsModal = ({
                   onChange={(event) => formikProps.handleChange(event)}
                   onBlur={formikProps.handleBlur}
                   checked={formikProps.values.enabled}
-                  label={(
+                  label={
                     <div className="d-flex align-items-center">
                       {enableAppLabel}
                       {formikProps.values.enabled && (
@@ -165,31 +166,29 @@ const AppSettingsModal = ({
                         </Badge>
                       )}
                     </div>
-                  )}
-                  helpText={(
+                  }
+                  helpText={
                     <div>
                       <p>{enableAppHelp}</p>
                       <span className="py-3">{learnMoreLink}</span>
                     </div>
-                  )}
+                  }
                 />
               )}
               {bodyChildren}
               {(formikProps.values.enabled || configureBeforeEnable) && children
                 && <AppConfigFormDivider marginAdj={{ default: 0, sm: 0 }} />}
-              {
-                children && (
-                  <TransitionReplace>
-                    {formikProps.values.enabled || configureBeforeEnable ? (
+              {children && (
+                <TransitionReplace>
+                  {formikProps.values.enabled || configureBeforeEnable ?
+                    (
                       <React.Fragment key="app-enabled">
                         {children(formikProps)}
                       </React.Fragment>
-                    ) : (
-                      <React.Fragment key="app-disabled" />
-                    )}
-                  </TransitionReplace>
-                )
-              }
+                    ) :
+                    <React.Fragment key="app-disabled" />}
+                </TransitionReplace>
+              )}
             </AppSettingsModalBase>
           </Form>
         )}

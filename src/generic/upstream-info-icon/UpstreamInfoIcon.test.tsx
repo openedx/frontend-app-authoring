@@ -1,5 +1,9 @@
 import {
-  render, screen, fireEvent, waitFor, initializeMocks,
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  initializeMocks,
 } from '@src/testUtils';
 import { UpstreamInfoIcon, UpstreamInfoIconProps } from '.';
 

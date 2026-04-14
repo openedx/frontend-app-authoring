@@ -17,15 +17,15 @@ import BlockTypeLabel from './BlockTypeLabel';
 import { useSearchContext } from './SearchManager';
 
 interface ProblemFilterItemProps {
-  count: number,
+  count: number;
   handleCheckboxChange: (e: any) => void;
 }
 interface FilterItemProps {
-  blockType: string,
-  count: number,
+  blockType: string;
+  count: number;
 }
 
-const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemProps) => {
+const ProblemFilterItem = ({ count, handleCheckboxChange }: ProblemFilterItemProps) => {
   const blockType = 'problem';
 
   const {
@@ -82,10 +82,9 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
       >
         <div className="d-flex justify-content-between align-items-center">
           <div>
-            <BlockTypeLabel blockType={blockType} />{' '}
-            <Badge variant="light" pill>{count}</Badge>
+            <BlockTypeLabel blockType={blockType} /> <Badge variant="light" pill>{count}</Badge>
           </div>
-          { Object.keys(problemTypes).length !== 0 && (
+          {Object.keys(problemTypes).length !== 0 && (
             <IconButton
               ref={setProblemItemTarget}
               variant="dark"
@@ -103,16 +102,14 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
         isOpen={isProblemItemOpen}
         onClose={closeProblemItem}
       >
-        <div
-          className="bg-white rounded shadow problem-sub-menu-item"
-        >
+        <div className="bg-white rounded shadow problem-sub-menu-item">
           <Form.Group className="mb-0">
             <Form.CheckboxSet
               name="block-type-filter"
               value={[...typesFilter.problems]}
             >
               <Menu>
-                { Object.entries(problemTypes).map(([problemType, problemTypeCount]) => (
+                {Object.entries(problemTypes).map(([problemType, problemTypeCount]) => (
                   <MenuItem
                     key={problemType}
                     as={Form.Checkbox}
@@ -120,18 +117,21 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
                     onChange={handleProblemCheckboxChange}
                   >
                     <div style={{ textAlign: 'start' }}>
-                      <BlockTypeLabel blockType={problemType} />{' '}
-                      <Badge variant="light" pill>{problemTypeCount}</Badge>
+                      <BlockTypeLabel blockType={problemType} /> <Badge variant="light" pill>{problemTypeCount}</Badge>
                     </div>
                   </MenuItem>
                 ))}
                 {
                   // Show a message if there are no options at all to avoid the
                   // impression that the dropdown isn't working
-                  Object.keys(problemTypes).length === 0 ? (
-                    /* istanbul ignore next */
-                    <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
-                  ) : null
+                  Object.keys(problemTypes).length === 0 ?
+                    (
+                      /* istanbul ignore next */
+                      <MenuItem disabled>
+                        <FormattedMessage {...messages['blockTypeFilter.empty']} />
+                      </MenuItem>
+                    ) :
+                    null
                 }
               </Menu>
             </Form.CheckboxSet>
@@ -142,7 +142,7 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
   );
 };
 
-const FilterItem = ({ blockType, count } : FilterItemProps) => {
+const FilterItem = ({ blockType, count }: FilterItemProps) => {
   const {
     problemTypes,
     setTypesFilter,
@@ -184,8 +184,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
       onChange={handleCheckboxChange}
     >
       <div>
-        <BlockTypeLabel blockType={blockType} />{' '}
-        <Badge variant="light" pill>{count}</Badge>
+        <BlockTypeLabel blockType={blockType} /> <Badge variant="light" pill>{count}</Badge>
       </div>
     </MenuItem>
   );
@@ -262,15 +261,15 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
           value={[...typesFilter.blocks]}
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
-            {
-              Object.entries(sortedBlockTypes).map(([blockType, count]) => (
-                <FilterItem key={blockType} blockType={blockType} count={count} />
-              ))
-            }
+            {Object.entries(sortedBlockTypes).map(([blockType, count]) => (
+              <FilterItem key={blockType} blockType={blockType} count={count} />
+            ))}
             {
               // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
               Object.keys(sortedBlockTypes).length === 0 && (
-                <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
+                <MenuItem disabled>
+                  <FormattedMessage {...messages['blockTypeFilter.empty']} />
+                </MenuItem>
               )
             }
           </Menu>

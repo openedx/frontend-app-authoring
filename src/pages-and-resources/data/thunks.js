@@ -2,13 +2,15 @@ import { RequestStatus } from '../../data/constants';
 import { addModels, updateModel } from '../../generic/model-store';
 import {
   getCourseAdvancedSettings,
-  getCourseApps, updateCourseAdvancedSettings,
+  getCourseApps,
+  updateCourseAdvancedSettings,
   updateCourseApp,
 } from './api';
 import {
   fetchCourseAppsSettingsSuccess,
   fetchCourseAppsSuccess,
-  updateCourseAppsApiStatus, updateCourseAppsSettingsSuccess,
+  updateCourseAppsApiStatus,
+  updateCourseAppsSettingsSuccess,
   updateLoadingStatus,
   updateSavingStatus,
 } from './slice';
@@ -35,7 +37,8 @@ export function fetchCourseApps(courseId) {
       const courseApps = await getCourseApps(courseId);
 
       courseApps.sort((firstEl, secondEl) => (
-        COURSE_APPS_ORDER.indexOf(firstEl.id) - COURSE_APPS_ORDER.indexOf(secondEl.id)));
+        COURSE_APPS_ORDER.indexOf(firstEl.id) - COURSE_APPS_ORDER.indexOf(secondEl.id)
+      ));
 
       dispatch(addModels({ modelType: 'courseApps', models: courseApps }));
       dispatch(fetchCourseAppsSuccess({

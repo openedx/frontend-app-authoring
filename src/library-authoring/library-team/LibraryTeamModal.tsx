@@ -10,7 +10,7 @@ export const LibraryTeamModal = () => {
   const intl = useIntl();
   const { sidebarAction, resetSidebarAction } = useSidebarContext();
   // Open the library team modal only when Manage Team sidebar action is set
-  const isOpen = (sidebarAction === SidebarActions.ManageTeam);
+  const isOpen = sidebarAction === SidebarActions.ManageTeam;
   const onClose = useCallback(() => {
     resetSidebarAction();
   }, [resetSidebarAction]);

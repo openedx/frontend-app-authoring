@@ -14,7 +14,9 @@ export const state = {
 
 export const generalFeedbackHooks = (generalFeedback, updateSettings) => {
   const [summary, setSummary] = module.state.summary({
-    message: messages.noGeneralFeedbackSummary, values: {}, intl: true,
+    message: messages.noGeneralFeedbackSummary,
+    values: {},
+    intl: true,
   });
 
   // eslint-disable-next-line react-hooks/rules-of-hooks

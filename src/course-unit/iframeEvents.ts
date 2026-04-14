@@ -13,13 +13,15 @@ export const dispatchShowMoveXBlockModal = (
   sourceXBlockInfo: XBlockInfo,
   sourceParentXBlockInfo: XBlockInfo,
 ) => {
-  window.dispatchEvent(new MessageEvent('message', {
-    data: {
-      type: messageTypes.showMoveXBlockModal,
-      payload: {
-        sourceXBlockInfo,
-        sourceParentXBlockInfo,
+  window.dispatchEvent(
+    new MessageEvent('message', {
+      data: {
+        type: messageTypes.showMoveXBlockModal,
+        payload: {
+          sourceXBlockInfo,
+          sourceParentXBlockInfo,
+        },
       },
-    },
-  }));
+    }),
+  );
 };

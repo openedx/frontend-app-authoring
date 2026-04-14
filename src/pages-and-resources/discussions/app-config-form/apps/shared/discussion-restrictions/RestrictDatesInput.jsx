@@ -18,7 +18,10 @@ const RestrictDatesInput = ({
   dataTestId,
 }) => {
   const {
-    handleChange, handleBlur, errors, touched,
+    handleChange,
+    handleBlur,
+    errors,
+    touched,
   } = useFormikContext();
 
   const [inFocus, setInFocus] = useState(false);

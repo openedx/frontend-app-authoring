@@ -51,7 +51,9 @@ export const SectionSidebar = () => {
   const handleMove = (step: number) => {
     if (index !== undefined) {
       updateSectionOrderByIndex(index, index + step);
-      setSelectedContainerState(selectedContainerState ? { ...selectedContainerState, index: index + step } : undefined);
+      setSelectedContainerState(
+        selectedContainerState ? { ...selectedContainerState, index: index + step } : undefined,
+      );
     }
   };
 

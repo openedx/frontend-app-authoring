@@ -207,12 +207,13 @@ export const dimensionHooks = (altTextHook) => {
     value: local,
     setHeight,
     setWidth,
-    updateDimensions: () => setAll(module.getValidDimensions({
-      dimensions,
-      local,
-      isLocked,
-      lockAspectRatio,
-    })),
+    updateDimensions: () =>
+      setAll(module.getValidDimensions({
+        dimensions,
+        local,
+        isLocked,
+        lockAspectRatio,
+      })),
   };
 };
 
@@ -320,15 +321,18 @@ export const onSaveClick = ({
   dimensions,
   isDecorative,
   saveToEditor,
-}) => () => {
-  if (module.checkFormValidation({
-    altText: altText.value,
-    isDecorative,
-    onAltTextFail: () => {
-      altText.error.set();
-      altText.validation.set();
-    },
-  })) {
+}) =>
+() => {
+  if (
+    module.checkFormValidation({
+      altText: altText.value,
+      isDecorative,
+      onAltTextFail: () => {
+        altText.error.set();
+        altText.validation.set();
+      },
+    })
+  ) {
     altText.error.dismiss();
     altText.validation.dismiss();
     // Replaces double quotes with &quot; to prevent the alt text from being truncated

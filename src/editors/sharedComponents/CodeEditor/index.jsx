@@ -20,7 +20,10 @@ const CodeEditor = ({
   const DOMref = useRef();
   const btnRef = useRef();
   hooks.createCodeMirrorDomNode({
-    ref: DOMref, initialText: value, upstreamRef: innerRef, lang,
+    ref: DOMref,
+    initialText: value,
+    upstreamRef: innerRef,
+    lang,
   });
   const { showBtnEscapeHTML, hideBtn } = hooks.prepareShowBtnEscapeHTML();
 

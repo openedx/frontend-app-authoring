@@ -36,9 +36,7 @@ jest.mock('@src/generic/datepicker-control', () => ({
 // Mock nested components: ReleaseSection, VisibilitySection, AdvancedTab
 jest.mock('./sharedSettings/ReleaseSection', () => ({
   __esModule: true,
-  ReleaseSection: ({ onChange }: any) => (
-    <button type="button" onClick={() => onChange('2030-01-01')}>Release</button>
-  ),
+  ReleaseSection: ({ onChange }: any) => <button type="button" onClick={() => onChange('2030-01-01')}>Release</button>,
 }));
 
 jest.mock('./sharedSettings/VisibilitySection', () => ({
@@ -112,11 +110,15 @@ describe('SubsectionSettings', () => {
 
     // Release
     await user.click(await screen.findByRole('button', { name: 'Release' }));
-    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, sectionId: 'section-abc', releaseDate: '2030-01-01' }));
+    expect(mutate).toHaveBeenCalledWith(
+      expect.objectContaining({ itemId: subsectionId, sectionId: 'section-abc', releaseDate: '2030-01-01' }),
+    );
 
     // Visibility
     await user.click(await screen.findByRole('button', { name: 'Visibility' }));
-    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ itemId: subsectionId, sectionId: 'section-abc', visibility: 'v' }));
+    expect(mutate).toHaveBeenCalledWith(
+      expect.objectContaining({ itemId: subsectionId, sectionId: 'section-abc', visibility: 'v' }),
+    );
 
     // Grading -> Ungraded
     await user.click(await screen.findByRole('button', { name: 'Ungraded' }));
@@ -131,7 +133,10 @@ describe('SubsectionSettings', () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
     apiHooks.useCourseItemData.mockReturnValue({
       data: {
-        ...baseItemData, graded: false, prereqMinScore: '50', prereqMinCompletion: '75',
+        ...baseItemData,
+        graded: false,
+        prereqMinScore: '50',
+        prereqMinCompletion: '75',
       },
       isPending: false,
     });
@@ -199,7 +204,10 @@ describe('SubsectionSettings', () => {
   it('resets grading local state when itemData changes', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
     const firstItemData = {
-      ...baseItemData, format: 'g1', due: '2024-01-01', graded: true,
+      ...baseItemData,
+      format: 'g1',
+      due: '2024-01-01',
+      graded: true,
     };
     const secondItemData = { ...firstItemData, format: 'g2', due: '2024-02-02' };
 

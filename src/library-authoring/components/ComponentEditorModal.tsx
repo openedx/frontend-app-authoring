@@ -29,7 +29,7 @@ export const ComponentEditorModal: React.FC<Record<never, never>> = () => {
   }
   const blockType = componentBeingEdited.blockType || getBlockType(componentBeingEdited.usageKey);
 
-  const onClose = (data?:any) => {
+  const onClose = (data?: any) => {
     closeComponentEditor(data);
     invalidateComponentData(queryClient, libraryId, componentBeingEdited.usageKey);
   };

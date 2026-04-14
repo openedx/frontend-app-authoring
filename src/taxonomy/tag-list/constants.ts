@@ -24,9 +24,4 @@ const TABLE_MODE_ACTIONS = {
 // forbidden characters: '\t', '>', ';'
 const TAG_NAME_PATTERN = /^[^\t>;]*$/;
 
-export {
-  TABLE_MODES,
-  TRANSITION_TABLE,
-  TABLE_MODE_ACTIONS,
-  TAG_NAME_PATTERN,
-};
+export { TABLE_MODES, TRANSITION_TABLE, TABLE_MODE_ACTIONS, TAG_NAME_PATTERN };

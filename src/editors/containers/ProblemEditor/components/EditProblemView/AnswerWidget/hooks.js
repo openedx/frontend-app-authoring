@@ -17,7 +17,8 @@ export const state = StrictDict({
 export const removeAnswer = ({
   answer,
   dispatch,
-}) => () => {
+}) =>
+() => {
   dispatch(actions.problem.deleteAnswer({
     id: answer.id,
     correct: answer.correct,
@@ -34,7 +35,8 @@ export const setAnswerTitle = ({
   hasSingleAnswer,
   dispatch,
   problemType,
-}) => (updatedTitle, isDirty) => {
+}) =>
+(updatedTitle, isDirty) => {
   let title = updatedTitle;
   if ([ProblemTypeKeys.TEXTINPUT, ProblemTypeKeys.NUMERIC, ProblemTypeKeys.DROPDOWN].includes(problemType)) {
     title = updatedTitle.target.value;
@@ -106,5 +108,11 @@ export const useAnswerContainer = ({ answers, updateField }) => {
 };
 
 export default {
-  state, removeAnswer, setAnswer, setAnswerTitle, useFeedback, isSingleAnswerProblem, useAnswerContainer,
+  state,
+  removeAnswer,
+  setAnswer,
+  setAnswerTitle,
+  useFeedback,
+  isSingleAnswerProblem,
+  useAnswerContainer,
 };

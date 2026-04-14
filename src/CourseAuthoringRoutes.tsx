@@ -1,5 +1,8 @@
 import {
-  Navigate, Routes, Route, useParams,
+  Navigate,
+  Routes,
+  Route,
+  useParams,
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
@@ -65,7 +68,7 @@ const CourseAuthoringRoutes = () => {
         <Routes>
           <Route
             path="/"
-            element={(
+            element={
               <PageWrap>
                 <CourseOutlineProvider>
                   <OutlineSidebarPagesProvider>
@@ -75,27 +78,49 @@ const CourseAuthoringRoutes = () => {
                   </OutlineSidebarPagesProvider>
                 </CourseOutlineProvider>
               </PageWrap>
-            )}
+            }
           />
           <Route
             path="course_info"
-            element={<PageWrap><CourseUpdates /></PageWrap>}
+            element={
+              <PageWrap>
+                <CourseUpdates />
+              </PageWrap>
+            }
           />
           <Route
             path="libraries"
-            element={<PageWrap><CourseLibraries /></PageWrap>}
+            element={
+              <PageWrap>
+                <CourseLibraries />
+              </PageWrap>
+            }
           />
           <Route
             path="assets"
-            element={<PageWrap><FilesPage /></PageWrap>}
+            element={
+              <PageWrap>
+                <FilesPage />
+              </PageWrap>
+            }
           />
           <Route
             path="videos"
-            element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><VideosPage /></PageWrap> : null}
+            element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true'
+              ? (
+                <PageWrap>
+                  <VideosPage />
+                </PageWrap>
+              )
+              : null}
           />
           <Route
             path="pages-and-resources/*"
-            element={<PageWrap><PagesAndResources /></PageWrap>}
+            element={
+              <PageWrap>
+                <PagesAndResources />
+              </PageWrap>
+            }
           />
           <Route
             path="proctored-exam-settings"
@@ -103,82 +128,142 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="custom-pages/*"
-            element={<PageWrap><CustomPages /></PageWrap>}
+            element={
+              <PageWrap>
+                <CustomPages />
+              </PageWrap>
+            }
           />
           <Route
             path="/subsection/:subsectionId"
-            element={<PageWrap><SubsectionUnitRedirect /></PageWrap>}
+            element={
+              <PageWrap>
+                <SubsectionUnitRedirect />
+              </PageWrap>
+            }
           />
           {DECODED_ROUTES.COURSE_UNIT.map((path) => (
             <Route
               key={path}
               path={path}
-              element={<PageWrap><IframeProvider><CourseUnit /></IframeProvider></PageWrap>}
+              element={
+                <PageWrap>
+                  <IframeProvider>
+                    <CourseUnit />
+                  </IframeProvider>
+                </PageWrap>
+              }
             />
           ))}
           <Route
             path="editor/course-videos/:blockId"
-            element={<PageWrap><VideoSelectorContainer /></PageWrap>}
+            element={
+              <PageWrap>
+                <VideoSelectorContainer />
+              </PageWrap>
+            }
           />
           <Route
             path="editor/:blockType/:blockId?"
-            element={<PageWrap><EditorContainer learningContextId={courseId} /></PageWrap>}
+            element={
+              <PageWrap>
+                <EditorContainer learningContextId={courseId} />
+              </PageWrap>
+            }
           />
           <Route
             path="settings/details"
-            element={<PageWrap><ScheduleAndDetails /></PageWrap>}
+            element={
+              <PageWrap>
+                <ScheduleAndDetails />
+              </PageWrap>
+            }
           />
           <Route
             path="settings/grading"
-            element={<PageWrap><GradingSettings /></PageWrap>}
+            element={
+              <PageWrap>
+                <GradingSettings />
+              </PageWrap>
+            }
           />
           <Route
             path="course_team"
-            element={<PageWrap><CourseTeam /></PageWrap>}
+            element={
+              <PageWrap>
+                <CourseTeam />
+              </PageWrap>
+            }
           />
           <Route
             path="group_configurations"
-            element={<PageWrap><GroupConfigurations /></PageWrap>}
+            element={
+              <PageWrap>
+                <GroupConfigurations />
+              </PageWrap>
+            }
           />
           <Route
             path="settings/advanced"
-            element={<PageWrap><AdvancedSettings /></PageWrap>}
+            element={
+              <PageWrap>
+                <AdvancedSettings />
+              </PageWrap>
+            }
           />
           <Route
             path="import"
-            element={(
+            element={
               <PageWrap>
                 <CourseImportProvider>
                   <CourseImportPage />
                 </CourseImportProvider>
               </PageWrap>
-            )}
+            }
           />
           <Route
             path="export"
-            element={(
+            element={
               <PageWrap>
                 <CourseExportProvider>
                   <CourseExportPage />
                 </CourseExportProvider>
               </PageWrap>
-            )}
+            }
           />
           <Route
             path="optimizer"
-            element={<PageWrap><CourseOptimizerPage /></PageWrap>}
+            element={
+              <PageWrap>
+                <CourseOptimizerPage />
+              </PageWrap>
+            }
           />
           <Route
             path="checklists"
-            element={<PageWrap><CourseChecklist /></PageWrap>}
+            element={
+              <PageWrap>
+                <CourseChecklist />
+              </PageWrap>
+            }
           />
           <Route
             path="certificates"
-            element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true' ? <PageWrap><Certificates /></PageWrap> : null}
+            element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true'
+              ? (
+                <PageWrap>
+                  <Certificates />
+                </PageWrap>
+              )
+              : null}
           />
           <Route
             path="textbooks"
-            element={<PageWrap><Textbooks /></PageWrap>}
+            element={
+              <PageWrap>
+                <Textbooks />
+              </PageWrap>
+            }
           />
         </Routes>
       </CourseAuthoringPage>

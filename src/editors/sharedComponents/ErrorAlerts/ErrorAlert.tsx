@@ -8,7 +8,7 @@ import messages from './messages';
 
 export const hooks = {
   state: {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     isDismissed: (val) => React.useState(val),
   },
   dismissalHooks: ({ dismissError, isError }) => {
@@ -33,9 +33,9 @@ export const hooks = {
 };
 
 declare interface ErrorAlertProps {
-  dismissError?: () => void,
-  hideHeading?: boolean,
-  isError: boolean,
+  dismissError?: () => void;
+  hideHeading?: boolean;
+  isError: boolean;
 }
 
 const ErrorAlert: React.FC<PropsWithChildren<ErrorAlertProps>> = ({

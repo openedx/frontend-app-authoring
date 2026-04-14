@@ -15,7 +15,8 @@ export const checkFieldErrors = (touched, errors, fieldPath, propertyName) => {
 export const errorExists = (errors, fieldPath, propertyName) => getIn(errors, `${fieldPath}.${propertyName}`);
 
 export const checkStatus = ([startDate, endDate]) => {
-  const today = moment(); let status;
+  const today = moment();
+  let status;
 
   if (moment(endDate).isBefore(today, 'days')) {
     status = constants.COMPLETE;
@@ -38,7 +39,8 @@ export const hasValidTimeFormat = (time) => time && moment(time, validTimeFormat
 export const startOfDayTime = (time) => time || moment().startOf('day').format('HH:mm');
 export const endOfDayTime = (time) => time || moment().endOf('day').format('HH:mm');
 export const normalizeTime = (time) => time && moment(time, validTimeFormats, true).format('HH:mm');
-export const normalizeDate = (date) => moment(date, ['MM/DD/YYYY', 'YYYY-MM-DDTHH:mm', 'YYYY-MM-DD'], true).format('YYYY-MM-DD');
+export const normalizeDate = (date) =>
+  moment(date, ['MM/DD/YYYY', 'YYYY-MM-DDTHH:mm', 'YYYY-MM-DD'], true).format('YYYY-MM-DD');
 
 export const decodeDateTime = (date, time) => {
   const nDate = normalizeDate(date);
@@ -56,7 +58,10 @@ export const sortRestrictedDatesByStatus = (data, status, order) => (
 );
 
 export const formatRestrictedDates = ({
-  startDate, startTime, endDate, endTime,
+  startDate,
+  startTime,
+  endDate,
+  endTime,
 }) => {
   let formattedDate;
   const hasSameDay = isSameDay(startDate, endDate);

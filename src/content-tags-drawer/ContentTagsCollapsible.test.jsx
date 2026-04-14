@@ -202,7 +202,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   async function getComponent(updatedData) {
-    const componentData = (!updatedData ? data : updatedData);
+    const componentData = !updatedData ? data : updatedData;
 
     return render(
       <ContentTagsCollapsibleComponent
@@ -247,10 +247,12 @@ describe('<ContentTagsCollapsible />', () => {
   it('should render edit mode', async () => {
     await getComponent();
 
-    expect(screen.getAllByRole(
-      'button',
-      { name: /delete/i },
-    ).length).toBe(3);
+    expect(
+      screen.getAllByRole(
+        'button',
+        { name: /delete/i },
+      ).length,
+    ).toBe(3);
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
   });
 
@@ -510,7 +512,9 @@ describe('<ContentTagsCollapsible />', () => {
   it('should handle search term change', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const {
-      getByText, getByRole, getByDisplayValue,
+      getByText,
+      getByRole,
+      getByDisplayValue,
     } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown

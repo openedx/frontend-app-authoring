@@ -3,7 +3,10 @@ import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, Stack, Tab, Tabs,
+  Button,
+  Stack,
+  Tab,
+  Tabs,
 } from '@openedx/paragon';
 import {
   OpenInFull,
@@ -146,16 +149,21 @@ export const UnitSidebar = () => {
         /* istanbul ignore next */
         const newIndex = isCrossSubsection
           ? (step === -1
-            ? sections[newSectionIndex].childInfo.children.find((s) => s.id === newSubsectionId)?.childInfo.children.length ?? 0
+            ? sections[newSectionIndex].childInfo.children.find((s) => s.id === newSubsectionId)?.childInfo.children
+              .length ?? 0
             : 0)
           : index + step;
         /* istanbul ignore next */
-        setSelectedContainerState(selectedContainerState ? {
-          ...selectedContainerState,
-          sectionId: newSectionId,
-          subsectionId: newSubsectionId,
-          index: newIndex,
-        } : undefined);
+        setSelectedContainerState(
+          selectedContainerState ?
+            {
+              ...selectedContainerState,
+              sectionId: newSectionId,
+              subsectionId: newSubsectionId,
+              index: newIndex,
+            } :
+            undefined,
+        );
       }
     }
   };
@@ -170,7 +178,7 @@ export const UnitSidebar = () => {
     if (navigator.clipboard) {
       // Modern approach: requires HTTPS (secure context)
       void navigator.clipboard.writeText(locationId);
-    } else /* istanbul ignore next */ {
+    } /* istanbul ignore next */ else {
       // Fallback for HTTP (non-secure) dev environments
       // Note: execCommand is deprecated but still widely supported as fallback
       const textarea = document.createElement('textarea');
@@ -197,11 +205,12 @@ export const UnitSidebar = () => {
           onClickDuplicate: unitData?.actions?.duplicable ? handleDuplicateUnitSubmit : undefined,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
-          onClickUnlink: () => openUnlinkModal({
-            value: unitData,
-            sectionId: selectedContainerState?.sectionId,
-            subsectionId: selectedContainerState?.subsectionId,
-          }),
+          onClickUnlink: () =>
+            openUnlinkModal({
+              value: unitData,
+              sectionId: selectedContainerState?.sectionId,
+              subsectionId: selectedContainerState?.subsectionId,
+            }),
           onClickDelete: openDeleteModal,
           onClickViewLibrary: () => {
             const upstreamRef = unitData?.upstreamInfo?.upstreamRef;
@@ -224,9 +233,7 @@ export const UnitSidebar = () => {
         >
           {intl.formatMessage(messages.openUnitPage)}
         </Button>
-        {unitData?.hasChanges && (
-          <PublishButon onClick={handlePublish} />
-        )}
+        {unitData?.hasChanges && <PublishButon onClick={handlePublish} />}
       </Stack>
       <Tabs
         variant="tabs"

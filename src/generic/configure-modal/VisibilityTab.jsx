@@ -56,9 +56,9 @@ const VisibilityTab = ({
 
   const hideDueMessage = {
     hideContentLabel: isSelfPaced ? messages.hideContentAfterEnd : messages.hideContentAfterDue,
-    hideContentDescription: (
-      isSelfPaced ? messages.hideContentAfterEndDescription : messages.hideContentAfterDueDescription
-    ),
+    hideContentDescription: isSelfPaced
+      ? messages.hideContentAfterEndDescription
+      : messages.hideContentAfterDueDescription,
   };
 
   return (
@@ -67,8 +67,8 @@ const VisibilityTab = ({
         {intl.formatMessage(messages.visibilitySectionTitle, { visibilityTitle })}
       </h5>
       <hr />
-      {
-        isSubsection ? (
+      {isSubsection ?
+        (
           <>
             <Form.RadioSet
               name="subsectionVisibility"
@@ -78,23 +78,30 @@ const VisibilityTab = ({
               <Form.Radio value="show">
                 <FormattedMessage {...messages.showEntireSubsection} />
               </Form.Radio>
-              <Form.Text><FormattedMessage {...messages.showEntireSubsectionDescription} /></Form.Text>
+              <Form.Text>
+                <FormattedMessage {...messages.showEntireSubsectionDescription} />
+              </Form.Text>
               <Form.Radio value="hideDue">
                 <FormattedMessage {...hideDueMessage.hideContentLabel} />
               </Form.Radio>
-              <Form.Text><FormattedMessage {...hideDueMessage.hideContentDescription} />
+              <Form.Text>
+                <FormattedMessage {...hideDueMessage.hideContentDescription} />
               </Form.Text>
               <Form.Radio value="hide">
                 <FormattedMessage {...messages.hideEntireSubsection} />
               </Form.Radio>
-              <Form.Text><FormattedMessage {...messages.hideEntireSubsectionDescription} /></Form.Text>
+              <Form.Text>
+                <FormattedMessage {...messages.hideEntireSubsectionDescription} />
+              </Form.Text>
             </Form.RadioSet>
             {showWarning && (
               <Alert className="mt-2" variant="warning">
                 <FormattedMessage {...messages.subsectionVisibilityWarning} />
               </Alert>
             )}
-            <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.assessmentResultsVisibility} /></h5>
+            <h5 className="mt-4 text-gray-700">
+              <FormattedMessage {...messages.assessmentResultsVisibility} />
+            </h5>
             <Form.RadioSet
               name="assessmentResultsVisibility"
               onChange={correctnessChanged}
@@ -103,15 +110,21 @@ const VisibilityTab = ({
               <Form.Radio value="always">
                 <FormattedMessage {...messages.alwaysShowAssessmentResults} />
               </Form.Radio>
-              <Form.Text><FormattedMessage {...messages.alwaysShowAssessmentResultsDescription} /></Form.Text>
+              <Form.Text>
+                <FormattedMessage {...messages.alwaysShowAssessmentResultsDescription} />
+              </Form.Text>
               <Form.Radio value="never">
                 <FormattedMessage {...messages.neverShowAssessmentResults} />
               </Form.Radio>
-              <Form.Text><FormattedMessage {...messages.neverShowAssessmentResultsDescription} /></Form.Text>
+              <Form.Text>
+                <FormattedMessage {...messages.neverShowAssessmentResultsDescription} />
+              </Form.Text>
               <Form.Radio value="past_due">
                 <FormattedMessage {...messages.showAssessmentResultsPastDue} />
               </Form.Radio>
-              <Form.Text><FormattedMessage {...messages.showAssessmentResultsPastDueDescription} /></Form.Text>
+              <Form.Text>
+                <FormattedMessage {...messages.showAssessmentResultsPastDueDescription} />
+              </Form.Text>
               <Form.Radio value="never_but_include_grade">
                 <FormattedMessage {...messages.neverShowAssessmentResultsButIncludeGrade} />
               </Form.Radio>
@@ -120,12 +133,12 @@ const VisibilityTab = ({
               </Form.Text>
             </Form.RadioSet>
           </>
-        ) : (
+        ) :
+        (
           <Form.Checkbox checked={isVisibleToStaffOnly} onChange={handleChange} data-testid="visibility-checkbox">
             <FormattedMessage {...messages.hideFromLearners} />
           </Form.Checkbox>
-        )
-      }
+        )}
       {showWarning && !isSubsection && (
         <Alert className="mt-2" variant="warning">
           <FormattedMessage {...messages.sectionVisibilityWarning} />

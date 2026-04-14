@@ -24,7 +24,10 @@ const unitData = {
     selectedGroups: [],
   },
   actions: {
-    deletable: true, duplicable: true, draggable: false, childAddable: false,
+    deletable: true,
+    duplicable: true,
+    draggable: false,
+    childAddable: false,
   },
   upstreamInfo: null,
   ancestorInfo: {
@@ -99,17 +102,18 @@ const mockUseParams = useParams as jest.MockedFunction<typeof useParams>;
 const selectors = jest.requireMock('@src/course-unit/data/selectors') as any;
 const unitSidebarContext = jest.requireMock('../UnitSidebarContext') as any;
 
-const renderComponent = () => render(
-  <IframeProvider>
-    <UnitSidebarProvider readOnly={false}>
-      <UnitInfoSidebar />
-    </UnitSidebarProvider>
-  </IframeProvider>,
-  {
-    path: '/course/:courseId',
-    params: { courseId: 'course-v1:UNIX+UX1+2025_T3' },
-  },
-);
+const renderComponent = () =>
+  render(
+    <IframeProvider>
+      <UnitSidebarProvider readOnly={false}>
+        <UnitInfoSidebar />
+      </UnitSidebarProvider>
+    </IframeProvider>,
+    {
+      path: '/course/:courseId',
+      params: { courseId: 'course-v1:UNIX+UX1+2025_T3' },
+    },
+  );
 
 describe('<UnitInfoSidebar /> - rendering', () => {
   let axiosMock: any;
@@ -130,7 +134,9 @@ describe('<UnitInfoSidebar /> - rendering', () => {
 
     selectors.getCourseVerticalChildren.mockReturnValue({
       children: [
-        { blockType: 'html' }, { blockType: 'problem' }, { blockType: 'html' },
+        { blockType: 'html' },
+        { blockType: 'problem' },
+        { blockType: 'html' },
       ],
     });
 
@@ -141,7 +147,9 @@ describe('<UnitInfoSidebar /> - rendering', () => {
   it('renders title and details components and sets default tab', () => {
     const setCurrentTabKey = jest.fn();
     unitSidebarContext.useUnitSidebarContext.mockReturnValue({
-      currentTabKey: 'details', setCurrentTabKey, isVertical: true,
+      currentTabKey: 'details',
+      setCurrentTabKey,
+      isVertical: true,
     });
 
     renderComponent();
@@ -155,7 +163,9 @@ describe('<UnitInfoSidebar /> - rendering', () => {
   it('renders settings tab content when active', () => {
     const setCurrentTabKey = jest.fn();
     unitSidebarContext.useUnitSidebarContext.mockReturnValue({
-      currentTabKey: 'settings', setCurrentTabKey, isVertical: true,
+      currentTabKey: 'settings',
+      setCurrentTabKey,
+      isVertical: true,
     });
 
     renderComponent();
@@ -176,7 +186,9 @@ describe('<UnitInfoSidebar /> - menu behavior', () => {
     selectors.getCourseUnitData.mockReturnValue(unitData);
     selectors.getCourseVerticalChildren.mockReturnValue({ children: [], isLoading: false });
     unitSidebarContext.useUnitSidebarContext.mockReturnValue({
-      currentTabKey: 'details', setCurrentTabKey: jest.fn(), isVertical: true,
+      currentTabKey: 'details',
+      setCurrentTabKey: jest.fn(),
+      isVertical: true,
     });
 
     // InfoSidebarMenu calls useCourseItemData(itemId) internally and returns null if undefined.

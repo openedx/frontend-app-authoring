@@ -65,7 +65,7 @@ const messages = defineMessages({
     id: 'course-authoring.sidebar.item-menu.move',
     defaultMessage: 'Move',
     description: 'Text for the Move button in the sidebar menu',
-  }, 
+  },
 });
 
 export default messages;

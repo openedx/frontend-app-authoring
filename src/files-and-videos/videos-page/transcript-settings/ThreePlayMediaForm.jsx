@@ -57,41 +57,43 @@ const ThreePlayMediaForm = ({
           />
         </Form.Group>
         <TransitionReplace>
-          {!isEmpty(data.videoSourceLanguage) ? (
-            <Form.Group size="sm">
-              <Form.Label className="h5">
-                <FormattedMessage {...messages.threePlayMediaTranscriptLanguageLabel} />
-              </Form.Label>
-              <FormDropdown
-                value={selectedLanguages}
-                options={languages}
-                allowMultiple={allowMultiple}
-                handleSelect={(value) => {
-                  if (!allowMultiple) {
-                    setData({ ...data, preferredLanguages: [value] });
-                  } else {
-                    const [lang, checked] = value;
-                    if (checked) {
-                      setData({ ...data, preferredLanguages: [...selectedLanguages, lang] });
+          {!isEmpty(data.videoSourceLanguage) ?
+            (
+              <Form.Group size="sm">
+                <Form.Label className="h5">
+                  <FormattedMessage {...messages.threePlayMediaTranscriptLanguageLabel} />
+                </Form.Label>
+                <FormDropdown
+                  value={selectedLanguages}
+                  options={languages}
+                  allowMultiple={allowMultiple}
+                  handleSelect={(value) => {
+                    if (!allowMultiple) {
+                      setData({ ...data, preferredLanguages: [value] });
                     } else {
-                      const updatedLangList = selectedLanguages.filter((selected) => selected !== lang);
-                      setData({ ...data, preferredLanguages: updatedLangList });
+                      const [lang, checked] = value;
+                      if (checked) {
+                        setData({ ...data, preferredLanguages: [...selectedLanguages, lang] });
+                      } else {
+                        const updatedLangList = selectedLanguages.filter((selected) => selected !== lang);
+                        setData({ ...data, preferredLanguages: updatedLangList });
+                      }
                     }
-                  }
-                }}
-                placeholderText={intl.formatMessage(messages.threePlayMediaTranscriptLanguagePlaceholder)}
-              />
-              <Form.Control.Feedback>
-                <ul className="m-0 p-0">
-                  {selectedLanguages.map(language => (
-                    <li className="row align-items-center m-0 pt-2" key={language}>
-                      <Icon src={Check} size="xs" /> <span>{languages[language]}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Form.Control.Feedback>
-            </Form.Group>
-          ) : null }
+                  }}
+                  placeholderText={intl.formatMessage(messages.threePlayMediaTranscriptLanguagePlaceholder)}
+                />
+                <Form.Control.Feedback>
+                  <ul className="m-0 p-0">
+                    {selectedLanguages.map(language => (
+                      <li className="row align-items-center m-0 pt-2" key={language}>
+                        <Icon src={Check} size="xs" /> <span>{languages[language]}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Form.Control.Feedback>
+              </Form.Group>
+            ) :
+            null}
         </TransitionReplace>
       </Stack>
     );

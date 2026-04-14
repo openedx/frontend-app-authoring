@@ -18,7 +18,8 @@ export default {
         has_children: true,
         video_sharing_enabled: true,
         video_sharing_options: 'per-video',
-        video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+        video_sharing_doc_url:
+          'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
         child_info: {
           category: 'sequential',
           display_name: 'Subsection',
@@ -30,7 +31,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -42,7 +44,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -52,7 +55,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@html+block@f7cc083ff66d442eafafd48152881276',
@@ -61,7 +65,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@video+block@0b9e39477cf34507a7a48f74be381fdd',
@@ -70,7 +75,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@video+block@6e72ebc448694e42ac56553af74304e7',
@@ -79,7 +85,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -94,7 +101,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
             },
           ],
         },
@@ -106,7 +114,8 @@ export default {
         has_children: true,
         video_sharing_enabled: true,
         video_sharing_options: 'per-video',
-        video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+        video_sharing_doc_url:
+          'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
         child_info: {
           category: 'sequential',
           display_name: 'Subsection',
@@ -118,7 +127,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -130,7 +140,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -140,7 +151,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -152,7 +164,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -162,7 +175,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@video+block@7e9b434e6de3435ab99bd3fb25bde807',
@@ -171,7 +185,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@412dc8dbb6674014862237b23c1f643f',
@@ -180,7 +195,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -192,7 +208,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -202,7 +219,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@video+block@5c90cffecd9b48b188cbfea176bf7fe9',
@@ -211,7 +229,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@722085be27c84ac693cfebc8ac5da700',
@@ -220,7 +239,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -232,7 +252,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -242,7 +263,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@9f9e1373cc8243b985c8750cc8acec7d',
@@ -251,7 +273,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -263,7 +286,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -273,7 +297,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@video+block@636541acbae448d98ab484b028c9a7f6',
@@ -282,7 +307,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@e2cb0e0994f84b0abfa5f4ae42ed9d44',
@@ -291,7 +317,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -303,7 +330,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -313,7 +341,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@3169f89efde2452993f2f2d9bc74f5b2',
@@ -322,7 +351,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -334,7 +364,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -344,7 +375,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@1c8d47c425724346a7968fa1bc745dcd',
@@ -353,7 +385,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -365,7 +398,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -375,7 +409,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@html+block@2574c523e97b477a9d72fbb37bfb995f',
@@ -384,7 +419,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@problem+block@932e6f2ce8274072a355a94560216d1a',
@@ -393,7 +429,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@problem+block@303034da25524878a2e66fb57c91cf85',
@@ -402,7 +439,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@ffa5817d49e14fec83ad6187cbe16358',
@@ -411,7 +449,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -423,7 +462,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -433,7 +473,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -448,7 +489,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -460,7 +502,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -470,7 +513,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@e5eac7e1a5a24f5fa7ed77bb6d136591',
@@ -479,7 +523,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -491,7 +536,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -501,7 +547,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@5ab88e67d46049b9aa694cb240c39cef',
@@ -510,7 +557,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -522,7 +570,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -532,7 +581,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@67c26b1e826e47aaa29757f62bcd1ad0',
@@ -541,7 +591,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -553,7 +604,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -563,7 +615,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@870371212ba04dcf9536d7c7b8f3109e',
@@ -572,7 +625,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -584,7 +638,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -594,7 +649,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@4d672c5893cb4f1dad0de67d2008522e',
@@ -603,7 +659,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -615,7 +672,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -625,7 +683,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@501aed9d902349eeb2191fa505548de2',
@@ -634,7 +693,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -646,7 +706,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -656,7 +717,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@6244918637ed4ff4b5f94a840a7e4b43',
@@ -665,7 +727,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -677,7 +740,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [],
                     },
@@ -695,41 +759,45 @@ export default {
         has_children: true,
         video_sharing_enabled: true,
         video_sharing_options: 'per-video',
-        video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+        video_sharing_doc_url:
+          'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
         child_info: {
           category: 'sequential',
           display_name: 'Subsection',
           children: [
             {
               id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@simulations',
-              display_name: "Lesson 2 - Let's Get Interactive!",
+              display_name: 'Lesson 2 - Let\'s Get Interactive!',
               category: 'sequential',
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
                 children: [
                   {
                     id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@d0d804e8863c4a95a659c04d8a2b2bc0',
-                    display_name: "Lesson 2 - Let's Get Interactive! ",
+                    display_name: 'Lesson 2 - Let\'s Get Interactive! ',
                     category: 'vertical',
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@html+block@78d7d3642f3a4dbabbd1b017861aa5f2',
-                          display_name: "Lesson 2: Let's Get Interactive!",
+                          display_name: 'Lesson 2: Let\'s Get Interactive!',
                           category: 'html',
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -741,7 +809,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -751,7 +820,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@6f7a6670f87147149caeff6afa07a526',
@@ -760,7 +830,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -772,7 +843,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -782,7 +854,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@e0d7423118ab432582d03e8e8dad8e36',
@@ -791,7 +864,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -803,7 +877,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -813,7 +888,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@03f051f9a8814881a3783d2511613aa6',
@@ -822,7 +898,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -834,7 +911,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -844,7 +922,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -859,7 +938,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -871,7 +951,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -881,7 +962,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -893,7 +975,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -903,7 +986,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@problem+block@python_grader',
@@ -912,7 +996,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@c6cd4bea43454aaea60ad01beb0cf213',
@@ -921,7 +1006,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -933,7 +1019,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -943,7 +1030,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@problem+block@free_form_simulation',
@@ -952,7 +1040,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@problem+block@logic_gate_problem',
@@ -961,7 +1050,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@4f06b358a96f4d1dae57d6d81acd06f2',
@@ -970,7 +1060,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -982,7 +1073,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -992,7 +1084,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@problem+block@700x_proteinmake',
@@ -1001,7 +1094,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@ed01bcd164e64038a78964a16eac3edc',
@@ -1010,7 +1104,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1022,7 +1117,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1032,7 +1128,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1047,7 +1144,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -1059,17 +1157,20 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
-                          id: 'block-v1:edX+DemoX+Demo_Course+type@openassessment+block@b24c33ea35954c7889e1d2944d3fe397',
+                          id:
+                            'block-v1:edX+DemoX+Demo_Course+type@openassessment+block@b24c33ea35954c7889e1d2944d3fe397',
                           display_name: 'Open Response Assessment',
                           category: 'openassessment',
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@12ad4f3ff4c14114a6e629b00e000976',
@@ -1078,7 +1179,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1096,7 +1198,8 @@ export default {
         has_children: true,
         video_sharing_enabled: true,
         video_sharing_options: 'per-video',
-        video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+        video_sharing_doc_url:
+          'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
         child_info: {
           category: 'sequential',
           display_name: 'Subsection',
@@ -1108,7 +1211,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -1120,7 +1224,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1130,7 +1235,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1142,7 +1248,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1152,7 +1259,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@discussion_5deb6081620d',
@@ -1161,7 +1269,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1173,7 +1282,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1183,7 +1293,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1195,7 +1306,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1205,7 +1317,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1220,7 +1333,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -1232,7 +1346,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1242,7 +1357,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1257,7 +1373,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -1269,7 +1386,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1279,7 +1397,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@html+block@55cbc99f262443d886a25cf84594eafb',
@@ -1288,7 +1407,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@ade92343df3d4953a40ab3adc8805390',
@@ -1297,7 +1417,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1315,7 +1436,8 @@ export default {
         has_children: true,
         video_sharing_enabled: true,
         video_sharing_options: 'per-video',
-        video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+        video_sharing_doc_url:
+          'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
         child_info: {
           category: 'sequential',
           display_name: 'Subsection',
@@ -1327,7 +1449,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -1339,7 +1462,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1349,7 +1473,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1361,7 +1486,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1371,7 +1497,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@4aba537a78774bd5a862485a8563c345',
@@ -1380,7 +1507,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1392,7 +1520,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1402,7 +1531,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@f480df4ce91347c5ae4301ddf6146238',
@@ -1411,7 +1541,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1423,7 +1554,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1433,7 +1565,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@b8cec2a19ebf463f90cd3544c7927b0e',
@@ -1442,7 +1575,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1454,7 +1588,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1464,7 +1599,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@problem+block@d1b84dcd39b0423d9e288f27f0f7f242',
@@ -1473,7 +1609,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@cd177caa62444fbca48aa8f843f09eac',
@@ -1482,7 +1619,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1494,7 +1632,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1504,7 +1643,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@ddede76df71045ffa16de9d1481d2119',
@@ -1513,7 +1653,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1525,7 +1666,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1535,7 +1677,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@1a810b1a3b2447b998f0917d0e5a802b',
@@ -1544,7 +1687,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1556,7 +1700,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1566,7 +1711,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@discussion+block@23e6eda482c04335af2bb265beacaf59',
@@ -1575,7 +1721,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1587,7 +1734,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1597,7 +1745,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                         {
                           id: 'block-v1:edX+DemoX+Demo_Course+type@html+block@6b6bee43c7c641509da71c9299cc9f5a',
@@ -1606,7 +1755,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1624,7 +1774,8 @@ export default {
         has_children: true,
         video_sharing_enabled: true,
         video_sharing_options: 'per-video',
-        video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+        video_sharing_doc_url:
+          'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
         child_info: {
           category: 'sequential',
           display_name: 'Subsection',
@@ -1636,7 +1787,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
               child_info: {
                 category: 'vertical',
                 display_name: 'Unit',
@@ -1648,7 +1800,8 @@ export default {
                     has_children: true,
                     video_sharing_enabled: true,
                     video_sharing_options: 'per-video',
-                    video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                    video_sharing_doc_url:
+                      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                     child_info: {
                       children: [
                         {
@@ -1658,7 +1811,8 @@ export default {
                           has_children: false,
                           video_sharing_enabled: true,
                           video_sharing_options: 'per-video',
-                          video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+                          video_sharing_doc_url:
+                            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
                         },
                       ],
                     },
@@ -1673,7 +1827,8 @@ export default {
               has_children: true,
               video_sharing_enabled: true,
               video_sharing_options: 'per-video',
-              video_sharing_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+              video_sharing_doc_url:
+                'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
             },
           ],
         },

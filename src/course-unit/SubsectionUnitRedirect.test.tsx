@@ -1,6 +1,9 @@
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
-  initializeMocks, waitFor, render, screen,
+  initializeMocks,
+  waitFor,
+  render,
+  screen,
 } from '../testUtils';
 import SubsectionUnitRedirect from './SubsectionUnitRedirect';
 import { getXBlockApiUrl } from '../course-outline/data/api';
@@ -44,7 +47,7 @@ jest.mock('react-router-dom', () => {
   const originalModule = jest.requireActual('react-router-dom');
   return {
     ...originalModule,
-    Navigate: ({ to }: { to: string }) => <div data-testid="mock-navigate" data-to={to}>Mocked Navigate</div>,
+    Navigate: ({ to }: { to: string; }) => <div data-testid="mock-navigate" data-to={to}>Mocked Navigate</div>,
   };
 });
 describe('SubsectionUnitRedirect', () => {
@@ -66,9 +69,11 @@ describe('SubsectionUnitRedirect', () => {
       expect(mockNavigate).toBeInTheDocument();
       expect(mockNavigate).toHaveAttribute(
         'data-to',
-        `/course/${courseId}/container/${encodeURIComponent(
-          'block-v1:edX+DemoX+Demo_Course+type@vertical+block@1',
-        )}`,
+        `/course/${courseId}/container/${
+          encodeURIComponent(
+            'block-v1:edX+DemoX+Demo_Course+type@vertical+block@1',
+          )
+        }`,
       );
     });
   });

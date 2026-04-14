@@ -60,7 +60,8 @@ const DEFAULT_TAB = {
 type SidebarInfoTab = ComponentInfoTab | CollectionInfoTab | ContainerInfoTab;
 const toSidebarInfoTab = (tab: string): SidebarInfoTab | undefined => (
   isComponentInfoTab(tab) || isCollectionInfoTab(tab) || isContainerInfoTab(tab)
-    ? tab : undefined
+    ? tab :
+    undefined
 );
 
 export interface DefaultTabs {
@@ -104,7 +105,6 @@ export type SidebarContextData = {
  * Sidebar Context.
  *
  * Get this using `useSidebarContext()`
- *
  */
 const SidebarContext = createContext<SidebarContextData | undefined>(undefined);
 

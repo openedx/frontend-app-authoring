@@ -37,7 +37,7 @@ import * as module from './index';
 
 export const hooks = {
   updateErrors: ({ isUploadError, isDeleteError }) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [error, setError] = React.useContext(ErrorContext).transcripts;
     if (isUploadError) {
       setError({ ...error, uploadError: messages.uploadTranscriptError.defaultMessage });
@@ -108,11 +108,11 @@ const TranscriptWidget = ({
       <div className="mr-4 ml-4">
         <Card className="bg-light-200">
           <Card.Section
-            title={(
+            title={
               <div className="text-gray-500">
                 {intl.formatMessage(messages.title)}
               </div>
-            )}
+            }
           >
             <div className="d-flex justify-content-around text-gray-700 pb-4 x-small">
               {intl.formatMessage(messages.videoCreationWarning)}
@@ -143,57 +143,59 @@ const TranscriptWidget = ({
         <FormattedMessage {...messages.deleteTranscriptError} />
       </ErrorAlert>
       <Stack gap={3}>
-        {hasTranscripts ? (
-          <Form.Group className="border-primary-100 border-bottom">
-            {transcripts.map((language, index) => (
-              <Transcript
-                key={language}
-                language={language}
-                transcriptUrl={selectedVideoTranscriptUrls[language]}
-                index={index}
-              />
-            ))}
-            <ActionRow className="mt-3.5">
+        {hasTranscripts ?
+          (
+            <Form.Group className="border-primary-100 border-bottom">
+              {transcripts.map((language, index) => (
+                <Transcript
+                  key={language}
+                  language={language}
+                  transcriptUrl={selectedVideoTranscriptUrls[language]}
+                  index={index}
+                />
+              ))}
+              <ActionRow className="mt-3.5">
+                <Form.Checkbox
+                  checked={allowTranscriptDownloads}
+                  className="decorative-control-label"
+                  onChange={(e) => updateField({ allowTranscriptDownloads: e.target.checked })}
+                >
+                  <div className="small text-gray-700">
+                    <FormattedMessage {...messages.allowDownloadCheckboxLabel} />
+                  </div>
+                </Form.Checkbox>
+                <OverlayTrigger
+                  key="top"
+                  placement="top"
+                  overlay={
+                    <Tooltip id="tooltip-top">
+                      <FormattedMessage {...messages.tooltipMessage} />
+                    </Tooltip>
+                  }
+                >
+                  <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
+                </OverlayTrigger>
+                <ActionRow.Spacer />
+              </ActionRow>
               <Form.Checkbox
-                checked={allowTranscriptDownloads}
-                className="decorative-control-label"
-                onChange={(e) => updateField({ allowTranscriptDownloads: e.target.checked })}
+                checked={showTranscriptByDefault}
+                className="mt-3 decorative-control-label"
+                onChange={(e) => updateField({ showTranscriptByDefault: e.target.checked })}
               >
                 <div className="small text-gray-700">
-                  <FormattedMessage {...messages.allowDownloadCheckboxLabel} />
+                  <FormattedMessage {...messages.showByDefaultCheckboxLabel} />
                 </div>
               </Form.Checkbox>
-              <OverlayTrigger
-                key="top"
-                placement="top"
-                overlay={(
-                  <Tooltip id="tooltip-top">
-                    <FormattedMessage {...messages.tooltipMessage} />
-                  </Tooltip>
-                )}
-              >
-                <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
-              </OverlayTrigger>
-              <ActionRow.Spacer />
-            </ActionRow>
-            <Form.Checkbox
-              checked={showTranscriptByDefault}
-              className="mt-3 decorative-control-label"
-              onChange={(e) => updateField({ showTranscriptByDefault: e.target.checked })}
-            >
-              <div className="small text-gray-700">
-                <FormattedMessage {...messages.showByDefaultCheckboxLabel} />
-              </div>
-            </Form.Checkbox>
-          </Form.Group>
-        ) : (
-          <>
-            <FormattedMessage {...messages.addFirstTranscript} />
-            {showImportCard && allowTranscriptImport
-              ? <ImportTranscriptCard setOpen={setShowImportCard} />
-              : null}
-          </>
-        )}
+            </Form.Group>
+          ) :
+          (
+            <>
+              <FormattedMessage {...messages.addFirstTranscript} />
+              {showImportCard && allowTranscriptImport
+                ? <ImportTranscriptCard setOpen={setShowImportCard} />
+                : null}
+            </>
+          )}
         <div className="mt-2">
           <Button
             className="text-primary-500 font-weight-bold justify-content-start pl-0"

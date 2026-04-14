@@ -140,9 +140,10 @@ describe('Video Settings modal hooks', () => {
         });
       });
       describe('returned object', () => {
-        const mockUpdateFormField = (args) => jest.fn(
-          (val) => ({ updateFormField: { args, val } }),
-        );
+        const mockUpdateFormField = (args) =>
+          jest.fn(
+            (val) => ({ updateFormField: { args, val } }),
+          );
         beforeEach(() => {
           jest.spyOn(hooks, keys.hooks.updateFormField)
             .mockImplementationOnce(mockUpdateFormField);

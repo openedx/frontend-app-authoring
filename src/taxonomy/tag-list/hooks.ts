@@ -21,7 +21,7 @@ import messages from './messages';
  * An invalid transition (e.g. from DRAFT to VIEW) will throw an error to prevent disruptive data refreshes.
  *
  * For examples, see: https://react.dev/learn/extracting-state-logic-into-a-reducer#writing-reducers-well
-*/
+ */
 export interface TableModeAction {
   type: string;
   targetMode: string;
@@ -100,7 +100,11 @@ const useTableModes = (): UseTableModesReturn => {
   const enterViewMode = () => transitionTableMode(TABLE_MODES.VIEW);
 
   return {
-    tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode,
+    tableMode,
+    enterDraftMode,
+    exitDraftWithoutSave,
+    enterPreviewMode,
+    enterViewMode,
   };
 };
 
@@ -183,7 +187,9 @@ const useEditActions = ({
       setCreatingParentId(null);
     } catch (error) {
       const message = intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: (error as Error)?.message });
-      setDraftError((error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: '' }));
+      setDraftError(
+        (error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: '' }),
+      );
       setToast({ show: true, message });
     }
   };
@@ -212,7 +218,9 @@ const useEditActions = ({
       });
     } catch (error) {
       const message = intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage: (error as Error)?.message });
-      setDraftError((error as Error)?.message || intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage: '' }));
+      setDraftError(
+        (error as Error)?.message || intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage: '' }),
+      );
       setToast({ show: true, message });
     }
   };

@@ -16,15 +16,16 @@ const contentGroupActions = {
   handleEdit: handleEditMock,
 };
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <ContentGroupsSection
-      availableGroup={contentGroupsMock}
-      contentGroupActions={contentGroupActions}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <ContentGroupsSection
+        availableGroup={contentGroupsMock}
+        contentGroupActions={contentGroupActions}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ContentGroupsSection />', () => {
   it('renders component correctly', () => {

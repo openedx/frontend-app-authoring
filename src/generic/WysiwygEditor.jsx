@@ -10,7 +10,10 @@ export const SUPPORTED_TEXT_EDITORS = {
 };
 
 export const WysiwygEditor = ({
-  initialValue, editorType, onChange, minHeight,
+  initialValue,
+  editorType,
+  onChange,
+  minHeight,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
   const { courseId } = useCourseAuthoringContext();
@@ -27,7 +30,8 @@ export const WysiwygEditor = ({
   };
 
   // default initial string returned onEditorChange if empty input
-  const needToChange = (value) => !isEquivalentCodeQuotes(initialValue, value)
+  const needToChange = (value) =>
+    !isEquivalentCodeQuotes(initialValue, value)
     && !isEquivalentCodeExtraSpaces(initialValue, value)
     && (initialValue !== DEFAULT_EMPTY_WYSIWYG_VALUE || value !== '');
 

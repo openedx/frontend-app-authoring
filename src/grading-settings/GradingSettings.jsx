@@ -1,6 +1,9 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, Container, Layout, StatefulButton,
+  Button,
+  Container,
+  Layout,
+  StatefulButton,
 } from '@openedx/paragon';
 import { Add as IconAdd, CheckCircle, Warning } from '@openedx/paragon/icons';
 import { useEffect, useState } from 'react';

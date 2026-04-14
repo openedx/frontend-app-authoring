@@ -9,7 +9,6 @@ import { initializeStore, type PartialEditorState } from './data/redux'; // adju
  *
  * Wraps the provided UI in both the EditorContextProvider and Redux Provider,
  * ensuring that components under test have access to the necessary context and store.
- *
  */
 export const editorRender = (
   ui: React.ReactElement,
@@ -17,7 +16,7 @@ export const editorRender = (
     initialState = {},
     learningContextId = 'course-v1:Org+COURSE+RUN',
     ...options
-  }: Omit<WrapperOptions, 'extraWrapper'> & { initialState?: PartialEditorState, learningContextId?: string } = {},
+  }: Omit<WrapperOptions, 'extraWrapper'> & { initialState?: PartialEditorState; learningContextId?: string; } = {},
 ) => {
   // We might need a way for the test cases to access this store directly. In that case we could allow either an
   // initialState parameter OR an editorStore parameter.

@@ -36,5 +36,6 @@ export async function mockClipboardHtml(blockType?: string): Promise<api.Clipboa
     sourceEditUrl: 'http://localhost:18010/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
   };
 }
-mockClipboardHtml.applyMock = (blockType?: string) => jest.spyOn(api, 'getClipboard').mockImplementation(() => mockClipboardHtml(blockType));
+mockClipboardHtml.applyMock = (blockType?: string) =>
+  jest.spyOn(api, 'getClipboard').mockImplementation(() => mockClipboardHtml(blockType));
 mockClipboardHtml.applyMockOnce = () => jest.spyOn(api, 'getClipboard').mockImplementationOnce(mockClipboardHtml);

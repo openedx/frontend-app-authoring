@@ -5,7 +5,9 @@ import { useFormikContext } from 'formik';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, Card, Form,
+  Button,
+  Card,
+  Form,
 } from '@openedx/paragon';
 
 import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
@@ -22,7 +24,9 @@ const TopicItem = ({
 }) => {
   const intl = useIntl();
   const {
-    handleChange, handleBlur, errors,
+    handleChange,
+    handleBlur,
+    errors,
   } = useFormikContext();
   const [inFocus, setInFocus] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
@@ -43,7 +47,8 @@ const TopicItem = ({
           </div>
         </div>
       );
-    } if (isOpen) {
+    }
+    if (isOpen) {
       return (
         <span className="h4 py-2 mr-auto">
           {intl.formatMessage(messages.configureAdditionalTopic)}

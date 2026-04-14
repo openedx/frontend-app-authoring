@@ -1,6 +1,10 @@
 import React from 'react';
 import {
-  ActionRow, Form, Icon, IconButton, Row,
+  ActionRow,
+  Form,
+  Icon,
+  IconButton,
+  Row,
 } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';

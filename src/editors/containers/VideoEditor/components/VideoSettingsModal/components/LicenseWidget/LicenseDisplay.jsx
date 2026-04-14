@@ -23,7 +23,9 @@ const LicenseDisplay = ({
   if (license !== LicenseTypes.select) {
     return (
       <Stack gap={3}>
-        <div className="x-small"><FormattedMessage {...messages.displaySubsectionTitle} /></div>
+        <div className="x-small">
+          <FormattedMessage {...messages.displaySubsectionTitle} />
+        </div>
         <div className="small border border-gray-300 rounded p-4">
           <LicenseBlurb license={license} details={details} />
           <div className="x-small mt-3">{licenseDescription}</div>

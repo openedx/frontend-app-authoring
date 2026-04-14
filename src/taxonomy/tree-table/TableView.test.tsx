@@ -15,7 +15,7 @@ jest.mock('./TableBody', () => {
   return MockTableBody;
 });
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
 

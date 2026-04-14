@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react';
 import {
-  render, screen, within, fireEvent,
+  render,
+  screen,
+  within,
+  fireEvent,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import TagsTree from './TagsTree';

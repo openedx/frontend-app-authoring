@@ -43,9 +43,7 @@ export const SelectVideoModal = ({
     >
       {/* Content selection */}
       {videos && (videos.map(
-        img => (
-          <div key={img.externalUrl}>{img.externalUrl}</div>
-        ),
+        img => <div key={img.externalUrl}>{img.externalUrl}</div>,
       ))}
     </BaseModal>
   );

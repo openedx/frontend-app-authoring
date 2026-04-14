@@ -19,8 +19,7 @@ const messages = defineMessages({
   },
   pacingTypeInstructorDescription: {
     id: 'course-authoring.schedule.pacing.radio.instructor.description',
-    defaultMessage:
-      'Instructor-paced courses progress at the pace that the course author sets. You can configure release dates for course content and due dates for assignments.',
+    defaultMessage: 'Instructor-paced courses progress at the pace that the course author sets. You can configure release dates for course content and due dates for assignments.',
   },
   pacingTypeSelfLabel: {
     id: 'course-authoring.schedule.pacing.radio.self-paced.label',

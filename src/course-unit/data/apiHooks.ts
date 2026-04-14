@@ -16,17 +16,19 @@ import {
  * Hook that provides a "mutation" that can be used to accept library block changes.
  */
 // eslint-disable-next-line import/prefer-default-export
-export const useAcceptLibraryBlockChanges = () => useMutation({
-  mutationFn: acceptLibraryBlockChanges,
-});
+export const useAcceptLibraryBlockChanges = () =>
+  useMutation({
+    mutationFn: acceptLibraryBlockChanges,
+  });
 
 /**
  * Hook that provides a "mutation" that can be used to ignore library block changes.
  */
 // eslint-disable-next-line import/prefer-default-export
-export const useIgnoreLibraryBlockChanges = () => useMutation({
-  mutationFn: ignoreLibraryBlockChanges,
-});
+export const useIgnoreLibraryBlockChanges = () =>
+  useMutation({
+    mutationFn: ignoreLibraryBlockChanges,
+  });
 
 /**
  * Wrapper around useConfigureUnit that updates unit data after processing
@@ -36,19 +38,23 @@ export const useConfigureUnitWithPageUpdates = () => {
   const dispatch = useDispatch();
   return {
     ...mutationFn,
-    mutate: (mutationArgs: ConfigureUnitData & ParentIds, options?: UseMutationOptions<
-      object,
-    DefaultError,
-    ConfigureUnitData & ParentIds
-    >) => mutationFn.mutate(mutationArgs, {
-      ...options,
-      onSuccess: async (...onMutateArgs) => {
-        const courseSectionVerticalData = await getVerticalData(onMutateArgs[1].unitId);
-        dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
-        const courseVerticalChildrenData = await getCourseContainerChildren(onMutateArgs[1].unitId);
-        dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
-        options?.onSuccess?.(...onMutateArgs);
-      },
-    }),
+    mutate: (
+      mutationArgs: ConfigureUnitData & ParentIds,
+      options?: UseMutationOptions<
+        object,
+        DefaultError,
+        ConfigureUnitData & ParentIds
+      >,
+    ) =>
+      mutationFn.mutate(mutationArgs, {
+        ...options,
+        onSuccess: async (...onMutateArgs) => {
+          const courseSectionVerticalData = await getVerticalData(onMutateArgs[1].unitId);
+          dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
+          const courseVerticalChildrenData = await getCourseContainerChildren(onMutateArgs[1].unitId);
+          dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
+          options?.onSuccess?.(...onMutateArgs);
+        },
+      }),
   };
 };

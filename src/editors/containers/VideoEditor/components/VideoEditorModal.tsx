@@ -7,7 +7,7 @@ import VideoSettingsModal from './VideoSettingsModal';
 import { RequestKeys } from '../../../data/constants/requests';
 
 interface Props {
-  onReturn?: (() => void);
+  onReturn?: () => void;
   isLibrary: boolean;
   onClose?: (() => void) | null;
 }
@@ -47,11 +47,12 @@ const VideoEditorModal: React.FC<Props> = ({
   }, [isLoaded, dispatch, selectedVideoId, selectedVideoUrl]);
 
   return (
-    <VideoSettingsModal {...{
-      onReturn: onSettingsReturn,
-      isLibrary,
-      onClose,
-    }}
+    <VideoSettingsModal
+      {...{
+        onReturn: onSettingsReturn,
+        isLibrary,
+        onClose,
+      }}
     />
   );
   // TODO: add logic to show SelectVideoModal if no selection

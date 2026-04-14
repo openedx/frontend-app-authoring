@@ -3,7 +3,10 @@ import { DataTableContext, Pagination, TableFooter } from '@openedx/paragon';
 
 const Footer = () => {
   const {
-    pageOptions, pageCount, gotoPage, state,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    state,
   } = useContext(DataTableContext);
 
   if (pageOptions.length < 2) {

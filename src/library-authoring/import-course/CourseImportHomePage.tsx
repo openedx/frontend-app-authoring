@@ -81,19 +81,21 @@ export const CourseImportHomePage = () => {
         </div>
         <Layout xs={[{ span: 9 }, { span: 3 }]}>
           <Layout.Element>
-            {courseImports.length ? (
-              <Stack gap={3} className="pl-4 mt-4">
-                <h3>
-                  <FormattedMessage {...messages.courseImportPreviousImports} />
-                </h3>
-                {courseImports.map((courseImport) => (
-                  <ImportedCourseCard
-                    key={courseImport.source.key}
-                    courseImport={courseImport}
-                  />
-                ))}
-              </Stack>
-            ) : (<EmptyState />)}
+            {courseImports.length ?
+              (
+                <Stack gap={3} className="pl-4 mt-4">
+                  <h3>
+                    <FormattedMessage {...messages.courseImportPreviousImports} />
+                  </h3>
+                  {courseImports.map((courseImport) => (
+                    <ImportedCourseCard
+                      key={courseImport.source.key}
+                      courseImport={courseImport}
+                    />
+                  ))}
+                </Stack>
+              ) :
+              <EmptyState />}
           </Layout.Element>
           <Layout.Element>
             <HelpSidebar />

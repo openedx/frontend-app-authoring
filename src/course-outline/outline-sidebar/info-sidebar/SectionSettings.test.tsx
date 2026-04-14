@@ -12,9 +12,14 @@ jest.mock('@src/course-outline/highlights-modal/HighlightsModal', () => ({
     <div>
       <button
         type="button"
-        onClick={() => onSubmit({
-          highlight_1: 'one', highlight_2: '', highlight_3: 'two', highlight_4: '', highlight_5: '',
-        })}
+        onClick={() =>
+          onSubmit({
+            highlight_1: 'one',
+            highlight_2: '',
+            highlight_3: 'two',
+            highlight_4: '',
+            highlight_5: '',
+          })}
       >
         Submit Highlights
       </button>
@@ -69,7 +74,10 @@ describe('SectionSettings', () => {
   it('renders highlights, release and visibility and calls mutates with expected payloads', async () => {
     // course not self paced -> ReleaseSection should render
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    apiHooks.useCourseItemData.mockReturnValue({ data: { visibilityState: 'staff_only', start: '2020-01-01' }, isPending: false });
+    apiHooks.useCourseItemData.mockReturnValue({
+      data: { visibilityState: 'staff_only', start: '2020-01-01' },
+      isPending: false,
+    });
 
     const user = userEvent.setup();
     render(<SectionSettings sectionId={sectionId} />);
@@ -80,11 +88,15 @@ describe('SectionSettings', () => {
 
     // Release button should be present and calling it should call configure mutate
     await user.click(await screen.findByRole('button', { name: 'Release' }));
-    expect(configureMutate).toHaveBeenCalledWith(expect.objectContaining({ sectionId, isVisibleToStaffOnly: true, startDatetime: '2025-01-01' }));
+    expect(configureMutate).toHaveBeenCalledWith(
+      expect.objectContaining({ sectionId, isVisibleToStaffOnly: true, startDatetime: '2025-01-01' }),
+    );
 
     // Visibility button should also call configure mutate
     await user.click(await screen.findByRole('button', { name: 'Visibility' }));
-    expect(configureMutate).toHaveBeenCalledWith(expect.objectContaining({ sectionId, isVisibleToStaffOnly: true, visibility: 'changed' }));
+    expect(configureMutate).toHaveBeenCalledWith(
+      expect.objectContaining({ sectionId, isVisibleToStaffOnly: true, visibility: 'changed' }),
+    );
   });
 
   it('does not render ReleaseSection when course is self paced', () => {

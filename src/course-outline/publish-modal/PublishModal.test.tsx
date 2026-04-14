@@ -83,9 +83,10 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   }),
 }));
 
-const renderComponent = () => render(
-  <PublishModal />,
-);
+const renderComponent = () =>
+  render(
+    <PublishModal />,
+  );
 
 describe('<PublishModal />', () => {
   beforeEach(() => {

@@ -72,12 +72,13 @@ const LicenseDetails = ({
                     <CheckboxControl
                       checked={details.noncommercial}
                       disabled={level === LicenseLevel.course}
-                      onChange={(e) => updateField({
-                        licenseDetails: {
-                          ...details,
-                          noncommercial: e.target.checked,
-                        },
-                      })}
+                      onChange={(e) =>
+                        updateField({
+                          licenseDetails: {
+                            ...details,
+                            noncommercial: e.target.checked,
+                          },
+                        })}
                     />
                   </ActionRow>
                 </Form.Group>
@@ -96,13 +97,14 @@ const LicenseDetails = ({
                     <CheckboxControl
                       checked={details.noDerivatives}
                       disabled={level === LicenseLevel.course}
-                      onChange={(e) => updateField({
-                        licenseDetails: {
-                          ...details,
-                          noDerivatives: e.target.checked,
-                          shareAlike: e.target.checked ? false : details.shareAlike,
-                        },
-                      })}
+                      onChange={(e) =>
+                        updateField({
+                          licenseDetails: {
+                            ...details,
+                            noDerivatives: e.target.checked,
+                            shareAlike: e.target.checked ? false : details.shareAlike,
+                          },
+                        })}
                     />
                   </ActionRow>
                 </Form.Group>
@@ -121,13 +123,14 @@ const LicenseDetails = ({
                     <CheckboxControl
                       checked={details.shareAlike}
                       disabled={level === LicenseLevel.course}
-                      onChange={(e) => updateField({
-                        licenseDetails: {
-                          ...details,
-                          shareAlike: e.target.checked,
-                          noDerivatives: e.target.checked ? false : details.noDerivatives,
-                        },
-                      })}
+                      onChange={(e) =>
+                        updateField({
+                          licenseDetails: {
+                            ...details,
+                            shareAlike: e.target.checked,
+                            noDerivatives: e.target.checked ? false : details.noDerivatives,
+                          },
+                        })}
                     />
                   </ActionRow>
                 </Form.Group>
@@ -136,7 +139,8 @@ const LicenseDetails = ({
                 </div>
               </div>
             </Stack>
-          ) : null}
+          ) :
+          null}
       </Form.Group>
     </div>
   )

@@ -16,11 +16,12 @@ let store;
 const courseId = 'course-v1:org+101+101';
 const emptyTextbooksMock = { textbooks: [] };
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <Textbooks />
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <Textbooks />
+    </CourseAuthoringProvider>,
+  );
 
 describe('<Textbooks />', () => {
   beforeEach(async () => {
@@ -36,7 +37,10 @@ describe('<Textbooks />', () => {
 
   it('renders Textbooks component correctly', async () => {
     const {
-      getByText, getByRole, getAllByTestId, queryByTestId,
+      getByText,
+      getByRole,
+      getAllByTestId,
+      queryByTestId,
     } = renderComponent();
 
     await waitFor(() => {

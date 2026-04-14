@@ -9,7 +9,7 @@ import messages from './messages';
  * Also accepts an optional `count` number, which will be displayed if
  * it's non-zero and the block label supports it.
  */
-const BlockTypeLabel: React.FC<{ blockType: string, count?: number }> = ({ blockType, count }) => {
+const BlockTypeLabel: React.FC<{ blockType: string; count?: number; }> = ({ blockType, count }) => {
   const msg = messages[`blockType.${blockType}`];
   const msgWithCount = messages[`blockType.${blockType}.with_count`];
 

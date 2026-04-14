@@ -9,9 +9,11 @@ import { unlinkDownstream } from './api';
 export const useUnlinkDownstream = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (variables: {
-      downstreamBlockId: string;
-    } & ParentIds) => unlinkDownstream(variables.downstreamBlockId),
+    mutationFn: (
+      variables: {
+        downstreamBlockId: string;
+      } & ParentIds,
+    ) => unlinkDownstream(variables.downstreamBlockId),
     onSuccess: (_, variables) => {
       const courseKey = getCourseKey(variables.downstreamBlockId);
       queryClient.invalidateQueries({

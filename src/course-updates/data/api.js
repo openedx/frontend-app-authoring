@@ -3,7 +3,8 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getCourseUpdatesApiUrl = (courseId) => `${getApiBaseUrl()}/course_info_update/${courseId}/`;
-export const updateCourseUpdatesApiUrl = (courseId, updateId) => `${getApiBaseUrl()}/course_info_update/${courseId}/${updateId}`;
+export const updateCourseUpdatesApiUrl = (courseId, updateId) =>
+  `${getApiBaseUrl()}/course_info_update/${courseId}/${updateId}`;
 export const getCourseHandoutApiUrl = (courseId) => {
   const formattedCourseId = courseId.split('course-v1:')[1];
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course_info+block@handouts`;

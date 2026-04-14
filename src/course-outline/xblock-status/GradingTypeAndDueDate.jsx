@@ -84,7 +84,8 @@ const GradingTypeAndDueDate = ({
         {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
       </>
     );
-  } if ((dueDate && !isSelfPaced) || graded) {
+  }
+  if ((dueDate && !isSelfPaced) || graded) {
     return (
       <>
         <div className="d-flex align-items-center">
@@ -94,7 +95,8 @@ const GradingTypeAndDueDate = ({
         {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
       </>
     );
-  } if (showRelativeWeeks) {
+  }
+  if (showRelativeWeeks) {
     return (
       <>
         {gradingTypeDiv()}

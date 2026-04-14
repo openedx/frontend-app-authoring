@@ -1,5 +1,8 @@
 import {
-  useConfigureSection, useCourseDetails, useCourseItemData, useUpdateCourseSectionHighlights,
+  useConfigureSection,
+  useCourseDetails,
+  useCourseItemData,
+  useUpdateCourseSectionHighlights,
 } from '@src/course-outline/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { SidebarContent } from '@src/generic/sidebar';
@@ -22,9 +25,7 @@ const Highlights = ({ sectionId }: Props) => {
       highlights: dataToSend,
     });
   };
-  return (
-    <HighlightsCard sectionId={sectionId} onSubmit={onSubmit} />
-  );
+  return <HighlightsCard sectionId={sectionId} onSubmit={onSubmit} />;
 };
 
 export const SectionSettings = ({ sectionId }: Props) => {
@@ -48,12 +49,12 @@ export const SectionSettings = ({ sectionId }: Props) => {
   return (
     <SidebarContent>
       <Highlights sectionId={sectionId} />
-      { !courseDetails?.selfPaced && (
-      <ReleaseSection
-        itemId={sectionId}
-        onChange={(val: string) => onChange({ startDatetime: val })}
-      />
-      ) }
+      {!courseDetails?.selfPaced && (
+        <ReleaseSection
+          itemId={sectionId}
+          onChange={(val: string) => onChange({ startDatetime: val })}
+        />
+      )}
       <VisibilitySection
         itemId={sectionId}
         onChange={onChange}

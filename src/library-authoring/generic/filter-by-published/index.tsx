@@ -8,16 +8,11 @@ import { FilterByPublished, PublishStatus } from '../../../search-manager';
  * never show results. This component removes that option from FilterByPublished
  * when not relevant.
  */
-const LibraryFilterByPublished : React.FC<Record<never, never>> = () => {
+const LibraryFilterByPublished: React.FC<Record<never, never>> = () => {
   const { showOnlyPublished } = usePublishedFilterContext();
 
   if (showOnlyPublished) {
-    return (
-      <FilterByPublished visibleFilters={
-        [PublishStatus.Published, PublishStatus.Modified]
-      }
-      />
-    );
+    return <FilterByPublished visibleFilters={[PublishStatus.Published, PublishStatus.Modified]} />;
   }
 
   return <FilterByPublished />;

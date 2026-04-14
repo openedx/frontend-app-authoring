@@ -1,6 +1,9 @@
 import { useSelector } from 'react-redux';
 import {
-  Form, Icon, IconButton, Stack,
+  Form,
+  Icon,
+  IconButton,
+  Stack,
 } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
@@ -14,22 +17,22 @@ import messages from './messages';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 
 interface UnitVisibilityInfoProps {
-  openVisibleModal: () => void,
-  visibleToStaffOnly: boolean,
+  openVisibleModal: () => void;
+  visibleToStaffOnly: boolean;
   userPartitionInfo?: {
-    selectablePartitions: Record<string, any>[],
-    selectedGroupsLabel: string,
-    selectedPartitionIndex: number,
-  },
+    selectablePartitions: Record<string, any>[];
+    selectedGroupsLabel: string;
+    selectedPartitionIndex: number;
+  };
 }
 
 interface UnitVisibilityInfoContentProps {
-  visibleToStaffOnly: boolean,
+  visibleToStaffOnly: boolean;
   userPartitionInfo?: {
-    selectablePartitions: Record<string, any>[],
-    selectedGroupsLabel: string,
-    selectedPartitionIndex: number,
-  },
+    selectablePartitions: Record<string, any>[];
+    selectedGroupsLabel: string;
+    selectedPartitionIndex: number;
+  };
 }
 
 const LegacyVisibilityInfo = ({
@@ -58,25 +61,27 @@ const LegacyVisibilityInfo = ({
 
   return (
     <>
-      {visibleToStaffOnly ? (
-        <>
+      {visibleToStaffOnly ?
+        (
+          <>
+            <h6 className="course-unit-sidebar-visibility-copy">
+              <FormattedMessage {...messages.visibilityStaffOnlyTitle} />
+            </h6>
+            {/* istanbul ignore next */ !hasExplicitStaffLock && (
+              <span className="course-unit-sidebar-visibility-section mb-2">
+                <FormattedMessage
+                  {...messages.visibilityHasExplicitStaffLockText}
+                  values={{ sectionName: staffLockFrom }}
+                />
+              </span>
+            )}
+          </>
+        ) :
+        (
           <h6 className="course-unit-sidebar-visibility-copy">
-            <FormattedMessage {...messages.visibilityStaffOnlyTitle} />
+            <FormattedMessage {...messages.visibilityStaffAndLearnersTitle} />
           </h6>
-          {/* istanbul ignore next */ !hasExplicitStaffLock && (
-            <span className="course-unit-sidebar-visibility-section mb-2">
-              <FormattedMessage
-                {...messages.visibilityHasExplicitStaffLockText}
-                values={{ sectionName: staffLockFrom }}
-              />
-            </span>
-          )}
-        </>
-      ) : (
-        <h6 className="course-unit-sidebar-visibility-copy">
-          <FormattedMessage {...messages.visibilityStaffAndLearnersTitle} />
-        </h6>
-      )}
+        )}
       <Form.Checkbox
         className="course-unit-sidebar-visibility-checkbox"
         checked={hasExplicitStaffLock}
@@ -126,11 +131,7 @@ const UnitVisibilityInfoContent = ({
   return (
     <>
       <Stack direction="horizontal" gap={2}>
-        {visibleToStaffOnly ? (
-          <Icon src={Lock} />
-        ) : (
-          <Icon src={Groups} />
-        )}
+        {visibleToStaffOnly ? <Icon src={Lock} /> : <Icon src={Groups} />}
         <span className="font-weight-bold text-primary-700">
           {labelMessages}
         </span>
@@ -155,17 +156,19 @@ const UnitVisibilityInfo = ({
     <span className="heading-label">
       <FormattedMessage {...messages.visibilityVisibleToTitle} />
     </span>
-    {isUnitPageNewDesignEnabled() ? (
-      <UnitVisibilityInfoContent
-        visibleToStaffOnly={visibleToStaffOnly}
-        userPartitionInfo={userPartitionInfo}
-      />
-    ) : (
-      <LegacyVisibilityInfo
-        visibleToStaffOnly={visibleToStaffOnly}
-        openVisibleModal={openVisibleModal}
-      />
-    )}
+    {isUnitPageNewDesignEnabled() ?
+      (
+        <UnitVisibilityInfoContent
+          visibleToStaffOnly={visibleToStaffOnly}
+          userPartitionInfo={userPartitionInfo}
+        />
+      ) :
+      (
+        <LegacyVisibilityInfo
+          visibleToStaffOnly={visibleToStaffOnly}
+          openVisibleModal={openVisibleModal}
+        />
+      )}
   </>
 );
 

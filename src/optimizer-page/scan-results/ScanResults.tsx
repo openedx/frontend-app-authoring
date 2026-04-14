@@ -28,7 +28,9 @@ import { countBrokenLinks, isDataEmpty } from '../utils';
 import FilterModal from './filterModal';
 import { useWaffleFlags } from '../../data/apiHooks';
 import {
-  updateAllPreviousRunLinks, updateSinglePreviousRunLink, fetchRerunLinkUpdateStatus,
+  updateAllPreviousRunLinks,
+  updateSinglePreviousRunLink,
+  fetchRerunLinkUpdateStatus,
 } from '../data/thunks';
 import { STATEFUL_BUTTON_STATES } from '../../constants';
 import { RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES } from '../data/constants';
@@ -42,7 +44,11 @@ interface Props {
 }
 
 const ScanResults: FC<Props> = ({
-  data, courseId, onErrorStateChange, rerunLinkUpdateInProgress, rerunLinkUpdateResult,
+  data,
+  courseId,
+  onErrorStateChange,
+  rerunLinkUpdateInProgress,
+  rerunLinkUpdateResult,
 }) => {
   const intl = useIntl();
   const waffleFlags = useWaffleFlags();
@@ -72,10 +78,12 @@ const ScanResults: FC<Props> = ({
       sectionId: string,
       messageKey: keyof typeof messages,
     ) => {
-      const itemsWithLinks = items.filter(item => (item.brokenLinks && item.brokenLinks.length > 0)
+      const itemsWithLinks = items.filter(item =>
+        (item.brokenLinks && item.brokenLinks.length > 0)
         || (item.lockedLinks && item.lockedLinks.length > 0)
         || (item.externalForbiddenLinks && item.externalForbiddenLinks.length > 0)
-        || (item.previousRunLinks && item.previousRunLinks.length > 0));
+        || (item.previousRunLinks && item.previousRunLinks.length > 0)
+      );
 
       if (itemsWithLinks.length === 0) { return null; }
 
@@ -144,10 +152,14 @@ const ScanResults: FC<Props> = ({
 
   // Calculate if there are any previous run links across all sections
   const hasPreviousRunLinks = useMemo(
-    () => allSections.some(section => (
-      section.subsections.some(subsection => subsection.units.some(unit => (
-        unit.blocks.some(block => block.previousRunLinks && block.previousRunLinks.length > 0)
-      ))))),
+    () =>
+      allSections.some(section => (
+        section.subsections.some(subsection =>
+          subsection.units.some(unit => (
+            unit.blocks.some(block => block.previousRunLinks && block.previousRunLinks.length > 0)
+          ))
+        )
+      )),
     [allSections],
   );
 
@@ -175,7 +187,10 @@ const ScanResults: FC<Props> = ({
 
   const activeFilters = Object.keys(filters).filter(key => filters[key]);
   const [filterBy, {
-    add, remove, set, clear,
+    add,
+    remove,
+    set,
+    clear,
   }] = useCheckboxSetValues(activeFilters);
 
   useEffect(() => {
@@ -207,9 +222,13 @@ const ScanResults: FC<Props> = ({
       const addBlocksWithPrevLinks = (sectionId: string) => {
         const section = allSections.find(s => s.id === sectionId);
         if (!section) { return; }
-        section.subsections.forEach(sub => sub.units.forEach(unit => unit.blocks.forEach(b => {
-          if (b.previousRunLinks?.length) { blocksWithResults.add(b.id); }
-        })));
+        section.subsections.forEach(sub =>
+          sub.units.forEach(unit =>
+            unit.blocks.forEach(b => {
+              if (b.previousRunLinks?.length) { blocksWithResults.add(b.id); }
+            })
+          )
+        );
       };
 
       if (Array.isArray(response.results)) {
@@ -414,10 +433,11 @@ const ScanResults: FC<Props> = ({
     if (
       rerunLinkUpdateResult
       && (rerunLinkUpdateResult.status === 'Succeeded'
-       || (rerunLinkUpdateResult.results && rerunLinkUpdateResult.results.length > 0))
+        || (rerunLinkUpdateResult.results && rerunLinkUpdateResult.results.length > 0))
     ) {
       const allResultIds = rerunLinkUpdateResult.results?.map(r => r.id).sort().join(',') || '';
-      const responseId = `${rerunLinkUpdateResult.status}-${rerunLinkUpdateResult.results?.length}-${allResultIds}-${isUpdateAllInProgress}`;
+      const responseId =
+        `${rerunLinkUpdateResult.status}-${rerunLinkUpdateResult.results?.length}-${allResultIds}-${isUpdateAllInProgress}`;
 
       if (processedResponseIds.has(responseId)) {
         return;
@@ -446,7 +466,8 @@ const ScanResults: FC<Props> = ({
         }
       }
     }
-  }, [rerunLinkUpdateResult,
+  }, [
+    rerunLinkUpdateResult,
     rerunLinkUpdateInProgress,
     isUpdateAllInProgress,
     intl,
@@ -509,7 +530,8 @@ const ScanResults: FC<Props> = ({
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     handleUpdateCompletion();
-  }, [rerunLinkUpdateInProgress,
+  }, [
+    rerunLinkUpdateInProgress,
     isUpdateAllInProgress,
     dispatch,
     courseId,
@@ -552,7 +574,7 @@ const ScanResults: FC<Props> = ({
 
     if (allLinksUpdatedInAPI) { return true; }
 
-    const allPreviousRunLinks: { linkId: string; isUpdatedInAPI: boolean }[] = [];
+    const allPreviousRunLinks: { linkId: string; isUpdatedInAPI: boolean; }[] = [];
     allSections.forEach(section => {
       section.subsections.forEach(subsection => {
         subsection.units.forEach(unit => {
@@ -573,11 +595,14 @@ const ScanResults: FC<Props> = ({
 
     if (allPreviousRunLinks.length === 0) { return false; }
 
-    const allUpdated = allPreviousRunLinks.every(({ linkId, isUpdatedInAPI }) => isUpdatedInAPI
-      || updatedLinkIds.includes(linkId));
+    const allUpdated = allPreviousRunLinks.every(({ linkId, isUpdatedInAPI }) =>
+      isUpdatedInAPI
+      || updatedLinkIds.includes(linkId)
+    );
 
     return allUpdated;
-  }, [allSections,
+  }, [
+    allSections,
     hasPreviousRunLinks,
     updatedLinkIds,
     updateAllTrigger,
@@ -619,8 +644,8 @@ const ScanResults: FC<Props> = ({
             exactMatch = updateStatusResponse.results.find(
               (result: any) => {
                 const matches = result.id === blockId
-                              && result.original_url === link
-                              && result.success === true;
+                  && result.original_url === link
+                  && result.success === true;
 
                 return matches;
               },
@@ -667,8 +692,8 @@ const ScanResults: FC<Props> = ({
             (result: any) => {
               if (hasOriginalUrlField) {
                 return result.id === blockId
-                       && result.original_url === link
-                       && result.success === false;
+                  && result.original_url === link
+                  && result.success === false;
               }
               return result.id === blockId && result.success === false;
             },
@@ -818,26 +843,29 @@ const ScanResults: FC<Props> = ({
   const shouldSectionRender = (sectionIndex: number): boolean => {
     const section = allSections[sectionIndex];
     const hasVisibleUnit = section.subsections.some(
-      (subsection) => subsection.units.some((unit) => unit.blocks.some((block) => {
-        const hasBroken = block.brokenLinks?.length > 0;
-        const hasLocked = block.lockedLinks?.length > 0;
-        const hasExternal = block.externalForbiddenLinks?.length > 0;
+      (subsection) =>
+        subsection.units.some((unit) =>
+          unit.blocks.some((block) => {
+            const hasBroken = block.brokenLinks?.length > 0;
+            const hasLocked = block.lockedLinks?.length > 0;
+            const hasExternal = block.externalForbiddenLinks?.length > 0;
 
-        const noFilters = !filters.brokenLinks
-            && !filters.lockedLinks
-            && !filters.externalForbiddenLinks;
+            const noFilters = !filters.brokenLinks
+              && !filters.lockedLinks
+              && !filters.externalForbiddenLinks;
 
-        const showBroken = filters.brokenLinks && hasBroken;
-        const showLocked = filters.lockedLinks && hasLocked;
-        const showExternal = filters.externalForbiddenLinks && hasExternal;
+            const showBroken = filters.brokenLinks && hasBroken;
+            const showLocked = filters.lockedLinks && hasLocked;
+            const showExternal = filters.externalForbiddenLinks && hasExternal;
 
-        return (
-          showBroken
+            return (
+              showBroken
               || showLocked
               || showExternal
               || (noFilters && (hasBroken || hasLocked || hasExternal))
-        );
-      })),
+            );
+          })
+        ),
     );
     return hasVisibleUnit;
   };
@@ -885,8 +913,8 @@ const ScanResults: FC<Props> = ({
         </div>
         <FilterModal
           isOpen={isOpen}
-        // ignoring below line because filter modal doesn't have close button
-        // istanbul ignore next
+          // ignoring below line because filter modal doesn't have close button
+          // istanbul ignore next
           onClose={close}
           onApply={setFilters}
           positionRef={buttonRef}
@@ -900,39 +928,39 @@ const ScanResults: FC<Props> = ({
         />
         {activeFilters.length > 0 && <div className="border-bottom border-light-400" />}
         {activeFilters.length > 0 && (
-        <div className="scan-results-active-filters-container">
-          <span className="scan-results-active-filters-chips">
-            {activeFilters.map(filter => (
-              <Chip
-                key={filter}
-                data-testid={`chip-${filter}`}
-                iconAfter={CloseSmall}
-                iconAfterAlt="icon-after"
-                className="scan-results-active-filters-chip"
-                onClick={() => {
-                  remove(filter);
-                  const updatedFilters = { ...filters, [filter]: false };
-                  setFilters(updatedFilters);
-                }}
-              >
-                {(() => {
-                  const foundOption = filterOptions.filter(option => option.value === filter)[0];
-                  return foundOption ? foundOption.name : filter;
-                })()}
-              </Chip>
-            ))}
-          </span>
-          <Button
-            variant="link"
-            className="clear-all-btn"
-            onClick={() => {
-              clear();
-              setFilters(initialFilters);
-            }}
-          >
-            {intl.formatMessage(messages.clearFilters)}
-          </Button>
-        </div>
+          <div className="scan-results-active-filters-container">
+            <span className="scan-results-active-filters-chips">
+              {activeFilters.map(filter => (
+                <Chip
+                  key={filter}
+                  data-testid={`chip-${filter}`}
+                  iconAfter={CloseSmall}
+                  iconAfterAlt="icon-after"
+                  className="scan-results-active-filters-chip"
+                  onClick={() => {
+                    remove(filter);
+                    const updatedFilters = { ...filters, [filter]: false };
+                    setFilters(updatedFilters);
+                  }}
+                >
+                  {(() => {
+                    const foundOption = filterOptions.filter(option => option.value === filter)[0];
+                    return foundOption ? foundOption.name : filter;
+                  })()}
+                </Chip>
+              ))}
+            </span>
+            <Button
+              variant="link"
+              className="clear-all-btn"
+              onClick={() => {
+                clear();
+                setFilters(initialFilters);
+              }}
+            >
+              {intl.formatMessage(messages.clearFilters)}
+            </Button>
+          </div>
         )}
 
         {(() => {
@@ -958,14 +986,18 @@ const ScanResults: FC<Props> = ({
                 index={index}
                 handleToggle={handleToggle}
                 isOpen={openStates[index]}
-                hasPrevAndIsOpen={index > 0 ? (() => {
-                  const prevVisibleIndex = findPreviousVisibleSection(index);
-                  return prevVisibleIndex >= 0 && openStates[prevVisibleIndex];
-                })() : true}
-                hasNextAndIsOpen={index < allSections.length - 1 ? (() => {
-                  const nextVisibleIndex = findNextVisibleSection(index);
-                  return nextVisibleIndex >= 1 && openStates[nextVisibleIndex];
-                })() : true}
+                hasPrevAndIsOpen={index > 0 ?
+                  (() => {
+                    const prevVisibleIndex = findPreviousVisibleSection(index);
+                    return prevVisibleIndex >= 0 && openStates[prevVisibleIndex];
+                  })() :
+                  true}
+                hasNextAndIsOpen={index < allSections.length - 1 ?
+                  (() => {
+                    const nextVisibleIndex = findNextVisibleSection(index);
+                    return nextVisibleIndex >= 1 && openStates[nextVisibleIndex];
+                  })() :
+                  true}
                 key={section.id}
                 title={section.displayName}
                 brokenNumber={brokenLinksCounts[index]}
@@ -991,9 +1023,9 @@ const ScanResults: FC<Props> = ({
                           && !filters.externalForbiddenLinks;
 
                         return showBroken
-                        || showLocked
-                        || showExternal
-                        || (noFilters && (hasBroken || hasLocked || hasExternal));
+                          || showLocked
+                          || showExternal
+                          || (noFilters && (hasBroken || hasLocked || hasExternal));
                       });
 
                       if (hasVisibleBlock) {
@@ -1017,107 +1049,107 @@ const ScanResults: FC<Props> = ({
         && allSections
         && allSections.length > 0
         && hasPreviousRunLinks && (() => {
-        // Filter out sections/subsections/units that have no previous run links
-        const filteredSections = allSections.map((section) => {
-          // Filter subsections
-          const filteredSubsections = section.subsections.map(subsection => {
-            // Filter units
-            const filteredUnits = subsection.units.filter(unit => unit.blocks.some(block => {
-              const hasPreviousLinks = block.previousRunLinks?.length > 0;
-              return hasPreviousLinks;
-            }));
+          // Filter out sections/subsections/units that have no previous run links
+          const filteredSections = allSections.map((section) => {
+            // Filter subsections
+            const filteredSubsections = section.subsections.map(subsection => {
+              // Filter units
+              const filteredUnits = subsection.units.filter(unit =>
+                unit.blocks.some(block => {
+                  const hasPreviousLinks = block.previousRunLinks?.length > 0;
+                  return hasPreviousLinks;
+                })
+              );
+              return {
+                ...subsection,
+                units: filteredUnits,
+              };
+            }).filter(subsection => subsection.units.length > 0);
             return {
-              ...subsection,
-              units: filteredUnits,
+              ...section,
+              subsections: filteredSubsections,
             };
-          }).filter(subsection => subsection.units.length > 0);
-          return {
-            ...section,
-            subsections: filteredSubsections,
-          };
-        }).filter(section => section.subsections.length > 0);
+          }).filter(section => section.subsections.length > 0);
 
-        if (filteredSections.length === 0) {
-          return null;
-        }
+          if (filteredSections.length === 0) {
+            return null;
+          }
 
-        return (
-          <div className="scan-results">
-            <div className="scan-header-second-title-container px-3">
-              <header className="sub-header-content d-flex justify-content-between align-items-center">
-                <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
-                <StatefulButton
-                  className="px-4 rounded-0 update-all-course-btn"
-                  labels={{
-                    default: intl.formatMessage(messages.updateAllButtonText),
-                    disable: intl.formatMessage(messages.updateAllButtonText),
-                    pending: intl.formatMessage(messages.updateAllButtonText),
-                  }}
-                  icons={{
-                    default: '',
-                    disable: '',
-                    pending: <Icon src={SpinnerSimple} className="icon-spin" />,
-                  }}
-                  state={
-                      Object.keys(updatingLinkIds).length > 0
-                        ? STATEFUL_BUTTON_STATES.disable
-                        : getUpdateAllButtonState()
-                    }
-                  onClick={handleUpdateAllCourseLinks}
-                  disabled={areAllLinksUpdated}
-                  disabledStates={['disable', 'pending']}
-                  variant="primary"
-                  data-testid="update-all-course"
-                />
-              </header>
+          return (
+            <div className="scan-results">
+              <div className="scan-header-second-title-container px-3">
+                <header className="sub-header-content d-flex justify-content-between align-items-center">
+                  <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
+                  <StatefulButton
+                    className="px-4 rounded-0 update-all-course-btn"
+                    labels={{
+                      default: intl.formatMessage(messages.updateAllButtonText),
+                      disable: intl.formatMessage(messages.updateAllButtonText),
+                      pending: intl.formatMessage(messages.updateAllButtonText),
+                    }}
+                    icons={{
+                      default: '',
+                      disable: '',
+                      pending: <Icon src={SpinnerSimple} className="icon-spin" />,
+                    }}
+                    state={Object.keys(updatingLinkIds).length > 0
+                      ? STATEFUL_BUTTON_STATES.disable
+                      : getUpdateAllButtonState()}
+                    onClick={handleUpdateAllCourseLinks}
+                    disabled={areAllLinksUpdated}
+                    disabledStates={['disable', 'pending']}
+                    variant="primary"
+                    data-testid="update-all-course"
+                  />
+                </header>
+              </div>
+              {filteredSections.map((section, index) => (
+                <SectionCollapsible
+                  index={index}
+                  handleToggle={handlePrevRunToggle}
+                  isOpen={prevRunOpenStates[index]}
+                  hasPrevAndIsOpen={index > 0 ? prevRunOpenStates[index - 1] : true}
+                  hasNextAndIsOpen={index < filteredSections.length - 1 ? prevRunOpenStates[index + 1] : true}
+                  key={section.id}
+                  title={section.displayName}
+                  previousRunLinksCount={previousRunLinksCounts[section.id] || 0}
+                  isPreviousRunLinks
+                  className="section-collapsible-header"
+                >
+                  {section.subsections.map((subsection) => (
+                    <>
+                      {subsection.units.map((unit) => (
+                        <div className="unit" key={unit.id}>
+                          <BrokenLinkTable
+                            unit={unit}
+                            linkType="previous"
+                            onUpdateLink={handleUpdateLink}
+                            sectionId={section.id}
+                            updatedLinks={updatedLinkIds}
+                            updatedLinkMap={updatedLinkMap}
+                            updatedLinkInProgress={updatingLinkIds}
+                          />
+                        </div>
+                      ))}
+                    </>
+                  ))}
+                </SectionCollapsible>
+              ))}
             </div>
-            {filteredSections.map((section, index) => (
-              <SectionCollapsible
-                index={index}
-                handleToggle={handlePrevRunToggle}
-                isOpen={prevRunOpenStates[index]}
-                hasPrevAndIsOpen={index > 0 ? prevRunOpenStates[index - 1] : true}
-                hasNextAndIsOpen={index < filteredSections.length - 1 ? prevRunOpenStates[index + 1] : true}
-                key={section.id}
-                title={section.displayName}
-                previousRunLinksCount={previousRunLinksCounts[section.id] || 0}
-                isPreviousRunLinks
-                className="section-collapsible-header"
-              >
-                {section.subsections.map((subsection) => (
-                  <>
-                    {subsection.units.map((unit) => (
-                      <div className="unit" key={unit.id}>
-                        <BrokenLinkTable
-                          unit={unit}
-                          linkType="previous"
-                          onUpdateLink={handleUpdateLink}
-                          sectionId={section.id}
-                          updatedLinks={updatedLinkIds}
-                          updatedLinkMap={updatedLinkMap}
-                          updatedLinkInProgress={updatingLinkIds}
-                        />
-                      </div>
-                    ))}
-                  </>
-                ))}
-              </SectionCollapsible>
-            ))}
-          </div>
-        );
-      })()}
+          );
+        })()}
 
       {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && !hasPreviousRunLinks && (
-      <div className="scan-results">
-        <div className="scan-header-second-title-container px-3">
-          <header className="sub-header-content">
-            <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
-          </header>
+        <div className="scan-results">
+          <div className="scan-header-second-title-container px-3">
+            <header className="sub-header-content">
+              <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
+            </header>
+          </div>
+          <div className="no-results-found-container">
+            <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
+          </div>
         </div>
-        <div className="no-results-found-container">
-          <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
-        </div>
-      </div>
       )}
     </>
   );

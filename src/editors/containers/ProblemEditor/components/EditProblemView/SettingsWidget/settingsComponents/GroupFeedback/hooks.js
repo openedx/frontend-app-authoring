@@ -96,6 +96,8 @@ export const groupFeedbackRowHooks = ({ id, groupFeedbacks, updateSettings }) =>
   };
 
   return {
-    handleAnswersSelectedChange, handleFeedbackChange, handleDelete,
+    handleAnswersSelectedChange,
+    handleFeedbackChange,
+    handleDelete,
   };
 };

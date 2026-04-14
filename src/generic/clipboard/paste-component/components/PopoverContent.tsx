@@ -7,10 +7,10 @@ import type { ClipboardStatus } from '../../../data/api';
 import messages from '../messages';
 
 interface PopoverContentProps {
-  clipboardData: ClipboardStatus,
+  clipboardData: ClipboardStatus;
 }
 
-const PopoverContent = ({ clipboardData } : PopoverContentProps) => {
+const PopoverContent = ({ clipboardData }: PopoverContentProps) => {
   const intl = useIntl();
   const { sourceEditUrl, content, sourceContextTitle } = clipboardData;
 
@@ -30,9 +30,7 @@ const PopoverContent = ({ clipboardData } : PopoverContentProps) => {
       <Stack>
         <Stack className="justify-content-between" direction="horizontal">
           <strong>{content.displayName}</strong>
-          {sourceEditUrl && (
-            <Icon className="clipboard-popover-icon m-0" src={OpenInNewIcon} />
-          )}
+          {sourceEditUrl && <Icon className="clipboard-popover-icon m-0" src={OpenInNewIcon} />}
         </Stack>
         <div>
           <small className="clipboard-popover-detail-block-type">

@@ -24,26 +24,28 @@ const ExportModalError = () => {
     }
   }, [fetchExportErrorMessage]);
 
-  const handleUnitRedirect = () => { window.location.assign(errorUnitUrl ?? ''); };
-  const handleRedirectCourseHome = () => { window.location.assign(`${getConfig().STUDIO_BASE_URL}/course/${courseId}`); };
+  const handleUnitRedirect = () => {
+    window.location.assign(errorUnitUrl ?? '');
+  };
+  const handleRedirectCourseHome = () => {
+    window.location.assign(`${getConfig().STUDIO_BASE_URL}/course/${courseId}`);
+  };
   return (
     <ModalNotification
       isOpen={isErrorModalOpen}
       title={intl.formatMessage(messages.errorTitle)}
-      message={
-        intl.formatMessage(
-          errorUnitUrl
-            ? messages.errorDescriptionUnit
-            : messages.errorDescriptionNotUnit,
-          { errorMessage: fetchExportErrorMessage },
-        )
-      }
-      cancelButtonText={
-        intl.formatMessage(errorUnitUrl ? messages.errorCancelButtonUnit : messages.errorCancelButtonNotUnit)
-      }
-      actionButtonText={
-        intl.formatMessage(errorUnitUrl ? messages.errorActionButtonUnit : messages.errorActionButtonNotUnit)
-      }
+      message={intl.formatMessage(
+        errorUnitUrl
+          ? messages.errorDescriptionUnit
+          : messages.errorDescriptionNotUnit,
+        { errorMessage: fetchExportErrorMessage },
+      )}
+      cancelButtonText={intl.formatMessage(
+        errorUnitUrl ? messages.errorCancelButtonUnit : messages.errorCancelButtonNotUnit,
+      )}
+      actionButtonText={intl.formatMessage(
+        errorUnitUrl ? messages.errorActionButtonUnit : messages.errorActionButtonNotUnit,
+      )}
       handleCancel={() => setIsErrorModalOpen(false)}
       handleAction={errorUnitUrl ? handleUnitRedirect : handleRedirectCourseHome}
       variant="danger"

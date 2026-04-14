@@ -1,5 +1,9 @@
 import {
-  initializeMocks, render, fireEvent, screen, waitFor,
+  initializeMocks,
+  render,
+  fireEvent,
+  screen,
+  waitFor,
 } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 
@@ -127,7 +131,9 @@ describe('<HighlightsForm />', () => {
   it('disables save button when pristine', async () => {
     render(<HighlightsForm {...defaultProps} />);
 
-    const saveBtn = await screen.findByRole('button', { name: messages.saveButton.defaultMessage }) as HTMLButtonElement;
+    const saveBtn = await screen.findByRole('button', {
+      name: messages.saveButton.defaultMessage,
+    }) as HTMLButtonElement;
     expect(saveBtn.disabled).toBe(true);
   });
 
@@ -201,7 +207,8 @@ describe('<HighlightsCard />', () => {
       <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
     );
 
-    expect(await screen.findByRole('button', { name: messages.addHighlightsButton.defaultMessage })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: messages.addHighlightsButton.defaultMessage }))
+      .toBeInTheDocument();
   });
 
   it('transitions to editing mode on edit button click', async () => {

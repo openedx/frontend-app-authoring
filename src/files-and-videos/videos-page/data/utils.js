@@ -278,7 +278,7 @@ export const validateForm = (cieloHasCredentials, threePlayHasCredentials, provi
     case 'Cielo24':
       if (cieloHasCredentials) {
         return !isEmpty(cielo24Fidelity) && !isEmpty(cielo24Turnaround)
-        && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
+          && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
       }
       return !isEmpty(apiKey) && !isEmpty(username);
     case '3PlayMedia':

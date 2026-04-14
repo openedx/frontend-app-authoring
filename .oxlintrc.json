@@ -7,7 +7,7 @@
   "rules": {
     "eslint/no-unused-vars": ["warn", {
       // Allow using {ignoredProp, ...keepTheRest} to omit a prop like 'ignoredProp' from an object.
-      "ignoreRestSiblings": true,
+      "ignoreRestSiblings": true
     }],
     // We disable exhaustive-deps because: it's noisy, and we often include extra deps when we want a memoized thing to
     // re-calculate after some change, even if we're not using that thing in the calculation.
@@ -21,11 +21,11 @@
         // complete, but we rarely if ever want that; we usually want to
         // continue invalidating more things immediately. So we don't usually
         // want to await this.
-        "invalidateQueries",
+        "invalidateQueries"
       ]
     }]
   },
   "ignorePatterns": [
-    "webpack.dev-tutor.config.js",
+    "webpack.dev-tutor.config.js"
   ]
 }

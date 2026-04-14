@@ -1,6 +1,9 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
-  Button, Card, Icon, Stack,
+  Button,
+  Card,
+  Icon,
+  Stack,
 } from '@openedx/paragon';
 import { Cached, LinkOff, Newsstand } from '@openedx/paragon/icons';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
@@ -179,9 +182,7 @@ const TopLevelTextAndButton = ({
   }
 
   if ((upstreamInfo?.downstreamCustomized?.length || 0) > 0) {
-    return (
-      <FormattedMessage {...messages.topParentModifiedText} values={messageValues} />
-    );
+    return <FormattedMessage {...messages.topParentModifiedText} values={messageValues} />;
   }
 
   return null;
@@ -190,7 +191,7 @@ const TopLevelTextAndButton = ({
 interface Props {
   itemId?: string;
   sectionId?: string;
-  postChange: (accept: boolean) => void,
+  postChange: (accept: boolean) => void;
   goToParent: (containerId: string, subsectionId?: string, sectionId?: string) => void;
 }
 
@@ -233,7 +234,9 @@ export const LibraryReferenceCard = ({
           <Stack gap={3}>
             <Stack direction="horizontal" gap={2}>
               <Icon src={Newsstand} />
-              <h4 className="mb-0"><FormattedMessage {...messages.libraryReferenceCardText} /></h4>
+              <h4 className="mb-0">
+                <FormattedMessage {...messages.libraryReferenceCardText} />
+              </h4>
             </Stack>
             <TopLevelTextAndButton
               blockData={itemData}

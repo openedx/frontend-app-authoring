@@ -51,10 +51,12 @@ describe('getFilteredChecklist utility function', () => {
       courseData.needsProctoringEscalationEmail,
     );
 
-    filteredChecklist.forEach(((
-      item => expect(item.pacingTypeFilter === filters.ALL
-        || item.pacingTypeFilter === filters.SELF_PACED)
-    )));
+    filteredChecklist.forEach(item =>
+      expect(
+        item.pacingTypeFilter === filters.ALL
+          || item.pacingTypeFilter === filters.SELF_PACED,
+      )
+    );
 
     expect(filteredChecklist.filter(item => item.pacingTypeFilter === filters.ALL).length)
       .toEqual(checklist.filter(item => item.pacingTypeFilter === filters.ALL).length);
@@ -72,15 +74,19 @@ describe('getFilteredChecklist utility function', () => {
       courseData.needsProctoringEscalationEmail,
     );
 
-    filteredChecklist.forEach(((
-      item => expect(item.pacingTypeFilter === filters.ALL
-        || item.pacingTypeFilter === filters.INSTRUCTOR_PACED)
-    )));
+    filteredChecklist.forEach(item =>
+      expect(
+        item.pacingTypeFilter === filters.ALL
+          || item.pacingTypeFilter === filters.INSTRUCTOR_PACED,
+      )
+    );
 
     expect(filteredChecklist.filter(item => item.pacingTypeFilter === filters.ALL).length)
       .toEqual(checklist.filter(item => item.pacingTypeFilter === filters.ALL).length);
-    expect(filteredChecklist
-      .filter(item => item.pacingTypeFilter === filters.INSTRUCTOR_PACED).length)
+    expect(
+      filteredChecklist
+        .filter(item => item.pacingTypeFilter === filters.INSTRUCTOR_PACED).length,
+    )
       .toEqual(checklist.filter(item => item.pacingTypeFilter === filters.INSTRUCTOR_PACED).length);
   });
 

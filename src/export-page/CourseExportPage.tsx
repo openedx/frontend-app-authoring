@@ -1,6 +1,9 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Container, Layout, Button, Card,
+  Container,
+  Layout,
+  Button,
+  Card,
 } from '@openedx/paragon';
 import { ArrowCircleDown as ArrowCircleDownIcon } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
@@ -68,7 +71,9 @@ const CourseExportPage = () => {
                   title={intl.formatMessage(messages.headingTitle)}
                   subtitle={intl.formatMessage(messages.headingSubtitle)}
                 />
-                <p className="small">{intl.formatMessage(messages.description1, { studioShortName: getConfig().STUDIO_SHORT_NAME })}</p>
+                <p className="small">
+                  {intl.formatMessage(messages.description1, { studioShortName: getConfig().STUDIO_SHORT_NAME })}
+                </p>
                 <p className="small">{intl.formatMessage(messages.description2)}</p>
                 <Card>
                   <Card.Header

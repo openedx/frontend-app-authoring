@@ -30,7 +30,10 @@ const componentData = {
   displayName: 'Component Name',
   category: 'problem',
   actions: {
-    deletable: true, duplicable: true, draggable: true, childAddable: false,
+    deletable: true,
+    duplicable: true,
+    draggable: true,
+    childAddable: false,
   },
   upstreamInfo: null,
 };
@@ -88,17 +91,18 @@ const mockSidebarContext = {
   readOnly: false,
 };
 
-const renderComponent = () => render(
-  <IframeProvider>
-    <UnitSidebarProvider readOnly={false}>
-      <ComponentInfoSidebar />
-    </UnitSidebarProvider>
-  </IframeProvider>,
-  {
-    path: '/course/:courseId',
-    params: { courseId: 'course-v1:UNIX+UX1+2025_T3' },
-  },
-);
+const renderComponent = () =>
+  render(
+    <IframeProvider>
+      <UnitSidebarProvider readOnly={false}>
+        <ComponentInfoSidebar />
+      </UnitSidebarProvider>
+    </IframeProvider>,
+    {
+      path: '/course/:courseId',
+      params: { courseId: 'course-v1:UNIX+UX1+2025_T3' },
+    },
+  );
 
 describe('<ComponentInfoSidebar />', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

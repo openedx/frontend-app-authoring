@@ -27,7 +27,7 @@ export interface CourseOutlineData {
     category: string;
     displayName: string;
     children: XBlock[];
-  }
+  };
 }
 
 export interface ContainerChildData {

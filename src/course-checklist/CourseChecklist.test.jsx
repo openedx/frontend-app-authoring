@@ -105,7 +105,10 @@ describe('CourseChecklistPage', () => {
 
     it('displays an alert and sets status to DENIED when API responds with 403', async () => {
       const courseLaunchApiUrl = getCourseLaunchApiUrl({
-        courseId, gradedOnly: true, validateOras: true, all: true,
+        courseId,
+        gradedOnly: true,
+        validateOras: true,
+        all: true,
       });
       axiosMock.onGet(courseLaunchApiUrl).reply(403);
 

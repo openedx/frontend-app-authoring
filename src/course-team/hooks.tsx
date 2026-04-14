@@ -51,7 +51,7 @@ const useCourseTeam = () => {
     openInfoModal();
   };
 
-  const handleAddUserSubmit = (body: { email: string }) => {
+  const handleAddUserSubmit = (body: { email: string; }) => {
     const { email } = body;
     const isUserContains = courseTeamUsers.some((user) => user.email === email);
 

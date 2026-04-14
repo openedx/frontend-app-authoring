@@ -24,11 +24,9 @@ export const OutlineAlignSidebar = () => {
 
   return (
     <AlignSidebar
-      title={
-        contentData && 'displayName' in contentData
-          ? contentData.displayName
-          : contentData?.courseDisplayNameWithDefault || ''
-      }
+      title={contentData && 'displayName' in contentData
+        ? contentData.displayName
+        : contentData?.courseDisplayNameWithDefault || ''}
       contentId={sidebarContentId}
       onBackBtnClick={(sidebarContentId !== courseId) ? handleBack : undefined}
     />

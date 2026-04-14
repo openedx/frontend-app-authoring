@@ -48,9 +48,7 @@ const LanguageSelect = ({
         onClose={close}
         onEscapeKey={close}
       >
-        <Menu
-          className="language-select"
-        >
+        <Menu className="language-select">
           <div>
             {Object.entries(options).map(([valueKey, text]) => {
               if (valueKey === value) {

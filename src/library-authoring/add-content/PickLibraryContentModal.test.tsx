@@ -50,27 +50,28 @@ const getIdFromContext = (context: ContextType) => {
   }
 };
 
-const render = (context: ContextType) => baseRender(
-  <PickLibraryContentModal isOpen onClose={onClose} />,
-  {
-    path: `/library/:libraryId/${context}/:${context === 'collection' ? context : 'container' }Id/*`,
-    params: {
-      libraryId,
-      ...(context === 'collection' && { collectionId: 'collectionId' }),
-      ...(context === 'unit' && { containerId: unitId }),
-      ...(context === 'section' && { containerId: sectionId }),
-      ...(context === 'subsection' && { containerId: subsectionId }),
+const render = (context: ContextType) =>
+  baseRender(
+    <PickLibraryContentModal isOpen onClose={onClose} />,
+    {
+      path: `/library/:libraryId/${context}/:${context === 'collection' ? context : 'container'}Id/*`,
+      params: {
+        libraryId,
+        ...(context === 'collection' && { collectionId: 'collectionId' }),
+        ...(context === 'unit' && { containerId: unitId }),
+        ...(context === 'section' && { containerId: sectionId }),
+        ...(context === 'subsection' && { containerId: subsectionId }),
+      },
+      extraWrapper: ({ children }) => (
+        <LibraryProvider
+          libraryId={libraryId}
+          componentPicker={ComponentPicker}
+        >
+          {children}
+        </LibraryProvider>
+      ),
     },
-    extraWrapper: ({ children }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-        componentPicker={ComponentPicker}
-      >
-        {children}
-      </LibraryProvider>
-    ),
-  },
-);
+  );
 
 describe('<PickLibraryContentModal />', () => {
   beforeEach(async () => {
@@ -111,9 +112,11 @@ describe('<PickLibraryContentModal />', () => {
 
       // Select and add the first item
       fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
-      expect(await screen.findByText(
-        new RegExp(`1 selected ${addType}`, 'i'),
-      )).toBeInTheDocument();
+      expect(
+        await screen.findByText(
+          new RegExp(`1 selected ${addType}`, 'i'),
+        ),
+      ).toBeInTheDocument();
       fireEvent.click(screen.getByRole('button', {
         name: new RegExp(`add to ${context}`, 'i'),
       }));
@@ -162,9 +165,11 @@ describe('<PickLibraryContentModal />', () => {
 
       // Select and add the first item
       fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
-      expect(await screen.findByText(
-        new RegExp(`1 selected ${addType}`, 'i'),
-      )).toBeInTheDocument();
+      expect(
+        await screen.findByText(
+          new RegExp(`1 selected ${addType}`, 'i'),
+        ),
+      ).toBeInTheDocument();
 
       fireEvent.click(screen.getByRole('button', {
         name: new RegExp(`add to ${context}`, 'i'),

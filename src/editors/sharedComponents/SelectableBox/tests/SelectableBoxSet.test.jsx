@@ -94,15 +94,17 @@ describe('<SelectableBox.Set />', () => {
       expect(screen.getByLabelText('test-radio-set-label')).toBeInTheDocument();
     });
     it('renders with an aria-labelledby attribute', () => {
-      render((
-        <>
-          <h2 id="test-radio-set-label">Radio Set Label text</h2>
-          <SelectableRadioSet
-            name="testName"
-            ariaLabelledby="test-radio-set-label"
-          />
-        </>
-      ));
+      render(
+        (
+          <>
+            <h2 id="test-radio-set-label">Radio Set Label text</h2>
+            <SelectableRadioSet
+              name="testName"
+              ariaLabelledby="test-radio-set-label"
+            />
+          </>
+        ),
+      );
       expect(screen.getByLabelText('Radio Set Label text')).toBeInTheDocument();
     });
   });

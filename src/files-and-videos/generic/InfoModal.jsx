@@ -53,12 +53,12 @@ const InfoModal = ({
         <hr />
         {showTranscriptionError && (
           <AlertMessage
-            description={(
+            description={
               <div className="row m-0 align-itmes-center">
                 <Icon src={Error} className="text-danger-500 mr-2" />
                 {intl.formatMessage(messages.transcriptionErrorMessage, { error: file.errorDescription })}
               </div>
-            )}
+            }
             variant="danger"
           />
         )}

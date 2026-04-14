@@ -1,6 +1,11 @@
 import { useEffect } from 'react';
 import {
-  AdvanceProblemKeys, AdvanceProblems, ProblemTypeKeys, ProblemTypes, getProblemTypes, getAdvanceProblems,
+  AdvanceProblemKeys,
+  AdvanceProblems,
+  ProblemTypeKeys,
+  ProblemTypes,
+  getProblemTypes,
+  getAdvanceProblems,
 } from '@src/editors/data/constants/problem';
 import { snakeCaseKeys } from '../../../../utils';
 import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
@@ -11,7 +16,8 @@ export const onSelect = ({
   setBlockTitle,
   defaultSettings,
   formatMessage,
-}) => () => {
+}) =>
+() => {
   if (Object.values(AdvanceProblemKeys).includes(selected)) {
     updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: AdvanceProblems[selected].template });
     if (formatMessage) {

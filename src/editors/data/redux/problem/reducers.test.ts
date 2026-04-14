@@ -397,8 +397,7 @@ describe('problem reducer', () => {
             correct: true,
             selectedFeedback: '',
             unselectedFeedback: '',
-          },
-          {
+          }, {
             id: 'B',
             correct: false,
             selectedFeedback: '',

@@ -29,7 +29,7 @@ import { ImportTagsWizard } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
 
-const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean }) => {
+const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean; }) => {
   const intl = useIntl();
 
   const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
@@ -44,11 +44,11 @@ const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean }) => {
       )}
       <OverlayTrigger
         placement="top"
-        overlay={(
+        overlay={
           <Tooltip id="download-template-tooltip">
             {intl.formatMessage(messages.downloadTemplateButtonHint)}
           </Tooltip>
-        )}
+        }
       >
         <Dropdown id="download-template-dropdown">
           <Dropdown.Toggle
@@ -95,7 +95,7 @@ const OrganizationFilterSelector = ({
   isOrganizationListLoaded: boolean;
   organizationListData?: string[];
   selectedOrgFilter: string;
-  setSelectedOrgFilter: (org: string) => void,
+  setSelectedOrgFilter: (org: string) => void;
 }) => {
   const intl = useIntl();
   const isOrgSelected = (value) => (value === selectedOrgFilter ? <Check /> : null);
@@ -106,7 +106,7 @@ const OrganizationFilterSelector = ({
       iconAfter={() => isOrgSelected(ALL_TAXONOMIES)}
       onClick={() => setSelectedOrgFilter(ALL_TAXONOMIES)}
     >
-      { isOrgSelected(ALL_TAXONOMIES)
+      {isOrgSelected(ALL_TAXONOMIES)
         ? intl.formatMessage(messages.orgInputSelectDefaultValue)
         : intl.formatMessage(messages.orgAllValue)}
     </MenuItem>,
@@ -116,7 +116,7 @@ const OrganizationFilterSelector = ({
       iconAfter={() => isOrgSelected(UNASSIGNED)}
       onClick={() => setSelectedOrgFilter(UNASSIGNED)}
     >
-      { intl.formatMessage(messages.orgUnassignedValue) }
+      {intl.formatMessage(messages.orgUnassignedValue)}
     </MenuItem>,
   ];
 
@@ -142,7 +142,7 @@ const OrganizationFilterSelector = ({
       defaultMessage={intl.formatMessage(messages.orgInputSelectDefaultValue)}
       data-testid="taxonomy-orgs-filter-selector"
     >
-      { isOrganizationListLoaded
+      {isOrganizationListLoaded
         ? selectOptions
         : (
           <Spinner

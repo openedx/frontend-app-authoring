@@ -21,18 +21,19 @@ const contentGroup = contentGroupsMock.groups[0];
 const contentGroupWithUsages = contentGroupsMock.groups[1];
 const contentGroupWithOnlyOneUsage = contentGroupsMock.groups[2];
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <ContentGroupCard
-      group={contentGroup}
-      groupNames={contentGroupsMock.groups?.map((group) => group.name)}
-      parentGroupId={contentGroupsMock.id}
-      contentGroupActions={contentGroupActions}
-      handleEditGroup={handleEditGroupMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <ContentGroupCard
+        group={contentGroup}
+        groupNames={contentGroupsMock.groups?.map((group) => group.name)}
+        parentGroupId={contentGroupsMock.id}
+        contentGroupActions={contentGroupActions}
+        handleEditGroup={handleEditGroupMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ContentGroupCard />', () => {
   it('renders component correctly', () => {
@@ -51,7 +52,10 @@ describe('<ContentGroupCard />', () => {
   it('expands/collapses the container group content on title click', async () => {
     const user = userEvent.setup();
     const {
-      getByText, queryByTestId, getByTestId, queryByText,
+      getByText,
+      queryByTestId,
+      getByTestId,
+      queryByText,
     } = renderComponent();
     const cardTitle = getByTestId('configuration-card-header-button');
     await user.click(cardTitle);

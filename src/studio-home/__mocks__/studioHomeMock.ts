@@ -6,7 +6,8 @@ export default {
     {
       courseKey: 'course-v1:MachineLearning+123+2023',
       displayName: 'Machine Learning',
-      lmsLink: '//localhost:18000/courses/course-v1:MachineLearning+123+2023/jump_to/block-v1:MachineLearning+123+2023+type@course+block@course',
+      lmsLink:
+        '//localhost:18000/courses/course-v1:MachineLearning+123+2023/jump_to/block-v1:MachineLearning+123+2023+type@course+block@course',
       number: '123',
       org: 'LSE',
       rerunLink: '/course_rerun/course-v1:MachineLearning+123+2023',
@@ -17,7 +18,8 @@ export default {
     {
       courseKey: 'course-v1:Design+123+e.g.2025',
       displayName: 'Design',
-      lmsLink: '//localhost:18000/courses/course-v1:Design+123+e.g.2025/jump_to/block-v1:Design+123+e.g.2025+type@course+block@course',
+      lmsLink:
+        '//localhost:18000/courses/course-v1:Design+123+e.g.2025/jump_to/block-v1:Design+123+e.g.2025+type@course+block@course',
       number: '123',
       org: 'University of Cape Town',
       rerunLink: '/course_rerun/course-v1:Design+123+e.g.2025',
@@ -32,7 +34,8 @@ export default {
     {
       courseKey: 'course-v1:HarvardX+123+2023',
       displayName: 'Managing Risk in the Information Age',
-      lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+      lmsLink:
+        '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
       number: '123',
       org: 'HarvardX',
       rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',

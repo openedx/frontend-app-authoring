@@ -94,7 +94,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
       const taxonomiesList = taxonomyListData.results.map((taxonomy) => ({
         ...taxonomy,
         canTagObject: taxonomy.canTagObject && canTagObject,
-        contentTags: /** @type {ContentTagData[]} */([]),
+        contentTags: /** @type {ContentTagData[]} */ ([]),
       }));
 
       const contentTaxonomies = contentTaxonomyTagsData.taxonomies;
@@ -123,7 +123,8 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
 
       // Delete Language taxonomy if is empty
       const filteredTaxonomies = taxonomiesList.filter(
-        (taxonomy) => taxonomy.exportId !== languageExportId
+        (taxonomy) =>
+          taxonomy.exportId !== languageExportId
           || taxonomy.contentTags.length !== 0,
       );
 
@@ -282,10 +283,11 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
 
     let message;
     if (tagsAdded && tagsRemoved) {
-      message = `${intl.formatMessage(
-        messages.tagsSaveToastTextTypeAdded,
-        { tagsAdded },
-      )
+      message = `${
+        intl.formatMessage(
+          messages.tagsSaveToastTextTypeAdded,
+          { tagsAdded },
+        )
       } ${
         intl.formatMessage(
           messages.tagsSaveToastTextTypeRemoved,

@@ -4,7 +4,37 @@ import { ProblemTypeKeys } from '../../../data/constants/problem';
 import { ToleranceTypes } from '../components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';
 import { findNodesAndRemoveTheirParentNodes } from './reactStateOLXHelpers';
 
-const HtmlBlockTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'pre', 'blockquote', 'ol', 'ul', 'li', 'dl', 'dt', 'dd', 'hr', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'colgroup', 'col', 'address', 'fieldset', 'legend'];
+const HtmlBlockTags = [
+  'p',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'div',
+  'pre',
+  'blockquote',
+  'ol',
+  'ul',
+  'li',
+  'dl',
+  'dt',
+  'dd',
+  'hr',
+  'table',
+  'thead',
+  'caption',
+  'tbody',
+  'tr',
+  'th',
+  'td',
+  'colgroup',
+  'col',
+  'address',
+  'fieldset',
+  'legend',
+];
 
 class ReactStateOLXParser {
   constructor(problemState) {

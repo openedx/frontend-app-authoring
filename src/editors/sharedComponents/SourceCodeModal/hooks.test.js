@@ -13,11 +13,10 @@ describe('SourceCodeModal hooks', () => {
   const mockContent = 'sOmEMockHtML';
   const mockSetContent = jest.fn();
   const mockEditorRef = {
-    current:
-          {
-            setContent: mockSetContent,
-            getContent: jest.fn(() => mockContent),
-          },
+    current: {
+      setContent: mockSetContent,
+      getContent: jest.fn(() => mockContent),
+    },
   };
   const mockClose = jest.fn();
   test('getSaveBtnProps', () => {

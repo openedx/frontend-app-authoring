@@ -40,7 +40,12 @@ export const imgProps = ({
 };
 
 export const saveToEditor = ({
-  settings, selection, lmsEndpointUrl, editorType, editorRef, isLibrary,
+  settings,
+  selection,
+  lmsEndpointUrl,
+  editorType,
+  editorRef,
+  isLibrary,
 }) => {
   const newImgTag = module.hooks.imgTag({
     settings,
@@ -58,10 +63,17 @@ export const saveToEditor = ({
 };
 
 export const updateImagesRef = ({
-  images, selection, height, width, newImage,
+  images,
+  selection,
+  height,
+  width,
+  newImage,
 }) => {
   const { result: mappedImages, foundMatch: imageAlreadyExists } = updateImageDimensions({
-    images: images.current, url: selection.externalUrl, height, width,
+    images: images.current,
+    url: selection.externalUrl,
+    height,
+    width,
   });
 
   // eslint-disable-next-line no-param-reassign
@@ -69,7 +81,10 @@ export const updateImagesRef = ({
 };
 
 export const updateReactState = ({
-  settings, selection, setSelection, images,
+  settings,
+  selection,
+  setSelection,
+  images,
 }) => {
   const { height, width } = settings.dimensions;
   const newImage = {
@@ -80,7 +95,11 @@ export const updateReactState = ({
   };
 
   updateImagesRef({
-    images, selection, height, width, newImage,
+    images,
+    selection,
+    height,
+    width,
+    newImage,
   });
 
   setSelection(newImage);
@@ -90,7 +109,8 @@ export const hooks = {
   createSaveCallback: ({
     close,
     ...args
-  }) => (
+  }) =>
+  (
     settings,
   ) => {
     saveToEditor({ settings, ...args });

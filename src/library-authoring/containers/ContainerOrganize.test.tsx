@@ -14,7 +14,7 @@ import ContainerOrganize from './ContainerOrganize';
 
 jest.mock('../../content-tags-drawer', () => ({
   ...jest.requireActual('../../content-tags-drawer'),
-  ContentTagsDrawer: ({ readOnly }: { readOnly: boolean }) => (
+  ContentTagsDrawer: ({ readOnly }: { readOnly: boolean; }) => (
     <div>Mocked {readOnly ? 'read-only' : 'editable'} ContentTagsDrawer</div>
   ),
 }));
@@ -29,20 +29,21 @@ const render = ({
 }: {
   libraryId?: string;
   containerId?: string;
-}) => baseRender(<ContainerOrganize />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: containerId,
-          type: SidebarBodyItemId.ComponentInfo,
-        }}
-      >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+}) =>
+  baseRender(<ContainerOrganize />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: containerId,
+            type: SidebarBodyItemId.ComponentInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<ContainerOrganize />', () => {
   beforeEach(() => {

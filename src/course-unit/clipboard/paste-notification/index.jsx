@@ -37,12 +37,12 @@ const PastNotificationAlert = ({ staticFileNotices, courseId }) => {
           className="course-unit__alert"
           title={intl.formatMessage(messages.hasConflictingErrorsTitle)}
           onClose={() => handleCloseNotificationAlert('conflictingFilesAlert')}
-          description={(
+          description={
             <AlertContent
               fileList={conflictingFiles}
               text={intl.formatMessage(messages.hasConflictingErrorsDescription)}
             />
-          )}
+          }
           variant="warning"
           icon={WarningIcon}
           dismissible
@@ -61,12 +61,12 @@ const PastNotificationAlert = ({ staticFileNotices, courseId }) => {
           className="course-unit__alert"
           title={intl.formatMessage(messages.hasErrorsTitle)}
           onClose={() => handleCloseNotificationAlert('errorFilesAlert')}
-          description={(
+          description={
             <AlertContent
               fileList={errorFiles}
               text={intl.formatMessage(messages.hasErrorsDescription)}
             />
-          )}
+          }
           variant="danger"
           icon={ErrorIcon}
           dismissible
@@ -78,12 +78,12 @@ const PastNotificationAlert = ({ staticFileNotices, courseId }) => {
           className="course-unit__alert"
           title={intl.formatMessage(messages.hasNewFilesTitle)}
           onClose={() => handleCloseNotificationAlert('newFilesAlert')}
-          description={(
+          description={
             <AlertContent
               fileList={newFiles}
               text={intl.formatMessage(messages.hasNewFilesDescription)}
             />
-          )}
+          }
           variant="info"
           icon={InfoIcon}
           dismissible
@@ -102,12 +102,11 @@ const PastNotificationAlert = ({ staticFileNotices, courseId }) => {
 
 PastNotificationAlert.propTypes = {
   courseId: PropTypes.string.isRequired,
-  staticFileNotices:
-    PropTypes.shape({
-      conflictingFiles: PropTypes.arrayOf(PropTypes.string),
-      errorFiles: PropTypes.arrayOf(PropTypes.string),
-      newFiles: PropTypes.arrayOf(PropTypes.string),
-    }),
+  staticFileNotices: PropTypes.shape({
+    conflictingFiles: PropTypes.arrayOf(PropTypes.string),
+    errorFiles: PropTypes.arrayOf(PropTypes.string),
+    newFiles: PropTypes.arrayOf(PropTypes.string),
+  }),
 };
 
 PastNotificationAlert.defaultProps = {

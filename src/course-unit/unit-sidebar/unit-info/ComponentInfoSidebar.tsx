@@ -21,7 +21,11 @@ import { useUnlinkDownstream, UnlinkModal } from '@src/generic/unlink-modal';
 import { useClipboard } from '@src/generic/clipboard';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import Loading from '@src/generic/Loading';
-import { deleteUnitItemQuery, duplicateUnitItemQuery, fetchCourseVerticalChildrenData } from '@src/course-unit/data/thunk';
+import {
+  deleteUnitItemQuery,
+  duplicateUnitItemQuery,
+  fetchCourseVerticalChildrenData,
+} from '@src/course-unit/data/thunk';
 
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
@@ -90,10 +94,11 @@ export const ComponentInfoSidebar = () => {
       dispatch(duplicateUnitItemQuery(
         unitData.id,
         selectedComponentId,
-        (courseKey: string, locator: string) => sendMessageToIframe(
-          messageTypes.completeXBlockDuplicating,
-          { courseKey, locator },
-        ),
+        (courseKey: string, locator: string) =>
+          sendMessageToIframe(
+            messageTypes.completeXBlockDuplicating,
+            { courseKey, locator },
+          ),
       ));
     }
   };

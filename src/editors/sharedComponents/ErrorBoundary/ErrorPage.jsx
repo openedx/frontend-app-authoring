@@ -1,7 +1,10 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
-  Button, Container, Row, Col,
+  Button,
+  Container,
+  Row,
+  Col,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
@@ -38,15 +41,17 @@ const ErrorPage = ({
             </div>
           )}
           <Row className="justify-content-center">
-            {learningContextId && (unitUrl && outlineType !== 'library' ? (
-              <Button className="mr-2" variant="outline-primary" onClick={() => navigateTo(unitUrl)}>
-                {intl.formatMessage(messages.returnToUnitPageLabel)}
-              </Button>
-            ) : (
-              <Button className="mr-2" variant="outline-primary" onClick={() => navigateTo(outlineUrl)}>
-                {intl.formatMessage(messages.returnToOutlineLabel, { outlineType })}
-              </Button>
-            ))}
+            {learningContextId && (unitUrl && outlineType !== 'library' ?
+              (
+                <Button className="mr-2" variant="outline-primary" onClick={() => navigateTo(unitUrl)}>
+                  {intl.formatMessage(messages.returnToUnitPageLabel)}
+                </Button>
+              ) :
+              (
+                <Button className="mr-2" variant="outline-primary" onClick={() => navigateTo(outlineUrl)}>
+                  {intl.formatMessage(messages.returnToOutlineLabel, { outlineType })}
+                </Button>
+              ))}
             <Button className="ml-2" onClick={() => global.location.reload()}>
               {intl.formatMessage(messages.unexpectedErrorButtonLabel)}
             </Button>

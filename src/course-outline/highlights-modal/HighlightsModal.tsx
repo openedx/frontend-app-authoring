@@ -98,7 +98,10 @@ const HighlightsFormInner = ({
   ]);
 
   const {
-    values, dirty, handleSubmit, resetForm,
+    values,
+    dirty,
+    handleSubmit,
+    resetForm,
   } = useFormikContext<HighlightData>();
 
   // Notify parent of dirty state changes
@@ -183,7 +186,7 @@ const HighlightsViewCard = ({
       <Card.Header
         title={intl.formatMessage(messages.highlightsTitle)}
         size="sm"
-        actions={(
+        actions={
           <ActionRow>
             <IconButton
               size="sm"
@@ -192,20 +195,18 @@ const HighlightsViewCard = ({
               alt={intl.formatMessage(messages.editButton)}
             />
           </ActionRow>
-        )}
+        }
       />
       <Card.Body>
         <ExpandableCard maxHeight={400}>
-          {nonEmptyHighlights.map((highlight) => (
-            <p key={highlight}>{highlight}</p>
-          ))}
+          {nonEmptyHighlights.map((highlight) => <p key={highlight}>{highlight}</p>)}
         </ExpandableCard>
       </Card.Body>
     </Card>
   );
 };
 
-const HighlightsEmptyState = ({ onAdd }: { onAdd: () => void }) => {
+const HighlightsEmptyState = ({ onAdd }: { onAdd: () => void; }) => {
   const intl = useIntl();
 
   return (
@@ -265,7 +266,7 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
       <ConfirmNavigationModal
         isOpen={blocker.state === 'blocked'}
         onConfirm={handleConfirmNavigation}
-        onCancel={/* istanbul ignore next */() => {
+        onCancel={/* istanbul ignore next */ () => {
           blocker.reset?.();
         }}
       />
