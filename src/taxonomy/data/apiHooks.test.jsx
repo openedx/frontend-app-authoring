@@ -111,7 +111,7 @@ describe('import taxonomy api calls', () => {
   });
 
   it('should surface duplicate tag error returned as an array', async () => {
-    const duplicateError = 'Tag with value \'ab\' already exists for taxonomy.';
+    const duplicateError = 'Request failed with status code 400';
     axiosMock.onPost(apiUrls.createTag(1)).reply(400, [duplicateError]);
     const { result } = renderHook(() => useCreateTag(1), { wrapper });
 
