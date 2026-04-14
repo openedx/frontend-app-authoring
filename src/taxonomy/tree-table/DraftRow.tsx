@@ -3,10 +3,10 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Spinner } from '@openedx/paragon';
 import { Row } from '@tanstack/react-table';
 
+import UsageCountDisplay from '@src/taxonomy/tag-list/UsageCountDisplay';
 import { EditableCell } from './EditableCell';
 import type { CreateRowMutationState, TreeRowData } from './types';
 import messages from './messages';
-import UsageCountDisplay from '../tag-list/UsageCountDisplay';
 
 interface DraftRowProps {
   draftError: string;

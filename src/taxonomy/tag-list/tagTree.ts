@@ -1,5 +1,5 @@
+import type { TagData } from '@src/taxonomy/data/types';
 import { TagTreeError } from './errors';
-import type { TagData } from '../data/types';
 
 export interface TagTreeNode extends TagData {
   subRows?: TagTreeNode[];

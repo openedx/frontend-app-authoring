@@ -30,7 +30,7 @@ const SaveErrorAlert = ({ draftError, isError, isUpdateError }: SaveErrorAlertPr
   if (!alertOpen) { return null; }
 
   return (
-    <Alert variant="danger" icon={Info} dismissible onClose={() => { setAlertOpen(false) }}>
+    <Alert variant="danger" icon={Info} dismissible onClose={() => { setAlertOpen(false); }}>
       <Alert.Heading>
         {intl.formatMessage(messages.errorSavingTitle)}
       </Alert.Heading>

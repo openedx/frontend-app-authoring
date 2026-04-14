@@ -1,10 +1,11 @@
 import { useReducer } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { useCreateTag, useUpdateTag } from '../data/apiHooks';
+import globalMessages from '@src/messages';
+import { useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
+import type { RowId } from '@src/taxonomy/tree-table/types';
 import { TagTree } from './tagTree';
 import { TagListTableError } from './errors';
-import type { RowId } from '../tree-table/types';
 import {
   TABLE_MODES,
   TRANSITION_TABLE,
@@ -13,8 +14,6 @@ import {
 } from './constants';
 
 import messages from './messages';
-import globalMessages from '../../messages';
-import { AxiosError } from 'axios';
 
 /** Interface for table mode actions for React's `useReducer` hook.
  *
@@ -165,9 +164,9 @@ const useEditActions = ({
     return true;
   };
 
-  const getErrorMessage = (error: unknown): string => {
+  const getErrorMessage = (error: any): string => {
     let errorMessage: string = '';
-    if (error instanceof AxiosError) {
+    if (error.name === 'AxiosError') {
       const responseData = error.response?.data;
       const tagError = Object.entries(responseData)?.find((errItem: [string, unknown]) => (
         ['tag', 'value', 'updated_tag_value'].includes(errItem[0].toLowerCase())

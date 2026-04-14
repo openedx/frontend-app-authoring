@@ -11,13 +11,13 @@ import {
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import type { Row } from '@tanstack/react-table';
 
-import messages from './messages';
 import type {
   RowId,
   TreeColumnDef,
   TreeRowData,
-} from '../tree-table/types';
+} from '@src/taxonomy/tree-table/types';
 import { TagListRowData } from './types';
+import messages from './messages';
 import OptionalExpandLink from './OptionalExpandLink';
 import UsageCountDisplay from './UsageCountDisplay';
 

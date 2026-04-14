@@ -1,4 +1,4 @@
-import { TreeRowData } from '../tree-table/types';
+import { TreeRowData } from '@src/taxonomy/tree-table/types';
 
 export interface TagListRowData extends TreeRowData {
   depth: number;

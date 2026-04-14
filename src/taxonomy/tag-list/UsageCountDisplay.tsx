@@ -4,7 +4,7 @@ import {
 import type { Row } from '@tanstack/react-table';
 import type {
   TreeRowData,
-} from '../tree-table/types';
+} from '@src/taxonomy/tree-table/types';
 import { TagListRowData } from './types';
 
 const asTagListRowData = (row: Row<TreeRowData>): TagListRowData => (
