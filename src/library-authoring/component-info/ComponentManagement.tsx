@@ -3,7 +3,10 @@ import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Collapsible, Icon, Stack } from '@openedx/paragon';
 import {
-  BookOpen, ExpandLess, ExpandMore, Tag,
+  BookOpen,
+  ExpandLess,
+  ExpandMore,
+  Tag,
 } from '@openedx/paragon/icons';
 
 import { useOptionalLibraryContext } from '../common/context/LibraryContext';
@@ -56,7 +59,7 @@ const ComponentManagement = () => {
     }
     let result = 0;
     componentTags.taxonomies.forEach((taxonomy) => {
-      const countedTags : string[] = [];
+      const countedTags: string[] = [];
       taxonomy.tags.forEach((tagData) => {
         tagData.lineage.forEach((tag) => {
           if (!countedTags.includes(tag)) {

@@ -18,6 +18,7 @@ export const getMovedXBlockParams = (state) => state.courseUnit.movedXBlockParam
 const getLoadingStatuses = (state) => state.courseUnit.loadingStatus;
 export const getIsLoading = createSelector(
   [getLoadingStatuses],
-  loadingStatus => Object.values(loadingStatus)
-    .some((status) => status === RequestStatus.IN_PROGRESS),
+  loadingStatus =>
+    Object.values(loadingStatus)
+      .some((status) => status === RequestStatus.IN_PROGRESS),
 );

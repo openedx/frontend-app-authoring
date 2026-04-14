@@ -71,7 +71,8 @@ export const parseState = ({
   isMarkdownEditorEnabled,
   ref,
   lmsEndpointUrl,
-}) => () => {
+}) =>
+() => {
   // Constructs the save payload by parsing the current state of the problem editor.
   // If the Markdown editor is enabled, the editor content is converted to OLX using convertMarkdownToXml.
   // For advanced problems, raw editor content is used as OLX; for visual ones, it's built via ReactStateOLXParser.
@@ -149,7 +150,10 @@ export const checkForNoAnswers = ({ openSaveWarningModal, problem }) => {
 };
 
 export const checkForSettingDiscrepancy = ({
-  problem, ref, openSaveWarningModal, isMarkdownEditorEnabled,
+  problem,
+  ref,
+  openSaveWarningModal,
+  isMarkdownEditorEnabled,
 }) => {
   const contentString = ref?.current?.state.doc.toString();
   const rawOLX = isMarkdownEditorEnabled ? convertMarkdownToXml(contentString) : contentString;
@@ -184,12 +188,14 @@ export const getContent = ({
     problem,
     openSaveWarningModal,
   });
-  const hasMismatchedSettings = isAdvancedProblemType || isMarkdownEditorEnabled ? checkForSettingDiscrepancy({
-    ref: editorRef,
-    problem,
-    openSaveWarningModal,
-    isMarkdownEditorEnabled,
-  }) : false;
+  const hasMismatchedSettings = isAdvancedProblemType || isMarkdownEditorEnabled ?
+    checkForSettingDiscrepancy({
+      ref: editorRef,
+      problem,
+      openSaveWarningModal,
+      isMarkdownEditorEnabled,
+    }) :
+    false;
   if (!hasNoAnswers && !hasMismatchedSettings) {
     const data = parseState({
       isAdvanced: isAdvancedProblemType,

@@ -5,7 +5,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { TagTree } from './tagTree';
 import { useEditActions, useTableModes } from './hooks';
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
 

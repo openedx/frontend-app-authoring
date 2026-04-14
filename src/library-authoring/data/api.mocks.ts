@@ -14,74 +14,83 @@ import * as api from './api';
  * Mock for `getContentLibraryV2List()`
  */
 export const mockGetContentLibraryV2List = {
-  applyMock: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
-    camelCaseObject(contentLibrariesListV2),
-  ),
-  applyMockNoPagination: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
-    camelCaseObject(contentLibrariesListV2.results),
-  ),
-  applyMockNoPaginationEmpty: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue([] as api.ContentLibrary[]),
-  applyMockError: () => jest.spyOn(api, 'getContentLibraryV2List').mockRejectedValue(
-    createAxiosError({ code: 500, message: 'Internal Error.', path: api.getContentLibraryV2ListApiUrl() }),
-  ),
-  applyMockLoading: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
-    new Promise(() => {}),
-  ),
-  applyMockEmpty: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue({
-    next: null,
-    previous: null,
-    count: 0,
-    numPages: 1,
-    currentPage: 1,
-    start: 0,
-    results: [],
-  }),
+  applyMock: () =>
+    jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
+      camelCaseObject(contentLibrariesListV2),
+    ),
+  applyMockNoPagination: () =>
+    jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
+      camelCaseObject(contentLibrariesListV2.results),
+    ),
+  applyMockNoPaginationEmpty: () =>
+    jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue([] as api.ContentLibrary[]),
+  applyMockError: () =>
+    jest.spyOn(api, 'getContentLibraryV2List').mockRejectedValue(
+      createAxiosError({ code: 500, message: 'Internal Error.', path: api.getContentLibraryV2ListApiUrl() }),
+    ),
+  applyMockLoading: () =>
+    jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
+      new Promise(() => {}),
+    ),
+  applyMockEmpty: () =>
+    jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue({
+      next: null,
+      previous: null,
+      count: 0,
+      numPages: 1,
+      currentPage: 1,
+      start: 0,
+      results: [],
+    }),
 };
 
 export const mockGetModulestoreMigratedBlocksInfo = {
-  applyMockSuccess: () => jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
-    [
-      {
-        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
-        targetKey: '1',
-        unsupportedReason: undefined,
-      },
-      {
-        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@sequential+block@2',
-        targetKey: '2',
-        unsupportedReason: undefined,
-      },
-      {
-        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@vertical+block@2',
-        targetKey: '3',
-        unsupportedReason: undefined,
-      },
-      {
-        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@3',
-        targetKey: '4',
-        unsupportedReason: undefined,
-      },
-    ],
-  ),
-  applyMockPartial: () => jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
-    [
-      {
-        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
-        targetKey: null,
-        unsupportedReason: 'The "library_content" XBlock (ID: "test_lib_content") has children, so it is not supported in content libraries. It has 2 children blocks.',
-      },
-      {
-        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@1',
-        targetKey: '1',
-        unsupportedReason: undefined,
-      },
-      {
-        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
-        targetKey: '2',
-        unsupportedReason: undefined,
-      },
-    ],
-  ),
+  applyMockSuccess: () =>
+    jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
+      [
+        {
+          sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
+          targetKey: '1',
+          unsupportedReason: undefined,
+        },
+        {
+          sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@sequential+block@2',
+          targetKey: '2',
+          unsupportedReason: undefined,
+        },
+        {
+          sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@vertical+block@2',
+          targetKey: '3',
+          unsupportedReason: undefined,
+        },
+        {
+          sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@3',
+          targetKey: '4',
+          unsupportedReason: undefined,
+        },
+      ],
+    ),
+  applyMockPartial: () =>
+    jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
+      [
+        {
+          sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
+          targetKey: null,
+          unsupportedReason:
+            'The "library_content" XBlock (ID: "test_lib_content") has children, so it is not supported in content libraries. It has 2 children blocks.',
+        },
+        {
+          sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@1',
+          targetKey: '1',
+          unsupportedReason: undefined,
+        },
+        {
+          sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
+          targetKey: '2',
+          unsupportedReason: undefined,
+        },
+      ],
+    ),
 };
 
 /**
@@ -227,9 +236,12 @@ export async function mockCreateLibraryBlock(
 ): ReturnType<typeof api.createLibraryBlock> {
   if (args.libraryId === mockContentLibrary.libraryId) {
     switch (args.blockType) {
-      case 'html': return mockCreateLibraryBlock.newHtmlData;
-      case 'problem': return mockCreateLibraryBlock.newProblemData;
-      case 'video': return mockCreateLibraryBlock.newVideoData;
+      case 'html':
+        return mockCreateLibraryBlock.newHtmlData;
+      case 'problem':
+        return mockCreateLibraryBlock.newProblemData;
+      case 'video':
+        return mockCreateLibraryBlock.newVideoData;
       default:
         // Continue to error handling below.
     }
@@ -340,13 +352,20 @@ mockRestoreContainer.applyMock = () => (
 export async function mockXBlockFields(usageKey: string): Promise<api.XBlockFields> {
   const thisMock = mockXBlockFields;
   switch (usageKey) {
-    case thisMock.usageKeyHtml: return thisMock.dataHtml;
-    case thisMock.usageKeyNewHtml: return thisMock.dataNewHtml;
-    case thisMock.usageKeyNewProblem: return thisMock.dataNewProblem;
-    case thisMock.usageKeyNewVideo: return thisMock.dataNewVideo;
-    case thisMock.usageKeyThirdParty: return thisMock.dataThirdParty;
-    case thisMock.usageKey0: return thisMock.dataHtml0;
-    default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
+    case thisMock.usageKeyHtml:
+      return thisMock.dataHtml;
+    case thisMock.usageKeyNewHtml:
+      return thisMock.dataNewHtml;
+    case thisMock.usageKeyNewProblem:
+      return thisMock.dataNewProblem;
+    case thisMock.usageKeyNewVideo:
+      return thisMock.dataNewVideo;
+    case thisMock.usageKeyThirdParty:
+      return thisMock.dataThirdParty;
+    case thisMock.usageKey0:
+      return thisMock.dataHtml0;
+    default:
+      throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
 // Mock of a "regular" HTML (Text) block:
@@ -407,15 +426,24 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
       return new Promise<any>(() => {});
     case thisMock.usageKeyError404:
       throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
-    case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
-    case thisMock.usageKeyPublished: return thisMock.dataPublished;
-    case thisMock.usageKeyWithCollections: return thisMock.dataWithCollections;
-    case thisMock.usageKeyPublishDisabled: return thisMock.dataPublishDisabled;
-    case thisMock.usageKeyUnsupportedXBlock: return thisMock.dataUnsupportedXBlock;
-    case thisMock.usageKeyForTags: return thisMock.dataPublished;
-    case thisMock.usageKeyPublishedWithChanges: return thisMock.dataPublishedWithChanges;
-    case thisMock.usageKeyPublishedWithChangesV2: return thisMock.dataPublishedWithChanges;
-    default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
+    case thisMock.usageKeyNeverPublished:
+      return thisMock.dataNeverPublished;
+    case thisMock.usageKeyPublished:
+      return thisMock.dataPublished;
+    case thisMock.usageKeyWithCollections:
+      return thisMock.dataWithCollections;
+    case thisMock.usageKeyPublishDisabled:
+      return thisMock.dataPublishDisabled;
+    case thisMock.usageKeyUnsupportedXBlock:
+      return thisMock.dataUnsupportedXBlock;
+    case thisMock.usageKeyForTags:
+      return thisMock.dataPublished;
+    case thisMock.usageKeyPublishedWithChanges:
+      return thisMock.dataPublishedWithChanges;
+    case thisMock.usageKeyPublishedWithChangesV2:
+      return thisMock.dataPublishedWithChanges;
+    default:
+      throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
 mockLibraryBlockMetadata.usageKeyThatNeverLoads = 'lb:Axim:infiniteLoading:html:123';
@@ -499,7 +527,8 @@ mockLibraryBlockMetadata.dataPublishedWithChanges = {
   collections: [],
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
-mockLibraryBlockMetadata.applyMock = () => jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata);
+mockLibraryBlockMetadata.applyMock = () =>
+  jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata);
 
 /**
  * Mock for `getCollectionMetadata()`
@@ -557,7 +586,7 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
     case mockGetContainerMetadata.unitIdLoading:
     case mockGetContainerMetadata.sectionIdLoading:
     case mockGetContainerMetadata.subsectionIdLoading:
-      return new Promise(() => { });
+      return new Promise(() => {});
     case mockGetContainerMetadata.unitIdWithCollections:
       return Promise.resolve(mockGetContainerMetadata.containerDataWithCollections);
     case mockGetContainerMetadata.sectionId:
@@ -810,23 +839,23 @@ export async function mockGetContainerHierarchy(containerId: string): Promise<ap
       ].includes(containerId)
     ) {
       numChildren = 1;
-    } else if ([
-      mockGetContainerMetadata.unitIdEmpty,
-      mockGetContainerMetadata.sectionIdEmpty,
-      mockGetContainerMetadata.subsectionIdEmpty,
-    ].includes(containerId)) {
+    } else if (
+      [
+        mockGetContainerMetadata.unitIdEmpty,
+        mockGetContainerMetadata.sectionIdEmpty,
+        mockGetContainerMetadata.subsectionIdEmpty,
+      ].includes(containerId)
+    ) {
       numChildren = 0;
     }
     return Array(numChildren).fill(mockGetContainerChildren.childTemplate).map(
       (child, idx) => (
         {
           ...child,
-          id: (
-            childId === containerId
-              ? childId
-              // Generate a unique ID when multiple child blocks
-              : `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`
-          ),
+          id: childId === containerId
+            ? childId
+            // Generate a unique ID when multiple child blocks
+            : `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`,
           displayName: `${name} block ${idx}`,
           publishedDisplayName: `${name} block published ${idx}`,
           hasUnpublishedChanges: true,
@@ -865,7 +894,8 @@ mockGetContainerHierarchy.applyMock = () => {
 export async function mockXBlockOLX(usageKey: string): Promise<string> {
   const thisMock = mockXBlockOLX;
   switch (usageKey) {
-    case thisMock.usageKeyHtml: return thisMock.olxHtml;
+    case thisMock.usageKeyHtml:
+      return thisMock.olxHtml;
     default: {
       const blockType = getBlockType(usageKey);
       return `<${blockType}>This is mock OLX for usageKey "${usageKey}"</${blockType}>`;
@@ -954,7 +984,8 @@ mockGetLibraryTeam.applyMock = () => jest.spyOn(api, 'getLibraryTeam').mockImple
 export async function mockBlockTypesMetadata(libraryId: string): Promise<api.BlockTypeMetadata[]> {
   const thisMock = mockBlockTypesMetadata;
   switch (libraryId) {
-    case mockContentLibrary.libraryId: return thisMock.blockTypesMetadata;
+    case mockContentLibrary.libraryId:
+      return thisMock.blockTypesMetadata;
     default: {
       return [];
     }
@@ -979,17 +1010,25 @@ export async function mockGetEntityLinks(
   const thisMock = mockGetEntityLinks;
   if (contentType === 'components') {
     switch (upstreamKey) {
-      case thisMock.upstreamContainerKey: return thisMock.componentResponse;
-      case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.componentResponse;
-      case thisMock.emptyUsageKey: return thisMock.emptyComponentUsage;
-      default: return [];
+      case thisMock.upstreamContainerKey:
+        return thisMock.componentResponse;
+      case mockLibraryBlockMetadata.usageKeyPublishedWithChanges:
+        return thisMock.componentResponse;
+      case thisMock.emptyUsageKey:
+        return thisMock.emptyComponentUsage;
+      default:
+        return [];
     }
   } else if (contentType === 'containers') {
     switch (upstreamKey) {
-      case thisMock.unitKey: return thisMock.unitResponse;
-      case thisMock.subsectionKey: return thisMock.subsectionResponse;
-      case thisMock.sectionKey: return thisMock.sectionResponse;
-      default: return [];
+      case thisMock.unitKey:
+        return thisMock.unitResponse;
+      case thisMock.subsectionKey:
+        return thisMock.subsectionResponse;
+      case thisMock.sectionKey:
+        return thisMock.sectionResponse;
+      default:
+        return [];
     }
   }
   return thisMock.allResponse;
@@ -1118,10 +1157,11 @@ mockGetEntityLinks.allResponse = [
   ...mockGetEntityLinks.subsectionResponse,
   ...mockGetEntityLinks.sectionResponse,
 ];
-mockGetEntityLinks.applyMock = () => jest.spyOn(
-  courseLibApi,
-  'getEntityLinks',
-).mockImplementation(mockGetEntityLinks);
+mockGetEntityLinks.applyMock = () =>
+  jest.spyOn(
+    courseLibApi,
+    'getEntityLinks',
+  ).mockImplementation(mockGetEntityLinks);
 
 export async function mockGetCourseImports(libraryId: string): ReturnType<typeof api.getCourseImports> {
   switch (libraryId) {
@@ -1183,21 +1223,23 @@ mockGetCourseImports.inProgressImport = {
   state: 'In Progress',
   progress: 0.5012,
 } satisfies api.CourseImport;
-mockGetCourseImports.applyMock = () => jest.spyOn(
-  api,
-  'getCourseImports',
-).mockImplementation(mockGetCourseImports);
+mockGetCourseImports.applyMock = () =>
+  jest.spyOn(
+    api,
+    'getCourseImports',
+  ).mockImplementation(mockGetCourseImports);
 
 export const mockGetMigrationInfo = {
-  applyMock: () => jest.spyOn(api, 'getMigrationInfo').mockResolvedValue(
-    camelCaseObject({
-      'course-v1:HarvardX+123+2023': [{
-        sourceKey: 'course-v1:HarvardX+123+2023',
-        targetCollectionKey: 'ltc:org:coll-1',
-        targetCollectionTitle: 'Collection 1',
-        targetKey: mockContentLibrary.libraryId,
-        targetTitle: 'Library 1',
-      }],
-    }),
-  ),
+  applyMock: () =>
+    jest.spyOn(api, 'getMigrationInfo').mockResolvedValue(
+      camelCaseObject({
+        'course-v1:HarvardX+123+2023': [{
+          sourceKey: 'course-v1:HarvardX+123+2023',
+          targetCollectionKey: 'ltc:org:coll-1',
+          targetCollectionTitle: 'Collection 1',
+          targetKey: mockContentLibrary.libraryId,
+          targetTitle: 'Library 1',
+        }],
+      }),
+    ),
 };

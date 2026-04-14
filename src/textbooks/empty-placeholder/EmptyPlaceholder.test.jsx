@@ -7,11 +7,12 @@ import messages from './messages';
 
 const onCreateNewTextbookMock = jest.fn();
 
-const renderComponent = () => render(
-  <IntlProvider locale="en">
-    <EmptyPlaceholder onCreateNewTextbook={onCreateNewTextbookMock} />
-  </IntlProvider>,
-);
+const renderComponent = () =>
+  render(
+    <IntlProvider locale="en">
+      <EmptyPlaceholder onCreateNewTextbook={onCreateNewTextbookMock} />
+    </IntlProvider>,
+  );
 
 describe('<EmptyPlaceholder />', () => {
   it('renders EmptyPlaceholder component correctly', () => {

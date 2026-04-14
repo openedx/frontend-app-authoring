@@ -22,7 +22,8 @@ describe('FeaturesTable', () => {
         featureIds: ['discussion-page', 'basic-configuration'],
         hasFullSupport: false,
         id: 'piazza',
-      }];
+      },
+    ];
 
     features = [
       { id: 'discussion-page', featureSupportType: 'basic' },

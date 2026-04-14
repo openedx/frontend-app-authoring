@@ -91,15 +91,21 @@ describe('TranscriptTab', () => {
     it('should delete empty transcript row', async () => {
       renderComponent(defaultProps);
       const addButton = screen.getByText(messages.uploadButtonLabel.defaultMessage);
-      await act(async () => { fireEvent.click(addButton); });
+      await act(async () => {
+        fireEvent.click(addButton);
+      });
 
       const deleteButton = screen.getByLabelText('delete empty transcript');
-      await act(async () => { fireEvent.click(deleteButton); });
+      await act(async () => {
+        fireEvent.click(deleteButton);
+      });
 
       expect(screen.getByText(transcriptRowMessages.deleteConfirmationHeader.defaultMessage)).toBeVisible();
 
       const confirmButton = screen.getByText(transcriptRowMessages.confirmDeleteLabel.defaultMessage);
-      await act(async () => { fireEvent.click(confirmButton); });
+      await act(async () => {
+        fireEvent.click(confirmButton);
+      });
 
       expect(screen.queryByTestId('transcript-')).toBeNull();
     });
@@ -111,7 +117,9 @@ describe('TranscriptTab', () => {
         renderComponent(defaultProps);
         addButton = screen.getByText(messages.uploadButtonLabel.defaultMessage);
 
-        await act(async () => { fireEvent.click(addButton); });
+        await act(async () => {
+          fireEvent.click(addButton);
+        });
       });
 
       it('should upload new transcript', async () => {
@@ -196,12 +204,15 @@ describe('TranscriptTab', () => {
         axiosMock.onDelete(`${getApiBaseUrl()}/transcript_delete/${courseId}/mOckID0/ar`).reply(204);
         await act(async () => {
           fireEvent.click(confirmButton);
-          await executeThunk(deleteVideoTranscript({
-            language: 'ar',
-            videoId: updatedProps.id,
-            transcripts: updatedProps.transcripts,
-            apiUrl: `/transcript_delete/${courseId}`,
-          }), store.dispatch);
+          await executeThunk(
+            deleteVideoTranscript({
+              language: 'ar',
+              videoId: updatedProps.id,
+              transcripts: updatedProps.transcripts,
+              apiUrl: `/transcript_delete/${courseId}`,
+            }),
+            store.dispatch,
+          );
         });
         const deleteStatus = store.getState().videos.transcriptStatus;
 
@@ -215,12 +226,15 @@ describe('TranscriptTab', () => {
         axiosMock.onDelete(`${getApiBaseUrl()}/transcript_delete/${courseId}/mOckID0/ar`).reply(404);
         await act(async () => {
           fireEvent.click(confirmButton);
-          await executeThunk(deleteVideoTranscript({
-            language: 'ar',
-            videoId: updatedProps.id,
-            transcripts: updatedProps.transcripts,
-            apiUrl: `/transcript_delete/${courseId}`,
-          }), store.dispatch);
+          await executeThunk(
+            deleteVideoTranscript({
+              language: 'ar',
+              videoId: updatedProps.id,
+              transcripts: updatedProps.transcripts,
+              apiUrl: `/transcript_delete/${courseId}`,
+            }),
+            store.dispatch,
+          );
         });
         const deleteStatus = store.getState().videos.transcriptStatus;
 

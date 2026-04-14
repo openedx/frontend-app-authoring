@@ -14,8 +14,8 @@ import messages from './messages';
 import UnitVisibilityInfo from './UnitVisibilityInfo';
 
 interface PublishControlsProps {
-  blockId: string,
-  hideCopyButton?: boolean,
+  blockId: string;
+  hideCopyButton?: boolean;
 }
 
 const PublishControls = ({

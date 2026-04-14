@@ -99,7 +99,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
   return (
     <ToastContext.Provider value={context}>
       {props.children}
-      { toastMessage && (
+      {toastMessage && (
         <ProcessingNotification
           isShow={toastMessage !== null}
           title={toastMessage}

@@ -21,7 +21,9 @@ const useCertificateCreateForm = (courseId) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   return {
-    courseTitle, handleCertificateSubmit, handleFormCancel,
+    courseTitle,
+    handleCertificateSubmit,
+    handleFormCancel,
   };
 };
 

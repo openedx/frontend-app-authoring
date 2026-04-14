@@ -3,13 +3,14 @@
 ### Slot ID: `org.openedx.frontend.authoring.course_outline_unit_card_extra_actions.v1`
 
 ### Slot ID Aliases
-* `course_outline_unit_card_extra_actions_slot`
+
+- `course_outline_unit_card_extra_actions_slot`
 
 ### Plugin Props:
 
-* `unit` - object
-* `section` - object
-* `subsection` - object
+- `unit` - object
+- `section` - object
+- `subsection` - object
 
 See the `PropTypes` definition in the slot for the attributes available in each of these objects.
 
@@ -35,9 +36,7 @@ import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-frame
 import { IconButton } from '@openedx/paragon';
 import { Help } from '@openedx/paragon/icons';
 
-const MyIconButton = () => (
-  <IconButton iconAs={Help} />
-);
+const MyIconButton = () => <IconButton iconAs={Help} />;
 
 const config = {
   pluginSlots: {
@@ -53,10 +52,10 @@ const config = {
             RenderWidget: MyIconButton,
           },
         },
-      ]
-    }
+      ],
+    },
   },
-}
+};
 
 export default config;
 ```

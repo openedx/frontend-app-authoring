@@ -18,15 +18,16 @@ const headerNavigationsActions = {
   handleEdit: handleEditFn,
 };
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <HeaderNavigations
-      category={COURSE_BLOCK_NAMES.vertical.id}
-      headerNavigationsActions={headerNavigationsActions}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <HeaderNavigations
+        category={COURSE_BLOCK_NAMES.vertical.id}
+        headerNavigationsActions={headerNavigationsActions}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 jest.mock('../unit-sidebar/UnitSidebarContext', () => ({
   useUnitSidebarContext: () => ({

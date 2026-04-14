@@ -50,9 +50,8 @@ const HomeSidebar = () => {
             {intl.formatMessage(messages.sidebarDescription2, {
               studioName,
               mailTo: (
-                <MailtoLink to={studioRequestEmail}>{
-                  intl.formatMessage(messages.sidebarDescription2MailTo, { platformName })
-                }
+                <MailtoLink to={studioRequestEmail}>
+                  {intl.formatMessage(messages.sidebarDescription2MailTo, { platformName })}
                 </MailtoLink>
               ),
             })}
@@ -80,9 +79,8 @@ const HomeSidebar = () => {
             {intl.formatMessage(messages.sidebarDescription4, {
               studioName,
               mailTo: (
-                <MailtoLink to={techSupportEmail}>{
-                  intl.formatMessage(messages.sidebarDescription4MailTo, { platformName })
-                }
+                <MailtoLink to={techSupportEmail}>
+                  {intl.formatMessage(messages.sidebarDescription4MailTo, { platformName })}
                 </MailtoLink>
               ),
             })}

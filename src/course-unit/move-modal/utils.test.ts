@@ -1,7 +1,10 @@
 import { CATEGORIES } from './constants';
 import { ITreeNode, IXBlockInfo, IAncestor } from './interfaces';
 import {
-  getXBlockType, findParentIds, isValidCategory, getBreadcrumbs,
+  getXBlockType,
+  findParentIds,
+  isValidCategory,
+  getBreadcrumbs,
 } from './utils';
 import messages from './messages';
 

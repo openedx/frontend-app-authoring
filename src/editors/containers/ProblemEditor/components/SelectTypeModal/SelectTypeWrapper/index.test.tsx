@@ -1,6 +1,8 @@
 import React from 'react';
 import {
-  screen, fireEvent, initializeMocks,
+  screen,
+  fireEvent,
+  initializeMocks,
 } from '@src/testUtils';
 import { editorRender } from '@src/editors/editorTestRender';
 import SelectTypeWrapper from './index';

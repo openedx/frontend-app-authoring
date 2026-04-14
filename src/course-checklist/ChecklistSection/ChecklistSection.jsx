@@ -22,36 +22,38 @@ const ChecklistSection = ({
   return (
     <Container>
       <h3 aria-describedby={getCompletionCountID()} className="lead">{dataHeading}</h3>
-      {isLoading ? (
-        <div className="row justify-content-center" data-testid="loading-spinner">
-          <LoadingSpinner />
-        </div>
-      ) : (
-        <>
-          <div data-testid="completion-subheader">
-            {getCompletionCount(checks, totalCompletedChecks)}
+      {isLoading ?
+        (
+          <div className="row justify-content-center" data-testid="loading-spinner">
+            <LoadingSpinner />
           </div>
-          <Stack gap={3} className="mt-3">
-            {checks.map(check => {
-              const checkId = check.id;
-              const isCompleted = values[checkId];
-              return (
-                <div
-                  className={`bg-white border py-3 px-4 ${isCompleted && 'checklist-item-complete'}`}
-                  id={`checklist-item-${checkId}`}
-                  data-testid={`checklist-item-${checkId}`}
-                  key={checkId}
-                >
-                  <ChecklistItemBody courseId={courseId} {...{ checkId, isCompleted }} />
-                  <div data-testid={`comment-section-${checkId}`}>
-                    <ChecklistItemComment {...{ courseId, checkId, data }} />
+        ) :
+        (
+          <>
+            <div data-testid="completion-subheader">
+              {getCompletionCount(checks, totalCompletedChecks)}
+            </div>
+            <Stack gap={3} className="mt-3">
+              {checks.map(check => {
+                const checkId = check.id;
+                const isCompleted = values[checkId];
+                return (
+                  <div
+                    className={`bg-white border py-3 px-4 ${isCompleted && 'checklist-item-complete'}`}
+                    id={`checklist-item-${checkId}`}
+                    data-testid={`checklist-item-${checkId}`}
+                    key={checkId}
+                  >
+                    <ChecklistItemBody courseId={courseId} {...{ checkId, isCompleted }} />
+                    <div data-testid={`comment-section-${checkId}`}>
+                      <ChecklistItemComment {...{ courseId, checkId, data }} />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </Stack>
-        </>
-      )}
+                );
+              })}
+            </Stack>
+          </>
+        )}
     </Container>
   );
 };

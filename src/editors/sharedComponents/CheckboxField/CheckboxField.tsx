@@ -3,15 +3,19 @@ import { FieldHookConfig, useField } from 'formik';
 import { Col, Form } from '@openedx/paragon';
 
 declare interface CheckboxFieldProps {
-  label: string,
-  id: string,
-  hint: string,
-  disabled?: boolean,
-  fieldConfig: string | FieldHookConfig<string>,
+  label: string;
+  id: string;
+  hint: string;
+  disabled?: boolean;
+  fieldConfig: string | FieldHookConfig<string>;
 }
 
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
-  label, id, hint = '', disabled = false, fieldConfig,
+  label,
+  id,
+  hint = '',
+  disabled = false,
+  fieldConfig,
 }) => {
   const [field, meta] = useField(fieldConfig);
   return (

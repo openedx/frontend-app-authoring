@@ -25,19 +25,17 @@ const WikiSettings = ({ onClose }) => {
       validationSchema={{ enablePublicWiki: Yup.boolean() }}
       onSettingsSave={handleSettingsSave}
     >
-      {
-        ({ values, handleChange, handleBlur }) => (
-          <FormSwitchGroup
-            id="enable-public-wiki"
-            name="enablePublicWiki"
-            label={intl.formatMessage(messages.enablePublicWikiLabel)}
-            helpText={intl.formatMessage(messages.enablePublicWikiHelp)}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            checked={values.enablePublicWiki}
-          />
-        )
-      }
+      {({ values, handleChange, handleBlur }) => (
+        <FormSwitchGroup
+          id="enable-public-wiki"
+          name="enablePublicWiki"
+          label={intl.formatMessage(messages.enablePublicWikiLabel)}
+          helpText={intl.formatMessage(messages.enablePublicWikiHelp)}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          checked={values.enablePublicWiki}
+        />
+      )}
     </AppSettingsModal>
   );
 };

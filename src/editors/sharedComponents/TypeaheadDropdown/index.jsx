@@ -60,7 +60,9 @@ class TypeaheadDropdown extends React.Component {
           className="dropdown-item data-hj-suppress"
           value={value}
           key={value}
-          onClick={(e) => { this.handleItemClick(e); }}
+          onClick={(e) => {
+            this.handleItemClick(e);
+          }}
         >
           {value}
         </button>
@@ -163,7 +165,9 @@ class TypeaheadDropdown extends React.Component {
         size="sm"
         variant="secondary"
         alt="expand-more"
-        onClick={(e) => { this.handleExpandMore(e); }}
+        onClick={(e) => {
+          this.handleExpandMore(e);
+        }}
       />
     );
   }
@@ -178,7 +182,9 @@ class TypeaheadDropdown extends React.Component {
         size="sm"
         variant="secondary"
         alt="expand-less"
-        onClick={(e) => { this.handleExpandLess(e); }}
+        onClick={(e) => {
+          this.handleExpandLess(e);
+        }}
       />
     );
   }
@@ -224,7 +230,7 @@ class TypeaheadDropdown extends React.Component {
             className="dropdown-container mt-2 rounded bg-light-100 box-shadow-centered-1 mr-2"
             style={{ maxHeight: '300px', overflowY: 'scroll' }}
           >
-            { this.state.dropDownItems.length > 0 ? this.state.dropDownItems : dropDownEmptyList }
+            {this.state.dropDownItems.length > 0 ? this.state.dropDownItems : dropDownEmptyList}
           </div>
         </FormGroup>
       </div>

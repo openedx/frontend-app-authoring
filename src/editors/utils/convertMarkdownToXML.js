@@ -4,9 +4,15 @@ export const convertMarkdownToXml = (markdown) => {
   // Comprehensive XML conversion function
   const toXml = (partialMarkdown) => {
     let xml = partialMarkdown;
-    let i; let makeParagraph; let demandhints;
+    let i;
+    let makeParagraph;
+    let demandhints;
     const responseTypes = [
-      'optionresponse', 'multiplechoiceresponse', 'stringresponse', 'numericalresponse', 'choiceresponse',
+      'optionresponse',
+      'multiplechoiceresponse',
+      'stringresponse',
+      'numericalresponse',
+      'choiceresponse',
     ];
 
     // fix DOS \r\n line endings to look like \n
@@ -21,14 +27,14 @@ export const convertMarkdownToXml = (markdown) => {
     // <label>question</label> <description>description</description>
     xml = xml.replace(/>>([^]+?)<</gm, (match, questionText) => {
       const result = questionText.split('||');
-      const label = `<label>${ result[0] }</label>\n`;
+      const label = `<label>${result[0]}</label>\n`;
 
       // don't add empty <description> tag
       if (result.length === 1 || !result[1]) {
         return label;
       }
 
-      return `${label }<description>${ result[1] }</description>\n`;
+      return `${label}<description>${result[1]}</description>\n`;
     });
 
     // Pull out demand hints,  || a hint ||
@@ -39,7 +45,7 @@ export const convertMarkdownToXml = (markdown) => {
       for (i = 0; i < options.length; i += 1) {
         inner = /\s*\|\|(.*?)\|\|/.exec(options[i]);
         if (inner) {
-          demandhints += `  <hint>${ inner[1].trim() }</hint>\n`;
+          demandhints += `  <hint>${inner[1].trim()}</hint>\n`;
         }
       }
       return '';
@@ -69,7 +75,7 @@ export const convertMarkdownToXml = (markdown) => {
         if (labelmatch) {
           hint = hint.replace(labelmatch[0], '').trim();
           label = labelmatch[1].trim();
-          labelassign = ` label="${ label }"`;
+          labelassign = ` label="${label}"`;
         }
       }
       if (detectParens) {
@@ -88,15 +94,23 @@ export const convertMarkdownToXml = (markdown) => {
     };
 
     xml = xml.replace(/\[\[((.|\n)+?)\]\]/g, (match, group1) => {
-      let textHint; let options; let optiontag; let correct;
-      let optionlines; let line; let correctstr; let hintstr; let label;
+      let textHint;
+      let options;
+      let optiontag;
+      let correct;
+      let optionlines;
+      let line;
+      let correctstr;
+      let hintstr;
+      let label;
       // decide if this is old style or new style
       if (match.indexOf('\n') === -1) { // OLD style, [[ .... ]]  on one line
         options = group1.split(/,\s*/g);
         optiontag = '  <optioninput options="(';
         for (i = 0; i < options.length; i += 1) {
-          optiontag += `'${ options[i].replace(/(?:^|,)\s*\((.*?)\)\s*(?:$|,)/g, '$1') }'${
-            i < options.length - 1 ? ',' : ''}`;
+          optiontag += `'${options[i].replace(/(?:^|,)\s*\((.*?)\)\s*(?:$|,)/g, '$1')}'${
+            i < options.length - 1 ? ',' : ''
+          }`;
         }
         optiontag += ')" correct="';
         correct = /(?:^|,)\s*\((.*?)\)\s*(?:$|,)/g.exec(group1);
@@ -104,7 +118,7 @@ export const convertMarkdownToXml = (markdown) => {
           optiontag += correct[1];
         }
         optiontag += '">';
-        return `\n<optionresponse>\n${ optiontag }</optioninput>\n</optionresponse>\n\n`;
+        return `\n<optionresponse>\n${optiontag}</optioninput>\n</optionresponse>\n\n`;
       }
 
       // new style  [[ many-lines ]]
@@ -114,32 +128,33 @@ export const convertMarkdownToXml = (markdown) => {
         line = lines[i].trim();
         if (line.length > 0) {
           textHint = extractHint(line, true);
-          correctstr = ` correct="${ textHint.parens ? 'True' : 'False' }"`;
+          correctstr = ` correct="${textHint.parens ? 'True' : 'False'}"`;
           hintstr = '';
           if (textHint.hint) {
             label = textHint.label;
             if (label) {
-              label = ` label="${ label }"`;
+              label = ` label="${label}"`;
             }
-            hintstr = ` <optionhint${ label }>${ textHint.hint }</optionhint>`;
+            hintstr = ` <optionhint${label}>${textHint.hint}</optionhint>`;
           }
-          optionlines += `    <option${ correctstr }>${ textHint.nothint }${hintstr }</option>\n`;
+          optionlines += `    <option${correctstr}>${textHint.nothint}${hintstr}</option>\n`;
         }
       }
-      return `\n<optionresponse>\n  <optioninput>\n${ optionlines }  </optioninput>\n</optionresponse>\n\n`;
+      return `\n<optionresponse>\n  <optioninput>\n${optionlines}  </optioninput>\n</optionresponse>\n\n`;
     });
     xml = xml.replace(/(^\s*\(.{0,3}\).*?$\n*)+/gm, (match) => {
       let choices = '';
       let shuffle = false;
       const options = match.split('\n');
       let correct;
-      let fixed; let hint; let
-        result;
+      let fixed;
+      let hint;
+      let result;
       for (i = 0; i < options.length; i++) {
         options[i] = options[i].trim(); // trim off leading/trailing whitespace
         if (options[i].length > 0) {
           let [, value] = options[i].split(/^\s*\(.{0,3}\)\s*/);
-          const [,inparens] = /^\s*\((.{0,3})\)\s*/.exec(options[i]);
+          const [, inparens] = /^\s*\((.{0,3})\)\s*/.exec(options[i]);
           correct = /x/i.test(inparens);
           fixed = '';
           if (/@/.test(inparens)) {
@@ -152,9 +167,9 @@ export const convertMarkdownToXml = (markdown) => {
           hint = extractHint(value);
           if (hint.hint) {
             value = hint.nothint;
-            value = `${value } <choicehint${ hint.labelassign }>${ hint.hint }</choicehint>`;
+            value = `${value} <choicehint${hint.labelassign}>${hint.hint}</choicehint>`;
           }
-          choices += `    <choice correct="${ correct }"${ fixed }>${ value }</choice>\n`;
+          choices += `    <choice correct="${correct}"${fixed}>${value}</choice>\n`;
         }
       }
       result = '<multiplechoiceresponse>\n';
@@ -174,9 +189,13 @@ export const convertMarkdownToXml = (markdown) => {
     xml = xml.replace(/(^\s*((\[.?\])|({{.*?}})).*?$\n*)+/gm, (match) => {
       let groupString = '<choiceresponse>\n';
       const options = match.split('\n');
-      let correct; let abhint; let endHints;
-      let hint; let inner; let select; let
-        hints;
+      let correct;
+      let abhint;
+      let endHints;
+      let hint;
+      let inner;
+      let select;
+      let hints;
 
       groupString += '  <checkboxgroup>\n';
       endHints = ''; // save these up to emit at the end
@@ -191,7 +210,7 @@ export const convertMarkdownToXml = (markdown) => {
             // lone case of hint text processing outside of extractHint, since syntax here is unique
             let [, , hintbody] = abhint;
             hintbody = hintbody.replace('&lf;', '\n').trim();
-            endHints += `    <compoundhint value="${ abhint[1].trim() }">${ hintbody }</compoundhint>\n`;
+            endHints += `    <compoundhint value="${abhint[1].trim()}">${hintbody}</compoundhint>\n`;
             // eslint-disable-next-line no-continue
             continue;
           }
@@ -203,18 +222,18 @@ export const convertMarkdownToXml = (markdown) => {
           //   {unselected: Remember that apple is also a fruit.}}
           hint = extractHint(value);
           if (hint.hint) {
-            inner = `{${ hint.hint }}`; // parsing is easier if we put outer { } back
+            inner = `{${hint.hint}}`; // parsing is easier if we put outer { } back
 
             // include \n since we are downstream of extractHint()
             select = /{\s*(s|selected):((.|\n)*?)}/i.exec(inner);
             // checkbox choicehints get their own line, since there can be two of them
             // <choicehint selected="true">You’re right that apple is a fruit.</choicehint>
             if (select) {
-              hints += `\n      <choicehint selected="true">${ select[2].trim() }</choicehint>`;
+              hints += `\n      <choicehint selected="true">${select[2].trim()}</choicehint>`;
             }
             select = /{\s*(u|unselected):((.|\n)*?)}/i.exec(inner);
             if (select) {
-              hints += `\n      <choicehint selected="false">${ select[2].trim() }</choicehint>`;
+              hints += `\n      <choicehint selected="false">${select[2].trim()}</choicehint>`;
             }
 
             // Blank out the original text only if the specific "selected" syntax is found
@@ -223,7 +242,7 @@ export const convertMarkdownToXml = (markdown) => {
               value = hint.nothint;
             }
           }
-          groupString += `    <choice correct="${ correct }">${ value }${hints }</choice>\n`;
+          groupString += `    <choice correct="${correct}">${value}${hints}</choice>\n`;
         }
       }
 
@@ -275,9 +294,15 @@ export const convertMarkdownToXml = (markdown) => {
       };
 
       const processNumericalResponse = (answerValues) => {
-        let firstAnswer; let answerData; let numericalResponseString; let additionalAnswerString;
-        let hintLine; let additionalTextHint; let additionalHintLine; let orMatch; let
-          hasTolerance;
+        let firstAnswer;
+        let answerData;
+        let numericalResponseString;
+        let additionalAnswerString;
+        let hintLine;
+        let additionalTextHint;
+        let additionalHintLine;
+        let orMatch;
+        let hasTolerance;
 
         // First string case is s?= [e.g. = 100]
         firstAnswer = answerValues[0].replace(/^=\s*/, '');
@@ -291,19 +316,19 @@ export const convertMarkdownToXml = (markdown) => {
         hintLine = '';
         if (textHint.hint) {
           firstAnswer = textHint.nothint;
-          hintLine = `  <correcthint${ textHint.labelassign }>${ textHint.hint }</correcthint>\n`;
+          hintLine = `  <correcthint${textHint.labelassign}>${textHint.hint}</correcthint>\n`;
         }
 
         // Range case
         if (isRangeToleranceCase(firstAnswer)) {
           // [5, 7) or (5, 7), or (1.2345 * (2+3), 7*4 ]  - range tolerance case
           // = (5*2)*3 should not be used as range tolerance
-          numericalResponseString = `<numericalresponse answer="${ firstAnswer }">\n`;
+          numericalResponseString = `<numericalresponse answer="${firstAnswer}">\n`;
         } else {
           answerData = getAnswerData(firstAnswer);
-          numericalResponseString = `<numericalresponse answer="${ answerData.answer }">\n`;
+          numericalResponseString = `<numericalresponse answer="${answerData.answer}">\n`;
           if (answerData.default) {
-            numericalResponseString += `  <responseparam type="tolerance" default="${ answerData.default }" />\n`;
+            numericalResponseString += `  <responseparam type="tolerance" default="${answerData.default}" />\n`;
           }
         }
 
@@ -319,18 +344,21 @@ export const convertMarkdownToXml = (markdown) => {
             // Do not add additional_answer if additional answer is not numerical (eg. or= ABC)
             // or contains range tolerance case (eg. or= (5,7)
             // or has tolerance (eg. or= 10 +- 0.02)
-            if (Number.isNaN(Number(orMatch[1]))
-                                || isRangeToleranceCase(orMatch[1])
-                                || hasTolerance) {
-            // eslint-disable-next-line no-continue
+            if (
+              Number.isNaN(Number(orMatch[1]))
+              || isRangeToleranceCase(orMatch[1])
+              || hasTolerance
+            ) {
+              // eslint-disable-next-line no-continue
               continue;
             }
 
             if (additionalTextHint.hint) {
-              additionalHintLine = `<correcthint${ additionalTextHint.labelassign }>${ additionalTextHint.hint }</correcthint>`;
+              additionalHintLine =
+                `<correcthint${additionalTextHint.labelassign}>${additionalTextHint.hint}</correcthint>`;
             }
 
-            additionalAnswerString += `  <additional_answer answer="${ orMatch[1] }">`;
+            additionalAnswerString += `  <additional_answer answer="${orMatch[1]}">`;
             additionalAnswerString += additionalHintLine;
             additionalAnswerString += '</additional_answer>\n';
           }
@@ -349,9 +377,13 @@ export const convertMarkdownToXml = (markdown) => {
       };
 
       const processStringResponse = (values) => {
-        let firstAnswer; let textHint; let typ; let string; let orMatch; let
-          notMatch;
-          // First string case is s?=
+        let firstAnswer;
+        let textHint;
+        let typ;
+        let string;
+        let orMatch;
+        let notMatch;
+        // First string case is s?=
         firstAnswer = values.shift();
         firstAnswer = firstAnswer.replace(/^s?=\s*/, '');
         textHint = extractHint(firstAnswer);
@@ -361,10 +393,9 @@ export const convertMarkdownToXml = (markdown) => {
           typ = ' type="ci regexp"';
           firstAnswer = firstAnswer.slice(1).trim();
         }
-        string = `<stringresponse answer="${ firstAnswer }"${ typ } >\n`;
+        string = `<stringresponse answer="${firstAnswer}"${typ} >\n`;
         if (textHint.hint) {
-          string += `  <correcthint${ textHint.labelassign }>${
-            textHint.hint }</correcthint>\n`;
+          string += `  <correcthint${textHint.labelassign}>${textHint.hint}</correcthint>\n`;
         }
 
         // Subsequent cases are not= or or=
@@ -372,16 +403,18 @@ export const convertMarkdownToXml = (markdown) => {
           textHint = extractHint(values[i]);
           notMatch = /^not=\s*(.*)/.exec(textHint.nothint);
           if (notMatch) {
-            string += `  <stringequalhint answer="${ notMatch[1] }"${ textHint.labelassign }>${ textHint.hint }</stringequalhint>\n`;
+            string += `  <stringequalhint answer="${
+              notMatch[1]
+            }"${textHint.labelassign}>${textHint.hint}</stringequalhint>\n`;
             // eslint-disable-next-line no-continue
             continue;
           }
           orMatch = /^or=\s*(.*)/.exec(textHint.nothint);
           if (orMatch) {
             // additional_answer with answer= attribute
-            string += `  <additional_answer answer="${ orMatch[1] }">`;
+            string += `  <additional_answer answer="${orMatch[1]}">`;
             if (textHint.hint) {
-              string += `<correcthint${ textHint.labelassign }>${ textHint.hint }</correcthint>`;
+              string += `<correcthint${textHint.labelassign}>${textHint.hint}</correcthint>`;
             }
             string += '</additional_answer>\n';
           }
@@ -395,10 +428,13 @@ export const convertMarkdownToXml = (markdown) => {
     });
 
     // replace explanations
-    xml = xml.replace(/\[explanation\]\n?([^\]]*)\[\/?explanation\]/gmi, (match, p1) => `<solution>\n<div class="detailed-solution">\nExplanation\n\n${ p1 }\n</div>\n</solution>`);
+    xml = xml.replace(
+      /\[explanation\]\n?([^\]]*)\[\/?explanation\]/gmi,
+      (match, p1) => `<solution>\n<div class="detailed-solution">\nExplanation\n\n${p1}\n</div>\n</solution>`,
+    );
 
     // replace code blocks
-    xml = xml.replace(/\[code\]\n?([^\]]*)\[\/?code\]/gmi, (match, p1) => `<pre><code>${ p1 }</code></pre>`);
+    xml = xml.replace(/\[code\]\n?([^\]]*)\[\/?code\]/gmi, (match, p1) => `<pre><code>${p1}</code></pre>`);
 
     // split scripts and preformatted sections, and wrap paragraphs
     const splits = xml.split(/(<\/?(?:script|pre|label|description).*?>)/g);
@@ -435,7 +471,7 @@ export const convertMarkdownToXml = (markdown) => {
 
     // make temporary xml
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(`<prob>${ xml }</prob>`, 'application/xml');
+    const xmlDoc = parser.parseFromString(`<prob>${xml}</prob>`, 'application/xml');
     let responseType = xmlDoc.querySelectorAll(responseTypesSelector);
     // convert if there is only one responsetype
     if (responseType.length === 1) {

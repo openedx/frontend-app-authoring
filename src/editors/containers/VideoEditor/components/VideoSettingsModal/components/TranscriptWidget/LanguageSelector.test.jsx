@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks, fireEvent,
+  render,
+  screen,
+  initializeMocks,
+  fireEvent,
 } from '@src/testUtils';
 import { useDispatch } from 'react-redux';
 import LanguageSelector from './LanguageSelector';
@@ -32,7 +35,9 @@ jest.mock('../../../../../../data/constants/video', () => ({
 jest.mock('../../../../../../data/redux', () => ({
   thunkActions: {
     video: {
-      updateTranscriptLanguage: jest.fn((args) => ({ updateTranscriptLanguage: args })).mockName('thunkActions.video.updateTranscriptLanguage'),
+      updateTranscriptLanguage: jest.fn((args) => ({ updateTranscriptLanguage: args })).mockName(
+        'thunkActions.video.updateTranscriptLanguage',
+      ),
       uploadTranscript: jest.fn().mockName('thunkActions.video.uploadTranscript'),
     },
   },

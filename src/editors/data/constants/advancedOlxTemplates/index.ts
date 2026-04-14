@@ -7,5 +7,10 @@ import jsInputResponse from './jsinput_response';
 import problemWithHint from './problem_with_hint';
 
 export default StrictDict({
-  circuitSchematic, customGrader, formulaResponse, imageResponse, jsInputResponse, problemWithHint,
+  circuitSchematic,
+  customGrader,
+  formulaResponse,
+  imageResponse,
+  jsInputResponse,
+  problemWithHint,
 });

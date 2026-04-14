@@ -1,14 +1,18 @@
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
-import HeaderNavigations, { HeaderNavigationsProps } from 'CourseAuthoring/course-outline/header-navigations/HeaderNavigations';
+import HeaderNavigations, {
+  HeaderNavigationsProps,
+} from 'CourseAuthoring/course-outline/header-navigations/HeaderNavigations';
 import HeaderActions from 'CourseAuthoring/course-outline/header-navigations/HeaderActions';
 import { isOutlineNewDesignEnabled } from '@src/course-outline/utils';
 
 interface CourseOutlineHeaderActionsSlotProps extends HeaderNavigationsProps {
-  sections: Array<({
-    id: string,
-    displayName: string,
-  })>,
+  sections: Array<
+    ({
+      id: string;
+      displayName: string;
+    })
+  >;
 }
 
 const CourseOutlineHeaderActionsSlot = ({

@@ -36,7 +36,12 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
   const user = getAuthenticatedUser();
   const { externalLinks } = app;
   const {
-    handleSubmit, handleChange, handleBlur, values, touched, errors,
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    values,
+    touched,
+    errors,
   } = useFormik({
     initialValues: ltiAppConfig,
     validationSchema: Yup.object().shape({
@@ -73,11 +78,11 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
             {...messages.staffOnlyConfigInfo}
             values={{
               providerName,
-              supportEmail: supportEmails[providerName] ? (
-                <MailtoLink to={supportEmails[providerName]}>{supportEmails[providerName]}</MailtoLink>
-              ) : (
-                'support'
-              ),
+              supportEmail: supportEmails[providerName] ?
+                <MailtoLink to={supportEmails[providerName]}>{supportEmails[providerName]}</MailtoLink> :
+                (
+                  'support'
+                ),
             }}
           />
         </p>
@@ -86,11 +91,11 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
             {...messages.staffOnlyConfigGuide}
             values={{
               providerName,
-              supportEmail: supportEmails[providerName] ? (
-                <MailtoLink to={supportEmails[providerName]}>{supportEmails[providerName]}</MailtoLink>
-              ) : (
-                'support'
-              ),
+              supportEmail: supportEmails[providerName] ?
+                <MailtoLink to={supportEmails[providerName]}>{supportEmails[providerName]}</MailtoLink> :
+                (
+                  'support'
+                ),
             }}
           />
         </p>
@@ -147,7 +152,7 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
             </Form.Group>
           </>
         )}
-        {(enablePIISharing) && (
+        {enablePIISharing && (
           <div data-testid="piiSharingFields">
             <Form.Text className="my-2">{intl.formatMessage(messages.piiSharing)}</Form.Text>
             <Form.Group controlId="piiSharing">

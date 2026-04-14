@@ -31,13 +31,14 @@ jest.mock('../data/thunks', () => ({
   deleteCourseCertificate: jest.fn(),
 }));
 
-const renderComponent = (props) => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificateDetails {...props} />
-    </IntlProvider>
-  </Provider>,
-);
+const renderComponent = (props) =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificateDetails {...props} />
+      </IntlProvider>
+    </Provider>,
+  );
 
 const defaultProps = {
   componentMode: MODE_STATES.view,
@@ -102,7 +103,9 @@ describe('CertificateDetails', () => {
     const deleteButton = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
     await user.click(deleteButton);
 
-    const confirmActionButton = await screen.findByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
+    const confirmActionButton = await screen.findByRole('button', {
+      name: commonMessages.deleteTooltip.defaultMessage,
+    });
     await user.click(confirmActionButton);
 
     expect(mockDispatch).toHaveBeenCalledWith(deleteCourseCertificate(courseId, certificateId));

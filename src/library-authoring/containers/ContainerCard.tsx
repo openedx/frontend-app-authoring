@@ -19,7 +19,11 @@ import { useRunOnNextRender } from '@src/utils';
 
 import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
-import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
+import {
+  SidebarActions,
+  SidebarBodyItemId,
+  useSidebarContext,
+} from '@src/library-authoring/common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import { useLibraryRoutes } from '@src/library-authoring/routes';
 import BaseCard from '@src/library-authoring/components/BaseCard';
@@ -35,10 +39,13 @@ type ContainerMenuProps = {
   index?: number;
 };
 
-export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, displayName, index }: ContainerMenuProps) => {
   const intl = useIntl();
   const {
-    libraryId, collectionId, containerId, readOnly,
+    libraryId,
+    collectionId,
+    containerId,
+    readOnly,
   } = useOptionalLibraryContext();
   const {
     sidebarItemInfo,
@@ -62,7 +69,7 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
   const handleRemoveFromCollection = () => {
     removeComponentsMutation.mutateAsync([containerKey]).then(() => {
       if (sidebarItemInfo?.id === containerKey) {
-      // Close sidebar if current component is open
+        // Close sidebar if current component is open
         closeLibrarySidebar();
       }
       showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
@@ -169,46 +176,44 @@ const UnitcardPreview = ({ childKeys, showMaxChildren = 5 }: UnitCardPreviewProp
   const hiddenChildren = childKeys.length - showMaxChildren;
   return (
     <Stack direction="horizontal" gap={2}>
-      {
-        childKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
-          const blockType = getBlockType(usageKey);
-          let blockPreview: ReactNode;
+      {childKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
+        const blockType = getBlockType(usageKey);
+        let blockPreview: ReactNode;
 
-          if (idx < showMaxChildren - 1 || hiddenChildren <= 0) {
-            // Show the first N-1 blocks as item icons
-            // (or all N blocks if no hidden children)
-            blockPreview = (
-              <ComponentIcon
-                blockType={blockType}
-                iconTitle={usageKey}
-              />
-            );
-          } else {
-            // Container has more blocks than can fit in the preview, so show "+N"
-            blockPreview = (
-              <FormattedMessage
-                {...messages.containerPreviewMoreBlocks}
-                values={{ count: hiddenChildren + 1 }}
-              />
-            );
-          }
-          return (
-            <div
-              // A container can have multiple instances of the same block
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${usageKey}-${idx}`}
-            >
-              {blockPreview}
-            </div>
+        if (idx < showMaxChildren - 1 || hiddenChildren <= 0) {
+          // Show the first N-1 blocks as item icons
+          // (or all N blocks if no hidden children)
+          blockPreview = (
+            <ComponentIcon
+              blockType={blockType}
+              iconTitle={usageKey}
+            />
           );
-        })
-      }
+        } else {
+          // Container has more blocks than can fit in the preview, so show "+N"
+          blockPreview = (
+            <FormattedMessage
+              {...messages.containerPreviewMoreBlocks}
+              values={{ count: hiddenChildren + 1 }}
+            />
+          );
+        }
+        return (
+          <div
+            // A container can have multiple instances of the same block
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${usageKey}-${idx}`}
+          >
+            {blockPreview}
+          </div>
+        );
+      })}
     </Stack>
   );
 };
 
 type ContainerCardPreviewProps = {
-  hit: ContainerHit,
+  hit: ContainerHit;
 };
 
 const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
@@ -253,10 +258,10 @@ const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
 };
 
 type ContainerCardProps = {
-  hit: ContainerHit,
+  hit: ContainerHit;
 };
 
-const ContainerCard = ({ hit } : ContainerCardProps) => {
+const ContainerCard = ({ hit }: ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = usePublishedFilterContext();
   const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
@@ -271,9 +276,11 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     usageKey: containerKey,
   } = hit;
 
-  const numChildrenCount = showOnlyPublished ? (
-    published?.numChildren || 0
-  ) : numChildren;
+  const numChildrenCount = showOnlyPublished ?
+    (
+      published?.numChildren || 0
+    ) :
+    numChildren;
 
   const displayName: string = (
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
@@ -303,15 +310,13 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
       preview={<ContainerCardPreview hit={hit} />}
       tags={tags}
       numChildren={numChildrenCount}
-      actions={(
+      actions={
         <ActionRow>
-          {componentPickerMode ? (
-            <AddComponentWidget usageKey={containerKey} blockType={itemType} />
-          ) : (
-            <ContainerMenu containerKey={containerKey} displayName={displayName} />
-          )}
+          {componentPickerMode ?
+            <AddComponentWidget usageKey={containerKey} blockType={itemType} /> :
+            <ContainerMenu containerKey={containerKey} displayName={displayName} />}
         </ActionRow>
-      )}
+      }
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
       onSelect={selectContainer}
       selected={selected}

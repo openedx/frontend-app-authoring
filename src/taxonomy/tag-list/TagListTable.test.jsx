@@ -1,7 +1,14 @@
 import React from 'react';
 import {
-  render, waitFor, waitForElementToBeRemoved, screen, within,
-  fireEvent, act, cleanup, initializeMocks,
+  render,
+  waitFor,
+  waitForElementToBeRemoved,
+  screen,
+  within,
+  fireEvent,
+  act,
+  cleanup,
+  initializeMocks,
 } from '@src/testUtils';
 import * as apiHooksModule from '../data/apiHooks';
 import * as hooksModule from './hooks';
@@ -93,7 +100,8 @@ const mockTagsPaginationResponse = {
   start: 0,
   results: [],
 };
-const rootTagsListUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&include_counts=true';
+const rootTagsListUrl =
+  'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&include_counts=true';
 const subTagsResponse = {
   next: null,
   previous: null,
@@ -112,7 +120,8 @@ const subTagsResponse = {
     },
   ],
 };
-const subTagsUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
+const subTagsUrl =
+  'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
 const createTagUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/';
 
 const renderTagListTable = (maxDepth = 3) => render(<TagListTable taxonomyId={1} maxDepth={maxDepth} />);
@@ -367,16 +376,18 @@ describe('<TagListTable />', () => {
         });
       });
       it('should show a loading spinner when saving a new tag', async () => {
-        axiosMock.onPost(createTagUrl).reply(() => new Promise(resolve => {
-          setTimeout(() => {
-            resolve([201, {
-              ...tagDefaults,
-              value: 'a new tag',
-              child_count: 0,
-              _id: 1234,
-            }]);
-          }, 100);
-        }));
+        axiosMock.onPost(createTagUrl).reply(() =>
+          new Promise(resolve => {
+            setTimeout(() => {
+              resolve([201, {
+                ...tagDefaults,
+                value: 'a new tag',
+                child_count: 0,
+                _id: 1234,
+              }]);
+            }, 100);
+          })
+        );
         const { creatingRow, input } = await openTopLevelDraftRow();
 
         fireEvent.change(input, { target: { value: 'a new tag' } });
@@ -977,7 +988,9 @@ describe('<TagListTable /> isolated async subtag tests', () => {
   it('shows the spinner before the query is complete', async () => {
     // Simulate an actual slow response from the API:
     let resolveResponse;
-    const promise = new Promise(resolve => { resolveResponse = resolve; });
+    const promise = new Promise(resolve => {
+      resolveResponse = resolve;
+    });
     axiosMock.onGet(rootTagsListUrl).reply(() => promise);
     renderTagListTable();
     const spinner = await screen.findByRole('status');

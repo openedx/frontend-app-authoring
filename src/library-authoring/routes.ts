@@ -67,11 +67,11 @@ export enum ContentType {
 export const allLibraryPageTabs: ContentType[] = Object.values(ContentType);
 
 export type NavigateToData = {
-  selectedItemId?: string,
-  collectionId?: string,
-  containerId?: string,
-  contentType?: ContentType,
-  index?: number,
+  selectedItemId?: string;
+  collectionId?: string;
+  containerId?: string;
+  contentType?: ContentType;
+  index?: number;
 };
 
 export type LibraryRoutesData = {
@@ -123,7 +123,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       insideSubsection,
       insideUnits,
       insideUnit,
-    ].filter((match) => match).length > 1) {
+    ].filter((match) => match).length > 1
+  ) {
     throw new Error('Cannot be inside more than one route at the same time.');
   }
 
@@ -146,8 +147,10 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     };
     let route: string;
 
-    if (routeParams.selectedItemId
-     && (['components', 'units', 'sections', 'subsections'].includes(routeParams.selectedItemId || ''))) {
+    if (
+      routeParams.selectedItemId
+      && (['components', 'units', 'sections', 'subsections'].includes(routeParams.selectedItemId || ''))
+    ) {
       // These are not valid selectedItemIds, but routes
       routeParams.selectedItemId = undefined;
     }
@@ -184,8 +187,10 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // FIXME: We are using the Collection key, not the full OpaqueKey. So we
       // can't directly use the selectedItemId to determine if it's a collection.
       // We need to change this to use the full OpaqueKey in the future.
-      if (routeParams.selectedItemId?.startsWith('lct:')
-        || routeParams.selectedItemId?.startsWith('lb:')) {
+      if (
+        routeParams.selectedItemId?.startsWith('lct:')
+        || routeParams.selectedItemId?.startsWith('lb:')
+      ) {
         routeParams.selectedItemId = undefined;
       }
       route = ROUTES.COLLECTIONS;

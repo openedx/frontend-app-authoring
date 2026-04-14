@@ -6,5 +6,9 @@ import singleSelect from './singleSelect';
 import textInput from './textInput';
 
 export default StrictDict({
-  dropdown, multiSelect, numeric, singleSelect, textInput,
+  dropdown,
+  multiSelect,
+  numeric,
+  singleSelect,
+  textInput,
 });

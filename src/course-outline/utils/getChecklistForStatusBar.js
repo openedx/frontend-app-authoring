@@ -73,7 +73,4 @@ const getCourseBestPracticesChecklist = (data) => {
   };
 };
 
-export {
-  getCourseLaunchChecklist,
-  getCourseBestPracticesChecklist,
-};
+export { getCourseLaunchChecklist, getCourseBestPracticesChecklist };

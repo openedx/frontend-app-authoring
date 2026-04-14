@@ -3,7 +3,9 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {
-  useIntl, isRtl, getLocale,
+  useIntl,
+  isRtl,
+  getLocale,
 } from '@edx/frontend-platform/i18n';
 import { Button, useWindowSize, breakpoints } from '@openedx/paragon';
 import {
@@ -29,16 +31,17 @@ const SequenceNavigation = ({
   const intl = useIntl();
   const sequenceStatus = useSelector(getSequenceStatus);
   const {
-    isFirstUnit, isLastUnit, nextLink, previousLink,
+    isFirstUnit,
+    isLastUnit,
+    nextLink,
+    previousLink,
   } = useSequenceNavigationMetadata(courseId, sequenceId, unitId);
   const sequence = useModel('sequences', sequenceId);
 
   const shouldDisplayNotificationTriggerInSequence = useWindowSize().width < breakpoints.small.minWidth;
   const renderUnitButtons = () => {
     if (sequence.unitIds.length === 0 || unitId === null) {
-      return (
-        <div style={{ flexBasis: '100%', minWidth: 0, borderBottom: 'solid 1px #EAEAEA' }} />
-      );
+      return <div style={{ flexBasis: '100%', minWidth: 0, borderBottom: 'solid 1px #EAEAEA' }} />;
     }
 
     return (

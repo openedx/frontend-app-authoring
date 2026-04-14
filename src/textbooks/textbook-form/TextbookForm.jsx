@@ -60,7 +60,11 @@ const TextbookForm = ({
         validateOnMount
       >
         {({
-          values, handleSubmit, isValid, dirty, setFieldValue,
+          values,
+          handleSubmit,
+          isValid,
+          dirty,
+          setFieldValue,
         }) => (
           <>
             <Form.Group size="sm" className="form-field">
@@ -174,12 +178,12 @@ const TextbookForm = ({
                 { maxSize: UPLOAD_FILE_MAX_SIZE / (1000 * 1000) },
               )}
               onSelectFile={setSelectedFile}
-              previewComponent={(
+              previewComponent={
                 <div className="modal-preview">
                   <Icon src={PdfIcon} className="modal-preview-icon" />
                   <span className="modal-preview-text">{selectedFile}</span>
                 </div>
-              )}
+              }
               maxSize={UPLOAD_FILE_MAX_SIZE}
             />
             <PromptIfDirty dirty={dirty} />

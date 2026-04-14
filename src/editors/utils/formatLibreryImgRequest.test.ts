@@ -1,5 +1,8 @@
 import {
-  parseLibraryImageData, getLibraryImageAssets, isImage, getFileName,
+  parseLibraryImageData,
+  getLibraryImageAssets,
+  isImage,
+  getFileName,
 } from './formatLibraryImgRequest';
 import { LibraryAssetResponse } from '../../library-authoring/data/api';
 

@@ -7,7 +7,11 @@ import ModalErrorListItem from './ModalErrorListItem';
 import messages from './messages';
 
 const ModalError = ({
-  isError, handleUndoChanges, showErrorModal, errorList, settingsData,
+  isError,
+  handleUndoChanges,
+  showErrorModal,
+  errorList,
+  settingsData,
 }) => {
   const intl = useIntl();
   return (
@@ -15,7 +19,7 @@ const ModalError = ({
       title={intl.formatMessage(messages.modalErrorTitle)}
       isOpen={isError}
       variant="danger"
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button
             variant="tertiary"
@@ -27,14 +31,14 @@ const ModalError = ({
             {intl.formatMessage(messages.modalErrorButtonUndoChanges)}
           </Button>
         </ActionRow>
-    )}
+      }
     >
       <p>
         <FormattedMessage
           id="course-authoring.advanced-settings.modal.error.description"
           defaultMessage="There was {errorCounter} while trying to save the course settings in the database.
             Please check the following validation feedbacks and reflect them in your course settings:"
-          values={{ errorCounter: <strong>{errorList.length} validation error </strong> }}
+          values={{ errorCounter: <strong>{errorList.length} validation error</strong> }}
         />
       </p>
       <hr />

@@ -1,7 +1,9 @@
 import userEvent from '@testing-library/user-event';
 import { getConfig } from '@edx/frontend-platform';
 import {
-  initializeMocks, waitFor, render,
+  initializeMocks,
+  waitFor,
+  render,
 } from '../../testUtils';
 
 import { executeThunk } from '../../utils';
@@ -31,9 +33,10 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const renderComponent = () => render(
-  <Breadcrumbs courseId={courseId} parentUnitId={parentUnitId} />,
-);
+const renderComponent = () =>
+  render(
+    <Breadcrumbs courseId={courseId} parentUnitId={parentUnitId} />,
+  );
 
 describe('<Breadcrumbs />', () => {
   beforeEach(async () => {

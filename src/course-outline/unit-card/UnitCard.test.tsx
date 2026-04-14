@@ -1,6 +1,10 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
-  initializeMocks, render, screen, waitFor, within,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
+  within,
 } from '@src/testUtils';
 
 import { XBlock } from '@src/data/types';
@@ -93,31 +97,32 @@ const unit = {
   },
 } satisfies Partial<XBlock> as XBlock;
 
-const renderComponent = (props?: object) => render(
-  <UnitCard
-    section={section}
-    subsection={subsection}
-    unit={unit}
-    index={1}
-    getPossibleMoves={jest.fn()}
-    onOrderChange={jest.fn()}
-    onOpenDeleteModal={jest.fn()}
-    onOpenConfigureModal={jest.fn()}
-    onDuplicateSubmit={jest.fn()}
-    isSelfPaced={false}
-    isCustomRelativeDatesActive={false}
-    discussionsSettings={{
-      providerType: '',
-      enableGradedUnits: false,
-    }}
-    {...props}
-  />,
-  {
-    path: '/course/:courseId',
-    params: { courseId: '5' },
-    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
-  },
-);
+const renderComponent = (props?: object) =>
+  render(
+    <UnitCard
+      section={section}
+      subsection={subsection}
+      unit={unit}
+      index={1}
+      getPossibleMoves={jest.fn()}
+      onOrderChange={jest.fn()}
+      onOpenDeleteModal={jest.fn()}
+      onOpenConfigureModal={jest.fn()}
+      onDuplicateSubmit={jest.fn()}
+      isSelfPaced={false}
+      isCustomRelativeDatesActive={false}
+      discussionsSettings={{
+        providerType: '',
+        enableGradedUnits: false,
+      }}
+      {...props}
+    />,
+    {
+      path: '/course/:courseId',
+      params: { courseId: '5' },
+      extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
+    },
+  );
 
 describe('<UnitCard />', () => {
   beforeEach(() => {

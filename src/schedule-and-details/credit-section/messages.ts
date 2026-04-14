@@ -11,8 +11,7 @@ const messages = defineMessages({
   },
   creditHelp: {
     id: 'course-authoring.schedule.credit.help',
-    defaultMessage:
-      'A requirement appears in this list when you publish the unit that contains the requirement.',
+    defaultMessage: 'A requirement appears in this list when you publish the unit that contains the requirement.',
   },
   creditMinimumGrade: {
     id: 'course-authoring.schedule.credit.minimum-grade',

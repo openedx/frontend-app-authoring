@@ -15,16 +15,17 @@ export const validateUserPermissions = async (
   // Convert the validations query object into an array for the API request
   const request: PermissionValidationRequestItem[] = Object.values(query);
 
-  const { data }: { data: PermissionValidationResponseItem[] } = await getAuthenticatedHttpClient().post(
+  const { data }: { data: PermissionValidationResponseItem[]; } = await getAuthenticatedHttpClient().post(
     getAuthzApiUrl('v1/permissions/validate/me'),
     request,
   );
 
   // Convert the API response back into the expected answer format
   const result: PermissionValidationAnswer = {};
-  data.forEach((item: { action: string; scope?: string; allowed: boolean }) => {
+  data.forEach((item: { action: string; scope?: string; allowed: boolean; }) => {
     const key = Object.keys(query).find(
-      (k) => query[k].action === item.action
+      (k) =>
+        query[k].action === item.action
         && query[k].scope === item.scope,
     );
     if (key) {

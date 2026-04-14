@@ -1,6 +1,8 @@
 import { Provider } from 'react-redux';
 import {
-  render, waitFor, within,
+  render,
+  waitFor,
+  within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -23,13 +25,14 @@ let axiosMock;
 let store;
 const courseId = 'course-123';
 
-const renderComponent = () => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificateEditForm courseId="course-123" />
-    </IntlProvider>
-  </Provider>,
-);
+const renderComponent = () =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificateEditForm courseId="course-123" />
+      </IntlProvider>
+    </Provider>,
+  );
 
 const initialState = {
   certificates: {

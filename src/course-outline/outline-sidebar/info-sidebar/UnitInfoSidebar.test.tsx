@@ -20,14 +20,24 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
   useCourseOutlineContext: jest.fn(),
 }));
 
-jest.mock('./PublishButon', () => ({ PublishButon: ({ onClick }: any) => <button type="button" onClick={onClick}>Publish</button> }));
+jest.mock(
+  './PublishButon',
+  () => ({ PublishButon: ({ onClick }: any) => <button type="button" onClick={onClick}>Publish</button> }),
+);
 jest.mock('./InfoSection', () => ({ InfoSection: ({ itemId }: any) => <div>InfoSection:{itemId}</div> }));
-jest.mock('@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings', () => ({ GenericUnitInfoSettings: () => <div>GenericUnitInfoSettings</div> }));
+jest.mock(
+  '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings',
+  () => ({ GenericUnitInfoSettings: () => <div>GenericUnitInfoSettings</div> }),
+);
 jest.mock('@src/generic/block-type-utils', () => ({ getItemIcon: () => () => null }));
-jest.mock('@src/course-unit/xblock-container-iframe', () => function XBlockIframe() {
-  return <div>XBlockIframe</div>;
-});
-jest.mock('@src/generic/hooks/context/iFrameContext', () => ({ IframeProvider: ({ children }: any) => <div>{children}</div> }));
+jest.mock('@src/course-unit/xblock-container-iframe', () =>
+  function XBlockIframe() {
+    return <div>XBlockIframe</div>;
+  });
+jest.mock(
+  '@src/generic/hooks/context/iFrameContext',
+  () => ({ IframeProvider: ({ children }: any) => <div>{children}</div> }),
+);
 
 const apiHooks = jest.requireMock('@src/course-outline/data/apiHooks') as any;
 const outlineContext = jest.requireMock('../OutlineSidebarContext') as any;
@@ -60,7 +70,10 @@ describe('UnitSidebar', () => {
   it('renders title and info tab by default', () => {
     apiHooks.useCourseItemData.mockReturnValue({
       data: {
-        displayName: 'Unit 1', hasChanges: false, category: 'vertical', id: 'unit-1',
+        displayName: 'Unit 1',
+        hasChanges: false,
+        category: 'vertical',
+        id: 'unit-1',
         actions: { deletable: true, duplicable: true },
       },
       isPending: false,
@@ -87,7 +100,10 @@ describe('UnitSidebar', () => {
     });
     apiHooks.useCourseItemData.mockReturnValue({
       data: {
-        displayName: 'Unit 2', hasChanges: true, category: 'vertical', id: 'unit-2',
+        displayName: 'Unit 2',
+        hasChanges: true,
+        category: 'vertical',
+        id: 'unit-2',
         actions: { deletable: true, duplicable: true },
       },
       isPending: false,
@@ -108,7 +124,10 @@ describe('UnitSidebar', () => {
     });
     apiHooks.useCourseItemData.mockReturnValue({
       data: {
-        displayName: 'Unit 3', hasChanges: false, category: 'vertical', id: 'unit-3',
+        displayName: 'Unit 3',
+        hasChanges: false,
+        category: 'vertical',
+        id: 'unit-3',
         actions: { deletable: true, duplicable: true },
       },
       isPending: false,
@@ -127,8 +146,13 @@ describe('UnitSidebar', () => {
     });
     apiHooks.useCourseItemData.mockReturnValue({
       data: {
-        displayName: 'Unit 4', hasChanges: false, category: 'vertical', id: 'unit-4',
-        visibilityState: undefined, discussionEnabled: false, userPartitionInfo: null,
+        displayName: 'Unit 4',
+        hasChanges: false,
+        category: 'vertical',
+        id: 'unit-4',
+        visibilityState: undefined,
+        discussionEnabled: false,
+        userPartitionInfo: null,
         actions: { deletable: true, duplicable: true },
       },
       isPending: false,

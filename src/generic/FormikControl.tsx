@@ -30,9 +30,11 @@ const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>>
 
   const fieldTouched = formikContext ? getIn(formikContext.touched, name) : false;
   const fieldError = formikContext ? getIn(formikContext.errors, name) : undefined;
-  const handleFocus = formikContext ? (
-    e: { target: { name: any; } },
-  ) => formikContext?.setFieldError(e.target.name, undefined) : undefined;
+  const handleFocus = formikContext ?
+    (
+      e: { target: { name: any; }; },
+    ) => formikContext?.setFieldError(e.target.name, undefined) :
+    undefined;
   const handleBlur = formikContext ? formikContext.handleBlur : undefined;
   const handleChange = formikContext ? formikContext.handleChange : undefined;
   const formikSetFieldValue = formikContext ? formikContext.setFieldValue : undefined;

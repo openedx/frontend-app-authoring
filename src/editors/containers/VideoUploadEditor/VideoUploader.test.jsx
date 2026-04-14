@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, fireEvent, act, screen,
+  render,
+  fireEvent,
+  act,
+  screen,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -42,13 +45,14 @@ describe('VideoUploader', () => {
     });
   });
 
-  const renderComponent = async (storeParam, setLoadingMockParam) => render(
-    <AppProvider store={storeParam}>
-      <IntlProvider locale="en">
-        <VideoUploader setLoading={setLoadingMockParam} />
-      </IntlProvider>,
-    </AppProvider>,
-  );
+  const renderComponent = async (storeParam, setLoadingMockParam) =>
+    render(
+      <AppProvider store={storeParam}>
+        <IntlProvider locale="en">
+          <VideoUploader setLoading={setLoadingMockParam} />
+        </IntlProvider>,
+      </AppProvider>,
+    );
 
   afterEach(() => {
     jest.clearAllMocks();

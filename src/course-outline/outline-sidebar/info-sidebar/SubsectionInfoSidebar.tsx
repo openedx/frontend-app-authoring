@@ -51,18 +51,20 @@ export const SubsectionSidebar = () => {
   if (isLoading || !subsectionData) {
     return <Loading />;
   }
-  
+
   // re-create actions object for customizations
   const actions = { ...subsectionData.actions };
   actions.deletable = actions.deletable && !section?.upstreamInfo?.upstreamRef;
   actions.duplicable = actions.duplicable && !section?.upstreamInfo?.upstreamRef;
 
-  const getPossibleMoves = section ? possibleSubsectionMoves(
-    [...sections],
-    sectionIndex ?? -1,
-    section,
-    section.childInfo.children,
-  ) : undefined;
+  const getPossibleMoves = section ?
+    possibleSubsectionMoves(
+      [...sections],
+      sectionIndex ?? -1,
+      section,
+      section.childInfo.children,
+    ) :
+    undefined;
 
   const canMoveSubsection = (oldIndex: number, step: number) => {
     if (getPossibleMoves && section) {
@@ -91,14 +93,18 @@ export const SubsectionSidebar = () => {
           ? (step === -1 ? sections[newSectionIndex].childInfo.children.length : 0)
           : index + step;
         // istanbul ignore next
-        setSelectedContainerState(selectedContainerState ? {
-          ...selectedContainerState,
-          sectionId: newSectionId,
-          index: newIndex,
-        } : undefined);
+        setSelectedContainerState(
+          selectedContainerState ?
+            {
+              ...selectedContainerState,
+              sectionId: newSectionId,
+              index: newIndex,
+            } :
+            undefined,
+        );
       }
     }
-  }
+  };
 
   return (
     <>
@@ -114,10 +120,11 @@ export const SubsectionSidebar = () => {
           onClickDuplicate: handleDuplicateSubsectionSubmit,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
-          onClickUnlink: () => openUnlinkModal({
-            value: subsectionData,
-            sectionId: selectedContainerState?.sectionId,
-          }),
+          onClickUnlink: () =>
+            openUnlinkModal({
+              value: subsectionData,
+              sectionId: selectedContainerState?.sectionId,
+            }),
           onClickDelete: openDeleteModal,
           onClickViewLibrary: () => {
             const upstreamRef = subsectionData?.upstreamInfo?.upstreamRef;

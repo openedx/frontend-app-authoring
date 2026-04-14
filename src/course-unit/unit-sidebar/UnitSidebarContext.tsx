@@ -1,5 +1,9 @@
 import {
-  createContext, useCallback, useContext, useMemo, useState,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
 } from 'react';
 import { SidebarPage } from '@src/generic/sidebar';
 import { useToggle } from '@openedx/paragon';
@@ -29,8 +33,8 @@ export const UnitSidebarProvider = ({
   children,
   readOnly,
 }: {
-  children?: React.ReactNode,
-  readOnly: boolean,
+  children?: React.ReactNode;
+  readOnly: boolean;
 }) => {
   const { sendMessageToIframe } = useIframe();
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<UnitSidebarPageKeys>(
@@ -41,7 +45,7 @@ export const UnitSidebarProvider = ({
   );
   const [currentTabKey, setCurrentTabKey] = useState<string>();
   const [selectedComponentId, setSelectedComponentId] = useState<string>();
-  const [isOpen, open,, toggle] = useToggle(true);
+  const [isOpen, open, , toggle] = useToggle(true);
 
   const setCurrentPageKey = useCallback(/* istanbul ignore next */ (
     pageKey: UnitSidebarPageKeys,

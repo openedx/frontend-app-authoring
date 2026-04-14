@@ -5,11 +5,11 @@ import messages from '../../messages';
 import ActionButtons from './ActionButtons';
 
 interface SidebarFooterProps {
-  locationId?: string,
-  displayUnitLocation?: boolean,
-  openDiscardModal: () => void,
-  handlePublishing: () => void,
-  hideCopyButton?: boolean,
+  locationId?: string;
+  displayUnitLocation?: boolean;
+  openDiscardModal: () => void;
+  handlePublishing: () => void;
+  hideCopyButton?: boolean;
 }
 
 const SidebarFooter = ({
@@ -24,17 +24,19 @@ const SidebarFooter = ({
   return (
     <Card.Footer className="course-unit-sidebar-footer" orientation="horizontal">
       <Stack className="course-unit-sidebar-visibility">
-        {displayUnitLocation ? (
-          <small className="course-unit-sidebar-location-description">
-            {intl.formatMessage(messages.unitLocationDescription, { id: locationId })}
-          </small>
-        ) : (
-          <ActionButtons
-            openDiscardModal={openDiscardModal}
-            handlePublishing={handlePublishing}
-            hideCopyButton={hideCopyButton}
-          />
-        )}
+        {displayUnitLocation ?
+          (
+            <small className="course-unit-sidebar-location-description">
+              {intl.formatMessage(messages.unitLocationDescription, { id: locationId })}
+            </small>
+          ) :
+          (
+            <ActionButtons
+              openDiscardModal={openDiscardModal}
+              handlePublishing={handlePublishing}
+              hideCopyButton={hideCopyButton}
+            />
+          )}
       </Stack>
     </Card.Footer>
   );

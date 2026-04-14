@@ -29,10 +29,14 @@ const PrereqSettings = ({
 
   const prereqSelectionForm = () => (
     <>
-      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.limitAccessTitle} /></h5>
+      <h5 className="mt-4 text-gray-700">
+        <FormattedMessage {...messages.limitAccessTitle} />
+      </h5>
       <hr />
       <Form>
-        <Form.Text><FormattedMessage {...messages.limitAccessDescription} /></Form.Text>
+        <Form.Text>
+          <FormattedMessage {...messages.limitAccessDescription} />
+        </Form.Text>
         <Form.Group controlId="prereqForm.select">
           <Form.Label>
             {intl.formatMessage(messages.prerequisiteSelectLabel)}
@@ -89,7 +93,9 @@ const PrereqSettings = ({
   return (
     <>
       {prereqs.length > 0 && prereqSelectionForm()}
-      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.prereqTitle} /></h5>
+      <h5 className="mt-4 text-gray-700">
+        <FormattedMessage {...messages.prereqTitle} />
+      </h5>
       <hr />
       <Form.Checkbox checked={isPrereq} onChange={handleCheckboxChange}>
         <FormattedMessage {...messages.prereqCheckboxLabel} />

@@ -27,7 +27,7 @@ interface SidebarContentProps {
  * </SidebarContent>
  * ```
  */
-export const SidebarContent = ({ children } : SidebarContentProps) => {
+export const SidebarContent = ({ children }: SidebarContentProps) => {
   // Flatten the array and filter out empty children to correctly render
   // the hr element between each child.
   const nonEmptyChildren = Array.isArray(children)

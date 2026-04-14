@@ -4,7 +4,7 @@ import { Check } from '@openedx/paragon/icons';
 
 const LibrariesV2FilterMenu: React.FC<{
   id: string;
-  menuItems: { id: string, name: string, value: string }[];
+  menuItems: { id: string; name: string; value: string; }[];
   onItemMenuSelected: (value: string) => void;
   defaultItemSelectedText: string;
   isFiltered: boolean;
@@ -21,9 +21,9 @@ const LibrariesV2FilterMenu: React.FC<{
     onItemMenuSelected(value);
   };
 
-  const libraryV2OrderSelectedIcon = (itemValue: string) => (itemValue === itemMenuSelected ? (
-    <Icon src={Check} className="ml-2" />
-  ) : null);
+  const libraryV2OrderSelectedIcon = (
+    itemValue: string,
+  ) => (itemValue === itemMenuSelected ? <Icon src={Check} className="ml-2" /> : null);
 
   useEffect(() => {
     if (!isFiltered) {

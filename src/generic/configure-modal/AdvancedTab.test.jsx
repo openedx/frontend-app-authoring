@@ -31,13 +31,14 @@ const defaultProps = {
   onlineProctoringRules: '',
 };
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <Formik initialValues={defaultProps.values} onSubmit={() => {}}>
-      <AdvancedTab {...defaultProps} {...props} />
-    </Formik>
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <Formik initialValues={defaultProps.values} onSubmit={() => {}}>
+        <AdvancedTab {...defaultProps} {...props} />
+      </Formik>
+    </IntlProvider>,
+  );
 
 describe('<AdvancedTab /> with enableTimedExams prop', () => {
   beforeEach(() => {
@@ -672,7 +673,10 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
     it('shows practice button and handles practice click', async () => {
       const user = userEvent.setup();
       renderComponent({
-        useBtnGroup: true, enableProctoredExams: true, supportsOnboarding: false, setFieldValue: mockSetFieldValue,
+        useBtnGroup: true,
+        enableProctoredExams: true,
+        supportsOnboarding: false,
+        setFieldValue: mockSetFieldValue,
       });
 
       const practiceBtn = screen.getByRole('button', { name: 'Practice proctored' });
@@ -689,7 +693,10 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
     it('handles onboarding button click', async () => {
       const user = userEvent.setup();
       renderComponent({
-        useBtnGroup: true, enableProctoredExams: true, supportsOnboarding: true, setFieldValue: mockSetFieldValue,
+        useBtnGroup: true,
+        enableProctoredExams: true,
+        supportsOnboarding: true,
+        setFieldValue: mockSetFieldValue,
       });
 
       const onboardingBtn = screen.getByRole('button', { name: 'Onboarding' });

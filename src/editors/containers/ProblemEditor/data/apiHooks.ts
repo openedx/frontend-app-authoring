@@ -10,16 +10,20 @@ interface ValidationResult {
   preview?: string;
 }
 
-export const useValidateInputBlock = () => useMutation({
-  mutationFn: async (title : string): Promise<ValidationResult> => {
-    try {
-      const res = await api.validateBlockNumericInput({ studioEndpointUrl: `${getApiBaseUrl()}`, data: { formula: title } });
-      return camelCaseObject(res.data);
-    } catch (err: any) {
-      return {
-        isValid: false,
-        error: err.response?.data?.error ?? 'Unknown error',
-      };
-    }
-  },
-});
+export const useValidateInputBlock = () =>
+  useMutation({
+    mutationFn: async (title: string): Promise<ValidationResult> => {
+      try {
+        const res = await api.validateBlockNumericInput({
+          studioEndpointUrl: `${getApiBaseUrl()}`,
+          data: { formula: title },
+        });
+        return camelCaseObject(res.data);
+      } catch (err: any) {
+        return {
+          isValid: false,
+          error: err.response?.data?.error ?? 'Unknown error',
+        };
+      }
+    },
+  });

@@ -9,7 +9,7 @@ import {
 
 import { EditableCell } from './EditableCell';
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
 

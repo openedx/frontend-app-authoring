@@ -1,5 +1,10 @@
 import {
-  createContext, useCallback, useContext, useEffect, useMemo, useState,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
@@ -46,7 +51,12 @@ export type CourseOutlineContextData = {
   closePublishModal: () => void;
   handleSectionDragAndDrop: (sectionListIds: string[]) => void;
   handleSubsectionDragAndDrop: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
-  handleUnitDragAndDrop: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => void;
+  handleUnitDragAndDrop: (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+  ) => void;
   updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => void;
   updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => void;
   updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => void;
@@ -202,10 +212,11 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
         await deleteMutation.mutateAsync(
           { itemId: currentSelection.currentId, sectionId: currentSelection.sectionId },
           {
-            onSettled: () => dispatch(deleteSubsection({
-              itemId: currentSelection.currentId,
-              sectionId: currentSelection.sectionId,
-            })),
+            onSettled: () =>
+              dispatch(deleteSubsection({
+                itemId: currentSelection.currentId,
+                sectionId: currentSelection.sectionId,
+              })),
           },
         );
         break;
@@ -217,11 +228,12 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
             sectionId: currentSelection.sectionId,
           },
           {
-            onSettled: () => dispatch(deleteUnit({
-              itemId: currentSelection.currentId,
-              subsectionId: currentSelection.subsectionId,
-              sectionId: currentSelection.sectionId,
-            })),
+            onSettled: () =>
+              dispatch(deleteUnit({
+                itemId: currentSelection.currentId,
+                subsectionId: currentSelection.subsectionId,
+                sectionId: currentSelection.sectionId,
+              })),
           },
         );
         break;

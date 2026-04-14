@@ -186,7 +186,9 @@ export function updateAssetLock({ assetId, courseId, locked }) {
 }
 
 export function resetErrors({ errorType }) {
-  return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
+  return (dispatch) => {
+    dispatch(clearErrors({ error: errorType }));
+  };
 }
 
 export function getUsagePaths({ asset, courseId }) {
@@ -206,7 +208,9 @@ export function getUsagePaths({ asset, courseId }) {
       }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
     } catch {
-      dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));
+      dispatch(
+        updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }),
+      );
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
     }
   };

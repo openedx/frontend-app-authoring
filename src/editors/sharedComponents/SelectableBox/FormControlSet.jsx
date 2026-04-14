@@ -8,16 +8,17 @@ const FormControlSet = ({
   isInline,
   children,
   ...props
-}) => React.createElement(as, {
-  className: classNames(
-    className,
-    {
-      'pgn__form-control-set': !isInline,
-      'pgn__form-control-set-inline': isInline,
-    },
-  ),
-  ...props,
-}, children);
+}) =>
+  React.createElement(as, {
+    className: classNames(
+      className,
+      {
+        'pgn__form-control-set': !isInline,
+        'pgn__form-control-set-inline': isInline,
+      },
+    ),
+    ...props,
+  }, children);
 
 FormControlSet.propTypes = {
   /** Specifies the base element */

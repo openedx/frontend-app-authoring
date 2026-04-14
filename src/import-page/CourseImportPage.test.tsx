@@ -25,13 +25,14 @@ jest.mock('universal-cookie', () => {
   return jest.fn(() => Cookie);
 });
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <CourseImportProvider>
-      <CourseImportPage />
-    </CourseImportProvider>
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseImportProvider>
+        <CourseImportPage />
+      </CourseImportProvider>
+    </CourseAuthoringProvider>,
+  );
 
 describe('<CourseImportPage />', () => {
   beforeEach(() => {

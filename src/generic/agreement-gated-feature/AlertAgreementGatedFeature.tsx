@@ -10,7 +10,7 @@ import {
 } from '@src/data/apiHooks';
 import messages from './messages';
 
-const AlertAgreement = ({ agreementType }: { agreementType: string }) => {
+const AlertAgreement = ({ agreementType }: { agreementType: string; }) => {
   const { data, isLoading, isError } = useUserAgreement(agreementType);
   const mutation = useUserAgreementRecordUpdater(agreementType);
   const showAlert = data && !isLoading && !isError;
@@ -29,8 +29,12 @@ const AlertAgreement = ({ agreementType }: { agreementType: string }) => {
       variant="warning"
       icon={Policy}
       actions={[
-        <Hyperlink key="learn-more" destination={url}><FormattedMessage {...messages.learnMoreLinkLabel} /></Hyperlink>,
-        <Button key="agree" onClick={handleAcceptAgreement}><FormattedMessage {...messages.agreeButtonLabel} /></Button>,
+        <Hyperlink key="learn-more" destination={url}>
+          <FormattedMessage {...messages.learnMoreLinkLabel} />
+        </Hyperlink>,
+        <Button key="agree" onClick={handleAcceptAgreement}>
+          <FormattedMessage {...messages.agreeButtonLabel} />
+        </Button>,
       ]}
     >
       <Alert.Heading>{name}</Alert.Heading>
@@ -40,7 +44,7 @@ const AlertAgreement = ({ agreementType }: { agreementType: string }) => {
 };
 
 const AlertAgreementWrapper = (
-  { agreementType }: { agreementType: string },
+  { agreementType }: { agreementType: string; },
 ) => {
   const { data, isLoading, isError } = useUserAgreementRecord(agreementType);
   const showAlert = !data?.isCurrent && !isLoading && !isError;
@@ -49,7 +53,7 @@ const AlertAgreementWrapper = (
 };
 
 export const AlertAgreementGatedFeature = (
-  { gatingTypes }: { gatingTypes: AgreementGated[] },
+  { gatingTypes }: { gatingTypes: AgreementGated[]; },
 ) => {
   const agreementTypes = getGatingAgreementTypes(gatingTypes);
   return (

@@ -51,8 +51,12 @@ describe('SelectImageModal hooks', () => {
   });
 
   describe('using state', () => {
-    beforeEach(() => { state.mock(); });
-    afterEach(() => { state.restore(); });
+    beforeEach(() => {
+      state.mock();
+    });
+    afterEach(() => {
+      state.restore();
+    });
 
     describe('searchAndSortHooks', () => {
       beforeEach(() => {
@@ -104,7 +108,6 @@ describe('SelectImageModal hooks', () => {
         images: ['data1', 'data2', 'other distinct data'],
         sortBy: sortKeys.dateNewest,
         searchString: 'test search string',
-
       };
       const load = (loadProps = {}) => {
         jest.spyOn(hooks, hookKeys.filteredList).mockImplementationOnce(
@@ -294,14 +297,19 @@ describe('SelectImageModal hooks', () => {
       spies.file = jest.spyOn(hooks, hookKeys.fileInputHooks)
         .mockReturnValueOnce(fileInputHooks);
       hook = hooks.imgHooks({
-        setSelection, clearSelection, images, imageCount,
+        setSelection,
+        clearSelection,
+        images,
+        imageCount,
       });
     });
     it('forwards fileInputHooks as fileInput, called with uploadAsset prop', () => {
       expect(hook.fileInput).toEqual(fileInputHooks);
       expect(spies.file.mock.calls.length).toEqual(1);
       expect(spies.file).toHaveBeenCalledWith({
-        setSelection, clearSelection, imgList: imgListHooks,
+        setSelection,
+        clearSelection,
+        imgList: imgListHooks,
       });
     });
     it('initializes imgListHooks with setSelection,searchAndSortHooks, and images', () => {
@@ -317,7 +325,9 @@ describe('SelectImageModal hooks', () => {
       expect(hook.searchSortProps).toEqual(searchAndSortHooks);
       expect(spies.file.mock.calls.length).toEqual(1);
       expect(spies.file).toHaveBeenCalledWith({
-        setSelection, clearSelection, imgList: imgListHooks,
+        setSelection,
+        clearSelection,
+        imgList: imgListHooks,
       });
     });
     it('forwards galleryProps and selectBtnProps from the image list hooks', () => {

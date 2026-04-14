@@ -22,7 +22,10 @@ describe('<IntroductionVideo />', () => {
 
   it('renders successfully', () => {
     const {
-      getByText, getByPlaceholderText, getByRole, getByTitle,
+      getByText,
+      getByPlaceholderText,
+      getByRole,
+      getByTitle,
     } = render(
       <RootWrapper {...props} />,
     );

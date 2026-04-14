@@ -18,9 +18,9 @@ const CoursesFilterMenu = ({
     onItemMenuSelected(value);
   };
 
-  const courseTypeSelectedIcon = (itemValue) => (itemValue === itemMenuSelected ? (
-    <Icon src={Check} className="ml-2" data-testid="menu-item-icon" />
-  ) : null);
+  const courseTypeSelectedIcon = (
+    itemValue,
+  ) => (itemValue === itemMenuSelected ? <Icon src={Check} className="ml-2" data-testid="menu-item-icon" /> : null);
 
   useEffect(() => {
     if (cleanFilters) {

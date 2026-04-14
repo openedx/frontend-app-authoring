@@ -1,5 +1,8 @@
 import {
-  Card, Icon, DataTable, StatefulButton,
+  Card,
+  Icon,
+  DataTable,
+  StatefulButton,
 } from '@openedx/paragon';
 import {
   SpinnerSimple,
@@ -15,10 +18,13 @@ import CustomIcon from './CustomIcon';
 import lockedIcon from './lockedIcon';
 import ManualIcon from './manualIcon';
 import {
-  STATEFUL_BUTTON_STATES, BROKEN, LOCKED, MANUAL,
+  STATEFUL_BUTTON_STATES,
+  BROKEN,
+  LOCKED,
+  MANUAL,
 } from '../../constants';
 
-const BrokenLinkHref: FC<{ href: string }> = ({ href }) => {
+const BrokenLinkHref: FC<{ href: string; }> = ({ href }) => {
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     window.open(href, '_blank');
@@ -33,7 +39,7 @@ const BrokenLinkHref: FC<{ href: string }> = ({ href }) => {
   );
 };
 
-const GoToBlock: FC<{ block: { url: string, displayName?: string } }> = ({ block }) => {
+const GoToBlock: FC<{ block: { url: string; displayName?: string; }; }> = ({ block }) => {
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     window.open(block.url, '_blank');
@@ -67,15 +73,15 @@ const iconsMap = {
 };
 
 const LinksCol: FC<{
-  block: { url: string, displayName: string, id?: string },
-  href: string,
-  linkType?: string,
-  showIcon?: boolean,
-  showUpdateButton?: boolean,
-  isUpdated?: boolean,
-  onUpdate?: (link: string, blockId: string, sectionId?: string) => void,
-  sectionId?: string,
-  originalLink?: string,
+  block: { url: string; displayName: string; id?: string; };
+  href: string;
+  linkType?: string;
+  showIcon?: boolean;
+  showUpdateButton?: boolean;
+  isUpdated?: boolean;
+  onUpdate?: (link: string, blockId: string, sectionId?: string) => void;
+  sectionId?: string;
+  originalLink?: string;
   updatedLinkMap?: Record<string, string>;
   updatedLinkInProgress?: Record<string, boolean>;
 }> = ({
@@ -120,30 +126,30 @@ const LinksCol: FC<{
           />
         )}
         {showUpdateButton && (
-          isUpdated ? (
-            <span
-              className="updated-link-text d-flex align-items-center text-success"
-            >
-              {intl.formatMessage(messages.updated)}
-              <Icon src={Check} className="text-success" />
-            </span>
-          ) : (
-            <StatefulButton
-              className="px-4 rounded-0 update-link-btn"
-              labels={{
-                default: intl.formatMessage(messages.updateButton),
-                pending: intl.formatMessage(messages.updateButton),
-              }}
-              icons={{ default: '', pending: <Icon src={SpinnerSimple} className="icon-spin" /> }}
-              state={isUpdating ? STATEFUL_BUTTON_STATES.pending : STATEFUL_BUTTON_STATES.default}
-              onClick={handleUpdate}
-              disabled={isUpdating}
-              disabledStates={['pending']}
-              variant="outline-primary"
-              size="sm"
-              data-testid={`update-link-${uid}`}
-            />
-          )
+          isUpdated ?
+            (
+              <span className="updated-link-text d-flex align-items-center text-success">
+                {intl.formatMessage(messages.updated)}
+                <Icon src={Check} className="text-success" />
+              </span>
+            ) :
+            (
+              <StatefulButton
+                className="px-4 rounded-0 update-link-btn"
+                labels={{
+                  default: intl.formatMessage(messages.updateButton),
+                  pending: intl.formatMessage(messages.updateButton),
+                }}
+                icons={{ default: '', pending: <Icon src={SpinnerSimple} className="icon-spin" /> }}
+                state={isUpdating ? STATEFUL_BUTTON_STATES.pending : STATEFUL_BUTTON_STATES.default}
+                onClick={handleUpdate}
+                disabled={isUpdating}
+                disabledStates={['pending']}
+                variant="outline-primary"
+                size="sm"
+                data-testid={`update-link-${uid}`}
+              />
+            )
         )}
       </div>
     </span>
@@ -226,7 +232,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
 
       if (
         filters.brokenLinks
-              || (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
+        || (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
       ) {
         const blockBrokenLinks = block.brokenLinks.map((link) => ({
           Links: (
@@ -242,7 +248,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
 
       if (
         filters.lockedLinks
-              || (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
+        || (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
       ) {
         const blockLockedLinks = block.lockedLinks.map((link) => ({
           Links: (
@@ -259,7 +265,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
 
       if (
         filters.externalForbiddenLinks
-              || (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
+        || (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
       ) {
         const externalForbiddenLinks = block.externalForbiddenLinks.map((link) => ({
           Links: (

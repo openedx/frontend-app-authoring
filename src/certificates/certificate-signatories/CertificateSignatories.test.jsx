@@ -24,13 +24,14 @@ jest.mock('./hooks/useEditSignatory');
 
 jest.mock('./hooks/useCreateSignatory');
 
-const renderComponent = (props) => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificateSignatories {...props} />
-    </IntlProvider>,
-  </Provider>,
-);
+const renderComponent = (props) =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificateSignatories {...props} />
+      </IntlProvider>,
+    </Provider>,
+  );
 
 const defaultProps = {
   signatories: signatoriesMock,

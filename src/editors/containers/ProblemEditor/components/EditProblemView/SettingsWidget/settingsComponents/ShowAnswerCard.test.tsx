@@ -1,6 +1,8 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks,
+  render,
+  screen,
+  initializeMocks,
 } from '@src/testUtils';
 import { selectors } from '../../../../../../data/redux';
 import { ShowAnswerCardInternal as ShowAnswerCard, mapStateToProps, mapDispatchToProps } from './ShowAnswerCard';

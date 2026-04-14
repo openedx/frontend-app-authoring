@@ -5,9 +5,12 @@ import type { UsageKeyBlock, UserTaskStatusWithUuid } from '@src/data/types';
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/`;
-export const getEntityLinksSummaryByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/${downstreamContextKey}/summary`;
-export const courseLegacyLibraryContentBlocks = (courseId: string) => `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
-export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) => `${courseLegacyLibraryContentBlocks(courseId)}${taskId}/`;
+export const getEntityLinksSummaryByDownstreamContextUrl = (downstreamContextKey: string) =>
+  `${getApiBaseUrl()}/api/contentstore/v2/downstreams/${downstreamContextKey}/summary`;
+export const courseLegacyLibraryContentBlocks = (courseId: string) =>
+  `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
+export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) =>
+  `${courseLegacyLibraryContentBlocks(courseId)}${taskId}/`;
 
 export interface PaginatedData<T> {
   next: string | null;
@@ -17,7 +20,7 @@ export interface PaginatedData<T> {
   count: number;
   numPages: number;
   currentPage: number;
-  results: T,
+  results: T;
 }
 
 export interface BasePublishableEntityLink {

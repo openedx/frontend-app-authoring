@@ -3,7 +3,10 @@ import { snakeCaseKeys, camelizeKeys } from '@src/editors/utils';
 import { isLibraryKey } from '../../../../generic/key-utils';
 import * as urls from './urls';
 import {
-  get, post, put, deleteObject,
+  get,
+  post,
+  put,
+  deleteObject,
 } from './utils';
 import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 
@@ -41,13 +44,15 @@ export const loadImage = (imageData) => ({
   dateAdded: new Date(imageData.dateAdded.replace(' at', '')).getTime(),
 });
 
-export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
-  (obj, image) => ({ ...obj, [image.id]: loadImage(image) }),
-  {},
-);
+export const loadImages = (rawImages) =>
+  camelizeKeys(rawImages).reduce(
+    (obj, image) => ({ ...obj, [image.id]: loadImage(image) }),
+    {},
+  );
 
 export const parseYoutubeId = (src: string): string | null => {
-  const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
+  const youtubeRegex =
+    /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
   const match = src.match(youtubeRegex);
   if (!match) {
     return null;
@@ -59,7 +64,7 @@ export const processVideoIds = ({
   videoId,
   videoUrl,
   fallbackVideos,
-}: { videoId: string, videoUrl: string, fallbackVideos: string[] }) => {
+}: { videoId: string; videoUrl: string; fallbackVideos: string[]; }) => {
   let youtubeId: string | null = '';
   const html5Sources: string[] = [];
 
@@ -93,10 +98,10 @@ export const isEdxVideo = (src: string): boolean => {
 export const processLicense = (licenseType, licenseDetails) => {
   if (licenseType === 'creative-commons') {
     return 'creative-commons: ver=4.0'.concat(
-      (licenseDetails.attribution ? ' BY' : ''),
-      (licenseDetails.noncommercial ? ' NC' : ''),
-      (licenseDetails.noDerivatives ? ' ND' : ''),
-      (licenseDetails.shareAlike ? ' SA' : ''),
+      licenseDetails.attribution ? ' BY' : '',
+      licenseDetails.noncommercial ? ' NC' : '',
+      licenseDetails.noDerivatives ? ' ND' : '',
+      licenseDetails.shareAlike ? ' SA' : '',
     );
   }
   if (licenseType === 'all-rights-reserved') {
@@ -106,22 +111,25 @@ export const processLicense = (licenseType, licenseDetails) => {
 };
 
 export const apiMethods = {
-  fetchBlockById: ({ blockId, studioEndpointUrl }): Promise<{ data: FieldsResponse }> => get(
-    urls.block({ blockId, studioEndpointUrl }),
-  ),
+  fetchBlockById: ({ blockId, studioEndpointUrl }): Promise<{ data: FieldsResponse; }> =>
+    get(
+      urls.block({ blockId, studioEndpointUrl }),
+    ),
   /** A better name for this would be 'get ancestors of block' */
-  fetchByUnitId: ({ blockId, studioEndpointUrl }): Promise<{ data: AncestorsResponse }> => get(
-    urls.blockAncestor({ studioEndpointUrl, blockId }),
-    fetchByUnitIdOptions,
-  ),
-  fetchStudioView: ({ blockId, studioEndpointUrl }) => get(
-    urls.blockStudioView({ studioEndpointUrl, blockId }),
-  ),
+  fetchByUnitId: ({ blockId, studioEndpointUrl }): Promise<{ data: AncestorsResponse; }> =>
+    get(
+      urls.blockAncestor({ studioEndpointUrl, blockId }),
+      fetchByUnitIdOptions,
+    ),
+  fetchStudioView: ({ blockId, studioEndpointUrl }) =>
+    get(
+      urls.blockStudioView({ studioEndpointUrl, blockId }),
+    ),
   fetchCourseImages: ({
     learningContextId,
     studioEndpointUrl,
     pageNumber,
-  }): Promise<{ data: AssetResponse & Pagination }> => {
+  }): Promise<{ data: AssetResponse & Pagination; }> => {
     const params = {
       asset_type: 'Images',
       page: pageNumber,
@@ -131,18 +139,22 @@ export const apiMethods = {
       { params },
     );
   },
-  fetchLibraryImages: ({ blockId }) => get(
-    `${urls.libraryAssets({ blockId })}`,
-  ),
-  fetchVideos: ({ studioEndpointUrl, learningContextId }) => get(
-    urls.courseVideos({ studioEndpointUrl, learningContextId }),
-  ),
-  fetchCourseDetails: ({ studioEndpointUrl, learningContextId }) => get(
-    urls.courseDetailsUrl({ studioEndpointUrl, learningContextId }),
-  ),
-  fetchAdvancedSettings: ({ studioEndpointUrl, learningContextId }) => get(
-    urls.courseAdvanceSettings({ studioEndpointUrl, learningContextId }),
-  ),
+  fetchLibraryImages: ({ blockId }) =>
+    get(
+      `${urls.libraryAssets({ blockId })}`,
+    ),
+  fetchVideos: ({ studioEndpointUrl, learningContextId }) =>
+    get(
+      urls.courseVideos({ studioEndpointUrl, learningContextId }),
+    ),
+  fetchCourseDetails: ({ studioEndpointUrl, learningContextId }) =>
+    get(
+      urls.courseDetailsUrl({ studioEndpointUrl, learningContextId }),
+    ),
+  fetchAdvancedSettings: ({ studioEndpointUrl, learningContextId }) =>
+    get(
+      urls.courseAdvanceSettings({ studioEndpointUrl, learningContextId }),
+    ),
   uploadAsset: ({
     blockId,
     learningContextId,
@@ -182,7 +194,8 @@ export const apiMethods = {
     youTubeId,
     videoId,
   }) => {
-    const getJSON = `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"},{"mode":"edx_video_id","type":"edx_video_id","video":"${videoId}"}]}`;
+    const getJSON =
+      `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"},{"mode":"edx_video_id","type":"edx_video_id","video":"${videoId}"}]}`;
     return get(
       urls.checkTranscriptsForImport({
         studioEndpointUrl,
@@ -291,11 +304,11 @@ export const apiMethods = {
     learningContextId,
     title,
   }: {
-    blockId: string,
-    blockType: string,
-    content: any, // string for 'html' blocks, otherwise Record<string, any>
-    learningContextId: string,
-    title: string,
+    blockId: string;
+    blockType: string;
+    content: any; // string for 'html' blocks, otherwise Record<string, any>
+    learningContextId: string;
+    title: string;
   }) => {
     let response = {};
     if (blockType === 'html') {
@@ -368,43 +381,48 @@ export const apiMethods = {
     learningContextId,
     studioEndpointUrl,
     title,
-  }) => post(
-    urls.block({ studioEndpointUrl, blockId }),
-    apiMethods.normalizeContent({
-      blockType,
-      content,
-      blockId,
-      learningContextId,
-      title,
-    }),
-  ),
+  }) =>
+    post(
+      urls.block({ studioEndpointUrl, blockId }),
+      apiMethods.normalizeContent({
+        blockType,
+        content,
+        blockId,
+        learningContextId,
+        title,
+      }),
+    ),
   fetchVideoFeatures: ({
     studioEndpointUrl,
-  }) => get(
-    urls.videoFeatures({ studioEndpointUrl }),
-  ),
+  }) =>
+    get(
+      urls.videoFeatures({ studioEndpointUrl }),
+    ),
   uploadVideo: ({
     data,
     studioEndpointUrl,
     learningContextId,
-  }) => post(
-    urls.courseVideos({ studioEndpointUrl, learningContextId }),
-    data,
-  ),
+  }) =>
+    post(
+      urls.courseVideos({ studioEndpointUrl, learningContextId }),
+      data,
+    ),
   getHandlerUrl: ({
     studioEndpointUrl,
     blockId,
     handlerName,
-  }) => get(
-    urls.boundHandlerUrl({ studioEndpointUrl, blockId, handlerName }),
-  ),
+  }) =>
+    get(
+      urls.boundHandlerUrl({ studioEndpointUrl, blockId, handlerName }),
+    ),
   validateBlockNumericInput: ({
     studioEndpointUrl,
     data,
-  }) => post(
-    urls.validateNumericInputUrl({ studioEndpointUrl }),
-    data,
-  ),
+  }) =>
+    post(
+      urls.validateNumericInputUrl({ studioEndpointUrl }),
+      data,
+    ),
 };
 
 export default apiMethods;

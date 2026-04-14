@@ -59,7 +59,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
     case mockGetCourseContainerChildren.unitIdLoading:
     case mockGetCourseContainerChildren.sectionIdLoading:
     case mockGetCourseContainerChildren.subsectionIdLoading:
-      return new Promise(() => { });
+      return new Promise(() => {});
     default:
       blockType = 'section';
       displayName = 'section block 00';

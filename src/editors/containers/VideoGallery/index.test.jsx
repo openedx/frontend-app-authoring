@@ -4,7 +4,10 @@ import { configureStore } from '@reduxjs/toolkit';
 import '@testing-library/jest-dom';
 import React from 'react';
 import {
-  act, fireEvent, render, screen,
+  act,
+  fireEvent,
+  render,
+  screen,
 } from '@testing-library/react';
 import * as reactRouterDom from 'react-router-dom';
 import * as reduxThunks from '../../data/redux';
@@ -37,7 +40,8 @@ const initialVideos = [
     status_nontranslated: 'In Progress',
     duration: 2,
     transcripts: [],
-  }, {
+  },
+  {
     edx_video_id: 'id_3',
     client_video_id: 'client_id_3',
     course_video_image_url: 'course_video_image_url_3',

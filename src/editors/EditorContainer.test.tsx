@@ -1,7 +1,11 @@
 import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import {
-  render, screen, initializeMocks, fireEvent, act,
+  render,
+  screen,
+  initializeMocks,
+  fireEvent,
+  act,
 } from '@src/testUtils';
 import EditorContainer from './EditorContainer';
 import { mockWaffleFlags } from '../data/apiHooks.mock';
@@ -50,7 +54,7 @@ jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
   },
 }));
 jest.mock('../library-authoring/LibraryBlock', () => ({
-  LibraryBlock: jest.fn(() => (<div>Advanced Editor Iframe</div>)),
+  LibraryBlock: jest.fn(() => <div>Advanced Editor Iframe</div>),
 }));
 
 const props = { learningContextId: 'cOuRsEId' };
@@ -62,7 +66,10 @@ describe('EditorContainer', () => {
       {
         status: 200,
         data: {
-          display_name: 'Fake Un-editable Block', category: 'fake', metadata: {}, data: '',
+          display_name: 'Fake Un-editable Block',
+          category: 'fake',
+          metadata: {},
+          data: '',
         },
       }
     ));

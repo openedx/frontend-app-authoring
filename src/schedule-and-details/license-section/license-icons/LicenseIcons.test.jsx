@@ -45,7 +45,10 @@ describe('<LicenseIcons />', () => {
       ...props,
       licenseType: LICENSE_TYPE.creativeCommons,
       licenseDetails: {
-        attribution: true, nonCommercial: true, noDerivatives: false, shareAlike: false,
+        attribution: true,
+        nonCommercial: true,
+        noDerivatives: false,
+        shareAlike: false,
       },
     };
     const { getByText, queryAllByRole, debug } = render(<RootWrapper {...initialProps} />);

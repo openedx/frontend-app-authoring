@@ -1,6 +1,7 @@
 import { Alert, Form } from '@openedx/paragon';
 import {
-  FormattedMessage, useIntl,
+  FormattedMessage,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 import { Field } from 'formik';
 import classNames from 'classnames';
@@ -11,53 +12,55 @@ import messages from './messages';
 export type UserPartitionInfo = {
   selectablePartitions: {
     groups: {
-      deleted: boolean,
-      id: number,
-      name: string,
-      selected: boolean,
-    }[],
-    id: number,
-    name: string,
-    scheme: string,
-  }[],
-  selectedGroupsLabel?: string,
-  selectedPartitionIndex: number,
+      deleted: boolean;
+      id: number;
+      name: string;
+      selected: boolean;
+    }[];
+    id: number;
+    name: string;
+    scheme: string;
+  }[];
+  selectedGroupsLabel?: string;
+  selectedPartitionIndex: number;
 };
 
 export interface UnitTabProps {
-  isXBlockComponent: boolean,
-  category?: string,
+  isXBlockComponent: boolean;
+  category?: string;
   values: {
-    isVisibleToStaffOnly: boolean,
-    discussionEnabled: boolean,
-    selectedPartitionIndex: number,
-    selectedGroups: string[],
-  },
-  setFieldValue: (key: string, value: any) => void,
-  showWarning: boolean,
-  userPartitionInfo?: UserPartitionInfo,
+    isVisibleToStaffOnly: boolean;
+    discussionEnabled: boolean;
+    selectedPartitionIndex: number;
+    selectedGroups: string[];
+  };
+  setFieldValue: (key: string, value: any) => void;
+  showWarning: boolean;
+  userPartitionInfo?: UserPartitionInfo;
 }
 
 export const DiscussionEditComponent = ({
   discussionEnabled,
   handleDiscussionChange,
 }: {
-  discussionEnabled: boolean,
-  handleDiscussionChange: (e: any) => void,
+  discussionEnabled: boolean;
+  handleDiscussionChange: (e: any) => void;
 }) => (
   <>
     <Form.Checkbox checked={discussionEnabled} onChange={handleDiscussionChange}>
       <FormattedMessage {...messages.discussionEnabledCheckbox} />
     </Form.Checkbox>
-    <p className="x-small font-weight-bold"><FormattedMessage {...messages.discussionEnabledDescription} /></p>
+    <p className="x-small font-weight-bold">
+      <FormattedMessage {...messages.discussionEnabledDescription} />
+    </p>
   </>
 );
 
 export interface AccessEditComponentProps {
-  selectedPartitionIndex?: number,
-  setFieldValue: (key: string, value: any) => void,
-  userPartitionInfo?: UserPartitionInfo,
-  selectedGroups: string[],
+  selectedPartitionIndex?: number;
+  setFieldValue: (key: string, value: any) => void;
+  userPartitionInfo?: UserPartitionInfo;
+  selectedGroups: string[];
 }
 
 export const AccessEditComponent = ({
@@ -108,7 +111,9 @@ export const AccessEditComponent = ({
       {selectedPartitionIndex !== undefined
         && selectedPartitionIndex >= 0 && userPartitionInfo?.selectablePartitions.length && (
         <Form.Group controlId="select-groups-checkboxes">
-          <Form.Label><FormattedMessage {...messages.unitSelectGroup} /></Form.Label>
+          <Form.Label>
+            <FormattedMessage {...messages.unitSelectGroup} />
+          </Form.Label>
           <div
             role="group"
             className="d-flex flex-column"
@@ -188,9 +193,15 @@ export const UnitTab = ({
     <>
       {!isXBlockComponent && (
         <>
-          <h4 className="mt-3"><FormattedMessage {...messages.unitVisibility} /></h4>
+          <h4 className="mt-3">
+            <FormattedMessage {...messages.unitVisibility} />
+          </h4>
           <hr />
-          <Form.Checkbox checked={isVisibleToStaffOnly} onChange={handleVisibilityChange} data-testid="unit-visibility-checkbox">
+          <Form.Checkbox
+            checked={isVisibleToStaffOnly}
+            onChange={handleVisibilityChange}
+            data-testid="unit-visibility-checkbox"
+          >
             <FormattedMessage {...messages.hideFromLearners} />
           </Form.Checkbox>
           {/* istanbul ignore next */ showWarning && (
@@ -216,7 +227,9 @@ export const UnitTab = ({
       )}
       {!isXBlockComponent && (
         <>
-          <h4 className="mt-4"><FormattedMessage {...messages.discussionEnabledSectionTitle} /></h4>
+          <h4 className="mt-4">
+            <FormattedMessage {...messages.discussionEnabledSectionTitle} />
+          </h4>
           <hr />
           <DiscussionEditComponent
             discussionEnabled={discussionEnabled}

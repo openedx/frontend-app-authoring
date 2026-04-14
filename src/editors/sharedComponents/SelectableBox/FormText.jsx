@@ -52,7 +52,12 @@ const resolveTextType = ({ isInvalid, isValid }) => {
 // };
 
 const FormText = ({
-  children, type, icon, muted, hasIcon, ...props
+  children,
+  type,
+  icon,
+  muted,
+  hasIcon,
+  ...props
 }) => {
   const className = classNames(
     props.className,

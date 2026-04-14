@@ -1,5 +1,8 @@
 import React, {
-  useCallback, useContext, useEffect, useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from 'react';
 import PropTypes from 'prop-types';
 
@@ -19,7 +22,10 @@ import SaveFormConnectionErrorAlert from '../../../generic/SaveFormConnectionErr
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 import {
   DENIED,
-  FAILED, LOADED, LOADING, selectApp,
+  FAILED,
+  LOADED,
+  LOADING,
+  selectApp,
 } from '../data/slice';
 import { fetchDiscussionSettings, saveProviderConfig } from '../data/thunks';
 import OpenedXConfigForm from './apps/openedx';
@@ -40,7 +46,10 @@ const AppConfigForm = ({
   const { appId: routeAppId } = useParams();
   const [isLoading, setLoading] = useState(true);
   const {
-    activeAppId, selectedAppId, status, saveStatus,
+    activeAppId,
+    selectedAppId,
+    status,
+    saveStatus,
   } = useSelector(state => state.discussions);
 
   const [confirmationDialogVisible, setConfirmationDialogVisible] = useState(false);
@@ -64,7 +73,7 @@ const AppConfigForm = ({
 
   // This is a callback that gets called after the form has been submitted successfully.
   const handleSubmit = useCallback((values) => {
-    const needsConfirmation = (activeAppId !== selectedAppId);
+    const needsConfirmation = activeAppId !== selectedAppId;
     if (needsConfirmation && !confirmationDialogVisible) {
       setConfirmationDialogVisible(true);
     } else {
@@ -75,16 +84,12 @@ const AppConfigForm = ({
   }, [activeAppId, confirmationDialogVisible, courseId, selectedAppId]);
 
   if (!selectedAppId || status === LOADING || isLoading) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   let alert = null;
   if (saveStatus === FAILED) {
-    alert = (
-      <SaveFormConnectionErrorAlert />
-    );
+    alert = <SaveFormConnectionErrorAlert />;
   }
   if (saveStatus === DENIED) {
     alert = <PermissionDeniedAlert />;

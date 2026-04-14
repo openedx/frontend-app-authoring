@@ -2,7 +2,12 @@ import { setConfig, getConfig } from '@edx/frontend-platform';
 
 import { ITEM_BADGE_STATUS } from '@src/course-outline/constants';
 import {
-  act, fireEvent, initializeMocks, render, screen, waitFor,
+  act,
+  fireEvent,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
@@ -258,8 +263,12 @@ describe('<CardHeader />', () => {
     // Ensure menu items related to editing are enabled
     const menuButton = screen.getByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
-    expect(await screen.findByTestId('subsection-card-header__menu-configure-button')).not.toHaveAttribute('aria-disabled');
-    expect(await screen.findByTestId('subsection-card-header__menu-manage-tags-button')).not.toHaveAttribute('aria-disabled');
+    expect(await screen.findByTestId('subsection-card-header__menu-configure-button')).not.toHaveAttribute(
+      'aria-disabled',
+    );
+    expect(await screen.findByTestId('subsection-card-header__menu-manage-tags-button')).not.toHaveAttribute(
+      'aria-disabled',
+    );
   });
 
   it('check editing is disabled when saving is in progress', async () => {

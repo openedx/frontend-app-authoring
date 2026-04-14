@@ -1,6 +1,8 @@
 import { getConfig } from '@edx/frontend-platform';
 import {
-  createContext, useContext, useMemo,
+  createContext,
+  useContext,
+  useMemo,
 } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useSelector } from 'react-redux';
@@ -38,7 +40,6 @@ export type CourseAuthoringContextData = {
  * Always available when we're in the context of a single course.
  *
  * Get this using `useCourseAuthoringContext()`
- *
  */
 const CourseAuthoringContext = createContext<CourseAuthoringContextData | undefined>(undefined);
 
@@ -122,7 +123,9 @@ export function useCourseAuthoringContext(): CourseAuthoringContextData {
   const ctx = useContext(CourseAuthoringContext);
   if (ctx === undefined) {
     /* istanbul ignore next */
-    throw new Error('useCourseAuthoringContext() was used in a component without a <CourseAuthoringProvider> ancestor.');
+    throw new Error(
+      'useCourseAuthoringContext() was used in a component without a <CourseAuthoringProvider> ancestor.',
+    );
   }
   return ctx;
 }

@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Hyperlink, MailtoLink,
+  Hyperlink,
+  MailtoLink,
 } from '@openedx/paragon';
 
 import AppConfigFormDivider from './AppConfigFormDivider';
@@ -34,12 +35,13 @@ const AppExternalLinks = ({
                   showLaunchIcon={showLaunchIcon}
                   className={customClasses}
                 >
-                  { intl.formatMessage(messages[type], { providerName }) }
+                  {intl.formatMessage(messages[type], { providerName })}
                 </Hyperlink>
               </div>
             ))}
           </>
-        ) : null}
+        ) :
+        null}
       {contactEmail && (
         <div className={customClasses}>
           <hr />
@@ -51,7 +53,7 @@ const AppExternalLinks = ({
                   to={contactEmail}
                   rel="noopener noreferrer"
                 >
-                  <span className={customClasses}>{ contactEmail }</span>
+                  <span className={customClasses}>{contactEmail}</span>
                 </MailtoLink>
               ),
             }}

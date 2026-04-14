@@ -1,5 +1,10 @@
 import {
-  createContext, ReactNode, useContext, useEffect, useMemo, useState,
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
@@ -61,8 +66,10 @@ export const CourseImportFilterProvider = ({ handleSelect, selectedCourseId, chi
 
   useEffect(() => {
     // Filter the courses based on selected course id and handle the selection change
-    if (!isCourseListLoading && !isPending
-      && filteredCourses.findIndex(course => course.courseKey === selectedCourseId) === -1) {
+    if (
+      !isCourseListLoading && !isPending
+      && filteredCourses.findIndex(course => course.courseKey === selectedCourseId) === -1
+    ) {
       handleSelect?.('');
     }
   }, [filteredCourses, selectedCourseId, handleSelect]);

@@ -4,7 +4,12 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 
 import {
-  getDownload, getVideosUrl, getAllUsagePaths, getCourseVideosApiUrl, uploadVideo, sendVideoUploadStatus,
+  getDownload,
+  getVideosUrl,
+  getAllUsagePaths,
+  getCourseVideosApiUrl,
+  uploadVideo,
+  sendVideoUploadStatus,
 } from './api';
 
 jest.mock('file-saver');
@@ -133,7 +138,10 @@ describe('api.js', () => {
         const loaded = total * progress;
         if (config.onUploadProgress) {
           config.onUploadProgress({
-            loaded, total, bytes: loaded, lengthComputable: true,
+            loaded,
+            total,
+            bytes: loaded,
+            lengthComputable: true,
           });
         }
         return [200, expectedResult];

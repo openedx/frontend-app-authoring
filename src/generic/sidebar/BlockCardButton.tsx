@@ -1,6 +1,10 @@
 import React from 'react';
 import {
-  Button, Chip, Collapsible, Icon, Stack,
+  Button,
+  Chip,
+  Collapsible,
+  Icon,
+  Stack,
 } from '@openedx/paragon';
 import { getItemIcon } from '../block-type-utils';
 

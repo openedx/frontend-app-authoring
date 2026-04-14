@@ -13,12 +13,13 @@ jest.mock('@src/authz/data/apiHooks', () => ({
 
 const mockPathname = '/foo-bar';
 
-const renderHelpSidebar = (props) => render(
-  <HelpSidebar {...props}>
-    <p>Test children</p>
-  </HelpSidebar>,
-  { path: mockPathname },
-);
+const renderHelpSidebar = (props) =>
+  render(
+    <HelpSidebar {...props}>
+      <p>Test children</p>
+    </HelpSidebar>,
+    { path: mockPathname },
+  );
 
 const props = {
   courseId: 'course123',

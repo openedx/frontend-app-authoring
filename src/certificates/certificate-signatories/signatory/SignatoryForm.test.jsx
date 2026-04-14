@@ -12,13 +12,14 @@ import SignatoryForm from './SignatoryForm';
 
 let store;
 
-const renderSignatory = (props) => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <SignatoryForm {...props} />
-    </IntlProvider>,
-  </Provider>,
-);
+const renderSignatory = (props) =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <SignatoryForm {...props} />
+      </IntlProvider>,
+    </Provider>,
+  );
 
 const initialState = {
   certificates: {
@@ -85,7 +86,12 @@ describe('Signatory Component', () => {
     const { getByRole, queryByTestId } = renderSignatory(defaultProps);
     const replaceButton = getByRole(
       'button',
-      { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModalReplace.defaultMessage) },
+      {
+        name: messages.uploadImageButton.defaultMessage.replace(
+          '{uploadText}',
+          messages.uploadModalReplace.defaultMessage,
+        ),
+      },
     );
 
     expect(queryByTestId('dropzone-container')).not.toBeInTheDocument();
@@ -136,7 +142,12 @@ describe('Signatory Component', () => {
 
     const replaceButton = getByRole(
       'button',
-      { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModalReplace.defaultMessage) },
+      {
+        name: messages.uploadImageButton.defaultMessage.replace(
+          '{uploadText}',
+          messages.uploadModalReplace.defaultMessage,
+        ),
+      },
     );
     const uploadButton = queryByRole(
       'button',
@@ -162,7 +173,12 @@ describe('Signatory Component', () => {
     );
     const replaceButton = queryByRole(
       'button',
-      { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModalReplace.defaultMessage) },
+      {
+        name: messages.uploadImageButton.defaultMessage.replace(
+          '{uploadText}',
+          messages.uploadModalReplace.defaultMessage,
+        ),
+      },
     );
 
     expect(uploadButton).toBeInTheDocument();

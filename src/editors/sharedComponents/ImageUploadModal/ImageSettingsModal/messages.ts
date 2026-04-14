@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   // index
   titleLabel: {
     id: 'authoring.texteditor.imagesettingsmodal.titleLabel',
@@ -47,7 +46,7 @@ const messages = defineMessages({
   },
   decorativeDimensionCheckboxLabel: {
     id: 'authoring.texteditor.imagesettingsmodal.decorativeDimensionCheckboxLabel',
-    defaultMessage: "Use percentages for the image's width and height",
+    defaultMessage: 'Use percentages for the image\'s width and height',
     description: 'Checkbox label for whether or not an image uses percentages for width and height.',
   },
 

@@ -40,7 +40,10 @@ export function useSequenceNavigationMetadata(courseId, currentSequenceId, curre
   }
 
   return {
-    isFirstUnit, isLastUnit, nextLink, previousLink,
+    isFirstUnit,
+    isLastUnit,
+    nextLink,
+    previousLink,
   };
 }
 

@@ -1,5 +1,6 @@
 import {
-  Icon, Toast,
+  Icon,
+  Toast,
 } from '@openedx/paragon';
 import { Settings as IconSettings } from '@openedx/paragon/icons';
 import classNames from 'classnames';
@@ -31,7 +32,7 @@ const ProcessingNotification = ({
     onClose={close || (() => {})}
     delay={delay}
   >
-    { /* @ts-ignore - Toast has a poor definition of children */ }
+    {/* @ts-ignore - Toast has a poor definition of children */}
     <span className="d-flex align-items-center">
       <Icon className="processing-notification-icon mb-0 mr-2" src={IconSettings} />
       <span className="font-weight-bold h4 mb-0 text-white">{title}</span>

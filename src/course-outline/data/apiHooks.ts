@@ -10,7 +10,10 @@ import { getNotificationMessage } from '@src/course-unit/data/utils';
 import { createGlobalState } from '@src/data/apiHooks';
 import type { XBlockBase, XblockChildInfo } from '@src/data/types';
 import {
-  ContainerType, getBlockType, getCourseKey, normalizeContainerType,
+  ContainerType,
+  getBlockType,
+  getCourseKey,
+  normalizeContainerType,
 } from '@src/generic/key-utils';
 import { useMutationWithProcessingNotification } from '@src/generic/processing-notification/data/apiHooks';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
@@ -18,7 +21,10 @@ import { useToastContext } from '@src/generic/toast-context';
 import { ParentIds } from '@src/generic/types';
 import {
   QueryClient,
-  skipToken, useMutation, useQuery, useQueryClient,
+  skipToken,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import {
@@ -109,7 +115,7 @@ type CreateCourseXBlockMutationProps = CreateCourseXBlockType & ParentIds;
  */
 export const useCreateCourseBlock = (
   courseKey: string,
-  callback?: ((locator: string, parentLocator: string) => Promise<void>),
+  callback?: (locator: string, parentLocator: string) => Promise<void>,
 ) => {
   const queryClient = useQueryClient();
   const { setData } = useScrollState(courseKey);
@@ -140,35 +146,37 @@ export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initial
   return useQuery<T>({
     initialData,
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
-    queryFn: enabled && itemId ? async () => {
-      const data = await getCourseItem<T>(itemId!);
-      // If the container has children blocks, update children react-query cache
-      // data without hitting the API as each xblock call returns its children information as well.
-      if ('childInfo' in data) {
-        // This could mean that data is of a section or subsection
-        (data.childInfo as XblockChildInfo).children.forEach(async (child) => {
-          await queryClient.cancelQueries({ queryKey: courseOutlineQueryKeys.courseItemId(child.id) });
-          queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(child.id), child);
-          if ('childInfo' in child) {
-            // This means that the data is of section and so its children subsections also
-            // have children i.e. units
-            (child.childInfo as XblockChildInfo).children.forEach(async (grandChild) => {
-              await queryClient.cancelQueries({ queryKey: courseOutlineQueryKeys.courseItemId(grandChild.id) });
-              queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(grandChild.id), grandChild);
-            });
-          }
-        });
-      }
-      // We update redux store section list to update children list in outline.
-      // Even though each block has its own hook to fetch data, new child blocks or deleted blocks
-      // won't be detected as the child blocks are rendered in the outline from the top level
-      // sectionList from redux store.
-      if (['chapter', 'section'].includes(data.category)) {
-        const payload = { [data.id]: data };
-        dispatch(updateSectionList(payload));
-      }
-      return data;
-    } : skipToken,
+    queryFn: enabled && itemId ?
+      async () => {
+        const data = await getCourseItem<T>(itemId!);
+        // If the container has children blocks, update children react-query cache
+        // data without hitting the API as each xblock call returns its children information as well.
+        if ('childInfo' in data) {
+          // This could mean that data is of a section or subsection
+          (data.childInfo as XblockChildInfo).children.forEach(async (child) => {
+            await queryClient.cancelQueries({ queryKey: courseOutlineQueryKeys.courseItemId(child.id) });
+            queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(child.id), child);
+            if ('childInfo' in child) {
+              // This means that the data is of section and so its children subsections also
+              // have children i.e. units
+              (child.childInfo as XblockChildInfo).children.forEach(async (grandChild) => {
+                await queryClient.cancelQueries({ queryKey: courseOutlineQueryKeys.courseItemId(grandChild.id) });
+                queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(grandChild.id), grandChild);
+              });
+            }
+          });
+        }
+        // We update redux store section list to update children list in outline.
+        // Even though each block has its own hook to fetch data, new child blocks or deleted blocks
+        // won't be detected as the child blocks are rendered in the outline from the top level
+        // sectionList from redux store.
+        if (['chapter', 'section'].includes(data.category)) {
+          const payload = { [data.id]: data };
+          dispatch(updateSectionList(payload));
+        }
+        return data;
+      } :
+      skipToken,
   });
 };
 
@@ -191,10 +199,12 @@ export const useCourseDetails = (courseId?: string, enabled: boolean = true) => 
 export const useUpdateCourseBlockName = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationFn: (variables:{
-      itemId: string;
-      displayName: string;
-    } & ParentIds) => editItemDisplayName({ itemId: variables.itemId, displayName: variables.displayName }),
+    mutationFn: (
+      variables: {
+        itemId: string;
+        displayName: string;
+      } & ParentIds,
+    ) => editItemDisplayName({ itemId: variables.itemId, displayName: variables.displayName }),
     onSuccess: async (_data, variables) => {
       await invalidateParentQueries(queryClient, variables);
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
@@ -206,9 +216,11 @@ export const useUpdateCourseBlockName = (courseId: string) => {
 export const usePublishCourseItem = () => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationFn: (variables:{
-      itemId: string;
-    } & ParentIds) => publishCourseItem(variables.itemId),
+    mutationFn: (
+      variables: {
+        itemId: string;
+      } & ParentIds,
+    ) => publishCourseItem(variables.itemId),
     onSettled: (_data, _err, variables) => {
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
@@ -219,9 +231,11 @@ export const usePublishCourseItem = () => {
 export const useDeleteCourseItem = () => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationFn: (variables:{
-      itemId: string;
-    } & ParentIds) => deleteCourseItem(variables.itemId),
+    mutationFn: (
+      variables: {
+        itemId: string;
+      } & ParentIds,
+    ) => deleteCourseItem(variables.itemId),
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
@@ -264,9 +278,11 @@ export const useConfigureSubsection = () => {
               && normalizeContainerType(getBlockType(queryKey[2], 'empty')) === ContainerType.Subsection;
           },
         });
-        await Promise.all(subsectionItemQueries.map((query) => queryClient.invalidateQueries({
-          queryKey: query.queryKey,
-        })));
+        await Promise.all(subsectionItemQueries.map((query) =>
+          queryClient.invalidateQueries({
+            queryKey: query.queryKey,
+          })
+        ));
       }
     },
   });
@@ -294,10 +310,12 @@ export const useConfigureUnit = () => {
 export const useUpdateCourseSectionHighlights = () => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationFn: (variables: {
-      sectionId: string;
-      highlights: string[];
-    } & ParentIds) => updateCourseSectionHighlights(variables.sectionId, variables.highlights),
+    mutationFn: (
+      variables: {
+        sectionId: string;
+        highlights: string[];
+      } & ParentIds,
+    ) => updateCourseSectionHighlights(variables.sectionId, variables.highlights),
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
@@ -312,10 +330,12 @@ export const useDuplicateItem = (courseKey: string) => {
   const dispatch = useDispatch();
   const { setData } = useScrollState(courseKey);
   return useMutationWithProcessingNotification({
-    mutationFn: (variables: {
-      itemId: string;
-      parentId: string;
-    } & ParentIds) => duplicateCourseItem(variables.itemId, variables.parentId),
+    mutationFn: (
+      variables: {
+        itemId: string;
+        parentId: string;
+      } & ParentIds,
+    ) => duplicateCourseItem(variables.itemId, variables.parentId),
     onSuccess: async (data, variables) => {
       await invalidateParentQueries(queryClient, variables);
       // add duplicated section to store, subsection and unit are handled by invalidateParentQueries
@@ -343,9 +363,11 @@ export const usePasteItem = (courseId?: string) => {
   const { setData: setScrollState } = useScrollState(courseId);
   const { setData } = usePasteFileNotices(courseId);
   return useMutationWithProcessingNotification({
-    mutationFn: (variables: {
-      parentLocator: string;
-    } & ParentIds) => pasteBlock(variables.parentLocator),
+    mutationFn: (
+      variables: {
+        parentLocator: string;
+      } & ParentIds,
+    ) => pasteBlock(variables.parentLocator),
     onSuccess: async (data, variables) => {
       await invalidateParentQueries(queryClient, variables);
       // set pasteFileNotices

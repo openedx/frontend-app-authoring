@@ -16,7 +16,7 @@ import ComponentManagement from './ComponentManagement';
 
 jest.mock('../../content-tags-drawer', () => ({
   ...jest.requireActual('../../content-tags-drawer'),
-  ContentTagsDrawer: ({ readOnly }: { readOnly: boolean }) => (
+  ContentTagsDrawer: ({ readOnly }: { readOnly: boolean; }) => (
     <div>Mocked {readOnly ? 'read-only' : 'editable'} ContentTagsDrawer</div>
   ),
 }));
@@ -35,20 +35,21 @@ mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockContentTaxonomyTagsData.applyMock();
 
-const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentManagement />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: usageKey,
-          type: SidebarBodyItemId.ComponentInfo,
-        }}
-      >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (usageKey: string, libraryId?: string) =>
+  baseRender(<ComponentManagement />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: usageKey,
+            type: SidebarBodyItemId.ComponentInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<ComponentManagement />', () => {
   beforeEach(() => {

@@ -4,9 +4,9 @@ import BaseModal from '../../../sharedComponents/BaseModal';
 import messages from '../messages';
 
 interface CancelConfirmModalProps {
-  isOpen: boolean,
-  closeCancelConfirmModal: () => void,
-  onCloseEditor: (() => void) | null,
+  isOpen: boolean;
+  closeCancelConfirmModal: () => void;
+  onCloseEditor: (() => void) | null;
 }
 
 const CancelConfirmModal = ({
@@ -18,22 +18,22 @@ const CancelConfirmModal = ({
   return (
     <BaseModal
       size="lg"
-      footerAction={(
+      footerAction={
         <Button
           variant="outline-brand"
           onClick={() => onCloseEditor?.()}
         >
           <FormattedMessage {...messages.discardChangesButtonlabel} />
         </Button>
-      )}
-      confirmAction={(
+      }
+      confirmAction={
         <Button
           variant="primary"
           onClick={closeCancelConfirmModal}
         >
           <FormattedMessage {...messages.keepEditingButtonLabel} />
         </Button>
-      )}
+      }
       isOpen={isOpen}
       close={closeCancelConfirmModal}
       title={intl.formatMessage(messages.cancelConfirmTitle)}

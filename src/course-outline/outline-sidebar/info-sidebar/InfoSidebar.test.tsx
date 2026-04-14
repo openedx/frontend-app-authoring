@@ -1,4 +1,4 @@
-import { fireEvent,initializeMocks, render, screen } from '@src/testUtils';
+import { fireEvent, initializeMocks, render, screen } from '@src/testUtils';
 import { getCourseSettingsApiUrl } from '@src/data/api';
 import type { SelectionState } from '@src/data/types';
 import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
@@ -102,7 +102,7 @@ describe('InfoSidebar component', () => {
   it('shows the settings link for the course', async () => {
     const user = userEvent.setup();
     renderComponent();
-    await user.click((await screen.findByRole('tab', { name: 'Settings' })));
+    await user.click(await screen.findByRole('tab', { name: 'Settings' }));
     const links = await screen.findAllByRole('link');
     expect(links).toHaveLength(5);
     expect(links[0]).toHaveTextContent('Schedule & details');

@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Form, Stack, CheckboxControl,
+  ActionRow,
+  Form,
+  Stack,
+  CheckboxControl,
 } from '@openedx/paragon';
 
 import { LICENSE_COMMONS_OPTIONS } from '../constants';

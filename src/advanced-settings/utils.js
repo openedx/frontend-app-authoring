@@ -20,11 +20,11 @@ export default function validateAdvancedSettingsData(settingObj, setErrorFields,
     } catch {
       let targetSettingValue = settingValue;
       const firstNonWhite = settingValue.substring(0, 1);
-      const isValid = !['{', '[', "'"].includes(firstNonWhite);
+      const isValid = !['{', '[', '\''].includes(firstNonWhite);
 
       if (isValid) {
         try {
-          targetSettingValue = `"${ targetSettingValue.trim() }"`;
+          targetSettingValue = `"${targetSettingValue.trim()}"`;
           JSON.parse(targetSettingValue);
           setEditedSettings((prevEditedSettings) => ({
             ...prevEditedSettings,

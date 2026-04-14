@@ -29,7 +29,7 @@ export interface XBlockTypes {
 export interface XBlockContainerIframeProps {
   courseId: string;
   blockId: string;
-  isUnitVerticalType: boolean,
+  isUnitVerticalType: boolean;
   unitXBlockActions: {
     handleDelete: (XBlockId: string | null) => Promise<void> | void;
     handleDuplicate: (XBlockId: string | null) => void;

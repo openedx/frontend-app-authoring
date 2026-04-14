@@ -20,15 +20,15 @@ import AdvancedTab from './AdvancedTab';
 import { UnitTab } from './UnitTab';
 
 interface Props {
-  isOpen: boolean,
+  isOpen: boolean;
   onClose: () => void;
-  onConfigureSubmit: (args: object) => void,
-  enableProctoredExams?: boolean,
-  enableTimedExams?: boolean,
-  currentItemData?: AccessManagedXBlockDataTypes,
-  isXBlockComponent?: boolean,
-  isSelfPaced?: boolean,
-  isOverflowVisible?: boolean,
+  onConfigureSubmit: (args: object) => void;
+  enableProctoredExams?: boolean;
+  enableTimedExams?: boolean;
+  currentItemData?: AccessManagedXBlockDataTypes;
+  isXBlockComponent?: boolean;
+  isSelfPaced?: boolean;
+  isOverflowVisible?: boolean;
 }
 
 const ConfigureModal = ({
@@ -318,7 +318,9 @@ const ConfigureModal = ({
           validateOnChange
         >
           {({
-            values, handleSubmit, setFieldValue,
+            values,
+            handleSubmit,
+            setFieldValue,
           }) => (
             <Form onSubmit={handleSubmit}>
               <ModalDialog.Body className="configure-modal__body">

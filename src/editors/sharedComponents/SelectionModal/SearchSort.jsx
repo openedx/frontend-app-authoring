@@ -2,7 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  ActionRow, Dropdown, Form, Icon, IconButton, SelectMenu, MenuItem,
+  ActionRow,
+  Dropdown,
+  Form,
+  Icon,
+  IconButton,
+  SelectMenu,
+  MenuItem,
 } from '@openedx/paragon';
 import { Check, Close, Search } from '@openedx/paragon/icons';
 import {
@@ -37,26 +43,24 @@ const SearchSort = ({
           autoFocus
           onChange={onSearchChange}
           placeholder={intl.formatMessage(messages.searchPlaceholder)}
-          trailingElement={
-            searchString
-              ? (
-                <IconButton
-                  alt={intl.formatMessage(messages.clearSearch)}
-                  iconAs={Icon}
-                  invertColors
-                  isActive
-                  onClick={clearSearchString}
-                  size="sm"
-                  src={Close}
-                />
-              )
-              : <Icon src={Search} />
-          }
+          trailingElement={searchString
+            ? (
+              <IconButton
+                alt={intl.formatMessage(messages.clearSearch)}
+                iconAs={Icon}
+                invertColors
+                isActive
+                onClick={clearSearchString}
+                size="sm"
+                src={Close}
+              />
+            )
+            : <Icon src={Search} />}
           value={searchString}
         />
       </Form.Group>
 
-      { !showSwitch && <ActionRow.Spacer /> }
+      {!showSwitch && <ActionRow.Spacer />}
       <SelectMenu variant="link" className="search-sort-menu">
         {Object.keys(sortKeys).map(key => (
           <MenuItem
@@ -67,34 +71,34 @@ const SearchSort = ({
           >
             <span className="search-sort-menu-by">
               <FormattedMessage {...messages.sortBy} />
-              <span style={{ whiteSpace: 'pre-wrap' }}> </span>
+              <span style={{ whiteSpace: 'pre-wrap' }}></span>
             </span>
             <FormattedMessage {...sortMessages[key]} />
           </MenuItem>
         ))}
       </SelectMenu>
 
-      { onFilterClick && (
-      <Dropdown>
-        <Dropdown.Toggle
-          data-testid="dropdown-filter"
-          className="text-gray-700"
-          id="gallery-filter-button"
-          variant="tertiary"
-        >
-          <FormattedMessage {...filterMessages[filterBy]} />
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          {Object.keys(filterKeys).map(key => (
-            <Dropdown.Item data-testid={`dropdown-filter-${key}`} key={key} onClick={onFilterClick(key)}>
-              <FormattedMessage {...filterMessages[key]} />
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
-      </Dropdown>
+      {onFilterClick && (
+        <Dropdown>
+          <Dropdown.Toggle
+            data-testid="dropdown-filter"
+            className="text-gray-700"
+            id="gallery-filter-button"
+            variant="tertiary"
+          >
+            <FormattedMessage {...filterMessages[filterBy]} />
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {Object.keys(filterKeys).map(key => (
+              <Dropdown.Item data-testid={`dropdown-filter-${key}`} key={key} onClick={onFilterClick(key)}>
+                <FormattedMessage {...filterMessages[key]} />
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
       )}
 
-      { showSwitch && (
+      {showSwitch && (
         <>
           <ActionRow.Spacer />
           <Form.SwitchSet
@@ -108,7 +112,6 @@ const SearchSort = ({
           </Form.SwitchSet>
         </>
       )}
-
     </ActionRow>
   );
 };

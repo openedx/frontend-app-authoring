@@ -7,8 +7,7 @@ const messages = defineMessages({
   },
   requirementsEntranceCollapseHelpText: {
     id: 'course-authoring.schedule-section.requirements.entrance.collapse.help-text',
-    defaultMessage:
-      'The score student must meet in order to successfully complete the entrance exam.',
+    defaultMessage: 'The score student must meet in order to successfully complete the entrance exam.',
   },
 });
 

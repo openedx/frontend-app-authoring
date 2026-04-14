@@ -19,11 +19,12 @@ jest.mock('react-router-dom', () => ({
 let axiosMock;
 let store;
 
-const renderComponent = children => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    {children}
-  </CourseAuthoringProvider>,
-);
+const renderComponent = children =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      {children}
+    </CourseAuthoringProvider>,
+  );
 
 beforeEach(async () => {
   const mocks = initializeMocks();
@@ -48,8 +49,7 @@ describe('Editor Pages Load no header', () => {
     const wrapper = renderComponent(
       <CourseAuthoringPage>
         <PagesAndResources />
-      </CourseAuthoringPage>
-      ,
+      </CourseAuthoringPage>,
     );
     expect(wrapper.queryByRole('status')).not.toBeInTheDocument();
   });
@@ -59,8 +59,7 @@ describe('Editor Pages Load no header', () => {
     const wrapper = renderComponent(
       <CourseAuthoringPage>
         <PagesAndResources />
-      </CourseAuthoringPage>
-      ,
+      </CourseAuthoringPage>,
     );
     expect(wrapper.queryByRole('status')).toBeInTheDocument();
   });
@@ -98,8 +97,7 @@ describe('Course authoring page', () => {
     const wrapper = renderComponent(
       <CourseAuthoringPage>
         <div data-testid={contentTestId} />
-      </CourseAuthoringPage>
-      ,
+      </CourseAuthoringPage>,
     );
     expect(await wrapper.findByTestId(contentTestId)).toBeInTheDocument();
     expect(wrapper.queryByTestId('notFoundAlert')).not.toBeInTheDocument();

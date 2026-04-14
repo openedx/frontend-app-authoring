@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import {
-  initializeMocks, render, screen, within,
+  initializeMocks,
+  render,
+  screen,
+  within,
 } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 

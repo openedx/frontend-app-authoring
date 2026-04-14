@@ -1,5 +1,8 @@
 import {
-  get, isEmpty, isFinite, isNil,
+  get,
+  isEmpty,
+  isFinite,
+  isNil,
 } from 'lodash';
 
 import { ShowAnswerTypes, RandomizationTypesKeys } from '../../../data/constants/problem';

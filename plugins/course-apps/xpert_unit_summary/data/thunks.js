@@ -1,9 +1,16 @@
-import { updateSavingStatus, updateLoadingStatus, updateResetStatus } from 'CourseAuthoring/pages-and-resources/data/slice';
+import {
+  updateSavingStatus,
+  updateLoadingStatus,
+  updateResetStatus,
+} from 'CourseAuthoring/pages-and-resources/data/slice';
 import { RequestStatus } from 'CourseAuthoring/data/constants';
 import { addModel, updateModel } from 'CourseAuthoring/generic/model-store';
 
 import {
-  getXpertSettings, postXpertSettings, getXpertPluginConfigurable, deleteXpertSettings,
+  getXpertSettings,
+  postXpertSettings,
+  getXpertPluginConfigurable,
+  deleteXpertSettings,
 } from './api';
 
 export function updateXpertSettings(courseId, state) {
@@ -13,7 +20,9 @@ export function updateXpertSettings(courseId, state) {
       const { response } = await postXpertSettings(courseId, state);
       const { success } = response;
       if (success) {
-        dispatch(updateModel({ modelType: 'XpertSettings', model: { id: 'xpert-unit-summary', enabled: state.enabled } }));
+        dispatch(
+          updateModel({ modelType: 'XpertSettings', model: { id: 'xpert-unit-summary', enabled: state.enabled } }),
+        );
         dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         return true;
       }

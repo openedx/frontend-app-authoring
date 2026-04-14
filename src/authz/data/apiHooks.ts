@@ -4,7 +4,8 @@ import { validateUserPermissions } from './api';
 
 const adminConsoleQueryKeys = {
   all: ['authz'],
-  permissions: (permissions: PermissionValidationQuery) => [...adminConsoleQueryKeys.all, 'validatePermissions', permissions] as const,
+  permissions: (permissions: PermissionValidationQuery) =>
+    [...adminConsoleQueryKeys.all, 'validatePermissions', permissions] as const,
 };
 
 /**
@@ -25,13 +26,13 @@ const adminConsoleQueryKeys = {
  *      }
  *    });
  * if (data.canRead) { ... }
- *
  */
 export const useUserPermissions = (
   permissions: PermissionValidationQuery,
   enabled: boolean = true,
-) => useQuery<PermissionValidationAnswer, Error>({
-  queryKey: adminConsoleQueryKeys.permissions(permissions),
-  queryFn: enabled ? () => validateUserPermissions(permissions) : skipToken,
-  retry: false,
-});
+) =>
+  useQuery<PermissionValidationAnswer, Error>({
+    queryKey: adminConsoleQueryKeys.permissions(permissions),
+    queryFn: enabled ? () => validateUserPermissions(permissions) : skipToken,
+    retry: false,
+  });

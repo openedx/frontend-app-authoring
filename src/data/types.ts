@@ -57,17 +57,17 @@ export interface UpstreamChildrenInfo {
 }
 
 export interface UpstreamInfo {
-  readyToSync: boolean,
-  upstreamRef: string,
-  upstreamName: string,
-  versionSynced: number,
-  versionAvailable: number | null,
-  versionDeclined: number | null,
-  errorMessage: string | null,
-  downstreamCustomized: string[],
-  topLevelParentKey?: string,
-  readyToSyncChildren?: UpstreamChildrenInfo[],
-  isReadyToSyncIndividually?: boolean,
+  readyToSync: boolean;
+  upstreamRef: string;
+  upstreamName: string;
+  versionSynced: number;
+  versionAvailable: number | null;
+  versionDeclined: number | null;
+  errorMessage: string | null;
+  downstreamCustomized: string[];
+  topLevelParentKey?: string;
+  readyToSyncChildren?: UpstreamChildrenInfo[];
+  isReadyToSyncIndividually?: boolean;
 }
 
 export interface XBlockBase {
@@ -97,7 +97,7 @@ export interface XBlockBase {
   actions: XBlockActions;
   explanatoryMessage?: string;
   userPartitions: UserPartitionTypes[];
-  showCorrectness: 'always' | 'never' | 'past_due' | 'never_but_include_grade',
+  showCorrectness: 'always' | 'never' | 'past_due' | 'never_but_include_grade';
   highlights: string[];
   highlightsEnabled: boolean;
   highlightsPreviewOnly: boolean;
@@ -142,10 +142,10 @@ interface OutlineError {
 }
 
 export interface OutlinePageErrors {
-  outlineIndexApi?: OutlineError | null,
-  reindexApi?: OutlineError | null,
-  sectionLoadingApi?: OutlineError | null,
-  courseLaunchApi?: OutlineError | null,
+  outlineIndexApi?: OutlineError | null;
+  reindexApi?: OutlineError | null;
+  sectionLoadingApi?: OutlineError | null;
+  courseLaunchApi?: OutlineError | null;
 }
 
 export interface UsageKeyBlock {

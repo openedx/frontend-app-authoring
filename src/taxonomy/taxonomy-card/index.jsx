@@ -16,7 +16,9 @@ import SystemDefinedBadge from '../system-defined-badge';
 const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
 
 const HeaderSubtitle = ({
-  id, showSystemBadge, orgsCount,
+  id,
+  showSystemBadge,
+  orgsCount,
 }) => {
   const intl = useIntl();
 
@@ -91,7 +93,11 @@ HeaderTitle.propTypes = {
 
 const TaxonomyCard = ({ className, original }) => {
   const {
-    id, name, description, systemDefined, orgsCount,
+    id,
+    name,
+    description,
+    systemDefined,
+    orgsCount,
   } = original;
 
   const intl = useIntl();
@@ -113,20 +119,21 @@ const TaxonomyCard = ({ className, original }) => {
     >
       <Card.Header
         title={<HeaderTitle taxonomyId={id} title={name} />}
-        subtitle={(
+        subtitle={
           <HeaderSubtitle
             id={id}
             showSystemBadge={systemDefined}
             orgsCount={orgsCount}
             intl={intl}
           />
-        )}
+        }
         actions={getHeaderActions()}
       />
-      <Card.Body className={classNames('taxonomy-card-body', {
-        'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(orgsCount),
-        'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(orgsCount),
-      })}
+      <Card.Body
+        className={classNames('taxonomy-card-body', {
+          'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(orgsCount),
+          'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(orgsCount),
+        })}
       >
         <Card.Section>
           {description}

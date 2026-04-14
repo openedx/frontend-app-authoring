@@ -10,7 +10,7 @@ import { getConfig } from '@edx/frontend-platform';
  * @returns {string} - A correctly formatted internal route for the application.
  */
 export const adoptCourseSectionUrl = (
-  { url, courseId, parentUnitId }: { url: string, courseId: string, parentUnitId: string },
+  { url, courseId, parentUnitId }: { url: string; courseId: string; parentUnitId: string; },
 ): string => {
   let newUrl = url;
   const urlConditions = [
@@ -40,7 +40,7 @@ export const adoptCourseSectionUrl = (
  * @returns {string} The constructed edit URL for the subsection's first unit.
  */
 export const subsectionFirstUnitEditUrl = (
-  { courseId, subsectionId }: { courseId: string, subsectionId: string },
+  { courseId, subsectionId }: { courseId: string; subsectionId: string; },
 ): string => {
   const url = `/course/${courseId}/subsection/${subsectionId}`;
   return url;

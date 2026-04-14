@@ -66,8 +66,4 @@ const actions = StrictDict(video.actions);
 
 const { reducer } = video;
 
-export {
-  actions,
-  initialState,
-  reducer,
-};
+export { actions, initialState, reducer };

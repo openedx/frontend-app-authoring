@@ -15,7 +15,9 @@ describe('FileInput component', () => {
       acceptedFiles: '.srt',
       fileInput: {
         addFile: () => mockOnChange(),
-        ref: (input) => { container.ref = input; },
+        ref: (input) => {
+          container.ref = input;
+        },
       },
     };
     el = render(<FileInput {...props} />);

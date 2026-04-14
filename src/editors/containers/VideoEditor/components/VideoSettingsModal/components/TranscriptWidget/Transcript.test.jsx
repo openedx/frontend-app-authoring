@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, fireEvent, screen, initializeMocks,
+  render,
+  fireEvent,
+  screen,
+  initializeMocks,
 } from 'CourseAuthoring/testUtils';
 import { TranscriptInternal, hooks } from './Transcript';
 

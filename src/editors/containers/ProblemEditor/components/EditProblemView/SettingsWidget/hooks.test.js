@@ -12,7 +12,7 @@ jest.mock('react', () => {
   return {
     updateState,
     useEffect: jest.fn(),
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
+    useState: jest.fn(val => [{ state: val }, (newVal) => updateState({ val, newVal })]),
   };
 });
 
@@ -95,7 +95,7 @@ describe('Problem settings hooks', () => {
       expect(state.setState[state.keys.summary])
         .toHaveBeenCalledWith({
           message: messages.hintSummary,
-          values: { hint: hints[0].value, count: (hints.length - 1) },
+          values: { hint: hints[0].value, count: hints.length - 1 },
         });
     });
     test('test handleAdd triggers updateSettings', () => {
@@ -339,9 +339,21 @@ describe('Problem settings hooks', () => {
       output = hooks.typeRowHooks(typeRowProps);
       output.onClick();
       expect(typeRowProps.setBlockTitle).toHaveBeenCalledWith(ProblemTypes[ProblemTypeKeys.DROPDOWN].title);
-      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(1, { ...typeRowProps.answers[0], correct: false, title: 'testA' });
-      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(2, { ...typeRowProps.answers[1], correct: false, title: 'testB' });
-      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(3, { ...typeRowProps.answers[2], correct: false, title: 'testC' });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(1, {
+        ...typeRowProps.answers[0],
+        correct: false,
+        title: 'testA',
+      });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(2, {
+        ...typeRowProps.answers[1],
+        correct: false,
+        title: 'testB',
+      });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(3, {
+        ...typeRowProps.answers[2],
+        correct: false,
+        title: 'testC',
+      });
       expect(typeRowProps.updateField).toHaveBeenCalledWith({ problemType: ProblemTypeKeys.DROPDOWN });
     });
 
@@ -358,9 +370,18 @@ describe('Problem settings hooks', () => {
       output = hooks.typeRowHooks(oneAnswerTypeRowProps);
       output.onClick();
       expect(typeRowProps.setBlockTitle).toHaveBeenCalledWith(ProblemTypes[ProblemTypeKeys.DROPDOWN].title);
-      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(1, { ...oneAnswerTypeRowProps.answers[0], title: 'testA' });
-      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(2, { ...oneAnswerTypeRowProps.answers[1], title: 'testB' });
-      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(3, { ...oneAnswerTypeRowProps.answers[2], title: 'testC' });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(1, {
+        ...oneAnswerTypeRowProps.answers[0],
+        title: 'testA',
+      });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(2, {
+        ...oneAnswerTypeRowProps.answers[1],
+        title: 'testB',
+      });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(3, {
+        ...oneAnswerTypeRowProps.answers[2],
+        title: 'testC',
+      });
       expect(typeRowProps.updateField).toHaveBeenCalledWith({ problemType: ProblemTypeKeys.DROPDOWN });
     });
     test('test onClick Multi-select to Numeric', () => {
@@ -370,9 +391,21 @@ describe('Problem settings hooks', () => {
       });
       output.onClick();
       expect(typeRowProps.setBlockTitle).toHaveBeenCalledWith(ProblemTypes[ProblemTypeKeys.NUMERIC].title);
-      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(1, { ...typeRowProps.answers[0], correct: true, title: 'testA' });
-      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(2, { ...typeRowProps.answers[1], correct: true, title: 'testB' });
-      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(3, { ...typeRowProps.answers[2], correct: true, title: 'testC' });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(1, {
+        ...typeRowProps.answers[0],
+        correct: true,
+        title: 'testA',
+      });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(2, {
+        ...typeRowProps.answers[1],
+        correct: true,
+        title: 'testB',
+      });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(3, {
+        ...typeRowProps.answers[2],
+        correct: true,
+        title: 'testC',
+      });
       expect(typeRowProps.updateField).toHaveBeenCalledWith({ problemType: ProblemTypeKeys.NUMERIC });
     });
 

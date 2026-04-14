@@ -155,9 +155,11 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.click(editTagsButton);
 
     // Show delete tag buttons
-    expect(screen.getAllByRole('button', {
-      name: /delete/i,
-    }).length).toBe(2);
+    expect(
+      screen.getAllByRole('button', {
+        name: /delete/i,
+      }).length,
+    ).toBe(2);
 
     // Show add a tag select
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
@@ -178,9 +180,11 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.click(manageTagsButton);
 
     // Show delete tag buttons
-    expect(screen.getAllByRole('button', {
-      name: /delete/i,
-    }).length).toBe(2);
+    expect(
+      screen.getAllByRole('button', {
+        name: /delete/i,
+      }).length,
+    ).toBe(2);
 
     // Show add a tag select
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
@@ -198,9 +202,11 @@ describe('<ContentTagsDrawer />', () => {
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // Show delete tag buttons
-    expect(screen.getAllByRole('button', {
-      name: /delete/i,
-    }).length).toBe(2);
+    expect(
+      screen.getAllByRole('button', {
+        name: /delete/i,
+      }).length,
+    ).toBe(2);
 
     // Show add a tag select
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();

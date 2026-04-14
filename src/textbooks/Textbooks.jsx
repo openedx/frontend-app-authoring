@@ -72,14 +72,14 @@ const Textbooks = () => {
         <section className="mb-4 mt-5">
           <SubHeader
             title={intl.formatMessage(messages.headingTitle)}
-            breadcrumbs={(
+            breadcrumbs={
               <Breadcrumb
                 linkAs={Link}
                 ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
                 links={breadcrumbs}
               />
-            )}
-            headerActions={(
+            }
+            headerActions={
               <Button
                 iconBefore={AddIcon}
                 onClick={openTextbookForm}
@@ -87,7 +87,7 @@ const Textbooks = () => {
               >
                 {intl.formatMessage(messages.newTextbookButton)}
               </Button>
-            )}
+            }
           />
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -100,19 +100,21 @@ const Textbooks = () => {
               <article>
                 <section className="textbook-section">
                   <div className="pt-4">
-                    {textbooks.length ? textbooks.map((textbook, index) => (
-                      <TextbookCard
-                        key={textbook.id}
-                        textbook={textbook}
-                        courseId={courseId}
-                        handleSavingStatusDispatch={handleSavingStatusDispatch}
-                        onEditSubmit={handleTextbookEditFormSubmit}
-                        onDeleteSubmit={handleTextbookDeleteSubmit}
-                        textbookIndex={index}
-                      />
-                    )) : (
-                      !isTextbookFormOpen && <EmptyPlaceholder onCreateNewTextbook={openTextbookForm} />
-                    )}
+                    {textbooks.length ?
+                      textbooks.map((textbook, index) => (
+                        <TextbookCard
+                          key={textbook.id}
+                          textbook={textbook}
+                          courseId={courseId}
+                          handleSavingStatusDispatch={handleSavingStatusDispatch}
+                          onEditSubmit={handleTextbookEditFormSubmit}
+                          onDeleteSubmit={handleTextbookDeleteSubmit}
+                          textbookIndex={index}
+                        />
+                      )) :
+                      (
+                        !isTextbookFormOpen && <EmptyPlaceholder onCreateNewTextbook={openTextbookForm} />
+                      )}
                     {isTextbookFormOpen && (
                       <TextbookForm
                         closeTextbookForm={closeTextbookForm}

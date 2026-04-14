@@ -3,19 +3,25 @@ import { useField, FieldHookConfig } from 'formik';
 import React from 'react';
 
 declare interface TextFieldProps {
-  label: string,
-  id: string,
-  type?: string,
-  hint?: string,
-  placeholder?: string,
-  name: string,
-  disabled?: boolean,
+  label: string;
+  id: string;
+  type?: string;
+  hint?: string;
+  placeholder?: string;
+  name: string;
+  disabled?: boolean;
   // For any other formik settings.
-  fieldConfig?: Omit<FieldHookConfig<string>, 'name'>,
+  fieldConfig?: Omit<FieldHookConfig<string>, 'name'>;
 }
 
 const TextField: React.FC<TextFieldProps> = ({
-  label, name, id, hint = '', type = 'text', placeholder = '', fieldConfig,
+  label,
+  name,
+  id,
+  hint = '',
+  type = 'text',
+  placeholder = '',
+  fieldConfig,
   disabled = false,
 }) => {
   const [field, meta] = useField({ name, ...fieldConfig } as FieldHookConfig<string>);

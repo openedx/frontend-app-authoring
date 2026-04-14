@@ -11,7 +11,7 @@ const FeaturesList = ({ app }) => {
   return (
     <Collapsible
       onClick={(event) => event.stopPropagation()}
-      title={(
+      title={
         <>
           <Collapsible.Visible whenClosed>
             {intl.formatMessage(messages['supportedFeatureList-mobile-show'])}
@@ -20,7 +20,7 @@ const FeaturesList = ({ app }) => {
             {intl.formatMessage(messages['supportedFeatureList-mobile-hide'])}
           </Collapsible.Visible>
         </>
-      )}
+      }
       styling="basic"
     >
       {app.featureIds.map((id) => (

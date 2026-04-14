@@ -64,9 +64,7 @@ const PagesAndResources = () => {
   }
 
   if (courseAppsApiStatus === RequestStatus.DENIED) {
-    return (
-      <PermissionDeniedAlert />
-    );
+    return <PermissionDeniedAlert />;
   }
 
   const hasAdditionalCoursePlugin = getConfig()?.pluginSlots?.additional_course_plugin != null;
@@ -82,29 +80,55 @@ const PagesAndResources = () => {
             rel="noopener noreferrer"
             showLaunchIcon={false}
           >
-            <Button variant="outline-primary" className="p-2"> {intl.formatMessage(messages.viewLiveButton)}</Button>
+            <Button variant="outline-primary" className="p-2">{intl.formatMessage(messages.viewLiveButton)}</Button>
           </Hyperlink>
         </div>
 
         <Routes>
-          <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings /></PageWrap>} />
-          <Route path="discussion" element={<PageWrap><DiscussionsSettings /></PageWrap>} />
-          <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings /></PageWrap>} />
-          <Route path=":appId/settings" element={<PageWrap><SettingsComponent url={redirectUrl} /></PageWrap>} />
+          <Route
+            path="discussion/configure/:appId"
+            element={
+              <PageWrap>
+                <DiscussionsSettings />
+              </PageWrap>
+            }
+          />
+          <Route
+            path="discussion"
+            element={
+              <PageWrap>
+                <DiscussionsSettings />
+              </PageWrap>
+            }
+          />
+          <Route
+            path="discussion/settings"
+            element={
+              <PageWrap>
+                <DiscussionsSettings />
+              </PageWrap>
+            }
+          />
+          <Route
+            path=":appId/settings"
+            element={
+              <PageWrap>
+                <SettingsComponent url={redirectUrl} />
+              </PageWrap>
+            }
+          />
         </Routes>
 
         <PageGrid pages={pages} pluginSlotComponent={<AdditionalCoursePluginSlot />} courseId={courseId} />
-        {
-          (contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
-            && (
-              <>
-                <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
-                  <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
-                </div>
-                <PageGrid pages={contentPermissionsPages} pluginSlotComponent={<AdditionalCourseContentPluginSlot />} />
-              </>
-            )
-        }
+        {(contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
+          && (
+            <>
+              <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
+                <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
+              </div>
+              <PageGrid pages={contentPermissionsPages} pluginSlotComponent={<AdditionalCourseContentPluginSlot />} />
+            </>
+          )}
       </main>
     </PagesAndResourcesProvider>
   );

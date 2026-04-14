@@ -2,7 +2,11 @@ import moment from 'moment/moment';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform/config';
 import {
-  Button, Hyperlink, Form, Stack, useToggle,
+  Button,
+  Hyperlink,
+  Form,
+  Stack,
+  useToggle,
 } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 import { type ReactNode } from 'react';
@@ -18,8 +22,8 @@ import { getVideoSharingOptionText } from '@src/course-outline/utils';
 import messages from './messages';
 
 interface StatusBarItemProps {
-  title: string,
-  children: ReactNode,
+  title: string;
+  children: ReactNode;
 }
 
 const StatusBarItem = ({ title, children }: StatusBarItemProps) => (
@@ -32,11 +36,11 @@ const StatusBarItem = ({ title, children }: StatusBarItemProps) => (
 );
 
 export interface LegacyStatusBarProps {
-  courseId: string,
-  isLoading: boolean,
-  openEnableHighlightsModal: () => void,
-  handleVideoSharingOptionChange: (value: string) => void,
-  statusBarData: CourseOutlineStatusBar,
+  courseId: string;
+  isLoading: boolean;
+  openEnableHighlightsModal: () => void;
+  handleVideoSharingOptionChange: (value: string) => void;
+  statusBarData: CourseOutlineStatusBar;
 }
 
 export const LegacyStatusBar = ({
@@ -65,7 +69,9 @@ export const LegacyStatusBar = ({
   } = checklist;
 
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
-  const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
+  const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${
+    totalCourseLaunchChecks + totalCourseBestPracticesChecks
+  }`;
 
   const {
     contentHighlights: contentHighlightsUrl,
@@ -82,22 +88,29 @@ export const LegacyStatusBar = ({
 
   return (
     <>
-      <Stack direction="horizontal" gap={3.5} className="d-flex align-items-stretch outline-status-bar" data-testid="outline-status-bar">
+      <Stack
+        direction="horizontal"
+        gap={3.5}
+        className="d-flex align-items-stretch outline-status-bar"
+        data-testid="outline-status-bar"
+      >
         <StatusBarItem title={intl.formatMessage(messages.startDateTitle)}>
           <Link
             className="small"
             to={`/course/${courseId}/settings/details/#schedule`}
           >
-            {courseReleaseDateObj.isValid() ? (
-              <FormattedDate
-                value={courseReleaseDateObj.toISOString()}
-                year="numeric"
-                month="short"
-                day="2-digit"
-                hour="numeric"
-                minute="numeric"
-              />
-            ) : courseReleaseDate}
+            {courseReleaseDateObj.isValid() ?
+              (
+                <FormattedDate
+                  value={courseReleaseDateObj.toISOString()}
+                  year="numeric"
+                  month="short"
+                  day="2-digit"
+                  hour="numeric"
+                  minute="numeric"
+                />
+              ) :
+              courseReleaseDate}
           </Link>
         </StatusBarItem>
         <StatusBarItem title={intl.formatMessage(messages.pacingTypeTitle)}>
@@ -117,15 +130,17 @@ export const LegacyStatusBar = ({
         </StatusBarItem>
         <StatusBarItem title={intl.formatMessage(messages.highlightEmailsTitle)}>
           <div className="d-flex align-items-center">
-            {highlightsEnabledForMessaging ? (
-              <span data-testid="highlights-enabled-span" className="small">
-                {intl.formatMessage(messages.highlightEmailsEnabled)}
-              </span>
-            ) : (
-              <Button data-testid="highlights-enable-button" size="sm" onClick={openEnableHighlightsModal}>
-                {intl.formatMessage(messages.highlightEmailsButton)}
-              </Button>
-            )}
+            {highlightsEnabledForMessaging ?
+              (
+                <span data-testid="highlights-enabled-span" className="small">
+                  {intl.formatMessage(messages.highlightEmailsEnabled)}
+                </span>
+              ) :
+              (
+                <Button data-testid="highlights-enable-button" size="sm" onClick={openEnableHighlightsModal}>
+                  {intl.formatMessage(messages.highlightEmailsButton)}
+                </Button>
+              )}
             <Hyperlink
               className="small ml-2"
               destination={contentHighlightsUrl}
@@ -140,7 +155,7 @@ export const LegacyStatusBar = ({
           <StatusBarItem title={intl.formatMessage(messages.courseTagsTitle)}>
             <div className="d-flex align-items-center">
               <TagCount count={courseTagCount || 0} />
-              { /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a
                 className="small ml-2"
                 href="#"
@@ -156,10 +171,7 @@ export const LegacyStatusBar = ({
             size="sm"
             className="d-flex flex-column justify-content-between m-0"
           >
-            <Form.Label
-              className="h5"
-            >{intl.formatMessage(messages.videoSharingTitle)}
-            </Form.Label>
+            <Form.Label className="h5">{intl.formatMessage(messages.videoSharingTitle)}</Form.Label>
             <div className="d-flex align-items-center">
               <Form.Control
                 as="select"
@@ -185,7 +197,6 @@ export const LegacyStatusBar = ({
               </Hyperlink>
             </div>
           </Form.Group>
-
         )}
       </Stack>
       <ContentTagsDrawerSheet

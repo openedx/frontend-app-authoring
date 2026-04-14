@@ -84,9 +84,4 @@ function requestCourseCreatorQuery() {
   };
 }
 
-export {
-  fetchStudioHomeData,
-  fetchOnlyStudioHomeData,
-  requestCourseCreatorQuery,
-  handleDeleteNotificationQuery,
-};
+export { fetchStudioHomeData, fetchOnlyStudioHomeData, requestCourseCreatorQuery, handleDeleteNotificationQuery };

@@ -2,23 +2,26 @@ import React, { KeyboardEventHandler, MouseEventHandler } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  ActionRow, Card, Icon, IconButtonWithTooltip,
+  ActionRow,
+  Card,
+  Icon,
+  IconButtonWithTooltip,
 } from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 interface SortableItemProps {
-  id: string,
-  children?: React.ReactNode,
-  actions: React.ReactNode,
-  actionStyle?: {},
-  componentStyle?: {},
-  isClickable?: boolean,
-  onClick?: MouseEventHandler,
-  onKeyDown?: KeyboardEventHandler,
-  disabled?: boolean,
-  cardClassName?: string,
+  id: string;
+  children?: React.ReactNode;
+  actions: React.ReactNode;
+  actionStyle?: {};
+  componentStyle?: {};
+  isClickable?: boolean;
+  onClick?: MouseEventHandler;
+  onKeyDown?: KeyboardEventHandler;
+  disabled?: boolean;
+  cardClassName?: string;
 }
 
 const SortableItem = ({
@@ -71,16 +74,16 @@ const SortableItem = ({
         <ActionRow style={actionStyle}>
           {actions}
           {!disabled && (
-          <IconButtonWithTooltip
-            tooltipPlacement="top"
-            tooltipContent={intl.formatMessage(messages.tooltipContent)}
-            src={DragIndicator}
-            iconAs={Icon}
-            variant="light"
-            alt={intl.formatMessage(messages.tooltipContent)}
-            {...attributes}
-            {...listeners}
-          />
+            <IconButtonWithTooltip
+              tooltipPlacement="top"
+              tooltipContent={intl.formatMessage(messages.tooltipContent)}
+              src={DragIndicator}
+              iconAs={Icon}
+              variant="light"
+              alt={intl.formatMessage(messages.tooltipContent)}
+              {...attributes}
+              {...listeners}
+            />
           )}
         </ActionRow>
         {children}

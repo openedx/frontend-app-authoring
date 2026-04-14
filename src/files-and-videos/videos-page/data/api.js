@@ -34,8 +34,10 @@ export async function getVideos(courseId) {
 export async function getAllUsagePaths({ courseId, videoIds }) {
   // Hack: pass 'videoId' into the 'config' object; it will be ignored by axios
   // but allows us to read it out later to easily get the videoId per result.
-  const apiPromises = videoIds.map(id => getAuthenticatedHttpClient()
-    .get(`${getVideosUrl(courseId)}/${id}/usage`, { videoId: id }));
+  const apiPromises = videoIds.map(id =>
+    getAuthenticatedHttpClient()
+      .get(`${getVideosUrl(courseId)}/${id}/usage`, { videoId: id })
+  );
   const updatedUsageLocations = [];
   const results = await Promise.allSettled(apiPromises);
 
@@ -142,7 +144,6 @@ export async function getDownload(selectedRows, courseId) {
 /**
  * Fetch where a video is used in a course.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function getVideoUsagePaths({ courseId, videoId }) {
   const { data } = await getAuthenticatedHttpClient()
@@ -153,7 +154,6 @@ export async function getVideoUsagePaths({ courseId, videoId }) {
 /**
  * Delete video from course.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function deleteVideo(courseId, videoId) {
   await getAuthenticatedHttpClient()
@@ -163,7 +163,6 @@ export async function deleteVideo(courseId, videoId) {
 /**
  * Add thumbnail to video.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function addThumbnail({ courseId, videoId, file }) {
   const formData = new FormData();
@@ -176,7 +175,6 @@ export async function addThumbnail({ courseId, videoId, file }) {
 /**
  * Add video to course.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function addVideo(courseId, file, controller) {
   const postJson = {

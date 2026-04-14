@@ -1,5 +1,8 @@
 import {
-  initializeMocks, render, screen, waitFor,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
 } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';

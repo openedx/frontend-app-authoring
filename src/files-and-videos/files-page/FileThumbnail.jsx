@@ -26,27 +26,29 @@ const FileThumbnail = ({
 
   return (
     <div className="row justify-content-center align-itmes-center">
-      {thumbnail ? (
-        <Image
-          style={{
-            width,
-            height,
-            objectFit: 'contain',
-            maxWidth: '100%',
-            maxHeight: '100%',
-          }}
-          className="border rounded p-1"
-          src={src}
-          alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
-        />
-      ) : (
-        <div
-          className="row justify-content-center align-items-center m-0 border rounded"
-          style={imageSize}
-        >
-          <Icon src={src} style={{ height: '48px', width: '48px' }} />
-        </div>
-      )}
+      {thumbnail ?
+        (
+          <Image
+            style={{
+              width,
+              height,
+              objectFit: 'contain',
+              maxWidth: '100%',
+              maxHeight: '100%',
+            }}
+            className="border rounded p-1"
+            src={src}
+            alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
+          />
+        ) :
+        (
+          <div
+            className="row justify-content-center align-items-center m-0 border rounded"
+            style={imageSize}
+          >
+            <Icon src={src} style={{ height: '48px', width: '48px' }} />
+          </div>
+        )}
     </div>
   );
 };

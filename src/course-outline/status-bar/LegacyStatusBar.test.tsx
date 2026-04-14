@@ -54,22 +54,23 @@ const statusBarData: CourseOutlineStatusBar = {
 
 const queryClient = new QueryClient();
 
-const renderComponent = (props?: Partial<LegacyStatusBarProps>) => render(
-  <AppProvider store={store} messages={{}}>
-    <QueryClientProvider client={queryClient}>
-      <IntlProvider locale="en">
-        <LegacyStatusBar
-          courseId={courseId}
-          isLoading={isLoading}
-          openEnableHighlightsModal={openEnableHighlightsModalMock}
-          handleVideoSharingOptionChange={handleVideoSharingOptionChange}
-          statusBarData={statusBarData}
-          {...props}
-        />
-      </IntlProvider>
-    </QueryClientProvider>
-  </AppProvider>,
-);
+const renderComponent = (props?: Partial<LegacyStatusBarProps>) =>
+  render(
+    <AppProvider store={store} messages={{}}>
+      <QueryClientProvider client={queryClient}>
+        <IntlProvider locale="en">
+          <LegacyStatusBar
+            courseId={courseId}
+            isLoading={isLoading}
+            openEnableHighlightsModal={openEnableHighlightsModalMock}
+            handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+            statusBarData={statusBarData}
+            {...props}
+          />
+        </IntlProvider>
+      </QueryClientProvider>
+    </AppProvider>,
+  );
 
 describe('<LegacyStatusBar />', () => {
   beforeEach(() => {

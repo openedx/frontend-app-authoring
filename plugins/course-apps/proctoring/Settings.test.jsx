@@ -1,5 +1,10 @@
 import {
-  render, screen, cleanup, waitFor, fireEvent, act,
+  render,
+  screen,
+  cleanup,
+  waitFor,
+  fireEvent,
+  act,
   initializeMocks,
 } from 'CourseAuthoring/testUtils';
 

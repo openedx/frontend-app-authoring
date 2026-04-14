@@ -1,6 +1,8 @@
 import React from 'react';
 import {
-  render, fireEvent, act,
+  render,
+  fireEvent,
+  act,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -54,7 +56,10 @@ const props = {
 describe('<RequirementsSection />', () => {
   it('renders successfully', () => {
     const {
-      getByText, getByLabelText, getByDisplayValue, getAllByRole,
+      getByText,
+      getByLabelText,
+      getByDisplayValue,
+      getAllByRole,
     } = render(<RootWrapper {...props} />);
     const checkboxList = getAllByRole('checkbox');
     expect(getByText(messages.requirementsTitle.defaultMessage)).toBeInTheDocument();

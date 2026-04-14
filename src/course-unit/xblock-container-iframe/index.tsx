@@ -1,7 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { getConfig } from '@edx/frontend-platform';
 import {
-  FC, useEffect, useState, useMemo, useCallback,
+  FC,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle, Sheet, StandardModal } from '@openedx/paragon';

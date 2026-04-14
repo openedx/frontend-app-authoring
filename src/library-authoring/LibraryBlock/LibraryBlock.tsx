@@ -13,14 +13,14 @@ import messages from './messages';
 export type VersionSpec = 'published' | 'draft' | number;
 
 interface LibraryBlockProps {
-  onBlockNotification?: (event: { eventType: string; [key: string]: any }) => void;
+  onBlockNotification?: (event: { eventType: string; [key: string]: any; }) => void;
   usageKey: string;
   version?: VersionSpec;
   view?: string;
   scrolling?: string;
   minHeight?: string;
   scrollIntoView?: boolean;
-  showTitle?: boolean,
+  showTitle?: boolean;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -91,7 +91,10 @@ export const LibraryBlock = ({
       loading="lazy"
       referrerPolicy="origin"
       style={{
-        width: '100%', height: iframeHeight, pointerEvents: 'auto', minHeight,
+        width: '100%',
+        height: iframeHeight,
+        pointerEvents: 'auto',
+        minHeight,
       }}
       allow={IFRAME_FEATURE_POLICY}
       allowFullScreen

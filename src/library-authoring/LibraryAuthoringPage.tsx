@@ -107,7 +107,7 @@ const HeaderActions = () => {
   );
 };
 
-export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
+export const SubHeaderTitle = ({ title }: { title: ReactNode; }) => {
   const intl = useIntl();
 
   const { readOnly } = useOptionalLibraryContext();
@@ -281,17 +281,19 @@ const LibraryAuthoringPage = ({
     return <NotFoundAlert />;
   }
 
-  const breadcumbs = componentPickerMode && !restrictToLibrary ? (
-    <Breadcrumb
-      links={[
-        {
-          label: intl.formatMessage(messages.returnToLibrarySelection),
-          onClick: returnToLibrarySelection,
-        },
-      ]}
-      linkAs={Link}
-    />
-  ) : undefined;
+  const breadcumbs = componentPickerMode && !restrictToLibrary ?
+    (
+      <Breadcrumb
+        links={[
+          {
+            label: intl.formatMessage(messages.returnToLibrarySelection),
+            onClick: returnToLibrarySelection,
+          },
+        ]}
+        linkAs={Link}
+      />
+    ) :
+    undefined;
 
   const extraFilter: string[] = [];
   if (libraryId) {
@@ -327,11 +329,9 @@ const LibraryAuthoringPage = ({
 
   // Disable filtering by block/problem type when viewing the Collections/Units/Sections/Subsections tab,
   // or when inside a specific Section or Subsection.
-  const onlyOneType = (
-    insideCollections || insideUnits || insideSections || insideSubsections
-      || insideSection || insideSubsection
-      || !([ContentType.home, ContentType.components].includes(activeKey))
-  );
+  const onlyOneType = insideCollections || insideUnits || insideSections || insideSubsections
+    || insideSection || insideSubsection
+    || !([ContentType.home, ContentType.components].includes(activeKey));
   const overrideTypesFilter = onlyOneType
     ? new TypesFilterData()
     : undefined;
@@ -354,22 +354,24 @@ const LibraryAuthoringPage = ({
       <div className="flex-grow-1">
         {libraryData
           && (
-          <>
-            <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
-            {!componentPickerMode && (
-            <Header
-              number={libraryData.slug}
-              title={libraryData.title}
-              org={libraryData.org}
-              contextId={libraryId}
-              readOnly={readOnly}
-              isLibrary
-              containerProps={{
-                size: undefined,
-              }}
-            />
-            )}
-          </>
+            <>
+              <Helmet>
+                <title>{libraryData.title} | {process.env.SITE_NAME}</title>
+              </Helmet>
+              {!componentPickerMode && (
+                <Header
+                  number={libraryData.slug}
+                  title={libraryData.title}
+                  org={libraryData.org}
+                  contextId={libraryId}
+                  readOnly={readOnly}
+                  isLibrary
+                  containerProps={{
+                    size: undefined,
+                  }}
+                />
+              )}
+            </>
           )}
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
@@ -378,13 +380,13 @@ const LibraryAuthoringPage = ({
           >
             {libraryData
               && (
-              <SubHeader
-                title={<SubHeaderTitle title={libraryData.title} />}
-                subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
-                breadcrumbs={breadcumbs}
-                headerActions={<HeaderActions />}
-                hideBorder
-              />
+                <SubHeader
+                  title={<SubHeaderTitle title={libraryData.title} />}
+                  subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
+                  breadcrumbs={breadcumbs}
+                  headerActions={<HeaderActions />}
+                  hideBorder
+                />
               )}
             {visibleTabs.length > 1 && (
               <Tabs

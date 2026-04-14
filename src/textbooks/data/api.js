@@ -5,9 +5,11 @@ import { omit } from 'lodash';
 const API_PATH_PATTERN = 'textbooks';
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getTextbooksApiUrl = (courseId) => `${getStudioBaseUrl()}/api/contentstore/v1/${API_PATH_PATTERN}/${courseId}`;
+export const getTextbooksApiUrl = (courseId) =>
+  `${getStudioBaseUrl()}/api/contentstore/v1/${API_PATH_PATTERN}/${courseId}`;
 export const getUpdateTextbooksApiUrl = (courseId) => `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}`;
-export const getEditTextbooksApiUrl = (courseId, textbookId) => `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}/${textbookId}`;
+export const getEditTextbooksApiUrl = (courseId, textbookId) =>
+  `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}/${textbookId}`;
 
 /**
  * Get textbooks for course.

@@ -22,18 +22,14 @@ interface EmptyStateProps {
 const EmptyState = ({ hasSearchQuery }: EmptyStateProps) => (
   <Alert className="mt-4 align-self-center">
     <Alert.Heading>
-      {hasSearchQuery ? (
-        <FormattedMessage {...messages.selectLibraryNoSearchResultsTitle} />
-      ) : (
-        <FormattedMessage {...messages.selectLibraryNoLibrariesTitle} />
-      )}
+      {hasSearchQuery ?
+        <FormattedMessage {...messages.selectLibraryNoSearchResultsTitle} /> :
+        <FormattedMessage {...messages.selectLibraryNoLibrariesTitle} />}
     </Alert.Heading>
     <p>
-      {hasSearchQuery ? (
-        <FormattedMessage {...messages.selectLibraryNoSearchResultsMessage} />
-      ) : (
-        <FormattedMessage {...messages.selectLibraryNoLibrariesMessage} />
-      )}
+      {hasSearchQuery ?
+        <FormattedMessage {...messages.selectLibraryNoSearchResultsMessage} /> :
+        <FormattedMessage {...messages.selectLibraryNoLibrariesMessage} />}
     </p>
   </Alert>
 );
@@ -87,7 +83,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: Select
         value={searchQuery}
         placeholder={intl.formatMessage(messages.selectLibrarySearchPlaceholder)}
       />
-      {data.results.length === 0 ? (<EmptyState hasSearchQuery={!!searchQuery} />) : (
+      {data.results.length === 0 ? <EmptyState hasSearchQuery={!!searchQuery} /> : (
         <>
           <Form.RadioSet
             name="selected-library"
@@ -106,9 +102,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: Select
                   size="sm"
                   title={<span className="card-item-title">{library.title}</span>}
                   subtitle={`${library.org} / ${library.slug}`}
-                  actions={(
-                    <Form.Radio value={library.id} name={`select-library-${library.id}`}>{' '}</Form.Radio>
-                  )}
+                  actions={<Form.Radio value={library.id} name={`select-library-${library.id}`}>{' '}</Form.Radio>}
                 />
                 <Card.Body>
                   <p>{library.description}</p>

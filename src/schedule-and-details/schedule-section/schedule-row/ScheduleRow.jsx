@@ -40,9 +40,7 @@ export const ScheduleRow = ({
         showUTC
       />
     </div>
-    {errorFeedback && (
-      <span className="schedule-date-item-error">{errorFeedback}</span>
-    )}
+    {errorFeedback && <span className="schedule-date-item-error">{errorFeedback}</span>}
   </li>
 );
 

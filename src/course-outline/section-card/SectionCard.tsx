@@ -1,8 +1,16 @@
 import {
-  useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  ReactNode,
+  useMemo,
 } from 'react';
 import {
-  Bubble, Button, useToggle,
+  Bubble,
+  Button,
+  useToggle,
 } from '@openedx/paragon';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
@@ -29,18 +37,18 @@ import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SectionCardProps {
-  section: XBlock,
-  isSelfPaced: boolean,
-  isCustomRelativeDatesActive: boolean,
-  children: ReactNode,
-  onOpenHighlightsModal: (section: XBlock) => void,
-  onOpenConfigureModal: () => void,
-  onOpenDeleteModal: () => void,
-  onDuplicateSubmit: () => void,
-  isSectionsExpanded: boolean,
-  index: number,
-  canMoveItem: (oldIndex: number, newIndex: number) => boolean,
-  onOrderChange: (oldIndex: number, newIndex: number) => void,
+  section: XBlock;
+  isSelfPaced: boolean;
+  isCustomRelativeDatesActive: boolean;
+  children: ReactNode;
+  onOpenHighlightsModal: (section: XBlock) => void;
+  onOpenConfigureModal: () => void;
+  onOpenDeleteModal: () => void;
+  onDuplicateSubmit: () => void;
+  isSectionsExpanded: boolean;
+  index: number;
+  canMoveItem: (oldIndex: number, newIndex: number) => boolean;
+  onOrderChange: (oldIndex: number, newIndex: number) => void;
 }
 
 const SectionCard = ({
@@ -110,7 +118,7 @@ const SectionCard = ({
     if (moment(initialData.editedOnRaw).isAfter(moment(section.editedOnRaw))) {
       queryClient.cancelQueries({
         queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
       }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
@@ -229,13 +237,13 @@ const SectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={(
+      prefixIcon={
         <UpstreamInfoIcon
           upstreamInfo={upstreamInfo}
           size="md"
           openSyncModal={openSyncModal}
         />
-      )}
+      }
     />
   );
 
@@ -285,10 +293,11 @@ const SectionCard = ({
                 status={sectionStatus}
                 hasChanges={hasChanges}
                 onClickMenuButton={handleClickMenuButton}
-                onClickPublish={/* istanbul ignore next */ () => openPublishModal({
-                  value: section,
-                  sectionId: section.id,
-                })}
+                onClickPublish={/* istanbul ignore next */ () =>
+                  openPublishModal({
+                    value: section,
+                    sectionId: section.id,
+                  })}
                 onClickConfigure={onOpenConfigureModal}
                 onClickDelete={onOpenDeleteModal}
                 onClickUnlink={() => openUnlinkModal({ value: section, sectionId: section.id })}

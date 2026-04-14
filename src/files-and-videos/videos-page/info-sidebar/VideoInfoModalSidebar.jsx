@@ -33,9 +33,9 @@ const VideoInfoModalSidebar = ({
           { transcriptCount: video.transcripts.length },
         )}
         notification={TRANSCRIPT_FAILURE_STATUSES.includes(video.transcriptionStatus) && (
-        <span>
-          <span className="sr-only">{intl.formatMessage(messages.notificationScreenReaderText)}</span>
-        </span>
+          <span>
+            <span className="sr-only">{intl.formatMessage(messages.notificationScreenReaderText)}</span>
+          </span>
         )}
       >
         <TranscriptTab {...{ video }} />

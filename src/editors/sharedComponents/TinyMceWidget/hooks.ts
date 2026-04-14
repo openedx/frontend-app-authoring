@@ -126,7 +126,8 @@ export const replaceStaticWithAsset = ({
       // vs /static/images/filename.ext pattern (should NOT be converted)
       // /static/images/ are direct links to images stored in static, not course assets
       // we have dummy images there for course content that should not be converted to assets
-      const isDirectStaticFile = (isStatic || assetSrc.startsWith('/asset')) && !assetSrc.substring(8).includes('images/');
+      const isDirectStaticFile = (isStatic || assetSrc.startsWith('/asset')) &&
+        !assetSrc.substring(8).includes('images/');
 
       const staticName = assetSrc.substring(8);
       const assetName = parseAssetName(src);
@@ -177,7 +178,10 @@ export const replaceStaticWithAsset = ({
  * @returns {Object} { result, foundMatch }
  */
 export function updateImageDimensions({
-  images, url, width, height,
+  images,
+  url,
+  width,
+  height,
 }) {
   let foundMatch = false;
 
@@ -196,12 +200,18 @@ export function updateImageDimensions({
 
 export const getImageResizeHandler = ({ editor, imagesRef, setImage }) => () => {
   const {
-    src, alt, width, height,
+    src,
+    alt,
+    width,
+    height,
   } = editor.selection.getNode();
 
   // eslint-disable-next-line no-param-reassign
   imagesRef.current = updateImageDimensions({
-    images: imagesRef.current, url: src, width, height,
+    images: imagesRef.current,
+    url: src,
+    width,
+    height,
   }).result;
 
   setImage({
@@ -259,8 +269,12 @@ export const detectImageMatchingError = ({ matchingImages, tinyMceHTML }) => {
 };
 
 export const openModalWithSelectedImage = ({
-  editor, images, setImage, openImgModal,
-}) => () => {
+  editor,
+  images,
+  setImage,
+  openImgModal,
+}) =>
+() => {
   const tinyMceHTML = editor.selection.getNode();
   const { src: mceSrc } = tinyMceHTML;
 
@@ -290,7 +304,8 @@ export const setupCustomBehavior = ({
   setImage,
   lmsEndpointUrl,
   learningContextId,
-}) => (editor) => {
+}) =>
+(editor) => {
   // image upload button
   editor.ui.registry.addButton(tinyMCE.buttons.imageUploadButton, {
     icon: 'image',
@@ -302,7 +317,10 @@ export const setupCustomBehavior = ({
     icon: 'image',
     tooltip: 'Edit Image Settings',
     onAction: openModalWithSelectedImage({
-      editor, images, setImage, openImgModal,
+      editor,
+      images,
+      setImage,
+      openImgModal,
     }),
   });
   // overriding the code plugin's icon with 'HTML' text
@@ -337,7 +355,8 @@ export const setupCustomBehavior = ({
   editor.ui.registry.addButton('customLabelButton', {
     icon: 'textToSpeech',
     text: 'Label',
-    tooltip: 'Apply a "Question" label to specific text, recognized by screen readers. Recommended to improve accessibility.',
+    tooltip:
+      'Apply a "Question" label to specific text, recognized by screen readers. Recommended to improve accessibility.',
     onAction: toggleLabelFormatting,
   });
   if (editorType === 'expandable') {

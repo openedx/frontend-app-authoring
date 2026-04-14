@@ -18,7 +18,8 @@ const getUpdateLinks = (courseId, waffleFlags) => {
     welcomeMessage: `/course/${courseId}/course_info`,
     gradingPolicy: `/course/${courseId}/settings/grading`,
     certificate: isLegacyCertificateUrl
-      ? `${baseUrl}/certificates/${courseId}` : `/course/${courseId}/certificates`,
+      ? `${baseUrl}/certificates/${courseId}` :
+      `/course/${courseId}/certificates`,
     courseDates: `/course/${courseId}/settings/details/#schedule`,
     proctoringEmail: `${baseUrl}/pages-and-resources/proctoring/settings`,
     outline: isLegacyOutlineUrl ? `${baseUrl}/course/${courseId}` : `/course/${courseId}`,
@@ -37,22 +38,24 @@ const ChecklistItemBody = ({
   return (
     <ActionRow>
       <div className="mr-3" id={`icon-${checkId}`} data-testid={`icon-${checkId}`}>
-        {isCompleted ? (
-          <Icon
-            data-testid="completed-icon"
-            src={CheckCircle}
-            className="text-success"
-            style={{ height: '32px', width: '32px' }}
-            screenReaderText={intl.formatMessage(messages.completedItemLabel)}
-          />
-        ) : (
-          <Icon
-            data-testid="uncompleted-icon"
-            src={RadioButtonUnchecked}
-            style={{ height: '32px', width: '32px' }}
-            screenReaderText={intl.formatMessage(messages.uncompletedItemLabel)}
-          />
-        )}
+        {isCompleted ?
+          (
+            <Icon
+              data-testid="completed-icon"
+              src={CheckCircle}
+              className="text-success"
+              style={{ height: '32px', width: '32px' }}
+              screenReaderText={intl.formatMessage(messages.completedItemLabel)}
+            />
+          ) :
+          (
+            <Icon
+              data-testid="uncompleted-icon"
+              src={RadioButtonUnchecked}
+              style={{ height: '32px', width: '32px' }}
+              screenReaderText={intl.formatMessage(messages.uncompletedItemLabel)}
+            />
+          )}
       </div>
       <div>
         <div>

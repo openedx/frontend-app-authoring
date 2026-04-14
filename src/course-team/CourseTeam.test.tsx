@@ -18,12 +18,13 @@ let axiosMock;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 
-const render = () => baseRender(
-  <CourseAuthoringProvider courseId={courseId}>
-    <CourseTeam />
-  </CourseAuthoringProvider>,
-  { path: mockPathname },
-);
+const render = () =>
+  baseRender(
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseTeam />
+    </CourseAuthoringProvider>,
+    { path: mockPathname },
+  );
 
 describe('<CourseTeam />', () => {
   beforeEach(() => {

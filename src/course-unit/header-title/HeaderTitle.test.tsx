@@ -20,18 +20,19 @@ const handleConfigureSubmit = jest.fn();
 let store;
 let axiosMock;
 
-const renderComponent = (props?: any) => render(
-  <IframeProvider>
-    <HeaderTitle
-      unitTitle={unitTitle}
-      isTitleEditFormOpen={isTitleEditFormOpen}
-      handleTitleEdit={handleTitleEdit}
-      handleTitleEditSubmit={handleTitleEditSubmit}
-      handleConfigureSubmit={handleConfigureSubmit}
-      {...props}
-    />,
-  </IframeProvider>,
-);
+const renderComponent = (props?: any) =>
+  render(
+    <IframeProvider>
+      <HeaderTitle
+        unitTitle={unitTitle}
+        isTitleEditFormOpen={isTitleEditFormOpen}
+        handleTitleEdit={handleTitleEdit}
+        handleTitleEditSubmit={handleTitleEditSubmit}
+        handleConfigureSubmit={handleConfigureSubmit}
+        {...props}
+      />,
+    </IframeProvider>,
+  );
 
 describe('<HeaderTitle />', () => {
   beforeEach(async () => {

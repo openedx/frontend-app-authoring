@@ -2,7 +2,10 @@ import React from 'react';
 
 import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import {
-  render, screen, fireEvent, initializeMocks,
+  render,
+  screen,
+  fireEvent,
+  initializeMocks,
 } from '@src/testUtils';
 import { actions } from '@src/editors/data/redux';
 import AnswersContainer from './AnswersContainer';

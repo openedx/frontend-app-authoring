@@ -90,7 +90,6 @@ export async function getDownload(selectedRows, courseId) {
 /**
  * Fetch where asset is used in a course.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function getAssetUsagePaths({ courseId, assetId }) {
   const { data } = await getAuthenticatedHttpClient()
@@ -102,7 +101,6 @@ export async function getAssetUsagePaths({ courseId, assetId }) {
 /**
  * Delete asset to course.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function deleteAsset(courseId, assetId) {
   await getAuthenticatedHttpClient()
@@ -112,7 +110,6 @@ export async function deleteAsset(courseId, assetId) {
 /**
  * Add asset to course.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function addAsset(courseId, file) {
   const formData = new FormData();
@@ -125,7 +122,6 @@ export async function addAsset(courseId, file) {
 /**
  * Update locked attribute for provided asset.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function updateLockStatus({ assetId, courseId, locked }) {
   const { data } = await getAuthenticatedHttpClient()

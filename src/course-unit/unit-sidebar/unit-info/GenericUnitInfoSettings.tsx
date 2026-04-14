@@ -143,7 +143,9 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
             onSubmit={handleSaveGroups}
           >
             {({
-              values, setFieldValue, dirty,
+              values,
+              setFieldValue,
+              dirty,
             }) => (
               <Form>
                 <AccessEditComponent
@@ -166,10 +168,11 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
         >
           <DiscussionEditComponent
             discussionEnabled={!!localState?.isDiscussionEnabled}
-            handleDiscussionChange={(e) => setLocalState((prev) => ({
-              ...prev,
-              isDiscussionEnabled: e.target.checked,
-            }))}
+            handleDiscussionChange={(e) =>
+              setLocalState((prev) => ({
+                ...prev,
+                isDiscussionEnabled: e.target.checked,
+              }))}
           />
         </SidebarSection>
       </SidebarContent>

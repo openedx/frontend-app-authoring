@@ -21,13 +21,19 @@ const SortAndFilterModal = ({
 }) => {
   const intl = useIntl();
   const {
-    state, setAllFilters, columns, gotoPage,
+    state,
+    setAllFilters,
+    columns,
+    gotoPage,
   } = useContext(DataTableContext);
   const filterOptions = getFilterOptions(columns);
   const currentFilters = getCheckedFilters(state);
   const [sortBy, setSortBy] = useState('dateAdded,desc');
   const [filterBy, {
-    add, remove, set, clear,
+    add,
+    remove,
+    set,
+    clear,
   }] = useCheckboxSetValues(currentFilters);
 
   useEffect(() => {
@@ -146,9 +152,7 @@ const SortAndFilterModal = ({
             value={filterBy}
             isInline
           >
-            {filterOptions.map(({ name, value }) => (
-              <Form.Checkbox key={value} value={value}>{name}</Form.Checkbox>
-            ))}
+            {filterOptions.map(({ name, value }) => <Form.Checkbox key={value} value={value}>{name}</Form.Checkbox>)}
           </Form.CheckboxSet>
         </Form.Group>
         <Button className="pl-0" variant="link" onClick={handleClearAll}>

@@ -1,5 +1,8 @@
 import {
-  render, screen, initializeMocks, fireEvent,
+  render,
+  screen,
+  initializeMocks,
+  fireEvent,
 } from '@src/testUtils';
 import Checker from '.';
 

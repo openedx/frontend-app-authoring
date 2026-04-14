@@ -4,7 +4,11 @@ import { useParams } from 'react-router-dom';
 import {
   Button,
   Icon,
-  Stack, StandardModal, Tab, Tabs, useToggle,
+  Stack,
+  StandardModal,
+  Tab,
+  Tabs,
+  useToggle,
 } from '@openedx/paragon';
 import { ChevronLeft, ChevronRight } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';

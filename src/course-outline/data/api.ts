@@ -14,9 +14,10 @@ import {
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-const pickDefined = <T extends Record<string, any>>(obj: T) => Object.fromEntries(
-  Object.entries(obj).filter(([, value]) => value !== undefined),
-);
+const pickDefined = <T extends Record<string, any>>(obj: T) =>
+  Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => value !== undefined),
+  );
 
 export const getCourseOutlineIndexApiUrl = (
   courseId: string,
@@ -29,9 +30,9 @@ export const getCourseBestPracticesApiUrl = ({
   excludeGraded,
   all,
 }: {
-  courseId: string,
-  excludeGraded: boolean,
-  all: boolean,
+  courseId: string;
+  excludeGraded: boolean;
+  all: boolean;
 }) => `${getApiBaseUrl()}/api/courses/v1/quality/${courseId}/?exclude_graded=${excludeGraded}&all=${all}`;
 
 export const getCourseLaunchApiUrl = ({
@@ -39,12 +40,13 @@ export const getCourseLaunchApiUrl = ({
   gradedOnly,
   validateOras,
   all,
-}:{
-  courseId: string,
-  gradedOnly: boolean,
-  validateOras: boolean,
-  all: boolean,
-}) => `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
+}: {
+  courseId: string;
+  gradedOnly: boolean;
+  validateOras: boolean;
+  all: boolean;
+}) =>
+  `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
 export const getCourseBlockApiUrl = (courseId: string) => {
   const formattedCourseId = courseId.split('course-v1:')[1];
@@ -55,10 +57,14 @@ export const getCourseReindexApiUrl = (reindexLink: string) => `${getApiBaseUrl(
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
-export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
-export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
-export const courseLegacyLibraryContentBlocks = (courseId: string) => `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
-export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) => `${courseLegacyLibraryContentBlocks(courseId)}${taskId}/`;
+export const exportTags = (courseId: string) =>
+  `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
+export const createDiscussionsTopicsUrl = (courseId: string) =>
+  `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
+export const courseLegacyLibraryContentBlocks = (courseId: string) =>
+  `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
+export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) =>
+  `${courseLegacyLibraryContentBlocks(courseId)}${taskId}/`;
 
 /**
  * Get course outline index.
@@ -85,7 +91,6 @@ export async function getCourseDetails(courseId: string): Promise<CourseDetails>
 }
 
 /**
- *
  * @param courseId
  * @returns {Promise<Array|Object>}
  */
@@ -109,12 +114,12 @@ export async function getCourseBestPractices({
   excludeGraded: boolean;
   all: boolean;
 }): Promise<{
-    isSelfPaced: boolean;
-    sections: any;
-    subsection: any;
-    units: any;
-    videos: any;
-  }> {
+  isSelfPaced: boolean;
+  sections: any;
+  subsection: any;
+  units: any;
+  videos: any;
+}> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseBestPracticesApiUrl({ courseId, excludeGraded, all }));
 
@@ -146,7 +151,10 @@ export async function getCourseLaunch({
 }: { courseId: string; gradedOnly: boolean; validateOras: boolean; all: boolean; }): Promise<CourseLaunchData> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseLaunchApiUrl({
-      courseId, gradedOnly, validateOras, all,
+      courseId,
+      gradedOnly,
+      validateOras,
+      all,
     }));
 
   return camelCaseObject(data);
@@ -279,8 +287,8 @@ export async function configureCourseSubsection(
     is_practice_exam: isPracticeExam,
     is_time_limited: isTimeLimited,
     is_proctored_enabled: (
-      isProctoredExam !== undefined || isPracticeExam !== undefined || isOnboardingExam !== undefined
-    )
+        isProctoredExam !== undefined || isPracticeExam !== undefined || isOnboardingExam !== undefined
+      )
       ? (isProctoredExam || isPracticeExam || isOnboardingExam)
       : undefined,
     exam_review_rules: examReviewRules,
@@ -311,15 +319,17 @@ export async function configureCourseSubsection(
 export async function configureCourseUnit(variables: ConfigureUnitData): Promise<object> {
   const body = {
     publish: variables.groupAccess ? null : variables.type,
-    ...(variables.type === PUBLISH_TYPES.republish ? {
-      metadata: {
-        visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
-        ...(variables.discussionEnabled !== undefined && {
-          discussion_enabled: variables.discussionEnabled,
-        }),
-        ...(variables.groupAccess != null && { group_access: variables.groupAccess }),
-      },
-    } : {}),
+    ...(variables.type === PUBLISH_TYPES.republish ?
+      {
+        metadata: {
+          visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
+          ...(variables.discussionEnabled !== undefined && {
+            discussion_enabled: variables.discussionEnabled,
+          }),
+          ...(variables.groupAccess != null && { group_access: variables.groupAccess }),
+        },
+      } :
+      {}),
   };
   const url = getCourseItemApiUrl(variables.unitId);
   const { data } = await getAuthenticatedHttpClient()
@@ -374,15 +384,15 @@ export async function duplicateCourseItem(itemId: string, parentId: string): Pro
 }
 
 export type CreateCourseXBlockType = {
-  type: string,
+  type: string;
   /** The category of the XBlock. Defaults to the type if not provided. */
-  category?: string,
-  parentLocator: string,
-  displayName?: string,
-  boilerplate?: string,
-  stagedContent?: string,
+  category?: string;
+  parentLocator: string;
+  displayName?: string;
+  boilerplate?: string;
+  stagedContent?: string;
   /** component key from library if being imported. */
-  libraryContentKey?: string,
+  libraryContentKey?: string;
 };
 
 /**
@@ -419,7 +429,7 @@ export async function createCourseXblock({
  * @param {string} courseId
  * @param {Array<string>} children list of sections id's
  * @returns {Promise<Object>}
-*/
+ */
 export async function setSectionOrderList(courseId: string, children: Array<string>): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .put(getCourseBlockApiUrl(courseId), {
@@ -434,7 +444,7 @@ export async function setSectionOrderList(courseId: string, children: Array<stri
  * @param {string} itemId Subsection or unit ID
  * @param {Array<string>} children list of sections id's
  * @returns {Promise<Object>}
-*/
+ */
 export async function setCourseItemOrderList(itemId: string, children: Array<string>): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .put(getCourseItemApiUrl(itemId), {
@@ -449,7 +459,7 @@ export async function setCourseItemOrderList(itemId: string, children: Array<str
  * @param {string} courseId
  * @param {string} videoSharingOption
  * @returns {Promise<Object>}
-*/
+ */
 export async function setVideoSharingOption(
   courseId: string,
   videoSharingOption: string,
@@ -468,7 +478,7 @@ export async function setVideoSharingOption(
  * Paste block to clipboard
  * @param {string} parentLocator
  * @returns {Promise<Object>}
-*/
+ */
 export async function pasteBlock(parentLocator: string): Promise<{
   locator: string;
   courseKey: string;
@@ -488,7 +498,7 @@ export async function pasteBlock(parentLocator: string): Promise<{
  * Dismiss notification
  * @param {string} url
  * @returns void
-*/
+ */
 export async function dismissNotification(url: string) {
   await getAuthenticatedHttpClient()
     .delete(url);

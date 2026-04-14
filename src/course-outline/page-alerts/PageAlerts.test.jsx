@@ -50,16 +50,17 @@ const pageAlertsData = {
   savingStatus: '',
 };
 
-const renderComponent = (props) => render(
-  <AppProvider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <PageAlerts
-        {...pageAlertsData}
-        {...props}
-      />
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <AppProvider store={store} messages={{}}>
+      <IntlProvider locale="en">
+        <PageAlerts
+          {...pageAlertsData}
+          {...props}
+        />
+      </IntlProvider>
+    </AppProvider>,
+  );
 
 describe('<PageAlerts />', () => {
   beforeEach(() => {
@@ -222,7 +223,10 @@ describe('<PageAlerts />', () => {
       ...pageAlertsData,
       errors: {
         outlineIndexApi: {
-          data: 'some error', status: 403, type: API_ERROR_TYPES.forbidden, dismissable: false,
+          data: 'some error',
+          status: 403,
+          type: API_ERROR_TYPES.forbidden,
+          dismissable: false,
         },
       },
     });
@@ -235,7 +239,10 @@ describe('<PageAlerts />', () => {
       ...pageAlertsData,
       errors: {
         outlineIndexApi: {
-          data: 'some error', status: 500, type: API_ERROR_TYPES.serverError, dismissable: true,
+          data: 'some error',
+          status: 500,
+          type: API_ERROR_TYPES.serverError,
+          dismissable: true,
         },
       },
     });

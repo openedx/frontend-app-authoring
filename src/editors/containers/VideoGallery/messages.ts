@@ -2,8 +2,7 @@ const messages = {
   // Gallery
   emptyGalleryLabel: {
     id: 'authoring.selectvideomodal.emptyGalleryLabel',
-    defaultMessage:
-      'No results found.',
+    defaultMessage: 'No results found.',
     description: 'Label for when video gallery is empty.',
   },
   selectVideoButtonlabel: {
@@ -101,15 +100,12 @@ const messages = {
   selectVideoError: {
     id: 'authoring.selectvideomodal.error.selectVideoError',
     defaultMessage: 'Select a video to continue.',
-    description:
-      'Message presented to user when clicking Next without selecting a video',
+    description: 'Message presented to user when clicking Next without selecting a video',
   },
   fileSizeError: {
     id: 'authoring.selectvideomodal.error.fileSizeError',
-    defaultMessage:
-      'Video must be 10 MB or less. Please resize image and try again.',
-    description:
-      'Message presented to user when file size of video is larger than 10 MB',
+    defaultMessage: 'Video must be 10 MB or less. Please resize image and try again.',
+    description: 'Message presented to user when file size of video is larger than 10 MB',
   },
   uploadVideoError: {
     id: 'authoring.selectvideomodal.error.uploadVideoError',

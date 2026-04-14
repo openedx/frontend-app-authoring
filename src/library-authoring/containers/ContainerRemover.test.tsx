@@ -54,12 +54,14 @@ describe('<ContainerRemover />', () => {
     axiosMock.onPatch(url).reply(200);
     const result = await mockGetContainerChildren(mockGetContainerChildren.unitIdWithDuplicate);
     const resultIds = result.map((obj) => obj.id);
-    renderModal(<ContainerRemover
-      close={mockClose}
-      containerKey={result[0].id}
-      displayName="Title"
-      index={0}
-    />);
+    renderModal(
+      <ContainerRemover
+        close={mockClose}
+        containerKey={result[0].id}
+        displayName="Title"
+        index={0}
+      />,
+    );
     const btn = await screen.findByRole('button', { name: 'Remove' });
     await user.click(btn);
 

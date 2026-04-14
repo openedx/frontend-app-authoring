@@ -1,5 +1,8 @@
 import {
-  fireEvent, render, screen, waitFor,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -12,13 +15,14 @@ const onChangeMock = jest.fn();
 const courseIdMock = 'course-id-bar';
 
 // Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea
-    {...props}
-    onFocus={() => {}}
-    onBlur={() => {}}
-  />
-)));
+jest.mock('react-textarea-autosize', () =>
+  jest.fn((props) => (
+    <textarea
+      {...props}
+      onFocus={() => {}}
+      onBlur={() => {}}
+    />
+  )));
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),

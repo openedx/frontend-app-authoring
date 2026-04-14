@@ -1,6 +1,9 @@
 import { useSelector } from 'react-redux';
 import {
-  Container, Button, Layout, StatefulButton,
+  Container,
+  Button,
+  Layout,
+  StatefulButton,
 } from '@openedx/paragon';
 import {
   CheckCircle as CheckCircleIcon,
@@ -319,9 +322,7 @@ const ScheduleAndDetails = () => {
                       isEntranceExamsEnabled={isEntranceExamsEnabled}
                       possiblePreRequisiteCourses={possiblePreRequisiteCourses}
                       entranceExamMinimumScorePct={entranceExamMinimumScorePct}
-                      isPrerequisiteCoursesEnabled={
-                        isPrerequisiteCoursesEnabled
-                      }
+                      isPrerequisiteCoursesEnabled={isPrerequisiteCoursesEnabled}
                       onChange={handleValuesChange}
                     />
                   )}
@@ -376,11 +377,9 @@ const ScheduleAndDetails = () => {
               key="save-button"
               onClick={handleUpdateValues}
               disabled={hasErrors}
-              state={
-                isQueryPending
-                  ? STATEFUL_BUTTON_STATES.pending
-                  : STATEFUL_BUTTON_STATES.default
-              }
+              state={isQueryPending
+                ? STATEFUL_BUTTON_STATES.pending
+                : STATEFUL_BUTTON_STATES.default}
               {...updateValuesButtonState}
             />,
           ].filter(Boolean)}

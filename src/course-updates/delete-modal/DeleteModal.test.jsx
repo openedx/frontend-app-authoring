@@ -8,16 +8,17 @@ import messages from './messages';
 const onDeleteSubmitMock = jest.fn();
 const closeMock = jest.fn();
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <DeleteModal
-      isOpen
-      close={closeMock}
-      onDeleteSubmit={onDeleteSubmitMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <DeleteModal
+        isOpen
+        close={closeMock}
+        onDeleteSubmit={onDeleteSubmitMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<DeleteModal />', () => {
   it('render DeleteModal component correctly', () => {

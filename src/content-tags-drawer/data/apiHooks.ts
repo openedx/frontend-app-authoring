@@ -16,7 +16,11 @@ import {
   updateContentTaxonomyTags,
   getContentTaxonomyTagsCount,
 } from './api';
-import { libraryAuthoringQueryKeys, libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
+import {
+  libraryAuthoringQueryKeys,
+  libraryQueryPredicate,
+  xblockQueryKeys,
+} from '../../library-authoring/data/apiHooks';
 import { getLibraryId } from '../../generic/key-utils';
 import type { UpdateTagsData } from './types';
 
@@ -67,10 +71,14 @@ export const useTaxonomyTagsData = (
     return getTaxonomyTagsData(taxonomyId, { parentTag: parentTag || '', searchTerm, page });
   };
 
-  const queries: { queryKey: any[]; queryFn: typeof queryFn; staleTime: number }[] = [];
+  const queries: { queryKey: any[]; queryFn: typeof queryFn; staleTime: number; }[] = [];
   for (let page = 1; page <= numPages; page++) {
     queries.push(
-      { queryKey: contentTagsQueryKeys.taxonomyTags(taxonomyId, parentTag, page, searchTerm), queryFn, staleTime: Infinity },
+      {
+        queryKey: contentTagsQueryKeys.taxonomyTags(taxonomyId, parentTag, page, searchTerm),
+        queryFn,
+        staleTime: Infinity,
+      },
     );
   }
 
@@ -160,7 +168,7 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
   const { containerId } = useParams();
 
   return useMutation({
-    mutationFn: ({ tagsData }: { tagsData: UpdateTagsData[] }) => (
+    mutationFn: ({ tagsData }: { tagsData: UpdateTagsData[]; }) => (
       updateContentTaxonomyTags(contentId, tagsData)
     ),
     onSettled: () => {
@@ -179,7 +187,10 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
         // Invalidate component metadata to update tags count
         queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(contentId) });
         // Invalidate content search to update tags count
-        queryClient.invalidateQueries({ queryKey: ['content_search'], predicate: (query) => libraryQueryPredicate(query, libraryId) });
+        queryClient.invalidateQueries({
+          queryKey: ['content_search'],
+          predicate: (query) => libraryQueryPredicate(query, libraryId),
+        });
         // If the tags for an item were edited from a container page (Unit, Subsection, Section),
         // invalidate children query to fetch count again.
         if (containerId) {

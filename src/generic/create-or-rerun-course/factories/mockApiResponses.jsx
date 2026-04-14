@@ -12,7 +12,8 @@ export const initialState = {
       postErrors: {},
     },
     loadingStatuses: {
-      organizationLoadingStatus: 'successful', courseRerunLoadingStatus: 'successful',
+      organizationLoadingStatus: 'successful',
+      courseRerunLoadingStatus: 'successful',
     },
     organizations: ['krisEdx', 'krisEd', 'DeveloperInc', 'importMit', 'testX', 'edX', 'developerInb'],
     savingStatus: '',

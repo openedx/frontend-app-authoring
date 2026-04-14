@@ -1,6 +1,9 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Dropdown, Icon, IconButton, Stack,
+  Dropdown,
+  Icon,
+  IconButton,
+  Stack,
 } from '@openedx/paragon';
 import {
   ArrowDownward,
@@ -55,7 +58,7 @@ export const InfoSidebarMenu = (props: InfoSidebarMenuProps) => {
     return null;
   }
 
-  const { upstreamInfo } = item;  
+  const { upstreamInfo } = item;
 
   return (
     <Dropdown>

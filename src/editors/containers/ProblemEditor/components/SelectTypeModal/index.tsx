@@ -32,12 +32,14 @@ const SelectTypeModal: React.FC<Props> = ({
   return (
     <SelectTypeWrapper onClose={onClose} selected={selected}>
       <Row className="justify-content-center">
-        {(!isAdvancedProblemType(selected)) ? (
-          <Stack direction="horizontal" gap={4} className="flex-wrap mb-6">
-            <ProblemTypeSelect selected={selected} setSelected={setSelected} />
-            <Preview problemType={selected} />
-          </Stack>
-        ) : <AdvanceTypeSelect selected={selected} setSelected={setSelected} />}
+        {(!isAdvancedProblemType(selected)) ?
+          (
+            <Stack direction="horizontal" gap={4} className="flex-wrap mb-6">
+              <ProblemTypeSelect selected={selected} setSelected={setSelected} />
+              <Preview problemType={selected} />
+            </Stack>
+          ) :
+          <AdvanceTypeSelect selected={selected} setSelected={setSelected} />}
       </Row>
     </SelectTypeWrapper>
   );

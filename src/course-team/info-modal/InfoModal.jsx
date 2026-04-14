@@ -38,7 +38,7 @@ const InfoModal = ({
       variant={variant}
       isOpen={isOpen && !isEmptyErrorMessage}
       onClose={close}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button variant={closeButtonVariant} onClick={close}>
             {closeButtonText}
@@ -54,7 +54,7 @@ const InfoModal = ({
             </Button>
           )}
         </ActionRow>
-      )}
+      }
     >
       <p>{message}</p>
     </AlertModal>

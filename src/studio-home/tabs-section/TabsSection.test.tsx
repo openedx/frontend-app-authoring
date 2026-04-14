@@ -50,26 +50,27 @@ export const LocationDisplay = () => {
   return <div data-testid="location-display">{location.pathname}</div>;
 };
 
-const render = (overrideProps = {}) => baseRender(
-  <>
-    <Routes>
-      <Route
-        path="/home"
-        element={tabSectionComponent(overrideProps)}
-      />
-      <Route
-        path="/libraries"
-        element={tabSectionComponent(overrideProps)}
-      />
-      <Route
-        path="/libraries-v1"
-        element={tabSectionComponent(overrideProps)}
-      />
-    </Routes>
-    <LocationDisplay />
-  </>,
-  { routerProps: { initialEntries: ['/home'] } },
-);
+const render = (overrideProps = {}) =>
+  baseRender(
+    <>
+      <Routes>
+        <Route
+          path="/home"
+          element={tabSectionComponent(overrideProps)}
+        />
+        <Route
+          path="/libraries"
+          element={tabSectionComponent(overrideProps)}
+        />
+        <Route
+          path="/libraries-v1"
+          element={tabSectionComponent(overrideProps)}
+        />
+      </Routes>
+      <LocationDisplay />
+    </>,
+    { routerProps: { initialEntries: ['/home'] } },
+  );
 
 describe('<TabsSection />', () => {
   beforeEach(() => {
@@ -308,9 +309,11 @@ describe('<TabsSection />', () => {
       expect(await within(panel).findByText('Showing 1 of 3')).toBeInTheDocument();
       expect(await within(panel).findByText(migratedContent.displayName)).toBeVisible();
       // Should not show other items.
-      expect(within(panel).queryByText(
-        generateGetStudioHomeLibrariesApiResponse().libraries[0].displayName,
-      )).not.toBeInTheDocument();
+      expect(
+        within(panel).queryByText(
+          generateGetStudioHomeLibrariesApiResponse().libraries[0].displayName,
+        ),
+      ).not.toBeInTheDocument();
       // reset search
       fireEvent.change(searchField, { target: { value: '' } });
 
@@ -474,9 +477,11 @@ describe('<TabsSection />', () => {
 
       expect(librariesTab).toHaveClass('active');
 
-      expect(await screen.findByText(
-        tabMessages.librariesV2TabLibraryNotFoundAlertMessage.defaultMessage,
-      )).toBeVisible();
+      expect(
+        await screen.findByText(
+          tabMessages.librariesV2TabLibraryNotFoundAlertMessage.defaultMessage,
+        ),
+      ).toBeVisible();
     });
 
     it('should hide Libraries tab when libraries are disabled', async () => {
@@ -518,9 +523,11 @@ describe('<TabsSection />', () => {
 
       expect(librariesTab).toHaveClass('active');
 
-      expect(await screen.findByText(
-        tabMessages.librariesTabErrorMessage.defaultMessage,
-      )).toBeVisible();
+      expect(
+        await screen.findByText(
+          tabMessages.librariesTabErrorMessage.defaultMessage,
+        ),
+      ).toBeVisible();
     });
 
     [true, false].forEach((isMigrated) => {

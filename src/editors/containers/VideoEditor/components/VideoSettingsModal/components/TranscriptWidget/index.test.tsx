@@ -1,6 +1,8 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks,
+  render,
+  screen,
+  initializeMocks,
 } from '@src/testUtils';
 import * as reactredux from 'react-redux';
 
@@ -9,7 +11,10 @@ import { RequestKeys } from '../../../../../../data/constants/requests';
 import { formatMessage } from '../../../../../../testUtils';
 import { actions, selectors } from '../../../../../../data/redux';
 import {
-  TranscriptWidgetInternal as TranscriptWidget, mapStateToProps, mapDispatchToProps, hooks,
+  TranscriptWidgetInternal as TranscriptWidget,
+  mapStateToProps,
+  mapDispatchToProps,
+  hooks,
 } from './index';
 
 jest.mock('../../../../../../data/redux', () => ({
@@ -42,7 +47,10 @@ jest.mock('../../../../../../data/redux', () => ({
     },
   },
 }));
-jest.mock('../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget', () => 'CollapsibleFormWidget');
+jest.mock(
+  '../../../../../../sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget',
+  () => 'CollapsibleFormWidget',
+);
 jest.mock('./Transcript', () => 'Transcript');
 
 jest.mock('react-redux', () => ({
@@ -123,12 +131,14 @@ describe('TranscriptWidget', () => {
       test('renders as expected with default props', () => {
         const { container } = render(<TranscriptWidget {...props} />);
         expect(container.querySelector('collapsibleformwidget')).toBeInTheDocument();
-        expect(screen.getByText('Add video transcripts (.srt files only) for improved accessibility.')).toBeInTheDocument();
+        expect(screen.getByText('Add video transcripts (.srt files only) for improved accessibility.'))
+          .toBeInTheDocument();
       });
 
       test('renders as expected with allowTranscriptImport true', () => {
         render(<TranscriptWidget {...props} allowTranscriptImport />);
-        expect(screen.getByText('We found transcript for this video on YouTube. Would you like to import it now?')).toBeInTheDocument();
+        expect(screen.getByText('We found transcript for this video on YouTube. Would you like to import it now?'))
+          .toBeInTheDocument();
       });
 
       test('renders as expected with transcripts', () => {
@@ -138,7 +148,9 @@ describe('TranscriptWidget', () => {
       });
 
       test('renders as expected with transcripts and urls', () => {
-        const { container } = render(<TranscriptWidget {...props} transcripts={['en']} selectedVideoTranscriptUrls={{ en: 'url' }} />);
+        const { container } = render(
+          <TranscriptWidget {...props} transcripts={['en']} selectedVideoTranscriptUrls={{ en: 'url' }} />,
+        );
         expect(container.querySelector('transcript')).toBeInTheDocument();
         expect(container.querySelector('transcript')).toHaveAttribute('language', 'en');
         expect(container.querySelector('transcript')).toHaveAttribute('transcriptUrl', 'url');

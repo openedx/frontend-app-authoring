@@ -27,7 +27,7 @@ const ExplanationWidget = ({
   const solutionContent = newContent || initialContent;
   let staticRootUrl;
   if (isLibrary) {
-    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`;
   }
   if (!refReady) { return null; }
   return (

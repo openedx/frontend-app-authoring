@@ -36,7 +36,10 @@ const ShowAnswerCard = ({
       </div>
       {!isLibrary && (
         <div className="pb-4">
-          <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#showanswer`} target="_blank">
+          <Hyperlink
+            destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#showanswer`}
+            target="_blank"
+          >
             <FormattedMessage {...messages.advancedSettingsLinkText} />
           </Hyperlink>
         </div>
@@ -50,7 +53,10 @@ const ShowAnswerCard = ({
           {Object.values(ShowAnswerTypesKeys).map((answerType) => {
             let optionDisplayName = ShowAnswerTypes[answerType];
             if (answerType === defaultValue) {
-              optionDisplayName = { ...optionDisplayName, defaultMessage: `${optionDisplayName.defaultMessage} (Default)` };
+              optionDisplayName = {
+                ...optionDisplayName,
+                defaultMessage: `${optionDisplayName.defaultMessage} (Default)`,
+              };
             }
             return (
               <option
@@ -65,15 +71,15 @@ const ShowAnswerCard = ({
       </Form.Group>
       {showAttempts
         && (
-        <Form.Group className="pb-0 mb-0 mt-4">
-          <Form.Control
-            type="number"
-            min={0}
-            value={showAnswer.afterAttempts}
-            onChange={handleAttemptsChange}
-            floatingLabel={intl.formatMessage(messages.showAnswerAttemptsInputLabel)}
-          />
-        </Form.Group>
+          <Form.Group className="pb-0 mb-0 mt-4">
+            <Form.Control
+              type="number"
+              min={0}
+              value={showAnswer.afterAttempts}
+              onChange={handleAttemptsChange}
+              floatingLabel={intl.formatMessage(messages.showAnswerAttemptsInputLabel)}
+            />
+          </Form.Group>
         )}
     </>
   );

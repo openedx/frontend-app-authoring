@@ -41,9 +41,9 @@ export const CreateLegacyLibrary = ({
   handleCancel,
   handlePostCreate,
 }: {
-  showInModal?: boolean,
-  handleCancel?: () => void,
-  handlePostCreate?: (library: LibraryV1Data) => void,
+  showInModal?: boolean;
+  handleCancel?: () => void;
+  handlePostCreate?: (library: LibraryV1Data) => void;
 }) => {
   const intl = useIntl();
   const navigate = useNavigate();
@@ -95,7 +95,7 @@ export const CreateLegacyLibrary = ({
 
   return (
     <>
-      {!showInModal && (<Header isHiddenMainMenu />)}
+      {!showInModal && <Header isHiddenMainMenu />}
       <Container size="xl" className="p-4 mt-3">
         {!showInModal && (
           <SubHeader
@@ -122,25 +122,23 @@ export const CreateLegacyLibrary = ({
             org: '',
             number: '',
           }}
-          validationSchema={
-            Yup.object().shape({
-              displayName: Yup.string()
-                .required(intl.formatMessage(messages.requiredFieldError)),
-              org: Yup.string()
-                .required(intl.formatMessage(messages.requiredFieldError))
-                .matches(
-                  specialCharsRule,
-                  intl.formatMessage(messages.disallowedCharsError),
-                )
-                .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
-              number: Yup.string()
-                .required(intl.formatMessage(messages.requiredFieldError))
-                .matches(
-                  validSlugIdRegex,
-                  intl.formatMessage(messages.invalidSlugError),
-                ),
-            })
-          }
+          validationSchema={Yup.object().shape({
+            displayName: Yup.string()
+              .required(intl.formatMessage(messages.requiredFieldError)),
+            org: Yup.string()
+              .required(intl.formatMessage(messages.requiredFieldError))
+              .matches(
+                specialCharsRule,
+                intl.formatMessage(messages.disallowedCharsError),
+              )
+              .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
+            number: Yup.string()
+              .required(intl.formatMessage(messages.requiredFieldError))
+              .matches(
+                validSlugIdRegex,
+                intl.formatMessage(messages.invalidSlugError),
+              ),
+          })}
           onSubmit={(values) => mutate(values)}
         >
           {(formikProps) => (
@@ -159,17 +157,17 @@ export const CreateLegacyLibrary = ({
                 <Form.Autosuggest
                   name="org"
                   isLoading={isOrganizationListLoading}
-                  onChange={(event) => formikProps.setFieldValue(
-                    'org',
-                    allowToCreateNewOrg
-                      ? (event.selectionId || event.userProvidedText)
-                      : event.selectionId,
-                  )}
+                  onChange={(event) =>
+                    formikProps.setFieldValue(
+                      'org',
+                      allowToCreateNewOrg
+                        ? (event.selectionId || event.userProvidedText)
+                        : event.selectionId,
+                    )}
                   placeholder={intl.formatMessage(messages.orgPlaceholder)}
                 >
-                  {organizations.map((org) => (
-                    <Form.AutosuggestOption key={org} id={org}>{org}</Form.AutosuggestOption>
-                  ))}
+                  {organizations.map((org) => <Form.AutosuggestOption key={org} id={org}>{org}
+                  </Form.AutosuggestOption>)}
                 </Form.Autosuggest>
                 <FormikErrorFeedback name="org">
                   <Form.Text>{intl.formatMessage(messages.orgHelp)}</Form.Text>
@@ -184,14 +182,13 @@ export const CreateLegacyLibrary = ({
                 className=""
                 controlClasses="pb-2"
               />
-              <ActionRow className={
-                classNames(
+              <ActionRow
+                className={classNames(
                   {
                     'justify-content-start': !showInModal,
                     'justify-content-end': showInModal,
                   },
-                )
-              }
+                )}
               >
                 <Button
                   variant="outline-primary"
@@ -214,9 +211,9 @@ export const CreateLegacyLibrary = ({
             </Form>
           )}
         </Formik>
-        {isError && (<AlertError error={error} />)}
+        {isError && <AlertError error={error} />}
       </Container>
-      {!showInModal && (<StudioFooterSlot />)}
+      {!showInModal && <StudioFooterSlot />}
     </>
   );
 };

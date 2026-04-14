@@ -9,7 +9,7 @@ import { useWaffleFlags } from './apiHooks';
 import { getApiWaffleFlagsUrl } from './api';
 
 // A little component for testing our waffle flag hooks.
-const FlagComponent = ({ courseId }: { courseId?: string }) => {
+const FlagComponent = ({ courseId }: { courseId?: string; }) => {
   const waffleFlags = useWaffleFlags(courseId);
   return (
     <ul>
@@ -25,7 +25,9 @@ describe('useWaffleFlags', () => {
     const { axiosMock } = initializeMocks();
     // Simulate an actual slow response from the Waffle Flags REST API:
     let resolveResponse;
-    const promise = new Promise<[number, unknown]>(resolve => { resolveResponse = resolve; });
+    const promise = new Promise<[number, unknown]>(resolve => {
+      resolveResponse = resolve;
+    });
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(() => promise);
 
     render(<FlagComponent />);
@@ -49,7 +51,9 @@ describe('useWaffleFlags', () => {
     const { axiosMock } = initializeMocks();
     // Simulate an actual slow response from the Waffle Flags REST API:
     let resolveResponse;
-    const promise = new Promise<[number, unknown]>(resolve => { resolveResponse = resolve; });
+    const promise = new Promise<[number, unknown]>(resolve => {
+      resolveResponse = resolve;
+    });
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(() => promise);
 
     render(<FlagComponent />);
@@ -76,7 +80,9 @@ describe('useWaffleFlags', () => {
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, { useNewCourseOutlinePage: false });
     // Control when we respond with the course-specific flag value:
     let resolveResponse;
-    const promise = new Promise<[number, unknown]>(resolve => { resolveResponse = resolve; });
+    const promise = new Promise<[number, unknown]>(resolve => {
+      resolveResponse = resolve;
+    });
     axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(() => promise);
 
     // Check the global flag:

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Form, IconButton, useToggle,
+  Form,
+  IconButton,
+  useToggle,
 } from '@openedx/paragon';
 import {
   EditOutline as EditIcon,
@@ -60,10 +62,11 @@ const HeaderTitle = ({
       type: PUBLISH_TYPES.republish,
       unitId: currentItemData.id,
     }, {
-      onSuccess: () => sendMessageToIframe(
-        messageTypes.completeManageXBlockAccess,
-        { locator: currentItemData.id },
-      ),
+      onSuccess: () =>
+        sendMessageToIframe(
+          messageTypes.completeManageXBlockAccess,
+          { locator: currentItemData.id },
+        ),
       onSettled: () => closeConfigureModal(),
     });
   };
@@ -75,23 +78,25 @@ const HeaderTitle = ({
 
   return (
     <div className="unit-header-title d-flex align-items-center lead" data-testid="unit-header-title">
-      {isTitleEditFormOpen ? (
-        <Form.Group className="m-0">
-          <Form.Control
-            ref={(e) => e && e.focus()}
-            value={titleValue}
-            name="displayName"
-            onChange={(e) => setTitleValue(e.target.value)}
-            aria-label={intl.formatMessage(messages.ariaLabelButtonEdit)}
-            onBlur={() => handleTitleEditSubmit(titleValue)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleTitleEditSubmit(titleValue);
-              }
-            }}
-          />
-        </Form.Group>
-      ) : unitTitle}
+      {isTitleEditFormOpen ?
+        (
+          <Form.Group className="m-0">
+            <Form.Control
+              ref={(e) => e && e.focus()}
+              value={titleValue}
+              name="displayName"
+              onChange={(e) => setTitleValue(e.target.value)}
+              aria-label={intl.formatMessage(messages.ariaLabelButtonEdit)}
+              onBlur={() => handleTitleEditSubmit(titleValue)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleTitleEditSubmit(titleValue);
+                }
+              }}
+            />
+          </Form.Group>
+        ) :
+        unitTitle}
       <IconButton
         alt={intl.formatMessage(messages.altButtonEdit)}
         className="ml-1 flex-shrink-0 edit-button"
