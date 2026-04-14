@@ -5,7 +5,6 @@ import {
   Card,
   ActionRow,
   Pagination,
-  Alert,
   Icon,
 } from '@openedx/paragon';
 
@@ -18,7 +17,7 @@ import {
   type PaginationState,
 } from '@tanstack/react-table';
 
-import { ArrowDropUpDown, Info } from '@openedx/paragon/icons';
+import { ArrowDropUpDown } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import TableBody from './TableBody';
 import './TableView.scss';
@@ -30,6 +29,7 @@ import type {
   TreeRowData,
 } from './types';
 import messages from './messages';
+import SaveErrorAlert from './SaveErrorAlert';
 
 interface TableViewProps {
   treeData: TreeRowData[];
@@ -102,18 +102,10 @@ const TableView = ({
 
   const { isError } = createRowMutation;
   const { isError: isUpdateError } = updateRowMutation;
-  const [showError, setShowError] = React.useState(true);
 
   return (
     <>
-      {(isError || isUpdateError) && showError && (
-        <Alert variant="danger" icon={Info} dismissible onClose={() => setShowError(false)}>
-          <Alert.Heading>
-            {intl.formatMessage(messages.errorSavingTitle)}
-          </Alert.Heading>
-          {intl.formatMessage(messages.errorSavingMessage, { errorMessage: draftError || intl.formatMessage(messages.errorSavingMessage, { errorMessage: '' }) })}
-        </Alert>
-      )}
+      <SaveErrorAlert draftError={draftError} isError={isError} isUpdateError={isUpdateError} />
       <Card className="tag-list-card">
         <Card.Section className="p-0">
           <div className="d-flex justify-content-end align-items-center p-4">
