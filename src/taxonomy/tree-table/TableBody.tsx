@@ -13,7 +13,8 @@ import type {
   TreeColumnDef,
   TreeTable,
 } from './types';
-import { CreateRow, EditRow } from './CreateRow';
+import CreateRow from './CreateRow';
+import EditRow from './EditRow';
 
 interface TableBodyProps {
   columns: TreeColumnDef[];
@@ -86,39 +87,36 @@ const TableBody = ({
           setIsCreatingTopRow={setIsCreatingTopRow}
           exitDraftWithoutSave={exitDraftWithoutSave}
           createRowMutation={createRowMutation}
-          columns={columns}
           validate={validate}
         />
       )}
 
       {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
         <React.Fragment key={row.id}>
-          {editingRowId === `${row.original.id}:${String(row.original.value)}` ?
-            (
-              <EditRow
-                draftError={draftError}
-                setDraftError={setDraftError}
-                initialValue={String(row.original.value)}
-                handleUpdateRow={(value) => handleUpdateRow(value, String(row.original.value))}
-                cancelEditRow={() => {
-                  setEditingRowId(null);
-                  exitDraftWithoutSave();
-                }}
-                updateRowMutation={updateRowMutation}
-                columns={columns}
-                validate={validate}
-              />
-            ) :
-            (
-              <tr>
-                {row.getVisibleCells()
-                  .map((cell, index) => (
-                    <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-              </tr>
-            )}
+          {editingRowId === `${row.original.id}:${String(row.original.value)}` ? (
+            <EditRow
+              draftError={draftError}
+              setDraftError={setDraftError}
+              initialValue={String(row.original.value)}
+              handleUpdateRow={(value) => handleUpdateRow(value, String(row.original.value))}
+              cancelEditRow={() => {
+                setEditingRowId(null);
+                exitDraftWithoutSave();
+              }}
+              updateRowMutation={updateRowMutation}
+              validate={validate}
+              row={row}
+            />
+          ) : (
+            <tr>
+              {row.getVisibleCells()
+                .map((cell) => (
+                  <td key={cell.id} className="p-1">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+            </tr>
+          )}
           <NestedRows
             parentRow={row}
             childRowsData={row.subRows}

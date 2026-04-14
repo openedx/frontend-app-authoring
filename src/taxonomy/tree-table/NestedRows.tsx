@@ -7,7 +7,8 @@ import type {
   TreeColumnDef,
   CreateRowMutationState,
 } from './types';
-import { CreateRow, EditRow } from './CreateRow';
+import CreateRow from './CreateRow';
+import EditRow from './EditRow';
 
 interface NestedRowsProps {
   /** The parent row object from TanStack React Table */
@@ -103,7 +104,6 @@ const NestedRows = ({
           setIsCreatingTopRow={setIsCreatingTopRow}
           exitDraftWithoutSave={onCancelCreation}
           createRowMutation={createRowMutation}
-          columns={[]}
           indent={indent}
           validate={validate}
         />
@@ -112,45 +112,43 @@ const NestedRows = ({
         const rowData = row.original || row;
         return (
           <React.Fragment key={String(rowData.id)}>
-            {editingRowId === `${row.original.id}:${String(row.original.value)}` ?
-              (
-                <EditRow
-                  draftError={draftError}
-                  setDraftError={setDraftError}
-                  initialValue={String(row.original.value)}
-                  handleUpdateRow={(value) => handleUpdateRow(value, String(row.original.value))}
-                  cancelEditRow={() => {
-                    setEditingRowId(null);
-                    exitDraftWithoutSave();
-                  }}
-                  updateRowMutation={updateRowMutation}
-                  columns={columns}
-                  indent={indent}
-                  validate={validate}
-                />
-              ) :
-              (
-                <tr>
-                  {row.getVisibleCells()
-                    .map((cell, index) => {
-                      const content = flexRender(cell.column.columnDef.cell, cell.getContext());
-                      const isFirstColumn = index === 0;
+            {editingRowId === `${row.original.id}:${String(row.original.value)}` ? (
+              <EditRow
+                draftError={draftError}
+                setDraftError={setDraftError}
+                initialValue={String(row.original.value)}
+                handleUpdateRow={(value) => handleUpdateRow(value, String(row.original.value))}
+                cancelEditRow={() => {
+                  setEditingRowId(null);
+                  exitDraftWithoutSave();
+                }}
+                updateRowMutation={updateRowMutation}
+                indent={indent}
+                validate={validate}
+                row={row}
+              />
+            ) : (
+              <tr>
+                {row.getVisibleCells()
+                  .map((cell, index) => {
+                    const content = flexRender(cell.column.columnDef.cell, cell.getContext());
+                    const isFirstColumn = index === 0;
 
-                      return (
-                        <td
-                          key={cell.id}
-                          className={`p-1 align-top tree-table-overflow-anywhere ${
-                            isFirstColumn ? '' : 'tree-table-actions-column'
-                          }`}
-                        >
-                          {isFirstColumn ?
-                            <div className={`tree-table-indent tree-table-indent-${indent}`}>{content}</div> :
-                            content}
-                        </td>
-                      );
-                    })}
-                </tr>
-              )}
+                    return (
+                      <td
+                        key={cell.id}
+                        className="p-1 tree-table-overflow-anywhere"
+                      >
+                        {isFirstColumn ? (
+                          <div className={`tree-table-indent tree-table-indent-${indent}`}>{content}</div>
+                        ) : (
+                          content
+                        )}
+                      </td>
+                    );
+                  })}
+              </tr>
+            )}
             <NestedRows
               parentRow={row}
               childRowsData={row.subRows as TreeRow[]}
