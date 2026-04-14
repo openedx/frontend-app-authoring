@@ -4,7 +4,7 @@ import { ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 import { Row } from '@tanstack/react-table';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import type { TreeRowData } from '../tree-table/types';
+import type { TreeRowData } from '@src/taxonomy/tree-table/types';
 import messages from './messages';
 
 interface OptionalExpandLinkProps {

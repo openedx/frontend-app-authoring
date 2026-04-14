@@ -1,10 +1,11 @@
 import { useReducer } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { useCreateTag, useUpdateTag } from '../data/apiHooks';
+import globalMessages from '@src/messages';
+import { useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
+import type { RowId } from '@src/taxonomy/tree-table/types';
 import { TagTree } from './tagTree';
 import { TagListTableError } from './errors';
-import type { RowId } from '../tree-table/types';
 import {
   TABLE_MODES,
   TRANSITION_TABLE,
