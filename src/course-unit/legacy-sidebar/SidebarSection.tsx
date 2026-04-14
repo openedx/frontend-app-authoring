@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { Card } from '@openedx/paragon';
 
-const SidebarSection = ({ className = null, children = null, ...props }:SidebarSectionProps) => (
+const SidebarSection = ({ className = null, children = null, ...props }: SidebarSectionProps) => (
   <Card
     className={classNames('course-unit-sidebar', className)}
     {...props}

@@ -41,7 +41,10 @@ const {
 } = courseDetailsMock;
 
 const {
-  aboutPageEditable, sidebarHtmlEnabled, shortDescriptionEditable, lmsLinkForAboutPage,
+  aboutPageEditable,
+  sidebarHtmlEnabled,
+  shortDescriptionEditable,
+  lmsLinkForAboutPage,
 } = courseSettingsMock;
 
 const props = {

@@ -17,7 +17,8 @@ const defaultProps = {
       activeStatus: 'active',
       id: 'file-test',
       usageLocations: [{
-        displayLocation: 'unit', url: 'unit/url',
+        displayLocation: 'unit',
+        url: 'unit/url',
       }],
     },
   }],

@@ -88,7 +88,9 @@ describe('CustomPages', () => {
     await mockStore(RequestStatus.SUCCESSFUL);
     const addButton = screen.getByTestId('body-add-button');
     expect(addButton).toBeVisible();
-    await act(async () => { fireEvent.click(addButton); });
+    await act(async () => {
+      fireEvent.click(addButton);
+    });
     const addStatus = store.getState().customPages.addingStatus;
     expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
   });

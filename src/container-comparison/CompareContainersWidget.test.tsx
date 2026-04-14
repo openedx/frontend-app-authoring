@@ -18,10 +18,12 @@ describe('CompareContainersWidget', () => {
   test('renders the component with a title', async () => {
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
     axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
-    render(<CompareContainersWidget
-      upstreamBlockId={mockGetContainerMetadata.sectionId}
-      downstreamBlockId={mockGetCourseContainerChildren.sectionId}
-    />);
+    render(
+      <CompareContainersWidget
+        upstreamBlockId={mockGetContainerMetadata.sectionId}
+        downstreamBlockId={mockGetCourseContainerChildren.sectionId}
+      />,
+    );
     expect((await screen.findAllByText('Test Title')).length).toEqual(2);
     expect((await screen.findAllByText('subsection block 0')).length).toEqual(1);
     expect((await screen.findAllByText('subsection block 00')).length).toEqual(1);
@@ -39,10 +41,12 @@ describe('CompareContainersWidget', () => {
   test('renders loading spinner when data is pending', async () => {
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionIdLoading);
     axiosMock.onGet(url).reply(() => new Promise(() => {}));
-    render(<CompareContainersWidget
-      upstreamBlockId={mockGetContainerMetadata.sectionIdLoading}
-      downstreamBlockId={mockGetCourseContainerChildren.sectionIdLoading}
-    />);
+    render(
+      <CompareContainersWidget
+        upstreamBlockId={mockGetContainerMetadata.sectionIdLoading}
+        downstreamBlockId={mockGetCourseContainerChildren.sectionIdLoading}
+      />,
+    );
     const spinner = await screen.findAllByRole('status');
     expect(spinner.length).toEqual(4);
     expect(spinner[0].textContent).toEqual('Loading...');
@@ -53,16 +57,20 @@ describe('CompareContainersWidget', () => {
 
   test('calls onRowClick when a row is clicked and updates diff view', async () => {
     // mocks title
-    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, { publishedDisplayName: 'Test Title' });
+    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, {
+      publishedDisplayName: 'Test Title',
+    });
     axiosMock.onGet(
       getLibraryContainerApiUrl('lct:org1:Demo_course_generated:subsection:subsection-0'),
     ).reply(200, { publishedDisplayName: 'subsection block 0' });
 
     const user = userEvent.setup();
-    render(<CompareContainersWidget
-      upstreamBlockId={mockGetContainerMetadata.sectionId}
-      downstreamBlockId={mockGetCourseContainerChildren.sectionId}
-    />);
+    render(
+      <CompareContainersWidget
+        upstreamBlockId={mockGetContainerMetadata.sectionId}
+        downstreamBlockId={mockGetCourseContainerChildren.sectionId}
+      />,
+    );
     expect((await screen.findAllByText('Test Title')).length).toEqual(2);
     // left i.e. before side block
     let block = await screen.findByText('subsection block 00');
@@ -89,16 +97,20 @@ describe('CompareContainersWidget', () => {
 
   test('should show removed container diff state', async () => {
     // mocks title
-    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, { publishedDisplayName: 'Test Title' });
+    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, {
+      publishedDisplayName: 'Test Title',
+    });
     axiosMock.onGet(
       getLibraryContainerApiUrl('lct:org1:Demo_course_generated:subsection:subsection-0'),
     ).reply(200, { publishedDisplayName: 'subsection block 0' });
 
     const user = userEvent.setup();
-    render(<CompareContainersWidget
-      upstreamBlockId={mockGetContainerMetadata.sectionId}
-      downstreamBlockId={mockGetCourseContainerChildren.sectionId}
-    />);
+    render(
+      <CompareContainersWidget
+        upstreamBlockId={mockGetContainerMetadata.sectionId}
+        downstreamBlockId={mockGetCourseContainerChildren.sectionId}
+      />,
+    );
     expect((await screen.findAllByText('Test Title')).length).toEqual(2);
     // left i.e. before side block
     const block = await screen.findByText('subsection block 00');
@@ -112,16 +124,20 @@ describe('CompareContainersWidget', () => {
 
   test('should show new added container diff state', async () => {
     // mocks title
-    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, { publishedDisplayName: 'Test Title' });
+    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, {
+      publishedDisplayName: 'Test Title',
+    });
     axiosMock.onGet(
       getLibraryContainerApiUrl('lct:org1:Demo_course_generated:subsection:subsection-0'),
     ).reply(200, { publishedDisplayName: 'subsection block 0' });
 
     const user = userEvent.setup();
-    render(<CompareContainersWidget
-      upstreamBlockId={mockGetContainerMetadata.sectionId}
-      downstreamBlockId="block-v1:UNIX+UX1+2025_T3+type@section+block@0-new"
-    />);
+    render(
+      <CompareContainersWidget
+        upstreamBlockId={mockGetContainerMetadata.sectionId}
+        downstreamBlockId="block-v1:UNIX+UX1+2025_T3+type@section+block@0-new"
+      />,
+    );
     const blocks = await screen.findAllByText('This subsection will be added in the new version');
     await user.click(blocks[0]);
 
@@ -131,10 +147,12 @@ describe('CompareContainersWidget', () => {
   test('should show alert if the only change is a single text component with local overrides', async () => {
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
     axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
-    render(<CompareContainersWidget
-      upstreamBlockId={mockGetContainerMetadata.sectionId}
-      downstreamBlockId={mockGetCourseContainerChildren.sectionShowsAlertSingleText}
-    />);
+    render(
+      <CompareContainersWidget
+        upstreamBlockId={mockGetContainerMetadata.sectionId}
+        downstreamBlockId={mockGetCourseContainerChildren.sectionShowsAlertSingleText}
+      />,
+    );
 
     expect((await screen.findAllByText('Test Title')).length).toEqual(2);
 
@@ -147,10 +165,12 @@ describe('CompareContainersWidget', () => {
   test('should show alert if the only changes is multiple text components with local overrides', async () => {
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
     axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
-    render(<CompareContainersWidget
-      upstreamBlockId={mockGetContainerMetadata.sectionId}
-      downstreamBlockId={mockGetCourseContainerChildren.sectionShowsAlertMultipleText}
-    />);
+    render(
+      <CompareContainersWidget
+        upstreamBlockId={mockGetContainerMetadata.sectionId}
+        downstreamBlockId={mockGetCourseContainerChildren.sectionShowsAlertMultipleText}
+      />,
+    );
 
     expect((await screen.findAllByText('Test Title')).length).toEqual(2);
 

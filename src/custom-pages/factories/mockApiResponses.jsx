@@ -29,7 +29,7 @@ export const initialState = {
   },
 };
 
-export const generateFetchPageApiResponse = () => ([{
+export const generateFetchPageApiResponse = () => [{
   type: 'static_tab',
   title: null,
   is_hideable: false,
@@ -42,7 +42,7 @@ export const generateFetchPageApiResponse = () => ([{
     url_slug: '1',
   },
   id: 'mOckID1',
-}]);
+}];
 
 export const generateXblockData = (
   blockId,

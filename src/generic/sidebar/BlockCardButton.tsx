@@ -1,6 +1,10 @@
 import React from 'react';
 import {
-  Button, Chip, Collapsible, Icon, Stack,
+  Button,
+  Chip,
+  Collapsible,
+  Icon,
+  Stack,
 } from '@openedx/paragon';
 import { getItemIcon } from '../block-type-utils';
 
@@ -52,7 +56,7 @@ export const BlockCardButton = ({
         >
           <Stack direction="horizontal" className="d-flex flex-wrap" gap={2}>
             {templates.map((template) => (
-              <Chip onClick={() => onClickTemplate?.(template.boilerplateName)}>
+              <Chip onClick={() => onClickTemplate?.(template.boilerplateName)} key={template.boilerplateName}>
                 {template.displayName}
               </Chip>
             ))}

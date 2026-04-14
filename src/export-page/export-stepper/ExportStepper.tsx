@@ -18,16 +18,18 @@ const ExportStepper = () => {
 
   const successTitle = intl.formatMessage(messages.stepperSuccessTitle);
   let successTitleComponent;
-  const localizedSuccessDate = successDate ? (
-    <FormattedDate
-      value={successDate}
-      year="2-digit"
-      month="2-digit"
-      day="2-digit"
-      hour="numeric"
-      minute="numeric"
-    />
-  ) : null;
+  const localizedSuccessDate = successDate ?
+    (
+      <FormattedDate
+        value={successDate}
+        year="2-digit"
+        month="2-digit"
+        day="2-digit"
+        hour="numeric"
+        minute="numeric"
+      />
+    ) :
+    null;
 
   if (localizedSuccessDate && currentStage === EXPORT_STAGES.SUCCESS) {
     successTitleComponent = (
@@ -42,15 +44,18 @@ const ExportStepper = () => {
       title: intl.formatMessage(messages.stepperPreparingTitle),
       description: intl.formatMessage(messages.stepperPreparingDescription),
       key: EXPORT_STAGES.PREPARING,
-    }, {
+    },
+    {
       title: intl.formatMessage(messages.stepperExportingTitle),
       description: intl.formatMessage(messages.stepperExportingDescription),
       key: EXPORT_STAGES.EXPORTING,
-    }, {
+    },
+    {
       title: intl.formatMessage(messages.stepperCompressingTitle),
       description: intl.formatMessage(messages.stepperCompressingDescription),
       key: EXPORT_STAGES.COMPRESSING,
-    }, {
+    },
+    {
       title: successTitle,
       description: intl.formatMessage(messages.stepperSuccessDescription),
       key: EXPORT_STAGES.SUCCESS,

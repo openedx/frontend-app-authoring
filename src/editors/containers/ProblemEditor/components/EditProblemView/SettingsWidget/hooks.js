@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 
 import {
-  includes, isEmpty, isFinite, isNaN, isNil,
+  includes,
+  isEmpty,
+  isFinite,
+  isNaN,
+  isNil,
 } from 'lodash';
 import {
   ProblemTypeKeys,
@@ -62,7 +66,7 @@ export const hintsCardHooks = (hints, updateSettings) => {
     if (hintsNumber === 0) {
       setSummary({ message: messages.noHintSummary, values: {} });
     } else {
-      setSummary({ message: messages.hintSummary, values: { hint: hints[0].value, count: (hintsNumber - 1) } });
+      setSummary({ message: messages.hintSummary, values: { hint: hints[0].value, count: hintsNumber - 1 } });
     }
   }, [hints]);
 

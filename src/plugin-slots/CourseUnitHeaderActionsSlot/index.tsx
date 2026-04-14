@@ -1,6 +1,8 @@
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
-import HeaderNavigations, { HeaderNavigationActions } from 'CourseAuthoring/course-unit/header-navigations/HeaderNavigations';
+import HeaderNavigations, {
+  HeaderNavigationActions,
+} from 'CourseAuthoring/course-unit/header-navigations/HeaderNavigations';
 import { COURSE_BLOCK_NAMES } from 'CourseAuthoring/constants';
 
 export interface CourseUnitHeaderActionsSlotProps {

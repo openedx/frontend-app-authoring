@@ -10,7 +10,11 @@ import * as appHooks from '../../hooks';
 import { selectors } from '../../data/redux';
 import analyticsEvt from '../../data/constants/analyticsEvt';
 import {
-  filterKeys, filterMessages, sortFunctions, sortKeys, sortMessages,
+  filterKeys,
+  filterMessages,
+  sortFunctions,
+  sortKeys,
+  sortMessages,
 } from './utils';
 
 export const {
@@ -47,8 +51,10 @@ export const filterListBySearch = ({
   searchString,
   videoList,
 }) => (
-  videoList.filter(({ displayName }) => displayName.toLowerCase()
-    .includes(searchString.toLowerCase()))
+  videoList.filter(({ displayName }) =>
+    displayName.toLowerCase()
+      .includes(searchString.toLowerCase())
+  )
 );
 
 export const filterListByStatus = ({ statusFilter, videoList }) => {
@@ -88,7 +94,7 @@ export const useVideoListProps = ({
   videos,
   returnFunction,
 }) => {
-  const [highlighted, setHighlighted] = React.useState(/** @type {string | null} */(null));
+  const [highlighted, setHighlighted] = React.useState(/** @type {string | null} */ (null));
   const [
     showSelectVideoError,
     setShowSelectVideoError,

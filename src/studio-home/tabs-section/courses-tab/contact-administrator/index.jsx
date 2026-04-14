@@ -9,7 +9,9 @@ import { getStudioHomeData } from '../../../data/selectors';
 import messages from '../../../messages';
 
 const ContactAdministrator = ({
-  hasAbilityToCreateCourse, showNewCourseContainer, onClickNewCourse,
+  hasAbilityToCreateCourse,
+  showNewCourseContainer,
+  onClickNewCourse,
 }) => {
   const intl = useIntl();
   const { studioShortName } = useSelector(getStudioHomeData);
@@ -28,7 +30,7 @@ const ContactAdministrator = ({
           <Card.Section
             className="small"
             title={intl.formatMessage(messages.defaultSection_2_Title)}
-            actions={(
+            actions={
               <Button
                 iconBefore={AddIcon}
                 variant="outline-primary"
@@ -38,7 +40,7 @@ const ContactAdministrator = ({
               >
                 {intl.formatMessage(messages.btnAddNewCourseText)}
               </Button>
-            )}
+            }
           >
             {intl.formatMessage(messages.defaultSection_2_Description)}
           </Card.Section>

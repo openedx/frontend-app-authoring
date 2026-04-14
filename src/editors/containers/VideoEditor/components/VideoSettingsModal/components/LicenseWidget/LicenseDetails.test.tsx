@@ -1,6 +1,8 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks,
+  render,
+  screen,
+  initializeMocks,
 } from '@src/testUtils';
 
 import { actions } from '../../../../../../data/redux';
@@ -34,7 +36,7 @@ describe('LicenseDetails', () => {
   describe('renders', () => {
     test('renders as expected with default props', () => {
       const { container } = render(<LicenseDetails {...props} />);
-      const reduxWrapper = (container.firstChild as HTMLElement);
+      const reduxWrapper = container.firstChild as HTMLElement;
       expect(reduxWrapper?.innerHTML).toBe('');
       expect(screen.queryByText('License Details')).not.toBeInTheDocument();
     });
@@ -46,7 +48,7 @@ describe('LicenseDetails', () => {
 
     test('renders as expected with level set to block and license set to select', () => {
       const { container } = render(<LicenseDetails {...props} level="block" license="select" />);
-      const reduxWrapper = (container.firstChild as HTMLElement);
+      const reduxWrapper = container.firstChild as HTMLElement;
       expect(reduxWrapper?.innerHTML).toBe('');
       expect(screen.queryByText('License Details')).not.toBeInTheDocument();
     });

@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, Stack, Badge, Truncate,
+  Button,
+  Stack,
+  Badge,
+  Truncate,
 } from '@openedx/paragon';
 import {
   ArrowDropDown as ArrowDownIcon,
@@ -12,7 +15,10 @@ import { getCombinedBadgeList } from '../utils';
 import messages from './messages';
 
 const TitleButton = ({
-  group, isExpanded, isExperiment, onTitleClick,
+  group,
+  isExpanded,
+  isExperiment,
+  onTitleClick,
 }) => {
   const { formatMessage } = useIntl();
   const { id, name, usage } = group;

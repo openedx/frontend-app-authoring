@@ -25,7 +25,8 @@ export const handleIndexTransformEvent = ({
   local,
   setter,
   transform,
-}) => (index) => (
+}) =>
+(index) => (
   handler(val => setter(transform(local, index, val)))
 );
 

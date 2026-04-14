@@ -127,12 +127,10 @@ const CreateContainerModal = () => {
         initialValues={{
           displayName: '',
         }}
-        validationSchema={
-          Yup.object().shape({
-            displayName: Yup.string()
-              .required(labels.validationError),
-          })
-        }
+        validationSchema={Yup.object().shape({
+          displayName: Yup.string()
+            .required(labels.validationError),
+        })}
         onSubmit={handleCreate}
       >
         {(formikProps) => (
@@ -140,11 +138,11 @@ const CreateContainerModal = () => {
             <ModalDialog.Body className="mw-sm">
               <FormikControl
                 name="displayName"
-                label={(
+                label={
                   <Form.Label className="font-weight-bold h3">
                     {labels.nameLabel}
                   </Form.Label>
-                )}
+                }
                 value={formikProps.values.displayName}
                 placeholder={labels.placeholder}
                 controlClasses="pb-2"

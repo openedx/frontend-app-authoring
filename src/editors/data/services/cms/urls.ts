@@ -16,7 +16,10 @@ export const unit = ({ studioEndpointUrl, unitUrl, blockId }) => (
 );
 
 export const returnUrl = ({
-  studioEndpointUrl, unitUrl, learningContextId, blockId,
+  studioEndpointUrl,
+  unitUrl,
+  learningContextId,
+  blockId,
 }): string => {
   // Is this a v1 library?
   if (isLibraryV1Key(learningContextId)) {

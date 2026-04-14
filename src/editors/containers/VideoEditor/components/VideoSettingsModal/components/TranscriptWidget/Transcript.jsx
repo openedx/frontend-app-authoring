@@ -26,7 +26,7 @@ import messages from './messages';
 
 export const hooks = {
   state: {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     inDeleteConfirmation: (args) => React.useState(args),
   },
   setUpDeleteConfirmation: () => {
@@ -53,7 +53,7 @@ const Transcript = ({
       {inDeleteConfirmation
         ? (
           <Card className="mb-2">
-            <Card.Header title={(<FormattedMessage {...messages.deleteConfirmationHeader} />)} />
+            <Card.Header title={<FormattedMessage {...messages.deleteConfirmationHeader} />} />
             <Card.Body>
               <Card.Section>
                 <FormattedMessage {...messages.deleteConfirmationMessage} />
@@ -84,20 +84,22 @@ const Transcript = ({
               language={language}
             />
             <ActionRow.Spacer />
-            { language === '' ? (
-              <IconButton
-                iconAs={Icon}
-                src={DeleteOutline}
-                onClick={() => launchDeleteConfirmation()}
-              />
-            ) : (
-              <TranscriptActionMenu
-                index={index}
-                language={language}
-                transcriptUrl={transcriptUrl}
-                launchDeleteConfirmation={launchDeleteConfirmation}
-              />
-            )}
+            {language === '' ?
+              (
+                <IconButton
+                  iconAs={Icon}
+                  src={DeleteOutline}
+                  onClick={() => launchDeleteConfirmation()}
+                />
+              ) :
+              (
+                <TranscriptActionMenu
+                  index={index}
+                  language={language}
+                  transcriptUrl={transcriptUrl}
+                  launchDeleteConfirmation={launchDeleteConfirmation}
+                />
+              )}
           </ActionRow>
         )}
     </>
@@ -115,8 +117,7 @@ Transcript.propTypes = {
   deleteTranscript: PropTypes.func.isRequired,
 };
 
-export const mapStateToProps = () => ({
-});
+export const mapStateToProps = () => ({});
 export const mapDispatchToProps = {
   deleteTranscript: thunkActions.video.deleteTranscript,
 };

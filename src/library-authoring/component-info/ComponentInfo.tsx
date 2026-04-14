@@ -106,8 +106,8 @@ const ComponentActions = ({
   componentId,
   hasUnpublishedChanges,
 }: {
-  componentId: string,
-  hasUnpublishedChanges: boolean,
+  componentId: string;
+  hasUnpublishedChanges: boolean;
 }) => {
   const intl = useIntl();
   const { openComponentEditor } = useOptionalLibraryContext();
@@ -135,15 +135,17 @@ const ComponentActions = ({
         {intl.formatMessage(messages.editComponentButtonTitle)}
       </Button>
       <div className="flex-grow-1">
-        {!hasUnpublishedChanges ? (
-          <div className="m-1">
-            <PublishedChip />
-          </div>
-        ) : (
-          <PublishDraftButton
-            onClick={openPublisher}
-          />
-        )}
+        {!hasUnpublishedChanges ?
+          (
+            <div className="m-1">
+              <PublishedChip />
+            </div>
+          ) :
+          (
+            <PublishDraftButton
+              onClick={openPublisher}
+            />
+          )}
       </div>
       <div className="mt-2">
         <ComponentMenu usageKey={componentId} index={sidebarItemInfo?.index} />
@@ -165,11 +167,9 @@ const ComponentInfo = () => {
     resetSidebarAction,
   } = useSidebarContext();
 
-  const tab: ComponentInfoTab = (
-    isComponentInfoTab(sidebarTab)
-      ? sidebarTab
-      : defaultTab.component
-  );
+  const tab: ComponentInfoTab = isComponentInfoTab(sidebarTab)
+    ? sidebarTab
+    : defaultTab.component;
 
   const handleTabChange = (newTab: ComponentInfoTab) => {
     resetSidebarAction();

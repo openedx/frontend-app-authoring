@@ -17,7 +17,7 @@ const DeleteModal = ({ isOpen, close, onDeleteSubmit }) => {
       title={intl.formatMessage(messages.deleteModalTitle)}
       isOpen={isOpen}
       onClose={close}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button variant="tertiary" onClick={close}>
             {intl.formatMessage(messages.cancelButton)}
@@ -31,7 +31,7 @@ const DeleteModal = ({ isOpen, close, onDeleteSubmit }) => {
             {intl.formatMessage(messages.deleteButton)}
           </Button>
         </ActionRow>
-      )}
+      }
     >
       <p>{intl.formatMessage(messages.deleteModalDescription)}</p>
     </AlertModal>

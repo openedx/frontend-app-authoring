@@ -8,7 +8,12 @@ import { executeThunk } from '../../../utils';
 import { generateProvidersApiResponse, legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
 import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from './api';
 import {
-  DENIED, FAILED, SAVED, LOADED, selectApp, updateValidationStatus,
+  DENIED,
+  FAILED,
+  SAVED,
+  LOADED,
+  selectApp,
+  updateValidationStatus,
 } from './slice';
 import { fetchDiscussionSettings, fetchProviders, saveProviderConfig } from './thunks';
 
@@ -28,12 +33,10 @@ const featuresState = {
   'wcag-2.1': {
     id: 'wcag-2.1',
     featureSupportType: 'partial',
-
   },
   'basic-configuration': {
     id: 'basic-configuration',
     featureSupportType: 'common',
-
   },
 };
 
@@ -284,7 +287,10 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchProviders(courseId), store.dispatch);
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator), store.dispatch);
+      await executeThunk(
+        saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator),
+        store.dispatch,
+      );
 
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
@@ -307,7 +313,10 @@ describe('Data layer integration tests', () => {
       // We call fetchProviders and selectApp here too just to get us into a real state.
       await executeThunk(fetchProviders(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator), store.dispatch);
+      await executeThunk(
+        saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator),
+        store.dispatch,
+      );
 
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
@@ -351,17 +360,20 @@ describe('Data layer integration tests', () => {
       // We call fetchProviders and selectApp here too just to get us into a real state.
       await executeThunk(fetchProviders(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveProviderConfig(
-        courseId,
-        'piazza',
-        {
-          consumerKey: 'new_consumer_key',
-          consumerSecret: 'new_consumer_secret',
-          launchUrl: 'http://localhost/new_launch_url',
-        },
-        pagesAndResourcesPath,
-        mockedNavigator,
-      ), store.dispatch);
+      await executeThunk(
+        saveProviderConfig(
+          courseId,
+          'piazza',
+          {
+            consumerKey: 'new_consumer_key',
+            consumerSecret: 'new_consumer_secret',
+            launchUrl: 'http://localhost/new_launch_url',
+          },
+          pagesAndResourcesPath,
+          mockedNavigator,
+        ),
+        store.dispatch,
+      );
 
       await waitFor(() => {
         expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
@@ -435,30 +447,33 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchProviders(courseId), store.dispatch);
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'legacy' }));
-      await executeThunk(saveProviderConfig(
-        courseId,
-        'legacy',
-        {
-          allowAnonymousPosts: true,
-          allowAnonymousPostsPeers: true,
-          reportedContentEmailNotifications: true,
-          restrictedDates: [],
-          // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
-          // but we technically send it to the thunk, so here it is.
-          divideByCohorts: true,
-          allowDivisionsByUnit: true,
-          alwaysDivideInlineDiscussions: true,
-          divideCourseTopicsByCohorts: true,
-          divisionScheme: DivisionSchemes.COHORT,
-          divideDiscussionIds,
-          discussionTopics: [
-            { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
-            { name: 'General', id: 'course' },
-          ],
-        },
-        pagesAndResourcesPath,
-        mockedNavigator,
-      ), store.dispatch);
+      await executeThunk(
+        saveProviderConfig(
+          courseId,
+          'legacy',
+          {
+            allowAnonymousPosts: true,
+            allowAnonymousPostsPeers: true,
+            reportedContentEmailNotifications: true,
+            restrictedDates: [],
+            // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
+            // but we technically send it to the thunk, so here it is.
+            divideByCohorts: true,
+            allowDivisionsByUnit: true,
+            alwaysDivideInlineDiscussions: true,
+            divideCourseTopicsByCohorts: true,
+            divisionScheme: DivisionSchemes.COHORT,
+            divideDiscussionIds,
+            discussionTopics: [
+              { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
+              { name: 'General', id: 'course' },
+            ],
+          },
+          pagesAndResourcesPath,
+          mockedNavigator,
+        ),
+        store.dispatch,
+      );
       await waitFor(() => {
         expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
         expect(store.getState().discussions).toEqual(

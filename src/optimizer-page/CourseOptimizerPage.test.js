@@ -1,14 +1,21 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react/jsx-filename-extension */
 import {
-  fireEvent, render, waitFor, screen,
+  fireEvent,
+  render,
+  waitFor,
+  screen,
   initializeMocks,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import generalMessages from '../messages';
 import scanResultsMessages from './scan-results/messages';
-import CourseOptimizerPage, { pollLinkCheckDuringScan, pollRerunLinkUpdateDuringUpdate, pollRerunLinkUpdateStatus } from './CourseOptimizerPage';
+import CourseOptimizerPage, {
+  pollLinkCheckDuringScan,
+  pollRerunLinkUpdateDuringUpdate,
+  pollRerunLinkUpdateStatus,
+} from './CourseOptimizerPage';
 import { postLinkCheckCourseApiUrl, getLinkCheckStatusApiUrl } from './data/api';
 import {
   mockApiResponse,
@@ -61,7 +68,10 @@ describe('CourseOptimizerPage', () => {
       mockFetchLinkCheckStatus = jest.fn();
       jest.spyOn(thunks, 'fetchLinkCheckStatus').mockImplementation(mockFetchLinkCheckStatus);
       jest.useFakeTimers();
-      jest.spyOn(global, 'setInterval').mockImplementation((cb) => { cb(); return true; });
+      jest.spyOn(global, 'setInterval').mockImplementation((cb) => {
+        cb();
+        return true;
+      });
     });
 
     afterEach(() => {

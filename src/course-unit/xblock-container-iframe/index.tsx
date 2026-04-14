@@ -1,6 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { getConfig } from '@edx/frontend-platform';
 import {
-  FC, useEffect, useState, useMemo, useCallback,
+  FC,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle, Sheet, StandardModal } from '@openedx/paragon';
@@ -24,7 +29,8 @@ import EditorPage from '@src/editors/EditorPage';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ConfigureUnitData } from '@src/course-outline/data/types';
 import { AccessManagedXBlockDataTypes } from '@src/data/types';
-import { messageTypes } from '../constants';
+import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
+import { messageTypes, PUBLISH_TYPES } from '../constants';
 import {
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
@@ -40,17 +46,19 @@ import {
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 import { isUnitPageNewDesignEnabled } from '../utils';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
+import { contentTagsQueryKeys } from '@src/content-tags-drawer/data/apiHooks';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId,
   blockId,
   unitXBlockActions,
   courseVerticalChildren,
-  handleConfigureSubmit,
   isUnitVerticalType,
   readonly,
 }) => {
   const intl = useIntl();
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const {
     setCurrentPageKey,
@@ -95,11 +103,21 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     setIframeRef(iframeRef);
   }, [setIframeRef]);
 
+  const refreshComponent = (id: string) => {
+    queryClient.invalidateQueries({
+      queryKey: courseOutlineQueryKeys.courseItemId(id),
+    });
+    queryClient.invalidateQueries({
+      queryKey: contentTagsQueryKeys.contentData(id),
+    });
+  };
+
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
     closeVideoSelectorModal();
     sendMessageToIframe(messageTypes.refreshXBlock, null);
-  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
+    refreshComponent(newBlockId);
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe, newBlockId]);
 
   const handleEditXBlock = useCallback((type: string, id: string) => {
     setBlockType(type);
@@ -145,19 +163,24 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     }
   };
 
-  const onUnlinkSubmit = () => {
+  const onUnlinkSubmit = async () => {
     if (unlinkXBlockId) {
-      unitXBlockActions.handleUnlink(unlinkXBlockId);
+      await unitXBlockActions.handleUnlink(unlinkXBlockId);
       closeUnlinkModal();
+      refreshComponent(unlinkXBlockId);
     }
   };
 
+  const configureFn = useConfigureUnitWithPageUpdates();
   const onManageXBlockAccessSubmit = (variables: Omit<ConfigureUnitData, 'unitId'>) => {
     if (configureXBlockId) {
-      handleConfigureSubmit({
+      configureFn.mutate({
         unitId: configureXBlockId,
         ...variables,
-        closeModalFn: closeConfigureModal,
+        type: PUBLISH_TYPES.republish,
+      }, {
+        onSuccess: () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: configureXBlockId }),
+        onSettled: () => closeConfigureModal(),
       });
       setAccessManagedXBlockData(undefined);
     }
@@ -183,6 +206,9 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const handleSaveEditedXBlockData = () => {
     sendMessageToIframe(messageTypes.completeXBlockEditing, { locator: configureXBlockId });
     dispatch(updateCourseUnitSidebar(blockId));
+    if (configureXBlockId) {
+      refreshComponent(configureXBlockId);
+    }
     if (!isUnitVerticalType) {
       dispatch(fetchCourseSectionVerticalData(blockId));
     }

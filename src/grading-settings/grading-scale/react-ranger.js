@@ -5,8 +5,8 @@ function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null) { return {}; }
   const target = {};
   const sourceKeys = Object.keys(source);
-  let key; let
-    i;
+  let key;
+  let i;
 
   for (i = 0; i < sourceKeys.length; i++) {
     key = sourceKeys[i];
@@ -160,7 +160,8 @@ function useRanger(_ref) {
     const { values } = _getLatest2;
     const _getLatest2$onChange = _getLatest2.onChange;
     const onChange = _getLatest2$onChange === void 0
-      ? function () {} : _getLatest2$onChange; // Left Arrow || Right Arrow
+      ? function() {} :
+      _getLatest2$onChange; // Left Arrow || Right Arrow
 
     if (e.keyCode === 37 || e.keyCode === 39) {
       setActiveHandleIndex(i);
@@ -179,9 +180,9 @@ function useRanger(_ref) {
       const { tempValues } = _getLatest3;
       const { values } = _getLatest3;
       const _getLatest3$onChange = _getLatest3.onChange;
-      const onChange = _getLatest3$onChange === void 0 ? function () {} : _getLatest3$onChange;
+      const onChange = _getLatest3$onChange === void 0 ? function() {} : _getLatest3$onChange;
       const _getLatest3$onDrag = _getLatest3.onDrag;
-      const onDrag = _getLatest3$onDrag === void 0 ? function () {} : _getLatest3$onDrag;
+      const onDrag = _getLatest3$onDrag === void 0 ? function() {} : _getLatest3$onDrag;
 
       document.removeEventListener('mousemove', handleDrag);
       document.removeEventListener('touchmove', handleDrag);
@@ -199,8 +200,11 @@ function useRanger(_ref) {
     document.addEventListener('mouseup', handleRelease);
     document.addEventListener('touchend', handleRelease);
   }, [getLatest, handleDrag]);
-  const getPercentageForValue = React.useCallback((val) =>
-    interpolator.getPercentageForValue(val, min, max), [interpolator, max, min]); // Build the ticks
+  const getPercentageForValue = React.useCallback((val) => interpolator.getPercentageForValue(val, min, max), [
+    interpolator,
+    max,
+    min,
+  ]); // Build the ticks
 
   const ticks = React.useMemo(() => {
     let ticks = controlledTicks || steps;
@@ -230,7 +234,7 @@ function useRanger(_ref) {
           style: {
             position: 'absolute',
             width: 0,
-            left: `${getPercentageForValue(value) }%`,
+            left: `${getPercentageForValue(value)}%`,
             transform: 'translateX(-50%)',
             ...style,
           },
@@ -257,8 +261,8 @@ function useRanger(_ref) {
           key,
           style: {
             position: 'absolute',
-            left: `${left }%`,
-            width: `${width }%`,
+            left: `${left}%`,
+            width: `${width}%`,
             ...style,
           },
           ...rest,
@@ -266,57 +270,64 @@ function useRanger(_ref) {
       },
     }));
   }, [getPercentageForValue, max, min, tempValues, values]);
-  const handles = React.useMemo(() => (tempValues || values).map((value, i) => ({
-    value,
-    active: i === activeHandleIndex,
-    getHandleProps: function getHandleProps(_temp3) {
-      const _ref4 = _temp3 === void 0 ? {} : _temp3;
-      const _ref4$key = _ref4.key;
-      const key = _ref4$key === void 0 ? i : _ref4$key;
-      const { ref } = _ref4;
-      const _ref4$innerRef = _ref4.innerRef;
-      const _onKeyDown = _ref4.onKeyDown;
-      const _onMouseDown = _ref4.onMouseDown;
-      const _onTouchStart = _ref4.onTouchStart;
-      const _ref4$style = _ref4.style;
-      const style = _ref4$style === void 0 ? {} : _ref4$style;
-      const rest = _objectWithoutPropertiesLoose(_ref4, [
-        'key', 'ref', 'innerRef', 'onKeyDown', 'onMouseDown', 'onTouchStart', 'style',
-      ]);
+  const handles = React.useMemo(() =>
+    (tempValues || values).map((value, i) => ({
+      value,
+      active: i === activeHandleIndex,
+      getHandleProps: function getHandleProps(_temp3) {
+        const _ref4 = _temp3 === void 0 ? {} : _temp3;
+        const _ref4$key = _ref4.key;
+        const key = _ref4$key === void 0 ? i : _ref4$key;
+        const { ref } = _ref4;
+        const _ref4$innerRef = _ref4.innerRef;
+        const _onKeyDown = _ref4.onKeyDown;
+        const _onMouseDown = _ref4.onMouseDown;
+        const _onTouchStart = _ref4.onTouchStart;
+        const _ref4$style = _ref4.style;
+        const style = _ref4$style === void 0 ? {} : _ref4$style;
+        const rest = _objectWithoutPropertiesLoose(_ref4, [
+          'key',
+          'ref',
+          'innerRef',
+          'onKeyDown',
+          'onMouseDown',
+          'onTouchStart',
+          'style',
+        ]);
 
-      return {
-        key,
-        onKeyDown: function onKeyDown(e) {
-          e.persist();
-          handleKeyDown(e, i);
-          if (_onKeyDown) { _onKeyDown(e); }
-        },
-        onMouseDown: function onMouseDown(e) {
-          e.persist();
-          handlePress(e, i);
-          if (_onMouseDown) { _onMouseDown(e); }
-        },
-        onTouchStart: function onTouchStart(e) {
-          e.persist();
-          handlePress(e, i);
-          if (_onTouchStart) { _onTouchStart(e); }
-        },
-        role: 'slider',
-        'aria-valuemin': min,
-        'aria-valuemax': max,
-        'aria-valuenow': value,
-        style: {
-          position: 'absolute',
-          top: '50%',
-          left: `${getPercentageForValue(value) }%`,
-          zIndex: i === activeHandleIndex ? '1' : '0',
-          transform: 'translate(-50%, -50%)',
-          ...style,
-        },
-        ...rest,
-      };
-    },
-  })), [activeHandleIndex, getPercentageForValue, handleKeyDown, handlePress, min, max, tempValues, values]);
+        return {
+          key,
+          onKeyDown: function onKeyDown(e) {
+            e.persist();
+            handleKeyDown(e, i);
+            if (_onKeyDown) { _onKeyDown(e); }
+          },
+          onMouseDown: function onMouseDown(e) {
+            e.persist();
+            handlePress(e, i);
+            if (_onMouseDown) { _onMouseDown(e); }
+          },
+          onTouchStart: function onTouchStart(e) {
+            e.persist();
+            handlePress(e, i);
+            if (_onTouchStart) { _onTouchStart(e); }
+          },
+          role: 'slider',
+          'aria-valuemin': min,
+          'aria-valuemax': max,
+          'aria-valuenow': value,
+          style: {
+            position: 'absolute',
+            top: '50%',
+            left: `${getPercentageForValue(value)}%`,
+            zIndex: i === activeHandleIndex ? '1' : '0',
+            transform: 'translate(-50%, -50%)',
+            ...style,
+          },
+          ...rest,
+        };
+      },
+    })), [activeHandleIndex, getPercentageForValue, handleKeyDown, handlePress, min, max, tempValues, values]);
 
   const getTrackProps = function getTrackProps(_temp4) {
     const _ref5 = _temp4 === void 0 ? {} : _temp4;

@@ -139,7 +139,7 @@ const CourseUpdates = () => {
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
                     instruction={intl.formatMessage(messages.sectionInfo)}
-                    headerActions={(
+                    headerActions={
                       <Button
                         variant="primary"
                         iconBefore={AddIcon}
@@ -149,7 +149,7 @@ const CourseUpdates = () => {
                       >
                         {intl.formatMessage(messages.newUpdateButton)}
                       </Button>
-                    )}
+                    }
                   />
                   <section className="updates-section">
                     {isMainFormOpen && (
@@ -164,24 +164,28 @@ const CourseUpdates = () => {
                       {courseUpdates.length > 0 && (
                         <div className="p-4.5">
                           {courseUpdates.map((courseUpdate, index) => (
-                            isInnerFormOpen(courseUpdate.id) ? (
-                              <UpdateForm
-                                close={closeUpdateForm}
-                                requestType={requestType}
-                                isInnerForm
-                                isFirstUpdate={index === 0}
-                                onSubmit={handleUpdatesSubmit}
-                                courseUpdatesInitialValues={courseUpdatesInitialValues}
-                              />
-                            ) : (
-                              <CourseUpdate
-                                dateForUpdate={courseUpdate.date}
-                                contentForUpdate={courseUpdate.content}
-                                onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_update, courseUpdate)}
-                                onDelete={() => handleOpenDeleteForm(courseUpdate)}
-                                isDisabledButtons={isUpdateFormOpen}
-                              />
-                            )
+                            isInnerFormOpen(courseUpdate.id) ?
+                              (
+                                <UpdateForm
+                                  key={courseUpdate.id}
+                                  close={closeUpdateForm}
+                                  requestType={requestType}
+                                  isInnerForm
+                                  isFirstUpdate={index === 0}
+                                  onSubmit={handleUpdatesSubmit}
+                                  courseUpdatesInitialValues={courseUpdatesInitialValues}
+                                />
+                              ) :
+                              (
+                                <CourseUpdate
+                                  key={courseUpdate.id}
+                                  dateForUpdate={courseUpdate.date}
+                                  contentForUpdate={courseUpdate.content}
+                                  onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_update, courseUpdate)}
+                                  onDelete={() => handleOpenDeleteForm(courseUpdate)}
+                                  isDisabledButtons={isUpdateFormOpen}
+                                />
+                              )
                           ))}
                         </div>
                       )}

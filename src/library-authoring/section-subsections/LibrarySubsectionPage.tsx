@@ -28,7 +28,10 @@ export const LibrarySubsectionPage = () => {
   const { data: libraryData, isPending: isLibPending } = useContentLibrary(libraryId);
   // fetch subsectionData from index as it includes its parent sections as well.
   const {
-    hits, isPending, isError, error,
+    hits,
+    isPending,
+    isError,
+    error,
   } = useContentFromSearchIndex(containerId ? [containerId] : []);
   const subsectionData = (hits as ContainerHit[])?.[0];
 
@@ -74,20 +77,20 @@ export const LibrarySubsectionPage = () => {
           <div className="px-4 bg-light-200 border-bottom mb-2">
             <SubHeader
               title={<SubHeaderTitle title={<ContainerEditableTitle containerId={containerId} />} />}
-              breadcrumbs={(
+              breadcrumbs={
                 <ParentBreadcrumbs
                   libraryData={libraryData}
                   parents={subsectionData.sections}
                   containerType={subsectionData.blockType}
                 />
-              )}
-              headerActions={(
+              }
+              headerActions={
                 <HeaderActions
                   containerKey={containerId}
                   infoBtnText={intl.formatMessage(subsectionMessages.infoButtonText)}
                   addContentBtnText={intl.formatMessage(subsectionMessages.newContentButton)}
                 />
-              )}
+              }
               hideBorder
             />
           </div>

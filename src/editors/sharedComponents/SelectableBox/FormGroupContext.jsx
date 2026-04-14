@@ -1,5 +1,8 @@
 import React, {
-  useState, useEffect, useMemo, useCallback,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -114,8 +117,4 @@ FormGroupContextProvider.defaultProps = {
   size: undefined,
 };
 
-export {
-  FormGroupContext,
-  FormGroupContextProvider,
-  useFormGroupContext,
-};
+export { FormGroupContext, FormGroupContextProvider, useFormGroupContext };

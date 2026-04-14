@@ -105,9 +105,7 @@ export const ItemHierarchyPublisher = ({
   };
 
   return (
-    <Container
-      className="p-3 status-box draft-status"
-    >
+    <Container className="p-3 status-box draft-status">
       <h4>{intl.formatMessage(messages.publishConfirmHeading)}</h4>
       <p>{childWarningMessage()} {parentWarningMessage()}</p>
       <ItemHierarchy showPublishStatus />

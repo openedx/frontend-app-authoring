@@ -8,11 +8,11 @@ import messages from './messages';
  * @param {typeof REQUEST_TYPES} requestType - one of REQUEST_TYPES
  * @param {object} courseUpdatesInitialValues - form initial values depending on requestType
  * @returns {{
-  *  currentContent: string,
-  *  validationSchema: object,
-  *  formTitle: string,
-  *  submitButtonText: string,
-  *  contentFieldName: string
+ *  currentContent: string,
+ *  validationSchema: object,
+ *  formTitle: string,
+ *  submitButtonText: string,
+ *  contentFieldName: string
  *  }}
  */
 const geUpdateFormSettings = (requestType, courseUpdatesInitialValues, intl) => {

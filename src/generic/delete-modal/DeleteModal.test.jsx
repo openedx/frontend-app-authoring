@@ -26,19 +26,20 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
-const renderComponent = (props) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <DeleteModal
-        isOpen
-        close={closeMock}
-        category="Section"
-        onDeleteSubmit={onDeleteSubmitMock}
-        {...props}
-      />
-    </IntlProvider>,
-  </AppProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <DeleteModal
+          isOpen
+          close={closeMock}
+          category="Section"
+          onDeleteSubmit={onDeleteSubmitMock}
+          {...props}
+        />
+      </IntlProvider>,
+    </AppProvider>,
+  );
 
 describe('<DeleteModal />', () => {
   beforeEach(() => {

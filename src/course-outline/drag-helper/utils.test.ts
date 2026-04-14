@@ -1,6 +1,11 @@
 import { XBlock } from '@src/data/types';
 import {
-  possibleSubsectionMoves, moveSubsection, moveSubsectionOver, possibleUnitMoves, moveUnit, moveUnitOver,
+  possibleSubsectionMoves,
+  moveSubsection,
+  moveSubsectionOver,
+  possibleUnitMoves,
+  moveUnit,
+  moveUnitOver,
 } from './utils';
 
 describe('possibleSubsectionMoves', () => {

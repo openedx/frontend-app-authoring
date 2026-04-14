@@ -27,20 +27,21 @@ const {
 
 const { unitId: containerId } = mockGetContainerMetadata;
 
-const render = (libraryId: string = mockLibraryId) => baseRender(<ContainerInfoHeader />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: containerId,
-          type: SidebarBodyItemId.ContainerInfo,
-        }}
-      >
-        { children }
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (libraryId: string = mockLibraryId) =>
+  baseRender(<ContainerInfoHeader />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: containerId,
+            type: SidebarBodyItemId.ContainerInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<ContainerInfoHeader />', () => {
   beforeEach(() => {

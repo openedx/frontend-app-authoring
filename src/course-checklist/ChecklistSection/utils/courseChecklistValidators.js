@@ -18,15 +18,20 @@ export const hasDates = dates => (
 export const hasAssignmentDeadlines = (assignments, dates) => {
   if (!hasDates(dates)) {
     return false;
-  } if (assignments.totalNumber === 0) {
+  }
+  if (assignments.totalNumber === 0) {
     return false;
-  } if (assignments.assignmentsWithDatesBeforeStart.length > 0) {
+  }
+  if (assignments.assignmentsWithDatesBeforeStart.length > 0) {
     return false;
-  } if (assignments.assignmentsWithDatesAfterEnd.length > 0) {
+  }
+  if (assignments.assignmentsWithDatesAfterEnd.length > 0) {
     return false;
-  } if (assignments.assignmentsWithOraDatesBeforeStart.length > 0) {
+  }
+  if (assignments.assignmentsWithOraDatesBeforeStart.length > 0) {
     return false;
-  } if (assignments.assignmentsWithOraDatesAfterEnd.length > 0) {
+  }
+  if (assignments.assignmentsWithOraDatesAfterEnd.length > 0) {
     return false;
   }
 
@@ -36,7 +41,8 @@ export const hasAssignmentDeadlines = (assignments, dates) => {
 export const hasShortVideoDuration = (videos) => {
   if (videos.totalNumber === 0) {
     return false;
-  } if (videos.totalNumber > 0 && videos.durations.median !== null && videos.durations.median <= 600) {
+  }
+  if (videos.totalNumber > 0 && videos.durations.median !== null && videos.durations.median <= 600) {
     return true;
   }
 
@@ -46,7 +52,8 @@ export const hasShortVideoDuration = (videos) => {
 export const hasDiverseSequences = (subsections) => {
   if (subsections.totalVisible === 0) {
     return false;
-  } if (subsections.totalVisible > 0) {
+  }
+  if (subsections.totalVisible > 0) {
     return ((subsections.numWithOneBlockType / subsections.totalVisible) <= 0.2);
   }
 

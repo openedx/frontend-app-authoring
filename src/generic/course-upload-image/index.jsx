@@ -56,53 +56,57 @@ const CourseUploadImage = ({
     }
   };
 
-  const inputComponent = assetImagePath ? (
-    <div className="image-preview">
-      <Image
-        src={imageAbsolutePath().href}
-        alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
-        fluid
-      />
-    </div>
-  ) : (
-    <>
-      <IconButton
-        isActive
-        src={FileUploadIcon}
-        iconAs={Icon}
-        variant="secondary"
-        alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
-      />
-      <p>
-        {intl.formatMessage(messages.uploadImageDropzoneText, {
-          identifierFieldText,
-        })}
-      </p>
-    </>
-  );
+  const inputComponent = assetImagePath ?
+    (
+      <div className="image-preview">
+        <Image
+          src={imageAbsolutePath().href}
+          alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
+          fluid
+        />
+      </div>
+    ) :
+    (
+      <>
+        <IconButton
+          isActive
+          src={FileUploadIcon}
+          iconAs={Icon}
+          variant="secondary"
+          alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
+        />
+        <p>
+          {intl.formatMessage(messages.uploadImageDropzoneText, {
+            identifierFieldText,
+          })}
+        </p>
+      </>
+    );
 
-  const cardImageTextBody = assetImagePath ? (
-    <span className="x-small text-gray-700">
-      <FormattedMessage
-        {...messages.uploadImageBodyFilled}
-        values={{
-          hyperlink: (
-            <Hyperlink
-              destination={assetsUrl().href}
-              target="_blank"
-              showLaunchIcon={false}
-            >
-              {intl.formatMessage(messages.uploadImageFilesAndUploads)}
-            </Hyperlink>
-          ),
-        }}
-      />
-    </span>
-  ) : (
-    <span className="x-small text-gray-700">
-      {intl.formatMessage(messages.uploadImageEmpty)}
-    </span>
-  );
+  const cardImageTextBody = assetImagePath ?
+    (
+      <span className="x-small text-gray-700">
+        <FormattedMessage
+          {...messages.uploadImageBodyFilled}
+          values={{
+            hyperlink: (
+              <Hyperlink
+                destination={assetsUrl().href}
+                target="_blank"
+                showLaunchIcon={false}
+              >
+                {intl.formatMessage(messages.uploadImageFilesAndUploads)}
+              </Hyperlink>
+            ),
+          }}
+        />
+      </span>
+    ) :
+    (
+      <span className="x-small text-gray-700">
+        {intl.formatMessage(messages.uploadImageEmpty)}
+      </span>
+    );
 
   return (
     <Form.Group className="form-group-custom w-100">
@@ -123,12 +127,10 @@ const CourseUploadImage = ({
           <Form.Control
             value={assetImagePath}
             onChange={(e) => handleChangeImageAsset(e.target.value)}
-            placeholder={
-              customInputPlaceholder
+            placeholder={customInputPlaceholder
               || intl.formatMessage(messages.uploadImageInputPlaceholder, {
                 identifierFieldText,
-              })
-            }
+              })}
           />
         </Card.Footer>
       </Card>

@@ -17,9 +17,7 @@ export const useChecklistState = ({ data, dataList }) => {
       const { isSelfPaced } = data;
       const hasCertificatesEnabled = data.certificates && data.certificates.isEnabled;
       const hasHighlightsEnabled = data.sections && data.sections.highlightsEnabled;
-      const needsProctoringEscalationEmail = (
-        data.proctoring && data.proctoring.needsProctoringEscalationEmail
-      );
+      const needsProctoringEscalationEmail = data.proctoring && data.proctoring.needsProctoringEscalationEmail;
       const checks = getFilteredChecklist(
         dataList,
         isSelfPaced,

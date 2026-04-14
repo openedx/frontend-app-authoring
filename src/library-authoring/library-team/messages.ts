@@ -69,10 +69,8 @@ const messages = defineMessages({
   cannotChangeRoleSingleAdmin: {
     id: 'course-authoring.library-authoring.library-team.cannot-changerole-single-admin',
     defaultMessage: 'Promote another member to Admin to change this user\'s access rights.',
-    description: (
-      'Shown to Library Admins if there\'s only one Admin in the Team,'
-      + ' explaining why this member cannot be changed yet.'
-    ),
+    description: 'Shown to Library Admins if there\'s only one Admin in the Team,'
+      + ' explaining why this member cannot be changed yet.',
   },
   makeMemberAdmin: {
     id: 'course-authoring.library-authoring.library-team.make-member-admin',

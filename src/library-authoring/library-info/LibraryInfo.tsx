@@ -56,7 +56,12 @@ const LibraryInfo = () => {
           </Button>
         )}
         {shouldShowAdminConsoleLink && (
-          <Button as={Hyperlink} variant="outline-primary" destination={`${adminConsoleUrl}/authz/libraries/${libraryId}`} target="_blank">
+          <Button
+            as={Hyperlink}
+            variant="outline-primary"
+            destination={`${adminConsoleUrl}/authz/libraries/${libraryId}`}
+            target="_blank"
+          >
             {intl.formatMessage(messages.libraryTeamButtonTitle)}
           </Button>
         )}

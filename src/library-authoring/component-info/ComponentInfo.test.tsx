@@ -33,7 +33,7 @@ jest.mock('./ComponentManagement', () => ({
 }));
 
 const withLibraryId = (libraryId: string, sidebarComponentUsageKey: string) => ({
-  extraWrapper: ({ children }: { children: React.ReactNode }) => (
+  extraWrapper: ({ children }: { children: React.ReactNode; }) => (
     <LibraryProvider libraryId={libraryId}>
       <SidebarProvider
         initialSidebarItemInfo={{

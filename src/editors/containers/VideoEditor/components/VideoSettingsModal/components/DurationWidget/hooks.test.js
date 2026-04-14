@@ -8,7 +8,7 @@ jest.mock('react', () => {
   return {
     ...jest.requireActual('react'),
     updateState,
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
+    useState: jest.fn(val => [{ state: val }, (newVal) => updateState({ val, newVal })]),
     useCallback: (cb, prereqs) => ({ useCallback: { cb, prereqs } }),
     useEffect: jest.fn(),
   };

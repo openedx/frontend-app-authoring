@@ -111,7 +111,9 @@ describe('AnswerOption', () => {
     const myProps = { ...props, answer: { ...answerWithOnlyFeedback, isAnswerRange: false } };
     render(<AnswerOption {...myProps} />);
     expect(
-      screen.getByText('Error: This input type only supports numeric answers. Did you mean to make a Text input or Math expression input problem?'),
+      screen.getByText(
+        'Error: This input type only supports numeric answers. Did you mean to make a Text input or Math expression input problem?',
+      ),
     ).toBeInTheDocument();
   });
 });

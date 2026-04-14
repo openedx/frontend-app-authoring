@@ -35,22 +35,24 @@ export const handleSaveClicked = ({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const analytics = useSelector(selectors.app.analytics);
   if (createBlockOnSave) {
-    return () => createBlock({
+    return () =>
+      createBlock({
+        analytics,
+        content: getContent({ dispatch }),
+        destination,
+        dispatch,
+        returnFunction,
+      });
+  }
+  return () =>
+    saveBlock({
       analytics,
       content: getContent({ dispatch }),
       destination,
       dispatch,
       returnFunction,
+      validateEntry,
     });
-  }
-  return () => saveBlock({
-    analytics,
-    content: getContent({ dispatch }),
-    destination,
-    dispatch,
-    returnFunction,
-    validateEntry,
-  });
 };
 
 export const cancelConfirmModalToggle = () => {
@@ -68,7 +70,7 @@ export const handleCancel = ({
 }: {
   onClose?: (() => void) | null;
   returnFunction?: (() => (result: any) => void) | null;
-}): ((result?: any) => void) => {
+}): (result?: any) => void => {
   if (onClose) {
     return onClose;
   }
@@ -87,10 +89,11 @@ export const handleCancel = ({
 // eslint-disable-next-line react-hooks/rules-of-hooks
 export const isInitialized = () => useSelector(selectors.app.isInitialized);
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-export const saveFailed = () => useSelector((rootState) => (
-  selectors.requests.isFailed(rootState, { requestKey: RequestKeys.saveBlock })
-));
+export const saveFailed = () =>
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useSelector((rootState) => (
+    selectors.requests.isFailed(rootState, { requestKey: RequestKeys.saveBlock })
+  ));
 
 export const createFailed = () => ({
   // eslint-disable-next-line react-hooks/rules-of-hooks

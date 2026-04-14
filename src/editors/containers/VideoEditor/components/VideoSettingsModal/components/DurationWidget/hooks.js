@@ -24,14 +24,15 @@ export const durationWidget = ({ duration, updateField }) => {
   return {
     unsavedDuration,
     onBlur: (index) => (
-      (e) => module.updateDuration({
-        duration,
-        setDuration,
-        unsavedDuration,
-        setUnsavedDuration,
-        index,
-        inputString: e.target.value,
-      })
+      (e) =>
+        module.updateDuration({
+          duration,
+          setDuration,
+          unsavedDuration,
+          setUnsavedDuration,
+          index,
+          inputString: e.target.value,
+        })
     ),
     onChange: (index) => (
       (e) => setUnsavedDuration(module.onDurationChange(unsavedDuration, index, e.target.value))

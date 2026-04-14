@@ -12,13 +12,19 @@ import useCertificateCreateForm from './hooks/useCertificateCreateForm';
 const CertificateCreateForm = ({ courseId }) => {
   const intl = useIntl();
   const {
-    courseTitle, handleCertificateSubmit, handleFormCancel,
+    courseTitle,
+    handleCertificateSubmit,
+    handleFormCancel,
   } = useCertificateCreateForm(courseId);
 
   return (
     <Formik initialValues={defaultCertificate} onSubmit={handleCertificateSubmit}>
       {({
-        values, handleChange, handleBlur, resetForm, setFieldValue,
+        values,
+        handleChange,
+        handleBlur,
+        resetForm,
+        setFieldValue,
       }) => (
         <Form className="certificates-card-form" data-testid="certificates-create-form">
           <Card>

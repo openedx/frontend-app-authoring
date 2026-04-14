@@ -67,8 +67,12 @@ describe('app selectors unit tests', () => {
         data: {
           ancestors: [
             {
-              id: 'unit id', display_name: 'Unit', category: 'vertical' as const, has_children: true,
-            }],
+              id: 'unit id',
+              display_name: 'Unit',
+              category: 'vertical' as const,
+              has_children: true,
+            },
+          ],
         },
       };
       const learningContextId = 'some learning context';
@@ -77,7 +81,10 @@ describe('app selectors unit tests', () => {
         cb(unitUrl, studioEndpointUrl, learningContextId, blockId),
       ).toEqual(
         urls.returnUrl({
-          unitUrl, studioEndpointUrl, learningContextId, blockId,
+          unitUrl,
+          studioEndpointUrl,
+          learningContextId,
+          blockId,
         }),
       );
     });

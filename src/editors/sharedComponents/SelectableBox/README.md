@@ -15,14 +15,14 @@ notes: |
 
 A box that has selection states. It can be used as an alternative to a radio button or checkbox set.
 
-The ``SelectableBox`` can contain any kind of content as long as it is not clickable. In other words, there should be no clickable targets distinct from selection.
+The `SelectableBox` can contain any kind of content as long as it is not clickable. In other words, there should be no clickable targets distinct from selection.
 
 ## Basic Usage
 
-As ``Checkbox``
+As `Checkbox`
 
 ```jsx live
-() => {
+(() => {
   const type = 'checkbox';
   const allCheeseOptions = ['swiss', 'cheddar', 'pepperjack'];
   const [checkedCheeses, { add, remove, set, clear }] = useCheckboxSetValues(['swiss']);
@@ -30,10 +30,10 @@ As ``Checkbox``
   const handleChange = e => {
     e.target.checked ? add(e.target.value) : remove(e.target.value);
   };
-  
+
   const isInvalid = () => checkedCheeses.includes('swiss');
   const isExtraSmall = useMediaQuery({ maxWidth: breakpoints.extraSmall.maxWidth });
-  
+
   return (
     <div className="bg-light-200 p-3">
       <SelectableBox.Set
@@ -65,13 +65,13 @@ As ``Checkbox``
       </SelectableBox.Set>
     </div>
   );
-}
+});
 ```
 
 ## As Radio
 
 ```jsx live
-() => {
+(() => {
   const type = 'radio';
   const [value, setValue] = useState('green');
   const handleChange = e => setValue(e.target.value);
@@ -102,13 +102,15 @@ As ``Checkbox``
       </SelectableBox>
     </SelectableBox.Set>
   );
-}
+});
 ```
+
 ## As Checkbox
-As ``Checkbox`` with ``isIndeterminate``
+
+As `Checkbox` with `isIndeterminate`
 
 ```jsx live
-() => {
+(() => {
   const type = 'checkbox';
   const allCheeseOptions = ['swiss', 'cheddar', 'pepperjack'];
   const [checkedCheeses, { add, remove, set, clear }] = useCheckboxSetValues(['swiss']);
@@ -163,13 +165,13 @@ As ``Checkbox`` with ``isIndeterminate``
       </SelectableBox.Set>
     </>
   );
-}
+});
 ```
 
-As ``Checkbox`` with ``ariaLabelledby``
+As `Checkbox` with `ariaLabelledby`
 
 ```jsx live
-() => {
+(() => {
   const type = 'checkbox';
   const allCheeseOptions = ['swiss', 'cheddar', 'pepperjack'];
   const [checkedCheeses, { add, remove, set, clear }] = useCheckboxSetValues(['swiss']);
@@ -177,9 +179,9 @@ As ``Checkbox`` with ``ariaLabelledby``
   const handleChange = e => {
     e.target.checked ? add(e.target.value) : remove(e.target.value);
   };
-  
+
   const isExtraSmall = useMediaQuery({ maxWidth: breakpoints.extraSmall.maxWidth });
-  
+
   return (
     <div className="bg-light-200 p-3">
       <h3 id="cheese selection" className="mb-4">
@@ -211,5 +213,5 @@ As ``Checkbox`` with ``ariaLabelledby``
       </SelectableBox.Set>
     </div>
   );
-}
+});
 ```

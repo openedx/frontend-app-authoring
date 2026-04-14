@@ -63,8 +63,14 @@ const mockStore = async ({
   const fetchProviderConfigUrl = `${providersApiUrl}/${courseId}/`;
   const fetchLiveConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
 
-  axiosMock.onGet(fetchProviderConfigUrl).reply(200, configurationProviders(emailSharing, usernameSharing, 'big_blue_button', isFreeTier));
-  axiosMock.onGet(fetchLiveConfigUrl).reply(200, generateLiveConfigurationApiResponse(enabled, piiSharingAllowed, 'bigBlueButton', isFreeTier));
+  axiosMock.onGet(fetchProviderConfigUrl).reply(
+    200,
+    configurationProviders(emailSharing, usernameSharing, 'big_blue_button', isFreeTier),
+  );
+  axiosMock.onGet(fetchLiveConfigUrl).reply(
+    200,
+    generateLiveConfigurationApiResponse(enabled, piiSharingAllowed, 'bigBlueButton', isFreeTier),
+  );
 
   await executeThunk(fetchLiveProviders(courseId), store.dispatch);
   await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
@@ -88,14 +94,17 @@ describe('BBB Settings', () => {
     expect(container.querySelector('select[name="tierType"]')).not.toBeDisabled();
   });
 
-  test.each([[true, 3], [false, 2]])('Plan dropdown should display correct number of options', async (isFreeTier, noOfOptions) => {
-    await mockStore({ emailSharing: true, isFreeTier });
-    renderComponent();
-    const spinner = getByRole(container, 'status');
-    await waitForElementToBeRemoved(spinner);
-    const dropDown = queryByTestId(container, 'plansDropDown');
-    expect(getAllByRole(dropDown, 'option').length).toBe(noOfOptions);
-  });
+  test.each([[true, 3], [false, 2]])(
+    'Plan dropdown should display correct number of options',
+    async (isFreeTier, noOfOptions) => {
+      await mockStore({ emailSharing: true, isFreeTier });
+      renderComponent();
+      const spinner = getByRole(container, 'status');
+      await waitForElementToBeRemoved(spinner);
+      const dropDown = queryByTestId(container, 'plansDropDown');
+      expect(getAllByRole(dropDown, 'option').length).toBe(noOfOptions);
+    },
+  );
 
   test(
     'Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled, ',

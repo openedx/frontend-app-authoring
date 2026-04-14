@@ -1,11 +1,16 @@
 import '@testing-library/jest-dom';
 import {
-  fireEvent, render, screen,
+  fireEvent,
+  render,
+  screen,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import {
-  filterKeys, filterMessages, sortKeys, sortMessages,
+  filterKeys,
+  filterMessages,
+  sortKeys,
+  sortMessages,
 } from '../../containers/VideoGallery/utils';
 import SearchSort from './SearchSort';
 import messages from './messages';

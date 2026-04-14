@@ -39,17 +39,21 @@ export const useCreateLibraryV2 = () => {
  * const { data, isLoading, isError } = useGetLibraryRestoreStatus('task:456abc');
  * ```
  */
-export const useGetLibraryRestoreStatus = (taskId: string) => useQuery<GetLibraryRestoreStatusResponse, Error>({
-  queryKey: libraryRestoreQueryKeys.restoreStatus(taskId),
-  queryFn: () => getLibraryRestoreStatus(taskId),
-  enabled: !!taskId, // Only run the query if taskId is provided
-  refetchInterval: (query) => (
-    (query.state.data?.state === LibraryRestoreStatus.Pending
-      || query.state.data?.state === LibraryRestoreStatus.InProgress
-    ) ? 2000 : false),
-});
+export const useGetLibraryRestoreStatus = (taskId: string) =>
+  useQuery<GetLibraryRestoreStatusResponse, Error>({
+    queryKey: libraryRestoreQueryKeys.restoreStatus(taskId),
+    queryFn: () => getLibraryRestoreStatus(taskId),
+    enabled: !!taskId, // Only run the query if taskId is provided
+    refetchInterval: (query) => (
+      (query.state.data?.state === LibraryRestoreStatus.Pending
+          || query.state.data?.state === LibraryRestoreStatus.InProgress) ?
+        2000 :
+        false
+    ),
+  });
 
-export const useCreateLibraryRestore = () => useMutation<CreateLibraryRestoreResponse, Error, File>({
-  mutationKey: libraryRestoreQueryKeys.restoreMutation(),
-  mutationFn: createLibraryRestore,
-});
+export const useCreateLibraryRestore = () =>
+  useMutation<CreateLibraryRestoreResponse, Error, File>({
+    mutationKey: libraryRestoreQueryKeys.restoreMutation(),
+    mutationFn: createLibraryRestore,
+  });

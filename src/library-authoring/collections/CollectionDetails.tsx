@@ -13,10 +13,10 @@ import HistoryWidget from '../generic/history-widget';
 import messages from './messages';
 
 interface BlockCountProps {
-  count: number,
-  blockType?: string,
-  label: React.ReactNode,
-  className?: string,
+  count: number;
+  blockType?: string;
+  label: React.ReactNode;
+  className?: string;
 }
 
 const BlockCount = ({
@@ -148,14 +148,16 @@ const CollectionDetails = () => {
         <h3 className="h5">
           {intl.formatMessage(messages.detailsTabDescriptionTitle)}
         </h3>
-        {!readOnly ? (
-          <textarea
-            className="form-control"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            onBlur={onSubmit}
-          />
-        ) : collection.description}
+        {!readOnly ?
+          (
+            <textarea
+              className="form-control"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              onBlur={onSubmit}
+            />
+          ) :
+          collection.description}
       </div>
       <div>
         <h3 className="h5">

@@ -32,11 +32,12 @@ describe('GroupEditor', () => {
     errors: {},
   };
 
-  const renderComponent = (overrideProps = {}) => render(
-    <IntlProvider locale="en" messages={{}}>
-      <GroupEditor {...mockProps} {...overrideProps} />
-    </IntlProvider>,
-  );
+  const renderComponent = (overrideProps = {}) =>
+    render(
+      <IntlProvider locale="en" messages={{}}>
+        <GroupEditor {...mockProps} {...overrideProps} />
+      </IntlProvider>,
+    );
 
   beforeEach(() => {
     useFormikContext.mockReturnValue({

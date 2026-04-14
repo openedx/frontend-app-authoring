@@ -1,6 +1,9 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, Dropdown, DropdownButton, Hyperlink,
+  Button,
+  Dropdown,
+  DropdownButton,
+  Hyperlink,
 } from '@openedx/paragon';
 
 import messages from '../../messages';

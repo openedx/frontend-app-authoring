@@ -31,7 +31,7 @@ interface WrapperProps {
   children: React.ReactNode;
 }
 
-export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void, fullscreen?: boolean }> = (
+export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void; fullscreen?: boolean; }> = (
   {
     children,
     onClose,
@@ -55,7 +55,9 @@ export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void, 
   );
 };
 
-export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => <ModalDialog.Body className="pb-0">{children}</ModalDialog.Body>;
+export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => (
+  <ModalDialog.Body className="pb-0">{children}</ModalDialog.Body>
+);
 
 // eslint-disable-next-line react/jsx-no-useless-fragment
 export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => <>{children}</>;

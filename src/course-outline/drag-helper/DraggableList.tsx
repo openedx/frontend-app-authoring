@@ -36,24 +36,24 @@ import {
 import CourseItemOverlay from './CourseItemOverlay';
 
 interface DraggableListProps {
-  items: XBlock[],
-  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>,
-  restoreSectionList: () => void,
-  handleSectionDragAndDrop: (sectionListIds: string[], restoreSectionList: () => void) => void,
+  items: XBlock[];
+  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
+  restoreSectionList: () => void;
+  handleSectionDragAndDrop: (sectionListIds: string[], restoreSectionList: () => void) => void;
   handleSubsectionDragAndDrop: (
     sectionId: string,
     prevSectionId: string,
     subsectionListIds: string[],
     restoreSectionList: () => void,
-  ) => void,
+  ) => void;
   handleUnitDragAndDrop: (
     sectionId: string,
     prevSectionId: string,
     subsectionId: string,
     unitListIds: string[],
     restoreSectionList: () => void,
-  ) => void,
-  children: React.ReactNode,
+  ) => void;
+  children: React.ReactNode;
 }
 
 interface ItemInfoType {
@@ -363,7 +363,10 @@ const DraggableList = ({
   };
 
   const customClosestCorners: CollisionDetection = ({
-    active, droppableContainers, droppableRects, ...args
+    active,
+    droppableContainers,
+    droppableRects,
+    ...args
   }) => {
     const activeCategory = active.data?.current?.category;
     const filteredContainers = droppableContainers.filter(
@@ -385,7 +388,10 @@ const DraggableList = ({
       },
     );
     return closestCorners({
-      active, droppableContainers: filteredContainers, droppableRects, ...args,
+      active,
+      droppableContainers: filteredContainers,
+      droppableRects,
+      ...args,
     });
   };
 

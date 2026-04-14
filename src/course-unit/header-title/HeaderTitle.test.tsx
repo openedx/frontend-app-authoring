@@ -4,6 +4,7 @@ import { initializeMocks, render, screen } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 import { executeThunk } from '@src/utils';
 
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { getCourseSectionVerticalApiUrl } from '../data/api';
 import { fetchCourseSectionVerticalData } from '../data/thunk';
 import { courseSectionVerticalMock } from '../__mocks__';
@@ -19,16 +20,19 @@ const handleConfigureSubmit = jest.fn();
 let store;
 let axiosMock;
 
-const renderComponent = (props?: any) => render(
-  <HeaderTitle
-    unitTitle={unitTitle}
-    isTitleEditFormOpen={isTitleEditFormOpen}
-    handleTitleEdit={handleTitleEdit}
-    handleTitleEditSubmit={handleTitleEditSubmit}
-    handleConfigureSubmit={handleConfigureSubmit}
-    {...props}
-  />,
-);
+const renderComponent = (props?: any) =>
+  render(
+    <IframeProvider>
+      <HeaderTitle
+        unitTitle={unitTitle}
+        isTitleEditFormOpen={isTitleEditFormOpen}
+        handleTitleEdit={handleTitleEdit}
+        handleTitleEditSubmit={handleTitleEditSubmit}
+        handleConfigureSubmit={handleConfigureSubmit}
+        {...props}
+      />,
+    </IframeProvider>,
+  );
 
 describe('<HeaderTitle />', () => {
   beforeEach(async () => {

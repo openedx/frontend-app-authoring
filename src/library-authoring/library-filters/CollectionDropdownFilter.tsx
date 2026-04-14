@@ -1,6 +1,12 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ButtonGroup, Dropdown, Form, OverlayTrigger, Scrollable, SearchField, Tooltip,
+  ButtonGroup,
+  Dropdown,
+  Form,
+  OverlayTrigger,
+  Scrollable,
+  SearchField,
+  Tooltip,
 } from '@openedx/paragon';
 import { Folder } from '@openedx/paragon/icons';
 import Loading from '@src/generic/Loading';
@@ -107,13 +113,13 @@ export const CollectionDropdownFilter = () => {
     >
       <OverlayTrigger
         placement="auto"
-        overlay={(
+        overlay={
           <Tooltip variant="light" id="library-filter-tooltip">
             {selectedLibraries.length !== 1
               ? intl.formatMessage(messages.collectionFilterBtnHelp)
               : label || intl.formatMessage(messages.collectionFilterBtnText)}
           </Tooltip>
-        )}
+        }
       >
         <Dropdown.Toggle
           id="collection-filter-dropdown-toggle"
@@ -123,9 +129,9 @@ export const CollectionDropdownFilter = () => {
           size="sm"
         >
           {!label && (
-          <span className="sr-only">
-            {intl.formatMessage(messages.collectionFilterBtnText)}
-          </span>
+            <span className="sr-only">
+              {intl.formatMessage(messages.collectionFilterBtnText)}
+            </span>
           )}
           {truncate(label, { length: 30 })}
         </Dropdown.Toggle>

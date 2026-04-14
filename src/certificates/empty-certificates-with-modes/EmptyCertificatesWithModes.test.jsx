@@ -10,13 +10,14 @@ import WithModesWithoutCertificates from './EmptyCertificatesWithModes';
 const courseId = 'course-123';
 let store;
 
-const renderComponent = (props) => render(
-  <AppProvider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <WithModesWithoutCertificates courseId={courseId} {...props} />
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <AppProvider store={store} messages={{}}>
+      <IntlProvider locale="en">
+        <WithModesWithoutCertificates courseId={courseId} {...props} />
+      </IntlProvider>
+    </AppProvider>,
+  );
 
 describe('EmptyCertificatesWithModes', () => {
   beforeEach(() => {

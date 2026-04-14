@@ -22,9 +22,7 @@ const Checker = ({
         isValid={answer.correct}
         disabled={disabled}
       />
-      <Form.Label
-        className="pt-2"
-      >
+      <Form.Label className="pt-2">
         {answer.id}
       </Form.Label>
     </>

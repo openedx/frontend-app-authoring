@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Icon, Stack, IconButtonWithTooltip,
+  Icon,
+  Stack,
+  IconButtonWithTooltip,
 } from '@openedx/paragon';
 import {
-  EditOutline as EditOutlineIcon, DeleteOutline as DeleteOutlineIcon,
+  EditOutline as EditOutlineIcon,
+  DeleteOutline as DeleteOutlineIcon,
 } from '@openedx/paragon/icons';
 
 import CertificateSection from '../certificate-section/CertificateSection';
@@ -38,7 +41,7 @@ const CertificateDetails = ({
       title={intl.formatMessage(messages.detailsSectionTitle)}
       className="certificate-details"
       data-testid="certificate-details"
-      actions={(
+      actions={
         <Stack direction="horizontal" gap="2">
           <IconButtonWithTooltip
             src={EditOutlineIcon}
@@ -55,7 +58,7 @@ const CertificateDetails = ({
             onClick={confirmOpen}
           />
         </Stack>
-      )}
+      }
     >
       <Stack>
         <Stack direction="horizontal" gap="1.5" className="certificate-details__info">

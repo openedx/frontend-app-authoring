@@ -24,6 +24,16 @@
       .pgn__tab_more {
         display: none;
       }
+
+      /*
+       * On resizing the Sidebar last child is automatically attached below class
+       * and hidden from dom. We unset all changes.
+       */
+      .pgn__tab_invisible {
+        position: relative;
+        pointer-events: unset;
+        visibility: unset;
+      }
     }
   }
 

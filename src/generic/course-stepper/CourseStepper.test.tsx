@@ -9,7 +9,8 @@ const stepsMock = [
   },
   {
     title: 'Exporting',
-    description: 'Creating the export data files (You can now leave this page safely, but avoid making drastic changes to content until this export is complete',
+    description:
+      'Creating the export data files (You can now leave this page safely, but avoid making drastic changes to content until this export is complete',
   },
   {
     title: 'Compressing',
@@ -21,9 +22,10 @@ const stepsMock = [
   },
 ];
 
-const renderComponent = (props) => render(
-  <CourseStepper steps={stepsMock} {...props} />,
-);
+const renderComponent = (props) =>
+  render(
+    <CourseStepper steps={stepsMock} {...props} />,
+  );
 
 describe('<CourseStepper />', () => {
   beforeEach(() => {

@@ -60,8 +60,4 @@ const requests = createSlice({
 const actions = StrictDict(requests.actions);
 const { reducer } = requests;
 
-export {
-  actions,
-  reducer,
-  initialState,
-};
+export { actions, reducer, initialState };

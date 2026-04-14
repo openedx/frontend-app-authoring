@@ -1,21 +1,27 @@
 module.exports = {
   advanced: 'https://docs.openedx.org/en/latest/educators/navigation/advanced_features.html',
-  certificates: 'https://docs.openedx.org/en/latest/educators/navigation/creating_course.html#set-up-course-certificates',
+  certificates:
+    'https://docs.openedx.org/en/latest/educators/navigation/creating_course.html#set-up-course-certificates',
   checklist: 'https://docs.openedx.org/en/latest/educators/quickstarts/build_a_course.html#quick-start-build-a-course',
   container: 'https://docs.openedx.org/en/latest/educators/references/course_development/parent_child_components.html',
   contentGroups: 'https://docs.openedx.org/en/latest/educators/navigation/advanced_features.html#manage-course-cohorts',
-  contentHighlights: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html#set-course-section-highlights',
-  contentLibraries: 'https://docs.openedx.org/en/latest/educators/navigation/content_creation_management.html#work-with-content-libraries',
+  contentHighlights:
+    'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html#set-course-section-highlights',
+  contentLibraries:
+    'https://docs.openedx.org/en/latest/educators/navigation/content_creation_management.html#work-with-content-libraries',
   default: 'https://docs.openedx.org/en/latest/educators/index.html',
   developCourse: 'https://docs.openedx.org/en/latest/educators/references/course_content_development.html',
-  enrollmentTracks: 'https://docs.openedx.org/en/latest/educators/how-tos/advanced_features/create_content_for_specific_enrollment_tracks.html',
+  enrollmentTracks:
+    'https://docs.openedx.org/en/latest/educators/how-tos/advanced_features/create_content_for_specific_enrollment_tracks.html',
   exportCourse: 'https://docs.openedx.org/en/latest/educators/how-tos/releasing-course/export_course.html',
   exportLibrary: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/export_import_library.html',
   files: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_files.html',
   grading: 'https://docs.openedx.org/en/latest/educators/concepts/grading/about_graded_subsections.html',
-  groupConfigurations: 'https://docs.openedx.org/en/latest/educators/concepts/advanced_features/about_group_configurations.html',
+  groupConfigurations:
+    'https://docs.openedx.org/en/latest/educators/concepts/advanced_features/about_group_configurations.html',
   home: 'https://docs.openedx.org/en/latest/educators/navigation/content_creation_management.html',
-  imageAccessibility: 'https://docs.openedx.org/en/latest/educators/references/imageAccessibility/image_accessibility.html',
+  imageAccessibility:
+    'https://docs.openedx.org/en/latest/educators/references/imageAccessibility/image_accessibility.html',
   importCourse: 'https://docs.openedx.org/en/latest/educators/how-tos/releasing-course/import_course.html',
   importLibrary: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/export_import_library.html',
   login: 'https://docs.openedx.org/en/latest/educators/quickstarts/build_a_course.html#quick-start-build-a-course',
@@ -24,12 +30,14 @@ module.exports = {
   register: 'https://docs.openedx.org/en/latest/educators/quickstarts/build_a_course.html#quick-start-build-a-course',
   schedule: 'https://docs.openedx.org/en/latest/educators/references/course_development/about_page.html',
   socialSharing: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
-  teamCourse: 'https://docs.openedx.org/en/latest/educators/references/course_development/course_team_roles.html#guide-to-course-team-roles',
+  teamCourse:
+    'https://docs.openedx.org/en/latest/educators/references/course_development/course_team_roles.html#guide-to-course-team-roles',
   teamLibrary: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/library_access.html',
   textbooks: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_textbooks.html',
   unit: 'https://docs.openedx.org/en/latest/educators/concepts/open_edx_platform/about_course_units.html',
   updates: 'https://docs.openedx.org/en/latest/educators/concepts/communication/about_course_updates_handouts.html',
-  video: 'https://docs.openedx.org/en/latest/educators/navigation/content_creation_management.html#manage-video-components',
+  video:
+    'https://docs.openedx.org/en/latest/educators/navigation/content_creation_management.html#manage-video-components',
   visibility: 'https://docs.openedx.org/en/latest/educators/references/controlling_content_visibility.html',
   welcome: 'https://docs.openedx.org/en/latest/educators/quickstarts/build_a_course.html#quick-start-build-a-course',
 };

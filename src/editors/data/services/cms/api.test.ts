@@ -1,7 +1,10 @@
 import * as api from './api';
 import * as urls from './urls';
 import {
-  get, post, put, deleteObject,
+  get,
+  post,
+  put,
+  deleteObject,
 } from './utils';
 
 jest.mock('./urls', () => ({
@@ -110,7 +113,9 @@ describe('cms api', () => {
     describe('fetchCourseImages', () => {
       it('should call get with url.courseAssets', async () => {
         await apiMethods.fetchCourseImages({
-          learningContextId, studioEndpointUrl, pageNumber: 0,
+          learningContextId,
+          studioEndpointUrl,
+          pageNumber: 0,
         });
         const params = {
           asset_type: 'Images',
@@ -164,7 +169,8 @@ describe('cms api', () => {
 
     describe('normalizeContent', () => {
       test('return value for blockType: html', () => {
-        const content = 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
+        const content =
+          'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
         expect(apiMethods.normalizeContent({
           blockId,
           blockType: 'html',
@@ -242,14 +248,17 @@ describe('cms api', () => {
         jest.restoreAllMocks();
       });
       test('throw error for invalid blockType', () => {
-        // @ts-expect-error because we're not passing 'blockId' or other parameters
-        expect(() => { apiMethods.normalizeContent({ blockType: 'somethingINVALID' }); })
+        expect(() => {
+          // @ts-expect-error because we're not passing 'blockId' or other parameters
+          apiMethods.normalizeContent({ blockType: 'somethingINVALID' });
+        })
           .toThrow(TypeError);
       });
     });
 
     describe('saveBlock', () => {
-      const content = 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
+      const content =
+        'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
       it('should call post with urls.block and normalizeContent', async () => {
         await apiMethods.saveBlock({
           blockId,
@@ -375,7 +384,8 @@ describe('cms api', () => {
     const videoId = 'sOmeVIDeoiD';
     const youTubeId = 'SOMeyoutUBeid';
     describe('checkTranscriptsForImport', () => {
-      const getJSON = `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"},{"mode":"edx_video_id","type":"edx_video_id","video":"${videoId}"}]}`;
+      const getJSON =
+        `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"},{"mode":"edx_video_id","type":"edx_video_id","video":"${videoId}"}]}`;
       it('should call get with url.checkTranscriptsForImport', async () => {
         await apiMethods.checkTranscriptsForImport({
           studioEndpointUrl,

@@ -24,7 +24,9 @@ const Sequence = ({
 
   const defaultContent = (
     <div className="sequence-container d-inline-flex flex-row">
-      <div className={classNames('sequence w-100', { 'position-relative': shouldDisplayNotificationTriggerInSequence })}>
+      <div
+        className={classNames('sequence w-100', { 'position-relative': shouldDisplayNotificationTriggerInSequence })}
+      >
         <SequenceNavigation
           sequenceId={sequenceId}
           unitId={unitId}
@@ -41,7 +43,7 @@ const Sequence = ({
   const isLoading = sequenceStatus === IN_PROGRESS || (sequenceStatus === FAILED && sequenceMightBeUnit);
   if (isLoading) {
     if (!sequenceId) {
-      return (<div>{intl.formatMessage(messages.sequenceNoContent)}</div>);
+      return <div>{intl.formatMessage(messages.sequenceNoContent)}</div>;
     }
 
     return <Loading />;

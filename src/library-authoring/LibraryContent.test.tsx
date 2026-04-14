@@ -42,7 +42,9 @@ const returnEmptyResult = (_url: string, req) => {
   mockEmptyResult.results[0].query = query;
   // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
   // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-  mockEmptyResult.results[0]?.hits.forEach((hit: any) => { hit._formatted = { ...hit }; });
+  mockEmptyResult.results[0]?.hits.forEach((hit: any) => {
+    hit._formatted = { ...hit };
+  });
   return mockEmptyResult;
 };
 
@@ -53,7 +55,7 @@ jest.mock('@src/search-manager', () => ({
 }));
 
 const withLibraryId = (libraryId: string) => ({
-  extraWrapper: ({ children }: { children: React.ReactNode }) => (
+  extraWrapper: ({ children }: { children: React.ReactNode; }) => (
     <LibraryProvider libraryId={libraryId}>
       {children}
     </LibraryProvider>
@@ -120,12 +122,14 @@ describe('<LibraryHome />', () => {
       {
         sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
         targetKey: null,
-        unsupportedReason: 'The "library_content" XBlock (ID: "test_lib_content") has children, so it is not supported in content libraries. It has 2 children blocks.',
+        unsupportedReason:
+          'The "library_content" XBlock (ID: "test_lib_content") has children, so it is not supported in content libraries. It has 2 children blocks.',
       },
       {
         sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@conditional+block@test_conditional',
         targetKey: null,
-        unsupportedReason: 'The "conditional" XBlock (ID: "test_conditional") has children, so it is not supported in content libraries. It has 2 children blocks.',
+        unsupportedReason:
+          'The "conditional" XBlock (ID: "test_conditional") has children, so it is not supported in content libraries. It has 2 children blocks.',
       },
     ]);
     (useGetContentHits as jest.Mock).mockReturnValue({

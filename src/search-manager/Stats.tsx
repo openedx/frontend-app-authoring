@@ -14,9 +14,7 @@ const Stats: React.FC<Record<never, never>> = () => {
     return null;
   }
 
-  return (
-    <FormattedMessage {...messages.numResults} values={{ numResults: totalHits }} />
-  );
+  return <FormattedMessage {...messages.numResults} values={{ numResults: totalHits }} />;
 };
 
 export default Stats;

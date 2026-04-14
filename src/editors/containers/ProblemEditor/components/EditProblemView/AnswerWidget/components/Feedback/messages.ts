@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   feedbackPlaceholder: {
     id: 'authoring.answerwidget.feedback.placeholder',
     defaultMessage: 'Feedback message',

@@ -23,8 +23,12 @@ const xblockId = 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4dd
 
 let broadcastMockListener: (x: unknown) => void | undefined;
 const clipboardBroadcastChannelMock = {
-  postMessage: (message: unknown) => { broadcastMockListener(message); },
-  addEventListener: (_eventName: string, handler: typeof broadcastMockListener) => { broadcastMockListener = handler; },
+  postMessage: (message: unknown) => {
+    broadcastMockListener(message);
+  },
+  addEventListener: (_eventName: string, handler: typeof broadcastMockListener) => {
+    broadcastMockListener = handler;
+  },
   removeEventListener: jest.fn(),
 };
 _testingOverrideBroadcastChannel(clipboardBroadcastChannelMock as any);

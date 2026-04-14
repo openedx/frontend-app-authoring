@@ -78,7 +78,11 @@ describe('useTaxonomyTagsData', () => {
     // Assert that useQueries was called with the correct arguments
     expect(useQueries).toHaveBeenCalledWith({
       queries: [
-        { queryKey: ['taxonomyTags', taxonomyId, null, 1, ''], queryFn: expect.any(Function), staleTime: Infinity },
+        {
+          queryKey: ['contentTags', 'taxonomyTags', taxonomyId, null, 1, ''],
+          queryFn: expect.any(Function),
+          staleTime: Infinity,
+        },
       ],
     });
 

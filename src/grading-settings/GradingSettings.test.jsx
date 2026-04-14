@@ -1,5 +1,9 @@
 import {
-  act, fireEvent, render, screen, initializeMocks,
+  act,
+  fireEvent,
+  render,
+  screen,
+  initializeMocks,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getCourseSettingsApiUrl } from '@src/data/api';

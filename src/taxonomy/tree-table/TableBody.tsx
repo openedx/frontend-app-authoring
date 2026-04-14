@@ -93,30 +93,32 @@ const TableBody = ({
 
       {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
         <React.Fragment key={row.id}>
-          {editingRowId === `${row.original.id}:${String(row.original.value)}` ? (
-            <EditRow
-              draftError={draftError}
-              setDraftError={setDraftError}
-              initialValue={String(row.original.value)}
-              handleUpdateRow={(value) => handleUpdateRow(value, String(row.original.value))}
-              cancelEditRow={() => {
-                setEditingRowId(null);
-                exitDraftWithoutSave();
-              }}
-              updateRowMutation={updateRowMutation}
-              columns={columns}
-              validate={validate}
-            />
-          ) : (
-            <tr>
-              {row.getVisibleCells()
-                .map((cell, index) => (
-                  <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-            </tr>
-          )}
+          {editingRowId === `${row.original.id}:${String(row.original.value)}` ?
+            (
+              <EditRow
+                draftError={draftError}
+                setDraftError={setDraftError}
+                initialValue={String(row.original.value)}
+                handleUpdateRow={(value) => handleUpdateRow(value, String(row.original.value))}
+                cancelEditRow={() => {
+                  setEditingRowId(null);
+                  exitDraftWithoutSave();
+                }}
+                updateRowMutation={updateRowMutation}
+                columns={columns}
+                validate={validate}
+              />
+            ) :
+            (
+              <tr>
+                {row.getVisibleCells()
+                  .map((cell, index) => (
+                    <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+              </tr>
+            )}
           <NestedRows
             parentRow={row}
             childRowsData={row.subRows}

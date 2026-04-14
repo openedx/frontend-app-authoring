@@ -14,14 +14,17 @@ export const TaxonomyLayout = () => {
   const [alertError, setAlertError] = useState<AlertErrorProps | null>(null);
 
   const context = useMemo(() => ({
-    toastMessage, setToastMessage, alertError, setAlertError,
+    toastMessage,
+    setToastMessage,
+    alertError,
+    setAlertError,
   }), []);
 
   return (
     <TaxonomyContext.Provider value={context}>
       <div className="bg-light-400">
         <Header isHiddenMainMenu />
-        { alertError && (
+        {alertError && (
           <AlertError
             {...alertError}
             onDismiss={() => setAlertError(null)}

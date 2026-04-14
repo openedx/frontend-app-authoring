@@ -59,16 +59,17 @@ jest.mock('../../generic/hooks/context/hooks', () => ({
   }),
 }));
 
-const renderComponent = (props?: AddComponentProps) => render(
-  <IframeProvider>
-    <AddComponent
-      isUnitVerticalType
-      parentLocator={blockId}
-      handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock}
-      {...props}
-    />
-  </IframeProvider>,
-);
+const renderComponent = (props?: AddComponentProps) =>
+  render(
+    <IframeProvider>
+      <AddComponent
+        isUnitVerticalType
+        parentLocator={blockId}
+        handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock}
+        {...props}
+      />
+    </IframeProvider>,
+  );
 
 describe('<AddComponent />', () => {
   beforeEach(async () => {
@@ -89,8 +90,9 @@ describe('<AddComponent />', () => {
     Object.keys(componentTemplates).forEach((component) => {
       const btn = getByRole('button', {
         name: new RegExp(
-          `${componentTemplates[component].type
-          } ${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`,
+          `${componentTemplates[component].type} ${messages.buttonText.defaultMessage} ${
+            componentTemplates[component].display_name
+          }`,
           'i',
         ),
       });
@@ -147,8 +149,9 @@ describe('<AddComponent />', () => {
 
       return expect(getByRole('button', {
         name: new RegExp(
-          `${componentTemplates[component].type
-          } ${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`,
+          `${componentTemplates[component].type} ${messages.buttonText.defaultMessage} ${
+            componentTemplates[component].display_name
+          }`,
           'i',
         ),
       })).toBeInTheDocument();
@@ -289,10 +292,14 @@ describe('<AddComponent />', () => {
     await user.click(advancedBtn);
     const modalContainer = getByRole('dialog');
 
-    expect(within(modalContainer).getByRole('button', { name: messages.modalContainerCancelBtnText.defaultMessage })).toBeInTheDocument();
-    expect(within(modalContainer).getByRole('button', { name: messages.modalBtnText.defaultMessage })).toBeInTheDocument();
+    expect(within(modalContainer).getByRole('button', { name: messages.modalContainerCancelBtnText.defaultMessage }))
+      .toBeInTheDocument();
+    expect(within(modalContainer).getByRole('button', { name: messages.modalBtnText.defaultMessage }))
+      .toBeInTheDocument();
 
-    await user.click(within(modalContainer).getByRole('button', { name: messages.modalContainerCancelBtnText.defaultMessage }));
+    await user.click(
+      within(modalContainer).getByRole('button', { name: messages.modalContainerCancelBtnText.defaultMessage }),
+    );
 
     expect(queryByRole('button', { name: messages.modalContainerCancelBtnText.defaultMessage })).toBeNull();
     expect(queryByRole('button', { name: messages.modalBtnText.defaultMessage })).toBeNull();
@@ -323,9 +330,9 @@ describe('<AddComponent />', () => {
 
   const createPdfBlock = async (
     { getByRole, queryAllByRole, user }: {
-      getByRole: RenderResult['getByRole']
-      queryAllByRole: RenderResult['queryAllByRole'],
-      user: UserEvent,
+      getByRole: RenderResult['getByRole'];
+      queryAllByRole: RenderResult['queryAllByRole'];
+      user: UserEvent;
     },
   ) => {
     const advancedBtn = getByRole('button', {

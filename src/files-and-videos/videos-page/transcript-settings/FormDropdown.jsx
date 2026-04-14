@@ -35,7 +35,12 @@ const FormDropdown = ({
         {Object.entries(options).map(([valueKey, text]) => {
           if (allowMultiple) {
             return (
-              <Dropdown.Item as={Form.Checkbox} checked={value.includes(valueKey)} onChange={(e) => handleSelect([valueKey, e.target.checked])} key={`${valueKey}-item`}>
+              <Dropdown.Item
+                as={Form.Checkbox}
+                checked={value.includes(valueKey)}
+                onChange={(e) => handleSelect([valueKey, e.target.checked])}
+                key={`${valueKey}-item`}
+              >
                 {text}
               </Dropdown.Item>
             );
@@ -43,7 +48,8 @@ const FormDropdown = ({
           if (valueKey === value) {
             return (
               <Dropdown.Item key={`${valueKey}-item`}>
-                <Icon size="inline" src={Check} className="m-n2" /><span className="pl-3">{text}</span>
+                <Icon size="inline" src={Check} className="m-n2" />
+                <span className="pl-3">{text}</span>
               </Dropdown.Item>
             );
           }

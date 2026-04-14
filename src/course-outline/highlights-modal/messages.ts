@@ -25,6 +25,51 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.highlights-modal.button.save',
     defaultMessage: 'Save',
   },
+  highlightsTitle: {
+    id: 'course.authoring.highlights.card.title',
+    defaultMessage: 'Highlights',
+    description: 'Title of the highlights card',
+  },
+  editButton: {
+    id: 'course.authoring.highlights.card.edit.button',
+    defaultMessage: 'Edit',
+    description: 'Edit button text in viewing mode',
+  },
+  addHighlightsButton: {
+    id: 'course.authoring.highlights.empty.add.button',
+    defaultMessage: 'Add Highlights',
+    description: 'Add highlights button in empty state',
+  },
+  showMoreButton: {
+    id: 'course.authoring.highlights.card.show.more.button',
+    defaultMessage: 'Show More',
+    description: 'Show more button to expand highlights list',
+  },
+  noHighlightsMessage: {
+    id: 'course.authoring.highlights.empty.message',
+    defaultMessage: 'No highlights added yet. Add highlights to help learners focus on key points.',
+    description: 'Message shown when no highlights exist',
+  },
+  unsavedChangesTitle: {
+    id: 'course.authoring.highlights.unsaved.changes.title',
+    defaultMessage: 'Leaving without saving?',
+    description: 'Title of unsaved changes confirmation dialog',
+  },
+  unsavedChangesMessage: {
+    id: 'course.authoring.highlights.unsaved.changes.message',
+    defaultMessage: 'Changes you made to highlights will not be saved',
+    description: 'Message in unsaved changes confirmation dialog',
+  },
+  keepEditingButton: {
+    id: 'course.authoring.highlights.unsaved.changes.keep.editing.button',
+    defaultMessage: 'Cancel',
+    description: 'Button to keep editing and close confirmation dialog',
+  },
+  discardChangesButton: {
+    id: 'course.authoring.highlights.unsaved.changes.discard.button',
+    defaultMessage: 'Leave',
+    description: 'Button to discard changes and navigate away',
+  },
 });
 
 export default messages;

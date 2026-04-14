@@ -12,7 +12,10 @@ interface PasteComponentProps {
 }
 
 const PasteComponent = ({
-  onClick, clipboardData, text, className,
+  onClick,
+  clipboardData,
+  text,
+  className,
 }: PasteComponentProps) => {
   const [showPopover, togglePopover] = useState(false);
   const popoverElementRef = useRef(null);

@@ -118,7 +118,8 @@ describe('<LibraryTeam />', () => {
       }
 
       // Single Admin user cannot be demoted or deleted.
-      expect(screen.getByText('Promote another member to Admin to change this user\'s access rights.')).toBeInTheDocument();
+      expect(screen.getByText('Promote another member to Admin to change this user\'s access rights.'))
+        .toBeInTheDocument();
 
       // Author + Reader can be made Admin
       expect(screen.getAllByRole('button', { name: 'Make Admin' }).length).toBe(2);
@@ -206,9 +207,11 @@ describe('<LibraryTeam />', () => {
       expect(axiosMock.history.post.length).toEqual(1);
     });
 
-    expect(await screen.findByText(
-      'Error adding Team Member. This is a specific error.',
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        'Error adding Team Member. This is a specific error.',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('shows error when specific error (Array)', async () => {
@@ -232,9 +235,11 @@ describe('<LibraryTeam />', () => {
       expect(axiosMock.history.post.length).toEqual(1);
     });
 
-    expect(await screen.findByText(
-      'Error adding Team Member. This is a specific error.',
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        'Error adding Team Member. This is a specific error.',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('shows error', async () => {

@@ -12,7 +12,8 @@ const ModalErrorListItem = ({ settingName, settingsData }) => {
     <li className="modal-error-item">
       <Alert variant="danger">
         <h4 className="modal-error-item-title">
-          <Icon src={Error} />{capitalize(displayName)}:
+          <Icon src={Error} />
+          {capitalize(displayName)}:
         </h4>
         <p className="m-0">{settingName.message}</p>
       </Alert>

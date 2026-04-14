@@ -10,17 +10,20 @@ import { getBlockType } from '@src/generic/key-utils';
 import { useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import {
-  useContainer, useContainerChildren, useRemoveContainerChildren, useUpdateContainerChildren,
+  useContainer,
+  useContainerChildren,
+  useRemoveContainerChildren,
+  useUpdateContainerChildren,
 } from '@src/library-authoring/data/apiHooks';
 import messages from '@src/library-authoring/components/messages';
 import { Container } from '@src/library-authoring/data/api';
 import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 
 type ContainerRemoverProps = {
-  close: () => void,
-  containerKey: string,
-  displayName: string,
-  index?: number,
+  close: () => void;
+  containerKey: string;
+  displayName: string;
+  index?: number;
 };
 
 const ContainerRemover = ({

@@ -16,6 +16,4 @@ const getTextbookFormInitialValues = (isEditForm = false, textbook = {}) => (isE
     ],
   });
 
-export {
-  getTextbookFormInitialValues,
-};
+export { getTextbookFormInitialValues };

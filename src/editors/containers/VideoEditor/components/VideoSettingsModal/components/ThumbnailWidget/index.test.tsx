@@ -22,7 +22,7 @@ jest.mock('../../../../../../data/redux', () => ({
 }));
 
 jest.mock('../../../../../../data/services/cms/api', () => ({
-  isEdxVideo: (args) => (args),
+  isEdxVideo: (args) => args,
 }));
 
 describe('ThumbnailWidget', () => {
@@ -57,7 +57,9 @@ describe('ThumbnailWidget', () => {
       expect(screen.getByRole('img', { name: 'Image used as thumbnail for video' })).toBeInTheDocument();
     });
     test('snapshots: renders as expected where thumbnail uploads are allowed', () => {
-      const { container } = render(<ThumbnailWidget {...props} thumbnail="sOMeUrl" videoId="sOMeViDEoID" allowThumbnailUpload />);
+      const { container } = render(
+        <ThumbnailWidget {...props} thumbnail="sOMeUrl" videoId="sOMeViDEoID" allowThumbnailUpload />,
+      );
       const reduxWrapper = container.getRootNode();
       expect(reduxWrapper.textContent).toBe(null);
     });

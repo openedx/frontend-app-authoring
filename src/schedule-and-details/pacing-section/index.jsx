@@ -7,7 +7,9 @@ import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
 const PacingSection = ({
-  selfPaced, startDate, onChange,
+  selfPaced,
+  startDate,
+  onChange,
 }) => {
   const intl = useIntl();
   const canTogglePace = new Date() <= new Date(startDate);

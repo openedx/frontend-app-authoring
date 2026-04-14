@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import { Stack } from '@openedx/paragon';
 
 const CertificateSection = ({
-  title, actions, children, ...rest
+  title,
+  actions,
+  children,
+  ...rest
 }) => (
   <section {...rest}>
     <Stack className="justify-content-between mb-2.5" direction="horizontal">

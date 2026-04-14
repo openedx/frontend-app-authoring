@@ -1,10 +1,16 @@
 /* eslint-disable react/prop-types */
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, Icon, OverlayTrigger, Tooltip,
+  Button,
+  Icon,
+  OverlayTrigger,
+  Tooltip,
 } from '@openedx/paragon';
 import {
-  CallSplit, LinkOff, Newsstand, Sync,
+  CallSplit,
+  LinkOff,
+  Newsstand,
+  Sync,
 } from '@openedx/paragon/icons';
 
 import { BoldText } from '@src/utils';
@@ -83,16 +89,16 @@ const UpstreamInfoIconContent = ({
     <OverlayTrigger
       key={`upstream-icon-${upstreamInfo.upstreamRef}`}
       placement="top"
-      overlay={(
+      overlay={
         <Tooltip className="upstream-info-tooltip" id={`upstream-icon-tooltip-${upstreamInfo.upstreamRef}`}>
           {tooltipMessage}
         </Tooltip>
-      )}
+      }
     >
       <div
-        className={
-          `upstream-info-icon size-${secondIcon ? 'two' : 'one'}-${size} ${upstreamInfo.readyToSync ? 'sync-state' : ''} rounded-sm d-flex justify-content-center`
-        }
+        className={`upstream-info-icon size-${secondIcon ? 'two' : 'one'}-${size} ${
+          upstreamInfo.readyToSync ? 'sync-state' : ''
+        } rounded-sm d-flex justify-content-center`}
       >
         <Icon
           title={intl.formatMessage(messages.upstreamLinkOk)}
@@ -106,7 +112,7 @@ const UpstreamInfoIconContent = ({
   );
 };
 
-export const UpstreamInfoIcon: React.FC<UpstreamInfoIconProps & { openSyncModal: () => void }> = ({
+export const UpstreamInfoIcon: React.FC<UpstreamInfoIconProps & { openSyncModal: () => void; }> = ({
   upstreamInfo,
   size,
   openSyncModal,
@@ -132,7 +138,5 @@ export const UpstreamInfoIcon: React.FC<UpstreamInfoIconProps & { openSyncModal:
     );
   }
 
-  return (
-    <UpstreamInfoIconContent upstreamInfo={upstreamInfo} size={size} />
-  );
+  return <UpstreamInfoIconContent upstreamInfo={upstreamInfo} size={size} />;
 };

@@ -63,9 +63,10 @@ describe('<AccessibilityPolicyForm />', () => {
 
     it('renders in progress state', async () => {
       axiosMock.onPost(getZendeskrUrl()).reply(
-        () => new Promise(() => {
-          // always in pending
-        }),
+        () =>
+          new Promise(() => {
+            // always in pending
+          }),
       );
 
       await user.click(submitButton);

@@ -14,7 +14,10 @@ import SequenceNavigationDropdown from './SequenceNavigationDropdown';
 import UnitButton from './UnitButton';
 
 const SequenceNavigationTabs = ({
-  unitIds, unitId, handleCreateNewCourseXBlock, showPasteUnit,
+  unitIds,
+  unitId,
+  handleCreateNewCourseXBlock,
+  showPasteUnit,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -33,10 +36,13 @@ const SequenceNavigationTabs = ({
 
   const handleAddNewSequenceUnit = () => {
     dispatch(updateQueryPendingStatus(true));
-    handleCreateNewCourseXBlock({ parentLocator: sequenceId, category: 'vertical', displayName: 'Unit' }, ({ courseKey, locator }) => {
-      navigate(`/course/${courseKey}/container/${locator}/${sequenceId}`, courseId);
-      dispatch(changeEditTitleFormOpen(true));
-    });
+    handleCreateNewCourseXBlock(
+      { parentLocator: sequenceId, category: 'vertical', displayName: 'Unit' },
+      ({ courseKey, locator }) => {
+        navigate(`/course/${courseKey}/container/${locator}/${sequenceId}`, courseId);
+        dispatch(changeEditTitleFormOpen(true));
+      },
+    );
   };
 
   const handlePasteNewSequenceUnit = () => {
@@ -62,14 +68,14 @@ const SequenceNavigationTabs = ({
             />
           ))}
           {sequenceChildAddable && (
-          <Button
-            className="sequence-navigation-tabs-action-btn"
-            variant="outline-primary"
-            iconBefore={PlusIcon}
-            onClick={handleAddNewSequenceUnit}
-          >
-            {intl.formatMessage(messages.newUnitBtnText)}
-          </Button>
+            <Button
+              className="sequence-navigation-tabs-action-btn"
+              variant="outline-primary"
+              iconBefore={PlusIcon}
+              onClick={handleAddNewSequenceUnit}
+            >
+              {intl.formatMessage(messages.newUnitBtnText)}
+            </Button>
           )}
           {showPasteUnit && (
             <Button

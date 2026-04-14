@@ -16,7 +16,9 @@ describe('<SettingsSidebar />', () => {
   });
   it('renders about descriptions correctly', () => {
     const { getByText } = render(<SettingsSidebar courseId={courseId} />);
-    const aboutThirtyDescription = getByText('When you enter strings as policy values, ensure that you use double quotation marks (“) around the string. Do not use single quotation marks (‘).');
+    const aboutThirtyDescription = getByText(
+      'When you enter strings as policy values, ensure that you use double quotation marks (“) around the string. Do not use single quotation marks (‘).',
+    );
     expect(getByText(messages.aboutDescription1.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.aboutDescription2.defaultMessage)).toBeInTheDocument();
     expect(aboutThirtyDescription).toBeInTheDocument();

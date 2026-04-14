@@ -31,16 +31,42 @@ class ReactStateSettingsParser {
       ShowAnswerTypesKeys.AFTER_ALL_ATTEMPTS_OR_CORRECT,
     ];
 
-    settings = popuplateItem(settings, 'number', 'max_attempts', stateSettings.scoring.attempts, defaultSettings?.maxAttempts, true);
+    settings = popuplateItem(
+      settings,
+      'number',
+      'max_attempts',
+      stateSettings.scoring.attempts,
+      defaultSettings?.maxAttempts,
+      true,
+    );
     settings = popuplateItem(settings, 'weight', 'weight', stateSettings.scoring);
     settings = popuplateItem(settings, 'gradingMethod', 'grading_method', stateSettings.scoring);
     settings = popuplateItem(settings, 'on', 'showanswer', stateSettings.showAnswer, defaultSettings?.showanswer, true);
     if (includes(numberOfAttemptsChoice, stateSettings.showAnswer.on)) {
-      settings = popuplateItem(settings, 'afterAttempts', 'attempts_before_showanswer_button', stateSettings.showAnswer);
+      settings = popuplateItem(
+        settings,
+        'afterAttempts',
+        'attempts_before_showanswer_button',
+        stateSettings.showAnswer,
+      );
     }
-    settings = popuplateItem(settings, 'showResetButton', 'show_reset_button', stateSettings, defaultSettings?.showResetButton, true);
+    settings = popuplateItem(
+      settings,
+      'showResetButton',
+      'show_reset_button',
+      stateSettings,
+      defaultSettings?.showResetButton,
+      true,
+    );
     settings = popuplateItem(settings, 'timeBetween', 'submission_wait_seconds', stateSettings);
-    settings = popuplateItem(settings, 'randomization', 'rerandomize', stateSettings, defaultSettings?.rerandomize, true);
+    settings = popuplateItem(
+      settings,
+      'randomization',
+      'rerandomize',
+      stateSettings,
+      defaultSettings?.rerandomize,
+      true,
+    );
 
     return settings;
   }

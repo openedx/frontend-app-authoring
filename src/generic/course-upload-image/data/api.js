@@ -1,10 +1,11 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-export const getUploadAssetsUrl = (courseId) => new URL(
-  `/assets/${courseId}/`,
-  getConfig().STUDIO_BASE_URL,
-);
+export const getUploadAssetsUrl = (courseId) =>
+  new URL(
+    `/assets/${courseId}/`,
+    getConfig().STUDIO_BASE_URL,
+  );
 
 /**
  * Upload assets.

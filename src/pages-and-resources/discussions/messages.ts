@@ -36,8 +36,8 @@ const messages = defineMessages({
   },
   noProviderSwitchAfterCourseStarted: {
     id: 'authoring.discussions.noProviderSwitchAfterCourseStarted',
-    defaultMessage: "Discussion provider can't be changed after course has started, please reach out to partner support.",
-    description: "Informs the user that the provider can't be changed after the course has started.",
+    defaultMessage: 'Discussion provider can\'t be changed after course has started, please reach out to partner support.',
+    description: 'Informs the user that the provider can\'t be changed after the course has started.',
   },
   providerSelection: {
     id: 'authoring.discussions.providerSelection',

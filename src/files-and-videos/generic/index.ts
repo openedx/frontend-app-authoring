@@ -22,5 +22,5 @@ export {
   useFileInput,
   TranscriptColumn,
 };
-export { default as FileTable } from './FileTable';
 export { default as EditFileErrors } from './EditFileErrors';
+export { default as FileTable } from './FileTable';

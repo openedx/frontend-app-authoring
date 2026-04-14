@@ -1,6 +1,8 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks,
+  render,
+  screen,
+  initializeMocks,
 } from '@src/testUtils';
 import SettingsOption from './SettingsOption';
 
@@ -34,7 +36,7 @@ describe('SettingsOption', () => {
   });
 
   test('renders sections when expanded', () => {
-    const children = (<h1>First Section</h1>);
+    const children = <h1>First Section</h1>;
     const sections = [{ children: <h1>Second Section</h1> }, { children: <h1>Third Section</h1> }];
     render(<SettingsOption {...defaultProps} extraSections={sections}>{children}</SettingsOption>);
     expect(screen.getByText('First Section')).toBeInTheDocument();

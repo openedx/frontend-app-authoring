@@ -35,20 +35,17 @@ const messages = defineMessages({
     id: 'problemEditor.settings.tolerance.type.percent',
     defaultMessage: 'Percentage',
     description: 'A possible value type for a tolerance',
-
   },
   typesNumber: {
     id: 'problemEditor.settings.tolerance.type.number',
     defaultMessage: 'Number',
     description: 'A possible value type for a tolerance',
-
   },
   typesNone: {
     id: 'problemEditor.settings.tolerance.type.none',
     defaultMessage: 'None',
     description: 'A possible value type for a tolerance',
   },
-
 });
 
 export default messages;

@@ -1,8 +1,7 @@
 module.exports = {
   aboutSidebarHtml: '',
   bannerImageName: 'images_course_image.jpg',
-  bannerImageAssetPath:
-    '/asset-v1:edX+M12+2T2023+type@asset+block@images_courseasdd_image.jpg',
+  bannerImageAssetPath: '/asset-v1:edX+M12+2T2023+type@asset+block@images_courseasdd_image.jpg',
   certificateAvailableDate: null,
   certificatesDisplayBehavior: 'end',
   courseId: 'M12',
@@ -33,7 +32,7 @@ module.exports = {
   learningInfo: ['foo'],
   license: 'creative-commons: ver=4.0 BY NC ND',
   org: 'edX',
-  overview: "<section class='about'></section>",
+  overview: '<section class=\'about\'></section>',
   preRequisiteCourses: [],
   run: '2T2023',
   selfPaced: false,
@@ -42,7 +41,6 @@ module.exports = {
   subtitle: 'subtitle',
   syllabus: null,
   title: 'title',
-  videoThumbnailImageAssetPath:
-    '/asset-v1:edX+M12+2T2023+type@asset+block@images_course_image.jpg',
+  videoThumbnailImageAssetPath: '/asset-v1:edX+M12+2T2023+type@asset+block@images_course_image.jpg',
   videoThumbnailImageName: 'images_course_image.jpg',
 };

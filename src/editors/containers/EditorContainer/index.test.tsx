@@ -132,8 +132,12 @@ describe('EditorContainer', () => {
 
   test('it disables the save button until the fields have been loaded', async () => {
     // Mock that loading the block data has begun but not completed yet:
-    let resolver: (result: { data: any }) => void;
-    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(() => new Promise((r) => { resolver = r; }));
+    let resolver: (result: { data: any; }) => void;
+    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(() =>
+      new Promise((r) => {
+        resolver = r;
+      })
+    );
 
     render(<EditorPage {...defaultPropsHtml} />);
 
@@ -173,6 +177,7 @@ describe('EditorContainer', () => {
   test('should display an alert when is an error saving the changes', async () => {
     jest.spyOn(hooks, 'saveFailed').mockImplementation(() => true);
     render(<EditorPage {...defaultPropsHtml} />);
-    expect(await screen.findByText(/Error: Content save failed. Please check recent changes and try again later./i)).toBeInTheDocument();
+    expect(await screen.findByText(/Error: Content save failed. Please check recent changes and try again later./i))
+      .toBeInTheDocument();
   });
 });

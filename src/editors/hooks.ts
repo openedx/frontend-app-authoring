@@ -25,7 +25,8 @@ export const navigateCallback = ({
   destination,
   analyticsEvent,
   analytics,
-}) => (response) => {
+}) =>
+(response) => {
   if (process.env.NODE_ENV !== 'development' && analyticsEvent && analytics) {
     sendTrackEvent(analyticsEvent, analytics);
   }
@@ -91,8 +92,10 @@ export const createBlock = ({
 };
 export const clearSaveError = ({
   dispatch,
-}) => () => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.saveBlock }));
+}) =>
+() => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.saveBlock }));
 
 export const clearCreateError = ({
   dispatch,
-}) => () => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.createBlock }));
+}) =>
+() => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.createBlock }));

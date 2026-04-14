@@ -4,7 +4,10 @@ import PropTypes from 'prop-types';
 import { MAXIMUM_SCALE_LENGTH } from '../utils';
 
 const GradingScaleHandle = ({
-  idx, value, gradingSegments, getHandleProps,
+  idx,
+  value,
+  gradingSegments,
+  getHandleProps,
 }) => (
   <button
     key={value}
@@ -12,9 +15,12 @@ const GradingScaleHandle = ({
     type="button"
     disabled={gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH}
     {...getHandleProps({
-      style: gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH ? {
-        cursor: 'default', display: 'none',
-      } : { cursor: 'e-resize' },
+      style: gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH ?
+        {
+          cursor: 'default',
+          display: 'none',
+        } :
+        { cursor: 'e-resize' },
     })}
   />
 );

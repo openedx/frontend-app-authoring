@@ -33,6 +33,7 @@ import {
 } from '@src/library-authoring/data/api.mocks';
 
 import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
+import { getCourseItemApiUrl } from '@src/course-outline/data/api';
 import {
   getCourseSectionVerticalApiUrl,
   getCourseVerticalChildrenApiUrl,
@@ -43,7 +44,6 @@ import {
 import {
   createNewCourseXBlock,
   deleteUnitItemQuery,
-  editCourseUnitVisibilityAndData,
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
   getCourseOutlineInfoQuery,
@@ -68,6 +68,7 @@ import CourseUnit from './CourseUnit';
 import tagsDrawerMessages from '../content-tags-drawer/messages';
 import configureModalMessages from '../generic/configure-modal/messages';
 import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
+import { getXBlockApiUrl } from '../course-outline/data/api';
 import addComponentMessages from './add-component/messages';
 import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
 import moveModalMessages from './move-modal/messages';
@@ -82,7 +83,7 @@ let store;
 let mockShowToast;
 let mockCloseToast;
 const courseId = '123';
-const blockId = '567890';
+const blockId = courseSectionVerticalMock.xblock_info.id;
 const sequenceId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
 const unitDisplayName = courseSectionVerticalMock.xblock_info.display_name;
 const mockedUsedNavigate = jest.fn();
@@ -105,8 +106,8 @@ const postXBlockBody = {
   staged_content: 'clipboard',
 };
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: () => ({ blockId, sequenceId }),
   useNavigate: () => mockedUsedNavigate,
 }));
@@ -177,13 +178,17 @@ describe('<CourseUnit />', () => {
     const currentSubSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
 
     const unitHeaderTitle = await screen.findByTestId('unit-header-title');
-    expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
-    expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
-    expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: currentSectionName })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: currentSubSectionName })).toBeInTheDocument();
+    expect(await screen.findByText(unitDisplayName)).toBeInTheDocument();
+    expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage }))
+      .toBeInTheDocument();
+    expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage }))
+      .toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage }))
+      .toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage }))
+      .toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: currentSectionName })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: currentSubSectionName })).toBeInTheDocument();
   });
 
   it('renders the course unit iframe with correct attributes', async () => {
@@ -377,18 +382,25 @@ describe('<CourseUnit />', () => {
           published_by: userName,
         },
       });
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    const publishBtn = await screen.findByRole('button', { name: /Publish/ });
+    await user.click(publishBtn);
 
     // check if the sidebar status is Published and Live
-    expect(await screen.findByText(
-      legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage,
-    )).toBeInTheDocument();
-    expect(await screen.findByText(
-      unitInfoMessages.publishLastPublished.defaultMessage
-        .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
-        .replace('{publishedBy}', userName),
-    )).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        unitInfoMessages.publishLastPublished.defaultMessage
+          .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
+          .replace('{publishedBy}', userName),
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', {
+      name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage,
+    })).not.toBeInTheDocument();
     expect(await screen.findByText(unitDisplayName)).toBeInTheDocument();
 
     axiosMock
@@ -397,11 +409,14 @@ describe('<CourseUnit />', () => {
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(courseId))
       .reply(200, courseSectionVerticalMock);
-    await executeThunk(deleteUnitItemQuery(
-      courseId,
-      courseVerticalChildrenMock.children[0].block_id,
-      simulatePostMessageEvent,
-    ), store.dispatch);
+    await executeThunk(
+      deleteUnitItemQuery(
+        courseId,
+        courseVerticalChildrenMock.children[0].block_id,
+        simulatePostMessageEvent,
+      ),
+      store.dispatch,
+    );
 
     const updatedCourseVerticalChildren = courseVerticalChildrenMock.children.filter(
       child => child.block_id !== courseVerticalChildrenMock.children[0].block_id,
@@ -419,36 +434,46 @@ describe('<CourseUnit />', () => {
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    await user.click(publishBtn);
 
-    expect(await screen.findByTitle(
-      xblockContainerIframeMessages.xblockIframeTitle.defaultMessage,
-    )).toHaveAttribute(
+    expect(
+      await screen.findByTitle(
+        xblockContainerIframeMessages.xblockIframeTitle.defaultMessage,
+      ),
+    ).toHaveAttribute(
       'aria-label',
       xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
         .replace('{xblockCount}', updatedCourseVerticalChildren.length.toString()),
     );
     // after removing the xblock, the sidebar status changes to Draft (unpublished changes)
-    expect(await screen.findByText(
-      legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
+      ),
+    ).toBeInTheDocument();
     expect(await screen.findByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-    expect(await screen.findByText(
-      legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage,
+      ),
+    ).toBeInTheDocument();
     expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
-    expect(await screen.findByText(
-      unitInfoMessages.publishInfoDraftSaved.defaultMessage
-        .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
-        .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
-    )).toBeInTheDocument();
-    expect(await screen.findByText(
-      legacySidebarMessages.releaseInfoWithSection.defaultMessage
-        .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        unitInfoMessages.publishInfoDraftSaved.defaultMessage
+          .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
+          .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.releaseInfoWithSection.defaultMessage
+          .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
+      ),
+    ).toBeInTheDocument();
   });
 
   it('checks if the xblock unlink is called when the corresponding unlink button is clicked', async () => {
@@ -481,16 +506,51 @@ describe('<CourseUnit />', () => {
   });
 
   it('checks if xblock is a duplicate when the corresponding duplicate button is clicked and if the sidebar status is updated', async () => {
-    const user = userEvent.setup();
-    render(<RootWrapper />);
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          visibility_state: UNIT_VISIBILITY_STATES.live,
+          has_changes: false,
+          published_by: userName,
+        },
+      });
 
-    simulatePostMessageEvent(messageTypes.duplicateXBlock, {
-      id: courseVerticalChildrenMock.children[0].block_id,
-    });
+    render(<RootWrapper />);
 
     axiosMock
       .onPost(postXBlockBaseApiUrl())
       .replyOnce(200, { locator: '1234567890' });
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(blockId), {
+        publish: PUBLISH_TYPES.makePublic,
+      })
+      .reply(200, { dummy: 'value' });
+
+    const iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute(
+      'aria-label',
+      xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
+        .replace('{xblockCount}', courseVerticalChildrenMock.children.length.toString()),
+    );
+
+    // check if the sidebar status is Published and Live
+    expect(
+      await screen.findByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        unitInfoMessages.publishLastPublished.defaultMessage
+          .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
+          .replace('{publishedBy}', userName),
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not
+      .toBeInTheDocument();
+    expect(await screen.findByText(unitDisplayName)).toBeInTheDocument();
 
     const updatedCourseVerticalChildren = [
       ...courseVerticalChildrenMock.children,
@@ -505,7 +565,6 @@ describe('<CourseUnit />', () => {
         },
       },
     ];
-
     axiosMock
       .onGet(getCourseVerticalChildrenApiUrl(blockId))
       .reply(200, {
@@ -513,55 +572,13 @@ describe('<CourseUnit />', () => {
         children: updatedCourseVerticalChildren,
       });
 
-    await user.click(
-      await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage }),
-    );
-
-    const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-    expect(iframe).toHaveAttribute(
-      'aria-label',
-      xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-        .replace('{xblockCount}', courseVerticalChildrenMock.children.length.toString()),
-    );
-
     simulatePostMessageEvent(messageTypes.duplicateXBlock, {
       id: courseVerticalChildrenMock.children[0].block_id,
     });
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
-        publish: PUBLISH_TYPES.makePublic,
-      })
-      .reply(200, { dummy: 'value' });
-    axiosMock
-      .onGet(getCourseSectionVerticalApiUrl(blockId))
-      .reply(200, {
-        ...courseSectionVerticalMock,
-        xblock_info: {
-          ...courseSectionVerticalMock.xblock_info,
-          visibility_state: UNIT_VISIBILITY_STATES.live,
-          has_changes: false,
-          published_by: userName,
-        },
-      });
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
-
-    await waitFor(() => {
-      // check if the sidebar status is Published and Live
-      expect(screen.getByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(
-        unitInfoMessages.publishLastPublished.defaultMessage
-          .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
-          .replace('{publishedBy}', userName),
-      )).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
-      expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
-    });
-
-    axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
 
     const xblockIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
     expect(xblockIframe).toHaveAttribute(
@@ -571,24 +588,32 @@ describe('<CourseUnit />', () => {
     );
 
     // after duplicate the xblock, the sidebar status changes to Draft (unpublished changes)
-    expect(screen.getByText(
-      legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
-    )).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
-    expect(screen.getByText(
-      unitInfoMessages.publishInfoDraftSaved.defaultMessage
-        .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
-        .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
-    )).toBeInTheDocument();
-    expect(screen.getByText(
-      legacySidebarMessages.releaseInfoWithSection.defaultMessage
-        .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
+      ),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        unitInfoMessages.publishInfoDraftSaved.defaultMessage
+          .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
+          .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.releaseInfoWithSection.defaultMessage
+          .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
+      ),
+    ).toBeInTheDocument();
   });
 
   it('handles CourseUnit header action buttons', async () => {
@@ -601,12 +626,16 @@ describe('<CourseUnit />', () => {
       published_preview_link: publishedPreviewLink,
     } = courseSectionVerticalMock;
 
-    const viewLiveButton = await screen.findByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage });
+    const viewLiveButton = await screen.findByRole('button', {
+      name: headerNavigationsMessages.viewLiveButton.defaultMessage,
+    });
     await user.click(viewLiveButton);
     expect(window.open).toHaveBeenCalled();
     expect(window.open).toHaveBeenCalledWith(publishedPreviewLink, '_blank');
 
-    const previewButton = await screen.findByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage });
+    const previewButton = await screen.findByRole('button', {
+      name: headerNavigationsMessages.previewButton.defaultMessage,
+    });
     await user.click(previewButton);
     expect(window.open).toHaveBeenCalled();
     expect(window.open).toHaveBeenCalledWith(draftPreviewLink, '_blank');
@@ -696,8 +725,6 @@ describe('<CourseUnit />', () => {
       .reply(200, courseCreateXblockMock);
     render(<RootWrapper />);
 
-    await user.click(await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage }));
-
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.makePublic,
@@ -714,8 +741,33 @@ describe('<CourseUnit />', () => {
           published_by: userName,
         },
       });
+    const updatedCourseVerticalChildren = [
+      ...courseVerticalChildrenMock.children,
+      {
+        name: 'Copy XBlock',
+        block_id: '1234567890',
+        block_type: 'drag-and-drop-v2',
+        user_partition_info: {
+          selectable_partitions: [],
+          selected_partition_index: -1,
+          selected_groups_label: '',
+        },
+      },
+    ];
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, {
+        ...courseVerticalChildrenMock,
+        children: updatedCourseVerticalChildren,
+      });
+
+    const publishBtn = await screen.findByRole('button', { name: /Publish/ });
+    await user.click(publishBtn);
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, courseSectionVerticalMock);
 
     const problemButton = await screen.findByRole('button', {
       name: new RegExp(`problem ${addComponentMessages.buttonText.defaultMessage} Problem`, 'i'),
@@ -728,27 +780,33 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
-
     // after creating problem xblock, the sidebar status changes to Draft (unpublished changes)
-    expect(screen.getByText(
-      legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
-    )).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
-    expect(screen.getByText(
-      unitInfoMessages.publishInfoDraftSaved.defaultMessage
-        .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
-        .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
-    )).toBeInTheDocument();
-    expect(screen.getByText(
-      legacySidebarMessages.releaseInfoWithSection.defaultMessage
-        .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
+      ),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        unitInfoMessages.publishInfoDraftSaved.defaultMessage
+          .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
+          .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.releaseInfoWithSection.defaultMessage
+          .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
+      ),
+    ).toBeInTheDocument();
   });
 
   it('correct addition of a new course unit after click on the "Add new unit" button', async () => {
@@ -853,10 +911,14 @@ describe('<CourseUnit />', () => {
 
     const unitHeaderTitle = screen.getByTestId('unit-header-title');
 
-    const editTitleButton = within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage });
+    const editTitleButton = within(unitHeaderTitle).getByRole('button', {
+      name: headerTitleMessages.altButtonEdit.defaultMessage,
+    });
     await user.click(editTitleButton);
 
-    const titleEditField = within(unitHeaderTitle).getByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
+    const titleEditField = within(unitHeaderTitle).getByRole('textbox', {
+      name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage,
+    });
 
     await user.clear(titleEditField);
     await user.type(titleEditField, newDisplayName);
@@ -877,7 +939,9 @@ describe('<CourseUnit />', () => {
       .reply(200, courseCreateXblockMock);
     render(<RootWrapper />);
 
-    const publishButton = await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage });
+    const publishButton = await screen.findByRole('button', {
+      name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage,
+    });
     await user.click(publishButton);
 
     axiosMock
@@ -897,7 +961,7 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    await user.click(publishButton);
 
     await waitFor(() => {
       // check if the sidebar status is Published and Live
@@ -909,7 +973,12 @@ describe('<CourseUnit />', () => {
         .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
         .replace('{publishedBy}', userName),
     )).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not
+      .toBeInTheDocument();
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, courseSectionVerticalMock);
 
     const videoButton = screen.getByRole('button', {
       name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
@@ -918,32 +987,39 @@ describe('<CourseUnit />', () => {
 
     await user.click(videoButton);
 
-    axiosMock
-      .onGet(getCourseSectionVerticalApiUrl(blockId))
-      .reply(200, courseSectionVerticalMock);
-
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
-
     // after creating video xblock, the sidebar status changes to Draft (unpublished changes)
-    expect(screen.getByText(
-      legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
-    )).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
-    expect(screen.getByText(
-      unitInfoMessages.publishInfoDraftSaved.defaultMessage
-        .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
-        .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
-    )).toBeInTheDocument();
-    expect(screen.getByText(
-      legacySidebarMessages.releaseInfoWithSection.defaultMessage
-        .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
-    )).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /add video to your course/i, hidden: true })).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
+      ),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        unitInfoMessages.publishInfoDraftSaved.defaultMessage
+          .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
+          .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.releaseInfoWithSection.defaultMessage
+          .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', {
+        name: /add video to your course/i,
+        hidden: true,
+      }),
+    ).toBeInTheDocument();
 
     waffleSpy.mockRestore();
   });
@@ -955,9 +1031,9 @@ describe('<CourseUnit />', () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
 
-    await waitFor(async () => {
-      await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage }));
-    });
+    await user.click(
+      await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage }),
+    );
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {
@@ -976,25 +1052,36 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    const publishButton = await screen.findByRole('button', {
+      name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage,
+    });
+    await user.click(publishButton);
 
-    await waitFor(async () => {
-      // check if the sidebar status is Published and Live
-      expect(screen.getByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(
+    // check if the sidebar status is Published and Live
+    expect(
+      await screen.findByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
         unitInfoMessages.publishLastPublished.defaultMessage
           .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
           .replace('{publishedBy}', userName),
-      )).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not
+      .toBeInTheDocument();
 
-      const videoButton = screen.getByRole('button', {
-        name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
-        hidden: true,
-      });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, courseSectionVerticalMock);
 
-      await user.click(videoButton);
+    const videoButton = await screen.findByRole('button', {
+      name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
+      hidden: true,
     });
+    await user.click(videoButton);
+
+    await user.click(videoButton);
 
     /** TODO -- fix this test.
     await waitFor(() => {
@@ -1006,27 +1093,33 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
-
     // after creating video xblock, the sidebar status changes to Draft (unpublished changes)
-    expect(screen.getByText(
-      legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
-    )).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
-    expect(screen.getByText(
-      unitInfoMessages.publishInfoDraftSaved.defaultMessage
-        .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
-        .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
-    )).toBeInTheDocument();
-    expect(screen.getByText(
-      legacySidebarMessages.releaseInfoWithSection.defaultMessage
-        .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
+      ),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        unitInfoMessages.publishInfoDraftSaved.defaultMessage
+          .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
+          .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        legacySidebarMessages.releaseInfoWithSection.defaultMessage
+          .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renders course unit details for a draft with unpublished changes', async () => {
@@ -1107,21 +1200,15 @@ describe('<CourseUnit />', () => {
   it('should toggle visibility from sidebar and update course unit state accordingly', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
-    let courseUnitSidebar;
-    let draftUnpublishedChangesHeading;
-    let visibilityCheckbox;
+    const courseUnitSidebar = await screen.findByTestId('course-unit-sidebar');
 
-    await waitFor(async () => {
-      courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
+    const draftUnpublishedChangesHeading = await within(courseUnitSidebar)
+      .findByText(legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage);
+    expect(draftUnpublishedChangesHeading).toBeInTheDocument();
 
-      draftUnpublishedChangesHeading = within(courseUnitSidebar)
-        .getByText(legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage);
-      expect(draftUnpublishedChangesHeading).toBeInTheDocument();
-
-      visibilityCheckbox = within(courseUnitSidebar)
-        .getByLabelText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage);
-      expect(visibilityCheckbox).not.toBeChecked();
-    });
+    const visibilityCheckbox = await within(courseUnitSidebar)
+      .findByLabelText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage);
+    expect(visibilityCheckbox).not.toBeChecked();
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {
@@ -1140,29 +1227,41 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, true), store.dispatch);
+    await user.click(visibilityCheckbox);
 
     await waitFor(async () => {
       expect(visibilityCheckbox).toBeChecked();
     });
-    expect(within(courseUnitSidebar)
-      .getByText(legacySidebarMessages.sidebarTitleVisibleToStaffOnly.defaultMessage)).toBeInTheDocument();
-    expect(within(courseUnitSidebar)
-      .getByText(unitInfoMessages.visibilityStaffOnlyTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      within(courseUnitSidebar)
+        .getByText(legacySidebarMessages.sidebarTitleVisibleToStaffOnly.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      within(courseUnitSidebar)
+        .getByText(unitInfoMessages.visibilityStaffOnlyTitle.defaultMessage),
+    ).toBeInTheDocument();
 
     await user.click(visibilityCheckbox);
 
     const modalNotification = screen.getByRole('dialog');
-    const makeVisibilityBtn = within(modalNotification).getByRole('button', { name: unitInfoMessages.modalMakeVisibilityActionButtonText.defaultMessage });
-    const cancelBtn = within(modalNotification).getByRole('button', { name: unitInfoMessages.modalMakeVisibilityCancelButtonText.defaultMessage });
-    const headingElement = within(modalNotification).getByRole('heading', { name: unitInfoMessages.modalMakeVisibilityTitle.defaultMessage });
+    const makeVisibilityBtn = within(modalNotification).getByRole('button', {
+      name: unitInfoMessages.modalMakeVisibilityActionButtonText.defaultMessage,
+    });
+    const cancelBtn = within(modalNotification).getByRole('button', {
+      name: unitInfoMessages.modalMakeVisibilityCancelButtonText.defaultMessage,
+    });
+    const headingElement = within(modalNotification).getByRole('heading', {
+      name: unitInfoMessages.modalMakeVisibilityTitle.defaultMessage,
+    });
 
     expect(makeVisibilityBtn).toBeInTheDocument();
     expect(cancelBtn).toBeInTheDocument();
     expect(headingElement).toBeInTheDocument();
     expect(headingElement).toHaveClass('pgn__modal-title');
-    expect(within(modalNotification)
-      .getByText(unitInfoMessages.modalMakeVisibilityDescription.defaultMessage)).toBeInTheDocument();
+    expect(
+      within(modalNotification)
+        .getByText(unitInfoMessages.modalMakeVisibilityDescription.defaultMessage),
+    ).toBeInTheDocument();
 
     await user.click(makeVisibilityBtn);
 
@@ -1176,9 +1275,17 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, null), store.dispatch);
+    await user.click(visibilityCheckbox);
 
-    expect(visibilityCheckbox).not.toBeChecked();
+    await user.click(
+      await within(await screen.findByRole('dialog')).findByRole('button', {
+        name: unitInfoMessages.modalMakeVisibilityActionButtonText.defaultMessage,
+      }),
+    );
+
+    await waitFor(async () => {
+      expect(visibilityCheckbox).not.toBeChecked();
+    });
     expect(draftUnpublishedChangesHeading).toBeInTheDocument();
   });
 
@@ -1190,7 +1297,9 @@ describe('<CourseUnit />', () => {
 
     await waitFor(async () => {
       courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
-      publishBtn = within(courseUnitSidebar).queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage });
+      publishBtn = within(courseUnitSidebar).queryByRole('button', {
+        name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage,
+      });
       expect(publishBtn).toBeInTheDocument();
 
       await user.click(publishBtn);
@@ -1213,19 +1322,26 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+    const publishButton = await screen.findByRole('button', {
+      name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage,
+    });
+    await user.click(publishButton);
 
-    expect(within(courseUnitSidebar)
-      .getByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
-    expect(within(courseUnitSidebar).getByText(
-      unitInfoMessages.publishLastPublished.defaultMessage
-        .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
-        .replace('{publishedBy}', userName),
-    )).toBeInTheDocument();
+    expect(
+      within(courseUnitSidebar)
+        .getByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      within(courseUnitSidebar).getByText(
+        unitInfoMessages.publishLastPublished.defaultMessage
+          .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
+          .replace('{publishedBy}', userName),
+      ),
+    ).toBeInTheDocument();
     expect(publishBtn).not.toBeInTheDocument();
   });
 
-  it('should discard changes after click on the "Discard changes" button', async () => {
+  it('should discard changes after click on the Discard changes button', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
     let courseUnitSidebar;
@@ -1237,21 +1353,31 @@ describe('<CourseUnit />', () => {
       const draftUnpublishedChangesHeading = within(courseUnitSidebar)
         .getByText(legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage);
       expect(draftUnpublishedChangesHeading).toBeInTheDocument();
-      discardChangesBtn = await within(courseUnitSidebar).findByRole('button', { name: legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage });
+      discardChangesBtn = await within(courseUnitSidebar).findByRole('button', {
+        name: legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage,
+      });
       expect(discardChangesBtn).toBeInTheDocument();
 
       await user.click(discardChangesBtn);
 
       const modalNotification = screen.getByRole('dialog');
       expect(modalNotification).toBeInTheDocument();
-      expect(within(modalNotification)
-        .getByText(unitInfoMessages.modalDiscardUnitChangesDescription.defaultMessage)).toBeInTheDocument();
-      expect(within(modalNotification)
-        .getByText(unitInfoMessages.modalDiscardUnitChangesCancelButtonText.defaultMessage)).toBeInTheDocument();
-      const headingElement = within(modalNotification).getByRole('heading', { name: unitInfoMessages.modalDiscardUnitChangesTitle.defaultMessage });
+      expect(
+        within(modalNotification)
+          .getByText(unitInfoMessages.modalDiscardUnitChangesDescription.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(modalNotification)
+          .getByText(unitInfoMessages.modalDiscardUnitChangesCancelButtonText.defaultMessage),
+      ).toBeInTheDocument();
+      const headingElement = within(modalNotification).getByRole('heading', {
+        name: unitInfoMessages.modalDiscardUnitChangesTitle.defaultMessage,
+      });
       expect(headingElement).toBeInTheDocument();
       expect(headingElement).toHaveClass('pgn__modal-title');
-      const actionBtn = within(modalNotification).getByRole('button', { name: unitInfoMessages.modalDiscardUnitChangesActionButtonText.defaultMessage });
+      const actionBtn = within(modalNotification).getByRole('button', {
+        name: unitInfoMessages.modalDiscardUnitChangesActionButtonText.defaultMessage,
+      });
       expect(actionBtn).toBeInTheDocument();
 
       await user.click(actionBtn);
@@ -1273,59 +1399,62 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(
-      blockId,
-      PUBLISH_TYPES.discardChanges,
-      true,
-    ), store.dispatch);
+    await user.click(
+      await screen.findByRole('button', {
+        name: legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage,
+      }),
+    );
+    await user.click(
+      await within(await screen.findByRole('dialog')).findByRole('button', {
+        name: legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage,
+      }),
+    );
 
-    expect(within(courseUnitSidebar)
-      .getByText(legacySidebarMessages.sidebarTitlePublishedNotYetReleased.defaultMessage)).toBeInTheDocument();
+    expect(
+      await within(courseUnitSidebar)
+        .findByText(legacySidebarMessages.sidebarTitlePublishedNotYetReleased.defaultMessage),
+    ).toBeInTheDocument();
     expect(discardChangesBtn).not.toBeInTheDocument();
   });
 
   it('should toggle visibility from header configure modal and update course unit state accordingly', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
-    let courseUnitSidebar;
-    let sidebarVisibilityCheckbox;
-    let modalVisibilityCheckbox;
-    let configureModal;
-    let restrictAccessSelect;
+    expect(
+      await within(await screen.findByTestId('course-unit-sidebar'))
+        .findByLabelText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage),
+    ).not.toBeChecked();
 
-    await waitFor(async () => {
-      courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
-      sidebarVisibilityCheckbox = within(courseUnitSidebar)
-        .getByLabelText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage);
-      expect(sidebarVisibilityCheckbox).not.toBeChecked();
+    const headerConfigureBtn = await screen.findByRole('button', { name: /settings/i });
+    expect(headerConfigureBtn).toBeInTheDocument();
 
-      const headerConfigureBtn = screen.getByRole('button', { name: /settings/i });
-      expect(headerConfigureBtn).toBeInTheDocument();
+    await user.click(headerConfigureBtn);
+    const configureModal = await screen.findByTestId('configure-modal');
+    const restrictAccessSelect = await within(configureModal)
+      .findByRole('combobox', { name: configureModalMessages.restrictAccessTo.defaultMessage });
+    expect(
+      await within(configureModal)
+        .findByText(configureModalMessages.unitVisibility.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      await within(configureModal)
+        .findByText(configureModalMessages.restrictAccessTo.defaultMessage),
+    ).toBeInTheDocument();
+    expect(restrictAccessSelect).toBeInTheDocument();
+    expect(restrictAccessSelect).toHaveValue('-1');
 
-      await user.click(headerConfigureBtn);
-      configureModal = screen.getByTestId('configure-modal');
-      restrictAccessSelect = within(configureModal)
-        .getByRole('combobox', { name: configureModalMessages.restrictAccessTo.defaultMessage });
-      expect(within(configureModal)
-        .getByText(configureModalMessages.unitVisibility.defaultMessage)).toBeInTheDocument();
-      expect(within(configureModal)
-        .getByText(configureModalMessages.restrictAccessTo.defaultMessage)).toBeInTheDocument();
-      expect(restrictAccessSelect).toBeInTheDocument();
-      expect(restrictAccessSelect).toHaveValue('-1');
+    const modalVisibilityCheckbox = await within(configureModal)
+      .findByRole('checkbox', { name: configureModalMessages.hideFromLearners.defaultMessage });
+    expect(modalVisibilityCheckbox).not.toBeChecked();
 
-      modalVisibilityCheckbox = within(configureModal)
-        .getByRole('checkbox', { name: configureModalMessages.hideFromLearners.defaultMessage });
-      expect(modalVisibilityCheckbox).not.toBeChecked();
+    await user.click(modalVisibilityCheckbox);
+    expect(modalVisibilityCheckbox).toBeChecked();
 
-      await user.click(modalVisibilityCheckbox);
-      expect(modalVisibilityCheckbox).toBeChecked();
+    await user.selectOptions(restrictAccessSelect, '0');
+    const [, group1Checkbox] = await within(configureModal).findAllByRole('checkbox');
 
-      await user.selectOptions(restrictAccessSelect, '0');
-      const [, group1Checkbox] = within(configureModal).getAllByRole('checkbox');
-
-      await user.click(group1Checkbox);
-      expect(group1Checkbox).toBeChecked();
-    });
+    await user.click(group1Checkbox);
+    expect(group1Checkbox).toBeChecked();
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id), {
@@ -1334,7 +1463,10 @@ describe('<CourseUnit />', () => {
       })
       .reply(200, { dummy: 'value' });
     axiosMock
-      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .onGet(getCourseVerticalChildrenApiUrl(courseSectionVerticalMock.xblock_info.id))
+      .reply(200, courseVerticalChildrenMock);
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseSectionVerticalMock.xblock_info.id))
       .reply(200, {
         ...courseSectionVerticalMock,
         xblock_info: {
@@ -1344,17 +1476,22 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    const modalSaveBtn = within(configureModal)
-      .getByRole('button', { name: configureModalMessages.saveButton.defaultMessage });
+    const modalSaveBtn = await within(configureModal)
+      .findByRole('button', { name: configureModalMessages.saveButton.defaultMessage });
     await user.click(modalSaveBtn);
 
-    await waitFor(() => {
-      expect(sidebarVisibilityCheckbox).toBeChecked();
-      expect(within(courseUnitSidebar)
-        .getByText(legacySidebarMessages.sidebarTitleVisibleToStaffOnly.defaultMessage)).toBeInTheDocument();
-      expect(within(courseUnitSidebar)
-        .getByText(unitInfoMessages.visibilityStaffOnlyTitle.defaultMessage)).toBeInTheDocument();
-    });
+    expect(
+      await within(await screen.findByTestId('course-unit-sidebar'))
+        .findByLabelText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage),
+    ).toBeChecked();
+    expect(
+      await within(await screen.findByTestId('course-unit-sidebar'))
+        .findByText(legacySidebarMessages.sidebarTitleVisibleToStaffOnly.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      await within(await screen.findByTestId('course-unit-sidebar'))
+        .findByText(unitInfoMessages.visibilityStaffOnlyTitle.defaultMessage),
+    ).toBeInTheDocument();
   });
 
   it('shows the Tags sidebar when enabled', async () => {
@@ -1363,7 +1500,9 @@ describe('<CourseUnit />', () => {
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
     });
     render(<RootWrapper />);
-    await waitFor(() => { expect(screen.getByText('Unit tags')).toBeInTheDocument(); });
+    await waitFor(() => {
+      expect(screen.getByText('Unit tags')).toBeInTheDocument();
+    });
   });
 
   it('hides the Tags sidebar when not enabled', async () => {
@@ -1372,7 +1511,9 @@ describe('<CourseUnit />', () => {
       ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
     });
     render(<RootWrapper />);
-    await waitFor(() => { expect(screen.queryByText('Unit tags')).not.toBeInTheDocument(); });
+    await waitFor(() => {
+      expect(screen.queryByText('Unit tags')).not.toBeInTheDocument();
+    });
   });
 
   describe('Copy paste functionality', () => {
@@ -1392,7 +1533,9 @@ describe('<CourseUnit />', () => {
 
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
-      await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+      await user.click(
+        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+      );
       await user.click(screen.getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
       let units: HTMLElement[] | null = null;
@@ -1427,7 +1570,9 @@ describe('<CourseUnit />', () => {
       expect(units.length).toEqual(updatedCourseUnits.length);
       expect(mockedUsedNavigate).toHaveBeenCalled();
       expect(mockedUsedNavigate)
-        .toHaveBeenCalledWith(`/course/${courseId}/container/${blockId}/${updatedAncestorsChild.id}`, { replace: true });
+        .toHaveBeenCalledWith(`/course/${courseId}/container/${blockId}/${updatedAncestorsChild.id}`, {
+          replace: true,
+        });
     });
 
     it('should increase the number of course XBlocks after copying and pasting a block', async () => {
@@ -1449,7 +1594,9 @@ describe('<CourseUnit />', () => {
         });
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
-      await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+      await user.click(
+        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+      );
 
       await waitFor(() => {
         const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
@@ -1513,7 +1660,9 @@ describe('<CourseUnit />', () => {
 
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
-      await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+      await user.click(
+        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+      );
       await user.click(screen.getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
@@ -1535,12 +1684,18 @@ describe('<CourseUnit />', () => {
       await executeThunk(createNewCourseXBlock(camelCaseObject(postXBlockBody), null, blockId), store.dispatch);
       const newFilesAlert = screen.getByTestId('has-new-files-alert');
 
-      expect(within(newFilesAlert)
-        .getByText(pasteNotificationsMessages.hasNewFilesTitle.defaultMessage)).toBeInTheDocument();
-      expect(within(newFilesAlert)
-        .getByText(pasteNotificationsMessages.hasNewFilesDescription.defaultMessage)).toBeInTheDocument();
-      expect(within(newFilesAlert)
-        .getByText(pasteNotificationsMessages.hasNewFilesButtonText.defaultMessage)).toBeInTheDocument();
+      expect(
+        within(newFilesAlert)
+          .getByText(pasteNotificationsMessages.hasNewFilesTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(newFilesAlert)
+          .getByText(pasteNotificationsMessages.hasNewFilesDescription.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(newFilesAlert)
+          .getByText(pasteNotificationsMessages.hasNewFilesButtonText.defaultMessage),
+      ).toBeInTheDocument();
       clipboardMockResponse.staticFileNotices.newFiles.forEach((fileName) => {
         expect(within(newFilesAlert).getByText(fileName)).toBeInTheDocument();
       });
@@ -1566,7 +1721,9 @@ describe('<CourseUnit />', () => {
 
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
-      await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+      await user.click(
+        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+      );
       await user.click(screen.getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
@@ -1590,12 +1747,18 @@ describe('<CourseUnit />', () => {
       await executeThunk(createNewCourseXBlock(camelCaseObject(postXBlockBody), null, blockId), store.dispatch);
       const conflictingErrorsAlert = screen.getByTestId('has-conflicting-errors-alert');
 
-      expect(within(conflictingErrorsAlert)
-        .getByText(pasteNotificationsMessages.hasConflictingErrorsTitle.defaultMessage)).toBeInTheDocument();
-      expect(within(conflictingErrorsAlert)
-        .getByText(pasteNotificationsMessages.hasConflictingErrorsDescription.defaultMessage)).toBeInTheDocument();
-      expect(within(conflictingErrorsAlert)
-        .getByText(pasteNotificationsMessages.hasConflictingErrorsButtonText.defaultMessage)).toBeInTheDocument();
+      expect(
+        within(conflictingErrorsAlert)
+          .getByText(pasteNotificationsMessages.hasConflictingErrorsTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(conflictingErrorsAlert)
+          .getByText(pasteNotificationsMessages.hasConflictingErrorsDescription.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(conflictingErrorsAlert)
+          .getByText(pasteNotificationsMessages.hasConflictingErrorsButtonText.defaultMessage),
+      ).toBeInTheDocument();
       clipboardMockResponse.staticFileNotices.conflictingFiles.forEach((fileName) => {
         expect(within(conflictingErrorsAlert).getByText(fileName)).toBeInTheDocument();
       });
@@ -1621,7 +1784,9 @@ describe('<CourseUnit />', () => {
 
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
-      await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+      await user.click(
+        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+      );
       await user.click(screen.getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
@@ -1645,10 +1810,14 @@ describe('<CourseUnit />', () => {
       await executeThunk(createNewCourseXBlock(camelCaseObject(postXBlockBody), null, blockId), store.dispatch);
       const errorFilesAlert = screen.getByTestId('has-error-files-alert');
 
-      expect(within(errorFilesAlert)
-        .getByText(pasteNotificationsMessages.hasErrorsTitle.defaultMessage)).toBeInTheDocument();
-      expect(within(errorFilesAlert)
-        .getByText(pasteNotificationsMessages.hasErrorsDescription.defaultMessage)).toBeInTheDocument();
+      expect(
+        within(errorFilesAlert)
+          .getByText(pasteNotificationsMessages.hasErrorsTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(errorFilesAlert)
+          .getByText(pasteNotificationsMessages.hasErrorsDescription.defaultMessage),
+      ).toBeInTheDocument();
 
       await user.click(within(errorFilesAlert).getByText(/Dismiss/i));
 
@@ -1718,8 +1887,10 @@ describe('<CourseUnit />', () => {
       await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
       );
-      expect(screen.getByRole('button', { name: moveModalMessages.moveModalSubmitButton.defaultMessage })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: moveModalMessages.moveModalCancelButton.defaultMessage })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: moveModalMessages.moveModalSubmitButton.defaultMessage }))
+        .toBeInTheDocument();
+      expect(screen.getByRole('button', { name: moveModalMessages.moveModalCancelButton.defaultMessage }))
+        .toBeInTheDocument();
     });
 
     it('should navigates to xBlock current unit', async () => {
@@ -1741,7 +1912,8 @@ describe('<CourseUnit />', () => {
 
       const currentSection = courseOutlineInfoMock.child_info.children[1];
       const currentSectionItemBtn = screen.getByRole('button', {
-        name: `${currentSection.display_name} ${moveModalMessages.moveModalOutlineItemCurrentLocationText.defaultMessage} ${moveModalMessages.moveModalOutlineItemViewText.defaultMessage}`,
+        name:
+          `${currentSection.display_name} ${moveModalMessages.moveModalOutlineItemCurrentLocationText.defaultMessage} ${moveModalMessages.moveModalOutlineItemViewText.defaultMessage}`,
       });
       expect(currentSectionItemBtn).toBeInTheDocument();
       await user.click(currentSectionItemBtn);
@@ -1749,7 +1921,8 @@ describe('<CourseUnit />', () => {
       await waitFor(async () => {
         const currentSubsection = currentSection.child_info.children[0];
         const currentSubsectionItemBtn = screen.getByRole('button', {
-          name: `${currentSubsection.display_name} ${moveModalMessages.moveModalOutlineItemCurrentLocationText.defaultMessage} ${moveModalMessages.moveModalOutlineItemViewText.defaultMessage}`,
+          name:
+            `${currentSubsection.display_name} ${moveModalMessages.moveModalOutlineItemCurrentLocationText.defaultMessage} ${moveModalMessages.moveModalOutlineItemViewText.defaultMessage}`,
         });
         expect(currentSubsectionItemBtn).toBeInTheDocument();
         await user.click(currentSubsectionItemBtn);
@@ -1790,7 +1963,8 @@ describe('<CourseUnit />', () => {
 
       const currentSection = courseOutlineInfoMock.child_info.children[1];
       const currentSectionItemBtn = screen.getByRole('button', {
-        name: `${currentSection.display_name} ${moveModalMessages.moveModalOutlineItemCurrentLocationText.defaultMessage} ${moveModalMessages.moveModalOutlineItemViewText.defaultMessage}`,
+        name:
+          `${currentSection.display_name} ${moveModalMessages.moveModalOutlineItemCurrentLocationText.defaultMessage} ${moveModalMessages.moveModalOutlineItemViewText.defaultMessage}`,
       });
       expect(currentSectionItemBtn).toBeInTheDocument();
       await user.click(currentSectionItemBtn);
@@ -1834,25 +2008,31 @@ describe('<CourseUnit />', () => {
         .onPatch(postXBlockBaseApiUrl())
         .reply(200, {});
 
-      await executeThunk(patchUnitItemQuery({
-        sourceLocator: requestData.sourceLocator,
-        targetParentLocator: requestData.targetParentLocator,
-        title: requestData.title,
-        currentParentLocator: requestData.currentParentLocator,
-        isMoving: requestData.isMoving,
-        callbackFn: requestData.callbackFn,
-      }), store.dispatch);
+      await executeThunk(
+        patchUnitItemQuery({
+          sourceLocator: requestData.sourceLocator,
+          targetParentLocator: requestData.targetParentLocator,
+          title: requestData.title,
+          currentParentLocator: requestData.currentParentLocator,
+          isMoving: requestData.isMoving,
+          callbackFn: requestData.callbackFn,
+        }),
+        store.dispatch,
+      );
 
       simulatePostMessageEvent(messageTypes.rollbackMovedXBlock, { locator: requestData.sourceLocator });
 
       const dismissButton = screen.getByRole('button', {
-        name: /dismiss/i, hidden: true,
+        name: /dismiss/i,
+        hidden: true,
       });
       const undoButton = screen.getByRole('button', {
-        name: messages.undoMoveButton.defaultMessage, hidden: true,
+        name: messages.undoMoveButton.defaultMessage,
+        hidden: true,
       });
       const newLocationButton = screen.getByRole('button', {
-        name: messages.newLocationButton.defaultMessage, hidden: true,
+        name: messages.newLocationButton.defaultMessage,
+        hidden: true,
       });
 
       expect(screen.getByText(messages.alertMoveSuccessTitle.defaultMessage)).toBeInTheDocument();
@@ -1882,17 +2062,21 @@ describe('<CourseUnit />', () => {
         .onPatch(postXBlockBaseApiUrl())
         .reply(200, {});
 
-      await executeThunk(patchUnitItemQuery({
-        sourceLocator: requestData.sourceLocator,
-        targetParentLocator: requestData.targetParentLocator,
-        title: requestData.title,
-        currentParentLocator: requestData.currentParentLocator,
-        isMoving: requestData.isMoving,
-        callbackFn: requestData.callbackFn,
-      }), store.dispatch);
+      await executeThunk(
+        patchUnitItemQuery({
+          sourceLocator: requestData.sourceLocator,
+          targetParentLocator: requestData.targetParentLocator,
+          title: requestData.title,
+          currentParentLocator: requestData.currentParentLocator,
+          isMoving: requestData.isMoving,
+          callbackFn: requestData.callbackFn,
+        }),
+        store.dispatch,
+      );
 
       const newLocationButton = screen.getByRole('button', {
-        name: messages.newLocationButton.defaultMessage, hidden: true,
+        name: messages.newLocationButton.defaultMessage,
+        hidden: true,
       });
       await user.click(newLocationButton);
       expect(mockedUsedNavigate).toHaveBeenCalledWith(
@@ -1944,9 +2128,11 @@ describe('<CourseUnit />', () => {
       await waitFor(async () => {
         const configureModal = screen.getByTestId('configure-modal');
         expect(configureModal).toBeInTheDocument();
-        await user.click(within(configureModal).getByRole('button', {
-          name: configureModalMessages.cancelButton.defaultMessage,
-        }));
+        await user.click(
+          within(configureModal).getByRole('button', {
+            name: configureModalMessages.cancelButton.defaultMessage,
+          }),
+        );
         expect(handleConfigureSubmitMock).not.toHaveBeenCalled();
       });
 
@@ -2044,12 +2230,18 @@ describe('<CourseUnit />', () => {
       configureModal = getByTestId('configure-modal');
       restrictAccessSelect = within(configureModal)
         .getByRole('combobox', { name: configureModalMessages.restrictAccessTo.defaultMessage });
-      expect(within(configureModal)
-        .getByRole('heading', { name: configureModalMessages[headingMessageId].defaultMessage })).toBeInTheDocument();
-      expect(within(configureModal)
-        .queryByText(configureModalMessages.unitVisibility.defaultMessage)).not.toBeInTheDocument();
-      expect(within(configureModal)
-        .getByText(configureModalMessages.restrictAccessTo.defaultMessage)).toBeInTheDocument();
+      expect(
+        within(configureModal)
+          .getByRole('heading', { name: configureModalMessages[headingMessageId].defaultMessage }),
+      ).toBeInTheDocument();
+      expect(
+        within(configureModal)
+          .queryByText(configureModalMessages.unitVisibility.defaultMessage),
+      ).not.toBeInTheDocument();
+      expect(
+        within(configureModal)
+          .getByText(configureModalMessages.restrictAccessTo.defaultMessage),
+      ).toBeInTheDocument();
       expect(restrictAccessSelect).toBeInTheDocument();
       expect(restrictAccessSelect).toHaveValue('-1');
     });
@@ -2102,14 +2294,19 @@ describe('<CourseUnit />', () => {
       const unitHeaderTitle = await findByTestId('unit-header-title');
       await findByText(unitDisplayName);
       await waitFor(() => {
-        expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
-        expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+        expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage }))
+          .toBeInTheDocument();
+        expect(
+          within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage }),
+        ).toBeInTheDocument();
         expect(getByRole('button', { name: currentSectionName })).toBeInTheDocument();
         expect(getByRole('button', { name: currentSubSectionName })).toBeInTheDocument();
 
         expect(queryByRole('heading', { name: addComponentMessages.title.defaultMessage })).not.toBeInTheDocument();
-        expect(queryByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage })).not.toBeInTheDocument();
-        expect(queryByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage })).not.toBeInTheDocument();
+        expect(queryByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage })).not
+          .toBeInTheDocument();
+        expect(queryByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage })).not
+          .toBeInTheDocument();
 
         expect(queryByRole('heading', { name: /unit tags/i })).not.toBeInTheDocument();
         expect(queryByRole('heading', { name: /unit location/i })).not.toBeInTheDocument();
@@ -2187,29 +2384,47 @@ describe('<CourseUnit />', () => {
 
       const currentSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
       const currentSubSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
-      const helpLinkUrl = 'https://docs.openedx.org/en/latest/educators/references/course_development/parent_child_components.html';
+      const helpLinkUrl =
+        'https://docs.openedx.org/en/latest/educators/references/course_development/parent_child_components.html';
 
       await waitFor(() => {
         const unitHeaderTitle = screen.getByTestId('unit-header-title');
         expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
-        expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
-        expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+        expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage }))
+          .toBeInTheDocument();
+        expect(
+          within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage }),
+        ).toBeInTheDocument();
         expect(screen.getByRole('button', { name: currentSectionName })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: currentSubSectionName })).toBeInTheDocument();
 
-        expect(screen.queryByRole('heading', { name: addComponentMessages.title.defaultMessage })).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage })).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage })).not.toBeInTheDocument();
+        expect(screen.queryByRole('heading', { name: addComponentMessages.title.defaultMessage })).not
+          .toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage })).not
+          .toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage })).not
+          .toBeInTheDocument();
 
         expect(screen.queryByRole('heading', { name: /unit tags/i })).not.toBeInTheDocument();
         expect(screen.queryByRole('heading', { name: /unit location/i })).not.toBeInTheDocument();
 
         // Sidebar
         const sidebarContent = [
-          { query: screen.queryByRole, type: 'heading', name: legacySidebarMessages.sidebarSplitTestAddComponentTitle.defaultMessage },
-          { query: screen.queryByText, name: legacySidebarMessages.sidebarSplitTestSelectComponentType.defaultMessage.replaceAll('{bold_tag}', '') },
+          {
+            query: screen.queryByRole,
+            type: 'heading',
+            name: legacySidebarMessages.sidebarSplitTestAddComponentTitle.defaultMessage,
+          },
+          {
+            query: screen.queryByText,
+            name: legacySidebarMessages.sidebarSplitTestSelectComponentType.defaultMessage.replaceAll('{bold_tag}', ''),
+          },
           { query: screen.queryByText, name: legacySidebarMessages.sidebarSplitTestComponentAdded.defaultMessage },
-          { query: screen.queryByRole, type: 'heading', name: legacySidebarMessages.sidebarSplitTestEditComponentTitle.defaultMessage },
+          {
+            query: screen.queryByRole,
+            type: 'heading',
+            name: legacySidebarMessages.sidebarSplitTestEditComponentTitle.defaultMessage,
+          },
           {
             query: screen.queryByText,
             name: legacySidebarMessages.sidebarSplitTestEditComponentInstruction.defaultMessage
@@ -2392,6 +2607,10 @@ describe('<CourseUnit />', () => {
   });
 
   it('should change the visibility of the unit in the settings sidebar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
     const user = userEvent.setup();
     render(<RootWrapper />);
 
@@ -2404,23 +2623,20 @@ describe('<CourseUnit />', () => {
 
     // Move to settings
     expect(await screen.findByRole('heading', { name: /draft \(unpublished changes\)/i })).toBeInTheDocument();
-    const settingsTab = screen.getByRole('tab', { name: /settings/i });
+    const settingsTab = await screen.findByRole('tab', { name: /settings/i });
     expect(settingsTab).toBeInTheDocument();
     await user.click(settingsTab);
-
-    // Change Visibility to Staff Only
-    expect(screen.getByRole('heading', { name: /visibility/i })).toBeInTheDocument();
-    const staffOnlyButton = screen.getByRole('button', { name: /staff only/i });
-    expect(staffOnlyButton).toBeInTheDocument();
-    await user.click(staffOnlyButton);
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.republish,
-        metadata: { visible_to_staff_only: true },
+        metadata: { visible_to_staff_only: true, discussion_enabled: true },
       })
       .reply(200, { dummy: 'value' });
 
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, courseVerticalChildrenMock);
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -2432,24 +2648,21 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, true), store.dispatch);
-    // Move to Details
-    const detailsTab = screen.getByRole('tab', { name: /details/i });
-    await user.click(detailsTab);
-    expect(screen.getByRole('heading', { name: /visible to staff only/i })).toBeInTheDocument();
+    // Change Visibility to Staff Only
+    expect(await screen.findByRole('heading', { name: /visibility/i })).toBeInTheDocument();
+    const staffOnlyButton = await screen.findByRole('button', { name: /staff only/i });
+    expect(staffOnlyButton).toBeInTheDocument();
+    await user.click(staffOnlyButton);
 
-    // Move to settings and change visibility to all
-    const editVisibilityButton = screen.getByRole('button', { name: /edit visibility/i });
-    await user.click(editVisibilityButton);
-    const studentVisibleButton = screen.getByRole('button', { name: /student visible/i });
-    await user.click(studentVisibleButton);
+    // Move to Details
+    const detailsTab = await screen.findByRole('tab', { name: /details/i });
+    await user.click(detailsTab);
+    expect(await screen.findByRole('heading', { name: /visible to staff only/i })).toBeInTheDocument();
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.republish,
-        metadata: {
-          visible_to_staff_only: null,
-        },
+        metadata: { visible_to_staff_only: null, discussion_enabled: true },
       })
       .reply(200, { dummy: 'value' });
     axiosMock
@@ -2463,13 +2676,11 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, false), store.dispatch);
-
-    // Move to Details
-    await user.click(detailsTab);
-    expect(
-      screen.getByRole('heading', { name: /draft \(unpublished changes\)/i }),
-    ).toBeInTheDocument();
+    // Move to settings and change visibility to all
+    const editVisibilityButton = await screen.findByRole('button', { name: /edit visibility/i });
+    await user.click(editVisibilityButton);
+    const studentVisibleButton = await screen.findByRole('button', { name: /student visible/i });
+    await user.click(studentVisibleButton);
   });
 
   it('displays the staff only state in the status bar', async () => {
@@ -2516,11 +2727,6 @@ describe('<CourseUnit />', () => {
     expect(settingsTab).toBeInTheDocument();
     await user.click(settingsTab);
 
-    // Disable discussions
-    const discussionButton = screen.getByRole('checkbox', { name: /enable discussion/i });
-    expect(discussionButton).toBeChecked();
-    await user.click(discussionButton);
-
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.republish,
@@ -2540,13 +2746,10 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await executeThunk(editCourseUnitVisibilityAndData(
-      blockId,
-      PUBLISH_TYPES.republish,
-      false,
-      null,
-      false,
-    ), store.dispatch);
+    // Disable discussions
+    const discussionButton = screen.getByRole('checkbox', { name: /enable discussion/i });
+    expect(discussionButton).toBeChecked();
+    await user.click(discussionButton);
 
     expect(discussionButton).not.toBeChecked();
   });
@@ -2740,9 +2943,11 @@ describe('<CourseUnit />', () => {
     await executeThunk(fetchCourseSectionVerticalData(blockId, courseId), store.dispatch);
     expect(await screen.findByRole('heading', { name: /draft \(unpublished changes\)/i })).toBeInTheDocument();
     expect(await screen.findByText(/access restrictions applied/i)).toBeInTheDocument();
-    expect(await screen.findByText(
-      /access to some content in this unit is restricted to specific groups of learners\./i,
-    ));
+    expect(
+      await screen.findByText(
+        /access to some content in this unit is restricted to specific groups of learners\./i,
+      ),
+    );
   });
 
   it('should render never published state in the unit sidebar', async () => {
@@ -2980,7 +3185,9 @@ describe('<CourseUnit />', () => {
         newMockResult.results[0].query = query;
         // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
         // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-        newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+        newMockResult.results[0]?.hits.forEach((hit) => {
+          hit._formatted = { ...hit };
+        });
         return newMockResult;
       });
 
@@ -3252,6 +3459,10 @@ describe('<CourseUnit />', () => {
       ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
     });
 
+    axiosMock
+      .onGet(getXBlockApiUrl(mockContentData.textXBlock))
+      .reply(200, mockContentData.textXBlockData);
+
     render(<RootWrapper />);
 
     await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
@@ -3261,5 +3472,277 @@ describe('<CourseUnit />', () => {
     });
 
     await screen.findByText(mockContentData.textXBlockData.displayName);
+  });
+
+  describe('ComponentInfoSidebar menus', () => {
+    const componentId = mockContentData.textXBlock;
+    const componentData = {
+      displayName: 'Text XBlock 1',
+      category: 'html',
+      id: componentId,
+      actions: { duplicable: true, deletable: true, draggable: false },
+      upstreamInfo: null,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const renderComponentSidebar = async (data: any = componentData) => {
+      setConfig({ ...getConfig(), ENABLE_UNIT_PAGE_NEW_DESIGN: 'true' });
+      axiosMock.onGet(getXBlockApiUrl(componentId)).reply(200, data);
+      render(<RootWrapper />);
+      await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      simulatePostMessageEvent(messageTypes.xblockSelected, { contentId: componentId });
+      await screen.findByText(data.displayName);
+    };
+
+    it('duplicates component from sidebar menu', async () => {
+      const user = userEvent.setup();
+      await renderComponentSidebar();
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      axiosMock
+        .onPost(postXBlockBaseApiUrl())
+        .reply(200, { locator: 'new-block-id' });
+      axiosMock
+        .onGet(getCourseVerticalChildrenApiUrl(blockId))
+        .reply(200, courseVerticalChildrenMock);
+
+      const duplicateBtn = await screen.findByText('Duplicate');
+      await user.click(duplicateBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+      });
+      expect(axiosMock.history.post[0].url).toBe(postXBlockBaseApiUrl());
+      expect(JSON.parse(axiosMock.history.post[0].data).duplicate_source_locator).toBe(componentId);
+    });
+
+    it('opens delete modal and deletes component from sidebar menu', async () => {
+      const user = userEvent.setup();
+      await renderComponentSidebar();
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const deleteBtn = await screen.findByText('Delete');
+      await user.click(deleteBtn);
+
+      expect(await screen.findByRole('dialog')).toBeInTheDocument();
+
+      axiosMock
+        .onDelete(getXBlockBaseApiUrl(componentId))
+        .reply(200, {});
+      axiosMock
+        .onGet(getCourseVerticalChildrenApiUrl(blockId))
+        .reply(200, courseVerticalChildrenMock);
+
+      const confirmBtn = await screen.findByRole('button', { name: /^delete$/i });
+      await user.click(confirmBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.delete.length).toBe(1);
+      });
+      expect(axiosMock.history.delete[0].url).toBe(getXBlockBaseApiUrl(componentId));
+    });
+
+    it('opens move modal from sidebar menu', async () => {
+      const user = userEvent.setup();
+      await renderComponentSidebar();
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const moveBtn = await screen.findByText('Move');
+      await user.click(moveBtn);
+
+      expect(
+        await screen.findByText(
+          moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', componentData.displayName),
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it('opens unlink modal and unlinks component from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const componentWithUpstream = {
+        ...componentData,
+        actions: { ...componentData.actions, unlinkable: true },
+        upstreamInfo: { upstreamRef: 'lb:org:lib:html:block-id' },
+      };
+      await renderComponentSidebar(componentWithUpstream);
+
+      axiosMock.onDelete(getDownstreamApiUrl(componentId)).reply(200, {});
+      axiosMock.onGet(getCourseVerticalChildrenApiUrl(blockId)).reply(200, courseVerticalChildrenMock);
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const unlinkBtn = await screen.findByText('Unlink from Library');
+      await user.click(unlinkBtn);
+
+      const confirmBtn = await screen.findByRole('button', { name: /confirm unlink/i });
+      await user.click(confirmBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.delete.length).toBe(1);
+      });
+      expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(componentId));
+    });
+
+    it('navigates to library when clicking View in Library from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const upstreamRef = 'lb:org:lib:html:block-id';
+      const componentWithUpstream = {
+        ...componentData,
+        upstreamInfo: { upstreamRef },
+      };
+      await renderComponentSidebar(componentWithUpstream);
+
+      const menuToggle = await screen.findByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const viewLibBtn = await screen.findByText('View in Library');
+      await user.click(viewLibBtn);
+
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/library/'),
+      );
+    });
+  });
+
+  describe('UnitInfoSidebar menus', () => {
+    const unitId = courseSectionVerticalMock.xblock_info.id;
+    const upstreamRef = 'lb:org:lib:vertical:unit-id';
+
+    const unitItemData = {
+      id: unitId,
+      displayName: courseSectionVerticalMock.xblock_info.display_name,
+      category: 'vertical',
+      actions: { deletable: true, duplicable: false, draggable: false },
+      upstreamInfo: null,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const renderUnitInfoSidebar = async (itemData: any = unitItemData) => {
+      setConfig({ ...getConfig(), ENABLE_UNIT_PAGE_NEW_DESIGN: 'true' });
+      axiosMock.onGet(getXBlockApiUrl(unitId)).reply(200, itemData);
+      render(<RootWrapper />);
+      // Wait for the Details tab which is unique to the new unit info sidebar
+      await screen.findByRole('tab', { name: /details/i });
+      await screen.findByRole('button', { name: 'Item Menu' });
+    };
+
+    it('opens delete modal and deletes unit from sidebar menu', async () => {
+      const user = userEvent.setup();
+      await renderUnitInfoSidebar();
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const deleteBtn = await screen.findByText('Delete');
+      await user.click(deleteBtn);
+
+      expect(await screen.findByRole('dialog')).toBeInTheDocument();
+
+      axiosMock.onDelete(getXBlockBaseApiUrl(unitId)).reply(200, {});
+
+      const confirmBtn = await screen.findByRole('button', { name: /^delete$/i });
+      await user.click(confirmBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.delete.length).toBe(1);
+      });
+      expect(axiosMock.history.delete[0].url).toBe(getXBlockBaseApiUrl(unitId));
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}`);
+    });
+
+    it('opens unlink modal and unlinks unit from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const unitWithUpstream = {
+        ...unitItemData,
+        actions: { ...unitItemData.actions, unlinkable: true },
+        upstreamInfo: { upstreamRef },
+      };
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          xblock_info: {
+            ...courseSectionVerticalMock.xblock_info,
+            upstream_info: { upstream_ref: upstreamRef },
+            actions: {
+              ...courseSectionVerticalMock.xblock_info.actions,
+              unlinkable: true,
+            },
+          },
+        });
+      await executeThunk(fetchCourseSectionVerticalData(blockId, courseId), store.dispatch);
+      await renderUnitInfoSidebar(unitWithUpstream);
+
+      axiosMock.onDelete(getDownstreamApiUrl(unitId)).reply(200, {});
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const unlinkBtn = await screen.findByText('Unlink from Library');
+      await user.click(unlinkBtn);
+
+      const confirmBtn = await screen.findByRole('button', { name: /confirm unlink/i });
+      await user.click(confirmBtn);
+
+      await waitFor(() => {
+        expect(axiosMock.history.delete.length).toBe(1);
+      });
+      expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(unitId));
+    });
+
+    it('navigates to library when clicking View in Library from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const unitWithUpstream = {
+        ...unitItemData,
+        upstreamInfo: { upstreamRef },
+      };
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          xblock_info: {
+            ...courseSectionVerticalMock.xblock_info,
+            upstream_info: { upstream_ref: upstreamRef },
+          },
+        });
+      await executeThunk(fetchCourseSectionVerticalData(blockId, courseId), store.dispatch);
+      await renderUnitInfoSidebar(unitWithUpstream);
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const viewLibBtn = await screen.findByText('View in Library');
+      await user.click(viewLibBtn);
+
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/library/'),
+      );
+    });
+
+    it('copies location ID to clipboard when Copy Location ID is clicked from sidebar menu', async () => {
+      const user = userEvent.setup();
+      const writeText = jest.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: { writeText },
+        writable: true,
+        configurable: true,
+      });
+      await renderUnitInfoSidebar();
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const copyLocationBtn = await screen.findByText('Copy Location ID');
+      await user.click(copyLocationBtn);
+
+      expect(writeText).toHaveBeenCalledWith('867dddb6f55d410caaa9c1eb9c6743ec');
+    });
   });
 });

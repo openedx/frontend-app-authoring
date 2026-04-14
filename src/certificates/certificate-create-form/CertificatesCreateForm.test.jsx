@@ -1,5 +1,7 @@
 import {
-  render, waitFor, within,
+  render,
+  waitFor,
+  within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -23,13 +25,14 @@ const courseId = 'course-123';
 let store;
 let axiosMock;
 
-const renderComponent = () => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificateCreateForm courseId={courseId} />
-    </IntlProvider>
-  </Provider>,
-);
+const renderComponent = () =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificateCreateForm courseId={courseId} />
+      </IntlProvider>
+    </Provider>,
+  );
 
 const initialState = {
   certificates: {
@@ -134,7 +137,10 @@ describe('CertificateCreateForm', () => {
   it('add and delete signatory', async () => {
     const user = userEvent.setup();
     const {
-      getAllByRole, queryAllByRole, getByText, getByRole,
+      getAllByRole,
+      queryAllByRole,
+      getByText,
+      getByRole,
     } = renderComponent();
 
     const addSignatoryBtn = getByText(signatoryMessages.addSignatoryButton.defaultMessage);

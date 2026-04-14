@@ -20,19 +20,19 @@ const UsageMetricsMessage = ({
   const intl = useIntl();
   let usageMessage;
   if (usagePathStatus === RequestStatus.SUCCESSFUL) {
-    usageMessage = isEmpty(usageLocations) ? (
-      <FormattedMessage {...messages.usageNotInUseMessage} />
-    ) : (
-      <ul className="p-0">
-        {usageLocations.map(location => (
-          <li key={`usage-location-${location.displayLocation}`} style={{ listStyle: 'none' }}>
-            <Hyperlink destination={`${getConfig().STUDIO_BASE_URL}${location.url}`} target="_blank">
-              {location.displayLocation}
-            </Hyperlink>
-          </li>
-        ))}
-      </ul>
-    );
+    usageMessage = isEmpty(usageLocations) ?
+      <FormattedMessage {...messages.usageNotInUseMessage} /> :
+      (
+        <ul className="p-0">
+          {usageLocations.map(location => (
+            <li key={`usage-location-${location.displayLocation}`} style={{ listStyle: 'none' }}>
+              <Hyperlink destination={`${getConfig().STUDIO_BASE_URL}${location.url}`} target="_blank">
+                {location.displayLocation}
+              </Hyperlink>
+            </li>
+          ))}
+        </ul>
+      );
   } else if (usagePathStatus === RequestStatus.FAILED) {
     usageMessage = (
       <Row className="m-0 pt-1">

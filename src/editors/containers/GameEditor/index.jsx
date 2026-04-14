@@ -65,9 +65,8 @@ export const ThumbEditor = ({
           )
           : (
             <p>
-              Your Editor Goes here.
-              You can get at the xblock data with the blockValue field.
-              here is what is in your xblock:  {JSON.stringify(blockValue)}
+              Your Editor Goes here. You can get at the xblock data with the blockValue field. here is what is in your
+              xblock: {JSON.stringify(blockValue)}
             </p>
           )}
       </div>

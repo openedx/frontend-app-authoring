@@ -1,6 +1,8 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks,
+  render,
+  screen,
+  initializeMocks,
 } from '@src/testUtils';
 
 import LicenseBlurb from './LicenseBlurb';
@@ -13,7 +15,6 @@ describe('LicenseBlurb', () => {
       noncommercial: false,
       noDerivatives: false,
       shareAlike: false,
-
     },
   };
 
@@ -38,17 +39,23 @@ describe('LicenseBlurb', () => {
     });
 
     test('renders as expected when details.attribution and details.noncommercial equal true', () => {
-      const { container } = render(<LicenseBlurb license="" details={{ ...props.details, attribution: true, noncommercial: true }} />);
+      const { container } = render(
+        <LicenseBlurb license="" details={{ ...props.details, attribution: true, noncommercial: true }} />,
+      );
       expect(container.querySelectorAll('span.pgn__icon')).toHaveLength(2);
     });
 
     test('renders as expected when details.attribution and details.noDerivatives equal true', () => {
-      const { container } = render(<LicenseBlurb license="" details={{ ...props.details, attribution: true, noDerivatives: true }} />);
+      const { container } = render(
+        <LicenseBlurb license="" details={{ ...props.details, attribution: true, noDerivatives: true }} />,
+      );
       expect(container.querySelectorAll('span.pgn__icon')).toHaveLength(2);
     });
 
     test('renders as expected when details.attribution and details.shareAlike equal true', () => {
-      const { container } = render(<LicenseBlurb license="" details={{ ...props.details, attribution: true, shareAlike: true }} />);
+      const { container } = render(
+        <LicenseBlurb license="" details={{ ...props.details, attribution: true, shareAlike: true }} />,
+      );
       expect(container.querySelectorAll('span.pgn__icon')).toHaveLength(2);
     });
   });

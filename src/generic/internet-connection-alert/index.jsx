@@ -7,7 +7,10 @@ import AlertMessage from '../alert-message';
 import messages from './messages';
 
 const InternetConnectionAlert = ({
-  isFailed, isQueryPending, onQueryProcessing, onInternetConnectionFailed,
+  isFailed,
+  isQueryPending,
+  onQueryProcessing,
+  onInternetConnectionFailed,
 }) => {
   const intl = useIntl();
   const [showAlert, setShowAlert] = useState(false);

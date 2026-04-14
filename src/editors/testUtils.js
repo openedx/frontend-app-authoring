@@ -54,13 +54,14 @@ export const mockNestedComponent = (name, contents) => {
  *     IconButton: 'IconButton',
  *   })
  */
-export const mockNestedComponents = (mapping) => Object.entries(mapping).reduce(
-  (obj, [name, value]) => ({
-    ...obj,
-    [name]: mockNestedComponent(name, value),
-  }),
-  {},
-);
+export const mockNestedComponents = (mapping) =>
+  Object.entries(mapping).reduce(
+    (obj, [name, value]) => ({
+      ...obj,
+      [name]: mockNestedComponent(name, value),
+    }),
+    {},
+  );
 
 /**
  * Mock utility for working with useState in a hooks module.
@@ -132,10 +133,12 @@ export class MockUseState {
    * @return {object} - StrictDict of state object keys
    */
   get keys() {
-    return StrictDict(Object.keys(this.hooks.state).reduce(
-      (obj, key) => ({ ...obj, [key]: key }),
-      {},
-    ));
+    return StrictDict(
+      Object.keys(this.hooks.state).reduce(
+        (obj, key) => ({ ...obj, [key]: key }),
+        {},
+      ),
+    );
   }
 
   /**

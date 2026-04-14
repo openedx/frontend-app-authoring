@@ -112,8 +112,10 @@ const TranscriptTab = ({
             ))}
           </ul>
         </ErrorAlert>
-        {previousSelection.map(transcript => (
+        {previousSelection.map((transcript, idx) => (
           <Transcript
+            // eslint-disable-next-line react/no-array-index-key
+            key={idx}
             {...{
               languages,
               transcript,

@@ -13,7 +13,8 @@ const setGradingData = (fn) => {
 };
 
 const gracePeriodDefaultTime = {
-  hours: 12, minutes: 12,
+  hours: 12,
+  minutes: 12,
 };
 
 const RootWrapper = (props = {}) => (
@@ -36,10 +37,12 @@ describe('<DeadlineSection />', () => {
     });
   });
   it('checking deadline input value', async () => {
-    const { getByTestId } = render(<RootWrapper
-      gracePeriod={gracePeriodDefaultTime}
-      setGradingData={setGradingData}
-    />);
+    const { getByTestId } = render(
+      <RootWrapper
+        gracePeriod={gracePeriodDefaultTime}
+        setGradingData={setGradingData}
+      />,
+    );
     await waitFor(() => {
       const inputElement = getByTestId('deadline-period-input');
       expect(inputElement.value).toBe('12:12');
@@ -49,20 +52,24 @@ describe('<DeadlineSection />', () => {
     });
   });
   it('checking deadline input value if grace Period has no hours', async () => {
-    const { getByTestId } = render(<RootWrapper
-      gracePeriod={{ hours: 0, minutes: 13 }}
-      setGradingData={setGradingData}
-    />);
+    const { getByTestId } = render(
+      <RootWrapper
+        gracePeriod={{ hours: 0, minutes: 13 }}
+        setGradingData={setGradingData}
+      />,
+    );
     await waitFor(() => {
       const inputElement = getByTestId('deadline-period-input');
       expect(inputElement.value).toBe('00:13');
     });
   });
   it('checking deadline input value if grace Period has no minutes', async () => {
-    const { getByTestId } = render(<RootWrapper
-      gracePeriod={{ hours: 13, minutes: 0 }}
-      setGradingData={setGradingData}
-    />);
+    const { getByTestId } = render(
+      <RootWrapper
+        gracePeriod={{ hours: 13, minutes: 0 }}
+        setGradingData={setGradingData}
+      />,
+    );
     await waitFor(() => {
       const inputElement = getByTestId('deadline-period-input');
       expect(inputElement.value).toBe('13:00');
@@ -76,10 +83,12 @@ describe('<DeadlineSection />', () => {
     });
   });
   it('checking deadline input validation error', async () => {
-    const { getByPlaceholderText, getByText } = render(<RootWrapper
-      gracePeriod={gracePeriodDefaultTime}
-      setGradingData={setGradingData}
-    />);
+    const { getByPlaceholderText, getByText } = render(
+      <RootWrapper
+        gracePeriod={gracePeriodDefaultTime}
+        setGradingData={setGradingData}
+      />,
+    );
     await waitFor(() => {
       const inputElement = getByPlaceholderText(TIME_FORMAT.toUpperCase());
       fireEvent.change(inputElement, { target: { value: 'wrong:input format' } });
@@ -87,10 +96,12 @@ describe('<DeadlineSection />', () => {
     });
   });
   it('checking deadline input time format validation error', async () => {
-    const { getByPlaceholderText, getByText } = render(<RootWrapper
-      gracePeriod={gracePeriodDefaultTime}
-      setGradingData={setGradingData}
-    />);
+    const { getByPlaceholderText, getByText } = render(
+      <RootWrapper
+        gracePeriod={gracePeriodDefaultTime}
+        setGradingData={setGradingData}
+      />,
+    );
 
     await waitFor(() => {
       const inputElement = getByPlaceholderText(TIME_FORMAT.toUpperCase());

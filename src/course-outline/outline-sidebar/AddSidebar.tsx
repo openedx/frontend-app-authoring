@@ -5,13 +5,19 @@ import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sideb
 
 import contentMessages from '@src/library-authoring/add-content/messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
 import {
-  Stack, Tab, Tabs,
+  Stack,
+  Tab,
+  Tabs,
 } from '@openedx/paragon';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import {
-  useCallback, useEffect, useMemo, useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { ComponentSelectedEvent } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
@@ -42,17 +48,17 @@ const CannotAddContentAlert = () => {
 };
 
 type AddContentButtonProps = {
-  name: string,
-  blockType: ContainerType,
+  name: string;
+  blockType: ContainerType;
 };
 
 /** Add Content Button */
-const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
+const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
+  const { courseUsageKey } = useCourseAuthoringContext();
   const {
-    courseUsageKey,
     handleAddBlock,
     handleAddAndOpenUnit,
-  } = useCourseAuthoringContext();
+  } = useCourseOutlineContext();
   const {
     currentFlow,
     stopCurrentFlow,
@@ -121,9 +127,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
         }
         break;
       case 'unit':
-        sectionParentId = (
-          currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId
-        );
+        sectionParentId = currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId;
         subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
         if (subsectionParentId) {
           addUnit(subsectionParentId, sectionParentId);
@@ -210,10 +214,8 @@ const AddNewContent = () => {
 
 /** Add Existing Content Tab Section */
 const ShowLibraryContent = () => {
-  const {
-    courseUsageKey,
-    handleAddBlock,
-  } = useCourseAuthoringContext();
+  const { courseUsageKey } = useCourseAuthoringContext();
+  const { handleAddBlock } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
     currentFlow,
@@ -261,9 +263,7 @@ const ShowLibraryContent = () => {
         }
         break;
       case 'unit':
-        sectionParentId = (
-          currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId
-        );
+        sectionParentId = currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId;
         subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
         if (subsectionParentId) {
           await handleAddBlock.mutateAsync({

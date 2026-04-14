@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks, fireEvent,
+  render,
+  screen,
+  initializeMocks,
+  fireEvent,
 } from '@src/testUtils';
 import { thunkActions, selectors } from '../../../../../../data/redux';
 
@@ -21,14 +24,20 @@ jest.mock('../../../../../../data/redux', () => ({
   thunkActions: {
     video: {
       deleteTranscript: jest.fn().mockName('thunkActions.video.deleteTranscript'),
-      replaceTranscript: jest.fn((args) => ({ replaceTranscript: args })).mockName('thunkActions.video.replaceTranscript'),
+      replaceTranscript: jest.fn((args) => ({ replaceTranscript: args })).mockName(
+        'thunkActions.video.replaceTranscript',
+      ),
       downloadTranscript: jest.fn().mockName('thunkActions.video.downloadTranscript'),
     },
   },
   selectors: {
     video: {
-      getTranscriptDownloadUrl: jest.fn(args => ({ getTranscriptDownloadUrl: args })).mockName('selectors.video.getTranscriptDownloadUrl'),
-      buildTranscriptUrl: jest.fn(args => ({ buildTranscriptUrl: args })).mockName('selectors.video.buildTranscriptUrl'),
+      getTranscriptDownloadUrl: jest.fn(args => ({ getTranscriptDownloadUrl: args })).mockName(
+        'selectors.video.getTranscriptDownloadUrl',
+      ),
+      buildTranscriptUrl: jest.fn(args => ({ buildTranscriptUrl: args })).mockName(
+        'selectors.video.buildTranscriptUrl',
+      ),
     },
   },
 }));
@@ -50,7 +59,8 @@ describe('TranscriptActionMenu', () => {
 
       test('it dispatches the correct thunk', () => {
         const cb = componentModule.hooks.replaceFileCallback({
-          dispatch: mockDispatch, language: lang1Code,
+          dispatch: mockDispatch,
+          language: lang1Code,
         });
         cb(mockEvent);
         expect(thunkActions.video.replaceTranscript).toHaveBeenCalledWith(result);
@@ -66,7 +76,9 @@ describe('TranscriptActionMenu', () => {
       launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
       // redux
       getTranscriptDownloadUrl: jest.fn().mockName('selectors.video.getTranscriptDownloadUrl'),
-      buildTranscriptUrl: jest.fn().mockName('selectors.video.buildTranscriptUrl').mockImplementation((url) => url.transcriptUrl),
+      buildTranscriptUrl: jest.fn().mockName('selectors.video.buildTranscriptUrl').mockImplementation((url) =>
+        url.transcriptUrl
+      ),
     };
     beforeEach(() => {
       initializeMocks();

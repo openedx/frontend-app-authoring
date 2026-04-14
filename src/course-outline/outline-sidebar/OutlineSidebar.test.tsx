@@ -2,9 +2,14 @@ import { getConfig, setConfig } from '@edx/frontend-platform';
 import { userEvent } from '@testing-library/user-event';
 
 import {
-  initializeMocks, render, screen, waitFor, within,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
+  within,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 
 import { OutlineSidebarProvider } from './OutlineSidebarContext';
 import { OutlineSidebarPagesProvider } from './OutlineSidebarPagesContext';
@@ -15,24 +20,29 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseDetails: jest.fn().mockReturnValue({ isPending: false, data: { title: 'Test Course' } }),
   useCreateCourseBlock: jest.fn(),
   useCourseItemData: jest.fn().mockReturnValue({ data: {} }),
+  useDuplicateItem: jest.fn().mockReturnValue({ duplicateItem: jest.fn() }),
+  useDeleteCourseItem: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
 }));
 
 const courseId = '123';
 
 const extraWrapper = ({ children }) => (
   <CourseAuthoringProvider courseId={courseId}>
-    <OutlineSidebarPagesProvider>
-      <OutlineSidebarProvider>
-        {children}
-      </OutlineSidebarProvider>
-    </OutlineSidebarPagesProvider>
+    <CourseOutlineProvider>
+      <OutlineSidebarPagesProvider>
+        <OutlineSidebarProvider>
+          {children}
+        </OutlineSidebarProvider>
+      </OutlineSidebarPagesProvider>
+    </CourseOutlineProvider>
   </CourseAuthoringProvider>
 );
 
-const renderComponent = () => render(
-  <OutlineSidebar />,
-  { extraWrapper },
-);
+const renderComponent = () =>
+  render(
+    <OutlineSidebar />,
+    { extraWrapper },
+  );
 
 describe('<OutlineSidebar>', () => {
   beforeEach(() => {

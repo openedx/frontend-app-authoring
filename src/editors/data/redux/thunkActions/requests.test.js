@@ -79,7 +79,7 @@ describe('requests thunkActions module', () => {
 
   describe('networkRequest', () => {
     const requestKey = 'test-request';
-    const testData = ({ some: 'test data' });
+    const testData = { some: 'test data' };
     let resolveFn;
     let rejectFn;
     describe('without success and failure handlers', () => {
@@ -266,9 +266,11 @@ describe('requests thunkActions module', () => {
       let dispatchedAction;
       describe('courses', () => {
         beforeEach(() => {
-          fetchImages = jest.fn((args) => new Promise((resolve) => {
-            resolve({ data: { assets: { fetchImages: args } } });
-          }));
+          fetchImages = jest.fn((args) =>
+            new Promise((resolve) => {
+              resolve({ data: { assets: { fetchImages: args } } });
+            })
+          );
           jest.spyOn(api, apiKeys.fetchCourseImages).mockImplementationOnce(fetchImages);
           loadImages = jest.spyOn(api, apiKeys.loadImages).mockImplementationOnce(() => ({}));
           requests.fetchImages({ ...fetchParams, onSuccess, onFailure })(dispatch, () => testState);
@@ -304,12 +306,16 @@ describe('requests thunkActions module', () => {
         };
         beforeEach(() => {
           jest.spyOn(selectors.app, 'learningContextId').mockImplementationOnce(() => ('lib:demo'));
-          fetchImages = jest.fn((args) => new Promise((resolve) => {
-            resolve({ data: { files: { fetchImages: args } } });
-          }));
+          fetchImages = jest.fn((args) =>
+            new Promise((resolve) => {
+              resolve({ data: { files: { fetchImages: args } } });
+            })
+          );
           jest.spyOn(api, apiKeys.fetchLibraryImages).mockImplementationOnce(fetchImages);
           requests.fetchImages({
-            ...fetchParams, onSuccess, onFailure,
+            ...fetchParams,
+            onSuccess,
+            onFailure,
           })(dispatch, () => testState);
           [[dispatchedAction]] = dispatch.mock.calls;
         });
@@ -327,9 +333,11 @@ describe('requests thunkActions module', () => {
       let fetchVideos;
       let dispatchedAction;
       beforeEach(() => {
-        fetchVideos = jest.fn((args) => new Promise((resolve) => {
-          resolve({ data: { videos: { fetchVideos: args } } });
-        }));
+        fetchVideos = jest.fn((args) =>
+          new Promise((resolve) => {
+            resolve({ data: { videos: { fetchVideos: args } } });
+          })
+        );
         jest.spyOn(api, apiKeys.fetchVideos).mockImplementationOnce(fetchVideos);
         requests.fetchVideos({ ...fetchParams, onSuccess, onFailure })(dispatch, () => testState);
         [[dispatchedAction]] = dispatch.mock.calls;
@@ -394,12 +402,17 @@ describe('requests thunkActions module', () => {
           asset,
         };
         beforeEach(() => {
-          uploadAsset = jest.fn((args) => new Promise((resolve) => {
-            resolve({ data: { asset: args } });
-          }));
+          uploadAsset = jest.fn((args) =>
+            new Promise((resolve) => {
+              resolve({ data: { asset: args } });
+            })
+          );
           jest.spyOn(api, apiKeys.uploadAsset).mockImplementationOnce(uploadAsset);
           requests.uploadAsset({
-            asset, ...fetchParams, onSuccess, onFailure,
+            asset,
+            ...fetchParams,
+            onSuccess,
+            onFailure,
           })(dispatch, () => testState);
           [[dispatchedAction]] = dispatch.mock.calls;
         });
@@ -423,12 +436,17 @@ describe('requests thunkActions module', () => {
         };
         beforeEach(() => {
           jest.spyOn(selectors.app, 'learningContextId').mockImplementationOnce(() => ('lib:demo'));
-          uploadAsset = jest.fn((args) => new Promise((resolve) => {
-            resolve({ data: { asset: args } });
-          }));
+          uploadAsset = jest.fn((args) =>
+            new Promise((resolve) => {
+              resolve({ data: { asset: args } });
+            })
+          );
           jest.spyOn(api, apiKeys.uploadAsset).mockImplementationOnce(uploadAsset);
           requests.uploadAsset({
-            asset, ...fetchParams, onSuccess, onFailure,
+            asset,
+            ...fetchParams,
+            onSuccess,
+            onFailure,
           })(dispatch, () => testState);
           [[dispatchedAction]] = dispatch.mock.calls;
         });
@@ -448,11 +466,14 @@ describe('requests thunkActions module', () => {
         expectedData: {
           ...fetchParams,
           requestKey: RequestKeys.batchUploadAssets,
-          promise: assets.reduce((acc, asset) => acc.then(() => requests.uploadAsset({
-            asset,
-            learningContextId: selectors.app.learningContextId(testState),
-            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
-          })), Promise.resolve()),
+          promise: assets.reduce((acc, asset) =>
+            acc.then(() =>
+              requests.uploadAsset({
+                asset,
+                learningContextId: selectors.app.learningContextId(testState),
+                studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+              })
+            ), Promise.resolve()),
         },
       });
       describe('removeTemporalLink', () => {

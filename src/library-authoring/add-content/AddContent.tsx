@@ -37,33 +37,33 @@ import { messages, getContentMessages } from './messages';
 import type { BlockTypeMetadata } from '../data/api';
 
 type ContentType = {
-  name: string,
-  disabled?: boolean,
-  icon?: React.ComponentType,
-  blockType: string,
+  name: string;
+  disabled?: boolean;
+  icon?: React.ComponentType;
+  blockType: string;
 };
 
 type AddContentButtonProps = {
-  contentType: ContentType,
-  onCreateContent: (blockType: string) => void,
+  contentType: ContentType;
+  onCreateContent: (blockType: string) => void;
 };
 
 type AddContentViewProps = {
-  contentTypes: ContentType[],
-  onCreateContent: (blockType: string) => void,
-  isAddLibraryContentModalOpen: boolean,
-  closeAddLibraryContentModal: () => void,
-  isComponentPicker?: boolean,
+  contentTypes: ContentType[];
+  onCreateContent: (blockType: string) => void;
+  isAddLibraryContentModalOpen: boolean;
+  closeAddLibraryContentModal: () => void;
+  isComponentPicker?: boolean;
 };
 
 type AddAdvancedContentViewProps = {
-  closeAdvancedList: () => void,
-  onCreateContent: (blockType: string) => void,
-  advancedBlocks: Record<string, BlockTypeMetadata>,
-  isBlockTypeEnabled: (blockType: string) => boolean,
+  closeAdvancedList: () => void;
+  onCreateContent: (blockType: string) => void;
+  advancedBlocks: Record<string, BlockTypeMetadata>;
+  isBlockTypeEnabled: (blockType: string) => boolean;
 };
 
-const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonProps) => {
+const AddContentButton = ({ contentType, onCreateContent }: AddContentButtonProps) => {
   const {
     name,
     disabled = false,
@@ -174,9 +174,7 @@ const AddContentView = ({
       onCreateContent={onCreateContent}
     />
   ));
-  const separator = (
-    <hr className="w-100 bg-gray-500" />
-  );
+  const separator = <hr className="w-100 bg-gray-500" />;
 
   // Extract the paste button for use on Section and Subsection
   const pasteButton = componentButtons.find(ct => ct.key === 'add-content-paste');
@@ -261,18 +259,20 @@ const AddAdvancedContentView = ({
         </Button>
       </div>
       {sortedBlockTypes.map((blockType) => (
-        isBlockTypeEnabled(blockType) ? (
-          <AddContentButton
-            key={`add-content-${blockType}`}
-            contentType={{
-              name: advancedBlocks[blockType].displayName,
-              blockType,
-              icon: AutoAwesome,
-              disabled: false,
-            }}
-            onCreateContent={onCreateContent}
-          />
-        ) : null
+        isBlockTypeEnabled(blockType) ?
+          (
+            <AddContentButton
+              key={`add-content-${blockType}`}
+              contentType={{
+                name: advancedBlocks[blockType].displayName,
+                blockType,
+                icon: AutoAwesome,
+                disabled: false,
+              }}
+              onCreateContent={onCreateContent}
+            />
+          ) :
+          null
       ))}
     </>
   );
@@ -341,10 +341,11 @@ const AddContent = () => {
   // We use block types data from backend to verify the enabled basic and advanced blocks.
   // Also, we use that data to get the translated display name of the block.
   const { data: blockTypesDataList } = useBlockTypesMetadata(libraryId);
-  const blockTypesData = useMemo(() => blockTypesDataList?.reduce((acc, block) => {
-    acc[block.blockType] = block;
-    return acc;
-  }, {}), [blockTypesDataList]);
+  const blockTypesData = useMemo(() =>
+    blockTypesDataList?.reduce((acc, block) => {
+      acc[block.blockType] = block;
+      return acc;
+    }, {}), [blockTypesDataList]);
 
   const isBlockTypeEnabled = (blockType: string) => !getConfig().LIBRARY_UNSUPPORTED_BLOCKS.includes(blockType);
 
@@ -376,13 +377,16 @@ const AddContent = () => {
     },
   ];
 
-  const isBasicBlock = (blockType: string) => contentTypes.some(
-    content => content.blockType === blockType,
-  );
+  const isBasicBlock = (blockType: string) =>
+    contentTypes.some(
+      content => content.blockType === blockType,
+    );
 
-  const advancedBlocks = useMemo(() => (blockTypesData ? Object.fromEntries(
-    Object.entries(blockTypesData).filter(([key]) => !isBasicBlock(key)),
-  ) : {}), [blockTypesData]) as Record<string, BlockTypeMetadata>;
+  const advancedBlocks = useMemo(() => (blockTypesData ?
+    Object.fromEntries(
+      Object.entries(blockTypesData).filter(([key]) => !isBasicBlock(key)),
+    ) :
+    {}), [blockTypesData]) as Record<string, BlockTypeMetadata>;
 
   // Include the 'Advanced / Other' button if there are enabled advanced Xblocks
   if (Object.keys(advancedBlocks).length > 0) {
@@ -491,11 +495,13 @@ const AddContent = () => {
       showAddLibraryContentModal();
     } else if (blockType === 'advancedXBlock') {
       showAdvancedList();
-    } else if ([
-      ContainerType.Unit,
-      ContainerType.Subsection,
-      ContainerType.Section,
-    ].includes(blockType as ContainerType)) {
+    } else if (
+      [
+        ContainerType.Unit,
+        ContainerType.Subsection,
+        ContainerType.Section,
+      ].includes(blockType as ContainerType)
+    ) {
       setCreateContainerModalType?.(blockType as ContainerType);
     } else {
       onCreateBlock(blockType);
@@ -509,22 +515,24 @@ const AddContent = () => {
 
   return (
     <Stack direction="vertical">
-      {isAdvancedListOpen ? (
-        <AddAdvancedContentView
-          closeAdvancedList={closeAdvancedList}
-          onCreateContent={onCreateContent}
-          advancedBlocks={advancedBlocks}
-          isBlockTypeEnabled={isBlockTypeEnabled}
-        />
-      ) : (
-        <AddContentView
-          contentTypes={contentTypes}
-          onCreateContent={onCreateContent}
-          isAddLibraryContentModalOpen={isAddLibraryContentModalOpen}
-          closeAddLibraryContentModal={closeAddLibraryContentModal}
-          isComponentPicker={!!componentPicker}
-        />
-      )}
+      {isAdvancedListOpen ?
+        (
+          <AddAdvancedContentView
+            closeAdvancedList={closeAdvancedList}
+            onCreateContent={onCreateContent}
+            advancedBlocks={advancedBlocks}
+            isBlockTypeEnabled={isBlockTypeEnabled}
+          />
+        ) :
+        (
+          <AddContentView
+            contentTypes={contentTypes}
+            onCreateContent={onCreateContent}
+            isAddLibraryContentModalOpen={isAddLibraryContentModalOpen}
+            closeAddLibraryContentModal={closeAddLibraryContentModal}
+            isComponentPicker={!!componentPicker}
+          />
+        )}
     </Stack>
   );
 };

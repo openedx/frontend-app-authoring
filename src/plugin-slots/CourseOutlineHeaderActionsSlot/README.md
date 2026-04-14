@@ -3,17 +3,18 @@
 ### Slot ID: `org.openedx.frontend.authoring.course_outline_header_actions.v1`
 
 ### Slot ID Aliases
-* `course_outline_header_actions_slot`
+
+- `course_outline_header_actions_slot`
 
 ### Plugin Props:
 
-* `isReIndexShow` - Boolean.
-* `isSectionsExpanded` - Boolean.
-* `headerNavigationsActions` - Object. See Proptypes definition in the component for details.
-* `hasSections` - Boolean. Indicates if the course outline has sections.
-* `courseActions` - Object. See Proptypes definition in the component for details.
-* `errors` - Object. See Proptypes definition in the component for details.
-* `sections` - Array of objects. Sections of the course outline.
+- `isReIndexShow` - Boolean.
+- `isSectionsExpanded` - Boolean.
+- `headerNavigationsActions` - Object. See Proptypes definition in the component for details.
+- `hasSections` - Boolean. Indicates if the course outline has sections.
+- `courseActions` - Object. See Proptypes definition in the component for details.
+- `errors` - Object. See Proptypes definition in the component for details.
+- `sections` - Array of objects. Sections of the course outline.
 
 ## Description
 
@@ -31,9 +32,7 @@ The following example configuration inserts an extra button to the header as sho
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 import { Button } from '@openedx/paragon';
 
-const MyButton = () => (
-  <Button>🐣</Button>
-);
+const MyButton = () => <Button>🐣</Button>;
 
 const config = {
   pluginSlots: {
@@ -49,11 +48,10 @@ const config = {
             RenderWidget: MyButton,
           },
         },
-      ]
-    }
+      ],
+    },
   },
-}
+};
 
 export default config;
 ```
-

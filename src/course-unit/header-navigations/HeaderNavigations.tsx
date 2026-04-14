@@ -1,9 +1,14 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, ButtonGroup, Stack,
+  Button,
+  ButtonGroup,
+  Stack,
 } from '@openedx/paragon';
 import {
-  Add, Edit as EditIcon, FindInPage, InfoOutline,
+  Add,
+  Edit as EditIcon,
+  FindInPage,
+  InfoOutline,
 } from '@openedx/paragon/icons';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 
@@ -47,9 +52,11 @@ const HeaderNavigations = ({
 
   return (
     <nav className="header-navigations ml-auto flex-shrink-0">
-      {/**
-       * Action buttons used in the unit page
-       */}
+      {
+        /**
+         * Action buttons used in the unit page
+         */
+      }
       {category === COURSE_BLOCK_NAMES.vertical.id && (
         <Stack direction="horizontal" gap={3}>
           {showNewDesignButtons && (
@@ -87,13 +94,14 @@ const HeaderNavigations = ({
             >
               {intl.formatMessage(messages.viewLiveButton)}
             </Button>
-
           </ButtonGroup>
         </Stack>
       )}
-      {/**
-       * Action buttons used in legacy libraries content page and split test page
-       */}
+      {
+        /**
+         * Action buttons used in legacy libraries content page and split test page
+         */
+      }
       {[COURSE_BLOCK_NAMES.libraryContent.id, COURSE_BLOCK_NAMES.splitTest.id].includes(category) && (
         <Button
           iconBefore={EditIcon}

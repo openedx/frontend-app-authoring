@@ -142,7 +142,8 @@ export const updateSingleCustomPage = ({
   blockId,
   metadata,
   setCurrentPage,
-}) => (dispatch) => {
+}) =>
+(dispatch) => {
   dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
   try {
     dispatch(updateModel({

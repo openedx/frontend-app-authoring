@@ -4,15 +4,15 @@ import { getSupportedFormats } from '../videos-page/data/utils';
 import messages from './messages';
 
 declare interface UseFileInputArgs {
-  onAddFile: (files: File[]) => void,
-  setSelectedRows: (files: File[]) => void,
-  setAddOpen: () => void,
+  onAddFile: (files: File[]) => void;
+  setSelectedRows: (files: File[]) => void;
+  setAddOpen: () => void;
 }
 
 declare interface FileInputVars {
-  click: () => void,
-  addFile: ChangeEventHandler<HTMLInputElement>,
-  ref: MutableRefObject<HTMLInputElement | null>
+  click: () => void;
+  addFile: ChangeEventHandler<HTMLInputElement>;
+  ref: MutableRefObject<HTMLInputElement | null>;
 }
 
 export const useFileInput = ({
@@ -38,16 +38,19 @@ export const useFileInput = ({
 
 declare interface FileInputArgs {
   fileInput: {
-    addFile: ChangeEventHandler<HTMLInputElement>,
-    ref: MutableRefObject<HTMLInputElement | null>,
-  },
-  supportedFileFormats?: string | string[] | Record<string, string[]>,
-  allowMultiple?: boolean,
-  id?: string,
+    addFile: ChangeEventHandler<HTMLInputElement>;
+    ref: MutableRefObject<HTMLInputElement | null>;
+  };
+  supportedFileFormats?: string | string[] | Record<string, string[]>;
+  allowMultiple?: boolean;
+  id?: string;
 }
 
 const FileInput = ({
-  fileInput: hook, supportedFileFormats, allowMultiple = true, id,
+  fileInput: hook,
+  supportedFileFormats,
+  allowMultiple = true,
+  id,
 }: FileInputArgs) => {
   const intl = useIntl();
   return (

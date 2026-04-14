@@ -1,14 +1,18 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type {
-  Filter, MeiliSearch, MultiSearchQuery, SearchResponse,
+  Filter,
+  MeiliSearch,
+  MultiSearchQuery,
+  SearchResponse,
 } from 'meilisearch';
 import { ContainerType } from '../../generic/key-utils';
 
-export const getContentSearchConfigUrl = () => new URL(
-  'api/content_search/v2/studio/',
-  getConfig().STUDIO_BASE_URL,
-).href;
+export const getContentSearchConfigUrl = () =>
+  new URL(
+    'api/content_search/v2/studio/',
+    getConfig().STUDIO_BASE_URL,
+  ).href;
 
 export const HIGHLIGHT_PRE_TAG = '__meili-highlight__'; // Indicate the start of a highlighted (matching) term
 export const HIGHLIGHT_POST_TAG = '__/meili-highlight__'; // Indicate the end of a highlighted (matching) term
@@ -37,7 +41,7 @@ export const allPublishFilters: PublishStatus[] = Object.values(PublishStatus);
 /**
  * Get the content search configuration from the CMS.
  */
-export const getContentSearchConfig = async (): Promise<{ url: string, indexName: string, apiKey: string }> => {
+export const getContentSearchConfig = async (): Promise<{ url: string; indexName: string; apiKey: string; }> => {
   const url = getContentSearchConfigUrl();
   const response = await getAuthenticatedHttpClient().get(url);
   return {
@@ -117,10 +121,10 @@ interface BaseContentHit {
   /** The course or library ID */
   contextKey: string;
   org: string;
-  breadcrumbs: Array<{ displayName: string }>;
+  breadcrumbs: Array<{ displayName: string; }>;
   tags: ContentHitTags;
   /** Same fields with <mark>...</mark> highlights */
-  formatted: { displayName: string, content?: ContentDetails, description?: string };
+  formatted: { displayName: string; content?: ContentDetails; description?: string; };
   created: number;
   modified: number;
 }
@@ -139,17 +143,17 @@ export interface ContentHit extends BaseContentHit {
    */
   type: 'course_block' | 'library_block';
   breadcrumbs: [
-    { displayName: string },
-    ...Array<{ displayName: string, usageKey: string }>,
+    { displayName: string; },
+    ...Array<{ displayName: string; usageKey: string; }>,
   ];
   description?: string;
   content?: ContentDetails;
   lastPublished: number | null;
-  collections: { displayName?: string[], key?: string[] };
-  units: { displayName?: string[], key?: string[] };
+  collections: { displayName?: string[]; key?: string[]; };
+  units: { displayName?: string[]; key?: string[]; };
   published?: ContentPublishedData;
   publishStatus: PublishStatus;
-  formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
+  formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData; };
 }
 
 /**
@@ -179,8 +183,8 @@ export interface CollectionHit extends BaseContentHit {
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
 interface ContainerHitContent {
-  childUsageKeys?: string[],
-  childDisplayNames?: string[],
+  childUsageKeys?: string[];
+  childDisplayNames?: string[];
 }
 export interface ContainerHit extends BaseContentHit {
   type: 'library_container';
@@ -188,10 +192,10 @@ export interface ContainerHit extends BaseContentHit {
   numChildren?: number;
   published?: ContentPublishedData;
   publishStatus: PublishStatus;
-  formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
+  formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData; };
   content?: ContainerHitContent;
-  sections?: { displayName?: string[], key?: string[] };
-  subsections?: { displayName?: string[], key?: string[] };
+  sections?: { displayName?: string[]; key?: string[]; };
+  subsections?: { displayName?: string[]; key?: string[]; };
 }
 
 export type HitType = ContentHit | CollectionHit | ContainerHit;
@@ -213,20 +217,20 @@ export function formatSearchHit(hit: Record<string, any>): HitType {
 }
 
 interface FetchSearchParams {
-  client: MeiliSearch,
-  indexName: string,
-  searchKeywords: string,
-  blockTypesFilter?: string[],
-  problemTypesFilter?: string[],
-  publishStatusFilter?: PublishStatus[],
+  client: MeiliSearch;
+  indexName: string;
+  searchKeywords: string;
+  blockTypesFilter?: string[];
+  problemTypesFilter?: string[];
+  publishStatusFilter?: PublishStatus[];
   /** The full path of tags that each result MUST have, e.g. ["Difficulty > Hard", "Subject > Math"] */
-  tagsFilter?: string[],
-  extraFilter?: Filter,
-  sort?: SearchSortOption[],
+  tagsFilter?: string[];
+  extraFilter?: Filter;
+  sort?: SearchSortOption[];
   /** How many results to skip, e.g. if limit=20 then passing offset=20 gets the second page. */
-  offset?: number,
-  skipBlockTypeFetch?: boolean,
-  limit?: number,
+  offset?: number;
+  skipBlockTypeFetch?: boolean;
+  limit?: number;
 }
 
 export async function fetchSearchResults({
@@ -243,13 +247,13 @@ export async function fetchSearchResults({
   skipBlockTypeFetch = false,
   limit = 20,
 }: FetchSearchParams): Promise<{
-    hits: HitType[],
-    nextOffset: number | undefined,
-    totalHits: number,
-    blockTypes: Record<string, number>,
-    problemTypes: Record<string, number>,
-    publishStatus: Record<string, number>,
-  }> {
+  hits: HitType[];
+  nextOffset: number | undefined;
+  totalHits: number;
+  blockTypes: Record<string, number>;
+  problemTypes: Record<string, number>;
+  publishStatus: Record<string, number>;
+}> {
   const queries: MultiSearchQuery[] = [];
 
   // Convert 'extraFilter' into an array
@@ -257,9 +261,13 @@ export async function fetchSearchResults({
 
   const blockTypesFilterFormatted = blockTypesFilter?.length ? [blockTypesFilter.map(bt => `block_type = ${bt}`)] : [];
 
-  const problemTypesFilterFormatted = problemTypesFilter?.length ? [problemTypesFilter.map(pt => `content.problem_types = ${pt}`)] : [];
+  const problemTypesFilterFormatted = problemTypesFilter?.length
+    ? [problemTypesFilter.map(pt => `content.problem_types = ${pt}`)]
+    : [];
 
-  const publishStatusFilterFormatted = publishStatusFilter?.length ? [publishStatusFilter.map(ps => `publish_status = ${ps}`)] : [];
+  const publishStatusFilterFormatted = publishStatusFilter?.length
+    ? [publishStatusFilter.map(ps => `publish_status = ${ps}`)]
+    : [];
 
   const tagsFilterFormatted = formatTagsFilter(tagsFilter);
 
@@ -306,7 +314,7 @@ export async function fetchSearchResults({
     });
   }
 
-  const { results } = await client.multiSearch(({ queries }));
+  const { results } = await client.multiSearch({ queries });
   const hitLength = results[0].hits.length;
   return {
     hits: results[0].hits.map(formatSearchHit) as ContentHit[],
@@ -404,12 +412,14 @@ export async function fetchAvailableTagOptions({
   // Notice we don't 'await' the result of this request, so it can happen in parallel with the main request that follows
   const maybeHasChildren = depth > 0 && depth < 4; // If depth=0, it definitely has children; we don't support depth > 4
   const nextLevelFacet = `tags.level${depth}`; // This will give the children of the current tags.
-  const preloadChildTagsData = maybeHasChildren ? client.index(indexName).searchForFacetValues({
-    facetName: nextLevelFacet,
-    facetQuery: parentTagPath,
-    q: searchKeywords,
-    filter: [...extraFilterFormatted, ...blockTypesFilterFormatted, ...parentFilter],
-  }) : undefined;
+  const preloadChildTagsData = maybeHasChildren ?
+    client.index(indexName).searchForFacetValues({
+      facetName: nextLevelFacet,
+      facetQuery: parentTagPath,
+      q: searchKeywords,
+      filter: [...extraFilterFormatted, ...blockTypesFilterFormatted, ...parentFilter],
+    }) :
+    undefined;
 
   // Now load the facet values. Doing it with this API gives us much more flexibility in loading than if we just
   // requested the facets by passing { facets: ["tags"] } into the main search request; that works fine for loading the
@@ -458,7 +468,9 @@ export async function fetchAvailableTagOptions({
       // it's a safe bet that most/all of them have children. And it's not a huge problem if we say they have children
       // but they don't.
       // eslint-disable-next-line no-param-reassign
-      tags.forEach((t) => { t.hasChildren = true; });
+      tags.forEach((t) => {
+        t.hasChildren = true;
+      });
     } else if (childFacetHits.length > 0) {
       // Some (or maybe all) of these tags have child tags. Let's figure out which ones exactly.
       const tagsWithChildren = new Set<string>();
@@ -468,7 +480,9 @@ export async function fetchAvailableTagOptions({
         tagsWithChildren.add(tagPath);
       });
       // eslint-disable-next-line no-param-reassign
-      tags.forEach((t) => { t.hasChildren = tagsWithChildren.has(t.tagPath); });
+      tags.forEach((t) => {
+        t.hasChildren = tagsWithChildren.has(t.tagPath);
+      });
     }
   }
 
@@ -503,7 +517,7 @@ export async function fetchTagsThatMatchKeyword({
   extraFilter?: Filter;
   /** Only show taxonomies/tags that match these keywords */
   tagSearchKeywords?: string;
-}): Promise<{ mayBeMissingResults: boolean; matches: { tagPath: string }[] }> {
+}): Promise<{ mayBeMissingResults: boolean; matches: { tagPath: string; }[]; }> {
   if (!tagSearchKeywords || tagSearchKeywords.trim() === '') {
     // This data isn't needed if there is no tag keyword search. Don't bother making a search query.
     return { matches: [], mayBeMissingResults: false };

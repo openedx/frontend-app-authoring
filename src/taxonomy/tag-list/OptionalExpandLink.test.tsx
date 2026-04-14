@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import OptionalExpandLink from './OptionalExpandLink';
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
 
@@ -12,11 +12,12 @@ const createMockRow = ({
   canExpand = true,
   isExpanded = false,
   toggleHandler = jest.fn(),
-} = {}) => ({
-  getCanExpand: () => canExpand,
-  getIsExpanded: () => isExpanded,
-  getToggleExpandedHandler: () => toggleHandler,
-}) as any;
+} = {}) =>
+  ({
+    getCanExpand: () => canExpand,
+    getIsExpanded: () => isExpanded,
+    getToggleExpandedHandler: () => toggleHandler,
+  }) as any;
 
 describe('OptionalExpandLink', () => {
   it('hides expand button when row cannot expand', () => {

@@ -31,7 +31,8 @@ const SocialShareWidget = ({
   const intl = useIntl();
   const isSetByCourse = allowVideoSharing.level === 'course';
   const videoSharingEnabled = isLibrary ? videoSharingEnabledForAll : videoSharingEnabledForCourse;
-  const learnMoreLink = videoSharingLearnMoreLink || getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html');
+  const learnMoreLink = videoSharingLearnMoreLink ||
+    getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html');
   const onSocialSharingCheckboxChange = hooks.useTrackSocialSharingChange({ updateField });
 
   const getSubtitle = () => {
@@ -41,42 +42,44 @@ const SocialShareWidget = ({
     return intl.formatMessage(messages.disabledSubtitle);
   };
 
-  return (videoSharingEnabled ? (
-    <CollapsibleFormWidget
-      fontSize="x-small"
-      title={intl.formatMessage(messages.title)}
-      subtitle={getSubtitle()}
-    >
-      <div>
-        <FormattedMessage {...messages.socialSharingDescription} />
-      </div>
-      <Form.Checkbox
-        className="mt-3"
-        checked={allowVideoSharing.value}
-        disabled={isSetByCourse}
-        onChange={onSocialSharingCheckboxChange}
+  return (videoSharingEnabled ?
+    (
+      <CollapsibleFormWidget
+        fontSize="x-small"
+        title={intl.formatMessage(messages.title)}
+        subtitle={getSubtitle()}
       >
-        <div className="small text-gray-700">
-          {intl.formatMessage(messages.socialSharingCheckboxLabel)}
+        <div>
+          <FormattedMessage {...messages.socialSharingDescription} />
         </div>
-      </Form.Checkbox>
-      {isSetByCourse && (
-        <>
-          <div className="mt-2">
-            <FormattedMessage {...messages.overrideSocialSharingNote} />
+        <Form.Checkbox
+          className="mt-3"
+          checked={allowVideoSharing.value}
+          disabled={isSetByCourse}
+          onChange={onSocialSharingCheckboxChange}
+        >
+          <div className="small text-gray-700">
+            {intl.formatMessage(messages.socialSharingCheckboxLabel)}
           </div>
-          <div>
-            <FormattedMessage {...messages.disclaimerSettingLocation} />
-          </div>
-        </>
-      )}
-      <div className="mt-3">
-        <Hyperlink className="text-primary-500" destination={learnMoreLink} target="_blank">
-          {intl.formatMessage(messages.learnMoreLinkLabel)}
-        </Hyperlink>
-      </div>
-    </CollapsibleFormWidget>
-  ) : null);
+        </Form.Checkbox>
+        {isSetByCourse && (
+          <>
+            <div className="mt-2">
+              <FormattedMessage {...messages.overrideSocialSharingNote} />
+            </div>
+            <div>
+              <FormattedMessage {...messages.disclaimerSettingLocation} />
+            </div>
+          </>
+        )}
+        <div className="mt-3">
+          <Hyperlink className="text-primary-500" destination={learnMoreLink} target="_blank">
+            {intl.formatMessage(messages.learnMoreLinkLabel)}
+          </Hyperlink>
+        </div>
+      </CollapsibleFormWidget>
+    ) :
+    null);
 };
 
 SocialShareWidget.defaultProps = {

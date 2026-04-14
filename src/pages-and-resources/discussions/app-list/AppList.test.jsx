@@ -1,6 +1,11 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import {
-  render, screen, within, queryAllByRole, waitFor, fireEvent,
+  render,
+  screen,
+  within,
+  queryAllByRole,
+  waitFor,
+  fireEvent,
   initializeMocks,
 } from '@src/testUtils';
 import { act } from 'react-dom/test-utils';
@@ -114,8 +119,10 @@ describe('AppList', () => {
 
     test('hides the FeaturesList at desktop sizes', async () => {
       renderComponent();
-      await waitFor(() => expect(screen.queryByText(messages['supportedFeatureList-mobile-show'].defaultMessage))
-        .not.toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.queryByText(messages['supportedFeatureList-mobile-show'].defaultMessage))
+          .not.toBeInTheDocument()
+      );
     });
 
     test('displays the FeaturesList at mobile sizes', async () => {

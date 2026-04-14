@@ -40,7 +40,8 @@ const SearchResults: React.FC<Record<never, never>> = () => {
             labels={labels}
             onClick={fetchNextPage}
           />
-        ) : null}
+        ) :
+        null}
     </>
   );
 };

@@ -18,7 +18,7 @@ import PlaceholderCard from './import-course/PlaceholderCard';
  *
  * Use content to:
  *   - 'collections': Suggest to create a collection on empty state.
-*   - Anything else to suggest to add content on empty state.
+ *   - Anything else to suggest to add content on empty state.
  */
 
 type LibraryContentProps = {
@@ -110,6 +110,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
       })}
       {showPlaceholderBlocks && placeholderData?.hits?.map((item) => (
         <PlaceholderCard
+          key={item.usage_key}
           displayName={item.display_name}
           blockType={item.block_type}
         />

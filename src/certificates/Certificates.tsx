@@ -24,7 +24,12 @@ const MODE_COMPONENTS = {
 const Certificates = () => {
   const { courseId } = useCourseAuthoringContext();
   const {
-    certificates, componentMode, isLoading, loadingStatus, pageHeadTitle, hasCertificateModes,
+    certificates,
+    componentMode,
+    isLoading,
+    loadingStatus,
+    pageHeadTitle,
+    hasCertificateModes,
   } = useCertificates({ courseId });
 
   if (isLoading) {
@@ -43,7 +48,9 @@ const Certificates = () => {
 
   return (
     <>
-      <Helmet><title>{pageHeadTitle}</title></Helmet>
+      <Helmet>
+        <title>{pageHeadTitle}</title>
+      </Helmet>
       <MainLayout courseId={courseId} showHeaderButtons={hasCertificateModes && certificates?.length > 0}>
         <ModeComponent courseId={courseId} />
       </MainLayout>

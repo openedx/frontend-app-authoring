@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, screen, fireEvent, initializeMocks,
+  render,
+  screen,
+  fireEvent,
+  initializeMocks,
 } from '@src/testUtils';
 import VideoSourceWidget from '.';
 import * as hooks from './hooks';
@@ -23,13 +26,22 @@ describe('VideoSourceWidget', () => {
   it('renders all main fields and labels', () => {
     widgetValuesSpy.mockReturnValue({
       videoId: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       videoSource: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       fallbackVideos: {
-        formValue: [], onChange: jest.fn(), onBlur: jest.fn(), local: [],
+        formValue: [],
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: [],
       },
       allowVideoDownloads: { local: false, onCheckedChange: jest.fn() },
     });
@@ -57,13 +69,22 @@ describe('VideoSourceWidget', () => {
     const updateVideoId = jest.fn();
     widgetValuesSpy.mockReturnValue({
       videoId: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       videoSource: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       fallbackVideos: {
-        formValue: [], onChange: jest.fn(), onBlur: jest.fn(), local: [],
+        formValue: [],
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: [],
       },
       allowVideoDownloads: { local: false, onCheckedChange: jest.fn() },
     });
@@ -89,13 +110,22 @@ describe('VideoSourceWidget', () => {
     const updateVideoURL = jest.fn();
     widgetValuesSpy.mockReturnValue({
       videoId: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       videoSource: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       fallbackVideos: {
-        formValue: [], onChange: jest.fn(), onBlur: jest.fn(), local: [],
+        formValue: [],
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: [],
       },
       allowVideoDownloads: { local: false, onCheckedChange: jest.fn() },
     });
@@ -121,10 +151,16 @@ describe('VideoSourceWidget', () => {
     const deleteFallbackVideo = jest.fn();
     widgetValuesSpy.mockReturnValue({
       videoId: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       videoSource: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       fallbackVideos: {
         formValue: ['url1', 'url2'],
@@ -157,13 +193,22 @@ describe('VideoSourceWidget', () => {
     const addFallbackVideo = jest.fn();
     widgetValuesSpy.mockReturnValue({
       videoId: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       videoSource: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       fallbackVideos: {
-        formValue: [], onChange: jest.fn(), onBlur: jest.fn(), local: [],
+        formValue: [],
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: [],
       },
       allowVideoDownloads: { local: false, onCheckedChange: jest.fn() },
     });
@@ -189,13 +234,22 @@ describe('VideoSourceWidget', () => {
     const onCheckedChange = jest.fn();
     widgetValuesSpy.mockReturnValue({
       videoId: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       videoSource: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       fallbackVideos: {
-        formValue: [], onChange: jest.fn(), onBlur: jest.fn(), local: [],
+        formValue: [],
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: [],
       },
       allowVideoDownloads: { local: false, onCheckedChange },
     });
@@ -220,13 +274,22 @@ describe('VideoSourceWidget', () => {
   it('shows error alert when videoIdChangeAlert.show is true', () => {
     widgetValuesSpy.mockReturnValue({
       videoId: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       videoSource: {
-        onChange: jest.fn(), onBlur: jest.fn(), local: '', formValue: '',
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: '',
+        formValue: '',
       },
       fallbackVideos: {
-        formValue: [], onChange: jest.fn(), onBlur: jest.fn(), local: [],
+        formValue: [],
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        local: [],
       },
       allowVideoDownloads: { local: false, onCheckedChange: jest.fn() },
     });

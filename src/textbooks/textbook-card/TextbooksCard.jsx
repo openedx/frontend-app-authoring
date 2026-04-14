@@ -60,61 +60,63 @@ const TextbookCard = ({
 
   return (
     <>
-      {isTextbookFormOpen ? (
-        <TextbookForm
-          closeTextbookForm={closeTextbookForm}
-          initialFormValues={getTextbookFormInitialValues(true, { tab_title: tabTitle, chapters, id })}
-          onSubmit={onEditSubmit}
-          onSavingStatus={handleSavingStatusDispatch}
-        />
-      ) : (
+      {isTextbookFormOpen ?
         (
-          <Card className="textbook-card" data-testid="textbook-card">
-            <Card.Header
-              title={tabTitle}
-              actions={(
-                <ActionRow>
-                  <IconButtonWithTooltip
-                    tooltipContent={intl.formatMessage(messages.buttonView)}
-                    src={ViewIcon}
-                    iconAs={Icon}
-                    data-testid="textbook-view-button"
-                    onClick={onPreviewTextbookClick}
-                  />
-                  <IconButtonWithTooltip
-                    tooltipContent={intl.formatMessage(messages.buttonEdit)}
-                    src={EditIcon}
-                    iconAs={Icon}
-                    data-testid="textbook-edit-button"
-                    onClick={openTextbookForm}
-                  />
-                  <IconButtonWithTooltip
-                    tooltipContent={intl.formatMessage(messages.buttonDelete)}
-                    src={DeleteIcon}
-                    iconAs={Icon}
-                    data-testid="textbook-delete-button"
-                    onClick={openDeleteModal}
-                  />
-                </ActionRow>
-              )}
-            />
-            <div className="textbook-card__chapters">
-              <Collapsible
-                styling="basic"
-                data-testid="chapters-button"
-                title={intl.formatMessage(messages.chaptersTitle, { count: chapters.length })}
-              >
-                {chapters.map(({ title, url }) => (
-                  <div className="textbook-card__chapter-item" key={title}>
-                    <span className="small">{title}</span>
-                    <span className="small text-gray-700">{url}</span>
-                  </div>
-                ))}
-              </Collapsible>
-            </div>
-          </Card>
-        )
-      )}
+          <TextbookForm
+            closeTextbookForm={closeTextbookForm}
+            initialFormValues={getTextbookFormInitialValues(true, { tab_title: tabTitle, chapters, id })}
+            onSubmit={onEditSubmit}
+            onSavingStatus={handleSavingStatusDispatch}
+          />
+        ) :
+        (
+          (
+            <Card className="textbook-card" data-testid="textbook-card">
+              <Card.Header
+                title={tabTitle}
+                actions={
+                  <ActionRow>
+                    <IconButtonWithTooltip
+                      tooltipContent={intl.formatMessage(messages.buttonView)}
+                      src={ViewIcon}
+                      iconAs={Icon}
+                      data-testid="textbook-view-button"
+                      onClick={onPreviewTextbookClick}
+                    />
+                    <IconButtonWithTooltip
+                      tooltipContent={intl.formatMessage(messages.buttonEdit)}
+                      src={EditIcon}
+                      iconAs={Icon}
+                      data-testid="textbook-edit-button"
+                      onClick={openTextbookForm}
+                    />
+                    <IconButtonWithTooltip
+                      tooltipContent={intl.formatMessage(messages.buttonDelete)}
+                      src={DeleteIcon}
+                      iconAs={Icon}
+                      data-testid="textbook-delete-button"
+                      onClick={openDeleteModal}
+                    />
+                  </ActionRow>
+                }
+              />
+              <div className="textbook-card__chapters">
+                <Collapsible
+                  styling="basic"
+                  data-testid="chapters-button"
+                  title={intl.formatMessage(messages.chaptersTitle, { count: chapters.length })}
+                >
+                  {chapters.map(({ title, url }) => (
+                    <div className="textbook-card__chapter-item" key={title}>
+                      <span className="small">{title}</span>
+                      <span className="small text-gray-700">{url}</span>
+                    </div>
+                  ))}
+                </Collapsible>
+              </div>
+            </Card>
+          )
+        )}
       <DeleteModal
         isOpen={isDeleteModalOpen}
         close={closeDeleteModal}

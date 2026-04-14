@@ -64,9 +64,7 @@ const FilesPage = () => {
         <div className="h2">
           {intl.formatMessage(messages.heading)}
         </div>
-        {loadingStatus !== RequestStatus.FAILED && (
-          <CourseFilesSlot />
-        )}
+        {loadingStatus !== RequestStatus.FAILED && <CourseFilesSlot />}
       </Container>
     </FilesPageProvider>
   );

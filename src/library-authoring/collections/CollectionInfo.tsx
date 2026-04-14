@@ -30,8 +30,10 @@ const CollectionInfo = () => {
   const { sidebarItemInfo, sidebarTab, setSidebarTab } = useSidebarContext();
 
   const tab: CollectionInfoTab = (
-    sidebarTab && isCollectionInfoTab(sidebarTab)
-  ) ? sidebarTab : COLLECTION_INFO_TABS.Details;
+      sidebarTab && isCollectionInfoTab(sidebarTab)
+    ) ?
+    sidebarTab :
+    COLLECTION_INFO_TABS.Details;
 
   const collectionId = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen

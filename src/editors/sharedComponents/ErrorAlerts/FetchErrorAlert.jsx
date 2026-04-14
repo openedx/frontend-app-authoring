@@ -24,7 +24,6 @@ FetchErrorAlert.propTypes = {
     description: PropTypes.string,
   }).isRequired,
   isFetchError: PropTypes.bool.isRequired,
-
 };
 
 export default FetchErrorAlert;

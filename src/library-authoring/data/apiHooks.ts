@@ -115,7 +115,10 @@ export const xblockQueryKeys = {
    */
   xblock: (usageKey?: string) => [...xblockQueryKeys.all, usageKey],
   /** Fields (i.e. the content, display name, etc.) of an XBlock */
-  xblockFields: (usageKey: string, version: VersionSpec = 'draft') => [...xblockQueryKeys.xblock(usageKey), 'fields', version],
+  xblockFields: (
+    usageKey: string,
+    version: VersionSpec = 'draft',
+  ) => [...xblockQueryKeys.xblock(usageKey), 'fields', version],
   /** OLX (XML representation of the fields/content) */
   xblockOLX: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'OLX'],
   /** assets (static files) */
@@ -245,13 +248,13 @@ export const useUpdateLibraryMetadata = () => {
  * Builds the query to fetch list of V2 Libraries
  */
 export function useContentLibraryV2List(
-  customParams: api.GetLibrariesV2CustomParamsPagination
+  customParams: api.GetLibrariesV2CustomParamsPagination,
 ): UseQueryResult<api.LibrariesV2Response, Error>;
 export function useContentLibraryV2List(
-  customParams: api.GetLibrariesV2CustomParamsNoPagination
+  customParams: api.GetLibrariesV2CustomParamsNoPagination,
 ): UseQueryResult<api.ContentLibrary[], Error>;
 export function useContentLibraryV2List(
-  customParams: api.GetLibrariesV2CustomParams
+  customParams: api.GetLibrariesV2CustomParams,
 ): UseQueryResult<api.LibrariesV2Response | api.ContentLibrary[], Error>;
 export function useContentLibraryV2List(
   customParams: api.GetLibrariesV2CustomParams,
@@ -543,7 +546,7 @@ export const useCollection = (libraryId?: string, collectionId?: string) => (
 export const useUpdateCollection = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ libraryId, collectionId, data }:{
+    mutationFn: async ({ libraryId, collectionId, data }: {
       libraryId: string;
       collectionId: string;
       data: api.UpdateCollectionComponentsRequest;
@@ -708,9 +711,12 @@ export const useUpdateContainer = (containerId: string, affectedParentContainerI
         const childrenQueryKey = libraryAuthoringQueryKeys.containerChildren(affectedParentContainerId);
         childrenPreviousData = queryClient.getQueryData(childrenQueryKey) as api.Container[];
         if (childrenPreviousData) {
-          queryClient.setQueryData(childrenQueryKey, childrenPreviousData.map(item => (
-            item.id === containerId ? { ...item, ...data } : item
-          )));
+          queryClient.setQueryData(
+            childrenQueryKey,
+            childrenPreviousData.map(item => (
+              item.id === containerId ? { ...item, ...data } : item
+            )),
+          );
         }
       }
 
@@ -770,35 +776,37 @@ export const useRestoreContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = <ChildType extends {
-  id: string;
-  isNew?: boolean;
-} = api.LibraryBlockMetadata | api.Container>(
-    containerId?: string,
-    published: boolean = false,
-  ) => (
-    useQuery({
-      enabled: !!containerId,
-      queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
-      queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published),
-      structuralSharing: (oldData: ChildType[], newData: ChildType[]) => {
+export const useContainerChildren = <
+  ChildType extends {
+    id: string;
+    isNew?: boolean;
+  } = api.LibraryBlockMetadata | api.Container,
+>(
+  containerId?: string,
+  published: boolean = false,
+) => (
+  useQuery({
+    enabled: !!containerId,
+    queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
+    queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published),
+    structuralSharing: (oldData: ChildType[], newData: ChildType[]) => {
       // This just sets `isNew` flag to new children components
-        if (oldData) {
-          const oldDataIds = oldData.map((obj) => obj.id);
-          // eslint-disable-next-line no-param-reassign
-          newData = newData.map((newObj) => {
-            if (!oldDataIds.includes(newObj.id)) {
+      if (oldData) {
+        const oldDataIds = oldData.map((obj) => obj.id);
+        // eslint-disable-next-line no-param-reassign
+        newData = newData.map((newObj) => {
+          if (!oldDataIds.includes(newObj.id)) {
             // Set isNew = true if we have new child on refetch
             // eslint-disable-next-line no-param-reassign
-              newObj.isNew = true;
-            }
-            return newObj;
-          });
-        }
-        return replaceEqualDeep(oldData, newData);
-      },
-    })
-  );
+            newObj.isNew = true;
+          }
+          return newObj;
+        });
+      }
+      return replaceEqualDeep(oldData, newData);
+    },
+  })
+);
 
 /**
  * If you work with `useContentFromSearchIndex`, you can use this
@@ -939,8 +947,8 @@ export const useRemoveContainerChildren = (containerId?: string) => {
 };
 
 /**
-  * Use this mutation to publish changes to a container and any children within it
-  */
+ * Use this mutation to publish changes to a container and any children within it
+ */
 export const usePublishContainer = (containerId: string) => {
   const queryClient = useQueryClient();
   const libraryId = getLibraryId(containerId);
@@ -1018,11 +1026,14 @@ export const useMigrationBlocksInfo = (
 ) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationBlocksInfo(libraryId, collectionId, isFailed),
-    queryFn: enabled ? () => api.getModulestoreMigrationBlocksInfo(
-      libraryId,
-      collectionId,
-      isFailed,
-      taskUuid,
-    ) : skipToken,
+    queryFn: enabled ?
+      () =>
+        api.getModulestoreMigrationBlocksInfo(
+          libraryId,
+          collectionId,
+          isFailed,
+          taskUuid,
+        ) :
+      skipToken,
   })
 );

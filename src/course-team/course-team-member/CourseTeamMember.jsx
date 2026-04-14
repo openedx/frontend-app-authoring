@@ -43,29 +43,31 @@ const CourseTeamMember = ({
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
       {isAllowActions && (
-        !isHideActions ? (
-          <div className="member-actions">
-            <Button
-              variant={isAdminRole ? 'tertiary' : 'primary'}
-              size="sm"
-              onClick={() => onChangeRole(email, isAdminRole ? USER_ROLES.staff : USER_ROLES.admin)}
-            >
-              {isAdminRole ? intl.formatMessage(messages.removeButton) : intl.formatMessage(messages.addButton)}
-            </Button>
-            <IconButtonWithTooltip
-              src={DeleteOutline}
-              tooltipContent={intl.formatMessage(messages.deleteUserButton)}
-              onClick={() => onDelete(email)}
-              iconAs={Icon}
-              alt={intl.formatMessage(messages.deleteUserButton)}
-              data-testid="delete-button"
-            />
-          </div>
-        ) : (
-          <div className="member-hint text-right">
-            <span>{intl.formatMessage(messages.hint)}</span>
-          </div>
-        )
+        !isHideActions ?
+          (
+            <div className="member-actions">
+              <Button
+                variant={isAdminRole ? 'tertiary' : 'primary'}
+                size="sm"
+                onClick={() => onChangeRole(email, isAdminRole ? USER_ROLES.staff : USER_ROLES.admin)}
+              >
+                {isAdminRole ? intl.formatMessage(messages.removeButton) : intl.formatMessage(messages.addButton)}
+              </Button>
+              <IconButtonWithTooltip
+                src={DeleteOutline}
+                tooltipContent={intl.formatMessage(messages.deleteUserButton)}
+                onClick={() => onDelete(email)}
+                iconAs={Icon}
+                alt={intl.formatMessage(messages.deleteUserButton)}
+                data-testid="delete-button"
+              />
+            </div>
+          ) :
+          (
+            <div className="member-hint text-right">
+              <span>{intl.formatMessage(messages.hint)}</span>
+            </div>
+          )
       )}
     </div>
   );

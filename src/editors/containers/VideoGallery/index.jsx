@@ -2,7 +2,9 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Image, useToggle, StandardModal,
+  Image,
+  useToggle,
+  StandardModal,
 } from '@openedx/paragon';
 import { useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';

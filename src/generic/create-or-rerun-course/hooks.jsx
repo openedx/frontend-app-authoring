@@ -69,7 +69,12 @@ const useCreateOrRerunCourse = (initialValues) => {
   });
 
   const {
-    values, errors, touched, handleChange, handleBlur, setFieldValue,
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    setFieldValue,
   } = useFormik({
     initialValues,
     enableReinitialize: true,

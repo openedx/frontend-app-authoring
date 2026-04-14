@@ -125,27 +125,29 @@ const CollapsibleStateWithAction = ({ state, className }) => {
       <Collapsible.Body className="collapsible-body bg-light-white py-3 px-3.5">
         <p className="small text-gray-700">{description}</p>
         <h5 className="text-gray-700">{actionTitle}</h5>
-        {[COURSE_CREATOR_STATES.denied, COURSE_CREATOR_STATES.pending].includes(state) ? (
-          <div
-            className={classNames('py-1 px-2.5 rounded-sm', {
-              'bg-danger-100': state === COURSE_CREATOR_STATES.denied,
-              'bg-warning-100': state === COURSE_CREATOR_STATES.pending,
-            })}
-          >
-            <span className="d-inline-block text-black font-weight-bold m-2.5">
-              {stateName}
-            </span>
-            <span className="text-gray-700 small">{actionText}</span>
-          </div>
-        ) : (
-          <StatefulButton
-            key="request-button"
-            size="sm"
-            onClick={() => dispatch(requestCourseCreatorQuery())}
-            state={requestButtonCurrentState}
-            {...requestButtonStates}
-          />
-        )}
+        {[COURSE_CREATOR_STATES.denied, COURSE_CREATOR_STATES.pending].includes(state) ?
+          (
+            <div
+              className={classNames('py-1 px-2.5 rounded-sm', {
+                'bg-danger-100': state === COURSE_CREATOR_STATES.denied,
+                'bg-warning-100': state === COURSE_CREATOR_STATES.pending,
+              })}
+            >
+              <span className="d-inline-block text-black font-weight-bold m-2.5">
+                {stateName}
+              </span>
+              <span className="text-gray-700 small">{actionText}</span>
+            </div>
+          ) :
+          (
+            <StatefulButton
+              key="request-button"
+              size="sm"
+              onClick={() => dispatch(requestCourseCreatorQuery())}
+              state={requestButtonCurrentState}
+              {...requestButtonStates}
+            />
+          )}
       </Collapsible.Body>
     </Collapsible.Advanced>
   );

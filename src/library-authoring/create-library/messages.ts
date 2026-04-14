@@ -48,8 +48,8 @@ const messages = defineMessages({
   },
   slugHelp: {
     id: 'course-authoring.library-authoring.create-library.form.slug.help',
-    defaultMessage: `The unique code that identifies this library. Note: This is 
-    part of your library URL, so no spaces or special characters are allowed. 
+    defaultMessage: `The unique code that identifies this library. Note: This is
+    part of your library URL, so no spaces or special characters are allowed.
     This cannot be changed.`,
     description: 'Help text for the slug field.',
   },
@@ -125,7 +125,7 @@ const messages = defineMessages({
   },
   archiveRestoredCreatedBy: {
     id: 'course-authoring.library-authoring.create-library.form.archive.restored-created-by',
-    defaultMessage: 'Created on instance {server}, by user {createdBy}',
+    defaultMessage: 'Backup created on instance {server}, by user {createdBy}',
     description: 'Text showing who restored the archive.',
   },
   archiveBackupDate: {

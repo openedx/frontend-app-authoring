@@ -47,9 +47,7 @@ const VideoSettingsModal: React.FC<Props> = ({
     <ErrorSummary />
     <ConnectedVideoPreviewWidget />
     <VideoSourceWidget />
-    {!isLibrary && (
-      <SocialShareWidget />
-    )}
+    {!isLibrary && <SocialShareWidget />}
     <ThumbnailWidget />
     <TranscriptWidget />
     <DurationWidget />

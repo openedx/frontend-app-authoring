@@ -5,8 +5,9 @@ Design decisions and their rationales should be documented in the repo (docstrin
 [OEP-19](https://open-edx-proposals.readthedocs.io/en/latest/oep-0019-bp-developer-documentation.html), and can be linked here.
 
 Useful information to include:
+
 - Which user roles will this change impact? Common user roles are "Learner", "Course Author",
-"Developer", and "Operator".
+  "Developer", and "Operator".
 - Include screenshots for changes to the UI (ideally, both "before" and "after" screenshots, if applicable).
 
 ## Supporting information
@@ -21,6 +22,7 @@ Please provide detailed step-by-step instructions for manually testing this chan
 ## Other information
 
 Include anything else that will help reviewers and consumers understand the change.
+
 - Does this change depend on other changes elsewhere?
 - Any special concerns or limitations? For example: deprecations, migrations, security, or accessibility.
 

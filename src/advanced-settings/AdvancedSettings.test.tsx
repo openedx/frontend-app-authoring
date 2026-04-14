@@ -18,23 +18,25 @@ const mockPathname = '/foo-bar';
 const courseId = '123';
 
 // Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea
-    {...props}
-    onFocus={() => { }}
-  />
-)));
+jest.mock('react-textarea-autosize', () =>
+  jest.fn((props) => (
+    <textarea
+      {...props}
+      onFocus={() => {}}
+    />
+  )));
 
 jest.mock('@src/authz/data/apiHooks', () => ({
   useUserPermissions: jest.fn(),
 }));
 
-const render = () => baseRender(
-  <CourseAuthoringProvider courseId={courseId}>
-    <AdvancedSettings />
-  </CourseAuthoringProvider>,
-  { path: mockPathname },
-);
+const render = () =>
+  baseRender(
+    <CourseAuthoringProvider courseId={courseId}>
+      <AdvancedSettings />
+    </CourseAuthoringProvider>,
+    { path: mockPathname },
+  );
 
 describe('<AdvancedSettings />', () => {
   beforeEach(() => {
@@ -65,7 +67,8 @@ describe('<AdvancedSettings />', () => {
       selector: 'h2.sub-header-title',
     })).toBeInTheDocument();
     expect(screen.getByText(messages.policy.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i)).toBeInTheDocument();
+    expect(screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i))
+      .toBeInTheDocument();
   });
 
   it('should render setting element', async () => {
@@ -175,7 +178,8 @@ describe('<AdvancedSettings />', () => {
       selector: 'h2.sub-header-title',
     })).toBeInTheDocument();
     expect(screen.getByText(messages.policy.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i)).toBeInTheDocument();
+    expect(screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i))
+      .toBeInTheDocument();
   });
 
   it('should show permission alert when authz.enable_course_authoring flag is enabled and the user is not authorized', async () => {

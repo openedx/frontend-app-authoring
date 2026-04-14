@@ -20,15 +20,15 @@ import AdvancedTab from './AdvancedTab';
 import { UnitTab } from './UnitTab';
 
 interface Props {
-  isOpen: boolean,
+  isOpen: boolean;
   onClose: () => void;
-  onConfigureSubmit: (args: object) => void,
-  enableProctoredExams?: boolean,
-  enableTimedExams?: boolean,
-  currentItemData?: AccessManagedXBlockDataTypes,
-  isXBlockComponent?: boolean,
-  isSelfPaced?: boolean,
-  isOverflowVisible?: boolean,
+  onConfigureSubmit: (args: object) => void;
+  enableProctoredExams?: boolean;
+  enableTimedExams?: boolean;
+  currentItemData?: AccessManagedXBlockDataTypes;
+  isXBlockComponent?: boolean;
+  isSelfPaced?: boolean;
+  isOverflowVisible?: boolean;
 }
 
 const ConfigureModal = ({
@@ -179,7 +179,7 @@ const ConfigureModal = ({
           isOnboardingExam: data.isOnboardingExam,
           isPracticeExam: data.isPracticeExam,
           examReviewRules: data.examReviewRules,
-          defaultTimeLimitMin: data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
+          defaultTimeLimitMinutes: data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
           hideAfterDue: data.hideAfterDue,
           showCorrectness: data.showCorrectness,
           isPrereq: data.isPrereq,
@@ -256,19 +256,21 @@ const ConfigureModal = ({
               />
             </Tab>
             <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>
-              <AdvancedTab
-                values={values}
-                setFieldValue={setFieldValue}
-                prereqs={prereqs}
-                releasedToStudents={releasedToStudents}
-                wasExamEverLinkedWithExternal={wasExamEverLinkedWithExternal}
-                enableProctoredExams={enableProctoredExams}
-                enableTimedExams={enableTimedExams}
-                supportsOnboarding={supportsOnboarding}
-                showReviewRules={showReviewRules}
-                wasProctoredExam={isProctoredExam}
-                onlineProctoringRules={onlineProctoringRules}
-              />
+              <div className="mt-4">
+                <AdvancedTab
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  prereqs={prereqs}
+                  releasedToStudents={releasedToStudents}
+                  wasExamEverLinkedWithExternal={wasExamEverLinkedWithExternal}
+                  enableProctoredExams={enableProctoredExams}
+                  enableTimedExams={enableTimedExams}
+                  supportsOnboarding={supportsOnboarding}
+                  showReviewRules={showReviewRules}
+                  wasProctoredExam={isProctoredExam}
+                  onlineProctoringRules={onlineProctoringRules}
+                />
+              </div>
             </Tab>
           </Tabs>
         );
@@ -316,7 +318,9 @@ const ConfigureModal = ({
           validateOnChange
         >
           {({
-            values, handleSubmit, setFieldValue,
+            values,
+            handleSubmit,
+            setFieldValue,
           }) => (
             <Form onSubmit={handleSubmit}>
               <ModalDialog.Body className="configure-modal__body">

@@ -6,7 +6,7 @@ import { UnitSidebarPageKeys, useUnitSidebarContext } from './UnitSidebarContext
 import { useUnitSidebarPagesContext } from './UnitSidebarPagesContext';
 
 export type UnitSidebarProps = {
-  legacySidebarProps: LegacySidebarProps,
+  legacySidebarProps: LegacySidebarProps;
 };
 
 /**
@@ -26,9 +26,7 @@ export const UnitSidebar = ({
   const sidebarPages = useUnitSidebarPagesContext();
 
   if (!isUnitPageNewDesignEnabled()) {
-    return (
-      <LegacySidebar {...legacySidebarProps} />
-    );
+    return <LegacySidebar {...legacySidebarProps} />;
   }
 
   const handleChangePage = (key: UnitSidebarPageKeys) => {

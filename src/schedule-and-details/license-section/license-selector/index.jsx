@@ -30,9 +30,7 @@ const LicenseSelector = ({ licenseType, onChangeLicenseType }) => {
     return (
       <OverlayTrigger
         key={type}
-        overlay={
-          <Tooltip id={`tooltip-${type}`}>{LICENSE_BUTTON_GROUP_LABELS[type].tooltip}</Tooltip>
-        }
+        overlay={<Tooltip id={`tooltip-${type}`}>{LICENSE_BUTTON_GROUP_LABELS[type].tooltip}</Tooltip>}
       >
         <Button
           variant={isActive ? 'primary' : 'outline-primary'}

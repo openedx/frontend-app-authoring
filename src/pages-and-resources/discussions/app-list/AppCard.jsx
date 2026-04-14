@@ -3,7 +3,9 @@ import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import Responsive from 'react-responsive';
 import {
-  Card, CheckboxControl, breakpoints,
+  Card,
+  CheckboxControl,
+  breakpoints,
 } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
@@ -11,7 +13,10 @@ import appMessages from '../app-config-form/messages';
 import FeaturesList from './FeaturesList';
 
 const AppCard = ({
-  app, onClick, selected, features,
+  app,
+  onClick,
+  selected,
+  features,
 }) => {
   const intl = useIntl();
   const { canChangeProviders } = useCourseAuthoringContext();
@@ -33,7 +38,7 @@ const AppCard = ({
       <Card.Header
         title={<div data-testid="card-title">{intl.formatMessage(appMessages[`appName-${app.id}`])}</div>}
         subtitle={<div className="h6 text-muted" data-testid="card-subtitle">{supportText}</div>}
-        actions={(
+        actions={
           <div className="mt-2.5">
             <CheckboxControl
               checked={selected}
@@ -44,7 +49,7 @@ const AppCard = ({
               })}
             />
           </div>
-        )}
+        }
         size="sm"
       />
       <Card.Body>
