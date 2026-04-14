@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Routes,
   Route,
@@ -6,7 +6,8 @@ import {
   Link,
 } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppContext, PageWrap } from '@edx/frontend-platform/react';
+import { getConfig } from '@edx/frontend-platform';
+import { PageWrap } from '@edx/frontend-platform/react';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -57,8 +58,7 @@ const CustomPages = () => {
 
   document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
-  // @ts-expect-error - frontend-platform doesn't have type information
-  const { config } = useContext(AppContext);
+  const config = getConfig();
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 
   useEffect(() => {
