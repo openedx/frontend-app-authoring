@@ -89,6 +89,7 @@ const mockSidebarContext = {
   open: jest.fn(),
   toggle: jest.fn(),
   readOnly: false,
+  isVertical: true,
 };
 
 const renderComponent = () =>
