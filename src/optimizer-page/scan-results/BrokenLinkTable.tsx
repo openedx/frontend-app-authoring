@@ -24,6 +24,7 @@ import {
   MANUAL,
 } from '../../constants';
 import { buildBlockContainerUrl } from '../utils';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 const BrokenLinkHref: FC<{ href: string; }> = ({ href }) => {
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -159,7 +160,6 @@ const LinksCol: FC<{
 
 interface BrokenLinkTableProps {
   unit: Unit;
-  courseId: string;
   filters?: Filters;
   linkType?: 'broken' | 'previous';
   onUpdateLink?: (link: string, blockId: string, sectionId?: string) => Promise<boolean>;
@@ -175,7 +175,6 @@ type TableData = {
 
 const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
   unit,
-  courseId,
   filters,
   linkType = BROKEN,
   onUpdateLink,
@@ -184,6 +183,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
   updatedLinkMap = {},
   updatedLinkInProgress = {},
 }) => {
+  const { courseId } = useCourseAuthoringContext();
   const brokenLinkList = unit.blocks.reduce(
     (
       acc: TableData,

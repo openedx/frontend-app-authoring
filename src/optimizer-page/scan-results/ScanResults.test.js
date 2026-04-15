@@ -172,6 +172,10 @@ jest.mock('../../data/apiHooks', () => ({
   })),
 }));
 
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: jest.fn(() => ({ courseId: 'test-course-id' })),
+}));
+
 // Mock the thunks
 jest.mock('../data/thunks', () => ({
   updateSinglePreviousRunLink: jest.fn(() => () => Promise.resolve({ status: 'Succeeded' })),

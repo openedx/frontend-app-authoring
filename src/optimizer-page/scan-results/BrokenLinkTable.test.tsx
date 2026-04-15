@@ -13,6 +13,10 @@ import BrokenLinkTable from './BrokenLinkTable';
 import { Unit, Filters } from '../types';
 import initializeStore from '../../store';
 
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: jest.fn(() => ({ courseId: 'course-v1:TestX+Test101+2024' })),
+}));
+
 let store: any;
 
 const mockOnUpdateLink = jest.fn();
@@ -60,7 +64,6 @@ interface BrokenLinkTableWrapperProps {
   linkType?: 'broken' | 'previous';
   sectionId?: string;
   updatedLinks?: string[];
-  courseId?: string;
 }
 
 const BrokenLinkTableWrapper: React.FC<BrokenLinkTableWrapperProps> = ({
@@ -75,7 +78,6 @@ const BrokenLinkTableWrapper: React.FC<BrokenLinkTableWrapperProps> = ({
         unit={unit || createMockUnit([createMockBlock()])}
         onUpdateLink={onUpdateLink || mockOnUpdateLink}
         filters={filters}
-        courseId={courseId}
         {...props}
       />
     </IntlProvider>
@@ -150,7 +152,7 @@ describe('BrokenLinkTable', () => {
         createMockBlock(['https://example.com/broken-link']),
       ]);
 
-      render(<BrokenLinkTableWrapper courseId="course-v1:TestX+Test101+2024" unit={unitWithBrokenLink} />);
+      render(<BrokenLinkTableWrapper unit={unitWithBrokenLink} />);
 
       expect(screen.getByText('https://example.com/broken-link')).toBeInTheDocument();
     });
@@ -603,7 +605,6 @@ describe('BrokenLinkTable', () => {
       intlWrapper(
         <BrokenLinkTable
           unit={mockUnitWithPreviousRunLinks}
-          courseId="course-v1:TestX+Test101+2024"
           linkType="previous"
         />,
       );
@@ -633,7 +634,6 @@ describe('BrokenLinkTable', () => {
       const { container } = intlWrapper(
         <BrokenLinkTable
           unit={unitWithoutPreviousRunLinks}
-          courseId="course-v1:TestX+Test101+2024"
           linkType="previous"
         />,
       );
@@ -660,7 +660,6 @@ describe('BrokenLinkTable', () => {
       intlWrapper(
         <BrokenLinkTable
           unit={unitWithNoDisplayName}
-          courseId="course-v1:TestX+Test101+2024"
           linkType="previous"
         />,
       );
@@ -675,7 +674,6 @@ describe('BrokenLinkTable', () => {
       intlWrapper(
         <BrokenLinkTable
           unit={mockUnitWithBrokenLinks}
-          courseId="course-v1:TestX+Test101+2024"
           filters={mockFilters}
           linkType="broken"
         />,
@@ -689,7 +687,6 @@ describe('BrokenLinkTable', () => {
       const { container } = intlWrapper(
         <BrokenLinkTable
           unit={mockUnitWithBrokenLinks}
-          courseId="course-v1:TestX+Test101+2024"
           linkType="broken"
         />,
       );
@@ -712,7 +709,7 @@ describe('BrokenLinkTable', () => {
         createMockBlock(['https://broken.com/link1']),
       ]);
 
-      render(<BrokenLinkTableWrapper courseId="course-v1:TestX+Test101+2024" unit={unit} />);
+      render(<BrokenLinkTableWrapper unit={unit} />);
 
       const goToAnchor = screen.getByText('Test Block');
 
@@ -731,7 +728,7 @@ describe('BrokenLinkTable', () => {
         createMockBlock(['https://broken.com/link1']),
       ]);
 
-      render(<BrokenLinkTableWrapper courseId="course-v1:TestX+Test101+2024" unit={unit} />);
+      render(<BrokenLinkTableWrapper unit={unit} />);
 
       const hrefAnchor = screen.getByText('https://broken.com/link1');
 
@@ -751,8 +748,6 @@ BrokenLinkTableWrapper.propTypes = {
   filters: PropTypes.any,
   linkType: PropTypes.oneOf(['broken', 'previous']),
   sectionId: PropTypes.string,
-  courseId: PropTypes.string,
-
   updatedLinks: PropTypes.any,
 };
 /* eslint-enable react/forbid-prop-types */
