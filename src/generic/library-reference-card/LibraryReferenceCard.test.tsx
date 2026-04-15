@@ -227,9 +227,11 @@ describe('LibraryReferenceCard', () => {
       />,
     );
     // Broken link text should NOT appear
-    expect(await screen.findByText(
-      `${itemData.displayName} was reused as part of a section.`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        `${itemData.displayName} was reused as part of a section.`,
+      ),
+    ).toBeInTheDocument();
     expect(screen.queryByText(/broken link/i)).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Unlink section' })).not.toBeInTheDocument();
   });

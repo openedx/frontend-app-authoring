@@ -51,9 +51,12 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
         </Stack>
       )}
       <div>
-        <FormattedMessage {...messages.contentBlocksCount} values={{
-          count: totalHits,
-        }}/>
+        <FormattedMessage
+          {...messages.contentBlocksCount}
+          values={{
+            count: totalHits,
+          }}
+        />
       </div>
     </Stack>
   );

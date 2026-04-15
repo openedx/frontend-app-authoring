@@ -61,14 +61,11 @@ const UnitInfoDetails = () => {
 
   return (
     <SidebarContent>
-      {isVertical && (
-        <PublishControls blockId={blockId} hideCopyButton />
-      )}
+      {isVertical && <PublishControls blockId={blockId} hideCopyButton />}
       <SidebarSection
         title={isVertical
           ? intl.formatMessage(messages.sidebarSectionSummary)
-          : intl.formatMessage(messages.sidebarSectionSummaryDefault)
-        }
+          : intl.formatMessage(messages.sidebarSectionSummaryDefault)}
         icon={getItemIcon('unit')}
       >
         {componentData && <ComponentCountSnippet componentData={componentData} />}

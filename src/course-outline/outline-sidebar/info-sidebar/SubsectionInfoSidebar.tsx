@@ -35,7 +35,7 @@ export const SubsectionSidebar = () => {
   const { subsectionId = '', index } = selectedContainerState ?? {};
 
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
-  
+
   const availableTabs = {
     info: 'info',
     settings: 'settings',

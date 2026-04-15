@@ -87,15 +87,17 @@ export const ComponentPicker = ({
 
   const restrictToLibrary = !!libraryId;
 
-  const componentPickerProviderProps = componentPickerMode === 'single' ? {
-    componentPickerMode,
-    onComponentSelected,
-    restrictToLibrary,
-  } : {
-    componentPickerMode,
-    onChangeComponentSelection,
-    restrictToLibrary,
-  };
+  const componentPickerProviderProps = componentPickerMode === 'single' ?
+    {
+      componentPickerMode,
+      onComponentSelected,
+      restrictToLibrary,
+    } :
+    {
+      componentPickerMode,
+      onChangeComponentSelection,
+      restrictToLibrary,
+    };
 
   return (
     <PublishedFilterContextProvider showOnlyPublished={calcShowOnlyPublished}>

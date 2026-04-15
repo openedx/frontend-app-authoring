@@ -94,7 +94,6 @@ export const UnitSidebar = () => {
     }
   }, [currentTabKey, setCurrentTabKey]);
 
-  
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const { data: subsection } = useCourseItemData<XBlock>(selectedContainerState?.subsectionId);
   const { getUnitUrl, courseId, openUnlinkModal } = useCourseAuthoringContext();

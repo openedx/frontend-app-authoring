@@ -50,7 +50,6 @@ export const SectionSidebar = () => {
   }, [currentTabKey, setCurrentTabKey]);
   const { sectionId = '', index } = selectedContainerState ?? {};
   const { data: sectionData, isLoading } = useCourseItemData(sectionId);
-  
 
   const handlePublish = () => {
     if (sectionData?.hasChanges) {

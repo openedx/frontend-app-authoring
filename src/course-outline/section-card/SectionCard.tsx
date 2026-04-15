@@ -183,7 +183,8 @@ const SectionCard = ({
     }
     const subsections = section.childInfo?.children ?? [];
     const isScrollTargetInSection = subsections.some(
-      (sub) => sub.id === scrollState.id
+      (sub) =>
+        sub.id === scrollState.id
         || sub.childInfo?.children?.some((unit) => unit.id === scrollState.id),
     );
     if (isScrollTargetInSection) {
