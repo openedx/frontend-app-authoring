@@ -58,7 +58,6 @@ type PickerProps = {
   extraFilter?: string[];
   visibleTabs?: ContentType[];
   componentPickerMode?: 'single' | 'multiple';
-  restrictOpenInfoSidebar?: boolean;
   onComponentSelected?: ComponentSelectedEvent;
   onChangeComponentSelection?: ComponentSelectionChangedEvent;
   FiltersComponent?: React.ComponentType<FiltersProps>;
@@ -71,7 +70,6 @@ export const ComponentPicker = ({
   showOnlyPublished,
   extraFilter,
   componentPickerMode = 'single',
-  restrictOpenInfoSidebar = false,
   visibleTabs = allLibraryPageTabs,
   /** This default callback is used to send the selected component back to the parent window,
    * when the component picker is used in an iframe.
@@ -89,19 +87,15 @@ export const ComponentPicker = ({
 
   const restrictToLibrary = !!libraryId;
 
-  const componentPickerProviderProps = componentPickerMode === 'single' ?
-    {
-      componentPickerMode,
-      onComponentSelected,
-      restrictToLibrary,
-      restrictOpenInfoSidebar,
-    } :
-    {
-      componentPickerMode,
-      onChangeComponentSelection,
-      restrictToLibrary,
-      restrictOpenInfoSidebar,
-    };
+  const componentPickerProviderProps = componentPickerMode === 'single' ? {
+    componentPickerMode,
+    onComponentSelected,
+    restrictToLibrary,
+  } : {
+    componentPickerMode,
+    onChangeComponentSelection,
+    restrictToLibrary,
+  };
 
   return (
     <PublishedFilterContextProvider showOnlyPublished={calcShowOnlyPublished}>

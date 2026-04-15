@@ -311,7 +311,6 @@ const AddLibraryContent = () => {
         visibleTabs={[ContentType.home]}
         FiltersComponent={SidebarFilters}
         onComponentSelected={handleSelection}
-        restrictOpenInfoSidebar
       />
     </MultiLibraryProvider>
   );

@@ -17,7 +17,7 @@ type ComponentCardProps = {
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {
   const { openComponentInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
-  const { componentPickerMode, restrictOpenInfoSidebar } = useComponentPickerContext();
+  const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = usePublishedFilterContext();
 
   const {
@@ -38,10 +38,6 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
     if (!componentPickerMode) {
       openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
     } else {
-      if (restrictOpenInfoSidebar) {
-        // Do nothing on select
-        return;
-      }
       // In component picker mode, we want to open the sidebar
       // without changing the URL
       openComponentInfoSidebar(usageKey);
