@@ -717,7 +717,7 @@ describe('BrokenLinkTable', () => {
 
       await waitFor(() => {
         expect(window.open).toHaveBeenCalledWith(
-          'http://localhost/course/course-v1:TestX+Test101+2024/container/unit-1#block-1',
+          '/course/course-v1:TestX+Test101+2024/container/unit-1#block-1',
           '_blank',
         );
       });

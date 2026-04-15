@@ -114,21 +114,7 @@ describe('buildBlockContainerUrl', () => {
     const result = buildBlockContainerUrl(courseId, unitId, blockId);
 
     expect(result).toBe(
-      `${window.location.origin}/course/${courseId}/container/${unitId}#${blockId}`,
+      `/course/${courseId}/container/${unitId}#${blockId}`,
     );
-  });
-
-  it('should return only the internal path when window is undefined', () => {
-    const courseId = 'course-v1:Test+Course+2024';
-    const unitId = 'unit123';
-    const blockId = 'block456';
-
-    Object.defineProperty(globalThis, 'window', { value: undefined, configurable: true, writable: true });
-
-    const result = buildBlockContainerUrl(courseId, unitId, blockId);
-
-    Object.defineProperty(globalThis, 'window', { value: globalThis, configurable: true, writable: true });
-
-    expect(result).toBe(`/course/${courseId}/container/${unitId}#${blockId}`);
   });
 });

@@ -8,9 +8,7 @@ export const buildBlockContainerUrl = (
 ): string => {
   const path = `/course/${courseId}/container/${unitId}#${blockId}`;
   const internalPath = createCorrectInternalRoute(path);
-  return typeof window !== 'undefined'
-    ? `${window.location.origin}${internalPath}`
-    : internalPath;
+  return internalPath;
 };
 
 export const countBrokenLinks = (
