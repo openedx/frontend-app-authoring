@@ -26,10 +26,12 @@ describe('request selectors', () => {
     describe('statusSelector', () => {
       it('returns a state selector that applies a fn against request state by requestKey', () => {
         const myMethod = ({ data }) => ({ myData: data });
-        expect(selectors.statusSelector(myMethod)(
-          { requests: { [testKey]: { data: testValue } } },
-          { requestKey: testKey },
-        )).toEqual({ myData: testValue });
+        expect(
+          selectors.statusSelector(myMethod)(
+            { requests: { [testKey]: { data: testValue } } },
+            { requestKey: testKey },
+          ),
+        ).toEqual({ myData: testValue });
       });
     });
     describe('state selectors', () => {

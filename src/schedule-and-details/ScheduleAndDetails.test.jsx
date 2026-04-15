@@ -46,15 +46,17 @@ jest.mock('../editors/sharedComponents/TinyMceWidget', () => ({
 }));
 
 // Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea {...props} onFocus={() => {}} onBlur={() => {}} />
-)));
-
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <ScheduleAndDetails />
-  </CourseAuthoringProvider>,
+jest.mock(
+  'react-textarea-autosize',
+  () => jest.fn((props) => <textarea {...props} onFocus={() => {}} onBlur={() => {}} />),
 );
+
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <ScheduleAndDetails />
+    </CourseAuthoringProvider>,
+  );
 
 describe('<ScheduleAndDetails />', () => {
   beforeEach(() => {

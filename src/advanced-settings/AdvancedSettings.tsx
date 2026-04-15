@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import {
-  Container, Button, Layout, StatefulButton, TransitionReplace,
+  Container,
+  Button,
+  Layout,
+  StatefulButton,
+  TransitionReplace,
 } from '@openedx/paragon';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -176,19 +180,21 @@ const AdvancedSettings = () => {
             </AlertProctoringError>
           )}
           <TransitionReplace>
-            {showSuccessAlert ? (
-              <AlertMessage
-                key={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
-                show={showSuccessAlert}
-                variant="success"
-                icon={CheckCircle}
-                title={intl.formatMessage(messages.alertSuccess)}
-                description={intl.formatMessage(messages.alertSuccessDescriptions)}
-                aria-hidden="true"
-                aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
-                aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
-              />
-            ) : null}
+            {showSuccessAlert ?
+              (
+                <AlertMessage
+                  key={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+                  show={showSuccessAlert}
+                  variant="success"
+                  icon={CheckCircle}
+                  title={intl.formatMessage(messages.alertSuccess)}
+                  description={intl.formatMessage(messages.alertSuccessDescriptions)}
+                  aria-hidden="true"
+                  aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+                  aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
+                />
+              ) :
+              null}
           </TransitionReplace>
         </div>
         <section className="setting-items mb-4">
@@ -212,7 +218,7 @@ const AdvancedSettings = () => {
                       <FormattedMessage
                         id="course-authoring.advanced-settings.policies.description"
                         defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
-                        values={{ notice: <strong>Warning:  </strong> }}
+                        values={{ notice: <strong>Warning:</strong> }}
                       />
                     </div>
                     <div className="setting-items-deprecated-setting">
@@ -225,9 +231,9 @@ const AdvancedSettings = () => {
                           id="course-authoring.advanced-settings.deprecated.button.text"
                           defaultMessage="{visibility} deprecated settings"
                           values={{
-                            visibility:
-                              showDeprecated ? intl.formatMessage(messages.deprecatedButtonHideText)
-                                : intl.formatMessage(messages.deprecatedButtonShowText),
+                            visibility: showDeprecated ?
+                              intl.formatMessage(messages.deprecatedButtonHideText)
+                              : intl.formatMessage(messages.deprecatedButtonShowText),
                           }}
                         />
                       </Button>
@@ -281,11 +287,13 @@ const AdvancedSettings = () => {
           aria-describedby={intl.formatMessage(messages.alertWarningAriaDescribedby)}
           role="dialog"
           actions={[
-            !isQueryPending ? (
-              <Button variant="tertiary" onClick={handleResetSettingsValues}>
-                {intl.formatMessage(messages.buttonCancelText)}
-              </Button>
-            ) : /* istanbul ignore next */ null,
+            !isQueryPending ?
+              (
+                <Button key="cancelBtn" variant="tertiary" onClick={handleResetSettingsValues}>
+                  {intl.formatMessage(messages.buttonCancelText)}
+                </Button>
+              ) :
+              /* istanbul ignore next */ null,
             <StatefulButton
               key="statefulBtn"
               onClick={handleUpdateAdvancedSettingsData}

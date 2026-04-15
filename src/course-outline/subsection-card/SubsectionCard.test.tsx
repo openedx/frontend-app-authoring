@@ -1,7 +1,13 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import {
-  act, fireEvent, initializeMocks, render, screen, waitFor, within,
+  act,
+  fireEvent,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
+  within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
@@ -30,9 +36,15 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     handleAddAndOpenUnit: handleOnAddUnitFromLibrary,
     handleAddBlock: {},
     setCurrentSelection,
+    openPublishModal: jest.fn(),
   }),
 }));
 
@@ -113,33 +125,34 @@ const section: XBlock = {
   },
 } satisfies Partial<XBlock> as XBlock;
 
-const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <SubsectionCard
-    section={section}
-    subsection={subsection}
-    index={1}
-    isSelfPaced={false}
-    getPossibleMoves={jest.fn()}
-    onOrderChange={jest.fn()}
-    onOpenDeleteModal={jest.fn()}
-    isCustomRelativeDatesActive={false}
-    onDuplicateSubmit={jest.fn()}
-    onOpenConfigureModal={jest.fn()}
-    onPasteClick={jest.fn()}
-    isSectionsExpanded={false}
-    {...props}
-  >
-    <span>children</span>
-  </SubsectionCard>,
-  {
-    path: '/course/:courseId',
-    params: { courseId: '5' },
-    routerProps: {
-      initialEntries: [entry],
+const renderComponent = (props?: object, entry = '/course/:courseId') =>
+  render(
+    <SubsectionCard
+      section={section}
+      subsection={subsection}
+      index={1}
+      isSelfPaced={false}
+      getPossibleMoves={jest.fn()}
+      onOrderChange={jest.fn()}
+      onOpenDeleteModal={jest.fn()}
+      isCustomRelativeDatesActive={false}
+      onDuplicateSubmit={jest.fn()}
+      onOpenConfigureModal={jest.fn()}
+      onPasteClick={jest.fn()}
+      isSectionsExpanded={false}
+      {...props}
+    >
+      <span>children</span>
+    </SubsectionCard>,
+    {
+      path: '/course/:courseId',
+      params: { courseId: '5' },
+      routerProps: {
+        initialEntries: [entry],
+      },
+      extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
     },
-    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
-  },
-);
+  );
 
 describe('<SubsectionCard />', () => {
   beforeEach(() => {
@@ -200,6 +213,7 @@ describe('<SubsectionCard />', () => {
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
     });
   });
 
@@ -468,11 +482,13 @@ describe('<SubsectionCard />', () => {
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
     });
     expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index: 1,
     });
   });
 });

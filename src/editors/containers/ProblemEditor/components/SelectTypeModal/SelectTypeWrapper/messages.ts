@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   selectTypeTitle: {
     id: 'authoring.problemEditor.selectType.title',
     defaultMessage: 'Select problem type',

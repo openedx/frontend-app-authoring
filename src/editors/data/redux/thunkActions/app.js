@@ -21,30 +21,33 @@ export const fetchBlock = () => (dispatch) => {
       dispatch(actions.app.setBlockValue(response));
       dispatch(actions.app.setShowRawEditor(response));
     },
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchBlock,
-      error,
-    })),
+    onFailure: (error) =>
+      dispatch(actions.requests.failRequest({
+        requestKey: RequestKeys.fetchBlock,
+        error,
+      })),
   }));
 };
 
 export const fetchStudioView = () => (dispatch) => {
   dispatch(requests.fetchStudioView({
     onSuccess: (response) => dispatch(actions.app.setStudioView(response)),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchStudioView,
-      error,
-    })),
+    onFailure: (error) =>
+      dispatch(actions.requests.failRequest({
+        requestKey: RequestKeys.fetchStudioView,
+        error,
+      })),
   }));
 };
 
 export const fetchUnit = () => (dispatch) => {
   dispatch(requests.fetchUnit({
     onSuccess: (response) => dispatch(actions.app.setUnitUrl(response)),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchUnit,
-      error,
-    })),
+    onFailure: (error) =>
+      dispatch(actions.requests.failRequest({
+        requestKey: RequestKeys.fetchUnit,
+        error,
+      })),
   }));
 };
 
@@ -52,30 +55,33 @@ export const fetchImages = ({ pageNumber }) => (dispatch) => {
   dispatch(requests.fetchImages({
     pageNumber,
     onSuccess: ({ images, imageCount }) => dispatch(actions.app.setImages({ images, imageCount })),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchImages,
-      error,
-    })),
+    onFailure: (error) =>
+      dispatch(actions.requests.failRequest({
+        requestKey: RequestKeys.fetchImages,
+        error,
+      })),
   }));
 };
 
 export const fetchVideos = () => (dispatch) => {
   dispatch(requests.fetchVideos({
     onSuccess: (response) => dispatch(actions.app.setVideos(response.data.videos)),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchVideos,
-      error,
-    })),
+    onFailure: (error) =>
+      dispatch(actions.requests.failRequest({
+        requestKey: RequestKeys.fetchVideos,
+        error,
+      })),
   }));
 };
 
 export const fetchCourseDetails = () => (dispatch) => {
   dispatch(requests.fetchCourseDetails({
     onSuccess: (response) => dispatch(actions.app.setCourseDetails(response)),
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchCourseDetails,
-      error,
-    })),
+    onFailure: (error) =>
+      dispatch(actions.requests.failRequest({
+        requestKey: RequestKeys.fetchCourseDetails,
+        error,
+      })),
   }));
 };
 
@@ -130,10 +136,12 @@ export const saveBlock = (content, returnToUnit) => (dispatch) => {
         const storageKey = 'courseRefreshTriggerOnComponentEditSave';
         sessionStorage.setItem(storageKey, Date.now());
 
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: storageKey,
-          newValue: Date.now().toString(),
-        }));
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            key: storageKey,
+            newValue: Date.now().toString(),
+          }),
+        );
       }
       returnToUnit(response.data);
     },
@@ -157,16 +165,18 @@ export const createBlock = (content, returnToUnit) => (dispatch, getState) => {
         assets: newImages,
         content,
         onSuccess: (updatedContent) => dispatch(saveBlock(updatedContent, returnToUnit)),
-        onFailure: (error) => dispatch(actions.requests.failRequest({
-          requestKey: RequestKeys.batchUploadAssets,
-          error,
-        })),
+        onFailure: (error) =>
+          dispatch(actions.requests.failRequest({
+            requestKey: RequestKeys.batchUploadAssets,
+            error,
+          })),
       }));
     },
-    onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.createBlock,
-      error,
-    })),
+    onFailure: (error) =>
+      dispatch(actions.requests.failRequest({
+        requestKey: RequestKeys.createBlock,
+        error,
+      })),
   }));
 };
 

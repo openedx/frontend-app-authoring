@@ -39,9 +39,7 @@ export const TranscriptActionMenu = ({
         onClose={close}
         onEscapeKey={close}
       >
-        <Menu
-          className="transcript-menu"
-        >
+        <Menu className="transcript-menu">
           <MenuItem
             as={Button}
             variant="tertiary"

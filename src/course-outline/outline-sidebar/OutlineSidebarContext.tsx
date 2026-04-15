@@ -10,7 +10,7 @@ import { useToggle } from '@openedx/paragon';
 
 import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
 import { SelectionState, XBlock } from '@src/data/types';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
@@ -39,16 +39,26 @@ interface OutlineSidebarContextData {
   toggle: () => void;
   selectedContainerState?: SelectionState;
   setSelectedContainerState: (selectedContainerState?: SelectionState) => void;
-  openContainerInfoSidebar: (containerId: string, subsectionId?: string, sectionId?: string) => void;
+  openContainerInfoSidebar: (
+    containerId: string,
+    subsectionId?: string,
+    sectionId?: string,
+    index?: number,
+  ) => void;
   /**
    * Opens the sidebar for a new container and keeps the current sidebar page
    */
-  openContainerSidebar: (containerId: string, subsectionId?: string, sectionId?: string) => void;
+  openContainerSidebar: (
+    containerId: string,
+    subsectionId?: string,
+    sectionId?: string,
+    index?: number,
+  ) => void;
   clearSelection: () => void;
   /** Stores last section that allows adding subsections inside it. */
   lastEditableSection?: XBlock;
   /** Stores last subsection that allows adding units inside it and its parent sectionId */
-  lastEditableSubsection?: { data?: XBlock, sectionId?: string };
+  lastEditableSubsection?: { data?: XBlock; sectionId?: string; };
   /** XBlock data of selectedContainerState.currentId */
   currentItemData?: XBlock;
 }
@@ -60,7 +70,7 @@ const getLastEditableItem = (blockList: Array<XBlock>) => findLast(blockList, (i
 const getLastEditableSubsection = (
   blockList: Array<XBlock>,
   startIndex?: number,
-): { data: XBlock, sectionId: string } | undefined => {
+): { data: XBlock; sectionId: string; } | undefined => {
   const lastSectionIndex = findLastIndex(blockList, (item) => item.actions.childAddable, startIndex);
   if (lastSectionIndex !== -1) {
     const lastSubsectionIndex = findLastIndex(
@@ -80,7 +90,7 @@ const getLastEditableSubsection = (
   return undefined;
 };
 
-export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
+export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNode; }) => {
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<OutlineSidebarPageKeys>(
     'info',
     'sidebar',
@@ -97,22 +107,22 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const [currentTabKey, setCurrentTabKey] = useState<string>();
 
   /**
-  * Use this to store the selected container's information and should always contain full ancestor info.
-  * If selected container is a section, set containerId and sectionId to same value and subsectionId should
-  * be undefined.
-  * If selected container is a subsection, set containerId and subsectionId to same value and sectionId
-  * should be set to its parent section id.
-  * If selected container is an unit, set containerId as unitId, subsectionId as its parent subsection's id
-  * and sectionId should be set to its top parent section's id.
-  */
+   * Use this to store the selected container's information and should always contain full ancestor info.
+   * If selected container is a section, set containerId and sectionId to same value and subsectionId should
+   * be undefined.
+   * If selected container is a subsection, set containerId and subsectionId to same value and sectionId
+   * should be set to its parent section id.
+   * If selected container is an unit, set containerId as unitId, subsectionId as its parent subsection's id
+   * and sectionId should be set to its top parent section's id.
+   */
   const [selectedContainerState, setSelectedContainerState] = useState<SelectionState | undefined>();
-  const { setCurrentSelection } = useCourseAuthoringContext();
+  const { setCurrentSelection } = useCourseOutlineContext();
 
   /**
-  * Set currentSelection to same as selectedContainerState whenever
-  * selectedContainerState or currentPageKey changes.
-  * This allows us to reset the currentSelection.
-  */
+   * Set currentSelection to same as selectedContainerState whenever
+   * selectedContainerState or currentPageKey changes.
+   * This allows us to reset the currentSelection.
+   */
   useEffect(() => {
     // To allow tag buttons on other cards to jump to align page and not loose its selection
     if (currentPageKey !== 'align') {
@@ -132,9 +142,15 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     containerId: string,
     subsectionId?: string,
     sectionId?: string,
+    index?: number,
   ) => {
     if (isOutlineNewDesignEnabled()) {
-      setSelectedContainerState({ currentId: containerId, subsectionId, sectionId });
+      setSelectedContainerState({
+        currentId: containerId,
+        subsectionId,
+        sectionId,
+        index,
+      });
       setCurrentPageKey('info');
     }
   }, [setSelectedContainerState, setCurrentPageKey]);
@@ -143,9 +159,15 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     containerId: string,
     subsectionId?: string,
     sectionId?: string,
+    index?: number,
   ) => {
     if (isOutlineNewDesignEnabled()) {
-      setSelectedContainerState({ currentId: containerId, subsectionId, sectionId });
+      setSelectedContainerState({
+        currentId: containerId,
+        subsectionId,
+        sectionId,
+        index,
+      });
     }
   }, [setSelectedContainerState]);
 
@@ -154,10 +176,10 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   }, [selectedContainerState]);
 
   /**
-  * Starts add content flow.
-  * The sidebar enters an add content flow which allows user to add content in a specific container.
-  * A placeholder container is added in the location when the flow is started.
-  */
+   * Starts add content flow.
+   * The sidebar enters an add content flow which allows user to add content in a specific container.
+   * A placeholder container is added in the location when the flow is started.
+   */
   const startCurrentFlow = useCallback((flow: OutlineFlow) => {
     setCurrentPageKey('add');
     setCurrentFlow(flow);

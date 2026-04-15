@@ -18,7 +18,7 @@ export const state = {
 
 export const hooks = {
   isEditing: () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [isEditing, setIsEditing] = React.useState(false);
     return {
       isEditing,
@@ -28,7 +28,7 @@ export const hooks = {
   },
 
   localTitle: ({ dispatch, stopEditing }) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const title = useSelector(selectors.app.displayTitle);
     const [localTitle, setLocalTitle] = module.state.localTitle(title);
     return {

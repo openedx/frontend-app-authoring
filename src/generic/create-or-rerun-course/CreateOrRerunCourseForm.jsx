@@ -160,38 +160,40 @@ const CreateOrRerunCourseForm = ({
     handleBlur(e);
   };
 
-  const renderOrgField = (field) => (allowToCreateNewOrg ? (
-    <TypeaheadDropdown
-      readOnly={false}
-      name={field.name}
-      value={field.value}
-      controlClassName={classNames({ 'is-invalid': hasErrorField(field.name) })}
-      options={field.options}
-      placeholder={field.placeholder}
-      handleBlur={handleCustomBlurForDropdown}
-      handleChange={(value) => setFieldValue(field.name, value)}
-      noOptionsMessage={intl.formatMessage(messages.courseOrgNoOptions)}
-      helpMessage=""
-      errorMessage=""
-      floatingLabel=""
-    />
-  ) : (
-    <Dropdown className="mr-2">
-      <Dropdown.Toggle id={`${field.name}-dropdown`} variant="outline-primary">
-        {field.value || intl.formatMessage(messages.courseOrgNoOptions)}
-      </Dropdown.Toggle>
-      <Dropdown.Menu>
-        {field.options?.map((value) => (
-          <Dropdown.Item
-            key={value}
-            onClick={() => setFieldValue(field.name, value)}
-          >
-            {value}
-          </Dropdown.Item>
-        ))}
-      </Dropdown.Menu>
-    </Dropdown>
-  ));
+  const renderOrgField = (field) => (allowToCreateNewOrg ?
+    (
+      <TypeaheadDropdown
+        readOnly={false}
+        name={field.name}
+        value={field.value}
+        controlClassName={classNames({ 'is-invalid': hasErrorField(field.name) })}
+        options={field.options}
+        placeholder={field.placeholder}
+        handleBlur={handleCustomBlurForDropdown}
+        handleChange={(value) => setFieldValue(field.name, value)}
+        noOptionsMessage={intl.formatMessage(messages.courseOrgNoOptions)}
+        helpMessage=""
+        errorMessage=""
+        floatingLabel=""
+      />
+    ) :
+    (
+      <Dropdown className="mr-2">
+        <Dropdown.Toggle id={`${field.name}-dropdown`} variant="outline-primary">
+          {field.value || intl.formatMessage(messages.courseOrgNoOptions)}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          {field.options?.map((value) => (
+            <Dropdown.Item
+              key={value}
+              onClick={() => setFieldValue(field.name, value)}
+            >
+              {value}
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown>
+    ));
 
   useEffect(() => {
     // it needs to display the initial focus for the field depending on the current page
@@ -205,20 +207,22 @@ const CreateOrRerunCourseForm = ({
   return (
     <div className="create-or-rerun-course-form">
       <TransitionReplace>
-        {(errors[TOTAL_LENGTH_KEY] || showErrorBanner) ? (
-          <AlertMessage
-            variant="danger"
-            icon={InfoIcon}
-            title={errorMessage}
-            aria-hidden="true"
-            aria-labelledby={intl.formatMessage(
-              messages.alertErrorExistsAriaLabelledBy,
-            )}
-            aria-describedby={intl.formatMessage(
-              messages.alertErrorExistsAriaDescribedBy,
-            )}
-          />
-        ) : null}
+        {(errors[TOTAL_LENGTH_KEY] || showErrorBanner) ?
+          (
+            <AlertMessage
+              variant="danger"
+              icon={InfoIcon}
+              title={errorMessage}
+              aria-hidden="true"
+              aria-labelledby={intl.formatMessage(
+                messages.alertErrorExistsAriaLabelledBy,
+              )}
+              aria-describedby={intl.formatMessage(
+                messages.alertErrorExistsAriaDescribedBy,
+              )}
+            />
+          ) :
+          null}
       </TransitionReplace>
       <h3 className="mb-3">{title}</h3>
       <Form>
@@ -230,18 +234,20 @@ const CreateOrRerunCourseForm = ({
             key={field.label}
           >
             <Form.Label>{field.label}</Form.Label>
-            {field.name !== 'org' ? (
-              <Form.Control
-                value={field.value}
-                placeholder={field.placeholder}
-                name={field.name}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                isInvalid={hasErrorField(field.name)}
-                disabled={field.disabled}
-                ref={field?.ref}
-              />
-            ) : renderOrgField(field)}
+            {field.name !== 'org' ?
+              (
+                <Form.Control
+                  value={field.value}
+                  placeholder={field.placeholder}
+                  name={field.name}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  isInvalid={hasErrorField(field.name)}
+                  disabled={field.disabled}
+                  ref={field?.ref}
+                />
+              ) :
+              renderOrgField(field)}
             <Form.Text>{field.helpText}</Form.Text>
             {hasErrorField(field.name) && (
               <Form.Control.Feedback
@@ -266,11 +272,9 @@ const CreateOrRerunCourseForm = ({
             className="ml-3"
             onClick={handleOnClickCreate}
             disabled={!isFormFilled || isFormInvalid}
-            state={
-              savingStatus === RequestStatus.PENDING
-                ? STATEFUL_BUTTON_STATES.pending
-                : STATEFUL_BUTTON_STATES.default
-            }
+            state={savingStatus === RequestStatus.PENDING
+              ? STATEFUL_BUTTON_STATES.pending
+              : STATEFUL_BUTTON_STATES.default}
             {...createButtonState}
           />
         </ActionRow>

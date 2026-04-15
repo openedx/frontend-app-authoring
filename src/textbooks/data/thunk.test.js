@@ -16,7 +16,10 @@ import {
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import {
-  getTextbooks, createTextbook, editTextbook, deleteTextbook,
+  getTextbooks,
+  createTextbook,
+  editTextbook,
+  deleteTextbook,
 } from './api';
 
 jest.mock('../../generic/toast-context', () => ({

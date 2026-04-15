@@ -7,7 +7,12 @@ import { uploadAssets } from './data/api';
 import messages from './messages';
 
 const useModalDropzone = ({
-  onChange, onCancel, onClose, fileTypes, onSavingStatus, onSelectFile,
+  onChange,
+  onCancel,
+  onClose,
+  fileTypes,
+  onSavingStatus,
+  onSelectFile,
 }) => {
   const { courseId } = useParams();
   const intl = useIntl();
@@ -47,16 +52,17 @@ const useModalDropzone = ({
    *    "* /*": [".pdf", ".docx"]
    *  }
    */
-  const constructAcceptObject = (types) => types
-    .reduce((acc, type) => {
-      // eslint-disable-next-line no-nested-ternary
-      const mimeType = type === 'pdf' ? 'application/pdf' : VALID_IMAGE_TYPES.includes(type) ? 'image/*' : '*/*';
-      if (!acc[mimeType]) {
-        acc[mimeType] = [];
-      }
-      acc[mimeType].push(`.${type}`);
-      return acc;
-    }, {});
+  const constructAcceptObject = (types) =>
+    types
+      .reduce((acc, type) => {
+        // eslint-disable-next-line no-nested-ternary
+        const mimeType = type === 'pdf' ? 'application/pdf' : VALID_IMAGE_TYPES.includes(type) ? 'image/*' : '*/*';
+        if (!acc[mimeType]) {
+          acc[mimeType] = [];
+        }
+        acc[mimeType].push(`.${type}`);
+        return acc;
+      }, {});
 
   const accept = useMemo(() => constructAcceptObject(fileTypes), [fileTypes]);
 

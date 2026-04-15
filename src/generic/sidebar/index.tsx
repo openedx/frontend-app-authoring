@@ -1,5 +1,5 @@
-export { SidebarContent } from './SidebarContent';
-export { SidebarTitle } from './SidebarTitle';
-export { SidebarSection } from './SidebarSection';
 export { Sidebar } from './Sidebar';
 export type { SidebarPage } from './Sidebar';
+export { SidebarContent } from './SidebarContent';
+export { SidebarSection } from './SidebarSection';
+export { SidebarTitle } from './SidebarTitle';

@@ -51,7 +51,6 @@ export function useStateOrUrlSearchParam<Type>(
  * We use a class to store both Block and Problem types together because
  * their behaviour is tightly intertwined: e.g if Block type "problem" is
  * selected, that means all available Problem types are also selected.
- *
  */
 export class TypesFilterData {
   #blocks = new Set<string>();
@@ -90,7 +89,7 @@ export class TypesFilterData {
     return !(this.#blocks.size || this.#problems.size);
   }
 
-  get blocks() : Set<string> {
+  get blocks(): Set<string> {
     return this.#blocks;
   }
 
@@ -105,8 +104,8 @@ export class TypesFilterData {
   }
 
   union({ blocks, problems }: {
-    blocks?: string[] | Set<string> | string | undefined,
-    problems?: string[] | Set<string> | string | undefined,
+    blocks?: string[] | Set<string> | string | undefined;
+    problems?: string[] | Set<string> | string | undefined;
   }): void {
     let newBlocks: string[];
     if (!blocks) {

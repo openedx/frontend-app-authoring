@@ -1,5 +1,8 @@
 import React, {
-  useContext, useEffect, useRef, useState,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 import classNames from 'classnames';
 import EmailValidator from 'email-validator';
@@ -10,7 +13,13 @@ import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Alert, Badge, Form, Hyperlink, ModalDialog, StatefulButton,
+  ActionRow,
+  Alert,
+  Badge,
+  Form,
+  Hyperlink,
+  ModalDialog,
+  StatefulButton,
 } from '@openedx/paragon';
 
 import ExamsApiService from 'CourseAuthoring/data/services/ExamsApiService';
@@ -120,7 +129,9 @@ const ProctoringSettings = ({ onClose }) => {
     }
 
     if (requiresEscalationEmailProviders.includes(formValues.proctoringProvider)) {
-      studioDataToPostBack.proctored_exam_settings.proctoring_escalation_email = formValues.escalationEmail === '' ? null : formValues.escalationEmail;
+      studioDataToPostBack.proctored_exam_settings.proctoring_escalation_email = formValues.escalationEmail === ''
+        ? null
+        : formValues.escalationEmail;
     }
 
     // only save back to exam service if necessary
@@ -161,14 +172,20 @@ const ProctoringSettings = ({ onClose }) => {
       && !(formValues.escalationEmail === '' && !formValues.enableProctoredExams)
     ) {
       if (formValues.escalationEmail === '') {
-        const errorMessage = intl.formatMessage(messages['authoring.proctoring.escalationemail.error.blank'], { proctoringProviderName: getProviderDisplayLabel(formValues.proctoringProvider) });
+        const errorMessage = intl.formatMessage(messages['authoring.proctoring.escalationemail.error.blank'], {
+          proctoringProviderName: getProviderDisplayLabel(formValues.proctoringProvider),
+        });
 
         setFormStatus({
           isValid: false,
           errors: {
             formEscalationEmail: {
               dialogErrorMessage: (
-                <Alert.Link onClick={setFocusToEscalationEmailInput} href="#formEscalationEmail" data-testid="escalationEmailErrorLink">
+                <Alert.Link
+                  onClick={setFocusToEscalationEmailInput}
+                  href="#formEscalationEmail"
+                  data-testid="escalationEmailErrorLink"
+                >
                   {errorMessage}
                 </Alert.Link>
               ),
@@ -183,7 +200,15 @@ const ProctoringSettings = ({ onClose }) => {
           isValid: false,
           errors: {
             formEscalationEmail: {
-              dialogErrorMessage: (<Alert.Link onClick={setFocusToEscalationEmailInput} href="#formEscalationEmail" data-testid="escalationEmailErrorLink">{errorMessage}</Alert.Link>),
+              dialogErrorMessage: (
+                <Alert.Link
+                  onClick={setFocusToEscalationEmailInput}
+                  href="#formEscalationEmail"
+                  data-testid="escalationEmailErrorLink"
+                >
+                  {errorMessage}
+                </Alert.Link>
+              ),
               inputErrorMessage: errorMessage,
             },
           },
@@ -280,30 +305,28 @@ const ProctoringSettings = ({ onClose }) => {
           name="enableProctoredExams"
           onChange={handleChange}
           checked={formValues.enableProctoredExams}
-          label={(
+          label={
             <div className="d-flex align-items-center">
               {intl.formatMessage(messages['authoring.proctoring.enableproctoredexams.label'])}
-              {
-                formValues.enableProctoredExams && (
-                  <Badge className="ml-2" variant="success">
-                    {intl.formatMessage(messages['authoring.proctoring.enabled'])}
-                  </Badge>
-                )
-              }
+              {formValues.enableProctoredExams && (
+                <Badge className="ml-2" variant="success">
+                  {intl.formatMessage(messages['authoring.proctoring.enabled'])}
+                </Badge>
+              )}
             </div>
-          )}
-          helpText={(
+          }
+          helpText={
             <div>
               <p>
                 {intl.formatMessage(messages['authoring.proctoring.enableproctoredexams.help'])}
               </p>
               <span className="py-3">{learnMoreLink}</span>
             </div>
-          )}
+          }
         />
 
         {/* PROCTORING PROVIDER */}
-        { formValues.enableProctoredExams && (
+        {formValues.enableProctoredExams && (
           <>
             <hr />
             <Form.Group controlId="formProctoringProvider">
@@ -320,11 +343,9 @@ const ProctoringSettings = ({ onClose }) => {
                 {getProctoringProviderOptions(availableProctoringProviders)}
               </Form.Control>
               <Form.Text id="proctoringProviderHelpText">
-                {
-                  cannotEditProctoringProvider()
-                    ? intl.formatMessage(messages['authoring.proctoring.provider.help.aftercoursestart'])
-                    : intl.formatMessage(messages['authoring.proctoring.provider.help'])
-                }
+                {cannotEditProctoringProvider()
+                  ? intl.formatMessage(messages['authoring.proctoring.provider.help.aftercoursestart'])
+                  : intl.formatMessage(messages['authoring.proctoring.provider.help'])}
               </Form.Text>
             </Form.Group>
           </>
@@ -351,17 +372,15 @@ const ProctoringSettings = ({ onClose }) => {
             </Form.Text>
             {Object.prototype.hasOwnProperty.call(formStatus.errors, 'formEscalationEmail') && (
               <Form.Control.Feedback type="invalid">
-                {
-                  formStatus.errors.formEscalationEmail
-                  && formStatus.errors.formEscalationEmail.inputErrorMessage
-                }
+                {formStatus.errors.formEscalationEmail
+                  && formStatus.errors.formEscalationEmail.inputErrorMessage}
               </Form.Control.Feedback>
             )}
           </Form.Group>
         )}
 
         {/* ALLOW OPTING OUT OF PROCTORED EXAMS */}
-        { isEdxStaff && formValues.enableProctoredExams && !isLtiProviderSelected && (
+        {isEdxStaff && formValues.enableProctoredExams && !isLtiProviderSelected && (
           <fieldset aria-describedby="allowOptingOutHelpText">
             <Form.Group controlId="formAllowingOptingOut">
               <Form.Label as="legend" className="font-weight-bold">
@@ -388,21 +407,15 @@ const ProctoringSettings = ({ onClose }) => {
   }
 
   function renderLoading() {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   function renderConnectionError() {
-    return (
-      <ConnectionErrorAlert />
-    );
+    return <ConnectionErrorAlert />;
   }
 
   function renderPermissionError() {
-    return (
-      <PermissionDeniedAlert />
-    );
+    return <PermissionDeniedAlert />;
   }
 
   function renderSaveSuccess() {

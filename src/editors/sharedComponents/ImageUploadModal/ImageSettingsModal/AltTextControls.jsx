@@ -39,11 +39,11 @@ const AltTextControls = ({
         value={value}
       />
       {validation.show
-      && (
-        <Form.Control.Feedback type="invalid">
-          <FormattedMessage {...messages.altTextLocalFeedback} />
-        </Form.Control.Feedback>
-      )}
+        && (
+          <Form.Control.Feedback type="invalid">
+            <FormattedMessage {...messages.altTextLocalFeedback} />
+          </Form.Control.Feedback>
+        )}
       <Form.Checkbox
         checked={isDecorative}
         className="mt-4.5 decorative-control-label"

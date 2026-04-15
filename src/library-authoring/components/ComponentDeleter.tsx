@@ -29,7 +29,10 @@ const ComponentDeleter = ({ usageKey, close }: Props) => {
   const sidebarComponentUsageKey = sidebarItemInfo?.id;
 
   const restoreComponentMutation = useRestoreLibraryBlock();
-  const { data: dataDownstreamLinks, isPending: isPendingLinks } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
+  const { data: dataDownstreamLinks, isPending: isPendingLinks } = useEntityLinks({
+    upstreamKey: usageKey,
+    contentType: 'components',
+  });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
   const restoreComponent = useCallback(async () => {

@@ -60,7 +60,7 @@ const SettingCard = ({
         <Card.Body className="d-flex row m-0 align-items-center">
           <Card.Header
             className="col-6"
-            title={(
+            title={
               <ActionRow>
                 {capitalize(displayName)}
                 <IconButton
@@ -88,7 +88,7 @@ const SettingCard = ({
                 </ModalPopup>
                 <ActionRow.Spacer />
               </ActionRow>
-            )}
+            }
           />
           <Card.Section className="col-6 flex-grow-1">
             <Form.Group className="m-0">

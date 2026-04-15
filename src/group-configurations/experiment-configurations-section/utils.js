@@ -32,7 +32,10 @@ const getNextGroupName = (groups, groupFieldName = 'name') => {
   } while (existingGroupNames.includes(`Group ${groupName}`));
 
   return {
-    [groupFieldName]: `Group ${groupName}`, version: 1, usage: [], idx: nextIndex,
+    [groupFieldName]: `Group ${groupName}`,
+    version: 1,
+    usage: [],
+    idx: nextIndex,
   };
 };
 
@@ -65,9 +68,4 @@ const getFormGroupErrors = (errors) => {
   return { arrayErrors, stringError };
 };
 
-export {
-  allGroupNamesAreUnique,
-  getNextGroupName,
-  getGroupPercentage,
-  getFormGroupErrors,
-};
+export { allGroupNamesAreUnique, getNextGroupName, getGroupPercentage, getFormGroupErrors };

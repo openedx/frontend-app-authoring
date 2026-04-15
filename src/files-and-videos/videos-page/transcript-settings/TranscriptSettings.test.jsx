@@ -605,7 +605,9 @@ describe('TranscriptSettings', () => {
         });
         expect(updateButton).not.toHaveAttribute('disabled');
 
-        axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404, { error: 'Invalid turnaround.' });
+        axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404, {
+          error: 'Invalid turnaround.',
+        });
         fireEvent.click(updateButton);
         await waitFor(() => {
           const { transcriptStatus } = store.getState().videos;

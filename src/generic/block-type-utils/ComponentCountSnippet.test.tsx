@@ -1,5 +1,8 @@
 import {
-  initializeMocks, matchInnerText, render, screen,
+  initializeMocks,
+  matchInnerText,
+  render,
+  screen,
 } from '@src/testUtils';
 
 import { ComponentCountSnippet } from '.';

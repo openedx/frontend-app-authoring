@@ -54,7 +54,11 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
 
   // TABLE MODES
   const {
-    tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode,
+    tableMode,
+    enterDraftMode,
+    exitDraftWithoutSave,
+    enterPreviewMode,
+    enterViewMode,
   } = useTableModes();
 
   // PAGINATION
@@ -99,20 +103,21 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   });
 
   const columns = useMemo<TreeColumnDef[]>(
-    () => getColumns({
-      setIsCreatingTopTag,
-      setCreatingParentId,
-      handleUpdateTag,
-      setEditingRowId,
-      onStartDraft: enterDraftMode,
-      setActiveActionMenuRowId,
-      hasOpenDraft,
-      canAddTag: tagList?.canAddTag !== false,
-      draftError,
-      setDraftError,
-      isSavingDraft: createTagMutation.isPending,
-      maxDepth,
-    }),
+    () =>
+      getColumns({
+        setIsCreatingTopTag,
+        setCreatingParentId,
+        handleUpdateTag,
+        setEditingRowId,
+        onStartDraft: enterDraftMode,
+        setActiveActionMenuRowId,
+        hasOpenDraft,
+        canAddTag: tagList?.canAddTag !== false,
+        draftError,
+        setDraftError,
+        isSavingDraft: createTagMutation.isPending,
+        maxDepth,
+      }),
     [
       isCreatingTopTag,
       tableMode,

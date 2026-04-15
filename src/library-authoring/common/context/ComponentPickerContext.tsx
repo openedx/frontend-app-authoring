@@ -33,7 +33,7 @@ type NoComponentPickerType = {
 type BasePickerType = {
   restrictToLibrary: boolean;
   restrictOpenInfoSidebar: boolean;
-  extraFilter: string[],
+  extraFilter: string[];
   isLoading?: boolean;
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -68,7 +68,7 @@ type BasePickerProps = {
   restrictToLibrary?: boolean;
   restrictOpenInfoSidebar?: boolean;
   /** Only show published components */
-  extraFilter?: string[],
+  extraFilter?: string[];
 };
 
 export type ComponentPickerSingleProps = BasePickerProps & {

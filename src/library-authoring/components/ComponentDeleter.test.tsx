@@ -10,7 +10,10 @@ import {
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
 import {
-  mockContentLibrary, mockDeleteLibraryBlock, mockLibraryBlockMetadata, mockRestoreLibraryBlock,
+  mockContentLibrary,
+  mockDeleteLibraryBlock,
+  mockLibraryBlockMetadata,
+  mockRestoreLibraryBlock,
 } from '../data/api.mocks';
 import ComponentDeleter from './ComponentDeleter';
 
@@ -29,7 +32,7 @@ const renderArgs = {
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
       <SidebarProvider>
-        { children }
+        {children}
       </SidebarProvider>
     </LibraryProvider>
   ),
@@ -105,9 +108,11 @@ describe('<ComponentDeleter />', () => {
     const modal = await screen.findByRole('dialog', { name: 'Delete Component' });
     expect(modal).toBeVisible();
 
-    expect(await screen.findByText(
-      /by deleting this component, you will also be deleting it from in this library\./i,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /by deleting this component, you will also be deleting it from in this library\./i,
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByText(/unit 1/i)).toBeInTheDocument();
   });
 
@@ -131,9 +136,11 @@ describe('<ComponentDeleter />', () => {
     const modal = await screen.findByRole('dialog', { name: 'Delete Component' });
     expect(modal).toBeVisible();
 
-    expect(await screen.findByText(
-      /by deleting this component, you will also be deleting it from in this library\./i,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /by deleting this component, you will also be deleting it from in this library\./i,
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByText(/2 units/i)).toBeInTheDocument();
   });
 });

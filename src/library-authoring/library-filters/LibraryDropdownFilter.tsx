@@ -1,6 +1,12 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ButtonGroup, Dropdown, Form, OverlayTrigger, Scrollable, SearchField, Tooltip,
+  ButtonGroup,
+  Dropdown,
+  Form,
+  OverlayTrigger,
+  Scrollable,
+  SearchField,
+  Tooltip,
 } from '@openedx/paragon';
 import { Newsstand } from '@openedx/paragon/icons';
 import Loading from '@src/generic/Loading';
@@ -96,11 +102,11 @@ export const LibraryDropdownFilter = () => {
     >
       <OverlayTrigger
         placement="auto"
-        overlay={(
+        overlay={
           <Tooltip variant="light" id="library-filter-tooltip">
             {label}
           </Tooltip>
-        )}
+        }
       >
         <Dropdown.Toggle
           id="library-filter-dropdown-toggle"

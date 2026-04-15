@@ -16,8 +16,12 @@ interface InfoMessageProps {
 
 const InfoMessage = (props: InfoMessageProps) => (
   <Stack className="d-flex mt-6 align-items-center">
-    <p className="lead"> <FormattedMessage {...props.title} /> </p>
-    <p className="small text-muted"> <FormattedMessage {...props.subtitle} /> </p>
+    <p className="lead">
+      <FormattedMessage {...props.title} />
+    </p>
+    <p className="small text-muted">
+      <FormattedMessage {...props.subtitle} />
+    </p>
     <img src={props.image} alt="" />
   </Stack>
 );
@@ -27,7 +31,7 @@ const InfoMessage = (props: InfoMessageProps) => (
  * Likewise, if the results are empty (0 results), display a special message.
  * Otherwise, display the results, which are assumed to be the children prop.
  */
-const EmptyStates: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+const EmptyStates: React.FC<{ children: React.ReactElement; }> = ({ children }) => {
   const {
     canClearFilters: hasFiltersApplied,
     totalHits,

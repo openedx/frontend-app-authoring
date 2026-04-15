@@ -29,21 +29,19 @@ const ProgressSettings = ({ onClose }) => {
       validationSchema={{ enableProgressGraph: Yup.boolean() }}
       onSettingsSave={handleSettingsSave}
     >
-      {
-        ({ handleChange, handleBlur, values }) => (
-          showProgressGraphSetting && (
-            <FormSwitchGroup
-              id="enable-progress-graph"
-              name="enableProgressGraph"
-              label={intl.formatMessage(messages.enableGraphLabel)}
-              helpText={intl.formatMessage(messages.enableGraphHelp)}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              checked={values.enableProgressGraph}
-            />
-          )
+      {({ handleChange, handleBlur, values }) => (
+        showProgressGraphSetting && (
+          <FormSwitchGroup
+            id="enable-progress-graph"
+            name="enableProgressGraph"
+            label={intl.formatMessage(messages.enableGraphLabel)}
+            helpText={intl.formatMessage(messages.enableGraphHelp)}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            checked={values.enableProgressGraph}
+          />
         )
-      }
+      )}
     </AppSettingsModal>
   );
 };

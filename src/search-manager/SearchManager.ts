@@ -11,7 +11,8 @@ import { union } from 'lodash';
 import {
   type HitType,
   SearchSortOption,
-  forceArray, PublishStatus,
+  forceArray,
+  PublishStatus,
 } from './data/api';
 import { TypesFilterData, useStateOrUrlSearchParam } from './hooks';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
@@ -52,13 +53,13 @@ export interface SearchContextData {
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
 
 export const SearchContextProvider: React.FC<{
-  extraFilter?: Filter,
-  overrideTypesFilter?: TypesFilterData,
-  overrideSearchSortOrder?: SearchSortOption
-  children: React.ReactNode,
-  closeSearchModal?: () => void,
-  skipBlockTypeFetch?: boolean,
-  skipUrlUpdate?: boolean,
+  extraFilter?: Filter;
+  overrideTypesFilter?: TypesFilterData;
+  overrideSearchSortOrder?: SearchSortOption;
+  children: React.ReactNode;
+  closeSearchModal?: () => void;
+  skipBlockTypeFetch?: boolean;
+  skipUrlUpdate?: boolean;
 }> = ({
   overrideTypesFilter,
   overrideSearchSortOrder,
@@ -148,7 +149,7 @@ export const SearchContextProvider: React.FC<{
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
   const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
-  let sort: SearchSortOption[] = (searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse]);
+  let sort: SearchSortOption[] = searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse];
   // Adding `SearchSortOption.RECENTLY_MODIFIED` as second sort when
   // selecting `SearchSortOption.RECENTLY_PUBLISHED`.
   // This is to sort the never published components by recently modified that
@@ -157,12 +158,10 @@ export const SearchContextProvider: React.FC<{
     sort = union(sort, [SearchSortOption.RECENTLY_MODIFIED]);
   }
 
-  const canClearFilters = (
-    !typesFilter.isEmpty()
+  const canClearFilters = !typesFilter.isEmpty()
     || tagsFilter.length > 0
     || publishStatusFilter.length > 0
-    || !!usageKey
-  );
+    || !!usageKey;
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
     setTypesFilter((types) => types.clear());
@@ -209,7 +208,7 @@ export const SearchContextProvider: React.FC<{
       searchSortOrder,
       setSearchSortOrder,
       defaultSearchSortOrder,
-      closeSearchModal: props.closeSearchModal ?? (() => { }),
+      closeSearchModal: props.closeSearchModal ?? (() => {}),
       hasError: hasConnectionError || result.isError,
       usageKey,
       ...result,

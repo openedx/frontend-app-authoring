@@ -139,43 +139,47 @@ const LibraryCollectionPage = () => {
     return <ErrorAlert error={error} />;
   }
 
-  const breadcrumbs = !componentPickerMode ? (
-    <Breadcrumb
-      ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
-      links={[
-        {
-          label: libraryData.title,
-          to: `/library/${libraryId}`,
-        },
-        {
-          label: intl.formatMessage(messages.allCollections),
-          to: `/library/${libraryId}/collections`,
-        },
-        // Adding empty breadcrumb to add the last `>` spacer.
-        {
-          label: '',
-          to: '',
-        },
-      ]}
-      linkAs={Link}
-    />
-  ) : (
-    <Breadcrumb
-      ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
-      links={[
-        {
-          label: '',
-          to: '',
-        },
-        {
-          label: intl.formatMessage(messages.returnToLibrary),
-          onClick: () => { setCollectionId?.(undefined); },
-        },
-      ]}
-      spacer={<Icon src={ArrowBack} size="sm" />}
-      linkAs={Link}
-    />
-  );
+  const breadcrumbs = !componentPickerMode ?
+    (
+      <Breadcrumb
+        ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
+        links={[
+          {
+            label: libraryData.title,
+            to: `/library/${libraryId}`,
+          },
+          {
+            label: intl.formatMessage(messages.allCollections),
+            to: `/library/${libraryId}/collections`,
+          },
+          // Adding empty breadcrumb to add the last `>` spacer.
+          {
+            label: '',
+            to: '',
+          },
+        ]}
+        linkAs={Link}
+      />
+    ) :
+    (
+      <Breadcrumb
+        ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
+        links={[
+          {
+            label: '',
+            to: '',
+          },
+          {
+            label: intl.formatMessage(messages.returnToLibrary),
+            onClick: () => {
+              setCollectionId?.(undefined);
+            },
+          },
+        ]}
+        spacer={<Icon src={ArrowBack} size="sm" />}
+        linkAs={Link}
+      />
+    );
 
   const extraFilter = [`collections.key = "${collectionId}"`];
   if (libraryId) {
@@ -192,7 +196,9 @@ const LibraryCollectionPage = () => {
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
-        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
+        <Helmet>
+          <title>{libraryData.title} | {process.env.SITE_NAME}</title>
+        </Helmet>
         {!componentPickerMode && (
           <Header
             number={libraryData.slug}

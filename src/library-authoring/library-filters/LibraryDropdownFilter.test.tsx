@@ -1,6 +1,9 @@
 import { mockContentLibrary, mockGetContentLibraryV2List } from '@src/library-authoring/data/api.mocks';
 import {
-  initializeMocks, render, screen, waitFor,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
 } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 import { LibraryDropdownFilter } from './LibraryDropdownFilter';
@@ -128,17 +131,19 @@ describe('LibraryDropdownFilter', () => {
     const searchInput = await screen.findByPlaceholderText('Search Library Name');
     await user.type(searchInput, 'Test Library');
 
-    await waitFor(() => expect(mockApi).toHaveBeenLastCalledWith({
-      pagination: false,
-      search: 'Test Library',
-    }), { timeout: 600 });
+    await waitFor(() =>
+      expect(mockApi).toHaveBeenLastCalledWith({
+        pagination: false,
+        search: 'Test Library',
+      }), { timeout: 600 });
 
     const clearBtn = await screen.findByRole('button', { name: 'clear search' });
     await user.click(clearBtn);
 
-    await waitFor(() => expect(mockApi).toHaveBeenLastCalledWith({
-      pagination: false,
-      search: '',
-    }), { timeout: 600 });
+    await waitFor(() =>
+      expect(mockApi).toHaveBeenLastCalledWith({
+        pagination: false,
+        search: '',
+      }), { timeout: 600 });
   });
 });

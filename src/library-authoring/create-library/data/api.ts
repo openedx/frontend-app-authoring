@@ -13,10 +13,10 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getContentLibraryV2CreateApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
 
 export interface CreateContentLibraryArgs {
-  title: string,
-  org: string,
-  slug: string,
-  learning_package?: number,
+  title: string;
+  org: string;
+  slug: string;
+  learning_package?: number;
 }
 
 /**

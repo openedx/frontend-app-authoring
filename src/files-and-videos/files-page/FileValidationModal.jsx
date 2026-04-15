@@ -41,7 +41,7 @@ const FileValidationModal = ({
       <ModalDialog.Body>
         <FormattedMessage {...messages.overwriteConfirmMessage} />
         <ul className="mt-2">
-          {Object.keys(duplicateFiles).map(file => <li>{file}</li>)}
+          {Object.keys(duplicateFiles).map(file => <li key={file}>{file}</li>)}
         </ul>
       </ModalDialog.Body>
       <ModalDialog.Footer>

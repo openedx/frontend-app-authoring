@@ -12,23 +12,27 @@ const FieldFeedback = ({
 }) => (
   <>
     <TransitionReplace className={transitionClasses}>
-      {feedbackCondition ? (
-        <React.Fragment key="open1">
-          <Form.Control.Feedback type="default" hasIcon={false} key={`${feedbackMessage}-feedback`}>
-            <div className={`small ${feedbackClasses}`}>{feedbackMessage}</div>
-          </Form.Control.Feedback>
-        </React.Fragment>
-      ) : <React.Fragment key="close1" />}
+      {feedbackCondition ?
+        (
+          <React.Fragment key="open1">
+            <Form.Control.Feedback type="default" hasIcon={false} key={`${feedbackMessage}-feedback`}>
+              <div className={`small ${feedbackClasses}`}>{feedbackMessage}</div>
+            </Form.Control.Feedback>
+          </React.Fragment>
+        ) :
+        <React.Fragment key="close1" />}
     </TransitionReplace>
 
     <TransitionReplace>
-      {errorCondition ? (
-        <React.Fragment key="open">
-          <Form.Control.Feedback type="invalid" hasIcon={false} key={`${errorMessage}-feedback`}>
-            <div className={`small ${feedbackClasses}`}>{errorMessage}</div>
-          </Form.Control.Feedback>
-        </React.Fragment>
-      ) : <React.Fragment key="close" />}
+      {errorCondition ?
+        (
+          <React.Fragment key="open">
+            <Form.Control.Feedback type="invalid" hasIcon={false} key={`${errorMessage}-feedback`}>
+              <div className={`small ${feedbackClasses}`}>{errorMessage}</div>
+            </Form.Control.Feedback>
+          </React.Fragment>
+        ) :
+        <React.Fragment key="close" />}
     </TransitionReplace>
   </>
 );

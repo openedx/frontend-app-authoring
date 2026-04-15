@@ -42,15 +42,18 @@ export interface SidebarSectionProps {
  * ```
  */
 export const SidebarSection = ({
-  title, icon, actions, children,
+  title,
+  icon,
+  actions,
+  children,
 }: SidebarSectionProps) => (
   <Stack gap={2}>
     <Stack direction="horizontal" gap={2}>
       {icon && <Icon src={icon} className="mr-1 text-primary" size="sm" />}
       {title && (
-      <h3 className="h5 font-weight-bold text-primary mb-0 mt-1">
-        {title}
-      </h3>
+        <h3 className="h5 font-weight-bold text-primary mb-0 mt-1">
+          {title}
+        </h3>
       )}
       {actions && (
         <Dropdown className="ml-auto">

@@ -10,9 +10,9 @@ import SplitTestSidebarInfo from './SplitTestSidebarInfo';
 import PublishControls from '../unit-sidebar/unit-info/PublishControls';
 
 export type XBlock = {
-  id: string,
-  name: string,
-  blockType: string,
+  id: string;
+  name: string;
+  blockType: string;
 };
 
 export interface LegacySidebarProps {
@@ -38,6 +38,10 @@ const LegacySidebar = ({
 }: LegacySidebarProps) => {
   const { blockId } = useParams();
   const { courseId } = useCourseAuthoringContext();
+
+  if (!blockId) {
+    return null;
+  }
 
   return (
     <Stack gap={3} className="px-4 mw-sm">

@@ -15,12 +15,14 @@ import messages from './messages';
 const CLIPBOARD_QUERY_KEY = ['clipboard'];
 
 // Global, shared broadcast channel for the clipboard. Disabled by default in test environment where it's not defined.
-let clipboardBroadcastChannel = (
-  typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL) : null
-);
+let clipboardBroadcastChannel = typeof BroadcastChannel !== 'undefined'
+  ? new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL)
+  : null;
 /** To allow mocking the broadcast channel for testing */
 // eslint-disable-next-line
-export const _testingOverrideBroadcastChannel = (x: BroadcastChannel) => { clipboardBroadcastChannel = x; };
+export const _testingOverrideBroadcastChannel = (x: BroadcastChannel) => {
+  clipboardBroadcastChannel = x;
+};
 
 /**
  * Custom React hook for managing clipboard functionality.

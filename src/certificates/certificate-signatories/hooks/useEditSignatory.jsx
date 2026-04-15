@@ -1,5 +1,9 @@
 const useEditSignatory = ({
-  arrayHelpers, editModes, setEditModes, setFieldValue, initialSignatoriesValues,
+  arrayHelpers,
+  editModes,
+  setEditModes,
+  setFieldValue,
+  initialSignatoriesValues,
 }) => {
   const handleDeleteSignatory = (id) => {
     arrayHelpers.remove(id);

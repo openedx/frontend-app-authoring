@@ -1,5 +1,8 @@
 import {
-  render, queryByLabelText, queryByTestId, initializeMocks,
+  render,
+  queryByLabelText,
+  queryByTestId,
+  initializeMocks,
 } from '@src/testUtils';
 import { executeThunk } from '@src/utils';
 

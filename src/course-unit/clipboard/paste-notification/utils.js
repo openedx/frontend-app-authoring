@@ -8,4 +8,5 @@
  *                          `false` if it does not, and `null` if fileList is not defined.
  */
 export const getAlertStatus = (fileList, alertKey, alertState) => (
-  fileList?.length ? fileList && alertState[alertKey] : null);
+  fileList?.length ? fileList && alertState[alertKey] : null
+);

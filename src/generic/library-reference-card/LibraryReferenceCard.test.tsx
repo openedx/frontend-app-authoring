@@ -96,9 +96,11 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `The link between ${itemData.displayName} and the library version has been broken. To edit or make changes, unlink component.`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        `The link between ${itemData.displayName} and the library version has been broken. To edit or make changes, unlink component.`,
+      ),
+    ).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Unlink from library' }));
     expect(mockUseCourseAuthoringContext().openUnlinkModal).toHaveBeenCalledWith({
@@ -126,9 +128,11 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} has available updates`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        `${itemData.displayName} has available updates`,
+      ),
+    ).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Review Updates' }));
     expect(mockOpenSyncModal).toHaveBeenCalled();
@@ -152,9 +156,11 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} has been modified in this course.`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        `${itemData.displayName} has been modified in this course.`,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renders the LibraryReferenceCard with top level error message', async () => {
@@ -186,9 +192,11 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} was reused as part of a section which has a broken link. To receive library updates to this component, unlink the broken link.`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        `${itemData.displayName} was reused as part of a section which has a broken link. To receive library updates to this component, unlink the broken link.`,
+      ),
+    ).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Unlink section' }));
     // should call unlink with parent section data
@@ -255,9 +263,11 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} was reused as part of a section which has updates available.`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        `${itemData.displayName} was reused as part of a section which has updates available.`,
+      ),
+    ).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Review Updates' }));
     expect(mockOpenSyncModal).toHaveBeenCalledWith(parentData);
@@ -282,9 +292,11 @@ describe('LibraryReferenceCard', () => {
         goToParent={mockOpenContainerInfoSidebar}
       />,
     );
-    expect(await screen.findByText(
-      `${itemData.displayName} was reused as part of a section.`,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        `${itemData.displayName} was reused as part of a section.`,
+      ),
+    ).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'View section' }));
     expect(mockOpenContainerInfoSidebar).toHaveBeenCalledWith(

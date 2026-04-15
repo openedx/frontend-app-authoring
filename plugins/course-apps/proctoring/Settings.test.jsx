@@ -1,5 +1,10 @@
 import {
-  render, screen, cleanup, waitFor, fireEvent, act,
+  render,
+  screen,
+  cleanup,
+  waitFor,
+  fireEvent,
+  act,
   initializeMocks,
 } from 'CourseAuthoring/testUtils';
 
@@ -73,6 +78,8 @@ describe('ProctoredExamSettings', () => {
     ).reply(200, {
       provider: null,
     });
+
+    axiosMock.onGet(/course_index/).reply(200, { sections: [] });
 
     axiosMock.onGet(
       StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),

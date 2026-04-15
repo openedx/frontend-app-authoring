@@ -1,8 +1,13 @@
 import {
-  IconButton, Stack, useToggle,
+  IconButton,
+  Stack,
+  useToggle,
 } from '@openedx/paragon';
 import {
-  ClearFiltersButton, FilterByBlockType, FilterByTags, SearchKeywordsField,
+  ClearFiltersButton,
+  FilterByBlockType,
+  FilterByTags,
+  SearchKeywordsField,
   useSearchContext,
 } from '@src/search-manager';
 import { FilterList } from '@openedx/paragon/icons';
@@ -15,7 +20,7 @@ import { CollectionDropdownFilter } from './CollectionDropdownFilter';
 
 export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
   const intl = useIntl();
-  const [isOn,,, toggle] = useToggle(false);
+  const [isOn, , , toggle] = useToggle(false);
   const { selectedCollections, setSelectedCollections } = useMultiLibraryContext();
   const { totalHits } = useSearchContext();
 
@@ -35,15 +40,15 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
         </Stack>
       </Stack>
       {isOn && (
-      <Stack className="flex-wrap" direction="horizontal" gap={2}>
-        {!(onlyOneType) && <FilterByBlockType />}
-        <FilterByTags />
-        <CollectionDropdownFilter />
-        <ClearFiltersButton
-          onClear={() => setSelectedCollections([])}
-          canClear={selectedCollections.length > 0}
-        />
-      </Stack>
+        <Stack className="flex-wrap" direction="horizontal" gap={2}>
+          {!onlyOneType && <FilterByBlockType />}
+          <FilterByTags />
+          <CollectionDropdownFilter />
+          <ClearFiltersButton
+            onClear={() => setSelectedCollections([])}
+            canClear={selectedCollections.length > 0}
+          />
+        </Stack>
       )}
       <div>
         <FormattedMessage {...messages.contentBlocksCount} values={{

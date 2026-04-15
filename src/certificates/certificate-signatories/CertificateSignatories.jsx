@@ -27,7 +27,11 @@ const CertificateSignatories = ({
     handleDeleteSignatory,
     handleCancelUpdateSignatory,
   } = useEditSignatory({
-    arrayHelpers, editModes, setEditModes, setFieldValue, initialSignatoriesValues,
+    arrayHelpers,
+    editModes,
+    setEditModes,
+    setFieldValue,
+    initialSignatoriesValues,
   });
 
   const { handleAddSignatory } = useCreateSignatory({ arrayHelpers });
@@ -43,37 +47,43 @@ const CertificateSignatories = ({
         </p>
         <Stack gap="4.5">
           {signatories.map(({
-            id, name, title, organization, signatureImagePath,
+            id,
+            name,
+            title,
+            organization,
+            signatureImagePath,
           }, idx) => (
-            isForm || editModes[idx] ? (
-              <SignatoryForm
-                key={id}
-                index={idx}
-                isEdit={editModes[idx]}
-                name={name}
-                title={title}
-                organization={organization}
-                signatureImagePath={signatureImagePath}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                setFieldValue={setFieldValue}
-                showDeleteButton={signatories.length > 1 && !editModes[idx]}
-                handleDeleteSignatory={() => handleDeleteSignatory(idx)}
-                {...(editModes[idx] && {
-                  handleCancelUpdateSignatory: () => handleCancelUpdateSignatory(idx),
-                })}
-              />
-            ) : (
-              <Signatory
-                key={id}
-                index={idx}
-                name={name}
-                title={title}
-                organization={organization}
-                signatureImagePath={signatureImagePath}
-                handleEdit={() => toggleEditSignatory(idx)}
-              />
-            )
+            isForm || editModes[idx] ?
+              (
+                <SignatoryForm
+                  key={id}
+                  index={idx}
+                  isEdit={editModes[idx]}
+                  name={name}
+                  title={title}
+                  organization={organization}
+                  signatureImagePath={signatureImagePath}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
+                  showDeleteButton={signatories.length > 1 && !editModes[idx]}
+                  handleDeleteSignatory={() => handleDeleteSignatory(idx)}
+                  {...(editModes[idx] && {
+                    handleCancelUpdateSignatory: () => handleCancelUpdateSignatory(idx),
+                  })}
+                />
+              ) :
+              (
+                <Signatory
+                  key={id}
+                  index={idx}
+                  name={name}
+                  title={title}
+                  organization={organization}
+                  signatureImagePath={signatureImagePath}
+                  handleEdit={() => toggleEditSignatory(idx)}
+                />
+              )
           ))}
         </Stack>
         {isForm && (

@@ -2,11 +2,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import SectionCollapsible from './SectionCollapsible';
 
-const intlWrapper = (ui: React.ReactElement) => render(
-  <IntlProvider locale="en" messages={{}}>
-    {ui}
-  </IntlProvider>,
-);
+const intlWrapper = (ui: React.ReactElement) =>
+  render(
+    <IntlProvider locale="en" messages={{}}>
+      {ui}
+    </IntlProvider>,
+  );
 
 describe('SectionCollapsible', () => {
   const defaultProps = {

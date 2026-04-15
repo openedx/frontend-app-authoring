@@ -10,73 +10,74 @@ import editorMessages from '@src/editors/containers/EditorContainer/messages';
 import { fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-const render = () => editorRender(
-  <PdfEditor onClose={() => undefined} returnFunction={() => () => undefined} />,
-  {
-    initialState: {
-      app: {
-        blockValue: {
-          data: {
-            id: 'pdf-block-id',
-            display_name: 'PDF',
-            category: 'pdf',
-            has_children: false,
-            has_changes: null,
-            explanatory_message: null,
-            group_access: {},
-            data: '',
-            metadata: {
+const render = () =>
+  editorRender(
+    <PdfEditor onClose={() => undefined} returnFunction={() => () => undefined} />,
+    {
+      initialState: {
+        app: {
+          blockValue: {
+            data: {
+              id: 'pdf-block-id',
               display_name: 'PDF',
+              category: 'pdf',
+              has_children: false,
+              has_changes: null,
+              explanatory_message: null,
+              group_access: {},
+              data: '',
+              metadata: {
+                display_name: 'PDF',
+              },
             },
           },
-        },
-        unitUrl: {
-          data: {
-            ancestors: [
-              {
-                id: 'block-v1:Test+TS102+2026+type@vertical+block@29f73003508e47e0af00b495ecdc66f1',
-                display_name: 'Unit',
-                category: 'vertical',
-                has_children: true,
-              },
-              {
-                id: 'block-v1:Test+TS102+2026+type@sequential+block@a9f3bc6ad94a4e108449b5c84a46f7ba',
-                display_name: 'Subsection',
-                category: 'sequential',
-                has_children: true,
-              },
-              {
-                id: 'block-v1:Test+TS102+2026+type@chapter+block@606d3cab05a94551b71c5abbd0009baf',
-                display_name: 'Section',
-                category: 'chapter',
-                has_children: true,
-              },
-              {
-                id: 'block-v1:Test+TS102+2026+type@course+block@course',
-                display_name: 'New Test Course',
-                category: 'course',
-                has_children: true,
-                unit_level_discussions: true,
-              },
-            ],
+          unitUrl: {
+            data: {
+              ancestors: [
+                {
+                  id: 'block-v1:Test+TS102+2026+type@vertical+block@29f73003508e47e0af00b495ecdc66f1',
+                  display_name: 'Unit',
+                  category: 'vertical',
+                  has_children: true,
+                },
+                {
+                  id: 'block-v1:Test+TS102+2026+type@sequential+block@a9f3bc6ad94a4e108449b5c84a46f7ba',
+                  display_name: 'Subsection',
+                  category: 'sequential',
+                  has_children: true,
+                },
+                {
+                  id: 'block-v1:Test+TS102+2026+type@chapter+block@606d3cab05a94551b71c5abbd0009baf',
+                  display_name: 'Section',
+                  category: 'chapter',
+                  has_children: true,
+                },
+                {
+                  id: 'block-v1:Test+TS102+2026+type@course+block@course',
+                  display_name: 'New Test Course',
+                  category: 'course',
+                  has_children: true,
+                  unit_level_discussions: true,
+                },
+              ],
+            },
           },
+          blockId: 'pdf-block-id',
+          blockTitle: 'PDF',
+          blockType: 'pdf',
+          learningContextId: 'course-v1:Test+TS102+2026',
+          editorInitialized: false,
+          studioEndpointUrl: 'https://studio.local',
+          lmsEndpointUrl: 'http://local.openedx.io:8000',
+          images: {},
+          imageCount: 0,
+          videos: {},
+          courseDetails: {},
+          showRawEditor: false,
         },
-        blockId: 'pdf-block-id',
-        blockTitle: 'PDF',
-        blockType: 'pdf',
-        learningContextId: 'course-v1:Test+TS102+2026',
-        editorInitialized: false,
-        studioEndpointUrl: 'https://studio.local',
-        lmsEndpointUrl: 'http://local.openedx.io:8000',
-        images: {},
-        imageCount: 0,
-        videos: {},
-        courseDetails: {},
-        showRawEditor: false,
       },
     },
-  },
-);
+  );
 
 describe('PdfEditor', () => {
   let axiosMock: MockAdapter;

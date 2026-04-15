@@ -78,11 +78,12 @@ export const updatedObject = (obj, index, val) => ({ ...obj, [index]: val });
  * @param {string} key - form key
  * @return {func} - callback taking a value and updating the video redux field
  */
-// eslint-disable-next-line react-hooks/rules-of-hooks
-export const updateFormField = ({ dispatch, key }) => useCallback(
-  (val) => dispatch(actions.video.updateField({ [key]: val })),
-  [],
-);
+export const updateFormField = ({ dispatch, key }) =>
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useCallback(
+    (val) => dispatch(actions.video.updateField({ [key]: val })),
+    [],
+  );
 
 /**
  * valueHooks({ dispatch, key })
@@ -251,10 +252,11 @@ export const objectWidget = ({ dispatch, key }) => {
  * @param {func} dispatch - redux dispatch method
  * @return {object} - { <key>: <widgetFn({ key, dispatch })> }
  */
-export const widgetValues = ({ fields, dispatch }) => Object.keys(fields).reduce(
-  (obj, key) => ({
-    ...obj,
-    [key]: fields[key]({ key, dispatch }),
-  }),
-  {},
-);
+export const widgetValues = ({ fields, dispatch }) =>
+  Object.keys(fields).reduce(
+    (obj, key) => ({
+      ...obj,
+      [key]: fields[key]({ key, dispatch }),
+    }),
+    {},
+  );

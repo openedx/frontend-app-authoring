@@ -62,15 +62,15 @@ const SelectionModal = ({
   return (
     <BaseModal
       close={close}
-      confirmAction={(
+      confirmAction={
         <Button {...selectBtnProps} variant="primary">
           <FormattedMessage {...confirmMsg} />
         </Button>
-      )}
+      }
       isOpen={isOpen}
       size={size}
       isFullscreenScroll={isFullscreenScroll}
-      footerAction={(
+      footerAction={
         <Button
           className="text-primary-500"
           iconBefore={Add}
@@ -82,7 +82,7 @@ const SelectionModal = ({
         >
           <FormattedMessage {...uploadButtonMsg} />
         </Button>
-      )}
+      }
       title={intl.formatMessage(titleMsg)}
       bodyStyle={{ background }}
       headerComponent={!isLibrary && (
@@ -92,10 +92,12 @@ const SelectionModal = ({
       )}
       className="selection-modal"
     >
-      {/*
+      {
+        /*
         If the modal dialog content is zero height, it shows a bottom shadow
         as if there was content to scroll to, so make the min-height 1px.
-      */}
+      */
+      }
       <Stack gap={2} style={{ minHeight: '1px' }}>
         {/* Error Alerts */}
         <FetchErrorAlert isFetchError={isFetchError} message={fetchError} />

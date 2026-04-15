@@ -1,13 +1,25 @@
 import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  getConfig, initializeMockApp, setConfig,
+  getConfig,
+  initializeMockApp,
+  setConfig,
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
 import {
-  act, findByRole, fireEvent, getByRole, queryByLabelText, queryByRole, queryByTestId, queryByText,
-  render, screen, waitFor, waitForElementToBeRemoved,
+  act,
+  findByRole,
+  fireEvent,
+  getByRole,
+  queryByLabelText,
+  queryByRole,
+  queryByTestId,
+  queryByText,
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
@@ -64,11 +76,19 @@ function renderComponent(route) {
               <Routes>
                 <Route
                   path={`/course/${courseId}/pages-and-resources/discussion/configure/:appId`}
-                  element={<PageWrap><DiscussionsSettings /></PageWrap>}
+                  element={
+                    <PageWrap>
+                      <DiscussionsSettings />
+                    </PageWrap>
+                  }
                 />
                 <Route
                   path={`/course/${courseId}/pages-and-resources/discussion`}
-                  element={<PageWrap><DiscussionsSettings /></PageWrap>}
+                  element={
+                    <PageWrap>
+                      <DiscussionsSettings />
+                    </PageWrap>
+                  }
                 />
               </Routes>
               <LocationDisplay />
@@ -223,7 +243,10 @@ describe('DiscussionsSettings', () => {
     });
 
     test('requires confirmation if changing provider', async () => {
-      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(200, courseDetailResponse);
+      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(
+        200,
+        courseDetailResponse,
+      );
 
       renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
       // This is an important line that ensures the spinner has been removed - and thus our main
@@ -243,7 +266,10 @@ describe('DiscussionsSettings', () => {
     });
 
     test('can cancel confirmation', async () => {
-      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(200, courseDetailResponse);
+      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(
+        200,
+        courseDetailResponse,
+      );
 
       renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
       // This is an important line that ensures the spinner has been removed - and thus our main
@@ -293,7 +319,9 @@ describe('DiscussionsSettings', () => {
 
       const alert = queryByRole(container, 'alert');
       expect(alert).toBeInTheDocument();
-      expect(alert.textContent).toEqual(expect.stringContaining('We encountered a technical error when loading this page.'));
+      expect(alert.textContent).toEqual(
+        expect.stringContaining('We encountered a technical error when loading this page.'),
+      );
       expect(alert.innerHTML).toEqual(expect.stringContaining(getConfig().SUPPORT_URL));
     });
   });
@@ -326,7 +354,9 @@ describe('DiscussionsSettings', () => {
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
       const alert = await findByRole(container, 'alert');
       expect(alert).toBeInTheDocument();
-      expect(alert.textContent).toEqual(expect.stringContaining('We encountered a technical error when applying changes.'));
+      expect(alert.textContent).toEqual(
+        expect.stringContaining('We encountered a technical error when applying changes.'),
+      );
       expect(alert.innerHTML).toEqual(expect.stringContaining(getConfig().SUPPORT_URL));
     });
   });
@@ -373,7 +403,11 @@ describe('DiscussionsSettings', () => {
       // Confirm route is correct
       // We don't technically leave the route in this case, though the modal is hidden.
       const locationDisplay = await screen.findByTestId('location-display');
-      await waitFor(() => expect(locationDisplay.textContent).toEqual(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`));
+      await waitFor(() =>
+        expect(locationDisplay.textContent).toEqual(
+          `/course/${courseId}/pages-and-resources/discussion/configure/piazza`,
+        )
+      );
 
       const alert = await findByRole(container, 'alert');
       expect(alert).toBeInTheDocument();
@@ -466,28 +500,34 @@ describe.each([
       .reply(200, { courseId, name: 'Course Test' });
   });
 
-  test(`${piiSharingAllowed ? 'shows PII share username/email field when piiSharingAllowed is true'
-    : 'hides PII share username/email field when piiSharingAllowed is false'}`, async () => {
-    const user = userEvent.setup();
-    renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
+  test(
+    `${
+      piiSharingAllowed ?
+        'shows PII share username/email field when piiSharingAllowed is true'
+        : 'hides PII share username/email field when piiSharingAllowed is false'
+    }`,
+    async () => {
+      const user = userEvent.setup();
+      renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
 
-    let spinner = await screen.findByRole('status');
-    await waitFor(() => {
-      expect(spinner).not.toBeInTheDocument();
-    });
+      let spinner = await screen.findByRole('status');
+      await waitFor(() => {
+        expect(spinner).not.toBeInTheDocument();
+      });
 
-    await user.click(screen.getByLabelText('Select Piazza'));
-    await user.click(screen.getByText(messages.nextButton.defaultMessage));
+      await user.click(screen.getByLabelText('Select Piazza'));
+      await user.click(screen.getByText(messages.nextButton.defaultMessage));
 
-    await waitFor(() => {
-      spinner = screen.queryByRole('status');
-      expect(spinner).not.toBeInTheDocument();
-    });
+      await waitFor(() => {
+        spinner = screen.queryByRole('status');
+        expect(spinner).not.toBeInTheDocument();
+      });
 
-    if (enablePIISharing) {
-      expect(queryByTestId(container, 'piiSharingFields')).toBeInTheDocument();
-    } else {
-      expect(queryByTestId(container, 'piiSharingFields')).not.toBeInTheDocument();
-    }
-  });
+      if (enablePIISharing) {
+        expect(queryByTestId(container, 'piiSharingFields')).toBeInTheDocument();
+      } else {
+        expect(queryByTestId(container, 'piiSharingFields')).not.toBeInTheDocument();
+      }
+    },
+  );
 });

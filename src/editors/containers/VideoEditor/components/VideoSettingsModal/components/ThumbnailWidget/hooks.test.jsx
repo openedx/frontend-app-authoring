@@ -43,7 +43,11 @@ describe('state hooks', () => {
 
 describe('createResampledFile', () => {
   it('should return resampled file object', () => {
-    hook = hooks.createResampledFile({ canvasUrl: 'data:MimETYpe,sOMEUrl', filename: testValue, mimeType: 'sOmEuiMAge' });
+    hook = hooks.createResampledFile({
+      canvasUrl: 'data:MimETYpe,sOMEUrl',
+      filename: testValue,
+      mimeType: 'sOmEuiMAge',
+    });
     expect(hook).toEqual(resampledFile);
   });
 });
@@ -55,7 +59,11 @@ describe('resampleImage', () => {
     image.height = '800';
     image.width = '800';
     hook = hooks.resampleImage({ image, filename: testValue });
-    expect(spy).toHaveBeenCalledWith({ canvasUrl: 'data:image/png;base64,00', filename: testValue, mimeType: 'image/png' });
+    expect(spy).toHaveBeenCalledWith({
+      canvasUrl: 'data:image/png;base64,00',
+      filename: testValue,
+      mimeType: 'image/png',
+    });
     expect(spy.mock.calls.length).toEqual(1);
     expect(spy).toHaveReturnedWith(resampledFile);
     expect(hook).toEqual(['data:image/png;base64,00', resampledFile]);
@@ -139,9 +147,12 @@ describe('fileInput', () => {
     const testFile = new File([selectedFileSuccess], 'sOMEUrl.jpg');
     hooks.deleteThumbnail({ dispatch })();
     expect(dispatch).toHaveBeenNthCalledWith(1, actions.video.updateField({ thumbnail: null }));
-    expect(dispatch).toHaveBeenNthCalledWith(2, thunkActions.video.uploadThumbnail({
-      thumbnail: testFile,
-      emptyCanvas: true,
-    }));
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      thunkActions.video.uploadThumbnail({
+        thumbnail: testFile,
+        emptyCanvas: true,
+      }),
+    );
   });
 });

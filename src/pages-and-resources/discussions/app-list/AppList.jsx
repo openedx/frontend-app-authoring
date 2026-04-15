@@ -1,16 +1,31 @@
 import React, {
-  useCallback, useEffect, useMemo, useState, useContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useContext,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  CardGrid, Container, breakpoints, Form, ActionRow, AlertModal, Button, StatefulButton,
+  CardGrid,
+  Container,
+  breakpoints,
+  Form,
+  ActionRow,
+  AlertModal,
+  Button,
+  StatefulButton,
 } from '@openedx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useModels } from '../../../generic/model-store';
 import {
-  selectApp, LOADED, LOADING, SAVING, updateValidationStatus,
+  selectApp,
+  LOADED,
+  LOADING,
+  SAVING,
+  updateValidationStatus,
 } from '../data/slice';
 import AppCard from './AppCard';
 import messages from './messages';
@@ -27,7 +42,14 @@ const AppList = () => {
   const dispatch = useDispatch();
   const { courseId } = useContext(PagesAndResourcesContext);
   const {
-    appIds, featureIds, status, saveStatus, activeAppId, selectedAppId, enabled, postingRestrictions,
+    appIds,
+    featureIds,
+    status,
+    saveStatus,
+    activeAppId,
+    selectedAppId,
+    enabled,
+    postingRestrictions,
   } = useSelector(state => state.discussions);
   const [discussionTabToggle, setDiscussionTabToggle] = useState(enabled);
   const apps = useModels('apps', appIds);
@@ -36,9 +58,10 @@ const AppList = () => {
   const ltiProvider = !['openedx', 'legacy'].includes(activeAppId);
   const isOnSmallScreen = useIsOnSmallScreen();
 
-  const showOneEdxProvider = useMemo(() => apps.filter(app => (
-    activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx'
-  )), [activeAppId]);
+  const showOneEdxProvider = useMemo(() =>
+    apps.filter(app => (
+      activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx'
+    )), [activeAppId]);
 
   // This could be a bit confusing.  activeAppId is the ID of the app that is currently configured
   // according to the server.  selectedAppId is the ID of the app that we _want_ to configure here
@@ -73,8 +96,7 @@ const AppList = () => {
       selectedAppId,
       {
         enabled: enabledDiscussion,
-        postingRestrictions:
-        enabledDiscussion ? postingRestrictions : discussionRestriction.ENABLED,
+        postingRestrictions: enabledDiscussion ? postingRestrictions : discussionRestriction.ENABLED,
       },
     ));
   }, [courseId, selectedAppId, postingRestrictions]);
@@ -98,9 +120,7 @@ const AppList = () => {
   }, [updateSettings]);
 
   if (!selectedAppId || status === LOADING) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   if (status === LOADED && apps.length === 0) {
@@ -111,15 +131,16 @@ const AppList = () => {
     );
   }
 
-  const showAppCard = (filteredApps) => filteredApps.map(app => (
-    <AppCard
-      key={app.id}
-      app={app}
-      selected={app.id === selectedAppId}
-      onClick={handleSelectApp}
-      features={features}
-    />
-  ));
+  const showAppCard = (filteredApps) =>
+    filteredApps.map(app => (
+      <AppCard
+        key={app.id}
+        app={app}
+        selected={app.id === selectedAppId}
+        onClick={handleSelectApp}
+        features={features}
+      />
+    ));
 
   return (
     <div className="my-sm-4" data-testid="appList">
@@ -166,7 +187,7 @@ const AppList = () => {
         onClose={handleClose}
         isBlocking
         className="hide-discussion-modal"
-        footerNode={(
+        footerNode={
           <ActionRow>
             <Button variant="link" className="text-decoration-none bg-black" onClick={handleClose}>
               {intl.formatMessage(messages.hideDiscussionCancelButton)}
@@ -181,7 +202,7 @@ const AppList = () => {
               onClick={handleOk}
             />
           </ActionRow>
-        )}
+        }
       >
         <p className="bg-black">
           {intl.formatMessage(messages.hideDiscussionTabMessage)}

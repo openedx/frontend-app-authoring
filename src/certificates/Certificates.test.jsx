@@ -15,11 +15,12 @@ let axiosMock;
 let store;
 const courseId = 'course-123';
 
-const renderComponent = (props) => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <Certificates {...props} />
-  </CourseAuthoringProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <Certificates {...props} />
+    </CourseAuthoringProvider>,
+  );
 
 describe('Certificates', () => {
   beforeEach(async () => {

@@ -37,25 +37,28 @@ const VideoEditor: React.FC<EditorComponent> = ({
         returnFunction={returnFunction}
         validateEntry={validateEntry}
       >
-        {(isCreateWorkflow || studioViewFinished) ? (
-          <div className="video-editor">
-            <VideoEditorModal {...{ isLibrary, onClose, returnFunction }} />
-          </div>
-        ) : (
-          <div style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-          >
-            <Spinner
-              animation="border"
-              className="m-3"
-              screenReaderText={intl.formatMessage(messages.spinnerScreenReaderText)}
-            />
-          </div>
-        )}
+        {(isCreateWorkflow || studioViewFinished) ?
+          (
+            <div className="video-editor">
+              <VideoEditorModal {...{ isLibrary, onClose, returnFunction }} />
+            </div>
+          ) :
+          (
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <Spinner
+                animation="border"
+                className="m-3"
+                screenReaderText={intl.formatMessage(messages.spinnerScreenReaderText)}
+              />
+            </div>
+          )}
       </EditorContainer>
     </ErrorContext.Provider>
   );

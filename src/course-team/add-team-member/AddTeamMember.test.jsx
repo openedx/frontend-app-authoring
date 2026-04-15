@@ -7,11 +7,12 @@ import messages from './messages';
 
 const onFormOpenMock = jest.fn();
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <AddTeamMember onFormOpen={onFormOpenMock} {...props} />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <AddTeamMember onFormOpen={onFormOpenMock} {...props} />
+    </IntlProvider>,
+  );
 
 describe('<AddTeamMember />', () => {
   it('render AddTeamMember component correctly', () => {

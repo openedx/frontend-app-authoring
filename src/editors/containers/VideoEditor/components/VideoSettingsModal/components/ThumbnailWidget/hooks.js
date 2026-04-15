@@ -98,12 +98,14 @@ export const fileInput = ({ setThumbnailSrc, imgRef, fileSizeError }) => {
   const addFile = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
-    if (file && module.checkValidSize({
-      file,
-      onSizeFail: () => {
-        fileSizeError.set();
-      },
-    })) {
+    if (
+      file && module.checkValidSize({
+        file,
+        onSizeFail: () => {
+          fileSizeError.set();
+        },
+      })
+    ) {
       reader.onload = () => {
         setThumbnailSrc(reader.result);
         const image = imgRef.current;
@@ -149,7 +151,11 @@ export const deleteThumbnail = ({ dispatch }) => () => {
   emptyCanvas.height = constants.MAX_HEIGHT;
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, emptyCanvas.width, emptyCanvas.height);
-  const file = createResampledFile({ canvasUrl: emptyCanvas.toDataURL(), filename: 'blankThumbnail.png', mimeType: 'image/png' });
+  const file = createResampledFile({
+    canvasUrl: emptyCanvas.toDataURL(),
+    filename: 'blankThumbnail.png',
+    mimeType: 'image/png',
+  });
   dispatch(thunkActions.video.uploadThumbnail({ thumbnail: file, emptyCanvas }));
 };
 

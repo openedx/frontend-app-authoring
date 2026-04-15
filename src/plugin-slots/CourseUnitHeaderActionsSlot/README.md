@@ -3,15 +3,16 @@
 ### Slot ID: `org.openedx.frontend.authoring.course_unit_header_actions.v1`
 
 ### Slot ID Aliases
-* `course_unit_header_actions_slot`
+
+- `course_unit_header_actions_slot`
 
 ### Plugin Props:
 
-* `headerNavigationsActions` - Object. See the prop-types definition in the component for details.
-* `category` - String.
-* `unitTitle` - String. Title of the Unit
-* `isUnitVerticalType` - Boolean. Flag indicating if the Unit is VerticalBlock type. It's false for others like Library Blocks.
-* `verticalBlocks` - Array. List of the vertical blocks.
+- `headerNavigationsActions` - Object. See the prop-types definition in the component for details.
+- `category` - String.
+- `unitTitle` - String. Title of the Unit
+- `isUnitVerticalType` - Boolean. Flag indicating if the Unit is VerticalBlock type. It's false for others like Library Blocks.
+- `verticalBlocks` - Array. List of the vertical blocks.
 
 ## Description
 
@@ -29,9 +30,7 @@ The following example configuration inserts an extra button to the header as sho
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 import { Button } from '@openedx/paragon';
 
-const MyButton = () => (
-  <Button>🐣</Button>
-);
+const MyButton = () => <Button>🐣</Button>;
 
 const config = {
   pluginSlots: {
@@ -47,10 +46,10 @@ const config = {
             RenderWidget: MyButton,
           },
         },
-      ]
-    }
+      ],
+    },
   },
-}
+};
 
 export default config;
 ```

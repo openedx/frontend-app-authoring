@@ -65,24 +65,21 @@ const TagMenuItem: React.FC<{
         />
         {label}
         <Badge variant="light" pill className="ml-1">{tagCount}</Badge>
-        {
-          hasChildren
-            ? (
-              <IconButton
-                src={isExpanded ? ArrowDropUp : ArrowDropDown}
-                iconAs={Icon}
-                alt={
-                  intl.formatMessage(
-                    isExpanded ? messages.childTagsCollapse : messages.childTagsExpand,
-                    { tagName: label },
-                  )
-                }
-                onClick={expandChildrenClick}
-                variant="primary"
-                size="sm"
-              />
-            ) : null
-        }
+        {hasChildren
+          ? (
+            <IconButton
+              src={isExpanded ? ArrowDropUp : ArrowDropDown}
+              iconAs={Icon}
+              alt={intl.formatMessage(
+                isExpanded ? messages.childTagsCollapse : messages.childTagsExpand,
+                { tagName: label },
+              )}
+              onClick={expandChildrenClick}
+              variant="primary"
+              size="sm"
+            />
+          ) :
+          null}
       </div>
     </label>
   );
@@ -95,7 +92,7 @@ const TagOptions: React.FC<{
   tagSearchKeywords: string;
   parentTagPath?: string;
   toggleTagChildren?: (tagPath: string) => void;
-  expandedTags: string[],
+  expandedTags: string[];
 }> = ({
   parentTagPath = '',
   tagSearchKeywords,
@@ -110,7 +107,11 @@ const TagOptions: React.FC<{
   });
 
   if (isError) {
-    return <MenuItem disabled><FormattedMessage {...messages['blockTagsFilter.error']} /></MenuItem>;
+    return (
+      <MenuItem disabled>
+        <FormattedMessage {...messages['blockTagsFilter.error']} />
+      </MenuItem>
+    );
   }
   if (isLoading || data.tags === undefined) {
     return <LoadingSpinner />;
@@ -118,31 +119,35 @@ const TagOptions: React.FC<{
 
   // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
   if (data.tags.length === 0 && !parentTagPath) {
-    return <MenuItem disabled><FormattedMessage {...messages['blockTagsFilter.empty']} /></MenuItem>;
+    return (
+      <MenuItem disabled>
+        <FormattedMessage {...messages['blockTagsFilter.empty']} />
+      </MenuItem>
+    );
   }
 
   return (
     <div role="group">
-      {
-        data.tags.map(({ tagName, tagPath, ...t }) => {
-          const isExpanded = expandedTags.includes(tagPath);
-          return (
-            <React.Fragment key={tagName}>
-              <TagMenuItem
-                label={tagName}
-                tagCount={t.tagCount}
-                tagPath={tagPath}
-                isChecked={searchContext.tagsFilter.includes(tagPath)}
-                onClickCheckbox={() => {
-                  searchContext.setTagsFilter((tf) => (
-                    tf.includes(tagPath) ? tf.filter(tp => tp !== tagPath) : [...tf, tagPath]
-                  ));
-                }}
-                hasChildren={t.hasChildren}
-                isExpanded={isExpanded}
-                onToggleChildren={toggleTagChildren}
-              />
-              {isExpanded ? (
+      {data.tags.map(({ tagName, tagPath, ...t }) => {
+        const isExpanded = expandedTags.includes(tagPath);
+        return (
+          <React.Fragment key={tagName}>
+            <TagMenuItem
+              label={tagName}
+              tagCount={t.tagCount}
+              tagPath={tagPath}
+              isChecked={searchContext.tagsFilter.includes(tagPath)}
+              onClickCheckbox={() => {
+                searchContext.setTagsFilter((tf) => (
+                  tf.includes(tagPath) ? tf.filter(tp => tp !== tagPath) : [...tf, tagPath]
+                ));
+              }}
+              hasChildren={t.hasChildren}
+              isExpanded={isExpanded}
+              onToggleChildren={toggleTagChildren}
+            />
+            {isExpanded ?
+              (
                 <div className="ml-4">
                   <TagOptions
                     parentTagPath={tagPath}
@@ -151,11 +156,11 @@ const TagOptions: React.FC<{
                     toggleTagChildren={toggleTagChildren}
                   />
                 </div>
-              ) : null}
-            </React.Fragment>
-          );
-        })
-      }
+              ) :
+              null}
+          </React.Fragment>
+        );
+      })}
       {
         // Sometimes, due to limitations of how the search index/API works, we aren't able to retrieve all the options:
         data.mayBeMissingResults
@@ -163,7 +168,8 @@ const TagOptions: React.FC<{
             <MenuItem iconBefore={Warning} disabled>
               <FormattedMessage {...messages['blockTagsFilter.incomplete']} />
             </MenuItem>
-          ) : null
+          ) :
+          null
       }
     </div>
   );

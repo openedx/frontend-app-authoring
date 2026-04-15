@@ -95,7 +95,7 @@ const GradingScale = ({
       return updatedGradingSegment;
     });
 
-    const nextIndex = (letters.length % defaultGradeDesignations.length);
+    const nextIndex = letters.length % defaultGradeDesignations.length;
 
     if (gradingSegments.length === 2) {
       setLetters([defaultGradeDesignations[0], defaultGradeDesignations[nextIndex]]);
@@ -109,16 +109,18 @@ const GradingScale = ({
     const sortedSegments = newGradingSegmentData.sort((currentValue, previousValue) => currentValue - previousValue);
     const newSegmentValue = sortedSegments[sortedSegments.length - 1 - activeHandleIndex];
     const prevSegmentBoundary = (gradingSegments[activeHandleIndex + 1]
-        && gradingSegments[activeHandleIndex + 1].current) || 0;
+      && gradingSegments[activeHandleIndex + 1].current) || 0;
     const nextSegmentBoundary = gradingSegments[activeHandleIndex - 1].current;
 
     showSavePrompt(true);
 
     setGradingSegments(gradingSegments.map((gradingSegment, idx) => {
       const upperBoundaryValue = (newSegmentValue < nextSegmentBoundary - gapToSegment)
-        ? newSegmentValue : (nextSegmentBoundary - gapToSegment);
+        ? newSegmentValue :
+        (nextSegmentBoundary - gapToSegment);
       const lowerBoundaryValue = (upperBoundaryValue > prevSegmentBoundary + gapToSegment)
-        ? upperBoundaryValue : (prevSegmentBoundary + gapToSegment);
+        ? upperBoundaryValue :
+        (prevSegmentBoundary + gapToSegment);
 
       if (idx === activeHandleIndex - 1) {
         return {

@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
-  Button, Card, MailtoLink, Hyperlink,
+  Button,
+  Card,
+  MailtoLink,
+  Hyperlink,
 } from '@openedx/paragon';
 import PageBannerSlot from '@src/plugin-slots/PageBannerSlot';
 import { Email as EmailIcon } from '@openedx/paragon/icons';

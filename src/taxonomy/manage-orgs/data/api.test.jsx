@@ -8,7 +8,6 @@ import MockAdapter from 'axios-mock-adapter';
 import {
   getManageOrgsApiUrl,
   useManageOrgs,
-
 } from './api';
 
 let axiosMock;

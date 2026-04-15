@@ -6,21 +6,25 @@ import { type Container, useToggle } from '@openedx/paragon';
 import { useWaffleFlags } from '../data/apiHooks';
 import { SearchModal } from '../search-modal';
 import {
-  useContentMenuItems, useLibrarySettingsMenuItems, useLibraryToolsMenuItems, useSettingMenuItems, useToolsMenuItems,
+  useContentMenuItems,
+  useLibrarySettingsMenuItems,
+  useLibraryToolsMenuItems,
+  useSettingMenuItems,
+  useToolsMenuItems,
 } from './hooks';
 import messages from './messages';
 
 type ContainerPropsType = Omit<React.ComponentProps<typeof Container>, 'children'>;
 
 interface HeaderProps {
-  contextId?: string,
-  number?: string,
-  org?: string,
-  title?: string,
-  isHiddenMainMenu?: boolean,
-  isLibrary?: boolean,
-  containerProps?: ContainerPropsType,
-  readOnly?: boolean,
+  contextId?: string;
+  number?: string;
+  org?: string;
+  title?: string;
+  isHiddenMainMenu?: boolean;
+  isLibrary?: boolean;
+  containerProps?: ContainerPropsType;
+  readOnly?: boolean;
 }
 
 const Header = ({
@@ -46,27 +50,29 @@ const Header = ({
   const toolsMenuItems = useToolsMenuItems(contextId);
   const libraryToolsMenuItems = useLibraryToolsMenuItems(contextId);
   const libraryToolsSettingsItems = useLibrarySettingsMenuItems(contextId, readOnly);
-  let mainMenuDropdowns = !isLibrary ? [
-    {
-      id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
-      buttonTitle: intl.formatMessage(messages['header.links.content']),
-      items: contentMenuItems,
-    },
-    {
-      id: `${intl.formatMessage(messages['header.links.settings'])}-dropdown-menu`,
-      buttonTitle: intl.formatMessage(messages['header.links.settings']),
-      items: settingMenuItems,
-    },
-    {
+  let mainMenuDropdowns = !isLibrary ?
+    [
+      {
+        id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
+        buttonTitle: intl.formatMessage(messages['header.links.content']),
+        items: contentMenuItems,
+      },
+      {
+        id: `${intl.formatMessage(messages['header.links.settings'])}-dropdown-menu`,
+        buttonTitle: intl.formatMessage(messages['header.links.settings']),
+        items: settingMenuItems,
+      },
+      {
+        id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
+        buttonTitle: intl.formatMessage(messages['header.links.tools']),
+        items: toolsMenuItems,
+      },
+    ] :
+    [{
       id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.tools']),
-      items: toolsMenuItems,
-    },
-  ] : [{
-    id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
-    buttonTitle: intl.formatMessage(messages['header.links.tools']),
-    items: libraryToolsMenuItems,
-  }];
+      items: libraryToolsMenuItems,
+    }];
 
   // Include settings menu only if user is allowed to see them.
   if (isLibrary && libraryToolsSettingsItems.length > 0) {

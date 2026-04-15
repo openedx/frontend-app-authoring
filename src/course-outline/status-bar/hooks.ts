@@ -5,8 +5,8 @@ export interface HookType {
   notificationAppData: {
     tabsCount?: {
       count?: number;
-    }
-  }
+    };
+  };
 }
 
 // Load the hook module asynchronously

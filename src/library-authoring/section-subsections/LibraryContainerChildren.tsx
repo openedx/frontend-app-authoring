@@ -1,9 +1,15 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  useCallback, useContext, useEffect, useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from 'react';
 import {
-  ActionRow, Badge, Icon, Stack,
+  ActionRow,
+  Badge,
+  Icon,
+  Stack,
 } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
 import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
@@ -44,7 +50,10 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
 }
 
 const ContainerRow = ({
-  containerKey, container, readOnly, index,
+  containerKey,
+  container,
+  readOnly,
+  index,
 }: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
@@ -78,10 +87,8 @@ const ContainerRow = ({
   return (
     <>
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-      <div
-        // Prevent parent card from being clicked.
-        className="stop-event-propagation"
-      >
+      <div // Prevent parent card from being clicked.
+       className="stop-event-propagation">
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
           text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
@@ -188,7 +195,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   }, [openItemSidebar, navigateTo, readOnly]);
 
   const getComponentStyle = useCallback((childId: string) => {
-    const style: { marginBottom: string, borderRadius: string, outline?: string } = {
+    const style: { marginBottom: string; borderRadius: string; outline?: string; } = {
       marginBottom: '1rem',
       borderRadius: '8px',
     };
@@ -211,11 +218,9 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     <div className="ml-2 library-container-children">
       {children?.length === 0 && (
         <h4 className="ml-2">
-          {containerType === ContainerType.Section ? (
-            <FormattedMessage {...sectionMessages.noChildrenText} />
-          ) : (
-            <FormattedMessage {...subsectionMessages.noChildrenText} />
-          )}
+          {containerType === ContainerType.Section ?
+            <FormattedMessage {...sectionMessages.noChildrenText} /> :
+            <FormattedMessage {...subsectionMessages.noChildrenText} />}
         </h4>
       )}
       <DraggableList
@@ -246,17 +251,18 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               }
             }}
             disabled={readOnly || libReadOnly}
-            cardClassName={sidebarItemInfo?.id === child.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined}
-            actions={(
+            cardClassName={sidebarItemInfo?.id === child.originalId && sidebarItemInfo?.index === index
+              ? 'selected'
+              : undefined}
+            actions={
               <ContainerRow
                 containerKey={containerKey}
                 container={child}
                 readOnly={readOnly || libReadOnly}
                 index={index}
               />
-            )}
+            }
           />
-
         ))}
       </DraggableList>
     </div>

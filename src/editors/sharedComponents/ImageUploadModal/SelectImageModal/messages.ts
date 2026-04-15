@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   nextButtonLabel: {
     id: 'authoring.texteditor.selectimagemodal.next.label',
     defaultMessage: 'Next',
@@ -43,8 +42,7 @@ const messages = defineMessages({
   // Gallery
   emptyGalleryLabel: {
     id: 'authoring.texteditor.selectimagemodal.emptyGalleryLabel',
-    defaultMessage:
-      'No images found in your gallery. Please upload an image using the button below.',
+    defaultMessage: 'No images found in your gallery. Please upload an image using the button below.',
     description: 'Label for when image gallery is empty.',
   },
 
@@ -61,16 +59,13 @@ const messages = defineMessages({
   },
   fileSizeError: {
     id: 'authoring.texteditor.selectimagemodal.error.fileSizeError',
-    defaultMessage:
-      'Images must be 10 MB or less. Please resize image and try again.',
-    description:
-      ' Message presented to user when file size of image is larger than 10 MB',
+    defaultMessage: 'Images must be 10 MB or less. Please resize image and try again.',
+    description: ' Message presented to user when file size of image is larger than 10 MB',
   },
   selectImageError: {
     id: 'authoring.texteditor.selectimagemodal.error.selectImageError',
     defaultMessage: 'Select an image to continue.',
-    description:
-      'Message presented to user when clicking Next without selecting an image',
+    description: 'Message presented to user when clicking Next without selecting an image',
   },
 });
 

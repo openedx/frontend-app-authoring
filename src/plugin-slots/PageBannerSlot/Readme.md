@@ -3,7 +3,8 @@
 ### Slot ID: `org.openedx.frontend.authoring.page_banner.v1`
 
 ### Slot ID Aliases
-* `page_banner_slot`
+
+- `page_banner_slot`
 
 ## Description
 

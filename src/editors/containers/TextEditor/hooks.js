@@ -4,9 +4,9 @@ import { setAssetToStaticUrl } from '../../sharedComponents/TinyMceWidget/hooks'
 export const { nullMethod, navigateCallback, navigateTo } = appHooks;
 
 export const getContent = ({ editorRef, showRawEditor }) => () => {
-  const content = (showRawEditor && editorRef && editorRef.current
+  const content = showRawEditor && editorRef && editorRef.current
     ? editorRef.current.state.doc.toString()
-    : editorRef.current?.getContent());
+    : editorRef.current?.getContent();
   return setAssetToStaticUrl({ editorValue: content });
 };
 
@@ -15,8 +15,8 @@ export const isDirty = ({ editorRef, showRawEditor }) => () => {
   if (!editorRef?.current) {
     return false;
   }
-  const dirty = (showRawEditor && editorRef && editorRef.current
+  const dirty = showRawEditor && editorRef && editorRef.current
     ? editorRef.current.observer?.lastChange !== 0
-    : !editorRef.current.isNotDirty);
+    : !editorRef.current.isNotDirty;
   return dirty;
 };

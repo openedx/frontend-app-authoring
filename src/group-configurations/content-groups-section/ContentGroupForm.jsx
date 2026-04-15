@@ -51,7 +51,11 @@ const ContentGroupForm = ({
         onSubmit={onSubmitForm}
       >
         {({
-          values, errors, dirty, handleChange, handleSubmit,
+          values,
+          errors,
+          dirty,
+          handleChange,
+          handleSubmit,
         }) => {
           const isInvalid = !!errors.newGroupName;
 

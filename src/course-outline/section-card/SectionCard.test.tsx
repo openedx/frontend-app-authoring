@@ -1,6 +1,12 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
-  act, fireEvent, initializeMocks, render, screen, waitFor, within,
+  act,
+  fireEvent,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
+  within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
@@ -27,7 +33,13 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: '5',
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     setCurrentSelection,
+    openPublishModal: jest.fn(),
   }),
 }));
 
@@ -85,32 +97,33 @@ const section = {
   },
 } satisfies Partial<XBlock> as XBlock;
 
-const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <SectionCard
-    section={section}
-    index={1}
-    canMoveItem={jest.fn()}
-    onOrderChange={jest.fn()}
-    onOpenHighlightsModal={jest.fn()}
-    onOpenDeleteModal={jest.fn()}
-    onOpenConfigureModal={jest.fn()}
-    onDuplicateSubmit={jest.fn()}
-    isSectionsExpanded
-    isSelfPaced={false}
-    isCustomRelativeDatesActive={false}
-    {...props}
-  >
-    <span>children</span>
-  </SectionCard>,
-  {
-    path: '/course/:courseId',
-    params: { courseId: '5' },
-    routerProps: {
-      initialEntries: [entry],
+const renderComponent = (props?: object, entry = '/course/:courseId') =>
+  render(
+    <SectionCard
+      section={section}
+      index={1}
+      canMoveItem={jest.fn()}
+      onOrderChange={jest.fn()}
+      onOpenHighlightsModal={jest.fn()}
+      onOpenDeleteModal={jest.fn()}
+      onOpenConfigureModal={jest.fn()}
+      onDuplicateSubmit={jest.fn()}
+      isSectionsExpanded
+      isSelfPaced={false}
+      isCustomRelativeDatesActive={false}
+      {...props}
+    >
+      <span>children</span>
+    </SectionCard>,
+    {
+      path: '/course/:courseId',
+      params: { courseId: '5' },
+      routerProps: {
+        initialEntries: [entry],
+      },
+      extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
     },
-    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
-  },
-);
+  );
 let axiosMock;
 let queryClient;
 
@@ -146,7 +159,7 @@ describe('<SectionCard />', () => {
     expect(screen.getByTestId('section-card-header')).toBeInTheDocument();
 
     // The card is not selected
-    expect((await screen.findByTestId('section-card'))).not.toHaveClass('outline-card-selected');
+    expect(await screen.findByTestId('section-card')).not.toHaveClass('outline-card-selected');
 
     // Get the <Row> that contains the card and click it to select the card
     const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
@@ -394,10 +407,12 @@ describe('<SectionCard />', () => {
     expect(setCurrentSelection).toHaveBeenCalledWith({
       currentId: section.id,
       sectionId: section.id,
+      index: 1,
     });
     expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
       currentId: section.id,
       sectionId: section.id,
+      index: 1,
     });
   });
 });

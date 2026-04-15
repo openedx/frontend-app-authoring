@@ -51,7 +51,6 @@ const CustomMenu = (props) => {
   return (
     <components.Menu {...props}>
       <div className="bg-white p-3 shadow">
-
         <SelectableBox.Set
           type="checkbox"
           name="tags"
@@ -81,7 +80,7 @@ const CustomMenu = (props) => {
               className="tags-drawer-cancel-button"
               onClick={handleCancelStagedTags}
             >
-              { intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText) }
+              {intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText)}
             </Button>
             <Button
               tabIndex={0}
@@ -91,7 +90,7 @@ const CustomMenu = (props) => {
               disabled={!(value && value.length)}
               onClick={handleCommitStagedTags}
             >
-              { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
+              {intl.formatMessage(messages.collapsibleAddStagedTagsButtonText)}
             </Button>
           </div>
         </div>
@@ -130,22 +129,23 @@ const CustomIndicatorsContainer = (props) => {
   const intl = useIntl();
   return (
     <components.IndicatorsContainer {...props}>
-      {
-        (value && value.length && (
-          <Button
-            variant="dark"
-            size="sm"
-            className="mt-2 mb-2 rounded-0 inline-add-button"
-            onClick={handleCommitStagedTags}
-            onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
-            ref={selectInlineAddRef}
-            tabIndex={0}
-            onKeyDown={disableActionKeys} // To prevent navigating staged tags when button focused
-          >
-            { intl.formatMessage(messages.collapsibleInlineAddStagedTagsButtonText) }
-          </Button>
-        )) || null
-      }
+      {(value && value.length && (
+        <Button
+          variant="dark"
+          size="sm"
+          className="mt-2 mb-2 rounded-0 inline-add-button"
+          onClick={handleCommitStagedTags}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          ref={selectInlineAddRef}
+          tabIndex={0}
+          onKeyDown={disableActionKeys} // To prevent navigating staged tags when button focused
+        >
+          {intl.formatMessage(messages.collapsibleInlineAddStagedTagsButtonText)}
+        </Button>
+      )) || null}
       {props.children}
     </components.IndicatorsContainer>
   );
@@ -211,7 +211,6 @@ const CustomIndicatorsContainer = (props) => {
  *   }
  * };
  *
- *
  * It also keeps track of newly added tags as they are selected in the dropdown selectors.
  * They are store in the same format above, and then merged to one tree that is used as the
  * source of truth for both the tag bubble and the dropdowns. They keys are order alphabetically.
@@ -237,11 +236,11 @@ const ContentTagsCollapsible = ({
 }) => {
   const intl = useIntl();
   const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
-  const selectCancelRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
-  const selectAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
-  const selectInlineAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
-  const selectInlineEditModeRef = React.useRef(/** @type {HTMLButtonElement | null} */(null));
-  const selectRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
+  const selectCancelRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
+  const selectAddRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
+  const selectInlineAddRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
+  const selectInlineEditModeRef = React.useRef(/** @type {HTMLButtonElement | null} */ (null));
+  const selectRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
 
   const [selectMenuIsOpen, setSelectMenuIsOpen] = React.useState(false);
 
@@ -345,8 +344,8 @@ const ContentTagsCollapsible = ({
         } else if (focusedElement === selectCancelRef.current && selectAddRef.current?.disabled) {
           setSelectMenuIsOpen(false);
         }
-      // Navigating backwards
-      // @ts-ignore inputRef actually exists under the current selectRef
+        // Navigating backwards
+        // @ts-ignore inputRef actually exists under the current selectRef
       } else if (event.shiftKey && focusedElement === selectRef.current?.inputRef) {
         setSelectMenuIsOpen(false);
       }
@@ -388,10 +387,11 @@ const ContentTagsCollapsible = ({
         </Collapsible.Trigger>
 
         <Collapsible.Body className="collapsible-body">
-          { Object.keys(appliedContentTagsTree).length === 0 && !isEditMode
+          {Object.keys(appliedContentTagsTree).length === 0 && !isEditMode
             && (
               <div className="mb-3" key={taxonomyId}>
-                <p className="text-gray-500">{intl.formatMessage(messages.collapsibleNoTagsAddedText)}
+                <p className="text-gray-500">
+                  {intl.formatMessage(messages.collapsibleNoTagsAddedText)}
                   {canTagObject && (
                     <Button
                       tabIndex={0}
@@ -401,13 +401,13 @@ const ContentTagsCollapsible = ({
                       className="text-info-500 add-tags-button"
                       onClick={toEditMode}
                     >
-                      { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
+                      {intl.formatMessage(messages.collapsibleAddStagedTagsButtonText)}
                     </Button>
                   )}
                 </p>
               </div>
             )}
-          { Object.keys(appliedContentTagsTree).length !== 0
+          {Object.keys(appliedContentTagsTree).length !== 0
             && (
               <div className="mb-3" key={taxonomyId}>
                 <TagsTree
@@ -433,7 +433,7 @@ const ContentTagsCollapsible = ({
                 menuIsOpen={selectMenuIsOpen}
                 onFocus={onSelectMenuFocus}
                 onKeyDown={handleSelectOnKeyDown}
-                ref={/** @type {React.RefObject} */(selectRef)}
+                ref={/** @type {React.RefObject} */ (selectRef)}
                 isMulti
                 isLoading={updateTags.isPending}
                 isDisabled={updateTags.isPending}

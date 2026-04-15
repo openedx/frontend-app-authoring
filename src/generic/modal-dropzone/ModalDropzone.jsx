@@ -43,7 +43,12 @@ const ModalDropzone = ({
     handleCancel,
     handleSelectFile,
   } = useModalDropzone({
-    onChange, onCancel, onClose, fileTypes, onSavingStatus, onSelectFile,
+    onChange,
+    onCancel,
+    onClose,
+    fileTypes,
+    onSavingStatus,
+    onSelectFile,
   });
 
   const invalidSizeMore = invalidFileSizeMore || intl.formatMessage(
@@ -51,30 +56,32 @@ const ModalDropzone = ({
     { maxSize: maxSize / (1000 * 1000) },
   );
 
-  const inputComponent = previewUrl ? (
-    <div>
-      {previewComponent || (
-        <Image
-          src={previewUrl}
+  const inputComponent = previewUrl ?
+    (
+      <div>
+        {previewComponent || (
+          <Image
+            src={previewUrl}
+            alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
+            fluid
+          />
+        )}
+      </div>
+    ) :
+    (
+      <>
+        <IconButton
+          isActive
+          src={FileUploadIcon}
+          iconAs={Icon}
+          variant="secondary"
           alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
-          fluid
+          className="mb-3"
         />
-      )}
-    </div>
-  ) : (
-    <>
-      <IconButton
-        isActive
-        src={FileUploadIcon}
-        iconAs={Icon}
-        variant="secondary"
-        alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
-        className="mb-3"
-      />
-      <p>{imageDropzoneText || intl.formatMessage(messages.uploadImageDropzoneText)}</p>
-      <p className="x-small text-center mt-1.5">{imageHelpText}</p>
-    </>
-  );
+        <p>{imageDropzoneText || intl.formatMessage(messages.uploadImageDropzoneText)}</p>
+        <p className="x-small text-center mt-1.5">{imageHelpText}</p>
+      </>
+    );
 
   return (
     <ModalDialog
@@ -95,18 +102,18 @@ const ModalDropzone = ({
         <Form.Group className="form-group-custom w-100">
           <Card>
             <Card.Body className="image-body">
-              {uploadProgress > 0 ? (
-                <Spinner animation="border" variant="primary" className="mr-3" screenReaderText={uploadProgress} />
-              ) : (
-                <Dropzone
-                  onProcessUpload={handleSelectFile}
-                  inputComponent={inputComponent}
-                  accept={accept}
-                  errorMessages={{ invalidSizeMore }}
-                  validator={imageValidator}
-                  maxSize={maxSize}
-                />
-              )}
+              {uploadProgress > 0 ?
+                <Spinner animation="border" variant="primary" className="mr-3" screenReaderText={uploadProgress} /> :
+                (
+                  <Dropzone
+                    onProcessUpload={handleSelectFile}
+                    inputComponent={inputComponent}
+                    accept={accept}
+                    errorMessages={{ invalidSizeMore }}
+                    validator={imageValidator}
+                    maxSize={maxSize}
+                  />
+                )}
             </Card.Body>
           </Card>
         </Form.Group>

@@ -1,7 +1,10 @@
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import { getApiWaffleFlagsUrl } from './data/api';
 import {
-  screen, initializeMocks, render, waitFor,
+  screen,
+  initializeMocks,
+  render,
+  waitFor,
 } from './testUtils';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';

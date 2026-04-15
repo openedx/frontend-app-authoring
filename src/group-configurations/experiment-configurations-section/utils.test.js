@@ -9,10 +9,12 @@ describe('utils module', () => {
     it('return correct next group name test-case-1', () => {
       const groups = [
         {
-          name: 'Group A', idx: 0,
+          name: 'Group A',
+          idx: 0,
         },
         {
-          name: 'Group B', idx: 1,
+          name: 'Group B',
+          idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
@@ -30,10 +32,12 @@ describe('utils module', () => {
     it('return correct next group name test-case-3', () => {
       const groups = [
         {
-          name: 'Some group', idx: 0,
+          name: 'Some group',
+          idx: 0,
         },
         {
-          name: 'Group B', idx: 1,
+          name: 'Group B',
+          idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
@@ -44,10 +48,12 @@ describe('utils module', () => {
     it('return correct next group name test-case-4', () => {
       const groups = [
         {
-          name: 'Group A', idx: 0,
+          name: 'Group A',
+          idx: 0,
         },
         {
-          name: 'Group A', idx: 1,
+          name: 'Group A',
+          idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
@@ -58,13 +64,16 @@ describe('utils module', () => {
     it('return correct next group name test-case-5', () => {
       const groups = [
         {
-          name: 'Group A', idx: 0,
+          name: 'Group A',
+          idx: 0,
         },
         {
-          name: 'Group C', idx: 1,
+          name: 'Group C',
+          idx: 1,
         },
         {
-          name: 'Group B', idx: 2,
+          name: 'Group B',
+          idx: 2,
         },
       ];
       const nextGroup = getNextGroupName(groups);
@@ -75,10 +84,12 @@ describe('utils module', () => {
     it('return correct next group name test-case-6', () => {
       const groups = [
         {
-          name: '', idx: 0,
+          name: '',
+          idx: 0,
         },
         {
-          name: '', idx: 1,
+          name: '',
+          idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
@@ -89,10 +100,12 @@ describe('utils module', () => {
     it('return correct next group name test-case-7', () => {
       const groups = [
         {
-          name: 'Group A', idx: 0,
+          name: 'Group A',
+          idx: 0,
         },
         {
-          name: 'Group C', idx: 1,
+          name: 'Group C',
+          idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
@@ -103,7 +116,8 @@ describe('utils module', () => {
     it('return correct next group name test-case-8', () => {
       const groups = [
         {
-          name: 'Group D', idx: 0,
+          name: 'Group D',
+          idx: 0,
         },
       ];
       const nextGroup = getNextGroupName(groups);
@@ -114,7 +128,8 @@ describe('utils module', () => {
     it('return correct next group name test-case-9', () => {
       const groups = [
         {
-          name: 'Group E', idx: 4,
+          name: 'Group E',
+          idx: 4,
         },
       ];
       const nextGroup = getNextGroupName(groups);
@@ -124,7 +139,8 @@ describe('utils module', () => {
     it('return correct next group name test-case-10', () => {
       const groups = [
         {
-          name: 'Group E', idx: 0,
+          name: 'Group E',
+          idx: 0,
         },
       ];
       const nextGroup = getNextGroupName(groups);

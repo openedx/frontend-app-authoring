@@ -2,7 +2,11 @@ import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { executeThunk } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
 import {
-  initializeMocks, render, waitFor, fireEvent, screen,
+  initializeMocks,
+  render,
+  waitFor,
+  fireEvent,
+  screen,
 } from '@src/testUtils';
 
 import {

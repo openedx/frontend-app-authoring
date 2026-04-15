@@ -22,9 +22,10 @@ const AssignmentItem = ({
   trailingElement,
 }) => (
   <li className={className}>
-    <Form.Group className={classNames('form-group-custom', {
-      'form-group-custom_isInvalid': errorEffort,
-    })}
+    <Form.Group
+      className={classNames('form-group-custom', {
+        'form-group-custom_isInvalid': errorEffort,
+      })}
     >
       <Form.Label className="grading-label">{title}</Form.Label>
       <Form.Control

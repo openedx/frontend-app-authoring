@@ -281,7 +281,9 @@ describe('<CreateLibrary />', () => {
 
       render(<CreateLibrary />);
 
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       expect(createFromArchiveBtn).toBeInTheDocument();
 
       await user.click(createFromArchiveBtn);
@@ -301,7 +303,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Create a mock file
@@ -334,7 +338,7 @@ describe('<CreateLibrary />', () => {
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
 
       // Mock console.error to capture the call
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
       // Mock the restore mutation to trigger onError callback immediately
       mockRestoreMutate.mockImplementation((_file: File, { onError }: any) => {
@@ -346,7 +350,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Upload a valid file that will trigger the restore process and its onError callback
@@ -397,7 +403,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Upload a file to trigger the restore process
@@ -459,7 +467,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Upload a file to trigger the restore process
@@ -480,7 +490,7 @@ describe('<CreateLibrary />', () => {
         expect(screen.getByText('TestOrg / test-archive')).toBeInTheDocument();
         // Testing the archive details summary
         expect(screen.getByText(/Contains 8 sections, 12 subsections, 20 units, 15 components/i)).toBeInTheDocument();
-        expect(screen.getByText(/Created on instance test.com/i)).toBeInTheDocument();
+        expect(screen.getByText(/Backup created on instance test.com/i)).toBeInTheDocument();
         expect(screen.getByText(/by user test@example.com/i)).toBeInTheDocument();
       });
     });
@@ -523,7 +533,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Upload a file to trigger the restore process
@@ -537,7 +549,7 @@ describe('<CreateLibrary />', () => {
       await waitFor(() => {
         // Testing the archive details summary without instance and user email
         expect(screen.getByText(/Contains 8 sections, 12 subsections, 20 units, 15 components/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Created on instance/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Backup created on instance/i)).not.toBeInTheDocument();
         expect(screen.queryByText(/by user/i)).not.toBeInTheDocument();
       });
     });
@@ -562,7 +574,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Upload a file to trigger the restore process
@@ -595,7 +609,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Try to upload a file with correct MIME type but wrong extension to trigger our custom validation
@@ -647,7 +663,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Initially no archive preview should be shown (no uploaded file)
@@ -722,7 +740,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Fill in form fields
@@ -765,7 +785,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Should show error alert with the specific error message
@@ -781,7 +803,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Should show generic error message
@@ -825,7 +849,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Fill in form fields
@@ -876,7 +902,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Fill in form fields
@@ -927,7 +955,9 @@ describe('<CreateLibrary />', () => {
       render(<CreateLibrary />);
 
       // Switch to archive mode
-      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      const createFromArchiveBtn = await screen.findByRole('button', {
+        name: messages.createFromArchiveButton.defaultMessage,
+      });
       await user.click(createFromArchiveBtn);
 
       // Fill in form fields

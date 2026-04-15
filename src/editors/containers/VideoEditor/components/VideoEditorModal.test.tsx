@@ -66,19 +66,20 @@ describe('VideoUploader', () => {
     });
   });
 
-  const renderComponent = async () => render(
-    <AppProvider store={store} wrapWithRouter={false}>
-      <IntlProvider locale="en">
-        <MemoryRouter
-          initialEntries={[
-            '/some/path?selectedVideoId=id_1&selectedVideoUrl=https://video.com',
-          ]}
-        >
-          <VideoEditorModal isLibrary={false} />
-        </MemoryRouter>
-      </IntlProvider>
-    </AppProvider>,
-  );
+  const renderComponent = async () =>
+    render(
+      <AppProvider store={store} wrapWithRouter={false}>
+        <IntlProvider locale="en">
+          <MemoryRouter
+            initialEntries={[
+              '/some/path?selectedVideoId=id_1&selectedVideoUrl=https://video.com',
+            ]}
+          >
+            <VideoEditorModal isLibrary={false} />
+          </MemoryRouter>
+        </IntlProvider>
+      </AppProvider>,
+    );
 
   it('should render the component and call loadVideoData with correct parameters', async () => {
     await renderComponent();

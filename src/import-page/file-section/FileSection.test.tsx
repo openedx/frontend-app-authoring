@@ -16,13 +16,14 @@ const courseId = '123';
 
 let axiosMock;
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <CourseImportProvider>
-      <FileSection />
-    </CourseImportProvider>
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseImportProvider>
+        <FileSection />
+      </CourseImportProvider>
+    </CourseAuthoringProvider>,
+  );
 
 describe('<FileSection />', () => {
   beforeEach(() => {

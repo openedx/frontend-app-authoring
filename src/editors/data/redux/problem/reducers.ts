@@ -242,8 +242,4 @@ const actions = StrictDict(problem.actions);
 
 const { reducer } = problem;
 
-export {
-  actions,
-  initialState,
-  reducer,
-};
+export { actions, initialState, reducer };

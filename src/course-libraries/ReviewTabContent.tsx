@@ -1,5 +1,8 @@
 import React, {
-  useCallback, useContext, useMemo, useState,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -21,7 +24,12 @@ import messages from './messages';
 import previewChangesMessages from '../course-unit/preview-changes/messages';
 import { invalidateLinksQuery, useEntityLinks } from './data/apiHooks';
 import {
-  SearchContextProvider, SearchKeywordsField, useSearchContext, BlockTypeLabel, Highlight, SearchSortWidget,
+  SearchContextProvider,
+  SearchKeywordsField,
+  useSearchContext,
+  BlockTypeLabel,
+  Highlight,
+  SearchSortWidget,
 } from '../search-manager';
 import { getItemIcon } from '../generic/block-type-utils';
 import type { ContentHit } from '../search-manager/data/api';
@@ -56,7 +64,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
 }) => {
   const intl = useIntl();
   const itemIcon = getItemIcon(info.blockType);
-  const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
+  const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string; usageKey: string; }>;
 
   const getItemLink = useCallback(() => {
     let key = info.usageKey;
@@ -81,9 +89,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
       className="my-3 border-light-500 border shadow-none"
       orientation="horizontal"
     >
-      <Card.Section
-        className="py-3"
-      >
+      <Card.Section className="py-3">
         <Stack direction="horizontal" gap={2}>
           <Stack direction="vertical" gap={1}>
             <Stack direction="horizontal" gap={1} className="micro text-gray-500">
@@ -104,19 +110,21 @@ const ItemCard: React.FC<ItemCardProps> = ({
               )}
               {intl.formatMessage(messages.breadcrumbLabel)}
               <Hyperlink showLaunchIcon={false} destination={getItemLink()} target="_blank">
-                {info.blockType === 'chapter' ? (
-                  <div className="micro text-gray-700 border-bottom">
-                    {intl.formatMessage(messages.viewSectionInCourseLabel)}
-                  </div>
-                ) : (
-                  <Breadcrumb
-                    className="micro text-gray-700 border-bottom"
-                    ariaLabel={intl.formatMessage(messages.breadcrumbLabel)}
-                    links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
-                    spacer={<span className="custom-spacer">/</span>}
-                    linkAs="span"
-                  />
-                )}
+                {info.blockType === 'chapter' ?
+                  (
+                    <div className="micro text-gray-700 border-bottom">
+                      {intl.formatMessage(messages.viewSectionInCourseLabel)}
+                    </div>
+                  ) :
+                  (
+                    <Breadcrumb
+                      className="micro text-gray-700 border-bottom"
+                      ariaLabel={intl.formatMessage(messages.breadcrumbLabel)}
+                      links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
+                      spacer={<span className="custom-spacer">/</span>}
+                      linkAs="span"
+                    />
+                  )}
               </Hyperlink>
             </Stack>
           </Stack>
@@ -266,7 +274,7 @@ const ItemReviewList = ({
           info={info}
           itemType={outOfSyncItemsByKey[info.usageKey]?.upstreamType}
           libraryName={outOfSyncItemsByKey[info.usageKey]?.upstreamContextTitle}
-          actions={(
+          actions={
             <ActionRow>
               <Button
                 size="sm"
@@ -293,7 +301,7 @@ const ItemReviewList = ({
                 className="rounded-0"
               />
             </ActionRow>
-          )}
+          }
         />
       ))}
       {blockData && (

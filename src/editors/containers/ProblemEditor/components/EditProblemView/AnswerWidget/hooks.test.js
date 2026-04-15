@@ -15,7 +15,7 @@ jest.mock('react', () => {
   const updateState = jest.fn();
   return {
     useEffect: jest.fn(),
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
+    useState: jest.fn(val => [{ state: val }, (newVal) => updateState({ val, newVal })]),
   };
 });
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -179,14 +179,18 @@ describe('Answer Options Hooks', () => {
     test('toggleFeedback with selected feedback', () => {
       const key = state.keys.isFeedbackVisible;
       output = module.useFeedback(answerWithOnlyFeedback);
-      windowSpy.mockImplementation(() => ({ tinymce: { editors: { 'selectedFeedback-A': { getContent: () => 'string' } } } }));
+      windowSpy.mockImplementation(() => ({
+        tinymce: { editors: { 'selectedFeedback-A': { getContent: () => 'string' } } },
+      }));
       output.toggleFeedback(false);
       expect(state.setState[key]).toHaveBeenCalledWith(true);
     });
     test('toggleFeedback with unselected feedback', () => {
       const key = state.keys.isFeedbackVisible;
       output = module.useFeedback(answerWithOnlyFeedback);
-      windowSpy.mockImplementation(() => ({ tinymce: { editors: { 'unselectedFeedback-A': { getContent: () => 'string' } } } }));
+      windowSpy.mockImplementation(() => ({
+        tinymce: { editors: { 'unselectedFeedback-A': { getContent: () => 'string' } } },
+      }));
       output.toggleFeedback(false);
       expect(state.setState[key]).toHaveBeenCalledWith(true);
     });

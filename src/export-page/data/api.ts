@@ -11,7 +11,7 @@ export interface ExportStatusData {
   exportError?: {
     rawErrorMsg?: string;
     editUnitUrl?: string;
-  }
+  };
 }
 
 export async function startCourseExporting(courseId: string): Promise<ExportStatusData> {

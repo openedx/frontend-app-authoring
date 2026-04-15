@@ -3,58 +3,49 @@ import { nodeContainsChildTags, findNodesAndRemoveTheirParentNodes, tagName } fr
 describe('reactStateOLXHelpers', () => {
   describe('findNodesWithChildTags', () => {
     const node = {
-      div:
-       [
-         {
-           label:
-           [
-             { '#text': 'def' },
-           ],
-         },
-         { '#text': ' ' },
-         {
-           em:
-           [
-             { '#text': 'ghi' },
-           ],
-           ':@': { '@_class': 'olx_description' },
-         },
-         {
-           em:
-           [
-             { '#text': 'jkl' },
-           ],
-         },
-       ],
+      div: [
+        {
+          label: [
+            { '#text': 'def' },
+          ],
+        },
+        { '#text': ' ' },
+        {
+          em: [
+            { '#text': 'ghi' },
+          ],
+          ':@': { '@_class': 'olx_description' },
+        },
+        {
+          em: [
+            { '#text': 'jkl' },
+          ],
+        },
+      ],
     };
 
     const nodeWithNestedLabel = {
-      div:
-       [
-         {
-           div:
-           [{
-             label:
-            [
+      div: [
+        {
+          div: [{
+            label: [
               { '#text': 'def' },
             ],
-           }],
-         },
-         { '#text': ' ' },
-         {
-           em:
-           [
-             { '#text': 'ghi' },
-           ],
-           ':@': { '@_class': 'olx_description' },
-         },
-         {
-           em:
-           [
-             { '#text': 'jkl' },
-           ],
-         },
-       ],
+          }],
+        },
+        { '#text': ' ' },
+        {
+          em: [
+            { '#text': 'ghi' },
+          ],
+          ':@': { '@_class': 'olx_description' },
+        },
+        {
+          em: [
+            { '#text': 'jkl' },
+          ],
+        },
+      ],
     };
 
     it('should return true if node contains specified child tags', () => {
@@ -91,16 +82,13 @@ describe('reactStateOLXHelpers', () => {
         }],
       },
       {
-        div:
-        [
+        div: [
           {
-            label:
-            [{ '#text': 'def' }],
+            label: [{ '#text': 'def' }],
           },
           { '#text': ' ' },
           {
-            em:
-            [{
+            em: [{
               '#text': 'ghi',
             }],
             ':@': { '@_class': 'olx_description' },
@@ -121,10 +109,9 @@ describe('reactStateOLXHelpers', () => {
       },
       { '#text': ' ' },
       {
-        em:
-            [{
-              '#text': 'ghi',
-            }],
+        em: [{
+          '#text': 'ghi',
+        }],
         ':@': { '@_class': 'olx_description' },
       },
       { em: [{ '#text': 'Just a generic em tag' }] },
@@ -172,10 +159,9 @@ describe('reactStateOLXHelpers', () => {
       expect(tagName({
         ':@': { '@_class': 'olx_description' },
         '#text': 'abc',
-        em:
-            [{
-              '#text': 'ghi',
-            }],
+        em: [{
+          '#text': 'ghi',
+        }],
       })).toEqual('em');
     });
   });

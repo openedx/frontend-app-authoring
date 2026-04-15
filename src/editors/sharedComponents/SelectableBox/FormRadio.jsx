@@ -24,9 +24,7 @@ const RadioControl = React.forwardRef((props, ref) => {
     }
   };
 
-  return (
-    <input {...{ ...radioProps, onChange }} type="radio" ref={ref} />
-  );
+  return <input {...{ ...radioProps, onChange }} type="radio" ref={ref} />;
 });
 
 RadioControl.propTypes = {

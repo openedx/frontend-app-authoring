@@ -1,18 +1,18 @@
 {
-    "name": "@openedx-plugins/course-app-wiki",
-    "version": "0.1.0",
-    "description": "Wiki configuration for courses using it",
-    "peerDependencies": {
-        "@edx/frontend-app-authoring": "*",
-        "@edx/frontend-platform": "*",
-        "@openedx/paragon": "*",
-        "prop-types": "*",
-        "react": "*",
-        "yup": "*"
-    },
-    "peerDependenciesMeta": {
-        "@edx/frontend-app-authoring": {
-            "optional": true
-        }
+  "name": "@openedx-plugins/course-app-wiki",
+  "version": "0.1.0",
+  "description": "Wiki configuration for courses using it",
+  "peerDependencies": {
+    "@edx/frontend-app-authoring": "*",
+    "@edx/frontend-platform": "*",
+    "@openedx/paragon": "*",
+    "prop-types": "*",
+    "react": "*",
+    "yup": "*"
+  },
+  "peerDependenciesMeta": {
+    "@edx/frontend-app-authoring": {
+      "optional": true
     }
+  }
 }

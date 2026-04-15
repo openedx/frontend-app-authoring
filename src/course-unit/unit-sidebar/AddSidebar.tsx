@@ -4,7 +4,11 @@ import { useParams } from 'react-router-dom';
 import {
   Button,
   Icon,
-  Stack, StandardModal, Tab, Tabs, useToggle,
+  Stack,
+  StandardModal,
+  Tab,
+  Tabs,
+  useToggle,
 } from '@openedx/paragon';
 import { ChevronLeft, ChevronRight } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
@@ -206,6 +210,7 @@ const AddNewContent = () => {
         <Stack gap={2}>
           {templatesByType.advanced?.templates.map((advancedTypeObj) => (
             <BlockCardButton
+              key={advancedTypeObj.category}
               blockType={advancedTypeObj.category}
               name={advancedTypeObj.displayName}
               onClick={() => handleSelection('advanced', advancedTypeObj.category)}
@@ -223,6 +228,7 @@ const AddNewContent = () => {
         {blockTypes.map((blockTypeObj) => (
           <BlockCardButton
             {...blockTypeObj}
+            key={blockTypeObj.blockType}
             templates={templatesByType[blockTypeObj.blockType].templates}
             onClick={() => handleSelection(blockTypeObj.blockType)}
             onClickTemplate={(boilerplateName: string) => handleSelection(blockTypeObj.blockType, boilerplateName)}

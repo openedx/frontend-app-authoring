@@ -65,10 +65,12 @@ describe('<ParentBreadcrumbs />', () => {
   });
 
   it('should throw an error if displayName and key arrays are not the same length', async () => {
-    expect(() => renderComponent(ContainerType.Unit, {
-      displayName: ['Parent 1'],
-      key: ['key1', 'key2'],
-    })).toThrow('Parents key and displayName arrays must have the same length.');
+    expect(() =>
+      renderComponent(ContainerType.Unit, {
+        displayName: ['Parent 1'],
+        key: ['key1', 'key2'],
+      })
+    ).toThrow('Parents key and displayName arrays must have the same length.');
   });
 
   it('show breadcrumb with multiple parents', async () => {
@@ -91,9 +93,15 @@ describe('<ParentBreadcrumbs />', () => {
     expect(subsectionLinks).toHaveLength(2); // Library link only. Parents are displayed in a dropdown.
 
     expect(subsectionLinks[0]).toHaveTextContent('Parent Subsection 1');
-    expect(subsectionLinks[0]).toHaveProperty('href', 'http://localhost/library/library-id/subsection/subsection-key-1');
+    expect(subsectionLinks[0]).toHaveProperty(
+      'href',
+      'http://localhost/library/library-id/subsection/subsection-key-1',
+    );
 
     expect(subsectionLinks[1]).toHaveTextContent('Parent Subsection 2');
-    expect(subsectionLinks[1]).toHaveProperty('href', 'http://localhost/library/library-id/subsection/subsection-key-2');
+    expect(subsectionLinks[1]).toHaveProperty(
+      'href',
+      'http://localhost/library/library-id/subsection/subsection-key-2',
+    );
   });
 });

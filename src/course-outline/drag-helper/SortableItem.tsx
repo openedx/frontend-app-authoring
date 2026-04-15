@@ -3,7 +3,9 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  Col, Icon, Row,
+  Col,
+  Icon,
+  Row,
 } from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
 
@@ -16,7 +18,7 @@ interface SortableItemProps {
     childAddable?: boolean;
     displayName: string;
     status: string;
-  }
+  };
   isDroppable?: boolean;
   isDraggable?: boolean;
   children: React.ReactNode;

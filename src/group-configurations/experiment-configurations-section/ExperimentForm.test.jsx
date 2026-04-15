@@ -13,17 +13,18 @@ const onEditClickMock = jest.fn();
 
 const experimentConfiguration = experimentGroupConfigurationsMock[0];
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <ExperimentForm
-      initialValues={initialExperimentConfiguration}
-      onCreateClick={onCreateClickMock}
-      onCancelClick={onCancelClickMock}
-      onEditClick={onEditClickMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <ExperimentForm
+        initialValues={initialExperimentConfiguration}
+        onCreateClick={onCreateClickMock}
+        onCancelClick={onCancelClickMock}
+        onEditClick={onEditClickMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ExperimentForm />', () => {
   it('renders component correctly', () => {

@@ -52,7 +52,8 @@ export const determineText = ({ level }) => {
 
 export const onSelectLicense = ({
   dispatch,
-}) => (license) => {
+}) =>
+(license) => {
   switch (license) {
     case LicenseTypes.allRightsReserved:
       dispatch(actions.video.updateField({

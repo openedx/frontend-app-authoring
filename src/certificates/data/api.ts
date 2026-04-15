@@ -5,9 +5,11 @@ import { prepareCertificatePayload } from '../utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getCertificatesApiUrl = (courseId: string) => `${getApiBaseUrl()}/api/contentstore/v1/certificates/${courseId}`;
+export const getCertificatesApiUrl = (courseId: string) =>
+  `${getApiBaseUrl()}/api/contentstore/v1/certificates/${courseId}`;
 export const getCertificateApiUrl = (courseId: string) => `${getApiBaseUrl()}/certificates/${courseId}`;
-export const getUpdateCertificateApiUrl = (courseId: string, certificateId: number) => `${getCertificateApiUrl(courseId)}/${certificateId}`;
+export const getUpdateCertificateApiUrl = (courseId: string, certificateId: number) =>
+  `${getCertificateApiUrl(courseId)}/${certificateId}`;
 export const getUpdateCertificateActiveStatusApiUrl = (path: string) => `${getApiBaseUrl()}${path}`;
 
 /**

@@ -2,9 +2,9 @@ import { UniqueIdentifier } from '@dnd-kit/core';
 import React from 'react';
 
 interface DragContextProviderProps {
-  activeId: UniqueIdentifier | null,
-  overId: UniqueIdentifier | null,
-  children?: React.ReactNode,
+  activeId: UniqueIdentifier | null;
+  overId: UniqueIdentifier | null;
+  children?: React.ReactNode;
 }
 
 export const DragContext = React.createContext<DragContextProviderProps>({

@@ -16,9 +16,40 @@ import {
   updateContentTaxonomyTags,
   getContentTaxonomyTagsCount,
 } from './api';
-import { libraryAuthoringQueryKeys, libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
+import {
+  libraryAuthoringQueryKeys,
+  libraryQueryPredicate,
+  xblockQueryKeys,
+} from '../../library-authoring/data/apiHooks';
 import { getLibraryId } from '../../generic/key-utils';
 import type { UpdateTagsData } from './types';
+
+export const contentTagsQueryKeys = {
+  all: ['contentTags'],
+  taxonomyTags: (taxonomyId: number, parentTag: string | null, page: number, searchTerm: string) => [
+    ...contentTagsQueryKeys.all,
+    'taxonomyTags',
+    taxonomyId,
+    parentTag,
+    page,
+    searchTerm,
+  ],
+  contentTaxonomyTags: (contentId: string) => [
+    ...contentTagsQueryKeys.all,
+    'contentTaxonomyTags',
+    contentId,
+  ],
+  contentData: (contentId?: string) => [
+    ...contentTagsQueryKeys.all,
+    'contentData',
+    contentId,
+  ],
+  contentTagsCount: (contentPattern: string) => [
+    ...contentTagsQueryKeys.all,
+    'contentTagsCount',
+    contentPattern,
+  ],
+};
 
 /**
  * Builds the query to get the taxonomy tags
@@ -40,10 +71,14 @@ export const useTaxonomyTagsData = (
     return getTaxonomyTagsData(taxonomyId, { parentTag: parentTag || '', searchTerm, page });
   };
 
-  const queries: { queryKey: any[]; queryFn: typeof queryFn; staleTime: number }[] = [];
+  const queries: { queryKey: any[]; queryFn: typeof queryFn; staleTime: number; }[] = [];
   for (let page = 1; page <= numPages; page++) {
     queries.push(
-      { queryKey: ['taxonomyTags', taxonomyId, parentTag, page, searchTerm], queryFn, staleTime: Infinity },
+      {
+        queryKey: contentTagsQueryKeys.taxonomyTags(taxonomyId, parentTag, page, searchTerm),
+        queryFn,
+        staleTime: Infinity,
+      },
     );
   }
 
@@ -74,7 +109,7 @@ export const useTaxonomyTagsData = (
 
     // Store the pre-loaded descendants into the query cache:
     preLoadedData.forEach((tags, parentValue) => {
-      const queryKey = ['taxonomyTags', taxonomyId, parentValue, 1, searchTerm];
+      const queryKey = contentTagsQueryKeys.taxonomyTags(taxonomyId, parentValue, 1, searchTerm);
       const cachedData: TagListData = {
         next: '',
         previous: '',
@@ -106,7 +141,7 @@ export const useTaxonomyTagsData = (
  */
 export const useContentTaxonomyTagsData = (contentId: string) => (
   useQuery({
-    queryKey: ['contentTaxonomyTags', contentId],
+    queryKey: contentTagsQueryKeys.contentTaxonomyTags(contentId),
     queryFn: () => getContentTaxonomyTagsData(contentId),
   })
 );
@@ -118,7 +153,7 @@ export const useContentTaxonomyTagsData = (contentId: string) => (
  */
 export const useContentData = (contentId?: string, enabled: boolean = true) => (
   useQuery({
-    queryKey: ['contentData', contentId],
+    queryKey: contentTagsQueryKeys.contentData(contentId),
     queryFn: (enabled && contentId) ? () => getContentData(contentId) : skipToken,
   })
 );
@@ -133,11 +168,11 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
   const { containerId } = useParams();
 
   return useMutation({
-    mutationFn: ({ tagsData }: { tagsData: UpdateTagsData[] }) => (
+    mutationFn: ({ tagsData }: { tagsData: UpdateTagsData[]; }) => (
       updateContentTaxonomyTags(contentId, tagsData)
     ),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
+      queryClient.invalidateQueries({ queryKey: contentTagsQueryKeys.contentTaxonomyTags(contentId) });
       /// Invalidate query with pattern on course outline
       let contentPattern;
       if (contentId.includes('course-v1')) {
@@ -145,14 +180,17 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
       } else {
         contentPattern = contentId.replace(/\+type@.*$/, '*');
       }
-      queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
+      queryClient.invalidateQueries({ queryKey: contentTagsQueryKeys.contentTagsCount(contentPattern) });
       if (contentId.startsWith('lb:') || contentId.startsWith('lib-collection:') || contentId.startsWith('lct:')) {
         // Obtain library id from contentId
         const libraryId = getLibraryId(contentId);
         // Invalidate component metadata to update tags count
         queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(contentId) });
         // Invalidate content search to update tags count
-        queryClient.invalidateQueries({ queryKey: ['content_search'], predicate: (query) => libraryQueryPredicate(query, libraryId) });
+        queryClient.invalidateQueries({
+          queryKey: ['content_search'],
+          predicate: (query) => libraryQueryPredicate(query, libraryId),
+        });
         // If the tags for an item were edited from a container page (Unit, Subsection, Section),
         // invalidate children query to fetch count again.
         if (containerId) {

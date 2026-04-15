@@ -51,9 +51,7 @@ validate-no-uncommitted-package-lock-changes:
 validate:
 	make validate-no-uncommitted-package-lock-changes
 	npm run i18n_extract
-# We are trying out oxlint. Now that it's been working well for a while with both oxlint and eslint, we have disabled
-# eslint, and after a few weeks we'll evaluate whether any problems are slipping through if only oxlint is used.
-	npm run oxlint
+	npm run lint
 	npm run types
 	npm run test:ci
 	npm run build

@@ -7,9 +7,9 @@ import { RequestStatus } from '../../../data/constants';
 const UploadStatusIcon = ({ status }) => {
   switch (status) {
     case RequestStatus.SUCCESSFUL:
-      return (<Icon src={Check} />);
+      return <Icon src={Check} />;
     case RequestStatus.FAILED:
-      return (<Icon src={ErrorOutline} />);
+      return <Icon src={ErrorOutline} />;
     case RequestStatus.IN_PROGRESS:
       return (
         <Spinner
@@ -19,7 +19,7 @@ const UploadStatusIcon = ({ status }) => {
         />
       );
     default:
-      return (<div style={{ width: '24px' }} />);
+      return <div style={{ width: '24px' }} />;
   }
 };
 

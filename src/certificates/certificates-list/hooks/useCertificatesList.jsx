@@ -3,7 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { MODE_STATES } from '../../data/constants';
 import {
-  getCourseTitle, getCourseNumber, getCourseNumberOverride, getCertificates,
+  getCourseTitle,
+  getCourseNumber,
+  getCourseNumberOverride,
+  getCertificates,
 } from '../../data/selectors';
 import { updateCourseCertificate } from '../../data/thunks';
 import { setMode } from '../../data/slice';

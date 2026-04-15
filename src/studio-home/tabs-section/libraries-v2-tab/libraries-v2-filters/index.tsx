@@ -9,8 +9,8 @@ import messages from '../../messages';
 export interface LibrariesV2FiltersProps {
   isPending?: boolean;
   isFiltered?: boolean;
-  filterParams: { search?: string | undefined, order?: string };
-  setFilterParams: React.Dispatch<React.SetStateAction<{ search: string | undefined, order: string }>>;
+  filterParams: { search?: string | undefined; order?: string; };
+  setFilterParams: React.Dispatch<React.SetStateAction<{ search: string | undefined; order: string; }>>;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 

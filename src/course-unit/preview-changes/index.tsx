@@ -1,8 +1,15 @@
 import {
-  useCallback, useContext, useMemo, useState,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
 } from 'react';
 import {
-  ActionRow, Button, Icon, ModalDialog, useToggle,
+  ActionRow,
+  Button,
+  Icon,
+  ModalDialog,
+  useToggle,
 } from '@openedx/paragon';
 import { Info } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -29,9 +36,9 @@ const ConfirmationModal = ({
   onClose,
   updateAndRefresh,
 }: {
-  modalType: ConfirmationModalType,
-  onClose: () => void,
-  updateAndRefresh: (accept: boolean, overrideCustomizations: boolean) => void,
+  modalType: ConfirmationModalType;
+  onClose: () => void;
+  updateAndRefresh: (accept: boolean, overrideCustomizations: boolean) => void;
 }) => {
   const intl = useIntl();
 
@@ -98,21 +105,21 @@ const ConfirmationModal = ({
 };
 
 export interface LibraryChangesMessageData {
-  displayName: string,
-  downstreamBlockId: string,
-  upstreamBlockId: string,
-  upstreamBlockVersionSynced: number,
-  isLocallyModified?: boolean,
-  isContainer: boolean,
-  blockType?: string | null,
-  isReadyToSyncIndividually?: boolean,
+  displayName: string;
+  downstreamBlockId: string;
+  upstreamBlockId: string;
+  upstreamBlockVersionSynced: number;
+  isLocallyModified?: boolean;
+  isContainer: boolean;
+  blockType?: string | null;
+  isReadyToSyncIndividually?: boolean;
 }
 
 export interface PreviewLibraryXBlockChangesProps {
-  blockData: LibraryChangesMessageData,
-  isModalOpen: boolean,
-  closeModal: () => void,
-  postChange: (accept: boolean) => void,
+  blockData: LibraryChangesMessageData;
+  isModalOpen: boolean;
+  closeModal: () => void;
+  postChange: (accept: boolean) => void;
 }
 
 /**
@@ -133,7 +140,7 @@ export const PreviewLibraryXBlockChanges = ({
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
 
-  const isTextWithLocalChanges = (blockData.blockType === 'html' && blockData.isLocallyModified);
+  const isTextWithLocalChanges = blockData.blockType === 'html' && blockData.isLocallyModified;
 
   const getBody = useCallback(() => {
     if (!blockData) {
@@ -249,33 +256,37 @@ export const PreviewLibraryXBlockChanges = ({
       </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
-          {isTextWithLocalChanges ? (
-            <Button
-              variant="tertiary"
-              onClick={() => setConfirmationModalType('update')}
-            >
-              <FormattedMessage {...messages.updateToPublishedLibraryContentButton} />
-            </Button>
-          ) : (
-            <LoadingButton
-              onClick={() => updateAndRefresh(true, false)}
-              label={intl.formatMessage(messages.acceptChangesBtn)}
-            />
-          )}
-          {isTextWithLocalChanges ? (
-            <Button
-              onClick={() => setConfirmationModalType('keep')}
-            >
-              <FormattedMessage {...messages.keepCourseContentButton} />
-            </Button>
-          ) : (
-            <Button
-              variant="tertiary"
-              onClick={() => setConfirmationModalType('ignore')}
-            >
-              <FormattedMessage {...messages.ignoreChangesBtn} />
-            </Button>
-          )}
+          {isTextWithLocalChanges ?
+            (
+              <Button
+                variant="tertiary"
+                onClick={() => setConfirmationModalType('update')}
+              >
+                <FormattedMessage {...messages.updateToPublishedLibraryContentButton} />
+              </Button>
+            ) :
+            (
+              <LoadingButton
+                onClick={() => updateAndRefresh(true, false)}
+                label={intl.formatMessage(messages.acceptChangesBtn)}
+              />
+            )}
+          {isTextWithLocalChanges ?
+            (
+              <Button
+                onClick={() => setConfirmationModalType('keep')}
+              >
+                <FormattedMessage {...messages.keepCourseContentButton} />
+              </Button>
+            ) :
+            (
+              <Button
+                variant="tertiary"
+                onClick={() => setConfirmationModalType('ignore')}
+              >
+                <FormattedMessage {...messages.ignoreChangesBtn} />
+              </Button>
+            )}
         </ActionRow>
       </ModalDialog.Footer>
       <ConfirmationModal
@@ -303,7 +314,7 @@ const IframePreviewLibraryXBlockChanges = () => {
     data: {
       payload: LibraryChangesMessageData;
       type: string;
-    }
+    };
   }) => {
     const { payload, type } = data;
 

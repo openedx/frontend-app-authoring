@@ -24,8 +24,4 @@ const actions = StrictDict(game.actions);
 
 const { reducer } = game;
 
-export {
-  actions,
-  initialState,
-  reducer,
-};
+export { actions, initialState, reducer };

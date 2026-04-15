@@ -4,13 +4,14 @@ import messages from './messages';
 import ImportStepper from './ImportStepper';
 import { CourseImportProvider } from '../CourseImportContext';
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId="123456">
-    <CourseImportProvider>
-      <ImportStepper />
-    </CourseImportProvider>
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId="123456">
+      <CourseImportProvider>
+        <ImportStepper />
+      </CourseImportProvider>
+    </CourseAuthoringProvider>,
+  );
 
 describe('<ImportStepper />', () => {
   beforeEach(() => {

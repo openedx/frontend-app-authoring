@@ -107,11 +107,18 @@ const TableView = ({
   return (
     <>
       {(isError || isUpdateError) && showError && (
-        <Alert variant="danger" icon={Info} dismissible onClose={() => setShowError(false)}>
+        <Alert
+          variant="danger"
+          icon={Info}
+          dismissible
+          onClose={() => setShowError(false)}
+        >
           <Alert.Heading>
             {intl.formatMessage(messages.errorSavingTitle)}
           </Alert.Heading>
-          {intl.formatMessage(messages.errorSavingMessage, { errorMessage: draftError || intl.formatMessage(messages.errorSavingMessage, { errorMessage: '' }) })}
+          {intl.formatMessage(messages.errorSavingMessage, {
+            errorMessage: draftError || intl.formatMessage(messages.errorSavingMessage, { errorMessage: '' }),
+          })}
         </Alert>
       )}
       <Card className="tag-list-card">
@@ -133,9 +140,7 @@ const TableView = ({
               </Button>
             </ActionRow>
           </div>
-          <table
-            className="table w-100 tag-list-table tree-table-layout-fixed"
-          >
+          <table className="table w-100 tag-list-table tree-table-layout-fixed">
             <thead className="bg-light-400">
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id}>

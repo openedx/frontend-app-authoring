@@ -25,14 +25,14 @@ const SourceCodeModal = ({
     <BaseModal
       close={close}
       size="xl"
-      confirmAction={(
+      confirmAction={
         <Button {...saveBtnProps} variant="primary">
           <FormattedMessage {...messages.saveButtonLabel} />
         </Button>
-            )}
+      }
       isOpen={isOpen}
       title={intl.formatMessage(messages.titleLabel)}
-      bodyStyle={{ maxHeight: (height - 180) }}
+      bodyStyle={{ maxHeight: height - 180 }}
     >
       <div className="px-4.5 pt-2.5">
         <CodeEditor

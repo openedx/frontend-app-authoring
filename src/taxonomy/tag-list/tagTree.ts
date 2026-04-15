@@ -85,12 +85,12 @@ export class TagTree {
 
   /** For extra robustness, we verify that there are no cycles in the data. (The backend also guarantees this.) */
   private validateNoCycles(items: TagData[]) {
-    const parentByValue: { [key: string]: string | null } = {};
+    const parentByValue: { [key: string]: string | null; } = {};
     for (const item of items) {
       parentByValue[item.value.toLowerCase()] = item.parentValue ? item.parentValue.toLowerCase() : null;
     }
 
-    const visitStatus: { [key: string]: number } = {};
+    const visitStatus: { [key: string]: number; } = {};
 
     const detectCycle = (value: string): boolean => {
       const status = visitStatus[value] || 0;
@@ -129,7 +129,7 @@ export class TagTree {
     this.validateNoCycles(this.data);
 
     const treeChildren: TagTreeNode[] = [];
-    const lookup: { [key: string]: TagTreeNode } = {};
+    const lookup: { [key: string]: TagTreeNode; } = {};
 
     // Step 1: Create a lookup map of all items using 'value' as the key.
     // We use the spread operator (...) to create a shallow copy so we

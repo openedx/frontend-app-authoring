@@ -33,7 +33,8 @@ const mockImage = {
   portableUrl: '/static/DALL_E_2023-03-10.png',
   thumbnail: '/asset-v1:TestX+Test01+Test0101+type@thumbnail+block@DALL_E_2023-03-10.jpg',
   locked: false,
-  staticFullUrl: '/assets/courseware/v1/af2bf9ac70804e54c534107160a8e51e/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png',
+  staticFullUrl:
+    '/assets/courseware/v1/af2bf9ac70804e54c534107160a8e51e/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png',
   id: 'asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png',
   width: 100,
   height: 150,
@@ -95,7 +96,13 @@ describe('ImageUploadModal', () => {
 
       beforeEach(() => {
         output = hooks.createSaveCallback({
-          close, settings, images, editorRef, setSelection, selection, lmsEndpointUrl,
+          close,
+          settings,
+          images,
+          editorRef,
+          setSelection,
+          selection,
+          lmsEndpointUrl,
         });
       });
       afterEach(() => {
@@ -176,7 +183,7 @@ describe('ImageUploadModal', () => {
       expect(container.querySelector('ImageSettingsModal')).toBeInTheDocument();
     });
     test('snapshot: selection has no externalUrl (Select Image Modal)', () => {
-      const { container } = render(<ImageUploadModal {...props} selection={{ }} />);
+      const { container } = render(<ImageUploadModal {...props} selection={{}} />);
       expect(container.querySelector('SelectImageModal')).toBeInTheDocument();
     });
     test('snapshot: no selection (Select Image Modal)', () => {

@@ -22,10 +22,10 @@ import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';
 import messages from './messages';
 
 type CollectionMenuProps = {
-  hit: CollectionHit,
+  hit: CollectionHit;
 };
 
-const CollectionMenu = ({ hit } : CollectionMenuProps) => {
+const CollectionMenu = ({ hit }: CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
@@ -115,10 +115,10 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
 };
 
 type CollectionCardProps = {
-  hit: CollectionHit,
+  hit: CollectionHit;
 };
 
-const CollectionCard = ({ hit } : CollectionCardProps) => {
+const CollectionCard = ({ hit }: CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = usePublishedFilterContext();
   const { setCollectionId } = useOptionalLibraryContext();
@@ -133,9 +133,11 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
     published,
   } = hit;
 
-  const numChildrenCount = showOnlyPublished ? (
-    published?.numChildren || 0
-  ) : numChildren;
+  const numChildrenCount = showOnlyPublished ?
+    (
+      published?.numChildren || 0
+    ) :
+    numChildren;
 
   const { displayName = '', description = '' } = formatted;
 

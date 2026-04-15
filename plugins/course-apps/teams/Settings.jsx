@@ -116,52 +116,53 @@ const TeamSettings = ({
       onSettingsSave={handleSettingsSave}
       configureBeforeEnable
     >
-      {
-        ({
-          handleChange, handleBlur, values, errors,
-        }) => (
-          <>
-            <h4 className="my-3 pb-2">{intl.formatMessage(messages.teamSize)}</h4>
-            <FormikControl
-              name="maxTeamSize"
-              value={values.maxTeamSize}
-              floatingLabel={intl.formatMessage(messages.maxTeamSize)}
-              help={intl.formatMessage(messages.maxTeamSizeHelp)}
-              className="pb-1"
-              type="number"
-            />
-            <div className="bg-light-200 d-flex flex-column mx-n4 px-4 py-4 border border-top mb-n3.5">
-              <h4>{intl.formatMessage(messages.groups)}</h4>
-              <Form.Text className="mb-3">{intl.formatMessage(messages.groupsHelp)}</Form.Text>
-              <FieldArray name="groups">
-                {({ push, remove }) => (
-                  <>
-                    {values.groups?.map((group, index) => (
-                      <GroupEditor
-                        key={group.id || group.key}
-                        group={group}
-                        errors={errors.groups?.[index]}
-                        fieldNameCommonBase={`groups.${index}`}
-                        onDelete={() => remove(index)}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                    ))}
-                    <Button
-                      variant="plain"
-                      className="p-0 align-self-start mt-3"
-                      iconBefore={Add}
-                      onClick={() => push(blankNewGroup)}
-                    >
-                      {intl.formatMessage(messages.addGroup)}
-                    </Button>
-                  </>
-                )}
-              </FieldArray>
-            </div>
-          </>
-        )
-      }
+      {({
+        handleChange,
+        handleBlur,
+        values,
+        errors,
+      }) => (
+        <>
+          <h4 className="my-3 pb-2">{intl.formatMessage(messages.teamSize)}</h4>
+          <FormikControl
+            name="maxTeamSize"
+            value={values.maxTeamSize}
+            floatingLabel={intl.formatMessage(messages.maxTeamSize)}
+            help={intl.formatMessage(messages.maxTeamSizeHelp)}
+            className="pb-1"
+            type="number"
+          />
+          <div className="bg-light-200 d-flex flex-column mx-n4 px-4 py-4 border border-top mb-n3.5">
+            <h4>{intl.formatMessage(messages.groups)}</h4>
+            <Form.Text className="mb-3">{intl.formatMessage(messages.groupsHelp)}</Form.Text>
+            <FieldArray name="groups">
+              {({ push, remove }) => (
+                <>
+                  {values.groups?.map((group, index) => (
+                    <GroupEditor
+                      key={group.id || group.key}
+                      group={group}
+                      errors={errors.groups?.[index]}
+                      fieldNameCommonBase={`groups.${index}`}
+                      onDelete={() => remove(index)}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  ))}
+                  <Button
+                    variant="plain"
+                    className="p-0 align-self-start mt-3"
+                    iconBefore={Add}
+                    onClick={() => push(blankNewGroup)}
+                  >
+                    {intl.formatMessage(messages.addGroup)}
+                  </Button>
+                </>
+              )}
+            </FieldArray>
+          </div>
+        </>
+      )}
     </AppSettingsModal>
   );
 };

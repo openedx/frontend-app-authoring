@@ -22,10 +22,10 @@ import messages from './messages';
  * element's `children`. So use this to wrap a <RefinementList> etc.
  */
 const SearchFilterWidget: React.FC<{
-  appliedFilters: { label: React.ReactNode }[];
+  appliedFilters: { label: React.ReactNode; }[];
   label: React.ReactNode;
   children: React.ReactNode;
-  clearFilter: () => void,
+  clearFilter: () => void;
   icon: React.ComponentType;
   skipLabelUpdate?: boolean;
   btnSize?: 'sm' | 'md' | 'lg';
@@ -52,9 +52,13 @@ const SearchFilterWidget: React.FC<{
         >
           {props.label}
           {!props.skipLabelUpdate && appliedFilters.length >= 1 ? <>: {appliedFilters[0].label}</> : null}
-          {!props.skipLabelUpdate && appliedFilters.length > 1 ? (
-            <>,&nbsp;<Badge variant="secondary">+{appliedFilters.length - 1}</Badge></>
-          ) : null}
+          {!props.skipLabelUpdate && appliedFilters.length > 1 ?
+            (
+              <>
+                ,&nbsp;<Badge variant="secondary">+{appliedFilters.length - 1}</Badge>
+              </>
+            ) :
+            null}
         </Button>
       </div>
       <ModalPopup
@@ -68,8 +72,7 @@ const SearchFilterWidget: React.FC<{
         >
           {props.children}
 
-          {
-            !!appliedFilters.length
+          {!!appliedFilters.length
             && (
               <div className="d-flex justify-content-end">
                 <Button
@@ -77,11 +80,10 @@ const SearchFilterWidget: React.FC<{
                   variant="link"
                   className="text-info-500 text-decoration-none clear-filter-button"
                 >
-                  { intl.formatMessage(messages.clearFilter) }
+                  {intl.formatMessage(messages.clearFilter)}
                 </Button>
               </div>
-            )
-          }
+            )}
         </div>
       </ModalPopup>
     </>

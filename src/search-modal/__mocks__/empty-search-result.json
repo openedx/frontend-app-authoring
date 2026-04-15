@@ -19,7 +19,7 @@
       "offset": 0,
       "estimatedTotalHits": 0,
       "facetDistribution": {
-          "block_type": {}
+        "block_type": {}
       },
       "facetStats": {}
     }

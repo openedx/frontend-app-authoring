@@ -21,17 +21,19 @@ const baseProps = {
 };
 
 jest.mock('../SelectableBox', () => {
-  const Set = (props: { children: React.ReactNode }) => <div data-mock="SelectableBox.Set">{props?.children}</div>;
+  const Set = (props: { children: React.ReactNode; }) => <div data-mock="SelectableBox.Set">{props?.children}</div>;
   return { Set };
 });
 
-jest.mock('./GalleryCard', () => function mockGalleryCard(props) {
-  return <div data-mock="GalleryCard">GalleryCard {props?.asset?.id}</div>;
-});
+jest.mock('./GalleryCard', () =>
+  function mockGalleryCard(props) {
+    return <div data-mock="GalleryCard">GalleryCard {props?.asset?.id}</div>;
+  });
 
-jest.mock('./GalleryLoadMoreButton', () => function mockGalleryLoadMoreButton(props) {
-  return <button type="button" data-mock="GalleryLoadMoreButton" onClick={props.fetchNextPage}>Load More</button>;
-});
+jest.mock('./GalleryLoadMoreButton', () =>
+  function mockGalleryLoadMoreButton(props) {
+    return <button type="button" data-mock="GalleryLoadMoreButton" onClick={props.fetchNextPage}>Load More</button>;
+  });
 
 describe('Gallery', () => {
   beforeEach(() => {

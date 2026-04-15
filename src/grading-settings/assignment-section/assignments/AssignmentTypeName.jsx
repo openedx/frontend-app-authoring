@@ -17,9 +17,10 @@ const AssignmentTypeName = ({
 
   return (
     <li className="course-grading-assignment-type-name">
-      <Form.Group className={classNames('form-group-custom', {
-        'form-group-custom_isInvalid': errorEffort,
-      })}
+      <Form.Group
+        className={classNames('form-group-custom', {
+          'form-group-custom_isInvalid': errorEffort,
+        })}
       >
         <Form.Label className="grading-label">
           {intl.formatMessage(messages.assignmentTypeNameTitle)}

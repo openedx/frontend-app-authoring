@@ -14,14 +14,16 @@ describe('backup-restore hooks', () => {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
-    return function namingToMakeEslintHappy({ children }: { children: React.ReactNode }) {
+    return function namingToMakeEslintHappy({ children }: { children: React.ReactNode; }) {
       return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
     };
   };
 
   beforeEach(() => {
     initializeMocks();
-    createLibraryBackupSpy = jest.spyOn(api, 'createLibraryBackup').mockImplementation(async () => ({ task_id: 'task-abc' }));
+    createLibraryBackupSpy = jest.spyOn(api, 'createLibraryBackup').mockImplementation(async () => ({
+      task_id: 'task-abc',
+    }));
     getLibraryBackupStatusSpy = jest.spyOn(api, 'getLibraryBackupStatus').mockImplementation(async () => ({
       state: LibraryBackupStatus.Pending,
       url: '',

@@ -10,17 +10,18 @@ const onCreateClickMock = jest.fn();
 const onCancelClickMock = jest.fn();
 const onEditClickMock = jest.fn();
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <ContentGroupForm
-      groupNames={contentGroupsMock.groups?.map((group) => group.name)}
-      onCreateClick={onCreateClickMock}
-      onCancelClick={onCancelClickMock}
-      onEditClick={onEditClickMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <ContentGroupForm
+        groupNames={contentGroupsMock.groups?.map((group) => group.name)}
+        onCreateClick={onCreateClickMock}
+        onCancelClick={onCancelClickMock}
+        onEditClick={onEditClickMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ContentGroupForm />', () => {
   it('renders component correctly', () => {
@@ -40,7 +41,10 @@ describe('<ContentGroupForm />', () => {
 
   it('renders component in edit mode', () => {
     const {
-      getByText, queryByText, getByRole, getByPlaceholderText,
+      getByText,
+      queryByText,
+      getByRole,
+      getByPlaceholderText,
     } = renderComponent({
       isEditMode: true,
       overrideValue: 'overrideValue',
@@ -75,7 +79,9 @@ describe('<ContentGroupForm />', () => {
   it('calls onCreate when the "Create" button is clicked with a valid form', async () => {
     const user = userEvent.setup();
     const {
-      getByRole, getByPlaceholderText, queryByText,
+      getByRole,
+      getByPlaceholderText,
+      queryByText,
     } = renderComponent();
     const newGroupNameText = 'New group name';
     const newGroupInput = getByPlaceholderText(

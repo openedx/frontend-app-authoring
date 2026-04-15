@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   saveButtonLabel: {
     id: 'authoring.texteditor.sourcecodemodal.next.label',
     defaultMessage: 'Save',

@@ -25,7 +25,9 @@ import { ImportDetailsPage } from './import-course/ImportDetailsPage';
 
 const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const {
-    libraryId, collectionId, containerId,
+    libraryId,
+    collectionId,
+    containerId,
   } = useParams();
 
   if (libraryId === undefined) {
@@ -36,9 +38,9 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
   return (
     <LibraryProvider
       /** NOTE: We need to pass the collectionId or containerId as key to the LibraryProvider to force a re-render
-        * when we navigate to a collection or container page. This is necessary to make the back/forward navigation
-        * work correctly, as the LibraryProvider needs to rebuild the state from the URL.
-        * */
+       * when we navigate to a collection or container page. This is necessary to make the back/forward navigation
+       * work correctly, as the LibraryProvider needs to rebuild the state from the URL.
+       */
       key={collectionId || containerId}
       libraryId={libraryId}
       /** NOTE: The component picker modal to use. We need to pass it as a reference instead of

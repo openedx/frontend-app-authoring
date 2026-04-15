@@ -1,5 +1,8 @@
 import {
-  render, screen, waitFor, initializeMocks,
+  render,
+  screen,
+  waitFor,
+  initializeMocks,
 } from '@src/testUtils';
 
 import { mockContentTaxonomyTagsData } from './data/api.mocks';

@@ -56,29 +56,41 @@ const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
 
   return (
     <>
-      <h3 className="h5"><FormattedMessage {...messages.advancedDetailsUsageKey} /></h3>
+      <h3 className="h5">
+        <FormattedMessage {...messages.advancedDetailsUsageKey} />
+      </h3>
       <p className="text-monospace small">{usageKey}</p>
-      <h3 className="h5"><FormattedMessage {...messages.advancedDetailsOLX} /></h3>
+      <h3 className="h5">
+        <FormattedMessage {...messages.advancedDetailsOLX} />
+      </h3>
       {(() => {
         if (isOLXLoading) { return <LoadingSpinner />; }
         if (!olx) { return <FormattedMessage {...messages.advancedDetailsOLXError} />; }
         return (
           <div className="mb-4">
-            {olxUpdater.error ? (
-              <Alert variant="danger">
-                <>
-                  <p><strong><FormattedMessage {...messages.advancedDetailsOLXEditFailed} /></strong></p>
-                  {/*
+            {olxUpdater.error ?
+              (
+                <Alert variant="danger">
+                  <>
+                    <p>
+                      <strong>
+                        <FormattedMessage {...messages.advancedDetailsOLXEditFailed} />
+                      </strong>
+                    </p>
+                    {
+                      /*
                     TODO: fix the API so it returns 400 errors in a JSON object, not HTML 500 errors. Then display
                     a useful error message here like "parsing the XML failed on line 3".
                     (olxUpdater.error as Record<string, any>)?.customAttributes?.httpErrorResponseData.errorMessage
-                  */}
-                </>
-              </Alert>
-            ) : null}
+                  */
+                    }
+                  </>
+                </Alert>
+              ) :
+              null}
             <CodeEditor key={usageKey} readOnly={!isEditingOLX} editorRef={editorRef}>{olx}</CodeEditor>
-            {
-              isEditingOLX ? (
+            {isEditingOLX ?
+              (
                 <>
                   <Button variant="primary" onClick={updateOlx} disabled={olxUpdater.isPending}>
                     <FormattedMessage {...messages.advancedDetailsOLXSaveButton} />
@@ -87,27 +99,31 @@ const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
                     <FormattedMessage {...messages.advancedDetailsOLXCancelButton} />
                   </Button>
                 </>
-              ) : !readOnly ? (
+              ) :
+              !readOnly ?
+              (
                 <OverlayTrigger
                   placement="bottom-start"
-                  overlay={(
+                  overlay={
                     <Tooltip id="olx-edit-button">
                       <FormattedMessage {...messages.advancedDetailsOLXEditWarning} />
                     </Tooltip>
-                  )}
+                  }
                 >
                   <Button variant="link" onClick={() => setEditingOLX(true)}>
                     <FormattedMessage {...messages.advancedDetailsOLXEditButton} />
                   </Button>
                 </OverlayTrigger>
-              ) : (
+              ) :
+              (
                 null
-              )
-            }
+              )}
           </div>
         );
       })()}
-      <h3 className="h5"><FormattedMessage {...messages.advancedDetailsAssets} /></h3>
+      <h3 className="h5">
+        <FormattedMessage {...messages.advancedDetailsAssets} />
+      </h3>
       <ComponentAdvancedAssets />
     </>
   );

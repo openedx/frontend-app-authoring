@@ -33,15 +33,11 @@ const TaxonomyDetailPage = () => {
   } = useTaxonomyDetails(taxonomyId);
 
   if (!isFetched) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   if (isError || !taxonomy) {
-    return (
-      <ConnectionErrorAlert />
-    );
+    return <ConnectionErrorAlert />;
   }
 
   const getHeaderActions = () => (

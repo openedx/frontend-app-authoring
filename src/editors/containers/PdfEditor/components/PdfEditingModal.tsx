@@ -1,7 +1,10 @@
 import { EditorComponent } from '@src/editors/EditorComponent';
 import { useFormikContext } from 'formik';
 import React, {
-  PropsWithChildren, useContext, useEffect, useRef,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useRef,
 } from 'react';
 import EditorContainer from '@src/editors/containers/EditorContainer';
 import { PdfBlockContext, PdfState } from '@src/editors/containers/PdfEditor/contexts';

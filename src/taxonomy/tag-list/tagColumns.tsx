@@ -49,7 +49,7 @@ interface GetColumnsArgs {
   maxDepth: number;
 }
 
-const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
+const UsageCountDisplay = ({ row }: { row: Row<TreeRowData>; }) => {
   const count = asTagListRowData(row).usageCount ?? 0;
   return (
     count > 0 && (

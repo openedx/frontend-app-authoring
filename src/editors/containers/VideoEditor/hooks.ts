@@ -35,7 +35,7 @@ export const state = StrictDict({
   /* eslint-enable react-hooks/rules-of-hooks */
 });
 
-export const errorsHook = (): { error: ErrorContextData, validateEntry: () => boolean } => {
+export const errorsHook = (): { error: ErrorContextData; validateEntry: () => boolean; } => {
   const [durationErrors, setDurationErrors] = state.durationErrors({});
   const [handoutErrors, setHandoutErrors] = state.handoutErrors({});
   const [licenseErrors, setLicenseErrors] = state.licenseErrors({});

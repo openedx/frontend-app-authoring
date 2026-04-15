@@ -139,6 +139,11 @@ const messages = defineMessages({
     defaultMessage: 'Settings',
     description: 'Label for the settings tab of the unit info sidebar',
   },
+  locationCopiedText: {
+    id: 'course-authoring.unit-page.sidebar.info.copied-location',
+    defaultMessage: 'Location ID saved in the Clipboard',
+    description: 'Toast messages when the user copied an unit location ID',
+  },
 });
 
 export default messages;

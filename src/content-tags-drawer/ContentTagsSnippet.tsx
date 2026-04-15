@@ -8,7 +8,7 @@ interface ContentTagsSnippetProps {
   contentId: string;
 }
 
-const ContentTagChip = ({ tag }: { tag: Tag }) => {
+const ContentTagChip = ({ tag }: { tag: Tag; }) => {
   let lineageStr = tag.lineage.join(' > ');
   const lineageLength = tag.lineage.length;
   const MAX_TAG_LENGTH = 30;
@@ -56,9 +56,7 @@ export const ContentTagsSnippet = ({ contentId }: ContentTagsSnippetProps) => {
             {`${taxonomy.name} (${taxonomy.tags.length})`}
           </h4>
           <div className="d-flex flex-wrap">
-            {taxonomy.tags.map((tag) => (
-              <ContentTagChip key={tag.value} tag={tag} />
-            ))}
+            {taxonomy.tags.map((tag) => <ContentTagChip key={tag.value} tag={tag} />)}
           </div>
         </div>
       ))}

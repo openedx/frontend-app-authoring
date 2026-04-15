@@ -104,14 +104,14 @@ const CustomPageCard = ({
         title={intl.formatMessage(messages.deleteConfirmationTitle)}
         isOpen={isDeleteConfirmationOpen}
         onClose={closeDeleteConfirmation}
-        footerNode={(
+        footerNode={
           <ActionRow>
             <Button variant="tertiary" onClick={closeDeleteConfirmation}>
               {intl.formatMessage(messages.cancelButtonLabel)}
             </Button>
             <StatefulButton onClick={handleDelete} state={deletePageStatus} {...deletePageStateProps} />
           </ActionRow>
-        )}
+        }
       >
         {intl.formatMessage(messages.deleteConfirmationMessage)}
       </AlertModal>

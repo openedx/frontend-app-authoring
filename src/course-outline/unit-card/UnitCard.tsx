@@ -22,6 +22,7 @@ import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
@@ -35,8 +36,8 @@ interface UnitCardProps {
   onOpenDeleteModal: () => void;
   onDuplicateSubmit: () => void;
   index: number;
-  getPossibleMoves: (index: number, step: number) => void,
-  onOrderChange: (section: XBlock, moveDetails: any) => void,
+  getPossibleMoves: (index: number, step: number) => void;
+  onOrderChange: (section: XBlock, moveDetails: any) => void;
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean;
   discussionsSettings: {
@@ -67,9 +68,8 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-  const {
-    courseId, getUnitUrl, openUnlinkModal, openPublishModal, setCurrentSelection,
-  } = useCourseAuthoringContext();
+  const { courseId, getUnitUrl, openUnlinkModal } = useCourseAuthoringContext();
+  const { openPublishModal, setCurrentSelection } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
   const { data: subsection = initialSubsectionData } = useCourseItemData(
@@ -136,6 +136,7 @@ const UnitCard = ({
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -144,6 +145,7 @@ const UnitCard = ({
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -171,7 +173,8 @@ const UnitCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      openContainerSidebar(unit.id, subsection.id, section.id);
+      openContainerSidebar(unit.id, subsection.id, section.id, index);
+      selectAndTrigger();
     }
   }, [openContainerSidebar]);
 
@@ -180,13 +183,13 @@ const UnitCard = ({
       title={displayName}
       titleLink={getUnitUrl(id)}
       namePrefix={namePrefix}
-      prefixIcon={(
+      prefixIcon={
         <UpstreamInfoIcon
           upstreamInfo={upstreamInfo}
           size="xs"
           openSyncModal={openSyncModal}
         />
-      )}
+      }
     />
   );
 
@@ -205,7 +208,7 @@ const UnitCard = ({
     if (moment(initialData.editedOnRaw).isAfter(moment(unit.editedOnRaw))) {
       queryClient.cancelQueries({
         queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
       }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
@@ -225,11 +228,9 @@ const UnitCard = ({
     return null;
   }
 
-  const isDraggable = (
-    actions.draggable
-      && (actions.allowMoveUp || actions.allowMoveDown)
-      && !subsection.upstreamInfo?.upstreamRef
-  );
+  const isDraggable = actions.draggable
+    && (actions.allowMoveUp || actions.allowMoveDown)
+    && !subsection.upstreamInfo?.upstreamRef;
 
   return (
     <>
@@ -266,18 +267,20 @@ const UnitCard = ({
             hasChanges={hasChanges}
             cardId={id}
             onClickMenuButton={selectAndTrigger}
-            onClickPublish={() => openPublishModal({
-              value: unit,
-              sectionId: section.id,
-              subsectionId: subsection.id,
-            })}
+            onClickPublish={() =>
+              openPublishModal({
+                value: unit,
+                sectionId: section.id,
+                subsectionId: subsection.id,
+              })}
             onClickConfigure={onOpenConfigureModal}
             onClickDelete={onOpenDeleteModal}
-            onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
-              value: unit,
-              sectionId: section.id,
-              subsectionId: subsection.id,
-            })}
+            onClickUnlink={/* istanbul ignore next */ () =>
+              openUnlinkModal({
+                value: unit,
+                sectionId: section.id,
+                subsectionId: subsection.id,
+              })}
             onClickMoveUp={handleUnitMoveUp}
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}

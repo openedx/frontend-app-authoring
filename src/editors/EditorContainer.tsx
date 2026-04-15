@@ -63,6 +63,7 @@ const EditorContainer: React.FC<Props> = ({
         description={intl.formatMessage(messages.libraryBlockEditWarningDescription)}
         actions={[
           <Button
+            key="edit-warning"
             destination={getLibraryBlockUrl()}
             target="_blank"
             rel="noopener noreferrer"

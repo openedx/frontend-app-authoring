@@ -73,7 +73,4 @@ FormRadioSetContextProvider.defaultProps = {
 };
 
 export default FormRadioSetContext;
-export {
-  useRadioSetContext,
-  FormRadioSetContextProvider,
-};
+export { useRadioSetContext, FormRadioSetContextProvider };
