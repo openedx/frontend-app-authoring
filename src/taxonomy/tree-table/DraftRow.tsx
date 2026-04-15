@@ -34,7 +34,6 @@ const DraftRow: React.FC<DraftRowProps> = ({
   rowTestId,
   rowId,
   row,
-
 }) => {
   const [rowValue, setRowValue] = useState(initialValue);
   const [saveDisabled, setSaveDisabled] = useState(true);

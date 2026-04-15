@@ -230,7 +230,7 @@ export const useCreateTag = (taxonomyId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ value, parentTagValue }: { value: string, parentTagValue?: string }) => {
+    mutationFn: async ({ value, parentTagValue }: { value: string; parentTagValue?: string; }) => {
       await getAuthenticatedHttpClient().post(
         apiUrls.createTag(taxonomyId),
         { tag: value, parent_tag_value: parentTagValue },
@@ -254,7 +254,7 @@ export const useUpdateTag = (taxonomyId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ value, originalValue }: { value: string, originalValue: string }) => {
+    mutationFn: async ({ value, originalValue }: { value: string; originalValue: string; }) => {
       await getAuthenticatedHttpClient().patch(
         apiUrls.updateTag(taxonomyId),
         { tag: originalValue, updated_tag_value: value },

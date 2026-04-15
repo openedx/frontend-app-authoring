@@ -11,7 +11,7 @@ const asTagListRowData = (row: Row<TreeRowData>): TagListRowData => (
   row.original as unknown as TagListRowData
 );
 
-const UsageCountDisplay = ({ row }: { row: Row<TreeRowData> }) => {
+const UsageCountDisplay = ({ row }: { row: Row<TreeRowData>; }) => {
   const count = asTagListRowData(row).usageCount ?? 0;
 
   if (count <= 0) {
