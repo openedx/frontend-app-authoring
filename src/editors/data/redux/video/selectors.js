@@ -38,6 +38,7 @@ export const simpleSelectors = [
   stateKeys.duration,
   stateKeys.showTranscriptByDefault,
   stateKeys.handout,
+  stateKeys.audioDescriptionUrl,
   stateKeys.licenseType,
   stateKeys.licenseDetails,
   stateKeys.courseLicenseType,
@@ -112,6 +113,7 @@ export const videoSettings = createSelector(
     module.simpleSelectors.duration,
     module.simpleSelectors.showTranscriptByDefault,
     module.simpleSelectors.handout,
+    module.simpleSelectors.audioDescriptionUrl,
     module.simpleSelectors.licenseType,
     module.simpleSelectors.licenseDetails,
   ],
@@ -128,6 +130,7 @@ export const videoSettings = createSelector(
     duration,
     showTranscriptByDefault,
     handout,
+    audioDescriptionUrl,
     licenseType,
     licenseDetails,
   ) => (
@@ -144,6 +147,7 @@ export const videoSettings = createSelector(
       duration,
       showTranscriptByDefault,
       handout,
+      audioDescriptionUrl,
       licenseType,
       licenseDetails,
     }

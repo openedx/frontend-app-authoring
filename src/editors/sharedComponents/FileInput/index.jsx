@@ -1,15 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export const fileInput = ({ onAddFile }) => {
+import { checkValidFileSize } from './fileValidation';
+
+export const fileInput = ({ onAddFile, maxBytes, onSizeFail }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const ref = React.useRef();
   const click = () => ref.current.click();
   const addFile = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      onAddFile(file);
-    }
+    //  Check file is exists
+    if (!file) { return; }
+
+    // Check file size if maxBytes is provided
+    if (maxBytes && !checkValidFileSize({ file, onSizeFail, maxBytes })) { return; }
+
+    // Finally, delegate to the provided onAddFile handler
+    onAddFile(file);
   };
   return {
     click,

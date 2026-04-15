@@ -13,9 +13,11 @@ import TranscriptWidget from './components/TranscriptWidget';
 import VideoSourceWidget from './components/VideoSourceWidget';
 // Using default import to get selectors connected VideoSourceWidget
 import ConnectedVideoPreviewWidget from './components/VideoPreviewWidget';
+import AudioDescriptionWidget from './components/AudioDescriptionWidget';
 import './index.scss';
 import SocialShareWidget from './components/SocialShareWidget';
 import messages from '../../messages';
+import { useEditorContext } from '../../../../EditorContext';
 
 interface Props {
   onReturn: () => void;
@@ -27,35 +29,35 @@ const VideoSettingsModal: React.FC<Props> = ({
   onReturn,
   isLibrary,
   onClose,
-}) => (
-  <>
-    {!isLibrary && (
-      <Button
-        variant="link"
-        className="text-primary-500"
-        size="sm"
-        onClick={onClose || onReturn}
-        style={{
-          textDecoration: 'none',
-          marginLeft: '3px',
-        }}
-      >
-        <Icon src={ArrowBackIos} style={{ height: '13px' }} />
-        <FormattedMessage {...messages.replaceVideoButtonLabel} />
-      </Button>
-    )}
-    <ErrorSummary />
-    <ConnectedVideoPreviewWidget />
-    <VideoSourceWidget />
-    {!isLibrary && (
-      <SocialShareWidget />
-    )}
-    <ThumbnailWidget />
-    <TranscriptWidget />
-    <DurationWidget />
-    <HandoutWidget />
-    <LicenseWidget />
-  </>
-);
+}) => {
+  const { isAudioDescriptionEnabled } = useEditorContext();
+  return (
+    <>
+      {!isLibrary && (
+        <Button
+          variant="link"
+          className="text-primary-500 video-settings-back-btn"
+          size="sm"
+          onClick={onClose || onReturn}
+        >
+          <Icon src={ArrowBackIos} className="video-settings-back-icon" />
+          <FormattedMessage {...messages.replaceVideoButtonLabel} />
+        </Button>
+      )}
+      <ErrorSummary />
+      <ConnectedVideoPreviewWidget />
+      <VideoSourceWidget />
+      {!isLibrary && (
+        <SocialShareWidget />
+      )}
+      <ThumbnailWidget />
+      <TranscriptWidget />
+      {isAudioDescriptionEnabled && !isLibrary && <AudioDescriptionWidget />}
+      <DurationWidget />
+      <HandoutWidget />
+      <LicenseWidget />
+    </>
+  );
+};
 
 export default VideoSettingsModal;

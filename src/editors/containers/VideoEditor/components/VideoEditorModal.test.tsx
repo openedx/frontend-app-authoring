@@ -6,6 +6,8 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import VideoEditorModal from './VideoEditorModal';
 import { thunkActions } from '../../../data/redux';
+import { EditorContextProvider } from '../../../EditorContext';
+import { mockWaffleFlags } from '../../../../data/apiHooks.mock';
 
 jest.mock('../../../data/redux', () => ({
   ...jest.requireActual('../../../data/redux'),
@@ -17,6 +19,8 @@ jest.mock('../../../data/redux', () => ({
     },
   },
 }));
+
+mockWaffleFlags();
 
 describe('VideoUploader', () => {
   let store;
@@ -36,6 +40,8 @@ describe('VideoUploader', () => {
           uploadTranscript: { status: 'inactive' },
           deleteTranscript: { status: 'inactive' },
           fetchVideos: { status: 'inactive' },
+          uploadAudioDescription: { status: 'inactive' },
+          deleteAudioDescription: { status: 'inactive' },
         },
         video: {
           videoSource: '',
@@ -53,6 +59,7 @@ describe('VideoUploader', () => {
             stopTime: '00:00:00',
             total: '00:00:00',
           },
+          audioDescriptionUrl: '',
         },
       },
     });
@@ -69,13 +76,15 @@ describe('VideoUploader', () => {
   const renderComponent = async () => render(
     <AppProvider store={store} wrapWithRouter={false}>
       <IntlProvider locale="en">
-        <MemoryRouter
-          initialEntries={[
-            '/some/path?selectedVideoId=id_1&selectedVideoUrl=https://video.com',
-          ]}
-        >
-          <VideoEditorModal isLibrary={false} />
-        </MemoryRouter>
+        <EditorContextProvider learningContextId="course-v1:test+test+test">
+          <MemoryRouter
+            initialEntries={[
+              '/some/path?selectedVideoId=id_1&selectedVideoUrl=https://video.com',
+            ]}
+          >
+            <VideoEditorModal isLibrary={false} />
+          </MemoryRouter>
+        </EditorContextProvider>
       </IntlProvider>
     </AppProvider>,
   );
