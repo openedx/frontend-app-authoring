@@ -11,6 +11,6 @@ export interface PermissionValidationQuery {
   [permissionKey: string]: PermissionValidationRequestItem;
 }
 
-export interface PermissionValidationAnswer {
-  [permissionKey: string]: boolean;
-}
+export type PermissionValidationAnswer<Query extends PermissionValidationQuery = PermissionValidationQuery> = {
+  [K in keyof Query]: boolean;
+};

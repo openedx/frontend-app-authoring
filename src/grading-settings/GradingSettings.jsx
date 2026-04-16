@@ -12,7 +12,7 @@ import { Helmet } from 'react-helmet';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { STATEFUL_BUTTON_STATES } from '@src/constants';
 import { useCourseSettings } from '@src/data/apiHooks';
-import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getGradingPermissions } from '@src/authz/permissionHelpers';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
@@ -40,8 +40,9 @@ const GradingSettings = () => {
 
   const {
     isLoading: isLoadingUserPermissions,
-    permissions: userPermissions,
-  } = useUserPermissionsWithAuthzCourse(courseId, getGradingPermissions(courseId));
+    canViewGradingSettings,
+    canEditGradingSettings,
+  } = useCourseUserPermissions(courseId, getGradingPermissions(courseId));
 
   const {
     data: gradingSettings,
@@ -102,7 +103,7 @@ const GradingSettings = () => {
     }
   }, [savePending]);
 
-  if (!isLoadingUserPermissions && !userPermissions.canViewGradingSettings) {
+  if (!isLoadingUserPermissions && !canViewGradingSettings) {
     return <PermissionDeniedAlert />;
   }
 
@@ -118,7 +119,7 @@ const GradingSettings = () => {
     return null;
   }
 
-  const isEditable = !isLoadingUserPermissions && userPermissions.canEditGradingSettings;
+  const isEditable = !isLoadingUserPermissions && canEditGradingSettings;
 
   const handleQueryProcessing = () => {
     setShowSuccessAlert(false);

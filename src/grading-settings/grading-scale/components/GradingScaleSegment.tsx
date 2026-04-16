@@ -18,7 +18,7 @@ interface GradingScaleSegmentProps {
   letters: [string];
   gradingSegments: RangeSegment[];
   removeGradingSegment: (idx: number) => void;
-  isEditable?: boolean,
+  isEditable?: boolean;
 }
 
 const GradingScaleSegment = ({

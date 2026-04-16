@@ -8,7 +8,7 @@ import {
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getCourseSettingsApiUrl } from '@src/data/api';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
-import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 
 import gradingSettings from './__mocks__/gradingSettings';
 import { getGradingSettingsApiUrl } from './data/api';
@@ -17,12 +17,10 @@ import GradingSettings from './GradingSettings';
 import messages from './messages';
 
 jest.mock('@src/authz/hooks', () => ({
-  useUserPermissionsWithAuthzCourse: jest.fn().mockReturnValue({
+  useCourseUserPermissions: jest.fn().mockReturnValue({
     isLoading: false,
-    permissions: {
-      canViewGradingSettings: true,
-      canEditGradingSettings: true,
-    },
+    canViewGradingSettings: true,
+    canEditGradingSettings: true,
   }),
 }));
 
@@ -151,9 +149,10 @@ describe('<GradingSettings /> permissions', () => {
     mock.onGet(getGradingSettingsApiUrl(courseId)).reply(200, gradingSettings);
     mock.onPost(getGradingSettingsApiUrl(courseId)).reply(200, {});
     mock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, {});
-    jest.mocked(useUserPermissionsWithAuthzCourse).mockReturnValue({
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
-      permissions: { canViewGradingSettings: true, canEditGradingSettings: true },
+      canViewGradingSettings: true,
+      canEditGradingSettings: true,
     });
   });
 
@@ -171,9 +170,10 @@ describe('<GradingSettings /> permissions', () => {
 
   it('should show permission denied alert when user lacks view permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useUserPermissionsWithAuthzCourse).mockReturnValue({
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
-      permissions: { canViewGradingSettings: false, canEditGradingSettings: false },
+      canViewGradingSettings: false,
+      canEditGradingSettings: false,
     });
     render(<RootWrapper />);
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
@@ -181,9 +181,10 @@ describe('<GradingSettings /> permissions', () => {
 
   it('should disable inputs when user has view but not edit permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useUserPermissionsWithAuthzCourse).mockReturnValue({
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
-      permissions: { canViewGradingSettings: true, canEditGradingSettings: false },
+      canViewGradingSettings: true,
+      canEditGradingSettings: false,
     });
     render(<RootWrapper />);
     const segmentInputs = await screen.findAllByTestId('grading-scale-segment-input');
@@ -192,9 +193,10 @@ describe('<GradingSettings /> permissions', () => {
 
   it('should disable save button when user lacks edit permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useUserPermissionsWithAuthzCourse).mockReturnValue({
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
-      permissions: { canViewGradingSettings: true, canEditGradingSettings: false },
+      canViewGradingSettings: true,
+      canEditGradingSettings: false,
     });
     render(<RootWrapper />);
     const segmentInputs = await screen.findAllByTestId('grading-scale-segment-input');
