@@ -89,7 +89,6 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
       total: rawVideoData.duration || 0, // TODO can we get total duration? if not, probably dropping from widget
     },
     handout: rawVideoData.handout,
-    audioDescriptionUrl: rawVideoData.audio_description || '',
     licenseType,
     licenseDetails: {
       attribution: licenseOptions.by,
@@ -293,38 +292,7 @@ export const uploadHandout = ({ file }) => (dispatch) => {
   }));
 };
 
-export const uploadAudioDescription = ({ file }) => (dispatch, getState) => {
-  const state = getState();
-  const videoId = selectors.video.videoId(state) || '';
-  dispatch(requests.uploadAudioDescription({
-    file,
-    videoId,
-    onSuccess: (response) => {
-      const fileName = response.data.file_name || file.name;
-      const newVideoId = response.data.video_id || response.data.edx_video_id;
-      const fieldUpdate = {
-        audioDescriptionUrl: fileName,
-      };
-      if (newVideoId) {
-        fieldUpdate.videoId = newVideoId;
-      }
-      dispatch(actions.video.updateField(fieldUpdate));
-    },
-  }));
-};
-
-export const deleteAudioDescription = () => (dispatch, getState) => {
-  const state = getState();
-  const videoId = selectors.video.videoId(state) || '';
-  dispatch(requests.deleteAudioDescription({
-    videoId,
-    onSuccess: () => {
-      dispatch(actions.video.updateField({
-        audioDescriptionUrl: '',
-      }));
-    },
-  }));
-};
+// Transcript Thunks:
 
 export const importTranscript = () => (dispatch, getState) => {
   const state = getState();
@@ -497,8 +465,6 @@ export default {
   updateTranscriptLanguage,
   replaceTranscript,
   uploadHandout,
-  uploadAudioDescription,
-  deleteAudioDescription,
   uploadVideo,
   updateTranscriptHandlerUrl,
 };

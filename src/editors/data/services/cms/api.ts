@@ -284,31 +284,6 @@ export const apiMethods = {
       data,
     );
   },
-  uploadAudioDescription: ({
-    blockId,
-    studioEndpointUrl,
-    file,
-  }) => {
-    const data = new FormData();
-    data.append('file', file);
-    data.append('file_name', file.name);
-    data.append('content_type', file.type || 'audio/mpeg');
-    return post(
-      urls.audioDescriptionHandler({ studioEndpointUrl, blockId }),
-      data,
-    );
-  },
-  deleteAudioDescription: ({
-    blockId,
-    studioEndpointUrl,
-    videoId,
-  }) => {
-    const deleteJSON = { data: { edx_video_id: videoId } };
-    return deleteObject(
-      urls.audioDescriptionHandler({ studioEndpointUrl, blockId }),
-      deleteJSON,
-    );
-  },
   normalizeContent: ({
     blockId,
     blockType,
@@ -377,7 +352,6 @@ export const apiMethods = {
           track: '', // TODO Downloadable Transcript URL. Backend expects a file name, for example: "something.srt"
           show_captions: content.showTranscriptByDefault,
           handout: content.handout,
-          audio_description: content.audioDescriptionUrl,
           start_time: durationStringFromValue(content.duration.startTime),
           end_time: durationStringFromValue(content.duration.stopTime),
           license: processLicense(content.licenseType, content.licenseDetails),

@@ -8,14 +8,7 @@ describe('requests reducer', () => {
 
   describe('handling actions', () => {
     const arbitraryKey = 'ArbItrAryKey';
-    const requestsList = [
-      RequestKeys.fetchUnit,
-      RequestKeys.fetchBlock,
-      RequestKeys.saveBlock,
-      RequestKeys.uploadAudioDescription,
-      RequestKeys.deleteAudioDescription,
-      arbitraryKey,
-    ];
+    const requestsList = [RequestKeys.fetchUnit, RequestKeys.fetchBlock, RequestKeys.saveBlock, arbitraryKey];
 
     requestsList.forEach(requestKey => {
       describe(`${requestKey} lifecycle`, () => {

@@ -4,10 +4,6 @@ import {
   get, post, put, deleteObject,
 } from './utils';
 
-jest.mock('@edx/frontend-platform/auth', () => ({
-  ...jest.requireActual('@edx/frontend-platform/auth'),
-}));
-
 jest.mock('./urls', () => ({
   block: jest.fn().mockReturnValue('urls.block'),
   blockAncestor: jest.fn().mockReturnValue('urls.blockAncestor'),
@@ -27,7 +23,6 @@ jest.mock('./urls', () => ({
     .mockImplementation(
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
     ),
-  audioDescriptionHandler: jest.fn().mockReturnValue('urls.audioDescriptionHandler'),
   handlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
   transcriptXblockV2: jest.fn().mockReturnValue('url.transcriptXblockV2'),
 }));
@@ -203,7 +198,6 @@ describe('cms api', () => {
           },
           showTranscriptByDefault: 'ShOWtrANscriPTBYDeFAulT',
           handout: 'HAnDOuT',
-          audioDescriptionUrl: 'https://cdn.example.com/audio-description.mp3',
           licenseType: 'LiCeNsETYpe',
           licenseDetails: 'liCENSeDetAIls',
         };
@@ -240,7 +234,6 @@ describe('cms api', () => {
             track: '',
             show_captions: content.showTranscriptByDefault,
             handout: content.handout,
-            audio_description: content.audioDescriptionUrl,
             start_time: content.duration.startTime,
             end_time: content.duration.stopTime,
             license,
@@ -323,37 +316,6 @@ describe('cms api', () => {
         expect(post).toHaveBeenCalledWith(
           urls.courseVideos({ studioEndpointUrl, learningContextId }),
           data,
-        );
-      });
-    });
-    describe('uploadAudioDescription', () => {
-      it('should call post with FormData containing the file', async () => {
-        const audio = new Blob(['data'], { type: 'audio/mpeg' });
-        const file = new File([audio], 'audio-description.mp3', { type: 'audio/mpeg' });
-
-        await apiMethods.uploadAudioDescription({
-          blockId,
-          studioEndpointUrl,
-          file,
-        });
-
-        expect(post).toHaveBeenCalledWith(
-          urls.audioDescriptionHandler({ studioEndpointUrl, blockId }),
-          expect.any(FormData),
-        );
-      });
-    });
-    describe('deleteAudioDescription', () => {
-      it('should call deleteObject with the audio description handler url and video id payload', async () => {
-        await apiMethods.deleteAudioDescription({
-          blockId,
-          studioEndpointUrl,
-          videoId: 'video-id-123',
-        });
-
-        expect(deleteObject).toHaveBeenCalledWith(
-          urls.audioDescriptionHandler({ studioEndpointUrl, blockId }),
-          { data: { edx_video_id: 'video-id-123' } },
         );
       });
     });

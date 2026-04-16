@@ -1,34 +1,9 @@
-import { fireEvent, render, renderHook } from '@testing-library/react';
-import { FileInput, fileInput } from '.';
+import React from 'react';
+import { fireEvent, render } from '@testing-library/react';
+
+import { FileInput } from '.';
 
 const mockOnChange = jest.fn();
-
-describe('fileInput hook', () => {
-  it('calls onAddFile when no maxBytes is set', () => {
-    const onAddFile = jest.fn();
-    const { result } = renderHook(() => fileInput({ onAddFile }));
-    result.current.addFile({ target: { files: [{ name: 'test.pdf', size: 2_000_000_000 }] } });
-    expect(onAddFile).toHaveBeenCalled();
-  });
-
-  it('blocks files exceeding maxBytes and calls onSizeFail', () => {
-    const onAddFile = jest.fn();
-    const onSizeFail = jest.fn();
-    const { result } = renderHook(() => fileInput({ onAddFile, maxBytes: 1_000_000, onSizeFail }));
-    result.current.addFile({ target: { files: [{ name: 'big.pdf', size: 2_000_000 }] } });
-    expect(onSizeFail).toHaveBeenCalled();
-    expect(onAddFile).not.toHaveBeenCalled();
-  });
-
-  it('allows files within maxBytes', () => {
-    const onAddFile = jest.fn();
-    const onSizeFail = jest.fn();
-    const { result } = renderHook(() => fileInput({ onAddFile, maxBytes: 1_000_000, onSizeFail }));
-    result.current.addFile({ target: { files: [{ name: 'small.pdf', size: 500_000 }] } });
-    expect(onSizeFail).not.toHaveBeenCalled();
-    expect(onAddFile).toHaveBeenCalled();
-  });
-});
 
 describe('FileInput component', () => {
   let el;

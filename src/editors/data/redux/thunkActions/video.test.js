@@ -25,8 +25,6 @@ jest.mock('./requests', () => ({
   uploadAsset: (args) => ({ uploadAsset: args }),
   allowThumbnailUpload: (args) => ({ allowThumbnailUpload: args }),
   uploadThumbnail: (args) => ({ uploadThumbnail: args }),
-  uploadAudioDescription: (args) => ({ uploadAudioDescription: args }),
-  deleteAudioDescription: (args) => ({ deleteAudioDescription: args }),
   deleteTranscript: (args) => ({ deleteTranscript: args }),
   uploadTranscript: (args) => ({ uploadTranscript: args }),
   getTranscriptFile: (args) => ({ getTranscriptFile: args }),
@@ -55,8 +53,6 @@ const mockFilename = 'soMEtRANscRipT.srt';
 const mockThumbnail = 'sOMefILE';
 const mockThumbnailResponse = { data: { image_url: 'soMEimAGEUrL' } };
 const thumbnailUrl = 'soMEimAGEUrL';
-const mockAudioDescriptionFile = 'soMEAudIODEsCrIPtIoN.mp3';
-const mockAudioDescriptionResponse = { data: { file_name: 'audio-description.mp3' } };
 const mockAllowTranscriptImport = { data: { command: 'import' } };
 const mockVideoFeatures = {
   data: {
@@ -205,7 +201,6 @@ describe('video thunkActions', () => {
           total: 0,
         },
         handout: testMetadata.handout,
-        audioDescriptionUrl: '',
         licenseType: 'liCENSEtyPe',
         licenseDetails: {
           attribution: true,
@@ -259,7 +254,6 @@ describe('video thunkActions', () => {
           total: testVideosState.duration,
         },
         handout: undefined,
-        audioDescriptionUrl: '',
         licenseType: 'liCENSEtyPe',
         licenseDetails: {
           attribution: true,
@@ -315,7 +309,6 @@ describe('video thunkActions', () => {
           total: 0,
         },
         handout: undefined,
-        audioDescriptionUrl: '',
         licenseType: 'liCENSEtyPe',
         licenseDetails: {
           attribution: true,
@@ -360,7 +353,6 @@ describe('video thunkActions', () => {
           value: true,
         },
         handout: testMetadata.handout,
-        audioDescriptionUrl: '',
         licenseType: 'liCENSEtyPe',
         licenseDetails: {
           attribution: true,
@@ -627,45 +619,6 @@ describe('video thunkActions', () => {
       const handout = mockFilename;
       dispatchedAction.uploadAsset.onSuccess({ data: { asset: { url: mockFilename } } });
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({ handout }));
-    });
-  });
-  describe('uploadAudioDescription', () => {
-    beforeEach(() => {
-      thunkActions.uploadAudioDescription({ file: mockAudioDescriptionFile })(dispatch, getState);
-      [[dispatchedAction]] = dispatch.mock.calls;
-    });
-    it('dispatches uploadAudioDescription action', () => {
-      expect(dispatchedAction.uploadAudioDescription).not.toBe(undefined);
-    });
-    test('passes file and current video id to the request thunk', () => {
-      expect(dispatchedAction.uploadAudioDescription.file).toEqual(mockAudioDescriptionFile);
-      expect(dispatchedAction.uploadAudioDescription.videoId).toEqual({ videoId: getState() });
-    });
-    test('onSuccess: stores the returned file name', () => {
-      dispatch.mockClear();
-      dispatchedAction.uploadAudioDescription.onSuccess(mockAudioDescriptionResponse);
-      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
-        audioDescriptionUrl: mockAudioDescriptionResponse.data.file_name,
-      }));
-    });
-  });
-  describe('deleteAudioDescription', () => {
-    beforeEach(() => {
-      thunkActions.deleteAudioDescription()(dispatch, getState);
-      [[dispatchedAction]] = dispatch.mock.calls;
-    });
-    it('dispatches deleteAudioDescription action', () => {
-      expect(dispatchedAction.deleteAudioDescription).not.toBe(undefined);
-    });
-    test('passes the current video id to the request thunk', () => {
-      expect(dispatchedAction.deleteAudioDescription.videoId).toEqual({ videoId: getState() });
-    });
-    test('onSuccess: clears the audio description URL', () => {
-      dispatch.mockClear();
-      dispatchedAction.deleteAudioDescription.onSuccess();
-      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
-        audioDescriptionUrl: '',
-      }));
     });
   });
   describe('uploadThumbnail', () => {

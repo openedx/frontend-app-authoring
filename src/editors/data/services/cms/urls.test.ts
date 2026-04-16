@@ -10,7 +10,6 @@ import {
   downloadVideoTranscriptURL,
   videoTranscripts,
   downloadVideoHandoutUrl,
-  audioDescriptionHandler,
   courseDetailsUrl,
   checkTranscriptsForImport,
   replaceTranscript,
@@ -150,12 +149,6 @@ describe('cms url methods', () => {
     it('returns url with studioEndpointUrl and handout', () => {
       expect(downloadVideoHandoutUrl({ studioEndpointUrl, handout }))
         .toEqual(`${studioEndpointUrl}${handout}`);
-    });
-  });
-  describe('audioDescriptionHandler', () => {
-    it('returns url with studioEndpointUrl and blockId', () => {
-      expect(audioDescriptionHandler({ studioEndpointUrl, blockId }))
-        .toEqual(`${block({ studioEndpointUrl, blockId })}/handler/studio_audio_description`);
     });
   });
   describe('courseDetailsUrl', () => {

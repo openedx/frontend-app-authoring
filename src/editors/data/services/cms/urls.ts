@@ -96,10 +96,6 @@ export const downloadVideoHandoutUrl = (({ studioEndpointUrl, handout }) => (
   `${studioEndpointUrl}${handout}`
 )) satisfies UrlFunction;
 
-export const audioDescriptionHandler = (({ studioEndpointUrl, blockId }) => (
-  `${block({ studioEndpointUrl, blockId })}/handler/studio_audio_description`
-)) satisfies UrlFunction;
-
 export const courseDetailsUrl = (({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/settings/details/${learningContextId}`
 )) satisfies UrlFunction;

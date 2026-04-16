@@ -545,32 +545,6 @@ export const deleteGamesImage = ({
   }));
 };
 
-export const uploadAudioDescription = ({ file, ...rest }) => (dispatch, getState) => {
-  const state = getState();
-  dispatch(module.networkRequest({
-    requestKey: RequestKeys.uploadAudioDescription,
-    promise: api.uploadAudioDescription({
-      blockId: selectors.app.blockId(state),
-      studioEndpointUrl: selectors.app.studioEndpointUrl(state),
-      file,
-    }),
-    ...rest,
-  }));
-};
-
-export const deleteAudioDescription = ({ videoId, ...rest }) => (dispatch, getState) => {
-  const state = getState();
-  dispatch(module.networkRequest({
-    requestKey: RequestKeys.deleteAudioDescription,
-    promise: api.deleteAudioDescription({
-      blockId: selectors.app.blockId(state),
-      studioEndpointUrl: selectors.app.studioEndpointUrl(state),
-      videoId,
-    }),
-    ...rest,
-  }));
-};
-
 export default StrictDict({
   fetchBlock,
   fetchStudioView,
@@ -597,6 +571,4 @@ export default StrictDict({
   getGamesSettings,
   saveGamesSettings,
   deleteGamesImage,
-  uploadAudioDescription,
-  deleteAudioDescription,
 });
