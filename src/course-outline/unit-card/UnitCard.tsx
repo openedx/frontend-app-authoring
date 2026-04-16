@@ -608,9 +608,9 @@ const UnitCard = ({
                     componentTemplates={componentTemplates}
                     showPasteXBlock={!!showPasteXBlock}
                     onPasteComponent={handlePasteComponent}
-                    onComponentCreated={async (info: CreatedXBlockInfo) => {
+                    onComponentCreated={(info: CreatedXBlockInfo) => {
                       dispatch(fetchCourseSectionQuery([section.id]));
-                      await refetchUnitData();
+                      refetchUnitData();
                       const editorBlockType = info.category || info.type;
                       if (supportsMFEEditor(editorBlockType)) {
                         // MFE editor available (html, video, problem, games, etc.)
