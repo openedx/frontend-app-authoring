@@ -51,6 +51,8 @@ describe('UnitSidebar', () => {
       selectedContainerState: { currentId: 'unit-1', sectionId: 's1', subsectionId: 'ss1' },
       clearSelection: jest.fn(),
       setSelectedContainerState: jest.fn(),
+      currentTabKey: 'info',
+      setCurrentTabKey: jest.fn(),
     });
     authoring.useCourseAuthoringContext.mockReturnValue({
       openPublishModal: jest.fn(),
@@ -97,6 +99,8 @@ describe('UnitSidebar', () => {
       selectedContainerState: { currentId: 'unit-2', sectionId: 's1', subsectionId: 'ss1' },
       clearSelection: jest.fn(),
       setSelectedContainerState: jest.fn(),
+      currentTabKey: 'info',
+      setCurrentTabKey: jest.fn(),
     });
     apiHooks.useCourseItemData.mockReturnValue({
       data: {
@@ -121,6 +125,8 @@ describe('UnitSidebar', () => {
       selectedContainerState: { currentId: 'unit-3', sectionId: 's1', subsectionId: 'ss1' },
       clearSelection: jest.fn(),
       setSelectedContainerState: jest.fn(),
+      currentTabKey: 'preview',
+      setCurrentTabKey: jest.fn(),
     });
     apiHooks.useCourseItemData.mockReturnValue({
       data: {
@@ -143,6 +149,8 @@ describe('UnitSidebar', () => {
       selectedContainerState: { currentId: 'unit-4', sectionId: 's1', subsectionId: 'ss1' },
       clearSelection: jest.fn(),
       setSelectedContainerState: jest.fn(),
+      currentTabKey: 'settings',
+      setCurrentTabKey: jest.fn(),
     });
     apiHooks.useCourseItemData.mockReturnValue({
       data: {

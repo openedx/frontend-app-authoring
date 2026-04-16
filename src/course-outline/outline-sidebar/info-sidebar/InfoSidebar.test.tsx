@@ -198,6 +198,8 @@ describe('InfoSidebar component', () => {
       .reply(200, data);
     renderComponent();
     expect(await screen.findByText('unit name')).toBeInTheDocument();
+    // The Details tab is not active by default (preview is); click it to load its content
+    await user.click(screen.getByRole('tab', { name: /Details/i }));
     expect(await screen.findByText('Unit Content Summary')).toBeInTheDocument();
     const btn = await screen.findByRole('button', { name: 'Publish Changes (Draft)' });
     expect(btn).toBeInTheDocument();
