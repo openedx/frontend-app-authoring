@@ -43,7 +43,6 @@ const BrokenLinkHref: FC<{ href: string; }> = ({ href }) => {
 };
 
 const GoToBlock: FC<{ block: { url: string; displayName?: string; }; }> = ({ block }) => {
-
   return (
     <div className="go-to-block-link-container">
       <Link to={block.url} className="broken-link" rel="noreferrer" target="_blank">
