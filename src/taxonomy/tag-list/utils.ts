@@ -6,7 +6,7 @@ import { TagListRowData } from './types';
  *
  * Minimal getter function for `row.original`. Mainly because the naming of `original` is not expressive,
  * and it needs to be cast to the correct type.
-*/
+ */
 export const getTagListRowData = (row: Row<TreeRowData>): TagListRowData => (
   row.original as unknown as TagListRowData
 );

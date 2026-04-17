@@ -176,9 +176,11 @@ const useEditActions = ({
 
   const getAxiosErrorMessage = (axiosError: AxiosError) => {
     const responseData = axiosError.response?.data;
-    const tagError = responseData ? Object.entries(responseData)?.find((errItem: [string, unknown]) => (
-      ['tag', 'value', 'updated_tag_value'].includes(errItem[0].toLowerCase())
-    )) : null;
+    const tagError = responseData ?
+      Object.entries(responseData)?.find((errItem: [string, unknown]) => (
+        ['tag', 'value', 'updated_tag_value'].includes(errItem[0].toLowerCase())
+      )) :
+      null;
 
     const errorMessages = tagError ? tagError[1] : (
       axiosError.message || intl.formatMessage(globalMessages.unknownError)

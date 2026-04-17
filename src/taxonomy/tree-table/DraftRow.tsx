@@ -86,9 +86,7 @@ const DraftRow: React.FC<DraftRowProps> = ({
       <td aria-label="Usage Count">
         {row ? <UsageCountDisplay row={row} /> : null}
       </td>
-      <td
-        className="tree-table-create-row-actions-cell p-2"
-      >
+      <td className="tree-table-create-row-actions-cell p-2">
         <span className="d-flex justify-content-end">
           <span className="mr-2">
             <Button
