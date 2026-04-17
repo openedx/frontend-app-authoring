@@ -1,4 +1,3 @@
-import { createCorrectInternalRoute } from '../utils';
 import { LinkCheckResult } from './types';
 
 export const buildBlockContainerUrl = (
@@ -6,9 +5,7 @@ export const buildBlockContainerUrl = (
   unitId: string,
   blockId: string,
 ): string => {
-  const path = `/course/${courseId}/container/${unitId}#${blockId}`;
-  const internalPath = createCorrectInternalRoute(path);
-  return internalPath;
+  return `/course/${courseId}/container/${unitId}#${blockId}`;
 };
 
 export const countBrokenLinks = (

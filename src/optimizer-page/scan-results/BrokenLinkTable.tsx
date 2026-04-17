@@ -25,6 +25,7 @@ import {
 } from '../../constants';
 import { buildBlockContainerUrl } from '../utils';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { Link } from 'react-router-dom';
 
 const BrokenLinkHref: FC<{ href: string; }> = ({ href }) => {
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -42,16 +43,12 @@ const BrokenLinkHref: FC<{ href: string; }> = ({ href }) => {
 };
 
 const GoToBlock: FC<{ block: { url: string; displayName?: string; }; }> = ({ block }) => {
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    window.open(block.url, '_blank');
-  };
 
   return (
     <div className="go-to-block-link-container">
-      <a href={block.url} onClick={handleClick} className="broken-link" rel="noreferrer">
+      <Link to={block.url} className="broken-link" rel="noreferrer" target="_blank">
         {block.displayName}
-      </a>
+      </Link>
     </div>
   );
 };
