@@ -5,6 +5,7 @@ import {
   fireEvent,
   waitFor,
 } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -12,6 +13,10 @@ import PropTypes from 'prop-types';
 import BrokenLinkTable from './BrokenLinkTable';
 import { Unit, Filters } from '../types';
 import initializeStore from '../../store';
+
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: jest.fn(() => ({ courseId: 'course-v1:TestX+Test101+2024' })),
+}));
 
 let store: any;
 
@@ -82,9 +87,11 @@ const BrokenLinkTableWrapper: React.FC<BrokenLinkTableWrapperProps> = ({
 
 const intlWrapper = (ui: React.ReactElement) =>
   render(
-    <IntlProvider locale="en" messages={{}}>
-      {ui}
-    </IntlProvider>,
+    <MemoryRouter>
+      <IntlProvider locale="en" messages={{}}>
+        {ui}
+      </IntlProvider>
+    </MemoryRouter>,
   );
 
 describe('BrokenLinkTable', () => {
@@ -709,11 +716,11 @@ describe('BrokenLinkTable', () => {
 
       const goToAnchor = screen.getByText('Test Block');
 
-      fireEvent.click(goToAnchor);
-
-      await waitFor(() => {
-        expect(window.open).toHaveBeenCalledWith('https://example.com/block', '_blank');
-      });
+      expect(goToAnchor.closest('a')).toHaveAttribute(
+        'href',
+        '/course/course-v1:TestX+Test101+2024/container/unit-1#block-1',
+      );
+      expect(goToAnchor.closest('a')).toHaveAttribute('target', '_blank');
     });
 
     it('BrokenLinkHref anchor opens the href URL', async () => {

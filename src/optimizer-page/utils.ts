@@ -1,5 +1,12 @@
-/* eslint-disable import/prefer-default-export */
 import { LinkCheckResult } from './types';
+
+export const buildBlockContainerUrl = (
+  courseId: string,
+  unitId: string,
+  blockId: string,
+): string => {
+  return `/course/${courseId}/container/${unitId}#${blockId}`;
+};
 
 export const countBrokenLinks = (
   data: LinkCheckResult | null,
