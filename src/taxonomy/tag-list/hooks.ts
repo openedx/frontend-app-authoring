@@ -1,4 +1,5 @@
 import { useReducer } from 'react';
+import { AxiosError } from 'axios';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import globalMessages from '@src/messages';
@@ -168,24 +169,34 @@ const useEditActions = ({
     return true;
   };
 
-  const getErrorMessage = (error: any): string => {
-    let errorMessage: string = '';
-    if (error.name === 'AxiosError') {
-      const responseData = error.response?.data;
-      const tagError = Object.entries(responseData)?.find((errItem: [string, unknown]) => (
-        ['tag', 'value', 'updated_tag_value'].includes(errItem[0].toLowerCase())
-      ));
+  const formatErrorMessage = (errorMessage: string): string => {
+    // Remove trailing period for better message formatting
+    return errorMessage.replace(/\.$/, '');
+  };
 
-      const errorMessages = tagError ? tagError[1] : (
-        (error as Error).message || intl.formatMessage(globalMessages.unknownError)
-      );
-      errorMessage = Array.isArray(errorMessages) ? errorMessages.join('; ') : String(errorMessages);
-    } else {
-      errorMessage = (error as Error).message || intl.formatMessage(globalMessages.unknownError);
+  const getAxiosErrorMessage = (axiosError: AxiosError) => {
+    const responseData = axiosError.response?.data;
+    const tagError = responseData ? Object.entries(responseData)?.find((errItem: [string, unknown]) => (
+      ['tag', 'value', 'updated_tag_value'].includes(errItem[0].toLowerCase())
+    )) : null;
+
+    const errorMessages = tagError ? tagError[1] : (
+      axiosError.message || intl.formatMessage(globalMessages.unknownError)
+    );
+    const errorMessage = Array.isArray(errorMessages) ? errorMessages.join('; ') : String(errorMessages);
+    return formatErrorMessage(errorMessage);
+  };
+
+  const getErrorMessage = (error: unknown): string => {
+    if (error instanceof AxiosError) {
+      return getAxiosErrorMessage(error);
     }
 
-    errorMessage = errorMessage.replace(/\.$/, ''); // Remove trailing period for better message formatting
-    return errorMessage;
+    if (error instanceof Error && error.message) {
+      return formatErrorMessage(error.message);
+    }
+
+    return intl.formatMessage(globalMessages.unknownError);
   };
 
   const handleCreateTag = async (value: string, parentTagValue?: string) => {
