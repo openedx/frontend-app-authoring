@@ -16,7 +16,7 @@ import type {
   TreeColumnDef,
   TreeRowData,
 } from '@src/taxonomy/tree-table/types';
-import { TagListRowData } from './types';
+import type { TagListRowData } from './types';
 import messages from './messages';
 import OptionalExpandLink from './OptionalExpandLink';
 import UsageCountDisplay from './UsageCountDisplay';

@@ -15,16 +15,11 @@ interface SaveErrorAlertProps {
 }
 const SaveErrorAlert = ({ draftError, isError, isUpdateError }: SaveErrorAlertProps) => {
   const intl = useIntl();
-  const hasError = (isError || isUpdateError) && !!draftError;
+  const hasError: boolean = (isError || isUpdateError) && !!draftError;
   const [alertOpen, setAlertOpen] = React.useState(hasError);
 
   useEffect(() => {
-    if (hasError) {
-      setAlertOpen(true);
-    }
-    if (!hasError) {
-      setAlertOpen(false);
-    }
+    setAlertOpen(hasError);
   }, [hasError, isError, isUpdateError, draftError]);
 
   if (!alertOpen) { return null; }

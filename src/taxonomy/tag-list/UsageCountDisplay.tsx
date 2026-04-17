@@ -5,7 +5,7 @@ import type { Row } from '@tanstack/react-table';
 import type {
   TreeRowData,
 } from '@src/taxonomy/tree-table/types';
-import { TagListRowData } from './types';
+import type { TagListRowData } from './types';
 import { getTagListRowData } from './utils';
 
 const UsageCountDisplay = ({ row }: { row: Row<TreeRowData>; }) => {
