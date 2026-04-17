@@ -69,12 +69,10 @@ const DraftRow: React.FC<DraftRowProps> = ({
     }
   };
 
-  const indentClass = indent > 0 ? `tree-table-indent tree-table-indent-${indent}` : '';
-
   return (
     <tr id={rowId} data-testid={rowTestId}>
-      <td colSpan={1} className="py-2 pr-2 pl-0">
-        <div className={indentClass}>
+      <td className="py-2 pr-2 pl-0">
+        <div className={`tree-table-indent-${indent}`}>
           <EditableCell
             initialValue={initialValue}
             errorMessage={draftError}
@@ -85,12 +83,11 @@ const DraftRow: React.FC<DraftRowProps> = ({
           />
         </div>
       </td>
-      <td colSpan={1} aria-label="Usage Count">
+      <td aria-label="Usage Count">
         {row ? <UsageCountDisplay row={row} /> : null}
       </td>
       <td
-        colSpan={1}
-        className="tree-table-create-row-actions-cell p-2 align-top"
+        className="tree-table-create-row-actions-cell p-2"
       >
         <span className="d-flex justify-content-end">
           <span className="mr-2">

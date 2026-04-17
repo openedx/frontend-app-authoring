@@ -1,4 +1,5 @@
 import React from 'react';
+import { AxiosError } from 'axios';
 import {
   render,
   waitFor,
@@ -600,8 +601,7 @@ describe('<TagListTable />', () => {
 
       it('should show failure feedback when creating a duplicate root tag name', async () => {
         axiosMock.onPost(createTagUrl).reply(() => {
-          const error = new Error('Request failed with status code 400');
-          error.name = 'AxiosError';
+          const error = new AxiosError('Request failed with status code 400');
           error.response = {
             data: {
               tag: ['Tag with this name already exists'],
@@ -623,8 +623,7 @@ describe('<TagListTable />', () => {
 
       it('should keep the inline row and show a failure toast when save request fails', async () => {
         axiosMock.onPost(createTagUrl).reply(() => {
-          const error = new Error('Request failed with status code 500');
-          error.name = 'AxiosError';
+          const error = new AxiosError('Request failed with status code 500');
           error.response = {
             data: {
               tag: ['Internal server error'],

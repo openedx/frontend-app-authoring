@@ -20,12 +20,9 @@ import { TagListRowData } from './types';
 import messages from './messages';
 import OptionalExpandLink from './OptionalExpandLink';
 import UsageCountDisplay from './UsageCountDisplay';
+import { getTagListRowData } from './utils';
 
 const EDITABLE_COLUMNS = ['value'];
-
-const asTagListRowData = (row: Row<TreeRowData>): TagListRowData => (
-  row.original as unknown as TagListRowData
-);
 
 interface GetColumnsArgs {
   setIsCreatingTopTag: (isCreating: boolean) => void;
@@ -157,7 +154,7 @@ function getColumns({
       cell: ({ row }) => {
         const {
           value,
-        } = asTagListRowData(row);
+        } = getTagListRowData(row);
 
         return (
           <span className="d-flex align-items-center gap-2">
@@ -187,14 +184,14 @@ function getColumns({
         />
       ),
       cell: ({ row }) => {
-        const rowData = asTagListRowData(row);
+        const rowData = getTagListRowData(row);
 
         if (rowData.isNew || rowData.isEditing) {
           return <div className="d-flex gap-2" />;
         }
 
         const disableAddSubtag = hasOpenDraft || !canAddTag;
-        const disableEditTag = hasOpenDraft || row.original.canChangeTag === false;
+        const disableEditTag = hasOpenDraft || rowData.canChangeTag === false;
 
         const startSubtagDraft = () => {
           onStartDraft();

@@ -6,13 +6,10 @@ import type {
   TreeRowData,
 } from '@src/taxonomy/tree-table/types';
 import { TagListRowData } from './types';
-
-const asTagListRowData = (row: Row<TreeRowData>): TagListRowData => (
-  row.original as unknown as TagListRowData
-);
+import { getTagListRowData } from './utils';
 
 const UsageCountDisplay = ({ row }: { row: Row<TreeRowData>; }) => {
-  const count = asTagListRowData(row).usageCount ?? 0;
+  const count = getTagListRowData(row).usageCount ?? 0;
 
   if (count <= 0) {
     return null;
