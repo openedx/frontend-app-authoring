@@ -4,6 +4,7 @@ import MoreInfoColumn from './MoreInfoColumn';
 import StatusColumn from './StatusColumn';
 import ThumbnailColumn from './ThumbnailColumn';
 import TranscriptColumn from './TranscriptColumn';
+import { FilePickerColumn } from './FilePickerColumn';
 
 export {
   AccessColumn,
@@ -12,4 +13,5 @@ export {
   StatusColumn,
   ThumbnailColumn,
   TranscriptColumn,
+  FilePickerColumn,
 };

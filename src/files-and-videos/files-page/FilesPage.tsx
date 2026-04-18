@@ -14,7 +14,7 @@ import EditFileAlertsSlot from '@src/plugin-slots/EditFileAlertsSlot';
 
 import { EditFileErrors } from '../generic';
 import { fetchAssets, resetErrors } from './data/thunks';
-import FilesPageProvider, { FilePickerOptions } from './FilesPageProvider';
+import FilesPageProvider, { type FilePickerOptions } from '../generic/FilesPageProvider';
 import messages from './messages';
 import './FilesPage.scss';
 
@@ -64,7 +64,9 @@ const FilesPage = ({
         />
         <EditFileAlertsSlot />
         <div className="h2">
-          {intl.formatMessage(messages.heading)}
+          {filePickerMode
+            ? intl.formatMessage(messages.filePickerHeading, { multiSelect: filePickerOptions?.multiSelect })
+            : intl.formatMessage(messages.heading)}
         </div>
         {loadingStatus !== RequestStatus.FAILED && (
           <CourseFilesSlot />

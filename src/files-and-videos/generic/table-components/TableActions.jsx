@@ -4,7 +4,8 @@ import {
   Button, DataTableContext, Dropdown, useToggle,
 } from '@openedx/paragon';
 import { Add, Tune } from '@openedx/paragon/icons';
-import FilesPageProvider, { FilesPageContext } from '@src/files-and-videos/files-page/FilesPageProvider';
+import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageProvider';
+import { filePickerSubmitFile } from '@src/files-and-videos/generic/table-components/utils';
 import { isEmpty } from 'lodash';
 import { PropTypes } from 'prop-types';
 import React, { useContext, useEffect } from 'react';
@@ -23,7 +24,9 @@ const TableActions = ({
 }) => {
   const intl = useIntl();
   const [isSortOpen, openSort, closeSort] = useToggle(false);
-  const { state, clearSelection } = useContext(DataTableContext);
+  const {
+    state, clearSelection,
+  } = useContext(DataTableContext);
 
   const { filePickerMode } = useContext(FilesPageContext);
   // If window.opener is not available, show the user some error message.
@@ -37,6 +40,10 @@ const TableActions = ({
     fileInputControl.click();
     clearSelection();
   };
+
+  const handleFilePickerSubmit = React.useCallback(async () => {
+    await filePickerSubmitFile(selectedFlatRows.map(({ original }) => original));
+  }, [selectedFlatRows]);
 
   return (
     <>
@@ -82,13 +89,10 @@ const TableActions = ({
       {showFilePicker && (
         <Button
           className="ml-2"
-          onClick={async () => {
-            window.opener.postMessage({ type: 'org.openedx.assets.selected.v1', data: selectedFlatRows.map(({ original }) => original) }, '*');
-            window.close();
-          }}
+          onClick={handleFilePickerSubmit}
           disabled={selectedFlatRows.length === 0}
         >
-          Select File(s)
+          Use File(s)
         </Button>
       )}
       <SortAndFilterModal {...{ isSortOpen, closeSort, handleSort }} />
