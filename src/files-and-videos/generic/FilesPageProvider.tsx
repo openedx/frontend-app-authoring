@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 export interface FilePickerOptions {
   usageKey: string,
   multiSelect: boolean,
-  mimeType: string | null,
+  fileTypes: string[] | null,
 }
 
 interface FilesPageContextInterface {
@@ -28,7 +28,7 @@ const FilesPageProvider = ({
   const contextValue = useMemo(() => ({
     filePickerMode,
     filePickerOptions,
-  }), []);
+  }), [filePickerMode, filePickerOptions]);
   return (
     <FilesPageContext.Provider
       value={contextValue}

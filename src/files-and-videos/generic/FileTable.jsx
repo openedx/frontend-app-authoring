@@ -1,5 +1,5 @@
-import { FilesPageContext } from '@src/files-and-videos/files-page/FilesPageProvider';
-import {
+import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageProvider';
+import React, {
   useCallback, useContext, useEffect, useState,
 } from 'react';
 import { useSelector } from 'react-redux';
@@ -27,6 +27,7 @@ import {
   MoreInfoColumn,
   FilterStatus,
   Footer,
+  FilePickerColumn,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
@@ -60,6 +61,7 @@ const FileTable = ({
     lg: 3,
     xl: 2,
   };
+  const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
   const { defaultView } = useSelector((state) => state.videos);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
   const [isDownloadOpen, setDownloadOpen, setDownloadClose] = useToggle(false);
@@ -68,7 +70,7 @@ const FileTable = ({
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
   const [initialState, setInitialState] = useState({
-    filters: [],
+    filters: filePickerOptions.fileTypes ? [{ id: 'wrapperType', value: filePickerOptions.fileTypes }] : [],
     hiddenColumns: [],
     pageIndex: 0,
     pageSize: 50,
@@ -87,7 +89,6 @@ const FileTable = ({
   const defaultCurrentView = (fileType === 'video' && localStorage.getItem('videosCurrentView')) ||
     (fileType === 'file' && localStorage.getItem('filesCurrentView')) || defaultView;
   const [currentView, setCurrentView] = useState(defaultCurrentView);
-  const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
 
   useEffect(() => {
     if (!isEmpty(selectedRows) && Object.keys(selectedRows[0]).length > 0) {
@@ -206,6 +207,11 @@ const FileTable = ({
       }),
   };
 
+  const filePickerColumn = {
+    id: 'select-file',
+    Cell: FilePickerColumn,
+  };
+
   const hasMoreInfoColumn = tableColumns.filter(col => col.id === 'moreInfo').length === 1;
   if (!hasMoreInfoColumn) {
     tableColumns.push({ ...moreInfoColumn });
@@ -241,6 +247,7 @@ const FileTable = ({
         tableActions={headerActions}
         bulkActions={headerActions}
         columns={tableColumns}
+        additionalColumns={(filePickerMode && !filePickerOptions.multiSelect) ? [filePickerColumn] : []}
         itemCount={files.length}
         pageCount={pageCount}
         data={files}

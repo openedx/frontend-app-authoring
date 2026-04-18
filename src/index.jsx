@@ -8,7 +8,6 @@ import {
   getPath,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage, PageWrap } from '@edx/frontend-platform/react';
-import { FilesPage } from '@src/files-and-videos';
 import { FilePickerPage } from '@src/files-and-videos/files-page/FilePickerPage';
 import React, { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';

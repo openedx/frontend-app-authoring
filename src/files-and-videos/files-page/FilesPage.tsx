@@ -19,7 +19,7 @@ import { getFilesPermissions } from '@src/authz/permissionHelpers';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import { EditFileErrors } from '../generic';
 import { fetchAssets, resetErrors } from './data/thunks';
-import FilesPageProvider, { FilePickerOptions } from './FilesPageProvider';
+import FilesPageProvider, { type FilePickerOptions } from '../generic/FilesPageProvider';
 import Loading from '@src/generic/Loading';
 import messages from './messages';
 import './FilesPage.scss';
@@ -86,7 +86,9 @@ const FilesPage = ({
         />
         <EditFileAlertsSlot />
         <div className="h2">
-          {intl.formatMessage(messages.heading)}
+          {filePickerMode
+            ? intl.formatMessage(messages.filePickerHeading, { multiSelect: filePickerOptions?.multiSelect })
+            : intl.formatMessage(messages.heading)}
         </div>
         {loadingStatus !== RequestStatus.FAILED && <CourseFilesSlot />}
       </Container>

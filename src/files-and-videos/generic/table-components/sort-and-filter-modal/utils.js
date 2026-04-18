@@ -46,6 +46,5 @@ export const processFilters = (filters, columns, setAllFilters) => {
       allFilters.push({ id, value: matchingFilters });
     }
   });
-
   setAllFilters(allFilters);
 };

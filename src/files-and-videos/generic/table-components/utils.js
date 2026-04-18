@@ -1,4 +1,4 @@
-import { isEmpty, isArray } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 import messages from '../messages';
 
 const getFilterDisplayName = (column, values) => {
@@ -68,4 +68,12 @@ export const getCurrentViewRange = ({
     messages.rowStatusMessage,
     { fileCount, rowCount: filterRowCount },
   );
+};
+
+export const filePickerSubmitFile = async (fileData) => {
+  window.opener.postMessage({
+    type: 'org.openedx.assets.selected.v1',
+    data: fileData,
+  }, '*');
+  window.close();
 };
