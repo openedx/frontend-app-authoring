@@ -7,7 +7,8 @@ import { camelCase } from 'lodash';
 import { convertObjectToSnakeCase } from '@src/utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-export const getCourseAdvancedSettingsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings/${courseId}`;
+export const getCourseAdvancedSettingsApiUrl = (courseId) =>
+  `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings/${courseId}`;
 const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/proctoring_errors/`;
 
 /**

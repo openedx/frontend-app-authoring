@@ -1,3 +1,4 @@
 export { default as CourseOutline } from './CourseOutline';
-export { OutlineSidebarPagesProvider } from './outline-sidebar/OutlineSidebarPagesContext';
+export { CourseOutlineProvider, useCourseOutlineContext } from './CourseOutlineContext';
 export { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
+export { OutlineSidebarPagesProvider } from './outline-sidebar/OutlineSidebarPagesContext';

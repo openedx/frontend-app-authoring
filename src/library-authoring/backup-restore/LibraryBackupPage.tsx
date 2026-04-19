@@ -118,7 +118,8 @@ export const LibraryBackupPage = () => {
         return intl.formatMessage(messages.backupPending);
       }
       return backupState === LibraryBackupStatus.Pending
-        ? intl.formatMessage(messages.backupPending) : intl.formatMessage(messages.backupExporting);
+        ? intl.formatMessage(messages.backupPending) :
+        intl.formatMessage(messages.backupExporting);
     }
     if (hasBackupSucceeded && backupStatus.data?.url) {
       return intl.formatMessage(messages.downloadReadyButton);

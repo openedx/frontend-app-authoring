@@ -18,8 +18,8 @@ export type CourseDetailsData = {
   invitationOnly: boolean;
   isEnrolled: boolean;
   media: Record<
-  'image' | 'course_image' | 'banner_image' | 'course_video',
-  Record<string, string | null>
+    'image' | 'course_image' | 'banner_image' | 'course_video',
+    Record<string, string | null>
   >;
   mobileAvailable: boolean;
   name: string;
@@ -36,7 +36,8 @@ export type CourseDetailsData = {
 /**
  * Get the URL to check the migration task status
  */
-export const getModulestoreMigrationStatusUrl = (migrationId: string) => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migrations/${migrationId}/`;
+export const getModulestoreMigrationStatusUrl = (migrationId: string) =>
+  `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migrations/${migrationId}/`;
 
 /**
  * Get the URL for bulk migrate content to libraries
@@ -46,7 +47,11 @@ export const bulkModulestoreMigrateUrl = () => `${getStudioBaseUrl()}/api/module
 /**
  * Get the url for the API endpoint to get preview migration
  */
-export const getPreviewModulestoreMigrationUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migration_preview/`;
+export const getPreviewModulestoreMigrationUrl = () =>
+  `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migration_preview/`;
+
+export const getCourseSettingsApiUrl = (courseId: string) =>
+  `${getStudioBaseUrl()}/api/contentstore/v1/course_settings/${courseId}`;
 
 export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   const baseUrl = getStudioBaseUrl();
@@ -85,6 +90,7 @@ export const waffleFlagDefaults = {
   useNewUnitPage: false,
   useNewCertificatesPage: true,
   useNewTextbooksPage: true,
+  useNewPdfEditor: true,
   useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
   enableAuthzCourseAuthoring: false,
@@ -92,7 +98,7 @@ export const waffleFlagDefaults = {
 
 export type WaffleFlagName = keyof typeof waffleFlagDefaults;
 
-export type WaffleFlagsStatus = { id: string | undefined } & Record<WaffleFlagName, boolean>;
+export type WaffleFlagsStatus = { id: string | undefined; } & Record<WaffleFlagName, boolean>;
 
 /**
  * Get Waffle Flags from Studio's REST API.
@@ -204,7 +210,8 @@ export async function getPreviewModulestoreMigration(
   return camelCaseObject(data);
 }
 
-export const getUserAgreementRecordApi = (agreementType: string) => `${getConfig().LMS_BASE_URL}/api/agreements/v1/agreement_record/${agreementType}`;
+export const getUserAgreementRecordApi = (agreementType: string) =>
+  `${getConfig().LMS_BASE_URL}/api/agreements/v1/agreement_record/${agreementType}`;
 
 export async function getUserAgreementRecord(agreementType: string) {
   const client = getAuthenticatedHttpClient();
@@ -218,10 +225,52 @@ export async function updateUserAgreementRecord(agreementType: string) {
   return camelCaseObject(data);
 }
 
-export const getUserAgreementApi = (agreementType: string) => `${getConfig().LMS_BASE_URL}/api/agreements/v1/agreement/${agreementType}/`;
+export const getUserAgreementApi = (agreementType: string) =>
+  `${getConfig().LMS_BASE_URL}/api/agreements/v1/agreement/${agreementType}/`;
 
 export async function getUserAgreement(agreementType: string) {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.get(getUserAgreementApi(agreementType));
+  return camelCaseObject(data);
+}
+
+export interface CourseSettingsData {
+  aboutPageEditable: boolean;
+  canShowCertificateAvailableDateField: boolean;
+  courseDisplayName: string;
+  courseDisplayNameWithDefault: string;
+  creditEligibilityEnabled: boolean;
+  enableExtendedCourseDetails: boolean;
+  enrollmentEndEditable: boolean;
+  isCreditCourse: boolean;
+  isEntranceExamsEnabled: boolean;
+  isPrerequisiteCoursesEnabled: boolean;
+  languageOptions: [string, string][];
+  lmsLinkForAboutPage: string;
+  licensingEnabled: boolean;
+  marketingEnabled: boolean;
+  mfeProctoredExamSettingsUrl: string;
+  platformName: string;
+  possiblePreRequisiteCourses: {
+    courseKey: string;
+    displayName: string;
+    lmsLink: string;
+    number: string;
+    org: string;
+    rerunLink: string;
+    run: string;
+    url: string;
+  };
+  shortDescriptionEditable: boolean;
+  showMinGradeWarning: boolean;
+  sidebarHtmlEnabled: boolean;
+  upgradeDeadline: string | null;
+}
+
+/**
+ * Get course settings.
+ */
+export async function getCourseSettings(courseId: string): Promise<CourseSettingsData> {
+  const { data } = await getAuthenticatedHttpClient().get(getCourseSettingsApiUrl(courseId));
   return camelCaseObject(data);
 }

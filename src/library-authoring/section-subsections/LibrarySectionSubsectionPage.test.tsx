@@ -92,9 +92,10 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     render(<LibraryLayout />, {
       path,
       routerProps: {
-        initialEntries: [childId
-          ? `/library/${libId}/${cType}/${cId}/${childId}`
-          : `/library/${libId}/${cType}/${cId}`,
+        initialEntries: [
+          childId
+            ? `/library/${libId}/${cType}/${cId}/${childId}`
+            : `/library/${libId}/${cType}/${cId}`,
         ],
       },
     });

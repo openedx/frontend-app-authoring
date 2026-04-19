@@ -26,7 +26,13 @@ const FeedbackControl = ({
           {...labelMessage}
           values={{
             answerId: answer.id,
-            boldunderline: <b><u><FormattedMessage {...labelMessageBoldUnderline} /></u></b>,
+            boldunderline: (
+              <b>
+                <u>
+                  <FormattedMessage {...labelMessageBoldUnderline} />
+                </u>
+              </b>
+            ),
           }}
         />
       </Form.Label>

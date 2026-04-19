@@ -4,12 +4,15 @@ import { LICENSE_TYPE, LICENSE_COMMONS_OPTIONS, creativeCommonsVersion } from '.
 import { generateLicenseURL } from './utils';
 
 const useLicenseDetails = (license, onChange) => {
-  const [licenseType, setLicenseType] = useState(/** @type { string | null } */(null));
+  const [licenseType, setLicenseType] = useState(/** @type { string | null } */ (null));
   const [licenseDetails, setLicenseDetails] = useState({});
   const [licenseURL, setLicenseURL] = useState('');
 
   const {
-    attribution, nonCommercial, noDerivatives, shareAlike,
+    attribution,
+    nonCommercial,
+    noDerivatives,
+    shareAlike,
   } = LICENSE_COMMONS_OPTIONS;
 
   const defaultLicenseDetails = {
@@ -29,9 +32,9 @@ const useLicenseDetails = (license, onChange) => {
         .filter(([, value]) => value)
         .map(([key]) => LICENSE_COMMONS_OPTIONS[key]);
 
-      const updatedString = `${
-        LICENSE_TYPE.creativeCommons
-      }: ver=${creativeCommonsVersion} ${orderedDetails.join(' ')}`;
+      const updatedString = `${LICENSE_TYPE.creativeCommons}: ver=${creativeCommonsVersion} ${
+        orderedDetails.join(' ')
+      }`;
       onChange(updatedString, 'license');
     }
   };

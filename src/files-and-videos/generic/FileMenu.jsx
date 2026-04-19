@@ -32,29 +32,31 @@ const FileMenu = ({
         alt="file-menu-toggle"
       />
       <Dropdown.Menu>
-        {fileType === 'video' ? (
-          <Dropdown.Item
-            onClick={() => navigator.clipboard.writeText(id)}
-          >
-            {intl.formatMessage(messages.copyVideoIdTitle)}
-          </Dropdown.Item>
-        ) : (
-          <>
+        {fileType === 'video' ?
+          (
             <Dropdown.Item
-              onClick={/* istanbul ignore next */() => navigator.clipboard.writeText(portableUrl)}
+              onClick={() => navigator.clipboard.writeText(id)}
             >
-              {intl.formatMessage(messages.copyStudioUrlTitle)}
+              {intl.formatMessage(messages.copyVideoIdTitle)}
             </Dropdown.Item>
-            <Dropdown.Item
-              onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(externalUrl)}
-            >
-              {intl.formatMessage(messages.copyWebUrlTitle)}
-            </Dropdown.Item>
-            <Dropdown.Item onClick={handleLock}>
-              {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
-            </Dropdown.Item>
-          </>
-        )}
+          ) :
+          (
+            <>
+              <Dropdown.Item
+                onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(portableUrl)}
+              >
+                {intl.formatMessage(messages.copyStudioUrlTitle)}
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(externalUrl)}
+              >
+                {intl.formatMessage(messages.copyWebUrlTitle)}
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handleLock}>
+                {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
+              </Dropdown.Item>
+            </>
+          )}
         <Dropdown.Item onClick={onDownload}>
           {intl.formatMessage(messages.downloadTitle)}
         </Dropdown.Item>

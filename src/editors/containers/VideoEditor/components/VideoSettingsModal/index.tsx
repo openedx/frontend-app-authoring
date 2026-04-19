@@ -21,20 +21,22 @@ interface Props {
   onReturn: () => void;
   isLibrary: boolean;
   onClose?: (() => void) | null;
+  useNewVideoUploadsPage?: boolean;
 }
 
 const VideoSettingsModal: React.FC<Props> = ({
   onReturn,
   isLibrary,
   onClose,
+  useNewVideoUploadsPage,
 }) => (
   <>
-    {!isLibrary && (
+    {!isLibrary && useNewVideoUploadsPage && (
       <Button
         variant="link"
         className="text-primary-500"
         size="sm"
-        onClick={onClose || onReturn}
+        onClick={onReturn || onClose}
         style={{
           textDecoration: 'none',
           marginLeft: '3px',
@@ -47,9 +49,7 @@ const VideoSettingsModal: React.FC<Props> = ({
     <ErrorSummary />
     <ConnectedVideoPreviewWidget />
     <VideoSourceWidget />
-    {!isLibrary && (
-      <SocialShareWidget />
-    )}
+    {!isLibrary && <SocialShareWidget />}
     <ThumbnailWidget />
     <TranscriptWidget />
     <DurationWidget />

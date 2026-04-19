@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
-  Card, Form, Col, Button,
+  Card,
+  Form,
+  Col,
+  Button,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -10,7 +13,10 @@ import CourseUploadImage from '../../../generic/course-upload-image';
 import messages from './messages';
 
 const InstructorContainer = ({
-  instructor, idx, onDelete, onChange,
+  instructor,
+  idx,
+  onDelete,
+  onChange,
 }) => {
   const intl = useIntl();
   return (

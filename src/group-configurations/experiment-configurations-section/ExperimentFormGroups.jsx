@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Close as CloseIcon, Add as AddIcon } from '@openedx/paragon/icons';
 import {
-  Form, Icon, IconButtonWithTooltip, Stack, Button,
+  Form,
+  Icon,
+  IconButtonWithTooltip,
+  Stack,
+  Button,
 } from '@openedx/paragon';
 
 import {

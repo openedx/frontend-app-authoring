@@ -29,7 +29,13 @@ const data = {
 };
 
 const ContentTagsDropDownSelectorComponent = ({
-  taxonomyId, level, lineage, tagsTree, searchTerm, appliedContentTagsTree, stagedContentTagsTree,
+  taxonomyId,
+  level,
+  lineage,
+  tagsTree,
+  searchTerm,
+  appliedContentTagsTree,
+  stagedContentTagsTree,
 }) => (
   <IntlProvider locale="en" messages={{}}>
     <ContentTagsDropDownSelector
@@ -57,7 +63,7 @@ describe('<ContentTagsDropDownSelector />', () => {
   });
 
   async function getComponent(updatedData) {
-    const componentData = (!updatedData ? data : updatedData);
+    const componentData = !updatedData ? data : updatedData;
 
     return render(
       <ContentTagsDropDownSelectorComponent
@@ -217,15 +223,17 @@ describe('<ContentTagsDropDownSelector />', () => {
     });
 
     const updatedSearchTerm = 'test 2';
-    rerender(<ContentTagsDropDownSelectorComponent
-      key={`selector-${data.taxonomyId}`}
-      taxonomyId={data.taxonomyId}
-      level={data.level}
-      tagsTree={data.tagsTree}
-      searchTerm={updatedSearchTerm}
-      appliedContentTagsTree={{}}
-      stagedContentTagsTree={{}}
-    />);
+    rerender(
+      <ContentTagsDropDownSelectorComponent
+        key={`selector-${data.taxonomyId}`}
+        taxonomyId={data.taxonomyId}
+        level={data.level}
+        tagsTree={data.tagsTree}
+        searchTerm={updatedSearchTerm}
+        appliedContentTagsTree={{}}
+        stagedContentTagsTree={{}}
+      />,
+    );
 
     await waitFor(() => {
       expect(useTaxonomyTagsData).toHaveBeenCalledWith(data.taxonomyId, null, 1, updatedSearchTerm);
@@ -233,15 +241,17 @@ describe('<ContentTagsDropDownSelector />', () => {
 
     // Clean search term
     const cleanSearchTerm = '';
-    rerender(<ContentTagsDropDownSelectorComponent
-      key={`selector-${data.taxonomyId}`}
-      taxonomyId={data.taxonomyId}
-      level={data.level}
-      tagsTree={data.tagsTree}
-      searchTerm={cleanSearchTerm}
-      appliedContentTagsTree={{}}
-      stagedContentTagsTree={{}}
-    />);
+    rerender(
+      <ContentTagsDropDownSelectorComponent
+        key={`selector-${data.taxonomyId}`}
+        taxonomyId={data.taxonomyId}
+        level={data.level}
+        tagsTree={data.tagsTree}
+        searchTerm={cleanSearchTerm}
+        appliedContentTagsTree={{}}
+        stagedContentTagsTree={{}}
+      />,
+    );
 
     await waitFor(() => {
       expect(useTaxonomyTagsData).toHaveBeenCalledWith(data.taxonomyId, null, 1, cleanSearchTerm);

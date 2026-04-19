@@ -17,6 +17,7 @@ describe('courseSettings API', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // @ts-ignore since `getAuthenticatedHttpClient` is mocked. TODO: convert this test to use `initializeMocks()`
     getAuthenticatedHttpClient.mockReturnValue(mockHttpClient);
   });
 

@@ -22,7 +22,6 @@ export async function getCustomPages(courseId) {
 /**
  * Delete custom page for provided block.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function deleteCustomPage(blockId) {
   await getAuthenticatedHttpClient()
@@ -32,7 +31,6 @@ export async function deleteCustomPage(blockId) {
 /**
  * Add custom page for provided block.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function addCustomPage(courseId) {
   const v1CourseId = courseId.substring(7);
@@ -48,7 +46,6 @@ export async function addCustomPage(courseId) {
 /**
  * Update custom page html for provided block.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function updateCustomPage({ blockId, htmlString, metadata }) {
   const { data } = await getAuthenticatedHttpClient()
@@ -63,7 +60,6 @@ export async function updateCustomPage({ blockId, htmlString, metadata }) {
 /**
  * Update order of custom pages.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function updateCustomPageOrder(courseId, tabs) {
   await getAuthenticatedHttpClient()

@@ -46,17 +46,18 @@ const section = {
   hideAfterDue: true,
 };
 
-const renderComponent = (props) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <XBlockStatus
-        isSelfPaced={false}
-        isCustomRelativeDatesActive={false}
-        {...props}
-      />
-    </IntlProvider>,
-  </AppProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <XBlockStatus
+          isSelfPaced={false}
+          isCustomRelativeDatesActive={false}
+          {...props}
+        />
+      </IntlProvider>,
+    </AppProvider>,
+  );
 
 describe('<XBlockStatus /> for Instructor paced Section', () => {
   beforeEach(() => {

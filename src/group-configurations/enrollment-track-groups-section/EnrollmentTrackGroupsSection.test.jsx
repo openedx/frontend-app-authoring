@@ -4,14 +4,15 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { enrollmentTrackGroupsMock } from '../__mocks__';
 import EnrollmentTrackGroupsSection from '.';
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <EnrollmentTrackGroupsSection
-      availableGroup={enrollmentTrackGroupsMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <EnrollmentTrackGroupsSection
+        availableGroup={enrollmentTrackGroupsMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<EnrollmentTrackGroupsSection />', () => {
   it('renders component correctly', () => {

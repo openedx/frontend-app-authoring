@@ -219,7 +219,10 @@ describe('EditProblemView hooks parseState', () => {
         jest.clearAllMocks();
       });
       it('should call openSaveWarningModal for single select problem with empty title', () => {
-        window.tinymce.editors = { 'answer-A': { getContent: () => '' }, 'answer-B': { getContent: () => 'sOmevALUe' } };
+        window.tinymce.editors = {
+          'answer-A': { getContent: () => '' },
+          'answer-B': { getContent: () => 'sOmevALUe' },
+        };
         const expected = hooks.checkForNoAnswers({
           openSaveWarningModal,
           problem: {
@@ -313,7 +316,11 @@ describe('EditProblemView hooks parseState', () => {
     const openSaveWarningModal = jest.fn();
 
     it('default visual save and returns parseState data', () => {
-      const problem = { ...problemState, problemType: ProblemTypeKeys.NUMERIC, answers: [{ id: 'A', title: 'problem', correct: true }] };
+      const problem = {
+        ...problemState,
+        problemType: ProblemTypeKeys.NUMERIC,
+        answers: [{ id: 'A', title: 'problem', correct: true }],
+      };
       const content = hooks.getContent({
         isAdvancedProblemType: false,
         isMarkdownEditorEnabled: false,
@@ -379,7 +386,11 @@ describe('EditProblemView hooks parseState', () => {
       });
     });
     it('should return null', () => {
-      const problem = { ...problemState, problemType: ProblemTypeKeys.NUMERIC, answers: [{ id: 'A', title: '', correct: true }] };
+      const problem = {
+        ...problemState,
+        problemType: ProblemTypeKeys.NUMERIC,
+        answers: [{ id: 'A', title: '', correct: true }],
+      };
       const content = hooks.getContent({
         isAdvancedProblemType: false,
         problemState: problem,

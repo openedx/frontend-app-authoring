@@ -1,11 +1,17 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Badge, Icon, Stack,
+  ActionRow,
+  Badge,
+  Icon,
+  Stack,
 } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import {
-  useCallback, useContext, useEffect, useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from 'react';
 import { blockTypes } from '@src/editors/data/constants/app';
 import DraggableList, { SortableItem } from '@src/generic/DraggableList';
@@ -128,7 +134,10 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
 
 /** ComponentBlock to render preview of given component under Unit */
 const ComponentBlock = ({
-  block, readOnly, isDragging, index,
+  block,
+  readOnly,
+  isDragging,
+  index,
 }: ComponentBlockProps) => {
   const { openComponentEditor } = useOptionalLibraryContext();
   const { showOnlyPublished } = usePublishedFilterContext();
@@ -197,7 +206,9 @@ const ComponentBlock = ({
           }
         }}
         disabled={readOnly}
-        cardClassName={sidebarItemInfo?.id === block.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined}
+        cardClassName={sidebarItemInfo?.id === block.originalId && sidebarItemInfo?.index === index
+          ? 'selected'
+          : undefined}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
@@ -222,8 +233,8 @@ const ComponentBlock = ({
 interface LibraryUnitBlocksProps {
   unitId: string;
   /** set to true if it is rendered as preview
-  * This disables drag and drop, title edit and menus
-  */
+   * This disables drag and drop, title edit and menus
+   */
   readOnly?: boolean;
 }
 

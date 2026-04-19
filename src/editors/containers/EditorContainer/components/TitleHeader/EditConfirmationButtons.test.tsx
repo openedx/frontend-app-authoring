@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, screen, fireEvent, initializeMocks,
+  render,
+  screen,
+  fireEvent,
+  initializeMocks,
 } from '../../../../../testUtils';
 import EditConfirmationButtons from './EditConfirmationButtons';
 

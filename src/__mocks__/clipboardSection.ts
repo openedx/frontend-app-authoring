@@ -12,5 +12,6 @@ export default {
   },
   sourceUsageKey: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@chapter_0270f6de40fc',
   sourceContextTitle: 'Demonstration Course',
-  sourceEditUrl: 'http://localhost:18010/container/block-v1:edX+DemoX+Demo_Course+type@chapter+block@chapter_0270f6de40fc',
+  sourceEditUrl:
+    'http://localhost:18010/container/block-v1:edX+DemoX+Demo_Course+type@chapter+block@chapter_0270f6de40fc',
 };

@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Dropdown, Form, Collapsible, Icon,
+  Dropdown,
+  Form,
+  Collapsible,
+  Icon,
 } from '@openedx/paragon';
 import { InfoOutline } from '@openedx/paragon/icons';
 

@@ -7,7 +7,11 @@ import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import messages from './messages';
 import {
-  useContentMenuItems, useToolsMenuItems, useSettingMenuItems, useLibrarySettingsMenuItems, useLibraryToolsMenuItems,
+  useContentMenuItems,
+  useToolsMenuItems,
+  useSettingMenuItems,
+  useLibrarySettingsMenuItems,
+  useLibraryToolsMenuItems,
 } from './hooks';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -43,7 +47,7 @@ const createWrapper = () => {
     },
   });
 
-  const wrapper = ({ children }: { children: ReactNode }) => (
+  const wrapper = ({ children }: { children: ReactNode; }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
@@ -60,7 +64,8 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'true',
       });
-      const actualItems = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItems =
+        renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems).toHaveLength(5);
     });
     it('when video upload page disabled should not include Video Uploads option', () => {
@@ -71,14 +76,16 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'false',
       });
-      const actualItems = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItems =
+        renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems).toHaveLength(4);
     });
     it('adds course libraries link to content menu when libraries v2 is enabled', () => {
       jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: true,
       });
-      const actualItems = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItems =
+        renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems[1]).toEqual({ href: '/course/course-123/libraries', title: 'Library Updates' });
     });
   });
@@ -99,7 +106,8 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_CERTIFICATE_PAGE: 'true',
       });
-      const actualItems = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems).toHaveLength(6);
     });
     it('when certificate page disabled should not include certificates option', () => {
@@ -107,16 +115,19 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_CERTIFICATE_PAGE: 'false',
       });
-      const actualItems = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems).toHaveLength(5);
     });
     it('when user has access to advanced settings should include advanced settings option', () => {
-      const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current.map((item) => item.title);
+      const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result
+        .current.map((item) => item.title);
       expect(actualItemsTitle).toContain('Advanced Settings');
     });
     it('when user has no access to advanced settings should not include advanced settings option', () => {
       jest.mocked(useSelector).mockReturnValue({ canAccessAdvancedSettings: false });
-      const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current.map((item) => item.title);
+      const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result
+        .current.map((item) => item.title);
       expect(actualItemsTitle).not.toContain('Advanced Settings');
     });
 
@@ -171,7 +182,8 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
       });
-      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result.current.map((item) => item.title);
+      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
+        .current.map((item) => item.title);
       expect(actualItemsTitle).toEqual([
         'Import',
         'Export Course',
@@ -184,7 +196,8 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
       });
-      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result.current.map((item) => item.title);
+      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
+        .current.map((item) => item.title);
       expect(actualItemsTitle).toEqual([
         'Import',
         'Export Course',
@@ -196,9 +209,10 @@ describe('header utils', () => {
       mockWaffleFlags({
         enableCourseOptimizer: true,
       });
-      const optimizerItem = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result.current.find(
-        item => item.href === '/course/course-123/optimizer',
-      );
+      const optimizerItem = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
+        .current.find(
+          item => item.href === '/course/course-123/optimizer',
+        );
       expect(optimizerItem).toBeDefined();
     });
 
@@ -206,14 +220,17 @@ describe('header utils', () => {
       mockWaffleFlags({
         enableCourseOptimizer: false,
       });
-      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result.current.map((item) => item.title);
+      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
+        .current.map((item) => item.title);
       expect(actualItemsTitle).not.toContain(messages['header.links.optimizer'].defaultMessage);
     });
   });
 
   describe('useLibrarySettingsMenuItems', () => {
     it('should contain team access url', () => {
-      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false), { wrapper: createWrapper() }).result.current;
+      const items =
+        renderHook(() => useLibrarySettingsMenuItems('library-123', false), { wrapper: createWrapper() }).result
+          .current;
       expect(items).toContainEqual({ title: 'Library Team', href: 'http://localhost/?sa=manage-team' });
     });
     it('should contain admin console url if set', () => {
@@ -221,7 +238,9 @@ describe('header utils', () => {
         ...getConfig(),
         ADMIN_CONSOLE_URL: 'http://admin-console.com',
       });
-      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false), { wrapper: createWrapper() }).result.current;
+      const items =
+        renderHook(() => useLibrarySettingsMenuItems('library-123', false), { wrapper: createWrapper() }).result
+          .current;
       expect(items).toContainEqual({
         title: 'Library Team',
         href: 'http://admin-console.com/authz/libraries/library-123',
@@ -232,7 +251,8 @@ describe('header utils', () => {
         ...getConfig(),
         ADMIN_CONSOLE_URL: 'http://admin-console.com',
       });
-      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', true), { wrapper: createWrapper() }).result.current;
+      const items =
+        renderHook(() => useLibrarySettingsMenuItems('library-123', true), { wrapper: createWrapper() }).result.current;
       expect(items).toContainEqual({
         title: 'Library Team',
         href: 'http://admin-console.com/authz/libraries/library-123',
@@ -242,7 +262,8 @@ describe('header utils', () => {
 
   describe('useLibraryToolsMenuItems', () => {
     it('should contain backup and import url', () => {
-      const items = renderHook(() => useLibraryToolsMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const items =
+        renderHook(() => useLibraryToolsMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(items).toContainEqual({
         href: '/library/course-123/backup',
         title: 'Back up to local archive',

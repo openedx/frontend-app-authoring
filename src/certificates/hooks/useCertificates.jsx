@@ -5,7 +5,11 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { RequestStatus } from '../../data/constants';
 import getPageHeadTitle from '../../generic/utils';
 import {
-  getComponentMode, getLoadingStatus, getCertificates, getHasCertificateModes, getCourseTitle,
+  getComponentMode,
+  getLoadingStatus,
+  getCertificates,
+  getHasCertificateModes,
+  getCourseTitle,
 } from '../data/selectors';
 import { setMode } from '../data/slice';
 import { fetchCertificates } from '../data/thunks';
@@ -42,7 +46,12 @@ const useCertificates = ({ courseId }) => {
   }, [courseId]);
 
   return {
-    componentMode, isLoading, loadingStatus, certificates, pageHeadTitle, hasCertificateModes,
+    componentMode,
+    isLoading,
+    loadingStatus,
+    certificates,
+    pageHeadTitle,
+    hasCertificateModes,
   };
 };
 

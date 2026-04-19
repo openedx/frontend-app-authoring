@@ -30,7 +30,12 @@ const TeamTypeNameMessage = {
 };
 
 const GroupEditor = ({
-  group, onDelete, onChange, onBlur, fieldNameCommonBase, errors,
+  group,
+  onDelete,
+  onChange,
+  onBlur,
+  fieldNameCommonBase,
+  errors,
 }) => {
   const intl = useIntl();
   const [isDeleting, setDeleting] = useState(false);
@@ -48,7 +53,7 @@ const GroupEditor = ({
         ? (
           <div className="d-flex flex-column card rounded mb-3 px-4 py-2 p-4" key="isDeleting">
             <h4 className="mb-3">{intl.formatMessage(messages.groupDeleteHeading)}</h4>
-            {intl.formatMessage(messages.groupDeleteBody).split('\n').map(text => <p>{text}</p>)}
+            {intl.formatMessage(messages.groupDeleteBody).split('\n').map(text => <p key={text}>{text}</p>)}
             <div className="d-flex flex-row justify-content-end">
               <Button variant="muted" size="sm" onClick={cancelDeletion}>
                 {intl.formatMessage(messages.cancel)}
@@ -69,20 +74,21 @@ const GroupEditor = ({
             deleteAlt={intl.formatMessage(messages.deleteAlt)}
             expandAlt={intl.formatMessage(messages.expandAlt)}
             collapseAlt={intl.formatMessage(messages.collapseAlt)}
-            title={
-              isOpen
-                ? (
-                  <div className="d-flex flex-column flex-shrink-1 h4 p-0 m-0">
-                    {intl.formatMessage(messages.configureGroup)}
+            title={isOpen
+              ? (
+                <div className="d-flex flex-column flex-shrink-1 h4 p-0 m-0">
+                  {intl.formatMessage(messages.configureGroup)}
+                </div>
+              ) :
+              (
+                <div className="d-flex flex-column flex-shrink-1 small mw-100">
+                  <div className="small text-gray-500">
+                    {intl.formatMessage(TeamTypeNameMessage[group.type ? group.type : GroupTypes.OPEN].label)}
                   </div>
-                ) : (
-                  <div className="d-flex flex-column flex-shrink-1 small mw-100">
-                    <div className="small text-gray-500">{intl.formatMessage(TeamTypeNameMessage[group.type ? group.type : GroupTypes.OPEN].label)} </div>
-                    <div className="h4 text-truncate my-1 font-weight-normal">{group.name}</div>
-                    <div className="small text-truncate text-muted text-gray-500">{group.description}</div>
-                  </div>
-                )
-            }
+                  <div className="h4 text-truncate my-1 font-weight-normal">{group.name}</div>
+                  <div className="small text-truncate text-muted text-gray-500">{group.description}</div>
+                </div>
+              )}
           >
             <FormikControl
               name={`${fieldNameCommonBase}.name`}
@@ -111,18 +117,20 @@ const GroupEditor = ({
                 onChange={onChange}
                 onBlur={onBlur}
               >
-                {Object.values(GroupTypes).map(groupType => isGroupTypeEnabled(groupType) && (
-                  <Form.Radio
-                    key={groupType}
-                    value={groupType}
-                    description={intl.formatMessage(TeamTypeNameMessage[groupType].description)}
-                    className="my-2"
-                    // TODO: This should probably be fixed on the paragon side
-                    style={{ minWidth: '1.25rem', minHeight: '1.25rem' }}
-                  >
-                    {intl.formatMessage(TeamTypeNameMessage[groupType].label)}
-                  </Form.Radio>
-                ))}
+                {Object.values(GroupTypes).map(groupType =>
+                  isGroupTypeEnabled(groupType) && (
+                    <Form.Radio
+                      key={groupType}
+                      value={groupType}
+                      description={intl.formatMessage(TeamTypeNameMessage[groupType].description)}
+                      className="my-2"
+                      // TODO: This should probably be fixed on the paragon side
+                      style={{ minWidth: '1.25rem', minHeight: '1.25rem' }}
+                    >
+                      {intl.formatMessage(TeamTypeNameMessage[groupType].label)}
+                    </Form.Radio>
+                  )
+                )}
               </Form.RadioSet>
             </Form.Group>
             <FormikControl

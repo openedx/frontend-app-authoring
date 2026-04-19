@@ -30,17 +30,18 @@ export const dragHelpers = {
     ];
     return block;
   },
-  isBelowOverItem: (active: Active, over: Over) => over
-      && active.rect.current.translated
-      && active.rect.current.translated.top
-        > over.rect.top + over.rect.height,
+  isBelowOverItem: (active: Active, over: Over) =>
+    over
+    && active.rect.current.translated
+    && active.rect.current.translated.top
+      > over.rect.top + over.rect.height,
 };
 
 /**
-  * This function moves a subsection from one section to another in the copy of blocks.
-  * It updates the copy with the new positions for the sections and their subsections,
-  * while keeping other sections intact.
-*/
+ * This function moves a subsection from one section to another in the copy of blocks.
+ * It updates the copy with the new positions for the sections and their subsections,
+ * while keeping other sections intact.
+ */
 export const moveSubsectionOver = (
   prevCopy: XBlock[],
   activeSectionIdx: number,
@@ -107,8 +108,8 @@ export const moveUnitOver = (
 };
 
 /**
-  * Handles dragging and dropping a subsection within the same section.
-*/
+ * Handles dragging and dropping a subsection within the same section.
+ */
 export const moveSubsection = (
   prevCopy: XBlock[],
   sectionIdx: number,
@@ -152,6 +153,11 @@ export const moveUnit = (
  * This helps us avoid moving the item to a position of unmovable item.
  */
 export const canMoveSection = (sections: XBlock[]) => (id: number, step: number) => {
+  if (id === -1) {
+    // id is -1 when the section's position in the list is unknown (e.g. index prop is undefined),
+    // which is passed as a sentinel value via `index ?? -1` at the call site.
+    return false;
+  }
   const newId = id + step;
   const indexCheck = newId >= 0 && newId < sections.length;
   if (!indexCheck) {
@@ -162,16 +168,17 @@ export const canMoveSection = (sections: XBlock[]) => (id: number, step: number)
 };
 
 /**
-  * Checks if a user can move a specific subsection within its parent section or other sections.
-  * It ensures that the new position for the subsection is valid and that it's not
-  * attempting to drag an unmovable item or beyond the bounds of existing sections.
-*/
+ * Checks if a user can move a specific subsection within its parent section or other sections.
+ * It ensures that the new position for the subsection is valid and that it's not
+ * attempting to drag an unmovable item or beyond the bounds of existing sections.
+ */
 export const possibleSubsectionMoves = (
   sections: XBlock[],
   sectionIndex: number,
   section: XBlock,
   subsections: XBlock[],
-) => (index: number, step: number) => {
+) =>
+(index: number, step: number) => {
   if (!subsections[index]?.actions?.draggable) {
     return {};
   }
@@ -187,7 +194,8 @@ export const possibleSubsectionMoves = (
       ],
       sectionId: section.id,
     };
-  } if (step === -1 && index === 0 && sectionIndex > 0) {
+  }
+  if (step === -1 && index === 0 && sectionIndex > 0) {
     // find a section that accepts children above/before the current section
     const newSectionIndex = findLastIndex(sections, { actions: { childAddable: true } }, sectionIndex + step);
     if (newSectionIndex === -1) {
@@ -205,7 +213,8 @@ export const possibleSubsectionMoves = (
       ],
       sectionId: sections[newSectionIndex].id,
     };
-  } if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length + step) {
+  }
+  if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length + step) {
     // find a section that accepts children below/after the current section
     const newSectionIndex = findIndex(sections, { actions: { childAddable: true } }, sectionIndex + 1);
     // move subsection to first position of next section
@@ -229,9 +238,9 @@ export const possibleSubsectionMoves = (
 };
 
 /**
-  * Function to find the valid subsection index based on the current position and the step.
-  * It uses the provided find method.
-*/
+ * Function to find the valid subsection index based on the current position and the step.
+ * It uses the provided find method.
+ */
 const findValidSubsectionIndex = (
   sections: XBlock[],
   sectionIndex: number,
@@ -239,7 +248,7 @@ const findValidSubsectionIndex = (
   findMethod: typeof findLastIndex | typeof findIndex,
 ): {
   newSectionIndex: number;
-  newSubsectionIndex: number
+  newSubsectionIndex: number;
 } | null => {
   if (sectionIndex + step < 0) {
     return null;
@@ -268,7 +277,7 @@ const findValidSubsectionIndex = (
  * Moves a unit to a previous location within the XBlock structure.  This function attempts to move the unit
  * to the previous subsection within the same section, and if that fails, it will attempt to move it to the
  * previous section.
-*/
+ */
 const moveToPreviousLocation = (
   sections: XBlock[],
   sectionIndex: number,
@@ -331,7 +340,7 @@ const moveToPreviousLocation = (
 /**
  * This function attempts to move a unit to the next childAddable subsection within the current section.
  * If no such subsection exists, it will attempt to move the unit to the next section.
-*/
+ */
 const moveToNextLocation = (
   sections: XBlock[],
   sectionIndex: number,
@@ -391,10 +400,10 @@ const moveToNextLocation = (
 };
 
 /**
-  * Checks if a user can move a specific unit within all subsections
-  * It ensures that the new position for the unit is valid and that it's not
-  * attempting to drag an unmovable item or beyond the bounds of existing subsections and sections.
-*/
+ * Checks if a user can move a specific unit within all subsections
+ * It ensures that the new position for the unit is valid and that it's not
+ * attempting to drag an unmovable item or beyond the bounds of existing subsections and sections.
+ */
 export const possibleUnitMoves = (
   sections: XBlock[],
   sectionIndex: number,
@@ -402,7 +411,8 @@ export const possibleUnitMoves = (
   section: XBlock,
   subsection: XBlock,
   units: XBlock[],
-) => (index: number, step: number) => {
+) =>
+(index: number, step: number) => {
   // Early return if unit is not draggable
   if (!units[index]?.actions?.draggable) {
     return {};

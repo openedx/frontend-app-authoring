@@ -1,6 +1,9 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Collapsible, Image, Stack, Hyperlink,
+  Collapsible,
+  Image,
+  Stack,
+  Hyperlink,
 } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import React from 'react';

@@ -40,12 +40,14 @@ export const fileInput = ({ fileSizeError }) => {
   const click = () => ref.current.click();
   const addFile = (e) => {
     const file = e.target.files[0];
-    if (file && module.checkValidFileSize({
-      file,
-      onSizeFail: () => {
-        fileSizeError.set();
-      },
-    })) {
+    if (
+      file && module.checkValidFileSize({
+        file,
+        onSizeFail: () => {
+          fileSizeError.set();
+        },
+      })
+    ) {
       dispatch(thunkActions.video.uploadHandout({
         file,
       }));
@@ -69,4 +71,9 @@ export const fileSizeError = () => {
   };
 };
 
-export default { fileInput, fileSizeError, parseHandoutName };
+export default {
+  fileInput,
+  fileSizeError,
+  parseHandoutName,
+  checkValidFileSize,
+};

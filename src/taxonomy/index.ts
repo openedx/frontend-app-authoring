@@ -1,3 +1,3 @@
-export { TaxonomyListPage } from './TaxonomyListPage';
-export { TaxonomyLayout } from './TaxonomyLayout';
 export { TaxonomyDetailPage } from './taxonomy-detail';
+export { TaxonomyLayout } from './TaxonomyLayout';
+export { TaxonomyListPage } from './TaxonomyListPage';

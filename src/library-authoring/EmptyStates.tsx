@@ -1,7 +1,8 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import type { MessageDescriptor } from 'react-intl';
 import {
-  Button, Stack,
+  Button,
+  Stack,
 } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 import { ClearFiltersButton } from '../search-manager';

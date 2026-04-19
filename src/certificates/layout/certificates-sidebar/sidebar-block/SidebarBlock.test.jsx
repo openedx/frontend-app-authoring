@@ -7,9 +7,10 @@ const testProps = {
   paragraphs: ['Test Paragraph'],
 };
 
-const renderComponent = (props) => render(
-  <SidebarBlock {...props} />,
-);
+const renderComponent = (props) =>
+  render(
+    <SidebarBlock {...props} />,
+  );
 
 describe('SidebarBlock', () => {
   it('renders without crashing', () => {

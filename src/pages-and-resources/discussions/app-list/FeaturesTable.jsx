@@ -13,7 +13,10 @@ import './FeaturesTable.scss';
 const FeaturesTable = ({ apps, features }) => {
   const intl = useIntl();
   const {
-    basic, partial, full, common,
+    basic,
+    partial,
+    full,
+    common,
   } = groupBy(features, (feature) => feature.featureSupportType);
 
   const createRow = (feature) => {
@@ -32,22 +35,21 @@ const FeaturesTable = ({ apps, features }) => {
             key={`${app.id}&${feature.id}`}
             data-testid={`${app.id}-${feature.id.replaceAll('.', '-')}`}
           >
-            {
-              app.featureIds.includes(feature.id)
-                ? <Check id="check-icon" className="text-success-500" />
-                : <Remove id="remove-icon" className="text-light-700" />
-            }
+            {app.featureIds.includes(feature.id)
+              ? <Check id="check-icon" className="text-success-500" />
+              : <Remove id="remove-icon" className="text-light-700" />}
           </div>
         );
       }
     });
 
     return {
-      feature: FEATURE_TYPES.includes(feature) ? (
-        <span className="font-weight-bold">
-          {intl.formatMessage(messages[`featureType-${feature}`])}
-        </span>
-      )
+      feature: FEATURE_TYPES.includes(feature) ?
+        (
+          <span className="font-weight-bold">
+            {intl.formatMessage(messages[`featureType-${feature}`])}
+          </span>
+        )
         : intl.formatMessage(messages[`featureName-${feature.id}`]),
       // 'feature' is the identifier for cells in the first column.
       // This is spreading the app IDs from appCheckmarkCells into the return array, creating
@@ -60,18 +62,16 @@ const FeaturesTable = ({ apps, features }) => {
   return (
     <DataTable
       itemCount={features.length}
-      data={
-        [
-          { ...createRow('basic') },
-          ...basic.map((feature) => createRow(feature)),
-          { ...createRow('partial') },
-          ...partial.map((feature) => createRow(feature)),
-          { ...createRow('full') },
-          ...full.map((feature) => createRow(feature)),
-          { ...createRow('common') },
-          ...common.map((feature) => createRow(feature)),
-        ]
-      }
+      data={[
+        { ...createRow('basic') },
+        ...basic.map((feature) => createRow(feature)),
+        { ...createRow('partial') },
+        ...partial.map((feature) => createRow(feature)),
+        { ...createRow('full') },
+        ...full.map((feature) => createRow(feature)),
+        { ...createRow('common') },
+        ...common.map((feature) => createRow(feature)),
+      ]}
       columns={[
         {
           Header: '',

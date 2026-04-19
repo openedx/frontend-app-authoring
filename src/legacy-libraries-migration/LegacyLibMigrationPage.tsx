@@ -37,8 +37,8 @@ const ExitModal = ({
   isExitModalOpen,
   closeExitModal,
 }: {
-  isExitModalOpen: boolean,
-  closeExitModal: () => void,
+  isExitModalOpen: boolean;
+  closeExitModal: () => void;
 }) => {
   const intl = useIntl();
   const navigate = useNavigate();
@@ -229,22 +229,24 @@ export const LegacyLibMigrationPage = () => {
                     ? intl.formatMessage(messages.cancel)
                     : intl.formatMessage(messages.back)}
                 </Button>
-                {currentStep !== 'confirmation-view' ? (
-                  <Button className="mt-2 mb-2" onClick={handleNext} disabled={isNextDisabled()}>
-                    {intl.formatMessage(messages.next)}
-                  </Button>
-                ) : (
-                  <StatefulButton
-                    className="mt-2 mb-2"
-                    state={confirmationButtonState}
-                    disabledStates={['pending']}
-                    labels={{
-                      default: intl.formatMessage(messages.confirm),
-                      pending: intl.formatMessage(messages.confirm),
-                    }}
-                    onClick={handleNext}
-                  />
-                )}
+                {currentStep !== 'confirmation-view' ?
+                  (
+                    <Button className="mt-2 mb-2" onClick={handleNext} disabled={isNextDisabled()}>
+                      {intl.formatMessage(messages.next)}
+                    </Button>
+                  ) :
+                  (
+                    <StatefulButton
+                      className="mt-2 mb-2"
+                      state={confirmationButtonState}
+                      disabledStates={['pending']}
+                      labels={{
+                        default: intl.formatMessage(messages.confirm),
+                        pending: intl.formatMessage(messages.confirm),
+                      }}
+                      onClick={handleNext}
+                    />
+                  )}
               </div>
             </div>
           </Layout.Element>

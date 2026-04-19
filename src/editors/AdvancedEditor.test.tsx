@@ -11,7 +11,7 @@ import {
 import AdvancedEditor from './AdvancedEditor';
 
 jest.mock('./containers/EditorContainer', () => ({
-  EditorModalWrapper: jest.fn(() => (<div>Advanced Editor Iframe</div>)),
+  EditorModalWrapper: jest.fn(() => <div>Advanced Editor Iframe</div>),
 }));
 const onCloseMock = jest.fn();
 

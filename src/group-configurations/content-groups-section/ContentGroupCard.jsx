@@ -68,68 +68,70 @@ const ContentGroupCard = ({
 
   return (
     <>
-      {isEditMode ? (
-        <ContentGroupForm
-          isEditMode={isEditMode}
-          groupNames={groupNames}
-          isUsedInLocation={isUsedInLocation}
-          overrideValue={name}
-          onCancelClick={switchOffEditMode}
-          onEditClick={(values) => handleEditGroup(id, values, switchOffEditMode)}
-        />
-      ) : (
-        <div className="configuration-card" data-testid="content-group-card">
-          <div className="configuration-card-header">
-            <TitleButton
-              group={group}
-              isExpanded={isExpanded}
-              onTitleClick={handleExpandContent}
-            />
-            {!readOnly && (
-              <ActionRow className="ml-auto d-flex">
-                <IconButtonWithTooltip
-                  tooltipContent={formatMessage(messages.actionEdit)}
-                  alt={formatMessage(messages.actionEdit)}
-                  src={EditOutlineIcon}
-                  iconAs={Icon}
-                  onClick={switchOnEditMode}
-                  data-testid="content-group-card-header-edit"
-                />
-                <IconButtonWithTooltip
-                  className="configuration-card-header__delete-tooltip"
-                  tooltipContent={formatMessage(
-                    isUsedInLocation
-                      ? messages.deleteRestriction
-                      : messages.actionDelete,
-                  )}
-                  alt={formatMessage(messages.actionDelete)}
-                  src={DeleteOutlineIcon}
-                  iconAs={Icon}
-                  onClick={openDeleteModal}
-                  data-testid="content-group-card-header-delete"
-                  disabled={isUsedInLocation}
-                />
-              </ActionRow>
-            )}
-          </div>
-          {isExpanded && (
-            <div
-              className="configuration-card-content"
-              data-testid="content-group-card-content"
-            >
-              {usage?.length ? (
-                <UsageList
-                  className="mt-2.5"
-                  itemList={usage}
-                  key={usage.label}
-                />
-              ) : (
-                guideHowToAdd
+      {isEditMode ?
+        (
+          <ContentGroupForm
+            isEditMode={isEditMode}
+            groupNames={groupNames}
+            isUsedInLocation={isUsedInLocation}
+            overrideValue={name}
+            onCancelClick={switchOffEditMode}
+            onEditClick={(values) => handleEditGroup(id, values, switchOffEditMode)}
+          />
+        ) :
+        (
+          <div className="configuration-card" data-testid="content-group-card">
+            <div className="configuration-card-header">
+              <TitleButton
+                group={group}
+                isExpanded={isExpanded}
+                onTitleClick={handleExpandContent}
+              />
+              {!readOnly && (
+                <ActionRow className="ml-auto d-flex">
+                  <IconButtonWithTooltip
+                    tooltipContent={formatMessage(messages.actionEdit)}
+                    alt={formatMessage(messages.actionEdit)}
+                    src={EditOutlineIcon}
+                    iconAs={Icon}
+                    onClick={switchOnEditMode}
+                    data-testid="content-group-card-header-edit"
+                  />
+                  <IconButtonWithTooltip
+                    className="configuration-card-header__delete-tooltip"
+                    tooltipContent={formatMessage(
+                      isUsedInLocation
+                        ? messages.deleteRestriction
+                        : messages.actionDelete,
+                    )}
+                    alt={formatMessage(messages.actionDelete)}
+                    src={DeleteOutlineIcon}
+                    iconAs={Icon}
+                    onClick={openDeleteModal}
+                    data-testid="content-group-card-header-delete"
+                    disabled={isUsedInLocation}
+                  />
+                </ActionRow>
               )}
             </div>
-          )}
-        </div>
-      )}
+            {isExpanded && (
+              <div
+                className="configuration-card-content"
+                data-testid="content-group-card-content"
+              >
+                {usage?.length ?
+                  (
+                    <UsageList
+                      className="mt-2.5"
+                      itemList={usage}
+                      key={usage.label}
+                    />
+                  ) :
+                  guideHowToAdd}
+              </div>
+            )}
+          </div>
+        )}
       <DeleteModal
         category={formatMessage(messages.subtitleModalDelete)}
         isOpen={isOpenDeleteModal}

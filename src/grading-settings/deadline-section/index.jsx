@@ -9,7 +9,10 @@ import { formatTime, timerValidation } from './utils';
 import messages from './messages';
 
 const DeadlineSection = ({
-  setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert,
+  setShowSavePrompt,
+  gracePeriod,
+  setGradingData,
+  setShowSuccessAlert,
 }) => {
   const intl = useIntl();
   const timeStampValue = gracePeriod
@@ -41,9 +44,10 @@ const DeadlineSection = ({
   };
 
   return (
-    <Form.Group className={classNames('w-50 form-group-custom', {
-      'form-group-custom_isInvalid': isError,
-    })}
+    <Form.Group
+      className={classNames('w-50 form-group-custom', {
+        'form-group-custom_isInvalid': isError,
+      })}
     >
       <Form.Label className="grading-label">
         {intl.formatMessage(messages.gracePeriodOnDeadlineLabel)}

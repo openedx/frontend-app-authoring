@@ -4,7 +4,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import AlertError from '.';
 
-const RootWrapper = ({ error }: { error: unknown }) => (
+const RootWrapper = ({ error }: { error: unknown; }) => (
   <IntlProvider locale="en">
     <AlertError error={error} />
   </IntlProvider>

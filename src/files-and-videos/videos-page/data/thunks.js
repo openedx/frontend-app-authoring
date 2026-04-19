@@ -333,7 +333,12 @@ export function addVideoFile(
           edxVideoId,
         });
         hasFailure = await uploadToBucket({
-          courseId, uploadUrl, file, uploadingIdsRef, edxVideoId, dispatch,
+          courseId,
+          uploadUrl,
+          file,
+          uploadingIdsRef,
+          edxVideoId,
+          dispatch,
         });
       } else {
         hasFailure = true;

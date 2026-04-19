@@ -24,7 +24,7 @@ const config = createConfig('webpack-prod', {
         try {
           // Try to resolve the real package. If it exists, do nothing.
           require.resolve('@edx/frontend-plugin-notifications');
-        } catch (e) {
+        } catch {
           // Package not found → point to the stub we created.
           // eslint-disable-next-line no-param-reassign
           resource.request = path.resolve(__dirname, 'src/stubs/empty-notifications-plugin.tsx');

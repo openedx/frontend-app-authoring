@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { connect, useSelector } from 'react-redux';
 import {
-  Button, Collapsible,
+  Button,
+  Collapsible,
 } from '@openedx/paragon';
 import { useEditorContext } from '@src/editors/EditorContext';
 import { selectors, actions } from '@src/editors/data/redux';
@@ -51,16 +52,17 @@ const SettingsWidget = ({
   const feedbackCard = () => {
     if ([ProblemTypeKeys.MULTISELECT].includes(problemType)) {
       return (
-        <div className="mt-3"><GroupFeedbackCard
-          groupFeedbacks={groupFeedbackList}
-          updateSettings={updateField}
-          answers={answers}
-        />
+        <div className="mt-3">
+          <GroupFeedbackCard
+            groupFeedbacks={groupFeedbackList}
+            updateSettings={updateField}
+            answers={answers}
+          />
         </div>
       );
     }
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    return (<></>);
+    return <></>;
   };
 
   return (
@@ -77,7 +79,7 @@ const SettingsWidget = ({
         />
       </div>
       {ProblemTypeKeys.NUMERIC === problemType
-          && (
+        && (
           <div className="my-3">
             <ToleranceCard
               updateSettings={updateSettings}
@@ -86,7 +88,7 @@ const SettingsWidget = ({
               correctAnswerCount={correctAnswerCount}
             />
           </div>
-          )}
+        )}
       {!isLibrary && (
         <div className="my-3">
           <ScoringCard
@@ -143,8 +145,7 @@ const SettingsWidget = ({
               />
             </div>
           )}
-          {
-            problemType === ProblemTypeKeys.ADVANCED && (
+          {problemType === ProblemTypeKeys.ADVANCED && (
             <div className="my-3">
               <Randomization
                 randomization={settings.randomization}
@@ -152,8 +153,7 @@ const SettingsWidget = ({
                 updateSettings={updateSettings}
               />
             </div>
-            )
-          }
+          )}
           {!isLibrary && (
             <div className="my-3">
               <TimerCard timeBetween={settings.timeBetween} updateSettings={updateSettings} />
@@ -162,12 +162,12 @@ const SettingsWidget = ({
           <div className="my-3">
             <SwitchEditorCard problemType={problemType} editorType="advanced" />
           </div>
-          { (showMarkdownEditorButton && !isMarkdownEditorEnabled) // Only show button if not already in markdown editor
-          && (
-          <div className="my-3">
-            <SwitchEditorCard problemType={problemType} editorType="markdown" />
-          </div>
-          )}
+          {(showMarkdownEditorButton && !isMarkdownEditorEnabled) // Only show button if not already in markdown editor
+            && (
+              <div className="my-3">
+                <SwitchEditorCard problemType={problemType} editorType="markdown" />
+              </div>
+            )}
         </Collapsible.Body>
       </Collapsible.Advanced>
     </div>

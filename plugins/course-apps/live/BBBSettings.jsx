@@ -42,15 +42,17 @@ const BbbSettings = ({
   };
   return (
     <>
-      {isPiiDisabled ? (
-        <p data-testid="request-pii-sharing">
-          {intl.formatMessage(messages.requestPiiSharingEnableForBbb, { provider: providerNames[values.provider] })}
-        </p>
-      ) : (
-        <p data-testid="helper-text">
-          {intl.formatMessage(messages.providerHelperText, { providerName: providerNames[values.provider] })}
-        </p>
-      )}
+      {isPiiDisabled ?
+        (
+          <p data-testid="request-pii-sharing">
+            {intl.formatMessage(messages.requestPiiSharingEnableForBbb, { provider: providerNames[values.provider] })}
+          </p>
+        ) :
+        (
+          <p data-testid="helper-text">
+            {intl.formatMessage(messages.providerHelperText, { providerName: providerNames[values.provider] })}
+          </p>
+        )}
 
       <Form.Group controlId="bbs-settings" data-testid="plansDropDown">
         <Form.Label as="planSelector" className="h6">
@@ -78,33 +80,35 @@ const BbbSettings = ({
         showLaunchIcon
         className="text-primary-500 pt-2"
       >
-        { intl.formatMessage(messages.learnMore, { providerName: 'plans' }) }
+        {intl.formatMessage(messages.learnMore, { providerName: 'plans' })}
       </Hyperlink>
       <>
         <AppConfigFormDivider thick marginAdj={{ default: 0, sm: 2 }} />
-        {isPiiDisabled ? (
-          <p data-testid="help-request-pii-sharing">
-            {intl.formatMessage(messages.piiSharingEnableHelpTextBbb)}
-          </p>
-        ) : (
-          <>
-            {bbbPlan === bbbPlanTypes.commercial && <LiveCommonFields values={values} />}
-            {bbbPlan === bbbPlanTypes.free && (
-              <span data-testid="free-plan-message">
-                {intl.formatMessage(messages.freePlanMessage)}
-                <Hyperlink
-                  destination={getExternalLinkUrl('https://bigbluebutton.org/privacy-policy/')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  showLaunchIcon
-                  className="text-gray-700 ml-1"
-                >
-                  {intl.formatMessage(messages.privacyPolicy)}
-                </Hyperlink>
-              </span>
-            )}
-          </>
-        )}
+        {isPiiDisabled ?
+          (
+            <p data-testid="help-request-pii-sharing">
+              {intl.formatMessage(messages.piiSharingEnableHelpTextBbb)}
+            </p>
+          ) :
+          (
+            <>
+              {bbbPlan === bbbPlanTypes.commercial && <LiveCommonFields values={values} />}
+              {bbbPlan === bbbPlanTypes.free && (
+                <span data-testid="free-plan-message">
+                  {intl.formatMessage(messages.freePlanMessage)}
+                  <Hyperlink
+                    destination={getExternalLinkUrl('https://bigbluebutton.org/privacy-policy/')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    showLaunchIcon
+                    className="text-gray-700 ml-1"
+                  >
+                    {intl.formatMessage(messages.privacyPolicy)}
+                  </Hyperlink>
+                </span>
+              )}
+            </>
+          )}
       </>
     </>
   );

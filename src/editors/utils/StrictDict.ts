@@ -21,6 +21,6 @@ const strictGet = (target, name) => {
   return undefined;
 };
 
-const StrictDict = <T extends Record<string, any>>(dict: T) => new Proxy(dict, { get: strictGet }) as T;
+const StrictDict = <T extends Record<string, unknown>>(dict: T) => new Proxy(dict, { get: strictGet }) as T;
 
 export default StrictDict;

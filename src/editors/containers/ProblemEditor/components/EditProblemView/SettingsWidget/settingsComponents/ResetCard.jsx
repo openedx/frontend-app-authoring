@@ -16,13 +16,16 @@ const ResetCard = ({
   const intl = useIntl();
   const isLibrary = useSelector(selectors.app.isLibrary);
   const { setResetTrue, setResetFalse } = resetCardHooks(updateSettings);
-  const advancedSettingsLink = `${useSelector(selectors.app.studioEndpointUrl)}/settings/advanced/${useSelector(selectors.app.learningContextId)}#show_reset_button`;
+  const advancedSettingsLink = `${useSelector(selectors.app.studioEndpointUrl)}/settings/advanced/${
+    useSelector(selectors.app.learningContextId)
+  }#show_reset_button`;
   const currentResetButton = showResetButton !== null ? showResetButton : defaultValue;
   return (
     <SettingsOption
       title={intl.formatMessage(messages.resetSettingsTitle)}
       summary={currentResetButton
-        ? intl.formatMessage(messages.resetSettingsTrue) : intl.formatMessage(messages.resetSettingsFalse)}
+        ? intl.formatMessage(messages.resetSettingsTrue) :
+        intl.formatMessage(messages.resetSettingsFalse)}
       className="resetCard"
     >
       <div className="halfSpacedMessage">

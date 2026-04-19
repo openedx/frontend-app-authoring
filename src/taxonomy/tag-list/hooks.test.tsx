@@ -1,11 +1,11 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 
 import { TagTree } from './tagTree';
 import { useEditActions, useTableModes } from './hooks';
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
 
@@ -44,6 +44,8 @@ describe('useTableModes', () => {
 describe('useEditActions', () => {
   const buildActions = (overrides = {}) => {
     const createTagMutation = { mutateAsync: jest.fn() };
+    // mock updateTagMutation to have a function `mutateAsync` that returns a resolved promise
+    const updateTagMutation = { mutateAsync: jest.fn() };
     const setTagTree = jest.fn();
     const setDraftError = jest.fn();
     const enterPreviewMode = jest.fn();
@@ -63,6 +65,7 @@ describe('useEditActions', () => {
       setCreatingParentId,
       exitDraftWithoutSave,
       setEditingRowId,
+      updateTagMutation: updateTagMutation as any,
       ...(overrides as any),
     };
 
@@ -139,7 +142,9 @@ describe('useEditActions', () => {
       await actions.handleUpdateTag('updated', 'original');
     });
 
-    expect(enterPreviewMode).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(enterPreviewMode).toHaveBeenCalled();
+    });
     expect(setToast).toHaveBeenCalledWith({
       show: true,
       message: 'Tag "updated" updated successfully',

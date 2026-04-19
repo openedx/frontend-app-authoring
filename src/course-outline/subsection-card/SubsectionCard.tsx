@@ -1,5 +1,11 @@
 import {
-  useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  ReactNode,
+  useMemo,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -23,6 +29,7 @@ import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
@@ -30,23 +37,23 @@ import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
 
 interface SubsectionCardProps {
-  section: XBlock,
-  subsection: XBlock,
-  children: ReactNode
-  isSectionsExpanded: boolean,
-  isSelfPaced: boolean,
-  isCustomRelativeDatesActive: boolean,
-  onOpenDeleteModal: () => void,
-  onDuplicateSubmit: () => void,
-  index: number,
-  getPossibleMoves: (index: number, step: number) => void,
-  onOrderChange: (section: XBlock, moveDetails: any) => void,
-  onOpenConfigureModal: () => void,
+  section: XBlock;
+  subsection: XBlock;
+  children: ReactNode;
+  isSectionsExpanded: boolean;
+  isSelfPaced: boolean;
+  isCustomRelativeDatesActive: boolean;
+  onOpenDeleteModal: () => void;
+  onDuplicateSubmit: () => void;
+  index: number;
+  getPossibleMoves: (index: number, step: number) => void;
+  onOrderChange: (section: XBlock, moveDetails: any) => void;
+  onOpenConfigureModal: () => void;
   onPasteClick: (
     parentLocator: string,
     subsectionId: string,
-    sectionId: string
-  ) => void,
+    sectionId: string,
+  ) => void;
 }
 
 const SubsectionCard = ({
@@ -73,9 +80,8 @@ const SubsectionCard = ({
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const {
-    courseId, openUnlinkModal, openPublishModal, setCurrentSelection,
-  } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const { openPublishModal, setCurrentSelection } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
@@ -149,7 +155,7 @@ const SubsectionCard = ({
     if (moment(initialData.editedOnRaw).isAfter(moment(subsection.editedOnRaw))) {
       queryClient.cancelQueries({
         queryKey: courseOutlineQueryKeys.courseItemId(initialData.id),
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
       }).catch((error) => console.error('Error cancelling query:', error));
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }
@@ -164,6 +170,7 @@ const SubsectionCard = ({
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -172,6 +179,7 @@ const SubsectionCard = ({
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,
+      index,
     });
   };
 
@@ -200,13 +208,13 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={(
+      prefixIcon={
         <UpstreamInfoIcon
           upstreamInfo={upstreamInfo}
           size="sm"
           openSyncModal={openSyncModal}
         />
-      )}
+      }
     />
   );
 
@@ -241,16 +249,15 @@ const SubsectionCard = ({
     setIsExpanded((prevState) => (containsSearchResult() || prevState));
   }, [locatorId, setIsExpanded]);
 
-  const isDraggable = (
-    actions.draggable
-      && (actions.allowMoveUp || actions.allowMoveDown)
-      && !(isHeaderVisible === false)
-      && !section.upstreamInfo?.upstreamRef
-  );
+  const isDraggable = actions.draggable
+    && (actions.allowMoveUp || actions.allowMoveDown)
+    && !(isHeaderVisible === false)
+    && !section.upstreamInfo?.upstreamRef;
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(subsection.id, subsection.id, section.id);
+      openContainerInfoSidebar(subsection.id, subsection.id, section.id, index);
+      handleClickMenuButton();
       setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);
@@ -295,10 +302,11 @@ const SubsectionCard = ({
                 onClickMenuButton={handleClickMenuButton}
                 onClickPublish={() => openPublishModal({ value: subsection, sectionId: section.id })}
                 onClickDelete={onOpenDeleteModal}
-                onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
-                  value: subsection,
-                  sectionId: section.id,
-                })}
+                onClickUnlink={/* istanbul ignore next */ () =>
+                  openUnlinkModal({
+                    value: subsection,
+                    sectionId: section.id,
+                  })}
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
@@ -335,7 +343,7 @@ const SubsectionCard = ({
               </div>
             </>
           )}
-          {(isExpanded) && (
+          {isExpanded && (
             <div
               data-testid="subsection-card__units"
               className={classNames('subsection-card__units', { 'item-children': isDraggable })}

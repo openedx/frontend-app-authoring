@@ -2,7 +2,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from '../messages';
 
-const EmptyMessage = ({ category, categoryText }: { category: string, categoryText: string }) => {
+const EmptyMessage = ({ category, categoryText }: { category: string; categoryText: string; }) => {
   const intl = useIntl();
   return (
     <li className="xblock-no-child-message">

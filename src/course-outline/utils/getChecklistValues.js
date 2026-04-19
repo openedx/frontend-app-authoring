@@ -55,21 +55,31 @@ const getChecklistValues = ({
   let filteredCheckList;
 
   if (isSelfPaced) {
-    filteredCheckList = checklist.filter(({ pacingTypeFilter }) => pacingTypeFilter === CHECKLIST_FILTERS.ALL
-      || pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED);
+    filteredCheckList = checklist.filter(({ pacingTypeFilter }) =>
+      pacingTypeFilter === CHECKLIST_FILTERS.ALL
+      || pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED
+    );
   } else {
-    filteredCheckList = checklist.filter(({ pacingTypeFilter }) => pacingTypeFilter === CHECKLIST_FILTERS.ALL
-      || pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED);
+    filteredCheckList = checklist.filter(({ pacingTypeFilter }) =>
+      pacingTypeFilter === CHECKLIST_FILTERS.ALL
+      || pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED
+    );
   }
 
-  filteredCheckList = filteredCheckList.filter(({ id }) => id !== 'certificate'
-    || hasCertificatesEnabled);
+  filteredCheckList = filteredCheckList.filter(({ id }) =>
+    id !== 'certificate'
+    || hasCertificatesEnabled
+  );
 
-  filteredCheckList = filteredCheckList.filter(({ id }) => id !== 'weeklyHighlights'
-    || hasHighlightsEnabled);
+  filteredCheckList = filteredCheckList.filter(({ id }) =>
+    id !== 'weeklyHighlights'
+    || hasHighlightsEnabled
+  );
 
-  filteredCheckList = filteredCheckList.filter(({ id }) => id !== 'proctoringEmail'
-    || needsProctoringEscalationEmail);
+  filteredCheckList = filteredCheckList.filter(({ id }) =>
+    id !== 'proctoringEmail'
+    || needsProctoringEscalationEmail
+  );
 
   return filteredCheckList;
 };

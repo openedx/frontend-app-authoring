@@ -2,7 +2,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from '../messages';
 
-const CategoryIndicator = ({ categoryText, displayName }: { categoryText: string, displayName: string }) => {
+const CategoryIndicator = ({ categoryText, displayName }: { categoryText: string; displayName: string; }) => {
   const intl = useIntl();
   return (
     <div className="xblock-items-category small text-gray-500">

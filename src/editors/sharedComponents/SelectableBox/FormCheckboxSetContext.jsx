@@ -71,7 +71,4 @@ FormCheckboxSetContextProvider.defaultProps = {
 };
 
 export default FormCheckboxSetContext;
-export {
-  useCheckboxSetContext,
-  FormCheckboxSetContextProvider,
-};
+export { useCheckboxSetContext, FormCheckboxSetContextProvider };

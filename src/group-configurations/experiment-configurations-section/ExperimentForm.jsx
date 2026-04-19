@@ -48,7 +48,11 @@ const ExperimentForm = ({
         onSubmit={onSubmitForm}
       >
         {({
-          values, errors, dirty, handleChange, handleSubmit,
+          values,
+          errors,
+          dirty,
+          handleChange,
+          handleSubmit,
         }) => (
           <>
             <Form.Group

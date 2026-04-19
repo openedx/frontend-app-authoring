@@ -1,0 +1,10 @@
+{
+  // For messages files, we allow unlimited line length, to keep the file format consistent.
+  // For now a separate file is required, but this could be simplified when
+  // https://github.com/dprint/dprint/issues/996 is implemented or if we change to a different formatter.
+  "extends": "dprint.json",
+  "lineWidth": 10000,
+  "includes": ["src/**/messages.{ts,js}"]
+  // Because this inherits "excludes" from "dprint.json", it's necessary to use "--excludes-override none"
+  // to run this on the command line.
+}

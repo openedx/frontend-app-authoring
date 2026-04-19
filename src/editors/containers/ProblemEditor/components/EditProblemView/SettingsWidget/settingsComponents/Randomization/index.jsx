@@ -34,19 +34,16 @@ export const RandomizationCard = ({
           value={curretRandomization}
           onChange={handleChange}
         >
-          {
-            Object.values(RandomizationTypesKeys).map((randomizationType) => (
-              <option
-                key={randomizationType}
-                value={randomizationType}
-              >
-                {intl.formatMessage(RandomizationTypes[randomizationType])}
-              </option>
-            ))
-          }
+          {Object.values(RandomizationTypesKeys).map((randomizationType) => (
+            <option
+              key={randomizationType}
+              value={randomizationType}
+            >
+              {intl.formatMessage(RandomizationTypes[randomizationType])}
+            </option>
+          ))}
         </Form.Control>
       </Form.Group>
-
     </SettingsOption>
   );
 };

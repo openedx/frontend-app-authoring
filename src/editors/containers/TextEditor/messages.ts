@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   couldNotLoadTextContext: {
     id: 'authoring.texteditor.load.error',
     defaultMessage: 'Error: Could Not Load Text Content',

@@ -13,7 +13,11 @@ import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resource
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
 import { PagesAndResourcesContext } from './pages-and-resources/PagesAndResourcesProvider';
 import {
-  hasValidDateFormat, hasValidTimeFormat, decodeDateTime, endOfDayTime, startOfDayTime,
+  hasValidDateFormat,
+  hasValidTimeFormat,
+  decodeDateTime,
+  endOfDayTime,
+  startOfDayTime,
 } from './pages-and-resources/discussions/app-config-form/utils';
 import { DATE_TIME_FORMAT } from './constants';
 
@@ -213,7 +217,8 @@ export function setupYupExtensions() {
       // of if startTime or endTime is not present for time comparison
       // or startDate or endDate is not present for date comparison
 
-      if (!this.parent
+      if (
+        !this.parent
         || (!(this.parent.startTime && this.parent.endTime) && type === 'time')
         || (!(this.parent.startDate && this.parent.endDate) && type === 'date')
       ) {
@@ -316,9 +321,9 @@ export const getFileSizeToClosestByte = (fileSize: any) => {
 };
 
 /**
-* A generic hook to run callback on next render cycle.
-* @param {} callback - Callback function that needs to be run later
-*/
+ * A generic hook to run callback on next render cycle.
+ * @param {} callback - Callback function that needs to be run later
+ */
 export const useRunOnNextRender = (callback: () => void) => {
   const [scheduled, setScheduled] = useState(false);
 

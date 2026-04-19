@@ -29,25 +29,26 @@ const render = (
   usageKey: string = mockLibraryBlockMetadata.usageKeyPublished,
   libraryId: string = mockContentLibrary.libraryId,
   showOnlyPublished: boolean = false,
-) => baseRender(
-  <ComponentAdvancedInfo />,
-  {
-    extraWrapper: ({ children }: { children: React.ReactNode }) => (
-      <LibraryProvider libraryId={libraryId}>
-        <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
-          <SidebarProvider
-            initialSidebarItemInfo={{
-              id: usageKey,
-              type: SidebarBodyItemId.ComponentInfo,
-            }}
-          >
-            {children}
-          </SidebarProvider>
-        </PublishedFilterContextProvider>
-      </LibraryProvider>
-    ),
-  },
-);
+) =>
+  baseRender(
+    <ComponentAdvancedInfo />,
+    {
+      extraWrapper: ({ children }: { children: React.ReactNode; }) => (
+        <LibraryProvider libraryId={libraryId}>
+          <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
+            <SidebarProvider
+              initialSidebarItemInfo={{
+                id: usageKey,
+                type: SidebarBodyItemId.ComponentInfo,
+              }}
+            >
+              {children}
+            </SidebarProvider>
+          </PublishedFilterContextProvider>
+        </LibraryProvider>
+      ),
+    },
+  );
 
 describe('<ComponentAdvancedInfo />', () => {
   beforeEach(() => {
@@ -84,7 +85,9 @@ describe('<ComponentAdvancedInfo />', () => {
 
     render();
 
-    const url = `${getXBlockAssetsApiUrl(mockLibraryBlockMetadata.usageKeyPublished)}${encodeURIComponent('static/image1.png')}`;
+    const url = `${getXBlockAssetsApiUrl(mockLibraryBlockMetadata.usageKeyPublished)}${
+      encodeURIComponent('static/image1.png')
+    }`;
     axiosMock.onDelete(url).reply(200);
 
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });

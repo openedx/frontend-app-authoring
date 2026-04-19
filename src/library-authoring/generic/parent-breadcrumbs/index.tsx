@@ -2,7 +2,9 @@ import type { ReactNode } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Link } from 'react-router-dom';
 import {
-  Breadcrumb, MenuItem, SelectMenu,
+  Breadcrumb,
+  MenuItem,
+  SelectMenu,
 } from '@openedx/paragon';
 import { ContainerType } from '@src/generic/key-utils';
 import type { ContentLibrary } from '../../data/api';
@@ -69,7 +71,7 @@ export const ParentBreadcrumbs = ({ libraryData, parents, containerType }: Paren
   const intl = useIntl();
   const { id: libraryId, title: libraryTitle } = libraryData;
 
-  const links: Array<{ label: string | string[], to: string | string[], containerType: ContainerType }> = [
+  const links: Array<{ label: string | string[]; to: string | string[]; containerType: ContainerType; }> = [
     {
       label: libraryTitle,
       to: `/library/${libraryId}`,

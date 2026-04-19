@@ -30,14 +30,15 @@ describe('CoursesFilterMenu', () => {
     },
   ];
 
-  const renderComponent = (overrideProps = {}) => render(
-    <CoursesFilterMenu
-      menuItems={menuItemsMock}
-      onItemMenuSelected={onCourseTypeSelectedMock}
-      id="course-filter-menu-toggle"
-      {...overrideProps}
-    />,
-  );
+  const renderComponent = (overrideProps = {}) =>
+    render(
+      <CoursesFilterMenu
+        menuItems={menuItemsMock}
+        onItemMenuSelected={onCourseTypeSelectedMock}
+        id="course-filter-menu-toggle"
+        {...overrideProps}
+      />,
+    );
 
   beforeEach(() => {
     jest.clearAllMocks();

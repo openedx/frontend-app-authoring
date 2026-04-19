@@ -28,9 +28,10 @@ const {
   libraryData,
 } = mockContentLibrary;
 
-const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryInfo />, {
-  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>,
-});
+const render = (libraryId: string = mockLibraryId) =>
+  baseRender(<LibraryInfo />, {
+    extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>,
+  });
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;
@@ -291,7 +292,7 @@ describe('<LibraryInfo />', () => {
     expect(screen.getByText('Settings')).toBeInTheDocument();
   });
 
-  it('renders PublicReadToggle when user can manage team', async () => { 
+  it('renders PublicReadToggle when user can manage team', async () => {
     render();
     const allowSwitch = await screen.findByRole('switch', { name: /allow public read/i });
     expect(allowSwitch).toBeInTheDocument();

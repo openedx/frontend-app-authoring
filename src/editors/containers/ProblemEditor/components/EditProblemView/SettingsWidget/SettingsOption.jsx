@@ -12,7 +12,13 @@ import { showFullCard } from './hooks';
 import CardSection from './CardSection';
 
 const SettingsOption = ({
-  title, className, extraSections, children, summary, hasExpandableTextArea, ...passThroughProps
+  title,
+  className,
+  extraSections,
+  children,
+  summary,
+  hasExpandableTextArea,
+  ...passThroughProps
 }) => {
   const { isCardCollapsibleOpen, toggleCardCollapse } = showFullCard(hasExpandableTextArea);
 
@@ -34,14 +40,23 @@ const SettingsOption = ({
           </Collapsible.Trigger>
         </Collapsible.Advanced>
       </Card.Section>
-      <CardSection {...passThroughProps} isCardCollapsibleOpen={isCardCollapsibleOpen} summary={summary} key={`settingsOption-${title}-children`}>
+      <CardSection
+        {...passThroughProps}
+        isCardCollapsibleOpen={isCardCollapsibleOpen}
+        summary={summary}
+        key={`settingsOption-${title}-children`}
+      >
         {children}
       </CardSection>
       {extraSections.map((section, index) => (
         <>
           {isCardCollapsibleOpen && <hr />}
           {/* eslint-disable-next-line react/no-array-index-key */}
-          <CardSection {...passThroughProps} isCardCollapsibleOpen={isCardCollapsibleOpen} key={`settingsOption-${title}-${index}`}>
+          <CardSection
+            {...passThroughProps}
+            isCardCollapsibleOpen={isCardCollapsibleOpen}
+            key={`settingsOption-${title}-${index}`}
+          >
             {section.children}
           </CardSection>
         </>

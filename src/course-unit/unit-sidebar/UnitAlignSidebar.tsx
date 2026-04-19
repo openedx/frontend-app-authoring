@@ -26,10 +26,9 @@ export const UnitAlignSidebar = () => {
 
   return (
     <AlignSidebar
-      title={
-        contentData && 'displayName' in contentData
-          ? contentData.displayName : ''
-      }
+      title={contentData && 'displayName' in contentData
+        ? contentData.displayName :
+        ''}
       contentId={sidebarContentId || ''}
       onBackBtnClick={selectedComponentId ? handleBack : undefined}
     />

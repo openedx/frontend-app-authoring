@@ -8,16 +8,17 @@ import messages from './messages';
 const onEditMock = jest.fn();
 const handoutsContentMock = 'Handouts Content';
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <CourseHandouts
-      onEdit={onEditMock}
-      contentForHandouts={handoutsContentMock}
-      isDisabledButtons={false}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <CourseHandouts
+        onEdit={onEditMock}
+        contentForHandouts={handoutsContentMock}
+        isDisabledButtons={false}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<CourseHandouts />', () => {
   it('render CourseHandouts component correctly', () => {

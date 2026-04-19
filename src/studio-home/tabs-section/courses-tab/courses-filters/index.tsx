@@ -31,10 +31,10 @@ interface BaseFilter {
 const regexOnlyWhiteSpaces = /^\s+$/;
 
 interface Props {
-  dispatch: Dispatch<any>,
-  locationValue: string,
-  onSubmitSearchField?: () => void,
-  isLoading?: boolean,
+  dispatch: Dispatch<any>;
+  locationValue: string;
+  onSubmitSearchField?: () => void;
+  isLoading?: boolean;
 }
 
 const CoursesFilters = ({

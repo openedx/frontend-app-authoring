@@ -1,7 +1,10 @@
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Alert, Button, Hyperlink, Truncate,
+  Alert,
+  Button,
+  Hyperlink,
+  Truncate,
 } from '@openedx/paragon';
 import {
   Campaign as CampaignIcon,
@@ -104,6 +107,7 @@ const PageAlerts = ({
         onClose={onDismiss}
         actions={[
           <Button
+            key="learnMore"
             href={discussionsIncontextLearnmoreUrl}
             target="_blank"
           >
@@ -222,7 +226,8 @@ const PageAlerts = ({
                     ),
                   }}
                 />
-              ) : (
+              ) :
+              (
                 <FormattedMessage
                   {...messages.proctoringErrorText}
                   values={{
@@ -267,6 +272,7 @@ const PageAlerts = ({
           onClose={onDismiss}
           actions={[
             <Button
+              key="view-files"
               as={Link}
               to={getAssetsUrl()}
             >
@@ -290,7 +296,10 @@ const PageAlerts = ({
           title={intl.formatMessage(messages.errorFileAlertTitle)}
           description={intl.formatMessage(
             messages.errorFileAlertDesc,
-            { errorFilesLen: pasteFileNotices.errorFiles.length, errorFilesStr: pasteFileNotices.errorFiles.join(', ') },
+            {
+              errorFilesLen: pasteFileNotices.errorFiles.length,
+              errorFilesStr: pasteFileNotices.errorFiles.join(', '),
+            },
           )}
           dismissible
           show
@@ -329,6 +338,7 @@ const PageAlerts = ({
           onClose={onDismiss}
           actions={[
             <Button
+              key="view-files"
               as={Link}
               to={getAssetsUrl()}
             >
@@ -396,26 +406,28 @@ const PageAlerts = ({
     }
     return (
       errorList.map((msgObj) => (
-        msgObj.dismissible ? (
-          <ErrorAlert
-            isError
-            hideHeading
-            key={msgObj.key}
-            dismissError={() => dispatch(dismissError(msgObj.key))}
-          >
-            <Alert.Heading>{msgObj.title}</Alert.Heading>
-            {msgObj.desc}
-          </ErrorAlert>
-        ) : (
-          <Alert
-            variant="danger"
-            icon={ErrorIcon}
-            key={msgObj.key}
-          >
-            <Alert.Heading>{msgObj.title}</Alert.Heading>
-            {msgObj.desc}
-          </Alert>
-        )
+        msgObj.dismissible ?
+          (
+            <ErrorAlert
+              isError
+              hideHeading
+              key={msgObj.key}
+              dismissError={() => dispatch(dismissError(msgObj.key))}
+            >
+              <Alert.Heading>{msgObj.title}</Alert.Heading>
+              {msgObj.desc}
+            </ErrorAlert>
+          ) :
+          (
+            <Alert
+              variant="danger"
+              icon={ErrorIcon}
+              key={msgObj.key}
+            >
+              <Alert.Heading>{msgObj.title}</Alert.Heading>
+              {msgObj.desc}
+            </Alert>
+          )
       ))
     );
   };

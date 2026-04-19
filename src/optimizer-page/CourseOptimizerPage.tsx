@@ -1,11 +1,19 @@
 /* eslint-disable no-param-reassign */
 import {
-  useEffect, useState, useRef, MutableRefObject,
+  useEffect,
+  useState,
+  useRef,
+  MutableRefObject,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge, Container, Layout, Card, Icon, StatefulButton,
+  Badge,
+  Container,
+  Layout,
+  Card,
+  Icon,
+  StatefulButton,
 } from '@openedx/paragon';
 import { SpinnerSimple } from '@openedx/paragon/icons';
 import { Helmet } from 'react-helmet';
@@ -19,8 +27,15 @@ import { RERUN_LINK_UPDATE_STATUSES } from './data/constants';
 import { STATEFUL_BUTTON_STATES } from '../constants';
 import messages from './messages';
 import {
-  getCurrentStage, getError, getLinkCheckInProgress, getLoadingStatus, getSavingStatus, getLinkCheckResult,
-  getLastScannedAt, getRerunLinkUpdateInProgress, getRerunLinkUpdateResult,
+  getCurrentStage,
+  getError,
+  getLinkCheckInProgress,
+  getLoadingStatus,
+  getSavingStatus,
+  getLinkCheckResult,
+  getLastScannedAt,
+  getRerunLinkUpdateInProgress,
+  getRerunLinkUpdateResult,
 } from './data/selectors';
 import { startLinkCheck, fetchLinkCheckStatus, fetchRerunLinkUpdateStatus } from './data/thunks';
 import ScanResults from './scan-results';
@@ -168,9 +183,9 @@ const CourseOptimizerPage = () => {
     if (rerunUpdateInterval.current) { clearInterval(rerunUpdateInterval.current); }
 
     return (
-    // <Container size="xl" className="course-unit px-4 mt-4">
+      // <Container size="xl" className="course-unit px-4 mt-4">
       <ConnectionErrorAlert />
-    // </Container>
+      // </Container>
     );
   }
 
@@ -198,9 +213,7 @@ const CourseOptimizerPage = () => {
       )}
       <Container size="xl" className="mt-4 px-4 export">
         <section className="setting-items mb-4">
-          <Layout
-            lg={[{ span: 12 }, { span: 0 }]}
-          >
+          <Layout>
             <Layout.Element>
               <article>
                 <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 p-3">
@@ -223,7 +236,7 @@ const CourseOptimizerPage = () => {
                     }}
                     state={getScanButtonState()}
                     onClick={() => dispatch(startLinkCheck(courseId))}
-                    disabled={!!(linkCheckInProgress) && !errorMessage}
+                    disabled={!!linkCheckInProgress && !errorMessage}
                     variant="primary"
                     data-testid="scan-course"
                   />
@@ -250,7 +263,12 @@ const CourseOptimizerPage = () => {
                         title={intl.formatMessage(messages.scanHeader)}
                       />
                       <Card.Section className="px-3 py-1">
-                        <p className="small"> {lastScannedAt && `${intl.formatMessage(messages.lastScannedOn)} ${intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })}`}</p>
+                        <p className="small">
+                          {lastScannedAt &&
+                            `${intl.formatMessage(messages.lastScannedOn)} ${
+                              intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })
+                            }`}
+                        </p>
                       </Card.Section>
                       <ScanResults
                         data={linkCheckResult}

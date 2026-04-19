@@ -87,11 +87,11 @@ const TabsSection = ({
         <Tab
           key={TABS_LIST.libraries}
           eventKey={TABS_LIST.libraries}
-          title={(
+          title={
             <Stack gap={2} direction="horizontal">
               {intl.formatMessage(messages.librariesTabTitle)}
             </Stack>
-          )}
+          }
         >
           <div>
             <WelcomeLibrariesV2Alert />

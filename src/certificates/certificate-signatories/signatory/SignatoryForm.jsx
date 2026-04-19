@@ -1,7 +1,14 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import {
-  Image, Icon, Stack, IconButtonWithTooltip, FormLabel, Form, Button, useToggle,
+  Image,
+  Icon,
+  Stack,
+  IconButtonWithTooltip,
+  FormLabel,
+  Form,
+  Button,
+  useToggle,
 } from '@openedx/paragon';
 import { DeleteOutline as DeleteOutlineIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -108,7 +115,7 @@ const SignatoryForm = ({
           </Form.Group>
         ))}
         <Form.Group className="m-0">
-          <FormLabel> {intl.formatMessage(messages.imageLabel)}</FormLabel>
+          <FormLabel>{intl.formatMessage(messages.imageLabel)}</FormLabel>
           {signatureImagePath && (
             <Image
               src={`${getConfig().STUDIO_BASE_URL}${signatureImagePath}`}

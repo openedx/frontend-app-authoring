@@ -12,7 +12,7 @@ import BaseCard from './BaseCard';
 import { ComponentMenu } from './ComponentMenu';
 
 type ComponentCardProps = {
-  hit: ContentHit,
+  hit: ContentHit;
 };
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {
@@ -53,15 +53,13 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
       displayName={displayName}
       description={componentDescription}
       tags={tags}
-      actions={(
+      actions={
         <ActionRow>
-          {componentPickerMode ? (
-            <AddComponentWidget usageKey={usageKey} blockType={blockType} />
-          ) : (
-            <ComponentMenu usageKey={usageKey} />
-          )}
+          {componentPickerMode ?
+            <AddComponentWidget usageKey={usageKey} blockType={blockType} /> :
+            <ComponentMenu usageKey={usageKey} />}
         </ActionRow>
-      )}
+      }
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
       onSelect={selectComponent}
       selected={selected}

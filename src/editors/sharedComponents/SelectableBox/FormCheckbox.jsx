@@ -66,10 +66,12 @@ const FormCheckbox = React.forwardRef(({
   const { hasFormGroupProvider, useSetIsControlGroupEffect, getControlProps } = useFormGroupContext();
   useSetIsControlGroupEffect(true);
   const shouldActAsGroup = hasFormGroupProvider && !hasCheckboxSetProvider;
-  const groupProps = shouldActAsGroup ? {
-    ...getControlProps({}),
-    role: 'group',
-  } : {};
+  const groupProps = shouldActAsGroup ?
+    {
+      ...getControlProps({}),
+      role: 'group',
+    } :
+    {};
 
   const control = React.createElement(controlAs, { ...props, className: controlClassName, ref });
   return (

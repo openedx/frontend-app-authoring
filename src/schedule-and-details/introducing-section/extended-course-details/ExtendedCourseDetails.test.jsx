@@ -7,13 +7,14 @@ import messages from './messages';
 import ExtendedCourseDetails from '.';
 
 // Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () => jest.fn((props) => (
-  <textarea
-    {...props}
-    onFocus={() => {}}
-    onBlur={() => {}}
-  />
-)));
+jest.mock('react-textarea-autosize', () =>
+  jest.fn((props) => (
+    <textarea
+      {...props}
+      onFocus={() => {}}
+      onBlur={() => {}}
+    />
+  )));
 
 const onChangeMock = jest.fn();
 

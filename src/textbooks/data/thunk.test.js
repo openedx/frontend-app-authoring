@@ -1,7 +1,4 @@
-import {
-  hideProcessingNotification,
-  showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
+import { showToastOutsideReact, closeToastOutsideReact } from '../../generic/toast-context';
 import {
   fetchTextbooksQuery,
   createTextbookQuery,
@@ -19,8 +16,16 @@ import {
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import {
-  getTextbooks, createTextbook, editTextbook, deleteTextbook,
+  getTextbooks,
+  createTextbook,
+  editTextbook,
+  deleteTextbook,
 } from './api';
+
+jest.mock('../../generic/toast-context', () => ({
+  showToastOutsideReact: jest.fn(),
+  closeToastOutsideReact: jest.fn(),
+}));
 
 jest.mock('./api', () => ({
   getTextbooks: jest.fn(),
@@ -63,11 +68,11 @@ describe('createTextbookQuery', () => {
     await createTextbookQuery('courseId', textbook)(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-    expect(dispatch).toHaveBeenCalledWith(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    expect(showToastOutsideReact).toHaveBeenCalledWith(NOTIFICATION_MESSAGES.saving);
     expect(createTextbook).toHaveBeenCalledWith('courseId', textbook);
     expect(dispatch).toHaveBeenCalledWith(createTextbookSuccess(textbook));
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-    expect(dispatch).toHaveBeenCalledWith(hideProcessingNotification());
+    expect(closeToastOutsideReact).toHaveBeenCalled();
   });
 
   it('should dispatch updateSavingStatus with RequestStatus.FAILED on failure', async () => {
@@ -76,10 +81,10 @@ describe('createTextbookQuery', () => {
     await createTextbookQuery('courseId', {})(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-    expect(dispatch).toHaveBeenCalledWith(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    expect(showToastOutsideReact).toHaveBeenCalledWith(NOTIFICATION_MESSAGES.saving);
     expect(createTextbook).toHaveBeenCalledWith('courseId', {});
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.FAILED, errorMessage: '' }));
-    expect(dispatch).toHaveBeenCalledWith(hideProcessingNotification());
+    expect(closeToastOutsideReact).toHaveBeenCalled();
   });
 });
 
@@ -91,11 +96,11 @@ describe('editTextbookQuery', () => {
     await editTextbookQuery('courseId', textbook)(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-    expect(dispatch).toHaveBeenCalledWith(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    expect(showToastOutsideReact).toHaveBeenCalledWith(NOTIFICATION_MESSAGES.saving);
     expect(editTextbook).toHaveBeenCalledWith('courseId', textbook);
     expect(dispatch).toHaveBeenCalledWith(editTextbookSuccess(textbook));
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-    expect(dispatch).toHaveBeenCalledWith(hideProcessingNotification());
+    expect(closeToastOutsideReact).toHaveBeenCalled();
   });
 
   it('should dispatch updateSavingStatus with RequestStatus.FAILED on failure', async () => {
@@ -104,10 +109,10 @@ describe('editTextbookQuery', () => {
     await editTextbookQuery('courseId', {})(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-    expect(dispatch).toHaveBeenCalledWith(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    expect(showToastOutsideReact).toHaveBeenCalledWith(NOTIFICATION_MESSAGES.saving);
     expect(editTextbook).toHaveBeenCalledWith('courseId', {});
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.FAILED, errorMessage: '' }));
-    expect(dispatch).toHaveBeenCalledWith(hideProcessingNotification());
+    expect(closeToastOutsideReact).toHaveBeenCalled();
   });
 });
 
@@ -118,11 +123,11 @@ describe('deleteTextbookQuery', () => {
     await deleteTextbookQuery('courseId', 'textbookId')(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-    expect(dispatch).toHaveBeenCalledWith(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
+    expect(showToastOutsideReact).toHaveBeenCalledWith(NOTIFICATION_MESSAGES.deleting);
     expect(deleteTextbook).toHaveBeenCalledWith('courseId', 'textbookId');
     expect(dispatch).toHaveBeenCalledWith(deleteTextbookSuccess('textbookId'));
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-    expect(dispatch).toHaveBeenCalledWith(hideProcessingNotification());
+    expect(closeToastOutsideReact).toHaveBeenCalled();
   });
 
   it('should dispatch updateSavingStatus with RequestStatus.FAILED on failure', async () => {
@@ -131,9 +136,9 @@ describe('deleteTextbookQuery', () => {
     await deleteTextbookQuery('courseId', 'textbookId')(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-    expect(dispatch).toHaveBeenCalledWith(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
+    expect(showToastOutsideReact).toHaveBeenCalledWith(NOTIFICATION_MESSAGES.deleting);
     expect(deleteTextbook).toHaveBeenCalledWith('courseId', 'textbookId');
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.FAILED, errorMessage: '' }));
-    expect(dispatch).toHaveBeenCalledWith(hideProcessingNotification());
+    expect(closeToastOutsideReact).toHaveBeenCalled();
   });
 });

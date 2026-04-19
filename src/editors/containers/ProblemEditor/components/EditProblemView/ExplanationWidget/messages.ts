@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   solutionWidgetTitle: {
     id: 'authoring.problemEditor.explanationwidget.explanationWidgetTitle',
     defaultMessage: 'Explanation',

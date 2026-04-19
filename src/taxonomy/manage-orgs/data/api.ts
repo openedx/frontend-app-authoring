@@ -4,10 +4,11 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getManageOrgsApiUrl = (taxonomyId: number): string => new URL(
-  `api/content_tagging/v1/taxonomies/${taxonomyId}/orgs/`,
-  getApiBaseUrl(),
-).href;
+export const getManageOrgsApiUrl = (taxonomyId: number): string =>
+  new URL(
+    `api/content_tagging/v1/taxonomies/${taxonomyId}/orgs/`,
+    getApiBaseUrl(),
+  ).href;
 
 /**
  * Build the mutation to assign organizations to a taxonomy.
@@ -15,7 +16,7 @@ export const getManageOrgsApiUrl = (taxonomyId: number): string => new URL(
 export const useManageOrgs = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ taxonomyId, orgs, allOrgs }: { taxonomyId: number, orgs?: string[], allOrgs: boolean }) => {
+    mutationFn: async ({ taxonomyId, orgs, allOrgs }: { taxonomyId: number; orgs?: string[]; allOrgs: boolean; }) => {
       const { data } = await getAuthenticatedHttpClient().put(
         getManageOrgsApiUrl(taxonomyId),
         {

@@ -4,9 +4,7 @@ import { FILE_LIST_DEFAULT_VALUE } from '../constants';
 
 const FileList = ({ fileList }) => (
   <ul>
-    {fileList.map((fileName) => (
-      <li key={fileName}>{fileName}</li>
-    ))}
+    {fileList.map((fileName) => <li key={fileName}>{fileName}</li>)}
   </ul>
 );
 

@@ -42,10 +42,11 @@ const UpdateForm = ({
   } = geUpdateFormSettings(requestType, courseUpdatesInitialValues, intl);
 
   return (
-    <div className={classNames('update-form', {
-      'update-form__inner': isInnerForm,
-      'update-form__inner-first': isFirstUpdate,
-    })}
+    <div
+      className={classNames('update-form', {
+        'update-form__inner': isInnerForm,
+        'update-form__inner-first': isFirstUpdate,
+      })}
     >
       <Formik
         initialValues={courseUpdatesInitialValues}
@@ -55,7 +56,10 @@ const UpdateForm = ({
         onSubmit={onSubmit}
       >
         {({
-          values, handleSubmit, isValid, setFieldValue,
+          values,
+          handleSubmit,
+          isValid,
+          setFieldValue,
         }) => (
           <>
             <h3 className="update-form-title">{formTitle}</h3>
@@ -93,7 +97,11 @@ const UpdateForm = ({
                 </div>
                 {!isValid && (
                   <div className="datepicker-field-error">
-                    <Icon src={ErrorIcon} className="text-danger-500" alt={intl.formatMessage(messages.updateFormErrorAltText)} />
+                    <Icon
+                      src={ErrorIcon}
+                      className="text-danger-500"
+                      alt={intl.formatMessage(messages.updateFormErrorAltText)}
+                    />
                     <span className="message-error">{intl.formatMessage(messages.updateFormInValid)}</span>
                   </div>
                 )}
@@ -105,7 +113,7 @@ const UpdateForm = ({
                 data-testid="course-updates-wisiwyg-editor"
                 name={contentFieldName}
                 minHeight={300}
-                onChange={/* istanbul ignore next: we can't test WYSIWYG editors */async (value) => {
+                onChange={/* istanbul ignore next: we can't test WYSIWYG editors */ async (value) => {
                   await setFieldValue(contentFieldName, value || DEFAULT_EMPTY_WYSIWYG_VALUE);
                 }}
               />

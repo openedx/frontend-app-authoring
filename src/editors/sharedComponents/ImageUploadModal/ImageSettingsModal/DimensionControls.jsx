@@ -57,11 +57,9 @@ const DimensionControls = ({
         />
         <IconButton
           className="d-inline-block"
-          alt={
-          isLocked
+          alt={isLocked
             ? intl.formatMessage(messages.unlockDimensionsLabel)
-            : intl.formatMessage(messages.lockDimensionsLabel)
-        }
+            : intl.formatMessage(messages.lockDimensionsLabel)}
           iconAs={Icon}
           src={isLocked ? Locked : Unlocked}
           onClick={isLocked ? unlock : lock}
@@ -76,7 +74,7 @@ DimensionControls.defaultProps = {
     width: '100',
   },
 };
-DimensionControls.propTypes = ({
+DimensionControls.propTypes = {
   value: PropTypes.shape({
     height: PropTypes.string,
     width: PropTypes.string,
@@ -87,6 +85,6 @@ DimensionControls.propTypes = ({
   lock: PropTypes.func.isRequired,
   unlock: PropTypes.func.isRequired,
   updateDimensions: PropTypes.func.isRequired,
-});
+};
 
 export default DimensionControls;

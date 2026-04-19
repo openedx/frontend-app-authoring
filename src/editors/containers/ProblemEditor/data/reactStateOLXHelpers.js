@@ -9,9 +9,11 @@ import { flatten } from 'lodash';
  * @returns {void}
  */
 function flattenSubNodes(node, subNodes, options = { recursive: false }) {
-  const values = Array.isArray(node) ? (
-    flatten(node.map(n => Object.values(n)))
-  ) : Object.values(node);
+  const values = Array.isArray(node) ?
+    (
+      flatten(node.map(n => Object.values(n)))
+    ) :
+    Object.values(node);
 
   values.forEach(value => {
     if (Array.isArray(value)) {

@@ -16,7 +16,10 @@ export const unit = ({ studioEndpointUrl, unitUrl, blockId }) => (
 );
 
 export const returnUrl = ({
-  studioEndpointUrl, unitUrl, learningContextId, blockId,
+  studioEndpointUrl,
+  unitUrl,
+  learningContextId,
+  blockId,
 }): string => {
   // Is this a v1 library?
   if (isLibraryV1Key(learningContextId)) {
@@ -120,10 +123,14 @@ export const courseVideos = (({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/videos/${learningContextId}`
 )) satisfies UrlFunction;
 
-export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
+export const boundHandlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
   `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/${handlerName}/`
 )) satisfies UrlFunction;
 
 export const validateNumericInputUrl = (({ studioEndpointUrl }) => (
   `${studioEndpointUrl}/api/contentstore/v2/validate/numerical-input/`
+)) satisfies UrlFunction;
+
+export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
+  `${studioEndpointUrl}/xblock/${blockId}/handler/${handlerName}`
 )) satisfies UrlFunction;

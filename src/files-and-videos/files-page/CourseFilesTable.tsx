@@ -31,7 +31,7 @@ import { useParams } from 'react-router-dom';
 
 export const CourseFilesTable = () => {
   const intl = useIntl();
-  const { courseId } = useParams() as { courseId: string };
+  const { courseId } = useParams() as { courseId: string; };
   const dispatch = useDispatch();
   const {
     assetIds,
@@ -42,10 +42,11 @@ export const CourseFilesTable = () => {
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id));
-  const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({
-    selectedRows,
-    courseId,
-  }));
+  const handleDownloadFile = (selectedRows) =>
+    dispatch(fetchAssetDownload({
+      selectedRows,
+      courseId,
+    }));
   const handleAddFile = (files) => {
     handleErrorReset({ errorType: 'add' });
     dispatch(validateAssetFiles(courseId, files));
@@ -64,10 +65,11 @@ export const CourseFilesTable = () => {
   };
 
   const thumbnailPreview = (props) => FileThumbnail(props);
-  const infoModalSidebar = (asset) => FileInfoModalSidebar({
-    asset,
-    handleLockedAsset: handleLockFile,
-  });
+  const infoModalSidebar = (asset) =>
+    FileInfoModalSidebar({
+      asset,
+      handleLockedAsset: handleLockFile,
+    });
 
   const assets = useModels('assets', assetIds);
   const data = {

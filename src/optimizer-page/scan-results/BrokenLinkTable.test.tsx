@@ -1,7 +1,11 @@
 import React from 'react';
 import {
-  render, screen, fireEvent, waitFor,
+  render,
+  screen,
+  fireEvent,
+  waitFor,
 } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -9,6 +13,10 @@ import PropTypes from 'prop-types';
 import BrokenLinkTable from './BrokenLinkTable';
 import { Unit, Filters } from '../types';
 import initializeStore from '../../store';
+
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: jest.fn(() => ({ courseId: 'course-v1:TestX+Test101+2024' })),
+}));
 
 let store: any;
 
@@ -60,7 +68,10 @@ interface BrokenLinkTableWrapperProps {
 }
 
 const BrokenLinkTableWrapper: React.FC<BrokenLinkTableWrapperProps> = ({
-  unit, onUpdateLink, filters = { brokenLinks: true, lockedLinks: false, externalForbiddenLinks: false }, ...props
+  unit,
+  onUpdateLink,
+  filters = { brokenLinks: true, lockedLinks: false, externalForbiddenLinks: false },
+  ...props
 }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
@@ -74,11 +85,14 @@ const BrokenLinkTableWrapper: React.FC<BrokenLinkTableWrapperProps> = ({
   </AppProvider>
 );
 
-const intlWrapper = (ui: React.ReactElement) => render(
-  <IntlProvider locale="en" messages={{}}>
-    {ui}
-  </IntlProvider>,
-);
+const intlWrapper = (ui: React.ReactElement) =>
+  render(
+    <MemoryRouter>
+      <IntlProvider locale="en" messages={{}}>
+        {ui}
+      </IntlProvider>
+    </MemoryRouter>,
+  );
 
 describe('BrokenLinkTable', () => {
   beforeEach(() => {
@@ -216,7 +230,9 @@ describe('BrokenLinkTable', () => {
         },
       ]);
 
-      render(<BrokenLinkTableWrapper unit={unitWithPreviousRunLinks} linkType="previous" onUpdateLink={mockUpdateHandler} />);
+      render(
+        <BrokenLinkTableWrapper unit={unitWithPreviousRunLinks} linkType="previous" onUpdateLink={mockUpdateHandler} />,
+      );
 
       const updateButton = findUpdateButton();
       fireEvent.click(updateButton);
@@ -244,7 +260,14 @@ describe('BrokenLinkTable', () => {
         },
       ]);
 
-      render(<BrokenLinkTableWrapper unit={unitWithPreviousRunLinks} linkType="previous" onUpdateLink={mockUpdateHandler} sectionId="section-123" />);
+      render(
+        <BrokenLinkTableWrapper
+          unit={unitWithPreviousRunLinks}
+          linkType="previous"
+          onUpdateLink={mockUpdateHandler}
+          sectionId="section-123"
+        />,
+      );
 
       const updateButton = findUpdateButton();
       fireEvent.click(updateButton);
@@ -272,7 +295,9 @@ describe('BrokenLinkTable', () => {
         },
       ]);
 
-      render(<BrokenLinkTableWrapper unit={unitWithPreviousRunLinks} linkType="previous" onUpdateLink={mockUpdateHandler} />);
+      render(
+        <BrokenLinkTableWrapper unit={unitWithPreviousRunLinks} linkType="previous" onUpdateLink={mockUpdateHandler} />,
+      );
 
       const updateButton = findUpdateButton();
       fireEvent.click(updateButton);
@@ -289,9 +314,10 @@ describe('BrokenLinkTable', () => {
   describe('Loading States', () => {
     it('should show loading state during update', async () => {
       const mockUpdateHandler = jest.fn().mockImplementation(
-        () => new Promise(resolve => {
-          setTimeout(() => resolve(true), 100);
-        }),
+        () =>
+          new Promise(resolve => {
+            setTimeout(() => resolve(true), 100);
+          }),
       );
       const unitWithPreviousRunLinks = createMockUnit([
         {
@@ -305,7 +331,9 @@ describe('BrokenLinkTable', () => {
         },
       ]);
 
-      render(<BrokenLinkTableWrapper unit={unitWithPreviousRunLinks} linkType="previous" onUpdateLink={mockUpdateHandler} />);
+      render(
+        <BrokenLinkTableWrapper unit={unitWithPreviousRunLinks} linkType="previous" onUpdateLink={mockUpdateHandler} />,
+      );
 
       const updateButton = findUpdateButton();
       fireEvent.click(updateButton);
@@ -346,7 +374,8 @@ describe('BrokenLinkTable', () => {
 
       render(<BrokenLinkTableWrapper unit={unitWithSpecialChars} />);
 
-      expect(screen.getByText('https://example.com/path with spaces/file.pdf?param=value&other=123')).toBeInTheDocument();
+      expect(screen.getByText('https://example.com/path with spaces/file.pdf?param=value&other=123'))
+        .toBeInTheDocument();
     });
 
     it('should handle very long URLs', () => {
@@ -687,11 +716,11 @@ describe('BrokenLinkTable', () => {
 
       const goToAnchor = screen.getByText('Test Block');
 
-      fireEvent.click(goToAnchor);
-
-      await waitFor(() => {
-        expect(window.open).toHaveBeenCalledWith('https://example.com/block', '_blank');
-      });
+      expect(goToAnchor.closest('a')).toHaveAttribute(
+        'href',
+        '/course/course-v1:TestX+Test101+2024/container/unit-1#block-1',
+      );
+      expect(goToAnchor.closest('a')).toHaveAttribute('target', '_blank');
     });
 
     it('BrokenLinkHref anchor opens the href URL', async () => {

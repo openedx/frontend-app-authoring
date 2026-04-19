@@ -40,7 +40,10 @@ const ExperimentCard = ({
   }, [isExpandedByDefault]);
 
   const {
-    id, groups: groupsControl, description, usage,
+    id,
+    groups: groupsControl,
+    description,
+    usage,
   } = configuration;
   const isUsedInLocation = !!usage?.length;
 
@@ -85,73 +88,75 @@ const ExperimentCard = ({
 
   return (
     <>
-      {isEditMode ? (
-        <ExperimentForm
-          isEditMode={isEditMode}
-          initialValues={formValues}
-          isUsedInLocation={isUsedInLocation}
-          onCreateClick={onCreate}
-          onCancelClick={switchOffEditMode}
-          onEditClick={handleEditConfiguration}
-        />
-      ) : (
-        <div
-          className="configuration-card"
-          data-testid="configuration-card"
-          id={id}
-        >
-          <div className="configuration-card-header">
-            <TitleButton
-              group={configuration}
-              isExpanded={isExpanded}
-              onTitleClick={() => setIsExpanded((prevState) => !prevState)}
-              isExperiment
-            />
-            <ActionRow className="ml-auto d-flex">
-              <IconButtonWithTooltip
-                tooltipContent={formatMessage(messages.actionEdit)}
-                alt={formatMessage(messages.actionEdit)}
-                src={EditOutlineIcon}
-                iconAs={Icon}
-                onClick={switchOnEditMode}
-                data-testid="configuration-card-header-edit"
+      {isEditMode ?
+        (
+          <ExperimentForm
+            isEditMode={isEditMode}
+            initialValues={formValues}
+            isUsedInLocation={isUsedInLocation}
+            onCreateClick={onCreate}
+            onCancelClick={switchOffEditMode}
+            onEditClick={handleEditConfiguration}
+          />
+        ) :
+        (
+          <div
+            className="configuration-card"
+            data-testid="configuration-card"
+            id={id}
+          >
+            <div className="configuration-card-header">
+              <TitleButton
+                group={configuration}
+                isExpanded={isExpanded}
+                onTitleClick={() => setIsExpanded((prevState) => !prevState)}
+                isExperiment
               />
-              <IconButtonWithTooltip
-                className="configuration-card-header__delete-tooltip"
-                tooltipContent={formatMessage(
-                  isUsedInLocation
-                    ? messages.experimentConfigurationDeleteRestriction
-                    : messages.actionDelete,
-                )}
-                alt={formatMessage(messages.actionDelete)}
-                src={DeleteOutlineIcon}
-                iconAs={Icon}
-                onClick={openDeleteModal}
-                data-testid="configuration-card-header-delete"
-                disabled={isUsedInLocation}
-              />
-            </ActionRow>
-          </div>
-          {isExpanded && (
-            <div
-              className="configuration-card-content"
-              data-testid="configuration-card-content"
-            >
-              <span className="x-small text-gray-500">{description}</span>
-              <ExperimentCardGroup groups={groupsControl} />
-              {usage?.length ? (
-                <UsageList
-                  className="mt-2.5"
-                  itemList={usage}
-                  isExperiment
+              <ActionRow className="ml-auto d-flex">
+                <IconButtonWithTooltip
+                  tooltipContent={formatMessage(messages.actionEdit)}
+                  alt={formatMessage(messages.actionEdit)}
+                  src={EditOutlineIcon}
+                  iconAs={Icon}
+                  onClick={switchOnEditMode}
+                  data-testid="configuration-card-header-edit"
                 />
-              ) : (
-                guideHowToAdd
-              )}
+                <IconButtonWithTooltip
+                  className="configuration-card-header__delete-tooltip"
+                  tooltipContent={formatMessage(
+                    isUsedInLocation
+                      ? messages.experimentConfigurationDeleteRestriction
+                      : messages.actionDelete,
+                  )}
+                  alt={formatMessage(messages.actionDelete)}
+                  src={DeleteOutlineIcon}
+                  iconAs={Icon}
+                  onClick={openDeleteModal}
+                  data-testid="configuration-card-header-delete"
+                  disabled={isUsedInLocation}
+                />
+              </ActionRow>
             </div>
-          )}
-        </div>
-      )}
+            {isExpanded && (
+              <div
+                className="configuration-card-content"
+                data-testid="configuration-card-content"
+              >
+                <span className="x-small text-gray-500">{description}</span>
+                <ExperimentCardGroup groups={groupsControl} />
+                {usage?.length ?
+                  (
+                    <UsageList
+                      className="mt-2.5"
+                      itemList={usage}
+                      isExperiment
+                    />
+                  ) :
+                  guideHowToAdd}
+              </div>
+            )}
+          </div>
+        )}
       <DeleteModal
         category={formatMessage(messages.subtitleModalDelete)}
         isOpen={isOpenDeleteModal}

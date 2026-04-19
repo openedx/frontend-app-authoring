@@ -23,7 +23,7 @@ type UnlinkModalPropsComponent = {
 type UnlinkModalProps = {
   isOpen: boolean;
   close: () => void;
-  onUnlinkSubmit: () => void | Promise<void>,
+  onUnlinkSubmit: () => void | Promise<void>;
 } & (UnlinkModalPropsContainer | UnlinkModalPropsComponent);
 
 export const UnlinkModal = ({
@@ -52,10 +52,12 @@ export const UnlinkModal = ({
     categoryName,
     b: BoldText,
   });
-  const modalDescriptionChildren = !isComponent ? intl.formatMessage(messages.descriptionChildren, {
-    categoryName,
-    childrenCategoryName,
-  }) : null;
+  const modalDescriptionChildren = !isComponent ?
+    intl.formatMessage(messages.descriptionChildren, {
+      categoryName,
+      childrenCategoryName,
+    }) :
+    null;
 
   return (
     <AlertModal
@@ -64,7 +66,7 @@ export const UnlinkModal = ({
       onClose={close}
       variant="warning"
       icon={Warning}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button
             onClick={(e) => {
@@ -86,7 +88,7 @@ export const UnlinkModal = ({
             label={intl.formatMessage(messages.unlinkButton)}
           />
         </ActionRow>
-      )}
+      }
     >
       <div>
         <p className="mt-2">{modalDescription}</p>

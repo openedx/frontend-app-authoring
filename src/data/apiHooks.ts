@@ -3,17 +3,25 @@ import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { UserAgreement, UserAgreementRecord } from '@src/data/types';
 import { libraryAuthoringQueryKeys } from '@src/library-authoring/data/apiHooks';
 import {
-  skipToken, useMutation, useQueries, useQuery, useQueryClient, UseQueryOptions,
+  skipToken,
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
 } from '@tanstack/react-query';
 import {
   BulkMigrateRequestData,
   bulkModulestoreMigrate,
   getCourseDetails,
   getModulestoreMigrationStatus,
-  getPreviewModulestoreMigration, getUserAgreement,
+  getPreviewModulestoreMigration,
+  getUserAgreement,
   getUserAgreementRecord,
-  getWaffleFlags, updateUserAgreementRecord,
+  getWaffleFlags,
+  updateUserAgreementRecord,
   waffleFlagDefaults,
+  getCourseSettings,
 } from './api';
 import { RequestStatus, RequestStatusType } from './constants';
 
@@ -23,7 +31,10 @@ export const migrationQueryKeys = {
    * Base key for data specific to a migration task
    */
   migrationTask: (migrationId?: string | null) => [...migrationQueryKeys.all, migrationId],
-  migrationPreview: (library_key: string, source_key?: string) => [...migrationQueryKeys.all, 'preview', source_key, library_key],
+  migrationPreview: (
+    library_key: string,
+    source_key?: string,
+  ) => [...migrationQueryKeys.all, 'preview', source_key, library_key],
 };
 
 export const courseDetailsKey = {
@@ -169,15 +180,15 @@ export function createGlobalState<T>(
   };
 }
 
-export const getGatingAgreementTypes = (gatingTypes: string[]): string[] => (
-  [...new Set(
+export const getGatingAgreementTypes = (gatingTypes: string[]): string[] => [
+  ...new Set(
     gatingTypes
       .flatMap(gatingType => getConfig().AGREEMENT_GATING?.[gatingType])
       .filter(item => Boolean(item)),
-  )]
-);
+  ),
+];
 
-export const useUserAgreementRecord = (agreementType:string) => (
+export const useUserAgreementRecord = (agreementType: string) => (
   useQuery<UserAgreementRecord, Error>({
     queryKey: ['agreement-record', agreementType],
     queryFn: () => getUserAgreementRecord(agreementType),
@@ -185,7 +196,7 @@ export const useUserAgreementRecord = (agreementType:string) => (
   })
 );
 
-export const useUserAgreementRecords = (agreementTypes:string[]) => (
+export const useUserAgreementRecords = (agreementTypes: string[]) => (
   useQueries({
     queries: agreementTypes.map<UseQueryOptions<UserAgreementRecord, Error>>(agreementType => ({
       queryKey: ['agreement-record', agreementType],
@@ -195,7 +206,7 @@ export const useUserAgreementRecords = (agreementTypes:string[]) => (
   })
 );
 
-export const useUserAgreementRecordUpdater = (agreementType:string) => {
+export const useUserAgreementRecordUpdater = (agreementType: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => updateUserAgreementRecord(agreementType),
@@ -205,10 +216,20 @@ export const useUserAgreementRecordUpdater = (agreementType:string) => {
   });
 };
 
-export const useUserAgreement = (agreementType:string) => (
+export const useUserAgreement = (agreementType: string) => (
   useQuery<UserAgreement, Error>({
     queryKey: ['agreements', agreementType],
     queryFn: () => getUserAgreement(agreementType),
     retry: false,
+  })
+);
+
+/**
+ * Get the course settings
+ */
+export const useCourseSettings = (courseId: string) => (
+  useQuery({
+    queryKey: ['courseSettings', courseId],
+    queryFn: () => getCourseSettings(courseId),
   })
 );

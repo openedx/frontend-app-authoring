@@ -7,18 +7,15 @@ import {
   Row,
 } from '@openedx/paragon';
 import { Add as AddIcon } from '@openedx/paragon/icons';
-import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { useWaffleFlags } from '../data/apiHooks';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { LoadingSpinner } from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-import ProcessingNotification from '../generic/processing-notification';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import TextbookCard from './textbook-card/TextbooksCard';
 import TextbookSidebar from './textbook-sidebar/TextbookSidebar';
@@ -48,11 +45,6 @@ const Textbooks = () => {
     handleTextbookDeleteSubmit,
   } = useTextbooks(courseId, waffleFlags);
 
-  const {
-    isShow: showProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
-
   if (isLoadingFailed) {
     return (
       <Container size="xl" className="course-unit px-4 mt-4">
@@ -80,14 +72,14 @@ const Textbooks = () => {
         <section className="mb-4 mt-5">
           <SubHeader
             title={intl.formatMessage(messages.headingTitle)}
-            breadcrumbs={(
+            breadcrumbs={
               <Breadcrumb
                 linkAs={Link}
                 ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
                 links={breadcrumbs}
               />
-            )}
-            headerActions={(
+            }
+            headerActions={
               <Button
                 iconBefore={AddIcon}
                 onClick={openTextbookForm}
@@ -95,7 +87,7 @@ const Textbooks = () => {
               >
                 {intl.formatMessage(messages.newTextbookButton)}
               </Button>
-            )}
+            }
           />
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -108,19 +100,21 @@ const Textbooks = () => {
               <article>
                 <section className="textbook-section">
                   <div className="pt-4">
-                    {textbooks.length ? textbooks.map((textbook, index) => (
-                      <TextbookCard
-                        key={textbook.id}
-                        textbook={textbook}
-                        courseId={courseId}
-                        handleSavingStatusDispatch={handleSavingStatusDispatch}
-                        onEditSubmit={handleTextbookEditFormSubmit}
-                        onDeleteSubmit={handleTextbookDeleteSubmit}
-                        textbookIndex={index}
-                      />
-                    )) : (
-                      !isTextbookFormOpen && <EmptyPlaceholder onCreateNewTextbook={openTextbookForm} />
-                    )}
+                    {textbooks.length ?
+                      textbooks.map((textbook, index) => (
+                        <TextbookCard
+                          key={textbook.id}
+                          textbook={textbook}
+                          courseId={courseId}
+                          handleSavingStatusDispatch={handleSavingStatusDispatch}
+                          onEditSubmit={handleTextbookEditFormSubmit}
+                          onDeleteSubmit={handleTextbookDeleteSubmit}
+                          textbookIndex={index}
+                        />
+                      )) :
+                      (
+                        !isTextbookFormOpen && <EmptyPlaceholder onCreateNewTextbook={openTextbookForm} />
+                      )}
                     {isTextbookFormOpen && (
                       <TextbookForm
                         closeTextbookForm={closeTextbookForm}
@@ -139,10 +133,6 @@ const Textbooks = () => {
           </Layout>
         </section>
       </Container>
-      <ProcessingNotification
-        isShow={showProcessingNotification}
-        title={processingNotificationTitle}
-      />
       <div className="alert-toast">
         <SavingErrorAlert
           savingStatus={savingStatus}

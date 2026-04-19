@@ -6,6 +6,6 @@
  * tags exceeding this depth, they will still be rendered, but further nesting will be blocked.
  * * **Sync Required**: This must match `TAXONOMY_MAX_DEPTH` in the openedx-core backend.
  */
-const TAXONOMY_MAX_DEPTH = 3;
+const TAXONOMY_MAX_DEPTH = 5;
 
 export { TAXONOMY_MAX_DEPTH };

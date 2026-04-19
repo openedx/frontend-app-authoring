@@ -7,13 +7,14 @@ import { CourseExportProvider } from '../CourseExportContext';
 
 const courseId = 'course-123';
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <CourseExportProvider>
-      <ExportSidebar />
-    </CourseExportProvider>
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseExportProvider>
+        <ExportSidebar />
+      </CourseExportProvider>
+    </CourseAuthoringProvider>,
+  );
 
 describe('<ExportSidebar />', () => {
   beforeEach(() => {

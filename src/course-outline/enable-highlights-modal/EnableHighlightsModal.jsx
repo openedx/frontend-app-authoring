@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, AlertModal, Button, Hyperlink,
+  ActionRow,
+  AlertModal,
+  Button,
+  Hyperlink,
 } from '@openedx/paragon';
 
 import messages from './messages';
@@ -26,7 +29,7 @@ const EnableHighlightsModal = ({
       size="lg"
       isOpen={isOpen}
       onClose={close}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button variant="tertiary" onClick={close}>
             {intl.formatMessage(messages.cancelButton)}
@@ -35,7 +38,7 @@ const EnableHighlightsModal = ({
             {intl.formatMessage(messages.submitButton)}
           </Button>
         </ActionRow>
-      )}
+      }
     >
       <p className="small">{intl.formatMessage(messages.description_1)}</p>
       <p className="small">

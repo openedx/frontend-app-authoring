@@ -3,7 +3,7 @@ import { Stack } from '@openedx/paragon';
 
 import messages from './messages';
 
-const CustomFormattedDate = ({ date }: { date: string | Date }) => (
+const CustomFormattedDate = ({ date }: { date: string | Date; }) => (
   <FormattedDate
     value={date}
     year="numeric"
@@ -19,17 +19,17 @@ type HistoryWidgedProps = {
 };
 
 /**
-  * This component displays the history of an entity (Last Modified and Created dates)
-  *
-  * This component doesn't handle fetching the data or any other side effects. It only displays the dates.
-  *
-  * @example
-  * ```tsx
-  * const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
-  *
-  * return <HistoryWidget {...componentMetadata} />;
-  * ```
-  */
+ * This component displays the history of an entity (Last Modified and Created dates)
+ *
+ * This component doesn't handle fetching the data or any other side effects. It only displays the dates.
+ *
+ * @example
+ * ```tsx
+ * const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
+ *
+ * return <HistoryWidget {...componentMetadata} />;
+ * ```
+ */
 const HistoryWidget = ({
   modified,
   created,
@@ -38,19 +38,25 @@ const HistoryWidget = ({
   <Stack className="history-widget-bar small" gap={3}>
     {lastPublished && (
       <div>
-        <div className="text-muted"><FormattedMessage {...messages.lastPublishedTitle} /> </div>
+        <div className="text-muted">
+          <FormattedMessage {...messages.lastPublishedTitle} />
+        </div>
         <CustomFormattedDate date={lastPublished} />
       </div>
     )}
     {modified && (
       <div>
-        <div className="text-muted"><FormattedMessage {...messages.lastModifiedTitle} /> </div>
+        <div className="text-muted">
+          <FormattedMessage {...messages.lastModifiedTitle} />
+        </div>
         <CustomFormattedDate date={modified} />
       </div>
     )}
     {created && (
       <div>
-        <div className="text-muted"><FormattedMessage {...messages.createdTitle} /> </div>
+        <div className="text-muted">
+          <FormattedMessage {...messages.createdTitle} />
+        </div>
         <CustomFormattedDate date={created} />
       </div>
     )}

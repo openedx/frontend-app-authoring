@@ -27,7 +27,7 @@ jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
   },
 }));
 jest.mock('../library-authoring/LibraryBlock', () => ({
-  LibraryBlock: jest.fn(() => (<div>Advanced Editor Iframe</div>)),
+  LibraryBlock: jest.fn(() => <div>Advanced Editor Iframe</div>),
 }));
 
 const defaultPropsHtml = {

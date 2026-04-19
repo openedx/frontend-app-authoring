@@ -19,10 +19,12 @@ const multiDims = {
 
 const state = new MockUseState(hooks);
 
-const hookKeys = StrictDict(Object.keys(hooks).reduce(
-  (obj, key) => ({ ...obj, [key]: key }),
-  {},
-));
+const hookKeys = StrictDict(
+  Object.keys(hooks).reduce(
+    (obj, key) => ({ ...obj, [key]: key }),
+    {},
+  ),
+);
 
 let hook;
 
@@ -30,12 +32,13 @@ const testVal = 'MY test VALUE';
 
 describe('state values', () => {
   const testStateMethod = (key) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     expect(hooks.state[key](testVal)).toEqual(React.useState(testVal));
   };
   test('provides altText state value', () => testStateMethod(state.keys.altText));
   test('provides dimensions state value', () => testStateMethod(state.keys.dimensions));
-  test('provides showAltTextDismissibleError state value', () => testStateMethod(state.keys.showAltTextDismissibleError));
+  test('provides showAltTextDismissibleError state value', () =>
+    testStateMethod(state.keys.showAltTextDismissibleError));
   test('provides showAltTextSubmissionError state value', () => testStateMethod(state.keys.showAltTextSubmissionError));
   test('provides isDecorative state value', () => testStateMethod(state.keys.isDecorative));
   test('provides isLocked state value', () => testStateMethod(state.keys.isLocked));

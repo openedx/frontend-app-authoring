@@ -7,8 +7,9 @@ import React, {
 
 import { Form } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+
+import OptionalExpandLink from '@src/taxonomy/tag-list/OptionalExpandLink';
 import messages from './messages';
-import OptionalExpandLink from '../tag-list/OptionalExpandLink';
 
 /**
  * Props for the EditableCell component.
@@ -48,7 +49,6 @@ const EditableCell = ({
   useEffect(() => {
     if (autoFocus && inputRef.current) {
       inputRef.current.focus();
-      inputRef.current.select();
     }
   }, [inputRef.current]); // autoFocus explicitly not a dependency, to avoid unexpected focus change.
 

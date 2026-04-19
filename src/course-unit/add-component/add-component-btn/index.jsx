@@ -6,7 +6,10 @@ import messages from '../messages';
 import AddComponentIcon from './AddComponentIcon';
 
 const AddComponentButton = ({
-  type, displayName, onClick, beta,
+  type,
+  displayName,
+  onClick,
+  beta,
 }) => {
   const intl = useIntl();
 

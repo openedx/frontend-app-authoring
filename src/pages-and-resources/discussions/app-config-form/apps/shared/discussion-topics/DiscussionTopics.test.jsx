@@ -1,7 +1,14 @@
 import React from 'react';
 
 import {
-  act, fireEvent, queryAllByTestId, queryByTestId, queryByText, render, waitFor, queryByLabelText,
+  act,
+  fireEvent,
+  queryAllByTestId,
+  queryByTestId,
+  queryByText,
+  render,
+  waitFor,
+  queryByLabelText,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';

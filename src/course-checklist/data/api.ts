@@ -91,7 +91,10 @@ export async function getCourseLaunch({
 }: CourseLaunchRequest): Promise<CourseLaunchData> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseLaunchApiUrl({
-      courseId, gradedOnly, validateOras, all,
+      courseId,
+      gradedOnly,
+      validateOras,
+      all,
     }));
 
   return camelCaseObject(data);

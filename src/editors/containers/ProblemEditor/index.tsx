@@ -3,7 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Spinner } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  EditorState, selectors, actions, thunkActions,
+  EditorState,
+  selectors,
+  actions,
+  thunkActions,
 } from '@src/editors/data/redux';
 import { RequestKeys } from '@src/editors/data/constants/requests';
 import { EditorComponent } from '@src/editors/EditorComponent';
@@ -29,8 +32,10 @@ const ProblemEditor: React.FC<Props> = ({
   const intl = useIntl();
   const dispatch = useDispatch();
 
-  const blockFinished = useSelector((state: EditorState) => selectors.app.shouldCreateBlock(state)
-    || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }));
+  const blockFinished = useSelector((state: EditorState) =>
+    selectors.app.shouldCreateBlock(state)
+    || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock })
+  );
 
   const blockFailed = useSelector(
     (state: EditorState) => selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
@@ -42,8 +47,10 @@ const ProblemEditor: React.FC<Props> = ({
   const updateField = React.useCallback((data) => dispatch(actions.problem.updateField(data)), [dispatch]);
   const setBlockTitle = React.useCallback((title) => dispatch(actions.app.setBlockTitle(title)), [dispatch]);
 
-  const advancedSettingsFinished = useSelector((state: EditorState) => selectors.app.shouldCreateBlock(state)
-    || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAdvancedSettings }));
+  const advancedSettingsFinished = useSelector((state: EditorState) =>
+    selectors.app.shouldCreateBlock(state)
+    || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAdvancedSettings })
+  );
 
   useEffect(() => {
     const run = async () => {
@@ -89,10 +96,10 @@ const ProblemEditor: React.FC<Props> = ({
   }
 
   if (problemType === null) {
-    return (<SelectTypeModal onClose={onClose} openAdvanced={extraProps?.problemType === 'advanced'} />);
+    return <SelectTypeModal onClose={onClose} openAdvanced={extraProps?.problemType === 'advanced'} />;
   }
 
-  return (<EditProblemView returnFunction={returnFunction} />);
+  return <EditProblemView returnFunction={returnFunction} />;
 };
 
 export default ProblemEditor;

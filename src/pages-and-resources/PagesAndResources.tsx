@@ -1,10 +1,10 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { PageWrap, AppContext } from '@edx/frontend-platform/react';
+import { PageWrap } from '@edx/frontend-platform/react';
 import { Button, Hyperlink } from '@openedx/paragon';
 import { useModels } from '@src/generic/model-store';
 import { RequestStatus } from '@src/data/constants';
@@ -37,9 +37,7 @@ const PagesAndResources = () => {
   const loadingStatus = useSelector(getLoadingStatus);
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
 
-  // @ts-ignore
-  const { config } = useContext(AppContext);
-  const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
+  const learningCourseURL = `${getConfig().LEARNING_BASE_URL}/course/${courseId}`;
   const redirectUrl = `/course/${courseId}/pages-and-resources`;
 
   // The pages here are driven by course apps. The list of course app IDs comes from the LMS API.
@@ -64,9 +62,7 @@ const PagesAndResources = () => {
   }
 
   if (courseAppsApiStatus === RequestStatus.DENIED) {
-    return (
-      <PermissionDeniedAlert />
-    );
+    return <PermissionDeniedAlert />;
   }
 
   const hasAdditionalCoursePlugin = getConfig()?.pluginSlots?.additional_course_plugin != null;
@@ -82,29 +78,55 @@ const PagesAndResources = () => {
             rel="noopener noreferrer"
             showLaunchIcon={false}
           >
-            <Button variant="outline-primary" className="p-2"> {intl.formatMessage(messages.viewLiveButton)}</Button>
+            <Button variant="outline-primary" className="p-2">{intl.formatMessage(messages.viewLiveButton)}</Button>
           </Hyperlink>
         </div>
 
         <Routes>
-          <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings /></PageWrap>} />
-          <Route path="discussion" element={<PageWrap><DiscussionsSettings /></PageWrap>} />
-          <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings /></PageWrap>} />
-          <Route path=":appId/settings" element={<PageWrap><SettingsComponent url={redirectUrl} /></PageWrap>} />
+          <Route
+            path="discussion/configure/:appId"
+            element={
+              <PageWrap>
+                <DiscussionsSettings />
+              </PageWrap>
+            }
+          />
+          <Route
+            path="discussion"
+            element={
+              <PageWrap>
+                <DiscussionsSettings />
+              </PageWrap>
+            }
+          />
+          <Route
+            path="discussion/settings"
+            element={
+              <PageWrap>
+                <DiscussionsSettings />
+              </PageWrap>
+            }
+          />
+          <Route
+            path=":appId/settings"
+            element={
+              <PageWrap>
+                <SettingsComponent url={redirectUrl} />
+              </PageWrap>
+            }
+          />
         </Routes>
 
         <PageGrid pages={pages} pluginSlotComponent={<AdditionalCoursePluginSlot />} courseId={courseId} />
-        {
-          (contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
-            && (
-              <>
-                <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
-                  <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
-                </div>
-                <PageGrid pages={contentPermissionsPages} pluginSlotComponent={<AdditionalCourseContentPluginSlot />} />
-              </>
-            )
-        }
+        {(contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
+          && (
+            <>
+              <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
+                <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
+              </div>
+              <PageGrid pages={contentPermissionsPages} pluginSlotComponent={<AdditionalCourseContentPluginSlot />} />
+            </>
+          )}
       </main>
     </PagesAndResourcesProvider>
   );

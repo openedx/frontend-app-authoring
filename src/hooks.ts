@@ -9,8 +9,9 @@ import {
 } from 'react';
 import { history } from '@edx/frontend-platform';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { isEqual } from 'lodash';
 
-export const useScrollToHashElement = ({ isLoading }: { isLoading: boolean }) => {
+export const useScrollToHashElement = ({ isLoading }: { isLoading: boolean; }) => {
   const [elementWithHash, setElementWithHash] = useState<string | null>(null);
   const { pathname } = useLocation();
 
@@ -30,7 +31,7 @@ export const useScrollToHashElement = ({ isLoading }: { isLoading: boolean }) =>
   return { elementWithHash };
 };
 
-export const useEscapeClick = ({ onEscape, dependency }: { onEscape: () => void, dependency: any }) => {
+export const useEscapeClick = ({ onEscape, dependency }: { onEscape: () => void; dependency: any; }) => {
   useEffect(() => {
     const handleEscapeClick = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -82,7 +83,7 @@ export const useLoadOnScroll = (
         window.removeEventListener('scroll', onscroll);
       };
     }
-    return () => { };
+    return () => {};
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 };
 
@@ -154,18 +155,18 @@ export function useStateWithUrlSearchParam<Type>(
   // Update the url search parameter using:
   type ReturnSetterParams = (
     // a Type value
-    value?: Type | Type[]
-    // or a function that returns a Type from the previous returnValue
-    | ((value: Type | Type[]) => Type | Type[])
+    value?:
+      | Type
+      | Type[]
+      // or a function that returns a Type from the previous returnValue
+      | ((value: Type | Type[]) => Type | Type[]),
   ) => void;
   const returnSetter: Dispatch<SetStateAction<Type | Type[]>> = useCallback<ReturnSetterParams>((value) => {
     setSearchParams((/* previous -- see STATE WORKAROUND above */) => {
       const useValue = value instanceof Function ? value(returnValue) : value;
-      const paramValue: string | string[] | undefined = (
-        useValue instanceof Array
-          ? useValue.map(toString).filter((v) => v !== undefined) as string[]
-          : toString(useValue)
-      );
+      const paramValue: string | string[] | undefined = useValue instanceof Array
+        ? useValue.map(toString).filter((v) => v !== undefined) as string[]
+        : toString(useValue);
 
       const newSearchParams = new URLSearchParams(locationRef.current.search);
       if (paramValue === undefined || paramValue === defaultValue) {
@@ -216,7 +217,10 @@ export function useStickyState<T>(
 }
 
 export function useToggleWithValue<T>(defaultValue?: T): [
-  isDefined: boolean, value: T | undefined, define: ((val: T) => void), undefine: () => void,
+  isDefined: boolean,
+  value: T | undefined,
+  define: ((val: T) => void),
+  undefine: () => void,
 ] {
   const [value, setValue] = useState<T | undefined>(defaultValue);
   const define = useCallback((val: T) => {
@@ -227,4 +231,71 @@ export function useToggleWithValue<T>(defaultValue?: T): [
   }, []);
   const isDefined = useMemo(() => value !== undefined, [value]);
   return [isDefined, value, define, undefine];
+}
+
+type SetStateWithCallbackAction<T> = React.SetStateAction<T | undefined> | {
+  value: React.SetStateAction<T | undefined>;
+  skipCallback?: boolean;
+};
+
+/**
+ * Hook to use `useState` and also trigger a callback when the state updates. This is particularly useful for
+ * scenarios where you want to update the UI or perform side effects every time the state changes.
+ *
+ * The returned setter also accepts `{ value, skipCallback }` to optionally suppress the callback for a
+ * specific update.
+ *
+ * @param defaultValue The default value of the state
+ * @param callback Receives the latest value as argument
+ * @param delay Time in milliseconds before the callback is triggered after state update (defaults to 500 ms)
+ */
+export function useStateWithCallback<T>(
+  defaultValue?: T | (() => T | undefined),
+  callback?: (val: T | undefined) => void,
+  delay = 500,
+): [T | undefined, React.Dispatch<SetStateWithCallbackAction<T>>] {
+  const [data, setData] = useState(defaultValue);
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const callbackRef = useRef(callback);
+  const skipCallbackRef = useRef(false);
+  const prevDataRef = useRef(defaultValue); // Track previous value
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    // Only run if data actually changed
+    if (isEqual(data, prevDataRef.current)) {
+      return () => {};
+    }
+
+    prevDataRef.current = data;
+
+    if (skipCallbackRef.current) {
+      skipCallbackRef.current = false;
+      return () => {};
+    }
+
+    if (timeoutRef.current) { clearTimeout(timeoutRef.current); }
+
+    timeoutRef.current = setTimeout(() => {
+      callbackRef.current?.(data);
+    }, delay);
+
+    return () => clearTimeout(timeoutRef.current);
+  }, [data, delay]);
+
+  const setDataWithCallback = (value: SetStateWithCallbackAction<T>) => {
+    if (typeof value === 'object' && value !== null && 'value' in value) {
+      skipCallbackRef.current = !!value.skipCallback;
+      setData(value.value);
+      return;
+    }
+
+    skipCallbackRef.current = false;
+    setData(value as React.SetStateAction<T | undefined>);
+  };
+
+  return [data, setDataWithCallback];
 }

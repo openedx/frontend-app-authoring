@@ -8,11 +8,12 @@ import messages from './messages';
 
 const usages = contentGroupsMock.groups[1]?.usage;
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <UsageList itemList={usages} {...props} />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <UsageList itemList={usages} {...props} />
+    </IntlProvider>,
+  );
 
 describe('<UsageList />', () => {
   it('renders component correctly', () => {

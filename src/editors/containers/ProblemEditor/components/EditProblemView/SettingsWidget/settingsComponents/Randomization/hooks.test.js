@@ -8,7 +8,7 @@ jest.mock('react', () => {
   return {
     updateState,
     useEffect: jest.fn(),
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
+    useState: jest.fn(val => [{ state: val }, (newVal) => updateState({ val, newVal })]),
   };
 });
 

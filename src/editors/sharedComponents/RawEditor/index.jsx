@@ -25,15 +25,16 @@ const RawEditor = ({
           You are using the raw {lang} editor.
         </Alert>
       )}
-      { value ? (
-        <CodeEditor
-          innerRef={editorRef}
-          value={staticUpdate}
-          lang={lang}
-          data-testid="code-editor"
-        />
-      ) : null}
-
+      {value ?
+        (
+          <CodeEditor
+            innerRef={editorRef}
+            value={staticUpdate}
+            lang={lang}
+            data-testid="code-editor"
+          />
+        ) :
+        null}
     </div>
   );
 };

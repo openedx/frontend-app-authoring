@@ -15,7 +15,9 @@ const ExportSidebar = () => {
   return (
     <HelpSidebar courseId={courseId}>
       <h4 className="help-sidebar-about-title">{intl.formatMessage(messages.title1)}</h4>
-      <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.description1, { studioShortName: getConfig().STUDIO_SHORT_NAME })}</p>
+      <p className="help-sidebar-about-descriptions">
+        {intl.formatMessage(messages.description1, { studioShortName: getConfig().STUDIO_SHORT_NAME })}
+      </p>
       <hr />
       <h4 className="help-sidebar-about-title">{intl.formatMessage(messages.exportedContent)}</h4>
       <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.exportedContentHeading)}</p>

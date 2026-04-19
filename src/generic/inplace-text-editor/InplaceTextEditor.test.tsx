@@ -10,7 +10,7 @@ import { InplaceTextEditor } from '.';
 
 const mockOnSave = jest.fn();
 
-const RootWrapper = ({ children }: { children: React.ReactNode }) => (
+const RootWrapper = ({ children }: { children: React.ReactNode; }) => (
   <IntlProvider locale="en">
     {children}
   </IntlProvider>
@@ -102,7 +102,9 @@ describe('<InplaceTextEditor />', () => {
     const newText = screen.getByText('New text');
     expect(newText).toBeInTheDocument();
 
-    await act(async () => { rejecter(new Error('error')); });
+    await act(async () => {
+      rejecter(new Error('error'));
+    });
 
     // Remove pending new text on error
     expect(newText).not.toBeInTheDocument();

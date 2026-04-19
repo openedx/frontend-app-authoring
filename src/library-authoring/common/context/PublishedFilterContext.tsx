@@ -6,7 +6,7 @@ interface PublishedFilterContextProps {
 
 const Context = React.createContext<PublishedFilterContextProps | undefined>(undefined);
 
-export const PublishedFilterContextProvider: React.FC<PublishedFilterContextProps & { children: React.ReactNode }> = ({
+export const PublishedFilterContextProvider: React.FC<PublishedFilterContextProps & { children: React.ReactNode; }> = ({
   showOnlyPublished,
   children,
 }) => {

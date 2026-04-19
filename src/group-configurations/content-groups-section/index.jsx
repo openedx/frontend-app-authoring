@@ -43,35 +43,35 @@ const ContentGroupsSection = ({
       <h2 className="lead text-black mb-3 configuration-section-name">
         {name}
       </h2>
-      {groups?.length ? (
-        <>
-          {groups.map((group) => (
-            <ContentGroupCard
-              group={group}
-              groupNames={groupNames}
-              parentGroupId={parentGroupId}
-              key={group.id}
-              contentGroupActions={contentGroupActions}
-              handleEditGroup={handleEditContentGroup}
-            />
-          ))}
-          {!isNewGroupVisible && (
-            <Button
-              className="mt-4"
-              variant="outline-primary"
-              onClick={openNewGroup}
-              iconBefore={AddIcon}
-              block
-            >
-              {formatMessage(messages.addNewGroup)}
-            </Button>
-          )}
-        </>
-      ) : (
-        !isNewGroupVisible && (
-          <EmptyPlaceholder onCreateNewGroup={openNewGroup} />
-        )
-      )}
+      {groups?.length ?
+        (
+          <>
+            {groups.map((group) => (
+              <ContentGroupCard
+                group={group}
+                groupNames={groupNames}
+                parentGroupId={parentGroupId}
+                key={group.id}
+                contentGroupActions={contentGroupActions}
+                handleEditGroup={handleEditContentGroup}
+              />
+            ))}
+            {!isNewGroupVisible && (
+              <Button
+                className="mt-4"
+                variant="outline-primary"
+                onClick={openNewGroup}
+                iconBefore={AddIcon}
+                block
+              >
+                {formatMessage(messages.addNewGroup)}
+              </Button>
+            )}
+          </>
+        ) :
+        (
+          !isNewGroupVisible && <EmptyPlaceholder onCreateNewGroup={openNewGroup} />
+        )}
       {isNewGroupVisible && (
         <ContentGroupForm
           groupNames={groupNames}

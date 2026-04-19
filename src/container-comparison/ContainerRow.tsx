@@ -1,10 +1,17 @@
 import {
-  ActionRow, Card, Icon, Stack,
+  ActionRow,
+  Card,
+  Icon,
+  Stack,
 } from '@openedx/paragon';
 import type { MessageDescriptor } from 'react-intl';
 import { useMemo } from 'react';
 import {
-  Cached, ChevronRight, Delete, Done, Plus,
+  Cached,
+  ChevronRight,
+  Delete,
+  Done,
+  Plus,
 } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getItemIcon } from '@src/generic/block-type-utils';
@@ -31,7 +38,12 @@ interface StateContext {
 }
 
 const ContainerRow = ({
-  title, containerType, state, side, originalName, onClick,
+  title,
+  containerType,
+  state,
+  side,
+  originalName,
+  onClick,
 }: ContainerRowProps) => {
   const isClickable = isRowClickable(state, containerType as ContainerType);
   const stateContext: StateContext = useMemo(() => {
@@ -51,13 +63,20 @@ const ContainerRow = ({
         message = side === 'Before' ? messages.renamedDiffBeforeMessage : messages.renamedUpdatedDiffAfterMessage;
         return { className: 'bg-light-300 text-light-300 ', icon: Done, message };
       case 'locallyContentUpdated':
-        message = side === 'Before' ? messages.locallyContentUpdatedBeforeMessage : messages.locallyContentUpdatedAfterMessage;
+        message = side === 'Before'
+          ? messages.locallyContentUpdatedBeforeMessage
+          : messages.locallyContentUpdatedAfterMessage;
         return { className: 'bg-light-300 text-light-300 ', icon: Done, message };
       case 'locallyRenamedAndContentUpdated':
         message = side === 'Before' ? messages.renamedDiffBeforeMessage : messages.renamedUpdatedDiffAfterMessage;
-        message2 = side === 'Before' ? messages.locallyContentUpdatedBeforeMessage : messages.locallyContentUpdatedAfterMessage;
+        message2 = side === 'Before'
+          ? messages.locallyContentUpdatedBeforeMessage
+          : messages.locallyContentUpdatedAfterMessage;
         return {
-          className: 'bg-light-300 text-light-300 ', icon: Done, message, message2,
+          className: 'bg-light-300 text-light-300 ',
+          icon: Done,
+          message,
+          message2,
         };
       case 'moved':
         message = side === 'Before' ? messages.movedDiffBeforeMessage : messages.movedDiffAfterMessage;
@@ -94,32 +113,32 @@ const ContainerRow = ({
               />
               <span className="small font-weight-bold">{title}</span>
             </Stack>
-            {stateContext.message ? (
-              <div className="d-flex flex-column">
-                <span className="micro">
-                  <FormattedMessage
-                    {...stateContext.message}
-                    values={{
-                      blockType: containerType,
-                      name: originalName,
-                    }}
-                  />
-                </span>
-                {stateContext.message2 && (
+            {stateContext.message ?
+              (
+                <div className="d-flex flex-column">
                   <span className="micro">
                     <FormattedMessage
-                      {...stateContext.message2}
+                      {...stateContext.message}
                       values={{
                         blockType: containerType,
                         name: originalName,
                       }}
                     />
                   </span>
-                )}
-              </div>
-            ) : (
-              <span className="micro">&nbsp;</span>
-            )}
+                  {stateContext.message2 && (
+                    <span className="micro">
+                      <FormattedMessage
+                        {...stateContext.message2}
+                        values={{
+                          blockType: containerType,
+                          name: originalName,
+                        }}
+                      />
+                    </span>
+                  )}
+                </div>
+              ) :
+              <span className="micro">&nbsp;</span>}
           </Stack>
           <ActionRow.Spacer />
           {isClickable && <Icon size="md" src={ChevronRight} />}

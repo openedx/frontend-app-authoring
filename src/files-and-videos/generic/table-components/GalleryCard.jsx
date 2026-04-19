@@ -30,7 +30,7 @@ const GalleryCard = ({
     <Card className={`${className} w-100 gallery-card`} data-testid={`grid-card-${original.id}`}>
       <Card.Header
         className="pr-0 pt-2 pb-2"
-        actions={(
+        actions={
           <ActionRow>
             <FileMenu
               externalUrl={original.externalUrl}
@@ -40,18 +40,18 @@ const GalleryCard = ({
               portableUrl={original.portableUrl}
               id={original.id}
               fileType={fileType}
-              onDownload={() => handleBulkDownload([{
-                original: {
-                  id: original.id,
-                  displayName:
-                  original.displayName,
-                  downloadLink: original?.downloadLink,
-                },
-              }])}
+              onDownload={() =>
+                handleBulkDownload([{
+                  original: {
+                    id: original.id,
+                    displayName: original.displayName,
+                    downloadLink: original?.downloadLink,
+                  },
+                }])}
               openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
             />
           </ActionRow>
-        )}
+        }
       />
       <Card.Section className="pr-3 pl-3 pt-0 pb-0">
         <div className="row align-items-center justify-content-center m-0">

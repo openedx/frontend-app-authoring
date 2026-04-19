@@ -56,7 +56,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
 
   const addMember = useAddLibraryTeamMember(libraryId);
   const onAddMember = useCallback(
-    (data: { email: string }) => {
+    (data: { email: string; }) => {
       const { email } = data;
       addMember.mutateAsync({
         libraryId,
@@ -141,21 +141,25 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
   }
 
   const { email: currentUserEmail, administrator: isGlobalStaff } = getAuthenticatedUser();
-  const isLibraryAdmin = libraryTeamMembers ? (
-    libraryTeamMembers.filter(
-      ({ email, accessLevel }) => (
-        accessLevel === LibraryRole.Admin.toString() && email === currentUserEmail
-      ),
-    ).length === 1
-  ) : false;
+  const isLibraryAdmin = libraryTeamMembers ?
+    (
+      libraryTeamMembers.filter(
+        ({ email, accessLevel }) => (
+          accessLevel === LibraryRole.Admin.toString() && email === currentUserEmail
+        ),
+      ).length === 1
+    ) :
+    false;
   const canChangeRoles = libraryData ? libraryData.canEditLibrary && (isLibraryAdmin || isGlobalStaff) : false;
 
   // Is there only one Admin member in the Team? We'll prevent that user from being demoted/deleted.
-  const singleAdmin = libraryTeamMembers ? (
-    libraryTeamMembers.filter(
-      ({ accessLevel }) => accessLevel === LibraryRole.Admin.toString(),
-    ).length === 1
-  ) : false;
+  const singleAdmin = libraryTeamMembers ?
+    (
+      libraryTeamMembers.filter(
+        ({ accessLevel }) => accessLevel === LibraryRole.Admin.toString(),
+      ).length === 1
+    ) :
+    false;
 
   return (
     <Container size="xl" className="library-team px-4">
@@ -204,21 +208,23 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
       )}
       <section className="library-team-section mt-3">
         <div className="members-container">
-          {libraryTeamMembers && libraryTeamMembers.length ? (
-            libraryTeamMembers.map(({ username, accessLevel, email }) => (
-              <LibraryTeamMember
-                key={email}
-                username={username}
-                email={email}
-                accessLevel={accessLevel}
-                isCurrentUser={email === currentUserEmail}
-                isSingleAdmin={singleAdmin && accessLevel === LibraryRole.Admin}
-                canChangeRoles={canChangeRoles}
-                onChangeRole={onChangeRole}
-                onDeleteRole={onDeleteRole}
-              />
-            ))
-          ) : <FormattedMessage {...messages.noMembersFound} />}
+          {libraryTeamMembers && libraryTeamMembers.length ?
+            (
+              libraryTeamMembers.map(({ username, accessLevel, email }) => (
+                <LibraryTeamMember
+                  key={email}
+                  username={username}
+                  email={email}
+                  accessLevel={accessLevel}
+                  isCurrentUser={email === currentUserEmail}
+                  isSingleAdmin={singleAdmin && accessLevel === LibraryRole.Admin}
+                  canChangeRoles={canChangeRoles}
+                  onChangeRole={onChangeRole}
+                  onDeleteRole={onDeleteRole}
+                />
+              ))
+            ) :
+            <FormattedMessage {...messages.noMembersFound} />}
         </div>
       </section>
       {isError && <AlertError error={error} />}

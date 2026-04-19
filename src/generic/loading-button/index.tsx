@@ -10,15 +10,15 @@ import {
 
 interface LoadingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
-  onClick?: (e: any) => (Promise<void> | void);
+  onClick?: (e: any) => Promise<void> | void;
   size?: string;
   variant?: string;
   isLoading?: boolean;
 }
 
 /**
-  * A button that shows a loading spinner when clicked, if the onClick function returns a Promise.
-  */
+ * A button that shows a loading spinner when clicked, if the onClick function returns a Promise.
+ */
 const LoadingButton: React.FC<LoadingButtonProps> = ({
   label,
   onClick,

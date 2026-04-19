@@ -10,34 +10,40 @@ export default {
   is_collapsible: false,
   position: 1,
   prev_url: '%2Fcontainer%2Fblock-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40vertical%2Bblock%40vertical_0270f6de40fc',
-  next_url: '%2Fcontainer%2Fblock-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40vertical%2Bblock%404f6c1b4e316a419ab5b6bf30e6c708e9',
+  next_url:
+    '%2Fcontainer%2Fblock-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40vertical%2Bblock%404f6c1b4e316a419ab5b6bf30e6c708e9',
   new_unit_category: 'vertical',
   outline_url: '/course/course-v1:edX+DemoX+Demo_Course?format=concise',
   ancestor_xblocks: [
     {
       children: [
         {
-          url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40d8a6192ade314473a78242dfeedfbf5b',
+          url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40d8a6192ade314473a78242dfeedfbf5b',
           display_name: 'Introduction 2',
           usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@v3v57d5h5j4a8s33a78242dfeedfbf5b',
         },
         {
-          url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40interactive_demonstrations',
+          url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40interactive_demonstrations',
           display_name: 'Example Week 1: Getting Started',
           usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@4bgkas5384h6f686f8ghj53feedfbf2f',
         },
         {
-          url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40graded_interactions',
+          url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40graded_interactions',
           display_name: 'Example Week 2: Get Interactive',
           usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@v3v57d5h5j4a8s33nsdajdsh876fbf3g',
         },
         {
-          url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40social_integration',
+          url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40social_integration',
           display_name: 'Example Week 3: Be Social',
           usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@sg8b76g7b68s7s33a78242dfeedfbf4c',
         },
         {
-          url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%401414ffd5143b4b508f739b563ab468b7',
+          url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%401414ffd5143b4b508f739b563ab468b7',
           display_name: 'About Exams and Certificates',
           usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@jhk76823jh42j5kl23kjl2dfeedfbf8d',
         },
@@ -48,12 +54,14 @@ export default {
     {
       children: [
         {
-          url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%4019a30717eff543078a5d94ae9d6c18a5',
+          url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%4019a30717eff543078a5d94ae9d6c18a5',
           display_name: 'Lesson 1 - Getting Started',
           usage_key: 'block-v1+edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5',
         },
         {
-          url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40basic_questions',
+          url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40basic_questions',
           display_name: 'Homework - Question Styles',
           usage_key: 'block-v1+edX+DemoX+Demo_Course+type@sequential+block@basic_questions',
         },
@@ -77,6 +85,14 @@ export default {
         {
           display_name: 'Video',
           category: 'videoalpha',
+          boilerplate_name: null,
+          hinted: false,
+          tab: 'common',
+          support_level: true,
+        },
+        {
+          display_name: 'PDF',
+          category: 'pdf',
           boilerplate_name: null,
           hinted: false,
           tab: 'common',
@@ -413,7 +429,8 @@ export default {
           edited_on: 'Jan 04, 2024 at 10:32 UTC',
           published: true,
           published_on: 'Dec 28, 2023 at 10:00 UTC',
-          studio_url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%4019a30717eff543078a5d94ae9d6c18a5',
+          studio_url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%4019a30717eff543078a5d94ae9d6c18a5',
           released_to_students: true,
           release_date: 'Feb 05, 2013 at 05:00 UTC',
           visibility_state: 'needs_attention',
@@ -483,7 +500,8 @@ export default {
                 edited_on: 'Jan 04, 2024 at 10:32 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'needs_attention',
@@ -567,7 +585,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4f6c1b4e316a419ab5b6bf30e6c708e9',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4f6c1b4e316a419ab5b6bf30e6c708e9',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -651,7 +670,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@3dc16db8d14842e38324e95d4030b8a0',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@3dc16db8d14842e38324e95d4030b8a0',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -735,7 +755,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4a1bba2a403f40bca5ec245e945b0d76',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@4a1bba2a403f40bca5ec245e945b0d76',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -819,7 +840,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@256f17a44983429fb1a60802203ee4e0',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@256f17a44983429fb1a60802203ee4e0',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -903,7 +925,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@e3601c0abee6427d8c17e6d6f8fdddd1',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@e3601c0abee6427d8c17e6d6f8fdddd1',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -987,7 +1010,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@a79d59cd72034188a71d388f4954a606',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@a79d59cd72034188a71d388f4954a606',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -1071,7 +1095,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@134df56c516a4a0dbb24dd5facef746e',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@134df56c516a4a0dbb24dd5facef746e',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -1155,7 +1180,8 @@ export default {
                 edited_on: 'Dec 28, 2023 at 10:00 UTC',
                 published: true,
                 published_on: 'Dec 28, 2023 at 10:00 UTC',
-                studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d91b9e5d8bc64d57a1332d06bf2f2193',
+                studio_url:
+                  '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d91b9e5d8bc64d57a1332d06bf2f2193',
                 released_to_students: true,
                 release_date: 'Feb 05, 2013 at 05:00 UTC',
                 visibility_state: 'live',
@@ -1268,7 +1294,8 @@ export default {
           edited_on: 'Jan 04, 2024 at 10:32 UTC',
           published: true,
           published_on: 'Dec 28, 2023 at 10:00 UTC',
-          studio_url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40interactive_demonstrations',
+          studio_url:
+            '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40interactive_demonstrations',
           released_to_students: true,
           release_date: 'Feb 05, 2013 at 05:00 UTC',
           visibility_state: 'live',
@@ -1317,7 +1344,8 @@ export default {
           highlights: [],
           highlights_enabled: true,
           highlights_preview_only: false,
-          highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+          highlights_doc_url:
+            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           ancestor_has_staff_lock: false,
           user_partition_info: {
             selectable_partitions: [
@@ -1403,7 +1431,8 @@ export default {
           highlights_enabled_for_messaging: false,
           highlights_enabled: true,
           highlights_preview_only: false,
-          highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+          highlights_doc_url:
+            'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           enable_proctored_exams: false,
           enable_timed_exams: true,
           ancestor_has_staff_lock: false,
@@ -1469,8 +1498,10 @@ export default {
     release_date_from: 'Section "Example Week 1: Getting Started"',
     staff_lock_from: null,
   },
-  draft_preview_link: '//preview.localhost:18000/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
-  published_preview_link: '//localhost:18000/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
+  draft_preview_link:
+    '//preview.localhost:18000/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
+  published_preview_link:
+    '//localhost:18000/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
   show_unit_tags: false,
   user_clipboard: {
     content: null,

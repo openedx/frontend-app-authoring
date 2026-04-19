@@ -23,12 +23,13 @@ jest.mock('react-router-dom', () => ({
 const onSubmitMock = jest.fn();
 const onCancelMock = jest.fn();
 
-const renderComponent = () => render(
-  <AddUserForm
-    onSubmit={onSubmitMock}
-    onCancel={onCancelMock}
-  />,
-);
+const renderComponent = () =>
+  render(
+    <AddUserForm
+      onSubmit={onSubmitMock}
+      onCancel={onCancelMock}
+    />,
+  );
 
 describe('<AddUserForm />', () => {
   beforeEach(() => {
@@ -50,7 +51,9 @@ describe('<AddUserForm />', () => {
     const user = userEvent.setup();
     renderComponent();
 
-    const emailInput = screen.getByPlaceholderText(messages.formPlaceholder.defaultMessage.replace('{email}', EXAMPLE_USER_EMAIL));
+    const emailInput = screen.getByPlaceholderText(
+      messages.formPlaceholder.defaultMessage.replace('{email}', EXAMPLE_USER_EMAIL),
+    );
     const addUserButton = screen.getByRole('button', { name: messages.addUserButton.defaultMessage });
 
     fireEvent.change(emailInput, { target: { value: EXAMPLE_USER_EMAIL } });

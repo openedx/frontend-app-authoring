@@ -5,7 +5,10 @@ import messages from './messages';
 import { extractCourseUnitId } from './utils';
 
 const useCourseUnitData = ({
-  hasChanges, published, visibilityState, id,
+  hasChanges,
+  published,
+  visibilityState,
+  id,
 }) => {
   const intl = useIntl();
   const releaseStatus = getUnitReleaseStatus(intl);
@@ -16,7 +19,8 @@ const useCourseUnitData = ({
     [UNIT_VISIBILITY_STATES.live]: messages.sidebarTitlePublishedAndLive,
     // eslint-disable-next-line no-nested-ternary
     default: published
-      ? (hasChanges ? messages.sidebarTitleDraftUnpublishedChanges
+      ? (hasChanges ?
+        messages.sidebarTitleDraftUnpublishedChanges
         : messages.sidebarTitlePublishedNotYetReleased)
       : messages.sidebarTitleDraftNeverPublished,
   };

@@ -6,11 +6,13 @@ import { IframeProvider } from './iFrameContext';
 
 describe('useIframe hook', () => {
   it('throws an error when used outside of IframeProvider', () => {
-    expect(() => { renderHook(() => useIframe()); }).toThrow('useIframe must be used within an IframeProvider');
+    expect(() => {
+      renderHook(() => useIframe());
+    }).toThrow('useIframe must be used within an IframeProvider');
   });
 
   it('returns context value when used inside IframeProvider', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
+    const wrapper = ({ children }: { children: ReactNode; }) => (
       <IframeProvider>
         {children}
       </IframeProvider>

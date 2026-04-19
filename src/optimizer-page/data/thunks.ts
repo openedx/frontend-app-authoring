@@ -110,7 +110,12 @@ export function updateAllPreviousRunLinks(courseId: string) {
   };
 }
 
-export function updateSinglePreviousRunLink(courseId: string, linkUrl: string, blockId: string, contentType: string = 'course_updates') {
+export function updateSinglePreviousRunLink(
+  courseId: string,
+  linkUrl: string,
+  blockId: string,
+  contentType: string = 'course_updates',
+) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     try {

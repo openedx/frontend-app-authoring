@@ -27,7 +27,7 @@ const render = (courseImport: CourseImport) => (
   testRender(
     <ImportedCourseCard courseImport={courseImport} />,
     {
-      extraWrapper: ({ children }: { children: React.ReactNode }) => (
+      extraWrapper: ({ children }: { children: React.ReactNode; }) => (
         <LibraryProvider libraryId={mockContentLibrary.libraryId}>
           {children}
         </LibraryProvider>

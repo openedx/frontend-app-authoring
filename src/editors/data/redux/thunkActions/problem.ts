@@ -84,8 +84,12 @@ export const getDataFromOlx = ({ rawOLX, rawSettings, defaultSettings }) => {
 };
 
 export const loadProblem = ({
-  rawOLX, rawSettings, defaultSettings, isMarkdownEditorEnabled,
-}) => (dispatch) => {
+  rawOLX,
+  rawSettings,
+  defaultSettings,
+  isMarkdownEditorEnabled,
+}) =>
+(dispatch) => {
   if (isBlankProblem({ rawOLX })) {
     dispatch(actions.problem.setEnableTypeSelection(camelizeKeys(defaultSettings)));
   } else {
@@ -101,45 +105,47 @@ export const fetchAdvancedSettings = ({
   rawOLX,
   rawSettings,
   isMarkdownEditorEnabled,
-}) => (dispatch) => new Promise((resolve) => {
-  const advancedProblemSettingKeys = ['max_attempts', 'showanswer', 'show_reset_button', 'rerandomize'];
+}) =>
+(dispatch) =>
+  new Promise((resolve) => {
+    const advancedProblemSettingKeys = ['max_attempts', 'showanswer', 'show_reset_button', 'rerandomize'];
 
-  dispatch(requests.fetchAdvancedSettings({
-    onSuccess: (response) => {
-      const defaultSettings = {};
+    dispatch(requests.fetchAdvancedSettings({
+      onSuccess: (response) => {
+        const defaultSettings = {};
 
-      Object.entries(response.data as Record<string, any>).forEach(([key, value]) => {
-        if (advancedProblemSettingKeys.includes(key)) {
-          defaultSettings[key] = value.value;
-        }
-      });
+        Object.entries(response.data as Record<string, any>).forEach(([key, value]) => {
+          if (advancedProblemSettingKeys.includes(key)) {
+            defaultSettings[key] = value.value;
+          }
+        });
 
-      dispatch(actions.problem.updateField({
-        defaultSettings: camelizeKeys(defaultSettings),
-      }));
+        dispatch(actions.problem.updateField({
+          defaultSettings: camelizeKeys(defaultSettings),
+        }));
 
-      loadProblem({
-        rawOLX,
-        rawSettings,
-        defaultSettings,
-        isMarkdownEditorEnabled,
-      })(dispatch);
+        loadProblem({
+          rawOLX,
+          rawSettings,
+          defaultSettings,
+          isMarkdownEditorEnabled,
+        })(dispatch);
 
-      resolve(true);
-    },
+        resolve(true);
+      },
 
-    onFailure: () => {
-      loadProblem({
-        rawOLX,
-        rawSettings,
-        defaultSettings: {},
-        isMarkdownEditorEnabled,
-      })(dispatch);
+      onFailure: () => {
+        loadProblem({
+          rawOLX,
+          rawSettings,
+          defaultSettings: {},
+          isMarkdownEditorEnabled,
+        })(dispatch);
 
-      resolve(false);
-    },
-  }));
-});
+        resolve(false);
+      },
+    }));
+  });
 
 export const initializeProblem = (blockValue) => (dispatch, getState) => {
   const rawOLX = get(blockValue, 'data.data', '');
@@ -152,7 +158,10 @@ export const initializeProblem = (blockValue) => (dispatch, getState) => {
     // Though first we need to fake the request or else the problem type selection UI won't display:
     dispatch(actions.requests.completeRequest({ requestKey: RequestKeys.fetchAdvancedSettings, response: {} }));
     return dispatch(loadProblem({
-      rawOLX, rawSettings, defaultSettings: {}, isMarkdownEditorEnabled,
+      rawOLX,
+      rawSettings,
+      defaultSettings: {},
+      isMarkdownEditorEnabled,
     }));
   }
   // Load the defaults (for max_attempts, etc.) from the course's advanced settings, then proceed:
@@ -160,5 +169,8 @@ export const initializeProblem = (blockValue) => (dispatch, getState) => {
 };
 
 export default {
-  initializeProblem, switchEditor, switchToAdvancedEditor, fetchAdvancedSettings,
+  initializeProblem,
+  switchEditor,
+  switchToAdvancedEditor,
+  fetchAdvancedSettings,
 };

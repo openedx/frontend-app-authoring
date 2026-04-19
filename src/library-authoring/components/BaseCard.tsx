@@ -39,13 +39,13 @@ const BaseCard = ({
   onSelect,
   selected = false,
   ...props
-} : BaseCardProps) => {
+}: BaseCardProps) => {
   const tagCount = useMemo(() => {
     if (!tags) {
       return 0;
     }
     return (tags.level0?.length || 0) + (tags.level1?.length || 0)
-            + (tags.level2?.length || 0) + (tags.level3?.length || 0);
+      + (tags.level2?.length || 0) + (tags.level3?.length || 0);
   }, [tags]);
 
   const itemIcon = !props.isPlaceholder ? getItemIcon(itemType) : ExtensionOff;
@@ -66,16 +66,13 @@ const BaseCard = ({
       >
         <Card.Header
           className={`library-item-header ${itemComponentStyle}`}
-          title={
-            <Icon src={itemIcon} className="library-item-header-icon my-2" />
-          }
-          actions={(
-            <div
-              // Prevent card being clicked when actions menu are clicked
-              className="stop-event-propagation"
-            >{actions}
+          title={<Icon src={itemIcon} className="library-item-header-icon my-2" />}
+          actions={
+            <div // Prevent card being clicked when actions menu are clicked
+             className="stop-event-propagation">
+              {actions}
             </div>
-          )}
+          }
         />
         <Card.Body className="w-100">
           <Card.Section>
@@ -95,10 +92,10 @@ const BaseCard = ({
                 </small>
               </Stack>
               {!props.isPlaceholder && (
-              <>
-                <ComponentCount count={numChildren} />
-                <TagCount size="sm" count={tagCount} />
-              </>
+                <>
+                  <ComponentCount count={numChildren} />
+                  <TagCount size="sm" count={tagCount} />
+                </>
               )}
             </Stack>
             <div className="badge-container d-flex align-items-center justify-content-center">

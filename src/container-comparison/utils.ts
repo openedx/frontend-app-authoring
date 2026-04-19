@@ -12,7 +12,7 @@ import {
 export function checkIsReadyToSync(link: UpstreamInfo): boolean {
   return (link.versionSynced < (link.versionAvailable || 0))
     || (link.versionSynced < (link.versionDeclined || 0))
-      || ((link.readyToSyncChildren?.length || 0) > 0);
+    || ((link.readyToSyncChildren?.length || 0) > 0);
 }
 
 /**
@@ -54,7 +54,9 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
     } else {
       // It was present in previous version
       let state: ContainerState | undefined;
-      const displayName = oldVersion.upstreamLink.downstreamCustomized.includes('display_name') ? oldVersion.name : newVersion.displayName;
+      const displayName = oldVersion.upstreamLink.downstreamCustomized.includes('display_name')
+        ? oldVersion.name
+        : newVersion.displayName;
       let originalName: string | undefined;
       // FIXME: This logic doesn't work when the content is updated locally and the upstream display name is updated.
       // `isRenamed` becomes true.

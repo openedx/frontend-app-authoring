@@ -4,12 +4,14 @@ import { render, screen, initializeMocks } from '../../../testUtils';
 import SourceCodeModal from './index';
 import * as hooks from './hooks';
 
-jest.mock('../BaseModal', () => jest.fn(({ children, ...props }) => (
-  <div data-base-modal {...props}>{children}</div>
-)));
-jest.mock('../CodeEditor', () => jest.fn(({ innerRef, value, lang }) => (
-  <div data-code-editor data-lang={lang} data-value={value} ref={innerRef}>CodeEditor</div>
-)));
+jest.mock('../BaseModal', () => jest.fn(({ children, ...props }) => <div data-base-modal {...props}>{children}</div>));
+jest.mock(
+  '../CodeEditor',
+  () =>
+    jest.fn(({ innerRef, value, lang }) => (
+      <div data-code-editor data-lang={lang} data-value={value} ref={innerRef}>CodeEditor</div>
+    )),
+);
 jest.mock('./hooks', () => ({
   prepareSourceCodeModal: jest.fn().mockReturnValue({
     saveBtnProps: { onClick: jest.fn() },

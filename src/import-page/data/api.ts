@@ -6,8 +6,8 @@ export const postImportCourseApiUrl = (courseId) => `${getApiBaseUrl()}/import/$
 export const getImportStatusApiUrl = (courseId, fileName) => `${getApiBaseUrl()}/import_status/${courseId}/${fileName}`;
 
 export interface ImportStatusData {
-  importStatus: number,
-  message?: string,
+  importStatus: number;
+  message?: string;
 }
 
 /**

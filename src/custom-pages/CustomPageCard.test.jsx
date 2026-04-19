@@ -67,14 +67,20 @@ const mockStore = async ({
   axiosMock.onPut(xblockEditUrl).reply(200, generateUpdateVisibilityApiResponse(blockId, visibility));
   axiosMock.onGet(xblockEditUrl).reply(200, generateXblockData(blockId));
 
-  await executeThunk(deleteSingleCustomPage({
-    blockId,
-    closeConfirmation: jest.fn(),
-  }), store.dispatch);
-  await executeThunk(updateCustomPageVisibility({
-    blockId,
-    metadata: { courseStaffOnly: visibility },
-  }), store.dispatch);
+  await executeThunk(
+    deleteSingleCustomPage({
+      blockId,
+      closeConfirmation: jest.fn(),
+    }),
+    store.dispatch,
+  );
+  await executeThunk(
+    updateCustomPageVisibility({
+      blockId,
+      metadata: { courseStaffOnly: visibility },
+    }),
+    store.dispatch,
+  );
 };
 
 describe('CustomPageCard', () => {
@@ -118,7 +124,9 @@ describe('CustomPageCard', () => {
     expect(screen.queryByTestId('delete-confirmation-alert-modal')).toBeNull();
     const confirmButton = screen.getByText(messages.deletePageLabel.defaultMessage);
     await mockStore({ blockId: 'mOckID1' });
-    await act(async () => { fireEvent.click(confirmButton); });
+    await act(async () => {
+      fireEvent.click(confirmButton);
+    });
     const deleteStatus = store.getState().customPages.deletingStatus;
     expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
   });
@@ -126,14 +134,18 @@ describe('CustomPageCard', () => {
     renderComponent();
     const editButton = screen.getByTestId('edit-modal-icon');
     await mockStore({ blockId: 'mOckID1' });
-    await act(async () => { fireEvent.click(editButton); });
+    await act(async () => {
+      fireEvent.click(editButton);
+    });
     expect(defaultProps.setCurrentPage).toHaveBeenCalled();
   });
   it('should open update courseStaffOnly to true', async () => {
     renderComponent(false);
     const visibilityButton = screen.getByTestId('visibility-toggle-icon');
     await mockStore({ blockId: 'mOckID1', visibility: true });
-    await act(async () => { fireEvent.click(visibilityButton); });
+    await act(async () => {
+      fireEvent.click(visibilityButton);
+    });
     const { courseStaffOnly } = store.getState().models.customPages[defaultProps.page.id];
     expect(courseStaffOnly).toBeTruthy();
   });
@@ -141,7 +153,9 @@ describe('CustomPageCard', () => {
     renderComponent(true);
     const visibilityButton = screen.getByTestId('visibility-toggle-icon');
     await mockStore({ blockId: 'mOckID1', visibility: false });
-    await act(async () => { fireEvent.click(visibilityButton); });
+    await act(async () => {
+      fireEvent.click(visibilityButton);
+    });
     const { courseStaffOnly } = store.getState().models.customPages[defaultProps.page.id];
     expect(courseStaffOnly).toBeFalsy();
   });

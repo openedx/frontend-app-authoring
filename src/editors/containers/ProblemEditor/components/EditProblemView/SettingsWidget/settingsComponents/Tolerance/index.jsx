@@ -56,7 +56,9 @@ export const ToleranceCard = ({
   const isAnswerRange = isAnswerRangeSet({ answers });
   const hasMultipleCorrectAnswers = correctAnswerCount > 1;
   let summary = getSummary({ tolerance, intl });
-  useEffect(() => { summary = getSummary({ tolerance, intl }); }, [tolerance]);
+  useEffect(() => {
+    summary = getSummary({ tolerance, intl });
+  }, [tolerance]);
   useEffect(() => {
     if (hasMultipleCorrectAnswers) {
       updateSettings({ tolerance: { value: null, type: ToleranceTypes.none.type } });
@@ -69,24 +71,18 @@ export const ToleranceCard = ({
       summary={summary}
       none={tolerance.type === ToleranceTypes.none.type}
     >
-      { isAnswerRange
-       && (
-       <Alert
-         variant="info"
-       >
-         <FormattedMessage {...messages.toleranceAnswerRangeWarning} />
-       </Alert>
-       )}
-      {
-        hasMultipleCorrectAnswers
+      {isAnswerRange
         && (
-          <Alert
-            variant="info"
-          >
+          <Alert variant="info">
+            <FormattedMessage {...messages.toleranceAnswerRangeWarning} />
+          </Alert>
+        )}
+      {hasMultipleCorrectAnswers
+        && (
+          <Alert variant="info">
             <FormattedMessage {...messages.toleranceMultipleAnswersWarning} />
           </Alert>
-        )
-      }
+        )}
       <div className="mb-3">
         <span>
           <FormattedMessage {...messages.toleranceSettingText} />
@@ -108,20 +104,19 @@ export const ToleranceCard = ({
             </option>
           ))}
         </Form.Control>
-        { tolerance?.type !== ToleranceTypes.none.type && (!isAnswerRange || !hasMultipleCorrectAnswers)
+        {tolerance?.type !== ToleranceTypes.none.type && (!isAnswerRange || !hasMultipleCorrectAnswers)
           && (
-          <Form.Control
-            className="mt-4"
-            type="number"
-            min={0}
-            step={0.1}
-            value={tolerance.value}
-            onChange={handleToleranceValueChange({ updateSettings, tolerance, answers })}
-            floatingLabel={intl.formatMessage(messages.toleranceValueInputLabel)}
-          />
+            <Form.Control
+              className="mt-4"
+              type="number"
+              min={0}
+              step={0.1}
+              value={tolerance.value}
+              onChange={handleToleranceValueChange({ updateSettings, tolerance, answers })}
+              floatingLabel={intl.formatMessage(messages.toleranceValueInputLabel)}
+            />
           )}
       </Form.Group>
-
     </SettingsOption>
   );
 };

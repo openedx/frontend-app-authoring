@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   assignmentTypeNameErrorMessage3: {
     id: 'course-authoring.grading-settings.assignment.type-name.error.message-3',
-    defaultMessage: "There's already another assignment type with this name.",
+    defaultMessage: 'There\'s already another assignment type with this name.',
   },
   abbreviationTitle: {
     id: 'course-authoring.grading-settings.assignment.abbreviation.title',
@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
   abbreviationDescription: {
     id: 'course-authoring.grading-settings.assignment.abbreviation.description',
-    defaultMessage: "This short name for the assignment type (for example, HW or Midterm) appears next to assignments on a learner's Progress page.",
+    defaultMessage: 'This short name for the assignment type (for example, HW or Midterm) appears next to assignments on a learner\'s Progress page.',
   },
   weightOfTotalGradeTitle: {
     id: 'course-authoring.grading-settings.assignment.weight-of-total-grade.title',

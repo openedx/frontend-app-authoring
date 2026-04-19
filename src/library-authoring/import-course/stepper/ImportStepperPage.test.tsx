@@ -30,7 +30,8 @@ const courses = [
   {
     courseKey: mockGetPreviewModulestoreMigration.sourceKeyGood,
     displayName: 'Managing Risk in the Information Age',
-    lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+    lmsLink:
+      '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
     number: '123',
     org: 'HarvardX',
     rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
@@ -40,7 +41,8 @@ const courses = [
   {
     courseKey: mockGetPreviewModulestoreMigration.sourceKeyBlockLimit,
     displayName: 'Course with a lot of components',
-    lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+    lmsLink:
+      '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
     number: '3',
     org: 'HarvardX',
     rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
@@ -50,7 +52,8 @@ const courses = [
   {
     courseKey: mockGetPreviewModulestoreMigration.sourceKeyBlockLoading,
     displayName: 'Course with a loading',
-    lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+    lmsLink:
+      '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
     number: '4',
     org: 'HarvardX',
     rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
@@ -99,7 +102,7 @@ const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
     ...render(
       <ImportStepperPage />,
       {
-        extraWrapper: ({ children }: { children: React.ReactNode }) => (
+        extraWrapper: ({ children }: { children: React.ReactNode; }) => (
           <LibraryProvider libraryId={libraryKey}>
             {children}
           </LibraryProvider>
@@ -177,9 +180,13 @@ describe('<ImportStepperModal />', () => {
     expect(nextButton).toBeEnabled();
     await user.click(nextButton);
 
-    await waitFor(async () => expect(await screen.findByText(
-      /managing risk in the information age is being analyzed for review prior to import/i,
-    )).toBeInTheDocument());
+    await waitFor(async () =>
+      expect(
+        await screen.findByText(
+          /managing risk in the information age is being analyzed for review prior to import/i,
+        ),
+      ).toBeInTheDocument()
+    );
 
     expect(await screen.findByText('Analysis Summary')).toBeInTheDocument();
     // The import details is loading
@@ -211,9 +218,11 @@ describe('<ImportStepperModal />', () => {
     await user.click(nextButton);
 
     expect(await screen.findByText(/Import Blocked/i)).toBeInTheDocument();
-    expect(await screen.findByText(
-      /This import would exceed the Content Library limit of 1000 items/i,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /This import would exceed the Content Library limit of 1000 items/i,
+      ),
+    ).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: /import course/i })).toBeDisabled();
   });

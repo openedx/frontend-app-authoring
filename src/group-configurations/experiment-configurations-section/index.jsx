@@ -33,37 +33,39 @@ const ExperimentConfigurationsSection = ({
       <h2 className="lead text-black mb-3 configuration-section-name">
         {formatMessage(messages.title)}
       </h2>
-      {availableGroups.length ? (
-        <>
-          {availableGroups.map((configuration) => (
-            <ExperimentCard
-              key={configuration.id}
-              configuration={configuration}
-              experimentConfigurationActions={experimentConfigurationActions}
-              isExpandedByDefault={configuration.id === +elementWithHash}
-              onCreate={handleCreateConfiguration}
+      {availableGroups.length ?
+        (
+          <>
+            {availableGroups.map((configuration) => (
+              <ExperimentCard
+                key={configuration.id}
+                configuration={configuration}
+                experimentConfigurationActions={experimentConfigurationActions}
+                isExpandedByDefault={configuration.id === +elementWithHash}
+                onCreate={handleCreateConfiguration}
+              />
+            ))}
+            {!isNewConfigurationVisible && (
+              <Button
+                className="mt-4"
+                variant="outline-primary"
+                onClick={openNewConfiguration}
+                iconBefore={AddIcon}
+                block
+              >
+                {formatMessage(messages.addNewGroup)}
+              </Button>
+            )}
+          </>
+        ) :
+        (
+          !isNewConfigurationVisible && (
+            <EmptyPlaceholder
+              onCreateNewGroup={openNewConfiguration}
+              isExperiment
             />
-          ))}
-          {!isNewConfigurationVisible && (
-            <Button
-              className="mt-4"
-              variant="outline-primary"
-              onClick={openNewConfiguration}
-              iconBefore={AddIcon}
-              block
-            >
-              {formatMessage(messages.addNewGroup)}
-            </Button>
-          )}
-        </>
-      ) : (
-        !isNewConfigurationVisible && (
-          <EmptyPlaceholder
-            onCreateNewGroup={openNewConfiguration}
-            isExperiment
-          />
-        )
-      )}
+          )
+        )}
       {isNewConfigurationVisible && (
         <ExperimentForm
           initialValues={initialExperimentConfiguration}

@@ -23,7 +23,12 @@ const useAccessibility = (initialValues: AccessibilityFormData) => {
   });
 
   const {
-    values, errors, touched, handleChange, handleBlur, handleReset,
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    handleReset,
   } = useFormik({
     initialValues,
     enableReinitialize: true,

@@ -87,12 +87,11 @@ const AnswerOption = ({
               }
             }}
             placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
-
           />
           {(!data?.isValid) && (
-          <Form.Control.Feedback type="invalid">
-            <FormattedMessage {...messages.answerNumericErrorText} />
-          </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">
+              <FormattedMessage {...messages.answerNumericErrorText} />
+            </Form.Control.Feedback>
           )}
         </Form.Group>
       );
@@ -152,7 +151,10 @@ const AnswerOption = ({
         </Collapsible.Body>
       </div>
       <div className="d-flex flex-row flex-nowrap">
-        <Collapsible.Trigger aria-label={intl.formatMessage(messages.feedbackToggleIconAriaLabel)} className="btn-icon btn-icon-primary btn-icon-md align-items-center">
+        <Collapsible.Trigger
+          aria-label={intl.formatMessage(messages.feedbackToggleIconAriaLabel)}
+          className="btn-icon btn-icon-primary btn-icon-md align-items-center"
+        >
           <Icon
             src={FeedbackOutline}
             alt={intl.formatMessage(messages.feedbackToggleIconAltText)}

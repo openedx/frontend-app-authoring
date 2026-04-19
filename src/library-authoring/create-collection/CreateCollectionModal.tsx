@@ -57,13 +57,11 @@ const CreateCollectionModal = () => {
           title: '',
           description: '',
         }}
-        validationSchema={
-          Yup.object().shape({
-            title: Yup.string()
-              .required(intl.formatMessage(messages.createCollectionModalNameInvalid)),
-            description: Yup.string(),
-          })
-        }
+        validationSchema={Yup.object().shape({
+          title: Yup.string()
+            .required(intl.formatMessage(messages.createCollectionModalNameInvalid)),
+          description: Yup.string(),
+        })}
         onSubmit={handleCreate}
       >
         {(formikProps) => (
@@ -71,11 +69,11 @@ const CreateCollectionModal = () => {
             <ModalDialog.Body className="mw-sm">
               <FormikControl
                 name="title"
-                label={(
+                label={
                   <Form.Label className="font-weight-bold h3">
                     {intl.formatMessage(messages.createCollectionModalNameLabel)}
                   </Form.Label>
-                )}
+                }
                 value={formikProps.values.title}
                 placeholder={intl.formatMessage(messages.createCollectionModalNamePlaceholder)}
                 controlClasses="pb-2"
@@ -83,18 +81,18 @@ const CreateCollectionModal = () => {
               <FormikControl
                 name="description"
                 as="textarea"
-                label={(
+                label={
                   <Form.Label className="font-weight-bold h3">
                     {intl.formatMessage(messages.createCollectionModalDescriptionLabel)}
                   </Form.Label>
-                )}
+                }
                 value={formikProps.values.description}
                 placeholder={intl.formatMessage(messages.createCollectionModalDescriptionPlaceholder)}
-                help={(
+                help={
                   <Form.Text>
                     {intl.formatMessage(messages.createCollectionModalDescriptionDetails)}
                   </Form.Text>
-                )}
+                }
                 controlClasses="pb-2"
                 rows="5"
               />

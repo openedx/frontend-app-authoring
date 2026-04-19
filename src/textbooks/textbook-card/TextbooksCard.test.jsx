@@ -1,5 +1,8 @@
 import {
-  render, waitFor, within, initializeMocks,
+  render,
+  waitFor,
+  within,
+  initializeMocks,
 } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 
@@ -21,17 +24,18 @@ const onEditSubmitMock = jest.fn();
 const onDeleteSubmitMock = jest.fn();
 const handleSavingStatusDispatchMock = jest.fn();
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <TextbookCard
-      textbook={textbook}
-      courseId={courseId}
-      onEditSubmit={onEditSubmitMock}
-      onDeleteSubmit={onDeleteSubmitMock}
-      handleSavingStatusDispatch={handleSavingStatusDispatchMock}
-    />,
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <TextbookCard
+        textbook={textbook}
+        courseId={courseId}
+        onEditSubmit={onEditSubmitMock}
+        onDeleteSubmit={onDeleteSubmitMock}
+        handleSavingStatusDispatch={handleSavingStatusDispatchMock}
+      />,
+    </CourseAuthoringProvider>,
+  );
 
 describe('<TextbookCard />', () => {
   let user;

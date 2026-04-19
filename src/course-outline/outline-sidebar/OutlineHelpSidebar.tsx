@@ -40,9 +40,7 @@ const OutlineHelpSideBar = () => {
             key={title}
             title={title}
           >
-            {descriptions.map((description) => (
-              <p className="x-small" key={description}>{description}</p>
-            ))}
+            {descriptions.map((description) => <p className="x-small" key={description}>{description}</p>)}
             {!!link?.href && (
               <Hyperlink
                 className="x-small"

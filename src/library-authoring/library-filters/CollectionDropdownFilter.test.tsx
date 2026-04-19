@@ -1,7 +1,9 @@
 import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
 import { useGetContentHits } from '@src/search-manager';
 import {
-  initializeMocks, render, screen,
+  initializeMocks,
+  render,
+  screen,
 } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 import { CollectionDropdownFilter } from './CollectionDropdownFilter';
@@ -86,8 +88,7 @@ describe('CollectionDropdownFilter', () => {
         hits: [{
           display_name: 'Test collection',
           block_id: 'test-collection',
-        },
-        {
+        }, {
           display_name: 'Sample Taxonomy Course',
           block_id: 'sample-taxonomy-course',
         }],
@@ -115,8 +116,7 @@ describe('CollectionDropdownFilter', () => {
         hits: [{
           display_name: 'Test collection',
           block_id: 'test-collection',
-        },
-        {
+        }, {
           display_name: 'Sample Taxonomy Course',
           block_id: 'sample-taxonomy-course',
         }],
@@ -146,8 +146,7 @@ describe('CollectionDropdownFilter', () => {
         hits: [{
           display_name: 'Test collection',
           block_id: 'test-collection',
-        },
-        {
+        }, {
           display_name: 'Sample Taxonomy Course',
           block_id: 'sample-taxonomy-course',
         }],
@@ -176,8 +175,7 @@ describe('CollectionDropdownFilter', () => {
         hits: [{
           display_name: 'Test collection',
           block_id: 'test-collection',
-        },
-        {
+        }, {
           display_name: 'Sample Taxonomy Course',
           block_id: 'sample-taxonomy-course',
         }],

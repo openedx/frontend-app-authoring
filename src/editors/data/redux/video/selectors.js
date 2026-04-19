@@ -84,18 +84,20 @@ export const getTranscriptDownloadUrl = createSelector(
 
 export const buildTranscriptUrl = createSelector(
   [AppSelectors.simpleSelectors.studioEndpointUrl],
-  (studioEndpointUrl) => ({ transcriptUrl }) => mediaTranscriptURL({
-    studioEndpointUrl,
-    transcriptUrl,
-  }),
+  (studioEndpointUrl) => ({ transcriptUrl }) =>
+    mediaTranscriptURL({
+      studioEndpointUrl,
+      transcriptUrl,
+    }),
 );
 
 export const getHandoutDownloadUrl = createSelector(
   [AppSelectors.simpleSelectors.studioEndpointUrl],
-  (studioEndpointUrl) => ({ handout }) => downloadVideoHandoutUrl({
-    studioEndpointUrl,
-    handout,
-  }),
+  (studioEndpointUrl) => ({ handout }) =>
+    downloadVideoHandoutUrl({
+      studioEndpointUrl,
+      handout,
+    }),
 );
 
 export const videoSettings = createSelector(

@@ -22,8 +22,8 @@ const MemberBadge = ({
   role,
   isCurrentUser,
 }: {
-  role: LibraryRole,
-  isCurrentUser: boolean,
+  role: LibraryRole;
+  isCurrentUser: boolean;
 }) => {
   const roleMessage = ROLE_LABEL[role] ?? ROLE_LABEL[LibraryRole.Unknown];
   const variant = ROLE_BADGE_VARIANT[role] ?? ROLE_BADGE_VARIANT[LibraryRole.Unknown];
@@ -50,14 +50,14 @@ const LibraryTeamMember = ({
   onChangeRole,
   onDeleteRole,
 }: {
-  username: string,
-  email: string,
-  accessLevel: string,
-  canChangeRoles: boolean,
-  isCurrentUser: boolean,
-  isSingleAdmin: boolean,
-  onChangeRole: (username: string, role: LibraryRole) => void,
-  onDeleteRole: (username: string) => void,
+  username: string;
+  email: string;
+  accessLevel: string;
+  canChangeRoles: boolean;
+  isCurrentUser: boolean;
+  isSingleAdmin: boolean;
+  onChangeRole: (username: string, role: LibraryRole) => void;
+  onDeleteRole: (username: string) => void;
 }) => {
   const intl = useIntl();
 
@@ -77,38 +77,40 @@ const LibraryTeamMember = ({
         <span className="member-info-name font-weight-bold">{username}</span>
         <MailtoLink to={email}>{email}</MailtoLink>
       </div>
-      {canChangeThisMember ? (
-        <div className="member-actions w-100 d-flex mt-2 justify-content-between">
-          {availableRoles && availableRoles.length && availableRoles.map((newRole) => (
-            <Button
-              size="sm"
-              key={newRole}
-              variant={ROLE_BUTTON_VARIANT[newRole]}
-              onClick={() => onChangeRole(username, newRole)}
-            >
-              {intl.formatMessage(CHANGE_ROLE_LABEL[newRole])}
-            </Button>
-          ))}
+      {canChangeThisMember ?
+        (
+          <div className="member-actions w-100 d-flex mt-2 justify-content-between">
+            {availableRoles && availableRoles.length && availableRoles.map((newRole) => (
+              <Button
+                size="sm"
+                key={newRole}
+                variant={ROLE_BUTTON_VARIANT[newRole]}
+                onClick={() => onChangeRole(username, newRole)}
+              >
+                {intl.formatMessage(CHANGE_ROLE_LABEL[newRole])}
+              </Button>
+            ))}
 
-          <IconButtonWithTooltip
-            src={DeleteOutline}
-            tooltipContent={intl.formatMessage(messages.deleteMember)}
-            onClick={() => onDeleteRole(username)}
-            iconAs={Icon}
-            alt={intl.formatMessage(messages.deleteMember)}
-            title={intl.formatMessage(messages.deleteMember)}
-          />
-        </div>
-      ) : (
-        // We prevent the user from removing the last remaining Admin
-        // user so that someone can still administrate this Library,
-        // so show a message explaining why.
-        canChangeRoles && (
-          <div className="member-hint text-right">
-            <FormattedMessage {...messages.cannotChangeRoleSingleAdmin} />
+            <IconButtonWithTooltip
+              src={DeleteOutline}
+              tooltipContent={intl.formatMessage(messages.deleteMember)}
+              onClick={() => onDeleteRole(username)}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.deleteMember)}
+              title={intl.formatMessage(messages.deleteMember)}
+            />
           </div>
-        )
-      )}
+        ) :
+        (
+          // We prevent the user from removing the last remaining Admin
+          // user so that someone can still administrate this Library,
+          // so show a message explaining why.
+          canChangeRoles && (
+            <div className="member-hint text-right">
+              <FormattedMessage {...messages.cannotChangeRoleSingleAdmin} />
+            </div>
+          )
+        )}
     </div>
   );
 };

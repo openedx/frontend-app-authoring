@@ -13,6 +13,4 @@ const LICENSE_COMMONS_OPTIONS = {
   shareAlike: 'SA',
 };
 
-export {
-  LICENSE_TYPE, LICENSE_COMMONS_OPTIONS, creativeCommonsLicensesURL, creativeCommonsVersion,
-};
+export { LICENSE_TYPE, LICENSE_COMMONS_OPTIONS, creativeCommonsLicensesURL, creativeCommonsVersion };

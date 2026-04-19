@@ -14,13 +14,18 @@ import {
   Hyperlink,
 } from '@openedx/paragon';
 import {
-  Info, CheckCircleOutline, SpinnerSimple,
+  Info,
+  CheckCircleOutline,
+  SpinnerSimple,
 } from '@openedx/paragon/icons';
 
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';
 import React, {
-  useContext, useEffect, useRef, useState,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
@@ -45,18 +50,21 @@ import ResetIcon from './ResetIcon';
 import './SettingsModal.scss';
 
 const AppSettingsForm = ({
-  formikProps, children, showForm,
-}) => children && (
-  <TransitionReplace>
-    {showForm ? (
-      <React.Fragment key="app-enabled">
-        {children(formikProps)}
-      </React.Fragment>
-    ) : (
-      <React.Fragment key="app-disabled" />
-    )}
-  </TransitionReplace>
-);
+  formikProps,
+  children,
+  showForm,
+}) =>
+  children && (
+    <TransitionReplace>
+      {showForm ?
+        (
+          <React.Fragment key="app-enabled">
+            {children(formikProps)}
+          </React.Fragment>
+        ) :
+        <React.Fragment key="app-disabled" />}
+    </TransitionReplace>
+  );
 
 AppSettingsForm.propTypes = {
   // Ignore the warning here since we're just passing along the props as-is and the child component should validate
@@ -71,7 +79,12 @@ AppSettingsForm.defaultProps = {
 };
 
 const SettingsModalBase = ({
-  title, onClose, variant, isMobile, children, footer,
+  title,
+  onClose,
+  variant,
+  isMobile,
+  children,
+  footer,
 }) => {
   const intl = useIntl();
   return (
@@ -156,14 +169,14 @@ const ResetUnitsButton = ({
   return (
     <OverlayTrigger
       placement="right"
-      overlay={(
+      overlay={
         <Tooltip
           id={`tooltip-reset-${checked}`}
           className="reset-tooltip"
         >
           {intl.formatMessage(messages[messageKey])}
         </Tooltip>
-      )}
+      }
     >
       <StatefulButton
         className="reset-units-button"
@@ -296,14 +309,12 @@ const SettingsModal = ({
           checked: xpertSettings?.enabled?.toString() || 'true',
           ...initialValues,
         }}
-        validationSchema={
-          Yup.object()
-            .shape({
-              enabled: Yup.boolean(),
-              checked: Yup.string().oneOf(['true', 'false']),
-              ...validationSchema,
-            })
-        }
+        validationSchema={Yup.object()
+          .shape({
+            enabled: Yup.boolean(),
+            checked: Yup.string().oneOf(['true', 'false']),
+            ...validationSchema,
+          })}
         onSubmit={handleFormSubmit}
         enableReinitialize={enableReinitialize}
       >
@@ -317,7 +328,7 @@ const SettingsModal = ({
               isMobile={isMobile}
               isFullscreenOnMobile
               intl={intl}
-              footer={(
+              footer={
                 <StatefulButton
                   labels={{
                     default: intl.formatMessage(messages.save),
@@ -328,7 +339,7 @@ const SettingsModal = ({
                   onClick={handleFormikSubmit(formikProps)}
                   disabled={!formikProps.dirty}
                 />
-              )}
+              }
             >
               {saveError && (
                 <Alert variant="danger" icon={Info} ref={alertRef}>
@@ -344,7 +355,7 @@ const SettingsModal = ({
                 onChange={formikProps.handleChange}
                 onBlur={formikProps.handleBlur}
                 checked={formikProps.values.enabled}
-                label={(
+                label={
                   <div className="d-flex align-items-center">
                     {enableAppLabel}
                     {formikProps.values.enabled && (
@@ -353,14 +364,14 @@ const SettingsModal = ({
                       </Badge>
                     )}
                   </div>
-                )}
-                helpText={(
+                }
+                helpText={
                   <div>
                     <p>{enableAppHelp}</p>
                     {helpPrivacyLink}
                     {learnMoreLink}
                   </div>
-                )}
+                }
               />
               {(formikProps.values.enabled || configureBeforeEnable) && (
                 <Form.RadioSet

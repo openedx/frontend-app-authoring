@@ -5,7 +5,15 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from '../messages';
 
 const ModalContainer = ({
-  title, isOpen, close, children, btnText, size, onSubmit, hasValue, resetDisabled,
+  title,
+  isOpen,
+  close,
+  children,
+  btnText,
+  size,
+  onSubmit,
+  hasValue,
+  resetDisabled,
 }) => {
   const intl = useIntl();
 
@@ -25,7 +33,7 @@ const ModalContainer = ({
       isOpen={isOpen}
       onClose={handleClose}
       size={size}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <ActionRow.Spacer />
           <Button variant="tertiary" onClick={handleClose}>
@@ -35,7 +43,7 @@ const ModalContainer = ({
             {btnText}
           </Button>
         </ActionRow>
-      )}
+      }
     >
       {children}
     </StandardModal>

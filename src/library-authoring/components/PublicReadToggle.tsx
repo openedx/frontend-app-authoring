@@ -30,9 +30,7 @@ const PublicReadToggle = ({ libraryId, canEditToggle }: PublicReadToggleProps) =
       checked={library?.allowPublicRead}
       disabled={!canEditToggle || isPending}
       onChange={onChangeToggle}
-      helperText={
-        <span>{formatMessage(messages.publicReadToggleSubtext)}</span>
-      }
+      helperText={<span>{formatMessage(messages.publicReadToggleSubtext)}</span>}
     >
       {formatMessage(messages.publicReadToggleLabel)}
     </Form.Switch>

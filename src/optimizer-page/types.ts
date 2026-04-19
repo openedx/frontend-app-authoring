@@ -8,7 +8,7 @@ export interface Unit {
     brokenLinks: string[];
     lockedLinks: string[];
     externalForbiddenLinks: string[];
-    previousRunLinks: { originalLink: string; isUpdated: boolean; updatedLink?: string }[];
+    previousRunLinks: { originalLink: string; isUpdated: boolean; updatedLink?: string; }[];
   }[];
 }
 
@@ -33,7 +33,7 @@ export interface LinkCheckResult {
     brokenLinks: string[];
     lockedLinks: string[];
     externalForbiddenLinks: string[];
-    previousRunLinks: { originalLink: string; isUpdated: boolean; updatedLink?: string }[];
+    previousRunLinks: { originalLink: string; isUpdated: boolean; updatedLink?: string; }[];
   }[];
   customPages?: {
     id: string;
@@ -42,12 +42,12 @@ export interface LinkCheckResult {
     brokenLinks: string[];
     lockedLinks: string[];
     externalForbiddenLinks: string[];
-    previousRunLinks: { originalLink: string; isUpdated: boolean; updatedLink?: string }[];
+    previousRunLinks: { originalLink: string; isUpdated: boolean; updatedLink?: string; }[];
   }[];
 }
 
 export interface Filters {
-  brokenLinks: boolean,
-  lockedLinks: boolean,
-  externalForbiddenLinks: boolean,
+  brokenLinks: boolean;
+  lockedLinks: boolean;
+  externalForbiddenLinks: boolean;
 }

@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks, fireEvent,
+  render,
+  screen,
+  initializeMocks,
+  fireEvent,
 } from '@src/testUtils';
 import { RandomizationCard } from './index';
 import * as hooks from './hooks';

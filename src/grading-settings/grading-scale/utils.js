@@ -8,8 +8,9 @@ export const MAXIMUM_SCALE_LENGTH = 100;
  * @param {object} cutoffs - The object containing the settings to grading cutoffs.
  * @returns {array} - Converted grading cutoffs.
  */
-export const getGradingValues = (cutoffs) => Object.values(cutoffs)
-  .map(number => Math.round(number * MAXIMUM_SCALE_LENGTH));
+export const getGradingValues = (cutoffs) =>
+  Object.values(cutoffs)
+    .map(number => Math.round(number * MAXIMUM_SCALE_LENGTH));
 
 /**
  * Initially, the data comes in the format { a: 0.8 },
@@ -18,19 +19,20 @@ export const getGradingValues = (cutoffs) => Object.values(cutoffs)
  * @param {object} gradeValues - The object containing the settings to grading cutoffs.
  * @returns {object} - New grading cutoffs.
  */
-export const getSortedGrades = (gradeValues) => gradeValues.reduce((sortedArray, current, idx) => {
-  if (idx === (gradeValues.length - 1)) {
-    sortedArray.push({ current: gradeValues[idx - 1] || MAXIMUM_SCALE_LENGTH, previous: gradeValues[idx] });
-    sortedArray.push({ current: gradeValues[idx], previous: 0 });
-  } else if (idx === 0) {
-    sortedArray.push({ current: MAXIMUM_SCALE_LENGTH, previous: current });
-  } else {
-    const previous = gradeValues[idx - 1];
-    sortedArray.push({ current: previous, previous: current });
-  }
+export const getSortedGrades = (gradeValues) =>
+  gradeValues.reduce((sortedArray, current, idx) => {
+    if (idx === (gradeValues.length - 1)) {
+      sortedArray.push({ current: gradeValues[idx - 1] || MAXIMUM_SCALE_LENGTH, previous: gradeValues[idx] });
+      sortedArray.push({ current: gradeValues[idx], previous: 0 });
+    } else if (idx === 0) {
+      sortedArray.push({ current: MAXIMUM_SCALE_LENGTH, previous: current });
+    } else {
+      const previous = gradeValues[idx - 1];
+      sortedArray.push({ current: previous, previous: current });
+    }
 
-  return sortedArray;
-}, []);
+    return sortedArray;
+  }, []);
 
 /**
  * Changes the start and end values of the segments when there are two segments.

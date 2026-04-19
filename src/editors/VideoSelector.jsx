@@ -26,9 +26,7 @@ const VideoSelector = ({
   if (loading) {
     return null;
   }
-  return (
-    <VideoGallery returnFunction={returnFunction} onCancel={onCancel} />
-  );
+  return <VideoGallery returnFunction={returnFunction} onCancel={onCancel} />;
 };
 
 VideoSelector.propTypes = {

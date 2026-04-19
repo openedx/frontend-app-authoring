@@ -32,7 +32,9 @@ const AdvanceTypeSelect: React.FC<Props> = ({
 }) => {
   const intl = useIntl();
 
-  const handleChange = e => { setSelected(e.target.value); };
+  const handleChange = e => {
+    setSelected(e.target.value);
+  };
   return (
     <Col xs={12} md={8} className="justify-content-center">
       <Form.Group className="border rounded text-primary-500 p-0">
@@ -65,13 +67,15 @@ const AdvanceTypeSelect: React.FC<Props> = ({
                   <ActionRow.Spacer />
                   <OverlayTrigger
                     placement="right"
-                    overlay={(
+                    overlay={
                       <Tooltip id={`tooltip-adv-${type}`}>
                         <div className="text-left">
-                          {intl.formatMessage(messages.supportStatusTooltipMessage, { supportStatus: problemData.status.replace(' ', '_') })}
+                          {intl.formatMessage(messages.supportStatusTooltipMessage, {
+                            supportStatus: problemData.status.replace(' ', '_'),
+                          })}
                         </div>
                       </Tooltip>
-                    )}
+                    }
                   >
                     <div className="text-gray-500">
                       {intl.formatMessage(messages.problemSupportStatus, { supportStatus: problemData.status })}
@@ -92,7 +96,9 @@ const AdvanceTypeSelect: React.FC<Props> = ({
         </Form.RadioSet>
       </Form.Group>
       <Hyperlink
-        destination={getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/references/course_development/exercise_tools/guide_problem_types.html#advanced-problem-types')}
+        destination={getExternalLinkUrl(
+          'https://docs.openedx.org/en/latest/educators/references/course_development/exercise_tools/guide_problem_types.html#advanced-problem-types',
+        )}
         target="_blank"
       >
         <FormattedMessage {...messages.learnMoreAdvancedButtonLabel} />

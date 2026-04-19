@@ -3,11 +3,9 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   configurationChangeConsequence: {
     id: 'authoring.discussions.configurationChangeConsequences',
-    defaultMessage:
-      'Students will lose access to any active or previous'
+    defaultMessage: 'Students will lose access to any active or previous'
       + ' discussion posts for your course.',
-    description:
-      'Describes that, as a consequence of changing configuration,'
+    description: 'Describes that, as a consequence of changing configuration,'
       + ' students will lose access posts on the course.',
   },
   configureApp: {

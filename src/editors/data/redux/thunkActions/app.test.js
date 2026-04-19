@@ -19,7 +19,7 @@ jest.mock('./requests', () => ({
 }));
 
 jest.mock('../../../utils', () => ({
-  camelizeKeys: (args) => ([{ camelizeKeys: args }]),
+  camelizeKeys: (args) => [{ camelizeKeys: args }],
   ...jest.requireActual('../../../utils'),
 }));
 

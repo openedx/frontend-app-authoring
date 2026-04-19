@@ -20,7 +20,7 @@ jest.mock('redux-logger', () => ({
 jest.mock('redux-thunk', () => 'thunkMiddleware');
 jest.mock('redux', () => ({
   applyMiddleware: (...middleware) => ({ applied: middleware }),
-  createStore: (reducer, middleware) => ({ reducer, middleware }),
+  createStore: (reducer, preloadedState, middleware) => ({ reducer, preloadedState, middleware }),
 }));
 jest.mock('@redux-devtools/extension', () => ({
   composeWithDevToolsLogOnlyInProduction: (middleware) => ({ withDevTools: middleware }),

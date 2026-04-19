@@ -42,9 +42,7 @@ const SavingErrorAlert = ({
       data-testid="saving-error-alert"
       icon={WarningIcon}
       title={intl.formatMessage(messages.warningTitle)}
-      description={
-        errorMessage || intl.formatMessage(messages.warningDescription)
-      }
+      description={errorMessage || intl.formatMessage(messages.warningDescription)}
       aria-hidden="true"
       aria-labelledby={intl.formatMessage(
         messages.warningTitleAriaLabelledBy,

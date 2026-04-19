@@ -84,17 +84,19 @@ const CourseTeam = () => {
                   <SubHeader
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
-                    headerActions={isAllowActions ? (
-                      <Button
-                        variant="primary"
-                        iconBefore={IconAdd}
-                        size="sm"
-                        onClick={openForm}
-                        disabled={isFormVisible}
-                      >
-                        {intl.formatMessage(messages.addNewMemberButton)}
-                      </Button>
-                    ) : undefined}
+                    headerActions={isAllowActions ?
+                      (
+                        <Button
+                          variant="primary"
+                          iconBefore={IconAdd}
+                          size="sm"
+                          onClick={openForm}
+                          disabled={isFormVisible}
+                        >
+                          {intl.formatMessage(messages.addNewMemberButton)}
+                        </Button>
+                      ) :
+                      undefined}
                   />
                   <section className="course-team-section">
                     <div className="members-container">
@@ -104,19 +106,21 @@ const CourseTeam = () => {
                           onCancel={hideForm}
                         />
                       )}
-                      {courseTeamUsers.length ? courseTeamUsers.map(({ username, role, email }) => (
-                        <CourseTeamMember
-                          key={email}
-                          userName={username}
-                          role={role}
-                          email={email}
-                          currentUserEmail={currentUserEmail || ''}
-                          isAllowActions={isAllowActions}
-                          isHideActions={role === USER_ROLES.admin && isSingleAdmin}
-                          onChangeRole={handleChangeRoleUserSubmit}
-                          onDelete={handleOpenDeleteModal}
-                        />
-                      )) : null}
+                      {courseTeamUsers.length ?
+                        courseTeamUsers.map(({ username, role, email }) => (
+                          <CourseTeamMember
+                            key={email}
+                            userName={username}
+                            role={role}
+                            email={email}
+                            currentUserEmail={currentUserEmail || ''}
+                            isAllowActions={isAllowActions}
+                            isHideActions={role === USER_ROLES.admin && isSingleAdmin}
+                            onChangeRole={handleChangeRoleUserSubmit}
+                            onDelete={handleOpenDeleteModal}
+                          />
+                        )) :
+                        null}
                       {isShowAddTeamMember && (
                         <AddTeamMember
                           onFormOpen={openForm}

@@ -16,13 +16,14 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ blockId: 'unit-id-1' }),
 }));
 
-const renderComponent = () => render(
-  <IframeProvider>
-    <UnitSidebarProvider readOnly={false}>
-      <UnitAlignSidebar />
-    </UnitSidebarProvider>
-  </IframeProvider>,
-);
+const renderComponent = () =>
+  render(
+    <IframeProvider>
+      <UnitSidebarProvider readOnly={false}>
+        <UnitAlignSidebar />
+      </UnitSidebarProvider>
+    </IframeProvider>,
+  );
 
 describe('OutlineAlignSidebar', () => {
   beforeEach(() => {

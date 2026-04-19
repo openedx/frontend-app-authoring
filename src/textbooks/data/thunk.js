@@ -1,7 +1,4 @@
-import {
-  hideProcessingNotification,
-  showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
+import { showToastOutsideReact, closeToastOutsideReact } from '../../generic/toast-context';
 import { handleResponseErrors } from '../../generic/saving-error-alert';
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
@@ -37,7 +34,7 @@ export function fetchTextbooksQuery(courseId) {
 export function createTextbookQuery(courseId, textbook) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       const data = await createTextbook(courseId, textbook);
@@ -46,7 +43,7 @@ export function createTextbookQuery(courseId, textbook) {
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -54,7 +51,7 @@ export function createTextbookQuery(courseId, textbook) {
 export function editTextbookQuery(courseId, textbook) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
 
     try {
       const data = await editTextbook(courseId, textbook);
@@ -63,7 +60,7 @@ export function editTextbookQuery(courseId, textbook) {
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
@@ -71,7 +68,7 @@ export function editTextbookQuery(courseId, textbook) {
 export function deleteTextbookQuery(courseId, textbookId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.deleting);
 
     try {
       await deleteTextbook(courseId, textbookId);
@@ -80,7 +77,7 @@ export function deleteTextbookQuery(courseId, textbookId) {
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
-      dispatch(hideProcessingNotification());
+      closeToastOutsideReact();
     }
   };
 }
