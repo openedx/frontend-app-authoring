@@ -106,7 +106,8 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_CERTIFICATE_PAGE: 'true',
       });
-      const actualItems = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems).toHaveLength(7);
     });
     it('when certificate page disabled should not include certificates option', () => {
@@ -114,7 +115,8 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_CERTIFICATE_PAGE: 'false',
       });
-      const actualItems = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems).toHaveLength(6);
     });
     it('when user has access to advanced settings should include advanced settings option', () => {
@@ -178,7 +180,8 @@ describe('header utils', () => {
         ...getConfig(),
         ADMIN_CONSOLE_URL: 'http://admin-console.example.com',
       });
-      const actualItems = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       const rolesPermissionsItem = actualItems.find(item => item.title === 'Roles and Permissions');
       expect(rolesPermissionsItem).toEqual({
         href: 'http://admin-console.example.com/authz?scope=course-123',
@@ -253,7 +256,9 @@ describe('header utils', () => {
       delete configWithoutAdminConsole.ADMIN_CONSOLE_URL;
       setConfig(configWithoutAdminConsole);
 
-      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false), { wrapper: createWrapper() }).result.current;
+      const items =
+        renderHook(() => useLibrarySettingsMenuItems('library-123', false), { wrapper: createWrapper() }).result
+          .current;
       expect(items).toContainEqual({ title: 'Library Team', href: 'http://localhost/?sa=manage-team' });
     });
     it('should contain admin console url if set', () => {
