@@ -4,19 +4,18 @@ import React, {
   useEffect,
 } from 'react';
 import type { PaginationState } from '@tanstack/react-table';
-import { TableView } from '@src/taxonomy/tree-table';
 import { useTagListData, useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
-import { TagTree } from './tagTree';
+import { TableView, TreeTableContext } from '@src/taxonomy/tree-table';
 import type {
   RowId,
-  TreeColumnDef,
   TreeRowData,
 } from '../tree-table/types';
+import { TagTree } from './tagTree';
 import {
   TABLE_MODES,
 } from './constants';
-import { getColumns } from './tagColumns';
 import { useTableModes, useEditActions } from './hooks';
+import { createTreeTableContextValue } from './createTreeTableContextValue';
 
 interface TagListTableProps {
   taxonomyId: number;
@@ -102,42 +101,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     setEditingRowId,
   });
 
-  const columns = useMemo<TreeColumnDef[]>(
-    () =>
-      getColumns({
-        setIsCreatingTopTag,
-        setCreatingParentId,
-        handleUpdateTag,
-        setEditingRowId,
-        onStartDraft: enterDraftMode,
-        setActiveActionMenuRowId,
-        hasOpenDraft,
-        canAddTag: tagList?.canAddTag !== false,
-        draftError,
-        setDraftError,
-        isSavingDraft: createTagMutation.isPending,
-        maxDepth,
-      }),
-    [
-      isCreatingTopTag,
-      tableMode,
-      activeActionMenuRowId,
-      hasOpenDraft,
-      creatingParentId,
-      tagList?.canAddTag,
-      draftError,
-      createTagMutation.isPending,
-      maxDepth,
-      setIsCreatingTopTag,
-      setCreatingParentId,
-      handleUpdateTag,
-      setEditingRowId,
-      enterDraftMode,
-      setActiveActionMenuRowId,
-      setDraftError,
-    ],
-  );
-
   // RELOAD DATA IN VIEW MODE
   useEffect(() => {
     // Get row data in VIEW mode. Otherwise keep current data to avoid disrupting
@@ -150,33 +113,71 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     }
   }, [tagList?.results, tableMode]);
 
+  const contextValue = useMemo(
+    () => createTreeTableContextValue({
+      treeData,
+      pageCount,
+      pagination,
+      handlePaginationChange,
+      isLoading,
+      isCreatingTopRow: isCreatingTopTag,
+      draftError,
+      createRowMutation: createTagMutation,
+      updateRowMutation: updateTagMutation,
+      toast,
+      setToast,
+      setIsCreatingTopRow: setIsCreatingTopTag,
+      exitDraftWithoutSave,
+      handleCreateRow: handleCreateTag,
+      creatingParentId,
+      setCreatingParentId,
+      setDraftError,
+      validate,
+      handleUpdateRow: handleUpdateTag,
+      editingRowId,
+      setEditingRowId,
+      onStartDraft: enterDraftMode,
+      setActiveActionMenuRowId,
+      hasOpenDraft,
+      canAddTag: tagList?.canAddTag !== false,
+      maxDepth,
+    }),
+    [
+      treeData,
+      pageCount,
+      pagination,
+      handlePaginationChange,
+      isLoading,
+      isCreatingTopTag,
+      draftError,
+      createTagMutation,
+      updateTagMutation,
+      toast,
+      setToast,
+      setIsCreatingTopTag,
+      exitDraftWithoutSave,
+      handleCreateTag,
+      creatingParentId,
+      setCreatingParentId,
+      setDraftError,
+      validate,
+      handleUpdateTag,
+      editingRowId,
+      setEditingRowId,
+      enterDraftMode,
+      setActiveActionMenuRowId,
+      hasOpenDraft,
+      tagList?.canAddTag,
+      maxDepth,
+    ],
+  );
+
+
+
   return (
-    <TableView
-      {...{
-        treeData,
-        columns,
-        pageCount,
-        pagination,
-        handlePaginationChange,
-        isLoading,
-        isCreatingTopRow: isCreatingTopTag,
-        draftError,
-        createRowMutation: createTagMutation,
-        updateRowMutation: updateTagMutation,
-        handleCreateRow: handleCreateTag,
-        handleUpdateRow: handleUpdateTag,
-        toast,
-        setToast,
-        setIsCreatingTopRow: setIsCreatingTopTag,
-        exitDraftWithoutSave,
-        creatingParentId,
-        setCreatingParentId,
-        setDraftError,
-        validate,
-        editingRowId,
-        setEditingRowId,
-      }}
-    />
+    <TreeTableContext.Provider value={contextValue}>
+      <TableView />
+    </TreeTableContext.Provider>
   );
 };
 

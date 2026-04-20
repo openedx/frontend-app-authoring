@@ -2,6 +2,7 @@ import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { TreeTableContext } from './TreeTableContext';
 import { TableView } from './TableView';
 
 jest.mock('./TableBody', () => {
@@ -19,7 +20,7 @@ const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
 
-const baseProps = () => ({
+const baseContextValue = () => ({
   treeData: [{ id: 1, value: 'root' }],
   columns: [{ accessorKey: 'value', header: 'Tag name', cell: (info: any) => info.getValue() }],
   pageCount: 3,
@@ -44,13 +45,23 @@ const baseProps = () => ({
   setEditingRowId: jest.fn(),
 });
 
+const renderTableView = (
+  contextValue = baseContextValue(),
+  props: React.ComponentProps<typeof TableView> = {},
+) => render(
+  <TreeTableContext.Provider value={contextValue}>
+    <TableView {...props} />
+  </TreeTableContext.Provider>,
+  { wrapper },
+);
+
 describe('TableView', () => {
   it('shows and dismisses save error banner', () => {
-    const props = baseProps();
-    props.createRowMutation = { isPending: false, isError: true };
-    props.draftError = 'Request failed with status code 500';
+    const contextValue = baseContextValue();
+    contextValue.createRowMutation = { isPending: false, isError: true };
+    contextValue.draftError = 'Request failed with status code 500';
 
-    render(<TableView {...props} />, { wrapper });
+    renderTableView(contextValue);
 
     expect(screen.getByText('Error saving changes')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /dismiss/i }));
@@ -58,38 +69,37 @@ describe('TableView', () => {
   });
 
   it('keeps pagination hidden by default even when multiple pages are reported', () => {
-    const props = baseProps();
-    render(<TableView {...props} />, { wrapper });
+    renderTableView();
 
     expect(screen.queryByRole('navigation', { name: /table pagination/i })).not.toBeInTheDocument();
   });
 
   it('renders pagination and updates page selection when explicitly enabled', () => {
-    const props = baseProps();
-    render(<TableView {...props} enablePagination />, { wrapper });
+    const contextValue = baseContextValue();
+    renderTableView(contextValue, { enablePagination: true });
 
     expect(screen.getByText('Page 1 of 3')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /^page 2$/i }));
-    expect(props.handlePaginationChange).toHaveBeenCalled();
+    expect(contextValue.handlePaginationChange).toHaveBeenCalled();
   });
 
   it('hides pagination when there is only one page', () => {
-    const props = baseProps();
-    props.pageCount = 1;
-    render(<TableView {...props} />, { wrapper });
+    const contextValue = baseContextValue();
+    contextValue.pageCount = 1;
+    renderTableView(contextValue);
 
     expect(screen.queryByRole('navigation', { name: /table pagination/i })).not.toBeInTheDocument();
   });
 
   it('closes toast by setting show to false', () => {
-    const props = baseProps();
-    props.toast = { show: true, message: 'created', variant: 'success' };
+    const contextValue = baseContextValue();
+    contextValue.toast = { show: true, message: 'created', variant: 'success' };
 
-    render(<TableView {...props} />, { wrapper });
+    renderTableView(contextValue);
 
     fireEvent.click(screen.getByRole('button', { name: /close/i }));
-    expect(props.setToast).toHaveBeenCalled();
-    const updater = props.setToast.mock.calls[0][0];
+    expect(contextValue.setToast).toHaveBeenCalled();
+    const updater = contextValue.setToast.mock.calls[0][0];
     expect(updater({ show: true, message: 'created', variant: 'success' })).toEqual({
       show: false,
       message: 'created',

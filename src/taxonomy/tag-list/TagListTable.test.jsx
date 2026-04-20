@@ -1248,8 +1248,8 @@ describe('<TagListTable /> pagination transition behavior', () => {
       handleUpdateTag: jest.fn(),
       validate: jest.fn(() => true),
     });
-    jest.spyOn(treeTableModule, 'TableView').mockImplementation((props) => {
-      tableViewProps = props;
+    jest.spyOn(treeTableModule, 'TableView').mockImplementation(() => {
+      tableViewProps = React.useContext(treeTableModule.TreeTableContext);
       return <div data-testid="mock-table-view" />;
     });
   });
