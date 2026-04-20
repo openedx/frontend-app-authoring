@@ -1,7 +1,6 @@
 import React, {
   useState,
   useMemo,
-  useEffect,
 } from 'react';
 import type { PaginationState } from '@tanstack/react-table';
 import { useTagListData, useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
@@ -11,11 +10,11 @@ import type {
   TreeRowData,
 } from '../tree-table/types';
 import { TagTree } from './tagTree';
+import { getColumns } from './tagColumns';
 import {
   TABLE_MODES,
 } from './constants';
 import { useTableModes, useEditActions } from './hooks';
-import { createTreeTableContextValue } from './createTreeTableContextValue';
 
 interface TagListTableProps {
   taxonomyId: number;
@@ -83,6 +82,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const createTagMutation = useCreateTag(taxonomyId);
   const updateTagMutation = useUpdateTag(taxonomyId);
   const pageCount = tagList?.numPages ?? -1;
+  const canAddTag = tagList?.canAddTag !== false;
 
   // TODO: to make this more readable, introduce a React context for the TagListTable instead of passing props.
 
@@ -101,78 +101,39 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     setEditingRowId,
   });
 
-  // RELOAD DATA IN VIEW MODE
-  useEffect(() => {
-    // Get row data in VIEW mode. Otherwise keep current data to avoid disrupting
-    // users while they edit or create a tag.
-    if (tableMode === TABLE_MODES.VIEW && tagList?.results) {
-      const tree = new TagTree(tagList?.results);
-      if (tree) {
-        setTagTree(tree);
-      }
-    }
-  }, [tagList?.results, tableMode]);
-
-  const contextValue = useMemo(
-    () => createTreeTableContextValue({
-      treeData,
-      pageCount,
-      pagination,
-      handlePaginationChange,
-      isLoading,
-      isCreatingTopRow: isCreatingTopTag,
-      draftError,
-      createRowMutation: createTagMutation,
-      updateRowMutation: updateTagMutation,
-      toast,
-      setToast,
-      setIsCreatingTopRow: setIsCreatingTopTag,
-      exitDraftWithoutSave,
-      handleCreateRow: handleCreateTag,
-      creatingParentId,
-      setCreatingParentId,
-      setDraftError,
-      validate,
-      handleUpdateRow: handleUpdateTag,
-      editingRowId,
-      setEditingRowId,
-      onStartDraft: enterDraftMode,
-      setActiveActionMenuRowId,
-      hasOpenDraft,
-      canAddTag: tagList?.canAddTag !== false,
-      maxDepth,
-    }),
-    [
-      treeData,
-      pageCount,
-      pagination,
-      handlePaginationChange,
-      isLoading,
-      isCreatingTopTag,
-      draftError,
-      createTagMutation,
-      updateTagMutation,
-      toast,
-      setToast,
-      setIsCreatingTopTag,
-      exitDraftWithoutSave,
-      handleCreateTag,
-      creatingParentId,
-      setCreatingParentId,
-      setDraftError,
-      validate,
-      handleUpdateTag,
-      editingRowId,
-      setEditingRowId,
-      enterDraftMode,
-      setActiveActionMenuRowId,
-      hasOpenDraft,
-      tagList?.canAddTag,
-      maxDepth,
-    ],
-  );
-
-
+  // TreeTable context
+  const contextValueArgs = {
+    treeData,
+    pageCount,
+    pagination,
+    handlePaginationChange,
+    isLoading,
+    isCreatingTopRow: isCreatingTopTag,
+    draftError,
+    createRowMutation: createTagMutation,
+    updateRowMutation: updateTagMutation,
+    toast,
+    setToast,
+    setIsCreatingTopRow: setIsCreatingTopTag,
+    exitDraftWithoutSave,
+    handleCreateRow: handleCreateTag,
+    creatingParentId,
+    setCreatingParentId,
+    setDraftError,
+    validate,
+    handleUpdateRow: handleUpdateTag,
+    editingRowId,
+    setEditingRowId,
+    onStartDraft: enterDraftMode,
+    setActiveActionMenuRowId,
+    hasOpenDraft,
+    canAddTag,
+    maxDepth,
+  };
+  const contextValue = {
+    ...contextValueArgs,
+    columns: getColumns(contextValueArgs),
+  };
 
   return (
     <TreeTableContext.Provider value={contextValue}>
