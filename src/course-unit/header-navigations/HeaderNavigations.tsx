@@ -87,6 +87,7 @@ const HeaderNavigations = ({
             >
               {intl.formatMessage(messages.previewButton)}
             </Button>
+            {/* TODO: convert to <Button as="a" href="..."> since it navigates to a URL */}
             <Button
               variant="outline-primary"
               onClick={handleViewLive}
