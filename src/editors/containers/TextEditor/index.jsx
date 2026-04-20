@@ -43,7 +43,7 @@ const TextEditor = ({
   const editorContent = newContent || initialContent;
   let staticRootUrl;
   if (isLibrary) {
-    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`;
   }
 
   if (!refReady) { return null; }
@@ -85,7 +85,7 @@ const TextEditor = ({
     >
       <div className="editor-body h-75 overflow-auto">
         <Toast show={blockFailed} onClose={hooks.nullMethod}>
-          { intl.formatMessage(messages.couldNotLoadTextContext) }
+          {intl.formatMessage(messages.couldNotLoadTextContext)}
         </Toast>
 
         {(!blockFinished)
@@ -97,7 +97,8 @@ const TextEditor = ({
                 screenreadertext={intl.formatMessage(messages.spinnerScreenReaderText)}
               />
             </div>
-          ) : (selectEditor())}
+          ) :
+          (selectEditor())}
       </div>
     </EditorContainer>
   );
@@ -130,7 +131,7 @@ export const mapStateToProps = (state) => ({
   blockId: selectors.app.blockId(state),
   showRawEditor: selectors.app.showRawEditor(state),
   blockFinished: selectors.app.shouldCreateBlock(state)
-  || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
+    || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   learningContextId: selectors.app.learningContextId(state),
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),

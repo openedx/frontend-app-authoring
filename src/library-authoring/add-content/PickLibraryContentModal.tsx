@@ -34,7 +34,10 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   } = useLibraryContext();
 
   const {
-    insideCollection, insideUnit, insideSection, insideSubsection,
+    insideCollection,
+    insideUnit,
+    insideSection,
+    insideSubsection,
   } = useLibraryRoutes();
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
@@ -110,7 +113,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
       size="xl"
       isOpen={isOpen}
       onClose={onClose}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <FormattedMessage
             {...contentMessages.selectedContent}
@@ -121,7 +124,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
             {intl.formatMessage(contentMessages.addToButton)}
           </Button>
         </ActionRow>
-      )}
+      }
     >
       <LibraryProvider
         libraryId={libraryId}

@@ -12,13 +12,14 @@ import CertificateDetailsForm from './CertificateDetailsForm';
 
 let store;
 
-const renderComponent = (props) => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      <CertificateDetailsForm {...props} />
-    </IntlProvider>
-  </Provider>,
-);
+const renderComponent = (props) =>
+  render(
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <CertificateDetailsForm {...props} />
+      </IntlProvider>
+    </Provider>,
+  );
 
 const defaultProps = {
   componentMode: MODE_STATES.view,

@@ -2,7 +2,12 @@ import { setConfig, getConfig } from '@edx/frontend-platform';
 
 import { ITEM_BADGE_STATUS } from '@src/course-outline/constants';
 import {
-  act, fireEvent, initializeMocks, render, screen, waitFor,
+  act,
+  fireEvent,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
@@ -11,6 +16,7 @@ import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
+import { CourseOutlineProvider } from '../CourseOutlineContext';
 
 const onExpandMock = jest.fn();
 const onClickMenuButtonMock = jest.fn();
@@ -87,9 +93,11 @@ const renderComponent = (props?: object, entry = '/') => {
       },
       extraWrapper: ({ children }) => (
         <CourseAuthoringProvider courseId={courseId}>
-          <OutlineSidebarProvider>
-            {children}
-          </OutlineSidebarProvider>
+          <CourseOutlineProvider>
+            <OutlineSidebarProvider>
+              {children}
+            </OutlineSidebarProvider>
+          </CourseOutlineProvider>
         </CourseAuthoringProvider>
       ),
     },
@@ -255,8 +263,12 @@ describe('<CardHeader />', () => {
     // Ensure menu items related to editing are enabled
     const menuButton = screen.getByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
-    expect(await screen.findByTestId('subsection-card-header__menu-configure-button')).not.toHaveAttribute('aria-disabled');
-    expect(await screen.findByTestId('subsection-card-header__menu-manage-tags-button')).not.toHaveAttribute('aria-disabled');
+    expect(await screen.findByTestId('subsection-card-header__menu-configure-button')).not.toHaveAttribute(
+      'aria-disabled',
+    );
+    expect(await screen.findByTestId('subsection-card-header__menu-manage-tags-button')).not.toHaveAttribute(
+      'aria-disabled',
+    );
   });
 
   it('check editing is disabled when saving is in progress', async () => {

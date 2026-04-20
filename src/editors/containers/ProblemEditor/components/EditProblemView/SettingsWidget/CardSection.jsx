@@ -1,11 +1,16 @@
 import React from 'react';
 import { Collapsible, Card } from '@openedx/paragon';
 import {
-  bool, string, node,
+  bool,
+  string,
+  node,
 } from 'prop-types';
 
 const CardSection = ({
-  children, none, isCardCollapsibleOpen, summary,
+  children,
+  none,
+  isCardCollapsibleOpen,
+  summary,
 }) => {
   const show = isCardCollapsibleOpen || summary;
   if (!show) { return null; }

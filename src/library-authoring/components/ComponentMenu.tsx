@@ -13,7 +13,11 @@ import { getBlockType } from '@src/generic/key-utils';
 import { ToastContext } from '@src/generic/toast-context';
 
 import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
-import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
+import {
+  SidebarActions,
+  SidebarBodyItemId,
+  useSidebarContext,
+} from '@src/library-authoring/common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import containerMessages from '@src/library-authoring/containers/messages';
 import { useLibraryRoutes } from '@src/library-authoring/routes';

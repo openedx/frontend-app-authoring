@@ -21,7 +21,10 @@ const ComponentModalView = ({
   const [moduleTitle, setModuleTitle] = useState('');
   const { open, close, isOpen } = modalParams;
   const {
-    type, displayName, templates, supportLegend,
+    type,
+    displayName,
+    templates,
+    supportLegend,
   } = component;
   const supportLabels = getXBlockSupportMessages(intl);
 
@@ -76,11 +79,11 @@ const ComponentModalView = ({
                   {isDisplaySupportLabel && (
                     <OverlayTrigger
                       placement="right"
-                      overlay={(
+                      overlay={
                         <Tooltip id={`${componentTemplate.displayName}-support-tooltip`}>
                           {supportLabels[componentTemplate.supportLevel].tooltip}
                         </Tooltip>
-                      )}
+                      }
                     >
                       <span className="x-small text-gray-500 flex-shrink-0 ml-2">
                         {supportLabels[componentTemplate.supportLevel].label}

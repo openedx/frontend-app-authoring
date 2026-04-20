@@ -23,7 +23,7 @@ import messages from './messages';
 
 const ContainerOrganize = () => {
   const intl = useIntl();
-  const [tagsCollapseIsOpen, ,setTagsCollapseClose, toggleTags] = useToggle(true);
+  const [tagsCollapseIsOpen, , setTagsCollapseClose, toggleTags] = useToggle(true);
   const [collectionsCollapseIsOpen, setCollectionsCollapseOpen, , toggleCollections] = useToggle(true);
 
   const { readOnly } = useOptionalLibraryContext();
@@ -53,7 +53,7 @@ const ContainerOrganize = () => {
     }
     let result = 0;
     componentTags.taxonomies.forEach((taxonomy) => {
-      const countedTags : string[] = [];
+      const countedTags: string[] = [];
       taxonomy.tags.forEach((tagData) => {
         tagData.lineage.forEach((tag) => {
           if (!countedTags.includes(tag)) {

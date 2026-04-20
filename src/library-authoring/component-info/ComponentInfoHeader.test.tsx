@@ -23,20 +23,21 @@ const xBlockFields = {
   },
 };
 
-const render = (libraryId: string = mockLibraryId) => baseRender(<ComponentInfoHeader />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: usageKey,
-          type: SidebarBodyItemId.ComponentInfo,
-        }}
-      >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (libraryId: string = mockLibraryId) =>
+  baseRender(<ComponentInfoHeader />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libraryId}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: usageKey,
+            type: SidebarBodyItemId.ComponentInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;

@@ -5,7 +5,6 @@ import {
   Card,
   ActionRow,
   Pagination,
-  Alert,
   Icon,
 } from '@openedx/paragon';
 
@@ -18,7 +17,7 @@ import {
   type PaginationState,
 } from '@tanstack/react-table';
 
-import { ArrowDropUpDown, Info } from '@openedx/paragon/icons';
+import { ArrowDropUpDown } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import TableBody from './TableBody';
 import './TableView.scss';
@@ -30,6 +29,7 @@ import type {
   TreeRowData,
 } from './types';
 import messages from './messages';
+import SaveErrorAlert from './SaveErrorAlert';
 
 interface TableViewProps {
   treeData: TreeRowData[];
@@ -42,6 +42,7 @@ interface TableViewProps {
   isCreatingTopRow: boolean;
   draftError: string;
   createRowMutation: CreateRowMutationState;
+  updateRowMutation: CreateRowMutationState;
   toast: ToastState;
   setToast: React.Dispatch<React.SetStateAction<ToastState>>;
   setIsCreatingTopRow: (isCreating: boolean) => void;
@@ -51,6 +52,9 @@ interface TableViewProps {
   setCreatingParentId: (id: RowId | null) => void;
   setDraftError: (error: string) => void;
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
+  handleUpdateRow: (value: string, originalValue: string) => void;
+  editingRowId: RowId | null;
+  setEditingRowId: (id: RowId | null) => void;
 }
 
 const TableView = ({
@@ -64,6 +68,7 @@ const TableView = ({
   isCreatingTopRow,
   draftError,
   createRowMutation,
+  updateRowMutation,
   handleCreateRow,
   toast,
   setToast,
@@ -73,6 +78,9 @@ const TableView = ({
   setCreatingParentId,
   setDraftError,
   validate,
+  handleUpdateRow,
+  editingRowId,
+  setEditingRowId,
 }: TableViewProps) => {
   const intl = useIntl();
 
@@ -93,18 +101,11 @@ const TableView = ({
   const currentPageIndex = table.getState().pagination.pageIndex + 1;
 
   const { isError } = createRowMutation;
-  const [showError, setShowError] = React.useState(true);
+  const { isError: isUpdateError } = updateRowMutation;
 
   return (
     <>
-      {isError && showError && (
-        <Alert variant="danger" icon={Info} dismissible onClose={() => setShowError(false)}>
-          <Alert.Heading>
-            {intl.formatMessage(messages.errorSavingTitle)}
-          </Alert.Heading>
-          {intl.formatMessage(messages.errorSavingMessage, { errorMessage: draftError || intl.formatMessage(messages.errorSavingMessage, { errorMessage: '' }) })}
-        </Alert>
-      )}
+      <SaveErrorAlert draftError={draftError} isError={isError} isUpdateError={isUpdateError} />
       <Card className="tag-list-card">
         <Card.Section className="p-0">
           <div className="d-flex justify-content-end align-items-center p-4">
@@ -124,16 +125,14 @@ const TableView = ({
               </Button>
             </ActionRow>
           </div>
-          <table
-            className="table w-100 tag-list-table tree-table-layout-fixed"
-          >
+          <table className="table w-100 tag-list-table tree-table-layout-fixed">
             <thead className="bg-light-400">
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header, index) => (
                     <th
                       key={header.id}
-                      className={`p-2 text-left ${index === 0 ? 'pl-2.5' : 'tree-table-actions-column'}`}
+                      className={`p-2 text-left ${index === 0 ? 'pl-2.5' : ''}`}
                     >
                       {header.isPlaceholder
                         ? null
@@ -157,9 +156,13 @@ const TableView = ({
               setCreatingParentId={setCreatingParentId}
               setDraftError={setDraftError}
               createRowMutation={createRowMutation}
+              updateRowMutation={updateRowMutation}
               table={table}
               isLoading={isLoading}
               validate={validate}
+              handleUpdateRow={handleUpdateRow}
+              editingRowId={editingRowId}
+              setEditingRowId={setEditingRowId}
             />
           </table>
         </Card.Section>

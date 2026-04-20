@@ -20,7 +20,7 @@ import { ContentType, allLibraryPageTabs } from '../routes';
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection?: () => void;
-  visibleTabs: ContentType[],
+  visibleTabs: ContentType[];
   FiltersComponent?: React.ComponentType<FiltersProps>;
 }
 
@@ -54,12 +54,12 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
 };
 
 type PickerProps = {
-  showOnlyPublished?: boolean,
-  extraFilter?: string[],
-  visibleTabs?: ContentType[],
-  componentPickerMode?: 'single' | 'multiple',
-  onComponentSelected?: ComponentSelectedEvent,
-  onChangeComponentSelection?: ComponentSelectionChangedEvent,
+  showOnlyPublished?: boolean;
+  extraFilter?: string[];
+  visibleTabs?: ContentType[];
+  componentPickerMode?: 'single' | 'multiple';
+  onComponentSelected?: ComponentSelectedEvent;
+  onChangeComponentSelection?: ComponentSelectionChangedEvent;
   FiltersComponent?: React.ComponentType<FiltersProps>;
 };
 
@@ -78,7 +78,7 @@ export const ComponentPicker = ({
   onChangeComponentSelection = defaultSelectionChangedCallback,
   FiltersComponent,
   returnToLibrarySelection,
-}: PickerProps & LibraryComponentPickerProps & { libraryId?: string }) => {
+}: PickerProps & LibraryComponentPickerProps & { libraryId?: string; }) => {
   const location = useLocation();
 
   const queryParams = new URLSearchParams(location.search);
@@ -87,15 +87,17 @@ export const ComponentPicker = ({
 
   const restrictToLibrary = !!libraryId;
 
-  const componentPickerProviderProps = componentPickerMode === 'single' ? {
-    componentPickerMode,
-    onComponentSelected,
-    restrictToLibrary,
-  } : {
-    componentPickerMode,
-    onChangeComponentSelection,
-    restrictToLibrary,
-  };
+  const componentPickerProviderProps = componentPickerMode === 'single' ?
+    {
+      componentPickerMode,
+      onComponentSelected,
+      restrictToLibrary,
+    } :
+    {
+      componentPickerMode,
+      onChangeComponentSelection,
+      restrictToLibrary,
+    };
 
   return (
     <PublishedFilterContextProvider showOnlyPublished={calcShowOnlyPublished}>
@@ -104,7 +106,7 @@ export const ComponentPicker = ({
         extraFilter={extraFilter}
       >
         <SidebarProvider>
-          { calcShowOnlyPublished
+          {calcShowOnlyPublished
             && (
               <Alert variant="info" className="m-2">
                 <FormattedMessage {...messages.pickerInfoBanner} />

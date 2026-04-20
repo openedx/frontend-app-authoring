@@ -1,5 +1,8 @@
 import React, {
-  useCallback, useEffect, useMemo, useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { Helmet } from 'react-helmet';
 import { getConfig } from '@edx/frontend-platform';
@@ -17,7 +20,10 @@ import {
   Tabs,
 } from '@openedx/paragon';
 import {
-  Cached, CheckCircle, Launch, Loop,
+  Cached,
+  CheckCircle,
+  Launch,
+  Loop,
 } from '@openedx/paragon/icons';
 
 import sumBy from 'lodash/sumBy';
@@ -50,13 +56,13 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
   return (
     <Card className="my-3 border-light-500 border shadow-none">
       <Card.Header
-        title={(
+        title={
           <Stack direction="horizontal" gap={2}>
             <Icon src={NewsstandIcon} />
             {linkSummary.upstreamContextTitle}
           </Stack>
-        )}
-        actions={(
+        }
+        actions={
           <ActionRow>
             <Button
               destination={`${getConfig().PUBLIC_PATH}library/${linkSummary.upstreamContextKey}`}
@@ -71,7 +77,7 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
               View Library
             </Button>
           </ActionRow>
-        )}
+        }
         size="sm"
       />
       <Card.Section>
@@ -139,11 +145,17 @@ export const CourseLibraries = () => {
       return <Loading />;
     }
     if (libraries?.length === 0) {
-      return <small><FormattedMessage {...messages.homeTabDescriptionEmpty} /></small>;
+      return (
+        <small>
+          <FormattedMessage {...messages.homeTabDescriptionEmpty} />
+        </small>
+      );
     }
     return (
       <>
-        <small><FormattedMessage {...messages.homeTabDescription} /></small>
+        <small>
+          <FormattedMessage {...messages.homeTabDescription} />
+        </small>
         {libraries?.map((library) => (
           <LibraryCard
             linkSummary={library}
@@ -199,15 +211,17 @@ export const CourseLibraries = () => {
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
-          headerActions={(!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.all) ? (
-            <Button
-              variant="primary"
-              onClick={onAlertReview}
-              iconBefore={Cached}
-            >
-              {intl.formatMessage(messages.reviewUpdatesBtn)}
-            </Button>
-          ) : null}
+          headerActions={(!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.all) ?
+            (
+              <Button
+                variant="primary"
+                onClick={onAlertReview}
+                iconBefore={Cached}
+              >
+                {intl.formatMessage(messages.reviewUpdatesBtn)}
+              </Button>
+            ) :
+            null}
           hideBorder
         />
         <section className="mb-4">
@@ -225,12 +239,12 @@ export const CourseLibraries = () => {
             </Tab>
             <Tab
               eventKey={CourseLibraryTabs.review}
-              title={(
+              title={
                 <Stack direction="horizontal" gap={1}>
                   <Icon src={Loop} />
                   {intl.formatMessage(messages.reviewTabTitle)}
                 </Stack>
-              )}
+              }
               notification={outOfSyncCount}
               className="px-2 mt-3"
             >

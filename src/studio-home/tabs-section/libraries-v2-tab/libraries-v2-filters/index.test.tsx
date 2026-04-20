@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  screen, fireEvent, render, waitFor,
+  screen,
+  fireEvent,
+  render,
+  waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -10,22 +13,23 @@ describe('LibrariesV2Filters', () => {
   const setFilterParamsMock = jest.fn();
   const setCurrentPageMock = jest.fn();
 
-  const IntlProviderWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  const IntlProviderWrapper: React.FC<{ children: React.ReactNode; }> = ({ children }) => (
     <IntlProvider locale="en" messages={{}}>
       {children}
     </IntlProvider>
   );
 
-  const renderComponent = (overrideProps: Partial<LibrariesV2FiltersProps> = {}) => render(
-    <IntlProviderWrapper>
-      <LibrariesV2Filters
-        filterParams={{}}
-        setFilterParams={setFilterParamsMock}
-        setCurrentPage={setCurrentPageMock}
-        {...overrideProps}
-      />
-    </IntlProviderWrapper>,
-  );
+  const renderComponent = (overrideProps: Partial<LibrariesV2FiltersProps> = {}) =>
+    render(
+      <IntlProviderWrapper>
+        <LibrariesV2Filters
+          filterParams={{}}
+          setFilterParams={setFilterParamsMock}
+          setCurrentPage={setCurrentPageMock}
+          {...overrideProps}
+        />
+      </IntlProviderWrapper>,
+    );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -108,10 +112,11 @@ describe('LibrariesV2Filters', () => {
     const searchInput = screen.getByRole('searchbox');
     fireEvent.change(searchInput, { target: { value: '   ' } });
 
-    await waitFor(() => expect(setFilterParamsMock).not.toHaveBeenCalledWith(expect.objectContaining({
-      search: '   ',
-      order: 'created',
-    })), { timeout: 500 });
+    await waitFor(() =>
+      expect(setFilterParamsMock).not.toHaveBeenCalledWith(expect.objectContaining({
+        search: '   ',
+        order: 'created',
+      })), { timeout: 500 });
   });
 
   it('should display the loading spinner when isLoading is true', () => {

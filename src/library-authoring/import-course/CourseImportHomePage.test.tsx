@@ -24,7 +24,7 @@ const render = (libraryId: string) => (
   testRender(
     <CourseImportHomePage />,
     {
-      extraWrapper: ({ children }: { children: React.ReactNode }) => (
+      extraWrapper: ({ children }: { children: React.ReactNode; }) => (
         <LibraryProvider libraryId={libraryId}>
           {children}
         </LibraryProvider>

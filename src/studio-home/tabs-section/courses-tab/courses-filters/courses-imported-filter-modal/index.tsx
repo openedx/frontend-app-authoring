@@ -1,6 +1,10 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Button, Form, IconButton, ModalDialog,
+  ActionRow,
+  Button,
+  Form,
+  IconButton,
+  ModalDialog,
 } from '@openedx/paragon';
 import { Settings } from '@openedx/paragon/icons';
 import { useState } from 'react';

@@ -9,21 +9,28 @@ import Signatory from './Signatory';
 
 const mockHandleEdit = jest.fn();
 
-const renderSignatory = (props) => render(
-  <IntlProvider locale="en">
-    <Signatory {...props} />
-  </IntlProvider>,
-);
+const renderSignatory = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <Signatory {...props} />
+    </IntlProvider>,
+  );
 
 const defaultProps = { ...signatoriesMock[0], handleEdit: mockHandleEdit, index: 0 };
 
 describe('Signatory Component', () => {
   it('renders in MODE_STATES.view mode', () => {
     const {
-      getByText, queryByText, getByAltText, getByRole,
+      getByText,
+      queryByText,
+      getByAltText,
+      getByRole,
     } = renderSignatory(defaultProps);
     const signatureImage = getByAltText(messages.imageLabel.defaultMessage);
-    const sectionTitle = getByRole('heading', { level: 3, name: `${messages.signatoryTitle.defaultMessage} ${defaultProps.index + 1}` });
+    const sectionTitle = getByRole('heading', {
+      level: 3,
+      name: `${messages.signatoryTitle.defaultMessage} ${defaultProps.index + 1}`,
+    });
 
     expect(sectionTitle).toBeInTheDocument();
     expect(getByText(defaultProps.name)).toBeInTheDocument();

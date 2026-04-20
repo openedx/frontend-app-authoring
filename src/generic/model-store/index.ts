@@ -10,7 +10,4 @@ export {
   removeModels,
 } from './slice';
 
-export {
-  useModel,
-  useModels,
-} from './hooks';
+export { useModel, useModels } from './hooks';

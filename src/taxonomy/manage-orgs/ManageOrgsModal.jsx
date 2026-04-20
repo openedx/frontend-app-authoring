@@ -39,7 +39,7 @@ const ConfirmModal = ({
       onClose={onClose}
       variant="warning"
       icon={Warning}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button variant="tertiary" onClick={onClose}>
             {intl.formatMessage(messages.cancelButton)}
@@ -48,7 +48,7 @@ const ConfirmModal = ({
             {intl.formatMessage(messages.continueButton)}
           </Button>
         </ActionRow>
-      )}
+      }
     >
       <p>
         {intl.formatMessage(messages.confirmUnassignText, { taxonomyName })}
@@ -72,8 +72,8 @@ const ManageOrgsModal = ({
   const intl = useIntl();
   const { setToastMessage } = useContext(TaxonomyContext);
 
-  const [selectedOrgs, setSelectedOrgs] = useState(/** @type {null|string[]} */(null));
-  const [allOrgs, setAllOrgs] = useState(/** @type {null|boolean} */(null));
+  const [selectedOrgs, setSelectedOrgs] = useState(/** @type {null|string[]} */ (null));
+  const [allOrgs, setAllOrgs] = useState(/** @type {null|boolean} */ (null));
 
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
 
@@ -131,7 +131,8 @@ const ManageOrgsModal = ({
   useEffect(() => {
     if (selectedOrgs) {
       // This is a hack to force the Form.Autosuggest to clear its value after a selection is made.
-      const inputRef = /** @type {null|HTMLInputElement} */ (document.querySelector('.manage-orgs .pgn__form-group input'));
+      const inputRef =
+        /** @type {null|HTMLInputElement} */ (document.querySelector('.manage-orgs .pgn__form-group input'));
       if (inputRef) {
         //  @ts-ignore value can be null
         inputRef.value = null;
@@ -178,17 +179,19 @@ const ManageOrgsModal = ({
                 <div>{intl.formatMessage(messages.currentAssignments)}</div>
               </Form.Label>
               <div className="col-9 d-inline-box overflow-auto">
-                {selectedOrgs.length ? selectedOrgs.map((org) => (
-                  <Chip
-                    key={org}
-                    iconAfter={Close}
-                    iconAfterAlt={intl.formatMessage(messages.removeOrg, { org })}
-                    onIconAfterClick={() => setSelectedOrgs(selOrgs => (selOrgs || []).filter((o) => o !== org))}
-                    disabled={!!allOrgs}
-                  >
-                    {org}
-                  </Chip>
-                )) : <span className="text-muted">{intl.formatMessage(messages.noOrganizationAssigned)}</span> }
+                {selectedOrgs.length ?
+                  selectedOrgs.map((org) => (
+                    <Chip
+                      key={org}
+                      iconAfter={Close}
+                      iconAfterAlt={intl.formatMessage(messages.removeOrg, { org })}
+                      onIconAfterClick={() => setSelectedOrgs(selOrgs => (selOrgs || []).filter((o) => o !== org))}
+                      disabled={!!allOrgs}
+                    >
+                      {org}
+                    </Chip>
+                  )) :
+                  <span className="text-muted">{intl.formatMessage(messages.noOrganizationAssigned)}</span>}
               </div>
             </Stack>
           </Form.Group>
@@ -205,9 +208,11 @@ const ManageOrgsModal = ({
               }}
               disabled={allOrgs}
             >
-              {organizationListData ? organizationListData.filter(o => !selectedOrgs?.includes(o)).map((org) => (
-                <Form.AutosuggestOption key={org}>{org}</Form.AutosuggestOption>
-              )) : [] }
+              {organizationListData ?
+                organizationListData.filter(o => !selectedOrgs?.includes(o)).map((org) => (
+                  <Form.AutosuggestOption key={org}>{org}</Form.AutosuggestOption>
+                )) :
+                []}
             </Form.Autosuggest>
           </Form.Group>
           <Form.Checkbox checked={allOrgs} onChange={(e) => setAllOrgs(e.target.checked)}>

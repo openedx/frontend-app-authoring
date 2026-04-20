@@ -42,14 +42,14 @@ const ImageSettingsModal = ({
   return (
     <BaseModal
       close={close}
-      confirmAction={(
+      confirmAction={
         <Button
           variant="primary"
           onClick={onSaveClick}
         >
           <FormattedMessage {...messages.saveButtonLabel} />
         </Button>
-      )}
+      }
       isOpen={isOpen}
       title={intl.formatMessage(messages.titleLabel)}
     >

@@ -1,11 +1,13 @@
 import { render, screen, initializeMocks } from '@src/testUtils';
 import { FeedbackBox } from './FeedbackBox';
 
-jest.mock('../../../../../../../sharedComponents/ExpandableTextArea', () => jest.fn(({
-  id, value, setContent, placeholder,
-}) => (
-  <textarea id={id} value={value} placeholder={placeholder} onChange={e => setContent(e.target.value)} />
-)));
+jest.mock('../../../../../../../sharedComponents/ExpandableTextArea', () =>
+  jest.fn(({
+    id,
+    value,
+    setContent,
+    placeholder,
+  }) => <textarea id={id} value={value} placeholder={placeholder} onChange={e => setContent(e.target.value)} />));
 
 const answerWithFeedback = {
   id: 'A',

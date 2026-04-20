@@ -18,16 +18,17 @@ const experimentConfigurationActions = {
 const onCreateMock = jest.fn();
 const experimentConfiguration = experimentGroupConfigurationsMock[0];
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <ExperimentCard
-      configuration={experimentConfiguration}
-      experimentConfigurationActions={experimentConfigurationActions}
-      onCreate={onCreateMock}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <IntlProvider locale="en">
+      <ExperimentCard
+        configuration={experimentConfiguration}
+        experimentConfigurationActions={experimentConfigurationActions}
+        onCreate={onCreateMock}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<ExperimentCard />', () => {
   it('renders component correctly', () => {
@@ -108,7 +109,7 @@ describe('<ExperimentCard />', () => {
     expect(usageBlock).toBeInTheDocument();
   });
 
-  it("user can't delete experiment configuration that is used in location", () => {
+  it('user can\'t delete experiment configuration that is used in location', () => {
     const usageLocation = {
       label: 'UnitName 2 / Content Experiment',
       url: '/container/block-v1:2u+1+1+type@split_test+block@ccfae830ec9b406c835f8ce4520ae396',

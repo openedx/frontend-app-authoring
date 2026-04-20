@@ -5,9 +5,4 @@ import VideoThumbnail from './VideoThumbnail';
 import VideoInfoModalSidebar from './info-sidebar';
 
 export default VideosPage;
-export {
-  TranscriptSettings,
-  UploadModal,
-  VideoThumbnail,
-  VideoInfoModalSidebar,
-};
+export { TranscriptSettings, UploadModal, VideoThumbnail, VideoInfoModalSidebar };

@@ -4,9 +4,11 @@ import { flexRender } from '@tanstack/react-table';
 import type {
   RowId,
   TreeRow,
+  TreeColumnDef,
   CreateRowMutationState,
 } from './types';
-import { CreateRow } from './CreateRow';
+import CreateRow from './CreateRow';
+import EditRow from './EditRow';
 
 interface NestedRowsProps {
   /** The parent row object from TanStack React Table */
@@ -35,6 +37,18 @@ interface NestedRowsProps {
   setIsCreatingTopRow: (isCreating: boolean) => void;
   /** State object for the row creation mutation (isPending, isError, error) */
   createRowMutation: CreateRowMutationState;
+  /** State object for the row update mutation (isPending, isError, error) */
+  updateRowMutation: CreateRowMutationState;
+  /** Callback when an existing row is updated (receives new value and original value) */
+  handleUpdateRow: (value: string, originalValue: string) => void;
+  /** ID of the row currently in edit mode */
+  editingRowId: RowId | null;
+  /** Setter function for which row is in edit mode */
+  setEditingRowId: (id: RowId | null) => void;
+  /** Callback to exit draft mode without saving changes */
+  exitDraftWithoutSave: () => void;
+  /** Column definitions for rendering cells in edit mode */
+  columns?: TreeColumnDef[];
   /** Validation function for new row values (receives value and optional 'soft' or 'hard' mode;
    * in 'hard' mode an exception is thrown on validation failure) */
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
@@ -67,6 +81,12 @@ const NestedRows = ({
   setCreatingParentId = () => {},
   setIsCreatingTopRow,
   createRowMutation,
+  updateRowMutation,
+  handleUpdateRow,
+  editingRowId,
+  setEditingRowId,
+  exitDraftWithoutSave,
+  columns = [],
   validate,
 }: NestedRowsProps) => {
   if (!parentRow.getIsExpanded()) {
@@ -84,7 +104,6 @@ const NestedRows = ({
           setIsCreatingTopRow={setIsCreatingTopRow}
           exitDraftWithoutSave={onCancelCreation}
           createRowMutation={createRowMutation}
-          columns={[]}
           indent={indent}
           validate={validate}
         />
@@ -93,38 +112,53 @@ const NestedRows = ({
         const rowData = row.original || row;
         return (
           <React.Fragment key={String(rowData.id)}>
-            <tr>
-              {row.getVisibleCells()
-                .map((cell, index) => {
-                  const content = flexRender(cell.column.columnDef.cell, cell.getContext());
-                  const isFirstColumn = index === 0;
+            {editingRowId === `${row.original.id}:${String(row.original.value)}` ?
+              (
+                <EditRow
+                  draftError={draftError}
+                  setDraftError={setDraftError}
+                  initialValue={String(row.original.value)}
+                  handleUpdateRow={(value) => handleUpdateRow(value, String(row.original.value))}
+                  cancelEditRow={() => {
+                    setEditingRowId(null);
+                    exitDraftWithoutSave();
+                  }}
+                  updateRowMutation={updateRowMutation}
+                  indent={indent}
+                  validate={validate}
+                  row={row}
+                />
+              ) :
+              (
+                <tr>
+                  {row.getVisibleCells()
+                    .map((cell, index) => {
+                      const content = flexRender(cell.column.columnDef.cell, cell.getContext());
+                      const isFirstColumn = index === 0;
 
-                  return (
-                    <td
-                      key={cell.id}
-                      className={`p-1 align-top tree-table-overflow-anywhere ${isFirstColumn ? '' : 'tree-table-actions-column'}`}
-                    >
-                      {isFirstColumn ? (
-                        <div className={`tree-table-indent tree-table-indent-${indent}`}>{content}</div>
-                      ) : (
-                        content
-                      )}
-                    </td>
-                  );
-                })}
-            </tr>
+                      return (
+                        <td
+                          key={cell.id}
+                          className="p-1 tree-table-overflow-anywhere"
+                        >
+                          {isFirstColumn ?
+                            <div className={`tree-table-indent tree-table-indent-${indent}`}>{content}</div> :
+                            content}
+                        </td>
+                      );
+                    })}
+                </tr>
+              )}
             <NestedRows
               parentRow={row}
               childRowsData={row.subRows as TreeRow[]}
               parentRowValue={String(row.original.value)}
               isCreating={creatingParentId === row.original.id}
               onSaveNewChildRow={onSaveNewChildRow}
-              onCancelCreation={
-                () => {
-                  setCreatingParentId(null);
-                  onCancelCreation();
-                }
-              }
+              onCancelCreation={() => {
+                setCreatingParentId(null);
+                onCancelCreation();
+              }}
               creatingParentId={creatingParentId}
               setCreatingParentId={setCreatingParentId}
               depth={depth + 1}
@@ -132,6 +166,12 @@ const NestedRows = ({
               setDraftError={setDraftError}
               setIsCreatingTopRow={setIsCreatingTopRow}
               createRowMutation={createRowMutation}
+              updateRowMutation={updateRowMutation}
+              handleUpdateRow={handleUpdateRow}
+              editingRowId={editingRowId}
+              setEditingRowId={setEditingRowId}
+              exitDraftWithoutSave={exitDraftWithoutSave}
+              columns={columns}
               validate={validate}
             />
           </React.Fragment>

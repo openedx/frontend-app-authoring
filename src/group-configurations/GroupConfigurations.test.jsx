@@ -22,11 +22,12 @@ const enrollmentTrackGroups = groupConfigurationResponseMock.allGroupConfigurati
 const contentGroups = groupConfigurationResponseMock.allGroupConfigurations[1];
 const teamGroups = groupConfigurationResponseMock.allGroupConfigurations[2];
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <GroupConfigurations />
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <GroupConfigurations />
+    </CourseAuthoringProvider>,
+  );
 
 describe('<GroupConfigurations />', () => {
   beforeEach(async () => {

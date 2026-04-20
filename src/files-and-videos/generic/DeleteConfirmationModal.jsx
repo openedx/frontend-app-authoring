@@ -40,13 +40,13 @@ const DeleteConfirmationModal = ({
     <li style={{ listStyle: 'None' }} key={original.id}>
       <Collapsible
         styling="basic"
-        title={(
+        title={
           <h3 className="h5 m-n2">
             <Truncate.Deprecated lines={1}>
               {original.displayName}
             </Truncate.Deprecated>
           </h3>
-        )}
+        }
         data-testid={`collapsible-${original.id}`}
       >
         <ul className="px-2 py-0">
@@ -75,7 +75,7 @@ const DeleteConfirmationModal = ({
       )}
       isOpen={isDeleteConfirmationOpen}
       onClose={closeDeleteConfirmation}
-      footerNode={(
+      footerNode={
         <ActionRow>
           <Button variant="tertiary" onClick={closeDeleteConfirmation}>
             {intl.formatMessage(messages.cancelButtonLabel)}
@@ -84,7 +84,7 @@ const DeleteConfirmationModal = ({
             {intl.formatMessage(messages.deleteFileButtonLabel)}
           </Button>
         </ActionRow>
-      )}
+      }
     >
       {intl.formatMessage(
         messages.deleteConfirmationMessage,

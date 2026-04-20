@@ -25,40 +25,42 @@ export const FeedbackBox = ({
     learningContextId,
   };
 
-  return ((problemType === ProblemTypeKeys.MULTISELECT) ? (
-    <div className="bg-light-300 p-4 mt-3 rounded text-primary-500">
-      <FeedbackControl
-        key={`selectedfeedback-${answer.id}`}
-        feedback={answer.selectedFeedback}
-        labelMessage={messages.selectedFeedbackLabel}
-        labelMessageBoldUnderline={messages.selectedFeedbackLabelBoldUnderlineText}
-        onChange={setSelectedFeedback}
-        type="selected"
-        {...props}
-      />
-      <FeedbackControl
-        key={`unselectedfeedback-${answer.id}`}
-        feedback={answer.unselectedFeedback}
-        labelMessage={messages.unSelectedFeedbackLabel}
-        labelMessageBoldUnderline={messages.unSelectedFeedbackLabelBoldUnderlineText}
-        onChange={setUnselectedFeedback}
-        type="unselected"
-        {...props}
-      />
-    </div>
-  ) : (
-    <div className="bg-light-300 p-4 mt-3 rounded text-primary-500">
-      <FeedbackControl
-        key={`selectedfeedback-${answer.id}`}
-        feedback={answer.selectedFeedback}
-        labelMessage={messages.selectedFeedbackLabel}
-        labelMessageBoldUnderline={messages.selectedFeedbackLabelBoldUnderlineText}
-        onChange={setSelectedFeedback}
-        type="selected"
-        {...props}
-      />
-    </div>
-  ));
+  return ((problemType === ProblemTypeKeys.MULTISELECT) ?
+    (
+      <div className="bg-light-300 p-4 mt-3 rounded text-primary-500">
+        <FeedbackControl
+          key={`selectedfeedback-${answer.id}`}
+          feedback={answer.selectedFeedback}
+          labelMessage={messages.selectedFeedbackLabel}
+          labelMessageBoldUnderline={messages.selectedFeedbackLabelBoldUnderlineText}
+          onChange={setSelectedFeedback}
+          type="selected"
+          {...props}
+        />
+        <FeedbackControl
+          key={`unselectedfeedback-${answer.id}`}
+          feedback={answer.unselectedFeedback}
+          labelMessage={messages.unSelectedFeedbackLabel}
+          labelMessageBoldUnderline={messages.unSelectedFeedbackLabelBoldUnderlineText}
+          onChange={setUnselectedFeedback}
+          type="unselected"
+          {...props}
+        />
+      </div>
+    ) :
+    (
+      <div className="bg-light-300 p-4 mt-3 rounded text-primary-500">
+        <FeedbackControl
+          key={`selectedfeedback-${answer.id}`}
+          feedback={answer.selectedFeedback}
+          labelMessage={messages.selectedFeedbackLabel}
+          labelMessageBoldUnderline={messages.selectedFeedbackLabelBoldUnderlineText}
+          onChange={setSelectedFeedback}
+          type="selected"
+          {...props}
+        />
+      </div>
+    ));
 };
 FeedbackBox.propTypes = {
   answer: answerOptionProps.isRequired,

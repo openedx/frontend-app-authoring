@@ -22,15 +22,16 @@ let axiosMock;
 let queryClient;
 const courseId = '123';
 
-const renderComponent = (props = {}) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <QueryClientProvider client={queryClient}>
-        <ActionButtons {...props} />
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <QueryClientProvider client={queryClient}>
+          <ActionButtons {...props} />
+        </QueryClientProvider>
+      </IntlProvider>
+    </AppProvider>,
+  );
 
 describe('<ActionButtons />', () => {
   beforeEach(async () => {

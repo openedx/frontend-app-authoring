@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   settingsWidgetTitle: {
     id: 'authoring.problemeditor.settings.settingsWidgetTitle',
     defaultMessage: 'Settings',
@@ -64,7 +63,7 @@ const messages = defineMessages({
   },
   resetSettingText: {
     id: 'authoring.problemeditor.settings.reset.text',
-    defaultMessage: "Determines whether a 'Reset' button is shown so the user may reset their answer, generally for use in practice or formative assessments.",
+    defaultMessage: 'Determines whether a \'Reset\' button is shown so the user may reset their answer, generally for use in practice or formative assessments.',
     description: 'Reset settings card text',
   },
   scoringSettingsTitle: {

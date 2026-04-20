@@ -23,7 +23,7 @@ jest.mock('@src/library-authoring/data/apiHooks', () => ({
 }));
 
 const render = (element: React.ReactElement) => {
-  const params: { libraryId: string } = { libraryId };
+  const params: { libraryId: string; } = { libraryId };
   return baseRender(element, {
     path: '/libraries/:libraryId/import/course',
     params,
@@ -31,7 +31,7 @@ const render = (element: React.ReactElement) => {
       <LibraryProvider
         libraryId={libraryId}
       >
-        { children }
+        {children}
       </LibraryProvider>
     ),
   });
@@ -79,11 +79,13 @@ describe('ReviewImportDetails', () => {
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Completed: Reimport/i)).toBeInTheDocument();
-    expect(await screen.findByText(
-      messages.importCourseAnalysisCompleteReimportBody.defaultMessage
-        .replace('{courseName}', 'Test Course')
-        .replace('{libraryName}', 'Library title'),
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        messages.importCourseAnalysisCompleteReimportBody.defaultMessage
+          .replace('{courseName}', 'Test Course')
+          .replace('{libraryName}', 'Library title'),
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renders warning when unsupportedBlockPercentage > 0', async () => {
@@ -93,15 +95,19 @@ describe('ReviewImportDetails', () => {
       data: null,
     });
 
-    render(<ReviewImportDetails
-      courseId={mockGetPreviewModulestoreMigration.sourceKeyUnsupported}
-    />);
+    render(
+      <ReviewImportDetails
+        courseId={mockGetPreviewModulestoreMigration.sourceKeyUnsupported}
+      />,
+    );
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
-    expect(await screen.findByText(
-      /75% of course content will be imported into a collection in your library called Test Course. Some content will not be imported. For details see below./i,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /75% of course content will be imported into a collection in your library called Test Course. Some content will not be imported. For details see below./i,
+      ),
+    ).toBeInTheDocument();
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
     expect(await screen.findByText('15/20')).toBeInTheDocument();
     expect(await screen.findByText('Sections')).toBeInTheDocument();
@@ -121,15 +127,19 @@ describe('ReviewImportDetails', () => {
       data: null,
     });
 
-    render(<ReviewImportDetails
-      courseId={mockGetPreviewModulestoreMigration.sourceKeyBlockLimit}
-    />);
+    render(
+      <ReviewImportDetails
+        courseId={mockGetPreviewModulestoreMigration.sourceKeyBlockLimit}
+      />,
+    );
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Blocked/i)).toBeInTheDocument();
-    expect(await screen.findByText(
-      /This import would exceed the Content Library limit of 1000 items/i,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /This import would exceed the Content Library limit of 1000 items/i,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renders success alert when no unsupported blocks', async () => {
@@ -139,15 +149,19 @@ describe('ReviewImportDetails', () => {
       data: null,
     });
 
-    render(<ReviewImportDetails
-      courseId={mockGetPreviewModulestoreMigration.sourceKeyGood}
-    />);
+    render(
+      <ReviewImportDetails
+        courseId={mockGetPreviewModulestoreMigration.sourceKeyGood}
+      />,
+    );
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
-    expect(await screen.findByText(
-      messages.importCourseAnalysisCompleteAllContentBody.defaultMessage
-        .replace('{courseName}', 'Test Course'),
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        messages.importCourseAnalysisCompleteAllContentBody.defaultMessage
+          .replace('{courseName}', 'Test Course'),
+      ),
+    ).toBeInTheDocument();
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
     expect(await screen.findByText('10')).toBeInTheDocument();
     expect(await screen.findByText('Sections')).toBeInTheDocument();

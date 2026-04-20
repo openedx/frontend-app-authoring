@@ -17,7 +17,8 @@ const closeMock = jest.fn();
 const onSubmitMock = jest.fn();
 const addNewUpdateMock = { id: 0, date: moment().utc().toDate(), content: 'Some content' };
 const formattedDateMock = '07/11/2023';
-const contentMock = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+const contentMock =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
 jest.mock('@tinymce/tinymce-react', () => {
   const originalModule = jest.requireActual('@tinymce/tinymce-react');
@@ -48,17 +49,18 @@ const courseUpdatesInitialValues = (requestType) => {
   }
 };
 
-const renderComponent = ({ requestType }) => render(
-  <CourseAuthoringProvider courseId="1">
-    <UpdateForm
-      isOpen
-      close={closeMock}
-      requestType={requestType}
-      onSubmit={onSubmitMock}
-      courseUpdatesInitialValues={courseUpdatesInitialValues(requestType)}
-    />,
-  </CourseAuthoringProvider>,
-);
+const renderComponent = ({ requestType }) =>
+  render(
+    <CourseAuthoringProvider courseId="1">
+      <UpdateForm
+        isOpen
+        close={closeMock}
+        requestType={requestType}
+        onSubmit={onSubmitMock}
+        courseUpdatesInitialValues={courseUpdatesInitialValues(requestType)}
+      />,
+    </CourseAuthoringProvider>,
+  );
 
 describe('<UpdateForm />', () => {
   beforeEach(() => {
@@ -88,7 +90,10 @@ describe('<UpdateForm />', () => {
 
   it('render Edit handouts form correctly', async () => {
     const {
-      getByText, getByRole, queryByTestId, queryByText,
+      getByText,
+      getByRole,
+      queryByTestId,
+      queryByText,
     } = renderComponent({ requestType: REQUEST_TYPES.edit_handouts });
 
     expect(getByText(messages.editHandoutsTitle.defaultMessage)).toBeInTheDocument();

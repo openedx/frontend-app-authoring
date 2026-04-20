@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   randomizationSettingTitle: {
     id: 'authoring.problemeditor.settings.randomization.SettingTitle',
     defaultMessage: 'Randomization',

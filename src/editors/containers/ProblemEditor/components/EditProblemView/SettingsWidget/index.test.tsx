@@ -2,8 +2,9 @@ import React from 'react';
 
 import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import { screen, initializeMocks } from '@src/testUtils';
-import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
+import { editorRender } from '@src/editors/editorTestRender';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { type PartialEditorState } from '@src/editors/data/redux';
 import * as hooks from './hooks';
 import { SettingsWidgetInternal as SettingsWidget } from '.';
 import { ProblemEditorContextProvider } from '../ProblemEditorContext';
@@ -47,7 +48,6 @@ describe('SettingsWidget', () => {
     correctAnswerCount: 0,
     groupFeedbackList: [],
     showMarkdownEditorButton: false,
-
   };
 
   const editorRef = { current: null };
@@ -55,12 +55,13 @@ describe('SettingsWidget', () => {
   const renderSettingsWidget = (
     overrideProps = {},
     options = {},
-  ) => editorRender(
-    <ProblemEditorContextProvider editorRef={editorRef}>
-      <SettingsWidget {...props} {...overrideProps} />
-    </ProblemEditorContextProvider>,
-    options,
-  );
+  ) =>
+    editorRender(
+      <ProblemEditorContextProvider editorRef={editorRef}>
+        <SettingsWidget {...props} {...overrideProps} />
+      </ProblemEditorContextProvider>,
+      options,
+    );
 
   beforeEach(() => {
     initializeMocks();

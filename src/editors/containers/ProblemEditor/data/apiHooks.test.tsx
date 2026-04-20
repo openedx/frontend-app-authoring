@@ -34,6 +34,7 @@ const createWrapper = () => {
 describe('useValidateInputBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // @ts-ignore
     mockedGetConfig.mockReturnValue({
       STUDIO_BASE_URL: 'http://studio.local.openedx.io:8001',
     });

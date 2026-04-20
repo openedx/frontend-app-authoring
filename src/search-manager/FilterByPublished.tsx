@@ -13,7 +13,7 @@ import { useSearchContext } from './SearchManager';
 import { allPublishFilters, PublishStatus } from './data/api';
 
 interface FilterByPublishedProps {
-  visibleFilters?: PublishStatus[],
+  visibleFilters?: PublishStatus[];
 }
 
 /**
@@ -59,7 +59,9 @@ const FilterByPublished = ({
       key={filter}
       as={Form.Checkbox}
       value={filter}
-      onChange={() => { toggleFilterMode(filter); }}
+      onChange={() => {
+        toggleFilterMode(filter);
+      }}
     >
       <div>
         {filterLabels[filter]}

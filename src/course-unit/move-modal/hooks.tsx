@@ -1,5 +1,8 @@
 import {
-  useCallback, useEffect, useState, useMemo,
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -15,17 +18,26 @@ import { useIframe } from '../../generic/hooks/context/hooks';
 import { messageTypes } from '../constants';
 import { CATEGORIES, MOVE_DIRECTIONS } from './constants';
 import {
-  findParentIds, getBreadcrumbs, getXBlockType, isValidCategory,
+  findParentIds,
+  getBreadcrumbs,
+  getXBlockType,
+  isValidCategory,
 } from './utils';
 import {
-  IState, IUseMoveModalParams, IUseMoveModalReturn, IXBlockInfo,
+  IState,
+  IUseMoveModalParams,
+  IUseMoveModalReturn,
+  IXBlockInfo,
 } from './interfaces';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useMoveModal = ({
-  isOpenModal, closeModal, openModal, courseId,
+  isOpenModal,
+  closeModal,
+  openModal,
+  courseId,
 }: IUseMoveModalParams): IUseMoveModalReturn => {
-  const { blockId } = useParams<{ blockId: string }>();
+  const { blockId } = useParams<{ blockId: string; }>();
   const intl = useIntl();
   const dispatch = useDispatch();
   const { sendMessageToIframe } = useIframe();
@@ -49,7 +61,7 @@ export const useMoveModal = ({
     [courseOutlineInfo, state.sourceXBlockInfo.current.id],
   );
 
-  const receiveMessage = useCallback(({ data }: { data: any }) => {
+  const receiveMessage = useCallback(({ data }: { data: any; }) => {
     const { payload, type } = data;
 
     if (type === messageTypes.showMoveXBlockModal) {
@@ -211,8 +223,12 @@ export const useMoveModal = ({
       enableMoveOperation(state.parentInfo.parent);
     }
   }, [
-    state.parentInfo, isOpenModal, courseOutlineInfoLoadingStatus, updateChildrenItemsData,
-    setDisplayedXBlocksCategories, enableMoveOperation,
+    state.parentInfo,
+    isOpenModal,
+    courseOutlineInfoLoadingStatus,
+    updateChildrenItemsData,
+    setDisplayedXBlocksCategories,
+    enableMoveOperation,
   ]);
 
   return {

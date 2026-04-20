@@ -1,7 +1,10 @@
 import { camelCaseObject } from '@edx/frontend-platform';
 
 import {
-  initializeMocks, render, screen, within,
+  initializeMocks,
+  render,
+  screen,
+  within,
 } from '@src/testUtils';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
 

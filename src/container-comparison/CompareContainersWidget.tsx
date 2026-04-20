@@ -25,7 +25,10 @@ import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
 import {
-  ContainerChild, ContainerChildBase, ContainerState, WithState,
+  ContainerChild,
+  ContainerChildBase,
+  ContainerState,
+  WithState,
 } from './types';
 import { diffPreviewContainerChildren, isRowClickable } from './utils';
 import messages from './messages';
@@ -85,7 +88,11 @@ const CompareContainersWidgetInner = ({
 
   const renderBeforeChildren = useCallback(() => {
     if (!result[0] && state !== 'added') {
-      return <div className="m-auto"><LoadingSpinner /></div>;
+      return (
+        <div className="m-auto">
+          <LoadingSpinner />
+        </div>
+      );
     }
 
     if (state === 'added') {
@@ -117,7 +124,11 @@ const CompareContainersWidgetInner = ({
 
   const renderAfterChildren = useCallback(() => {
     if (!result[1] && state !== 'removed') {
-      return <div className="m-auto"><LoadingSpinner /></div>;
+      return (
+        <div className="m-auto">
+          <LoadingSpinner />
+        </div>
+      );
     }
 
     if (state === 'removed') {
@@ -148,7 +159,11 @@ const CompareContainersWidgetInner = ({
 
   const getTitleComponent = useCallback((title?: string | null) => {
     if (!title) {
-      return <div className="m-auto"><LoadingSpinner /></div>;
+      return (
+        <div className="m-auto">
+          <LoadingSpinner />
+        </div>
+      );
     }
 
     if (parent.length === 0) {
@@ -222,15 +237,17 @@ export const CompareContainersWidget = ({
   downstreamBlockId,
   isReadyToSyncIndividually = false,
 }: ContainerInfoProps) => {
-  const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps & {
-    state?: ContainerState;
-    parent:(ContainerInfoProps & { state?: ContainerState })[];
-  }>({
-        upstreamBlockId,
-        downstreamBlockId,
-        parent: [],
-        state: 'modified',
-      });
+  const [currentContainerState, setCurrentContainerState] = useState<
+    ContainerInfoProps & {
+      state?: ContainerState;
+      parent: (ContainerInfoProps & { state?: ContainerState; })[];
+    }
+  >({
+    upstreamBlockId,
+    downstreamBlockId,
+    parent: [],
+    state: 'modified',
+  });
 
   const { data } = useCourseContainerChildren(downstreamBlockId, true);
   let localUpdateAlertBlockName = '';
@@ -240,8 +257,11 @@ export const CompareContainersWidget = ({
   // We decided not to put this in `CompareContainersWidgetInner` because if you enter a child,
   // the alert would disappear. By keeping this call in CompareContainersWidget,
   // the alert remains in the modal regardless of whether you navigate within the children.
-  if (!isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo
-      && data.upstreamReadyToSyncChildrenInfo.every(value => value.downstreamCustomized.length > 0 && value.blockType === 'html')
+  if (
+    !isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo
+    && data.upstreamReadyToSyncChildrenInfo.every(value =>
+      value.downstreamCustomized.length > 0 && value.blockType === 'html'
+    )
   ) {
     localUpdateAlertCount = data.upstreamReadyToSyncChildrenInfo.length;
     if (localUpdateAlertCount === 1) {

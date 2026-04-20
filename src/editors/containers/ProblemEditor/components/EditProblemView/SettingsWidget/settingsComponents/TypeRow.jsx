@@ -38,7 +38,9 @@ const TypeRow = ({
     <>
       <Button onClick={onClick} className="d-flex p-0 flex-row justify-content-between w-100">
         <span className="small text-primary-500">{label}</span>
-        <span hidden={selected}><Icon src={Check} className="text-success" /></span>
+        <span hidden={selected}>
+          <Icon src={Check} className="text-success" />
+        </span>
       </Button>
       <hr className={lastRow ? 'd-none' : 'd-block'} />
     </>

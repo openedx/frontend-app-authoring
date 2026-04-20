@@ -7,7 +7,10 @@ import HeaderNavigations from 'CourseAuthoring/course-unit/header-navigations/He
 import { COURSE_BLOCK_NAMES } from 'CourseAuthoring/constants';
 
 const CourseUnitHeaderActionsSlot = ({
-  headerNavigationsActions, category, unitTitle, verticalBlocks,
+  headerNavigationsActions,
+  category,
+  unitTitle,
+  verticalBlocks,
 }) => {
   const isUnitVerticalType = category === COURSE_BLOCK_NAMES.vertical.id;
   return (
@@ -15,7 +18,11 @@ const CourseUnitHeaderActionsSlot = ({
       id="org.openedx.frontend.authoring.course_unit_header_actions.v1"
       idAliases={['course_unit_header_actions_slot']}
       pluginProps={{
-        headerNavigationsActions, category, unitTitle, isUnitVerticalType, verticalBlocks,
+        headerNavigationsActions,
+        category,
+        unitTitle,
+        isUnitVerticalType,
+        verticalBlocks,
       }}
     >
       <HeaderNavigations headerNavigationsActions={headerNavigationsActions} category={category} />

@@ -36,7 +36,7 @@ const TaxonomyList = ({ contentId }: TaxonomyListProps) => {
     if (tagsByTaxonomy.length !== 0) {
       return (
         <div>
-          { tagsByTaxonomy.map((data) => (
+          {tagsByTaxonomy.map((data) => (
             <div key={data.id}>
               <ContentTagsCollapsible
                 contentId={contentId}
@@ -63,7 +63,7 @@ const TaxonomyList = ({ contentId }: TaxonomyListProps) => {
               className="text-info-500 p-0 enable-taxonomies-button"
               onClick={() => navigate('/taxonomies')}
             >
-              { intl.formatMessage(messages.emptyDrawerContentLink) }
+              {intl.formatMessage(messages.emptyDrawerContentLink)}
             </Button>
           ),
         }}
@@ -83,8 +83,8 @@ const ContentTagsDrawerTitle = () => {
 
   return (
     <>
-      { isContentDataLoaded
-        ? <h2 className="h3 pl-2.5">{ contentName }</h2>
+      {isContentDataLoaded
+        ? <h2 className="h3 pl-2.5">{contentName}</h2>
         : (
           <div className="d-flex justify-content-center align-items-center flex-column">
             <Spinner
@@ -99,8 +99,8 @@ const ContentTagsDrawerTitle = () => {
 };
 
 interface ContentTagsDrawerVariantFooterProps {
-  onClose: () => void,
-  readOnly: boolean,
+  onClose: () => void;
+  readOnly: boolean;
 }
 
 const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawerVariantFooterProps) => {
@@ -114,37 +114,40 @@ const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawer
   } = useContext(ContentTagsDrawerContext);
 
   return (
-    <Container
-      className="bg-white position-sticky p-3.5 box-shadow-up-2 tags-drawer-footer"
-    >
+    <Container className="bg-white position-sticky p-3.5 box-shadow-up-2 tags-drawer-footer">
       <div className="d-flex justify-content-end">
-        { commitGlobalStagedTagsStatus !== 'loading' ? (
-          <Stack direction="horizontal" gap={2}>
-            <Button
-              className="font-weight-bold tags-drawer-cancel-button"
-              variant="tertiary"
-              onClick={isEditMode
-                ? toReadMode
-                : onClose}
-            >
-              { intl.formatMessage(isEditMode
-                ? messages.tagsDrawerCancelButtonText
-                : messages.tagsDrawerCloseButtonText)}
-            </Button>
-            {!readOnly && (
+        {commitGlobalStagedTagsStatus !== 'loading' ?
+          (
+            <Stack direction="horizontal" gap={2}>
               <Button
-                className="rounded-0"
+                className="font-weight-bold tags-drawer-cancel-button"
+                variant="tertiary"
                 onClick={isEditMode
-                  ? commitGlobalStagedTags
-                  : toEditMode}
+                  ? toReadMode
+                  : onClose}
               >
-                { intl.formatMessage(isEditMode
-                  ? messages.tagsDrawerSaveButtonText
-                  : messages.tagsDrawerEditTagsButtonText)}
+                {intl.formatMessage(
+                  isEditMode
+                    ? messages.tagsDrawerCancelButtonText
+                    : messages.tagsDrawerCloseButtonText,
+                )}
               </Button>
-            )}
-          </Stack>
-        )
+              {!readOnly && (
+                <Button
+                  className="rounded-0"
+                  onClick={isEditMode
+                    ? commitGlobalStagedTags
+                    : toEditMode}
+                >
+                  {intl.formatMessage(
+                    isEditMode
+                      ? messages.tagsDrawerSaveButtonText
+                      : messages.tagsDrawerEditTagsButtonText,
+                  )}
+                </Button>
+              )}
+            </Stack>
+          )
           : (
             <Spinner
               animation="border"
@@ -172,43 +175,47 @@ const ContentTagsComponentVariantFooter = ({ readOnly = false }: ContentTagsComp
 
   return (
     <div>
-      {isEditMode ? (
-        <div>
-          { commitGlobalStagedTagsStatus !== 'loading' ? (
-            <Stack direction="horizontal" gap={2}>
-              <Button
-                className="font-weight-bold tags-drawer-cancel-button"
-                variant="tertiary"
-                onClick={toReadMode}
-              >
-                {intl.formatMessage(messages.tagsDrawerCancelButtonText)}
-              </Button>
-              <Button
-                className="rounded-0"
-                onClick={commitGlobalStagedTags}
-                block
-              >
-                {intl.formatMessage(messages.tagsDrawerSaveButtonText)}
-              </Button>
-            </Stack>
-          ) : (
-            <div className="d-flex justify-content-center">
-              <Spinner
-                animation="border"
-                screenReaderText={intl.formatMessage(messages.loadingMessage)}
-              />
-            </div>
-          )}
-        </div>
-      ) : !readOnly && (
-        <Button
-          variant="outline-primary"
-          onClick={toEditMode}
-          block
-        >
-          {intl.formatMessage(messages.manageTagsButton)}
-        </Button>
-      )}
+      {isEditMode ?
+        (
+          <div>
+            {commitGlobalStagedTagsStatus !== 'loading' ?
+              (
+                <Stack direction="horizontal" gap={2}>
+                  <Button
+                    className="font-weight-bold tags-drawer-cancel-button"
+                    variant="tertiary"
+                    onClick={toReadMode}
+                  >
+                    {intl.formatMessage(messages.tagsDrawerCancelButtonText)}
+                  </Button>
+                  <Button
+                    className="rounded-0"
+                    onClick={commitGlobalStagedTags}
+                    block
+                  >
+                    {intl.formatMessage(messages.tagsDrawerSaveButtonText)}
+                  </Button>
+                </Stack>
+              ) :
+              (
+                <div className="d-flex justify-content-center">
+                  <Spinner
+                    animation="border"
+                    screenReaderText={intl.formatMessage(messages.loadingMessage)}
+                  />
+                </div>
+              )}
+          </div>
+        ) :
+        !readOnly && (
+          <Button
+            variant="outline-primary"
+            onClick={toEditMode}
+            block
+          >
+            {intl.formatMessage(messages.manageTagsButton)}
+          </Button>
+        )}
     </div>
   );
 };
@@ -343,9 +350,7 @@ const ContentTagsDrawer = ({
             },
           )}
         >
-          {variant === 'drawer' && (
-            <ContentTagsDrawerTitle />
-          )}
+          {variant === 'drawer' && <ContentTagsDrawerTitle />}
           <Container
             className={classNames(
               {
@@ -367,7 +372,7 @@ const ContentTagsDrawer = ({
                 <p className="other-description text-gray-500">
                   {intl.formatMessage(messages.otherTagsDescription)}
                 </p>
-                { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded && (
+                {isTaxonomyListLoaded && isContentTaxonomyTagsLoaded && (
                   otherTaxonomies.map((data) => (
                     <div key={data.id}>
                       <ContentTagsCollapsible
@@ -385,7 +390,8 @@ const ContentTagsDrawer = ({
           </Container>
         </Container>
         {renderFooter()}
-        {/* istanbul ignore next */
+        {
+          /* istanbul ignore next */
           toastMessage && (
             <Toast
               show

@@ -27,26 +27,26 @@ const GalleryCard = ({
       value={asset.id}
     >
       <div className="card-div d-flex flex-row flex-nowrap align-items-center">
-        <div
-          className="row justify-content-center align-itmes-center p-2"
-        >
-          {(thumbnailError && thumbnailFallback) ? (
-            <div style={{ width: '200px', height: '100px' }}>
-              { thumbnailFallback }
-            </div>
-          ) : (
-            <Image
-              className="selection-modal-image-thumbnail"
-              src={asset.externalUrl}
-              onError={thumbnailFallback && (() => setThumbnailError(true))}
-            />
-          )}
-          { asset.statusMessage && asset.statusBadgeVariant && (
+        <div className="row justify-content-center align-itmes-center p-2">
+          {(thumbnailError && thumbnailFallback) ?
+            (
+              <div style={{ width: '200px', height: '100px' }}>
+                {thumbnailFallback}
+              </div>
+            ) :
+            (
+              <Image
+                className="selection-modal-image-thumbnail"
+                src={asset.externalUrl}
+                onError={thumbnailFallback && (() => setThumbnailError(true))}
+              />
+            )}
+          {asset.statusMessage && asset.statusBadgeVariant && (
             <Badge variant={asset.statusBadgeVariant} style={{ position: 'absolute', left: '6px', top: '6px' }}>
               <FormattedMessage {...asset.statusMessage} />
             </Badge>
           )}
-          { asset.duration >= 0 && (
+          {asset.duration >= 0 && (
             <Badge
               variant="dark"
               style={{
@@ -64,7 +64,7 @@ const GalleryCard = ({
           <h3 className="text-primary-500">
             <Truncate.Deprecated>{asset.displayName}</Truncate.Deprecated>
           </h3>
-          { asset.transcripts && (
+          {asset.transcripts && (
             <div style={{ margin: '0 0 5px 0' }}>
               <LanguageNamesWidget
                 transcripts={asset.transcripts}
@@ -72,15 +72,15 @@ const GalleryCard = ({
             </div>
           )}
           {asset.dateAdded && (
-          <p className="text-gray-500" style={{ fontSize: '11px' }}>
-            <FormattedMessage
-              {...messages.addedDate}
-              values={{
-                date: <FormattedDate value={asset.dateAdded} />,
-                time: <FormattedTime value={asset.dateAdded} />,
-              }}
-            />
-          </p>
+            <p className="text-gray-500" style={{ fontSize: '11px' }}>
+              <FormattedMessage
+                {...messages.addedDate}
+                values={{
+                  date: <FormattedDate value={asset.dateAdded} />,
+                  time: <FormattedTime value={asset.dateAdded} />,
+                }}
+              />
+            </p>
           )}
         </div>
       </div>

@@ -9,7 +9,11 @@
  * @returns {Object[]} The array of sidebar data groups.
  */
 const getSidebarData = ({
-  messages, intl, shouldShowExperimentGroups, shouldShowContentGroup, shouldShowEnrollmentTrackGroup,
+  messages,
+  intl,
+  shouldShowExperimentGroups,
+  shouldShowContentGroup,
+  shouldShowEnrollmentTrackGroup,
 }) => {
   const groups = [];
 

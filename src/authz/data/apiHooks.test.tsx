@@ -17,7 +17,7 @@ const createWrapper = () => {
     },
   });
 
-  const wrapper = ({ children }: { children: ReactNode }) => (
+  const wrapper = ({ children }: { children: ReactNode; }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
@@ -66,10 +66,12 @@ const mockInvalidMultiplePermissions = [
 
 describe('useUserPermissions', () => {
   beforeEach(() => {
+    // TODO: convert this test to use `initializeMocks()` / `testUtils.tsx`
     jest.clearAllMocks();
   });
 
   it('returns allowed true when permission is valid', async () => {
+    // @ts-ignore since `getAuthenticatedHttpClient` is mocked.
     getAuthenticatedHttpClient.mockReturnValue({
       post: jest.fn().mockResolvedValueOnce({ data: mockValidSinglePermission }),
     });
@@ -86,6 +88,7 @@ describe('useUserPermissions', () => {
   });
 
   it('returns allowed false when permission is invalid', async () => {
+    // @ts-ignore since `getAuthenticatedHttpClient` is mocked.
     getAuthenticatedHttpClient.mockReturnValue({
       post: jest.fn().mockResolvedValue({ data: mockInvalidSinglePermission }),
     });
@@ -101,6 +104,7 @@ describe('useUserPermissions', () => {
   });
 
   it('returns allowed true when multiple permissions are valid', async () => {
+    // @ts-ignore since `getAuthenticatedHttpClient` is mocked.
     getAuthenticatedHttpClient.mockReturnValue({
       post: jest.fn().mockResolvedValueOnce({ data: mockValidMultiplePermissions }),
     });
@@ -118,6 +122,7 @@ describe('useUserPermissions', () => {
   });
 
   it('returns allowed false when multiple permissions are invalid', async () => {
+    // @ts-ignore since `getAuthenticatedHttpClient` is mocked.
     getAuthenticatedHttpClient.mockReturnValue({
       post: jest.fn().mockResolvedValue({ data: mockInvalidMultiplePermissions }),
     });
@@ -134,6 +139,7 @@ describe('useUserPermissions', () => {
   });
 
   it('returns allowed false when the permission is not included in the server response', async () => {
+    // @ts-ignore since `getAuthenticatedHttpClient` is mocked.
     getAuthenticatedHttpClient.mockReturnValue({
       post: jest.fn().mockResolvedValue({ data: mockEmptyPermissions }),
     });
@@ -151,6 +157,7 @@ describe('useUserPermissions', () => {
   it('handles error when the API call fails', async () => {
     const mockError = new Error('API Error');
 
+    // @ts-ignore since `getAuthenticatedHttpClient` is mocked.
     getAuthenticatedHttpClient.mockReturnValue({
       post: jest.fn().mockRejectedValue(new Error('API Error')),
     });

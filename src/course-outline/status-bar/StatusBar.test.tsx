@@ -37,14 +37,15 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   }),
 }));
 
-const renderComponent = (props?: Partial<StatusBarProps>) => render(
-  <StatusBar
-    courseId={courseId}
-    isLoading={isLoading}
-    statusBarData={statusBarData}
-    {...props}
-  />,
-);
+const renderComponent = (props?: Partial<StatusBarProps>) =>
+  render(
+    <StatusBar
+      courseId={courseId}
+      isLoading={isLoading}
+      statusBarData={statusBarData}
+      {...props}
+    />,
+  );
 
 describe('<StatusBar />', () => {
   beforeEach(() => {

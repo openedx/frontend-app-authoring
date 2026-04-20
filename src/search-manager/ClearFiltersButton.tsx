@@ -4,10 +4,10 @@ import messages from './messages';
 import { useSearchContext } from './SearchManager';
 
 type ClearFiltersButtonProps = {
-  variant?: 'link' | 'primary',
-  size?: 'sm' | 'md' | 'lg' | 'inline',
-  onClear?: () => void,
-  canClear?: boolean,
+  variant?: 'link' | 'primary';
+  size?: 'sm' | 'md' | 'lg' | 'inline';
+  onClear?: () => void;
+  canClear?: boolean;
 };
 
 /**

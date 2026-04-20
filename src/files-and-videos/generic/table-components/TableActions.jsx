@@ -51,14 +51,16 @@ const TableActions = ({
           <FormattedMessage {...messages.actionsButtonLabel} />
         </Dropdown.Toggle>
         <Dropdown.Menu>
-          {encodingsDownloadUrl ? (
-            <Dropdown.Item
-              download
-              href={`${getConfig().STUDIO_BASE_URL}${encodingsDownloadUrl}`}
-            >
-              <FormattedMessage {...messages.downloadEncodingsTitle} />
-            </Dropdown.Item>
-          ) : null}
+          {encodingsDownloadUrl ?
+            (
+              <Dropdown.Item
+                download
+                href={`${getConfig().STUDIO_BASE_URL}${encodingsDownloadUrl}`}
+              >
+                <FormattedMessage {...messages.downloadEncodingsTitle} />
+              </Dropdown.Item>
+            ) :
+            null}
           <Dropdown.Item
             onClick={() => handleBulkDownload(selectedFlatRows)}
             disabled={isEmpty(selectedFlatRows)}

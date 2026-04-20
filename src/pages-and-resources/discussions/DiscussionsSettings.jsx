@@ -1,11 +1,17 @@
 import React, {
-  useCallback, useContext, useEffect, useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Alert, Button, FullscreenModal, Stepper,
+  Alert,
+  Button,
+  FullscreenModal,
+  Stepper,
 } from '@openedx/paragon';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -96,7 +102,7 @@ const DiscussionsSettings = () => {
             isOpen
             beforeBodyNode={<Stepper.Header className="border-bottom border-light" />}
             isOverflowVisible={false}
-            footerNode={(
+            footerNode={
               <>
                 <Stepper.ActionRow eventKey={SELECTION_STEP}>
                   <AppList.NextButton />
@@ -113,19 +119,17 @@ const DiscussionsSettings = () => {
                   </div>
                 </Stepper.ActionRow>
               </>
-            )}
+            }
           >
             <Stepper.Step
               eventKey={SELECTION_STEP}
               title={intl.formatMessage(messages.providerSelection)}
             >
-              {
-                !canChangeProviders && (
-                  <Alert variant="warning">
-                    {intl.formatMessage(messages.noProviderSwitchAfterCourseStarted)}
-                  </Alert>
-                )
-              }
+              {!canChangeProviders && (
+                <Alert variant="warning">
+                  {intl.formatMessage(messages.noProviderSwitchAfterCourseStarted)}
+                </Alert>
+              )}
               <AppList />
             </Stepper.Step>
             <Stepper.Step

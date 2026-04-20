@@ -75,7 +75,7 @@ interface SidebarProps<T extends SidebarPages> {
  *     isOpen={isOpen}
  *     toggle={toggle}
  *   />
- *);
+ * );
  * ```
  */
 // eslint-disable-next-line react/function-component-definition
@@ -97,40 +97,40 @@ export function Sidebar<T extends SidebarPages>({
 
   return (
     <Stack direction="horizontal" className="sidebar align-items-baseline ml-3" gap={2}>
-      {(isOpen && !!currentPageKey) ? (
-        <ResizableBox>
-          <div className="sidebar-content p-3 bg-white border-right">
-            <Dropdown data-testid="sidebar-dropdown">
-              <Dropdown.Toggle
-                id="dropdown-toggle-with-iconbutton"
-                as={Button}
-                variant="tertiary"
-                className="x-small text-primary font-weight-bold pl-0"
-              >
-                {intl.formatMessage(title)}
-                <Icon src={SidebarIcon} size="xs" className="ml-2" />
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="mt-1">
-                {Object.entries(pages).map(([key, page]) => (
-                  <Dropdown.Item
-                    key={key}
-                    onClick={() => setCurrentPageKey(key)}
-                    disabled={page.disabled}
-                  >
-                    <Stack direction="horizontal" gap={2}>
-                      <Icon src={page.icon} />
-                      {intl.formatMessage(page.title)}
-                    </Stack>
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-            <SidebarComponent />
-          </div>
-        </ResizableBox>
-      ) : (
-        <div className="min-vh-100 border" />
-      )}
+      {(isOpen && !!currentPageKey) ?
+        (
+          <ResizableBox>
+            <div className="sidebar-content p-3 bg-white border-right">
+              <Dropdown data-testid="sidebar-dropdown">
+                <Dropdown.Toggle
+                  id="dropdown-toggle-with-iconbutton"
+                  as={Button}
+                  variant="tertiary"
+                  className="x-small text-primary font-weight-bold pl-0"
+                >
+                  {intl.formatMessage(title)}
+                  <Icon src={SidebarIcon} size="xs" className="ml-2" />
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="mt-1">
+                  {Object.entries(pages).map(([key, page]) => (
+                    <Dropdown.Item
+                      key={key}
+                      onClick={() => setCurrentPageKey(key)}
+                      disabled={page.disabled}
+                    >
+                      <Stack direction="horizontal" gap={2}>
+                        <Icon src={page.icon} />
+                        {intl.formatMessage(page.title)}
+                      </Stack>
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+              <SidebarComponent />
+            </div>
+          </ResizableBox>
+        ) :
+        <div className="min-vh-100 border" />}
       <div className="sidebar-toggle p-1" data-testid="sidebar-toggle">
         <IconButton
           src={isOpen ? ExpandedIcon : CollapsedIcon}
@@ -162,9 +162,7 @@ export function Sidebar<T extends SidebarPages>({
               );
             }
 
-            return (
-              <IconButton {...buttonData} />
-            );
+            return <IconButton key={key} {...buttonData} />;
           })}
         </IconButtonToggle>
       </div>

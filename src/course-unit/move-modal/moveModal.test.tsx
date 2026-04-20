@@ -32,21 +32,22 @@ const subsections: IXBlock[] = sections[1]?.childInfo?.children || [];
 const units: IXBlock[] = subsections[1]?.childInfo?.children || [];
 const components: IXBlock[] = units[0]?.childInfo?.children || [];
 
-const renderComponent = (props?: any) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <IframeProvider>
-        <MoveModal
-          isOpenModal
-          closeModal={closeModalMockFn}
-          openModal={openModalMockFn}
-          courseId={courseId}
-          {...props}
-        />
-      </IframeProvider>
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props?: any) =>
+  render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <IframeProvider>
+          <MoveModal
+            isOpenModal
+            closeModal={closeModalMockFn}
+            openModal={openModalMockFn}
+            courseId={courseId}
+            {...props}
+          />
+        </IframeProvider>
+      </IntlProvider>
+    </AppProvider>,
+  );
 
 describe('<MoveModal />', () => {
   beforeEach(async () => {

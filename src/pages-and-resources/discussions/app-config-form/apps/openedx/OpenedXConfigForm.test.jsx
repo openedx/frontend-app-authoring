@@ -157,9 +157,11 @@ describe('OpenedXConfigForm', () => {
     expect(container.querySelector('#divideByCohorts')).toBeDisabled();
     expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
 
-    divideDiscussionIds.forEach(id => expect(
-      container.querySelector(`#checkbox-${id}`),
-    ).not.toBeInTheDocument());
+    divideDiscussionIds.forEach(id =>
+      expect(
+        container.querySelector(`#checkbox-${id}`),
+      ).not.toBeInTheDocument()
+    );
 
     // AnonymousPostingFields
     expect(
@@ -196,9 +198,11 @@ describe('OpenedXConfigForm', () => {
     expect(
       container.querySelector('#divideCourseTopicsByCohorts'),
     ).not.toBeInTheDocument();
-    divideDiscussionIds.forEach(id => expect(
-      container.querySelector(`#checkbox-${id}`),
-    ).not.toBeInTheDocument());
+    divideDiscussionIds.forEach(id =>
+      expect(
+        container.querySelector(`#checkbox-${id}`),
+      ).not.toBeInTheDocument()
+    );
 
     // AnonymousPostingFields
     expect(
@@ -242,10 +246,14 @@ describe('OpenedXConfigForm', () => {
   const updateTopicName = async (topicId, topicName) => {
     const topicCard = queryByTestId(container, topicId);
 
-    await act(async () => { await user.click(queryByLabelText(topicCard, 'Expand')); });
+    await act(async () => {
+      await user.click(queryByLabelText(topicCard, 'Expand'));
+    });
     const topicInput = topicCard.querySelector('input');
     topicInput.focus();
-    await act(async () => { fireEvent.change(topicInput, { target: { value: topicName } }); });
+    await act(async () => {
+      fireEvent.change(topicInput, { target: { value: topicName } });
+    });
     topicInput.blur();
 
     return topicCard;
@@ -253,12 +261,14 @@ describe('OpenedXConfigForm', () => {
 
   const assertTopicNameRequiredValidation = (topicCard, expectExists = true) => {
     const error = queryByText(topicCard, messages.discussionTopicRequired.defaultMessage);
-    if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
+    if (expectExists) { expect(error).toBeInTheDocument(); }
+    else { expect(error).not.toBeInTheDocument(); }
   };
 
   const assertDuplicateTopicNameValidation = async (topicCard, expectExists = true) => {
     const error = queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage);
-    if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
+    if (expectExists) { expect(error).toBeInTheDocument(); }
+    else { expect(error).not.toBeInTheDocument(); }
   };
 
   const assertHasErrorValidation = (expectExists = true) => {
@@ -310,7 +320,9 @@ describe('OpenedXConfigForm', () => {
     test('check duplicate error is removed on fields when name is fixed', async () => {
       const duplicateTopicInput = duplicateTopicCard.querySelector('input');
       duplicateTopicInput.focus();
-      await act(async () => { await user.type(duplicateTopicInput, 'valid'); });
+      await act(async () => {
+        await user.type(duplicateTopicInput, 'valid');
+      });
       duplicateTopicInput.blur();
 
       await waitForElementToBeRemoved(

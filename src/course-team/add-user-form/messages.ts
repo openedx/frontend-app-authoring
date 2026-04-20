@@ -25,7 +25,6 @@ const messages = defineMessages({
     id: 'course-authoring.course-team.form.button.cancel',
     defaultMessage: 'Cancel',
   },
-
 });
 
 export default messages;

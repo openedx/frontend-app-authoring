@@ -15,7 +15,13 @@ export const CourseAuthoringUnitSidebarSlot = (
   <PluginSlot
     id="org.openedx.frontend.authoring.course_unit_sidebar.v2"
     pluginProps={{
-      blockId, courseId, unitTitle, xBlocks, readOnly, isUnitVerticalType, isSplitTestType,
+      blockId,
+      courseId,
+      unitTitle,
+      xBlocks,
+      readOnly,
+      isUnitVerticalType,
+      isSplitTestType,
     }}
   >
     <UnitSidebar
@@ -31,9 +37,9 @@ export const CourseAuthoringUnitSidebarSlot = (
 );
 
 type XBlock = {
-  id: string,
-  name: string,
-  blockType: string,
+  id: string;
+  name: string;
+  blockType: string;
 };
 
 interface CourseAuthoringUnitSidebarSlotProps {

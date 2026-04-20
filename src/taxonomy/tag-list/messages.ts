@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.column.value.header',
     defaultMessage: 'Tag name',
   },
+  tagListColumnCountHeader: {
+    id: 'course-authoring.tag-list.column.count.header',
+    defaultMessage: 'Usage Count',
+  },
   tagListError: {
     id: 'course-authoring.tag-list.error',
     defaultMessage: 'Error: unable to load child tags',
@@ -52,6 +56,14 @@ const messages = defineMessages({
   hideSubtagsButtonLabel: {
     id: 'course-authoring.tag-list.hide-subtags.button-label',
     defaultMessage: 'Hide Subtags',
+  },
+  tagUpdateErrorMessage: {
+    id: 'course-authoring.tag-list.update-error',
+    defaultMessage: 'Error updating tag: {errorMessage}',
+  },
+  renameTag: {
+    id: 'course-authoring.tag-list.rename-tag',
+    defaultMessage: 'Rename',
   },
 });
 

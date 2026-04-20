@@ -60,7 +60,8 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
   const [licenseType, licenseOptions] = module.parseLicense({ licenseData: studioView, level: 'block' });
   // eslint-disable-next-line no-console
   console.log(licenseType);
-  const transcripts = rawVideoData.transcriptsFromSelected ? rawVideoData.transcriptsFromSelected
+  const transcripts = rawVideoData.transcriptsFromSelected ?
+    rawVideoData.transcriptsFromSelected
     : module.parseTranscripts({ transcriptsData: studioView });
 
   const [courseLicenseType, courseLicenseDetails] = module.parseLicense({
@@ -106,10 +107,11 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
     thumbnail: rawVideoData.thumbnail,
   }));
   dispatch(requests.fetchVideoFeatures({
-    onSuccess: (response) => dispatch(actions.video.updateField({
-      allowThumbnailUpload: response.data.allowThumbnailUpload,
-      videoSharingEnabledForAll: response.data.videoSharingEnabled,
-    })),
+    onSuccess: (response) =>
+      dispatch(actions.video.updateField({
+        allowThumbnailUpload: response.data.allowThumbnailUpload,
+        videoSharingEnabledForAll: response.data.videoSharingEnabled,
+      })),
   }));
   const youTubeId = parseYoutubeId(videoSourceUrl);
   if (youTubeId) {
@@ -197,7 +199,10 @@ export const parseLicense = ({ licenseData, level }) => {
     metadataArr.forEach(arr => {
       const parsedStr = arr.replace(/&#34;/g, '"');
       if (parsedStr.includes('license')) {
-        license = parsedStr.substring(parsedStr.indexOf('"value"'), parsedStr.indexOf(', "type"')).replace(/"value": |"/g, '');
+        license = parsedStr.substring(parsedStr.indexOf('"value"'), parsedStr.indexOf(', "type"')).replace(
+          /"value": |"/g,
+          '',
+        );
       }
     });
   }
@@ -306,7 +311,8 @@ export const importTranscript = () => (dispatch, getState) => {
       dispatch(actions.video.updateField({
         transcripts: [
           ...transcriptsPlaceholderRemoved,
-          'en'],
+          'en',
+        ],
       }));
 
       if (selectors.video.videoId(state) === '') {
@@ -333,7 +339,8 @@ export const uploadTranscript = ({ language, file }) => (dispatch, getState) => 
         dispatch(actions.video.updateField({
           transcripts: [
             ...transcriptsPlaceholderRemoved,
-            language],
+            language,
+          ],
         }));
       }
 
@@ -369,7 +376,9 @@ export const updateTranscriptLanguage = ({ newLanguageCode, languageBeforeChange
     onSuccess: (response) => {
       dispatch(requests.updateTranscriptLanguage({
         languageBeforeChange,
-        file: new File([new Blob([response.data], { type: 'text/plain' })], `${videoId}_${newLanguageCode}.srt`, { type: 'text/plain' }),
+        file: new File([new Blob([response.data], { type: 'text/plain' })], `${videoId}_${newLanguageCode}.srt`, {
+          type: 'text/plain',
+        }),
         newLanguageCode,
         videoId,
         onSuccess: () => {
@@ -419,35 +428,37 @@ export const uploadVideo = ({ supportedFiles, setLoadSpinner, postUploadRedirect
     data,
     onSuccess: async (response) => {
       const { files } = response.data;
-      await Promise.all(Object.values(files).map(async (fileObj) => {
-        const fileName = fileObj.file_name;
-        const edxVideoId = fileObj.edx_video_id;
-        const uploadUrl = fileObj.upload_url;
-        const uploadFile = supportedFiles.find((file) => file.get('file').name === fileName);
-        if (!uploadFile) {
-          // eslint-disable-next-line no-console
-          console.error(`Could not find file object with name "${fileName}" in supportedFiles array.`);
-          return;
-        }
-        const file = uploadFile.get('file');
-        await fetch(uploadUrl, {
-          method: 'PUT',
-          headers: {
-            'Content-Disposition': `attachment; filename="${file.name}"`,
-            'Content-Type': file.type,
-          },
-          multipart: false,
-          body: file,
-        })
-          .then((resp) => {
-            if (!resp.ok) {
-              throw new Error('Failed to connect with server');
-            }
-            postUploadRedirect(edxVideoId);
+      await Promise.all(
+        Object.values(files).map(async (fileObj) => {
+          const fileName = fileObj.file_name;
+          const edxVideoId = fileObj.edx_video_id;
+          const uploadUrl = fileObj.upload_url;
+          const uploadFile = supportedFiles.find((file) => file.get('file').name === fileName);
+          if (!uploadFile) {
+            // eslint-disable-next-line no-console
+            console.error(`Could not find file object with name "${fileName}" in supportedFiles array.`);
+            return;
+          }
+          const file = uploadFile.get('file');
+          await fetch(uploadUrl, {
+            method: 'PUT',
+            headers: {
+              'Content-Disposition': `attachment; filename="${file.name}"`,
+              'Content-Type': file.type,
+            },
+            multipart: false,
+            body: file,
           })
-          // eslint-disable-next-line no-console
-          .catch((error) => console.error('Error uploading file:', error));
-      }));
+            .then((resp) => {
+              if (!resp.ok) {
+                throw new Error('Failed to connect with server');
+              }
+              postUploadRedirect(edxVideoId);
+            })
+            // eslint-disable-next-line no-console
+            .catch((error) => console.error('Error uploading file:', error));
+        }),
+      );
       setLoadSpinner(false);
     },
   }));

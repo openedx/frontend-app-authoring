@@ -3,7 +3,8 @@
 ### Slot ID: `org.openedx.frontend.layout.studio_footer.v1`
 
 ### Slot ID Aliases
-* `studio_footer_slot`
+
+- `studio_footer_slot`
 
 ## Description
 
@@ -39,15 +40,13 @@ const config = {
           widget: {
             id: 'custom_footer',
             type: DIRECT_PLUGIN,
-            RenderWidget: () => (
-              <h1 style={{textAlign: 'center'}}>🦶</h1>
-            ),
+            RenderWidget: () => <h1 style={{ textAlign: 'center' }}>🦶</h1>,
           },
         },
-      ]
-    }
+      ],
+    },
   },
-}
+};
 
 export default config;
 ```

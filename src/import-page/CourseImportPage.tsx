@@ -1,6 +1,7 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Container, Layout,
+  Container,
+  Layout,
 } from '@openedx/paragon';
 
 import { Helmet } from 'react-helmet';

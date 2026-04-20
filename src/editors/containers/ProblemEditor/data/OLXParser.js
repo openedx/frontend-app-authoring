@@ -3,7 +3,11 @@
 
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import {
-  get, has, keys, isArray, isEmpty,
+  get,
+  has,
+  keys,
+  isArray,
+  isEmpty,
 } from 'lodash';
 import {
   ProblemTypeKeys,
@@ -95,7 +99,8 @@ export const responseKeys = [
  * [--5,10]
  * []
  */
-export const answerRangeFormatRegex = /^[([]\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*,\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*[)\]]$/m;
+export const answerRangeFormatRegex =
+  /^[([]\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*,\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*[)\]]$/m;
 
 export const stripNonTextTags = ({ input, tag }) => {
   const stripedTags = {};
@@ -250,8 +255,12 @@ export class OLXParser {
       );
     } else if (isArray(choice)) {
       choice.forEach((element, index) => {
-        const preservedAnswer = preservedAnswers[index].filter(answer => !Object.keys(answer).includes(`${option}hint`));
-        const preservedFeedback = preservedAnswers[index].filter(answer => Object.keys(answer).includes(`${option}hint`));
+        const preservedAnswer = preservedAnswers[index].filter(answer =>
+          !Object.keys(answer).includes(`${option}hint`)
+        );
+        const preservedFeedback = preservedAnswers[index].filter(answer =>
+          Object.keys(answer).includes(`${option}hint`)
+        );
         let title = String(element['#text']);
 
         if (isComplexAnswer && preservedAnswer) {
@@ -579,7 +588,10 @@ export class OLXParser {
   }
 
   replaceOlxDescriptionTag(questionString) {
-    return questionString.replace(/<description>/gm, '<em class="olx_description">').replace(/<\/description>/gm, '</em>');
+    return questionString.replace(/<description>/gm, '<em class="olx_description">').replace(
+      /<\/description>/gm,
+      '</em>',
+    );
   }
 
   /** getHints()
@@ -677,9 +689,11 @@ export class OLXParser {
       return ProblemTypeKeys.ADVANCED;
     }
     // make sure compound problems are treated as advanced
-    if ((problemTypeKeys.length > 1)
+    if (
+      (problemTypeKeys.length > 1)
       || (isArray(this.problem[problemTypeKeys[0]])
-        && this.problem[problemTypeKeys[0]].length > 1)) {
+        && this.problem[problemTypeKeys[0]].length > 1)
+    ) {
       return ProblemTypeKeys.ADVANCED;
     }
     const problemType = problemTypeKeys[0];
@@ -703,8 +717,8 @@ export class OLXParser {
       const firstIncorrectAnswerText = answers.find(answer => answer.correct === false)?.selectedFeedback;
       const isAllIncorrectSelectedFeedbackTheSame = answers.every(answer => (answer.correct
         ? true
-        : answer?.selectedFeedback === firstIncorrectAnswerText
-      ));
+        : answer?.selectedFeedback === firstIncorrectAnswerText)
+      );
       if (isAllIncorrectSelectedFeedbackTheSame) {
         return firstIncorrectAnswerText;
       }

@@ -1,6 +1,9 @@
 import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
 import {
-  initializeMocks, render, screen, waitFor,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
 } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 import mockResult from '@src/library-authoring/__mocks__/library-search.json';
@@ -20,6 +23,7 @@ import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
 import { XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { snakeCaseKeys } from '@src/editors/utils';
 import { getXBlockApiUrl, getXBlockBaseApiUrl } from '@src/course-outline/data/api';
 import MockAdapter from 'axios-mock-adapter/types';
@@ -33,7 +37,6 @@ mockLibraryBlockMetadata.applyMock();
 mockGetContainerMetadata.applyMock();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
-const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   ...jest.requireActual('@src/CourseAuthoringContext'),
   useCourseAuthoringContext: () => ({
@@ -41,8 +44,13 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId: 5,
     courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
     courseDetails: { name: 'Test course' },
-    setCurrentSelection,
   }),
+}));
+
+jest.mock('@src/course-outline/data/apiHooks', () => ({
+  ...jest.requireActual('@src/course-outline/data/apiHooks'),
+  useDuplicateItem: jest.fn().mockReturnValue({ mutate: jest.fn(), isPending: false }),
+  useDeleteCourseItem: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
 }));
 
 let outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -76,15 +84,18 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   }),
 }));
 
-const renderComponent = () => render(<AddSidebar />, {
-  extraWrapper: ({ children }) => (
-    <CourseAuthoringProvider courseId="some-course">
-      <OutlineSidebarProvider>
-        {children}
-      </OutlineSidebarProvider>
-    </CourseAuthoringProvider>
-  ),
-});
+const renderComponent = () =>
+  render(<AddSidebar />, {
+    extraWrapper: ({ children }) => (
+      <CourseAuthoringProvider courseId="some-course">
+        <CourseOutlineProvider>
+          <OutlineSidebarProvider>
+            {children}
+          </OutlineSidebarProvider>
+        </CourseOutlineProvider>
+      </CourseAuthoringProvider>
+    ),
+  });
 const searchResult = {
   ...mockResult,
   results: [
@@ -115,7 +126,9 @@ describe('AddSidebar', () => {
       newMockResult.results[0].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-      newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      newMockResult.results[0]?.hits.forEach((hit) => {
+        hit._formatted = { ...hit };
+      });
       return newMockResult;
     });
     outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -321,7 +334,9 @@ describe('AddSidebar', () => {
       // Check existing tab content
       await user.click(await screen.findByRole('tab', { name: 'Add Existing' }));
       // Check existing tab content is rendered by default
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+      await waitFor(() => {
+        expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+      });
       expect(fetchMock).toHaveLastFetched((_url, req) => {
         const requestData = JSON.parse((req.body ?? '') as string);
         const requestedFilter = requestData?.queries[0].filter;
@@ -370,9 +385,11 @@ describe('AddSidebar', () => {
     // render existing tab as well
     await user.click(await screen.findByRole('tab', { name: 'Add Existing' }));
     // One in new tab and one in existing tab
-    expect((await screen.findAllByText(
-      `${currentItemData.displayName} is a library section. Content cannot be added to Library referenced sections.`,
-    )).length).toEqual(2);
+    expect(
+      (await screen.findAllByText(
+        `${currentItemData.displayName} is a library section. Content cannot be added to Library referenced sections.`,
+      )).length,
+    ).toEqual(2);
   });
 
   it('back button is rendered and works', async () => {

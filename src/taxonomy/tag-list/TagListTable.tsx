@@ -3,11 +3,10 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import type { PaginationState } from '@tanstack/react-table';
-import { useTagListData, useCreateTag } from '../data/apiHooks';
+import { TableView } from '@src/taxonomy/tree-table';
+import { useTagListData, useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
 import { TagTree } from './tagTree';
-import { TableView } from '../tree-table';
 import type {
   RowId,
   TreeColumnDef,
@@ -40,7 +39,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   // TODO: Simpler approaches have been suggested. Two options are to just use simple React state:
   // `isCurrentlyEditingTag` and `lastCreatedTag`, or to use optimistic updates.
   // For reference, see https://github.com/openedx/frontend-app-authoring/pull/2872#discussion_r2880965005.
-  const intl = useIntl();
 
   const [creatingParentId, setCreatingParentId] = useState<RowId | null>(null);
   const [editingRowId, setEditingRowId] = useState<RowId | null>(null);
@@ -56,7 +54,11 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
 
   // TABLE MODES
   const {
-    tableMode, enterDraftMode, exitDraftWithoutSave, enterPreviewMode, enterViewMode,
+    tableMode,
+    enterDraftMode,
+    exitDraftWithoutSave,
+    enterPreviewMode,
+    enterViewMode,
   } = useTableModes();
 
   // PAGINATION
@@ -80,6 +82,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     enabled: tableMode === TABLE_MODES.VIEW,
   });
   const createTagMutation = useCreateTag(taxonomyId);
+  const updateTagMutation = useUpdateTag(taxonomyId);
   const pageCount = tagList?.numPages ?? -1;
 
   // TODO: to make this more readable, introduce a React context for the TagListTable instead of passing props.
@@ -90,6 +93,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     setTagTree,
     setDraftError,
     createTagMutation,
+    updateTagMutation,
     enterPreviewMode,
     setToast,
     setIsCreatingTopTag,
@@ -99,27 +103,28 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   });
 
   const columns = useMemo<TreeColumnDef[]>(
-    () => getColumns({
-      setIsCreatingTopTag,
-      setCreatingParentId,
-      handleUpdateTag,
-      setEditingRowId,
-      onStartDraft: enterDraftMode,
-      setActiveActionMenuRowId,
-      hasOpenDraft,
-      draftError,
-      setDraftError,
-      isSavingDraft: createTagMutation.isPending,
-      maxDepth,
-      creatingParentId,
-    }),
+    () =>
+      getColumns({
+        setIsCreatingTopTag,
+        setCreatingParentId,
+        handleUpdateTag,
+        setEditingRowId,
+        onStartDraft: enterDraftMode,
+        setActiveActionMenuRowId,
+        hasOpenDraft,
+        canAddTag: tagList?.canAddTag !== false,
+        draftError,
+        setDraftError,
+        isSavingDraft: createTagMutation.isPending,
+        maxDepth,
+      }),
     [
       isCreatingTopTag,
-      editingRowId,
       tableMode,
       activeActionMenuRowId,
       hasOpenDraft,
       creatingParentId,
+      tagList?.canAddTag,
       draftError,
       createTagMutation.isPending,
       maxDepth,
@@ -157,7 +162,9 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
         isCreatingTopRow: isCreatingTopTag,
         draftError,
         createRowMutation: createTagMutation,
+        updateRowMutation: updateTagMutation,
         handleCreateRow: handleCreateTag,
+        handleUpdateRow: handleUpdateTag,
         toast,
         setToast,
         setIsCreatingTopRow: setIsCreatingTopTag,
@@ -166,6 +173,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
         setCreatingParentId,
         setDraftError,
         validate,
+        editingRowId,
+        setEditingRowId,
       }}
     />
   );

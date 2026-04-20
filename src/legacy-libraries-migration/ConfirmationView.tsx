@@ -29,18 +29,18 @@ const ConfirmationCard = ({
 }: ConfirmationCardProps) => (
   <Card className="mb-3.5">
     <Card.Header
-      title={(
+      title={
         <Stack className="h4" direction="horizontal">
           <Icon className="mr-1" src={Folder} />
           <span>{legacyLib.displayName}</span>
         </Stack>
-      )}
-      subtitle={(
+      }
+      subtitle={
         <Stack className="mb-1.5" direction="horizontal">
           <Icon className="mr-1.5" src={SubdirectoryArrowRight} />
           <span>{destinationName}</span>
         </Stack>
-      )}
+      }
     />
     {legacyLib.isMigrated && (
       <Stack className="ml-3.5 mt-1 mb-2 text-gray-500" direction="horizontal">

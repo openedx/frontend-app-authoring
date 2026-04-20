@@ -33,14 +33,17 @@ export const createTestFetcher = (
   thunkAction,
   args,
   onDispatch,
-) => (
+) =>
+(
   resolveFn,
   expectedActions,
 ) => {
   const store = mockStore({});
-  mockedMethod.mockReturnValue(new Promise(resolve => {
-    resolve(new Promise(resolveFn));
-  }));
+  mockedMethod.mockReturnValue(
+    new Promise(resolve => {
+      resolve(new Promise(resolveFn));
+    }),
+  );
   return store.dispatch(thunkAction(...args)).then(() => {
     onDispatch();
     if (expectedActions !== undefined) {

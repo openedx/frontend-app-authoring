@@ -48,7 +48,8 @@ describe('Preview', () => {
     expect(screen.getByText('Single select problem')).toBeInTheDocument();
 
     // Check that the description is rendered correctly
-    expect(screen.getByText('Learners must select the correct answer from a list of possible options.')).toBeInTheDocument();
+    expect(screen.getByText('Learners must select the correct answer from a list of possible options.'))
+      .toBeInTheDocument();
 
     // Check that the image has correct src attribute
     const image = screen.getByRole('img');

@@ -5,7 +5,8 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 const API_PATH_PATTERN = 'group_configurations';
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getContentStoreApiUrl = (courseId) => `${getStudioBaseUrl()}/api/contentstore/v1/${API_PATH_PATTERN}/${courseId}`;
+export const getContentStoreApiUrl = (courseId) =>
+  `${getStudioBaseUrl()}/api/contentstore/v1/${API_PATH_PATTERN}/${courseId}`;
 export const getLegacyApiUrl = (courseId, parentGroupId, groupId) => {
   const parentUrlPath = `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}`;
   const parentGroupPath = `${parentGroupId ? `/${parentGroupId}` : ''}`;

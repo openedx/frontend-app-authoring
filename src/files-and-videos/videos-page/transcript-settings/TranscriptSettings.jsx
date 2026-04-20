@@ -6,7 +6,8 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Collapsible,
-  Icon, IconButton,
+  Icon,
+  IconButton,
   Sheet,
   TransitionReplace,
 } from '@openedx/paragon';
@@ -62,55 +63,57 @@ const TranscriptSettings = ({
           <>
             <ActionRow>
               <TransitionReplace>
-                {transcriptType ? (
-                  <IconButton
-                    key="back-button"
-                    size="sm"
-                    iconAs={Icon}
-                    src={ChevronLeft}
-                    onClick={() => setTranscriptType(null)}
-                    alt="back button to main transcript settings view"
-                  />
-                ) : (
-                  <div key="title" className="h3">
-                    <FormattedMessage {...messages.transcriptSettingsTitle} />
-                  </div>
-                )}
+                {transcriptType ?
+                  (
+                    <IconButton
+                      key="back-button"
+                      size="sm"
+                      iconAs={Icon}
+                      src={ChevronLeft}
+                      onClick={() => setTranscriptType(null)}
+                      alt="back button to main transcript settings view"
+                    />
+                  ) :
+                  (
+                    <div key="title" className="h3">
+                      <FormattedMessage {...messages.transcriptSettingsTitle} />
+                    </div>
+                  )}
               </TransitionReplace>
               <ActionRow.Spacer />
               <IconButton size="sm" iconAs={Icon} src={Close} onClick={closeTranscriptSettings} alt="close settings" />
             </ActionRow>
             <TransitionReplace>
-              { transcriptType ? (
-                <div key="transcript-settings">
-                  <OrderTranscriptForm
-                    {...{
-                      setTranscriptType,
-                      transcriptType,
-                      activeTranscriptPreferences,
-                      transcriptCredentials,
-                      closeTranscriptSettings,
-                      handleOrderTranscripts,
-                      transcriptionPlans,
-                      errorMessages,
-                      transcriptStatus,
-                    }}
-                  />
-                </div>
-              ) : (
-                <div key="transcript-type-selection" className="mt-3">
-                  <Collapsible.Advanced
-                    onOpen={() => setTranscriptType('order')}
-                  >
-                    <Collapsible.Trigger
-                      className="row m-0 justify-content-between align-items-center"
+              {transcriptType ?
+                (
+                  <div key="transcript-settings">
+                    <OrderTranscriptForm
+                      {...{
+                        setTranscriptType,
+                        transcriptType,
+                        activeTranscriptPreferences,
+                        transcriptCredentials,
+                        closeTranscriptSettings,
+                        handleOrderTranscripts,
+                        transcriptionPlans,
+                        errorMessages,
+                        transcriptStatus,
+                      }}
+                    />
+                  </div>
+                ) :
+                (
+                  <div key="transcript-type-selection" className="mt-3">
+                    <Collapsible.Advanced
+                      onOpen={() => setTranscriptType('order')}
                     >
-                      <FormattedMessage {...messages.orderTranscriptsTitle} />
-                      <Icon src={ChevronRight} />
-                    </Collapsible.Trigger>
-                  </Collapsible.Advanced>
-                </div>
-              )}
+                      <Collapsible.Trigger className="row m-0 justify-content-between align-items-center">
+                        <FormattedMessage {...messages.orderTranscriptsTitle} />
+                        <Icon src={ChevronRight} />
+                      </Collapsible.Trigger>
+                    </Collapsible.Advanced>
+                  </div>
+                )}
             </TransitionReplace>
           </>
         )}

@@ -146,7 +146,13 @@ function tinyMCEEmbedIframePlugin(editor) {
         };
         if (data.source) {
           const {
-            size, sizeType, name, title, longDescriptionURL, border, scrollbar,
+            size,
+            sizeType,
+            name,
+            title,
+            longDescriptionURL,
+            border,
+            scrollbar,
           } = data;
           const { width, height } = sizeTypes[sizeType] || { width: size.width, height: size.height };
 
@@ -155,7 +161,8 @@ function tinyMCEEmbedIframePlugin(editor) {
           const heightFormat = pxRegex.test(height) ? height : '300px';
           const hasScroll = scrollbar ? 'yes' : 'no';
 
-          let iframeCode = `<iframe src="${data.source}" width="${widthFormat}" height="${heightFormat}" scrolling="${hasScroll}"`;
+          let iframeCode =
+            `<iframe src="${data.source}" width="${widthFormat}" height="${heightFormat}" scrolling="${hasScroll}"`;
 
           if (name) {
             iframeCode += ` name="${name}"`;

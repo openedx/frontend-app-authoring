@@ -4,7 +4,12 @@ import type MockAdapter from 'axios-mock-adapter';
 import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
 import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import {
-  initializeMocks, render as baseRender, screen, waitFor, within, fireEvent,
+  initializeMocks,
+  render as baseRender,
+  screen,
+  waitFor,
+  within,
+  fireEvent,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { type CollectionHit } from '../../search-manager';
@@ -51,17 +56,18 @@ const render = (
   ui: React.ReactElement,
   showOnlyPublished: boolean = false,
   libId: string = libraryId,
-) => baseRender(ui, {
-  path: '/library/:libraryId',
-  params: { libraryId: libId },
-  extraWrapper: ({ children }) => (
-    <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
-      <LibraryProvider libraryId={libId}>
-        {children}
-      </LibraryProvider>
-    </PublishedFilterContextProvider>
-  ),
-});
+) =>
+  baseRender(ui, {
+    path: '/library/:libraryId',
+    params: { libraryId: libId },
+    extraWrapper: ({ children }) => (
+      <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
+        <LibraryProvider libraryId={libId}>
+          {children}
+        </LibraryProvider>
+      </PublishedFilterContextProvider>
+    ),
+  });
 
 describe('<CollectionCard />', () => {
   beforeEach(() => {

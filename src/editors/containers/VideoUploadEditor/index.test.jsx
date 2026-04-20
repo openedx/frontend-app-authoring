@@ -15,13 +15,14 @@ jest.unmock('@openedx/paragon/icons');
 describe('VideoUploadEditor', () => {
   let store;
 
-  const renderComponent = async (storeParam) => render(
-    <AppProvider store={storeParam}>
-      <IntlProvider locale="en">
-        <VideoUploadEditor />
-      </IntlProvider>,
-    </AppProvider>,
-  );
+  const renderComponent = async (storeParam) =>
+    render(
+      <AppProvider store={storeParam}>
+        <IntlProvider locale="en">
+          <VideoUploadEditor />
+        </IntlProvider>,
+      </AppProvider>,
+    );
 
   beforeEach(async () => {
     store = configureStore({

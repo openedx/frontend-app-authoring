@@ -45,7 +45,8 @@ export const displayList = ({ sortBy, searchString, images }) => (
   module.filteredList({
     searchString,
     imageList: images,
-  }).sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]));
+  }).sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest])
+);
 
 export const imgListHooks = ({
   searchSortProps,
@@ -124,13 +125,15 @@ export const fileInputHooks = ({ setSelection, clearSelection, imgList }) => {
   const click = () => ref.current.click();
   const addFile = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile && module.checkValidFileSize({
-      selectedFile,
-      clearSelection,
-      onSizeFail: () => {
-        imgList.inputError.set();
-      },
-    })) {
+    if (
+      selectedFile && module.checkValidFileSize({
+        selectedFile,
+        clearSelection,
+        onSizeFail: () => {
+          imgList.inputError.set();
+        },
+      })
+    ) {
       dispatch(
         thunkActions.app.uploadAsset({
           file: selectedFile,

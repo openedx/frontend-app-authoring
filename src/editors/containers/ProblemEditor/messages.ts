@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   blockFailed: {
     id: 'authoring.problemEditor.blockFailed',
     defaultMessage: 'Problem failed to load',

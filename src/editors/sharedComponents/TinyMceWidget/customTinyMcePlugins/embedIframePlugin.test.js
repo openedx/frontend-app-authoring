@@ -293,7 +293,9 @@ describe('TinyMCE Embed IFrame Plugin', () => {
     expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining('height="800px"'));
     expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining(`name="${dataMock.name}"`));
     expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining(`title="${dataMock.title}"`));
-    expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining(`longdesc="${dataMock.longDescriptionURL}"`));
+    expect(editorMock.insertContent).toHaveBeenCalledWith(
+      expect.stringContaining(`longdesc="${dataMock.longDescriptionURL}"`),
+    );
     expect(editorMock.insertContent).toHaveBeenCalledWith(expect.stringContaining('scrolling="yes"'));
 
     expect(apiMock.close).toHaveBeenCalled();

@@ -128,7 +128,7 @@ const StudioHome = () => {
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {
-    return (<Loading />);
+    return <Loading />;
   }
 
   const getMainBody = () => {
@@ -136,12 +136,12 @@ const StudioHome = () => {
       return (
         <AlertMessage
           variant="danger"
-          description={(
+          description={
             <Row className="m-0 align-items-center">
               <Icon src={Error} className="text-danger-500 mr-1" />
               <span>{intl.formatMessage(messages.homePageLoadFailedMessage)}</span>
             </Row>
-          )}
+          }
         />
       );
     }

@@ -26,10 +26,10 @@ const mockSetToastMessage = jest.fn();
  * @type {}
  */
 const TaxonomyMenuComponent: React.FC<{
-  iconMenu: boolean,
-  systemDefined?: boolean,
-  canChangeTaxonomy?: boolean,
-  canDeleteTaxonomy?: boolean,
+  iconMenu: boolean;
+  systemDefined?: boolean;
+  canChangeTaxonomy?: boolean;
+  canDeleteTaxonomy?: boolean;
 }> = ({
   iconMenu,
   systemDefined = false,
@@ -189,7 +189,10 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
 
   test('should export a taxonomy', async () => {
     const {
-      findByTestId, getByTestId, getByText, queryByText,
+      findByTestId,
+      getByTestId,
+      getByText,
+      queryByText,
     } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on export menu
@@ -229,7 +232,10 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
 
   test('should delete a taxonomy', async () => {
     const {
-      getByTestId, getByLabelText, findByTestId, queryByText,
+      getByTestId,
+      getByLabelText,
+      findByTestId,
+      queryByText,
     } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on delete menu
@@ -267,7 +273,10 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
 
   it('should open manage orgs dialog menu click', async () => {
     const {
-      findByTestId, findByText, getByText, queryByText,
+      findByTestId,
+      findByText,
+      getByText,
+      queryByText,
     } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // We need to provide a taxonomy or the modal will not open

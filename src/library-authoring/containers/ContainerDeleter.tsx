@@ -15,13 +15,13 @@ import { useContentFromSearchIndex, useDeleteContainer, useRestoreContainer } fr
 import messages from './messages';
 
 type ContainerDeleterProps = {
-  close: () => void,
-  containerId: string,
+  close: () => void;
+  containerId: string;
 };
 
 type ContainerParents = {
-  displayName?: string[],
-  key?: string[],
+  displayName?: string[];
+  key?: string[];
 };
 
 const getOtherParentContainers = (containerParents?: ContainerParents, currentParentId?: string) => {

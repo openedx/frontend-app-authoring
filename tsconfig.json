@@ -1,18 +1,19 @@
 {
-    "extends": "@edx/typescript-config",
-    "compilerOptions": {
-      "outDir": "dist",
-      "paths": {
-        "@src/*": ["./src/*"],
-        "CourseAuthoring/*": ["./src/*"]
-      },
-      "types": ["jest", "@testing-library/jest-dom"]
+  "extends": "@edx/typescript-config",
+  "compilerOptions": {
+    "strict": true,
+    "outDir": "dist",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "CourseAuthoring/*": ["./src/*"]
     },
-    "include": [
-      "*.js",
-      ".eslintrc.js",
-      "src/**/*",
-      "plugins/**/*"
-    ],
-    "exclude": ["dist", "node_modules"]
+    "types": ["jest", "@testing-library/jest-dom"]
+  },
+  "include": [
+    "*.js",
+    ".eslintrc.js",
+    "src/**/*",
+    "plugins/**/*"
+  ],
+  "exclude": ["dist", "node_modules"]
 }

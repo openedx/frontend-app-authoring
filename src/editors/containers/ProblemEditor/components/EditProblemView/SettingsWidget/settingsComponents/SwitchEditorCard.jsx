@@ -24,20 +24,23 @@ const SwitchEditorCard = ({
     <Card className="border border-light-700 shadow-none">
       <BaseModal
         isOpen={isConfirmOpen}
-        close={() => { setConfirmOpen(false); }}
+        close={() => {
+          setConfirmOpen(false);
+        }}
         title={<FormattedMessage {...messages[`ConfirmSwitchMessageTitle-${editorType}`]} />}
-        confirmAction={(
+        confirmAction={
           <Button
             /* istanbul ignore next */
-            onClick={() => handleConfirmEditorSwitch({
-              switchEditor: () => dispatch(thunkActions.problem.switchEditor(editorType, editorRef)),
-              setConfirmOpen,
-            })}
+            onClick={() =>
+              handleConfirmEditorSwitch({
+                switchEditor: () => dispatch(thunkActions.problem.switchEditor(editorType, editorRef)),
+                setConfirmOpen,
+              })}
             variant="primary"
           >
             <FormattedMessage {...messages[`ConfirmSwitchButtonLabel-${editorType}`]} />
           </Button>
-        )}
+        }
         size="md"
       >
         <FormattedMessage {...messages[`ConfirmSwitchMessage-${editorType}`]} />
@@ -46,7 +49,9 @@ const SwitchEditorCard = ({
         className="my-3 ml-2 py-0"
         variant="link"
         size="sm"
-        onClick={() => { setConfirmOpen(true); }}
+        onClick={() => {
+          setConfirmOpen(true);
+        }}
       >
         <FormattedMessage {...messages[`SwitchButtonLabel-${editorType}`]} />
       </Button>

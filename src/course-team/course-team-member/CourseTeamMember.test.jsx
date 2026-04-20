@@ -12,21 +12,22 @@ const currentUserEmailMock = 'user@example.com';
 const onChangeRoleMock = jest.fn();
 const onDeleteMock = jest.fn();
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <CourseTeamMember
-      userName={userNameMock}
-      email={emailMock}
-      currentUserEmail="some@example.com"
-      onChangeRole={onChangeRoleMock}
-      onDelete={onDeleteMock}
-      isAllowActions
-      isHideActions={false}
-      role={USER_ROLES.admin}
-      {...props}
-    />
-  </IntlProvider>,
-);
+const renderComponent = (props) =>
+  render(
+    <IntlProvider locale="en">
+      <CourseTeamMember
+        userName={userNameMock}
+        email={emailMock}
+        currentUserEmail="some@example.com"
+        onChangeRole={onChangeRoleMock}
+        onDelete={onDeleteMock}
+        isAllowActions
+        isHideActions={false}
+        role={USER_ROLES.admin}
+        {...props}
+      />
+    </IntlProvider>,
+  );
 
 describe('<CourseTeamMember />', () => {
   it('render CourseTeamMember component correctly', () => {

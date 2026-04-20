@@ -3,8 +3,10 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { USER_ROLES } from '@src/constants';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-export const getCourseTeamApiUrl = (courseId: string) => `${getApiBaseUrl()}/api/contentstore/v1/course_team/${courseId}`;
-export const updateCourseTeamUserApiUrl = (courseId: string, email: string) => `${getApiBaseUrl()}/course_team/${courseId}/${email}`;
+export const getCourseTeamApiUrl = (courseId: string) =>
+  `${getApiBaseUrl()}/api/contentstore/v1/course_team/${courseId}`;
+export const updateCourseTeamUserApiUrl = (courseId: string, email: string) =>
+  `${getApiBaseUrl()}/course_team/${courseId}/${email}`;
 
 export interface CourseTeamUser {
   id: number;

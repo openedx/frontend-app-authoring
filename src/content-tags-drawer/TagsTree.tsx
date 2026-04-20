@@ -1,23 +1,27 @@
 import React, { useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Icon, Stack, IconButton, OverlayTrigger, Tooltip,
+  Icon,
+  Stack,
+  IconButton,
+  OverlayTrigger,
+  Tooltip,
 } from '@openedx/paragon';
 import { Tag, Close, Lock } from '@openedx/paragon/icons';
 import messages from './messages';
 import { ContentTagsDrawerContext } from './common/context';
 import { TagTree } from './ContentTagsCollapsible';
 
-const LibraryLockIcon = ({ key }: { key: string }) => (
+const LibraryLockIcon = ({ key }: { key: string; }) => (
   <OverlayTrigger
     placement="top"
-    overlay={(
+    overlay={
       <Tooltip
         id={`tooltip-lock-${key}`}
       >
         <FormattedMessage {...messages.libraryLockIconTooltip} />
       </Tooltip>
-    )}
+    }
   >
     <Icon
       src={Lock}
@@ -124,7 +128,6 @@ interface TagsTreeProps {
  *     }
  *   }
  * };
- *
  */
 const TagsTree = ({
   tags,
@@ -149,9 +152,7 @@ const TagsTree = ({
       {Object.keys(tags).map((key) => (
         <div className="mt-1.5 mb-1.5" key={key}>
           <div className="d-flex pl-2.5" key={key}>
-            {
-              tabsNumberArray.map((index) => <span className="d-inline-block ml-4" key={`${key}-${index}`} />)
-            }
+            {tabsNumberArray.map((index) => <span className="d-inline-block ml-4" key={`${key}-${index}`} />)}
             <TagComponent
               value={key}
               canDelete={isEditMode && tags[key].canDeleteObjecttag}
@@ -165,7 +166,7 @@ const TagsTree = ({
               )}
             />
           </div>
-          { tags[key].children
+          {tags[key].children
             && (
               <TagsTree
                 tags={tags[key].children}

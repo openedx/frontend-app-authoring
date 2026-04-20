@@ -41,7 +41,7 @@ const render = (migrationTaskId: string) => (
   testRender(
     <ImportDetailsPage />,
     {
-      extraWrapper: ({ children }: { children: React.ReactNode }) => (
+      extraWrapper: ({ children }: { children: React.ReactNode; }) => (
         <LibraryProvider libraryId={libraryId}>
           {children}
         </LibraryProvider>
@@ -94,9 +94,11 @@ describe('<ImportDetailsPage />', () => {
   it('should render Succeeded state', async () => {
     mockGetModulestoreMigratedBlocksInfo.applyMockSuccess();
     render(mockGetMigrationStatus.migrationId);
-    expect(await screen.findByText(
-      /test course has been imported to your library in a collection called test collection/i,
-    ));
+    expect(
+      await screen.findByText(
+        /test course has been imported to your library in a collection called test collection/i,
+      ),
+    );
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
     expect(await screen.findByText('4')).toBeInTheDocument();
 
@@ -148,19 +150,27 @@ describe('<ImportDetailsPage />', () => {
     expect(await screen.findByText(/Components/i)).toBeInTheDocument();
     expect(await screen.findByText('1/2')).toBeInTheDocument();
 
-    expect(await screen.findByText(
-      /66% of course test course has been imported successfully/i,
-    )).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /66% of course test course has been imported successfully/i,
+      ),
+    ).toBeInTheDocument();
 
-    expect(await screen.findByRole('cell', {
-      name: /randomized content block/i,
-    })).toBeInTheDocument();
-    expect(await screen.findByRole('cell', {
-      name: 'library_content',
-    })).toBeInTheDocument();
-    expect(await screen.findByRole('cell', {
-      name: /has children, so it is not supported in content libraries/i,
-    })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('cell', {
+        name: /randomized content block/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole('cell', {
+        name: 'library_content',
+      }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole('cell', {
+        name: /has children, so it is not supported in content libraries/i,
+      }),
+    ).toBeInTheDocument();
 
     const viewImportedContentBtn = screen.getByRole('button', {
       name: /view imported content/i,

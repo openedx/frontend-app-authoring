@@ -2,17 +2,28 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  DataTableContext, Button, Row, Chip,
+  DataTableContext,
+  Button,
+  Row,
+  Chip,
 } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 import { getFilters, removeFilter } from './utils';
 
 const FilterStatus = ({
-  className, variant, size, clearFiltersText, buttonClassName,
+  className,
+  variant,
+  size,
+  clearFiltersText,
+  buttonClassName,
 }) => {
   const intl = useIntl();
   const {
-    state, setAllFilters, setFilter, RowStatusComponent, columns,
+    state,
+    setAllFilters,
+    setFilter,
+    RowStatusComponent,
+    columns,
   } = useContext(DataTableContext);
 
   if (!setAllFilters) {

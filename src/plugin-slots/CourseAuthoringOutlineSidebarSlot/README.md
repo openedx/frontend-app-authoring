@@ -3,13 +3,14 @@
 ### Slot ID: `org.openedx.frontend.authoring.course_outline_sidebar.v1`
 
 ### Slot ID Aliases
-* `course_authoring_outline_sidebar_slot`
+
+- `course_authoring_outline_sidebar_slot`
 
 ### Plugin Props:
 
-* `courseId` - String.
-* `courseName` - String.
-* `sections` - Array of Objects. Object structure defined in `index.tsx`.
+- `courseId` - String.
+- `courseName` - String.
+- `sections` - Array of Objects. Object structure defined in `index.tsx`.
 
 ## Description
 
@@ -33,13 +34,11 @@ const config = {
         {
           op: PLUGIN_OPERATIONS.Wrap,
           widgetId: 'default_contents',
-          wrapper: ({ component }) => (
-            <div style={{ border: 'thick dashed red' }}>{component}</div>
-          ),
+          wrapper: ({ component }) => <div style={{ border: 'thick dashed red' }}>{component}</div>,
         },
       ],
     },
-  }
+  },
 };
 export default config;
 ```

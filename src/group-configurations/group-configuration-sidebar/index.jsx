@@ -9,12 +9,19 @@ import { getSidebarData } from './utils';
 import messages from './messages';
 
 const GroupConfigurationSidebar = ({
-  courseId, shouldShowExperimentGroups, shouldShowContentGroup, shouldShowEnrollmentTrackGroup,
+  courseId,
+  shouldShowExperimentGroups,
+  shouldShowContentGroup,
+  shouldShowEnrollmentTrackGroup,
 }) => {
   const intl = useIntl();
   const urls = useHelpUrls(['groupConfigurations', 'enrollmentTracks', 'contentGroups']);
   const sidebarData = getSidebarData({
-    messages, intl, shouldShowExperimentGroups, shouldShowContentGroup, shouldShowEnrollmentTrackGroup,
+    messages,
+    intl,
+    shouldShowExperimentGroups,
+    shouldShowContentGroup,
+    shouldShowEnrollmentTrackGroup,
   });
 
   return (

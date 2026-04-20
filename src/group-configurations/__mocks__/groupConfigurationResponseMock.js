@@ -34,8 +34,7 @@ module.exports = {
     },
     {
       active: true,
-      description:
-        'The groups in this configuration can be mapped to cohorts in the Instructor Dashboard.',
+      description: 'The groups in this configuration can be mapped to cohorts in the Instructor Dashboard.',
       groups: [
         {
           id: 593758473,

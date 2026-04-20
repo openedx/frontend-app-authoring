@@ -165,7 +165,9 @@ describe('Course Optimizer API', () => {
       const url = api.postRerunLinkUpdateApiUrl(courseId);
       axiosMock.onPost(url).networkError();
 
-      await expect(api.postRerunLinkUpdateSingle(courseId, 'https://test.com', 'block-1')).rejects.toThrow('Network Error');
+      await expect(api.postRerunLinkUpdateSingle(courseId, 'https://test.com', 'block-1')).rejects.toThrow(
+        'Network Error',
+      );
     });
 
     it('should handle server errors', async () => {
@@ -245,9 +247,15 @@ describe('Course Optimizer API', () => {
       const courseId = 'test-course-123';
 
       expect(api.postLinkCheckCourseApiUrl(courseId)).toMatch(/\/api\/contentstore\/v0\/link_check\/test-course-123$/);
-      expect(api.getLinkCheckStatusApiUrl(courseId)).toMatch(/\/api\/contentstore\/v0\/link_check_status\/test-course-123$/);
-      expect(api.postRerunLinkUpdateApiUrl(courseId)).toMatch(/\/api\/contentstore\/v0\/rerun_link_update\/test-course-123$/);
-      expect(api.getRerunLinkUpdateStatusApiUrl(courseId)).toMatch(/\/api\/contentstore\/v0\/rerun_link_update_status\/test-course-123$/);
+      expect(api.getLinkCheckStatusApiUrl(courseId)).toMatch(
+        /\/api\/contentstore\/v0\/link_check_status\/test-course-123$/,
+      );
+      expect(api.postRerunLinkUpdateApiUrl(courseId)).toMatch(
+        /\/api\/contentstore\/v0\/rerun_link_update\/test-course-123$/,
+      );
+      expect(api.getRerunLinkUpdateStatusApiUrl(courseId)).toMatch(
+        /\/api\/contentstore\/v0\/rerun_link_update_status\/test-course-123$/,
+      );
     });
   });
 });

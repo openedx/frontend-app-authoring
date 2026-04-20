@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Form, Icon } from '@openedx/paragon';
-import { Calendar } from '@openedx/paragon/icons';
+import { AccessTime, Calendar } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { convertToDateFromString, convertToStringFromDate, isValidDate } from '../../utils';
@@ -61,6 +61,13 @@ const DatepickerControl = ({
             src={Calendar}
             className="datepicker-custom-control-icon"
             alt={intl.formatMessage(messages.calendarAltText)}
+          />
+        )}
+        {type === DATEPICKER_TYPES.time && (
+          <Icon
+            src={AccessTime}
+            className="datepicker-custom-control-icon"
+            alt={intl.formatMessage(messages.timeAltText)}
           />
         )}
         <DatePicker

@@ -17,7 +17,7 @@ import {
   mediaTranscriptURL,
   videoFeatures,
   courseVideos,
-  handlerUrl,
+  boundHandlerUrl,
   transcriptXblockV2,
   downloadVideoTranscriptURLV2,
 } from './urls';
@@ -36,7 +36,7 @@ describe('cms url methods', () => {
   const videoId = '123-SOmeVidEOid-213';
   const parameters = 'SomEParAMEterS';
   const handlerName = 'transcript';
-  const transcriptHandlerUrl = handlerUrl({ studioEndpointUrl, blockId, handlerName });
+  const transcriptHandlerUrl = boundHandlerUrl({ studioEndpointUrl, blockId, handlerName });
 
   describe('return to learning context urls', () => {
     const unitUrl = {
@@ -50,7 +50,10 @@ describe('cms url methods', () => {
     };
     it('returns the library page when given the v1 library', () => {
       expect(returnUrl({
-        studioEndpointUrl, unitUrl, learningContextId: libraryLearningContextId, blockId: libraryV1Id,
+        studioEndpointUrl,
+        unitUrl,
+        learningContextId: libraryLearningContextId,
+        blockId: libraryV1Id,
       }))
         .toEqual(`${studioEndpointUrl}/library/${libraryLearningContextId}`);
     });
@@ -60,24 +63,36 @@ describe('cms url methods', () => {
     // });
     it('returns empty url when given the v2 library', () => {
       expect(returnUrl({
-        studioEndpointUrl, unitUrl, learningContextId: libraryV2Id, blockId: libraryV2Id,
+        studioEndpointUrl,
+        unitUrl,
+        learningContextId: libraryV2Id,
+        blockId: libraryV2Id,
       })).toEqual('');
     });
     it('returnUrl function should return url with studioEndpointUrl, unitUrl, and blockId', () => {
       expect(returnUrl({
-        studioEndpointUrl, unitUrl, learningContextId: courseId, blockId,
+        studioEndpointUrl,
+        unitUrl,
+        learningContextId: courseId,
+        blockId,
       }))
         .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}#${blockId}`);
     });
     it('returns blank url for v2 block', () => {
       expect(returnUrl({
-        studioEndpointUrl, unitUrl, learningContextId: courseId, blockId: v2BlockId,
+        studioEndpointUrl,
+        unitUrl,
+        learningContextId: courseId,
+        blockId: v2BlockId,
       }))
         .toEqual('');
     });
     it('throws error if no unit url', () => {
       expect(returnUrl({
-        studioEndpointUrl, unitUrl: null, learningContextId: courseId, blockId,
+        studioEndpointUrl,
+        unitUrl: null,
+        learningContextId: courseId,
+        blockId,
       }))
         .toEqual('');
     });
@@ -106,7 +121,9 @@ describe('cms url methods', () => {
         .toEqual(`${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`);
     });
     it('throws error with studioEndpointUrl, v2 blockId and ancestor query', () => {
-      expect(() => { blockAncestor({ studioEndpointUrl, blockId: v2BlockId }); })
+      expect(() => {
+        blockAncestor({ studioEndpointUrl, blockId: v2BlockId });
+      })
         .toThrow('Block ancestor not available (and not needed) for V2 blocks');
     });
   });
@@ -196,7 +213,7 @@ describe('cms url methods', () => {
   });
   describe('handlerUrl', () => {
     it('returns url with studioEndpointUrl, blockId and handlerName', () => {
-      expect(handlerUrl({ studioEndpointUrl, blockId, handlerName }))
+      expect(boundHandlerUrl({ studioEndpointUrl, blockId, handlerName }))
         .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/transcript/`);
     });
   });

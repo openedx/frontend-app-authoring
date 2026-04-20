@@ -8,7 +8,7 @@ const messages = defineMessages({
   },
   pasteButtonWhatsInClipboardText: {
     id: 'course-authoring.generic.paste-component.paste-button.whats-in-clipboard.text',
-    defaultMessage: "What's in my clipboard?",
+    defaultMessage: 'What\'s in my clipboard?',
     description: 'The popover trigger button text of the info about copied content.',
   },
 });

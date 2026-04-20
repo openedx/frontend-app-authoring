@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, screen, fireEvent, waitFor,
+  render,
+  screen,
+  fireEvent,
+  waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Provider } from 'react-redux';
@@ -105,7 +108,9 @@ describe('SelectVideoModal hooks', () => {
 
       render(<TestComponent fetchVideos={fetchVideos} />);
 
-      await waitFor(() => expect(screen.getByTestId('videos').textContent).toBe(videos.map((v) => v.externalUrl).join(', ')));
+      await waitFor(() =>
+        expect(screen.getByTestId('videos').textContent).toBe(videos.map((v) => v.externalUrl).join(', '))
+      );
 
       expect(fetchVideos).toHaveBeenCalled();
     });

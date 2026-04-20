@@ -26,7 +26,9 @@ export const useContentMenuItems = (courseId: string) => {
       title: intl.formatMessage(messages['header.links.outline']),
     },
     {
-      href: waffleFlags.useNewUpdatesPage ? `/course/${courseId}/course_info` : `${studioBaseUrl}/course_info/${courseId}`,
+      href: waffleFlags.useNewUpdatesPage
+        ? `/course/${courseId}/course_info`
+        : `${studioBaseUrl}/course_info/${courseId}`,
       title: intl.formatMessage(messages['header.links.updates']),
     },
     {
@@ -106,8 +108,8 @@ export const useSettingMenuItems = (courseId: string) => {
       ? [{
         href: `/course/${courseId}/settings/advanced`,
         title: intl.formatMessage(messages['header.links.advancedSettings']),
-      }] : []
-    ),
+      }] :
+      []),
   ];
   if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' || waffleFlags.useNewCertificatesPage) {
     items.push({
@@ -136,21 +138,23 @@ export const useToolsMenuItems = (courseId: string) => {
       ? [{
         href: `${studioBaseUrl}/course/${courseId}#export-tags`,
         title: intl.formatMessage(messages['header.links.exportTags']),
-      }] : []
-    ),
+      }] :
+      []),
     {
       href: `/course/${courseId}/checklists`,
       title: intl.formatMessage(messages['header.links.checklists']),
     },
-    ...(waffleFlags.enableCourseOptimizer ? [{
-      href: `/course/${courseId}/optimizer`,
-      title: (
-        <>
-          {intl.formatMessage(messages['header.links.optimizer'])}
-          <Badge variant="primary" className="ml-2">{intl.formatMessage(courseOptimizerMessages.new)}</Badge>
-        </>
-      ),
-    }] : []),
+    ...(waffleFlags.enableCourseOptimizer ?
+      [{
+        href: `/course/${courseId}/optimizer`,
+        title: (
+          <>
+            {intl.formatMessage(messages['header.links.optimizer'])}
+            <Badge variant="primary" className="ml-2">{intl.formatMessage(courseOptimizerMessages.new)}</Badge>
+          </>
+        ),
+      }] :
+      []),
   ];
 
   return items;
@@ -198,7 +202,7 @@ export const useLibrarySettingsMenuItems = (itemId: string, readOnly: boolean) =
     return null;
   };
 
-  const items: { title: string; href: string }[] = [];
+  const items: { title: string; href: string; }[] = [];
 
   const teamAccessUrl = openTeamAccessModalUrl();
   if (teamAccessUrl) {

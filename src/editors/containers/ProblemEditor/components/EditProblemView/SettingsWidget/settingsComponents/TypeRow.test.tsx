@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, screen, fireEvent, initializeMocks,
+  render,
+  screen,
+  fireEvent,
+  initializeMocks,
 } from '../../../../../../../testUtils';
 import TypeRow from './TypeRow';
 
@@ -12,10 +15,18 @@ jest.mock('../hooks', () => ({
 const defaultProps = {
   answers: [
     {
-      correct: true, id: '1', selectedFeedback: 'Good', title: 'A', unselectedFeedback: 'Try again',
+      correct: true,
+      id: '1',
+      selectedFeedback: 'Good',
+      title: 'A',
+      unselectedFeedback: 'Try again',
     },
     {
-      correct: false, id: '2', selectedFeedback: 'No', title: 'B', unselectedFeedback: 'Nope',
+      correct: false,
+      id: '2',
+      selectedFeedback: 'No',
+      title: 'B',
+      unselectedFeedback: 'Nope',
     },
   ],
   blockTitle: 'Block Title',

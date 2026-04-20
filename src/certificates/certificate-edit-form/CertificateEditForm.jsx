@@ -29,7 +29,11 @@ const CertificateEditForm = ({ courseId }) => {
       {certificates.map((certificate, id) => (
         <Formik initialValues={initialValues[id]} onSubmit={handleCertificateSubmit} key={certificate.id}>
           {({
-            values, handleChange, handleBlur, resetForm, setFieldValue,
+            values,
+            handleChange,
+            handleBlur,
+            resetForm,
+            setFieldValue,
           }) => (
             <>
               <Form className="certificates-card-form" data-testid="certificates-edit-form">
@@ -70,7 +74,8 @@ const CertificateEditForm = ({ courseId }) => {
                     <Button
                       className="ml-auto"
                       variant="tertiary"
-                      onClick={() => confirmOpen(certificate.id)}
+                      onClick={() =>
+                        confirmOpen(certificate.id)}
                     >
                       {intl.formatMessage(commonMessages.deleteTooltip)}
                     </Button>
@@ -83,7 +88,8 @@ const CertificateEditForm = ({ courseId }) => {
                 message={intl.formatMessage(messages.deleteCertificateMessage)}
                 actionButtonText={intl.formatMessage(commonMessages.deleteTooltip)}
                 cancelButtonText={intl.formatMessage(commonMessages.cardCancel)}
-                handleCancel={() => confirmClose()}
+                handleCancel={() =>
+                  confirmClose()}
                 handleAction={() => {
                   confirmClose();
                   handleCertificateDelete(certificate.id);

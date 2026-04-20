@@ -50,17 +50,18 @@ const contentHit: ContentHit = {
 };
 
 const { libraryId } = mockContentLibrary;
-const render = (libId: string = libraryId) => baseRender(<ComponentCard hit={contentHit} />, {
-  path: '/library/:libraryId',
-  params: { libraryId: libId },
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libId}>
-      <SidebarProvider>
-        { children }
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = (libId: string = libraryId) =>
+  baseRender(<ComponentCard hit={contentHit} />, {
+    path: '/library/:libraryId',
+    params: { libraryId: libId },
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={libId}>
+        <SidebarProvider>
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<ComponentCard />', () => {
   beforeEach(() => {

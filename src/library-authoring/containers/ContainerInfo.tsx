@@ -36,7 +36,7 @@ import { ContainerPublisher } from './ContainerPublisher';
 import { PublishDraftButton, PublishedChip } from '../generic/publish-status-buttons';
 
 type ContainerPreviewProps = {
-  containerId: string,
+  containerId: string;
 };
 
 const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
@@ -81,7 +81,7 @@ const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
   );
 };
 
-const ContainerPreview = ({ containerId } : ContainerPreviewProps) => {
+const ContainerPreview = ({ containerId }: ContainerPreviewProps) => {
   const containerType = getBlockType(containerId);
   if (containerType === ContainerType.Unit) {
     return <LibraryUnitBlocks unitId={containerId} readOnly />;
@@ -94,9 +94,9 @@ const ContainerActions = ({
   containerType,
   hasUnpublishedChanges,
 }: {
-  containerId: string,
-  containerType: string,
-  hasUnpublishedChanges: boolean,
+  containerId: string;
+  containerType: string;
+  hasUnpublishedChanges: boolean;
 }) => {
   const intl = useIntl();
   const { libraryId } = useOptionalLibraryContext();
@@ -130,17 +130,19 @@ const ContainerActions = ({
         </Button>
       )}
       {!componentPickerMode && (
-        !hasUnpublishedChanges ? (
-          <div className="m-1 flex-grow-1">
-            <PublishedChip />
-          </div>
-        ) : (
-          <div className="flex-grow-1">
-            <PublishDraftButton
-              onClick={openPublisher}
-            />
-          </div>
-        )
+        !hasUnpublishedChanges ?
+          (
+            <div className="m-1 flex-grow-1">
+              <PublishedChip />
+            </div>
+          ) :
+          (
+            <div className="flex-grow-1">
+              <PublishDraftButton
+                onClick={openPublisher}
+              />
+            </div>
+          )
       )}
       {showOpenButton && (
         <div className="mt-1">
@@ -176,8 +178,10 @@ const ContainerInfo = () => {
 
   const defaultContainerTab = defaultTab.container;
   const tab: ContainerInfoTab = (
-    sidebarTab && isContainerInfoTab(sidebarTab)
-  ) ? sidebarTab : defaultContainerTab;
+      sidebarTab && isContainerInfoTab(sidebarTab)
+    ) ?
+    sidebarTab :
+    defaultContainerTab;
 
   /* istanbul ignore next */
   const handleTabChange = (newTab: ContainerInfoTab) => {

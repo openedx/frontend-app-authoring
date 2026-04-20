@@ -7,7 +7,9 @@ import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
 const DetailsSection = ({
-  language, languageOptions, onChange,
+  language,
+  languageOptions,
+  onChange,
 }) => {
   const intl = useIntl();
   const formattedLanguage = () => {

@@ -115,7 +115,9 @@ describe('<SelectableBox />', () => {
     it('ref is passed to onClick function', async () => {
       const user = userEvent.setup();
       let inputRef;
-      const onClick = (ref) => { inputRef = ref; };
+      const onClick = (ref) => {
+        inputRef = ref;
+      };
       render(<SelectableRadio onClick={onClick} />);
       const radio = screen.getByRole('button');
       await user.click(radio);

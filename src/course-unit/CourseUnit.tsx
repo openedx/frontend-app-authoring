@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import type { MessageDescriptor } from 'react-intl';
 import {
@@ -26,13 +25,11 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import DraftIcon from '@src/generic/DraftIcon';
 import { CourseAuthoringUnitSidebarSlot } from '../plugin-slots/CourseAuthoringUnitSidebarSlot';
 
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';
 import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
 import { PasteComponent } from '../generic/clipboard';
-import ProcessingNotification from '../generic/processing-notification';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import Loading from '../generic/Loading';
@@ -52,7 +49,7 @@ import { UnitSidebarPagesProvider } from './unit-sidebar/UnitSidebarPagesContext
 import { UNIT_VISIBILITY_STATES } from './constants';
 import { isUnitPageNewDesignEnabled } from './utils';
 
-const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
+const StatusBar = ({ courseUnit }: { courseUnit: any; }) => {
   const { selectedPartitionIndex, selectedGroupsLabel } = courseUnit.userPartitionInfo ?? {};
   const hasGroups = selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex) && selectedGroupsLabel;
   let groupsCount = 0;
@@ -66,10 +63,10 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
     text: messages.statusBarDraftNeverPublished,
     icon: DraftIcon,
   } as {
-    variant: string,
-    className?: string,
-    text: MessageDescriptor,
-    icon: React.ComponentType,
+    variant: string;
+    className?: string;
+    text: MessageDescriptor;
+    icon: React.ComponentType;
   };
 
   if (courseUnit.currentlyVisibleToStudents) {
@@ -134,11 +131,11 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
       {groupsCount > 1 && (
         <OverlayTrigger
           placement="top"
-          overlay={(
+          overlay={
             <Tooltip id="unit-group-access-tooltip">
               {selectedGroupsLabel}
             </Tooltip>
-          )}
+          }
         >
           <Stack direction="horizontal" gap={1}>
             <Icon src={Groups} />
@@ -201,7 +198,6 @@ const CourseUnit = () => {
     handleTitleEditSubmit,
     headerNavigationsActions,
     handleTitleEdit,
-    handleConfigureSubmit,
     courseVerticalChildren,
     canPasteComponent,
     isMoveModalOpen,
@@ -224,11 +220,6 @@ const CourseUnit = () => {
 
   useScrollToLastPosition();
 
-  const {
-    isShow: isShowProcessingNotification,
-    title: processingNotificationTitle,
-  } = useSelector(getProcessingNotification);
-
   if (isLoading) {
     return <Loading />;
   }
@@ -247,49 +238,49 @@ const CourseUnit = () => {
         <Container fluid className="course-unit px-4">
           <section className="course-unit-container mb-4 mt-5">
             <TransitionReplace>
-              {movedXBlockParams.isSuccess ? (
-                <AlertMessage
-                  key="xblock-moved-alert"
-                  data-testid="xblock-moved-alert"
-                  show={movedXBlockParams.isSuccess}
-                  variant="success"
-                  icon={CheckCircleIcon}
-                  title={movedXBlockParams.isUndo
-                    ? intl.formatMessage(messages.alertMoveCancelTitle)
-                    : intl.formatMessage(messages.alertMoveSuccessTitle)}
-                  description={movedXBlockParams.isUndo
-                    ? intl.formatMessage(messages.alertMoveCancelDescription, { title: movedXBlockParams.title })
-                    : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
-                  aria-hidden={movedXBlockParams.isSuccess}
-                  dismissible
-                  actions={movedXBlockParams.isUndo ? undefined : [
-                    <Button
-                      onClick={handleRollbackMovedXBlock}
-                      key="xblock-moved-alert-undo-move-button"
-                    >
-                      {intl.formatMessage(messages.undoMoveButton)}
-                    </Button>,
-                    <Button
-                      onClick={handleNavigateToTargetUnit}
-                      key="xblock-moved-alert-new-location-button"
-                    >
-                      {intl.formatMessage(messages.newLocationButton)}
-                    </Button>,
-                  ]}
-                  onClose={handleCloseXBlockMovedAlert}
-                />
-              ) : null}
+              {movedXBlockParams.isSuccess ?
+                (
+                  <AlertMessage
+                    key="xblock-moved-alert"
+                    data-testid="xblock-moved-alert"
+                    show={movedXBlockParams.isSuccess}
+                    variant="success"
+                    icon={CheckCircleIcon}
+                    title={movedXBlockParams.isUndo
+                      ? intl.formatMessage(messages.alertMoveCancelTitle)
+                      : intl.formatMessage(messages.alertMoveSuccessTitle)}
+                    description={movedXBlockParams.isUndo
+                      ? intl.formatMessage(messages.alertMoveCancelDescription, { title: movedXBlockParams.title })
+                      : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
+                    aria-hidden={movedXBlockParams.isSuccess}
+                    dismissible
+                    actions={movedXBlockParams.isUndo ? undefined : [
+                      <Button
+                        onClick={handleRollbackMovedXBlock}
+                        key="xblock-moved-alert-undo-move-button"
+                      >
+                        {intl.formatMessage(messages.undoMoveButton)}
+                      </Button>,
+                      <Button
+                        onClick={handleNavigateToTargetUnit}
+                        key="xblock-moved-alert-new-location-button"
+                      >
+                        {intl.formatMessage(messages.newLocationButton)}
+                      </Button>,
+                    ]}
+                    onClose={handleCloseXBlockMovedAlert}
+                  />
+                ) :
+                null}
             </TransitionReplace>
             {courseUnit.upstreamInfo?.upstreamLink && (
               <AlertMessage
-                title={intl.formatMessage(
+                description={intl.formatMessage(
                   messages.alertLibraryUnitReadOnlyText,
                   {
                     link: (
-                      <Alert.Link
-                        href={courseUnit.upstreamInfo.upstreamLink}
-                      >
-                        {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
+                      <Alert.Link href={courseUnit.upstreamInfo.upstreamLink}>
+                        <FormattedMessage {...messages.alertLibraryUnitReadOnlyLinkText} />
                       </Alert.Link>
                     ),
                   },
@@ -299,34 +290,31 @@ const CourseUnit = () => {
             )}
             <SubHeader
               hideBorder
-              title={(
+              title={
                 <HeaderTitle
                   unitTitle={unitTitle}
                   isTitleEditFormOpen={isTitleEditFormOpen}
                   handleTitleEdit={handleTitleEdit}
                   handleTitleEditSubmit={handleTitleEditSubmit}
-                  handleConfigureSubmit={handleConfigureSubmit}
                 />
-              )}
-              breadcrumbs={(
+              }
+              breadcrumbs={
                 <Breadcrumbs
                   courseId={courseId}
                   parentUnitId={sequenceId}
                 />
-              )}
-              headerActions={(
+              }
+              headerActions={
                 <CourseUnitHeaderActionsSlot
                   category={unitCategory}
                   headerNavigationsActions={headerNavigationsActions}
                   unitTitle={unitTitle}
                   verticalBlocks={courseVerticalChildren.children}
                 />
-              )}
+              }
             />
             <div className="unit-header-status-bar h5 mt-2 mb-4 font-weight-normal">
-              {isUnitPageNewDesignEnabled() && isUnitVerticalType && (
-                <StatusBar courseUnit={courseUnit} />
-              )}
+              {isUnitPageNewDesignEnabled() && isUnitVerticalType && <StatusBar courseUnit={courseUnit} />}
             </div>
             {isUnitVerticalType && (
               <Sequence
@@ -360,7 +348,6 @@ const CourseUnit = () => {
                     isUnitVerticalType={isUnitVerticalType}
                     unitXBlockActions={unitXBlockActions}
                     courseVerticalChildren={courseVerticalChildren.children}
-                    handleConfigureSubmit={handleConfigureSubmit}
                   />
                 )}
                 {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData
@@ -407,10 +394,6 @@ const CourseUnit = () => {
           </section>
         </Container>
         <div className="alert-toast">
-          <ProcessingNotification
-            isShow={isShowProcessingNotification}
-            title={processingNotificationTitle}
-          />
           <SavingErrorAlert
             savingStatus={savingStatus}
             errorMessage={errorMessage}

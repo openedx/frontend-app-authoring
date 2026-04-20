@@ -15,7 +15,7 @@ jest.mock('./TableBody', () => {
   return MockTableBody;
 });
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
 
@@ -29,6 +29,7 @@ const baseProps = () => ({
   isCreatingTopRow: false,
   draftError: '',
   createRowMutation: { isPending: false, isError: false },
+  updateRowMutation: { isPending: false, isError: false },
   toast: { show: false, message: '', variant: 'success' },
   setToast: jest.fn(),
   setIsCreatingTopRow: jest.fn(),
@@ -38,12 +39,16 @@ const baseProps = () => ({
   setCreatingParentId: jest.fn(),
   setDraftError: jest.fn(),
   validate: jest.fn(() => true),
+  handleUpdateRow: jest.fn(),
+  editingRowId: null,
+  setEditingRowId: jest.fn(),
 });
 
 describe('TableView', () => {
   it('shows and dismisses save error banner', () => {
     const props = baseProps();
     props.createRowMutation = { isPending: false, isError: true };
+    props.draftError = 'Request failed with status code 500';
 
     render(<TableView {...props} />, { wrapper });
 

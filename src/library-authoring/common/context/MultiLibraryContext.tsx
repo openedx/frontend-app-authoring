@@ -10,7 +10,7 @@ interface MultiLibraryContextProps {
 
 const Context = React.createContext<MultiLibraryContextProps | undefined>(undefined);
 
-export const MultiLibraryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const MultiLibraryProvider: React.FC<{ children: React.ReactNode; }> = ({ children }) => {
   const [selectedLibraries, setSelectedLibraries] = useStickyState<string[]>([], 'outline-library-filter');
   const [selectedCollections, setSelectedCollections] = React.useState<string[]>([]);
 

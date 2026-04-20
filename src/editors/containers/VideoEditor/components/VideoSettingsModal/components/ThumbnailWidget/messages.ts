@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   title: {
     id: 'authoring.videoeditor.thumbnail.title',
     defaultMessage: 'Thumbnail',
@@ -24,8 +23,7 @@ const messages = defineMessages({
   },
   unavailableMessage: {
     id: 'authoring.videoeditor.thumbnail.unavailable.message',
-    defaultMessage:
-      'Select a video from your library to enable this feature (applies only to courses that run on the edx.org site).',
+    defaultMessage: 'Select a video from your library to enable this feature (applies only to courses that run on the edx.org site).',
     description: 'Message for unavailable thumbnail widget',
   },
   uploadButtonLabel: {
@@ -55,10 +53,8 @@ const messages = defineMessages({
   },
   fileSizeError: {
     id: 'authoring.videoeditor.thumbnail.error.fileSizeError',
-    defaultMessage:
-      'The file size for thumbnails must be larger than 2 KB or less than 2 MB. Please resize your image and try again.',
-    description:
-      ' Message presented to user when file size of image is less than 2 KB or larger than 2 MB',
+    defaultMessage: 'The file size for thumbnails must be larger than 2 KB or less than 2 MB. Please resize your image and try again.',
+    description: ' Message presented to user when file size of image is less than 2 KB or larger than 2 MB',
   },
 });
 

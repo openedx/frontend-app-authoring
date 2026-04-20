@@ -18,13 +18,13 @@ const CustomIcon = ({
     <OverlayTrigger
       key="top"
       placement={placement}
-      overlay={(
+      overlay={
         <Tooltip variant="dark" id="tooltip-top" className={placement !== 'top' ? 'ml-3' : ''}>
           {intl.formatMessage(message1)}
           {message1 && <br />}
           {intl.formatMessage(message2)}
         </Tooltip>
-      )}
+      }
     >
       <Icon src={icon} style={{ color: '#000000' }} />
     </OverlayTrigger>

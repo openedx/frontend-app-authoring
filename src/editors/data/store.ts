@@ -3,15 +3,16 @@ import thunkMiddleware from 'redux-thunk';
 import { composeWithDevToolsLogOnlyInProduction } from '@redux-devtools/extension';
 import { createLogger } from 'redux-logger';
 
-import reducer, { actions, selectors, type EditorState } from './redux';
+import reducer, { actions, PartialEditorState, selectors, type EditorState } from './redux';
 
-export const createStore = () => {
+export const createStore = (preloadedState?: PartialEditorState) => {
   const loggerMiddleware = createLogger();
 
   const middleware = [thunkMiddleware, loggerMiddleware];
 
   const store: redux.Store<EditorState> = redux.createStore<EditorState, any, any, any>(
     reducer as any,
+    preloadedState as EditorState,
     composeWithDevToolsLogOnlyInProduction(redux.applyMiddleware(...middleware)),
   );
 

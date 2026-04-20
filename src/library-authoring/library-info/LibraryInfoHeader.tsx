@@ -53,7 +53,7 @@ const LibraryInfoHeader = () => {
 
   return (
     <Stack direction="horizontal">
-      { inputIsActive
+      {inputIsActive
         ? (
           <Form.Control
             autoFocus

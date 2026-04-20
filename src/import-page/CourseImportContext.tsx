@@ -1,5 +1,9 @@
 import {
-  createContext, useContext, useEffect, useMemo, useState,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
@@ -106,7 +110,9 @@ export const CourseImportProvider = ({ children }: CourseImportProviderProps) =>
   const errorMessage = importStatusData?.message;
   const anyRequestFailed = isErrorImportStatus || importMutation.isError || Boolean(errorMessage);
   const anyRequestInProgress = isPendingImportStatus || importMutation.isPending;
-  const formattedErrorMessage = anyRequestFailed ? errorMessage || intl.formatMessage(messages.defaultErrorMessage) : '';
+  const formattedErrorMessage = anyRequestFailed
+    ? errorMessage || intl.formatMessage(messages.defaultErrorMessage)
+    : '';
   const isLoadingDenied = importStatusError?.response?.status === 403;
 
   useEffect(() => {

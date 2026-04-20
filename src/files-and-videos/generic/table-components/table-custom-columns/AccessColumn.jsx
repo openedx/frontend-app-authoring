@@ -11,17 +11,13 @@ const AccessColumn = ({ row }) => {
   return (
     <OverlayTrigger
       placement="top"
-      overlay={(
+      overlay={
         <Tooltip id="access-tooltip-description">
           {intl.formatMessage(messages.lockFileTooltipContent)}
         </Tooltip>
-      )}
+      }
     >
-      {locked ? (
-        <Icon src={Locked} size="sm" />
-      ) : (
-        <Icon src={LockOpen} size="sm" />
-      )}
+      {locked ? <Icon src={Locked} size="sm" /> : <Icon src={LockOpen} size="sm" />}
     </OverlayTrigger>
   );
 };

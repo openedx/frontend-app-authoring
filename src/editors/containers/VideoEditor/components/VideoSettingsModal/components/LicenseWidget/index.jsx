@@ -11,10 +11,10 @@ import {
 } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 
-import { actions, selectors } from '../../../../../../data/redux';
+import { actions, selectors } from '@src/editors/data/redux';
+import CollapsibleFormWidget from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import * as hooks from './hooks';
 import messages from './messages';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import LicenseBlurb from './LicenseBlurb';
 import LicenseSelector from './LicenseSelector';
 import LicenseDetails from './LicenseDetails';
@@ -43,40 +43,44 @@ const LicenseWidget = ({
   const { licenseDescription, levelDescription } = hooks.determineText({ level });
   return (
     <CollapsibleFormWidget
-      subtitle={(
+      subtitle={
         <div>
           <LicenseBlurb license={license} details={details} />
           <div className="x-small mt-2">{levelDescription}</div>
         </div>
-      )}
+      }
       title={intl.formatMessage(messages.title)}
     >
       <Stack gap={4}>
-        {license ? (
-          <>
-            <LicenseSelector license={license} level={level} />
-            <LicenseDetails license={license} details={details} level={level} />
-            <LicenseDisplay
-              license={license}
-              details={details}
-              licenseDescription={licenseDescription}
-            />
-          </>
-        ) : null }
-        {!licenseType ? (
-          <>
-            <div className="border-primary-100 border-bottom my-2" />
-            <Button
-              className="text-primary-500 font-weight-bold justify-content-start pl-0"
-              size="sm"
-              iconBefore={Add}
-              variant="link"
-              onClick={() => updateField({ licenseType: 'select', licenseDetails: {} })}
-            >
-              <FormattedMessage {...messages.addLicenseButtonLabel} />
-            </Button>
-          </>
-        ) : null }
+        {license ?
+          (
+            <>
+              <LicenseSelector license={license} level={level} />
+              <LicenseDetails license={license} details={details} level={level} />
+              <LicenseDisplay
+                license={license}
+                details={details}
+                licenseDescription={licenseDescription}
+              />
+            </>
+          ) :
+          null}
+        {!licenseType ?
+          (
+            <>
+              <div className="border-primary-100 border-bottom my-2" />
+              <Button
+                className="text-primary-500 font-weight-bold justify-content-start pl-0"
+                size="sm"
+                iconBefore={Add}
+                variant="link"
+                onClick={() => updateField({ licenseType: 'select', licenseDetails: {} })}
+              >
+                <FormattedMessage {...messages.addLicenseButtonLabel} />
+              </Button>
+            </>
+          ) :
+          null}
       </Stack>
     </CollapsibleFormWidget>
   );

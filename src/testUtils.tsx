@@ -113,9 +113,7 @@ const RouterAndRoute: React.FC<RouteOptions> = ({
       </MemoryRouter>
     );
   }
-  return (
-    <MemoryRouter {...routerProps}>{children}</MemoryRouter>
-  );
+  return <MemoryRouter {...routerProps}>{children}</MemoryRouter>;
 };
 
 function makeWrapper({ extraWrapper, ...routeArgs }: WrapperOptions & RouteOptions = {}) {
@@ -158,8 +156,8 @@ const defaultUser = {
  * Returns the new `axiosMock` in case you need to mock out axios requests.
  */
 export function initializeMocks({ user = defaultUser, initialState = undefined }: {
-  user?: { userId: number, username: string },
-  initialState?: Partial<DeprecatedReduxState>,
+  user?: { userId: number; username: string; };
+  initialState?: Partial<DeprecatedReduxState>;
 } = {}) {
   initializeMockApp({
     authenticatedUser: user,
@@ -202,6 +200,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
     reduxStore,
     axiosMock,
     mockShowToast: mockToastContext.showToast,
+    mockCloseToast: mockToastContext.closeToast,
     mockToastAction: mockToastContext.toastAction,
     queryClient,
     validateUserPermissionsMock,
@@ -212,7 +211,7 @@ export * from '@testing-library/react';
 export { customRender as render, makeWrapper };
 
 /** Simulate a real Axios error (such as we'd see in response to a 404) */
-export function createAxiosError({ code, message, path }: { code: number, message: string, path: string }) {
+export function createAxiosError({ code, message, path }: { code: number; message: string; path: string; }) {
   const request = { path };
   const config = { headers: new AxiosHeaders() };
   const error = new AxiosError(
@@ -248,6 +247,8 @@ const getInnerText = (element: Element | null): string => {
 export const matchInnerText = (
   nodeName: string,
   textToMatch: string,
-) => (_: string, element: Element | null) => !!element
-    && element.nodeName === nodeName
-    && getInnerText(element) === textToMatch;
+) =>
+(_: string, element: Element | null) =>
+  !!element
+  && element.nodeName === nodeName
+  && getInnerText(element) === textToMatch;

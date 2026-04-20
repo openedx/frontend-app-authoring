@@ -9,7 +9,8 @@ const ContentTagsDrawerSheet = ({ id, onClose, showSheet }) => {
   const [blockingSheet, setBlockingSheet] = useState(false);
 
   const context = useMemo(() => ({
-    blockingSheet, setBlockingSheet,
+    blockingSheet,
+    setBlockingSheet,
   }), [blockingSheet, setBlockingSheet]);
 
   // ContentTagsDrawerSheet is only used when editing Courses/Course Units,

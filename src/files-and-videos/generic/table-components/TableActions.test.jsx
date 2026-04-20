@@ -57,7 +57,9 @@ describe('TableActions', () => {
 
     expect(screen.getByRole('button', { name: messages.sortButtonLabel.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.actionsButtonLabel.defaultMessage })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: messages.addFilesButtonLabel.defaultMessage.replace('{fileType}', 'video') })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: messages.addFilesButtonLabel.defaultMessage.replace('{fileType}', 'video') }),
+    ).toBeInTheDocument();
   });
 
   test('disables bulk and delete actions if no rows selected', () => {
@@ -90,7 +92,9 @@ describe('TableActions', () => {
     const mockClear = jest.fn();
 
     renderWithContext({ fileInputControl: { click: mockClick } }, {}, mockClear);
-    fireEvent.click(screen.getByRole('button', { name: messages.addFilesButtonLabel.defaultMessage.replace('{fileType}', 'video') }));
+    fireEvent.click(
+      screen.getByRole('button', { name: messages.addFilesButtonLabel.defaultMessage.replace('{fileType}', 'video') }),
+    );
     expect(mockClick).toHaveBeenCalled();
   });
 
@@ -130,6 +134,9 @@ describe('TableActions', () => {
     renderWithContext({ encodingsDownloadUrl });
 
     fireEvent.click(screen.getByRole('button', { name: messages.actionsButtonLabel.defaultMessage }));
-    expect(screen.getByRole('link', { name: messages.downloadEncodingsTitle.defaultMessage })).toHaveAttribute('href', expect.stringContaining(encodingsDownloadUrl));
+    expect(screen.getByRole('link', { name: messages.downloadEncodingsTitle.defaultMessage })).toHaveAttribute(
+      'href',
+      expect.stringContaining(encodingsDownloadUrl),
+    );
   });
 });

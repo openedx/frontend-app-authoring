@@ -25,36 +25,39 @@ const SidebarBody = ({
   } = useSelector(getCourseUnitData);
 
   return (
-    <Card.Body className={classNames('course-unit-sidebar-date', {
-      'is-stuff-only': visibleToStaffOnly,
-    })}
+    <Card.Body
+      className={classNames('course-unit-sidebar-date', {
+        'is-stuff-only': visibleToStaffOnly,
+      })}
     >
       <Stack>
-        {displayUnitLocation ? (
-          <span>
-            <h5 className="course-unit-sidebar-date-stage m-0">
-              {intl.formatMessage(messages.unitLocationTitle)}
-            </h5>
-            <p className="m-0 font-weight-bold">
-              {locationId}
-            </p>
-          </span>
-        ) : (
-          <>
+        {displayUnitLocation ?
+          (
             <span>
-              {getPublishInfo(intl, hasChanges, editedBy, editedOn, publishedBy, publishedOn)}
-            </span>
-            <span className="mt-3.5">
               <h5 className="course-unit-sidebar-date-stage m-0">
-                {releaseLabel}
+                {intl.formatMessage(messages.unitLocationTitle)}
               </h5>
-              <ReleaseInfoComponent />
+              <p className="m-0 font-weight-bold">
+                {locationId}
+              </p>
             </span>
-            <p className="mt-3.5 mb-0">
-              {intl.formatMessage(messages.sidebarBodyNote)}
-            </p>
-          </>
-        )}
+          ) :
+          (
+            <>
+              <span>
+                {getPublishInfo(intl, hasChanges, editedBy, editedOn, publishedBy, publishedOn)}
+              </span>
+              <span className="mt-3.5">
+                <h5 className="course-unit-sidebar-date-stage m-0">
+                  {releaseLabel}
+                </h5>
+                <ReleaseInfoComponent />
+              </span>
+              <p className="mt-3.5 mb-0">
+                {intl.formatMessage(messages.sidebarBodyNote)}
+              </p>
+            </>
+          )}
       </Stack>
     </Card.Body>
   );

@@ -35,22 +35,21 @@ const CourseAuthoringPage = ({ children }: Props) => {
   const isEditor = pathname.includes('/editor');
 
   if (courseDetailStatus === RequestStatus.NOT_FOUND && !isEditor) {
-    return (
-      <NotFoundAlert />
-    );
+    return <NotFoundAlert />;
   }
   if (courseAppsApiStatus === RequestStatus.DENIED) {
-    return (
-      <PermissionDeniedAlert />
-    );
+    return <PermissionDeniedAlert />;
   }
   return (
     <div>
-      {/* While V2 Editors are temporarily served from their own pages
+      {
+        /* While V2 Editors are temporarily served from their own pages
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
-      This functionality will be removed in TNL-9591 */}
-      {inProgress ? !isEditor && <Loading />
+      This functionality will be removed in TNL-9591 */
+      }
+      {inProgress ?
+        !isEditor && <Loading />
         : (!isEditor && (
           <Header
             number={courseNumber}
@@ -61,8 +60,7 @@ const CourseAuthoringPage = ({ children }: Props) => {
               size: 'fluid',
             }}
           />
-        )
-        )}
+        ))}
       {children}
       {!inProgress && !isEditor && <StudioFooterSlot />}
     </div>

@@ -12,8 +12,8 @@ import FormikControl from '../../generic/FormikControl';
 import { EXAMPLE_USER_EMAIL } from './constants';
 
 const AddLibraryTeamMember = ({ onSubmit, onCancel }: {
-  onSubmit: ({ email } : { email: string }) => void,
-  onCancel: () => void,
+  onSubmit: ({ email }: { email: string; }) => void;
+  onCancel: () => void;
 }) => {
   const intl = useIntl();
 
@@ -22,11 +22,9 @@ const AddLibraryTeamMember = ({ onSubmit, onCancel }: {
       <Formik
         initialValues={{ email: '' }}
         onSubmit={onSubmit}
-        validationSchema={
-          Yup.object().shape({
-            email: Yup.string().required('Email required').email('Invalid email'),
-          })
-        }
+        validationSchema={Yup.object().shape({
+          email: Yup.string().required('Email required').email('Invalid email'),
+        })}
         validateOnBlur
       >
         {({ handleSubmit, values }) => (

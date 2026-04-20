@@ -30,7 +30,7 @@ const Banner = ({
   const { libraryId } = useLibraryContext();
   const { data: migrationInfoData, isPending: migrationInfoIsPending } = useMigrationInfo(
     [courseId!],
-    (courseId !== undefined && libraryId !== undefined),
+    courseId !== undefined && libraryId !== undefined,
   );
 
   const currentMigrationInfo = useMemo(() => {
@@ -53,7 +53,9 @@ const Banner = ({
   if (isBlockDataPending || migrationInfoIsPending) {
     return (
       <Alert>
-        <Alert.Heading><FormattedMessage {...messages.importCourseInProgressStatusTitle} /></Alert.Heading>
+        <Alert.Heading>
+          <FormattedMessage {...messages.importCourseInProgressStatusTitle} />
+        </Alert.Heading>
         <p>
           <FormattedMessage
             {...messages.importCourseInProgressStatusBody}
@@ -86,7 +88,9 @@ const Banner = ({
     return (
       <>
         <Alert variant="warning" icon={Warning}>
-          <Alert.Heading><FormattedMessage {...messages.importCourseAnalysisCompleteReimportTitle} /></Alert.Heading>
+          <Alert.Heading>
+            <FormattedMessage {...messages.importCourseAnalysisCompleteReimportTitle} />
+          </Alert.Heading>
         </Alert>
         <p>
           <FormattedMessage
@@ -104,7 +108,9 @@ const Banner = ({
   if (unsupportedBlockPercentage > 0) {
     return (
       <Alert variant="warning" icon={Warning}>
-        <Alert.Heading><FormattedMessage {...messages.importCourseAnalysisCompleteSomeContentTitle} /></Alert.Heading>
+        <Alert.Heading>
+          <FormattedMessage {...messages.importCourseAnalysisCompleteSomeContentTitle} />
+        </Alert.Heading>
         <p>
           <FormattedMessage
             {...messages.importCourseAnalysisCompleteSomeContentBody}
@@ -120,7 +126,9 @@ const Banner = ({
 
   return (
     <Alert variant="success" icon={CheckCircle}>
-      <Alert.Heading><FormattedMessage {...messages.importCourseAnalysisCompleteAllContentTitle} /></Alert.Heading>
+      <Alert.Heading>
+        <FormattedMessage {...messages.importCourseAnalysisCompleteAllContentTitle} />
+      </Alert.Heading>
       <p>
         <FormattedMessage
           {...messages.importCourseAnalysisCompleteAllContentBody}
@@ -133,7 +141,7 @@ const Banner = ({
   );
 };
 
-export const ReviewImportDetails = ({ courseId }: { courseId: string }) => {
+export const ReviewImportDetails = ({ courseId }: { courseId: string; }) => {
   const { libraryId } = useLibraryContext();
 
   const {
@@ -157,7 +165,9 @@ export const ReviewImportDetails = ({ courseId }: { courseId: string }) => {
       />
       {!limitIsExceeded && (
         <>
-          <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
+          <h4>
+            <FormattedMessage {...messages.importCourseAnalysisSummary} />
+          </h4>
           <SummaryCard
             totalBlocks={totalBlocks}
             totalComponents={totalComponents}
@@ -169,12 +179,14 @@ export const ReviewImportDetails = ({ courseId }: { courseId: string }) => {
           />
           {!isPreviewMigrationPending && unssuportedBlocks > 0
             && (
-            <>
-              <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
-              <Stack className="align-items-center" gap={3}>
-                <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
-              </Stack>
-            </>
+              <>
+                <h4>
+                  <FormattedMessage {...messages.importCourseAnalysisDetails} />
+                </h4>
+                <Stack className="align-items-center" gap={3}>
+                  <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
+                </Stack>
+              </>
             )}
         </>
       )}

@@ -1,2 +1,2 @@
-export { PublishedChip } from './PublishedChip';
 export { PublishDraftButton } from './PublishDraftButton';
+export { PublishedChip } from './PublishedChip';

@@ -1,6 +1,8 @@
 import {
   initializeMocks,
-  render, waitFor, within,
+  render,
+  waitFor,
+  within,
 } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 
@@ -21,16 +23,17 @@ const initialFormValuesMock = getTextbookFormInitialValues();
 const onSubmitMock = jest.fn();
 const onSavingStatus = jest.fn();
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider>
-    <TextbookForm
-      closeTextbookForm={closeTextbookFormMock}
-      initialFormValues={initialFormValuesMock}
-      onSubmit={onSubmitMock}
-      onSavingStatus={onSavingStatus}
-    />
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider>
+      <TextbookForm
+        closeTextbookForm={closeTextbookFormMock}
+        initialFormValues={initialFormValuesMock}
+        onSubmit={onSubmitMock}
+        onSavingStatus={onSavingStatus}
+      />
+    </CourseAuthoringProvider>,
+  );
 
 describe('<TextbookForm />', () => {
   beforeEach(async () => {
@@ -42,7 +45,10 @@ describe('<TextbookForm />', () => {
 
   it('renders TextbooksForm component correctly', async () => {
     const {
-      getByText, getByRole, getByPlaceholderText, getByTestId,
+      getByText,
+      getByRole,
+      getByPlaceholderText,
+      getByTestId,
     } = renderComponent();
 
     await waitFor(() => {

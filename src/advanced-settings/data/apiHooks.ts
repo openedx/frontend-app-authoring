@@ -16,9 +16,11 @@ export const advancedSettingsQueryKeys = {
 };
 
 const sortSettingsByDisplayName = (settings: Record<string, any>): Record<string, any> => (
-  Object.fromEntries(Object.entries(settings).sort(
-    ([, v1], [, v2]) => v1.displayName.localeCompare(v2.displayName),
-  ))
+  Object.fromEntries(
+    Object.entries(settings).sort(
+      ([, v1], [, v2]) => v1.displayName.localeCompare(v2.displayName),
+    ),
+  )
 );
 
 /**

@@ -9,7 +9,7 @@ import messages from './messages';
  * @returns {string} - The determined XBlock type (e.g., 'section', 'subsection', 'unit').
  */
 export const getXBlockType = (category: string): string => {
-  const categoryMap: { [key: string]: string } = {
+  const categoryMap: { [key: string]: string; } = {
     [CATEGORIES.KEYS.chapter]: CATEGORIES.KEYS.section,
     [CATEGORIES.KEYS.sequential]: CATEGORIES.KEYS.subsection,
     [CATEGORIES.KEYS.vertical]: CATEGORIES.KEYS.unit,
@@ -74,17 +74,17 @@ export const isValidCategory = (
 
   if (
     sourceParentHasChildren
-      && sourceParentCategory
-      && !(BASIC_BLOCK_TYPES as readonly string[]).includes(sourceParentCategory)
+    && sourceParentCategory
+    && !(BASIC_BLOCK_TYPES as readonly string[]).includes(sourceParentCategory)
   ) {
     sourceParentCategory = CATEGORIES.KEYS.vertical;
   }
 
   if (
     targetParentHasChildren
-      && targetParentCategory
-      && !(BASIC_BLOCK_TYPES as readonly string[]).includes(targetParentCategory)
-      && targetParentCategory !== CATEGORIES.KEYS.split_test
+    && targetParentCategory
+    && !(BASIC_BLOCK_TYPES as readonly string[]).includes(targetParentCategory)
+    && targetParentCategory !== CATEGORIES.KEYS.split_test
   ) {
     targetParentCategory = CATEGORIES.KEYS.vertical;
   }

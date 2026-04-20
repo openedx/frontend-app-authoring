@@ -45,7 +45,7 @@ const renderArgs = {
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
       <SidebarProvider>
-        { children }
+        {children}
       </SidebarProvider>
     </LibraryProvider>
   ),
@@ -71,10 +71,13 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
     it(`<${context}> should show a confirmation prompt the card with title and description`, async () => {
       const mockCancel = jest.fn();
       const { containerId } = getContainerDetails(context);
-      render(<ContainerDeleter
-        containerId={containerId}
-        close={mockCancel}
-      />, renderArgs);
+      render(
+        <ContainerDeleter
+          containerId={containerId}
+          close={mockCancel}
+        />,
+        renderArgs,
+      );
 
       const modal = await screen.findByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
       expect(modal).toBeVisible();
@@ -137,8 +140,11 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
       const modal = await screen.findByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
       expect(modal).toBeVisible();
 
-      const textMatch = new RegExp(`By deleting this ${context}, you will also be deleting it from ${parent} 1 in this library.`);
-      expect((await screen.findAllByText((_, element) => textMatch.test(element?.textContent || ''))).length).toBeGreaterThan(0);
+      const textMatch = new RegExp(
+        `By deleting this ${context}, you will also be deleting it from ${parent} 1 in this library.`,
+      );
+      expect((await screen.findAllByText((_, element) => textMatch.test(element?.textContent || ''))).length)
+        .toBeGreaterThan(0);
     });
 
     it(`<${context}> should show parents message if parents is set with multiple parents`, async () => {
@@ -165,8 +171,12 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
       const modal = await screen.findByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
       expect(modal).toBeVisible();
 
-      const textMatch = new RegExp(`By deleting this ${context}, you will also be deleting it from 2 ${parent}s in this library.`, 'i');
-      expect((await screen.findAllByText((_, element) => textMatch.test(element?.textContent || ''))).length).toBeGreaterThan(0);
+      const textMatch = new RegExp(
+        `By deleting this ${context}, you will also be deleting it from 2 ${parent}s in this library.`,
+        'i',
+      );
+      expect((await screen.findAllByText((_, element) => textMatch.test(element?.textContent || ''))).length)
+        .toBeGreaterThan(0);
     });
   });
 });

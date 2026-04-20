@@ -122,13 +122,13 @@ describe('<LibraryUnitPage />', () => {
 
   it('shows empty unit', async () => {
     renderLibraryUnitPage(mockGetContainerMetadata.unitIdEmpty);
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
     expect(await screen.findByText('This unit is empty')).toBeInTheDocument();
   });
 
   it('can rename unit', async () => {
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
 
     const editUnitTitleButton = screen.getAllByRole(
       'button',
@@ -159,7 +159,7 @@ describe('<LibraryUnitPage />', () => {
 
   it('show error if renaming unit fails', async () => {
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
 
     const editUnitTitleButton = screen.getAllByRole(
       'button',
@@ -213,7 +213,7 @@ describe('<LibraryUnitPage />', () => {
   it('should open and close component sidebar on component selection', async () => {
     const user = userEvent.setup();
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
     // No Preview tab shown in sidebar
     expect(screen.queryByText('Preview')).not.toBeInTheDocument();
 
@@ -238,7 +238,7 @@ describe('<LibraryUnitPage />', () => {
     const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(200);
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
 
     // Wait loading of the component
     await screen.findByText('text block 0');
@@ -273,7 +273,7 @@ describe('<LibraryUnitPage />', () => {
     const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(400);
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
+    expect(await screen.findAllByText('Test Unit')).toHaveLength(2); // Header + Sidebar
 
     // Wait loading of the component
     await screen.findByText('text block 0');

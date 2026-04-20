@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import { Col, Form } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
-import { actions, selectors } from '../../../../../../data/redux';
-import { keyStore } from '../../../../../../utils';
-import CollapsibleFormWidget from '../CollapsibleFormWidget';
+import { actions, selectors } from '@src/editors/data/redux';
+import { keyStore } from '@src/editors/utils';
+import CollapsibleFormWidget from '@src/editors/sharedComponents/CollapsibleFormWidget/CollapsibleFormWidget';
 import * as hooks from './hooks';
 import messages from '../messages';
 

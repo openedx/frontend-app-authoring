@@ -2,7 +2,10 @@ import userEvent from '@testing-library/user-event';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { ContainerType } from '@src/generic/key-utils';
 import {
-  initializeMocks, render, screen, waitFor,
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
 } from '@src/testUtils';
 import { OutlineFlow, OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
@@ -23,6 +26,11 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId: 5,
     courseUsageKey,
     getUnitUrl: (id: string) => `/some/${id}`,
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
     handleAddAndOpenUnit,
     handleAddBlock,
     setCurrentSelection,
@@ -58,12 +66,15 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
     it('renders and behaves correctly', async () => {
       const newClickHandler = jest.fn();
       const useFromLibClickHandler = jest.fn();
-      render(<OutlineAddChildButtons
-        handleNewButtonClick={newClickHandler}
-        handleUseFromLibraryClick={useFromLibClickHandler}
-        childType={containerType}
-        parentLocator=""
-      />, { extraWrapper: OutlineSidebarProvider });
+      render(
+        <OutlineAddChildButtons
+          handleNewButtonClick={newClickHandler}
+          handleUseFromLibraryClick={useFromLibClickHandler}
+          childType={containerType}
+          parentLocator=""
+        />,
+        { extraWrapper: OutlineSidebarProvider },
+      );
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
       expect(newBtn).toBeInTheDocument();
@@ -78,38 +89,47 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
     it('calls appropriate new handlers', async () => {
       const parentLocator = `parent-of-${containerType}`;
       const grandParentLocator = `grandparent-of-${containerType}`;
-      render(<OutlineAddChildButtons
-        childType={containerType}
-        parentLocator={parentLocator}
-        grandParentLocator={grandParentLocator}
-      />, { extraWrapper: OutlineSidebarProvider });
+      render(
+        <OutlineAddChildButtons
+          childType={containerType}
+          parentLocator={parentLocator}
+          grandParentLocator={grandParentLocator}
+        />,
+        { extraWrapper: OutlineSidebarProvider },
+      );
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
       expect(newBtn).toBeInTheDocument();
       await userEvent.click(newBtn);
       switch (containerType) {
         case ContainerType.Section:
-          await waitFor(() => expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith({
-            type: ContainerType.Chapter,
-            parentLocator: courseUsageKey,
-            displayName: 'Section',
-          }));
+          await waitFor(() =>
+            expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith({
+              type: ContainerType.Chapter,
+              parentLocator: courseUsageKey,
+              displayName: 'Section',
+            })
+          );
           break;
         case ContainerType.Subsection:
-          await waitFor(() => expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith({
-            type: ContainerType.Sequential,
-            parentLocator,
-            displayName: 'Subsection',
-            sectionId: parentLocator,
-          }));
+          await waitFor(() =>
+            expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith({
+              type: ContainerType.Sequential,
+              parentLocator,
+              displayName: 'Subsection',
+              sectionId: parentLocator,
+            })
+          );
           break;
         case ContainerType.Unit:
-          await waitFor(() => expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
-            type: ContainerType.Vertical,
-            parentLocator,
-            displayName: 'Unit',
-            sectionId: grandParentLocator,
-          }));
+          await waitFor(() =>
+            expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
+              type: ContainerType.Vertical,
+              parentLocator,
+              displayName: 'Unit',
+              sectionId: grandParentLocator,
+            })
+          );
           break;
         default:
           throw new Error(`Unknown container type: ${containerType}`);
@@ -118,17 +138,22 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
 
     it('calls appropriate use handlers', async () => {
       const parentLocator = `parent-of-${containerType}`;
-      render(<OutlineAddChildButtons
-        childType={containerType}
-        parentLocator={parentLocator}
-      />, { extraWrapper: OutlineSidebarProvider });
+      render(
+        <OutlineAddChildButtons
+          childType={containerType}
+          parentLocator={parentLocator}
+        />,
+        { extraWrapper: OutlineSidebarProvider },
+      );
       const useBtn = await screen.findByRole('button', { name: `Use ${containerType} from library` });
       expect(useBtn).toBeInTheDocument();
       await userEvent.click(useBtn);
-      await waitFor(() => expect(startCurrentFlow).toHaveBeenCalledWith({
-        flowType: containerType,
-        parentLocator,
-      }));
+      await waitFor(() =>
+        expect(startCurrentFlow).toHaveBeenCalledWith({
+          flowType: containerType,
+          parentLocator,
+        })
+      );
     });
 
     it('shows appropriate static placeholder', async () => {
@@ -137,14 +162,19 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
         flowType: containerType,
         parentLocator,
       };
-      render(<OutlineAddChildButtons
-        childType={containerType}
-        parentLocator={parentLocator}
-      />, { extraWrapper: OutlineSidebarProvider });
+      render(
+        <OutlineAddChildButtons
+          childType={containerType}
+          parentLocator={parentLocator}
+        />,
+        { extraWrapper: OutlineSidebarProvider },
+      );
       // should show placeholder when use button is clicked
-      expect(await screen.findByRole('heading', {
-        name: new RegExp(`Adding Library ${containerType}`, 'i'),
-      })).toBeInTheDocument();
+      expect(
+        await screen.findByRole('heading', {
+          name: new RegExp(`Adding Library ${containerType}`, 'i'),
+        }),
+      ).toBeInTheDocument();
     });
   });
 });

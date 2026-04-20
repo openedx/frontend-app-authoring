@@ -1,7 +1,14 @@
 import { addModel, addModels } from '../../../generic/model-store';
 import { getDiscussionsProviders, getDiscussionsSettings, postDiscussionsSettings } from './api';
 import {
-  DENIED, FAILED, loadApps, LOADING, SAVED, SAVING, updateSaveStatus, updateStatus,
+  DENIED,
+  FAILED,
+  loadApps,
+  LOADING,
+  SAVED,
+  SAVING,
+  updateSaveStatus,
+  updateStatus,
 } from './slice';
 
 function updateDiscussionSettingsState({

@@ -25,7 +25,7 @@ const TagsSidebarHeader = () => {
       <h3 className="course-unit-sidebar-header-title m-0">
         {intl.formatMessage(messages.tagsSidebarTitle)}
       </h3>
-      { isContentTagsCountLoaded
+      {isContentTagsCountLoaded
         && <TagCount count={contentTagsCount} />}
     </Stack>
   );

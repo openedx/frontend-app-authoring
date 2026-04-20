@@ -15,7 +15,7 @@ const LearningAssistantSettings = ({ onClose }) => {
   const intl = useIntl();
 
   // We need to render more than one link, so we use the bodyChildren prop.
-  const bodyChildren = (
+  const bodyChildren =
     appInfo?.documentationLinks?.learnMoreOpenaiDataPrivacy && appInfo?.documentationLinks?.learnMoreOpenai
       ? (
         <div className="d-flex flex-column">
@@ -41,8 +41,7 @@ const LearningAssistantSettings = ({ onClose }) => {
           )}
         </div>
       )
-      : null
-  );
+      : null;
 
   return (
     <AppSettingsModal

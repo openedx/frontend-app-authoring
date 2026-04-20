@@ -5,7 +5,7 @@ import { HookType, useDynamicHookShim } from './hooks';
 import messages from './messages';
 
 // Component that actually calls the loaded hook
-const NotificationHookConsumer = ({ hook }: { hook: () => HookType }) => {
+const NotificationHookConsumer = ({ hook }: { hook: () => HookType; }) => {
   // The hook is now called on **every** render of this component
   const { notificationAppData } = hook();
 

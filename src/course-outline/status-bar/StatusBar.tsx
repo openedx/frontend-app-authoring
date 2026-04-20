@@ -3,7 +3,10 @@ import { FormattedDate, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Badge, Icon, Stack } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 import {
-  Cached, ChecklistRtl, Description, Event,
+  Cached,
+  ChecklistRtl,
+  Description,
+  Event,
 } from '@openedx/paragon/icons';
 
 import type { ChecklistType, CourseOutlineStatusBar } from '@src/course-outline/data/types';
@@ -13,7 +16,7 @@ import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
 
-const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Moment }) => {
+const CourseBadge = ({ startDate, endDate }: { startDate: Moment; endDate: Moment; }) => {
   const now = moment().utc();
   switch (true) {
     case !startDate.isValid():
@@ -42,7 +45,7 @@ const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Momen
   }
 };
 
-const UnpublishedBadgeStatus = ({ courseId }: { courseId: string }) => {
+const UnpublishedBadgeStatus = ({ courseId }: { courseId: string; }) => {
   const { data } = useCourseDetails(courseId);
   if (!data?.hasChanges) {
     return null;
@@ -60,7 +63,7 @@ const UnpublishedBadgeStatus = ({ courseId }: { courseId: string }) => {
   );
 };
 
-const LibraryUpdates = ({ courseId }: { courseId: string }) => {
+const LibraryUpdates = ({ courseId }: { courseId: string; }) => {
   const { data } = useEntityLinksSummaryByDownstreamContext(courseId);
   const outOfSyncCount = data?.reduce((count, lib) => count + (lib.readyToSyncCount || 0), 0);
   const url = `/course/${courseId}/libraries?tab=review`;
@@ -86,7 +89,10 @@ const LibraryUpdates = ({ courseId }: { courseId: string }) => {
 };
 
 const CourseDates = ({
-  startDate, endDate, startDateRaw, datesLink,
+  startDate,
+  endDate,
+  startDateRaw,
+  datesLink,
 }: {
   startDate: Moment;
   endDate: Moment;

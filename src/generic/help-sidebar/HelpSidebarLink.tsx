@@ -1,10 +1,21 @@
+import React from 'react';
+
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { Hyperlink } from '@openedx/paragon';
 
+interface HelpSidebarLinkProps {
+  as?: React.ElementType;
+  isNewPage?: boolean;
+  pathToPage: string;
+  title: string;
+}
+
 const HelpSidebarLink = ({
-  as, pathToPage, title, isNewPage,
-}) => {
+  as = 'li',
+  isNewPage = true,
+  pathToPage,
+  title,
+}: HelpSidebarLinkProps) => {
   const TagElement = as;
   if (isNewPage) {
     return (
@@ -27,18 +38,6 @@ const HelpSidebarLink = ({
       </Hyperlink>
     </TagElement>
   );
-};
-
-HelpSidebarLink.propTypes = {
-  isNewPage: PropTypes.bool,
-  pathToPage: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  as: PropTypes.string,
-};
-
-HelpSidebarLink.defaultProps = {
-  as: 'li',
-  isNewPage: true,
 };
 
 export default HelpSidebarLink;

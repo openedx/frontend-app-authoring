@@ -8,12 +8,12 @@ import messages from './info-modal/messages';
  * @param {string} errorEmail - email from wrong request
  * @param {string} courseName - current course name
  * @returns {{
-   * title: string,
-   * message: string,
-   * variant: string,
-   * closeButtonText: string,
-   * submitButtonText: string,
-   * closeButtonVariant: string
+ * title: string,
+ * message: string,
+ * variant: string,
+ * closeButtonText: string,
+ * submitButtonText: string,
+ * closeButtonVariant: string
  * }}
  */
 

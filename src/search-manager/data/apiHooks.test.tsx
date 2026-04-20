@@ -5,7 +5,8 @@ import fetchMock from 'fetch-mock-jest';
 import mockResult from './__mocks__/block-types.json';
 import { mockContentSearchConfig, mockGetContentHits } from './api.mock';
 import {
-  useGetBlockTypes, useGetContentHits,
+  useGetBlockTypes,
+  useGetContentHits,
 } from './apiHooks';
 
 mockContentSearchConfig.applyMock();

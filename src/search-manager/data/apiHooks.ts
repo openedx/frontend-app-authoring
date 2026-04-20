@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  keepPreviousData, skipToken, useInfiniteQuery, useQuery,
+  keepPreviousData,
+  skipToken,
+  useInfiniteQuery,
+  useQuery,
 } from '@tanstack/react-query';
 import { type Filter, MeiliSearch } from 'meilisearch';
 
@@ -19,11 +22,10 @@ import {
 /**
  * Load the Meilisearch connection details from the CMS: the URL to use, the index name, and an API key specific
  * to the current user that allows it to search all content he have permission to view.
- *
  */
 export const useContentSearchConnection = (): {
-  client?: MeiliSearch,
-  indexName?: string,
+  client?: MeiliSearch;
+  indexName?: string;
   hasConnectionError: boolean;
 } => {
   const { data: connectionDetails, isError: hasConnectionError } = useQuery({
@@ -67,22 +69,20 @@ export const buildSearchQueryKey = ({
   publishStatusFilter: PublishStatus[];
   tagsFilter: string[];
   sort: SearchSortOption[];
-}) => (
-  [
-    'content_search',
-    'results',
-    client?.config.apiKey,
-    client?.config.host,
-    indexName,
-    extraFilter,
-    searchKeywords,
-    blockTypesFilter,
-    problemTypesFilter,
-    publishStatusFilter,
-    tagsFilter,
-    sort,
-  ]
-);
+}) => [
+  'content_search',
+  'results',
+  client?.config.apiKey,
+  client?.config.host,
+  indexName,
+  extraFilter,
+  searchKeywords,
+  blockTypesFilter,
+  problemTypesFilter,
+  publishStatusFilter,
+  tagsFilter,
+  sort,
+];
 
 /**
  * Get the results of a search
@@ -281,9 +281,10 @@ export const useTagFilterOptions = (args: {
     }
     // Combine these two queries to filter the list of tags based on the keyword search.
     const tags = mainQuery.data.tags.filter(
-      ({ tagPath }) => tagKeywordSearchData.data.matches.some(
-        (matchingTag) => matchingTag.tagPath === tagPath || matchingTag.tagPath.startsWith(tagPath + TAG_SEP),
-      ),
+      ({ tagPath }) =>
+        tagKeywordSearchData.data.matches.some(
+          (matchingTag) => matchingTag.tagPath === tagPath || matchingTag.tagPath.startsWith(tagPath + TAG_SEP),
+        ),
     );
     return {
       tags,
@@ -328,13 +329,16 @@ export const useGetContentHits = (
       indexName,
       extraFilters,
     ],
-    queryFn: enabled ? () => fetchContentHits(
-      client!,
-      indexName!,
-      extraFilters,
-      limit,
-      attributesToRetrieve,
-    ) : skipToken,
+    queryFn: enabled ?
+      () =>
+        fetchContentHits(
+          client!,
+          indexName!,
+          extraFilters,
+          limit,
+          attributesToRetrieve,
+        ) :
+      skipToken,
     refetchOnMount,
   });
 };

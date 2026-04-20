@@ -42,7 +42,8 @@ const VideoThumbnail = ({
     }
   }
   const supportedFiles = videoImageSettings?.supportedFileFormats
-    ? Object.values(videoImageSettings.supportedFileFormats) : null;
+    ? Object.values(videoImageSettings.supportedFileFormats) :
+    null;
   const isUploaded = VIDEO_SUCCESS_STATUSES.includes(status);
   const isFailed = VIDEO_FAILURE_STATUSES.includes(status);
   const failedMessage = intl.formatMessage(messages.failedCheckboxLabel);
@@ -52,54 +53,58 @@ const VideoThumbnail = ({
   return (
     <div className="video-thumbnail row justify-content-center align-itmes-center">
       {allowThumbnailUpload && isUploaded && <div className="thumbnail-overlay" />}
-      {showThumbnail && !thumbnailError && pageLoadStatus === RequestStatus.SUCCESSFUL ? (
-        <>
-          <div className="border rounded">
-            { thumbnail ? (
-              <Image
-                style={imageSize}
-                className="m-1 bg-light-300"
-                src={thumbnail}
-                alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
-                onError={() => setThumbnailError(true)}
-              />
-            ) : (
-              <div
-                className="row justify-content-center align-items-center m-0"
-                style={imageSize}
+      {showThumbnail && !thumbnailError && pageLoadStatus === RequestStatus.SUCCESSFUL ?
+        (
+          <>
+            <div className="border rounded">
+              {thumbnail ?
+                (
+                  <Image
+                    style={imageSize}
+                    className="m-1 bg-light-300"
+                    src={thumbnail}
+                    alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
+                    onError={() => setThumbnailError(true)}
+                  />
+                ) :
+                (
+                  <div
+                    className="row justify-content-center align-items-center m-0"
+                    style={imageSize}
+                  >
+                    <Icon src={VideoFile} style={{ height: '48px', width: '48px' }} />
+                  </div>
+                )}
+            </div>
+            <div className="add-thumbnail" data-testid={`video-thumbnail-${id}`}>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={fileInputControl.click}
+                tabIndex={0}
               >
-                <Icon src={VideoFile} style={{ height: '48px', width: '48px' }} />
-              </div>
-            )}
-          </div>
-          <div className="add-thumbnail" data-testid={`video-thumbnail-${id}`}>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={fileInputControl.click}
-              tabIndex={0}
+                {addThumbnailMessage}
+              </Button>
+            </div>
+          </>
+        ) :
+        (
+          <>
+            <div
+              className="row justify-content-center align-items-center m-0 border rounded"
+              style={imageSize}
             >
-              {addThumbnailMessage}
-            </Button>
-          </div>
-        </>
-      ) : (
-        <>
-          <div
-            className="row justify-content-center align-items-center m-0 border rounded"
-            style={imageSize}
-          >
-            <Icon src={VideoFile} style={{ height: '48px', width: '48px' }} />
-          </div>
-          <div className="status-badge">
-            {!isUploaded && (
-              <Badge variant="light">
-                {!isFailed ? status : failedMessage}
-              </Badge>
-            )}
-          </div>
-        </>
-      )}
+              <Icon src={VideoFile} style={{ height: '48px', width: '48px' }} />
+            </div>
+            <div className="status-badge">
+              {!isUploaded && (
+                <Badge variant="light">
+                  {!isFailed ? status : failedMessage}
+                </Badge>
+              )}
+            </div>
+          </>
+        )}
       {allowThumbnailUpload && (
         <FileInput
           key="video-thumbnail-upload"

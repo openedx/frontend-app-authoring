@@ -94,13 +94,13 @@ export const LibrarySectionPage = () => {
             <SubHeader
               title={<SubHeaderTitle title={<ContainerEditableTitle containerId={containerId} />} />}
               breadcrumbs={breadcrumbs}
-              headerActions={(
+              headerActions={
                 <HeaderActions
                   containerKey={containerId}
                   infoBtnText={intl.formatMessage(sectionMessages.infoButtonText)}
                   addContentBtnText={intl.formatMessage(sectionMessages.newContentButton)}
                 />
-              )}
+              }
               hideBorder
             />
           </div>

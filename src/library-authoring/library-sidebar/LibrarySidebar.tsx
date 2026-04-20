@@ -11,7 +11,10 @@ import { AddContent, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { ContainerInfoHeader, ContainerInfo } from '../containers';
 import {
-  COMPONENT_INFO_TABS, SidebarActions, SidebarBodyItemId, useSidebarContext,
+  COMPONENT_INFO_TABS,
+  SidebarActions,
+  SidebarBodyItemId,
+  useSidebarContext,
 } from '../common/context/SidebarContext';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
@@ -64,7 +67,7 @@ const LibrarySidebar = () => {
     unknown: null,
   };
 
-  const buildBody = () : React.ReactNode => bodyComponentMap[sidebarItemInfo?.type || 'unknown'];
+  const buildBody = (): React.ReactNode => bodyComponentMap[sidebarItemInfo?.type || 'unknown'];
   const buildHeader = (): React.ReactNode => headerComponentMap[sidebarItemInfo?.type || 'unknown'];
 
   return (

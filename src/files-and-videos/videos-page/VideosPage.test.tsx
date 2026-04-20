@@ -274,7 +274,12 @@ describe('Videos page', () => {
             window.dispatchEvent(new Event('beforeunload'));
           });
           await waitFor(() => {
-            expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+            expect(setFailedSpy).toHaveBeenCalledWith(
+              courseId,
+              expect.any(String),
+              expect.any(String),
+              'upload_failed',
+            );
           });
           uploadSpy.mockRestore();
           setFailedSpy.mockRestore();
@@ -311,7 +316,12 @@ describe('Videos page', () => {
           });
           await waitFor(() => {
             const addStatus = store.getState().videos.addingStatus;
-            expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+            expect(setFailedSpy).toHaveBeenCalledWith(
+              courseId,
+              expect.any(String),
+              expect.any(String),
+              'upload_failed',
+            );
 
             expect(addStatus).toEqual(RequestStatus.FAILED);
 
@@ -703,10 +713,13 @@ describe('Videos page', () => {
         axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID3/usage`).reply(404);
         fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
         fireEvent.click(screen.getByText('Info'));
-        await executeThunk(getUsagePaths({
-          courseId,
-          video: { id: 'mOckID3', displayName: 'mOckID3' },
-        }), store.dispatch);
+        await executeThunk(
+          getUsagePaths({
+            courseId,
+            video: { id: 'mOckID3', displayName: 'mOckID3' },
+          }),
+          store.dispatch,
+        );
         await waitFor(() => {
           const { usageStatus } = store.getState().videos;
           expect(usageStatus).toEqual(RequestStatus.FAILED);
@@ -729,8 +742,11 @@ describe('Videos page', () => {
 
         axiosMock.onPut(`${getVideosUrl(courseId)}/download`).reply(404);
         fireEvent.click(downloadButton!);
-        // @ts-ignore
-        await executeThunk(fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2', downloadLink: 'test' } }]), store.dispatch);
+        await executeThunk(
+          // @ts-ignore
+          fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2', downloadLink: 'test' } }]),
+          store.dispatch,
+        );
 
         const updateStatus = store.getState().videos.updatingStatus;
         expect(updateStatus).toEqual(RequestStatus.FAILED);

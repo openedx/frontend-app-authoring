@@ -213,7 +213,11 @@ export const mockApiResponseWithPreviousRunLinks = {
                     externalForbiddenLinks: [],
                     previousRunLinks: [
                       { originalLink: 'https://example.com/old-course-run/content', isUpdated: false },
-                      { originalLink: 'https://example.com/old-course-run/content2', isUpdated: true, updatedLink: 'https://example.com/new-course-run/content2' },
+                      {
+                        originalLink: 'https://example.com/old-course-run/content2',
+                        isUpdated: true,
+                        updatedLink: 'https://example.com/new-course-run/content2',
+                      },
                     ],
                   },
                 ],
@@ -232,7 +236,11 @@ export const mockApiResponseWithPreviousRunLinks = {
         lockedLinks: [],
         externalForbiddenLinks: [],
         previousRunLinks: [
-          { originalLink: 'https://example.com/old-course-run/update', isUpdated: true, updatedLink: 'https://example.com/new-course-run/update' },
+          {
+            originalLink: 'https://example.com/old-course-run/update',
+            isUpdated: true,
+            updatedLink: 'https://example.com/new-course-run/update',
+          },
         ],
       },
     ],

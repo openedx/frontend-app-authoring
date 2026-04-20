@@ -1,2 +1,2 @@
-export { TableView } from './TableView';
 export { EditableCell } from './EditableCell';
+export { TableView } from './TableView';

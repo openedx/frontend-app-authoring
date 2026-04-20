@@ -1,5 +1,8 @@
 import {
-  useCallback, useEffect, useRef, useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -14,14 +17,12 @@ import { useEventListener } from '@src/generic/hooks';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { COURSE_BLOCK_NAMES, iframeMessageTypes } from '@src/constants';
 
-import { ConfigureUnitData } from '@src/course-outline/data/types';
-import { messageTypes, PUBLISH_TYPES } from './constants';
+import { messageTypes } from './constants';
 import {
   createNewCourseXBlock,
   deleteUnitItemQuery,
   duplicateUnitItemQuery,
   editCourseItemQuery,
-  editCourseUnitVisibilityAndData,
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
   getCourseOutlineInfoQuery,
@@ -50,7 +51,7 @@ import {
 export const useCourseUnit = ({
   courseId,
   blockId,
-}: { courseId: string, blockId: string }) => {
+}: { courseId: string; blockId: string; }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { sendMessageToIframe } = useIframe();
@@ -100,19 +101,6 @@ export const useCourseUnit = ({
     dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
   };
 
-  const handleConfigureSubmit = (variables: ConfigureUnitData & { closeModalFn?: () => void }) => {
-    dispatch(editCourseUnitVisibilityAndData(
-      variables.unitId,
-      PUBLISH_TYPES.republish,
-      variables.isVisibleToStaffOnly,
-      variables.groupAccess,
-      variables.discussionEnabled,
-      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: variables.unitId }),
-      blockId,
-    ));
-    variables.closeModalFn?.();
-  };
-
   const handleTitleEditSubmit = (displayName) => {
     if (unitTitle !== displayName) {
       dispatch(editCourseItemQuery(blockId, displayName, sequenceId));
@@ -147,10 +135,11 @@ export const useCourseUnit = ({
       dispatch(duplicateUnitItemQuery(
         blockId,
         XBlockId,
-        (courseKey: string, locator: string) => sendMessageToIframe(
-          messageTypes.completeXBlockDuplicating,
-          { courseKey, locator },
-        ),
+        (courseKey: string, locator: string) =>
+          sendMessageToIframe(
+            messageTypes.completeXBlockDuplicating,
+            { courseKey, locator },
+          ),
       ));
     },
     handleUnlink: async (XBlockId: string) => {
@@ -165,7 +154,10 @@ export const useCourseUnit = ({
 
   const handleRollbackMovedXBlock = () => {
     const {
-      sourceLocator, targetParentLocator, title, currentParentLocator,
+      sourceLocator,
+      targetParentLocator,
+      title,
+      currentParentLocator,
     } = movedXBlockParams;
     dispatch(patchUnitItemQuery({
       sourceLocator,
@@ -274,7 +266,6 @@ export const useCourseUnit = ({
     headerNavigationsActions,
     handleTitleEdit,
     handleTitleEditSubmit,
-    handleConfigureSubmit,
     courseVerticalChildren,
     canPasteComponent,
     isMoveModalOpen,
@@ -289,12 +280,12 @@ export const useCourseUnit = ({
   };
 };
 
-export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string }) => {
+export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string; }) => {
   const dispatch = useDispatch();
   const { sendMessageToIframe } = useIframe();
 
   // oxlint-disable typescript-eslint(await-thenable)
-  return async (body: object, callback?: (args: { courseKey: string, locator: string }) => void) => (
+  return async (body: object, callback?: (args: { courseKey: string; locator: string; }) => void) => (
     // eslint-disable-next-line @typescript-eslint/return-await
     await dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
   );

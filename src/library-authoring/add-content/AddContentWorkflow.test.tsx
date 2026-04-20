@@ -30,7 +30,7 @@ mockCreateLibraryBlock.applyMock();
 mockSearchResult(mockResult);
 // Mocking the redux APIs in the src/editors/ folder is a bit more involved:
 jest.spyOn(editorCmsApi as any, 'fetchBlockById').mockImplementation(
-  async (args: { blockId: string }) => (
+  async (args: { blockId: string; }) => (
     { status: 200, data: snakeCaseObject(await mockXBlockFields(args.blockId)) }
   ),
 );
@@ -76,7 +76,8 @@ describe('AddContentWorkflow test', () => {
 
     // Mock the save() REST API method:
     saveSpy.mockReset().mockImplementationOnce(async () => ({
-      status: 200, data: { id: mockXBlockFields.usageKeyNewHtml },
+      status: 200,
+      data: { id: mockXBlockFields.usageKeyNewHtml },
     }));
 
     // Click Save should create the component and then save the content
@@ -110,7 +111,8 @@ describe('AddContentWorkflow test', () => {
 
     // Mock the save() REST API method:
     saveSpy.mockReset().mockImplementationOnce(async () => ({
-      status: 200, data: { id: mockXBlockFields.usageKeyNewProblem },
+      status: 200,
+      data: { id: mockXBlockFields.usageKeyNewProblem },
     }));
 
     // Click Save should create the component and then save the content
@@ -141,7 +143,8 @@ describe('AddContentWorkflow test', () => {
 
     // Mock the save() REST API method:
     saveSpy.mockReset().mockImplementationOnce(async () => ({
-      status: 200, data: { id: mockXBlockFields.usageKeyNewVideo },
+      status: 200,
+      data: { id: mockXBlockFields.usageKeyNewVideo },
     }));
 
     // Click Save should create the component and then save the content

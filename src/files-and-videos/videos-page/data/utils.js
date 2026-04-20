@@ -97,10 +97,13 @@ export const getSortedTranscripts = (languages, transcripts) => {
 
 export const getSupportedFormats = (supportedFileFormats) => {
   if (isEmpty(supportedFileFormats)) {
-    return null;
+    return undefined;
+  }
+  if (typeof supportedFileFormats === 'string') {
+    return supportedFileFormats;
   }
   if (isArray(supportedFileFormats)) {
-    return supportedFileFormats;
+    return supportedFileFormats.join(', ');
   }
   const supportedFormats = [];
   Object.entries(supportedFileFormats).forEach(([key, value]) => {
@@ -123,7 +126,7 @@ export const getSupportedFormats = (supportedFileFormats) => {
       supportedFormats.push(format);
     }
   });
-  return supportedFormats;
+  return supportedFormats.join(', ');
 };
 
 /** createResampledFile({ canvasUrl, filename, mimeType })
@@ -275,7 +278,7 @@ export const validateForm = (cieloHasCredentials, threePlayHasCredentials, provi
     case 'Cielo24':
       if (cieloHasCredentials) {
         return !isEmpty(cielo24Fidelity) && !isEmpty(cielo24Turnaround)
-        && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
+          && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
       }
       return !isEmpty(apiKey) && !isEmpty(username);
     case '3PlayMedia':

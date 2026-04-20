@@ -29,20 +29,21 @@ const { description: originalDescription } = mockGetCollectionMetadata.collectio
 
 const library = mockContentLibrary.libraryData;
 
-const render = () => baseRender(<CollectionDetails />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={library.id}>
-      <SidebarProvider
-        initialSidebarItemInfo={{
-          id: collectionId,
-          type: SidebarBodyItemId.CollectionInfo,
-        }}
-      >
-        { children }
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+const render = () =>
+  baseRender(<CollectionDetails />, {
+    extraWrapper: ({ children }) => (
+      <LibraryProvider libraryId={library.id}>
+        <SidebarProvider
+          initialSidebarItemInfo={{
+            id: collectionId,
+            type: SidebarBodyItemId.CollectionInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
 
 describe('<CollectionDetails />', () => {
   beforeEach(() => {

@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { useWaffleFlags } from '@src/data/apiHooks';
 import * as appHooks from '../../../hooks';
 import { thunkActions, selectors } from '../../../data/redux';
 import VideoSettingsModal from './VideoSettingsModal';
 import { RequestKeys } from '../../../data/constants/requests';
 
 interface Props {
-  onReturn?: (() => void);
+  onReturn?: () => void;
   isLibrary: boolean;
   onClose?: (() => void) | null;
 }
@@ -41,17 +42,20 @@ const VideoEditorModal: React.FC<Props> = ({
   const isLoaded = useSelector(
     (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchVideos }),
   );
+  const { useNewVideoUploadsPage } = useWaffleFlags();
 
   useEffect(() => {
     hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
   }, [isLoaded, dispatch, selectedVideoId, selectedVideoUrl]);
 
   return (
-    <VideoSettingsModal {...{
-      onReturn: onSettingsReturn,
-      isLibrary,
-      onClose,
-    }}
+    <VideoSettingsModal
+      {...{
+        onReturn: onSettingsReturn,
+        isLibrary,
+        onClose,
+        useNewVideoUploadsPage,
+      }}
     />
   );
   // TODO: add logic to show SelectVideoModal if no selection

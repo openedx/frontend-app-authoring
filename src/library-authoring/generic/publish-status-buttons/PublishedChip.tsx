@@ -10,9 +10,7 @@ import messages from './messages';
  * It renders a localized message with consistent styling for status chips.
  */
 export const PublishedChip = () => (
-  <Container
-    className="p-2 text-nowrap flex-grow-1 status-button published-status font-weight-bold"
-  >
+  <Container className="p-2 text-nowrap flex-grow-1 status-button published-status font-weight-bold">
     <FormattedMessage {...messages.publishedChipText} />
   </Container>
 );

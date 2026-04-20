@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks, fireEvent,
+  render,
+  screen,
+  initializeMocks,
+  fireEvent,
 } from '@src/testUtils';
 import GroupFeedbackCard from './index';
 import * as hooks from './hooks';
@@ -14,10 +17,16 @@ jest.mock('./hooks', () => ({
 describe('HintsCard', () => {
   const answers = ['A', 'B', 'C'];
   const groupFeedback1 = {
-    id: 1, value: 'groupFeedback1', answers: ['A', 'C'], feedback: 'sOmE FeEDBACK',
+    id: 1,
+    value: 'groupFeedback1',
+    answers: ['A', 'C'],
+    feedback: 'sOmE FeEDBACK',
   };
   const groupFeedback2 = {
-    id: 2, value: '', answers: ['A'], feedback: 'sOmE FeEDBACK oTher FeEdback',
+    id: 2,
+    value: '',
+    answers: ['A'],
+    feedback: 'sOmE FeEDBACK oTher FeEdback',
   };
   const groupFeedbacks0 = [];
   const groupFeedbacks1 = [groupFeedback1];
