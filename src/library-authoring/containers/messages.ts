@@ -41,6 +41,16 @@ const messages = defineMessages({
     defaultMessage: 'Settings',
     description: 'Title for settings tab',
   },
+  detailsTabTitle: {
+    id: 'course-authoring.library-authoring.container-sidebar.details-tab.title',
+    defaultMessage: 'Details',
+    description: 'Title for details tab',
+  },
+  detailsTabHistoryHeading: {
+    id: 'course-authoring.library-authoring.container-sidebar.details-tab.history-heading',
+    defaultMessage: 'History',
+    description: 'Heading for details tab history section',
+  },
   updateContainerSuccessMsg: {
     id: 'course-authoring.library-authoring.update-container-success-msg',
     defaultMessage: 'Container updated successfully.',

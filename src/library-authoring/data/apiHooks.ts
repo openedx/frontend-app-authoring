@@ -91,6 +91,18 @@ export const libraryAuthoringQueryKeys = {
     }
     return ['hierarchy'];
   },
+  containerCreationEntry: (containerId: string) => [
+    ...libraryAuthoringQueryKeys.container(containerId),
+    'creationEntry',
+  ],
+  containerDraftHistory: (containerId: string) => [
+    ...libraryAuthoringQueryKeys.container(containerId),
+    'draftHistory',
+  ],
+  containerPublishHistory: (containerId: string) => [
+    ...libraryAuthoringQueryKeys.container(containerId),
+    'publishHistory',
+  ],
   courseImports: (libraryId: string) => [
     ...libraryAuthoringQueryKeys.contentLibrary(libraryId),
     'courseImports',
@@ -127,7 +139,10 @@ export const xblockQueryKeys = {
   componentDownstreamLinks: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamLinks'],
   draftHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'draftHistory'],
   publishHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory'],
-  publishHistoryEntries: (usageKey: string, publishGroupId: string) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory', publishGroupId, 'entries'],
+  publishHistoryEntries: (
+    usageKey: string,
+    publishGroupId: string,
+  ) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory', publishGroupId, 'entries'],
   creationEntry: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'creationEntry'],
 
   /**
@@ -1056,26 +1071,58 @@ export const useLibraryBlockPublishHistory = (usageKey?: string) => (
 );
 
 /**
- * Returns the entries for a publish history group of a library block.
+ * Returns the entries for a publish history group of a library item.
  */
-export const useLibraryBlockPublishHistoryEntries = (
+export const useLibraryPublishHistoryEntries = (
   usageKey?: string,
   publishGroupId?: string,
   enabled: boolean = true,
 ) => (
   useQuery({
     queryKey: xblockQueryKeys.publishHistoryEntries(usageKey!, publishGroupId!),
-    queryFn: (usageKey && publishGroupId && enabled) ? () => api.getLibraryBlockPublishHistoryEntries(usageKey, publishGroupId) : skipToken,
+    queryFn: (usageKey && publishGroupId && enabled)
+      ? () => api.getLibraryPublishHistoryEntries(getLibraryId(usageKey), usageKey, publishGroupId)
+      : skipToken,
   })
 );
 
 /**
  * Returns the creation entry for a library block.
  */
-export const useLibraryBlockCreationEntry = (usageKey?: string ) => (
+export const useLibraryBlockCreationEntry = (usageKey?: string) => (
   useQuery({
     queryKey: xblockQueryKeys.creationEntry(usageKey!),
     queryFn: usageKey ? () => api.getLibraryBlockCreationEntry(usageKey) : skipToken,
+  })
+);
+
+/**
+ * Hook to fetch the publish history groups for a library container (unit, section, subsection).
+ */
+export const useLibraryContainerPublishHistory = (containerKey?: string) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.containerPublishHistory(containerKey!),
+    queryFn: containerKey ? () => api.getLibraryContainerPublishHistory(containerKey) : skipToken,
+  })
+);
+
+/**
+ * Hook to fetch the draft history entries for a library container (unit, section, subsection).
+ */
+export const useLibraryContainerDraftHistory = (containerKey?: string) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.containerDraftHistory(containerKey!),
+    queryFn: containerKey ? () => api.getLibraryContainerDraftHistory(containerKey) : skipToken,
+  })
+);
+
+/**
+ * Hook to fetch the creation entry for a library container (unit, section, subsection).
+ */
+export const useLibraryContainerCreationEntry = (containerKey?: string) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.containerCreationEntry(containerKey!),
+    queryFn: containerKey ? () => api.getLibraryContainerCreationEntry(containerKey) : skipToken,
   })
 );
 

@@ -1,10 +1,7 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 
-import AlertError from '@src/generic/alert-error';
-import Loading from '@src/generic/Loading';
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { useLibraryBlockMetadata } from '../data/apiHooks';
 import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import { ComponentUsage } from './ComponentUsage';
 import messages from './messages';
@@ -18,21 +15,6 @@ const ComponentDetails = () => {
   // istanbul ignore if: this should never happen
   if (!usageKey) {
     throw new Error('usageKey is required');
-  }
-
-  const {
-    data: componentMetadata,
-    isError,
-    error,
-    isPending,
-  } = useLibraryBlockMetadata(usageKey);
-
-  if (isError) {
-    return <AlertError error={error} />;
-  }
-
-  if (isPending) {
-    return <Loading />;
   }
 
   return (
@@ -50,7 +32,6 @@ const ComponentDetails = () => {
         </h3>
         <HistoryComponentLog
           componentId={usageKey}
-          displayName={componentMetadata.displayName}
         />
       </>
       <ComponentAdvancedInfo />

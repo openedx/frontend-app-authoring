@@ -1,16 +1,16 @@
-import { ComponentProps, ReactNode, useState } from "react";
-import moment from "moment";
-import classNames from "classnames";
-import { Avatar, Collapsible, Icon, Stack, useToggle } from "@openedx/paragon";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@openedx/paragon/icons";
-import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
+import { ComponentProps, ReactNode, useState } from 'react';
+import moment from 'moment';
+import classNames from 'classnames';
+import { Avatar, Collapsible, Icon, Stack, useToggle } from '@openedx/paragon';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@openedx/paragon/icons';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
-import { useLibraryBlockPublishHistoryEntries } from "@src/library-authoring/data/apiHooks";
-import { LoadingSpinner } from "@src/generic/Loading";
+import { useLibraryPublishHistoryEntries } from '@src/library-authoring/data/apiHooks';
+import { LoadingSpinner } from '@src/generic/Loading';
 
-import { LibraryHistoryEntry, LibraryPublishContributor, LibraryPublishHistoryGroup } from "../../data/api";
-import messages from "./messages";
-import { getItemIcon } from "@src/generic/block-type-utils";
+import { LibraryHistoryEntry, LibraryPublishContributor, LibraryPublishHistoryGroup } from '../../data/api';
+import messages from './messages';
+import { getItemIcon } from '@src/generic/block-type-utils';
 
 const MAX_VISIBLE_CONTRIBUTORS = 5;
 
@@ -76,7 +76,7 @@ const HistoryLogGroupTitle = ({
 }: HistoryLogGroupTitleProps) => {
   return (
     <Stack direction="horizontal" gap={2} className="mb-1">
-      <Avatar className="history-log-group-avatar big-avatar" size="md"/>
+      <Avatar className="history-log-group-avatar big-avatar" size="md" />
       <Stack>
         <Stack direction="horizontal" gap={1}>
           {titleMessage}
@@ -88,15 +88,15 @@ const HistoryLogGroupTitle = ({
       {!disableCollapsible && (
         <>
           <Collapsible.Visible whenClosed>
-            <Icon src={KeyboardArrowDown}/>
+            <Icon src={KeyboardArrowDown} />
           </Collapsible.Visible>
           <Collapsible.Visible whenOpen>
-            <Icon src={KeyboardArrowUp}/>
+            <Icon src={KeyboardArrowUp} />
           </Collapsible.Visible>
         </>
       )}
     </Stack>
-  )
+  );
 };
 
 const HistoryLogGroupEntries = ({
@@ -108,7 +108,7 @@ const HistoryLogGroupEntries = ({
       const entryMessage = entry.action === 'edited'
         ? messages.historyEditEntry
         : messages.historyRenameEntry;
-      
+
       return (
         <div key={entry.changedAt}>
           <Stack direction="horizontal" gap={2} className="ml-1.5">
@@ -125,7 +125,7 @@ const HistoryLogGroupEntries = ({
                   values={{
                     user: entry.changedBy.username,
                     displayName: <span className="history-log-title text-truncate">{entry.title}</span>,
-                    icon: <Icon src={getItemIcon(entry.blockType)} />
+                    icon: <Icon src={getItemIcon(entry.itemType)} />,
                   }}
                 />
               </Stack>
@@ -133,7 +133,6 @@ const HistoryLogGroupEntries = ({
                 {moment(entry.changedAt).fromNow()}
               </span>
             </Stack>
-            
           </Stack>
           <div className="history-log-vert" />
         </div>
@@ -179,15 +178,15 @@ export const HistoryDraftLogGroup = ({
             titleMessage={intl.formatMessage(
               messages.draftTitle,
               {
-                displayName: <span className="history-log-title text-truncate">{displayName}</span>
-              }
+                displayName: <span className="history-log-title text-truncate">{displayName}</span>,
+              },
             )}
             dateMessage={intl.formatMessage(
               messages.draftTitleDate,
               {
                 count: entries.length,
                 date: moment(entries?.at(-1)?.changedAt ?? '').fromNow(),
-              }
+              },
             )}
           />
         </Collapsible.Trigger>
@@ -208,7 +207,7 @@ const ContributorsAvatars = ({ contributors }: ContributorsAvatarsProps) => {
         {visible.map(({ username, profileImageUrls }) => (
           <ContributorAvatar
             key={username}
-            size='xs'
+            size="xs"
             className="contributors-avatar"
             username={username}
             src={profileImageUrls.small}
@@ -228,10 +227,9 @@ const ContributorsAvatars = ({ contributors }: ContributorsAvatarsProps) => {
 export const HistoryPublishLogGroup = ({
   itemId,
   publishLogUuid,
-  title,
+  directPublishedEntities,
   publishedBy,
   publishedAt,
-  blockType,
   contributors,
 }: HistoryPublishLogGroupProps) => {
   const intl = useIntl();
@@ -240,7 +238,9 @@ export const HistoryPublishLogGroup = ({
   const {
     data: entries,
     isPending,
-  } = useLibraryBlockPublishHistoryEntries(itemId, publishLogUuid, isOpenCollapsible);
+  } = useLibraryPublishHistoryEntries(itemId, publishLogUuid, isOpenCollapsible);
+
+  const dateMessage = moment(publishedAt).fromNow();
 
   return (
     <div className="history-log-group publish-group">
@@ -250,41 +250,57 @@ export const HistoryPublishLogGroup = ({
         onClose={closeCollapsible}
       >
         <Collapsible.Trigger>
-          <HistoryLogGroupTitle
-            titleMessage={intl.formatMessage(
-              messages.publishTitle,
-              {
-                user: publishedBy,
-                displayName: <span className="history-log-title text-truncate">{title}</span>,
-                icon: <Icon src={getItemIcon(blockType)} /> 
-              },
-            )}
-            dateMessage={moment(publishedAt).fromNow()}
-          />
+          {directPublishedEntities.length === 1 && (
+            <HistoryLogGroupTitle
+              titleMessage={intl.formatMessage(
+                messages.publishTitle,
+                {
+                  user: publishedBy,
+                  displayName: (
+                    <span className="history-log-title text-truncate">{directPublishedEntities[0].title}</span>
+                  ),
+                  icon: <Icon src={getItemIcon(directPublishedEntities[0].entityType)} />,
+                },
+              )}
+              dateMessage={dateMessage}
+            />
+          )}
+          {directPublishedEntities.length > 1 && (
+            <HistoryLogGroupTitle
+              titleMessage={intl.formatMessage(
+                messages.publishTitleMultiple,
+                {
+                  user: publishedBy,
+                  icon: <Icon src={getItemIcon('default')} />,
+                },
+              )}
+              dateMessage={dateMessage}
+            />
+          )}
         </Collapsible.Trigger>
         <Collapsible.Body>
-          {isPending ? (
-            <>
-              <div className="history-log-vert" />
-              <div className="ml-2 mt-2 w-100">
-                <LoadingSpinner />
-              </div>
-            </>
-          ): (
-            <HistoryLogGroupEntries entries={entries ?? []} />
-          )}
+          {isPending ?
+            (
+              <>
+                <div className="history-log-vert" />
+                <div className="ml-2 mt-2 w-100">
+                  <LoadingSpinner />
+                </div>
+              </>
+            ) :
+            <HistoryLogGroupEntries entries={entries ?? []} />}
         </Collapsible.Body>
       </Collapsible.Advanced>
       <Stack direction="horizontal">
-        <div className={classNames(
-          "history-log-vert",
-          {
-            "history-log-vert-long": !isOpenCollapsible, 
-          }
-        )} />
-        {!isOpenCollapsible && (
-          <ContributorsAvatars contributors={contributors} />
-        )}
+        <div
+          className={classNames(
+            'history-log-vert',
+            {
+              'history-log-vert-long': !isOpenCollapsible,
+            },
+          )}
+        />
+        {!isOpenCollapsible && <ContributorsAvatars contributors={contributors} />}
       </Stack>
     </div>
   );

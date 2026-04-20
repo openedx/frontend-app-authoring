@@ -255,9 +255,11 @@ const getInnerText = (element: Element | null): string => {
 export const matchInnerText = (
   nodeName: string,
   textToMatch: string,
-) => (_: string, element: Element | null) => !!element
-    && element.nodeName === nodeName
-    && getInnerText(element) === textToMatch;
+) =>
+(_: string, element: Element | null) =>
+  !!element
+  && element.nodeName === nodeName
+  && getInnerText(element) === textToMatch;
 
 /**
  * Finds the innermost element whose full textContent (normalized whitespace) matches a regex.
@@ -269,11 +271,12 @@ export const matchInnerText = (
  *
  * Useful when text is split across child elements (e.g. by an icon or inline tag).
  */
-export const findByDeepTextContent = (pattern: RegExp) => screen.findByText((_, el) => {
-  if (!el) return false;
-  const normalizedText = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
-  if (!pattern.test(normalizedText)) return false;
-  return !Array.from(el.children).some(
-    (child) => pattern.test(((child as Element).textContent ?? '').replace(/\s+/g, ' ').trim()),
-  );
-});
+export const findByDeepTextContent = (pattern: RegExp) =>
+  screen.findByText((_, el) => {
+    if (!el) { return false; }
+    const normalizedText = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
+    if (!pattern.test(normalizedText)) { return false; }
+    return !Array.from(el.children).some(
+      (child) => pattern.test(((child as Element).textContent ?? '').replace(/\s+/g, ' ').trim()),
+    );
+  });

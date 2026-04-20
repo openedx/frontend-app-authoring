@@ -34,6 +34,16 @@ export const getBlockTypesMetaDataUrl = (libraryId: string) =>
   `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/block_types/`;
 
 /**
+ * Get the URL for the entries of a publish group.
+ */
+export const getLibraryPublishHistoryEntriesUrl = (
+  libraryId: string,
+  entityKey: string,
+  publishGroupId: string,
+) =>
+  `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/publish_history_entries/?scope_entity_key=${entityKey}&publish_log_uuid=${publishGroupId}`;
+
+/**
  * Get the URL for library block metadata.
  */
 export const getLibraryBlockMetadataUrl = (usageKey: string) =>
@@ -58,22 +68,20 @@ export const getLibraryBlockHierarchyUrl = (usageKey: string) => `${getLibraryBl
 /**
  * Get the URL for the component draft history.
  */
-export const getLibraryBlockDraftHistoryUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}draft_history/`;
+export const getLibraryBlockDraftHistoryUrl = (usageKey: string) =>
+  `${getLibraryBlockMetadataUrl(usageKey)}draft_history/`;
 
 /**
  * Get the URL for the component publish history.
  */
-export const getLibraryBlockPublishHistoryUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}publish_history/`;
-
-/**
- * Get the URL for the entries of a publish group.
- */
-export const getLibraryBlockPublishHistoryEntriesUrl = (usageKey: string, publishGroupId: string) => `${getLibraryBlockMetadataUrl(usageKey)}publish_history/${publishGroupId}/entries/`
+export const getLibraryBlockPublishHistoryUrl = (usageKey: string) =>
+  `${getLibraryBlockMetadataUrl(usageKey)}publish_history/`;
 
 /**
  * Get the URL for the creation entry of a component.
  */
-export const getLibraryBlockCreationEntryUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}creation_entry/`;
+export const getLibraryBlockCreationEntryUrl = (usageKey: string) =>
+  `${getLibraryBlockMetadataUrl(usageKey)}creation_entry/`;
 
 /**
  * Get the URL for content library list API.
@@ -180,6 +188,21 @@ export const getLibraryContainerCollectionsUrl = (containerId: string) =>
  */
 export const getLibraryContainerPublishApiUrl = (containerId: string) =>
   `${getLibraryContainerApiUrl(containerId)}publish/`;
+/**
+ * Get the URL for the draft history log of a contaienr.
+ */
+export const getLibraryContainerDraftHistoryUrl = (containerId: string) =>
+  `${getLibraryContainerApiUrl(containerId)}draft_history/`;
+/**
+ * Get the URL for the publish history log of a container.
+ */
+export const getLibraryContainerPublishHistoryUrl = (containerId: string) =>
+  `${getLibraryContainerApiUrl(containerId)}publish_history/`;
+/**
+ * Get the URL for the creation entry of a container.
+ */
+export const getLibraryContainerCreationEntryUrl = (usageKey: string) =>
+  `${getLibraryContainerApiUrl(usageKey)}creation_entry/`;
 /**
  * Get the URL for the API endpoint to create a backup of a v2 library.
  */
@@ -954,14 +977,25 @@ export async function getModulestoreMigrationBlocksInfo(
   return camelCaseObject(data);
 }
 
+export interface DirectPublishedEntity {
+  entityKey: string;
+  entityType: string;
+  title: string;
+}
 export interface LibraryPublishHistoryGroup {
   publishLogUuid: string;
-  title: string;
+  directPublishedEntities: DirectPublishedEntity[];
   publishedBy: string;
   publishedAt: string;
-  blockType: string;
   contributors: LibraryPublishContributor[];
   contributorsCount: number;
+  /**
+   * Key to use as `scope_entity_key` when fetching entries for this group.
+   * Pre-Verawood: the specific entity key for this group (container or usage key).
+   * Post-Verawood container groups: null — use the container currently being viewed.
+   * Component history (all eras): the component's usage key.
+   */
+  scopeEntityKey?: string;
 }
 
 export interface LibraryPublishContributor {
@@ -978,7 +1012,7 @@ export interface LibraryHistoryEntry {
   changedBy: LibraryPublishContributor;
   changedAt: string;
   title: string;
-  blockType: string;
+  itemType: string;
   action: 'edited' | 'renamed' | 'created';
 }
 
@@ -993,8 +1027,14 @@ export async function getLibraryBlockPublishHistory(usageKey: string): Promise<L
 /**
  * Get the entries for a publish history group of a library block.
  */
-export async function getLibraryBlockPublishHistoryEntries(usageKey: string, publishGroupId: string): Promise<LibraryHistoryEntry[]> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockPublishHistoryEntriesUrl(usageKey, publishGroupId));
+export async function getLibraryPublishHistoryEntries(
+  libraryId: string,
+  entityKey: string,
+  publishGroupId: string,
+): Promise<LibraryHistoryEntry[]> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getLibraryPublishHistoryEntriesUrl(libraryId, entityKey, publishGroupId),
+  );
   return camelCaseObject(data);
 }
 
@@ -1011,5 +1051,29 @@ export async function getLibraryBlockDraftHistory(usageKey: string): Promise<Lib
  */
 export async function getLibraryBlockCreationEntry(usageKey: string): Promise<LibraryHistoryEntry> {
   const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockCreationEntryUrl(usageKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the creation entry for a library container.
+ */
+export async function getLibraryContainerCreationEntry(containerKey: string): Promise<LibraryHistoryEntry> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerCreationEntryUrl(containerKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the publish history for a library container.
+ */
+export async function getLibraryContainerPublishHistory(containerKey: string): Promise<LibraryPublishHistoryGroup[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerPublishHistoryUrl(containerKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the draft history for a library container.
+ */
+export async function getLibraryContainerDraftHistory(containerKey: string): Promise<LibraryHistoryEntry[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerDraftHistoryUrl(containerKey));
   return camelCaseObject(data);
 }

@@ -11,6 +11,11 @@ const messages = defineMessages({
     defaultMessage: '{user} published {icon} {displayName}',
     description: 'Title for the publish group in the history log section.',
   },
+  publishTitleMultiple: {
+    id: 'course-authoring.library-authoring.history.publish.title-multiple',
+    defaultMessage: '{user} published {icon} Multiple Items',
+    description: 'Title for the publish group in the history log section of multiple items.',
+  },
   draftTitleDate: {
     id: 'course-authoring.library-authoring.history.draft.date',
     defaultMessage: '{count, plural, one {{count} change} other {{count} changes}} since {date}',

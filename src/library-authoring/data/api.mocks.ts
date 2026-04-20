@@ -1245,9 +1245,12 @@ mockGetCourseImports.applyMock = () =>
 export async function mockLibraryBlockDraftHistory(usageKey: string): Promise<api.LibraryHistoryEntry[]> {
   const thisMock = mockLibraryBlockDraftHistory;
   switch (usageKey) {
-    case thisMock.usageKey: return thisMock.data;
-    case thisMock.usageKeyEmpty: return [];
-    default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
+    case thisMock.usageKey:
+      return thisMock.data;
+    case thisMock.usageKeyEmpty:
+      return [];
+    default:
+      throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
 mockLibraryBlockDraftHistory.usageKey = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
@@ -1268,17 +1271,18 @@ mockLibraryBlockDraftHistory.data = [
     changedAt: '2026-03-16T11:00:00Z',
     title: 'Electron Arcs',
     action: 'edited',
-    blockType: 'html',
+    itemType: 'html',
   },
   {
     changedBy: mockContributor('test_user_2'),
     changedAt: '2026-03-13T10:00:00Z',
     title: 'More on Quarks',
     action: 'renamed',
-    blockType: 'html',
+    itemType: 'html',
   },
 ] satisfies api.LibraryHistoryEntry[];
-mockLibraryBlockDraftHistory.applyMock = () => jest.spyOn(api, 'getLibraryBlockDraftHistory').mockImplementation(mockLibraryBlockDraftHistory);
+mockLibraryBlockDraftHistory.applyMock = () =>
+  jest.spyOn(api, 'getLibraryBlockDraftHistory').mockImplementation(mockLibraryBlockDraftHistory);
 
 /**
  * Mock for `getLibraryBlockPublishHistory()`
@@ -1288,9 +1292,12 @@ mockLibraryBlockDraftHistory.applyMock = () => jest.spyOn(api, 'getLibraryBlockD
 export async function mockLibraryBlockPublishHistory(usageKey: string): Promise<api.LibraryPublishHistoryGroup[]> {
   const thisMock = mockLibraryBlockPublishHistory;
   switch (usageKey) {
-    case thisMock.usageKeyWithGroups: return thisMock.data;
-    case thisMock.usageKeyEmpty: return [];
-    default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
+    case thisMock.usageKeyWithGroups:
+      return thisMock.data;
+    case thisMock.usageKeyEmpty:
+      return [];
+    default:
+      throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
 mockLibraryBlockPublishHistory.usageKeyWithGroups = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
@@ -1298,24 +1305,26 @@ mockLibraryBlockPublishHistory.usageKeyEmpty = 'lb:Axim:TEST2:html:571fe018-f3ce
 mockLibraryBlockPublishHistory.data = [
   {
     publishLogUuid: 'abc-123',
-    title: 'Protons',
-    blockType: 'html',
+    directPublishedEntities: [
+      { entityKey: 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1', entityType: 'html', title: 'Protons' },
+    ],
     publishedBy: 'author',
     publishedAt: '2026-03-14T10:00:00Z',
     contributors: ['test_user_1', 'test_user_2', 'test_user_3', 'test_user_4', 'test_user_5'].map(mockContributor),
     contributorsCount: 5,
   },
 ] satisfies api.LibraryPublishHistoryGroup[];
-mockLibraryBlockPublishHistory.applyMock = () => jest.spyOn(api, 'getLibraryBlockPublishHistory').mockImplementation(mockLibraryBlockPublishHistory);
+mockLibraryBlockPublishHistory.applyMock = () =>
+  jest.spyOn(api, 'getLibraryBlockPublishHistory').mockImplementation(mockLibraryBlockPublishHistory);
 
 /**
- * Mock for `getLibraryBlockPublishHistoryEntries()`
+ * Mock for `getLibraryPublishHistoryEntries()`
  *
  * Use `mockLibraryBlockPublishHistoryEntries.applyMock()` to apply it to the whole test suite.
  */
 export async function mockLibraryBlockPublishHistoryEntries(
-  _usageKey: string,
-  _publishGroupId: string,
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  ..._: Parameters<typeof api.getLibraryPublishHistoryEntries>
 ): Promise<api.LibraryHistoryEntry[]> {
   return mockLibraryBlockPublishHistoryEntries.data;
 }
@@ -1325,13 +1334,14 @@ mockLibraryBlockPublishHistoryEntries.data = [
     changedAt: '2026-03-10T09:00:00Z',
     title: 'Protons',
     action: 'edited',
-    blockType: 'html',
+    itemType: 'html',
   },
 ] satisfies api.LibraryHistoryEntry[];
-mockLibraryBlockPublishHistoryEntries.applyMock = () => jest.spyOn(
-  api,
-  'getLibraryBlockPublishHistoryEntries',
-).mockImplementation(mockLibraryBlockPublishHistoryEntries);
+mockLibraryBlockPublishHistoryEntries.applyMock = () =>
+  jest.spyOn(
+    api,
+    'getLibraryPublishHistoryEntries',
+  ).mockImplementation(mockLibraryBlockPublishHistoryEntries);
 
 /**
  * Mock for `getLibraryBlockCreationEntry()`
@@ -1343,9 +1353,12 @@ export async function mockLibraryBlockCreationEntry(usageKey: string): Promise<a
   switch (usageKey) {
     case thisMock.usageKeyThatNeverLoads:
       return new Promise<any>(() => {});
-    case thisMock.usageKey: return thisMock.data;
-    case thisMock.usageKeyEmpty: return thisMock.dataEmpty;
-    default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
+    case thisMock.usageKey:
+      return thisMock.data;
+    case thisMock.usageKeyEmpty:
+      return thisMock.dataEmpty;
+    default:
+      throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
 mockLibraryBlockCreationEntry.usageKeyThatNeverLoads = 'lb:Axim:infiniteLoading:html:123';
@@ -1355,17 +1368,138 @@ mockLibraryBlockCreationEntry.data = {
   changedBy: mockContributor('author'),
   changedAt: '2024-01-01T00:00:00Z',
   title: 'Introduction to Testing 1',
-  blockType: 'html',
+  itemType: 'html',
   action: 'created',
 } satisfies api.LibraryHistoryEntry;
 mockLibraryBlockCreationEntry.dataEmpty = {
   changedBy: mockContributor('Author'),
   changedAt: '2024-01-01T00:00:00Z',
   title: 'Introduction to Testing 2',
-  blockType: 'html',
+  itemType: 'html',
   action: 'created',
 } satisfies api.LibraryHistoryEntry;
-mockLibraryBlockCreationEntry.applyMock = () => jest.spyOn(api, 'getLibraryBlockCreationEntry').mockImplementation(mockLibraryBlockCreationEntry);
+mockLibraryBlockCreationEntry.applyMock = () =>
+  jest.spyOn(api, 'getLibraryBlockCreationEntry').mockImplementation(mockLibraryBlockCreationEntry);
+
+/**
+ * Mock for `getLibraryContainerDraftHistory()`
+ *
+ * Use `mockLibraryContainerDraftHistory.applyMock()` to apply it to the whole test suite.
+ */
+export async function mockLibraryContainerDraftHistory(containerKey: string): Promise<api.LibraryHistoryEntry[]> {
+  const thisMock = mockLibraryContainerDraftHistory;
+  switch (containerKey) {
+    case thisMock.containerKeyThatNeverLoads:
+      return new Promise<any>(() => {});
+    case thisMock.containerKey:
+      return thisMock.data;
+    case thisMock.containerKeyEmpty:
+      return [];
+    default:
+      throw new Error(`No mock has been set up for containerKey "${containerKey}"`);
+  }
+}
+mockLibraryContainerDraftHistory.containerKeyThatNeverLoads = 'lct:Axim:TEST1:unit:infiniteLoading';
+mockLibraryContainerDraftHistory.containerKey = 'lct:Axim:TEST1:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
+mockLibraryContainerDraftHistory.containerKeyEmpty = 'lct:Axim:TEST2:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
+mockLibraryContainerDraftHistory.data = [
+  {
+    changedBy: mockContributor('container_user_1'),
+    changedAt: '2026-03-16T11:00:00Z',
+    title: 'Intro Unit',
+    action: 'edited',
+    itemType: 'unit',
+  },
+  {
+    changedBy: mockContributor('container_user_2'),
+    changedAt: '2026-03-13T10:00:00Z',
+    title: 'Unit Renamed',
+    action: 'renamed',
+    itemType: 'unit',
+  },
+] satisfies api.LibraryHistoryEntry[];
+mockLibraryContainerDraftHistory.applyMock = () =>
+  jest.spyOn(api, 'getLibraryContainerDraftHistory').mockImplementation(mockLibraryContainerDraftHistory);
+
+/**
+ * Mock for `getLibraryContainerPublishHistory()`
+ *
+ * Use `mockLibraryContainerPublishHistory.applyMock()` to apply it to the whole test suite.
+ */
+export async function mockLibraryContainerPublishHistory(
+  containerKey: string,
+): Promise<api.LibraryPublishHistoryGroup[]> {
+  const thisMock = mockLibraryContainerPublishHistory;
+  switch (containerKey) {
+    case thisMock.containerKeyThatNeverLoads:
+      return new Promise<any>(() => {});
+    case thisMock.containerKeyWithGroups:
+      return thisMock.data;
+    case thisMock.containerKeyEmpty:
+      return [];
+    default:
+      throw new Error(`No mock has been set up for containerKey "${containerKey}"`);
+  }
+}
+mockLibraryContainerPublishHistory.containerKeyThatNeverLoads = 'lct:Axim:TEST1:unit:infiniteLoading';
+mockLibraryContainerPublishHistory.containerKeyWithGroups = 'lct:Axim:TEST1:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
+mockLibraryContainerPublishHistory.containerKeyEmpty = 'lct:Axim:TEST2:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
+mockLibraryContainerPublishHistory.data = [
+  {
+    publishLogUuid: 'def-456',
+    directPublishedEntities: [
+      {
+        entityKey: 'lct:Axim:TEST1:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd1',
+        entityType: 'unit',
+        title: 'Intro Unit',
+      },
+    ],
+    publishedBy: 'container_author',
+    publishedAt: '2026-03-14T10:00:00Z',
+    contributors: ['container_user_1', 'container_user_2'].map(mockContributor),
+    contributorsCount: 2,
+  },
+] satisfies api.LibraryPublishHistoryGroup[];
+mockLibraryContainerPublishHistory.applyMock = () =>
+  jest.spyOn(api, 'getLibraryContainerPublishHistory').mockImplementation(mockLibraryContainerPublishHistory);
+
+/**
+ * Mock for `getLibraryContainerCreationEntry()`
+ *
+ * Use `mockLibraryContainerCreationEntry.applyMock()` to apply it to the whole test suite.
+ */
+export async function mockLibraryContainerCreationEntry(containerKey: string): Promise<api.LibraryHistoryEntry> {
+  const thisMock = mockLibraryContainerCreationEntry;
+  switch (containerKey) {
+    case thisMock.usageKeyThatNeverLoads:
+      return new Promise<any>(() => {});
+    case thisMock.usageKey:
+      return thisMock.data;
+    case thisMock.usageKeyEmpty:
+      return thisMock.dataEmpty;
+    default:
+      throw new Error(`No mock has been set up for containerKey "${containerKey}"`);
+  }
+}
+mockLibraryContainerCreationEntry.usageKeyThatNeverLoads = 'lct:Axim:TEST1:unit:infiniteLoading';
+mockLibraryContainerCreationEntry.usageKey = 'lct:Axim:TEST1:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
+mockLibraryContainerCreationEntry.usageKeyEmpty = 'lct:Axim:TEST2:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
+mockLibraryContainerCreationEntry.data = {
+  changedBy: mockContributor('author'),
+  changedAt: '2024-01-01T00:00:00Z',
+  title: 'Introduction to Testing Unit 1',
+  itemType: 'unit',
+  action: 'created',
+} satisfies api.LibraryHistoryEntry;
+mockLibraryContainerCreationEntry.dataEmpty = {
+  changedBy: mockContributor('Author'),
+  changedAt: '2024-01-01T00:00:00Z',
+  title: 'Introduction to Testing Unit 2',
+  itemType: 'unit',
+  action: 'created',
+} satisfies api.LibraryHistoryEntry;
+mockLibraryContainerCreationEntry.applyMock = () =>
+  jest.spyOn(api, 'getLibraryContainerCreationEntry').mockImplementation(mockLibraryContainerCreationEntry);
 
 export const mockGetMigrationInfo = {
   applyMock: () =>

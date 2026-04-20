@@ -1,20 +1,17 @@
-import { LoadingSpinner } from "@src/generic/Loading";
+import { LoadingSpinner } from '@src/generic/Loading';
 import {
+  useContainer,
   useLibraryBlockCreationEntry,
   useLibraryBlockDraftHistory,
+  useLibraryBlockMetadata,
   useLibraryBlockPublishHistory,
-} from "@src/library-authoring/data/apiHooks";
-import { HistoryCreatedLogGroup, HistoryDraftLogGroup, HistoryPublishLogGroup } from "./HistoryLogGroup";
+  useLibraryContainerCreationEntry,
+  useLibraryContainerDraftHistory,
+  useLibraryContainerPublishHistory,
+} from '@src/library-authoring/data/apiHooks';
+import { HistoryCreatedLogGroup, HistoryDraftLogGroup, HistoryPublishLogGroup } from './HistoryLogGroup';
 
-export interface HistoryComponentLogProps {
-  componentId: string;
-  displayName: string;
-}
-
-export const HistoryComponentLog = ({
-  componentId,
-  displayName,
-}: HistoryComponentLogProps) => {
+export const HistoryComponentLog = ({ componentId }: { componentId: string; }) => {
   const {
     data: draftHistory,
     isPending: isPendingDraftHistory,
@@ -28,37 +25,95 @@ export const HistoryComponentLog = ({
   const {
     data: creationEntry,
     isPending: isPendingCreationEntry,
-  } = useLibraryBlockCreationEntry(componentId); 
+  } = useLibraryBlockCreationEntry(componentId);
 
-  if (isPendingDraftHistory || isPendingPublishHistoryGroups || isPendingCreationEntry) {
-    return <LoadingSpinner />
+  const {
+    data: componentMetadata,
+    isPending: isPendingComponentMetadata,
+  } = useLibraryBlockMetadata(componentId);
+
+  if (isPendingDraftHistory || isPendingPublishHistoryGroups || isPendingCreationEntry || isPendingComponentMetadata) {
+    return <LoadingSpinner />;
   }
-  
+
   return (
     <div className="history-log">
       {draftHistory && draftHistory.length !== 0 && (
         <HistoryDraftLogGroup
-          displayName={displayName}
+          displayName={componentMetadata?.displayName || ''}
           entries={draftHistory}
-        /> 
+        />
       )}
       {publishHistoryGroups && publishHistoryGroups.length !== 0 && (
-        publishHistoryGroups.map((publishGroup) => {
-          return (
-            <div key={publishGroup.publishLogUuid}>
-              <HistoryPublishLogGroup
-                {...publishGroup}
-                itemId={componentId}
-              />
-            </div>
-          )
-        })
+        publishHistoryGroups.map((publishGroup) => (
+          <div key={`${publishGroup.publishLogUuid}-${publishGroup.directPublishedEntities[0].entityKey}`}>
+            <HistoryPublishLogGroup
+              {...publishGroup}
+              itemId={publishGroup.scopeEntityKey || componentId}
+            />
+          </div>
+        ))
       )}
       {creationEntry && (
         <HistoryCreatedLogGroup
           user={creationEntry.changedBy.username}
           displayName={creationEntry.title}
-          itemType={creationEntry.blockType}
+          itemType={creationEntry.itemType}
+          createdAt={creationEntry.changedAt}
+        />
+      )}
+    </div>
+  );
+};
+
+export const HistoryContainerLog = ({ containerId }: { containerId: string; }) => {
+  const {
+    data: draftHistory,
+    isPending: isPendingDraftHistory,
+  } = useLibraryContainerDraftHistory(containerId);
+
+  const {
+    data: publishHistoryGroups,
+    isPending: isPendingPublishHistoryGroups,
+  } = useLibraryContainerPublishHistory(containerId);
+
+  const {
+    data: creationEntry,
+    isPending: isPendingCreationEntry,
+  } = useLibraryContainerCreationEntry(containerId);
+
+  const {
+    data: container,
+    isPending: isPendingContainer,
+  } = useContainer(containerId);
+
+  if (isPendingDraftHistory || isPendingContainer || isPendingPublishHistoryGroups || isPendingCreationEntry) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <div className="history-log">
+      {draftHistory && draftHistory.length !== 0 && (
+        <HistoryDraftLogGroup
+          displayName={container?.displayName ?? ''}
+          entries={draftHistory}
+        />
+      )}
+      {publishHistoryGroups && publishHistoryGroups.length !== 0 && (
+        publishHistoryGroups.map((publishGroup) => (
+          <div key={`${publishGroup.publishLogUuid}-${publishGroup.directPublishedEntities[0].entityKey}`}>
+            <HistoryPublishLogGroup
+              {...publishGroup}
+              itemId={publishGroup.scopeEntityKey || containerId}
+            />
+          </div>
+        ))
+      )}
+      {creationEntry && (
+        <HistoryCreatedLogGroup
+          user={creationEntry.changedBy.username}
+          displayName={creationEntry.title}
+          itemType={creationEntry.itemType}
           createdAt={creationEntry.changedAt}
         />
       )}
