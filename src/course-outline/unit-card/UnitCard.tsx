@@ -44,7 +44,6 @@ import DraggableList, { SortableItem as GenericSortableItem } from '@src/generic
 import { ToastContext } from '@src/generic/toast-context';
 import { useUnitHandler, useComponentTemplates } from './data/hooks';
 import AddComponentWidget from './AddComponentWidget';
-import type { CreatedXBlockInfo } from './AddComponentWidget';
 import messages from './messages';
 
 interface UnitCardProps {
@@ -608,17 +607,9 @@ const UnitCard = ({
                     componentTemplates={componentTemplates}
                     showPasteXBlock={!!showPasteXBlock}
                     onPasteComponent={handlePasteComponent}
-                    onComponentCreated={(info: CreatedXBlockInfo) => {
+                    onComponentCreated={() => {
                       dispatch(fetchCourseSectionQuery([section.id]));
                       refetchUnitData();
-                      const editorBlockType = info.category || info.type;
-                      if (supportsMFEEditor(editorBlockType)) {
-                        // MFE editor available (html, video, problem, games, etc.)
-                        handleShowMFEEditor(editorBlockType, info.locator);
-                      } else {
-                        // No MFE editor — open the legacy Studio editor in an iframe
-                        handleShowLegacyEditModal(info.locator);
-                      }
                     }}
                   />
                 </div>

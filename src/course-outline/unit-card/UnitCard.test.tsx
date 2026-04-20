@@ -568,7 +568,7 @@ describe('<UnitCard />', () => {
       expect(screen.queryByTestId('add-component-item-paste')).not.toBeInTheDocument();
     });
 
-    it('opens MFE editor after creating an MFE-supported component (e.g. html)', async () => {
+    it('does not open editor after creating an MFE-supported component (e.g. html)', async () => {
       // Simulate createXBlock returning a locator for an html component
       mockCreateXBlock.mockResolvedValueOnce({
         locator: 'block-v1:test+type@html+block@new1',
@@ -604,13 +604,17 @@ describe('<UnitCard />', () => {
       await act(async () => fireEvent.click(toggle));
       await act(async () => fireEvent.click(screen.getByTestId('add-component-item-html')));
 
-      // The MFE editor modal should appear (mocked EditorPage inside .editor-page div)
+      // createXBlock should have been called
       await waitFor(() => {
-        expect(screen.getByTestId('mock-editor-page')).toBeInTheDocument();
+        expect(mockCreateXBlock).toHaveBeenCalled();
       });
+
+      // No editor should open — component is created without launching an editor
+      expect(screen.queryByTestId('mock-editor-page')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('mock-modal-iframe')).not.toBeInTheDocument();
     });
 
-    it('opens legacy editor after creating a non-MFE component (e.g. openassessment)', async () => {
+    it('does not open editor after creating a non-MFE component (e.g. openassessment)', async () => {
       // Simulate createXBlock returning a locator for an ORA component
       mockCreateXBlock.mockResolvedValueOnce({
         locator: 'block-v1:test+type@openassessment+block@new2',
@@ -650,10 +654,14 @@ describe('<UnitCard />', () => {
       await act(async () => fireEvent.click(toggle));
       await act(async () => fireEvent.click(screen.getByTestId('add-component-item-openassessment')));
 
-      // Legacy editor modal (iframe) should appear — MockModalIframe renders with a title
+      // createXBlock should have been called
       await waitFor(() => {
-        expect(screen.getByTestId('mock-modal-iframe')).toBeInTheDocument();
+        expect(mockCreateXBlock).toHaveBeenCalled();
       });
+
+      // No editor should open — component is created without launching an editor
+      expect(screen.queryByTestId('mock-editor-page')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('mock-modal-iframe')).not.toBeInTheDocument();
     });
   });
 

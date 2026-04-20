@@ -82,9 +82,27 @@ const AddComponentWidget = ({
     }
   };
 
-  /** Handle clicking a dropdown item – open modal if multiple templates, otherwise create directly */
+  /**
+   * Map of component types that should skip the template selection modal
+   * and create directly with a specific default template.
+   * Key: component type, Value: function to find the default template.
+   */
+  const directCreateDefaults: Record<string, (tpls: ComponentTemplate['templates']) => ComponentTemplate['templates'][0] | undefined> = {
+    html: (tpls) => tpls.find((t) => !t.boilerplateName) || tpls[0],
+    openassessment: (tpls) => tpls.find((t) => t.boilerplateName === 'peer-assessment') || tpls[0],
+    problem: (tpls) => tpls[0],
+  };
+
   const handleDropdownItemClick = async (template: ComponentTemplate) => {
-    if (template.templates.length > 1) {
+    const directDefault = directCreateDefaults[template.type];
+    if (directDefault) {
+      const defaultTpl = directDefault(template.templates);
+      await handleAddComponent(
+        template.type,
+        defaultTpl?.category || template.type,
+        defaultTpl?.boilerplateName,
+      );
+    } else if (template.templates.length > 1) {
       // Multiple sub-types available – show selection modal
       setModalTemplate(template);
       setSelectedTemplateValue('');

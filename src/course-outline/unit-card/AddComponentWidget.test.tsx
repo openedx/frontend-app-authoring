@@ -39,6 +39,17 @@ const problemTemplate: ComponentTemplate = {
   supportLegend: {},
 };
 
+const openAssessmentTemplate: ComponentTemplate = {
+  type: 'openassessment',
+  displayName: 'Open Response',
+  templates: [
+    { displayName: 'Peer Assessment Only', category: 'openassessment', boilerplateName: 'peer-assessment' },
+    { displayName: 'Self Assessment Only', category: 'openassessment', boilerplateName: 'self-assessment' },
+    { displayName: 'Staff Assessment Only', category: 'openassessment', boilerplateName: 'staff-assessment' },
+  ],
+  supportLegend: {},
+};
+
 const advancedTemplate: ComponentTemplate = {
   type: 'advanced',
   displayName: 'Advanced',
@@ -55,7 +66,7 @@ const unitId = 'block-v1:edX+Demo+2025+type@vertical+block@unit1';
 const renderWidget = (props?: Partial<React.ComponentProps<typeof AddComponentWidget>>) => render(
   <AddComponentWidget
     unitId={unitId}
-    componentTemplates={[htmlTemplate, problemTemplate, advancedTemplate]}
+    componentTemplates={[htmlTemplate, problemTemplate, openAssessmentTemplate, advancedTemplate]}
     {...props}
   />,
 );
@@ -147,62 +158,87 @@ describe('<AddComponentWidget />', () => {
     });
   });
 
-  it('opens template selection modal for multi-template types', async () => {
-    renderWidget();
-    // Open dropdown and click Problem (multiple templates)
-    const toggle = screen.getByText(messages.addComponentButton.defaultMessage);
-    await act(async () => fireEvent.click(toggle));
-    await act(async () => fireEvent.click(screen.getByTestId('add-component-item-problem')));
-
-    // Modal should appear with radio options
-    expect(screen.getByText('Add problem component')).toBeInTheDocument();
-    expect(screen.getByText('Blank Problem')).toBeInTheDocument();
-    expect(screen.getByText('Multiple Choice')).toBeInTheDocument();
-    expect(screen.getByText('Checkboxes')).toBeInTheDocument();
-  });
-
-  it('creates component from modal after selecting a template', async () => {
+  it('creates problem component directly without modal (skips template selection)', async () => {
     const onCreated = jest.fn();
     renderWidget({ onComponentCreated: onCreated });
 
-    // Open dropdown → click Problem → modal opens
+    // Open dropdown and click Problem – should create directly, no modal
     const toggle = screen.getByText(messages.addComponentButton.defaultMessage);
     await act(async () => fireEvent.click(toggle));
     await act(async () => fireEvent.click(screen.getByTestId('add-component-item-problem')));
 
-    // Select "Multiple Choice" radio button
-    const multipleChoiceRadio = screen.getByLabelText('Multiple Choice');
-    await act(async () => fireEvent.click(multipleChoiceRadio));
-
-    // Click "Select" button to submit
-    const selectButton = screen.getByText(messages.templateModalSelect.defaultMessage);
-    await act(async () => fireEvent.click(selectButton));
-
-    // Should create with the selected boilerplate
+    // Should call createXBlock with the first/default template
     await waitFor(() => {
       expect(mockCreateXBlock).toHaveBeenCalledWith({
         parentLocator: unitId,
         type: 'problem',
         category: 'problem',
-        boilerplate: 'multiple_choice',
+        boilerplate: undefined,
       });
     });
+
+    // Modal should NOT appear
+    expect(screen.queryByText('Add problem component')).not.toBeInTheDocument();
   });
 
-  it('closes modal without creating when cancel is clicked', async () => {
-    renderWidget();
-    // Open dropdown → click Problem → modal opens
+  it('creates open response component directly with Peer Assessment Only default (skips modal)', async () => {
+    const onCreated = jest.fn();
+    renderWidget({ onComponentCreated: onCreated });
+
+    // Open dropdown and click Open Response – should create directly, no modal
     const toggle = screen.getByText(messages.addComponentButton.defaultMessage);
     await act(async () => fireEvent.click(toggle));
-    await act(async () => fireEvent.click(screen.getByTestId('add-component-item-problem')));
+    await act(async () => fireEvent.click(screen.getByTestId('add-component-item-openassessment')));
 
-    // Click "Cancel" button
-    const cancelButton = screen.getByText(messages.templateModalCancel.defaultMessage);
-    await act(async () => fireEvent.click(cancelButton));
+    // Should call createXBlock with 'peer-assessment' boilerplate
+    await waitFor(() => {
+      expect(mockCreateXBlock).toHaveBeenCalledWith({
+        parentLocator: unitId,
+        type: 'openassessment',
+        category: 'openassessment',
+        boilerplate: 'peer-assessment',
+      });
+    });
 
-    // Modal should close, createXBlock should not be called
-    expect(screen.queryByText('Add problem component')).not.toBeInTheDocument();
-    expect(mockCreateXBlock).not.toHaveBeenCalled();
+    // Modal should NOT appear
+    expect(screen.queryByText('Add open response component')).not.toBeInTheDocument();
+  });
+
+  it('creates html/text component directly with default Text template (skips modal)', async () => {
+    const onCreated = jest.fn();
+    // Use multi-template html to prove modal is skipped even with multiple templates
+    const htmlMultiTemplate: ComponentTemplate = {
+      type: 'html',
+      displayName: 'Text',
+      templates: [
+        { displayName: 'Text', category: 'html', boilerplateName: undefined },
+        { displayName: 'Raw HTML', category: 'html', boilerplateName: 'raw.yaml' },
+        { displayName: 'Zooming Image Tool', category: 'html', boilerplateName: 'zooming_image.yaml' },
+      ],
+      supportLegend: {},
+    };
+    renderWidget({
+      componentTemplates: [htmlMultiTemplate, problemTemplate, openAssessmentTemplate, advancedTemplate],
+      onComponentCreated: onCreated,
+    });
+
+    // Open dropdown and click Text – should create directly, no modal
+    const toggle = screen.getByText(messages.addComponentButton.defaultMessage);
+    await act(async () => fireEvent.click(toggle));
+    await act(async () => fireEvent.click(screen.getByTestId('add-component-item-html')));
+
+    // Should call createXBlock with default Text (no boilerplate)
+    await waitFor(() => {
+      expect(mockCreateXBlock).toHaveBeenCalledWith({
+        parentLocator: unitId,
+        type: 'html',
+        category: 'html',
+        boilerplate: undefined,
+      });
+    });
+
+    // Modal should NOT appear
+    expect(screen.queryByText('Add text component')).not.toBeInTheDocument();
   });
 
   it('creates advanced component directly on click', async () => {
@@ -269,15 +305,28 @@ describe('<AddComponentWidget />', () => {
     expect(screen.queryByTestId('add-component-item-paste')).not.toBeInTheDocument();
   });
 
-  it('disables the Select button in modal when no template is selected', async () => {
-    renderWidget();
-    // Open dropdown → click Problem → modal opens
+  it('still opens modal for types not in directCreateDefaults (e.g. custom multi-template)', async () => {
+    // Create a custom type with multiple templates that is NOT in directCreateDefaults
+    const customTemplate: ComponentTemplate = {
+      type: 'custom_type',
+      displayName: 'Custom',
+      templates: [
+        { displayName: 'Option A', category: 'custom_type', boilerplateName: 'option_a' },
+        { displayName: 'Option B', category: 'custom_type', boilerplateName: 'option_b' },
+      ],
+      supportLegend: {},
+    };
+    renderWidget({
+      componentTemplates: [customTemplate],
+    });
+
     const toggle = screen.getByText(messages.addComponentButton.defaultMessage);
     await act(async () => fireEvent.click(toggle));
-    await act(async () => fireEvent.click(screen.getByTestId('add-component-item-problem')));
+    await act(async () => fireEvent.click(screen.getByTestId('add-component-item-custom_type')));
 
-    // Select button should be disabled initially (no radio selected)
-    const selectButton = screen.getByText(messages.templateModalSelect.defaultMessage);
-    expect(selectButton).toBeDisabled();
+    // Modal should appear
+    expect(screen.getByText('Add custom component')).toBeInTheDocument();
+    expect(screen.getByText('Option A')).toBeInTheDocument();
+    expect(screen.getByText('Option B')).toBeInTheDocument();
   });
 });
