@@ -1,5 +1,5 @@
 import { mockApiResponse } from './mocks/mockApiResponse';
-import { countBrokenLinks, isDataEmpty } from './utils';
+import { countBrokenLinks, isDataEmpty, buildBlockContainerUrl } from './utils';
 
 describe('countBrokenLinks', () => {
   it('should return the count of broken links', () => {
@@ -102,5 +102,19 @@ describe('isDataEmpty', () => {
       courseUpdates: [],
     };
     expect(isDataEmpty(data)).toBe(false);
+  });
+});
+
+describe('buildBlockContainerUrl', () => {
+  it('should build a correct internal route for block container', () => {
+    const courseId = 'course-v1:Test+Course+2024';
+    const unitId = 'unit123';
+    const blockId = 'block456';
+
+    const result = buildBlockContainerUrl(courseId, unitId, blockId);
+
+    expect(result).toBe(
+      `/course/${courseId}/container/${unitId}#${blockId}`,
+    );
   });
 });

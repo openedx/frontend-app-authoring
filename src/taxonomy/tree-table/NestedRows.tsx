@@ -7,7 +7,8 @@ import type {
   TreeColumnDef,
   CreateRowMutationState,
 } from './types';
-import { CreateRow, EditRow } from './CreateRow';
+import CreateRow from './CreateRow';
+import EditRow from './EditRow';
 
 interface NestedRowsProps {
   /** The parent row object from TanStack React Table */
@@ -103,7 +104,6 @@ const NestedRows = ({
           setIsCreatingTopRow={setIsCreatingTopRow}
           exitDraftWithoutSave={onCancelCreation}
           createRowMutation={createRowMutation}
-          columns={[]}
           indent={indent}
           validate={validate}
         />
@@ -124,9 +124,9 @@ const NestedRows = ({
                     exitDraftWithoutSave();
                   }}
                   updateRowMutation={updateRowMutation}
-                  columns={columns}
                   indent={indent}
                   validate={validate}
+                  row={row}
                 />
               ) :
               (
@@ -139,9 +139,7 @@ const NestedRows = ({
                       return (
                         <td
                           key={cell.id}
-                          className={`p-1 align-top tree-table-overflow-anywhere ${
-                            isFirstColumn ? '' : 'tree-table-actions-column'
-                          }`}
+                          className="p-1 tree-table-overflow-anywhere"
                         >
                           {isFirstColumn ?
                             <div className={`tree-table-indent tree-table-indent-${indent}`}>{content}</div> :

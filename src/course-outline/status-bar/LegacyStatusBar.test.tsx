@@ -56,9 +56,9 @@ const queryClient = new QueryClient();
 
 const renderComponent = (props?: Partial<LegacyStatusBarProps>) =>
   render(
-    <AppProvider store={store} messages={{}}>
+    <AppProvider store={store}>
       <QueryClientProvider client={queryClient}>
-        <IntlProvider locale="en">
+        <IntlProvider locale="en" messages={{}}>
           <LegacyStatusBar
             courseId={courseId}
             isLoading={isLoading}

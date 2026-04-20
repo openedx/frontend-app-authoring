@@ -7,8 +7,9 @@ import React, {
 
 import { Form } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+
+import OptionalExpandLink from '@src/taxonomy/tag-list/OptionalExpandLink';
 import messages from './messages';
-import OptionalExpandLink from '../tag-list/OptionalExpandLink';
 
 /**
  * Props for the EditableCell component.

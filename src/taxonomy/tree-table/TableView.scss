@@ -10,11 +10,7 @@
   overflow-wrap: anywhere;
 }
 
-.tree-table-indent {
-  padding-inline-start: var(--pgn-spacing-spacer-base);
-}
-
-@for $depth from 2 through 10 {
+@for $depth from 0 through 10 {
   .tree-table-indent-#{$depth} {
     padding-inline-start: calc(var(--pgn-spacing-spacer-base) * #{$depth});
   }

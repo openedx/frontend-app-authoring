@@ -1,10 +1,12 @@
 import { useReducer } from 'react';
+import { AxiosError } from 'axios';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { useCreateTag, useUpdateTag } from '../data/apiHooks';
+import globalMessages from '@src/messages';
+import { useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
+import type { RowId } from '@src/taxonomy/tree-table/types';
 import { TagTree } from './tagTree';
 import { TagListTableError } from './errors';
-import type { RowId } from '../tree-table/types';
 import {
   TABLE_MODES,
   TRANSITION_TABLE,
@@ -167,6 +169,38 @@ const useEditActions = ({
     return true;
   };
 
+  const formatErrorMessage = (errorMessage: string): string => {
+    // Remove trailing period for better message formatting
+    return errorMessage.replace(/\.$/, '');
+  };
+
+  const getAxiosErrorMessage = (axiosError: AxiosError) => {
+    const responseData = axiosError.response?.data;
+    const tagError = responseData ?
+      Object.entries(responseData)?.find((errItem: [string, unknown]) => (
+        ['tag', 'value', 'updated_tag_value'].includes(errItem[0].toLowerCase())
+      )) :
+      null;
+
+    const errorMessages = tagError ? tagError[1] : (
+      axiosError.message || intl.formatMessage(globalMessages.unknownError)
+    );
+    const errorMessage = Array.isArray(errorMessages) ? errorMessages.join('; ') : String(errorMessages);
+    return formatErrorMessage(errorMessage);
+  };
+
+  const getErrorMessage = (error: unknown): string => {
+    if (error instanceof AxiosError) {
+      return getAxiosErrorMessage(error);
+    }
+
+    if (error instanceof Error && error.message) {
+      return formatErrorMessage(error.message);
+    }
+
+    return intl.formatMessage(globalMessages.unknownError);
+  };
+
   const handleCreateTag = async (value: string, parentTagValue?: string) => {
     const trimmed = value.trim();
 
@@ -186,11 +220,9 @@ const useEditActions = ({
       setIsCreatingTopTag(false);
       setCreatingParentId(null);
     } catch (error) {
-      const message = intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: (error as Error)?.message });
-      setDraftError(
-        (error as Error)?.message || intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage: '' }),
-      );
-      setToast({ show: true, message });
+      const errorMessage = getErrorMessage(error);
+      setDraftError(errorMessage);
+      setToast({ show: true, message: intl.formatMessage(messages.tagCreationErrorMessage, { errorMessage }) });
     }
   };
 
@@ -217,11 +249,9 @@ const useEditActions = ({
         message: intl.formatMessage(messages.tagUpdateSuccessMessage, { name: trimmed }),
       });
     } catch (error) {
-      const message = intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage: (error as Error)?.message });
-      setDraftError(
-        (error as Error)?.message || intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage: '' }),
-      );
-      setToast({ show: true, message });
+      const errorMessage = getErrorMessage(error);
+      setDraftError(errorMessage);
+      setToast({ show: true, message: intl.formatMessage(messages.tagUpdateErrorMessage, { errorMessage }) });
     }
   };
 

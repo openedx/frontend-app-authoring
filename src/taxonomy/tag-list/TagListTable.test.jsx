@@ -1,4 +1,5 @@
 import React from 'react';
+import { AxiosError } from 'axios';
 import {
   render,
   waitFor,
@@ -598,8 +599,16 @@ describe('<TagListTable />', () => {
         expect(screen.getByText(/invalid character/i)).toBeInTheDocument();
       });
 
-      it('should show an inline duplicate-name error when the entered root tag already exists', async () => {
-        axiosMock.onPost(createTagUrl).reply(400, ['Tag with this name already exists']);
+      it('should show failure feedback when creating a duplicate root tag name', async () => {
+        axiosMock.onPost(createTagUrl).reply(() => {
+          const error = new AxiosError('Request failed with status code 400');
+          error.response = {
+            data: {
+              tag: ['Tag with this name already exists'],
+            },
+          };
+          return Promise.reject(error);
+        });
 
         fireEvent.click(await screen.findByLabelText('Create Tag'));
         const draftRow = await screen.findAllByRole('row');
@@ -609,12 +618,18 @@ describe('<TagListTable />', () => {
         fireEvent.change(input, { target: { value: 'root tag 1' } });
         fireEvent.click(saveButton);
 
-        expect(await screen.findByText('Tag with this name already exists')).toBeInTheDocument();
+        expect(await screen.findByText('Error creating tag: Tag with this name already exists')).toBeInTheDocument();
       });
 
       it('should keep the inline row and show a failure toast when save request fails', async () => {
-        axiosMock.onPost(createTagUrl).reply(500, {
-          error: 'Internal server error',
+        axiosMock.onPost(createTagUrl).reply(() => {
+          const error = new AxiosError('Request failed with status code 500');
+          error.response = {
+            data: {
+              tag: ['Internal server error'],
+            },
+          };
+          return Promise.reject(error);
         });
 
         fireEvent.click(await screen.findByLabelText('Create Tag'));

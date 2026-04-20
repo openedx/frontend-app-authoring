@@ -110,11 +110,19 @@ describe('import taxonomy api calls', () => {
     expect(axiosMock.history.put[0].url).toEqual(apiUrls.tagsPlanImport(1));
   });
 
-  it('should surface duplicate tag error returned as an array', async () => {
-    const duplicateError = 'Tag with value \'ab\' already exists for taxonomy.';
-    axiosMock.onPost(apiUrls.createTag(1)).reply(400, [duplicateError]);
+  it('should surface tag errors', async () => {
+    const duplicateMessage = 'Tag with value \'ab\' already exists for taxonomy.';
+    axiosMock.onPost(apiUrls.createTag(1)).reply(400, [duplicateMessage]);
     const { result } = renderHook(() => useCreateTag(1), { wrapper });
 
-    await expect(result.current.mutateAsync({ value: 'ab' })).rejects.toEqual(Error(duplicateError));
+    try {
+      await result.current.mutateAsync({ value: 'ab' });
+      // expect: if code reaches this line, the test should fail because an error should have been thrown
+      expect('This line should not be reached').toBe(false);
+    } catch (error) {
+      // we check the response data, not the error message, because of how react-query surfaces errors from axios
+      // @ts-ignore
+      expect(error.response.data).toEqual([duplicateMessage]);
+    }
   });
 });

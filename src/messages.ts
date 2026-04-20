@@ -10,6 +10,10 @@ const messages = defineMessages({
     id: 'authoring.alert.support.text',
     defaultMessage: 'Support Page',
   },
+  unknownError: {
+    id: 'authoring.alert.error.unknown',
+    defaultMessage: 'Unknown error',
+  },
 });
 
 export default messages;

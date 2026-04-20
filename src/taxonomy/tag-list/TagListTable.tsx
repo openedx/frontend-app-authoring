@@ -4,9 +4,9 @@ import React, {
   useEffect,
 } from 'react';
 import type { PaginationState } from '@tanstack/react-table';
-import { useTagListData, useCreateTag, useUpdateTag } from '../data/apiHooks';
+import { TableView } from '@src/taxonomy/tree-table';
+import { useTagListData, useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
 import { TagTree } from './tagTree';
-import { TableView } from '../tree-table';
 import type {
   RowId,
   TreeColumnDef,
