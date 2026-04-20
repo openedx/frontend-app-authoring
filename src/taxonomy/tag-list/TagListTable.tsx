@@ -1,6 +1,7 @@
 import React, {
   useState,
   useMemo,
+  useEffect,
 } from 'react';
 import type { PaginationState } from '@tanstack/react-table';
 import { useTagListData, useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
@@ -100,6 +101,18 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     exitDraftWithoutSave,
     setEditingRowId,
   });
+
+  // RELOAD DATA IN VIEW MODE
+  useEffect(() => {
+    // Get row data in VIEW mode. Otherwise keep current data to avoid disrupting
+    // users while they edit or create a tag.
+    if (tableMode === TABLE_MODES.VIEW && tagList?.results) {
+      const tree = new TagTree(tagList?.results);
+      if (tree) {
+        setTagTree(tree);
+      }
+    }
+  }, [tagList?.results, tableMode]);
 
   // TreeTable context
   const contextValueArgs = {
