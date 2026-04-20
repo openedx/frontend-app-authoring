@@ -65,6 +65,14 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.rename-tag',
     defaultMessage: 'Rename',
   },
+  deleteTag: {
+    id: 'course-authoring.tag-list.delete-tag',
+    defaultMessage: 'Delete',
+  },
+  deleteTagDisabledTooltip: {
+    id: 'course-authoring.tag-list.delete-tag-disabled-tooltip',
+    defaultMessage: 'This tag does not allow deletion',
+  },
 });
 
 export default messages;

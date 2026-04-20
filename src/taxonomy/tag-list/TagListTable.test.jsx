@@ -991,6 +991,44 @@ describe('<TagListTable />', () => {
       expect(within(grandchildTagRow).getByText('Add Subtag')).toHaveAttribute('aria-disabled', 'true');
     });
   });
+
+  describe('Delete Tags', () => {
+    const tagDepthScenarios = [
+      {
+        description: 'Delete a top-level tag',
+        tagName: 'root tag 1',
+      },
+      { description: 'Delete a sub-tag', tagName: 'the child tag' },
+      { description: 'Delete a grandchild tag', tagName: 'the grandchild tag' },
+    ];
+
+    tagDepthScenarios.forEach(({ description, tagName }) => {
+      describe(description, () => {
+        beforeEach(async () => {
+          axiosMock.resetHistory();
+        });
+
+        it('should disable delete action and show tooltip if tag includes `can_delete: false`', async () => {
+          axiosMock.reset();
+          axiosMock.onGet(rootTagsListUrl).reply(200, mockTagResponseDisallowingEdits);
+          axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
+          cleanup();
+          ({ axiosMock } = initializeMocks({ user: adminUser }));
+          axiosMock.onGet(rootTagsListUrl).reply(200, mockTagResponseDisallowingEdits);
+          axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
+          renderTagListTable();
+          await waitForRootTag();
+
+          openActionsMenuForTag(tagName);
+          const deleteButton = screen.getByRole('button', { name: /Delete/i });
+          expect(deleteButton).toBeInTheDocument();
+          expect(deleteButton).toHaveAttribute('aria-disabled', 'true');
+          fireEvent.mouseOver(deleteButton);
+          expect(screen.getByText(/This tag does not allow deletion/i)).toBeInTheDocument();
+        });
+      });
+    });
+  });
 });
 
 // These async creation flows are intentionally isolated because they pass individually

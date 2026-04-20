@@ -3,6 +3,8 @@ import {
   IconButton,
   IconButtonWithTooltip,
   Dropdown,
+  OverlayTrigger,
+  Tooltip,
 } from '@openedx/paragon';
 import {
   AddCircle,
@@ -25,24 +27,21 @@ import { getTagListRowData } from './utils';
 const EDITABLE_COLUMNS = ['value'];
 
 interface GetColumnsArgs {
-  setIsCreatingTopTag: (isCreating: boolean) => void;
+  setIsCreatingTopRow: (isCreating: boolean) => void;
   setCreatingParentId: (id: RowId | null) => void;
-  handleUpdateTag: (value: string, originalValue: string) => void;
   setEditingRowId: (id: RowId | null) => void;
   onStartDraft: () => void;
   setActiveActionMenuRowId: (id: RowId | null) => void;
   hasOpenDraft: boolean;
   canAddTag: boolean;
-  draftError: string;
   setDraftError: (error: string) => void;
-  isSavingDraft: boolean;
   maxDepth: number;
 }
 
 interface ActionsHeaderProps {
   onStartDraft: () => void;
   setDraftError: (error: string) => void;
-  setIsCreatingTopTag: (isCreating: boolean) => void;
+  setIsCreatingTopRow: (isCreating: boolean) => void;
   setEditingRowId: (id: RowId | null) => void;
   setActiveActionMenuRowId: (id: RowId | null) => void;
   hasOpenDraft: boolean;
@@ -53,7 +52,7 @@ interface ActionsHeaderProps {
 const ActionsHeader = ({
   onStartDraft,
   setDraftError,
-  setIsCreatingTopTag,
+  setIsCreatingTopRow,
   setEditingRowId,
   setActiveActionMenuRowId,
   hasOpenDraft,
@@ -72,7 +71,7 @@ const ActionsHeader = ({
         onClick={() => {
           onStartDraft();
           setDraftError('');
-          setIsCreatingTopTag(true);
+          setIsCreatingTopRow(true);
           setEditingRowId(null);
           setActiveActionMenuRowId(null);
         }}
@@ -90,6 +89,9 @@ interface ActionsMenuProps {
   editTag: () => void;
   disableEditTag: boolean;
   reachedMaxDepth: (row: Row<TreeRowData>) => boolean;
+  deleteTag: () => void;
+  disableDeleteTag: boolean;
+
   row: Row<TreeRowData>;
 }
 
@@ -101,8 +103,19 @@ const ActionsMenu = ({
   editTag,
   disableEditTag,
   reachedMaxDepth,
+  deleteTag,
+  disableDeleteTag,
 }: ActionsMenuProps) => {
   const intl = useIntl();
+
+  const deleteTagMenuItem = (
+    <Dropdown.Item
+      onClick={deleteTag}
+      disabled={disableDeleteTag}
+    >
+      {intl.formatMessage(messages.deleteTag)}
+    </Dropdown.Item>
+  )
 
   return (
     <Dropdown>
@@ -128,13 +141,25 @@ const ActionsMenu = ({
         >
           {intl.formatMessage(messages.renameTag)}
         </Dropdown.Item>
+        {disableDeleteTag ? (
+          <OverlayTrigger
+            placement="bottom"
+            overlay={
+              <Tooltip id={`tooltip-taxonomy-delete-tag-${rowData.id}`}>
+                {intl.formatMessage(messages.deleteTagDisabledTooltip)}
+              </Tooltip>
+            }
+          >
+            {deleteTagMenuItem}
+          </OverlayTrigger>
+        ) : deleteTagMenuItem}
       </Dropdown.Menu>
     </Dropdown>
   );
 };
 
 function getColumns({
-  setIsCreatingTopTag,
+  setIsCreatingTopRow,
   setCreatingParentId,
   setEditingRowId,
   onStartDraft,
@@ -175,7 +200,7 @@ function getColumns({
         <ActionsHeader
           onStartDraft={onStartDraft}
           setDraftError={setDraftError}
-          setIsCreatingTopTag={setIsCreatingTopTag}
+          setIsCreatingTopRow={setIsCreatingTopRow}
           setEditingRowId={setEditingRowId}
           setActiveActionMenuRowId={setActiveActionMenuRowId}
           hasOpenDraft={hasOpenDraft}
@@ -192,13 +217,14 @@ function getColumns({
 
         const disableAddSubtag = hasOpenDraft || !canAddTag;
         const disableEditTag = hasOpenDraft || rowData.canChangeTag === false;
+        const disableDeleteTag = hasOpenDraft || rowData.canDeleteTag === false;
 
         const startSubtagDraft = () => {
           onStartDraft();
           setDraftError('');
           setCreatingParentId(rowData.id);
           setEditingRowId(null);
-          setIsCreatingTopTag(false);
+          setIsCreatingTopRow(false);
           setActiveActionMenuRowId(null);
           row.toggleExpanded(true);
         };
@@ -208,8 +234,12 @@ function getColumns({
           setDraftError('');
           setEditingRowId(`${rowData.id}:${rowData.value}`);
           setCreatingParentId(null);
-          setIsCreatingTopTag(false);
+          setIsCreatingTopRow(false);
           setActiveActionMenuRowId(null);
+        };
+
+        const deleteTag = () => {
+          // todo: implement
         };
 
         return (
@@ -222,6 +252,8 @@ function getColumns({
               editTag={editTag}
               disableEditTag={disableEditTag}
               reachedMaxDepth={reachedMaxDepth}
+              deleteTag={deleteTag}
+              disableDeleteTag={disableDeleteTag}
             />
           </div>
         );
