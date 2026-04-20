@@ -328,7 +328,7 @@ describe('<LibraryAuthoringPage />', () => {
 
   it('should show Library Team button in Library Info that opens the Library Team modal', async () => {
     await renderLibraryPage();
-    const manageAccess = await screen.findByRole('button', { name: /Library Team/i });
+    const manageAccess = await screen.findByRole('button', { name: /Manage Access/i });
 
     expect(manageAccess).not.toBeDisabled();
     fireEvent.click(manageAccess);
