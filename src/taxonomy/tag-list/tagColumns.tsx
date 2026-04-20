@@ -1,16 +1,4 @@
-import {
-  Icon,
-  IconButton,
-  IconButtonWithTooltip,
-  Dropdown,
-  OverlayTrigger,
-  Tooltip,
-} from '@openedx/paragon';
-import {
-  AddCircle,
-  MoreVert,
-} from '@openedx/paragon/icons';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import type { Row } from '@tanstack/react-table';
 
 import type {
@@ -18,17 +6,16 @@ import type {
   TreeColumnDef,
   TreeRowData,
 } from '@src/taxonomy/tree-table/types';
-import type { TagListRowData } from './types';
 import messages from './messages';
 import OptionalExpandLink from './OptionalExpandLink';
 import UsageCountDisplay from './UsageCountDisplay';
 import { getTagListRowData } from './utils';
+import Actions from './Actions';
 
 const EDITABLE_COLUMNS = ['value'];
 
 interface GetColumnsArgs {
   setIsCreatingTopRow: (isCreating: boolean) => void;
-  setCreatingParentId: (id: RowId | null) => void;
   setEditingRowId: (id: RowId | null) => void;
   onStartDraft: () => void;
   setActiveActionMenuRowId: (id: RowId | null) => void;
@@ -36,133 +23,18 @@ interface GetColumnsArgs {
   canAddTag: boolean;
   setDraftError: (error: string) => void;
   maxDepth: number;
+  startSubtagDraft: (row: Row<TreeRowData>) => void;
+  startEditTag: (row: Row<TreeRowData>) => void;
+  startDeleteTag: (row: Row<TreeRowData>) => void;
 }
-
-interface ActionsHeaderProps {
-  onStartDraft: () => void;
-  setDraftError: (error: string) => void;
-  setIsCreatingTopRow: (isCreating: boolean) => void;
-  setEditingRowId: (id: RowId | null) => void;
-  setActiveActionMenuRowId: (id: RowId | null) => void;
-  hasOpenDraft: boolean;
-  draftInProgressHintId: string;
-  canAddTag: boolean;
-}
-
-const ActionsHeader = ({
-  onStartDraft,
-  setDraftError,
-  setIsCreatingTopRow,
-  setEditingRowId,
-  setActiveActionMenuRowId,
-  hasOpenDraft,
-  canAddTag,
-  draftInProgressHintId,
-}: ActionsHeaderProps) => {
-  const intl = useIntl();
-  return (
-    <div className="d-flex justify-content-end">
-      <IconButtonWithTooltip
-        tooltipPlacement="top"
-        tooltipContent={<div>{intl.formatMessage(messages.createNewTagTooltip)}</div>}
-        src={AddCircle}
-        alt={intl.formatMessage(messages.createTagButtonLabel)}
-        size="inline"
-        onClick={() => {
-          onStartDraft();
-          setDraftError('');
-          setIsCreatingTopRow(true);
-          setEditingRowId(null);
-          setActiveActionMenuRowId(null);
-        }}
-        disabled={hasOpenDraft || !canAddTag}
-        aria-describedby={hasOpenDraft ? draftInProgressHintId : undefined}
-      />
-    </div>
-  );
-};
-
-interface ActionsMenuProps {
-  rowData: TagListRowData;
-  startSubtagDraft: () => void;
-  disableAddSubtag: boolean;
-  editTag: () => void;
-  disableEditTag: boolean;
-  reachedMaxDepth: (row: Row<TreeRowData>) => boolean;
-  deleteTag: () => void;
-  disableDeleteTag: boolean;
-
-  row: Row<TreeRowData>;
-}
-
-const ActionsMenu = ({
-  rowData,
-  row,
-  startSubtagDraft,
-  disableAddSubtag,
-  editTag,
-  disableEditTag,
-  reachedMaxDepth,
-  deleteTag,
-  disableDeleteTag,
-}: ActionsMenuProps) => {
-  const intl = useIntl();
-
-  const deleteTagMenuItem = (
-    <Dropdown.Item
-      onClick={deleteTag}
-      disabled={disableDeleteTag}
-    >
-      {intl.formatMessage(messages.deleteTag)}
-    </Dropdown.Item>
-  )
-
-  return (
-    <Dropdown>
-      <Dropdown.Toggle
-        id={`dropdown-toggle-for-tag-${rowData.id}`}
-        as={IconButton}
-        src={MoreVert}
-        iconAs={Icon}
-        variant="primary"
-        aria-label={intl.formatMessage(messages.moreActionsForTag, { tagName: rowData.value })}
-        size="sm"
-      />
-      <Dropdown.Menu>
-        <Dropdown.Item
-          onClick={startSubtagDraft}
-          disabled={reachedMaxDepth(row) || disableAddSubtag}
-        >
-          {intl.formatMessage(messages.addSubtag)}
-        </Dropdown.Item>
-        <Dropdown.Item
-          onClick={editTag}
-          disabled={disableEditTag}
-        >
-          {intl.formatMessage(messages.renameTag)}
-        </Dropdown.Item>
-        {disableDeleteTag ? (
-          <OverlayTrigger
-            placement="bottom"
-            overlay={
-              <Tooltip id={`tooltip-taxonomy-delete-tag-${rowData.id}`}>
-                {intl.formatMessage(messages.deleteTagDisabledTooltip)}
-              </Tooltip>
-            }
-          >
-            {deleteTagMenuItem}
-          </OverlayTrigger>
-        ) : deleteTagMenuItem}
-      </Dropdown.Menu>
-    </Dropdown>
-  );
-};
 
 function getColumns({
   setIsCreatingTopRow,
-  setCreatingParentId,
   setEditingRowId,
   onStartDraft,
+  startSubtagDraft,
+  startEditTag,
+  startDeleteTag,
   setActiveActionMenuRowId,
   hasOpenDraft,
   canAddTag,
@@ -197,7 +69,7 @@ function getColumns({
     {
       id: 'actions',
       header: () => (
-        <ActionsHeader
+        <Actions.Header
           onStartDraft={onStartDraft}
           setDraftError={setDraftError}
           setIsCreatingTopRow={setIsCreatingTopRow}
@@ -219,40 +91,17 @@ function getColumns({
         const disableEditTag = hasOpenDraft || rowData.canChangeTag === false;
         const disableDeleteTag = hasOpenDraft || rowData.canDeleteTag === false;
 
-        const startSubtagDraft = () => {
-          onStartDraft();
-          setDraftError('');
-          setCreatingParentId(rowData.id);
-          setEditingRowId(null);
-          setIsCreatingTopRow(false);
-          setActiveActionMenuRowId(null);
-          row.toggleExpanded(true);
-        };
-
-        const editTag = () => {
-          onStartDraft();
-          setDraftError('');
-          setEditingRowId(`${rowData.id}:${rowData.value}`);
-          setCreatingParentId(null);
-          setIsCreatingTopRow(false);
-          setActiveActionMenuRowId(null);
-        };
-
-        const deleteTag = () => {
-          // todo: implement
-        };
-
         return (
           <div className="d-flex align-items-center justify-content-end gap-2">
-            <ActionsMenu
+            <Actions.Menu
               rowData={rowData}
               row={row}
-              startSubtagDraft={startSubtagDraft}
+              startSubtagDraft={() => startSubtagDraft(row)}
               disableAddSubtag={disableAddSubtag}
-              editTag={editTag}
+              startEditTag={() => startEditTag(row)}
               disableEditTag={disableEditTag}
               reachedMaxDepth={reachedMaxDepth}
-              deleteTag={deleteTag}
+              startDeleteTag={() => startDeleteTag(row)}
               disableDeleteTag={disableDeleteTag}
             />
           </div>

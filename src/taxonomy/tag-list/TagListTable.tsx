@@ -16,6 +16,7 @@ import {
   TABLE_MODES,
 } from './constants';
 import { useTableModes, useEditActions } from './hooks';
+import TypeXToConfirmPopup from './TypeXToConfirmPopup';
 
 interface TagListTableProps {
   taxonomyId: number;
@@ -50,6 +51,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const [draftError, setDraftError] = useState('');
   const treeData = (tagTree?.getAllAsDeepCopy() || []) as unknown as TreeRowData[];
   const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;
+  const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
+  const [confirmDeleteDialogContext, setConfirmDeleteDialogContext] = useState<Row<TreeRowData> | null>(null);
 
   // TABLE MODES
   const {
@@ -89,18 +92,25 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
 
   // Custom Edit Actions Hook - handles table mode transitions, API calls,
   // and updating the table without a full data reload when creating or editing tags.
-  const { handleCreateTag, handleUpdateTag, validate } = useEditActions({
-    setTagTree,
-    setDraftError,
-    createTagMutation,
-    updateTagMutation,
-    enterPreviewMode,
-    setToast,
-    setIsCreatingTopTag,
-    setCreatingParentId,
-    exitDraftWithoutSave,
-    setEditingRowId,
-  });
+  const { handleCreateTag, handleUpdateTag, validate, startSubtagDraft, startEditTag, startDeleteTag, handleDeleteTag } = useEditActions(
+    {
+      enterDraftMode,
+      enterPreviewMode,
+      enterViewMode,
+      setTagTree,
+      setDraftError,
+      createTagMutation,
+      updateTagMutation,
+      setToast,
+      setIsCreatingTopTag,
+      setCreatingParentId,
+      exitDraftWithoutSave,
+      setEditingRowId,
+      setActiveActionMenuRowId,
+      setConfirmDeleteDialogOpen,
+      setConfirmDeleteDialogContext,
+    },
+  );
 
   // RELOAD DATA IN VIEW MODE
   useEffect(() => {
@@ -142,6 +152,13 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     hasOpenDraft,
     canAddTag,
     maxDepth,
+    startSubtagDraft,
+    startEditTag,
+    startDeleteTag,
+    confirmDeleteDialogOpen,
+    setConfirmDeleteDialogOpen,
+    confirmDeleteDialogContext,
+    setConfirmDeleteDialogContext,
   };
   const contextValue = {
     ...contextValueArgs,
@@ -151,6 +168,20 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   return (
     <TreeTableContext.Provider value={contextValue}>
       <TableView />
+      <TypeXToConfirmPopup
+        label="Confirm Delete"
+        X="DELETE"
+        bodyText="Are you sure you want to delete this tag?"
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        isOpen={confirmDeleteDialogOpen}
+        context={confirmDeleteDialogContext}
+        onConfirm={(row) => { handleDeleteTag(row); setConfirmDeleteDialogOpen(false); setConfirmDeleteDialogContext(null); }}
+        onCancel={() => {
+          setConfirmDeleteDialogOpen(false);
+          setConfirmDeleteDialogContext(null);
+        }}
+      />
     </TreeTableContext.Provider>
   );
 };

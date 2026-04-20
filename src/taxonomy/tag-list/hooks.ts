@@ -4,7 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import globalMessages from '@src/messages';
 import { useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
-import type { RowId } from '@src/taxonomy/tree-table/types';
+import type { RowId, TreeRowData } from '@src/taxonomy/tree-table/types';
 import { TagTree } from './tagTree';
 import { TagListTableError } from './errors';
 import {
@@ -15,6 +15,9 @@ import {
 } from './constants';
 
 import messages from './messages';
+import { start } from '@src/library-authoring/__mocks__/contentLibrariesListV2';
+import { getTagListRowData } from './utils';
+import { Row } from '@tanstack/react-table';
 
 /** Interface for table mode actions for React's `useReducer` hook.
  *
@@ -41,13 +44,18 @@ interface UseEditActionsParams {
   setTagTree: React.Dispatch<React.SetStateAction<TagTree | null>>;
   setDraftError: React.Dispatch<React.SetStateAction<string>>;
   createTagMutation: ReturnType<typeof useCreateTag>;
+  enterDraftMode: () => void;
   enterPreviewMode: () => void;
+  enterViewMode: () => void;
   setToast: React.Dispatch<React.SetStateAction<{ show: boolean; message: string; }>>;
   setIsCreatingTopTag: React.Dispatch<React.SetStateAction<boolean>>;
   setCreatingParentId: React.Dispatch<React.SetStateAction<RowId | null>>;
   exitDraftWithoutSave: () => void;
   setEditingRowId: React.Dispatch<React.SetStateAction<RowId | null>>;
   updateTagMutation: ReturnType<typeof useUpdateTag>;
+  setActiveActionMenuRowId: React.Dispatch<React.SetStateAction<RowId | null>>;
+  setConfirmDeleteDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setConfirmDeleteDialogContext: React.Dispatch<React.SetStateAction<Row<TreeRowData> | null>>;
 }
 
 const getInlineValidationMessage = (value: string, intl: ReturnType<typeof useIntl>): string => {
@@ -111,16 +119,20 @@ const useTableModes = (): UseTableModesReturn => {
 };
 
 const useEditActions = ({
+  enterDraftMode,
+  enterPreviewMode,
+  enterViewMode,
   setTagTree,
   setDraftError,
   createTagMutation,
-  enterPreviewMode,
   setToast,
   setIsCreatingTopTag,
   setCreatingParentId,
   exitDraftWithoutSave,
   setEditingRowId,
   updateTagMutation,
+  setConfirmDeleteDialogOpen,
+  setConfirmDeleteDialogContext,
 }: UseEditActionsParams) => {
   const intl = useIntl();
 
@@ -255,11 +267,54 @@ const useEditActions = ({
     }
   };
 
+  const startSubtagDraft = (row: Row<TreeRowData>) => {
+    const rowData = getTagListRowData(row);
+    enterDraftMode();
+    setDraftError('');
+    setCreatingParentId(rowData.id);
+    row.toggleExpanded(true);
+  };
+
+  const startEditTag = (row: Row<TreeRowData>) => {
+    const rowData = getTagListRowData(row);
+    enterDraftMode();
+    setDraftError('');
+    setEditingRowId(`${rowData.id}:${rowData.value}`);
+  };
+
+  const startDeleteTag = (row: Row<TreeRowData>) => {
+    setConfirmDeleteDialogOpen(true);
+    setConfirmDeleteDialogContext(row);
+  };
+
+  const someDeleteTagAPICall = async (value: string) => {
+    // Placeholder for actual delete API call
+    return new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  const handleDeleteTag = async (row: Row<TreeRowData>) => {
+    const rowData = getTagListRowData(row);
+    try {
+      enterViewMode();
+      await someDeleteTagAPICall(rowData.value); // Replace with actual delete API call
+      setToast({
+        show: true,
+        message: intl.formatMessage(messages.tagDeleteSuccessMessage, { name: rowData.value }),
+      });
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      setToast({ show: true, message: intl.formatMessage(messages.tagDeleteErrorMessage, { errorMessage }) });
+    }
+  };
+
   return {
     updateTableWithoutDataReload,
     handleCreateTag,
     handleUpdateTag,
+    startSubtagDraft,
+    startEditTag,
+    startDeleteTag,
     validate,
+    handleDeleteTag,
   };
 };
 

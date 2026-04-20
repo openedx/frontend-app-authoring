@@ -73,6 +73,18 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.delete-tag-disabled-tooltip',
     defaultMessage: 'This tag does not allow deletion',
   },
+  tagEditForbidden: {
+    id: 'course-authoring.tag-list.system-defined-tag-edit-disabled',
+    defaultMessage: 'Disabled because this is not allowed to be changed',
+  },
+  tagDeleteForbidden: {
+    id: 'course-authoring.tag-list.system-defined-tag-delete-disabled',
+    defaultMessage: 'Disabled because this is not allowed to be deleted',
+  },
+  hasOpenDraft: {
+    id: 'course-authoring.tag-list.has-open-draft',
+    defaultMessage: 'Disabled because tag creation or edit is in progress',
+  },
 });
 
 export default messages;

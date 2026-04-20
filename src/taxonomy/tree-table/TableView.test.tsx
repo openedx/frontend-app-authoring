@@ -48,12 +48,13 @@ const baseContextValue = () => ({
 const renderTableView = (
   contextValue = baseContextValue(),
   props: React.ComponentProps<typeof TableView> = {},
-) => render(
-  <TreeTableContext.Provider value={contextValue}>
-    <TableView {...props} />
-  </TreeTableContext.Provider>,
-  { wrapper },
-);
+) =>
+  render(
+    <TreeTableContext.Provider value={contextValue}>
+      <TableView {...props} />
+    </TreeTableContext.Provider>,
+    { wrapper },
+  );
 
 describe('TableView', () => {
   it('shows and dismisses save error banner', () => {

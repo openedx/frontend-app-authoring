@@ -33,6 +33,8 @@ export interface TreeTableContextValue {
   handleUpdateRow: (value: string, originalValue: string) => void;
   editingRowId: RowId | null;
   setEditingRowId: (id: RowId | null) => void;
+  confirmDeleteDialogOpen: boolean;
+  setConfirmDeleteDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const TreeTableContext = createContext<TreeTableContextValue>({
@@ -58,4 +60,6 @@ export const TreeTableContext = createContext<TreeTableContextValue>({
   handleUpdateRow: () => {},
   editingRowId: null,
   setEditingRowId: () => {},
+  confirmDeleteDialogOpen: false,
+  setConfirmDeleteDialogOpen: () => {},
 });
