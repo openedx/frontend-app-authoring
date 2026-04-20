@@ -1313,7 +1313,7 @@ mockLibraryBlockPublishHistory.data = [
     contributors: ['test_user_1', 'test_user_2', 'test_user_3', 'test_user_4', 'test_user_5'].map(mockContributor),
     contributorsCount: 5,
   },
-] satisfies api.LibraryPublishHistoryGroup[];
+] as api.LibraryPublishHistoryGroup[];
 mockLibraryBlockPublishHistory.applyMock = () =>
   jest.spyOn(api, 'getLibraryBlockPublishHistory').mockImplementation(mockLibraryBlockPublishHistory);
 

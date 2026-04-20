@@ -985,7 +985,7 @@ export interface DirectPublishedEntity {
 export interface LibraryPublishHistoryGroup {
   publishLogUuid: string;
   directPublishedEntities: DirectPublishedEntity[];
-  publishedBy: string;
+  publishedBy?: string;
   publishedAt: string;
   contributors: LibraryPublishContributor[];
   contributorsCount: number;
@@ -1005,7 +1005,7 @@ export interface LibraryPublishContributor {
     medium: string;
     small: string;
   };
-  username: string;
+  username?: string;
 }
 
 export interface LibraryHistoryEntry {

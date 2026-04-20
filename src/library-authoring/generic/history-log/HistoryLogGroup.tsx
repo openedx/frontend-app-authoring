@@ -41,7 +41,7 @@ export interface HistoryPublishLogGroupProps extends LibraryPublishHistoryGroup 
 }
 
 interface ContributorAvatarProps {
-  username: string;
+  username?: string;
   src: string;
   className: string;
   size: ComponentProps<typeof Avatar>['size'];
@@ -57,13 +57,14 @@ const ContributorAvatar = ({
   className,
   size,
 }: ContributorAvatarProps) => {
+  const intl = useIntl();
   const [imgError, setImgError] = useState(false);
   return (
     <Avatar
       className={className}
       size={size}
       src={imgError ? undefined : src}
-      alt={username}
+      alt={username || intl.formatMessage(messages.historyEntryDefaultUser)}
       onError={() => setImgError(true)}
     />
   );
@@ -101,45 +102,49 @@ const HistoryLogGroupTitle = ({
 
 const HistoryLogGroupEntries = ({
   entries,
-}: HistoryLogGroupEntriesProps) => (
-  <Stack gap={0}>
-    <div className="history-log-vert" />
-    {entries.map((entry) => {
-      const entryMessage = entry.action === 'edited'
-        ? messages.historyEditEntry
-        : messages.historyRenameEntry;
+}: HistoryLogGroupEntriesProps) => {
+  const intl = useIntl();
 
-      return (
-        <div key={entry.changedAt}>
-          <Stack direction="horizontal" gap={2} className="ml-1.5">
-            <ContributorAvatar
-              username={entry.changedBy.username}
-              src={entry.changedBy.profileImageUrls.medium}
-              className="history-log-group-avatar small-avatar"
-              size="sm"
-            />
-            <Stack>
-              <Stack direction="horizontal" gap={1}>
-                <FormattedMessage
-                  {...entryMessage}
-                  values={{
-                    user: entry.changedBy.username,
-                    displayName: <span className="history-log-title text-truncate">{entry.title}</span>,
-                    icon: <Icon src={getItemIcon(entry.itemType)} />,
-                  }}
-                />
+  return (
+    <Stack gap={0}>
+      <div className="history-log-vert" />
+      {entries.map((entry) => {
+        const entryMessage = entry.action === 'edited'
+          ? messages.historyEditEntry
+          : messages.historyRenameEntry;
+
+        return (
+          <div key={entry.changedAt}>
+            <Stack direction="horizontal" gap={2} className="ml-1.5">
+              <ContributorAvatar
+                username={entry.changedBy?.username || intl.formatMessage(messages.historyEntryDefaultUser)}
+                src={entry.changedBy.profileImageUrls.medium}
+                className="history-log-group-avatar small-avatar"
+                size="sm"
+              />
+              <Stack>
+                <Stack direction="horizontal" gap={1}>
+                  <FormattedMessage
+                    {...entryMessage}
+                    values={{
+                      user: entry.changedBy.username ?? intl.formatMessage(messages.historyEntryDefaultUser),
+                      displayName: <span className="history-log-title text-truncate">{entry.title}</span>,
+                      icon: <Icon src={getItemIcon(entry.itemType)} />,
+                    }}
+                  />
+                </Stack>
+                <span className="small text-gray-500">
+                  {moment(entry.changedAt).fromNow()}
+                </span>
               </Stack>
-              <span className="small text-gray-500">
-                {moment(entry.changedAt).fromNow()}
-              </span>
             </Stack>
-          </Stack>
-          <div className="history-log-vert" />
-        </div>
-      );
-    })}
-  </Stack>
-);
+            <div className="history-log-vert" />
+          </div>
+        );
+      })}
+    </Stack>
+  );
+};
 
 export const HistoryCreatedLogGroup = ({
   user,
@@ -255,7 +260,7 @@ export const HistoryPublishLogGroup = ({
               titleMessage={intl.formatMessage(
                 messages.publishTitle,
                 {
-                  user: publishedBy,
+                  user: publishedBy || intl.formatMessage(messages.historyEntryDefaultUser),
                   displayName: (
                     <span className="history-log-title text-truncate">{directPublishedEntities[0].title}</span>
                   ),

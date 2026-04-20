@@ -7,6 +7,7 @@ import {
   findByDeepTextContent,
 } from '@src/testUtils';
 
+import type { LibraryPublishContributor } from '@src/library-authoring/data/api';
 import {
   mockLibraryBlockDraftHistory,
   mockLibraryBlockPublishHistory,
@@ -39,6 +40,15 @@ const renderContainerComponent = (containerId: string) =>
   render(
     <HistoryContainerLog containerId={containerId} />,
   );
+
+const mockContributorNoUsername = (): LibraryPublishContributor => ({
+  profileImageUrls: {
+    full: 'http://example.com/full.png',
+    large: 'http://example.com/large.png',
+    medium: 'http://example.com/medium.png',
+    small: 'http://example.com/small.png',
+  },
+});
 
 describe('<HistoryComponentLog />', () => {
   beforeEach(() => {
@@ -92,6 +102,38 @@ describe('<HistoryComponentLog />', () => {
   it('always renders the created group with fallback user when createdBy is null', async () => {
     renderComponent(mockLibraryBlockCreationEntry.usageKey);
     expect(await findByDeepTextContent(/Author created.*Introduction to Testing 1/i)).toBeInTheDocument();
+  });
+
+  it('shows fallback "Author" for draft entry when changedBy has no username', async () => {
+    const user = userEvent.setup();
+    const originalData = mockLibraryBlockDraftHistory.data;
+    mockLibraryBlockDraftHistory.data = [
+      {
+        changedBy: mockContributorNoUsername(),
+        changedAt: '2026-03-16T11:00:00Z',
+        title: 'Anonymous Component',
+        itemType: 'html',
+        action: 'edited',
+      },
+    ];
+    renderComponent(mockLibraryBlockCreationEntry.usageKey);
+    const trigger = await findByDeepTextContent(/Introduction to Testing 1 is a draft/i);
+    await user.click(trigger);
+    expect(await findByDeepTextContent(/Author edited.*Anonymous Component/i)).toBeInTheDocument();
+    mockLibraryBlockDraftHistory.data = originalData;
+  });
+
+  it('shows fallback "Author" in publish group header when publishedBy is undefined', async () => {
+    const originalData = mockLibraryBlockPublishHistory.data;
+    mockLibraryBlockPublishHistory.data = [
+      {
+        ...originalData[0],
+        publishedBy: undefined,
+      },
+    ];
+    renderComponent(mockLibraryBlockCreationEntry.usageKey);
+    expect(await findByDeepTextContent(/Author published.*Protons/i)).toBeInTheDocument();
+    mockLibraryBlockPublishHistory.data = originalData;
   });
 });
 
