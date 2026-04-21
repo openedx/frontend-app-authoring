@@ -1,10 +1,13 @@
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, DataTableContext, Dropdown, useToggle,
+  Button,
+  DataTableContext,
+  Dropdown,
+  useToggle,
 } from '@openedx/paragon';
 import { Add, Tune } from '@openedx/paragon/icons';
-import FilesPageProvider, { FilesPageContext } from '@src/files-and-videos/files-page/FilesPageProvider';
+import { FilesPageContext } from '@src/files-and-videos/files-page/FilesPageProvider';
 import { isEmpty } from 'lodash';
 import { PropTypes } from 'prop-types';
 import React, { useContext, useEffect } from 'react';
@@ -85,7 +88,10 @@ const TableActions = ({
         <Button
           className="ml-2"
           onClick={async () => {
-            window.opener.postMessage({ type: 'org.openedx.assets.selected.v1', data: selectedFlatRows.map(({ original }) => original) }, '*');
+            window.opener.postMessage({
+              type: 'org.openedx.assets.selected.v1',
+              data: selectedFlatRows.map(({ original }) => original),
+            }, '*');
             window.close();
           }}
           disabled={selectedFlatRows.length === 0}

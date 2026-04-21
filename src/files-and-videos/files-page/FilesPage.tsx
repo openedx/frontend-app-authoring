@@ -24,8 +24,8 @@ const FilesPage = ({
   filePickerMode = false,
   filePickerOptions = undefined,
 }: {
-  filePickerMode?: boolean,
-  filePickerOptions?: FilePickerOptions,
+  filePickerMode?: boolean;
+  filePickerOptions?: FilePickerOptions;
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -37,7 +37,7 @@ const FilesPage = ({
     deletingStatus: deleteAssetStatus,
     updatingStatus: updateAssetStatus,
     errors: errorMessages,
-  } = useSelector((state:DeprecatedReduxState) => state.assets);
+  } = useSelector((state: DeprecatedReduxState) => state.assets);
 
   useEffect(() => {
     dispatch(fetchAssets(courseId));

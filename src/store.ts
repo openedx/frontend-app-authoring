@@ -47,8 +47,7 @@ export interface DeprecatedReduxState {
       lock: string[];
       download: string[];
       usageMetrics: string[];
-      loading:string;
-
+      loading: string;
     };
   };
   pagesAndResources: Record<string, any>;

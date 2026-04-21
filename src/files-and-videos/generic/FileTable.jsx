@@ -1,6 +1,9 @@
 import { FilesPageContext } from '@src/files-and-videos/files-page/FilesPageProvider';
 import {
-  useCallback, useContext, useEffect, useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -82,7 +85,7 @@ const FileTable = ({
   const defaultCurrentView = (fileType === 'video' && localStorage.getItem('videosCurrentView')) ||
     (fileType === 'file' && localStorage.getItem('filesCurrentView')) || defaultView;
   const [currentView, setCurrentView] = useState(defaultCurrentView);
-  const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
+  const { filePickerOptions } = useContext(FilesPageContext);
 
   useEffect(() => {
     if (!isEmpty(selectedRows) && Object.keys(selectedRows[0]).length > 0) {

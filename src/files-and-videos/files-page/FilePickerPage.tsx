@@ -3,7 +3,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import FilesPage from './FilesPage';
 
 export const FilePickerPage = () => {
-  const { courseId } = useParams<{ courseId: string }>();
+  const { courseId } = useParams<{ courseId: string; }>();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const filePickerOptions = {

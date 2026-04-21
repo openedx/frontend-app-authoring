@@ -1,15 +1,14 @@
 import React, { useMemo } from 'react';
 
 export interface FilePickerOptions {
-  usageKey: string,
-  multiSelect: boolean,
-  mimeType: string | null,
+  usageKey: string;
+  multiSelect: boolean;
+  mimeType: string | null;
 }
 
 interface FilesPageContextInterface {
-  filePickerMode: boolean,
-  filePickerOptions?: FilePickerOptions,
-
+  filePickerMode: boolean;
+  filePickerOptions?: FilePickerOptions;
 }
 
 export const FilesPageContext = React.createContext<FilesPageContextInterface>({
@@ -17,7 +16,7 @@ export const FilesPageContext = React.createContext<FilesPageContextInterface>({
 });
 
 interface FilesPageProviderProps extends FilesPageContextInterface {
-  children: React.ReactNode,
+  children: React.ReactNode;
 }
 
 const FilesPageProvider = ({
