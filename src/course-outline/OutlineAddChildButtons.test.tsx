@@ -38,12 +38,14 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
 }));
 
 const startCurrentFlow = jest.fn();
+const openContainerInfoSidebar = jest.fn();
 let currentFlow: OutlineFlow | null = null;
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
     ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     startCurrentFlow,
+    openContainerInfoSidebar,
     currentFlow,
     isCurrentFlowOn: !!currentFlow,
   }),
@@ -113,6 +115,8 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
               expect.objectContaining({ onSuccess: expect.any(Function) }),
             )
           );
+          handleAddBlock.mutateAsync.mock.calls[0][1].onSuccess({ locator: 'new-section-id' });
+          expect(openContainerInfoSidebar).toHaveBeenCalledWith('new-section-id', undefined, 'new-section-id');
           break;
         case ContainerType.Subsection:
           await waitFor(() =>
@@ -125,6 +129,12 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
               },
               expect.objectContaining({ onSuccess: expect.any(Function) }),
             )
+          );
+          handleAddBlock.mutateAsync.mock.calls[0][1].onSuccess({ locator: 'new-subsection-id' });
+          expect(openContainerInfoSidebar).toHaveBeenCalledWith(
+            'new-subsection-id',
+            'new-subsection-id',
+            parentLocator,
           );
           break;
         case ContainerType.Unit:

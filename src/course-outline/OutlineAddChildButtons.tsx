@@ -135,7 +135,6 @@ const NewOutlineAddChildButtons = ({
           parentLocator: courseUsageKey,
           displayName: COURSE_BLOCK_NAMES.chapter.name,
         }, {
-          // istanbul ignore next
           onSuccess: (data: { locator: string; }) => {
             openContainerInfoSidebar(data.locator, undefined, data.locator);
           },
@@ -154,7 +153,6 @@ const NewOutlineAddChildButtons = ({
           displayName: COURSE_BLOCK_NAMES.sequential.name,
           sectionId: parentLocator,
         }, {
-          // istanbul ignore next
           onSuccess: (data: { locator: string; }) => {
             openContainerInfoSidebar(data.locator, data.locator, parentLocator);
           },
