@@ -246,67 +246,64 @@ export const HistoryPublishLogGroup = ({
   } = useLibraryPublishHistoryEntries(itemId, publishLogUuid, isOpenCollapsible);
 
   const dateMessage = moment(publishedAt).fromNow();
+  const hasContributors = contributors.length > 0;
+
+  const titleMessage = directPublishedEntities.length === 1
+    ? intl.formatMessage(messages.publishTitle, {
+      user: publishedBy || intl.formatMessage(messages.historyEntryDefaultUser),
+      displayName: <span className="history-log-title text-truncate">{directPublishedEntities[0].title}</span>,
+      icon: <Icon src={getItemIcon(directPublishedEntities[0].entityType)} />,
+    })
+    : intl.formatMessage(messages.publishTitleMultiple, {
+      user: publishedBy || intl.formatMessage(messages.historyEntryDefaultUser),
+      icon: <Icon src={getItemIcon('default')} />,
+    });
 
   return (
     <div className="history-log-group publish-group">
-      <Collapsible.Advanced
-        open={isOpenCollapsible}
-        onOpen={openCollapsible}
-        onClose={closeCollapsible}
-      >
-        <Collapsible.Trigger>
-          {directPublishedEntities.length === 1 && (
-            <HistoryLogGroupTitle
-              titleMessage={intl.formatMessage(
-                messages.publishTitle,
-                {
-                  user: publishedBy || intl.formatMessage(messages.historyEntryDefaultUser),
-                  displayName: (
-                    <span className="history-log-title text-truncate">{directPublishedEntities[0].title}</span>
-                  ),
-                  icon: <Icon src={getItemIcon(directPublishedEntities[0].entityType)} />,
-                },
-              )}
-              dateMessage={dateMessage}
-            />
-          )}
-          {directPublishedEntities.length > 1 && (
-            <HistoryLogGroupTitle
-              titleMessage={intl.formatMessage(
-                messages.publishTitleMultiple,
-                {
-                  user: publishedBy,
-                  icon: <Icon src={getItemIcon('default')} />,
-                },
-              )}
-              dateMessage={dateMessage}
-            />
-          )}
-        </Collapsible.Trigger>
-        <Collapsible.Body>
-          {isPending ?
-            (
-              <>
-                <div className="history-log-vert" />
-                <div className="ml-2 mt-2 w-100">
-                  <LoadingSpinner />
-                </div>
-              </>
-            ) :
-            <HistoryLogGroupEntries entries={entries ?? []} />}
-        </Collapsible.Body>
-      </Collapsible.Advanced>
-      <Stack direction="horizontal">
-        <div
-          className={classNames(
-            'history-log-vert',
-            {
-              'history-log-vert-long': !isOpenCollapsible,
-            },
-          )}
-        />
-        {!isOpenCollapsible && <ContributorsAvatars contributors={contributors} />}
-      </Stack>
+      {hasContributors ?
+        (
+          <Collapsible.Advanced
+            open={isOpenCollapsible}
+            onOpen={openCollapsible}
+            onClose={closeCollapsible}
+          >
+            <Collapsible.Trigger>
+              <HistoryLogGroupTitle titleMessage={titleMessage} dateMessage={dateMessage} />
+            </Collapsible.Trigger>
+            <Collapsible.Body>
+              {isPending ?
+                (
+                  <>
+                    <div className="history-log-vert" />
+                    <div className="ml-2 mt-2 w-100">
+                      <LoadingSpinner />
+                    </div>
+                  </>
+                ) :
+                <HistoryLogGroupEntries entries={entries ?? []} />}
+            </Collapsible.Body>
+          </Collapsible.Advanced>
+        ) :
+        (
+          <>
+            <HistoryLogGroupTitle titleMessage={titleMessage} dateMessage={dateMessage} disableCollapsible />
+            <div className="history-log-vert" />
+          </>
+        )}
+      {hasContributors && (
+        <Stack direction="horizontal">
+          <div
+            className={classNames(
+              'history-log-vert',
+              {
+                'history-log-vert-long': !isOpenCollapsible,
+              },
+            )}
+          />
+          {!isOpenCollapsible && <ContributorsAvatars contributors={contributors} />}
+        </Stack>
+      )}
     </div>
   );
 };

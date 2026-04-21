@@ -135,6 +135,23 @@ describe('<HistoryComponentLog />', () => {
     expect(await findByDeepTextContent(/Author published.*Protons/i)).toBeInTheDocument();
     mockLibraryBlockPublishHistory.data = originalData;
   });
+
+  it('renders publish group without collapsible and without contributor count when contributors is empty', async () => {
+    const originalData = mockLibraryBlockPublishHistory.data;
+    mockLibraryBlockPublishHistory.data = [
+      {
+        ...originalData[0],
+        contributors: [],
+        contributorsCount: 0,
+      },
+    ];
+    renderComponent(mockLibraryBlockCreationEntry.usageKey);
+    const publishTitle = await findByDeepTextContent(/author published.*Protons/i);
+    expect(publishTitle).toBeInTheDocument();
+    expect(screen.queryByText(/authors? contributed/i)).not.toBeInTheDocument();
+    expect(publishTitle.closest('[role="button"]')).toBeNull();
+    mockLibraryBlockPublishHistory.data = originalData;
+  });
 });
 
 describe('<HistoryContainerLog />', () => {
