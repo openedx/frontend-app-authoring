@@ -34,6 +34,7 @@ describe('VideoEditorHooks', () => {
     jest.clearAllMocks();
   });
   describe('state hooks', () => {
+    state.testGetter(state.keys.useAudioDescriptionErrors);
     state.testGetter(state.keys.durationErrors);
     state.testGetter(state.keys.handoutErrors);
     state.testGetter(state.keys.licenseErrors);
@@ -54,7 +55,14 @@ describe('VideoEditorHooks', () => {
       field1: 'field1msg',
       field2: 'field2msg',
     };
+    const fakeAudioDescriptionError = {
+      field1: 'audioDescriptionMsg',
+    };
     test('error: state values', () => {
+      expect(hooks.errorsHook().error.audioDescription).toEqual([
+        state.stateVals[state.keys.useAudioDescriptionErrors],
+        state.setState[state.keys.useAudioDescriptionErrors],
+      ]);
       expect(hooks.errorsHook().error.duration).toEqual([
         state.stateVals[state.keys.durationErrors],
         state.setState[state.keys.durationErrors],
@@ -87,6 +95,11 @@ describe('VideoEditorHooks', () => {
       });
       test('validateEntry: returns false if any validation calls are false', () => {
         state.mockVal(state.keys.durationErrors, fakeDurationError);
+        hook = hooks.errorsHook();
+        expect(hook.validateEntry()).toEqual(false);
+      });
+      test('validateEntry: returns false when audio description validation fails', () => {
+        state.mockVal(state.keys.useAudioDescriptionErrors, fakeAudioDescriptionError);
         hook = hooks.errorsHook();
         expect(hook.validateEntry()).toEqual(false);
       });

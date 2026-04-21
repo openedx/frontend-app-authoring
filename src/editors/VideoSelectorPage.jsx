@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import ErrorBoundary from './sharedComponents/ErrorBoundary';
 import VideoSelector from './VideoSelector';
 import store from './data/store';
+import { EditorContextProvider } from './EditorContext';
 
 const VideoSelectorPage = ({
   blockId,
@@ -20,16 +21,18 @@ const VideoSelectorPage = ({
         studioEndpointUrl,
       }}
     >
-      <VideoSelector
-        {...{
-          blockId,
-          learningContextId: courseId,
-          lmsEndpointUrl,
-          studioEndpointUrl,
-          returnFunction,
-          onCancel,
-        }}
-      />
+      <EditorContextProvider learningContextId={courseId}>
+        <VideoSelector
+          {...{
+            blockId,
+            learningContextId: courseId,
+            lmsEndpointUrl,
+            studioEndpointUrl,
+            returnFunction,
+            onCancel,
+          }}
+        />
+      </EditorContextProvider>
     </ErrorBoundary>
   </Provider>
 );

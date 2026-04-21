@@ -50,6 +50,9 @@ jest.mock('../../services/cms/api', () => ({
   importTranscript: (args) => args,
   fetchVideoFeatures: (args) => args,
   uploadVideo: (args) => args,
+  getAudioDescriptionUploadUrl: jest.fn(),
+  uploadAudioDescription: jest.fn(),
+  deleteAudioDescription: (args) => args,
 }));
 
 jest.mock('../../../../library-authoring/data/api', () => ({
@@ -803,6 +806,51 @@ describe('requests thunkActions module', () => {
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
             learningContextId: selectors.app.learningContextId(testState),
             data,
+          }),
+        },
+      });
+    });
+    describe('uploadAudioDescription', () => {
+      const file = { name: 'audio.mp3', type: 'audio/mpeg', size: 12345 };
+      const uploadResponse = { data: { file_name: 'audio.mp3', url: '/media/audio.mp3' } };
+
+      beforeEach(() => {
+        api.uploadAudioDescription.mockReturnValue(Promise.resolve(uploadResponse));
+
+        requests.uploadAudioDescription({
+          file,
+          onSuccess,
+          onFailure,
+        })(dispatch, () => testState);
+      });
+
+      it('dispatches networkRequest with uploadAudioDescription requestKey', () => {
+        const [[dispatchedAction]] = dispatch.mock.calls;
+        expect(dispatchedAction.networkRequest).not.toEqual(undefined);
+        expect(dispatchedAction.networkRequest.requestKey).toEqual(RequestKeys.uploadAudioDescription);
+      });
+
+      it('calls uploadAudioDescription with correct args', () => {
+        expect(api.uploadAudioDescription).toHaveBeenCalledWith({
+          blockId: selectors.app.blockId(testState),
+          studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          file,
+        });
+      });
+    });
+    describe('deleteAudioDescription', () => {
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.deleteAudioDescription,
+        args: { ...fetchParams, videoId },
+        expectedString: 'with deleteAudioDescription promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.deleteAudioDescription,
+          promise: api.deleteAudioDescription({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            blockId: selectors.app.blockId(testState),
+            videoId,
           }),
         },
       });
