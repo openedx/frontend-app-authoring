@@ -151,4 +151,90 @@ describe('library data API', () => {
     await api.getContentLibraryV2List({ type: 'complex' });
     expect(axiosMock.history.get[0].url).toEqual(url);
   });
+
+  describe('getLibraryBlockDraftHistory', () => {
+    it('should fetch draft history for a library block', async () => {
+      const usageKey = 'lb:org:lib:html:1';
+      const url = api.getLibraryBlockDraftHistoryUrl(usageKey);
+      axiosMock.onGet(url).reply(200, []);
+
+      await api.getLibraryBlockDraftHistory(usageKey);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+    });
+  });
+
+  describe('getLibraryBlockPublishHistory', () => {
+    it('should fetch publish history groups for a library block', async () => {
+      const usageKey = 'lb:org:lib:html:1';
+      const url = api.getLibraryBlockPublishHistoryUrl(usageKey);
+      axiosMock.onGet(url).reply(200, []);
+
+      await api.getLibraryBlockPublishHistory(usageKey);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+    });
+  });
+
+  describe('getLibraryPublishHistoryEntries', () => {
+    it('should fetch entries for a publish history group', async () => {
+      const libraryId = 'lib:org:lib1';
+      const entityKey = 'lb:org:lib:html:1';
+      const publishGroupId = 'abc-123';
+      const url = api.getLibraryPublishHistoryEntriesUrl(libraryId, entityKey, publishGroupId);
+      axiosMock.onGet(url).reply(200, []);
+
+      await api.getLibraryPublishHistoryEntries(libraryId, entityKey, publishGroupId);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+    });
+  });
+
+  describe('getLibraryBlockCreationEntry', () => {
+    it('should fetch the creation entry for a library block', async () => {
+      const usageKey = 'lb:org:lib:html:1';
+      const url = api.getLibraryBlockCreationEntryUrl(usageKey);
+      axiosMock.onGet(url).reply(200, {});
+
+      await api.getLibraryBlockCreationEntry(usageKey);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+    });
+  });
+
+  describe('getLibraryContainerDraftHistory', () => {
+    it('should fetch draft history for a library container', async () => {
+      const containerKey = 'lct:org:lib:unit:1';
+      const url = api.getLibraryContainerDraftHistoryUrl(containerKey);
+      axiosMock.onGet(url).reply(200, []);
+
+      await api.getLibraryContainerDraftHistory(containerKey);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+    });
+  });
+
+  describe('getLibraryContainerPublishHistory', () => {
+    it('should fetch publish history groups for a library container', async () => {
+      const containerKey = 'lct:org:lib:unit:1';
+      const url = api.getLibraryContainerPublishHistoryUrl(containerKey);
+      axiosMock.onGet(url).reply(200, []);
+
+      await api.getLibraryContainerPublishHistory(containerKey);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+    });
+  });
+
+  describe('getLibraryContainerCreationEntry', () => {
+    it('should fetch the creation entry for a library container', async () => {
+      const containerKey = 'lct:org:lib:unit:1';
+      const url = api.getLibraryContainerCreationEntryUrl(containerKey);
+      axiosMock.onGet(url).reply(200, {});
+
+      await api.getLibraryContainerCreationEntry(containerKey);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+    });
+  });
 });
