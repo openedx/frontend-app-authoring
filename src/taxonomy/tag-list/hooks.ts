@@ -118,6 +118,13 @@ const useTableModes = (): UseTableModesReturn => {
   };
 };
 
+const getTagWithDescendantsCount = (rowData: TreeRowData): number => {
+  if (!rowData.subRows || rowData.subRows.length === 0) {
+    return 1;
+  }
+  return rowData.subRows.reduce((count, subRow) => count + getTagWithDescendantsCount(subRow), 1);
+};
+
 const useEditActions = ({
   enterDraftMode,
   enterPreviewMode,
@@ -290,15 +297,18 @@ const useEditActions = ({
   const someDeleteTagAPICall = async (value: string) => {
     // Placeholder for actual delete API call
     return new Promise((resolve) => setTimeout(resolve, 1000));
-  }
+  };
+
   const handleDeleteTag = async (row: Row<TreeRowData>) => {
     const rowData = getTagListRowData(row);
+    const count = getTagWithDescendantsCount(rowData);
     try {
+      // In view mode, the table reloads on change, reflecting the deletion without needing to manually update the table state
       enterViewMode();
       await someDeleteTagAPICall(rowData.value); // Replace with actual delete API call
       setToast({
         show: true,
-        message: intl.formatMessage(messages.tagDeleteSuccessMessage, { name: rowData.value }),
+        message: intl.formatMessage(messages.tagsDeleteSuccessMessage, { count }),
       });
     } catch (error) {
       const errorMessage = getErrorMessage(error);

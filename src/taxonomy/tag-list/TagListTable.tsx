@@ -3,7 +3,7 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
-import type { PaginationState } from '@tanstack/react-table';
+import type { PaginationState, Row } from '@tanstack/react-table';
 import { useTagListData, useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
 import { TableView, TreeTableContext } from '@src/taxonomy/tree-table';
 import type {
@@ -16,7 +16,7 @@ import {
   TABLE_MODES,
 } from './constants';
 import { useTableModes, useEditActions } from './hooks';
-import TypeXToConfirmPopup from './TypeXToConfirmPopup';
+import TypeXToConfirmModal from '@src/generic/TypeXToConfirmModal';
 
 interface TagListTableProps {
   taxonomyId: number;
@@ -87,8 +87,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const updateTagMutation = useUpdateTag(taxonomyId);
   const pageCount = tagList?.numPages ?? -1;
   const canAddTag = tagList?.canAddTag !== false;
-
-  // TODO: to make this more readable, introduce a React context for the TagListTable instead of passing props.
 
   // Custom Edit Actions Hook - handles table mode transitions, API calls,
   // and updating the table without a full data reload when creating or editing tags.
@@ -168,7 +166,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   return (
     <TreeTableContext.Provider value={contextValue}>
       <TableView />
-      <TypeXToConfirmPopup
+      <TypeXToConfirmModal
         label="Confirm Delete"
         X="DELETE"
         bodyText="Are you sure you want to delete this tag?"

@@ -14,6 +14,6 @@
     ".eslintrc.js",
     "src/**/*",
     "plugins/**/*"
-  ],
+, "src/generic/TypeXToConfirmModal.tsx"  ],
   "exclude": ["dist", "node_modules"]
 }

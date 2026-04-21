@@ -85,6 +85,14 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.has-open-draft',
     defaultMessage: 'Disabled because tag creation or edit is in progress',
   },
+  tagsDeleteSuccessMessage: {
+    id: 'course-authoring.tag-list.delete-success',
+    defaultMessage: '{count} tag(s) deleted. This change will be applied across all tagged content.',
+  },
+  tagDeleteErrorMessage: {
+    id: 'course-authoring.tag-list.delete-error',
+    defaultMessage: 'Error deleting tag: {errorMessage}',
+  },
 });
 
 export default messages;
