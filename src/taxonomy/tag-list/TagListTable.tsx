@@ -17,6 +17,7 @@ import {
 } from './constants';
 import { useTableModes, useEditActions } from './hooks';
 import TypeXToConfirmModal from '@src/generic/TypeXToConfirmModal';
+import DeleteModal from './DeleteModal';
 
 interface TagListTableProps {
   taxonomyId: number;
@@ -90,7 +91,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
 
   // Custom Edit Actions Hook - handles table mode transitions, API calls,
   // and updating the table without a full data reload when creating or editing tags.
-  const { handleCreateTag, handleUpdateTag, validate, startSubtagDraft, startEditTag, startDeleteTag, handleDeleteTag } = useEditActions(
+  const editActions = useEditActions(
     {
       enterDraftMode,
       enterPreviewMode,
@@ -124,6 +125,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
 
   // TreeTable context
   const contextValueArgs = {
+    ...editActions,
     treeData,
     pageCount,
     pagination,
@@ -137,12 +139,9 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     setToast,
     setIsCreatingTopRow: setIsCreatingTopTag,
     exitDraftWithoutSave,
-    handleCreateRow: handleCreateTag,
     creatingParentId,
     setCreatingParentId,
     setDraftError,
-    validate,
-    handleUpdateRow: handleUpdateTag,
     editingRowId,
     setEditingRowId,
     onStartDraft: enterDraftMode,
@@ -150,9 +149,6 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     hasOpenDraft,
     canAddTag,
     maxDepth,
-    startSubtagDraft,
-    startEditTag,
-    startDeleteTag,
     confirmDeleteDialogOpen,
     setConfirmDeleteDialogOpen,
     confirmDeleteDialogContext,
@@ -166,20 +162,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   return (
     <TreeTableContext.Provider value={contextValue}>
       <TableView />
-      <TypeXToConfirmModal
-        label="Confirm Delete"
-        X="DELETE"
-        bodyText="Are you sure you want to delete this tag?"
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
-        isOpen={confirmDeleteDialogOpen}
-        context={confirmDeleteDialogContext}
-        onConfirm={(row) => { handleDeleteTag(row); setConfirmDeleteDialogOpen(false); setConfirmDeleteDialogContext(null); }}
-        onCancel={() => {
-          setConfirmDeleteDialogOpen(false);
-          setConfirmDeleteDialogContext(null);
-        }}
-      />
+      <DeleteModal />
     </TreeTableContext.Provider>
   );
 };

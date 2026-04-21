@@ -16,7 +16,7 @@ import {
 
 import messages from './messages';
 import { start } from '@src/library-authoring/__mocks__/contentLibrariesListV2';
-import { getTagListRowData } from './utils';
+import { getTagListRowData, getTagWithDescendantsCount } from './utils';
 import { Row } from '@tanstack/react-table';
 
 /** Interface for table mode actions for React's `useReducer` hook.
@@ -116,13 +116,6 @@ const useTableModes = (): UseTableModesReturn => {
     enterPreviewMode,
     enterViewMode,
   };
-};
-
-const getTagWithDescendantsCount = (rowData: TreeRowData): number => {
-  if (!rowData.subRows || rowData.subRows.length === 0) {
-    return 1;
-  }
-  return rowData.subRows.reduce((count, subRow) => count + getTagWithDescendantsCount(subRow), 1);
 };
 
 const useEditActions = ({
@@ -318,13 +311,13 @@ const useEditActions = ({
 
   return {
     updateTableWithoutDataReload,
-    handleCreateTag,
-    handleUpdateTag,
+    handleCreateRow: handleCreateTag,
+    handleUpdateRow: handleUpdateTag,
     startSubtagDraft,
-    startEditTag,
-    startDeleteTag,
+    startEditRow: startEditTag,
+    startDeleteRow: startDeleteTag,
     validate,
-    handleDeleteTag,
+    handleDeleteRow: handleDeleteTag,
   };
 };
 

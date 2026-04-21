@@ -7,10 +7,12 @@ interface TypeXToConfirmModalProps {
   confirmLabel: string;
   cancelLabel: string;
   X: string;
-  context?: any;
+  // any additional context that the caller wants to pass to the onConfirm callback; not a React context.
+  context?: Record<string, any> | null;
   isOpen: boolean;
-  onConfirm: (context?: any) => void;
+  onConfirm: (context?: Record<string, any> | null) => void;
   onCancel: () => void;
+  setContext?: (context: Record<string, any> | null) => void;
 }
 
 const TypeXToConfirmModal: React.FC<TypeXToConfirmModalProps> = ({
@@ -23,18 +25,19 @@ const TypeXToConfirmModal: React.FC<TypeXToConfirmModalProps> = ({
   context,
   onConfirm,
   onCancel,
+  setContext,
 }) => {
   const [confirmedByTyping, setConfirmedByTyping] = React.useState(false);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!confirmedByTyping) return;
+    if (!confirmedByTyping) { return; }
     if (e.key === 'Enter') {
       onConfirm(context);
     }
   };
 
   const handleConfirm = () => {
-    if (!confirmedByTyping) return;
+    if (!confirmedByTyping) { return; }
     setConfirmedByTyping(false);
     onConfirm(context);
   };
@@ -56,8 +59,12 @@ const TypeXToConfirmModal: React.FC<TypeXToConfirmModalProps> = ({
   useEffect(() => {
     if (!isOpen) {
       setConfirmedByTyping(false);
+      if (setContext) {
+        // reset onConfirm callback context when modal is closed
+        setContext(null);
+      }
     }
-  }, [X, isOpen]);
+  }, [X, isOpen, context, setContext]);
 
   return (
     <ModalDialog

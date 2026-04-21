@@ -93,6 +93,34 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.delete-error',
     defaultMessage: 'Error deleting tag: {errorMessage}',
   },
+  confirmDeleteTitle: {
+    id: 'course-authoring.tag-list.confirm-delete-title',
+    defaultMessage: 'Delete "{tagName}"',
+  },
+  typeToConfirmDeleteOneTag: {
+    id: 'course-authoring.tag-list.delete-one-tag-type-to-confirm',
+    defaultMessage: 'DELETE',
+  },
+  deleteTagConfirmation: {
+    id: 'course-authoring.tag-list.delete-tag-confirmation',
+    defaultMessage: 'Warning! You are about to delete a tag. If the tag is applied to course content it will be removed.',
+  },
+  deleteLabel: {
+    id: 'course-authoring.tag-list.delete-label',
+    defaultMessage: 'Delete',
+  },
+  cancelLabel: {
+    id: 'course-authoring.tag-list.cancel-label',
+    defaultMessage: 'Cancel',
+  },
+  typeToConfirmDeleteTagWithSubtags: {
+    id: 'course-authoring.tag-list.delete-tag-with-subtags-type-to-confirm',
+    defaultMessage: 'DELETE WITH SUB-TAGS',
+  },
+  deleteTagWithSubtagsConfirmation: {
+    id: 'course-authoring.tag-list.delete-tag-with-subtags-confirmation',
+    defaultMessage: 'Warning! You are about to delete a tag containing sub-tags. If you proceed, {count} sub-tags that you did not directly select will also be deleted. Any tags applied to course content will be removed.',
+  },
 });
 
 export default messages;

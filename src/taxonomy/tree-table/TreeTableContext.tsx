@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
-import type { OnChangeFn, PaginationState } from '@tanstack/react-table';
+import type { OnChangeFn, PaginationState, Row } from '@tanstack/react-table';
 
 import type {
   CreateRowMutationState,
@@ -35,6 +35,11 @@ export interface TreeTableContextValue {
   setEditingRowId: (id: RowId | null) => void;
   confirmDeleteDialogOpen: boolean;
   setConfirmDeleteDialogOpen: Dispatch<SetStateAction<boolean>>;
+  confirmDeleteDialogContext: Row<TreeRowData> | null;
+  setConfirmDeleteDialogContext: Dispatch<SetStateAction<Row<TreeRowData> | null>>;
+  handleDeleteRow: (row: Row<TreeRowData>) => void;
+  startEditRow: (row: Row<TreeRowData>) => void;
+  startDeleteRow: (row: Row<TreeRowData>) => void;
 }
 
 export const TreeTableContext = createContext<TreeTableContextValue>({
@@ -62,4 +67,9 @@ export const TreeTableContext = createContext<TreeTableContextValue>({
   setEditingRowId: () => {},
   confirmDeleteDialogOpen: false,
   setConfirmDeleteDialogOpen: () => {},
+  confirmDeleteDialogContext: null,
+  setConfirmDeleteDialogContext: () => {},
+  handleDeleteRow: () => {},
+  startEditRow: () => {},
+  startDeleteRow: () => {},
 });

@@ -24,8 +24,8 @@ interface GetColumnsArgs {
   setDraftError: (error: string) => void;
   maxDepth: number;
   startSubtagDraft: (row: Row<TreeRowData>) => void;
-  startEditTag: (row: Row<TreeRowData>) => void;
-  startDeleteTag: (row: Row<TreeRowData>) => void;
+  startEditRow: (row: Row<TreeRowData>) => void;
+  startDeleteRow: (row: Row<TreeRowData>) => void;
 }
 
 function getColumns({
@@ -33,8 +33,8 @@ function getColumns({
   setEditingRowId,
   onStartDraft,
   startSubtagDraft,
-  startEditTag,
-  startDeleteTag,
+  startEditRow,
+  startDeleteRow,
   setActiveActionMenuRowId,
   hasOpenDraft,
   canAddTag,
@@ -88,8 +88,8 @@ function getColumns({
         }
 
         const disableAddSubtag = hasOpenDraft || !canAddTag;
-        const disableEditTag = hasOpenDraft || rowData.canChangeTag === false;
-        const disableDeleteTag = hasOpenDraft || rowData.canDeleteTag === false;
+        const disableEditRow = hasOpenDraft || rowData.canChangeTag === false;
+        const disableDeleteRow = hasOpenDraft || rowData.canDeleteTag === false;
 
         return (
           <div className="d-flex align-items-center justify-content-end gap-2">
@@ -98,11 +98,11 @@ function getColumns({
               row={row}
               startSubtagDraft={() => startSubtagDraft(row)}
               disableAddSubtag={disableAddSubtag}
-              startEditTag={() => startEditTag(row)}
-              disableEditTag={disableEditTag}
+              startEditRow={() => startEditRow(row)}
+              disableEditRow={disableEditRow}
               reachedMaxDepth={reachedMaxDepth}
-              startDeleteTag={() => startDeleteTag(row)}
-              disableDeleteTag={disableDeleteTag}
+              startDeleteRow={() => startDeleteRow(row)}
+              disableDeleteRow={disableDeleteRow}
             />
           </div>
         );

@@ -66,11 +66,11 @@ interface ActionsMenuProps {
   rowData: TagListRowData;
   startSubtagDraft: () => void;
   disableAddSubtag: boolean;
-  startEditTag: () => void;
-  disableEditTag: boolean;
+  startEditRow: () => void;
+  disableEditRow: boolean;
   reachedMaxDepth: (row: Row<TreeRowData>) => boolean;
-  startDeleteTag: (row: Row<TreeRowData>) => void;
-  disableDeleteTag: boolean;
+  startDeleteRow: (row: Row<TreeRowData>) => void;
+  disableDeleteRow: boolean;
   row: Row<TreeRowData>;
 }
 
@@ -79,27 +79,27 @@ const ActionsMenu = ({
   row,
   startSubtagDraft,
   disableAddSubtag,
-  startEditTag,
-  disableEditTag,
+  startEditRow,
+  disableEditRow,
   reachedMaxDepth,
-  startDeleteTag,
-  disableDeleteTag,
+  startDeleteRow,
+  disableDeleteRow,
 }: ActionsMenuProps) => {
   const intl = useIntl();
 
-  const deleteTagMenuItem = (
+  const deleteRowMenuItem = (
     <Dropdown.Item
-      onClick={() => startDeleteTag(row)}
-      disabled={disableDeleteTag}
+      onClick={() => startDeleteRow(row)}
+      disabled={disableDeleteRow}
     >
       {intl.formatMessage(messages.deleteTag)}
     </Dropdown.Item>
   );
 
-  const editTagMenuItem = (
+  const editRowMenuItem = (
     <Dropdown.Item
-      onClick={startEditTag}
-      disabled={disableEditTag}
+      onClick={startEditRow}
+      disabled={disableEditRow}
     >
       {intl.formatMessage(messages.renameTag)}
     </Dropdown.Item>
@@ -123,8 +123,8 @@ const ActionsMenu = ({
         >
           {intl.formatMessage(messages.addSubtag)}
         </Dropdown.Item>
-        {editTagMenuItem}
-        {deleteTagMenuItem}
+        {editRowMenuItem}
+        {deleteRowMenuItem}
       </Dropdown.Menu>
     </Dropdown>
   );
