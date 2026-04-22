@@ -29,6 +29,7 @@ export interface TreeTableContextValue {
   creatingParentId: RowId | null;
   setCreatingParentId: (id: RowId | null) => void;
   setDraftError: (error: string) => void;
+  deleteRowMutation: CreateRowMutationState;
   validate: (value: string, mode?: 'soft' | 'hard') => boolean;
   handleUpdateRow: (value: string, originalValue: string) => void;
   editingRowId: RowId | null;
@@ -53,6 +54,7 @@ export const TreeTableContext = createContext<TreeTableContextValue>({
   draftError: '',
   createRowMutation: {},
   updateRowMutation: {},
+  deleteRowMutation: {},
   toast: { show: false, message: '', variant: 'success' },
   setToast: () => {},
   setIsCreatingTopRow: () => {},

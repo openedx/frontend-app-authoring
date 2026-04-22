@@ -43,6 +43,7 @@ const TableView = ({
     draftError,
     createRowMutation,
     updateRowMutation,
+    deleteRowMutation,
     handleCreateRow,
     toast,
     setToast,
@@ -75,10 +76,11 @@ const TableView = ({
 
   const { isError } = createRowMutation;
   const { isError: isUpdateError } = updateRowMutation;
+  const { isError: isDeleteError } = deleteRowMutation;
 
   return (
     <>
-      <SaveErrorAlert draftError={draftError} isError={isError} isUpdateError={isUpdateError} />
+      <SaveErrorAlert draftError={draftError} isError={isError} isUpdateError={isUpdateError} isDeleteError={isDeleteError} />
       <Card className="tag-list-card">
         <Card.Section className="p-0">
           <div className="d-flex justify-content-end align-items-center p-4">

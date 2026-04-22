@@ -307,6 +307,7 @@ const useEditActions = ({
       });
     } catch (error) {
       const errorMessage = getErrorMessage(error);
+      setDraftError(errorMessage);
       setToast({ show: true, message: intl.formatMessage(messages.tagDeleteErrorMessage, { errorMessage }) });
     }
   };

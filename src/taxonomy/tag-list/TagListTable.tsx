@@ -137,6 +137,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     draftError,
     createRowMutation: createTagMutation,
     updateRowMutation: updateTagMutation,
+    deleteRowMutation: deleteTagMutation,
     toast,
     setToast,
     setIsCreatingTopRow: setIsCreatingTopTag,
