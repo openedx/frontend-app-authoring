@@ -2,7 +2,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Container } from '@openedx/paragon';
 import { DeprecatedReduxState } from '@src/store';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -19,7 +19,7 @@ import { getFilesPermissions } from '@src/authz/permissionHelpers';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import { EditFileErrors } from '../generic';
 import { fetchAssets, resetErrors } from './data/thunks';
-import FilesPageProvider, { type FilePickerOptions } from '../generic/FilesPageProvider';
+import { FilesPageContext, type FilePickerOptions } from '../generic/FilesPageContext';
 import Loading from '@src/generic/Loading';
 import messages from './messages';
 import './FilesPage.scss';
@@ -51,6 +51,10 @@ const FilesPage = ({
   useEffect(() => {
     dispatch(fetchAssets(courseId));
   }, [courseId]);
+  const contextValue = useMemo(() => ({
+    filePickerMode,
+    filePickerOptions,
+  }), [filePickerMode, filePickerOptions]);
 
   if (isLoadingPermissions) {
     return <Loading />;
@@ -71,8 +75,8 @@ const FilesPage = ({
   }
 
   return (
-    <FilesPageProvider filePickerMode={filePickerMode} filePickerOptions={filePickerOptions}>
-      <Container size="xl" className="p-4 pt-4.5">
+    <FilesPageContext.Provider value={contextValue}>
+      <Container size="xl" className={filePickerOptions?.embedded ? '' : 'p-4 pt-4.5'}>
         <EditFileErrors
           resetErrors={handleErrorReset}
           errorMessages={errorMessages}
@@ -85,14 +89,16 @@ const FilesPage = ({
           gatingTypes={[AgreementGated.UPLOAD, AgreementGated.UPLOAD_FILES]}
         />
         <EditFileAlertsSlot />
-        <div className="h2">
-          {filePickerMode
-            ? intl.formatMessage(messages.filePickerHeading, { multiSelect: filePickerOptions?.multiSelect })
-            : intl.formatMessage(messages.heading)}
-        </div>
+        {!filePickerOptions?.embedded && (
+          <div className="h2">
+            {filePickerMode
+              ? intl.formatMessage(messages.filePickerHeading, { multiSelect: filePickerOptions?.multiSelect })
+              : intl.formatMessage(messages.heading)}
+          </div>
+        )}
         {loadingStatus !== RequestStatus.FAILED && <CourseFilesSlot />}
       </Container>
-    </FilesPageProvider>
+    </FilesPageContext.Provider>
   );
 };
 

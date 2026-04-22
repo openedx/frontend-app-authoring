@@ -1,5 +1,5 @@
 import { Button } from '@openedx/paragon';
-import { filePickerSubmitFile } from '@src/files-and-videos/generic/table-components/utils';
+import { filePickerSubmitFiles } from '@src/files-and-videos/generic/table-components/utils';
 import React from 'react';
 
 interface FilePickerColumnProps {
@@ -12,7 +12,7 @@ export const FilePickerColumn = ({ row }:FilePickerColumnProps) => (
   <Button
     variant="link"
     onClick={async () => {
-      await filePickerSubmitFile([row.original]);
+      await filePickerSubmitFiles([row.original]);
     }}
   >
     Select

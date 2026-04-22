@@ -70,10 +70,13 @@ export const getCurrentViewRange = ({
   );
 };
 
-export const filePickerSubmitFile = async (fileData) => {
-  window.opener.postMessage({
+export const filePickerSubmitFiles = async (fileData) => {
+  window.opener?.postMessage({
     type: 'org.openedx.assets.selected.v1',
     data: fileData,
   }, '*');
-  window.close();
+  window.parent?.postMessage({
+    type: 'org.openedx.assets.selected.v1',
+    data: fileData,
+  }, '*');
 };

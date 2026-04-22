@@ -1,5 +1,5 @@
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { type FilePickerOptions } from '@src/files-and-videos/generic/FilesPageProvider';
+import { type FilePickerOptions } from '@src/files-and-videos/generic/FilesPageContext';
 import { useLocation, useParams } from 'react-router-dom';
 import FilesPage from './FilesPage';
 
@@ -17,6 +17,7 @@ export const FilePickerPage = () => {
   const filePickerOptions: FilePickerOptions = {
     usageKey: params.get('usage_key')!,
     multiSelect: params.get('multiSelect') === 'true',
+    embedded: params.get('embedded') === 'true',
     fileTypes,
   };
 
