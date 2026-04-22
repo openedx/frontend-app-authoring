@@ -1,11 +1,15 @@
 .sidebar {
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  max-height: 100vh;
+
   .sidebar-content {
     flex: 0 1 auto;
     min-width: 440px;
     overflow-y: auto;
-    min-height: 100vh;
-    height: 100%;
-    max-height: 300vh;
+    height: 100vh;
+    max-height: 100vh;
 
     /*
      * Change the styles for tabs in all sidebars.
