@@ -51,7 +51,7 @@ export const BlockCardButton = ({
       <div data-testid={`${blockType}-collapsible`}>
         <Collapsible
           styling="card-lg"
-          className="mx-2 font-weight-bold shadow pl-1 rounded"
+          className="mx-n2 font-weight-bold shadow-sm pl-1 rounded"
           title={titleComponent}
         >
           <Stack direction="horizontal" className="d-flex flex-wrap" gap={2}>
@@ -69,7 +69,7 @@ export const BlockCardButton = ({
   return (
     <Button
       variant="tertiary"
-      className="mx-2 shadow border justify-content-between pl-4 font-weight-bold"
+      className="mx-n2 shadow-sm border justify-content-between pl-4 font-weight-bold"
       onClick={onClick}
       disabled={disabled}
     >

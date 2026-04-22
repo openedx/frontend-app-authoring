@@ -137,6 +137,7 @@ export function Sidebar<T extends SidebarPages>({
           alt={intl.formatMessage(messages.toggle)}
           onClick={toggle}
           variant="primary"
+          className="mb-2"
         />
         <IconButtonToggle
           activeValue={activeKey}

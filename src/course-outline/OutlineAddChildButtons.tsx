@@ -114,7 +114,7 @@ const NewOutlineAddChildButtons = ({
     handleAddBlock,
     handleAddAndOpenUnit,
   } = useCourseOutlineContext();
-  const { startCurrentFlow } = useOutlineSidebarContext();
+  const { startCurrentFlow, openContainerInfoSidebar } = useOutlineSidebarContext();
   let messageMap = {
     newButton: messages.newUnitButton,
     importButton: messages.useUnitFromLibraryButton,
@@ -134,6 +134,10 @@ const NewOutlineAddChildButtons = ({
           type: ContainerType.Chapter,
           parentLocator: courseUsageKey,
           displayName: COURSE_BLOCK_NAMES.chapter.name,
+        }, {
+          onSuccess: (data: { locator: string; }) => {
+            openContainerInfoSidebar(data.locator, undefined, data.locator);
+          },
         });
       flowType = ContainerType.Section;
       break;
@@ -148,6 +152,10 @@ const NewOutlineAddChildButtons = ({
           parentLocator,
           displayName: COURSE_BLOCK_NAMES.sequential.name,
           sectionId: parentLocator,
+        }, {
+          onSuccess: (data: { locator: string; }) => {
+            openContainerInfoSidebar(data.locator, data.locator, parentLocator);
+          },
         });
       flowType = ContainerType.Subsection;
       break;
