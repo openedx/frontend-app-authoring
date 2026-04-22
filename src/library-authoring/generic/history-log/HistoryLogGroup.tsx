@@ -186,7 +186,7 @@ export const HistoryPublishLogGroup = ({
                     </div>
                   </>
                 ) :
-                <HistoryLogGroupEntries entries={entries ?? []} />}
+                <HistoryLogGroupEntries entries={entries ?? []} itemId={itemId} />}
             </Collapsible.Body>
           </Collapsible.Advanced>
         ) :
