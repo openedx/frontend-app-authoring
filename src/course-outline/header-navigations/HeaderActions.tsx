@@ -18,9 +18,6 @@ import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarConte
 import messages from './messages';
 
 export interface HeaderActionsProps {
-  actions: {
-    lmsLink: string;
-  };
   courseActions: XBlockActions;
   headerNavigationsActions: {
     handleNewSection: () => void;
@@ -34,7 +31,6 @@ export interface HeaderActionsProps {
 }
 
 const HeaderActions = ({
-  actions,
   courseActions,
   headerNavigationsActions,
   isReIndexShow,
@@ -42,10 +38,9 @@ const HeaderActions = ({
   errors,
 }: HeaderActionsProps) => {
   const intl = useIntl();
-  const { lmsLink } = actions;
 
   const { clearSelection, open, setCurrentPageKey } = useOutlineSidebarContext();
-  const { handleReIndex } = headerNavigationsActions;
+  const { handleReIndex, lmsLink } = headerNavigationsActions;
 
   const handleCourseInfoClick = () => {
     clearSelection();

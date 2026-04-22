@@ -38,7 +38,6 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
 const renderComponent = (props?: Partial<HeaderActionsProps>) =>
   render(
     <HeaderActions
-      actions={headerNavigationsActions}
       courseActions={courseActions}
       headerNavigationsActions={headerNavigationsActions}
       isReIndexShow

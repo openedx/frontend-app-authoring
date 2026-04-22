@@ -329,8 +329,6 @@ describe('<SubsectionCard />', () => {
     expect(useUnitFromLibraryButton).toBeInTheDocument();
     await user.click(useUnitFromLibraryButton);
 
-    screen.logTestingPlaygroundURL();
-
     expect(startCurrentFlow).toHaveBeenCalledWith({
       flowType: ContainerType.Unit,
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',

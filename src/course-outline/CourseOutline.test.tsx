@@ -461,7 +461,7 @@ describe('<CourseOutline />', () => {
     });
     await user.click(addSectionFromLibraryButton);
 
-    // Start the add existring section flow
+    // Start the add existing section flow
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
     expect(startCurrentFlow).toHaveBeenCalledWith({
       flowType: ContainerType.Section,

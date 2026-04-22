@@ -49,7 +49,6 @@ const CourseOutlineHeaderActionsSlot = ({
     }}
   >
     <HeaderActions
-      actions={headerNavigationsActions}
       courseActions={courseActions}
       headerNavigationsActions={headerNavigationsActions}
       isReIndexShow={isReIndexShow}
