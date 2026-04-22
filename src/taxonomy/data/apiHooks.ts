@@ -269,3 +269,23 @@ export const useUpdateTag = (taxonomyId: number) => {
     },
   });
 };
+
+export const useDeleteTag = (taxonomyId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ value, withSubtags }: { value: string; withSubtags: boolean; }) => {
+      const body = { tags: [value], with_subtags: withSubtags };
+      await getAuthenticatedHttpClient().delete(apiUrls.deleteTag(taxonomyId), {
+        data: body,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId),
+      });
+      // In the metadata, 'tagsCount' (and possibly other fields) will have changed:
+      queryClient.invalidateQueries({ queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId) });
+    },
+  });
+};

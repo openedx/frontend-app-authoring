@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import globalMessages from '@src/messages';
-import { useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
+import { useCreateTag, useDeleteTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
 import type { RowId, TreeRowData } from '@src/taxonomy/tree-table/types';
 import { TagTree } from './tagTree';
 import { TagListTableError } from './errors';
@@ -56,6 +56,7 @@ interface UseEditActionsParams {
   setActiveActionMenuRowId: React.Dispatch<React.SetStateAction<RowId | null>>;
   setConfirmDeleteDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setConfirmDeleteDialogContext: React.Dispatch<React.SetStateAction<Row<TreeRowData> | null>>;
+  deleteTagMutation: ReturnType<typeof useDeleteTag>;
 }
 
 const getInlineValidationMessage = (value: string, intl: ReturnType<typeof useIntl>): string => {
@@ -131,6 +132,7 @@ const useEditActions = ({
   exitDraftWithoutSave,
   setEditingRowId,
   updateTagMutation,
+  deleteTagMutation,
   setConfirmDeleteDialogOpen,
   setConfirmDeleteDialogContext,
 }: UseEditActionsParams) => {
@@ -287,18 +289,18 @@ const useEditActions = ({
     setConfirmDeleteDialogContext(row);
   };
 
-  const someDeleteTagAPICall = async (value: string) => {
-    // Placeholder for actual delete API call
-    return new Promise((resolve) => setTimeout(resolve, 1000));
-  };
-
   const handleDeleteTag = async (row: Row<TreeRowData>) => {
     const rowData = getTagListRowData(row);
     const count = getTagWithDescendantsCount(rowData);
+    // If the tag in the frontend state does not have subtags,
+    // don't allow the backend to delete subtags.
+    // That prevents problems in case of stale frontend state.
+    const shouldDeleteSubtags = count > 1;
     try {
-      // In view mode, the table reloads on change, reflecting the deletion without needing to manually update the table state
+      // In view mode, the table reloads on change, reflecting the deletion
+      // without needing to manually update the table state
       enterViewMode();
-      await someDeleteTagAPICall(rowData.value); // Replace with actual delete API call
+      await deleteTagMutation.mutateAsync({ value: rowData.value, withSubtags: shouldDeleteSubtags });
       setToast({
         show: true,
         message: intl.formatMessage(messages.tagsDeleteSuccessMessage, { count }),

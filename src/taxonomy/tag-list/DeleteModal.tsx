@@ -14,12 +14,12 @@ const DeleteModal = () => {
     setConfirmDeleteDialogOpen,
     confirmDeleteDialogContext,
     setConfirmDeleteDialogContext,
-    handleDeleteTag,
+    handleDeleteRow,
   } = useContext(TreeTableContext);
   const intl = useIntl();
 
   const handleConfirm = (row: Row<TreeRowData>) => {
-    handleDeleteTag(row);
+    handleDeleteRow(row);
     setConfirmDeleteDialogOpen(false);
     setConfirmDeleteDialogContext(null);
   };
@@ -33,15 +33,29 @@ const DeleteModal = () => {
   const count = useMemo(() => rowData ? getTagWithDescendantsCount(rowData) : 0, [confirmDeleteDialogContext]);
 
   const hasSubtags = count > 1;
-  const bodyText = hasSubtags ? intl.formatMessage(messages.deleteTagWithSubtagsConfirmation, { count }) : intl.formatMessage(messages.deleteTagConfirmation);
-  const typeToDeleteText = hasSubtags ? intl.formatMessage(messages.typeToConfirmDeleteTagWithSubtags) : intl.formatMessage(messages.typeToConfirmDeleteOneTag);
+  // const bodyText = hasSubtags ? intl.formatMessage(messages.deleteTagWithSubtagsConfirmation, { count }) : intl.formatMessage(messages.deleteTagConfirmation, { count });
+  const typeToDeleteText = hasSubtags ? intl.formatMessage(messages.typeToConfirmDeleteTagWithSubtags, { count }) : intl.formatMessage(messages.typeToConfirmDeleteOneTag);
+  const messageText = hasSubtags ? intl.formatMessage(messages.deleteTagWithSubtagsConfirmation, { count }) : intl.formatMessage(messages.deleteTagConfirmation, { count });
+  const parts = messageText.split(String(count));
+  const bodyText = (
+    <>
+      <div>
+        {parts[0]}
+        <strong>{count}</strong>
+        {parts[1]}
+      </div>
+      <div>
+        <strong>{intl.formatMessage(messages.deleteTagConfirmationEmphasizedPart)}</strong>
+      </div>
+    </>
+  );
 
   return (
     <TypeXToConfirmModal
       label={intl.formatMessage(messages.confirmDeleteTitle, { tagName: rowData?.value })}
       X={typeToDeleteText}
       bodyText={bodyText}
-      confirmLabel={intl.formatMessage(messages.deleteLabel)}
+      confirmLabel={intl.formatMessage(count > 1 ? messages.deleteLabelPlural : messages.deleteLabelSingular)}
       cancelLabel={intl.formatMessage(messages.cancelLabel)}
       isOpen={confirmDeleteDialogOpen}
       context={confirmDeleteDialogContext}

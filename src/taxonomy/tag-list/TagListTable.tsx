@@ -4,7 +4,7 @@ import React, {
   useEffect,
 } from 'react';
 import type { PaginationState, Row } from '@tanstack/react-table';
-import { useTagListData, useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
+import { useTagListData, useCreateTag, useUpdateTag, useDeleteTag } from '@src/taxonomy/data/apiHooks';
 import { TableView, TreeTableContext } from '@src/taxonomy/tree-table';
 import type {
   RowId,
@@ -86,6 +86,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   });
   const createTagMutation = useCreateTag(taxonomyId);
   const updateTagMutation = useUpdateTag(taxonomyId);
+  const deleteTagMutation = useDeleteTag(taxonomyId);
   const pageCount = tagList?.numPages ?? -1;
   const canAddTag = tagList?.canAddTag !== false;
 
@@ -108,6 +109,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
       setActiveActionMenuRowId,
       setConfirmDeleteDialogOpen,
       setConfirmDeleteDialogContext,
+      deleteTagMutation,
     },
   );
 

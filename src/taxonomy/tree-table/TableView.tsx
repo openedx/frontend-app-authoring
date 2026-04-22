@@ -18,6 +18,7 @@ import {
 import { ArrowDropUpDown } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import TableBody from './TableBody';
+// @ts-ignore
 import './TableView.scss';
 import messages from './messages';
 import SaveErrorAlert from './SaveErrorAlert';

@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
-import { Button, Form, ModalDialog } from '@openedx/paragon';
+import { Button, Card, Form, Icon, ModalDialog } from '@openedx/paragon';
+import { WarningFilled } from '@openedx/paragon/icons';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
 
 interface TypeXToConfirmModalProps {
   label: string;
-  bodyText: string;
+  bodyText: string | React.ReactNode;
   confirmLabel: string;
   cancelLabel: string;
   X: string;
@@ -28,6 +31,7 @@ const TypeXToConfirmModal: React.FC<TypeXToConfirmModalProps> = ({
   setContext,
 }) => {
   const [confirmedByTyping, setConfirmedByTyping] = React.useState(false);
+  const intl = useIntl();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!confirmedByTyping) { return; }
@@ -77,21 +81,39 @@ const TypeXToConfirmModal: React.FC<TypeXToConfirmModalProps> = ({
         <ModalDialog.Title>{label}</ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        <div>{bodyText}</div>
-        <div>
+        <Card className="bg-warning-100">
+          <Card.Section>
+            <div className="d-flex align-items-start mb-2">
+              <Icon src={WarningFilled} className="text-warning-500 mr-2" />
+              <div className="small">{bodyText}</div>
+            </div>
+          </Card.Section>
+        </Card>
+        <div className="mt-3">
           <div>
-            Type <span className="text-primary-500 font-weight-bold">{X}</span> to confirm
+            {(() => {
+              const messageText = intl.formatMessage(messages.typeToConfirmInstruction, { X });
+              const parts = messageText.split(X);
+              return (
+                <>
+                  {parts[0]}
+                  <strong>{X}</strong>
+                  {parts[1]}
+                </>
+              );
+            })()}
           </div>
           <Form.Control
             onKeyDown={handleKeyDown}
             onChange={handleChange}
+            className="mt-4"
           />
         </div>
         <ModalDialog.Footer>
           <Button variant="tertiary" onClick={handleCancel}>
             {cancelLabel}
           </Button>
-          <Button onClick={handleConfirm} disabled={!confirmedByTyping}>
+          <Button onClick={handleConfirm} disabled={!confirmedByTyping} variant="danger">
             {confirmLabel}
           </Button>
         </ModalDialog.Footer>
