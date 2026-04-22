@@ -1,5 +1,5 @@
-import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageProvider';
-import { filePickerSubmitFile } from '@src/files-and-videos/generic/table-components/utils';
+import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageContext';
+import { filePickerSubmitFiles } from '@src/files-and-videos/generic/table-components/utils';
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -30,7 +30,8 @@ const GalleryCard = ({
   const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
 
   const handleFilePickerSubmit = React.useCallback(async () => {
-    await filePickerSubmitFile([original]);
+    await filePickerSubmitFiles([original]);
+    window.close();
   }, [original]);
 
   return (

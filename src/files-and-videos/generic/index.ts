@@ -10,7 +10,7 @@ import {
 } from './table-components';
 import FileInput, { useFileInput } from './FileInput';
 
-export { FilesPageContext } from './FilesPageProvider';
+export { FilesPageContext } from './FilesPageContext';
 
 export {
   TableActions,

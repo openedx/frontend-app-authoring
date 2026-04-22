@@ -4,8 +4,8 @@ import {
   Button, DataTableContext, Dropdown, useToggle,
 } from '@openedx/paragon';
 import { Add, Tune } from '@openedx/paragon/icons';
-import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageProvider';
-import { filePickerSubmitFile } from '@src/files-and-videos/generic/table-components/utils';
+import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageContext';
+import { filePickerSubmitFiles } from '@src/files-and-videos/generic/table-components/utils';
 import { isEmpty } from 'lodash';
 import { PropTypes } from 'prop-types';
 import React, { useContext, useEffect } from 'react';
@@ -28,7 +28,7 @@ const TableActions = ({
     state, clearSelection,
   } = useContext(DataTableContext);
 
-  const { filePickerMode } = useContext(FilesPageContext);
+  const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
   // If window.opener is not available, show the user some error message.
   const showFilePicker = filePickerMode; // && Boolean(window.opener);
   // This useEffect saves DataTable state so it can persist after table re-renders due to data reload.
@@ -42,7 +42,7 @@ const TableActions = ({
   };
 
   const handleFilePickerSubmit = React.useCallback(async () => {
-    await filePickerSubmitFile(selectedFlatRows.map(({ original }) => original));
+    await filePickerSubmitFiles(selectedFlatRows.map(({ original }) => original));
   }, [selectedFlatRows]);
 
   return (
@@ -86,7 +86,7 @@ const TableActions = ({
       <Button iconBefore={Add} onClick={handleOpenFileSelector}>
         {intl.formatMessage(messages.addFilesButtonLabel, { fileType })}
       </Button>
-      {showFilePicker && (
+      {showFilePicker && !filePickerOptions.embedded && (
         <Button
           className="ml-2"
           onClick={handleFilePickerSubmit}
