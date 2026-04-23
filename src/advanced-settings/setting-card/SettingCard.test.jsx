@@ -17,14 +17,6 @@ const settingData = {
   value: 'Setting Value',
 };
 
-jest.mock('react-textarea-autosize', () =>
-  jest.fn((props) => (
-    <textarea
-      {...props}
-      onFocus={() => {}}
-    />
-  )));
-
 const RootWrapper = () => (
   <IntlProvider locale="en">
     <SettingCard
@@ -44,12 +36,12 @@ const RootWrapper = () => (
 describe('<SettingCard />', () => {
   afterEach(() => jest.clearAllMocks());
   it('renders the setting card with the provided data', () => {
-    const { getByText, getByLabelText } = render(<RootWrapper />);
+    const { getByText, getByRole } = render(<RootWrapper />);
     const cardTitle = getByText(/Setting Name/i);
-    const input = getByLabelText(/Setting Name/i);
+    const input = getByRole('textbox');
     expect(cardTitle).toBeInTheDocument();
     expect(input).toBeInTheDocument();
-    expect(input.value).toBe(JSON.stringify(settingData.value, null, 4));
+    expect(input.value).toBe(settingData.value);
   });
   it('displays the deprecated status when the setting is deprecated', () => {
     const deprecatedSettingData = { ...settingData, deprecated: true };
@@ -63,7 +55,7 @@ describe('<SettingCard />', () => {
           showSaveSettingsPrompt={showSaveSettingsPrompt}
           settingData={deprecatedSettingData}
           handleBlur={handleBlur}
-          isEditable={false}
+          isEditableState={false}
           saveSettingsPrompt
         />
       </IntlProvider>,
@@ -77,8 +69,8 @@ describe('<SettingCard />', () => {
   });
   it('calls setEdited on blur', async () => {
     const user = userEvent.setup();
-    const { getByLabelText } = render(<RootWrapper />);
-    const inputBox = getByLabelText(/Setting Name/i);
+    const { getByRole } = render(<RootWrapper />);
+    const inputBox = getByRole('textbox');
     fireEvent.focus(inputBox);
     await user.clear(inputBox);
     await user.type(inputBox, '3, 2, 1');

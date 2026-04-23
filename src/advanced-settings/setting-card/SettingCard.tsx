@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
 import {
-  ActionRow,
-  Card,
+  Badge,
   Form,
   Icon,
   IconButton,
   ModalPopup,
   useToggle,
 } from '@openedx/paragon';
-import { InfoOutline, Warning } from '@openedx/paragon/icons';
+import { InfoOutline } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import { capitalize } from 'lodash';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import TextareaAutosize from 'react-textarea-autosize';
 
 import messages from './messages';
+import {
+  FIELD_TYPE, getFieldType, serializeValue,
+} from '../data/fieldTypes';
+import { FIELD_PLACEHOLDER_MESSAGES } from '../data/fieldTypeMessages';
+import BooleanInput from './inputs/BooleanInput';
+import NumberInput from './inputs/NumberInput';
+import EnumInput from './inputs/EnumInput';
+import StringInput from './inputs/StringInput';
+import JsonInput from './inputs/JsonInput';
 
 const SettingCard = ({
   name,
@@ -33,20 +40,38 @@ const SettingCard = ({
   const [target, setTarget] = useState<HTMLButtonElement | null>(null);
   const [newValue, setNewValue] = useState(initialValue);
 
-  const handleSettingChange = (e) => {
-    const { value } = e.target;
-    setNewValue(e.target.value);
-    if (value !== initialValue) {
-      if (!saveSettingsPrompt) {
-        showSaveSettingsPrompt(true);
-      }
-      if (!isEditableState) {
-        setIsEditableState(true);
-      }
+  const fieldType = getFieldType(name, settingData.value);
+  const placeholder = FIELD_PLACEHOLDER_MESSAGES[name]
+    ? intl.formatMessage(FIELD_PLACEHOLDER_MESSAGES[name])
+    : '';
+
+  /**
+   * Returns the native (parsed) value for display in the input.
+   * For JSON type, returns the raw JSON string (CodeMirror handles it as text).
+   */
+  const getDisplayValue = () => {
+    const raw = isEditableState ? newValue : initialValue;
+    if (fieldType === FIELD_TYPE.JSON) { return raw; }
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed ?? '';
+    } catch {
+      return raw;
     }
   };
 
-  const handleCardBlur = () => {
+  /**
+   * Marks the field as edited and shows the save prompt.
+   * Does not commit to the parent — call handleCommit() for that.
+   */
+  const markEdited = (serialized: string) => {
+    setNewValue(serialized);
+    if (!saveSettingsPrompt) { showSaveSettingsPrompt(true); }
+    if (!isEditableState) { setIsEditableState(true); }
+  };
+
+  /** Commits the current newValue to the parent edited state and validates. */
+  const handleCommit = () => {
     setEdited((prevEditedSettings) => ({
       ...prevEditedSettings,
       [name]: newValue,
@@ -54,61 +79,128 @@ const SettingCard = ({
     handleBlur();
   };
 
-  return (
-    <li className="field-group course-advanced-policy-list-item">
-      <Card className="flex-column setting-card">
-        <Card.Body className="d-flex row m-0 align-items-center">
-          <Card.Header
-            className="col-6"
-            title={
-              <ActionRow>
-                {capitalize(displayName)}
-                <IconButton
-                  ref={setTarget}
-                  onClick={open}
-                  src={InfoOutline}
-                  iconAs={Icon}
-                  alt={intl.formatMessage(messages.helpButtonText)}
-                  variant="primary"
-                  className="flex-shrink-0 ml-1 mr-2"
-                />
-                <ModalPopup
-                  hasArrow
-                  placement="right"
-                  positionRef={target}
-                  isOpen={isOpen}
-                  onClose={close}
-                  className="pgn__modal-popup__arrow"
-                >
-                  <div
-                    className="p-2 x-small rounded modal-popup-content"
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{ __html: help }}
-                  />
-                </ModalPopup>
-                <ActionRow.Spacer />
-              </ActionRow>
-            }
+  /**
+   * For immediate inputs (Boolean, Enum): serialize, mark, and commit in one step.
+   */
+  const handleImmediateChange = (nativeValue) => {
+    const serialized = serializeValue(nativeValue, fieldType);
+    setNewValue(serialized);
+    if (!saveSettingsPrompt) { showSaveSettingsPrompt(true); }
+    if (!isEditableState) { setIsEditableState(true); }
+    setEdited((prev) => ({ ...prev, [name]: serialized }));
+    handleBlur();
+  };
+
+  /**
+   * For lazy inputs (Number, String, JSON): serialize and mark only.
+   * The parent is updated on blur via handleCommit().
+   */
+  const handleLazyChange = (rawValue) => {
+    const serialized = serializeValue(rawValue, fieldType);
+    markEdited(serialized);
+  };
+
+  const renderInput = () => {
+    const displayValue = getDisplayValue();
+
+    switch (fieldType) {
+      case FIELD_TYPE.BOOLEAN:
+        return (
+          <BooleanInput
+            value={displayValue as boolean}
+            name={name}
+            displayName={displayName}
+            onChange={handleImmediateChange}
           />
-          <Card.Section className="col-6 flex-grow-1">
-            <Form.Group className="m-0">
-              <Form.Control
-                as={TextareaAutosize}
-                value={isEditableState ? newValue : initialValue}
-                name={name}
-                onChange={handleSettingChange}
-                aria-label={displayName}
-                onBlur={handleCardBlur}
-              />
-            </Form.Group>
-          </Card.Section>
-        </Card.Body>
-        {deprecated && (
-          <Card.Status icon={Warning} variant="danger">
-            {intl.formatMessage(messages.deprecated)}
-          </Card.Status>
-        )}
-      </Card>
+        );
+      case FIELD_TYPE.NUMBER:
+        return (
+          <NumberInput
+            value={displayValue as number}
+            name={name}
+            displayName={displayName}
+            onChange={handleLazyChange}
+            onBlur={handleCommit}
+            placeholder={placeholder}
+          />
+        );
+      case FIELD_TYPE.ENUM:
+        return (
+          <EnumInput
+            value={displayValue as string}
+            name={name}
+            displayName={displayName}
+            onChange={handleImmediateChange}
+          />
+        );
+      case FIELD_TYPE.STRING:
+        return (
+          <StringInput
+            value={displayValue as string}
+            name={name}
+            displayName={displayName}
+            onChange={handleLazyChange}
+            onBlur={handleCommit}
+            placeholder={placeholder}
+          />
+        );
+      case FIELD_TYPE.JSON:
+        return (
+          <JsonInput
+            initialValue={displayValue as string}
+            onChange={handleLazyChange}
+            onBlur={handleCommit}
+            isEditableState={isEditableState}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <li className="setting-row">
+      <div className="d-flex align-items-center px-4 py-3">
+        <div className="setting-row-label col-6 d-flex align-items-center flex-wrap">
+          <span className="setting-row-name font-weight-bold mr-1">
+            {capitalize(displayName)}
+          </span>
+          {deprecated && (
+            <Badge variant="danger" className="ml-1 mr-1">
+              {intl.formatMessage(messages.deprecated)}
+            </Badge>
+          )}
+          <IconButton
+            ref={setTarget}
+            onClick={open}
+            src={InfoOutline}
+            iconAs={Icon}
+            alt={intl.formatMessage(messages.helpButtonText)}
+            variant="primary"
+            size="sm"
+            className="flex-shrink-0"
+          />
+          <ModalPopup
+            hasArrow
+            placement="right"
+            positionRef={target}
+            isOpen={isOpen}
+            onClose={close}
+            className="pgn__modal-popup__arrow"
+          >
+            <div
+              className="p-2 x-small rounded modal-popup-content"
+              // eslint-disable-next-line react/no-danger
+              dangerouslySetInnerHTML={{ __html: help }}
+            />
+          </ModalPopup>
+        </div>
+        <div className="setting-row-input col-6">
+          <Form.Group className="m-0">
+            {renderInput()}
+          </Form.Group>
+        </div>
+      </div>
     </li>
   );
 };

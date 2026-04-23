@@ -5,6 +5,7 @@
     margin-top: 8.75rem;
   }
 
+
   .setting-items-policies {
     .setting-items-deprecated-setting {
       float: right;
@@ -18,13 +19,48 @@
     }
   }
 
-  .setting-card {
-    margin-bottom: 1.75rem;
-
-    .pgn__card-header .pgn__card-header-title-md {
-      font-size: 1.125rem;
-    }
+  // Section is now a Card; individual setting rows replace per-setting Cards
+  .settings-section {
+    overflow: hidden;
   }
+
+  .sub-header {
+    padding-bottom: 1.5rem;
+  }
+}
+
+.settings-filters {
+  flex-wrap: wrap;
+  gap: .75rem;
+
+  .settings-filters-search {
+    width: 280px;
+  }
+
+}
+
+.settings-section-trigger {
+  cursor: pointer;
+  border-bottom: 1px solid var(--pgn-color-gray-200);
+
+  &:hover {
+    background-color: var(--pgn-color-gray-100);
+  }
+
+  // When collapsed, no border below the trigger
+  &[aria-expanded="false"] {
+    border-bottom-color: transparent;
+  }
+}
+
+.settings-section-title {
+  font: normal var(--pgn-typography-font-weight-bold) 1.125rem/1.5rem var(--pgn-typography-font-family-base);
+  color: var(--pgn-color-headings-base);
+}
+
+.settings-section-icon {
+  color: var(--pgn-color-gray-500);
+  flex-shrink: 0;
 }
 
 .alert-toast {
@@ -40,26 +76,44 @@
 }
 
 .setting-items-list {
-  li {
-    list-style: none;
+  list-style: none;
+}
+
+.subcategory-header {
+  list-style: none;
+
+  .subcategory-header-title {
+    font-size: 1rem;
+    font-weight: var(--pgn-typography-font-weight-bold);
+    color: var(--pgn-color-headings-base);
+  }
+
+  .subcategory-header-divider {
+    border-color: var(--pgn-color-gray-200);
+  }
+}
+
+.display-overrides-nested-fields {
+  list-style: none;
+  border-left: 3px solid var(--pgn-color-primary-300);
+  margin-left: 2rem;
+  margin-right: 1rem;
+  margin-bottom: .5rem;
+}
+
+.display-overrides-blocked-message {
+  font-size: .8125rem;
+  color: var(--pgn-color-danger-500);
+}
+
+.setting-row {
+  .setting-row-name {
+    font-size: .9375rem;
   }
 
   .form-control {
     min-height: 2.75rem;
     flex-grow: 1;
-  }
-
-  .pgn__card-header {
-    padding: 0 0 0 1.5rem;
-  }
-
-  .pgn__card-status {
-    padding: .625rem;
-  }
-
-  .pgn__card-header-content {
-    margin-top: 1.438rem;
-    margin-bottom: 1.438rem;
   }
 }
 
