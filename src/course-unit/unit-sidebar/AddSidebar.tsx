@@ -148,6 +148,9 @@ const AddNewContent = () => {
       case COMPONENT_TYPES.openassessment:
         void handleCreateXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
         break;
+      case COMPONENT_TYPES.itembank:
+        void handleCreateXBlock({ type, category: 'itembank', parentLocator: blockId });
+        break;
       case COMPONENT_TYPES.html:
         void handleCreateXBlock({
           type,
@@ -180,6 +183,10 @@ const AddNewContent = () => {
     {
       blockType: 'problem',
       name: intl.formatMessage(messages.sidebarAddProblemButton),
+    },
+    {
+      blockType: 'itembank',
+      name: intl.formatMessage(messages.sidebarAddProblemBankButton),
     },
     {
       blockType: 'drag-and-drop-v2',

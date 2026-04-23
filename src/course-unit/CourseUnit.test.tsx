@@ -3224,6 +3224,7 @@ describe('<CourseUnit />', () => {
       expect(openResponseCollapsible).toBeInTheDocument();
       const problemCollapsible = screen.getByTestId('problem-collapsible');
       expect(problemCollapsible).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Problem Bank' })).toBeInTheDocument();
 
       // Check text templates
       await user.click(within(textCollapsible).getByText(/text/i));
@@ -3276,6 +3277,10 @@ describe('<CourseUnit />', () => {
       {
         name: 'Drag Drop',
         blockType: 'drag-and-drop-v2',
+      },
+      {
+        name: 'Problem Bank',
+        blockType: 'itembank',
       },
     ].forEach(({ name, blockType }) => {
       it(`calls appropriate handlers on new button click for ${name} block`, async () => {
