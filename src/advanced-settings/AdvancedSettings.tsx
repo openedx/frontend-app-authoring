@@ -282,7 +282,9 @@ const AdvancedSettings = () => {
                           forceOpen={filterText.trim() !== ''}
                           expandAll={expandAll}
                           subcategoryMap={category === CATEGORY_CONTENT_BLOCKS ? CONTENT_BLOCKS_SUBCATEGORY_MAP : null}
-                          subcategoryOrder={category === CATEGORY_CONTENT_BLOCKS ? CONTENT_BLOCKS_SUBCATEGORY_ORDER : []}
+                          subcategoryOrder={category === CATEGORY_CONTENT_BLOCKS
+                            ? CONTENT_BLOCKS_SUBCATEGORY_ORDER
+                            : []}
                         />
                       ),
                     )}

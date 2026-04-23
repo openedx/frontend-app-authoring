@@ -10,7 +10,12 @@ interface StringInputProps {
 }
 
 const StringInput = ({
-  value = '', name, displayName, onChange, onBlur, placeholder = '',
+  value = '',
+  name,
+  displayName,
+  onChange,
+  onBlur,
+  placeholder = '',
 }: StringInputProps) => (
   <Form.Control
     type="text"

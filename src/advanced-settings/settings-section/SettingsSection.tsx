@@ -40,7 +40,7 @@ const CATEGORY_MESSAGE_MAP = {
   [CATEGORY_OTHER]: messages.categoryOther,
 };
 
-const SUBCATEGORY_MESSAGE_MAP: Record<string, { id: string; defaultMessage: string }> = {
+const SUBCATEGORY_MESSAGE_MAP: Record<string, { id: string; defaultMessage: string; }> = {
   Settings: messages.subcategorySettings,
   Problems: messages.subcategoryProblems,
   Video: messages.subcategoryVideo,

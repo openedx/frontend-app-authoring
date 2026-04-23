@@ -2,13 +2,16 @@ import { render, fireEvent, initializeMocks } from '@src/testUtils';
 import StringInput from './StringInput';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderInput = (props: Record<string, any> = {}) => render(
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <StringInput name="displayName" displayName="Display Name" onBlur={jest.fn()} {...(props as any)} />,
-);
+const renderInput = (props: Record<string, any> = {}) =>
+  render(
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <StringInput name="displayName" displayName="Display Name" onBlur={jest.fn()} {...(props as any)} />,
+  );
 
 describe('<StringInput />', () => {
-  beforeEach(() => { initializeMocks(); });
+  beforeEach(() => {
+    initializeMocks();
+  });
 
   it('renders with the correct value', () => {
     const { getByRole } = renderInput({ value: 'My Course', onChange: jest.fn() });

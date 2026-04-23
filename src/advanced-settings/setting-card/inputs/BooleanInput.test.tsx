@@ -2,13 +2,16 @@ import { render, fireEvent, initializeMocks } from '@src/testUtils';
 import BooleanInput from './BooleanInput';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderInput = (props: Record<string, any> = {}) => render(
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <BooleanInput name="selfPaced" displayName="Self Paced" {...(props as any)} />,
-);
+const renderInput = (props: Record<string, any> = {}) =>
+  render(
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <BooleanInput name="selfPaced" displayName="Self Paced" {...(props as any)} />,
+  );
 
 describe('<BooleanInput />', () => {
-  beforeEach(() => { initializeMocks(); });
+  beforeEach(() => {
+    initializeMocks();
+  });
 
   it('renders as checked when value is true', () => {
     const { getByRole } = renderInput({ value: true, onChange: jest.fn() });

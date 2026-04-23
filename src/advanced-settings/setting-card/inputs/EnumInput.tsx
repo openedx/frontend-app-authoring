@@ -10,7 +10,10 @@ interface EnumInputProps {
 }
 
 const EnumInput = ({
-  value = '', name, displayName, onChange,
+  value = '',
+  name,
+  displayName,
+  onChange,
 }: EnumInputProps) => {
   const intl = useIntl();
   const options = ENUM_OPTIONS[name] || [];

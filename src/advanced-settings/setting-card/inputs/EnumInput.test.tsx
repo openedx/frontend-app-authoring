@@ -3,13 +3,16 @@ import EnumInput from './EnumInput';
 import { ENUM_OPTIONS } from '../../data/fieldTypes';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderInput = (props: Record<string, any> = {}) => render(
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <EnumInput name="showanswer" displayName="Show Answer" {...(props as any)} />,
-);
+const renderInput = (props: Record<string, any> = {}) =>
+  render(
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <EnumInput name="showanswer" displayName="Show Answer" {...(props as any)} />,
+  );
 
 describe('<EnumInput />', () => {
-  beforeEach(() => { initializeMocks(); });
+  beforeEach(() => {
+    initializeMocks();
+  });
 
   it('renders the correct options for the given field name', () => {
     const { getAllByRole } = renderInput({ value: 'always', onChange: jest.fn() });

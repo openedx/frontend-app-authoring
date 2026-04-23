@@ -11,7 +11,12 @@ interface NumberInputProps {
 }
 
 const NumberInput = ({
-  value = '', name, displayName, onChange, onBlur, placeholder = '',
+  value = '',
+  name,
+  displayName,
+  onChange,
+  onBlur,
+  placeholder = '',
 }: NumberInputProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const filtered = e.target.value.replace(/[^0-9.-]/g, '');

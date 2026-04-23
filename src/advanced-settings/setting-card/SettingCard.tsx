@@ -14,7 +14,9 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import {
-  FIELD_TYPE, getFieldType, serializeValue,
+  FIELD_TYPE,
+  getFieldType,
+  serializeValue,
 } from '../data/fieldTypes';
 import { FIELD_PLACEHOLDER_MESSAGES } from '../data/fieldTypeMessages';
 import BooleanInput from './inputs/BooleanInput';

@@ -77,8 +77,14 @@ describe('serializeValue()', () => {
 describe('ENUM_OPTIONS', () => {
   it('contains options for all 8 enum fields', () => {
     const expectedFields = [
-      'showanswer', 'rerandomize', 'catalogVisibility', 'courseVisibility',
-      'showCorrectness', 'videoSharingOptions', 'courseEditMethod', 'certificatesDisplayBehavior',
+      'showanswer',
+      'rerandomize',
+      'catalogVisibility',
+      'courseVisibility',
+      'showCorrectness',
+      'videoSharingOptions',
+      'courseEditMethod',
+      'certificatesDisplayBehavior',
     ];
     expectedFields.forEach((field) => {
       expect(ENUM_OPTIONS[field]).toBeDefined();

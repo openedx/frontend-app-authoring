@@ -31,12 +31,14 @@ const enumOptionMessages = defineMessages({
   finished: {
     id: 'course-authoring.advanced-settings.enum.finished',
     defaultMessage: 'Finished',
-    description: 'Option label for Show Answer: show the answer after the learner has used all attempts or the problem is past due',
+    description:
+      'Option label for Show Answer: show the answer after the learner has used all attempts or the problem is past due',
   },
   correctOrPastDue: {
     id: 'course-authoring.advanced-settings.enum.correct-or-past-due',
     defaultMessage: 'Correct or past due',
-    description: 'Option label for Show Answer: show the answer once the learner answers correctly or the due date passes',
+    description:
+      'Option label for Show Answer: show the answer once the learner answers correctly or the due date passes',
   },
   pastDue: {
     id: 'course-authoring.advanced-settings.enum.past-due',
@@ -61,7 +63,8 @@ const enumOptionMessages = defineMessages({
   afterAllAttemptsOrCorrect: {
     id: 'course-authoring.advanced-settings.enum.after-all-attempts-or-correct',
     defaultMessage: 'After all attempts or correct',
-    description: 'Option label for Show Answer: show the answer after all attempts are used or the learner answers correctly',
+    description:
+      'Option label for Show Answer: show the answer after all attempts are used or the learner answers correctly',
   },
   attemptedNoPastDue: {
     id: 'course-authoring.advanced-settings.enum.attempted-no-past-due',
@@ -141,12 +144,14 @@ const enumOptionMessages = defineMessages({
   earlyNoInfo: {
     id: 'course-authoring.advanced-settings.enum.early-no-info',
     defaultMessage: 'Early (no info)',
-    description: 'Option label for Certificates Display Behavior: certificates are displayed early with no additional information',
+    description:
+      'Option label for Certificates Display Behavior: certificates are displayed early with no additional information',
   },
   earlyWithInfo: {
     id: 'course-authoring.advanced-settings.enum.early-with-info',
     defaultMessage: 'Early (with info)',
-    description: 'Option label for Certificates Display Behavior: certificates are displayed early with additional information shown to learners',
+    description:
+      'Option label for Certificates Display Behavior: certificates are displayed early with additional information shown to learners',
   },
 });
 
@@ -155,7 +160,7 @@ const enumOptionMessages = defineMessages({
  * Used by EnumInput to render localized option labels.
  * Keys match the `value` field of each option in ENUM_OPTIONS (fieldTypes.ts).
  */
-export const ENUM_LABEL_MESSAGES: Record<string, Record<string, { id: string; defaultMessage: string }>> = {
+export const ENUM_LABEL_MESSAGES: Record<string, Record<string, { id: string; defaultMessage: string; }>> = {
   showanswer: {
     always: enumOptionMessages.always,
     answered: enumOptionMessages.answered,
@@ -349,7 +354,8 @@ export const FIELD_PLACEHOLDER_MESSAGES = defineMessages({
   topLevelDownstreamParentKey: {
     id: 'course-authoring.advanced-settings.placeholder.top-level-downstream-parent-key',
     defaultMessage: 'e.g. block-v1:Org+Course+Run+type@vertical+block@id',
-    description: 'Placeholder for the Top-Level Downstream Parent Key field in Advanced Settings (Open edX block key format)',
+    description:
+      'Placeholder for the Top-Level Downstream Parent Key field in Advanced Settings (Open edX block key format)',
   },
   certNameLong: {
     id: 'course-authoring.advanced-settings.placeholder.cert-name-long',

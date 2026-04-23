@@ -21,7 +21,10 @@ interface JsonInputProps {
 }
 
 const JsonInput = ({
-  initialValue, onChange, onBlur, isEditableState,
+  initialValue,
+  onChange,
+  onBlur,
+  isEditableState,
 }: JsonInputProps) => {
   const divRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
@@ -30,8 +33,12 @@ const JsonInput = ({
 
   // Keep refs pointing to the latest callbacks so the CodeMirror
   // event handlers (created once on mount) always call the current versions.
-  useEffect(() => { onChangeRef.current = onChange; }, [onChange]);
-  useEffect(() => { onBlurRef.current = onBlur; }, [onBlur]);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+  useEffect(() => {
+    onBlurRef.current = onBlur;
+  }, [onBlur]);
 
   useEffect(() => {
     if (!divRef.current) { return undefined; }

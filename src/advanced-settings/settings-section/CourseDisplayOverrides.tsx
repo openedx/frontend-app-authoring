@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
-  Form, Icon, IconButton, ModalPopup, useToggle,
+  Form,
+  Icon,
+  IconButton,
+  ModalPopup,
+  useToggle,
 } from '@openedx/paragon';
 import { InfoOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';

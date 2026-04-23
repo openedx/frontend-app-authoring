@@ -4,15 +4,22 @@ import messages from './messages';
 import type { SettingEntry } from '../data/types';
 
 // Mock SettingCard to avoid pulling in CodeMirror and other heavy dependencies.
-jest.mock('../setting-card/SettingCard', () => jest.fn(({ name }: { name: string }) => (
-  <div data-testid={`setting-card-${name}`}>{name}</div>
-)));
+jest.mock(
+  '../setting-card/SettingCard',
+  () => jest.fn(({ name }: { name: string; }) => <div data-testid={`setting-card-${name}`}>{name}</div>),
+);
 
 const emptyEntry = (name: string): SettingEntry => [name, {
-  displayName: name, value: '', help: '', deprecated: false,
+  displayName: name,
+  value: '',
+  help: '',
+  deprecated: false,
 }];
 const filledEntry = (name: string): SettingEntry => [name, {
-  displayName: name, value: 'My Course', help: '', deprecated: false,
+  displayName: name,
+  value: 'My Course',
+  help: '',
+  deprecated: false,
 }];
 
 const defaultProps = {
@@ -24,16 +31,19 @@ const defaultProps = {
   setIsEditableState: jest.fn(),
 };
 
-const renderOverrides = (displaySettingsEntries: SettingEntry[], props = {}) => render(
-  <CourseDisplayOverrides
-    {...defaultProps}
-    displaySettingsEntries={displaySettingsEntries}
-    {...props}
-  />,
-);
+const renderOverrides = (displaySettingsEntries: SettingEntry[], props = {}) =>
+  render(
+    <CourseDisplayOverrides
+      {...defaultProps}
+      displaySettingsEntries={displaySettingsEntries}
+      {...props}
+    />,
+  );
 
 describe('<CourseDisplayOverrides />', () => {
-  beforeEach(() => { initializeMocks(); });
+  beforeEach(() => {
+    initializeMocks();
+  });
 
   it('renders the Course Display Overrides label', () => {
     const { getByText } = renderOverrides([emptyEntry('displayName')]);

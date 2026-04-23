@@ -2,13 +2,16 @@ import { render, fireEvent, initializeMocks } from '@src/testUtils';
 import NumberInput from './NumberInput';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderInput = (props: Record<string, any> = {}) => render(
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <NumberInput name="maxAttempts" displayName="Maximum Attempts" onBlur={jest.fn()} {...(props as any)} />,
-);
+const renderInput = (props: Record<string, any> = {}) =>
+  render(
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <NumberInput name="maxAttempts" displayName="Maximum Attempts" onBlur={jest.fn()} {...(props as any)} />,
+  );
 
 describe('<NumberInput />', () => {
-  beforeEach(() => { initializeMocks(); });
+  beforeEach(() => {
+    initializeMocks();
+  });
 
   it('renders with the correct numeric value', () => {
     const { getByRole } = renderInput({ value: 3, onChange: jest.fn() });

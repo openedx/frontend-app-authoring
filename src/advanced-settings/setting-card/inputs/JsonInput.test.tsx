@@ -25,7 +25,7 @@ jest.mock('codemirror', () => {
   }));
   EditorViewMock.theme = jest.fn(() => ({}));
   EditorViewMock.updateListener = { of: jest.fn(() => ({})) };
-  EditorViewMock.domEventHandlers = jest.fn((handlers: { blur: () => void }) => {
+  EditorViewMock.domEventHandlers = jest.fn((handlers: { blur: () => void; }) => {
     registeredBlurHandler = handlers.blur;
     return {};
   });
@@ -34,7 +34,7 @@ jest.mock('codemirror', () => {
 
 jest.mock('@codemirror/state', () => ({
   EditorState: {
-    create: jest.fn(({ doc, extensions }: { doc: string; extensions: unknown[] }) => ({ doc, extensions })),
+    create: jest.fn(({ doc, extensions }: { doc: string; extensions: unknown[]; }) => ({ doc, extensions })),
   },
   Annotation: {
     define: jest.fn(() => ({ of: jest.fn((val: boolean) => ({ type: 'programmatic', val })) })),

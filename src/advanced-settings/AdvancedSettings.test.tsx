@@ -16,14 +16,15 @@ import filterMessages from './settings-filters/messages';
 
 // Mock CodeMirror-based JsonInput with a controlled textarea so tests can
 // interact with JSON fields without a real browser layout engine.
-jest.mock('./setting-card/inputs/JsonInput', () => jest.fn(({ initialValue, onChange, onBlur }) => (
-  <textarea
-    data-testid="json-input"
-    value={initialValue}
-    onChange={(e) => onChange(e.target.value)}
-    onBlur={onBlur}
-  />
-)));
+jest.mock('./setting-card/inputs/JsonInput', () =>
+  jest.fn(({ initialValue, onChange, onBlur }) => (
+    <textarea
+      data-testid="json-input"
+      value={initialValue}
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={onBlur}
+    />
+  )));
 
 jest.mock('@src/authz/data/apiHooks', () => ({
   useUserPermissions: jest.fn(),
@@ -65,9 +66,11 @@ describe('<AdvancedSettings />', () => {
 
   it('should render without errors', async () => {
     render();
-    expect(await screen.findByText(messages.headingSubtitle.defaultMessage, {
-      selector: 'small.sub-header-title-subtitle',
-    })).toBeInTheDocument();
+    expect(
+      await screen.findByText(messages.headingSubtitle.defaultMessage, {
+        selector: 'small.sub-header-title-subtitle',
+      }),
+    ).toBeInTheDocument();
     expect(screen.getByText(messages.headingTitle.defaultMessage, {
       selector: 'h2.sub-header-title',
     })).toBeInTheDocument();
@@ -177,9 +180,11 @@ describe('<AdvancedSettings />', () => {
       data: { canManageAdvancedSettings: true },
     } as unknown as ReturnType<typeof useUserPermissions>);
     render();
-    expect(await screen.findByText(messages.headingSubtitle.defaultMessage, {
-      selector: 'small.sub-header-title-subtitle',
-    })).toBeInTheDocument();
+    expect(
+      await screen.findByText(messages.headingSubtitle.defaultMessage, {
+        selector: 'small.sub-header-title-subtitle',
+      }),
+    ).toBeInTheDocument();
     expect(screen.getByText(messages.headingTitle.defaultMessage, {
       selector: 'h2.sub-header-title',
     })).toBeInTheDocument();

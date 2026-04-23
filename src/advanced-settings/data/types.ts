@@ -14,5 +14,5 @@ export type SettingEntry = [string, SettingData];
 
 /** Callback signatures shared across input components and section components. */
 export type SetEditedSettings = (
-  updater: (prev: Record<string, string>) => Record<string, string>
+  updater: (prev: Record<string, string>) => Record<string, string>,
 ) => void;

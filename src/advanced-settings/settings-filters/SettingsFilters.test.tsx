@@ -2,20 +2,23 @@ import { render, fireEvent, initializeMocks } from '@src/testUtils';
 import SettingsFilters from './SettingsFilters';
 import messages from './messages';
 
-const renderFilters = (props = {}) => render(
-  <SettingsFilters
-    filterText=""
-    onFilterChange={jest.fn()}
-    showDeprecated={false}
-    onDeprecatedChange={jest.fn()}
-    expandAll
-    onExpandAllChange={jest.fn()}
-    {...props}
-  />,
-);
+const renderFilters = (props = {}) =>
+  render(
+    <SettingsFilters
+      filterText=""
+      onFilterChange={jest.fn()}
+      showDeprecated={false}
+      onDeprecatedChange={jest.fn()}
+      expandAll
+      onExpandAllChange={jest.fn()}
+      {...props}
+    />,
+  );
 
 describe('<SettingsFilters />', () => {
-  beforeEach(() => { initializeMocks(); });
+  beforeEach(() => {
+    initializeMocks();
+  });
 
   it('renders the search field', () => {
     const { getByRole } = renderFilters({});

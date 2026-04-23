@@ -4,9 +4,10 @@ import messages from './messages';
 import type { SettingEntry } from '../data/types';
 
 // Mock SettingCard to avoid pulling in CodeMirror and other heavy dependencies.
-jest.mock('../setting-card/SettingCard', () => jest.fn(({ name }: { name: string }) => (
-  <div data-testid={`setting-card-${name}`}>{name}</div>
-)));
+jest.mock(
+  '../setting-card/SettingCard',
+  () => jest.fn(({ name }: { name: string; }) => <div data-testid={`setting-card-${name}`}>{name}</div>),
+);
 
 const defaultProps = {
   category: 'Grading',
@@ -26,15 +27,18 @@ const makeEntry = (name: string, deprecated = false): SettingEntry => [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderSection = (props: Record<string, any> = {}) => render(
-  <SettingsSection
-    {...defaultProps}
-    {...props}
-  />,
-);
+const renderSection = (props: Record<string, any> = {}) =>
+  render(
+    <SettingsSection
+      {...defaultProps}
+      {...props}
+    />,
+  );
 
 describe('<SettingsSection />', () => {
-  beforeEach(() => { initializeMocks(); });
+  beforeEach(() => {
+    initializeMocks();
+  });
 
   it('renders the category title', () => {
     const { getByText } = renderSection({

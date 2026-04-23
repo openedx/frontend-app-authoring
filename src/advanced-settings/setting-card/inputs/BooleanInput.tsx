@@ -8,7 +8,10 @@ interface BooleanInputProps {
 }
 
 const BooleanInput = ({
-  value, name, displayName, onChange,
+  value,
+  name,
+  displayName,
+  onChange,
 }: BooleanInputProps) => (
   <Form.Switch
     id={`setting-bool-${name}`}
