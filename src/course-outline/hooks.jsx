@@ -112,9 +112,9 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const headerNavigationsActions = {
-    handleNewSection: () => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleAddBlock.mutateAsync({
+    handleNewSection: async () => {
+      // istanbul ignore next - we are using this for back compability with the plugin slot. we don't call it anymore.
+      await handleAddBlock.mutateAsync({
         type: ContainerType.Chapter,
         parentLocator: courseStructure?.id,
         displayName: COURSE_BLOCK_NAMES.chapter.name,

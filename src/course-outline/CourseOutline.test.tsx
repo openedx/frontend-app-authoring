@@ -1,4 +1,4 @@
-import { getConfig, setConfig } from '@edx/frontend-platform';
+import { getConfig } from '@edx/frontend-platform';
 import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
 import { logError } from '@edx/frontend-platform/logging';
@@ -9,8 +9,7 @@ import { executeThunk } from '@src/utils';
 import configureModalMessages from '@src/generic/configure-modal/messages';
 import pasteButtonMessages from '@src/generic/clipboard/paste-component/messages';
 import { getApiBaseUrl, getClipboardUrl } from '@src/generic/data/api';
-import { postXBlockBaseApiUrl } from '@src/course-unit/data/api';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { ContainerType } from '@src/generic/key-utils';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
@@ -74,9 +73,8 @@ let axiosMock: import('axios-mock-adapter/types');
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
-const getContainerKey = jest.fn().mockReturnValue('lct:org:lib:unit:1');
-const getContainerType = jest.fn().mockReturnValue('unit');
 const clearSelection = jest.fn();
+const startCurrentFlow = jest.fn();
 let selectedContainerId: string | undefined;
 let courseOutlineIndexMock = cloneDeep(originalCourseOutlineIndexMock);
 
@@ -85,6 +83,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
     ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
+    startCurrentFlow,
     clearSelection,
     selectedContainerState: (() => (selectedContainerId ? { currentId: selectedContainerId } : undefined))(),
   }),
@@ -107,24 +106,6 @@ jest.mock('@src/help-urls/hooks', () => ({
 jest.mock('./data/api', () => ({
   ...jest.requireActual('./data/api'),
   getTagsCount: () => jest.fn().mockResolvedValue({}),
-}));
-
-// Mock LibraryAndComponentPicker to call onComponentSelected on click
-jest.mock('@src/library-authoring/component-picker', () => ({
-  LibraryAndComponentPicker: (props) => {
-    const onClick = () => {
-      // eslint-disable-next-line react/prop-types
-      props.onComponentSelected({
-        usageKey: getContainerKey(),
-        blockType: getContainerType(),
-      });
-    };
-    return (
-      <button type="submit" onClick={onClick}>
-        Dummy button
-      </button>
-    );
-  },
 }));
 
 jest.mock('@edx/frontend-platform/logging', () => ({
@@ -480,118 +461,66 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds a unit from library correctly', async () => {
-    getContainerKey.mockReturnValue('lct:org:lib:unit:1');
-    getContainerKey.mockReturnValue('unit');
+    const user = userEvent.setup();
     renderComponent();
     const [sectionElement] = await screen.findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const units = await within(subsectionElement).findAllByTestId('unit-card');
     expect(units.length).toBe(1);
 
-    axiosMock
-      .onPost(postXBlockBaseApiUrl())
-      .reply(200, {
-        locator: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@vertical1e842129',
-        parent_locator: 'parent',
-      });
-
     const addUnitFromLibraryButton = within(subsectionElement).getByRole('button', {
       name: /use unit from library/i,
     });
-    fireEvent.click(addUnitFromLibraryButton);
+    await user.click(addUnitFromLibraryButton);
 
-    // click dummy button to execute onComponentSelected prop.
-    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
-    fireEvent.click(dummyBtn);
-
-    await waitFor(() => expect(axiosMock.history.post.length).toBe(3));
-
+    // Start the add existing unit flow
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    await waitFor(() => {
-      expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
-        type: COMPONENT_TYPES.libraryV2,
-        category: 'vertical',
-        parent_locator: subsection.id,
-        library_content_key: getContainerKey(),
-      }));
+    expect(startCurrentFlow).toHaveBeenCalledWith({
+      flowType: ContainerType.Unit,
+      parentLocator: subsection.id,
+      grandParentLocator: section.id,
     });
   });
 
   it('adds a subsection from library correctly', async () => {
-    getContainerKey.mockReturnValue('lct:org:lib:subsection:1');
-    getContainerKey.mockReturnValue('subsection');
+    const user = userEvent.setup();
     renderComponent();
     const [sectionElement] = await screen.findAllByTestId('section-card');
     const subsections = await within(sectionElement).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(2);
 
-    axiosMock
-      .onPost(postXBlockBaseApiUrl())
-      .reply(200, {
-        locator: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential45d4d95a',
-        parent_locator: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersda1',
-      });
-
     const addSubsectionFromLibraryButton = within(sectionElement).getByRole('button', {
       name: /use subsection from library/i,
     });
-    fireEvent.click(addSubsectionFromLibraryButton);
+    await user.click(addSubsectionFromLibraryButton);
 
-    // click dummy button to execute onComponentSelected prop.
-    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
-    fireEvent.click(dummyBtn);
-
-    await waitFor(() => expect(axiosMock.history.post.length).toBe(3));
-
+    // Start the add existing subsection flow
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    await waitFor(() => {
-      expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
-        type: COMPONENT_TYPES.libraryV2,
-        category: 'sequential',
-        parent_locator: section.id,
-        library_content_key: getContainerKey(),
-      }));
+    expect(startCurrentFlow).toHaveBeenCalledWith({
+      flowType: ContainerType.Subsection,
+      parentLocator: section.id,
+      grandParentLocator: undefined,
     });
   });
 
   it('adds a section from library correctly', async () => {
     const user = userEvent.setup();
-    getContainerKey.mockReturnValue('lct:org:lib:section:1');
-    getContainerKey.mockReturnValue('section');
     renderComponent();
     const sections = await screen.findAllByTestId('section-card');
     expect(sections.length).toBe(4);
-
-    axiosMock
-      .onPost(postXBlockBaseApiUrl())
-      .reply(200, {
-        locator: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersdafdd',
-        courseKey: 'course-v1:UNIX+UX1+2025_T3',
-      });
-    axiosMock
-      .onGet(getXBlockApiUrl('block-v1:UNIX+UX1+2025_T3+type@chapter+block@chaptersdafdd'))
-      .reply(200, courseSectionMock);
 
     const addSectionFromLibraryButton = await screen.findByRole('button', {
       name: /use section from library/i,
     });
     await user.click(addSectionFromLibraryButton);
 
-    // click dummy button to execute onComponentSelected prop.
-    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
-    fireEvent.click(dummyBtn);
-
-    await waitFor(() => expect(axiosMock.history.post.length).toBe(3));
-
-    const courseUsageKey = courseOutlineIndexMock.courseStructure.id;
-    await waitFor(() => {
-      expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
-        type: COMPONENT_TYPES.libraryV2,
-        category: 'chapter',
-        parent_locator: courseUsageKey,
-        library_content_key: getContainerKey(),
-      }));
+    // Start the add existing section flow
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    expect(startCurrentFlow).toHaveBeenCalledWith({
+      flowType: ContainerType.Section,
+      parentLocator: courseBlockId,
+      grandParentLocator: undefined,
     });
   });
 
@@ -820,6 +749,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section, subsection and unit is deleted when corresponding delete button is clicked', async () => {
+    const user = userEvent.setup();
     renderComponent();
     // get section, subsection and unit
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -831,22 +761,18 @@ describe('<CourseOutline />', () => {
     selectedContainerId = section.id;
 
     const checkDeleteBtn = async (item, element, elementName) => {
-      await waitFor(() => {
-        expect(screen.queryByText(item.displayName)).toBeInTheDocument();
-      });
+      expect(within(element).getByText(item.displayName)).toBeInTheDocument();
 
       axiosMock.onDelete(getCourseItemApiUrl(item.id)).reply(200);
 
       const menu = await within(element).findByTestId(`${elementName}-card-header__menu-button`);
-      fireEvent.click(menu);
+      await user.click(menu);
       const deleteButton = await within(element).findByTestId(`${elementName}-card-header__menu-delete-button`);
-      fireEvent.click(deleteButton);
+      await user.click(deleteButton);
       const confirmButton = await screen.findByRole('button', { name: 'Delete' });
-      fireEvent.click(confirmButton);
+      await user.click(confirmButton);
 
-      await waitFor(() => {
-        expect(screen.queryByText(item.displayName)).not.toBeInTheDocument();
-      });
+      expect(element).not.toBeInTheDocument();
     };
 
     // delete unit, subsection and then section in order.
@@ -2614,10 +2540,6 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that the new status bar and expand bar is shown when flag is set', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
-    });
     renderComponent();
     const btn = await screen.findByRole('button', { name: 'Collapse all' });
     expect(btn).toBeInTheDocument();
