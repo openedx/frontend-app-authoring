@@ -15,6 +15,7 @@ import {
   getCourseItem,
   restartIndexingOnCourse,
   setSectionOrderList,
+  setVideoSharingOption,
   setCourseItemOrderList,
   dismissNotification,
   createDiscussionsTopics,
@@ -147,6 +148,24 @@ export function enableCourseHighlightsEmailsQuery(courseId: string) {
     try {
       await enableCourseHighlightsEmails(courseId);
       dispatch(fetchCourseOutlineIndexQuery(courseId));
+
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    } finally {
+      closeToastOutsideReact();
+    }
+  };
+}
+
+export function setVideoSharingOptionQuery(courseId: string, option: string) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
+
+    try {
+      await setVideoSharingOption(courseId, option);
+      dispatch(updateStatusBar({ videoSharingOptions: option }));
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch {

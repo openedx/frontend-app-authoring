@@ -52,13 +52,14 @@ import {
   courseSectionMock,
   courseSubsectionMock,
 } from './__mocks__';
-import { COURSE_BLOCK_NAMES } from './constants';
+import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
 
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
+import statusBarMessages from './status-bar/messages';
 import subsectionMessages from './subsection-card/messages';
 import pageAlertMessages from './page-alerts/messages';
 import {
@@ -240,6 +241,59 @@ describe('<CourseOutline />', () => {
     fireEvent.click(reindexButton);
 
     expect(await findByText(messages.alertSuccessDescription.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('check video sharing option udpates correctly', async () => {
+    const { findByLabelText } = renderComponent();
+
+    axiosMock
+      .onPost(getCourseBlockApiUrl(courseId), {
+        metadata: {
+          video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+        },
+      })
+      .reply(200);
+    const optionDropdown = await findByLabelText(statusBarMessages.videoSharingTitle.defaultMessage);
+    await act(
+      async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
+    );
+
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+      metadata: {
+        video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+      },
+    }));
+  });
+
+  it('check video sharing option shows error on failure', async () => {
+    renderComponent();
+
+    axiosMock
+      .onPost(getCourseBlockApiUrl(courseId), {
+        metadata: {
+          video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+        },
+      })
+      .reply(500);
+    const optionDropdown = await screen.findByLabelText(statusBarMessages.videoSharingTitle.defaultMessage);
+    await act(
+      async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
+    );
+
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+      metadata: {
+        video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+      },
+    }));
+
+    const alertElements = screen.queryAllByRole('alert');
+    expect(alertElements.find(
+      (el) => el.classList.contains('alert-content'),
+    )).toHaveTextContent(
+      'Unable to save changes. Please try again.',
+    );
   });
 
   it('render error alert after failed reindex correctly', async () => {

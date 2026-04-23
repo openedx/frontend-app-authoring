@@ -112,6 +112,7 @@ const CourseOutline = () => {
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
+    handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,
     discussionsSettings,
@@ -243,6 +244,7 @@ const CourseOutline = () => {
             isLoading={isLoading}
             statusBarData={statusBarData}
             openEnableHighlightsModal={openEnableHighlightsModal}
+            handleVideoSharingOptionChange={handleVideoSharingOptionChange}
           />
           <hr className="mt-4 mb-0 w-100 text-light-400" />
           <div className="d-flex align-items-baseline">

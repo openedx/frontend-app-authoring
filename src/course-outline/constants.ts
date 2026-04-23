@@ -73,6 +73,12 @@ export const BEST_PRACTICES_CHECKLIST = {
   ],
 } as const;
 
+export const VIDEO_SHARING_OPTIONS = {
+  perVideo: 'per-video',
+  allOn: 'all-on',
+  allOff: 'all-off',
+} as const;
+
 export const API_ERROR_TYPES = {
   networkError: 'networkError',
   serverError: 'serverError',

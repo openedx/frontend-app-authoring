@@ -1,3 +1,4 @@
+import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { initializeMocks, render, screen } from '@src/testUtils';
 import { StatusBar, StatusBarProps } from './StatusBar';
@@ -17,7 +18,8 @@ const statusBarData: CourseOutlineStatusBar = {
     completedCourseBestPracticesChecks: 1,
   },
   highlightsEnabledForMessaging: false,
-  videoSharingEnabled: true,
+  videoSharingEnabled: false,
+  videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
 };
 
 jest.mock('@src/course-libraries/data/apiHooks', () => ({
@@ -35,6 +37,7 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   }),
 }));
 const mockOpenEnableHighlightsModal = jest.fn();
+const mockHandleVideoSharingOptionChange = jest.fn();
 
 const renderComponent = (props?: Partial<StatusBarProps>) =>
   render(
@@ -43,6 +46,7 @@ const renderComponent = (props?: Partial<StatusBarProps>) =>
       isLoading={isLoading}
       statusBarData={statusBarData}
       openEnableHighlightsModal={mockOpenEnableHighlightsModal}
+      handleVideoSharingOptionChange={mockHandleVideoSharingOptionChange}
       {...props}
     />,
   );
@@ -60,6 +64,9 @@ describe('<StatusBar />', () => {
     expect(await screen.findByText('Feb 05, 2013 - Apr 09, 2013')).toBeInTheDocument();
     expect(await screen.findByText(`2/9 ${messages.checklistCompleted.defaultMessage}`)).toBeInTheDocument();
     expect(await screen.findByText('Active')).toBeInTheDocument();
+
+    // Video sharing is not enabled by default
+    expect(screen.queryByText('Video Sharing:')).not.toBeInTheDocument();
   });
 
   it('renders Archived Badge', async () => {
@@ -136,5 +143,16 @@ describe('<StatusBar />', () => {
       },
     });
     expect(await screen.findByText(messages.highlightEmailsEnabled.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('does render video sharing dropdown if enabled', async () => {
+    renderComponent({
+      statusBarData: {
+        ...statusBarData,
+        videoSharingEnabled: true,
+      },
+    });
+
+    expect(await screen.findByText('Video Sharing:')).toBeInTheDocument();
   });
 });

@@ -7,7 +7,7 @@ import {
 import DraftIcon from '@src/generic/DraftIcon';
 import { VisibilityTypes } from '@src/data/constants';
 import { ValueOf } from '@src/types';
-import { ITEM_BADGE_STATUS } from './constants';
+import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
 
 export type ItemBadgeStatusValue = ValueOf<typeof ITEM_BADGE_STATUS>;
 /**
@@ -182,4 +182,33 @@ const scrollToElement = (
   }
 };
 
-export { getItemStatus, getItemStatusBadgeContent, getItemStatusBorder, getHighlightsFormValues, scrollToElement };
+/**
+ * Get video sharing dropdown translated options.
+ * @param {string} id - option id
+ * @returns {string} - text to display
+ */
+const getVideoSharingOptionText = (
+  id: ValueOf<typeof VIDEO_SHARING_OPTIONS>,
+  messages: Record<string, MessageDescriptor>,
+  intl: IntlShape,
+): string => {
+  switch (id) {
+    case VIDEO_SHARING_OPTIONS.perVideo:
+      return intl.formatMessage(messages.videoSharingPerVideoText);
+    case VIDEO_SHARING_OPTIONS.allOn:
+      return intl.formatMessage(messages.videoSharingAllOnText);
+    case VIDEO_SHARING_OPTIONS.allOff:
+      return intl.formatMessage(messages.videoSharingAllOffText);
+    default:
+      return '';
+  }
+};
+
+export {
+  getItemStatus,
+  getItemStatusBadgeContent,
+  getItemStatusBorder,
+  getHighlightsFormValues,
+  getVideoSharingOptionText,
+  scrollToElement,
+};

@@ -50,6 +50,26 @@ const messages = defineMessages({
     defaultMessage: 'Manage tags',
     description: 'Opens the drawer to edit content tags',
   },
+  videoSharingTitle: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.title',
+    defaultMessage: 'Video Sharing:',
+  },
+  videoSharingLink: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.link',
+    defaultMessage: 'Learn more',
+  },
+  videoSharingPerVideoText: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.perVideo.text',
+    defaultMessage: 'Per Video',
+  },
+  videoSharingAllOffText: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.allOff.text',
+    defaultMessage: 'No Videos',
+  },
+  videoSharingAllOnText: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.allOn.text',
+    defaultMessage: 'All Videos',
+  },
   unpublishedBadgeText: {
     id: 'course-authoring.course-outline.status-bar.unpublished.badge.text',
     defaultMessage: 'Unpublished Changes',
