@@ -94,7 +94,7 @@ export const useSettingMenuItems = (courseId: string) => {
     },
     ...(isAuthzEnabled
       ? [{
-        href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${courseId}`,
+        href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`,
         title: intl.formatMessage(messages['header.links.roles.permissions']),
       }]
       : [{
