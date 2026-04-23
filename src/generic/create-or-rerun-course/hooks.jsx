@@ -60,13 +60,20 @@ const useCreateOrRerunCourse = (initialValues) => {
         intl.formatMessage(messages.disallowedCharsError),
       )
       .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
-  }).test(TOTAL_LENGTH_KEY, intl.formatMessage(messages.totalLengthError, { maxLength: MAX_TOTAL_LENGTH }), function validateTotalLength() {
-    const { org, number, run } = this?.options.originalValue || {};
-    if ((org?.length || 0) + (number?.length || 0) + (run?.length || 0) > MAX_TOTAL_LENGTH) {
-      return this.createError({ path: TOTAL_LENGTH_KEY, message: intl.formatMessage(messages.totalLengthError, { maxLength: MAX_TOTAL_LENGTH }) });
-    }
-    return true;
-  });
+  }).test(
+    TOTAL_LENGTH_KEY,
+    intl.formatMessage(messages.totalLengthError, { maxLength: MAX_TOTAL_LENGTH }),
+    function validateTotalLength() {
+      const { org, number, run } = this?.options.originalValue || {};
+      if ((org?.length || 0) + (number?.length || 0) + (run?.length || 0) > MAX_TOTAL_LENGTH) {
+        return this.createError({
+          path: TOTAL_LENGTH_KEY,
+          message: intl.formatMessage(messages.totalLengthError, { maxLength: MAX_TOTAL_LENGTH }),
+        });
+      }
+      return true;
+    },
+  );
 
   const {
     values,
