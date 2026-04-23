@@ -31,6 +31,7 @@ const baseContextValue = () => ({
   draftError: '',
   createRowMutation: { isPending: false, isError: false },
   updateRowMutation: { isPending: false, isError: false },
+  deleteRowMutation: { isPending: false, isError: false },
   toast: { show: false, message: '', variant: 'success' },
   setToast: jest.fn(),
   setIsCreatingTopRow: jest.fn(),
@@ -43,6 +44,13 @@ const baseContextValue = () => ({
   handleUpdateRow: jest.fn(),
   editingRowId: null,
   setEditingRowId: jest.fn(),
+  confirmDeleteDialogOpen: false,
+  setConfirmDeleteDialogOpen: jest.fn(),
+  confirmDeleteDialogContext: null,
+  setConfirmDeleteDialogContext: jest.fn(),
+  handleDeleteRow: jest.fn(),
+  startEditRow: jest.fn(),
+  startDeleteRow: jest.fn(),
 });
 
 const renderTableView = (
@@ -106,5 +114,40 @@ describe('TableView', () => {
       message: 'created',
       variant: 'success',
     });
+  });
+
+  it('shows the save error alert when a delete mutation fails and draftError is present', () => {
+    const contextValue = baseContextValue();
+    contextValue.deleteRowMutation = { isPending: false, isError: true };
+    contextValue.draftError = 'Delete request failed';
+
+    renderTableView(contextValue);
+
+    expect(screen.getByText('Error saving changes')).toBeInTheDocument();
+    expect(screen.getByText('Delete request failed. Please try again.')).toBeInTheDocument();
+  });
+
+  it('reopens the save error alert when a new delete error arrives after the user previously dismissed it', () => {
+    const contextValue = baseContextValue();
+    contextValue.deleteRowMutation = { isPending: false, isError: true };
+    contextValue.draftError = 'First delete failure';
+
+    const { rerender } = renderTableView(contextValue);
+
+    fireEvent.click(screen.getByRole('button', { name: /dismiss/i }));
+    expect(screen.queryByText('Error saving changes')).not.toBeInTheDocument();
+
+    const nextContextValue = baseContextValue();
+    nextContextValue.deleteRowMutation = { isPending: false, isError: true };
+    nextContextValue.draftError = 'Second delete failure';
+
+    rerender(
+      <TreeTableContext.Provider value={nextContextValue}>
+        <TableView />
+      </TreeTableContext.Provider>,
+    );
+
+    expect(screen.getByText('Error saving changes')).toBeInTheDocument();
+    expect(screen.getByText('Second delete failure. Please try again.')).toBeInTheDocument();
   });
 });
