@@ -39,6 +39,7 @@ import {
   CONTENT_BLOCKS_SUBCATEGORY_MAP,
   CONTENT_BLOCKS_SUBCATEGORY_ORDER,
 } from './data/settingsCategories';
+import type { SettingEntry } from './data/types';
 
 const AdvancedSettings = () => {
   const intl = useIntl();
@@ -271,7 +272,7 @@ const AdvancedSettings = () => {
                         <SettingsSection
                           key={category}
                           category={category}
-                          settingsEntries={settingsEntries as [string, object][]}
+                          settingsEntries={settingsEntries as SettingEntry[]}
                           showDeprecated={showDeprecated}
                           showSaveSettingsPrompt={showSaveSettingsPrompt}
                           saveSettingsPrompt={saveSettingsPrompt}
