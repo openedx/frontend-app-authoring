@@ -45,13 +45,18 @@ const messages = defineMessages({
   },
   alertLibraryUnitReadOnlyText: {
     id: 'course-authoring.course-unit.alert.read-only.text',
-    defaultMessage: 'This unit can only be edited from the {link}.',
+    defaultMessage: 'Only certain edits are possible for {link}. {learnMore}',
     description: 'Text of the alert when the unit is read only because is a library unit',
   },
   alertLibraryUnitReadOnlyLinkText: {
     id: 'course-authoring.course-unit.alert.read-only.link.text',
-    defaultMessage: 'library',
+    defaultMessage: 'library content',
     description: 'Text of the link in the alert when the unit is read only because is a library unit',
+  },
+  alertLibraryUnitReadOnlyLearnMoreText: {
+    id: 'course-authoring.course-unit.alert.read-only.learn-more.text',
+    defaultMessage: 'Learn More',
+    description: 'Text of the learn more link in the alert when the unit is read only because is a library unit',
   },
   statusBarDraftChangesBadge: {
     id: 'course-authoring.course-unit.status-bar.publish-status.draft-changes',

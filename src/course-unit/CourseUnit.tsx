@@ -48,6 +48,7 @@ import { UnitSidebarProvider } from './unit-sidebar/UnitSidebarContext';
 import { UnitSidebarPagesProvider } from './unit-sidebar/UnitSidebarPagesContext';
 import { UNIT_VISIBILITY_STATES } from './constants';
 import { isUnitPageNewDesignEnabled } from './utils';
+import { useHelpUrls } from '@src/help-urls/hooks';
 
 const StatusBar = ({ courseUnit }: { courseUnit: any; }) => {
   const { selectedPartitionIndex, selectedGroupsLabel } = courseUnit.userPartitionInfo ?? {};
@@ -164,6 +165,7 @@ const CourseUnit = () => {
   const intl = useIntl();
   const { blockId } = useParams();
   const { courseId } = useCourseAuthoringContext();
+  const urls = useHelpUrls(['syncLibraryUpdates']);
 
   if (courseId === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -281,6 +283,11 @@ const CourseUnit = () => {
                     link: (
                       <Alert.Link href={courseUnit.upstreamInfo.upstreamLink}>
                         <FormattedMessage {...messages.alertLibraryUnitReadOnlyLinkText} />
+                      </Alert.Link>
+                    ),
+                    learnMore: (
+                      <Alert.Link href={urls['syncLibraryUpdates']}>
+                        <FormattedMessage {...messages.alertLibraryUnitReadOnlyLearnMoreText} />
                       </Alert.Link>
                     ),
                   },

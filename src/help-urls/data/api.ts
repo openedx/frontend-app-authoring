@@ -29,6 +29,7 @@ export interface HelpUrls {
   register: string;
   schedule: string;
   socialSharing: string;
+  syncLibraryUpdates: string;
   teamCourse: string;
   teamLibrary: string;
   textbooks: string;
