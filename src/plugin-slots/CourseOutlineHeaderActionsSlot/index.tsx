@@ -1,12 +1,21 @@
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
-import HeaderNavigations, {
-  HeaderNavigationsProps,
-} from 'CourseAuthoring/course-outline/header-navigations/HeaderNavigations';
-import HeaderActions from 'CourseAuthoring/course-outline/header-navigations/HeaderActions';
-import { isOutlineNewDesignEnabled } from '@src/course-outline/utils';
+import HeaderActions from '@src/course-outline/header-navigations/HeaderActions';
+import type { OutlinePageErrors, XBlockActions } from '@src/data/types';
 
-interface CourseOutlineHeaderActionsSlotProps extends HeaderNavigationsProps {
+interface CourseOutlineHeaderActionsSlotProps {
+  isReIndexShow: boolean;
+  isSectionsExpanded: boolean;
+  isDisabledReindexButton: boolean;
+  headerNavigationsActions: {
+    handleNewSection: () => void;
+    handleReIndex: () => void;
+    handleExpandAll: () => void;
+    lmsLink: string;
+  };
+  hasSections: boolean;
+  courseActions: XBlockActions;
+  errors?: OutlinePageErrors;
   sections: Array<
     ({
       id: string;
@@ -39,25 +48,13 @@ const CourseOutlineHeaderActionsSlot = ({
       sections,
     }}
   >
-    {isOutlineNewDesignEnabled()
-      ? (
-        <HeaderActions
-          actions={headerNavigationsActions}
-          courseActions={courseActions}
-          errors={errors}
-        />
-      )
-      : (
-        <HeaderNavigations
-          headerNavigationsActions={headerNavigationsActions}
-          isReIndexShow={isReIndexShow}
-          isSectionsExpanded={isSectionsExpanded}
-          isDisabledReindexButton={isDisabledReindexButton}
-          hasSections={hasSections}
-          courseActions={courseActions}
-          errors={errors}
-        />
-      )}
+    <HeaderActions
+      courseActions={courseActions}
+      headerNavigationsActions={headerNavigationsActions}
+      isReIndexShow={isReIndexShow}
+      isDisabledReindexButton={isDisabledReindexButton}
+      errors={errors}
+    />
   </PluginSlot>
 );
 

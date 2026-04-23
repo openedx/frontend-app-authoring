@@ -108,7 +108,7 @@ describe('header utils', () => {
       });
       const actualItems =
         renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      expect(actualItems).toHaveLength(6);
+      expect(actualItems).toHaveLength(7);
     });
     it('when certificate page disabled should not include certificates option', () => {
       setConfig({
@@ -117,7 +117,7 @@ describe('header utils', () => {
       });
       const actualItems =
         renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      expect(actualItems).toHaveLength(5);
+      expect(actualItems).toHaveLength(6);
     });
     it('when user has access to advanced settings should include advanced settings option', () => {
       const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result
@@ -174,6 +174,20 @@ describe('header utils', () => {
         expect(actualItemsTitle).not.toContain('Advanced Settings');
       });
     });
+
+    it('should include roles and permissions option', () => {
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'http://admin-console.example.com',
+      });
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const rolesPermissionsItem = actualItems.find(item => item.title === 'Roles and Permissions');
+      expect(rolesPermissionsItem).toEqual({
+        href: 'http://admin-console.example.com/authz?scope=course-123',
+        title: 'Roles and Permissions',
+      });
+    });
   });
 
   describe('getToolsMenuItems', () => {
@@ -227,7 +241,21 @@ describe('header utils', () => {
   });
 
   describe('useLibrarySettingsMenuItems', () => {
+    let originalConfig: any;
+
+    beforeEach(() => {
+      originalConfig = { ...getConfig() };
+    });
+
+    afterEach(() => {
+      setConfig(originalConfig);
+    });
+
     it('should contain team access url', () => {
+      const configWithoutAdminConsole = { ...getConfig() };
+      delete configWithoutAdminConsole.ADMIN_CONSOLE_URL;
+      setConfig(configWithoutAdminConsole);
+
       const items =
         renderHook(() => useLibrarySettingsMenuItems('library-123', false), { wrapper: createWrapper() }).result
           .current;

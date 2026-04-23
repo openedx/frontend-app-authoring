@@ -213,9 +213,7 @@ const CourseOptimizerPage = () => {
       )}
       <Container size="xl" className="mt-4 px-4 export">
         <section className="setting-items mb-4">
-          <Layout
-            lg={[{ span: 12 }, { span: 0 }]}
-          >
+          <Layout>
             <Layout.Element>
               <article>
                 <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 p-3">

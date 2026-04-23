@@ -30,21 +30,15 @@ const messages = defineMessages({
     defaultMessage: '{count, plural, one {{count} notification} other {{count} notifications}}',
     description: 'Metadata notifications text in course outline',
   },
-  highlightEmailsTitle: {
-    id: 'course-authoring.course-outline.status-bar.highlight-emails',
-    defaultMessage: 'Course highlight emails',
-  },
   highlightEmailsButton: {
     id: 'course-authoring.course-outline.status-bar.highlight-emails.button',
-    defaultMessage: 'Enable now',
+    defaultMessage: 'Enable highlights emails',
+    description: 'Enable highlights emails button in course outline',
   },
   highlightEmailsEnabled: {
     id: 'course-authoring.course-outline.status-bar.highlight-emails.enabled',
-    defaultMessage: 'Enabled',
-  },
-  highlightEmailsLink: {
-    id: 'course-authoring.course-outline.status-bar.highlight-emails.link',
-    defaultMessage: 'Learn more',
+    defaultMessage: 'Highlights emails enabled',
+    description: 'Message displayed when highlights emails are enabled',
   },
   courseTagsTitle: {
     id: 'course-authoring.course-outline.status-bar.course-tags',
@@ -58,7 +52,7 @@ const messages = defineMessages({
   },
   videoSharingTitle: {
     id: 'course-authoring.course-outline.status-bar.video-sharing.title',
-    defaultMessage: 'Video Sharing',
+    defaultMessage: 'Video Sharing:',
   },
   videoSharingLink: {
     id: 'course-authoring.course-outline.status-bar.video-sharing.link',

@@ -21,6 +21,7 @@ const headerNavProps = {
   unitTitle: 'Mock Unit',
   isUnitVerticalType: false,
   verticalBlocks: [],
+  isPublished: true,
 };
 
 describe('CourseUnitHeaderActionsSlot', () => {
@@ -40,6 +41,7 @@ describe('CourseUnitHeaderActionsSlot', () => {
         verticalBlocks={[]}
         category="library"
         headerNavigationsActions={headerNavProps.headerNavigationsActions}
+        isPublished
       />,
     );
     expect(component.toJSON().props.pluginProps.isUnitVerticalType).toEqual(false);
@@ -50,6 +52,7 @@ describe('CourseUnitHeaderActionsSlot', () => {
         verticalBlocks={[]}
         category={COURSE_BLOCK_NAMES.vertical.id}
         headerNavigationsActions={headerNavProps.headerNavigationsActions}
+        isPublished
       />,
     );
     expect(component.toJSON().props.pluginProps.isUnitVerticalType).toEqual(true);

@@ -13,7 +13,8 @@ import type {
   TreeColumnDef,
   TreeTable,
 } from './types';
-import { CreateRow, EditRow } from './CreateRow';
+import CreateRow from './CreateRow';
+import EditRow from './EditRow';
 
 interface TableBodyProps {
   columns: TreeColumnDef[];
@@ -86,7 +87,6 @@ const TableBody = ({
           setIsCreatingTopRow={setIsCreatingTopRow}
           exitDraftWithoutSave={exitDraftWithoutSave}
           createRowMutation={createRowMutation}
-          columns={columns}
           validate={validate}
         />
       )}
@@ -105,15 +105,15 @@ const TableBody = ({
                   exitDraftWithoutSave();
                 }}
                 updateRowMutation={updateRowMutation}
-                columns={columns}
                 validate={validate}
+                row={row}
               />
             ) :
             (
               <tr>
                 {row.getVisibleCells()
-                  .map((cell, index) => (
-                    <td key={cell.id} className={`p-1 ${index === 0 ? '' : 'tree-table-actions-column'}`}>
+                  .map((cell) => (
+                    <td key={cell.id} className="p-1">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}

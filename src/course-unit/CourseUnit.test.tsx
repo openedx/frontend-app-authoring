@@ -78,6 +78,8 @@ import legacySidebarMessages from './legacy-sidebar/messages';
 import unitInfoMessages from './unit-sidebar/unit-info/messages';
 import messages from './messages';
 
+import { getApiWaffleFlagsUrl } from '../data/api';
+
 let axiosMock;
 let store;
 let mockShowToast;
@@ -170,6 +172,11 @@ describe('<CourseUnit />', () => {
     axiosMock
       .onGet(getContentTaxonomyTagsCountApiUrl(blockId))
       .reply(200, 17);
+    axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {
+      waffle_flags: {
+        'studio.enable_new_video_uploads_page': true,
+      },
+    });
   });
 
   it('render CourseUnit component correctly', async () => {

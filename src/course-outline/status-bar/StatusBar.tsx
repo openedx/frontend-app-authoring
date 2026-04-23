@@ -1,6 +1,17 @@
 import moment, { Moment } from 'moment/moment';
-import { FormattedDate, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Badge, Icon, Stack } from '@openedx/paragon';
+import {
+  FormattedDate,
+  FormattedMessage,
+  useIntl,
+} from '@edx/frontend-platform/i18n';
+import {
+  Badge,
+  Button,
+  Form,
+  Hyperlink,
+  Icon,
+  Stack,
+} from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 import {
   Cached,
@@ -11,7 +22,10 @@ import {
 
 import type { ChecklistType, CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { useEntityLinksSummaryByDownstreamContext } from '@src/course-libraries/data/apiHooks';
+import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
+import { getVideoSharingOptionText } from '@src/course-outline/utils';
+import { useHelpUrls } from '@src/help-urls/hooks';
 
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
@@ -173,21 +187,94 @@ const Checklists = ({ courseId, checklist }: {
   );
 };
 
+const Highlights = ({ highlightsEnabledForMessaging, openEnableHighlightsModal }: {
+  highlightsEnabledForMessaging: boolean;
+  openEnableHighlightsModal: () => void;
+}) => {
+  const intl = useIntl();
+
+  if (highlightsEnabledForMessaging) {
+    return (
+      <span data-testid="highlights-enabled-span" className="small">
+        {intl.formatMessage(messages.highlightEmailsEnabled)}
+      </span>
+    );
+  } else {
+    return (
+      <Button data-testid="highlights-enable-button" size="sm" onClick={openEnableHighlightsModal}>
+        {intl.formatMessage(messages.highlightEmailsButton)}
+      </Button>
+    );
+  }
+};
+
+const VideoSharingDropdown = ({ handleVideoSharingOptionChange, videoSharingOptions }: {
+  handleVideoSharingOptionChange: (value: string) => void;
+  videoSharingOptions: string;
+}) => {
+  const intl = useIntl();
+  const {
+    socialSharing: socialSharingUrl,
+  } = useHelpUrls(['socialSharing']);
+
+  return (
+    <Form.Group
+      size="sm"
+      className="d-flex m-0 align-items-center"
+    >
+      <Form.Label className="h5 m-0 mr-2 text-gray-700">
+        <FormattedMessage {...messages.videoSharingTitle} />
+      </Form.Label>
+      <div className="d-flex align-items-center">
+        <Form.Control
+          as="select"
+          defaultValue={videoSharingOptions}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleVideoSharingOptionChange(e.target.value)}
+        >
+          {Object.values(VIDEO_SHARING_OPTIONS).map((option) => (
+            <option
+              key={option}
+              value={option}
+            >
+              {getVideoSharingOptionText(option, messages, intl)}
+            </option>
+          ))}
+        </Form.Control>
+        <Hyperlink
+          className="small"
+          destination={socialSharingUrl}
+          target="_blank"
+          showLaunchIcon={false}
+        >
+          <FormattedMessage {...messages.videoSharingLink} />
+        </Hyperlink>
+      </div>
+    </Form.Group>
+  );
+};
+
 export interface StatusBarProps {
   courseId: string;
   isLoading: boolean;
   statusBarData: CourseOutlineStatusBar;
+  openEnableHighlightsModal: () => void;
+  handleVideoSharingOptionChange: (value: string) => void;
 }
 
 export const StatusBar = ({
   statusBarData,
   isLoading,
   courseId,
+  openEnableHighlightsModal,
+  handleVideoSharingOptionChange,
 }: StatusBarProps) => {
   const {
     endDate,
     courseReleaseDate,
+    highlightsEnabledForMessaging,
     checklist,
+    videoSharingEnabled,
+    videoSharingOptions,
   } = statusBarData;
 
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
@@ -209,6 +296,16 @@ export const StatusBar = ({
       />
       <Checklists courseId={courseId} checklist={checklist} />
       <LibraryUpdates courseId={courseId} />
+      <Highlights
+        highlightsEnabledForMessaging={highlightsEnabledForMessaging}
+        openEnableHighlightsModal={openEnableHighlightsModal}
+      />
+      {videoSharingEnabled && (
+        <VideoSharingDropdown
+          handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+          videoSharingOptions={videoSharingOptions}
+        />
+      )}
       <NotificationStatusIcon />
     </Stack>
   );

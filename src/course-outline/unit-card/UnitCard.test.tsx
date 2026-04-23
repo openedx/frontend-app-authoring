@@ -145,10 +145,6 @@ describe('<UnitCard />', () => {
 
   it('render UnitCard component in selected state', async () => {
     const user = userEvent.setup();
-    setConfig({
-      ...getConfig(),
-      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
-    });
 
     const { container } = renderComponent();
 
@@ -294,27 +290,6 @@ describe('<UnitCard />', () => {
     await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
   });
 
-  it('should open legacy manage tags', async () => {
-    const user = userEvent.setup();
-    setConfig({
-      ...getConfig(),
-      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
-    });
-    renderComponent();
-    const element = await screen.findByTestId('unit-card');
-    const menu = await within(element).findByTestId('unit-card-header__menu-button');
-    await user.click(menu);
-
-    const manageTagsBtn = await within(element).findByTestId('unit-card-header__menu-manage-tags-button');
-    expect(manageTagsBtn).toBeInTheDocument();
-
-    await user.click(manageTagsBtn);
-
-    const drawer = await screen.findByRole('alert');
-    expect(within(drawer).getByText(/manage tags/i));
-  });
-
   it('should open align sidebar', async () => {
     const user = userEvent.setup();
     const mockSetCurrentPageKey = jest.fn();
@@ -352,7 +327,6 @@ describe('<UnitCard />', () => {
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
     });
     renderComponent();
     const element = await screen.findByTestId('unit-card');

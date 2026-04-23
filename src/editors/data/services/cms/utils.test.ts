@@ -9,6 +9,7 @@ describe('cms service utils', () => {
   describe('get', () => {
     it('forwards arguments to authenticatedHttpClient().get', () => {
       const get = jest.fn((...args) => ({ get: args }));
+      // @ts-ignore since `getAuthenticatedHttpClient` is mocked.
       getAuthenticatedHttpClient.mockReturnValue({ get });
       const args = ['url 1', { headers: {} }] as const;
       expect(utils.get(...args)).toEqual(get(...args));
@@ -17,6 +18,7 @@ describe('cms service utils', () => {
   describe('post', () => {
     it('forwards arguments to authenticatedHttpClient().post', () => {
       const post = jest.fn((...args) => ({ post: args }));
+      // @ts-ignore since `getAuthenticatedHttpClient` is mocked.
       getAuthenticatedHttpClient.mockReturnValue({ post });
       const args = ['url 2', { headers: {} }] as const;
       expect(utils.post(...args)).toEqual(post(...args));

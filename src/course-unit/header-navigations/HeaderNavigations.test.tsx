@@ -79,6 +79,18 @@ describe('<HeaderNavigations />', () => {
     });
   });
 
+  it('should enable the "View Live" button when isPublished is true', () => {
+    renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id, isPublished: true });
+
+    expect(screen.getByRole('button', { name: messages.viewLiveButton.defaultMessage })).not.toBeDisabled();
+  });
+
+  it('should disable the "View Live" button when isPublished is false', () => {
+    renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id, isPublished: false });
+
+    expect(screen.getByRole('button', { name: messages.viewLiveButton.defaultMessage })).toBeDisabled();
+  });
+
   it('click Info button should open info sidebar', async () => {
     setConfig({
       ...getConfig(),

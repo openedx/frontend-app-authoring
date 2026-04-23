@@ -58,8 +58,6 @@ import headerMessages from './header-navigations/messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { StatusBar } from './status-bar/StatusBar';
-import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
-import { isOutlineNewDesignEnabled } from './utils';
 
 const CourseOutline = () => {
   const intl = useIntl();
@@ -131,9 +129,6 @@ const CourseOutline = () => {
     handleUnlinkItemSubmit,
   } = useCourseOutline({ courseId });
 
-  // Show the new actions bar if it is enabled in the configuration.
-  // This is a temporary flag until the new design feature is fully implemented.
-  const showNewActionsBar = isOutlineNewDesignEnabled();
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -244,45 +239,33 @@ const CourseOutline = () => {
               />
             }
           />
-          {showNewActionsBar
-            ? (
-              <StatusBar
-                courseId={courseId}
-                isLoading={isLoading}
-                statusBarData={statusBarData}
-              />
-            ) :
-            (
-              <LegacyStatusBar
-                courseId={courseId}
-                isLoading={isLoading}
-                statusBarData={statusBarData}
-                openEnableHighlightsModal={openEnableHighlightsModal}
-                handleVideoSharingOptionChange={handleVideoSharingOptionChange}
-              />
-            )}
+          <StatusBar
+            courseId={courseId}
+            isLoading={isLoading}
+            statusBarData={statusBarData}
+            openEnableHighlightsModal={openEnableHighlightsModal}
+            handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+          />
           <hr className="mt-4 mb-0 w-100 text-light-400" />
           <div className="d-flex align-items-baseline">
             <div className="flex-fill">
               <article>
                 <div>
-                  {showNewActionsBar && (
-                    <ActionRow className="mt-3">
-                      {Boolean(sections.length) && (
-                        <Button
-                          variant="outline-primary"
-                          id="expand-collapse-all-button"
-                          data-testid="expand-collapse-all-button"
-                          iconBefore={isSectionsExpanded ? CloseFullscreen : OpenInFull}
-                          onClick={headerNavigationsActions.handleExpandAll}
-                        >
-                          {isSectionsExpanded
-                            ? intl.formatMessage(headerMessages.collapseAllButton)
-                            : intl.formatMessage(headerMessages.expandAllButton)}
-                        </Button>
-                      )}
-                    </ActionRow>
-                  )}
+                  <ActionRow className="mt-3">
+                    {Boolean(sections.length) && (
+                      <Button
+                        variant="outline-primary"
+                        id="expand-collapse-all-button"
+                        data-testid="expand-collapse-all-button"
+                        iconBefore={isSectionsExpanded ? CloseFullscreen : OpenInFull}
+                        onClick={headerNavigationsActions.handleExpandAll}
+                      >
+                        {isSectionsExpanded
+                          ? intl.formatMessage(headerMessages.collapseAllButton)
+                          : intl.formatMessage(headerMessages.expandAllButton)}
+                      </Button>
+                    )}
+                  </ActionRow>
                   <section>
                     {!errors?.outlineIndexApi && (
                       <div className="pt-4">

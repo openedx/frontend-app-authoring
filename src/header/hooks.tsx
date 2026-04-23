@@ -93,6 +93,10 @@ export const useSettingMenuItems = (courseId: string) => {
       title: intl.formatMessage(messages['header.links.grading']),
     },
     {
+      href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${courseId}`,
+      title: intl.formatMessage(messages['header.links.roles.permissions']),
+    },
+    {
       href: `/course/${courseId}/course_team`,
       title: intl.formatMessage(messages['header.links.courseTeam']),
     },

@@ -7,8 +7,9 @@ import {
   MailtoLink,
   Row,
 } from '@openedx/paragon';
-import { Add as AddIcon, Error } from '@openedx/paragon/icons';
+import { Add as AddIcon, Error, ManageAccounts } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -47,6 +48,8 @@ const StudioHome = () => {
     librariesV2Enabled,
   } = useStudioHome();
 
+  const adminConsoleUrl = `${getConfig().ADMIN_CONSOLE_URL}/authz`;
+
   const v1LibraryTab = librariesV1Enabled && location?.pathname.split('/').pop() === 'libraries-v1';
   const showV2LibraryURL = librariesV2Enabled && !v1LibraryTab;
 
@@ -70,6 +73,20 @@ const StudioHome = () => {
         <MailtoLink to={studioRequestEmail}>{intl.formatMessage(messages.emailStaffBtnText)}</MailtoLink>,
       );
     }
+
+    headerButtons.push(
+      <div className="border-right mr-3 pr-4 py-2">
+        <Button
+          as="a"
+          href={adminConsoleUrl}
+          variant="primary"
+          iconBefore={ManageAccounts}
+          size="sm"
+        >
+          {intl.formatMessage(messages.addRolesPermissionsBtnText)}
+        </Button>
+      </div>,
+    );
 
     if (hasAbilityToCreateNewCourse) {
       headerButtons.push(

@@ -90,7 +90,7 @@ export function syncDiscussionsTopics(courseId: string) {
     try {
       await createDiscussionsTopics(courseId);
     } catch (error) {
-      logError(error);
+      logError(error as string | Error);
     }
   };
 }

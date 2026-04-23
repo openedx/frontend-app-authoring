@@ -224,6 +224,7 @@ const ShowLibraryContent = () => {
     lastEditableSubsection,
     selectedContainerState,
     currentItemData,
+    openContainerInfoSidebar,
   } = useOutlineSidebarContext();
 
   let sectionParentId = lastEditableSection?.id;
@@ -237,6 +238,11 @@ const ShowLibraryContent = () => {
           category: ContainerType.Chapter,
           parentLocator: courseUsageKey,
           libraryContentKey: usageKey,
+        }, {
+          onSuccess: (data: { locator: string; }) => {
+            // istanbul ignore next
+            openContainerInfoSidebar(data.locator, undefined, data.locator);
+          },
         });
         break;
       case 'subsection':
@@ -248,6 +254,11 @@ const ShowLibraryContent = () => {
             parentLocator: sectionParentId,
             libraryContentKey: usageKey,
             sectionId: sectionParentId,
+          }, {
+            onSuccess: (data: { locator: string; }) => {
+              // istanbul ignore next
+              openContainerInfoSidebar(data.locator, data.locator, sectionParentId);
+            },
           });
         }
         break;
@@ -261,6 +272,11 @@ const ShowLibraryContent = () => {
             parentLocator: subsectionParentId,
             libraryContentKey: usageKey,
             sectionId: sectionParentId,
+          }, {
+            onSuccess: (data: { locator: string; }) => {
+              // istanbul ignore next
+              openContainerInfoSidebar(data.locator, subsectionParentId, sectionParentId);
+            },
           });
         }
         break;

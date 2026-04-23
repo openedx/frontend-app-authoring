@@ -17,8 +17,8 @@ const statusBarData: CourseOutlineStatusBar = {
     totalCourseBestPracticesChecks: 4,
     completedCourseBestPracticesChecks: 1,
   },
-  highlightsEnabledForMessaging: true,
-  videoSharingEnabled: true,
+  highlightsEnabledForMessaging: false,
+  videoSharingEnabled: false,
   videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
 };
 
@@ -36,6 +36,8 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
     isLoading: false,
   }),
 }));
+const mockOpenEnableHighlightsModal = jest.fn();
+const mockHandleVideoSharingOptionChange = jest.fn();
 
 const renderComponent = (props?: Partial<StatusBarProps>) =>
   render(
@@ -43,6 +45,8 @@ const renderComponent = (props?: Partial<StatusBarProps>) =>
       courseId={courseId}
       isLoading={isLoading}
       statusBarData={statusBarData}
+      openEnableHighlightsModal={mockOpenEnableHighlightsModal}
+      handleVideoSharingOptionChange={mockHandleVideoSharingOptionChange}
       {...props}
     />,
   );
@@ -60,6 +64,9 @@ describe('<StatusBar />', () => {
     expect(await screen.findByText('Feb 05, 2013 - Apr 09, 2013')).toBeInTheDocument();
     expect(await screen.findByText(`2/9 ${messages.checklistCompleted.defaultMessage}`)).toBeInTheDocument();
     expect(await screen.findByText('Active')).toBeInTheDocument();
+
+    // Video sharing is not enabled by default
+    expect(screen.queryByText('Video Sharing:')).not.toBeInTheDocument();
   });
 
   it('renders Archived Badge', async () => {
@@ -116,5 +123,36 @@ describe('<StatusBar />', () => {
     // wait for render
     expect(await screen.findByText('Feb 05, 2013 - Apr 09, 2013')).toBeInTheDocument();
     expect(screen.queryByText(`9/9 ${messages.checklistCompleted.defaultMessage}`)).toBeNull();
+  });
+
+  it('calls openEnableHighlightsModal when the button is clicked', async () => {
+    renderComponent();
+
+    const button = await screen.findByRole('button', { name: 'Enable highlights emails' });
+    expect(button).toBeInTheDocument();
+
+    button.click();
+    expect(mockOpenEnableHighlightsModal).toHaveBeenCalled();
+  });
+
+  it('shows a message when email highlights are enabled', async () => {
+    renderComponent({
+      statusBarData: {
+        ...statusBarData,
+        highlightsEnabledForMessaging: true,
+      },
+    });
+    expect(await screen.findByText(messages.highlightEmailsEnabled.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('does render video sharing dropdown if enabled', async () => {
+    renderComponent({
+      statusBarData: {
+        ...statusBarData,
+        videoSharingEnabled: true,
+      },
+    });
+
+    expect(await screen.findByText('Video Sharing:')).toBeInTheDocument();
   });
 });

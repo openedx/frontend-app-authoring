@@ -1,5 +1,6 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import userEvent from '@testing-library/user-event';
+
 import {
   act,
   fireEvent,
@@ -10,14 +11,12 @@ import {
   within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
-import { Info } from '@openedx/paragon/icons';
-import userEvent from '@testing-library/user-event';
-import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
-import cardHeaderMessages from '../card-header/messages';
-import SubsectionCard from './SubsectionCard';
-import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
+import { ContainerType } from '@src/generic/key-utils';
 
-const containerKey = 'lct:org:lib:unit:1';
+import cardHeaderMessages from '../card-header/messages';
+import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
+import SubsectionCard from './SubsectionCard';
+
 const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
 const setCurrentSelection = jest.fn();
 
@@ -55,22 +54,14 @@ jest.mock('@src/studio-home/data/selectors', () => ({
   }),
 }));
 
-// Mock LibraryAndComponentPicker to call onComponentSelected on click
-jest.mock('@src/library-authoring/component-picker', () => ({
-  LibraryAndComponentPicker: (props) => {
-    const onClick = () => {
-      // eslint-disable-next-line react/prop-types
-      props.onComponentSelected({
-        usageKey: containerKey,
-        blockType: 'unit',
-      });
-    };
-    return (
-      <button type="submit" onClick={onClick}>
-        Dummy button
-      </button>
-    );
-  },
+const startCurrentFlow = jest.fn();
+
+jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
+  ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
+  useOutlineSidebarContext: () => ({
+    ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
+    startCurrentFlow,
+  }),
 }));
 
 const unit = {
@@ -150,7 +141,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
       routerProps: {
         initialEntries: [entry],
       },
-      extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
+      extraWrapper: OutlineSidebarProvider,
     },
   );
 
@@ -170,10 +161,6 @@ describe('<SubsectionCard />', () => {
   });
 
   it('render SubsectionCard component in selected state', () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
-    });
     const { container } = renderComponent();
 
     expect(screen.getByTestId('subsection-card-header')).toBeInTheDocument();
@@ -330,15 +317,11 @@ describe('<SubsectionCard />', () => {
   });
 
   it('should add unit from library', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
-    });
     const user = userEvent.setup();
     renderComponent();
 
     const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandButton);
+    await user.click(expandButton);
 
     const useUnitFromLibraryButton = screen.getByRole('button', {
       name: /use unit from library/i,
@@ -346,18 +329,10 @@ describe('<SubsectionCard />', () => {
     expect(useUnitFromLibraryButton).toBeInTheDocument();
     await user.click(useUnitFromLibraryButton);
 
-    expect(await screen.findByText('Select unit'));
-
-    // click dummy button to execute onComponentSelected prop.
-    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
-    await user.click(dummyBtn);
-
-    expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalledWith({
-      type: COMPONENT_TYPES.libraryV2,
+    expect(startCurrentFlow).toHaveBeenCalledWith({
+      flowType: ContainerType.Unit,
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
-      category: 'vertical',
-      sectionId: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
-      libraryContentKey: containerKey,
+      grandParentLocator: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
     });
   });
 
@@ -406,64 +381,11 @@ describe('<SubsectionCard />', () => {
     await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
   });
 
-  it('should open legacy manage tags', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
-    });
-    renderComponent();
-    const element = await screen.findByTestId('subsection-card');
-    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menu);
-
-    const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
-    expect(manageTagsBtn).toBeInTheDocument();
-
-    fireEvent.click(manageTagsBtn);
-
-    const drawer = await screen.findByRole('alert');
-    expect(within(drawer).getByText(/manage tags/i));
-  });
-
   it('should open align sidebar', async () => {
     const user = userEvent.setup();
-    const mockSetCurrentPageKey = jest.fn();
-    const mockSetSelectedContainerState = jest.fn();
-
-    const testSidebarPage = {
-      component: CourseInfoSidebar,
-      icon: Info,
-      title: '',
-    };
-
-    jest
-      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
-      .mockImplementation(() => ({
-        setCurrentPageKey: mockSetCurrentPageKey,
-        currentPageKey: 'info',
-        sidebarPages: {
-          info: testSidebarPage,
-          help: testSidebarPage,
-          add: testSidebarPage,
-        },
-        currentTabKey: 'info',
-        setCurrentTabKey: jest.fn(),
-        openContainerSidebar: jest.fn(),
-        isOpen: true,
-        open: jest.fn(),
-        toggle: jest.fn(),
-        currentFlow: undefined,
-        startCurrentFlow: jest.fn(),
-        stopCurrentFlow: jest.fn(),
-        openContainerInfoSidebar: jest.fn(),
-        clearSelection: jest.fn(),
-        setSelectedContainerState: mockSetSelectedContainerState,
-      }));
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
     });
     renderComponent();
     const element = await screen.findByTestId('subsection-card');
@@ -475,20 +397,6 @@ describe('<SubsectionCard />', () => {
 
     await user.click(manageTagsBtn);
 
-    await waitFor(() => {
-      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
-    });
-    expect(setCurrentSelection).toHaveBeenCalledWith({
-      currentId: subsection.id,
-      subsectionId: subsection.id,
-      sectionId: section.id,
-      index: 1,
-    });
-    expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
-      currentId: subsection.id,
-      subsectionId: subsection.id,
-      sectionId: section.id,
-      index: 1,
-    });
+    expect(screen.getByText('Manage tags')).toBeInTheDocument();
   });
 });

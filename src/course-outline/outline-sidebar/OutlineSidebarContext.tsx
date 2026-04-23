@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
 import { findLast, findLastIndex } from 'lodash';
 import { ContainerType } from '@src/generic/key-utils';
-import { isOutlineNewDesignEnabled } from '../utils';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
 export type OutlineFlow = {
@@ -144,15 +143,13 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     sectionId?: string,
     index?: number,
   ) => {
-    if (isOutlineNewDesignEnabled()) {
-      setSelectedContainerState({
-        currentId: containerId,
-        subsectionId,
-        sectionId,
-        index,
-      });
-      setCurrentPageKey('info');
-    }
+    setSelectedContainerState({
+      currentId: containerId,
+      subsectionId,
+      sectionId,
+      index,
+    });
+    setCurrentPageKey('info');
   }, [setSelectedContainerState, setCurrentPageKey]);
 
   const openContainerSidebar = useCallback((
@@ -161,14 +158,12 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     sectionId?: string,
     index?: number,
   ) => {
-    if (isOutlineNewDesignEnabled()) {
-      setSelectedContainerState({
-        currentId: containerId,
-        subsectionId,
-        sectionId,
-        index,
-      });
-    }
+    setSelectedContainerState({
+      currentId: containerId,
+      subsectionId,
+      sectionId,
+      index,
+    });
   }, [setSelectedContainerState]);
 
   const clearSelection = useCallback(() => {

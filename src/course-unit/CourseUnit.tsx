@@ -310,6 +310,7 @@ const CourseUnit = () => {
                   headerNavigationsActions={headerNavigationsActions}
                   unitTitle={unitTitle}
                   verticalBlocks={courseVerticalChildren.children}
+                  isPublished={courseUnit.published}
                 />
               }
             />

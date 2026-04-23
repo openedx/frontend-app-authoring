@@ -16,7 +16,7 @@ import messages from './messages';
 import { isUnitPageNewDesignEnabled } from '../utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 
-type HeaderNavigationActions = {
+export type HeaderNavigationActions = {
   handleViewLive: () => void;
   handlePreview: () => void;
   handleEdit: () => void;
@@ -25,6 +25,7 @@ type HeaderNavigationActions = {
 type HeaderNavigationsProps = {
   headerNavigationsActions: HeaderNavigationActions;
   category: string;
+  isPublished?: boolean;
 };
 
 /**
@@ -33,7 +34,11 @@ type HeaderNavigationsProps = {
  * - Legacy library content page
  * - Split test page
  */
-const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigationsProps) => {
+const HeaderNavigations = ({
+  headerNavigationsActions,
+  category,
+  isPublished = true,
+}: HeaderNavigationsProps) => {
   const intl = useIntl();
   const {
     handleViewLive,
@@ -82,9 +87,11 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
             >
               {intl.formatMessage(messages.previewButton)}
             </Button>
+            {/* TODO: convert to <Button as="a" href="..."> since it navigates to a URL */}
             <Button
               variant="outline-primary"
               onClick={handleViewLive}
+              disabled={!isPublished}
             >
               {intl.formatMessage(messages.viewLiveButton)}
             </Button>

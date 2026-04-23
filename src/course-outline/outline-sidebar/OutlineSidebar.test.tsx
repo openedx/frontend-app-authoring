@@ -1,4 +1,3 @@
-import { getConfig, setConfig } from '@edx/frontend-platform';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -49,18 +48,7 @@ describe('<OutlineSidebar>', () => {
     initializeMocks();
   });
 
-  it('should render the help sidebar by default', async () => {
-    renderComponent();
-    await waitFor(() => {
-      expect(screen.getByText('Creating your course organization')).toBeInTheDocument();
-    });
-  });
-
-  it('should render the new sidebar if ENABLE_COURSE_OUTLINE_NEW_DESIGN is true', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
-    });
+  it('should render the new sidebar by default', async () => {
     renderComponent();
 
     // Check that the new sidebar is rendered, with the Info page

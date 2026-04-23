@@ -13,7 +13,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { camelCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import { apiUrls, ALL_TAXONOMIES, getApiErrorMessage } from './api';
 import * as api from './api';
 import type { QueryOptions, TagListData } from './types';
@@ -229,18 +228,13 @@ export const useSubTags = (taxonomyId: number, parentTagValue: string) =>
 
 export const useCreateTag = (taxonomyId: number) => {
   const queryClient = useQueryClient();
-  const intl = useIntl();
 
   return useMutation({
     mutationFn: async ({ value, parentTagValue }: { value: string; parentTagValue?: string; }) => {
-      try {
-        await getAuthenticatedHttpClient().post(
-          apiUrls.createTag(taxonomyId),
-          { tag: value, parent_tag_value: parentTagValue },
-        );
-      } catch (err) {
-        throw new Error(getApiErrorMessage(err, intl));
-      }
+      await getAuthenticatedHttpClient().post(
+        apiUrls.createTag(taxonomyId),
+        { tag: value, parent_tag_value: parentTagValue },
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -261,14 +255,10 @@ export const useUpdateTag = (taxonomyId: number) => {
 
   return useMutation({
     mutationFn: async ({ value, originalValue }: { value: string; originalValue: string; }) => {
-      try {
-        await getAuthenticatedHttpClient().patch(
-          apiUrls.updateTag(taxonomyId),
-          { tag: originalValue, updated_tag_value: value },
-        );
-      } catch (err) {
-        throw new Error(getApiErrorMessage(err));
-      }
+      await getAuthenticatedHttpClient().patch(
+        apiUrls.updateTag(taxonomyId),
+        { tag: originalValue, updated_tag_value: value },
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

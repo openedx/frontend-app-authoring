@@ -1,10 +1,10 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { PageWrap, AppContext } from '@edx/frontend-platform/react';
+import { PageWrap } from '@edx/frontend-platform/react';
 import { Button, Hyperlink } from '@openedx/paragon';
 import { useModels } from '@src/generic/model-store';
 import { RequestStatus } from '@src/data/constants';
@@ -37,9 +37,7 @@ const PagesAndResources = () => {
   const loadingStatus = useSelector(getLoadingStatus);
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
 
-  // @ts-ignore
-  const { config } = useContext(AppContext);
-  const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
+  const learningCourseURL = `${getConfig().LEARNING_BASE_URL}/course/${courseId}`;
   const redirectUrl = `/course/${courseId}/pages-and-resources`;
 
   // The pages here are driven by course apps. The list of course app IDs comes from the LMS API.
