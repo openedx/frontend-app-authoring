@@ -75,6 +75,7 @@ const baseContextValue = (overrides = {}) => ({
   handleDeleteRow: jest.fn(),
   startEditRow: jest.fn(),
   startDeleteRow: jest.fn(),
+  table: null,
   ...overrides,
 });
 

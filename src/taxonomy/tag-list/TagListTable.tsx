@@ -159,6 +159,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const contextValue = {
     ...contextValueArgs,
     columns: getColumns(contextValueArgs),
+    table: null,
   };
 
   return (

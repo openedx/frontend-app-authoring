@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import {
   Button,
   Toast,
@@ -23,6 +23,7 @@ import './TableView.scss';
 import messages from './messages';
 import SaveErrorAlert from './SaveErrorAlert';
 import { TreeTableContext } from './TreeTableContext';
+import { TreeRowData, TreeTable } from './types';
 
 interface TableViewProps {
   enablePagination?: boolean;
@@ -32,33 +33,24 @@ const TableView = ({
   enablePagination = false,
 }: TableViewProps) => {
   const intl = useIntl();
+
+  const contextValue = useContext(TreeTableContext);
+
   const {
     treeData,
     columns,
     pageCount,
     pagination,
     handlePaginationChange,
-    isLoading,
-    isCreatingTopRow,
     draftError,
     createRowMutation,
     updateRowMutation,
     deleteRowMutation,
-    handleCreateRow,
     toast,
     setToast,
-    setIsCreatingTopRow,
-    exitDraftWithoutSave,
-    creatingParentId,
-    setCreatingParentId,
-    setDraftError,
-    validate,
-    handleUpdateRow,
-    editingRowId,
-    setEditingRowId,
-  } = useContext(TreeTableContext);
+  } = contextValue;
 
-  const table = useReactTable({
+  const table: TreeTable = useReactTable({
     data: treeData,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -72,6 +64,11 @@ const TableView = ({
     getSubRows: (row) => row?.subRows || undefined,
   });
 
+  const nestedContextValue = useMemo(() => ({
+    ...contextValue,
+    table,
+  }), [contextValue, table]);
+
   const currentPageIndex = table.getState().pagination.pageIndex + 1;
 
   const { isError } = createRowMutation;
@@ -79,7 +76,10 @@ const TableView = ({
   const { isError: isDeleteError } = deleteRowMutation;
 
   return (
-    <>
+    // This is a nested context provider. It is a valid pattern in React even if it looks odd,
+    // and the purpose here is to add the react-table instance to the overall context.
+    // Note that there is an outer context provider higher up in `TagListTable` as well.
+    <TreeTableContext.Provider value={nestedContextValue}>
       <SaveErrorAlert
         draftError={draftError}
         isError={isError}
@@ -125,25 +125,7 @@ const TableView = ({
                 </tr>
               ))}
             </thead>
-            <TableBody
-              columns={columns}
-              isCreatingTopRow={isCreatingTopRow}
-              draftError={draftError}
-              handleCreateRow={handleCreateRow}
-              setIsCreatingTopRow={setIsCreatingTopRow}
-              exitDraftWithoutSave={exitDraftWithoutSave}
-              creatingParentId={creatingParentId}
-              setCreatingParentId={setCreatingParentId}
-              setDraftError={setDraftError}
-              createRowMutation={createRowMutation}
-              updateRowMutation={updateRowMutation}
-              table={table}
-              isLoading={isLoading}
-              validate={validate}
-              handleUpdateRow={handleUpdateRow}
-              editingRowId={editingRowId}
-              setEditingRowId={setEditingRowId}
-            />
+            <TableBody />
           </table>
         </Card.Section>
 
@@ -180,7 +162,7 @@ const TableView = ({
           {toast.message}
         </Toast>
       </Card>
-    </>
+    </TreeTableContext.Provider>
   );
 };
 

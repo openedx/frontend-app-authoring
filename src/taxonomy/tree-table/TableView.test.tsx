@@ -51,6 +51,7 @@ const baseContextValue = () => ({
   handleDeleteRow: jest.fn(),
   startEditRow: jest.fn(),
   startDeleteRow: jest.fn(),
+  table: null,
 });
 
 const renderTableView = (

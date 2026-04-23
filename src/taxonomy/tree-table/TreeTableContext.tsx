@@ -7,6 +7,7 @@ import type {
   RowId,
   ToastState,
   TreeColumnDef,
+  TreeTable,
   TreeRowData,
 } from './types';
 
@@ -41,6 +42,7 @@ export interface TreeTableContextValue {
   handleDeleteRow: (row: Row<TreeRowData>) => void;
   startEditRow: (row: Row<TreeRowData>) => void;
   startDeleteRow: (row: Row<TreeRowData>) => void;
+  table: TreeTable | null;
 }
 
 export const TreeTableContext = createContext<TreeTableContextValue>({
@@ -74,4 +76,5 @@ export const TreeTableContext = createContext<TreeTableContextValue>({
   handleDeleteRow: () => {},
   startEditRow: () => {},
   startDeleteRow: () => {},
+  table: null,
 });
