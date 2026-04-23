@@ -23,7 +23,7 @@ import './TableView.scss';
 import messages from './messages';
 import SaveErrorAlert from './SaveErrorAlert';
 import { TreeTableContext } from './TreeTableContext';
-import { TreeRowData, TreeTable } from './types';
+import { TreeTable } from './types';
 
 interface TableViewProps {
   enablePagination?: boolean;

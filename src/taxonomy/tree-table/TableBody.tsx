@@ -54,9 +54,7 @@ const TableBody = () => {
         </tr>
       )}
 
-      {isCreatingTopRow && (
-        <CreateRow />
-      )}
+      {isCreatingTopRow && <CreateRow />}
 
       {table.getRowModel().rows.filter(row => row.depth === 0).map(row => (
         <React.Fragment key={row.id}>
