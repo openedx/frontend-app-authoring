@@ -128,6 +128,9 @@ export const useCreateCourseBlock = (
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
       });
       await invalidateParentQueries(queryClient, variables);
+      // Invalidate tags count for the newly created block
+      const contentPattern = data.locator.replace(/\+type@.*$/, '*');
+      queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
       // scroll to newly added block
       setData({ id: data.locator });
       // if newly created block is chapter or section, fetch and add it to store
