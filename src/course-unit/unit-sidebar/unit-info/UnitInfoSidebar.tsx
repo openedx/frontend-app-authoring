@@ -121,6 +121,7 @@ export const UnitInfoSidebar = () => {
   const currentItemData = useSelector(getCourseUnitData);
   const {
     currentTabKey,
+    isVertical,
     setCurrentTabKey,
   } = useUnitSidebarContext();
   const { showToast } = useContext(ToastContext);
@@ -228,14 +229,16 @@ export const UnitInfoSidebar = () => {
             <UnitInfoDetails />
           </div>
         </Tab>
-        <Tab
-          eventKey="settings"
-          title={intl.formatMessage(messages.sidebarInfoSettingsTab)}
-        >
-          <div className="mt-4">
-            <UnitInfoSettings />
-          </div>
-        </Tab>
+        {isVertical && (
+          <Tab
+            eventKey="settings"
+            title={intl.formatMessage(messages.sidebarInfoSettingsTab)}
+          >
+            <div className="mt-4">
+              <UnitInfoSettings />
+            </div>
+          </Tab>
+        )}
       </Tabs>
       <DeleteModal
         isOpen={isDeleteModalOpen}
