@@ -172,9 +172,18 @@ describe('LibraryReferenceCard', () => {
         upstreamInfo: {
           ...itemData.upstreamInfo,
           topLevelParentKey: sectionData.upstreamInfo.downstreamKey,
-          errorMessage: 'some error',
         },
       });
+    const parentDataWithError = {
+      ...sectionData,
+      upstreamInfo: {
+        ...sectionData.upstreamInfo,
+        errorMessage: 'some error',
+      },
+    };
+    axiosMock
+      .onGet(getXBlockApiUrl(sectionData.id))
+      .reply(200, parentDataWithError);
     render(
       <LibraryReferenceCard
         itemId={itemData.id}
@@ -192,9 +201,39 @@ describe('LibraryReferenceCard', () => {
     await user.click(await screen.findByRole('button', { name: 'Unlink section' }));
     // should call unlink with parent section data
     expect(mockUseCourseAuthoringContext().openUnlinkModal).toHaveBeenCalledWith({
-      value: sectionData,
+      value: parentDataWithError,
       sectionId: sectionData.id,
     });
+  });
+
+  it('does not show broken link UI when only the item (not the parent) has errorMessage', async () => {
+    axiosMock
+      .onGet(getXBlockApiUrl(itemData.id))
+      .reply(200, {
+        ...itemData,
+        upstreamInfo: {
+          ...itemData.upstreamInfo,
+          topLevelParentKey: sectionData.upstreamInfo.downstreamKey,
+          errorMessage: 'some error on the item itself',
+        },
+      });
+    // Parent has no errorMessage (default sectionData mock is used from beforeEach)
+    render(
+      <LibraryReferenceCard
+        itemId={itemData.id}
+        sectionId={sectionData.id}
+        postChange={mockPostChange}
+        goToParent={mockOpenContainerInfoSidebar}
+      />,
+    );
+    // Broken link text should NOT appear
+    expect(
+      await screen.findByText(
+        `${itemData.displayName} was reused as part of a section.`,
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/broken link/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Unlink section' })).not.toBeInTheDocument();
   });
 
   it('renders the LibraryReferenceCard with top level ready to sync', async () => {

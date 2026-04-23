@@ -99,6 +99,11 @@ const messages = defineMessages({
     defaultMessage: 'Unit Content Summary',
     description: 'Title for the summary section in the Unit info sidebar',
   },
+  sidebarSectionSummaryDefault: {
+    id: 'course-authoring.unit-page.sidebar.info.section.summary-default',
+    defaultMessage: 'Content Summary',
+    description: 'Title for the summary section in the info sidebar',
+  },
   sidebarSectionTaxonomies: {
     id: 'course-authoring.unit-page.sidebar.info.section.taxonomies',
     defaultMessage: 'Taxonomy Alignments',

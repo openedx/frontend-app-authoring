@@ -8,9 +8,10 @@ import {
   FilterByBlockType,
   FilterByTags,
   SearchKeywordsField,
+  useSearchContext,
 } from '@src/search-manager';
 import { FilterList } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
 import { LibraryDropdownFilter } from './LibraryDropdownFilter';
 import messages from './messages';
@@ -21,6 +22,7 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
   const intl = useIntl();
   const [isOn, , , toggle] = useToggle(false);
   const { selectedCollections, setSelectedCollections } = useMultiLibraryContext();
+  const { totalHits } = useSearchContext();
 
   return (
     <Stack gap={3} className="my-3">
@@ -48,6 +50,14 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
           />
         </Stack>
       )}
+      <div>
+        <FormattedMessage
+          {...messages.contentBlocksCount}
+          values={{
+            count: totalHits,
+          }}
+        />
+      </div>
     </Stack>
   );
 };

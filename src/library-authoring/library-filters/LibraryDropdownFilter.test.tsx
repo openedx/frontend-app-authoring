@@ -94,12 +94,28 @@ describe('LibraryDropdownFilter', () => {
     expect(dropdownTrigger).toBeInTheDocument();
   });
 
-  it('should update label to n libraries if more than one is selected', async () => {
-    mockGetContentLibraryV2List.applyMockNoPagination();
+  it('should update label to n libraries if more than one but not all are selected', async () => {
+    // The mock has 2 libraries (TL1, AL1). Add a third so selecting 2 is not "all selected".
+    const mockApi = mockGetContentLibraryV2List.applyMockNoPagination();
+    mockApi.mockResolvedValue([
+      { id: 'lib:SampleTaxonomyOrg1:TL1', title: 'Test Library 1' },
+      { id: 'lib:SampleTaxonomyOrg1:AL1', title: 'Test Library 2' },
+      { id: 'lib:SampleTaxonomyOrg1:TL3', title: 'Test Library 3' },
+    ] as any);
     mockValue = ['lib:SampleTaxonomyOrg1:TL1', 'lib:SampleTaxonomyOrg1:AL1'];
     renderComponent();
 
     const dropdownTrigger = await screen.findByRole('button', { name: '2 Libraries' });
+    expect(dropdownTrigger).toBeInTheDocument();
+  });
+
+  it('should reset label to "All libraries" when all libraries are selected', async () => {
+    mockGetContentLibraryV2List.applyMockNoPagination();
+    // Both libraries in the mock are selected — selectedLibraries.length === data.length
+    mockValue = ['lib:SampleTaxonomyOrg1:TL1', 'lib:SampleTaxonomyOrg1:AL1'];
+    renderComponent();
+
+    const dropdownTrigger = await screen.findByRole('button', { name: 'All libraries' });
     expect(dropdownTrigger).toBeInTheDocument();
   });
 

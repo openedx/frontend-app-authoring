@@ -62,7 +62,7 @@ const UnitCard = ({
 }: UnitCardProps) => {
   const currentRef = useRef(null);
   const [searchParams] = useSearchParams();
-  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const locatorId = searchParams.get('show');
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'unit';
@@ -173,10 +173,10 @@ const UnitCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      openContainerInfoSidebar(unit.id, subsection.id, section.id, index);
+      openContainerSidebar(unit.id, subsection.id, section.id, index);
       selectAndTrigger();
     }
-  }, [openContainerInfoSidebar]);
+  }, [openContainerSidebar]);
 
   const titleComponent = (
     <TitleLink

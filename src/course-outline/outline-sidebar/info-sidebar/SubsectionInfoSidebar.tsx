@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -24,10 +24,29 @@ import { SubsectionSettings } from './SubsectionSettings';
 export const SubsectionSidebar = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<'info' | 'settings'>('info');
-  const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
+
+  const {
+    clearSelection,
+    currentTabKey,
+    setCurrentTabKey,
+    selectedContainerState,
+    setSelectedContainerState,
+  } = useOutlineSidebarContext();
   const { subsectionId = '', index } = selectedContainerState ?? {};
+
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
+
+  const availableTabs = {
+    info: 'info',
+    settings: 'settings',
+  };
+
+  useEffect(() => {
+    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
+      // Set default Tab key
+      setCurrentTabKey('info');
+    }
+  }, [currentTabKey, setCurrentTabKey]);
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const { openUnlinkModal } = useCourseAuthoringContext();
   const {
@@ -140,14 +159,14 @@ export const SubsectionSidebar = () => {
         variant="tabs"
         className="my-2 mx-n3.5"
         id="add-content-tabs"
-        activeKey={tab}
-        onSelect={setTab}
+        activeKey={currentTabKey}
+        onSelect={setCurrentTabKey}
         mountOnEnter
       >
-        <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
+        <Tab eventKey={availableTabs.info} title={intl.formatMessage(messages.infoTabText)}>
           <InfoSection itemId={subsectionId} />
         </Tab>
-        <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
+        <Tab eventKey={availableTabs.settings} title={intl.formatMessage(messages.settingsTabText)}>
           {/* key is required to reset local state of tab */}
           <SubsectionSettings key={subsectionId} subsectionId={subsectionId} />
         </Tab>

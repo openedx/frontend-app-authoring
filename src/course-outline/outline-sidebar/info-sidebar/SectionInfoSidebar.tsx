@@ -1,12 +1,10 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
-
 import { SidebarTitle } from '@src/generic/sidebar';
-
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -14,18 +12,16 @@ import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContex
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getLibraryId } from '@src/generic/key-utils';
 import { SectionSettings } from '@src/course-outline/outline-sidebar/info-sidebar/SectionSettings';
+import { canMoveSection } from '@src/course-outline/drag-helper/utils';
+
 import { InfoSection } from './InfoSection';
 import messages from '../messages';
 import { PublishButon } from './PublishButon';
-import { canMoveSection } from '@src/course-outline/drag-helper/utils';
 
 export const SectionSidebar = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<'info' | 'settings'>('info');
-  const { clearSelection, selectedContainerState, setSelectedContainerState } = useOutlineSidebarContext();
-  const { sectionId = '', index } = selectedContainerState ?? {};
-  const { data: sectionData, isLoading } = useCourseItemData(sectionId);
+
   const { openUnlinkModal } = useCourseAuthoringContext();
   const {
     openPublishModal,
@@ -34,6 +30,26 @@ export const SectionSidebar = () => {
     updateSectionOrderByIndex,
     openDeleteModal,
   } = useCourseOutlineContext();
+  const {
+    clearSelection,
+    currentTabKey,
+    setCurrentTabKey,
+    selectedContainerState,
+    setSelectedContainerState,
+  } = useOutlineSidebarContext();
+  const availableTabs = {
+    info: 'info',
+    settings: 'settings',
+  };
+
+  useEffect(() => {
+    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
+      // Set default Tab key
+      setCurrentTabKey('info');
+    }
+  }, [currentTabKey, setCurrentTabKey]);
+  const { sectionId = '', index } = selectedContainerState ?? {};
+  const { data: sectionData, isLoading } = useCourseItemData(sectionId);
 
   const handlePublish = () => {
     if (sectionData?.hasChanges) {
@@ -87,15 +103,15 @@ export const SectionSidebar = () => {
         variant="tabs"
         className="my-2 mx-n3.5"
         id="add-content-tabs"
-        activeKey={tab}
-        onSelect={setTab}
+        activeKey={currentTabKey}
+        onSelect={setCurrentTabKey}
         mountOnEnter
       >
-        <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
+        <Tab eventKey={availableTabs.info} title={intl.formatMessage(messages.infoTabText)}>
           <InfoSection itemId={sectionId} />
         </Tab>
         <Tab
-          eventKey="settings"
+          eventKey={availableTabs.settings}
           title={intl.formatMessage(messages.settingsTabText)}
         >
           <SectionSettings key={sectionId} sectionId={sectionId} />

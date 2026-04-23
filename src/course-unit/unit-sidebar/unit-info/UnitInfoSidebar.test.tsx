@@ -172,6 +172,58 @@ describe('<UnitInfoSidebar /> - rendering', () => {
 
     expect(screen.getByText('GenericUnitInfoSettings')).toBeInTheDocument();
   });
+
+  it('shows PublishControls and vertical section title when isVertical is true', () => {
+    unitSidebarContext.useUnitSidebarContext.mockReturnValue({
+      currentTabKey: 'details',
+      setCurrentTabKey: jest.fn(),
+      isVertical: true,
+    });
+
+    renderComponent();
+
+    expect(screen.getByText('PublishControls')).toBeInTheDocument();
+    expect(screen.getByText('Unit Content Summary')).toBeInTheDocument();
+    expect(screen.queryByText('Content Summary')).not.toBeInTheDocument();
+  });
+
+  it('hides PublishControls and shows default section title when isVertical is false', () => {
+    unitSidebarContext.useUnitSidebarContext.mockReturnValue({
+      currentTabKey: 'details',
+      setCurrentTabKey: jest.fn(),
+      isVertical: false,
+    });
+
+    renderComponent();
+
+    expect(screen.queryByText('PublishControls')).not.toBeInTheDocument();
+    expect(screen.getByText('Content Summary')).toBeInTheDocument();
+    expect(screen.queryByText('Unit Content Summary')).not.toBeInTheDocument();
+  });
+
+  it('shows Settings tab when isVertical is true', () => {
+    unitSidebarContext.useUnitSidebarContext.mockReturnValue({
+      currentTabKey: 'details',
+      setCurrentTabKey: jest.fn(),
+      isVertical: true,
+    });
+
+    renderComponent();
+
+    expect(screen.getByRole('tab', { name: 'Settings' })).toBeInTheDocument();
+  });
+
+  it('hides Settings tab when isVertical is false', () => {
+    unitSidebarContext.useUnitSidebarContext.mockReturnValue({
+      currentTabKey: 'details',
+      setCurrentTabKey: jest.fn(),
+      isVertical: false,
+    });
+
+    renderComponent();
+
+    expect(screen.queryByRole('tab', { name: 'Settings' })).not.toBeInTheDocument();
+  });
 });
 
 describe('<UnitInfoSidebar /> - menu behavior', () => {

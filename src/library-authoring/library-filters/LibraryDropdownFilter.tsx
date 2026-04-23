@@ -84,7 +84,7 @@ export const LibraryDropdownFilter = () => {
 
   useEffect(() => {
     const baseName = intl.formatMessage(messages.librariesFilterBtnText);
-    if (!selectedLibraries.length) {
+    if (!selectedLibraries.length || selectedLibraries.length === data?.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length === 1) {
       setLabel(data?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);

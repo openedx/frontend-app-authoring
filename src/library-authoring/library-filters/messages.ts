@@ -51,6 +51,11 @@ const messages = defineMessages({
     defaultMessage: 'See more',
     description: 'Alt text for more fitlers',
   },
+  contentBlocksCount: {
+    id: 'course-authoring.library-authoring.library-filters.content-blocks-count',
+    defaultMessage: 'Showing {count, plural, one {# Content Block} other {# Content Blocks}}',
+    description: 'Message to show the content blocks count (singular or plural)',
+  },
 });
 
 export default messages;

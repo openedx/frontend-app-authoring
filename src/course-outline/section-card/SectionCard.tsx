@@ -67,7 +67,7 @@ const SectionCard = ({
 }: SectionCardProps) => {
   const currentRef = useRef(null);
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
@@ -175,6 +175,23 @@ const SectionCard = ({
     setIsExpanded((prevState) => containsSearchResult() || prevState);
   }, [locatorId, setIsExpanded]);
 
+  useEffect(() => {
+    // If a new child (subsection/unit) was just created and its scroll target is inside this
+    // section, expand so that SubsectionCard mounts and can scroll to it.
+    if (!scrollState?.id) {
+      return;
+    }
+    const subsections = section.childInfo?.children ?? [];
+    const isScrollTargetInSection = subsections.some(
+      (sub) =>
+        sub.id === scrollState.id
+        || sub.childInfo?.children?.some((unit) => unit.id === scrollState.id),
+    );
+    if (isScrollTargetInSection) {
+      setIsExpanded(true);
+    }
+  }, [scrollState?.id]);
+
   const handleOnPostChangeSync = useCallback(() => {
     queryClient.invalidateQueries({
       queryKey: courseOutlineQueryKeys.courseItemId(section.id),
@@ -251,11 +268,11 @@ const SectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(section.id, undefined, section.id, index);
+      openContainerSidebar(section.id, undefined, section.id, index);
       handleClickMenuButton();
       setIsExpanded(true);
     }
-  }, [openContainerInfoSidebar]);
+  }, [openContainerSidebar]);
 
   return (
     <>

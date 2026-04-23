@@ -83,7 +83,7 @@ const HasTopParentTextAndButton = ({
     name: displayName,
   };
 
-  if (upstreamInfo.errorMessage) {
+  if (parentData?.upstreamInfo?.errorMessage) {
     return (
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.hasTopParentBrokenLinkText} values={messageValues} />

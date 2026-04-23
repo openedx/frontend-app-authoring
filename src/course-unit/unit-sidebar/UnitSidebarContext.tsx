@@ -10,13 +10,15 @@ import { useToggle } from '@openedx/paragon';
 import { useStateWithUrlSearchParam } from '@src/hooks';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { messageTypes } from '../constants';
+import { useSelector } from 'react-redux';
+import { getCourseUnitData } from '../data/selectors';
 
 export type UnitSidebarPageKeys = 'info' | 'add' | 'align';
 export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
 
 interface UnitSidebarContextData {
   currentPageKey: UnitSidebarPageKeys;
-  setCurrentPageKey: (pageKey: UnitSidebarPageKeys, componentId?: string | null) => void;
+  setCurrentPageKey: (pageKey?: UnitSidebarPageKeys, componentId?: string | null) => void;
   currentTabKey?: string;
   setCurrentTabKey: (tabKey: string | undefined) => void;
   selectedComponentId?: string;
@@ -25,6 +27,11 @@ interface UnitSidebarContextData {
   open: () => void;
   toggle: () => void;
   readOnly: boolean;
+  /*
+   * There are other blocks that use the same unit screen and sidebars.
+   * For example: Conditional block.
+   */
+  isVertical: boolean;
 }
 
 const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(undefined);
@@ -47,13 +54,21 @@ export const UnitSidebarProvider = ({
   const [selectedComponentId, setSelectedComponentId] = useState<string>();
   const [isOpen, open, , toggle] = useToggle(true);
 
+  const currentItemData = useSelector(getCourseUnitData);
+  const isVertical = currentItemData?.category === 'vertical';
+
   const setCurrentPageKey = useCallback(/* istanbul ignore next */ (
-    pageKey: UnitSidebarPageKeys,
+    pageKey?: UnitSidebarPageKeys,
     componentId?: string | null,
   ) => {
     // Reset tab
     setCurrentTabKey(undefined);
-    setCurrentPageKeyState(pageKey);
+    if (pageKey) {
+      setCurrentPageKeyState(pageKey);
+    } else if (componentId && currentPageKey === 'add') {
+      // Components do not have add sidebar, in this case, open the info by default
+      setCurrentPageKeyState('info');
+    }
     if (componentId !== undefined) {
       setSelectedComponentId(componentId === null ? undefined : componentId);
     }
@@ -62,7 +77,7 @@ export const UnitSidebarProvider = ({
       sendMessageToIframe(messageTypes.clearSelection, null);
     }
     open();
-  }, [open]);
+  }, [open, currentPageKey]);
 
   const context = useMemo<UnitSidebarContextData>(
     () => ({
@@ -76,6 +91,7 @@ export const UnitSidebarProvider = ({
       open,
       toggle,
       readOnly,
+      isVertical,
     }),
     [
       currentPageKey,
@@ -88,6 +104,7 @@ export const UnitSidebarProvider = ({
       open,
       toggle,
       readOnly,
+      isVertical,
     ],
   );
 

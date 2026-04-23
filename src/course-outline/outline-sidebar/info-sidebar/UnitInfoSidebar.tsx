@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useEffect, useContext } from 'react';
 import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -69,13 +69,31 @@ const UnitSettingsTab = ({ unitId }: Props) => {
 export const UnitSidebar = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<'preview' | 'info' | 'settings'>('info');
-  const { selectedContainerState, clearSelection, setSelectedContainerState } = useOutlineSidebarContext();
+  const {
+    selectedContainerState,
+    clearSelection,
+    currentTabKey,
+    setCurrentTabKey,
+    setSelectedContainerState,
+  } = useOutlineSidebarContext();
   const {
     currentId: unitId = /* istanbul ignore next */ '',
     index,
   } = selectedContainerState ?? {};
   const { data: unitData, isPending } = useCourseItemData(unitId);
+  const availableTabs = {
+    preview: 'preview',
+    info: 'info',
+    settings: 'settings',
+  };
+
+  useEffect(() => {
+    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
+      // Set default Tab key
+      setCurrentTabKey('preview');
+    }
+  }, [currentTabKey, setCurrentTabKey]);
+
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const { data: subsection } = useCourseItemData<XBlock>(selectedContainerState?.subsectionId);
   const { getUnitUrl, courseId, openUnlinkModal } = useCourseAuthoringContext();
@@ -239,12 +257,12 @@ export const UnitSidebar = () => {
         variant="tabs"
         className="my-2 mx-n3.5"
         id="unit-content-tabs"
-        activeKey={tab}
-        onSelect={setTab}
+        activeKey={currentTabKey}
+        onSelect={setCurrentTabKey}
         mountOnEnter
       >
         <Tab
-          eventKey="preview"
+          eventKey={availableTabs.preview}
           title={intl.formatMessage(messages.previewTabText)}
           // To make sure that data is fresh
           unmountOnExit
@@ -260,10 +278,10 @@ export const UnitSidebar = () => {
             />
           </IframeProvider>
         </Tab>
-        <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
+        <Tab eventKey={availableTabs.info} title={intl.formatMessage(messages.infoTabText)}>
           <InfoSection itemId={unitId} />
         </Tab>
-        <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
+        <Tab eventKey={availableTabs.settings} title={intl.formatMessage(messages.settingsTabText)}>
           <UnitSettingsTab unitId={unitId} />
         </Tab>
       </Tabs>
