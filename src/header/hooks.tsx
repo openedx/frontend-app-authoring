@@ -92,14 +92,15 @@ export const useSettingMenuItems = (courseId: string) => {
       href: `/course/${courseId}/settings/grading`,
       title: intl.formatMessage(messages['header.links.grading']),
     },
-    {
-      href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${courseId}`,
-      title: intl.formatMessage(messages['header.links.roles.permissions']),
-    },
-    {
-      href: `/course/${courseId}/course_team`,
-      title: intl.formatMessage(messages['header.links.courseTeam']),
-    },
+    ...(isAuthzEnabled
+      ? [{
+        href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${courseId}`,
+        title: intl.formatMessage(messages['header.links.roles.permissions']),
+      }]
+      : [{
+        href: `/course/${courseId}/course_team`,
+        title: intl.formatMessage(messages['header.links.courseTeam']),
+      }]),
     {
       href: `/course/${courseId}/group_configurations`,
       title: intl.formatMessage(messages['header.links.groupConfigurations']),
