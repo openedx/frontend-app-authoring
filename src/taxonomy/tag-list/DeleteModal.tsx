@@ -34,8 +34,12 @@ const DeleteModal = () => {
 
   const hasSubtags = count > 1;
   // const bodyText = hasSubtags ? intl.formatMessage(messages.deleteTagWithSubtagsConfirmation, { count }) : intl.formatMessage(messages.deleteTagConfirmation, { count });
-  const typeToDeleteText = hasSubtags ? intl.formatMessage(messages.typeToConfirmDeleteTagWithSubtags, { count }) : intl.formatMessage(messages.typeToConfirmDeleteOneTag);
-  const messageText = hasSubtags ? intl.formatMessage(messages.deleteTagWithSubtagsConfirmation, { count }) : intl.formatMessage(messages.deleteTagConfirmation, { count });
+  const typeToDeleteText = hasSubtags
+    ? intl.formatMessage(messages.typeToConfirmDeleteTagWithSubtags, { count })
+    : intl.formatMessage(messages.typeToConfirmDeleteOneTag);
+  const messageText = hasSubtags
+    ? intl.formatMessage(messages.deleteTagWithSubtagsConfirmation, { count })
+    : intl.formatMessage(messages.deleteTagConfirmation, { count });
   const parts = messageText.split(String(count));
   const bodyText = (
     <>

@@ -18,11 +18,12 @@ const defaultProps = () => ({
   setContext: jest.fn(),
 });
 
-const renderModal = (props = defaultProps()) => render(
-  <IntlProvider locale="en" messages={{}}>
-    <TypeXToConfirmModal {...props} />
-  </IntlProvider>,
-);
+const renderModal = (props = defaultProps()) =>
+  render(
+    <IntlProvider locale="en" messages={{}}>
+      <TypeXToConfirmModal {...props} />
+    </IntlProvider>,
+  );
 
 describe('TypeXToConfirmModal', () => {
   it('keeps the destructive confirm button disabled until the typed value exactly matches the required confirmation phrase', () => {

@@ -6,10 +6,11 @@ import { render, screen, within } from '@testing-library/react';
 import { TreeTableContext } from '@src/taxonomy/tree-table';
 import DeleteModal from './DeleteModal';
 
-const createRow = (rowData) => ({
-  id: String(rowData.id),
-  original: rowData,
-}) as any;
+const createRow = (rowData) =>
+  ({
+    id: String(rowData.id),
+    original: rowData,
+  }) as any;
 
 const leafRowData = {
   id: 101,
@@ -77,13 +78,14 @@ const baseContextValue = (overrides = {}) => ({
   ...overrides,
 });
 
-const renderDeleteModal = (contextValue = baseContextValue()) => render(
-  <IntlProvider locale="en" messages={{}}>
-    <TreeTableContext.Provider value={contextValue as any}>
-      <DeleteModal />
-    </TreeTableContext.Provider>
-  </IntlProvider>,
-);
+const renderDeleteModal = (contextValue = baseContextValue()) =>
+  render(
+    <IntlProvider locale="en" messages={{}}>
+      <TreeTableContext.Provider value={contextValue as any}>
+        <DeleteModal />
+      </TreeTableContext.Provider>
+    </IntlProvider>,
+  );
 
 describe('DeleteModal', () => {
   it('renders a singular delete title and "Delete Tag" action label when the selected row has no descendants', () => {

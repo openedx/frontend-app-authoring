@@ -16,7 +16,6 @@ import {
   TABLE_MODES,
 } from './constants';
 import { useTableModes, useEditActions } from './hooks';
-import TypeXToConfirmModal from '@src/generic/TypeXToConfirmModal';
 import DeleteModal from './DeleteModal';
 
 interface TagListTableProps {
@@ -48,7 +47,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
   const [tagTree, setTagTree] = useState<TagTree | null>(null);
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
-  const [activeActionMenuRowId, setActiveActionMenuRowId] = useState<RowId | null>(null);
+  const [, setActiveActionMenuRowId] = useState<RowId | null>(null);
   const [draftError, setDraftError] = useState('');
   const treeData = (tagTree?.getAllAsDeepCopy() || []) as unknown as TreeRowData[];
   const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;

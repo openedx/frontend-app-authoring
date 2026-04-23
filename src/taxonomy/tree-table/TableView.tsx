@@ -80,7 +80,12 @@ const TableView = ({
 
   return (
     <>
-      <SaveErrorAlert draftError={draftError} isError={isError} isUpdateError={isUpdateError} isDeleteError={isDeleteError} />
+      <SaveErrorAlert
+        draftError={draftError}
+        isError={isError}
+        isUpdateError={isUpdateError}
+        isDeleteError={isDeleteError}
+      />
       <Card className="tag-list-card">
         <Card.Section className="p-0">
           <div className="d-flex justify-content-end align-items-center p-4">

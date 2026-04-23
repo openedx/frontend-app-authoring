@@ -1,6 +1,6 @@
 import React from 'react';
 import { AxiosError } from 'axios';
-import userEvent from "@testing-library/user-event";
+import userEvent from '@testing-library/user-event';
 import {
   render,
   waitFor,
@@ -87,20 +87,11 @@ const mockTagsResponse = {
 
 const mockTagResponseDisallowingEdits = {
   ...mockTagsResponse,
-  results: mockTagsResponse.results.map(tag => ({
+  results: mockTagsResponse.results.map((tag) => ({
     ...tag,
     can_change_tag: false,
     can_delete_tag: false,
   })),
-};
-const mockTagsPaginationResponse = {
-  next: null,
-  previous: null,
-  count: 103,
-  num_pages: 2,
-  current_page: 1,
-  start: 0,
-  results: [],
 };
 const rootTagsListUrl =
   'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&include_counts=true';
@@ -211,12 +202,12 @@ const openDeleteDialogForTag = async ({
   actionButtonName = /actions/i,
 } = {}) => {
   openActionsMenuForTag(tagName, actionButtonName);
-  fireEvent.click(screen.getByRole("button", { name: /^Delete$/i }));
-  const dialog = await screen.findByRole("dialog");
+  fireEvent.click(screen.getByRole('button', { name: /^Delete$/i }));
+  const dialog = await screen.findByRole('dialog');
   expect(within(dialog).getByText(`Delete "${tagName}"`)).toBeInTheDocument();
-  const input = within(dialog).getByRole("textbox");
-  const cancelButton = within(dialog).getByRole("button", { name: "Cancel" });
-  const deleteButton = within(dialog).getByRole("button", {
+  const input = within(dialog).getByRole('textbox');
+  const cancelButton = within(dialog).getByRole('button', { name: 'Cancel' });
+  const deleteButton = within(dialog).getByRole('button', {
     name: /Delete Tag|Delete Tags/i,
   });
   return {
@@ -1000,7 +991,7 @@ describe('<TagListTable />', () => {
           axiosMock.resetHistory();
         });
 
-        it("should disable delete action if tag includes `can_delete: false`", async () => {
+        it('should disable delete action if tag includes `can_delete: false`', async () => {
           axiosMock.reset();
           axiosMock
             .onGet(rootTagsListUrl)
@@ -1016,77 +1007,76 @@ describe('<TagListTable />', () => {
           await waitForRootTag();
 
           openActionsMenuForTag(tagName);
-          const deleteButton = screen.getByRole("button", { name: /Delete/i });
+          const deleteButton = screen.getByRole('button', { name: /Delete/i });
           expect(deleteButton).toBeInTheDocument();
-          expect(deleteButton).toHaveAttribute("aria-disabled", "true");
+          expect(deleteButton).toHaveAttribute('aria-disabled', 'true');
         });
       });
     });
 
     it('opens the delete confirmation dialog for a leaf tag from the actions menu and requires typing "DELETE" before deletion can proceed', async () => {
-      fireEvent.click(screen.getAllByText("Expand All")[0]);
-      await screen.findByText("the grandchild tag");
+      fireEvent.click(screen.getAllByText('Expand All')[0]);
+      await screen.findByText('the grandchild tag');
 
-      const { dialog, input, cancelButton, deleteButton } =
-        await openDeleteDialogForTag({
-          tagName: "the grandchild tag",
-          actionButtonName: /more actions for tag "the grandchild tag"/i,
-        });
+      const { dialog, input, cancelButton, deleteButton } = await openDeleteDialogForTag({
+        tagName: 'the grandchild tag',
+        actionButtonName: /more actions for tag "the grandchild tag"/i,
+      });
 
       expect(dialog).toHaveTextContent(
-        "Warning! You are about to delete 1 tag(s).",
+        'Warning! You are about to delete 1 tag(s).',
       );
       expect(dialog).toHaveTextContent(
-        "Any tags applied to course content will be removed across all assigned organizations.",
+        'Any tags applied to course content will be removed across all assigned organizations.',
       );
-      expect(dialog).toHaveTextContent("Type DELETE to confirm");
+      expect(dialog).toHaveTextContent('Type DELETE to confirm');
       expect(cancelButton).toBeInTheDocument();
-      expect(deleteButton).toHaveTextContent("Delete Tag");
+      expect(deleteButton).toHaveTextContent('Delete Tag');
       expect(deleteButton).toBeDisabled();
 
-      fireEvent.change(input, { target: { value: "DELETE ALL 2 TAGS" } });
+      fireEvent.change(input, { target: { value: 'DELETE ALL 2 TAGS' } });
       expect(deleteButton).toBeDisabled();
 
-      fireEvent.change(input, { target: { value: "DELETE" } });
+      fireEvent.change(input, { target: { value: 'DELETE' } });
       expect(deleteButton).toBeEnabled();
     });
 
-    it("opens the stronger delete confirmation dialog for a parent tag and requires the exact descendant-aware confirmation phrase before enabling delete", async () => {
-      fireEvent.click(screen.getAllByText("Expand All")[0]);
-      await screen.findByText("the child tag");
+    it('opens the stronger delete confirmation dialog for a parent tag and requires the exact descendant-aware confirmation phrase before enabling delete', async () => {
+      fireEvent.click(screen.getAllByText('Expand All')[0]);
+      await screen.findByText('the child tag');
 
       const { dialog, input, deleteButton } = await openDeleteDialogForTag({
-        tagName: "the child tag",
+        tagName: 'the child tag',
         actionButtonName: /more actions for tag "the child tag"/i,
       });
 
       expect(dialog).toHaveTextContent(
-        "Warning! You are about to delete a tag containing sub-tags. If you proceed, 2 tags will be deleted.",
+        'Warning! You are about to delete a tag containing sub-tags. If you proceed, 2 tags will be deleted.',
       );
-      expect(dialog).toHaveTextContent("Type DELETE ALL 2 TAGS to confirm");
-      expect(deleteButton).toHaveTextContent("Delete Tags");
+      expect(dialog).toHaveTextContent('Type DELETE ALL 2 TAGS to confirm');
+      expect(deleteButton).toHaveTextContent('Delete Tags');
       expect(deleteButton).toBeDisabled();
 
-      fireEvent.change(input, { target: { value: "DELETE" } });
+      fireEvent.change(input, { target: { value: 'DELETE' } });
       expect(deleteButton).toBeDisabled();
 
-      fireEvent.change(input, { target: { value: "DELETE ALL 2 TAGS" } });
+      fireEvent.change(input, { target: { value: 'DELETE ALL 2 TAGS' } });
       expect(deleteButton).toBeEnabled();
     });
 
-    it("shows the descendant deletion warning and the total recursive tag count when deleting a tag with nested subtags", async () => {
+    it('shows the descendant deletion warning and the total recursive tag count when deleting a tag with nested subtags', async () => {
       const { dialog, deleteButton } = await openDeleteDialogForTag({
-        tagName: "root tag 1",
+        tagName: 'root tag 1',
       });
 
       expect(dialog).toHaveTextContent(
-        "Warning! You are about to delete a tag containing sub-tags. If you proceed, 3 tags will be deleted.",
+        'Warning! You are about to delete a tag containing sub-tags. If you proceed, 3 tags will be deleted.',
       );
-      expect(dialog).toHaveTextContent("Type DELETE ALL 3 TAGS to confirm");
-      expect(deleteButton).toHaveTextContent("Delete Tags");
+      expect(dialog).toHaveTextContent('Type DELETE ALL 3 TAGS to confirm');
+      expect(deleteButton).toHaveTextContent('Delete Tags');
     });
 
-    it("deletes a leaf tag after typed confirmation and shows the success toast describing that tagged content will be updated", async () => {
+    it('deletes a leaf tag after typed confirmation and shows the success toast describing that tagged content will be updated', async () => {
       axiosMock.reset();
       axiosMock.onDelete(deleteTagUrl).reply(204);
       axiosMock
@@ -1095,35 +1085,35 @@ describe('<TagListTable />', () => {
           200,
           buildTagsResponse(
             mockTagsResponse.results.filter(
-              (tag) => tag.value !== "root tag 2",
+              (tag) => tag.value !== 'root tag 2',
             ),
           ),
         );
 
-      expect(screen.queryByText("root tag 2")).toBeInTheDocument();
+      expect(screen.queryByText('root tag 2')).toBeInTheDocument();
 
       const { input, deleteButton } = await openDeleteDialogForTag({
-        tagName: "root tag 2",
+        tagName: 'root tag 2',
       });
-      fireEvent.change(input, { target: { value: "DELETE" } });
+      fireEvent.change(input, { target: { value: 'DELETE' } });
       fireEvent.click(deleteButton);
 
-      await expectDeleteRequest({ tagName: "root tag 2", withSubtags: false });
+      await expectDeleteRequest({ tagName: 'root tag 2', withSubtags: false });
       expect(
         await screen.findByText(
-          "1 tag(s) deleted. This change will be applied across all tagged content.",
+          '1 tag(s) deleted. This change will be applied across all tagged content.',
         ),
       ).toBeInTheDocument();
       await waitFor(() => {
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-        expect(screen.queryByText("root tag 2")).not.toBeInTheDocument();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        expect(screen.queryByText('root tag 2')).not.toBeInTheDocument();
       });
     });
 
-    it("deletes a parent tag together with all rendered descendants after typed confirmation and shows the success toast with the total deleted count", async () => {
-      fireEvent.click(screen.getAllByText("Expand All")[0]);
-      await screen.findByText("the child tag");
-      await screen.findByText("the grandchild tag");
+    it('deletes a parent tag together with all rendered descendants after typed confirmation and shows the success toast with the total deleted count', async () => {
+      fireEvent.click(screen.getAllByText('Expand All')[0]);
+      await screen.findByText('the child tag');
+      await screen.findByText('the grandchild tag');
 
       axiosMock.reset();
       axiosMock.onDelete(deleteTagUrl).reply(204);
@@ -1134,7 +1124,7 @@ describe('<TagListTable />', () => {
           buildTagsResponse(
             mockTagsResponse.results.filter(
               (tag) =>
-                !["root tag 1", "the child tag", "the grandchild tag"].includes(
+                !['root tag 1', 'the child tag', 'the grandchild tag'].includes(
                   tag.value,
                 ),
             ),
@@ -1142,60 +1132,60 @@ describe('<TagListTable />', () => {
         );
 
       const { input, deleteButton } = await openDeleteDialogForTag({
-        tagName: "root tag 1",
+        tagName: 'root tag 1',
       });
-      fireEvent.change(input, { target: { value: "DELETE ALL 3 TAGS" } });
+      fireEvent.change(input, { target: { value: 'DELETE ALL 3 TAGS' } });
       fireEvent.click(deleteButton);
 
-      await expectDeleteRequest({ tagName: "root tag 1", withSubtags: true });
+      await expectDeleteRequest({ tagName: 'root tag 1', withSubtags: true });
       expect(
         await screen.findByText(
-          "3 tag(s) deleted. This change will be applied across all tagged content.",
+          '3 tag(s) deleted. This change will be applied across all tagged content.',
         ),
       ).toBeInTheDocument();
       await waitFor(() => {
-        expect(screen.queryByText("root tag 1")).not.toBeInTheDocument();
-        expect(screen.queryByText("the child tag")).not.toBeInTheDocument();
+        expect(screen.queryByText('root tag 1')).not.toBeInTheDocument();
+        expect(screen.queryByText('the child tag')).not.toBeInTheDocument();
         expect(
-          screen.queryByText("the grandchild tag"),
+          screen.queryByText('the grandchild tag'),
         ).not.toBeInTheDocument();
-        expect(screen.getByText("root tag 2")).toBeInTheDocument();
+        expect(screen.getByText('root tag 2')).toBeInTheDocument();
       });
     });
 
-    it("does not issue a delete request when the dialog is canceled and leaves the table unchanged", async () => {
+    it('does not issue a delete request when the dialog is canceled and leaves the table unchanged', async () => {
       const { cancelButton } = await openDeleteDialogForTag({
-        tagName: "root tag 1",
+        tagName: 'root tag 1',
       });
       fireEvent.click(cancelButton);
 
       await waitFor(() => {
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       });
       expect(axiosMock.history.delete.length).toBe(0);
-      expect(screen.getByText("root tag 1")).toBeInTheDocument();
+      expect(screen.getByText('root tag 1')).toBeInTheDocument();
     });
 
-    it("does not keep a previous typed confirmation when the delete dialog is closed and reopened for the same tag", async () => {
-      const firstOpen = await openDeleteDialogForTag({ tagName: "root tag 1" });
+    it('does not keep a previous typed confirmation when the delete dialog is closed and reopened for the same tag', async () => {
+      const firstOpen = await openDeleteDialogForTag({ tagName: 'root tag 1' });
       fireEvent.change(firstOpen.input, {
-        target: { value: "DELETE ALL 3 TAGS" },
+        target: { value: 'DELETE ALL 3 TAGS' },
       });
       expect(firstOpen.deleteButton).toBeEnabled();
       fireEvent.click(firstOpen.cancelButton);
 
       await waitFor(() => {
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       });
 
       const secondOpen = await openDeleteDialogForTag({
-        tagName: "root tag 1",
+        tagName: 'root tag 1',
       });
-      expect(secondOpen.input.value).toEqual("");
+      expect(secondOpen.input.value).toEqual('');
       expect(secondOpen.deleteButton).toBeDisabled();
     });
 
-    it("completes the delete workflow with keyboard only by opening the menu, selecting Delete, typing the confirmation phrase, and pressing Enter", async () => {
+    it('completes the delete workflow with keyboard only by opening the menu, selecting Delete, typing the confirmation phrase, and pressing Enter', async () => {
       const user = userEvent.setup();
       axiosMock.reset();
       axiosMock.onDelete(deleteTagUrl).reply(204);
@@ -1205,101 +1195,101 @@ describe('<TagListTable />', () => {
           200,
           buildTagsResponse(
             mockTagsResponse.results.filter(
-              (tag) => tag.value !== "root tag 2",
+              (tag) => tag.value !== 'root tag 2',
             ),
           ),
         );
 
-      const row = screen.getByText("root tag 2").closest("tr");
-      const actionsButton = within(row).getByRole("button", {
+      const row = screen.getByText('root tag 2').closest('tr');
+      const actionsButton = within(row).getByRole('button', {
         name: /more actions for tag "root tag 2"/i,
       });
       actionsButton.focus();
       expect(actionsButton).toHaveFocus();
 
-      await user.keyboard("{Enter}");
+      await user.keyboard('{Enter}');
 
-      const deleteMenuItem = await screen.findByRole("button", {
+      const deleteMenuItem = await screen.findByRole('button', {
         name: /^Delete$/i,
       });
       deleteMenuItem.focus();
       expect(deleteMenuItem).toHaveFocus();
-      await user.keyboard("{Enter}");
+      await user.keyboard('{Enter}');
 
-      const dialog = await screen.findByRole("dialog");
-      const input = within(dialog).getByRole("textbox");
-      await user.type(input, "DELETE");
-      await user.keyboard("{Enter}");
+      const dialog = await screen.findByRole('dialog');
+      const input = within(dialog).getByRole('textbox');
+      await user.type(input, 'DELETE');
+      await user.keyboard('{Enter}');
 
-      await expectDeleteRequest({ tagName: "root tag 2", withSubtags: false });
+      await expectDeleteRequest({ tagName: 'root tag 2', withSubtags: false });
       expect(
         await screen.findByText(
-          "1 tag(s) deleted. This change will be applied across all tagged content.",
+          '1 tag(s) deleted. This change will be applied across all tagged content.',
         ),
       ).toBeInTheDocument();
       await waitFor(() => {
-        expect(screen.queryByText("root tag 2")).not.toBeInTheDocument();
+        expect(screen.queryByText('root tag 2')).not.toBeInTheDocument();
       });
     });
 
-    it("cancels the delete workflow with keyboard only by pressing Escape and does not send a delete request", async () => {
+    it('cancels the delete workflow with keyboard only by pressing Escape and does not send a delete request', async () => {
       const user = userEvent.setup();
-      const row = screen.getByText("root tag 1").closest("tr");
-      const actionsButton = within(row).getByRole("button", {
+      const row = screen.getByText('root tag 1').closest('tr');
+      const actionsButton = within(row).getByRole('button', {
         name: /more actions for tag "root tag 1"/i,
       });
       actionsButton.focus();
       expect(actionsButton).toHaveFocus();
 
-      await user.keyboard("{Enter}");
+      await user.keyboard('{Enter}');
 
-      const deleteMenuItem = await screen.findByRole("button", {
+      const deleteMenuItem = await screen.findByRole('button', {
         name: /^Delete$/i,
       });
       deleteMenuItem.focus();
       expect(deleteMenuItem).toHaveFocus();
-      await user.keyboard("{Enter}");
+      await user.keyboard('{Enter}');
 
-      const dialog = await screen.findByRole("dialog");
+      const dialog = await screen.findByRole('dialog');
       expect(
         within(dialog).getByText('Delete "root tag 1"'),
       ).toBeInTheDocument();
 
-      await user.keyboard("{Escape}");
+      await user.keyboard('{Escape}');
 
       await waitFor(() => {
-        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       });
       expect(axiosMock.history.delete.length).toBe(0);
-      expect(screen.getByText("root tag 1")).toBeInTheDocument();
+      expect(screen.getByText('root tag 1')).toBeInTheDocument();
     });
 
-    it("surfaces a failed delete through both the persistent error alert and the delete-error toast while leaving the row visible", async () => {
+    it('surfaces a failed delete through both the persistent error alert and the delete-error toast while leaving the row visible', async () => {
       axiosMock.reset();
       axiosMock.onDelete(deleteTagUrl).reply(() => {
-        const error = new AxiosError("Request failed with status code 500");
+        const error = new AxiosError('Request failed with status code 500');
         error.response = {
           data: {
-            value: ["Delete failed"],
+            value: ['Delete failed'],
           },
         };
         return Promise.reject(error);
       });
 
       const { input, deleteButton } = await openDeleteDialogForTag({
-        tagName: "root tag 1",
+        tagName: 'root tag 1',
       });
-      fireEvent.change(input, { target: { value: "DELETE ALL 3 TAGS" } });
+      fireEvent.change(input, { target: { value: 'DELETE ALL 3 TAGS' } });
       fireEvent.click(deleteButton);
 
-      await expectDeleteRequest({ tagName: "root tag 1", withSubtags: true });
+      await expectDeleteRequest({ tagName: 'root tag 1', withSubtags: true });
       expect(
-        await screen.findByText("Error saving changes"),
+        await screen.findByText('Error saving changes'),
       ).toBeInTheDocument();
       expect(
-        await screen.findByText("Error deleting tag: Delete failed"),
+        await screen.findByText('Error deleting tag: Delete failed'),
       ).toBeInTheDocument();
-      expect(screen.getByText("root tag 1")).toBeInTheDocument();
+      expect(screen.getByText('root tag 1')).toBeInTheDocument();
     });
   });
 });

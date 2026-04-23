@@ -15,7 +15,6 @@ import {
 } from './constants';
 
 import messages from './messages';
-import { start } from '@src/library-authoring/__mocks__/contentLibrariesListV2';
 import { getTagListRowData, getTagWithDescendantsCount } from './utils';
 import { Row } from '@tanstack/react-table';
 
