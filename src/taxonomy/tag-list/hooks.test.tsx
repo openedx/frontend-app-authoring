@@ -122,7 +122,7 @@ describe('useEditActions', () => {
     } = buildActions();
 
     await act(async () => {
-      await actions.handleUpdateTag('  same value  ', 'same value');
+      await actions.handleUpdateRow('  same value  ', 'same value');
     });
 
     expect(enterPreviewMode).not.toHaveBeenCalled();
@@ -139,7 +139,7 @@ describe('useEditActions', () => {
     } = buildActions();
 
     await act(async () => {
-      await actions.handleUpdateTag('updated', 'original');
+      await actions.handleUpdateRow('updated', 'original');
     });
 
     await waitFor(() => {
@@ -152,17 +152,12 @@ describe('useEditActions', () => {
     expect(setEditingRowId).toHaveBeenCalledWith(null);
   });
 
-  it('keeps draft open and shows failure toast when createTag request fails', async () => {
-    const {
-      actions,
-      createTagMutation,
-      setDraftError,
-      setToast,
-    } = buildActions();
+  it('keeps draft open and shows failure toast when createRow request fails', async () => {
+    const { actions, createTagMutation, setDraftError, setToast } = buildActions();
     createTagMutation.mutateAsync.mockRejectedValue(new Error('server failed'));
 
     await act(async () => {
-      await actions.handleCreateTag('new tag');
+      await actions.handleCreateRow('new tag');
     });
 
     expect(setDraftError).toHaveBeenCalledWith('server failed');
