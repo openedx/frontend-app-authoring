@@ -1009,7 +1009,7 @@ export interface LibraryPublishContributor {
 }
 
 export interface LibraryHistoryEntry {
-  changedBy: LibraryPublishContributor;
+  contributor: LibraryPublishContributor;
   changedAt: string;
   title: string;
   itemType: string;

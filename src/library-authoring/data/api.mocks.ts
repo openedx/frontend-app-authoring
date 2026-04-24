@@ -1267,14 +1267,14 @@ const mockContributor = (username: string): api.LibraryPublishContributor => ({
 
 mockLibraryBlockDraftHistory.data = [
   {
-    changedBy: mockContributor('test_user_1'),
+    contributor: mockContributor('test_user_1'),
     changedAt: '2026-03-16T11:00:00Z',
     title: 'Electron Arcs',
     action: 'edited',
     itemType: 'html',
   },
   {
-    changedBy: mockContributor('test_user_2'),
+    contributor: mockContributor('test_user_2'),
     changedAt: '2026-03-13T10:00:00Z',
     title: 'More on Quarks',
     action: 'renamed',
@@ -1330,7 +1330,7 @@ export async function mockLibraryBlockPublishHistoryEntries(
 }
 mockLibraryBlockPublishHistoryEntries.data = [
   {
-    changedBy: mockContributor('test_user'),
+    contributor: mockContributor('test_user'),
     changedAt: '2026-03-10T09:00:00Z',
     title: 'Protons',
     action: 'edited',
@@ -1365,14 +1365,14 @@ mockLibraryBlockCreationEntry.usageKeyThatNeverLoads = 'lb:Axim:infiniteLoading:
 mockLibraryBlockCreationEntry.usageKey = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
 mockLibraryBlockCreationEntry.usageKeyEmpty = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
 mockLibraryBlockCreationEntry.data = {
-  changedBy: mockContributor('author'),
+  contributor: mockContributor('author'),
   changedAt: '2024-01-01T00:00:00Z',
   title: 'Introduction to Testing 1',
   itemType: 'html',
   action: 'created',
 } satisfies api.LibraryHistoryEntry;
 mockLibraryBlockCreationEntry.dataEmpty = {
-  changedBy: mockContributor('Author'),
+  contributor: mockContributor('Author'),
   changedAt: '2024-01-01T00:00:00Z',
   title: 'Introduction to Testing 2',
   itemType: 'html',
@@ -1404,14 +1404,14 @@ mockLibraryContainerDraftHistory.containerKey = 'lct:Axim:TEST1:unit:571fe018-f3
 mockLibraryContainerDraftHistory.containerKeyEmpty = 'lct:Axim:TEST2:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
 mockLibraryContainerDraftHistory.data = [
   {
-    changedBy: mockContributor('container_user_1'),
+    contributor: mockContributor('container_user_1'),
     changedAt: '2026-03-16T11:00:00Z',
     title: 'Intro Unit',
     action: 'edited',
     itemType: 'unit',
   },
   {
-    changedBy: mockContributor('container_user_2'),
+    contributor: mockContributor('container_user_2'),
     changedAt: '2026-03-13T10:00:00Z',
     title: 'Unit Renamed',
     action: 'renamed',
@@ -1485,14 +1485,14 @@ mockLibraryContainerCreationEntry.usageKeyThatNeverLoads = 'lct:Axim:TEST1:unit:
 mockLibraryContainerCreationEntry.usageKey = 'lct:Axim:TEST1:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
 mockLibraryContainerCreationEntry.usageKeyEmpty = 'lct:Axim:TEST2:unit:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
 mockLibraryContainerCreationEntry.data = {
-  changedBy: mockContributor('author'),
+  contributor: mockContributor('author'),
   changedAt: '2024-01-01T00:00:00Z',
   title: 'Introduction to Testing Unit 1',
   itemType: 'unit',
   action: 'created',
 } satisfies api.LibraryHistoryEntry;
 mockLibraryContainerCreationEntry.dataEmpty = {
-  changedBy: mockContributor('Author'),
+  contributor: mockContributor('Author'),
   changedAt: '2024-01-01T00:00:00Z',
   title: 'Introduction to Testing Unit 2',
   itemType: 'unit',

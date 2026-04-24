@@ -104,12 +104,12 @@ describe('<HistoryComponentLog />', () => {
     expect(await findByDeepTextContent(/Author created.*Introduction to Testing 1/i)).toBeInTheDocument();
   });
 
-  it('shows fallback "Author" for draft entry when changedBy has no username', async () => {
+  it('shows fallback "Author" for draft entry when contributor has no username', async () => {
     const user = userEvent.setup();
     const originalData = mockLibraryBlockDraftHistory.data;
     mockLibraryBlockDraftHistory.data = [
       {
-        changedBy: mockContributorNoUsername(),
+        contributor: mockContributorNoUsername(),
         changedAt: '2026-03-16T11:00:00Z',
         title: 'Anonymous Component',
         itemType: 'html',
@@ -141,7 +141,7 @@ describe('<HistoryComponentLog />', () => {
     const originalData = mockLibraryBlockDraftHistory.data;
     mockLibraryBlockDraftHistory.data = [
       {
-        changedBy: {
+        contributor: {
           username: 'creator_user',
           profileImageUrls: {
             full: 'icon/mock/path',
@@ -224,7 +224,7 @@ describe('<HistoryContainerLog />', () => {
     const originalData = mockLibraryContainerDraftHistory.data;
     mockLibraryContainerDraftHistory.data = [
       {
-        changedBy: {
+        contributor: {
           username: 'creator_user',
           profileImageUrls: {
             full: 'icon/mock/path',

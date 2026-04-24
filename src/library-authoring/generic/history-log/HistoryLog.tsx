@@ -56,7 +56,7 @@ export const HistoryComponentLog = ({ componentId }: { componentId: string; }) =
       )}
       {creationEntry && (
         <HistoryCreatedLogGroup
-          user={creationEntry.changedBy?.username}
+          user={creationEntry.contributor?.username}
           displayName={creationEntry.title}
           itemType={creationEntry.itemType}
           createdAt={creationEntry.changedAt}
@@ -111,7 +111,7 @@ export const HistoryContainerLog = ({ containerId }: { containerId: string; }) =
       )}
       {creationEntry && (
         <HistoryCreatedLogGroup
-          user={creationEntry.changedBy?.username}
+          user={creationEntry.contributor?.username}
           displayName={creationEntry.title}
           itemType={creationEntry.itemType}
           createdAt={creationEntry.changedAt}
