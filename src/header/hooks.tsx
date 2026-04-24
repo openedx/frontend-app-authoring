@@ -94,8 +94,21 @@ export const useSettingMenuItems = (courseId: string) => {
     },
     ...(isAuthzEnabled
       ? [{
-        href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`,
-        title: intl.formatMessage(messages['header.links.roles.permissions']),
+        href: '#',
+        title: (
+          <span
+            onClick={(e) => {
+              e.preventDefault();
+              window.open(
+                `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`,
+                '_blank',
+                'noopener,noreferrer',
+              );
+            }}
+          >
+            {intl.formatMessage(messages['header.links.roles.permissions'])}
+          </span>
+        ),
       }]
       : [{
         href: `/course/${courseId}/course_team`,
