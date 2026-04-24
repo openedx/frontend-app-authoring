@@ -3,7 +3,8 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
-import type { PaginationState } from '@tanstack/react-table';
+import { Button } from '@openedx/paragon';
+import type { PaginationState, Row } from '@tanstack/react-table';
 import { TableView } from '@src/taxonomy/tree-table';
 import { useTagListData, useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
 import { TagTree } from './tagTree';
@@ -17,6 +18,8 @@ import {
 } from './constants';
 import { getColumns } from './tagColumns';
 import { useTableModes, useEditActions } from './hooks';
+import DeleteModal from './DeleteModal';
+import { getTagListRowData } from './utils';
 
 interface TagListTableProps {
   taxonomyId: number;
@@ -51,6 +54,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const [draftError, setDraftError] = useState('');
   const treeData = (tagTree?.getAllAsDeepCopy() || []) as unknown as TreeRowData[];
   const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteModalRow, setDeleteModalRow] = useState<Row<TreeRowData> | null>(null);
 
   // TABLE MODES
   const {
@@ -150,33 +155,77 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     }
   }, [tagList?.results, tableMode]);
 
+  const openDeleteModalTest = () => {
+    const firstRow = treeData[0];
+
+    if (!firstRow) {
+      return;
+    }
+
+    setDeleteModalRow({
+      id: String(firstRow.id),
+      original: firstRow,
+    } as Row<TreeRowData>);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteModalConfirm = (row: Row<TreeRowData>) => {
+    const rowData = getTagListRowData(row);
+
+    setToast({
+      show: true,
+      message: `Delete modal confirmed for "${rowData.value}" (test only).`,
+      variant: 'success',
+    });
+  };
+
   return (
-    <TableView
-      {...{
-        treeData,
-        columns,
-        pageCount,
-        pagination,
-        handlePaginationChange,
-        isLoading,
-        isCreatingTopRow: isCreatingTopTag,
-        draftError,
-        createRowMutation: createTagMutation,
-        updateRowMutation: updateTagMutation,
-        handleCreateRow: handleCreateTag,
-        handleUpdateRow: handleUpdateTag,
-        toast,
-        setToast,
-        setIsCreatingTopRow: setIsCreatingTopTag,
-        exitDraftWithoutSave,
-        creatingParentId,
-        setCreatingParentId,
-        setDraftError,
-        validate,
-        editingRowId,
-        setEditingRowId,
-      }}
-    />
+    <>
+      <div className="d-flex justify-content-end mb-3">
+        {/* TODO: remove after testing */}
+        <Button
+          variant="outline-primary"
+          size="sm"
+          onClick={openDeleteModalTest}
+          disabled={!treeData.length}
+        >
+          Test Delete Modal
+        </Button>
+      </div>
+      <TableView
+        {...{
+          treeData,
+          columns,
+          pageCount,
+          pagination,
+          handlePaginationChange,
+          isLoading,
+          isCreatingTopRow: isCreatingTopTag,
+          draftError,
+          createRowMutation: createTagMutation,
+          updateRowMutation: updateTagMutation,
+          handleCreateRow: handleCreateTag,
+          handleUpdateRow: handleUpdateTag,
+          toast,
+          setToast,
+          setIsCreatingTopRow: setIsCreatingTopTag,
+          exitDraftWithoutSave,
+          creatingParentId,
+          setCreatingParentId,
+          setDraftError,
+          validate,
+          editingRowId,
+          setEditingRowId,
+        }}
+      />
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        row={deleteModalRow}
+        setIsOpen={setIsDeleteModalOpen}
+        setRow={setDeleteModalRow}
+        handleDeleteRow={handleDeleteModalConfirm}
+      />
+    </>
   );
 };
 

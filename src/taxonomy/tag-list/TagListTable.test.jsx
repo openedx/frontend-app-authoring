@@ -1,5 +1,6 @@
 import React from 'react';
 import { AxiosError } from 'axios';
+import userEvent from '@testing-library/user-event';
 import {
   render,
   waitFor,
@@ -218,6 +219,23 @@ describe('<TagListTable />', () => {
       const nestedTr = cell.querySelector('tr');
       expect(nestedTr).toBeNull();
     });
+  });
+
+  it('opens the temporary delete modal trigger and confirms through the test-only callback', async () => {
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole('button', { name: 'Test Delete Modal' }));
+
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getByText('Delete "root tag 1"')).toBeInTheDocument();
+    expect(dialog).toHaveTextContent('Type DELETE ALL 3 TAGS to confirm');
+
+    await user.type(within(dialog).getByRole('textbox'), 'DELETE ALL 3 TAGS');
+    await user.click(within(dialog).getByRole('button', { name: 'Delete Tags' }));
+
+    expect(
+      await screen.findByText('Delete modal confirmed for "root tag 1" (test only).'),
+    ).toBeInTheDocument();
   });
 
   it('should render page correctly', async () => {

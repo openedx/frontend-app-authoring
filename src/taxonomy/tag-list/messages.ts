@@ -65,6 +65,42 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.rename-tag',
     defaultMessage: 'Rename',
   },
+  confirmDeleteTitle: {
+    id: 'course-authoring.tag-list.confirm-delete-title',
+    defaultMessage: 'Delete "{tagName}"',
+  },
+  typeToConfirmDeleteOneTag: {
+    id: 'course-authoring.tag-list.delete-one-tag-type-to-confirm',
+    defaultMessage: 'DELETE',
+  },
+  deleteTagConfirmation: {
+    id: 'course-authoring.tag-list.delete-tag-confirmation',
+    defaultMessage: 'Warning! You are about to delete {count} tag(s).',
+  },
+  deleteLabelPlural: {
+    id: 'course-authoring.tag-list.delete-label',
+    defaultMessage: 'Delete Tags',
+  },
+  deleteLabelSingular: {
+    id: 'course-authoring.tag-list.delete-label-singular',
+    defaultMessage: 'Delete Tag',
+  },
+  cancelLabel: {
+    id: 'course-authoring.tag-list.cancel-label',
+    defaultMessage: 'Cancel',
+  },
+  typeToConfirmDeleteTagWithSubtags: {
+    id: 'course-authoring.tag-list.delete-tag-with-subtags-type-to-confirm',
+    defaultMessage: 'DELETE ALL {count} TAGS',
+  },
+  deleteTagWithSubtagsConfirmation: {
+    id: 'course-authoring.tag-list.delete-tag-with-subtags-confirmation',
+    defaultMessage: 'Warning! You are about to delete a tag containing sub-tags. If you proceed, {count} tags will be deleted.',
+  },
+  deleteTagConfirmationEmphasizedPart: {
+    id: 'course-authoring.tag-list.delete-tag-confirmation-bold-part',
+    defaultMessage: 'Any tags applied to course content will be removed across all assigned organizations.',
+  },
 });
 
 export default messages;
