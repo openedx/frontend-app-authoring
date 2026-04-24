@@ -99,6 +99,7 @@ export const apiUrls = {
   tagsPlanImport: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/import/plan/`),
   createTag: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/`),
   updateTag: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/`),
+  deleteTag: (taxonomyId: number) => makeUrl(`${taxonomyId}/tags/`),
 } satisfies Record<string, (...args: any[]) => string>;
 
 /**

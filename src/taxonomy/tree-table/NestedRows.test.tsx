@@ -3,21 +3,37 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import NestedRows from './NestedRows';
+import { TreeTableContext } from './TreeTableContext';
 
 const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <IntlProvider locale="en" messages={{}}>{children}</IntlProvider>
 );
 
-const defaultRequiredProps = {
-  setIsCreatingTopRow: jest.fn(),
+const baseContextValue: any = () => ({
+  treeData: [],
+  columns: [],
+  pageCount: -1,
+  pagination: { pageIndex: 0, pageSize: 10 },
+  handlePaginationChange: jest.fn(),
+  isLoading: false,
+  isCreatingTopRow: false,
+  draftError: '',
   createRowMutation: {},
   updateRowMutation: {},
+  toast: { show: false, message: '', variant: 'success' },
+  setToast: jest.fn(),
+  setIsCreatingTopRow: jest.fn(),
+  exitDraftWithoutSave: jest.fn(),
+  handleCreateRow: jest.fn(),
+  creatingParentId: null,
+  setCreatingParentId: jest.fn(),
+  setDraftError: jest.fn(),
+  validate: jest.fn(() => true),
   handleUpdateRow: jest.fn(),
   editingRowId: null,
   setEditingRowId: jest.fn(),
-  exitDraftWithoutSave: jest.fn(),
-  validate: () => true,
-};
+  table: null,
+});
 
 const makeCell = (id: string, content: string) => ({
   id,
@@ -46,16 +62,18 @@ const makeRow = ({
 describe('NestedRows', () => {
   it('renders nothing when parent row is collapsed', () => {
     const parent = makeRow({ id: 1, value: 'parent', expanded: false });
+    const contextValue = baseContextValue();
     const { container } = render(
-      <table>
-        <tbody>
-          <NestedRows
-            parentRow={parent as any}
-            parentRowValue="parent"
-            {...defaultRequiredProps}
-          />
-        </tbody>
-      </table>,
+      <TreeTableContext.Provider value={contextValue as any}>
+        <table>
+          <tbody>
+            <NestedRows
+              parentRow={parent as any}
+              parentRowValue="parent"
+            />
+          </tbody>
+        </table>
+      </TreeTableContext.Provider>,
       { wrapper },
     );
 
@@ -70,30 +88,31 @@ describe('NestedRows', () => {
       expanded: true,
       subRows: [nestedChild],
     });
-    const setCreatingParentId = jest.fn();
+    const contextValue = baseContextValue();
+    contextValue.setCreatingParentId = jest.fn();
+    contextValue.creatingParentId = 2;
+    contextValue.createRowMutation = { isPending: false };
     const onCancelCreation = jest.fn();
 
     render(
-      <table>
-        <tbody>
-          <NestedRows
-            parentRow={parent as any}
-            parentRowValue="parent"
-            childRowsData={[nestedChild as any]}
-            creatingParentId={2}
-            setCreatingParentId={setCreatingParentId}
-            onCancelCreation={onCancelCreation}
-            {...defaultRequiredProps}
-            createRowMutation={{ isPending: false }}
-          />
-        </tbody>
-      </table>,
+      <TreeTableContext.Provider value={contextValue as any}>
+        <table>
+          <tbody>
+            <NestedRows
+              parentRow={parent as any}
+              parentRowValue="parent"
+              childRowsData={[nestedChild as any]}
+              onCancelCreation={onCancelCreation}
+            />
+          </tbody>
+        </table>
+      </TreeTableContext.Provider>,
       { wrapper },
     );
 
     fireEvent.click(screen.getByText('Cancel'));
 
-    expect(setCreatingParentId).toHaveBeenCalledWith(null);
+    expect(contextValue.setCreatingParentId).toHaveBeenCalledWith(null);
     expect(onCancelCreation).toHaveBeenCalled();
   });
 
@@ -106,18 +125,21 @@ describe('NestedRows', () => {
       subRows: [nestedChild],
     });
 
+    const contextValue = baseContextValue();
+    contextValue.editingRowId = '2:child';
+
     render(
-      <table>
-        <tbody>
-          <NestedRows
-            parentRow={parent as any}
-            parentRowValue="parent"
-            childRowsData={[nestedChild as any]}
-            {...defaultRequiredProps}
-            editingRowId="2:child"
-          />
-        </tbody>
-      </table>,
+      <TreeTableContext.Provider value={contextValue as any}>
+        <table>
+          <tbody>
+            <NestedRows
+              parentRow={parent as any}
+              parentRowValue="parent"
+              childRowsData={[nestedChild as any]}
+            />
+          </tbody>
+        </table>
+      </TreeTableContext.Provider>,
       { wrapper },
     );
 
