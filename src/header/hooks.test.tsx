@@ -108,7 +108,7 @@ describe('header utils', () => {
       });
       const actualItems =
         renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      expect(actualItems).toHaveLength(7);
+      expect(actualItems).toHaveLength(6);
     });
     it('when certificate page disabled should not include certificates option', () => {
       setConfig({
@@ -117,7 +117,7 @@ describe('header utils', () => {
       });
       const actualItems =
         renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      expect(actualItems).toHaveLength(6);
+      expect(actualItems).toHaveLength(5);
     });
     it('when user has access to advanced settings should include advanced settings option', () => {
       const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result
