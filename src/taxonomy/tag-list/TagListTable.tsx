@@ -155,6 +155,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     }
   }, [tagList?.results, tableMode]);
 
+  // TODO: remove after testing
   const openDeleteModalTest = () => {
     const firstRow = treeData[0];
 
@@ -169,6 +170,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     setIsDeleteModalOpen(true);
   };
 
+  // TODO: remove after testing
   const handleDeleteModalConfirm = (row: Row<TreeRowData>) => {
     const rowData = getTagListRowData(row);
 
