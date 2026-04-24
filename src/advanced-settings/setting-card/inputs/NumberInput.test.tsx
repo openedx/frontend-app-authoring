@@ -59,4 +59,16 @@ describe('<NumberInput />', () => {
     fireEvent.blur(getByRole('textbox'));
     expect(onBlur).toHaveBeenCalled();
   });
+
+  it('renders with empty value when no value prop is provided', () => {
+    // Covers the default value='' parameter branch (L14).
+    const { getByRole } = renderInput({ onChange: jest.fn() });
+    expect(getByRole('textbox')).toHaveValue('');
+  });
+
+  it('uses name as aria-label when displayName is empty', () => {
+    // Covers the displayName || name fallback branch (L36).
+    const { getByRole } = renderInput({ value: 3, onChange: jest.fn(), displayName: '' });
+    expect(getByRole('textbox')).toHaveAttribute('aria-label', 'maxAttempts');
+  });
 });

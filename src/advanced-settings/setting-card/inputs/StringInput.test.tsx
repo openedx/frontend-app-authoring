@@ -51,4 +51,23 @@ describe('<StringInput />', () => {
     fireEvent.change(getByRole('textbox'), { target: { value: 'typing...' } });
     expect(onBlur).not.toHaveBeenCalled();
   });
+
+  it('renders with empty value when no value prop is provided', () => {
+    // Covers the default value='' parameter branch (L13).
+    const { getByRole } = renderInput({ onChange: jest.fn() });
+    expect(getByRole('textbox')).toHaveValue('');
+  });
+
+  it('uses name as aria-label when displayName is empty', () => {
+    // Covers the displayName || name fallback branch (L26).
+    const { getByRole } = renderInput({ value: 'test', onChange: jest.fn(), displayName: '' });
+    expect(getByRole('textbox')).toHaveAttribute('aria-label', 'displayName');
+  });
+
+  it('renders with empty value when value is null', () => {
+    // Covers the `value ?? ""` null branch (L22).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { getByRole } = renderInput({ value: null as any, onChange: jest.fn() });
+    expect(getByRole('textbox')).toHaveValue('');
+  });
 });

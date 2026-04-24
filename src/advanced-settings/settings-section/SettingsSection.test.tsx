@@ -9,6 +9,12 @@ jest.mock(
   () => jest.fn(({ name }: { name: string; }) => <div data-testid={`setting-card-${name}`}>{name}</div>),
 );
 
+// Mock CourseDisplayOverrides to isolate SettingsSection behaviour.
+jest.mock(
+  './CourseDisplayOverrides',
+  () => jest.fn(() => <div data-testid="course-display-overrides" />),
+);
+
 const defaultProps = {
   category: 'Grading',
   settingsEntries: [] as SettingEntry[],
@@ -92,6 +98,48 @@ describe('<SettingsSection />', () => {
     // Click the trigger to collapse
     fireEvent.click(trigger);
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('re-opens the section when forceOpen changes to true after being collapsed', () => {
+    const { getByRole, rerender } = renderSection({
+      settingsEntries: [makeEntry('noGrade')],
+      expandAll: false, // start collapsed
+      forceOpen: false,
+    });
+    expect(getByRole('button')).toHaveAttribute('aria-expanded', 'false');
+
+    rerender(
+      <SettingsSection
+        {...defaultProps}
+        settingsEntries={[makeEntry('noGrade')]}
+        expandAll={false}
+        forceOpen
+      />,
+    );
+    expect(getByRole('button')).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('renders CourseDisplayOverrides for display-override keys in the General Setting category', () => {
+    const { getByTestId, queryByTestId } = renderSection({
+      category: 'General Setting',
+      settingsEntries: [
+        makeEntry('displayName'),
+        makeEntry('displayCoursenumber'),
+        makeEntry('otherSetting'),
+      ],
+    });
+    expect(getByTestId('course-display-overrides')).toBeInTheDocument();
+    expect(getByTestId('setting-card-otherSetting')).toBeInTheDocument();
+    expect(queryByTestId('setting-card-displayName')).toBeNull();
+  });
+
+  it('renders only SettingCards when no display-override keys are in the General Setting category', () => {
+    const { queryByTestId, getByTestId } = renderSection({
+      category: 'General Setting',
+      settingsEntries: [makeEntry('otherSetting')],
+    });
+    expect(queryByTestId('course-display-overrides')).toBeNull();
+    expect(getByTestId('setting-card-otherSetting')).toBeInTheDocument();
   });
 
   it('renders subcategory headers when a subcategoryMap is provided', () => {

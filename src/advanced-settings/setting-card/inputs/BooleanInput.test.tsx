@@ -36,4 +36,9 @@ describe('<BooleanInput />', () => {
     fireEvent.click(getByRole('switch'));
     expect(onChange).toHaveBeenCalledWith(false);
   });
+
+  it('uses name as aria-label when displayName is empty', () => {
+    const { getByRole } = renderInput({ value: true, onChange: jest.fn(), displayName: '' });
+    expect(getByRole('switch')).toHaveAttribute('aria-label', 'selfPaced');
+  });
 });

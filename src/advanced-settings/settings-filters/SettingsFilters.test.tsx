@@ -79,4 +79,14 @@ describe('<SettingsFilters />', () => {
     fireEvent.click(getByText(messages.hideDeprecated.defaultMessage));
     expect(onDeprecatedChange).toHaveBeenCalledWith(false);
   });
+
+  it('calls onFilterChange with empty string when the search is cleared', () => {
+    const onFilterChange = jest.fn();
+    // Trigger the form reset event — this is what Paragon's SearchField fires
+    // when the clear (type="reset") button is clicked.
+    const { container } = renderFilters({ onFilterChange });
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    fireEvent.reset(container.querySelector('form')!);
+    expect(onFilterChange).toHaveBeenCalledWith('');
+  });
 });

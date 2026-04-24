@@ -15,6 +15,8 @@ import JsonInput from './JsonInput';
  * `onBlurRef.current`, which is kept up-to-date on every render.
  */
 let registeredBlurHandler: (() => void) | null = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let capturedUpdateListener: ((update: any) => void) | null = null;
 
 jest.mock('codemirror', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,7 +26,13 @@ jest.mock('codemirror', () => {
     state: { doc: { length: 0, toString: () => '' } },
   }));
   EditorViewMock.theme = jest.fn(() => ({}));
-  EditorViewMock.updateListener = { of: jest.fn(() => ({})) };
+  EditorViewMock.updateListener = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    of: jest.fn((cb: (update: any) => void) => {
+      capturedUpdateListener = cb;
+      return {};
+    }),
+  };
   EditorViewMock.domEventHandlers = jest.fn((handlers: { blur: () => void; }) => {
     registeredBlurHandler = handlers.blur;
     return {};
@@ -47,6 +55,7 @@ describe('<JsonInput />', () => {
   beforeEach(() => {
     initializeMocks();
     registeredBlurHandler = null;
+    capturedUpdateListener = null;
   });
 
   it('calls the latest onBlur after re-renders, not the stale initial one', () => {
@@ -100,5 +109,45 @@ describe('<JsonInput />', () => {
     expect(onBlurUpdated).toHaveBeenCalledTimes(1);
     // The stale initial onBlur must NOT be called (that would commit initialValue)
     expect(onBlurInitial).not.toHaveBeenCalled();
+  });
+
+  it('calls onChange when a user-driven document change occurs', () => {
+    const onChange = jest.fn();
+    render(
+      <JsonInput
+        initialValue='[]'
+        onChange={onChange}
+        onBlur={jest.fn()}
+        isEditableState={false}
+      />,
+    );
+    expect(capturedUpdateListener).not.toBeNull();
+    // Simulate a user-driven change: docChanged=true, no programmatic annotation
+    capturedUpdateListener!({
+      docChanged: true,
+      transactions: [{ annotation: jest.fn().mockReturnValue(undefined) }],
+      state: { doc: { toString: () => '["new"]' } },
+    });
+    expect(onChange).toHaveBeenCalledWith('["new"]');
+  });
+
+  it('does not call onChange for programmatic dispatches', () => {
+    const onChange = jest.fn();
+    render(
+      <JsonInput
+        initialValue='[]'
+        onChange={onChange}
+        onBlur={jest.fn()}
+        isEditableState={false}
+      />,
+    );
+    expect(capturedUpdateListener).not.toBeNull();
+    // Simulate a programmatic dispatch (e.g. reset after cancel)
+    capturedUpdateListener!({
+      docChanged: true,
+      transactions: [{ annotation: jest.fn().mockReturnValue(true) }],
+      state: { doc: { toString: () => '["reset"]' } },
+    });
+    expect(onChange).not.toHaveBeenCalled();
   });
 });
