@@ -1465,7 +1465,7 @@ describe('<CourseUnit />', () => {
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id), {
-        publish: null,
+        publish: 'republish',
         metadata: { visible_to_staff_only: true, group_access: { 50: [2] }, discussion_enabled: true },
       })
       .reply(200, { dummy: 'value' });
