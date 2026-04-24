@@ -44,28 +44,35 @@ describe('useTableModes', () => {
 describe('useEditActions', () => {
   const buildActions = (overrides = {}) => {
     const createTagMutation = { mutateAsync: jest.fn() };
-    // mock updateTagMutation to have a function `mutateAsync` that returns a resolved promise
     const updateTagMutation = { mutateAsync: jest.fn() };
+    const deleteTagMutation = { mutateAsync: jest.fn() };
     const setTagTree = jest.fn();
     const setDraftError = jest.fn();
+    const enterDraftMode = jest.fn();
     const enterPreviewMode = jest.fn();
+    const enterViewMode = jest.fn();
     const setToast = jest.fn();
     const setIsCreatingTopTag = jest.fn();
     const setCreatingParentId = jest.fn();
     const exitDraftWithoutSave = jest.fn();
     const setEditingRowId = jest.fn();
+    const setActiveActionMenuRowId = jest.fn();
 
     const params = {
       setTagTree,
       setDraftError,
       createTagMutation: createTagMutation as any,
+      enterDraftMode,
       enterPreviewMode,
+      enterViewMode,
       setToast,
       setIsCreatingTopTag,
       setCreatingParentId,
       exitDraftWithoutSave,
       setEditingRowId,
       updateTagMutation: updateTagMutation as any,
+      deleteTagMutation: deleteTagMutation as any,
+      setActiveActionMenuRowId,
       ...(overrides as any),
     };
 
@@ -74,14 +81,18 @@ describe('useEditActions', () => {
     return {
       actions: result.current,
       createTagMutation,
+      deleteTagMutation,
       setTagTree,
       setDraftError,
+      enterDraftMode,
       enterPreviewMode,
+      enterViewMode,
       setToast,
       setIsCreatingTopTag,
       setCreatingParentId,
       exitDraftWithoutSave,
       setEditingRowId,
+      setActiveActionMenuRowId,
     };
   };
 
@@ -122,7 +133,7 @@ describe('useEditActions', () => {
     } = buildActions();
 
     await act(async () => {
-      await actions.handleUpdateTag('  same value  ', 'same value');
+      await actions.handleUpdateRow('  same value  ', 'same value');
     });
 
     expect(enterPreviewMode).not.toHaveBeenCalled();
@@ -139,7 +150,7 @@ describe('useEditActions', () => {
     } = buildActions();
 
     await act(async () => {
-      await actions.handleUpdateTag('updated', 'original');
+      await actions.handleUpdateRow('updated', 'original');
     });
 
     await waitFor(() => {
@@ -152,17 +163,12 @@ describe('useEditActions', () => {
     expect(setEditingRowId).toHaveBeenCalledWith(null);
   });
 
-  it('keeps draft open and shows failure toast when createTag request fails', async () => {
-    const {
-      actions,
-      createTagMutation,
-      setDraftError,
-      setToast,
-    } = buildActions();
+  it('keeps draft open and shows failure toast when createRow request fails', async () => {
+    const { actions, createTagMutation, setDraftError, setToast } = buildActions();
     createTagMutation.mutateAsync.mockRejectedValue(new Error('server failed'));
 
     await act(async () => {
-      await actions.handleCreateTag('new tag');
+      await actions.handleCreateRow('new tag');
     });
 
     expect(setDraftError).toHaveBeenCalledWith('server failed');

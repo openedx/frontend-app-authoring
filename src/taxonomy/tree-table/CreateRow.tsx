@@ -1,42 +1,41 @@
-import React from 'react';
-import type { CreateRowMutationState } from './types';
+import React, { useContext } from 'react';
 import DraftRow from './DraftRow';
+import { TreeTableContext } from './TreeTableContext';
 
 interface CreateRowProps {
-  draftError: string;
-  setDraftError: (error: string) => void;
-  handleCreateRow: (value: string) => void;
-  setIsCreatingTopRow: (isCreating: boolean) => void;
-  exitDraftWithoutSave: () => void;
-  createRowMutation: CreateRowMutationState;
+  handleCreateRow?: (value: string) => void;
+  exitDraftWithoutSave?: () => void;
   indent?: number;
-  validate: (value: string, mode?: 'soft' | 'hard') => boolean;
 }
 
 const CreateRow: React.FC<CreateRowProps> = ({
-  draftError,
-  setDraftError,
   handleCreateRow,
-  setIsCreatingTopRow,
   exitDraftWithoutSave,
-  createRowMutation,
   indent = 0,
-  validate,
 }) => {
+  const {
+    setDraftError,
+    handleCreateRow: contextHandleCreateRow,
+    setIsCreatingTopRow,
+    exitDraftWithoutSave: contextExitDraftWithoutSave,
+    createRowMutation,
+  } = useContext(TreeTableContext);
+
+  const onCreateRow = handleCreateRow ?? contextHandleCreateRow;
+  const onExitDraftWithoutSave = exitDraftWithoutSave ?? contextExitDraftWithoutSave;
+
   const handleCancel = () => {
     setDraftError('');
     setIsCreatingTopRow(false);
-    exitDraftWithoutSave();
+    onExitDraftWithoutSave();
   };
 
   return (
     <DraftRow
-      draftError={draftError}
-      onSave={handleCreateRow}
+      onSave={onCreateRow}
       onCancel={handleCancel}
       mutationState={createRowMutation}
       indent={indent}
-      validate={validate}
       rowId="creating-top-row"
       rowTestId="creating-top-row"
     />

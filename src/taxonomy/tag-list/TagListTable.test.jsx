@@ -1,5 +1,6 @@
 import React from 'react';
 import { AxiosError } from 'axios';
+import userEvent from '@testing-library/user-event';
 import {
   render,
   waitFor,
@@ -86,20 +87,11 @@ const mockTagsResponse = {
 
 const mockTagResponseDisallowingEdits = {
   ...mockTagsResponse,
-  results: mockTagsResponse.results.map(tag => ({
+  results: mockTagsResponse.results.map((tag) => ({
     ...tag,
     can_change_tag: false,
     can_delete_tag: false,
   })),
-};
-const mockTagsPaginationResponse = {
-  next: null,
-  previous: null,
-  count: 103,
-  num_pages: 2,
-  current_page: 1,
-  start: 0,
-  results: [],
 };
 const rootTagsListUrl =
   'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&include_counts=true';
@@ -124,6 +116,8 @@ const subTagsResponse = {
 const subTagsUrl =
   'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
 const createTagUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/';
+const deleteTagUrl = createTagUrl;
+const deleteConfirmMessage = 'Warning: are you sure you want to delete this tag and all its subtags and descendants? Any tags applied to course content will be deleted.';
 
 const renderTagListTable = (maxDepth = 3) => render(<TagListTable taxonomyId={1} maxDepth={maxDepth} />);
 
@@ -196,6 +190,25 @@ const openRenameDraftRow = async (tagName = 'root tag 1') => {
     saveButton,
     cancelButton,
   };
+};
+
+const buildTagsResponse = (results) => ({
+  ...mockTagsResponse,
+  count: results.filter((tag) => tag.depth === 0).length,
+  results,
+});
+
+const expectDeleteRequest = async ({ tagName, withSubtags }) => {
+  await waitFor(() => {
+    expect(axiosMock.history.delete.length).toBe(1);
+    expect(axiosMock.history.delete[0].url).toBe(deleteTagUrl);
+    expect(axiosMock.history.delete[0].data).toEqual(
+      JSON.stringify({
+        tags: [tagName],
+        with_subtags: withSubtags,
+      }),
+    );
+  });
 };
 
 describe('<TagListTable />', () => {
@@ -279,24 +292,6 @@ describe('<TagListTable />', () => {
         name: /table pagination/i,
       })).not.toBeInTheDocument();
     });
-  });
-
-  // temporarily skipped because pagination is not implemented yet
-  it.skip('should render pagination footer', async () => {
-    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsPaginationResponse);
-    renderTagListTable();
-    const tableFooter = await screen.findAllByRole('navigation', {
-      name: /table pagination/i,
-    });
-    expect(tableFooter[0]).toBeInTheDocument();
-  });
-
-  // temporarily skipped because pagination is not implemented yet
-  it.skip('should render correct number of items in pagination footer', async () => {
-    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsPaginationResponse);
-    renderTagListTable();
-    const paginationButtons = await screen.findByText('Page 1 of 2');
-    expect(paginationButtons).toBeInTheDocument();
   });
 
   describe('Create a new top-level tag', () => {
@@ -458,38 +453,6 @@ describe('<TagListTable />', () => {
         });
         const temporaryRow = await screen.findByText('xyz tag');
         expect(temporaryRow).toBeInTheDocument();
-      });
-
-      // temporarily skipped because pagination is not implemented yet
-      it.skip('should refresh the table and remove the temporary row when a pagination button is clicked', async () => {
-        axiosMock.onPost(createTagUrl).reply(201, {
-          ...tagDefaults,
-          value: 'xyz tag',
-          child_count: 0,
-          _id: 1234,
-        });
-        const { creatingRow, input } = await openTopLevelDraftRow();
-
-        fireEvent.change(input, { target: { value: 'xyz tag' } });
-        const saveButton = within(creatingRow).getByRole('button', { name: 'Save' });
-        fireEvent.click(saveButton);
-        const temporaryRow = await screen.findByText('xyz tag');
-        // temporaryRow should be at the top of the table, that is, the first row after the header
-        const rows = screen.getAllByRole('row');
-        expect(rows[1]).toContainElement(temporaryRow);
-
-        // Simulate clicking a pagination button
-        const paginationButton = await screen.findByRole('button', { name: 'Go to page 2' });
-        fireEvent.click(paginationButton);
-
-        await waitFor(() => {
-          // A get request should have refreshed the table data
-          expect(axiosMock.history.get.length).toBeGreaterThan(1);
-          const xyzTagRow = screen.queryByText('xyz tag');
-          expect(xyzTagRow).toBeInTheDocument();
-          // expect the row to not be the first row after the header
-          expect(rows[1]).not.toContainElement(xyzTagRow);
-        });
       });
 
       // a bit flaky when ran together with other tests - any way to improve this?
@@ -991,6 +954,165 @@ describe('<TagListTable />', () => {
       expect(within(grandchildTagRow).getByText('Add Subtag')).toHaveAttribute('aria-disabled', 'true');
     });
   });
+
+  describe('Delete Tags', () => {
+    let confirmSpy;
+
+    beforeEach(() => {
+      confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
+    });
+
+    afterEach(() => {
+      confirmSpy.mockRestore();
+    });
+
+    const tagDepthScenarios = [
+      {
+        description: 'Delete a top-level tag',
+        tagName: 'root tag 1',
+      },
+      { description: 'Delete a sub-tag', tagName: 'the child tag' },
+      { description: 'Delete a grandchild tag', tagName: 'the grandchild tag' },
+    ];
+
+    tagDepthScenarios.forEach(({ description, tagName }) => {
+      describe(description, () => {
+        beforeEach(async () => {
+          axiosMock.resetHistory();
+        });
+
+        it('should disable delete action if tag includes `can_delete: false`', async () => {
+          axiosMock.reset();
+          axiosMock
+            .onGet(rootTagsListUrl)
+            .reply(200, mockTagResponseDisallowingEdits);
+          axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
+          cleanup();
+          ({ axiosMock } = initializeMocks({ user: adminUser }));
+          axiosMock
+            .onGet(rootTagsListUrl)
+            .reply(200, mockTagResponseDisallowingEdits);
+          axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
+          renderTagListTable();
+          await waitForRootTag();
+
+          openActionsMenuForTag(tagName);
+          const deleteButton = screen.getByRole('button', { name: /Delete/i });
+          expect(deleteButton).toBeInTheDocument();
+          expect(deleteButton).toHaveAttribute('aria-disabled', 'true');
+        });
+      });
+    });
+
+    it('asks for browser confirmation before deleting a leaf tag and deletes after acceptance', async () => {
+      axiosMock.reset();
+      axiosMock.onDelete(deleteTagUrl).reply(204);
+      axiosMock
+        .onGet(rootTagsListUrl)
+        .reply(
+          200,
+          buildTagsResponse(
+            mockTagsResponse.results.filter(
+              (tag) => tag.value !== 'root tag 2',
+            ),
+          ),
+        );
+
+      expect(screen.queryByText('root tag 2')).toBeInTheDocument();
+
+      openActionsMenuForTag('root tag 2');
+      fireEvent.click(screen.getByRole('button', { name: /^Delete$/i }));
+
+      expect(confirmSpy).toHaveBeenCalledWith(deleteConfirmMessage);
+      await expectDeleteRequest({ tagName: 'root tag 2', withSubtags: false });
+      expect(
+        await screen.findByText(
+          '1 tag(s) deleted. This change will be applied across all tagged content.',
+        ),
+      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.queryByText('root tag 2')).not.toBeInTheDocument();
+      });
+    });
+
+    it('deletes a parent tag together with all rendered descendants after browser confirmation', async () => {
+      fireEvent.click(screen.getAllByText('Expand All')[0]);
+      await screen.findByText('the child tag');
+      await screen.findByText('the grandchild tag');
+
+      axiosMock.reset();
+      axiosMock.onDelete(deleteTagUrl).reply(204);
+      axiosMock
+        .onGet(rootTagsListUrl)
+        .reply(
+          200,
+          buildTagsResponse(
+            mockTagsResponse.results.filter(
+              (tag) =>
+                !['root tag 1', 'the child tag', 'the grandchild tag'].includes(
+                  tag.value,
+                ),
+            ),
+          ),
+        );
+
+      openActionsMenuForTag('root tag 1');
+      fireEvent.click(screen.getByRole('button', { name: /^Delete$/i }));
+
+      expect(confirmSpy).toHaveBeenCalledWith(deleteConfirmMessage);
+      await expectDeleteRequest({ tagName: 'root tag 1', withSubtags: true });
+      expect(
+        await screen.findByText(
+          '3 tag(s) deleted. This change will be applied across all tagged content.',
+        ),
+      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.queryByText('root tag 1')).not.toBeInTheDocument();
+        expect(screen.queryByText('the child tag')).not.toBeInTheDocument();
+        expect(
+          screen.queryByText('the grandchild tag'),
+        ).not.toBeInTheDocument();
+        expect(screen.getByText('root tag 2')).toBeInTheDocument();
+      });
+    });
+
+    it('does not issue a delete request when browser confirmation is canceled and leaves the table unchanged', async () => {
+      confirmSpy.mockReturnValue(false);
+
+      openActionsMenuForTag('root tag 1');
+      fireEvent.click(screen.getByRole('button', { name: /^Delete$/i }));
+
+      expect(confirmSpy).toHaveBeenCalledWith(deleteConfirmMessage);
+      expect(axiosMock.history.delete.length).toBe(0);
+      expect(screen.getByText('root tag 1')).toBeInTheDocument();
+    });
+
+    it('surfaces a failed delete through both the persistent error alert and the delete-error toast while leaving the row visible', async () => {
+      axiosMock.reset();
+      axiosMock.onDelete(deleteTagUrl).reply(() => {
+        const error = new AxiosError('Request failed with status code 500');
+        error.response = {
+          data: {
+            value: ['Delete failed'],
+          },
+        };
+        return Promise.reject(error);
+      });
+
+      openActionsMenuForTag('root tag 1');
+      fireEvent.click(screen.getByRole('button', { name: /^Delete$/i }));
+
+      expect(confirmSpy).toHaveBeenCalledWith(deleteConfirmMessage);
+      await expectDeleteRequest({ tagName: 'root tag 1', withSubtags: true });
+      expect(
+        await screen.findByText('Error saving changes'),
+      ).toBeInTheDocument();
+      expect(
+        await screen.findByText('Error deleting tag: Delete failed'),
+      ).toBeInTheDocument();
+      expect(screen.getByText('root tag 1')).toBeInTheDocument();
+    });
+  });
 });
 
 // These async creation flows are intentionally isolated because they pass individually
@@ -1206,12 +1328,15 @@ describe('<TagListTable /> pagination transition behavior', () => {
       mutateAsync: jest.fn(),
     });
     jest.spyOn(hooksModule, 'useEditActions').mockReturnValue({
-      handleCreateTag: jest.fn(),
-      handleUpdateTag: jest.fn(),
+      handleCreateRow: jest.fn(),
+      handleUpdateRow: jest.fn(),
+      startSubtagDraft: jest.fn(),
+      startEditRow: jest.fn(),
+      startDeleteRow: jest.fn(),
       validate: jest.fn(() => true),
     });
-    jest.spyOn(treeTableModule, 'TableView').mockImplementation((props) => {
-      tableViewProps = props;
+    jest.spyOn(treeTableModule, 'TableView').mockImplementation(() => {
+      tableViewProps = React.useContext(treeTableModule.TreeTableContext);
       return <div data-testid="mock-table-view" />;
     });
   });
