@@ -1,6 +1,5 @@
 import React from 'react';
 import { AxiosError } from 'axios';
-import userEvent from '@testing-library/user-event';
 import {
   render,
   waitFor,
@@ -12,9 +11,9 @@ import {
   cleanup,
   initializeMocks,
 } from '@src/testUtils';
-import * as apiHooksModule from '../data/apiHooks';
+import * as apiHooksModule from '@src/taxonomy/data/apiHooks';
+import * as treeTableModule from '@src/taxonomy/tree-table';
 import * as hooksModule from './hooks';
-import * as treeTableModule from '../tree-table';
 import TagListTable from './TagListTable';
 
 let axiosMock;
@@ -117,7 +116,8 @@ const subTagsUrl =
   'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
 const createTagUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/';
 const deleteTagUrl = createTagUrl;
-const deleteConfirmMessage = 'Warning: are you sure you want to delete this tag and all its subtags and descendants? Any tags applied to course content will be deleted.';
+const deleteConfirmMessage =
+  'Warning: are you sure you want to delete this tag and all its subtags and descendants? Any tags applied to course content will be deleted.';
 
 const renderTagListTable = (maxDepth = 3) => render(<TagListTable taxonomyId={1} maxDepth={maxDepth} />);
 

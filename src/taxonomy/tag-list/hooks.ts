@@ -18,7 +18,8 @@ import messages from './messages';
 import { getTagListRowData, getTagWithDescendantsCount } from './utils';
 import { Row } from '@tanstack/react-table';
 
-const DELETE_CONFIRM_MESSAGE = 'Warning: are you sure you want to delete this tag and all its subtags and descendants? Any tags applied to course content will be deleted.';
+const DELETE_CONFIRM_MESSAGE =
+  'Warning: are you sure you want to delete this tag and all its subtags and descendants? Any tags applied to course content will be deleted.';
 
 /** Interface for table mode actions for React's `useReducer` hook.
  *
