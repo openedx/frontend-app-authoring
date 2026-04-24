@@ -115,7 +115,7 @@ describe('<JsonInput />', () => {
     const onChange = jest.fn();
     render(
       <JsonInput
-        initialValue='[]'
+        initialValue="[]"
         onChange={onChange}
         onBlur={jest.fn()}
         isEditableState={false}
@@ -135,7 +135,7 @@ describe('<JsonInput />', () => {
     const onChange = jest.fn();
     render(
       <JsonInput
-        initialValue='[]'
+        initialValue="[]"
         onChange={onChange}
         onBlur={jest.fn()}
         isEditableState={false}
