@@ -25,10 +25,6 @@ const DeleteModal = ({
 }: DeleteModalProps) => {
   const intl = useIntl();
 
-  if (!row) {
-    return null;
-  }
-
   const handleConfirm = (row: Row<TreeRowData>) => {
     handleDeleteRow(row);
     setIsOpen(false);
@@ -40,8 +36,12 @@ const DeleteModal = ({
     setRow(null);
   };
 
-  const rowData = getTagListRowData(row);
-  const count = useMemo(() => getTagWithDescendantsCount(rowData), [rowData]);
+  const rowData = row ? getTagListRowData(row) : null;
+  const count = useMemo(() => (rowData ? getTagWithDescendantsCount(rowData) : 0), [rowData]);
+
+  if (!row) {
+    return null;
+  }
 
   const hasSubtags = count > 1;
   const typeToDeleteText = hasSubtags
