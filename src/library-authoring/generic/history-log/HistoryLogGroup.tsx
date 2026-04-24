@@ -105,13 +105,24 @@ const HistoryLogGroupEntries = ({
 }: HistoryLogGroupEntriesProps) => {
   const intl = useIntl();
 
+  const getEntryMessage = (entry: LibraryHistoryEntry) => {
+    switch (entry.action) {
+      case 'edited':
+        return messages.historyEditEntry;
+      case 'renamed':
+        return messages.historyRenameEntry;
+      case 'created':
+        return messages.historyCreatedEntry;
+      default:
+        return messages.historyEditEntry;
+    }
+  };
+
   return (
     <Stack gap={0}>
       <div className="history-log-vert" />
       {entries.map((entry) => {
-        const entryMessage = entry.action === 'edited'
-          ? messages.historyEditEntry
-          : messages.historyRenameEntry;
+        const entryMessage = getEntryMessage(entry);
 
         return (
           <div key={entry.changedAt}>

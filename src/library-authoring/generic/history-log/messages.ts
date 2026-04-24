@@ -36,6 +36,16 @@ const messages = defineMessages({
     defaultMessage: '{user} renamed {icon} {displayName}',
     description: 'Rename entry of the history log.',
   },
+  historyCreatedEntry: {
+    id: 'course-authoring.library-authoring.history.created-entry',
+    defaultMessage: '{user} created {icon} {displayName}',
+    description: 'Created entry of the history log.',
+  },
+  historyDeletedEntry: {
+    id: 'course-authoring.library-authoring.history.deleted-entry',
+    defaultMessage: '{user} deleted {icon} {displayName}',
+    description: 'Deleted entry of the history log.',
+  },
   historyEntryDefaultUser: {
     id: 'course-authoring.library-authoring.history.default-user',
     defaultMessage: 'Author',

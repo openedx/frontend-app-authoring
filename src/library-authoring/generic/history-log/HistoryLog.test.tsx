@@ -136,6 +136,33 @@ describe('<HistoryComponentLog />', () => {
     mockLibraryBlockPublishHistory.data = originalData;
   });
 
+  it('renders draft entry with "created" action', async () => {
+    const user = userEvent.setup();
+    const originalData = mockLibraryBlockDraftHistory.data;
+    mockLibraryBlockDraftHistory.data = [
+      {
+        changedBy: {
+          username: 'creator_user',
+          profileImageUrls: {
+            full: 'icon/mock/path',
+            large: 'icon/mock/path',
+            medium: 'icon/mock/path',
+            small: 'icon/mock/path',
+          },
+        },
+        changedAt: '2026-03-16T11:00:00Z',
+        title: 'New Component',
+        itemType: 'html',
+        action: 'created',
+      },
+    ] as any;
+    renderComponent(mockLibraryBlockCreationEntry.usageKey);
+    const trigger = await findByDeepTextContent(/Introduction to Testing 1 is a draft/i);
+    await user.click(trigger);
+    expect(await findByDeepTextContent(/creator_user created.*New Component/i)).toBeInTheDocument();
+    mockLibraryBlockDraftHistory.data = originalData;
+  });
+
   it('renders publish group without collapsible and without contributor count when contributors is empty', async () => {
     const originalData = mockLibraryBlockPublishHistory.data;
     mockLibraryBlockPublishHistory.data = [
@@ -190,6 +217,33 @@ describe('<HistoryContainerLog />', () => {
     renderContainerComponent(mockLibraryContainerDraftHistory.containerKeyEmpty);
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
     expect(screen.queryByText(/published/i)).not.toBeInTheDocument();
+  });
+
+  it('renders draft entry with "created" action', async () => {
+    const user = userEvent.setup();
+    const originalData = mockLibraryContainerDraftHistory.data;
+    mockLibraryContainerDraftHistory.data = [
+      {
+        changedBy: {
+          username: 'creator_user',
+          profileImageUrls: {
+            full: 'icon/mock/path',
+            large: 'icon/mock/path',
+            medium: 'icon/mock/path',
+            small: 'icon/mock/path',
+          },
+        },
+        changedAt: '2026-03-16T11:00:00Z',
+        title: 'New Unit',
+        itemType: 'unit',
+        action: 'created',
+      },
+    ] as any;
+    renderContainerComponent(mockLibraryContainerDraftHistory.containerKey);
+    const trigger = await findByDeepTextContent(/Test Unit is a draft/i);
+    await user.click(trigger);
+    expect(await findByDeepTextContent(/creator_user created.*New Unit/i)).toBeInTheDocument();
+    mockLibraryContainerDraftHistory.data = originalData;
   });
 
   it('always renders the created group', async () => {
