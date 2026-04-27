@@ -108,13 +108,17 @@ export const ItemHierarchy = ({
   } = data;
 
   // Returns a message describing the publish status of the given hierarchy row.
-  const publishMessage = (contents: ItemHierarchyMember[]) => {
+  const publishMessage = (
+    contents: ItemHierarchyMember[],
+    isParentOfSelectedRow = false,
+  ) => {
     // If we're not showing publish status, then we don't need a publish message
-    if (!showPublishStatus) {
+    if (!showPublishStatus || isParentOfSelectedRow) {
       return undefined;
     }
 
     // If any item has unpublished changes, mark this row as Draft.
+    // Skip Draft for parent rows of currently selected row.
     if (contents.some((item) => item.hasUnpublishedChanges)) {
       return messages.draftChipText;
     }
@@ -155,7 +159,7 @@ export const ItemHierarchy = ({
           showArrow={showSubsections}
           selected={selectedSections}
           willPublish={selectedSections}
-          publishMessage={publishMessage(sections)}
+          publishMessage={publishMessage(sections, selectedSubsections || selectedUnits || selectedComponents)}
         />
       )}
       {showSubsections && (
@@ -171,7 +175,7 @@ export const ItemHierarchy = ({
           showArrow={showUnits}
           selected={selectedSubsections}
           willPublish={selectedSubsections || selectedSections}
-          publishMessage={publishMessage(subsections)}
+          publishMessage={publishMessage(subsections, selectedUnits || selectedComponents)}
         />
       )}
       {showUnits && (
@@ -187,7 +191,7 @@ export const ItemHierarchy = ({
           showArrow={showComponents}
           selected={selectedUnits}
           willPublish={selectedUnits || selectedSubsections || selectedSections}
-          publishMessage={publishMessage(units)}
+          publishMessage={publishMessage(units, selectedComponents)}
         />
       )}
       {showComponents && (
