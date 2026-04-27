@@ -2542,7 +2542,7 @@ describe('<CourseUnit />', () => {
       });
     await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
 
-    expect(screen.getByText(/this unit can only be edited from the \./i)).toBeInTheDocument();
+    expect(screen.getByText(messages.alertLibraryUnitReadOnlyLinkText.defaultMessage)).toBeInTheDocument();
 
     // Edit button should be enabled even for library imported units
     const unitHeaderTitle = screen.getByTestId('unit-header-title');
@@ -3451,7 +3451,7 @@ describe('<CourseUnit />', () => {
       });
     await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
 
-    expect(screen.getByText(/this unit can only be edited from the \./i)).toBeInTheDocument();
+    expect(screen.getByText(messages.alertLibraryUnitReadOnlyLinkText.defaultMessage)).toBeInTheDocument();
 
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();

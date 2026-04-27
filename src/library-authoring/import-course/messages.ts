@@ -171,7 +171,7 @@ const messages = defineMessages({
   },
   importCourseAnalysisCompleteAllContentBody: {
     id: 'library-authoring.import-course.review-details.analysis-complete.100.body',
-    defaultMessage: 'All course content will imported into a collection in your library called {courseName}. See details below.',
+    defaultMessage: 'All course content will be imported into a collection in your library called {courseName}. See details below.',
     description: 'Body of the info card when course import analysis is complete and all data can be imported.',
   },
   importCourseAnalysisCompleteSomeContentTitle: {
