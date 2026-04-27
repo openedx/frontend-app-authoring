@@ -139,32 +139,24 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
     containerId: unitId,
     childType: 'component',
     willPublishCount: 2,
-    parentType: 'subsection',
-    parentCount: 3,
   },
   {
     containerType: ContainerType.Subsection,
     containerId: subsectionId,
     childType: 'unit',
     willPublishCount: 3,
-    parentType: 'section',
-    parentCount: 2,
   },
   {
     containerType: ContainerType.Section,
     containerId: sectionId,
     childType: 'subsection',
     willPublishCount: 4,
-    parentType: '',
-    parentCount: 0,
   },
 ].forEach(({
   containerId,
   containerType,
   childType,
   willPublishCount,
-  parentType,
-  parentCount,
 }) => {
   describe(`<ContainerInfo /> with containerType: ${containerType}`, () => {
     beforeEach(() => {
@@ -250,16 +242,8 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
           'i',
         ),
       )).toBeInTheDocument();
-      if (parentCount > 0) {
-        expect(screen.getByText(
-          new RegExp(
-            `Its parent ${parentType}s will be`, // <srong>draft</strong>
-            'i',
-          ),
-        )).toBeInTheDocument();
-      }
       expect(screen.queryAllByText('Will Publish').length).toBe(willPublishCount);
-      expect(screen.queryAllByText('Draft').length).toBe(4 - willPublishCount);
+      expect(screen.queryAllByText('Draft').length).toBe(0);
 
       // Click on the confirm Cancel button
       const publishCancel = await screen.findByRole('button', { name: 'Cancel' });
@@ -306,7 +290,7 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
       expect(mockShowToast).toHaveBeenCalledWith('Failed to publish changes');
     });
 
-    it(`shows single child / parent message before publishing the ${containerType}`, async () => {
+    it(`shows single child message before publishing the ${containerType}`, async () => {
       const user = userEvent.setup();
       render(singleChild(containerId), containerType);
 
@@ -323,14 +307,6 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
           'i',
         ),
       )).toBeInTheDocument();
-      if (parentCount) {
-        expect(screen.getByText(
-          new RegExp(
-            `Its parent ${parentType} will be`, // <strong>draft</strong>
-            'i',
-          ),
-        )).toBeInTheDocument();
-      }
     });
 
     it(`omits child count before publishing an empty ${containerType}`, async () => {
