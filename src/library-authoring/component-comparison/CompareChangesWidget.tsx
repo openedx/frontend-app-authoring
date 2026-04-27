@@ -51,7 +51,7 @@ const CompareChangesWidget = ({
     <Card className={classNames('flex-1 min-w-0', { 'border-0': !sideBySide })}>
       <Card.Body
         className="p-4 bg-white overflow-auto"
-        style={{ height: '70vh' }}
+        style={{ height: '60vh' }}
       >
         {sideBySide && (
           <h3 className="w-100 text-center mb-4">
@@ -68,9 +68,9 @@ const CompareChangesWidget = ({
             <LibraryBlock
               usageKey={oldUsageKey || usageKey}
               version={oldVersion}
-              minHeight="50vh"
+              minHeight="45vh"
               showTitle={showTitle}
-              addHeight={40}
+              addHeight={70}
             />
           </IframeProvider>
         </div>
@@ -82,7 +82,7 @@ const CompareChangesWidget = ({
     <Card className={classNames('flex-1 min-w-0', { 'border-0': !sideBySide })}>
       <Card.Body
         className="p-4 bg-white overflow-auto"
-        style={{ height: '70vh' }}
+        style={{ height: '60vh' }}
       >
         {sideBySide && (
           <h3 className="w-100 text-center mb-4">
@@ -94,8 +94,8 @@ const CompareChangesWidget = ({
             usageKey={usageKey}
             version={newVersion}
             showTitle={showNewTitle || showTitle}
-            minHeight="50vh"
-            addHeight={40}
+            minHeight="45vh"
+            addHeight={70}
           />
         </IframeProvider>
       </Card.Body>

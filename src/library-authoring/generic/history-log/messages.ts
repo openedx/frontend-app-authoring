@@ -71,6 +71,11 @@ const messages = defineMessages({
     defaultMessage: 'Show this version',
     description: 'Action to open the version comparison modal for a history entry.',
   },
+  doneButton: {
+    id: 'course-authoring.library-authoring.history.done-button',
+    defaultMessage: 'Done',
+    description: 'Button label to close preview changes modal.',
+  },
 });
 
 export default messages;
