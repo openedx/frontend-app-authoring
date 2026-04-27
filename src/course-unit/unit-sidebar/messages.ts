@@ -46,6 +46,11 @@ const messages = defineMessages({
     defaultMessage: 'Open Response',
     description: 'Label for the button to create a new Open Response block',
   },
+  sidebarAddProblemBankButton: {
+    id: 'course-authoring.unit-page.sidebar.add.new.problem-bank',
+    defaultMessage: 'Problem Bank',
+    description: 'Label for the button to create a new Problem Bank block',
+  },
   sidebarAddDragDropButton: {
     id: 'course-authoring.unit-page.sidebar.add.new.drag-and-drop',
     defaultMessage: 'Drag Drop',
