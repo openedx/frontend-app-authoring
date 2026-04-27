@@ -1,3 +1,4 @@
+import { userEvent } from '@testing-library/user-event';
 import { render, screen, initializeMocks } from '@src/testUtils';
 
 import HistoryCompareChangesModal from './HistoryCompareChangesModal';
@@ -43,6 +44,26 @@ describe('<HistoryCompareChangesModal />', () => {
     expect(await screen.findByTestId('compare-changes-widget')).toHaveAttribute('data-new-version', 'published');
     expect(await screen.findByTestId('compare-changes-widget')).toHaveAttribute('data-side-by-side', 'true');
     expect(await screen.findByTestId('compare-changes-widget')).toHaveAttribute('data-show-title', 'true');
+    expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument();
+  });
+
+  it('closes modal when clicking done button', async () => {
+    const onClose = jest.fn();
+    const user = userEvent.setup();
+
+    render(
+      <HistoryCompareChangesModal
+        isOpen
+        onClose={onClose}
+        usageKey="lb:org:lib:type:id"
+        oldTitle="Electron Arcs"
+        oldVersion={3}
+        newVersion="published"
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Done' }));
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('renders nothing for container usage keys', () => {

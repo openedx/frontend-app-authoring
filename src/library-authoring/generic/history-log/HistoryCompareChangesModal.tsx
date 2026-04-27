@@ -1,4 +1,4 @@
-import { Icon, ModalDialog, Stack } from '@openedx/paragon';
+import { Button, Icon, ModalDialog, Stack } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import CompareChangesWidget from '@src/library-authoring/component-comparison/CompareChangesWidget';
@@ -49,7 +49,7 @@ const HistoryCompareChangesModal = ({
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          <Stack direction='horizontal'>
+          <Stack direction='horizontal' gap={2}>
             <FormattedMessage
               {...messages.previewChangesTitle}
               values={{
@@ -74,6 +74,11 @@ const HistoryCompareChangesModal = ({
           showTitle
         />
       </ModalDialog.Body>
+      <ModalDialog.Footer>
+        <Button onClick={onClose}>
+          {intl.formatMessage(messages.doneButton)}
+        </Button>
+      </ModalDialog.Footer>
     </ModalDialog>
   );
 };
