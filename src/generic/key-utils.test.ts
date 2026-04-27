@@ -3,6 +3,8 @@ import {
   ContainerType,
   getBlockType,
   getLibraryId,
+  isContainerType,
+  isContainerUsageKey,
   isLibraryKey,
   isLibraryV1Key,
   normalizeContainerType,
@@ -162,6 +164,58 @@ describe('component utils', () => {
     ) {
       it(`returns '${expected}' for '${containerType}'`, () => {
         expect(normalizeContainerType(containerType)).toStrictEqual(expected);
+      });
+    }
+  });
+
+  describe('isContainerType', () => {
+    for (const containerType of [
+      ContainerType.Vertical,
+      ContainerType.Sequential,
+      ContainerType.Chapter,
+      ContainerType.Unit,
+      ContainerType.Subsection,
+      ContainerType.Section,
+    ] as const) {
+      it(`returns true for '${containerType}'`, () => {
+        expect(isContainerType(containerType)).toBe(true);
+      });
+    }
+
+    for (const containerType of ['html', 'problem', '', 'video']) {
+      it(`returns false for '${containerType}'`, () => {
+        expect(isContainerType(containerType)).toBe(false);
+      });
+    }
+  });
+
+  describe('isContainerUsageKey', () => {
+    for (const usageKey of [
+      'lct:org:lib:section:my-section-9284e2',
+      'lct:org:lib:subsection:my-subsection-9284e2',
+      'lct:org:lib:unit:my-unit-9284e2',
+      'block-v1:org+type@chapter+block@1',
+      'block-v1:org+type@sequential+block@1',
+      'block-v1:org+type@vertical+block@1',
+      'block-v1:org+type@section+block@1',
+      'block-v1:org+type@subsection+block@1',
+      'block-v1:org+type@unit+block@1',
+    ]) {
+      it(`returns true for '${usageKey}'`, () => {
+        expect(isContainerUsageKey(usageKey)).toBe(true);
+      });
+    }
+
+    for (const usageKey of [
+      'lb:org:lib:html:id',
+      'block-v1:org+type@problem+block@1',
+      'not a key',
+      '',
+      undefined,
+      null,
+    ]) {
+      it(`returns false for '${usageKey}'`, () => {
+        expect(isContainerUsageKey(usageKey as any)).toBe(false);
       });
     }
   });

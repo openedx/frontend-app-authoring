@@ -10,6 +10,7 @@ import {
   mockLibraryBlockDraftHistory,
   mockLibraryBlockPublishHistory,
   mockLibraryBlockPublishHistoryEntries,
+  mockLibraryContainerDraftHistory,
 } from '@src/library-authoring/data/api.mocks';
 import { HistoryDraftLogGroup, HistoryPublishLogGroup } from './HistoryLogGroup';
 
@@ -19,6 +20,7 @@ mockLibraryBlockPublishHistoryEntries.applyMock();
 
 const draftEntries = mockLibraryBlockDraftHistory.data;
 const publishGroup = mockLibraryBlockPublishHistory.data[0];
+const containerDraftEntries = mockLibraryContainerDraftHistory.data;
 
 describe('<HistoryLogGroup />', () => {
   beforeEach(() => {
@@ -67,5 +69,23 @@ describe('<HistoryLogGroup />', () => {
     await user.click(await screen.findByText('Show this version'));
 
     expect(await screen.findByText('Preview changes: Protons')).toBeInTheDocument();
+  });
+
+  it('hides entry action dropdown for container item ids', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <HistoryDraftLogGroup
+        itemId={mockLibraryContainerDraftHistory.containerKey}
+        displayName="Intro Unit"
+        entries={containerDraftEntries}
+      />,
+    );
+
+    const trigger = await findByDeepTextContent(/Intro Unit is a draft/i);
+    await user.click(trigger);
+
+    expect(await findByDeepTextContent(/container_user_1 edited.*Intro Unit/i)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /more actions/i })).not.toBeInTheDocument();
   });
 });

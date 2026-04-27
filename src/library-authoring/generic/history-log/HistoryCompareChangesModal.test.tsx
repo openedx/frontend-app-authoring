@@ -42,4 +42,20 @@ describe('<HistoryCompareChangesModal />', () => {
     expect(await screen.findByTestId('compare-changes-widget')).toHaveAttribute('data-side-by-side', 'true');
     expect(await screen.findByTestId('compare-changes-widget')).toHaveAttribute('data-show-title', 'true');
   });
+
+  it('renders nothing for container usage keys', () => {
+    render(
+      <HistoryCompareChangesModal
+        isOpen
+        onClose={jest.fn()}
+        usageKey="lct:org:lib:unit:my-unit-9284e2"
+        oldTitle="Intro Unit"
+        oldVersion={3}
+        newVersion="published"
+      />,
+    );
+
+    expect(screen.queryByText('Preview changes: Intro Unit')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('compare-changes-widget')).not.toBeInTheDocument();
+  });
 });

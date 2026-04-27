@@ -141,3 +141,27 @@ export function normalizeContainerType(containerType: ContainerType | string) {
       return containerType;
   }
 }
+
+/**
+ * Check whether a block/container type points to a container (section/subsection/unit),
+ * including legacy names (chapter/sequential/vertical).
+ */
+export function isContainerType(containerType: ContainerType | string): boolean {
+  const normalizedType = normalizeContainerType(containerType);
+
+  return [ContainerType.Section, ContainerType.Subsection, ContainerType.Unit].includes(
+    normalizedType as ContainerType,
+  );
+}
+
+/**
+ * Check whether a usage key belongs to a container.
+ */
+export function isContainerUsageKey(usageKey: string | undefined | null): boolean {
+  if (typeof usageKey !== 'string') {
+    return false;
+  }
+
+  const blockType = getBlockType(usageKey, 'empty');
+  return blockType ? isContainerType(blockType) : false;
+}
