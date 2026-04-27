@@ -13,6 +13,7 @@ const DeadlineSection = ({
   gracePeriod,
   setGradingData,
   setShowSuccessAlert,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const timeStampValue = gracePeriod
@@ -57,6 +58,7 @@ const DeadlineSection = ({
         value={newDeadlineValue}
         onChange={handleDeadlineChange}
         placeholder={TIME_FORMAT.toUpperCase()}
+        disabled={!isEditable}
       />
       <Form.Control.Feedback className="grading-description">
         {intl.formatMessage(messages.gracePeriodOnDeadlineDescription)}
@@ -82,6 +84,7 @@ DeadlineSection.propTypes = {
     hours: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     minutes: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }),
+  isEditable: PropTypes.bool,
 };
 
 export default DeadlineSection;

@@ -12,6 +12,7 @@ const CreditSection = ({
   minimumGradeCredit,
   setGradingData,
   setShowSuccessAlert,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const [errorEffort, setErrorEffort] = useState(false);
@@ -51,6 +52,7 @@ const CreditSection = ({
         value={Math.round(parseFloat(minimumGradeCredit) * 100) || ''}
         name="minimum_grade_credit"
         onChange={handleCreditChange}
+        disabled={!isEditable}
       />
       <Form.Control.Feedback className="grading-description">
         {intl.formatMessage(messages.creditEligibilityDescription)}
@@ -70,6 +72,7 @@ CreditSection.propTypes = {
   setGradingData: PropTypes.func.isRequired,
   setShowSuccessAlert: PropTypes.func.isRequired,
   minimumGradeCredit: PropTypes.number.isRequired,
+  isEditable: PropTypes.bool,
 };
 
 export default CreditSection;

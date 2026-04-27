@@ -12,7 +12,10 @@ import { Helmet } from 'react-helmet';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { STATEFUL_BUTTON_STATES } from '@src/constants';
 import { useCourseSettings } from '@src/data/apiHooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getGradingPermissions } from '@src/authz/permissionHelpers';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import SectionSubHeader from '@src/generic/section-sub-header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import AlertMessage from '@src/generic/alert-message';
@@ -34,6 +37,13 @@ import messages from './messages';
 const GradingSettings = () => {
   const intl = useIntl();
   const { courseId, courseDetails } = useCourseAuthoringContext();
+
+  const {
+    isLoading: isLoadingUserPermissions,
+    canViewGradingSettings,
+    canEditGradingSettings,
+  } = useCourseUserPermissions(courseId, getGradingPermissions(courseId));
+
   const {
     data: gradingSettings,
     isLoading: isGradingSettingsLoading,
@@ -55,7 +65,7 @@ const GradingSettings = () => {
   const courseGradingDetails = gradingSettings?.courseDetails;
   const isLoadingDenied = isGradingSettingsError || isCourseSettingsError;
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  const isLoading = isCourseSettingsLoading || isGradingSettingsLoading;
+  const isLoading = isCourseSettingsLoading || isGradingSettingsLoading || isLoadingUserPermissions;
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const [eligibleGrade, setEligibleGrade] = useState(null);
@@ -93,6 +103,10 @@ const GradingSettings = () => {
     }
   }, [savePending]);
 
+  if (!isLoadingUserPermissions && !canViewGradingSettings) {
+    return <PermissionDeniedAlert />;
+  }
+
   if (isLoadingDenied) {
     return (
       <Container size="xl" className="course-unit px-4 mt-4">
@@ -104,6 +118,8 @@ const GradingSettings = () => {
   if (isLoading) {
     return null;
   }
+
+  const isEditable = !isLoadingUserPermissions && canEditGradingSettings;
 
   const handleQueryProcessing = () => {
     setShowSuccessAlert(false);
@@ -177,6 +193,7 @@ const GradingSettings = () => {
                       setOverrideInternetConnectionAlert={setOverrideInternetConnectionAlert}
                       setEligibleGrade={setEligibleGrade}
                       defaultGradeDesignations={gradingSettings?.defaultGradeDesignations}
+                      isEditable={isEditable}
                     />
                   </section>
                   {courseSettingsData.creditEligibilityEnabled && courseSettingsData.isCreditCourse && (
@@ -191,6 +208,7 @@ const GradingSettings = () => {
                         minimumGradeCredit={minimumGradeCredit}
                         setGradingData={setGradingData}
                         setShowSuccessAlert={setShowSuccessAlert}
+                        isEditable={isEditable}
                       />
                     </section>
                   )}
@@ -204,6 +222,7 @@ const GradingSettings = () => {
                       gracePeriod={gracePeriod}
                       setGradingData={setGradingData}
                       setShowSuccessAlert={setShowSuccessAlert}
+                      isEditable={isEditable}
                     />
                   </section>
                   <section>
@@ -222,11 +241,13 @@ const GradingSettings = () => {
                       setGradingData={setGradingData}
                       courseAssignmentLists={courseAssignmentLists}
                       setShowSuccessAlert={setShowSuccessAlert}
+                      isEditable={isEditable}
                     />
                     <Button
                       variant="primary"
                       iconBefore={IconAdd}
                       onClick={handleAddAssignment}
+                      disabled={!isEditable}
                     >
                       {intl.formatMessage(messages.addNewAssignmentTypeBtn)}
                     </Button>
@@ -270,6 +291,7 @@ const GradingSettings = () => {
               key="statefulBtn"
               onClick={handleSendGradingSettingsData}
               state={isQueryPending ? STATEFUL_BUTTON_STATES.pending : STATEFUL_BUTTON_STATES.default}
+              disabled={!isEditable}
               {...updateValuesButtonState}
             />,
           ].filter(Boolean)}

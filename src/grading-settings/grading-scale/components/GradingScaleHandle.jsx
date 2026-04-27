@@ -8,14 +8,15 @@ const GradingScaleHandle = ({
   value,
   gradingSegments,
   getHandleProps,
+  isEditable = true,
 }) => (
   <button
     key={value}
     className="grading-scale-segment-btn-resize"
     type="button"
-    disabled={gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH}
+    disabled={!isEditable || gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH}
     {...getHandleProps({
-      style: gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH ?
+      style: (!isEditable || gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH) ?
         {
           cursor: 'default',
           display: 'none',
@@ -35,6 +36,7 @@ GradingScaleHandle.propTypes = {
       previous: PropTypes.number.isRequired,
     }),
   ).isRequired,
+  isEditable: PropTypes.bool,
 };
 
 export default GradingScaleHandle;
