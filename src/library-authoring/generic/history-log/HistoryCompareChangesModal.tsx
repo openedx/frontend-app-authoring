@@ -3,6 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import CompareChangesWidget from '@src/library-authoring/component-comparison/CompareChangesWidget';
 import { type VersionSpec } from '@src/library-authoring/LibraryBlock';
+import { isContainerUsageKey } from '@src/generic/key-utils';
 
 import messages from './messages';
 import classNames from 'classnames';
@@ -27,6 +28,12 @@ const HistoryCompareChangesModal = ({
   sideBySide = true,
 }: HistoryCompareChangesModalProps) => {
   const intl = useIntl();
+  const shouldShowDiff = !isContainerUsageKey(usageKey);
+
+  if (!shouldShowDiff) {
+    return null;
+  }
+
   const title = intl.formatMessage(messages.previewChangesTitle, { title: oldTitle });
 
   return (
