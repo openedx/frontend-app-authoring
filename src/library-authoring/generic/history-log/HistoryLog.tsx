@@ -151,6 +151,7 @@ export const HistoryContainerLog = ({ containerId }: { containerId: string; }) =
     <div className="history-log">
       {draftHistory && draftHistory.length !== 0 && (
         <HistoryDraftLogGroup
+          itemId={containerId}
           displayName={container?.displayName ?? ''}
           entries={draftHistory}
         />
