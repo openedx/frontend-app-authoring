@@ -34,7 +34,9 @@ describe('<HistoryCompareChangesModal />', () => {
       />,
     );
 
-    expect(await screen.findByText('Preview changes: Electron Arcs')).toBeInTheDocument();
+    const modalTitle = await screen.findByText('Preview changes: Electron Arcs');
+    expect(modalTitle).toBeInTheDocument();
+    expect(modalTitle.querySelector('svg')).toBeInTheDocument();
     expect(await screen.findByTestId('compare-changes-widget')).toHaveAttribute('data-usage-key', 'lb:org:lib:type:id');
     expect(await screen.findByTestId('compare-changes-widget')).toHaveAttribute('data-old-title', 'Electron Arcs');
     expect(await screen.findByTestId('compare-changes-widget')).toHaveAttribute('data-old-version', '3');

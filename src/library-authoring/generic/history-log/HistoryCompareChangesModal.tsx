@@ -1,9 +1,10 @@
-import { ModalDialog } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { Icon, ModalDialog, Stack } from '@openedx/paragon';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import CompareChangesWidget from '@src/library-authoring/component-comparison/CompareChangesWidget';
 import { type VersionSpec } from '@src/library-authoring/LibraryBlock';
-import { isContainerUsageKey } from '@src/generic/key-utils';
+import { getItemIcon } from '@src/generic/block-type-utils';
+import { getBlockType, isContainerUsageKey } from '@src/generic/key-utils';
 
 import messages from './messages';
 import classNames from 'classnames';
@@ -35,6 +36,7 @@ const HistoryCompareChangesModal = ({
   }
 
   const title = intl.formatMessage(messages.previewChangesTitle, { title: oldTitle });
+  const blockType = getBlockType(usageKey, 'empty');
 
   return (
     <ModalDialog
@@ -46,7 +48,21 @@ const HistoryCompareChangesModal = ({
       isOverflowVisible={false}
     >
       <ModalDialog.Header>
-        <ModalDialog.Title>{title}</ModalDialog.Title>
+        <ModalDialog.Title>
+          <Stack direction='horizontal'>
+            <FormattedMessage
+              {...messages.previewChangesTitle}
+              values={{
+                title: (
+                  <>
+                    <Icon size='lg' src={getItemIcon(blockType)} className="mr-1" />
+                    {oldTitle}
+                  </>
+                ),
+              }}
+            />
+          </Stack>
+        </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
         <CompareChangesWidget
