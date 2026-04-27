@@ -129,6 +129,8 @@ export const useCreateCourseBlock = (
       });
       await invalidateParentQueries(queryClient, variables);
       // Invalidate tags count for the newly created block
+      // Strips "+type@<blockType>+block@<id>" to produce a course-run wildcard, e.g.
+      // "block-v1:org+course+run+type@vertical+block@abc" → "block-v1:org+course+run*"
       const contentPattern = data.locator.replace(/\+type@.*$/, '*');
       queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
       // scroll to newly added block
