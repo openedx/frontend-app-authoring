@@ -25,6 +25,7 @@ const OpenedXConfigForm = ({
   onSubmit,
   formRef,
   legacy,
+  isEditable = false,
 }) => {
   const intl = useIntl();
   const {
@@ -135,13 +136,18 @@ const OpenedXConfigForm = ({
         return (
           <OpenedXConfigFormProvider value={contextValue}>
             <Card className="mb-5 px-4 px-sm-5 pb-4" data-testid="legacyConfigForm">
-              <Form ref={formRef} onSubmit={handleSubmit}>
+              <Form ref={formRef} onSubmit={handleSubmit} disabled={!isEditable}>
                 <h3 className="text-primary-500 my-3">{intl.formatMessage(messages[`appName-${selectedAppId}`])}</h3>
                 <AppConfigFormDivider thick />
                 {!legacy
                   && (
                     <>
-                      <InContextDiscussionFields onBlur={handleBlur} onChange={handleChange} values={values} />
+                      <InContextDiscussionFields
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        values={values}
+                        disabled={!isEditable}
+                      />
                       <AppConfigFormDivider thick />
                     </>
                   )}
@@ -149,14 +155,15 @@ const OpenedXConfigForm = ({
                   onBlur={handleBlur}
                   onChange={handleChange}
                   values={values}
+                  disabled={!isEditable}
                 />
                 <AppConfigFormDivider thick />
-                <DiscussionTopics />
+                <DiscussionTopics disabled={!isEditable} />
                 <AppConfigFormDivider thick />
-                <DivisionByGroupFields />
+                <DivisionByGroupFields disabled={!isEditable} />
                 <AppConfigFormDivider thick />
-                <ReportedContentEmailNotifications />
-                <DiscussionRestriction />
+                <ReportedContentEmailNotifications disabled={!isEditable} />
+                <DiscussionRestriction disabled={!isEditable} />
               </Form>
             </Card>
           </OpenedXConfigFormProvider>
@@ -171,6 +178,11 @@ OpenedXConfigForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
+  isEditable: PropTypes.bool,
+};
+
+OpenedXConfigForm.defaultProps = {
+  isEditable: true,
 };
 
 export default OpenedXConfigForm;

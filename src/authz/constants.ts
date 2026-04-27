@@ -17,6 +17,7 @@ export const CONTENT_LIBRARY_PERMISSIONS = {
 
 export const COURSE_PERMISSIONS = {
   MANAGE_ADVANCED_SETTINGS: 'courses.manage_advanced_settings',
+  VIEW_ADVANCED_SETTINGS: 'courses.view_advanced_settings',
 
   VIEW_GRADING_SETTINGS: 'courses.view_grading_settings',
   EDIT_GRADING_SETTINGS: 'courses.edit_grading_settings',
@@ -24,4 +25,7 @@ export const COURSE_PERMISSIONS = {
   VIEW_SCHEDULE_AND_DETAILS: 'courses.view_schedule_and_details',
   EDIT_SCHEDULE: 'courses.edit_schedule',
   EDIT_DETAILS: 'courses.edit_details',
+
+  VIEW_PAGES_AND_RESOURCES: 'courses.view_pages_and_resources',
+  EDIT_PAGES_AND_RESOURCES: 'courses.manage_pages_and_resources',
 };

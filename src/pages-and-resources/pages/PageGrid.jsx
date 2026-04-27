@@ -3,7 +3,7 @@ import React from 'react';
 import { CardGrid } from '@openedx/paragon';
 import PageCard, { CoursePageShape } from './PageCard';
 
-const PageGrid = ({ pages, pluginSlotComponent, courseId }) => (
+const PageGrid = ({ pages, pluginSlotComponent, courseId, readOnly = false }) => (
   <CardGrid
     columnSizes={{
       xs: 12,
@@ -12,7 +12,7 @@ const PageGrid = ({ pages, pluginSlotComponent, courseId }) => (
       xl: 6,
     }}
   >
-    {pages.map((page) => <PageCard page={page} key={page.id} courseId={courseId} />)}
+    {pages.map((page) => <PageCard page={page} key={page.id} courseId={courseId} readOnly={readOnly} />)}
     {pluginSlotComponent}
   </CardGrid>
 );
@@ -20,12 +20,14 @@ const PageGrid = ({ pages, pluginSlotComponent, courseId }) => (
 PageGrid.defaultProps = {
   pluginSlotComponent: null,
   courseId: null,
+  readOnly: false,
 };
 
 PageGrid.propTypes = {
   pages: PropTypes.arrayOf(CoursePageShape.isRequired).isRequired,
   pluginSlotComponent: PropTypes.element,
   courseId: PropTypes.string,
+  readOnly: PropTypes.bool,
 };
 
 export default PageGrid;

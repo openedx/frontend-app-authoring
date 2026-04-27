@@ -18,7 +18,7 @@ import { useModel } from '../../../../../generic/model-store';
 
 ensureConfig(['SITE_NAME', 'SUPPORT_EMAIL'], 'LTI Config Form');
 
-const LtiConfigForm = ({ onSubmit, formRef }) => {
+const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -71,7 +71,7 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
 
   return (
     <Card className="mb-5 p-5" data-testid="ltiConfigForm">
-      <Form ref={formRef} onSubmit={handleSubmit}>
+      <Form ref={formRef} onSubmit={handleSubmit} disabled={!isEditable}>
         <h3 className="mb-3">{providerName}</h3>
         <p>
           <FormattedMessage
@@ -189,6 +189,11 @@ LtiConfigForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
+  isEditable: PropTypes.bool,
+};
+
+LtiConfigForm.defaultProps = {
+  isEditable: true,
 };
 
 export default LtiConfigForm;

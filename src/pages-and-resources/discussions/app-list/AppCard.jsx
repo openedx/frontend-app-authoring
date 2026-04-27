@@ -8,6 +8,8 @@ import {
   breakpoints,
 } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useContext } from 'react';
+import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 import messages from './messages';
 import appMessages from '../app-config-form/messages';
 import FeaturesList from './FeaturesList';
@@ -20,6 +22,8 @@ const AppCard = ({
 }) => {
   const intl = useIntl();
   const { canChangeProviders } = useCourseAuthoringContext();
+  const { isEditable = false } = useContext(PagesAndResourcesContext);
+  const canInteract = canChangeProviders && isEditable;
   const supportText = app.hasFullSupport
     ? intl.formatMessage(messages.appFullSupport)
     : intl.formatMessage(messages.appBasicSupport);
@@ -27,8 +31,8 @@ const AppCard = ({
   return (
     <Card
       isClickable
-      onClick={() => canChangeProviders && onClick(app.id)}
-      onKeyPress={() => canChangeProviders && onClick(app.id)}
+      onClick={() => canInteract && onClick(app.id)}
+      onKeyPress={() => canInteract && onClick(app.id)}
       role="radio"
       aria-checked={selected}
       className={classNames({
@@ -42,7 +46,7 @@ const AppCard = ({
           <div className="mt-2.5">
             <CheckboxControl
               checked={selected}
-              disabled={!canChangeProviders}
+              disabled={!canInteract}
               readOnly
               aria-label={intl.formatMessage(messages.selectApp, {
                 appName: intl.formatMessage(appMessages[`appName-${app.id}`]),
