@@ -103,9 +103,9 @@ const CompareChangesWidget = ({
   );
 
   return (
-    <div className="bg-white p-2">
+    <div className="bg-light-300 py-2 px-1">
       {sideBySide ? (
-        <Stack direction='horizontal' gap={2}>
+        <Stack direction='horizontal' gap={3}>
           {oldBlock}
           {newBlock}
         </Stack>
