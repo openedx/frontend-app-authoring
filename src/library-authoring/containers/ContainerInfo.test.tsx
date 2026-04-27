@@ -157,7 +157,6 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
   containerType,
   childType,
   willPublishCount,
-
 }) => {
   describe(`<ContainerInfo /> with containerType: ${containerType}`, () => {
     beforeEach(() => {
@@ -308,7 +307,6 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
           'i',
         ),
       )).toBeInTheDocument();
-
     });
 
     it(`omits child count before publishing an empty ${containerType}`, async () => {
