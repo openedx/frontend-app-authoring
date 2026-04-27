@@ -51,6 +51,10 @@ const AdvancedSettings = () => {
       action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
       scope: courseId,
     },
+    canViewAdvancedSettings: {
+      action: COURSE_PERMISSIONS.VIEW_ADVANCED_SETTINGS,
+      scope: courseId,
+    },
   }, isAuthzEnabled);
 
   const {
@@ -148,14 +152,28 @@ const AdvancedSettings = () => {
     showSaveSettingsPrompt(true);
   };
 
-  // Show permission denied alert when authz is enabled and user doesn't have permission
+  // Show permission denied alert when authz is enabled and user doesn't have VIEW or MANAGE
   const authzIsEnabledAndNoPermission = isAuthzEnabled
     && !isLoadingUserPermissions
+    && !userPermissions?.canViewAdvancedSettings
     && !userPermissions?.canManageAdvancedSettings;
 
   if (authzIsEnabledAndNoPermission) {
     return <PermissionDeniedAlert />;
   }
+
+  // Determine if UI should be disabled (has VIEW but not MANAGE) - auditor sees read-only view
+  const isReadOnly = isAuthzEnabled
+    && !isLoadingUserPermissions
+    && userPermissions?.canViewAdvancedSettings
+    && !userPermissions?.canManageAdvancedSettings;
+
+  // Apply read-only mode for auditors
+  if (isReadOnly) {
+    setIsEditableState(false);
+  }
+
+  // Show the page content (read-only or editable)
 
   return (
     <>
@@ -255,6 +273,7 @@ const AdvancedSettings = () => {
                             handleBlur={handleSettingBlur}
                             isEditableState={isEditableState}
                             setIsEditableState={setIsEditableState}
+                            readOnly={isReadOnly}
                           />
                         );
                       })}

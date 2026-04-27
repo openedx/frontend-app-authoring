@@ -10,3 +10,14 @@ export const getGradingPermissions = (courseId: string) => ({
     scope: courseId,
   },
 });
+
+export const getPagesAndResourcesPermissions = (courseId: string) => ({
+  canViewPagesAndResources: {
+    action: COURSE_PERMISSIONS.VIEW_PAGES_AND_RESOURCES,
+    scope: courseId,
+  },
+  canEditPagesAndResources: {
+    action: COURSE_PERMISSIONS.EDIT_PAGES_AND_RESOURCES,
+    scope: courseId,
+  },
+});

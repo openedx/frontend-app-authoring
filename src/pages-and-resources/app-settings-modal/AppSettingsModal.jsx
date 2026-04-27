@@ -52,7 +52,7 @@ const AppSettingsModal = ({
   hideAppToggle,
 }) => {
   const { formatMessage } = useIntl();
-  const { courseId } = useContext(PagesAndResourcesContext);
+  const { courseId, isEditable = false } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
   const updateSettingsRequestStatus = useSelector(getSavingStatus);
   const alertRef = useRef(null);
@@ -139,6 +139,7 @@ const AppSettingsModal = ({
                   }}
                   state={submitButtonState}
                   onClick={handleFormikSubmit(formikProps)}
+                  disabled={!isEditable}
                 />
               }
             >
@@ -157,6 +158,7 @@ const AppSettingsModal = ({
                   onChange={(event) => formikProps.handleChange(event)}
                   onBlur={formikProps.handleBlur}
                   checked={formikProps.values.enabled}
+                  disabled={!isEditable}
                   label={
                     <div className="d-flex align-items-center">
                       {enableAppLabel}

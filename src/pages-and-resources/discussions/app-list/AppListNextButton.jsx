@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { DiscussionsContext } from '../DiscussionsProvider';
+import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 
 import messages from './messages';
 
@@ -12,6 +13,7 @@ const AppListNextButton = () => {
   const intl = useIntl();
   const { selectedAppId } = useSelector(state => state.discussions);
   const { path: discussionsPath } = useContext(DiscussionsContext);
+  const { isEditable = false } = useContext(PagesAndResourcesContext);
   const navigate = useNavigate();
 
   const handleStartConfig = useCallback(() => {
@@ -22,6 +24,7 @@ const AppListNextButton = () => {
     <Button
       variant="primary"
       onClick={handleStartConfig}
+      disabled={!isEditable}
     >
       {intl.formatMessage(messages.nextButton)}
     </Button>
