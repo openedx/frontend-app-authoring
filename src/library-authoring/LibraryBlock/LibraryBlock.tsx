@@ -53,10 +53,6 @@ export const LibraryBlock = ({
   const intl = useIntl();
   const params = new URLSearchParams();
 
-  if (version === 0) {
-    return null;
-  }
-
   if (version) {
     params.set('version', version.toString());
   }
@@ -85,6 +81,10 @@ export const LibraryBlock = ({
   }, [scrollIntoView]);
 
   useIframeContent(iframeRef, setIframeRef);
+
+  if (version === 0) {
+    return null;
+  }
 
   return (
     <iframe

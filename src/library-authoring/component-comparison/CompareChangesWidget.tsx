@@ -104,17 +104,19 @@ const CompareChangesWidget = ({
 
   return (
     <div className="bg-light-300 py-2 px-1">
-      {sideBySide ? (
-        <Stack direction='horizontal' gap={3}>
-          {oldBlock}
-          {newBlock}
-        </Stack>
-      ) : (
-        <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
-          {oldBlock && <Tab eventKey="old" title={oldTabMessage}>{oldBlock}</Tab>}
-          <Tab eventKey="new" title={newTabMessage}>{newBlock}</Tab>
-        </Tabs>
-      )}
+      {sideBySide ?
+        (
+          <Stack direction="horizontal" gap={3}>
+            {oldBlock}
+            {newBlock}
+          </Stack>
+        ) :
+        (
+          <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
+            {oldBlock && <Tab eventKey="old" title={oldTabMessage}>{oldBlock}</Tab>}
+            <Tab eventKey="new" title={newTabMessage}>{newBlock}</Tab>
+          </Tabs>
+        )}
     </div>
   );
 };

@@ -43,19 +43,19 @@ const HistoryCompareChangesModal = ({
       isOpen={isOpen}
       onClose={onClose}
       size="xl"
-      className={classNames({'w-xl-100 mw-xl': sideBySide})}
+      className={classNames({ 'w-xl-100 mw-xl': sideBySide })}
       title={title}
       isOverflowVisible={false}
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          <Stack direction='horizontal' gap={2}>
+          <Stack direction="horizontal" gap={2}>
             <FormattedMessage
               {...messages.previewChangesTitle}
               values={{
                 title: (
                   <>
-                    <Icon size='lg' src={getItemIcon(blockType)} className="mr-1" />
+                    <Icon size="lg" src={getItemIcon(blockType)} className="mr-1" />
                     {oldTitle}
                   </>
                 ),
