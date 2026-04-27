@@ -64,7 +64,7 @@ const HistoryCompareChangesModal = ({
           </Stack>
         </ModalDialog.Title>
       </ModalDialog.Header>
-      <ModalDialog.Body>
+      <ModalDialog.Body className="bg-light-300">
         <CompareChangesWidget
           usageKey={usageKey}
           oldTitle={oldTitle}
