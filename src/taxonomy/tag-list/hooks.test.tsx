@@ -42,6 +42,10 @@ describe('useTableModes', () => {
 });
 
 describe('useEditActions', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   const buildActions = (overrides = {}) => {
     const createTagMutation = { mutateAsync: jest.fn() };
     const updateTagMutation = { mutateAsync: jest.fn() };
@@ -175,6 +179,71 @@ describe('useEditActions', () => {
     expect(setToast).toHaveBeenCalledWith({
       show: true,
       message: 'Error creating tag: server failed',
+    });
+  });
+
+  it('enters view mode only after a delete request succeeds', async () => {
+    const {
+      actions,
+      deleteTagMutation,
+      enterViewMode,
+      setToast,
+    } = buildActions();
+    deleteTagMutation.mutateAsync.mockResolvedValue(undefined);
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+
+    actions.startDeleteRow({
+      original: {
+        id: 1,
+        value: 'tag to delete',
+        depth: 0,
+        childCount: 0,
+      },
+    } as any);
+
+    await waitFor(() => {
+      expect(enterViewMode).toHaveBeenCalled();
+    });
+    expect(deleteTagMutation.mutateAsync).toHaveBeenCalledWith({
+      value: 'tag to delete',
+      withSubtags: false,
+    });
+    expect(deleteTagMutation.mutateAsync.mock.invocationCallOrder[0]).toBeLessThan(
+      enterViewMode.mock.invocationCallOrder[0],
+    );
+    expect(setToast).toHaveBeenCalledWith({
+      show: true,
+      message: '1 tag(s) deleted. This change will be applied across all tagged content.',
+    });
+  });
+
+  it('does not enter view mode when a delete request fails', async () => {
+    const {
+      actions,
+      deleteTagMutation,
+      enterViewMode,
+      setDraftError,
+      setToast,
+    } = buildActions();
+    deleteTagMutation.mutateAsync.mockRejectedValue(new Error('server failed'));
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+
+    actions.startDeleteRow({
+      original: {
+        id: 1,
+        value: 'tag to delete',
+        depth: 0,
+        childCount: 0,
+      },
+    } as any);
+
+    await waitFor(() => {
+      expect(setDraftError).toHaveBeenCalledWith('server failed');
+    });
+    expect(enterViewMode).not.toHaveBeenCalled();
+    expect(setToast).toHaveBeenCalledWith({
+      show: true,
+      message: 'Error deleting tag: server failed',
     });
   });
 });

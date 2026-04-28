@@ -25,6 +25,7 @@ interface ActionsHeaderProps {
   setEditingRowId: (id: RowId | null) => void;
   setActiveActionMenuRowId: (id: RowId | null) => void;
   hasOpenDraft: boolean;
+  disableTagActions: boolean;
   draftInProgressHintId: string;
   canAddTag: boolean;
 }
@@ -36,6 +37,7 @@ const ActionsHeader = ({
   setEditingRowId,
   setActiveActionMenuRowId,
   hasOpenDraft,
+  disableTagActions,
   canAddTag,
   draftInProgressHintId,
 }: ActionsHeaderProps) => {
@@ -55,7 +57,7 @@ const ActionsHeader = ({
           setEditingRowId(null);
           setActiveActionMenuRowId(null);
         }}
-        disabled={hasOpenDraft || !canAddTag}
+        disabled={disableTagActions || !canAddTag}
         aria-describedby={hasOpenDraft ? draftInProgressHintId : undefined}
       />
     </div>

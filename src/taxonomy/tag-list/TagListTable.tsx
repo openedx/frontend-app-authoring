@@ -83,6 +83,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const createTagMutation = useCreateTag(taxonomyId);
   const updateTagMutation = useUpdateTag(taxonomyId);
   const deleteTagMutation = useDeleteTag(taxonomyId);
+  const disableTagActions = hasOpenDraft || deleteTagMutation.isPending;
   const pageCount = tagList?.numPages ?? -1;
   const canAddTag = tagList?.canAddTag !== false;
 
@@ -143,6 +144,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     onStartDraft: enterDraftMode,
     setActiveActionMenuRowId,
     hasOpenDraft,
+    disableTagActions,
     canAddTag,
     maxDepth,
   };

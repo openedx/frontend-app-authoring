@@ -296,10 +296,10 @@ const useEditActions = ({
     // the backend rejects the request instead of deleting the parent alone.
     const shouldDeleteSubtags = count > 1;
     try {
+      await deleteTagMutation.mutateAsync({ value: rowData.value, withSubtags: shouldDeleteSubtags });
       // In view mode, the table reloads on change, reflecting the deletion
       // without needing to manually update the table state
       enterViewMode();
-      await deleteTagMutation.mutateAsync({ value: rowData.value, withSubtags: shouldDeleteSubtags });
       setToast({
         show: true,
         message: intl.formatMessage(messages.tagsDeleteSuccessMessage, { count }),

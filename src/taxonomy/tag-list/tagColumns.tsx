@@ -20,6 +20,7 @@ interface GetColumnsArgs {
   onStartDraft: () => void;
   setActiveActionMenuRowId: (id: RowId | null) => void;
   hasOpenDraft: boolean;
+  disableTagActions: boolean;
   canAddTag: boolean;
   setDraftError: (error: string) => void;
   maxDepth: number;
@@ -37,6 +38,7 @@ function getColumns({
   startDeleteRow,
   setActiveActionMenuRowId,
   hasOpenDraft,
+  disableTagActions,
   canAddTag,
   setDraftError,
   maxDepth,
@@ -76,6 +78,7 @@ function getColumns({
           setEditingRowId={setEditingRowId}
           setActiveActionMenuRowId={setActiveActionMenuRowId}
           hasOpenDraft={hasOpenDraft}
+          disableTagActions={disableTagActions}
           draftInProgressHintId={draftInProgressHintId}
           canAddTag={canAddTag}
         />
@@ -87,9 +90,9 @@ function getColumns({
           return <div className="d-flex gap-2" />;
         }
 
-        const disableAddSubtag = hasOpenDraft || !canAddTag;
-        const disableEditRow = hasOpenDraft || rowData.canChangeTag === false;
-        const disableDeleteRow = hasOpenDraft || rowData.canDeleteTag === false;
+        const disableAddSubtag = disableTagActions || !canAddTag;
+        const disableEditRow = disableTagActions || rowData.canChangeTag === false;
+        const disableDeleteRow = disableTagActions || rowData.canDeleteTag === false;
 
         return (
           <div className="d-flex align-items-center justify-content-end gap-2">
