@@ -82,6 +82,7 @@ const StudioHome = () => {
           variant="primary"
           iconBefore={ManageAccounts}
           size="sm"
+          target="_blank"
         >
           {intl.formatMessage(messages.addRolesPermissionsBtnText)}
         </Button>
