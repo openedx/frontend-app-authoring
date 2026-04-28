@@ -291,9 +291,9 @@ const useEditActions = ({
   const handleDeleteTag = async (row: Row<TreeRowData>) => {
     const rowData = getTagListRowData(row);
     const count = getTagWithDescendantsCount(rowData);
-    // If the tag in the frontend state does not have subtags,
-    // don't allow the backend to delete subtags.
-    // That prevents problems in case of stale frontend state.
+    // Only request recursive deletion when the frontend has loaded descendants.
+    // If this state is stale and the backend finds subtags while with_subtags is false,
+    // the backend rejects the request instead of deleting the parent alone.
     const shouldDeleteSubtags = count > 1;
     try {
       // In view mode, the table reloads on change, reflecting the deletion

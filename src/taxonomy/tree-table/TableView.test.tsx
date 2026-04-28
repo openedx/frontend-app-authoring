@@ -113,7 +113,7 @@ describe('TableView', () => {
     const contextValue = baseContextValue();
     contextValue.draftError = 'Delete request failed';
 
-    renderTableView(contextValue, { hasAdditionalError: true });
+    renderTableView(contextValue, { hasDeleteError: true });
 
     expect(screen.getByText('Error saving changes')).toBeInTheDocument();
     expect(screen.getByText('Delete request failed. Please try again.')).toBeInTheDocument();
@@ -123,7 +123,7 @@ describe('TableView', () => {
     const contextValue = baseContextValue();
     contextValue.draftError = 'First delete failure';
 
-    const { rerender } = renderTableView(contextValue, { hasAdditionalError: true });
+    const { rerender } = renderTableView(contextValue, { hasDeleteError: true });
 
     fireEvent.click(screen.getByRole('button', { name: /dismiss/i }));
     expect(screen.queryByText('Error saving changes')).not.toBeInTheDocument();
@@ -133,7 +133,7 @@ describe('TableView', () => {
 
     rerender(
       <TreeTableContext.Provider value={nextContextValue}>
-        <TableView hasAdditionalError />
+        <TableView hasDeleteError />
       </TreeTableContext.Provider>,
     );
 

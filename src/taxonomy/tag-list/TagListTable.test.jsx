@@ -982,11 +982,6 @@ describe('<TagListTable />', () => {
         });
 
         it('should disable delete action if tag includes `can_delete: false`', async () => {
-          axiosMock.reset();
-          axiosMock
-            .onGet(rootTagsListUrl)
-            .reply(200, mockTagResponseDisallowingEdits);
-          axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
           cleanup();
           ({ axiosMock } = initializeMocks({ user: adminUser }));
           axiosMock

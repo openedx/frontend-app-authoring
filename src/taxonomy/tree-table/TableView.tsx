@@ -27,12 +27,12 @@ import { TreeTable } from './types';
 
 interface TableViewProps {
   enablePagination?: boolean;
-  hasAdditionalError?: boolean;
+  hasDeleteError?: boolean;
 }
 
 const TableView = ({
   enablePagination = false,
-  hasAdditionalError = false,
+  hasDeleteError = false,
 }: TableViewProps) => {
   const intl = useIntl();
 
@@ -84,7 +84,7 @@ const TableView = ({
         draftError={draftError}
         isError={isError}
         isUpdateError={isUpdateError}
-        isAdditionalError={hasAdditionalError}
+        isDeleteError={hasDeleteError}
       />
       <Card className="tag-list-card">
         <Card.Section className="p-0">

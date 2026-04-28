@@ -13,21 +13,21 @@ interface SaveErrorAlertProps {
   draftError: string | undefined;
   isError: boolean | undefined;
   isUpdateError: boolean | undefined;
-  isAdditionalError?: boolean;
+  isDeleteError?: boolean;
 }
 const SaveErrorAlert = ({
   draftError,
   isError,
   isUpdateError,
-  isAdditionalError = false,
+  isDeleteError = false,
 }: SaveErrorAlertProps) => {
   const intl = useIntl();
-  const hasError: boolean = Boolean((isError || isUpdateError || isAdditionalError) && !!draftError);
+  const hasError: boolean = Boolean((isError || isUpdateError || isDeleteError) && !!draftError);
   const [alertOpen, setAlertOpen] = React.useState(hasError);
 
   useEffect(() => {
     setAlertOpen(hasError);
-  }, [hasError, isError, isUpdateError, isAdditionalError, draftError]);
+  }, [hasError, isError, isUpdateError, isDeleteError, draftError]);
 
   if (!alertOpen) { return null; }
 
