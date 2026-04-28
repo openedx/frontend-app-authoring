@@ -46,7 +46,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
   const [tagTree, setTagTree] = useState<TagTree | null>(null);
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
-  const [_, setActiveActionMenuRowId] = useState<RowId | null>(null);
+  const [, setActiveActionMenuRowId] = useState<RowId | null>(null);
   const [draftError, setDraftError] = useState('');
   const treeData = (tagTree?.getAllAsDeepCopy() || []) as unknown as TreeRowData[];
   const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;
