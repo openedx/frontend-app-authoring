@@ -28,6 +28,8 @@ describe('getTagsWithDescendantCount', () => {
       ],
     } as any;
 
+    // The total includes the root tag itself:
+    // root + child 1 + 2 grandchildren + child 2 + grandchild 3 + great grandchild 1 = 7.
     expect(getTagWithDescendantsCount(rowData)).toBe(7);
   });
 });

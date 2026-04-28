@@ -1,5 +1,12 @@
 import React, { useEffect } from 'react';
-import { Button, Card, Form, Icon, ModalDialog } from '@openedx/paragon';
+import {
+  ActionRow,
+  Button,
+  Card,
+  Form,
+  Icon,
+  ModalDialog,
+} from '@openedx/paragon';
 import { WarningFilled } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
@@ -10,12 +17,11 @@ interface TypeXToConfirmModalProps {
   confirmLabel: string;
   cancelLabel: string;
   X: string;
-  // any additional context that the caller wants to pass to the onConfirm callback; not a React context.
-  context?: Record<string, any> | null;
+  confirmPayload?: Record<string, any> | null;
   isOpen: boolean;
-  onConfirm: (context?: Record<string, any> | null) => void;
+  onConfirm: (confirmPayload?: Record<string, any> | null) => void;
   onCancel: () => void;
-  setContext?: (context: Record<string, any> | null) => void;
+  setConfirmPayload?: (confirmPayload: Record<string, any> | null) => void;
 }
 
 const TypeXToConfirmModal: React.FC<TypeXToConfirmModalProps> = ({
@@ -25,25 +31,18 @@ const TypeXToConfirmModal: React.FC<TypeXToConfirmModalProps> = ({
   confirmLabel,
   cancelLabel,
   isOpen,
-  context,
+  confirmPayload,
   onConfirm,
   onCancel,
-  setContext,
+  setConfirmPayload,
 }) => {
   const [confirmedByTyping, setConfirmedByTyping] = React.useState(false);
   const intl = useIntl();
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!confirmedByTyping) { return; }
-    if (e.key === 'Enter') {
-      onConfirm(context);
-    }
-  };
-
   const handleConfirm = () => {
     if (!confirmedByTyping) { return; }
     setConfirmedByTyping(false);
-    onConfirm(context);
+    onConfirm(confirmPayload);
   };
 
   const handleCancel = () => {
@@ -63,12 +62,11 @@ const TypeXToConfirmModal: React.FC<TypeXToConfirmModalProps> = ({
   useEffect(() => {
     if (!isOpen) {
       setConfirmedByTyping(false);
-      if (setContext) {
-        // reset onConfirm callback context when modal is closed
-        setContext(null);
+      if (setConfirmPayload) {
+        setConfirmPayload(null);
       }
     }
-  }, [X, isOpen, context, setContext]);
+  }, [X, isOpen, confirmPayload, setConfirmPayload]);
 
   return (
     <ModalDialog
@@ -91,33 +89,27 @@ const TypeXToConfirmModal: React.FC<TypeXToConfirmModalProps> = ({
         </Card>
         <div className="mt-3">
           <div>
-            {(() => {
-              const messageText = intl.formatMessage(messages.typeToConfirmInstruction, { X });
-              const parts = messageText.split(X);
-              return (
-                <>
-                  {parts[0]}
-                  <strong>{X}</strong>
-                  {parts[1]}
-                </>
-              );
-            })()}
+            {intl.formatMessage(messages.typeToConfirmInstruction, {
+              X,
+              strong: (chunks: React.ReactNode) => <strong>{chunks}</strong>,
+            })}
           </div>
           <Form.Control
-            onKeyDown={handleKeyDown}
             onChange={handleChange}
             className="mt-4"
           />
         </div>
-        <ModalDialog.Footer>
+      </ModalDialog.Body>
+      <ModalDialog.Footer>
+        <ActionRow>
           <Button variant="tertiary" onClick={handleCancel}>
             {cancelLabel}
           </Button>
           <Button onClick={handleConfirm} disabled={!confirmedByTyping} variant="danger">
             {confirmLabel}
           </Button>
-        </ModalDialog.Footer>
-      </ModalDialog.Body>
+        </ActionRow>
+      </ModalDialog.Footer>
     </ModalDialog>
   );
 };

@@ -72,8 +72,8 @@ const DeleteModal = ({
       confirmLabel={intl.formatMessage(count > 1 ? messages.deleteLabelPlural : messages.deleteLabelSingular)}
       cancelLabel={intl.formatMessage(messages.cancelLabel)}
       isOpen={isOpen}
-      context={row}
-      setContext={setRow}
+      confirmPayload={row}
+      setConfirmPayload={setRow}
       onConfirm={handleConfirm}
       onCancel={handleCancel}
     />

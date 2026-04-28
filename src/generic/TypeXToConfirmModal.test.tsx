@@ -1,7 +1,7 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import TypeXToConfirmModal from './TypeXToConfirmModal';
 
@@ -11,11 +11,11 @@ const defaultProps = () => ({
   confirmLabel: 'Delete',
   cancelLabel: 'Cancel',
   X: 'DELETE',
-  context: { id: 7 },
+  confirmPayload: { id: 7 },
   isOpen: true,
   onConfirm: jest.fn(),
   onCancel: jest.fn(),
-  setContext: jest.fn(),
+  setConfirmPayload: jest.fn(),
 });
 
 const renderModal = (props = defaultProps()) =>
@@ -26,37 +26,47 @@ const renderModal = (props = defaultProps()) =>
   );
 
 describe('TypeXToConfirmModal', () => {
-  it('keeps the destructive confirm button disabled until the typed value exactly matches the required confirmation phrase', () => {
+  it('renders the required confirmation phrase with strong emphasis', () => {
+    renderModal();
+
+    expect(screen.getByText('DELETE', { selector: 'strong' })).toBeInTheDocument();
+  });
+
+  it('keeps the destructive confirm button disabled until the typed value exactly matches the required confirmation phrase', async () => {
+    const user = userEvent.setup();
     renderModal();
 
     const input = screen.getByRole('textbox');
     const confirmButton = screen.getByRole('button', { name: 'Delete' });
 
     expect(confirmButton).toBeDisabled();
-    fireEvent.change(input, { target: { value: 'DEL' } });
+    await user.type(input, 'DEL');
     expect(confirmButton).toBeDisabled();
-    fireEvent.change(input, { target: { value: 'DELETE' } });
+    await user.type(input, 'ETE');
     expect(confirmButton).toBeEnabled();
   });
 
-  it('does not enable confirmation for partial, differently cased, or whitespace-padded confirmation text', () => {
+  it('does not enable confirmation for partial, differently cased, or whitespace-padded confirmation text', async () => {
+    const user = userEvent.setup();
     renderModal();
 
     const input = screen.getByRole('textbox');
     const confirmButton = screen.getByRole('button', { name: 'Delete' });
 
-    ['DEL', 'delete', ' DELETE', 'DELETE ', ' Delete '].forEach(value => {
-      fireEvent.change(input, { target: { value } });
+    for (const value of ['DEL', 'delete', ' DELETE', 'DELETE ', ' Delete ']) {
+      await user.clear(input);
+      await user.type(input, value);
       expect(confirmButton).toBeDisabled();
-    });
+    }
   });
 
-  it('submits on Enter only after the exact confirmation phrase has been entered', async () => {
+  it('requires explicit activation of the enabled destructive confirm button', async () => {
     const user = userEvent.setup();
     const props = defaultProps();
     renderModal(props);
 
     const input = screen.getByRole('textbox');
+    const confirmButton = screen.getByRole('button', { name: 'Delete' });
 
     await user.click(input);
     await user.keyboard('{Enter}');
@@ -64,7 +74,10 @@ describe('TypeXToConfirmModal', () => {
 
     await user.type(input, 'DELETE');
     await user.keyboard('{Enter}');
-    expect(props.onConfirm).toHaveBeenCalledWith(props.context);
+    expect(props.onConfirm).not.toHaveBeenCalled();
+
+    await user.click(confirmButton);
+    expect(props.onConfirm).toHaveBeenCalledWith(props.confirmPayload);
   });
 
   it('resets confirmation state when the modal closes so a reopened dialog starts disabled again', async () => {
@@ -90,7 +103,7 @@ describe('TypeXToConfirmModal', () => {
     expect(screen.getByRole('button', { name: 'Delete' })).toBeDisabled();
   });
 
-  it('clears the provided context when the modal is closed without confirming', () => {
+  it('clears the provided confirm payload when the modal is closed without confirming', () => {
     const props = defaultProps();
     const { rerender } = renderModal(props);
 
@@ -100,7 +113,7 @@ describe('TypeXToConfirmModal', () => {
       </IntlProvider>,
     );
 
-    expect(props.setContext).toHaveBeenCalledWith(null);
+    expect(props.setConfirmPayload).toHaveBeenCalledWith(null);
     expect(props.onConfirm).not.toHaveBeenCalled();
   });
 });
