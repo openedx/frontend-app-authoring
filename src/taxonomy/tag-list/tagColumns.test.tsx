@@ -26,8 +26,13 @@ const getActionsColumn = (overrides = {}) => {
 describe('tagColumns', () => {
   it('disables create, edit, and delete actions when tag actions are disabled', () => {
     const actionsColumn = getActionsColumn({ disableTagActions: true });
-    const headerElement = (actionsColumn?.header as any)();
-    const cellElement = (actionsColumn?.cell as any)({
+
+    if (!actionsColumn) {
+      throw new Error('Actions column not found');
+    }
+
+    const headerElement = (actionsColumn.header as any)();
+    const cellElement = (actionsColumn.cell as any)({
       row: {
         depth: 0,
         original: {
