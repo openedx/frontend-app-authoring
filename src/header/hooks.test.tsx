@@ -182,11 +182,11 @@ describe('header utils', () => {
       });
       const actualItems =
         renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      const rolesPermissionsItem = actualItems.find(item => item.href === '#');
-      expect(rolesPermissionsItem).toBeDefined();
-      expect(rolesPermissionsItem?.href).toBe('#');
-      // Check that title is a React element (since it now uses a span with onClick)
-      expect(typeof rolesPermissionsItem?.title).toBe('object');
+      const rolesPermissionsItem = actualItems.find(item => item.title === 'Roles and Permissions');
+      expect(rolesPermissionsItem).toEqual({
+        href: 'http://admin-console.example.com/authz?scope=course-123',
+        title: 'Roles and Permissions',
+      });
     });
   });
 
