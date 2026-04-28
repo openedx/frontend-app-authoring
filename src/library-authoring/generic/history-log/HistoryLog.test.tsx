@@ -169,7 +169,6 @@ describe('<HistoryComponentLog />', () => {
       {
         ...originalData[0],
         contributors: [],
-        contributorsCount: 0,
       },
     ];
     renderComponent(mockLibraryBlockCreationEntry.usageKey);

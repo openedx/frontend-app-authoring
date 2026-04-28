@@ -1311,7 +1311,6 @@ mockLibraryBlockPublishHistory.data = [
     publishedBy: 'author',
     publishedAt: '2026-03-14T10:00:00Z',
     contributors: ['test_user_1', 'test_user_2', 'test_user_3', 'test_user_4', 'test_user_5'].map(mockContributor),
-    contributorsCount: 5,
   },
 ] as api.LibraryPublishHistoryGroup[];
 mockLibraryBlockPublishHistory.applyMock = () =>
@@ -1457,7 +1456,6 @@ mockLibraryContainerPublishHistory.data = [
     publishedBy: 'container_author',
     publishedAt: '2026-03-14T10:00:00Z',
     contributors: ['container_user_1', 'container_user_2'].map(mockContributor),
-    contributorsCount: 2,
   },
 ] satisfies api.LibraryPublishHistoryGroup[];
 mockLibraryContainerPublishHistory.applyMock = () =>

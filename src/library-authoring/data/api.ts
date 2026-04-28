@@ -988,7 +988,6 @@ export interface LibraryPublishHistoryGroup {
   publishedBy?: string;
   publishedAt: string;
   contributors: LibraryPublishContributor[];
-  contributorsCount: number;
   /**
    * Key to use as `scope_entity_key` when fetching entries for this group.
    * Pre-Verawood: the specific entity key for this group (container or usage key).
