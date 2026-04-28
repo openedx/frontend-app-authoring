@@ -29,9 +29,10 @@ interface UnitSidebarContextData {
   readOnly: boolean;
   /*
    * There are other blocks that use the same unit screen and sidebars.
-   * For example: Conditional block.
+   * For example: Conditional block, Content Experiments block.
    */
   isVertical: boolean;
+  currentItemCategory?: string;
 }
 
 const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(undefined);
@@ -55,7 +56,8 @@ export const UnitSidebarProvider = ({
   const [isOpen, open, , toggle] = useToggle(true);
 
   const currentItemData = useSelector(getCourseUnitData);
-  const isVertical = currentItemData?.category === 'vertical';
+  const currentItemCategory = currentItemData?.category;
+  const isVertical = currentItemCategory === 'vertical';
 
   const setCurrentPageKey = useCallback(/* istanbul ignore next */ (
     pageKey?: UnitSidebarPageKeys,
@@ -92,6 +94,7 @@ export const UnitSidebarProvider = ({
       toggle,
       readOnly,
       isVertical,
+      currentItemCategory,
     }),
     [
       currentPageKey,
@@ -105,6 +108,7 @@ export const UnitSidebarProvider = ({
       toggle,
       readOnly,
       isVertical,
+      currentItemCategory,
     ],
   );
 
