@@ -35,13 +35,14 @@ export const getBlockTypesMetaDataUrl = (libraryId: string) =>
 
 /**
  * Get the URL for the entries of a publish group.
+ * publishGroupUuid: UUID of the PublishLog that groups this set of published entities.
  */
 export const getLibraryPublishHistoryEntriesUrl = (
   libraryId: string,
   entityKey: string,
-  publishGroupId: string,
+  publishGroupUuid: string,
 ) =>
-  `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/publish_history_entries/?scope_entity_key=${entityKey}&publish_log_uuid=${publishGroupId}`;
+  `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/publish_history_entries/?scope_entity_key=${entityKey}&publish_log_uuid=${publishGroupUuid}`;
 
 /**
  * Get the URL for library block metadata.
@@ -79,6 +80,7 @@ export const getLibraryBlockPublishHistoryUrl = (usageKey: string) =>
 
 /**
  * Get the URL for the creation entry of a component.
+ * The creation entry is the draft change record representing when the component was first added to the library.
  */
 export const getLibraryBlockCreationEntryUrl = (usageKey: string) =>
   `${getLibraryBlockMetadataUrl(usageKey)}creation_entry/`;
@@ -200,6 +202,7 @@ export const getLibraryContainerPublishHistoryUrl = (containerId: string) =>
   `${getLibraryContainerApiUrl(containerId)}publish_history/`;
 /**
  * Get the URL for the creation entry of a container.
+ * The creation entry is the draft change record representing when the container was first added to the library.
  */
 export const getLibraryContainerCreationEntryUrl = (usageKey: string) =>
   `${getLibraryContainerApiUrl(usageKey)}creation_entry/`;
@@ -990,7 +993,7 @@ export interface LibraryPublishHistoryGroup {
   contributors: LibraryPublishContributor[];
   /**
    * Key to use as `scope_entity_key` when fetching entries for this group.
-   * Pre-Verawood: the specific entity key for this group (container or usage key).
+   * Pre-Verawood history entries: the specific entity key for this group (container or usage key).
    * Post-Verawood container groups: null — use the container currently being viewed.
    * Component history (all eras): the component's usage key.
    */
@@ -1029,10 +1032,10 @@ export async function getLibraryBlockPublishHistory(usageKey: string): Promise<L
 export async function getLibraryPublishHistoryEntries(
   libraryId: string,
   entityKey: string,
-  publishGroupId: string,
+  publishGroupUuid: string,
 ): Promise<LibraryHistoryEntry[]> {
   const { data } = await getAuthenticatedHttpClient().get(
-    getLibraryPublishHistoryEntriesUrl(libraryId, entityKey, publishGroupId),
+    getLibraryPublishHistoryEntriesUrl(libraryId, entityKey, publishGroupUuid),
   );
   return camelCaseObject(data);
 }

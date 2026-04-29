@@ -41,6 +41,9 @@ const messages = defineMessages({
     defaultMessage: 'Settings',
     description: 'Title for settings tab',
   },
+  // TODO: These messages (detailsTabTitle, detailsTabHistoryHeading, etc.) should be shared
+  // across all sidebar types (components, containers, collections) since the tab names and
+  // headings are identical. Currently they are duplicated in each sidebar's messages file.
   detailsTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.details-tab.title',
     defaultMessage: 'Details',

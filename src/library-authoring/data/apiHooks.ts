@@ -141,8 +141,8 @@ export const xblockQueryKeys = {
   publishHistory: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory'],
   publishHistoryEntries: (
     usageKey: string,
-    publishGroupId: string,
-  ) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory', publishGroupId, 'entries'],
+    publishGroupUuid: string,
+  ) => [...xblockQueryKeys.xblock(usageKey), 'publishHistory', publishGroupUuid, 'entries'],
   creationEntry: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'creationEntry'],
 
   /**
@@ -1075,13 +1075,13 @@ export const useLibraryBlockPublishHistory = (usageKey?: string) => (
  */
 export const useLibraryPublishHistoryEntries = (
   usageKey?: string,
-  publishGroupId?: string,
+  publishGroupUuid?: string,
   enabled: boolean = true,
 ) => (
   useQuery({
-    queryKey: xblockQueryKeys.publishHistoryEntries(usageKey!, publishGroupId!),
-    queryFn: (usageKey && publishGroupId && enabled)
-      ? () => api.getLibraryPublishHistoryEntries(getLibraryId(usageKey), usageKey, publishGroupId)
+    queryKey: xblockQueryKeys.publishHistoryEntries(usageKey!, publishGroupUuid!),
+    queryFn: (usageKey && publishGroupUuid && enabled)
+      ? () => api.getLibraryPublishHistoryEntries(getLibraryId(usageKey), usageKey, publishGroupUuid)
       : skipToken,
   })
 );

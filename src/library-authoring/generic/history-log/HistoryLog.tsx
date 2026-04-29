@@ -13,6 +13,13 @@ import { HistoryCreatedLogGroup, HistoryDraftLogGroup, HistoryPublishLogGroup } 
 import { useMemo } from 'react';
 import { LibraryPublishHistoryGroup } from '@src/library-authoring/data/api';
 
+/**
+ * History log for a single component (block).
+ *
+ * Renders, top to bottom: pending draft edits, publish groups, and the creation entry.
+ * For the container equivalent see HistoryContainerLog, which adds logic to split publish
+ * groups into those before and after the container's creation time.
+ */
 export const HistoryComponentLog = ({ componentId }: { componentId: string; }) => {
   const {
     data: draftHistory,
@@ -68,6 +75,17 @@ export const HistoryComponentLog = ({ componentId }: { componentId: string; }) =
   );
 };
 
+/**
+ * History log for a container (e.g. a Unit).
+ *
+ * Similar to HistoryComponentLog but uses container-specific API hooks and splits publish groups
+ * into those after and before the container's creation time. The latter can occur when the container
+ * has children that were published before the container itself was created.
+ * These "before creation" groups are rendered below the creation entry.
+ *
+ * These two components are kept separate because the hooks they use are different and the
+ * before/after creation split logic only applies to containers.
+ */
 export const HistoryContainerLog = ({ containerId }: { containerId: string; }) => {
   const {
     data: draftHistory,

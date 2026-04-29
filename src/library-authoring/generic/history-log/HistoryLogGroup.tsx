@@ -25,6 +25,7 @@ export interface HistoryCreatedLogGroupProps {
   displayName: string;
   itemType: string;
   createdAt: string;
+  // When true, renders a vertical connector line below the creation entry to link it to publish groups that predate the container's creation.
   showLogVert?: boolean;
 }
 
@@ -35,11 +36,12 @@ export interface HistoryDraftLogGroupProps {
 
 export interface HistoryLogGroupEntriesProps {
   entries: LibraryHistoryEntry[];
-  hideLastLogVert?: boolean;
 }
 
 export interface HistoryPublishLogGroupProps extends LibraryPublishHistoryGroup {
   itemId: string;
+  // When true, hides the vertical connector line rendered below this group. Used for the last group
+  // in the history log to avoid a dangling connector with nothing below it.
   hideLogVert?: boolean;
 }
 
@@ -105,7 +107,6 @@ const HistoryLogGroupTitle = ({
 
 const HistoryLogGroupEntries = ({
   entries,
-  hideLastLogVert,
 }: HistoryLogGroupEntriesProps) => {
   const intl = useIntl();
 
@@ -154,7 +155,7 @@ const HistoryLogGroupEntries = ({
                 </span>
               </Stack>
             </Stack>
-            {!isLast && !hideLastLogVert && <div className="history-log-vert" />}
+            {!isLast && <div className="history-log-vert" />}
           </div>
         );
       })}
