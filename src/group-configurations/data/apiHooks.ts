@@ -2,12 +2,10 @@
 import { AxiosError } from 'axios';
 import {
   useQuery,
-  useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { useToastContext } from '@src/generic/toast-context';
-import { NOTIFICATION_MESSAGES } from '@src/constants';
+import { useMutationWithProcessingNotification } from '@src/generic/processing-notification/data/apiHooks';
 import * as api from './api';
 import { AvailableGroup, OnErrorCallbackFunc } from '../types';
 
@@ -34,18 +32,10 @@ export const useGetGroupConfigurations = (courseId: string) => (
  */
 export const useCreateContentGroup = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
-  return useMutation<AvailableGroup, AxiosError, AvailableGroup>({
+  return useMutationWithProcessingNotification<AvailableGroup, AxiosError, AvailableGroup>({
     mutationFn: (group: AvailableGroup) => api.createContentGroup(courseId, group),
     onSettled: () => {
-      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
-    },
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving);
     },
     onError,
   });
@@ -56,18 +46,10 @@ export const useCreateContentGroup = (courseId: string, onError?: OnErrorCallbac
  */
 export const useEditContentGroup = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (group: AvailableGroup) => api.editContentGroup(courseId, group),
     onSettled: () => {
-      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
-    },
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving);
     },
     onError,
   });
@@ -78,20 +60,12 @@ export const useEditContentGroup = (courseId: string, onError?: OnErrorCallbackF
  */
 export const useDeleteContentGroup = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: ({ parentGroupId, groupId }: { parentGroupId: number; groupId: number; }) => (
       api.deleteContentGroup(courseId, parentGroupId, groupId)
     ),
     onSettled: () => {
-      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
-    },
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.deleting);
     },
     onError,
   });
@@ -102,18 +76,10 @@ export const useDeleteContentGroup = (courseId: string, onError?: OnErrorCallbac
  */
 export const useCreateExperimentConfiguration = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (configuration: AvailableGroup) => api.createExperimentConfiguration(courseId, configuration),
     onSettled: () => {
-      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
-    },
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving);
     },
     onError,
   });
@@ -124,18 +90,10 @@ export const useCreateExperimentConfiguration = (courseId: string, onError?: OnE
  */
 export const useEditExperimentConfiguration = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (configuration: AvailableGroup) => api.editExperimentConfiguration(courseId, configuration),
     onSettled: () => {
-      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
-    },
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.saving);
     },
     onError,
   });
@@ -146,18 +104,10 @@ export const useEditExperimentConfiguration = (courseId: string, onError?: OnErr
  */
 export const useDeleteExperimentConfiguration = (courseId: string, onError?: OnErrorCallbackFunc) => {
   const queryClient = useQueryClient();
-  const {
-    showToast,
-    closeToast,
-  } = useToastContext();
-  return useMutation({
+  return useMutationWithProcessingNotification({
     mutationFn: (configurationId: number) => api.deleteExperimentConfiguration(courseId, configurationId),
     onSettled: () => {
-      closeToast();
       queryClient.invalidateQueries({ queryKey: groupConfigurationsQueryKeys.groupConfigurations(courseId) });
-    },
-    onMutate: () => {
-      showToast(NOTIFICATION_MESSAGES.deleting);
     },
     onError,
   });

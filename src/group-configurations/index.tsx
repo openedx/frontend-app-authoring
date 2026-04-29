@@ -20,7 +20,6 @@ import EnrollmentTrackGroupsSection from './enrollment-track-groups-section';
 import GroupConfigurationSidebar from './group-configuration-sidebar';
 import { useGroupConfigurations } from './hooks';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-import { AvailableGroup } from './types';
 
 const GroupConfigurations = () => {
   const { formatMessage } = useIntl();
@@ -62,13 +61,12 @@ const GroupConfigurations = () => {
     );
   }
 
-  const enrollmentTrackGroup: AvailableGroup = shouldShowEnrollmentTrack
+  const enrollmentTrackGroup = shouldShowEnrollmentTrack
     ? allGroupConfigurations.find((group) => group.scheme === 'enrollment_track')
     : null;
 
-  const contentGroup: AvailableGroup[] = allGroupConfigurations.find((group) => group.scheme === 'cohort');
-
-  const teamGroups: AvailableGroup[] = allGroupConfigurations.filter((group) => group.scheme === 'team');
+  const contentGroup = allGroupConfigurations.find((group) => group.scheme === 'cohort');
+  const teamGroups = allGroupConfigurations.filter((group) => group.scheme === 'team');
 
   return (
     <>

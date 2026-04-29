@@ -1,5 +1,9 @@
 import {
-  act, renderHook, waitFor, initializeMocks, makeWrapper,
+  act,
+  renderHook,
+  waitFor,
+  initializeMocks,
+  makeWrapper,
 } from '@src/testUtils';
 
 import { getContentStoreApiUrl, getLegacyApiUrl } from './data/api';
@@ -35,7 +39,9 @@ describe('useGroupConfigurations', () => {
       axiosMock.onPost(getLegacyApiUrl(courseId, mockGroup.id)).reply(200, mockGroup);
       const { result } = renderHook(() => useGroupConfigurations(), { wrapper: makeWrapper() });
 
-      act(() => { void result.current.contentGroupActions.handleCreate(mockGroup, mockCallback); });
+      act(() => {
+        void result.current.contentGroupActions.handleCreate(mockGroup, mockCallback);
+      });
       await waitFor(() => expect(mockCallback).toHaveBeenCalled());
     });
 
@@ -43,7 +49,9 @@ describe('useGroupConfigurations', () => {
       axiosMock.onPost(getLegacyApiUrl(courseId, mockGroup.id)).reply(200, mockGroup);
       const { result } = renderHook(() => useGroupConfigurations(), { wrapper: makeWrapper() });
 
-      act(() => { void result.current.contentGroupActions.handleEdit(mockGroup, mockCallback); });
+      act(() => {
+        void result.current.contentGroupActions.handleEdit(mockGroup, mockCallback);
+      });
       await waitFor(() => expect(mockCallback).toHaveBeenCalled());
     });
 
@@ -53,7 +61,9 @@ describe('useGroupConfigurations', () => {
       axiosMock.onDelete(getLegacyApiUrl(courseId, parentGroupId, groupId)).reply(204);
       const { result } = renderHook(() => useGroupConfigurations(), { wrapper: makeWrapper() });
 
-      act(() => { result.current.contentGroupActions.handleDelete(parentGroupId, groupId); });
+      act(() => {
+        result.current.contentGroupActions.handleDelete(parentGroupId, groupId);
+      });
       await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
     });
   });
@@ -63,7 +73,9 @@ describe('useGroupConfigurations', () => {
       axiosMock.onPost(getLegacyApiUrl(courseId)).reply(200, mockGroup);
       const { result } = renderHook(() => useGroupConfigurations(), { wrapper: makeWrapper() });
 
-      act(() => { void result.current.experimentConfigurationActions.handleCreate(mockGroup, mockCallback); });
+      act(() => {
+        void result.current.experimentConfigurationActions.handleCreate(mockGroup, mockCallback);
+      });
       await waitFor(() => expect(mockCallback).toHaveBeenCalled());
     });
 
@@ -71,7 +83,9 @@ describe('useGroupConfigurations', () => {
       axiosMock.onPost(getLegacyApiUrl(courseId, mockGroup.id)).reply(200, mockGroup);
       const { result } = renderHook(() => useGroupConfigurations(), { wrapper: makeWrapper() });
 
-      act(() => { void result.current.experimentConfigurationActions.handleEdit(mockGroup, mockCallback); });
+      act(() => {
+        void result.current.experimentConfigurationActions.handleEdit(mockGroup, mockCallback);
+      });
       await waitFor(() => expect(mockCallback).toHaveBeenCalled());
     });
 
@@ -80,7 +94,9 @@ describe('useGroupConfigurations', () => {
       axiosMock.onDelete(getLegacyApiUrl(courseId, configurationId)).reply(204);
       const { result } = renderHook(() => useGroupConfigurations(), { wrapper: makeWrapper() });
 
-      act(() => { result.current.experimentConfigurationActions.handleDelete(configurationId); });
+      act(() => {
+        result.current.experimentConfigurationActions.handleDelete(configurationId);
+      });
       await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
     });
   });
@@ -91,7 +107,9 @@ describe('useGroupConfigurations', () => {
     axiosMock.onDelete(getLegacyApiUrl(courseId, 1, 2)).reply(500);
     const { result } = renderHook(() => useGroupConfigurations(), { wrapper: makeWrapper() });
 
-    act(() => { result.current.contentGroupActions.handleDelete(1, 2); });
+    act(() => {
+      result.current.contentGroupActions.handleDelete(1, 2);
+    });
     await waitFor(() => expect(result.current.anyMutationFailed).toBe(true));
   });
 });
