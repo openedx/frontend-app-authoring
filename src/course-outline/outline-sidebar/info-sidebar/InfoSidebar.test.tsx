@@ -15,6 +15,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
     selectedContainerState,
     clearSelection: jest.fn(),
     setSelectedContainerState: mockSetSelectedContainerState,
+    openContainerInfoSidebar: mockOpenContainerInfoSidebar,
   }),
 }));
 
@@ -39,6 +40,7 @@ const updateUnitOrderByIndex = jest.fn();
 const updateSubsectionOrderByIndex = jest.fn();
 const updateSectionOrderByIndex = jest.fn();
 const mockSetSelectedContainerState = jest.fn();
+const mockOpenContainerInfoSidebar = jest.fn();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mockSections: any[] = [];
 
@@ -91,6 +93,7 @@ describe('InfoSidebar component', () => {
     updateSubsectionOrderByIndex.mockClear();
     updateSectionOrderByIndex.mockClear();
     mockSetSelectedContainerState.mockClear();
+    mockOpenContainerInfoSidebar.mockClear();
     mockSections = [];
   });
 
@@ -452,6 +455,26 @@ describe('InfoSidebar component', () => {
       await screen.findByText(data.displayName);
       await screen.findByRole('button', { name: 'Item Menu' });
     };
+
+    it('goes back to parent section with section index', async () => {
+      const user = userEvent.setup();
+      mockSections = [{
+        id: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
+        actions: { childAddable: true },
+        upstreamInfo: null,
+        childInfo: { children: [] },
+      }];
+      await renderSubsectionMenu();
+
+      await user.click(screen.getByRole('button', { name: /back/i }));
+
+      expect(mockOpenContainerInfoSidebar).toHaveBeenCalledWith(
+        'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
+        undefined,
+        'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
+        0,
+      );
+    });
 
     it('calls openDeleteModal when Delete is clicked in subsection menu', async () => {
       const user = userEvent.setup();

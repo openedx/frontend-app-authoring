@@ -128,7 +128,12 @@ export const SubsectionSidebar = () => {
 
   const handleBack = () => {
     if (selectedContainerState?.sectionId) {
-      openContainerInfoSidebar(selectedContainerState.sectionId, undefined, selectedContainerState.sectionId);
+      openContainerInfoSidebar(
+        selectedContainerState.sectionId,
+        undefined,
+        selectedContainerState.sectionId,
+        sectionIndex >= 0 ? sectionIndex : undefined,
+      );
       return;
     }
     clearSelection();

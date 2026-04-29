@@ -359,6 +359,7 @@ const AddTabs = () => {
 export const AddSidebar = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
+  const { sections } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
     currentFlow,
@@ -395,9 +396,13 @@ export const AddSidebar = () => {
     }
 
     const { currentId, subsectionId, sectionId } = selectedContainerState;
+    const sectionIndex = sections.findIndex((section) => section.id === sectionId);
+    const subsectionIndex = sections
+      .find((section) => section.id === sectionId)
+      ?.childInfo.children.findIndex((subsection) => subsection.id === subsectionId) ?? -1;
 
     if (currentId === subsectionId && sectionId) {
-      openContainerSidebar(sectionId, undefined, sectionId);
+      openContainerSidebar(sectionId, undefined, sectionId, sectionIndex >= 0 ? sectionIndex : undefined);
       return;
     }
 
@@ -407,7 +412,12 @@ export const AddSidebar = () => {
     }
 
     if (subsectionId) {
-      openContainerSidebar(subsectionId, subsectionId, sectionId);
+      openContainerSidebar(
+        subsectionId,
+        subsectionId,
+        sectionId,
+        subsectionIndex >= 0 ? subsectionIndex : undefined,
+      );
       return;
     }
 
