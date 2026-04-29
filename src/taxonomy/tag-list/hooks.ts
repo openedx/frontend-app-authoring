@@ -1,10 +1,11 @@
 import { useReducer } from 'react';
 import { AxiosError } from 'axios';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Row } from '@tanstack/react-table';
 
 import globalMessages from '@src/messages';
-import { useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
-import type { RowId } from '@src/taxonomy/tree-table/types';
+import { useCreateTag, useDeleteTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
+import type { RowId, TreeRowData } from '@src/taxonomy/tree-table/types';
 import { TagTree } from './tagTree';
 import { TagListTableError } from './errors';
 import {
@@ -15,6 +16,7 @@ import {
 } from './constants';
 
 import messages from './messages';
+import { getTagListRowData, getTagWithDescendantsCount } from './utils';
 
 /** Interface for table mode actions for React's `useReducer` hook.
  *
@@ -41,13 +43,17 @@ interface UseEditActionsParams {
   setTagTree: React.Dispatch<React.SetStateAction<TagTree | null>>;
   setDraftError: React.Dispatch<React.SetStateAction<string>>;
   createTagMutation: ReturnType<typeof useCreateTag>;
+  enterDraftMode: () => void;
   enterPreviewMode: () => void;
+  enterViewMode: () => void;
   setToast: React.Dispatch<React.SetStateAction<{ show: boolean; message: string; }>>;
   setIsCreatingTopTag: React.Dispatch<React.SetStateAction<boolean>>;
   setCreatingParentId: React.Dispatch<React.SetStateAction<RowId | null>>;
   exitDraftWithoutSave: () => void;
   setEditingRowId: React.Dispatch<React.SetStateAction<RowId | null>>;
   updateTagMutation: ReturnType<typeof useUpdateTag>;
+  setActiveActionMenuRowId: React.Dispatch<React.SetStateAction<RowId | null>>;
+  deleteTagMutation: ReturnType<typeof useDeleteTag>;
 }
 
 const getInlineValidationMessage = (value: string, intl: ReturnType<typeof useIntl>): string => {
@@ -111,16 +117,19 @@ const useTableModes = (): UseTableModesReturn => {
 };
 
 const useEditActions = ({
+  enterDraftMode,
+  enterPreviewMode,
+  enterViewMode,
   setTagTree,
   setDraftError,
   createTagMutation,
-  enterPreviewMode,
   setToast,
   setIsCreatingTopTag,
   setCreatingParentId,
   exitDraftWithoutSave,
   setEditingRowId,
   updateTagMutation,
+  deleteTagMutation,
 }: UseEditActionsParams) => {
   const intl = useIntl();
 
@@ -255,10 +264,51 @@ const useEditActions = ({
     }
   };
 
+  const startSubtagDraft = (row: Row<TreeRowData>) => {
+    const rowData = getTagListRowData(row);
+    enterDraftMode();
+    setDraftError('');
+    setCreatingParentId(rowData.id);
+    row.toggleExpanded(true);
+  };
+
+  const startEditTag = (row: Row<TreeRowData>) => {
+    const rowData = getTagListRowData(row);
+    enterDraftMode();
+    setDraftError('');
+    setEditingRowId(`${rowData.id}:${rowData.value}`);
+  };
+
+  const handleDeleteTag = async (row: Row<TreeRowData>) => {
+    const rowData = getTagListRowData(row);
+    const count = getTagWithDescendantsCount(rowData);
+    // Only request recursive deletion when the frontend has loaded descendants.
+    // If this state is stale and the backend finds subtags while with_subtags is false,
+    // the backend rejects the request instead of deleting the parent alone.
+    const shouldDeleteSubtags = count > 1;
+    try {
+      await deleteTagMutation.mutateAsync({ value: rowData.value, withSubtags: shouldDeleteSubtags });
+      // In view mode, the table reloads on change, reflecting the deletion
+      // without needing to manually update the table state
+      enterViewMode();
+      setToast({
+        show: true,
+        message: intl.formatMessage(messages.tagsDeleteSuccessMessage, { count }),
+      });
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      setDraftError(errorMessage);
+      setToast({ show: true, message: intl.formatMessage(messages.tagDeleteErrorMessage, { errorMessage }) });
+    }
+  };
+
   return {
     updateTableWithoutDataReload,
-    handleCreateTag,
-    handleUpdateTag,
+    handleCreateRow: handleCreateTag,
+    handleUpdateRow: handleUpdateTag,
+    handleDeleteRow: handleDeleteTag,
+    startSubtagDraft,
+    startEditRow: startEditTag,
     validate,
   };
 };

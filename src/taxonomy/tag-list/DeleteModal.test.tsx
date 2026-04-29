@@ -1,7 +1,7 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 
 import DeleteModal from './DeleteModal';
 
@@ -94,7 +94,7 @@ describe('DeleteModal', () => {
   it('calls handleDeleteRow with the dialog row context and then closes and clears the dialog state on confirm', async () => {
     const user = userEvent.setup();
     const row = createRow(leafRowData);
-    const handleDeleteRow = jest.fn();
+    const handleDeleteRow = jest.fn().mockResolvedValue(undefined);
     const setIsOpen = jest.fn();
     const setRow = jest.fn();
 
@@ -108,9 +108,11 @@ describe('DeleteModal', () => {
     await user.type(screen.getByRole('textbox'), 'DELETE');
     await user.click(screen.getByRole('button', { name: 'Delete Tag' }));
 
-    expect(handleDeleteRow).toHaveBeenCalledWith(row);
-    expect(setIsOpen).toHaveBeenCalledWith(false);
-    expect(setRow).toHaveBeenCalledWith(null);
+    await waitFor(() => {
+      expect(handleDeleteRow).toHaveBeenCalledWith(row);
+      expect(setIsOpen).toHaveBeenCalledWith(false);
+      expect(setRow).toHaveBeenCalledWith(null);
+    });
   });
 
   it('closes and clears the dialog context on cancel without invoking deletion', async () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Spinner } from '@openedx/paragon';
 import { Row } from '@tanstack/react-table';
@@ -7,15 +7,14 @@ import UsageCountDisplay from '@src/taxonomy/tag-list/UsageCountDisplay';
 import { EditableCell } from './EditableCell';
 import type { CreateRowMutationState, TreeRowData } from './types';
 import messages from './messages';
+import { TreeTableContext } from './TreeTableContext';
 
 interface DraftRowProps {
-  draftError: string;
   initialValue?: string;
   onSave: (value: string) => void;
   onCancel: () => void;
   mutationState: CreateRowMutationState;
   indent?: number;
-  validate: (value: string, mode?: 'soft' | 'hard') => boolean;
   requireValueChangeToEnableSave?: boolean;
   rowTestId?: string;
   rowId?: string;
@@ -23,13 +22,11 @@ interface DraftRowProps {
 }
 
 const DraftRow: React.FC<DraftRowProps> = ({
-  draftError,
   initialValue = '',
   onSave,
   onCancel,
   mutationState,
   indent = 0,
-  validate,
   requireValueChangeToEnableSave = false,
   rowTestId,
   rowId,
@@ -38,6 +35,8 @@ const DraftRow: React.FC<DraftRowProps> = ({
   const [rowValue, setRowValue] = useState(initialValue);
   const [saveDisabled, setSaveDisabled] = useState(true);
   const intl = useIntl();
+
+  const { draftError, validate } = useContext(TreeTableContext);
 
   const updateSaveDisabled = (value: string) => {
     const trimmedValue = value.trim();

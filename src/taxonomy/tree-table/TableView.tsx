@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
 import {
   Button,
   Toast,
@@ -13,78 +13,45 @@ import {
   getCoreRowModel,
   getExpandedRowModel,
   flexRender,
-  type OnChangeFn,
-  type PaginationState,
 } from '@tanstack/react-table';
 
 import { ArrowDropUpDown } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import TableBody from './TableBody';
+// @ts-ignore
 import './TableView.scss';
-import type {
-  CreateRowMutationState,
-  RowId,
-  ToastState,
-  TreeColumnDef,
-  TreeRowData,
-} from './types';
 import messages from './messages';
 import SaveErrorAlert from './SaveErrorAlert';
+import { TreeTableContext } from './TreeTableContext';
+import { TreeTable } from './types';
 
 interface TableViewProps {
-  treeData: TreeRowData[];
-  columns: TreeColumnDef[];
-  pageCount: number;
   enablePagination?: boolean;
-  pagination: PaginationState;
-  handlePaginationChange: OnChangeFn<PaginationState>;
-  isLoading: boolean;
-  isCreatingTopRow: boolean;
-  draftError: string;
-  createRowMutation: CreateRowMutationState;
-  updateRowMutation: CreateRowMutationState;
-  toast: ToastState;
-  setToast: React.Dispatch<React.SetStateAction<ToastState>>;
-  setIsCreatingTopRow: (isCreating: boolean) => void;
-  exitDraftWithoutSave: () => void;
-  handleCreateRow: (value: string, parentRowValue?: string) => void;
-  creatingParentId: RowId | null;
-  setCreatingParentId: (id: RowId | null) => void;
-  setDraftError: (error: string) => void;
-  validate: (value: string, mode?: 'soft' | 'hard') => boolean;
-  handleUpdateRow: (value: string, originalValue: string) => void;
-  editingRowId: RowId | null;
-  setEditingRowId: (id: RowId | null) => void;
+  hasDeleteError?: boolean;
 }
 
 const TableView = ({
-  treeData,
-  columns,
-  pageCount,
   enablePagination = false,
-  pagination,
-  handlePaginationChange,
-  isLoading,
-  isCreatingTopRow,
-  draftError,
-  createRowMutation,
-  updateRowMutation,
-  handleCreateRow,
-  toast,
-  setToast,
-  setIsCreatingTopRow,
-  exitDraftWithoutSave,
-  creatingParentId,
-  setCreatingParentId,
-  setDraftError,
-  validate,
-  handleUpdateRow,
-  editingRowId,
-  setEditingRowId,
+  hasDeleteError = false,
 }: TableViewProps) => {
   const intl = useIntl();
 
-  const table = useReactTable({
+  const contextValue = useContext(TreeTableContext);
+
+  const {
+    treeData,
+    columns,
+    pageCount,
+    pagination,
+    handlePaginationChange,
+    draftError,
+    createRowMutation,
+    updateRowMutation,
+    toast,
+    setToast,
+  } = contextValue;
+
+  const table: TreeTable = useReactTable({
     data: treeData,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -98,14 +65,27 @@ const TableView = ({
     getSubRows: (row) => row?.subRows || undefined,
   });
 
+  const nestedContextValue = useMemo(() => ({
+    ...contextValue,
+    table,
+  }), [contextValue, table]);
+
   const currentPageIndex = table.getState().pagination.pageIndex + 1;
 
   const { isError } = createRowMutation;
   const { isError: isUpdateError } = updateRowMutation;
 
   return (
-    <>
-      <SaveErrorAlert draftError={draftError} isError={isError} isUpdateError={isUpdateError} />
+    // This is a nested context provider. It is a valid pattern in React even if it looks odd,
+    // and the purpose here is to add the react-table instance to the overall context.
+    // Note that there is an outer context provider higher up in `TagListTable` as well.
+    <TreeTableContext.Provider value={nestedContextValue}>
+      <SaveErrorAlert
+        draftError={draftError}
+        isError={isError}
+        isUpdateError={isUpdateError}
+        isDeleteError={hasDeleteError}
+      />
       <Card className="tag-list-card">
         <Card.Section className="p-0">
           <div className="d-flex justify-content-end align-items-center p-4">
@@ -145,25 +125,7 @@ const TableView = ({
                 </tr>
               ))}
             </thead>
-            <TableBody
-              columns={columns}
-              isCreatingTopRow={isCreatingTopRow}
-              draftError={draftError}
-              handleCreateRow={handleCreateRow}
-              setIsCreatingTopRow={setIsCreatingTopRow}
-              exitDraftWithoutSave={exitDraftWithoutSave}
-              creatingParentId={creatingParentId}
-              setCreatingParentId={setCreatingParentId}
-              setDraftError={setDraftError}
-              createRowMutation={createRowMutation}
-              updateRowMutation={updateRowMutation}
-              table={table}
-              isLoading={isLoading}
-              validate={validate}
-              handleUpdateRow={handleUpdateRow}
-              editingRowId={editingRowId}
-              setEditingRowId={setEditingRowId}
-            />
+            <TableBody />
           </table>
         </Card.Section>
 
@@ -200,7 +162,7 @@ const TableView = ({
           {toast.message}
         </Toast>
       </Card>
-    </>
+    </TreeTableContext.Provider>
   );
 };
 
