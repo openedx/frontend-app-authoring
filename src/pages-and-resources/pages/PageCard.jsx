@@ -62,7 +62,6 @@ const PageCard = ({
 PageCard.defaultProps = {
   settingButton: null,
   courseId: null,
-  readOnly: false,
 };
 
 PageCard.propTypes = {

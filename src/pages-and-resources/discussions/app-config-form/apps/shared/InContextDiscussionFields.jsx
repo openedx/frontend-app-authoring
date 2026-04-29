@@ -78,8 +78,4 @@ InContextDiscussionFields.propTypes = {
   disabled: PropTypes.bool,
 };
 
-InContextDiscussionFields.defaultProps = {
-  disabled: false,
-};
-
 export default InContextDiscussionFields;

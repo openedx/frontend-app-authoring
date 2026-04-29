@@ -76,6 +76,18 @@ const AdvancedSettings = () => {
   } = updateMutation;
 
   const isLoading = isPendingSettingsStatus || (isAuthzEnabled && isLoadingUserPermissions);
+
+  // Determine if UI should be read-only (has VIEW but not MANAGE) — auditor
+  const isReadOnly = isAuthzEnabled
+    && !isLoadingUserPermissions
+    && !!userPermissions?.canViewAdvancedSettings
+    && !userPermissions?.canManageAdvancedSettings;
+
+  useEffect(() => {
+    if (isReadOnly) {
+      setIsEditableState(false);
+    }
+  }, [isReadOnly]);
   const updateSettingsButtonState = {
     labels: {
       default: intl.formatMessage(messages.buttonSaveText),
@@ -160,17 +172,6 @@ const AdvancedSettings = () => {
 
   if (authzIsEnabledAndNoPermission) {
     return <PermissionDeniedAlert />;
-  }
-
-  // Determine if UI should be disabled (has VIEW but not MANAGE) - auditor sees read-only view
-  const isReadOnly = isAuthzEnabled
-    && !isLoadingUserPermissions
-    && userPermissions?.canViewAdvancedSettings
-    && !userPermissions?.canManageAdvancedSettings;
-
-  // Apply read-only mode for auditors
-  if (isReadOnly) {
-    setIsEditableState(false);
   }
 
   // Show the page content (read-only or editable)
