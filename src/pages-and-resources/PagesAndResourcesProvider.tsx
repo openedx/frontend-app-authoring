@@ -15,6 +15,9 @@ interface PagesAndResourcesProviderProps {
   children: React.ReactNode;
 }
 
+// isEditable defaults to true so that existing renders without the authz RBAC flag
+// continue to work as fully editable. The context default is false (fail-closed) for
+// components that consume it outside of any provider.
 const PagesAndResourcesProvider = ({ courseId, isEditable = true, children }: PagesAndResourcesProviderProps) => {
   const contextValue = useMemo(() => ({
     courseId,

@@ -197,8 +197,4 @@ LtiConfigForm.propTypes = {
   isEditable: PropTypes.bool,
 };
 
-LtiConfigForm.defaultProps = {
-  isEditable: true,
-};
-
 export default LtiConfigForm;

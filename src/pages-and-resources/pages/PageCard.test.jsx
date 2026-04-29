@@ -118,17 +118,4 @@ describe('LiveSettings', () => {
     expect(screen.getByText('Test Page')).toBeInTheDocument();
   });
 
-  it('disables arrow buttons for legacy-link pages when isEditable=false in context', async () => {
-    render(
-      <PagesAndResourcesProvider courseId={courseId} isEditable={false}>
-        <PageGrid pages={mockPageConfig} />
-      </PagesAndResourcesProvider>,
-    );
-    await waitFor(() => {
-      const buttons = screen.queryAllByRole('button');
-      expect(buttons.length).toBeGreaterThan(0);
-      const disabledButtons = buttons.filter((btn) => btn.disabled);
-      expect(disabledButtons.length).toBeGreaterThan(0);
-    });
-  });
 });

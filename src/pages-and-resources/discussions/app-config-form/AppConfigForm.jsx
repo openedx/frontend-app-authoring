@@ -42,7 +42,7 @@ const AppConfigForm = ({
   const navigate = useNavigate();
 
   const { formRef } = useContext(AppConfigFormContext);
-  const { path: pagesAndResourcesPath, isEditable = false } = useContext(PagesAndResourcesContext);
+  const { path: pagesAndResourcesPath, isEditable } = useContext(PagesAndResourcesContext);
   const { appId: routeAppId } = useParams();
   const [isLoading, setLoading] = useState(true);
   const {

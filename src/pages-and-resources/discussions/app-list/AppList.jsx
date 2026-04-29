@@ -40,7 +40,7 @@ import { discussionRestriction } from '../data/constants';
 const AppList = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { courseId, isEditable = false } = useContext(PagesAndResourcesContext);
+  const { courseId, isEditable } = useContext(PagesAndResourcesContext);
   const {
     appIds,
     featureIds,

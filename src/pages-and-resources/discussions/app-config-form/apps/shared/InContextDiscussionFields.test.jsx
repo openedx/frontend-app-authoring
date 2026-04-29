@@ -3,6 +3,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Formik, Form } from 'formik';
 import InContextDiscussionFields from './InContextDiscussionFields';
+import messages from '../../messages';
+
+const gradedUnitLabel = messages.gradedUnitPagesLabel.defaultMessage;
 
 const defaultProps = {
   onBlur: jest.fn(),
@@ -60,7 +63,7 @@ describe('InContextDiscussionFields', () => {
     renderComponent({ disabled: false });
     // When not disabled, clicking the switch should trigger the onChange which sets showPopup
     // The component should still render - we test via the callback behavior
-    const switchControl = screen.getByLabelText(/enable discussions/i);
+    const switchControl = screen.getByLabelText(gradedUnitLabel);
     expect(switchControl).not.toBeDisabled();
   });
 
@@ -68,14 +71,14 @@ describe('InContextDiscussionFields', () => {
     renderComponent({ disabled: true });
     // When disabled, clicking should not trigger popup logic
     // Verify the switch is disabled
-    const switchControl = screen.getByLabelText(/enable discussions/i);
+    const switchControl = screen.getByLabelText(gradedUnitLabel);
     expect(switchControl).toBeDisabled();
   });
 
   it('shows confirmation popup and handles confirm', () => {
     renderComponent({ disabled: false, setFieldValue: jest.fn() });
     // Click the switch to show popup
-    const switchControl = screen.getByLabelText(/enable discussions/i);
+    const switchControl = screen.getByLabelText(gradedUnitLabel);
     fireEvent.click(switchControl);
     // Check popup appears with confirm button
     expect(screen.getByText(/Confirm/i)).toBeInTheDocument();
@@ -89,7 +92,7 @@ describe('InContextDiscussionFields', () => {
       disabled: false,
       values: { enableGradedUnits: true, groupAtSubsection: false },
     });
-    const switchControl = screen.getByLabelText(/enable discussions/i);
+    const switchControl = screen.getByLabelText(gradedUnitLabel);
     fireEvent.click(switchControl);
     // Popup shows cancel-related labels (enableGradedUnits=true branch)
     expect(screen.getByText(/Confirm/i)).toBeInTheDocument();
@@ -98,7 +101,7 @@ describe('InContextDiscussionFields', () => {
   it('shows confirmation popup and handles cancel', () => {
     renderComponent({ disabled: false, setFieldValue: jest.fn() });
     // Click the switch to show popup
-    const switchControl = screen.getByLabelText(/enable discussions/i);
+    const switchControl = screen.getByLabelText(gradedUnitLabel);
     fireEvent.click(switchControl);
     // Check popup appears with cancel button
     expect(screen.getByText(/Cancel/i)).toBeInTheDocument();
@@ -109,7 +112,7 @@ describe('InContextDiscussionFields', () => {
 
   it('does not show popup when onChange fires with disabled=true', () => {
     renderComponent({ disabled: true });
-    const switchControl = screen.getByLabelText(/enable discussions/i);
+    const switchControl = screen.getByLabelText(gradedUnitLabel);
     // fireEvent bypasses browser disabled-input behavior, but the !disabled guard in onChange prevents the popup
     fireEvent.click(switchControl);
     expect(screen.queryByText(/Confirm/i)).not.toBeInTheDocument();
