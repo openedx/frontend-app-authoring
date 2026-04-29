@@ -249,4 +249,62 @@ describe('<HistoryContainerLog />', () => {
     renderContainerComponent(mockLibraryContainerDraftHistory.containerKey);
     expect(await findByDeepTextContent(/author created.*Introduction to Testing Unit 1/i)).toBeInTheDocument();
   });
+
+  it('renders publish groups after container creation before the created entry', async () => {
+    // Default mock: publishedAt '2026-03-14' is after createdAt '2024-01-01'
+    renderContainerComponent(mockLibraryContainerDraftHistory.containerKey);
+    const publishGroup = await findByDeepTextContent(/container_author published.*Intro Unit/i);
+    const createdEntry = await findByDeepTextContent(/author created.*Introduction to Testing Unit 1/i);
+    expect(publishGroup.compareDocumentPosition(createdEntry)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+
+  it('renders publish groups before container creation after the created entry', async () => {
+    const originalData = mockLibraryContainerPublishHistory.data;
+    mockLibraryContainerPublishHistory.data = [
+      {
+        ...originalData[0],
+        publishedAt: '2023-01-01T00:00:00Z', // before createdAt '2024-01-01'
+      },
+    ];
+    renderContainerComponent(mockLibraryContainerDraftHistory.containerKey);
+    const createdEntry = await findByDeepTextContent(/author created.*Introduction to Testing Unit 1/i);
+    expect(await screen.findByText(/2 authors contributed/i)).toBeInTheDocument();
+    // The publish group contributors should still appear
+    const contributorsText = screen.getByText(/2 authors contributed/i);
+    expect(createdEntry.compareDocumentPosition(contributorsText)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    mockLibraryContainerPublishHistory.data = originalData;
+  });
+
+  it('renders both pre-creation and post-creation publish groups in correct order', async () => {
+    const originalData = mockLibraryContainerPublishHistory.data;
+    mockLibraryContainerPublishHistory.data = [
+      {
+        ...originalData[0],
+        publishLogUuid: 'after-uuid',
+        publishedAt: '2026-01-01T00:00:00Z', // after createdAt '2024-01-01'
+        directPublishedEntities: [
+          { ...originalData[0].directPublishedEntities[0], entityKey: 'key-after', title: 'After Unit' },
+        ],
+        contributors: [],
+      },
+      {
+        ...originalData[0],
+        publishLogUuid: 'before-uuid',
+        publishedAt: '2023-01-01T00:00:00Z', // before createdAt '2024-01-01'
+        directPublishedEntities: [
+          { ...originalData[0].directPublishedEntities[0], entityKey: 'key-before', title: 'Before Unit' },
+        ],
+        contributors: [],
+      },
+    ];
+    renderContainerComponent(mockLibraryContainerDraftHistory.containerKey);
+    const afterGroup = await findByDeepTextContent(/container_author published.*After Unit/i);
+    const createdEntry = await findByDeepTextContent(/author created.*Introduction to Testing Unit 1/i);
+    // After-creation group comes before the created entry
+    expect(afterGroup.compareDocumentPosition(createdEntry)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    // Before-creation group title is hidden (hideLogVert=true, no contributors), so only the vert line renders
+    // Verify the after-group is visible but before-group title is not
+    expect(screen.queryByText(/container_author published.*Before Unit/i)).not.toBeInTheDocument();
+    mockLibraryContainerPublishHistory.data = originalData;
+  });
 });

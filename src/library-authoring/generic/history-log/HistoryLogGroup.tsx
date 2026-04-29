@@ -25,6 +25,7 @@ export interface HistoryCreatedLogGroupProps {
   displayName: string;
   itemType: string;
   createdAt: string;
+  showLogVert?: boolean;
 }
 
 export interface HistoryDraftLogGroupProps {
@@ -34,10 +35,12 @@ export interface HistoryDraftLogGroupProps {
 
 export interface HistoryLogGroupEntriesProps {
   entries: LibraryHistoryEntry[];
+  hideLastLogVert?: boolean;
 }
 
 export interface HistoryPublishLogGroupProps extends LibraryPublishHistoryGroup {
   itemId: string;
+  hideLogVert?: boolean;
 }
 
 interface ContributorAvatarProps {
@@ -102,6 +105,7 @@ const HistoryLogGroupTitle = ({
 
 const HistoryLogGroupEntries = ({
   entries,
+  hideLastLogVert,
 }: HistoryLogGroupEntriesProps) => {
   const intl = useIntl();
 
@@ -121,7 +125,8 @@ const HistoryLogGroupEntries = ({
   return (
     <Stack gap={0}>
       <div className="history-log-vert" />
-      {entries.map((entry) => {
+      {entries.map((entry, index, arr) => {
+        const isLast = index === arr.length - 1;
         const entryMessage = getEntryMessage(entry);
 
         return (
@@ -149,7 +154,7 @@ const HistoryLogGroupEntries = ({
                 </span>
               </Stack>
             </Stack>
-            <div className="history-log-vert" />
+            {!isLast && !hideLastLogVert && <div className="history-log-vert" />}
           </div>
         );
       })}
@@ -162,6 +167,7 @@ export const HistoryCreatedLogGroup = ({
   displayName,
   itemType,
   createdAt,
+  showLogVert,
 }: HistoryCreatedLogGroupProps) => {
   const intl = useIntl();
 
@@ -176,6 +182,7 @@ export const HistoryCreatedLogGroup = ({
         dateMessage={moment(createdAt).fromNow()}
         disableCollapsible
       />
+      {showLogVert && <div className="history-log-vert" />}
     </div>
   );
 };
@@ -247,6 +254,7 @@ export const HistoryPublishLogGroup = ({
   publishedBy,
   publishedAt,
   contributors,
+  hideLogVert,
 }: HistoryPublishLogGroupProps) => {
   const intl = useIntl();
   const [isOpenCollapsible, openCollapsible, closeCollapsible] = useToggle(false);
@@ -298,21 +306,36 @@ export const HistoryPublishLogGroup = ({
         ) :
         (
           <>
-            <HistoryLogGroupTitle titleMessage={titleMessage} dateMessage={dateMessage} disableCollapsible />
+            {!hideLogVert && (
+              <HistoryLogGroupTitle titleMessage={titleMessage} dateMessage={dateMessage} disableCollapsible />
+            )}
             <div className="history-log-vert" />
           </>
         )}
       {hasContributors && (
         <Stack direction="horizontal">
-          <div
-            className={classNames(
-              'history-log-vert',
-              {
-                'history-log-vert-long': !isOpenCollapsible,
-              },
+          {!hideLogVert && (
+            <div
+              className={classNames(
+                'history-log-vert',
+                {
+                  'history-log-vert-long': !isOpenCollapsible,
+                },
+              )}
+            />
+          )}
+          {!isOpenCollapsible &&
+            (
+              <div
+                className={classNames(
+                  {
+                    'ml-4 pl-1': hideLogVert,
+                  },
+                )}
+              >
+                <ContributorsAvatars contributors={contributors} />
+              </div>
             )}
-          />
-          {!isOpenCollapsible && <ContributorsAvatars contributors={contributors} />}
         </Stack>
       )}
     </div>
