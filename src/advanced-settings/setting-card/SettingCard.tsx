@@ -138,8 +138,4 @@ SettingCard.propTypes = {
   readOnly: PropTypes.bool,
 };
 
-SettingCard.defaultProps = {
-  readOnly: false,
-};
-
 export default SettingCard;

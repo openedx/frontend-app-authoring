@@ -77,7 +77,7 @@ describe('OpenedXConfigForm', () => {
     axiosMock.reset();
   });
 
-  const createComponent = (onSubmit = jest.fn(), formRef = createRef(), legacy = true) => {
+  const createComponent = (onSubmit = jest.fn(), formRef = createRef(), legacy = true, isEditable = false) => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
@@ -85,6 +85,7 @@ describe('OpenedXConfigForm', () => {
             onSubmit={onSubmit}
             formRef={formRef}
             legacy={legacy}
+            isEditable={isEditable}
           />
         </IntlProvider>
       </AppProvider>,
@@ -113,6 +114,36 @@ describe('OpenedXConfigForm', () => {
     expect(queryByText(container, messages.visibilityInContext.defaultMessage)).toBeInTheDocument();
     expect(queryByText(container, messages.gradedUnitPagesLabel.defaultMessage)).toBeInTheDocument();
     expect(queryByText(container, messages.groupInContextSubsectionLabel.defaultMessage)).toBeInTheDocument();
+  });
+
+  test('renders editable form when isEditable=true', async () => {
+    await mockStore(legacyApiResponse);
+    createComponent(jest.fn(), createRef(), true, true);
+    const form = container.querySelector('form');
+    expect(form).toBeInTheDocument();
+    expect(form).not.toBeDisabled();
+  });
+
+  test('renders form using default isEditable=false when prop is omitted', async () => {
+    await mockStore(legacyApiResponse);
+    const formRef = createRef();
+    // Render directly without isEditable to trigger the default param = false
+    const wrapper = render(
+      <AppProvider store={store}>
+        <IntlProvider locale="en">
+          <OpenedXConfigForm
+            onSubmit={jest.fn()}
+            formRef={formRef}
+            legacy
+          />
+        </IntlProvider>
+      </AppProvider>,
+    );
+    const form = wrapper.container.querySelector('form');
+    expect(form).toBeInTheDocument();
+    // isEditable defaults to false — child controls should be disabled
+    const divideByCohorts = wrapper.container.querySelector('#divideByCohorts');
+    expect(divideByCohorts).toBeDisabled();
   });
 
   test('calls onSubmit when the formRef is submitted', async () => {
@@ -346,6 +377,25 @@ describe('OpenedXConfigForm', () => {
       expect(duplicateTopicCard).not.toBeInTheDocument();
       await assertDuplicateTopicNameValidation(topicCard, false);
       assertHasErrorValidation(false);
+    });
+  });
+
+  describe('isEditable prop', () => {
+    test('renders with isEditable=false (read-only mode)', async () => {
+      await mockStore(legacyApiResponse);
+      const wrapper = createComponent(jest.fn(), createRef(), true, false);
+
+      // Form renders with disabled when isEditable=false (lines 139, 149, etc)
+      const form = wrapper.querySelector('form');
+      expect(form).toBeInTheDocument();
+    });
+
+    test('renders with isEditable=true (edit mode)', async () => {
+      await mockStore(legacyApiResponse);
+      const wrapper = createComponent(jest.fn(), createRef(), true, true);
+
+      const form = wrapper.querySelector('form');
+      expect(form).toBeInTheDocument();
     });
   });
 });

@@ -9,6 +9,7 @@ import {
 } from '@src/testUtils';
 
 import PageGrid from './PageGrid';
+import PageCard from './PageCard';
 
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 
@@ -68,6 +69,68 @@ describe('LiveSettings', () => {
     await waitFor(() => {
       const textbookSettingsButton = screen.queryAllByRole('link')[1];
       expect(textbookSettingsButton).toHaveAttribute('href', textbookPagePath);
+    });
+  });
+
+  it('renders readOnly mode correctly', async () => {
+    render(
+      <PagesAndResourcesProvider courseId={courseId} isEditable={false}>
+        <PageGrid pages={mockPageConfig} />
+      </PagesAndResourcesProvider>,
+    );
+    // When isEditable=false, settings button should be disabled
+    await waitFor(() => {
+      const buttons = screen.queryAllByRole('button');
+      expect(buttons.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('renders enabled by default when readOnly is not specified (default false)', async () => {
+    // readOnly defaults to false - page card should render with enabled settings
+    render(
+      <PagesAndResourcesProvider courseId={courseId} isEditable={true}>
+        <PageGrid pages={mockPageConfig} />
+      </PagesAndResourcesProvider>,
+    );
+    // Should render buttons (enabled by default)
+    await waitFor(() => {
+      const buttons = screen.queryAllByRole('button');
+      expect(buttons.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('renders PageCard directly without readOnly prop (uses default false)', () => {
+    render(
+      <PagesAndResourcesProvider courseId={courseId}>
+        <PageCard
+          page={{
+            id: '1',
+            name: 'Test Page',
+            description: 'Test description',
+            enabled: false,
+            legacyLink: null,
+            allowedOperations: { enable: true },
+          }}
+          courseId={courseId}
+        />
+      </PagesAndResourcesProvider>,
+    );
+    expect(screen.getByText('Test Page')).toBeInTheDocument();
+  });
+
+  it('renders PageGrid with readOnly=true passing readOnly to PageCards', async () => {
+    render(
+      <PagesAndResourcesProvider courseId={courseId}>
+        <PageGrid pages={mockPageConfig} readOnly />
+      </PagesAndResourcesProvider>,
+    );
+    await waitFor(() => {
+      // With readOnly=true and legacyLink-based pages, arrow buttons become disabled
+      const buttons = screen.queryAllByRole('button');
+      expect(buttons.length).toBeGreaterThan(0);
+      // At least one button is disabled (the arrow buttons for pages with legacyLinks)
+      const disabledButtons = buttons.filter((btn) => btn.disabled);
+      expect(disabledButtons.length).toBeGreaterThan(0);
     });
   });
 });

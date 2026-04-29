@@ -90,7 +90,6 @@ PageSettingButton.defaultProps = {
   legacyLink: null,
   allowedOperations: null,
   courseId: null,
-  readOnly: false,
 };
 
 PageSettingButton.propTypes = {

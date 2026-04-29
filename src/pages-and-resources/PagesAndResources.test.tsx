@@ -8,7 +8,15 @@ import {
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { PagesAndResources } from '.';
+
+// Mock authz hooks
+jest.mock('@src/authz/hooks', () => ({
+  ...jest.requireActual('@src/authz/hooks'),
+  useCourseUserPermissions: jest.fn(),
+}));
 
 const mockPlugin = (identifier) => ({
   plugins: [
@@ -45,7 +53,29 @@ describe('PagesAndResources', () => {
         ),
       },
     });
+
+    // Set up waffle flags to disable authz by default
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+
+    // Default: authz disabled allows everything
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
+      isLoading: false,
+      isAuthzEnabled: false,
+      canViewPagesAndResources: true,
+      canEditPagesAndResources: true,
+    } as ReturnType<typeof useCourseUserPermissions>);
   });
+
+  // Helper to set up permission mocks
+  const mockPermissions = (canView: boolean, canEdit: boolean) => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
+      isLoading: false,
+      isAuthzEnabled: true,
+      canViewPagesAndResources: canView,
+      canEditPagesAndResources: canEdit,
+    } as ReturnType<typeof useCourseUserPermissions>);
+  };
 
   it('doesn\'t show content permissions section if relevant apps are not enabled', async () => {
     const initialState = {
@@ -127,5 +157,61 @@ describe('PagesAndResources', () => {
     await waitFor(() => expect(screen.getByText('Xpert unit summaries')).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByTestId('additional_course_content_plugin')).toBeInTheDocument());
+  });
+
+  describe('permission integration', () => {
+    it('shows PermissionDeniedAlert when user has no VIEW or EDIT permissions', async () => {
+      mockPermissions(false, false);
+
+      const initialState = {
+        models: {
+          courseApps: {},
+        },
+        pagesAndResources: {
+          courseAppIds: [],
+        },
+      };
+
+      initializeMocks({ initialState });
+      renderComponent();
+
+      await waitFor(() => expect(screen.getByTestId('permissionDeniedAlert')).toBeInTheDocument());
+    });
+
+    it('does NOT show PermissionDeniedAlert when user has VIEW permission', async () => {
+      mockPermissions(true, false);
+
+      const initialState = {
+        models: {
+          courseApps: {},
+        },
+        pagesAndResources: {
+          courseAppIds: [],
+        },
+      };
+
+      initializeMocks({ initialState });
+      renderComponent();
+
+      await waitFor(() => expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument());
+    });
+
+    it('does NOT show PermissionDeniedAlert when user has EDIT permission', async () => {
+      mockPermissions(true, true);
+
+      const initialState = {
+        models: {
+          courseApps: {},
+        },
+        pagesAndResources: {
+          courseAppIds: [],
+        },
+      };
+
+      initializeMocks({ initialState });
+      renderComponent();
+
+      await waitFor(() => expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument());
+    });
   });
 });

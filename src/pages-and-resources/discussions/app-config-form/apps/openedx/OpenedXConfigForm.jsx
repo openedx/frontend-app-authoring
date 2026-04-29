@@ -181,8 +181,4 @@ OpenedXConfigForm.propTypes = {
   isEditable: PropTypes.bool,
 };
 
-OpenedXConfigForm.defaultProps = {
-  isEditable: true,
-};
-
 export default OpenedXConfigForm;

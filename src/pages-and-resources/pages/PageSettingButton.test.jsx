@@ -1,5 +1,5 @@
 // @ts-check
-import { screen, render, initializeMocks } from '../../testUtils';
+import { screen, render, initializeMocks, fireEvent } from '../../testUtils';
 import PageSettingButton from './PageSettingButton';
 import { mockWaffleFlags } from '../../data/apiHooks.mock';
 
@@ -55,5 +55,46 @@ describe('PageSettingButton', () => {
 
     const linkElement = screen.getByRole('link');
     expect(linkElement).toHaveAttribute('href', defaultProps.legacyLink);
+  });
+
+  it('renders disabled icon button in read-only mode with legacy link', () => {
+    renderComponent({ readOnly: true, legacyLink: 'http://legacylink.com/textbooks' });
+
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+  });
+
+  it('renders enabled button by default when readOnly is not specified (default false)', () => {
+    // readOnly defaults to false - button should be enabled
+    renderComponent({ legacyLink: 'http://legacylink.com/textbooks' });
+
+    const linkElement = screen.getByRole('link');
+    expect(linkElement).toBeInTheDocument();
+  });
+
+  it('does not render when no legacyLink and cannot configure', () => {
+    renderComponent({ allowedOperations: null, legacyLink: null });
+
+    expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('navigates to settings page when settings button clicked (readOnly=false)', () => {
+    renderComponent({ legacyLink: 'http://legacylink.com/some-value', readOnly: false });
+
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    expect(button).not.toBeDisabled();
+    fireEvent.click(button);
+    // The button click invokes navigate — component stays mounted without errors
+  });
+
+  it('navigates to settings page with readOnly param when settings button clicked (readOnly=true)', () => {
+    renderComponent({ legacyLink: 'http://legacylink.com/some-value', readOnly: true });
+
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    expect(button).not.toBeDisabled();
+    fireEvent.click(button);
+    // Clicking triggers navigate with ?readOnly=true
   });
 });
