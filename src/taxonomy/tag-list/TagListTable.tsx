@@ -3,7 +3,7 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
-import type { PaginationState } from '@tanstack/react-table';
+import type { PaginationState, Row } from '@tanstack/react-table';
 import { useTagListData, useCreateTag, useUpdateTag, useDeleteTag } from '@src/taxonomy/data/apiHooks';
 import { TableView, TreeTableContext } from '@src/taxonomy/tree-table';
 import type {
@@ -12,6 +12,7 @@ import type {
 } from '../tree-table/types';
 import { TagTree } from './tagTree';
 import { getColumns } from './tagColumns';
+import DeleteModal from './DeleteModal';
 import {
   TABLE_MODES,
 } from './constants';
@@ -47,6 +48,8 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   const [tagTree, setTagTree] = useState<TagTree | null>(null);
   const [isCreatingTopTag, setIsCreatingTopTag] = useState(false);
   const [, setActiveActionMenuRowId] = useState<RowId | null>(null);
+  const [deleteRow, setDeleteRow] = useState<Row<TreeRowData> | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [draftError, setDraftError] = useState('');
   const treeData = (tagTree?.getAllAsDeepCopy() || []) as unknown as TreeRowData[];
   const hasOpenDraft = isCreatingTopTag || creatingParentId !== null || editingRowId !== null;
@@ -108,6 +111,12 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
     },
   );
 
+  const startDeleteRow = (row: Row<TreeRowData>) => {
+    setDeleteRow(row);
+    setIsDeleteModalOpen(true);
+    setActiveActionMenuRowId(null);
+  };
+
   // RELOAD DATA IN VIEW MODE
   useEffect(() => {
     // Get row data in VIEW mode. Otherwise keep current data to avoid disrupting
@@ -123,6 +132,7 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   // TreeTable context
   const contextValueArgs = {
     ...editActions,
+    startDeleteRow,
     treeData,
     pageCount,
     pagination,
@@ -157,6 +167,13 @@ const TagListTable = ({ taxonomyId, maxDepth }: TagListTableProps) => {
   return (
     <TreeTableContext.Provider value={contextValue}>
       <TableView hasDeleteError={deleteTagMutation.isError} />
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        row={deleteRow}
+        setIsOpen={setIsDeleteModalOpen}
+        setRow={setDeleteRow}
+        handleDeleteRow={editActions.handleDeleteRow}
+      />
     </TreeTableContext.Provider>
   );
 };

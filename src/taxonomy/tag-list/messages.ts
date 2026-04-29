@@ -100,6 +100,7 @@ const messages = defineMessages({
   deleteTagConfirmationEmphasizedPart: {
     id: 'course-authoring.tag-list.delete-tag-confirmation-bold-part',
     defaultMessage: 'Any tags applied to course content will be removed across all assigned organizations.',
+  },
   deleteTag: {
     id: 'course-authoring.tag-list.delete-tag',
     defaultMessage: 'Delete',

@@ -116,8 +116,6 @@ const subTagsUrl =
   'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
 const createTagUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/';
 const deleteTagUrl = createTagUrl;
-const deleteConfirmMessage =
-  'Warning: are you sure you want to delete this tag and all its subtags and descendants? Any tags applied to course content will be deleted.';
 
 const renderTagListTable = (maxDepth = 3) => render(<TagListTable taxonomyId={1} maxDepth={maxDepth} />);
 
@@ -956,16 +954,6 @@ describe('<TagListTable />', () => {
   });
 
   describe('Delete Tags', () => {
-    let confirmSpy;
-
-    beforeEach(() => {
-      confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
-    });
-
-    afterEach(() => {
-      confirmSpy.mockRestore();
-    });
-
     const tagDepthScenarios = [
       {
         description: 'Delete a top-level tag',
@@ -999,7 +987,7 @@ describe('<TagListTable />', () => {
       });
     });
 
-    it('asks for browser confirmation before deleting a leaf tag and deletes after acceptance', async () => {
+    it('opens the delete modal for a leaf tag and deletes only after typed confirmation', async () => {
       axiosMock.reset();
       axiosMock.onDelete(deleteTagUrl).reply(204);
       axiosMock
@@ -1018,7 +1006,14 @@ describe('<TagListTable />', () => {
       openActionsMenuForTag('root tag 2');
       fireEvent.click(screen.getByRole('button', { name: /^Delete$/i }));
 
-      expect(confirmSpy).toHaveBeenCalledWith(deleteConfirmMessage);
+      const dialog = screen.getByRole('dialog');
+      expect(dialog).toHaveTextContent('Delete "root tag 2"');
+      expect(dialog).toHaveTextContent('Type DELETE to confirm');
+      expect(axiosMock.history.delete.length).toBe(0);
+
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'DELETE' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Delete Tag' }));
+
       await expectDeleteRequest({ tagName: 'root tag 2', withSubtags: false });
       expect(
         await screen.findByText(
@@ -1030,7 +1025,7 @@ describe('<TagListTable />', () => {
       });
     });
 
-    it('deletes a parent tag together with all rendered descendants after browser confirmation', async () => {
+    it('deletes a parent tag together with all rendered descendants after typed modal confirmation', async () => {
       fireEvent.click(screen.getAllByText('Expand All')[0]);
       await screen.findByText('the child tag');
       await screen.findByText('the grandchild tag');
@@ -1054,7 +1049,13 @@ describe('<TagListTable />', () => {
       openActionsMenuForTag('root tag 1');
       fireEvent.click(screen.getByRole('button', { name: /^Delete$/i }));
 
-      expect(confirmSpy).toHaveBeenCalledWith(deleteConfirmMessage);
+      const dialog = screen.getByRole('dialog');
+      expect(dialog).toHaveTextContent('Delete "root tag 1"');
+      expect(dialog).toHaveTextContent('Type DELETE ALL 3 TAGS to confirm');
+
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'DELETE ALL 3 TAGS' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Delete Tags' }));
+
       await expectDeleteRequest({ tagName: 'root tag 1', withSubtags: true });
       expect(
         await screen.findByText(
@@ -1071,14 +1072,15 @@ describe('<TagListTable />', () => {
       });
     });
 
-    it('does not issue a delete request when browser confirmation is canceled and leaves the table unchanged', async () => {
-      confirmSpy.mockReturnValue(false);
-
+    it('does not issue a delete request when the delete modal is canceled and leaves the table unchanged', async () => {
       openActionsMenuForTag('root tag 1');
       fireEvent.click(screen.getByRole('button', { name: /^Delete$/i }));
 
-      expect(confirmSpy).toHaveBeenCalledWith(deleteConfirmMessage);
+      expect(screen.getByRole('dialog')).toHaveTextContent('Delete "root tag 1"');
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
       expect(axiosMock.history.delete.length).toBe(0);
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       expect(screen.getByText('root tag 1')).toBeInTheDocument();
     });
 
@@ -1097,7 +1099,9 @@ describe('<TagListTable />', () => {
       openActionsMenuForTag('root tag 1');
       fireEvent.click(screen.getByRole('button', { name: /^Delete$/i }));
 
-      expect(confirmSpy).toHaveBeenCalledWith(deleteConfirmMessage);
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'DELETE ALL 3 TAGS' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Delete Tags' }));
+
       await expectDeleteRequest({ tagName: 'root tag 1', withSubtags: true });
       expect(
         await screen.findByText('Error saving changes'),
@@ -1325,9 +1329,9 @@ describe('<TagListTable /> pagination transition behavior', () => {
     jest.spyOn(hooksModule, 'useEditActions').mockReturnValue({
       handleCreateRow: jest.fn(),
       handleUpdateRow: jest.fn(),
+      handleDeleteRow: jest.fn(),
       startSubtagDraft: jest.fn(),
       startEditRow: jest.fn(),
-      startDeleteRow: jest.fn(),
       validate: jest.fn(() => true),
     });
     jest.spyOn(treeTableModule, 'TableView').mockImplementation(() => {

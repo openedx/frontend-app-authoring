@@ -190,9 +190,8 @@ describe('useEditActions', () => {
       setToast,
     } = buildActions();
     deleteTagMutation.mutateAsync.mockResolvedValue(undefined);
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
 
-    actions.startDeleteRow({
+    actions.handleDeleteRow({
       original: {
         id: 1,
         value: 'tag to delete',
@@ -226,9 +225,8 @@ describe('useEditActions', () => {
       setToast,
     } = buildActions();
     deleteTagMutation.mutateAsync.mockRejectedValue(new Error('server failed'));
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
 
-    actions.startDeleteRow({
+    actions.handleDeleteRow({
       original: {
         id: 1,
         value: 'tag to delete',

@@ -1,6 +1,7 @@
 import { useReducer } from 'react';
 import { AxiosError } from 'axios';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Row } from '@tanstack/react-table';
 
 import globalMessages from '@src/messages';
 import { useCreateTag, useDeleteTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
@@ -16,10 +17,6 @@ import {
 
 import messages from './messages';
 import { getTagListRowData, getTagWithDescendantsCount } from './utils';
-import { Row } from '@tanstack/react-table';
-
-const DELETE_CONFIRM_MESSAGE =
-  'Warning: are you sure you want to delete this tag and all its subtags and descendants? Any tags applied to course content will be deleted.';
 
 /** Interface for table mode actions for React's `useReducer` hook.
  *
@@ -282,12 +279,6 @@ const useEditActions = ({
     setEditingRowId(`${rowData.id}:${rowData.value}`);
   };
 
-  const startDeleteTag = (row: Row<TreeRowData>) => {
-    if (window.confirm(DELETE_CONFIRM_MESSAGE)) {
-      void handleDeleteTag(row);
-    }
-  };
-
   const handleDeleteTag = async (row: Row<TreeRowData>) => {
     const rowData = getTagListRowData(row);
     const count = getTagWithDescendantsCount(rowData);
@@ -315,9 +306,9 @@ const useEditActions = ({
     updateTableWithoutDataReload,
     handleCreateRow: handleCreateTag,
     handleUpdateRow: handleUpdateTag,
+    handleDeleteRow: handleDeleteTag,
     startSubtagDraft,
     startEditRow: startEditTag,
-    startDeleteRow: startDeleteTag,
     validate,
   };
 };

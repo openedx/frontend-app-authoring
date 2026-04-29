@@ -25,8 +25,8 @@ const DeleteModal = ({
 }: DeleteModalProps) => {
   const intl = useIntl();
 
-  const handleConfirm = (row: Row<TreeRowData>) => {
-    handleDeleteRow(row);
+  const handleConfirm = async (row: Row<TreeRowData>) => {
+    await handleDeleteRow(row);
     setIsOpen(false);
     setRow(null);
   };
