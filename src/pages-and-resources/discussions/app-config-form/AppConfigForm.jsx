@@ -42,7 +42,7 @@ const AppConfigForm = ({
   const navigate = useNavigate();
 
   const { formRef } = useContext(AppConfigFormContext);
-  const { path: pagesAndResourcesPath, isEditable: contextIsEditable = false } = useContext(PagesAndResourcesContext);
+  const { path: pagesAndResourcesPath, isEditable = false } = useContext(PagesAndResourcesContext);
   const { appId: routeAppId } = useParams();
   const [isLoading, setLoading] = useState(true);
   const {
@@ -102,7 +102,7 @@ const AppConfigForm = ({
         formRef={formRef}
         onSubmit={handleSubmit}
         legacy
-        isEditable={contextIsEditable}
+        isEditable={isEditable}
       />
     );
   } else if (selectedAppId === 'openedx') {
@@ -111,7 +111,7 @@ const AppConfigForm = ({
         formRef={formRef}
         onSubmit={handleSubmit}
         legacy={false}
-        isEditable={contextIsEditable}
+        isEditable={isEditable}
       />
     );
   } else {
@@ -119,7 +119,7 @@ const AppConfigForm = ({
       <LtiConfigForm
         formRef={formRef}
         onSubmit={handleSubmit}
-        isEditable={contextIsEditable}
+        isEditable={isEditable}
       />
     );
   }

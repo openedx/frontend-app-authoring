@@ -71,7 +71,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
 
   return (
     <Card className="mb-5 p-5" data-testid="ltiConfigForm">
-      <Form ref={formRef} onSubmit={handleSubmit} disabled={!isEditable}>
+      <Form ref={formRef} onSubmit={handleSubmit}>
         <h3 className="mb-3">{providerName}</h3>
         <p>
           <FormattedMessage
@@ -113,6 +113,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.consumerKey}
+                disabled={!isEditable}
               />
               {isInvalidConsumerKey && (
                 <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -130,6 +131,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.consumerSecret}
+                disabled={!isEditable}
               />
               {isInvalidConsumerSecret && (
                 <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -143,6 +145,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.launchUrl}
+                disabled={!isEditable}
               />
               {isInvalidLaunchUrl && (
                 <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -163,6 +166,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onBlur={handleBlur}
                 checked={values.piiShareUsername}
                 label={intl.formatMessage(messages.piiShareUsername)}
+                disabled={!isEditable}
               />
               <Form.Check
                 type="checkbox"
@@ -171,6 +175,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onBlur={handleBlur}
                 checked={values.piiShareEmail}
                 label={intl.formatMessage(messages.piiShareEmail)}
+                disabled={!isEditable}
               />
             </Form.Group>
           </div>

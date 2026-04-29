@@ -18,7 +18,7 @@ const AppConfigFormSaveButton = ({ labelText }) => {
   const { isEditable = false } = useContext(PagesAndResourcesContext);
 
   const app = useModel('apps', selectedAppId);
-  const canSubmit = (getAuthenticatedUser().administrator || !app?.adminOnlyConfig) && isEditable;
+  const canSubmit = getAuthenticatedUser().administrator || !app?.adminOnlyConfig;
 
   const { formRef } = useContext(AppConfigFormContext);
 
@@ -47,6 +47,7 @@ const AppConfigFormSaveButton = ({ labelText }) => {
         }}
         state={submitButtonState}
         onClick={handleSave}
+        disabled={!isEditable}
         style={{ minWidth: '88px' }}
       />
     )

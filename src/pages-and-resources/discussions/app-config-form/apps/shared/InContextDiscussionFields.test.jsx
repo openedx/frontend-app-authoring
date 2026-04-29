@@ -110,7 +110,7 @@ describe('InContextDiscussionFields', () => {
   it('does not show popup when onChange fires with disabled=true', () => {
     renderComponent({ disabled: true });
     const switchControl = screen.getByLabelText(/enable discussions/i);
-    // Fire change event even though switch is disabled — onChange guard (!disabled) prevents popup
+    // fireEvent bypasses browser disabled-input behavior, but the !disabled guard in onChange prevents the popup
     fireEvent.click(switchControl);
     expect(screen.queryByText(/Confirm/i)).not.toBeInTheDocument();
   });
