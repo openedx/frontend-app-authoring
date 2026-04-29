@@ -38,7 +38,7 @@ const mockPageConfig = [
 
 const renderComponent = () => {
   render(
-    <PagesAndResourcesProvider courseId={courseId}>
+    <PagesAndResourcesProvider courseId={courseId} isEditable>
       <PageGrid pages={mockPageConfig} />
     </PagesAndResourcesProvider>,
   );
@@ -99,7 +99,7 @@ describe('LiveSettings', () => {
     });
   });
 
-  it('renders PageCard directly without readOnly prop (uses default false)', () => {
+  it('renders PageCard without isEditable in context (defaults to false, no settings button)', () => {
     render(
       <PagesAndResourcesProvider courseId={courseId}>
         <PageCard
@@ -118,17 +118,15 @@ describe('LiveSettings', () => {
     expect(screen.getByText('Test Page')).toBeInTheDocument();
   });
 
-  it('renders PageGrid with readOnly=true passing readOnly to PageCards', async () => {
+  it('disables arrow buttons for legacy-link pages when isEditable=false in context', async () => {
     render(
-      <PagesAndResourcesProvider courseId={courseId}>
-        <PageGrid pages={mockPageConfig} readOnly />
+      <PagesAndResourcesProvider courseId={courseId} isEditable={false}>
+        <PageGrid pages={mockPageConfig} />
       </PagesAndResourcesProvider>,
     );
     await waitFor(() => {
-      // With readOnly=true and legacyLink-based pages, arrow buttons become disabled
       const buttons = screen.queryAllByRole('button');
       expect(buttons.length).toBeGreaterThan(0);
-      // At least one button is disabled (the arrow buttons for pages with legacyLinks)
       const disabledButtons = buttons.filter((btn) => btn.disabled);
       expect(disabledButtons.length).toBeGreaterThan(0);
     });

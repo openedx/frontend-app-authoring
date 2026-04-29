@@ -15,10 +15,9 @@ const PageSettingButton = ({
   courseId,
   legacyLink,
   allowedOperations,
-  readOnly = false,
 }) => {
   const { formatMessage } = useIntl();
-  const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
+  const { path: pagesAndResourcesPath, isEditable = false } = useContext(PagesAndResourcesContext);
   const navigate = useNavigate();
   const waffleFlags = useWaffleFlags(courseId);
 
@@ -42,8 +41,7 @@ const PageSettingButton = ({
 
   const canConfigureOrEnable = allowedOperations?.configure || allowedOperations?.enable;
 
-  // If read-only (auditor), disable the arrow/link navigation but allow opening modal for settings
-  if (determineLinkDestination && readOnly) {
+  if (determineLinkDestination && !isEditable) {
     return (
       <span className="text-muted">
         <IconButton
@@ -74,14 +72,13 @@ const PageSettingButton = ({
     return null;
   }
 
-  // Settings button - allow opening modal, but pass readOnly state via navigation
   return (
     <IconButton
       src={Settings}
       iconAs={Icon}
       size="inline"
       alt={formatMessage(messages.settings)}
-      onClick={() => navigate(`${pagesAndResourcesPath}/${id}/settings${readOnly ? '?readOnly=true' : ''}`)}
+      onClick={() => navigate(`${pagesAndResourcesPath}/${id}/settings`)}
     />
   );
 };
@@ -100,7 +97,6 @@ PageSettingButton.propTypes = {
     configure: PropTypes.bool,
     enable: PropTypes.bool,
   }),
-  readOnly: PropTypes.bool,
 };
 
 export default PageSettingButton;

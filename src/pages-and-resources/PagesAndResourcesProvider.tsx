@@ -15,7 +15,7 @@ interface PagesAndResourcesProviderProps {
   children: React.ReactNode;
 }
 
-const PagesAndResourcesProvider = ({ courseId, isEditable = true, children }: PagesAndResourcesProviderProps) => {
+const PagesAndResourcesProvider = ({ courseId, isEditable = false, children }: PagesAndResourcesProviderProps) => {
   const contextValue = useMemo(() => ({
     courseId,
     path: `/course/${courseId}/pages-and-resources`,

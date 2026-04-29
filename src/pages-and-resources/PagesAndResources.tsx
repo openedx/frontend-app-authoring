@@ -81,17 +81,8 @@ const PagesAndResources = () => {
   const isEditable = !isLoadingUserPermissions && canEditPagesAndResources;
   const hasAdditionalCoursePlugin = getConfig()?.pluginSlots?.additional_course_plugin != null;
 
-  // Read-only mode: has VIEW permission but not MANAGE (auditor)
-  const isReadOnly = isAuthzEnabled
-    && !isLoadingUserPermissions
-    && canViewPagesAndResources
-    && !canEditPagesAndResources;
-
-  // For the modal: if readOnly, isEditable should be false (show disabled fields)
-  const isEditableForModal = isReadOnly ? false : isEditable;
-
   return (
-    <PagesAndResourcesProvider courseId={courseId} isEditable={isEditableForModal}>
+    <PagesAndResourcesProvider courseId={courseId} isEditable={isEditable}>
       <main className="container container-mw-md px-3">
         <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
           <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>
@@ -143,7 +134,6 @@ const PagesAndResources = () => {
           pages={pages}
           pluginSlotComponent={<AdditionalCoursePluginSlot />}
           courseId={courseId}
-          readOnly={isReadOnly}
         />
         {(contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
           && (
@@ -154,7 +144,6 @@ const PagesAndResources = () => {
               <PageGrid
                 pages={contentPermissionsPages}
                 pluginSlotComponent={<AdditionalCourseContentPluginSlot />}
-                readOnly={isReadOnly}
               />
             </>
           )}

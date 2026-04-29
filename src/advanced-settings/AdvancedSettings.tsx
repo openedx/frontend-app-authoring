@@ -10,9 +10,6 @@ import {
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useWaffleFlags } from '@src/data/apiHooks';
-import { useUserPermissions } from '@src/authz/data/apiHooks';
-import { COURSE_PERMISSIONS } from '@src/authz/constants';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
 import AlertProctoringError from '@src/generic/AlertProctoringError';
 import { LoadingSpinner } from '@src/generic/Loading';
@@ -30,6 +27,8 @@ import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import ModalError from './modal-error/ModalError';
 import { useCourseAdvancedSettings, useProctoringExamErrors, useUpdateCourseAdvancedSettings } from './data/apiHooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getAdvancedSettingsPermissions } from '@src/authz/permissionHelpers';
 
 const AdvancedSettings = () => {
   const intl = useIntl();
@@ -44,18 +43,12 @@ const AdvancedSettings = () => {
 
   const { courseId, courseDetails } = useCourseAuthoringContext();
 
-  const waffleFlags = useWaffleFlags(courseId);
-  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
-    },
-    canViewAdvancedSettings: {
-      action: COURSE_PERMISSIONS.VIEW_ADVANCED_SETTINGS,
-      scope: courseId,
-    },
-  }, isAuthzEnabled);
+  const {
+    isLoading: isLoadingUserPermissions,
+    isAuthzEnabled,
+    canViewAdvancedSettings,
+    canManageAdvancedSettings,
+  } = useCourseUserPermissions(courseId, getAdvancedSettingsPermissions(courseId));
 
   const {
     data: advancedSettingsData = {},
@@ -77,17 +70,12 @@ const AdvancedSettings = () => {
 
   const isLoading = isPendingSettingsStatus || (isAuthzEnabled && isLoadingUserPermissions);
 
-  // Determine if UI should be read-only (has VIEW but not MANAGE) — auditor
+  // Determine if UI should be read-only (has VIEW but not MANAGE)
   const isReadOnly = isAuthzEnabled
     && !isLoadingUserPermissions
-    && !!userPermissions?.canViewAdvancedSettings
-    && !userPermissions?.canManageAdvancedSettings;
+    && !!canViewAdvancedSettings
+    && !canManageAdvancedSettings;
 
-  useEffect(() => {
-    if (isReadOnly) {
-      setIsEditableState(false);
-    }
-  }, [isReadOnly]);
   const updateSettingsButtonState = {
     labels: {
       default: intl.formatMessage(messages.buttonSaveText),
@@ -167,14 +155,12 @@ const AdvancedSettings = () => {
   // Show permission denied alert when authz is enabled and user doesn't have VIEW or MANAGE
   const authzIsEnabledAndNoPermission = isAuthzEnabled
     && !isLoadingUserPermissions
-    && !userPermissions?.canViewAdvancedSettings
-    && !userPermissions?.canManageAdvancedSettings;
+    && !canViewAdvancedSettings
+    && !canManageAdvancedSettings;
 
   if (authzIsEnabledAndNoPermission) {
     return <PermissionDeniedAlert />;
   }
-
-  // Show the page content (read-only or editable)
 
   return (
     <>

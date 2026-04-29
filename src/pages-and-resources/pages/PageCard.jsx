@@ -26,12 +26,11 @@ const PageCard = ({
   page,
   settingButton,
   courseId,
-  readOnly = false,
 }) => {
   const { formatMessage } = useIntl();
   const isDesktop = useIsDesktop();
 
-  const SettingButton = settingButton || <PageSettingButton courseId={courseId} {...page} readOnly={readOnly} />;
+  const SettingButton = settingButton || <PageSettingButton courseId={courseId} {...page} />;
 
   return (
     <Card
@@ -68,7 +67,6 @@ PageCard.propTypes = {
   page: CoursePageShape.isRequired,
   settingButton: PropTypes.node,
   courseId: PropTypes.string,
-  readOnly: PropTypes.bool,
 };
 
 export default PageCard;
