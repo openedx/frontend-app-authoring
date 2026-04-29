@@ -34,6 +34,17 @@ export const getBlockTypesMetaDataUrl = (libraryId: string) =>
   `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/block_types/`;
 
 /**
+ * Get the URL for the entries of a publish group.
+ * publishGroupUuid: UUID of the PublishLog that groups this set of published entities.
+ */
+export const getLibraryPublishHistoryEntriesUrl = (
+  libraryId: string,
+  entityKey: string,
+  publishGroupUuid: string,
+) =>
+  `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/publish_history_entries/?scope_entity_key=${entityKey}&publish_log_uuid=${publishGroupUuid}`;
+
+/**
  * Get the URL for library block metadata.
  */
 export const getLibraryBlockMetadataUrl = (usageKey: string) =>
@@ -54,6 +65,25 @@ export const getLibraryBlockCollectionsUrl = (usageKey: string) =>
  * Get the URL for a single component hierarchy api.
  */
 export const getLibraryBlockHierarchyUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}hierarchy/`;
+
+/**
+ * Get the URL for the component draft history.
+ */
+export const getLibraryBlockDraftHistoryUrl = (usageKey: string) =>
+  `${getLibraryBlockMetadataUrl(usageKey)}draft_history/`;
+
+/**
+ * Get the URL for the component publish history.
+ */
+export const getLibraryBlockPublishHistoryUrl = (usageKey: string) =>
+  `${getLibraryBlockMetadataUrl(usageKey)}publish_history/`;
+
+/**
+ * Get the URL for the creation entry of a component.
+ * The creation entry is the draft change record representing when the component was first added to the library.
+ */
+export const getLibraryBlockCreationEntryUrl = (usageKey: string) =>
+  `${getLibraryBlockMetadataUrl(usageKey)}creation_entry/`;
 
 /**
  * Get the URL for content library list API.
@@ -160,6 +190,22 @@ export const getLibraryContainerCollectionsUrl = (containerId: string) =>
  */
 export const getLibraryContainerPublishApiUrl = (containerId: string) =>
   `${getLibraryContainerApiUrl(containerId)}publish/`;
+/**
+ * Get the URL for the draft history log of a contaienr.
+ */
+export const getLibraryContainerDraftHistoryUrl = (containerId: string) =>
+  `${getLibraryContainerApiUrl(containerId)}draft_history/`;
+/**
+ * Get the URL for the publish history log of a container.
+ */
+export const getLibraryContainerPublishHistoryUrl = (containerId: string) =>
+  `${getLibraryContainerApiUrl(containerId)}publish_history/`;
+/**
+ * Get the URL for the creation entry of a container.
+ * The creation entry is the draft change record representing when the container was first added to the library.
+ */
+export const getLibraryContainerCreationEntryUrl = (usageKey: string) =>
+  `${getLibraryContainerApiUrl(usageKey)}creation_entry/`;
 /**
  * Get the URL for the API endpoint to create a backup of a v2 library.
  */
@@ -332,6 +378,7 @@ export interface LibraryBlockMetadata {
   lastDraftCreatedBy: string | null;
   hasUnpublishedChanges: boolean;
   created: string | null;
+  createdBy: string | null;
   modified: string | null;
   tagsCount: number;
   collections: CollectionMetadata[];
@@ -930,5 +977,105 @@ export async function getModulestoreMigrationBlocksInfo(
   }
 
   const { data } = await client.get(getModulestoreMigratedBlocksInfoUrl(), { params });
+  return camelCaseObject(data);
+}
+
+export interface DirectPublishedEntity {
+  entityKey: string;
+  entityType: string;
+  title: string;
+}
+export interface LibraryPublishHistoryGroup {
+  publishLogUuid: string;
+  directPublishedEntities: DirectPublishedEntity[];
+  publishedBy?: string;
+  publishedAt: string;
+  contributors: LibraryPublishContributor[];
+  /**
+   * Key to use as `scope_entity_key` when fetching entries for this group.
+   * Pre-Verawood history entries: the specific entity key for this group (container or usage key).
+   * Post-Verawood container groups: null — use the container currently being viewed.
+   * Component history (all eras): the component's usage key.
+   */
+  scopeEntityKey?: string;
+}
+
+export interface LibraryPublishContributor {
+  profileImageUrls: {
+    full: string;
+    large: string;
+    medium: string;
+    small: string;
+  };
+  username?: string;
+}
+
+export interface LibraryHistoryEntry {
+  contributor?: LibraryPublishContributor | null;
+  changedAt: string;
+  title: string;
+  itemType: string;
+  action: 'edited' | 'renamed' | 'created';
+}
+
+/**
+ * Get the publish history for a library block.
+ */
+export async function getLibraryBlockPublishHistory(usageKey: string): Promise<LibraryPublishHistoryGroup[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockPublishHistoryUrl(usageKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the entries for a publish history group of a library block.
+ */
+export async function getLibraryPublishHistoryEntries(
+  libraryId: string,
+  entityKey: string,
+  publishGroupUuid: string,
+): Promise<LibraryHistoryEntry[]> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getLibraryPublishHistoryEntriesUrl(libraryId, entityKey, publishGroupUuid),
+  );
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the draft history for a library block.
+ */
+export async function getLibraryBlockDraftHistory(usageKey: string): Promise<LibraryHistoryEntry[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockDraftHistoryUrl(usageKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the creation entry for a library block.
+ */
+export async function getLibraryBlockCreationEntry(usageKey: string): Promise<LibraryHistoryEntry> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockCreationEntryUrl(usageKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the creation entry for a library container.
+ */
+export async function getLibraryContainerCreationEntry(containerKey: string): Promise<LibraryHistoryEntry> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerCreationEntryUrl(containerKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the publish history for a library container.
+ */
+export async function getLibraryContainerPublishHistory(containerKey: string): Promise<LibraryPublishHistoryGroup[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerPublishHistoryUrl(containerKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the draft history for a library container.
+ */
+export async function getLibraryContainerDraftHistory(containerKey: string): Promise<LibraryHistoryEntry[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerDraftHistoryUrl(containerKey));
   return camelCaseObject(data);
 }

@@ -34,6 +34,7 @@ import { useContainer } from '../data/apiHooks';
 import ContainerDeleter from './ContainerDeleter';
 import { ContainerPublisher } from './ContainerPublisher';
 import { PublishDraftButton, PublishedChip } from '../generic/publish-status-buttons';
+import { ContainerDetails } from './ContainerDetails';
 
 type ContainerPreviewProps = {
   containerId: string;
@@ -238,6 +239,11 @@ const ContainerInfo = () => {
           CONTAINER_INFO_TABS.Settings,
           intl.formatMessage(messages.settingsTabTitle),
           <ContainerSettings />,
+        )}
+        {renderTab(
+          CONTAINER_INFO_TABS.Details,
+          intl.formatMessage(messages.detailsTabTitle),
+          <ContainerDetails />,
         )}
       </Tabs>
     </Stack>

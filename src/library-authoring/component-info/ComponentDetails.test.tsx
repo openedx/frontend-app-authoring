@@ -4,13 +4,18 @@ import {
   render as baseRender,
   screen,
   fireEvent,
+  findByDeepTextContent,
 } from '@src/testUtils';
 import { mockFetchIndexDocuments, mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 
 import {
   mockContentLibrary,
   mockGetEntityLinks,
+  mockLibraryBlockCreationEntry,
+  mockLibraryBlockDraftHistory,
   mockLibraryBlockMetadata,
+  mockLibraryBlockPublishHistory,
+  mockLibraryBlockPublishHistoryEntries,
   mockXBlockAssets,
   mockXBlockOLX,
 } from '../data/api.mocks';
@@ -21,6 +26,10 @@ import ComponentDetails from './ComponentDetails';
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
+mockLibraryBlockCreationEntry.applyMock();
+mockLibraryBlockDraftHistory.applyMock();
+mockLibraryBlockPublishHistory.applyMock();
+mockLibraryBlockPublishHistoryEntries.applyMock();
 mockXBlockAssets.applyMock();
 mockXBlockOLX.applyMock();
 mockGetEntityLinks.applyMock();
@@ -60,7 +69,9 @@ describe('<ComponentDetails />', () => {
 
   it('should render the component details error', async () => {
     render(mockLibraryBlockMetadata.usageKeyError404);
-    expect(await screen.findByText(/Mocked request failed with status code 404/)).toBeInTheDocument();
+    // Metadata and history queries fail silently; the section renders empty without crashing
+    expect(await screen.findByText('Component History')).toBeInTheDocument();
+    expect(screen.queryByText(/Mocked request failed/)).not.toBeInTheDocument();
   });
 
   it('should render the component usage', async () => {
@@ -96,11 +107,7 @@ describe('<ComponentDetails />', () => {
 
   it('should render the component history', async () => {
     render(mockLibraryBlockMetadata.usageKeyPublished);
-    // Show created date
-    expect(await screen.findByText('June 20, 2024')).toBeInTheDocument();
-    // Show modified date
-    expect(await screen.findByText('June 21, 2024')).toBeInTheDocument();
-    // Show last published date
-    expect(await screen.findByText('June 22, 2024')).toBeInTheDocument();
+    // usageKeyPublished matches usageKeyEmpty in mockLibraryBlockCreationEntry (TEST2 key)
+    expect(await findByDeepTextContent(/Author created.*Introduction to Testing 2/i)).toBeInTheDocument();
   });
 });

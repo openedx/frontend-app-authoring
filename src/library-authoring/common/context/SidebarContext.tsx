@@ -45,6 +45,7 @@ export const CONTAINER_INFO_TABS = {
   Manage: 'manage',
   Usage: 'usage',
   Settings: 'settings',
+  Details: 'details',
 } as const;
 export type ContainerInfoTab = typeof CONTAINER_INFO_TABS[keyof typeof CONTAINER_INFO_TABS];
 export const isContainerInfoTab = (tab: string): tab is ContainerInfoTab => (
