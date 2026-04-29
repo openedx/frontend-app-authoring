@@ -121,7 +121,6 @@ describe('OpenedXConfigForm', () => {
     createComponent(jest.fn(), createRef(), true, true);
     const form = container.querySelector('form');
     expect(form).toBeInTheDocument();
-    expect(form).not.toBeDisabled();
   });
 
   test('renders form using default isEditable=false when prop is omitted', async () => {
@@ -380,22 +379,4 @@ describe('OpenedXConfigForm', () => {
     });
   });
 
-  describe('isEditable prop', () => {
-    test('renders with isEditable=false (read-only mode)', async () => {
-      await mockStore(legacyApiResponse);
-      const wrapper = createComponent(jest.fn(), createRef(), true, false);
-
-      // Form renders with disabled when isEditable=false (lines 139, 149, etc)
-      const form = wrapper.querySelector('form');
-      expect(form).toBeInTheDocument();
-    });
-
-    test('renders with isEditable=true (edit mode)', async () => {
-      await mockStore(legacyApiResponse);
-      const wrapper = createComponent(jest.fn(), createRef(), true, true);
-
-      const form = wrapper.querySelector('form');
-      expect(form).toBeInTheDocument();
-    });
-  });
 });

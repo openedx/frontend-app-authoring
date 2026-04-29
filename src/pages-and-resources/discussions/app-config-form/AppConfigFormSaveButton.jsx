@@ -15,7 +15,7 @@ const AppConfigFormSaveButton = ({ labelText }) => {
   const intl = useIntl();
   const saveStatus = useSelector(state => state.discussions.saveStatus);
   const { selectedAppId } = useSelector((state) => state.discussions);
-  const { isEditable = false } = useContext(PagesAndResourcesContext);
+  const { isEditable } = useContext(PagesAndResourcesContext);
 
   const app = useModel('apps', selectedAppId);
   const canSubmit = getAuthenticatedUser().administrator || !app?.adminOnlyConfig;

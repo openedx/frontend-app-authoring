@@ -22,7 +22,7 @@ const AppCard = ({
 }) => {
   const intl = useIntl();
   const { canChangeProviders } = useCourseAuthoringContext();
-  const { isEditable = false } = useContext(PagesAndResourcesContext);
+  const { isEditable } = useContext(PagesAndResourcesContext);
   const canInteract = canChangeProviders && isEditable;
   const supportText = app.hasFullSupport
     ? intl.formatMessage(messages.appFullSupport)

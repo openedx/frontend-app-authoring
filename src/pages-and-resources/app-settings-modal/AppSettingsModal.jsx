@@ -52,7 +52,7 @@ const AppSettingsModal = ({
   hideAppToggle,
 }) => {
   const { formatMessage } = useIntl();
-  const { courseId, isEditable = false } = useContext(PagesAndResourcesContext);
+  const { courseId, isEditable } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
   const updateSettingsRequestStatus = useSelector(getSavingStatus);
   const alertRef = useRef(null);

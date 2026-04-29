@@ -13,7 +13,7 @@ const AppListNextButton = () => {
   const intl = useIntl();
   const { selectedAppId } = useSelector(state => state.discussions);
   const { path: discussionsPath } = useContext(DiscussionsContext);
-  const { isEditable = false } = useContext(PagesAndResourcesContext);
+  const { isEditable } = useContext(PagesAndResourcesContext);
   const navigate = useNavigate();
 
   const handleStartConfig = useCallback(() => {

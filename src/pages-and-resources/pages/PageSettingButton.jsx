@@ -17,7 +17,7 @@ const PageSettingButton = ({
   allowedOperations,
 }) => {
   const { formatMessage } = useIntl();
-  const { path: pagesAndResourcesPath, isEditable = false } = useContext(PagesAndResourcesContext);
+  const { path: pagesAndResourcesPath, isEditable } = useContext(PagesAndResourcesContext);
   const navigate = useNavigate();
   const waffleFlags = useWaffleFlags(courseId);
 
@@ -43,15 +43,14 @@ const PageSettingButton = ({
 
   if (determineLinkDestination && !isEditable) {
     return (
-      <span className="text-muted">
-        <IconButton
-          src={ArrowForward}
-          iconAs={Icon}
-          size="inline"
-          alt={formatMessage(messages.settings)}
-          disabled
-        />
-      </span>
+      <IconButton
+        src={ArrowForward}
+        iconAs={Icon}
+        size="inline"
+        alt={formatMessage(messages.settings)}
+        className="text-muted"
+        disabled
+      />
     );
   }
 
