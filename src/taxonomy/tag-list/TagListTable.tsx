@@ -3,7 +3,7 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
-import type { PaginationState, Row } from '@tanstack/react-table';
+import type { PaginationState } from '@tanstack/react-table';
 import { TableView } from '@src/taxonomy/tree-table';
 import { useTagListData, useCreateTag, useUpdateTag } from '@src/taxonomy/data/apiHooks';
 import { TagTree } from './tagTree';
