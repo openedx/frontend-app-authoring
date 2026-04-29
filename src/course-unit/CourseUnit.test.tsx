@@ -149,6 +149,7 @@ const RootWrapper = () => (
 describe('<CourseUnit />', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
+
     window.scrollTo = jest.fn();
     global.localStorage.clear();
     store = mocks.reduxStore;
@@ -180,6 +181,10 @@ describe('<CourseUnit />', () => {
   });
 
   it('render CourseUnit component correctly', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     render(<RootWrapper />);
     const currentSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
     const currentSubSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
@@ -271,6 +276,10 @@ describe('<CourseUnit />', () => {
   });
 
   it('closes legacy edit modal and updates course unit sidebar after saveEditedXBlockData message', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     render(<RootWrapper />);
 
     const xblocksIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
@@ -308,6 +317,10 @@ describe('<CourseUnit />', () => {
   });
 
   it('updates course unit sidebar after receiving refreshPositions message', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     render(<RootWrapper />);
 
     const xblocksIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
@@ -341,6 +354,10 @@ describe('<CourseUnit />', () => {
 
   it('checks whether xblock is removed when the corresponding delete button is clicked and the sidebar is the updated', async () => {
     const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     render(<RootWrapper />);
 
     const iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
@@ -513,6 +530,10 @@ describe('<CourseUnit />', () => {
   });
 
   it('checks if xblock is a duplicate when the corresponding duplicate button is clicked and if the sidebar status is updated', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -1130,6 +1151,10 @@ describe('<CourseUnit />', () => {
   });
 
   it('renders course unit details for a draft with unpublished changes', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     render(<RootWrapper />);
 
     await waitFor(() => {
@@ -1206,6 +1231,10 @@ describe('<CourseUnit />', () => {
 
   it('should toggle visibility from sidebar and update course unit state accordingly', async () => {
     const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     render(<RootWrapper />);
     const courseUnitSidebar = await screen.findByTestId('course-unit-sidebar');
 
@@ -1298,6 +1327,10 @@ describe('<CourseUnit />', () => {
 
   it('should publish course unit after click on the "Publish" button', async () => {
     const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     render(<RootWrapper />);
     let courseUnitSidebar;
     let publishBtn;
@@ -1350,6 +1383,10 @@ describe('<CourseUnit />', () => {
 
   it('should discard changes after click on the Discard changes button', async () => {
     const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     render(<RootWrapper />);
     let courseUnitSidebar;
     let discardChangesBtn;
@@ -1425,6 +1462,10 @@ describe('<CourseUnit />', () => {
   });
 
   it('should toggle visibility from header configure modal and update course unit state accordingly', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     const user = userEvent.setup();
     render(<RootWrapper />);
     expect(
@@ -1524,6 +1565,13 @@ describe('<CourseUnit />', () => {
   });
 
   describe('Copy paste functionality', () => {
+    beforeEach(() => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+      });
+    });
+
     it('should copy a unit, paste it as a new unit, and update the course section vertical data', async () => {
       const user = userEvent.setup();
       render(<RootWrapper />);
@@ -2320,17 +2368,31 @@ describe('<CourseUnit />', () => {
       });
     });
 
-    it('should display visibility modal correctly', async () => (
-      checkRenderVisibilityModal('libraryContentAccess')
-    ));
+    it('should display visibility modal correctly', async () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+      });
+      await checkRenderVisibilityModal('libraryContentAccess');
+    });
 
-    it('opens legacy edit modal on edit button click', checkLegacyEditModalOnEditMessage);
+    it('opens legacy edit modal on edit button click', async () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+      });
+      await checkLegacyEditModalOnEditMessage();
+    });
   });
 
   describe('Split Test Content page', () => {
     const newUnitId = '12345';
 
     beforeEach(async () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+      });
       axiosMock
         .onGet(getCourseSectionVerticalApiUrl(blockId))
         .reply(200, {
@@ -2524,6 +2586,7 @@ describe('<CourseUnit />', () => {
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
     });
     render(<RootWrapper />);
 

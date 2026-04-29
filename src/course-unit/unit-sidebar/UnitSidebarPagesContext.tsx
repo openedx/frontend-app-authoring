@@ -16,7 +16,7 @@ export type UnitSidebarPages = {
   align?: SidebarPage;
 };
 
-const getUnitSidebarPages = (readOnly: boolean, hasComponentSelected: boolean) => {
+const getUnitSidebarPages = (readOnly: boolean, disableAdd: boolean) => {
   const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
 
   return {
@@ -30,8 +30,8 @@ const getUnitSidebarPages = (readOnly: boolean, hasComponentSelected: boolean) =
         component: AddSidebar,
         icon: Plus,
         title: messages.sidebarButtonAdd,
-        disabled: hasComponentSelected,
-        tooltip: hasComponentSelected ? messages.sidebarDisabledAddTooltip : undefined,
+        disabled: disableAdd,
+        tooltip: disableAdd ? messages.sidebarDisabledAddTooltip : undefined,
       },
     }),
     ...(showAlignSidebar && {
@@ -81,13 +81,19 @@ type UnitSidebarPagesProviderProps = {
 };
 
 export const UnitSidebarPagesProvider = ({ children }: UnitSidebarPagesProviderProps) => {
-  const { readOnly, selectedComponentId } = useUnitSidebarContext();
+  const {
+    readOnly,
+    selectedComponentId,
+    currentItemCategory,
+  } = useUnitSidebarContext();
 
   const hasComponentSelected = selectedComponentId !== undefined;
+  const isSplitTest = currentItemCategory === 'split_test';
+  const disableAdd = hasComponentSelected || isSplitTest;
 
   const sidebarPages = useMemo(
-    () => getUnitSidebarPages(readOnly, hasComponentSelected),
-    [readOnly, hasComponentSelected],
+    () => getUnitSidebarPages(readOnly, disableAdd),
+    [readOnly, disableAdd],
   );
 
   return (
