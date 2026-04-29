@@ -34,6 +34,16 @@ describe('OutlineAlignSidebar', () => {
       .spyOn(CourseOutlineContext, 'useCourseOutlineContext')
       .mockReturnValue({
         setCurrentSelection,
+        sections: [
+          {
+            id: 'section-1',
+            childInfo: {
+              children: [
+                { id: 'subsection-1', childInfo: { children: [{ id: 'unit-1' }] } },
+              ],
+            },
+          },
+        ],
       } as any);
     jest
       .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
@@ -112,11 +122,12 @@ describe('OutlineAlignSidebar', () => {
     const backButton = await screen.findByRole('button', { name: /back/i });
     backButton.click();
 
-    expect(openContainerSidebar).toHaveBeenCalledWith('subsection-1', 'subsection-1', 'section-1');
+    expect(openContainerSidebar).toHaveBeenCalledWith('subsection-1', 'subsection-1', 'section-1', 0);
     expect(setCurrentSelection).toHaveBeenCalledWith({
       currentId: 'subsection-1',
       subsectionId: 'subsection-1',
       sectionId: 'section-1',
+      index: 0,
     });
   });
 });

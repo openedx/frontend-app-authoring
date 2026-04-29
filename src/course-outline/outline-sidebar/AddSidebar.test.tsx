@@ -21,7 +21,7 @@ import {
 } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
-import { XBlock } from '@src/data/types';
+import { SelectionState, XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { snakeCaseKeys } from '@src/editors/utils';
@@ -70,8 +70,10 @@ jest.mock('@src/studio-home/hooks', () => ({
 let currentFlow: OutlineFlow | null = null;
 let isCurrentFlowOn = false;
 let currentItemData: Partial<XBlock> | null;
+let selectedContainerState: SelectionState | undefined;
 const clearSelection = jest.fn();
 const stopCurrentFlow = jest.fn();
+const openContainerSidebar = jest.fn();
 jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
@@ -79,8 +81,10 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
     currentFlow,
     isCurrentFlowOn,
     currentItemData,
+    selectedContainerState,
     clearSelection,
     stopCurrentFlow,
+    openContainerSidebar,
   }),
 }));
 
@@ -132,6 +136,10 @@ describe('AddSidebar', () => {
       return newMockResult;
     });
     outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
+    selectedContainerState = undefined;
+    clearSelection.mockClear();
+    stopCurrentFlow.mockClear();
+    openContainerSidebar.mockClear();
   });
 
   it('renders the AddSidebar component without any errors', async () => {
@@ -399,7 +407,29 @@ describe('AddSidebar', () => {
 
     const back = await screen.findByRole('button', { name: 'Back' });
     await user.click(back);
-    expect(clearSelection).toHaveBeenCalled();
     expect(stopCurrentFlow).toHaveBeenCalled();
+  });
+
+  it('back from unit sets subsection index in selection', async () => {
+    const user = userEvent.setup();
+    const section = outlineChildren[0];
+    const subsection = section.childInfo.children[0];
+    const unit = subsection.childInfo.children[0];
+    selectedContainerState = {
+      currentId: unit.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    };
+    renderComponent();
+
+    const back = await screen.findByRole('button', { name: 'Back' });
+    await user.click(back);
+
+    expect(openContainerSidebar).toHaveBeenCalledWith(
+      subsection.id,
+      subsection.id,
+      section.id,
+      0,
+    );
   });
 });
