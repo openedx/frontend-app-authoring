@@ -93,7 +93,7 @@ export const UnitSidebarPagesProvider = ({ children }: UnitSidebarPagesProviderP
 
   const sidebarPages = useMemo(
     () => getUnitSidebarPages(readOnly, disableAdd),
-    [readOnly, hasComponentSelected],
+    [readOnly, disableAdd],
   );
 
   return (
