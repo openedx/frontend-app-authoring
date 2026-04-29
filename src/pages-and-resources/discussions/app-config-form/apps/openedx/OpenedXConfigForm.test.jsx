@@ -378,5 +378,4 @@ describe('OpenedXConfigForm', () => {
       assertHasErrorValidation(false);
     });
   });
-
 });

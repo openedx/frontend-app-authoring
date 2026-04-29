@@ -117,5 +117,4 @@ describe('LiveSettings', () => {
     );
     expect(screen.getByText('Test Page')).toBeInTheDocument();
   });
-
 });
