@@ -11,7 +11,8 @@ jest.mock('./CreateRow', () => () => (
   </tr>
 ));
 
-jest.mock('./EditRow', () => ({
+jest.mock('./EditRow', () =>
+({
   initialValue,
   handleUpdateRow,
   cancelEditRow,
@@ -31,7 +32,8 @@ jest.mock('./EditRow', () => ({
   </tr>
 ));
 
-jest.mock('./NestedRows', () => ({
+jest.mock('./NestedRows', () =>
+({
   parentRowValue,
   isCreating,
   onSaveNewChildRow,
@@ -108,14 +110,15 @@ const makeRow = ({
   getVisibleCells: () => [makeCell(`${id}-cell`, `${value} cell`)],
 });
 
-const renderTableBody = (contextValue = baseContextValue()) => render(
-  <TreeTableContext.Provider value={contextValue as any}>
-    <table>
-      <TableBody />
-    </table>
-  </TreeTableContext.Provider>,
-  { wrapper },
-);
+const renderTableBody = (contextValue = baseContextValue()) =>
+  render(
+    <TreeTableContext.Provider value={contextValue as any}>
+      <table>
+        <TableBody />
+      </table>
+    </TreeTableContext.Provider>,
+    { wrapper },
+  );
 
 describe('TableBody', () => {
   it('returns null when no table instance is available in context', () => {
