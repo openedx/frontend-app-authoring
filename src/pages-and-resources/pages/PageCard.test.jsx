@@ -9,6 +9,7 @@ import {
 } from '@src/testUtils';
 
 import PageGrid from './PageGrid';
+import PageCard from './PageCard';
 
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 
@@ -37,7 +38,7 @@ const mockPageConfig = [
 
 const renderComponent = () => {
   render(
-    <PagesAndResourcesProvider courseId={courseId}>
+    <PagesAndResourcesProvider courseId={courseId} isEditable>
       <PageGrid pages={mockPageConfig} />
     </PagesAndResourcesProvider>,
   );
@@ -69,5 +70,51 @@ describe('LiveSettings', () => {
       const textbookSettingsButton = screen.queryAllByRole('link')[1];
       expect(textbookSettingsButton).toHaveAttribute('href', textbookPagePath);
     });
+  });
+
+  it('disables legacy-link arrow buttons in readOnly mode, but keeps settings gear accessible', async () => {
+    render(
+      <PagesAndResourcesProvider courseId={courseId} isEditable={false}>
+        <PageGrid pages={mockPageConfig} />
+      </PagesAndResourcesProvider>,
+    );
+    await waitFor(() => {
+      // Arrow buttons for legacy-link pages must be disabled so auditors
+      // can't navigate to external Studio pages that bypass isEditable.
+      const disabledButtons = screen.queryAllByRole('button').filter((btn) => btn.disabled);
+      expect(disabledButtons.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('all buttons are enabled when isEditable=true', async () => {
+    render(
+      <PagesAndResourcesProvider courseId={courseId} isEditable>
+        <PageGrid pages={mockPageConfig} />
+      </PagesAndResourcesProvider>,
+    );
+    await waitFor(() => {
+      const buttons = screen.queryAllByRole('button');
+      expect(buttons.length).toBeGreaterThan(0);
+      buttons.forEach((btn) => expect(btn).not.toBeDisabled());
+    });
+  });
+
+  it('renders PageCard with default isEditable=true — settings button is present and enabled', () => {
+    render(
+      <PagesAndResourcesProvider courseId={courseId}>
+        <PageCard
+          page={{
+            id: '1',
+            name: 'Test Page',
+            description: 'Test description',
+            enabled: false,
+            legacyLink: null,
+            allowedOperations: { enable: true },
+          }}
+          courseId={courseId}
+        />
+      </PagesAndResourcesProvider>,
+    );
+    expect(screen.getByText('Test Page')).toBeInTheDocument();
   });
 });

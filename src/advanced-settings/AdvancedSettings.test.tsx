@@ -191,4 +191,25 @@ describe('<AdvancedSettings />', () => {
     render();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
   });
+
+  it('should render settings in read-only mode when user has VIEW but not MANAGE permissions (auditor)', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: { canViewAdvancedSettings: true, canManageAdvancedSettings: false },
+    } as unknown as ReturnType<typeof useUserPermissions>);
+    render();
+    const textarea = await screen.findByLabelText(/Advanced Module List/i);
+    expect(textarea).toBeDisabled();
+  });
+
+  it('should show permission denied when user has NO permissions (null data)', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: null,
+    } as unknown as ReturnType<typeof useUserPermissions>);
+    render();
+    expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+  });
 });

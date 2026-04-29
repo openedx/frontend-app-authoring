@@ -3,10 +3,12 @@ import {
   queryByLabelText,
   queryByTestId,
   initializeMocks,
+  fireEvent,
 } from '@src/testUtils';
 import { executeThunk } from '@src/utils';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import PagesAndResourcesProvider from '../../PagesAndResourcesProvider';
 import AppCard from './AppCard';
 import messages from './messages';
 import appMessages from '../app-config-form/messages';
@@ -38,15 +40,17 @@ describe('AppCard', () => {
     await executeThunk(fetchProviders(courseId), store.dispatch);
   };
 
-  const createComponent = (data) => {
+  const createComponent = (data, { isEditable = false } = {}) => {
     const wrapper = render(
       <CourseAuthoringProvider courseId={courseId}>
-        <AppCard
-          app={data}
-          onClick={() => jest.fn()}
-          selected={selected}
-          features={[]}
-        />
+        <PagesAndResourcesProvider courseId={courseId} isEditable={isEditable}>
+          <AppCard
+            app={data}
+            onClick={() => jest.fn()}
+            selected={selected}
+            features={[]}
+          />
+        </PagesAndResourcesProvider>
       </CourseAuthoringProvider>,
     );
     container = wrapper.container;
@@ -95,5 +99,99 @@ describe('AppCard', () => {
     createComponent(appWithBasicSupport);
 
     expect(queryByTestId(container, 'card-subtitle')).toHaveTextContent(subtitle);
+  });
+
+  describe('isEditable integration', () => {
+    test('card responds to click when isEditable=true', async () => {
+      const handleClick = jest.fn();
+      await mockStore(legacyApiResponse);
+
+      const wrapper = render(
+        <CourseAuthoringProvider courseId={courseId}>
+          <PagesAndResourcesProvider courseId={courseId} isEditable>
+            <AppCard
+              app={app}
+              onClick={handleClick}
+              selected={false}
+              features={[]}
+            />
+          </PagesAndResourcesProvider>
+        </CourseAuthoringProvider>,
+      );
+      const card = wrapper.container.querySelector('[role="radio"]');
+
+      fireEvent.click(card);
+
+      expect(handleClick).toHaveBeenCalledWith(app.id);
+    });
+
+    test('card does NOT respond to click when isEditable=false', async () => {
+      const handleClick = jest.fn();
+      await mockStore(legacyApiResponse);
+
+      const wrapper = render(
+        <CourseAuthoringProvider courseId={courseId}>
+          <PagesAndResourcesProvider courseId={courseId} isEditable={false}>
+            <AppCard
+              app={app}
+              onClick={handleClick}
+              selected={false}
+              features={[]}
+            />
+          </PagesAndResourcesProvider>
+        </CourseAuthoringProvider>,
+      );
+      const card = wrapper.container.querySelector('[role="radio"]');
+
+      fireEvent.click(card);
+
+      expect(handleClick).not.toHaveBeenCalled();
+    });
+
+    test('card responds to keyDown Enter when isEditable=true', async () => {
+      const handleClick = jest.fn();
+      await mockStore(legacyApiResponse);
+
+      const wrapper = render(
+        <CourseAuthoringProvider courseId={courseId}>
+          <PagesAndResourcesProvider courseId={courseId} isEditable>
+            <AppCard
+              app={app}
+              onClick={handleClick}
+              selected={false}
+              features={[]}
+            />
+          </PagesAndResourcesProvider>
+        </CourseAuthoringProvider>,
+      );
+      const card = wrapper.container.querySelector('[role="radio"]');
+
+      fireEvent.keyDown(card, { key: 'Enter' });
+
+      expect(handleClick).toHaveBeenCalledWith(app.id);
+    });
+
+    test('card does NOT respond to keyDown when isEditable=false', async () => {
+      const handleClick = jest.fn();
+      await mockStore(legacyApiResponse);
+
+      const wrapper = render(
+        <CourseAuthoringProvider courseId={courseId}>
+          <PagesAndResourcesProvider courseId={courseId} isEditable={false}>
+            <AppCard
+              app={app}
+              onClick={handleClick}
+              selected={false}
+              features={[]}
+            />
+          </PagesAndResourcesProvider>
+        </CourseAuthoringProvider>,
+      );
+      const card = wrapper.container.querySelector('[role="radio"]');
+
+      fireEvent.keyDown(card, { key: 'Enter' });
+
+      expect(handleClick).not.toHaveBeenCalled();
+    });
   });
 });

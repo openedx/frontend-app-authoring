@@ -108,14 +108,20 @@ describe('Course authoring page', () => {
 
     axiosMock.onGet(
       `${courseAppsApiUrl}/${courseId}`,
-    ).reply(403);
+    ).reply(403, { response: { status: 403 } });
     await executeThunk(fetchCourseApps(courseId), store.dispatch);
   };
   test('renders PermissionDeniedAlert when courseAppsApiStatus is DENIED', async () => {
     mockPathname = '/editor/';
     await mockStoreDenied();
 
-    const wrapper = renderComponent(<CourseAuthoringPage />);
+    // Test PagesAndResources (which has the PermissionDeniedAlert logic),
+    // not CourseAuthoringPage which is just the layout wrapper
+    const wrapper = renderComponent(
+      <CourseAuthoringPage>
+        <PagesAndResources />
+      </CourseAuthoringPage>,
+    );
     expect(await wrapper.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
   });
 });

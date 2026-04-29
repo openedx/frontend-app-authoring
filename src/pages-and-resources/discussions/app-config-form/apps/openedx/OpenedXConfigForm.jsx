@@ -25,6 +25,7 @@ const OpenedXConfigForm = ({
   onSubmit,
   formRef,
   legacy,
+  isEditable = false,
 }) => {
   const intl = useIntl();
   const {
@@ -141,7 +142,12 @@ const OpenedXConfigForm = ({
                 {!legacy
                   && (
                     <>
-                      <InContextDiscussionFields onBlur={handleBlur} onChange={handleChange} values={values} />
+                      <InContextDiscussionFields
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        values={values}
+                        disabled={!isEditable}
+                      />
                       <AppConfigFormDivider thick />
                     </>
                   )}
@@ -149,14 +155,15 @@ const OpenedXConfigForm = ({
                   onBlur={handleBlur}
                   onChange={handleChange}
                   values={values}
+                  disabled={!isEditable}
                 />
                 <AppConfigFormDivider thick />
-                <DiscussionTopics />
+                <DiscussionTopics disabled={!isEditable} />
                 <AppConfigFormDivider thick />
-                <DivisionByGroupFields />
+                <DivisionByGroupFields disabled={!isEditable} />
                 <AppConfigFormDivider thick />
-                <ReportedContentEmailNotifications />
-                <DiscussionRestriction />
+                <ReportedContentEmailNotifications disabled={!isEditable} />
+                <DiscussionRestriction disabled={!isEditable} />
               </Form>
             </Card>
           </OpenedXConfigFormProvider>
@@ -171,6 +178,7 @@ OpenedXConfigForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
+  isEditable: PropTypes.bool,
 };
 
 export default OpenedXConfigForm;

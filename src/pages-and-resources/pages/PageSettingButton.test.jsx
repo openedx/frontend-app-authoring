@@ -1,7 +1,8 @@
 // @ts-check
-import { screen, render, initializeMocks } from '../../testUtils';
+import { screen, render, initializeMocks, fireEvent } from '../../testUtils';
 import PageSettingButton from './PageSettingButton';
 import { mockWaffleFlags } from '../../data/apiHooks.mock';
+import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 
 const defaultProps = {
   id: 'page_id',
@@ -10,7 +11,12 @@ const defaultProps = {
   allowedOperations: { configure: true, enable: true },
 };
 
-const renderComponent = (props = {}) => render(<PageSettingButton {...defaultProps} {...props} />);
+const renderComponent = (props = {}, { isEditable = true } = {}) =>
+  render(
+    <PagesAndResourcesProvider courseId={defaultProps.courseId} isEditable={isEditable}>
+      <PageSettingButton {...defaultProps} {...props} />
+    </PagesAndResourcesProvider>,
+  );
 
 mockWaffleFlags();
 
@@ -55,5 +61,34 @@ describe('PageSettingButton', () => {
 
     const linkElement = screen.getByRole('link');
     expect(linkElement).toHaveAttribute('href', defaultProps.legacyLink);
+  });
+
+  it('renders disabled icon button in read-only mode with legacy link', () => {
+    renderComponent({ legacyLink: 'http://legacylink.com/textbooks' }, { isEditable: false });
+
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+  });
+
+  it('renders arrow link when user is editable', () => {
+    renderComponent({ legacyLink: 'http://legacylink.com/textbooks' }, { isEditable: true });
+
+    const linkElement = screen.getByRole('link');
+    expect(linkElement).toBeInTheDocument();
+  });
+
+  it('does not render when no legacyLink and cannot configure', () => {
+    renderComponent({ allowedOperations: null, legacyLink: null });
+
+    expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('navigates to settings page when settings gear button clicked', () => {
+    renderComponent({ legacyLink: 'http://legacylink.com/some-value' });
+
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    expect(button).not.toBeDisabled();
+    fireEvent.click(button);
   });
 });
