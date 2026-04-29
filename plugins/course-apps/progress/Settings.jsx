@@ -6,7 +6,7 @@ import { getConfig } from '@edx/frontend-platform';
 import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
 import { useAppSetting } from 'CourseAuthoring/utils';
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
-import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources';
 import messages from './messages';
 
 const ProgressSettings = ({ onClose }) => {

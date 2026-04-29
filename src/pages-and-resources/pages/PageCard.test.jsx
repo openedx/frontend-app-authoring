@@ -72,34 +72,34 @@ describe('LiveSettings', () => {
     });
   });
 
-  it('renders readOnly mode correctly', async () => {
+  it('disables legacy-link arrow buttons in readOnly mode, but keeps settings gear accessible', async () => {
     render(
       <PagesAndResourcesProvider courseId={courseId} isEditable={false}>
         <PageGrid pages={mockPageConfig} />
       </PagesAndResourcesProvider>,
     );
-    // When isEditable=false, settings button should be disabled
     await waitFor(() => {
-      const buttons = screen.queryAllByRole('button');
-      expect(buttons.length).toBeGreaterThan(0);
+      // Arrow buttons for legacy-link pages must be disabled so auditors
+      // can't navigate to external Studio pages that bypass isEditable.
+      const disabledButtons = screen.queryAllByRole('button').filter((btn) => btn.disabled);
+      expect(disabledButtons.length).toBeGreaterThan(0);
     });
   });
 
-  it('renders enabled by default when readOnly is not specified (default false)', async () => {
-    // readOnly defaults to false - page card should render with enabled settings
+  it('all buttons are enabled when isEditable=true', async () => {
     render(
-      <PagesAndResourcesProvider courseId={courseId} isEditable={true}>
+      <PagesAndResourcesProvider courseId={courseId} isEditable>
         <PageGrid pages={mockPageConfig} />
       </PagesAndResourcesProvider>,
     );
-    // Should render buttons (enabled by default)
     await waitFor(() => {
       const buttons = screen.queryAllByRole('button');
       expect(buttons.length).toBeGreaterThan(0);
+      buttons.forEach((btn) => expect(btn).not.toBeDisabled());
     });
   });
 
-  it('renders PageCard without isEditable in context (defaults to false, no settings button)', () => {
+  it('renders PageCard with default isEditable=true — settings button is present and enabled', () => {
     render(
       <PagesAndResourcesProvider courseId={courseId}>
         <PageCard

@@ -34,7 +34,7 @@ const PagesAndResources = () => {
     isLoading: isLoadingUserPermissions,
     isAuthzEnabled,
     canViewPagesAndResources,
-    canEditPagesAndResources,
+    canManagePagesAndResources,
   } = useCourseUserPermissions(courseId, getPagesAndResourcesPermissions(courseId));
 
   const dispatch = useDispatch();
@@ -72,13 +72,14 @@ const PagesAndResources = () => {
 
   // Gate: if user has neither VIEW nor MANAGE permission, show permission denied
   const hasNoAccess = (!isAuthzEnabled && courseAppsApiStatus === RequestStatus.DENIED)
-    || (isAuthzEnabled && !isLoadingUserPermissions && !canViewPagesAndResources && !canEditPagesAndResources);
+    || (isAuthzEnabled && !canViewPagesAndResources && !canManagePagesAndResources);
 
   if (hasNoAccess) {
     return <PermissionDeniedAlert />;
   }
 
-  const isEditable = !isLoadingUserPermissions && canEditPagesAndResources;
+  // When authz is disabled every authenticated user has full edit access.
+  const isEditable = !isAuthzEnabled || !!canManagePagesAndResources;
   const hasAdditionalCoursePlugin = getConfig()?.pluginSlots?.additional_course_plugin != null;
 
   return (

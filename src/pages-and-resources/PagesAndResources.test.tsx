@@ -62,18 +62,18 @@ describe('PagesAndResources', () => {
       isLoading: false,
       isAuthzEnabled: false,
       canViewPagesAndResources: true,
-      canEditPagesAndResources: true,
+      canManagePagesAndResources: true,
     } as ReturnType<typeof useCourseUserPermissions>);
   });
 
   // Helper to set up permission mocks
-  const mockPermissions = (canView: boolean, canEdit: boolean) => {
+  const mockPermissions = (canView: boolean, canManage: boolean) => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
       isAuthzEnabled: true,
       canViewPagesAndResources: canView,
-      canEditPagesAndResources: canEdit,
+      canManagePagesAndResources: canManage,
     } as ReturnType<typeof useCourseUserPermissions>);
   };
 
