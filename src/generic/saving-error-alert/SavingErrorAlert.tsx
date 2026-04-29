@@ -6,6 +6,7 @@ import AlertMessage from '../alert-message';
 import messages from './messages';
 
 export interface SavingErrorAlertProps {
+  /** Whether a mutation query has failed, triggering the error alert to appear. */
   isQueryFailed: boolean;
   errorMessage?: string;
 }
