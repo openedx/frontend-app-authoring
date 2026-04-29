@@ -10,14 +10,39 @@ import { useOutlineSidebarContext } from './OutlineSidebarContext';
 export const OutlineAlignSidebar = () => {
   const { courseId } = useCourseAuthoringContext();
   const { setCurrentSelection } = useCourseOutlineContext();
-  const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
+  const { selectedContainerState, clearSelection, openContainerSidebar } = useOutlineSidebarContext();
 
   const sidebarContentId = selectedContainerState?.currentId || courseId;
 
   const { data: contentData } = useContentData(sidebarContentId);
 
-  // istanbul ignore next
   const handleBack = () => {
+    const { currentId, subsectionId, sectionId } = selectedContainerState || {};
+
+    if (!currentId) {
+      clearSelection();
+      setCurrentSelection(undefined);
+      return;
+    }
+
+    if (currentId === subsectionId && sectionId) {
+      openContainerSidebar(sectionId, undefined, sectionId);
+      setCurrentSelection({ currentId: sectionId, sectionId });
+      return;
+    }
+
+    if (currentId === sectionId) {
+      clearSelection();
+      setCurrentSelection(undefined);
+      return;
+    }
+
+    if (subsectionId) {
+      openContainerSidebar(subsectionId, subsectionId, sectionId);
+      setCurrentSelection({ currentId: subsectionId, subsectionId, sectionId });
+      return;
+    }
+
     clearSelection();
     setCurrentSelection(undefined);
   };

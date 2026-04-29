@@ -75,6 +75,7 @@ export const UnitSidebar = () => {
     currentTabKey,
     setCurrentTabKey,
     setSelectedContainerState,
+    openContainerInfoSidebar,
   } = useOutlineSidebarContext();
   const {
     currentId: unitId = /* istanbul ignore next */ '',
@@ -209,12 +210,25 @@ export const UnitSidebar = () => {
     showToast(intl.formatMessage(messages.locationCopiedText));
   };
 
+  const handleBack = () => {
+    if (selectedContainerState?.subsectionId) {
+      openContainerInfoSidebar(
+        selectedContainerState.subsectionId,
+        selectedContainerState.subsectionId,
+        selectedContainerState.sectionId,
+        subsectionIndex >= 0 ? subsectionIndex : undefined,
+      );
+      return;
+    }
+    clearSelection();
+  };
+
   return (
     <>
       <SidebarTitle
         title={unitData?.displayName || ''}
         icon={getItemIcon(unitData?.category || '')}
-        onBackBtnClick={clearSelection}
+        onBackBtnClick={handleBack}
         menuProps={{
           itemId: unitId,
           index: index ?? -1,
