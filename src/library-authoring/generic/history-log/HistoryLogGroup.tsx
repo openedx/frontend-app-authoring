@@ -45,7 +45,7 @@ export interface HistoryPublishLogGroupProps extends LibraryPublishHistoryGroup 
 
 interface ContributorAvatarProps {
   username?: string;
-  src: string;
+  src?: string;
   className: string;
   size: ComponentProps<typeof Avatar>['size'];
 }
@@ -134,7 +134,7 @@ const HistoryLogGroupEntries = ({
             <Stack direction="horizontal" gap={2} className="ml-1.5">
               <ContributorAvatar
                 username={entry.contributor?.username || intl.formatMessage(messages.historyEntryDefaultUser)}
-                src={entry.contributor.profileImageUrls.medium}
+                src={entry.contributor?.profileImageUrls.medium}
                 className="history-log-group-avatar small-avatar"
                 size="sm"
               />
@@ -143,7 +143,7 @@ const HistoryLogGroupEntries = ({
                   <FormattedMessage
                     {...entryMessage}
                     values={{
-                      user: entry.contributor.username ?? intl.formatMessage(messages.historyEntryDefaultUser),
+                      user: entry.contributor?.username ?? intl.formatMessage(messages.historyEntryDefaultUser),
                       displayName: <span className="history-log-title text-truncate">{entry.title}</span>,
                       icon: <Icon src={getItemIcon(entry.itemType)} />,
                     }}

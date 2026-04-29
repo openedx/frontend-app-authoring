@@ -1008,7 +1008,7 @@ export interface LibraryPublishContributor {
 }
 
 export interface LibraryHistoryEntry {
-  contributor: LibraryPublishContributor;
+  contributor?: LibraryPublishContributor | null;
   changedAt: string;
   title: string;
   itemType: string;
