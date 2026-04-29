@@ -16,8 +16,15 @@ jest.mock('@src/content-tags-drawer', () => ({
 }));
 
 describe('OutlineAlignSidebar', () => {
+  const setCurrentSelection = jest.fn();
+  const clearSelection = jest.fn();
+  const openContainerSidebar = jest.fn();
+
   beforeEach(() => {
     initializeMocks();
+    setCurrentSelection.mockReset();
+    clearSelection.mockReset();
+    openContainerSidebar.mockReset();
     jest
       .spyOn(CourseAuthoringContext, 'useCourseAuthoringContext')
       .mockReturnValue({
@@ -26,7 +33,7 @@ describe('OutlineAlignSidebar', () => {
     jest
       .spyOn(CourseOutlineContext, 'useCourseOutlineContext')
       .mockReturnValue({
-        setCurrentSelection: jest.fn(),
+        setCurrentSelection,
       } as any);
     jest
       .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
@@ -34,6 +41,8 @@ describe('OutlineAlignSidebar', () => {
         selectedContainerState: {
           currentId: 'block-v1:test+course+run+type@sequential+block@seq1',
         },
+        clearSelection,
+        openContainerSidebar,
       } as any);
     jest
       .spyOn(CourseDetailsApi, 'useCourseDetails')
@@ -67,6 +76,8 @@ describe('OutlineAlignSidebar', () => {
       .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
       .mockReturnValue({
         selectedContainerState: undefined,
+        clearSelection,
+        openContainerSidebar,
       } as any);
     jest
       .spyOn(CourseDetailsApi, 'useCourseDetails')
@@ -81,5 +92,31 @@ describe('OutlineAlignSidebar', () => {
     render(<OutlineAlignSidebar />);
 
     expect(await screen.findByText('Test Course')).toBeInTheDocument();
+  });
+
+  it('back button selects parent block in align sidebar', async () => {
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockReturnValue({
+        selectedContainerState: {
+          currentId: 'unit-1',
+          subsectionId: 'subsection-1',
+          sectionId: 'section-1',
+        },
+        clearSelection,
+        openContainerSidebar,
+      } as any);
+
+    render(<OutlineAlignSidebar />);
+
+    const backButton = await screen.findByRole('button', { name: /back/i });
+    backButton.click();
+
+    expect(openContainerSidebar).toHaveBeenCalledWith('subsection-1', 'subsection-1', 'section-1');
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: 'subsection-1',
+      subsectionId: 'subsection-1',
+      sectionId: 'section-1',
+    });
   });
 });

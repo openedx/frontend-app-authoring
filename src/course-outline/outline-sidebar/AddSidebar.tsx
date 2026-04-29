@@ -366,6 +366,7 @@ export const AddSidebar = () => {
     clearSelection,
     stopCurrentFlow,
     selectedContainerState,
+    openContainerSidebar,
   } = useOutlineSidebarContext();
   const { data: flowData } = useCourseItemData(currentFlow?.parentLocator);
   const titleAndIcon = useMemo(() => {
@@ -387,8 +388,30 @@ export const AddSidebar = () => {
   ]);
 
   const handleBack = () => {
-    clearSelection();
     stopCurrentFlow();
+
+    if (!selectedContainerState) {
+      return;
+    }
+
+    const { currentId, subsectionId, sectionId } = selectedContainerState;
+
+    if (currentId === subsectionId && sectionId) {
+      openContainerSidebar(sectionId, undefined, sectionId);
+      return;
+    }
+
+    if (currentId === sectionId) {
+      clearSelection();
+      return;
+    }
+
+    if (subsectionId) {
+      openContainerSidebar(subsectionId, subsectionId, sectionId);
+      return;
+    }
+
+    clearSelection();
   };
 
   return (
