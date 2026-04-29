@@ -16,8 +16,8 @@ export const getPagesAndResourcesPermissions = (courseId: string) => ({
     action: COURSE_PERMISSIONS.VIEW_PAGES_AND_RESOURCES,
     scope: courseId,
   },
-  canEditPagesAndResources: {
-    action: COURSE_PERMISSIONS.EDIT_PAGES_AND_RESOURCES,
+  canManagePagesAndResources: {
+    action: COURSE_PERMISSIONS.MANAGE_PAGES_AND_RESOURCES,
     scope: courseId,
   },
 });

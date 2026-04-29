@@ -30,9 +30,10 @@ const AppCard = ({
 
   return (
     <Card
-      isClickable
+      isClickable={canInteract}
+      aria-disabled={!canInteract}
       onClick={() => canInteract && onClick(app.id)}
-      onKeyPress={() => canInteract && onClick(app.id)}
+      onKeyDown={(e) => canInteract && (e.key === 'Enter' || e.key === ' ') && onClick(app.id)}
       role="radio"
       aria-checked={selected}
       className={classNames({

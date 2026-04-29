@@ -20,13 +20,13 @@ describe('permissionHelpers', () => {
   });
 
   describe('getPagesAndResourcesPermissions', () => {
-    it('returns VIEW and EDIT permissions with the correct actions and scope', () => {
+    it('returns VIEW and MANAGE permissions with the correct actions and scope', () => {
       const result = getPagesAndResourcesPermissions(courseId);
 
       expect(result.canViewPagesAndResources.action).toBe(COURSE_PERMISSIONS.VIEW_PAGES_AND_RESOURCES);
       expect(result.canViewPagesAndResources.scope).toBe(courseId);
-      expect(result.canEditPagesAndResources.action).toBe(COURSE_PERMISSIONS.EDIT_PAGES_AND_RESOURCES);
-      expect(result.canEditPagesAndResources.scope).toBe(courseId);
+      expect(result.canManagePagesAndResources.action).toBe(COURSE_PERMISSIONS.MANAGE_PAGES_AND_RESOURCES);
+      expect(result.canManagePagesAndResources.scope).toBe(courseId);
     });
   });
 

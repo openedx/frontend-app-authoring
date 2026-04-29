@@ -23,5 +23,5 @@ export const COURSE_PERMISSIONS = {
   EDIT_GRADING_SETTINGS: 'courses.edit_grading_settings',
 
   VIEW_PAGES_AND_RESOURCES: 'courses.view_pages_and_resources',
-  EDIT_PAGES_AND_RESOURCES: 'courses.manage_pages_and_resources',
+  MANAGE_PAGES_AND_RESOURCES: 'courses.manage_pages_and_resources',
 };

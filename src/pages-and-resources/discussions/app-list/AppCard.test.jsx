@@ -148,7 +148,7 @@ describe('AppCard', () => {
       expect(handleClick).not.toHaveBeenCalled();
     });
 
-    test('card responds to keyPress when isEditable=true', async () => {
+    test('card responds to keyDown Enter when isEditable=true', async () => {
       const handleClick = jest.fn();
       await mockStore(legacyApiResponse);
 
@@ -166,12 +166,12 @@ describe('AppCard', () => {
       );
       const card = wrapper.container.querySelector('[role="radio"]');
 
-      fireEvent.keyPress(card, { key: 'Enter', charCode: 13 });
+      fireEvent.keyDown(card, { key: 'Enter' });
 
       expect(handleClick).toHaveBeenCalledWith(app.id);
     });
 
-    test('card does NOT respond to keyPress when isEditable=false', async () => {
+    test('card does NOT respond to keyDown when isEditable=false', async () => {
       const handleClick = jest.fn();
       await mockStore(legacyApiResponse);
 
@@ -189,7 +189,7 @@ describe('AppCard', () => {
       );
       const card = wrapper.container.querySelector('[role="radio"]');
 
-      fireEvent.keyPress(card, { key: 'Enter', charCode: 13 });
+      fireEvent.keyDown(card, { key: 'Enter' });
 
       expect(handleClick).not.toHaveBeenCalled();
     });
