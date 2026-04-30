@@ -19,8 +19,8 @@ export const OutlineAlignSidebar = () => {
   const handleBack = () => {
     const { currentId, subsectionId, sectionId } = selectedContainerState || {};
     const sectionIndex = sections.findIndex((section) => section.id === sectionId);
-    const subsectionIndex = sections
-      .find((section) => section.id === sectionId)
+    const section = sectionIndex >= 0 ? sections[sectionIndex] : undefined;
+    const subsectionIndex = section
       ?.childInfo.children.findIndex((subsection) => subsection.id === subsectionId) ?? -1;
 
     if (!currentId) {
