@@ -167,9 +167,7 @@ const IntroducingSection = ({
           />
         </>
       )}
-      {aboutPageEditable && (
-        <IntroductionVideo introVideo={introVideo} isEditable={isEditable} onChange={onChange} />
-      )}
+      {aboutPageEditable && <IntroductionVideo introVideo={introVideo} isEditable={isEditable} onChange={onChange} />}
     </section>
   );
 };

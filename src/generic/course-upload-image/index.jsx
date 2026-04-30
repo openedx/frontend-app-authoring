@@ -134,8 +134,7 @@ const CourseUploadImage = ({
             placeholder={customInputPlaceholder
               || intl.formatMessage(messages.uploadImageInputPlaceholder, {
                 identifierFieldText,
-              })
-            }
+              })}
             disabled={disabled}
           />
         </Card.Footer>

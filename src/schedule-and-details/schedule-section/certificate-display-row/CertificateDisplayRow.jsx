@@ -135,7 +135,12 @@ const CertificateDisplayRow = ({
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {dropdownOptions.map(({ id, label }) => (
-                <Dropdown.Item key={id} onClick={isEditable ? () => handleOnChange(id) : undefined}>
+                <Dropdown.Item
+                  key={id}
+                  onClick={isEditable
+                    ? () => handleOnChange(id)
+                    : undefined}
+                >
                   {label}
                 </Dropdown.Item>
               ))}

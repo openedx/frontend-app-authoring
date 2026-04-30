@@ -62,8 +62,8 @@ const ScheduleAndDetails = () => {
   const {
     isLoading: isLoadingUserPermissions,
     canViewScheduleAndDetails,
-	canEditSchedule,
-	canEditDetails,
+    canEditSchedule,
+    canEditDetails,
   } = useCourseUserPermissions(courseId, getScheduleAndDetailsPermissions(courseId));
 
   const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
@@ -404,11 +404,9 @@ const ScheduleAndDetails = () => {
               key="save-button"
               onClick={handleUpdateValues}
               disabled={hasErrors || (!isScheduleEditable && !isDetailsEditable)}
-              state={
-                isQueryPending
-                  ? STATEFUL_BUTTON_STATES.pending
-                  : STATEFUL_BUTTON_STATES.default
-              }
+              state={isQueryPending
+                ? STATEFUL_BUTTON_STATES.pending
+                : STATEFUL_BUTTON_STATES.default}
               {...updateValuesButtonState}
             />,
           ].filter(Boolean)}
