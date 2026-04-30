@@ -198,4 +198,5 @@ initialize({
   },
   messages,
   requireAuthenticatedUser: true,
+  hydrateAuthenticatedUser: true,
 });
