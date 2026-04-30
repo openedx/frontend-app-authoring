@@ -7,7 +7,6 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { useLibraryPublishHistoryEntries } from '@src/library-authoring/data/apiHooks';
 import { LoadingSpinner } from '@src/generic/Loading';
-import { isContainerUsageKey } from '@src/generic/key-utils';
 
 import { LibraryHistoryEntry, LibraryPublishHistoryGroup } from '../../data/api';
 import messages from './messages';
