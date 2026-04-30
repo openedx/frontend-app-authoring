@@ -8,12 +8,13 @@ import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 import { InfoSidebar } from './InfoSidebar';
 
 let selectedContainerState: SelectionState | undefined;
+const mockClearSelection = jest.fn();
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
     ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     selectedContainerState,
-    clearSelection: jest.fn(),
+    clearSelection: mockClearSelection,
     setSelectedContainerState: mockSetSelectedContainerState,
     openContainerInfoSidebar: mockOpenContainerInfoSidebar,
   }),
@@ -94,6 +95,7 @@ describe('InfoSidebar component', () => {
     updateSectionOrderByIndex.mockClear();
     mockSetSelectedContainerState.mockClear();
     mockOpenContainerInfoSidebar.mockClear();
+    mockClearSelection.mockClear();
     mockSections = [];
   });
 
@@ -474,6 +476,22 @@ describe('InfoSidebar component', () => {
         'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
         0,
       );
+    });
+
+    it('clears selection on back when subsection has no sectionId', async () => {
+      const user = userEvent.setup();
+      selectedContainerState = {
+        currentId: subsectionId,
+        subsectionId,
+      };
+      axiosMock.onGet(getXBlockApiUrl(subsectionId)).reply(200, subsectionData);
+      renderComponent();
+      await screen.findByText(subsectionData.displayName);
+
+      await user.click(screen.getByRole('button', { name: /back/i }));
+
+      expect(mockClearSelection).toHaveBeenCalled();
+      expect(mockOpenContainerInfoSidebar).not.toHaveBeenCalled();
     });
 
     it('calls openDeleteModal when Delete is clicked in subsection menu', async () => {

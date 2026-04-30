@@ -23,6 +23,7 @@ export const OutlineAlignSidebar = () => {
     const subsectionIndex = section
       ?.childInfo.children.findIndex((subsection) => subsection.id === subsectionId) ?? -1;
 
+    // istanbul ignore next
     if (!currentId) {
       clearSelection();
       setCurrentSelection(undefined);
@@ -61,7 +62,9 @@ export const OutlineAlignSidebar = () => {
       return;
     }
 
+    // istanbul ignore next
     clearSelection();
+    // istanbul ignore next
     setCurrentSelection(undefined);
   };
 

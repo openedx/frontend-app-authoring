@@ -130,4 +130,78 @@ describe('OutlineAlignSidebar', () => {
       index: 0,
     });
   });
+
+  it('back button from subsection selects section', async () => {
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockReturnValue({
+        selectedContainerState: {
+          currentId: 'subsection-1',
+          subsectionId: 'subsection-1',
+          sectionId: 'section-1',
+        },
+        clearSelection,
+        openContainerSidebar,
+      } as any);
+
+    render(<OutlineAlignSidebar />);
+
+    const backButton = await screen.findByRole('button', { name: /back/i });
+    backButton.click();
+
+    expect(openContainerSidebar).toHaveBeenCalledWith('section-1', undefined, 'section-1', 0);
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: 'section-1',
+      sectionId: 'section-1',
+      index: 0,
+    });
+  });
+
+  it('back button from section clears selection', async () => {
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockReturnValue({
+        selectedContainerState: {
+          currentId: 'section-1',
+          sectionId: 'section-1',
+        },
+        clearSelection,
+        openContainerSidebar,
+      } as any);
+
+    render(<OutlineAlignSidebar />);
+
+    const backButton = await screen.findByRole('button', { name: /back/i });
+    backButton.click();
+
+    expect(clearSelection).toHaveBeenCalled();
+    expect(setCurrentSelection).toHaveBeenCalledWith(undefined);
+  });
+
+  it('back button handles missing section when selecting subsection parent', async () => {
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockReturnValue({
+        selectedContainerState: {
+          currentId: 'unit-1',
+          subsectionId: 'subsection-1',
+          sectionId: 'missing-section',
+        },
+        clearSelection,
+        openContainerSidebar,
+      } as any);
+
+    render(<OutlineAlignSidebar />);
+
+    const backButton = await screen.findByRole('button', { name: /back/i });
+    backButton.click();
+
+    expect(openContainerSidebar).toHaveBeenCalledWith('subsection-1', 'subsection-1', 'missing-section', undefined);
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: 'subsection-1',
+      subsectionId: 'subsection-1',
+      sectionId: 'missing-section',
+      index: undefined,
+    });
+  });
 });

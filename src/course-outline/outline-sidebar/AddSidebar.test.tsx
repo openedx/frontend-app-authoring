@@ -432,4 +432,38 @@ describe('AddSidebar', () => {
       0,
     );
   });
+
+  it('back from subsection opens section', async () => {
+    const user = userEvent.setup();
+    const section = outlineChildren[0];
+    const subsection = section.childInfo.children[0];
+    selectedContainerState = {
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    };
+    renderComponent();
+
+    const back = await screen.findByRole('button', { name: 'Back' });
+    await user.click(back);
+
+    expect(openContainerSidebar).toHaveBeenCalledWith(section.id, undefined, section.id, 0);
+    expect(clearSelection).not.toHaveBeenCalled();
+  });
+
+  it('back from section clears selection', async () => {
+    const user = userEvent.setup();
+    const section = outlineChildren[0];
+    selectedContainerState = {
+      currentId: section.id,
+      sectionId: section.id,
+    };
+    renderComponent();
+
+    const back = await screen.findByRole('button', { name: 'Back' });
+    await user.click(back);
+
+    expect(clearSelection).toHaveBeenCalled();
+    expect(openContainerSidebar).not.toHaveBeenCalled();
+  });
 });
