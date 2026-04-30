@@ -30,6 +30,7 @@ export interface HistoryCreatedLogGroupProps {
 }
 
 export interface HistoryDraftLogGroupProps {
+  itemId: string;
   displayName: string;
   entries: LibraryHistoryEntry[];
 }
@@ -97,6 +98,7 @@ export const HistoryCreatedLogGroup = ({
 };
 
 export const HistoryDraftLogGroup = ({
+  itemId,
   displayName,
   entries,
 }: HistoryDraftLogGroupProps) => {
@@ -123,7 +125,7 @@ export const HistoryDraftLogGroup = ({
           />
         </Collapsible.Trigger>
         <Collapsible.Body>
-          <HistoryLogGroupEntries entries={entries} />
+          <HistoryLogGroupEntries itemId={itemId} entries={entries} />
         </Collapsible.Body>
       </Collapsible.Advanced>
       <div className="history-log-vert" />
@@ -184,7 +186,7 @@ export const HistoryPublishLogGroup = ({
                     </div>
                   </>
                 ) :
-                <HistoryLogGroupEntries entries={entries ?? []} />}
+                <HistoryLogGroupEntries entries={entries ?? []} itemId={itemId} />}
             </Collapsible.Body>
           </Collapsible.Advanced>
         ) :

@@ -1016,6 +1016,8 @@ export interface LibraryHistoryEntry {
   title: string;
   itemType: string;
   action: 'edited' | 'renamed' | 'created';
+  oldVersion?: number;
+  newVersion?: number;
 }
 
 /**
