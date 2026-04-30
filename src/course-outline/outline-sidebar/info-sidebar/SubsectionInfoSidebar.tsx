@@ -31,6 +31,7 @@ export const SubsectionSidebar = () => {
     setCurrentTabKey,
     selectedContainerState,
     setSelectedContainerState,
+    openContainerInfoSidebar,
   } = useOutlineSidebarContext();
   const { subsectionId = '', index } = selectedContainerState ?? {};
 
@@ -125,12 +126,25 @@ export const SubsectionSidebar = () => {
     }
   };
 
+  const handleBack = () => {
+    if (selectedContainerState?.sectionId) {
+      openContainerInfoSidebar(
+        selectedContainerState.sectionId,
+        undefined,
+        selectedContainerState.sectionId,
+        sectionIndex >= 0 ? sectionIndex : undefined,
+      );
+      return;
+    }
+    clearSelection();
+  };
+
   return (
     <>
       <SidebarTitle
         title={subsectionData?.displayName || ''}
         icon={getItemIcon(subsectionData?.category || '')}
-        onBackBtnClick={clearSelection}
+        onBackBtnClick={handleBack}
         menuProps={{
           itemId: subsectionId,
           index: index ?? -1,
