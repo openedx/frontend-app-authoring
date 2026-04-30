@@ -9,13 +9,11 @@ import messages from './messages';
 import { SAVING } from '../data/slice';
 import { AppConfigFormContext } from './AppConfigFormProvider';
 import { useModel } from '../../../generic/model-store';
-import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 
 const AppConfigFormSaveButton = ({ labelText }) => {
   const intl = useIntl();
   const saveStatus = useSelector(state => state.discussions.saveStatus);
   const { selectedAppId } = useSelector((state) => state.discussions);
-  const { isEditable } = useContext(PagesAndResourcesContext);
 
   const app = useModel('apps', selectedAppId);
   const canSubmit = getAuthenticatedUser().administrator || !app?.adminOnlyConfig;
@@ -47,7 +45,6 @@ const AppConfigFormSaveButton = ({ labelText }) => {
         }}
         state={submitButtonState}
         onClick={handleSave}
-        disabled={!isEditable}
         style={{ minWidth: '88px' }}
       />
     )

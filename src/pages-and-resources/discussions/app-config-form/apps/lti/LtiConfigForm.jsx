@@ -113,7 +113,6 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.consumerKey}
-
               />
               {isInvalidConsumerKey && (
                 <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -145,7 +144,6 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.launchUrl}
-
               />
               {isInvalidLaunchUrl && (
                 <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -166,7 +164,6 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
                 onBlur={handleBlur}
                 checked={values.piiShareUsername}
                 label={intl.formatMessage(messages.piiShareUsername)}
-
               />
               <Form.Check
                 type="checkbox"
@@ -175,7 +172,6 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
                 onBlur={handleBlur}
                 checked={values.piiShareEmail}
                 label={intl.formatMessage(messages.piiShareEmail)}
-
               />
             </Form.Group>
           </div>

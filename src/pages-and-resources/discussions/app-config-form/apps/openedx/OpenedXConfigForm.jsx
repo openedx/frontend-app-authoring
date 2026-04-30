@@ -141,11 +141,7 @@ const OpenedXConfigForm = ({
                 {!legacy
                   && (
                     <>
-                      <InContextDiscussionFields
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        values={values}
-                      />
+                      <InContextDiscussionFields onBlur={handleBlur} onChange={handleChange} values={values} />
                       <AppConfigFormDivider thick />
                     </>
                   )}
