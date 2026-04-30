@@ -403,7 +403,7 @@ const CourseUnit = () => {
         </Container>
         <div className="alert-toast">
           <SavingErrorAlert
-            savingStatus={savingStatus}
+            isQueryFailed={savingStatus === RequestStatus.FAILED}
             errorMessage={errorMessage}
           />
         </div>

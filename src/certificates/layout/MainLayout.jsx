@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { Container, Layout } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { RequestStatus } from '@src/data/constants';
 
 import { SavingErrorAlert } from '../../generic/saving-error-alert';
 import SubHeader from '../../generic/sub-header/SubHeader';
@@ -48,7 +49,7 @@ const MainLayout = ({ courseId, showHeaderButtons, children }) => {
       </Container>
       <div className="certificates alert-toast">
         <SavingErrorAlert
-          savingStatus={savingStatus}
+          isQueryFailed={savingStatus === RequestStatus.FAILED}
           errorMessage={errorMessage}
         />
       </div>

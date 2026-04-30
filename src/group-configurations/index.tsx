@@ -5,12 +5,13 @@ import {
   Stack,
   Row,
 } from '@openedx/paragon';
+import { Helmet } from 'react-helmet';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { LoadingSpinner } from '@src/generic/Loading';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import getPageHeadTitle from '@src/generic/utils';
+import { SavingErrorAlert } from '@src/generic/saving-error-alert';
 
-import { LoadingSpinner } from '../generic/Loading';
-import SubHeader from '../generic/sub-header/SubHeader';
-import getPageHeadTitle from '../generic/utils';
-import { SavingErrorAlert } from '../generic/saving-error-alert';
 import messages from './messages';
 import ContentGroupsSection from './content-groups-section';
 import ExperimentConfigurationsSection from './experiment-configurations-section';
@@ -19,30 +20,30 @@ import EnrollmentTrackGroupsSection from './enrollment-track-groups-section';
 import GroupConfigurationSidebar from './group-configuration-sidebar';
 import { useGroupConfigurations } from './hooks';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-import { AvailableGroup } from './types';
 
 const GroupConfigurations = () => {
   const { formatMessage } = useIntl();
   const { courseId, courseDetails } = useCourseAuthoringContext();
   const {
     isLoading,
-    savingStatus,
-    errorMessage,
+    anyMutationFailed,
+    mutationErrorMessage,
     contentGroupActions,
     experimentConfigurationActions,
-    groupConfigurations: {
-      allGroupConfigurations,
-      shouldShowEnrollmentTrack,
-      shouldShowExperimentGroups,
-      experimentGroupConfigurations,
-    },
+    groupConfigurations,
     isLoadingDenied,
-  } = useGroupConfigurations(courseId);
+  } = useGroupConfigurations();
 
   document.title = getPageHeadTitle(
     courseDetails?.name ?? '',
     formatMessage(messages.headingTitle),
   );
+  const {
+    shouldShowEnrollmentTrack = false,
+    shouldShowExperimentGroups = false,
+    experimentGroupConfigurations = [],
+    allGroupConfigurations = [],
+  } = groupConfigurations ?? {};
 
   if (isLoadingDenied) {
     return (
@@ -60,16 +61,18 @@ const GroupConfigurations = () => {
     );
   }
 
-  const enrollmentTrackGroup: AvailableGroup = shouldShowEnrollmentTrack
+  const enrollmentTrackGroup = shouldShowEnrollmentTrack
     ? allGroupConfigurations.find((group) => group.scheme === 'enrollment_track')
     : null;
 
-  const contentGroup: AvailableGroup[] = allGroupConfigurations.find((group) => group.scheme === 'cohort');
-
-  const teamGroups: AvailableGroup[] = allGroupConfigurations.filter((group) => group.scheme === 'team');
+  const contentGroup = allGroupConfigurations.find((group) => group.scheme === 'cohort');
+  const teamGroups = allGroupConfigurations.filter((group) => group.scheme === 'team');
 
   return (
     <>
+      <Helmet>
+        <title>{getPageHeadTitle(courseDetails?.name ?? '', formatMessage(messages.headingTitle))}</title>
+      </Helmet>
       <Container size="xl" className="group-configurations px-4">
         <div className="mt-5" />
         <SubHeader
@@ -128,8 +131,8 @@ const GroupConfigurations = () => {
       </Container>
       <div className="alert-toast">
         <SavingErrorAlert
-          savingStatus={savingStatus}
-          errorMessage={errorMessage}
+          isQueryFailed={anyMutationFailed}
+          errorMessage={mutationErrorMessage}
         />
       </div>
     </>
