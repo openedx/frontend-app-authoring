@@ -73,7 +73,7 @@ export const HistoryLogGroupEntries = ({
                   (
                     <Dropdown>
                       <Dropdown.Toggle
-                        id="dropdown-toggle-with-iconbutton"
+                        id={`dropdown-toggle-${itemId}-${entry.changedAt}-${index}`}
                         as={IconButton}
                         src={MoreVert}
                         iconAs={Icon}
