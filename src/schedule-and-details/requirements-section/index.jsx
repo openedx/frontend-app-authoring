@@ -18,6 +18,7 @@ const RequirementsSection = ({
   possiblePreRequisiteCourses,
   entranceExamMinimumScorePct,
   isPrerequisiteCoursesEnabled,
+  isEditable,
   onChange,
 }) => {
   const intl = useIntl();
@@ -33,20 +34,20 @@ const RequirementsSection = ({
     >
       <Form.Label>{intl.formatMessage(messages.dropdownLabel)}</Form.Label>
       <Dropdown className="bg-white">
-        <Dropdown.Toggle id="prerequisiteDropdown" variant="outline-primary">
+        <Dropdown.Toggle id="prerequisiteDropdown" variant="outline-primary" disabled={!isEditable}>
           {formattedSelectedItem}
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Item
             key={intl.formatMessage(messages.dropdownEmptyText)}
-            onClick={() => onChange([], 'preRequisiteCourses')}
+            onClick={isEditable ? () => onChange([], 'preRequisiteCourses') : undefined}
           >
             {intl.formatMessage(messages.dropdownEmptyText)}
           </Dropdown.Item>
           {possiblePreRequisiteCourses.map((course) => (
             <Dropdown.Item
               key={course.courseKey}
-              onClick={() => onChange([course.courseKey], 'preRequisiteCourses')}
+              onClick={isEditable ? () => onChange([course.courseKey], 'preRequisiteCourses') : undefined}
             >
               {course.displayName}
             </Dropdown.Item>
@@ -74,6 +75,7 @@ const RequirementsSection = ({
             value={effort || ''}
             placeholder={TIME_FORMAT.toUpperCase()}
             onChange={(e) => onChange(e.target.value, 'effort')}
+            disabled={!isEditable}
           />
           <Form.Control.Feedback>
             {intl.formatMessage(messages.timepickerHelpText)}
@@ -86,6 +88,7 @@ const RequirementsSection = ({
           errorEffort={errorFields?.entranceExamMinimumScorePct}
           isCheckedString={entranceExamEnabled}
           entranceExamMinimumScorePct={entranceExamMinimumScorePct}
+          isEditable={isEditable}
           onChange={onChange}
         />
       )}
@@ -110,6 +113,7 @@ RequirementsSection.defaultProps = {
   entranceExamEnabled: '',
   preRequisiteCourses: [],
   entranceExamMinimumScorePct: '',
+  isEditable: true,
 };
 
 RequirementsSection.propTypes = {
@@ -124,6 +128,7 @@ RequirementsSection.propTypes = {
   ).isRequired,
   entranceExamMinimumScorePct: PropTypes.string,
   isPrerequisiteCoursesEnabled: PropTypes.bool.isRequired,
+  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

@@ -10,6 +10,7 @@ const PacingSection = ({
   selfPaced,
   startDate,
   onChange,
+  isEditable,
 }) => {
   const intl = useIntl();
   const canTogglePace = new Date() <= new Date(startDate);
@@ -34,14 +35,14 @@ const PacingSection = ({
           <Form.Radio
             value="false"
             description={intl.formatMessage(messages.pacingTypeInstructorDescription)}
-            disabled={!canTogglePace}
+            disabled={!canTogglePace || !isEditable}
           >
             {intl.formatMessage(messages.pacingTypeInstructorLabel)}
           </Form.Radio>
           <Form.Radio
             value="true"
             description={intl.formatMessage(messages.pacingTypeSelfDescription)}
-            disabled={!canTogglePace}
+            disabled={!canTogglePace || !isEditable}
           >
             {intl.formatMessage(messages.pacingTypeSelfLabel)}
           </Form.Radio>
@@ -54,11 +55,13 @@ const PacingSection = ({
 PacingSection.defaultProps = {
   selfPaced: '',
   startDate: '',
+  isEditable: true,
 };
 
 PacingSection.propTypes = {
   startDate: PropTypes.string,
   selfPaced: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

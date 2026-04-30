@@ -7,7 +7,7 @@ import { Add as AddIcon } from '@openedx/paragon/icons';
 import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
-const LearningOutcomesSection = ({ learningInfo, onChange }) => {
+const LearningOutcomesSection = ({ learningInfo, isEditable, onChange }) => {
   const intl = useIntl();
 
   const handleInputChange = (value, index) => {
@@ -39,10 +39,12 @@ const LearningOutcomesSection = ({ learningInfo, onChange }) => {
         value={text}
         placeholder={intl.formatMessage(messages.outcomesInputPlaceholder)}
         onChange={(e) => handleInputChange(e.target.value, idx)}
+        disabled={!isEditable}
       />
       <Button
         variant="outline-primary"
         onClick={() => handleDelete(idx)}
+        disabled={!isEditable}
       >
         {intl.formatMessage(messages.outcomesDelete)}
       </Button>
@@ -58,7 +60,7 @@ const LearningOutcomesSection = ({ learningInfo, onChange }) => {
       <ul className="learning-outcomes-list">
         {learningInfo.map(renderLearningOutcomeItem)}
       </ul>
-      <Button iconBefore={AddIcon} variant="primary" onClick={handleAdd}>
+      <Button iconBefore={AddIcon} variant="primary" onClick={handleAdd} disabled={!isEditable}>
         {intl.formatMessage(messages.outcomesAdd)}
       </Button>
     </section>
@@ -67,10 +69,12 @@ const LearningOutcomesSection = ({ learningInfo, onChange }) => {
 
 LearningOutcomesSection.defaultProps = {
   learningInfo: [],
+  isEditable: true,
 };
 
 LearningOutcomesSection.propTypes = {
   learningInfo: PropTypes.arrayOf(PropTypes.string),
+  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 
