@@ -92,14 +92,13 @@ describe('<SettingCard />', () => {
       expect(handleBlur).toHaveBeenCalled();
     });
   });
-  it('renders in readOnly mode with disabled input', () => {
-    render(<RootWrapper readOnly />);
+  it('renders in read-only mode with disabled input', () => {
+    render(<RootWrapper isEditable={false} />);
     const input = screen.getByLabelText(/Setting Name/i);
     expect(input).toBeDisabled();
   });
 
-  it('renders enabled by default when readOnly is not specified (default false)', () => {
-    // readOnly defaults to false - input should be enabled
+  it('renders enabled by default when isEditable is not specified (default true)', () => {
     render(<RootWrapper />);
     const input = screen.getByLabelText(/Setting Name/i);
     expect(input).not.toBeDisabled();

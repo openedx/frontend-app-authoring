@@ -70,11 +70,9 @@ const AdvancedSettings = () => {
 
   const isLoading = isPendingSettingsStatus || (isAuthzEnabled && isLoadingUserPermissions);
 
-  // Determine if UI should be read-only (has VIEW but not MANAGE)
-  const isReadOnly = isAuthzEnabled
-    && !isLoadingUserPermissions
-    && !!canViewAdvancedSettings
-    && !canManageAdvancedSettings;
+  const isEditable = !isAuthzEnabled
+    || isLoadingUserPermissions
+    || !!canManageAdvancedSettings;
 
   const updateSettingsButtonState = {
     labels: {
@@ -218,7 +216,7 @@ const AdvancedSettings = () => {
               />
               <article>
                 <div>
-                  <section className="setting-items-policies" aria-disabled={isReadOnly || undefined}>
+                  <section className="setting-items-policies" aria-disabled={!isEditable || undefined}>
                     <div className="small">
                       <FormattedMessage
                         id="course-authoring.advanced-settings.policies.description"
@@ -260,7 +258,7 @@ const AdvancedSettings = () => {
                             handleBlur={handleSettingBlur}
                             isEditableState={isEditableState}
                             setIsEditableState={setIsEditableState}
-                            readOnly={isReadOnly}
+                            isEditable={isEditable}
                           />
                         );
                       })}

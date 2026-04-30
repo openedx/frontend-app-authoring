@@ -25,7 +25,7 @@ const SettingCard = ({
   saveSettingsPrompt,
   isEditableState,
   setIsEditableState,
-  readOnly = false,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const { deprecated, help, displayName } = settingData;
@@ -100,7 +100,7 @@ const SettingCard = ({
                 onChange={handleSettingChange}
                 aria-label={displayName}
                 onBlur={handleCardBlur}
-                disabled={readOnly}
+                disabled={!isEditable}
               />
             </Form.Group>
           </Card.Section>
@@ -135,7 +135,7 @@ SettingCard.propTypes = {
   saveSettingsPrompt: PropTypes.bool.isRequired,
   isEditableState: PropTypes.bool.isRequired,
   setIsEditableState: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool,
+  isEditable: PropTypes.bool,
 };
 
 export default SettingCard;
