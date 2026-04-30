@@ -318,7 +318,7 @@ export async function configureCourseSubsection(
  */
 export async function configureCourseUnit(variables: ConfigureUnitData): Promise<object> {
   const body = {
-    publish: variables.groupAccess ? null : variables.type,
+    publish: variables.type,
     ...(variables.type === PUBLISH_TYPES.republish ?
       {
         metadata: {
