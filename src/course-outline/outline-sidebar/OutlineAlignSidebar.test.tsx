@@ -19,6 +19,9 @@ describe('OutlineAlignSidebar', () => {
   const setCurrentSelection = jest.fn();
   const clearSelection = jest.fn();
   const openContainerSidebar = jest.fn();
+  const sectionId = 'block-v1:test+course+run+type@chapter+block@section-1';
+  const subsectionId = 'block-v1:test+course+run+type@sequential+block@subsection-1';
+  const unitId = 'block-v1:test+course+run+type@vertical+block@unit-1';
 
   beforeEach(() => {
     initializeMocks();
@@ -36,10 +39,10 @@ describe('OutlineAlignSidebar', () => {
         setCurrentSelection,
         sections: [
           {
-            id: 'section-1',
+            id: sectionId,
             childInfo: {
               children: [
-                { id: 'subsection-1', childInfo: { children: [{ id: 'unit-1' }] } },
+                { id: subsectionId, childInfo: { children: [{ id: unitId }] } },
               ],
             },
           },
@@ -109,9 +112,9 @@ describe('OutlineAlignSidebar', () => {
       .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
       .mockReturnValue({
         selectedContainerState: {
-          currentId: 'unit-1',
-          subsectionId: 'subsection-1',
-          sectionId: 'section-1',
+          currentId: unitId,
+          subsectionId,
+          sectionId,
         },
         clearSelection,
         openContainerSidebar,
@@ -122,11 +125,11 @@ describe('OutlineAlignSidebar', () => {
     const backButton = await screen.findByRole('button', { name: /back/i });
     backButton.click();
 
-    expect(openContainerSidebar).toHaveBeenCalledWith('subsection-1', 'subsection-1', 'section-1', 0);
+    expect(openContainerSidebar).toHaveBeenCalledWith(subsectionId, subsectionId, sectionId, 0);
     expect(setCurrentSelection).toHaveBeenCalledWith({
-      currentId: 'subsection-1',
-      subsectionId: 'subsection-1',
-      sectionId: 'section-1',
+      currentId: subsectionId,
+      subsectionId,
+      sectionId,
       index: 0,
     });
   });
@@ -136,8 +139,8 @@ describe('OutlineAlignSidebar', () => {
       .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
       .mockReturnValue({
         selectedContainerState: {
-          currentId: 'section-1',
-          sectionId: 'section-1',
+          currentId: sectionId,
+          sectionId,
         },
         clearSelection,
         openContainerSidebar,

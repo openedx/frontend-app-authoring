@@ -1,5 +1,5 @@
 import { SelectionState } from '@src/data/types';
-import { getBackSelectionState, navigateBackFromSelection } from './back-navigation';
+import { getBackSelectionState, openSelectionState } from './back-navigation';
 
 describe('back-navigation', () => {
   const sections = [
@@ -102,53 +102,18 @@ describe('back-navigation', () => {
     });
   });
 
-  describe('navigateBackFromSelection', () => {
-    it('opens parent and propagates selection when back target exists', () => {
+  describe('openSelectionState', () => {
+    it('opens container with SelectionState payload', () => {
       const openContainer = jest.fn();
-      const clearSelection = jest.fn();
-      const onSelectionChange = jest.fn();
 
-      navigateBackFromSelection({
-        selectedContainerState: {
-          currentId: 'unit-1',
-          subsectionId: 'subsection-1',
-          sectionId: 'section-1',
-        },
-        sections,
-        openContainer,
-        clearSelection,
-        onSelectionChange,
-      });
-
-      expect(openContainer).toHaveBeenCalledWith('subsection-1', 'subsection-1', 'section-1', 0);
-      expect(onSelectionChange).toHaveBeenCalledWith({
+      openSelectionState(openContainer, {
         currentId: 'subsection-1',
         subsectionId: 'subsection-1',
         sectionId: 'section-1',
         index: 0,
       });
-      expect(clearSelection).not.toHaveBeenCalled();
-    });
 
-    it('clears selection and propagates undefined when no back target', () => {
-      const openContainer = jest.fn();
-      const clearSelection = jest.fn();
-      const onSelectionChange = jest.fn();
-
-      navigateBackFromSelection({
-        selectedContainerState: {
-          currentId: 'section-1',
-          sectionId: 'section-1',
-        },
-        sections,
-        openContainer,
-        clearSelection,
-        onSelectionChange,
-      });
-
-      expect(clearSelection).toHaveBeenCalled();
-      expect(onSelectionChange).toHaveBeenCalledWith(undefined);
-      expect(openContainer).not.toHaveBeenCalled();
+      expect(openContainer).toHaveBeenCalledWith('subsection-1', 'subsection-1', 'section-1', 0);
     });
   });
 });

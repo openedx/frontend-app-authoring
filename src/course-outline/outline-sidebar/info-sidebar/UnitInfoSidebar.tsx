@@ -35,7 +35,7 @@ import { InfoSection } from './InfoSection';
 import { useClipboard } from '@src/generic/clipboard';
 import { ToastContext } from '@src/generic/toast-context';
 import { XBlock } from '@src/data/types';
-import { navigateBackFromSelection } from '../back-navigation';
+import { useBackNavigation } from '../back-navigation';
 interface Props {
   unitId: string;
 }
@@ -72,7 +72,6 @@ export const UnitSidebar = () => {
   const navigate = useNavigate();
   const {
     selectedContainerState,
-    clearSelection,
     currentTabKey,
     setCurrentTabKey,
     setSelectedContainerState,
@@ -112,6 +111,10 @@ export const UnitSidebar = () => {
   ) ?? -1;
   const { copyToClipboard } = useClipboard();
   const { showToast } = useContext(ToastContext);
+
+  const handleBack = useBackNavigation({
+    openContainer: openContainerInfoSidebar,
+  });
 
   const handlePublish = () => {
     if (unitData?.hasChanges) {
@@ -209,16 +212,6 @@ export const UnitSidebar = () => {
       document.body.removeChild(textarea);
     }
     showToast(intl.formatMessage(messages.locationCopiedText));
-  };
-
-  const handleBack = () => {
-    navigateBackFromSelection({
-      selectedContainerState,
-      sections,
-      selectedSection: section,
-      openContainer: openContainerInfoSidebar,
-      clearSelection,
-    });
   };
 
   return (

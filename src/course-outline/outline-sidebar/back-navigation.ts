@@ -1,4 +1,8 @@
+import { useCallback } from 'react';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { SelectionState, XBlock } from '@src/data/types';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
 /**
  * Function signature shared by sidebar container openers.
@@ -15,22 +19,11 @@ type OpenContainerFn = (
 ) => void;
 
 /**
- * Inputs for generic "back" navigation resolution.
+ * Inputs for useBackNavigation hook.
  */
-type NavigateBackOptions = {
-  /** Current selection state in sidebar context. */
-  selectedContainerState: SelectionState | undefined;
-  /** Sections list from course outline context (used for parent index lookup). */
-  sections: Array<XBlock>;
+type UseBackNavigationOptions = {
   /** Callback used to open a container sidebar (align/info/add flavors). */
   openContainer: OpenContainerFn;
-  /** Fallback action when no parent target exists. */
-  clearSelection: () => void;
-  /**
-   * Optional authoritative selected section payload.
-   * Useful when section list is partial/minimal in tests or callers.
-   */
-  selectedSection?: XBlock;
   /** Optional hook to sync external selection state (e.g. align view selection). */
   onSelectionChange?: (selectionState?: SelectionState) => void;
 };
@@ -51,31 +44,34 @@ export const openSelectionState = (
 };
 
 /**
- * Execute generic back navigation for outline sidebars.
+ * Hook that returns standardized sidebar "back" handler.
  *
- * Flow:
- * 1) Compute parent selection state.
- * 2) If parent exists, open parent and optionally sync external selection.
- * 3) Else clear selection and optionally sync undefined.
+ * It pulls required state from context/hooks:
+ * - selectedContainerState + clearSelection (sidebar context)
+ * - sections (course outline context)
+ * - selected section data via useCourseItemData (React Query cache)
  */
-export const navigateBackFromSelection = ({
-  selectedContainerState,
-  sections,
-  openContainer,
-  clearSelection,
-  selectedSection,
-  onSelectionChange,
-}: NavigateBackOptions) => {
-  const backSelectionState = getBackSelectionState(selectedContainerState, sections, selectedSection);
+export const useBackNavigation = ({ openContainer, onSelectionChange }: UseBackNavigationOptions) => {
+  const { sections } = useCourseOutlineContext();
+  const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
+  const { data: selectedSection } = useCourseItemData<XBlock>(
+    selectedContainerState?.sectionId,
+    undefined,
+    Boolean(selectedContainerState?.sectionId),
+  );
 
-  if (backSelectionState) {
-    openSelectionState(openContainer, backSelectionState);
-    onSelectionChange?.(backSelectionState);
-    return;
-  }
+  return useCallback(() => {
+    const backSelectionState = getBackSelectionState(selectedContainerState, sections, selectedSection);
 
-  clearSelection();
-  onSelectionChange?.(undefined);
+    if (backSelectionState) {
+      openSelectionState(openContainer, backSelectionState);
+      onSelectionChange?.(backSelectionState);
+      return;
+    }
+
+    clearSelection();
+    onSelectionChange?.(undefined);
+  }, [selectedContainerState, sections, selectedSection, openContainer, onSelectionChange, clearSelection]);
 };
 
 /**

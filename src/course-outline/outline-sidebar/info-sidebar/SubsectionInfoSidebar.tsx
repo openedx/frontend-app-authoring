@@ -15,7 +15,7 @@ import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/Ou
 import { getLibraryId } from '@src/generic/key-utils';
 import { possibleSubsectionMoves } from '@src/course-outline/drag-helper/utils';
 import { XBlock } from '@src/data/types';
-import { navigateBackFromSelection } from '../back-navigation';
+import { useBackNavigation } from '../back-navigation';
 
 import { InfoSection } from './InfoSection';
 import { PublishButon } from './PublishButon';
@@ -27,7 +27,6 @@ export const SubsectionSidebar = () => {
   const navigate = useNavigate();
 
   const {
-    clearSelection,
     currentTabKey,
     setCurrentTabKey,
     selectedContainerState,
@@ -59,6 +58,10 @@ export const SubsectionSidebar = () => {
     openDeleteModal,
   } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
+
+  const handleBack = useBackNavigation({
+    openContainer: openContainerInfoSidebar,
+  });
 
   const handlePublish = () => {
     if (selectedContainerState?.sectionId && subsectionData?.hasChanges) {
@@ -125,16 +128,6 @@ export const SubsectionSidebar = () => {
         );
       }
     }
-  };
-
-  const handleBack = () => {
-    navigateBackFromSelection({
-      selectedContainerState,
-      sections,
-      selectedSection: section,
-      openContainer: openContainerInfoSidebar,
-      clearSelection,
-    });
   };
 
   return (

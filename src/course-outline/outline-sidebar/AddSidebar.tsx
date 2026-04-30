@@ -29,7 +29,7 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
 import AlertMessage from '@src/generic/alert-message';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { navigateBackFromSelection } from './back-navigation';
+import { useBackNavigation } from './back-navigation';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import messages from './messages';
 
@@ -360,12 +360,10 @@ const AddTabs = () => {
 export const AddSidebar = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
-  const { sections } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
     currentFlow,
     currentItemData,
-    clearSelection,
     stopCurrentFlow,
     selectedContainerState,
     openContainerSidebar,
@@ -389,14 +387,13 @@ export const AddSidebar = () => {
     courseDetails,
   ]);
 
+  const handleSelectionBack = useBackNavigation({
+    openContainer: openContainerSidebar,
+  });
+
   const handleBack = () => {
     stopCurrentFlow();
-    navigateBackFromSelection({
-      selectedContainerState,
-      sections,
-      openContainer: openContainerSidebar,
-      clearSelection,
-    });
+    handleSelectionBack();
   };
 
   return (
