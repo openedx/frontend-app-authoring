@@ -10,7 +10,7 @@ const DetailsSection = ({
   language,
   languageOptions,
   onChange,
-  isEditable,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const formattedLanguage = () => {
@@ -51,7 +51,6 @@ const DetailsSection = ({
 
 DetailsSection.defaultProps = {
   language: '',
-  isEditable: true,
 };
 
 DetailsSection.propTypes = {
@@ -59,7 +58,6 @@ DetailsSection.propTypes = {
   languageOptions: PropTypes.arrayOf(
     PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   ).isRequired,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

@@ -18,7 +18,7 @@ const RequirementsSection = ({
   possiblePreRequisiteCourses,
   entranceExamMinimumScorePct,
   isPrerequisiteCoursesEnabled,
-  isEditable,
+  isEditable = true,
   onChange,
 }) => {
   const intl = useIntl();
@@ -113,7 +113,6 @@ RequirementsSection.defaultProps = {
   entranceExamEnabled: '',
   preRequisiteCourses: [],
   entranceExamMinimumScorePct: '',
-  isEditable: true,
 };
 
 RequirementsSection.propTypes = {
@@ -128,7 +127,6 @@ RequirementsSection.propTypes = {
   ).isRequired,
   entranceExamMinimumScorePct: PropTypes.string,
   isPrerequisiteCoursesEnabled: PropTypes.bool.isRequired,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

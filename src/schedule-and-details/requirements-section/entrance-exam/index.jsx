@@ -12,7 +12,7 @@ const EntranceExam = ({
   errorEffort,
   isCheckedString,
   entranceExamMinimumScorePct,
-  isEditable,
+  isEditable = true,
   onChange,
 }) => {
   const { courseId } = useParams();
@@ -79,14 +79,12 @@ EntranceExam.defaultProps = {
   errorEffort: '',
   isCheckedString: '',
   entranceExamMinimumScorePct: '',
-  isEditable: true,
 };
 
 EntranceExam.propTypes = {
   errorEffort: PropTypes.string,
   isCheckedString: PropTypes.string,
   entranceExamMinimumScorePct: PropTypes.string,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

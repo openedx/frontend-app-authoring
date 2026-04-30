@@ -159,13 +159,13 @@ const ScheduleAndDetails = () => {
   const { overview: initialOverview } = courseDetails || {};
   const { aboutSidebarHtml: initialAboutSidebarHtml } = courseDetails || {};
 
-  if (!isLoadingUserPermissions && !canViewScheduleAndDetails) {
-    return <PermissionDeniedAlert />;
-  }
-
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
+  }
+
+  if (!canViewScheduleAndDetails) {
+    return <PermissionDeniedAlert />;
   }
 
   if (loadingDetailsStatus === RequestStatus.DENIED || loadingSettingsStatus === RequestStatus.DENIED) {
@@ -176,8 +176,8 @@ const ScheduleAndDetails = () => {
     );
   }
 
-  const isScheduleEditable = !isLoadingUserPermissions && canEditSchedule;
-  const isDetailsEditable = !isLoadingUserPermissions && canEditDetails;
+  const isScheduleEditable = canEditSchedule;
+  const isDetailsEditable = canEditDetails;
 
   const showCreditSection = creditEligibilityEnabled && isCreditCourse;
   const showRequirementsSection = aboutPageEditable || isPrerequisiteCoursesEnabled || isEntranceExamsEnabled;

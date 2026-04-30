@@ -9,7 +9,7 @@ import InstructorContainer from './instructor-container';
 import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
-const InstructorsSection = ({ instructors, isEditable, onChange }) => {
+const InstructorsSection = ({ instructors, isEditable = true, onChange }) => {
   const intl = useIntl();
   const newInstructor = {
     bio: '',
@@ -79,7 +79,6 @@ const InstructorsSection = ({ instructors, isEditable, onChange }) => {
 
 InstructorsSection.defaultProps = {
   instructors: [],
-  isEditable: true,
 };
 
 InstructorsSection.propTypes = {
@@ -92,7 +91,6 @@ InstructorsSection.propTypes = {
       title: PropTypes.string,
     }),
   ),
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

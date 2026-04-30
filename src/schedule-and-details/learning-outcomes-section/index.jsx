@@ -7,7 +7,7 @@ import { Add as AddIcon } from '@openedx/paragon/icons';
 import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
-const LearningOutcomesSection = ({ learningInfo, isEditable, onChange }) => {
+const LearningOutcomesSection = ({ learningInfo, isEditable = true, onChange }) => {
   const intl = useIntl();
 
   const handleInputChange = (value, index) => {
@@ -69,12 +69,10 @@ const LearningOutcomesSection = ({ learningInfo, isEditable, onChange }) => {
 
 LearningOutcomesSection.defaultProps = {
   learningInfo: [],
-  isEditable: true,
 };
 
 LearningOutcomesSection.propTypes = {
   learningInfo: PropTypes.arrayOf(PropTypes.string),
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

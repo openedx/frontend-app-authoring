@@ -9,7 +9,7 @@ import messages from './messages';
 const GradeRequirements = ({
   errorEffort,
   entranceExamMinimumScorePct,
-  isEditable,
+  isEditable = true,
   onChange,
 }) => (
   <Form.Group
@@ -45,13 +45,11 @@ const GradeRequirements = ({
 GradeRequirements.defaultProps = {
   errorEffort: '',
   entranceExamMinimumScorePct: '',
-  isEditable: true,
 };
 
 GradeRequirements.propTypes = {
   errorEffort: PropTypes.string,
   entranceExamMinimumScorePct: PropTypes.string,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

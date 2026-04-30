@@ -10,7 +10,7 @@ import { LICENSE_TYPE } from './constants';
 import messages from './messages';
 import { useLicenseDetails } from './hooks';
 
-const LicenseSection = ({ license, isEditable, onChange }) => {
+const LicenseSection = ({ license, isEditable = true, onChange }) => {
   const intl = useIntl();
   const {
     licenseURL,
@@ -49,12 +49,10 @@ const LicenseSection = ({ license, isEditable, onChange }) => {
 
 LicenseSection.defaultProps = {
   license: null,
-  isEditable: true,
 };
 
 LicenseSection.propTypes = {
   license: PropTypes.string,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

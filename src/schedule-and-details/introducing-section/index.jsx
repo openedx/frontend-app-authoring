@@ -30,7 +30,7 @@ const IntroducingSection = ({
   shortDescriptionEditable,
   enableExtendedCourseDetails,
   videoThumbnailImageAssetPath,
-  isEditable,
+  isEditable = true,
   onChange,
 }) => {
   const intl = useIntl();
@@ -184,7 +184,6 @@ IntroducingSection.defaultProps = {
   bannerImageAssetPath: '',
   videoThumbnailImageAssetPath: '',
   overview: '',
-  isEditable: true,
 };
 
 IntroducingSection.propTypes = {
@@ -204,7 +203,6 @@ IntroducingSection.propTypes = {
   shortDescriptionEditable: PropTypes.bool.isRequired,
   enableExtendedCourseDetails: PropTypes.bool.isRequired,
   videoThumbnailImageAssetPath: PropTypes.string,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

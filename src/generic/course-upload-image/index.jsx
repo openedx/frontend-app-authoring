@@ -27,7 +27,7 @@ const CourseUploadImage = ({
   identifierFieldText,
   showImageBodyText,
   customInputPlaceholder,
-  disabled,
+  disabled = false,
   onChange,
 }) => {
   const { courseId } = useParams();
@@ -157,7 +157,6 @@ CourseUploadImage.defaultProps = {
   showImageBodyText: false,
   identifierFieldText: '',
   customInputPlaceholder: '',
-  disabled: false,
 };
 
 CourseUploadImage.propTypes = {
@@ -169,7 +168,6 @@ CourseUploadImage.propTypes = {
   showImageBodyText: PropTypes.bool,
   identifierFieldText: PropTypes.string,
   customInputPlaceholder: PropTypes.string,
-  disabled: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

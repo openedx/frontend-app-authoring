@@ -5,7 +5,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
-const IntroductionVideo = ({ introVideo, isEditable, onChange }) => {
+const IntroductionVideo = ({ introVideo, isEditable = true, onChange }) => {
   const intl = useIntl();
   const embedVideoUrl = introVideo
     ? `//www.youtube.com/embed/${introVideo}`
@@ -55,12 +55,10 @@ const IntroductionVideo = ({ introVideo, isEditable, onChange }) => {
 
 IntroductionVideo.defaultProps = {
   introVideo: '',
-  isEditable: true,
 };
 
 IntroductionVideo.propTypes = {
   introVideo: PropTypes.string,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

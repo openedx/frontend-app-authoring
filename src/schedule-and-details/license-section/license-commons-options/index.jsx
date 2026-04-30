@@ -12,7 +12,7 @@ import {
 import { LICENSE_COMMONS_OPTIONS } from '../constants';
 import messages from './messages';
 
-const LicenseCommonsOptions = ({ licenseDetails, isEditable, onToggleCheckbox }) => {
+const LicenseCommonsOptions = ({ licenseDetails, isEditable = true, onToggleCheckbox }) => {
   const optionDetails = [
     {
       id: LICENSE_COMMONS_OPTIONS.attribution,
@@ -89,10 +89,6 @@ const LicenseCommonsOptions = ({ licenseDetails, isEditable, onToggleCheckbox })
   );
 };
 
-LicenseCommonsOptions.defaultProps = {
-  isEditable: true,
-};
-
 LicenseCommonsOptions.propTypes = {
   licenseDetails: PropTypes.shape({
     attribution: PropTypes.bool.isRequired,
@@ -100,7 +96,6 @@ LicenseCommonsOptions.propTypes = {
     noDerivatives: PropTypes.bool.isRequired,
     shareAlike: PropTypes.bool.isRequired,
   }).isRequired,
-  isEditable: PropTypes.bool,
   onToggleCheckbox: PropTypes.func.isRequired,
 };
 

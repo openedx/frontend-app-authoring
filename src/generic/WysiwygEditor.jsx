@@ -14,7 +14,7 @@ export const WysiwygEditor = ({
   editorType,
   onChange,
   minHeight,
-  disabled,
+  disabled = false,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
   const { courseId } = useCourseAuthoringContext();
@@ -74,7 +74,6 @@ WysiwygEditor.defaultProps = {
   initialValue: '',
   editorType: SUPPORTED_TEXT_EDITORS.text,
   minHeight: 200,
-  disabled: false,
 };
 
 WysiwygEditor.propTypes = {
@@ -82,5 +81,4 @@ WysiwygEditor.propTypes = {
   editorType: PropTypes.oneOf(Object.values(SUPPORTED_TEXT_EDITORS)),
   onChange: PropTypes.func.isRequired,
   minHeight: PropTypes.number,
-  disabled: PropTypes.bool,
 };

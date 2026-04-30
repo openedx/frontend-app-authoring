@@ -19,7 +19,7 @@ const ScheduleSection = ({
   certificateAvailableDate,
   certificatesDisplayBehavior,
   canShowCertificateAvailableDateField,
-  isEditable,
+  isEditable = true,
   onChange,
 }) => {
   const intl = useIntl();
@@ -156,7 +156,6 @@ ScheduleSection.defaultProps = {
   enrollmentStart: '',
   upgradeDeadline: '',
   certificateAvailableDate: '',
-  isEditable: true,
 };
 
 ScheduleSection.propTypes = {
@@ -171,7 +170,6 @@ ScheduleSection.propTypes = {
   certificateAvailableDate: PropTypes.string,
   certificatesDisplayBehavior: PropTypes.string.isRequired,
   canShowCertificateAvailableDateField: PropTypes.bool.isRequired,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

@@ -24,7 +24,7 @@ const CertificateDisplayRow = ({
   availableDateErrorFeedback,
   certificatesDisplayBehavior,
   displayBehaviorErrorFeedback,
-  isEditable,
+  isEditable = true,
   onChange,
 }) => {
   const intl = useIntl();
@@ -182,7 +182,6 @@ CertificateDisplayRow.defaultProps = {
   availableDateErrorFeedback: '',
   certificatesDisplayBehavior: '',
   displayBehaviorErrorFeedback: '',
-  isEditable: true,
 };
 
 CertificateDisplayRow.propTypes = {
@@ -190,7 +189,6 @@ CertificateDisplayRow.propTypes = {
   availableDateErrorFeedback: PropTypes.string,
   certificatesDisplayBehavior: PropTypes.string,
   displayBehaviorErrorFeedback: PropTypes.string,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

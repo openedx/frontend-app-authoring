@@ -10,7 +10,7 @@ const PacingSection = ({
   selfPaced,
   startDate,
   onChange,
-  isEditable,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const canTogglePace = new Date() <= new Date(startDate);
@@ -55,13 +55,11 @@ const PacingSection = ({
 PacingSection.defaultProps = {
   selfPaced: '',
   startDate: '',
-  isEditable: true,
 };
 
 PacingSection.propTypes = {
   startDate: PropTypes.string,
   selfPaced: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

@@ -17,7 +17,7 @@ const InstructorContainer = ({
   idx,
   onDelete,
   onChange,
-  isEditable,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   return (
@@ -114,7 +114,6 @@ const InstructorContainer = ({
 
 InstructorContainer.defaultProps = {
   instructor: {},
-  isEditable: true,
 };
 
 InstructorContainer.propTypes = {
@@ -126,7 +125,6 @@ InstructorContainer.propTypes = {
     title: PropTypes.string,
   }),
   idx: PropTypes.number.isRequired,
-  isEditable: PropTypes.bool,
   onDelete: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
 };

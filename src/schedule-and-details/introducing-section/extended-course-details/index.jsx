@@ -11,7 +11,7 @@ const ExtendedCourseDetails = ({
   subtitle,
   duration,
   description,
-  isEditable,
+  isEditable = true,
   onChange,
 }) => {
   const intl = useIntl();
@@ -76,7 +76,6 @@ ExtendedCourseDetails.defaultProps = {
   subtitle: '',
   duration: '',
   description: '',
-  isEditable: true,
 };
 
 ExtendedCourseDetails.propTypes = {
@@ -84,7 +83,6 @@ ExtendedCourseDetails.propTypes = {
   subtitle: PropTypes.string,
   duration: PropTypes.string,
   description: PropTypes.string,
-  isEditable: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 
