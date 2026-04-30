@@ -27,12 +27,20 @@ import ScheduleAndDetails from '.';
 jest.mock('@src/authz/hooks', () => ({
   useCourseUserPermissions: jest.fn().mockReturnValue({
     isLoading: false,
-    isAuthzEnabled: true,
     canViewScheduleAndDetails: true,
     canEditSchedule: true,
     canEditDetails: true,
   }),
 }));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    canViewScheduleAndDetails: true,
+    canEditSchedule: true,
+    canEditDetails: true,
+    ...overrides,
+  });
 
 let axiosMock;
 let store;
@@ -191,13 +199,7 @@ describe('<ScheduleAndDetails /> permissions', () => {
     axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, courseDetailsMock);
     axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, courseSettingsMock);
     axiosMock.onPut(getCourseDetailsApiUrl(courseId)).reply(200);
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      isLoading: false,
-      isAuthzEnabled: true,
-      canViewScheduleAndDetails: true,
-      canEditSchedule: true,
-      canEditDetails: true,
-    });
+    mockPermissions();
   });
 
   it('renders normally when authz flag is disabled (no regression)', async () => {
@@ -218,13 +220,7 @@ describe('<ScheduleAndDetails /> permissions', () => {
 
   it('shows PermissionDeniedAlert when user lacks view permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      isLoading: false,
-      isAuthzEnabled: true,
-      canViewScheduleAndDetails: false,
-      canEditSchedule: false,
-      canEditDetails: false,
-    });
+    mockPermissions({ canViewScheduleAndDetails: false, canEditSchedule: false, canEditDetails: false });
     const { getByTestId } = renderComponent();
     await waitFor(() => {
       expect(getByTestId('permissionDeniedAlert')).toBeInTheDocument();
@@ -233,13 +229,7 @@ describe('<ScheduleAndDetails /> permissions', () => {
 
   it('disables schedule date inputs when user lacks edit_schedule permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      isLoading: false,
-      isAuthzEnabled: true,
-      canViewScheduleAndDetails: true,
-      canEditSchedule: false,
-      canEditDetails: true,
-    });
+    mockPermissions({ canEditSchedule: false });
     const { getAllByPlaceholderText } = renderComponent();
     await waitFor(() => {
       const dateInputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
@@ -249,13 +239,7 @@ describe('<ScheduleAndDetails /> permissions', () => {
 
   it('disables pacing and details inputs when user lacks edit_details permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      isLoading: false,
-      isAuthzEnabled: true,
-      canViewScheduleAndDetails: true,
-      canEditSchedule: true,
-      canEditDetails: false,
-    });
+    mockPermissions({ canEditDetails: false });
     const { getAllByRole } = renderComponent();
     await waitFor(() => {
       const radios = getAllByRole('radio');
@@ -265,13 +249,7 @@ describe('<ScheduleAndDetails /> permissions', () => {
 
   it('save button cannot be triggered when user has no edit permissions', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      isLoading: false,
-      isAuthzEnabled: true,
-      canViewScheduleAndDetails: true,
-      canEditSchedule: false,
-      canEditDetails: false,
-    });
+    mockPermissions({ canEditSchedule: false, canEditDetails: false });
     const { getAllByPlaceholderText, queryByText } = renderComponent();
     // Wait for page to load
     const dateInputs = await waitFor(() => getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase()));

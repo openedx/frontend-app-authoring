@@ -97,11 +97,9 @@ describe('<RequirementsSection />', () => {
   });
 
   it('disables effort input and prerequisite dropdown when isEditable is false', () => {
-    const { getByDisplayValue, getByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    const { container, getByDisplayValue } = render(<RootWrapper {...props} isEditable={false} />);
     expect(getByDisplayValue(props.effort)).toBeDisabled();
-    expect(getByRole('button', { name: messages.dropdownLabel.defaultMessage, hidden: true })).toBeDefined();
-    const dropdown = getByRole('button', { name: new RegExp(props.preRequisiteCourses[0] || '', 'i'), hidden: true });
-    expect(dropdown || getByRole('button', { name: messages.dropdownEmptyText?.defaultMessage || '' })).toBeDefined();
+    expect(container.querySelector('#prerequisiteDropdown')).toBeDisabled();
   });
 
   it('enables effort input when isEditable is true', () => {

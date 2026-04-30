@@ -176,8 +176,7 @@ const ScheduleAndDetails = () => {
     );
   }
 
-  const isScheduleEditable = canEditSchedule;
-  const isDetailsEditable = canEditDetails;
+  const canEdit = canEditSchedule || canEditDetails;
 
   const showCreditSection = creditEligibilityEnabled && isCreditCourse;
   const showRequirementsSection = aboutPageEditable || isPrerequisiteCoursesEnabled || isEntranceExamsEnabled;
@@ -277,7 +276,7 @@ const ScheduleAndDetails = () => {
                   <PacingSection
                     selfPaced={selfPaced}
                     startDate={startDate}
-                    isEditable={isDetailsEditable}
+                    isEditable={canEditDetails}
                     onChange={handleValuesChange}
                   />
                   <ScheduleSection
@@ -292,14 +291,14 @@ const ScheduleAndDetails = () => {
                     certificateAvailableDate={certificateAvailableDate}
                     certificatesDisplayBehavior={certificatesDisplayBehavior}
                     canShowCertificateAvailableDateField={canShowCertificateAvailableDateField}
-                    isEditable={isScheduleEditable}
+                    isEditable={canEditSchedule}
                     onChange={handleValuesChange}
                   />
                   {aboutPageEditable && (
                     <DetailsSection
                       language={language}
                       languageOptions={languageOptions}
-                      isEditable={isDetailsEditable}
+                      isEditable={canEditDetails}
                       onChange={handleValuesChange}
                     />
                   )}
@@ -320,19 +319,19 @@ const ScheduleAndDetails = () => {
                     shortDescriptionEditable={shortDescriptionEditable}
                     enableExtendedCourseDetails={enableExtendedCourseDetails}
                     videoThumbnailImageAssetPath={videoThumbnailImageAssetPath}
-                    isEditable={isDetailsEditable}
+                    isEditable={canEditDetails}
                     onChange={handleValuesChange}
                   />
                   {enableExtendedCourseDetails && (
                     <>
                       <LearningOutcomesSection
                         learningInfo={learningInfo}
-                        isEditable={isDetailsEditable}
+                        isEditable={canEditDetails}
                         onChange={handleValuesChange}
                       />
                       <InstructorsSection
                         instructors={instructorInfo?.instructors}
-                        isEditable={isDetailsEditable}
+                        isEditable={canEditDetails}
                         onChange={handleValuesChange}
                       />
                     </>
@@ -348,14 +347,14 @@ const ScheduleAndDetails = () => {
                       possiblePreRequisiteCourses={possiblePreRequisiteCourses}
                       entranceExamMinimumScorePct={entranceExamMinimumScorePct}
                       isPrerequisiteCoursesEnabled={isPrerequisiteCoursesEnabled}
-                      isEditable={isDetailsEditable}
+                      isEditable={canEditDetails}
                       onChange={handleValuesChange}
                     />
                   )}
                   {licensingEnabled && (
                     <LicenseSection
                       license={license}
-                      isEditable={isDetailsEditable}
+                      isEditable={canEditDetails}
                       onChange={handleValuesChange}
                     />
                   )}
@@ -403,7 +402,7 @@ const ScheduleAndDetails = () => {
             <StatefulButton
               key="save-button"
               onClick={handleUpdateValues}
-              disabled={hasErrors || (!isScheduleEditable && !isDetailsEditable)}
+              disabled={hasErrors || !canEdit}
               state={isQueryPending
                 ? STATEFUL_BUTTON_STATES.pending
                 : STATEFUL_BUTTON_STATES.default}
