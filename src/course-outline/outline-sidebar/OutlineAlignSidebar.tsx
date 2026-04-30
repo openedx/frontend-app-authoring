@@ -2,6 +2,7 @@ import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { AlignSidebar } from '@src/generic/sidebar/AlignSidebar';
+import { navigateBackFromSelection } from './back-navigation';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
 /**
@@ -17,60 +18,13 @@ export const OutlineAlignSidebar = () => {
   const { data: contentData } = useContentData(sidebarContentId);
 
   const handleBack = () => {
-    const { currentId, subsectionId, sectionId } = selectedContainerState || {};
-    const sectionIndex = sections.findIndex((section) => section.id === sectionId);
-    const section = sectionIndex >= 0 ? sections[sectionIndex] : undefined;
-    const subsectionIndex = section
-      ?.childInfo.children.findIndex((subsection) => subsection.id === subsectionId) ?? -1;
-
-    // istanbul ignore next
-    if (!currentId) {
-      clearSelection();
-      setCurrentSelection(undefined);
-      return;
-    }
-
-    if (currentId === subsectionId) {
-      if (sectionId) {
-        openContainerSidebar(sectionId, undefined, sectionId, sectionIndex >= 0 ? sectionIndex : undefined);
-        setCurrentSelection({
-          currentId: sectionId,
-          sectionId,
-          index: sectionIndex >= 0 ? sectionIndex : undefined,
-        });
-        return;
-      }
-      clearSelection();
-      setCurrentSelection(undefined);
-      return;
-    }
-
-    if (currentId === sectionId) {
-      clearSelection();
-      setCurrentSelection(undefined);
-      return;
-    }
-
-    if (subsectionId) {
-      openContainerSidebar(
-        subsectionId,
-        subsectionId,
-        sectionId,
-        subsectionIndex >= 0 ? subsectionIndex : undefined,
-      );
-      setCurrentSelection({
-        currentId: subsectionId,
-        subsectionId,
-        sectionId,
-        index: subsectionIndex >= 0 ? subsectionIndex : undefined,
-      });
-      return;
-    }
-
-    // istanbul ignore next
-    clearSelection();
-    // istanbul ignore next
-    setCurrentSelection(undefined);
+    navigateBackFromSelection({
+      selectedContainerState,
+      sections,
+      openContainer: openContainerSidebar,
+      clearSelection,
+      onSelectionChange: setCurrentSelection,
+    });
   };
 
   return (

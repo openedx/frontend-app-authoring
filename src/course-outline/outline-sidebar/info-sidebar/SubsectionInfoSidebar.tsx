@@ -15,6 +15,7 @@ import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/Ou
 import { getLibraryId } from '@src/generic/key-utils';
 import { possibleSubsectionMoves } from '@src/course-outline/drag-helper/utils';
 import { XBlock } from '@src/data/types';
+import { navigateBackFromSelection } from '../back-navigation';
 
 import { InfoSection } from './InfoSection';
 import { PublishButon } from './PublishButon';
@@ -127,16 +128,13 @@ export const SubsectionSidebar = () => {
   };
 
   const handleBack = () => {
-    if (selectedContainerState?.sectionId) {
-      openContainerInfoSidebar(
-        selectedContainerState.sectionId,
-        undefined,
-        selectedContainerState.sectionId,
-        sectionIndex >= 0 ? sectionIndex : undefined,
-      );
-      return;
-    }
-    clearSelection();
+    navigateBackFromSelection({
+      selectedContainerState,
+      sections,
+      selectedSection: section,
+      openContainer: openContainerInfoSidebar,
+      clearSelection,
+    });
   };
 
   return (

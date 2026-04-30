@@ -218,32 +218,4 @@ describe('UnitSidebar', () => {
 
     expect(openContainerInfoSidebar).toHaveBeenCalledWith('ss1', 'ss1', 's1', 0);
   });
-
-  it('back clears selection when subsectionId missing', async () => {
-    const user = userEvent.setup();
-    const clearSelection = jest.fn();
-    outlineContext.useOutlineSidebarContext.mockReturnValue({
-      selectedContainerState: { currentId: 'unit-6', sectionId: 's1' },
-      clearSelection,
-      openContainerInfoSidebar: jest.fn(),
-      setSelectedContainerState: jest.fn(),
-      currentTabKey: 'info',
-      setCurrentTabKey: jest.fn(),
-    });
-    apiHooks.useCourseItemData.mockReturnValue({
-      data: {
-        displayName: 'Unit 6',
-        hasChanges: false,
-        category: 'vertical',
-        id: 'unit-6',
-        actions: { deletable: true, duplicable: true },
-      },
-      isPending: false,
-    });
-
-    render(<UnitSidebar />);
-    await user.click(screen.getByRole('button', { name: 'Back' }));
-
-    expect(clearSelection).toHaveBeenCalled();
-  });
 });

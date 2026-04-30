@@ -29,6 +29,7 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
 import AlertMessage from '@src/generic/alert-message';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { navigateBackFromSelection } from './back-navigation';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import messages from './messages';
 
@@ -390,42 +391,12 @@ export const AddSidebar = () => {
 
   const handleBack = () => {
     stopCurrentFlow();
-
-    if (!selectedContainerState) {
-      return;
-    }
-
-    const { currentId, subsectionId, sectionId } = selectedContainerState;
-    const sectionIndex = sections.findIndex((section) => section.id === sectionId);
-    const section = sectionIndex >= 0 ? sections[sectionIndex] : undefined;
-    const subsectionIndex = section
-      ?.childInfo.children.findIndex((subsection) => subsection.id === subsectionId) ?? -1;
-
-    if (currentId === subsectionId) {
-      if (sectionId) {
-        openContainerSidebar(sectionId, undefined, sectionId, sectionIndex >= 0 ? sectionIndex : undefined);
-        return;
-      }
-      clearSelection();
-      return;
-    }
-
-    if (currentId === sectionId) {
-      clearSelection();
-      return;
-    }
-
-    if (subsectionId) {
-      openContainerSidebar(
-        subsectionId,
-        subsectionId,
-        sectionId,
-        subsectionIndex >= 0 ? subsectionIndex : undefined,
-      );
-      return;
-    }
-
-    clearSelection();
+    navigateBackFromSelection({
+      selectedContainerState,
+      sections,
+      openContainer: openContainerSidebar,
+      clearSelection,
+    });
   };
 
   return (

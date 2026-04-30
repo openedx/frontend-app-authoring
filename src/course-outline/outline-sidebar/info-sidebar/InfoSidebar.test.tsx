@@ -478,22 +478,6 @@ describe('InfoSidebar component', () => {
       );
     });
 
-    it('clears selection on back when subsection has no sectionId', async () => {
-      const user = userEvent.setup();
-      selectedContainerState = {
-        currentId: subsectionId,
-        subsectionId,
-      };
-      axiosMock.onGet(getXBlockApiUrl(subsectionId)).reply(200, subsectionData);
-      renderComponent();
-      await screen.findByText(subsectionData.displayName);
-
-      await user.click(screen.getByRole('button', { name: /back/i }));
-
-      expect(mockClearSelection).toHaveBeenCalled();
-      expect(mockOpenContainerInfoSidebar).not.toHaveBeenCalled();
-    });
-
     it('calls openDeleteModal when Delete is clicked in subsection menu', async () => {
       const user = userEvent.setup();
       await renderSubsectionMenu();

@@ -35,6 +35,7 @@ import { InfoSection } from './InfoSection';
 import { useClipboard } from '@src/generic/clipboard';
 import { ToastContext } from '@src/generic/toast-context';
 import { XBlock } from '@src/data/types';
+import { navigateBackFromSelection } from '../back-navigation';
 interface Props {
   unitId: string;
 }
@@ -211,16 +212,13 @@ export const UnitSidebar = () => {
   };
 
   const handleBack = () => {
-    if (selectedContainerState?.subsectionId) {
-      openContainerInfoSidebar(
-        selectedContainerState.subsectionId,
-        selectedContainerState.subsectionId,
-        selectedContainerState.sectionId,
-        subsectionIndex >= 0 ? subsectionIndex : undefined,
-      );
-      return;
-    }
-    clearSelection();
+    navigateBackFromSelection({
+      selectedContainerState,
+      sections,
+      selectedSection: section,
+      openContainer: openContainerInfoSidebar,
+      clearSelection,
+    });
   };
 
   return (
