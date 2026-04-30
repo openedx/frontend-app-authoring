@@ -130,7 +130,6 @@ const LtiConfigForm = ({ onSubmit, formRef }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.consumerSecret}
-
               />
               {isInvalidConsumerSecret && (
                 <Form.Control.Feedback type="invalid" hasIcon={false}>
