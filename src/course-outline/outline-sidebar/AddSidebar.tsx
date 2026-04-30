@@ -401,8 +401,12 @@ export const AddSidebar = () => {
     const subsectionIndex = section
       ?.childInfo.children.findIndex((subsection) => subsection.id === subsectionId) ?? -1;
 
-    if (currentId === subsectionId && sectionId) {
-      openContainerSidebar(sectionId, undefined, sectionId, sectionIndex >= 0 ? sectionIndex : undefined);
+    if (currentId === subsectionId) {
+      if (sectionId) {
+        openContainerSidebar(sectionId, undefined, sectionId, sectionIndex >= 0 ? sectionIndex : undefined);
+        return;
+      }
+      clearSelection();
       return;
     }
 

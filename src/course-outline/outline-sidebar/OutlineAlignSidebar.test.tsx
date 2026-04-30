@@ -157,6 +157,28 @@ describe('OutlineAlignSidebar', () => {
     });
   });
 
+  it('back button from subsection without section clears selection', async () => {
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockReturnValue({
+        selectedContainerState: {
+          currentId: 'subsection-1',
+          subsectionId: 'subsection-1',
+        },
+        clearSelection,
+        openContainerSidebar,
+      } as any);
+
+    render(<OutlineAlignSidebar />);
+
+    const backButton = await screen.findByRole('button', { name: /back/i });
+    backButton.click();
+
+    expect(clearSelection).toHaveBeenCalled();
+    expect(setCurrentSelection).toHaveBeenCalledWith(undefined);
+    expect(openContainerSidebar).not.toHaveBeenCalled();
+  });
+
   it('back button from section clears selection', async () => {
     jest
       .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')

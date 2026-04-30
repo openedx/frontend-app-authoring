@@ -30,13 +30,18 @@ export const OutlineAlignSidebar = () => {
       return;
     }
 
-    if (currentId === subsectionId && sectionId) {
-      openContainerSidebar(sectionId, undefined, sectionId, sectionIndex >= 0 ? sectionIndex : undefined);
-      setCurrentSelection({
-        currentId: sectionId,
-        sectionId,
-        index: sectionIndex >= 0 ? sectionIndex : undefined,
-      });
+    if (currentId === subsectionId) {
+      if (sectionId) {
+        openContainerSidebar(sectionId, undefined, sectionId, sectionIndex >= 0 ? sectionIndex : undefined);
+        setCurrentSelection({
+          currentId: sectionId,
+          sectionId,
+          index: sectionIndex >= 0 ? sectionIndex : undefined,
+        });
+        return;
+      }
+      clearSelection();
+      setCurrentSelection(undefined);
       return;
     }
 

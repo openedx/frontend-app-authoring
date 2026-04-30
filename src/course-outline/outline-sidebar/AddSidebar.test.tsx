@@ -451,6 +451,23 @@ describe('AddSidebar', () => {
     expect(clearSelection).not.toHaveBeenCalled();
   });
 
+  it('back from subsection without section clears selection', async () => {
+    const user = userEvent.setup();
+    const section = outlineChildren[0];
+    const subsection = section.childInfo.children[0];
+    selectedContainerState = {
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+    };
+    renderComponent();
+
+    const back = await screen.findByRole('button', { name: 'Back' });
+    await user.click(back);
+
+    expect(clearSelection).toHaveBeenCalled();
+    expect(openContainerSidebar).not.toHaveBeenCalled();
+  });
+
   it('back from section clears selection', async () => {
     const user = userEvent.setup();
     const section = outlineChildren[0];
