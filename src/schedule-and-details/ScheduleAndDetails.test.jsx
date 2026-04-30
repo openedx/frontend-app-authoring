@@ -27,6 +27,7 @@ import ScheduleAndDetails from '.';
 jest.mock('@src/authz/hooks', () => ({
   useCourseUserPermissions: jest.fn().mockReturnValue({
     isLoading: false,
+    isAuthzEnabled: true,
     canViewScheduleAndDetails: true,
     canEditSchedule: true,
     canEditDetails: true,
@@ -36,6 +37,7 @@ jest.mock('@src/authz/hooks', () => ({
 const mockPermissions = (overrides = {}) =>
   jest.mocked(useCourseUserPermissions).mockReturnValue({
     isLoading: false,
+    isAuthzEnabled: true,
     canViewScheduleAndDetails: true,
     canEditSchedule: true,
     canEditDetails: true,
