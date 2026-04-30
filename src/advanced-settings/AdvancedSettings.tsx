@@ -8,7 +8,7 @@ import {
   TransitionReplace,
 } from '@openedx/paragon';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
@@ -24,17 +24,29 @@ import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import Placeholder from '@src/editors/Placeholder';
 
-import SettingCard from './setting-card/SettingCard';
 import SettingsSidebar from './settings-sidebar/SettingsSidebar';
+import SettingsSection from './settings-section/SettingsSection';
+import SettingsFilters from './settings-filters/SettingsFilters';
 import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import ModalError from './modal-error/ModalError';
 import { useCourseAdvancedSettings, useProctoringExamErrors, useUpdateCourseAdvancedSettings } from './data/apiHooks';
+import {
+  SETTINGS_CATEGORY_MAP,
+  CATEGORY_ORDER,
+  UNCATEGORIZED,
+  CATEGORY_CONTENT_BLOCKS,
+  CONTENT_BLOCKS_SUBCATEGORY_MAP,
+  CONTENT_BLOCKS_SUBCATEGORY_ORDER,
+} from './data/settingsCategories';
+import type { SettingEntry } from './data/types';
 
 const AdvancedSettings = () => {
   const intl = useIntl();
   const [saveSettingsPrompt, showSaveSettingsPrompt] = useState(false);
   const [showDeprecated, setShowDeprecated] = useState(false);
+  const [filterText, setFilterText] = useState('');
+  const [expandAll, setExpandAll] = useState(true);
   const [errorModal, showErrorModal] = useState(false);
   const [editedSettings, setEditedSettings] = useState({});
   const [errorFields, setErrorFields] = useState([]);
@@ -89,15 +101,16 @@ const AdvancedSettings = () => {
     if (isQuerySuccess) {
       setShowSuccessAlert(true);
       setIsEditableState(false);
+      setEditedSettings({});
+      showSaveSettingsPrompt(false);
       setTimeout(() => setShowSuccessAlert(false), 15000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      showSaveSettingsPrompt(false);
     } else if (queryError && !hasInternetConnectionError) {
       // @ts-ignore
       setErrorFields(queryError?.response?.data ?? []);
       showErrorModal(true);
     }
-  }, [isQuerySuccess, queryError]);
+  }, [isQuerySuccess, queryError, hasInternetConnectionError]);
 
   if (isLoading) {
     return (
@@ -146,6 +159,39 @@ const AdvancedSettings = () => {
   const handleManuallyChangeClick = (setToState) => {
     showErrorModal(setToState);
     showSaveSettingsPrompt(true);
+  };
+
+  const groupSettingsByCategory = (settingsData, filter) => {
+    const query = filter.toLowerCase().trim();
+    const groups = {};
+
+    Object.entries(settingsData).forEach(([key, value]) => {
+      if (query) {
+        const matchesKey = key.toLowerCase().includes(query);
+        const matchesName = ((value as any).displayName || '').toLowerCase().includes(query);
+        if (!matchesKey && !matchesName) {
+          return;
+        }
+      }
+      const category = SETTINGS_CATEGORY_MAP[key] || UNCATEGORIZED;
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push([key, value]);
+    });
+
+    const ordered = {};
+    CATEGORY_ORDER.forEach((cat) => {
+      if (groups[cat]) {
+        ordered[cat] = groups[cat];
+      }
+    });
+    Object.keys(groups).forEach((cat) => {
+      if (!ordered[cat]) {
+        ordered[cat] = groups[cat];
+      }
+    });
+    return ordered;
   };
 
   // Show permission denied alert when authz is enabled and user doesn't have permission
@@ -209,56 +255,40 @@ const AdvancedSettings = () => {
               <SubHeader
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
                 title={intl.formatMessage(messages.headingTitle)}
-                contentTitle={intl.formatMessage(messages.policy)}
               />
               <article>
                 <div>
                   <section className="setting-items-policies">
-                    <div className="small">
-                      <FormattedMessage
-                        id="course-authoring.advanced-settings.policies.description"
-                        defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
-                        values={{ notice: <strong>Warning:</strong> }}
-                      />
-                    </div>
-                    <div className="setting-items-deprecated-setting">
-                      <Button
-                        variant={showDeprecated ? 'outline-brand' : 'tertiary'}
-                        onClick={() => setShowDeprecated(!showDeprecated)}
-                        size="sm"
-                      >
-                        <FormattedMessage
-                          id="course-authoring.advanced-settings.deprecated.button.text"
-                          defaultMessage="{visibility} deprecated settings"
-                          values={{
-                            visibility: showDeprecated ?
-                              intl.formatMessage(messages.deprecatedButtonHideText)
-                              : intl.formatMessage(messages.deprecatedButtonShowText),
-                          }}
+                    <SettingsFilters
+                      filterText={filterText}
+                      onFilterChange={setFilterText}
+                      showDeprecated={showDeprecated}
+                      onDeprecatedChange={setShowDeprecated}
+                      expandAll={expandAll}
+                      onExpandAllChange={setExpandAll}
+                    />
+                    {Object.entries(groupSettingsByCategory(advancedSettingsData, filterText)).map(
+                      ([category, settingsEntries]) => (
+                        <SettingsSection
+                          key={category}
+                          category={category}
+                          settingsEntries={settingsEntries as SettingEntry[]}
+                          showDeprecated={showDeprecated}
+                          showSaveSettingsPrompt={showSaveSettingsPrompt}
+                          saveSettingsPrompt={saveSettingsPrompt}
+                          setEditedSettings={setEditedSettings}
+                          handleSettingBlur={handleSettingBlur}
+                          isEditableState={isEditableState}
+                          setIsEditableState={setIsEditableState}
+                          forceOpen={filterText.trim() !== ''}
+                          expandAll={expandAll}
+                          subcategoryMap={category === CATEGORY_CONTENT_BLOCKS ? CONTENT_BLOCKS_SUBCATEGORY_MAP : null}
+                          subcategoryOrder={category === CATEGORY_CONTENT_BLOCKS
+                            ? CONTENT_BLOCKS_SUBCATEGORY_ORDER
+                            : []}
                         />
-                      </Button>
-                    </div>
-                    <ul className="setting-items-list p-0">
-                      {Object.keys(advancedSettingsData).map((settingName) => {
-                        const settingData = advancedSettingsData[settingName];
-                        if (settingData.deprecated && !showDeprecated) {
-                          return null;
-                        }
-                        return (
-                          <SettingCard
-                            key={settingName}
-                            settingData={settingData}
-                            name={settingName}
-                            showSaveSettingsPrompt={showSaveSettingsPrompt}
-                            saveSettingsPrompt={saveSettingsPrompt}
-                            setEdited={setEditedSettings}
-                            handleBlur={handleSettingBlur}
-                            isEditableState={isEditableState}
-                            setIsEditableState={setIsEditableState}
-                          />
-                        );
-                      })}
-                    </ul>
+                      ),
+                    )}
                   </section>
                 </div>
               </article>

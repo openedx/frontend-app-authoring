@@ -12,23 +12,27 @@ import { advancedSettingsMock } from './__mocks__';
 import { getCourseAdvancedSettingsApiUrl } from './data/api';
 import AdvancedSettings from './AdvancedSettings';
 import messages from './messages';
+import filterMessages from './settings-filters/messages';
 
-let axiosMock;
-const mockPathname = '/foo-bar';
-const courseId = '123';
-
-// Mock the TextareaAutosize component
-jest.mock('react-textarea-autosize', () =>
-  jest.fn((props) => (
+// Mock CodeMirror-based JsonInput with a controlled textarea so tests can
+// interact with JSON fields without a real browser layout engine.
+jest.mock('./setting-card/inputs/JsonInput', () =>
+  jest.fn(({ initialValue, onChange, onBlur }) => (
     <textarea
-      {...props}
-      onFocus={() => {}}
+      data-testid="json-input"
+      value={initialValue}
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={onBlur}
     />
   )));
 
 jest.mock('@src/authz/data/apiHooks', () => ({
   useUserPermissions: jest.fn(),
 }));
+
+let axiosMock;
+const mockPathname = '/foo-bar';
+const courseId = '123';
 
 const render = () =>
   baseRender(
@@ -62,13 +66,15 @@ describe('<AdvancedSettings />', () => {
 
   it('should render without errors', async () => {
     render();
-    expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(messages.headingSubtitle.defaultMessage, {
+        selector: 'small.sub-header-title-subtitle',
+      }),
+    ).toBeInTheDocument();
     expect(screen.getByText(messages.headingTitle.defaultMessage, {
       selector: 'h2.sub-header-title',
     })).toBeInTheDocument();
-    expect(screen.getByText(messages.policy.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i))
-      .toBeInTheDocument();
+    expect(screen.queryByText(messages.policy.defaultMessage)).toBeNull();
   });
 
   it('should render setting element', async () => {
@@ -77,9 +83,9 @@ describe('<AdvancedSettings />', () => {
     expect(screen.queryByText('Certificate web/html view enabled')).toBeNull();
   });
 
-  it('should change to onСhange', async () => {
+  it('should change to onChange', async () => {
     render();
-    const textarea = await screen.findByLabelText(/Advanced Module List/i);
+    const textarea = await screen.findByDisplayValue('[]');
     expect(textarea).toBeInTheDocument();
     fireEvent.change(textarea, { target: { value: '[1, 2, 3]' } });
     expect(textarea).toHaveValue('[1, 2, 3]');
@@ -87,7 +93,7 @@ describe('<AdvancedSettings />', () => {
 
   it('should display a warning alert', async () => {
     render();
-    const textarea = await screen.findByLabelText(/Advanced Module List/i);
+    const textarea = await screen.findByDisplayValue('[]');
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
     expect(screen.getByText(messages.buttonCancelText.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.buttonSaveText.defaultMessage)).toBeInTheDocument();
@@ -95,7 +101,7 @@ describe('<AdvancedSettings />', () => {
     expect(screen.getByText(messages.alertWarningDescriptions.defaultMessage)).toBeInTheDocument();
   });
 
-  it('should display a tooltip on clicking on the icon', async () => {
+  it('should display a tooltip on clicking on the info icon', async () => {
     const user = userEvent.setup();
     render();
     const button = await screen.findByLabelText(/Show help text/i);
@@ -103,42 +109,43 @@ describe('<AdvancedSettings />', () => {
     expect(screen.getByText(/Enter the names of the advanced modules to use in your course./i)).toBeInTheDocument();
   });
 
-  it('should change deprecated button text', async () => {
+  it('should toggle deprecated settings visibility', async () => {
     const user = userEvent.setup();
     render();
-    const showDeprecatedItemsBtn = await screen.findByText(/Show Deprecated Settings/i);
-    expect(showDeprecatedItemsBtn).toBeInTheDocument();
-    await user.click(showDeprecatedItemsBtn);
-    expect(screen.getByText(/Hide Deprecated Settings/i)).toBeInTheDocument();
+    const showDeprecatedBtn = await screen.findByText(filterMessages.showDeprecated.defaultMessage);
+    expect(showDeprecatedBtn).toBeInTheDocument();
+    expect(screen.queryByText('Certificate web/html view enabled')).toBeNull();
+    await user.click(showDeprecatedBtn);
+    expect(screen.getByText(filterMessages.hideDeprecated.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText('Certificate web/html view enabled')).toBeInTheDocument();
   });
 
   it('should reset to default value on click on Cancel button', async () => {
     const user = userEvent.setup();
     render();
-    const textarea = await screen.findByLabelText(/Advanced Module List/i);
+    const textarea = await screen.findByDisplayValue('[]');
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
     expect(textarea).toHaveValue('[3, 2, 1]');
     await user.click(screen.getByText(messages.buttonCancelText.defaultMessage));
     expect(textarea).toHaveValue('[]');
   });
 
-  it('should update the textarea value and display the updated value after clicking "Change manually"', async () => {
+  it('should preserve the field value after a failed save due to invalid JSON', async () => {
     const user = userEvent.setup();
     render();
-    const textarea = await screen.findByLabelText(/Advanced Module List/i);
+    const textarea = await screen.findByDisplayValue('[]');
     fireEvent.change(textarea, { target: { value: '[3, 2, 1,' } });
     fireEvent.blur(textarea);
     expect(textarea).toHaveValue('[3, 2, 1,');
     await user.click(screen.getByText('Save changes'));
-    await user.click(await screen.findByText('Change manually'));
+    expect(screen.queryByText(messages.buttonSaveText.defaultMessage)).toBeNull();
     expect(textarea).toHaveValue('[3, 2, 1,');
   });
 
   it('should show success alert after save', async () => {
     const user = userEvent.setup();
     render();
-    const textarea = await screen.findByLabelText(/Advanced Module List/i);
+    const textarea = await screen.findByDisplayValue('[]');
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
     expect(textarea).toHaveValue('[3, 2, 1]');
     axiosMock
@@ -151,13 +158,13 @@ describe('<AdvancedSettings />', () => {
         },
       });
     await user.click(screen.getByText('Save changes'));
-    expect(screen.getByText('Your policy changes have been saved.')).toBeInTheDocument();
+    expect(await screen.findByText('Your policy changes have been saved.')).toBeInTheDocument();
   });
 
   it('should show error modal on save failure', async () => {
     const user = userEvent.setup();
     render();
-    const textarea = await screen.findByLabelText(/Advanced Module List/i);
+    const textarea = await screen.findByDisplayValue('[]');
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
     axiosMock
       .onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`)
@@ -173,13 +180,15 @@ describe('<AdvancedSettings />', () => {
       data: { canManageAdvancedSettings: true },
     } as unknown as ReturnType<typeof useUserPermissions>);
     render();
-    expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      await screen.findByText(messages.headingSubtitle.defaultMessage, {
+        selector: 'small.sub-header-title-subtitle',
+      }),
+    ).toBeInTheDocument();
     expect(screen.getByText(messages.headingTitle.defaultMessage, {
       selector: 'h2.sub-header-title',
     })).toBeInTheDocument();
-    expect(screen.getByText(messages.policy.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(/Do not modify these policies unless you are familiar with their purpose./i))
-      .toBeInTheDocument();
+    expect(screen.queryByText(messages.policy.defaultMessage)).toBeNull();
   });
 
   it('should show permission alert when authz.enable_course_authoring flag is enabled and the user is not authorized', async () => {

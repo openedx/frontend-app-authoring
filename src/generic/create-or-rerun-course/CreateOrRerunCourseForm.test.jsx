@@ -226,7 +226,11 @@ describe('<CreateOrRerunCourseForm />', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText(messages.totalLengthError.defaultMessage)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          `The combined length of the organization, course number and course run fields cannot be more than 65 characters.`,
+        ),
+      ).toBeInTheDocument();
     });
   });
 
