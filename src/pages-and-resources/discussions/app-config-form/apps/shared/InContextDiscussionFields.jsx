@@ -11,7 +11,6 @@ const InContextDiscussionFields = ({
   onBlur,
   onChange,
   values,
-  disabled = false,
 }) => {
   const intl = useIntl();
   const {
@@ -45,13 +44,12 @@ const InContextDiscussionFields = ({
         )
         : (
           <FormSwitchGroup
-            onChange={() => !disabled && setShowPopup(true)}
+            onChange={() => setShowPopup(true)}
             onBlur={onBlur}
             id="enableGradedUnits"
             checked={values.enableGradedUnits}
             label={intl.formatMessage(messages.gradedUnitPagesLabel)}
             helpText={intl.formatMessage(messages.gradedUnitPagesHelp)}
-            disabled={disabled}
           />
         )}
       <AppConfigFormDivider />
@@ -62,7 +60,6 @@ const InContextDiscussionFields = ({
         checked={values.groupAtSubsection}
         label={intl.formatMessage(messages.groupInContextSubsectionLabel)}
         helpText={intl.formatMessage(messages.groupInContextSubsectionHelp)}
-        disabled={disabled}
       />
     </>
   );
@@ -75,7 +72,6 @@ InContextDiscussionFields.propTypes = {
     enableGradedUnits: PropTypes.bool,
     groupAtSubsection: PropTypes.bool,
   }).isRequired,
-  disabled: PropTypes.bool,
 };
 
 export default InContextDiscussionFields;

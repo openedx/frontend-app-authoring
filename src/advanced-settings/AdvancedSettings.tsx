@@ -72,7 +72,7 @@ const AdvancedSettings = () => {
 
   const isEditable = !isAuthzEnabled
     || isLoadingUserPermissions
-    || !!canManageAdvancedSettings;
+    || canManageAdvancedSettings;
 
   const updateSettingsButtonState = {
     labels: {

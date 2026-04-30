@@ -18,7 +18,7 @@ import { useModel } from '../../../../../generic/model-store';
 
 ensureConfig(['SITE_NAME', 'SUPPORT_EMAIL'], 'LTI Config Form');
 
-const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
+const LtiConfigForm = ({ onSubmit, formRef }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -113,7 +113,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.consumerKey}
-                disabled={!isEditable}
+
               />
               {isInvalidConsumerKey && (
                 <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -131,7 +131,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.consumerSecret}
-                disabled={!isEditable}
+
               />
               {isInvalidConsumerSecret && (
                 <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -145,7 +145,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.launchUrl}
-                disabled={!isEditable}
+
               />
               {isInvalidLaunchUrl && (
                 <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -166,7 +166,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onBlur={handleBlur}
                 checked={values.piiShareUsername}
                 label={intl.formatMessage(messages.piiShareUsername)}
-                disabled={!isEditable}
+
               />
               <Form.Check
                 type="checkbox"
@@ -175,7 +175,7 @@ const LtiConfigForm = ({ onSubmit, formRef, isEditable = false }) => {
                 onBlur={handleBlur}
                 checked={values.piiShareEmail}
                 label={intl.formatMessage(messages.piiShareEmail)}
-                disabled={!isEditable}
+
               />
             </Form.Group>
           </div>
@@ -194,7 +194,6 @@ LtiConfigForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
-  isEditable: PropTypes.bool,
 };
 
 export default LtiConfigForm;
