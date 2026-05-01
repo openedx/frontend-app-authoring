@@ -15,22 +15,28 @@ export { FIELD_TYPE };
  * All current values are covered there. When adding new options, always add
  * a corresponding i18n message — never rely on `label` for user-visible text.
  */
-export const ENUM_OPTIONS: Record<string, Array<{ value: string; label: string }>> = Object.fromEntries(
-  SETTINGS_CONFIG.flatMap((cat) => cat.fields
-    .filter((f) => f.enumOptions)
-    .map((f) => [f.key, f.enumOptions!])),
+export const ENUM_OPTIONS: Record<string, Array<{ value: string; label: string; }>> = Object.fromEntries(
+  SETTINGS_CONFIG.flatMap((cat) =>
+    cat.fields
+      .filter((f) => f.enumOptions)
+      .map((f) => [f.key, f.enumOptions!])
+  ),
 );
 
 const BOOLEAN_KEYS = new Set<string>(
-  SETTINGS_CONFIG.flatMap((cat) => cat.fields
-    .filter((f) => f.type === FIELD_TYPE.BOOLEAN)
-    .map((f) => f.key)),
+  SETTINGS_CONFIG.flatMap((cat) =>
+    cat.fields
+      .filter((f) => f.type === FIELD_TYPE.BOOLEAN)
+      .map((f) => f.key)
+  ),
 );
 
 const NUMBER_KEYS = new Set<string>(
-  SETTINGS_CONFIG.flatMap((cat) => cat.fields
-    .filter((f) => f.type === FIELD_TYPE.NUMBER)
-    .map((f) => f.key)),
+  SETTINGS_CONFIG.flatMap((cat) =>
+    cat.fields
+      .filter((f) => f.type === FIELD_TYPE.NUMBER)
+      .map((f) => f.key)
+  ),
 );
 
 /**
