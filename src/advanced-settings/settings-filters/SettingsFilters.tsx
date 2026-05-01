@@ -1,5 +1,7 @@
 import {
-  Button, SearchField, Stack,
+  Button,
+  SearchField,
+  Stack,
 } from '@openedx/paragon';
 import { OpenInFull, CloseFullscreen } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
