@@ -19,11 +19,13 @@ import {
   serializeValue,
 } from '../data/fieldTypes';
 import { FIELD_PLACEHOLDER_MESSAGES } from '../data/fieldTypeMessages';
-import BooleanInput from './inputs/BooleanInput';
-import NumberInput from './inputs/NumberInput';
-import EnumInput from './inputs/EnumInput';
-import StringInput from './inputs/StringInput';
-import JsonInput from './inputs/JsonInput';
+import {
+  BooleanInput,
+  EnumInput,
+  JsonInput,
+  NumberInput,
+  StringInput,
+} from './inputs';
 
 const SettingCard = ({
   name,
@@ -168,7 +170,7 @@ const SettingCard = ({
             {capitalize(displayName)}
           </span>
           {deprecated && (
-            <Badge variant="danger" className="ml-1 mr-1">
+            <Badge variant="danger" className="mx-1">
               {intl.formatMessage(messages.deprecated)}
             </Badge>
           )}
@@ -178,9 +180,7 @@ const SettingCard = ({
             src={InfoOutline}
             iconAs={Icon}
             alt={intl.formatMessage(messages.helpButtonText)}
-            variant="primary"
             size="sm"
-            className="flex-shrink-0"
           />
           <ModalPopup
             hasArrow

@@ -1,5 +1,6 @@
-import { render, fireEvent, initializeMocks } from '@src/testUtils';
-import SettingsSection from './SettingsSection';
+import userEvent from '@testing-library/user-event';
+import { render, initializeMocks } from '@src/testUtils';
+import SettingsSection, { SettingsSectionProps } from './SettingsSection';
 import messages from './messages';
 import type { SettingEntry } from '../data/types';
 
@@ -15,7 +16,7 @@ jest.mock(
   () => jest.fn(() => <div data-testid="course-display-overrides" />),
 );
 
-const defaultProps = {
+const defaultProps: SettingsSectionProps = {
   category: 'Grading',
   settingsEntries: [] as SettingEntry[],
   showDeprecated: false,
@@ -32,8 +33,7 @@ const makeEntry = (name: string, deprecated = false): SettingEntry => [
   { displayName: name, value: 'test', help: '', deprecated },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderSection = (props: Record<string, any> = {}) =>
+const renderSection = (props: Partial<SettingsSectionProps> = {}) =>
   render(
     <SettingsSection
       {...defaultProps}
@@ -42,8 +42,11 @@ const renderSection = (props: Record<string, any> = {}) =>
   );
 
 describe('<SettingsSection />', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     initializeMocks();
+    user = userEvent.setup();
   });
 
   it('renders the category title', () => {
@@ -88,7 +91,7 @@ describe('<SettingsSection />', () => {
     expect(queryByRole('button')).toBeNull();
   });
 
-  it('collapses the section when the trigger is clicked', () => {
+  it('collapses the section when the trigger is clicked', async () => {
     const { getByRole } = renderSection({
       settingsEntries: [makeEntry('noGrade')],
     });
@@ -96,7 +99,7 @@ describe('<SettingsSection />', () => {
     // Section is open by default
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
     // Click the trigger to collapse
-    fireEvent.click(trigger);
+    await user.click(trigger);
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
   });
 

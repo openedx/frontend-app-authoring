@@ -1,16 +1,21 @@
-import { render, fireEvent, initializeMocks } from '@src/testUtils';
-import BooleanInput from './BooleanInput';
+import userEvent from '@testing-library/user-event';
+import { render, initializeMocks } from '@src/testUtils';
+import BooleanInput, { BooleanInputProps } from './BooleanInput';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderInput = (props: Record<string, any> = {}) =>
-  render(
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <BooleanInput name="selfPaced" displayName="Self Paced" {...(props as any)} />,
-  );
+const renderInput = ({
+  name = 'selfPaced',
+  displayName = 'Self Paced',
+  value = false,
+  onChange = jest.fn(),
+}: Partial<BooleanInputProps> = {}) =>
+  render(<BooleanInput name={name} displayName={displayName} value={value} onChange={onChange} />);
 
 describe('<BooleanInput />', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     initializeMocks();
+    user = userEvent.setup();
   });
 
   it('renders as checked when value is true', () => {
@@ -23,17 +28,17 @@ describe('<BooleanInput />', () => {
     expect(getByRole('switch')).not.toBeChecked();
   });
 
-  it('calls onChange with true when toggled from false', () => {
+  it('calls onChange with true when toggled from false', async () => {
     const onChange = jest.fn();
     const { getByRole } = renderInput({ value: false, onChange });
-    fireEvent.click(getByRole('switch'));
+    await user.click(getByRole('switch'));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
-  it('calls onChange with false when toggled from true', () => {
+  it('calls onChange with false when toggled from true', async () => {
     const onChange = jest.fn();
     const { getByRole } = renderInput({ value: true, onChange });
-    fireEvent.click(getByRole('switch'));
+    await user.click(getByRole('switch'));
     expect(onChange).toHaveBeenCalledWith(false);
   });
 

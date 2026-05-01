@@ -1,8 +1,9 @@
+import { Form } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { ENUM_OPTIONS } from '../../data/fieldTypes';
 import { ENUM_LABEL_MESSAGES } from '../../data/fieldTypeMessages';
 
-interface EnumInputProps {
+export interface EnumInputProps {
   value?: string;
   name: string;
   displayName: string;
@@ -19,8 +20,8 @@ const EnumInput = ({
   const options = ENUM_OPTIONS[name] || [];
 
   return (
-    <select
-      className="form-control"
+    <Form.Control
+      as="select"
       value={value ?? ''}
       name={name}
       onChange={(e) => onChange(e.target.value)}
@@ -36,7 +37,7 @@ const EnumInput = ({
           </option>
         );
       })}
-    </select>
+    </Form.Control>
   );
 };
 

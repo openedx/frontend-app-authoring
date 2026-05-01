@@ -1,8 +1,8 @@
 import { ChangeEvent } from 'react';
 import { Form } from '@openedx/paragon';
 
-interface NumberInputProps {
-  value?: number | string;
+export interface NumberInputProps {
+  value?: number | string | null;
   name: string;
   displayName: string;
   onChange: (value: string) => void;

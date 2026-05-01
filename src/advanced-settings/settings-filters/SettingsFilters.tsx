@@ -1,4 +1,6 @@
-import { Button, Icon, SearchField } from '@openedx/paragon';
+import {
+  Button, SearchField, Stack,
+} from '@openedx/paragon';
 import { OpenInFull, CloseFullscreen } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
@@ -23,26 +25,24 @@ const SettingsFilters = ({
   const intl = useIntl();
 
   return (
-    <div className="settings-filters d-flex align-items-center gap-3 mb-4">
-      <div className="settings-filters-search">
-        <SearchField
-          onSubmit={onFilterChange}
-          onChange={onFilterChange}
-          onClear={() => onFilterChange('')}
-          value={filterText}
-          placeholder={intl.formatMessage(messages.searchPlaceholder)}
-          screenReaderText={{
-            label: intl.formatMessage(messages.searchLabel),
-            submitButton: intl.formatMessage(messages.searchSubmitButton),
-          }}
-          size="sm"
-        />
-      </div>
+    <Stack direction="horizontal" gap={3} className="flex-wrap align-items-center mb-4">
+      <SearchField
+        onSubmit={onFilterChange}
+        onChange={onFilterChange}
+        onClear={() => onFilterChange('')}
+        value={filterText}
+        placeholder={intl.formatMessage(messages.searchPlaceholder)}
+        screenReaderText={{
+          label: intl.formatMessage(messages.searchLabel),
+          submitButton: intl.formatMessage(messages.searchSubmitButton),
+        }}
+        size="sm"
+      />
       <Button
         variant="outline-primary"
+        iconBefore={expandAll ? CloseFullscreen : OpenInFull}
         onClick={() => onExpandAllChange(!expandAll)}
       >
-        <Icon src={expandAll ? CloseFullscreen : OpenInFull} className="mr-1" />
         {expandAll ? intl.formatMessage(messages.collapseAll) : intl.formatMessage(messages.expandAll)}
       </Button>
       <Button
@@ -51,7 +51,7 @@ const SettingsFilters = ({
       >
         {showDeprecated ? intl.formatMessage(messages.hideDeprecated) : intl.formatMessage(messages.showDeprecated)}
       </Button>
-    </div>
+    </Stack>
   );
 };
 

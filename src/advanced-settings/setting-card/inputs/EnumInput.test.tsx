@@ -1,17 +1,22 @@
-import { render, fireEvent, initializeMocks } from '@src/testUtils';
-import EnumInput from './EnumInput';
+import userEvent from '@testing-library/user-event';
+import { render, initializeMocks } from '@src/testUtils';
+import EnumInput, { EnumInputProps } from './EnumInput';
 import { ENUM_OPTIONS } from '../../data/fieldTypes';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderInput = (props: Record<string, any> = {}) =>
-  render(
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <EnumInput name="showanswer" displayName="Show Answer" {...(props as any)} />,
-  );
+const renderInput = ({
+  name = 'showanswer',
+  displayName = 'Show Answer',
+  value = 'always',
+  onChange = jest.fn(),
+}: Partial<EnumInputProps> = {}) =>
+  render(<EnumInput name={name} displayName={displayName} value={value} onChange={onChange} />);
 
 describe('<EnumInput />', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     initializeMocks();
+    user = userEvent.setup();
   });
 
   it('renders the correct options for the given field name', () => {
@@ -26,24 +31,25 @@ describe('<EnumInput />', () => {
     expect(getByRole('combobox')).toHaveValue('never');
   });
 
-  it('calls onChange with the selected value when the selection changes', () => {
+  it('calls onChange with the selected value when the selection changes', async () => {
     const onChange = jest.fn();
     const { getByRole } = renderInput({ value: 'always', onChange });
-    fireEvent.change(getByRole('combobox'), { target: { value: 'never' } });
+    await user.selectOptions(getByRole('combobox'), 'never');
     expect(onChange).toHaveBeenCalledWith('never');
   });
 
-  it('calls onChange only once per change event', () => {
+  it('calls onChange only once per change event', async () => {
     const onChange = jest.fn();
     const { getByRole } = renderInput({ value: 'always', onChange });
-    fireEvent.change(getByRole('combobox'), { target: { value: 'past_due' } });
+    await user.selectOptions(getByRole('combobox'), 'past_due');
     expect(onChange).toHaveBeenCalledTimes(1);
   });
 
-  it('calls onChange when the field is blurred', () => {
+  it('calls onChange when the field is blurred', async () => {
     const onChange = jest.fn();
     const { getByRole } = renderInput({ value: 'always', onChange });
-    fireEvent.blur(getByRole('combobox'));
+    await user.click(getByRole('combobox'));
+    await user.tab();
     expect(onChange).toHaveBeenCalledWith('always');
   });
 

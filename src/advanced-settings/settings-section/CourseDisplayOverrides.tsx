@@ -70,9 +70,7 @@ const CourseDisplayOverrides = ({
               src={InfoOutline}
               iconAs={Icon}
               alt={intl.formatMessage(messages.courseDisplayOverridesInfoAlt)}
-              variant="primary"
               size="sm"
-              className="flex-shrink-0"
             />
             <ModalPopup
               hasArrow
@@ -100,14 +98,14 @@ const CourseDisplayOverrides = ({
           </div>
         </div>
         {showBlockedMessage && (
-          <p className="display-overrides-blocked-message px-4 pb-3 mt-0 mb-0">
+          <p className="display-overrides-blocked-message px-4 pb-3 my-0">
             {intl.formatMessage(messages.courseDisplayOverridesBlockedMessage)}
           </p>
         )}
       </li>
 
       {isEnabled && (
-        <li className="display-overrides-nested-fields">
+        <li className="display-overrides-nested-fields ml-4 mr-3 mb-2">
           <ul className="setting-items-list m-0 p-0">
             {displaySettingsEntries.map(([settingName, settingData]) => (
               <SettingCard

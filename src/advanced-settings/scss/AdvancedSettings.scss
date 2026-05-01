@@ -19,24 +19,6 @@
     }
   }
 
-  // Section is now a Card; individual setting rows replace per-setting Cards
-  .settings-section {
-    overflow: hidden;
-  }
-
-  .sub-header {
-    padding-bottom: 1.5rem;
-  }
-}
-
-.settings-filters {
-  flex-wrap: wrap;
-  gap: .75rem;
-
-  .settings-filters-search {
-    width: 280px;
-  }
-
 }
 
 .settings-section-trigger {
@@ -53,14 +35,9 @@
   }
 }
 
-.settings-section-title {
-  font: normal var(--pgn-typography-font-weight-bold) 1.125rem/1.5rem var(--pgn-typography-font-family-base);
-  color: var(--pgn-color-headings-base);
-}
 
 .settings-section-icon {
   color: var(--pgn-color-gray-500);
-  flex-shrink: 0;
 }
 
 .alert-toast {
@@ -80,11 +57,7 @@
 }
 
 .subcategory-header {
-  list-style: none;
-
   .subcategory-header-title {
-    font-size: 1rem;
-    font-weight: var(--pgn-typography-font-weight-bold);
     color: var(--pgn-color-headings-base);
   }
 
@@ -94,28 +67,13 @@
 }
 
 .display-overrides-nested-fields {
-  list-style: none;
   border-left: 3px solid var(--pgn-color-primary-300);
-  margin-left: 2rem;
-  margin-right: 1rem;
-  margin-bottom: .5rem;
 }
 
 .display-overrides-blocked-message {
-  font-size: .8125rem;
   color: var(--pgn-color-danger-500);
 }
 
-.setting-row {
-  .setting-row-name {
-    font-size: .9375rem;
-  }
-
-  .form-control {
-    min-height: 2.75rem;
-    flex-grow: 1;
-  }
-}
 
 .setting-sidebar-supplementary {
   .setting-sidebar-supplementary-about {

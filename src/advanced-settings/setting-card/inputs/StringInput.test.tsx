@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event';
 import { render, fireEvent, initializeMocks } from '@src/testUtils';
 import StringInput from './StringInput';
 
@@ -9,8 +10,11 @@ const renderInput = (props: Record<string, any> = {}) =>
   );
 
 describe('<StringInput />', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     initializeMocks();
+    user = userEvent.setup();
   });
 
   it('renders with the correct value', () => {
@@ -38,10 +42,11 @@ describe('<StringInput />', () => {
     expect(onChange).toHaveBeenCalledTimes(2);
   });
 
-  it('calls onBlur when focus leaves the field', () => {
+  it('calls onBlur when focus leaves the field', async () => {
     const onBlur = jest.fn();
     const { getByRole } = renderInput({ value: 'My Course', onChange: jest.fn(), onBlur });
-    fireEvent.blur(getByRole('textbox'));
+    await user.click(getByRole('textbox'));
+    await user.tab();
     expect(onBlur).toHaveBeenCalled();
   });
 

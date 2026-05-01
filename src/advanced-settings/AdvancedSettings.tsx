@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import {
+  Alert,
   Container,
   Button,
   Layout,
@@ -255,6 +256,7 @@ const AdvancedSettings = () => {
               <SubHeader
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
                 title={intl.formatMessage(messages.headingTitle)}
+                headerClassName="pb-4"
               />
               <article>
                 <div>
@@ -267,8 +269,17 @@ const AdvancedSettings = () => {
                       expandAll={expandAll}
                       onExpandAllChange={setExpandAll}
                     />
-                    {Object.entries(groupSettingsByCategory(advancedSettingsData, filterText)).map(
-                      ([category, settingsEntries]) => (
+                    {(() => {
+                      const grouped = groupSettingsByCategory(advancedSettingsData, filterText);
+                      const entries = Object.entries(grouped);
+                      if (filterText.trim() && entries.length === 0) {
+                        return (
+                          <Alert variant="info">
+                            {intl.formatMessage(messages.noSearchResults, { query: filterText.trim() })}
+                          </Alert>
+                        );
+                      }
+                      return entries.map(([category, settingsEntries]) => (
                         <SettingsSection
                           key={category}
                           category={category}
@@ -287,8 +298,8 @@ const AdvancedSettings = () => {
                             ? CONTENT_BLOCKS_SUBCATEGORY_ORDER
                             : []}
                         />
-                      ),
-                    )}
+                      ));
+                    })()}
                   </section>
                 </div>
               </article>

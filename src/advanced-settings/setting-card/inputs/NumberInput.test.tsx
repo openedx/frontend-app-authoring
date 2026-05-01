@@ -1,16 +1,32 @@
+import userEvent from '@testing-library/user-event';
 import { render, fireEvent, initializeMocks } from '@src/testUtils';
-import NumberInput from './NumberInput';
+import NumberInput, { NumberInputProps } from './NumberInput';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderInput = (props: Record<string, any> = {}) =>
+const renderInput = ({
+  name = 'maxAttempts',
+  displayName = 'Maximum Attempts',
+  onChange = jest.fn(),
+  onBlur = jest.fn(),
+  value,
+  placeholder,
+}: Partial<NumberInputProps> = {}) =>
   render(
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <NumberInput name="maxAttempts" displayName="Maximum Attempts" onBlur={jest.fn()} {...(props as any)} />,
+    <NumberInput
+      name={name}
+      displayName={displayName}
+      onChange={onChange}
+      onBlur={onBlur}
+      value={value}
+      placeholder={placeholder}
+    />,
   );
 
 describe('<NumberInput />', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     initializeMocks();
+    user = userEvent.setup();
   });
 
   it('renders with the correct numeric value', () => {
@@ -53,10 +69,11 @@ describe('<NumberInput />', () => {
     expect(onChange).toHaveBeenCalledWith('');
   });
 
-  it('calls onBlur when focus leaves the field', () => {
+  it('calls onBlur when focus leaves the field', async () => {
     const onBlur = jest.fn();
     const { getByRole } = renderInput({ value: 3, onChange: jest.fn(), onBlur });
-    fireEvent.blur(getByRole('textbox'));
+    await user.click(getByRole('textbox'));
+    await user.tab();
     expect(onBlur).toHaveBeenCalled();
   });
 

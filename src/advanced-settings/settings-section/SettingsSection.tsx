@@ -68,7 +68,7 @@ const groupBySubcategory = (
   return ordered;
 };
 
-interface SettingsSectionProps {
+export interface SettingsSectionProps {
   category: string;
   settingsEntries: SettingEntry[];
   showDeprecated: boolean;
@@ -140,12 +140,12 @@ const SettingsSection = ({
         ([subcat, items]) => (
           <Fragment key={subcat}>
             <li className="subcategory-header px-4 pt-4 pb-0">
-              <p className="subcategory-header-title mb-2">
+              <p className="subcategory-header-title font-weight-bold mb-2">
                 {SUBCATEGORY_MESSAGE_MAP[subcat]
                   ? intl.formatMessage(SUBCATEGORY_MESSAGE_MAP[subcat])
                   : subcat}
               </p>
-              <hr className="subcategory-header-divider mt-0 mb-0" />
+              <hr className="subcategory-header-divider my-0" />
             </li>
             {items.map(([settingName, settingData]) => renderSettingCard(settingName, settingData))}
           </Fragment>
@@ -180,9 +180,9 @@ const SettingsSection = ({
   return (
     <Card className="settings-section mb-4">
       <Collapsible.Advanced open={isOpen} onToggle={setIsOpen}>
-        <Collapsible.Trigger className="settings-section-trigger w-100 p-0 border-0 bg-transparent text-left">
+        <Collapsible.Trigger className="settings-section-trigger">
           <div className="d-flex align-items-center justify-content-between px-4 py-3">
-            <h3 className="settings-section-title m-0">
+            <h3 className="settings-section-title font-weight-bold m-0">
               {CATEGORY_MESSAGE_MAP[category]
                 ? intl.formatMessage(CATEGORY_MESSAGE_MAP[category])
                 : category}

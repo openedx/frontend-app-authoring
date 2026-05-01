@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event';
 import { render, fireEvent, initializeMocks } from '@src/testUtils';
 import SettingsFilters from './SettingsFilters';
 import messages from './messages';
@@ -16,8 +17,11 @@ const renderFilters = (props = {}) =>
   );
 
 describe('<SettingsFilters />', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     initializeMocks();
+    user = userEvent.setup();
   });
 
   it('renders the search field', () => {
@@ -42,17 +46,17 @@ describe('<SettingsFilters />', () => {
     expect(getByText(messages.expandAll.defaultMessage)).toBeInTheDocument();
   });
 
-  it('calls onExpandAllChange with false when "Collapse all" is clicked', () => {
+  it('calls onExpandAllChange with false when "Collapse all" is clicked', async () => {
     const onExpandAllChange = jest.fn();
     const { getByText } = renderFilters({ expandAll: true, onExpandAllChange });
-    fireEvent.click(getByText(messages.collapseAll.defaultMessage));
+    await user.click(getByText(messages.collapseAll.defaultMessage));
     expect(onExpandAllChange).toHaveBeenCalledWith(false);
   });
 
-  it('calls onExpandAllChange with true when "Expand all" is clicked', () => {
+  it('calls onExpandAllChange with true when "Expand all" is clicked', async () => {
     const onExpandAllChange = jest.fn();
     const { getByText } = renderFilters({ expandAll: false, onExpandAllChange });
-    fireEvent.click(getByText(messages.expandAll.defaultMessage));
+    await user.click(getByText(messages.expandAll.defaultMessage));
     expect(onExpandAllChange).toHaveBeenCalledWith(true);
   });
 
@@ -66,17 +70,17 @@ describe('<SettingsFilters />', () => {
     expect(getByText(messages.hideDeprecated.defaultMessage)).toBeInTheDocument();
   });
 
-  it('calls onDeprecatedChange with true when "Show deprecated" is clicked', () => {
+  it('calls onDeprecatedChange with true when "Show deprecated" is clicked', async () => {
     const onDeprecatedChange = jest.fn();
     const { getByText } = renderFilters({ showDeprecated: false, onDeprecatedChange });
-    fireEvent.click(getByText(messages.showDeprecated.defaultMessage));
+    await user.click(getByText(messages.showDeprecated.defaultMessage));
     expect(onDeprecatedChange).toHaveBeenCalledWith(true);
   });
 
-  it('calls onDeprecatedChange with false when "Hide deprecated" is clicked', () => {
+  it('calls onDeprecatedChange with false when "Hide deprecated" is clicked', async () => {
     const onDeprecatedChange = jest.fn();
     const { getByText } = renderFilters({ showDeprecated: true, onDeprecatedChange });
-    fireEvent.click(getByText(messages.hideDeprecated.defaultMessage));
+    await user.click(getByText(messages.hideDeprecated.defaultMessage));
     expect(onDeprecatedChange).toHaveBeenCalledWith(false);
   });
 

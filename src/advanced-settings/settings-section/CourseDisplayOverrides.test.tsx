@@ -1,4 +1,5 @@
-import { render, fireEvent, initializeMocks } from '@src/testUtils';
+import userEvent from '@testing-library/user-event';
+import { render, initializeMocks } from '@src/testUtils';
 import CourseDisplayOverrides from './CourseDisplayOverrides';
 import messages from './messages';
 import type { SettingEntry } from '../data/types';
@@ -41,8 +42,11 @@ const renderOverrides = (displaySettingsEntries: SettingEntry[], props = {}) =>
   );
 
 describe('<CourseDisplayOverrides />', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     initializeMocks();
+    user = userEvent.setup();
   });
 
   it('renders the Course Display Overrides label', () => {
@@ -85,21 +89,21 @@ describe('<CourseDisplayOverrides />', () => {
     expect(getByTestId('setting-card-displayName')).toBeInTheDocument();
   });
 
-  it('shows nested fields after enabling the toggle', () => {
+  it('shows nested fields after enabling the toggle', async () => {
     const { getByRole, getByTestId } = renderOverrides([
       emptyEntry('displayName'),
     ]);
-    fireEvent.click(getByRole('switch'));
+    await user.click(getByRole('switch'));
     expect(getByTestId('setting-card-displayName')).toBeInTheDocument();
   });
 
-  it('shows the blocked message when trying to disable the toggle while fields have content', () => {
+  it('shows the blocked message when trying to disable the toggle while fields have content', async () => {
     const { getByRole, getByText } = renderOverrides([
       filledEntry('displayName'),
       emptyEntry('displayCoursenumber'),
     ]);
     // Toggle is currently on — try to turn it off
-    fireEvent.click(getByRole('switch'));
+    await user.click(getByRole('switch'));
     expect(getByText(messages.courseDisplayOverridesBlockedMessage.defaultMessage)).toBeInTheDocument();
   });
 
@@ -108,15 +112,15 @@ describe('<CourseDisplayOverrides />', () => {
     expect(queryByText(messages.courseDisplayOverridesBlockedMessage.defaultMessage)).toBeNull();
   });
 
-  it('allows disabling the toggle when all fields are empty', () => {
+  it('allows disabling the toggle when all fields are empty', async () => {
     const { getByRole, queryByTestId } = renderOverrides([
       emptyEntry('displayName'),
     ]);
     // Enable first
-    fireEvent.click(getByRole('switch'));
+    await user.click(getByRole('switch'));
     expect(queryByTestId('setting-card-displayName')).toBeInTheDocument();
     // Disable — should work because no content
-    fireEvent.click(getByRole('switch'));
+    await user.click(getByRole('switch'));
     expect(queryByTestId('setting-card-displayName')).toBeNull();
   });
 });

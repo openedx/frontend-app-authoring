@@ -1,6 +1,6 @@
 import { Form } from '@openedx/paragon';
 
-interface BooleanInputProps {
+export interface BooleanInputProps {
   value: boolean;
   name: string;
   displayName: string;
