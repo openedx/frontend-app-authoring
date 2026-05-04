@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
 import {
-  type EditableSubsection,
   getLastEditableItem,
   getLastEditableSubsection,
 } from '@src/course-outline/state/editability';
@@ -62,7 +61,7 @@ interface OutlineSidebarContextData {
   /** Stores last section that allows adding subsections inside it. */
   lastEditableSection?: XBlock;
   /** Stores last subsection that allows adding units inside it and its parent sectionId */
-  lastEditableSubsection?: EditableSubsection;
+  lastEditableSubsection?: { data?: XBlock; sectionId?: string; };
   /** XBlock data of selectedContainerState.currentId */
   currentItemData?: XBlock;
 }

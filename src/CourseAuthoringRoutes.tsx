@@ -16,6 +16,7 @@ import { FilesPage, VideosPage } from './files-and-videos';
 import { AdvancedSettings } from './advanced-settings';
 import {
   CourseOutline,
+  CourseOutlineStateProvider,
   OutlineSidebarProvider,
   OutlineSidebarPagesProvider,
 } from './course-outline';
@@ -71,11 +72,13 @@ const CourseAuthoringRoutes = () => {
             element={
               <PageWrap>
                 <CourseOutlineProvider>
-                  <OutlineSidebarPagesProvider>
-                    <OutlineSidebarProvider>
-                      <CourseOutline />
-                    </OutlineSidebarProvider>
-                  </OutlineSidebarPagesProvider>
+                  <CourseOutlineStateProvider>
+                    <OutlineSidebarPagesProvider>
+                      <OutlineSidebarProvider>
+                        <CourseOutline />
+                      </OutlineSidebarProvider>
+                    </OutlineSidebarPagesProvider>
+                  </CourseOutlineStateProvider>
                 </CourseOutlineProvider>
               </PageWrap>
             }
