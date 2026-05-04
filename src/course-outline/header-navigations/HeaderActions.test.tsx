@@ -51,13 +51,13 @@ const renderComponent = (props?: Partial<HeaderActionsProps>) =>
     {
       extraWrapper: ({ children }) => (
         <CourseAuthoringProvider courseId="1">
-          <CourseOutlineProvider>
-            <CourseOutlineStateProvider>
+          <CourseOutlineStateProvider>
+            <CourseOutlineProvider>
               <OutlineSidebarProvider>
                 {children}
               </OutlineSidebarProvider>
-            </CourseOutlineStateProvider>
-          </CourseOutlineProvider>
+            </CourseOutlineProvider>
+          </CourseOutlineStateProvider>
         </CourseAuthoringProvider>
       ),
     },

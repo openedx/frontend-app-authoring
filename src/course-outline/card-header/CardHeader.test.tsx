@@ -94,13 +94,13 @@ const renderComponent = (props?: object, entry = '/') => {
       },
       extraWrapper: ({ children }) => (
         <CourseAuthoringProvider courseId={courseId}>
-          <CourseOutlineProvider>
-            <CourseOutlineStateProvider>
+          <CourseOutlineStateProvider>
+            <CourseOutlineProvider>
               <OutlineSidebarProvider>
                 {children}
               </OutlineSidebarProvider>
-            </CourseOutlineStateProvider>
-          </CourseOutlineProvider>
+            </CourseOutlineProvider>
+          </CourseOutlineStateProvider>
         </CourseAuthoringProvider>
       ),
     },

@@ -28,15 +28,15 @@ const courseId = '123';
 
 const extraWrapper = ({ children }) => (
   <CourseAuthoringProvider courseId={courseId}>
-    <CourseOutlineProvider>
-      <CourseOutlineStateProvider>
+    <CourseOutlineStateProvider>
+      <CourseOutlineProvider>
         <OutlineSidebarPagesProvider>
           <OutlineSidebarProvider>
             {children}
           </OutlineSidebarProvider>
         </OutlineSidebarPagesProvider>
-      </CourseOutlineStateProvider>
-    </CourseOutlineProvider>
+      </CourseOutlineProvider>
+    </CourseOutlineStateProvider>
   </CourseAuthoringProvider>
 );
 

@@ -65,15 +65,15 @@ const CourseOutline = () => {
   } = useCourseAuthoringContext();
   const {
     currentSelection,
-    sections,
-    restoreSectionList,
-    setSections,
     updateSectionOrderByIndex,
     updateSubsectionOrderByIndex,
     updateUnitOrderByIndex,
   } = useCourseOutlineContext();
   const {
     courseUsageKey,
+    sections,
+    setSections,
+    restoreSectionList,
     enableProctoredExams,
     enableTimedExams,
   } = useCourseOutlineState();
@@ -370,14 +370,14 @@ const CourseOutline = () => {
                           ) :
                           (
                             <EmptyPlaceholder>
-                              {courseActions.childAddable && (
+                              {courseActions.childAddable ? (
                                 <OutlineAddChildButtons
                                   childType={ContainerType.Section}
                                   parentLocator={courseUsageKey!}
                                   btnVariant="primary"
                                   btnClasses="mt-1"
                                 />
-                              )}
+                              ) : <></>}
                             </EmptyPlaceholder>
                           )}
                       </div>

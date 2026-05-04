@@ -24,6 +24,7 @@ import type { ContainerType } from '@src/generic/key-utils';
 import { XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
+import { CourseOutlineStateProvider } from '@src/course-outline/CourseOutlineStateContext';
 import { snakeCaseKeys } from '@src/editors/utils';
 import { getXBlockApiUrl, getXBlockBaseApiUrl } from '@src/course-outline/data/api';
 import MockAdapter from 'axios-mock-adapter/types';
@@ -51,8 +52,12 @@ let lastEditableSection: any;
 let lastEditableSubsection: { data?: any; sectionId?: string; } | undefined;
 
 jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
+  CourseOutlineStateProvider: ({ children }) => children,
   useCourseOutlineState: () => ({
     courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
+    sections: outlineChildren,
+    setSections: jest.fn(),
+    restoreSectionList: jest.fn(),
     currentItemData,
     lastEditableSection,
     lastEditableSubsection,
@@ -102,11 +107,13 @@ const renderComponent = () =>
   render(<AddSidebar />, {
     extraWrapper: ({ children }) => (
       <CourseAuthoringProvider courseId="some-course">
-        <CourseOutlineProvider>
-          <OutlineSidebarProvider>
-            {children}
-          </OutlineSidebarProvider>
-        </CourseOutlineProvider>
+        <CourseOutlineStateProvider>
+          <CourseOutlineProvider>
+            <OutlineSidebarProvider>
+              {children}
+            </OutlineSidebarProvider>
+          </CourseOutlineProvider>
+        </CourseOutlineStateProvider>
       </CourseAuthoringProvider>
     ),
   });

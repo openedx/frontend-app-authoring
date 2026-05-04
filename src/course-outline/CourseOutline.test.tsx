@@ -135,15 +135,15 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const renderComponent = () =>
   render(
     <CourseAuthoringProvider courseId={courseId}>
-      <CourseOutlineProvider>
-        <CourseOutlineStateProvider>
+      <CourseOutlineStateProvider>
+        <CourseOutlineProvider>
           <OutlineSidebarPagesProvider>
             <OutlineSidebarProvider>
               <CourseOutline />
             </OutlineSidebarProvider>
           </OutlineSidebarPagesProvider>
-        </CourseOutlineStateProvider>
-      </CourseOutlineProvider>
+        </CourseOutlineProvider>
+      </CourseOutlineStateProvider>
     </CourseAuthoringProvider>,
   );
 

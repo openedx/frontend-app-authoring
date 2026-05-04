@@ -34,11 +34,11 @@ const Probe = () => {
 };
 
 const renderComponent = () => render(
-  <CourseOutlineProvider>
-    <CourseOutlineStateProvider>
+  <CourseOutlineStateProvider>
+    <CourseOutlineProvider>
       <Probe />
-    </CourseOutlineStateProvider>
-  </CourseOutlineProvider>,
+    </CourseOutlineProvider>
+  </CourseOutlineStateProvider>,
 );
 
 describe('CourseOutlineProvider outline index query sync', () => {

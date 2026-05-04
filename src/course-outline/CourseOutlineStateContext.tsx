@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -41,6 +42,8 @@ type CourseOutlineStateContextData = {
   courseName?: string;
   courseUsageKey?: string;
   sections: XBlock[];
+  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
+  restoreSectionList: () => void;
   courseActions: XBlockActions;
   statusBarData: CourseOutlineStatusBar;
   savingStatus: string;
@@ -70,7 +73,8 @@ const CourseOutlineStateContext = createContext<CourseOutlineStateContextData | 
 
 export const CourseOutlineStateProvider = ({ children }: { children?: React.ReactNode }) => {
   const outlineIndexData = useSelector(getOutlineIndexData);
-  const sections = useSelector(getSectionsList);
+  const sectionsList = useSelector(getSectionsList);
+  const [sections, setSections] = useState<XBlock[]>(sectionsList);
   const courseActions = useSelector(getCourseActions);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
@@ -82,6 +86,14 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const createdOn = useSelector(getCreatedOn);
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
   const { data: currentItemData } = useCourseItemData<XBlock>(currentSelection?.currentId);
+
+  useEffect(() => {
+    setSections(sectionsList);
+  }, [sectionsList]);
+
+  const restoreSectionList = useCallback(() => {
+    setSections(() => [...sectionsList]);
+  }, [sectionsList]);
 
   const lastEditableSection = useMemo(() => {
     if (currentItemData?.category === 'chapter' && currentItemData.actions.childAddable) {
@@ -130,6 +142,8 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     courseName: outlineIndexData?.courseStructure?.displayName,
     courseUsageKey: outlineIndexData?.courseStructure?.id,
     sections,
+    setSections,
+    restoreSectionList,
     courseActions,
     statusBarData,
     savingStatus,
@@ -151,6 +165,8 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   }), [
     outlineIndexData,
     sections,
+    setSections,
+    restoreSectionList,
     courseActions,
     statusBarData,
     savingStatus,

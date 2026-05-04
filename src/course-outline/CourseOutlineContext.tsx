@@ -20,7 +20,7 @@ import {
   useDeleteCourseItem,
   useDuplicateItem,
 } from './data/apiHooks';
-import { getOutlineIndexData, getSectionsList } from './data/selectors';
+import { getOutlineIndexData } from './data/selectors';
 import {
   setSectionOrderListQuery,
   setSubsectionOrderListQuery,
@@ -40,6 +40,7 @@ import {
   getCourseOutlineStatusBarData,
   useCourseOutlineIndex,
 } from './data/outlineIndexQuery';
+import { useCourseOutlineState } from './CourseOutlineStateContext';
 
 export type CourseOutlineContextData = {
   handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
@@ -94,8 +95,11 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
   const outlineIndexQuery = useCourseOutlineIndex(courseId, {
     initialData: courseStructure ? outlineIndexData : undefined,
   });
-  const sectionsList = useSelector(getSectionsList);
-  const [sections, setSections] = useState<XBlock[]>(sectionsList);
+  const {
+    sections,
+    setSections,
+    restoreSectionList,
+  } = useCourseOutlineState();
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [
     isPublishModalOpen,
@@ -110,10 +114,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
    * does not change which card is selected in the outline.
    */
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
-
-  const restoreSectionList = () => {
-    setSections(() => [...sectionsList]);
-  };
 
   useEffect(() => {
     const { status, errors } = getCourseOutlineIndexRequestState({
@@ -135,10 +135,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
     dispatch(updateCourseActions(outlineIndexQuery.data.courseStructure.actions));
   }, [dispatch, outlineIndexQuery.data]);
 
-  useEffect(() => {
-    setSections(sectionsList);
-  }, [sectionsList]);
-
   const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const handleAddBlock = useCreateCourseBlock(courseId);
 
@@ -146,7 +142,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
     mutate: duplicateItem,
     isPending: isDuplicatingItem,
   } = useDuplicateItem(courseId);
-
   // parentId is required by the API to know where to insert the duplicate.
   // sectionId/subsectionId are required to invalidate the correct React Query caches after duplication.
   const handleDuplicateSubmit = (parentId: string | undefined) => {
