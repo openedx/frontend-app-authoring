@@ -72,6 +72,13 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   useOutlineSidebarContext: () => ({ selectedContainerState: { sectionId: 'section-abc' } }),
 }));
 
+jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
+  useCourseOutlineState: () => ({
+    enableProctoredExams: true,
+    enableTimedExams: true,
+  }),
+}));
+
 const apiHooks = jest.requireMock('@src/course-outline/data/apiHooks') as any;
 
 const baseItemData = {

@@ -42,8 +42,13 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     ...jest.requireActual('@src/CourseAuthoringContext').useCourseAuthoringContext(),
     courseId: 5,
-    courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
     courseDetails: { name: 'Test course' },
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
+  useCourseOutlineState: () => ({
+    courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
   }),
 }));
 

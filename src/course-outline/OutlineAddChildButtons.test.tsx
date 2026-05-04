@@ -23,8 +23,13 @@ const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
-    courseUsageKey,
     getUnitUrl: (id: string) => `/some/${id}`,
+  }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
+  useCourseOutlineState: () => ({
+    courseUsageKey,
   }),
 }));
 

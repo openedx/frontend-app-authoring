@@ -10,7 +10,6 @@ import {
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import { CheckCircle as CheckCircleIcon, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
-import { useSelector } from 'react-redux';
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -33,10 +32,7 @@ import { useCourseOutlineContext } from './CourseOutlineContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
-import {
-  getProctoredExamsFlag,
-  getTimedExamsFlag,
-} from './data/selectors';
+import { useCourseOutlineState } from './CourseOutlineStateContext';
 import { COURSE_BLOCK_NAMES } from './constants';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
@@ -64,7 +60,6 @@ const CourseOutline = () => {
   const location = useLocation();
   const {
     courseId,
-    courseUsageKey,
     isUnlinkModalOpen,
     closeUnlinkModal,
   } = useCourseAuthoringContext();
@@ -77,6 +72,11 @@ const CourseOutline = () => {
     updateSubsectionOrderByIndex,
     updateUnitOrderByIndex,
   } = useCourseOutlineContext();
+  const {
+    courseUsageKey,
+    enableProctoredExams,
+    enableTimedExams,
+  } = useCourseOutlineState();
 
   const {
     courseName,
@@ -151,9 +151,6 @@ const CourseOutline = () => {
 
   const itemCategory = currentItemData?.category || '';
   const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();
-
-  const enableProctoredExams = useSelector(getProctoredExamsFlag);
-  const enableTimedExams = useSelector(getTimedExamsFlag);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -366,7 +363,7 @@ const CourseOutline = () => {
                               {courseActions.childAddable && (
                                 <OutlineAddChildButtons
                                   childType={ContainerType.Section}
-                                  parentLocator={courseUsageKey}
+                                  parentLocator={courseUsageKey!}
                                 />
                               )}
                             </>
@@ -376,7 +373,7 @@ const CourseOutline = () => {
                               {courseActions.childAddable && (
                                 <OutlineAddChildButtons
                                   childType={ContainerType.Section}
-                                  parentLocator={courseUsageKey}
+                                  parentLocator={courseUsageKey!}
                                   btnVariant="primary"
                                   btnClasses="mt-1"
                                 />

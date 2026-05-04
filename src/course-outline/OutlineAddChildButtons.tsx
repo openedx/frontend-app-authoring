@@ -11,8 +11,8 @@ import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { useCourseOutlineState } from '@src/course-outline/CourseOutlineStateContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
@@ -98,7 +98,7 @@ const OutlineAddChildButtons = ({
   // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
-  const { courseUsageKey } = useCourseAuthoringContext();
+  const { courseUsageKey } = useCourseOutlineState();
   const {
     handleAddBlock,
     handleAddAndOpenUnit,
@@ -121,7 +121,7 @@ const OutlineAddChildButtons = ({
       onNewCreateContent = () =>
         handleAddBlock.mutateAsync({
           type: ContainerType.Chapter,
-          parentLocator: courseUsageKey,
+          parentLocator: courseUsageKey!,
           displayName: COURSE_BLOCK_NAMES.chapter.name,
         }, {
           onSuccess: (data: { locator: string; }) => {

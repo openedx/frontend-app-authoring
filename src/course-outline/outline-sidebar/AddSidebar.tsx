@@ -6,6 +6,7 @@ import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sideb
 import contentMessages from '@src/library-authoring/add-content/messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { useCourseOutlineState } from '@src/course-outline/CourseOutlineStateContext';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
 import {
   Stack,
@@ -54,7 +55,7 @@ type AddContentButtonProps = {
 
 /** Add Content Button */
 const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
-  const { courseUsageKey } = useCourseAuthoringContext();
+  const { courseUsageKey } = useCourseOutlineState();
   const {
     handleAddBlock,
     handleAddAndOpenUnit,
@@ -72,7 +73,7 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
   const addSection = (onSuccess?: (data: { locator: string; }) => void) => {
     handleAddBlock.mutate({
       type: ContainerType.Chapter,
-      parentLocator: courseUsageKey,
+      parentLocator: courseUsageKey!,
       displayName: COURSE_BLOCK_NAMES.chapter.name,
     }, {
       onSuccess: (data: { locator: string; }) => {
@@ -214,7 +215,7 @@ const AddNewContent = () => {
 
 /** Add Existing Content Tab Section */
 const ShowLibraryContent = () => {
-  const { courseUsageKey } = useCourseAuthoringContext();
+  const { courseUsageKey } = useCourseOutlineState();
   const { handleAddBlock } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
@@ -236,7 +237,7 @@ const ShowLibraryContent = () => {
         await handleAddBlock.mutateAsync({
           type: COMPONENT_TYPES.libraryV2,
           category: ContainerType.Chapter,
-          parentLocator: courseUsageKey,
+          parentLocator: courseUsageKey!,
           libraryContentKey: usageKey,
         }, {
           onSuccess: (data: { locator: string; }) => {

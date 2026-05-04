@@ -8,6 +8,7 @@ import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/sel
 import { RequestStatus } from '@src/data/constants';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineState } from './CourseOutlineStateContext';
 import { useCourseOutlineContext } from './CourseOutlineContext';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
@@ -24,16 +25,6 @@ import { COURSE_BLOCK_NAMES } from './constants';
 import {
   updateSavingStatus,
 } from './data/slice';
-import {
-  getLoadingStatus,
-  getOutlineIndexData,
-  getSavingStatus,
-  getStatusBarData,
-  getCourseActions,
-  getCustomRelativeDatesActiveFlag,
-  getErrors,
-  getCreatedOn,
-} from './data/selectors';
 import {
   enableCourseHighlightsEmailsQuery,
   fetchCourseBestPracticesQuery,
@@ -71,6 +62,16 @@ const useCourseOutline = ({ courseId }) => {
   });
 
   const {
+    outlineIndexData,
+    createdOn,
+    loadingStatus,
+    statusBarData,
+    savingStatus,
+    courseActions,
+    isCustomRelativeDatesActive,
+    errors,
+  } = useCourseOutlineState();
+  const {
     reindexLink,
     courseStructure,
     lmsLink,
@@ -81,17 +82,9 @@ const useCourseOutline = ({ courseId }) => {
     proctoringErrors,
     mfeProctoredExamSettingsUrl,
     advanceSettingsUrl,
-  } = useSelector(getOutlineIndexData);
-  /** Course usage key is different than courseKey and useful in using as parentLocator for imported sections */
-  const createdOn = useSelector(getCreatedOn);
-  const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
-  const statusBarData = useSelector(getStatusBarData);
-  const savingStatus = useSelector(getSavingStatus);
-  const courseActions = useSelector(getCourseActions);
-
-  const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
+  } = outlineIndexData;
+  const { outlineIndexLoadingStatus, reIndexLoadingStatus } = loadingStatus;
   const genericSavingStatus = useSelector(getGenericSavingStatus);
-  const errors = useSelector(getErrors);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);

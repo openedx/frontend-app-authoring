@@ -6,7 +6,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { useConfigureSubsection, useCourseDetails, useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { getProctoredExamsFlag, getTimedExamsFlag } from '@src/course-outline/data/selectors';
+import { useCourseOutlineState } from '@src/course-outline/CourseOutlineStateContext';
 import { ConfigureSubsectionData } from '@src/course-outline/data/types';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -20,7 +20,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useSelector } from 'react-redux';
 import { ReleaseSection } from './sharedSettings/ReleaseSection';
 import messages from './messages';
 import { VisibilitySection } from './sharedSettings/VisibilitySection';
@@ -202,8 +201,10 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
 const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(subsectionId);
-  const enableTimedExams = useSelector(getTimedExamsFlag);
-  const enableProctoredExams = useSelector(getProctoredExamsFlag);
+  const {
+    enableTimedExams,
+    enableProctoredExams,
+  } = useCourseOutlineState();
   const getLatestLocalState = useCallback(() => ({
     isProctoredExam: itemData?.isProctoredExam,
     isTimeLimited: itemData?.isTimeLimited,
