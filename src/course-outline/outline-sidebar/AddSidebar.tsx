@@ -35,7 +35,7 @@ import messages from './messages';
 
 const CannotAddContentAlert = () => {
   const intl = useIntl();
-  const { currentItemData } = useOutlineSidebarContext();
+  const { currentItemData } = useCourseOutlineState();
   return (
     <AlertMessage
       variant="info"
@@ -55,7 +55,11 @@ type AddContentButtonProps = {
 
 /** Add Content Button */
 const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
-  const { courseUsageKey } = useCourseOutlineState();
+  const {
+    courseUsageKey,
+    lastEditableSection,
+    lastEditableSubsection,
+  } = useCourseOutlineState();
   const {
     handleAddBlock,
     handleAddAndOpenUnit,
@@ -63,8 +67,6 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
   const {
     currentFlow,
     stopCurrentFlow,
-    lastEditableSection,
-    lastEditableSubsection,
     openContainerInfoSidebar,
   } = useOutlineSidebarContext();
   let sectionParentId = lastEditableSection?.id;
@@ -174,7 +176,8 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
 /** Add New Content Tab Section */
 const AddNewContent = () => {
   const intl = useIntl();
-  const { isCurrentFlowOn, currentFlow, currentItemData } = useOutlineSidebarContext();
+  const { currentItemData } = useCourseOutlineState();
+  const { isCurrentFlowOn, currentFlow } = useOutlineSidebarContext();
   const btns = useCallback(() => {
     if (currentFlow?.flowType) {
       return (
@@ -215,16 +218,18 @@ const AddNewContent = () => {
 
 /** Add Existing Content Tab Section */
 const ShowLibraryContent = () => {
-  const { courseUsageKey } = useCourseOutlineState();
+  const {
+    courseUsageKey,
+    currentItemData,
+    lastEditableSection,
+    lastEditableSubsection,
+  } = useCourseOutlineState();
   const { handleAddBlock } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
     currentFlow,
     stopCurrentFlow,
-    lastEditableSection,
-    lastEditableSubsection,
     selectedContainerState,
-    currentItemData,
     openContainerInfoSidebar,
   } = useOutlineSidebarContext();
 
@@ -360,10 +365,10 @@ const AddTabs = () => {
 export const AddSidebar = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
+  const { currentItemData } = useCourseOutlineState();
   const {
     isCurrentFlowOn,
     currentFlow,
-    currentItemData,
     clearSelection,
     stopCurrentFlow,
     selectedContainerState,

@@ -9,17 +9,10 @@ import {
 import { useToggle } from '@openedx/paragon';
 
 import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
-import { SelectionState, XBlock } from '@src/data/types';
+import { SelectionState } from '@src/data/types';
 import { useCourseOutlineState } from '@src/course-outline/CourseOutlineStateContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { useSelector } from 'react-redux';
-import { getSectionsList } from '@src/course-outline/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
-import {
-  getLastEditableItem,
-  getLastEditableSubsection,
-} from '@src/course-outline/state/editability';
 import { buildSelectionState } from '@src/course-outline/state/selection';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
@@ -59,12 +52,6 @@ interface OutlineSidebarContextData {
     index?: number,
   ) => void;
   clearSelection: () => void;
-  /** Stores last section that allows adding subsections inside it. */
-  lastEditableSection?: XBlock;
-  /** Stores last subsection that allows adding units inside it and its parent sectionId */
-  lastEditableSubsection?: { data?: XBlock; sectionId?: string; };
-  /** XBlock data of selectedContainerState.currentId */
-  currentItemData?: XBlock;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
@@ -156,31 +143,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     setCurrentFlow(flow);
   }, [setCurrentFlow, setCurrentPageKey]);
 
-  const { data: currentItemData } = useCourseItemData<XBlock>(selectedContainerState?.currentId);
-  const sectionsList = useSelector(getSectionsList);
-
-  /** Stores last section that allows adding subsections inside it. */
-  const lastEditableSection = useMemo(() => {
-    if (currentItemData?.category === 'chapter' && currentItemData.actions.childAddable) {
-      return currentItemData;
-    }
-    return currentItemData ? undefined : getLastEditableItem(sectionsList);
-  }, [currentItemData, sectionsList]);
-
-  /** Stores last subsection that allows adding units inside it. */
-  const lastEditableSubsection = useMemo(() => {
-    if (currentItemData?.category === 'sequential' && currentItemData.actions.childAddable) {
-      return { data: currentItemData, sectionId: selectedContainerState?.sectionId };
-    }
-    if (currentItemData?.category === 'chapter') {
-      return {
-        data: getLastEditableItem(currentItemData?.childInfo.children || []),
-        sectionId: selectedContainerState?.currentId,
-      };
-    }
-    return currentItemData ? undefined : getLastEditableSubsection(sectionsList);
-  }, [currentItemData, sectionsList, selectedContainerState]);
-
   useEscapeClick({
     onEscape: () => {
       stopCurrentFlow();
@@ -207,9 +169,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       openContainerInfoSidebar,
       openContainerSidebar,
       clearSelection,
-      lastEditableSection,
-      lastEditableSubsection,
-      currentItemData,
     }),
     [
       currentPageKey,
@@ -228,9 +187,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       openContainerInfoSidebar,
       openContainerSidebar,
       clearSelection,
-      lastEditableSection,
-      lastEditableSubsection,
-      currentItemData,
     ],
   );
 

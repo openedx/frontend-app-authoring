@@ -18,6 +18,12 @@ import {
   useCourseOutlineState,
 } from './CourseOutlineStateContext';
 
+let currentItemData;
+jest.mock('./data/apiHooks', () => ({
+  ...jest.requireActual('./data/apiHooks'),
+  useCourseItemData: () => ({ data: currentItemData }),
+}));
+
 describe('CourseOutlineStateContext', () => {
   it('exposes outline state and selection actions from legacy sources', () => {
     initializeMockApp({
@@ -28,6 +34,7 @@ describe('CourseOutlineStateContext', () => {
         roles: [],
       },
     });
+    currentItemData = null;
     const store = initializeStore();
     const outlineIndexData = {
       ...courseOutlineIndexMock,
@@ -48,6 +55,8 @@ describe('CourseOutlineStateContext', () => {
     );
 
     const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+    const lastSection = outlineIndexData.courseStructure.childInfo.children.at(-1)!;
+    const lastSubsection = lastSection.childInfo.children.at(-1)!;
 
     expect(result.current.courseName).toBe(outlineIndexData.courseStructure.displayName);
     expect(result.current.courseUsageKey).toBe(outlineIndexData.courseStructure.id);
@@ -59,31 +68,53 @@ describe('CourseOutlineStateContext', () => {
     expect(result.current.enableTimedExams).toBe(true);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isLoadingDenied).toBe(false);
+    expect(result.current.currentItemData).toBeNull();
+    expect(result.current.lastEditableSection).toEqual(lastSection);
+    expect(result.current.lastEditableSubsection).toEqual({
+      data: lastSubsection,
+      sectionId: lastSection.id,
+    });
 
+    currentItemData = lastSection;
     act(() => {
       result.current.selectContainer({
-        currentId: 'block-v1:test+selection',
-        sectionId: 'block-v1:test+section',
+        currentId: lastSection.id,
+        sectionId: lastSection.id,
       });
     });
     expect(result.current.currentSelection).toEqual({
-      currentId: 'block-v1:test+selection',
-      sectionId: 'block-v1:test+section',
+      currentId: lastSection.id,
+      sectionId: lastSection.id,
+    });
+    expect(result.current.currentItemData).toEqual(lastSection);
+    expect(result.current.lastEditableSection).toEqual(lastSection);
+    expect(result.current.lastEditableSubsection).toEqual({
+      data: lastSubsection,
+      sectionId: lastSection.id,
     });
 
+    currentItemData = lastSubsection;
     act(() => {
-      result.current.openContainerInfo('block-v1:test+info', 'block-v1:test+subsection', 'block-v1:test+section', 3);
+      result.current.openContainerInfo(lastSubsection.id, lastSubsection.id, lastSection.id, 3);
     });
     expect(result.current.currentSelection).toEqual({
-      currentId: 'block-v1:test+info',
-      subsectionId: 'block-v1:test+subsection',
-      sectionId: 'block-v1:test+section',
+      currentId: lastSubsection.id,
+      subsectionId: lastSubsection.id,
+      sectionId: lastSection.id,
       index: 3,
     });
+    expect(result.current.currentItemData).toEqual(lastSubsection);
+    expect(result.current.lastEditableSection).toBeUndefined();
+    expect(result.current.lastEditableSubsection).toEqual({
+      data: lastSubsection,
+      sectionId: lastSection.id,
+    });
 
+    currentItemData = null;
     act(() => {
       result.current.clearSelection();
     });
     expect(result.current.currentSelection).toBeUndefined();
+    expect(result.current.currentItemData).toBeNull();
   });
 });

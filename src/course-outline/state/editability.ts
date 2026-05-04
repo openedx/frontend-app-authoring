@@ -3,8 +3,8 @@ import { findLast, findLastIndex } from 'lodash';
 import { type XBlock } from '@src/data/types';
 
 export type EditableSubsection = {
-  data: XBlock;
-  sectionId: string;
+  data?: XBlock;
+  sectionId?: string;
 };
 
 export const getLastEditableItem = (blockList: XBlock[]) => findLast(

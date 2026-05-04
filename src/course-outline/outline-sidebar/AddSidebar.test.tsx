@@ -46,9 +46,16 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
+let currentItemData: Partial<XBlock> | null;
+let lastEditableSection: any;
+let lastEditableSubsection: { data?: any; sectionId?: string; } | undefined;
+
 jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
   useCourseOutlineState: () => ({
     courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
+    currentItemData,
+    lastEditableSection,
+    lastEditableSubsection,
     currentSelection: undefined,
     selectContainer: jest.fn(),
     clearSelection: jest.fn(),
@@ -78,7 +85,6 @@ jest.mock('@src/studio-home/hooks', () => ({
 
 let currentFlow: OutlineFlow | null = null;
 let isCurrentFlowOn = false;
-let currentItemData: Partial<XBlock> | null;
 const clearSelection = jest.fn();
 const stopCurrentFlow = jest.fn();
 jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
@@ -87,7 +93,6 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
     ...jest.requireActual('../outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     currentFlow,
     isCurrentFlowOn,
-    currentItemData,
     clearSelection,
     stopCurrentFlow,
   }),
@@ -141,6 +146,12 @@ describe('AddSidebar', () => {
       return newMockResult;
     });
     outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
+    currentItemData = null;
+    lastEditableSection = outlineChildren[outlineChildren.length - 1] as any;
+    lastEditableSubsection = lastEditableSection ? {
+      data: lastEditableSection.childInfo.children[lastEditableSection.childInfo.children.length - 1] as any,
+      sectionId: lastEditableSection.id,
+    } : undefined;
   });
 
   it('renders the AddSidebar component without any errors', async () => {
@@ -218,6 +229,8 @@ describe('AddSidebar', () => {
     const user = userEvent.setup();
     // the course is empty
     outlineChildren = [];
+    lastEditableSection = undefined;
+    lastEditableSubsection = undefined;
     const sectionId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chapter123';
     axiosMock.onPost(getXBlockBaseApiUrl())
       .reply(200, { locator: sectionId });
@@ -248,6 +261,8 @@ describe('AddSidebar', () => {
     const user = userEvent.setup();
     // the course is empty
     outlineChildren = [];
+    lastEditableSection = undefined;
+    lastEditableSubsection = undefined;
     const sectionId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chapter123';
     const subsectionId = 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential234';
     const unitId = 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@vertical2133';

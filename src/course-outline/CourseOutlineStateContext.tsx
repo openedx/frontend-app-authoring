@@ -27,7 +27,13 @@ import {
   getProctoredExamsFlag,
   getTimedExamsFlag,
 } from './data/selectors';
+import { useCourseItemData } from './data/apiHooks';
 import { buildSelectionState } from './state/selection';
+import {
+  EditableSubsection,
+  getLastEditableItem,
+  getLastEditableSubsection,
+} from './state/editability';
 import { CourseOutlineState as LegacyCourseOutlineState, CourseOutlineStatusBar } from './data/types';
 
 type CourseOutlineStateContextData = {
@@ -46,6 +52,9 @@ type CourseOutlineStateContextData = {
   enableProctoredExams?: boolean;
   enableTimedExams?: boolean;
   createdOn: LegacyCourseOutlineState['createdOn'];
+  currentItemData?: XBlock;
+  lastEditableSection?: XBlock;
+  lastEditableSubsection?: EditableSubsection;
   currentSelection?: SelectionState;
   selectContainer: (selection?: SelectionState) => void;
   clearSelection: () => void;
@@ -72,6 +81,27 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const enableTimedExams = useSelector(getTimedExamsFlag);
   const createdOn = useSelector(getCreatedOn);
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
+  const { data: currentItemData } = useCourseItemData<XBlock>(currentSelection?.currentId);
+
+  const lastEditableSection = useMemo(() => {
+    if (currentItemData?.category === 'chapter' && currentItemData.actions.childAddable) {
+      return currentItemData;
+    }
+    return currentItemData ? undefined : getLastEditableItem(sections);
+  }, [currentItemData, sections]);
+
+  const lastEditableSubsection = useMemo(() => {
+    if (currentItemData?.category === 'sequential' && currentItemData.actions.childAddable) {
+      return { data: currentItemData, sectionId: currentSelection?.sectionId };
+    }
+    if (currentItemData?.category === 'chapter') {
+      return {
+        data: getLastEditableItem(currentItemData?.childInfo.children || []),
+        sectionId: currentSelection?.currentId,
+      };
+    }
+    return currentItemData ? undefined : getLastEditableSubsection(sections);
+  }, [currentItemData, sections, currentSelection]);
 
   const selectContainer = useCallback((selection?: SelectionState) => {
     setCurrentSelection(selection);
@@ -111,6 +141,9 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     enableProctoredExams,
     enableTimedExams,
     createdOn,
+    currentItemData,
+    lastEditableSection,
+    lastEditableSubsection,
     currentSelection,
     selectContainer,
     clearSelection,
@@ -127,6 +160,9 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     enableProctoredExams,
     enableTimedExams,
     createdOn,
+    currentItemData,
+    lastEditableSection,
+    lastEditableSubsection,
     currentSelection,
     selectContainer,
     clearSelection,
