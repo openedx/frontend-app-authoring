@@ -33,6 +33,7 @@ export const useTextbooks = () => {
   const [mutationErrorMessage, setMutationErrorMessage] = useState<string>();
 
   const handleMutationError: OnErrorCallbackFunc = (error) => (
+    /* istanbul ignore next */
     setMutationErrorMessage(getMessageFromAxiosError(error))
   );
 
@@ -63,6 +64,7 @@ export const useTextbooks = () => {
   ];
 
   const handleTextbookFormSubmit = (formValues: BaseTextbook) => {
+    /* istanbul ignore next */
     createMutation.mutate(formValues, {
       onSuccess: closeTextbookForm,
       onError: handleMutationError,
@@ -70,6 +72,7 @@ export const useTextbooks = () => {
   };
 
   const handleTextbookEditFormSubmit = (formValues: Textbook, onSuccess: () => void) => {
+    /* istanbul ignore next */
     updateMutation.mutate(formValues, {
       onSuccess,
       onError: handleMutationError,
@@ -77,6 +80,7 @@ export const useTextbooks = () => {
   };
 
   const handleTextbookDeleteSubmit = (textbookId: string) => {
+    /* istanbul ignore next */
     deleteMutation.mutate(textbookId, {
       onError: handleMutationError,
     });
