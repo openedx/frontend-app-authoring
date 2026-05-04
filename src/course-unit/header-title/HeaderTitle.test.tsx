@@ -1,5 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { initializeMocks, render, screen } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 import { executeThunk } from '@src/utils';
@@ -47,6 +48,10 @@ describe('<HeaderTitle />', () => {
   });
 
   it('render HeaderTitle component correctly', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     renderComponent();
 
     expect(screen.getByText(unitTitle)).toBeInTheDocument();
@@ -55,6 +60,10 @@ describe('<HeaderTitle />', () => {
   });
 
   it('render HeaderTitle with open edit form', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     renderComponent({
       isTitleEditFormOpen: true,
     });
@@ -66,6 +75,10 @@ describe('<HeaderTitle />', () => {
   });
 
   it('Units sourced from upstream show a enabled edit button', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
     // Override mock unit with one sourced from an upstream library
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
