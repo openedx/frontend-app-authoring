@@ -212,9 +212,25 @@ describe('<CourseOutline />', () => {
   });
 
   it('handles course outline fetch api errors', async () => {
+    ({ reduxStore: store, axiosMock } = initializeMocks());
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(500, 'some internal error');
+    axiosMock
+      .onGet(getCourseBestPracticesApiUrl({
+        courseId,
+        excludeGraded: true,
+        all: true,
+      }))
+      .reply(200, courseBestPracticesMock);
+    axiosMock
+      .onGet(getCourseLaunchApiUrl({
+        courseId,
+        gradedOnly: true,
+        validateOras: true,
+        all: true,
+      }))
+      .reply(200, courseLaunchMock);
 
     const { findByText, queryByRole } = renderComponent();
     expect(await findByText('"some internal error"')).toBeInTheDocument();
@@ -2487,9 +2503,25 @@ describe('<CourseOutline />', () => {
   });
 
   it('sets status to DENIED when API responds with 403', async () => {
+    ({ reduxStore: store, axiosMock } = initializeMocks());
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(403);
+    axiosMock
+      .onGet(getCourseBestPracticesApiUrl({
+        courseId,
+        excludeGraded: true,
+        all: true,
+      }))
+      .reply(200, courseBestPracticesMock);
+    axiosMock
+      .onGet(getCourseLaunchApiUrl({
+        courseId,
+        gradedOnly: true,
+        validateOras: true,
+        all: true,
+      }))
+      .reply(200, courseLaunchMock);
 
     const { getByTestId } = renderComponent();
 

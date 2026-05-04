@@ -22,12 +22,24 @@ import {
 } from './data/apiHooks';
 import { getOutlineIndexData, getSectionsList } from './data/selectors';
 import {
-  fetchCourseOutlineIndexQuery,
   setSectionOrderListQuery,
   setSubsectionOrderListQuery,
   setUnitOrderListQuery,
 } from './data/thunk';
-import { deleteSection, deleteSubsection, deleteUnit } from './data/slice';
+import {
+  deleteSection,
+  deleteSubsection,
+  deleteUnit,
+  fetchOutlineIndexSuccess,
+  updateCourseActions,
+  updateOutlineIndexLoadingStatus,
+  updateStatusBar,
+} from './data/slice';
+import {
+  getCourseOutlineIndexRequestState,
+  getCourseOutlineStatusBarData,
+  useCourseOutlineIndex,
+} from './data/outlineIndexQuery';
 
 export type CourseOutlineContextData = {
   handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
@@ -77,7 +89,11 @@ type CourseOutlineProviderProps = {
 export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) => {
   const { courseId, openUnitPage } = useCourseAuthoringContext();
   const dispatch = useDispatch();
-  const { courseStructure } = useSelector(getOutlineIndexData);
+  const outlineIndexData = useSelector(getOutlineIndexData);
+  const { courseStructure } = outlineIndexData;
+  const outlineIndexQuery = useCourseOutlineIndex(courseId, {
+    initialData: courseStructure ? outlineIndexData : undefined,
+  });
   const sectionsList = useSelector(getSectionsList);
   const [sections, setSections] = useState<XBlock[]>(sectionsList);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
@@ -100,8 +116,24 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
   };
 
   useEffect(() => {
-    dispatch(fetchCourseOutlineIndexQuery(courseId));
-  }, [courseId]);
+    const { status, errors } = getCourseOutlineIndexRequestState({
+      isPending: outlineIndexQuery.isPending,
+      isSuccess: outlineIndexQuery.isSuccess,
+      error: outlineIndexQuery.error,
+    });
+
+    dispatch(updateOutlineIndexLoadingStatus({ status, errors }));
+  }, [dispatch, outlineIndexQuery.error, outlineIndexQuery.isPending, outlineIndexQuery.isSuccess]);
+
+  useEffect(() => {
+    if (!outlineIndexQuery.data) {
+      return;
+    }
+
+    dispatch(fetchOutlineIndexSuccess(outlineIndexQuery.data));
+    dispatch(updateStatusBar(getCourseOutlineStatusBarData(outlineIndexQuery.data)));
+    dispatch(updateCourseActions(outlineIndexQuery.data.courseStructure.actions));
+  }, [dispatch, outlineIndexQuery.data]);
 
   useEffect(() => {
     setSections(sectionsList);
