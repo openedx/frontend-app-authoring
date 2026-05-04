@@ -20,6 +20,7 @@ import {
   getLastEditableItem,
   getLastEditableSubsection,
 } from '@src/course-outline/state/editability';
+import { buildSelectionState } from '@src/course-outline/state/selection';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
 export type OutlineFlow = {
@@ -122,12 +123,12 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     sectionId?: string,
     index?: number,
   ) => {
-    setSelectedContainerState({
+    setSelectedContainerState(buildSelectionState({
       currentId: containerId,
       subsectionId,
       sectionId,
       index,
-    });
+    }));
     setCurrentPageKey('info');
   }, [setSelectedContainerState, setCurrentPageKey]);
 
@@ -137,12 +138,12 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     sectionId?: string,
     index?: number,
   ) => {
-    setSelectedContainerState({
+    setSelectedContainerState(buildSelectionState({
       currentId: containerId,
       subsectionId,
       sectionId,
       index,
-    });
+    }));
   }, [setSelectedContainerState]);
 
   const clearSelection = useCallback(() => {
