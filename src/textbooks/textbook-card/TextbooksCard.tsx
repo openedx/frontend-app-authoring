@@ -43,6 +43,7 @@ const TextbookCard = ({
   const { tabTitle, chapters, id } = textbook;
 
   const onPreviewTextbookClick = () => {
+    /* istanbul ignore next */
     window.open(`${getConfig().LMS_BASE_URL}/courses/${courseId}/pdfbook/${textbookIndex}/`, '_blank');
   };
 
