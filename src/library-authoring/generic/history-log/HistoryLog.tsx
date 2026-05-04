@@ -49,7 +49,7 @@ export const HistoryComponentLog = ({ componentId }: { componentId: string; }) =
     <div className="history-log">
       {draftHistory && draftHistory.length !== 0 && (
         <HistoryDraftLogGroup
-          itemId={componentId}
+          itemKey={componentId}
           displayName={componentMetadata?.displayName || ''}
           entries={draftHistory}
         />
@@ -151,7 +151,7 @@ export const HistoryContainerLog = ({ containerId }: { containerId: string; }) =
     <div className="history-log">
       {draftHistory && draftHistory.length !== 0 && (
         <HistoryDraftLogGroup
-          itemId={containerId}
+          itemKey={containerId}
           displayName={container?.displayName ?? ''}
           entries={draftHistory}
         />

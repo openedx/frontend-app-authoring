@@ -32,7 +32,7 @@ describe('<HistoryLogGroup />', () => {
 
     render(
       <HistoryDraftLogGroup
-        itemId={mockLibraryBlockDraftHistory.usageKey}
+        itemKey={mockLibraryBlockDraftHistory.usageKey}
         displayName="Test Component"
         entries={draftEntries}
       />,
@@ -76,7 +76,7 @@ describe('<HistoryLogGroup />', () => {
 
     render(
       <HistoryDraftLogGroup
-        itemId={mockLibraryContainerDraftHistory.containerKey}
+        itemKey={mockLibraryContainerDraftHistory.containerKey}
         displayName="Intro Unit"
         entries={containerDraftEntries}
       />,

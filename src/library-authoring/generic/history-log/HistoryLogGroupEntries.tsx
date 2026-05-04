@@ -11,12 +11,12 @@ import { useToggleWithValue } from '@src/hooks';
 import HistoryCompareChangesModal from '@src/library-authoring/generic/history-log/HistoryCompareChangesModal';
 
 export interface HistoryLogGroupEntriesProps {
-  itemId: string;
+  itemKey: string;
   entries: LibraryHistoryEntry[];
 }
 
 export const HistoryLogGroupEntries = ({
-  itemId,
+  itemKey,
   entries,
 }: HistoryLogGroupEntriesProps) => {
   const intl = useIntl();
@@ -69,11 +69,11 @@ export const HistoryLogGroupEntries = ({
                     {moment(entry.changedAt).fromNow()}
                   </span>
                 </Stack>
-                {!isContainerUsageKey(itemId) &&
+                {!isContainerUsageKey(itemKey) &&
                   (
                     <Dropdown>
                       <Dropdown.Toggle
-                        id={`dropdown-toggle-${itemId}-${entry.changedAt}-${index}`}
+                        id={`dropdown-toggle-${itemKey}-${entry.changedAt}-${index}`}
                         as={IconButton}
                         src={MoreVert}
                         iconAs={Icon}
@@ -97,7 +97,7 @@ export const HistoryLogGroupEntries = ({
         <HistoryCompareChangesModal
           isOpen={isChangeModalOpen}
           onClose={closeChangeModal}
-          usageKey={itemId}
+          usageKey={itemKey}
           oldTitle={changeModalData.title}
           oldVersion={changeModalData.oldVersion}
           newVersion={changeModalData.newVersion || 'published'}
