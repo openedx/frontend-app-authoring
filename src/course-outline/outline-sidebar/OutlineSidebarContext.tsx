@@ -14,8 +14,12 @@ import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContex
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
-import { findLast, findLastIndex } from 'lodash';
 import { ContainerType } from '@src/generic/key-utils';
+import {
+  type EditableSubsection,
+  getLastEditableItem,
+  getLastEditableSubsection,
+} from '@src/course-outline/state/editability';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
 export type OutlineFlow = {
@@ -57,37 +61,12 @@ interface OutlineSidebarContextData {
   /** Stores last section that allows adding subsections inside it. */
   lastEditableSection?: XBlock;
   /** Stores last subsection that allows adding units inside it and its parent sectionId */
-  lastEditableSubsection?: { data?: XBlock; sectionId?: string; };
+  lastEditableSubsection?: EditableSubsection;
   /** XBlock data of selectedContainerState.currentId */
   currentItemData?: XBlock;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
-
-const getLastEditableItem = (blockList: Array<XBlock>) => findLast(blockList, (item) => item.actions.childAddable);
-
-const getLastEditableSubsection = (
-  blockList: Array<XBlock>,
-  startIndex?: number,
-): { data: XBlock; sectionId: string; } | undefined => {
-  const lastSectionIndex = findLastIndex(blockList, (item) => item.actions.childAddable, startIndex);
-  if (lastSectionIndex !== -1) {
-    const lastSubsectionIndex = findLastIndex(
-      blockList[lastSectionIndex].childInfo.children,
-      (item) => item.actions.childAddable,
-    );
-    if (lastSubsectionIndex !== -1) {
-      return {
-        data: blockList[lastSectionIndex].childInfo.children[lastSubsectionIndex],
-        sectionId: blockList[lastSectionIndex].id,
-      };
-    }
-    if (lastSectionIndex > 0) {
-      return getLastEditableSubsection(blockList, lastSectionIndex - 1);
-    }
-  }
-  return undefined;
-};
 
 export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNode; }) => {
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<OutlineSidebarPageKeys>(

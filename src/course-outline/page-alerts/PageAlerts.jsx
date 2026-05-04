@@ -4,7 +4,6 @@ import {
   Alert,
   Button,
   Hyperlink,
-  Truncate,
 } from '@openedx/paragon';
 import {
   Campaign as CampaignIcon,
@@ -12,7 +11,6 @@ import {
   InfoOutline as InfoOutlineIcon,
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
-import { uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -28,8 +26,8 @@ import { RequestStatus } from '../../data/constants';
 import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import AlertMessage from '../../generic/alert-message';
 import AlertProctoringError from '../../generic/AlertProctoringError';
-import { API_ERROR_TYPES } from '../constants';
 import { dismissError } from '../data/slice';
+import { buildApiErrorMessages } from './buildApiErrorMessages';
 import messages from './messages';
 
 const PageAlerts = ({
@@ -352,55 +350,7 @@ const PageAlerts = ({
   };
 
   const renderApiErrors = () => {
-    let errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
-      switch (v.type) {
-        case API_ERROR_TYPES.forbidden: {
-          const description = intl.formatMessage(messages.forbiddenAlertBody, {
-            LMS: (
-              <Hyperlink
-                destination={`${getConfig().LMS_BASE_URL}`}
-                target="_blank"
-                showLaunchIcon={false}
-              >
-                {intl.formatMessage(messages.forbiddenAlertLmsUrl)}
-              </Hyperlink>
-            ),
-          });
-          return {
-            key: k,
-            desc: description,
-            title: intl.formatMessage(messages.forbiddenAlert),
-            dismissible: v.dismissible,
-          };
-        }
-        case API_ERROR_TYPES.serverError: {
-          const description = (
-            <Truncate.Deprecated lines={2}>
-              {v.data || intl.formatMessage(messages.serverErrorAlertBody)}
-            </Truncate.Deprecated>
-          );
-          return {
-            key: k,
-            desc: description,
-            title: intl.formatMessage(messages.serverErrorAlert),
-            dismissible: v.dismissible,
-          };
-        }
-        case API_ERROR_TYPES.networkError:
-          return {
-            key: k,
-            title: intl.formatMessage(messages.networkErrorAlert),
-            dismissible: v.dismissible,
-          };
-        default:
-          return {
-            key: k,
-            title: v.data,
-            dismissible: v.dismissible,
-          };
-      }
-    });
-    errorList = uniqBy(errorList, 'title');
+    const errorList = buildApiErrorMessages({ errors, intl });
     if (!errorList?.length) {
       return null;
     }
