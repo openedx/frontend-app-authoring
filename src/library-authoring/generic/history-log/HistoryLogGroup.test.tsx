@@ -56,7 +56,7 @@ describe('<HistoryLogGroup />', () => {
     render(
       <HistoryPublishLogGroup
         {...publishGroup}
-        itemId={mockLibraryBlockPublishHistory.usageKeyWithGroups}
+        itemKey={mockLibraryBlockPublishHistory.usageKeyWithGroups}
       />,
     );
 

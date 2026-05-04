@@ -59,7 +59,7 @@ export const HistoryComponentLog = ({ componentId }: { componentId: string; }) =
           <div key={`${publishGroup.publishLogUuid}-${publishGroup.directPublishedEntities[0].entityKey}`}>
             <HistoryPublishLogGroup
               {...publishGroup}
-              itemId={publishGroup.scopeEntityKey || componentId}
+              itemKey={publishGroup.scopeEntityKey || componentId}
             />
           </div>
         ))
@@ -140,7 +140,7 @@ export const HistoryContainerLog = ({ containerId }: { containerId: string; }) =
         <div key={`${publishGroup.publishLogUuid}-${publishGroup.directPublishedEntities[0].entityKey}`}>
           <HistoryPublishLogGroup
             {...publishGroup}
-            itemId={publishGroup.scopeEntityKey || containerId}
+            itemKey={publishGroup.scopeEntityKey || containerId}
             hideLogVert={isLast && isBeforeGroup}
           />
         </div>

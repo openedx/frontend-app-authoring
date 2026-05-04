@@ -36,7 +36,7 @@ export interface HistoryDraftLogGroupProps {
 }
 
 export interface HistoryPublishLogGroupProps extends LibraryPublishHistoryGroup {
-  itemId: string;
+  itemKey: string;
   // When true, hides the vertical connector line rendered below this group. Used for the last group
   // in the history log to avoid a dangling connector with nothing below it.
   hideLogVert?: boolean;
@@ -134,7 +134,7 @@ export const HistoryDraftLogGroup = ({
 };
 
 export const HistoryPublishLogGroup = ({
-  itemId,
+  itemKey,
   publishLogUuid,
   directPublishedEntities,
   publishedBy,
@@ -148,7 +148,7 @@ export const HistoryPublishLogGroup = ({
   const {
     data: entries,
     isPending,
-  } = useLibraryPublishHistoryEntries(itemId, publishLogUuid, isOpenCollapsible);
+  } = useLibraryPublishHistoryEntries(itemKey, publishLogUuid, isOpenCollapsible);
 
   const dateMessage = moment(publishedAt).fromNow();
   const hasContributors = contributors.length > 0;
@@ -186,7 +186,7 @@ export const HistoryPublishLogGroup = ({
                     </div>
                   </>
                 ) :
-                <HistoryLogGroupEntries entries={entries ?? []} itemKey={itemId} />}
+                <HistoryLogGroupEntries entries={entries ?? []} itemKey={itemKey} />}
             </Collapsible.Body>
           </Collapsible.Advanced>
         ) :
