@@ -47,5 +47,5 @@ export const subsectionFirstUnitEditUrl = (
 };
 
 export const isUnitPageNewDesignEnabled = () => (
-  getConfig().ENABLE_UNIT_PAGE_NEW_DESIGN?.toString().toLowerCase() === 'true'
+  (getConfig().ENABLE_UNIT_PAGE_NEW_DESIGN?.toString().toLowerCase() ?? 'true') === 'true'
 );
