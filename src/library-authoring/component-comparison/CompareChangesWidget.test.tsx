@@ -19,11 +19,11 @@ describe('<CompareChangesWidget />', () => {
     render(<CompareChangesWidget usageKey={usageKey} />);
 
     // By default we see the new version:
-    const newTab = screen.getByRole('tab', { name: 'New version' });
+    const newTab = await screen.findByRole('tab', { name: 'New version' });
     expect(newTab).toBeInTheDocument();
     expect(newTab).toHaveClass('active');
 
-    const newTabPanel = screen.getByRole('tabpanel', { name: 'New version' });
+    const newTabPanel = await screen.findByRole('tabpanel', { name: 'New version' });
     const newIframe = within(newTabPanel).getByTitle('Preview');
     expect(newIframe).toBeVisible();
     expect(newIframe).toHaveAttribute(
@@ -32,10 +32,10 @@ describe('<CompareChangesWidget />', () => {
     );
 
     // Now switch to the "old version" tab:
-    const oldTab = screen.getByRole('tab', { name: 'Old version' });
+    const oldTab = await screen.findByRole('tab', { name: 'Old version' });
     fireEvent.click(oldTab);
 
-    const oldTabPanel = screen.getByRole('tabpanel', { name: 'Old version' });
+    const oldTabPanel = await screen.findByRole('tabpanel', { name: 'Old version' });
     expect(oldTabPanel).toBeVisible();
     const oldIframe = within(oldTabPanel).getByTitle('Preview');
     expect(oldIframe).toBeVisible();
@@ -49,11 +49,11 @@ describe('<CompareChangesWidget />', () => {
     render(<CompareChangesWidget usageKey={usageKey} oldVersion={7} newVersion="published" />);
 
     // By default we see the new version:
-    const newTab = screen.getByRole('tab', { name: 'New version' });
+    const newTab = await screen.findByRole('tab', { name: 'New version' });
     expect(newTab).toBeInTheDocument();
     expect(newTab).toHaveClass('active');
 
-    const newTabPanel = screen.getByRole('tabpanel', { name: 'New version' });
+    const newTabPanel = await screen.findByRole('tabpanel', { name: 'New version' });
     const newIframe = within(newTabPanel).getByTitle('Preview');
     expect(newIframe).toBeVisible();
     expect(newIframe).toHaveAttribute(
@@ -62,16 +62,34 @@ describe('<CompareChangesWidget />', () => {
     );
 
     // Now switch to the "old version" tab:
-    const oldTab = screen.getByRole('tab', { name: 'Old version' });
+    const oldTab = await screen.findByRole('tab', { name: 'Old version' });
     fireEvent.click(oldTab);
 
-    const oldTabPanel = screen.getByRole('tabpanel', { name: 'Old version' });
+    const oldTabPanel = await screen.findByRole('tabpanel', { name: 'Old version' });
     expect(oldTabPanel).toBeVisible();
     const oldIframe = within(oldTabPanel).getByTitle('Preview');
     expect(oldIframe).toBeVisible();
     expect(oldIframe).toHaveAttribute(
       'src',
       `http://localhost:18010/xblocks/v2/${usageKey}/embed/student_view/?version=7`,
+    );
+  });
+
+  it('renders side-by-side compare mode with both iframes and expected sources', async () => {
+    render(<CompareChangesWidget usageKey={usageKey} oldVersion={7} newVersion="published" sideBySide />);
+
+    expect(await screen.findByText('Old version')).toBeInTheDocument();
+    expect(await screen.findByText('New version')).toBeInTheDocument();
+
+    const iframes = await screen.findAllByTitle('Preview');
+    expect(iframes).toHaveLength(2);
+    expect(iframes[0]).toHaveAttribute(
+      'src',
+      `http://localhost:18010/xblocks/v2/${usageKey}/embed/student_view/?version=7`,
+    );
+    expect(iframes[1]).toHaveAttribute(
+      'src',
+      `http://localhost:18010/xblocks/v2/${usageKey}/embed/student_view/?version=published`,
     );
   });
 });

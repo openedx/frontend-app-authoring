@@ -21,6 +21,7 @@ interface LibraryBlockProps {
   minHeight?: string;
   scrollIntoView?: boolean;
   showTitle?: boolean;
+  addHeight?: number;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -40,6 +41,7 @@ export const LibraryBlock = ({
   scrolling = 'no',
   scrollIntoView = false,
   showTitle = false,
+  addHeight = 0,
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
@@ -50,6 +52,7 @@ export const LibraryBlock = ({
 
   const intl = useIntl();
   const params = new URLSearchParams();
+
   if (version) {
     params.set('version', version.toString());
   }
@@ -79,6 +82,10 @@ export const LibraryBlock = ({
 
   useIframeContent(iframeRef, setIframeRef);
 
+  if (version === 0) {
+    return null;
+  }
+
   return (
     <iframe
       ref={iframeRef}
@@ -92,7 +99,7 @@ export const LibraryBlock = ({
       referrerPolicy="origin"
       style={{
         width: '100%',
-        height: iframeHeight,
+        height: iframeHeight + addHeight,
         pointerEvents: 'auto',
         minHeight,
       }}
