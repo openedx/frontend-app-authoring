@@ -22,7 +22,6 @@ const currentItemMock = {
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
-    courseUsageKey: 'course-usage-key',
     courseDetails: { name: 'Test course' },
   }),
 }));
