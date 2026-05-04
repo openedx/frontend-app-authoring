@@ -9,6 +9,7 @@ import {
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
+import { CourseOutlineStateProvider } from '@src/course-outline/CourseOutlineStateContext';
 
 import { OutlineSidebarProvider } from './OutlineSidebarContext';
 import { OutlineSidebarPagesProvider } from './OutlineSidebarPagesContext';
@@ -28,11 +29,13 @@ const courseId = '123';
 const extraWrapper = ({ children }) => (
   <CourseAuthoringProvider courseId={courseId}>
     <CourseOutlineProvider>
-      <OutlineSidebarPagesProvider>
-        <OutlineSidebarProvider>
-          {children}
-        </OutlineSidebarProvider>
-      </OutlineSidebarPagesProvider>
+      <CourseOutlineStateProvider>
+        <OutlineSidebarPagesProvider>
+          <OutlineSidebarProvider>
+            {children}
+          </OutlineSidebarProvider>
+        </OutlineSidebarPagesProvider>
+      </CourseOutlineStateProvider>
     </CourseOutlineProvider>
   </CourseAuthoringProvider>
 );

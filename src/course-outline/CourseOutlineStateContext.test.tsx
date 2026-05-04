@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 
@@ -19,7 +19,7 @@ import {
 } from './CourseOutlineStateContext';
 
 describe('CourseOutlineStateContext', () => {
-  it('exposes read-only outline state from legacy sources', () => {
+  it('exposes outline state and selection actions from legacy sources', () => {
     initializeMockApp({
       authenticatedUser: {
         userId: 1,
@@ -59,5 +59,31 @@ describe('CourseOutlineStateContext', () => {
     expect(result.current.enableTimedExams).toBe(true);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isLoadingDenied).toBe(false);
+
+    act(() => {
+      result.current.selectContainer({
+        currentId: 'block-v1:test+selection',
+        sectionId: 'block-v1:test+section',
+      });
+    });
+    expect(result.current.currentSelection).toEqual({
+      currentId: 'block-v1:test+selection',
+      sectionId: 'block-v1:test+section',
+    });
+
+    act(() => {
+      result.current.openContainerInfo('block-v1:test+info', 'block-v1:test+subsection', 'block-v1:test+section', 3);
+    });
+    expect(result.current.currentSelection).toEqual({
+      currentId: 'block-v1:test+info',
+      subsectionId: 'block-v1:test+subsection',
+      sectionId: 'block-v1:test+section',
+      index: 3,
+    });
+
+    act(() => {
+      result.current.clearSelection();
+    });
+    expect(result.current.currentSelection).toBeUndefined();
   });
 });

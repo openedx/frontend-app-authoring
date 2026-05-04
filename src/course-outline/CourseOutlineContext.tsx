@@ -89,11 +89,9 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
   ] = useToggleWithValue<ModalState>();
 
   /**
-   * This will hold the state of current item that is being operated on,
-   * For example:
-   *  - the details of container that is being edited.
-   *  - the details of container of which see more dropdown is open.
-   * It is mostly used in modals which should be soon be replaced with its equivalent in sidebar.
+   * Holds action target state for menus, edit, duplicate, delete, and modals.
+   * This is intentionally separate from sidebar/card selection so opening a menu
+   * does not change which card is selected in the outline.
    */
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
 

@@ -49,6 +49,10 @@ jest.mock('@src/CourseAuthoringContext', () => ({
 jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
   useCourseOutlineState: () => ({
     courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
+    currentSelection: undefined,
+    selectContainer: jest.fn(),
+    clearSelection: jest.fn(),
+    openContainerInfo: jest.fn(),
   }),
 }));
 

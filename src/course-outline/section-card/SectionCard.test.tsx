@@ -15,6 +15,7 @@ import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import SectionCard from './SectionCard';
+import { CourseOutlineStateProvider } from '../CourseOutlineStateContext';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
@@ -121,7 +122,13 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
       routerProps: {
         initialEntries: [entry],
       },
-      extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
+      extraWrapper: ({ children }) => (
+        <CourseOutlineStateProvider>
+          <OutlineSidebarContext.OutlineSidebarProvider>
+            {children}
+          </OutlineSidebarContext.OutlineSidebarProvider>
+        </CourseOutlineStateProvider>
+      ),
     },
   );
 let axiosMock;
@@ -164,6 +171,22 @@ describe('<SectionCard />', () => {
 
     // The card is selected
     expect(await screen.findByTestId('section-card')).toHaveClass('outline-card-selected');
+  });
+
+  it('does not select section card when menu opens', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+
+    const card = screen.getByTestId('section-card');
+    const menuButton = await screen.findByTestId('section-card-header__menu-button');
+    await user.click(menuButton);
+
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: section.id,
+      sectionId: section.id,
+      index: 1,
+    });
+    expect(card).not.toHaveClass('outline-card-selected');
   });
 
   it('expands/collapses the card when the expand button is clicked', () => {

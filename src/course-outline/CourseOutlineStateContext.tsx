@@ -1,12 +1,19 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useMemo,
+  useState,
 } from 'react';
 import { useSelector } from 'react-redux';
 
 import { RequestStatus } from '@src/data/constants';
-import type { OutlinePageErrors, XBlock, XBlockActions } from '@src/data/types';
+import type {
+  OutlinePageErrors,
+  SelectionState,
+  XBlock,
+  XBlockActions,
+} from '@src/data/types';
 import {
   getCourseActions,
   getCreatedOn,
@@ -20,6 +27,7 @@ import {
   getProctoredExamsFlag,
   getTimedExamsFlag,
 } from './data/selectors';
+import { buildSelectionState } from './state/selection';
 import { CourseOutlineState as LegacyCourseOutlineState, CourseOutlineStatusBar } from './data/types';
 
 type CourseOutlineStateContextData = {
@@ -38,6 +46,15 @@ type CourseOutlineStateContextData = {
   enableProctoredExams?: boolean;
   enableTimedExams?: boolean;
   createdOn: LegacyCourseOutlineState['createdOn'];
+  currentSelection?: SelectionState;
+  selectContainer: (selection?: SelectionState) => void;
+  clearSelection: () => void;
+  openContainerInfo: (
+    containerId: string,
+    subsectionId?: string,
+    sectionId?: string,
+    index?: number,
+  ) => void;
 };
 
 const CourseOutlineStateContext = createContext<CourseOutlineStateContextData | undefined>(undefined);
@@ -54,6 +71,29 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
   const enableTimedExams = useSelector(getTimedExamsFlag);
   const createdOn = useSelector(getCreatedOn);
+  const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
+
+  const selectContainer = useCallback((selection?: SelectionState) => {
+    setCurrentSelection(selection);
+  }, []);
+
+  const clearSelection = useCallback(() => {
+    setCurrentSelection(undefined);
+  }, []);
+
+  const openContainerInfo = useCallback((
+    containerId: string,
+    subsectionId?: string,
+    sectionId?: string,
+    index?: number,
+  ) => {
+    setCurrentSelection(buildSelectionState({
+      currentId: containerId,
+      subsectionId,
+      sectionId,
+      index,
+    }));
+  }, []);
 
   const context = useMemo<CourseOutlineStateContextData>(() => ({
     outlineIndexData,
@@ -71,6 +111,10 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     enableProctoredExams,
     enableTimedExams,
     createdOn,
+    currentSelection,
+    selectContainer,
+    clearSelection,
+    openContainerInfo,
   }), [
     outlineIndexData,
     sections,
@@ -83,6 +127,10 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     enableProctoredExams,
     enableTimedExams,
     createdOn,
+    currentSelection,
+    selectContainer,
+    clearSelection,
+    openContainerInfo,
   ]);
 
   return (

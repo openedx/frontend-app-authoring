@@ -6,7 +6,11 @@ import {
   screen,
 } from '@src/testUtils';
 
-import { CourseOutlineProvider, OutlineSidebarProvider } from '@src/course-outline';
+import {
+  CourseOutlineProvider,
+  CourseOutlineStateProvider,
+  OutlineSidebarProvider,
+} from '@src/course-outline';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import HeaderActions, { HeaderActionsProps } from './HeaderActions';
@@ -48,9 +52,11 @@ const renderComponent = (props?: Partial<HeaderActionsProps>) =>
       extraWrapper: ({ children }) => (
         <CourseAuthoringProvider courseId="1">
           <CourseOutlineProvider>
-            <OutlineSidebarProvider>
-              {children}
-            </OutlineSidebarProvider>
+            <CourseOutlineStateProvider>
+              <OutlineSidebarProvider>
+                {children}
+              </OutlineSidebarProvider>
+            </CourseOutlineStateProvider>
           </CourseOutlineProvider>
         </CourseAuthoringProvider>
       ),

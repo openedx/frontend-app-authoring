@@ -1,6 +1,7 @@
 import { fireEvent, initializeMocks, render, screen } from '@src/testUtils';
 import { getCourseSettingsApiUrl } from '@src/data/api';
 import type { SelectionState } from '@src/data/types';
+import { CourseOutlineStateProvider } from '@src/course-outline/CourseOutlineStateContext';
 import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import userEvent from '@testing-library/user-event';
@@ -74,7 +75,15 @@ jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: () => ({ data: [] }),
 }));
 
-const renderComponent = () => render(<InfoSidebar />, { extraWrapper: OutlineSidebarProvider });
+const renderComponent = () => render(<InfoSidebar />, {
+  extraWrapper: ({ children }) => (
+    <CourseOutlineStateProvider>
+      <OutlineSidebarProvider>
+        {children}
+      </OutlineSidebarProvider>
+    </CourseOutlineStateProvider>
+  ),
+});
 let axiosMock;
 
 describe('InfoSidebar component', () => {

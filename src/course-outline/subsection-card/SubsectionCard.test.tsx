@@ -14,6 +14,7 @@ import { XBlock } from '@src/data/types';
 import { ContainerType } from '@src/generic/key-utils';
 
 import cardHeaderMessages from '../card-header/messages';
+import { CourseOutlineStateProvider } from '../CourseOutlineStateContext';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 import SubsectionCard from './SubsectionCard';
 
@@ -141,7 +142,13 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
       routerProps: {
         initialEntries: [entry],
       },
-      extraWrapper: OutlineSidebarProvider,
+      extraWrapper: ({ children }) => (
+        <CourseOutlineStateProvider>
+          <OutlineSidebarProvider>
+            {children}
+          </OutlineSidebarProvider>
+        </CourseOutlineStateProvider>
+      ),
     },
   );
 
@@ -191,9 +198,10 @@ describe('<SubsectionCard />', () => {
     expect(screen.queryByRole('button', { name: 'New unit' })).not.toBeInTheDocument();
   });
 
-  it('updates current section, subsection and item', async () => {
+  it('updates current section, subsection and item without changing selected card when menu opens', async () => {
     renderComponent();
 
+    const card = screen.getByTestId('subsection-card');
     const menu = await screen.findByTestId('subsection-card-header__menu');
     fireEvent.click(menu);
     expect(setCurrentSelection).toHaveBeenCalledWith({
@@ -202,6 +210,7 @@ describe('<SubsectionCard />', () => {
       sectionId: section.id,
       index: 1,
     });
+    expect(card).not.toHaveClass('outline-card-selected');
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
