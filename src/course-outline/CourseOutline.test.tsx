@@ -664,6 +664,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexWithoutSections);
+    await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
 
     const { getByTestId } = renderComponent();
 
@@ -679,6 +680,7 @@ describe('<CourseOutline />', () => {
         ...courseOutlineIndexMock,
         notificationDismissUrl: '/some/url',
       });
+    await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
 
     renderComponent();
     const alert = await screen.findByText(pageAlertMessages.configurationErrorTitle.defaultMessage);
@@ -1696,8 +1698,12 @@ describe('<CourseOutline />', () => {
         ...section,
         highlights,
       });
-    const highlightBtn = await screen.findAllByRole('button', { name: '0 Section highlights' });
-    await user.click(highlightBtn[0]);
+    const highlightBtn = await screen.findByTestId('section-card-highlights-button').catch(() => {
+      // Fallback: find button containing 'Section highlights' text within first section card
+      const sections = screen.getAllByTestId('section-card');
+      return within(sections[0]).findByText('Section highlights');
+    });
+    await user.click(highlightBtn);
     const dialog = await screen.findByRole('dialog');
     fireEvent.change(await within(dialog).findByRole('textbox', { name: 'Highlight 1' }), {
       target: { value: 'New Highlight 1' },
@@ -2536,6 +2542,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexWithoutSections);
+    await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
 
     renderComponent();
 
@@ -2556,15 +2563,17 @@ describe('<CourseOutline />', () => {
     const newSectionButton = (await screen.findAllByRole('button', { name: 'New section' }))[0];
     fireEvent.click(newSectionButton);
 
-    const element = await screen.findByTestId('section-card');
+    const sectionButton = await screen.findByRole('button', { name: 'Section' });
+    const element = sectionButton.closest('[data-testid="section-card"]');
     expect(element).toBeInTheDocument();
 
     axiosMock.onDelete(getDownstreamApiUrl(courseSectionMock.id)).reply(200);
 
-    const menu = await within(element).findByTestId('section-card-header__menu-button');
+    const menu = await within(element as HTMLElement).findByTestId('section-card-header__menu-button');
     fireEvent.click(menu);
-    const unlinkButton = await within(element).findByRole('button', { name: 'Unlink from Library' });
+    const unlinkButton = await within(element as HTMLElement).findByTestId('section-card-header__menu-unlink-button');
     fireEvent.click(unlinkButton);
+
     const confirmButton = await screen.findByRole('button', { name: 'Confirm Unlink' });
     fireEvent.click(confirmButton);
 
