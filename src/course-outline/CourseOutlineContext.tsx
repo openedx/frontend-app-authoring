@@ -2,11 +2,10 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 
 import { SelectionState } from '@src/data/types';
@@ -19,21 +18,12 @@ import {
   useDeleteCourseItem,
   useDuplicateItem,
 } from './data/apiHooks';
-import { getOutlineIndexData } from './data/selectors';
 import {
   deleteSection,
   deleteSubsection,
   deleteUnit,
-  fetchOutlineIndexSuccess,
-  updateCourseActions,
-  updateOutlineIndexLoadingStatus,
-  updateStatusBar,
 } from './data/slice';
-import {
-  getCourseOutlineIndexRequestState,
-  getCourseOutlineStatusBarData,
-  useCourseOutlineIndex,
-} from './data/outlineIndexQuery';
+import { useCourseOutlineState } from './CourseOutlineStateContext';
 
 export type CourseOutlineContextData = {
   handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
@@ -69,11 +59,8 @@ type CourseOutlineProviderProps = {
 export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) => {
   const { courseId, openUnitPage } = useCourseAuthoringContext();
   const dispatch = useDispatch();
-  const outlineIndexData = useSelector(getOutlineIndexData);
+  const { outlineIndexData } = useCourseOutlineState();
   const { courseStructure } = outlineIndexData;
-  const outlineIndexQuery = useCourseOutlineIndex(courseId, {
-    initialData: courseStructure ? outlineIndexData : undefined,
-  });
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [
     isPublishModalOpen,
@@ -88,26 +75,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
    * does not change which card is selected in the outline.
    */
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
-
-  useEffect(() => {
-    const { status, errors } = getCourseOutlineIndexRequestState({
-      isPending: outlineIndexQuery.isPending,
-      isSuccess: outlineIndexQuery.isSuccess,
-      error: outlineIndexQuery.error,
-    });
-
-    dispatch(updateOutlineIndexLoadingStatus({ status, errors }));
-  }, [dispatch, outlineIndexQuery.error, outlineIndexQuery.isPending, outlineIndexQuery.isSuccess]);
-
-  useEffect(() => {
-    if (!outlineIndexQuery.data) {
-      return;
-    }
-
-    dispatch(fetchOutlineIndexSuccess(outlineIndexQuery.data));
-    dispatch(updateStatusBar(getCourseOutlineStatusBarData(outlineIndexQuery.data)));
-    dispatch(updateCourseActions(outlineIndexQuery.data.courseStructure.actions));
-  }, [dispatch, outlineIndexQuery.data]);
 
   const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const handleAddBlock = useCreateCourseBlock(courseId);

@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -35,12 +36,26 @@ import {
   setSubsectionOrderListQuery,
   setUnitOrderListQuery,
 } from './data/thunk';
+import {
+  getCourseOutlineIndexRequestState,
+  getCourseOutlineStatusBarData,
+  useCourseOutlineIndex,
+} from './data/outlineIndexQuery';
+import {
+  fetchOutlineIndexSuccess,
+  updateCourseActions,
+  updateOutlineIndexLoadingStatus,
+  updateStatusBar,
+} from './data/slice';
+
 import { buildSelectionState } from './state/selection';
 import {
   EditableSubsection,
   getLastEditableItem,
   getLastEditableSubsection,
 } from './state/editability';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+
 import {
   CourseOutlineState as LegacyCourseOutlineState,
   CourseOutlineStatusBar,
@@ -106,8 +121,35 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   // Sections from Redux (PR 8: primary source during transition)
   const sections = sectionsList;
 
-  // Course ID from Redux
-  const courseId = outlineIndexData?.courseStructure?.id;
+  // Course ID from context (primary source)
+  const { courseId } = useCourseAuthoringContext();
+
+  // Mount outline index query from React Query
+  const outlineIndexQuery = useCourseOutlineIndex(courseId, {
+    initialData: outlineIndexData?.courseStructure ? outlineIndexData : undefined,
+  });
+
+  // Sync query state to Redux loading status
+  useEffect(() => {
+    const { status, errors } = getCourseOutlineIndexRequestState({
+      isPending: outlineIndexQuery.isPending,
+      isSuccess: outlineIndexQuery.isSuccess,
+      error: outlineIndexQuery.error,
+    });
+
+    dispatch(updateOutlineIndexLoadingStatus({ status, errors }));
+  }, [dispatch, outlineIndexQuery.error, outlineIndexQuery.isPending, outlineIndexQuery.isSuccess]);
+
+  // Sync query data to Redux on success
+  useEffect(() => {
+    if (!outlineIndexQuery.data) {
+      return;
+    }
+
+    dispatch(fetchOutlineIndexSuccess(outlineIndexQuery.data));
+    dispatch(updateStatusBar(getCourseOutlineStatusBarData(outlineIndexQuery.data)));
+    dispatch(updateCourseActions(outlineIndexQuery.data.courseStructure.actions));
+  }, [dispatch, outlineIndexQuery.data]);
 
   // Preview state: undefined means show sections, array means show preview
   const [previewSections, setPreviewSections] = useState<XBlock[] | undefined>();

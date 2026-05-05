@@ -2,6 +2,7 @@ import React from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import initializeStore from '@src/store';
 import { RequestStatus } from '@src/data/constants';
@@ -21,6 +22,10 @@ import {
 let currentItemData;
 const mockOutlineIndexData = {
   ...courseOutlineIndexMock,
+  courseStructure: {
+    ...courseOutlineIndexMock.courseStructure,
+    videoSharingOptions: 'by-course',
+  },
   createdOn: new Date().toISOString(),
 };
 
@@ -28,6 +33,13 @@ const mockOutlineIndexData = {
 jest.mock('./data/apiHooks', () => ({
   ...jest.requireActual('./data/apiHooks'),
   useCourseItemData: () => ({ data: currentItemData }),
+}));
+
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course',
+    openUnitPage: jest.fn(),
+  }),
 }));
 
 describe('CourseOutlineStateContext', () => {
@@ -48,11 +60,14 @@ describe('CourseOutlineStateContext', () => {
     store.dispatch(updateStatusBar({ videoSharingOptions: 'by-course' }));
     store.dispatch(updateCourseActions({ allowMoveDown: true }));
 
+    const queryClient = new QueryClient();
     const wrapper = ({ children }: { children?: React.ReactNode }) => (
       <AppProvider store={store}>
-        <CourseOutlineStateProvider>
-          {children}
-        </CourseOutlineStateProvider>
+        <QueryClientProvider client={queryClient}>
+          <CourseOutlineStateProvider>
+            {children}
+          </CourseOutlineStateProvider>
+        </QueryClientProvider>
       </AppProvider>
     );
 
