@@ -20,6 +20,7 @@ import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/d
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { useCourseOutlineState } from '@src/course-outline/CourseOutlineStateContext';
 import XBlockContainerIframe from '@src/course-unit/xblock-container-iframe';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -100,10 +101,10 @@ export const UnitSidebar = () => {
   const {
     openPublishModal,
     handleDuplicateUnitSubmit,
-    sections,
     updateUnitOrderByIndex,
     openDeleteModal,
   } = useCourseOutlineContext();
+  const { sections } = useCourseOutlineState();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
   const subsectionIndex = section?.childInfo?.children?.findIndex(
     (s) => s.id === selectedContainerState?.subsectionId,

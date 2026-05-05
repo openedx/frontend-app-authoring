@@ -19,6 +19,9 @@ jest.mock('@src/CourseAuthoringContext', () => ({
 jest.mock('@src/course-outline/CourseOutlineContext', () => ({
   useCourseOutlineContext: jest.fn(),
 }));
+jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
+  useCourseOutlineState: jest.fn(),
+}));
 
 jest.mock(
   './PublishButon',
@@ -43,6 +46,7 @@ const apiHooks = jest.requireMock('@src/course-outline/data/apiHooks') as any;
 const outlineContext = jest.requireMock('../OutlineSidebarContext') as any;
 const authoring = jest.requireMock('@src/CourseAuthoringContext') as any;
 const outlineCtx = jest.requireMock('@src/course-outline/CourseOutlineContext') as any;
+const outlineState = jest.requireMock('@src/course-outline/CourseOutlineStateContext') as any;
 
 describe('UnitSidebar', () => {
   beforeEach(() => {
@@ -63,10 +67,10 @@ describe('UnitSidebar', () => {
     outlineCtx.useCourseOutlineContext.mockReturnValue({
       openPublishModal: jest.fn(),
       handleDuplicateUnitSubmit: jest.fn(),
-      sections: [],
       updateUnitOrderByIndex: jest.fn(),
       openDeleteModal: jest.fn(),
     });
+    outlineState.useCourseOutlineState.mockReturnValue({ sections: [] });
   });
 
   it('renders title and info tab by default', () => {
@@ -91,10 +95,10 @@ describe('UnitSidebar', () => {
     outlineCtx.useCourseOutlineContext.mockReturnValue({
       openPublishModal,
       handleDuplicateUnitSubmit: jest.fn(),
-      sections: [],
       updateUnitOrderByIndex: jest.fn(),
       openDeleteModal: jest.fn(),
     });
+    outlineState.useCourseOutlineState.mockReturnValue({ sections: [] });
     outlineContext.useOutlineSidebarContext.mockReturnValue({
       selectedContainerState: { currentId: 'unit-2', sectionId: 's1', subsectionId: 'ss1' },
       clearSelection: jest.fn(),

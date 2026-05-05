@@ -47,9 +47,6 @@ export type CourseOutlineContextData = {
   handleAddBlock: ReturnType<typeof useCreateCourseBlock>;
   currentSelection?: SelectionState;
   setCurrentSelection: React.Dispatch<React.SetStateAction<SelectionState | undefined>>;
-  sections: XBlock[];
-  restoreSectionList: () => void;
-  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
   isDuplicatingItem: boolean;
   isDeleteModalOpen: boolean;
   openDeleteModal: () => void;
@@ -96,7 +93,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
     initialData: courseStructure ? outlineIndexData : undefined,
   });
   const {
-    sections,
     setSections,
     restoreSectionList,
   } = useCourseOutlineState();
@@ -275,9 +271,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
     handleAddAndOpenUnit,
     currentSelection,
     setCurrentSelection,
-    sections,
-    restoreSectionList,
-    setSections,
     isDuplicatingItem,
     isDeleteModalOpen,
     openDeleteModal,
@@ -301,9 +294,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
     handleAddAndOpenUnit,
     currentSelection,
     setCurrentSelection,
-    sections,
-    restoreSectionList,
-    setSections,
     isDuplicatingItem,
     isDeleteModalOpen,
     openDeleteModal,
