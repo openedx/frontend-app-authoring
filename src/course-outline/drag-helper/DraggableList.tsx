@@ -37,23 +37,13 @@ import CourseItemOverlay from './CourseItemOverlay';
 
 interface DraggableListProps {
   items: XBlock[];
-  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
-  restoreSectionList: () => void;
-  handleSectionDragAndDrop: (sectionListIds: string[], restoreSectionList: () => void) => void;
-  handleSubsectionDragAndDrop: (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionListIds: string[],
-    restoreSectionList: () => void,
-  ) => void;
-  handleUnitDragAndDrop: (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionId: string,
-    unitListIds: string[],
-    restoreSectionList: () => void,
-  ) => void;
   children: React.ReactNode;
+  // Intent-level callbacks for drag operations
+  onPreviewTreeChange?: (nextTree: XBlock[]) => void;
+  onCancelDrag?: () => void;
+  onSectionDrop?: (sectionListIds: string[]) => void;
+  onSubsectionDrop?: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
+  onUnitDrop?: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => void;
 }
 
 interface ItemInfoType {
@@ -68,12 +58,12 @@ interface ItemInfoType {
 
 const DraggableList = ({
   items,
-  setSections,
-  restoreSectionList,
-  handleSectionDragAndDrop,
-  handleSubsectionDragAndDrop,
-  handleUnitDragAndDrop,
   children,
+  onPreviewTreeChange,
+  onCancelDrag,
+  onSectionDrop,
+  onSubsectionDrop,
+  onUnitDrop,
 }: DraggableListProps) => {
   const prevContainerInfo = React.useRef<string | null>();
   const sensors = useSensors(
@@ -171,16 +161,15 @@ const DraggableList = ({
       setCurrentOverId(overInfo.parent?.id || null);
     }
 
-    setSections((prev) => {
-      const [prevCopy] = moveSubsectionOver(
-        [...prev],
-        activeInfo.parentIndex!,
-        activeInfo.index,
-        overSectionIndex!,
-        newIndex,
-      );
-      return prevCopy;
-    });
+    const [prevCopy] = moveSubsectionOver(
+      [...items],
+      activeInfo.parentIndex!,
+      activeInfo.index,
+      overSectionIndex!,
+      newIndex,
+    );
+    // Notify parent of preview change
+    onPreviewTreeChange?.(prevCopy);
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.parent?.id;
     }
@@ -218,18 +207,17 @@ const DraggableList = ({
       setCurrentOverId(overInfo.parent?.id || null);
     }
 
-    setSections((prev: XBlock[]) => {
-      const [prevCopy] = moveUnitOver(
-        [...prev],
-        activeInfo.grandParentIndex!,
-        activeInfo.parentIndex!,
-        activeInfo.index,
-        overSectionIndex!,
-        overSubsectionIndex!,
-        newIndex,
-      );
-      return prevCopy;
-    });
+    const [prevCopy] = moveUnitOver(
+      [...items],
+      activeInfo.grandParentIndex!,
+      activeInfo.parentIndex!,
+      activeInfo.index,
+      overSectionIndex!,
+      overSubsectionIndex!,
+      newIndex,
+    );
+    // Notify parent of preview change
+    onPreviewTreeChange?.(prevCopy);
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.grandParent?.id;
     }
@@ -265,8 +253,8 @@ const DraggableList = ({
   const handleDragCancel = React.useCallback(() => {
     setActiveId?.(null);
     setDraggedItemClone(null);
-    restoreSectionList();
-  }, [setActiveId]);
+    onCancelDrag?.();
+  }, [onCancelDrag]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -294,49 +282,42 @@ const DraggableList = ({
 
     if (activeInfo.index !== overInfo.index || prevContainerInfo.current) {
       switch (activeInfo.category) {
-        case COURSE_BLOCK_NAMES.chapter.id:
-          setSections((prev) => {
-            const result = arrayMove(prev, activeInfo.index, overInfo.index);
-            handleSectionDragAndDrop(result.map(section => section.id), restoreSectionList);
-            return result;
-          });
+        case COURSE_BLOCK_NAMES.chapter.id: {
+          const result = arrayMove(items, activeInfo.index, overInfo.index) as XBlock[];
+          onPreviewTreeChange?.(result);
+          onSectionDrop?.(result.map(section => section.id));
           break;
-        case COURSE_BLOCK_NAMES.sequential.id:
-          setSections((prev) => {
-            const [prevCopy, result] = moveSubsection(
-              [...prev],
-              activeInfo.parentIndex!,
-              activeInfo.index,
-              overInfo.index,
-            );
-            handleSubsectionDragAndDrop(
-              activeInfo.parent!.id,
-              prevContainerInfo.current!,
-              result.map(subsection => subsection.id),
-              restoreSectionList,
-            );
-            return prevCopy;
-          });
+        }
+        case COURSE_BLOCK_NAMES.sequential.id: {
+          const [, result] = moveSubsection(
+            [...items],
+            activeInfo.parentIndex!,
+            activeInfo.index,
+            overInfo.index,
+          );
+          onSubsectionDrop?.(
+            activeInfo.parent!.id,
+            prevContainerInfo.current!,
+            result.map(subsection => subsection.id),
+          );
           break;
-        case COURSE_BLOCK_NAMES.vertical.id:
-          setSections((prev) => {
-            const [prevCopy, result] = moveUnit(
-              [...prev],
-              activeInfo.grandParentIndex!,
-              activeInfo.parentIndex!,
-              activeInfo.index,
-              overInfo.index,
-            );
-            handleUnitDragAndDrop(
-              activeInfo.grandParent!.id,
-              prevContainerInfo.current!,
-              activeInfo.parent!.id,
-              result.map(unit => unit.id),
-              restoreSectionList,
-            );
-            return prevCopy;
-          });
+        }
+        case COURSE_BLOCK_NAMES.vertical.id: {
+          const [, result] = moveUnit(
+            [...items],
+            activeInfo.grandParentIndex!,
+            activeInfo.parentIndex!,
+            activeInfo.index,
+            overInfo.index,
+          );
+          onUnitDrop?.(
+            activeInfo.grandParent!.id,
+            prevContainerInfo.current!,
+            activeInfo.parent!.id,
+            result.map(unit => unit.id),
+          );
           break;
+        }
         default:
           break;
       }

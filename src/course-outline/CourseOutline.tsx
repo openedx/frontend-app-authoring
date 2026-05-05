@@ -48,7 +48,7 @@ import {
   possibleUnitMoves,
   possibleSubsectionMoves,
 } from './drag-helper/utils';
-import { useCourseOutline } from './hooks';
+import { useCourseOutline } from './hooks.jsx';
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import { getTagsExportFile } from './data/api';
@@ -69,16 +69,16 @@ const CourseOutline = () => {
   const {
     courseUsageKey,
     sections,
-    setSections,
-    restoreSectionList,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
-    handleUnitDragAndDrop,
     updateSectionOrderByIndex,
     updateSubsectionOrderByIndex,
     updateUnitOrderByIndex,
     enableProctoredExams,
     enableTimedExams,
+    previewSections,
+    cancelReorderPreview,
+    commitSectionReorder,
+    commitSubsectionReorder,
+    commitUnitReorder,
   } = useCourseOutlineState();
 
   const {
@@ -271,11 +271,11 @@ const CourseOutline = () => {
                             <>
                               <DraggableList
                                 items={sections}
-                                setSections={setSections}
-                                restoreSectionList={restoreSectionList}
-                                handleSectionDragAndDrop={handleSectionDragAndDrop}
-                                handleSubsectionDragAndDrop={handleSubsectionDragAndDrop}
-                                handleUnitDragAndDrop={handleUnitDragAndDrop}
+                                onPreviewTreeChange={previewSections}
+                                onCancelDrag={cancelReorderPreview}
+                                onSectionDrop={commitSectionReorder}
+                                onSubsectionDrop={commitSubsectionReorder}
+                                onUnitDrop={commitUnitReorder}
                               >
                                 <SortableContext
                                   id="root"

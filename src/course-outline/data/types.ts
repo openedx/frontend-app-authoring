@@ -1,7 +1,10 @@
-import { XBlock, XBlockActions } from '@src/data/types';
+import { XBlock, XBlockActions, XblockChildInfo } from '@src/data/types';
 import { PUBLISH_TYPES } from '@src/course-unit/constants';
 
 export interface CourseStructure {
+  id: string;
+  displayName: string;
+  childInfo?: XblockChildInfo;
   highlightsEnabledForMessaging: boolean;
   videoSharingEnabled: boolean;
   videoSharingOptions: string;
@@ -9,6 +12,8 @@ export interface CourseStructure {
   end: string;
   actions: XBlockActions;
   hasChanges: boolean;
+  enableProctoredExams?: boolean;
+  enableTimedExams?: boolean;
 }
 
 export interface CourseOutline {
@@ -25,6 +30,8 @@ export interface CourseOutline {
   proctoringErrors: string[];
   reindexLink: string;
   rerunNotificationId: null;
+  isCustomRelativeDatesActive?: boolean;
+  createdOn?: string;
 }
 
 // TODO: This interface has only basic data, all the rest needs to be added.

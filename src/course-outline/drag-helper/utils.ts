@@ -8,7 +8,7 @@ export const dragHelpers = {
     // eslint-disable-next-line no-param-reassign
     block.childInfo = { ...block.childInfo };
     // eslint-disable-next-line no-param-reassign
-    block.childInfo.children = [...block.childInfo.children];
+    block.childInfo.children = [...(block.childInfo.children || [])];
     return block;
   },
   setBlockChildren: (block: XBlock, children: XBlock[]) => {

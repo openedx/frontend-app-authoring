@@ -19,6 +19,12 @@ import {
 } from './CourseOutlineStateContext';
 
 let currentItemData;
+const mockOutlineIndexData = {
+  ...courseOutlineIndexMock,
+  createdOn: new Date().toISOString(),
+};
+
+// Mock useCourseItemData to return mock data
 jest.mock('./data/apiHooks', () => ({
   ...jest.requireActual('./data/apiHooks'),
   useCourseItemData: () => ({ data: currentItemData }),
@@ -36,11 +42,7 @@ describe('CourseOutlineStateContext', () => {
     });
     currentItemData = null;
     const store = initializeStore();
-    const outlineIndexData = {
-      ...courseOutlineIndexMock,
-      createdOn: new Date().toISOString(),
-    };
-    store.dispatch(fetchOutlineIndexSuccess(outlineIndexData));
+    store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
     store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     store.dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     store.dispatch(updateStatusBar({ videoSharingOptions: 'by-course' }));
@@ -55,12 +57,12 @@ describe('CourseOutlineStateContext', () => {
     );
 
     const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
-    const lastSection = outlineIndexData.courseStructure.childInfo.children.at(-1)!;
+    const lastSection = mockOutlineIndexData.courseStructure.childInfo.children.at(-1)!;
     const lastSubsection = lastSection.childInfo.children.at(-1)!;
 
-    expect(result.current.courseName).toBe(outlineIndexData.courseStructure.displayName);
-    expect(result.current.courseUsageKey).toBe(outlineIndexData.courseStructure.id);
-    expect(result.current.sections).toEqual(outlineIndexData.courseStructure.childInfo.children);
+    expect(result.current.courseName).toBe(mockOutlineIndexData.courseStructure.displayName);
+    expect(result.current.courseUsageKey).toBe(mockOutlineIndexData.courseStructure.id);
+    expect(result.current.sections).toEqual(mockOutlineIndexData.courseStructure.childInfo.children);
     expect(result.current.savingStatus).toBe(RequestStatus.PENDING);
     expect(result.current.statusBarData.videoSharingOptions).toBe('by-course');
     expect(result.current.courseActions.allowMoveDown).toBe(true);
