@@ -289,12 +289,13 @@ const DraggableList = ({
           break;
         }
         case COURSE_BLOCK_NAMES.sequential.id: {
-          const [, result] = moveSubsection(
+          const [nextTree, result] = moveSubsection(
             [...items],
             activeInfo.parentIndex!,
             activeInfo.index,
             overInfo.index,
           );
+          onPreviewTreeChange?.(nextTree);
           onSubsectionDrop?.(
             activeInfo.parent!.id,
             prevContainerInfo.current!,
@@ -303,13 +304,14 @@ const DraggableList = ({
           break;
         }
         case COURSE_BLOCK_NAMES.vertical.id: {
-          const [, result] = moveUnit(
+          const [nextTree, result] = moveUnit(
             [...items],
             activeInfo.grandParentIndex!,
             activeInfo.parentIndex!,
             activeInfo.index,
             overInfo.index,
           );
+          onPreviewTreeChange?.(nextTree);
           onUnitDrop?.(
             activeInfo.grandParent!.id,
             prevContainerInfo.current!,
