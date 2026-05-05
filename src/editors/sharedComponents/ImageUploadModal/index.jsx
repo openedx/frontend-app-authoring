@@ -31,11 +31,13 @@ export const imgProps = ({
     const index = url.indexOf('static/');
     url = url.substring(index);
   }
+  const { dimensions, altText, isDecorative, ...imgAttrs } = settings;
   return {
     src: url,
-    alt: settings.isDecorative ? '' : settings.altText,
-    width: settings.dimensions.width,
-    height: settings.dimensions.height,
+    alt: isDecorative ? '' : altText,
+    width: dimensions.width,
+    height: dimensions.height,
+    ...imgAttrs,
   };
 };
 
@@ -75,7 +77,6 @@ export const updateImagesRef = ({
     height,
     width,
   });
-
   // eslint-disable-next-line no-param-reassign
   images.current = imageAlreadyExists ? mappedImages : [...images.current, newImage];
 };

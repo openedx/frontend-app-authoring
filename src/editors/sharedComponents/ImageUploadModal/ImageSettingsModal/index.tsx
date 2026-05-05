@@ -4,7 +4,9 @@ import './index.scss';
 
 import { Button, Image } from '@openedx/paragon';
 import { ArrowBackIos } from '@openedx/paragon/icons';
-import { Formik, useFormikContext } from 'formik';
+import { ImageAdditionalSettingsSlot } from '@src/plugin-slots/ImageAdditionalSettingsSlot';
+import ImageSettingsModalSlot from '@src/plugin-slots/ImageSettingsModalSlot';
+import { Formik, FormikBag, useFormikContext } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
 import BaseModal from '../../BaseModal';
@@ -39,7 +41,16 @@ interface ImageSettingsModalProps extends ImageSettingsModalCommonProps {
   saveToEditor: (config: AltText & { dimensions: ImageDimensions; }) => void;
 }
 
-const ImageSettingsModalInternal = ({
+export interface ImageSettingsModalFormProps<T extends ImageConfig = ImageConfig>
+  extends ImageSettingsModalCommonProps, ImageSettingsModalInternalProps
+{
+  initialValues: T;
+  validationSchema: Yup.ObjectSchema<Record<string, any>>;
+  handleSubmit: (values: T, actions: any) => void;
+  processValues?: (values: T) => void;
+}
+
+const ImageSettingsModalBase = ({
   isOpen,
   close,
   returnToSelection,
@@ -102,11 +113,46 @@ const ImageSettingsModalInternal = ({
         <div className="img-settings-form-controls">
           <DimensionControls originalDimensions={imgDimensions} />
           <AltTextControls />
+          <ImageAdditionalSettingsSlot />
         </div>
       </div>
     </BaseModal>
   );
 };
+
+export const ImageSettingsModalForm = ({
+  isOpen,
+  close,
+  returnToSelection,
+  selection,
+  imgDimensions,
+  setImgDimensions,
+  initialValues,
+  validationSchema,
+  handleSubmit,
+  processValues,
+}: ImageSettingsModalFormProps) => (
+  <Formik
+    initialValues={initialValues}
+    validationSchema={validationSchema}
+    onSubmit={React.useCallback(
+      (values, formikHelpers) => {
+        if (processValues) { processValues(values); }
+        handleSubmit(values, formikHelpers);
+      },
+      [handleSubmit, processValues],
+    )}
+  >
+    <ImageSettingsModalBase
+      isOpen={isOpen}
+      close={close}
+      returnToSelection={returnToSelection}
+      selection={selection}
+      imgDimensions={imgDimensions}
+      setImgDimensions={setImgDimensions}
+    />
+  </Formik>
+);
 
 /**
  * Modal display wrapping the dimension and alt-text controls for image tags
@@ -132,7 +178,7 @@ const ImageSettingsModal = ({
     isLocked: true,
     width: imgDimensions.width,
     height: imgDimensions.height,
-    isDecorative: false,
+    isDecorative: !selection.altText,
     altText: selection.altText || '',
   };
   const validationSchema = Yup.object().shape({
@@ -146,33 +192,30 @@ const ImageSettingsModal = ({
     }),
   });
 
-  const handleSubmit = React.useCallback((value, actions) => {
+  const handleSubmit = React.useCallback((value: ImageConfig, actions: FormikBag<ImageConfig, any>) => {
+    const { width, height, ...imgAttrs } = value;
     saveToEditor({
-      altText: value.altText,
       dimensions: {
-        width: value.width,
-        height: value.height,
+        width,
+        height,
       },
-      isDecorative: value.isDecorative,
+      ...imgAttrs,
     });
     actions.setSubmitting(false);
   }, [saveToEditor]);
 
   return (
-    <Formik
-      initialValues={initialValues}
+    <ImageSettingsModalSlot
       validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      <ImageSettingsModalInternal
-        isOpen={isOpen}
-        close={close}
-        returnToSelection={returnToSelection}
-        selection={selection}
-        imgDimensions={imgDimensions}
-        setImgDimensions={setImgDimensions}
-      />
-    </Formik>
+      initialValues={initialValues}
+      handleSubmit={handleSubmit}
+      isOpen={isOpen}
+      close={close}
+      returnToSelection={returnToSelection}
+      selection={selection}
+      imgDimensions={imgDimensions}
+      setImgDimensions={setImgDimensions}
+    />
   );
 };
 
