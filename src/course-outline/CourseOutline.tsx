@@ -65,15 +65,18 @@ const CourseOutline = () => {
   } = useCourseAuthoringContext();
   const {
     currentSelection,
-    updateSectionOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateUnitOrderByIndex,
   } = useCourseOutlineContext();
   const {
     courseUsageKey,
     sections,
     setSections,
     restoreSectionList,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
     enableProctoredExams,
     enableTimedExams,
   } = useCourseOutlineState();
@@ -122,9 +125,6 @@ const CourseOutline = () => {
     mfeProctoredExamSettingsUrl,
     handleDismissNotification,
     advanceSettingsUrl,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
-    handleUnitDragAndDrop,
     errors,
     handleUnlinkItemSubmit,
   } = useCourseOutline({ courseId });

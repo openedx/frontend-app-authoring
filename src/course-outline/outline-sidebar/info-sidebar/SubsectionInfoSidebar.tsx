@@ -53,10 +53,9 @@ export const SubsectionSidebar = () => {
   const {
     openPublishModal,
     handleDuplicateSubsectionSubmit,
-    updateSubsectionOrderByIndex,
     openDeleteModal,
   } = useCourseOutlineContext();
-  const { sections } = useCourseOutlineState();
+  const { sections, updateSubsectionOrderByIndex } = useCourseOutlineState();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
 
   const handlePublish = () => {

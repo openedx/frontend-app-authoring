@@ -49,9 +49,6 @@ const useCourseOutline = ({ courseId }) => {
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
-    handleUnitDragAndDrop,
   } = useCourseOutlineContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
@@ -286,9 +283,6 @@ const useCourseOutline = ({ courseId }) => {
     handleDismissNotification,
     advanceSettingsUrl,
     genericSavingStatus,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
-    handleUnitDragAndDrop,
     errors,
     handleUnlinkItemSubmit,
   };

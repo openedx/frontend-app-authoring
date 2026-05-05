@@ -6,7 +6,8 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { arrayMove } from '@dnd-kit/sortable';
 
 import { RequestStatus } from '@src/data/constants';
 import type {
@@ -29,6 +30,11 @@ import {
   getTimedExamsFlag,
 } from './data/selectors';
 import { useCourseItemData } from './data/apiHooks';
+import {
+  setSectionOrderListQuery,
+  setSubsectionOrderListQuery,
+  setUnitOrderListQuery,
+} from './data/thunk';
 import { buildSelectionState } from './state/selection';
 import {
   EditableSubsection,
@@ -44,6 +50,23 @@ type CourseOutlineStateContextData = {
   sections: XBlock[];
   setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
   restoreSectionList: () => void;
+  handleSectionDragAndDrop: (sectionListIds: string[], restoreCallback?: () => void) => void;
+  handleSubsectionDragAndDrop: (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionListIds: string[],
+    restoreCallback?: () => void,
+  ) => void;
+  handleUnitDragAndDrop: (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+    restoreCallback?: () => void,
+  ) => void;
+  updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => void;
+  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => void;
+  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => void;
   courseActions: XBlockActions;
   statusBarData: CourseOutlineStatusBar;
   savingStatus: string;
@@ -72,6 +95,7 @@ type CourseOutlineStateContextData = {
 const CourseOutlineStateContext = createContext<CourseOutlineStateContextData | undefined>(undefined);
 
 export const CourseOutlineStateProvider = ({ children }: { children?: React.ReactNode }) => {
+  const dispatch = useDispatch();
   const outlineIndexData = useSelector(getOutlineIndexData);
   const sectionsList = useSelector(getSectionsList);
   const [sections, setSections] = useState<XBlock[]>(sectionsList);
@@ -94,6 +118,80 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const restoreSectionList = useCallback(() => {
     setSections(() => [...sectionsList]);
   }, [sectionsList]);
+
+  const courseId = outlineIndexData?.courseStructure?.id;
+
+  const handleSectionDragAndDrop = useCallback((sectionListIds: string[], restoreCallback = restoreSectionList) => {
+    if (!courseId) {
+      return;
+    }
+    dispatch(setSectionOrderListQuery(courseId, sectionListIds, restoreCallback));
+  }, [courseId, dispatch, restoreSectionList]);
+
+  const handleSubsectionDragAndDrop = useCallback((
+    sectionId: string,
+    prevSectionId: string,
+    subsectionListIds: string[],
+    restoreCallback = restoreSectionList,
+  ) => {
+    dispatch(setSubsectionOrderListQuery(sectionId, prevSectionId, subsectionListIds, restoreCallback));
+  }, [dispatch, restoreSectionList]);
+
+  const handleUnitDragAndDrop = useCallback((
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+    restoreCallback = restoreSectionList,
+  ) => {
+    dispatch(setUnitOrderListQuery(sectionId, subsectionId, prevSectionId, unitListIds, restoreCallback));
+  }, [dispatch, restoreSectionList]);
+
+  const updateSectionOrderByIndex = useCallback((currentIndex: number, newIndex: number) => {
+    if (currentIndex === newIndex) {
+      return;
+    }
+    setSections((prevSections) => {
+      const newSections = arrayMove(prevSections, currentIndex, newIndex);
+      handleSectionDragAndDrop(newSections.map((section) => section.id), restoreSectionList);
+      return newSections;
+    });
+  }, [handleSectionDragAndDrop, restoreSectionList]);
+
+  const updateSubsectionOrderByIndex = useCallback((section: XBlock, moveDetails) => {
+    const { fn, args, sectionId } = moveDetails;
+    if (!args) {
+      return;
+    }
+    const [sectionsCopy, newSubsections] = fn(...args);
+    if (newSubsections && sectionId) {
+      setSections(sectionsCopy);
+      handleSubsectionDragAndDrop(
+        sectionId,
+        section.id,
+        newSubsections.map((subsection) => subsection.id),
+        restoreSectionList,
+      );
+    }
+  }, [handleSubsectionDragAndDrop, restoreSectionList]);
+
+  const updateUnitOrderByIndex = useCallback((section: XBlock, moveDetails) => {
+    const { fn, args, sectionId, subsectionId } = moveDetails;
+    if (!args) {
+      return;
+    }
+    const [sectionsCopy, newUnits] = fn(...args);
+    if (newUnits && subsectionId) {
+      setSections(sectionsCopy);
+      handleUnitDragAndDrop(
+        sectionId,
+        section.id,
+        subsectionId,
+        newUnits.map((unit) => unit.id),
+        restoreSectionList,
+      );
+    }
+  }, [handleUnitDragAndDrop, restoreSectionList]);
 
   const lastEditableSection = useMemo(() => {
     if (currentItemData?.category === 'chapter' && currentItemData.actions.childAddable) {
@@ -144,6 +242,12 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     sections,
     setSections,
     restoreSectionList,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
     courseActions,
     statusBarData,
     savingStatus,
@@ -167,6 +271,12 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     sections,
     setSections,
     restoreSectionList,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
     courseActions,
     statusBarData,
     savingStatus,

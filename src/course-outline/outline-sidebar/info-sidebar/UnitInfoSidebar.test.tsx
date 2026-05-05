@@ -67,10 +67,13 @@ describe('UnitSidebar', () => {
     outlineCtx.useCourseOutlineContext.mockReturnValue({
       openPublishModal: jest.fn(),
       handleDuplicateUnitSubmit: jest.fn(),
-      updateUnitOrderByIndex: jest.fn(),
       openDeleteModal: jest.fn(),
     });
-    outlineState.useCourseOutlineState.mockReturnValue({ sections: [] });
+    outlineState.useCourseOutlineState.mockReturnValue({
+      sections: [],
+      restoreSectionList: jest.fn(),
+      updateUnitOrderByIndex: jest.fn(),
+    });
   });
 
   it('renders title and info tab by default', () => {
@@ -95,10 +98,13 @@ describe('UnitSidebar', () => {
     outlineCtx.useCourseOutlineContext.mockReturnValue({
       openPublishModal,
       handleDuplicateUnitSubmit: jest.fn(),
-      updateUnitOrderByIndex: jest.fn(),
       openDeleteModal: jest.fn(),
     });
-    outlineState.useCourseOutlineState.mockReturnValue({ sections: [] });
+    outlineState.useCourseOutlineState.mockReturnValue({
+      sections: [],
+      restoreSectionList: jest.fn(),
+      updateUnitOrderByIndex: jest.fn(),
+    });
     outlineContext.useOutlineSidebarContext.mockReturnValue({
       selectedContainerState: { currentId: 'unit-2', sectionId: 's1', subsectionId: 'ss1' },
       clearSelection: jest.fn(),

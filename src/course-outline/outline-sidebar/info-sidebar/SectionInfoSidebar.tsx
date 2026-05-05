@@ -27,10 +27,9 @@ export const SectionSidebar = () => {
   const {
     openPublishModal,
     handleDuplicateSectionSubmit,
-    updateSectionOrderByIndex,
     openDeleteModal,
   } = useCourseOutlineContext();
-  const { sections } = useCourseOutlineState();
+  const { sections, updateSectionOrderByIndex } = useCourseOutlineState();
   const {
     clearSelection,
     currentTabKey,

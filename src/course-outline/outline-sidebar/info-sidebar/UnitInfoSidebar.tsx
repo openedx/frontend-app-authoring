@@ -101,10 +101,9 @@ export const UnitSidebar = () => {
   const {
     openPublishModal,
     handleDuplicateUnitSubmit,
-    updateUnitOrderByIndex,
     openDeleteModal,
   } = useCourseOutlineContext();
-  const { sections } = useCourseOutlineState();
+  const { sections, updateUnitOrderByIndex } = useCourseOutlineState();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
   const subsectionIndex = section?.childInfo?.children?.findIndex(
     (s) => s.id === selectedContainerState?.subsectionId,

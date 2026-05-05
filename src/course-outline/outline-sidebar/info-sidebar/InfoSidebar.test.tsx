@@ -62,11 +62,8 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
     openPublishModal,
     openDeleteModal,
     handleDuplicateUnitSubmit,
-    updateUnitOrderByIndex,
     handleDuplicateSectionSubmit,
-    updateSectionOrderByIndex,
     handleDuplicateSubsectionSubmit,
-    updateSubsectionOrderByIndex,
   }),
 }));
 jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
@@ -75,6 +72,9 @@ jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
     sections: mockSections,
     setSections: jest.fn(),
     restoreSectionList: jest.fn(),
+    updateUnitOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateSectionOrderByIndex,
   }),
 }));
 

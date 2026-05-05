@@ -8,9 +8,8 @@ import {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
-import { arrayMove } from '@dnd-kit/sortable';
 
-import { SelectionState, type XBlock } from '@src/data/types';
+import { SelectionState } from '@src/data/types';
 import { useToggleWithValue } from '@src/hooks';
 import { getBlockType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
@@ -21,11 +20,6 @@ import {
   useDuplicateItem,
 } from './data/apiHooks';
 import { getOutlineIndexData } from './data/selectors';
-import {
-  setSectionOrderListQuery,
-  setSubsectionOrderListQuery,
-  setUnitOrderListQuery,
-} from './data/thunk';
 import {
   deleteSection,
   deleteSubsection,
@@ -40,7 +34,6 @@ import {
   getCourseOutlineStatusBarData,
   useCourseOutlineIndex,
 } from './data/outlineIndexQuery';
-import { useCourseOutlineState } from './CourseOutlineStateContext';
 
 export type CourseOutlineContextData = {
   handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
@@ -59,17 +52,6 @@ export type CourseOutlineContextData = {
   currentPublishModalData?: ModalState;
   openPublishModal: (value: ModalState) => void;
   closePublishModal: () => void;
-  handleSectionDragAndDrop: (sectionListIds: string[]) => void;
-  handleSubsectionDragAndDrop: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
-  handleUnitDragAndDrop: (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionId: string,
-    unitListIds: string[],
-  ) => void;
-  updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => void;
-  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => void;
-  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => void;
 };
 
 /**
@@ -92,10 +74,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
   const outlineIndexQuery = useCourseOutlineIndex(courseId, {
     initialData: courseStructure ? outlineIndexData : undefined,
   });
-  const {
-    setSections,
-    restoreSectionList,
-  } = useCourseOutlineState();
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [
     isPublishModalOpen,
@@ -154,65 +132,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
   const handleDuplicateSectionSubmit = () => handleDuplicateSubmit(courseStructure.id);
   const handleDuplicateSubsectionSubmit = () => handleDuplicateSubmit(currentSelection?.sectionId);
   const handleDuplicateUnitSubmit = () => handleDuplicateSubmit(currentSelection?.subsectionId);
-
-  const handleSectionDragAndDrop = (sectionListIds: string[]) => {
-    dispatch(setSectionOrderListQuery(courseId, sectionListIds, restoreSectionList));
-  };
-
-  const handleSubsectionDragAndDrop = (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionListIds: string[],
-  ) => {
-    dispatch(setSubsectionOrderListQuery(sectionId, prevSectionId, subsectionListIds, restoreSectionList));
-  };
-
-  const handleUnitDragAndDrop = (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionId: string,
-    unitListIds: string[],
-  ) => {
-    dispatch(setUnitOrderListQuery(sectionId, subsectionId, prevSectionId, unitListIds, restoreSectionList));
-  };
-
-  /** Move section to new index */
-  const updateSectionOrderByIndex = (currentIndex: number, newIndex: number) => {
-    if (currentIndex === newIndex) {
-      return;
-    }
-    setSections((prevSections) => {
-      const newSections = arrayMove(prevSections, currentIndex, newIndex);
-      handleSectionDragAndDrop(newSections.map((section) => section.id));
-      return newSections;
-    });
-  };
-
-  /** Uses details from move information and moves subsection */
-  const updateSubsectionOrderByIndex = (section: XBlock, moveDetails) => {
-    const { fn, args, sectionId } = moveDetails;
-    if (!args) {
-      return;
-    }
-    const [sectionsCopy, newSubsections] = fn(...args);
-    if (newSubsections && sectionId) {
-      setSections(sectionsCopy);
-      handleSubsectionDragAndDrop(sectionId, section.id, newSubsections.map((subsection) => subsection.id));
-    }
-  };
-
-  /** Uses details from move information and moves unit */
-  const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
-    const { fn, args, sectionId, subsectionId } = moveDetails;
-    if (!args) {
-      return;
-    }
-    const [sectionsCopy, newUnits] = fn(...args);
-    if (newUnits && subsectionId) {
-      setSections(sectionsCopy);
-      handleUnitDragAndDrop(sectionId, section.id, subsectionId, newUnits.map((unit) => unit.id));
-    }
-  };
 
   const deleteMutation = useDeleteCourseItem();
 
@@ -283,12 +202,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
     currentPublishModalData,
     openPublishModal,
     closePublishModal,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
-    handleUnitDragAndDrop,
-    updateSectionOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateUnitOrderByIndex,
   }), [
     handleAddBlock,
     handleAddAndOpenUnit,
@@ -306,12 +219,6 @@ export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) 
     currentPublishModalData,
     openPublishModal,
     closePublishModal,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
-    handleUnitDragAndDrop,
-    updateSectionOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateUnitOrderByIndex,
   ]);
 
   return (
