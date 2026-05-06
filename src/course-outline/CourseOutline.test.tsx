@@ -73,7 +73,7 @@ import {
 let axiosMock: import('axios-mock-adapter/types');
 let store;
 const mockPathname = '/foo-bar';
-const courseId = '123';
+const courseId = 'course-v1:edX+DemoX+Demo_Course';
 const clearSelection = jest.fn();
 const startCurrentFlow = jest.fn();
 let selectedContainerId: string | undefined;

@@ -1,5 +1,5 @@
 import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
-import { addSection, duplicateSection, updateSectionList } from '@src/course-outline/data/slice';
+import { courseOutlineIndexQueryKey } from './outlineIndexQuery';
 import {
   ConfigureSectionData,
   ConfigureSubsectionData,
@@ -26,7 +26,6 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
 import {
   createCourseXblock,
   type CreateCourseXBlockType,
@@ -103,6 +102,103 @@ export const invalidateParentQueries = async (queryClient: QueryClient, variable
   }
 };
 
+// ---- PR 9: Outline index cache helpers (replace Redux slice dispatches) ----
+
+/** Append a new section to outline index query cache. */
+const appendSectionToOutlineIndex = (
+  queryClient: QueryClient,
+  courseId: string,
+  newSection: XBlockBase,
+) => {
+  queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+    if (!old) return old;
+    return {
+      ...old,
+      courseStructure: {
+        ...old.courseStructure,
+        childInfo: {
+          ...(old.courseStructure.childInfo || { children: [] }),
+          children: [...(old.courseStructure.childInfo?.children || []), newSection],
+        },
+      },
+    };
+  });
+};
+
+/** Replace top-level sections in outline index cache by id. */
+export const replaceSectionInOutlineIndex = (
+  queryClient: QueryClient,
+  courseId: string,
+  sections: Record<string, XBlockBase>,
+) => {
+  const old = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
+  if (!old?.courseStructure?.childInfo?.children) return;
+  const updated = {
+    ...old,
+    courseStructure: {
+      ...old.courseStructure,
+      childInfo: {
+        ...old.courseStructure.childInfo,
+        children: old.courseStructure.childInfo.children.map(
+          (s: any) => (s.id in sections ? sections[s.id] : s),
+        ),
+      },
+    },
+  };
+  queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), updated);
+};
+
+/** Insert duplicated section after original id in outline index cache. */
+const insertDuplicatedSectionInOutlineIndex = (
+  queryClient: QueryClient,
+  courseId: string,
+  originalId: string,
+  duplicatedSection: XBlockBase,
+) => {
+  queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+    if (!old?.courseStructure?.childInfo?.children) return old;
+    return {
+      ...old,
+      courseStructure: {
+        ...old.courseStructure,
+        childInfo: {
+          ...old.courseStructure.childInfo,
+          children: old.courseStructure.childInfo.children.reduce(
+            (result: any[], current: any) => {
+              if (current.id === originalId) {
+                return [...result, current, duplicatedSection];
+              }
+              return [...result, current];
+            },
+            [],
+          ),
+        },
+      },
+    };
+  });
+};
+
+/** Invalidate parent queries and sync section data to outline index cache. */
+async function invalidateParentQueriesAndSync(
+  queryClient: QueryClient,
+  variables: ParentIds,
+): Promise<void> {
+  await invalidateParentQueries(queryClient, variables);
+  // Force immediate refetch and wait for it, then sync to outline index.
+  if (variables?.sectionId) {
+    await queryClient.refetchQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
+    const sectionData = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(variables.sectionId));
+    if (sectionData && ['chapter', 'section'].includes((sectionData as any).category)) {
+      const outlineCourseId = getCourseKey(variables.sectionId);
+      replaceSectionInOutlineIndex(queryClient, outlineCourseId, {
+        [variables.sectionId]: sectionData as XBlockBase,
+      });
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+
 type CreateCourseXBlockMutationProps = CreateCourseXBlockType & ParentIds;
 
 /**
@@ -119,7 +215,6 @@ export const useCreateCourseBlock = (
 ) => {
   const queryClient = useQueryClient();
   const { setData } = useScrollState(courseKey);
-  const dispatch = useDispatch();
   return useMutationWithProcessingNotification({
     mutationFn: (variables: CreateCourseXBlockMutationProps) => createCourseXblock(variables),
     onSuccess: async (data: { locator: string; }, variables) => {
@@ -127,19 +222,19 @@ export const useCreateCourseBlock = (
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
       });
-      await invalidateParentQueries(queryClient, variables);
+
+      // Invalidate parent queries and sync updated section to outline index cache.
+      await invalidateParentQueriesAndSync(queryClient, variables);
+
       // Invalidate tags count for the newly created block
-      // Strips "+type@<blockType>+block@<id>" to produce a course-run wildcard, e.g.
-      // "block-v1:org+course+run+type@vertical+block@abc" → "block-v1:org+course+run*"
       const contentPattern = data.locator.replace(/\+type@.*$/, '*');
       queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
       // scroll to newly added block
       setData({ id: data.locator });
-      // if newly created block is chapter or section, fetch and add it to store
-      // all other types are handled by invalidateParentQueries and useCourseItemData
+      // If newly created block is chapter, append to outline index cache.
       if (getBlockType(data.locator) === 'chapter') {
         const newBlock = await getCourseItem(data.locator);
-        dispatch(addSection(newBlock));
+        appendSectionToOutlineIndex(queryClient, courseKey, newBlock);
       }
     },
   });
@@ -147,8 +242,7 @@ export const useCreateCourseBlock = (
 
 export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initialData?: T, enabled: boolean = true) => {
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
-  return useQuery<T>({
+  const query = useQuery<T>({
     initialData,
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
     queryFn: enabled && itemId ?
@@ -171,18 +265,17 @@ export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initial
             }
           });
         }
-        // We update redux store section list to update children list in outline.
-        // Even though each block has its own hook to fetch data, new child blocks or deleted blocks
-        // won't be detected as the child blocks are rendered in the outline from the top level
-        // sectionList from redux store.
+        // Sync section data to outline index cache (committed tree reads from query cache).
         if (['chapter', 'section'].includes(data.category)) {
-          const payload = { [data.id]: data };
-          dispatch(updateSectionList(payload));
+          const outlineCourseId = getCourseKey(data.id);
+          replaceSectionInOutlineIndex(queryClient, outlineCourseId, { [data.id]: data as any });
         }
         return data;
       } :
       skipToken,
   });
+
+  return query;
 };
 
 export const useCourseDetails = (courseId?: string, enabled: boolean = true) => (
@@ -332,7 +425,6 @@ export const useUpdateCourseSectionHighlights = () => {
 
 export const useDuplicateItem = (courseKey: string) => {
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
   const { setData } = useScrollState(courseKey);
   return useMutationWithProcessingNotification({
     mutationFn: (
@@ -342,11 +434,13 @@ export const useDuplicateItem = (courseKey: string) => {
       } & ParentIds,
     ) => duplicateCourseItem(variables.itemId, variables.parentId),
     onSuccess: async (data, variables) => {
-      await invalidateParentQueries(queryClient, variables);
-      // add duplicated section to store, subsection and unit are handled by invalidateParentQueries
+      // Invalidate parent queries and sync updated section to outline index cache.
+      await invalidateParentQueriesAndSync(queryClient, variables);
+
+      // For chapter (section) duplication, insert the duplicated section into the outline index cache.
       if (getBlockType(variables.itemId) === 'chapter') {
         const duplicatedItem = await getCourseItem(data.locator);
-        dispatch(duplicateSection({ id: variables.itemId, duplicatedItem }));
+        insertDuplicatedSectionInOutlineIndex(queryClient, courseKey, variables.itemId, duplicatedItem);
       }
       // scroll to newly added block
       setData({ id: data.locator });

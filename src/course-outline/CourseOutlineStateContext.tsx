@@ -7,8 +7,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { arrayMove } from '@dnd-kit/sortable';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { RequestStatus } from '@src/data/constants';
 import type {
@@ -30,13 +31,14 @@ import {
   getProctoredExamsFlag,
   getTimedExamsFlag,
 } from './data/selectors';
-import { useCourseItemData } from './data/apiHooks';
+import { replaceSectionInOutlineIndex, useCourseItemData } from './data/apiHooks';
 import {
   setSectionOrderListQuery,
   setSubsectionOrderListQuery,
   setUnitOrderListQuery,
 } from './data/thunk';
 import {
+  courseOutlineIndexQueryKey,
   getCourseOutlineIndexRequestState,
   getCourseOutlineStatusBarData,
   useCourseOutlineIndex,
@@ -118,16 +120,25 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const enableTimedExams = useSelector(getTimedExamsFlag);
   const createdOn = useSelector(getCreatedOn);
 
-  // Sections from Redux (PR 8: primary source during transition)
-  const sections = sectionsList;
+  // Redux store reference for reading updated state in success callbacks
+  const store = useStore();
+
+  // Query client for updating React Query cache after reorder
+  const queryClient = useQueryClient();
 
   // Course ID from context (primary source)
   const { courseId } = useCourseAuthoringContext();
 
-  // Mount outline index query from React Query
+  // Mount outline index query from React Query (primary source)
   const outlineIndexQuery = useCourseOutlineIndex(courseId, {
     initialData: outlineIndexData?.courseStructure ? outlineIndexData : undefined,
   });
+
+  // Effective outline data — prefer React Query cache, fall back to Redux facade
+  const effectiveOutlineIndexData = outlineIndexQuery.data || outlineIndexData;
+
+  // Committed sections from query cache (PR 9: primary source), fall back to Redux sectionsList
+  const sections = effectiveOutlineIndexData?.courseStructure?.childInfo?.children || sectionsList;
 
   // Sync query state to Redux loading status
   useEffect(() => {
@@ -179,6 +190,49 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     previousSectionsRef.current = undefined;
   }, []);
 
+  // Helper: accept reorder preview then read updated sections from Redux
+  // and sync them to React Query cache via replaceSectionInOutlineIndex.
+  const acceptReorderAndSyncSections = useCallback((
+    primarySectionId: string,
+    secondarySectionId?: string,
+  ) => {
+    acceptReorderPreview();
+    const state = store.getState();
+    const sectionIds = [primarySectionId];
+    if (secondarySectionId && secondarySectionId !== primarySectionId) {
+      sectionIds.push(secondarySectionId);
+    }
+    const updatedSections: Record<string, any> = {};
+    const sectionsList = getSectionsList(state);
+    sectionIds.forEach(id => {
+      const s = sectionsList.find((s: any) => s.id === id);
+      if (s) updatedSections[id] = s;
+    });
+    if (Object.keys(updatedSections).length > 0) {
+      replaceSectionInOutlineIndex(queryClient, courseId, updatedSections);
+    }
+  }, [acceptReorderPreview, store, queryClient, courseId]);
+
+  // Helper: accept reorder preview then sync React Query cache with new section order
+  const acceptReorderAndSyncSectionOrder = useCallback((sectionListIds: string[]) => {
+    acceptReorderPreview();
+    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+      if (!old?.courseStructure?.childInfo?.children) return old;
+      return {
+        ...old,
+        courseStructure: {
+          ...old.courseStructure,
+          childInfo: {
+            ...old.courseStructure.childInfo,
+            children: sectionListIds.map(id =>
+              old.courseStructure.childInfo.children.find((s: any) => s.id === id)
+            ).filter(Boolean),
+          },
+        },
+      };
+    });
+  }, [acceptReorderPreview, queryClient, courseId]);
+
   // Cancel preview and restore to committed (current) state
   const cancelReorderPreview = useCallback(() => {
     setPreviewSections(undefined);
@@ -202,9 +256,9 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
       courseId,
       sectionListIds,
       rollbackReorderPreview,
-      acceptReorderPreview,
+      () => acceptReorderAndSyncSectionOrder(sectionListIds),
     ));
-  }, [courseId, dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderPreview]);
+  }, [courseId, dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderAndSyncSectionOrder]);
 
   // Commit subsection reorder
   const commitSubsectionReorder = useCallback((
@@ -218,9 +272,11 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
       prevSectionId,
       subsectionListIds,
       rollbackReorderPreview,
-      acceptReorderPreview,
+      () => {
+        acceptReorderAndSyncSections(sectionId, prevSectionId);
+      },
     ));
-  }, [dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderPreview]);
+  }, [dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderAndSyncSections]);
 
   // Commit unit reorder
   const commitUnitReorder = useCallback((
@@ -236,9 +292,11 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
       prevSectionId,
       unitListIds,
       rollbackReorderPreview,
-      acceptReorderPreview,
+      () => {
+        acceptReorderAndSyncSections(sectionId, prevSectionId);
+      },
     ));
-  }, [dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderPreview]);
+  }, [dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderAndSyncSections]);
 
   const updateSectionOrderByIndex = useCallback((currentIndex: number, newIndex: number) => {
     if (!courseId || currentIndex === newIndex) {
@@ -248,15 +306,16 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     const previousSections = visibleSections;
     previousSectionsRef.current = previousSections;
     const nextSections = arrayMove(visibleSections, currentIndex, newIndex) as XBlock[];
+    const sectionListIds = nextSections.map((section) => section.id);
     setPreviewSections(nextSections);
 
     dispatch(setSectionOrderListQuery(
       courseId,
-      nextSections.map((section) => section.id),
+      sectionListIds,
       rollbackReorderPreview,
-      acceptReorderPreview,
+      () => acceptReorderAndSyncSectionOrder(sectionListIds),
     ));
-  }, [visibleSections, courseId, dispatch, rollbackReorderPreview, acceptReorderPreview]);
+  }, [visibleSections, courseId, dispatch, rollbackReorderPreview, acceptReorderAndSyncSectionOrder]);
 
   const updateSubsectionOrderByIndex = useCallback((section: XBlock, moveDetails) => {
     const { fn, args, sectionId } = moveDetails;
@@ -274,10 +333,12 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
         section.id,
         newSubsections.map((subsection: XBlock) => subsection.id),
         rollbackReorderPreview,
-        acceptReorderPreview,
+        () => {
+          acceptReorderAndSyncSections(sectionId, section.id);
+        },
       ));
     }
-  }, [visibleSections, dispatch, rollbackReorderPreview, acceptReorderPreview]);
+  }, [visibleSections, dispatch, rollbackReorderPreview, acceptReorderAndSyncSections]);
 
   const updateUnitOrderByIndex = useCallback((section: XBlock, moveDetails) => {
     const { fn, args, sectionId, subsectionId } = moveDetails;
@@ -296,10 +357,12 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
         section.id,
         newUnits.map((unit: XBlock) => unit.id),
         rollbackReorderPreview,
-        acceptReorderPreview,
+        () => {
+          acceptReorderAndSyncSections(sectionId, section.id);
+        },
       ));
     }
-  }, [visibleSections, dispatch, rollbackReorderPreview, acceptReorderPreview]);
+  }, [visibleSections, dispatch, rollbackReorderPreview, acceptReorderAndSyncSections]);
 
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
@@ -347,9 +410,9 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   }, []);
 
   const context = useMemo<CourseOutlineStateContextData>(() => ({
-    outlineIndexData,
-    courseName: outlineIndexData?.courseStructure?.displayName,
-    courseUsageKey: courseId,
+    outlineIndexData: effectiveOutlineIndexData,
+    courseName: effectiveOutlineIndexData?.courseStructure?.displayName,
+    courseUsageKey: effectiveOutlineIndexData?.courseStructure?.id || courseId,
     sections: visibleSections,
     updateSectionOrderByIndex,
     updateSubsectionOrderByIndex,
@@ -380,7 +443,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     commitSubsectionReorder,
     commitUnitReorder,
   }), [
-    outlineIndexData,
+    effectiveOutlineIndexData,
     courseId,
     visibleSections,
     updateSectionOrderByIndex,
