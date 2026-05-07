@@ -54,6 +54,7 @@ import {
   courseSubsectionMock,
 } from './__mocks__';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
+import { courseOutlineIndexQueryKey } from './data/outlineIndexQuery';
 import CourseOutline from './CourseOutline';
 
 import messages from './messages';
@@ -72,6 +73,7 @@ import {
 
 let axiosMock: import('axios-mock-adapter/types');
 let store;
+let queryClient;
 const mockPathname = '/foo-bar';
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
 const clearSelection = jest.fn();
@@ -164,6 +166,7 @@ describe('<CourseOutline />', () => {
 
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
+    queryClient = mocks.queryClient;
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexMock);
@@ -331,7 +334,6 @@ describe('<CourseOutline />', () => {
     const { findAllByRole, findByTestId } = renderComponent();
     const expandAllButton = await findByTestId('expand-collapse-all-button');
     fireEvent.click(expandAllButton);
-    const [section] = store.getState().courseOutline.sectionsList;
     const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = sectionsDraggers[1];
 
@@ -339,26 +341,37 @@ describe('<CourseOutline />', () => {
       .onPut(getCourseBlockApiUrl(courseId))
       .reply(200, { dummy: 'value' });
 
-    const section1 = store.getState().courseOutline.sectionsList[0].id;
-    jest.mocked(closestCorners).mockReturnValue([{ id: section1 }]);
+    const sections = store.getState().courseOutline.sectionsList;
+    const sectionIds = sections.map(s => s.id);
+    jest.mocked(closestCorners).mockReturnValue([{ id: sectionIds[0] }]);
 
     fireEvent.keyDown(draggableButton, { code: 'Space' });
     await sleep(1);
     fireEvent.keyDown(draggableButton, { code: 'Space' });
-    await waitFor(async () => {
-      const saveStatus = store.getState().courseOutline.savingStatus;
-      expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+
+    // Wait for mutation API call
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBe(1);
     });
 
-    const section2 = store.getState().courseOutline.sectionsList[1].id;
-    expect(section1).toBe(section2);
+    // Verify API called with correct new order
+    const putData = JSON.parse(axiosMock.history.put[0].data);
+    expect(putData.children).toEqual([
+      sectionIds[1], sectionIds[0], sectionIds[2], sectionIds[3],
+    ]);
+
+    // Verify React Query cache was updated with new order
+    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedChildren = cachedData?.courseStructure?.childInfo?.children;
+    expect(cachedChildren.map(s => s.id)).toEqual([
+      sectionIds[1], sectionIds[0], sectionIds[2], sectionIds[3],
+    ]);
   });
 
   it('check section list is restored to original order when API call fails', async () => {
     const { findAllByRole, findByTestId } = renderComponent();
     const expandAllButton = await findByTestId('expand-collapse-all-button');
     fireEvent.click(expandAllButton);
-    const [section] = store.getState().courseOutline.sectionsList;
     const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = sectionsDraggers[1];
 
@@ -366,19 +379,23 @@ describe('<CourseOutline />', () => {
       .onPut(getCourseBlockApiUrl(courseId))
       .reply(500);
 
-    const section1 = store.getState().courseOutline.sectionsList[0].id;
-    jest.mocked(closestCorners).mockReturnValue([{ id: section1 }]);
+    const sections = store.getState().courseOutline.sectionsList;
+    const sectionIds = sections.map(s => s.id);
+    jest.mocked(closestCorners).mockReturnValue([{ id: sectionIds[0] }]);
 
     fireEvent.keyDown(draggableButton, { code: 'Space' });
     await sleep(1);
     fireEvent.keyDown(draggableButton, { code: 'Space' });
-    await waitFor(async () => {
-      const saveStatus = store.getState().courseOutline.savingStatus;
-      expect(saveStatus).toEqual(RequestStatus.FAILED);
+
+    // Wait for mutation API call to fail
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBe(1);
     });
 
-    const section1New = store.getState().courseOutline.sectionsList[0].id;
-    expect(section1).toBe(section1New);
+    // Verify React Query cache still has original order (rollback cleared preview, cache unchanged)
+    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedChildren = cachedData?.courseStructure?.childInfo?.children;
+    expect(cachedChildren.map(s => s.id)).toEqual(sectionIds);
   });
 
   it('adds new section correctly', async () => {

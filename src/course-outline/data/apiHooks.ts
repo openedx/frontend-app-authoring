@@ -37,6 +37,7 @@ import {
   configureCourseSection,
   configureCourseSubsection,
   configureCourseUnit,
+  setSectionOrderList,
   updateCourseSectionHighlights,
   duplicateCourseItem,
   pasteBlock,
@@ -457,6 +458,16 @@ export const usePasteFileNotices = createGlobalState<StaticFileNotices>(
     errorFiles: [],
   },
 );
+
+export const useReorderSections = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutationWithProcessingNotification({
+    mutationFn: (sectionListIds: string[]) => setSectionOrderList(courseId, sectionListIds),
+    onSuccess: (_data, _sectionListIds) => {
+      // Cache update handled by caller in CourseOutlineStateContext
+    },
+  });
+};
 
 export const usePasteItem = (courseId?: string) => {
   const queryClient = useQueryClient();

@@ -36,7 +36,6 @@ import {
 } from './data/selectors';
 import { replaceSectionInOutlineIndex, useCourseItemData } from './data/apiHooks';
 import {
-  setSectionOrderListQuery,
   setSubsectionOrderListQuery,
   setUnitOrderListQuery,
   fetchCourseBestPracticesQuery,
@@ -68,6 +67,7 @@ import {
   useConfigureSubsection,
   useConfigureUnit,
   usePasteItem,
+  useReorderSections,
   useUpdateCourseSectionHighlights,
 } from './data/apiHooks';
 import {
@@ -288,20 +288,23 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     setPreviewSections(nextSections);
   }, [captureOriginalSections]);
 
+  // PR 11: Reorder sections mutation hook (declared before callbacks that use it)
+  const reorderSectionsMutation = useReorderSections(courseId);
+
   // Commit section reorder — keeps preview visible until request settles
-  const commitSectionReorder = useCallback((sectionListIds: string[]) => {
+  const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
     if (!courseId) {
       return;
     }
 
     captureOriginalSections();
-    dispatch(setSectionOrderListQuery(
-      courseId,
-      sectionListIds,
-      rollbackReorderPreview,
-      () => acceptReorderAndSyncSectionOrder(sectionListIds),
-    ));
-  }, [courseId, dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderAndSyncSectionOrder]);
+    try {
+      await reorderSectionsMutation.mutateAsync(sectionListIds);
+      acceptReorderAndSyncSectionOrder(sectionListIds);
+    } catch {
+      rollbackReorderPreview();
+    }
+  }, [courseId, reorderSectionsMutation, captureOriginalSections, acceptReorderAndSyncSectionOrder, rollbackReorderPreview]);
 
   // Commit subsection reorder
   const commitSubsectionReorder = useCallback((
@@ -341,7 +344,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     ));
   }, [dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderAndSyncSections]);
 
-  const updateSectionOrderByIndex = useCallback((currentIndex: number, newIndex: number) => {
+  const updateSectionOrderByIndex = useCallback(async (currentIndex: number, newIndex: number) => {
     if (!courseId || currentIndex === newIndex) {
       return;
     }
@@ -352,13 +355,13 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     const sectionListIds = nextSections.map((section) => section.id);
     setPreviewSections(nextSections);
 
-    dispatch(setSectionOrderListQuery(
-      courseId,
-      sectionListIds,
-      rollbackReorderPreview,
-      () => acceptReorderAndSyncSectionOrder(sectionListIds),
-    ));
-  }, [visibleSections, courseId, dispatch, rollbackReorderPreview, acceptReorderAndSyncSectionOrder]);
+    try {
+      await reorderSectionsMutation.mutateAsync(sectionListIds);
+      acceptReorderAndSyncSectionOrder(sectionListIds);
+    } catch {
+      rollbackReorderPreview();
+    }
+  }, [visibleSections, courseId, reorderSectionsMutation, rollbackReorderPreview, acceptReorderAndSyncSectionOrder]);
 
   const updateSubsectionOrderByIndex = useCallback((section: XBlock, moveDetails) => {
     const { fn, args, sectionId } = moveDetails;
