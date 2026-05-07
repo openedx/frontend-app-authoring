@@ -2316,13 +2316,27 @@ describe('<CourseOutline />', () => {
     fireEvent.keyDown(draggableButton, { code: 'Space' });
     await sleep(1);
     fireEvent.keyDown(draggableButton, { code: 'Space' });
-    await waitFor(async () => {
-      const saveStatus = store.getState().courseOutline.savingStatus;
-      expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+
+    // Wait for mutation API call
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBe(1);
     });
 
-    const subsection2 = store.getState().courseOutline.sectionsList[0].childInfo.children[1].id;
-    expect(subsection1).toBe(subsection2);
+    // Verify API called with correct new order
+    const putData = JSON.parse(axiosMock.history.put[0].data);
+    expect(putData.children).toEqual([
+      section.childInfo.children[1].id,
+      section.childInfo.children[0].id,
+    ]);
+
+    // Verify React Query cache was updated with fresh section data
+    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedSection = cachedData?.courseStructure?.childInfo?.children
+      .find((s: any) => s.id === section.id);
+    expect(cachedSection.childInfo.children.map((c: any) => c.id)).toEqual([
+      section.childInfo.children[1].id,
+      section.childInfo.children[0].id,
+    ]);
   });
 
   it('check that new subsection list is restored to original order when API call fails', async () => {
@@ -2345,13 +2359,19 @@ describe('<CourseOutline />', () => {
     fireEvent.keyDown(draggableButton, { code: 'Space' });
     await sleep(1);
     fireEvent.keyDown(draggableButton, { code: 'Space' });
-    await waitFor(async () => {
-      const saveStatus = store.getState().courseOutline.savingStatus;
-      expect(saveStatus).toEqual(RequestStatus.FAILED);
+
+    // Wait for mutation API call to fail
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBe(1);
     });
 
-    const subsection1New = store.getState().courseOutline.sectionsList[0].childInfo.children[0].id;
-    expect(subsection1).toBe(subsection1New);
+    // Verify React Query cache still has original order (rollback cleared preview, cache unchanged)
+    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedSection = cachedData?.courseStructure?.childInfo?.children
+      .find((s: any) => s.id === section.id);
+    expect(cachedSection.childInfo.children.map((c: any) => c.id)).toEqual(
+      section.childInfo.children.map((c: any) => c.id),
+    );
   });
 
   it('check that new unit list is saved when dragged', async () => {

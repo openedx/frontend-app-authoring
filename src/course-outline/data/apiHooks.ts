@@ -37,6 +37,7 @@ import {
   configureCourseSection,
   configureCourseSubsection,
   configureCourseUnit,
+  setCourseItemOrderList,
   setSectionOrderList,
   updateCourseSectionHighlights,
   duplicateCourseItem,
@@ -141,7 +142,13 @@ export const replaceSectionInOutlineIndex = (
       childInfo: {
         ...old.courseStructure.childInfo,
         children: old.courseStructure.childInfo.children.map(
-          (s: any) => (s.id in sections ? sections[s.id] : s),
+          (s: any) => {
+            if (!(s.id in sections)) return s;
+            const replacement = sections[s.id];
+            // Guard against bad replacement data: skip if missing childInfo.children
+            if (!replacement?.childInfo?.children) return s;
+            return replacement;
+          },
         ),
       },
     },
@@ -465,6 +472,40 @@ export const useReorderSections = (courseId: string) => {
     mutationFn: (sectionListIds: string[]) => setSectionOrderList(courseId, sectionListIds),
     onSuccess: (_data, _sectionListIds) => {
       // Cache update handled by caller in CourseOutlineStateContext
+    },
+  });
+};
+
+export const useReorderSubsections = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutationWithProcessingNotification({
+    mutationFn: (variables: {
+      sectionId: string;
+      prevSectionId?: string;
+      subsectionListIds: string[];
+    }) => setCourseItemOrderList(variables.sectionId, variables.subsectionListIds),
+    onSuccess: async (_data, variables) => {
+      // Fetch fresh section data for affected sections and sync to outline index cache.
+      const sectionIds: string[] = [variables.sectionId];
+      if (variables.prevSectionId && variables.prevSectionId !== variables.sectionId) {
+        sectionIds.push(variables.prevSectionId);
+      }
+      const updatedSections: Record<string, XBlockBase> = {};
+      // Use Promise.all for parallel fetching
+      await Promise.all(sectionIds.map(async (id) => {
+        try {
+          const sectionData = await getCourseItem<XBlockBase>(id);
+          updatedSections[id] = sectionData;
+        } catch (e) {
+          // If getCourseItem fails for one section, still try others
+        }
+      }));
+      if (Object.keys(updatedSections).length > 0) {
+        replaceSectionInOutlineIndex(queryClient, courseId, updatedSections);
+      } else {
+        // Fallback: invalidate the whole outline index query to force refetch
+        queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+      }
     },
   });
 };

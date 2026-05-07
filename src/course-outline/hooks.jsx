@@ -27,7 +27,6 @@ const useCourseOutline = ({ courseId }) => {
 
   const {
     outlineIndexData,
-    createdOn,
     loadingStatus,
     statusBarData,
     savingStatus,

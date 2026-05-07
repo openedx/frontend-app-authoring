@@ -36,7 +36,6 @@ import {
 } from './data/selectors';
 import { replaceSectionInOutlineIndex, useCourseItemData } from './data/apiHooks';
 import {
-  setSubsectionOrderListQuery,
   setUnitOrderListQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
@@ -68,6 +67,7 @@ import {
   useConfigureUnit,
   usePasteItem,
   useReorderSections,
+  useReorderSubsections,
   useUpdateCourseSectionHighlights,
 } from './data/apiHooks';
 import {
@@ -180,8 +180,11 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   // Effective outline data — prefer React Query cache, fall back to Redux facade
   const effectiveOutlineIndexData = outlineIndexQuery.data || outlineIndexData;
 
-  // Committed sections from query cache (PR 9: primary source), fall back to Redux sectionsList
-  const sections = effectiveOutlineIndexData?.courseStructure?.childInfo?.children || sectionsList;
+  // Committed sections from query cache (PR 9: primary source), fall back to Redux sectionsList.
+  // Note: check .length to avoid empty array (truthy) overriding populated Redux data.
+  const sections = effectiveOutlineIndexData?.courseStructure?.childInfo?.children?.length
+    ? effectiveOutlineIndexData.courseStructure.childInfo.children
+    : sectionsList || [];
 
   // Sync query state to Redux loading status
   useEffect(() => {
@@ -291,6 +294,9 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   // PR 11: Reorder sections mutation hook (declared before callbacks that use it)
   const reorderSectionsMutation = useReorderSections(courseId);
 
+  // PR 12: Reorder subsections mutation hook
+  const reorderSubsectionsMutation = useReorderSubsections(courseId);
+
   // Commit section reorder — keeps preview visible until request settles
   const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
     if (!courseId) {
@@ -307,22 +313,19 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   }, [courseId, reorderSectionsMutation, captureOriginalSections, acceptReorderAndSyncSectionOrder, rollbackReorderPreview]);
 
   // Commit subsection reorder
-  const commitSubsectionReorder = useCallback((
+  const commitSubsectionReorder = useCallback(async (
     sectionId: string,
     prevSectionId: string,
     subsectionListIds: string[],
   ) => {
     captureOriginalSections();
-    dispatch(setSubsectionOrderListQuery(
-      sectionId,
-      prevSectionId,
-      subsectionListIds,
-      rollbackReorderPreview,
-      () => {
-        acceptReorderAndSyncSections(sectionId, prevSectionId);
-      },
-    ));
-  }, [dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderAndSyncSections]);
+    try {
+      await reorderSubsectionsMutation.mutateAsync({ sectionId, prevSectionId, subsectionListIds });
+      acceptReorderPreview();
+    } catch {
+      rollbackReorderPreview();
+    }
+  }, [reorderSubsectionsMutation, captureOriginalSections, acceptReorderPreview, rollbackReorderPreview]);
 
   // Commit unit reorder
   const commitUnitReorder = useCallback((
@@ -363,7 +366,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     }
   }, [visibleSections, courseId, reorderSectionsMutation, rollbackReorderPreview, acceptReorderAndSyncSectionOrder]);
 
-  const updateSubsectionOrderByIndex = useCallback((section: XBlock, moveDetails) => {
+  const updateSubsectionOrderByIndex = useCallback(async (section: XBlock, moveDetails) => {
     const { fn, args, sectionId } = moveDetails;
     if (!args) {
       return;
@@ -374,17 +377,18 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     const [sectionsCopy, newSubsections] = fn(...args);
     if (newSubsections && sectionId) {
       setPreviewSections(sectionsCopy);
-      dispatch(setSubsectionOrderListQuery(
-        sectionId,
-        section.id,
-        newSubsections.map((subsection: XBlock) => subsection.id),
-        rollbackReorderPreview,
-        () => {
-          acceptReorderAndSyncSections(sectionId, section.id);
-        },
-      ));
+      try {
+        await reorderSubsectionsMutation.mutateAsync({
+          sectionId,
+          prevSectionId: section.id,
+          subsectionListIds: newSubsections.map((subsection: XBlock) => subsection.id),
+        });
+        acceptReorderPreview();
+      } catch {
+        rollbackReorderPreview();
+      }
     }
-  }, [visibleSections, dispatch, rollbackReorderPreview, acceptReorderAndSyncSections]);
+  }, [visibleSections, reorderSubsectionsMutation, rollbackReorderPreview, acceptReorderPreview]);
 
   const updateUnitOrderByIndex = useCallback((section: XBlock, moveDetails) => {
     const { fn, args, sectionId, subsectionId } = moveDetails;
