@@ -10,8 +10,11 @@ import {
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
+import moment from 'moment';
+import { getConfig } from '@edx/frontend-platform';
 
 import { RequestStatus } from '@src/data/constants';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
 import type {
   OutlinePageErrors,
   SelectionState,
@@ -36,6 +39,9 @@ import {
   setSectionOrderListQuery,
   setSubsectionOrderListQuery,
   setUnitOrderListQuery,
+  fetchCourseBestPracticesQuery,
+  fetchCourseLaunchQuery,
+  syncDiscussionsTopics,
 } from './data/thunk';
 import {
   courseOutlineIndexQueryKey,
@@ -48,7 +54,31 @@ import {
   updateCourseActions,
   updateOutlineIndexLoadingStatus,
   updateStatusBar,
+  updateReindexLoadingStatus,
+  updateSavingStatus,
+  dismissError as dismissErrorSlice,
+  deleteSection,
+  deleteSubsection,
+  deleteUnit,
 } from './data/slice';
+import {
+  useDeleteCourseItem,
+  useDuplicateItem,
+  useConfigureSection,
+  useConfigureSubsection,
+  useConfigureUnit,
+  usePasteItem,
+  useUpdateCourseSectionHighlights,
+} from './data/apiHooks';
+import {
+  enableCourseHighlightsEmails,
+  setVideoSharingOption,
+  dismissNotification,
+  restartIndexingOnCourse,
+} from './data/api';
+import { getErrorDetails } from './utils/getErrorDetails';
+import { showToastOutsideReact, closeToastOutsideReact } from '@src/generic/toast-context';
+import { getBlockType } from '@src/generic/key-utils';
 
 import { buildSelectionState } from './state/selection';
 import {
@@ -100,6 +130,19 @@ type CourseOutlineStateContextData = {
   commitSectionReorder: (sectionListIds: string[]) => void;
   commitSubsectionReorder: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
   commitUnitReorder: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => void;
+
+  // Mutation methods (PR 10)
+  deleteCurrentSelection: (selection: SelectionState) => Promise<void>;
+  duplicateCurrentSelection: (selection: SelectionState) => void;
+  configureCurrentSelection: (selection: SelectionState, variables: any) => void;
+  pasteClipboardContent: (parentLocator: string, subsectionId?: string, sectionId?: string) => void;
+  updateHighlightsForCurrentSelection: (selection: SelectionState, highlights: Record<string, string | false>) => void;
+  enableHighlightsEmails: () => Promise<void>;
+  changeVideoSharingOption: (value: string) => void;
+  dismissNotification: () => void;
+  dismissError: (key: string) => void;
+  reindexCourse: () => Promise<void>;
+  setSavingStatus: (status: string) => void;
 };
 
 const CourseOutlineStateContext = createContext<CourseOutlineStateContextData | undefined>(undefined);
@@ -409,6 +452,209 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     }));
   }, []);
 
+  // --- PR 10: Mutation hooks ---
+  const deleteMutation = useDeleteCourseItem();
+  const { mutate: duplicateItem } = useDuplicateItem(courseId);
+  const { mutate: configureSection } = useConfigureSection();
+  const { mutate: configureSubsection } = useConfigureSubsection();
+  const { mutate: configureUnit } = useConfigureUnit();
+  const { mutate: pasteItem } = usePasteItem(courseId);
+  const { mutate: updateSectionHighlights } = useUpdateCourseSectionHighlights();
+
+  // Helper: sync Redux sectionsList into React Query outline index cache
+  const syncSectionsToOutlineIndex = useCallback(() => {
+    const state = store.getState();
+    const sectionsFromRedux = getSectionsList(state);
+    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+      if (!old?.courseStructure?.childInfo) return old;
+      return {
+        ...old,
+        courseStructure: {
+          ...old.courseStructure,
+          childInfo: {
+            ...old.courseStructure.childInfo,
+            children: sectionsFromRedux,
+          },
+        },
+      };
+    });
+  }, [store, queryClient, courseId]);
+
+  // --- PR 10: Mutation methods ---
+
+  const deleteCurrentSelection = useCallback(async (selection: SelectionState) => {
+    if (!selection?.currentId) {
+      return;
+    }
+    const category = getBlockType(selection.currentId);
+    switch (category) {
+      case 'chapter':
+        await deleteMutation.mutateAsync(
+          { itemId: selection.currentId },
+          { onSettled: () => dispatch(deleteSection({ itemId: selection.currentId })) }, // TODO PR 14: remove Redux facade
+        );
+        break;
+      case 'sequential':
+        await deleteMutation.mutateAsync(
+          { itemId: selection.currentId, sectionId: selection.sectionId },
+          { onSettled: () => dispatch(deleteSubsection({ itemId: selection.currentId, sectionId: selection.sectionId })) }, // TODO PR 14: remove Redux facade
+        );
+        break;
+      case 'vertical':
+        await deleteMutation.mutateAsync(
+          {
+            itemId: selection.currentId,
+            subsectionId: selection.subsectionId,
+            sectionId: selection.sectionId,
+          },
+          { onSettled: () => dispatch(deleteUnit({ itemId: selection.currentId, subsectionId: selection.subsectionId, sectionId: selection.sectionId })) }, // TODO PR 14: remove Redux facade
+        );
+        break;
+      default:
+        throw new Error(`Unrecognized category ${category}`);
+    }
+    // Sync Redux sectionsList (updated by deleteSection/deleteSubsection/deleteUnit) into React Query cache
+    syncSectionsToOutlineIndex();
+  }, [deleteMutation, dispatch, queryClient, courseId, syncSectionsToOutlineIndex]);
+
+  const duplicateCurrentSelection = useCallback((selection: SelectionState) => {
+    if (!selection?.currentId) {
+      return;
+    }
+    const category = getBlockType(selection.currentId);
+    let parentId: string | undefined;
+    if (category === 'chapter') {
+      parentId = effectiveOutlineIndexData?.courseStructure?.id || courseId;
+    } else if (category === 'sequential') {
+      parentId = selection.sectionId;
+    } else if (category === 'vertical') {
+      parentId = selection.subsectionId;
+    }
+    if (parentId) {
+      duplicateItem({
+        itemId: selection.currentId,
+        parentId,
+        sectionId: selection.sectionId,
+        subsectionId: selection.subsectionId,
+      });
+    }
+  }, [duplicateItem, effectiveOutlineIndexData, queryClient, courseId]);
+
+  const configureCurrentSelection = useCallback((selection: SelectionState, variables: any) => {
+    if (!selection?.currentId) {
+      return;
+    }
+    const category = getBlockType(selection.currentId);
+    switch (category) {
+      case 'chapter':
+        configureSection({ sectionId: selection.sectionId, ...variables });
+        break;
+      case 'sequential':
+        configureSubsection({ itemId: selection.currentId, sectionId: selection.sectionId, ...variables });
+        break;
+      case 'vertical':
+        configureUnit({ unitId: selection.currentId, sectionId: selection.sectionId, ...variables });
+        break;
+      default:
+        throw new Error('Unsupported block type');
+    }
+  }, [configureSection, configureSubsection, configureUnit]);
+
+  const pasteClipboardContent = useCallback((parentLocator: string, subsectionId?: string, sectionId?: string) => {
+    pasteItem({ parentLocator, subsectionId, sectionId });
+  }, [pasteItem]);
+
+  const updateHighlightsForCurrentSelection = useCallback((
+    selection: SelectionState,
+    highlights: Record<string, string | false>,
+  ) => {
+    if (!selection?.currentId) {
+      return;
+    }
+    const dataToSend = Object.values(highlights).filter(Boolean) as string[];
+    updateSectionHighlights({ sectionId: selection.currentId, highlights: dataToSend });
+  }, [updateSectionHighlights]);
+
+  const enableHighlightsEmails = useCallback(async () => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING })); // TODO PR 14: remove Redux facade
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
+    try {
+      await enableCourseHighlightsEmails(courseId);
+      queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL })); // TODO PR 14: remove Redux facade
+    } catch {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED })); // TODO PR 14: remove Redux facade
+    } finally {
+      closeToastOutsideReact();
+    }
+  }, [dispatch, courseId, queryClient]);
+
+  const changeVideoSharingOption = useCallback(async (value: string) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING })); // TODO PR 14: remove Redux facade
+    showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
+    try {
+      await setVideoSharingOption(courseId, value);
+      dispatch(updateStatusBar({ videoSharingOptions: value })); // TODO PR 14: remove Redux facade
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL })); // TODO PR 14: remove Redux facade
+    } catch {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED })); // TODO PR 14: remove Redux facade
+    } finally {
+      closeToastOutsideReact();
+    }
+  }, [dispatch, courseId]);
+
+  const handleDismissNotification = useCallback(async () => {
+    const dismissUrl = effectiveOutlineIndexData?.notificationDismissUrl;
+    if (!dismissUrl) {
+      return;
+    }
+    const url = `${getConfig().STUDIO_BASE_URL}${dismissUrl}`;
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING })); // TODO PR 14: remove Redux facade
+    try {
+      await dismissNotification(url);
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL })); // TODO PR 14: remove Redux facade
+    } catch {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED })); // TODO PR 14: remove Redux facade
+    }
+  }, [dispatch, effectiveOutlineIndexData]);
+
+  const dismissError = useCallback((key: string) => {
+    dispatch(dismissErrorSlice(key)); // TODO PR 14: remove Redux facade
+  }, [dispatch]);
+
+  const reindexCourse = useCallback(async () => {
+    const link = effectiveOutlineIndexData?.reindexLink;
+    if (!link) {
+      return;
+    }
+    dispatch(updateReindexLoadingStatus({ status: RequestStatus.IN_PROGRESS })); // TODO PR 14: remove Redux facade
+    try {
+      await restartIndexingOnCourse(link);
+      dispatch(updateReindexLoadingStatus({ status: RequestStatus.SUCCESSFUL })); // TODO PR 14: remove Redux facade
+    } catch (error) {
+      dispatch(updateReindexLoadingStatus({ // TODO PR 14: remove Redux facade
+        status: RequestStatus.FAILED,
+        errors: getErrorDetails(error),
+      }));
+    }
+  }, [dispatch, effectiveOutlineIndexData]);
+
+  const setSavingStatus = useCallback((status: string) => {
+    dispatch(updateSavingStatus({ status })); // TODO PR 14: remove Redux facade
+  }, [dispatch]);
+
+  // Mount effects moved from hooks.jsx (PR 10)
+  useEffect(() => {
+    dispatch(fetchCourseBestPracticesQuery({ courseId }));
+    dispatch(fetchCourseLaunchQuery({ courseId }));
+  }, [dispatch, courseId]);
+
+  useEffect(() => {
+    if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
+      dispatch(syncDiscussionsTopics(courseId));
+    }
+  }, [createdOn, courseId, dispatch]);
+
   const context = useMemo<CourseOutlineStateContextData>(() => ({
     outlineIndexData: effectiveOutlineIndexData,
     courseName: effectiveOutlineIndexData?.courseStructure?.displayName,
@@ -442,6 +688,18 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     commitSectionReorder,
     commitSubsectionReorder,
     commitUnitReorder,
+    // PR 10: Mutation methods
+    deleteCurrentSelection,
+    duplicateCurrentSelection,
+    configureCurrentSelection,
+    pasteClipboardContent,
+    updateHighlightsForCurrentSelection,
+    enableHighlightsEmails,
+    changeVideoSharingOption,
+    dismissNotification: handleDismissNotification,
+    dismissError,
+    reindexCourse,
+    setSavingStatus,
   }), [
     effectiveOutlineIndexData,
     courseId,
@@ -470,6 +728,18 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     commitSectionReorder,
     commitSubsectionReorder,
     commitUnitReorder,
+    // PR 10: Mutation methods
+    deleteCurrentSelection,
+    duplicateCurrentSelection,
+    configureCurrentSelection,
+    pasteClipboardContent,
+    updateHighlightsForCurrentSelection,
+    enableHighlightsEmails,
+    changeVideoSharingOption,
+    handleDismissNotification,
+    dismissError,
+    reindexCourse,
+    setSavingStatus,
   ]);
 
   return (

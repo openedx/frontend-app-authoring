@@ -13,7 +13,6 @@ import {
 } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePasteFileNotices } from '@src/course-outline/data/apiHooks';
 import { AlertAgreementGatedFeature } from '@src/generic/agreement-gated-feature';
@@ -26,7 +25,6 @@ import { RequestStatus } from '../../data/constants';
 import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import AlertMessage from '../../generic/alert-message';
 import AlertProctoringError from '../../generic/AlertProctoringError';
-import { dismissError } from '../data/slice';
 import { buildApiErrorMessages } from './buildApiErrorMessages';
 import messages from './messages';
 
@@ -42,9 +40,9 @@ const PageAlerts = ({
   advanceSettingsUrl,
   savingStatus,
   errors,
+  dismissError,
 }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const discussionAlertDismissKey = `discussionAlertDismissed-${courseId}`;
   const [showConfigAlert, setShowConfigAlert] = useState(true);
@@ -362,7 +360,7 @@ const PageAlerts = ({
               isError
               hideHeading
               key={msgObj.key}
-              dismissError={() => dispatch(dismissError(msgObj.key))}
+              dismissError={() => dismissError(msgObj.key)}
             >
               <Alert.Heading>{msgObj.title}</Alert.Heading>
               {msgObj.desc}
@@ -424,6 +422,7 @@ PageAlerts.defaultProps = {
   advanceSettingsUrl: '',
   savingStatus: '',
   errors: {},
+  dismissError: () => {},
 };
 
 PageAlerts.propTypes = {
@@ -453,6 +452,7 @@ PageAlerts.propTypes = {
   mfeProctoredExamSettingsUrl: PropTypes.string,
   advanceSettingsUrl: PropTypes.string,
   savingStatus: PropTypes.string,
+  dismissError: PropTypes.func,
   errors: PropTypes.shape({
     outlineIndexApi: PropTypes.shape({
       data: PropTypes.string,

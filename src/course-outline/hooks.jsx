@@ -1,42 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
-import { getConfig } from '@edx/frontend-platform';
 
-import moment from 'moment';
 import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
 import { RequestStatus } from '@src/data/constants';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineState } from './CourseOutlineStateContext';
 import { useCourseOutlineContext } from './CourseOutlineContext';
-import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
-import {
-  useConfigureSection,
-  useConfigureSubsection,
-  useConfigureUnit,
-  usePasteItem,
-  useUpdateCourseSectionHighlights,
-} from '@src/course-outline/data/apiHooks';
-import { PUBLISH_TYPES } from '@src/course-unit/constants';
+import { ContainerType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from './constants';
-import {
-  updateSavingStatus,
-} from './data/slice';
-import {
-  enableCourseHighlightsEmailsQuery,
-  fetchCourseBestPracticesQuery,
-  fetchCourseLaunchQuery,
-  fetchCourseReindexQuery,
-  setVideoSharingOptionQuery,
-  dismissNotificationQuery,
-  syncDiscussionsTopics,
-} from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
-  const dispatch = useDispatch();
   const { currentUnlinkModalData, closeUnlinkModal } = useCourseAuthoringContext();
   const {
     handleAddBlock,
@@ -45,18 +22,8 @@ const useCourseOutline = ({ courseId }) => {
     isDeleteModalOpen,
     openDeleteModal,
     closeDeleteModal,
-    getHandleDeleteItemSubmit,
-    handleDuplicateSectionSubmit,
-    handleDuplicateSubsectionSubmit,
-    handleDuplicateUnitSubmit,
   } = useCourseOutlineContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
-
-  const handleDeleteItemSubmit = getHandleDeleteItemSubmit(() => {
-    if (selectedContainerState.currentId === currentSelection?.currentId) {
-      clearSelection();
-    }
-  });
 
   const {
     outlineIndexData,
@@ -67,6 +34,17 @@ const useCourseOutline = ({ courseId }) => {
     courseActions,
     isCustomRelativeDatesActive,
     errors,
+    // PR 10: Mutation methods from state context
+    deleteCurrentSelection,
+    duplicateCurrentSelection,
+    configureCurrentSelection,
+    pasteClipboardContent: pasteViaState,
+    updateHighlightsForCurrentSelection,
+    enableHighlightsEmails,
+    changeVideoSharingOption,
+    dismissNotification,
+    reindexCourse,
+    setSavingStatus,
   } = useCourseOutlineState();
   const {
     reindexLink,
@@ -92,13 +70,8 @@ const useCourseOutline = ({ courseId }) => {
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
-  const { mutate: pasteClipboardContent } = usePasteItem(courseId);
   const handlePasteClipboardClick = (parentLocator, subsectionId, sectionId) => {
-    pasteClipboardContent({
-      parentLocator,
-      subsectionId,
-      sectionId,
-    });
+    pasteViaState(parentLocator, subsectionId, sectionId);
   };
 
   const headerNavigationsActions = {
@@ -113,8 +86,7 @@ const useCourseOutline = ({ courseId }) => {
     handleReIndex: () => {
       setDisableReindexButton(true);
       setShowSuccessAlert(false);
-
-      dispatch(fetchCourseReindexQuery(reindexLink)).then(() => {
+      reindexCourse().then(() => {
         setDisableReindexButton(false);
       });
     },
@@ -124,13 +96,21 @@ const useCourseOutline = ({ courseId }) => {
     lmsLink,
   };
 
+  const handleDeleteItemSubmit = async () => {
+    await deleteCurrentSelection(currentSelection);
+    closeDeleteModal();
+    if (selectedContainerState.currentId === currentSelection?.currentId) {
+      clearSelection();
+    }
+  };
+
   const handleEnableHighlightsSubmit = () => {
-    dispatch(enableCourseHighlightsEmailsQuery(courseId));
+    enableHighlightsEmails();
     closeEnableHighlightsModal();
   };
 
   const handleInternetConnectionFailed = () => {
-    dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    setSavingStatus(RequestStatus.FAILED);
   };
 
   const handleOpenHighlightsModal = (section) => {
@@ -141,16 +121,8 @@ const useCourseOutline = ({ courseId }) => {
     openHighlightsModal();
   };
 
-  const {
-    mutate: updateCourseSectionHighlights,
-  } = useUpdateCourseSectionHighlights();
   const handleHighlightsFormSubmit = (highlights) => {
-    const dataToSend = Object.values(highlights).filter(Boolean);
-    updateCourseSectionHighlights({
-      sectionId: currentSelection?.currentId,
-      highlights: dataToSend,
-    });
-
+    updateHighlightsForCurrentSelection(currentSelection, highlights);
     closeHighlightsModal();
   };
 
@@ -180,58 +152,18 @@ const useCourseOutline = ({ courseId }) => {
     });
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
 
-  const { mutate: configureCourseSection } = useConfigureSection();
-  const { mutate: configureCourseSubsection } = useConfigureSubsection();
-  const { mutate: configureCourseUnit } = useConfigureUnit();
   const handleConfigureItemSubmit = (variables) => {
-    const category = getBlockType(currentSelection.currentId);
-    switch (category) {
-      case COURSE_BLOCK_NAMES.chapter.id:
-        configureCourseSection({
-          sectionId: currentSelection?.sectionId,
-          ...variables,
-        });
-        break;
-      case COURSE_BLOCK_NAMES.sequential.id:
-        configureCourseSubsection({
-          itemId: currentSelection?.currentId,
-          sectionId: currentSelection?.sectionId,
-          ...variables,
-        });
-        break;
-      case COURSE_BLOCK_NAMES.vertical.id:
-        configureCourseUnit({
-          unitId: currentSelection?.currentId,
-          sectionId: currentSelection?.sectionId,
-          type: PUBLISH_TYPES.republish,
-          ...variables,
-        });
-        break;
-      default:
-        // istanbul ignore next
-        throw new Error('Unsupported block type');
-    }
+    configureCurrentSelection(currentSelection, variables);
     handleConfigureModalClose();
   };
 
   const handleVideoSharingOptionChange = (value) => {
-    dispatch(setVideoSharingOptionQuery(courseId, value));
+    changeVideoSharingOption(value);
   };
 
   const handleDismissNotification = () => {
-    dispatch(dismissNotificationQuery(`${getConfig().STUDIO_BASE_URL}${notificationDismissUrl}`));
+    dismissNotification();
   };
-
-  useEffect(() => {
-    dispatch(fetchCourseBestPracticesQuery({ courseId }));
-    dispatch(fetchCourseLaunchQuery({ courseId }));
-  }, [courseId]);
-
-  useEffect(() => {
-    if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
-      dispatch(syncDiscussionsTopics(courseId));
-    }
-  }, [createdOn, courseId]);
 
   useEffect(() => {
     setShowSuccessAlert(reIndexLoadingStatus === RequestStatus.SUCCESSFUL);
@@ -269,9 +201,9 @@ const useCourseOutline = ({ courseId }) => {
     closeDeleteModal,
     openDeleteModal,
     handleDeleteItemSubmit,
-    handleDuplicateSectionSubmit,
-    handleDuplicateSubsectionSubmit,
-    handleDuplicateUnitSubmit,
+    handleDuplicateSectionSubmit: () => duplicateCurrentSelection(currentSelection),
+    handleDuplicateSubsectionSubmit: () => duplicateCurrentSelection(currentSelection),
+    handleDuplicateUnitSubmit: () => duplicateCurrentSelection(currentSelection),
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,

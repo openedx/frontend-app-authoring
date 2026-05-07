@@ -442,6 +442,7 @@ export const useDuplicateItem = (courseKey: string) => {
         const duplicatedItem = await getCourseItem(data.locator);
         insertDuplicatedSectionInOutlineIndex(queryClient, courseKey, variables.itemId, duplicatedItem);
       }
+
       // scroll to newly added block
       setData({ id: data.locator });
     },

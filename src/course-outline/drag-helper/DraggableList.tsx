@@ -392,9 +392,9 @@ const DraggableList = ({
       <DragContextProvider activeId={activeId} overId={currentOverId}>
         {children}
       </DragContextProvider>
-      {createPortal(
+      {activeId && createPortal(
         <DragOverlay>
-          {draggedItemClone && activeId ? draggedItemClone : null}
+          {draggedItemClone ? draggedItemClone : null}
         </DragOverlay>,
         document.body,
       )}

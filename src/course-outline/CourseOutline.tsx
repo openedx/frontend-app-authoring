@@ -79,6 +79,7 @@ const CourseOutline = () => {
     commitSectionReorder,
     commitSubsectionReorder,
     commitUnitReorder,
+    dismissError,
   } = useCourseOutlineState();
 
   const {
@@ -176,6 +177,7 @@ const CourseOutline = () => {
           advanceSettingsUrl={advanceSettingsUrl}
           savingStatus={savingStatus}
           errors={errors}
+          dismissError={dismissError}
         />
       </Container>
     );
@@ -200,6 +202,7 @@ const CourseOutline = () => {
             advanceSettingsUrl={advanceSettingsUrl}
             savingStatus={savingStatus}
             errors={errors}
+            dismissError={dismissError}
           />
           <LegacyLibContentBlockAlert courseId={courseId} />
           <TransitionReplace>

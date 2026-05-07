@@ -336,7 +336,7 @@ describe('<CourseOutline />', () => {
     const draggableButton = sectionsDraggers[1];
 
     axiosMock
-      .onPut(getCourseBlockApiUrl(section.id))
+      .onPut(getCourseBlockApiUrl(courseId))
       .reply(200, { dummy: 'value' });
 
     const section1 = store.getState().courseOutline.sectionsList[0].id;
@@ -363,7 +363,7 @@ describe('<CourseOutline />', () => {
     const draggableButton = sectionsDraggers[1];
 
     axiosMock
-      .onPut(getCourseBlockApiUrl(section.id))
+      .onPut(getCourseBlockApiUrl(courseId))
       .reply(500);
 
     const section1 = store.getState().courseOutline.sectionsList[0].id;
@@ -847,20 +847,49 @@ describe('<CourseOutline />', () => {
         .reply(200, {
           ...section,
         });
+      // Update outline index mock to reflect the mutation so the
+      // duplicateItem.onSuccess refetchQueries gets correct data.
+      const updatedOutlineChildren = (() => {
+        if (elementName === 'section') {
+          // For section duplication, append the new section (with updated id).
+          const dupSection = { ...courseOutlineIndexMock.courseStructure.childInfo.children.find(
+            (s) => s.id === item.id,
+          ), id: duplicatedItemId };
+          return [...courseOutlineIndexMock.courseStructure.childInfo.children, dupSection];
+        }
+        // For unit/subsection, replace the mutated section in place.
+        return courseOutlineIndexMock.courseStructure.childInfo.children.map(
+          (s) => (s.id === section.id ? section : s),
+        );
+      })();
+      axiosMock
+        .onGet(getCourseOutlineIndexApiUrl(courseId))
+        .reply(200, {
+          ...courseOutlineIndexMock,
+          courseStructure: {
+            ...courseOutlineIndexMock.courseStructure,
+            childInfo: {
+              ...courseOutlineIndexMock.courseStructure.childInfo,
+              children: updatedOutlineChildren,
+            },
+          },
+        });
 
       const menu = await within(element).findByTestId(`${elementName}-card-header__menu-button`);
       fireEvent.click(menu);
       const duplicateButton = await within(element).findByTestId(`${elementName}-card-header__menu-duplicate-button`);
       await act(async () => fireEvent.click(duplicateButton));
-      if (parentElement) {
-        expect(
-          await within(parentElement).findAllByTestId(`${elementName}-card`),
-        ).toHaveLength(expectedLength);
-      } else {
-        expect(
-          await findAllByTestId(`${elementName}-card`),
-        ).toHaveLength(expectedLength);
-      }
+      await waitFor(() => {
+        if (parentElement) {
+          expect(
+            within(parentElement).queryAllByTestId(`${elementName}-card`),
+          ).toHaveLength(expectedLength);
+        } else {
+          expect(
+            screen.queryAllByTestId(`${elementName}-card`),
+          ).toHaveLength(expectedLength);
+        }
+      });
     };
 
     // duplicate unit, subsection and then section in order.

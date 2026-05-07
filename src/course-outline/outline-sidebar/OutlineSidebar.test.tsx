@@ -22,6 +22,11 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseItemData: jest.fn().mockReturnValue({ data: {} }),
   useDuplicateItem: jest.fn().mockReturnValue({ duplicateItem: jest.fn() }),
   useDeleteCourseItem: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
+  useConfigureSection: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  useConfigureSubsection: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  useConfigureUnit: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  usePasteItem: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  useUpdateCourseSectionHighlights: jest.fn().mockReturnValue({ mutate: jest.fn() }),
 }));
 
 const courseId = '123';
