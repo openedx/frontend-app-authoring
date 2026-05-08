@@ -28,18 +28,20 @@ const ShowcaseClassEditor = () => {
     // Toggle the 'showcase' class based on the checkbox state
     const filteredList = classList.filter(c => c !== 'showcase');
     const newList = event.target.checked
-      ? [...filteredList, "showcase"]
+      ? [...filteredList, 'showcase']
       : filteredList;
     await formik.setFieldValue('classList', newList);
   };
 
   return (
     <Form.Group>
-      <Form.Checkbox
-        checked={checked}
-        onChange={handleChange}
-      />
-      <Form.Label>Showcase Image</Form.Label>
+      <Form.Label>
+        <Form.Checkbox
+          checked={checked}
+          onChange={handleChange}
+        />
+        Showcase Image
+      </Form.Label>
     </Form.Group>
   );
 };
@@ -53,7 +55,7 @@ const config = {
           widget: {
             id: 'showcase_class_editor',
             type: 'DIRECT_PLUGIN',
-            RenderWidget: ShowCaseClassEditor,
+            RenderWidget: ShowcaseClassEditor,
           },
         },
       ],

@@ -39,7 +39,7 @@ interface ImageSettingsModalInternalProps extends ImageSettingsModalCommonProps 
 }
 
 interface ImageSettingsModalProps extends ImageSettingsModalCommonProps {
-  saveToEditor: (config: AltText & { dimensions: ImageDimensions; classList?: string[] }) => void;
+  saveToEditor: (config: AltText & { dimensions: ImageDimensions; classList?: string[]; }) => void;
 }
 
 export interface ImageSettingsModalFormProps<T extends ImageConfig = ImageConfig>

@@ -13,12 +13,12 @@
 This slot wraps the image settings modal. It can be used to modify the form's initial values, validation schema, or to wrap the entire modal component. You can also use this slot to add validation and initial values to the form. The `processValues` function is called to clean up values being submitted.
 
 Combined with `ImageAdditionalSettingsSlot`, this slot allows extending the image editing capabilities of the image settings modal.
- 
+
 Since this slot wraps a modal that uses a React portal, you can't use it to wrap the modal in another div etc.
 
 ## Example
 
-The following `env.config.jsx` will modify the image settings modal to log the values being submitted. 
+The following `env.config.jsx` will modify the image settings modal to log the values being submitted.
 
 ```jsx
 import { PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
