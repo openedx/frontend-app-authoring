@@ -18,7 +18,7 @@ export const useCourseOutlineIndex = (
   {
     enabled = true,
     initialData,
-    refetchOnMount = !initialData,
+    refetchOnMount = true,
   }: UseCourseOutlineIndexOptions = {},
 ) => useQuery<CourseOutline>({
   queryKey: courseOutlineIndexQueryKey(courseId),

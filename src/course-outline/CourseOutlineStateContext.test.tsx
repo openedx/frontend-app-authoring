@@ -1,10 +1,11 @@
 import React from 'react';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import initializeStore from '@src/store';
+import { initializeMocks } from '@src/testUtils';
 import { RequestStatus } from '@src/data/constants';
 import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
 import {
@@ -18,6 +19,8 @@ import {
   CourseOutlineStateProvider,
   useCourseOutlineState,
 } from './CourseOutlineStateContext';
+import { courseOutlineIndexQueryKey } from './data/outlineIndexQuery';
+import { getCourseOutlineIndexApiUrl } from './data/api';
 
 let currentItemData;
 const mockOutlineIndexData = {
@@ -35,32 +38,37 @@ jest.mock('./data/apiHooks', () => ({
   useCourseItemData: () => ({ data: currentItemData }),
 }));
 
+// Mutable mock for courseId to test navigation behavior
+let mockCourseId = 'block-v1:edX+DemoX+Demo_Course+type@course+block@course';
+
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
-    courseId: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course',
+    courseId: mockCourseId,
     openUnitPage: jest.fn(),
   }),
 }));
 
 describe('CourseOutlineStateContext', () => {
-  it('exposes outline state and selection actions from legacy sources', () => {
-    initializeMockApp({
-      authenticatedUser: {
+  beforeEach(() => {
+    // Reset courseId to default before each test
+    mockCourseId = 'block-v1:edX+DemoX+Demo_Course+type@course+block@course';
+  });
+
+  it('exposes outline state and selection actions from legacy sources', async () => {
+    const { reduxStore: store, axiosMock, queryClient } = initializeMocks({
+      user: {
         userId: 1,
         username: 'test-user',
-        administrator: true,
-        roles: [],
       },
     });
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
     currentItemData = null;
-    const store = initializeStore();
     store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
     store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     store.dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     store.dispatch(updateStatusBar({ videoSharingOptions: 'by-course' }));
     store.dispatch(updateCourseActions({ allowMoveDown: true }));
 
-    const queryClient = new QueryClient();
     const wrapper = ({ children }: { children?: React.ReactNode }) => (
       <AppProvider store={store}>
         <QueryClientProvider client={queryClient}>
@@ -72,12 +80,21 @@ describe('CourseOutlineStateContext', () => {
     );
 
     const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+
+    // Wait for background fetch to settle (refetchOnMount=true)
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
     const lastSection = mockOutlineIndexData.courseStructure.childInfo.children.at(-1)!;
     const lastSubsection = lastSection.childInfo.children.at(-1)!;
 
     expect(result.current.courseName).toBe(mockOutlineIndexData.courseStructure.displayName);
     expect(result.current.courseUsageKey).toBe(mockOutlineIndexData.courseStructure.id);
-    expect(result.current.sections).toEqual(mockOutlineIndexData.courseStructure.childInfo.children);
+    expect(result.current.sections).toHaveLength(mockOutlineIndexData.courseStructure.childInfo.children.length);
+    expect(result.current.sections.map(section => section.id)).toEqual(
+      mockOutlineIndexData.courseStructure.childInfo.children.map(section => section.id),
+    );
     expect(result.current.savingStatus).toBe(RequestStatus.PENDING);
     expect(result.current.statusBarData.videoSharingOptions).toBe('by-course');
     expect(result.current.courseActions.allowMoveDown).toBe(true);
@@ -133,5 +150,86 @@ describe('CourseOutlineStateContext', () => {
     });
     expect(result.current.currentSelection).toBeUndefined();
     expect(result.current.currentItemData).toBeNull();
+  });
+
+  describe('course navigation', () => {
+    const courseBId = 'block-v1:Other+Course+type@course+block@other_course';
+
+    it('resets sections on courseId change, does not show stale Redux data', () => {
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 1,
+          username: 'test-user',
+        },
+      });
+      currentItemData = null;
+      const store = initializeStore();
+      // Pre-load Redux with course A data and successful status (simulates
+      // navigation from already-loaded course A).
+      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
+      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+
+      // Set courseId to course B (simulating navigation)
+      mockCourseId = courseBId;
+
+      const queryClient = new QueryClient();
+      const wrapper = ({ children }: { children?: React.ReactNode }) => (
+        <AppProvider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <CourseOutlineStateProvider>
+              {children}
+            </CourseOutlineStateProvider>
+          </QueryClientProvider>
+        </AppProvider>
+      );
+
+      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+
+      // While query loads for course B, sections should be empty
+      // NOT the stale course A sections from Redux
+      expect(result.current.sections).toEqual([]);
+      // isLoading should be true since React Query is fetching (no API mock)
+      expect(result.current.isLoading).toBe(true);
+      // courseName should be undefined while loading (no data for course B yet)
+      expect(result.current.courseName).toBeUndefined();
+    });
+
+    it('does not pass stale Redux data as initialData to React Query for different course', () => {
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 1,
+          username: 'test-user',
+        },
+      });
+      currentItemData = null;
+      const store = initializeStore();
+      // Pre-load Redux with course A data
+      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
+
+      // Set courseId to course B
+      mockCourseId = courseBId;
+
+      const queryClient = new QueryClient();
+      const wrapper = ({ children }: { children?: React.ReactNode }) => (
+        <AppProvider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <CourseOutlineStateProvider>
+              {children}
+            </CourseOutlineStateProvider>
+          </QueryClientProvider>
+        </AppProvider>
+      );
+
+      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+
+      // courseOutlineIndexQueryKey(courseBId) = ['courseOutline', courseBId, 'index']
+      // Query cache for course B should be empty until fetch resolves
+      // (no initialData was passed for course B)
+      const courseBQueryData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseBId));
+      expect(courseBQueryData).toBeUndefined();
+
+      // Query for course B should be in pending state (fetching)
+      expect(result.current.isLoading).toBe(true);
+    });
   });
 });

@@ -204,6 +204,38 @@ describe('<CourseOutline />', () => {
     expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
   });
 
+  it('renders sections from React Query without pre-loading Redux (page refresh scenario)', async () => {
+    // Create fresh mock state — no pre-loaded Redux data, empty React Query cache.
+    ({ reduxStore: store, axiosMock, queryClient } = initializeMocks());
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, courseOutlineIndexMock);
+    axiosMock
+      .onGet(getCourseBestPracticesApiUrl({
+        courseId,
+        excludeGraded: true,
+        all: true,
+      }))
+      .reply(200, courseBestPracticesMock);
+    axiosMock
+      .onGet(getCourseLaunchApiUrl({
+        courseId,
+        gradedOnly: true,
+        validateOras: true,
+        all: true,
+      }))
+      .reply(200, courseLaunchMock);
+
+    renderComponent();
+
+    // Should show sections, not EmptyPlaceholder
+    const sectionCards = await screen.findAllByTestId('section-card');
+    expect(sectionCards.length).toBe(
+      courseOutlineIndexMock.courseStructure.childInfo.children.length,
+    );
+    expect(screen.queryByTestId('empty-placeholder')).not.toBeInTheDocument();
+  });
+
   it('logs an error when syncDiscussionsTopics encounters an API failure', async () => {
     axiosMock
       .onPost(createDiscussionsTopicsUrl(courseId))

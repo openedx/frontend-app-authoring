@@ -12,6 +12,7 @@ import {
   CourseOutlineStateProvider,
   useCourseOutlineState,
 } from './CourseOutlineStateContext';
+import { useCourseOutline } from './hooks.jsx';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
@@ -20,6 +21,17 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId,
     openUnitPage: jest.fn(),
+  }),
+}));
+
+jest.mock('./outline-sidebar/OutlineSidebarContext', () => ({
+  ...jest.requireActual('./outline-sidebar/OutlineSidebarContext'),
+  useOutlineSidebarContext: () => ({
+    selectedContainerState: undefined,
+    clearSelection: jest.fn(),
+    isCurrentFlowOn: undefined,
+    currentFlow: undefined,
+    startCurrentFlow: jest.fn(),
   }),
 }));
 
@@ -33,10 +45,31 @@ const Probe = () => {
   return <div>{courseName}</div>;
 };
 
+// Probe that exercises the useCourseOutline hook (hooks.jsx) to verify it does
+// not crash when outlineIndexData is undefined during initial load or
+// course navigation.
+const OutlineCrashGuard = () => {
+  useCourseOutline({ courseId });
+  return <div data-testid="crash-guard">ok</div>;
+};
+
+const ProbeSections = () => {
+  const { sections } = useCourseOutlineState();
+  return <div data-testid="sections-count">{sections.length}</div>;
+};
+
 const renderComponent = () => render(
   <CourseOutlineStateProvider>
     <CourseOutlineProvider>
       <Probe />
+    </CourseOutlineProvider>
+  </CourseOutlineStateProvider>,
+);
+
+const renderSectionsComponent = () => render(
+  <CourseOutlineStateProvider>
+    <CourseOutlineProvider>
+      <ProbeSections />
     </CourseOutlineProvider>
   </CourseOutlineStateProvider>,
 );
@@ -78,5 +111,40 @@ describe('CourseOutlineProvider outline index query sync', () => {
       expect(store.getState().courseOutline.loadingStatus.outlineIndexLoadingStatus).toBe(RequestStatus.DENIED);
     });
     expect(store.getState().courseOutline.errors.outlineIndexApi).toBeNull();
+  });
+
+  it('derives sections from React Query data while Redux is still empty (page refresh scenario)', async () => {
+    // Simulate page refresh: Redux starts empty (no pre-loaded data),
+    // React Query fetches and returns valid children.
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseId)).reply(200, courseOutlineIndexMock);
+
+    renderSectionsComponent();
+
+    // ProbeSections renders sections.length. Once query succeeds the value should be non-zero.
+    await waitFor(() => {
+      expect(screen.getByTestId('sections-count').textContent).toBe(
+        String(courseOutlineIndexMock.courseStructure.childInfo.children.length),
+      );
+    });
+
+    // Redux sectionsList is still the initial empty state at this point
+    // (Effect B hasn't synced yet or is batched — but sections derivation
+    //  from React Query data should already be correct).
+  });
+
+  it('useCourseOutline does not crash when outlineIndexData is undefined (initial load)', async () => {
+    // No API mock = query stays loading with no data.
+    // Redux starts empty (outlineIndexData: {}), so reduxDataMatchesCourse
+    // is false. effectiveOutlineIndexData is undefined. The hook must
+    // survive this without crashing on destructuring reindexLink etc.
+    render(
+      <CourseOutlineStateProvider>
+        <CourseOutlineProvider>
+          <OutlineCrashGuard />
+        </CourseOutlineProvider>
+      </CourseOutlineStateProvider>,
+    );
+
+    expect(screen.getByTestId('crash-guard')).toHaveTextContent('ok');
   });
 });

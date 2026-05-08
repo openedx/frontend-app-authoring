@@ -172,31 +172,51 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   // Course ID from context (primary source)
   const { courseId } = useCourseAuthoringContext();
 
-  // Mount outline index query from React Query (primary source)
+  // Whether Redux data belongs to current course (content-based guard).
+  // With provider remount keyed by courseId, this is enough to block stale data
+  // from previous course from leaking into initialData, effectiveOutlineIndexData,
+  // or sectionsList fallback.
+  const reduxDataMatchesCourse = outlineIndexData?.courseStructure?.id === courseId;
+
+  // Mount outline index query from React Query (primary source).
+  // Seed from Redux facade only when facade data matches current course.
   const outlineIndexQuery = useCourseOutlineIndex(courseId, {
-    initialData: outlineIndexData?.courseStructure ? outlineIndexData : undefined,
+    initialData: reduxDataMatchesCourse ? outlineIndexData : undefined,
   });
 
-  // Effective outline data — prefer React Query cache, fall back to Redux facade
-  const effectiveOutlineIndexData = outlineIndexQuery.data || outlineIndexData;
+  // Derive outline-index loading/error state from live query so course switches
+  // do not momentarily reuse stale Redux request status before sync effect runs.
+  const outlineIndexRequestState = useMemo(() => getCourseOutlineIndexRequestState({
+    isPending: outlineIndexQuery.isPending,
+    isSuccess: outlineIndexQuery.isSuccess,
+    error: outlineIndexQuery.error,
+  }), [outlineIndexQuery.error, outlineIndexQuery.isPending, outlineIndexQuery.isSuccess]);
+  const effectiveLoadingStatus = useMemo(() => ({
+    ...loadingStatus,
+    outlineIndexLoadingStatus: outlineIndexRequestState.status,
+  }), [loadingStatus, outlineIndexRequestState.status]);
+  const effectiveErrors = useMemo(() => ({
+    ...errors,
+    outlineIndexApi: outlineIndexRequestState.errors,
+  }), [errors, outlineIndexRequestState.errors]);
+
+  // Effective outline data — prefer React Query cache, fall back to Redux facade.
+  // Only fall back to Redux when its data matches the current course.
+  const effectiveOutlineIndexData = outlineIndexQuery.data
+    ?? (reduxDataMatchesCourse ? outlineIndexData : undefined);
 
   // Committed sections from query cache (PR 9: primary source), fall back to Redux sectionsList.
-  // Note: check .length to avoid empty array (truthy) overriding populated Redux data.
-  const sections = effectiveOutlineIndexData?.courseStructure?.childInfo?.children?.length
-    ? effectiveOutlineIndexData.courseStructure.childInfo.children
-    : sectionsList || [];
+  // When query has resolved successfully, trust its data even if children array is empty.
+  // When query is loading/error/idle and Redux has data for the current course, use it.
+  // Otherwise show empty sections (prevent stale flash from a different course).
+  const sections = outlineIndexQuery.isSuccess
+    ? (effectiveOutlineIndexData?.courseStructure?.childInfo?.children || [])
+    : reduxDataMatchesCourse ? (sectionsList || []) : [];
 
-  // Sync query state to Redux loading status
+  // Sync query state to Redux loading status facade
   useEffect(() => {
-    const { status, errors } = getCourseOutlineIndexRequestState({
-      isPending: outlineIndexQuery.isPending,
-      isSuccess: outlineIndexQuery.isSuccess,
-      error: outlineIndexQuery.error,
-    });
-
-    dispatch(updateOutlineIndexLoadingStatus({ status, errors }));
-  }, [dispatch, outlineIndexQuery.error, outlineIndexQuery.isPending, outlineIndexQuery.isSuccess]);
-
+    dispatch(updateOutlineIndexLoadingStatus(outlineIndexRequestState));
+  }, [dispatch, outlineIndexRequestState]);
   // Sync query data to Redux on success
   useEffect(() => {
     if (!outlineIndexQuery.data) {
@@ -673,11 +693,10 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     courseActions,
     statusBarData,
     savingStatus,
-    errors,
-    loadingStatus,
-    // Use legacy Redux loading status
-    isLoading: loadingStatus.outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
-    isLoadingDenied: loadingStatus.outlineIndexLoadingStatus === RequestStatus.DENIED,
+    errors: effectiveErrors,
+    loadingStatus: effectiveLoadingStatus,
+    isLoading: effectiveLoadingStatus.outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
+    isLoadingDenied: effectiveLoadingStatus.outlineIndexLoadingStatus === RequestStatus.DENIED,
     isCustomRelativeDatesActive,
     enableProctoredExams,
     enableTimedExams,
@@ -717,8 +736,8 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     courseActions,
     statusBarData,
     savingStatus,
-    errors,
-    loadingStatus,
+    effectiveErrors,
+    effectiveLoadingStatus,
     isCustomRelativeDatesActive,
     enableProctoredExams,
     enableTimedExams,

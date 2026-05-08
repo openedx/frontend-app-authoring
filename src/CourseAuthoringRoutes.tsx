@@ -71,7 +71,7 @@ const CourseAuthoringRoutes = () => {
             path="/"
             element={
               <PageWrap>
-                <CourseOutlineStateProvider>
+                <CourseOutlineStateProvider key={courseId}>
                   <CourseOutlineProvider>
                     <OutlineSidebarPagesProvider>
                       <OutlineSidebarProvider>

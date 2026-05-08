@@ -56,7 +56,7 @@ const useCourseOutline = ({ courseId }) => {
     proctoringErrors,
     mfeProctoredExamSettingsUrl,
     advanceSettingsUrl,
-  } = outlineIndexData;
+  } = outlineIndexData || {};
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = loadingStatus;
   const genericSavingStatus = useSelector(getGenericSavingStatus);
 
