@@ -489,6 +489,53 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
 
   // --- PR 10: Mutation methods ---
 
+  // Pure helpers to remove items from outline tree at each level
+  const removeSectionFromTree = (children: any[], sectionId: string): any[] =>
+    children.filter((s: any) => s.id !== sectionId);
+
+  const removeSubsectionFromTree = (children: any[], sectionId: string, subsectionId: string): any[] =>
+    children.map((s: any) => {
+      if (s.id !== sectionId) return s;
+      return {
+        ...s,
+        childInfo: {
+          ...s.childInfo,
+          children: (s.childInfo?.children || []).filter((sub: any) => sub.id !== subsectionId),
+        },
+      };
+    });
+
+  const removeUnitFromTree = (
+    children: any[], sectionId: string, subsectionId: string, unitId: string,
+  ): any[] =>
+    children.map((s: any) => {
+      if (s.id !== sectionId) return s;
+      return {
+        ...s,
+        childInfo: {
+          ...s.childInfo,
+          children: (s.childInfo?.children || []).map((sub: any) => {
+            if (sub.id !== subsectionId) return sub;
+            return {
+              ...sub,
+              childInfo: {
+                ...sub.childInfo,
+                children: (sub.childInfo?.children || []).filter((u: any) => u.id !== unitId),
+              },
+            };
+          }),
+        },
+      };
+    });
+
+  // Helper: apply outline index cache update with null guards
+  const updateOutlineIndexCache = (updater: (old: any) => any) => {
+    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+      if (!old?.courseStructure?.childInfo?.children) return old;
+      return updater(old);
+    });
+  };
+
   const deleteCurrentSelection = useCallback(async (selection: SelectionState) => {
     if (!selection?.currentId) {
       return;
@@ -499,11 +546,39 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
         await deleteMutation.mutateAsync(
           { itemId: selection.currentId },
         );
+        // Remove section from outline index cache
+        updateOutlineIndexCache((old) => ({
+          ...old,
+          courseStructure: {
+            ...old.courseStructure,
+            childInfo: {
+              ...old.courseStructure.childInfo,
+              children: removeSectionFromTree(
+                old.courseStructure.childInfo.children, selection.currentId,
+              ),
+            },
+          },
+        }));
         break;
       case 'sequential':
         await deleteMutation.mutateAsync(
           { itemId: selection.currentId, sectionId: selection.sectionId },
         );
+        // Remove subsection from outline index cache
+        updateOutlineIndexCache((old) => ({
+          ...old,
+          courseStructure: {
+            ...old.courseStructure,
+            childInfo: {
+              ...old.courseStructure.childInfo,
+              children: removeSubsectionFromTree(
+                old.courseStructure.childInfo.children,
+                selection.sectionId!,
+                selection.currentId,
+              ),
+            },
+          },
+        }));
         break;
       case 'vertical':
         await deleteMutation.mutateAsync(
@@ -513,12 +588,26 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
             sectionId: selection.sectionId,
           },
         );
+        // Remove unit from outline index cache
+        updateOutlineIndexCache((old) => ({
+          ...old,
+          courseStructure: {
+            ...old.courseStructure,
+            childInfo: {
+              ...old.courseStructure.childInfo,
+              children: removeUnitFromTree(
+                old.courseStructure.childInfo.children,
+                selection.sectionId!,
+                selection.subsectionId!,
+                selection.currentId,
+              ),
+            },
+          },
+        }));
         break;
       default:
         throw new Error(`Unrecognized category ${category}`);
     }
-    // Invalidate outline index query after successful delete to reflect updated tree
-    queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
   }, [deleteMutation, queryClient, courseId]);
 
   const duplicateCurrentSelection = useCallback((selection: SelectionState) => {
