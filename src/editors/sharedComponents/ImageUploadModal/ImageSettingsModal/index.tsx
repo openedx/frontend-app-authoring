@@ -29,6 +29,7 @@ interface ImageSettingsModalCommonProps {
     altText: string | null;
     externalUrl: string;
     url: string;
+    classList: string[];
   };
 }
 
@@ -38,7 +39,7 @@ interface ImageSettingsModalInternalProps extends ImageSettingsModalCommonProps 
 }
 
 interface ImageSettingsModalProps extends ImageSettingsModalCommonProps {
-  saveToEditor: (config: AltText & { dimensions: ImageDimensions; }) => void;
+  saveToEditor: (config: AltText & { dimensions: ImageDimensions; classList?: string[] }) => void;
 }
 
 export interface ImageSettingsModalFormProps<T extends ImageConfig = ImageConfig>
@@ -180,12 +181,14 @@ const ImageSettingsModal = ({
     height: imgDimensions.height,
     isDecorative: !selection.altText,
     altText: selection.altText || '',
+    classList: selection.classList,
   };
   const validationSchema = Yup.object().shape({
     isLocked: Yup.boolean(),
     isDecorative: Yup.boolean(),
     width: Yup.string().trim().matches(/^[0-9]+%?$/).required(),
     height: Yup.string().trim().matches(/^[0-9]+%?$/).required(),
+    classList: Yup.array().of(Yup.string()).default([]),
     altText: Yup.string().when('isDecorative', {
       is: true,
       otherwise: (schema) => schema.required(intl.formatMessage(messages.altTextLocalFeedback)),

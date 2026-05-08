@@ -15,4 +15,5 @@ export interface AltText {
 
 export interface ImageConfig extends ImageDimensions, AltText {
   isLocked: boolean;
+  classList?: string[];
 }

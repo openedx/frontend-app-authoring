@@ -31,12 +31,13 @@ export const imgProps = ({
     const index = url.indexOf('static/');
     url = url.substring(index);
   }
-  const { dimensions, altText, isDecorative, ...imgAttrs } = settings;
+  const { dimensions, altText, isDecorative, classList, ...imgAttrs } = settings;
   return {
     src: url,
     alt: isDecorative ? '' : altText,
     width: dimensions.width,
     height: dimensions.height,
+    class: classList?.join(' '),
     ...imgAttrs,
   };
 };
