@@ -23,6 +23,7 @@ import { courseOutlineIndexQueryKey } from './data/outlineIndexQuery';
 import { getCourseOutlineIndexApiUrl } from './data/api';
 
 let currentItemData;
+const deleteMutateAsync = jest.fn();
 const mockOutlineIndexData = {
   ...courseOutlineIndexMock,
   courseStructure: {
@@ -33,9 +34,11 @@ const mockOutlineIndexData = {
 };
 
 // Mock useCourseItemData to return mock data
+// Mock useDeleteCourseItem to return a controlled mutateAsync
 jest.mock('./data/apiHooks', () => ({
   ...jest.requireActual('./data/apiHooks'),
   useCourseItemData: () => ({ data: currentItemData }),
+  useDeleteCourseItem: () => ({ mutateAsync: deleteMutateAsync }),
 }));
 
 // Mutable mock for courseId to test navigation behavior
@@ -52,6 +55,8 @@ describe('CourseOutlineStateContext', () => {
   beforeEach(() => {
     // Reset courseId to default before each test
     mockCourseId = 'block-v1:edX+DemoX+Demo_Course+type@course+block@course';
+    deleteMutateAsync.mockReset();
+    deleteMutateAsync.mockResolvedValue(undefined);
   });
 
   it('exposes outline state and selection actions from legacy sources', async () => {
@@ -150,6 +155,191 @@ describe('CourseOutlineStateContext', () => {
     });
     expect(result.current.currentSelection).toBeUndefined();
     expect(result.current.currentItemData).toBeNull();
+  });
+
+    describe('deleteCurrentSelection', () => {
+    it('returns early when selection is empty', async () => {
+      const { reduxStore: store, axiosMock, queryClient } = initializeMocks({
+        user: {
+          userId: 1,
+          username: 'test-user',
+        },
+      });
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
+      currentItemData = null;
+      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
+      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+
+      const wrapper = ({ children }: { children?: React.ReactNode }) => (
+        <AppProvider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <CourseOutlineStateProvider>
+              {children}
+            </CourseOutlineStateProvider>
+          </QueryClientProvider>
+        </AppProvider>
+      );
+
+      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Call with empty selection — should early-return, no mutateAsync call
+      await result.current.deleteCurrentSelection(undefined as any);
+      await result.current.deleteCurrentSelection({} as any);
+
+      expect(deleteMutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('deletes a section and invalidates outline index query', async () => {
+      const { reduxStore: store, axiosMock, queryClient } = initializeMocks({
+        user: {
+          userId: 1,
+          username: 'test-user',
+        },
+      });
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
+      currentItemData = null;
+      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
+      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+
+      const wrapper = ({ children }: { children?: React.ReactNode }) => (
+        <AppProvider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <CourseOutlineStateProvider>
+              {children}
+            </CourseOutlineStateProvider>
+          </QueryClientProvider>
+        </AppProvider>
+      );
+
+      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Ensure query has data before delete
+      const initialLength = result.current.sections.length;
+      expect(initialLength).toBeGreaterThan(0);
+
+      const targetSection = mockOutlineIndexData.courseStructure.childInfo.children[0];
+
+      deleteMutateAsync.mockResolvedValue({});
+
+      await result.current.deleteCurrentSelection({
+        currentId: targetSection.id,
+        sectionId: targetSection.id,
+      });
+
+      expect(deleteMutateAsync).toHaveBeenCalledWith({
+        itemId: targetSection.id,
+      });
+
+      // Outline index query should be invalidated (stale + refetching)
+      const queryState = queryClient.getQueryState(courseOutlineIndexQueryKey(mockCourseId));
+      expect(queryState?.isInvalidated).toBe(true);
+    });
+
+    it('deletes a subsection', async () => {
+      const { reduxStore: store, axiosMock, queryClient } = initializeMocks({
+        user: {
+          userId: 1,
+          username: 'test-user',
+        },
+      });
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
+      currentItemData = null;
+      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
+      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+
+      const wrapper = ({ children }: { children?: React.ReactNode }) => (
+        <AppProvider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <CourseOutlineStateProvider>
+              {children}
+            </CourseOutlineStateProvider>
+          </QueryClientProvider>
+        </AppProvider>
+      );
+
+      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      const targetSection = mockOutlineIndexData.courseStructure.childInfo.children[0];
+      const targetSubsection = targetSection.childInfo.children[0];
+
+      deleteMutateAsync.mockResolvedValue({});
+
+      await result.current.deleteCurrentSelection({
+        currentId: targetSubsection.id,
+        subsectionId: targetSubsection.id,
+        sectionId: targetSection.id,
+      });
+
+      expect(deleteMutateAsync).toHaveBeenCalledWith({
+        itemId: targetSubsection.id,
+        sectionId: targetSection.id,
+      });
+
+      const queryState = queryClient.getQueryState(courseOutlineIndexQueryKey(mockCourseId));
+      expect(queryState?.isInvalidated).toBe(true);
+    });
+
+    it('deletes a unit', async () => {
+      const { reduxStore: store, axiosMock, queryClient } = initializeMocks({
+        user: {
+          userId: 1,
+          username: 'test-user',
+        },
+      });
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
+      currentItemData = null;
+      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
+      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+
+      const wrapper = ({ children }: { children?: React.ReactNode }) => (
+        <AppProvider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <CourseOutlineStateProvider>
+              {children}
+            </CourseOutlineStateProvider>
+          </QueryClientProvider>
+        </AppProvider>
+      );
+
+      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      const targetSection = mockOutlineIndexData.courseStructure.childInfo.children[0];
+      const targetSubsection = targetSection.childInfo.children[0];
+      const targetUnit = targetSubsection.childInfo.children[0];
+
+      deleteMutateAsync.mockResolvedValue({});
+
+      await result.current.deleteCurrentSelection({
+        currentId: targetUnit.id,
+        subsectionId: targetSubsection.id,
+        sectionId: targetSection.id,
+      });
+
+      expect(deleteMutateAsync).toHaveBeenCalledWith({
+        itemId: targetUnit.id,
+        subsectionId: targetSubsection.id,
+        sectionId: targetSection.id,
+      });
+
+      const queryState = queryClient.getQueryState(courseOutlineIndexQueryKey(mockCourseId));
+      expect(queryState?.isInvalidated).toBe(true);
+    });
   });
 
   describe('course navigation', () => {

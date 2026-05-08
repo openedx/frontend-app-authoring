@@ -55,9 +55,6 @@ import {
   updateReindexLoadingStatus,
   updateSavingStatus,
   dismissError as dismissErrorSlice,
-  deleteSection,
-  deleteSubsection,
-  deleteUnit,
 } from './data/slice';
 import {
   useDeleteCourseItem,
@@ -488,24 +485,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const { mutate: pasteItem } = usePasteItem(courseId);
   const { mutate: updateSectionHighlights } = useUpdateCourseSectionHighlights();
 
-  // Helper: sync Redux sectionsList into React Query outline index cache
-  const syncSectionsToOutlineIndex = useCallback(() => {
-    const state = store.getState();
-    const sectionsFromRedux = getSectionsList(state);
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-      if (!old?.courseStructure?.childInfo) return old;
-      return {
-        ...old,
-        courseStructure: {
-          ...old.courseStructure,
-          childInfo: {
-            ...old.courseStructure.childInfo,
-            children: sectionsFromRedux,
-          },
-        },
-      };
-    });
-  }, [store, queryClient, courseId]);
+
 
   // --- PR 10: Mutation methods ---
 
@@ -518,13 +498,11 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
       case 'chapter':
         await deleteMutation.mutateAsync(
           { itemId: selection.currentId },
-          { onSettled: () => dispatch(deleteSection({ itemId: selection.currentId })) }, // TODO PR 14: remove Redux facade
         );
         break;
       case 'sequential':
         await deleteMutation.mutateAsync(
           { itemId: selection.currentId, sectionId: selection.sectionId },
-          { onSettled: () => dispatch(deleteSubsection({ itemId: selection.currentId, sectionId: selection.sectionId })) }, // TODO PR 14: remove Redux facade
         );
         break;
       case 'vertical':
@@ -534,15 +512,14 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
             subsectionId: selection.subsectionId,
             sectionId: selection.sectionId,
           },
-          { onSettled: () => dispatch(deleteUnit({ itemId: selection.currentId, subsectionId: selection.subsectionId, sectionId: selection.sectionId })) }, // TODO PR 14: remove Redux facade
         );
         break;
       default:
         throw new Error(`Unrecognized category ${category}`);
     }
-    // Sync Redux sectionsList (updated by deleteSection/deleteSubsection/deleteUnit) into React Query cache
-    syncSectionsToOutlineIndex();
-  }, [deleteMutation, dispatch, queryClient, courseId, syncSectionsToOutlineIndex]);
+    // Invalidate outline index query after successful delete to reflect updated tree
+    queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+  }, [deleteMutation, queryClient, courseId]);
 
   const duplicateCurrentSelection = useCallback((selection: SelectionState) => {
     if (!selection?.currentId) {

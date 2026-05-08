@@ -830,6 +830,36 @@ describe('<CourseOutline />', () => {
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
     selectedContainerId = section.id;
 
+    // Mutable copy of outline data so refetch responses reflect deletions.
+    const outlineData = cloneDeep(courseOutlineIndexMock);
+
+    const removeItemFromOutline = (itemId: string) => {
+      // Remove from top-level sections
+      const sectionIdx = outlineData.courseStructure.childInfo.children.findIndex(
+        (s: any) => s.id === itemId,
+      );
+      if (sectionIdx >= 0) {
+        outlineData.courseStructure.childInfo.children.splice(sectionIdx, 1);
+        return;
+      }
+      // Remove from subsections
+      for (const s of outlineData.courseStructure.childInfo.children) {
+        const subIdx = s.childInfo.children.findIndex((sub: any) => sub.id === itemId);
+        if (subIdx >= 0) {
+          s.childInfo.children.splice(subIdx, 1);
+          return;
+        }
+        // Remove from units
+        for (const sub of s.childInfo.children) {
+          const unitIdx = sub.childInfo.children.findIndex((u: any) => u.id === itemId);
+          if (unitIdx >= 0) {
+            sub.childInfo.children.splice(unitIdx, 1);
+            return;
+          }
+        }
+      }
+    };
+
     const checkDeleteBtn = async (item, element, elementName) => {
       expect(within(element).getByText(item.displayName)).toBeInTheDocument();
 
@@ -842,15 +872,27 @@ describe('<CourseOutline />', () => {
       const confirmButton = await screen.findByRole('button', { name: 'Delete' });
       await user.click(confirmButton);
 
-      expect(element).not.toBeInTheDocument();
+      // Wait for the element to disappear after the outline index query
+      // refetches with updated data (invalidation replaces Redux facade sync).
+      await waitFor(() => {
+        expect(element).not.toBeInTheDocument();
+      });
     };
 
     // delete unit, subsection and then section in order.
+    // Before each delete, remove the item from the mutable data so
+    // the refetch (triggered by query invalidation) returns an updated tree.
     // check unit
+    removeItemFromOutline(unit.id);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseId)).reply(200, outlineData);
     await checkDeleteBtn(unit, unitElement, 'unit');
     // check subsection
+    removeItemFromOutline(subsection.id);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseId)).reply(200, outlineData);
     await checkDeleteBtn(subsection, subsectionElement, 'subsection');
     // check section
+    removeItemFromOutline(section.id);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseId)).reply(200, outlineData);
     await checkDeleteBtn(section, sectionElement, 'section');
     expect(clearSelection).toHaveBeenCalledTimes(1);
   });
