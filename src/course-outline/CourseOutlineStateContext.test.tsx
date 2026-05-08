@@ -238,9 +238,64 @@ describe('CourseOutlineStateContext', () => {
         itemId: targetSection.id,
       });
 
-      // Outline index query should be invalidated (stale + refetching)
-      const queryState = queryClient.getQueryState(courseOutlineIndexQueryKey(mockCourseId));
-      expect(queryState?.isInvalidated).toBe(true);
+      // Section should be removed from cached outline tree
+      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(mockCourseId)) as any;
+      expect(cachedData.courseStructure.childInfo.children.find(
+        (s: any) => s.id === targetSection.id,
+      )).toBeUndefined();
+      // Other sections should remain
+      expect(cachedData.courseStructure.childInfo.children.length).toBe(
+        mockOutlineIndexData.courseStructure.childInfo.children.length - 1,
+      );
+    });
+
+    it('does not update cache when delete mutation fails', async () => {
+      const { reduxStore: store, axiosMock, queryClient } = initializeMocks({
+        user: {
+          userId: 1,
+          username: 'test-user',
+        },
+      });
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
+      currentItemData = null;
+      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
+      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+
+      const wrapper = ({ children }: { children?: React.ReactNode }) => (
+        <AppProvider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <CourseOutlineStateProvider>
+              {children}
+            </CourseOutlineStateProvider>
+          </QueryClientProvider>
+        </AppProvider>
+      );
+
+      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      const targetSection = mockOutlineIndexData.courseStructure.childInfo.children[0];
+      const cachedBefore = queryClient.getQueryData(courseOutlineIndexQueryKey(mockCourseId)) as any;
+      const sectionsBefore = cachedBefore.courseStructure.childInfo.children.length;
+
+      // Mutation rejects to simulate API failure
+      deleteMutateAsync.mockRejectedValue(new Error('API error'));
+
+      // Error should propagate unhandled since deleteCurrentSelection does not catch
+      await expect(result.current.deleteCurrentSelection({
+        currentId: targetSection.id,
+        sectionId: targetSection.id,
+      })).rejects.toThrow('API error');
+
+      // Cache should be unchanged
+      const cachedAfter = queryClient.getQueryData(courseOutlineIndexQueryKey(mockCourseId)) as any;
+      expect(cachedAfter.courseStructure.childInfo.children.length).toBe(sectionsBefore);
+      expect(cachedAfter.courseStructure.childInfo.children.find(
+        (s: any) => s.id === targetSection.id,
+      )).toBeDefined();
     });
 
     it('deletes a subsection', async () => {
@@ -287,8 +342,20 @@ describe('CourseOutlineStateContext', () => {
         sectionId: targetSection.id,
       });
 
-      const queryState = queryClient.getQueryState(courseOutlineIndexQueryKey(mockCourseId));
-      expect(queryState?.isInvalidated).toBe(true);
+      // Subsection should be removed from its parent section in cached tree
+      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(mockCourseId)) as any;
+      const parentSection = cachedData.courseStructure.childInfo.children.find(
+        (s: any) => s.id === targetSection.id,
+      );
+      expect(parentSection.childInfo.children.find(
+        (sub: any) => sub.id === targetSubsection.id,
+      )).toBeUndefined();
+      // Other subsections in parent should remain
+      const sourceSection = mockOutlineIndexData.courseStructure.childInfo.children
+        .find((s: any) => s.id === targetSection.id) as any;
+      expect(parentSection.childInfo.children.length).toBe(
+        sourceSection.childInfo.children.length - 1,
+      );
     });
 
     it('deletes a unit', async () => {
@@ -337,8 +404,25 @@ describe('CourseOutlineStateContext', () => {
         sectionId: targetSection.id,
       });
 
-      const queryState = queryClient.getQueryState(courseOutlineIndexQueryKey(mockCourseId));
-      expect(queryState?.isInvalidated).toBe(true);
+      // Unit should be removed from its parent subsection in cached tree
+      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(mockCourseId)) as any;
+      const parentSection = cachedData.courseStructure.childInfo.children.find(
+        (s: any) => s.id === targetSection.id,
+      );
+      const parentSubsection = parentSection.childInfo.children.find(
+        (sub: any) => sub.id === targetSubsection.id,
+      );
+      expect(parentSubsection.childInfo.children.find(
+        (u: any) => u.id === targetUnit.id,
+      )).toBeUndefined();
+      // Other units in parent should remain
+      const originalSection = mockOutlineIndexData.courseStructure.childInfo.children
+        .find((s: any) => s.id === targetSection.id) as any;
+      const originalSubsection = originalSection.childInfo.children
+        .find((sub: any) => sub.id === targetSubsection.id) as any;
+      expect(parentSubsection.childInfo.children.length).toBe(
+        originalSubsection.childInfo.children.length - 1,
+      );
     });
   });
 
