@@ -18,6 +18,7 @@ import BasicTab from './BasicTab';
 import VisibilityTab from './VisibilityTab';
 import AdvancedTab from './AdvancedTab';
 import { UnitTab } from './UnitTab';
+import { PUBLISH_TYPES } from '@src/course-unit/constants';
 
 interface Props {
   isOpen: boolean;
@@ -199,6 +200,7 @@ const ConfigureModal = ({
         }
         onConfigureSubmit({
           isVisibleToStaffOnly: data.isVisibleToStaffOnly,
+          type: PUBLISH_TYPES.republish,
           groupAccess,
           discussionEnabled: data.discussionEnabled,
         });
