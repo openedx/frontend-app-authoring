@@ -12,7 +12,6 @@ import {
   fetchOutlineIndexSuccess,
   updateCourseActions,
   updateOutlineIndexLoadingStatus,
-  updateSavingStatus,
   updateStatusBar,
 } from '@src/course-outline/data/slice';
 import {
@@ -70,7 +69,6 @@ describe('CourseOutlineStateContext', () => {
     currentItemData = null;
     store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
     store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-    store.dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     store.dispatch(updateStatusBar({ videoSharingOptions: 'by-course' }));
     store.dispatch(updateCourseActions({ allowMoveDown: true }));
 
@@ -100,7 +98,7 @@ describe('CourseOutlineStateContext', () => {
     expect(result.current.sections.map(section => section.id)).toEqual(
       mockOutlineIndexData.courseStructure.childInfo.children.map(section => section.id),
     );
-    expect(result.current.savingStatus).toBe(RequestStatus.PENDING);
+    expect(result.current.savingStatus).toBe('');
     expect(result.current.statusBarData.videoSharingOptions).toBe('by-course');
     expect(result.current.courseActions.allowMoveDown).toBe(true);
     expect(result.current.enableProctoredExams).toBe(true);

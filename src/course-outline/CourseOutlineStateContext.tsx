@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
@@ -28,19 +28,14 @@ import {
   getErrors,
   getLoadingStatus,
   getOutlineIndexData,
-  getSavingStatus,
+
   getSectionsList,
   getStatusBarData,
   getProctoredExamsFlag,
   getTimedExamsFlag,
 } from './data/selectors';
-import { replaceSectionInOutlineIndex, useCourseItemData } from './data/apiHooks';
-import {
-  setUnitOrderListQuery,
-  fetchCourseBestPracticesQuery,
-  fetchCourseLaunchQuery,
-  syncDiscussionsTopics,
-} from './data/thunk';
+import { replaceSectionInOutlineIndex, useCourseItemData, useReorderUnits } from './data/apiHooks';
+
 import {
   courseOutlineIndexQueryKey,
   getCourseOutlineIndexRequestState,
@@ -52,9 +47,9 @@ import {
   updateCourseActions,
   updateOutlineIndexLoadingStatus,
   updateStatusBar,
-  updateReindexLoadingStatus,
-  updateSavingStatus,
-  dismissError as dismissErrorSlice,
+  fetchStatusBarChecklistSuccess,
+  fetchStatusBarSelfPacedSuccess,
+  updateCourseLaunchQueryStatus,
 } from './data/slice';
 import {
   useDeleteCourseItem,
@@ -72,8 +67,15 @@ import {
   setVideoSharingOption,
   dismissNotification,
   restartIndexingOnCourse,
+  createDiscussionsTopics,
+  getCourseLaunch,
+  getCourseBestPractices,
 } from './data/api';
 import { getErrorDetails } from './utils/getErrorDetails';
+import {
+  getCourseBestPracticesChecklist,
+  getCourseLaunchChecklist,
+} from './utils/getChecklistForStatusBar';
 import { showToastOutsideReact, closeToastOutsideReact } from '@src/generic/toast-context';
 import { getBlockType } from '@src/generic/key-utils';
 
@@ -151,7 +153,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const outlineIndexData = useSelector(getOutlineIndexData);
   const sectionsList = useSelector(getSectionsList);
   const loadingStatus = useSelector(getLoadingStatus);
-  const savingStatus = useSelector(getSavingStatus);
+  const [savingStatus, setSavingStatusState] = useState('');
   const errors = useSelector(getErrors);
   const statusBarData = useSelector(getStatusBarData);
   const courseActions = useSelector(getCourseActions);
@@ -161,8 +163,6 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const createdOn = useSelector(getCreatedOn);
 
   // Redux store reference for reading updated state in success callbacks
-  const store = useStore();
-
   // Query client for updating React Query cache after reorder
   const queryClient = useQueryClient();
 
@@ -181,6 +181,10 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     initialData: reduxDataMatchesCourse ? outlineIndexData : undefined,
   });
 
+  const [dismissedErrorKeys, setDismissedErrorKeys] = useState<Set<string>>(new Set());
+  const [reindexLoadingStatus, setReindexLoadingStatus] = useState<string>(RequestStatus.IN_PROGRESS);
+  const [localStatusBarOverride, setLocalStatusBarOverride] = useState<Partial<CourseOutlineStatusBar>>({});
+
   // Derive outline-index loading/error state from live query so course switches
   // do not momentarily reuse stale Redux request status before sync effect runs.
   const outlineIndexRequestState = useMemo(() => getCourseOutlineIndexRequestState({
@@ -191,11 +195,17 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const effectiveLoadingStatus = useMemo(() => ({
     ...loadingStatus,
     outlineIndexLoadingStatus: outlineIndexRequestState.status,
-  }), [loadingStatus, outlineIndexRequestState.status]);
-  const effectiveErrors = useMemo(() => ({
-    ...errors,
-    outlineIndexApi: outlineIndexRequestState.errors,
-  }), [errors, outlineIndexRequestState.errors]);
+    reIndexLoadingStatus: reindexLoadingStatus,
+  }), [loadingStatus, outlineIndexRequestState.status, reindexLoadingStatus]);
+  const effectiveErrors = useMemo(() => {
+    // Null out any dismissed error keys so they don't appear in the UI
+    const filtered = { ...errors };
+    dismissedErrorKeys.forEach(key => { filtered[key] = null; });
+    return {
+      ...filtered,
+      outlineIndexApi: outlineIndexRequestState.errors,
+    };
+  }, [errors, dismissedErrorKeys, outlineIndexRequestState.errors]);
 
   // Effective outline data — prefer React Query cache, fall back to Redux facade.
   // Only fall back to Redux when its data matches the current course.
@@ -253,28 +263,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     previousSectionsRef.current = undefined;
   }, []);
 
-  // Helper: accept reorder preview then read updated sections from Redux
-  // and sync them to React Query cache via replaceSectionInOutlineIndex.
-  const acceptReorderAndSyncSections = useCallback((
-    primarySectionId: string,
-    secondarySectionId?: string,
-  ) => {
-    acceptReorderPreview();
-    const state = store.getState();
-    const sectionIds = [primarySectionId];
-    if (secondarySectionId && secondarySectionId !== primarySectionId) {
-      sectionIds.push(secondarySectionId);
-    }
-    const updatedSections: Record<string, any> = {};
-    const sectionsList = getSectionsList(state);
-    sectionIds.forEach(id => {
-      const s = sectionsList.find((s: any) => s.id === id);
-      if (s) updatedSections[id] = s;
-    });
-    if (Object.keys(updatedSections).length > 0) {
-      replaceSectionInOutlineIndex(queryClient, courseId, updatedSections);
-    }
-  }, [acceptReorderPreview, store, queryClient, courseId]);
+
 
   // Helper: accept reorder preview then sync React Query cache with new section order
   const acceptReorderAndSyncSectionOrder = useCallback((sectionListIds: string[]) => {
@@ -314,6 +303,9 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   // PR 12: Reorder subsections mutation hook
   const reorderSubsectionsMutation = useReorderSubsections(courseId);
 
+  // PR 13: Reorder units mutation hook
+  const reorderUnitsMutation = useReorderUnits(courseId);
+
   // Commit section reorder — keeps preview visible until request settles
   const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
     if (!courseId) {
@@ -345,24 +337,20 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   }, [reorderSubsectionsMutation, captureOriginalSections, acceptReorderPreview, rollbackReorderPreview]);
 
   // Commit unit reorder
-  const commitUnitReorder = useCallback((
+  const commitUnitReorder = useCallback(async (
     sectionId: string,
     prevSectionId: string,
     subsectionId: string,
     unitListIds: string[],
   ) => {
     captureOriginalSections();
-    dispatch(setUnitOrderListQuery(
-      sectionId,
-      subsectionId,
-      prevSectionId,
-      unitListIds,
-      rollbackReorderPreview,
-      () => {
-        acceptReorderAndSyncSections(sectionId, prevSectionId);
-      },
-    ));
-  }, [dispatch, captureOriginalSections, rollbackReorderPreview, acceptReorderAndSyncSections]);
+    try {
+      await reorderUnitsMutation.mutateAsync({ sectionId, prevSectionId, subsectionId, unitListIds });
+      acceptReorderPreview();
+    } catch {
+      rollbackReorderPreview();
+    }
+  }, [reorderUnitsMutation, captureOriginalSections, acceptReorderPreview, rollbackReorderPreview]);
 
   const updateSectionOrderByIndex = useCallback(async (currentIndex: number, newIndex: number) => {
     if (!courseId || currentIndex === newIndex) {
@@ -407,7 +395,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     }
   }, [visibleSections, reorderSubsectionsMutation, rollbackReorderPreview, acceptReorderPreview]);
 
-  const updateUnitOrderByIndex = useCallback((section: XBlock, moveDetails) => {
+  const updateUnitOrderByIndex = useCallback(async (section: XBlock, moveDetails) => {
     const { fn, args, sectionId, subsectionId } = moveDetails;
     if (!args) {
       return;
@@ -418,18 +406,19 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     const [sectionsCopy, newUnits] = fn(...args);
     if (newUnits && subsectionId) {
       setPreviewSections(sectionsCopy);
-      dispatch(setUnitOrderListQuery(
-        sectionId,
-        subsectionId,
-        section.id,
-        newUnits.map((unit: XBlock) => unit.id),
-        rollbackReorderPreview,
-        () => {
-          acceptReorderAndSyncSections(sectionId, section.id);
-        },
-      ));
+      try {
+        await reorderUnitsMutation.mutateAsync({
+          sectionId,
+          prevSectionId: section.id,
+          subsectionId,
+          unitListIds: newUnits.map((unit: XBlock) => unit.id),
+        });
+        acceptReorderPreview();
+      } catch {
+        rollbackReorderPreview();
+      }
     }
-  }, [visibleSections, dispatch, rollbackReorderPreview, acceptReorderAndSyncSections]);
+  }, [visibleSections, reorderUnitsMutation, rollbackReorderPreview, acceptReorderPreview]);
 
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
@@ -669,32 +658,32 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   }, [updateSectionHighlights]);
 
   const enableHighlightsEmails = useCallback(async () => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING })); // TODO PR 14: remove Redux facade
+    setSavingStatusState(RequestStatus.PENDING);
     showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
     try {
       await enableCourseHighlightsEmails(courseId);
       queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
-      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL })); // TODO PR 14: remove Redux facade
+      setSavingStatusState(RequestStatus.SUCCESSFUL);
     } catch {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED })); // TODO PR 14: remove Redux facade
+      setSavingStatusState(RequestStatus.FAILED);
     } finally {
       closeToastOutsideReact();
     }
-  }, [dispatch, courseId, queryClient]);
+  }, [courseId, queryClient]);
 
   const changeVideoSharingOption = useCallback(async (value: string) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING })); // TODO PR 14: remove Redux facade
+    setSavingStatusState(RequestStatus.PENDING);
     showToastOutsideReact(NOTIFICATION_MESSAGES.saving);
     try {
       await setVideoSharingOption(courseId, value);
-      dispatch(updateStatusBar({ videoSharingOptions: value })); // TODO PR 14: remove Redux facade
-      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL })); // TODO PR 14: remove Redux facade
+      setLocalStatusBarOverride({ videoSharingOptions: value });
+      setSavingStatusState(RequestStatus.SUCCESSFUL);
     } catch {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED })); // TODO PR 14: remove Redux facade
+      setSavingStatusState(RequestStatus.FAILED);
     } finally {
       closeToastOutsideReact();
     }
-  }, [dispatch, courseId]);
+  }, [courseId]);
 
   const handleDismissNotification = useCallback(async () => {
     const dismissUrl = effectiveOutlineIndexData?.notificationDismissUrl;
@@ -702,51 +691,63 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
       return;
     }
     const url = `${getConfig().STUDIO_BASE_URL}${dismissUrl}`;
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING })); // TODO PR 14: remove Redux facade
+    setSavingStatusState(RequestStatus.PENDING);
     try {
       await dismissNotification(url);
-      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL })); // TODO PR 14: remove Redux facade
+      setSavingStatusState(RequestStatus.SUCCESSFUL);
     } catch {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED })); // TODO PR 14: remove Redux facade
+      setSavingStatusState(RequestStatus.FAILED);
     }
-  }, [dispatch, effectiveOutlineIndexData]);
+  }, [effectiveOutlineIndexData]);
 
   const dismissError = useCallback((key: string) => {
-    dispatch(dismissErrorSlice(key)); // TODO PR 14: remove Redux facade
-  }, [dispatch]);
+    setDismissedErrorKeys(prev => new Set([...prev, key]));
+  }, []);
 
   const reindexCourse = useCallback(async () => {
     const link = effectiveOutlineIndexData?.reindexLink;
     if (!link) {
       return;
     }
-    dispatch(updateReindexLoadingStatus({ status: RequestStatus.IN_PROGRESS })); // TODO PR 14: remove Redux facade
+    setReindexLoadingStatus(RequestStatus.IN_PROGRESS);
     try {
       await restartIndexingOnCourse(link);
-      dispatch(updateReindexLoadingStatus({ status: RequestStatus.SUCCESSFUL })); // TODO PR 14: remove Redux facade
+      setReindexLoadingStatus(RequestStatus.SUCCESSFUL);
     } catch (error) {
-      dispatch(updateReindexLoadingStatus({ // TODO PR 14: remove Redux facade
-        status: RequestStatus.FAILED,
-        errors: getErrorDetails(error),
-      }));
+      setReindexLoadingStatus(RequestStatus.FAILED);
     }
-  }, [dispatch, effectiveOutlineIndexData]);
+  }, [effectiveOutlineIndexData]);
 
   const setSavingStatus = useCallback((status: string) => {
-    dispatch(updateSavingStatus({ status })); // TODO PR 14: remove Redux facade
-  }, [dispatch]);
+    setSavingStatusState(status);
+  }, []);
 
   // Mount effects moved from hooks.jsx (PR 10)
   useEffect(() => {
-    dispatch(fetchCourseBestPracticesQuery({ courseId }));
-    dispatch(fetchCourseLaunchQuery({ courseId }));
-  }, [dispatch, courseId]);
+    getCourseBestPractices({ courseId, excludeGraded: true, all: true }).then((data) => {
+      if (data) {
+        dispatch(fetchStatusBarChecklistSuccess(getCourseBestPracticesChecklist(data)));
+      }
+    }).catch(() => {});
+
+    getCourseLaunch({ courseId, gradedOnly: true, validateOras: true, all: true })
+      .then((data) => {
+        dispatch(fetchStatusBarSelfPacedSuccess({ isSelfPaced: data.isSelfPaced }));
+        dispatch(fetchStatusBarChecklistSuccess(getCourseLaunchChecklist(data)));
+        dispatch(updateCourseLaunchQueryStatus({ status: RequestStatus.SUCCESSFUL }));
+      }).catch((error) => {
+        dispatch(updateCourseLaunchQueryStatus({
+          status: RequestStatus.FAILED,
+          errors: getErrorDetails(error),
+        }));
+      });
+  }, [courseId, dispatch]);
 
   useEffect(() => {
     if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
-      dispatch(syncDiscussionsTopics(courseId));
+      createDiscussionsTopics(courseId).catch(() => {});
     }
-  }, [createdOn, courseId, dispatch]);
+  }, [createdOn, courseId]);
 
   const context = useMemo<CourseOutlineStateContextData>(() => ({
     outlineIndexData: effectiveOutlineIndexData,
@@ -757,7 +758,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     updateSubsectionOrderByIndex,
     updateUnitOrderByIndex,
     courseActions,
-    statusBarData,
+    statusBarData: { ...statusBarData, ...localStatusBarOverride },
     savingStatus,
     errors: effectiveErrors,
     loadingStatus: effectiveLoadingStatus,
@@ -801,6 +802,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     updateUnitOrderByIndex,
     courseActions,
     statusBarData,
+    localStatusBarOverride,
     savingStatus,
     effectiveErrors,
     effectiveLoadingStatus,

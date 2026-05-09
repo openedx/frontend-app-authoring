@@ -466,6 +466,41 @@ export const usePasteFileNotices = createGlobalState<StaticFileNotices>(
   },
 );
 
+export const useReorderUnits = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutationWithProcessingNotification({
+    mutationFn: (variables: {
+      sectionId: string;
+      prevSectionId?: string;
+      subsectionId: string;
+      unitListIds: string[];
+    }) => setCourseItemOrderList(variables.subsectionId, variables.unitListIds),
+    onSuccess: async (_data, variables) => {
+      // Fetch fresh section data for affected sections and sync to outline index cache.
+      const sectionIds: string[] = [variables.sectionId];
+      if (variables.prevSectionId && variables.prevSectionId !== variables.sectionId) {
+        sectionIds.push(variables.prevSectionId);
+      }
+      const updatedSections: Record<string, XBlockBase> = {};
+      // Use Promise.all for parallel fetching
+      await Promise.all(sectionIds.map(async (id) => {
+        try {
+          const sectionData = await getCourseItem<XBlockBase>(id);
+          updatedSections[id] = sectionData;
+        } catch (e) {
+          // If getCourseItem fails for one section, still try others
+        }
+      }));
+      if (Object.keys(updatedSections).length > 0) {
+        replaceSectionInOutlineIndex(queryClient, courseId, updatedSections);
+      } else {
+        // Fallback: invalidate the whole outline index query to force refetch
+        queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+      }
+    },
+  });
+};
+
 export const useReorderSections = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({

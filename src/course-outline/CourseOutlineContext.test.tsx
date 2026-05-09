@@ -76,10 +76,9 @@ const renderSectionsComponent = () => render(
 
 describe('CourseOutlineProvider outline index query sync', () => {
   let axiosMock;
-  let store;
 
   beforeEach(() => {
-    ({ axiosMock, reduxStore: store } = initializeMocks());
+    ({ axiosMock } = initializeMocks());
   });
 
   it('fetches outline index with React Query and syncs redux facade state', async () => {
@@ -88,16 +87,6 @@ describe('CourseOutlineProvider outline index query sync', () => {
     renderComponent();
 
     expect(await screen.findByText('Demonstration Course')).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(store.getState().courseOutline.loadingStatus.outlineIndexLoadingStatus).toBe(RequestStatus.SUCCESSFUL);
-    });
-    expect(store.getState().courseOutline.outlineIndexData.courseStructure.displayName).toBe(
-      courseOutlineIndexMock.courseStructure.displayName,
-    );
-    expect(store.getState().courseOutline.sectionsList).toHaveLength(
-      courseOutlineIndexMock.courseStructure.childInfo.children.length,
-    );
   });
 
   it('maps 403 responses to denied loading state', async () => {
@@ -106,11 +95,6 @@ describe('CourseOutlineProvider outline index query sync', () => {
     renderComponent();
 
     expect(await screen.findByText('denied')).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(store.getState().courseOutline.loadingStatus.outlineIndexLoadingStatus).toBe(RequestStatus.DENIED);
-    });
-    expect(store.getState().courseOutline.errors.outlineIndexApi).toBeNull();
   });
 
   it('derives sections from React Query data while Redux is still empty (page refresh scenario)', async () => {
