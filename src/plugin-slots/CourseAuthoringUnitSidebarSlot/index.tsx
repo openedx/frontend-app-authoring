@@ -12,28 +12,31 @@ export const CourseAuthoringUnitSidebarSlot = (
     isSplitTestType,
   }: CourseAuthoringUnitSidebarSlotProps,
 ) => (
-  <PluginSlot
-    id="org.openedx.frontend.authoring.course_unit_sidebar.v2"
-    pluginProps={{
-      blockId,
-      courseId,
-      unitTitle,
-      xBlocks,
-      readOnly,
-      isUnitVerticalType,
-      isSplitTestType,
-    }}
+  <div className="pt-1" // This is to fix the vertical alignment of the sidebar
   >
-    <UnitSidebar
-      legacySidebarProps={{
+    <PluginSlot
+      id="org.openedx.frontend.authoring.course_unit_sidebar.v2"
+      pluginProps={{
+        blockId,
+        courseId,
         unitTitle,
         xBlocks,
         readOnly,
         isUnitVerticalType,
         isSplitTestType,
       }}
-    />
-  </PluginSlot>
+    >
+      <UnitSidebar
+        legacySidebarProps={{
+          unitTitle,
+          xBlocks,
+          readOnly,
+          isUnitVerticalType,
+          isSplitTestType,
+        }}
+      />
+    </PluginSlot>
+  </div>
 );
 
 type XBlock = {
