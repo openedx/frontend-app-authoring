@@ -100,10 +100,9 @@ export const UnitSidebar = () => {
   const { getUnitUrl, courseId, openUnlinkModal } = useCourseAuthoringContext();
   const {
     openPublishModal,
-    handleDuplicateUnitSubmit,
     openDeleteModal,
   } = useCourseOutlineContext();
-  const { sections, updateUnitOrderByIndex } = useCourseOutlineState();
+  const { sections, updateUnitOrderByIndex, duplicateCurrentSelection } = useCourseOutlineState();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
   const subsectionIndex = section?.childInfo?.children?.findIndex(
     (s) => s.id === selectedContainerState?.subsectionId,
@@ -220,7 +219,7 @@ export const UnitSidebar = () => {
           index: index ?? -1,
           actions,
           canMoveItem: canMoveUnit,
-          onClickDuplicate: unitData?.actions?.duplicable ? handleDuplicateUnitSubmit : undefined,
+          onClickDuplicate: unitData?.actions?.duplicable ? () => selectedContainerState && duplicateCurrentSelection(selectedContainerState) : undefined,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () =>

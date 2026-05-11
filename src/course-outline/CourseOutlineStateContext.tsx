@@ -4,10 +4,8 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
-import { arrayMove } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
 import { getConfig } from '@edx/frontend-platform';
@@ -20,7 +18,7 @@ import type {
   XBlock,
   XBlockActions,
 } from '@src/data/types';
-import { useCourseItemData, useReorderUnits } from './data/apiHooks';
+import { useCourseItemData } from './data/apiHooks';
 
 import {
   courseOutlineIndexQueryKey,
@@ -35,8 +33,6 @@ import {
   useConfigureSubsection,
   useConfigureUnit,
   usePasteItem,
-  useReorderSections,
-  useReorderSubsections,
   useUpdateCourseSectionHighlights,
 } from './data/apiHooks';
 import {
@@ -56,6 +52,7 @@ import {
 import { showToastOutsideReact, closeToastOutsideReact } from '@src/generic/toast-context';
 import { getBlockType } from '@src/generic/key-utils';
 
+import { useOutlineReorderState } from './state/useOutlineReorderState';
 import { buildSelectionState } from './state/selection';
 import {
   EditableSubsection,
@@ -75,9 +72,9 @@ type CourseOutlineStateContextData = {
   courseName?: string;
   courseUsageKey?: string;
   sections: XBlock[];
-  updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => void;
-  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => void;
-  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => void;
+  updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => Promise<void>;
+  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
+  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
   courseActions: XBlockActions;
   statusBarData: CourseOutlineStatusBar;
   savingStatus: string;
@@ -104,9 +101,9 @@ type CourseOutlineStateContextData = {
   // Intent-level drag handlers (PR 8 cleanup)
   previewSections: (nextSections: XBlock[]) => void;
   cancelReorderPreview: () => void;
-  commitSectionReorder: (sectionListIds: string[]) => void;
-  commitSubsectionReorder: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
-  commitUnitReorder: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => void;
+  commitSectionReorder: (sectionListIds: string[]) => Promise<void>;
+  commitSubsectionReorder: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => Promise<void>;
+  commitUnitReorder: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => Promise<void>;
 
   // Mutation methods (PR 10)
   deleteCurrentSelection: (selection: SelectionState) => Promise<void>;
@@ -255,169 +252,18 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     }
   }, [createdOn, courseId]);
 
-  // --- Preview state for drag reorder ---
-  const [previewSections, setPreviewSections] = useState<XBlock[] | undefined>();
-  const previousSectionsRef = useRef<XBlock[] | undefined>();
-
-  const visibleSections = previewSections ?? sections;
-
-  const captureOriginalSections = useCallback(() => {
-    if (!previousSectionsRef.current) {
-      previousSectionsRef.current = visibleSections;
-    }
-  }, [visibleSections]);
-
-  const rollbackReorderPreview = useCallback(() => {
-    setPreviewSections(undefined);
-    previousSectionsRef.current = undefined;
-  }, []);
-
-  const acceptReorderPreview = useCallback(() => {
-    setPreviewSections(undefined);
-    previousSectionsRef.current = undefined;
-  }, []);
-
-  // Accept reorder preview then sync React Query cache with new section order
-  const acceptReorderAndSyncSectionOrder = useCallback((sectionListIds: string[]) => {
-    acceptReorderPreview();
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-      if (!old?.courseStructure?.childInfo?.children) return old;
-      return {
-        ...old,
-        courseStructure: {
-          ...old.courseStructure,
-          childInfo: {
-            ...old.courseStructure.childInfo,
-            children: sectionListIds.map(id =>
-              old.courseStructure.childInfo.children.find((s: any) => s.id === id)
-            ).filter(Boolean),
-          },
-        },
-      };
-    });
-  }, [acceptReorderPreview, queryClient, courseId]);
-
-  const cancelReorderPreview = useCallback(() => {
-    setPreviewSections(undefined);
-    previousSectionsRef.current = undefined;
-  }, []);
-
-  const previewSectionsCallback = useCallback((nextSections: XBlock[]) => {
-    captureOriginalSections();
-    setPreviewSections(nextSections);
-  }, [captureOriginalSections]);
-
-  // --- Reorder mutation hooks ---
-  const reorderSectionsMutation = useReorderSections(courseId);
-  const reorderSubsectionsMutation = useReorderSubsections(courseId);
-  const reorderUnitsMutation = useReorderUnits(courseId);
-
-  const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
-    if (!courseId) {
-      return;
-    }
-    captureOriginalSections();
-    try {
-      await reorderSectionsMutation.mutateAsync(sectionListIds);
-      acceptReorderAndSyncSectionOrder(sectionListIds);
-    } catch {
-      rollbackReorderPreview();
-    }
-  }, [courseId, reorderSectionsMutation, captureOriginalSections, acceptReorderAndSyncSectionOrder, rollbackReorderPreview]);
-
-  const commitSubsectionReorder = useCallback(async (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionListIds: string[],
-  ) => {
-    captureOriginalSections();
-    try {
-      await reorderSubsectionsMutation.mutateAsync({ sectionId, prevSectionId, subsectionListIds });
-      acceptReorderPreview();
-    } catch {
-      rollbackReorderPreview();
-    }
-  }, [reorderSubsectionsMutation, captureOriginalSections, acceptReorderPreview, rollbackReorderPreview]);
-
-  const commitUnitReorder = useCallback(async (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionId: string,
-    unitListIds: string[],
-  ) => {
-    captureOriginalSections();
-    try {
-      await reorderUnitsMutation.mutateAsync({ sectionId, prevSectionId, subsectionId, unitListIds });
-      acceptReorderPreview();
-    } catch {
-      rollbackReorderPreview();
-    }
-  }, [reorderUnitsMutation, captureOriginalSections, acceptReorderPreview, rollbackReorderPreview]);
-
-  const updateSectionOrderByIndex = useCallback(async (currentIndex: number, newIndex: number) => {
-    if (!courseId || currentIndex === newIndex) {
-      return;
-    }
-
-    previousSectionsRef.current = visibleSections;
-    const nextSections = arrayMove(visibleSections, currentIndex, newIndex) as XBlock[];
-    const sectionListIds = nextSections.map((section) => section.id);
-    setPreviewSections(nextSections);
-
-    try {
-      await reorderSectionsMutation.mutateAsync(sectionListIds);
-      acceptReorderAndSyncSectionOrder(sectionListIds);
-    } catch {
-      rollbackReorderPreview();
-    }
-  }, [visibleSections, courseId, reorderSectionsMutation, rollbackReorderPreview, acceptReorderAndSyncSectionOrder]);
-
-  const updateSubsectionOrderByIndex = useCallback(async (section: XBlock, moveDetails) => {
-    const { fn, args, sectionId } = moveDetails;
-    if (!args) {
-      return;
-    }
-
-    previousSectionsRef.current = visibleSections;
-    const [sectionsCopy, newSubsections] = fn(...args);
-    if (newSubsections && sectionId) {
-      setPreviewSections(sectionsCopy);
-      try {
-        await reorderSubsectionsMutation.mutateAsync({
-          sectionId,
-          prevSectionId: section.id,
-          subsectionListIds: newSubsections.map((subsection: XBlock) => subsection.id),
-        });
-        acceptReorderPreview();
-      } catch {
-        rollbackReorderPreview();
-      }
-    }
-  }, [visibleSections, reorderSubsectionsMutation, rollbackReorderPreview, acceptReorderPreview]);
-
-  const updateUnitOrderByIndex = useCallback(async (section: XBlock, moveDetails) => {
-    const { fn, args, sectionId, subsectionId } = moveDetails;
-    if (!args) {
-      return;
-    }
-
-    previousSectionsRef.current = visibleSections;
-    const [sectionsCopy, newUnits] = fn(...args);
-    if (newUnits && subsectionId) {
-      setPreviewSections(sectionsCopy);
-      try {
-        await reorderUnitsMutation.mutateAsync({
-          sectionId,
-          prevSectionId: section.id,
-          subsectionId,
-          unitListIds: newUnits.map((unit: XBlock) => unit.id),
-        });
-        acceptReorderPreview();
-      } catch {
-        rollbackReorderPreview();
-      }
-    }
-  }, [visibleSections, reorderUnitsMutation, rollbackReorderPreview, acceptReorderPreview]);
+  // --- Reorder state (extracted hook) ---
+  const {
+    visibleSections,
+    previewSections: previewSectionsCallback,
+    cancelReorderPreview,
+    commitSectionReorder,
+    commitSubsectionReorder,
+    commitUnitReorder,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
+  } = useOutlineReorderState({ courseId, sections });
 
   // --- Selection state ---
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();

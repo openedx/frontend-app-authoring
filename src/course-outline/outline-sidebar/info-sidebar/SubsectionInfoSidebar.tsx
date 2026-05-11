@@ -52,10 +52,9 @@ export const SubsectionSidebar = () => {
   const { openUnlinkModal } = useCourseAuthoringContext();
   const {
     openPublishModal,
-    handleDuplicateSubsectionSubmit,
     openDeleteModal,
   } = useCourseOutlineContext();
-  const { sections, updateSubsectionOrderByIndex } = useCourseOutlineState();
+  const { sections, updateSubsectionOrderByIndex, duplicateCurrentSelection } = useCourseOutlineState();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
 
   const handlePublish = () => {
@@ -136,7 +135,7 @@ export const SubsectionSidebar = () => {
           index: index ?? -1,
           actions,
           canMoveItem: canMoveSubsection,
-          onClickDuplicate: handleDuplicateSubsectionSubmit,
+          onClickDuplicate: () => selectedContainerState && duplicateCurrentSelection(selectedContainerState),
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () =>

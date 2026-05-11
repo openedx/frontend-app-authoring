@@ -26,10 +26,9 @@ export const SectionSidebar = () => {
   const { openUnlinkModal } = useCourseAuthoringContext();
   const {
     openPublishModal,
-    handleDuplicateSectionSubmit,
     openDeleteModal,
   } = useCourseOutlineContext();
-  const { sections, updateSectionOrderByIndex } = useCourseOutlineState();
+  const { sections, updateSectionOrderByIndex, duplicateCurrentSelection } = useCourseOutlineState();
   const {
     clearSelection,
     currentTabKey,
@@ -84,7 +83,7 @@ export const SectionSidebar = () => {
           index: index ?? -1,
           actions: sectionData.actions || {},
           canMoveItem: canMoveSection(sections),
-          onClickDuplicate: handleDuplicateSectionSubmit,
+          onClickDuplicate: () => selectedContainerState && duplicateCurrentSelection(selectedContainerState),
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () => openUnlinkModal({ value: sectionData, sectionId }),

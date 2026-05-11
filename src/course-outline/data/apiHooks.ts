@@ -8,7 +8,7 @@ import {
 } from '@src/course-outline/data/types';
 import { getNotificationMessage } from '@src/course-unit/data/utils';
 import { createGlobalState } from '@src/data/apiHooks';
-import type { XBlockBase, XblockChildInfo } from '@src/data/types';
+import type { XBlock, XBlockBase, XblockChildInfo } from '@src/data/types';
 import {
   ContainerType,
   getBlockType,
@@ -131,7 +131,7 @@ const appendSectionToOutlineIndex = (
 export const replaceSectionInOutlineIndex = (
   queryClient: QueryClient,
   courseId: string,
-  sections: Record<string, XBlockBase>,
+  sections: Record<string, XBlock>,
 ) => {
   const old = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
   if (!old?.courseStructure?.childInfo?.children) return;
@@ -199,7 +199,7 @@ async function invalidateParentQueriesAndSync(
     if (sectionData && ['chapter', 'section'].includes((sectionData as any).category)) {
       const outlineCourseId = getCourseKey(variables.sectionId);
       replaceSectionInOutlineIndex(queryClient, outlineCourseId, {
-        [variables.sectionId]: sectionData as XBlockBase,
+        [variables.sectionId]: sectionData as XBlock,
       });
     }
   }
@@ -481,11 +481,11 @@ export const useReorderUnits = (courseId: string) => {
       if (variables.prevSectionId && variables.prevSectionId !== variables.sectionId) {
         sectionIds.push(variables.prevSectionId);
       }
-      const updatedSections: Record<string, XBlockBase> = {};
+      const updatedSections: Record<string, XBlock> = {};
       // Use Promise.all for parallel fetching
       await Promise.all(sectionIds.map(async (id) => {
         try {
-          const sectionData = await getCourseItem<XBlockBase>(id);
+          const sectionData = await getCourseItem<XBlock>(id);
           updatedSections[id] = sectionData;
         } catch (e) {
           // If getCourseItem fails for one section, still try others
@@ -525,11 +525,11 @@ export const useReorderSubsections = (courseId: string) => {
       if (variables.prevSectionId && variables.prevSectionId !== variables.sectionId) {
         sectionIds.push(variables.prevSectionId);
       }
-      const updatedSections: Record<string, XBlockBase> = {};
+      const updatedSections: Record<string, XBlock> = {};
       // Use Promise.all for parallel fetching
       await Promise.all(sectionIds.map(async (id) => {
         try {
-          const sectionData = await getCourseItem<XBlockBase>(id);
+          const sectionData = await getCourseItem<XBlock>(id);
           updatedSections[id] = sectionData;
         } catch (e) {
           // If getCourseItem fails for one section, still try others
