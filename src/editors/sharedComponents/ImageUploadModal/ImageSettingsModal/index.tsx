@@ -14,10 +14,9 @@ import ErrorAlert from '../../ErrorAlerts/ErrorAlert';
 import AltTextControls from './AltTextControls';
 import DimensionControls from './DimensionControls';
 import messages from './messages';
-import {
-  AltText,
+import type {
+  HTMLImageAttrs,
   ImageConfig,
-  ImageDimensions,
   OrigImageDimensions,
 } from './types';
 
@@ -39,7 +38,7 @@ interface ImageSettingsModalInternalProps extends ImageSettingsModalCommonProps 
 }
 
 interface ImageSettingsModalProps extends ImageSettingsModalCommonProps {
-  saveToEditor: (config: AltText & { dimensions: ImageDimensions; classList?: string[]; }) => void;
+  saveToEditor: (config: HTMLImageAttrs) => void;
 }
 
 export interface ImageSettingsModalFormProps<T extends ImageConfig = ImageConfig>
@@ -196,7 +195,7 @@ const ImageSettingsModal = ({
   });
 
   const handleSubmit = React.useCallback((value: ImageConfig, actions: FormikBag<ImageConfig, any>) => {
-    const { width, height, ...imgAttrs } = value;
+    const { width, height, isDecorative, isLocked, ...imgAttrs } = value;
     saveToEditor({
       dimensions: {
         width,

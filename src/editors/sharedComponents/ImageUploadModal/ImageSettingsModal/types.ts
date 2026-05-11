@@ -17,3 +17,9 @@ export interface ImageConfig extends ImageDimensions, AltText {
   isLocked: boolean;
   classList?: string[];
 }
+
+export interface HTMLImageAttrs {
+  dimensions: ImageDimensions;
+  altText: string;
+  classList?: string[];
+}

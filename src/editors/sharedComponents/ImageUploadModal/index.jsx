@@ -37,7 +37,7 @@ export const imgProps = ({
     alt: isDecorative ? '' : altText,
     width: dimensions.width,
     height: dimensions.height,
-    class: classList?.join(' '),
+    class: (classList ?? []).join(' '),
     ...imgAttrs,
   };
 };

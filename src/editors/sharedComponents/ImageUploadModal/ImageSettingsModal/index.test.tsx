@@ -12,6 +12,7 @@ describe('ImageSettingsModal', () => {
       altText: 'AlTTExt',
       externalUrl: 'ExtERNALurL',
       url: 'UrL',
+      classList: [],
     },
     close: jest.fn().mockName('props.close'),
     returnToSelection: jest.fn().mockName('props.returnToSelector'),
