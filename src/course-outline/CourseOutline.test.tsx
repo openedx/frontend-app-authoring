@@ -338,14 +338,11 @@ describe('<CourseOutline />', () => {
 
     axiosMock
       .onGet(getCourseReindexApiUrl(courseOutlineIndexMock.reindexLink))
-      .reply(500);
+      .reply(500, 'reindex failed');
     const reindexButton = await findByTestId('course-reindex');
     await act(async () => fireEvent.click(reindexButton));
 
-    // Verify the reindex API call was made (failure is handled; UI shows error state)
-    await waitFor(() => {
-      expect(axiosMock.history.get.length).toBeGreaterThan(0);
-    });
+    expect(await findByText(('"reindex failed"'))).toBeInTheDocument();
   });
 
   it('check that new section list is saved when dragged', async () => {

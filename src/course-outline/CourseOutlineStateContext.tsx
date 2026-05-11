@@ -153,6 +153,8 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const [dismissedErrorKeys, setDismissedErrorKeys] = useState<Set<string>>(new Set());
   // Reindex loading status (set by reindexCourse callback)
   const [reindexLoadingStatus, setReindexLoadingStatus] = useState<string>(RequestStatus.IN_PROGRESS);
+  // Reindex error details (set by reindexCourse catch)
+  const [localReindexError, setLocalReindexError] = useState<any>(null);
   // Local override for status bar (set by changeVideoSharingOption)
   const [localStatusBarOverride, setLocalStatusBarOverride] = useState<Partial<CourseOutlineStatusBar>>({});
   // Saving status (set by mutation helpers)
@@ -216,14 +218,14 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const effectiveErrors = useMemo((): Record<string, any> => {
     const base = {
       outlineIndexApi: outlineIndexRequestState.errors,
-      reindexApi: DEFAULT_ERROR_NULL,
+      reindexApi: localReindexError,
       sectionLoadingApi: DEFAULT_ERROR_NULL,
       courseLaunchApi: localCourseLaunchErrors,
     };
     const filtered = { ...base };
     dismissedErrorKeys.forEach(key => { filtered[key] = null; });
     return filtered;
-  }, [outlineIndexRequestState.errors, dismissedErrorKeys, localCourseLaunchErrors]);
+  }, [outlineIndexRequestState.errors, dismissedErrorKeys, localReindexError, localCourseLaunchErrors]);
 
   // --- Checklist/launch effects (replaces Redux dispatch-based effects) ---
   // Fetch best practices and launch data on course change
@@ -700,11 +702,13 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     if (!link) {
       return;
     }
+    setLocalReindexError(null);
     setReindexLoadingStatus(RequestStatus.IN_PROGRESS);
     try {
       await restartIndexingOnCourse(link);
       setReindexLoadingStatus(RequestStatus.SUCCESSFUL);
     } catch (error) {
+      setLocalReindexError(getErrorDetails(error));
       setReindexLoadingStatus(RequestStatus.FAILED);
     }
   }, [effectiveOutlineIndexData]);
