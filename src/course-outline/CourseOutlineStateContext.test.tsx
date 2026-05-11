@@ -6,14 +6,9 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import initializeStore from '@src/store';
 import { initializeMocks } from '@src/testUtils';
-import { RequestStatus } from '@src/data/constants';
+
 import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
-import {
-  fetchOutlineIndexSuccess,
-  updateCourseActions,
-  updateOutlineIndexLoadingStatus,
-  updateStatusBar,
-} from '@src/course-outline/data/slice';
+
 import {
   CourseOutlineStateProvider,
   useCourseOutlineState,
@@ -28,6 +23,10 @@ const mockOutlineIndexData = {
   courseStructure: {
     ...courseOutlineIndexMock.courseStructure,
     videoSharingOptions: 'by-course',
+    actions: {
+      ...courseOutlineIndexMock.courseStructure.actions,
+      allowMoveDown: true,
+    },
   },
   createdOn: new Date().toISOString(),
 };
@@ -67,10 +66,7 @@ describe('CourseOutlineStateContext', () => {
     });
     axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
     currentItemData = null;
-    store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
-    store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-    store.dispatch(updateStatusBar({ videoSharingOptions: 'by-course' }));
-    store.dispatch(updateCourseActions({ allowMoveDown: true }));
+
 
     const wrapper = ({ children }: { children?: React.ReactNode }) => (
       <AppProvider store={store}>
@@ -165,8 +161,6 @@ describe('CourseOutlineStateContext', () => {
       });
       axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
       currentItemData = null;
-      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
-      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
 
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
@@ -200,8 +194,6 @@ describe('CourseOutlineStateContext', () => {
       });
       axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
       currentItemData = null;
-      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
-      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
 
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
@@ -256,8 +248,6 @@ describe('CourseOutlineStateContext', () => {
       });
       axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
       currentItemData = null;
-      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
-      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
 
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
@@ -305,8 +295,6 @@ describe('CourseOutlineStateContext', () => {
       });
       axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
       currentItemData = null;
-      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
-      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
 
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
@@ -365,8 +353,6 @@ describe('CourseOutlineStateContext', () => {
       });
       axiosMock.onGet(getCourseOutlineIndexApiUrl(mockCourseId)).reply(200, mockOutlineIndexData);
       currentItemData = null;
-      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
-      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
 
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
@@ -436,11 +422,6 @@ describe('CourseOutlineStateContext', () => {
       });
       currentItemData = null;
       const store = initializeStore();
-      // Pre-load Redux with course A data and successful status (simulates
-      // navigation from already-loaded course A).
-      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
-      store.dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-
       // Set courseId to course B (simulating navigation)
       mockCourseId = courseBId;
 
@@ -475,9 +456,6 @@ describe('CourseOutlineStateContext', () => {
       });
       currentItemData = null;
       const store = initializeStore();
-      // Pre-load Redux with course A data
-      store.dispatch(fetchOutlineIndexSuccess(mockOutlineIndexData));
-
       // Set courseId to course B
       mockCourseId = courseBId;
 

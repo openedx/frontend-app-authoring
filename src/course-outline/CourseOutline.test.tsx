@@ -37,7 +37,7 @@ import {
   createDiscussionsTopics,
   createDiscussionsTopicsUrl,
 } from './data/api';
-import { fetchOutlineIndexSuccess } from './data/slice';
+
 import {
   courseOutlineIndexMock as originalCourseOutlineIndexMock,
   courseOutlineIndexWithoutSections,
@@ -184,14 +184,6 @@ describe('<CourseOutline />', () => {
       .reply(200, {});
     // Seed React Query cache with a clone so tests can mutate the mock data
     queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), cloneDeep(courseOutlineIndexMock));
-    // Seed Redux with proctored exam flags needed by configure modal tests
-    store.dispatch(fetchOutlineIndexSuccess({
-      courseStructure: {
-        enableProctoredExams: true,
-        enableTimedExams: true,
-        childInfo: { children: [] },
-      },
-    }));
   });
 
   afterEach(() => {

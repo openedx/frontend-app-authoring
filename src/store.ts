@@ -18,7 +18,7 @@ import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';
 import { reducer as courseOptimizerReducer } from './optimizer-page/data/slice';
 import { reducer as genericReducer } from './generic/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
-import { reducer as courseOutlineReducer } from './course-outline/data/slice';
+
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
 import { reducer as certificatesReducer } from './certificates/data/slice';
 
@@ -41,7 +41,7 @@ export interface DeprecatedReduxState {
   courseOptimizer: Record<string, any>;
   generic: Record<string, any>;
   videos: Record<string, any>;
-  courseOutline: Record<string, any>;
+
   courseUnit: Record<string, any>;
   certificates: {
     loadingStatus: RequestStatusType;
@@ -68,7 +68,7 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       courseOptimizer: courseOptimizerReducer,
       generic: genericReducer,
       videos: videosReducer,
-      courseOutline: courseOutlineReducer,
+
       courseUnit: courseUnitReducer,
       certificates: certificatesReducer,
     },

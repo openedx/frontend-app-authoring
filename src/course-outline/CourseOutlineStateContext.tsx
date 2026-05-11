@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
@@ -21,20 +20,7 @@ import type {
   XBlock,
   XBlockActions,
 } from '@src/data/types';
-import {
-  getCourseActions,
-  getCreatedOn,
-  getCustomRelativeDatesActiveFlag,
-  getErrors,
-  getLoadingStatus,
-  getOutlineIndexData,
-
-  getSectionsList,
-  getStatusBarData,
-  getProctoredExamsFlag,
-  getTimedExamsFlag,
-} from './data/selectors';
-import { replaceSectionInOutlineIndex, useCourseItemData, useReorderUnits } from './data/apiHooks';
+import { useCourseItemData, useReorderUnits } from './data/apiHooks';
 
 import {
   courseOutlineIndexQueryKey,
@@ -42,15 +28,6 @@ import {
   getCourseOutlineStatusBarData,
   useCourseOutlineIndex,
 } from './data/outlineIndexQuery';
-import {
-  fetchOutlineIndexSuccess,
-  updateCourseActions,
-  updateOutlineIndexLoadingStatus,
-  updateStatusBar,
-  fetchStatusBarChecklistSuccess,
-  fetchStatusBarSelfPacedSuccess,
-  updateCourseLaunchQueryStatus,
-} from './data/slice';
 import {
   useDeleteCourseItem,
   useDuplicateItem,
@@ -90,6 +67,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import {
   CourseOutlineState as LegacyCourseOutlineState,
   CourseOutlineStatusBar,
+  ChecklistType,
 } from './data/types';
 
 type CourseOutlineStateContextData = {
@@ -110,7 +88,7 @@ type CourseOutlineStateContextData = {
   isCustomRelativeDatesActive: boolean;
   enableProctoredExams?: boolean;
   enableTimedExams?: boolean;
-  createdOn: LegacyCourseOutlineState['createdOn'];
+  createdOn?: string;
   currentItemData?: XBlock;
   lastEditableSection?: XBlock;
   lastEditableSubsection?: EditableSubsection;
@@ -144,128 +122,160 @@ type CourseOutlineStateContextData = {
   setSavingStatus: (status: string) => void;
 };
 
+// Default actions when outline data hasn't loaded or has no actions
+const DEFAULT_COURSE_ACTIONS: XBlockActions = {
+  deletable: true,
+  unlinkable: false,
+  draggable: true,
+  childAddable: true,
+  duplicable: true,
+  allowMoveUp: false,
+  allowMoveDown: false,
+};
+
+const DEFAULT_LAUNCH_STATUS = RequestStatus.IN_PROGRESS;
+const DEFAULT_FETCH_SECTION_STATUS = RequestStatus.IN_PROGRESS;
+const DEFAULT_ERROR_NULL = null;
+
 const CourseOutlineStateContext = createContext<CourseOutlineStateContextData | undefined>(undefined);
 
 export const CourseOutlineStateProvider = ({ children }: { children?: React.ReactNode }) => {
-  const dispatch = useDispatch();
-
-  // Redux selectors for all state
-  const outlineIndexData = useSelector(getOutlineIndexData);
-  const sectionsList = useSelector(getSectionsList);
-  const loadingStatus = useSelector(getLoadingStatus);
-  const [savingStatus, setSavingStatusState] = useState('');
-  const errors = useSelector(getErrors);
-  const statusBarData = useSelector(getStatusBarData);
-  const courseActions = useSelector(getCourseActions);
-  const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
-  const enableProctoredExams = useSelector(getProctoredExamsFlag);
-  const enableTimedExams = useSelector(getTimedExamsFlag);
-  const createdOn = useSelector(getCreatedOn);
-
-  // Redux store reference for reading updated state in success callbacks
   // Query client for updating React Query cache after reorder
   const queryClient = useQueryClient();
 
   // Course ID from context (primary source)
   const { courseId } = useCourseAuthoringContext();
 
-  // Whether Redux data belongs to current course (content-based guard).
-  // With provider remount keyed by courseId, this is enough to block stale data
-  // from previous course from leaking into initialData, effectiveOutlineIndexData,
-  // or sectionsList fallback.
-  const reduxDataMatchesCourse = outlineIndexData?.courseStructure?.id === courseId;
+  // Mount outline index query from React Query (primary source, no Redux facade)
+  const outlineIndexQuery = useCourseOutlineIndex(courseId);
 
-  // Mount outline index query from React Query (primary source).
-  // Seed from Redux facade only when facade data matches current course.
-  const outlineIndexQuery = useCourseOutlineIndex(courseId, {
-    initialData: reduxDataMatchesCourse ? outlineIndexData : undefined,
-  });
-
+  // Local state for dismissed errors (persists filter across renders)
   const [dismissedErrorKeys, setDismissedErrorKeys] = useState<Set<string>>(new Set());
+  // Reindex loading status (set by reindexCourse callback)
   const [reindexLoadingStatus, setReindexLoadingStatus] = useState<string>(RequestStatus.IN_PROGRESS);
+  // Local override for status bar (set by changeVideoSharingOption)
   const [localStatusBarOverride, setLocalStatusBarOverride] = useState<Partial<CourseOutlineStatusBar>>({});
+  // Saving status (set by mutation helpers)
+  const [savingStatus, setSavingStatusState] = useState('');
 
-  // Derive outline-index loading/error state from live query so course switches
-  // do not momentarily reuse stale Redux request status before sync effect runs.
+  // --- Query-derived state (no Redux) ---
+
+  // Effective outline data from React Query cache
+  const effectiveOutlineIndexData = outlineIndexQuery.data;
+
+  // Derive outline-index loading/error state from live query
   const outlineIndexRequestState = useMemo(() => getCourseOutlineIndexRequestState({
     isPending: outlineIndexQuery.isPending,
     isSuccess: outlineIndexQuery.isSuccess,
     error: outlineIndexQuery.error,
   }), [outlineIndexQuery.error, outlineIndexQuery.isPending, outlineIndexQuery.isSuccess]);
+
+  // Committed sections from query cache children
+  const sections = effectiveOutlineIndexData?.courseStructure?.childInfo?.children || [];
+
+  // --- Local state for checklist, launch, and self-paced (replaces Redux dispatch-based effects) ---
+  const [localChecklist, setLocalChecklist] = useState<ChecklistType>({
+    totalCourseLaunchChecks: 0,
+    completedCourseLaunchChecks: 0,
+    totalCourseBestPracticesChecks: 0,
+    completedCourseBestPracticesChecks: 0,
+  });
+  const [localIsSelfPaced, setLocalIsSelfPaced] = useState<boolean>(false);
+  const [localCourseLaunchQueryStatus, setLocalCourseLaunchQueryStatus] = useState<string>(DEFAULT_LAUNCH_STATUS);
+  const [localCourseLaunchErrors, setLocalCourseLaunchErrors] = useState<any>(null);
+
+  // --- Derived flags from outline data ---
+  const courseActions = effectiveOutlineIndexData?.courseStructure?.actions || DEFAULT_COURSE_ACTIONS;
+  const isCustomRelativeDatesActive = effectiveOutlineIndexData?.isCustomRelativeDatesActive ?? false;
+  const enableProctoredExams = effectiveOutlineIndexData?.courseStructure?.enableProctoredExams;
+  const enableTimedExams = effectiveOutlineIndexData?.courseStructure?.enableTimedExams;
+  const createdOn = effectiveOutlineIndexData?.createdOn;
+
+  // --- Derived status bar data (merge query data + local checklist/selfPaced + overrides) ---
+  const statusBarData = useMemo(() => {
+    const base = effectiveOutlineIndexData
+      ? getCourseOutlineStatusBarData(effectiveOutlineIndexData)
+      : {};
+    return {
+      ...base,
+      checklist: localChecklist,
+      isSelfPaced: localIsSelfPaced,
+      ...localStatusBarOverride,
+    } as CourseOutlineStatusBar;
+  }, [effectiveOutlineIndexData, localChecklist, localIsSelfPaced, localStatusBarOverride]);
+
+  // --- Derived loading status (query-derived + local) ---
   const effectiveLoadingStatus = useMemo(() => ({
-    ...loadingStatus,
     outlineIndexLoadingStatus: outlineIndexRequestState.status,
     reIndexLoadingStatus: reindexLoadingStatus,
-  }), [loadingStatus, outlineIndexRequestState.status, reindexLoadingStatus]);
-  const effectiveErrors = useMemo(() => {
-    // Null out any dismissed error keys so they don't appear in the UI
-    const filtered = { ...errors };
-    dismissedErrorKeys.forEach(key => { filtered[key] = null; });
-    return {
-      ...filtered,
+    fetchSectionLoadingStatus: DEFAULT_FETCH_SECTION_STATUS,
+    courseLaunchQueryStatus: localCourseLaunchQueryStatus,
+  }), [outlineIndexRequestState.status, reindexLoadingStatus, localCourseLaunchQueryStatus]);
+
+  // --- Derived errors (query-derived + local, minus dismissed keys) ---
+  const effectiveErrors = useMemo((): Record<string, any> => {
+    const base = {
       outlineIndexApi: outlineIndexRequestState.errors,
+      reindexApi: DEFAULT_ERROR_NULL,
+      sectionLoadingApi: DEFAULT_ERROR_NULL,
+      courseLaunchApi: localCourseLaunchErrors,
     };
-  }, [errors, dismissedErrorKeys, outlineIndexRequestState.errors]);
+    const filtered = { ...base };
+    dismissedErrorKeys.forEach(key => { filtered[key] = null; });
+    return filtered;
+  }, [outlineIndexRequestState.errors, dismissedErrorKeys, localCourseLaunchErrors]);
 
-  // Effective outline data — prefer React Query cache, fall back to Redux facade.
-  // Only fall back to Redux when its data matches the current course.
-  const effectiveOutlineIndexData = outlineIndexQuery.data
-    ?? (reduxDataMatchesCourse ? outlineIndexData : undefined);
-
-  // Committed sections from query cache (PR 9: primary source), fall back to Redux sectionsList.
-  // When query has resolved successfully, trust its data even if children array is empty.
-  // When query is loading/error/idle and Redux has data for the current course, use it.
-  // Otherwise show empty sections (prevent stale flash from a different course).
-  const sections = outlineIndexQuery.isSuccess
-    ? (effectiveOutlineIndexData?.courseStructure?.childInfo?.children || [])
-    : reduxDataMatchesCourse ? (sectionsList || []) : [];
-
-  // Sync query state to Redux loading status facade
+  // --- Checklist/launch effects (replaces Redux dispatch-based effects) ---
+  // Fetch best practices and launch data on course change
   useEffect(() => {
-    dispatch(updateOutlineIndexLoadingStatus(outlineIndexRequestState));
-  }, [dispatch, outlineIndexRequestState]);
-  // Sync query data to Redux on success
+    getCourseBestPractices({ courseId, excludeGraded: true, all: true }).then((data) => {
+      if (data) {
+        setLocalChecklist(prev => ({ ...prev, ...getCourseBestPracticesChecklist(data) }));
+      }
+    }).catch(() => {});
+
+    getCourseLaunch({ courseId, gradedOnly: true, validateOras: true, all: true })
+      .then((data) => {
+        setLocalIsSelfPaced(data.isSelfPaced);
+        setLocalChecklist(prev => ({ ...prev, ...getCourseLaunchChecklist(data) }));
+        setLocalCourseLaunchQueryStatus(RequestStatus.SUCCESSFUL);
+        setLocalCourseLaunchErrors(null);
+      }).catch((error) => {
+        setLocalCourseLaunchQueryStatus(RequestStatus.FAILED);
+        setLocalCourseLaunchErrors(getErrorDetails(error));
+      });
+  }, [courseId]);
+
+  // Create discussions topics if course was created recently
   useEffect(() => {
-    if (!outlineIndexQuery.data) {
-      return;
+    if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
+      createDiscussionsTopics(courseId).catch(() => {});
     }
+  }, [createdOn, courseId]);
 
-    dispatch(fetchOutlineIndexSuccess(outlineIndexQuery.data));
-    dispatch(updateStatusBar(getCourseOutlineStatusBarData(outlineIndexQuery.data)));
-    dispatch(updateCourseActions(outlineIndexQuery.data.courseStructure.actions));
-  }, [dispatch, outlineIndexQuery.data]);
-
-  // Preview state: undefined means show sections, array means show preview
+  // --- Preview state for drag reorder ---
   const [previewSections, setPreviewSections] = useState<XBlock[] | undefined>();
-
-  // Ref to track original sections captured at drag start (restore target on failure)
   const previousSectionsRef = useRef<XBlock[] | undefined>();
 
-  // Current visible sections = previewSections ?? sections
   const visibleSections = previewSections ?? sections;
 
-  // Helper: capture original tree once at first preview update
   const captureOriginalSections = useCallback(() => {
     if (!previousSectionsRef.current) {
       previousSectionsRef.current = visibleSections;
     }
   }, [visibleSections]);
 
-  // Helper: clear preview and snapshot (used as rollback callback on failure)
   const rollbackReorderPreview = useCallback(() => {
     setPreviewSections(undefined);
     previousSectionsRef.current = undefined;
   }, []);
 
-  // Helper: clear preview and snapshot (used as success callback)
   const acceptReorderPreview = useCallback(() => {
     setPreviewSections(undefined);
     previousSectionsRef.current = undefined;
   }, []);
 
-
-
-  // Helper: accept reorder preview then sync React Query cache with new section order
+  // Accept reorder preview then sync React Query cache with new section order
   const acceptReorderAndSyncSectionOrder = useCallback((sectionListIds: string[]) => {
     acceptReorderPreview();
     queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
@@ -285,33 +295,25 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     });
   }, [acceptReorderPreview, queryClient, courseId]);
 
-  // Cancel preview and restore to committed (current) state
   const cancelReorderPreview = useCallback(() => {
     setPreviewSections(undefined);
     previousSectionsRef.current = undefined;
   }, []);
 
-  // Preview callback from DraggableList — captures original tree once, then updates preview
   const previewSectionsCallback = useCallback((nextSections: XBlock[]) => {
     captureOriginalSections();
     setPreviewSections(nextSections);
   }, [captureOriginalSections]);
 
-  // PR 11: Reorder sections mutation hook (declared before callbacks that use it)
+  // --- Reorder mutation hooks ---
   const reorderSectionsMutation = useReorderSections(courseId);
-
-  // PR 12: Reorder subsections mutation hook
   const reorderSubsectionsMutation = useReorderSubsections(courseId);
-
-  // PR 13: Reorder units mutation hook
   const reorderUnitsMutation = useReorderUnits(courseId);
 
-  // Commit section reorder — keeps preview visible until request settles
   const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
     if (!courseId) {
       return;
     }
-
     captureOriginalSections();
     try {
       await reorderSectionsMutation.mutateAsync(sectionListIds);
@@ -321,7 +323,6 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     }
   }, [courseId, reorderSectionsMutation, captureOriginalSections, acceptReorderAndSyncSectionOrder, rollbackReorderPreview]);
 
-  // Commit subsection reorder
   const commitSubsectionReorder = useCallback(async (
     sectionId: string,
     prevSectionId: string,
@@ -336,7 +337,6 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     }
   }, [reorderSubsectionsMutation, captureOriginalSections, acceptReorderPreview, rollbackReorderPreview]);
 
-  // Commit unit reorder
   const commitUnitReorder = useCallback(async (
     sectionId: string,
     prevSectionId: string,
@@ -357,8 +357,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
       return;
     }
 
-    const previousSections = visibleSections;
-    previousSectionsRef.current = previousSections;
+    previousSectionsRef.current = visibleSections;
     const nextSections = arrayMove(visibleSections, currentIndex, newIndex) as XBlock[];
     const sectionListIds = nextSections.map((section) => section.id);
     setPreviewSections(nextSections);
@@ -377,8 +376,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
       return;
     }
 
-    const previousSections = visibleSections;
-    previousSectionsRef.current = previousSections;
+    previousSectionsRef.current = visibleSections;
     const [sectionsCopy, newSubsections] = fn(...args);
     if (newSubsections && sectionId) {
       setPreviewSections(sectionsCopy);
@@ -401,8 +399,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
       return;
     }
 
-    const previousSections = visibleSections;
-    previousSectionsRef.current = previousSections;
+    previousSectionsRef.current = visibleSections;
     const [sectionsCopy, newUnits] = fn(...args);
     if (newUnits && subsectionId) {
       setPreviewSections(sectionsCopy);
@@ -420,6 +417,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     }
   }, [visibleSections, reorderUnitsMutation, rollbackReorderPreview, acceptReorderPreview]);
 
+  // --- Selection state ---
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
@@ -473,10 +471,6 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const { mutate: configureUnit } = useConfigureUnit();
   const { mutate: pasteItem } = usePasteItem(courseId);
   const { mutate: updateSectionHighlights } = useUpdateCourseSectionHighlights();
-
-
-
-  // --- PR 10: Mutation methods ---
 
   // Pure helpers to remove items from outline tree at each level
   const removeSectionFromTree = (children: any[], sectionId: string): any[] =>
@@ -535,7 +529,6 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
         await deleteMutation.mutateAsync(
           { itemId: selection.currentId },
         );
-        // Remove section from outline index cache
         updateOutlineIndexCache((old) => ({
           ...old,
           courseStructure: {
@@ -553,7 +546,6 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
         await deleteMutation.mutateAsync(
           { itemId: selection.currentId, sectionId: selection.sectionId },
         );
-        // Remove subsection from outline index cache
         updateOutlineIndexCache((old) => ({
           ...old,
           courseStructure: {
@@ -577,7 +569,6 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
             sectionId: selection.sectionId,
           },
         );
-        // Remove unit from outline index cache
         updateOutlineIndexCache((old) => ({
           ...old,
           courseStructure: {
@@ -722,35 +713,8 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     setSavingStatusState(status);
   }, []);
 
-  // Mount effects moved from hooks.jsx (PR 10)
-  useEffect(() => {
-    getCourseBestPractices({ courseId, excludeGraded: true, all: true }).then((data) => {
-      if (data) {
-        dispatch(fetchStatusBarChecklistSuccess(getCourseBestPracticesChecklist(data)));
-      }
-    }).catch(() => {});
-
-    getCourseLaunch({ courseId, gradedOnly: true, validateOras: true, all: true })
-      .then((data) => {
-        dispatch(fetchStatusBarSelfPacedSuccess({ isSelfPaced: data.isSelfPaced }));
-        dispatch(fetchStatusBarChecklistSuccess(getCourseLaunchChecklist(data)));
-        dispatch(updateCourseLaunchQueryStatus({ status: RequestStatus.SUCCESSFUL }));
-      }).catch((error) => {
-        dispatch(updateCourseLaunchQueryStatus({
-          status: RequestStatus.FAILED,
-          errors: getErrorDetails(error),
-        }));
-      });
-  }, [courseId, dispatch]);
-
-  useEffect(() => {
-    if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
-      createDiscussionsTopics(courseId).catch(() => {});
-    }
-  }, [createdOn, courseId]);
-
   const context = useMemo<CourseOutlineStateContextData>(() => ({
-    outlineIndexData: effectiveOutlineIndexData,
+    outlineIndexData: (effectiveOutlineIndexData || {}) as object,
     courseName: effectiveOutlineIndexData?.courseStructure?.displayName,
     courseUsageKey: effectiveOutlineIndexData?.courseStructure?.id || courseId,
     sections: visibleSections,
@@ -758,7 +722,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     updateSubsectionOrderByIndex,
     updateUnitOrderByIndex,
     courseActions,
-    statusBarData: { ...statusBarData, ...localStatusBarOverride },
+    statusBarData,
     savingStatus,
     errors: effectiveErrors,
     loadingStatus: effectiveLoadingStatus,
@@ -802,7 +766,6 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     updateUnitOrderByIndex,
     courseActions,
     statusBarData,
-    localStatusBarOverride,
     savingStatus,
     effectiveErrors,
     effectiveLoadingStatus,
