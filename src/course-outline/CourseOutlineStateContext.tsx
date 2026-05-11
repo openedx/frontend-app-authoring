@@ -2,12 +2,10 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import moment from 'moment';
 
 import { RequestStatus } from '@src/data/constants';
 import type {
@@ -18,24 +16,9 @@ import type {
 } from '@src/data/types';
 import { useCourseItemData } from './data/apiHooks';
 
-import {
-  getCourseOutlineIndexRequestState,
-  getCourseOutlineStatusBarData,
-  useCourseOutlineIndex,
-} from './data/outlineIndexQuery';
-import {
-  createDiscussionsTopics,
-  getCourseLaunch,
-  getCourseBestPractices,
-} from './data/api';
-import { getErrorDetails } from './utils/getErrorDetails';
-import {
-  getCourseBestPracticesChecklist,
-  getCourseLaunchChecklist,
-} from './utils/getChecklistForStatusBar';
-
 import { useOutlineMutations } from './state/useOutlineMutations';
 import { useOutlineReorderState } from './state/useOutlineReorderState';
+import { useOutlineStatusState } from './state/useOutlineStatusState';
 import { buildSelectionState } from './state/selection';
 import {
   EditableSubsection,
@@ -47,7 +30,6 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import {
   CourseOutlineState as LegacyCourseOutlineState,
   CourseOutlineStatusBar,
-  ChecklistType,
 } from './data/types';
 
 type CourseOutlineStateContextData = {
@@ -102,20 +84,7 @@ type CourseOutlineStateContextData = {
   setSavingStatus: (status: string) => void;
 };
 
-// Default actions when outline data hasn't loaded or has no actions
-const DEFAULT_COURSE_ACTIONS: XBlockActions = {
-  deletable: true,
-  unlinkable: false,
-  draggable: true,
-  childAddable: true,
-  duplicable: true,
-  allowMoveUp: false,
-  allowMoveDown: false,
-};
 
-const DEFAULT_LAUNCH_STATUS = RequestStatus.IN_PROGRESS;
-const DEFAULT_FETCH_SECTION_STATUS = RequestStatus.IN_PROGRESS;
-const DEFAULT_ERROR_NULL = null;
 
 const CourseOutlineStateContext = createContext<CourseOutlineStateContextData | undefined>(undefined);
 
@@ -125,9 +94,6 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
 
   // Course ID from context (primary source)
   const { courseId } = useCourseAuthoringContext();
-
-  // Mount outline index query from React Query (primary source, no Redux facade)
-  const outlineIndexQuery = useCourseOutlineIndex(courseId);
 
   // Local state for dismissed errors (persists filter across renders)
   const [dismissedErrorKeys, setDismissedErrorKeys] = useState<Set<string>>(new Set());
@@ -140,100 +106,25 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   // Saving status (set by mutation helpers)
   const [savingStatus, setSavingStatusState] = useState('');
 
-  // --- Query-derived state (no Redux) ---
-
-  // Effective outline data from React Query cache
-  const effectiveOutlineIndexData = outlineIndexQuery.data;
-
-  // Derive outline-index loading/error state from live query
-  const outlineIndexRequestState = useMemo(() => getCourseOutlineIndexRequestState({
-    isPending: outlineIndexQuery.isPending,
-    isSuccess: outlineIndexQuery.isSuccess,
-    error: outlineIndexQuery.error,
-  }), [outlineIndexQuery.error, outlineIndexQuery.isPending, outlineIndexQuery.isSuccess]);
-
-  // Committed sections from query cache children
-  const sections = effectiveOutlineIndexData?.courseStructure?.childInfo?.children || [];
-
-  // --- Local state for checklist, launch, and self-paced (replaces Redux dispatch-based effects) ---
-  const [localChecklist, setLocalChecklist] = useState<ChecklistType>({
-    totalCourseLaunchChecks: 0,
-    completedCourseLaunchChecks: 0,
-    totalCourseBestPracticesChecks: 0,
-    completedCourseBestPracticesChecks: 0,
+  // --- Status/query state (extracted hook) ---
+  const {
+    effectiveOutlineIndexData,
+    sections,
+    statusBarData,
+    effectiveLoadingStatus,
+    effectiveErrors,
+    courseActions,
+    isCustomRelativeDatesActive,
+    enableProctoredExams,
+    enableTimedExams,
+    createdOn,
+  } = useOutlineStatusState({
+    courseId,
+    reindexLoadingStatus,
+    localStatusBarOverride,
+    dismissedErrorKeys,
+    localReindexError,
   });
-  const [localIsSelfPaced, setLocalIsSelfPaced] = useState<boolean>(false);
-  const [localCourseLaunchQueryStatus, setLocalCourseLaunchQueryStatus] = useState<string>(DEFAULT_LAUNCH_STATUS);
-  const [localCourseLaunchErrors, setLocalCourseLaunchErrors] = useState<any>(null);
-
-  // --- Derived flags from outline data ---
-  const courseActions = effectiveOutlineIndexData?.courseStructure?.actions || DEFAULT_COURSE_ACTIONS;
-  const isCustomRelativeDatesActive = effectiveOutlineIndexData?.isCustomRelativeDatesActive ?? false;
-  const enableProctoredExams = effectiveOutlineIndexData?.courseStructure?.enableProctoredExams;
-  const enableTimedExams = effectiveOutlineIndexData?.courseStructure?.enableTimedExams;
-  const createdOn = effectiveOutlineIndexData?.createdOn;
-
-  // --- Derived status bar data (merge query data + local checklist/selfPaced + overrides) ---
-  const statusBarData = useMemo(() => {
-    const base = effectiveOutlineIndexData
-      ? getCourseOutlineStatusBarData(effectiveOutlineIndexData)
-      : {};
-    return {
-      ...base,
-      checklist: localChecklist,
-      isSelfPaced: localIsSelfPaced,
-      ...localStatusBarOverride,
-    } as CourseOutlineStatusBar;
-  }, [effectiveOutlineIndexData, localChecklist, localIsSelfPaced, localStatusBarOverride]);
-
-  // --- Derived loading status (query-derived + local) ---
-  const effectiveLoadingStatus = useMemo(() => ({
-    outlineIndexLoadingStatus: outlineIndexRequestState.status,
-    reIndexLoadingStatus: reindexLoadingStatus,
-    fetchSectionLoadingStatus: DEFAULT_FETCH_SECTION_STATUS,
-    courseLaunchQueryStatus: localCourseLaunchQueryStatus,
-  }), [outlineIndexRequestState.status, reindexLoadingStatus, localCourseLaunchQueryStatus]);
-
-  // --- Derived errors (query-derived + local, minus dismissed keys) ---
-  const effectiveErrors = useMemo((): Record<string, any> => {
-    const base = {
-      outlineIndexApi: outlineIndexRequestState.errors,
-      reindexApi: localReindexError,
-      sectionLoadingApi: DEFAULT_ERROR_NULL,
-      courseLaunchApi: localCourseLaunchErrors,
-    };
-    const filtered = { ...base };
-    dismissedErrorKeys.forEach(key => { filtered[key] = null; });
-    return filtered;
-  }, [outlineIndexRequestState.errors, dismissedErrorKeys, localReindexError, localCourseLaunchErrors]);
-
-  // --- Checklist/launch effects (replaces Redux dispatch-based effects) ---
-  // Fetch best practices and launch data on course change
-  useEffect(() => {
-    getCourseBestPractices({ courseId, excludeGraded: true, all: true }).then((data) => {
-      if (data) {
-        setLocalChecklist(prev => ({ ...prev, ...getCourseBestPracticesChecklist(data) }));
-      }
-    }).catch(() => {});
-
-    getCourseLaunch({ courseId, gradedOnly: true, validateOras: true, all: true })
-      .then((data) => {
-        setLocalIsSelfPaced(data.isSelfPaced);
-        setLocalChecklist(prev => ({ ...prev, ...getCourseLaunchChecklist(data) }));
-        setLocalCourseLaunchQueryStatus(RequestStatus.SUCCESSFUL);
-        setLocalCourseLaunchErrors(null);
-      }).catch((error) => {
-        setLocalCourseLaunchQueryStatus(RequestStatus.FAILED);
-        setLocalCourseLaunchErrors(getErrorDetails(error));
-      });
-  }, [courseId]);
-
-  // Create discussions topics if course was created recently
-  useEffect(() => {
-    if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
-      createDiscussionsTopics(courseId).catch(() => {});
-    }
-  }, [createdOn, courseId]);
 
   // --- Reorder state (extracted hook) ---
   const {
