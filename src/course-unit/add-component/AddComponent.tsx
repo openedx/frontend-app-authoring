@@ -81,7 +81,9 @@ const AddComponent = ({
   const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
   const courseVerticalChildren = useSelector(getCourseVerticalChildren);
   const existingBlockTypes = new Set(
-    (courseVerticalChildren?.children ?? []).map((child: { blockType?: string; category?: string }) => child.blockType ?? child.category),
+    (courseVerticalChildren?.children ?? []).map((child: { blockType?: string; category?: string; }) =>
+      child.blockType ?? child.category
+    ),
   );
   const blockId = addComponentTemplateData?.parentLocator || parentLocator;
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();

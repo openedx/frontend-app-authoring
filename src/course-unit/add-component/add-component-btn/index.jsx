@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import {
-  Badge, Button, OverlayTrigger, Tooltip,
+  Badge,
+  Button,
+  OverlayTrigger,
+  Tooltip,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 

@@ -86,7 +86,8 @@ export const useCourseUnit = ({
   ].includes(unitCategory);
   // True for generic container XBlocks that are not one of the specially-handled types above.
   // These containers can also host add-component buttons via the MFE native strip.
-  const isGenericContainerType = !isUnitVerticalType && !isSplitTestType && !isProblemBankType && !isUnitLegacyLibraryType && !!unitCategory;
+  const isGenericContainerType = !isUnitVerticalType && !isSplitTestType && !isProblemBankType &&
+    !isUnitLegacyLibraryType && !!unitCategory;
 
   const headerNavigationsActions = {
     handleViewLive: () => {
