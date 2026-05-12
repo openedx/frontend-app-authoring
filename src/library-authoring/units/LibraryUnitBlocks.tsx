@@ -83,7 +83,7 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
 
   /* istanbul ignore next */
   const jumpToManageTags = () => {
-    navigateTo({ selectedItemId: block.originalId, sidebarAction: SidebarActions.JumpToManageTags});
+    navigateTo({ selectedItemId: block.originalId, sidebarAction: SidebarActions.JumpToManageTags });
   };
 
   return (

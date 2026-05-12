@@ -85,7 +85,7 @@ export const ContainerMenu = ({ containerKey, displayName, index }: ContainerMen
   };
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ selectedItemId: containerKey, sidebarAction: SidebarActions.JumpToManageCollections});
+    navigateTo({ selectedItemId: containerKey, sidebarAction: SidebarActions.JumpToManageCollections });
   }, [navigateTo, containerKey]);
 
   const openContainer = useCallback(() => {

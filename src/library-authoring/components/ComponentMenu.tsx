@@ -78,7 +78,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
   }, [usageKey, openItemSidebar, openComponentEditor]);
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ selectedItemId: usageKey, sidebarAction: SidebarActions.JumpToManageCollections});
+    navigateTo({ selectedItemId: usageKey, sidebarAction: SidebarActions.JumpToManageCollections });
   }, [
     usageKey,
     navigateTo,

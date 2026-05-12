@@ -73,7 +73,7 @@ const ContainerRow = ({
   };
 
   const jumpToManageTags = useCallback(() => {
-    navigateTo({ selectedItemId: container.originalId, sidebarAction: SidebarActions.JumpToManageTags});
+    navigateTo({ selectedItemId: container.originalId, sidebarAction: SidebarActions.JumpToManageTags });
   }, [navigateTo]);
 
   return (
