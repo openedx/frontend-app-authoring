@@ -35,7 +35,7 @@ const GradingScaleSegment = ({
   return (
     <div
       key={value}
-      className={`grading-scale-segment segment-${idx - 1}`}
+      className={`grading-scale-segment segment-${(idx - 1)%5}`}
       data-testid="grading-scale-segment"
       {...getSegmentProps()}
     >
