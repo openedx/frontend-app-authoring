@@ -5,7 +5,7 @@ import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sideb
 
 import contentMessages from '@src/library-authoring/add-content/messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
 import {
   Stack,

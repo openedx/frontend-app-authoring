@@ -30,7 +30,7 @@ import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
 import { useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';

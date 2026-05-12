@@ -16,7 +16,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: jest.fn(),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
   useCourseOutlineContext: jest.fn(),
 }));
 
@@ -42,7 +42,7 @@ jest.mock(
 const apiHooks = jest.requireMock('@src/course-outline/data/apiHooks') as any;
 const outlineContext = jest.requireMock('../OutlineSidebarContext') as any;
 const authoring = jest.requireMock('@src/CourseAuthoringContext') as any;
-const outlineState = jest.requireMock('@src/course-outline/CourseOutlineStateContext') as any;
+const outlineState = jest.requireMock('@src/course-outline/CourseOutlineContext') as any;
 
 describe('UnitSidebar', () => {
   beforeEach(() => {

@@ -506,7 +506,7 @@ export const useReorderSections = (courseId: string) => {
   return useMutationWithProcessingNotification({
     mutationFn: (sectionListIds: string[]) => setSectionOrderList(courseId, sectionListIds),
     onSuccess: (_data, _sectionListIds) => {
-      // Cache update handled by caller in CourseOutlineStateContext
+      // Cache update handled by caller in CourseOutlineContext
     },
   });
 };

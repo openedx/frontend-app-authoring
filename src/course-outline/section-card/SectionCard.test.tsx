@@ -15,7 +15,7 @@ import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import SectionCard from './SectionCard';
-import { CourseOutlineProvider } from '../CourseOutlineStateContext';
+import { CourseOutlineProvider } from '../CourseOutlineContext';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
@@ -37,8 +37,8 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineStateContext', () => {
-  const realModule = jest.requireActual('@src/course-outline/CourseOutlineStateContext');
+jest.mock('@src/course-outline/CourseOutlineContext', () => {
+  const realModule = jest.requireActual('@src/course-outline/CourseOutlineContext');
   return {
     ...realModule,
     useCourseOutlineContext: () => {

@@ -8,7 +8,7 @@ import {
   within,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineStateContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 
 import { OutlineSidebarProvider } from './OutlineSidebarContext';
 import { OutlineSidebarPagesProvider } from './OutlineSidebarPagesContext';

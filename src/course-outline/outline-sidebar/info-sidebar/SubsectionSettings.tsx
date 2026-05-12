@@ -6,7 +6,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { useConfigureSubsection, useCourseDetails, useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { ConfigureSubsectionData } from '@src/course-outline/data/types';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';

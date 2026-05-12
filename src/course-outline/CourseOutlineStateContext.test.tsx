@@ -12,7 +12,7 @@ import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
 import {
   CourseOutlineProvider,
   useCourseOutlineContext,
-} from './CourseOutlineStateContext';
+} from './CourseOutlineContext';
 import { courseOutlineIndexQueryKey } from './data/outlineIndexQuery';
 import { getCourseOutlineIndexApiUrl } from './data/api';
 
@@ -49,7 +49,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-describe('CourseOutlineStateContext', () => {
+describe('CourseOutlineContext', () => {
   beforeEach(() => {
     // Reset courseId to default before each test
     mockCourseId = 'block-v1:edX+DemoX+Demo_Course+type@course+block@course';

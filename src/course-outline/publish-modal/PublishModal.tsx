@@ -9,7 +9,7 @@ import {
 import { usePublishCourseItem } from '@src/course-outline/data/apiHooks';
 import type { UnitXBlock, XBlock } from '@src/data/types';
 import LoadingButton from '@src/generic/loading-button';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import messages from './messages';
 import { COURSE_BLOCK_NAMES } from '../constants';
 

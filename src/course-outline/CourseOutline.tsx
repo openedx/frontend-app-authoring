@@ -31,7 +31,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { useCourseOutlineContext } from './CourseOutlineStateContext';
+import { useCourseOutlineContext } from './CourseOutlineContext';
 import { COURSE_BLOCK_NAMES } from './constants';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';

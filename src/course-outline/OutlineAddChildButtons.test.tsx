@@ -27,8 +27,8 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
-  ...jest.requireActual('@src/course-outline/CourseOutlineStateContext'),
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  ...jest.requireActual('@src/course-outline/CourseOutlineContext'),
   useCourseOutlineContext: () => ({
     courseUsageKey,
     currentSelection: undefined,

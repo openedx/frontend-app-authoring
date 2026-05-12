@@ -10,7 +10,7 @@ import { getCourseOutlineIndexApiUrl } from './data/api';
 import {
   CourseOutlineProvider,
   useCourseOutlineContext,
-} from './CourseOutlineStateContext';
+} from './CourseOutlineContext';
 import { useCourseOutline } from './hooks.jsx';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';

@@ -23,7 +23,7 @@ import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
 import { XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineStateContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { snakeCaseKeys } from '@src/editors/utils';
 import { getXBlockApiUrl, getXBlockBaseApiUrl } from '@src/course-outline/data/api';
 import MockAdapter from 'axios-mock-adapter/types';
@@ -50,7 +50,7 @@ let currentItemData: Partial<XBlock> | null;
 let lastEditableSection: any;
 let lastEditableSubsection: { data?: any; sectionId?: string; } | undefined;
 
-jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
   CourseOutlineProvider: ({ children }) => children,
   useCourseOutlineContext: () => ({
     courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',

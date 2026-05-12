@@ -10,7 +10,7 @@ import { useToggle } from '@openedx/paragon';
 
 import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
 import { SelectionState } from '@src/data/types';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { ContainerType } from '@src/generic/key-utils';
 import { buildSelectionState } from '@src/course-outline/state/selection';
 

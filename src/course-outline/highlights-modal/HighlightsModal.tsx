@@ -12,7 +12,7 @@ import { Edit as EditIcon } from '@openedx/paragon/icons';
 import { Formik, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { ExpandableCard } from '@src/generic/expandable-card/ExpandableCard';
 import { useBlocker } from 'react-router';

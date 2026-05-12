@@ -1,7 +1,7 @@
 import { render, screen, initializeMocks } from '@src/testUtils';
 
 import * as CourseAuthoringContext from '@src/CourseAuthoringContext';
-import * as CourseOutlineContext from '@src/course-outline/CourseOutlineStateContext';
+import * as CourseOutlineContext from '@src/course-outline/CourseOutlineContext';
 import * as CourseDetailsApi from '@src/data/apiHooks';
 import * as ContentDataApi from '@src/content-tags-drawer/data/apiHooks';
 import * as OutlineSidebarContext from './OutlineSidebarContext';

@@ -1,6 +1,6 @@
 import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { AlignSidebar } from '@src/generic/sidebar/AlignSidebar';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 

@@ -72,7 +72,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   useOutlineSidebarContext: () => ({ selectedContainerState: { sectionId: 'section-abc' } }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
   useCourseOutlineContext: () => ({
     enableProctoredExams: true,
     enableTimedExams: true,

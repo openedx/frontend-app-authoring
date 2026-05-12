@@ -6,7 +6,7 @@ import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/sel
 import { RequestStatus } from '@src/data/constants';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from './CourseOutlineStateContext';
+import { useCourseOutlineContext } from './CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { ContainerType } from '@src/generic/key-utils';

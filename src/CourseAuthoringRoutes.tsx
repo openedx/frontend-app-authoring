@@ -73,7 +73,7 @@ const CourseAuthoringRoutes = () => {
                 <CourseOutlineProvider key={courseId}>
                   <OutlineSidebarPagesProvider>
                     <OutlineSidebarProvider>
-                        <CourseOutline />
+                      <CourseOutline />
                     </OutlineSidebarProvider>
                   </OutlineSidebarPagesProvider>
                 </CourseOutlineProvider>

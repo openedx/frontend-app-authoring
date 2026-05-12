@@ -16,7 +16,7 @@ import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
-import { CourseOutlineProvider } from '../CourseOutlineStateContext';
+import { CourseOutlineProvider } from '../CourseOutlineContext';
 
 const onExpandMock = jest.fn();
 const onClickMenuButtonMock = jest.fn();

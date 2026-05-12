@@ -1,7 +1,7 @@
 import { fireEvent, initializeMocks, render, screen } from '@src/testUtils';
 import { getCourseSettingsApiUrl } from '@src/data/api';
 import type { SelectionState } from '@src/data/types';
-import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineStateContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import userEvent from '@testing-library/user-event';
@@ -57,7 +57,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineStateContext', () => {
+jest.mock('@src/course-outline/CourseOutlineContext', () => {
   // Lazy getters avoid 'Cannot access before initialization' with hoisted jest.mock
   const mock = () => ({
     sections: mockSections,
@@ -72,7 +72,7 @@ jest.mock('@src/course-outline/CourseOutlineStateContext', () => {
     duplicateCurrentSelection: jest.fn(),
   });
   return {
-    ...jest.requireActual('@src/course-outline/CourseOutlineStateContext'),
+    ...jest.requireActual('@src/course-outline/CourseOutlineContext'),
     useCourseOutlineContext: jest.fn(mock),
   };
 });

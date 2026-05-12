@@ -14,7 +14,7 @@ import { XBlock } from '@src/data/types';
 import { ContainerType } from '@src/generic/key-utils';
 
 import cardHeaderMessages from '../card-header/messages';
-import { CourseOutlineProvider } from '../CourseOutlineStateContext';
+import { CourseOutlineProvider } from '../CourseOutlineContext';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 import SubsectionCard from './SubsectionCard';
 
@@ -39,8 +39,8 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineStateContext', () => {
-  const realModule = jest.requireActual('@src/course-outline/CourseOutlineStateContext');
+jest.mock('@src/course-outline/CourseOutlineContext', () => {
+  const realModule = jest.requireActual('@src/course-outline/CourseOutlineContext');
   return {
     ...realModule,
     useCourseOutlineContext: () => {
