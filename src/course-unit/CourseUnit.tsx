@@ -191,6 +191,7 @@ const CourseUnit = () => {
     isUnitLegacyLibraryType,
     isSplitTestType,
     isProblemBankType,
+    isGenericContainerType,
     staticFileNotices,
     currentlyVisibleToStudents,
     unitXBlockActions,
@@ -375,6 +376,7 @@ const CourseUnit = () => {
                     isSplitTestType={isSplitTestType}
                     isUnitVerticalType={isUnitVerticalType}
                     isProblemBankType={isProblemBankType}
+                    isGenericContainerType={isGenericContainerType}
                     handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
                     addComponentTemplateData={addComponentTemplateData}
                   />

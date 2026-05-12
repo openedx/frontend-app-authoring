@@ -15,6 +15,8 @@ const ComponentModalView = ({
   modalParams,
   handleCreateNewXBlock,
   isRequestedModalView,
+  disabled,
+  disabledReason,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -37,9 +39,11 @@ const ComponentModalView = ({
   const renderAddComponentButton = () => (
     <li>
       <AddComponentButton
-        onClick={open}
+        onClick={disabled ? undefined : open}
         type={type}
         displayName={displayName}
+        disabled={disabled}
+        disabledReason={disabledReason}
       />
     </li>
   );
@@ -102,6 +106,8 @@ const ComponentModalView = ({
 
 ComponentModalView.defaultProps = {
   isRequestedModalView: false,
+  disabled: false,
+  disabledReason: null,
 };
 
 ComponentModalView.propTypes = {
@@ -111,6 +117,9 @@ ComponentModalView.propTypes = {
     isOpen: PropTypes.bool,
   }).isRequired,
   handleCreateNewXBlock: PropTypes.func.isRequired,
+  isRequestedModalView: PropTypes.bool,
+  disabled: PropTypes.bool,
+  disabledReason: PropTypes.string,
   component: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     category: PropTypes.string,
@@ -129,7 +138,6 @@ ComponentModalView.propTypes = {
       showLegend: PropTypes.bool,
     }),
   }).isRequired,
-  isRequestedModalView: PropTypes.bool,
 };
 
 export default ComponentModalView;
