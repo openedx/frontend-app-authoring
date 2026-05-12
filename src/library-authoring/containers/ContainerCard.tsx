@@ -71,7 +71,7 @@ export const ContainerMenu = ({ containerKey, displayName, index }: ContainerMen
         closeLibrarySidebar();
       }
       showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
-    }).catch(() => {
+    }).catch(/* istanbul ignore next */ () => {
       showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
     });
   };

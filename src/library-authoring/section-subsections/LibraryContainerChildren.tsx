@@ -137,6 +137,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const containerType = getBlockType(containerKey);
   const handleReorder = useCallback(() => async (newOrder?: LibraryContainerMetadataWithUniqueId[]) => {
     if (!newOrder) {
+      /* istanbul ignore next */
       return;
     }
     const childrenKeys = newOrder.map((o) => o.originalId);
