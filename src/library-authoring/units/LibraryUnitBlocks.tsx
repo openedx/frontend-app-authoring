@@ -66,6 +66,7 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
   const { showOnlyPublished } = usePublishedFilterContext();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
+
   const updateMutation = useUpdateXBlockFields(block.originalId);
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
@@ -82,9 +83,9 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
   };
 
   /* istanbul ignore next */
-  const jumpToManageTags = () => {
+  const jumpToManageTags = useCallback(() => {
     navigateTo({ selectedItemId: block.originalId, sidebarAction: SidebarActions.JumpToManageTags });
-  };
+  }, [navigateTo, block.originalId]);
 
   return (
     <>
