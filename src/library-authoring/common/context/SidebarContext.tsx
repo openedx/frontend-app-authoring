@@ -91,7 +91,12 @@ export type SidebarContextData = {
   openCollectionInfoSidebar: (collectionId: string) => void;
   openComponentInfoSidebar: (usageKey: string) => void;
   openContainerInfoSidebar: (usageKey: string) => void;
-  openItemSidebar: (selectedItemId: string, type: SidebarBodyItemId, index?: number) => void;
+  openItemSidebar: (
+    selectedItemId: string,
+    type: SidebarBodyItemId,
+    index?: number,
+    sidebarAction?: SidebarActions,
+  ) => void;
   sidebarItemInfo?: SidebarItemInfo;
   sidebarAction: SidebarActions;
   setSidebarAction: (action: SidebarActions) => void;
@@ -181,8 +186,13 @@ export const SidebarProvider = ({
   }, []);
 
   const { navigateTo } = useLibraryRoutes();
-  const openItemSidebar = useCallback((selectedItemId: string, type: SidebarBodyItemId, index?: number) => {
-    navigateTo({ selectedItemId, index });
+  const openItemSidebar = useCallback((
+    selectedItemId: string,
+    type: SidebarBodyItemId,
+    index?: number,
+    sidebarAction?: SidebarActions,
+  ) => {
+    navigateTo({ selectedItemId, index, sidebarAction });
     setSidebarItemInfo({ id: selectedItemId, type, index });
   }, [navigateTo, setSidebarItemInfo]);
 

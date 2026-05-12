@@ -79,17 +79,9 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
     openComponentEditor?.(usageKey);
   }, [usageKey, openItemSidebar, openComponentEditor]);
 
-  const scheduleJumpToCollection = useRunOnNextRender(() => {
-    // TODO: Ugly hack to make sure sidebar shows add to collection section
-    // This needs to run after all changes to url takes place to avoid conflicts.
-    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageCollections), 250);
-  });
-
   const showManageCollections = useCallback(() => {
-    openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
-    scheduleJumpToCollection();
+    openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo, undefined, SidebarActions.JumpToManageCollections);
   }, [
-    scheduleJumpToCollection,
     usageKey,
     openItemSidebar,
   ]);
