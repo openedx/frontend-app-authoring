@@ -2,16 +2,14 @@ import {
   createContext,
   useContext,
   useMemo,
-  useState,
 } from 'react';
-import { useToggle } from '@openedx/paragon';
 
 import { SelectionState } from '@src/data/types';
-import { useToggleWithValue } from '@src/hooks';
-import { useCourseAuthoringContext, type ModalState } from '@src/CourseAuthoringContext';
+import type { ModalState } from '@src/CourseAuthoringContext';
 import {
   useCreateCourseBlock,
 } from './data/apiHooks';
+import { useCourseOutlineState } from './CourseOutlineStateContext';
 
 export type CourseOutlineContextData = {
   handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
@@ -40,49 +38,32 @@ type CourseOutlineProviderProps = {
 };
 
 export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) => {
-  const { courseId, openUnitPage } = useCourseAuthoringContext();
-  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const [
-    isPublishModalOpen,
-    currentPublishModalData,
-    openPublishModal,
-    closePublishModal,
-  ] = useToggleWithValue<ModalState>();
-
-  /**
-   * Holds action target state for menus, edit, duplicate, delete, and modals.
-   * This is intentionally separate from sidebar/card selection so opening a menu
-   * does not change which card is selected in the outline.
-   */
-  const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
-
-  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
-  const handleAddBlock = useCreateCourseBlock(courseId);
+  const state = useCourseOutlineState();
 
   const context = useMemo<CourseOutlineContextData>(() => ({
-    handleAddBlock,
-    handleAddAndOpenUnit,
-    currentSelection,
-    setCurrentSelection,
-    isDeleteModalOpen,
-    openDeleteModal,
-    closeDeleteModal,
-    isPublishModalOpen,
-    currentPublishModalData,
-    openPublishModal,
-    closePublishModal,
+    handleAddBlock: state.handleAddBlock,
+    handleAddAndOpenUnit: state.handleAddAndOpenUnit,
+    currentSelection: state.actionTargetSelection,
+    setCurrentSelection: state.setActionTargetSelection,
+    isDeleteModalOpen: state.isDeleteModalOpen,
+    openDeleteModal: state.openDeleteModal,
+    closeDeleteModal: state.closeDeleteModal,
+    isPublishModalOpen: state.isPublishModalOpen,
+    currentPublishModalData: state.currentPublishModalData,
+    openPublishModal: state.openPublishModal,
+    closePublishModal: state.closePublishModal,
   }), [
-    handleAddBlock,
-    handleAddAndOpenUnit,
-    currentSelection,
-    setCurrentSelection,
-    isDeleteModalOpen,
-    openDeleteModal,
-    closeDeleteModal,
-    isPublishModalOpen,
-    currentPublishModalData,
-    openPublishModal,
-    closePublishModal,
+    state.handleAddBlock,
+    state.handleAddAndOpenUnit,
+    state.actionTargetSelection,
+    state.setActionTargetSelection,
+    state.isDeleteModalOpen,
+    state.openDeleteModal,
+    state.closeDeleteModal,
+    state.isPublishModalOpen,
+    state.currentPublishModalData,
+    state.openPublishModal,
+    state.closePublishModal,
   ]);
 
   return (

@@ -14,11 +14,14 @@ import type {
   XBlock,
   XBlockActions,
 } from '@src/data/types';
-import { useCourseItemData } from './data/apiHooks';
+import { useCourseItemData, useCreateCourseBlock } from './data/apiHooks';
 
 import { useOutlineMutations } from './state/useOutlineMutations';
 import { useOutlineReorderState } from './state/useOutlineReorderState';
 import { useOutlineStatusState } from './state/useOutlineStatusState';
+import useOutlineAddBlockActions from './state/useOutlineAddBlockActions';
+import useOutlineModalState from './state/useOutlineModalState';
+import useOutlineActionTargetState from './state/useOutlineActionTargetState';
 import { buildSelectionState } from './state/selection';
 import {
   EditableSubsection,
@@ -26,6 +29,7 @@ import {
   getLastEditableSubsection,
 } from './state/editability';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import type { ModalState } from '@src/CourseAuthoringContext';
 
 import {
   CourseOutlineState as LegacyCourseOutlineState,
@@ -82,6 +86,21 @@ type CourseOutlineStateContextData = {
   dismissError: (key: string) => void;
   reindexCourse: () => Promise<void>;
   setSavingStatus: (status: string) => void;
+
+  // Add-block mutation handlers
+  handleAddBlock: ReturnType<typeof useCreateCourseBlock>;
+  handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
+  // Action/menu target selection (separate from sidebar/card selection)
+  actionTargetSelection?: SelectionState;
+  setActionTargetSelection: React.Dispatch<React.SetStateAction<SelectionState | undefined>>;
+  // Modal state
+  isDeleteModalOpen: boolean;
+  openDeleteModal: () => void;
+  closeDeleteModal: () => void;
+  isPublishModalOpen: boolean;
+  currentPublishModalData?: ModalState;
+  openPublishModal: (value: ModalState) => void;
+  closePublishModal: () => void;
 };
 
 
@@ -93,7 +112,7 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   const queryClient = useQueryClient();
 
   // Course ID from context (primary source)
-  const { courseId } = useCourseAuthoringContext();
+  const { courseId, openUnitPage } = useCourseAuthoringContext();
 
   // Local state for dismissed errors (persists filter across renders)
   const [dismissedErrorKeys, setDismissedErrorKeys] = useState<Set<string>>(new Set());
@@ -209,6 +228,29 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     setDismissedErrorKeys,
   });
 
+  // --- Add-block actions (extracted hook) ---
+  const {
+    handleAddBlock,
+    handleAddAndOpenUnit,
+  } = useOutlineAddBlockActions({ courseId, openUnitPage });
+
+  // --- Action target selection (extracted hook) ---
+  const {
+    actionTargetSelection,
+    setActionTargetSelection,
+  } = useOutlineActionTargetState();
+
+  // --- Modal state (extracted hook) ---
+  const {
+    isDeleteModalOpen,
+    openDeleteModal,
+    closeDeleteModal,
+    isPublishModalOpen,
+    currentPublishModalData,
+    openPublishModal,
+    closePublishModal,
+  } = useOutlineModalState();
+
   const context = useMemo<CourseOutlineStateContextData>(() => ({
     outlineIndexData: (effectiveOutlineIndexData || {}) as object,
     courseName: effectiveOutlineIndexData?.courseStructure?.displayName,
@@ -253,6 +295,20 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     dismissError,
     reindexCourse,
     setSavingStatus,
+    // Add-block mutation handlers
+    handleAddBlock,
+    handleAddAndOpenUnit,
+    // Action/menu target selection
+    actionTargetSelection,
+    setActionTargetSelection,
+    // Modal state
+    isDeleteModalOpen,
+    openDeleteModal,
+    closeDeleteModal,
+    isPublishModalOpen,
+    currentPublishModalData,
+    openPublishModal,
+    closePublishModal,
   }), [
     effectiveOutlineIndexData,
     courseId,
@@ -293,6 +349,20 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
     dismissError,
     reindexCourse,
     setSavingStatus,
+    // Add-block mutation handlers
+    handleAddBlock,
+    handleAddAndOpenUnit,
+    // Action/menu target selection
+    actionTargetSelection,
+    setActionTargetSelection,
+    // Modal state
+    isDeleteModalOpen,
+    openDeleteModal,
+    closeDeleteModal,
+    isPublishModalOpen,
+    currentPublishModalData,
+    openPublishModal,
+    closePublishModal,
   ]);
 
   return (
