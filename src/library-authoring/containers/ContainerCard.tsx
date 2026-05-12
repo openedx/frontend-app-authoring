@@ -15,7 +15,6 @@ import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
 import { type ContainerHit, Highlight, PublishStatus } from '@src/search-manager';
 import { ToastContext } from '@src/generic/toast-context';
-import { useRunOnNextRender } from '@src/utils';
 
 import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
@@ -50,7 +49,6 @@ export const ContainerMenu = ({ containerKey, displayName, index }: ContainerMen
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
-    setSidebarAction,
   } = useSidebarContext();
   const { copyToClipboard } = useClipboard();
 
@@ -86,16 +84,9 @@ export const ContainerMenu = ({ containerKey, displayName, index }: ContainerMen
     }
   };
 
-  const scheduleJumpToCollection = useRunOnNextRender(() => {
-    // TODO: Ugly hack to make sure sidebar shows add to collection section
-    // This needs to run after all changes to url takes place to avoid conflicts.
-    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageCollections));
-  });
-
   const showManageCollections = useCallback(() => {
-    navigateTo({ selectedItemId: containerKey });
-    scheduleJumpToCollection();
-  }, [scheduleJumpToCollection, navigateTo, containerKey]);
+    navigateTo({ selectedItemId: containerKey, sidebarAction: SidebarActions.JumpToManageCollections});
+  }, [navigateTo, containerKey]);
 
   const openContainer = useCallback(() => {
     navigateTo({ containerId: containerKey });

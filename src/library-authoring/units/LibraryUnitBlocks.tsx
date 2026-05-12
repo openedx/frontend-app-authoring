@@ -24,7 +24,7 @@ import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
 import Loading from '@src/generic/Loading';
 import TagCount from '@src/generic/tag-count';
 import { ToastContext } from '@src/generic/toast-context';
-import { skipIfUnwantedTarget, useRunOnNextRender } from '@src/utils';
+import { skipIfUnwantedTarget } from '@src/utils';
 import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
@@ -38,6 +38,7 @@ import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { canEditComponent } from '../components/ComponentEditorModal';
+import { useLibraryRoutes } from '../routes';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -64,8 +65,7 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
   const { showOnlyPublished } = usePublishedFilterContext();
   const { showToast } = useContext(ToastContext);
-  const { setSidebarAction, openItemSidebar } = useSidebarContext();
-
+  const { navigateTo } = useLibraryRoutes();
   const updateMutation = useUpdateXBlockFields(block.originalId);
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
@@ -82,16 +82,8 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
   };
 
   /* istanbul ignore next */
-  const scheduleJumpToTags = useRunOnNextRender(() => {
-    // TODO: Ugly hack to make sure sidebar shows manage tags section
-    // This needs to run after all changes to url takes place to avoid conflicts.
-    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageTags), 250);
-  });
-
-  /* istanbul ignore next */
   const jumpToManageTags = () => {
-    openItemSidebar(block.originalId, SidebarBodyItemId.ComponentInfo);
-    scheduleJumpToTags();
+    navigateTo({ selectedItemId: block.originalId, sidebarAction: SidebarActions.JumpToManageTags});
   };
 
   return (

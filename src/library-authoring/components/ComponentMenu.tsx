@@ -21,7 +21,6 @@ import {
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import containerMessages from '@src/library-authoring/containers/messages';
 import { useLibraryRoutes } from '@src/library-authoring/routes';
-import { useRunOnNextRender } from '@src/utils';
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import ComponentRemover from './ComponentRemover';
@@ -45,10 +44,9 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
-    setSidebarAction,
     openItemSidebar,
   } = useSidebarContext();
-  const { insideCollection } = useLibraryRoutes();
+  const { insideCollection, navigateTo } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
@@ -80,10 +78,10 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
   }, [usageKey, openItemSidebar, openComponentEditor]);
 
   const showManageCollections = useCallback(() => {
-    openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo, undefined, SidebarActions.JumpToManageCollections);
+    navigateTo({ selectedItemId: usageKey, sidebarAction: SidebarActions.JumpToManageCollections});
   }, [
     usageKey,
-    openItemSidebar,
+    navigateTo,
   ]);
 
   const containerType = containerId ? getBlockType(containerId) : 'collection';
