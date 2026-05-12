@@ -29,7 +29,7 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
@@ -71,7 +71,7 @@ const SectionCard = ({
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
-  const { openPublishModal, setCurrentSelection } = useCourseOutlineContext();
+  const { openPublishModal, setActionTargetSelection } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
@@ -221,7 +221,7 @@ const SectionCard = ({
   };
 
   const handleClickMenuButton = () => {
-    setCurrentSelection({
+    setActionTargetSelection({
       currentId: section.id,
       sectionId: section.id,
       index,

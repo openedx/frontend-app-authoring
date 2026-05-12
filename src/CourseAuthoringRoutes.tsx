@@ -16,11 +16,10 @@ import { FilesPage, VideosPage } from './files-and-videos';
 import { AdvancedSettings } from './advanced-settings';
 import {
   CourseOutline,
-  CourseOutlineStateProvider,
+  CourseOutlineProvider,
   OutlineSidebarProvider,
   OutlineSidebarPagesProvider,
 } from './course-outline';
-import { CourseOutlineProvider } from './course-outline/CourseOutlineContext';
 import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
@@ -71,15 +70,13 @@ const CourseAuthoringRoutes = () => {
             path="/"
             element={
               <PageWrap>
-                <CourseOutlineStateProvider key={courseId}>
-                  <CourseOutlineProvider>
-                    <OutlineSidebarPagesProvider>
-                      <OutlineSidebarProvider>
+                <CourseOutlineProvider key={courseId}>
+                  <OutlineSidebarPagesProvider>
+                    <OutlineSidebarProvider>
                         <CourseOutline />
-                      </OutlineSidebarProvider>
-                    </OutlineSidebarPagesProvider>
-                  </CourseOutlineProvider>
-                </CourseOutlineStateProvider>
+                    </OutlineSidebarProvider>
+                  </OutlineSidebarPagesProvider>
+                </CourseOutlineProvider>
               </PageWrap>
             }
           />

@@ -107,7 +107,7 @@ type CourseOutlineStateContextData = {
 
 const CourseOutlineStateContext = createContext<CourseOutlineStateContextData | undefined>(undefined);
 
-export const CourseOutlineStateProvider = ({ children }: { children?: React.ReactNode }) => {
+export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode }) => {
   // Query client for updating React Query cache after reorder
   const queryClient = useQueryClient();
 
@@ -372,10 +372,14 @@ export const CourseOutlineStateProvider = ({ children }: { children?: React.Reac
   );
 };
 
-export function useCourseOutlineState(): CourseOutlineStateContextData {
+export function useCourseOutlineContext(): CourseOutlineStateContextData {
   const ctx = useContext(CourseOutlineStateContext);
   if (ctx === undefined) {
-    throw new Error('useCourseOutlineState() was used in a component without a <CourseOutlineStateProvider> ancestor.');
+    throw new Error('useCourseOutlineContext() was used in a component without a <CourseOutlineProvider> ancestor.');
   }
   return ctx;
 }
+
+// Compatibility aliases for gradual migration
+export const CourseOutlineStateProvider = CourseOutlineProvider;
+export const useCourseOutlineState = useCourseOutlineContext;

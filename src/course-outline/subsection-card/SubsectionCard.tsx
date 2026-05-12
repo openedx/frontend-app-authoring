@@ -29,7 +29,7 @@ import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
@@ -81,7 +81,7 @@ const SubsectionCard = ({
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
-  const { openPublishModal, setCurrentSelection } = useCourseOutlineContext();
+  const { openPublishModal, setActionTargetSelection } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
@@ -166,7 +166,7 @@ const SubsectionCard = ({
   };
 
   const handleClickMenuButton = () => {
-    setCurrentSelection({
+    setActionTargetSelection({
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,

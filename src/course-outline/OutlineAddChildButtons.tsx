@@ -11,8 +11,7 @@ import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
-import { useCourseOutlineState } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
@@ -98,11 +97,7 @@ const OutlineAddChildButtons = ({
   // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
-  const { courseUsageKey } = useCourseOutlineState();
-  const {
-    handleAddBlock,
-    handleAddAndOpenUnit,
-  } = useCourseOutlineContext();
+  const { courseUsageKey, handleAddBlock, handleAddAndOpenUnit } = useCourseOutlineContext();
   const { startCurrentFlow, openContainerInfoSidebar } = useOutlineSidebarContext();
   let messageMap = {
     newButton: messages.newUnitButton,

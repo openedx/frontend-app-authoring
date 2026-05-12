@@ -73,7 +73,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
 }));
 
 jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
-  useCourseOutlineState: () => ({
+  useCourseOutlineContext: () => ({
     enableProctoredExams: true,
     enableTimedExams: true,
   }),

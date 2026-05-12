@@ -1,7 +1,7 @@
 import { render, screen, initializeMocks } from '@src/testUtils';
 
 import * as CourseAuthoringContext from '@src/CourseAuthoringContext';
-import * as CourseOutlineContext from '@src/course-outline/CourseOutlineContext';
+import * as CourseOutlineContext from '@src/course-outline/CourseOutlineStateContext';
 import * as CourseDetailsApi from '@src/data/apiHooks';
 import * as ContentDataApi from '@src/content-tags-drawer/data/apiHooks';
 import * as OutlineSidebarContext from './OutlineSidebarContext';
@@ -26,7 +26,10 @@ describe('OutlineAlignSidebar', () => {
     jest
       .spyOn(CourseOutlineContext, 'useCourseOutlineContext')
       .mockReturnValue({
-        setCurrentSelection: jest.fn(),
+        setActionTargetSelection: jest.fn(),
+        selectContainer: jest.fn(),
+        clearSelection: jest.fn(),
+        openContainerInfo: jest.fn(),
       } as any);
     jest
       .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')

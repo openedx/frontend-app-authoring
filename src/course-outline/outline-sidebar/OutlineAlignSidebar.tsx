@@ -1,6 +1,6 @@
 import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
 import { AlignSidebar } from '@src/generic/sidebar/AlignSidebar';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
@@ -9,7 +9,7 @@ import { useOutlineSidebarContext } from './OutlineSidebarContext';
  */
 export const OutlineAlignSidebar = () => {
   const { courseId } = useCourseAuthoringContext();
-  const { setCurrentSelection } = useCourseOutlineContext();
+  const { setActionTargetSelection } = useCourseOutlineContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
   const sidebarContentId = selectedContainerState?.currentId || courseId;
@@ -19,7 +19,7 @@ export const OutlineAlignSidebar = () => {
   // istanbul ignore next
   const handleBack = () => {
     clearSelection();
-    setCurrentSelection(undefined);
+    setActionTargetSelection(undefined);
   };
 
   return (

@@ -1,7 +1,7 @@
 import { fireEvent, initializeMocks, render, screen } from '@src/testUtils';
 import { getCourseSettingsApiUrl } from '@src/data/api';
 import type { SelectionState } from '@src/data/types';
-import { CourseOutlineStateProvider } from '@src/course-outline/CourseOutlineStateContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineStateContext';
 import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import userEvent from '@testing-library/user-event';
@@ -31,10 +31,11 @@ const courseId = '5';
 
 const openPublishModal = jest.fn();
 const openDeleteModal = jest.fn();
+const duplicateCurrentSelection = jest.fn();
 const openUnlinkModal = jest.fn();
-const handleDuplicateSectionSubmit = jest.fn();
-const handleDuplicateUnitSubmit = jest.fn();
-const handleDuplicateSubsectionSubmit = jest.fn();
+
+
+
 const mockedNavigate = jest.fn();
 const updateUnitOrderByIndex = jest.fn();
 const updateSubsectionOrderByIndex = jest.fn();
@@ -56,27 +57,25 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineContext', () => ({
-  useCourseOutlineContext: () => ({
-    setCurrentSelection: jest.fn(),
-    openPublishModal,
-    openDeleteModal,
-    handleDuplicateUnitSubmit,
-    handleDuplicateSectionSubmit,
-    handleDuplicateSubsectionSubmit,
-  }),
-}));
-jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
-  ...jest.requireActual('@src/course-outline/CourseOutlineStateContext'),
-  useCourseOutlineState: () => ({
+jest.mock('@src/course-outline/CourseOutlineStateContext', () => {
+  // Lazy getters avoid 'Cannot access before initialization' with hoisted jest.mock
+  const mock = () => ({
     sections: mockSections,
     setSections: jest.fn(),
     restoreSectionList: jest.fn(),
     updateUnitOrderByIndex,
     updateSubsectionOrderByIndex,
     updateSectionOrderByIndex,
-  }),
-}));
+    setActionTargetSelection: jest.fn(),
+    openPublishModal,
+    openDeleteModal,
+    duplicateCurrentSelection: jest.fn(),
+  });
+  return {
+    ...jest.requireActual('@src/course-outline/CourseOutlineStateContext'),
+    useCourseOutlineContext: jest.fn(mock),
+  };
+});
 
 jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: () => ({ data: [] }),
@@ -84,11 +83,11 @@ jest.mock('@src/search-manager', () => ({
 
 const renderComponent = () => render(<InfoSidebar />, {
   extraWrapper: ({ children }) => (
-    <CourseOutlineStateProvider>
+    <CourseOutlineProvider>
       <OutlineSidebarProvider>
         {children}
       </OutlineSidebarProvider>
-    </CourseOutlineStateProvider>
+    </CourseOutlineProvider>
   ),
 });
 let axiosMock;
@@ -99,9 +98,9 @@ describe('InfoSidebar component', () => {
     axiosMock = mocks.axiosMock;
     openDeleteModal.mockClear();
     openUnlinkModal.mockClear();
-    handleDuplicateSectionSubmit.mockClear();
-    handleDuplicateUnitSubmit.mockClear();
-    handleDuplicateSubsectionSubmit.mockClear();
+    duplicateCurrentSelection.mockClear();
+    
+    
     mockedNavigate.mockClear();
     updateUnitOrderByIndex.mockClear();
     updateSubsectionOrderByIndex.mockClear();
@@ -266,7 +265,7 @@ describe('InfoSidebar component', () => {
       expect(openDeleteModal).toHaveBeenCalled();
     });
 
-    it('calls handleDuplicateUnitSubmit when Duplicate is clicked in unit menu', async () => {
+    it('calls duplicateCurrentSelection when Duplicate is clicked in unit menu', async () => {
       const user = userEvent.setup();
       await renderUnitMenu();
 
@@ -276,7 +275,7 @@ describe('InfoSidebar component', () => {
       const duplicateBtn = await screen.findByText('Duplicate');
       await user.click(duplicateBtn);
 
-      expect(handleDuplicateUnitSubmit).toHaveBeenCalled();
+      expect(duplicateCurrentSelection).toHaveBeenCalled();
     });
 
     it('calls openUnlinkModal when Unlink is clicked in unit menu', async () => {
@@ -482,7 +481,7 @@ describe('InfoSidebar component', () => {
       expect(openDeleteModal).toHaveBeenCalled();
     });
 
-    it('calls handleDuplicateSubsectionSubmit when Duplicate is clicked in subsection menu', async () => {
+    it('calls duplicateCurrentSelection when Duplicate is clicked in subsection menu', async () => {
       const user = userEvent.setup();
       await renderSubsectionMenu();
 
@@ -492,7 +491,7 @@ describe('InfoSidebar component', () => {
       const duplicateBtn = await screen.findByText('Duplicate');
       await user.click(duplicateBtn);
 
-      expect(handleDuplicateSubsectionSubmit).toHaveBeenCalled();
+      expect(duplicateCurrentSelection).toHaveBeenCalled();
     });
 
     it('calls openUnlinkModal when Unlink is clicked in subsection menu', async () => {
@@ -648,7 +647,7 @@ describe('InfoSidebar component', () => {
       expect(openDeleteModal).toHaveBeenCalled();
     });
 
-    it('calls handleDuplicateSectionSubmit when Duplicate is clicked in section menu', async () => {
+    it('calls duplicateCurrentSelection when Duplicate is clicked in section menu', async () => {
       const user = userEvent.setup();
       await renderSectionMenu();
 
@@ -658,7 +657,7 @@ describe('InfoSidebar component', () => {
       const duplicateBtn = await screen.findByText('Duplicate');
       await user.click(duplicateBtn);
 
-      expect(handleDuplicateSectionSubmit).toHaveBeenCalled();
+      expect(duplicateCurrentSelection).toHaveBeenCalled();
     });
 
     it('calls openUnlinkModal when Unlink is clicked in section menu', async () => {

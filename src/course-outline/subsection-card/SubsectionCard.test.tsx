@@ -14,12 +14,12 @@ import { XBlock } from '@src/data/types';
 import { ContainerType } from '@src/generic/key-utils';
 
 import cardHeaderMessages from '../card-header/messages';
-import { CourseOutlineStateProvider } from '../CourseOutlineStateContext';
+import { CourseOutlineProvider } from '../CourseOutlineStateContext';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 import SubsectionCard from './SubsectionCard';
 
 const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
-const setCurrentSelection = jest.fn();
+const setActionTargetSelection = jest.fn();
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -39,14 +39,22 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineContext', () => ({
-  useCourseOutlineContext: () => ({
-    handleAddAndOpenUnit: handleOnAddUnitFromLibrary,
-    handleAddBlock: {},
-    setCurrentSelection,
-    openPublishModal: jest.fn(),
-  }),
-}));
+jest.mock('@src/course-outline/CourseOutlineStateContext', () => {
+  const realModule = jest.requireActual('@src/course-outline/CourseOutlineStateContext');
+  return {
+    ...realModule,
+    useCourseOutlineContext: () => {
+      const realResult = realModule.useCourseOutlineContext();
+      return {
+        ...realResult,
+        handleAddAndOpenUnit: handleOnAddUnitFromLibrary,
+        handleAddBlock: {},
+        setActionTargetSelection,
+        openPublishModal: jest.fn(),
+      };
+    },
+  };
+});
 
 jest.mock('@src/studio-home/data/selectors', () => ({
   ...jest.requireActual('@src/studio-home/data/selectors'),
@@ -143,11 +151,11 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
         initialEntries: [entry],
       },
       extraWrapper: ({ children }) => (
-        <CourseOutlineStateProvider>
+        <CourseOutlineProvider>
           <OutlineSidebarProvider>
             {children}
           </OutlineSidebarProvider>
-        </CourseOutlineStateProvider>
+        </CourseOutlineProvider>
       ),
     },
   );
@@ -204,7 +212,7 @@ describe('<SubsectionCard />', () => {
     const card = screen.getByTestId('subsection-card');
     const menu = await screen.findByTestId('subsection-card-header__menu');
     fireEvent.click(menu);
-    expect(setCurrentSelection).toHaveBeenCalledWith({
+    expect(setActionTargetSelection).toHaveBeenCalledWith({
       currentId: subsection.id,
       subsectionId: subsection.id,
       sectionId: section.id,

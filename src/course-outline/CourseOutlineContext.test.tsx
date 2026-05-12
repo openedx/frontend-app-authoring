@@ -7,10 +7,9 @@ import {
 } from '@src/testUtils';
 import { courseOutlineIndexMock } from './__mocks__';
 import { getCourseOutlineIndexApiUrl } from './data/api';
-import { CourseOutlineProvider } from './CourseOutlineContext';
 import {
-  CourseOutlineStateProvider,
-  useCourseOutlineState,
+  CourseOutlineProvider,
+  useCourseOutlineContext,
 } from './CourseOutlineStateContext';
 import { useCourseOutline } from './hooks.jsx';
 
@@ -36,7 +35,7 @@ jest.mock('./outline-sidebar/OutlineSidebarContext', () => ({
 }));
 
 const Probe = () => {
-  const { courseName, isLoadingDenied } = useCourseOutlineState();
+  const { courseName, isLoadingDenied } = useCourseOutlineContext();
 
   if (isLoadingDenied) {
     return <div>denied</div>;
@@ -54,24 +53,20 @@ const OutlineCrashGuard = () => {
 };
 
 const ProbeSections = () => {
-  const { sections } = useCourseOutlineState();
+  const { sections } = useCourseOutlineContext();
   return <div data-testid="sections-count">{sections.length}</div>;
 };
 
 const renderComponent = () => render(
-  <CourseOutlineStateProvider>
-    <CourseOutlineProvider>
-      <Probe />
-    </CourseOutlineProvider>
-  </CourseOutlineStateProvider>,
+  <CourseOutlineProvider>
+    <Probe />
+  </CourseOutlineProvider>,
 );
 
 const renderSectionsComponent = () => render(
-  <CourseOutlineStateProvider>
-    <CourseOutlineProvider>
-      <ProbeSections />
-    </CourseOutlineProvider>
-  </CourseOutlineStateProvider>,
+  <CourseOutlineProvider>
+    <ProbeSections />
+  </CourseOutlineProvider>,
 );
 
 describe('CourseOutlineProvider outline index query sync', () => {
@@ -122,11 +117,9 @@ describe('CourseOutlineProvider outline index query sync', () => {
     // is false. effectiveOutlineIndexData is undefined. The hook must
     // survive this without crashing on destructuring reindexLink etc.
     render(
-      <CourseOutlineStateProvider>
-        <CourseOutlineProvider>
-          <OutlineCrashGuard />
-        </CourseOutlineProvider>
-      </CourseOutlineStateProvider>,
+      <CourseOutlineProvider>
+        <OutlineCrashGuard />
+      </CourseOutlineProvider>,
     );
 
     expect(screen.getByTestId('crash-guard')).toHaveTextContent('ok');

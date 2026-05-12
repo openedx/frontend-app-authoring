@@ -23,8 +23,7 @@ import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
 import { XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
-import { CourseOutlineStateProvider } from '@src/course-outline/CourseOutlineStateContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineStateContext';
 import { snakeCaseKeys } from '@src/editors/utils';
 import { getXBlockApiUrl, getXBlockBaseApiUrl } from '@src/course-outline/data/api';
 import MockAdapter from 'axios-mock-adapter/types';
@@ -52,8 +51,8 @@ let lastEditableSection: any;
 let lastEditableSubsection: { data?: any; sectionId?: string; } | undefined;
 
 jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
-  CourseOutlineStateProvider: ({ children }) => children,
-  useCourseOutlineState: () => ({
+  CourseOutlineProvider: ({ children }) => children,
+  useCourseOutlineContext: () => ({
     courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
     sections: outlineChildren,
     setSections: jest.fn(),
@@ -65,6 +64,9 @@ jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
     selectContainer: jest.fn(),
     clearSelection: jest.fn(),
     openContainerInfo: jest.fn(),
+    setActionTargetSelection: jest.fn(),
+    handleAddBlock: { isPending: false, mutate: jest.fn(), mutateAsync: jest.fn() },
+    handleAddAndOpenUnit: { isPending: false, mutate: jest.fn(), mutateAsync: jest.fn() },
   }),
 }));
 
@@ -107,13 +109,11 @@ const renderComponent = () =>
   render(<AddSidebar />, {
     extraWrapper: ({ children }) => (
       <CourseAuthoringProvider courseId="some-course">
-        <CourseOutlineStateProvider>
-          <CourseOutlineProvider>
-            <OutlineSidebarProvider>
-              {children}
-            </OutlineSidebarProvider>
-          </CourseOutlineProvider>
-        </CourseOutlineStateProvider>
+        <CourseOutlineProvider>
+          <OutlineSidebarProvider>
+            {children}
+          </OutlineSidebarProvider>
+        </CourseOutlineProvider>
       </CourseAuthoringProvider>
     ),
   });

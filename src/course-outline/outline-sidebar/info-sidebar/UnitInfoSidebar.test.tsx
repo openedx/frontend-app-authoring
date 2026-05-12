@@ -16,11 +16,8 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: jest.fn(),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineContext', () => ({
-  useCourseOutlineContext: jest.fn(),
-}));
 jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
-  useCourseOutlineState: jest.fn(),
+  useCourseOutlineContext: jest.fn(),
 }));
 
 jest.mock(
@@ -45,7 +42,6 @@ jest.mock(
 const apiHooks = jest.requireMock('@src/course-outline/data/apiHooks') as any;
 const outlineContext = jest.requireMock('../OutlineSidebarContext') as any;
 const authoring = jest.requireMock('@src/CourseAuthoringContext') as any;
-const outlineCtx = jest.requireMock('@src/course-outline/CourseOutlineContext') as any;
 const outlineState = jest.requireMock('@src/course-outline/CourseOutlineStateContext') as any;
 
 describe('UnitSidebar', () => {
@@ -64,15 +60,13 @@ describe('UnitSidebar', () => {
       courseId: '5',
       openUnlinkModal: jest.fn(),
     });
-    outlineCtx.useCourseOutlineContext.mockReturnValue({
-      openPublishModal: jest.fn(),
-      handleDuplicateUnitSubmit: jest.fn(),
-      openDeleteModal: jest.fn(),
-    });
-    outlineState.useCourseOutlineState.mockReturnValue({
+    outlineState.useCourseOutlineContext.mockReturnValue({
       sections: [],
       restoreSectionList: jest.fn(),
       updateUnitOrderByIndex: jest.fn(),
+      openPublishModal: jest.fn(),
+      openDeleteModal: jest.fn(),
+      duplicateCurrentSelection: jest.fn(),
     });
   });
 
@@ -95,15 +89,13 @@ describe('UnitSidebar', () => {
   it('shows publish button and triggers openPublishModal when unit has changes', async () => {
     const user = userEvent.setup();
     const openPublishModal = jest.fn();
-    outlineCtx.useCourseOutlineContext.mockReturnValue({
-      openPublishModal,
-      handleDuplicateUnitSubmit: jest.fn(),
-      openDeleteModal: jest.fn(),
-    });
-    outlineState.useCourseOutlineState.mockReturnValue({
+    outlineState.useCourseOutlineContext.mockReturnValue({
       sections: [],
       restoreSectionList: jest.fn(),
       updateUnitOrderByIndex: jest.fn(),
+      openPublishModal,
+      openDeleteModal: jest.fn(),
+      duplicateCurrentSelection: jest.fn(),
     });
     outlineContext.useOutlineSidebarContext.mockReturnValue({
       selectedContainerState: { currentId: 'unit-2', sectionId: 's1', subsectionId: 'ss1' },

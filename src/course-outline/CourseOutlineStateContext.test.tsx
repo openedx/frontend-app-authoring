@@ -10,8 +10,8 @@ import { initializeMocks } from '@src/testUtils';
 import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
 
 import {
-  CourseOutlineStateProvider,
-  useCourseOutlineState,
+  CourseOutlineProvider,
+  useCourseOutlineContext,
 } from './CourseOutlineStateContext';
 import { courseOutlineIndexQueryKey } from './data/outlineIndexQuery';
 import { getCourseOutlineIndexApiUrl } from './data/api';
@@ -71,14 +71,14 @@ describe('CourseOutlineStateContext', () => {
     const wrapper = ({ children }: { children?: React.ReactNode }) => (
       <AppProvider store={store}>
         <QueryClientProvider client={queryClient}>
-          <CourseOutlineStateProvider>
+          <CourseOutlineProvider>
             {children}
-          </CourseOutlineStateProvider>
+          </CourseOutlineProvider>
         </QueryClientProvider>
       </AppProvider>
     );
 
-    const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+    const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
     // Wait for background fetch to settle (refetchOnMount=true)
     await waitFor(() => {
@@ -165,14 +165,14 @@ describe('CourseOutlineStateContext', () => {
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
           <QueryClientProvider client={queryClient}>
-            <CourseOutlineStateProvider>
+            <CourseOutlineProvider>
               {children}
-            </CourseOutlineStateProvider>
+            </CourseOutlineProvider>
           </QueryClientProvider>
         </AppProvider>
       );
 
-      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+      const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -198,14 +198,14 @@ describe('CourseOutlineStateContext', () => {
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
           <QueryClientProvider client={queryClient}>
-            <CourseOutlineStateProvider>
+            <CourseOutlineProvider>
               {children}
-            </CourseOutlineStateProvider>
+            </CourseOutlineProvider>
           </QueryClientProvider>
         </AppProvider>
       );
 
-      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+      const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -252,14 +252,14 @@ describe('CourseOutlineStateContext', () => {
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
           <QueryClientProvider client={queryClient}>
-            <CourseOutlineStateProvider>
+            <CourseOutlineProvider>
               {children}
-            </CourseOutlineStateProvider>
+            </CourseOutlineProvider>
           </QueryClientProvider>
         </AppProvider>
       );
 
-      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+      const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -299,14 +299,14 @@ describe('CourseOutlineStateContext', () => {
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
           <QueryClientProvider client={queryClient}>
-            <CourseOutlineStateProvider>
+            <CourseOutlineProvider>
               {children}
-            </CourseOutlineStateProvider>
+            </CourseOutlineProvider>
           </QueryClientProvider>
         </AppProvider>
       );
 
-      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+      const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -357,14 +357,14 @@ describe('CourseOutlineStateContext', () => {
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
           <QueryClientProvider client={queryClient}>
-            <CourseOutlineStateProvider>
+            <CourseOutlineProvider>
               {children}
-            </CourseOutlineStateProvider>
+            </CourseOutlineProvider>
           </QueryClientProvider>
         </AppProvider>
       );
 
-      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+      const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -429,14 +429,14 @@ describe('CourseOutlineStateContext', () => {
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
           <QueryClientProvider client={queryClient}>
-            <CourseOutlineStateProvider>
+            <CourseOutlineProvider>
               {children}
-            </CourseOutlineStateProvider>
+            </CourseOutlineProvider>
           </QueryClientProvider>
         </AppProvider>
       );
 
-      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+      const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
       // While query loads for course B, sections should be empty
       // NOT the stale course A sections from Redux
@@ -463,14 +463,14 @@ describe('CourseOutlineStateContext', () => {
       const wrapper = ({ children }: { children?: React.ReactNode }) => (
         <AppProvider store={store}>
           <QueryClientProvider client={queryClient}>
-            <CourseOutlineStateProvider>
+            <CourseOutlineProvider>
               {children}
-            </CourseOutlineStateProvider>
+            </CourseOutlineProvider>
           </QueryClientProvider>
         </AppProvider>
       );
 
-      const { result } = renderHook(() => useCourseOutlineState(), { wrapper });
+      const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
       // courseOutlineIndexQueryKey(courseBId) = ['courseOutline', courseBId, 'index']
       // Query cache for course B should be empty until fetch resolves

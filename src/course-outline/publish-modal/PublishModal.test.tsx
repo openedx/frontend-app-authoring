@@ -67,7 +67,8 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
+  ...jest.requireActual('@src/course-outline/CourseOutlineStateContext'),
   useCourseOutlineContext: () => ({
     isPublishModalOpen: true,
     currentPublishModalData: { value: currentItemMock },

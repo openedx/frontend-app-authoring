@@ -6,7 +6,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { useConfigureSubsection, useCourseDetails, useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { useCourseOutlineState } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
 import { ConfigureSubsectionData } from '@src/course-outline/data/types';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -204,7 +204,7 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
   const {
     enableTimedExams,
     enableProctoredExams,
-  } = useCourseOutlineState();
+  } = useCourseOutlineContext();
   const getLatestLocalState = useCallback(() => ({
     isProctoredExam: itemData?.isProctoredExam,
     isTimeLimited: itemData?.isTimeLimited,

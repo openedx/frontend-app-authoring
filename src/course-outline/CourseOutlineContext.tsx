@@ -1,16 +1,44 @@
-import {
-  createContext,
-  useContext,
-  useMemo,
-} from 'react';
+/**
+ * Compatibility shim — re-exports from CourseOutlineStateContext with
+ * API mapping for old `currentSelection` / `setCurrentSelection` names.
+ *
+ * Direct-path imports from this file continue to work but resolve to
+ * the single seam in CourseOutlineStateContext.
+ */
 
-import { SelectionState } from '@src/data/types';
+import { type SelectionState } from '@src/data/types';
 import type { ModalState } from '@src/CourseAuthoringContext';
 import {
   useCreateCourseBlock,
 } from './data/apiHooks';
-import { useCourseOutlineState } from './CourseOutlineStateContext';
+import { useCourseOutlineContext as useUnderlying } from './CourseOutlineStateContext';
 
+export { CourseOutlineProvider } from './CourseOutlineStateContext';
+
+/**
+ * Shim hook — maps old API names to the renamed state context fields.
+ *
+ * Callers using this shim get:
+ *   currentSelection  ←  actionTargetSelection
+ *   setCurrentSelection  ←  setActionTargetSelection
+ *
+ * All other fields pass through with identical names.
+ */
+export const useCourseOutlineContext = () => {
+  const ctx = useUnderlying();
+  const {
+    actionTargetSelection,
+    setActionTargetSelection,
+    ...rest
+  } = ctx;
+  return {
+    ...rest,
+    currentSelection: actionTargetSelection,
+    setCurrentSelection: setActionTargetSelection,
+  };
+};
+
+// Legacy type — same shape callers expect.
 export type CourseOutlineContextData = {
   handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
   handleAddBlock: ReturnType<typeof useCreateCourseBlock>;
@@ -24,60 +52,3 @@ export type CourseOutlineContextData = {
   openPublishModal: (value: ModalState) => void;
   closePublishModal: () => void;
 };
-
-/**
- * Course Outline Context.
- * Only available within the course outline page.
- *
- * Get this using `useCourseOutlineContext()`
- */
-const CourseOutlineContext = createContext<CourseOutlineContextData | undefined>(undefined);
-
-type CourseOutlineProviderProps = {
-  children?: React.ReactNode;
-};
-
-export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) => {
-  const state = useCourseOutlineState();
-
-  const context = useMemo<CourseOutlineContextData>(() => ({
-    handleAddBlock: state.handleAddBlock,
-    handleAddAndOpenUnit: state.handleAddAndOpenUnit,
-    currentSelection: state.actionTargetSelection,
-    setCurrentSelection: state.setActionTargetSelection,
-    isDeleteModalOpen: state.isDeleteModalOpen,
-    openDeleteModal: state.openDeleteModal,
-    closeDeleteModal: state.closeDeleteModal,
-    isPublishModalOpen: state.isPublishModalOpen,
-    currentPublishModalData: state.currentPublishModalData,
-    openPublishModal: state.openPublishModal,
-    closePublishModal: state.closePublishModal,
-  }), [
-    state.handleAddBlock,
-    state.handleAddAndOpenUnit,
-    state.actionTargetSelection,
-    state.setActionTargetSelection,
-    state.isDeleteModalOpen,
-    state.openDeleteModal,
-    state.closeDeleteModal,
-    state.isPublishModalOpen,
-    state.currentPublishModalData,
-    state.openPublishModal,
-    state.closePublishModal,
-  ]);
-
-  return (
-    <CourseOutlineContext.Provider value={context}>
-      {children}
-    </CourseOutlineContext.Provider>
-  );
-};
-
-export function useCourseOutlineContext(): CourseOutlineContextData {
-  const ctx = useContext(CourseOutlineContext);
-  if (ctx === undefined) {
-    /* istanbul ignore next */
-    throw new Error('useCourseOutlineContext() was used in a component without a <CourseOutlineProvider> ancestor.');
-  }
-  return ctx;
-}

@@ -15,12 +15,12 @@ import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import SectionCard from './SectionCard';
-import { CourseOutlineStateProvider } from '../CourseOutlineStateContext';
+import { CourseOutlineProvider } from '../CourseOutlineStateContext';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
-const setCurrentSelection = jest.fn();
+const setActionTargetSelection = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -37,12 +37,20 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineContext', () => ({
-  useCourseOutlineContext: () => ({
-    setCurrentSelection,
-    openPublishModal: jest.fn(),
-  }),
-}));
+jest.mock('@src/course-outline/CourseOutlineStateContext', () => {
+  const realModule = jest.requireActual('@src/course-outline/CourseOutlineStateContext');
+  return {
+    ...realModule,
+    useCourseOutlineContext: () => {
+      const realResult = realModule.useCourseOutlineContext();
+      return {
+        ...realResult,
+        setActionTargetSelection,
+        openPublishModal: jest.fn(),
+      };
+    },
+  };
+});
 
 const unit = {
   id: 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
@@ -123,11 +131,11 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
         initialEntries: [entry],
       },
       extraWrapper: ({ children }) => (
-        <CourseOutlineStateProvider>
+        <CourseOutlineProvider>
           <OutlineSidebarContext.OutlineSidebarProvider>
             {children}
           </OutlineSidebarContext.OutlineSidebarProvider>
-        </CourseOutlineStateProvider>
+        </CourseOutlineProvider>
       ),
     },
   );
@@ -181,7 +189,7 @@ describe('<SectionCard />', () => {
     const menuButton = await screen.findByTestId('section-card-header__menu-button');
     await user.click(menuButton);
 
-    expect(setCurrentSelection).toHaveBeenCalledWith({
+    expect(setActionTargetSelection).toHaveBeenCalledWith({
       currentId: section.id,
       sectionId: section.id,
       index: 1,
@@ -401,7 +409,7 @@ describe('<SectionCard />', () => {
     await waitFor(() => {
       expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
     });
-    expect(setCurrentSelection).toHaveBeenCalledWith({
+    expect(setActionTargetSelection).toHaveBeenCalledWith({
       currentId: section.id,
       sectionId: section.id,
       index: 1,

@@ -12,7 +12,7 @@ import { Edit as EditIcon } from '@openedx/paragon/icons';
 import { Formik, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { ExpandableCard } from '@src/generic/expandable-card/ExpandableCard';
 import { useBlocker } from 'react-router';
@@ -304,7 +304,7 @@ const HighlightsModal = ({
   onSubmit: (highlights: HighlightData) => void;
 }) => {
   const intl = useIntl();
-  const { currentSelection } = useCourseOutlineContext();
+  const { actionTargetSelection: currentSelection } = useCourseOutlineContext();
   const { data: currentItemData } = useCourseItemData(
     currentSelection?.currentId,
   );

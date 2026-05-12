@@ -8,8 +8,7 @@ import {
   within,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
-import { CourseOutlineStateProvider } from '@src/course-outline/CourseOutlineStateContext';
+import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineStateContext';
 
 import { OutlineSidebarProvider } from './OutlineSidebarContext';
 import { OutlineSidebarPagesProvider } from './OutlineSidebarPagesContext';
@@ -33,15 +32,13 @@ const courseId = '123';
 
 const extraWrapper = ({ children }) => (
   <CourseAuthoringProvider courseId={courseId}>
-    <CourseOutlineStateProvider>
-      <CourseOutlineProvider>
-        <OutlineSidebarPagesProvider>
-          <OutlineSidebarProvider>
-            {children}
-          </OutlineSidebarProvider>
-        </OutlineSidebarPagesProvider>
-      </CourseOutlineProvider>
-    </CourseOutlineStateProvider>
+    <CourseOutlineProvider>
+      <OutlineSidebarPagesProvider>
+        <OutlineSidebarProvider>
+          {children}
+        </OutlineSidebarProvider>
+      </OutlineSidebarPagesProvider>
+    </CourseOutlineProvider>
   </CourseAuthoringProvider>
 );
 

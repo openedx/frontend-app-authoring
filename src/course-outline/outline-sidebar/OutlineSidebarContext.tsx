@@ -10,8 +10,7 @@ import { useToggle } from '@openedx/paragon';
 
 import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
 import { SelectionState } from '@src/data/types';
-import { useCourseOutlineState } from '@src/course-outline/CourseOutlineStateContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
 import { ContainerType } from '@src/generic/key-utils';
 import { buildSelectionState } from '@src/course-outline/state/selection';
 
@@ -86,8 +85,8 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     selectContainer: setSelectedContainerState,
     clearSelection,
     openContainerInfo,
-  } = useCourseOutlineState();
-  const { setCurrentSelection } = useCourseOutlineContext();
+    setActionTargetSelection,
+  } = useCourseOutlineContext();
 
   /**
    * Set currentSelection to same as selectedContainerState whenever
@@ -97,9 +96,9 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   useEffect(() => {
     // To allow tag buttons on other cards to jump to align page and not loose its selection
     if (currentPageKey !== 'align') {
-      setCurrentSelection(selectedContainerState);
+      setActionTargetSelection(selectedContainerState);
     }
-  }, [currentPageKey, selectedContainerState, setCurrentSelection]);
+  }, [currentPageKey, selectedContainerState, setActionTargetSelection]);
 
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);

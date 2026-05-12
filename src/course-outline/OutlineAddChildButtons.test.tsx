@@ -19,7 +19,7 @@ jest.mock('@src/studio-home/data/selectors', () => ({
 const handleAddAndOpenUnit = { mutateAsync: jest.fn() };
 const handleAddBlock = { mutateAsync: jest.fn() };
 const courseUsageKey = 'some/usage/key';
-const setCurrentSelection = jest.fn();
+const setActionTargetSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
@@ -28,20 +28,16 @@ jest.mock('@src/CourseAuthoringContext', () => ({
 }));
 
 jest.mock('@src/course-outline/CourseOutlineStateContext', () => ({
-  useCourseOutlineState: () => ({
+  ...jest.requireActual('@src/course-outline/CourseOutlineStateContext'),
+  useCourseOutlineContext: () => ({
     courseUsageKey,
     currentSelection: undefined,
     selectContainer: jest.fn(),
     clearSelection: jest.fn(),
     openContainerInfo: jest.fn(),
-  }),
-}));
-
-jest.mock('@src/course-outline/CourseOutlineContext', () => ({
-  useCourseOutlineContext: () => ({
     handleAddAndOpenUnit,
     handleAddBlock,
-    setCurrentSelection,
+    setActionTargetSelection,
   }),
 }));
 

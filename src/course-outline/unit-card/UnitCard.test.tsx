@@ -13,12 +13,12 @@ import userEvent from '@testing-library/user-event';
 import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
-import { CourseOutlineStateProvider } from '../CourseOutlineStateContext';
+import { CourseOutlineProvider } from '../CourseOutlineStateContext';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
-const setCurrentSelection = jest.fn();
+const setActionTargetSelection = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -36,12 +36,20 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineContext', () => ({
-  useCourseOutlineContext: () => ({
-    setCurrentSelection,
-    openPublishModal: jest.fn(),
-  }),
-}));
+jest.mock('@src/course-outline/CourseOutlineStateContext', () => {
+  const realModule = jest.requireActual('@src/course-outline/CourseOutlineStateContext');
+  return {
+    ...realModule,
+    useCourseOutlineContext: () => {
+      const realResult = realModule.useCourseOutlineContext();
+      return {
+        ...realResult,
+        setActionTargetSelection,
+        openPublishModal: jest.fn(),
+      };
+    },
+  };
+});
 
 const section = {
   id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
@@ -122,11 +130,11 @@ const renderComponent = (props?: object) =>
       path: '/course/:courseId',
       params: { courseId: '5' },
       extraWrapper: ({ children }) => (
-        <CourseOutlineStateProvider>
+        <CourseOutlineProvider>
           <OutlineSidebarContext.OutlineSidebarProvider>
             {children}
           </OutlineSidebarContext.OutlineSidebarProvider>
-        </CourseOutlineStateProvider>
+        </CourseOutlineProvider>
       ),
     },
   );
@@ -178,7 +186,7 @@ describe('<UnitCard />', () => {
     const menuButton = await screen.findByTestId('unit-card-header__menu-button');
     await user.click(menuButton);
 
-    expect(setCurrentSelection).toHaveBeenCalledWith({
+    expect(setActionTargetSelection).toHaveBeenCalledWith({
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
@@ -365,7 +373,7 @@ describe('<UnitCard />', () => {
     await waitFor(() => {
       expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
     });
-    expect(setCurrentSelection).toHaveBeenCalledWith({
+    expect(setActionTargetSelection).toHaveBeenCalledWith({
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,

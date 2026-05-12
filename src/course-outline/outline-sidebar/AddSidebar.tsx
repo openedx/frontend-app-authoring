@@ -5,8 +5,7 @@ import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sideb
 
 import contentMessages from '@src/library-authoring/add-content/messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
-import { useCourseOutlineState } from '@src/course-outline/CourseOutlineStateContext';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineStateContext';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
 import {
   Stack,
@@ -35,7 +34,7 @@ import messages from './messages';
 
 const CannotAddContentAlert = () => {
   const intl = useIntl();
-  const { currentItemData } = useCourseOutlineState();
+  const { currentItemData } = useCourseOutlineContext();
   return (
     <AlertMessage
       variant="info"
@@ -59,8 +58,6 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
     courseUsageKey,
     lastEditableSection,
     lastEditableSubsection,
-  } = useCourseOutlineState();
-  const {
     handleAddBlock,
     handleAddAndOpenUnit,
   } = useCourseOutlineContext();
@@ -176,7 +173,7 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
 /** Add New Content Tab Section */
 const AddNewContent = () => {
   const intl = useIntl();
-  const { currentItemData } = useCourseOutlineState();
+  const { currentItemData } = useCourseOutlineContext();
   const { isCurrentFlowOn, currentFlow } = useOutlineSidebarContext();
   const btns = useCallback(() => {
     if (currentFlow?.flowType) {
@@ -223,8 +220,8 @@ const ShowLibraryContent = () => {
     currentItemData,
     lastEditableSection,
     lastEditableSubsection,
-  } = useCourseOutlineState();
-  const { handleAddBlock } = useCourseOutlineContext();
+    handleAddBlock,
+  } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
     currentFlow,
@@ -365,7 +362,7 @@ const AddTabs = () => {
 export const AddSidebar = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
-  const { currentItemData } = useCourseOutlineState();
+  const { currentItemData } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
     currentFlow,

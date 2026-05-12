@@ -28,11 +28,10 @@ import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from './CourseOutlineContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { useCourseOutlineState } from './CourseOutlineStateContext';
+import { useCourseOutlineContext } from './CourseOutlineStateContext';
 import { COURSE_BLOCK_NAMES } from './constants';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
@@ -64,9 +63,6 @@ const CourseOutline = () => {
     closeUnlinkModal,
   } = useCourseAuthoringContext();
   const {
-    currentSelection,
-  } = useCourseOutlineContext();
-  const {
     courseUsageKey,
     sections,
     updateSectionOrderByIndex,
@@ -80,7 +76,8 @@ const CourseOutline = () => {
     commitSubsectionReorder,
     commitUnitReorder,
     dismissError,
-  } = useCourseOutlineState();
+    actionTargetSelection,
+  } = useCourseOutlineContext();
 
   const {
     courseName,
@@ -148,7 +145,7 @@ const CourseOutline = () => {
     }
   }, [location, courseId, courseName]);
 
-  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
+  const { data: currentItemData } = useCourseItemData(actionTargetSelection?.currentId);
 
   const itemCategory = currentItemData?.category || '';
   const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();

@@ -8,7 +8,6 @@ import {
 
 import {
   CourseOutlineProvider,
-  CourseOutlineStateProvider,
   OutlineSidebarProvider,
 } from '@src/course-outline';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
@@ -51,13 +50,11 @@ const renderComponent = (props?: Partial<HeaderActionsProps>) =>
     {
       extraWrapper: ({ children }) => (
         <CourseAuthoringProvider courseId="1">
-          <CourseOutlineStateProvider>
-            <CourseOutlineProvider>
-              <OutlineSidebarProvider>
-                {children}
-              </OutlineSidebarProvider>
-            </CourseOutlineProvider>
-          </CourseOutlineStateProvider>
+          <CourseOutlineProvider>
+            <OutlineSidebarProvider>
+              {children}
+            </OutlineSidebarProvider>
+          </CourseOutlineProvider>
         </CourseAuthoringProvider>
       ),
     },

@@ -6,8 +6,7 @@ import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/sel
 import { RequestStatus } from '@src/data/constants';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineState } from './CourseOutlineStateContext';
-import { useCourseOutlineContext } from './CourseOutlineContext';
+import { useCourseOutlineContext } from './CourseOutlineStateContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { ContainerType } from '@src/generic/key-utils';
@@ -15,17 +14,13 @@ import { COURSE_BLOCK_NAMES } from './constants';
 
 const useCourseOutline = ({ courseId }) => {
   const { currentUnlinkModalData, closeUnlinkModal } = useCourseAuthoringContext();
-  const {
-    handleAddBlock,
-    setCurrentSelection,
-    currentSelection,
-    isDeleteModalOpen,
-    openDeleteModal,
-    closeDeleteModal,
-  } = useCourseOutlineContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
   const {
+    handleAddBlock,
+    isDeleteModalOpen,
+    openDeleteModal,
+    closeDeleteModal,
     outlineIndexData,
     loadingStatus,
     statusBarData,
@@ -44,7 +39,10 @@ const useCourseOutline = ({ courseId }) => {
     dismissNotification,
     reindexCourse,
     setSavingStatus,
-  } = useCourseOutlineState();
+    // Action target selection (aliased for backward compat)
+    actionTargetSelection: currentSelection,
+    setActionTargetSelection: setCurrentSelection,
+  } = useCourseOutlineContext();
   const {
     reindexLink,
     courseStructure,
