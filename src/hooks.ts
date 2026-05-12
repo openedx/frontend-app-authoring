@@ -143,6 +143,9 @@ export function useStateWithUrlSearchParam<Type>(
   // initializing URLSearchParams.
   const location = useLocation();
   const locationRef = useRef(location);
+  // Keep locationRef in sync with the current location so that setters
+  // always build on top of the latest URL (e.g. after a navigate() call).
+  locationRef.current = location;
   const [searchParams, setSearchParams] = useSearchParams();
   const paramValues = searchParams.getAll(paramName);
 

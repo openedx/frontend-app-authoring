@@ -267,7 +267,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
 
     const newPath = generatePath(BASE_ROUTE + route, routeParams);
     // Prevent unnecessary navigation if the path is the same.
-    if (newPath !== pathname) {
+    // Always navigate when sidebarAction is provided to ensure the search param is updated.
+    if (newPath !== pathname || sidebarAction) {
       navigate({
         pathname: newPath,
         search: searchParams.toString(),
