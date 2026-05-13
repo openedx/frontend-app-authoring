@@ -17,8 +17,19 @@ import messages from './messages';
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const waffleFlags = useWaffleFlags();
+  const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
+
+  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
+    canViewPagesAndResources: {
+      action: COURSE_PERMISSIONS.VIEW_PAGES_AND_RESOURCES,
+      scope: courseId,
+    },
+  }, isAuthzEnabled);
+
+  const canViewPagesAndResources = !isAuthzEnabled
+    || (!isLoadingUserPermissions && (userPermissions?.canViewPagesAndResources || false));
 
   const items = [
     {
@@ -31,10 +42,12 @@ export const useContentMenuItems = (courseId: string) => {
         : `${studioBaseUrl}/course_info/${courseId}`,
       title: intl.formatMessage(messages['header.links.updates']),
     },
-    {
-      href: getPagePath(courseId, 'true', 'tabs'),
-      title: intl.formatMessage(messages['header.links.pages']),
-    },
+    ...(canViewPagesAndResources
+      ? [{
+        href: getPagePath(courseId, 'true', 'tabs'),
+        title: intl.formatMessage(messages['header.links.pages']),
+      }]
+      : []),
     {
       href: waffleFlags.useNewFilesUploadsPage ? `/course/${courseId}/assets` : `${studioBaseUrl}/assets/${courseId}`,
       title: intl.formatMessage(messages['header.links.filesAndUploads']),
@@ -69,26 +82,26 @@ export const useSettingMenuItems = (courseId: string) => {
   */
   const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
   const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
-    },
-    canViewScheduleAndDetails: {
-      action: COURSE_PERMISSIONS.VIEW_SCHEDULE_AND_DETAILS,
+    canViewAdvancedSettings: {
+      action: COURSE_PERMISSIONS.VIEW_ADVANCED_SETTINGS,
       scope: courseId,
     },
     canViewGradingSettings: {
       action: COURSE_PERMISSIONS.VIEW_GRADING_SETTINGS,
       scope: courseId,
     },
+    canViewScheduleAndDetails: {
+      action: COURSE_PERMISSIONS.VIEW_SCHEDULE_AND_DETAILS,
+      scope: courseId,
+    },
   }, isAuthzEnabled);
 
-  const authzCanManageAdvancedSettings = isLoadingUserPermissions
+  const authzCanViewAdvancedSettings = isLoadingUserPermissions
     ? false
-    : userPermissions?.canManageAdvancedSettings || false;
+    : userPermissions?.canViewAdvancedSettings || false;
 
   const canAccessAdvancedSettings = isAuthzEnabled
-    ? authzCanManageAdvancedSettings
+    ? authzCanViewAdvancedSettings
     : legacyCanAccessAdvancedSettings;
 
   const canViewScheduleAndDetails = isAuthzEnabled

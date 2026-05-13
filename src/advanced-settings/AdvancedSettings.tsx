@@ -216,7 +216,7 @@ const AdvancedSettings = () => {
               />
               <article>
                 <div>
-                  <section className="setting-items-policies" aria-disabled={!isEditable || undefined}>
+                  <section className="setting-items-policies" aria-disabled={!isEditable}>
                     <div className="small">
                       <FormattedMessage
                         id="course-authoring.advanced-settings.policies.description"

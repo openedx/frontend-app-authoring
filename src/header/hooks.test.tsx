@@ -56,6 +56,13 @@ const createWrapper = () => {
 
 describe('header utils', () => {
   describe('getContentMenuItems', () => {
+    beforeEach(() => {
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewPagesAndResources: true },
+      } as any);
+    });
+
     it('when video upload page enabled should include Video Uploads option', () => {
       jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: false,
@@ -88,6 +95,30 @@ describe('header utils', () => {
         renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems[1]).toEqual({ href: '/course/course-123/libraries', title: 'Library Updates' });
     });
+    it('when authz enabled and user has canViewPagesAndResources should include pages and resources option', async () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useSelector).mockReturnValue({ librariesV2Enabled: false });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewPagesAndResources: true },
+      } as any);
+      const { result } = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() });
+      await waitFor(() => {
+        expect(result.current.map((item) => item.title)).toContain('Pages & Resources');
+      });
+    });
+    it('when authz enabled and user lacks canViewPagesAndResources should not include pages and resources option', async () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useSelector).mockReturnValue({ librariesV2Enabled: false });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewPagesAndResources: false },
+      } as any);
+      const { result } = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() });
+      await waitFor(() => {
+        expect(result.current.map((item) => item.title)).not.toContain('Pages & Resources');
+      });
+    });
   });
 
   describe('getSettingsMenuitems', () => {
@@ -97,7 +128,7 @@ describe('header utils', () => {
       });
       jest.mocked(useUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canManageAdvancedSettings: true },
+        data: { canViewAdvancedSettings: true, canViewGradingSettings: true },
       } as any);
     });
 
@@ -134,10 +165,9 @@ describe('header utils', () => {
     it('when the authz.enable_course_authoring flag is enabled and user has access to advanced settings should include advanced settings option', async () => {
       // Mock feature flag
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
       jest.mocked(useUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canManageAdvancedSettings: true },
+        data: { canViewAdvancedSettings: true, canViewGradingSettings: true },
       } as any);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
@@ -148,10 +178,9 @@ describe('header utils', () => {
     it('when authz.enable_course_authoring flag is enabled and user has no access to advanced settings should not include advanced settings option', async () => {
       // Mock feature flag
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
       jest.mocked(useUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canManageAdvancedSettings: false },
+        data: { canViewAdvancedSettings: false, canViewGradingSettings: true },
       } as any);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
@@ -163,7 +192,6 @@ describe('header utils', () => {
     it('when authz.enable_course_authoring flag is enabled and the permission request is still loading, should not include advanced settings option', async () => {
       // Mock feature flag
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
       jest.mocked(useUserPermissions).mockReturnValue({
         isLoading: true,
         data: undefined,
