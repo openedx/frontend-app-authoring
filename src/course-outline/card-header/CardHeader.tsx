@@ -136,6 +136,11 @@ const CardHeader = ({
     openForm();
   };
 
+  const onConfigureClick = () => {
+    onClickMenuButton();
+    onClickConfigure();
+  };
+
   useEffect(() => {
     const locatorId = searchParams.get('show');
     if (!locatorId) {
@@ -281,7 +286,7 @@ const CardHeader = ({
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-configure-button`}
                 disabled={editMutation.isPending}
-                onClick={onClickConfigure}
+                onClick={onConfigureClick}
               >
                 {intl.formatMessage(messages.menuConfigure)}
               </Dropdown.Item>

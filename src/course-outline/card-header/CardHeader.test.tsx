@@ -107,6 +107,7 @@ const renderComponent = (props?: object, entry = '/') => {
 describe('<CardHeader />', () => {
   beforeEach(() => {
     initializeMocks();
+    useUpdateCourseBlockNameMock.isPending = false;
   });
 
   it('render CardHeader component correctly', async () => {
@@ -319,6 +320,36 @@ describe('<CardHeader />', () => {
     fireEvent.click(duplicateMenuItem);
     await act(async () => fireEvent.click(duplicateMenuItem));
     expect(onClickDuplicateMock).toHaveBeenCalled();
+  });
+
+  it('calls onClickMenuButton before onClickConfigure when configure menu item is clicked', async () => {
+    renderComponent();
+
+    // Open dropdown
+    const menuButton = screen.getByTestId('subsection-card-header__menu-button');
+    await act(async () => {
+      fireEvent.click(menuButton);
+    });
+
+    // Verify configure button is enabled before clicking
+    const configureButton = await screen.findByTestId('subsection-card-header__menu-configure-button');
+    expect(configureButton).not.toHaveAttribute('aria-disabled');
+
+    // Clear both mocks so the dropdown-open call doesn't pollute ordering assertion
+    onClickMenuButtonMock.mockClear();
+    onClickConfigureMock.mockClear();
+
+    // Click configure menu item
+    await act(async () => {
+      fireEvent.click(configureButton);
+    });
+
+    // Assert both were called and in order
+    expect(onClickMenuButtonMock).toHaveBeenCalled();
+    expect(onClickConfigureMock).toHaveBeenCalled();
+    expect(onClickMenuButtonMock.mock.invocationCallOrder[0]).toBeLessThan(
+      onClickConfigureMock.mock.invocationCallOrder[0],
+    );
   });
 
   it('check if proctoringExamConfigurationLink is visible', async () => {

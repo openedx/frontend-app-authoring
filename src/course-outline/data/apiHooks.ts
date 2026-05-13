@@ -135,6 +135,7 @@ export const replaceSectionInOutlineIndex = (
 ) => {
   const old = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
   if (!old?.courseStructure?.childInfo?.children) return;
+  let hadMissingChildInfo = false;
   const updated = {
     ...old,
     courseStructure: {
@@ -145,8 +146,11 @@ export const replaceSectionInOutlineIndex = (
           (s: any) => {
             if (!(s.id in sections)) return s;
             const replacement = sections[s.id];
-            // Guard against bad replacement data: skip if missing childInfo.children
-            if (!replacement?.childInfo?.children) return s;
+            // Skip replacement if missing childInfo.children, invalidate as fallback
+            if (!replacement?.childInfo?.children) {
+              hadMissingChildInfo = true;
+              return s;
+            }
             return replacement;
           },
         ),
@@ -154,6 +158,9 @@ export const replaceSectionInOutlineIndex = (
     },
   };
   queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), updated);
+  if (hadMissingChildInfo) {
+    queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+  }
 };
 
 /** Insert duplicated section after original id in outline index cache. */
@@ -186,25 +193,6 @@ const insertDuplicatedSectionInOutlineIndex = (
   });
 };
 
-/** Invalidate parent queries and sync section data to outline index cache. */
-async function invalidateParentQueriesAndSync(
-  queryClient: QueryClient,
-  variables: ParentIds,
-): Promise<void> {
-  await invalidateParentQueries(queryClient, variables);
-  // Force immediate refetch and wait for it, then sync to outline index.
-  if (variables?.sectionId) {
-    await queryClient.refetchQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
-    const sectionData = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(variables.sectionId));
-    if (sectionData && ['chapter', 'section'].includes((sectionData as any).category)) {
-      const outlineCourseId = getCourseKey(variables.sectionId);
-      replaceSectionInOutlineIndex(queryClient, outlineCourseId, {
-        [variables.sectionId]: sectionData as XBlock,
-      });
-    }
-  }
-}
-
 // -----------------------------------------------------------------------------
 
 type CreateCourseXBlockMutationProps = CreateCourseXBlockType & ParentIds;
@@ -231,8 +219,7 @@ export const useCreateCourseBlock = (
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
       });
 
-      // Invalidate parent queries and sync updated section to outline index cache.
-      await invalidateParentQueriesAndSync(queryClient, variables);
+      await invalidateParentQueries(queryClient, variables);
 
       // Invalidate tags count for the newly created block
       const contentPattern = data.locator.replace(/\+type@.*$/, '*');
@@ -442,8 +429,7 @@ export const useDuplicateItem = (courseKey: string) => {
       } & ParentIds,
     ) => duplicateCourseItem(variables.itemId, variables.parentId),
     onSuccess: async (data, variables) => {
-      // Invalidate parent queries and sync updated section to outline index cache.
-      await invalidateParentQueriesAndSync(queryClient, variables);
+      await invalidateParentQueries(queryClient, variables);
 
       // For chapter (section) duplication, insert the duplicated section into the outline index cache.
       if (getBlockType(variables.itemId) === 'chapter') {
@@ -466,6 +452,32 @@ export const usePasteFileNotices = createGlobalState<StaticFileNotices>(
   },
 );
 
+/** Fetch affected sections and sync to outline index cache after reorder. */
+const syncSectionsToOutlineIndex = async (
+  queryClient: QueryClient,
+  courseId: string,
+  variables: { sectionId: string; prevSectionId?: string },
+): Promise<void> => {
+  const sectionIds: string[] = [variables.sectionId];
+  if (variables.prevSectionId && variables.prevSectionId !== variables.sectionId) {
+    sectionIds.push(variables.prevSectionId);
+  }
+  const updatedSections: Record<string, XBlock> = {};
+  await Promise.all(sectionIds.map(async (id) => {
+    try {
+      const sectionData = await getCourseItem<XBlock>(id);
+      updatedSections[id] = sectionData;
+    } catch {
+      // If getCourseItem fails for one section, still try others
+    }
+  }));
+  if (Object.keys(updatedSections).length > 0) {
+    replaceSectionInOutlineIndex(queryClient, courseId, updatedSections);
+  } else {
+    queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+  }
+};
+
 export const useReorderUnits = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
@@ -476,38 +488,14 @@ export const useReorderUnits = (courseId: string) => {
       unitListIds: string[];
     }) => setCourseItemOrderList(variables.subsectionId, variables.unitListIds),
     onSuccess: async (_data, variables) => {
-      // Fetch fresh section data for affected sections and sync to outline index cache.
-      const sectionIds: string[] = [variables.sectionId];
-      if (variables.prevSectionId && variables.prevSectionId !== variables.sectionId) {
-        sectionIds.push(variables.prevSectionId);
-      }
-      const updatedSections: Record<string, XBlock> = {};
-      // Use Promise.all for parallel fetching
-      await Promise.all(sectionIds.map(async (id) => {
-        try {
-          const sectionData = await getCourseItem<XBlock>(id);
-          updatedSections[id] = sectionData;
-        } catch (e) {
-          // If getCourseItem fails for one section, still try others
-        }
-      }));
-      if (Object.keys(updatedSections).length > 0) {
-        replaceSectionInOutlineIndex(queryClient, courseId, updatedSections);
-      } else {
-        // Fallback: invalidate the whole outline index query to force refetch
-        queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
-      }
+      await syncSectionsToOutlineIndex(queryClient, courseId, variables);
     },
   });
 };
 
 export const useReorderSections = (courseId: string) => {
-  const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
     mutationFn: (sectionListIds: string[]) => setSectionOrderList(courseId, sectionListIds),
-    onSuccess: (_data, _sectionListIds) => {
-      // Cache update handled by caller in CourseOutlineContext
-    },
   });
 };
 
@@ -520,27 +508,7 @@ export const useReorderSubsections = (courseId: string) => {
       subsectionListIds: string[];
     }) => setCourseItemOrderList(variables.sectionId, variables.subsectionListIds),
     onSuccess: async (_data, variables) => {
-      // Fetch fresh section data for affected sections and sync to outline index cache.
-      const sectionIds: string[] = [variables.sectionId];
-      if (variables.prevSectionId && variables.prevSectionId !== variables.sectionId) {
-        sectionIds.push(variables.prevSectionId);
-      }
-      const updatedSections: Record<string, XBlock> = {};
-      // Use Promise.all for parallel fetching
-      await Promise.all(sectionIds.map(async (id) => {
-        try {
-          const sectionData = await getCourseItem<XBlock>(id);
-          updatedSections[id] = sectionData;
-        } catch (e) {
-          // If getCourseItem fails for one section, still try others
-        }
-      }));
-      if (Object.keys(updatedSections).length > 0) {
-        replaceSectionInOutlineIndex(queryClient, courseId, updatedSections);
-      } else {
-        // Fallback: invalidate the whole outline index query to force refetch
-        queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
-      }
+      await syncSectionsToOutlineIndex(queryClient, courseId, variables);
     },
   });
 };
