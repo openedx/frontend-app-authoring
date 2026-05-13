@@ -4,7 +4,6 @@ import moment from 'moment';
 import { RequestStatus } from '@src/data/constants';
 import type { XBlock, XBlockActions } from '@src/data/types';
 import {
-  getCourseOutlineIndexRequestState,
   getCourseOutlineStatusBarData,
   useCourseOutlineIndex,
 } from '../data/outlineIndexQuery';
@@ -47,7 +46,8 @@ export interface UseOutlineStatusStateOutput {
   sections: XBlock[];
   statusBarData: CourseOutlineStatusBar;
   effectiveLoadingStatus: {
-    outlineIndexLoadingStatus: string;
+    outlineIndexIsLoading: boolean;
+    outlineIndexIsDenied: boolean;
     reIndexLoadingStatus: string;
     fetchSectionLoadingStatus: string;
     courseLaunchQueryStatus: string;
@@ -73,12 +73,11 @@ export function useOutlineStatusState({
   // Effective outline data from React Query cache
   const effectiveOutlineIndexData = outlineIndexQuery.data;
 
-  // Derive outline-index loading/error state from live query
-  const outlineIndexRequestState = useMemo(() => getCourseOutlineIndexRequestState({
-    isPending: outlineIndexQuery.isPending,
-    isSuccess: outlineIndexQuery.isSuccess,
-    error: outlineIndexQuery.error,
-  }), [outlineIndexQuery.error, outlineIndexQuery.isPending, outlineIndexQuery.isSuccess]);
+  // Derive outline-index loading/error booleans from React Query fields
+  const outlineIndexIsPending = outlineIndexQuery.isPending;
+  const outlineIndexIsDenied = !outlineIndexQuery.isPending
+    && !outlineIndexQuery.isSuccess
+    && (outlineIndexQuery.error as any)?.response?.status === 403;
 
   // Committed sections from query cache children
   const sections = effectiveOutlineIndexData?.courseStructure?.childInfo?.children || [];
@@ -116,16 +115,20 @@ export function useOutlineStatusState({
 
   // --- Derived loading status (query-derived + local) ---
   const effectiveLoadingStatus = useMemo(() => ({
-    outlineIndexLoadingStatus: outlineIndexRequestState.status,
+    outlineIndexIsLoading: outlineIndexIsPending,
+    outlineIndexIsDenied,
     reIndexLoadingStatus: reindexLoadingStatus,
     fetchSectionLoadingStatus: DEFAULT_FETCH_SECTION_STATUS,
     courseLaunchQueryStatus: localCourseLaunchQueryStatus,
-  }), [outlineIndexRequestState.status, reindexLoadingStatus, localCourseLaunchQueryStatus]);
+  }), [outlineIndexIsPending, outlineIndexIsDenied, reindexLoadingStatus, localCourseLaunchQueryStatus]);
 
   // --- Derived errors (query-derived + local, minus dismissed keys) ---
   const effectiveErrors = useMemo((): Record<string, any> => {
+    const outlineIndexErrors = !outlineIndexIsDenied && outlineIndexQuery.error != null
+      ? getErrorDetails(outlineIndexQuery.error, false)
+      : null;
     const base = {
-      outlineIndexApi: outlineIndexRequestState.errors,
+      outlineIndexApi: outlineIndexErrors,
       reindexApi: localReindexError,
       sectionLoadingApi: DEFAULT_ERROR_NULL,
       courseLaunchApi: localCourseLaunchErrors,
@@ -133,7 +136,7 @@ export function useOutlineStatusState({
     const filtered = { ...base };
     dismissedErrorKeys.forEach(key => { filtered[key] = null; });
     return filtered;
-  }, [outlineIndexRequestState.errors, dismissedErrorKeys, localReindexError, localCourseLaunchErrors]);
+  }, [outlineIndexQuery.error, outlineIndexIsDenied, dismissedErrorKeys, localReindexError, localCourseLaunchErrors]);
 
   // --- Checklist/launch effects ---
   useEffect(() => {

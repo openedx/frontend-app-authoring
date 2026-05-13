@@ -55,7 +55,7 @@ const useCourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     advanceSettingsUrl,
   } = outlineIndexData || {};
-  const { outlineIndexLoadingStatus, reIndexLoadingStatus } = loadingStatus;
+  const { outlineIndexIsLoading, outlineIndexIsDenied, reIndexLoadingStatus } = loadingStatus;
   const genericSavingStatus = useSelector(getGenericSavingStatus);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
@@ -171,8 +171,8 @@ const useCourseOutline = ({ courseId }) => {
     courseActions,
     savingStatus,
     isCustomRelativeDatesActive,
-    isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
-    isLoadingDenied: outlineIndexLoadingStatus === RequestStatus.DENIED,
+    isLoading: outlineIndexIsLoading,
+    isLoadingDenied: outlineIndexIsDenied,
     isReIndexShow: Boolean(reindexLink),
     showSuccessAlert,
     isDisabledReindexButton,

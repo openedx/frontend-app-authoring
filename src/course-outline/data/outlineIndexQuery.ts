@@ -1,9 +1,7 @@
-import { RequestStatus } from '@src/data/constants';
 import { skipToken, useQuery } from '@tanstack/react-query';
 
 import { getCourseOutlineIndex } from './api';
 import type { CourseOutline } from './types';
-import { getErrorDetails } from '../utils/getErrorDetails';
 
 export const courseOutlineIndexQueryKey = (courseId?: string) => ['courseOutline', courseId, 'index'];
 
@@ -27,53 +25,6 @@ export const useCourseOutlineIndex = (
   refetchOnMount,
   retry: false,
 });
-
-type CourseOutlineIndexRequestStateArgs = {
-  isPending: boolean;
-  isSuccess: boolean;
-  error: unknown;
-};
-
-export const getCourseOutlineIndexRequestState = ({
-  isPending,
-  isSuccess,
-  error,
-}: CourseOutlineIndexRequestStateArgs) => {
-  const requestError = error as any;
-
-  if (isPending) {
-    return {
-      status: RequestStatus.IN_PROGRESS,
-      errors: null,
-    };
-  }
-
-  if (requestError?.response?.status === 403) {
-    return {
-      status: RequestStatus.DENIED,
-      errors: null,
-    };
-  }
-
-  if (requestError) {
-    return {
-      status: RequestStatus.FAILED,
-      errors: getErrorDetails(requestError, false),
-    };
-  }
-
-  if (isSuccess) {
-    return {
-      status: RequestStatus.SUCCESSFUL,
-      errors: null,
-    };
-  }
-
-  return {
-    status: RequestStatus.IN_PROGRESS,
-    errors: null,
-  };
-};
 
 export const getCourseOutlineStatusBarData = (outlineIndex: CourseOutline) => {
   const {

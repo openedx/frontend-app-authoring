@@ -96,7 +96,8 @@ describe('useOutlineStatusState', () => {
 
       const { result } = renderStatusHook();
 
-      expect(result.current.effectiveLoadingStatus.outlineIndexLoadingStatus).toBe(RequestStatus.IN_PROGRESS);
+      expect(result.current.effectiveLoadingStatus.outlineIndexIsLoading).toBe(true);
+      expect(result.current.effectiveLoadingStatus.outlineIndexIsDenied).toBe(false);
       expect(result.current.effectiveLoadingStatus.courseLaunchQueryStatus).toBe(RequestStatus.IN_PROGRESS);
     });
 
@@ -110,7 +111,8 @@ describe('useOutlineStatusState', () => {
 
       const { result } = renderStatusHook();
 
-      expect(result.current.effectiveLoadingStatus.outlineIndexLoadingStatus).toBe(RequestStatus.DENIED);
+      expect(result.current.effectiveLoadingStatus.outlineIndexIsLoading).toBe(false);
+      expect(result.current.effectiveLoadingStatus.outlineIndexIsDenied).toBe(true);
       expect(result.current.effectiveErrors.outlineIndexApi).toBeNull();
     });
 
@@ -124,7 +126,8 @@ describe('useOutlineStatusState', () => {
 
       const { result } = renderStatusHook();
 
-      expect(result.current.effectiveLoadingStatus.outlineIndexLoadingStatus).toBe(RequestStatus.FAILED);
+      expect(result.current.effectiveLoadingStatus.outlineIndexIsLoading).toBe(false);
+      expect(result.current.effectiveLoadingStatus.outlineIndexIsDenied).toBe(false);
       expect(result.current.effectiveErrors.outlineIndexApi).toEqual(
         expect.objectContaining({ type: 'serverError' }),
       );

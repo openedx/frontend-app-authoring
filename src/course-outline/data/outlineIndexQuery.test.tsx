@@ -1,16 +1,13 @@
 import {
-  createAxiosError,
   initializeMocks,
   makeWrapper,
   renderHook,
   waitFor,
 } from '@src/testUtils';
-import { RequestStatus } from '@src/data/constants';
 import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
 
 import { getCourseOutlineIndexApiUrl } from './api';
 import {
-  getCourseOutlineIndexRequestState,
   getCourseOutlineStatusBarData,
   useCourseOutlineIndex,
 } from './outlineIndexQuery';
@@ -43,56 +40,6 @@ describe('outlineIndexQuery', () => {
     expect(outlineIndex?.courseStructure.childInfo.children).toHaveLength(
       courseOutlineIndexMock.courseStructure.childInfo.children.length,
     );
-  });
-
-  it('maps success status', () => {
-    expect(getCourseOutlineIndexRequestState({
-      isPending: false,
-      isSuccess: true,
-      error: null,
-    })).toEqual({
-      status: RequestStatus.SUCCESSFUL,
-      errors: null,
-    });
-  });
-
-  it('maps denied status without page error payload', () => {
-    const error = createAxiosError({
-      code: 403,
-      message: 'forbidden',
-      path: getCourseOutlineIndexApiUrl(courseId),
-    });
-
-    expect(getCourseOutlineIndexRequestState({
-      isPending: false,
-      isSuccess: false,
-      error,
-    })).toEqual({
-      status: RequestStatus.DENIED,
-      errors: null,
-    });
-  });
-
-  it('maps failure status with normalized page error payload', () => {
-    const error = createAxiosError({
-      code: 500,
-      message: 'boom',
-      path: getCourseOutlineIndexApiUrl(courseId),
-    });
-
-    expect(getCourseOutlineIndexRequestState({
-      isPending: false,
-      isSuccess: false,
-      error,
-    })).toEqual({
-      status: RequestStatus.FAILED,
-      errors: {
-        data: '{"detail":"boom"}',
-        dismissible: false,
-        status: 500,
-        type: 'serverError',
-      },
-    });
   });
 
   it('defaults refetchOnMount to true when initialData is provided (background fetch)', async () => {

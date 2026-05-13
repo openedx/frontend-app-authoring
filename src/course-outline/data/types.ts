@@ -64,7 +64,8 @@ export interface CourseOutlineStatusBar {
 
 export interface CourseOutlineState {
   loadingStatus: {
-    outlineIndexLoadingStatus: string;
+    outlineIndexIsLoading: boolean;
+    outlineIndexIsDenied: boolean;
     reIndexLoadingStatus: string;
     fetchSectionLoadingStatus: string;
     courseLaunchQueryStatus: string;
