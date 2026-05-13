@@ -73,6 +73,14 @@ export const useSettingMenuItems = (courseId: string) => {
       action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
       scope: courseId,
     },
+    canViewScheduleAndDetails: {
+      action: COURSE_PERMISSIONS.VIEW_SCHEDULE_AND_DETAILS,
+      scope: courseId,
+    },
+    canViewGradingSettings: {
+      action: COURSE_PERMISSIONS.VIEW_GRADING_SETTINGS,
+      scope: courseId,
+    },
   }, isAuthzEnabled);
 
   const authzCanManageAdvancedSettings = isLoadingUserPermissions
@@ -83,15 +91,27 @@ export const useSettingMenuItems = (courseId: string) => {
     ? authzCanManageAdvancedSettings
     : legacyCanAccessAdvancedSettings;
 
+  const canViewScheduleAndDetails = isAuthzEnabled
+    ? (!isLoadingUserPermissions && (userPermissions?.canViewScheduleAndDetails || false))
+    : true;
+
+  const canViewGradingSettings = isAuthzEnabled
+    ? (!isLoadingUserPermissions && (userPermissions?.canViewGradingSettings || false))
+    : true;
+
   const items = [
-    {
-      href: `/course/${courseId}/settings/details`,
-      title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
-    },
-    {
-      href: `/course/${courseId}/settings/grading`,
-      title: intl.formatMessage(messages['header.links.grading']),
-    },
+    ...(canViewScheduleAndDetails
+      ? [{
+        href: `/course/${courseId}/settings/details`,
+        title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
+      }]
+      : []),
+    ...(canViewGradingSettings
+      ? [{
+        href: `/course/${courseId}/settings/grading`,
+        title: intl.formatMessage(messages['header.links.grading']),
+      }]
+      : []),
     ...(isAuthzEnabled
       ? [{
         href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`,

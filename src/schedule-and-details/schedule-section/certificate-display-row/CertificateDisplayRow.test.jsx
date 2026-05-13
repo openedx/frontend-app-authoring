@@ -93,4 +93,27 @@ describe('<CertificateDisplayRow />', () => {
       getByText(messages.certificateAvailableDateLabel.defaultMessage),
     ).toBeInTheDocument();
   });
+
+  it('disables the dropdown toggle when isEditable is false', () => {
+    const { getByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    // certificatesDisplayBehavior: 'end' from mock → button label is Option2
+    const toggle = getByRole('button', { name: messages.certificateBehaviorDropdownOption2.defaultMessage });
+    expect(toggle).toBeDisabled();
+  });
+
+  it('does not call onChange when dropdown item clicked while isEditable is false', () => {
+    onChangeMock.mockClear();
+    const { getByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    const toggle = getByRole('button', { name: messages.certificateBehaviorDropdownOption2.defaultMessage });
+    // Toggle is disabled, clicking it does not open the dropdown
+    fireEvent.click(toggle);
+    expect(onChangeMock).not.toHaveBeenCalled();
+  });
+
+  it('enables the dropdown toggle when isEditable is true', () => {
+    const { getByRole } = render(<RootWrapper {...props} isEditable />);
+    // certificatesDisplayBehavior: 'end' from mock → button label is Option2
+    const toggle = getByRole('button', { name: messages.certificateBehaviorDropdownOption2.defaultMessage });
+    expect(toggle).not.toBeDisabled();
+  });
 });

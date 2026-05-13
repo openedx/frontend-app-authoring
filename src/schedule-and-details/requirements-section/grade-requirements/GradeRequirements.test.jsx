@@ -47,4 +47,14 @@ describe('<GradeRequirements />', () => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
   });
+
+  it('disables input when isEditable is false', () => {
+    const { getByDisplayValue } = render(<RootWrapper {...props} isEditable={false} />);
+    expect(getByDisplayValue(props.entranceExamMinimumScorePct)).toBeDisabled();
+  });
+
+  it('enables input when isEditable is true', () => {
+    const { getByDisplayValue } = render(<RootWrapper {...props} isEditable />);
+    expect(getByDisplayValue(props.entranceExamMinimumScorePct)).not.toBeDisabled();
+  });
 });

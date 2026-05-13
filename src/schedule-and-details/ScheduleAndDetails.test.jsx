@@ -10,6 +10,8 @@ import { executeThunk } from '@src/utils';
 import genericMessages from '@src/generic/help-sidebar/messages';
 import { DATE_FORMAT } from '@src/constants';
 import { getCourseSettingsApiUrl } from '@src/data/api';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseDetailsMock, courseSettingsMock } from './__mocks__';
@@ -21,6 +23,26 @@ import basicMessages from './basic-section/messages';
 import scheduleMessages from './schedule-section/messages';
 import messages from './messages';
 import ScheduleAndDetails from '.';
+
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn().mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canViewScheduleAndDetails: true,
+    canEditSchedule: true,
+    canEditDetails: true,
+  }),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canViewScheduleAndDetails: true,
+    canEditSchedule: true,
+    canEditDetails: true,
+    ...overrides,
+  });
 
 let axiosMock;
 let store;
@@ -167,5 +189,75 @@ describe('<ScheduleAndDetails />', () => {
       await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
     });
     expect(getByText(messages.alertFail.defaultMessage)).toBeInTheDocument();
+  });
+});
+
+describe('<ScheduleAndDetails /> permissions', () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    store = mocks.reduxStore;
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, courseDetailsMock);
+    axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, courseSettingsMock);
+    axiosMock.onPut(getCourseDetailsApiUrl(courseId)).reply(200);
+    mockPermissions();
+  });
+
+  it('renders normally when authz flag is disabled (no regression)', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+    const { getAllByText } = renderComponent();
+    await waitFor(() => {
+      expect(getAllByText(messages.headingTitle.defaultMessage).length).toBeGreaterThan(0);
+    });
+  });
+
+  it('renders normally when user has all permissions', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    const { getAllByText } = renderComponent();
+    await waitFor(() => {
+      expect(getAllByText(messages.headingTitle.defaultMessage).length).toBeGreaterThan(0);
+    });
+  });
+
+  it('shows PermissionDeniedAlert when user lacks view permission', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    mockPermissions({ canViewScheduleAndDetails: false, canEditSchedule: false, canEditDetails: false });
+    const { getByTestId } = renderComponent();
+    await waitFor(() => {
+      expect(getByTestId('permissionDeniedAlert')).toBeInTheDocument();
+    });
+  });
+
+  it('disables schedule date inputs when user lacks edit_schedule permission', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    mockPermissions({ canEditSchedule: false });
+    const { getAllByPlaceholderText } = renderComponent();
+    await waitFor(() => {
+      const dateInputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
+      dateInputs.forEach((input) => expect(input).toBeDisabled());
+    });
+  });
+
+  it('disables pacing and details inputs when user lacks edit_details permission', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    mockPermissions({ canEditDetails: false });
+    const { getAllByRole } = renderComponent();
+    await waitFor(() => {
+      const radios = getAllByRole('radio');
+      radios.forEach((radio) => expect(radio).toBeDisabled());
+    });
+  });
+
+  it('save button cannot be triggered when user has no edit permissions', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    mockPermissions({ canEditSchedule: false, canEditDetails: false });
+    const { getAllByPlaceholderText, queryByText } = renderComponent();
+    // Wait for page to load
+    const dateInputs = await waitFor(() => getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase()));
+    // All date inputs must be disabled (no edit_schedule permission)
+    dateInputs.forEach((input) => expect(input).toBeDisabled());
+    // No changes can be made so the save button never appears
+    expect(queryByText(messages.buttonSaveText.defaultMessage)).not.toBeInTheDocument();
   });
 });

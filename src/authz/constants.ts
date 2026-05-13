@@ -20,4 +20,8 @@ export const COURSE_PERMISSIONS = {
 
   VIEW_GRADING_SETTINGS: 'courses.view_grading_settings',
   EDIT_GRADING_SETTINGS: 'courses.edit_grading_settings',
+
+  VIEW_SCHEDULE_AND_DETAILS: 'courses.view_schedule_and_details',
+  EDIT_SCHEDULE: 'courses.edit_schedule',
+  EDIT_DETAILS: 'courses.edit_details',
 };

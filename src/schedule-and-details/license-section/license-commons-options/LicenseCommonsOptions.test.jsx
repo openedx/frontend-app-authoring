@@ -47,11 +47,29 @@ describe('<LicenseCommonsOptions />', () => {
     expect(props.onToggleCheckbox).not.toHaveBeenCalled();
     fireEvent.click(checkboxList[1]);
     expect(props.onToggleCheckbox).toHaveBeenCalledWith(LICENSE_COMMONS_OPTIONS.nonCommercial);
-    // Note: there is no point in asserting that the checkbox is now checked,
-    // because it is a controlled component that never changes unless the props change.
-    // This test should really be implemented in a higher level component/page.
-    // await waitFor(() => {
-    //   expect(checkboxList[1].checked).toBeFalsy();
-    // });
+  });
+
+  it('disables all non-fixed checkboxes when isEditable is false', () => {
+    const { getAllByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    const checkboxList = getAllByRole('checkbox');
+    // All checkboxes (including attribution which is always disabled) should be disabled
+    checkboxList.forEach((checkbox) => expect(checkbox).toBeDisabled());
+  });
+
+  it('does not call onToggleCheckbox when clicked while isEditable is false', () => {
+    onToggleCheckboxMock.mockClear();
+    const { getAllByRole } = render(<RootWrapper {...props} isEditable={false} />);
+    const checkboxList = getAllByRole('checkbox');
+    fireEvent.click(checkboxList[1]);
+    expect(onToggleCheckboxMock).not.toHaveBeenCalled();
+  });
+
+  it('non-fixed checkboxes are enabled when isEditable is true', () => {
+    const { getAllByRole } = render(<RootWrapper {...props} isEditable />);
+    const checkboxList = getAllByRole('checkbox');
+    // checkboxList[0] is attribution (always disabled), rest should be enabled
+    expect(checkboxList[1]).not.toBeDisabled();
+    expect(checkboxList[2]).not.toBeDisabled();
+    expect(checkboxList[3]).not.toBeDisabled();
   });
 });
