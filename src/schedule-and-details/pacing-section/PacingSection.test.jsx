@@ -66,4 +66,22 @@ describe('<PacingSection />', () => {
     fireEvent.click(radioList[1]);
     expect(onChangeMock).toHaveBeenCalled();
   });
+
+  it('disables radio inputs when isEditable is false', () => {
+    const year = new Date().getFullYear() + 1;
+    const futureDate = `${year}-12-31`;
+    const initialProps = { ...props, startDate: futureDate, isEditable: false };
+    const { getAllByRole } = render(<RootWrapper {...initialProps} />);
+    const radioList = getAllByRole('radio');
+    radioList.forEach((radio) => expect(radio).toBeDisabled());
+  });
+
+  it('keeps radio inputs enabled when isEditable is true and course has not started', () => {
+    const year = new Date().getFullYear() + 1;
+    const futureDate = `${year}-12-31`;
+    const initialProps = { ...props, startDate: futureDate, isEditable: true };
+    const { getAllByRole } = render(<RootWrapper {...initialProps} />);
+    const radioList = getAllByRole('radio');
+    radioList.forEach((radio) => expect(radio).not.toBeDisabled());
+  });
 });
