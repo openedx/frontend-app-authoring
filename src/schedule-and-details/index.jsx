@@ -20,6 +20,9 @@ import { STATEFUL_BUTTON_STATES } from '@src/constants';
 import getPageHeadTitle from '@src/generic/utils';
 import { useScrollToHashElement } from '@src/hooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getScheduleAndDetailsPermissions } from '@src/authz/permissionHelpers';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 
 import {
   fetchCourseSettingsQuery,
@@ -52,11 +55,20 @@ const ScheduleAndDetails = () => {
   const courseDetails = useSelector(getCourseDetails);
   const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
   const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
-  const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
-    || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
 
   const { courseId, courseDetails: course } = useCourseAuthoringContext();
   document.title = getPageHeadTitle(course?.name || '', intl.formatMessage(messages.headingTitle));
+
+  const {
+    isLoading: isLoadingUserPermissions,
+    canViewScheduleAndDetails,
+    canEditSchedule,
+    canEditDetails,
+  } = useCourseUserPermissions(courseId, getScheduleAndDetailsPermissions(courseId));
+
+  const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
+    || loadingSettingsStatus === RequestStatus.IN_PROGRESS
+    || isLoadingUserPermissions;
 
   const {
     platformName,
@@ -152,6 +164,10 @@ const ScheduleAndDetails = () => {
     return <></>;
   }
 
+  if (!canViewScheduleAndDetails) {
+    return <PermissionDeniedAlert />;
+  }
+
   if (loadingDetailsStatus === RequestStatus.DENIED || loadingSettingsStatus === RequestStatus.DENIED) {
     return (
       <div className="row justify-content-center m-6">
@@ -159,6 +175,8 @@ const ScheduleAndDetails = () => {
       </div>
     );
   }
+
+  const canEdit = canEditSchedule || canEditDetails;
 
   const showCreditSection = creditEligibilityEnabled && isCreditCourse;
   const showRequirementsSection = aboutPageEditable || isPrerequisiteCoursesEnabled || isEntranceExamsEnabled;
@@ -258,6 +276,7 @@ const ScheduleAndDetails = () => {
                   <PacingSection
                     selfPaced={selfPaced}
                     startDate={startDate}
+                    isEditable={canEditDetails}
                     onChange={handleValuesChange}
                   />
                   <ScheduleSection
@@ -272,12 +291,14 @@ const ScheduleAndDetails = () => {
                     certificateAvailableDate={certificateAvailableDate}
                     certificatesDisplayBehavior={certificatesDisplayBehavior}
                     canShowCertificateAvailableDateField={canShowCertificateAvailableDateField}
+                    isEditable={canEditSchedule}
                     onChange={handleValuesChange}
                   />
                   {aboutPageEditable && (
                     <DetailsSection
                       language={language}
                       languageOptions={languageOptions}
+                      isEditable={canEditDetails}
                       onChange={handleValuesChange}
                     />
                   )}
@@ -298,16 +319,19 @@ const ScheduleAndDetails = () => {
                     shortDescriptionEditable={shortDescriptionEditable}
                     enableExtendedCourseDetails={enableExtendedCourseDetails}
                     videoThumbnailImageAssetPath={videoThumbnailImageAssetPath}
+                    isEditable={canEditDetails}
                     onChange={handleValuesChange}
                   />
                   {enableExtendedCourseDetails && (
                     <>
                       <LearningOutcomesSection
                         learningInfo={learningInfo}
+                        isEditable={canEditDetails}
                         onChange={handleValuesChange}
                       />
                       <InstructorsSection
                         instructors={instructorInfo?.instructors}
+                        isEditable={canEditDetails}
                         onChange={handleValuesChange}
                       />
                     </>
@@ -323,12 +347,14 @@ const ScheduleAndDetails = () => {
                       possiblePreRequisiteCourses={possiblePreRequisiteCourses}
                       entranceExamMinimumScorePct={entranceExamMinimumScorePct}
                       isPrerequisiteCoursesEnabled={isPrerequisiteCoursesEnabled}
+                      isEditable={canEditDetails}
                       onChange={handleValuesChange}
                     />
                   )}
                   {licensingEnabled && (
                     <LicenseSection
                       license={license}
+                      isEditable={canEditDetails}
                       onChange={handleValuesChange}
                     />
                   )}
@@ -376,7 +402,7 @@ const ScheduleAndDetails = () => {
             <StatefulButton
               key="save-button"
               onClick={handleUpdateValues}
-              disabled={hasErrors}
+              disabled={hasErrors || !canEdit}
               state={isQueryPending
                 ? STATEFUL_BUTTON_STATES.pending
                 : STATEFUL_BUTTON_STATES.default}

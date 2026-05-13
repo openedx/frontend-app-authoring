@@ -10,6 +10,7 @@ const DetailsSection = ({
   language,
   languageOptions,
   onChange,
+  isEditable = true,
 }) => {
   const intl = useIntl();
   const formattedLanguage = () => {
@@ -26,14 +27,14 @@ const DetailsSection = ({
       <Form.Group className="form-group-custom dropdown-language">
         <Form.Label>{intl.formatMessage(messages.dropdownLabel)}</Form.Label>
         <Dropdown className="bg-white">
-          <Dropdown.Toggle variant="outline-primary" id="languageDropdown">
+          <Dropdown.Toggle variant="outline-primary" id="languageDropdown" disabled={!isEditable}>
             {formattedLanguage()}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {languageOptions.map((option) => (
               <Dropdown.Item
                 key={option[0]}
-                onClick={() => onChange(option[0], 'language')}
+                onClick={isEditable ? () => onChange(option[0], 'language') : undefined}
               >
                 {option[1]}
               </Dropdown.Item>

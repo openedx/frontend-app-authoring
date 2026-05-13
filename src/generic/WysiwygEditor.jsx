@@ -14,6 +14,7 @@ export const WysiwygEditor = ({
   editorType,
   onChange,
   minHeight,
+  disabled = false,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
   const { courseId } = useCourseAuthoringContext();
@@ -64,6 +65,7 @@ export const WysiwygEditor = ({
       images={{}}
       enableImageUpload={false}
       onEditorChange={() => ({})}
+      disabled={disabled}
     />
   );
 };

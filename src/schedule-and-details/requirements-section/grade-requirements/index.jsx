@@ -9,6 +9,7 @@ import messages from './messages';
 const GradeRequirements = ({
   errorEffort,
   entranceExamMinimumScorePct,
+  isEditable = true,
   onChange,
 }) => (
   <Form.Group
@@ -27,6 +28,7 @@ const GradeRequirements = ({
         value={entranceExamMinimumScorePct}
         onChange={(e) => onChange(e.target.value, 'entranceExamMinimumScorePct')}
         trailingElement="%"
+        disabled={!isEditable}
       />
     </Stack>
     {errorEffort && (

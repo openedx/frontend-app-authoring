@@ -175,6 +175,58 @@ describe('header utils', () => {
       });
     });
 
+    it('when authz flag is enabled and user has canViewScheduleAndDetails should include schedule and details option', async () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewScheduleAndDetails: true },
+      } as any);
+      const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
+      await waitFor(() => {
+        const actualItemsTitle = result.current.map((item) => item.title);
+        expect(actualItemsTitle).toContain('Schedule & Details');
+      });
+    });
+
+    it('when authz flag is enabled and user lacks canViewScheduleAndDetails should not include schedule and details option', async () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewScheduleAndDetails: false },
+      } as any);
+      const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
+      await waitFor(() => {
+        const actualItemsTitle = result.current.map((item) => item.title);
+        expect(actualItemsTitle).not.toContain('Schedule & Details');
+      });
+    });
+
+    it('when authz flag is enabled and user has canViewGradingSettings should include grading option', async () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewGradingSettings: true },
+      } as any);
+      const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
+      await waitFor(() => {
+        const actualItemsTitle = result.current.map((item) => item.title);
+        expect(actualItemsTitle).toContain('Grading');
+      });
+    });
+
+    it('when authz flag is enabled and user lacks canViewGradingSettings should not include grading option', async () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewGradingSettings: false },
+      } as any);
+      const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
+      await waitFor(() => {
+        const actualItemsTitle = result.current.map((item) => item.title);
+        expect(actualItemsTitle).not.toContain('Grading');
+      });
+    });
+
     it('should include roles and permissions option', () => {
       setConfig({
         ...getConfig(),

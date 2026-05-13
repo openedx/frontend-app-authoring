@@ -11,6 +11,7 @@ const ExtendedCourseDetails = ({
   subtitle,
   duration,
   description,
+  isEditable = true,
   onChange,
 }) => {
   const intl = useIntl();
@@ -61,6 +62,7 @@ const ExtendedCourseDetails = ({
             maxLength={param.maxLength}
             onChange={(e) => onChange(e.target.value, param.controlName)}
             aria-label={param.ariaLabel}
+            disabled={!isEditable}
           />
           <Form.Control.Feedback>{param.helpText}</Form.Control.Feedback>
         </Form.Group>
