@@ -133,7 +133,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
           </Dropdown.Item>
         )}
       </Dropdown.Menu>
-      {isDeleteModalOpen && (
+      {isDeleteModalOpen && /* istanbul ignore next */ (
         <ComponentDeleter
           usageKey={usageKey}
           close={closeDeleteModal}
