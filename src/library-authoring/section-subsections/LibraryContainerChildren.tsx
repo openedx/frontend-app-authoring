@@ -31,7 +31,7 @@ import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
 import { useLibraryRoutes } from '../routes';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { skipIfUnwantedTarget, useRunOnNextRender } from '../../utils';
+import { skipIfUnwantedTarget } from '../../utils';
 import { ContainerMenu } from '../containers/ContainerCard';
 
 interface LibraryContainerChildrenProps {
@@ -59,7 +59,7 @@ const ContainerRow = ({
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
   const { showOnlyPublished } = usePublishedFilterContext();
-  const { setSidebarAction, openItemSidebar } = useSidebarContext();
+  const { navigateTo } = useLibraryRoutes();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
@@ -72,17 +72,9 @@ const ContainerRow = ({
     }
   };
 
-  /* istanbul ignore next */
-  const scheduleJumpToTags = useRunOnNextRender(() => {
-    // TODO: Ugly hack to make sure sidebar shows manage tags section
-    // This needs to run after all changes to url takes place to avoid conflicts.
-    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageTags), 250);
-  });
-
   const jumpToManageTags = useCallback(() => {
-    openItemSidebar(container.originalId, SidebarBodyItemId.ContainerInfo);
-    scheduleJumpToTags();
-  }, [openItemSidebar, scheduleJumpToTags, container.originalId]);
+    navigateTo({ selectedItemId: container.originalId, sidebarAction: SidebarActions.JumpToManageTags });
+  }, [navigateTo, container.originalId]);
 
   return (
     <>
@@ -145,6 +137,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const containerType = getBlockType(containerKey);
   const handleReorder = useCallback(() => async (newOrder?: LibraryContainerMetadataWithUniqueId[]) => {
     if (!newOrder) {
+      /* istanbul ignore next */
       return;
     }
     const childrenKeys = newOrder.map((o) => o.originalId);

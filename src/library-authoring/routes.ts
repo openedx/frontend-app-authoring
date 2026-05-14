@@ -11,6 +11,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { ContainerType, getBlockType } from '../generic/key-utils';
+import { SidebarActions } from './common/context/SidebarContext';
 
 export const BASE_ROUTE = '/library/:libraryId';
 
@@ -72,6 +73,7 @@ export type NavigateToData = {
   containerId?: string;
   contentType?: ContentType;
   index?: number;
+  sidebarAction?: SidebarActions;
 };
 
 export type LibraryRoutesData = {
@@ -136,6 +138,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     containerId,
     contentType,
     index,
+    sidebarAction,
   }: NavigateToData = {}) => {
     const routeParams = {
       ...params,
@@ -255,12 +258,17 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       routeParams.index = undefined;
     }
 
-    // Also remove the `sa` (sidebar action) search param if it exists.
-    searchParams.delete(LibQueryParamKeys.SidebarActions);
+    // Set or clear the sidebar action search param.
+    if (sidebarAction) {
+      searchParams.set(LibQueryParamKeys.SidebarActions, sidebarAction);
+    } else {
+      searchParams.delete(LibQueryParamKeys.SidebarActions);
+    }
 
     const newPath = generatePath(BASE_ROUTE + route, routeParams);
     // Prevent unnecessary navigation if the path is the same.
-    if (newPath !== pathname) {
+    // Always navigate when sidebarAction is provided to ensure the search param is updated.
+    if (newPath !== pathname || sidebarAction) {
       navigate({
         pathname: newPath,
         search: searchParams.toString(),

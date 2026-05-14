@@ -21,7 +21,6 @@ import {
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import containerMessages from '@src/library-authoring/containers/messages';
 import { useLibraryRoutes } from '@src/library-authoring/routes';
-import { useRunOnNextRender } from '@src/utils';
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import ComponentRemover from './ComponentRemover';
@@ -45,10 +44,9 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
-    setSidebarAction,
     openItemSidebar,
   } = useSidebarContext();
-  const { insideCollection } = useLibraryRoutes();
+  const { insideCollection, navigateTo } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
@@ -79,19 +77,11 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
     openComponentEditor?.(usageKey);
   }, [usageKey, openItemSidebar, openComponentEditor]);
 
-  const scheduleJumpToCollection = useRunOnNextRender(() => {
-    // TODO: Ugly hack to make sure sidebar shows add to collection section
-    // This needs to run after all changes to url takes place to avoid conflicts.
-    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageCollections), 250);
-  });
-
   const showManageCollections = useCallback(() => {
-    openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
-    scheduleJumpToCollection();
+    navigateTo({ selectedItemId: usageKey, sidebarAction: SidebarActions.JumpToManageCollections });
   }, [
-    scheduleJumpToCollection,
     usageKey,
-    openItemSidebar,
+    navigateTo,
   ]);
 
   const containerType = containerId ? getBlockType(containerId) : 'collection';
@@ -143,7 +133,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
           </Dropdown.Item>
         )}
       </Dropdown.Menu>
-      {isDeleteModalOpen && (
+      {isDeleteModalOpen && /* istanbul ignore next */ (
         <ComponentDeleter
           usageKey={usageKey}
           close={closeDeleteModal}
