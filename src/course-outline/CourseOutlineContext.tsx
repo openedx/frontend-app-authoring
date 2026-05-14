@@ -319,7 +319,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     commitSectionReorder,
     commitSubsectionReorder,
     commitUnitReorder,
-    // PR 10: Mutation methods
     deleteCurrentSelection,
     duplicateCurrentSelection,
     configureCurrentSelection,
@@ -373,7 +372,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     commitSectionReorder,
     commitSubsectionReorder,
     commitUnitReorder,
-    // PR 10: Mutation methods
     deleteCurrentSelection,
     duplicateCurrentSelection,
     configureCurrentSelection,

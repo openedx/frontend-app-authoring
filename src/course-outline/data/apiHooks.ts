@@ -108,8 +108,6 @@ export const invalidateParentQueries = async (queryClient: QueryClient, variable
   }
 };
 
-// ---- PR 9: Outline index cache helpers (replace Redux slice dispatches) ----
-
 /** Append a new section to outline index query cache. */
 const appendSectionToOutlineIndex = (
   queryClient: QueryClient,
@@ -196,8 +194,6 @@ const insertDuplicatedSectionInOutlineIndex = (
     };
   });
 };
-
-// -----------------------------------------------------------------------------
 
 type CreateCourseXBlockMutationProps = CreateCourseXBlockType & ParentIds;
 

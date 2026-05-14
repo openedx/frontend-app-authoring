@@ -28,7 +28,6 @@ const useCourseOutline = ({ courseId }) => {
     courseActions,
     isCustomRelativeDatesActive,
     errors,
-    // PR 10: Mutation methods from state context
     deleteCurrentSelection,
     duplicateCurrentSelection,
     configureCurrentSelection,
