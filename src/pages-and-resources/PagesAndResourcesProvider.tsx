@@ -4,17 +4,14 @@ interface PagesAndResourcesContextData {
   courseId?: string;
   path?: string;
   isEditable?: boolean;
-  canManageAdvancedSettings?: boolean;
 }
 export const PagesAndResourcesContext = React.createContext<PagesAndResourcesContextData>({
   isEditable: false,
-  canManageAdvancedSettings: true,
 });
 
 interface PagesAndResourcesProviderProps {
   courseId: string;
   isEditable?: boolean;
-  canManageAdvancedSettings?: boolean;
   children: React.ReactNode;
 }
 
@@ -24,15 +21,13 @@ interface PagesAndResourcesProviderProps {
 const PagesAndResourcesProvider = ({
   courseId,
   isEditable = true,
-  canManageAdvancedSettings = true,
   children,
 }: PagesAndResourcesProviderProps) => {
   const contextValue = useMemo(() => ({
     courseId,
     path: `/course/${courseId}/pages-and-resources`,
     isEditable,
-    canManageAdvancedSettings,
-  }), [courseId, isEditable, canManageAdvancedSettings]);
+  }), [courseId, isEditable]);
   return (
     <PagesAndResourcesContext.Provider
       value={contextValue}

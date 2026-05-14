@@ -7,6 +7,8 @@ import { ArrowForward, Settings } from '@openedx/paragon/icons';
 import { useNavigate, Link } from 'react-router-dom';
 
 import { useWaffleFlags } from '../../data/apiHooks';
+import { useCourseUserPermissions } from '../../authz/hooks';
+import { getAdvancedSettingsPermissions } from '../../authz/permissionHelpers';
 import messages from '../messages';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 
@@ -17,7 +19,8 @@ const PageSettingButton = ({
   allowedOperations,
 }) => {
   const { formatMessage } = useIntl();
-  const { path: pagesAndResourcesPath, isEditable, canManageAdvancedSettings } = useContext(PagesAndResourcesContext);
+  const { path: pagesAndResourcesPath, isEditable } = useContext(PagesAndResourcesContext);
+  const { canManageAdvancedSettings } = useCourseUserPermissions(courseId, getAdvancedSettingsPermissions(courseId));
   const navigate = useNavigate();
   const waffleFlags = useWaffleFlags(courseId);
 

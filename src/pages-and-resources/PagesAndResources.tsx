@@ -15,7 +15,7 @@ import { AdditionalCourseContentPluginSlot } from '@src/plugin-slots/AdditionalC
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { DeprecatedReduxState } from '@src/store';
 import { useCourseUserPermissions } from '@src/authz/hooks';
-import { getPagesAndResourcesPermissions, getAdvancedSettingsPermissions } from '@src/authz/permissionHelpers';
+import { getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 
 import messages from './messages';
 import DiscussionsSettings from './discussions';
@@ -35,11 +35,7 @@ const PagesAndResources = () => {
     isAuthzEnabled,
     canViewPagesAndResources,
     canManagePagesAndResources,
-    canManageAdvancedSettings,
-  } = useCourseUserPermissions(courseId, {
-    ...getPagesAndResourcesPermissions(courseId),
-    ...getAdvancedSettingsPermissions(courseId),
-  });
+  } = useCourseUserPermissions(courseId, getPagesAndResourcesPermissions(courseId));
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -87,7 +83,7 @@ const PagesAndResources = () => {
   const hasAdditionalCoursePlugin = getConfig()?.pluginSlots?.additional_course_plugin != null;
 
   return (
-    <PagesAndResourcesProvider courseId={courseId} isEditable={isEditable} canManageAdvancedSettings={canManageAdvancedSettings}>
+    <PagesAndResourcesProvider courseId={courseId} isEditable={isEditable}>
       <main className="container container-mw-md px-3">
         <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
           <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>

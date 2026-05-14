@@ -2,7 +2,13 @@
 import { screen, render, initializeMocks, fireEvent } from '../../testUtils';
 import PageSettingButton from './PageSettingButton';
 import { mockWaffleFlags } from '../../data/apiHooks.mock';
+import { useCourseUserPermissions } from '../../authz/hooks';
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
+
+jest.mock('../../authz/hooks', () => ({
+  ...jest.requireActual('../../authz/hooks'),
+  useCourseUserPermissions: jest.fn(),
+}));
 
 const defaultProps = {
   id: 'page_id',
@@ -11,16 +17,18 @@ const defaultProps = {
   allowedOperations: { configure: true, enable: true },
 };
 
-const renderComponent = (props = {}, { isEditable = true, canManageAdvancedSettings = true } = {}) =>
-  render(
-    <PagesAndResourcesProvider
-      courseId={defaultProps.courseId}
-      isEditable={isEditable}
-      canManageAdvancedSettings={canManageAdvancedSettings}
-    >
+const renderComponent = (props = {}, { isEditable = true, canManageAdvancedSettings = true } = {}) => {
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canManageAdvancedSettings,
+  });
+  return render(
+    <PagesAndResourcesProvider courseId={defaultProps.courseId} isEditable={isEditable}>
       <PageSettingButton {...defaultProps} {...props} />
     </PagesAndResourcesProvider>,
   );
+};
 
 mockWaffleFlags();
 
