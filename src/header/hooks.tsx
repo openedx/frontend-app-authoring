@@ -82,8 +82,8 @@ export const useSettingMenuItems = (courseId: string) => {
   */
   const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
   const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canViewAdvancedSettings: {
-      action: COURSE_PERMISSIONS.VIEW_ADVANCED_SETTINGS,
+    canManageAdvancedSettings: {
+      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
       scope: courseId,
     },
     canViewGradingSettings: {
@@ -96,12 +96,12 @@ export const useSettingMenuItems = (courseId: string) => {
     },
   }, isAuthzEnabled);
 
-  const authzCanViewAdvancedSettings = isLoadingUserPermissions
+  const authzCanManageAdvancedSettings = isLoadingUserPermissions
     ? false
-    : userPermissions?.canViewAdvancedSettings || false;
+    : userPermissions?.canManageAdvancedSettings || false;
 
   const canAccessAdvancedSettings = isAuthzEnabled
-    ? authzCanViewAdvancedSettings
+    ? authzCanManageAdvancedSettings
     : legacyCanAccessAdvancedSettings;
 
   const canViewScheduleAndDetails = isAuthzEnabled

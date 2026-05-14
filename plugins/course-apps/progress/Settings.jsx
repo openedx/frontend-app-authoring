@@ -1,19 +1,17 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import React from 'react';
 import * as Yup from 'yup';
 import { getConfig } from '@edx/frontend-platform';
 import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
 import { useAppSetting } from 'CourseAuthoring/utils';
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
-import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources';
 import messages from './messages';
 
 const ProgressSettings = ({ onClose }) => {
   const intl = useIntl();
   const [disableProgressGraph, saveSetting] = useAppSetting('disableProgressGraph');
   const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toString().toLowerCase() === 'true';
-  const { isEditable = false } = useContext(PagesAndResourcesContext);
 
   const handleSettingsSave = async (values) => {
     if (showProgressGraphSetting) { await saveSetting(!values.enableProgressGraph); }
@@ -41,7 +39,6 @@ const ProgressSettings = ({ onClose }) => {
             onChange={handleChange}
             onBlur={handleBlur}
             checked={values.enableProgressGraph}
-            disabled={!isEditable}
           />
         )
       )}

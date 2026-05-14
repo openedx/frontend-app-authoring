@@ -11,9 +11,13 @@ const defaultProps = {
   allowedOperations: { configure: true, enable: true },
 };
 
-const renderComponent = (props = {}, { isEditable = true } = {}) =>
+const renderComponent = (props = {}, { isEditable = true, canManageAdvancedSettings = true } = {}) =>
   render(
-    <PagesAndResourcesProvider courseId={defaultProps.courseId} isEditable={isEditable}>
+    <PagesAndResourcesProvider
+      courseId={defaultProps.courseId}
+      isEditable={isEditable}
+      canManageAdvancedSettings={canManageAdvancedSettings}
+    >
       <PageSettingButton {...defaultProps} {...props} />
     </PagesAndResourcesProvider>,
   );
@@ -90,5 +94,55 @@ describe('PageSettingButton', () => {
     expect(button).toBeInTheDocument();
     expect(button).not.toBeDisabled();
     fireEvent.click(button);
+  });
+
+  it('renders disabled gear for progress app when user lacks MANAGE_ADVANCED_SETTINGS', () => {
+    renderComponent(
+      { id: 'progress', legacyLink: null },
+      { canManageAdvancedSettings: false },
+    );
+
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+  });
+
+  it('renders enabled gear for progress app when user has MANAGE_ADVANCED_SETTINGS', () => {
+    renderComponent(
+      { id: 'progress', legacyLink: null },
+      { canManageAdvancedSettings: true },
+    );
+
+    const button = screen.getByRole('button');
+    expect(button).not.toBeDisabled();
+  });
+
+  it('renders disabled gear for wiki app when user lacks MANAGE_ADVANCED_SETTINGS', () => {
+    renderComponent(
+      { id: 'wiki', legacyLink: null },
+      { canManageAdvancedSettings: false },
+    );
+
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+  });
+
+  it('renders enabled gear for wiki app when user has MANAGE_ADVANCED_SETTINGS', () => {
+    renderComponent(
+      { id: 'wiki', legacyLink: null },
+      { canManageAdvancedSettings: true },
+    );
+
+    const button = screen.getByRole('button');
+    expect(button).not.toBeDisabled();
+  });
+
+  it('renders enabled gear for other apps even when MANAGE_ADVANCED_SETTINGS is false', () => {
+    renderComponent(
+      { id: 'discussion', legacyLink: null },
+      { canManageAdvancedSettings: false },
+    );
+
+    const button = screen.getByRole('button');
+    expect(button).not.toBeDisabled();
   });
 });

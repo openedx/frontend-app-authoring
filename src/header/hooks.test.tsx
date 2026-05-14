@@ -129,7 +129,7 @@ describe('header utils', () => {
       });
       jest.mocked(useUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewAdvancedSettings: true, canViewGradingSettings: true },
+        data: { canManageAdvancedSettings: true, canViewGradingSettings: true },
       } as any);
     });
 
@@ -168,7 +168,7 @@ describe('header utils', () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewAdvancedSettings: true, canViewGradingSettings: true },
+        data: { canManageAdvancedSettings: true, canViewGradingSettings: true },
       } as any);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
@@ -181,7 +181,7 @@ describe('header utils', () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewAdvancedSettings: false, canViewGradingSettings: true },
+        data: { canManageAdvancedSettings: false, canViewGradingSettings: true },
       } as any);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {

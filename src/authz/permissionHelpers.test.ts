@@ -31,11 +31,9 @@ describe('permissionHelpers', () => {
   });
 
   describe('getAdvancedSettingsPermissions', () => {
-    it('returns VIEW and MANAGE permissions with the correct actions and scope', () => {
+    it('returns MANAGE permission with the correct action and scope', () => {
       const result = getAdvancedSettingsPermissions(courseId);
 
-      expect(result.canViewAdvancedSettings.action).toBe(COURSE_PERMISSIONS.VIEW_ADVANCED_SETTINGS);
-      expect(result.canViewAdvancedSettings.scope).toBe(courseId);
       expect(result.canManageAdvancedSettings.action).toBe(COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS);
       expect(result.canManageAdvancedSettings.scope).toBe(courseId);
     });
@@ -44,7 +42,6 @@ describe('permissionHelpers', () => {
       const otherId = 'course-v1:another+test+run';
       const result = getAdvancedSettingsPermissions(otherId);
 
-      expect(result.canViewAdvancedSettings.scope).toBe(otherId);
       expect(result.canManageAdvancedSettings.scope).toBe(otherId);
     });
   });

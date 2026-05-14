@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor, screen } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -25,7 +25,7 @@ jest.mock('react-textarea-autosize', () =>
     />
   )));
 
-const RootWrapper = (props = {}) => (
+const RootWrapper = () => (
   <IntlProvider locale="en">
     <SettingCard
       isOn
@@ -37,7 +37,6 @@ const RootWrapper = (props = {}) => (
       handleBlur={handleBlur}
       isEditableState
       saveSettingsPrompt={false}
-      {...props}
     />
   </IntlProvider>
 );
@@ -91,34 +90,5 @@ describe('<SettingCard />', () => {
       expect(setEdited).toHaveBeenCalled();
       expect(handleBlur).toHaveBeenCalled();
     });
-  });
-  it('renders in read-only mode with disabled input', () => {
-    render(<RootWrapper isEditable={false} />);
-    const input = screen.getByLabelText(/Setting Name/i);
-    expect(input).toBeDisabled();
-  });
-
-  it('renders enabled by default when isEditable is not specified (default true)', () => {
-    render(<RootWrapper />);
-    const input = screen.getByLabelText(/Setting Name/i);
-    expect(input).not.toBeDisabled();
-  });
-
-  it('calls setIsEditableState when value changes and isEditableState is false', async () => {
-    // Test for line 45: setIsEditableState(true) called when value changes
-    const { getByLabelText } = render(<RootWrapper isEditableState={false} />);
-    const input = getByLabelText(/Setting Name/i);
-    fireEvent.change(input, { target: { value: 'new-different-value' } });
-    await waitFor(() => {
-      expect(setIsEditableState).toHaveBeenCalledWith(true);
-    });
-  });
-
-  it('shows help popup when clicking info button', () => {
-    render(<RootWrapper />);
-    const helpButton = screen.getByRole('button', { name: /show help text/i });
-    fireEvent.click(helpButton);
-    // The help text should be visible in the popup - verify component renders help
-    expect(screen.queryByText(/This is a help message/i)).toBeInTheDocument();
   });
 });

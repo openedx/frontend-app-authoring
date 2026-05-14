@@ -17,7 +17,7 @@ const PageSettingButton = ({
   allowedOperations,
 }) => {
   const { formatMessage } = useIntl();
-  const { path: pagesAndResourcesPath, isEditable } = useContext(PagesAndResourcesContext);
+  const { path: pagesAndResourcesPath, isEditable, canManageAdvancedSettings } = useContext(PagesAndResourcesContext);
   const navigate = useNavigate();
   const waffleFlags = useWaffleFlags(courseId);
 
@@ -71,13 +71,16 @@ const PageSettingButton = ({
     return null;
   }
 
+  const isGearDisabled = (id === 'progress' || id === 'wiki') && !canManageAdvancedSettings;
+
   return (
     <IconButton
       src={Settings}
       iconAs={Icon}
       size="inline"
       alt={formatMessage(messages.settings)}
-      onClick={() => navigate(`${pagesAndResourcesPath}/${id}/settings`)}
+      disabled={isGearDisabled}
+      onClick={isGearDisabled ? undefined : () => navigate(`${pagesAndResourcesPath}/${id}/settings`)}
     />
   );
 };
