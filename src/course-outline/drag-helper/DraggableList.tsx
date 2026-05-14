@@ -65,6 +65,12 @@ const DraggableList = ({
   onSubsectionDrop,
   onUnitDrop,
 }: DraggableListProps) => {
+  // Drag-local working tree: seeded from `items` before drag starts,
+  // updated immediately in preview handlers so cross-parent math
+  // always reads the latest tree even if parent hasn't re-rendered.
+  const dragTreeRef = React.useRef<XBlock[]>(items);
+  const activeIdRef = React.useRef<UniqueIdentifier | null>(null);
+
   const prevContainerInfo = React.useRef<string | null>();
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -73,24 +79,37 @@ const DraggableList = ({
     }),
   );
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
+
+  // Sync committed items into drag tree when no drag is in progress.
+  // This ensures the ref always has the latest committed state between drags.
+  if (!activeIdRef.current) {
+    dragTreeRef.current = items;
+  }
   const [draggedItemClone, setDraggedItemClone] = React.useState<React.ReactNode>(null);
   const [currentOverId, setCurrentOverId] = React.useState<string | null>(null);
 
+  // Notify parent of preview change and update drag-local tree immediately.
+  const updateDragTree = React.useCallback((nextTree: XBlock[]) => {
+    dragTreeRef.current = nextTree;
+    onPreviewTreeChange?.(nextTree);
+  }, [onPreviewTreeChange]);
+
   const findItemInfo = (id: UniqueIdentifier): ItemInfoType | null => {
+    const tree = dragTreeRef.current;
     // search id in sections
-    const sectionIndex = items.findIndex((section: XBlock) => section.id === id);
+    const sectionIndex = tree.findIndex((section: XBlock) => section.id === id);
     if (sectionIndex !== -1) {
       return {
         index: sectionIndex,
-        item: items[sectionIndex],
+        item: tree[sectionIndex],
         category: COURSE_BLOCK_NAMES.chapter.id,
         parent: undefined,
       };
     }
 
     // search id in subsections
-    for (let index = 0; index < items.length; index++) {
-      const section = items[index];
+    for (let index = 0; index < tree.length; index++) {
+      const section = tree[index];
       const subsectionIndex = section.childInfo.children.findIndex((subsection: XBlock) => subsection.id === id);
       if (subsectionIndex !== -1) {
         return {
@@ -104,8 +123,8 @@ const DraggableList = ({
     }
 
     // search id in units
-    for (let index = 0; index < items.length; index++) {
-      const section = items[index];
+    for (let index = 0; index < tree.length; index++) {
+      const section = tree[index];
       for (let subIndex = 0; subIndex < section.childInfo.children.length; subIndex++) {
         const subsection = section.childInfo.children[subIndex];
         const unitIndex = subsection.childInfo.children.findIndex((unit: XBlock) => unit.id === id);
@@ -162,14 +181,14 @@ const DraggableList = ({
     }
 
     const [prevCopy] = moveSubsectionOver(
-      [...items],
+      [...dragTreeRef.current],
       activeInfo.parentIndex!,
       activeInfo.index,
       overSectionIndex!,
       newIndex,
     );
-    // Notify parent of preview change
-    onPreviewTreeChange?.(prevCopy);
+    // Update drag-local tree and notify parent
+    updateDragTree(prevCopy);
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.parent?.id;
     }
@@ -208,7 +227,7 @@ const DraggableList = ({
     }
 
     const [prevCopy] = moveUnitOver(
-      [...items],
+      [...dragTreeRef.current],
       activeInfo.grandParentIndex!,
       activeInfo.parentIndex!,
       activeInfo.index,
@@ -216,8 +235,8 @@ const DraggableList = ({
       overSubsectionIndex!,
       newIndex,
     );
-    // Notify parent of preview change
-    onPreviewTreeChange?.(prevCopy);
+    // Update drag-local tree and notify parent
+    updateDragTree(prevCopy);
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.grandParent?.id;
     }
@@ -252,6 +271,7 @@ const DraggableList = ({
 
   const handleDragCancel = React.useCallback(() => {
     setActiveId?.(null);
+    activeIdRef.current = null;
     setDraggedItemClone(null);
     onCancelDrag?.();
   }, [onCancelDrag]);
@@ -262,6 +282,7 @@ const DraggableList = ({
       return;
     }
     setActiveId(null);
+    activeIdRef.current = null;
     setDraggedItemClone(null);
     setCurrentOverId(null);
     const { id } = active;
@@ -283,19 +304,19 @@ const DraggableList = ({
     if (activeInfo.index !== overInfo.index || prevContainerInfo.current) {
       switch (activeInfo.category) {
         case COURSE_BLOCK_NAMES.chapter.id: {
-          const result = arrayMove(items, activeInfo.index, overInfo.index) as XBlock[];
-          onPreviewTreeChange?.(result);
+          const result = arrayMove(dragTreeRef.current, activeInfo.index, overInfo.index) as XBlock[];
+          updateDragTree(result);
           onSectionDrop?.(result.map(section => section.id));
           break;
         }
         case COURSE_BLOCK_NAMES.sequential.id: {
           const [nextTree, result] = moveSubsection(
-            [...items],
+            [...dragTreeRef.current],
             activeInfo.parentIndex!,
             activeInfo.index,
             overInfo.index,
           );
-          onPreviewTreeChange?.(nextTree);
+          updateDragTree(nextTree);
           onSubsectionDrop?.(
             activeInfo.parent!.id,
             prevContainerInfo.current!,
@@ -305,13 +326,13 @@ const DraggableList = ({
         }
         case COURSE_BLOCK_NAMES.vertical.id: {
           const [nextTree, result] = moveUnit(
-            [...items],
+            [...dragTreeRef.current],
             activeInfo.grandParentIndex!,
             activeInfo.parentIndex!,
             activeInfo.index,
             overInfo.index,
           );
-          onPreviewTreeChange?.(nextTree);
+          updateDragTree(nextTree);
           onUnitDrop?.(
             activeInfo.grandParent!.id,
             prevContainerInfo.current!,
@@ -330,6 +351,10 @@ const DraggableList = ({
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const { id } = active;
+
+    // Capture the latest committed tree into drag-local ref.
+    dragTreeRef.current = items;
+    activeIdRef.current = id;
 
     setActiveId(id);
     // @ts-ignore-next-line
@@ -392,7 +417,7 @@ const DraggableList = ({
       <DragContextProvider activeId={activeId} overId={currentOverId}>
         {children}
       </DragContextProvider>
-      {activeId && createPortal(
+      {createPortal(
         <DragOverlay>
           {draggedItemClone ? draggedItemClone : null}
         </DragOverlay>,

@@ -17,9 +17,12 @@ const mockMutate = {
   updateHighlights: jest.fn(),
 };
 
+// Allow tests to control isPending for duplicate.
+let mockIsDuplicatePending = false;
+
 jest.mock('../data/apiHooks', () => ({
   useDeleteCourseItem: jest.fn(() => ({ mutateAsync: mockMutateAsync.delete })),
-  useDuplicateItem: jest.fn(() => ({ mutate: mockMutate.duplicate })),
+  useDuplicateItem: jest.fn(() => ({ mutate: mockMutate.duplicate, isPending: mockIsDuplicatePending })),
   useConfigureSection: jest.fn(() => ({ mutate: mockMutate.configureSection })),
   useConfigureSubsection: jest.fn(() => ({ mutate: mockMutate.configureSubsection })),
   useConfigureUnit: jest.fn(() => ({ mutate: mockMutate.configureUnit })),
@@ -111,7 +114,6 @@ function defaultInput() {
     setReindexLoadingStatus: jest.fn(),
     setLocalReindexError: jest.fn(),
     setSavingStatusState: jest.fn(),
-    setDismissedErrorKeys: jest.fn() as React.Dispatch<React.SetStateAction<Set<string>>>,
   };
 }
 
@@ -124,6 +126,7 @@ describe('useOutlineMutations', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     queryClient = new QueryClient();
+    mockIsDuplicatePending = false;
   });
 
   describe('deleteCurrentSelection', () => {
@@ -196,6 +199,59 @@ describe('useOutlineMutations', () => {
       const cached: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
       const subsection = cached?.courseStructure?.childInfo?.children[0]?.childInfo?.children[0];
       expect(subsection?.childInfo?.children).toHaveLength(0);
+    });
+
+    it('falls back to invalidating when delete no outline index cached', async () => {
+      // Do NOT seed the outline index cache — simulate cache miss.
+      mockMutateAsync.delete.mockResolvedValueOnce(undefined);
+      const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+      const { result } = renderMutationsHook();
+
+      await act(async () => {
+        await result.current.deleteCurrentSelection({
+          currentId: 'block-v1:org+type@chapter+block@section1',
+        });
+      });
+
+      // Mutation still ran.
+      expect(mockMutateAsync.delete).toHaveBeenCalledWith(
+        { itemId: 'block-v1:org+type@chapter+block@section1' },
+      );
+
+      // Fallback invalidation fired because the optimistic update could not apply.
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: courseOutlineIndexQueryKey(courseId),
+      });
+
+      invalidateSpy.mockRestore();
+    });
+  });
+
+  describe('duplicateCurrentSelection', () => {
+    it('does not fire duplicate when mutation already pending', async () => {
+      mockIsDuplicatePending = true;
+
+      const { result } = renderMutationsHook();
+
+      result.current.duplicateCurrentSelection({
+        currentId: 'block-v1:org+type@chapter+block@sectionA',
+      });
+
+      // mutate should not be called — early exit due to isPending.
+      expect(mockMutate.duplicate).not.toHaveBeenCalled();
+    });
+
+    it('fires duplicate when not pending', async () => {
+      mockIsDuplicatePending = false;
+
+      const { result } = renderMutationsHook();
+
+      result.current.duplicateCurrentSelection({
+        currentId: 'block-v1:org+type@chapter+block@sectionA',
+      });
+
+      expect(mockMutate.duplicate).toHaveBeenCalledTimes(1);
     });
   });
 

@@ -33,7 +33,6 @@ interface UseOutlineMutationsInput {
   setReindexLoadingStatus: (status: string) => void;
   setLocalReindexError: (error: any) => void;
   setSavingStatusState: (status: string) => void;
-  setDismissedErrorKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
 export interface UseOutlineMutationsOutput {
@@ -45,7 +44,6 @@ export interface UseOutlineMutationsOutput {
   enableHighlightsEmails: () => Promise<void>;
   changeVideoSharingOption: (value: string) => void;
   dismissNotification: () => void;
-  dismissError: (key: string) => void;
   reindexCourse: () => Promise<void>;
   setSavingStatus: (status: string) => void;
 }
@@ -58,11 +56,10 @@ export function useOutlineMutations({
   setReindexLoadingStatus,
   setLocalReindexError,
   setSavingStatusState,
-  setDismissedErrorKeys,
 }: UseOutlineMutationsInput): UseOutlineMutationsOutput {
   // --- Mutation hooks ---
   const deleteMutation = useDeleteCourseItem();
-  const { mutate: duplicateItem } = useDuplicateItem(courseId);
+  const { mutate: duplicateItem, isPending: isDuplicatePending } = useDuplicateItem(courseId);
   const { mutate: configureSection } = useConfigureSection();
   const { mutate: configureSubsection } = useConfigureSubsection();
   const { mutate: configureUnit } = useConfigureUnit();
@@ -108,12 +105,21 @@ export function useOutlineMutations({
       };
     });
 
-  // Helper: apply outline index cache update with null guards
+  // Helper: apply outline index cache update with null guards.
+  // If cache entry is missing or malformed, fall back to invalidating
+  // the query so a fresh fetch reconciles server state.
   const updateOutlineIndexCache = (updater: (old: any) => any) => {
+    let applied = false;
     queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-      if (!old?.courseStructure?.childInfo?.children) return old;
+      if (!old?.courseStructure?.childInfo?.children) {
+        return old; // can't apply — will invalidate below
+      }
+      applied = true;
       return updater(old);
     });
+    if (!applied) {
+      queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+    }
   };
 
   const deleteCurrentSelection = useCallback(async (selection: SelectionState) => {
@@ -188,7 +194,7 @@ export function useOutlineMutations({
   }, [deleteMutation, queryClient, courseId]);
 
   const duplicateCurrentSelection = useCallback((selection: SelectionState) => {
-    if (!selection?.currentId) {
+    if (!selection?.currentId || isDuplicatePending) {
       return;
     }
     const category = getBlockType(selection.currentId);
@@ -208,7 +214,7 @@ export function useOutlineMutations({
         subsectionId: selection.subsectionId,
       });
     }
-  }, [duplicateItem, effectiveOutlineIndexData, queryClient, courseId]);
+  }, [isDuplicatePending, duplicateItem, effectiveOutlineIndexData, queryClient, courseId]);
 
   const configureCurrentSelection = useCallback((selection: SelectionState, variables: any) => {
     if (!selection?.currentId) {
@@ -288,10 +294,6 @@ export function useOutlineMutations({
     }
   }, [effectiveOutlineIndexData, setSavingStatusState]);
 
-  const dismissError = useCallback((key: string) => {
-    setDismissedErrorKeys(prev => new Set([...prev, key]));
-  }, [setDismissedErrorKeys]);
-
   const reindexCourse = useCallback(async () => {
     const link = effectiveOutlineIndexData?.reindexLink;
     if (!link) {
@@ -321,7 +323,6 @@ export function useOutlineMutations({
     enableHighlightsEmails,
     changeVideoSharingOption,
     dismissNotification: handleDismissNotification,
-    dismissError,
     reindexCourse,
     setSavingStatus,
   };

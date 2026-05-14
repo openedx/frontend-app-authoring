@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 
+import { logError } from '@edx/frontend-platform/logging';
 import { RequestStatus } from '@src/data/constants';
 import type { XBlock, XBlockActions } from '@src/data/types';
 import {
@@ -18,6 +19,10 @@ import {
   getCourseLaunchChecklist,
 } from '../utils/getChecklistForStatusBar';
 import type { CourseOutlineStatusBar, ChecklistType } from '../data/types';
+import {
+  computeErrorSignature,
+  filterDismissedErrors,
+} from './outlineErrorDismissal';
 
 const DEFAULT_LAUNCH_STATUS = RequestStatus.IN_PROGRESS;
 const DEFAULT_FETCH_SECTION_STATUS = RequestStatus.IN_PROGRESS;
@@ -37,7 +42,7 @@ interface UseOutlineStatusStateInput {
   courseId: string;
   reindexLoadingStatus: string;
   localStatusBarOverride: Partial<CourseOutlineStatusBar>;
-  dismissedErrorKeys: Set<string>;
+  dismissedErrorSignatures: Record<string, string>;
   localReindexError: any;
 }
 
@@ -52,6 +57,7 @@ export interface UseOutlineStatusStateOutput {
     fetchSectionLoadingStatus: string;
     courseLaunchQueryStatus: string;
   };
+  rawErrors: Record<string, any>;
   effectiveErrors: Record<string, any>;
   courseActions: XBlockActions;
   isCustomRelativeDatesActive: boolean;
@@ -64,7 +70,7 @@ export function useOutlineStatusState({
   courseId,
   reindexLoadingStatus,
   localStatusBarOverride,
-  dismissedErrorKeys,
+  dismissedErrorSignatures,
   localReindexError,
 }: UseOutlineStatusStateInput): UseOutlineStatusStateOutput {
   // Mount outline index query from React Query (primary source)
@@ -122,21 +128,23 @@ export function useOutlineStatusState({
     courseLaunchQueryStatus: localCourseLaunchQueryStatus,
   }), [outlineIndexIsPending, outlineIndexIsDenied, reindexLoadingStatus, localCourseLaunchQueryStatus]);
 
-  // --- Derived errors (query-derived + local, minus dismissed keys) ---
-  const effectiveErrors = useMemo((): Record<string, any> => {
+  // --- Raw / base errors (before dismissal) ---
+  const rawErrors = useMemo((): Record<string, any> => {
     const outlineIndexErrors = !outlineIndexIsDenied && outlineIndexQuery.error != null
       ? getErrorDetails(outlineIndexQuery.error, false)
       : null;
-    const base = {
+    return {
       outlineIndexApi: outlineIndexErrors,
       reindexApi: localReindexError,
       sectionLoadingApi: DEFAULT_ERROR_NULL,
       courseLaunchApi: localCourseLaunchErrors,
     };
-    const filtered = { ...base };
-    dismissedErrorKeys.forEach(key => { filtered[key] = null; });
-    return filtered;
-  }, [outlineIndexQuery.error, outlineIndexIsDenied, dismissedErrorKeys, localReindexError, localCourseLaunchErrors]);
+  }, [outlineIndexQuery.error, outlineIndexIsDenied, localReindexError, localCourseLaunchErrors]);
+
+  // --- Derived errors (raw minus signature-matched dismissals) ---
+  const effectiveErrors = useMemo((): Record<string, any> => {
+    return filterDismissedErrors(rawErrors, dismissedErrorSignatures, computeErrorSignature);
+  }, [rawErrors, dismissedErrorSignatures]);
 
   // --- Checklist/launch effects ---
   useEffect(() => {
@@ -161,7 +169,7 @@ export function useOutlineStatusState({
   // Create discussions topics if course was created recently
   useEffect(() => {
     if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
-      createDiscussionsTopics(courseId).catch(() => {});
+      createDiscussionsTopics(courseId).catch((err) => logError(err));
     }
   }, [createdOn, courseId]);
 
@@ -170,6 +178,7 @@ export function useOutlineStatusState({
     sections,
     statusBarData,
     effectiveLoadingStatus,
+    rawErrors,
     effectiveErrors,
     courseActions,
     isCustomRelativeDatesActive,

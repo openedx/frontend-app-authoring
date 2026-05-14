@@ -2,7 +2,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -23,6 +25,10 @@ import useOutlineAddBlockActions from './state/useOutlineAddBlockActions';
 import useOutlineModalState from './state/useOutlineModalState';
 import useOutlineActionTargetState from './state/useOutlineActionTargetState';
 import { buildSelectionState } from './state/selection';
+import {
+  computeErrorSignature,
+  pruneDismissedErrorSignatures,
+} from './state/outlineErrorDismissal';
 import {
   EditableSubsection,
   getLastEditableItem,
@@ -114,8 +120,9 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
   // Course ID from context (primary source)
   const { courseId, openUnitPage } = useCourseAuthoringContext();
 
-  // Local state for dismissed errors (persists filter across renders)
-  const [dismissedErrorKeys, setDismissedErrorKeys] = useState<Set<string>>(new Set());
+  // Dismissed error signatures: { [errorKey]: signatureAtTimeOfDismissal }
+  // Dismissal applies only while the current error's signature matches.
+  const [dismissedErrorSignatures, setDismissedErrorSignatures] = useState<Record<string, string>>({});
   // Reindex loading status (set by reindexCourse callback)
   const [reindexLoadingStatus, setReindexLoadingStatus] = useState<string>(RequestStatus.IN_PROGRESS);
   // Reindex error details (set by reindexCourse catch)
@@ -131,6 +138,7 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     sections,
     statusBarData,
     effectiveLoadingStatus,
+    rawErrors,
     effectiveErrors,
     courseActions,
     isCustomRelativeDatesActive,
@@ -141,7 +149,7 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     courseId,
     reindexLoadingStatus,
     localStatusBarOverride,
-    dismissedErrorKeys,
+    dismissedErrorSignatures,
     localReindexError,
   });
 
@@ -204,6 +212,36 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     }));
   }, []);
 
+  // Keep latest raw errors accessible in callbacks without re-creating them.
+  const rawErrorsRef = useRef<Record<string, any>>(rawErrors);
+  rawErrorsRef.current = rawErrors;
+
+  // Prune stale dismissals whenever raw errors change.
+  // Drops entries where the error cleared or its payload changed,
+  // so a new occurrence (even with the same payload) will show.
+  useEffect(() => {
+    setDismissedErrorSignatures(prev => {
+      const pruned = pruneDismissedErrorSignatures(rawErrors, prev);
+      return pruned;
+    });
+  }, [rawErrors]);
+
+  // Dismiss error by storing a signature of the current error payload.
+  // The error stays hidden only as long as the payload signature matches.
+  const dismissError = useCallback((key: string) => {
+    const currentError = rawErrorsRef.current?.[key];
+    if (currentError == null) {
+      return; // nothing to dismiss
+    }
+    const sig = computeErrorSignature(currentError);
+    setDismissedErrorSignatures(prev => {
+      if (prev[key] === sig) {
+        return prev; // already dismissed with same signature
+      }
+      return { ...prev, [key]: sig };
+    });
+  }, []);
+
   // --- Mutation methods (extracted hook) ---
   const {
     deleteCurrentSelection,
@@ -214,7 +252,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     enableHighlightsEmails,
     changeVideoSharingOption,
     dismissNotification: handleDismissNotification,
-    dismissError,
     reindexCourse,
     setSavingStatus,
   } = useOutlineMutations({
@@ -225,7 +262,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     setReindexLoadingStatus,
     setLocalReindexError,
     setSavingStatusState,
-    setDismissedErrorKeys,
   });
 
   // --- Add-block actions (extracted hook) ---

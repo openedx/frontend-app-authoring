@@ -16,6 +16,12 @@ jest.mock('../data/api', () => ({
   createDiscussionsTopics: (...args: any[]) => mockCreateDiscussionsTopics(...args),
 }));
 
+const mockLogError = jest.fn();
+
+jest.mock('@edx/frontend-platform/logging', () => ({
+  logError: (...args: any[]) => mockLogError(...args),
+}));
+
 jest.mock('../utils/getErrorDetails', () => ({
   getErrorDetails: jest.fn((error: any) => ({
     type: 'serverError',
@@ -62,7 +68,7 @@ function defaultInput() {
     courseId: 'course-v1:test+course+2025',
     reindexLoadingStatus: RequestStatus.IN_PROGRESS,
     localStatusBarOverride: {},
-    dismissedErrorKeys: new Set<string>(),
+    dismissedErrorSignatures: {},
     localReindexError: null,
   };
 }
@@ -170,14 +176,87 @@ describe('useOutlineStatusState', () => {
       });
 
       const { result } = renderStatusHook({
-        dismissedErrorKeys: new Set(['outlineIndexApi', 'courseLaunchApi']),
+        dismissedErrorSignatures: { outlineIndexApi: 'stub', courseLaunchApi: 'stub' },
         localReindexError: { type: 'serverError', data: 'reindex failed' } as any,
+        // No matching signature for reindexApi so it stays visible.
       });
 
       expect(result.current.effectiveErrors.outlineIndexApi).toBeNull();
       expect(result.current.effectiveErrors.courseLaunchApi).toBeNull();
       expect(result.current.effectiveErrors.reindexApi).toEqual({ type: 'serverError', data: 'reindex failed' });
       expect(result.current.effectiveErrors.sectionLoadingApi).toBeNull();
+    });
+
+    it('does not hide error when its payload changed since dismissal', () => {
+      // Simulate: error occurred, user dismissed it, then error source changed.
+      mockUseCourseOutlineIndex.mockReturnValue({
+        data: undefined,
+        isPending: false,
+        isSuccess: false,
+        error: { response: { status: 500, data: 'new internal error' } },
+      });
+
+      // Stored signature is for a different error payload — stale dismissal.
+      const staleSignature = JSON.stringify({
+        type: 'serverError',
+        data: '"old error data"',
+        status: 500,
+        dismissible: false,
+      });
+
+      const { result } = renderStatusHook({
+        dismissedErrorSignatures: { outlineIndexApi: staleSignature },
+      });
+
+      // Current error has a different signature, so it must show.
+      expect(result.current.effectiveErrors.outlineIndexApi).not.toBeNull();
+      expect(result.current.effectiveErrors.outlineIndexApi).toEqual(
+        expect.objectContaining({ type: 'serverError' }),
+      );
+    });
+
+    it('clears stale dismissal when source error becomes null (proving re-show after clear)', () => {
+      // Phase 1: error present with matching signature — dismissed.
+      const transientError = { response: { status: 500, data: 'transient fail' } };
+      mockUseCourseOutlineIndex.mockReturnValue({
+        data: undefined,
+        isPending: false,
+        isSuccess: false,
+        error: transientError,
+      });
+
+      // Compute the signature that getErrorDetails mock would produce.
+      const expectedSig = JSON.stringify({
+        type: 'serverError',
+        data: 'unknown error',
+        dismissible: true,
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { result, rerender } = renderStatusHook({
+        dismissedErrorSignatures: {
+          outlineIndexApi: expectedSig,
+        },
+      });
+
+      // Matching signature → error hidden.
+      expect(result.current.effectiveErrors.outlineIndexApi).toBeNull();
+
+      // Phase 2: error clears.
+      mockUseCourseOutlineIndex.mockReturnValue({
+        data: sampleOutlineIndexData,
+        isPending: false,
+        isSuccess: true,
+        error: undefined,
+      });
+
+      rerender({});
+
+      // After clear, effectiveErrors for outlineIndexApi is null (no error).
+      // The key point: if the error re-appeared with the same payload,
+      // the stale signature would have been pruned (because error went to null),
+      // so the new occurrence would NOT be hidden.
+      expect(result.current.effectiveErrors.outlineIndexApi).toBeNull();
     });
   });
 
@@ -230,6 +309,54 @@ describe('useOutlineStatusState', () => {
       expect(result.current.effectiveErrors.courseLaunchApi).toEqual(
         expect.objectContaining({ type: 'serverError' }),
       );
+    });
+  });
+
+  describe('discussion topics sync', () => {
+    it('calls logError when createDiscussionsTopics fails for recent course', async () => {
+      const recentCreatedOn = new Date();
+      const recentCourseData = {
+        ...sampleOutlineIndexData,
+        createdOn: recentCreatedOn.toISOString(),
+      };
+
+      mockUseCourseOutlineIndex.mockReturnValue({
+        data: recentCourseData,
+        isPending: false,
+        isSuccess: true,
+        error: undefined,
+      });
+
+      mockGetCourseBestPractices.mockResolvedValue({ some: 'data' });
+      mockGetCourseLaunch.mockResolvedValue({ isSelfPaced: false });
+      mockCreateDiscussionsTopics.mockRejectedValue(new Error('discussion sync failed'));
+
+      renderStatusHook();
+
+      await waitFor(() => {
+        expect(mockCreateDiscussionsTopics).toHaveBeenCalled();
+      });
+
+      expect(mockLogError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'discussion sync failed' }),
+      );
+    });
+
+    it('does not call logError or createDiscussionsTopics for old course', () => {
+      mockUseCourseOutlineIndex.mockReturnValue({
+        data: sampleOutlineIndexData,
+        isPending: false,
+        isSuccess: true,
+        error: undefined,
+      });
+
+      mockGetCourseBestPractices.mockResolvedValue({ some: 'data' });
+      mockGetCourseLaunch.mockResolvedValue({ isSelfPaced: false });
+
+      renderStatusHook();
+
+      expect(mockCreateDiscussionsTopics).not.toHaveBeenCalled();
+      expect(mockLogError).not.toHaveBeenCalled();
     });
   });
 

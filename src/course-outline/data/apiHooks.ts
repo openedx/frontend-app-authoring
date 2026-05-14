@@ -96,11 +96,15 @@ export const useScrollState = createGlobalState<ScrollState>(courseOutlineQueryK
  * 2. Else If subsectionId exists, invalidate subsection data
  */
 export const invalidateParentQueries = async (queryClient: QueryClient, variables: ParentIds) => {
-  if (variables.sectionId) {
-    await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
-  } else if (variables.subsectionId) {
-    // istanbul ignore next
-    await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.subsectionId) });
+  try {
+    if (variables.sectionId) {
+      await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
+    } else if (variables.subsectionId) {
+      // istanbul ignore next
+      await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.subsectionId) });
+    }
+  } catch (e) {
+    handleResponseErrors(e);
   }
 };
 
@@ -222,6 +226,8 @@ export const useCreateCourseBlock = (
       await invalidateParentQueries(queryClient, variables);
 
       // Invalidate tags count for the newly created block
+      // Strips "+type@<blockType>+block@<id>" to produce a course-run wildcard, e.g.
+      // "block-v1:org+course+run+type@vertical+block@abc" → "block-v1:org+course+run*"
       const contentPattern = data.locator.replace(/\+type@.*$/, '*');
       queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
       // scroll to newly added block
@@ -452,34 +458,7 @@ export const usePasteFileNotices = createGlobalState<StaticFileNotices>(
   },
 );
 
-/** Fetch affected sections and sync to outline index cache after reorder. */
-const syncSectionsToOutlineIndex = async (
-  queryClient: QueryClient,
-  courseId: string,
-  variables: { sectionId: string; prevSectionId?: string },
-): Promise<void> => {
-  const sectionIds: string[] = [variables.sectionId];
-  if (variables.prevSectionId && variables.prevSectionId !== variables.sectionId) {
-    sectionIds.push(variables.prevSectionId);
-  }
-  const updatedSections: Record<string, XBlock> = {};
-  await Promise.all(sectionIds.map(async (id) => {
-    try {
-      const sectionData = await getCourseItem<XBlock>(id);
-      updatedSections[id] = sectionData;
-    } catch {
-      // If getCourseItem fails for one section, still try others
-    }
-  }));
-  if (Object.keys(updatedSections).length > 0) {
-    replaceSectionInOutlineIndex(queryClient, courseId, updatedSections);
-  } else {
-    queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
-  }
-};
-
 export const useReorderUnits = (courseId: string) => {
-  const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
     mutationFn: (variables: {
       sectionId: string;
@@ -487,9 +466,6 @@ export const useReorderUnits = (courseId: string) => {
       subsectionId: string;
       unitListIds: string[];
     }) => setCourseItemOrderList(variables.subsectionId, variables.unitListIds),
-    onSuccess: async (_data, variables) => {
-      await syncSectionsToOutlineIndex(queryClient, courseId, variables);
-    },
   });
 };
 
@@ -500,16 +476,12 @@ export const useReorderSections = (courseId: string) => {
 };
 
 export const useReorderSubsections = (courseId: string) => {
-  const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
     mutationFn: (variables: {
       sectionId: string;
       prevSectionId?: string;
       subsectionListIds: string[];
     }) => setCourseItemOrderList(variables.sectionId, variables.subsectionListIds),
-    onSuccess: async (_data, variables) => {
-      await syncSectionsToOutlineIndex(queryClient, courseId, variables);
-    },
   });
 };
 
