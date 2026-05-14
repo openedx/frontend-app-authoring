@@ -501,10 +501,10 @@ describe('Videos page', () => {
             });
 
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
+          fireEvent.click(screen.getByText(messages.infoAndTranscriptsTitle.defaultMessage));
 
           await waitFor(() => {
-            expect(screen.getByText(messages.infoTitle.defaultMessage)).toBeVisible();
+            expect(screen.getByText(messages.usageTitle.defaultMessage)).toBeVisible();
           });
 
           const { usageStatus } = store.getState().videos;
@@ -520,15 +520,12 @@ describe('Videos page', () => {
 
           axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(201, { usageLocations: [] });
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
+          fireEvent.click(screen.getByText(messages.infoAndTranscriptsTitle.defaultMessage));
           await waitFor(() => {
             expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
           });
 
-          const infoTab = screen.getAllByRole('tab')[0];
-          expect(infoTab).toBeVisible();
-
-          expect(infoTab).toHaveClass('active');
+          expect(screen.getByText(messages.usageTitle.defaultMessage)).toBeVisible();
         });
 
         it('should open video info modal and show transcript tab', async () => {
@@ -537,16 +534,12 @@ describe('Videos page', () => {
 
           axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(201, { usageLocations: [] });
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
+          fireEvent.click(screen.getByText(messages.infoAndTranscriptsTitle.defaultMessage));
           await waitFor(() => {
             expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
           });
 
-          const transcriptTab = screen.getAllByRole('tab')[1];
-          fireEvent.click(transcriptTab);
-          expect(transcriptTab).toBeVisible();
-
-          expect(transcriptTab).toHaveClass('active');
+          expect(screen.getByText('Transcript (0)')).toBeVisible();
         });
 
         it('should show transcript error', async () => {
@@ -555,12 +548,11 @@ describe('Videos page', () => {
 
           axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID3/usage`).reply(201, { usageLocations: [] });
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
+          fireEvent.click(screen.getByText(messages.infoAndTranscriptsTitle.defaultMessage));
 
-          const transcriptTab = screen.getAllByRole('tab')[1];
-          fireEvent.click(transcriptTab);
-
-          expect(screen.getByText('Transcript (1)')).toBeVisible();
+          await waitFor(() => {
+            expect(screen.getByText('Transcript (1)')).toBeVisible();
+          });
         });
       });
 
@@ -711,7 +703,7 @@ describe('Videos page', () => {
 
         axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID3/usage`).reply(404);
         fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-        fireEvent.click(screen.getByText('Info'));
+        fireEvent.click(screen.getByText(messages.infoAndTranscriptsTitle.defaultMessage));
         await executeThunk(getUsagePaths({
           courseId,
           video: { id: 'mOckID3', displayName: 'mOckID3' },

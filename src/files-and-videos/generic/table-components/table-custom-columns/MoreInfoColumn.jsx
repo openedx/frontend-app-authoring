@@ -109,7 +109,7 @@ const MoreInfoColumn = ({
             variant="tertiary"
             onClick={() => handleOpenFileInfo(row.original)}
           >
-            {intl.formatMessage(messages.infoTitle)}
+            {intl.formatMessage(fileType === 'video' ? messages.infoAndTranscriptsTitle : messages.infoTitle)}
           </MenuItem>
           <hr className="my-2" />
           <MenuItem

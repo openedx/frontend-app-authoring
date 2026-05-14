@@ -24,6 +24,7 @@ import {
   MoreInfoColumn,
   FilterStatus,
   Footer,
+  TranscriptColumn,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
@@ -42,6 +43,7 @@ const FileTable = ({
   maxFileSize,
   thumbnailPreview,
   infoModalSidebar,
+  infoModalContentUnderPreview,
 }) => {
   const intl = useIntl();
   const pageCount = Math.ceil(files.length / 50);
@@ -185,7 +187,13 @@ const FileTable = ({
 
   const hasMoreInfoColumn = tableColumns.filter(col => col.id === 'moreInfo').length === 1;
   if (!hasMoreInfoColumn) {
-    tableColumns.push({ ...moreInfoColumn });
+    tableColumns.push({ ...moreInfoColumn }); // eslint-disable-line no-param-reassign
+  }
+
+  const transcriptColIndex = tableColumns.findIndex(col => col.id === 'transcriptStatus');
+  if (transcriptColIndex !== -1) {
+    // eslint-disable-next-line no-param-reassign, react/prop-types
+    tableColumns[transcriptColIndex].Cell = ({ row }) => TranscriptColumn({ row, handleOpenFileInfo });
   }
 
   return (
@@ -293,6 +301,7 @@ const FileTable = ({
           usagePathStatus={usagePathStatus}
           error={usageErrorMessages}
           sidebar={infoModalSidebar}
+          contentUnderPreview={infoModalContentUnderPreview(selectedRows[0].original)}
         />
       )}
 
@@ -326,11 +335,13 @@ FileTable.propTypes = {
   maxFileSize: PropTypes.number.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
   infoModalSidebar: PropTypes.func.isRequired,
+  infoModalContentUnderPreview: PropTypes.func,
 };
 
 FileTable.defaultProps = {
   files: null,
   handleLockFile: () => {},
+  infoModalContentUnderPreview: () => null,
 };
 
 export default FileTable;

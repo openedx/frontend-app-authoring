@@ -12,6 +12,8 @@ import {
 } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
 
+import { useWaffleFlags } from '../../../../data/apiHooks';
+import { VideosPageContext } from '../../VideosPageProvider';
 import messages from './messages';
 
 export const TranscriptActionMenu = ({
@@ -19,9 +21,12 @@ export const TranscriptActionMenu = ({
   launchDeleteConfirmation,
   handleTranscript,
   input,
+  onEdit,
 }) => {
   const [isOpen, , close, toggle] = useToggle();
   const [target, setTarget] = useState(null);
+  const { courseId } = React.useContext(VideosPageContext);
+  const { enableTranscriptEditor } = useWaffleFlags(courseId);
   return (
     <>
       <IconButton
@@ -40,13 +45,26 @@ export const TranscriptActionMenu = ({
         onEscapeKey={close}
       >
         <Menu
-          className="transcript-menu"
+          className="transcript-menu overflow-hidden"
         >
+          {enableTranscriptEditor && (
+            <MenuItem
+              as={Button}
+              variant="tertiary"
+              key={`transcript-actions-${language}-edit`}
+              onClick={() => {
+                onEdit(language);
+                close();
+              }}
+            >
+              <FormattedMessage {...messages.editTranscript} />
+            </MenuItem>
+          )}
           <MenuItem
             as={Button}
             variant="tertiary"
             key={`transcript-actions-${language}-replace`}
-            onClick={input.click}
+            onClick={() => { input.click(); close(); }}
           >
             <FormattedMessage {...messages.replaceTranscript} />
           </MenuItem>
@@ -77,9 +95,14 @@ TranscriptActionMenu.propTypes = {
   language: PropTypes.string.isRequired,
   handleTranscript: PropTypes.func.isRequired,
   launchDeleteConfirmation: PropTypes.func.isRequired,
+  onEdit: PropTypes.func,
   input: PropTypes.shape({
     click: PropTypes.func.isRequired,
   }).isRequired,
+};
+
+TranscriptActionMenu.defaultProps = {
+  onEdit: () => {},
 };
 
 export default TranscriptActionMenu;

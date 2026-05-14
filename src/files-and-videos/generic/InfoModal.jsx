@@ -24,6 +24,7 @@ const InfoModal = ({
   usagePathStatus,
   error,
   sidebar,
+  contentUnderPreview,
 }) => {
   const intl = useIntl();
   const [activeTab, setActiveTab] = useState('fileInfo');
@@ -75,6 +76,7 @@ const InfoModal = ({
                 thumbnailPreview={thumbnailPreview}
                 imageSize={{ width: '503px', height: '281px' }}
               />
+              {contentUnderPreview}
               <div>
                 <div className="row m-0 font-weight-bold">
                   <FormattedMessage {...messages.usageTitle} />
@@ -114,10 +116,12 @@ InfoModal.propTypes = {
   error: PropTypes.arrayOf(PropTypes.string).isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
   sidebar: PropTypes.func.isRequired,
+  contentUnderPreview: PropTypes.node,
 };
 
 InfoModal.defaultProps = {
   file: null,
+  contentUnderPreview: null,
 };
 
 export default InfoModal;

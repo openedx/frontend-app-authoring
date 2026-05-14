@@ -59,7 +59,7 @@ const FileMenu = ({
           {intl.formatMessage(messages.downloadTitle)}
         </Dropdown.Item>
         <Dropdown.Item onClick={openAssetInfo}>
-          {intl.formatMessage(messages.infoTitle)}
+          {intl.formatMessage(fileType === 'video' ? messages.infoAndTranscriptsTitle : messages.infoTitle)}
         </Dropdown.Item>
         <Dropdown.Divider />
         <Dropdown.Item

@@ -25,6 +25,7 @@ import {
 } from '@src/files-and-videos/videos-page/data/thunks';
 import { getFormattedDuration, resampleFile } from '@src/files-and-videos/videos-page/data/utils';
 import VideoInfoModalSidebar from '@src/files-and-videos/videos-page/info-sidebar';
+import InfoTab from '@src/files-and-videos/videos-page/info-sidebar/InfoTab';
 import messages from '@src/files-and-videos/videos-page/messages';
 import TranscriptSettings from '@src/files-and-videos/videos-page/transcript-settings';
 import UploadModal from '@src/files-and-videos/videos-page/upload-modal';
@@ -151,15 +152,16 @@ export const CourseVideosTable = () => {
     handleAddThumbnail,
     videoImageSettings,
   });
-  const infoModalSidebar = (video, activeTab, setActiveTab) => (
-    <VideoInfoModalSidebar video={video} activeTab={activeTab} setActiveTab={setActiveTab} />
+  const infoModalSidebar = (video) => (
+    <VideoInfoModalSidebar video={video} />
   );
+  const infoModalContentUnderPreview = (video) => (<InfoTab video={video} />);
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
     id: 'transcriptStatus',
     Header: 'Transcript',
     accessor: 'transcriptStatus',
-    Cell: ({ row }) => TranscriptColumn({ row }),
+    Cell: ({ row, handleOpenFileInfo }: any) => TranscriptColumn({ row, handleOpenFileInfo }),
     Filter: CheckboxFilter,
     filter: 'exactTextCase',
     filterChoices: [
@@ -269,6 +271,7 @@ export const CourseVideosTable = () => {
               maxFileSize,
               thumbnailPreview,
               infoModalSidebar,
+              infoModalContentUnderPreview,
               files: videos,
             }}
           />

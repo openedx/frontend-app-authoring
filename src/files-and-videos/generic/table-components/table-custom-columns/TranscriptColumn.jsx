@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Icon } from '@openedx/paragon';
+import { Button, Icon } from '@openedx/paragon';
 import { Info } from '@openedx/paragon/icons';
 import { TRANSCRIPT_FAILURE_STATUSES } from '../../../videos-page/data/constants';
 
-const TranscriptColumn = ({ row }) => {
+const TranscriptColumn = ({ row, handleOpenFileInfo }) => {
   const { transcripts, transcriptionStatus } = row.original;
   const numOfTranscripts = transcripts?.length;
   const transcriptMessage = numOfTranscripts > 0 ? `(${numOfTranscripts}) available` : null;
@@ -15,12 +15,22 @@ const TranscriptColumn = ({ row }) => {
       {TRANSCRIPT_FAILURE_STATUSES.includes(transcriptionStatus) && (
         <Icon src={Info} size="sm" className="mr-2 text-danger-500" />
       )}
-      <FormattedMessage
-        id="course-authoring.videos-page.table.transcriptColumn.message"
-        description="Message with the number of transcripts available"
-        defaultMessage="{message}"
-        values={{ message: transcriptMessage }}
-      />
+      {numOfTranscripts > 0 && handleOpenFileInfo ? (
+        <Button
+          variant="link"
+          size="inline"
+          onClick={(e) => { e.stopPropagation(); handleOpenFileInfo(row.original); }}
+        >
+          {transcriptMessage}
+        </Button>
+      ) : (
+        <FormattedMessage
+          id="course-authoring.videos-page.table.transcriptColumn.message"
+          description="Message with the number of transcripts available"
+          defaultMessage="{message}"
+          values={{ message: transcriptMessage }}
+        />
+      )}
     </div>
   );
 };
@@ -32,6 +42,11 @@ TranscriptColumn.propTypes = {
       transcriptionStatus: PropTypes.string.isRequired,
     }.isRequired,
   }.isRequired,
+  handleOpenFileInfo: PropTypes.func,
+};
+
+TranscriptColumn.defaultProps = {
+  handleOpenFileInfo: null,
 };
 
 export default TranscriptColumn;

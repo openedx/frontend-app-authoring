@@ -1,6 +1,11 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  editTranscript: {
+    id: 'course-authoriong.video-uploads.file-info.transcript.editTranscript',
+    defaultMessage: 'Edit transcript',
+    description: 'Message Presented To user for action to edit transcript',
+  },
   fileSizeError: {
     id: 'course-authoriong.video-uploads.file-info.transcript.error.fileSizeError',
     defaultMessage: 'Transcript file size exeeds the maximum. Please try again.',
