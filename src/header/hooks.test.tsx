@@ -3,7 +3,7 @@ import { getConfig, setConfig } from '@edx/frontend-platform';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
-import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import messages from './messages';
 import {
@@ -34,8 +34,9 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
-jest.mock('@src/authz/data/apiHooks', () => ({
-  useUserPermissions: jest.fn(),
+jest.mock('@src/authz/hooks', () => ({
+  ...jest.requireActual('@src/authz/hooks'),
+  useCourseUserPermissions: jest.fn(),
 }));
 
 const createWrapper = () => {
@@ -57,10 +58,12 @@ const createWrapper = () => {
 describe('header utils', () => {
   describe('getContentMenuItems', () => {
     beforeEach(() => {
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewPagesAndResources: true },
-      } as any);
+        isAuthzEnabled: false,
+        canViewPagesAndResources: true,
+        canManagePagesAndResources: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
     });
 
     it('when video upload page enabled should include Video Uploads option', () => {
@@ -98,10 +101,12 @@ describe('header utils', () => {
     it('when authz enabled and user has canViewPagesAndResources should include pages and resources option', async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useSelector).mockReturnValue({ librariesV2Enabled: false });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewPagesAndResources: true },
-      } as any);
+        isAuthzEnabled: true,
+        canViewPagesAndResources: true,
+        canManagePagesAndResources: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
         expect(result.current.map((item) => item.title)).toContain('Pages & Resources');
@@ -110,10 +115,12 @@ describe('header utils', () => {
     it('when authz enabled and user lacks canViewPagesAndResources should not include pages and resources option', async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useSelector).mockReturnValue({ librariesV2Enabled: false });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewPagesAndResources: false },
-      } as any);
+        isAuthzEnabled: true,
+        canViewPagesAndResources: false,
+        canManagePagesAndResources: false,
+      } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
         expect(result.current.map((item) => item.title)).not.toContain('Pages & Resources');
@@ -127,10 +134,13 @@ describe('header utils', () => {
       jest.mocked(useSelector).mockReturnValue({
         canAccessAdvancedSettings: true,
       });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canManageAdvancedSettings: true, canViewGradingSettings: true },
-      } as any);
+        isAuthzEnabled: false,
+        canManageAdvancedSettings: true,
+        canViewGradingSettings: true,
+        canViewScheduleAndDetails: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
     });
 
     it('when certificate page enabled should include certificates option', () => {
@@ -164,12 +174,14 @@ describe('header utils', () => {
     });
 
     it('when the authz.enable_course_authoring flag is enabled and user has access to advanced settings should include advanced settings option', async () => {
-      // Mock feature flag
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canManageAdvancedSettings: true, canViewGradingSettings: true },
-      } as any);
+        isAuthzEnabled: true,
+        canManageAdvancedSettings: true,
+        canViewGradingSettings: true,
+        canViewScheduleAndDetails: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
         const actualItemsTitle = result.current.map((item) => item.title);
@@ -177,12 +189,14 @@ describe('header utils', () => {
       });
     });
     it('when authz.enable_course_authoring flag is enabled and user has no access to advanced settings should not include advanced settings option', async () => {
-      // Mock feature flag
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canManageAdvancedSettings: false, canViewGradingSettings: true },
-      } as any);
+        isAuthzEnabled: true,
+        canManageAdvancedSettings: false,
+        canViewGradingSettings: true,
+        canViewScheduleAndDetails: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
         const actualItemsTitle = result.current.map((item) => item.title);
@@ -191,12 +205,11 @@ describe('header utils', () => {
     });
 
     it('when authz.enable_course_authoring flag is enabled and the permission request is still loading, should not include advanced settings option', async () => {
-      // Mock feature flag
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: true,
-        data: undefined,
-      } as any);
+        isAuthzEnabled: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
         const actualItemsTitle = result.current.map((item) => item.title);
@@ -206,10 +219,13 @@ describe('header utils', () => {
 
     it('when authz flag is enabled and user has canViewScheduleAndDetails should include schedule and details option', async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewScheduleAndDetails: true },
-      } as any);
+        isAuthzEnabled: true,
+        canViewScheduleAndDetails: true,
+        canManageAdvancedSettings: true,
+        canViewGradingSettings: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
         const actualItemsTitle = result.current.map((item) => item.title);
@@ -219,10 +235,13 @@ describe('header utils', () => {
 
     it('when authz flag is enabled and user lacks canViewScheduleAndDetails should not include schedule and details option', async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewScheduleAndDetails: false },
-      } as any);
+        isAuthzEnabled: true,
+        canViewScheduleAndDetails: false,
+        canManageAdvancedSettings: true,
+        canViewGradingSettings: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
         const actualItemsTitle = result.current.map((item) => item.title);
@@ -232,10 +251,13 @@ describe('header utils', () => {
 
     it('when authz flag is enabled and user has canViewGradingSettings should include grading option', async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewGradingSettings: true },
-      } as any);
+        isAuthzEnabled: true,
+        canViewGradingSettings: true,
+        canManageAdvancedSettings: true,
+        canViewScheduleAndDetails: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
         const actualItemsTitle = result.current.map((item) => item.title);
@@ -245,10 +267,13 @@ describe('header utils', () => {
 
     it('when authz flag is enabled and user lacks canViewGradingSettings should not include grading option', async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      jest.mocked(useUserPermissions).mockReturnValue({
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        data: { canViewGradingSettings: false },
-      } as any);
+        isAuthzEnabled: true,
+        canViewGradingSettings: false,
+        canManageAdvancedSettings: true,
+        canViewScheduleAndDetails: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {
         const actualItemsTitle = result.current.map((item) => item.title);
@@ -258,6 +283,13 @@ describe('header utils', () => {
 
     it('should include roles and permissions option', () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true, useNewCertificatesPage: false });
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        isAuthzEnabled: true,
+        canManageAdvancedSettings: true,
+        canViewGradingSettings: true,
+        canViewScheduleAndDetails: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
       setConfig({
         ...getConfig(),
         ADMIN_CONSOLE_URL: 'http://admin-console.example.com',

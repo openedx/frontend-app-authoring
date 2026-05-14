@@ -10,8 +10,13 @@ import courseOptimizerMessages from '@src/optimizer-page/messages';
 import { SidebarActions } from '@src/library-authoring/common/context/SidebarContext';
 import { LibQueryParamKeys } from '@src/library-authoring/routes';
 
-import { useUserPermissions } from '@src/authz/data/apiHooks';
-import { COURSE_PERMISSIONS } from '@src/authz/constants';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import {
+  getAdvancedSettingsPermissions,
+  getGradingPermissions,
+  getPagesAndResourcesPermissions,
+  getScheduleAndDetailsPermissions,
+} from '@src/authz/permissionHelpers';
 import messages from './messages';
 
 export const useContentMenuItems = (courseId: string) => {
@@ -20,16 +25,10 @@ export const useContentMenuItems = (courseId: string) => {
   const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
 
-  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canViewPagesAndResources: {
-      action: COURSE_PERMISSIONS.VIEW_PAGES_AND_RESOURCES,
-      scope: courseId,
-    },
-  }, isAuthzEnabled);
-
-  const canViewPagesAndResources = !isAuthzEnabled
-    || (!isLoadingUserPermissions && (userPermissions?.canViewPagesAndResources || false));
+  const { canViewPagesAndResources } = useCourseUserPermissions(
+    courseId,
+    getPagesAndResourcesPermissions(courseId),
+  );
 
   const items = [
     {
@@ -80,37 +79,20 @@ export const useSettingMenuItems = (courseId: string) => {
     If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
     Otherwise, fallback to existing logic.
   */
-  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
-    },
-    canViewGradingSettings: {
-      action: COURSE_PERMISSIONS.VIEW_GRADING_SETTINGS,
-      scope: courseId,
-    },
-    canViewScheduleAndDetails: {
-      action: COURSE_PERMISSIONS.VIEW_SCHEDULE_AND_DETAILS,
-      scope: courseId,
-    },
-  }, isAuthzEnabled);
-
-  const authzCanManageAdvancedSettings = isLoadingUserPermissions
-    ? false
-    : userPermissions?.canManageAdvancedSettings || false;
+  const {
+    isAuthzEnabled,
+    canManageAdvancedSettings,
+    canViewGradingSettings,
+    canViewScheduleAndDetails,
+  } = useCourseUserPermissions(courseId, {
+    ...getAdvancedSettingsPermissions(courseId),
+    ...getGradingPermissions(courseId),
+    ...getScheduleAndDetailsPermissions(courseId),
+  });
 
   const canAccessAdvancedSettings = isAuthzEnabled
-    ? authzCanManageAdvancedSettings
+    ? canManageAdvancedSettings
     : legacyCanAccessAdvancedSettings;
-
-  const canViewScheduleAndDetails = isAuthzEnabled
-    ? (!isLoadingUserPermissions && (userPermissions?.canViewScheduleAndDetails || false))
-    : true;
-
-  const canViewGradingSettings = isAuthzEnabled
-    ? (!isLoadingUserPermissions && (userPermissions?.canViewGradingSettings || false))
-    : true;
 
   const items = [
     ...(canViewScheduleAndDetails
