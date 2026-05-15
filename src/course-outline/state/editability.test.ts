@@ -9,11 +9,12 @@ const makeBlock = (
   id: string,
   childAddable: boolean,
   children: XBlock[] = [],
-) => ({
-  id,
-  actions: { childAddable },
-  childInfo: { children },
-}) as XBlock;
+) =>
+  ({
+    id,
+    actions: { childAddable },
+    childInfo: { children },
+  }) as XBlock;
 
 describe('editability helpers', () => {
   it('returns last editable item', () => {

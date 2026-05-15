@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 import { InfoSidebar } from './InfoSidebar';
 
+const mockDuplicateItem = { mutate: jest.fn() };
 let selectedContainerState: SelectionState | undefined;
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
@@ -25,16 +26,14 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
     data: { title: 'Course name' },
     isLoading: false,
   }),
+  useDuplicateItem: jest.fn(() => mockDuplicateItem),
 }));
 
 const courseId = '5';
 
 const openPublishModal = jest.fn();
 const openDeleteModal = jest.fn();
-const duplicateCurrentSelection = jest.fn();
 const openUnlinkModal = jest.fn();
-
-
 
 const mockedNavigate = jest.fn();
 const updateUnitOrderByIndex = jest.fn();
@@ -69,7 +68,6 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
     setActionTargetSelection: jest.fn(),
     openPublishModal,
     openDeleteModal,
-    duplicateCurrentSelection: jest.fn(),
   });
   return {
     ...jest.requireActual('@src/course-outline/CourseOutlineContext'),
@@ -81,15 +79,16 @@ jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: () => ({ data: [] }),
 }));
 
-const renderComponent = () => render(<InfoSidebar />, {
-  extraWrapper: ({ children }) => (
-    <CourseOutlineProvider>
-      <OutlineSidebarProvider>
-        {children}
-      </OutlineSidebarProvider>
-    </CourseOutlineProvider>
-  ),
-});
+const renderComponent = () =>
+  render(<InfoSidebar />, {
+    extraWrapper: ({ children }) => (
+      <CourseOutlineProvider>
+        <OutlineSidebarProvider>
+          {children}
+        </OutlineSidebarProvider>
+      </CourseOutlineProvider>
+    ),
+  });
 let axiosMock;
 
 describe('InfoSidebar component', () => {
@@ -98,9 +97,8 @@ describe('InfoSidebar component', () => {
     axiosMock = mocks.axiosMock;
     openDeleteModal.mockClear();
     openUnlinkModal.mockClear();
-    duplicateCurrentSelection.mockClear();
-    
-    
+    mockDuplicateItem.mutate.mockClear();
+
     mockedNavigate.mockClear();
     updateUnitOrderByIndex.mockClear();
     updateSubsectionOrderByIndex.mockClear();
@@ -265,7 +263,7 @@ describe('InfoSidebar component', () => {
       expect(openDeleteModal).toHaveBeenCalled();
     });
 
-    it('calls duplicateCurrentSelection when Duplicate is clicked in unit menu', async () => {
+    it('calls duplicate when Duplicate is clicked in unit menu', async () => {
       const user = userEvent.setup();
       await renderUnitMenu();
 
@@ -275,7 +273,7 @@ describe('InfoSidebar component', () => {
       const duplicateBtn = await screen.findByText('Duplicate');
       await user.click(duplicateBtn);
 
-      expect(duplicateCurrentSelection).toHaveBeenCalled();
+      expect(mockDuplicateItem.mutate).toHaveBeenCalled();
     });
 
     it('calls openUnlinkModal when Unlink is clicked in unit menu', async () => {
@@ -481,7 +479,7 @@ describe('InfoSidebar component', () => {
       expect(openDeleteModal).toHaveBeenCalled();
     });
 
-    it('calls duplicateCurrentSelection when Duplicate is clicked in subsection menu', async () => {
+    it('calls duplicate when Duplicate is clicked in subsection menu', async () => {
       const user = userEvent.setup();
       await renderSubsectionMenu();
 
@@ -491,7 +489,7 @@ describe('InfoSidebar component', () => {
       const duplicateBtn = await screen.findByText('Duplicate');
       await user.click(duplicateBtn);
 
-      expect(duplicateCurrentSelection).toHaveBeenCalled();
+      expect(mockDuplicateItem.mutate).toHaveBeenCalled();
     });
 
     it('calls openUnlinkModal when Unlink is clicked in subsection menu', async () => {
@@ -647,7 +645,7 @@ describe('InfoSidebar component', () => {
       expect(openDeleteModal).toHaveBeenCalled();
     });
 
-    it('calls duplicateCurrentSelection when Duplicate is clicked in section menu', async () => {
+    it('calls duplicate when Duplicate is clicked in section menu', async () => {
       const user = userEvent.setup();
       await renderSectionMenu();
 
@@ -657,7 +655,7 @@ describe('InfoSidebar component', () => {
       const duplicateBtn = await screen.findByText('Duplicate');
       await user.click(duplicateBtn);
 
-      expect(duplicateCurrentSelection).toHaveBeenCalled();
+      expect(mockDuplicateItem.mutate).toHaveBeenCalled();
     });
 
     it('calls openUnlinkModal when Unlink is clicked in section menu', async () => {

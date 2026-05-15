@@ -105,14 +105,11 @@ const CourseOutline = () => {
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
     handleEnableHighlightsSubmit,
-    handleInternetConnectionFailed,
     handleOpenHighlightsModal,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
     handleDeleteItemSubmit,
-    handleDuplicateSectionSubmit,
-    handleDuplicateSubsectionSubmit,
-    handleDuplicateUnitSubmit,
+
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,
@@ -125,7 +122,7 @@ const CourseOutline = () => {
     advanceSettingsUrl,
     errors,
     handleUnlinkItemSubmit,
-  } = useCourseOutline({ courseId });
+  } = useCourseOutline();
 
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -293,7 +290,6 @@ const CourseOutline = () => {
                                       onOpenHighlightsModal={handleOpenHighlightsModal}
                                       onOpenConfigureModal={openConfigureModal}
                                       onOpenDeleteModal={openDeleteModal}
-                                      onDuplicateSubmit={handleDuplicateSectionSubmit}
                                       isSectionsExpanded={isSectionsExpanded}
                                       onOrderChange={updateSectionOrderByIndex}
                                     >
@@ -318,7 +314,6 @@ const CourseOutline = () => {
                                             isSelfPaced={statusBarData.isSelfPaced}
                                             isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                             onOpenDeleteModal={openDeleteModal}
-                                            onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                             onOpenConfigureModal={openConfigureModal}
                                             onOrderChange={updateSubsectionOrderByIndex}
                                             onPasteClick={handlePasteClipboardClick}
@@ -347,7 +342,6 @@ const CourseOutline = () => {
                                                   )}
                                                   onOpenConfigureModal={openConfigureModal}
                                                   onOpenDeleteModal={openDeleteModal}
-                                                  onDuplicateSubmit={handleDuplicateUnitSubmit}
                                                   onOrderChange={updateUnitOrderByIndex}
                                                   discussionsSettings={discussionsSettings}
                                                 />
@@ -370,14 +364,16 @@ const CourseOutline = () => {
                           ) :
                           (
                             <EmptyPlaceholder>
-                              {courseActions.childAddable ? (
-                                <OutlineAddChildButtons
-                                  childType={ContainerType.Section}
-                                  parentLocator={courseUsageKey!}
-                                  btnVariant="primary"
-                                  btnClasses="mt-1"
-                                />
-                              ) : <></>}
+                              {courseActions.childAddable ?
+                                (
+                                  <OutlineAddChildButtons
+                                    childType={ContainerType.Section}
+                                    parentLocator={courseUsageKey!}
+                                    btnVariant="primary"
+                                    btnClasses="mt-1"
+                                  />
+                                ) :
+                                <></>}
                             </EmptyPlaceholder>
                           )}
                       </div>
@@ -436,7 +432,6 @@ const CourseOutline = () => {
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}
           isQueryPending={savingStatus === RequestStatus.PENDING}
-          onInternetConnectionFailed={handleInternetConnectionFailed}
         />
       </div>
       {toastMessage && (

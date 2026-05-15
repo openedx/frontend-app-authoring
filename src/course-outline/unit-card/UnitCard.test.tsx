@@ -117,7 +117,6 @@ const renderComponent = (props?: object) =>
       onOrderChange={jest.fn()}
       onOpenDeleteModal={jest.fn()}
       onOpenConfigureModal={jest.fn()}
-      onDuplicateSubmit={jest.fn()}
       isSelfPaced={false}
       isCustomRelativeDatesActive={false}
       discussionsSettings={{

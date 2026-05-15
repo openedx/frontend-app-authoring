@@ -1,5 +1,6 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { courseIDtoBlockID } from '@src/course-outline/utils';
 import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { XBlock } from '@src/data/types';
 import {
@@ -49,10 +50,7 @@ export const getCourseLaunchApiUrl = ({
   `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
 export const getCourseBlockApiUrl = (courseId: string) => {
-  if (courseId.startsWith('block-v1:')) {
-    return `${getApiBaseUrl()}/xblock/${courseId}`;
-  }
-  const formattedCourseId = courseId.split('course-v1:')[1];
+  const formattedCourseId = courseIDtoBlockID(courseId);
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
 };
 

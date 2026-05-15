@@ -1,4 +1,3 @@
-import { RequestStatus } from '@src/data/constants';
 import {
   initializeMocks,
   render,
@@ -48,7 +47,7 @@ const Probe = () => {
 // not crash when outlineIndexData is undefined during initial load or
 // course navigation.
 const OutlineCrashGuard = () => {
-  useCourseOutline({ courseId });
+  useCourseOutline();
   return <div data-testid="crash-guard">ok</div>;
 };
 
@@ -57,17 +56,19 @@ const ProbeSections = () => {
   return <div data-testid="sections-count">{sections.length}</div>;
 };
 
-const renderComponent = () => render(
-  <CourseOutlineProvider>
-    <Probe />
-  </CourseOutlineProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseOutlineProvider>
+      <Probe />
+    </CourseOutlineProvider>,
+  );
 
-const renderSectionsComponent = () => render(
-  <CourseOutlineProvider>
-    <ProbeSections />
-  </CourseOutlineProvider>,
-);
+const renderSectionsComponent = () =>
+  render(
+    <CourseOutlineProvider>
+      <ProbeSections />
+    </CourseOutlineProvider>,
+  );
 
 describe('CourseOutlineProvider outline index query sync', () => {
   let axiosMock;

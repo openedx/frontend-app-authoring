@@ -16,7 +16,7 @@ import { getItemIcon } from '@src/generic/block-type-utils';
 
 import { SidebarTitle } from '@src/generic/sidebar';
 
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -97,12 +97,21 @@ export const UnitSidebar = () => {
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const { data: subsection } = useCourseItemData<XBlock>(selectedContainerState?.subsectionId);
   const { getUnitUrl, courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const duplicateMutation = useDuplicateItem(courseId);
+  const duplicateCurrentSelection = (selection) => {
+    if (!selection?.currentId || !selection.subsectionId) { return; }
+    duplicateMutation.mutate({
+      itemId: selection.currentId,
+      parentId: selection.subsectionId,
+      sectionId: selection.sectionId,
+      subsectionId: selection.subsectionId,
+    });
+  };
   const {
     openPublishModal,
     openDeleteModal,
     sections,
     updateUnitOrderByIndex,
-    duplicateCurrentSelection,
   } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
   const subsectionIndex = section?.childInfo?.children?.findIndex(
@@ -220,7 +229,9 @@ export const UnitSidebar = () => {
           index: index ?? -1,
           actions,
           canMoveItem: canMoveUnit,
-          onClickDuplicate: unitData?.actions?.duplicable ? () => selectedContainerState && duplicateCurrentSelection(selectedContainerState) : undefined,
+          onClickDuplicate: unitData?.actions?.duplicable
+            ? () => selectedContainerState && duplicateCurrentSelection(selectedContainerState)
+            : undefined,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () =>

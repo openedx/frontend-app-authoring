@@ -31,7 +31,7 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useDuplicateItem, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
@@ -44,7 +44,6 @@ interface SubsectionCardProps {
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean;
   onOpenDeleteModal: () => void;
-  onDuplicateSubmit: () => void;
   index: number;
   getPossibleMoves: (index: number, step: number) => void;
   onOrderChange: (section: XBlock, moveDetails: any) => void;
@@ -66,7 +65,6 @@ const SubsectionCard = ({
   index,
   getPossibleMoves,
   onOpenDeleteModal,
-  onDuplicateSubmit,
   onOrderChange,
   onOpenConfigureModal,
   onPasteClick,
@@ -82,6 +80,15 @@ const SubsectionCard = ({
   const { sharedClipboardData, showPasteUnit } = useClipboard();
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
   const { openPublishModal, setActionTargetSelection } = useCourseOutlineContext();
+  const duplicateMutation = useDuplicateItem(courseId);
+  const handleDuplicate = () => {
+    duplicateMutation.mutate({
+      itemId: subsection.id,
+      parentId: section.id,
+      sectionId: section.id,
+      subsectionId: subsection.id,
+    });
+  };
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
@@ -312,7 +319,7 @@ const SubsectionCard = ({
                 onClickConfigure={onOpenConfigureModal}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
-                onClickDuplicate={onDuplicateSubmit}
+                onClickDuplicate={handleDuplicate}
                 onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}

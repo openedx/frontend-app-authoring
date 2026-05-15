@@ -18,13 +18,14 @@ export const useCourseOutlineIndex = (
     initialData,
     refetchOnMount = true,
   }: UseCourseOutlineIndexOptions = {},
-) => useQuery<CourseOutline>({
-  queryKey: courseOutlineIndexQueryKey(courseId),
-  queryFn: enabled && courseId ? () => getCourseOutlineIndex(courseId) : skipToken,
-  initialData,
-  refetchOnMount,
-  retry: false,
-});
+) =>
+  useQuery<CourseOutline>({
+    queryKey: courseOutlineIndexQueryKey(courseId),
+    queryFn: enabled && courseId ? () => getCourseOutlineIndex(courseId) : skipToken,
+    initialData,
+    refetchOnMount,
+    retry: false,
+  });
 
 export const getCourseOutlineStatusBarData = (outlineIndex: CourseOutline) => {
   const {

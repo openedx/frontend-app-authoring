@@ -136,7 +136,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
       onOrderChange={jest.fn()}
       onOpenDeleteModal={jest.fn()}
       isCustomRelativeDatesActive={false}
-      onDuplicateSubmit={jest.fn()}
       onOpenConfigureModal={jest.fn()}
       onPasteClick={jest.fn()}
       isSectionsExpanded={false}

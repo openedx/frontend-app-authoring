@@ -23,7 +23,12 @@ export interface UseOutlineReorderStateOutput {
   cancelReorderPreview: () => void;
   commitSectionReorder: (sectionListIds: string[]) => Promise<void>;
   commitSubsectionReorder: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => Promise<void>;
-  commitUnitReorder: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => Promise<void>;
+  commitUnitReorder: (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+  ) => Promise<void>;
   updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => Promise<void>;
   updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
   updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
@@ -58,7 +63,7 @@ export function useOutlineReorderState({
   const syncPreviewTreeToCache = useCallback(() => {
     const tree = latestVisibleSectionsRef.current;
     queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-      if (!old?.courseStructure?.childInfo) return old;
+      if (!old?.courseStructure?.childInfo) { return old; }
       return {
         ...old,
         courseStructure: {
@@ -76,16 +81,15 @@ export function useOutlineReorderState({
   const acceptReorderAndSyncSectionOrder = useCallback((sectionListIds: string[]) => {
     acceptReorderPreview();
     queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-      if (!old?.courseStructure?.childInfo?.children) return old;
+      if (!old?.courseStructure?.childInfo?.children) { return old; }
       return {
         ...old,
         courseStructure: {
           ...old.courseStructure,
           childInfo: {
             ...old.courseStructure.childInfo,
-            children: sectionListIds.map(id =>
-              old.courseStructure.childInfo.children.find((s: any) => s.id === id)
-            ).filter(Boolean),
+            children: sectionListIds.map(id => old.courseStructure.childInfo.children.find((s: any) => s.id === id))
+              .filter(Boolean),
           },
         },
       };
@@ -131,8 +135,8 @@ export function useOutlineReorderState({
 
   // --- Reorder mutation hooks ---
   const reorderSectionsMutation = useReorderSections(courseId);
-  const reorderSubsectionsMutation = useReorderSubsections(courseId);
-  const reorderUnitsMutation = useReorderUnits(courseId);
+  const reorderSubsectionsMutation = useReorderSubsections();
+  const reorderUnitsMutation = useReorderUnits();
 
   const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
     if (!courseId) {
@@ -161,7 +165,13 @@ export function useOutlineReorderState({
     } catch {
       rollbackReorderPreview();
     }
-  }, [reorderSubsectionsMutation, syncPreviewTreeToCache, acceptReorderPreview, rollbackReorderPreview, refetchAffectedSections]);
+  }, [
+    reorderSubsectionsMutation,
+    syncPreviewTreeToCache,
+    acceptReorderPreview,
+    rollbackReorderPreview,
+    refetchAffectedSections,
+  ]);
 
   const commitUnitReorder = useCallback(async (
     sectionId: string,
@@ -179,7 +189,13 @@ export function useOutlineReorderState({
     } catch {
       rollbackReorderPreview();
     }
-  }, [reorderUnitsMutation, syncPreviewTreeToCache, acceptReorderPreview, rollbackReorderPreview, refetchAffectedSections]);
+  }, [
+    reorderUnitsMutation,
+    syncPreviewTreeToCache,
+    acceptReorderPreview,
+    rollbackReorderPreview,
+    refetchAffectedSections,
+  ]);
 
   const updateSectionOrderByIndex = useCallback(async (currentIndex: number, newIndex: number) => {
     if (!courseId || currentIndex === newIndex) {
@@ -223,7 +239,14 @@ export function useOutlineReorderState({
         rollbackReorderPreview();
       }
     }
-  }, [visibleSections, reorderSubsectionsMutation, syncPreviewTreeToCache, rollbackReorderPreview, acceptReorderPreview, refetchAffectedSections]);
+  }, [
+    visibleSections,
+    reorderSubsectionsMutation,
+    syncPreviewTreeToCache,
+    rollbackReorderPreview,
+    acceptReorderPreview,
+    refetchAffectedSections,
+  ]);
 
   const updateUnitOrderByIndex = useCallback(async (section: XBlock, moveDetails) => {
     const { fn, args, sectionId, subsectionId } = moveDetails;
@@ -250,7 +273,14 @@ export function useOutlineReorderState({
         rollbackReorderPreview();
       }
     }
-  }, [visibleSections, reorderUnitsMutation, syncPreviewTreeToCache, rollbackReorderPreview, acceptReorderPreview, refetchAffectedSections]);
+  }, [
+    visibleSections,
+    reorderUnitsMutation,
+    syncPreviewTreeToCache,
+    rollbackReorderPreview,
+    acceptReorderPreview,
+    refetchAffectedSections,
+  ]);
 
   return {
     visibleSections,

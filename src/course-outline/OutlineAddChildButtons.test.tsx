@@ -16,14 +16,22 @@ jest.mock('@src/studio-home/data/selectors', () => ({
   }),
 }));
 
-const handleAddAndOpenUnit = { mutateAsync: jest.fn() };
-const handleAddBlock = { mutateAsync: jest.fn() };
+const mockMutateAsync = jest.fn();
+const mockMutate = jest.fn();
+const mockCreateBlock = { mutateAsync: mockMutateAsync, mutate: mockMutate, isPending: false };
+
+jest.mock('@src/course-outline/data/apiHooks', () => ({
+  ...jest.requireActual('@src/course-outline/data/apiHooks'),
+  useCreateCourseBlock: jest.fn(() => mockCreateBlock),
+}));
+
 const courseUsageKey = 'some/usage/key';
 const setActionTargetSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
-    courseId: 5,
+    courseId: 'some-course-id',
     getUnitUrl: (id: string) => `/some/${id}`,
+    openUnitPage: jest.fn(),
   }),
 }));
 
@@ -35,8 +43,6 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
     selectContainer: jest.fn(),
     clearSelection: jest.fn(),
     openContainerInfo: jest.fn(),
-    handleAddAndOpenUnit,
-    handleAddBlock,
     setActionTargetSelection,
   }),
 }));
@@ -63,6 +69,8 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   describe(`<OutlineAddChildButtons> for ${containerType}`, () => {
     beforeEach(() => {
       initializeMocks();
+      mockMutateAsync.mockReset();
+      mockMutate.mockReset();
     });
 
     it('renders and behaves correctly', async () => {
@@ -108,7 +116,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
       switch (containerType) {
         case ContainerType.Section:
           await waitFor(() =>
-            expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith(
+            expect(mockMutateAsync).toHaveBeenCalledWith(
               {
                 type: ContainerType.Chapter,
                 parentLocator: courseUsageKey,
@@ -117,12 +125,12 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
               expect.objectContaining({ onSuccess: expect.any(Function) }),
             )
           );
-          handleAddBlock.mutateAsync.mock.calls[0][1].onSuccess({ locator: 'new-section-id' });
+          mockMutateAsync.mock.calls[0][1].onSuccess({ locator: 'new-section-id' });
           expect(openContainerInfoSidebar).toHaveBeenCalledWith('new-section-id', undefined, 'new-section-id');
           break;
         case ContainerType.Subsection:
           await waitFor(() =>
-            expect(handleAddBlock.mutateAsync).toHaveBeenCalledWith(
+            expect(mockMutateAsync).toHaveBeenCalledWith(
               {
                 type: ContainerType.Sequential,
                 parentLocator,
@@ -132,7 +140,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
               expect.objectContaining({ onSuccess: expect.any(Function) }),
             )
           );
-          handleAddBlock.mutateAsync.mock.calls[0][1].onSuccess({ locator: 'new-subsection-id' });
+          mockMutateAsync.mock.calls[0][1].onSuccess({ locator: 'new-subsection-id' });
           expect(openContainerInfoSidebar).toHaveBeenCalledWith(
             'new-subsection-id',
             'new-subsection-id',
@@ -141,7 +149,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
           break;
         case ContainerType.Unit:
           await waitFor(() =>
-            expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
+            expect(mockMutateAsync).toHaveBeenCalledWith({
               type: ContainerType.Vertical,
               parentLocator,
               displayName: 'Unit',

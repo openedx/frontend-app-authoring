@@ -204,6 +204,18 @@ const getVideoSharingOptionText = (
   }
 };
 
+/**
+ * Converts courseId to course block id
+ * course-v1:demo+course+1 -> block-v1:demo+course+1+type@course+block@course
+ */
+const courseIDtoBlockID = (courseId: string) => {
+  if (courseId.startsWith('block-v1:')) {
+    return courseId;
+  }
+  const formattedCourseId = courseId.split('course-v1:')[1];
+  return `block-v1:${formattedCourseId}+type@course+block@course`;
+}
+
 export {
   getItemStatus,
   getItemStatusBadgeContent,
@@ -211,4 +223,5 @@ export {
   getHighlightsFormValues,
   getVideoSharingOptionText,
   scrollToElement,
+  courseIDtoBlockID,
 };

@@ -116,7 +116,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
       onOpenHighlightsModal={jest.fn()}
       onOpenDeleteModal={jest.fn()}
       onOpenConfigureModal={jest.fn()}
-      onDuplicateSubmit={jest.fn()}
       isSectionsExpanded
       isSelfPaced={false}
       isCustomRelativeDatesActive={false}

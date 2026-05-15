@@ -7,10 +7,11 @@ export type EditableSubsection = {
   sectionId?: string;
 };
 
-export const getLastEditableItem = (blockList: (XBlock | XBlockBase)[]) => findLast(
-  blockList,
-  (item) => item.actions.childAddable,
-) as XBlock | undefined;
+export const getLastEditableItem = (blockList: (XBlock | XBlockBase)[]) =>
+  findLast(
+    blockList,
+    (item) => item.actions.childAddable,
+  ) as XBlock | undefined;
 
 export const getLastEditableSubsection = (
   blockList: XBlock[],

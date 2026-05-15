@@ -48,9 +48,10 @@ describe('outlineIndexQuery', () => {
     // still performs a background fetch (proving refetchOnMount=true).
     axiosMock.onGet(getCourseOutlineIndexApiUrl(courseId)).reply(200, courseOutlineIndexMock);
 
-    renderHook(() => useCourseOutlineIndex(courseId, {
-      initialData: courseOutlineIndexMock as any,
-    }), { wrapper: makeWrapper() });
+    renderHook(() =>
+      useCourseOutlineIndex(courseId, {
+        initialData: courseOutlineIndexMock as any,
+      }), { wrapper: makeWrapper() });
 
     // If refetchOnMount were false (old behavior), no API call would be made
     // because initialData satisfies the query. With the fix (refetchOnMount=true),

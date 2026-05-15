@@ -95,14 +95,13 @@ describe('filterDismissedErrors', () => {
     const errA = { type: 'serverError', data: 'A', status: 500, dismissible: true };
     const errB = { type: 'serverError', data: 'B', status: 500, dismissible: true };
     const sigA = computeErrorSignature(errA);
-    const sigB = computeErrorSignature(errB);
     const base = {
       keyA: errA,
       keyB: errB,
       keyC: null,
     };
     const result = filterDismissedErrors(base, {
-      keyA: sigA,   // matches → hidden
+      keyA: sigA, // matches → hidden
       keyB: 'wrong', // doesn't match → visible
       keyC: 'stale', // error is null → visible (null)
     });

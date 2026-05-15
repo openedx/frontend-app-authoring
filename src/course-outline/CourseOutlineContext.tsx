@@ -7,26 +7,23 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-
-import { RequestStatus } from '@src/data/constants';
 import type {
   OutlinePageErrors,
   SelectionState,
   XBlock,
   XBlockActions,
 } from '@src/data/types';
-import { useCourseItemData, useCreateCourseBlock } from './data/apiHooks';
 
-import { useOutlineMutations } from './state/useOutlineMutations';
+import { useCourseItemData, useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './data/apiHooks';
+
 import { useOutlineReorderState } from './state/useOutlineReorderState';
 import { useOutlineStatusState } from './state/useOutlineStatusState';
-import useOutlineAddBlockActions from './state/useOutlineAddBlockActions';
 import useOutlineModalState from './state/useOutlineModalState';
 import useOutlineActionTargetState from './state/useOutlineActionTargetState';
 import { buildSelectionState } from './state/selection';
 import {
   computeErrorSignature,
+  filterDismissedErrors,
   pruneDismissedErrorSignatures,
 } from './state/outlineErrorDismissal';
 import {
@@ -73,33 +70,22 @@ type CourseOutlineContextData = {
     sectionId?: string,
     index?: number,
   ) => void;
-  // Intent-level drag handlers (PR 8 cleanup)
+
   previewSections: (nextSections: XBlock[]) => void;
   cancelReorderPreview: () => void;
   commitSectionReorder: (sectionListIds: string[]) => Promise<void>;
   commitSubsectionReorder: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => Promise<void>;
-  commitUnitReorder: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => Promise<void>;
+  commitUnitReorder: (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+  ) => Promise<void>;
 
-  // Mutation methods (PR 10)
-  deleteCurrentSelection: (selection: SelectionState) => Promise<void>;
-  duplicateCurrentSelection: (selection: SelectionState) => void;
-  configureCurrentSelection: (selection: SelectionState, variables: any) => void;
-  pasteClipboardContent: (parentLocator: string, subsectionId?: string, sectionId?: string) => void;
-  updateHighlightsForCurrentSelection: (selection: SelectionState, highlights: Record<string, string | false>) => void;
-  enableHighlightsEmails: () => Promise<void>;
-  changeVideoSharingOption: (value: string) => void;
-  dismissNotification: () => void;
   dismissError: (key: string) => void;
-  reindexCourse: () => Promise<void>;
-  setSavingStatus: (status: string) => void;
 
-  // Add-block mutation handlers
-  handleAddBlock: ReturnType<typeof useCreateCourseBlock>;
-  handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
-  // Action/menu target selection (separate from sidebar/card selection)
   actionTargetSelection?: SelectionState;
   setActionTargetSelection: React.Dispatch<React.SetStateAction<SelectionState | undefined>>;
-  // Modal state
   isDeleteModalOpen: boolean;
   openDeleteModal: () => void;
   closeDeleteModal: () => void;
@@ -109,37 +95,21 @@ type CourseOutlineContextData = {
   closePublishModal: () => void;
 };
 
-
-
 const CourseOutlineContext = createContext<CourseOutlineContextData | undefined>(undefined);
 
-export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode }) => {
-  // Query client for updating React Query cache after reorder
-  const queryClient = useQueryClient();
-
-  // Course ID from context (primary source)
-  const { courseId, openUnitPage } = useCourseAuthoringContext();
+export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode; }) => {
+  const { courseId } = useCourseAuthoringContext();
 
   // Dismissed error signatures: { [errorKey]: signatureAtTimeOfDismissal }
-  // Dismissal applies only while the current error's signature matches.
+  // Dismissal applies only while the current error's payload signature matches.
   const [dismissedErrorSignatures, setDismissedErrorSignatures] = useState<Record<string, string>>({});
-  // Reindex loading status (set by reindexCourse callback)
-  const [reindexLoadingStatus, setReindexLoadingStatus] = useState<string>(RequestStatus.IN_PROGRESS);
-  // Reindex error details (set by reindexCourse catch)
-  const [localReindexError, setLocalReindexError] = useState<any>(null);
-  // Local override for status bar (set by changeVideoSharingOption)
-  const [localStatusBarOverride, setLocalStatusBarOverride] = useState<Partial<CourseOutlineStatusBar>>({});
-  // Saving status (set by mutation helpers)
-  const [savingStatus, setSavingStatusState] = useState('');
 
-  // --- Status/query state (extracted hook) ---
   const {
     effectiveOutlineIndexData,
     sections,
     statusBarData,
     effectiveLoadingStatus,
     rawErrors,
-    effectiveErrors,
     courseActions,
     isCustomRelativeDatesActive,
     enableProctoredExams,
@@ -147,13 +117,13 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     createdOn,
   } = useOutlineStatusState({
     courseId,
-    reindexLoadingStatus,
-    localStatusBarOverride,
+    localStatusBarOverride: {} as Partial<CourseOutlineStatusBar>,
     dismissedErrorSignatures,
-    localReindexError,
   });
 
-  // --- Reorder state (extracted hook) ---
+  const savingStatus = useCourseOutlineSavingStatus(courseId);
+  const { reindexLoadingStatus: derivedReindexLoadingStatus, reindexError } = useCourseOutlineReindexStatus(courseId);
+
   const {
     visibleSections,
     previewSections: previewSectionsCallback,
@@ -166,7 +136,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     updateUnitOrderByIndex,
   } = useOutlineReorderState({ courseId, sections });
 
-  // --- Selection state ---
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
@@ -212,19 +181,42 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     }));
   }, []);
 
-  // Keep latest raw errors accessible in callbacks without re-creating them.
-  const rawErrorsRef = useRef<Record<string, any>>(rawErrors);
-  rawErrorsRef.current = rawErrors;
+  // Preserve reference when no reindex error to avoid unnecessary effect re-fires.
+  const mergedRawErrors = useMemo(() => {
+    if (reindexError != null) {
+      return { ...rawErrors, reindexApi: reindexError };
+    }
+    return rawErrors;
+  }, [rawErrors, reindexError]);
 
-  // Prune stale dismissals whenever raw errors change.
+  const mergedErrors = useMemo(() => {
+    return filterDismissedErrors(mergedRawErrors, dismissedErrorSignatures, computeErrorSignature);
+  }, [mergedRawErrors, dismissedErrorSignatures]);
+
+  const mergedLoadingStatus = useMemo(() => ({
+    ...effectiveLoadingStatus,
+    reIndexLoadingStatus: derivedReindexLoadingStatus,
+  }), [effectiveLoadingStatus, derivedReindexLoadingStatus]);
+
+  const rawErrorsRef = useRef<Record<string, any>>(mergedRawErrors);
+  rawErrorsRef.current = mergedRawErrors;
+
   // Drops entries where the error cleared or its payload changed,
   // so a new occurrence (even with the same payload) will show.
   useEffect(() => {
     setDismissedErrorSignatures(prev => {
-      const pruned = pruneDismissedErrorSignatures(rawErrors, prev);
+      const pruned = pruneDismissedErrorSignatures(mergedRawErrors, prev);
+      // Return prev (same reference) when pruned is semantically identical
+      // to avoid React re-render loops from `pruneDismissedErrorSignatures`
+      // always returning a new object literal.
+      const prevKeys = Object.keys(prev);
+      const prunedKeys = Object.keys(pruned);
+      if (prevKeys.length === prunedKeys.length && prevKeys.every(k => prev[k] === pruned[k])) {
+        return prev;
+      }
       return pruned;
     });
-  }, [rawErrors]);
+  }, [mergedRawErrors]);
 
   // Dismiss error by storing a signature of the current error payload.
   // The error stays hidden only as long as the payload signature matches.
@@ -242,41 +234,11 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     });
   }, []);
 
-  // --- Mutation methods (extracted hook) ---
-  const {
-    deleteCurrentSelection,
-    duplicateCurrentSelection,
-    configureCurrentSelection,
-    pasteClipboardContent,
-    updateHighlightsForCurrentSelection,
-    enableHighlightsEmails,
-    changeVideoSharingOption,
-    dismissNotification: handleDismissNotification,
-    reindexCourse,
-    setSavingStatus,
-  } = useOutlineMutations({
-    courseId,
-    effectiveOutlineIndexData,
-    queryClient,
-    setLocalStatusBarOverride,
-    setReindexLoadingStatus,
-    setLocalReindexError,
-    setSavingStatusState,
-  });
-
-  // --- Add-block actions (extracted hook) ---
-  const {
-    handleAddBlock,
-    handleAddAndOpenUnit,
-  } = useOutlineAddBlockActions({ courseId, openUnitPage });
-
-  // --- Action target selection (extracted hook) ---
   const {
     actionTargetSelection,
     setActionTargetSelection,
   } = useOutlineActionTargetState();
 
-  // --- Modal state (extracted hook) ---
   const {
     isDeleteModalOpen,
     openDeleteModal,
@@ -298,10 +260,10 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     courseActions,
     statusBarData,
     savingStatus,
-    errors: effectiveErrors,
-    loadingStatus: effectiveLoadingStatus,
-    isLoading: effectiveLoadingStatus.outlineIndexIsLoading,
-    isLoadingDenied: effectiveLoadingStatus.outlineIndexIsDenied,
+    errors: mergedErrors,
+    loadingStatus: mergedLoadingStatus,
+    isLoading: mergedLoadingStatus.outlineIndexIsLoading,
+    isLoadingDenied: mergedLoadingStatus.outlineIndexIsDenied,
     isCustomRelativeDatesActive,
     enableProctoredExams,
     enableTimedExams,
@@ -313,30 +275,14 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     selectContainer,
     clearSelection,
     openContainerInfo,
-    // Intent-level drag handlers
     previewSections: previewSectionsCallback,
     cancelReorderPreview,
     commitSectionReorder,
     commitSubsectionReorder,
     commitUnitReorder,
-    deleteCurrentSelection,
-    duplicateCurrentSelection,
-    configureCurrentSelection,
-    pasteClipboardContent,
-    updateHighlightsForCurrentSelection,
-    enableHighlightsEmails,
-    changeVideoSharingOption,
-    dismissNotification: handleDismissNotification,
     dismissError,
-    reindexCourse,
-    setSavingStatus,
-    // Add-block mutation handlers
-    handleAddBlock,
-    handleAddAndOpenUnit,
-    // Action/menu target selection
     actionTargetSelection,
     setActionTargetSelection,
-    // Modal state
     isDeleteModalOpen,
     openDeleteModal,
     closeDeleteModal,
@@ -354,8 +300,8 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     courseActions,
     statusBarData,
     savingStatus,
-    effectiveErrors,
-    effectiveLoadingStatus,
+    mergedErrors,
+    mergedLoadingStatus,
     isCustomRelativeDatesActive,
     enableProctoredExams,
     enableTimedExams,
@@ -372,24 +318,9 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     commitSectionReorder,
     commitSubsectionReorder,
     commitUnitReorder,
-    deleteCurrentSelection,
-    duplicateCurrentSelection,
-    configureCurrentSelection,
-    pasteClipboardContent,
-    updateHighlightsForCurrentSelection,
-    enableHighlightsEmails,
-    changeVideoSharingOption,
-    handleDismissNotification,
     dismissError,
-    reindexCourse,
-    setSavingStatus,
-    // Add-block mutation handlers
-    handleAddBlock,
-    handleAddAndOpenUnit,
-    // Action/menu target selection
     actionTargetSelection,
     setActionTargetSelection,
-    // Modal state
     isDeleteModalOpen,
     openDeleteModal,
     closeDeleteModal,
@@ -414,6 +345,5 @@ export function useCourseOutlineContext(): CourseOutlineContextData {
   return ctx;
 }
 
-// Compatibility aliases for gradual migration
 export const CourseOutlineStateProvider = CourseOutlineProvider;
 export const useCourseOutlineState = useCourseOutlineContext;

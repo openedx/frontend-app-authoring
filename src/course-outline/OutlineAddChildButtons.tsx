@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
@@ -27,10 +29,9 @@ import messages from './messages';
 const AddPlaceholder = ({ parentLocator }: { parentLocator?: string; }) => {
   const intl = useIntl();
   const { isCurrentFlowOn, currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
-  const {
-    handleAddBlock,
-    handleAddAndOpenUnit,
-  } = useCourseOutlineContext();
+  const { courseId, openUnitPage } = useCourseAuthoringContext();
+  const handleAddBlock = useCreateCourseBlock(courseId);
+  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
 
   if (!isCurrentFlowOn || currentFlow?.parentLocator !== parentLocator) {
     return null;
@@ -97,7 +98,10 @@ const OutlineAddChildButtons = ({
   // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
-  const { courseUsageKey, handleAddBlock, handleAddAndOpenUnit } = useCourseOutlineContext();
+  const { courseUsageKey } = useCourseOutlineContext();
+  const { courseId, openUnitPage } = useCourseAuthoringContext();
+  const handleAddBlock = useCreateCourseBlock(courseId);
+  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const { startCurrentFlow, openContainerInfoSidebar } = useOutlineSidebarContext();
   let messageMap = {
     newButton: messages.newUnitButton,

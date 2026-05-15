@@ -64,7 +64,6 @@ import {
 } from './drag-helper/utils';
 
 let axiosMock: import('axios-mock-adapter/types');
-let store;
 let queryClient;
 const mockPathname = '/foo-bar';
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
@@ -154,7 +153,6 @@ describe('<CourseOutline />', () => {
       hash: '',
     });
 
-    store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
     queryClient = mocks.queryClient;
     axiosMock
@@ -196,7 +194,7 @@ describe('<CourseOutline />', () => {
 
   it('renders sections from React Query without pre-loading Redux (page refresh scenario)', async () => {
     // Create fresh mock state — no pre-loaded Redux data, empty React Query cache.
-    ({ reduxStore: store, axiosMock, queryClient } = initializeMocks());
+    ({ axiosMock, queryClient } = initializeMocks());
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexMock);
@@ -233,13 +231,13 @@ describe('<CourseOutline />', () => {
 
     try {
       await createDiscussionsTopics(courseId);
-    } catch (e) {
+    } catch {
       expect(axiosMock.history.post.length).toBeGreaterThan(0);
     }
   });
 
   it('handles course outline fetch api errors', async () => {
-    ({ reduxStore: store, axiosMock } = initializeMocks());
+    ({ axiosMock } = initializeMocks());
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(500, 'some internal error');
@@ -339,7 +337,7 @@ describe('<CourseOutline />', () => {
     const reindexButton = await findByTestId('course-reindex');
     await act(async () => fireEvent.click(reindexButton));
 
-    expect(await findByText(('"reindex failed"'))).toBeInTheDocument();
+    expect(await findByText('"reindex failed"')).toBeInTheDocument();
   });
 
   it('check that new section list is saved when dragged', async () => {
@@ -369,14 +367,20 @@ describe('<CourseOutline />', () => {
     // Verify API called with correct new order
     const putData = JSON.parse(axiosMock.history.put[0].data);
     expect(putData.children).toEqual([
-      sectionIds[1], sectionIds[0], sectionIds[2], sectionIds[3],
+      sectionIds[1],
+      sectionIds[0],
+      sectionIds[2],
+      sectionIds[3],
     ]);
 
     // Verify React Query cache was updated with new order
     const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
     const cachedChildren = cachedData?.courseStructure?.childInfo?.children;
     expect(cachedChildren.map(s => s.id)).toEqual([
-      sectionIds[1], sectionIds[0], sectionIds[2], sectionIds[3],
+      sectionIds[1],
+      sectionIds[0],
+      sectionIds[2],
+      sectionIds[3],
     ]);
   });
 
@@ -683,7 +687,9 @@ describe('<CourseOutline />', () => {
       .reply(204);
     fireEvent.click(dismissBtn);
 
-    expect(axiosMock.history.delete.length).toBe(1);
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toBe(1);
+    });
   });
 
   it('check edit title works for section, subsection and unit', async () => {
@@ -886,9 +892,12 @@ describe('<CourseOutline />', () => {
       const updatedOutlineChildren = (() => {
         if (elementName === 'section') {
           // For section duplication, append the new section (with updated id).
-          const dupSection = { ...courseOutlineIndexMock.courseStructure.childInfo.children.find(
-            (s) => s.id === item.id,
-          ), id: duplicatedItemId };
+          const dupSection = {
+            ...courseOutlineIndexMock.courseStructure.childInfo.children.find(
+              (s) => s.id === item.id,
+            ),
+            id: duplicatedItemId,
+          };
           return [...courseOutlineIndexMock.courseStructure.childInfo.children, dupSection];
         }
         // For unit/subsection, replace the mutated section in place.
@@ -2145,9 +2154,11 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(moveUpButton));
     await waitFor(() => {
       const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
-      const firstSubUnits = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[0]?.childInfo?.children || [];
+      const firstSubUnits =
+        cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[0]?.childInfo?.children || [];
       expect(firstSubUnits[firstSubUnits.length - 1]?.id).toBe(unit.id);
-      const secondSubUnits = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[1]?.childInfo?.children || [];
+      const secondSubUnits =
+        cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[1]?.childInfo?.children || [];
       expect(secondSubUnits.length).toBe(subsection.childInfo.children.length - 1);
     });
   });
@@ -2195,7 +2206,8 @@ describe('<CourseOutline />', () => {
       const firstSectionChildren = cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children || [];
       const firstSectionLastSubUnits = firstSectionChildren[firstSectionChildren.length - 1]?.childInfo?.children || [];
       expect(firstSectionLastSubUnits[firstSectionLastSubUnits.length - 1]?.id).toBe(unit.id);
-      const secondSubUnits = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[0]?.childInfo?.children || [];
+      const secondSubUnits =
+        cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[0]?.childInfo?.children || [];
       expect(secondSubUnits.length).toBe(subsection.childInfo.children.length - 1);
     });
   });
@@ -2239,9 +2251,11 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(moveDownButton));
     await waitFor(() => {
       const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
-      const firstSubUnits = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[0]?.childInfo?.children || [];
+      const firstSubUnits =
+        cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[0]?.childInfo?.children || [];
       expect(firstSubUnits.length).toBe(firstSubsection.childInfo.children.length - 1);
-      const secondSubUnits = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[1]?.childInfo?.children || [];
+      const secondSubUnits =
+        cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[1]?.childInfo?.children || [];
       expect(secondSubUnits[0]?.id).toBe(unit.id);
     });
   });
@@ -2289,9 +2303,11 @@ describe('<CourseOutline />', () => {
     await waitFor(() => {
       const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
       const secondSectionChildren = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children || [];
-      const secondSectionLastSubUnits = secondSectionChildren[secondSectionChildren.length - 1]?.childInfo?.children || [];
+      const secondSectionLastSubUnits = secondSectionChildren[secondSectionChildren.length - 1]?.childInfo?.children ||
+        [];
       expect(secondSectionLastSubUnits.length).toBe(secondSectionLastSubsection.childInfo.children.length - 1);
-      const thirdSubUnits = cachedData?.courseStructure?.childInfo?.children[2]?.childInfo?.children[0]?.childInfo?.children || [];
+      const thirdSubUnits =
+        cachedData?.courseStructure?.childInfo?.children[2]?.childInfo?.children[0]?.childInfo?.children || [];
       expect(thirdSubUnits[0]?.id).toBe(unit.id);
     });
   });
@@ -2637,7 +2653,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('sets status to DENIED when API responds with 403', async () => {
-    ({ reduxStore: store, axiosMock } = initializeMocks());
+    ({ axiosMock } = initializeMocks());
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(403);

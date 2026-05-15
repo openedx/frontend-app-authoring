@@ -66,10 +66,8 @@ const sampleOutlineIndexData = {
 function defaultInput() {
   return {
     courseId: 'course-v1:test+course+2025',
-    reindexLoadingStatus: RequestStatus.IN_PROGRESS,
     localStatusBarOverride: {},
     dismissedErrorSignatures: {},
-    localReindexError: null,
   };
 }
 
@@ -177,13 +175,11 @@ describe('useOutlineStatusState', () => {
 
       const { result } = renderStatusHook({
         dismissedErrorSignatures: { outlineIndexApi: 'stub', courseLaunchApi: 'stub' },
-        localReindexError: { type: 'serverError', data: 'reindex failed' } as any,
-        // No matching signature for reindexApi so it stays visible.
       });
 
       expect(result.current.effectiveErrors.outlineIndexApi).toBeNull();
       expect(result.current.effectiveErrors.courseLaunchApi).toBeNull();
-      expect(result.current.effectiveErrors.reindexApi).toEqual({ type: 'serverError', data: 'reindex failed' });
+      expect(result.current.effectiveErrors.reindexApi).toBeNull();
       expect(result.current.effectiveErrors.sectionLoadingApi).toBeNull();
     });
 

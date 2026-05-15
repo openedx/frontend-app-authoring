@@ -28,7 +28,7 @@ import { MultiLibraryProvider } from '@src/library-authoring/common/context/Mult
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
 import AlertMessage from '@src/generic/alert-message';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData, useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import messages from './messages';
 
@@ -58,9 +58,10 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
     courseUsageKey,
     lastEditableSection,
     lastEditableSubsection,
-    handleAddBlock,
-    handleAddAndOpenUnit,
   } = useCourseOutlineContext();
+  const { courseId, openUnitPage } = useCourseAuthoringContext();
+  const handleAddBlock = useCreateCourseBlock(courseId);
+  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const {
     currentFlow,
     stopCurrentFlow,
@@ -220,8 +221,9 @@ const ShowLibraryContent = () => {
     currentItemData,
     lastEditableSection,
     lastEditableSubsection,
-    handleAddBlock,
   } = useCourseOutlineContext();
+  const { courseId: libCourseId } = useCourseAuthoringContext();
+  const handleAddBlock = useCreateCourseBlock(libCourseId);
   const {
     isCurrentFlowOn,
     currentFlow,

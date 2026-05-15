@@ -155,10 +155,12 @@ describe('AddSidebar', () => {
     outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
     currentItemData = null;
     lastEditableSection = outlineChildren[outlineChildren.length - 1] as any;
-    lastEditableSubsection = lastEditableSection ? {
-      data: lastEditableSection.childInfo.children[lastEditableSection.childInfo.children.length - 1] as any,
-      sectionId: lastEditableSection.id,
-    } : undefined;
+    lastEditableSubsection = lastEditableSection ?
+      {
+        data: lastEditableSection.childInfo.children[lastEditableSection.childInfo.children.length - 1] as any,
+        sectionId: lastEditableSection.id,
+      } :
+      undefined;
   });
 
   it('renders the AddSidebar component without any errors', async () => {

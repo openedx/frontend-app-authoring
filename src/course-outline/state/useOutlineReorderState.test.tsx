@@ -55,7 +55,7 @@ const sections: any[] = [
 
 let queryClient: QueryClient;
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({ children }: { children: React.ReactNode; }) => (
   <QueryClientProvider client={queryClient}>
     {children}
   </QueryClientProvider>
@@ -296,9 +296,12 @@ describe('useOutlineReorderState', () => {
 
       const [, newSubsections] = moveSubsection(
         sectionsWithSubs.map((s: any) => ({
-          ...s, childInfo: { ...s.childInfo, children: [...s.childInfo.children] },
+          ...s,
+          childInfo: { ...s.childInfo, children: [...s.childInfo.children] },
         })),
-        0, 1, 0,
+        0,
+        1,
+        0,
       );
       const expectedSubIds = newSubsections.map((s: any) => s.id);
 
@@ -369,9 +372,13 @@ describe('useOutlineReorderState', () => {
 
       const [, newUnits] = moveUnit(
         sectionsWithUnits.map((s: any) => ({
-          ...s, childInfo: { ...s.childInfo, children: [...s.childInfo.children] },
+          ...s,
+          childInfo: { ...s.childInfo, children: [...s.childInfo.children] },
         })),
-        0, 0, 1, 0,
+        0,
+        0,
+        1,
+        0,
       );
       const expectedUnitIds = newUnits.map((u: any) => u.id);
 

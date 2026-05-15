@@ -10,7 +10,7 @@ type DndHandlers = {
   onDragEnd: (e: any) => void;
   onDragCancel: () => void;
 };
-const mockDndHandlers: { current: DndHandlers | null } = { current: null };
+const mockDndHandlers: { current: DndHandlers | null; } = { current: null };
 
 jest.mock('@dnd-kit/core', () => {
   const actual = jest.requireActual('@dnd-kit/core');

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarTitle } from '@src/generic/sidebar';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -48,13 +48,22 @@ export const SubsectionSidebar = () => {
     }
   }, [currentTabKey, setCurrentTabKey]);
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
-  const { openUnlinkModal } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const duplicateMutation = useDuplicateItem(courseId);
+  const duplicateCurrentSelection = (selection) => {
+    if (!selection?.currentId || !selection.sectionId) { return; }
+    duplicateMutation.mutate({
+      itemId: selection.currentId,
+      parentId: selection.sectionId,
+      sectionId: selection.sectionId,
+      subsectionId: selection.subsectionId,
+    });
+  };
   const {
     openPublishModal,
     openDeleteModal,
     sections,
     updateSubsectionOrderByIndex,
-    duplicateCurrentSelection,
   } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
 

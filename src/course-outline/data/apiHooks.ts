@@ -19,10 +19,14 @@ import { useMutationWithProcessingNotification } from '@src/generic/processing-n
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { useToastContext } from '@src/generic/toast-context';
 import { ParentIds } from '@src/generic/types';
+import { getConfig } from '@edx/frontend-platform';
+import { RequestStatus } from '@src/data/constants';
+import { getErrorDetails } from '../utils/getErrorDetails';
 import {
   QueryClient,
   skipToken,
   useMutation,
+  useMutationState,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
@@ -30,15 +34,19 @@ import {
   createCourseXblock,
   type CreateCourseXBlockType,
   deleteCourseItem,
+  dismissNotification,
   editItemDisplayName,
+  enableCourseHighlightsEmails,
   getCourseDetails,
   getCourseItem,
   publishCourseItem,
   configureCourseSection,
   configureCourseSubsection,
   configureCourseUnit,
+  restartIndexingOnCourse,
   setCourseItemOrderList,
   setSectionOrderList,
+  setVideoSharingOption,
   updateCourseSectionHighlights,
   duplicateCourseItem,
   pasteBlock,
@@ -75,6 +83,14 @@ export const courseOutlineQueryKeys = {
     'status',
     { taskId },
   ],
+};
+
+export const courseOutlineMutationKeys = {
+  all: ['courseOutline', 'mutations'],
+  saving: (courseId?: string) => [...courseOutlineMutationKeys.all, courseId, 'saving'],
+  savingOperation: (courseId: string | undefined, operation: string) =>
+    [...courseOutlineMutationKeys.saving(courseId), operation],
+  reindex: (courseId?: string) => [...courseOutlineMutationKeys.all, courseId, 'reindex'],
 };
 
 type ScrollState = {
@@ -115,7 +131,7 @@ const appendSectionToOutlineIndex = (
   newSection: XBlockBase,
 ) => {
   queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-    if (!old) return old;
+    if (!old) { return old; }
     return {
       ...old,
       courseStructure: {
@@ -136,7 +152,7 @@ export const replaceSectionInOutlineIndex = (
   sections: Record<string, XBlock>,
 ) => {
   const old = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
-  if (!old?.courseStructure?.childInfo?.children) return;
+  if (!old?.courseStructure?.childInfo?.children) { return; }
   let hadMissingChildInfo = false;
   const updated = {
     ...old,
@@ -146,7 +162,7 @@ export const replaceSectionInOutlineIndex = (
         ...old.courseStructure.childInfo,
         children: old.courseStructure.childInfo.children.map(
           (s: any) => {
-            if (!(s.id in sections)) return s;
+            if (!(s.id in sections)) { return s; }
             const replacement = sections[s.id];
             // Skip replacement if missing childInfo.children, invalidate as fallback
             if (!replacement?.childInfo?.children) {
@@ -173,7 +189,7 @@ const insertDuplicatedSectionInOutlineIndex = (
   duplicatedSection: XBlockBase,
 ) => {
   queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-    if (!old?.courseStructure?.childInfo?.children) return old;
+    if (!old?.courseStructure?.childInfo?.children) { return old; }
     return {
       ...old,
       courseStructure: {
@@ -212,6 +228,7 @@ export const useCreateCourseBlock = (
   const queryClient = useQueryClient();
   const { setData } = useScrollState(courseKey);
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseKey, 'createBlock'),
     mutationFn: (variables: CreateCourseXBlockMutationProps) => createCourseXblock(variables),
     onSuccess: async (data: { locator: string; }, variables) => {
       await callback?.(data.locator, variables.parentLocator);
@@ -294,6 +311,7 @@ export const useCourseDetails = (courseId?: string, enabled: boolean = true) => 
 export const useUpdateCourseBlockName = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'updateName'),
     mutationFn: (
       variables: {
         itemId: string;
@@ -308,9 +326,10 @@ export const useUpdateCourseBlockName = (courseId: string) => {
   });
 };
 
-export const usePublishCourseItem = () => {
+export const usePublishCourseItem = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'publish'),
     mutationFn: (
       variables: {
         itemId: string;
@@ -323,24 +342,99 @@ export const usePublishCourseItem = () => {
   });
 };
 
-export const useDeleteCourseItem = () => {
+export const useDeleteCourseItem = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'delete'),
     mutationFn: (
       variables: {
         itemId: string;
       } & ParentIds,
     ) => deleteCourseItem(variables.itemId),
-    onSettled: (_data, _err, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      // Optimistic outline-index cache update: remove deleted item from the tree
+      const itemId = variables.itemId;
+      const category = getBlockType(itemId);
+      if (courseId && ['chapter', 'sequential', 'vertical'].includes(category)) {
+        queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+          if (!old?.courseStructure?.childInfo?.children) return old;
+          const children = [...old.courseStructure.childInfo.children];
+          if (category === 'chapter') {
+            return {
+              ...old,
+              courseStructure: {
+                ...old.courseStructure,
+                childInfo: {
+                  ...old.courseStructure.childInfo,
+                  children: children.filter((s: any) => s.id !== itemId),
+                },
+              },
+            };
+          }
+          if (category === 'sequential') {
+            return {
+              ...old,
+              courseStructure: {
+                ...old.courseStructure,
+                childInfo: {
+                  ...old.courseStructure.childInfo,
+                  children: children.map((s: any) => {
+                    if (s.id !== variables.sectionId) return s;
+                    return {
+                      ...s,
+                      childInfo: {
+                        ...s.childInfo,
+                        children: (s.childInfo?.children || []).filter((sub: any) => sub.id !== itemId),
+                      },
+                    };
+                  }),
+                },
+              },
+            };
+          }
+          if (category === 'vertical') {
+            return {
+              ...old,
+              courseStructure: {
+                ...old.courseStructure,
+                childInfo: {
+                  ...old.courseStructure.childInfo,
+                  children: children.map((s: any) => {
+                    if (s.id !== variables.sectionId) return s;
+                    return {
+                      ...s,
+                      childInfo: {
+                        ...s.childInfo,
+                        children: (s.childInfo?.children || []).map((sub: any) => {
+                          if (sub.id !== variables.subsectionId) return sub;
+                          return {
+                            ...sub,
+                            childInfo: {
+                              ...sub.childInfo,
+                              children: (sub.childInfo?.children || []).filter((u: any) => u.id !== itemId),
+                            },
+                          };
+                        }),
+                      },
+                    };
+                  }),
+                },
+              },
+            };
+          }
+          return old;
+        });
+      }
     },
   });
 };
 
-export const useConfigureSection = () => {
+export const useConfigureSection = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'configureSection'),
     mutationFn: (variables: ConfigureSectionData & ParentIds) => configureCourseSection(variables),
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({
@@ -351,9 +445,10 @@ export const useConfigureSection = () => {
   });
 };
 
-export const useConfigureSubsection = () => {
+export const useConfigureSubsection = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'configureSubsection'),
     mutationFn: (
       variables: Partial<ConfigureSubsectionData> & Pick<ConfigureSubsectionData, 'itemId'> & ParentIds,
     ) => configureCourseSubsection(variables),
@@ -383,11 +478,12 @@ export const useConfigureSubsection = () => {
   });
 };
 
-export const useConfigureUnit = () => {
+export const useConfigureUnit = (courseId?: string) => {
   const queryClient = useQueryClient();
   const { showToast, closeToast } = useToastContext();
   // We are not using useMutationWithProcessingNotification to set custom processing notification message
   return useMutation({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'configureUnit'),
     mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
     onMutate: (variables) => {
       const msg = getNotificationMessage(variables.type, variables.isVisibleToStaffOnly, true);
@@ -402,9 +498,10 @@ export const useConfigureUnit = () => {
   });
 };
 
-export const useUpdateCourseSectionHighlights = () => {
+export const useUpdateCourseSectionHighlights = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'highlights'),
     mutationFn: (
       variables: {
         sectionId: string;
@@ -424,6 +521,7 @@ export const useDuplicateItem = (courseKey: string) => {
   const queryClient = useQueryClient();
   const { setData } = useScrollState(courseKey);
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseKey, 'duplicate'),
     mutationFn: (
       variables: {
         itemId: string;
@@ -454,8 +552,9 @@ export const usePasteFileNotices = createGlobalState<StaticFileNotices>(
   },
 );
 
-export const useReorderUnits = (courseId: string) => {
+export const useReorderUnits = (courseId?: string) => {
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'reorderUnits'),
     mutationFn: (variables: {
       sectionId: string;
       prevSectionId?: string;
@@ -467,12 +566,14 @@ export const useReorderUnits = (courseId: string) => {
 
 export const useReorderSections = (courseId: string) => {
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'reorderSections'),
     mutationFn: (sectionListIds: string[]) => setSectionOrderList(courseId, sectionListIds),
   });
 };
 
-export const useReorderSubsections = (courseId: string) => {
+export const useReorderSubsections = (courseId?: string) => {
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'reorderSubsections'),
     mutationFn: (variables: {
       sectionId: string;
       prevSectionId?: string;
@@ -486,6 +587,7 @@ export const usePasteItem = (courseId?: string) => {
   const { setData: setScrollState } = useScrollState(courseId);
   const { setData } = usePasteFileNotices(courseId);
   return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'paste'),
     mutationFn: (
       variables: {
         parentLocator: string;
@@ -500,3 +602,119 @@ export const usePasteItem = (courseId?: string) => {
     },
   });
 };
+
+/**
+ * Set video sharing option for a course.
+ * Updates the outline index cache optimistically on success.
+ */
+export function useSetVideoSharingOption(courseId: string) {
+  const queryClient = useQueryClient();
+  return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'videoSharing'),
+    mutationFn: (value: string) => setVideoSharingOption(courseId, value),
+    onSuccess: (_data, value) => {
+      // Update outline index cache with new video sharing option
+      queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+        if (!old) { return old; }
+        return {
+          ...old,
+          statusBar: { ...old.statusBar, videoSharingOptions: value },
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+    },
+  });
+}
+
+/**
+ * Enable course highlights emails for a course.
+ * Invalidates the outline index cache on success.
+ */
+export function useEnableCourseHighlightsEmails(courseId: string) {
+  const queryClient = useQueryClient();
+  return useMutationWithProcessingNotification({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'highlightsEmail'),
+    mutationFn: () => enableCourseHighlightsEmails(courseId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+    },
+  });
+}
+
+/**
+ * Dismiss a notification for a course.
+ * Uses bare useMutation (no processing toast) to match existing behavior.
+ */
+export function useDismissNotification(courseId: string) {
+  return useMutation({
+    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'dismissNotification'),
+    mutationFn: (dismissUrl: string) => {
+      const url = `${getConfig().STUDIO_BASE_URL}${dismissUrl}`;
+      return dismissNotification(url);
+    },
+  });
+}
+
+/**
+ * Restart indexing on a course (reindex).
+ * Uses bare useMutation (no processing toast) since reindex status is tracked
+ * via useCourseOutlineReindexStatus.
+ */
+export function useRestartIndexingOnCourse(courseId: string) {
+  return useMutation({
+    mutationKey: courseOutlineMutationKeys.reindex(courseId),
+    mutationFn: (reindexLink: string) => restartIndexingOnCourse(reindexLink),
+  });
+}
+
+/**
+ * Aggregate save status across all saving mutations for a course.
+ * Priority: pending > latest completed by submittedAt > idle => ''
+ */
+export function useCourseOutlineSavingStatus(courseId?: string): string {
+  const mutations = useMutationState({
+    filters: { mutationKey: courseOutlineMutationKeys.saving(courseId) },
+  });
+  // Pending wins
+  const hasPending = mutations.some(m => m.status === 'pending');
+  if (hasPending) { return RequestStatus.PENDING; }
+  // Find latest by submittedAt among completed
+  let latest: { status: 'success' | 'error'; submittedAt: number } | null = null;
+  for (const m of mutations) {
+    if (m.status !== 'success' && m.status !== 'error') { continue; }
+    const t = m.submittedAt ?? 0;
+    if (t > 0 && (!latest || t > latest.submittedAt)) {
+      latest = { status: m.status as 'success' | 'error', submittedAt: t };
+    }
+  }
+  if (!latest) { return ''; }
+  return latest.status === 'error' ? RequestStatus.FAILED : RequestStatus.SUCCESSFUL;
+}
+
+/**
+ * Derive reindex loading status and error from reindex mutations.
+ */
+export function useCourseOutlineReindexStatus(courseId?: string): {
+  reindexLoadingStatus: string;
+  reindexError: any;
+} {
+  const mutations = useMutationState({
+    filters: { mutationKey: courseOutlineMutationKeys.reindex(courseId) },
+  });
+  const latest = mutations[mutations.length - 1]; // most recent submission
+  const status = latest?.status;
+  if (status === 'pending') {
+    return { reindexLoadingStatus: RequestStatus.IN_PROGRESS, reindexError: null };
+  }
+  if (status === 'error') {
+    return {
+      reindexLoadingStatus: RequestStatus.FAILED,
+      reindexError: getErrorDetails(latest.error),
+    };
+  }
+  if (status === 'success') {
+    return { reindexLoadingStatus: RequestStatus.SUCCESSFUL, reindexError: null };
+  }
+  // idle / no mutations — preserve existing behavior (IN_PROGRESS)
+  return { reindexLoadingStatus: RequestStatus.IN_PROGRESS, reindexError: null };
+}

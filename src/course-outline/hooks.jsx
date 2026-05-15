@@ -9,15 +9,27 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from './CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
-import { ContainerType } from '@src/generic/key-utils';
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from './constants';
+import {
+  useCreateCourseBlock,
+  useDeleteCourseItem,
+  useConfigureSection,
+  useConfigureSubsection,
+  useConfigureUnit,
+  usePasteItem,
+  useUpdateCourseSectionHighlights,
+  useSetVideoSharingOption,
+  useEnableCourseHighlightsEmails,
+  useDismissNotification,
+  useRestartIndexingOnCourse,
+} from './data/apiHooks';
 
-const useCourseOutline = ({ courseId }) => {
-  const { currentUnlinkModalData, closeUnlinkModal } = useCourseAuthoringContext();
+const useCourseOutline = () => {
+  const { currentUnlinkModalData, closeUnlinkModal, courseId } = useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
   const {
-    handleAddBlock,
     isDeleteModalOpen,
     openDeleteModal,
     closeDeleteModal,
@@ -28,17 +40,6 @@ const useCourseOutline = ({ courseId }) => {
     courseActions,
     isCustomRelativeDatesActive,
     errors,
-    deleteCurrentSelection,
-    duplicateCurrentSelection,
-    configureCurrentSelection,
-    pasteClipboardContent: pasteViaState,
-    updateHighlightsForCurrentSelection,
-    enableHighlightsEmails,
-    changeVideoSharingOption,
-    dismissNotification,
-    reindexCourse,
-    setSavingStatus,
-    // Action target selection (aliased for backward compat)
     actionTargetSelection: currentSelection,
     setActionTargetSelection: setCurrentSelection,
   } = useCourseOutlineContext();
@@ -57,6 +58,18 @@ const useCourseOutline = ({ courseId }) => {
   const { outlineIndexIsLoading, outlineIndexIsDenied, reIndexLoadingStatus } = loadingStatus;
   const genericSavingStatus = useSelector(getGenericSavingStatus);
 
+  const deleteMutation = useDeleteCourseItem(courseId);
+  const configureSectionMutation = useConfigureSection(courseId);
+  const configureSubsectionMutation = useConfigureSubsection(courseId);
+  const configureUnitMutation = useConfigureUnit(courseId);
+  const pasteMutation = usePasteItem(courseId);
+  const highlightsMutation = useUpdateCourseSectionHighlights(courseId);
+  const enableHighlightsEmailsMutation = useEnableCourseHighlightsEmails(courseId);
+  const videoSharingMutation = useSetVideoSharingOption(courseId);
+  const dismissNotificationMutation = useDismissNotification(courseId);
+  const reindexMutation = useRestartIndexingOnCourse(courseId);
+  const handleAddBlock = useCreateCourseBlock(courseId);
+
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);
   const [isDisabledReindexButton, setDisableReindexButton] = useState(false);
@@ -66,47 +79,109 @@ const useCourseOutline = ({ courseId }) => {
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
-  const handlePasteClipboardClick = (parentLocator, subsectionId, sectionId) => {
-    pasteViaState(parentLocator, subsectionId, sectionId);
-  };
-
-  const headerNavigationsActions = {
-    handleNewSection: async () => {
-      // istanbul ignore next - we are using this for back compability with the plugin slot. we don't call it anymore.
-      await handleAddBlock.mutateAsync({
-        type: ContainerType.Chapter,
-        parentLocator: courseStructure?.id,
-        displayName: COURSE_BLOCK_NAMES.chapter.name,
-      });
-    },
-    handleReIndex: () => {
-      setDisableReindexButton(true);
-      setShowSuccessAlert(false);
-      reindexCourse().then(() => {
-        setDisableReindexButton(false);
-      });
-    },
-    handleExpandAll: () => {
-      setSectionsExpanded((prevState) => !prevState);
-    },
-    lmsLink,
-  };
-
   const handleDeleteItemSubmit = async () => {
-    await deleteCurrentSelection(currentSelection);
+    if (!currentSelection?.currentId) { return; }
+    const category = getBlockType(currentSelection.currentId);
+    switch (category) {
+      case 'chapter':
+        await deleteMutation.mutateAsync({ itemId: currentSelection.currentId });
+        break;
+      case 'sequential':
+        await deleteMutation.mutateAsync({
+          itemId: currentSelection.currentId,
+          sectionId: currentSelection.sectionId,
+        });
+        break;
+      case 'vertical':
+        await deleteMutation.mutateAsync({
+          itemId: currentSelection.currentId,
+          subsectionId: currentSelection.subsectionId,
+          sectionId: currentSelection.sectionId,
+        });
+        break;
+      default:
+        throw new Error(`Unrecognized category ${category}`);
+    }
     closeDeleteModal();
     if (selectedContainerState?.currentId === currentSelection?.currentId) {
       clearSelection();
     }
   };
 
+  const configureCurrentSelection = (selection, variables) => {
+    if (!selection?.currentId) { return; }
+    const category = getBlockType(selection.currentId);
+    switch (category) {
+      case 'chapter':
+        configureSectionMutation.mutate({ sectionId: selection.sectionId, ...variables });
+        break;
+      case 'sequential':
+        configureSubsectionMutation.mutate({ itemId: selection.currentId, sectionId: selection.sectionId, ...variables });
+        break;
+      case 'vertical':
+        configureUnitMutation.mutate({ unitId: selection.currentId, sectionId: selection.sectionId, ...variables });
+        break;
+      default:
+        throw new Error('Unsupported block type');
+    }
+  };
+
+  const handlePasteClipboardClick = (parentLocator, subsectionId, sectionId) => {
+    pasteMutation.mutate({ parentLocator, subsectionId, sectionId });
+  };
+
   const handleEnableHighlightsSubmit = () => {
-    enableHighlightsEmails();
+    enableHighlightsEmailsMutation.mutate();
     closeEnableHighlightsModal();
   };
 
-  const handleInternetConnectionFailed = () => {
-    setSavingStatus(RequestStatus.FAILED);
+  const handleVideoSharingOptionChange = (value) => {
+    videoSharingMutation.mutate(value);
+  };
+
+  const handleDismissNotification = async () => {
+    const dismissUrl = outlineIndexData?.notificationDismissUrl;
+    if (dismissUrl) {
+      try {
+        await dismissNotificationMutation.mutateAsync(dismissUrl);
+      } catch {
+        // Error handled via mutation derived state
+      }
+    }
+  };
+
+  const reindexCourse = async () => {
+    const link = outlineIndexData?.reindexLink;
+    if (!link) { return; }
+    try {
+      await reindexMutation.mutateAsync(link);
+    } catch {
+      // Error handled via useCourseOutlineReindexStatus mutation state
+    }
+  };
+
+  const headerNavigationsActions = {
+    handleNewSection: async () => {
+      // istanbul ignore next - back compat with plugin slot
+      await handleAddBlock.mutateAsync({
+        type: ContainerType.Chapter,
+        parentLocator: courseStructure?.id,
+        displayName: COURSE_BLOCK_NAMES.chapter.name,
+      });
+    },
+    handleReIndex: async () => {
+      setDisableReindexButton(true);
+      setShowSuccessAlert(false);
+      try {
+        await reindexCourse();
+      } finally {
+        setDisableReindexButton(false);
+      }
+    },
+    handleExpandAll: () => {
+      setSectionsExpanded((prevState) => !prevState);
+    },
+    lmsLink,
   };
 
   const handleOpenHighlightsModal = (section) => {
@@ -118,13 +193,14 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleHighlightsFormSubmit = (highlights) => {
-    updateHighlightsForCurrentSelection(currentSelection, highlights);
+    if (!currentSelection?.currentId) { return; }
+    const dataToSend = Object.values(highlights).filter(Boolean);
+    highlightsMutation.mutate({ sectionId: currentSelection.currentId, highlights: dataToSend });
     closeHighlightsModal();
   };
 
   const handleConfigureModalClose = () => {
     closeConfigureModal();
-    // reset the currentSelection?.current so the ConfigureModal's state is also reset
     setCurrentSelection(undefined);
   };
 
@@ -151,14 +227,6 @@ const useCourseOutline = ({ courseId }) => {
   const handleConfigureItemSubmit = (variables) => {
     configureCurrentSelection(currentSelection, variables);
     handleConfigureModalClose();
-  };
-
-  const handleVideoSharingOptionChange = (value) => {
-    changeVideoSharingOption(value);
-  };
-
-  const handleDismissNotification = () => {
-    dismissNotification();
   };
 
   useEffect(() => {
@@ -188,7 +256,6 @@ const useCourseOutline = ({ courseId }) => {
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
     isInternetConnectionAlertFailed: isSavingStatusFailed,
-    handleInternetConnectionFailed,
     handleOpenHighlightsModal,
     isHighlightsModalOpen,
     closeHighlightsModal,
@@ -197,9 +264,7 @@ const useCourseOutline = ({ courseId }) => {
     closeDeleteModal,
     openDeleteModal,
     handleDeleteItemSubmit,
-    handleDuplicateSectionSubmit: () => duplicateCurrentSelection(currentSelection),
-    handleDuplicateSubsectionSubmit: () => duplicateCurrentSelection(currentSelection),
-    handleDuplicateUnitSubmit: () => duplicateCurrentSelection(currentSelection),
+
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,

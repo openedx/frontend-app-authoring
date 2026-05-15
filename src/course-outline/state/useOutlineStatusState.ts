@@ -40,10 +40,8 @@ const DEFAULT_COURSE_ACTIONS: XBlockActions = {
 
 interface UseOutlineStatusStateInput {
   courseId: string;
-  reindexLoadingStatus: string;
   localStatusBarOverride: Partial<CourseOutlineStatusBar>;
   dismissedErrorSignatures: Record<string, string>;
-  localReindexError: any;
 }
 
 export interface UseOutlineStatusStateOutput {
@@ -68,10 +66,8 @@ export interface UseOutlineStatusStateOutput {
 
 export function useOutlineStatusState({
   courseId,
-  reindexLoadingStatus,
   localStatusBarOverride,
   dismissedErrorSignatures,
-  localReindexError,
 }: UseOutlineStatusStateInput): UseOutlineStatusStateOutput {
   // Mount outline index query from React Query (primary source)
   const outlineIndexQuery = useCourseOutlineIndex(courseId);
@@ -123,10 +119,10 @@ export function useOutlineStatusState({
   const effectiveLoadingStatus = useMemo(() => ({
     outlineIndexIsLoading: outlineIndexIsPending,
     outlineIndexIsDenied,
-    reIndexLoadingStatus: reindexLoadingStatus,
+    reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
     fetchSectionLoadingStatus: DEFAULT_FETCH_SECTION_STATUS,
     courseLaunchQueryStatus: localCourseLaunchQueryStatus,
-  }), [outlineIndexIsPending, outlineIndexIsDenied, reindexLoadingStatus, localCourseLaunchQueryStatus]);
+  }), [outlineIndexIsPending, outlineIndexIsDenied, localCourseLaunchQueryStatus]);
 
   // --- Raw / base errors (before dismissal) ---
   const rawErrors = useMemo((): Record<string, any> => {
@@ -135,11 +131,11 @@ export function useOutlineStatusState({
       : null;
     return {
       outlineIndexApi: outlineIndexErrors,
-      reindexApi: localReindexError,
+      reindexApi: null,
       sectionLoadingApi: DEFAULT_ERROR_NULL,
       courseLaunchApi: localCourseLaunchErrors,
     };
-  }, [outlineIndexQuery.error, outlineIndexIsDenied, localReindexError, localCourseLaunchErrors]);
+  }, [outlineIndexQuery.error, outlineIndexIsDenied, localCourseLaunchErrors]);
 
   // --- Derived errors (raw minus signature-matched dismissals) ---
   const effectiveErrors = useMemo((): Record<string, any> => {
