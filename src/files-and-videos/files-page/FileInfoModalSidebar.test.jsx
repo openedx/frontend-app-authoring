@@ -48,6 +48,20 @@ describe('FileInfoModalSidebar', () => {
     expect(screen.getByText('Lock file')).toBeInTheDocument();
   });
 
+  it('hides Lock file section when canLockFile is false', () => {
+    renderComponent({ canLockFile: false });
+
+    expect(screen.getByText('Date added')).toBeInTheDocument();
+    expect(screen.getByText('Studio URL')).toBeInTheDocument();
+    expect(screen.queryByText('Lock file')).not.toBeInTheDocument();
+  });
+
+  it('shows Lock file section when canLockFile is true', () => {
+    renderComponent({ canLockFile: true });
+
+    expect(screen.getByText('Lock file')).toBeInTheDocument();
+  });
+
   it('displays the portable URL', () => {
     renderComponent();
     expect(screen.getByText('/static/test-file.png')).toBeInTheDocument();

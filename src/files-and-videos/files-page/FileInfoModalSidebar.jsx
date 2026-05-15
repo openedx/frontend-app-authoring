@@ -79,27 +79,28 @@ const FileInfoModalSidebar = ({
           onClick={() => navigator.clipboard.writeText(asset?.externalUrl)}
         />
       </ActionRow>
-      <ActionRow className=" border-top mt-3 pt-3">
-        <div className="font-weight-bold">
-          <FormattedMessage {...messages.lockFileTitle} />
-        </div>
-        <IconButtonWithTooltip
-          key="lock-file-info"
-          tooltipPlacement="top"
-          tooltipContent={intl.formatMessage(messages.lockFileTooltipContent)}
-          src={InfoOutline}
-          iconAs={Icon}
-          alt="Info"
-          size="inline"
-        />
-        <ActionRow.Spacer />
-        <CheckboxControl
-          disabled={!canLockFile}
-          checked={lockedState}
-          onChange={handleLock}
-          aria-label="Checkbox"
-        />
-      </ActionRow>
+      {canLockFile && (
+        <ActionRow className=" border-top mt-3 pt-3">
+          <div className="font-weight-bold">
+            <FormattedMessage {...messages.lockFileTitle} />
+          </div>
+          <IconButtonWithTooltip
+            key="lock-file-info"
+            tooltipPlacement="top"
+            tooltipContent={intl.formatMessage(messages.lockFileTooltipContent)}
+            src={InfoOutline}
+            iconAs={Icon}
+            alt="Info"
+            size="inline"
+          />
+          <ActionRow.Spacer />
+          <CheckboxControl
+            checked={lockedState}
+            onChange={handleLock}
+            aria-label="Checkbox"
+          />
+        </ActionRow>
+      )}
     </Stack>
   );
 };

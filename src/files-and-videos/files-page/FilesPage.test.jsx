@@ -13,7 +13,7 @@ import {
   initializeMocks,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { executeThunk } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
 import FilesPage from './FilesPage';
@@ -47,14 +47,12 @@ ReactDOM.createPortal = jest.fn(node => node);
 jest.mock('file-saver');
 
 jest.mock('@src/authz/hooks', () => ({
-  useUserPermissionsWithAuthzCourse: jest.fn().mockReturnValue({
+  useCourseUserPermissions: jest.fn().mockReturnValue({
     isLoading: false,
-    permissions: {
-      canViewFiles: true,
-      canEditFiles: true,
-      canDeleteFiles: true,
-      canCreateFiles: true,
-    },
+    canViewFiles: true,
+    canEditFiles: true,
+    canDeleteFiles: true,
+    canCreateFiles: true,
   }),
 }));
 
@@ -737,29 +735,38 @@ describe('FilesAndUploads', () => {
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
       global.localStorage.clear();
     });
+    it('should render loading spinner when permissions are loading', async () => {
+      useCourseUserPermissions.mockReturnValue({
+        isLoading: true,
+        canViewFiles: false,
+        canEditFiles: false,
+        canDeleteFiles: false,
+        canCreateFiles: false,
+      });
+      renderComponent();
+      expect(screen.getByRole('status')).toBeInTheDocument();
+      expect(screen.queryByTestId('files-dropzone')).not.toBeInTheDocument();
+    });
+
     it('should render permission alert when the user is not authorized to view files', async () => {
-      useUserPermissionsWithAuthzCourse.mockReturnValue({
+      useCourseUserPermissions.mockReturnValue({
         isLoading: false,
-        permissions: {
-          canViewFiles: false,
-          canEditFiles: true,
-          canDeleteFiles: true,
-          canCreateFiles: true,
-        },
+        canViewFiles: false,
+        canEditFiles: true,
+        canDeleteFiles: true,
+        canCreateFiles: true,
       });
       await mockStore(RequestStatus.SUCCESSFUL);
       expect(await screen.findByText(/You are not authorized to view this page/)).toBeInTheDocument();
     });
 
     it('should not render dropzone when is not authorized to create files', async () => {
-      useUserPermissionsWithAuthzCourse.mockReturnValue({
+      useCourseUserPermissions.mockReturnValue({
         isLoading: false,
-        permissions: {
-          canViewFiles: true,
-          canEditFiles: true,
-          canDeleteFiles: true,
-          canCreateFiles: false,
-        },
+        canViewFiles: true,
+        canEditFiles: true,
+        canDeleteFiles: true,
+        canCreateFiles: false,
       });
       await emptyMockStore(RequestStatus.SUCCESSFUL);
 
@@ -767,14 +774,12 @@ describe('FilesAndUploads', () => {
     });
 
     it('should render dropzone when is authorized to create files', async () => {
-      useUserPermissionsWithAuthzCourse.mockReturnValue({
+      useCourseUserPermissions.mockReturnValue({
         isLoading: false,
-        permissions: {
-          canViewFiles: true,
-          canEditFiles: true,
-          canDeleteFiles: true,
-          canCreateFiles: true,
-        },
+        canViewFiles: true,
+        canEditFiles: true,
+        canDeleteFiles: true,
+        canCreateFiles: true,
       });
       await emptyMockStore(RequestStatus.SUCCESSFUL);
 
@@ -783,14 +788,12 @@ describe('FilesAndUploads', () => {
 
     it('should not render delete item when is not authorized to delete files', async () => {
       const user = userEvent.setup();
-      useUserPermissionsWithAuthzCourse.mockReturnValue({
+      useCourseUserPermissions.mockReturnValue({
         isLoading: false,
-        permissions: {
-          canViewFiles: true,
-          canEditFiles: true,
-          canDeleteFiles: false,
-          canCreateFiles: true,
-        },
+        canViewFiles: true,
+        canEditFiles: true,
+        canDeleteFiles: false,
+        canCreateFiles: true,
       });
       await mockStore(RequestStatus.SUCCESSFUL);
 
@@ -802,14 +805,12 @@ describe('FilesAndUploads', () => {
 
     it('should render delete item when is authorized to delete files', async () => {
       const user = userEvent.setup();
-      useUserPermissionsWithAuthzCourse.mockReturnValue({
+      useCourseUserPermissions.mockReturnValue({
         isLoading: false,
-        permissions: {
-          canViewFiles: true,
-          canEditFiles: true,
-          canDeleteFiles: true,
-          canCreateFiles: true,
-        },
+        canViewFiles: true,
+        canEditFiles: true,
+        canDeleteFiles: true,
+        canCreateFiles: true,
       });
       await mockStore(RequestStatus.SUCCESSFUL);
 

@@ -28,7 +28,7 @@ import { getFileSizeToClosestByte } from '@src/utils';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getFilesPermissions } from '@src/authz/permissionHelpers';
 
 export const CourseFilesTable = () => {
@@ -43,8 +43,10 @@ export const CourseFilesTable = () => {
   } = useSelector((state: DeprecatedReduxState) => state.assets);
 
   const {
-    permissions,
-  } = useUserPermissionsWithAuthzCourse(courseId, getFilesPermissions(courseId));
+    canCreateFiles,
+    canDeleteFiles,
+    canEditFiles,
+  } = useCourseUserPermissions(courseId, getFilesPermissions(courseId));
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id));
@@ -75,7 +77,7 @@ export const CourseFilesTable = () => {
     FileInfoModalSidebar({
       asset,
       handleLockedAsset: handleLockFile,
-      canLockFile: permissions.canEditFiles,
+      canLockFile: canEditFiles,
     });
 
   const assets = useModels('assets', assetIds);
@@ -188,9 +190,9 @@ export const CourseFilesTable = () => {
             infoModalSidebar,
             files: assets,
             permissions: {
-              canCreateFiles: permissions.canCreateFiles,
-              canDeleteFiles: permissions.canDeleteFiles,
-              canEditFiles: permissions.canEditFiles,
+              canCreateFiles,
+              canDeleteFiles,
+              canEditFiles,
             },
           }}
         />

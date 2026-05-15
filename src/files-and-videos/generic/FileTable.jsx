@@ -197,7 +197,7 @@ const FileTable = ({
         fileType,
         permissions: {
           canEditFiles: permissions.canEditFiles,
-          caneDeleteFiles: permissions.canDeleteFiles,
+          canDeleteFiles: permissions.canDeleteFiles,
         },
       }),
   };

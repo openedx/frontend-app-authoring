@@ -49,7 +49,7 @@ describe('useCourseUserPermissions', () => {
     expect(result.current.canEdit).toBe(false);
   });
 
-  it('returns isLoading=true and no permission keys while authz permissions are loading', () => {
+  it('returns isLoading=true and permissions as false while authz permissions are loading', () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     jest.mocked(useUserPermissions).mockReturnValue({
       isLoading: true,

@@ -56,9 +56,11 @@ const FileMenu = ({
               >
                 {intl.formatMessage(messages.copyWebUrlTitle)}
               </Dropdown.Item>
-              <Dropdown.Item onClick={handleLock}>
-                {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
-              </Dropdown.Item>
+              {permissions.canEditFiles && (
+                <Dropdown.Item onClick={handleLock}>
+                  {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
+                </Dropdown.Item>
+              )}
             </>
           )}
         <Dropdown.Item onClick={onDownload}>

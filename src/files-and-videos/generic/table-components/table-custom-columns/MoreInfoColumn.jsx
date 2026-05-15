@@ -23,7 +23,7 @@ const MoreInfoColumn = ({
   fileType,
   permissions = {
     canEditFiles: true,
-    caneDeleteFiles: true,
+    canDeleteFiles: true,
   },
 }) => {
   const intl = useIntl();
@@ -93,13 +93,15 @@ const MoreInfoColumn = ({
                 >
                   {intl.formatMessage(messages.copyWebUrlTitle)}
                 </MenuItem>
-                <MenuItem
-                  as={Button}
-                  variant="tertiary"
-                  onClick={() => handleLock(id, !locked)}
-                >
-                  {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
-                </MenuItem>
+                {permissions.canEditFiles && (
+                  <MenuItem
+                    as={Button}
+                    variant="tertiary"
+                    onClick={() => handleLock(id, !locked)}
+                  >
+                    {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
+                  </MenuItem>
+                )}
               </>
             )}
           <MenuItem
@@ -120,7 +122,7 @@ const MoreInfoColumn = ({
             {intl.formatMessage(messages.infoTitle)}
           </MenuItem>
 
-          {permissions.caneDeleteFiles && (
+          {permissions.canDeleteFiles && (
             <>
               <hr className="my-2" />
               <MenuItem
