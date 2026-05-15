@@ -95,7 +95,7 @@ const useCourseOutline = ({ courseId }) => {
   const handleDeleteItemSubmit = async () => {
     await deleteCurrentSelection(currentSelection);
     closeDeleteModal();
-    if (selectedContainerState.currentId === currentSelection?.currentId) {
+    if (selectedContainerState?.currentId === currentSelection?.currentId) {
       clearSelection();
     }
   };
