@@ -8,6 +8,7 @@ import {
   fireEvent,
   screen,
 } from '@src/testUtils';
+import userEvent from '@testing-library/user-event';
 
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 
@@ -42,7 +43,7 @@ jest.mock('@src/authz/data/apiHooks', () => ({
 
 jest.mock('@src/data/apiHooks', () => ({
   ...jest.requireActual('@src/data/apiHooks'),
-  useWaffleFlags: jest.fn(() => ({ enableAuthzCourseAuthoring: false })),
+  useWaffleFlags: jest.fn(() => ({ enableAuthzCourseAuthoring: false, isLoading: false })),
 }));
 
 jest.mock('react-router-dom', () => ({
@@ -370,7 +371,7 @@ describe('<CourseUpdates />', () => {
         store = mocks.reduxStore;
         axiosMock = mocks.axiosMock;
 
-        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true });
+        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true, isLoading: false });
         (useUserPermissions as jest.Mock).mockReturnValue({
           isLoading: false,
           data: { canManageCourseUpdates: true, canViewCourseUpdates: true },
@@ -403,6 +404,15 @@ describe('<CourseUpdates />', () => {
         expect(await screen.findAllByRole('button', { name: /edit/i })).toHaveLength(4); // 3 for course updates and 1 for handouts
         expect(await screen.findAllByRole('button', { name: /delete/i })).toHaveLength(3);
       });
+
+      it('should open delete modal when clicking delete button on a course update', async () => {
+        render(<RootWrapper />);
+
+        const deleteButtons = await screen.findAllByTestId('course-update-delete-button');
+        await userEvent.click(deleteButtons[0]);
+
+        expect(screen.getByText('Are you sure you want to delete this update?')).toBeInTheDocument();
+      });
     });
 
     describe('when user does NOT have permission to manage course updates and enableAuthzCourseAuthoring is enabled', () => {
@@ -411,7 +421,7 @@ describe('<CourseUpdates />', () => {
         store = mocks.reduxStore;
         axiosMock = mocks.axiosMock;
 
-        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true });
+        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true, isLoading: false });
         (useUserPermissions as jest.Mock).mockReturnValue({
           isLoading: false,
           data: { canManageCourseUpdates: false, canViewCourseUpdates: true },
@@ -454,7 +464,7 @@ describe('<CourseUpdates />', () => {
         store = mocks.reduxStore;
         axiosMock = mocks.axiosMock;
 
-        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: false });
+        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: false, isLoading: false });
         (useUserPermissions as jest.Mock).mockReturnValue({
           isLoading: false,
           data: { canManageCourseUpdates: false },
@@ -479,13 +489,42 @@ describe('<CourseUpdates />', () => {
       });
     });
 
+    describe('when permissions are still loading', () => {
+      beforeEach(() => {
+        const mocks = initializeMocks();
+        store = mocks.reduxStore;
+        axiosMock = mocks.axiosMock;
+
+        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true, isLoading: false });
+        (useUserPermissions as jest.Mock).mockReturnValue({
+          isLoading: true,
+          data: undefined,
+        });
+
+        axiosMock
+          .onGet(getCourseUpdatesApiUrl(courseId))
+          .reply(200, courseUpdatesMock);
+        axiosMock
+          .onGet(getCourseHandoutApiUrl(courseId))
+          .reply(200, courseHandoutsMock);
+      });
+
+      it('should render loading spinner while permissions are loading', () => {
+        render(<RootWrapper />);
+
+        expect(screen.getByRole('status')).toBeInTheDocument();
+        expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: messages.newUpdateButton.defaultMessage })).not.toBeInTheDocument();
+      });
+    });
+
     describe('when user does NOT have permission to view course updates', () => {
       beforeEach(() => {
         const mocks = initializeMocks();
         store = mocks.reduxStore;
         axiosMock = mocks.axiosMock;
 
-        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true });
+        (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true, isLoading: false });
         (useUserPermissions as jest.Mock).mockReturnValue({
           isLoading: false,
           data: { canManageCourseUpdates: false, canViewCourseUpdates: false },

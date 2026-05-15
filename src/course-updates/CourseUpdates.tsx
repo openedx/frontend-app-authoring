@@ -31,7 +31,8 @@ import { matchesAnyStatus } from './utils';
 import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
 import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
-import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import Loading from '@src/generic/Loading';
 
 const CourseUpdates = () => {
   const intl = useIntl();
@@ -56,10 +57,9 @@ const CourseUpdates = () => {
 
   const {
     isLoading: isLoadingPermissions,
-    permissions,
-  } = useUserPermissionsWithAuthzCourse(courseId, getCourseUpdatesPermissions(courseId));
-
-  const { canViewCourseUpdates, canManageCourseUpdates } = permissions;
+    canViewCourseUpdates,
+    canManageCourseUpdates,
+  } = useCourseUserPermissions(courseId, getCourseUpdatesPermissions(courseId));
 
   const loadingStatuses = useSelector(getLoadingStatuses);
   const savingStatuses = useSelector(getSavingStatuses);
@@ -81,7 +81,7 @@ const CourseUpdates = () => {
     );
   }
   if (isLoadingPermissions) {
-    return null;
+    return <Loading />;
   }
 
   return (

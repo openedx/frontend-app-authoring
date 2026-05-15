@@ -14,7 +14,7 @@ import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { COURSE_PERMISSIONS } from '@src/authz/constants';
 import messages from './messages';
 import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
-import { useUserPermissionsWithAuthzCourse } from '@src/authz/hooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
@@ -23,8 +23,8 @@ export const useContentMenuItems = (courseId: string) => {
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
 
   const {
-    permissions: { canViewCourseUpdates },
-  } = useUserPermissionsWithAuthzCourse(courseId, getCourseUpdatesPermissions(courseId));
+    canViewCourseUpdates,
+  } = useCourseUserPermissions(courseId, getCourseUpdatesPermissions(courseId));
 
   const items = [
     {

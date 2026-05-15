@@ -5,14 +5,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as authzApi from '@src/authz/data/api';
 import { PermissionValidationQuery } from '@src/authz/types';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
-import { useUserPermissionsWithAuthzCourse } from './hooks';
+import { useCourseUserPermissions } from './hooks';
 
 jest.mock('@src/data/api');
 jest.mock('@src/authz/data/api');
 
 const mockedAuthzApi = jest.mocked(authzApi);
 
-describe('useUserPermissionsWithAuthzCourse', () => {
+describe('useCourseUserPermissions', () => {
   let queryClient: QueryClient;
 
   const createWrapper = () =>
@@ -50,7 +50,7 @@ describe('useUserPermissionsWithAuthzCourse', () => {
     });
 
     const { result } = renderHook(
-      () => useUserPermissionsWithAuthzCourse('course-v1:Test+101+2023', mockPermissions),
+      () => useCourseUserPermissions('course-v1:Test+101+2023', mockPermissions),
       { wrapper: createWrapper() },
     );
 
@@ -59,8 +59,8 @@ describe('useUserPermissionsWithAuthzCourse', () => {
     });
 
     expect(result.current.isAuthzEnabled).toBe(false);
-    expect(result.current.permissions.canViewFiles).toBe(true);
-    expect(result.current.permissions.canManageFiles).toBe(true);
+    expect(result.current.canViewFiles).toBe(true);
+    expect(result.current.canManageFiles).toBe(true);
   });
 
   it('returns loading state when authz is enabled and permissions are loading', async () => {
@@ -73,7 +73,7 @@ describe('useUserPermissionsWithAuthzCourse', () => {
     );
 
     const { result } = renderHook(
-      () => useUserPermissionsWithAuthzCourse('course-v1:Test+101+2023', mockPermissions),
+      () => useCourseUserPermissions('course-v1:Test+101+2023', mockPermissions),
       { wrapper: createWrapper() },
     );
 
@@ -82,6 +82,8 @@ describe('useUserPermissionsWithAuthzCourse', () => {
     });
 
     expect(result.current.isLoading).toBe(true);
+    expect(result.current.canViewFiles).toBe(false);
+    expect(result.current.canManageFiles).toBe(false);
   });
 
   it('returns actual permission values when authz is enabled and permissions loaded', async () => {
@@ -95,7 +97,7 @@ describe('useUserPermissionsWithAuthzCourse', () => {
     });
 
     const { result } = renderHook(
-      () => useUserPermissionsWithAuthzCourse('course-v1:Test+101+2023', mockPermissions),
+      () => useCourseUserPermissions('course-v1:Test+101+2023', mockPermissions),
       { wrapper: createWrapper() },
     );
 
@@ -104,8 +106,8 @@ describe('useUserPermissionsWithAuthzCourse', () => {
     });
 
     expect(result.current.isAuthzEnabled).toBe(true);
-    expect(result.current.permissions.canViewFiles).toBe(true);
-    expect(result.current.permissions.canManageFiles).toBe(false);
+    expect(result.current.canViewFiles).toBe(true);
+    expect(result.current.canManageFiles).toBe(false);
   });
 
   it('falls back to false for undefined permissions when authz is enabled', async () => {
@@ -118,7 +120,7 @@ describe('useUserPermissionsWithAuthzCourse', () => {
     });
 
     const { result } = renderHook(
-      () => useUserPermissionsWithAuthzCourse('course-v1:Test+101+2023', mockPermissions),
+      () => useCourseUserPermissions('course-v1:Test+101+2023', mockPermissions),
       { wrapper: createWrapper() },
     );
 
@@ -127,7 +129,7 @@ describe('useUserPermissionsWithAuthzCourse', () => {
     });
 
     expect(result.current.isAuthzEnabled).toBe(true);
-    expect(result.current.permissions.canViewFiles).toBe(true);
-    expect(result.current.permissions.canManageFiles).toBe(false);
+    expect(result.current.canViewFiles).toBe(true);
+    expect(result.current.canManageFiles).toBe(false);
   });
 });

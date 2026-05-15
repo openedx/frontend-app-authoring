@@ -10,7 +10,7 @@ const CourseHandouts = ({
   contentForHandouts,
   onEdit,
   isDisabledButtons,
-  canEdit,
+  canEdit = true,
 }) => {
   const intl = useIntl();
 
@@ -44,10 +44,6 @@ CourseHandouts.propTypes = {
   onEdit: PropTypes.func.isRequired,
   isDisabledButtons: PropTypes.bool.isRequired,
   canEdit: PropTypes.bool,
-};
-
-CourseHandouts.defaultProps = {
-  canEdit: true,
 };
 
 export default CourseHandouts;

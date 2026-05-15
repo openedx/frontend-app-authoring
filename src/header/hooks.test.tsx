@@ -135,6 +135,20 @@ describe('header utils', () => {
       const actualItemsTitle = actualItems.map((item) => item.title);
       expect(actualItemsTitle).toContain(messages['header.links.updates'].defaultMessage);
     });
+    it('when useNewUpdatesPage is false should use legacy studio URL for updates', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false, useNewUpdatesPage: false });
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: false,
+        data: { canViewCourseUpdates: true },
+      } as any);
+      jest.mocked(useSelector).mockReturnValue({
+        librariesV2Enabled: false,
+      });
+      const actualItems =
+        renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const updatesItem = actualItems.find((item) => item.title === messages['header.links.updates'].defaultMessage);
+      expect(updatesItem?.href).toContain('/course_info/course-123');
+    });
   });
 
   describe('getSettingsMenuitems', () => {

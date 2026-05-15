@@ -13,8 +13,8 @@ const CourseUpdate = ({
   onEdit,
   onDelete,
   isDisabledButtons,
-  canEdit,
-  canDelete,
+  canEdit = true,
+  canDelete = true,
 }) => {
   const intl = useIntl();
 
@@ -73,11 +73,6 @@ CourseUpdate.propTypes = {
   isDisabledButtons: PropTypes.bool.isRequired,
   canEdit: PropTypes.bool,
   canDelete: PropTypes.bool,
-};
-
-CourseUpdate.defaultProps = {
-  canEdit: true,
-  canDelete: true,
 };
 
 export default CourseUpdate;
