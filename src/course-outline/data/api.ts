@@ -51,7 +51,7 @@ export const getCourseLaunchApiUrl = ({
 
 export const getCourseBlockApiUrl = (courseId: string) => {
   const formattedCourseId = courseIDtoBlockID(courseId);
-  return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
+  return `${getApiBaseUrl()}/xblock/${formattedCourseId}`;
 };
 
 export const getCourseReindexApiUrl = (reindexLink: string) => `${getApiBaseUrl()}${reindexLink}`;
