@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarTitle } from '@src/generic/sidebar';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
+import { courseIDtoBlockID } from '@src/course-outline/utils';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -22,13 +23,13 @@ export const SectionSidebar = () => {
   const intl = useIntl();
   const navigate = useNavigate();
 
-  const { openUnlinkModal } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const duplicateMutation = useDuplicateItem(courseId);
   const {
     openPublishModal,
     openDeleteModal,
     sections,
     updateSectionOrderByIndex,
-    duplicateSection,
   } = useCourseOutlineContext();
   const {
     clearSelection,
@@ -87,7 +88,11 @@ export const SectionSidebar = () => {
           onClickDuplicate: () => {
             const sel = selectedContainerState;
             if (!sel?.currentId) { return; }
-            duplicateSection(sel.currentId, sel.sectionId ?? sel.currentId);
+            duplicateMutation.mutate({
+              itemId: sel.currentId,
+              parentId: courseIDtoBlockID(courseId),
+              sectionId: sel.sectionId ?? sel.currentId,
+            });
           },
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),

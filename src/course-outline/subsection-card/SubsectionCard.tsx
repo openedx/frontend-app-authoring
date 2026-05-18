@@ -31,7 +31,7 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useScrollState, useDuplicateItem } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
@@ -79,7 +79,8 @@ const SubsectionCard = ({
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
-  const { openPublishModal, setActionTargetSelection, duplicateSubsection } = useCourseOutlineContext();
+  const duplicateMutation = useDuplicateItem(courseId);
+  const { openPublishModal, setActionTargetSelection } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
@@ -310,7 +311,12 @@ const SubsectionCard = ({
                 onClickConfigure={onOpenConfigureModal}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
-                onClickDuplicate={() => duplicateSubsection(subsection.id, section.id, subsection.id)}
+                onClickDuplicate={() => duplicateMutation.mutate({
+                  itemId: subsection.id,
+                  parentId: section.id,
+                  sectionId: section.id,
+                  subsectionId: subsection.id,
+                })}
                 onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}

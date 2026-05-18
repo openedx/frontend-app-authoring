@@ -23,7 +23,7 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
-import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useScrollState, useDuplicateItem } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
@@ -67,7 +67,8 @@ const UnitCard = ({
 
   const { copyToClipboard } = useClipboard();
   const { courseId, getUnitUrl, openUnlinkModal } = useCourseAuthoringContext();
-  const { openPublishModal, setActionTargetSelection, duplicateUnit } = useCourseOutlineContext();
+  const duplicateMutation = useDuplicateItem(courseId);
+  const { openPublishModal, setActionTargetSelection } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
   const { data: subsection = initialSubsectionData } = useCourseItemData(
@@ -283,7 +284,12 @@ const UnitCard = ({
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}
             onClickCard={onClickCard}
-            onClickDuplicate={() => duplicateUnit(unit.id, section.id, subsection.id)}
+            onClickDuplicate={() => duplicateMutation.mutate({
+              itemId: unit.id,
+              parentId: subsection.id,
+              sectionId: section.id,
+              subsectionId: subsection.id,
+            })}
             onClickManageTags={handleClickManageTags}
             titleComponent={titleComponent}
             namePrefix={namePrefix}

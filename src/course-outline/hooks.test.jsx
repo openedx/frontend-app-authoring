@@ -36,6 +36,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
 }));
 
 jest.mock('./data/apiHooks', () => ({
+  useCreateCourseBlock: () => ({ isPending: false, mutate: jest.fn(), mutateAsync: jest.fn() }),
   useDeleteCourseItem: () => ({ mutateAsync: mockDeleteMutateAsync }),
   useConfigureSection: () => ({ mutate: jest.fn() }),
   useConfigureSubsection: () => ({ mutate: jest.fn() }),

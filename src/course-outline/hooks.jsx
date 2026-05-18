@@ -9,6 +9,7 @@ import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
+  useCreateCourseBlock,
   useDeleteCourseItem,
   useConfigureSection,
   useConfigureSubsection,
@@ -36,7 +37,6 @@ const useCourseOutline = () => {
     courseActions,
     isCustomRelativeDatesActive,
     errors,
-    handleAddBlock,
     actionTargetSelection,
     setActionTargetSelection,
     courseUsageKey,
@@ -57,6 +57,7 @@ const useCourseOutline = () => {
   } = outlineIndexData || {};
   const { outlineIndexIsLoading, outlineIndexIsDenied, reIndexLoadingStatus } = loadingStatus;
 
+  const handleAddBlock = useCreateCourseBlock(courseId);
   const deleteMutation = useDeleteCourseItem(courseId);
   const configureSectionMutation = useConfigureSection(courseId);
   const configureSubsectionMutation = useConfigureSubsection(courseId);

@@ -15,6 +15,8 @@ import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContex
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
+import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
 
 /**
@@ -24,10 +26,15 @@ import messages from './messages';
  * added to the course.
  * @param props.parentLocator The locator of the parent flow item to which the content will be added.
  */
-const AddPlaceholder = ({ parentLocator }: { parentLocator?: string; }) => {
+interface AddPlaceholderProps {
+  parentLocator?: string;
+  handleAddBlock: ReturnType<typeof useCreateCourseBlock>;
+  handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
+}
+
+const AddPlaceholder = ({ parentLocator, handleAddBlock, handleAddAndOpenUnit }: AddPlaceholderProps) => {
   const intl = useIntl();
   const { isCurrentFlowOn, currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
-  const { handleAddBlock, handleAddAndOpenUnit } = useCourseOutlineContext();
 
   if (!isCurrentFlowOn || currentFlow?.parentLocator !== parentLocator) {
     return null;
@@ -94,7 +101,10 @@ const OutlineAddChildButtons = ({
   // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
-  const { courseUsageKey, handleAddBlock, handleAddAndOpenUnit } = useCourseOutlineContext();
+  const { courseId, openUnitPage } = useCourseAuthoringContext();
+  const handleAddBlock = useCreateCourseBlock(courseId);
+  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
+  const { courseUsageKey } = useCourseOutlineContext();
   const { startCurrentFlow, openContainerInfoSidebar } = useOutlineSidebarContext();
   let messageMap = {
     newButton: messages.newUnitButton,
@@ -173,7 +183,7 @@ const OutlineAddChildButtons = ({
 
   return (
     <>
-      <AddPlaceholder parentLocator={parentLocator} />
+      <AddPlaceholder parentLocator={parentLocator} handleAddBlock={handleAddBlock} handleAddAndOpenUnit={handleAddAndOpenUnit} />
       <Stack direction="horizontal" gap={3} onClick={onClickCard}>
         <Button
           className={btnClasses}

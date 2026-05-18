@@ -16,7 +16,7 @@ import { getItemIcon } from '@src/generic/block-type-utils';
 
 import { SidebarTitle } from '@src/generic/sidebar';
 
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -97,12 +97,12 @@ export const UnitSidebar = () => {
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const { data: subsection } = useCourseItemData<XBlock>(selectedContainerState?.subsectionId);
   const { getUnitUrl, courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const duplicateMutation = useDuplicateItem(courseId);
   const {
     openPublishModal,
     openDeleteModal,
     sections,
     updateUnitOrderByIndex,
-    duplicateUnit,
   } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
   const subsectionIndex = section?.childInfo?.children?.findIndex(
@@ -224,7 +224,12 @@ export const UnitSidebar = () => {
             ? () => {
               const sel = selectedContainerState;
               if (!sel?.currentId || !sel.sectionId || !sel.subsectionId) { return; }
-              duplicateUnit(sel.currentId, sel.sectionId, sel.subsectionId);
+              duplicateMutation.mutate({
+                itemId: sel.currentId,
+                parentId: sel.subsectionId,
+                sectionId: sel.sectionId,
+                subsectionId: sel.subsectionId,
+              });
             }
             : undefined,
           onClickMoveUp: () => handleMove(-1),
