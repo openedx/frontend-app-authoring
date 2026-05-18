@@ -637,7 +637,7 @@ describe('useDeleteCourseItem optimistic cache update', () => {
     ).resolves.not.toThrow();
   });
 
-  it('invalidates deleted item own query key on success', async () => {
+  it('does not invalidate deleted item own query key (no self-refetch)', async () => {
     mockDeleteCourseItem.mockResolvedValue({});
     const { queryClient } = initializeMocks();
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
@@ -648,8 +648,16 @@ describe('useDeleteCourseItem optimistic cache update', () => {
       await result.current.mutateAsync({ itemId: seqId, sectionId: chapterId });
     });
 
-    expect(invalidateSpy).toHaveBeenCalledWith(
+    // The deleted item's own query should NOT be invalidated — that would
+    // trigger a 404 refetch. Stale-selection prevention is handled by
+    // hooks.jsx clearing currentSelection on successful delete.
+    expect(invalidateSpy).not.toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: courseOutlineQueryKeys.courseItemId(seqId) }),
+    );
+
+    // Course details invalidation should still fire
+    expect(invalidateSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: courseOutlineQueryKeys.courseDetails(expect.any(String)) }),
     );
 
     invalidateSpy.mockRestore();

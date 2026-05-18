@@ -427,9 +427,6 @@ export const useDeleteCourseItem = (courseId?: string) => {
     ) => deleteCourseItem(variables.itemId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
-      // Invalidate the deleted item's own cache so useCourseItemData
-      // does not return stale data if currentSelection still points to it.
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.itemId) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
       // Optimistic outline-index cache update: remove deleted item from the tree
       const itemId = variables.itemId;
