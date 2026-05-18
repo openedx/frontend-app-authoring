@@ -68,6 +68,9 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
     setActionTargetSelection: jest.fn(),
     openPublishModal,
     openDeleteModal,
+    duplicateSection: (...args) => mockDuplicateItem.mutate(...args),
+    duplicateSubsection: (...args) => mockDuplicateItem.mutate(...args),
+    duplicateUnit: (...args) => mockDuplicateItem.mutate(...args),
   });
   return {
     ...jest.requireActual('@src/course-outline/CourseOutlineContext'),

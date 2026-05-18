@@ -21,7 +21,7 @@ import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
-import { courseIDtoBlockID, getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
@@ -31,7 +31,7 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { courseOutlineQueryKeys, useCourseItemData, useDuplicateItem, useScrollState } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData, useScrollState } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
@@ -69,15 +69,7 @@ const SectionCard = ({
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
-  const { openPublishModal, setActionTargetSelection } = useCourseOutlineContext();
-  const duplicateMutation = useDuplicateItem(courseId);
-  const handleDuplicate = () => {
-    duplicateMutation.mutate({
-      itemId: section.id,
-      parentId: courseIDtoBlockID(courseId),
-      sectionId: section.id,
-    });
-  };
+  const { openPublishModal, setActionTargetSelection, duplicateSection } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
@@ -328,7 +320,7 @@ const SectionCard = ({
                 onClickMoveDown={handleSectionMoveDown}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
-                onClickDuplicate={handleDuplicate}
+                onClickDuplicate={() => duplicateSection(section.id, section.id)}
                 onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}

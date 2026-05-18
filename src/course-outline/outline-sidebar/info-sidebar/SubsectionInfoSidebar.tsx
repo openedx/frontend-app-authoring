@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarTitle } from '@src/generic/sidebar';
-import { useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -48,22 +48,13 @@ export const SubsectionSidebar = () => {
     }
   }, [currentTabKey, setCurrentTabKey]);
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
-  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
-  const duplicateMutation = useDuplicateItem(courseId);
-  const duplicateCurrentSelection = (selection) => {
-    if (!selection?.currentId || !selection.sectionId) { return; }
-    duplicateMutation.mutate({
-      itemId: selection.currentId,
-      parentId: selection.sectionId,
-      sectionId: selection.sectionId,
-      subsectionId: selection.subsectionId,
-    });
-  };
+  const { openUnlinkModal } = useCourseAuthoringContext();
   const {
     openPublishModal,
     openDeleteModal,
     sections,
     updateSubsectionOrderByIndex,
+    duplicateSubsection,
   } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
 
@@ -145,7 +136,11 @@ export const SubsectionSidebar = () => {
           index: index ?? -1,
           actions,
           canMoveItem: canMoveSubsection,
-          onClickDuplicate: () => selectedContainerState && duplicateCurrentSelection(selectedContainerState),
+          onClickDuplicate: () => {
+            const sel = selectedContainerState;
+            if (!sel?.currentId || !sel.sectionId) { return; }
+            duplicateSubsection(sel.currentId, sel.sectionId, sel.subsectionId);
+          },
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () =>

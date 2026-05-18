@@ -19,10 +19,6 @@ import {
   getCourseLaunchChecklist,
 } from '../utils/getChecklistForStatusBar';
 import type { CourseOutlineStatusBar, ChecklistType } from '../data/types';
-import {
-  computeErrorSignature,
-  filterDismissedErrors,
-} from './outlineErrorDismissal';
 
 const DEFAULT_LAUNCH_STATUS = RequestStatus.IN_PROGRESS;
 const DEFAULT_FETCH_SECTION_STATUS = RequestStatus.IN_PROGRESS;
@@ -40,8 +36,6 @@ const DEFAULT_COURSE_ACTIONS: XBlockActions = {
 
 interface UseOutlineStatusStateInput {
   courseId: string;
-  localStatusBarOverride: Partial<CourseOutlineStatusBar>;
-  dismissedErrorSignatures: Record<string, string>;
 }
 
 export interface UseOutlineStatusStateOutput {
@@ -51,12 +45,10 @@ export interface UseOutlineStatusStateOutput {
   effectiveLoadingStatus: {
     outlineIndexIsLoading: boolean;
     outlineIndexIsDenied: boolean;
-    reIndexLoadingStatus: string;
     fetchSectionLoadingStatus: string;
     courseLaunchQueryStatus: string;
   };
   rawErrors: Record<string, any>;
-  effectiveErrors: Record<string, any>;
   courseActions: XBlockActions;
   isCustomRelativeDatesActive: boolean;
   enableProctoredExams?: boolean;
@@ -66,8 +58,6 @@ export interface UseOutlineStatusStateOutput {
 
 export function useOutlineStatusState({
   courseId,
-  localStatusBarOverride,
-  dismissedErrorSignatures,
 }: UseOutlineStatusStateInput): UseOutlineStatusStateOutput {
   // Mount outline index query from React Query (primary source)
   const outlineIndexQuery = useCourseOutlineIndex(courseId);
@@ -102,7 +92,7 @@ export function useOutlineStatusState({
   const enableTimedExams = effectiveOutlineIndexData?.courseStructure?.enableTimedExams;
   const createdOn = effectiveOutlineIndexData?.createdOn;
 
-  // --- Derived status bar data (merge query data + local checklist/selfPaced + overrides) ---
+  // --- Derived status bar data (merge query data + local checklist/selfPaced) ---
   const statusBarData = useMemo(() => {
     const base = effectiveOutlineIndexData
       ? getCourseOutlineStatusBarData(effectiveOutlineIndexData)
@@ -111,15 +101,13 @@ export function useOutlineStatusState({
       ...base,
       checklist: localChecklist,
       isSelfPaced: localIsSelfPaced,
-      ...localStatusBarOverride,
     } as CourseOutlineStatusBar;
-  }, [effectiveOutlineIndexData, localChecklist, localIsSelfPaced, localStatusBarOverride]);
+  }, [effectiveOutlineIndexData, localChecklist, localIsSelfPaced]);
 
-  // --- Derived loading status (query-derived + local) ---
+  // --- Derived loading status (query-derived + local; reindex handled by context) ---
   const effectiveLoadingStatus = useMemo(() => ({
     outlineIndexIsLoading: outlineIndexIsPending,
     outlineIndexIsDenied,
-    reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
     fetchSectionLoadingStatus: DEFAULT_FETCH_SECTION_STATUS,
     courseLaunchQueryStatus: localCourseLaunchQueryStatus,
   }), [outlineIndexIsPending, outlineIndexIsDenied, localCourseLaunchQueryStatus]);
@@ -136,11 +124,6 @@ export function useOutlineStatusState({
       courseLaunchApi: localCourseLaunchErrors,
     };
   }, [outlineIndexQuery.error, outlineIndexIsDenied, localCourseLaunchErrors]);
-
-  // --- Derived errors (raw minus signature-matched dismissals) ---
-  const effectiveErrors = useMemo((): Record<string, any> => {
-    return filterDismissedErrors(rawErrors, dismissedErrorSignatures, computeErrorSignature);
-  }, [rawErrors, dismissedErrorSignatures]);
 
   // --- Checklist/launch effects ---
   useEffect(() => {
@@ -175,7 +158,6 @@ export function useOutlineStatusState({
     statusBarData,
     effectiveLoadingStatus,
     rawErrors,
-    effectiveErrors,
     courseActions,
     isCustomRelativeDatesActive,
     enableProctoredExams,

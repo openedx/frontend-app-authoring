@@ -1,19 +1,11 @@
 import { QueryClient } from '@tanstack/react-query';
 import { invalidateParentQueries, courseOutlineQueryKeys } from './apiHooks';
 
-// --- Mocks ---
-const mockHandleResponseErrors = jest.fn();
-jest.mock('@src/generic/saving-error-alert', () => ({
-  handleResponseErrors: (...args: any[]) => mockHandleResponseErrors(...args),
-}));
-
 describe('invalidateParentQueries', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
-    jest.clearAllMocks();
     queryClient = new QueryClient();
-    // Spy on invalidateQueries so we can control resolve/reject.
     jest.spyOn(queryClient, 'invalidateQueries');
   });
 
@@ -51,14 +43,12 @@ describe('invalidateParentQueries', () => {
     expect(queryClient.invalidateQueries).not.toHaveBeenCalled();
   });
 
-  it('does not throw and calls handleResponseErrors when invalidateQueries rejects', async () => {
+  it('propagates rejection when invalidateQueries rejects (caller must catch)', async () => {
     const rejectError = new Error('invalidation failed');
     (queryClient.invalidateQueries as jest.Mock).mockRejectedValueOnce(rejectError);
 
     await expect(
       invalidateParentQueries(queryClient, { sectionId }),
-    ).resolves.toBeUndefined();
-
-    expect(mockHandleResponseErrors).toHaveBeenCalledWith(rejectError);
+    ).rejects.toThrow(rejectError);
   });
 });

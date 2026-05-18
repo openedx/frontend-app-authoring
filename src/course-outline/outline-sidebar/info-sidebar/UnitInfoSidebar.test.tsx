@@ -68,6 +68,7 @@ describe('UnitSidebar', () => {
       openPublishModal: jest.fn(),
       openDeleteModal: jest.fn(),
       duplicateCurrentSelection: jest.fn(),
+      duplicateUnit: jest.fn(),
     });
   });
 
@@ -97,6 +98,7 @@ describe('UnitSidebar', () => {
       openPublishModal,
       openDeleteModal: jest.fn(),
       duplicateCurrentSelection: jest.fn(),
+      duplicateUnit: jest.fn(),
     });
     outlineContext.useOutlineSidebarContext.mockReturnValue({
       selectedContainerState: { currentId: 'unit-2', sectionId: 's1', subsectionId: 'ss1' },

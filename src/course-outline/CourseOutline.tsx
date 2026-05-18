@@ -357,7 +357,7 @@ const CourseOutline = () => {
                               {courseActions.childAddable && (
                                 <OutlineAddChildButtons
                                   childType={ContainerType.Section}
-                                  parentLocator={courseUsageKey!}
+                                  parentLocator={courseUsageKey}
                                 />
                               )}
                             </>
@@ -368,7 +368,7 @@ const CourseOutline = () => {
                                 (
                                   <OutlineAddChildButtons
                                     childType={ContainerType.Section}
-                                    parentLocator={courseUsageKey!}
+                                    parentLocator={courseUsageKey}
                                     btnVariant="primary"
                                     btnClasses="mt-1"
                                   />

@@ -4,7 +4,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import type {
@@ -20,6 +19,8 @@ import { useOutlineReorderState } from './state/useOutlineReorderState';
 import { useOutlineStatusState } from './state/useOutlineStatusState';
 import useOutlineModalState from './state/useOutlineModalState';
 import useOutlineActionTargetState from './state/useOutlineActionTargetState';
+import useOutlineAddBlockActions, { type UseOutlineAddBlockActions } from './state/useOutlineAddBlockActions';
+import useOutlineDuplicate, { type UseOutlineDuplicateOutput } from './state/useOutlineDuplicate';
 import { buildSelectionState } from './state/selection';
 import {
   computeErrorSignature,
@@ -42,7 +43,7 @@ import {
 type CourseOutlineContextData = {
   outlineIndexData: LegacyCourseOutlineState['outlineIndexData'];
   courseName?: string;
-  courseUsageKey?: string;
+  courseUsageKey: string;
   sections: XBlock[];
   updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => Promise<void>;
   updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
@@ -84,6 +85,13 @@ type CourseOutlineContextData = {
 
   dismissError: (key: string) => void;
 
+  handleAddBlock: UseOutlineAddBlockActions['handleAddBlock'];
+  handleAddAndOpenUnit: UseOutlineAddBlockActions['handleAddAndOpenUnit'];
+
+  duplicateSection: UseOutlineDuplicateOutput['duplicateSection'];
+  duplicateSubsection: UseOutlineDuplicateOutput['duplicateSubsection'];
+  duplicateUnit: UseOutlineDuplicateOutput['duplicateUnit'];
+
   actionTargetSelection?: SelectionState;
   setActionTargetSelection: React.Dispatch<React.SetStateAction<SelectionState | undefined>>;
   isDeleteModalOpen: boolean;
@@ -98,7 +106,7 @@ type CourseOutlineContextData = {
 const CourseOutlineContext = createContext<CourseOutlineContextData | undefined>(undefined);
 
 export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode; }) => {
-  const { courseId } = useCourseAuthoringContext();
+  const { courseId, openUnitPage } = useCourseAuthoringContext();
 
   // Dismissed error signatures: { [errorKey]: signatureAtTimeOfDismissal }
   // Dismissal applies only while the current error's payload signature matches.
@@ -117,8 +125,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     createdOn,
   } = useOutlineStatusState({
     courseId,
-    localStatusBarOverride: {} as Partial<CourseOutlineStatusBar>,
-    dismissedErrorSignatures,
   });
 
   const savingStatus = useCourseOutlineSavingStatus(courseId);
@@ -198,9 +204,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     reIndexLoadingStatus: derivedReindexLoadingStatus,
   }), [effectiveLoadingStatus, derivedReindexLoadingStatus]);
 
-  const rawErrorsRef = useRef<Record<string, any>>(mergedRawErrors);
-  rawErrorsRef.current = mergedRawErrors;
-
   // Drops entries where the error cleared or its payload changed,
   // so a new occurrence (even with the same payload) will show.
   useEffect(() => {
@@ -221,7 +224,7 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
   // Dismiss error by storing a signature of the current error payload.
   // The error stays hidden only as long as the payload signature matches.
   const dismissError = useCallback((key: string) => {
-    const currentError = rawErrorsRef.current?.[key];
+    const currentError = mergedRawErrors[key];
     if (currentError == null) {
       return; // nothing to dismiss
     }
@@ -232,7 +235,18 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
       }
       return { ...prev, [key]: sig };
     });
-  }, []);
+  }, [mergedRawErrors]);
+
+  const {
+    handleAddBlock,
+    handleAddAndOpenUnit,
+  } = useOutlineAddBlockActions({ courseId, openUnitPage });
+
+  const {
+    duplicateSection,
+    duplicateSubsection,
+    duplicateUnit,
+  } = useOutlineDuplicate(courseId);
 
   const {
     actionTargetSelection,
@@ -281,6 +295,11 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     commitSubsectionReorder,
     commitUnitReorder,
     dismissError,
+    handleAddBlock,
+    handleAddAndOpenUnit,
+    duplicateSection,
+    duplicateSubsection,
+    duplicateUnit,
     actionTargetSelection,
     setActionTargetSelection,
     isDeleteModalOpen,
@@ -319,6 +338,11 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     commitSubsectionReorder,
     commitUnitReorder,
     dismissError,
+    handleAddBlock,
+    handleAddAndOpenUnit,
+    duplicateSection,
+    duplicateSubsection,
+    duplicateUnit,
     actionTargetSelection,
     setActionTargetSelection,
     isDeleteModalOpen,

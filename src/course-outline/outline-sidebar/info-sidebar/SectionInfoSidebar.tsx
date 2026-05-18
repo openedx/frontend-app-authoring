@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarTitle } from '@src/generic/sidebar';
-import { useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -17,29 +17,18 @@ import { canMoveSection } from '@src/course-outline/drag-helper/utils';
 import { InfoSection } from './InfoSection';
 import messages from '../messages';
 import { PublishButon } from './PublishButon';
-import { SelectionState } from '@src/data/types';
-import { courseIDtoBlockID } from '@src/course-outline/utils';
 
 export const SectionSidebar = () => {
   const intl = useIntl();
   const navigate = useNavigate();
 
-  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
-  const duplicateMutation = useDuplicateItem(courseId);
-  const duplicateCurrentSelection = (selection: SelectionState) => {
-    if (!selection?.currentId) { return; }
-    duplicateMutation.mutate({
-      itemId: selection.currentId,
-      parentId: courseIDtoBlockID(courseId),
-      sectionId: selection.sectionId,
-      subsectionId: selection.subsectionId,
-    });
-  };
+  const { openUnlinkModal } = useCourseAuthoringContext();
   const {
     openPublishModal,
     openDeleteModal,
     sections,
     updateSectionOrderByIndex,
+    duplicateSection,
   } = useCourseOutlineContext();
   const {
     clearSelection,
@@ -95,7 +84,11 @@ export const SectionSidebar = () => {
           index: index ?? -1,
           actions: sectionData.actions || {},
           canMoveItem: canMoveSection(sections),
-          onClickDuplicate: () => selectedContainerState && duplicateCurrentSelection(selectedContainerState),
+          onClickDuplicate: () => {
+            const sel = selectedContainerState;
+            if (!sel?.currentId) { return; }
+            duplicateSection(sel.currentId, sel.sectionId ?? sel.currentId);
+          },
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () => openUnlinkModal({ value: sectionData, sectionId }),

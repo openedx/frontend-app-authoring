@@ -66,8 +66,6 @@ const sampleOutlineIndexData = {
 function defaultInput() {
   return {
     courseId: 'course-v1:test+course+2025',
-    localStatusBarOverride: {},
-    dismissedErrorSignatures: {},
   };
 }
 
@@ -105,7 +103,7 @@ describe('useOutlineStatusState', () => {
       expect(result.current.effectiveLoadingStatus.courseLaunchQueryStatus).toBe(RequestStatus.IN_PROGRESS);
     });
 
-    it('maps 403 error to DENIED status with null errors', () => {
+    it('maps 403 error to DENIED status with null error', () => {
       mockUseCourseOutlineIndex.mockReturnValue({
         data: undefined,
         isPending: false,
@@ -117,7 +115,7 @@ describe('useOutlineStatusState', () => {
 
       expect(result.current.effectiveLoadingStatus.outlineIndexIsLoading).toBe(false);
       expect(result.current.effectiveLoadingStatus.outlineIndexIsDenied).toBe(true);
-      expect(result.current.effectiveErrors.outlineIndexApi).toBeNull();
+      expect(result.current.rawErrors.outlineIndexApi).toBeNull();
     });
 
     it('maps 500 error to FAILED status with server error payload', () => {
@@ -132,14 +130,14 @@ describe('useOutlineStatusState', () => {
 
       expect(result.current.effectiveLoadingStatus.outlineIndexIsLoading).toBe(false);
       expect(result.current.effectiveLoadingStatus.outlineIndexIsDenied).toBe(false);
-      expect(result.current.effectiveErrors.outlineIndexApi).toEqual(
+      expect(result.current.rawErrors.outlineIndexApi).toEqual(
         expect.objectContaining({ type: 'serverError' }),
       );
     });
   });
 
   describe('status bar merge behavior', () => {
-    it('merges base status bar with local checklist, self-paced, and overrides', () => {
+    it('merges base status bar with local checklist and self-paced', () => {
       mockUseCourseOutlineIndex.mockReturnValue({
         data: sampleOutlineIndexData,
         isPending: false,
@@ -147,13 +145,11 @@ describe('useOutlineStatusState', () => {
         error: undefined,
       });
 
-      const { result } = renderStatusHook({
-        localStatusBarOverride: { videoSharingOptions: 'individual' },
-      });
+      const { result } = renderStatusHook();
 
       expect(result.current.statusBarData.courseReleaseDate).toBe('2025-06-01');
       expect(result.current.statusBarData.highlightsEnabledForMessaging).toBe(false);
-      expect(result.current.statusBarData.videoSharingOptions).toBe('individual');
+      expect(result.current.statusBarData.videoSharingOptions).toBe('per_course');
       expect(result.current.statusBarData.checklist).toEqual({
         totalCourseLaunchChecks: 0,
         completedCourseLaunchChecks: 0,
@@ -161,98 +157,6 @@ describe('useOutlineStatusState', () => {
         completedCourseBestPracticesChecks: 0,
       });
       expect(result.current.statusBarData.isSelfPaced).toBe(false);
-    });
-  });
-
-  describe('dismissed error filtering', () => {
-    it('filters out dismissed error keys from effectiveErrors', () => {
-      mockUseCourseOutlineIndex.mockReturnValue({
-        data: sampleOutlineIndexData,
-        isPending: false,
-        isSuccess: true,
-        error: undefined,
-      });
-
-      const { result } = renderStatusHook({
-        dismissedErrorSignatures: { outlineIndexApi: 'stub', courseLaunchApi: 'stub' },
-      });
-
-      expect(result.current.effectiveErrors.outlineIndexApi).toBeNull();
-      expect(result.current.effectiveErrors.courseLaunchApi).toBeNull();
-      expect(result.current.effectiveErrors.reindexApi).toBeNull();
-      expect(result.current.effectiveErrors.sectionLoadingApi).toBeNull();
-    });
-
-    it('does not hide error when its payload changed since dismissal', () => {
-      // Simulate: error occurred, user dismissed it, then error source changed.
-      mockUseCourseOutlineIndex.mockReturnValue({
-        data: undefined,
-        isPending: false,
-        isSuccess: false,
-        error: { response: { status: 500, data: 'new internal error' } },
-      });
-
-      // Stored signature is for a different error payload — stale dismissal.
-      const staleSignature = JSON.stringify({
-        type: 'serverError',
-        data: '"old error data"',
-        status: 500,
-        dismissible: false,
-      });
-
-      const { result } = renderStatusHook({
-        dismissedErrorSignatures: { outlineIndexApi: staleSignature },
-      });
-
-      // Current error has a different signature, so it must show.
-      expect(result.current.effectiveErrors.outlineIndexApi).not.toBeNull();
-      expect(result.current.effectiveErrors.outlineIndexApi).toEqual(
-        expect.objectContaining({ type: 'serverError' }),
-      );
-    });
-
-    it('clears stale dismissal when source error becomes null (proving re-show after clear)', () => {
-      // Phase 1: error present with matching signature — dismissed.
-      const transientError = { response: { status: 500, data: 'transient fail' } };
-      mockUseCourseOutlineIndex.mockReturnValue({
-        data: undefined,
-        isPending: false,
-        isSuccess: false,
-        error: transientError,
-      });
-
-      // Compute the signature that getErrorDetails mock would produce.
-      const expectedSig = JSON.stringify({
-        type: 'serverError',
-        data: 'unknown error',
-        dismissible: true,
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { result, rerender } = renderStatusHook({
-        dismissedErrorSignatures: {
-          outlineIndexApi: expectedSig,
-        },
-      });
-
-      // Matching signature → error hidden.
-      expect(result.current.effectiveErrors.outlineIndexApi).toBeNull();
-
-      // Phase 2: error clears.
-      mockUseCourseOutlineIndex.mockReturnValue({
-        data: sampleOutlineIndexData,
-        isPending: false,
-        isSuccess: true,
-        error: undefined,
-      });
-
-      rerender({});
-
-      // After clear, effectiveErrors for outlineIndexApi is null (no error).
-      // The key point: if the error re-appeared with the same payload,
-      // the stale signature would have been pruned (because error went to null),
-      // so the new occurrence would NOT be hidden.
-      expect(result.current.effectiveErrors.outlineIndexApi).toBeNull();
     });
   });
 
@@ -302,7 +206,7 @@ describe('useOutlineStatusState', () => {
         expect(result.current.effectiveLoadingStatus.courseLaunchQueryStatus).toBe(RequestStatus.FAILED);
       });
 
-      expect(result.current.effectiveErrors.courseLaunchApi).toEqual(
+      expect(result.current.rawErrors.courseLaunchApi).toEqual(
         expect.objectContaining({ type: 'serverError' }),
       );
     });
