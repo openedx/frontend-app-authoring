@@ -11,8 +11,6 @@ import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
@@ -29,9 +27,7 @@ import messages from './messages';
 const AddPlaceholder = ({ parentLocator }: { parentLocator?: string; }) => {
   const intl = useIntl();
   const { isCurrentFlowOn, currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
-  const { courseId, openUnitPage } = useCourseAuthoringContext();
-  const handleAddBlock = useCreateCourseBlock(courseId);
-  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
+  const { handleAddBlock, handleAddAndOpenUnit } = useCourseOutlineContext();
 
   if (!isCurrentFlowOn || currentFlow?.parentLocator !== parentLocator) {
     return null;
@@ -98,10 +94,7 @@ const OutlineAddChildButtons = ({
   // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
-  const { courseUsageKey } = useCourseOutlineContext();
-  const { courseId, openUnitPage } = useCourseAuthoringContext();
-  const handleAddBlock = useCreateCourseBlock(courseId);
-  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
+  const { courseUsageKey, handleAddBlock, handleAddAndOpenUnit } = useCourseOutlineContext();
   const { startCurrentFlow, openContainerInfoSidebar } = useOutlineSidebarContext();
   let messageMap = {
     newButton: messages.newUnitButton,
@@ -117,16 +110,14 @@ const OutlineAddChildButtons = ({
         newButton: messages.newSectionButton,
         importButton: messages.useSectionFromLibraryButton,
       };
-      onNewCreateContent = () =>
-        handleAddBlock.mutateAsync({
+      onNewCreateContent = async () => {
+        const data = await handleAddBlock.mutateAsync({
           type: ContainerType.Chapter,
-          parentLocator: courseUsageKey!,
+          parentLocator: courseUsageKey,
           displayName: COURSE_BLOCK_NAMES.chapter.name,
-        }, {
-          onSuccess: (data: { locator: string; }) => {
-            openContainerInfoSidebar(data.locator, undefined, data.locator);
-          },
         });
+        openContainerInfoSidebar(data.locator, undefined, data.locator);
+      };
       flowType = ContainerType.Section;
       break;
     case ContainerType.Subsection:
@@ -134,17 +125,15 @@ const OutlineAddChildButtons = ({
         newButton: messages.newSubsectionButton,
         importButton: messages.useSubsectionFromLibraryButton,
       };
-      onNewCreateContent = () =>
-        handleAddBlock.mutateAsync({
+      onNewCreateContent = async () => {
+        const data = await handleAddBlock.mutateAsync({
           type: ContainerType.Sequential,
           parentLocator,
           displayName: COURSE_BLOCK_NAMES.sequential.name,
           sectionId: parentLocator,
-        }, {
-          onSuccess: (data: { locator: string; }) => {
-            openContainerInfoSidebar(data.locator, data.locator, parentLocator);
-          },
         });
+        openContainerInfoSidebar(data.locator, data.locator, parentLocator);
+      };
       flowType = ContainerType.Subsection;
       break;
     case ContainerType.Unit:

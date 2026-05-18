@@ -65,8 +65,37 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
     clearSelection: jest.fn(),
     openContainerInfo: jest.fn(),
     setActionTargetSelection: jest.fn(),
-    handleAddBlock: { isPending: false, mutate: jest.fn(), mutateAsync: jest.fn() },
-    handleAddAndOpenUnit: { isPending: false, mutate: jest.fn(), mutateAsync: jest.fn() },
+    handleAddBlock: {
+      isPending: false,
+      mutate: jest.fn((variables, options) => {
+        const api = jest.requireActual('@src/course-outline/data/api');
+        api.createCourseXblock(variables).then(
+          data => options?.onSuccess?.(data),
+          () => {},
+        );
+      }),
+      mutateAsync: jest.fn(async (variables) => {
+        const api = jest.requireActual('@src/course-outline/data/api');
+        return api.createCourseXblock(variables);
+      }),
+    },
+    handleAddAndOpenUnit: {
+      isPending: false,
+      mutate: jest.fn((variables, options) => {
+        const api = jest.requireActual('@src/course-outline/data/api');
+        api.createCourseXblock(variables).then(
+          data => options?.onSuccess?.(data),
+          () => {},
+        );
+      }),
+      mutateAsync: jest.fn(async (variables) => {
+        const api = jest.requireActual('@src/course-outline/data/api');
+        return api.createCourseXblock(variables);
+      }),
+    },
+    duplicateSection: jest.fn(),
+    duplicateSubsection: jest.fn(),
+    duplicateUnit: jest.fn(),
   }),
 }));
 
@@ -94,6 +123,7 @@ let currentFlow: OutlineFlow | null = null;
 let isCurrentFlowOn = false;
 const clearSelection = jest.fn();
 const stopCurrentFlow = jest.fn();
+const mockOpenContainerInfoSidebar = jest.fn();
 jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
@@ -102,6 +132,7 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
     isCurrentFlowOn,
     clearSelection,
     stopCurrentFlow,
+    openContainerInfoSidebar: mockOpenContainerInfoSidebar,
   }),
 }));
 
@@ -264,6 +295,10 @@ describe('AddSidebar', () => {
       parentLocator: sectionId,
       displayName: 'Subsection',
     })));
+    // Intermediate section creation should NOT have opened its sidebar.
+    // Only the final subsection should trigger openContainerInfoSidebar.
+    expect(mockOpenContainerInfoSidebar).toHaveBeenCalledTimes(1);
+    expect(mockOpenContainerInfoSidebar).toHaveBeenCalledWith(sectionId, sectionId, sectionId);
   });
 
   it('creates parent section and subsection if required', async () => {
@@ -311,6 +346,9 @@ describe('AddSidebar', () => {
     expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(subsectionBody));
     // then unit
     expect(axiosMock.history.post[2].data).toEqual(JSON.stringify(unitBody));
+    // No sidebar opens for intermediate section/subsection creations.
+    // The unit page opens via handleAddAndOpenUnit's onSuccess.
+    expect(mockOpenContainerInfoSidebar).not.toHaveBeenCalled();
   });
 
   it('calls appropriate handlers on existing button click', async () => {

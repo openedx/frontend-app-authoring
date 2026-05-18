@@ -183,6 +183,135 @@ describe('useOutlineReorderState', () => {
       // Preview cleared — visibleSections back to source
       expect(result.current.visibleSections.map((s: any) => s.id)).toEqual(['A', 'B', 'C']);
     });
+
+    it('invalidates cache when sectionListIds contains id missing from cache', async () => {
+      // Inject spy on invalidateQueries
+      const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+      const { result } = renderReorderHook();
+
+      mockMutateAsync.sections.mockResolvedValueOnce(undefined);
+
+      // 'D' does not exist in the cache (only A, B, C are seeded)
+      await act(async () => {
+        await result.current.commitSectionReorder(['A', 'D', 'C']);
+      });
+
+      // Mutation was called
+      expect(mockMutateAsync.sections).toHaveBeenCalledWith(['A', 'D', 'C']);
+
+      // Cache unchanged — still shows original order
+      const cached: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedIds = cached?.courseStructure?.childInfo?.children?.map((s: any) => s.id);
+      expect(cachedIds).toEqual(['A', 'B', 'C']);
+
+      // Invalidation triggered because ids mismatch
+      expect(invalidateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ queryKey: courseOutlineIndexQueryKey(courseId) }),
+      );
+
+      invalidateSpy.mockRestore();
+    });
+
+    it('does not modify cache when cache has no outlineIndex structure', async () => {
+      // Remove the cached outline data so the updater sees no structure.
+      queryClient.removeQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+      expect(queryClient.getQueryData(courseOutlineIndexQueryKey(courseId))).toBeUndefined();
+
+      const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+      const { result } = renderReorderHook();
+
+      mockMutateAsync.sections.mockResolvedValueOnce(undefined);
+
+      await act(async () => {
+        await result.current.commitSectionReorder(['A', 'B', 'C']);
+      });
+
+      // Cache stays undefined — updater returns undefined unchanged
+      expect(queryClient.getQueryData(courseOutlineIndexQueryKey(courseId))).toBeUndefined();
+
+      // No invalidation (cache was empty, nothing to invalidate)
+      expect(invalidateSpy).not.toHaveBeenCalled();
+
+      invalidateSpy.mockRestore();
+    });
+
+    it('preserves unrelated cache fields when updater writes reordered children', async () => {
+      // Add a custom field to the cached data that the updater must carry through.
+      const prior: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), {
+        ...prior,
+        customMeta: { source: 'test' },
+      });
+
+      const { result } = renderReorderHook();
+      mockMutateAsync.sections.mockResolvedValueOnce(undefined);
+
+      await act(async () => {
+        await result.current.commitSectionReorder(['B', 'A', 'C']);
+      });
+
+      const cached: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      // customMeta survived the updater
+      expect(cached.customMeta).toEqual({ source: 'test' });
+      // Children were reordered
+      expect(cached.courseStructure.childInfo.children.map((s: any) => s.id)).toEqual(['B', 'A', 'C']);
+    });
+
+    it('does not resurrect concurrently-removed section during reorder write', async () => {
+      // Simulate a concurrent cache change that removes section B in the
+      // microtask gap between the mutation resolving and the reorder updater
+      // running. The old getQueryData + setQueryData pattern would write
+      // back stale children that include B, resurrecting it.
+      // The updater form reads the latest cache at write time, sees B is
+      // absent, sets shouldInvalidate, and returns old unchanged.
+      //
+      // We inject the concurrent change inside the mocked mutateAsync.
+      // Note: we do NOT call the pre-mockImplementation version of
+      // mockMutateAsync.sections because it is the SAME function reference
+      // (would cause infinite recursion).
+      mockMutateAsync.sections.mockImplementation(async () => {
+        // Inject concurrent change: remove section B from cache.
+        // This runs in the microtask gap before
+        // acceptReorderAndSyncSectionOrder's setQueryData.
+        queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => ({
+          ...old,
+          courseStructure: {
+            ...old.courseStructure,
+            childInfo: {
+              ...old.courseStructure.childInfo,
+              children: old.courseStructure.childInfo.children.filter((s: any) => s.id !== 'B'),
+            },
+          },
+        }));
+        return undefined;
+      });
+
+      const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+      const { result } = renderReorderHook();
+
+      const before: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      expect(before.courseStructure.childInfo.children.map((s: any) => s.id)).toEqual(['A', 'B', 'C']);
+
+      await act(async () => {
+        await result.current.commitSectionReorder(['B', 'A', 'C']);
+      });
+
+      // B was removed by concurrent change; reorder updater saw B absent
+      // and triggered invalidation.
+      const after: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const afterIds = after?.courseStructure?.childInfo?.children?.map((s: any) => s.id) || [];
+      expect(afterIds).not.toContain('B');
+
+      // Invalidation was triggered because B was missing from cache
+      expect(invalidateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ queryKey: courseOutlineIndexQueryKey(courseId) }),
+      );
+
+      invalidateSpy.mockRestore();
+    });
   });
 
   describe('commitSubsectionReorder', () => {

@@ -88,8 +88,10 @@ export const courseOutlineQueryKeys = {
 export const courseOutlineMutationKeys = {
   all: ['courseOutline', 'mutations'],
   saving: (courseId?: string) => [...courseOutlineMutationKeys.all, courseId, 'saving'],
-  savingOperation: (courseId: string | undefined, operation: string) =>
-    [...courseOutlineMutationKeys.saving(courseId), operation],
+  savingOperation: (
+    courseId: string | undefined,
+    operation: string,
+  ) => [...courseOutlineMutationKeys.saving(courseId), operation],
   reindex: (courseId?: string) => [...courseOutlineMutationKeys.all, courseId, 'reindex'],
 };
 
@@ -110,19 +112,19 @@ export const useScrollState = createGlobalState<ScrollState>(courseOutlineQueryK
  * Priority:
  * 1. If sectionId exists, invalidate section data which also updates all children block data
  * 2. Else If subsectionId exists, invalidate subsection data
+ *
+ * Callers are responsible for catching errors (they already do via .catch).
  */
 export const invalidateParentQueries = async (queryClient: QueryClient, variables: ParentIds) => {
-  try {
-    if (variables.sectionId) {
-      await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
-    } else if (variables.subsectionId) {
-      // istanbul ignore next
-      await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.subsectionId) });
-    }
-  } catch (e) {
-    handleResponseErrors(e);
+  if (variables.sectionId) {
+    await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
+  } else if (variables.subsectionId) {
+    // istanbul ignore next
+    await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.subsectionId) });
   }
 };
+
+// ---- Pure helpers for outline-index cache manipulation ----
 
 /** Append a new section to outline index query cache. */
 const appendSectionToOutlineIndex = (
@@ -181,6 +183,78 @@ export const replaceSectionInOutlineIndex = (
   }
 };
 
+/**
+ * Pure function: remove an item from outline-index data and return new tree.
+ * Does not touch React Query cache. Caller wraps with setQueryData.
+ */
+function removeItemFromOutlineIndexData(
+  old: any,
+  itemId: string,
+  variables: { sectionId?: string; subsectionId?: string; },
+): any {
+  if (!old?.courseStructure?.childInfo?.children) { return old; }
+  const category = getBlockType(itemId);
+  const children = [...old.courseStructure.childInfo.children];
+  if (category === 'chapter') {
+    return {
+      ...old,
+      courseStructure: {
+        ...old.courseStructure,
+        childInfo: { ...old.courseStructure.childInfo, children: children.filter((s: any) => s.id !== itemId) },
+      },
+    };
+  }
+  if (category === 'sequential') {
+    return {
+      ...old,
+      courseStructure: {
+        ...old.courseStructure,
+        childInfo: {
+          ...old.courseStructure.childInfo,
+          children: children.map((s: any) =>
+            s.id !== variables.sectionId ? s : {
+              ...s,
+              childInfo: {
+                ...s.childInfo,
+                children: (s.childInfo?.children || []).filter((sub: any) => sub.id !== itemId),
+              },
+            }
+          ),
+        },
+      },
+    };
+  }
+  if (category === 'vertical') {
+    return {
+      ...old,
+      courseStructure: {
+        ...old.courseStructure,
+        childInfo: {
+          ...old.courseStructure.childInfo,
+          children: children.map((s: any) =>
+            s.id !== variables.sectionId ? s : {
+              ...s,
+              childInfo: {
+                ...s.childInfo,
+                children: (s.childInfo?.children || []).map((sub: any) =>
+                  sub.id !== variables.subsectionId ? sub : {
+                    ...sub,
+                    childInfo: {
+                      ...sub.childInfo,
+                      children: (sub.childInfo?.children || []).filter((u: any) => u.id !== itemId),
+                    },
+                  }
+                ),
+              },
+            }
+          ),
+        },
+      },
+    };
+  }
+  return old;
+}
+
 /** Insert duplicated section after original id in outline index cache. */
 const insertDuplicatedSectionInOutlineIndex = (
   queryClient: QueryClient,
@@ -236,7 +310,7 @@ export const useCreateCourseBlock = (
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
       });
 
-      await invalidateParentQueries(queryClient, variables);
+      await invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
 
       // Invalidate tags count for the newly created block
       // Strips "+type@<blockType>+block@<id>" to produce a course-run wildcard, e.g.
@@ -319,7 +393,7 @@ export const useUpdateCourseBlockName = (courseId: string) => {
       } & ParentIds,
     ) => editItemDisplayName({ itemId: variables.itemId, displayName: variables.displayName }),
     onSuccess: async (_data, variables) => {
-      await invalidateParentQueries(queryClient, variables);
+      await invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseId) });
     },
@@ -353,79 +427,18 @@ export const useDeleteCourseItem = (courseId?: string) => {
     ) => deleteCourseItem(variables.itemId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
+      // Invalidate the deleted item's own cache so useCourseItemData
+      // does not return stale data if currentSelection still points to it.
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.itemId) });
       invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
       // Optimistic outline-index cache update: remove deleted item from the tree
       const itemId = variables.itemId;
       const category = getBlockType(itemId);
       if (courseId && ['chapter', 'sequential', 'vertical'].includes(category)) {
-        queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-          if (!old?.courseStructure?.childInfo?.children) return old;
-          const children = [...old.courseStructure.childInfo.children];
-          if (category === 'chapter') {
-            return {
-              ...old,
-              courseStructure: {
-                ...old.courseStructure,
-                childInfo: {
-                  ...old.courseStructure.childInfo,
-                  children: children.filter((s: any) => s.id !== itemId),
-                },
-              },
-            };
-          }
-          if (category === 'sequential') {
-            return {
-              ...old,
-              courseStructure: {
-                ...old.courseStructure,
-                childInfo: {
-                  ...old.courseStructure.childInfo,
-                  children: children.map((s: any) => {
-                    if (s.id !== variables.sectionId) return s;
-                    return {
-                      ...s,
-                      childInfo: {
-                        ...s.childInfo,
-                        children: (s.childInfo?.children || []).filter((sub: any) => sub.id !== itemId),
-                      },
-                    };
-                  }),
-                },
-              },
-            };
-          }
-          if (category === 'vertical') {
-            return {
-              ...old,
-              courseStructure: {
-                ...old.courseStructure,
-                childInfo: {
-                  ...old.courseStructure.childInfo,
-                  children: children.map((s: any) => {
-                    if (s.id !== variables.sectionId) return s;
-                    return {
-                      ...s,
-                      childInfo: {
-                        ...s.childInfo,
-                        children: (s.childInfo?.children || []).map((sub: any) => {
-                          if (sub.id !== variables.subsectionId) return sub;
-                          return {
-                            ...sub,
-                            childInfo: {
-                              ...sub.childInfo,
-                              children: (sub.childInfo?.children || []).filter((u: any) => u.id !== itemId),
-                            },
-                          };
-                        }),
-                      },
-                    };
-                  }),
-                },
-              },
-            };
-          }
-          return old;
-        });
+        queryClient.setQueryData(
+          courseOutlineIndexQueryKey(courseId),
+          (old: any) => removeItemFromOutlineIndexData(old, itemId, variables),
+        );
       }
     },
   });
@@ -529,7 +542,7 @@ export const useDuplicateItem = (courseKey: string) => {
       } & ParentIds,
     ) => duplicateCourseItem(variables.itemId, variables.parentId),
     onSuccess: async (data, variables) => {
-      await invalidateParentQueries(queryClient, variables);
+      await invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
 
       // For chapter (section) duplication, insert the duplicated section into the outline index cache.
       if (getBlockType(variables.itemId) === 'chapter') {
@@ -594,7 +607,7 @@ export const usePasteItem = (courseId?: string) => {
       } & ParentIds,
     ) => pasteBlock(variables.parentLocator),
     onSuccess: async (data, variables) => {
-      await invalidateParentQueries(queryClient, variables);
+      await invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
       // set pasteFileNotices
       setData(data.staticFileNotices);
       // scroll to pasted block
@@ -605,22 +618,14 @@ export const usePasteItem = (courseId?: string) => {
 
 /**
  * Set video sharing option for a course.
- * Updates the outline index cache optimistically on success.
+ * Invalidates outline index cache so the next read fetches fresh data.
  */
 export function useSetVideoSharingOption(courseId: string) {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
     mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'videoSharing'),
     mutationFn: (value: string) => setVideoSharingOption(courseId, value),
-    onSuccess: (_data, value) => {
-      // Update outline index cache with new video sharing option
-      queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-        if (!old) { return old; }
-        return {
-          ...old,
-          statusBar: { ...old.statusBar, videoSharingOptions: value },
-        };
-      });
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
     },
   });
@@ -679,7 +684,7 @@ export function useCourseOutlineSavingStatus(courseId?: string): string {
   const hasPending = mutations.some(m => m.status === 'pending');
   if (hasPending) { return RequestStatus.PENDING; }
   // Find latest by submittedAt among completed
-  let latest: { status: 'success' | 'error'; submittedAt: number } | null = null;
+  let latest: { status: 'success' | 'error'; submittedAt: number; } | null = null;
   for (const m of mutations) {
     if (m.status !== 'success' && m.status !== 'error') { continue; }
     const t = m.submittedAt ?? 0;
@@ -692,6 +697,21 @@ export function useCourseOutlineSavingStatus(courseId?: string): string {
 }
 
 /**
+ * Find the most recent (by submittedAt) mutation among a list.
+ */
+function latestMutation<T extends { submittedAt?: number; status?: string; }>(mutations: T[]): T | undefined {
+  let latest: T | undefined;
+  for (const m of mutations) {
+    if (m.status !== 'success' && m.status !== 'error' && m.status !== 'pending') { continue; }
+    const t = m.submittedAt ?? 0;
+    if (t > 0 && (!latest || (latest.submittedAt ?? 0) < t)) {
+      latest = m;
+    }
+  }
+  return latest;
+}
+
+/**
  * Derive reindex loading status and error from reindex mutations.
  */
 export function useCourseOutlineReindexStatus(courseId?: string): {
@@ -701,12 +721,12 @@ export function useCourseOutlineReindexStatus(courseId?: string): {
   const mutations = useMutationState({
     filters: { mutationKey: courseOutlineMutationKeys.reindex(courseId) },
   });
-  const latest = mutations[mutations.length - 1]; // most recent submission
+  const latest = latestMutation(mutations);
   const status = latest?.status;
   if (status === 'pending') {
     return { reindexLoadingStatus: RequestStatus.IN_PROGRESS, reindexError: null };
   }
-  if (status === 'error') {
+  if (status === 'error' && latest) {
     return {
       reindexLoadingStatus: RequestStatus.FAILED,
       reindexError: getErrorDetails(latest.error),

@@ -28,7 +28,7 @@ import { MultiLibraryProvider } from '@src/library-authoring/common/context/Mult
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
 import AlertMessage from '@src/generic/alert-message';
-import { useCourseItemData, useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import messages from './messages';
 
@@ -58,10 +58,9 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
     courseUsageKey,
     lastEditableSection,
     lastEditableSubsection,
+    handleAddBlock,
+    handleAddAndOpenUnit,
   } = useCourseOutlineContext();
-  const { courseId, openUnitPage } = useCourseAuthoringContext();
-  const handleAddBlock = useCreateCourseBlock(courseId);
-  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const {
     currentFlow,
     stopCurrentFlow,
@@ -70,39 +69,35 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
   let sectionParentId = lastEditableSection?.id;
   let subsectionParentId = lastEditableSubsection?.data?.id;
 
-  const addSection = (onSuccess?: (data: { locator: string; }) => void) => {
-    handleAddBlock.mutate({
+  const addSection = async (onSuccess?: (data: { locator: string; }) => void) => {
+    const data = await handleAddBlock.mutateAsync({
       type: ContainerType.Chapter,
-      parentLocator: courseUsageKey!,
+      parentLocator: courseUsageKey,
       displayName: COURSE_BLOCK_NAMES.chapter.name,
-    }, {
-      onSuccess: (data: { locator: string; }) => {
-        // istanbul ignore next
-        if (onSuccess) {
-          onSuccess(data);
-        } else {
-          openContainerInfoSidebar(data.locator, undefined, data.locator);
-        }
-      },
     });
+    // istanbul ignore next
+    if (onSuccess) {
+      onSuccess(data);
+    } else {
+      openContainerInfoSidebar(data.locator, undefined, data.locator);
+    }
+    return data;
   };
 
-  const addSubsection = (sectionId: string, onSuccess?: (data: { locator: string; }) => void) => {
-    handleAddBlock.mutate({
+  const addSubsection = async (sectionId: string, onSuccess?: (data: { locator: string; }) => void) => {
+    const data = await handleAddBlock.mutateAsync({
       type: ContainerType.Sequential,
       parentLocator: sectionId,
       displayName: COURSE_BLOCK_NAMES.sequential.name,
       sectionId,
-    }, {
-      onSuccess: (data: { locator: string; }) => {
-        // istanbul ignore next
-        if (onSuccess) {
-          onSuccess(data);
-        } else {
-          openContainerInfoSidebar(data.locator, data.locator, sectionId);
-        }
-      },
     });
+    // istanbul ignore next
+    if (onSuccess) {
+      onSuccess(data);
+    } else {
+      openContainerInfoSidebar(data.locator, data.locator, sectionId);
+    }
+    return data;
   };
 
   const addUnit = (subsectionId: string, sectionId?: string) => {
@@ -117,14 +112,17 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
   const onCreateContent = useCallback(async () => {
     switch (blockType) {
       case 'section':
-        addSection();
+        await addSection();
         break;
       case 'subsection':
         sectionParentId = currentFlow?.parentLocator || sectionParentId;
         if (sectionParentId) {
-          addSubsection(sectionParentId);
+          await addSubsection(sectionParentId);
         } else {
-          addSection(({ locator }) => addSubsection(locator));
+          // Create intermediate section but suppress its sidebar open
+          // so only the final subsection sidebar appears.
+          const data = await addSection(() => {});
+          await addSubsection(data.locator);
         }
         break;
       case 'unit':
@@ -133,13 +131,16 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
         if (subsectionParentId) {
           addUnit(subsectionParentId, sectionParentId);
         } else if (sectionParentId) {
-          addSubsection(sectionParentId, ({ locator }) => addUnit(locator));
+          // Create intermediate subsection but suppress its sidebar open
+          // — addUnit navigates to the unit page directly.
+          const data = await addSubsection(sectionParentId, () => {});
+          addUnit(data.locator);
         } else {
-          addSection(({ locator: sectionId }) => {
-            addSubsection(sectionId, ({ locator: subsectionId }) => {
-              addUnit(subsectionId, sectionId);
-            });
-          });
+          // Chain: section → subsection → unit.
+          // Suppress sidebar opens for intermediate section and subsection.
+          const sectionData = await addSection(() => {});
+          const subsectionData = await addSubsection(sectionData.locator, () => {});
+          addUnit(subsectionData.locator, sectionData.locator);
         }
         break;
       default:
@@ -221,9 +222,8 @@ const ShowLibraryContent = () => {
     currentItemData,
     lastEditableSection,
     lastEditableSubsection,
+    handleAddBlock,
   } = useCourseOutlineContext();
-  const { courseId: libCourseId } = useCourseAuthoringContext();
-  const handleAddBlock = useCreateCourseBlock(libCourseId);
   const {
     isCurrentFlowOn,
     currentFlow,
@@ -237,54 +237,48 @@ const ShowLibraryContent = () => {
 
   const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
     switch (blockType) {
-      case 'section':
-        await handleAddBlock.mutateAsync({
+      case 'section': {
+        const data = await handleAddBlock.mutateAsync({
           type: COMPONENT_TYPES.libraryV2,
           category: ContainerType.Chapter,
-          parentLocator: courseUsageKey!,
+          parentLocator: courseUsageKey,
           libraryContentKey: usageKey,
-        }, {
-          onSuccess: (data: { locator: string; }) => {
-            // istanbul ignore next
-            openContainerInfoSidebar(data.locator, undefined, data.locator);
-          },
         });
+        // istanbul ignore next
+        openContainerInfoSidebar(data.locator, undefined, data.locator);
         break;
-      case 'subsection':
+      }
+      case 'subsection': {
         sectionParentId = currentFlow?.parentLocator || sectionParentId;
         if (sectionParentId) {
-          await handleAddBlock.mutateAsync({
+          const data = await handleAddBlock.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Sequential,
             parentLocator: sectionParentId,
             libraryContentKey: usageKey,
             sectionId: sectionParentId,
-          }, {
-            onSuccess: (data: { locator: string; }) => {
-              // istanbul ignore next
-              openContainerInfoSidebar(data.locator, data.locator, sectionParentId);
-            },
           });
+          // istanbul ignore next
+          openContainerInfoSidebar(data.locator, data.locator, sectionParentId);
         }
         break;
-      case 'unit':
+      }
+      case 'unit': {
         sectionParentId = currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId;
         subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
         if (subsectionParentId) {
-          await handleAddBlock.mutateAsync({
+          const data = await handleAddBlock.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Vertical,
             parentLocator: subsectionParentId,
             libraryContentKey: usageKey,
             sectionId: sectionParentId,
-          }, {
-            onSuccess: (data: { locator: string; }) => {
-              // istanbul ignore next
-              openContainerInfoSidebar(data.locator, subsectionParentId, sectionParentId);
-            },
           });
+          // istanbul ignore next
+          openContainerInfoSidebar(data.locator, subsectionParentId, sectionParentId);
         }
         break;
+      }
       default:
         // istanbul ignore next: should not happen
         throw new Error(`Unrecognized block type ${blockType}`);

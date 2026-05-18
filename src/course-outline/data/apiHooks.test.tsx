@@ -2,6 +2,7 @@ import { setConfig, getConfig } from '@edx/frontend-platform';
 import { RequestStatus } from '@src/data/constants';
 import { act, renderHook, waitFor, initializeMocks, makeWrapper } from '@src/testUtils';
 import { courseOutlineIndexQueryKey } from './outlineIndexQuery';
+import { courseOutlineQueryKeys } from './apiHooks';
 
 // --- Mock API layer ---
 const mockSetVideoSharingOption = jest.fn();
@@ -38,7 +39,13 @@ const STUDIO_BASE_URL = 'http://localhost:18010';
 
 /** Minimal outline-index shape the delete optimistic update expects. */
 function buildOutlineIndex(
-  chapters: Array<{ id: string; displayName: string; subs?: Array<{ id: string; displayName: string; units?: Array<{ id: string; displayName: string }> }> }>,
+  chapters: Array<
+    {
+      id: string;
+      displayName: string;
+      subs?: Array<{ id: string; displayName: string; units?: Array<{ id: string; displayName: string; }>; }>;
+    }
+  >,
 ) {
   return {
     courseStructure: {
@@ -86,28 +93,6 @@ describe('useSetVideoSharingOption', () => {
     });
 
     expect(mockSetVideoSharingOption).toHaveBeenCalledWith(courseId, 'per-video');
-  });
-
-  it('updates outline-index cache with video sharing option on success', async () => {
-    const { queryClient } = initializeMocks();
-    mockSetVideoSharingOption.mockResolvedValue({});
-
-    // Prime cache with initial data
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), {
-      courseStructure: { childInfo: { children: [] } },
-      statusBar: { videoSharingOptions: 'per-video' },
-    });
-
-    const { result } = renderHook(() => useSetVideoSharingOption(courseId), { wrapper: makeWrapper() });
-
-    await act(async () => {
-      await result.current.mutateAsync('individual');
-    });
-
-    await waitFor(() => {
-      const data = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
-      expect(data.statusBar.videoSharingOptions).toBe('individual');
-    });
   });
 
   it('invalidates outline-index query on success (triggers refetch)', async () => {
@@ -262,7 +247,11 @@ describe('useCourseOutlineSavingStatus', () => {
   it('returns PENDING when any mutation is pending (pending wins)', async () => {
     // Arrange: trigger a mutation and keep it pending by returning an unresolved promise
     let resolvePending!: (value: unknown) => void;
-    mockSetVideoSharingOption.mockReturnValue(new Promise((resolve) => { resolvePending = resolve; }));
+    mockSetVideoSharingOption.mockReturnValue(
+      new Promise((resolve) => {
+        resolvePending = resolve;
+      }),
+    );
 
     const { result: mutResult } = renderHook(() => useSetVideoSharingOption(courseId), { wrapper: makeWrapper() });
 
@@ -271,7 +260,9 @@ describe('useCourseOutlineSavingStatus', () => {
     });
 
     // The mutation should now be pending; status hook should see it
-    const { result: statusResult } = renderHook(() => useCourseOutlineSavingStatus(courseId), { wrapper: makeWrapper() });
+    const { result: statusResult } = renderHook(() => useCourseOutlineSavingStatus(courseId), {
+      wrapper: makeWrapper(),
+    });
 
     await waitFor(() => {
       expect(statusResult.current).toBe(RequestStatus.PENDING);
@@ -292,7 +283,9 @@ describe('useCourseOutlineSavingStatus', () => {
       await mutResult.current.mutateAsync('per-video');
     });
 
-    const { result: statusResult } = renderHook(() => useCourseOutlineSavingStatus(courseId), { wrapper: makeWrapper() });
+    const { result: statusResult } = renderHook(() => useCourseOutlineSavingStatus(courseId), {
+      wrapper: makeWrapper(),
+    });
 
     await waitFor(() => {
       expect(statusResult.current).toBe(RequestStatus.SUCCESSFUL);
@@ -339,11 +332,15 @@ describe('useCourseOutlineSavingStatus', () => {
     });
 
     // Small delay to ensure submittedAt ordering
-    await new Promise((r) => { setTimeout(r, 5); });
+    await new Promise((r) => {
+      setTimeout(r, 5);
+    });
 
     // Second mutation: error
     await act(async () => {
-      try { await mutResult.current.mutateAsync(); } catch { /* expected */ }
+      try {
+        await mutResult.current.mutateAsync();
+      } catch { /* expected */ }
     });
 
     const { result: statusResult } = renderHook(
@@ -363,7 +360,9 @@ describe('useCourseOutlineSavingStatus', () => {
     // Second mutation: stays pending
     let resolveSecond!: (value: unknown) => void;
     mockSetVideoSharingOption.mockReturnValueOnce(
-      new Promise((resolve) => { resolveSecond = resolve; }),
+      new Promise((resolve) => {
+        resolveSecond = resolve;
+      }),
     );
 
     // Trigger a completed success mutation first
@@ -423,7 +422,9 @@ describe('useCourseOutlineReindexStatus', () => {
   it('returns IN_PROGRESS when reindex mutation is pending', async () => {
     let resolveReindex!: (value: unknown) => void;
     mockRestartIndexingOnCourse.mockReturnValue(
-      new Promise((resolve) => { resolveReindex = resolve; }),
+      new Promise((resolve) => {
+        resolveReindex = resolve;
+      }),
     );
 
     const { result: mutResult } = renderHook(
@@ -447,7 +448,9 @@ describe('useCourseOutlineReindexStatus', () => {
       });
     });
 
-    await act(async () => { resolveReindex({}); });
+    await act(async () => {
+      resolveReindex({});
+    });
   });
 
   it('returns SUCCESSFUL when reindex mutation succeeds', async () => {
@@ -545,7 +548,8 @@ describe('useDeleteCourseItem optimistic cache update', () => {
 
     const outlineData = buildOutlineIndex([
       {
-        id: chapterId, displayName: 'Ch 1',
+        id: chapterId,
+        displayName: 'Ch 1',
         subs: [
           { id: seqId, displayName: 'Seq 1' },
           { id: seq2Id, displayName: 'Seq 2' },
@@ -571,10 +575,12 @@ describe('useDeleteCourseItem optimistic cache update', () => {
 
     const outlineData = buildOutlineIndex([
       {
-        id: chapterId, displayName: 'Ch 1',
+        id: chapterId,
+        displayName: 'Ch 1',
         subs: [
           {
-            id: seqId, displayName: 'Seq 1',
+            id: seqId,
+            displayName: 'Seq 1',
             units: [
               { id: unitId, displayName: 'Unit 1' },
               { id: unit2Id, displayName: 'Unit 2' },
@@ -629,5 +635,23 @@ describe('useDeleteCourseItem optimistic cache update', () => {
         await result.current.mutateAsync({ itemId: unitId, sectionId: chapterId, subsectionId: seqId });
       }),
     ).resolves.not.toThrow();
+  });
+
+  it('invalidates deleted item own query key on success', async () => {
+    mockDeleteCourseItem.mockResolvedValue({});
+    const { queryClient } = initializeMocks();
+    const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(() => useDeleteCourseItem(courseId), { wrapper: makeWrapper() });
+
+    await act(async () => {
+      await result.current.mutateAsync({ itemId: seqId, sectionId: chapterId });
+    });
+
+    expect(invalidateSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: courseOutlineQueryKeys.courseItemId(seqId) }),
+    );
+
+    invalidateSpy.mockRestore();
   });
 });

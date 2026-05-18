@@ -44,6 +44,8 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
     clearSelection: jest.fn(),
     openContainerInfo: jest.fn(),
     setActionTargetSelection,
+    handleAddBlock: { isPending: false, mutate: mockMutate, mutateAsync: mockMutateAsync },
+    handleAddAndOpenUnit: { isPending: false, mutate: mockMutate, mutateAsync: mockMutateAsync },
   }),
 }));
 
@@ -112,40 +114,50 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
       expect(newBtn).toBeInTheDocument();
+
+      // Set mocked return value before click so follow-up code
+      // (openContainerInfoSidebar) runs after await mutateAsync.
+      switch (containerType) {
+        case ContainerType.Section:
+          mockMutateAsync.mockResolvedValue({ locator: 'new-section-id' });
+          break;
+        case ContainerType.Subsection:
+          mockMutateAsync.mockResolvedValue({ locator: 'new-subsection-id' });
+          break;
+        default:
+          break;
+      }
       await userEvent.click(newBtn);
+
       switch (containerType) {
         case ContainerType.Section:
           await waitFor(() =>
-            expect(mockMutateAsync).toHaveBeenCalledWith(
-              {
-                type: ContainerType.Chapter,
-                parentLocator: courseUsageKey,
-                displayName: 'Section',
-              },
-              expect.objectContaining({ onSuccess: expect.any(Function) }),
-            )
+            expect(mockMutateAsync).toHaveBeenCalledWith({
+              type: ContainerType.Chapter,
+              parentLocator: courseUsageKey,
+              displayName: 'Section',
+            })
           );
-          mockMutateAsync.mock.calls[0][1].onSuccess({ locator: 'new-section-id' });
-          expect(openContainerInfoSidebar).toHaveBeenCalledWith('new-section-id', undefined, 'new-section-id');
+          await waitFor(() => {
+            expect(openContainerInfoSidebar).toHaveBeenCalledWith('new-section-id', undefined, 'new-section-id');
+          });
           break;
         case ContainerType.Subsection:
           await waitFor(() =>
-            expect(mockMutateAsync).toHaveBeenCalledWith(
-              {
-                type: ContainerType.Sequential,
-                parentLocator,
-                displayName: 'Subsection',
-                sectionId: parentLocator,
-              },
-              expect.objectContaining({ onSuccess: expect.any(Function) }),
-            )
+            expect(mockMutateAsync).toHaveBeenCalledWith({
+              type: ContainerType.Sequential,
+              parentLocator,
+              displayName: 'Subsection',
+              sectionId: parentLocator,
+            })
           );
-          mockMutateAsync.mock.calls[0][1].onSuccess({ locator: 'new-subsection-id' });
-          expect(openContainerInfoSidebar).toHaveBeenCalledWith(
-            'new-subsection-id',
-            'new-subsection-id',
-            parentLocator,
-          );
+          await waitFor(() => {
+            expect(openContainerInfoSidebar).toHaveBeenCalledWith(
+              'new-subsection-id',
+              'new-subsection-id',
+              parentLocator,
+            );
+          });
           break;
         case ContainerType.Unit:
           await waitFor(() =>

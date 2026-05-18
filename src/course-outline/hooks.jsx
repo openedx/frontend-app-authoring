@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
-
-import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
 import { RequestStatus } from '@src/data/constants';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -12,7 +9,6 @@ import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
-  useCreateCourseBlock,
   useDeleteCourseItem,
   useConfigureSection,
   useConfigureSubsection,
@@ -40,8 +36,12 @@ const useCourseOutline = () => {
     courseActions,
     isCustomRelativeDatesActive,
     errors,
-    actionTargetSelection: currentSelection,
-    setActionTargetSelection: setCurrentSelection,
+    handleAddBlock,
+    actionTargetSelection,
+    setActionTargetSelection,
+    courseUsageKey,
+    currentSelection,
+    clearSelection: clearContextSelection,
   } = useCourseOutlineContext();
   const {
     reindexLink,
@@ -56,7 +56,6 @@ const useCourseOutline = () => {
     advanceSettingsUrl,
   } = outlineIndexData || {};
   const { outlineIndexIsLoading, outlineIndexIsDenied, reIndexLoadingStatus } = loadingStatus;
-  const genericSavingStatus = useSelector(getGenericSavingStatus);
 
   const deleteMutation = useDeleteCourseItem(courseId);
   const configureSectionMutation = useConfigureSection(courseId);
@@ -68,7 +67,6 @@ const useCourseOutline = () => {
   const videoSharingMutation = useSetVideoSharingOption(courseId);
   const dismissNotificationMutation = useDismissNotification(courseId);
   const reindexMutation = useRestartIndexingOnCourse(courseId);
-  const handleAddBlock = useCreateCourseBlock(courseId);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);
@@ -77,34 +75,42 @@ const useCourseOutline = () => {
   const [isHighlightsModalOpen, openHighlightsModal, closeHighlightsModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
 
-  const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
+  const isSavingStatusFailed = savingStatus === RequestStatus.FAILED;
 
   const handleDeleteItemSubmit = async () => {
-    if (!currentSelection?.currentId) { return; }
-    const category = getBlockType(currentSelection.currentId);
-    switch (category) {
-      case 'chapter':
-        await deleteMutation.mutateAsync({ itemId: currentSelection.currentId });
-        break;
-      case 'sequential':
-        await deleteMutation.mutateAsync({
-          itemId: currentSelection.currentId,
-          sectionId: currentSelection.sectionId,
-        });
-        break;
-      case 'vertical':
-        await deleteMutation.mutateAsync({
-          itemId: currentSelection.currentId,
-          subsectionId: currentSelection.subsectionId,
-          sectionId: currentSelection.sectionId,
-        });
-        break;
-      default:
-        throw new Error(`Unrecognized category ${category}`);
-    }
-    closeDeleteModal();
-    if (selectedContainerState?.currentId === currentSelection?.currentId) {
-      clearSelection();
+    if (!actionTargetSelection?.currentId) { return; }
+    try {
+      const category = getBlockType(actionTargetSelection.currentId);
+      switch (category) {
+        case 'chapter':
+          await deleteMutation.mutateAsync({ itemId: actionTargetSelection.currentId });
+          break;
+        case 'sequential':
+          await deleteMutation.mutateAsync({
+            itemId: actionTargetSelection.currentId,
+            sectionId: actionTargetSelection.sectionId,
+          });
+          break;
+        case 'vertical':
+          await deleteMutation.mutateAsync({
+            itemId: actionTargetSelection.currentId,
+            subsectionId: actionTargetSelection.subsectionId,
+            sectionId: actionTargetSelection.sectionId,
+          });
+          break;
+        default:
+          throw new Error(`Unrecognized category ${category}`);
+      }
+      closeDeleteModal();
+      if (selectedContainerState?.currentId === actionTargetSelection?.currentId) {
+        clearSelection();
+      }
+      if (currentSelection?.currentId === actionTargetSelection?.currentId) {
+        clearContextSelection();
+      }
+    } catch {
+      // Leave modal/selection unchanged on failure.
+      // Toast/notification handled by useMutationWithProcessingNotification.
     }
   };
 
@@ -116,7 +122,11 @@ const useCourseOutline = () => {
         configureSectionMutation.mutate({ sectionId: selection.sectionId, ...variables });
         break;
       case 'sequential':
-        configureSubsectionMutation.mutate({ itemId: selection.currentId, sectionId: selection.sectionId, ...variables });
+        configureSubsectionMutation.mutate({
+          itemId: selection.currentId,
+          sectionId: selection.sectionId,
+          ...variables,
+        });
         break;
       case 'vertical':
         configureUnitMutation.mutate({ unitId: selection.currentId, sectionId: selection.sectionId, ...variables });
@@ -165,7 +175,7 @@ const useCourseOutline = () => {
       // istanbul ignore next - back compat with plugin slot
       await handleAddBlock.mutateAsync({
         type: ContainerType.Chapter,
-        parentLocator: courseStructure?.id,
+        parentLocator: courseUsageKey,
         displayName: COURSE_BLOCK_NAMES.chapter.name,
       });
     },
@@ -185,7 +195,7 @@ const useCourseOutline = () => {
   };
 
   const handleOpenHighlightsModal = (section) => {
-    setCurrentSelection({
+    setActionTargetSelection({
       currentId: section.id,
       sectionId: section.id,
     });
@@ -193,15 +203,15 @@ const useCourseOutline = () => {
   };
 
   const handleHighlightsFormSubmit = (highlights) => {
-    if (!currentSelection?.currentId) { return; }
+    if (!actionTargetSelection?.currentId) { return; }
     const dataToSend = Object.values(highlights).filter(Boolean);
-    highlightsMutation.mutate({ sectionId: currentSelection.currentId, highlights: dataToSend });
+    highlightsMutation.mutate({ sectionId: actionTargetSelection.currentId, highlights: dataToSend });
     closeHighlightsModal();
   };
 
   const handleConfigureModalClose = () => {
     closeConfigureModal();
-    setCurrentSelection(undefined);
+    setActionTargetSelection(undefined);
   };
 
   const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
@@ -225,7 +235,7 @@ const useCourseOutline = () => {
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
 
   const handleConfigureItemSubmit = (variables) => {
-    configureCurrentSelection(currentSelection, variables);
+    configureCurrentSelection(actionTargetSelection, variables);
     handleConfigureModalClose();
   };
 
@@ -234,7 +244,6 @@ const useCourseOutline = () => {
   }, [reIndexLoadingStatus]);
 
   return {
-    courseUsageKey: courseStructure?.id,
     courseActions,
     savingStatus,
     isCustomRelativeDatesActive,
@@ -275,7 +284,6 @@ const useCourseOutline = () => {
     mfeProctoredExamSettingsUrl,
     handleDismissNotification,
     advanceSettingsUrl,
-    genericSavingStatus,
     errors,
     handleUnlinkItemSubmit,
   };
