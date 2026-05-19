@@ -4,7 +4,9 @@ import {
   Alert,
   Button,
   Hyperlink,
+  Truncate,
 } from '@openedx/paragon';
+import { uniqBy } from 'lodash';
 import {
   Campaign as CampaignIcon,
   Error as ErrorIcon,
@@ -21,11 +23,11 @@ import CourseOutlinePageAlertsSlot from '../../plugin-slots/CourseOutlinePageAle
 import advancedSettingsMessages from '../../advanced-settings/messages';
 import { OutOfSyncAlert } from '../../course-libraries/OutOfSyncAlert';
 import { RequestStatus } from '../../data/constants';
+import { API_ERROR_TYPES } from '../constants';
 
 import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import AlertMessage from '../../generic/alert-message';
 import AlertProctoringError from '../../generic/AlertProctoringError';
-import { buildApiErrorMessages } from './buildApiErrorMessages';
 import messages from './messages';
 
 const PageAlerts = ({
@@ -348,7 +350,59 @@ const PageAlerts = ({
   };
 
   const renderApiErrors = () => {
-    const errorList = buildApiErrorMessages({ errors, intl });
+    const errorList = uniqBy(
+      Object.entries(errors)
+        .filter(([, value]) => value !== null)
+        .map(([key, value]) => {
+          switch (value.type) {
+            case API_ERROR_TYPES.forbidden: {
+              const description = intl.formatMessage(messages.forbiddenAlertBody, {
+                LMS: (
+                  <Hyperlink
+                    destination={`${getConfig().LMS_BASE_URL}`}
+                    target="_blank"
+                    showLaunchIcon={false}
+                  >
+                    {intl.formatMessage(messages.forbiddenAlertLmsUrl)}
+                  </Hyperlink>
+                ),
+              });
+              return {
+                key,
+                desc: description,
+                title: intl.formatMessage(messages.forbiddenAlert),
+                dismissible: value.dismissible,
+              };
+            }
+            case API_ERROR_TYPES.serverError: {
+              const description = (
+                <Truncate.Deprecated lines={2}>
+                  {value.data || intl.formatMessage(messages.serverErrorAlertBody)}
+                </Truncate.Deprecated>
+              );
+              return {
+                key,
+                desc: description,
+                title: intl.formatMessage(messages.serverErrorAlert),
+                dismissible: value.dismissible,
+              };
+            }
+            case API_ERROR_TYPES.networkError:
+              return {
+                key,
+                title: intl.formatMessage(messages.networkErrorAlert),
+                dismissible: value.dismissible,
+              };
+            default:
+              return {
+                key,
+                title: value.data,
+                dismissible: value.dismissible,
+              };
+          }
+        }),
+      'title',
+    );
     if (!errorList?.length) {
       return null;
     }
