@@ -228,8 +228,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     });
   }, [mergedRawErrors]);
 
-
-
   const {
     actionTargetSelection,
     setActionTargetSelection,

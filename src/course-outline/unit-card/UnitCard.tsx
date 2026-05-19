@@ -23,7 +23,12 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
-import { courseOutlineQueryKeys, useCourseItemData, useScrollState, useDuplicateItem } from '@src/course-outline/data/apiHooks';
+import {
+  courseOutlineQueryKeys,
+  useCourseItemData,
+  useScrollState,
+  useDuplicateItem,
+} from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
@@ -284,12 +289,13 @@ const UnitCard = ({
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}
             onClickCard={onClickCard}
-            onClickDuplicate={() => duplicateMutation.mutate({
-              itemId: unit.id,
-              parentId: subsection.id,
-              sectionId: section.id,
-              subsectionId: subsection.id,
-            })}
+            onClickDuplicate={() =>
+              duplicateMutation.mutate({
+                itemId: unit.id,
+                parentId: subsection.id,
+                sectionId: section.id,
+                subsectionId: subsection.id,
+              })}
             onClickManageTags={handleClickManageTags}
             titleComponent={titleComponent}
             namePrefix={namePrefix}

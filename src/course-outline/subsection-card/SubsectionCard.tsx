@@ -31,7 +31,12 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { courseOutlineQueryKeys, useCourseItemData, useScrollState, useDuplicateItem } from '@src/course-outline/data/apiHooks';
+import {
+  courseOutlineQueryKeys,
+  useCourseItemData,
+  useScrollState,
+  useDuplicateItem,
+} from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import messages from './messages';
@@ -311,12 +316,13 @@ const SubsectionCard = ({
                 onClickConfigure={onOpenConfigureModal}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
-                onClickDuplicate={() => duplicateMutation.mutate({
-                  itemId: subsection.id,
-                  parentId: section.id,
-                  sectionId: section.id,
-                  subsectionId: subsection.id,
-                })}
+                onClickDuplicate={() =>
+                  duplicateMutation.mutate({
+                    itemId: subsection.id,
+                    parentId: section.id,
+                    sectionId: section.id,
+                    subsectionId: subsection.id,
+                  })}
                 onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}

@@ -214,7 +214,7 @@ const courseIDtoBlockID = (courseId: string) => {
   }
   const formattedCourseId = courseId.split('course-v1:')[1];
   return `block-v1:${formattedCourseId}+type@course+block@course`;
-}
+};
 
 export {
   getItemStatus,

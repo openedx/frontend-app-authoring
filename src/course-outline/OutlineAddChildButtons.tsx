@@ -183,7 +183,11 @@ const OutlineAddChildButtons = ({
 
   return (
     <>
-      <AddPlaceholder parentLocator={parentLocator} handleAddBlock={handleAddBlock} handleAddAndOpenUnit={handleAddAndOpenUnit} />
+      <AddPlaceholder
+        parentLocator={parentLocator}
+        handleAddBlock={handleAddBlock}
+        handleAddAndOpenUnit={handleAddAndOpenUnit}
+      />
       <Stack direction="horizontal" gap={3} onClick={onClickCard}>
         <Button
           className={btnClasses}
