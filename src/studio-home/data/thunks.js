@@ -10,6 +10,7 @@ import {
   updateLoadingStatuses,
   updateSavingStatuses,
   fetchCourseDataSuccessV2,
+  updateStudioHomeCoursesCustomParams,
 } from './slice';
 
 /**
@@ -43,6 +44,7 @@ function fetchStudioHomeData(
       try {
         const coursesData = await getStudioHomeCoursesV2(search || '', requestParams);
         dispatch(fetchCourseDataSuccessV2(coursesData));
+        dispatch(updateStudioHomeCoursesCustomParams({ currentPage: requestParams.page || 1 }));
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
       } catch {
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));
