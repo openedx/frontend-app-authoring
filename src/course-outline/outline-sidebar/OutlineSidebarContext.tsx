@@ -12,7 +12,6 @@ import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '
 import { SelectionState } from '@src/data/types';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { ContainerType } from '@src/generic/key-utils';
-import { buildSelectionState } from '@src/course-outline/state/selection';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
 export type OutlineFlow = {
@@ -124,12 +123,12 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     sectionId?: string,
     index?: number,
   ) => {
-    setSelectedContainerState(buildSelectionState({
+    setSelectedContainerState({
       currentId: containerId,
       subsectionId,
       sectionId,
       index,
-    }));
+    });
   }, [setSelectedContainerState]);
 
   /**

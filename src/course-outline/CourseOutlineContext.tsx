@@ -15,11 +15,10 @@ import type {
 
 import { useCourseItemData, useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './data/apiHooks';
 
+import { useToggle } from '@openedx/paragon';
+import { useToggleWithValue } from '@src/hooks';
 import { useOutlineReorderState } from './state/useOutlineReorderState';
 import { useOutlineStatusState } from './state/useOutlineStatusState';
-import useOutlineModalState from './state/useOutlineModalState';
-import useOutlineActionTargetState from './state/useOutlineActionTargetState';
-import { buildSelectionState } from './state/selection';
 import {
   computeErrorSignature,
   filterDismissedErrors,
@@ -170,12 +169,12 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     sectionId?: string,
     index?: number,
   ) => {
-    setCurrentSelection(buildSelectionState({
+    setCurrentSelection({
       currentId: containerId,
       subsectionId,
       sectionId,
       index,
-    }));
+    });
   }, []);
 
   // Preserve reference when no reindex error to avoid unnecessary effect re-fires.
@@ -228,20 +227,15 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     });
   }, [mergedRawErrors]);
 
-  const {
-    actionTargetSelection,
-    setActionTargetSelection,
-  } = useOutlineActionTargetState();
+  const [actionTargetSelection, setActionTargetSelection] = useState<SelectionState | undefined>();
 
-  const {
-    isDeleteModalOpen,
-    openDeleteModal,
-    closeDeleteModal,
+  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [
     isPublishModalOpen,
     currentPublishModalData,
     openPublishModal,
     closePublishModal,
-  } = useOutlineModalState();
+  ] = useToggleWithValue<ModalState>();
 
   const context = useMemo<CourseOutlineContextData>(() => ({
     outlineIndexData: (effectiveOutlineIndexData || {}) as object,
