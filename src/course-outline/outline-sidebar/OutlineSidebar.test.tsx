@@ -26,6 +26,11 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   useConfigureUnit: jest.fn().mockReturnValue({ mutate: jest.fn() }),
   usePasteItem: jest.fn().mockReturnValue({ mutate: jest.fn() }),
   useUpdateCourseSectionHighlights: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  useCourseOutlineSavingStatus: jest.fn().mockReturnValue(''),
+  useCourseOutlineReindexStatus: jest.fn().mockReturnValue({ reindexLoadingStatus: 'in-progress', reindexError: null }),
+  useReorderSections: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
+  useReorderSubsections: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
+  useReorderUnits: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
 }));
 
 const courseId = '123';
