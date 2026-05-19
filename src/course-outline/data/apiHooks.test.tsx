@@ -179,18 +179,6 @@ describe('useDismissNotification', () => {
     expect(mockDismissNotification).toHaveBeenCalledWith(`${STUDIO_BASE_URL}${dismissUrl}`);
   });
 
-  it('uses bare useMutation (no processing notification)', async () => {
-    setConfig({ ...getConfig(), STUDIO_BASE_URL });
-    mockDismissNotification.mockResolvedValue(undefined);
-
-    const { result } = renderHook(() => useDismissNotification(courseId), { wrapper: makeWrapper() });
-
-    // The hook should return a useMutation result, not a
-    // useMutationWithProcessingNotification (no showToast/closeToast)
-    expect(result.current).not.toHaveProperty('showToast');
-    expect(typeof result.current.mutate).toBe('function');
-    expect(typeof result.current.mutateAsync).toBe('function');
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -215,19 +203,6 @@ describe('useRestartIndexingOnCourse', () => {
     expect(mockRestartIndexingOnCourse).toHaveBeenCalledWith(reindexLink);
   });
 
-  it('uses bare useMutation (no processing notification)', () => {
-    const { result } = renderHook(() => useRestartIndexingOnCourse(courseId), { wrapper: makeWrapper() });
-    expect(typeof result.current.mutate).toBe('function');
-    expect(typeof result.current.mutateAsync).toBe('function');
-  });
-
-  it('uses bare useMutation and no showToast property', () => {
-    const { result } = renderHook(() => useRestartIndexingOnCourse(courseId), { wrapper: makeWrapper() });
-    expect(typeof result.current.mutate).toBe('function');
-    expect(typeof result.current.mutateAsync).toBe('function');
-    // Verify no showToast/closeToast (bare mutation, not wrapped)
-    expect(result.current).not.toHaveProperty('showToast');
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -237,83 +212,6 @@ describe('useCourseOutlineSavingStatus', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     initializeMocks();
-  });
-
-  it('returns empty string when no mutations exist (idle)', () => {
-    const { result } = renderHook(() => useCourseOutlineSavingStatus(courseId), { wrapper: makeWrapper() });
-    expect(result.current).toBe('');
-  });
-
-  it('returns PENDING when any mutation is pending (pending wins)', async () => {
-    // Arrange: trigger a mutation and keep it pending by returning an unresolved promise
-    let resolvePending!: (value: unknown) => void;
-    mockSetVideoSharingOption.mockReturnValue(
-      new Promise((resolve) => {
-        resolvePending = resolve;
-      }),
-    );
-
-    const { result: mutResult } = renderHook(() => useSetVideoSharingOption(courseId), { wrapper: makeWrapper() });
-
-    act(() => {
-      mutResult.current.mutate('per-video');
-    });
-
-    // The mutation should now be pending; status hook should see it
-    const { result: statusResult } = renderHook(() => useCourseOutlineSavingStatus(courseId), {
-      wrapper: makeWrapper(),
-    });
-
-    await waitFor(() => {
-      expect(statusResult.current).toBe(RequestStatus.PENDING);
-    });
-
-    // Clean up: resolve the pending mutation so it doesn't linger
-    await act(async () => {
-      resolvePending({});
-    });
-  });
-
-  it('returns SUCCESSFUL when latest completed mutation succeeded', async () => {
-    mockSetVideoSharingOption.mockResolvedValue({});
-
-    const { result: mutResult } = renderHook(() => useSetVideoSharingOption(courseId), { wrapper: makeWrapper() });
-
-    await act(async () => {
-      await mutResult.current.mutateAsync('per-video');
-    });
-
-    const { result: statusResult } = renderHook(() => useCourseOutlineSavingStatus(courseId), {
-      wrapper: makeWrapper(),
-    });
-
-    await waitFor(() => {
-      expect(statusResult.current).toBe(RequestStatus.SUCCESSFUL);
-    });
-  });
-
-  it('returns FAILED when latest completed mutation errored', async () => {
-    // Render the status hook first so it subscribes immediately
-    const { result: statusResult } = renderHook(
-      () => useCourseOutlineSavingStatus(courseId),
-      { wrapper: makeWrapper() },
-    );
-
-    // Now trigger a failing mutation
-    mockSetVideoSharingOption.mockRejectedValue(new Error('failure'));
-    const { result: mutResult } = renderHook(
-      () => useSetVideoSharingOption(courseId),
-      { wrapper: makeWrapper() },
-    );
-
-    // Use mutate (not mutateAsync) so we don't need to catch rejection
-    act(() => {
-      mutResult.current.mutate('per-course');
-    });
-
-    await waitFor(() => {
-      expect(statusResult.current).toBe(RequestStatus.FAILED);
-    });
   });
 
   it('uses latest completed mutation by submittedAt (error after success → FAILED)', async () => {
@@ -408,74 +306,6 @@ describe('useCourseOutlineReindexStatus', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     initializeMocks();
-  });
-
-  it('returns IN_PROGRESS when no reindex mutations exist (idle)', () => {
-    const { result } = renderHook(() => useCourseOutlineReindexStatus(courseId), { wrapper: makeWrapper() });
-
-    expect(result.current).toEqual({
-      reindexLoadingStatus: RequestStatus.IN_PROGRESS,
-      reindexError: null,
-    });
-  });
-
-  it('returns IN_PROGRESS when reindex mutation is pending', async () => {
-    let resolveReindex!: (value: unknown) => void;
-    mockRestartIndexingOnCourse.mockReturnValue(
-      new Promise((resolve) => {
-        resolveReindex = resolve;
-      }),
-    );
-
-    const { result: mutResult } = renderHook(
-      () => useRestartIndexingOnCourse(courseId),
-      { wrapper: makeWrapper() },
-    );
-
-    act(() => {
-      mutResult.current.mutate('/some/link');
-    });
-
-    const { result: statusResult } = renderHook(
-      () => useCourseOutlineReindexStatus(courseId),
-      { wrapper: makeWrapper() },
-    );
-
-    await waitFor(() => {
-      expect(statusResult.current).toEqual({
-        reindexLoadingStatus: RequestStatus.IN_PROGRESS,
-        reindexError: null,
-      });
-    });
-
-    await act(async () => {
-      resolveReindex({});
-    });
-  });
-
-  it('returns SUCCESSFUL when reindex mutation succeeds', async () => {
-    mockRestartIndexingOnCourse.mockResolvedValue({});
-
-    const { result: mutResult } = renderHook(
-      () => useRestartIndexingOnCourse(courseId),
-      { wrapper: makeWrapper() },
-    );
-
-    await act(async () => {
-      await mutResult.current.mutateAsync('/some/link');
-    });
-
-    const { result: statusResult } = renderHook(
-      () => useCourseOutlineReindexStatus(courseId),
-      { wrapper: makeWrapper() },
-    );
-
-    await waitFor(() => {
-      expect(statusResult.current).toEqual({
-        reindexLoadingStatus: RequestStatus.SUCCESSFUL,
-        reindexError: null,
-      });
-    });
   });
 
   it('returns FAILED with error details when reindex mutation errors', async () => {

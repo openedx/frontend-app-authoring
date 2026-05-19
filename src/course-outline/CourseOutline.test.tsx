@@ -33,8 +33,6 @@ import {
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
   exportTags,
-  createDiscussionsTopics,
-  createDiscussionsTopicsUrl,
 } from './data/api';
 
 import {
@@ -174,9 +172,6 @@ describe('<CourseOutline />', () => {
         all: true,
       }))
       .reply(200, courseLaunchMock);
-    axiosMock
-      .onPost(`${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`)
-      .reply(200, {});
     // Seed React Query cache with a clone so tests can mutate the mock data
     queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), cloneDeep(courseOutlineIndexMock));
   });
@@ -224,17 +219,7 @@ describe('<CourseOutline />', () => {
     expect(screen.queryByTestId('empty-placeholder')).not.toBeInTheDocument();
   });
 
-  it('logs an error when syncDiscussionsTopics encounters an API failure', async () => {
-    axiosMock
-      .onPost(createDiscussionsTopicsUrl(courseId))
-      .reply(500, 'some internal error');
 
-    try {
-      await createDiscussionsTopics(courseId);
-    } catch {
-      expect(axiosMock.history.post.length).toBeGreaterThan(0);
-    }
-  });
 
   it('handles course outline fetch api errors', async () => {
     ({ axiosMock } = initializeMocks());

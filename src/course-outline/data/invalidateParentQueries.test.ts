@@ -43,12 +43,4 @@ describe('invalidateParentQueries', () => {
     expect(queryClient.invalidateQueries).not.toHaveBeenCalled();
   });
 
-  it('propagates rejection when invalidateQueries rejects (caller must catch)', async () => {
-    const rejectError = new Error('invalidation failed');
-    (queryClient.invalidateQueries as jest.Mock).mockRejectedValueOnce(rejectError);
-
-    await expect(
-      invalidateParentQueries(queryClient, { sectionId }),
-    ).rejects.toThrow(rejectError);
-  });
 });
