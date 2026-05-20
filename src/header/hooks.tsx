@@ -127,7 +127,7 @@ export const useSettingMenuItems = (courseId: string) => {
       }] :
       []),
   ];
-  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' || waffleFlags.useNewCertificatesPage) {
+  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' && waffleFlags.useNewCertificatesPage) {
     items.push({
       href: `/course/${courseId}/certificates`,
       title: intl.formatMessage(messages['header.links.certificates']),

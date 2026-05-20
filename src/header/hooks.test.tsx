@@ -143,7 +143,8 @@ describe('header utils', () => {
       } as ReturnType<typeof useCourseUserPermissions>);
     });
 
-    it('when certificate page enabled should include certificates option', () => {
+    it('when certificate page enabled and waffle flag enabled should include certificates option', () => {
+      mockWaffleFlags({ useNewCertificatesPage: true });
       setConfig({
         ...getConfig(),
         ENABLE_CERTIFICATE_PAGE: 'true',
@@ -153,9 +154,20 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(6);
     });
     it('when certificate page disabled should not include certificates option', () => {
+      mockWaffleFlags({ useNewCertificatesPage: true });
       setConfig({
         ...getConfig(),
         ENABLE_CERTIFICATE_PAGE: 'false',
+      });
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      expect(actualItems).toHaveLength(5);
+    });
+    it('when waffle flag disabled should not include certificates option even if config enabled', () => {
+      mockWaffleFlags({ useNewCertificatesPage: false });
+      setConfig({
+        ...getConfig(),
+        ENABLE_CERTIFICATE_PAGE: 'true',
       });
       const actualItems =
         renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
