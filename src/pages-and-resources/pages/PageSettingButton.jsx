@@ -83,7 +83,7 @@ const PageSettingButton = ({
       size="inline"
       alt={formatMessage(messages.settings)}
       disabled={isGearDisabled}
-      onClick={isGearDisabled ? undefined : () => navigate(`${pagesAndResourcesPath}/${id}/settings`)}
+      onClick={() => navigate(`${pagesAndResourcesPath}/${id}/settings`)}
     />
   );
 };
