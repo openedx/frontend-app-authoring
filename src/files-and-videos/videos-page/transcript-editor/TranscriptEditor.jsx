@@ -57,6 +57,8 @@ const TranscriptEditor = ({
   const intl = useIntl();
   const videoRef = useRef(null);
   const cueIdRef = useRef(0);
+  const cueListRef = useRef(null);
+  const cueWrapperRefs = useRef({});
   const cueTextRefs = useRef({});
   const pendingFocusId = useRef(null);
 
@@ -102,6 +104,17 @@ const TranscriptEditor = ({
     [cues],
   );
 
+  const activeCueId = useMemo(() => {
+    const activeCue = cues.find((cue) => (
+      TIMESTAMP_REGEX.test(cue.startTime)
+      && TIMESTAMP_REGEX.test(cue.endTime)
+      && currentTime >= parseTimestamp(cue.startTime)
+      && currentTime < parseTimestamp(cue.endTime)
+    ));
+
+    return activeCue?.id || null;
+  }, [cues, currentTime]);
+
   useEffect(() => {
     if (pendingFocusId.current) {
       const el = cueTextRefs.current[pendingFocusId.current];
@@ -111,6 +124,31 @@ const TranscriptEditor = ({
       }
     }
   }, [cues]);
+
+  useEffect(() => {
+    const cueList = cueListRef.current;
+    const activeCue = activeCueId ? cueWrapperRefs.current[activeCueId] : null;
+
+    if (!cueList || !activeCue) {
+      return;
+    }
+
+    const cueListRect = cueList.getBoundingClientRect();
+    const activeCueRect = activeCue.getBoundingClientRect();
+    const nextScrollTop = cueList.scrollTop
+      + activeCueRect.top
+      - cueListRect.top
+      - ((cueListRect.height - activeCueRect.height) / 2);
+
+    if (typeof cueList.scrollTo === 'function') {
+      cueList.scrollTo({
+        top: Math.max(0, nextScrollTop),
+        behavior: 'smooth',
+      });
+    } else {
+      cueList.scrollTop = Math.max(0, nextScrollTop);
+    }
+  }, [activeCueId]);
 
   const inlineErrorMessage = saveError;
 
@@ -337,19 +375,19 @@ const TranscriptEditor = ({
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          <div className="d-flex align-items-start justify-content-between w-100 transcript-editor-modal__header-row">
+          <div className="d-flex align-items-start justify-content-between w-100 pr-4">
             <div>
               <h3 className="font-weight-bold h3 mb-0">{video.displayName}</h3>
               <h6 className="small text-gray-700 mt-1">{languages?.[language] || language}</h6>
             </div>
             {saveStatus === 'saving' && (
-              <div className="d-inline-flex align-items-center text-gray-700 transcript-editor-modal__save-indicator">
+              <div className="d-inline-flex align-items-center text-gray-700 small text-nowrap mt-1">
                 <Spinner animation="border" size="sm" className="mr-2" screenReaderText={intl.formatMessage(messages.saveInProgressLabel)} />
                 <span>{intl.formatMessage(messages.saveInProgressLabel)}</span>
               </div>
             )}
             {saveStatus === 'saved' && (
-              <div className="d-inline-flex align-items-center text-success transcript-editor-modal__save-indicator">
+              <div className="d-inline-flex align-items-center text-success small text-nowrap mt-1">
                 <Icon src={CheckCircle} className="mr-2" />
                 <span>{intl.formatMessage(messages.savedLabel)}</span>
               </div>
@@ -358,20 +396,20 @@ const TranscriptEditor = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
 
-      <ModalDialog.Body className="px-0 pb-0 d-flex flex-column">
+      <ModalDialog.Body className="p-0 d-flex flex-column overflow-hidden">
         {inlineErrorMessage && (
           <Alert variant="danger" icon={Info} className="mx-4 mt-3 mb-0 flex-shrink-0">
             {inlineErrorMessage}
           </Alert>
         )}
         {loading ? (
-          <div className="d-flex align-items-center justify-content-center py-5">
+          <div className="d-flex align-items-center justify-content-center py-5 flex-fill">
             <Spinner animation="border" screenReaderText={intl.formatMessage(messages.loadingLabel)} />
           </div>
         ) : (
           <>
             {video.downloadLink && (
-              <div className="flex-shrink-0 bg-black">
+              <div className="transcript-editor-modal__video-container bg-black d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden">
                 <video
                   ref={videoRef}
                   src={video.downloadLink}
@@ -394,7 +432,7 @@ const TranscriptEditor = ({
               </div>
             )}
 
-            <div className="transcript-editor-modal__cue-list overflow-auto px-4 pb-2">
+            <div ref={cueListRef} className="transcript-editor-modal__cue-list overflow-auto flex-grow-1 px-4 py-3">
               {cues.length === 0 && (
                 <div className="d-flex justify-content-center py-4">
                   <Button
@@ -408,13 +446,23 @@ const TranscriptEditor = ({
                 </div>
               )}
               {cues.map((cue, index) => {
-                const isActive = currentTime >= parseTimestamp(cue.startTime)
-                  && currentTime < parseTimestamp(cue.endTime);
+                const isActive = activeCueId === cue.id;
                 const hasCueTextError = hasInvalidCueText(cue.text);
                 return (
-                  <Stack key={cue.id ?? `cue-${index}`} gap={2} className={`py-2 transcript-editor-modal__cue-wrapper${isActive ? ' transcript-editor-modal__cue--active' : ''}`}>
-                    <Stack direction="horizontal" gap={2} className="transcript-editor-modal__cue-row">
-                      <div className="transcript-editor-modal__cue-text-wrap">
+                  <Stack
+                    key={cue.id ?? `cue-${index}`}
+                    ref={(el) => {
+                      if (el) {
+                        cueWrapperRefs.current[cue.id] = el;
+                      } else {
+                        delete cueWrapperRefs.current[cue.id];
+                      }
+                    }}
+                    gap={2}
+                    className={`px-3 py-2 transcript-editor-modal__cue-wrapper${isActive ? ' transcript-editor-modal__cue--active' : ''}`}
+                  >
+                    <Stack direction="horizontal" gap={2} className="transcript-editor-modal__cue-row flex-wrap flex-lg-nowrap align-items-center">
+                      <div className="transcript-editor-modal__cue-text-wrap flex-grow-1">
                         <Form.Control
                           type="text"
                           value={cue.text}

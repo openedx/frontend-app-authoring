@@ -1,35 +1,40 @@
 .transcript-editor-modal {
-  &__header-row {
-    padding-right: 2rem;
-  }
-
-  &__save-indicator {
-    font-size: 0.875rem;
-    white-space: nowrap;
-    margin-top: 0.25rem;
+  &__video-container {
+    background: var(--pgn-color-black);
+    height: clamp(8rem, 40vh, 32rem);
   }
 
   &__video {
     display: block;
     width: 100%;
-    max-height: 320px;
+    max-height: 100%;
+    max-width: 100%;
     background: var(--pgn-color-black);
     object-fit: contain;
   }
 
   &.pgn__modal {
-    .pgn__modal-content-container {
-      display: flex;
-      flex-direction: column;
-      max-height: 90vh;
+    width: 80vw;
+    max-width: 80vw;
+    height: 95vh;
+    max-height: 95vh;
+    overflow: hidden;
+
+    .pgn__modal-header,
+    .pgn__modal-footer {
+      flex: 0 0 auto;
     }
   }
 
   .pgn__modal-body {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
     flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .pgn__modal-body-content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
     min-height: 0;
     padding-left: 0;
     padding-right: 0;
@@ -37,19 +42,33 @@
   }
 
   &__cue-list {
-    max-height: calc(90vh - 500px);
-    min-height: 200px;
+    min-height: 0;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
   }
 
   &__cue-wrapper {
+    border-left: 3px solid transparent;
+    border-radius: 0.375rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color 0.15s ease;
+
     &.transcript-editor-modal__cue--active {
       background: linear-gradient(90deg, rgb(0 117 180 / 0.08) 0%, transparent 100%);
       border-left: 3px solid var(--pgn-color-info-500);
       border-radius: 0.25rem;
+      box-shadow: 0 0 0 2px rgb(0 117 180 / 0.2);    
 
       .transcript-editor-modal__cue-text.form-control {
-        color: var(--pgn-color-primary-500);
+        border-color: var(--pgn-color-info-500) !important;
+        background: var(--pgn-color-white) !important;
+        color: var(--pgn-color-gray-900);
         font-weight: 500;
+      }
+
+      .transcript-editor-modal__time.form-control {
+         border-color: var(--pgn-color-info-500);
+         color: var(--pgn-color-gray-900);
       }
     }
   }
@@ -103,8 +122,6 @@
     }
   }
 
-
-
   &__time-wrap {
     flex: 0 0 auto;
     width: 8rem;
@@ -147,8 +164,9 @@
     justify-content: center;
     position: relative;
     width: 100%;
-    height: 2rem;
+    height: 0;
     visibility: hidden;
+    transition: height 0.15s ease;
   }
 
   &__insert-divider-line {
@@ -172,6 +190,28 @@
   }
 
   &__cue-wrapper:hover &__insert-divider {
+    height: 2rem;
     visibility: visible;
+  }
+
+  @media (width <= 767.98px) {
+    &.pgn__modal {
+      width: calc(100vw - 1rem);
+      max-width: calc(100vw - 1rem);
+      height: calc(100vh - 0.5rem);
+      max-height: calc(100vh - 0.5rem);
+      margin: 0;
+    }
+  }
+
+  @media (width <= 991.98px) {
+    &__cue-text-wrap {
+      flex-basis: 100%;
+    }
+
+    &__time-wrap {
+      flex: 1 1 7.5rem;
+      max-width: 9rem;
+    }
   }
 }
