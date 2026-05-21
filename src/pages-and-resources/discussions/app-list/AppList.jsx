@@ -40,7 +40,7 @@ import { discussionRestriction } from '../data/constants';
 const AppList = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { courseId } = useContext(PagesAndResourcesContext);
+  const { courseId, isEditable } = useContext(PagesAndResourcesContext);
   const {
     appIds,
     featureIds,
@@ -155,6 +155,7 @@ const AppList = () => {
           onChange={handleChange}
           checked={!enabled}
           data-testid="hide-discussion"
+          disabled={!isEditable}
         >
           {intl.formatMessage(messages.hideDiscussionTab)}
         </Form.Switch>
@@ -200,6 +201,7 @@ const AppList = () => {
               className="ml-2"
               variant="primary"
               onClick={handleOk}
+              disabled={!isEditable}
             />
           </ActionRow>
         }
