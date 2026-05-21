@@ -28,7 +28,6 @@ import DraggableList, { SortableItem } from '@src/generic/DraggableList';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '@src/data/constants';
 import { useModels } from '@src/generic/model-store';
-import { useWaffleFlags } from '@src/data/apiHooks';
 import getPageHeadTitle from '@src/generic/utils';
 import { getPagePath } from '@src/utils';
 import { DeprecatedReduxState } from '@src/store';
@@ -70,8 +69,6 @@ const CustomPages = () => {
   const deletePageStatus = useSelector((state: DeprecatedReduxState) => state.customPages.deletingStatus);
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
-  const waffleFlags = useWaffleFlags(courseId);
-
   const pages = useModels('customPages', customPagesIds);
 
   const handleAddPage = () => {
@@ -128,9 +125,7 @@ const CustomPages = () => {
             links={[
               {
                 label: 'Content',
-                to: waffleFlags.useNewCourseOutlinePage
-                  ? `/course/${courseId}`
-                  : `${config.STUDIO_BASE_URL}/course/${courseId}`,
+                to: `/course/${courseId}`,
               },
               { label: 'Pages and Resources', to: getPagePath(courseId, 'true', 'tabs') },
             ]}
