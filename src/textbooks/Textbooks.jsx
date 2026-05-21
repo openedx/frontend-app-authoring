@@ -12,7 +12,6 @@ import { Link } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { RequestStatus } from '@src/data/constants';
 
-import { useWaffleFlags } from '../data/apiHooks';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
 import { LoadingSpinner } from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -28,7 +27,6 @@ import messages from './messages';
 const Textbooks = () => {
   const intl = useIntl();
   const { courseId, courseDetails } = useCourseAuthoringContext();
-  const waffleFlags = useWaffleFlags(courseId);
 
   const {
     textbooks,
@@ -44,7 +42,7 @@ const Textbooks = () => {
     handleSavingStatusDispatch,
     handleTextbookEditFormSubmit,
     handleTextbookDeleteSubmit,
-  } = useTextbooks(courseId, waffleFlags);
+  } = useTextbooks(courseId);
 
   if (isLoadingFailed) {
     return (

@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useContext, useEffect } from 'react';
-import { AppContext } from '@edx/frontend-platform/react';
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
 
@@ -20,10 +19,9 @@ import {
 } from './data/thunk';
 import messages from './messages';
 
-const useTextbooks = (courseId, waffleFlags) => {
+const useTextbooks = (courseId) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { config } = useContext(AppContext);
 
   const textbooks = useSelector(getTextbooksData);
   const loadingStatus = useSelector(getLoadingStatus);
@@ -35,7 +33,7 @@ const useTextbooks = (courseId, waffleFlags) => {
   const breadcrumbs = [
     {
       label: intl.formatMessage(messages.breadcrumbContent),
-      to: waffleFlags.useNewCourseOutlinePage ? `/course/${courseId}` : `${config.STUDIO_BASE_URL}/course/${courseId}`,
+      to: `/course/${courseId}`,
     },
     {
       label: intl.formatMessage(messages.breadcrumbPagesAndResources),
