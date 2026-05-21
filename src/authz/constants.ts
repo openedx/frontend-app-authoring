@@ -24,4 +24,7 @@ export const COURSE_PERMISSIONS = {
   VIEW_SCHEDULE_AND_DETAILS: 'courses.view_schedule_and_details',
   EDIT_SCHEDULE: 'courses.edit_schedule',
   EDIT_DETAILS: 'courses.edit_details',
+
+  VIEW_PAGES_AND_RESOURCES: 'courses.view_pages_and_resources',
+  MANAGE_PAGES_AND_RESOURCES: 'courses.manage_pages_and_resources',
 };

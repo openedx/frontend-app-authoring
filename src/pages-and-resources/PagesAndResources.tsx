@@ -14,6 +14,8 @@ import { AdditionalCoursePluginSlot } from '@src/plugin-slots/AdditionalCoursePl
 import { AdditionalCourseContentPluginSlot } from '@src/plugin-slots/AdditionalCourseContentPluginSlot';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { DeprecatedReduxState } from '@src/store';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 
 import messages from './messages';
 import DiscussionsSettings from './discussions';
@@ -27,6 +29,13 @@ const PagesAndResources = () => {
   const intl = useIntl();
   const { courseId, courseDetails } = useCourseAuthoringContext();
   document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
+
+  const {
+    isLoading: isLoadingUserPermissions,
+    isAuthzEnabled,
+    canViewPagesAndResources,
+    canManagePagesAndResources,
+  } = useCourseUserPermissions(courseId, getPagesAndResourcesPermissions(courseId));
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -56,19 +65,25 @@ const PagesAndResources = () => {
     }
   });
 
-  if (loadingStatus === RequestStatus.IN_PROGRESS) {
+  if (loadingStatus === RequestStatus.IN_PROGRESS || isLoadingUserPermissions) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
-  if (courseAppsApiStatus === RequestStatus.DENIED) {
+  // Gate: if user has neither VIEW nor MANAGE permission, show permission denied
+  const hasNoAccess = (!isAuthzEnabled && courseAppsApiStatus === RequestStatus.DENIED)
+    || (isAuthzEnabled && !canViewPagesAndResources && !canManagePagesAndResources);
+
+  if (hasNoAccess) {
     return <PermissionDeniedAlert />;
   }
 
+  // When authz is disabled every authenticated user has full edit access.
+  const isEditable = !isAuthzEnabled || !!canManagePagesAndResources;
   const hasAdditionalCoursePlugin = getConfig()?.pluginSlots?.additional_course_plugin != null;
 
   return (
-    <PagesAndResourcesProvider courseId={courseId}>
+    <PagesAndResourcesProvider courseId={courseId} isEditable={isEditable}>
       <main className="container container-mw-md px-3">
         <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
           <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>
@@ -81,7 +96,6 @@ const PagesAndResources = () => {
             <Button variant="outline-primary" className="p-2">{intl.formatMessage(messages.viewLiveButton)}</Button>
           </Hyperlink>
         </div>
-
         <Routes>
           <Route
             path="discussion/configure/:appId"
@@ -117,14 +131,21 @@ const PagesAndResources = () => {
           />
         </Routes>
 
-        <PageGrid pages={pages} pluginSlotComponent={<AdditionalCoursePluginSlot />} courseId={courseId} />
+        <PageGrid
+          pages={pages}
+          pluginSlotComponent={<AdditionalCoursePluginSlot />}
+          courseId={courseId}
+        />
         {(contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
           && (
             <>
               <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
                 <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
               </div>
-              <PageGrid pages={contentPermissionsPages} pluginSlotComponent={<AdditionalCourseContentPluginSlot />} />
+              <PageGrid
+                pages={contentPermissionsPages}
+                pluginSlotComponent={<AdditionalCourseContentPluginSlot />}
+              />
             </>
           )}
       </main>
