@@ -25,3 +25,21 @@ export const getGradingPermissions = (courseId: string) => ({
     scope: courseId,
   },
 });
+
+export const getPagesAndResourcesPermissions = (courseId: string) => ({
+  canViewPagesAndResources: {
+    action: COURSE_PERMISSIONS.VIEW_PAGES_AND_RESOURCES,
+    scope: courseId,
+  },
+  canManagePagesAndResources: {
+    action: COURSE_PERMISSIONS.MANAGE_PAGES_AND_RESOURCES,
+    scope: courseId,
+  },
+});
+
+export const getAdvancedSettingsPermissions = (courseId: string) => ({
+  canManageAdvancedSettings: {
+    action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
+    scope: courseId,
+  },
+});
