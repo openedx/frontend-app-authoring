@@ -38,6 +38,7 @@ import {
   addNewSectionQuery,
   addNewSubsectionQuery,
   addNewUnitQuery,
+  fetchCourseSectionQuery,
   deleteCourseSectionQuery,
   deleteCourseSubsectionQuery,
   deleteCourseUnitQuery,
@@ -145,13 +146,58 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleNewUnitSubmit = (subsectionId) => {
-    dispatch(addNewUnitQuery(subsectionId, openUnitPage));
+    const parentSection = sectionsList && sectionsList.find(
+      (section) => (
+        section.childInfo
+        && section.childInfo.children
+        && section.childInfo.children.some(
+          (child) => child.id === subsectionId,
+        )
+      ),
+    );
+
+    const parentSectionId = parentSection ? parentSection.id : null;
+
+    dispatch(addNewUnitQuery(subsectionId, (locator) => {
+      if (parentSectionId) {
+        dispatch(
+          fetchCourseSectionQuery(
+            [parentSectionId],
+            { subsectionId, unitId: locator },
+          ),
+        );
+      } else {
+        dispatch(fetchCourseOutlineIndexQuery(courseId));
+      }
+    }));
   };
 
-  /**
-  * import a unit block from library and redirect user to this unit page.
-  */
-  const handleAddUnitFromLibrary = useCreateCourseBlock(openUnitPage);
+  const handleAddUnitFromLibrary = useCreateCourseBlock(
+    (locator, parentLocator) => {
+      const parentSection = sectionsList && sectionsList.find(
+        (section) => (
+          section.childInfo
+        && section.childInfo.children
+        && section.childInfo.children.some(
+          (child) => child.id === parentLocator,
+        )
+        ),
+      );
+
+      const parentSectionId = parentSection ? parentSection.id : null;
+
+      if (parentSectionId) {
+        dispatch(
+          fetchCourseSectionQuery(
+            [parentSectionId],
+            { subsectionId: parentLocator, unitId: locator },
+          ),
+        );
+      } else {
+        dispatch(fetchCourseOutlineIndexQuery(courseId));
+      }
+    },
+  );
 
   const handleAddSubsectionFromLibrary = useCreateCourseBlock(async (locator, parentLocator) => {
     try {
