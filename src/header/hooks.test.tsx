@@ -129,7 +129,7 @@ describe('header utils', () => {
 
   describe('getSettingsMenuitems', () => {
     beforeEach(() => {
-      mockWaffleFlags({ enableAuthzCourseAuthoring: false, useNewCertificatesPage: false });
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false });
       jest.mocked(useSelector).mockReturnValue({
         canAccessAdvancedSettings: true,
       });
@@ -281,7 +281,7 @@ describe('header utils', () => {
     });
 
     it('should include roles and permissions option', () => {
-      mockWaffleFlags({ enableAuthzCourseAuthoring: true, useNewCertificatesPage: false });
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,

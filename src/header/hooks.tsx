@@ -72,7 +72,6 @@ export const useContentMenuItems = (courseId: string) => {
 export const useSettingMenuItems = (courseId: string) => {
   const intl = useIntl();
   const { canAccessAdvancedSettings: legacyCanAccessAdvancedSettings } = useSelector(getStudioHomeData);
-  const waffleFlags = useWaffleFlags(courseId);
 
   /*
     AuthZ for Course Authoring
