@@ -3,7 +3,6 @@ import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { type Container, useToggle } from '@openedx/paragon';
 
-import { useWaffleFlags } from '../data/apiHooks';
 import { SearchModal } from '../search-modal';
 import {
   useContentMenuItems,
@@ -38,11 +37,9 @@ const Header = ({
   readOnly = false,
 }: HeaderProps) => {
   const intl = useIntl();
-  const waffleFlags = useWaffleFlags();
 
   const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
 
-  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const meiliSearchEnabled = [true, 'true'].includes(getConfig().MEILISEARCH_ENABLED);
 
   const contentMenuItems = useContentMenuItems(contextId);
@@ -90,7 +87,7 @@ const Header = ({
     if (isLibrary) {
       return `/library/${contextId}`;
     }
-    return waffleFlags.useNewCourseOutlinePage ? `/course/${contextId}` : `${studioBaseUrl}/course/${contextId}`;
+    return `/course/${contextId}`;
   };
 
   return (
@@ -104,7 +101,7 @@ const Header = ({
         outlineLink={getOutlineLink()}
         searchButtonAction={meiliSearchEnabled ? openSearchModal : undefined}
         containerProps={containerProps}
-        isNewHomePage={waffleFlags.useNewHomePage}
+        isNewHomePage
       />
       {meiliSearchEnabled && (
         <SearchModal

@@ -5,24 +5,18 @@ import { ActionRow, Button, Icon } from '@openedx/paragon';
 import { CheckCircle, RadioButtonUnchecked } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 
-import { useWaffleFlags } from '@src/data/apiHooks';
-
 import messages from './messages';
 
-const getUpdateLinks = (courseId, waffleFlags) => {
+const getUpdateLinks = (courseId) => {
   const baseUrl = getConfig().STUDIO_BASE_URL;
-  const isLegacyCertificateUrl = !waffleFlags.useNewCertificatesPage;
-  const isLegacyOutlineUrl = !waffleFlags.useNewCourseOutlinePage;
 
   return {
     welcomeMessage: `/course/${courseId}/course_info`,
     gradingPolicy: `/course/${courseId}/settings/grading`,
-    certificate: isLegacyCertificateUrl
-      ? `${baseUrl}/certificates/${courseId}` :
-      `/course/${courseId}/certificates`,
+    certificate: `/course/${courseId}/certificates`,
     courseDates: `/course/${courseId}/settings/details/#schedule`,
     proctoringEmail: `${baseUrl}/pages-and-resources/proctoring/settings`,
-    outline: isLegacyOutlineUrl ? `${baseUrl}/course/${courseId}` : `/course/${courseId}`,
+    outline: `/course/${courseId}`,
   };
 };
 
@@ -32,8 +26,7 @@ const ChecklistItemBody = ({
   isCompleted,
 }) => {
   const intl = useIntl();
-  const waffleFlags = useWaffleFlags(courseId);
-  const updateLinks = getUpdateLinks(courseId, waffleFlags);
+  const updateLinks = getUpdateLinks(courseId);
 
   return (
     <ActionRow>

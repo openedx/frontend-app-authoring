@@ -86,7 +86,7 @@ const AddComponent = ({
   const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
-  const { useVideoGalleryFlow, useNewPdfEditor } = useWaffleFlags(courseId ?? undefined);
+  const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
 
   const courseUnit = useSelector(getCourseUnitData);
   const sequenceId = courseUnit?.ancestorInfo?.ancestors?.[0]?.id;
@@ -181,20 +181,16 @@ const AddComponent = ({
         // *in code* and not just in UI seems like a mistake in retrospect.
         //
         // There will be more of these, and soon.
-        if (moduleName === COMPONENT_TYPES.pdf && useNewPdfEditor) {
-          handleCreateNewCourseXBlock(
-            { type: moduleName, parentLocator: blockId },
-            /* istanbul ignore next */
-            ({ courseKey, locator }) => {
-              setCourseId(courseKey);
-              setBlockType(moduleName);
-              setNewBlockId(locator);
-              showXBlockEditorModal();
-            },
-          );
-        } else {
-          handleCreateNewCourseXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
-        }
+        handleCreateNewCourseXBlock(
+          { type: moduleName, parentLocator: blockId },
+          /* istanbul ignore next */
+          ({ courseKey, locator }) => {
+            setCourseId(courseKey);
+            setBlockType(moduleName ?? null);
+            setNewBlockId(locator);
+            showXBlockEditorModal();
+          },
+        );
         break;
       case COMPONENT_TYPES.openassessment:
         handleCreateNewCourseXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });

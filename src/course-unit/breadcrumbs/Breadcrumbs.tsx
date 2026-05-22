@@ -5,23 +5,15 @@ import {
   ArrowDropDown as ArrowDropDownIcon,
   ChevronRight as ChevronRightIcon,
 } from '@openedx/paragon/icons';
-import { getConfig } from '@edx/frontend-platform';
-
-import { useWaffleFlags } from '../../data/apiHooks';
 import { getCourseSectionVertical } from '../data/selectors';
 import { adoptCourseSectionUrl, subsectionFirstUnitEditUrl } from '../utils';
 
 const Breadcrumbs = ({ courseId, parentUnitId }: { courseId: string; parentUnitId: string; }) => {
   const { ancestorXblocks = [] } = useSelector(getCourseSectionVertical);
-  const waffleFlags = useWaffleFlags(courseId);
 
-  const getPathToCourseOutlinePage = (url) => (waffleFlags.useNewCourseOutlinePage
-    ? url :
-    `${getConfig().STUDIO_BASE_URL}${url}`);
+  const getPathToCourseOutlinePage = (url) => url;
 
-  const getPathToCourseUnitPage = (url) => (waffleFlags.useNewUnitPage
-    ? adoptCourseSectionUrl({ url, courseId, parentUnitId })
-    : `${getConfig().STUDIO_BASE_URL}${url}`);
+  const getPathToCourseUnitPage = (url) => adoptCourseSectionUrl({ url, courseId, parentUnitId });
 
   // based on the level of breadcrumbs the url will differ
   // at the subsection level it should navigate to the first unit if available
