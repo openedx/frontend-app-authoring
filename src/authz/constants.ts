@@ -26,4 +26,7 @@ export const COURSE_PERMISSIONS = {
   EDIT_DETAILS: 'courses.edit_details',
   VIEW_COURSE_UPDATES: 'courses.view_course_updates',
   MANAGE_COURSE_UPDATES: 'courses.manage_course_updates',
+
+  VIEW_PAGES_AND_RESOURCES: 'courses.view_pages_and_resources',
+  MANAGE_PAGES_AND_RESOURCES: 'courses.manage_pages_and_resources',
 };
