@@ -11,15 +11,12 @@ import messages from './messages';
 
 const getUpdateLinks = (courseId, waffleFlags) => {
   const baseUrl = getConfig().STUDIO_BASE_URL;
-  const isLegacyCertificateUrl = !waffleFlags.useNewCertificatesPage;
   const isLegacyOutlineUrl = !waffleFlags.useNewCourseOutlinePage;
 
   return {
     welcomeMessage: `/course/${courseId}/course_info`,
     gradingPolicy: `/course/${courseId}/settings/grading`,
-    certificate: isLegacyCertificateUrl
-      ? `${baseUrl}/certificates/${courseId}` :
-      `/course/${courseId}/certificates`,
+    certificate: `/course/${courseId}/certificates`,
     courseDates: `/course/${courseId}/settings/details/#schedule`,
     proctoringEmail: `${baseUrl}/pages-and-resources/proctoring/settings`,
     outline: isLegacyOutlineUrl ? `${baseUrl}/course/${courseId}` : `/course/${courseId}`,

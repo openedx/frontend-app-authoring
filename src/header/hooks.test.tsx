@@ -26,7 +26,6 @@ mockWaffleFlags({
   // Some flags can be enabled with either a config value or a waffle flag.
   // For test purposes, we'll configure the video upload page using the config, so leave the waffle flag off.
   useNewVideoUploadsPage: false,
-  useNewCertificatesPage: false,
 });
 
 jest.mock('react-redux', () => ({
@@ -143,8 +142,7 @@ describe('header utils', () => {
       } as ReturnType<typeof useCourseUserPermissions>);
     });
 
-    it('when certificate page enabled and waffle flag enabled should include certificates option', () => {
-      mockWaffleFlags({ useNewCertificatesPage: true });
+    it('when certificate page enabled should include certificates option', () => {
       setConfig({
         ...getConfig(),
         ENABLE_CERTIFICATE_PAGE: 'true',
@@ -154,20 +152,9 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(6);
     });
     it('when certificate page disabled should not include certificates option', () => {
-      mockWaffleFlags({ useNewCertificatesPage: true });
       setConfig({
         ...getConfig(),
         ENABLE_CERTIFICATE_PAGE: 'false',
-      });
-      const actualItems =
-        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      expect(actualItems).toHaveLength(5);
-    });
-    it('when waffle flag disabled should not include certificates option even if config enabled', () => {
-      mockWaffleFlags({ useNewCertificatesPage: false });
-      setConfig({
-        ...getConfig(),
-        ENABLE_CERTIFICATE_PAGE: 'true',
       });
       const actualItems =
         renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
