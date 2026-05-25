@@ -181,16 +181,20 @@ const AddComponent = ({
         // *in code* and not just in UI seems like a mistake in retrospect.
         //
         // There will be more of these, and soon.
-        handleCreateNewCourseXBlock(
-          { type: moduleName, parentLocator: blockId },
-          /* istanbul ignore next */
-          ({ courseKey, locator }) => {
-            setCourseId(courseKey);
-            setBlockType(moduleName ?? null);
-            setNewBlockId(locator);
-            showXBlockEditorModal();
-          },
-        );
+        if (moduleName === COMPONENT_TYPES.pdf) {
+          handleCreateNewCourseXBlock(
+            { type: moduleName, parentLocator: blockId },
+            /* istanbul ignore next */
+            ({ courseKey, locator }) => {
+              setCourseId(courseKey);
+              setBlockType(moduleName ?? null);
+              setNewBlockId(locator);
+              showXBlockEditorModal();
+            },
+          );
+        } else {
+          handleCreateNewCourseXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        }
         break;
       case COMPONENT_TYPES.openassessment:
         handleCreateNewCourseXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });

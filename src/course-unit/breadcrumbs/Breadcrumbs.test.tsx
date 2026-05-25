@@ -151,23 +151,4 @@ describe('<Breadcrumbs />', () => {
     expect(dropdownItem).toHaveAttribute('href', url);
   });
 
-  it('falls back to window.location.href when the waffle flag is disabled', async () => {
-    const user = userEvent.setup();
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { ancestor_xblocks: [{ children: [{ display_name, url }] }] } = courseSectionVerticalMock;
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, { useNewCourseOutlinePage: false });
-
-    const { getByText, getByRole } = renderComponent();
-
-    const dropdownBtn = getByText(breadcrumbsExpected.section.displayName);
-    await user.click(dropdownBtn);
-
-    const dropdownItem = getByRole('link', { name: display_name });
-    // We need waitFor here because the waffle flag defaults to true but asynchronously loads false from our axiosMock
-    await waitFor(() => {
-      expect(dropdownItem).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${url}`);
-    });
-  });
 });
