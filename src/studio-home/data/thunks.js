@@ -44,7 +44,9 @@ function fetchStudioHomeData(
       try {
         const coursesData = await getStudioHomeCoursesV2(search || '', requestParams);
         dispatch(fetchCourseDataSuccessV2(coursesData));
-        dispatch(updateStudioHomeCoursesCustomParams({ currentPage: requestParams.page || 1 }));
+        const searchPage = search ? parseInt(new URLSearchParams(search).get('page'), 10) : NaN;
+        const fetchedPage = requestParams.page || (!Number.isNaN(searchPage) && searchPage > 0 ? searchPage : 1);
+        dispatch(updateStudioHomeCoursesCustomParams({ currentPage: fetchedPage }));
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
       } catch {
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));
