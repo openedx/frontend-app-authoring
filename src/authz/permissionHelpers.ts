@@ -26,6 +26,17 @@ export const getGradingPermissions = (courseId: string) => ({
   },
 });
 
+export const getCourseUpdatesPermissions = (courseId: string) => ({
+  canViewCourseUpdates: {
+    action: COURSE_PERMISSIONS.VIEW_COURSE_UPDATES,
+    scope: courseId,
+  },
+  canManageCourseUpdates: {
+    action: COURSE_PERMISSIONS.MANAGE_COURSE_UPDATES,
+    scope: courseId,
+  },
+});
+
 export const getPagesAndResourcesPermissions = (courseId: string) => ({
   canViewPagesAndResources: {
     action: COURSE_PERMISSIONS.VIEW_PAGES_AND_RESOURCES,
