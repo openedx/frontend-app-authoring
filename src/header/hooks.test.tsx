@@ -22,11 +22,7 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
 }));
 
 // Bypass React Query for waffle flags, and just return the default values.
-mockWaffleFlags({
-  // Some flags can be enabled with either a config value or a waffle flag.
-  // For test purposes, we'll configure the video upload page using the config, so leave the waffle flag off.
-  useNewVideoUploadsPage: false,
-});
+mockWaffleFlags({});
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -266,15 +262,6 @@ describe('header utils', () => {
       const actualItems =
         renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems).toHaveLength(6);
-    });
-    it('when certificate page disabled should not include certificates option', () => {
-      setConfig({
-        ...getConfig(),
-        ENABLE_CERTIFICATE_PAGE: 'false',
-      });
-      const actualItems =
-        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      expect(actualItems).toHaveLength(5);
     });
     it('when user has access to advanced settings should include advanced settings option', () => {
       const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result

@@ -51,7 +51,7 @@ export const getPagesAndResourcesPermissions = (courseId: string) => ({
 export const getAdvancedSettingsPermissions = (courseId: string) => ({
   canManageAdvancedSettings: {
     action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-        scope: courseId,
+    scope: courseId,
   },
 });
 export const getFilesPermissions = (courseId: string) => ({
