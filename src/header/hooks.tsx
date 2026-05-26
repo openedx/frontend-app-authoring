@@ -18,6 +18,7 @@ import {
   getScheduleAndDetailsPermissions,
 } from '@src/authz/permissionHelpers';
 import messages from './messages';
+import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
 
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
@@ -25,9 +26,12 @@ export const useContentMenuItems = (courseId: string) => {
   const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
 
-  const { canViewPagesAndResources } = useCourseUserPermissions(
+  const { canViewCourseUpdates, canViewPagesAndResources } = useCourseUserPermissions(
     courseId,
-    getPagesAndResourcesPermissions(courseId),
+    {
+      ...getPagesAndResourcesPermissions(courseId),
+      ...getCourseUpdatesPermissions(courseId),
+    },
   );
 
   const items = [
@@ -35,12 +39,14 @@ export const useContentMenuItems = (courseId: string) => {
       href: waffleFlags.useNewCourseOutlinePage ? `/course/${courseId}` : `${studioBaseUrl}/course/${courseId}`,
       title: intl.formatMessage(messages['header.links.outline']),
     },
-    {
-      href: waffleFlags.useNewUpdatesPage
-        ? `/course/${courseId}/course_info`
-        : `${studioBaseUrl}/course_info/${courseId}`,
-      title: intl.formatMessage(messages['header.links.updates']),
-    },
+    ...(canViewCourseUpdates ?
+      [{
+        href: waffleFlags.useNewUpdatesPage
+          ? `/course/${courseId}/course_info`
+          : `${studioBaseUrl}/course_info/${courseId}`,
+        title: intl.formatMessage(messages['header.links.updates']),
+      }] :
+      []),
     ...(canViewPagesAndResources
       ? [{
         href: getPagePath(courseId, 'true', 'tabs'),
