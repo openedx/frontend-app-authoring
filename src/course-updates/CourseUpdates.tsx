@@ -14,6 +14,7 @@ import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import { RequestStatus } from '@src/data/constants';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import CourseHandouts from './course-handouts/CourseHandouts';
 import CourseUpdate from './course-update/CourseUpdate';
 import DeleteModal from './delete-modal/DeleteModal';
@@ -29,6 +30,9 @@ import {
 import { matchesAnyStatus } from './utils';
 import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
+import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import Loading from '@src/generic/Loading';
 
 const CourseUpdates = () => {
   const intl = useIntl();
@@ -51,6 +55,12 @@ const CourseUpdates = () => {
     handleDeleteUpdateSubmit,
   } = useCourseUpdates({ courseId });
 
+  const {
+    isLoading: isLoadingPermissions,
+    canViewCourseUpdates,
+    canManageCourseUpdates,
+  } = useCourseUserPermissions(courseId, getCourseUpdatesPermissions(courseId));
+
   const loadingStatuses = useSelector(getLoadingStatuses);
   const savingStatuses = useSelector(getSavingStatuses);
   const errors = useSelector(getErrors);
@@ -60,12 +70,18 @@ const CourseUpdates = () => {
   const anyStatusInProgress = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.IN_PROGRESS);
   const anyStatusPending = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.PENDING);
 
+  if (!isLoadingPermissions && !canManageCourseUpdates && !canViewCourseUpdates) {
+    return <PermissionDeniedAlert />;
+  }
   if (anyStatusDenied) {
     return (
       <Container size="xl" className="course-unit px-4 mt-4">
         <ConnectionErrorAlert />
       </Container>
     );
+  }
+  if (isLoadingPermissions) {
+    return <Loading />;
   }
 
   return (
@@ -139,17 +155,19 @@ const CourseUpdates = () => {
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
                     instruction={intl.formatMessage(messages.sectionInfo)}
-                    headerActions={
-                      <Button
-                        variant="primary"
-                        iconBefore={AddIcon}
-                        size="sm"
-                        onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
-                        disabled={isUpdateFormOpen || errors.loadingUpdates}
-                      >
-                        {intl.formatMessage(messages.newUpdateButton)}
-                      </Button>
-                    }
+                    headerActions={canManageCourseUpdates ?
+                      (
+                        <Button
+                          variant="primary"
+                          iconBefore={AddIcon}
+                          size="sm"
+                          onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
+                          disabled={isUpdateFormOpen || errors.loadingUpdates}
+                        >
+                          {intl.formatMessage(messages.newUpdateButton)}
+                        </Button>
+                      ) :
+                      null}
                   />
                   <section className="updates-section">
                     {isMainFormOpen && (
@@ -184,6 +202,8 @@ const CourseUpdates = () => {
                                   onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_update, courseUpdate)}
                                   onDelete={() => handleOpenDeleteForm(courseUpdate)}
                                   isDisabledButtons={isUpdateFormOpen}
+                                  canEdit={canManageCourseUpdates}
+                                  canDelete={canManageCourseUpdates}
                                 />
                               )
                           ))}
@@ -212,6 +232,7 @@ const CourseUpdates = () => {
                           contentForHandouts={courseHandouts?.data || ''}
                           onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
                           isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
+                          canEdit={canManageCourseUpdates}
                         />
                       </div>
                       <DeleteModal

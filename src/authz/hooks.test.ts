@@ -60,8 +60,8 @@ describe('useCourseUserPermissions', () => {
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.isAuthzEnabled).toBe(true);
-    expect(result.current.canView).toBeUndefined();
-    expect(result.current.canEdit).toBeUndefined();
+    expect(result.current.canView).toBe(false);
+    expect(result.current.canEdit).toBe(false);
   });
 
   it('falls back to false for permissions absent from server response when authz is enabled', () => {
