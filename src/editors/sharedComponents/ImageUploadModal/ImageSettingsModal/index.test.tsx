@@ -36,7 +36,7 @@ describe('ImageSettingsModal', () => {
     expect(props.close).toHaveBeenCalled();
   });
   describe('Alt Text Editing', () => {
-    test('Empty Alt Text raises error if image is nto decorative', async () => {
+    test('Empty Alt Text raises error if image is not decorative', async () => {
       render(<ImageSettingsModal {...props} />);
       await user.clear(screen.getByRole('textbox', { name: /alt text/i }));
       await user.click(screen.getByRole('button', { name: 'Save' }));
