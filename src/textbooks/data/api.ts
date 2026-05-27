@@ -5,18 +5,32 @@ import { omit } from 'lodash';
 const API_PATH_PATTERN = 'textbooks';
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getTextbooksApiUrl = (courseId) =>
+export const getTextbooksApiUrl = (courseId: string) =>
   `${getStudioBaseUrl()}/api/contentstore/v1/${API_PATH_PATTERN}/${courseId}`;
-export const getUpdateTextbooksApiUrl = (courseId) => `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}`;
-export const getEditTextbooksApiUrl = (courseId, textbookId) =>
+export const getUpdateTextbooksApiUrl = (courseId: string) => `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}`;
+export const getEditTextbooksApiUrl = (courseId: string, textbookId: string) =>
   `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}/${textbookId}`;
+
+export interface TextbookResponse {
+  textbooks: Textbook[];
+}
+
+export interface BaseTextbook {
+  chapters: {
+    title: string;
+    url: string;
+  }[];
+  tabTitle: string;
+}
+
+export interface Textbook extends BaseTextbook {
+  id: string;
+}
 
 /**
  * Get textbooks for course.
- * @param {string} courseId
- * @returns {Promise<Object>}
  */
-export async function getTextbooks(courseId) {
+export async function getTextbooks(courseId: string): Promise<TextbookResponse> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getTextbooksApiUrl(courseId));
 
@@ -25,11 +39,8 @@ export async function getTextbooks(courseId) {
 
 /**
  * Create new textbook for course.
- * @param {string} courseId
- * @param {tab_title: string, chapters: Array<[title: string: url: string]>} textbook
- * @returns {Promise<Object>}
  */
-export async function createTextbook(courseId, textbook) {
+export async function createTextbook(courseId: string, textbook: BaseTextbook): Promise<Textbook> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getUpdateTextbooksApiUrl(courseId), textbook);
 
@@ -38,12 +49,8 @@ export async function createTextbook(courseId, textbook) {
 
 /**
  * Edit textbook for course.
- * @param {string} courseId
- * @param {tab_title: string, id: string, chapters: Array<[title: string: url: string]>} textbook
- * @param {string} textbookId
- * @returns {Promise<Object>}
  */
-export async function editTextbook(courseId, textbook) {
+export async function editTextbook(courseId: string, textbook: Textbook): Promise<Textbook> {
   const { data } = await getAuthenticatedHttpClient()
     .put(getEditTextbooksApiUrl(courseId, textbook.id), omit(textbook, ['id']));
 
@@ -51,14 +58,9 @@ export async function editTextbook(courseId, textbook) {
 }
 
 /**
- * Edit textbook for course.
- * @param {string} courseId
- * @param {string} textbookId
- * @returns {Promise<Object>}
+ * Delete textbook for course.
  */
-export async function deleteTextbook(courseId, textbookId) {
-  const { data } = await getAuthenticatedHttpClient()
+export async function deleteTextbook(courseId: string, textbookId: string): Promise<void> {
+  await getAuthenticatedHttpClient()
     .delete(getEditTextbooksApiUrl(courseId, textbookId));
-
-  return camelCaseObject(data);
 }

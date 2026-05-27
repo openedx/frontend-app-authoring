@@ -20,7 +20,6 @@ import { reducer as genericReducer } from './generic/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
 import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
-import { reducer as textbooksReducer } from './textbooks/data/slice';
 import { reducer as certificatesReducer } from './certificates/data/slice';
 
 type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
@@ -52,7 +51,6 @@ export interface DeprecatedReduxState {
     componentMode: (typeof MODE_STATES)[keyof typeof MODE_STATES];
     certificatesData: any;
   };
-  textbooks: Record<string, any>;
 }
 
 export default function initializeStore(preloadedState: Partial<DeprecatedReduxState> | undefined = undefined) {
@@ -73,7 +71,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       courseOutline: courseOutlineReducer,
       courseUnit: courseUnitReducer,
       certificates: certificatesReducer,
-      textbooks: textbooksReducer,
     },
     preloadedState: preloadedState as DeprecatedReduxState | undefined,
   });

@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { FieldArray, Formik } from 'formik';
+import { FieldArray, Formik, FormikConfig } from 'formik';
 import {
   PictureAsPdf as PdfIcon,
   Add as AddIcon,
@@ -24,17 +23,26 @@ import ModalDropzone from '@src/generic/modal-dropzone/ModalDropzone';
 import { UPLOAD_FILE_MAX_SIZE } from '@src/constants';
 import textbookFormValidationSchema from './validations';
 import messages from './messages';
+import { Textbook } from '../data/api';
+import { TextbookFromValues } from '../utils';
+
+export type TextbookFormOnSubmit = FormikConfig<Textbook>['onSubmit'];
+
+export interface TextbookFormProps {
+  closeTextbookForm: () => void;
+  initialFormValues: TextbookFromValues;
+  onSubmit: TextbookFormOnSubmit;
+}
 
 const TextbookForm = ({
   closeTextbookForm,
   initialFormValues,
   onSubmit,
-  onSavingStatus,
-}) => {
+}: TextbookFormProps) => {
   const intl = useIntl();
 
-  const { courseDetail } = useCourseAuthoringContext();
-  const courseTitle = courseDetail ? courseDetail?.name : '';
+  const { courseDetails } = useCourseAuthoringContext();
+  const courseTitle = courseDetails ? courseDetails?.name : '';
 
   const [currentTextbookIndex, setCurrentTextbookIndex] = useState(0);
   const [isUploadModalOpen, openUploadModal, closeUploadModal] = useToggle(false);
@@ -68,7 +76,7 @@ const TextbookForm = ({
         }) => (
           <>
             <Form.Group size="sm" className="form-field">
-              <Form.Label size="sm" className="font-weight-bold form-main-label text-black">
+              <Form.Label className="small font-weight-bold form-main-label text-black">
                 {intl.formatMessage(messages.tabTitleLabel)} *
               </Form.Label>
               <FormikControl
@@ -88,7 +96,7 @@ const TextbookForm = ({
                     // eslint-disable-next-line react/no-array-index-key
                     <div className="form-chapters-fields" data-testid="form-chapters-fields" key={index}>
                       <Form.Group size="sm" className="form-field">
-                        <Form.Label size="sm" className="form-label font-weight-bold required text-black">
+                        <Form.Label className="small form-label font-weight-bold required text-black">
                           {intl.formatMessage(messages.chapterTitleLabel)} *
                         </Form.Label>
                         <FormikControl
@@ -102,7 +110,7 @@ const TextbookForm = ({
                       </Form.Group>
                       <Form.Group size="sm" className="form-field">
                         <div className="d-flex align-items-center mb-1">
-                          <Form.Label size="sm" className="font-weight-bold mb-0 text-black">
+                          <Form.Label className="small font-weight-bold mb-0 text-black">
                             {intl.formatMessage(messages.chapterUrlLabel)} *
                           </Form.Label>
                           <IconButtonWithTooltip
@@ -159,7 +167,7 @@ const TextbookForm = ({
               <Button variant="tertiary" onClick={closeTextbookForm} data-testid="cancel-button">
                 {intl.formatMessage(messages.cancelButton)}
               </Button>
-              <Button onClick={handleSubmit} disabled={!isValid} type="submit">
+              <Button onClick={() => handleSubmit()} disabled={!isValid} type="submit">
                 {intl.formatMessage(messages.saveButton)}
               </Button>
             </ActionRow>
@@ -172,7 +180,7 @@ const TextbookForm = ({
               modalTitle={intl.formatMessage(messages.uploadModalTitle, { courseName: courseTitle })}
               imageDropzoneText={intl.formatMessage(messages.uploadModalDropzoneText)}
               imageHelpText={intl.formatMessage(messages.uploadModalHelperText)}
-              onSavingStatus={onSavingStatus}
+              onSavingStatus={() => {}}
               invalidFileSizeMore={intl.formatMessage(
                 messages.uploadModalFileInvalidSizeText,
                 { maxSize: UPLOAD_FILE_MAX_SIZE / (1000 * 1000) },
@@ -192,13 +200,6 @@ const TextbookForm = ({
       </Formik>
     </div>
   );
-};
-
-TextbookForm.propTypes = {
-  closeTextbookForm: PropTypes.func.isRequired,
-  initialFormValues: PropTypes.shape({}).isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  onSavingStatus: PropTypes.func.isRequired,
 };
 
 export default TextbookForm;

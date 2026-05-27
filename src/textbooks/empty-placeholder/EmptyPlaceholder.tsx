@@ -1,11 +1,14 @@
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Add as IconAdd } from '@openedx/paragon/icons';
 import { Button } from '@openedx/paragon';
 
 import messages from './messages';
 
-const EmptyPlaceholder = ({ onCreateNewTextbook }) => {
+export interface EmptyPlaceholderProps {
+  onCreateNewTextbook: () => void;
+}
+
+const EmptyPlaceholder = ({ onCreateNewTextbook }: EmptyPlaceholderProps) => {
   const intl = useIntl();
 
   return (
@@ -16,10 +19,6 @@ const EmptyPlaceholder = ({ onCreateNewTextbook }) => {
       </Button>
     </div>
   );
-};
-
-EmptyPlaceholder.propTypes = {
-  onCreateNewTextbook: PropTypes.func.isRequired,
 };
 
 export default EmptyPlaceholder;
