@@ -19,7 +19,7 @@ import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import TextbookCard from './textbook-card/TextbooksCard';
 import TextbookSidebar from './textbook-sidebar/TextbookSidebar';
 import TextbookForm from './textbook-form/TextbookForm';
-import { useTextbooks } from './hooks';
+import { useTextbooksFeatures } from './hooks';
 import { getTextbookFormInitialValues } from './utils';
 import messages from './messages';
 
@@ -40,7 +40,7 @@ const Textbooks = () => {
     handleTextbookFormSubmit,
     handleTextbookEditFormSubmit,
     handleTextbookDeleteSubmit,
-  } = useTextbooks();
+  } = useTextbooksFeatures();
 
   if (isLoadingFailed) {
     return (

@@ -13,7 +13,7 @@ export const textbooksQueryKeys = {
 /**
  * Hook to fetch textbooks for the given courseId
  */
-export const useGetTextbooks = (courseId: string) => (
+export const useTextbooks = (courseId: string) => (
   useQuery<api.TextbookResponse, AxiosError>({
     queryKey: textbooksQueryKeys.textbooks(courseId),
     queryFn: () => api.getTextbooks(courseId),

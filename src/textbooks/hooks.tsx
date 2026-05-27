@@ -13,13 +13,13 @@ import {
   useCreateTextbook,
   useDeleteTextbook,
   useEditTextbook,
-  useGetTextbooks,
+  useTextbooks,
 } from './data/apiHooks';
 import { BaseTextbook, Textbook } from './data/api';
 
 export type OnErrorCallbackFunc = (error: AxiosError) => void;
 
-export const useTextbooks = () => {
+export const useTextbooksFeatures = () => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
   const waffleFlags = useWaffleFlags(courseId);
@@ -28,7 +28,7 @@ export const useTextbooks = () => {
     data: textbooksData,
     isPending: isPendingGetTextbooks,
     isError: isErrorGetTextbooks,
-  } = useGetTextbooks(courseId);
+  } = useTextbooks(courseId);
 
   const [mutationErrorMessage, setMutationErrorMessage] = useState<string>();
 

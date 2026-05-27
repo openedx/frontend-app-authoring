@@ -9,7 +9,7 @@ import {
   getEditTextbooksApiUrl,
 } from './api';
 import {
-  useGetTextbooks,
+  useTextbooks,
   useCreateTextbook,
   useEditTextbook,
   useDeleteTextbook,
@@ -39,11 +39,11 @@ describe('textbooks apiHooks', () => {
     axiosMock.reset();
   });
 
-  describe('useGetTextbooks', () => {
+  describe('useTextbooks', () => {
     it('should fetch textbooks for a course', async () => {
       axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, mockTextbookResponse);
 
-      const { result } = renderHook(() => useGetTextbooks(courseId), { wrapper });
+      const { result } = renderHook(() => useTextbooks(courseId), { wrapper });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBeFalsy();
