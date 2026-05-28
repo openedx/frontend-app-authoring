@@ -33,7 +33,7 @@ import { useComponentPickerContext } from '../common/context/ComponentPickerCont
 import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import messages from './messages';
-import { LibrarySidebar } from '../library-sidebar';
+import { LibrarySidebarPanel } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
 import LibraryFilterByPublished from '../generic/filter-by-published';
 
@@ -236,11 +236,7 @@ const LibraryCollectionPage = () => {
         </Container>
         {!componentPickerMode && <StudioFooterSlot containerProps={{ size: undefined }} />}
       </div>
-      {!!sidebarItemInfo?.type && (
-        <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
-          <LibrarySidebar />
-        </div>
-      )}
+      {!!sidebarItemInfo?.type && <LibrarySidebarPanel />}
     </div>
   );
 };

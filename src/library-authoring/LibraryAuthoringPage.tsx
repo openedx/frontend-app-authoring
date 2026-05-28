@@ -41,7 +41,7 @@ import { MainFilters } from '@src/library-authoring/library-filters/MainFilters'
 import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
 import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import LibraryContent from './LibraryContent';
-import { LibrarySidebar } from './library-sidebar';
+import { LibrarySidebarPanel } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
 import { useOptionalLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
@@ -404,11 +404,7 @@ const LibraryAuthoringPage = ({
         </Container>
         {!componentPickerMode && <StudioFooterSlot containerProps={{ size: undefined }} />}
       </div>
-      {!!sidebarItemInfo?.type && (
-        <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
-          <LibrarySidebar />
-        </div>
-      )}
+      {!!sidebarItemInfo?.type && <LibrarySidebarPanel />}
     </div>
   );
 };

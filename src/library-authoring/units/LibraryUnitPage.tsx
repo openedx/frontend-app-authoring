@@ -13,7 +13,7 @@ import Header from '../../header';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useContentFromSearchIndex, useContentLibrary } from '../data/apiHooks';
-import { LibrarySidebar } from '../library-sidebar';
+import { LibrarySidebarPanel } from '../library-sidebar';
 import { ParentBreadcrumbs } from '../generic/parent-breadcrumbs';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { LibraryUnitBlocks } from './LibraryUnitBlocks';
@@ -108,14 +108,7 @@ export const LibraryUnitPage = () => {
           </Container>
         </Container>
       </div>
-      {!!sidebarItemInfo?.type && (
-        <div
-          className="library-authoring-sidebar box-shadow-left-1 bg-white"
-          data-testid="library-sidebar"
-        >
-          <LibrarySidebar />
-        </div>
-      )}
+      {!!sidebarItemInfo?.type && <LibrarySidebarPanel />}
     </div>
   );
 };
