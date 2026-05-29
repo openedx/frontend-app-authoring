@@ -1,15 +1,96 @@
 import { initializeMocks } from '@src/testUtils';
-import { getUnitHandler, getUnitHandlerApiUrl } from './api';
+import { getCourseVerticalChildrenApiUrl } from '@src/course-unit/data/api';
+import {
+  deriveHasPartitionGroupComponents,
+  getUnitHandler,
+} from './api';
 
-// Mock unit handler API response in snake_case (as returned by Django)
-const mockUnitHandlerResponse = {
-  unit_id: 'block-v1:edX+DemoX+Demo+type@vertical+block@abc123',
+const unitId = 'block-v1:edX+DemoX+Demo+type@vertical+block@abc123';
+
+// Mock container children API response in snake_case (as returned by Django)
+const mockContainerChildrenResponse = {
   display_name: 'Test Unit',
-  components: [
-    { block_id: 'block-v1:edX+DemoX+Demo+type@html+block@1', block_type: 'html', display_name: 'Text' },
-    { block_id: 'block-v1:edX+DemoX+Demo+type@video+block@2', block_type: 'video', display_name: 'Video' },
+  children: [
+    {
+      block_id: 'block-v1:edX+DemoX+Demo+type@html+block@1',
+      block_type: 'html',
+      name: 'Text',
+      actions: {
+        can_copy: true,
+        can_duplicate: true,
+        can_delete: true,
+        can_move: false,
+        can_manage_access: false,
+      },
+    },
+    {
+      block_id: 'block-v1:edX+DemoX+Demo+type@video+block@2',
+      block_type: 'video',
+      name: 'Video',
+    },
   ],
+  is_published: false,
+  can_paste_component: true,
+  upstream_ready_to_sync_children_info: [],
 };
+
+describe('deriveHasPartitionGroupComponents', () => {
+  it('returns true when a component has selected partition groups', () => {
+    const components = [{
+      blockId: 'block-1',
+      blockType: 'html',
+      displayName: 'Text',
+      userPartitionInfo: {
+        selectablePartitions: [{
+          id: 50,
+          name: 'Enrollment Track Groups',
+          scheme: 'enrollment_track',
+          groups: [{
+            id: 1,
+            name: 'Audit',
+            selected: true,
+            deleted: false,
+          }],
+        }],
+        selectedPartitionIndex: -1,
+        selectedGroupsLabel: '',
+      },
+      actions: {
+        canCopy: false, canDuplicate: false, canDelete: false, canMove: false, canManageAccess: false,
+      },
+    }];
+
+    expect(deriveHasPartitionGroupComponents({ hasPartitionGroupComponents: false }, components)).toBe(true);
+  });
+
+  it('returns false when no components have partition group access', () => {
+    const components = [{
+      blockId: 'block-1',
+      blockType: 'html',
+      displayName: 'Text',
+      userPartitionInfo: {
+        selectablePartitions: [{
+          id: 50,
+          name: 'Enrollment Track Groups',
+          scheme: 'enrollment_track',
+          groups: [{
+            id: 1,
+            name: 'Audit',
+            selected: false,
+            deleted: false,
+          }],
+        }],
+        selectedPartitionIndex: -1,
+        selectedGroupsLabel: '',
+      },
+      actions: {
+        canCopy: false, canDuplicate: false, canDelete: false, canMove: false, canManageAccess: false,
+      },
+    }];
+
+    expect(deriveHasPartitionGroupComponents({ hasPartitionGroupComponents: true }, components)).toBe(false);
+  });
+});
 
 describe('unit-card data/api', () => {
   let axiosMock: ReturnType<typeof initializeMocks>['axiosMock'];
@@ -18,38 +99,38 @@ describe('unit-card data/api', () => {
     ({ axiosMock } = initializeMocks());
   });
 
-  describe('getUnitHandlerApiUrl', () => {
+  describe('getCourseVerticalChildrenApiUrl', () => {
     it('builds the correct URL for the given unitId', () => {
-      const unitId = 'block-v1:edX+DemoX+Demo+type@vertical+block@abc123';
-      const url = getUnitHandlerApiUrl(unitId);
-      // URL should end with the unit handler path + unitId
-      expect(url).toContain(`/api/contentstore/v1/unit_handler/${unitId}`);
+      const url = getCourseVerticalChildrenApiUrl(unitId);
+      expect(url).toContain(`/api/contentstore/v1/container/${unitId}/children`);
     });
   });
 
   describe('getUnitHandler', () => {
-    const unitId = 'block-v1:edX+DemoX+Demo+type@vertical+block@abc123';
-
     it('fetches unit data and returns camelCase response', async () => {
-      // Mock the GET request for unit handler
-      axiosMock.onGet(getUnitHandlerApiUrl(unitId)).reply(200, mockUnitHandlerResponse);
+      axiosMock.onGet(getCourseVerticalChildrenApiUrl(unitId)).reply(200, mockContainerChildrenResponse);
 
       const result = await getUnitHandler(unitId);
 
-      // Should have made exactly one GET request
       expect(axiosMock.history.get).toHaveLength(1);
-      expect(axiosMock.history.get[0].url).toEqual(getUnitHandlerApiUrl(unitId));
+      expect(axiosMock.history.get[0].url).toEqual(getCourseVerticalChildrenApiUrl(unitId));
 
-      // Response should be camelCased
-      expect(result.unitId).toBe(mockUnitHandlerResponse.unit_id);
-      expect(result.displayName).toBe(mockUnitHandlerResponse.display_name);
+      expect(result.unitId).toBe(unitId);
+      expect(result.displayName).toBe(mockContainerChildrenResponse.display_name);
       expect(result.components).toHaveLength(2);
       expect(result.components[0].blockType).toBe('html');
+      expect(result.components[0].displayName).toBe('Text');
+      expect(result.components[0].actions).toEqual({
+        canCopy: true,
+        canDuplicate: true,
+        canDelete: true,
+        canMove: false,
+        canManageAccess: false,
+      });
     });
 
     it('throws on network error', async () => {
-      // Simulate a network failure
-      axiosMock.onGet(getUnitHandlerApiUrl(unitId)).networkError();
+      axiosMock.onGet(getCourseVerticalChildrenApiUrl(unitId)).networkError();
 
       await expect(getUnitHandler(unitId)).rejects.toThrow();
     });

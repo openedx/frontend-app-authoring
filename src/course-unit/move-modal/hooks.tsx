@@ -23,9 +23,16 @@ import {
 
 // eslint-disable-next-line import/prefer-default-export
 export const useMoveModal = ({
-  isOpenModal, closeModal, openModal, courseId,
+  isOpenModal,
+  closeModal,
+  openModal,
+  courseId,
+  currentParentLocator: currentParentLocatorProp,
+  moveRequest,
+  onMoveComplete,
 }: IUseMoveModalParams): IUseMoveModalReturn => {
   const { blockId } = useParams<{ blockId: string }>();
+  const currentParentLocator = currentParentLocatorProp ?? blockId;
   const intl = useIntl();
   const dispatch = useDispatch();
   const { sendMessageToIframe } = useIframe();
@@ -182,15 +189,30 @@ export const useMoveModal = ({
       sourceLocator: state.sourceXBlockInfo.current.id,
       targetParentLocator: lastAncestor.id,
       title: state.sourceXBlockInfo.current.displayName,
-      currentParentLocator: blockId,
+      currentParentLocator,
       isMoving: true,
       callbackFn: (sourceLocator: string) => {
         sendMessageToIframe(messageTypes.completeXBlockMoving, { locator: sourceLocator });
         closeModal();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        onMoveComplete?.(lastAncestor.id);
+        if (!onMoveComplete) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       },
     }));
-  }, [state, dispatch, blockId, closeModal]);
+  }, [state, dispatch, currentParentLocator, closeModal, sendMessageToIframe, onMoveComplete]);
+
+  useEffect(() => {
+    if (isOpenModal && moveRequest) {
+      setState((prevState) => ({
+        ...prevState,
+        sourceXBlockInfo: {
+          current: moveRequest.sourceXBlockInfo,
+          parent: moveRequest.sourceParentXBlockInfo,
+        },
+      }));
+    }
+  }, [isOpenModal, moveRequest]);
 
   useEffect(() => {
     if (isOpenModal && !Object.keys(courseOutlineInfo).length) {

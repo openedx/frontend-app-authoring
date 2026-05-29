@@ -34,6 +34,12 @@ jest.mock('./data/hooks', () => ({
     mutateAsync: mockCreateXBlock,
     isPending: false,
   }),
+  useDeleteUnitComponent: () => ({
+    mutateAsync: jest.fn(),
+  }),
+  useDuplicateUnitComponent: () => ({
+    mutateAsync: jest.fn(),
+  }),
 }));
 
 // Mock pasteBlock API call used by handlePasteComponent

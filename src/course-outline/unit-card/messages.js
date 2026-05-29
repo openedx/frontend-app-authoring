@@ -76,6 +76,26 @@ const messages = defineMessages({
     defaultMessage: 'Select',
     description: 'Submit button in the template selection modal',
   },
+  componentMenuAlt: {
+    id: 'course-authoring.course-outline.unit.component-menu-alt',
+    defaultMessage: 'Component actions menu',
+    description: 'Alt/title text for the component menu button on the course outline',
+  },
+  menuManageAccess: {
+    id: 'course-authoring.course-outline.unit.component-menu-manage-access',
+    defaultMessage: 'Manage Access',
+    description: 'Menu item for managing component access from the course outline',
+  },
+  componentDuplicateError: {
+    id: 'course-authoring.course-outline.unit.component-duplicate-error',
+    defaultMessage: 'Failed to duplicate component. Please try again.',
+    description: 'Error message shown when duplicating a component from the outline fails',
+  },
+  componentDeleteError: {
+    id: 'course-authoring.course-outline.unit.component-delete-error',
+    defaultMessage: 'Failed to delete component. Please try again.',
+    description: 'Error message shown when deleting a component from the outline fails',
+  },
 });
 
 export default messages;

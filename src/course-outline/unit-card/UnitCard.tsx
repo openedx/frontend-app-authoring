@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   useToggle, Icon, OverlayTrigger, Tooltip,
 } from '@openedx/paragon';
@@ -21,6 +21,7 @@ import { useWaffleFlags } from '@src/data/apiHooks';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
+import { getSectionsList } from '@src/course-outline/data/selectors';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { setCourseItemOrderList, pasteBlock } from '@src/course-outline/data/api';
 import { RequestStatus, RequestStatusType } from '@src/data/constants';
@@ -42,8 +43,10 @@ import EditorPage from '@src/editors/EditorPage';
 import supportedEditors from '@src/editors/supportedEditors';
 import DraggableList, { SortableItem as GenericSortableItem } from '@src/generic/DraggableList';
 import { ToastContext } from '@src/generic/toast-context';
+import { deriveHasPartitionGroupComponents, EMPTY_UNIT_COMPONENT_ACTIONS, findSectionIdForUnit } from './data/api';
 import { useUnitHandler, useComponentTemplates } from './data/hooks';
 import AddComponentWidget from './AddComponentWidget';
+import ComponentMenu from './ComponentMenu';
 import messages from './messages';
 
 interface UnitCardProps {
@@ -91,6 +94,7 @@ const UnitCard = ({
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const intl = useIntl();
+  const sectionsList = useSelector(getSectionsList);
   const waffleFlags = useWaffleFlags();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
@@ -179,6 +183,14 @@ const UnitCard = ({
     hasChanges,
   });
   const borderStyle = getItemStatusBorder(unitStatus);
+
+  const unitStatusData = useMemo(() => ({
+    ...unit,
+    hasPartitionGroupComponents: deriveHasPartitionGroupComponents(
+      unit,
+      unitData?.components,
+    ),
+  }), [unit, unitData?.components]);
 
   const handleClickMenuButton = () => {
     dispatch(setCurrentItem(unit));
@@ -292,6 +304,26 @@ const UnitCard = ({
       handleShowLegacyEditModal(blockId);
     }
   };
+
+  const handleComponentActionComplete = useCallback(async (targetUnitId?: string) => {
+    const sectionIds = new Set([section.id]);
+    if (targetUnitId && targetUnitId !== id) {
+      const targetSectionId = findSectionIdForUnit(sectionsList, targetUnitId);
+      if (targetSectionId) {
+        sectionIds.add(targetSectionId);
+      }
+    }
+
+    await dispatch(fetchCourseSectionQuery([...sectionIds]) as any);
+
+    const refetchPromises: Promise<unknown>[] = [refetchUnitData()];
+    if (targetUnitId && targetUnitId !== id) {
+      refetchPromises.push(
+        queryClient.refetchQueries({ queryKey: ['unitHandler', targetUnitId] }),
+      );
+    }
+    await Promise.all(refetchPromises);
+  }, [dispatch, section.id, sectionsList, queryClient, id, refetchUnitData]);
 
   const handleComponentReorder = useCallback(() => async (newOrder: any[]) => {
     if (!newOrder) {
@@ -476,7 +508,7 @@ const UnitCard = ({
             <XBlockStatus
               isSelfPaced={isSelfPaced}
               isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-              blockData={unit}
+              blockData={unitStatusData}
             />
           </div>
 
@@ -513,13 +545,6 @@ const UnitCard = ({
                             id={component.blockId}
                             key={component.blockId}
                             buttonVariant="secondary"
-                            isClickable
-                            onClick={() => handleComponentClick(component.blockId)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handleComponentClick(component.blockId);
-                              }
-                            }}
                             componentStyle={{
                               background: 'white',
                               borderRadius: '6px',
@@ -573,6 +598,16 @@ const UnitCard = ({
                                     </span>
                                   </a>
                                 </OverlayTrigger>
+                                <ComponentMenu
+                                  unitId={id}
+                                  blockId={component.blockId}
+                                  displayName={component.displayName}
+                                  blockType={component.blockType}
+                                  userPartitionInfo={component.userPartitionInfo}
+                                  userPartitions={component.userPartitions}
+                                  actions={component.actions ?? EMPTY_UNIT_COMPONENT_ACTIONS}
+                                  onActionComplete={handleComponentActionComplete}
+                                />
                               </>
                             )}
                           />

@@ -8,11 +8,19 @@ export interface IXBlockInfo {
   hasChildren?: boolean;
 }
 
+export interface IMoveRequestPayload {
+  sourceXBlockInfo: IXBlockInfo;
+  sourceParentXBlockInfo: IXBlockInfo;
+}
+
 export interface IUseMoveModalParams {
   isOpenModal: boolean;
   closeModal: () => void;
   openModal: () => void;
   courseId: string;
+  currentParentLocator?: string;
+  moveRequest?: IMoveRequestPayload | null;
+  onMoveComplete?: (targetUnitId: string) => void;
 }
 
 export interface IUseMoveModalReturn {

@@ -18,7 +18,13 @@ import { EmptyMessage, ModalLoader, CategoryIndicator } from './components';
 import messages from './messages';
 
 const MoveModal: FC<IUseMoveModalParams> = ({
-  isOpenModal, closeModal, openModal, courseId,
+  isOpenModal,
+  closeModal,
+  openModal,
+  courseId,
+  currentParentLocator,
+  moveRequest,
+  onMoveComplete,
 }) => {
   const intl = useIntl();
 
@@ -38,7 +44,13 @@ const MoveModal: FC<IUseMoveModalParams> = ({
     handleCLoseModal,
     handleMoveXBlock,
   } = useMoveModal({
-    isOpenModal, closeModal, openModal, courseId,
+    isOpenModal,
+    closeModal,
+    openModal,
+    courseId,
+    currentParentLocator,
+    moveRequest,
+    onMoveComplete,
   });
 
   const renderBreadcrumbs = useCallback(() => (

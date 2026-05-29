@@ -1,11 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { camelCaseObject } from '@edx/frontend-platform';
-import { createCourseXblock } from '@src/course-unit/data/api';
+import {
+  createCourseXblock,
+  deleteUnitItem,
+  duplicateUnitItem,
+} from '@src/course-unit/data/api';
 import { getUnitHandler, getComponentTemplates } from './api';
 
-// Hook to fetch unit data (components list) when expanded
+const unitHandlerQueryKey = (unitId: string) => ['unitHandler', unitId] as const;
+
 export const useUnitHandler = (unitId: string, enabled: boolean = false) => useQuery({
-  queryKey: ['unitHandler', unitId],
+  queryKey: unitHandlerQueryKey(unitId),
   queryFn: () => getUnitHandler(unitId),
   enabled: enabled && !!unitId,
 });
@@ -45,8 +50,28 @@ export const useCreateXBlockInUnit = (unitId: string) => {
       return camelCaseObject(data) as { locator: string; courseKey: string };
     },
     onSuccess: () => {
-      // Refetch the unit handler data so the new component appears
-      queryClient.invalidateQueries({ queryKey: ['unitHandler', unitId] });
+      queryClient.invalidateQueries({ queryKey: unitHandlerQueryKey(unitId) });
     },
   });
 };
+
+const useUnitComponentMutation = <T>(
+  unitId: string,
+  mutationFn: (blockId: string) => Promise<T>,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: unitHandlerQueryKey(unitId) });
+    },
+  });
+};
+
+export const useDeleteUnitComponent = (unitId: string) => (
+  useUnitComponentMutation(unitId, deleteUnitItem)
+);
+
+export const useDuplicateUnitComponent = (unitId: string) => (
+  useUnitComponentMutation(unitId, (blockId) => duplicateUnitItem(unitId, blockId))
+);

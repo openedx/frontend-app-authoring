@@ -42,7 +42,8 @@
           }
         }
 
-        >a.component-card-button-icon {
+        >a.component-card-button-icon,
+        .component-menu-wrapper .component-card-button-icon {
           text-decoration: none;
           color: var(--pgn-color-primary-500);
 
@@ -52,6 +53,10 @@
             color: var(--pgn-color-white);
             background-color: var(--pgn-color-primary-500);
           }
+        }
+
+        .component-menu-wrapper {
+          flex-shrink: 0;
         }
       }
     }
