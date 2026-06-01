@@ -12,7 +12,7 @@ import { Edit as EditIcon } from '@openedx/paragon/icons';
 import { Formik, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import type { SelectionState } from '@src/data/types';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { ExpandableCard } from '@src/generic/expandable-card/ExpandableCard';
 import { useBlocker } from 'react-router';
@@ -293,20 +293,20 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
   );
 };
 
-// Keep the modal version for backward compatibility
 const HighlightsModal = ({
   isOpen,
   onClose,
   onSubmit,
+  modalData,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (highlights: HighlightData) => void;
+  modalData?: SelectionState;
 }) => {
   const intl = useIntl();
-  const { actionTargetSelection: currentSelection } = useCourseOutlineContext();
   const { data: currentItemData } = useCourseItemData(
-    currentSelection?.currentId,
+    modalData?.currentId,
   );
   const { displayName } = currentItemData || {};
   const { highlights = [] } = currentItemData || {};

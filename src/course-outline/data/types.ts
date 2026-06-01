@@ -21,6 +21,8 @@ export interface CourseOutline {
   courseStructure: CourseStructure;
   deprecatedBlocksInfo: Record<string, any>; // TODO: Create interface for this type
   discussionsIncontextLearnmoreUrl: string;
+  discussionsSettings?: { providerType: string; enableGradedUnits: boolean };
+  advanceSettingsUrl?: string;
   initialState: Record<string, any>; // TODO: Create interface for this type
   initialUserClipboard: Record<string, any>; // TODO: Create interface for this type
   languageCode: string;

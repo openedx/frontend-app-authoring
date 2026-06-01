@@ -2,7 +2,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -84,20 +83,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     selectContainer: setSelectedContainerState,
     clearSelection,
     openContainerInfo,
-    setActionTargetSelection,
   } = useCourseOutlineContext();
-
-  /**
-   * Set currentSelection to same as selectedContainerState whenever
-   * selectedContainerState or currentPageKey changes.
-   * This allows us to reset the currentSelection.
-   */
-  useEffect(() => {
-    // To allow tag buttons on other cards to jump to align page and not loose its selection
-    if (currentPageKey !== 'align') {
-      setActionTargetSelection(selectedContainerState);
-    }
-  }, [currentPageKey, selectedContainerState, setActionTargetSelection]);
 
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);

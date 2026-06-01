@@ -240,7 +240,11 @@ export const UnitSidebar = () => {
               sectionId: selectedContainerState?.sectionId,
               subsectionId: selectedContainerState?.subsectionId,
             }),
-          onClickDelete: openDeleteModal,
+          onClickDelete: () => openDeleteModal({
+            currentId: unitData.id,
+            subsectionId: selectedContainerState?.subsectionId,
+            sectionId: selectedContainerState?.sectionId,
+          }),
           onClickViewLibrary: () => {
             const upstreamRef = unitData?.upstreamInfo?.upstreamRef;
             if (upstreamRef) {

@@ -153,7 +153,11 @@ export const SubsectionSidebar = () => {
               value: subsectionData,
               sectionId: selectedContainerState?.sectionId,
             }),
-          onClickDelete: openDeleteModal,
+          onClickDelete: () => openDeleteModal({
+            currentId: subsectionData.id,
+            subsectionId: subsectionData.id,
+            sectionId: selectedContainerState?.sectionId,
+          }),
           onClickViewLibrary: () => {
             const upstreamRef = subsectionData?.upstreamInfo?.upstreamRef;
             if (upstreamRef) {

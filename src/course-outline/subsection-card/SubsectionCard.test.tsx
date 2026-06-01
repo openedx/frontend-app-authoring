@@ -19,8 +19,6 @@ import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext
 import SubsectionCard from './SubsectionCard';
 
 const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
-const setActionTargetSelection = jest.fn();
-
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
 
@@ -49,7 +47,6 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
         ...realResult,
         handleAddAndOpenUnit: handleOnAddUnitFromLibrary,
         handleAddBlock: {},
-        setActionTargetSelection,
         openPublishModal: jest.fn(),
       };
     },
@@ -211,12 +208,6 @@ describe('<SubsectionCard />', () => {
     const card = screen.getByTestId('subsection-card');
     const menu = await screen.findByTestId('subsection-card-header__menu');
     fireEvent.click(menu);
-    expect(setActionTargetSelection).toHaveBeenCalledWith({
-      currentId: subsection.id,
-      subsectionId: subsection.id,
-      sectionId: section.id,
-      index: 1,
-    });
     expect(card).not.toHaveClass('outline-card-selected');
   });
 

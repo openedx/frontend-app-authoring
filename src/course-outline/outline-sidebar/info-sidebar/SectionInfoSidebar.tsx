@@ -97,7 +97,14 @@ export const SectionSidebar = () => {
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
           onClickUnlink: () => openUnlinkModal({ value: sectionData, sectionId }),
-          onClickDelete: openDeleteModal,
+          onClickDelete: () => {
+            if (sectionData) {
+              openDeleteModal({
+                currentId: sectionData.id,
+                sectionId: sectionData.id,
+              });
+            }
+          },
           onClickViewLibrary: () => {
             const upstreamRef = sectionData.upstreamInfo?.upstreamRef;
             if (upstreamRef) {

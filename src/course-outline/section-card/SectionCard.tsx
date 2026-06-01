@@ -26,7 +26,7 @@ import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
-import type { XBlock } from '@src/data/types';
+import type { SelectionState, XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -47,8 +47,8 @@ interface SectionCardProps {
   isCustomRelativeDatesActive: boolean;
   children: ReactNode;
   onOpenHighlightsModal: (section: XBlock) => void;
-  onOpenConfigureModal: () => void;
-  onOpenDeleteModal: () => void;
+  onOpenConfigureModal: (selection: SelectionState) => void;
+  onOpenDeleteModal: (selection: SelectionState) => void;
   isSectionsExpanded: boolean;
   index: number;
   canMoveItem: (oldIndex: number, newIndex: number) => boolean;
@@ -75,7 +75,7 @@ const SectionCard = ({
   const locatorId = searchParams.get('show');
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
   const duplicateMutation = useDuplicateItem(courseId);
-  const { openPublishModal, setActionTargetSelection } = useCourseOutlineContext();
+  const { openPublishModal } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
@@ -224,14 +224,6 @@ const SectionCard = ({
     setIsExpanded((prevState) => !prevState);
   };
 
-  const handleClickMenuButton = () => {
-    setActionTargetSelection({
-      currentId: section.id,
-      sectionId: section.id,
-      index,
-    });
-  };
-
   const handleClickManageTags = () => {
     setSelectedContainerState({
       currentId: section.id,
@@ -273,7 +265,6 @@ const SectionCard = ({
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
       openContainerSidebar(section.id, undefined, section.id, index);
-      handleClickMenuButton();
       setIsExpanded(true);
     }
   }, [openContainerSidebar]);
@@ -313,14 +304,22 @@ const SectionCard = ({
                 title={displayName}
                 status={sectionStatus}
                 hasChanges={hasChanges}
-                onClickMenuButton={handleClickMenuButton}
+                renameSectionId={section.id}
                 onClickPublish={/* istanbul ignore next */ () =>
                   openPublishModal({
                     value: section,
                     sectionId: section.id,
                   })}
-                onClickConfigure={onOpenConfigureModal}
-                onClickDelete={onOpenDeleteModal}
+                onClickConfigure={() => onOpenConfigureModal({
+                  currentId: section.id,
+                  sectionId: section.id,
+                  index,
+                })}
+                onClickDelete={() => onOpenDeleteModal({
+                  currentId: section.id,
+                  sectionId: section.id,
+                  index,
+                })}
                 onClickUnlink={() => openUnlinkModal({ value: section, sectionId: section.id })}
                 onClickMoveUp={handleSectionMoveUp}
                 onClickMoveDown={handleSectionMoveDown}

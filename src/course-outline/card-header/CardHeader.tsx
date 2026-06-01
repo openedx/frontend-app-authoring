@@ -30,7 +30,6 @@ import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
 import { useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
@@ -44,8 +43,9 @@ interface CardHeaderProps {
   hasChanges: boolean;
   onClickPublish: () => void;
   onClickConfigure: () => void;
-  onClickMenuButton: () => void;
   onClickDelete: () => void;
+  renameSectionId?: string;
+  renameSubsectionId?: string;
   onClickUnlink: () => void;
   onClickDuplicate: () => void;
   onClickMoveUp: () => void;
@@ -83,8 +83,9 @@ const CardHeader = ({
   hasChanges,
   onClickPublish,
   onClickConfigure,
-  onClickMenuButton,
   onClickDelete,
+  renameSectionId,
+  renameSubsectionId,
   onClickUnlink,
   onClickDuplicate,
   onClickMoveUp,
@@ -114,11 +115,9 @@ const CardHeader = ({
 
   const openManageTagsDrawer = useCallback(() => {
     setCurrentPageKey('align');
-    onClickMenuButton();
     onClickManageTags?.();
   }, [setCurrentPageKey, cardId]);
   const { courseId } = useCourseAuthoringContext();
-  const { actionTargetSelection: currentSelection } = useCourseOutlineContext();
   const [isFormOpen, openForm, closeForm] = useToggle(false);
 
   // Use studio url as base if proctoringExamConfigurationLink is a relative link
@@ -132,12 +131,10 @@ const CardHeader = ({
   const { data: contentTagCount } = useContentTagsCount(cardId);
 
   const onEditClick = () => {
-    onClickMenuButton();
     openForm();
   };
 
   const onConfigureClick = () => {
-    onClickMenuButton();
     onClickConfigure();
   };
 
@@ -175,8 +172,8 @@ const CardHeader = ({
       editMutation.mutate({
         itemId: cardId,
         displayName: titleValue,
-        subsectionId: currentSelection?.subsectionId,
-        sectionId: currentSelection?.sectionId,
+        subsectionId: renameSubsectionId,
+        sectionId: renameSectionId,
       }, {
         onSettled: () => closeForm(),
       });
@@ -254,7 +251,7 @@ const CardHeader = ({
               onClick={onClickSync}
             />
           )}
-          <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
+          <Dropdown data-testid={`${namePrefix}-card-header__menu`}>
             <Dropdown.Toggle
               className="item-card-header__menu"
               id={`${namePrefix}-card-header__menu`}

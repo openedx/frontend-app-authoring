@@ -15,7 +15,6 @@ import type {
 
 import { useCourseItemData, useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './data/apiHooks';
 
-import { useToggle } from '@openedx/paragon';
 import { useToggleWithValue } from '@src/hooks';
 import { useOutlineReorderState } from './state/useOutlineReorderState';
 import { useOutlineStatusState } from './state/useOutlineStatusState';
@@ -33,12 +32,13 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import type { ModalState } from '@src/CourseAuthoringContext';
 
 import {
+  CourseOutline,
   CourseOutlineState as LegacyCourseOutlineState,
   CourseOutlineStatusBar,
 } from './data/types';
 
 type CourseOutlineContextData = {
-  outlineIndexData: LegacyCourseOutlineState['outlineIndexData'];
+  outlineIndexData: CourseOutline | undefined;
   courseName?: string;
   courseUsageKey: string;
   sections: XBlock[];
@@ -82,10 +82,9 @@ type CourseOutlineContextData = {
 
   dismissError: (key: string) => void;
 
-  actionTargetSelection?: SelectionState;
-  setActionTargetSelection: React.Dispatch<React.SetStateAction<SelectionState | undefined>>;
   isDeleteModalOpen: boolean;
-  openDeleteModal: () => void;
+  deleteModalData?: SelectionState;
+  openDeleteModal: (payload: SelectionState) => void;
   closeDeleteModal: () => void;
   isPublishModalOpen: boolean;
   currentPublishModalData?: ModalState;
@@ -227,9 +226,12 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     });
   }, [mergedRawErrors]);
 
-  const [actionTargetSelection, setActionTargetSelection] = useState<SelectionState | undefined>();
-
-  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [
+    isDeleteModalOpen,
+    deleteModalData,
+    openDeleteModal,
+    closeDeleteModal,
+  ] = useToggleWithValue<SelectionState>();
   const [
     isPublishModalOpen,
     currentPublishModalData,
@@ -238,7 +240,7 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
   ] = useToggleWithValue<ModalState>();
 
   const context = useMemo<CourseOutlineContextData>(() => ({
-    outlineIndexData: (effectiveOutlineIndexData || {}) as object,
+    outlineIndexData: effectiveOutlineIndexData as CourseOutline | undefined,
     courseName: effectiveOutlineIndexData?.courseStructure?.displayName,
     courseUsageKey: effectiveOutlineIndexData?.courseStructure?.id || courseId,
     sections: visibleSections,
@@ -269,9 +271,8 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     commitSubsectionReorder,
     commitUnitReorder,
     dismissError,
-    actionTargetSelection,
-    setActionTargetSelection,
     isDeleteModalOpen,
+    deleteModalData,
     openDeleteModal,
     closeDeleteModal,
     isPublishModalOpen,
@@ -307,9 +308,8 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     commitSubsectionReorder,
     commitUnitReorder,
     dismissError,
-    actionTargetSelection,
-    setActionTargetSelection,
     isDeleteModalOpen,
+    deleteModalData,
     openDeleteModal,
     closeDeleteModal,
     isPublishModalOpen,
@@ -333,5 +333,4 @@ export function useCourseOutlineContext(): CourseOutlineContextData {
   return ctx;
 }
 
-export const CourseOutlineStateProvider = CourseOutlineProvider;
-export const useCourseOutlineState = useCourseOutlineContext;
+

@@ -397,7 +397,7 @@ export default {
                 is_onboarding_exam: false,
                 is_time_limited: false,
                 isPrereq: true,
-                exam_review_rules: '',
+                examReviewRules: '',
                 default_time_limit_minutes: null,
                 proctoring_exam_configuration_link: null,
                 supports_onboarding: true,

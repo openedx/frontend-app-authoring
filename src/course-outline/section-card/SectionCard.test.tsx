@@ -20,7 +20,6 @@ import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
-const setActionTargetSelection = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -45,7 +44,6 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
       const realResult = realModule.useCourseOutlineContext();
       return {
         ...realResult,
-        setActionTargetSelection,
         openPublishModal: jest.fn(),
       };
     },
@@ -188,11 +186,6 @@ describe('<SectionCard />', () => {
     const menuButton = await screen.findByTestId('section-card-header__menu-button');
     await user.click(menuButton);
 
-    expect(setActionTargetSelection).toHaveBeenCalledWith({
-      currentId: section.id,
-      sectionId: section.id,
-      index: 1,
-    });
     expect(card).not.toHaveClass('outline-card-selected');
   });
 
@@ -407,11 +400,6 @@ describe('<SectionCard />', () => {
 
     await waitFor(() => {
       expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
-    });
-    expect(setActionTargetSelection).toHaveBeenCalledWith({
-      currentId: section.id,
-      sectionId: section.id,
-      index: 1,
     });
     expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
       currentId: section.id,

@@ -19,7 +19,7 @@ import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext
 import { CourseOutlineProvider } from '../CourseOutlineContext';
 
 const onExpandMock = jest.fn();
-const onClickMenuButtonMock = jest.fn();
+
 const onClickPublishMock = jest.fn();
 const onClickDeleteMock = jest.fn();
 const onClickUnlinkMock = jest.fn();
@@ -47,7 +47,7 @@ const cardHeaderProps = {
   status: ITEM_BADGE_STATUS.live,
   cardId: '12345',
   hasChanges: false,
-  onClickMenuButton: onClickMenuButtonMock,
+  renameSectionId: 'sec-1',
   onClickPublish: onClickPublishMock,
   onEditSubmit: jest.fn(),
   closeForm: closeFormMock,
@@ -184,13 +184,7 @@ describe('<CardHeader />', () => {
     expect(onExpandMock).toHaveBeenCalled();
   });
 
-  it('calls onClickMenuButton when menu is clicked', async () => {
-    renderComponent();
 
-    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    await act(async () => fireEvent.click(menuButton));
-    expect(onClickMenuButtonMock).toHaveBeenCalled();
-  });
 
   it('calls onClickPublish when item is clicked', async () => {
     renderComponent({
@@ -240,7 +234,6 @@ describe('<CardHeader />', () => {
 
     const editButton = await screen.findByTestId('subsection-edit-button');
     await user.click(editButton);
-    expect(onClickMenuButtonMock).toHaveBeenCalled();
   });
 
   it('check is field visible when edit is clicked', async () => {
@@ -320,36 +313,6 @@ describe('<CardHeader />', () => {
     fireEvent.click(duplicateMenuItem);
     await act(async () => fireEvent.click(duplicateMenuItem));
     expect(onClickDuplicateMock).toHaveBeenCalled();
-  });
-
-  it('calls onClickMenuButton before onClickConfigure when configure menu item is clicked', async () => {
-    renderComponent();
-
-    // Open dropdown
-    const menuButton = screen.getByTestId('subsection-card-header__menu-button');
-    await act(async () => {
-      fireEvent.click(menuButton);
-    });
-
-    // Verify configure button is enabled before clicking
-    const configureButton = await screen.findByTestId('subsection-card-header__menu-configure-button');
-    expect(configureButton).not.toHaveAttribute('aria-disabled');
-
-    // Clear both mocks so the dropdown-open call doesn't pollute ordering assertion
-    onClickMenuButtonMock.mockClear();
-    onClickConfigureMock.mockClear();
-
-    // Click configure menu item
-    await act(async () => {
-      fireEvent.click(configureButton);
-    });
-
-    // Assert both were called and in order
-    expect(onClickMenuButtonMock).toHaveBeenCalled();
-    expect(onClickConfigureMock).toHaveBeenCalled();
-    expect(onClickMenuButtonMock.mock.invocationCallOrder[0]).toBeLessThan(
-      onClickConfigureMock.mock.invocationCallOrder[0],
-    );
   });
 
   it('check if proctoringExamConfigurationLink is visible', async () => {

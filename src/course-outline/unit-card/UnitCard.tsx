@@ -20,7 +20,7 @@ import { useClipboard } from '@src/generic/clipboard';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
-import type { UnitXBlock, XBlock } from '@src/data/types';
+import type { SelectionState, UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import {
@@ -37,8 +37,8 @@ interface UnitCardProps {
   unit: UnitXBlock;
   subsection: XBlock;
   section: XBlock;
-  onOpenConfigureModal: () => void;
-  onOpenDeleteModal: () => void;
+  onOpenConfigureModal: (selection: SelectionState) => void;
+  onOpenDeleteModal: (selection: SelectionState) => void;
   index: number;
   getPossibleMoves: (index: number, step: number) => void;
   onOrderChange: (section: XBlock, moveDetails: any) => void;
@@ -73,7 +73,7 @@ const UnitCard = ({
   const { copyToClipboard } = useClipboard();
   const { courseId, getUnitUrl, openUnlinkModal } = useCourseAuthoringContext();
   const duplicateMutation = useDuplicateItem(courseId);
-  const { openPublishModal, setActionTargetSelection } = useCourseOutlineContext();
+  const { openPublishModal } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
   const { data: subsection = initialSubsectionData } = useCourseItemData(
@@ -135,15 +135,6 @@ const UnitCard = ({
   });
   const borderStyle = getItemStatusBorder(unitStatus);
 
-  const selectAndTrigger = () => {
-    setActionTargetSelection({
-      currentId: unit.id,
-      subsectionId: subsection.id,
-      sectionId: section.id,
-      index,
-    });
-  };
-
   const handleClickManageTags = () => {
     setSelectedContainerState({
       currentId: unit.id,
@@ -178,7 +169,6 @@ const UnitCard = ({
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       openContainerSidebar(unit.id, subsection.id, section.id, index);
-      selectAndTrigger();
     }
   }, [openContainerSidebar]);
 
@@ -270,15 +260,26 @@ const UnitCard = ({
             status={unitStatus}
             hasChanges={hasChanges}
             cardId={id}
-            onClickMenuButton={selectAndTrigger}
+            renameSectionId={section.id}
+            renameSubsectionId={subsection.id}
             onClickPublish={() =>
               openPublishModal({
                 value: unit,
                 sectionId: section.id,
                 subsectionId: subsection.id,
               })}
-            onClickConfigure={onOpenConfigureModal}
-            onClickDelete={onOpenDeleteModal}
+            onClickConfigure={() => onOpenConfigureModal({
+              currentId: unit.id,
+              subsectionId: subsection.id,
+              sectionId: section.id,
+              index,
+            })}
+            onClickDelete={() => onOpenDeleteModal({
+              currentId: unit.id,
+              subsectionId: subsection.id,
+              sectionId: section.id,
+              index,
+            })}
             onClickUnlink={/* istanbul ignore next */ () =>
               openUnlinkModal({
                 value: unit,

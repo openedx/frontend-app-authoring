@@ -26,7 +26,7 @@ import { ContainerType } from '@src/generic/key-utils';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
-import type { XBlock } from '@src/data/types';
+import type { SelectionState, XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -48,11 +48,11 @@ interface SubsectionCardProps {
   isSectionsExpanded: boolean;
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean;
-  onOpenDeleteModal: () => void;
+  onOpenDeleteModal: (selection: SelectionState) => void;
   index: number;
   getPossibleMoves: (index: number, step: number) => void;
   onOrderChange: (section: XBlock, moveDetails: any) => void;
-  onOpenConfigureModal: () => void;
+  onOpenConfigureModal: (selection: SelectionState) => void;
   onPasteClick: (
     parentLocator: string,
     subsectionId: string,
@@ -85,7 +85,7 @@ const SubsectionCard = ({
   const { sharedClipboardData, showPasteUnit } = useClipboard();
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
   const duplicateMutation = useDuplicateItem(courseId);
-  const { openPublishModal, setActionTargetSelection } = useCourseOutlineContext();
+  const { openPublishModal } = useCourseOutlineContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
@@ -167,15 +167,6 @@ const SubsectionCard = ({
 
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
-  };
-
-  const handleClickMenuButton = () => {
-    setActionTargetSelection({
-      currentId: subsection.id,
-      subsectionId: subsection.id,
-      sectionId: section.id,
-      index,
-    });
   };
 
   const handleClickManageTags = () => {
@@ -261,7 +252,6 @@ const SubsectionCard = ({
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
       openContainerSidebar(subsection.id, subsection.id, section.id, index);
-      handleClickMenuButton();
       setIsExpanded(true);
     }
   }, [openContainerSidebar]);
@@ -303,9 +293,15 @@ const SubsectionCard = ({
                 status={subsectionStatus}
                 cardId={id}
                 hasChanges={hasChanges}
-                onClickMenuButton={handleClickMenuButton}
+                renameSectionId={section.id}
+                renameSubsectionId={subsection.id}
                 onClickPublish={() => openPublishModal({ value: subsection, sectionId: section.id })}
-                onClickDelete={onOpenDeleteModal}
+                onClickDelete={() => onOpenDeleteModal({
+                  currentId: subsection.id,
+                  subsectionId: subsection.id,
+                  sectionId: section.id,
+                  index,
+                })}
                 onClickUnlink={/* istanbul ignore next */ () =>
                   openUnlinkModal({
                     value: subsection,
@@ -313,7 +309,12 @@ const SubsectionCard = ({
                   })}
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
-                onClickConfigure={onOpenConfigureModal}
+                onClickConfigure={() => onOpenConfigureModal({
+                  currentId: subsection.id,
+                  subsectionId: subsection.id,
+                  sectionId: section.id,
+                  index,
+                })}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
                 onClickDuplicate={() =>

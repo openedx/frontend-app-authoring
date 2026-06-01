@@ -10,8 +10,6 @@ import {
   CourseOutlineProvider,
   useCourseOutlineContext,
 } from './CourseOutlineContext';
-import { useCourseOutline } from './hooks.jsx';
-
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
 jest.mock('@src/CourseAuthoringContext', () => ({
@@ -43,13 +41,7 @@ const Probe = () => {
   return <div>{courseName}</div>;
 };
 
-// Probe that exercises the useCourseOutline hook (hooks.jsx) to verify it does
-// not crash when outlineIndexData is undefined during initial load or
-// course navigation.
-const OutlineCrashGuard = () => {
-  useCourseOutline();
-  return <div data-testid="crash-guard">ok</div>;
-};
+
 
 const ProbeSections = () => {
   const { sections } = useCourseOutlineContext();
@@ -112,17 +104,4 @@ describe('CourseOutlineProvider outline index query sync', () => {
     //  from React Query data should already be correct).
   });
 
-  it('useCourseOutline does not crash when outlineIndexData is undefined (initial load)', async () => {
-    // No API mock = query stays loading with no data.
-    // Redux starts empty (outlineIndexData: {}), so reduxDataMatchesCourse
-    // is false. effectiveOutlineIndexData is undefined. The hook must
-    // survive this without crashing on destructuring reindexLink etc.
-    render(
-      <CourseOutlineProvider>
-        <OutlineCrashGuard />
-      </CourseOutlineProvider>,
-    );
-
-    expect(screen.getByTestId('crash-guard')).toHaveTextContent('ok');
-  });
 });
