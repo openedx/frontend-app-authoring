@@ -9,6 +9,7 @@ import type {
   SequentialConfigurePayload,
   UnitConfigurePayload,
 } from '../data/types';
+import type { OutlineModalsProps } from '../OutlineModals';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '../CourseOutlineContext';
 import {
@@ -19,14 +20,13 @@ import {
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { useOutlineActions } from './useOutlineActions';
 import { COURSE_BLOCK_NAMES } from '../constants';
-import OutlineModals from '../OutlineModals';
 
 export interface UseOutlineModalsReturn {
   openEnableHighlightsModal: () => void;
   handleOpenHighlightsModal: (section: XBlock) => void;
   handleOpenConfigureModal: (selection: OutlineActionSelection) => void;
   openDeleteModal: (payload: OutlineActionSelection) => void;
-  modals: React.JSX.Element;
+  outlineModalsProps: OutlineModalsProps;
 }
 
 export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
@@ -165,41 +165,39 @@ export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
     }
   }, [deleteModalData, handleDeleteItemSubmit, closeDeleteModal, currentSelection, clearSelection]);
 
-  // ─── Rendered modals ─────────────────────────────────────────────────────
-  const modals = (
-    <OutlineModals
-      isEnableHighlightsModalOpen={isEnableHighlightsModalOpen}
-      closeEnableHighlightsModal={closeEnableHighlightsModal}
-      handleEnableHighlightsSubmit={handleEnableHighlightsSubmit}
-      isHighlightsModalOpen={isHighlightsModalOpen}
-      closeHighlightsModal={closeHighlightsModal}
-      handleHighlightsFormSubmit={handleHighlightsFormSubmit}
-      highlightsModalCurrentId={highlightsModalData}
-      isConfigureModalOpen={isConfigureModalOpen}
-      handleConfigureModalClose={handleConfigureModalClose}
-      handleConfigureItemSubmitWrapper={handleConfigureItemSubmitWrapper}
-      isOverflowVisible={isOverflowVisible}
-      currentItemData={configureItemData as XBlock | undefined}
-      enableProctoredExams={enableProctoredExams}
-      enableTimedExams={enableTimedExams}
-      isSelfPaced={statusBarData?.isSelfPaced ?? false}
-      itemCategoryName={itemCategoryName}
-      isDeleteModalOpen={isDeleteModalOpen}
-      closeDeleteModal={closeDeleteModal}
-      onDeleteConfirm={onDeleteConfirm}
-      isUnlinkModalOpen={isUnlinkModalOpen}
-      closeUnlinkModal={closeUnlinkModal}
-      handleUnlinkItemSubmit={handleUnlinkItemSubmit}
-      displayName={currentUnlinkModalData?.value?.displayName}
-      itemCategory={unlinkItemCategory}
-    />
-  );
+  // ─── Modal props (rendered by consumer via <OutlineModals {...outlineModalsProps} />) ──
+  const outlineModalsProps: OutlineModalsProps = {
+    isEnableHighlightsModalOpen,
+    closeEnableHighlightsModal,
+    handleEnableHighlightsSubmit,
+    isHighlightsModalOpen,
+    closeHighlightsModal,
+    handleHighlightsFormSubmit,
+    highlightsModalCurrentId: highlightsModalData,
+    isConfigureModalOpen,
+    handleConfigureModalClose,
+    handleConfigureItemSubmitWrapper,
+    isOverflowVisible,
+    currentItemData: configureItemData as XBlock | undefined,
+    enableProctoredExams,
+    enableTimedExams,
+    isSelfPaced: statusBarData?.isSelfPaced ?? false,
+    itemCategoryName,
+    isDeleteModalOpen,
+    closeDeleteModal,
+    onDeleteConfirm,
+    isUnlinkModalOpen,
+    closeUnlinkModal,
+    handleUnlinkItemSubmit,
+    displayName: currentUnlinkModalData?.value?.displayName,
+    itemCategory: unlinkItemCategory,
+  };
 
   return {
     openEnableHighlightsModal,
     handleOpenHighlightsModal,
     handleOpenConfigureModal,
     openDeleteModal,
-    modals,
+    outlineModalsProps,
   };
 }

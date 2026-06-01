@@ -41,6 +41,7 @@ import PageAlerts from './page-alerts/PageAlerts';
 import type { CourseOutline as CourseOutlineData } from './data/types';
 import OutlineTree from './OutlineTree';
 import { useOutlineModals } from './state/useOutlineModals';
+import OutlineModals from './OutlineModals';
 
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
@@ -164,7 +165,7 @@ const CourseOutline = () => {
     handleOpenHighlightsModal,
     handleOpenConfigureModal,
     openDeleteModal,
-    modals,
+    outlineModalsProps,
   } = useOutlineModals(courseId);
 
   // Use `setToastMessage` to show the toast.
@@ -330,7 +331,7 @@ const CourseOutline = () => {
             />
           </div>
         </section>
-        {modals}
+        <OutlineModals {...outlineModalsProps} />
       </Container>
       <div className="alert-toast">
         <InternetConnectionAlert

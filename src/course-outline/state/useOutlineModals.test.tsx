@@ -1,5 +1,6 @@
 import { renderHook, act, render } from '@testing-library/react';
 import { useOutlineModals } from './useOutlineModals';
+import OutlineModals from '../OutlineModals';
 
 // ---------------------------------------------------------------------------
 // Helpers: capture OutlineModals props so we can invoke onDeleteConfirm
@@ -97,8 +98,8 @@ jest.mock('@src/generic/unlink-modal', () => ({
 // ---------------------------------------------------------------------------
 function renderModalsHook() {
   const hookResult = renderHook(() => useOutlineModals(courseId));
-  // Mount the modals JSX so the OutlineModals mock component receives props
-  render(hookResult.result.current.modals);
+  // Mount OutlineModals with returned props so the mock captures them
+  render(<OutlineModals {...hookResult.result.current.outlineModalsProps} />);
   return hookResult;
 }
 
@@ -261,8 +262,8 @@ describe('useOutlineModals handleConfigureItemSubmitWrapper', () => {
     act(() => {
       result.current.handleOpenConfigureModal(chapterSelection);
     });
-    // Re-render modals so the mock OutlineModals captures updated props
-    render(result.current.modals);
+    // Re-render OutlineModals with returned props so the mock captures updated props
+    render(<OutlineModals {...result.current.outlineModalsProps} />);
     const wrapper = getHandleConfigureItemSubmitWrapper();
 
     await act(async () => {
@@ -289,7 +290,7 @@ describe('useOutlineModals handleConfigureItemSubmitWrapper', () => {
     act(() => {
       result.current.handleOpenConfigureModal(chapterSelection);
     });
-    render(result.current.modals);
+    render(<OutlineModals {...result.current.outlineModalsProps} />);
     const wrapperBefore = getHandleConfigureItemSubmitWrapper();
 
     await act(async () => {
@@ -300,7 +301,7 @@ describe('useOutlineModals handleConfigureItemSubmitWrapper', () => {
     // configureModalData should remain set (modal stayed open).
     // Next submission should go through again, not early-return.
     mockHandleConfigureItemSubmit.mockResolvedValue(true);
-    render(result.current.modals);
+    render(<OutlineModals {...result.current.outlineModalsProps} />);
     const wrapperAfter = getHandleConfigureItemSubmitWrapper();
 
     await act(async () => {
@@ -351,8 +352,8 @@ describe('useOutlineModals handleOpenHighlightsModal', () => {
       hookResult.result.current.handleOpenHighlightsModal(section);
     });
 
-    // Re-render modals so the mock OutlineModals captures updated props
-    render(hookResult.result.current.modals);
+    // Re-render OutlineModals with returned props so the mock captures updated props
+    render(<OutlineModals {...hookResult.result.current.outlineModalsProps} />);
 
     expect(capturedOutlineModalsProps.highlightsModalCurrentId).toBe('block-section-hl');
   });
@@ -374,7 +375,7 @@ describe('useOutlineModals handleHighlightsFormSubmit', () => {
     act(() => {
       hookResult.result.current.handleOpenHighlightsModal({ id: 'block-section-hl' } as any);
     });
-    render(hookResult.result.current.modals);
+    render(<OutlineModals {...hookResult.result.current.outlineModalsProps} />);
     const submit = getHandleHighlightsFormSubmit();
 
     act(() => {
@@ -411,7 +412,7 @@ describe('useOutlineModals handleHighlightsFormSubmit', () => {
     act(() => {
       hookResult.result.current.handleOpenHighlightsModal({ id: 'block-sec' } as any);
     });
-    render(hookResult.result.current.modals);
+    render(<OutlineModals {...hookResult.result.current.outlineModalsProps} />);
     const submit = getHandleHighlightsFormSubmit();
 
     act(() => {
