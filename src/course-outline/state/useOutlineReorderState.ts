@@ -126,8 +126,8 @@ export function useOutlineReorderState({
 
   // --- Reorder mutation hooks ---
   const reorderSectionsMutation = useReorderSections(courseId);
-  const reorderSubsectionsMutation = useReorderSubsections();
-  const reorderUnitsMutation = useReorderUnits();
+  const reorderSubsectionsMutation = useReorderSubsections(courseId);
+  const reorderUnitsMutation = useReorderUnits(courseId);
 
   const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
     if (!courseId) {
