@@ -68,7 +68,12 @@ function renderReorderHook() {
 describe('useOutlineReorderState', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Initialize mock delegates after jest.clearAllMocks resets them.
+    // Also reset mock implementations of the persistent mutation mocks
+    // (jest.clearAllMocks does NOT clear mockReturnValueOnce / mockResolvedValueOnce).
+    mockMutateAsync.sections.mockReset();
+    mockMutateAsync.subsections.mockReset();
+    mockMutateAsync.units.mockReset();
+    // Initialize mock delegates.
     mockReplaceSectionInOutlineIndex = jest.fn();
     mockGetCourseItem = jest.fn();
     queryClient = new QueryClient();
@@ -231,6 +236,180 @@ describe('useOutlineReorderState', () => {
       );
 
       invalidateSpy.mockRestore();
+    });
+  });
+
+  // --- updateSectionOrderByIndex ---
+
+  describe('updateSectionOrderByIndex', () => {
+    it('computes preview, calls mutation, and syncs cache on success', async () => {
+      mockMutateAsync.sections.mockResolvedValueOnce(undefined);
+
+      const { result } = renderReorderHook();
+
+      await act(async () => {
+        await result.current.updateSectionOrderByIndex(0, 2);
+      });
+
+      // Preview was set optimistically, then cleared on success — cache has final order
+      expect(mockMutateAsync.sections).toHaveBeenCalledWith(['B', 'C', 'A']);
+      const cached: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      expect(cached.courseStructure.childInfo.children.map((s: any) => s.id)).toEqual(['B', 'C', 'A']);
+    });
+
+    it('is a noop when currentIndex equals newIndex', async () => {
+      const { result } = renderReorderHook();
+
+      await act(async () => {
+        await result.current.updateSectionOrderByIndex(1, 1);
+      });
+
+      expect(mockMutateAsync.sections).not.toHaveBeenCalled();
+      expect(result.current.visibleSections.map((s: any) => s.id)).toEqual(['A', 'B', 'C']);
+    });
+
+    it('clears preview and does not write cache on mutation failure', async () => {
+      mockMutateAsync.sections.mockRejectedValueOnce(new Error('fail'));
+
+      const { result } = renderReorderHook();
+
+      await act(async () => {
+        await result.current.updateSectionOrderByIndex(0, 1);
+      });
+
+      // Preview was set optimistically, then cleared on failure
+      expect(result.current.visibleSections.map((s: any) => s.id)).toEqual(['A', 'B', 'C']);
+      // Cache unchanged
+      const cached: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      expect(cached.courseStructure.childInfo.children.map((s: any) => s.id)).toEqual(['A', 'B', 'C']);
+    });
+  });
+
+  // --- updateSubsectionOrderByIndex ---
+
+  describe('updateSubsectionOrderByIndex', () => {
+    it('moves subsection via moveDetails and calls subsection mutation', async () => {
+      const sectionA = {
+        ...sections[0],
+        childInfo: {
+          children: [
+            createSubsection('sub1'),
+            createSubsection('sub2'),
+            createSubsection('sub3'),
+          ],
+        },
+      };
+      // Re-seed cache with the richer section
+      queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => ({
+        ...old,
+        courseStructure: {
+          ...old.courseStructure,
+          childInfo: {
+            ...old.courseStructure.childInfo,
+            children: [sectionA, sections[1], sections[2]],
+          },
+        },
+      }));
+
+      mockMutateAsync.subsections.mockResolvedValueOnce(undefined);
+      mockGetCourseItem.mockResolvedValue(sectionA);
+
+      // Simulate moving sub2 from index 2 → index 0 within section A
+      // moveDetails has { fn, args, sectionId } as produced by possibleSubsectionMoves()
+      const moveDetails = {
+        fn: moveSubsection,
+        args: [[sectionA, sections[1], sections[2]], 0, 2, 0],
+        sectionId: 'A',
+      };
+
+      const { result } = renderReorderHook();
+
+      await act(async () => {
+        await result.current.updateSubsectionOrderByIndex(sectionA, moveDetails);
+      });
+
+      expect(mockMutateAsync.subsections).toHaveBeenCalledWith({
+        sectionId: 'A',
+        prevSectionId: 'A',
+        subsectionListIds: ['sub3', 'sub1', 'sub2'],
+      });
+    });
+
+    it('returns early when moveDetails has no args', async () => {
+      const { result } = renderReorderHook();
+
+      await act(async () => {
+        await result.current.updateSubsectionOrderByIndex(sections[0], { fn: () => [], args: null, sectionId: 'A' });
+      });
+
+      expect(mockMutateAsync.subsections).not.toHaveBeenCalled();
+    });
+  });
+
+  // --- updateUnitOrderByIndex ---
+
+  describe('updateUnitOrderByIndex', () => {
+    it('moves unit via moveDetails and calls unit mutation', async () => {
+      const sectionA = {
+        ...sections[0],
+        childInfo: {
+          children: [
+            {
+              ...createSubsection('sub1'),
+              childInfo: {
+                children: [
+                  { id: 'unit1' }, { id: 'unit2' }, { id: 'unit3' },
+                ],
+              },
+            },
+          ],
+        },
+      };
+      queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => ({
+        ...old,
+        courseStructure: {
+          ...old.courseStructure,
+          childInfo: {
+            ...old.courseStructure.childInfo,
+            children: [sectionA, sections[1], sections[2]],
+          },
+        },
+      }));
+
+      mockMutateAsync.units.mockResolvedValueOnce(undefined);
+      mockGetCourseItem.mockResolvedValue(sectionA);
+
+      // Move unit3 from index 2 → index 0 within sub1
+      // moveDetails has { fn, args, sectionId, subsectionId } as produced by possibleUnitMoves()
+      const moveDetails = {
+        fn: moveUnit,
+        args: [[sectionA, sections[1], sections[2]], 0, 0, 2, 0],
+        sectionId: 'A',
+        subsectionId: 'sub1',
+      };
+
+      const { result } = renderReorderHook();
+
+      await act(async () => {
+        await result.current.updateUnitOrderByIndex(sectionA, moveDetails);
+      });
+
+      expect(mockMutateAsync.units).toHaveBeenCalledWith({
+        sectionId: 'A',
+        prevSectionId: 'A',
+        subsectionId: 'sub1',
+        unitListIds: ['unit3', 'unit1', 'unit2'],
+      });
+    });
+
+    it('returns early when moveDetails has no args', async () => {
+      const { result } = renderReorderHook();
+
+      await act(async () => {
+        await result.current.updateUnitOrderByIndex(sections[0], { fn: () => [], args: null, sectionId: 'A', subsectionId: 'sub1' });
+      });
+
+      expect(mockMutateAsync.units).not.toHaveBeenCalled();
     });
   });
 

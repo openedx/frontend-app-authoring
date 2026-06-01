@@ -129,17 +129,16 @@ export function useOutlineReorderState({
   const reorderSubsectionsMutation = useReorderSubsections(courseId);
   const reorderUnitsMutation = useReorderUnits(courseId);
 
-  const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
-    if (!courseId) {
-      return;
-    }
+  // ─── Shared helpers: own mutation + success callback + error catch ─────────
+
+  const runSectionReorder = useCallback(async (sectionListIds: string[]) => {
     try {
       await reorderSectionsMutation.mutateAsync(sectionListIds);
       acceptReorderAndSyncSectionOrder(sectionListIds);
     } catch {
       clearPreview();
     }
-  }, [courseId, reorderSectionsMutation, acceptReorderAndSyncSectionOrder, clearPreview]);
+  }, [reorderSectionsMutation, acceptReorderAndSyncSectionOrder, clearPreview]);
 
   // Shared post-success for subsection/unit reorder: clear preview, refetch fresh data.
   const finishSubtreeReorder = useCallback(async (
@@ -150,7 +149,7 @@ export function useOutlineReorderState({
     await refetchAffectedSections(sectionId, prevSectionId);
   }, [clearPreview, refetchAffectedSections]);
 
-  const commitSubsectionReorder = useCallback(async (
+  const runSubsectionReorder = useCallback(async (
     sectionId: string,
     prevSectionId: string,
     subsectionListIds: string[],
@@ -161,13 +160,9 @@ export function useOutlineReorderState({
     } catch {
       clearPreview();
     }
-  }, [
-    reorderSubsectionsMutation,
-    finishSubtreeReorder,
-    clearPreview,
-  ]);
+  }, [reorderSubsectionsMutation, finishSubtreeReorder, clearPreview]);
 
-  const commitUnitReorder = useCallback(async (
+  const runUnitReorder = useCallback(async (
     sectionId: string,
     prevSectionId: string,
     subsectionId: string,
@@ -179,83 +174,72 @@ export function useOutlineReorderState({
     } catch {
       clearPreview();
     }
-  }, [
-    reorderUnitsMutation,
-    finishSubtreeReorder,
-    clearPreview,
-  ]);
+  }, [reorderUnitsMutation, finishSubtreeReorder, clearPreview]);
+
+  // ─── Public API: guard + compute preview + delegate ───────────────────────
+
+  const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
+    if (!courseId) { return; }
+    await runSectionReorder(sectionListIds);
+  }, [courseId, runSectionReorder]);
+
+  const commitSubsectionReorder = useCallback(async (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionListIds: string[],
+  ) => {
+    await runSubsectionReorder(sectionId, prevSectionId, subsectionListIds);
+  }, [runSubsectionReorder]);
+
+  const commitUnitReorder = useCallback(async (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+  ) => {
+    await runUnitReorder(sectionId, prevSectionId, subsectionId, unitListIds);
+  }, [runUnitReorder]);
 
   const updateSectionOrderByIndex = useCallback(async (currentIndex: number, newIndex: number) => {
-    if (!courseId || currentIndex === newIndex) {
-      return;
-    }
+    if (!courseId || currentIndex === newIndex) { return; }
 
     const nextSections = arrayMove(visibleSections, currentIndex, newIndex) as XBlock[];
     const sectionListIds = nextSections.map((section) => section.id);
     setPreviewSectionsState(nextSections);
 
-    try {
-      await reorderSectionsMutation.mutateAsync(sectionListIds);
-      acceptReorderAndSyncSectionOrder(sectionListIds);
-    } catch {
-      clearPreview();
-    }
-  }, [visibleSections, courseId, reorderSectionsMutation, clearPreview, acceptReorderAndSyncSectionOrder]);
+    await runSectionReorder(sectionListIds);
+  }, [visibleSections, courseId, runSectionReorder]);
 
   const updateSubsectionOrderByIndex = useCallback(async (section: XBlock, moveDetails) => {
     const { fn, args, sectionId } = moveDetails;
-    if (!args) {
-      return;
-    }
+    if (!args) { return; }
 
     const [sectionsCopy, newSubsections] = fn(...args);
     if (newSubsections && sectionId) {
       setPreviewSectionsState(sectionsCopy);
-      try {
-        await reorderSubsectionsMutation.mutateAsync({
-          sectionId,
-          prevSectionId: section.id,
-          subsectionListIds: newSubsections.map((subsection: XBlock) => subsection.id),
-        });
-        await finishSubtreeReorder(sectionId, section.id);
-      } catch {
-        clearPreview();
-      }
+      await runSubsectionReorder(
+        sectionId,
+        section.id,
+        newSubsections.map((subsection: XBlock) => subsection.id),
+      );
     }
-  }, [
-    visibleSections,
-    reorderSubsectionsMutation,
-    finishSubtreeReorder,
-    clearPreview,
-  ]);
+  }, [runSubsectionReorder]);
 
   const updateUnitOrderByIndex = useCallback(async (section: XBlock, moveDetails) => {
     const { fn, args, sectionId, subsectionId } = moveDetails;
-    if (!args) {
-      return;
-    }
+    if (!args) { return; }
 
     const [sectionsCopy, newUnits] = fn(...args);
     if (newUnits && subsectionId) {
       setPreviewSectionsState(sectionsCopy);
-      try {
-        await reorderUnitsMutation.mutateAsync({
-          sectionId,
-          prevSectionId: section.id,
-          subsectionId,
-          unitListIds: newUnits.map((unit: XBlock) => unit.id),
-        });
-        await finishSubtreeReorder(sectionId, section.id);
-      } catch {
-        clearPreview();
-      }
+      await runUnitReorder(
+        sectionId,
+        section.id,
+        subsectionId,
+        newUnits.map((unit: XBlock) => unit.id),
+      );
     }
-  }, [
-    visibleSections,
-    reorderUnitsMutation,
-    finishSubtreeReorder,
-    clearPreview,
-  ]);
+  }, [runUnitReorder]);
 
   return {
     visibleSections,
