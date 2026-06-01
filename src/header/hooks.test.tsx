@@ -26,7 +26,6 @@ mockWaffleFlags({
   // Some flags can be enabled with either a config value or a waffle flag.
   // For test purposes, we'll configure the video upload page using the config, so leave the waffle flag off.
   useNewVideoUploadsPage: false,
-  useNewCertificatesPage: false,
 });
 
 jest.mock('react-redux', () => ({
@@ -203,7 +202,7 @@ describe('header utils', () => {
       });
     });
     beforeEach(() => {
-      mockWaffleFlags({ enableAuthzCourseAuthoring: false, useNewCertificatesPage: false });
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false });
       jest.mocked(useSelector).mockReturnValue({
         canAccessAdvancedSettings: true,
       });
@@ -355,7 +354,7 @@ describe('header utils', () => {
     });
 
     it('should include roles and permissions option', () => {
-      mockWaffleFlags({ enableAuthzCourseAuthoring: true, useNewCertificatesPage: false });
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,

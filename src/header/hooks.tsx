@@ -78,7 +78,6 @@ export const useContentMenuItems = (courseId: string) => {
 export const useSettingMenuItems = (courseId: string) => {
   const intl = useIntl();
   const { canAccessAdvancedSettings: legacyCanAccessAdvancedSettings } = useSelector(getStudioHomeData);
-  const waffleFlags = useWaffleFlags(courseId);
 
   /*
     AuthZ for Course Authoring
@@ -133,7 +132,7 @@ export const useSettingMenuItems = (courseId: string) => {
       }] :
       []),
   ];
-  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' || waffleFlags.useNewCertificatesPage) {
+  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true') {
     items.push({
       href: `/course/${courseId}/certificates`,
       title: intl.formatMessage(messages['header.links.certificates']),
