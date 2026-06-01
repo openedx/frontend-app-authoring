@@ -8,14 +8,22 @@ import HighlightsModal from './highlights-modal/HighlightsModal';
 import type { HighlightData } from './highlights-modal/HighlightsModal';
 import PublishModal from './publish-modal/PublishModal';
 
-export interface OutlineModalsProps {
+// ─── Domain-grouped sub-interfaces ──────────────────────────────────────
+
+export interface EnableHighlightsGroup {
   isEnableHighlightsModalOpen: boolean;
   closeEnableHighlightsModal: () => void;
   handleEnableHighlightsSubmit: () => void;
+}
+
+export interface HighlightsGroup {
   isHighlightsModalOpen: boolean;
   closeHighlightsModal: () => void;
   handleHighlightsFormSubmit: (highlights: HighlightData) => void;
   highlightsModalCurrentId?: string;
+}
+
+export interface ConfigureGroup {
   isConfigureModalOpen: boolean;
   handleConfigureModalClose: () => void;
   handleConfigureItemSubmitWrapper: (variables: Record<string, unknown>) => void;
@@ -25,15 +33,28 @@ export interface OutlineModalsProps {
   enableTimedExams?: boolean;
   isSelfPaced: boolean;
   itemCategoryName: string;
+}
+
+export interface DeleteGroup {
   isDeleteModalOpen: boolean;
   closeDeleteModal: () => void;
   onDeleteConfirm: () => Promise<void>;
+}
+
+export interface UnlinkGroup {
   isUnlinkModalOpen: boolean;
   closeUnlinkModal: () => void;
   handleUnlinkItemSubmit: () => Promise<void>;
   displayName?: string;
   itemCategory: string;
 }
+
+export type OutlineModalsProps =
+  EnableHighlightsGroup &
+  HighlightsGroup &
+  ConfigureGroup &
+  DeleteGroup &
+  UnlinkGroup;
 
 const OutlineModals = ({
   isEnableHighlightsModalOpen,

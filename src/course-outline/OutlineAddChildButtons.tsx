@@ -28,11 +28,10 @@ import messages from './messages';
  */
 interface AddPlaceholderProps {
   parentLocator?: string;
-  handleAddBlock: ReturnType<typeof useCreateCourseBlock>;
-  handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
+  isPending: boolean;
 }
 
-const AddPlaceholder = ({ parentLocator, handleAddBlock, handleAddAndOpenUnit }: AddPlaceholderProps) => {
+const AddPlaceholder = ({ parentLocator, isPending }: AddPlaceholderProps) => {
   const intl = useIntl();
   const { isCurrentFlowOn, currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
 
@@ -58,7 +57,7 @@ const AddPlaceholder = ({ parentLocator, handleAddBlock, handleAddAndOpenUnit }:
     <Row className="mx-0 py-3 px-4 border-dashed border-gray-500 shadow-lg rounded bg-white w-100">
       <Col className="py-3">
         <Stack direction="horizontal" gap={3}>
-          {(handleAddAndOpenUnit.isPending || handleAddBlock.isPending) && <LoadingSpinner />}
+          {isPending && <LoadingSpinner />}
           <h3 className="mb-0">{getTitle()}</h3>
           <IconButton
             src={Close}
@@ -185,8 +184,7 @@ const OutlineAddChildButtons = ({
     <>
       <AddPlaceholder
         parentLocator={parentLocator}
-        handleAddBlock={handleAddBlock}
-        handleAddAndOpenUnit={handleAddAndOpenUnit}
+        isPending={handleAddBlock.isPending || handleAddAndOpenUnit.isPending}
       />
       <Stack direction="horizontal" gap={3} onClick={onClickCard}>
         <Button

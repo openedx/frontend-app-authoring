@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -44,34 +44,9 @@ export function useOutlineReorderState({
   const [previewSectionsState, setPreviewSectionsState] = useState<XBlock[] | undefined>();
   const visibleSections = previewSectionsState ?? sections;
 
-  // Always keep a ref pointing at the latest visible tree so callbacks
-  // can sync it to the query cache without stale closures.
-  const latestVisibleSectionsRef = useRef<XBlock[]>(visibleSections);
-  latestVisibleSectionsRef.current = visibleSections;
-
   const clearPreview = useCallback(() => {
     setPreviewSectionsState(undefined);
   }, []);
-
-  // Write the current visible tree (preview or committed) into the outline
-  // index query cache so the next consumer gets up-to-date children without
-  // an extra network round-trip.
-  const syncPreviewTreeToCache = useCallback(() => {
-    const tree = latestVisibleSectionsRef.current;
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-      if (!old?.courseStructure?.childInfo) { return old; }
-      return {
-        ...old,
-        courseStructure: {
-          ...old.courseStructure,
-          childInfo: {
-            ...old.courseStructure.childInfo,
-            children: tree,
-          },
-        },
-      };
-    });
-  }, [queryClient, courseId]);
 
   // Accept reorder preview then sync React Query cache with new section order.
   // If any section id is missing from the current cache (e.g. concurrent change),
@@ -115,7 +90,6 @@ export function useOutlineReorderState({
   const cancelReorderPreview = clearPreview;
 
   const callPreviewSections = useCallback((nextSections: XBlock[]) => {
-    latestVisibleSectionsRef.current = nextSections;
     setPreviewSectionsState(nextSections);
   }, []);
 
@@ -167,15 +141,14 @@ export function useOutlineReorderState({
     }
   }, [courseId, reorderSectionsMutation, acceptReorderAndSyncSectionOrder, clearPreview]);
 
-  // Shared post-success for subsection/unit reorder: sync preview, clear it, refetch.
+  // Shared post-success for subsection/unit reorder: clear preview, refetch fresh data.
   const finishSubtreeReorder = useCallback(async (
     sectionId: string,
     prevSectionId: string,
   ) => {
-    syncPreviewTreeToCache();
     clearPreview();
     await refetchAffectedSections(sectionId, prevSectionId);
-  }, [syncPreviewTreeToCache, clearPreview, refetchAffectedSections]);
+  }, [clearPreview, refetchAffectedSections]);
 
   const commitSubsectionReorder = useCallback(async (
     sectionId: string,
@@ -219,7 +192,6 @@ export function useOutlineReorderState({
 
     const nextSections = arrayMove(visibleSections, currentIndex, newIndex) as XBlock[];
     const sectionListIds = nextSections.map((section) => section.id);
-    latestVisibleSectionsRef.current = nextSections;
     setPreviewSectionsState(nextSections);
 
     try {
@@ -238,7 +210,6 @@ export function useOutlineReorderState({
 
     const [sectionsCopy, newSubsections] = fn(...args);
     if (newSubsections && sectionId) {
-      latestVisibleSectionsRef.current = sectionsCopy;
       setPreviewSectionsState(sectionsCopy);
       try {
         await reorderSubsectionsMutation.mutateAsync({
@@ -266,7 +237,6 @@ export function useOutlineReorderState({
 
     const [sectionsCopy, newUnits] = fn(...args);
     if (newUnits && subsectionId) {
-      latestVisibleSectionsRef.current = sectionsCopy;
       setPreviewSectionsState(sectionsCopy);
       try {
         await reorderUnitsMutation.mutateAsync({
