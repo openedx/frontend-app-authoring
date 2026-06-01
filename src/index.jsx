@@ -7,7 +7,8 @@ import {
   getConfig,
   getPath,
 } from '@edx/frontend-platform';
-import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
+import { AppProvider, ErrorPage, PageWrap } from '@edx/frontend-platform/react';
+import { FilePickerPage } from '@src/files-and-videos/files-page/FilePickerPage';
 import React, { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -102,6 +103,14 @@ const App = () => {
         <Route path="/legacy/preview-changes/:usageKey" element={<PreviewChangesEmbed />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
+        <Route
+          path="/file_picker/:courseId"
+          element={
+            <PageWrap>
+              <FilePickerPage />
+            </PageWrap>
+          }
+        />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
           <Route path="/accessibility" element={<AccessibilityPage />} />
         )}

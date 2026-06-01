@@ -1,6 +1,7 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Container } from '@openedx/paragon';
+import { DeprecatedReduxState } from '@src/store';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -15,11 +16,17 @@ import { AgreementGated } from '@src/constants';
 
 import { EditFileErrors } from '../generic';
 import { fetchAssets, resetErrors } from './data/thunks';
-import FilesPageProvider from './FilesPageProvider';
+import FilesPageProvider, { FilePickerOptions } from './FilesPageProvider';
 import messages from './messages';
 import './FilesPage.scss';
 
-const FilesPage = () => {
+const FilesPage = ({
+  filePickerMode = false,
+  filePickerOptions = undefined,
+}: {
+  filePickerMode?: boolean;
+  filePickerOptions?: FilePickerOptions;
+}) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { courseId, courseDetails } = useCourseAuthoringContext();
@@ -30,7 +37,7 @@ const FilesPage = () => {
     deletingStatus: deleteAssetStatus,
     updatingStatus: updateAssetStatus,
     errors: errorMessages,
-  } = useSelector(state => state.assets);
+  } = useSelector((state: DeprecatedReduxState) => state.assets);
 
   useEffect(() => {
     dispatch(fetchAssets(courseId));
@@ -47,7 +54,7 @@ const FilesPage = () => {
   }
 
   return (
-    <FilesPageProvider courseId={courseId}>
+    <FilesPageProvider filePickerMode={filePickerMode} filePickerOptions={filePickerOptions}>
       <Container size="xl" className="p-4 pt-4.5">
         <EditFileErrors
           resetErrors={handleErrorReset}
