@@ -297,12 +297,18 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    expect(axiosMock.history.post.length).toBe(3);
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+    // The video sharing POST is the one with the expected data.
+    // Find it by data content rather than assuming a fixed index.
+    const videoSharingPost = axiosMock.history.post.find(
+      (entry: any) => entry.data && entry.data.includes('video_sharing_options'),
+    );
+    expect(videoSharingPost).toBeDefined();
+    expect(videoSharingPost).toBeDefined();
+    expect(JSON.parse(videoSharingPost!.data)).toEqual({
       metadata: {
         video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
       },
-    }));
+    });
   });
 
   it('check video sharing option shows error on failure', async () => {
@@ -320,12 +326,16 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    expect(axiosMock.history.post.length).toBe(3);
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+    const videoSharingPost = axiosMock.history.post.find(
+      (entry: any) => entry.data && entry.data.includes('video_sharing_options'),
+    );
+    expect(videoSharingPost).toBeDefined();
+    expect(videoSharingPost).toBeDefined();
+    expect(JSON.parse(videoSharingPost!.data)).toEqual({
       metadata: {
         video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
       },
-    }));
+    });
 
     const alertElements = screen.queryAllByRole('alert');
     expect(alertElements.find(

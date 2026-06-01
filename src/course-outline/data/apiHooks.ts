@@ -37,8 +37,10 @@ import {
   dismissNotification,
   editItemDisplayName,
   enableCourseHighlightsEmails,
+  getCourseBestPractices,
   getCourseDetails,
   getCourseItem,
+  getCourseLaunch,
   publishCourseItem,
   configureCourseSection,
   configureCourseSubsection,
@@ -73,6 +75,14 @@ export const courseOutlineQueryKeys = {
   courseDetails: (courseId?: string) => [
     ...courseOutlineQueryKeys.course(courseId),
     'details',
+  ],
+  courseBestPractices: (courseId?: string) => [
+    ...courseOutlineQueryKeys.course(courseId),
+    'bestPractices',
+  ],
+  courseLaunch: (courseId?: string) => [
+    ...courseOutlineQueryKeys.course(courseId),
+    'launch',
   ],
   legacyLibReadyToMigrateBlocks: (courseId: string) => [
     ...courseOutlineQueryKeys.course(courseId),
@@ -662,6 +672,30 @@ export function useDismissNotification(courseId: string) {
  * Uses bare useMutation (no processing toast) since reindex status is tracked
  * via useCourseOutlineReindexStatus.
  */
+/**
+ * Fetch course best practices checklist data.
+ * Non-blocking — errors return undefined data silently; caller defaults when absent.
+ */
+export function useCourseBestPractices(courseId: string) {
+  return useQuery({
+    queryKey: courseOutlineQueryKeys.courseBestPractices(courseId),
+    queryFn: () => getCourseBestPractices({ courseId, excludeGraded: true, all: true }),
+    retry: false,
+  });
+}
+
+/**
+ * Fetch course launch validation data.
+ * Loading/error states drive courseLaunchQueryStatus and courseLaunchApi error details.
+ */
+export function useCourseLaunch(courseId: string) {
+  return useQuery({
+    queryKey: courseOutlineQueryKeys.courseLaunch(courseId),
+    queryFn: () => getCourseLaunch({ courseId, gradedOnly: true, validateOras: true, all: true }),
+    retry: false,
+  });
+}
+
 export function useRestartIndexingOnCourse(courseId: string) {
   return useMutation({
     mutationKey: courseOutlineMutationKeys.reindex(courseId),

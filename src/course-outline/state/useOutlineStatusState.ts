@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import moment from 'moment';
 
 import { logError } from '@edx/frontend-platform/logging';
@@ -9,9 +9,11 @@ import {
   useCourseOutlineIndex,
 } from '../data/outlineIndexQuery';
 import {
+  useCourseBestPractices,
+  useCourseLaunch,
+} from '../data/apiHooks';
+import {
   createDiscussionsTopics,
-  getCourseLaunch,
-  getCourseBestPractices,
 } from '../data/api';
 import { getErrorDetails } from '../utils/getErrorDetails';
 import {
@@ -20,7 +22,6 @@ import {
 } from '../utils/getChecklistForStatusBar';
 import type { CourseOutlineStatusBar, ChecklistType } from '../data/types';
 
-const DEFAULT_LAUNCH_STATUS = RequestStatus.IN_PROGRESS;
 const DEFAULT_FETCH_SECTION_STATUS = RequestStatus.IN_PROGRESS;
 const DEFAULT_ERROR_NULL = null;
 
@@ -74,16 +75,41 @@ export function useOutlineStatusState({
   // Committed sections from query cache children
   const sections = effectiveOutlineIndexData?.courseStructure?.childInfo?.children || [];
 
-  // --- Local state for checklist, launch, and self-paced ---
-  const [localChecklist, setLocalChecklist] = useState<ChecklistType>({
-    totalCourseLaunchChecks: 0,
-    completedCourseLaunchChecks: 0,
-    totalCourseBestPracticesChecks: 0,
-    completedCourseBestPracticesChecks: 0,
-  });
-  const [localIsSelfPaced, setLocalIsSelfPaced] = useState<boolean>(false);
-  const [localCourseLaunchQueryStatus, setLocalCourseLaunchQueryStatus] = useState<string>(DEFAULT_LAUNCH_STATUS);
-  const [localCourseLaunchErrors, setLocalCourseLaunchErrors] = useState<any>(null);
+  // --- Dedicated query hooks for checklist/launch data ---
+  const bestPracticesQuery = useCourseBestPractices(courseId);
+  const launchQuery = useCourseLaunch(courseId);
+
+  // Derive launch status and error from query state
+  const courseLaunchQueryStatus = useMemo(() => {
+    if (launchQuery.isPending) { return RequestStatus.IN_PROGRESS; }
+    if (launchQuery.isError) { return RequestStatus.FAILED; }
+    if (launchQuery.isSuccess) { return RequestStatus.SUCCESSFUL; }
+    return RequestStatus.IN_PROGRESS;
+  }, [launchQuery.isPending, launchQuery.isError, launchQuery.isSuccess]);
+
+  const courseLaunchErrors = useMemo(() => {
+    if (launchQuery.error) { return getErrorDetails(launchQuery.error); }
+    return null;
+  }, [launchQuery.error]);
+
+  // Merge checklist from both query results
+  const mergedChecklist = useMemo((): ChecklistType => {
+    const checklist: ChecklistType = {
+      totalCourseLaunchChecks: 0,
+      completedCourseLaunchChecks: 0,
+      totalCourseBestPracticesChecks: 0,
+      completedCourseBestPracticesChecks: 0,
+    };
+    if (bestPracticesQuery.data) {
+      Object.assign(checklist, getCourseBestPracticesChecklist(bestPracticesQuery.data));
+    }
+    if (launchQuery.data) {
+      Object.assign(checklist, getCourseLaunchChecklist(launchQuery.data));
+    }
+    return checklist;
+  }, [bestPracticesQuery.data, launchQuery.data]);
+
+  const isSelfPaced = launchQuery.data?.isSelfPaced ?? false;
 
   // --- Derived flags from outline data ---
   const courseActions = effectiveOutlineIndexData?.courseStructure?.actions || DEFAULT_COURSE_ACTIONS;
@@ -92,25 +118,25 @@ export function useOutlineStatusState({
   const enableTimedExams = effectiveOutlineIndexData?.courseStructure?.enableTimedExams;
   const createdOn = effectiveOutlineIndexData?.createdOn;
 
-  // --- Derived status bar data (merge query data + local checklist/selfPaced) ---
+  // --- Derived status bar data (merge query data + checklist/selfPaced from dedicated queries) ---
   const statusBarData = useMemo(() => {
     const base = effectiveOutlineIndexData
       ? getCourseOutlineStatusBarData(effectiveOutlineIndexData)
       : {};
     return {
       ...base,
-      checklist: localChecklist,
-      isSelfPaced: localIsSelfPaced,
+      checklist: mergedChecklist,
+      isSelfPaced,
     } as CourseOutlineStatusBar;
-  }, [effectiveOutlineIndexData, localChecklist, localIsSelfPaced]);
+  }, [effectiveOutlineIndexData, mergedChecklist, isSelfPaced]);
 
-  // --- Derived loading status (query-derived + local; reindex handled by context) ---
+  // --- Derived loading status (query-derived; reindex handled by context) ---
   const effectiveLoadingStatus = useMemo(() => ({
     outlineIndexIsLoading: outlineIndexIsPending,
     outlineIndexIsDenied,
     fetchSectionLoadingStatus: DEFAULT_FETCH_SECTION_STATUS,
-    courseLaunchQueryStatus: localCourseLaunchQueryStatus,
-  }), [outlineIndexIsPending, outlineIndexIsDenied, localCourseLaunchQueryStatus]);
+    courseLaunchQueryStatus,
+  }), [outlineIndexIsPending, outlineIndexIsDenied, courseLaunchQueryStatus]);
 
   // --- Raw / base errors (before dismissal) ---
   const rawErrors = useMemo((): Record<string, any> => {
@@ -121,29 +147,9 @@ export function useOutlineStatusState({
       outlineIndexApi: outlineIndexErrors,
       reindexApi: null,
       sectionLoadingApi: DEFAULT_ERROR_NULL,
-      courseLaunchApi: localCourseLaunchErrors,
+      courseLaunchApi: courseLaunchErrors,
     };
-  }, [outlineIndexQuery.error, outlineIndexIsDenied, localCourseLaunchErrors]);
-
-  // --- Checklist/launch effects ---
-  useEffect(() => {
-    getCourseBestPractices({ courseId, excludeGraded: true, all: true }).then((data) => {
-      if (data) {
-        setLocalChecklist(prev => ({ ...prev, ...getCourseBestPracticesChecklist(data) }));
-      }
-    }).catch(() => {});
-
-    getCourseLaunch({ courseId, gradedOnly: true, validateOras: true, all: true })
-      .then((data) => {
-        setLocalIsSelfPaced(data.isSelfPaced);
-        setLocalChecklist(prev => ({ ...prev, ...getCourseLaunchChecklist(data) }));
-        setLocalCourseLaunchQueryStatus(RequestStatus.SUCCESSFUL);
-        setLocalCourseLaunchErrors(null);
-      }).catch((error) => {
-        setLocalCourseLaunchQueryStatus(RequestStatus.FAILED);
-        setLocalCourseLaunchErrors(getErrorDetails(error));
-      });
-  }, [courseId]);
+  }, [outlineIndexQuery.error, outlineIndexIsDenied, courseLaunchErrors]);
 
   // Create discussions topics if course was created recently
   useEffect(() => {

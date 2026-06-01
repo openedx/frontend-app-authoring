@@ -1,18 +1,17 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RequestStatus } from '@src/data/constants';
 import { useOutlineStatusState } from './useOutlineStatusState';
 
 // --- Mocks ---
 
-const mockGetCourseBestPractices = jest.fn();
-const mockGetCourseLaunch = jest.fn();
 const mockCreateDiscussionsTopics = jest.fn();
 const mockGetCourseOutlineStatusBarData = jest.fn();
 const mockUseCourseOutlineIndex = jest.fn();
+const mockUseCourseBestPractices = jest.fn();
+const mockUseCourseLaunch = jest.fn();
 
 jest.mock('../data/api', () => ({
-  getCourseBestPractices: (...args: any[]) => mockGetCourseBestPractices(...args),
-  getCourseLaunch: (...args: any[]) => mockGetCourseLaunch(...args),
   createDiscussionsTopics: (...args: any[]) => mockCreateDiscussionsTopics(...args),
 }));
 
@@ -50,6 +49,15 @@ jest.mock('../data/outlineIndexQuery', () => {
   };
 });
 
+jest.mock('../data/apiHooks', () => {
+  const actual = jest.requireActual('../data/apiHooks');
+  return {
+    ...actual,
+    useCourseBestPractices: (...args: any[]) => mockUseCourseBestPractices(...args),
+    useCourseLaunch: (...args: any[]) => mockUseCourseLaunch(...args),
+  };
+});
+
 const sampleOutlineIndexData = {
   courseStructure: {
     id: 'course-v1:test+course+2025',
@@ -69,21 +77,44 @@ function defaultInput() {
   };
 }
 
+const testQueryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false } },
+});
+
 function renderStatusHook(input?: Partial<ReturnType<typeof defaultInput>>) {
   const merged = { ...defaultInput(), ...input };
-  return renderHook(() => useOutlineStatusState(merged));
+  return renderHook(() => useOutlineStatusState(merged), {
+    wrapper: ({ children }) => (
+      <QueryClientProvider client={testQueryClient}>
+        {children}
+      </QueryClientProvider>
+    ),
+  });
 }
 
 describe('useOutlineStatusState', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetCourseBestPractices.mockResolvedValue({ some: 'data' });
-    mockGetCourseLaunch.mockResolvedValue({ isSelfPaced: false });
     mockCreateDiscussionsTopics.mockResolvedValue([]);
     mockGetCourseOutlineStatusBarData.mockReturnValue({
       courseReleaseDate: '2025-06-01',
       highlightsEnabledForMessaging: false,
       videoSharingOptions: 'per_course',
+    });
+    // Default: both queries succeed with data
+    mockUseCourseBestPractices.mockReturnValue({
+      data: { some: 'data' },
+      isPending: false,
+      isError: false,
+      isSuccess: true,
+      error: undefined,
+    });
+    mockUseCourseLaunch.mockReturnValue({
+      data: { isSelfPaced: false },
+      isPending: false,
+      isError: false,
+      isSuccess: true,
+      error: undefined,
     });
   });
 
@@ -92,6 +123,13 @@ describe('useOutlineStatusState', () => {
       mockUseCourseOutlineIndex.mockReturnValue({
         data: undefined,
         isPending: true,
+        isSuccess: false,
+        error: undefined,
+      });
+      mockUseCourseLaunch.mockReturnValue({
+        data: undefined,
+        isPending: true,
+        isError: false,
         isSuccess: false,
         error: undefined,
       });
@@ -137,7 +175,7 @@ describe('useOutlineStatusState', () => {
   });
 
   describe('status bar merge behavior', () => {
-    it('merges base status bar with local checklist and self-paced', () => {
+    it('merges base status bar with checklist and self-paced from query hooks', () => {
       mockUseCourseOutlineIndex.mockReturnValue({
         data: sampleOutlineIndexData,
         isPending: false,
@@ -147,38 +185,40 @@ describe('useOutlineStatusState', () => {
 
       const { result } = renderStatusHook();
 
+      // Checklist values are synchronously available from query data
+      expect(result.current.statusBarData.checklist.totalCourseBestPracticesChecks).toBe(5);
       expect(result.current.statusBarData.courseReleaseDate).toBe('2025-06-01');
       expect(result.current.statusBarData.highlightsEnabledForMessaging).toBe(false);
       expect(result.current.statusBarData.videoSharingOptions).toBe('per_course');
       expect(result.current.statusBarData.checklist).toEqual({
-        totalCourseLaunchChecks: 0,
-        completedCourseLaunchChecks: 0,
-        totalCourseBestPracticesChecks: 0,
-        completedCourseBestPracticesChecks: 0,
+        totalCourseLaunchChecks: 8,
+        completedCourseLaunchChecks: 4,
+        totalCourseBestPracticesChecks: 5,
+        completedCourseBestPracticesChecks: 3,
       });
       expect(result.current.statusBarData.isSelfPaced).toBe(false);
     });
   });
 
-  describe('checklist/launch effects', () => {
-    it('sets courseLaunchQueryStatus SUCCESSFUL and merges checklist on success', async () => {
+  describe('checklist/launch state from query hooks', () => {
+    it('sets courseLaunchQueryStatus SUCCESSFUL and merges checklist on success', () => {
       mockUseCourseOutlineIndex.mockReturnValue({
         data: sampleOutlineIndexData,
         isPending: false,
         isSuccess: true,
         error: undefined,
       });
-
-      mockGetCourseBestPractices.mockResolvedValue({ some: 'data' });
-      mockGetCourseLaunch.mockResolvedValue({ isSelfPaced: true });
-      mockCreateDiscussionsTopics.mockResolvedValue([]);
+      mockUseCourseLaunch.mockReturnValue({
+        data: { isSelfPaced: true },
+        isPending: false,
+        isError: false,
+        isSuccess: true,
+        error: undefined,
+      });
 
       const { result } = renderStatusHook();
 
-      await waitFor(() => {
-        expect(result.current.effectiveLoadingStatus.courseLaunchQueryStatus).toBe(RequestStatus.SUCCESSFUL);
-      });
-
+      expect(result.current.effectiveLoadingStatus.courseLaunchQueryStatus).toBe(RequestStatus.SUCCESSFUL);
       expect(result.current.statusBarData.checklist).toEqual({
         totalCourseLaunchChecks: 8,
         completedCourseLaunchChecks: 4,
@@ -188,24 +228,24 @@ describe('useOutlineStatusState', () => {
       expect(result.current.statusBarData.isSelfPaced).toBe(true);
     });
 
-    it('sets courseLaunchQueryStatus FAILED and error on launch failure', async () => {
+    it('sets courseLaunchQueryStatus FAILED and error on launch failure', () => {
       mockUseCourseOutlineIndex.mockReturnValue({
         data: sampleOutlineIndexData,
         isPending: false,
         isSuccess: true,
         error: undefined,
       });
-
-      mockGetCourseBestPractices.mockResolvedValue({ some: 'data' });
-      mockGetCourseLaunch.mockRejectedValue(new Error('launch fetch failed'));
-      mockCreateDiscussionsTopics.mockResolvedValue([]);
+      mockUseCourseLaunch.mockReturnValue({
+        data: undefined,
+        isPending: false,
+        isError: true,
+        isSuccess: false,
+        error: new Error('launch fetch failed'),
+      });
 
       const { result } = renderStatusHook();
 
-      await waitFor(() => {
-        expect(result.current.effectiveLoadingStatus.courseLaunchQueryStatus).toBe(RequestStatus.FAILED);
-      });
-
+      expect(result.current.effectiveLoadingStatus.courseLaunchQueryStatus).toBe(RequestStatus.FAILED);
       expect(result.current.rawErrors.courseLaunchApi).toEqual(
         expect.objectContaining({ type: 'serverError' }),
       );
@@ -213,7 +253,7 @@ describe('useOutlineStatusState', () => {
   });
 
   describe('discussion topics sync', () => {
-    it('calls logError when createDiscussionsTopics fails for recent course', async () => {
+    it('calls createDiscussionsTopics for recent course and logs error on failure', async () => {
       const recentCreatedOn = new Date();
       const recentCourseData = {
         ...sampleOutlineIndexData,
@@ -227,31 +267,26 @@ describe('useOutlineStatusState', () => {
         error: undefined,
       });
 
-      mockGetCourseBestPractices.mockResolvedValue({ some: 'data' });
-      mockGetCourseLaunch.mockResolvedValue({ isSelfPaced: false });
       mockCreateDiscussionsTopics.mockRejectedValue(new Error('discussion sync failed'));
 
       renderStatusHook();
 
-      await waitFor(() => {
-        expect(mockCreateDiscussionsTopics).toHaveBeenCalled();
-      });
+      // The createDiscussionsTopics effect is called asynchronously
+      await new Promise(process.nextTick);
 
+      expect(mockCreateDiscussionsTopics).toHaveBeenCalled();
       expect(mockLogError).toHaveBeenCalledWith(
         expect.objectContaining({ message: 'discussion sync failed' }),
       );
     });
 
-    it('does not call logError or createDiscussionsTopics for old course', () => {
+    it('does not call createDiscussionsTopics for old course', () => {
       mockUseCourseOutlineIndex.mockReturnValue({
         data: sampleOutlineIndexData,
         isPending: false,
         isSuccess: true,
         error: undefined,
       });
-
-      mockGetCourseBestPractices.mockResolvedValue({ some: 'data' });
-      mockGetCourseLaunch.mockResolvedValue({ isSelfPaced: false });
 
       renderStatusHook();
 

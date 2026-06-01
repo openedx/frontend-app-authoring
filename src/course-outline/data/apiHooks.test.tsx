@@ -5,6 +5,8 @@ import { courseOutlineIndexQueryKey } from './outlineIndexQuery';
 import { courseOutlineQueryKeys } from './apiHooks';
 
 // --- Mock API layer ---
+const mockGetCourseBestPractices = jest.fn();
+const mockGetCourseLaunch = jest.fn();
 const mockSetVideoSharingOption = jest.fn();
 const mockEnableCourseHighlightsEmails = jest.fn();
 const mockDismissNotification = jest.fn();
@@ -12,6 +14,8 @@ const mockRestartIndexingOnCourse = jest.fn();
 const mockDeleteCourseItem = jest.fn();
 
 jest.mock('./api', () => ({
+  getCourseBestPractices: (...args: any[]) => mockGetCourseBestPractices(...args),
+  getCourseLaunch: (...args: any[]) => mockGetCourseLaunch(...args),
   setVideoSharingOption: (...args: any[]) => mockSetVideoSharingOption(...args),
   enableCourseHighlightsEmails: (...args: any[]) => mockEnableCourseHighlightsEmails(...args),
   dismissNotification: (...args: any[]) => mockDismissNotification(...args),
@@ -21,6 +25,8 @@ jest.mock('./api', () => ({
 
 // Hooks-under-test — must import after jest.mock
 import {
+  useCourseBestPractices,
+  useCourseLaunch,
   useSetVideoSharingOption,
   useEnableCourseHighlightsEmails,
   useDismissNotification,
@@ -73,6 +79,114 @@ function buildOutlineIndex(
     },
   };
 }
+
+// ---------------------------------------------------------------------------
+// useCourseBestPractices
+// ---------------------------------------------------------------------------
+describe('useCourseBestPractices', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    initializeMocks();
+  });
+
+  it('calls getCourseBestPractices with expected args', async () => {
+    mockGetCourseBestPractices.mockResolvedValue({ some: 'checklist' });
+
+    const { result } = renderHook(() => useCourseBestPractices(courseId), { wrapper: makeWrapper() });
+
+    await waitFor(() => {
+      expect(mockGetCourseBestPractices).toHaveBeenCalled();
+    });
+
+    expect(mockGetCourseBestPractices).toHaveBeenCalledWith({
+      courseId,
+      excludeGraded: true,
+      all: true,
+    });
+  });
+
+  it('uses course-scoped query key (courseOutline, courseId, bestPractices)', async () => {
+    const { queryClient } = initializeMocks();
+    const cachedData = { cached: 'data' };
+    // Pre-seed the cache with the exact key the hook should use.
+    // With staleTime: 0 (default), a background refetch may fire, but the hook
+    // should serve the cached data immediately on mount.
+    queryClient.setQueryData(['courseOutline', courseId, 'bestPractices'], cachedData);
+
+    const { result } = renderHook(() => useCourseBestPractices(courseId), { wrapper: makeWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(cachedData);
+    });
+  });
+
+  it('retry false — rejects once without retrying', async () => {
+    mockGetCourseBestPractices.mockRejectedValue(new Error('fail'));
+
+    const { result } = renderHook(() => useCourseBestPractices(courseId), { wrapper: makeWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    // Confirm mock was invoked
+    expect(mockGetCourseBestPractices).toHaveBeenCalled();
+    // With retry: false, there should be exactly 1 call total
+    expect(mockGetCourseBestPractices).toHaveBeenCalledTimes(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// useCourseLaunch
+// ---------------------------------------------------------------------------
+describe('useCourseLaunch', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    initializeMocks();
+  });
+
+  it('calls getCourseLaunch with expected args', async () => {
+    mockGetCourseLaunch.mockResolvedValue({ isSelfPaced: false });
+
+    const { result } = renderHook(() => useCourseLaunch(courseId), { wrapper: makeWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(mockGetCourseLaunch).toHaveBeenCalledWith({
+      courseId,
+      gradedOnly: true,
+      validateOras: true,
+      all: true,
+    });
+  });
+
+  it('uses course-scoped query key (courseOutline, courseId, launch)', async () => {
+    const { queryClient } = initializeMocks();
+    const cachedData = { cached: 'launch-data' };
+    queryClient.setQueryData(['courseOutline', courseId, 'launch'], cachedData);
+
+    const { result } = renderHook(() => useCourseLaunch(courseId), { wrapper: makeWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(cachedData);
+    });
+  });
+
+  it('retry false — rejects once without retrying', async () => {
+    mockGetCourseLaunch.mockRejectedValue(new Error('fail'));
+
+    const { result } = renderHook(() => useCourseLaunch(courseId), { wrapper: makeWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(mockGetCourseLaunch).toHaveBeenCalled();
+    expect(mockGetCourseLaunch).toHaveBeenCalledTimes(1);
+  });
+});
 
 // ---------------------------------------------------------------------------
 // useSetVideoSharingOption
