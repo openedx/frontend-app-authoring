@@ -88,7 +88,6 @@ describe('header utils', () => {
       mockWaffleFlags({
         enableAuthzCourseAuthoring: false,
         useNewVideoUploadsPage: false,
-        useNewCertificatesPage: false,
       });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
@@ -198,7 +197,6 @@ describe('header utils', () => {
       mockWaffleFlags({
         enableAuthzCourseAuthoring: false,
         useNewVideoUploadsPage: false,
-        useNewCertificatesPage: false,
       });
     });
     beforeEach(() => {
