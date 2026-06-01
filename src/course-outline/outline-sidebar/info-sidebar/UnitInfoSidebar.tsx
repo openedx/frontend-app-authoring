@@ -240,11 +240,17 @@ export const UnitSidebar = () => {
               sectionId: selectedContainerState?.sectionId,
               subsectionId: selectedContainerState?.subsectionId,
             }),
-          onClickDelete: () => openDeleteModal({
-            currentId: unitData.id,
-            subsectionId: selectedContainerState?.subsectionId,
-            sectionId: selectedContainerState?.sectionId,
-          }),
+          onClickDelete: () => {
+            const sectionId = selectedContainerState?.sectionId;
+            const subsectionId = selectedContainerState?.subsectionId;
+            if (!sectionId || !subsectionId) { return; }
+            openDeleteModal({
+              category: 'vertical',
+              currentId: unitData.id,
+              subsectionId,
+              sectionId,
+            });
+          },
           onClickViewLibrary: () => {
             const upstreamRef = unitData?.upstreamInfo?.upstreamRef;
             if (upstreamRef) {

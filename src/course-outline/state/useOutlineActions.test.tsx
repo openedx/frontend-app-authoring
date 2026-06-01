@@ -6,14 +6,18 @@ import { useOutlineActions } from './useOutlineActions';
 // ---------------------------------------------------------------------------
 const courseId = 'course-v1:test+course';
 const chapterSelection = {
+  category: 'chapter' as const,
   currentId: 'block-v1:test+course+type@chapter+block@ch1',
   sectionId: 'block-v1:test+course+type@chapter+block@ch1',
 };
 const sequentialSelection = {
+  category: 'sequential' as const,
   currentId: 'block-v1:test+course+type@sequential+block@subsec1',
   sectionId: 'block-v1:test+course+type@chapter+block@sec1',
+  subsectionId: 'block-v1:test+course+type@sequential+block@subsec1',
 };
 const verticalSelection = {
+  category: 'vertical' as const,
   currentId: 'block-v1:test+course+type@vertical+block@unit1',
   subsectionId: 'block-v1:test+course+type@sequential+block@subsec1',
   sectionId: 'block-v1:test+course+type@chapter+block@sec1',
@@ -50,7 +54,7 @@ describe('useOutlineActions', () => {
   });
 
   describe('handleDeleteItemSubmit', () => {
-    it('returns false early when selection is undefined', async () => {
+    it('returns false when selection is undefined (defensive)', async () => {
       const { result } = renderActionsHook();
 
       let res;
@@ -62,7 +66,7 @@ describe('useOutlineActions', () => {
       expect(mockDeleteMutateAsync).not.toHaveBeenCalled();
     });
 
-    it('returns false early when selection.currentId is undefined', async () => {
+    it('returns false when selection lacks category (defensive)', async () => {
       const { result } = renderActionsHook();
 
       let res;
@@ -136,55 +140,83 @@ describe('useOutlineActions', () => {
   });
 
   describe('handleConfigureItemSubmit', () => {
-    it('dispatches to section mutation for chapters', () => {
+    it('dispatches to section mutation for chapters with realistic config', () => {
       const { result } = renderActionsHook();
-      const variables = { start: '2025-01-01', displayName: 'Updated Chapter' };
+      const payload = {
+        category: 'chapter' as const,
+        sectionId: chapterSelection.sectionId,
+        isVisibleToStaffOnly: true,
+        startDatetime: '2025-06-01T00:00:00',
+      };
 
       act(() => {
-        result.current.handleConfigureItemSubmit(chapterSelection, variables);
+        result.current.handleConfigureItemSubmit(payload);
       });
 
       expect(mockSectionMutate).toHaveBeenCalledWith({
         sectionId: chapterSelection.sectionId,
-        ...variables,
+        isVisibleToStaffOnly: true,
+        startDatetime: '2025-06-01T00:00:00',
       });
     });
 
-    it('dispatches to subsection mutation for sequentials', () => {
+    it('dispatches to subsection mutation for sequentials with realistic config', () => {
       const { result } = renderActionsHook();
-      const variables = { due: '2025-06-01' };
+      const payload = {
+        category: 'sequential' as const,
+        itemId: sequentialSelection.currentId,
+        sectionId: sequentialSelection.sectionId,
+        isVisibleToStaffOnly: false,
+        releaseDate: '2025-07-01T00:00:00',
+        graderType: 'Homework',
+        dueDate: '2025-07-15T00:00:00',
+      };
 
       act(() => {
-        result.current.handleConfigureItemSubmit(sequentialSelection, variables);
+        result.current.handleConfigureItemSubmit(payload);
       });
 
       expect(mockSubsectionMutate).toHaveBeenCalledWith({
         itemId: sequentialSelection.currentId,
         sectionId: sequentialSelection.sectionId,
-        ...variables,
+        isVisibleToStaffOnly: false,
+        releaseDate: '2025-07-01T00:00:00',
+        graderType: 'Homework',
+        dueDate: '2025-07-15T00:00:00',
       });
     });
 
-    it('dispatches to unit mutation for verticals', () => {
+    it('dispatches to unit mutation for verticals with realistic config', () => {
       const { result } = renderActionsHook();
-      const variables = { weight: 1.0 };
+      const payload = {
+        category: 'vertical' as const,
+        unitId: verticalSelection.currentId,
+        sectionId: verticalSelection.sectionId,
+        isVisibleToStaffOnly: false,
+        type: 'republish' as const,
+        groupAccess: {},
+        discussionEnabled: true,
+      };
 
       act(() => {
-        result.current.handleConfigureItemSubmit(verticalSelection, variables);
+        result.current.handleConfigureItemSubmit(payload);
       });
 
       expect(mockUnitMutate).toHaveBeenCalledWith({
         unitId: verticalSelection.currentId,
         sectionId: verticalSelection.sectionId,
-        ...variables,
+        isVisibleToStaffOnly: false,
+        type: 'republish',
+        groupAccess: {},
+        discussionEnabled: true,
       });
     });
 
-    it('does nothing when selection is undefined', () => {
+    it('does nothing when payload is undefined (defensive)', () => {
       const { result } = renderActionsHook();
 
       act(() => {
-        result.current.handleConfigureItemSubmit(undefined as any, {});
+        result.current.handleConfigureItemSubmit(undefined as any);
       });
 
       expect(mockSectionMutate).not.toHaveBeenCalled();

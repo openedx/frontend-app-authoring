@@ -480,7 +480,7 @@ describe('useDeleteCourseItem optimistic cache update', () => {
 
     // The deleted item's own query should NOT be invalidated — that would
     // trigger a 404 refetch. Stale-selection prevention is handled by
-    // hooks.jsx clearing currentSelection on successful delete.
+    // useOutlineModals.onDeleteConfirm clearing currentSelection on success.
     expect(invalidateSpy).not.toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: courseOutlineQueryKeys.courseItemId(seqId) }),
     );

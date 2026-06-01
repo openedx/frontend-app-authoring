@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { getBlockType } from '@src/generic/key-utils';
-import { SelectionState } from '@src/data/types';
+import type { OutlineActionSelection } from '@src/data/types';
+import type { ConfigureItemPayload } from '../data/types';
 import {
   useDeleteCourseItem,
   useConfigureSection,
@@ -10,82 +10,75 @@ import {
 
 export interface OutlineActions {
   /** Returns true on success, false on failure. Caller handles modal close + selection clear. */
-  handleDeleteItemSubmit: (selection: SelectionState) => Promise<boolean>;
-  handleConfigureItemSubmit: (selection: SelectionState, variables: Record<string, unknown>) => void;
+  handleDeleteItemSubmit: (selection: OutlineActionSelection) => Promise<boolean>;
+  handleConfigureItemSubmit: (payload: ConfigureItemPayload) => void;
 }
 
 /**
  * Narrow hook for delete + configure mutation coordination.
- * Accepts explicit SelectionState inputs — does NOT read from any context.
+ * Accepts explicit OutlineActionSelection/ConfigureItemPayload inputs
+ * (category-discriminated) — does NOT read from any context or call getBlockType.
  */
-export function useOutlineActions(courseId: string): OutlineActions {
-  const deleteMutation = useDeleteCourseItem(courseId);
-  const configureSectionMutation = useConfigureSection(courseId);
-  const configureSubsectionMutation = useConfigureSubsection(courseId);
-  const configureUnitMutation = useConfigureUnit(courseId);
+export function useOutlineActions(_courseId: string): OutlineActions {
+  const deleteMutation = useDeleteCourseItem(_courseId);
+  const configureSectionMutation = useConfigureSection(_courseId);
+  const configureSubsectionMutation = useConfigureSubsection(_courseId);
+  const configureUnitMutation = useConfigureUnit(_courseId);
 
-  const handleDeleteItemSubmit = useCallback(async (selection: SelectionState): Promise<boolean> => {
-    if (!selection?.currentId) {
-      return false;
-    }
-    try {
-      const category = getBlockType(selection.currentId);
-      switch (category) {
-        case 'chapter':
-          await deleteMutation.mutateAsync({ itemId: selection.currentId });
-          break;
-        case 'sequential':
-          await deleteMutation.mutateAsync({
-            itemId: selection.currentId,
-            sectionId: selection.sectionId!,
-          });
-          break;
-        case 'vertical':
-          await deleteMutation.mutateAsync({
-            itemId: selection.currentId,
-            subsectionId: selection.subsectionId!,
-            sectionId: selection.sectionId!,
-          });
-          break;
-        default:
-          throw new Error(`Unrecognized category ${category}`);
+  const handleDeleteItemSubmit = useCallback(
+    async (selection: OutlineActionSelection): Promise<boolean> => {
+      try {
+        switch (selection.category) {
+          case 'chapter':
+            await deleteMutation.mutateAsync({ itemId: selection.currentId });
+            break;
+          case 'sequential':
+            await deleteMutation.mutateAsync({
+              itemId: selection.currentId,
+              sectionId: selection.sectionId,
+            });
+            break;
+          case 'vertical':
+            await deleteMutation.mutateAsync({
+              itemId: selection.currentId,
+              subsectionId: selection.subsectionId,
+              sectionId: selection.sectionId,
+            });
+            break;
+          default:
+            throw new Error(`Unrecognized category`);
+        }
+        return true;
+      } catch {
+        return false;
       }
-      return true;
-    } catch {
-      return false;
-    }
-  }, [deleteMutation]);
+    },
+    [deleteMutation],
+  );
 
-  const handleConfigureItemSubmit = useCallback((
-    selection: SelectionState,
-    variables: Record<string, unknown>,
-  ) => {
-    if (!selection?.currentId) {
-      return;
-    }
-    const category = getBlockType(selection.currentId);
-    switch (category) {
-      case 'chapter':
-        configureSectionMutation.mutate({ sectionId: selection.sectionId!, ...variables } as Parameters<typeof configureSectionMutation.mutate>[0]);
-        break;
-      case 'sequential':
-        configureSubsectionMutation.mutate({
-          itemId: selection.currentId,
-          sectionId: selection.sectionId!,
-          ...variables,
-        });
-        break;
-      case 'vertical':
-        configureUnitMutation.mutate({
-          unitId: selection.currentId!,
-          sectionId: selection.sectionId!,
-          ...variables,
-        } as Parameters<typeof configureUnitMutation.mutate>[0]);
-        break;
-      default:
-        throw new Error('Unsupported block type');
-    }
-  }, [configureSectionMutation, configureSubsectionMutation, configureUnitMutation]);
+  const handleConfigureItemSubmit = useCallback(
+    (payload: ConfigureItemPayload) => {
+      if (!payload) { return; }
+      switch (payload.category) {
+        case 'chapter': {
+          const { category: _, ...rest } = payload;
+          configureSectionMutation.mutate(rest);
+          break;
+        }
+        case 'sequential': {
+          const { category: _, ...rest } = payload;
+          configureSubsectionMutation.mutate(rest);
+          break;
+        }
+        case 'vertical': {
+          const { category: _, ...rest } = payload;
+          configureUnitMutation.mutate(rest);
+          break;
+        }
+      }
+    },
+    [configureSectionMutation, configureSubsectionMutation, configureUnitMutation],
+  );
 
   return { handleDeleteItemSubmit, handleConfigureItemSubmit };
 }

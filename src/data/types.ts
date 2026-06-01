@@ -171,6 +171,29 @@ export type SelectionState = {
   index?: number;
 };
 
+/**
+ * Discriminated union carrying exactly the fields needed per block category.
+ * Used in place of the loose SelectionState for delete/configure modal flows.
+ */
+export type OutlineActionSelection = {
+  category: 'chapter';
+  currentId: string;
+  sectionId: string;
+  index?: number;
+} | {
+  category: 'sequential';
+  currentId: string;
+  sectionId: string;
+  subsectionId: string;
+  index?: number;
+} | {
+  category: 'vertical';
+  currentId: string;
+  sectionId: string;
+  subsectionId: string;
+  index?: number;
+};
+
 export type AccessManagedXBlockDataTypes = {
   id: string;
   displayName?: string;

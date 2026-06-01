@@ -20,7 +20,7 @@ import { useClipboard } from '@src/generic/clipboard';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
-import type { SelectionState, UnitXBlock, XBlock } from '@src/data/types';
+import type { OutlineActionSelection, UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import {
@@ -37,8 +37,8 @@ interface UnitCardProps {
   unit: UnitXBlock;
   subsection: XBlock;
   section: XBlock;
-  onOpenConfigureModal: (selection: SelectionState) => void;
-  onOpenDeleteModal: (selection: SelectionState) => void;
+  onOpenConfigureModal: (selection: OutlineActionSelection) => void;
+  onOpenDeleteModal: (selection: OutlineActionSelection) => void;
   index: number;
   getPossibleMoves: (index: number, step: number) => void;
   onOrderChange: (section: XBlock, moveDetails: any) => void;
@@ -269,12 +269,14 @@ const UnitCard = ({
                 subsectionId: subsection.id,
               })}
             onClickConfigure={() => onOpenConfigureModal({
+              category: 'vertical',
               currentId: unit.id,
               subsectionId: subsection.id,
               sectionId: section.id,
               index,
             })}
             onClickDelete={() => onOpenDeleteModal({
+              category: 'vertical',
               currentId: unit.id,
               subsectionId: subsection.id,
               sectionId: section.id,

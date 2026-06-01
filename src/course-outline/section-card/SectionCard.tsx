@@ -26,7 +26,7 @@ import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
-import type { SelectionState, XBlock } from '@src/data/types';
+import type { OutlineActionSelection, XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -47,8 +47,8 @@ interface SectionCardProps {
   isCustomRelativeDatesActive: boolean;
   children: ReactNode;
   onOpenHighlightsModal: (section: XBlock) => void;
-  onOpenConfigureModal: (selection: SelectionState) => void;
-  onOpenDeleteModal: (selection: SelectionState) => void;
+  onOpenConfigureModal: (selection: OutlineActionSelection) => void;
+  onOpenDeleteModal: (selection: OutlineActionSelection) => void;
   isSectionsExpanded: boolean;
   index: number;
   canMoveItem: (oldIndex: number, newIndex: number) => boolean;
@@ -311,11 +311,13 @@ const SectionCard = ({
                     sectionId: section.id,
                   })}
                 onClickConfigure={() => onOpenConfigureModal({
+                  category: 'chapter',
                   currentId: section.id,
                   sectionId: section.id,
                   index,
                 })}
                 onClickDelete={() => onOpenDeleteModal({
+                  category: 'chapter',
                   currentId: section.id,
                   sectionId: section.id,
                   index,

@@ -2,7 +2,12 @@ import { useState, useCallback } from 'react';
 
 import { useToggle } from '@openedx/paragon';
 import { getBlockType } from '@src/generic/key-utils';
-import type { SelectionState, XBlock } from '@src/data/types';
+import type { OutlineActionSelection, XBlock } from '@src/data/types';
+import type {
+  ChapterConfigurePayload,
+  SequentialConfigurePayload,
+  UnitConfigurePayload,
+} from '../data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '../CourseOutlineContext';
 import {
@@ -18,8 +23,8 @@ import OutlineModals from '../OutlineModals';
 export interface UseOutlineModalsReturn {
   openEnableHighlightsModal: () => void;
   handleOpenHighlightsModal: (section: XBlock) => void;
-  handleOpenConfigureModal: (selection: SelectionState) => void;
-  openDeleteModal: (payload: SelectionState) => void;
+  handleOpenConfigureModal: (selection: OutlineActionSelection) => void;
+  openDeleteModal: (payload: OutlineActionSelection) => void;
   modals: React.JSX.Element;
 }
 
@@ -50,8 +55,8 @@ export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isHighlightsModalOpen, openHighlightsModal, closeHighlightsModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
-  const [highlightsModalData, setHighlightsModalData] = useState<SelectionState | undefined>();
-  const [configureModalData, setConfigureModalData] = useState<SelectionState | undefined>();
+  const [highlightsModalData, setHighlightsModalData] = useState<string | undefined>();
+  const [configureModalData, setConfigureModalData] = useState<OutlineActionSelection | undefined>();
 
   // ─── Data for configure modal ────────────────────────────────────────────
   const { data: configureItemData } = useCourseItemData(
@@ -61,7 +66,7 @@ export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
   // ─── Derived values ──────────────────────────────────────────────────────
   const configureItemCategory = configureItemData?.category || '';
   const isOverflowVisible = configureItemCategory === COURSE_BLOCK_NAMES.chapter.id;
-  const deleteItemCategory = deleteModalData?.currentId ? getBlockType(deleteModalData.currentId) : '';
+  const deleteItemCategory = deleteModalData?.category ?? '';
   const itemCategoryName = COURSE_BLOCK_NAMES[deleteItemCategory]?.name.toLowerCase();
   const unlinkItemCategory = currentUnlinkModalData?.value?.id ? getBlockType(currentUnlinkModalData.value.id) : '';
 
@@ -72,18 +77,14 @@ export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
   }, [enableHighlightsEmailsMutation]);
 
   const handleOpenHighlightsModal = useCallback((section: XBlock) => {
-    const payload: SelectionState = {
-      currentId: section.id,
-      sectionId: section.id,
-    };
-    setHighlightsModalData(payload);
+    setHighlightsModalData(section.id);
     openHighlightsModal();
   }, []);
 
   const handleHighlightsFormSubmit = useCallback((highlights) => {
-    if (!highlightsModalData?.currentId) { return; }
+    if (!highlightsModalData) { return; }
     const dataToSend = Object.values(highlights).filter(Boolean) as string[];
-    highlightsMutation.mutate({ sectionId: highlightsModalData.currentId, highlights: dataToSend });
+    highlightsMutation.mutate({ sectionId: highlightsModalData, highlights: dataToSend });
     closeHighlightsModal();
     setHighlightsModalData(undefined);
   }, [highlightsModalData, highlightsMutation]);
@@ -93,17 +94,44 @@ export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
     setConfigureModalData(undefined);
   }, []);
 
-  const handleOpenConfigureModal = useCallback((selection: SelectionState) => {
+  const handleOpenConfigureModal = useCallback((selection: OutlineActionSelection) => {
     setConfigureModalData(selection);
     openConfigureModal();
   }, []);
 
-  const handleConfigureItemSubmitWrapper = useCallback((variables) => {
-    if (configureModalData) {
-      handleConfigureItemSubmit(configureModalData, variables);
+  const handleConfigureItemSubmitWrapper = useCallback((variables: Record<string, unknown>) => {
+    if (!configureModalData) {
+      handleConfigureModalClose();
+      return;
+    }
+    const { category } = configureModalData;
+    switch (category) {
+      case 'chapter':
+        handleConfigureItemSubmit({
+          category: 'chapter',
+          sectionId: configureModalData.sectionId,
+          ...variables,
+        } as ChapterConfigurePayload);
+        break;
+      case 'sequential':
+        handleConfigureItemSubmit({
+          category: 'sequential',
+          itemId: configureModalData.currentId,
+          sectionId: configureModalData.sectionId,
+          ...variables,
+        } as SequentialConfigurePayload);
+        break;
+      case 'vertical':
+        handleConfigureItemSubmit({
+          category: 'vertical',
+          unitId: configureModalData.currentId,
+          sectionId: configureModalData.sectionId,
+          ...variables,
+        } as UnitConfigurePayload);
+        break;
     }
     handleConfigureModalClose();
-  }, [configureModalData, handleConfigureItemSubmit]);
+  }, [configureModalData, handleConfigureItemSubmit, handleConfigureModalClose]);
 
   const handleUnlinkItemSubmit = useCallback(async () => {
     if (!currentUnlinkModalData) { return; }
@@ -117,11 +145,11 @@ export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
 
   const onDeleteConfirm = useCallback(async () => {
-    if (!deleteModalData?.currentId) { return; }
+    if (!deleteModalData) { return; }
     const success = await handleDeleteItemSubmit(deleteModalData);
     if (success) {
       closeDeleteModal();
-      if (currentSelection?.currentId === deleteModalData?.currentId) {
+      if (currentSelection?.currentId === deleteModalData.currentId) {
         clearSelection();
       }
     }
@@ -136,7 +164,7 @@ export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
       isHighlightsModalOpen={isHighlightsModalOpen}
       closeHighlightsModal={closeHighlightsModal}
       handleHighlightsFormSubmit={handleHighlightsFormSubmit}
-      highlightsModalData={highlightsModalData}
+      highlightsModalCurrentId={highlightsModalData}
       isConfigureModalOpen={isConfigureModalOpen}
       handleConfigureModalClose={handleConfigureModalClose}
       handleConfigureItemSubmitWrapper={handleConfigureItemSubmitWrapper}

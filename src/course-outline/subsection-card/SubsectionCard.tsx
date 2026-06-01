@@ -26,7 +26,7 @@ import { ContainerType } from '@src/generic/key-utils';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
-import type { SelectionState, XBlock } from '@src/data/types';
+import type { OutlineActionSelection, XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -48,11 +48,11 @@ interface SubsectionCardProps {
   isSectionsExpanded: boolean;
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean;
-  onOpenDeleteModal: (selection: SelectionState) => void;
+  onOpenDeleteModal: (selection: OutlineActionSelection) => void;
   index: number;
   getPossibleMoves: (index: number, step: number) => void;
   onOrderChange: (section: XBlock, moveDetails: any) => void;
-  onOpenConfigureModal: (selection: SelectionState) => void;
+  onOpenConfigureModal: (selection: OutlineActionSelection) => void;
   onPasteClick: (
     parentLocator: string,
     subsectionId: string,
@@ -297,6 +297,7 @@ const SubsectionCard = ({
                 renameSubsectionId={subsection.id}
                 onClickPublish={() => openPublishModal({ value: subsection, sectionId: section.id })}
                 onClickDelete={() => onOpenDeleteModal({
+                  category: 'sequential',
                   currentId: subsection.id,
                   subsectionId: subsection.id,
                   sectionId: section.id,
@@ -310,6 +311,7 @@ const SubsectionCard = ({
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={() => onOpenConfigureModal({
+                  category: 'sequential',
                   currentId: subsection.id,
                   subsectionId: subsection.id,
                   sectionId: section.id,

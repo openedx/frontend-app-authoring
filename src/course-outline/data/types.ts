@@ -141,3 +141,33 @@ export type StaticFileNotices = {
   errorFiles: string[];
   newFiles: string[];
 };
+
+// ─── Configure flow payloads (category-discriminated) ─────────────────────
+
+export type ChapterConfigurePayload = {
+  category: 'chapter';
+  sectionId: string;
+  isVisibleToStaffOnly: boolean;
+  startDatetime: string;
+};
+
+export type SequentialConfigurePayload = {
+  category: 'sequential';
+  itemId: string;
+  sectionId: string;
+} & Partial<ConfigureSubsectionData>;
+
+export type UnitConfigurePayload = {
+  category: 'vertical';
+  unitId: string;
+  sectionId: string;
+  isVisibleToStaffOnly: boolean;
+  type: typeof PUBLISH_TYPES[keyof typeof PUBLISH_TYPES];
+  groupAccess: Record<string, any> | null;
+  discussionEnabled?: boolean;
+};
+
+export type ConfigureItemPayload =
+  | ChapterConfigurePayload
+  | SequentialConfigurePayload
+  | UnitConfigurePayload;

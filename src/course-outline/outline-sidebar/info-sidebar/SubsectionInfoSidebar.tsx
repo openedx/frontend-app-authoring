@@ -153,11 +153,16 @@ export const SubsectionSidebar = () => {
               value: subsectionData,
               sectionId: selectedContainerState?.sectionId,
             }),
-          onClickDelete: () => openDeleteModal({
-            currentId: subsectionData.id,
-            subsectionId: subsectionData.id,
-            sectionId: selectedContainerState?.sectionId,
-          }),
+          onClickDelete: () => {
+            const sectionId = selectedContainerState?.sectionId;
+            if (!sectionId) { return; }
+            openDeleteModal({
+              category: 'sequential',
+              currentId: subsectionData.id,
+              subsectionId: subsectionData.id,
+              sectionId,
+            });
+          },
           onClickViewLibrary: () => {
             const upstreamRef = subsectionData?.upstreamInfo?.upstreamRef;
             if (upstreamRef) {

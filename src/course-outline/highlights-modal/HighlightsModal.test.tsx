@@ -26,13 +26,6 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/CourseOutlineContext', () => ({
-  ...jest.requireActual('@src/course-outline/CourseOutlineContext'),
-  useCourseOutlineContext: () => ({
-    actionTargetSelection: { currentId: 1 },
-  }),
-}));
-
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseItemData: jest.fn(() => ({
     data: currentItemMock,

@@ -26,7 +26,6 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
 }));
 
 const courseUsageKey = 'some/usage/key';
-const setActionTargetSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 'some-course-id',
@@ -43,7 +42,6 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
     selectContainer: jest.fn(),
     clearSelection: jest.fn(),
     openContainerInfo: jest.fn(),
-    setActionTargetSelection,
     handleAddBlock: { isPending: false, mutate: mockMutate, mutateAsync: mockMutateAsync },
     handleAddAndOpenUnit: { isPending: false, mutate: mockMutate, mutateAsync: mockMutateAsync },
   }),

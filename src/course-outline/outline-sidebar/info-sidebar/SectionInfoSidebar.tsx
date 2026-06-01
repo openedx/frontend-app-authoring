@@ -100,6 +100,7 @@ export const SectionSidebar = () => {
           onClickDelete: () => {
             if (sectionData) {
               openDeleteModal({
+                category: 'chapter',
                 currentId: sectionData.id,
                 sectionId: sectionData.id,
               });

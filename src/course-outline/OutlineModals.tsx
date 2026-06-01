@@ -1,4 +1,4 @@
-import type { SelectionState, XBlock } from '@src/data/types';
+import type { XBlock } from '@src/data/types';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import { UnlinkModal } from '@src/generic/unlink-modal';
@@ -15,7 +15,7 @@ export interface OutlineModalsProps {
   isHighlightsModalOpen: boolean;
   closeHighlightsModal: () => void;
   handleHighlightsFormSubmit: (highlights: HighlightData) => void;
-  highlightsModalData?: SelectionState;
+  highlightsModalCurrentId?: string;
   isConfigureModalOpen: boolean;
   handleConfigureModalClose: () => void;
   handleConfigureItemSubmitWrapper: (variables: Record<string, unknown>) => void;
@@ -42,7 +42,7 @@ const OutlineModals = ({
   isHighlightsModalOpen,
   closeHighlightsModal,
   handleHighlightsFormSubmit,
-  highlightsModalData,
+  highlightsModalCurrentId,
   isConfigureModalOpen,
   handleConfigureModalClose,
   handleConfigureItemSubmitWrapper,
@@ -71,7 +71,7 @@ const OutlineModals = ({
       isOpen={isHighlightsModalOpen}
       onClose={closeHighlightsModal}
       onSubmit={handleHighlightsFormSubmit}
-      modalData={highlightsModalData}
+      currentId={highlightsModalCurrentId}
     />
     <PublishModal />
     <ConfigureModal

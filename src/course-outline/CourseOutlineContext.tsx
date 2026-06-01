@@ -8,6 +8,7 @@ import {
 } from 'react';
 import type {
   OutlinePageErrors,
+  OutlineActionSelection,
   SelectionState,
   XBlock,
   XBlockActions,
@@ -83,8 +84,8 @@ type CourseOutlineContextData = {
   dismissError: (key: string) => void;
 
   isDeleteModalOpen: boolean;
-  deleteModalData?: SelectionState;
-  openDeleteModal: (payload: SelectionState) => void;
+  deleteModalData?: OutlineActionSelection;
+  openDeleteModal: (payload: OutlineActionSelection) => void;
   closeDeleteModal: () => void;
   isPublishModalOpen: boolean;
   currentPublishModalData?: ModalState;
@@ -231,7 +232,7 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     deleteModalData,
     openDeleteModal,
     closeDeleteModal,
-  ] = useToggleWithValue<SelectionState>();
+  ] = useToggleWithValue<OutlineActionSelection>();
   const [
     isPublishModalOpen,
     currentPublishModalData,

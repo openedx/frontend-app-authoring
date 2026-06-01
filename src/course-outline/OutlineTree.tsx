@@ -1,6 +1,6 @@
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { ContainerType } from '@src/generic/key-utils';
-import type { SelectionState, XBlock, XBlockActions } from '@src/data/types';
+import type { OutlineActionSelection, XBlock, XBlockActions } from '@src/data/types';
 
 import SectionCard from './section-card/SectionCard';
 import SubsectionCard from './subsection-card/SubsectionCard';
@@ -41,8 +41,8 @@ export interface OutlineTreeProps {
   updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
   updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
   handleOpenHighlightsModal: (section: XBlock) => void;
-  openConfigureModal: (selection: SelectionState) => void;
-  openDeleteModal: (selection: SelectionState) => void;
+  openConfigureModal: (selection: OutlineActionSelection) => void;
+  openDeleteModal: (selection: OutlineActionSelection) => void;
   handlePasteClipboardClick: (parentLocator: string, subsectionId: string, sectionId: string) => void;
 }
 
