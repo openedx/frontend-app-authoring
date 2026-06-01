@@ -11,7 +11,8 @@ import {
 export interface OutlineActions {
   /** Returns true on success, false on failure. Caller handles modal close + selection clear. */
   handleDeleteItemSubmit: (selection: OutlineActionSelection) => Promise<boolean>;
-  handleConfigureItemSubmit: (payload: ConfigureItemPayload) => void;
+  /** Returns true on success, false on failure. Caller handles modal close + data cleanup. */
+  handleConfigureItemSubmit: (payload: ConfigureItemPayload) => Promise<boolean>;
 }
 
 /**
@@ -57,24 +58,29 @@ export function useOutlineActions(_courseId: string): OutlineActions {
   );
 
   const handleConfigureItemSubmit = useCallback(
-    (payload: ConfigureItemPayload) => {
-      if (!payload) { return; }
-      switch (payload.category) {
-        case 'chapter': {
-          const { category: _, ...rest } = payload;
-          configureSectionMutation.mutate(rest);
-          break;
+    async (payload: ConfigureItemPayload): Promise<boolean> => {
+      if (!payload) { return false; }
+      try {
+        switch (payload.category) {
+          case 'chapter': {
+            const { category: _, ...rest } = payload;
+            await configureSectionMutation.mutateAsync(rest);
+            break;
+          }
+          case 'sequential': {
+            const { category: _, ...rest } = payload;
+            await configureSubsectionMutation.mutateAsync(rest);
+            break;
+          }
+          case 'vertical': {
+            const { category: _, ...rest } = payload;
+            await configureUnitMutation.mutateAsync(rest);
+            break;
+          }
         }
-        case 'sequential': {
-          const { category: _, ...rest } = payload;
-          configureSubsectionMutation.mutate(rest);
-          break;
-        }
-        case 'vertical': {
-          const { category: _, ...rest } = payload;
-          configureUnitMutation.mutate(rest);
-          break;
-        }
+        return true;
+      } catch {
+        return false;
       }
     },
     [configureSectionMutation, configureSubsectionMutation, configureUnitMutation],

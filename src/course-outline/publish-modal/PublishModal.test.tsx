@@ -76,12 +76,13 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/data/apiHooks', () => ({
-  ...jest.requireActual('@src/course-outline/data/apiHooks'),
-  usePublishCourseItem: () => ({
-    mutateAsync: onPublishSubmitMock,
-  }),
-}));
+jest.mock('@src/course-outline/data/apiHooks', () => {
+  const actual = jest.requireActual('@src/course-outline/data/apiHooks');
+  return {
+    ...actual,
+    usePublishCourseItem: jest.fn(() => ({ mutateAsync: onPublishSubmitMock })),
+  };
+});
 
 const renderComponent = () =>
   render(
@@ -114,6 +115,12 @@ describe('<PublishModal />', () => {
     const cancelButton = await screen.findByRole('button', { name: messages.cancelButton.defaultMessage });
     await user.click(cancelButton);
     expect(onCloseMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('passes courseId into usePublishCourseItem', () => {
+    const apiHooks = require('@src/course-outline/data/apiHooks');
+    renderComponent();
+    expect(apiHooks.usePublishCourseItem).toHaveBeenCalledWith(5);
   });
 
   it('calls the onPublishSubmit function when save button is clicked', async () => {

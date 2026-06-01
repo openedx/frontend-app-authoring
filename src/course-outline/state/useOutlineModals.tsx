@@ -5,6 +5,7 @@ import { getBlockType } from '@src/generic/key-utils';
 import type { OutlineActionSelection, XBlock } from '@src/data/types';
 import type {
   ChapterConfigurePayload,
+  ConfigureItemPayload,
   SequentialConfigurePayload,
   UnitConfigurePayload,
 } from '../data/types';
@@ -99,38 +100,47 @@ export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
     openConfigureModal();
   }, []);
 
-  const handleConfigureItemSubmitWrapper = useCallback((variables: Record<string, unknown>) => {
+  const handleConfigureItemSubmitWrapper = useCallback(async (variables: Record<string, unknown>) => {
     if (!configureModalData) {
       handleConfigureModalClose();
       return;
     }
+    let payload: ConfigureItemPayload;
     const { category } = configureModalData;
     switch (category) {
       case 'chapter':
-        handleConfigureItemSubmit({
+        payload = {
           category: 'chapter',
           sectionId: configureModalData.sectionId,
           ...variables,
-        } as ChapterConfigurePayload);
+        } as ChapterConfigurePayload;
         break;
       case 'sequential':
-        handleConfigureItemSubmit({
+        payload = {
           category: 'sequential',
           itemId: configureModalData.currentId,
           sectionId: configureModalData.sectionId,
           ...variables,
-        } as SequentialConfigurePayload);
+        } as SequentialConfigurePayload;
         break;
       case 'vertical':
-        handleConfigureItemSubmit({
+        payload = {
           category: 'vertical',
           unitId: configureModalData.currentId,
           sectionId: configureModalData.sectionId,
           ...variables,
-        } as UnitConfigurePayload);
+        } as UnitConfigurePayload;
         break;
+      default:
+        handleConfigureModalClose();
+        return;
     }
-    handleConfigureModalClose();
+    const success = await handleConfigureItemSubmit(payload);
+    if (success) {
+      handleConfigureModalClose();
+    }
+    // On failure, keep modal open and configureModalData intact
+    // so the user can retry or inspect the error.
   }, [configureModalData, handleConfigureItemSubmit, handleConfigureModalClose]);
 
   const handleUnlinkItemSubmit = useCallback(async () => {

@@ -27,15 +27,15 @@ const verticalSelection = {
 // Mocks — jest.mock is hoisted above imports
 // ---------------------------------------------------------------------------
 const mockDeleteMutateAsync = jest.fn();
-const mockSectionMutate = jest.fn();
-const mockSubsectionMutate = jest.fn();
-const mockUnitMutate = jest.fn();
+const mockSectionMutateAsync = jest.fn();
+const mockSubsectionMutateAsync = jest.fn();
+const mockUnitMutateAsync = jest.fn();
 
 jest.mock('../data/apiHooks', () => ({
   useDeleteCourseItem: () => ({ mutateAsync: mockDeleteMutateAsync }),
-  useConfigureSection: () => ({ mutate: mockSectionMutate }),
-  useConfigureSubsection: () => ({ mutate: mockSubsectionMutate }),
-  useConfigureUnit: () => ({ mutate: mockUnitMutate }),
+  useConfigureSection: () => ({ mutateAsync: mockSectionMutateAsync }),
+  useConfigureSubsection: () => ({ mutateAsync: mockSubsectionMutateAsync }),
+  useConfigureUnit: () => ({ mutateAsync: mockUnitMutateAsync }),
 }));
 
 // ---------------------------------------------------------------------------
@@ -140,7 +140,8 @@ describe('useOutlineActions', () => {
   });
 
   describe('handleConfigureItemSubmit', () => {
-    it('dispatches to section mutation for chapters with realistic config', () => {
+    it('calls section mutation and returns true for chapters on success', async () => {
+      mockSectionMutateAsync.mockResolvedValue(undefined);
       const { result } = renderActionsHook();
       const payload = {
         category: 'chapter' as const,
@@ -149,18 +150,21 @@ describe('useOutlineActions', () => {
         startDatetime: '2025-06-01T00:00:00',
       };
 
-      act(() => {
-        result.current.handleConfigureItemSubmit(payload);
+      let res;
+      await act(async () => {
+        res = await result.current.handleConfigureItemSubmit(payload);
       });
 
-      expect(mockSectionMutate).toHaveBeenCalledWith({
+      expect(res).toBe(true);
+      expect(mockSectionMutateAsync).toHaveBeenCalledWith({
         sectionId: chapterSelection.sectionId,
         isVisibleToStaffOnly: true,
         startDatetime: '2025-06-01T00:00:00',
       });
     });
 
-    it('dispatches to subsection mutation for sequentials with realistic config', () => {
+    it('calls subsection mutation and returns true for sequentials on success', async () => {
+      mockSubsectionMutateAsync.mockResolvedValue(undefined);
       const { result } = renderActionsHook();
       const payload = {
         category: 'sequential' as const,
@@ -172,11 +176,13 @@ describe('useOutlineActions', () => {
         dueDate: '2025-07-15T00:00:00',
       };
 
-      act(() => {
-        result.current.handleConfigureItemSubmit(payload);
+      let res;
+      await act(async () => {
+        res = await result.current.handleConfigureItemSubmit(payload);
       });
 
-      expect(mockSubsectionMutate).toHaveBeenCalledWith({
+      expect(res).toBe(true);
+      expect(mockSubsectionMutateAsync).toHaveBeenCalledWith({
         itemId: sequentialSelection.currentId,
         sectionId: sequentialSelection.sectionId,
         isVisibleToStaffOnly: false,
@@ -186,7 +192,8 @@ describe('useOutlineActions', () => {
       });
     });
 
-    it('dispatches to unit mutation for verticals with realistic config', () => {
+    it('calls unit mutation and returns true for verticals on success', async () => {
+      mockUnitMutateAsync.mockResolvedValue(undefined);
       const { result } = renderActionsHook();
       const payload = {
         category: 'vertical' as const,
@@ -198,11 +205,13 @@ describe('useOutlineActions', () => {
         discussionEnabled: true,
       };
 
-      act(() => {
-        result.current.handleConfigureItemSubmit(payload);
+      let res;
+      await act(async () => {
+        res = await result.current.handleConfigureItemSubmit(payload);
       });
 
-      expect(mockUnitMutate).toHaveBeenCalledWith({
+      expect(res).toBe(true);
+      expect(mockUnitMutateAsync).toHaveBeenCalledWith({
         unitId: verticalSelection.currentId,
         sectionId: verticalSelection.sectionId,
         isVisibleToStaffOnly: false,
@@ -212,16 +221,37 @@ describe('useOutlineActions', () => {
       });
     });
 
-    it('does nothing when payload is undefined (defensive)', () => {
+    it('returns false when payload is undefined (defensive)', async () => {
       const { result } = renderActionsHook();
 
-      act(() => {
-        result.current.handleConfigureItemSubmit(undefined as any);
+      let res;
+      await act(async () => {
+        res = await result.current.handleConfigureItemSubmit(undefined as any);
       });
 
-      expect(mockSectionMutate).not.toHaveBeenCalled();
-      expect(mockSubsectionMutate).not.toHaveBeenCalled();
-      expect(mockUnitMutate).not.toHaveBeenCalled();
+      expect(res).toBe(false);
+      expect(mockSectionMutateAsync).not.toHaveBeenCalled();
+      expect(mockSubsectionMutateAsync).not.toHaveBeenCalled();
+      expect(mockUnitMutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('returns false on mutation failure (does not throw)', async () => {
+      mockSectionMutateAsync.mockRejectedValue(new Error('configure failed'));
+      const { result } = renderActionsHook();
+      const payload = {
+        category: 'chapter' as const,
+        sectionId: chapterSelection.sectionId,
+        isVisibleToStaffOnly: true,
+        startDatetime: '2025-06-01T00:00:00',
+      };
+
+      let res;
+      await act(async () => {
+        res = await result.current.handleConfigureItemSubmit(payload);
+      });
+
+      expect(res).toBe(false);
+      expect(mockSectionMutateAsync).toHaveBeenCalled();
     });
   });
 });

@@ -7,6 +7,7 @@ import {
 } from '@openedx/paragon';
 
 import { usePublishCourseItem } from '@src/course-outline/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import type { UnitXBlock, XBlock } from '@src/data/types';
 import LoadingButton from '@src/generic/loading-button';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -15,6 +16,7 @@ import { COURSE_BLOCK_NAMES } from '../constants';
 
 const PublishModal = () => {
   const intl = useIntl();
+  const { courseId } = useCourseAuthoringContext();
   const { isPublishModalOpen, currentPublishModalData, closePublishModal } = useCourseOutlineContext();
   const {
     id,
@@ -26,7 +28,7 @@ const PublishModal = () => {
     ? currentPublishModalData?.value.childInfo
     : undefined;
   const children: Array<XBlock | UnitXBlock> | undefined = childInfo?.children;
-  const publishMutation = usePublishCourseItem();
+  const publishMutation = usePublishCourseItem(courseId);
 
   const onPublishSubmit = async () => {
     if (id) {
