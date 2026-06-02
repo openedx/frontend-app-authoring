@@ -151,7 +151,7 @@ export function useOutlineReorderState({
     subsectionListIds: string[],
   ) => {
     try {
-      await reorderSubsectionsMutation.mutateAsync({ sectionId, prevSectionId, subsectionListIds });
+      await reorderSubsectionsMutation.mutateAsync({ sectionId, subsectionListIds });
       await finishSubtreeReorder(sectionId, prevSectionId);
     } catch {
       clearPreview();
@@ -165,7 +165,7 @@ export function useOutlineReorderState({
     unitListIds: string[],
   ) => {
     try {
-      await reorderUnitsMutation.mutateAsync({ sectionId, prevSectionId, subsectionId, unitListIds });
+      await reorderUnitsMutation.mutateAsync({ sectionId, subsectionId, unitListIds });
       await finishSubtreeReorder(sectionId, prevSectionId);
     } catch {
       clearPreview();

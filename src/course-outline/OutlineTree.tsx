@@ -12,11 +12,13 @@ import OutlineAddChildButtons from './OutlineAddChildButtons';
 import DraggableList from './drag-helper/DraggableList';
 import {
   canMoveSection,
-  moveSubsection,
-  moveUnit,
   possibleUnitMoves,
   possibleSubsectionMoves,
 } from './drag-helper/utils';
+import {
+  applySubsectionReorderMove,
+  applyUnitReorderMove,
+} from './drag-helper/reorderHelpers';
 
 export interface OutlineTreeProps {
   sections: XBlock[];
@@ -76,32 +78,11 @@ const OutlineTree = ({
   }, [sections, previewSections, commitSectionReorder]);
 
   const handleSubsectionOrderChange = useCallback(async (section: XBlock, moveDetails: any) => {
-    const { fn, args, sectionId } = moveDetails;
-    if (!args) { return; }
-    const [sectionsCopy, newSubsections] = fn(...args);
-    if (newSubsections && sectionId) {
-      previewSections(sectionsCopy);
-      await commitSubsectionReorder(
-        sectionId,
-        section.id,
-        newSubsections.map((s: XBlock) => s.id),
-      );
-    }
+    applySubsectionReorderMove(moveDetails, section, previewSections, commitSubsectionReorder);
   }, [previewSections, commitSubsectionReorder]);
 
   const handleUnitOrderChange = useCallback(async (section: XBlock, moveDetails: any) => {
-    const { fn, args, sectionId, subsectionId } = moveDetails;
-    if (!args) { return; }
-    const [sectionsCopy, newUnits] = fn(...args);
-    if (newUnits && subsectionId) {
-      previewSections(sectionsCopy);
-      await commitUnitReorder(
-        sectionId,
-        section.id,
-        subsectionId,
-        newUnits.map((u: XBlock) => u.id),
-      );
-    }
+    applyUnitReorderMove(moveDetails, section, previewSections, commitUnitReorder);
   }, [previewSections, commitUnitReorder]);
 
   return (<section>

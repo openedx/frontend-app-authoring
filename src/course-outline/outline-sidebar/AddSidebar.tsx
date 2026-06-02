@@ -29,6 +29,7 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
 import AlertMessage from '@src/generic/alert-message';
 import { useCourseItemData, useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
+import { useCreateBlockSidebar } from '@src/course-outline/state';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import messages from './messages';
 
@@ -55,7 +56,6 @@ type AddContentButtonProps = {
 /** Add Content Button */
 const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
   const { courseId, openUnitPage } = useCourseAuthoringContext();
-  const handleAddBlock = useCreateCourseBlock(courseId);
   const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const {
     courseUsageKey,
@@ -67,39 +67,13 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
     stopCurrentFlow,
     openContainerInfoSidebar,
   } = useOutlineSidebarContext();
+  const { createSection, createSubsection, handleAddBlock } = useCreateBlockSidebar(
+    courseId,
+    courseUsageKey,
+    openContainerInfoSidebar,
+  );
   let sectionParentId = lastEditableSection?.id;
   let subsectionParentId = lastEditableSubsection?.data?.id;
-
-  const addSection = async (onSuccess?: (data: { locator: string; }) => void) => {
-    const data = await handleAddBlock.mutateAsync({
-      type: ContainerType.Chapter,
-      parentLocator: courseUsageKey,
-      displayName: COURSE_BLOCK_NAMES.chapter.name,
-    });
-    // istanbul ignore next
-    if (onSuccess) {
-      onSuccess(data);
-    } else {
-      openContainerInfoSidebar(data.locator, undefined, data.locator);
-    }
-    return data;
-  };
-
-  const addSubsection = async (sectionId: string, onSuccess?: (data: { locator: string; }) => void) => {
-    const data = await handleAddBlock.mutateAsync({
-      type: ContainerType.Sequential,
-      parentLocator: sectionId,
-      displayName: COURSE_BLOCK_NAMES.sequential.name,
-      sectionId,
-    });
-    // istanbul ignore next
-    if (onSuccess) {
-      onSuccess(data);
-    } else {
-      openContainerInfoSidebar(data.locator, data.locator, sectionId);
-    }
-    return data;
-  };
 
   const addUnit = (subsectionId: string, sectionId?: string) => {
     handleAddAndOpenUnit.mutate({
@@ -113,17 +87,17 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
   const onCreateContent = useCallback(async () => {
     switch (blockType) {
       case 'section':
-        await addSection();
+        await createSection();
         break;
       case 'subsection':
         sectionParentId = currentFlow?.parentLocator || sectionParentId;
         if (sectionParentId) {
-          await addSubsection(sectionParentId);
+          await createSubsection(sectionParentId);
         } else {
           // Create intermediate section but suppress its sidebar open
           // so only the final subsection sidebar appears.
-          const data = await addSection(() => {});
-          await addSubsection(data.locator);
+          const data = await createSection(() => {});
+          await createSubsection(data.locator);
         }
         break;
       case 'unit':
@@ -134,13 +108,13 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
         } else if (sectionParentId) {
           // Create intermediate subsection but suppress its sidebar open
           // — addUnit navigates to the unit page directly.
-          const data = await addSubsection(sectionParentId, () => {});
+          const data = await createSubsection(sectionParentId, () => {});
           addUnit(data.locator);
         } else {
           // Chain: section → subsection → unit.
           // Suppress sidebar opens for intermediate section and subsection.
-          const sectionData = await addSection(() => {});
-          const subsectionData = await addSubsection(sectionData.locator, () => {});
+          const sectionData = await createSection(() => {});
+          const subsectionData = await createSubsection(sectionData.locator, () => {});
           addUnit(subsectionData.locator, sectionData.locator);
         }
         break;
@@ -152,8 +126,8 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
     stopCurrentFlow();
   }, [
     blockType,
-    courseUsageKey,
-    handleAddBlock,
+    createSection,
+    createSubsection,
     handleAddAndOpenUnit,
     currentFlow,
     sectionParentId,

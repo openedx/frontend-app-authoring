@@ -273,6 +273,7 @@ const DraggableList = ({
     setActiveId?.(null);
     activeIdRef.current = null;
     setDraggedItemClone(null);
+    prevContainerInfo.current = null;
     onCancelDrag?.();
   }, [onCancelDrag]);
 

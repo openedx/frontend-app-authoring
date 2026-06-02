@@ -16,6 +16,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
+import { useCreateBlockSidebar } from '@src/course-outline/state';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
 
@@ -101,10 +102,14 @@ const OutlineAddChildButtons = ({
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const intl = useIntl();
   const { courseId, openUnitPage } = useCourseAuthoringContext();
-  const handleAddBlock = useCreateCourseBlock(courseId);
   const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const { courseUsageKey } = useCourseOutlineContext();
   const { startCurrentFlow, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { createSection, createSubsection, handleAddBlock } = useCreateBlockSidebar(
+    courseId,
+    courseUsageKey,
+    openContainerInfoSidebar,
+  );
   let messageMap = {
     newButton: messages.newUnitButton,
     importButton: messages.useUnitFromLibraryButton,
@@ -120,12 +125,7 @@ const OutlineAddChildButtons = ({
         importButton: messages.useSectionFromLibraryButton,
       };
       onNewCreateContent = async () => {
-        const data = await handleAddBlock.mutateAsync({
-          type: ContainerType.Chapter,
-          parentLocator: courseUsageKey,
-          displayName: COURSE_BLOCK_NAMES.chapter.name,
-        });
-        openContainerInfoSidebar(data.locator, undefined, data.locator);
+        await createSection();
       };
       flowType = ContainerType.Section;
       break;
@@ -135,13 +135,7 @@ const OutlineAddChildButtons = ({
         importButton: messages.useSubsectionFromLibraryButton,
       };
       onNewCreateContent = async () => {
-        const data = await handleAddBlock.mutateAsync({
-          type: ContainerType.Sequential,
-          parentLocator,
-          displayName: COURSE_BLOCK_NAMES.sequential.name,
-          sectionId: parentLocator,
-        });
-        openContainerInfoSidebar(data.locator, data.locator, parentLocator);
+        await createSubsection(parentLocator);
       };
       flowType = ContainerType.Subsection;
       break;

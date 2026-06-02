@@ -16,7 +16,6 @@ import {
   normalizeContainerType,
 } from '@src/generic/key-utils';
 import { useMutationWithProcessingNotification } from '@src/generic/processing-notification/data/apiHooks';
-import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { useToastContext } from '@src/generic/toast-context';
 import { ParentIds } from '@src/generic/types';
 import { getConfig } from '@edx/frontend-platform';
@@ -135,6 +134,11 @@ export const invalidateParentQueries = async (queryClient: QueryClient, variable
 };
 
 // ---- Pure helpers for outline-index cache manipulation ----
+
+/** Fire-and-forget invalidateParentQueries — errors are best-effort. */
+const safeInvalidateParentQueries = (queryClient: QueryClient, variables: ParentIds) => {
+  invalidateParentQueries(queryClient, variables).catch(() => {});
+};
 
 /** Append a new section to outline index query cache. */
 const appendSectionToOutlineIndex = (
@@ -320,7 +324,7 @@ export const useCreateCourseBlock = (
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
       });
 
-      await invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
 
       // Invalidate tags count for the newly created block
       // Strips "+type@<blockType>+block@<id>" to produce a course-run wildcard, e.g.
@@ -403,7 +407,7 @@ export const useUpdateCourseBlockName = (courseId: string) => {
       } & ParentIds,
     ) => editItemDisplayName({ itemId: variables.itemId, displayName: variables.displayName }),
     onSuccess: async (_data, variables) => {
-      await invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseId) });
     },
@@ -420,7 +424,7 @@ export const usePublishCourseItem = (courseId?: string) => {
       } & ParentIds,
     ) => publishCourseItem(variables.itemId),
     onSettled: (_data, _err, variables) => {
-      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
     },
   });
@@ -437,7 +441,7 @@ export const useDeleteCourseItem = (courseId?: string) => {
     ) => deleteCourseItem(variables.itemId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
-      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
       // Optimistic outline-index cache update: remove deleted item from the tree
       const itemId = variables.itemId;
       const category = getBlockType(itemId);
@@ -460,7 +464,7 @@ export const useConfigureSection = (courseId?: string) => {
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
       });
-      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
     },
   });
 };
@@ -475,7 +479,7 @@ export const useConfigureSubsection = (courseId?: string) => {
     onSettled: async (_data, _err, variables) => {
       const courseKey = getCourseKey(variables.itemId);
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseKey) });
-      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
       if (variables.isPrereq !== undefined) {
         const subsectionItemQueries = queryClient.getQueryCache().findAll({
           predicate: (query) => {
@@ -512,7 +516,7 @@ export const useConfigureUnit = (courseId?: string) => {
     },
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.unitId)) });
-      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
       closeToast();
     },
   });
@@ -532,7 +536,7 @@ export const useUpdateCourseSectionHighlights = (courseId?: string) => {
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
       });
-      invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
     },
   });
 };
@@ -549,7 +553,7 @@ export const useDuplicateItem = (courseKey: string) => {
       } & ParentIds,
     ) => duplicateCourseItem(variables.itemId, variables.parentId),
     onSuccess: async (data, variables) => {
-      await invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
 
       // For chapter (section) duplication, insert the duplicated section into the outline index cache.
       if (getBlockType(variables.itemId) === 'chapter') {
@@ -577,7 +581,6 @@ export const useReorderUnits = (courseId?: string) => {
     mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'reorderUnits'),
     mutationFn: (variables: {
       sectionId: string;
-      prevSectionId?: string;
       subsectionId: string;
       unitListIds: string[];
     }) => setCourseItemOrderList(variables.subsectionId, variables.unitListIds),
@@ -596,7 +599,6 @@ export const useReorderSubsections = (courseId?: string) => {
     mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'reorderSubsections'),
     mutationFn: (variables: {
       sectionId: string;
-      prevSectionId?: string;
       subsectionListIds: string[];
     }) => setCourseItemOrderList(variables.sectionId, variables.subsectionListIds),
   });
@@ -614,7 +616,7 @@ export const usePasteItem = (courseId?: string) => {
       } & ParentIds,
     ) => pasteBlock(variables.parentLocator),
     onSuccess: async (data, variables) => {
-      await invalidateParentQueries(queryClient, variables).catch((e) => handleResponseErrors(e));
+      safeInvalidateParentQueries(queryClient, variables);
       // set pasteFileNotices
       setData(data.staticFileNotices);
       // scroll to pasted block

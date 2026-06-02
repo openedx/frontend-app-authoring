@@ -13,3 +13,4 @@ export { useOutlineReorderState } from './useOutlineReorderState';
 export type { UseOutlineReorderStateOutput } from './useOutlineReorderState';
 export { useOutlineStatusState } from './useOutlineStatusState';
 export type { UseOutlineStatusStateOutput } from './useOutlineStatusState';
+export { useCreateBlockSidebar } from './useCreateBlockSidebar';
