@@ -64,7 +64,8 @@ describe('UnitSidebar', () => {
     outlineState.useCourseOutlineContext.mockReturnValue({
       sections: [],
       restoreSectionList: jest.fn(),
-      updateUnitOrderByIndex: jest.fn(),
+      commitUnitReorder: jest.fn(),
+      previewSections: jest.fn(),
       openPublishModal: jest.fn(),
       openDeleteModal: jest.fn(),
       duplicateCurrentSelection: jest.fn(),

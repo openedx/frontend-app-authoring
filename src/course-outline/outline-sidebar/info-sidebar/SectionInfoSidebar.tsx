@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 import { useNavigate } from 'react-router-dom';
+import { arrayMove } from '@dnd-kit/sortable';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarTitle } from '@src/generic/sidebar';
@@ -29,7 +30,8 @@ export const SectionSidebar = () => {
     openPublishModal,
     openDeleteModal,
     sections,
-    updateSectionOrderByIndex,
+    previewSections,
+    commitSectionReorder,
   } = useCourseOutlineContext();
   const {
     clearSelection,
@@ -67,7 +69,10 @@ export const SectionSidebar = () => {
 
   const handleMove = (step: number) => {
     if (index !== undefined) {
-      updateSectionOrderByIndex(index, index + step);
+      const nextSections = arrayMove(sections, index, index + step);
+      const sectionListIds = nextSections.map((s: any) => s.id);
+      previewSections(nextSections);
+      commitSectionReorder(sectionListIds);
       setSelectedContainerState(
         selectedContainerState ? { ...selectedContainerState, index: index + step } : undefined,
       );

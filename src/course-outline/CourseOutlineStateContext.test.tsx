@@ -13,8 +13,7 @@ import {
   CourseOutlineProvider,
   useCourseOutlineContext,
 } from './CourseOutlineContext';
-import { courseOutlineIndexQueryKey } from './data/outlineIndexQuery';
-import { getCourseOutlineIndexApiUrl } from './data/api';
+import { courseOutlineIndexQueryKey, getCourseOutlineIndexApiUrl } from './data';
 
 let currentItemData;
 const mockOutlineIndexData = {

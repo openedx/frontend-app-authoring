@@ -33,7 +33,9 @@ import {
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
   exportTags,
-} from './data/api';
+  courseOutlineIndexQueryKey,
+  courseOutlineQueryKeys,
+} from './data';
 
 import {
   courseOutlineIndexMock as originalCourseOutlineIndexMock,
@@ -44,8 +46,6 @@ import {
   courseSubsectionMock,
 } from './__mocks__';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
-import { courseOutlineIndexQueryKey } from './data/outlineIndexQuery';
-import { courseOutlineQueryKeys } from './data/apiHooks';
 import CourseOutline from './CourseOutline';
 
 import messages from './messages';

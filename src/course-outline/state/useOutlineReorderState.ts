@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { arrayMove } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 
 import type { XBlock } from '@src/data/types';
@@ -8,9 +7,9 @@ import {
   useReorderSections,
   useReorderSubsections,
   useReorderUnits,
-} from '../data/apiHooks';
-import { getCourseItem } from '../data/api';
-import { courseOutlineIndexQueryKey } from '../data/outlineIndexQuery';
+  getCourseItem,
+  courseOutlineIndexQueryKey,
+} from '../data';
 
 interface UseOutlineReorderStateInput {
   courseId: string;
@@ -29,9 +28,6 @@ export interface UseOutlineReorderStateOutput {
     subsectionId: string,
     unitListIds: string[],
   ) => Promise<void>;
-  updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => Promise<void>;
-  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
-  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
 }
 
 export function useOutlineReorderState({
@@ -200,47 +196,6 @@ export function useOutlineReorderState({
     await runUnitReorder(sectionId, prevSectionId, subsectionId, unitListIds);
   }, [runUnitReorder]);
 
-  const updateSectionOrderByIndex = useCallback(async (currentIndex: number, newIndex: number) => {
-    if (!courseId || currentIndex === newIndex) { return; }
-
-    const nextSections = arrayMove(visibleSections, currentIndex, newIndex) as XBlock[];
-    const sectionListIds = nextSections.map((section) => section.id);
-    setPreviewSectionsState(nextSections);
-
-    await runSectionReorder(sectionListIds);
-  }, [visibleSections, courseId, runSectionReorder]);
-
-  const updateSubsectionOrderByIndex = useCallback(async (section: XBlock, moveDetails) => {
-    const { fn, args, sectionId } = moveDetails;
-    if (!args) { return; }
-
-    const [sectionsCopy, newSubsections] = fn(...args);
-    if (newSubsections && sectionId) {
-      setPreviewSectionsState(sectionsCopy);
-      await runSubsectionReorder(
-        sectionId,
-        section.id,
-        newSubsections.map((subsection: XBlock) => subsection.id),
-      );
-    }
-  }, [runSubsectionReorder]);
-
-  const updateUnitOrderByIndex = useCallback(async (section: XBlock, moveDetails) => {
-    const { fn, args, sectionId, subsectionId } = moveDetails;
-    if (!args) { return; }
-
-    const [sectionsCopy, newUnits] = fn(...args);
-    if (newUnits && subsectionId) {
-      setPreviewSectionsState(sectionsCopy);
-      await runUnitReorder(
-        sectionId,
-        section.id,
-        subsectionId,
-        newUnits.map((unit: XBlock) => unit.id),
-      );
-    }
-  }, [runUnitReorder]);
-
   return {
     visibleSections,
     previewSections: callPreviewSections,
@@ -248,8 +203,5 @@ export function useOutlineReorderState({
     commitSectionReorder,
     commitSubsectionReorder,
     commitUnitReorder,
-    updateSectionOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateUnitOrderByIndex,
   };
 }

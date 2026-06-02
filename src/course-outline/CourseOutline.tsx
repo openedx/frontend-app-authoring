@@ -32,20 +32,19 @@ import {
   useSetVideoSharingOption,
   useDismissNotification,
   useRestartIndexingOnCourse,
-} from '@src/course-outline/data/apiHooks';
+} from '@src/course-outline/data';
 import { useCourseOutlineContext } from './CourseOutlineContext';
 import { COURSE_BLOCK_NAMES } from './constants';
 
 import PageAlerts from './page-alerts/PageAlerts';
 
-import type { CourseOutline as CourseOutlineData } from './data/types';
 import OutlineTree from './OutlineTree';
-import { useOutlineModals } from './state/useOutlineModals';
+import { useOutlineModals } from './state';
 import OutlineModals from './OutlineModals';
 
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
-import { getTagsExportFile } from './data/api';
+import { getTagsExportFile } from './data';
 import { StatusBar } from './status-bar/StatusBar';
 
 const CourseOutline = () => {
@@ -57,9 +56,6 @@ const CourseOutline = () => {
   const {
     courseUsageKey,
     sections,
-    updateSectionOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateUnitOrderByIndex,
     previewSections,
     cancelReorderPreview,
     commitSectionReorder,
@@ -79,17 +75,15 @@ const CourseOutline = () => {
     outlineIndexData,
   } = useCourseOutlineContext();
 
-  const {
-    reindexLink,
-    lmsLink,
-    notificationDismissUrl,
-    discussionsSettings,
-    discussionsIncontextLearnmoreUrl,
-    deprecatedBlocksInfo,
-    proctoringErrors,
-    mfeProctoredExamSettingsUrl,
-    advanceSettingsUrl,
-  } = (outlineIndexData || {}) as CourseOutlineData;
+  const reindexLink = outlineIndexData?.reindexLink;
+  const lmsLink = outlineIndexData?.lmsLink;
+  const notificationDismissUrl = outlineIndexData?.notificationDismissUrl;
+  const discussionsSettings = outlineIndexData?.discussionsSettings;
+  const discussionsIncontextLearnmoreUrl = outlineIndexData?.discussionsIncontextLearnmoreUrl;
+  const deprecatedBlocksInfo = outlineIndexData?.deprecatedBlocksInfo;
+  const proctoringErrors = outlineIndexData?.proctoringErrors;
+  const mfeProctoredExamSettingsUrl = outlineIndexData?.mfeProctoredExamSettingsUrl;
+  const advanceSettingsUrl = outlineIndexData?.advanceSettingsUrl;
 
   const { reIndexLoadingStatus } = loadingStatus || {};
 
@@ -151,7 +145,7 @@ const CourseOutline = () => {
     handleExpandAll: () => {
       setSectionsExpanded((prevState) => !prevState);
     },
-    lmsLink,
+    lmsLink: lmsLink ?? '',
   }), [handleAddBlock, courseUsageKey, reindexLink, reindexMutation, lmsLink]);
 
   // ─── Effects (previously in hooks.jsx) ───────────────────────────────────
@@ -313,9 +307,6 @@ const CourseOutline = () => {
                     commitSectionReorder={commitSectionReorder}
                     commitSubsectionReorder={commitSubsectionReorder}
                     commitUnitReorder={commitUnitReorder}
-                    updateSectionOrderByIndex={updateSectionOrderByIndex}
-                    updateSubsectionOrderByIndex={updateSubsectionOrderByIndex}
-                    updateUnitOrderByIndex={updateUnitOrderByIndex}
                     handleOpenHighlightsModal={handleOpenHighlightsModal}
                     openConfigureModal={handleOpenConfigureModal}
                     openDeleteModal={openDeleteModal}

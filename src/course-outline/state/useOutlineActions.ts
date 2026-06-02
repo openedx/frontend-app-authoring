@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import type { OutlineActionSelection } from '@src/data/types';
-import type { ConfigureItemPayload } from '../data/types';
 import {
   useDeleteCourseItem,
   useConfigureSection,
   useConfigureSubsection,
   useConfigureUnit,
-} from '../data/apiHooks';
+  type ConfigureItemPayload,
+} from '../data';
 
 export interface OutlineActions {
   /** Returns true on success, false on failure. Caller handles modal close + selection clear. */

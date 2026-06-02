@@ -14,21 +14,19 @@ import type {
   XBlockActions,
 } from '@src/data/types';
 
-import { useCourseItemData, useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './data/apiHooks';
+import { useCourseItemData, useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './data';
 
 import { useToggleWithValue } from '@src/hooks';
-import { useOutlineReorderState } from './state/useOutlineReorderState';
-import { useOutlineStatusState } from './state/useOutlineStatusState';
 import {
+  useOutlineReorderState,
+  useOutlineStatusState,
   computeErrorSignature,
   filterDismissedErrors,
   pruneDismissedErrorSignatures,
-} from './state/outlineErrorDismissal';
-import {
   EditableSubsection,
   getLastEditableItem,
   getLastEditableSubsection,
-} from './state/editability';
+} from './state';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import type { ModalState } from '@src/CourseAuthoringContext';
 
@@ -36,16 +34,13 @@ import {
   CourseOutline,
   CourseOutlineState as LegacyCourseOutlineState,
   CourseOutlineStatusBar,
-} from './data/types';
+} from './data';
 
 type CourseOutlineContextData = {
   outlineIndexData: CourseOutline | undefined;
   courseName?: string;
   courseUsageKey: string;
   sections: XBlock[];
-  updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => Promise<void>;
-  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
-  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
   courseActions: XBlockActions;
   statusBarData: CourseOutlineStatusBar;
   savingStatus: string;
@@ -127,9 +122,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     commitSectionReorder,
     commitSubsectionReorder,
     commitUnitReorder,
-    updateSectionOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateUnitOrderByIndex,
   } = useOutlineReorderState({ courseId, sections });
 
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
@@ -245,9 +237,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     courseName: effectiveOutlineIndexData?.courseStructure?.displayName,
     courseUsageKey: effectiveOutlineIndexData?.courseStructure?.id || courseId,
     sections: visibleSections,
-    updateSectionOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateUnitOrderByIndex,
     courseActions,
     statusBarData,
     savingStatus,
@@ -284,9 +273,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     effectiveOutlineIndexData,
     courseId,
     visibleSections,
-    updateSectionOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateUnitOrderByIndex,
     courseActions,
     statusBarData,
     savingStatus,

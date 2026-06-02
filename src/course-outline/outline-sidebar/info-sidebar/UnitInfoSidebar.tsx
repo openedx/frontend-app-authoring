@@ -102,7 +102,8 @@ export const UnitSidebar = () => {
     openPublishModal,
     openDeleteModal,
     sections,
-    updateUnitOrderByIndex,
+    previewSections,
+    commitUnitReorder,
   } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
   const subsectionIndex = section?.childInfo?.children?.findIndex(
@@ -154,7 +155,19 @@ export const UnitSidebar = () => {
     if (section && subsection && getPossibleMoves && index !== undefined && sectionIndex !== undefined) {
       const moveDetails = getPossibleMoves(index, step);
       // section is the current parent section (used as prevSection in cross-section moves)
-      updateUnitOrderByIndex(section, moveDetails);
+      const { fn, args, sectionId, subsectionId } = moveDetails as { fn: (...a: any[]) => any; args: any; sectionId: string; subsectionId: string };
+      if (args) {
+        const [sectionsCopy, newUnits] = fn(...args);
+        if (newUnits && subsectionId) {
+          previewSections(sectionsCopy);
+          commitUnitReorder(
+            sectionId,
+            section.id,
+            subsectionId,
+            newUnits.map((u: XBlock) => u.id),
+          );
+        }
+      }
       if (!isEmpty(moveDetails)) {
         const newSectionId = moveDetails.sectionId;
         const newSubsectionId = moveDetails.subsectionId;

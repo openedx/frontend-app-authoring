@@ -54,7 +54,8 @@ export const SubsectionSidebar = () => {
     openPublishModal,
     openDeleteModal,
     sections,
-    updateSubsectionOrderByIndex,
+    previewSections,
+    commitSubsectionReorder,
   } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
 
@@ -97,7 +98,18 @@ export const SubsectionSidebar = () => {
   const handleMove = (step: number) => {
     if (section && getPossibleMoves && index !== undefined && sectionIndex !== undefined) {
       const moveDetails = getPossibleMoves(index, step);
-      updateSubsectionOrderByIndex(section, moveDetails);
+      const { fn, args, sectionId } = moveDetails as { fn: (...a: any[]) => any; args: any; sectionId: string };
+      if (args) {
+        const [sectionsCopy, newSubsections] = fn(...args);
+        if (newSubsections && sectionId) {
+          previewSections(sectionsCopy);
+          commitSubsectionReorder(
+            sectionId,
+            section.id,
+            newSubsections.map((s: XBlock) => s.id),
+          );
+        }
+      }
       if (!isEmpty(moveDetails)) {
         const newSectionId = moveDetails.sectionId;
         // A subsection can move to a different section (cross-section move)

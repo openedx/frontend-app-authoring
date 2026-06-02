@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+import { arrayMove } from '@dnd-kit/sortable';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { ContainerType } from '@src/generic/key-utils';
 import type { OutlineActionSelection, XBlock, XBlockActions } from '@src/data/types';
@@ -10,6 +12,8 @@ import OutlineAddChildButtons from './OutlineAddChildButtons';
 import DraggableList from './drag-helper/DraggableList';
 import {
   canMoveSection,
+  moveSubsection,
+  moveUnit,
   possibleUnitMoves,
   possibleSubsectionMoves,
 } from './drag-helper/utils';
@@ -37,9 +41,6 @@ export interface OutlineTreeProps {
     subsectionId: string,
     unitListIds: string[],
   ) => Promise<void>;
-  updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => Promise<void>;
-  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
-  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => Promise<void>;
   handleOpenHighlightsModal: (section: XBlock) => void;
   openConfigureModal: (selection: OutlineActionSelection) => void;
   openDeleteModal: (selection: OutlineActionSelection) => void;
@@ -60,15 +61,50 @@ const OutlineTree = ({
   commitSectionReorder,
   commitSubsectionReorder,
   commitUnitReorder,
-  updateSectionOrderByIndex,
-  updateSubsectionOrderByIndex,
-  updateUnitOrderByIndex,
   handleOpenHighlightsModal,
   openConfigureModal,
   openDeleteModal,
   handlePasteClipboardClick,
-}: OutlineTreeProps) => (
-  <section>
+}: OutlineTreeProps) => {
+  // ─── Card order change handlers (preview + commit) ────────────────────
+  const handleSectionOrderChange = useCallback(async (oldIndex: number, newIndex: number) => {
+    if (oldIndex === newIndex) { return; }
+    const nextSections = arrayMove(sections, oldIndex, newIndex) as XBlock[];
+    const sectionListIds = nextSections.map((s) => s.id);
+    previewSections(nextSections);
+    await commitSectionReorder(sectionListIds);
+  }, [sections, previewSections, commitSectionReorder]);
+
+  const handleSubsectionOrderChange = useCallback(async (section: XBlock, moveDetails: any) => {
+    const { fn, args, sectionId } = moveDetails;
+    if (!args) { return; }
+    const [sectionsCopy, newSubsections] = fn(...args);
+    if (newSubsections && sectionId) {
+      previewSections(sectionsCopy);
+      await commitSubsectionReorder(
+        sectionId,
+        section.id,
+        newSubsections.map((s: XBlock) => s.id),
+      );
+    }
+  }, [previewSections, commitSubsectionReorder]);
+
+  const handleUnitOrderChange = useCallback(async (section: XBlock, moveDetails: any) => {
+    const { fn, args, sectionId, subsectionId } = moveDetails;
+    if (!args) { return; }
+    const [sectionsCopy, newUnits] = fn(...args);
+    if (newUnits && subsectionId) {
+      previewSections(sectionsCopy);
+      await commitUnitReorder(
+        sectionId,
+        section.id,
+        subsectionId,
+        newUnits.map((u: XBlock) => u.id),
+      );
+    }
+  }, [previewSections, commitUnitReorder]);
+
+  return (<section>
     {!hasOutlineIndexError && (
       <div className="pt-4">
         {sections.length ? (
@@ -98,7 +134,7 @@ const OutlineTree = ({
                     onOpenConfigureModal={openConfigureModal}
                     onOpenDeleteModal={openDeleteModal}
                     isSectionsExpanded={isSectionsExpanded}
-                    onOrderChange={updateSectionOrderByIndex}
+                    onOrderChange={handleSectionOrderChange}
                   >
                     <SortableContext
                       id={section.id}
@@ -122,7 +158,7 @@ const OutlineTree = ({
                           isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                           onOpenDeleteModal={openDeleteModal}
                           onOpenConfigureModal={openConfigureModal}
-                          onOrderChange={updateSubsectionOrderByIndex}
+                          onOrderChange={handleSubsectionOrderChange}
                           onPasteClick={handlePasteClipboardClick}
                         >
                           <SortableContext
@@ -149,7 +185,7 @@ const OutlineTree = ({
                                 )}
                                 onOpenConfigureModal={openConfigureModal}
                                 onOpenDeleteModal={openDeleteModal}
-                                onOrderChange={updateUnitOrderByIndex}
+                                onOrderChange={handleUnitOrderChange}
                                 discussionsSettings={discussionsSettings}
                               />
                             ))}
@@ -185,6 +221,7 @@ const OutlineTree = ({
       </div>
     )}
   </section>
-);
+  );
+};
 
 export default OutlineTree;

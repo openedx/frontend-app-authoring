@@ -7,20 +7,17 @@ import type { XBlock, XBlockActions } from '@src/data/types';
 import {
   getCourseOutlineStatusBarData,
   useCourseOutlineIndex,
-} from '../data/outlineIndexQuery';
-import {
   useCourseBestPractices,
   useCourseLaunch,
-} from '../data/apiHooks';
-import {
   createDiscussionsTopics,
-} from '../data/api';
+  type CourseOutlineStatusBar,
+  type ChecklistType,
+} from '../data';
 import { getErrorDetails } from '../utils/getErrorDetails';
 import {
   getCourseBestPracticesChecklist,
   getCourseLaunchChecklist,
 } from '../utils/getChecklistForStatusBar';
-import type { CourseOutlineStatusBar, ChecklistType } from '../data/types';
 
 const DEFAULT_FETCH_SECTION_STATUS = RequestStatus.IN_PROGRESS;
 const DEFAULT_ERROR_NULL = null;

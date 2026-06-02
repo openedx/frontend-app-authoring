@@ -12,7 +12,6 @@ import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useGetBlockTypes } from '@src/search-manager';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { LibraryReferenceCard } from '@src/generic/library-reference-card/LibraryReferenceCard';
 import messages from '../messages';
 
@@ -22,7 +21,6 @@ interface Props {
 
 export const InfoSection = ({ itemId }: Props) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { data: itemData } = useCourseItemData(itemId);
   const { data: componentData } = useGetBlockTypes(
@@ -52,7 +50,7 @@ export const InfoSection = ({ itemId }: Props) => {
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
     }
-  }, [dispatch, selectedContainerState, queryClient, courseId]);
+  }, [selectedContainerState, queryClient, courseId]);
 
   /* istanbul ignore next */
   if (!itemData) {

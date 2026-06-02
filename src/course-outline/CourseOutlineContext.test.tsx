@@ -5,7 +5,7 @@ import {
   waitFor,
 } from '@src/testUtils';
 import { courseOutlineIndexMock } from './__mocks__';
-import { getCourseOutlineIndexApiUrl } from './data/api';
+import { getCourseOutlineIndexApiUrl } from './data';
 import {
   CourseOutlineProvider,
   useCourseOutlineContext,

@@ -3,20 +3,18 @@ import { useState, useCallback } from 'react';
 import { useToggle } from '@openedx/paragon';
 import { getBlockType } from '@src/generic/key-utils';
 import type { OutlineActionSelection, XBlock } from '@src/data/types';
-import type {
-  ChapterConfigurePayload,
-  ConfigureItemPayload,
-  SequentialConfigurePayload,
-  UnitConfigurePayload,
-} from '../data/types';
-import type { OutlineModalsProps } from '../OutlineModals';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from '../CourseOutlineContext';
 import {
   useCourseItemData,
   useUpdateCourseSectionHighlights,
   useEnableCourseHighlightsEmails,
-} from '../data/apiHooks';
+  type ChapterConfigurePayload,
+  type ConfigureItemPayload,
+  type SequentialConfigurePayload,
+  type UnitConfigurePayload,
+} from '../data';
+import type { OutlineModalsProps } from '../OutlineModals';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseOutlineContext } from '../CourseOutlineContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { useOutlineActions } from './useOutlineActions';
 import { COURSE_BLOCK_NAMES } from '../constants';
@@ -80,7 +78,7 @@ export function useOutlineModals(courseId: string): UseOutlineModalsReturn {
   const handleOpenHighlightsModal = useCallback((section: XBlock) => {
     setHighlightsModalData(section.id);
     openHighlightsModal();
-  }, []);
+  }, [openHighlightsModal]);
 
   const handleHighlightsFormSubmit = useCallback((highlights) => {
     if (!highlightsModalData) { return; }

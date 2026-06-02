@@ -36,9 +36,10 @@ const openDeleteModal = jest.fn();
 const openUnlinkModal = jest.fn();
 
 const mockedNavigate = jest.fn();
-const updateUnitOrderByIndex = jest.fn();
-const updateSubsectionOrderByIndex = jest.fn();
-const updateSectionOrderByIndex = jest.fn();
+const commitSectionReorder = jest.fn();
+const commitSubsectionReorder = jest.fn();
+const commitUnitReorder = jest.fn();
+const previewSections = jest.fn();
 const mockSetSelectedContainerState = jest.fn();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mockSections: any[] = [];
@@ -62,9 +63,10 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
     sections: mockSections,
     setSections: jest.fn(),
     restoreSectionList: jest.fn(),
-    updateUnitOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateSectionOrderByIndex,
+    commitUnitReorder,
+    commitSubsectionReorder,
+    commitSectionReorder,
+    previewSections,
     setActionTargetSelection: jest.fn(),
     openPublishModal,
     openDeleteModal,
@@ -103,9 +105,10 @@ describe('InfoSidebar component', () => {
     mockDuplicateItem.mutate.mockClear();
 
     mockedNavigate.mockClear();
-    updateUnitOrderByIndex.mockClear();
-    updateSubsectionOrderByIndex.mockClear();
-    updateSectionOrderByIndex.mockClear();
+    commitUnitReorder.mockClear();
+    commitSubsectionReorder.mockClear();
+    commitSectionReorder.mockClear();
+    previewSections.mockClear();
     mockSetSelectedContainerState.mockClear();
     mockSections = [];
   });
@@ -387,7 +390,7 @@ describe('InfoSidebar component', () => {
         await screen.findByRole('button', { name: 'Item Menu' });
       };
 
-      it('calls updateUnitOrderByIndex and setSelectedContainerState when Move Up is clicked', async () => {
+      it('calls commitUnitReorder and setSelectedContainerState when Move Up is clicked', async () => {
         const user = userEvent.setup();
         await renderDraggableUnitMenu();
 
@@ -397,13 +400,14 @@ describe('InfoSidebar component', () => {
         const moveUpBtn = await screen.findByText('Move Up');
         await user.click(moveUpBtn);
 
-        expect(updateUnitOrderByIndex).toHaveBeenCalled();
+        expect(previewSections).toHaveBeenCalled();
+        expect(commitUnitReorder).toHaveBeenCalled();
         expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
           expect.objectContaining({ index: 0, subsectionId: seqId, sectionId: chId }),
         );
       });
 
-      it('calls updateUnitOrderByIndex and setSelectedContainerState when Move Down is clicked', async () => {
+      it('calls commitUnitReorder and setSelectedContainerState when Move Down is clicked', async () => {
         const user = userEvent.setup();
         await renderDraggableUnitMenu();
 
@@ -413,7 +417,8 @@ describe('InfoSidebar component', () => {
         const moveDownBtn = await screen.findByText('Move Down');
         await user.click(moveDownBtn);
 
-        expect(updateUnitOrderByIndex).toHaveBeenCalled();
+        expect(previewSections).toHaveBeenCalled();
+        expect(commitUnitReorder).toHaveBeenCalled();
         expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
           expect.objectContaining({ index: 2, subsectionId: seqId, sectionId: chId }),
         );
@@ -576,7 +581,7 @@ describe('InfoSidebar component', () => {
         await screen.findByRole('button', { name: 'Item Menu' });
       };
 
-      it('calls updateSubsectionOrderByIndex and setSelectedContainerState when Move Up is clicked', async () => {
+      it('calls commitSubsectionReorder and setSelectedContainerState when Move Up is clicked', async () => {
         const user = userEvent.setup();
         await renderDraggableSubsectionMenu();
 
@@ -586,13 +591,14 @@ describe('InfoSidebar component', () => {
         const moveUpBtn = await screen.findByText('Move Up');
         await user.click(moveUpBtn);
 
-        expect(updateSubsectionOrderByIndex).toHaveBeenCalled();
+        expect(previewSections).toHaveBeenCalled();
+        expect(commitSubsectionReorder).toHaveBeenCalled();
         expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
           expect.objectContaining({ index: 0, sectionId: chId }),
         );
       });
 
-      it('calls updateSubsectionOrderByIndex and setSelectedContainerState when Move Down is clicked', async () => {
+      it('calls commitSubsectionReorder and setSelectedContainerState when Move Down is clicked', async () => {
         const user = userEvent.setup();
         await renderDraggableSubsectionMenu();
 
@@ -602,7 +608,8 @@ describe('InfoSidebar component', () => {
         const moveDownBtn = await screen.findByText('Move Down');
         await user.click(moveDownBtn);
 
-        expect(updateSubsectionOrderByIndex).toHaveBeenCalled();
+        expect(previewSections).toHaveBeenCalled();
+        expect(commitSubsectionReorder).toHaveBeenCalled();
         expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
           expect.objectContaining({ index: 2, sectionId: chId }),
         );
@@ -745,7 +752,7 @@ describe('InfoSidebar component', () => {
         expect(screen.getByText('Move Down')).toBeInTheDocument();
       });
 
-      it('calls updateSectionOrderByIndex and setSelectedContainerState when Move Up is clicked', async () => {
+      it('calls commitSectionReorder and setSelectedContainerState when Move Up is clicked', async () => {
         const user = userEvent.setup();
         await renderDraggableSectionMenu();
 
@@ -755,13 +762,14 @@ describe('InfoSidebar component', () => {
         const moveUpBtn = await screen.findByText('Move Up');
         await user.click(moveUpBtn);
 
-        expect(updateSectionOrderByIndex).toHaveBeenCalledWith(1, 0);
+        expect(previewSections).toHaveBeenCalled();
+        expect(commitSectionReorder).toHaveBeenCalled();
         expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
           expect.objectContaining({ index: 0 }),
         );
       });
 
-      it('calls updateSectionOrderByIndex and setSelectedContainerState when Move Down is clicked', async () => {
+      it('calls commitSectionReorder and setSelectedContainerState when Move Down is clicked', async () => {
         const user = userEvent.setup();
         await renderDraggableSectionMenu();
 
@@ -771,7 +779,8 @@ describe('InfoSidebar component', () => {
         const moveDownBtn = await screen.findByText('Move Down');
         await user.click(moveDownBtn);
 
-        expect(updateSectionOrderByIndex).toHaveBeenCalledWith(1, 2);
+        expect(previewSections).toHaveBeenCalled();
+        expect(commitSectionReorder).toHaveBeenCalled();
         expect(mockSetSelectedContainerState).toHaveBeenCalledWith(
           expect.objectContaining({ index: 2 }),
         );
