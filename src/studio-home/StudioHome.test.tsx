@@ -1,5 +1,6 @@
 import * as reactRedux from 'react-redux';
 import { getConfig, setConfig } from '@edx/frontend-platform';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 import {
   fireEvent,
@@ -92,16 +93,29 @@ describe('<StudioHome />', () => {
       within(header).getByRole('button', { name: 'New course' }); // will error if not found
     });
 
-    it('should render roles and permissions button', async () => {
+    it('should render roles and permissions button when authz is enabled', async () => {
       setConfig({
         ...getConfig(),
         ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
       });
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
 
       render(<StudioHome />, { path: '/home' });
       const header = getHeaderElement();
       const rolesButton = within(header).getByRole('link', { name: 'Roles and permissions' });
       expect(rolesButton).toHaveAttribute('href', 'https://admin-console.example.com/authz');
+    });
+
+    it('should not render roles and permissions button when authz is disabled', async () => {
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
+      });
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+
+      render(<StudioHome />, { path: '/home' });
+      const header = getHeaderElement();
+      expect(within(header).queryByRole('link', { name: 'Roles and permissions' })).not.toBeInTheDocument();
     });
 
     it('should show verify email layout if user inactive', async () => {
