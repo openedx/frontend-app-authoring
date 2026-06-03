@@ -19,6 +19,7 @@ import './FileInfoModalSidebar.scss';
 const FileInfoModalSidebar = ({
   asset,
   handleLockedAsset,
+  canLockFile = true,
 }) => {
   const intl = useIntl();
   const [lockedState, setLockedState] = useState(asset?.locked);
@@ -78,26 +79,28 @@ const FileInfoModalSidebar = ({
           onClick={() => navigator.clipboard.writeText(asset?.externalUrl)}
         />
       </ActionRow>
-      <ActionRow className=" border-top mt-3 pt-3">
-        <div className="font-weight-bold">
-          <FormattedMessage {...messages.lockFileTitle} />
-        </div>
-        <IconButtonWithTooltip
-          key="lock-file-info"
-          tooltipPlacement="top"
-          tooltipContent={intl.formatMessage(messages.lockFileTooltipContent)}
-          src={InfoOutline}
-          iconAs={Icon}
-          alt="Info"
-          size="inline"
-        />
-        <ActionRow.Spacer />
-        <CheckboxControl
-          checked={lockedState}
-          onChange={handleLock}
-          aria-label="Checkbox"
-        />
-      </ActionRow>
+      {canLockFile && (
+        <ActionRow className=" border-top mt-3 pt-3">
+          <div className="font-weight-bold">
+            <FormattedMessage {...messages.lockFileTitle} />
+          </div>
+          <IconButtonWithTooltip
+            key="lock-file-info"
+            tooltipPlacement="top"
+            tooltipContent={intl.formatMessage(messages.lockFileTooltipContent)}
+            src={InfoOutline}
+            iconAs={Icon}
+            alt="Info"
+            size="inline"
+          />
+          <ActionRow.Spacer />
+          <CheckboxControl
+            checked={lockedState}
+            onChange={handleLock}
+            aria-label="Checkbox"
+          />
+        </ActionRow>
+      )}
     </Stack>
   );
 };
@@ -115,6 +118,7 @@ FileInfoModalSidebar.propTypes = {
     usageLocations: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
+  canLockFile: PropTypes.bool,
 };
 
 export default FileInfoModalSidebar;
