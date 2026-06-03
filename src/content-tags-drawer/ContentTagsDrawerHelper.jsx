@@ -110,7 +110,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
           otherTaxonomiesList.push({
             canChangeTaxonomy: false,
             canDeleteTaxonomy: false,
-            canTagObject: false,
+            canTagObject: contentTaxonomyTags.canTagObject,
             contentTags: contentTaxonomyTags.tags,
             enabled: true,
             exportId: contentTaxonomyTags.exportId,
@@ -339,6 +339,14 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
         const fetchedTags = mergedTags[taxonomyId].contentTags.filter((t) => !stagedLineages.includes(t.value));
 
         mergedTags[taxonomyId].contentTags = [
+          ...fetchedTags,
+          ...globalStagedContentTags[taxonomyId],
+        ];
+      } else if (mergedOtherTaxonomies[taxonomyId]) {
+        const stagedLineages = globalStagedContentTags[taxonomyId].map((t) => t.lineage.slice(0, -1)).flat();
+        const fetchedTags = mergedOtherTaxonomies[taxonomyId].contentTags.filter((t) => !stagedLineages.includes(t.value));
+
+        mergedOtherTaxonomies[taxonomyId].contentTags = [
           ...fetchedTags,
           ...globalStagedContentTags[taxonomyId],
         ];

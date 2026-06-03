@@ -3,6 +3,8 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { AlignSidebar } from '@src/generic/sidebar/AlignSidebar';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useBackNavigation } from './back-navigation';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getTagsPermissions } from '@src/authz/permissionHelpers';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
 /**
@@ -16,6 +18,7 @@ export const OutlineAlignSidebar = () => {
   const sidebarContentId = selectedContainerState?.currentId || courseId;
 
   const { data: contentData } = useContentData(sidebarContentId);
+  const { canManageTags } = useCourseUserPermissions(courseId, getTagsPermissions(courseId));
 
   const handleBack = useBackNavigation({
     openContainer: openContainerSidebar,
@@ -29,6 +32,7 @@ export const OutlineAlignSidebar = () => {
         : contentData?.courseDisplayNameWithDefault || ''}
       contentId={sidebarContentId}
       onBackBtnClick={(sidebarContentId !== courseId) ? handleBack : undefined}
+      readOnly={!canManageTags}
     />
   );
 };
