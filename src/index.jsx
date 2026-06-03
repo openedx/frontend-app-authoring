@@ -28,7 +28,6 @@ import messages from './i18n';
 import {
   LibraryAndComponentPicker,
   CreateLibrary,
-  CreateLegacyLibrary,
   LibraryLayout,
   PreviewChangesEmbed,
 } from './library-authoring';
@@ -77,7 +76,6 @@ const App = () => {
         <Route path="/libraries" element={<StudioHome />} />
         <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/libraries-v1/migrate" element={<LegacyLibMigrationPage />} />
-        <Route path="/libraries-v1/create" element={<CreateLegacyLibrary />} />
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route
