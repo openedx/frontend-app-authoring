@@ -13,7 +13,7 @@ import Header from '../../header';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { messages, sectionMessages } from './messages';
-import { LibrarySidebar } from '../library-sidebar';
+import { LibrarySidebarPanel } from '../library-sidebar';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
 import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
 
@@ -114,14 +114,7 @@ export const LibrarySectionPage = () => {
           </Container>
         </Container>
       </div>
-      {!!sidebarItemInfo?.type && (
-        <div
-          className="library-authoring-sidebar box-shadow-left-1 bg-white"
-          data-testid="library-sidebar"
-        >
-          <LibrarySidebar />
-        </div>
-      )}
+      {!!sidebarItemInfo?.type && <LibrarySidebarPanel />}
     </div>
   );
 };

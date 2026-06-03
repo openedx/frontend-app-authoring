@@ -13,12 +13,16 @@
 
 .library-authoring-sidebar {
   z-index: 1000; // same as header
-  flex: 530px 0 0;
+  flex: 0 0 auto;
   position: sticky;
   top: 0;
   right: 0;
   height: 100vh;
-  overflow-y: auto;
+
+  > .w-100 {
+    height: 100%;
+    overflow-y: auto;
+  }
 }
 
 .dropdown-menu {
