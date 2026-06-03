@@ -1,6 +1,7 @@
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor,
 } from '@src/testUtils';
+import { useState } from 'react';
 
 import cardHeaderMessages from '@src/course-outline/card-header/messages';
 import ComponentMenu from './ComponentMenu';
@@ -25,22 +26,33 @@ jest.mock('./data/hooks', () => ({
   }),
 }));
 
+const ComponentMenuHarness = (props: Partial<React.ComponentProps<typeof ComponentMenu>>) => {
+  const [openBlockId, setOpenBlockId] = useState<string | null>(null);
+  const blockId = props.blockId ?? 'block-v1:test+type@html+block@1';
+
+  return (
+    <ComponentMenu
+      unitId="block-v1:test+type@vertical+block@unit1"
+      blockId={blockId}
+      displayName="Test Component"
+      blockType="html"
+      actions={{
+        canCopy: true,
+        canDuplicate: true,
+        canDelete: true,
+        canMove: false,
+        canManageAccess: false,
+      }}
+      onActionComplete={mockOnActionComplete}
+      isMenuOpen={openBlockId === blockId}
+      onMenuToggle={setOpenBlockId}
+      {...props}
+    />
+  );
+};
+
 const renderComponentMenu = (props?: Partial<React.ComponentProps<typeof ComponentMenu>>) => render(
-  <ComponentMenu
-    unitId="block-v1:test+type@vertical+block@unit1"
-    blockId="block-v1:test+type@html+block@1"
-    displayName="Test Component"
-    blockType="html"
-    actions={{
-      canCopy: true,
-      canDuplicate: true,
-      canDelete: true,
-      canMove: false,
-      canManageAccess: false,
-    }}
-    onActionComplete={mockOnActionComplete}
-    {...props}
-  />,
+  <ComponentMenuHarness {...props} />,
 );
 
 describe('<ComponentMenu />', () => {
@@ -108,16 +120,62 @@ describe('<ComponentMenu />', () => {
   });
 
   it('does not render when no actions are available', () => {
-    renderComponentMenu({
-      actions: {
-        canCopy: false,
-        canDuplicate: false,
-        canDelete: false,
-        canMove: false,
-        canManageAccess: false,
-      },
-    });
+    render(
+      <ComponentMenuHarness
+        actions={{
+          canCopy: false,
+          canDuplicate: false,
+          canDelete: false,
+          canMove: false,
+          canManageAccess: false,
+        }}
+      />,
+    );
 
     expect(screen.queryByTestId('component-menu')).not.toBeInTheDocument();
+  });
+
+  it('closes the menu when another component menu is opened', async () => {
+    const SharedMenus = () => {
+      const [openBlockId, setOpenBlockId] = useState<string | null>(null);
+      const sharedProps = {
+        unitId: 'block-v1:test+type@vertical+block@unit1',
+        displayName: 'Test Component',
+        blockType: 'html',
+        actions: {
+          canCopy: true,
+          canDuplicate: true,
+          canDelete: true,
+          canMove: false,
+          canManageAccess: true,
+        },
+        onActionComplete: mockOnActionComplete,
+        onMenuToggle: setOpenBlockId,
+      };
+
+      return (
+        <>
+          <ComponentMenu
+            {...sharedProps}
+            blockId="block-v1:test+type@html+block@1"
+            isMenuOpen={openBlockId === 'block-v1:test+type@html+block@1'}
+          />
+          <ComponentMenu
+            {...sharedProps}
+            blockId="block-v1:test+type@html+block@2"
+            isMenuOpen={openBlockId === 'block-v1:test+type@html+block@2'}
+          />
+        </>
+      );
+    };
+
+    render(<SharedMenus />);
+
+    const [firstToggle, secondToggle] = screen.getAllByTestId('component-menu-toggle');
+    await act(async () => fireEvent.click(firstToggle));
+    expect(screen.getByTestId('component-menu-manage-access')).toBeInTheDocument();
+
+    await act(async () => fireEvent.click(secondToggle));
+    expect(screen.getAllByTestId('component-menu-manage-access')).toHaveLength(1);
   });
 });

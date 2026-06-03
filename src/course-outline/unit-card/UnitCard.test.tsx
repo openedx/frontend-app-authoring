@@ -5,6 +5,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 import { XBlock } from '@src/data/types';
+import headerNavigationsMessages from '@src/course-unit/header-navigations/messages';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
 import componentMessages from './messages';
@@ -16,6 +17,7 @@ const mockUseComponentTemplates = jest.fn();
 const mockCreateXBlock = jest.fn();
 const mockPasteBlock = jest.fn();
 const mockCopyToClipboard = jest.fn();
+const mockRenameComponent = jest.fn();
 const mockShowPasteXBlock = { current: false };
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
@@ -39,6 +41,10 @@ jest.mock('./data/hooks', () => ({
   }),
   useDuplicateUnitComponent: () => ({
     mutateAsync: jest.fn(),
+  }),
+  useRenameUnitComponent: () => ({
+    mutateAsync: mockRenameComponent,
+    isPending: false,
   }),
 }));
 
@@ -171,6 +177,8 @@ describe('<UnitCard />', () => {
     mockUseComponentTemplates.mockReturnValue({ data: undefined });
     mockPasteBlock.mockReset();
     mockCreateXBlock.mockReset();
+    mockRenameComponent.mockReset();
+    mockRenameComponent.mockResolvedValue(undefined);
     mockShowPasteXBlock.current = false;
   });
 
@@ -363,6 +371,7 @@ describe('<UnitCard />', () => {
       const editButton = await screen.findByTestId('component-edit-button');
       expect(editButton.tagName).toBe('A');
       expect(editButton).toHaveAttribute('href', `/course/5/editor/html/${htmlComponent.blockId}`);
+      expect(editButton).toHaveTextContent(headerNavigationsMessages.editButton.defaultMessage);
     });
 
     it('renders edit button with legacy Studio URL for non-MFE types', async () => {
@@ -397,6 +406,29 @@ describe('<UnitCard />', () => {
 
       const prevented = !editButton.dispatchEvent(clickEvent);
       expect(prevented).toBe(false);
+    });
+
+    it('shows inline rename field after clicking the rename button', async () => {
+      await setupExpandedView([htmlComponent]);
+
+      const renameButton = await screen.findByTestId('component-rename-button');
+      fireEvent.click(renameButton);
+
+      const renameField = await screen.findByTestId('component-rename-field');
+      expect(renameField).toBeInTheDocument();
+      expect(renameField).toHaveValue('HTML Component');
+
+      fireEvent.change(renameField, { target: { value: 'Renamed Component' } });
+      expect(renameField).toHaveValue('Renamed Component');
+
+      fireEvent.blur(renameField);
+
+      await waitFor(() => {
+        expect(mockRenameComponent).toHaveBeenCalledWith({
+          blockId: htmlComponent.blockId,
+          displayName: 'Renamed Component',
+        });
+      });
     });
   });
 

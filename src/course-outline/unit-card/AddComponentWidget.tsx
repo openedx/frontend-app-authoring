@@ -51,7 +51,7 @@ const AddComponentWidget = ({
 }: AddComponentWidgetProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
-  const { mutateAsync: createXBlock, isPending } = useCreateXBlockInUnit(unitId);
+  const { mutateAsync: createXBlock, isPending } = useCreateXBlockInUnit();
 
   // State for template selection modal – shown when a component type has multiple templates
   const [isModalOpen, setIsModalOpen] = useState(false);

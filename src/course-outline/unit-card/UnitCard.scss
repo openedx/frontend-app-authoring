@@ -25,15 +25,27 @@
         display: flex;
         align-items: center;
 
-        >.flex-grow-1 {
+        .item-card-header,
+        .form-group {
           min-width: 0;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 80%;
         }
 
-        >a.flex-grow-1 {
+        .component-title-group {
+          flex: 0 1 auto;
+          align-items: center;
+
+          .item-card-header__title-btn {
+            flex: 0 1 auto;
+            min-width: 0;
+            margin-right: .5rem;
+          }
+
+          .item-card-button-icon {
+            flex-shrink: 0;
+          }
+        }
+
+        >a.item-card-header__title-btn {
           color: inherit;
           text-decoration: none;
 
@@ -42,21 +54,71 @@
           }
         }
 
-        >a.component-card-button-icon,
-        .component-menu-wrapper .component-card-button-icon {
-          text-decoration: none;
-          color: var(--pgn-color-primary-500);
+        .item-card-header__title-btn .truncate-1-line {
+          min-width: 0;
+          display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
 
-          &:hover,
+        .item-card-button-icon {
+          opacity: 0;
+          transition: opacity .3s linear;
+
           &:focus {
-            text-decoration: none;
-            color: var(--pgn-color-white);
-            background-color: var(--pgn-color-primary-500);
+            opacity: 1;
           }
+        }
+
+        .component-rename-button {
+          margin-right: .5rem;
+        }
+
+        &:hover .item-card-button-icon {
+          opacity: 1;
+        }
+
+        .component-header-actions {
+          flex-shrink: 0;
+          opacity: 1;
+          margin-left: .25rem;
+          align-items: center;
+        }
+
+        .component-edit-button,
+        .component-menu-wrapper,
+        .btn-icon.btn-icon-md {
+          align-self: center;
+        }
+
+        .component-edit-button {
+          width: 4.125rem;
+          height: 2.25rem;
+          white-space: nowrap;
+        }
+
+        .btn-icon.btn-icon-md {
+          width: 2.5rem;
+          height: 2.5rem;
         }
 
         .component-menu-wrapper {
           flex-shrink: 0;
+          opacity: 1;
+
+          .component-card-button-icon {
+            opacity: 1;
+            text-decoration: none;
+            color: var(--pgn-color-primary-500);
+
+            &:hover,
+            &:focus {
+              text-decoration: none;
+              color: var(--pgn-color-white);
+              background-color: var(--pgn-color-primary-500);
+            }
+          }
         }
       }
     }
@@ -95,6 +157,10 @@
 
         .component-card-button-icon:hover {
           background-color: var(--pgn-color-icon-button-bg-primary-hover);
+        }
+
+        .component-edit-button {
+          white-space: nowrap;
         }
       }
     }

@@ -96,6 +96,16 @@ const messages = defineMessages({
     defaultMessage: 'Failed to delete component. Please try again.',
     description: 'Error message shown when deleting a component from the outline fails',
   },
+  componentRenameError: {
+    id: 'course-authoring.course-outline.unit.component-rename-error',
+    defaultMessage: 'Failed to rename component. Please try again.',
+    description: 'Error message shown when renaming a component from the outline fails',
+  },
+  editButton: {
+    id: 'course-authoring.course-outline.unit.edit-button',
+    defaultMessage: 'Edit',
+    description: 'Label for the button to edit a component',
+  },
 });
 
 export default messages;

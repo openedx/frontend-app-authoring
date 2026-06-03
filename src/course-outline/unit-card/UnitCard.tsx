@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  useToggle, Icon, OverlayTrigger, Tooltip,
+  useToggle, Icon, Form, IconButtonWithTooltip, Button, OverlayTrigger, Tooltip, Stack,
 } from '@openedx/paragon';
 import { EditOutline as EditIcon } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
@@ -17,6 +17,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
+import { NOTIFICATION_MESSAGES } from '@src/constants';
+import {
+  hideProcessingNotification,
+  showProcessingNotification,
+} from '@src/generic/processing-notification/data/slice';
 import { useWaffleFlags } from '@src/data/apiHooks';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
@@ -26,6 +31,7 @@ import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { setCourseItemOrderList, pasteBlock } from '@src/course-outline/data/api';
 import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
+import cardHeaderMessages from '@src/course-outline/card-header/messages';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -44,7 +50,7 @@ import supportedEditors from '@src/editors/supportedEditors';
 import DraggableList, { SortableItem as GenericSortableItem } from '@src/generic/DraggableList';
 import { ToastContext } from '@src/generic/toast-context';
 import { deriveHasPartitionGroupComponents, EMPTY_UNIT_COMPONENT_ACTIONS, findSectionIdForUnit } from './data/api';
-import { useUnitHandler, useComponentTemplates } from './data/hooks';
+import { useUnitHandler, useComponentTemplates, useRenameUnitComponent } from './data/hooks';
 import AddComponentWidget from './AddComponentWidget';
 import ComponentMenu from './ComponentMenu';
 import messages from './messages';
@@ -108,6 +114,9 @@ const UnitCard = ({
   const [editBlockType, setEditBlockType] = useState<string>('');
   const [orderedComponents, setOrderedComponents] = useState<any[]>([]);
   const [dragComponentId, setDragComponentId] = useState<string | null>(null);
+  const [renamingBlockId, setRenamingBlockId] = useState<string | null>(null);
+  const [renameTitleValue, setRenameTitleValue] = useState('');
+  const [openComponentMenuBlockId, setOpenComponentMenuBlockId] = useState<string | null>(null);
   const previousComponentsOrder = useRef<any[]>([]);
   const namePrefix = 'unit';
 
@@ -129,6 +138,8 @@ const UnitCard = ({
     discussionEnabled,
     upstreamInfo,
   } = unit;
+
+  const { mutateAsync: renameComponent, isPending: isRenamePending } = useRenameUnitComponent();
 
   // Fetch unit components when expanded (only if flag is enabled)
   const {
@@ -325,6 +336,47 @@ const UnitCard = ({
     await Promise.all(refetchPromises);
   }, [dispatch, section.id, sectionsList, queryClient, id, refetchUnitData]);
 
+  const handleRenameStart = useCallback((blockId: string, currentName: string) => {
+    setRenamingBlockId(blockId);
+    setRenameTitleValue(currentName);
+  }, []);
+
+  const handleRenameCancel = useCallback((currentName: string) => {
+    setRenamingBlockId(null);
+    setRenameTitleValue(currentName);
+  }, []);
+
+  const handleRenameSubmit = useCallback(async (blockId: string, currentName: string) => {
+    const trimmedName = renameTitleValue.trim();
+
+    if (!trimmedName || trimmedName === currentName) {
+      setRenamingBlockId(null);
+      setRenameTitleValue('');
+      return;
+    }
+
+    try {
+      dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+      await renameComponent({ blockId, displayName: trimmedName });
+      await handleComponentActionComplete();
+      setRenamingBlockId(null);
+      setRenameTitleValue('');
+    } catch {
+      setRenamingBlockId(null);
+      setRenameTitleValue('');
+      showToast(intl.formatMessage(messages.componentRenameError));
+    } finally {
+      dispatch(hideProcessingNotification());
+    }
+  }, [
+    renameTitleValue,
+    renameComponent,
+    handleComponentActionComplete,
+    dispatch,
+    showToast,
+    intl,
+  ]);
+
   const handleComponentReorder = useCallback(() => async (newOrder: any[]) => {
     if (!newOrder) {
       return;
@@ -386,7 +438,7 @@ const UnitCard = ({
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       closeForm();
     }
-  }, [savingStatus]);
+  }, [savingStatus, closeForm]);
 
   useEffect(() => {
     if (unitData?.components) {
@@ -557,57 +609,128 @@ const UnitCard = ({
                             }}
                             actions={(
                               <>
-                                <Icon src={ComponentIcon} className="mr-2 text-dark" />
-                                <a
-                                  href={`${getTitleLink(id)}#${component.blockId}`}
-                                  className="flex-grow-1"
-                                  data-testid="component-name-link"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (!e.metaKey && !e.ctrlKey) {
-                                      e.preventDefault();
-                                      handleComponentClick(component.blockId);
-                                    }
-                                  }}
-                                >
-                                  {component.displayName}
-                                </a>
-                                <OverlayTrigger
-                                  placement="top"
-                                  overlay={(
-                                    <Tooltip id={`edit-tooltip-${component.blockId}`}>
-                                      {intl.formatMessage(messages.editComponent)}
-                                    </Tooltip>
-                                  )}
-                                >
-                                  <a
-                                    href={getComponentEditorUrl(component.blockType, component.blockId)}
-                                    className="component-card-button-icon btn btn-icon btn-icon-primary btn-icon-md"
-                                    data-testid="component-edit-button"
-                                    aria-label={intl.formatMessage(messages.editComponent)}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (!e.metaKey && !e.ctrlKey) {
-                                        e.preventDefault();
-                                        handleComponentEdit(e, component.blockType, component.blockId);
-                                      }
-                                    }}
+                                <Icon src={ComponentIcon} className="mr-2 text-dark flex-shrink-0" />
+                                {renamingBlockId === component.blockId ? (
+                                  <Form.Group
+                                    className="m-0 flex-grow-1 min-width-0"
+                                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                                    onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
                                   >
-                                    <span className="btn-icon_btn-icon-primary_icon">
-                                      <Icon src={EditIcon} />
-                                    </span>
-                                  </a>
-                                </OverlayTrigger>
-                                <ComponentMenu
-                                  unitId={id}
-                                  blockId={component.blockId}
-                                  displayName={component.displayName}
-                                  blockType={component.blockType}
-                                  userPartitionInfo={component.userPartitionInfo}
-                                  userPartitions={component.userPartitions}
-                                  actions={component.actions ?? EMPTY_UNIT_COMPONENT_ACTIONS}
-                                  onActionComplete={handleComponentActionComplete}
-                                />
+                                    <Form.Control
+                                      autoFocus
+                                      data-testid="component-rename-field"
+                                      value={renameTitleValue}
+                                      name="displayName"
+                                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                        setRenameTitleValue(e.target.value);
+                                      }}
+                                      aria-label={intl.formatMessage(cardHeaderMessages.editFieldAriaLabel)}
+                                      onBlur={() => handleRenameSubmit(
+                                        component.blockId,
+                                        component.displayName,
+                                      )}
+                                      onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                        if (e.key === 'Enter') {
+                                          handleRenameSubmit(
+                                            component.blockId,
+                                            component.displayName,
+                                          );
+                                        } else if (e.key === 'Escape') {
+                                          handleRenameCancel(component.displayName);
+                                        }
+                                      }}
+                                      disabled={isRenamePending}
+                                    />
+                                  </Form.Group>
+                                ) : (
+                                  <Stack
+                                    direction="horizontal"
+                                    gap={0}
+                                    className="item-card-header component-title-group flex-grow-1 min-width-0"
+                                    role="presentation"
+                                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                                    onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+                                  >
+                                    <a
+                                      href={`${getTitleLink(id)}#${component.blockId}`}
+                                      className="item-card-header__title-btn"
+                                      data-testid="component-name-link"
+                                      onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                                        e.stopPropagation();
+                                        if (!e.metaKey && !e.ctrlKey) {
+                                          e.preventDefault();
+                                          handleComponentClick(component.blockId);
+                                        }
+                                      }}
+                                      onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+                                    >
+                                      <span className="truncate-1-line mb-0">
+                                        {component.displayName}
+                                      </span>
+                                    </a>
+                                    <IconButtonWithTooltip
+                                      className="item-card-button-icon component-rename-button"
+                                      data-testid="component-rename-button"
+                                      alt={intl.formatMessage(cardHeaderMessages.altButtonRename)}
+                                      tooltipContent={(
+                                        <div>{intl.formatMessage(cardHeaderMessages.altButtonRename)}</div>
+                                      )}
+                                      iconAs={EditIcon}
+                                      onClick={(e: React.MouseEvent) => {
+                                        e.stopPropagation();
+                                        handleRenameStart(component.blockId, component.displayName);
+                                      }}
+                                      onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+                                      // @ts-ignore
+                                      disabled={isRenamePending}
+                                    />
+                                  </Stack>
+                                )}
+                                <Stack
+                                  direction="horizontal"
+                                  gap={2}
+                                  className="component-header-actions d-flex align-items-center flex-shrink-0 ml-auto"
+                                >
+                                  <OverlayTrigger
+                                    placement="top"
+                                    overlay={(
+                                      <Tooltip id={`edit-tooltip-${component.blockId}`}>
+                                        {intl.formatMessage(messages.editComponent)}
+                                      </Tooltip>
+                                    )}
+                                  >
+                                    <Button
+                                      as="a"
+                                      href={getComponentEditorUrl(component.blockType, component.blockId)}
+                                      variant="outline-primary"
+                                      size="sm"
+                                      className="component-edit-button"
+                                      data-testid="component-edit-button"
+                                      onClick={(e: React.MouseEvent) => {
+                                        e.stopPropagation();
+                                        if (!e.metaKey && !e.ctrlKey) {
+                                          e.preventDefault();
+                                          handleComponentEdit(e, component.blockType, component.blockId);
+                                        }
+                                      }}
+                                      onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+                                    >
+                                      {intl.formatMessage(messages.editButton)}
+                                    </Button>
+                                  </OverlayTrigger>
+                                  <ComponentMenu
+                                    unitId={id}
+                                    blockId={component.blockId}
+                                    displayName={component.displayName}
+                                    blockType={component.blockType}
+                                    userPartitionInfo={component.userPartitionInfo}
+                                    userPartitions={component.userPartitions}
+                                    actions={component.actions ?? EMPTY_UNIT_COMPONENT_ACTIONS}
+                                    onActionComplete={handleComponentActionComplete}
+                                    isMenuOpen={openComponentMenuBlockId === component.blockId}
+                                    onMenuToggle={setOpenComponentMenuBlockId}
+                                  />
+                                </Stack>
                               </>
                             )}
                           />

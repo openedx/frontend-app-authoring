@@ -1,9 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { camelCaseObject } from '@edx/frontend-platform';
 import {
   createCourseXblock,
   deleteUnitItem,
   duplicateUnitItem,
+  editUnitDisplayName,
 } from '@src/course-unit/data/api';
 import { getUnitHandler, getComponentTemplates } from './api';
 
@@ -29,49 +30,37 @@ export const useComponentTemplates = (
   staleTime: 5 * 60 * 1000, // 5 minutes — templates rarely change within a session
 });
 
-// Hook to create a new xblock component inside a unit, reusing the course-unit API
-export const useCreateXBlockInUnit = (unitId: string) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    // Wrap createCourseXblock to normalize the response with camelCase keys
-    mutationFn: async (params: {
-      parentLocator: string;
-      type: string;
-      category?: string;
-      boilerplate?: string;
-    }) => {
-      const data = await createCourseXblock({
-        type: params.type,
-        category: params.category,
-        parentLocator: params.parentLocator,
-        boilerplate: params.boilerplate,
-      });
-      // Normalize snake_case response (locator, course_key) to camelCase
-      return camelCaseObject(data) as { locator: string; courseKey: string };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: unitHandlerQueryKey(unitId) });
-    },
-  });
-};
+export const useCreateXBlockInUnit = () => useMutation({
+  mutationFn: async (params: {
+    parentLocator: string;
+    type: string;
+    category?: string;
+    boilerplate?: string;
+  }) => {
+    const data = await createCourseXblock({
+      type: params.type,
+      category: params.category,
+      parentLocator: params.parentLocator,
+      boilerplate: params.boilerplate,
+    });
+    return camelCaseObject(data) as { locator: string; courseKey: string };
+  },
+});
 
 const useUnitComponentMutation = <T>(
-  unitId: string,
   mutationFn: (blockId: string) => Promise<T>,
-) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: unitHandlerQueryKey(unitId) });
-    },
-  });
-};
+) => useMutation({ mutationFn });
 
-export const useDeleteUnitComponent = (unitId: string) => (
-  useUnitComponentMutation(unitId, deleteUnitItem)
+export const useDeleteUnitComponent = () => (
+  useUnitComponentMutation(deleteUnitItem)
 );
 
 export const useDuplicateUnitComponent = (unitId: string) => (
-  useUnitComponentMutation(unitId, (blockId) => duplicateUnitItem(unitId, blockId))
+  useUnitComponentMutation((blockId) => duplicateUnitItem(unitId, blockId))
 );
+
+export const useRenameUnitComponent = () => useMutation({
+  mutationFn: ({ blockId, displayName }: { blockId: string; displayName: string }) => (
+    editUnitDisplayName(blockId, displayName)
+  ),
+});
