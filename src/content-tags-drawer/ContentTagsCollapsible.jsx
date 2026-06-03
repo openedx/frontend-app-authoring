@@ -419,7 +419,7 @@ const ContentTagsCollapsible = ({
             )}
 
           <div className="d-flex taxonomy-tags-selector-menu">
-            {isEditMode && (
+            {isEditMode && canTagObject && (
               <Select
                 onBlur={handleOnBlur}
                 styles={{

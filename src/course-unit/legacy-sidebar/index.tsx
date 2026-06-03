@@ -4,6 +4,8 @@ import { PluginSlot } from '@openedx/frontend-plugin-framework/dist';
 import { Stack } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import TagsSidebarControls from '@src/content-tags-drawer/tags-sidebar-controls';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getTagsPermissions } from '@src/authz/permissionHelpers';
 import SidebarSection from './SidebarSection';
 import LocationInfo from './LocationInfo';
 import SplitTestSidebarInfo from './SplitTestSidebarInfo';
@@ -38,6 +40,7 @@ const LegacySidebar = ({
 }: LegacySidebarProps) => {
   const { blockId } = useParams();
   const { courseId } = useCourseAuthoringContext();
+  const { canManageTags } = useCourseUserPermissions(courseId, getTagsPermissions(courseId));
 
   if (!blockId) {
     return null;
@@ -62,7 +65,7 @@ const LegacySidebar = ({
           </SidebarSection>
           {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
             <SidebarSection className="tags-sidebar">
-              <TagsSidebarControls readOnly={readOnly} />
+              <TagsSidebarControls readOnly={readOnly} canManageTags={canManageTags} />
             </SidebarSection>
           )}
           <SidebarSection data-testid="course-unit-location-sidebar">

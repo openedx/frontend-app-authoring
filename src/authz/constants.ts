@@ -50,4 +50,6 @@ export const COURSE_PERMISSIONS = {
   IMPORT_COURSE: 'courses.import_course',
   EXPORT_COURSE: 'courses.export_course',
   EXPORT_TAGS: 'courses.export_tags',
+
+  MANAGE_TAGS: 'courses.manage_tags',
 };
