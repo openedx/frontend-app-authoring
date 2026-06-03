@@ -16,6 +16,7 @@ import {
   getGradingPermissions,
   getPagesAndResourcesPermissions,
   getScheduleAndDetailsPermissions,
+  getFilesPermissions,
 } from '@src/authz/permissionHelpers';
 import messages from './messages';
 import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
@@ -26,11 +27,12 @@ export const useContentMenuItems = (courseId: string) => {
   const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
 
-  const { canViewCourseUpdates, canViewPagesAndResources } = useCourseUserPermissions(
+  const { canViewCourseUpdates, canViewPagesAndResources, canViewFiles } = useCourseUserPermissions(
     courseId,
     {
       ...getPagesAndResourcesPermissions(courseId),
       ...getCourseUpdatesPermissions(courseId),
+      ...getFilesPermissions(courseId),
     },
   );
 
@@ -53,10 +55,12 @@ export const useContentMenuItems = (courseId: string) => {
         title: intl.formatMessage(messages['header.links.pages']),
       }]
       : []),
-    {
-      href: waffleFlags.useNewFilesUploadsPage ? `/course/${courseId}/assets` : `${studioBaseUrl}/assets/${courseId}`,
-      title: intl.formatMessage(messages['header.links.filesAndUploads']),
-    },
+    ...(canViewFiles
+      ? [{
+        href: waffleFlags.useNewFilesUploadsPage ? `/course/${courseId}/assets` : `${studioBaseUrl}/assets/${courseId}`,
+        title: intl.formatMessage(messages['header.links.filesAndUploads']),
+      }] :
+      []),
   ];
   if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' || waffleFlags.useNewVideoUploadsPage) {
     items.push({

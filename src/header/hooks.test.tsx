@@ -22,11 +22,7 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
 }));
 
 // Bypass React Query for waffle flags, and just return the default values.
-mockWaffleFlags({
-  // Some flags can be enabled with either a config value or a waffle flag.
-  // For test purposes, we'll configure the video upload page using the config, so leave the waffle flag off.
-  useNewVideoUploadsPage: false,
-});
+mockWaffleFlags({});
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -63,6 +59,7 @@ describe('header utils', () => {
         canViewPagesAndResources: true,
         canManagePagesAndResources: true,
         canViewCourseUpdates: true,
+        canViewFiles: true,
       } as ReturnType<typeof useCourseUserPermissions>);
     });
 
@@ -72,6 +69,7 @@ describe('header utils', () => {
         isLoading: false,
         canViewCourseUpdates: true,
         canViewPagesAndResources: true,
+        canViewFiles: true,
       } as any);
       jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: false,
@@ -93,6 +91,7 @@ describe('header utils', () => {
         isLoading: false,
         canViewCourseUpdates: true,
         canViewPagesAndResources: true,
+        canViewFiles: true,
       } as any);
       jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: false,
@@ -104,6 +103,48 @@ describe('header utils', () => {
       const actualItems =
         renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems).toHaveLength(4);
+    });
+    it('when authz enabled and user has no permission to view files should not include files option', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        canViewFiles: false,
+      } as any);
+      jest.mocked(useSelector).mockReturnValue({
+        librariesV2Enabled: false,
+      });
+      const actualItems =
+        renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItemsTitle = actualItems.map((item) => item.title);
+      expect(actualItemsTitle).not.toContain(messages['header.links.filesAndUploads'].defaultMessage);
+    });
+    it('when authz enabled and user has permission to view files should include files option', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        canViewFiles: true,
+      } as any);
+      jest.mocked(useSelector).mockReturnValue({
+        librariesV2Enabled: false,
+      });
+      const actualItems =
+        renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItemsTitle = actualItems.map((item) => item.title);
+      expect(actualItemsTitle).toContain(messages['header.links.filesAndUploads'].defaultMessage);
+    });
+    it('when authz disabled user should view files option', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        canViewFiles: true,
+      } as any);
+      jest.mocked(useSelector).mockReturnValue({
+        librariesV2Enabled: false,
+      });
+      const actualItems =
+        renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const actualItemsTitle = actualItems.map((item) => item.title);
+      expect(actualItemsTitle).toContain(messages['header.links.filesAndUploads'].defaultMessage);
     });
     it('adds course libraries link to content menu when libraries v2 is enabled', () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: false });
@@ -222,15 +263,6 @@ describe('header utils', () => {
         renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       expect(actualItems).toHaveLength(6);
     });
-    it('when certificate page disabled should not include certificates option', () => {
-      setConfig({
-        ...getConfig(),
-        ENABLE_CERTIFICATE_PAGE: 'false',
-      });
-      const actualItems =
-        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
-      expect(actualItems).toHaveLength(5);
-    });
     it('when user has access to advanced settings should include advanced settings option', () => {
       const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result
         .current.map((item) => item.title);
@@ -258,6 +290,44 @@ describe('header utils', () => {
         expect(actualItemsTitle).toContain('Advanced Settings');
       });
     });
+
+    it('should include course team option when authz is disabled', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        canManageAdvancedSettings: true,
+      } as any);
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const courseTeamItem = actualItems.find(item => item.title === 'Course Team');
+      expect(courseTeamItem).toEqual({
+        href: '/course/course-123/course_team',
+        title: 'Course Team',
+      });
+      const rolesPermissionsItem = actualItems.find(item => item.title === 'Roles and Permissions');
+      expect(rolesPermissionsItem).toBeUndefined();
+    });
+
+    it('should encode courseId in roles and permissions URL', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'http://admin-console.example.com',
+      });
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        isAuthzEnabled: true,
+        canManageAdvancedSettings: true,
+      } as any);
+      const courseIdWithSpecialChars = 'course-v1:org+course+run';
+      const actualItems =
+        renderHook(() => useSettingMenuItems(courseIdWithSpecialChars), { wrapper: createWrapper() }).result.current;
+      const rolesPermissionsItem = actualItems.find(item => item.title === 'Roles and Permissions');
+      expect(rolesPermissionsItem?.href).toBe(
+        `http://admin-console.example.com/authz?scope=${encodeURIComponent(courseIdWithSpecialChars)}`,
+      );
+    });
+
     it('when authz.enable_course_authoring flag is enabled and user has no access to advanced settings should not include advanced settings option', async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useCourseUserPermissions).mockReturnValue({

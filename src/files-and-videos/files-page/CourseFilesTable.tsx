@@ -28,6 +28,8 @@ import { getFileSizeToClosestByte } from '@src/utils';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getFilesPermissions } from '@src/authz/permissionHelpers';
 
 export const CourseFilesTable = () => {
   const intl = useIntl();
@@ -39,6 +41,12 @@ export const CourseFilesTable = () => {
     usageStatus: usagePathStatus,
     errors: errorMessages,
   } = useSelector((state: DeprecatedReduxState) => state.assets);
+
+  const {
+    canCreateFiles,
+    canDeleteFiles,
+    canEditFiles,
+  } = useCourseUserPermissions(courseId, getFilesPermissions(courseId));
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id));
@@ -69,6 +77,7 @@ export const CourseFilesTable = () => {
     FileInfoModalSidebar({
       asset,
       handleLockedAsset: handleLockFile,
+      canLockFile: canEditFiles,
     });
 
   const assets = useModels('assets', assetIds);
@@ -180,6 +189,11 @@ export const CourseFilesTable = () => {
             thumbnailPreview,
             infoModalSidebar,
             files: assets,
+            permissions: {
+              canCreateFiles,
+              canDeleteFiles,
+              canEditFiles,
+            },
           }}
         />
         <FileValidationModal {...{ handleFileOverwrite }} />
