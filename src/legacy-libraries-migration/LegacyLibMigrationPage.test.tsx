@@ -76,13 +76,13 @@ describe('<LegacyLibMigrationPage />', () => {
 
     cancelButton.click();
 
-    // Should navigate to legacy libraries tab on studio home
+    // Should navigate to libraries tab on studio home
     expect(await screen.findByText('Exit Migration?')).toBeInTheDocument();
     const exitButton = screen.getByRole('button', { name: /exit/i });
     exitButton.click();
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/libraries-v1');
+      expect(mockNavigate).toHaveBeenCalledWith('/libraries');
     });
   });
 
