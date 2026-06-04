@@ -7,7 +7,7 @@ export const CourseAuthoringOutlineSidebarSlot = ({
   courseName,
   sections,
 }: CourseAuthoringOutlineSidebarSlotProps) => (
-  <div>
+  <div className="sidebar">
     <PluginSlot
       id="org.openedx.frontend.authoring.course_outline_sidebar.v1"
       idAliases={['course_authoring_outline_sidebar_slot']}
