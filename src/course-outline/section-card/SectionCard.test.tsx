@@ -1,16 +1,9 @@
-import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
-  act,
   fireEvent,
   screen,
-  waitFor,
-  within,
 } from '@src/testUtils';
-import { Info } from '@openedx/paragon/icons';
-import userEvent from '@testing-library/user-event';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
-import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import {
   mockAcceptLibBlockChanges as mockUseAcceptLibraryBlockChanges,
   mockCardAuthoringContext,
@@ -25,8 +18,8 @@ import {
   mockSubsection as subsection,
   mockUnit as unit,
 } from '../__mocks__/testSetup';
+import { describeCard } from '../__mocks__/card-test-factory';
 import SectionCard from './SectionCard';
-import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -57,8 +50,10 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
   };
 });
 
-const renderComponent = (props?: object, entry = '/course/:courseId') =>
-  renderCard(
+let axiosMock;
+let queryClient;
+const renderSectionCard = (props?: Record<string, unknown>, entry = '/course/:courseId') => {
+  const result = renderCard(
     <SectionCard
       section={section}
       index={1}
@@ -77,14 +72,30 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
     {
       path: '/course/:courseId',
       params: { courseId: '5' },
-      routerProps: {
-        initialEntries: [entry],
-      },
+      routerProps: { initialEntries: [entry] },
     },
   );
-let axiosMock;
-let queryClient;
+  return { ...result, container: result.container as HTMLElement };
+};
 
+// ─── Shared tests via factory ─────────────────────────────────────────
+describeCard({
+  name: 'SectionCard',
+  testId: 'section-card',
+  headerTestId: 'section-card-header',
+  mockBlock: section,
+  blockPropKey: 'section',
+  syncNodeName: 'section name',
+  hasExpandCollapse: true,
+  expandTestId: 'section-card__subsections',
+  childAddLabel: 'New subsection',
+  render: renderSectionCard,
+  extraRenderAssertions: () => {
+    expect(screen.getByTestId('section-card__content')).toBeInTheDocument();
+  },
+});
+
+// ─── Unique tests ─────────────────────────────────────────────────────
 describe('<SectionCard />', () => {
   beforeEach(() => {
     const mocks = setupCardTestMocks();
@@ -95,48 +106,8 @@ describe('<SectionCard />', () => {
       .reply(200, section);
   });
 
-  it('render SectionCard component correctly', () => {
-    renderComponent();
-
-    expect(screen.getByTestId('section-card-header')).toBeInTheDocument();
-    expect(screen.getByTestId('section-card__content')).toBeInTheDocument();
-
-    // The card is not selected
-    const card = screen.getByTestId('section-card');
-    expect(card).not.toHaveClass('outline-card-selected');
-  });
-
-  it('render SectionCard component in selected state', async () => {
-    const user = userEvent.setup();
-    const { container } = renderComponent();
-
-    expect(screen.getByTestId('section-card-header')).toBeInTheDocument();
-
-    // The card is not selected
-    expect(await screen.findByTestId('section-card')).not.toHaveClass('outline-card-selected');
-
-    // Get the <Row> that contains the card and click it to select the card
-    const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
-    expect(el).not.toBeNull();
-    await user.click(el!);
-
-    // The card is selected
-    expect(await screen.findByTestId('section-card')).toHaveClass('outline-card-selected');
-  });
-
-  it('does not select section card when menu opens', async () => {
-    const user = userEvent.setup();
-    renderComponent();
-
-    const card = screen.getByTestId('section-card');
-    const menuButton = await screen.findByTestId('section-card-header__menu-button');
-    await user.click(menuButton);
-
-    expect(card).not.toHaveClass('outline-card-selected');
-  });
-
   it('expands/collapses the card when the expand button is clicked', () => {
-    renderComponent();
+    renderSectionCard();
 
     const expandButton = screen.getByTestId('section-card-header__expanded-btn');
     fireEvent.click(expandButton);
@@ -148,54 +119,12 @@ describe('<SectionCard />', () => {
     expect(screen.queryByRole('button', { name: 'New subsection' })).toBeInTheDocument();
   });
 
-  it('hides header based on isHeaderVisible flag', async () => {
-    const { queryByTestId } = renderComponent({
-      section: {
-        ...section,
-        isHeaderVisible: false,
-      },
-    });
-    expect(queryByTestId('section-card-header')).not.toBeInTheDocument();
-  });
-
-  it('hides add new, duplicate & delete option based on childAddable, duplicable & deletable action flag', async () => {
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, {
-        ...section,
-        actions: {
-          draggable: true,
-          childAddable: false,
-          deletable: false,
-          duplicable: false,
-        },
-      });
-    renderComponent({
-      section: {
-        ...section,
-        actions: {
-          draggable: true,
-          childAddable: false,
-          deletable: false,
-          duplicable: false,
-        },
-      },
-    });
-    const element = await screen.findByTestId('section-card');
-    const menu = await within(element).findByTestId('section-card-header__menu-button');
-    await act(async () => fireEvent.click(menu));
-    expect(within(element).queryByTestId('section-card-header__menu-duplicate-button')).not.toBeInTheDocument();
-    expect(within(element).queryByTestId('section-card-header__menu-delete-button')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'New subsection' })).not.toBeInTheDocument();
-  });
-
   it('check extended section when URL "show" param in subsection under section', async () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    // url encode subsection.id
     const subsectionIdUrl = encodeURIComponent(subsection.id);
-    renderComponent(collapsedSections, `/course/:courseId?show=${subsectionIdUrl}`);
+    renderSectionCard(collapsedSections as any, `/course/:courseId?show=${subsectionIdUrl}`);
 
     const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
@@ -207,9 +136,8 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    // url encode subsection.id
     const unitIdUrl = encodeURIComponent(unit.id);
-    renderComponent(collapsedSections, `/course/:courseId?show=${unitIdUrl}`);
+    renderSectionCard(collapsedSections as any, `/course/:courseId?show=${unitIdUrl}`);
 
     const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
@@ -222,7 +150,7 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    renderComponent(collapsedSections, `/course/:courseId?show=${randomId}`);
+    renderSectionCard(collapsedSections as any, `/course/:courseId?show=${randomId}`);
 
     const cardSubsections = screen.queryByTestId('section-card__subsections');
     const newSubsectionButton = screen.queryByRole('button', { name: 'New subsection' });
@@ -232,125 +160,22 @@ describe('<SectionCard />', () => {
 
   it('expands collapsed section when scrollState targets a child subsection', async () => {
     queryClient.setQueryData(courseOutlineQueryKeys.scrollToCourseItemId('5'), { id: subsection.id });
-    renderComponent({ isSectionsExpanded: false });
+    renderSectionCard({ isSectionsExpanded: false });
 
     expect(await screen.findByTestId('section-card__subsections')).toBeInTheDocument();
   });
 
   it('expands collapsed section when scrollState targets a unit inside a child subsection', async () => {
     queryClient.setQueryData(courseOutlineQueryKeys.scrollToCourseItemId('5'), { id: unit.id });
-    renderComponent({ isSectionsExpanded: false });
+    renderSectionCard({ isSectionsExpanded: false });
 
     expect(await screen.findByTestId('section-card__subsections')).toBeInTheDocument();
   });
 
   it('does not expand collapsed section when scrollState targets an unrelated id', async () => {
     queryClient.setQueryData(courseOutlineQueryKeys.scrollToCourseItemId('5'), { id: 'unrelated-id' });
-    renderComponent({ isSectionsExpanded: false });
+    renderSectionCard({ isSectionsExpanded: false });
 
     expect(screen.queryByTestId('section-card__subsections')).toBeNull();
-  });
-
-  it('should sync section changes from upstream', async () => {
-    renderComponent();
-
-    expect(await screen.findByTestId('section-card-header')).toBeInTheDocument();
-
-    // Click on sync button
-    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
-    fireEvent.click(syncButton);
-
-    // Should open compare preview modal
-    expect(screen.getByRole('heading', { name: /preview changes: section name/i })).toBeInTheDocument();
-
-    // Click on accept changes
-    const acceptChangesButton = screen.getByText(/accept changes/i);
-    fireEvent.click(acceptChangesButton);
-
-    await waitFor(() => expect(mockUseAcceptLibraryBlockChanges).toHaveBeenCalled());
-  });
-
-  it('should decline sync section changes from upstream', async () => {
-    renderComponent();
-
-    expect(await screen.findByTestId('section-card-header')).toBeInTheDocument();
-
-    // Click on sync button
-    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
-    fireEvent.click(syncButton);
-
-    // Should open compare preview modal
-    expect(screen.getByRole('heading', { name: /preview changes: section name/i })).toBeInTheDocument();
-
-    // Click on ignore changes
-    const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });
-    fireEvent.click(ignoreChangesButton);
-
-    // Should open the confirmation modal
-    expect(screen.getByRole('heading', { name: /ignore these changes\?/i })).toBeInTheDocument();
-
-    // Click on ignore button
-    const ignoreButton = screen.getByRole('button', { name: /ignore/i });
-    fireEvent.click(ignoreButton);
-
-    await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
-  });
-
-  it('should open align sidebar', async () => {
-    const user = userEvent.setup();
-    const mockSetCurrentPageKey = jest.fn();
-    const mockSetSelectedContainerState = jest.fn();
-
-    const testSidebarPage = {
-      component: CourseInfoSidebar,
-      icon: Info,
-      title: '',
-    };
-
-    jest
-      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
-      .mockImplementation(() => ({
-        setCurrentPageKey: mockSetCurrentPageKey,
-        currentPageKey: 'info',
-        sidebarPages: {
-          info: testSidebarPage,
-          help: testSidebarPage,
-          add: testSidebarPage,
-        },
-        currentTabKey: 'info',
-        setCurrentTabKey: jest.fn(),
-        openContainerSidebar: jest.fn(),
-        isOpen: true,
-        open: jest.fn(),
-        toggle: jest.fn(),
-        currentFlow: undefined,
-        startCurrentFlow: jest.fn(),
-        stopCurrentFlow: jest.fn(),
-        openContainerInfoSidebar: jest.fn(),
-        clearSelection: jest.fn(),
-        setSelectedContainerState: mockSetSelectedContainerState,
-      }));
-    setConfig({
-      ...getConfig(),
-      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-    });
-    renderComponent();
-    const element = await screen.findByTestId('section-card');
-    const menu = await within(element).findByTestId('section-card-header__menu-button');
-    await user.click(menu);
-
-    const manageTagsBtn = await within(element).findByTestId('section-card-header__menu-manage-tags-button');
-    expect(manageTagsBtn).toBeInTheDocument();
-
-    await user.click(manageTagsBtn);
-
-    await waitFor(() => {
-      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
-    });
-    expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
-      currentId: section.id,
-      sectionId: section.id,
-      index: 1,
-    });
   });
 });

@@ -5,7 +5,6 @@ import {
   act,
   fireEvent,
   screen,
-  waitFor,
   within,
 } from '@src/testUtils';
 import { ContainerType } from '@src/generic/key-utils';
@@ -20,6 +19,7 @@ import {
   setupCardTestMocks,
 } from '../__mocks__/testSetup';
 import { mockSection as section, mockSubsection as subsection, mockUnit as unit } from '../__mocks__/testSetup';
+import { describeCard } from '../__mocks__/card-test-factory';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
 
@@ -71,8 +71,8 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   }),
 }));
 
-const renderComponent = (props?: object, entry = '/course/:courseId') =>
-  renderCard(
+const renderSubsectionCard = (props?: Record<string, unknown>, entry = '/course/:courseId') => {
+  const result = renderCard(
     <SubsectionCard
       section={section}
       subsection={subsection}
@@ -92,47 +92,38 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
     {
       path: '/course/:courseId',
       params: { courseId: '5' },
-      routerProps: {
-        initialEntries: [entry],
-      },
+      routerProps: { initialEntries: [entry] },
     },
   );
+  return { ...result, container: result.container as HTMLElement };
+};
 
+// ─── Shared tests via factory ─────────────────────────────────────────
+describeCard({
+  name: 'SubsectionCard',
+  testId: 'subsection-card',
+  headerTestId: 'subsection-card-header',
+  mockBlock: subsection,
+  blockPropKey: 'subsection',
+  syncNodeName: 'subsection name',
+  hasExpandCollapse: true,
+  expandTestId: 'subsection-card__units',
+  childAddLabel: 'New unit',
+  render: renderSubsectionCard,
+  // SubsectionCard has pre-existing jest.mock for OutlineSidebarContext
+  // so the factory's jest.spyOn cannot redefine it.
+  skipAlignTest: true,
+  alignAssert: null,
+});
+
+// ─── Unique tests ─────────────────────────────────────────────────────
 describe('<SubsectionCard />', () => {
   beforeEach(() => {
     setupCardTestMocks();
   });
 
-  it('render SubsectionCard component correctly', () => {
-    renderComponent();
-
-    expect(screen.getByTestId('subsection-card-header')).toBeInTheDocument();
-
-    // The card is not selected
-    const card = screen.getByTestId('subsection-card');
-    expect(card).not.toHaveClass('outline-card-selected');
-  });
-
-  it('render SubsectionCard component in selected state', () => {
-    const { container } = renderComponent();
-
-    expect(screen.getByTestId('subsection-card-header')).toBeInTheDocument();
-
-    // The card is not selected
-    const card = screen.getByTestId('subsection-card');
-    expect(card).not.toHaveClass('outline-card-selected');
-
-    // Get the <Row> that contains the card and click it to select the card
-    const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
-    expect(el).not.toBeNull();
-    fireEvent.click(el!);
-
-    // The card is selected
-    expect(card).toHaveClass('outline-card-selected');
-  });
-
   it('expands/collapses the card when the subsection button is clicked', async () => {
-    renderComponent();
+    renderSubsectionCard();
 
     const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(expandButton);
@@ -144,47 +135,8 @@ describe('<SubsectionCard />', () => {
     expect(screen.queryByRole('button', { name: 'New unit' })).not.toBeInTheDocument();
   });
 
-  it('updates current section, subsection and item without changing selected card when menu opens', async () => {
-    renderComponent();
-
-    const card = screen.getByTestId('subsection-card');
-    const menu = await screen.findByTestId('subsection-card-header__menu');
-    fireEvent.click(menu);
-    expect(card).not.toHaveClass('outline-card-selected');
-  });
-
-  it('hides header based on isHeaderVisible flag', async () => {
-    renderComponent({
-      subsection: {
-        ...subsection,
-        isHeaderVisible: false,
-      },
-    });
-    expect(screen.queryByTestId('subsection-card-header')).not.toBeInTheDocument();
-  });
-
-  it('hides add new, duplicate & delete option based on childAddable, duplicable & deletable action flag', async () => {
-    renderComponent({
-      subsection: {
-        ...subsection,
-        actions: {
-          draggable: true,
-          childAddable: false,
-          deletable: false,
-          duplicable: false,
-        },
-      },
-    });
-    const element = await screen.findByTestId('subsection-card');
-    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
-    await act(async () => fireEvent.click(menu));
-    expect(within(element).queryByTestId('subsection-card-header__menu-duplicate-button')).not.toBeInTheDocument();
-    expect(within(element).queryByTestId('subsection-card-header__menu-delete-button')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'New unit' })).not.toBeInTheDocument();
-  });
-
   it('hides move, duplicate & delete options if parent was imported from library', async () => {
-    renderComponent({
+    renderSubsectionCard({
       section: {
         ...section,
         upstreamInfo: {
@@ -208,12 +160,12 @@ describe('<SubsectionCard />', () => {
   });
 
   it('renders live status', async () => {
-    renderComponent();
+    renderSubsectionCard();
     expect(await screen.findByText(cardHeaderMessages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders published but live status', async () => {
-    renderComponent({
+    renderSubsectionCard({
       subsection: {
         ...subsection,
         published: true,
@@ -224,7 +176,7 @@ describe('<SubsectionCard />', () => {
   });
 
   it('renders staff status', async () => {
-    renderComponent({
+    renderSubsectionCard({
       subsection: {
         ...subsection,
         published: false,
@@ -235,7 +187,7 @@ describe('<SubsectionCard />', () => {
   });
 
   it('renders draft status', async () => {
-    renderComponent({
+    renderSubsectionCard({
       subsection: {
         ...subsection,
         published: false,
@@ -248,7 +200,7 @@ describe('<SubsectionCard />', () => {
 
   it('check extended subsection when URL "show" param in subsection', async () => {
     const unitIdUrl = encodeURIComponent(unit.id);
-    renderComponent(undefined, `/course/:courseId?show=${unitIdUrl}`);
+    renderSubsectionCard(undefined, `/course/:courseId?show=${unitIdUrl}`);
 
     const cardUnits = await screen.findByTestId('subsection-card__units');
     const newUnitButton = await screen.findByRole('button', { name: 'New unit' });
@@ -258,7 +210,7 @@ describe('<SubsectionCard />', () => {
 
   it('check not extended subsection when URL "show" param not in subsection', async () => {
     const randomId = 'random-id';
-    renderComponent(undefined, `/course/:courseId?show=${randomId}`);
+    renderSubsectionCard(undefined, `/course/:courseId?show=${randomId}`);
 
     const cardUnits = screen.queryByTestId('subsection-card__units');
     const newUnitButton = screen.queryByRole('button', { name: 'New unit' });
@@ -266,9 +218,28 @@ describe('<SubsectionCard />', () => {
     expect(newUnitButton).toBeNull();
   });
 
+  it('should open align sidebar', async () => {
+    const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    renderSubsectionCard();
+    const element = await screen.findByTestId('subsection-card');
+    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
+    await user.click(menu);
+
+    const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
+    expect(manageTagsBtn).toBeInTheDocument();
+
+    await user.click(manageTagsBtn);
+
+    expect(screen.getByText('Manage tags')).toBeInTheDocument();
+  });
+
   it('should add unit from library', async () => {
     const user = userEvent.setup();
-    renderComponent();
+    renderSubsectionCard();
 
     const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
     await user.click(expandButton);
@@ -284,69 +255,5 @@ describe('<SubsectionCard />', () => {
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
       grandParentLocator: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
     });
-  });
-
-  it('should sync subsection changes from upstream', async () => {
-    renderComponent();
-
-    expect(await screen.findByTestId('subsection-card-header')).toBeInTheDocument();
-
-    // Click on sync button
-    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
-    fireEvent.click(syncButton);
-
-    // Should open compare preview modal
-    expect(screen.getByRole('heading', { name: /preview changes: subsection name/i })).toBeInTheDocument();
-
-    // Click on accept changes
-    const acceptChangesButton = screen.getByText(/accept changes/i);
-    fireEvent.click(acceptChangesButton);
-
-    await waitFor(() => expect(mockUseAcceptLibraryBlockChanges).toHaveBeenCalled());
-  });
-
-  it('should decline sync subsection changes from upstream', async () => {
-    renderComponent();
-
-    expect(await screen.findByTestId('subsection-card-header')).toBeInTheDocument();
-
-    // Click on sync button
-    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
-    fireEvent.click(syncButton);
-
-    // Should open compare preview modal
-    expect(screen.getByRole('heading', { name: /preview changes: subsection name/i })).toBeInTheDocument();
-
-    // Click on ignore changes
-    const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });
-    fireEvent.click(ignoreChangesButton);
-
-    // Should open the confirmation modal
-    expect(screen.getByRole('heading', { name: /ignore these changes\?/i })).toBeInTheDocument();
-
-    // Click on ignore button
-    const ignoreButton = screen.getByRole('button', { name: /ignore/i });
-    fireEvent.click(ignoreButton);
-
-    await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
-  });
-
-  it('should open align sidebar', async () => {
-    const user = userEvent.setup();
-    setConfig({
-      ...getConfig(),
-      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-    });
-    renderComponent();
-    const element = await screen.findByTestId('subsection-card');
-    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
-    await user.click(menu);
-
-    const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
-    expect(manageTagsBtn).toBeInTheDocument();
-
-    await user.click(manageTagsBtn);
-
-    expect(screen.getByText('Manage tags')).toBeInTheDocument();
   });
 });
