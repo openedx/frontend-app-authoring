@@ -47,33 +47,24 @@ export function useConfigureDialog(courseId: string): UseConfigureDialogOutput {
     openConfigureModal();
   }, [openConfigureModal]);
 
+  const payloadBuilders: Record<string, (data: typeof configureModalData, vars: Record<string, unknown>) => ConfigureItemPayload> = {
+    chapter: (data, vars) => ({ category: 'chapter', sectionId: data!.sectionId, ...vars }) as ChapterConfigurePayload,
+    sequential: (data, vars) => ({ category: 'sequential', itemId: data!.currentId, sectionId: data!.sectionId, ...vars }) as SequentialConfigurePayload,
+    vertical: (data, vars) => ({ category: 'vertical', unitId: data!.currentId, sectionId: data!.sectionId, ...vars }) as UnitConfigurePayload,
+  };
+
   const handleConfigureItemSubmitWrapper = useCallback(async (variables: Record<string, unknown>) => {
     if (!configureModalData) {
       handleConfigureModalClose();
       return;
     }
-    let payload: ConfigureItemPayload;
     const { category } = configureModalData;
-    switch (category) {
-      case 'chapter':
-        payload = {
-          category: 'chapter', sectionId: configureModalData.sectionId, ...variables,
-        } as ChapterConfigurePayload;
-        break;
-      case 'sequential':
-        payload = {
-          category: 'sequential', itemId: configureModalData.currentId, sectionId: configureModalData.sectionId, ...variables,
-        } as SequentialConfigurePayload;
-        break;
-      case 'vertical':
-        payload = {
-          category: 'vertical', unitId: configureModalData.currentId, sectionId: configureModalData.sectionId, ...variables,
-        } as UnitConfigurePayload;
-        break;
-      default:
-        handleConfigureModalClose();
-        return;
+    const builder = payloadBuilders[category];
+    if (!builder) {
+      handleConfigureModalClose();
+      return;
     }
+    const payload = builder(configureModalData, variables);
     const success = await handleConfigureItemSubmit(payload);
     if (success) {
       handleConfigureModalClose();

@@ -84,45 +84,41 @@ export function removeItemFromOutlineIndexData(
 ): any {
   if (!old?.courseStructure?.childInfo?.children) { return old; }
   const category = getBlockType(itemId);
-  const children = old.courseStructure.childInfo.children;
 
-  if (category === 'chapter') {
-    return updateCourseStructure(old, () => children.filter((s: any) => s.id !== itemId));
-  }
-
-  if (category === 'sequential') {
-    return mapSections(old, (s: any) =>
-      s.id !== variables.sectionId ? s : {
-        ...s,
-        childInfo: {
-          ...s.childInfo,
-          children: (s.childInfo?.children || []).filter((sub: any) => sub.id !== itemId),
-        },
-      },
-    );
-  }
-
-  if (category === 'vertical') {
-    return mapSections(old, (s: any) =>
-      s.id !== variables.sectionId ? s : {
-        ...s,
-        childInfo: {
-          ...s.childInfo,
-          children: (s.childInfo?.children || []).map((sub: any) =>
-            sub.id !== variables.subsectionId ? sub : {
-              ...sub,
-              childInfo: {
-                ...sub.childInfo,
-                children: (sub.childInfo?.children || []).filter((u: any) => u.id !== itemId),
+  const removeHandlers: Record<string, (o: any, id: string, v: typeof variables) => any> = {
+    chapter: (o, id) =>
+      updateCourseStructure(o, () =>
+        o.courseStructure.childInfo.children.filter((s: any) => s.id !== id)),
+    sequential: (o, id, v) =>
+      mapSections(o, (s: any) =>
+        s.id !== v.sectionId ? s : {
+          ...s,
+          childInfo: {
+            ...s.childInfo,
+            children: (s.childInfo?.children || []).filter((sub: any) => sub.id !== id),
+          },
+        }),
+    vertical: (o, id, v) =>
+      mapSections(o, (s: any) =>
+        s.id !== v.sectionId ? s : {
+          ...s,
+          childInfo: {
+            ...s.childInfo,
+            children: (s.childInfo?.children || []).map((sub: any) =>
+              sub.id !== v.subsectionId ? sub : {
+                ...sub,
+                childInfo: {
+                  ...sub.childInfo,
+                  children: (sub.childInfo?.children || []).filter((u: any) => u.id !== id),
+                },
               },
-            }
-          ),
-        },
-      },
-    );
-  }
+            ),
+          },
+        }),
+  };
 
-  return old;
+  const handler = removeHandlers[category];
+  return handler ? handler(old, itemId, variables) : old;
 }
 
 /** Insert duplicated section after original id in outline index cache. */

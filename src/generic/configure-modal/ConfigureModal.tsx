@@ -59,7 +59,7 @@ const ConfigureModal = ({
     hideAfterDue,
     showCorrectness,
     courseGraders,
-    category,
+    category: _category,
     format,
     userPartitionInfo,
     ancestorHasStaffLock,
@@ -79,6 +79,7 @@ const ConfigureModal = ({
     onlineProctoringRules,
     discussionEnabled,
   } = currentItemData;
+  const category = _category ?? '';
 
   const getSelectedGroups = () => {
     if ((userPartitionInfo?.selectedPartitionIndex || 0) >= 0) {
@@ -151,28 +152,51 @@ const ConfigureModal = ({
     discussionEnabled: Yup.boolean(),
   });
 
-  const isSubsection = category === COURSE_BLOCK_NAMES.sequential.id;
-
   const dialogTitle = isXBlockComponent
     ? intl.formatMessage(messages.componentTitle, { title: displayName })
     : intl.formatMessage(messages.title, { title: displayName });
 
-  const handleSave = (data) => {
-    let { releaseDate } = data;
-    // to prevent passing an empty string to the backend
-    releaseDate = releaseDate || null;
-    const groupAccess = {};
-    switch (category) {
-      case COURSE_BLOCK_NAMES.chapter.id:
+  // ─── Category-configured handlers ──────────────────────────────────
+  // Eliminates parallel switch pairs on category.
+  const configureHandlers: Record<string, {
+    handleSave: (data: Record<string, any>) => void;
+    renderBody: (values: any, setFieldValue: any) => React.ReactNode;
+  }> = {
+    [COURSE_BLOCK_NAMES.chapter.id]: {
+      handleSave: (data) => {
         onConfigureSubmit({
           isVisibleToStaffOnly: data.isVisibleToStaffOnly,
-          startDatetime: releaseDate,
+          startDatetime: data.releaseDate || null,
         });
-        break;
-      case COURSE_BLOCK_NAMES.sequential.id:
+      },
+      renderBody: (values, setFieldValue) => (
+        <Tabs>
+          <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
+            <BasicTab
+              values={values}
+              setFieldValue={setFieldValue}
+              isSubsection={false}
+              courseGraders={courseGraders || []}
+              isSelfPaced={!!isSelfPaced}
+            />
+          </Tab>
+          <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
+            <VisibilityTab
+              values={values}
+              setFieldValue={setFieldValue}
+              category={category}
+              isSubsection={false}
+              showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
+            />
+          </Tab>
+        </Tabs>
+      ),
+    },
+    [COURSE_BLOCK_NAMES.sequential.id]: {
+      handleSave: (data) => {
         onConfigureSubmit({
           isVisibleToStaffOnly: data.isVisibleToStaffOnly,
-          releaseDate,
+          releaseDate: data.releaseDate || null,
           graderType: data.graderType,
           dueDate: data.dueDate,
           isTimeLimited: data.isTimeLimited,
@@ -188,111 +212,89 @@ const ConfigureModal = ({
           prereqMinScore: data.prereqMinScore,
           prereqMinCompletion: data.prereqMinCompletion,
         });
-        break;
-      case COURSE_BLOCK_NAMES.vertical.id:
-      case COURSE_BLOCK_NAMES.libraryContent.id:
-      case COURSE_BLOCK_NAMES.splitTest.id:
-      case COURSE_BLOCK_NAMES.component.id:
-        // groupAccess should be {partitionId: [group1, group2]} or {} if selectedPartitionIndex === -1
-        if (data.selectedPartitionIndex >= 0) {
-          const partitionId = userPartitionInfo!.selectablePartitions[data.selectedPartitionIndex].id;
-          groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
-        }
-        onConfigureSubmit({
-          isVisibleToStaffOnly: data.isVisibleToStaffOnly,
-          type: PUBLISH_TYPES.republish,
-          groupAccess,
-          discussionEnabled: data.discussionEnabled,
-        });
-        break;
-      default:
-        break;
-    }
+      },
+      renderBody: (values, setFieldValue) => (
+        <Tabs>
+          <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
+            <BasicTab
+              values={values}
+              setFieldValue={setFieldValue}
+              isSubsection
+              courseGraders={courseGraders || []}
+              isSelfPaced={!!isSelfPaced}
+            />
+          </Tab>
+          <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
+            <VisibilityTab
+              values={values}
+              setFieldValue={setFieldValue}
+              category={category}
+              isSubsection
+              showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
+              isSelfPaced={isSelfPaced}
+            />
+          </Tab>
+          <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>
+            <div className="mt-4">
+              <AdvancedTab
+                values={values}
+                setFieldValue={setFieldValue}
+                prereqs={prereqs}
+                releasedToStudents={releasedToStudents}
+                wasExamEverLinkedWithExternal={wasExamEverLinkedWithExternal}
+                enableProctoredExams={enableProctoredExams}
+                enableTimedExams={enableTimedExams}
+                supportsOnboarding={supportsOnboarding}
+                showReviewRules={showReviewRules}
+                wasProctoredExam={isProctoredExam}
+                onlineProctoringRules={onlineProctoringRules}
+              />
+            </div>
+          </Tab>
+        </Tabs>
+      ),
+    },
   };
 
-  const renderModalBody = (values, setFieldValue) => {
-    switch (category) {
-      case COURSE_BLOCK_NAMES.chapter.id:
-        return (
-          <Tabs>
-            <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
-              <BasicTab
-                values={values}
-                setFieldValue={setFieldValue}
-                isSubsection={isSubsection}
-                courseGraders={courseGraders || []}
-                isSelfPaced={!!isSelfPaced}
-              />
-            </Tab>
-            <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
-              <VisibilityTab
-                values={values}
-                setFieldValue={setFieldValue}
-                category={category}
-                isSubsection={isSubsection}
-                showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
-              />
-            </Tab>
-          </Tabs>
-        );
-      case COURSE_BLOCK_NAMES.sequential.id:
-        return (
-          <Tabs>
-            <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
-              <BasicTab
-                values={values}
-                setFieldValue={setFieldValue}
-                isSubsection={isSubsection}
-                courseGraders={courseGraders || []}
-                isSelfPaced={!!isSelfPaced}
-              />
-            </Tab>
-            <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
-              <VisibilityTab
-                values={values}
-                setFieldValue={setFieldValue}
-                category={category}
-                isSubsection={isSubsection}
-                showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
-                isSelfPaced={isSelfPaced}
-              />
-            </Tab>
-            <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>
-              <div className="mt-4">
-                <AdvancedTab
-                  values={values}
-                  setFieldValue={setFieldValue}
-                  prereqs={prereqs}
-                  releasedToStudents={releasedToStudents}
-                  wasExamEverLinkedWithExternal={wasExamEverLinkedWithExternal}
-                  enableProctoredExams={enableProctoredExams}
-                  enableTimedExams={enableTimedExams}
-                  supportsOnboarding={supportsOnboarding}
-                  showReviewRules={showReviewRules}
-                  wasProctoredExam={isProctoredExam}
-                  onlineProctoringRules={onlineProctoringRules}
-                />
-              </div>
-            </Tab>
-          </Tabs>
-        );
-      case COURSE_BLOCK_NAMES.vertical.id:
-      case COURSE_BLOCK_NAMES.libraryContent.id:
-      case COURSE_BLOCK_NAMES.splitTest.id:
-      case COURSE_BLOCK_NAMES.component.id:
-        return (
-          <UnitTab
-            isXBlockComponent={isXBlockComponent}
-            category={category}
-            values={values}
-            setFieldValue={setFieldValue}
-            showWarning={visibilityState === VisibilityTypes.STAFF_ONLY && !ancestorHasStaffLock}
-            userPartitionInfo={userPartitionInfo}
-          />
-        );
-      default:
-        return null;
-    }
+  // Node-content handler shared by vertical, libraryContent, splitTest, component
+  const nodeHandler = {
+    handleSave: (data: Record<string, any>) => {
+      const groupAccess: Record<string, any> = {};
+      if (data.selectedPartitionIndex >= 0) {
+        const partitionId = userPartitionInfo!.selectablePartitions[data.selectedPartitionIndex].id;
+        groupAccess[partitionId] = data.selectedGroups.map((g: string) => parseInt(g, 10));
+      }
+      onConfigureSubmit({
+        isVisibleToStaffOnly: data.isVisibleToStaffOnly,
+        type: PUBLISH_TYPES.republish,
+        groupAccess,
+        discussionEnabled: data.discussionEnabled,
+      });
+    },
+    renderBody: (values, setFieldValue) => (
+      <UnitTab
+        isXBlockComponent={isXBlockComponent}
+        category={category}
+        values={values}
+        setFieldValue={setFieldValue}
+        showWarning={visibilityState === VisibilityTypes.STAFF_ONLY && !ancestorHasStaffLock}
+        userPartitionInfo={userPartitionInfo}
+      />
+    ),
+  };
+
+  [COURSE_BLOCK_NAMES.vertical.id, COURSE_BLOCK_NAMES.libraryContent.id, COURSE_BLOCK_NAMES.splitTest.id, COURSE_BLOCK_NAMES.component.id].forEach(
+    (key) => { configureHandlers[key] = nodeHandler; }
+  );
+
+  const activeHandler = configureHandlers[category];
+
+  const handleSave = (data: Record<string, any>) => {
+    activeHandler?.handleSave(data);
+  };
+
+  const renderModalBody = (values: any, setFieldValue: any) => {
+    return activeHandler?.renderBody(values, setFieldValue) ?? null;
   };
 
   return (

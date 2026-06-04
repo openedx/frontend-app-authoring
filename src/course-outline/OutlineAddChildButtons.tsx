@@ -14,11 +14,10 @@ import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/Ou
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
-import { COURSE_BLOCK_NAMES } from '@src/constants';
+import { OUTLINE_CATEGORY_CONFIG, CONTAINER_CATEGORY_CONFIG } from './constants';
 import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { useCreateBlockSidebar } from '@src/course-outline/state';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import messages from './messages';
 
 /**
  * Placeholder component that is displayed when a user clicks the "Use content from library" button.
@@ -41,17 +40,15 @@ const AddPlaceholder = ({ parentLocator, isPending }: AddPlaceholderProps) => {
   }
 
   const getTitle = () => {
-    switch (currentFlow?.flowType) {
-      case ContainerType.Section:
-        return intl.formatMessage(messages.placeholderSectionText);
-      case ContainerType.Subsection:
-        return intl.formatMessage(messages.placeholderSubsectionText);
-      case ContainerType.Unit:
-        return intl.formatMessage(messages.placeholderUnitText);
-      default:
-        // istanbul ignore next: this should never happen
-        throw new Error('Unknown flow type');
+    const flowType = currentFlow?.flowType;
+    if (!flowType) {
+      throw new Error('Unknown flow type');
     }
+    const config = CONTAINER_CATEGORY_CONFIG[flowType];
+    if (!config) {
+      throw new Error('Unknown flow type');
+    }
+    return intl.formatMessage(config.placeholderMessage);
   };
 
   return (
@@ -110,52 +107,37 @@ const OutlineAddChildButtons = ({
     courseUsageKey,
     openContainerInfoSidebar,
   );
-  let messageMap = {
-    newButton: messages.newUnitButton,
-    importButton: messages.useUnitFromLibraryButton,
-  };
-  let onNewCreateContent: () => Promise<void>;
-  let flowType: ContainerType;
+  // Core config from single source of truth
+  const categoryConfig = CONTAINER_CATEGORY_CONFIG[childType];
+  if (!categoryConfig) {
+    throw new Error(`Unrecognized block type ${childType}`);
+  }
 
-  // Based on the childType, determine the correct action and messages to display.
-  switch (childType) {
-    case ContainerType.Section:
-      messageMap = {
-        newButton: messages.newSectionButton,
-        importButton: messages.useSectionFromLibraryButton,
-      };
-      onNewCreateContent = async () => {
-        await createSection();
-      };
-      flowType = ContainerType.Section;
-      break;
-    case ContainerType.Subsection:
-      messageMap = {
-        newButton: messages.newSubsectionButton,
-        importButton: messages.useSubsectionFromLibraryButton,
-      };
-      onNewCreateContent = async () => {
-        await createSubsection(parentLocator);
-      };
-      flowType = ContainerType.Subsection;
-      break;
-    case ContainerType.Unit:
-      messageMap = {
-        newButton: messages.newUnitButton,
-        importButton: messages.useUnitFromLibraryButton,
-      };
-      onNewCreateContent = () =>
-        handleAddAndOpenUnit.mutateAsync({
-          type: ContainerType.Vertical,
-          parentLocator,
-          displayName: COURSE_BLOCK_NAMES.vertical.name,
-          sectionId: grandParentLocator,
-        });
-      flowType = ContainerType.Unit;
-      break;
-    default:
-      // istanbul ignore next: unreachable
-      throw new Error(`Unrecognized block type ${childType}`);
+  const messageMap = {
+    newButton: categoryConfig.newButtonMessage,
+    importButton: categoryConfig.importButtonMessage,
+  };
+  const flowType = childType;
+
+  // Create callbacks stay local — they depend on component-specific hooks
+  const createContentMap: Record<string, () => Promise<unknown>> = {
+    [ContainerType.Section]: async () => {
+      await createSection();
+    },
+    [ContainerType.Subsection]: async () => {
+      await createSubsection(parentLocator);
+    },
+    [ContainerType.Unit]: () =>
+      handleAddAndOpenUnit.mutateAsync({
+        type: ContainerType.Vertical,
+        parentLocator,
+        displayName: OUTLINE_CATEGORY_CONFIG.vertical.name,
+        sectionId: grandParentLocator,
+      }),
+  };
+  const onNewCreateContent = createContentMap[childType];
+  if (!onNewCreateContent) {
+    throw new Error(`Unrecognized block type ${childType}`);
   }
 
   /**

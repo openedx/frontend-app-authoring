@@ -7,6 +7,7 @@ import {
   useConfigureUnit,
   type ConfigureItemPayload,
 } from '../data';
+import { OUTLINE_CATEGORY_CONFIG } from '../constants';
 
 // ─── Narrow hook: delete only ────────────────────────────────────────────
 
@@ -22,26 +23,12 @@ export function useOutlineDeleteAction(courseId: string): {
   const handleDeleteItemSubmit = useCallback(
     async (selection: OutlineActionSelection): Promise<boolean> => {
       try {
-        switch (selection.category) {
-          case 'chapter':
-            await deleteMutation.mutateAsync({ itemId: selection.currentId });
-            break;
-          case 'sequential':
-            await deleteMutation.mutateAsync({
-              itemId: selection.currentId,
-              sectionId: selection.sectionId,
-            });
-            break;
-          case 'vertical':
-            await deleteMutation.mutateAsync({
-              itemId: selection.currentId,
-              subsectionId: selection.subsectionId,
-              sectionId: selection.sectionId,
-            });
-            break;
-          default:
-            throw new Error(`Unrecognized category`);
+        const config = OUTLINE_CATEGORY_CONFIG[selection.category];
+        const deleteParams: Record<string, string> = { itemId: selection.currentId };
+        for (const field of config.deleteExtraFields) {
+          deleteParams[field] = (selection as any)[field];
         }
+        await deleteMutation.mutateAsync(deleteParams as Parameters<typeof deleteMutation.mutateAsync>[0]);
         return true;
       } catch {
         return false;
@@ -66,29 +53,18 @@ export function useOutlineConfigureAction(courseId: string): {
   const configureSubsectionMutation = useConfigureSubsection(courseId);
   const configureUnitMutation = useConfigureUnit(courseId);
 
+  const configureMutationMap = {
+    chapter: configureSectionMutation,
+    sequential: configureSubsectionMutation,
+    vertical: configureUnitMutation,
+  } as const;
+
   const handleConfigureItemSubmit = useCallback(
     async (payload: ConfigureItemPayload): Promise<boolean> => {
       if (!payload) { return false; }
       try {
-        switch (payload.category) {
-          case 'chapter': {
-            const { category: _, ...rest } = payload;
-            await configureSectionMutation.mutateAsync(rest);
-            break;
-          }
-          case 'sequential': {
-            const { category: _, ...rest } = payload;
-            await configureSubsectionMutation.mutateAsync(rest);
-            break;
-          }
-          case 'vertical': {
-            const { category: _, ...rest } = payload;
-            await configureUnitMutation.mutateAsync(rest);
-            break;
-          }
-          default:
-            throw new Error(`Unrecognized category`);
-        }
+        const { category: _, ...rest } = payload;
+        await configureMutationMap[payload.category].mutateAsync(rest as any);
         return true;
       } catch {
         return false;
