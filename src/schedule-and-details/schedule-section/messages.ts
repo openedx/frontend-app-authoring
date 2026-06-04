@@ -73,6 +73,11 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.schedule-section.upgrade-deadline.time.label',
     defaultMessage: 'Upgrade deadline time',
   },
+  scheduleReadOnlyAlert: {
+    id: 'course-authoring.schedule.schedule-section.read-only-alert',
+    defaultMessage: 'You don\'t have permission to edit the "Course Schedule". Contact your organization admin to request access.',
+    description: 'Alert shown inside the Course Schedule section when the user cannot edit schedule fields',
+  },
 });
 
 export default messages;

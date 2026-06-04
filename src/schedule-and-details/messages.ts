@@ -81,6 +81,16 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.alert.fail',
     defaultMessage: 'We encountered an error when saving your changes.',
   },
+  viewOnlyAlert: {
+    id: 'course-authoring.schedule.alert.view-only',
+    defaultMessage: 'You have view-only access to this page. Contact your organization admin to request editing permissions.',
+    description: 'Alert shown to users who can view but cannot edit schedule or details',
+  },
+  viewOnlyAlert: {
+    id: 'course-authoring.schedule.alert.view-only',
+    defaultMessage: 'You have view-only access to this page. Contact your organization admin to request editing permissions.',
+    description: 'Alert shown to users who can view but cannot edit schedule or details',
+  },
   errorMessage1: {
     id: 'course-authoring.schedule.schedule-section.error-message-1',
     defaultMessage: 'The certificates display behavior must be \'A date after the course end date\' if certificate available date is set.',
