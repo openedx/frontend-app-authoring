@@ -322,6 +322,47 @@ function buildReorderOutlineSpec(): NodeSpec[] {
   ];
 }
 
+/** Build a 4-section NodeSpec for delete/duplicate/publish tests. */
+function buildOperationsOutlineSpec(): NodeSpec[] {
+  const id = (type: string, block: string) => `block-v1:edX+DemoX+Demo_Course+type@${type}+block@${block}`;
+  return [
+    {
+      id: id('chapter', 'd8a6192ade314473a78242dfeedfbf5b'),
+      displayName: 'Introduction 12',
+      overrides: { visibilityState: 'draft', published: false },
+      children: [
+        {
+          id: id('sequential', '8a85e287e30a47e98d8c1f37f74a6a9d'),
+          displayName: 'Subsection 1A',
+          overrides: { visibilityState: 'draft', published: false },
+          children: [{
+            id: id('vertical', '0f652012aa294ed9b4360a1e4f6c5232'),
+            displayName: 'Unit 1A1',
+            overrides: { visibilityState: 'draft', published: false },
+          }],
+        },
+        {
+          id: id('sequential', 'b713bc2830f34f6f87554028c3068729'),
+          displayName: 'Subsection 1B',
+          overrides: { visibilityState: 'draft', published: false },
+        },
+      ],
+    },
+    { id: id('chapter', 'section-2'), displayName: 'Section 2', overrides: { visibilityState: 'live' } },
+    { id: id('chapter', 'section-3'), displayName: 'Section 3', overrides: { visibilityState: 'live' } },
+    { id: id('chapter', 'section-4'), displayName: 'Section 4', overrides: { visibilityState: 'live' } },
+  ];
+}
+
+function useOperationsTestOutline() {
+  useTestOutline({
+    sections: buildOperationsOutlineSpec(),
+    overrides: {
+      courseStructure: { id: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course' },
+    },
+  });
+}
+
 /** Wrapper around useTestOutline for reorder/move tests — overrides courseStructure.id to match old mock. */
 function useReorderTestOutline() {
   useTestOutline({
@@ -644,6 +685,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new section correctly', async () => {
+    useTestOutline();
     const user = userEvent.setup();
     renderComponent();
     let elements = await screen.findAllByTestId('section-card');
@@ -677,6 +719,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new subsection correctly', async () => {
+    useOperationsTestOutline();
     const user = userEvent.setup();
     const { findAllByTestId } = renderComponent();
     const [section] = await findAllByTestId('section-card');
@@ -742,6 +785,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds a unit from library correctly', async () => {
+    useTestOutline();
     const user = userEvent.setup();
     renderComponent();
     const [sectionElement] = await screen.findAllByTestId('section-card');
@@ -765,6 +809,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds a subsection from library correctly', async () => {
+    useOperationsTestOutline();
     const user = userEvent.setup();
     renderComponent();
     const [sectionElement] = await screen.findAllByTestId('section-card');
@@ -786,6 +831,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds a section from library correctly', async () => {
+    useTestOutline();
     const user = userEvent.setup();
     renderComponent();
     const sections = await screen.findAllByTestId('section-card');
@@ -1014,6 +1060,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section, subsection and unit is deleted when corresponding delete button is clicked', async () => {
+    useOperationsTestOutline();
     const user = userEvent.setup();
     renderComponent();
     // get section, subsection and unit
@@ -1092,6 +1139,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section, subsection and unit is duplicated successfully', async () => {
+    useOperationsTestOutline();
     const { findAllByTestId } = renderComponent();
     // get section, subsection and unit
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children as unknown as XBlock[];
@@ -1190,6 +1238,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check section, subsection & unit is published when publish button is clicked', async () => {
+    useOperationsTestOutline();
     const { findAllByTestId, findByTestId } = renderComponent();
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children as unknown as XBlock[];
     const [sectionElement] = await findAllByTestId('section-card');
@@ -2894,6 +2943,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('should show toats on export tags', async () => {
+    useTestOutline();
     const expectedResponse = 'this is a test';
 
     // Delay to ensure we see "Please wait."
@@ -2923,6 +2973,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('should show toast on export tags error', async () => {
+    useTestOutline();
     // Delay to ensure we see "Please wait."
     // Without the delay the error renders too quickly
     axiosMock
