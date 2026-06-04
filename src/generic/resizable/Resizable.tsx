@@ -62,13 +62,13 @@ export const ResizableBox = ({
 
   return (
     <div
-      className="resizable"
+      className="resizable align-self-stretch d-flex"
       ref={boxRef}
       style={{ width: `${width}px` }}
     >
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-static-element-interactions */}
       <div className="resizable-handle" onMouseDown={onMouseDown} />
-      <div className="w-100">
+      <div className="w-100 d-flex">
         {children}
       </div>
     </div>
