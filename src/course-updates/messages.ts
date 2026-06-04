@@ -86,6 +86,11 @@ const messages = defineMessages({
     defaultMessage: 'Failed to delete selected course update. Please try again later.',
     description: 'Alert body message for deleting course update errors',
   },
+  viewOnlyAlert: {
+    id: 'course-authoring.course-updates.alert.view-only',
+    defaultMessage: 'You have view-only access to this page. Contact your organization admin to request permissions.',
+    description: 'Alert shown to users who can view but cannot manage course updates',
+  },
 });
 
 export default messages;

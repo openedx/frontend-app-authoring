@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
+  Alert,
   Button,
   Container,
   Layout,
@@ -155,7 +156,13 @@ const CourseUpdates = () => {
                         </Button>
                       ) :
                       null}
+					hideBorder={canViewCourseUpdates &&!canManageCourseUpdates}
                   />
+				  {canViewCourseUpdates && !canManageCourseUpdates && (
+                    <Alert variant="info" icon={LockIcon}>
+                      {intl.formatMessage(messages.viewOnlyAlert)}
+                    </Alert>
+                  )}
                   <section className="updates-section">
                     {isMainFormOpen && (
                       <UpdateForm
@@ -202,15 +209,17 @@ const CourseUpdates = () => {
                           <span className="small mr-2">
                             {intl.formatMessage(messages.noCourseUpdates)}
                           </span>
-                          <Button
-                            variant="primary"
-                            iconBefore={AddIcon}
-                            size="sm"
-                            onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
-                            disabled={isUpdateFormOpen || errors.loadingUpdates}
-                          >
-                            {intl.formatMessage(messages.firstUpdateButton)}
-                          </Button>
+                          {canManageCourseUpdates && (
+                            <Button
+                              variant="primary"
+                              iconBefore={AddIcon}
+                              size="sm"
+                              onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
+                              disabled={isUpdateFormOpen || errors.loadingUpdates}
+                            >
+                              {intl.formatMessage(messages.firstUpdateButton)}
+                            </Button>
+                          )}
                           <ActionRow.Spacer />
                         </ActionRow>
                       )}
