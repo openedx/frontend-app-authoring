@@ -41,6 +41,7 @@ import {
   courseBestPracticesMock,
   courseLaunchMock,
   buildTestOutline,
+  type NodeSpec,
 } from './__mocks__';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
@@ -71,7 +72,7 @@ const buildCourseOutlineIndexMock = () =>
     overrides: cloneDeep(originalCourseOutlineIndexMock) as Record<string, unknown>,
   }) as unknown as typeof originalCourseOutlineIndexMock;
 
-let courseOutlineIndexMock = buildCourseOutlineIndexMock();
+let courseOutlineIndexMock: any = buildCourseOutlineIndexMock();
 
 // ─── Local snake_case API-response mocks ────────────────────────────────
 const courseSectionMock = {
@@ -219,6 +220,118 @@ jest.mock('@src/studio-home/data/selectors', () => ({
 // eslint-disable-next-line no-promise-executor-return
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Replace the global outline fixture with buildTestOutline result.
+ * Reseeds React Query cache and updates the axios handler.
+ * Call inside individual tests (after beforeEach has run).
+ */
+function useTestOutline(
+  arg?: NodeSpec[] | { sections?: NodeSpec[]; overrides?: Record<string, unknown>; },
+) {
+  courseOutlineIndexMock = arg ? buildTestOutline(arg) : buildTestOutline();
+
+  // Update the API handler to return the new data
+  axiosMock.onGet(getCourseOutlineIndexApiUrl(courseId)).reply(200, courseOutlineIndexMock);
+
+  // Reseed the index cache
+  queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), cloneDeep(courseOutlineIndexMock));
+
+  // Reseed item-level caches
+  const children = (courseOutlineIndexMock.courseStructure as any).childInfo.children;
+  children.forEach((section: any) => {
+    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(section.id), section);
+    (section.childInfo?.children || []).forEach((subsection: any) => {
+      queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(subsection.id), subsection);
+      (subsection.childInfo?.children || []).forEach((unit: any) => {
+        queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(unit.id), unit);
+      });
+    });
+  });
+}
+
+/** Build a 4-section NodeSpec[] for reorder/drag/move tests with valid block-v1 IDs. */
+function buildReorderOutlineSpec(): NodeSpec[] {
+  const id = (type: string, block: string) => `block-v1:edX+DemoX+Demo_Course+type@${type}+block@${block}`;
+
+  /** Match the old mock's IDs for section-0 so collision-based drag handlers work. */
+  const oldSectionId = id('chapter', 'd8a6192ade314473a78242dfeedfbf5b');
+  const oldSub0Id = id('sequential', '8a85e287e30a47e98d8c1f37f74a6a9d');
+  const oldSub1Id = id('sequential', 'b713bc2830f34f6f87554028c3068729');
+
+  return [
+    {
+      id: oldSectionId,
+      displayName: 'Section 0',
+      children: [
+        {
+          id: oldSub0Id,
+          displayName: 'S0 Sub 0',
+          children: [{ id: id('vertical', 's0-sub-0-unit-0'), displayName: 'Unit' }],
+        },
+        {
+          id: oldSub1Id,
+          displayName: 'S0 Sub 1',
+          children: [{ id: id('vertical', 's0-sub-1-unit-0'), displayName: 'Unit' }],
+        },
+      ],
+    },
+    {
+      id: id('chapter', 'section-1'),
+      displayName: 'Section 1',
+      children: [
+        {
+          id: id('sequential', 's1-sub-0'),
+          displayName: 'S1 Sub 0',
+          children: [{ id: id('vertical', 's1-sub-0-unit-0'), displayName: 'Unit' }],
+        },
+        {
+          id: id('sequential', 's1-sub-1'),
+          displayName: 'S1 Sub 1',
+          children: [
+            { id: id('vertical', 's1-sub-1-unit-0'), displayName: 'Unit' },
+            { id: id('vertical', 's1-sub-1-unit-1'), displayName: 'Unit' },
+          ],
+        },
+      ],
+    },
+    {
+      id: id('chapter', 'section-2'),
+      displayName: 'Section 2',
+      children: [
+        {
+          id: id('sequential', 's2-sub-0'),
+          displayName: 'S2 Sub 0',
+          children: [
+            { id: id('vertical', 's2-sub-0-unit-0'), displayName: 'Unit' },
+            { id: id('vertical', 's2-sub-0-unit-1'), displayName: 'Unit' },
+          ],
+        },
+      ],
+    },
+    {
+      id: id('chapter', 'section-3'),
+      displayName: 'Section 3',
+      children: [
+        {
+          id: id('sequential', 's3-sub-0'),
+          displayName: 'S3 Sub 0',
+          children: [{ id: id('vertical', 's3-sub-0-unit-0'), displayName: 'Unit' }],
+        },
+      ],
+    },
+  ];
+}
+
+/** Wrapper around useTestOutline for reorder/move tests — overrides courseStructure.id to match old mock. */
+function useReorderTestOutline() {
+  useTestOutline({
+    sections: buildReorderOutlineSpec(),
+    overrides: {
+      courseStructure: { id: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course' },
+    },
+  });
+}
+
 const renderComponent = () =>
   render(
     <CourseAuthoringProvider courseId={courseId}>
@@ -298,6 +411,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('render CourseOutline component correctly', async () => {
+    useTestOutline({ overrides: { courseStructure: { displayName: 'Demonstration Course' } } });
     renderComponent();
 
     expect(await screen.findByText('Demonstration Course')).toBeInTheDocument();
@@ -307,6 +421,7 @@ describe('<CourseOutline />', () => {
   it('renders sections from React Query without pre-loading Redux (page refresh scenario)', async () => {
     // Create fresh mock state — no pre-loaded Redux data, empty React Query cache.
     ({ axiosMock, queryClient } = initializeMocks());
+    useTestOutline();
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexMock);
@@ -364,6 +479,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check reindex and render success alert is correctly', async () => {
+    useTestOutline({ overrides: { reindexLink: '/course/course-v1:edX+DemoX+Demo_Course/search_reindex' } });
     const { findByText, findByTestId } = renderComponent();
 
     axiosMock
@@ -439,6 +555,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('render error alert after failed reindex correctly', async () => {
+    useTestOutline({ overrides: { reindexLink: '/course/course-v1:edX+DemoX+Demo_Course/search_reindex' } });
     const { findByText, findByTestId } = renderComponent();
 
     axiosMock
@@ -451,6 +568,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new section list is saved when dragged', async () => {
+    useReorderTestOutline();
     const { findAllByRole, findByTestId } = renderComponent();
     const expandAllButton = await findByTestId('expand-collapse-all-button');
     fireEvent.click(expandAllButton);
@@ -495,6 +613,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check section list is restored to original order when API call fails', async () => {
+    useReorderTestOutline();
     const { findAllByRole, findByTestId } = renderComponent();
     const expandAllButton = await findByTestId('expand-collapse-all-button');
     fireEvent.click(expandAllButton);
@@ -687,6 +806,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('render checklist value correctly', async () => {
+    useTestOutline();
     const { findByText } = renderComponent();
 
     // Data is loaded via mount effects; wait for checklist to appear
@@ -694,6 +814,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('render alerts if checklist api fails', async () => {
+    useTestOutline();
     axiosMock
       .onGet(getCourseLaunchApiUrl({
         courseId,
@@ -715,6 +836,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check highlights are enabled after enable highlights query is successful', async () => {
+    useTestOutline();
     const { findByTestId, findByText } = renderComponent();
 
     axiosMock.reset();
@@ -744,6 +866,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('should expand and collapse subsections, after click on subheader buttons', async () => {
+    useTestOutline();
     const { queryAllByTestId, findByText } = renderComponent();
 
     const collapseBtn = await findByText(headerMessages.collapseAllButton.defaultMessage);
@@ -777,6 +900,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('render configuration alerts and check dismiss query', async () => {
+    useTestOutline();
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, {
@@ -1946,6 +2070,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section move up and down options work correctly', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get second section element
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
@@ -1982,6 +2107,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section move up & down option is rendered correctly based on index', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get first, second and last section element
     const {
@@ -2028,6 +2154,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether subsection move up and down options work correctly', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get second section element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2078,6 +2205,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether subsection move up to prev section if it is on top of its parent section', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     const [firstSection, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [, sectionElement] = await findAllByTestId('section-card');
@@ -2122,6 +2250,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether subsection move down to next section if it is in bottom position of its parent section', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     const [section, secondSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await findAllByTestId('section-card');
@@ -2167,6 +2296,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether subsection move up & down option is rendered correctly based on index', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // using first section
     const sectionElements = await findAllByTestId('section-card');
@@ -2217,6 +2347,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit move up and down options work correctly', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> second unit element
     const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2270,6 +2401,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit moves up to previous subsection if it is in top position in parent subsection', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> first unit element
     const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2317,6 +2449,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit moves up to previous subsection of prev section if it is in top position in parent subsection & section', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> first unit element
     const [firstSection, secondSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2366,6 +2499,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit moves down to next subsection if it is in last position in parent subsection', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> first unit element
     const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2414,6 +2548,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit moves down to next subsection of next section if it is in last position in parent subsection & section', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> first unit element
     const [, secondSection, thirdSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2466,6 +2601,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit move up & down option is rendered correctly based on index', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // using first section -> first subsection -> first unit
     const sections = await findAllByTestId('section-card');
@@ -2595,6 +2731,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new unit list is saved when dragged', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get third section
     const [, , sectionElement] = await findAllByTestId('section-card');
@@ -2636,6 +2773,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new unit list is restored to original order when API call fails', async () => {
+    useReorderTestOutline();
     const { findAllByTestId } = renderComponent();
     // get third section
     const [, , sectionElement] = await findAllByTestId('section-card');
