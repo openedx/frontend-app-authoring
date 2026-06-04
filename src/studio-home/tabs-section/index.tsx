@@ -9,7 +9,6 @@ import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
-import { BaseFilterState, Filter, LibrariesList } from './libraries-tab';
 import LibrariesV2List from './libraries-v2-tab/index';
 import { CoursesList } from './courses-tab';
 import { WelcomeLibrariesV2Alert } from './libraries-v2-tab/WelcomeLibrariesV2Alert';
@@ -18,7 +17,6 @@ interface Props {
   showNewCourseContainer: boolean;
   onClickNewCourse: () => void;
   isShowProcessing: boolean;
-  librariesV1Enabled?: boolean;
   librariesV2Enabled?: boolean;
 }
 
@@ -26,31 +24,22 @@ const TabsSection = ({
   showNewCourseContainer,
   onClickNewCourse,
   isShowProcessing,
-  librariesV1Enabled,
   librariesV2Enabled,
 }: Props) => {
   const intl = useIntl();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [migrationFilter, setMigrationFilter] = useState<Filter[]>(BaseFilterState);
   const TABS_LIST = {
     courses: 'courses',
     libraries: 'libraries',
-    legacyLibraries: 'legacyLibraries',
     archived: 'archived',
     taxonomies: 'taxonomies',
   } as const;
   type TabKeyType = keyof typeof TABS_LIST;
 
   const initTabKeyState = (pname: string) => {
-    if (pname.includes('/libraries-v1')) {
-      return TABS_LIST.legacyLibraries;
-    }
-
     if (pname.includes('/libraries')) {
-      return librariesV2Enabled
-        ? TABS_LIST.libraries
-        : TABS_LIST.legacyLibraries;
+      return TABS_LIST.libraries;
     }
 
     // Default to courses tab
@@ -101,25 +90,6 @@ const TabsSection = ({
       );
     }
 
-    if (librariesV1Enabled) {
-      tabs.push(
-        <Tab
-          key={TABS_LIST.legacyLibraries}
-          eventKey={TABS_LIST.legacyLibraries}
-          title={intl.formatMessage(
-            librariesV2Enabled
-              ? messages.legacyLibrariesTabTitle
-              : messages.librariesTabTitle,
-          )}
-        >
-          <LibrariesList
-            migrationFilter={migrationFilter}
-            setMigrationFilter={setMigrationFilter}
-          />
-        </Tab>,
-      );
-    }
-
     if (getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true') {
       tabs.push(
         <Tab
@@ -131,13 +101,11 @@ const TabsSection = ({
     }
 
     return tabs;
-  }, [showNewCourseContainer, migrationFilter]);
+  }, [showNewCourseContainer]);
 
   const handleSelectTab = (tab: TabKeyType) => {
     if (tab === TABS_LIST.courses) {
       navigate('/home');
-    } else if (tab === TABS_LIST.legacyLibraries) {
-      navigate('/libraries-v1');
     } else if (tab === TABS_LIST.libraries) {
       navigate('/libraries');
     } else if (tab === TABS_LIST.taxonomies) {
