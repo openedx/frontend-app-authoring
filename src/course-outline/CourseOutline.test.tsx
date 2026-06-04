@@ -38,11 +38,9 @@ import { courseOutlineQueryKeys } from './data/queryKeys';
 
 import {
   courseOutlineIndexMock as originalCourseOutlineIndexMock,
-  courseOutlineIndexWithoutSections,
   courseBestPracticesMock,
   courseLaunchMock,
-  courseSectionMock,
-  courseSubsectionMock,
+  buildTestOutline,
 } from './__mocks__';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
@@ -68,7 +66,105 @@ const courseId = 'course-v1:edX+DemoX+Demo_Course';
 const clearSelection = jest.fn();
 const startCurrentFlow = jest.fn();
 let selectedContainerId: string | undefined;
-let courseOutlineIndexMock = cloneDeep(originalCourseOutlineIndexMock);
+const buildCourseOutlineIndexMock = () =>
+  buildTestOutline({
+    overrides: cloneDeep(originalCourseOutlineIndexMock) as Record<string, unknown>,
+  }) as unknown as typeof originalCourseOutlineIndexMock;
+
+let courseOutlineIndexMock = buildCourseOutlineIndexMock();
+
+// ─── Local snake_case API-response mocks ────────────────────────────────
+const courseSectionMock = {
+  id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@d0e78d363a424da6be5c22704c34f7a7',
+  display_name: 'Section',
+  category: 'chapter',
+  has_children: false,
+  edited_on: 'Nov 22, 2023 at 07:45 UTC',
+  published: true,
+  published_on: 'Nov 22, 2023 at 07:45 UTC',
+  studio_url: '',
+  released_to_students: true,
+  release_date: 'Feb 05, 2013 at 05:00 UTC',
+  visibility_state: 'live',
+  has_explicit_staff_lock: false,
+  start: '2013-02-05T05:00:00Z',
+  graded: false,
+  due_date: '',
+  due: null,
+  relative_weeks_due: null,
+  format: null,
+  course_graders: ['Homework', 'Exam'],
+  has_changes: false,
+  actions: { deletable: true, draggable: true, childAddable: true, duplicable: true },
+  explanatory_message: null,
+  group_access: {},
+  user_partitions: [],
+  show_correctness: 'always',
+  highlights: [],
+  highlights_enabled: true,
+  highlights_preview_only: false,
+  highlights_doc_url: '',
+  child_info: { category: 'sequential', display_name: 'Subsection', children: [] },
+  ancestor_has_staff_lock: false,
+  staff_only_message: false,
+  enable_copy_paste_units: false,
+  has_partition_group_components: false,
+  user_partition_info: {
+    selectable_partitions: [],
+    selected_partition_index: -1,
+    selected_groups_label: '',
+  },
+};
+
+const courseSubsectionMock = {
+  id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@b713bc2830f34f6f87554028c3068729',
+  display_name: 'Subsection',
+  category: 'sequential',
+  has_children: false,
+  edited_on: 'Dec 05, 2023 at 10:35 UTC',
+  published: true,
+  published_on: 'Dec 05, 2023 at 10:35 UTC',
+  studio_url: '',
+  released_to_students: true,
+  release_date: 'Feb 05, 2013 at 05:00 UTC',
+  visibility_state: 'live',
+  has_explicit_staff_lock: false,
+  start: '2013-02-05T05:00:00Z',
+  graded: false,
+  due_date: '',
+  due: null,
+  relative_weeks_due: null,
+  format: null,
+  course_graders: ['Homework', 'Exam'],
+  has_changes: false,
+  actions: { deletable: true, draggable: true, childAddable: true, duplicable: true },
+  explanatory_message: null,
+  group_access: {},
+  user_partitions: [],
+  show_correctness: 'always',
+  hide_after_due: false,
+  is_proctored_exam: false,
+  was_exam_ever_linked_with_external: false,
+  online_proctoring_rules: '',
+  is_practice_exam: false,
+  is_onboarding_exam: false,
+  is_time_limited: false,
+  exam_review_rules: '',
+  default_time_limit_minutes: null,
+  proctoring_exam_configuration_link: null,
+  supports_onboarding: false,
+  show_review_rules: true,
+  child_info: { category: 'vertical', display_name: 'Unit', children: [] },
+  ancestor_has_staff_lock: false,
+  staff_only_message: false,
+  enable_copy_paste_units: false,
+  has_partition_group_components: false,
+  user_partition_info: {
+    selectable_partitions: [],
+    selected_partition_index: -1,
+    selected_groups_label: '',
+  },
+};
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
@@ -141,7 +237,7 @@ describe('<CourseOutline />', () => {
     const mocks = initializeMocks();
     selectedContainerId = undefined;
     // restore index mock
-    courseOutlineIndexMock = cloneDeep(originalCourseOutlineIndexMock);
+    courseOutlineIndexMock = buildCourseOutlineIndexMock();
 
     jest.mocked(useLocation).mockReturnValue({
       pathname: mockPathname,
@@ -239,8 +335,6 @@ describe('<CourseOutline />', () => {
     );
     expect(screen.queryByTestId('empty-placeholder')).not.toBeInTheDocument();
   });
-
-
 
   it('handles course outline fetch api errors', async () => {
     ({ axiosMock } = initializeMocks());
@@ -672,8 +766,8 @@ describe('<CourseOutline />', () => {
   it('render CourseOutline component without sections correctly', async () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
-      .reply(200, courseOutlineIndexWithoutSections);
-    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), courseOutlineIndexWithoutSections);
+      .reply(200, buildTestOutline({ sections: [] }));
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), buildTestOutline({ sections: [] }));
 
     const { getByTestId } = renderComponent();
 
@@ -720,18 +814,18 @@ describe('<CourseOutline />', () => {
         .reply(200, courseOutlineIndexMock);
       axiosMock
         .onGet(getCourseBestPracticesApiUrl({
-        courseId,
-        excludeGraded: true,
-        all: true,
-      }))
+          courseId,
+          excludeGraded: true,
+          all: true,
+        }))
         .reply(200, courseBestPracticesMock);
       axiosMock
         .onGet(getCourseLaunchApiUrl({
-        courseId,
-        gradedOnly: true,
-        validateOras: true,
-        all: true,
-      }))
+          courseId,
+          gradedOnly: true,
+          validateOras: true,
+          all: true,
+        }))
         .reply(200, courseLaunchMock);
       // Rename-specific handlers
       axiosMock
@@ -1002,13 +1096,15 @@ describe('<CourseOutline />', () => {
       updatedSection.childInfo.children = updatedSection.childInfo.children.map((sub: any) => ({
         ...sub,
         visibilityState: sub.id === item.id ? 'live' : sub.visibilityState,
-        childInfo: sub.childInfo ? {
-          ...sub.childInfo,
-          children: sub.childInfo.children.map((u: any) => ({
-            ...u,
-            visibilityState: u.id === item.id ? 'live' : u.visibilityState,
-          })),
-        } : undefined,
+        childInfo: sub.childInfo ?
+          {
+            ...sub.childInfo,
+            children: sub.childInfo.children.map((u: any) => ({
+              ...u,
+              visibilityState: u.id === item.id ? 'live' : u.visibilityState,
+            })),
+          } :
+          undefined,
       }));
       axiosMock
         .onGet(getXBlockApiUrl(section.id))
@@ -2742,8 +2838,8 @@ describe('<CourseOutline />', () => {
   it('can unlink library block', async () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
-      .reply(200, courseOutlineIndexWithoutSections);
-    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), courseOutlineIndexWithoutSections);
+      .reply(200, buildTestOutline({ sections: [] }));
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), buildTestOutline({ sections: [] }));
 
     renderComponent();
 

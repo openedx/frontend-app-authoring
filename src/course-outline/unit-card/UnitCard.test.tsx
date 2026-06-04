@@ -1,19 +1,17 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
-  initializeMocks,
-  render,
   screen,
   waitFor,
   within,
 } from '@src/testUtils';
 
-import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
 import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
+import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
+import { mockSection as section, mockSubsection as subsection, mockUnit as unit } from '../__mocks__/testSetup';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
-import { CourseOutlineProvider } from '../CourseOutlineContext';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
@@ -48,63 +46,8 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
   };
 });
 
-const section = {
-  id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
-  displayName: 'Section Name',
-  published: true,
-  visibilityState: 'live',
-  hasChanges: false,
-  highlights: ['highlight 1', 'highlight 2'],
-  actions: {
-    draggable: true,
-    childAddable: true,
-    deletable: true,
-    duplicable: true,
-  },
-} satisfies Partial<XBlock> as XBlock;
-
-const subsection = {
-  id: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
-  displayName: 'Subsection Name',
-  published: true,
-  visibilityState: 'live',
-  hasChanges: false,
-  actions: {
-    draggable: true,
-    childAddable: true,
-    deletable: true,
-    duplicable: true,
-  },
-} satisfies Partial<XBlock> as XBlock;
-
-const unit = {
-  id: 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
-  displayName: 'unit Name',
-  category: 'vertical',
-  published: true,
-  visibilityState: 'live',
-  hasChanges: false,
-  actions: {
-    draggable: true,
-    childAddable: true,
-    deletable: true,
-    duplicable: true,
-  },
-  isHeaderVisible: true,
-  upstreamInfo: {
-    readyToSync: true,
-    upstreamRef: 'lct:org1:lib1:unit:1',
-    versionSynced: 1,
-    versionAvailable: 2,
-    versionDeclined: null,
-    errorMessage: null,
-    downstreamCustomized: [] as string[],
-    upstreamName: 'Upstream',
-  },
-} satisfies Partial<XBlock> as XBlock;
-
 const renderComponent = (props?: object) =>
-  render(
+  renderCard(
     <UnitCard
       section={section}
       subsection={subsection}
@@ -125,19 +68,12 @@ const renderComponent = (props?: object) =>
     {
       path: '/course/:courseId',
       params: { courseId: '5' },
-      extraWrapper: ({ children }) => (
-        <CourseOutlineProvider>
-          <OutlineSidebarContext.OutlineSidebarProvider>
-            {children}
-          </OutlineSidebarContext.OutlineSidebarProvider>
-        </CourseOutlineProvider>
-      ),
     },
   );
 
 describe('<UnitCard />', () => {
   beforeEach(() => {
-    initializeMocks();
+    setupCardTestMocks();
   });
 
   it('render UnitCard component correctly', async () => {

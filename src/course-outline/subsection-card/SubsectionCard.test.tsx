@@ -4,18 +4,15 @@ import userEvent from '@testing-library/user-event';
 import {
   act,
   fireEvent,
-  initializeMocks,
-  render,
   screen,
   waitFor,
   within,
 } from '@src/testUtils';
-import { XBlock } from '@src/data/types';
 import { ContainerType } from '@src/generic/key-utils';
 
+import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
+import { mockSection as section, mockSubsection as subsection, mockUnit as unit } from '../__mocks__/testSetup';
 import cardHeaderMessages from '../card-header/messages';
-import { CourseOutlineProvider } from '../CourseOutlineContext';
-import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 import SubsectionCard from './SubsectionCard';
 
 const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
@@ -70,60 +67,8 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   }),
 }));
 
-const unit = {
-  id: 'unit-1',
-};
-
-const subsection: XBlock = {
-  id: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
-  displayName: 'Subsection Name',
-  category: 'sequential',
-  published: true,
-  visibilityState: 'live',
-  hasChanges: false,
-  actions: {
-    draggable: true,
-    childAddable: true,
-    deletable: true,
-    duplicable: true,
-  },
-  isHeaderVisible: true,
-  releasedToStudents: true,
-  childInfo: {
-    children: [unit],
-  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
-  upstreamInfo: {
-    readyToSync: true,
-    upstreamRef: 'lct:org1:lib1:subsection:1',
-    versionSynced: 1,
-    versionAvailable: 2,
-    versionDeclined: null,
-    errorMessage: null,
-    downstreamCustomized: [] as string[],
-    upstreamName: 'Upstream',
-  },
-} satisfies Partial<XBlock> as XBlock;
-
-const section: XBlock = {
-  id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
-  displayName: 'Section Name',
-  published: true,
-  visibilityState: 'live',
-  hasChanges: false,
-  highlights: ['highlight 1', 'highlight 2'],
-  childInfo: {
-    children: [subsection],
-  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
-  actions: {
-    draggable: true,
-    childAddable: true,
-    deletable: true,
-    duplicable: true,
-  },
-} satisfies Partial<XBlock> as XBlock;
-
 const renderComponent = (props?: object, entry = '/course/:courseId') =>
-  render(
+  renderCard(
     <SubsectionCard
       section={section}
       subsection={subsection}
@@ -146,19 +91,12 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
       routerProps: {
         initialEntries: [entry],
       },
-      extraWrapper: ({ children }) => (
-        <CourseOutlineProvider>
-          <OutlineSidebarProvider>
-            {children}
-          </OutlineSidebarProvider>
-        </CourseOutlineProvider>
-      ),
     },
   );
 
 describe('<SubsectionCard />', () => {
   beforeEach(() => {
-    initializeMocks();
+    setupCardTestMocks();
   });
 
   it('render SubsectionCard component correctly', () => {
@@ -305,7 +243,8 @@ describe('<SubsectionCard />', () => {
   });
 
   it('check extended subsection when URL "show" param in subsection', async () => {
-    renderComponent(undefined, `/course/:courseId?show=${unit.id}`);
+    const unitIdUrl = encodeURIComponent(unit.id);
+    renderComponent(undefined, `/course/:courseId?show=${unitIdUrl}`);
 
     const cardUnits = await screen.findByTestId('subsection-card__units');
     const newUnitButton = await screen.findByRole('button', { name: 'New unit' });

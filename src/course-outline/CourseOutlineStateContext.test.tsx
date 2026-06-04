@@ -7,7 +7,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import initializeStore from '@src/store';
 import { initializeMocks } from '@src/testUtils';
 
-import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
+import { buildTestOutline } from '@src/course-outline/__mocks__/helpers';
 
 import {
   CourseOutlineProvider,
@@ -17,18 +17,44 @@ import { courseOutlineQueryKeys } from './data/queryKeys';
 import { getCourseOutlineIndexApiUrl } from './data';
 
 let currentItemData;
-const mockOutlineIndexData = {
-  ...courseOutlineIndexMock,
-  courseStructure: {
-    ...courseOutlineIndexMock.courseStructure,
-    videoSharingOptions: 'by-course',
-    actions: {
-      ...courseOutlineIndexMock.courseStructure.actions,
-      allowMoveDown: true,
+const mockOutlineIndexData = buildTestOutline({
+  sections: [
+    {
+      id: 'section-1',
+      displayName: 'Section 1',
+      children: [{ id: 'subsection-1a', children: [{ id: 'unit-1a1' }] }],
+    },
+    {
+      id: 'section-2',
+      displayName: 'Section 2',
+      children: [
+        { id: 'subsection-2a' },
+        {
+          id: 'subsection-2b',
+          displayName: 'Subsection 2B',
+          children: [{ id: 'unit-2b1' }, { id: 'unit-2b2' }],
+        },
+      ],
+    },
+    { id: 'section-3', displayName: 'Section 3' },
+    { id: 'section-4', displayName: 'Section 4', children: [{ id: 'subsection-4a' }] },
+  ],
+  overrides: {
+    createdOn: new Date().toISOString(),
+    courseStructure: {
+      videoSharingOptions: 'by-course',
+      enableProctoredExams: true,
+      enableTimedExams: true,
+      actions: {
+        deletable: true,
+        draggable: true,
+        childAddable: true,
+        duplicable: true,
+        allowMoveDown: true,
+      },
     },
   },
-  createdOn: new Date().toISOString(),
-};
+});
 
 // Mock useCourseItemData to return mock data
 jest.mock('./data/apiHooks', () => ({
@@ -79,8 +105,8 @@ describe('CourseOutlineContext', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    const lastSection = mockOutlineIndexData.courseStructure.childInfo.children.at(-1)!;
-    const lastSubsection = lastSection.childInfo.children.at(-1)!;
+    const lastSection = mockOutlineIndexData.courseStructure.childInfo.children.at(-1)! as any;
+    const lastSubsection = lastSection.childInfo.children.at(-1)! as any;
 
     expect(result.current.courseName).toBe(mockOutlineIndexData.courseStructure.displayName);
     expect(result.current.courseUsageKey).toBe(mockOutlineIndexData.courseStructure.id);

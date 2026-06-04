@@ -1,4 +1,4 @@
-import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
+import { buildTestOutline } from '@src/course-outline/__mocks__';
 import {
   initializeMocks,
   render,
@@ -105,7 +105,51 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   useDeleteCourseItem: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
 }));
 
-let outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
+const BLOCK_PREFIX = 'block-v1:UNIX+UX1+2025_T3+type@';
+const BLOCK_SUFFIX = '+block@';
+
+const outlineFixture = buildTestOutline({
+  sections: [
+    {
+      id: `${BLOCK_PREFIX}chapter${BLOCK_SUFFIX}section-1`,
+      displayName: 'Section 1',
+      children: [
+        {
+          id: `${BLOCK_PREFIX}sequential${BLOCK_SUFFIX}subsection-1a`,
+          displayName: 'Subsection 1A',
+          children: [
+            { id: `${BLOCK_PREFIX}vertical${BLOCK_SUFFIX}unit-1a1`, displayName: 'Unit 1A1' },
+          ],
+        },
+      ],
+    },
+    {
+      id: `${BLOCK_PREFIX}chapter${BLOCK_SUFFIX}section-2`,
+      displayName: 'Section 2',
+      children: [
+        { id: `${BLOCK_PREFIX}sequential${BLOCK_SUFFIX}subsection-2a`, displayName: 'Subsection 2A' },
+        {
+          id: `${BLOCK_PREFIX}sequential${BLOCK_SUFFIX}subsection-2b`,
+          displayName: 'Subsection 2B',
+          children: [
+            { id: `${BLOCK_PREFIX}vertical${BLOCK_SUFFIX}unit-2b1`, displayName: 'Unit 2B1' },
+            { id: `${BLOCK_PREFIX}vertical${BLOCK_SUFFIX}unit-2b2`, displayName: 'Unit 2B2' },
+          ],
+        },
+      ],
+    },
+    { id: `${BLOCK_PREFIX}chapter${BLOCK_SUFFIX}section-3`, displayName: 'Section 3' },
+    {
+      id: `${BLOCK_PREFIX}chapter${BLOCK_SUFFIX}section-4`,
+      displayName: 'Section 4',
+      children: [
+        { id: `${BLOCK_PREFIX}sequential${BLOCK_SUFFIX}subsection-4a`, displayName: 'Subsection 4A' },
+      ],
+    },
+  ],
+});
+
+let outlineChildren = (outlineFixture.courseStructure as any).childInfo.children;
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useSelector: () => outlineChildren,
@@ -183,7 +227,7 @@ describe('AddSidebar', () => {
       });
       return newMockResult;
     });
-    outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
+    outlineChildren = (outlineFixture.courseStructure as any).childInfo.children;
     currentItemData = null;
     lastEditableSection = outlineChildren[outlineChildren.length - 1] as any;
     lastEditableSubsection = lastEditableSection ?
@@ -231,7 +275,7 @@ describe('AddSidebar', () => {
 
   it('calls appropriate handlers on new button click', async () => {
     const user = userEvent.setup();
-    const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const sectionList = (outlineFixture.courseStructure as any).childInfo.children;
     const lastSection = sectionList[3];
     const lastSubsection = lastSection.childInfo.children[0];
     axiosMock.onPost(getXBlockBaseApiUrl())
@@ -353,7 +397,7 @@ describe('AddSidebar', () => {
 
   it('calls appropriate handlers on existing button click', async () => {
     const user = userEvent.setup();
-    const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const sectionList = (outlineFixture.courseStructure as any).childInfo.children;
     const lastSection = sectionList[3];
     const lastSubsection = lastSection.childInfo.children[0];
     axiosMock.onPost(getXBlockBaseApiUrl())
@@ -393,7 +437,7 @@ describe('AddSidebar', () => {
   ['section', 'subsection', 'unit'].forEach((category) => {
     it(`shows appropriate existing and new content based on ${category} use button click`, async () => {
       const user = userEvent.setup();
-      const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
+      const sectionList = (outlineFixture.courseStructure as any).childInfo.children;
       const firstSection = sectionList[0];
       const firstSubsection = firstSection.childInfo.children[0];
       currentFlow = {

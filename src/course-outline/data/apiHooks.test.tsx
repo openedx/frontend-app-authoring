@@ -2,6 +2,7 @@ import { setConfig, getConfig } from '@edx/frontend-platform';
 import { RequestStatus } from '@src/data/constants';
 import { act, renderHook, waitFor, initializeMocks, makeWrapper } from '@src/testUtils';
 import { courseOutlineQueryKeys } from './queryKeys';
+import { buildTestOutline } from '../__mocks__';
 
 // --- Mock API layer ---
 const mockGetCourseBestPractices = jest.fn();
@@ -45,42 +46,8 @@ const STUDIO_BASE_URL = 'http://localhost:18010';
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Minimal outline-index shape the delete optimistic update expects. */
-function buildOutlineIndex(
-  chapters: Array<
-    {
-      id: string;
-      displayName: string;
-      subs?: Array<{ id: string; displayName: string; units?: Array<{ id: string; displayName: string; }>; }>;
-    }
-  >,
-) {
-  return {
-    courseStructure: {
-      childInfo: {
-        children: chapters.map((ch) => ({
-          id: ch.id,
-          displayName: ch.displayName,
-          category: 'chapter',
-          childInfo: {
-            children: (ch.subs || []).map((sub) => ({
-              id: sub.id,
-              displayName: sub.displayName,
-              category: 'sequential',
-              childInfo: {
-                children: (sub.units || []).map((u) => ({
-                  id: u.id,
-                  displayName: u.displayName,
-                  category: 'vertical',
-                })),
-              },
-            })),
-          },
-        })),
-      },
-    },
-  };
-}
+// buildTestOutline is imported from __mocks__ — provides buildTestOutline([...])
+// and buildTestOutline({ sections: [...], overrides: {...} }).
 
 // ---------------------------------------------------------------------------
 // useCourseBestPractices
@@ -294,7 +261,6 @@ describe('useDismissNotification', () => {
 
     expect(mockDismissNotification).toHaveBeenCalledWith(`${STUDIO_BASE_URL}${dismissUrl}`);
   });
-
 });
 
 // ---------------------------------------------------------------------------
@@ -318,7 +284,6 @@ describe('useRestartIndexingOnCourse', () => {
 
     expect(mockRestartIndexingOnCourse).toHaveBeenCalledWith(reindexLink);
   });
-
 });
 
 // ---------------------------------------------------------------------------
@@ -472,7 +437,7 @@ describe('useDeleteCourseItem optimistic cache update', () => {
   it('removes chapter from outline-index children on chapter delete', async () => {
     const { queryClient } = initializeMocks();
 
-    const outlineData = buildOutlineIndex([
+    const outlineData = buildTestOutline([
       { id: chapterId, displayName: 'Chapter 1' },
       { id: chapter2Id, displayName: 'Chapter 2' },
     ]);
@@ -492,11 +457,11 @@ describe('useDeleteCourseItem optimistic cache update', () => {
   it('removes sequential from its parent section children on sequential delete', async () => {
     const { queryClient } = initializeMocks();
 
-    const outlineData = buildOutlineIndex([
+    const outlineData = buildTestOutline([
       {
         id: chapterId,
         displayName: 'Ch 1',
-        subs: [
+        children: [
           { id: seqId, displayName: 'Seq 1' },
           { id: seq2Id, displayName: 'Seq 2' },
         ],
@@ -519,15 +484,15 @@ describe('useDeleteCourseItem optimistic cache update', () => {
   it('removes unit from its parent subsection children on vertical delete', async () => {
     const { queryClient } = initializeMocks();
 
-    const outlineData = buildOutlineIndex([
+    const outlineData = buildTestOutline([
       {
         id: chapterId,
         displayName: 'Ch 1',
-        subs: [
+        children: [
           {
             id: seqId,
             displayName: 'Seq 1',
-            units: [
+            children: [
               { id: unitId, displayName: 'Unit 1' },
               { id: unit2Id, displayName: 'Unit 2' },
             ],
@@ -552,8 +517,8 @@ describe('useDeleteCourseItem optimistic cache update', () => {
   it('does not modify cache for non-matching category (e.g. "course")', async () => {
     const { queryClient } = initializeMocks();
 
-    const outlineData = buildOutlineIndex([
-      { id: chapterId, displayName: 'Ch 1', subs: [{ id: seqId, displayName: 'Seq 1' }] },
+    const outlineData = buildTestOutline([
+      { id: chapterId, displayName: 'Ch 1', children: [{ id: seqId, displayName: 'Seq 1' }] },
     ]);
     queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
     const before = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
@@ -623,10 +588,26 @@ describe('useCourseItemData cache priming', () => {
     const { queryClient } = initializeMocks();
 
     // Build a 4-level tree: chapter → sequential → vertical → vertical (deep leaf)
-    const greatGrandchild = { id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@greatgrandchild', category: 'vertical', childInfo: { children: [] } };
-    const grandchild = { id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@grandchild', category: 'vertical', childInfo: { children: [greatGrandchild] } };
-    const child = { id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@child', category: 'sequential', childInfo: { children: [grandchild] } };
-    const root = { id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@root', category: 'chapter', childInfo: { children: [child] } };
+    const greatGrandchild = {
+      id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@greatgrandchild',
+      category: 'vertical',
+      childInfo: { children: [] },
+    };
+    const grandchild = {
+      id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@grandchild',
+      category: 'vertical',
+      childInfo: { children: [greatGrandchild] },
+    };
+    const child = {
+      id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@child',
+      category: 'sequential',
+      childInfo: { children: [grandchild] },
+    };
+    const root = {
+      id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@root',
+      category: 'chapter',
+      childInfo: { children: [child] },
+    };
 
     mockGetCourseItem.mockResolvedValue(root);
 
