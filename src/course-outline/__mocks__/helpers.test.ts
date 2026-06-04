@@ -87,6 +87,7 @@ describe('buildTestOutline', () => {
     expect(outline.deprecatedBlocksInfo).toBeDefined();
     expect(outline.initialState).toBeDefined();
     expect(outline.rerunNotificationId).toBeNull();
+    expect(outline.createdOn).toBeUndefined();
   });
 
   // -----------------------------------------------------------------------

@@ -153,8 +153,8 @@ function buildNode(spec: NodeSpec, category: string): Record<string, unknown> {
     ...(spec.overrides || {}),
   };
 
-  // Every node has childInfo — leaf nodes get an empty children array.
-  node.childInfo = { displayName, children };
+  // Every node gets childInfo — leaf nodes get empty children array.
+  node.childInfo = { displayName, children, category };
 
   return node;
 }
