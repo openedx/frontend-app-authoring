@@ -34,12 +34,13 @@ import {
   useRestartIndexingOnCourse,
 } from '@src/course-outline/data';
 import { useCourseOutlineContext } from './CourseOutlineContext';
+import { useHighlightsModal } from './state/useHighlightsModal';
+import { useConfigureDialog } from './state/useConfigureModal';
 import { COURSE_BLOCK_NAMES } from './constants';
 
 import PageAlerts from './page-alerts/PageAlerts';
 
 import OutlineTree from './OutlineTree';
-import { useOutlineModals } from './state';
 import OutlineModals from './OutlineModals';
 
 import messages from './messages';
@@ -73,7 +74,11 @@ const CourseOutline = () => {
     errors,
     loadingStatus,
     outlineIndexData,
+    openDeleteModal,
   } = useCourseOutlineContext();
+
+  const highlightsModal = useHighlightsModal(courseId);
+  const configureDialog = useConfigureDialog(courseId);
 
   const reindexLink = outlineIndexData?.reindexLink;
   const lmsLink = outlineIndexData?.lmsLink;
@@ -152,15 +157,6 @@ const CourseOutline = () => {
   useEffect(() => {
     setShowSuccessAlert(reIndexLoadingStatus === RequestStatus.SUCCESSFUL);
   }, [reIndexLoadingStatus]);
-
-  // ─── Modal hook ──────────────────────────────────────────────────────────
-  const {
-    openEnableHighlightsModal,
-    handleOpenHighlightsModal,
-    handleOpenConfigureModal,
-    openDeleteModal,
-    outlineModalsProps,
-  } = useOutlineModals(courseId);
 
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -270,7 +266,7 @@ const CourseOutline = () => {
             courseId={courseId}
             isLoading={isLoading}
             statusBarData={statusBarData}
-            openEnableHighlightsModal={openEnableHighlightsModal}
+            openEnableHighlightsModal={highlightsModal.openEnableHighlightsModal}
             handleVideoSharingOptionChange={handleVideoSharingOptionChange}
           />
           <hr className="mt-4 mb-0 w-100 text-light-400" />
@@ -307,8 +303,8 @@ const CourseOutline = () => {
                     commitSectionReorder={commitSectionReorder}
                     commitSubsectionReorder={commitSubsectionReorder}
                     commitUnitReorder={commitUnitReorder}
-                    handleOpenHighlightsModal={handleOpenHighlightsModal}
-                    openConfigureModal={handleOpenConfigureModal}
+                    handleOpenHighlightsModal={highlightsModal.handleOpenHighlightsModal}
+                    openConfigureModal={configureDialog.handleOpenConfigureModal}
                     openDeleteModal={openDeleteModal}
                     handlePasteClipboardClick={handlePasteClipboardClick}
                   />
@@ -322,7 +318,20 @@ const CourseOutline = () => {
             />
           </div>
         </section>
-        <OutlineModals {...outlineModalsProps} />
+        <OutlineModals
+          isEnableHighlightsModalOpen={highlightsModal.isEnableHighlightsModalOpen}
+          closeEnableHighlightsModal={highlightsModal.closeEnableHighlightsModal}
+          handleEnableHighlightsSubmit={highlightsModal.handleEnableHighlightsSubmit}
+          isHighlightsModalOpen={highlightsModal.isHighlightsModalOpen}
+          closeHighlightsModal={highlightsModal.closeHighlightsModal}
+          handleHighlightsFormSubmit={highlightsModal.handleHighlightsFormSubmit}
+          highlightsModalCurrentId={highlightsModal.highlightsModalCurrentId}
+          isConfigureModalOpen={configureDialog.isConfigureModalOpen}
+          handleConfigureModalClose={configureDialog.handleConfigureModalClose}
+          handleConfigureItemSubmitWrapper={configureDialog.handleConfigureItemSubmitWrapper}
+          isOverflowVisible={configureDialog.isOverflowVisible}
+          configureItemData={configureDialog.currentItemData}
+        />
       </Container>
       <div className="alert-toast">
         <InternetConnectionAlert

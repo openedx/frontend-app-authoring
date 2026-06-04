@@ -21,7 +21,7 @@ export function computeErrorSignature(error: any): string {
  *
  * A dismissal for key K with signature S is applied only when:
  *   - baseErrors[K] is non-null
- *   - computeSignature(baseErrors[K]) === S
+ *   - computeErrorSignature(baseErrors[K]) === S
  *
  * If the underlying error changed or cleared, the dismissal is
  * skipped so the new (or absent) error shows through naturally.
@@ -39,7 +39,6 @@ export function computeErrorSignature(error: any): string {
 export function pruneDismissedErrorSignatures(
   baseErrors: Record<string, any>,
   dismissedSignatures: Record<string, string>,
-  computeSignature: (error: any) => string = computeErrorSignature,
 ): Record<string, string> {
   const pruned: Record<string, string> = {};
 
@@ -53,7 +52,7 @@ export function pruneDismissedErrorSignatures(
       // Error cleared – drop.
       continue;
     }
-    const currentSig = computeSignature(currentError);
+    const currentSig = computeErrorSignature(currentError);
     if (currentSig !== dismissedSignatures[key]) {
       // Error changed – drop.
       continue;
@@ -68,7 +67,6 @@ export function pruneDismissedErrorSignatures(
 export function filterDismissedErrors(
   baseErrors: Record<string, any>,
   dismissedSignatures: Record<string, string>,
-  computeSignature: (error: any) => string = computeErrorSignature,
 ): Record<string, any> {
   const filtered = { ...baseErrors };
 
@@ -81,7 +79,7 @@ export function filterDismissedErrors(
       // Error cleared – dismissal is stale, don't apply.
       continue;
     }
-    const currentSig = computeSignature(currentError);
+    const currentSig = computeErrorSignature(currentError);
     if (currentSig === dismissedSignatures[key]) {
       // Same error instance – keep it dismissed.
       filtered[key] = null;

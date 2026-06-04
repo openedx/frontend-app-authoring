@@ -1,16 +1,21 @@
-export { getLastEditableItem, getLastEditableSubsection } from './editability';
-export type { EditableSubsection } from './editability';
+export { getLastEditableItem, getLastEditableSubsection } from '../utils/editability';
+export type { EditableSubsection } from '../utils/editability';
 export {
   computeErrorSignature,
   filterDismissedErrors,
   pruneDismissedErrorSignatures,
-} from './outlineErrorDismissal';
-export { useOutlineActions } from './useOutlineActions';
-export type { OutlineActions } from './useOutlineActions';
-export { useOutlineModals } from './useOutlineModals';
-export type { UseOutlineModalsReturn } from './useOutlineModals';
+} from '../utils/outlineErrorDismissal';
+export { useOutlineDeleteAction, useOutlineConfigureAction } from './useOutlineActions';
 export { useOutlineReorderState } from './useOutlineReorderState';
 export type { UseOutlineReorderStateOutput } from './useOutlineReorderState';
 export { useOutlineStatusState } from './useOutlineStatusState';
 export type { UseOutlineStatusStateOutput } from './useOutlineStatusState';
 export { useCreateBlockSidebar } from './useCreateBlockSidebar';
+export { useDeleteModal } from './useDeleteModal';
+export type { UseDeleteModalOutput } from './useDeleteModal';
+export { useHighlightsModal } from './useHighlightsModal';
+export type { UseHighlightsModalOutput } from './useHighlightsModal';
+export { useConfigureDialog } from './useConfigureModal';
+export type { UseConfigureDialogOutput } from './useConfigureModal';
+export { useUnlinkModal } from './useUnlinkModal';
+export type { UseUnlinkModalOutput } from './useUnlinkModal';

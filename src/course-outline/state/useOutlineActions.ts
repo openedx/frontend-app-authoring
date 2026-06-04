@@ -8,23 +8,16 @@ import {
   type ConfigureItemPayload,
 } from '../data';
 
-export interface OutlineActions {
-  /** Returns true on success, false on failure. Caller handles modal close + selection clear. */
-  handleDeleteItemSubmit: (selection: OutlineActionSelection) => Promise<boolean>;
-  /** Returns true on success, false on failure. Caller handles modal close + data cleanup. */
-  handleConfigureItemSubmit: (payload: ConfigureItemPayload) => Promise<boolean>;
-}
+// ─── Narrow hook: delete only ────────────────────────────────────────────
 
 /**
- * Narrow hook for delete + configure mutation coordination.
- * Accepts explicit OutlineActionSelection/ConfigureItemPayload inputs
- * (category-discriminated) — does NOT read from any context or call getBlockType.
+ * Narrow hook for delete mutation coordination.
+ * Registers only useDeleteCourseItem — avoids registering configure mutations.
  */
-export function useOutlineActions(_courseId: string): OutlineActions {
-  const deleteMutation = useDeleteCourseItem(_courseId);
-  const configureSectionMutation = useConfigureSection(_courseId);
-  const configureSubsectionMutation = useConfigureSubsection(_courseId);
-  const configureUnitMutation = useConfigureUnit(_courseId);
+export function useOutlineDeleteAction(courseId: string): {
+  handleDeleteItemSubmit: (selection: OutlineActionSelection) => Promise<boolean>;
+} {
+  const deleteMutation = useDeleteCourseItem(courseId);
 
   const handleDeleteItemSubmit = useCallback(
     async (selection: OutlineActionSelection): Promise<boolean> => {
@@ -57,6 +50,22 @@ export function useOutlineActions(_courseId: string): OutlineActions {
     [deleteMutation],
   );
 
+  return { handleDeleteItemSubmit };
+}
+
+// ─── Narrow hook: configure only ─────────────────────────────────────────
+
+/**
+ * Narrow hook for configure mutation coordination.
+ * Registers only configure mutations (section/subsection/unit) — avoids registering delete.
+ */
+export function useOutlineConfigureAction(courseId: string): {
+  handleConfigureItemSubmit: (payload: ConfigureItemPayload) => Promise<boolean>;
+} {
+  const configureSectionMutation = useConfigureSection(courseId);
+  const configureSubsectionMutation = useConfigureSubsection(courseId);
+  const configureUnitMutation = useConfigureUnit(courseId);
+
   const handleConfigureItemSubmit = useCallback(
     async (payload: ConfigureItemPayload): Promise<boolean> => {
       if (!payload) { return false; }
@@ -77,6 +86,8 @@ export function useOutlineActions(_courseId: string): OutlineActions {
             await configureUnitMutation.mutateAsync(rest);
             break;
           }
+          default:
+            throw new Error(`Unrecognized category`);
         }
         return true;
       } catch {
@@ -86,5 +97,5 @@ export function useOutlineActions(_courseId: string): OutlineActions {
     [configureSectionMutation, configureSubsectionMutation, configureUnitMutation],
   );
 
-  return { handleDeleteItemSubmit, handleConfigureItemSubmit };
+  return { handleConfigureItemSubmit };
 }

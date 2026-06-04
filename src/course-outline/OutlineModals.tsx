@@ -1,62 +1,43 @@
-import type { XBlock } from '@src/data/types';
+import React from 'react';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import { UnlinkModal } from '@src/generic/unlink-modal';
 
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import HighlightsModal from './highlights-modal/HighlightsModal';
-import type { HighlightData } from './highlights-modal/HighlightsModal';
 import PublishModal from './publish-modal/PublishModal';
 
-// ─── Domain-grouped sub-interfaces ──────────────────────────────────────
+import { useCourseOutlineContext } from './CourseOutlineContext';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useDeleteModal } from './state/useDeleteModal';
+import { useUnlinkModal } from './state/useUnlinkModal';
+import { COURSE_BLOCK_NAMES } from './constants';
+import type { XBlock } from '@src/data/types';
+import type { HighlightData } from './highlights-modal/HighlightsModal';
 
-export interface EnableHighlightsGroup {
+export interface OutlineModalsProps {
+  // Highlights modal
   isEnableHighlightsModalOpen: boolean;
   closeEnableHighlightsModal: () => void;
   handleEnableHighlightsSubmit: () => void;
-}
-
-export interface HighlightsGroup {
   isHighlightsModalOpen: boolean;
   closeHighlightsModal: () => void;
   handleHighlightsFormSubmit: (highlights: HighlightData) => void;
-  highlightsModalCurrentId?: string;
-}
-
-export interface ConfigureGroup {
+  highlightsModalCurrentId: string | undefined;
+  // Configure modal
   isConfigureModalOpen: boolean;
   handleConfigureModalClose: () => void;
-  handleConfigureItemSubmitWrapper: (variables: Record<string, unknown>) => void;
+  handleConfigureItemSubmitWrapper: (variables: Record<string, unknown>) => Promise<void>;
   isOverflowVisible: boolean;
-  currentItemData?: XBlock;
-  enableProctoredExams?: boolean;
-  enableTimedExams?: boolean;
-  isSelfPaced: boolean;
-  itemCategoryName: string;
+  configureItemData: XBlock | undefined;
 }
 
-export interface DeleteGroup {
-  isDeleteModalOpen: boolean;
-  closeDeleteModal: () => void;
-  onDeleteConfirm: () => Promise<void>;
-}
-
-export interface UnlinkGroup {
-  isUnlinkModalOpen: boolean;
-  closeUnlinkModal: () => void;
-  handleUnlinkItemSubmit: () => Promise<void>;
-  displayName?: string;
-  itemCategory: string;
-}
-
-export type OutlineModalsProps =
-  EnableHighlightsGroup &
-  HighlightsGroup &
-  ConfigureGroup &
-  DeleteGroup &
-  UnlinkGroup;
-
-const OutlineModals = ({
+/**
+ * Renders all course-outline modal dialogs.
+ * Receives highlights/configure props; reads delete/publish state from context
+ * and calls delete/unlink sub-hooks directly.
+ */
+const OutlineModals: React.FC<OutlineModalsProps> = ({
   isEnableHighlightsModalOpen,
   closeEnableHighlightsModal,
   handleEnableHighlightsSubmit,
@@ -68,57 +49,71 @@ const OutlineModals = ({
   handleConfigureModalClose,
   handleConfigureItemSubmitWrapper,
   isOverflowVisible,
-  currentItemData,
-  enableProctoredExams,
-  enableTimedExams,
-  isSelfPaced,
-  itemCategoryName,
-  isDeleteModalOpen,
-  closeDeleteModal,
-  onDeleteConfirm,
-  isUnlinkModalOpen,
-  closeUnlinkModal,
-  handleUnlinkItemSubmit,
-  displayName,
-  itemCategory,
-}: OutlineModalsProps) => (
-  <>
-    <EnableHighlightsModal
-      isOpen={isEnableHighlightsModalOpen}
-      close={closeEnableHighlightsModal}
-      onEnableHighlightsSubmit={handleEnableHighlightsSubmit}
-    />
-    <HighlightsModal
-      isOpen={isHighlightsModalOpen}
-      onClose={closeHighlightsModal}
-      onSubmit={handleHighlightsFormSubmit}
-      currentId={highlightsModalCurrentId}
-    />
-    <PublishModal />
-    <ConfigureModal
-      isOpen={isConfigureModalOpen}
-      onClose={handleConfigureModalClose}
-      onConfigureSubmit={handleConfigureItemSubmitWrapper}
-      isOverflowVisible={isOverflowVisible}
-      currentItemData={currentItemData}
-      enableProctoredExams={enableProctoredExams}
-      enableTimedExams={enableTimedExams}
-      isSelfPaced={isSelfPaced}
-    />
-    <DeleteModal
-      category={itemCategoryName}
-      isOpen={isDeleteModalOpen}
-      close={closeDeleteModal}
-      onDeleteSubmit={onDeleteConfirm}
-    />
-    <UnlinkModal
-      displayName={displayName}
-      category={itemCategory}
-      isOpen={isUnlinkModalOpen}
-      close={closeUnlinkModal}
-      onUnlinkSubmit={handleUnlinkItemSubmit}
-    />
-  </>
-);
+  configureItemData,
+}) => {
+  const {
+    enableProctoredExams,
+    enableTimedExams,
+    statusBarData,
+    isDeleteModalOpen,
+    closeDeleteModal,
+    deleteModalData,
+  } = useCourseOutlineContext();
+
+  const { courseId } = useCourseAuthoringContext();
+
+  const { onDeleteConfirm } = useDeleteModal(courseId);
+
+  const {
+    isUnlinkModalOpen,
+    closeUnlinkModal,
+    handleUnlinkItemSubmit,
+    displayName: unlinkDisplayName,
+    itemCategory: unlinkItemCategory,
+  } = useUnlinkModal();
+
+  const deleteItemCategory = deleteModalData?.category ?? '';
+  const itemCategoryName = COURSE_BLOCK_NAMES[deleteItemCategory]?.name.toLowerCase();
+
+  return (
+    <>
+      <EnableHighlightsModal
+        isOpen={isEnableHighlightsModalOpen}
+        close={closeEnableHighlightsModal}
+        onEnableHighlightsSubmit={handleEnableHighlightsSubmit}
+      />
+      <HighlightsModal
+        isOpen={isHighlightsModalOpen}
+        onClose={closeHighlightsModal}
+        onSubmit={handleHighlightsFormSubmit}
+        currentId={highlightsModalCurrentId}
+      />
+      <PublishModal />
+      <ConfigureModal
+        isOpen={isConfigureModalOpen}
+        onClose={handleConfigureModalClose}
+        onConfigureSubmit={handleConfigureItemSubmitWrapper}
+        isOverflowVisible={isOverflowVisible}
+        currentItemData={configureItemData}
+        enableProctoredExams={enableProctoredExams}
+        enableTimedExams={enableTimedExams}
+        isSelfPaced={statusBarData?.isSelfPaced ?? false}
+      />
+      <DeleteModal
+        category={itemCategoryName}
+        isOpen={isDeleteModalOpen}
+        close={closeDeleteModal}
+        onDeleteSubmit={onDeleteConfirm}
+      />
+      <UnlinkModal
+        displayName={unlinkDisplayName ?? ''}
+        category={unlinkItemCategory}
+        isOpen={isUnlinkModalOpen}
+        close={closeUnlinkModal}
+        onUnlinkSubmit={handleUnlinkItemSubmit}
+      />
+    </>
+  );
+};
 
 export default OutlineModals;

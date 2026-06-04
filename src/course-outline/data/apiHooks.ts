@@ -1,5 +1,7 @@
 import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
 import { courseOutlineIndexQueryKey } from './outlineIndexQuery';
+import { courseOutlineMutationKeys } from './mutationKeys';
+export { courseOutlineMutationKeys };
 import {
   ConfigureSectionData,
   ConfigureSubsectionData,
@@ -8,7 +10,7 @@ import {
 } from '@src/course-outline/data/types';
 import { getNotificationMessage } from '@src/course-unit/data/utils';
 import { createGlobalState } from '@src/data/apiHooks';
-import type { XBlock, XBlockBase, XblockChildInfo } from '@src/data/types';
+import type { XBlockBase, XblockChildInfo } from '@src/data/types';
 import {
   ContainerType,
   getBlockType,
@@ -19,13 +21,11 @@ import { useMutationWithProcessingNotification } from '@src/generic/processing-n
 import { useToastContext } from '@src/generic/toast-context';
 import { ParentIds } from '@src/generic/types';
 import { getConfig } from '@edx/frontend-platform';
-import { RequestStatus } from '@src/data/constants';
-import { getErrorDetails } from '../utils/getErrorDetails';
+
 import {
   QueryClient,
   skipToken,
   useMutation,
-  useMutationState,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
@@ -52,6 +52,21 @@ import {
   duplicateCourseItem,
   pasteBlock,
 } from './api';
+
+import {
+  appendSectionToOutlineIndex,
+  replaceSectionInOutlineIndex,
+  removeItemFromOutlineIndexData,
+  insertDuplicatedSectionInOutlineIndex,
+} from './outlineIndexCacheUtils';
+export {
+  appendSectionToOutlineIndex,
+  replaceSectionInOutlineIndex,
+  removeItemFromOutlineIndexData,
+  insertDuplicatedSectionInOutlineIndex,
+};
+import { useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './outlineStatusHooks';
+export { useCourseOutlineSavingStatus, useCourseOutlineReindexStatus };
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
@@ -94,15 +109,6 @@ export const courseOutlineQueryKeys = {
   ],
 };
 
-export const courseOutlineMutationKeys = {
-  all: ['courseOutline', 'mutations'],
-  saving: (courseId?: string) => [...courseOutlineMutationKeys.all, courseId, 'saving'],
-  savingOperation: (
-    courseId: string | undefined,
-    operation: string,
-  ) => [...courseOutlineMutationKeys.saving(courseId), operation],
-  reindex: (courseId?: string) => [...courseOutlineMutationKeys.all, courseId, 'reindex'],
-};
 
 type ScrollState = {
   id?: string;
@@ -140,163 +146,17 @@ const safeInvalidateParentQueries = (queryClient: QueryClient, variables: Parent
   invalidateParentQueries(queryClient, variables).catch(() => {});
 };
 
-/** Append a new section to outline index query cache. */
-const appendSectionToOutlineIndex = (
-  queryClient: QueryClient,
-  courseId: string,
-  newSection: XBlockBase,
-) => {
-  queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-    if (!old) { return old; }
-    return {
-      ...old,
-      courseStructure: {
-        ...old.courseStructure,
-        childInfo: {
-          ...(old.courseStructure.childInfo || { children: [] }),
-          children: [...(old.courseStructure.childInfo?.children || []), newSection],
-        },
-      },
-    };
-  });
-};
-
-/** Replace top-level sections in outline index cache by id. */
-export const replaceSectionInOutlineIndex = (
-  queryClient: QueryClient,
-  courseId: string,
-  sections: Record<string, XBlock>,
-) => {
-  const old = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
-  if (!old?.courseStructure?.childInfo?.children) { return; }
-  let hadMissingChildInfo = false;
-  const updated = {
-    ...old,
-    courseStructure: {
-      ...old.courseStructure,
-      childInfo: {
-        ...old.courseStructure.childInfo,
-        children: old.courseStructure.childInfo.children.map(
-          (s: any) => {
-            if (!(s.id in sections)) { return s; }
-            const replacement = sections[s.id];
-            // Skip replacement if missing childInfo.children, invalidate as fallback
-            if (!replacement?.childInfo?.children) {
-              hadMissingChildInfo = true;
-              return s;
-            }
-            return replacement;
-          },
-        ),
-      },
-    },
-  };
-  queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), updated);
-  if (hadMissingChildInfo) {
-    queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
-  }
-};
-
 /**
- * Pure function: remove an item from outline-index data and return new tree.
- * Does not touch React Query cache. Caller wraps with setQueryData.
+ * Shared cache invalidation — called by most mutation hooks.
+ * Invalidates parent queries + course details in one step.
  */
-function removeItemFromOutlineIndexData(
-  old: any,
-  itemId: string,
-  variables: { sectionId?: string; subsectionId?: string; },
-): any {
-  if (!old?.courseStructure?.childInfo?.children) { return old; }
-  const category = getBlockType(itemId);
-  const children = [...old.courseStructure.childInfo.children];
-  if (category === 'chapter') {
-    return {
-      ...old,
-      courseStructure: {
-        ...old.courseStructure,
-        childInfo: { ...old.courseStructure.childInfo, children: children.filter((s: any) => s.id !== itemId) },
-      },
-    };
-  }
-  if (category === 'sequential') {
-    return {
-      ...old,
-      courseStructure: {
-        ...old.courseStructure,
-        childInfo: {
-          ...old.courseStructure.childInfo,
-          children: children.map((s: any) =>
-            s.id !== variables.sectionId ? s : {
-              ...s,
-              childInfo: {
-                ...s.childInfo,
-                children: (s.childInfo?.children || []).filter((sub: any) => sub.id !== itemId),
-              },
-            }
-          ),
-        },
-      },
-    };
-  }
-  if (category === 'vertical') {
-    return {
-      ...old,
-      courseStructure: {
-        ...old.courseStructure,
-        childInfo: {
-          ...old.courseStructure.childInfo,
-          children: children.map((s: any) =>
-            s.id !== variables.sectionId ? s : {
-              ...s,
-              childInfo: {
-                ...s.childInfo,
-                children: (s.childInfo?.children || []).map((sub: any) =>
-                  sub.id !== variables.subsectionId ? sub : {
-                    ...sub,
-                    childInfo: {
-                      ...sub.childInfo,
-                      children: (sub.childInfo?.children || []).filter((u: any) => u.id !== itemId),
-                    },
-                  }
-                ),
-              },
-            }
-          ),
-        },
-      },
-    };
-  }
-  return old;
-}
-
-/** Insert duplicated section after original id in outline index cache. */
-const insertDuplicatedSectionInOutlineIndex = (
+const invalidateOutlineAndParents = (
   queryClient: QueryClient,
-  courseId: string,
-  originalId: string,
-  duplicatedSection: XBlockBase,
+  variables: ParentIds,
+  courseKey: string,
 ) => {
-  queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
-    if (!old?.courseStructure?.childInfo?.children) { return old; }
-    return {
-      ...old,
-      courseStructure: {
-        ...old.courseStructure,
-        childInfo: {
-          ...old.courseStructure.childInfo,
-          children: old.courseStructure.childInfo.children.reduce(
-            (result: any[], current: any) => {
-              if (current.id === originalId) {
-                return [...result, current, duplicatedSection];
-              }
-              return [...result, current];
-            },
-            [],
-          ),
-        },
-      },
-    };
-  });
+  safeInvalidateParentQueries(queryClient, variables);
+  queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseKey) });
 };
 
 type CreateCourseXBlockMutationProps = CreateCourseXBlockType & ParentIds;
@@ -320,11 +180,7 @@ export const useCreateCourseBlock = (
     mutationFn: (variables: CreateCourseXBlockMutationProps) => createCourseXblock(variables),
     onSuccess: async (data: { locator: string; }, variables) => {
       await callback?.(data.locator, variables.parentLocator);
-      queryClient.invalidateQueries({
-        queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
-      });
-
-      safeInvalidateParentQueries(queryClient, variables);
+      invalidateOutlineAndParents(queryClient, variables, getCourseKey(data.locator));
 
       // Invalidate tags count for the newly created block
       // Strips "+type@<blockType>+block@<id>" to produce a course-run wildcard, e.g.
@@ -407,9 +263,8 @@ export const useUpdateCourseBlockName = (courseId: string) => {
       } & ParentIds,
     ) => editItemDisplayName({ itemId: variables.itemId, displayName: variables.displayName }),
     onSuccess: async (_data, variables) => {
-      safeInvalidateParentQueries(queryClient, variables);
+      invalidateOutlineAndParents(queryClient, variables, courseId);
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseId) });
     },
   });
 };
@@ -424,8 +279,7 @@ export const usePublishCourseItem = (courseId?: string) => {
       } & ParentIds,
     ) => publishCourseItem(variables.itemId),
     onSettled: (_data, _err, variables) => {
-      safeInvalidateParentQueries(queryClient, variables);
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
+      invalidateOutlineAndParents(queryClient, variables, getCourseKey(variables.itemId));
     },
   });
 };
@@ -440,8 +294,7 @@ export const useDeleteCourseItem = (courseId?: string) => {
       } & ParentIds,
     ) => deleteCourseItem(variables.itemId),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.itemId)) });
-      safeInvalidateParentQueries(queryClient, variables);
+      invalidateOutlineAndParents(queryClient, variables, getCourseKey(variables.itemId));
       // Optimistic outline-index cache update: remove deleted item from the tree
       const itemId = variables.itemId;
       const category = getBlockType(itemId);
@@ -461,10 +314,7 @@ export const useConfigureSection = (courseId?: string) => {
     mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'configureSection'),
     mutationFn: (variables: ConfigureSectionData & ParentIds) => configureCourseSection(variables),
     onSettled: (_data, _err, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
-      });
-      safeInvalidateParentQueries(queryClient, variables);
+      invalidateOutlineAndParents(queryClient, variables, getCourseKey(variables.sectionId));
     },
   });
 };
@@ -478,8 +328,7 @@ export const useConfigureSubsection = (courseId?: string) => {
     ) => configureCourseSubsection(variables),
     onSettled: async (_data, _err, variables) => {
       const courseKey = getCourseKey(variables.itemId);
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseKey) });
-      safeInvalidateParentQueries(queryClient, variables);
+      invalidateOutlineAndParents(queryClient, variables, courseKey);
       if (variables.isPrereq !== undefined) {
         const subsectionItemQueries = queryClient.getQueryCache().findAll({
           predicate: (query) => {
@@ -515,8 +364,7 @@ export const useConfigureUnit = (courseId?: string) => {
       showToast(msg, undefined, 15000);
     },
     onSettled: (_data, _err, variables) => {
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.unitId)) });
-      safeInvalidateParentQueries(queryClient, variables);
+      invalidateOutlineAndParents(queryClient, variables, getCourseKey(variables.unitId));
       closeToast();
     },
   });
@@ -533,10 +381,7 @@ export const useUpdateCourseSectionHighlights = (courseId?: string) => {
       } & ParentIds,
     ) => updateCourseSectionHighlights(variables.sectionId, variables.highlights),
     onSettled: (_data, _err, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(variables.sectionId)),
-      });
-      safeInvalidateParentQueries(queryClient, variables);
+      invalidateOutlineAndParents(queryClient, variables, getCourseKey(variables.sectionId));
     },
   });
 };
@@ -553,7 +398,7 @@ export const useDuplicateItem = (courseKey: string) => {
       } & ParentIds,
     ) => duplicateCourseItem(variables.itemId, variables.parentId),
     onSuccess: async (data, variables) => {
-      safeInvalidateParentQueries(queryClient, variables);
+      invalidateOutlineAndParents(queryClient, variables, courseKey);
 
       // For chapter (section) duplication, insert the duplicated section into the outline index cache.
       if (getBlockType(variables.itemId) === 'chapter') {
@@ -703,71 +548,4 @@ export function useRestartIndexingOnCourse(courseId: string) {
     mutationKey: courseOutlineMutationKeys.reindex(courseId),
     mutationFn: (reindexLink: string) => restartIndexingOnCourse(reindexLink),
   });
-}
-
-/**
- * Aggregate save status across all saving mutations for a course.
- * Priority: pending > latest completed by submittedAt > idle => ''
- */
-export function useCourseOutlineSavingStatus(courseId?: string): string {
-  const mutations = useMutationState({
-    filters: { mutationKey: courseOutlineMutationKeys.saving(courseId) },
-  });
-  // Pending wins
-  const hasPending = mutations.some(m => m.status === 'pending');
-  if (hasPending) { return RequestStatus.PENDING; }
-  // Find latest by submittedAt among completed
-  let latest: { status: 'success' | 'error'; submittedAt: number; } | null = null;
-  for (const m of mutations) {
-    if (m.status !== 'success' && m.status !== 'error') { continue; }
-    const t = m.submittedAt ?? 0;
-    if (t > 0 && (!latest || t > latest.submittedAt)) {
-      latest = { status: m.status as 'success' | 'error', submittedAt: t };
-    }
-  }
-  if (!latest) { return ''; }
-  return latest.status === 'error' ? RequestStatus.FAILED : RequestStatus.SUCCESSFUL;
-}
-
-/**
- * Find the most recent (by submittedAt) mutation among a list.
- */
-function latestMutation<T extends { submittedAt?: number; status?: string; }>(mutations: T[]): T | undefined {
-  let latest: T | undefined;
-  for (const m of mutations) {
-    if (m.status !== 'success' && m.status !== 'error' && m.status !== 'pending') { continue; }
-    const t = m.submittedAt ?? 0;
-    if (t > 0 && (!latest || (latest.submittedAt ?? 0) < t)) {
-      latest = m;
-    }
-  }
-  return latest;
-}
-
-/**
- * Derive reindex loading status and error from reindex mutations.
- */
-export function useCourseOutlineReindexStatus(courseId?: string): {
-  reindexLoadingStatus: string;
-  reindexError: any;
-} {
-  const mutations = useMutationState({
-    filters: { mutationKey: courseOutlineMutationKeys.reindex(courseId) },
-  });
-  const latest = latestMutation(mutations);
-  const status = latest?.status;
-  if (status === 'pending') {
-    return { reindexLoadingStatus: RequestStatus.IN_PROGRESS, reindexError: null };
-  }
-  if (status === 'error' && latest) {
-    return {
-      reindexLoadingStatus: RequestStatus.FAILED,
-      reindexError: getErrorDetails(latest.error),
-    };
-  }
-  if (status === 'success') {
-    return { reindexLoadingStatus: RequestStatus.SUCCESSFUL, reindexError: null };
-  }
-  // idle / no mutations — preserve existing behavior (IN_PROGRESS)
-  return { reindexLoadingStatus: RequestStatus.IN_PROGRESS, reindexError: null };
 }

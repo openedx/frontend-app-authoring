@@ -178,7 +178,7 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
   }, [rawErrors, reindexError]);
 
   const mergedErrors = useMemo(() => {
-    return filterDismissedErrors(mergedRawErrors, dismissedErrorSignatures, computeErrorSignature);
+    return filterDismissedErrors(mergedRawErrors, dismissedErrorSignatures);
   }, [mergedRawErrors, dismissedErrorSignatures]);
 
   const mergedLoadingStatus = useMemo(() => ({
@@ -319,5 +319,3 @@ export function useCourseOutlineContext(): CourseOutlineContextData {
   }
   return ctx;
 }
-
-
