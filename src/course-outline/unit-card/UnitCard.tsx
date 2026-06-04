@@ -23,8 +23,8 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { OutlineActionSelection, UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import {
-  courseOutlineQueryKeys,
   useCourseItemData,
   useScrollState,
   useDuplicateItem,

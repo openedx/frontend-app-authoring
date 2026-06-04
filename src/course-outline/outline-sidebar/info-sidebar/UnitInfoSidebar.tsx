@@ -16,7 +16,8 @@ import { getItemIcon } from '@src/generic/block-type-utils';
 
 import { SidebarTitle } from '@src/generic/sidebar';
 
-import { courseOutlineQueryKeys, useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
+import { useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';

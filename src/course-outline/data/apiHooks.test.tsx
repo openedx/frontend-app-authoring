@@ -1,8 +1,7 @@
 import { setConfig, getConfig } from '@edx/frontend-platform';
 import { RequestStatus } from '@src/data/constants';
 import { act, renderHook, waitFor, initializeMocks, makeWrapper } from '@src/testUtils';
-import { courseOutlineIndexQueryKey } from './outlineIndexQuery';
-import { courseOutlineQueryKeys } from './apiHooks';
+import { courseOutlineQueryKeys } from './queryKeys';
 
 // --- Mock API layer ---
 const mockGetCourseBestPractices = jest.fn();
@@ -12,6 +11,7 @@ const mockEnableCourseHighlightsEmails = jest.fn();
 const mockDismissNotification = jest.fn();
 const mockRestartIndexingOnCourse = jest.fn();
 const mockDeleteCourseItem = jest.fn();
+const mockGetCourseItem = jest.fn();
 
 jest.mock('./api', () => ({
   getCourseBestPractices: (...args: any[]) => mockGetCourseBestPractices(...args),
@@ -21,6 +21,7 @@ jest.mock('./api', () => ({
   dismissNotification: (...args: any[]) => mockDismissNotification(...args),
   restartIndexingOnCourse: (...args: any[]) => mockRestartIndexingOnCourse(...args),
   deleteCourseItem: (...args: any[]) => mockDeleteCourseItem(...args),
+  getCourseItem: (...args: any[]) => mockGetCourseItem(...args),
 }));
 
 // Hooks-under-test — must import after jest.mock
@@ -34,6 +35,7 @@ import {
   useCourseOutlineSavingStatus,
   useCourseOutlineReindexStatus,
   useDeleteCourseItem,
+  useCourseItemData,
 } from './apiHooks';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
@@ -213,7 +215,7 @@ describe('useSetVideoSharingOption', () => {
     const { queryClient } = initializeMocks();
     mockSetVideoSharingOption.mockResolvedValue({});
 
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), {
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), {
       courseStructure: { childInfo: { children: [] } },
       statusBar: { videoSharingOptions: 'per-video' },
     });
@@ -225,7 +227,7 @@ describe('useSetVideoSharingOption', () => {
     });
 
     // After invalidation, the query is marked invalidated
-    const state = queryClient.getQueryState(courseOutlineIndexQueryKey(courseId));
+    const state = queryClient.getQueryState(courseOutlineQueryKeys.index(courseId));
     expect(state?.isInvalidated).toBe(true);
   });
 });
@@ -255,7 +257,7 @@ describe('useEnableCourseHighlightsEmails', () => {
     const { queryClient } = initializeMocks();
     mockEnableCourseHighlightsEmails.mockResolvedValue({});
 
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), {
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), {
       courseStructure: { childInfo: { children: [] } },
     });
 
@@ -265,7 +267,7 @@ describe('useEnableCourseHighlightsEmails', () => {
       await result.current.mutateAsync();
     });
 
-    const state = queryClient.getQueryState(courseOutlineIndexQueryKey(courseId));
+    const state = queryClient.getQueryState(courseOutlineQueryKeys.index(courseId));
     expect(state?.isInvalidated).toBe(true);
   });
 });
@@ -474,7 +476,7 @@ describe('useDeleteCourseItem optimistic cache update', () => {
       { id: chapterId, displayName: 'Chapter 1' },
       { id: chapter2Id, displayName: 'Chapter 2' },
     ]);
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), outlineData);
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
 
     const { result } = renderHook(() => useDeleteCourseItem(courseId), { wrapper: makeWrapper() });
 
@@ -482,7 +484,7 @@ describe('useDeleteCourseItem optimistic cache update', () => {
       await result.current.mutateAsync({ itemId: chapterId, sectionId: chapterId });
     });
 
-    const updated = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
+    const updated = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
     expect(updated.courseStructure.childInfo.children).toHaveLength(1);
     expect(updated.courseStructure.childInfo.children[0].id).toBe(chapter2Id);
   });
@@ -500,7 +502,7 @@ describe('useDeleteCourseItem optimistic cache update', () => {
         ],
       },
     ]);
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), outlineData);
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
 
     const { result } = renderHook(() => useDeleteCourseItem(courseId), { wrapper: makeWrapper() });
 
@@ -508,7 +510,7 @@ describe('useDeleteCourseItem optimistic cache update', () => {
       await result.current.mutateAsync({ itemId: seqId, sectionId: chapterId });
     });
 
-    const updated = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
+    const updated = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
     const section = updated.courseStructure.childInfo.children[0];
     expect(section.childInfo.children).toHaveLength(1);
     expect(section.childInfo.children[0].id).toBe(seq2Id);
@@ -533,7 +535,7 @@ describe('useDeleteCourseItem optimistic cache update', () => {
         ],
       },
     ]);
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), outlineData);
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
 
     const { result } = renderHook(() => useDeleteCourseItem(courseId), { wrapper: makeWrapper() });
 
@@ -541,7 +543,7 @@ describe('useDeleteCourseItem optimistic cache update', () => {
       await result.current.mutateAsync({ itemId: unitId, sectionId: chapterId, subsectionId: seqId });
     });
 
-    const updated = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
+    const updated = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
     const subsection = updated.courseStructure.childInfo.children[0].childInfo.children[0];
     expect(subsection.childInfo.children).toHaveLength(1);
     expect(subsection.childInfo.children[0].id).toBe(unit2Id);
@@ -553,8 +555,8 @@ describe('useDeleteCourseItem optimistic cache update', () => {
     const outlineData = buildOutlineIndex([
       { id: chapterId, displayName: 'Ch 1', subs: [{ id: seqId, displayName: 'Seq 1' }] },
     ]);
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), outlineData);
-    const before = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
+    const before = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
 
     const courseBlockId = 'block-v1:edX+DemoX+Demo_Course+type@course+block@course';
     const { result } = renderHook(() => useDeleteCourseItem(courseId), { wrapper: makeWrapper() });
@@ -563,14 +565,14 @@ describe('useDeleteCourseItem optimistic cache update', () => {
       await result.current.mutateAsync({ itemId: courseBlockId, sectionId: courseBlockId });
     });
 
-    const after = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const after = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
     expect(after).toEqual(before);
   });
 
   it('does not throw when outline-index cache is empty', async () => {
     const { queryClient } = initializeMocks();
     // No cache set — should be undefined
-    expect(queryClient.getQueryData(courseOutlineIndexQueryKey(courseId))).toBeUndefined();
+    expect(queryClient.getQueryData(courseOutlineQueryKeys.index(courseId))).toBeUndefined();
 
     const { result } = renderHook(() => useDeleteCourseItem(courseId), { wrapper: makeWrapper() });
 
@@ -605,5 +607,96 @@ describe('useDeleteCourseItem optimistic cache update', () => {
     );
 
     invalidateSpy.mockRestore();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// useCourseItemData — cache priming
+// ---------------------------------------------------------------------------
+describe('useCourseItemData cache priming', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    initializeMocks();
+  });
+
+  it('primes child, grandchild, and great-grandchild caches recursively with deterministic await order', async () => {
+    const { queryClient } = initializeMocks();
+
+    // Build a 4-level tree: chapter → sequential → vertical → vertical (deep leaf)
+    const greatGrandchild = { id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@greatgrandchild', category: 'vertical', childInfo: { children: [] } };
+    const grandchild = { id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@grandchild', category: 'vertical', childInfo: { children: [greatGrandchild] } };
+    const child = { id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@child', category: 'sequential', childInfo: { children: [grandchild] } };
+    const root = { id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@root', category: 'chapter', childInfo: { children: [child] } };
+
+    mockGetCourseItem.mockResolvedValue(root);
+
+    const { result } = renderHook(
+      () => useCourseItemData(root.id),
+      { wrapper: makeWrapper() },
+    );
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    // Verify root is cached
+    expect(queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(root.id))).toEqual(root);
+
+    // Verify child is cached
+    const childCached = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(child.id));
+    expect(childCached).toEqual(child);
+
+    // Verify grandchild is cached
+    const grandchildCached = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(grandchild.id));
+    expect(grandchildCached).toEqual(grandchild);
+
+    // Verify great-grandchild is cached (proves depth beyond the original 3-level hardcode)
+    const greatGrandchildCached = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(greatGrandchild.id));
+    expect(greatGrandchildCached).toEqual(greatGrandchild);
+
+    // Verify getCourseItem was called exactly once (all child reads from cache)
+    expect(mockGetCourseItem).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles node with childInfo key set to undefined without throwing', async () => {
+    const { queryClient } = initializeMocks();
+    const noChildren = {
+      id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@no-childinfo',
+      category: 'vertical',
+      childInfo: undefined,
+    };
+    mockGetCourseItem.mockResolvedValue(noChildren);
+
+    const { result } = renderHook(
+      () => useCourseItemData(noChildren.id),
+      { wrapper: makeWrapper() },
+    );
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(noChildren.id))).toEqual(noChildren);
+  });
+
+  it('handles node with missing children array without throwing', async () => {
+    const { queryClient } = initializeMocks();
+    const noChildren = {
+      id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@no-children',
+      category: 'vertical',
+      childInfo: {},
+    };
+    mockGetCourseItem.mockResolvedValue(noChildren);
+
+    const { result } = renderHook(
+      () => useCourseItemData(noChildren.id),
+      { wrapper: makeWrapper() },
+    );
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(noChildren.id))).toEqual(noChildren);
   });
 });

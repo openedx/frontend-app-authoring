@@ -1,7 +1,30 @@
 import { getBlockType } from '@src/generic/key-utils';
 import type { XBlock, XBlockBase } from '@src/data/types';
-import { courseOutlineIndexQueryKey } from './outlineIndexQuery';
+import { courseOutlineQueryKeys } from './queryKeys';
 import type { QueryClient } from '@tanstack/react-query';
+
+/**
+ * Pure helper: apply a transformation to the top-level children
+ * of the outline-index tree structure, preserving the 4-level
+ * immutable spread pattern that every cache-util function needs.
+ *
+ * Callers must guard against null/undefined `old` before calling.
+ */
+function updateCourseStructure(
+  old: any,
+  transformChildren: (children: any[]) => any[],
+): any {
+  return {
+    ...old,
+    courseStructure: {
+      ...old.courseStructure,
+      childInfo: {
+        ...(old.courseStructure.childInfo || { children: [] }),
+        children: transformChildren(old.courseStructure.childInfo?.children || []),
+      },
+    },
+  };
+}
 
 /** Append a new section to outline index query cache. */
 export const appendSectionToOutlineIndex = (
@@ -9,18 +32,9 @@ export const appendSectionToOutlineIndex = (
   courseId: string,
   newSection: XBlockBase,
 ) => {
-  queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+  queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), (old: any) => {
     if (!old) { return old; }
-    return {
-      ...old,
-      courseStructure: {
-        ...old.courseStructure,
-        childInfo: {
-          ...(old.courseStructure.childInfo || { children: [] }),
-          children: [...(old.courseStructure.childInfo?.children || []), newSection],
-        },
-      },
-    };
+    return updateCourseStructure(old, (children) => [...children, newSection]);
   });
 };
 
@@ -30,50 +44,33 @@ export const replaceSectionInOutlineIndex = (
   courseId: string,
   sections: Record<string, XBlock>,
 ) => {
-  const old = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId)) as any;
+  const old = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
   if (!old?.courseStructure?.childInfo?.children) { return; }
   let hadMissingChildInfo = false;
-  const updated = {
-    ...old,
-    courseStructure: {
-      ...old.courseStructure,
-      childInfo: {
-        ...old.courseStructure.childInfo,
-        children: old.courseStructure.childInfo.children.map(
-          (s: any) => {
-            if (!(s.id in sections)) { return s; }
-            const replacement = sections[s.id];
-            // Skip replacement if missing childInfo.children, invalidate as fallback
-            if (!replacement?.childInfo?.children) {
-              hadMissingChildInfo = true;
-              return s;
-            }
-            return replacement;
-          },
-        ),
-      },
-    },
-  };
-  queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), updated);
+  const updated = updateCourseStructure(old, (children) =>
+    children.map((s: any) => {
+      if (!(s.id in sections)) { return s; }
+      const replacement = sections[s.id];
+      // Skip replacement if missing childInfo.children, invalidate as fallback
+      if (!replacement?.childInfo?.children) {
+        hadMissingChildInfo = true;
+        return s;
+      }
+      return replacement;
+    }),
+  );
+  queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), updated);
   if (hadMissingChildInfo) {
-    queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+    queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.index(courseId) });
   }
 };
 
 /**
  * Map over top-level section children in the outline tree.
+ * Delegates to updateCourseStructure.
  */
 function mapSections(tree: any, fn: (section: any) => any): any {
-  return {
-    ...tree,
-    courseStructure: {
-      ...tree.courseStructure,
-      childInfo: {
-        ...tree.courseStructure.childInfo,
-        children: tree.courseStructure.childInfo.children.map(fn),
-      },
-    },
-  };
+  return updateCourseStructure(tree, (children) => children.map(fn));
 }
 
 /**
@@ -90,13 +87,7 @@ export function removeItemFromOutlineIndexData(
   const children = old.courseStructure.childInfo.children;
 
   if (category === 'chapter') {
-    return {
-      ...old,
-      courseStructure: {
-        ...old.courseStructure,
-        childInfo: { ...old.courseStructure.childInfo, children: children.filter((s: any) => s.id !== itemId) },
-      },
-    };
+    return updateCourseStructure(old, () => children.filter((s: any) => s.id !== itemId));
   }
 
   if (category === 'sequential') {
@@ -141,25 +132,18 @@ export const insertDuplicatedSectionInOutlineIndex = (
   originalId: string,
   duplicatedSection: XBlockBase,
 ) => {
-  queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+  queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), (old: any) => {
     if (!old?.courseStructure?.childInfo?.children) { return old; }
-    return {
-      ...old,
-      courseStructure: {
-        ...old.courseStructure,
-        childInfo: {
-          ...old.courseStructure.childInfo,
-          children: old.courseStructure.childInfo.children.reduce(
-            (result: any[], current: any) => {
-              if (current.id === originalId) {
-                return [...result, current, duplicatedSection];
-              }
-              return [...result, current];
-            },
-            [],
-          ),
+    return updateCourseStructure(old, (children) =>
+      children.reduce(
+        (result: any[], current: any) => {
+          if (current.id === originalId) {
+            return [...result, current, duplicatedSection];
+          }
+          return [...result, current];
         },
-      },
-    };
+        [],
+      ),
+    );
   });
 };

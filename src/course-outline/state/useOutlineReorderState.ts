@@ -2,13 +2,13 @@ import { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import type { XBlock } from '@src/data/types';
+import { courseOutlineQueryKeys } from '../data/queryKeys';
 import {
   replaceSectionInOutlineIndex,
   useReorderSections,
   useReorderSubsections,
   useReorderUnits,
   getCourseItem,
-  courseOutlineIndexQueryKey,
 } from '../data';
 
 interface UseOutlineReorderStateInput {
@@ -55,7 +55,7 @@ export function useOutlineReorderState({
     // The updater is kept pure: side-effect flags drive an outer invalidation
     // call after setQueryData returns.
     let shouldInvalidate = false;
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => {
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), (old: any) => {
       if (!old?.courseStructure?.childInfo?.children) { return old; }
       const matchedSections = sectionListIds.map(
         id => old.courseStructure.childInfo.children.find((s: any) => s.id === id),
@@ -79,7 +79,7 @@ export function useOutlineReorderState({
       };
     });
     if (shouldInvalidate) {
-      queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.index(courseId) });
     }
   }, [clearPreview, queryClient, courseId]);
 
@@ -116,7 +116,7 @@ export function useOutlineReorderState({
       replaceSectionInOutlineIndex(queryClient, courseId, freshSections);
     }
     if (anyFailed || Object.keys(freshSections).length === 0) {
-      queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.index(courseId) });
     }
   }, [queryClient, courseId]);
 

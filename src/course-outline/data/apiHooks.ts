@@ -1,7 +1,5 @@
 import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
-import { courseOutlineIndexQueryKey } from './outlineIndexQuery';
-import { courseOutlineMutationKeys } from './mutationKeys';
-export { courseOutlineMutationKeys };
+import { courseOutlineQueryKeys } from './queryKeys';
 import {
   ConfigureSectionData,
   ConfigureSubsectionData,
@@ -67,48 +65,6 @@ export {
 };
 import { useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './outlineStatusHooks';
 export { useCourseOutlineSavingStatus, useCourseOutlineReindexStatus };
-
-export const courseOutlineQueryKeys = {
-  all: ['courseOutline'],
-  /**
-   * Base key for data specific to a course in outline
-   */
-  course: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId],
-  courseItemId: (itemId?: string) => [
-    ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId) : undefined),
-    itemId,
-  ],
-  scrollToCourseItemId: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'scroll',
-  ],
-  pasteFileNotices: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'pasteFileNotices',
-  ],
-  courseDetails: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'details',
-  ],
-  courseBestPractices: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'bestPractices',
-  ],
-  courseLaunch: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'launch',
-  ],
-  legacyLibReadyToMigrateBlocks: (courseId: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'legacyLibReadyToMigrateBlocks',
-  ],
-  legacyLibReadyToMigrateBlocksStatus: (courseId: string, taskId?: string) => [
-    ...courseOutlineQueryKeys.legacyLibReadyToMigrateBlocks(courseId),
-    'status',
-    { taskId },
-  ],
-};
-
 
 type ScrollState = {
   id?: string;
@@ -176,7 +132,7 @@ export const useCreateCourseBlock = (
   const queryClient = useQueryClient();
   const { setData } = useScrollState(courseKey);
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseKey, 'createBlock'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseKey, 'createBlock'),
     mutationFn: (variables: CreateCourseXBlockMutationProps) => createCourseXblock(variables),
     onSuccess: async (data: { locator: string; }, variables) => {
       await callback?.(data.locator, variables.parentLocator);
@@ -198,6 +154,23 @@ export const useCreateCourseBlock = (
   });
 };
 
+/** Recursively prime the query cache with child blocks so they can be read without extra API calls. */
+async function primeChildCache(
+  queryClient: QueryClient,
+  node: XBlockBase,
+): Promise<void> {
+  if (!('childInfo' in node)) { return; }
+  const childInfo = (node as any).childInfo;
+  if (!childInfo) { return; }
+  const children = (childInfo as XblockChildInfo).children;
+  if (!children || !Array.isArray(children)) { return; }
+  for (const child of children) {
+    await queryClient.cancelQueries({ queryKey: courseOutlineQueryKeys.courseItemId(child.id) });
+    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(child.id), child);
+    await primeChildCache(queryClient, child);
+  }
+}
+
 export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initialData?: T, enabled: boolean = true) => {
   const queryClient = useQueryClient();
   const query = useQuery<T>({
@@ -206,23 +179,9 @@ export const useCourseItemData = <T extends XBlockBase>(itemId?: string, initial
     queryFn: enabled && itemId ?
       async () => {
         const data = await getCourseItem<T>(itemId!);
-        // If the container has children blocks, update children react-query cache
-        // data without hitting the API as each xblock call returns its children information as well.
-        if ('childInfo' in data) {
-          // This could mean that data is of a section or subsection
-          (data.childInfo as XblockChildInfo).children.forEach(async (child) => {
-            await queryClient.cancelQueries({ queryKey: courseOutlineQueryKeys.courseItemId(child.id) });
-            queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(child.id), child);
-            if ('childInfo' in child) {
-              // This means that the data is of section and so its children subsections also
-              // have children i.e. units
-              (child.childInfo as XblockChildInfo).children.forEach(async (grandChild) => {
-                await queryClient.cancelQueries({ queryKey: courseOutlineQueryKeys.courseItemId(grandChild.id) });
-                queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(grandChild.id), grandChild);
-              });
-            }
-          });
-        }
+        // Prime child block caches recursively (any depth), so subsequent reads
+        // resolve from cache without extra API calls.
+        await primeChildCache(queryClient, data);
         // Sync section data to outline index cache (committed tree reads from query cache).
         if (['chapter', 'section'].includes(data.category)) {
           const outlineCourseId = getCourseKey(data.id);
@@ -255,7 +214,7 @@ export const useCourseDetails = (courseId?: string, enabled: boolean = true) => 
 export const useUpdateCourseBlockName = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'updateName'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'updateName'),
     mutationFn: (
       variables: {
         itemId: string;
@@ -272,7 +231,7 @@ export const useUpdateCourseBlockName = (courseId: string) => {
 export const usePublishCourseItem = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'publish'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'publish'),
     mutationFn: (
       variables: {
         itemId: string;
@@ -287,7 +246,7 @@ export const usePublishCourseItem = (courseId?: string) => {
 export const useDeleteCourseItem = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'delete'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'delete'),
     mutationFn: (
       variables: {
         itemId: string;
@@ -300,7 +259,7 @@ export const useDeleteCourseItem = (courseId?: string) => {
       const category = getBlockType(itemId);
       if (courseId && ['chapter', 'sequential', 'vertical'].includes(category)) {
         queryClient.setQueryData(
-          courseOutlineIndexQueryKey(courseId),
+          courseOutlineQueryKeys.index(courseId),
           (old: any) => removeItemFromOutlineIndexData(old, itemId, variables),
         );
       }
@@ -311,7 +270,7 @@ export const useDeleteCourseItem = (courseId?: string) => {
 export const useConfigureSection = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'configureSection'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'configureSection'),
     mutationFn: (variables: ConfigureSectionData & ParentIds) => configureCourseSection(variables),
     onSettled: (_data, _err, variables) => {
       invalidateOutlineAndParents(queryClient, variables, getCourseKey(variables.sectionId));
@@ -322,7 +281,7 @@ export const useConfigureSection = (courseId?: string) => {
 export const useConfigureSubsection = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'configureSubsection'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'configureSubsection'),
     mutationFn: (
       variables: Partial<ConfigureSubsectionData> & Pick<ConfigureSubsectionData, 'itemId'> & ParentIds,
     ) => configureCourseSubsection(variables),
@@ -356,7 +315,7 @@ export const useConfigureUnit = (courseId?: string) => {
   const { showToast, closeToast } = useToastContext();
   // We are not using useMutationWithProcessingNotification to set custom processing notification message
   return useMutation({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'configureUnit'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'configureUnit'),
     mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
     onMutate: (variables) => {
       const msg = getNotificationMessage(variables.type, variables.isVisibleToStaffOnly, true);
@@ -373,7 +332,7 @@ export const useConfigureUnit = (courseId?: string) => {
 export const useUpdateCourseSectionHighlights = (courseId?: string) => {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'highlights'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'highlights'),
     mutationFn: (
       variables: {
         sectionId: string;
@@ -390,7 +349,7 @@ export const useDuplicateItem = (courseKey: string) => {
   const queryClient = useQueryClient();
   const { setData } = useScrollState(courseKey);
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseKey, 'duplicate'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseKey, 'duplicate'),
     mutationFn: (
       variables: {
         itemId: string;
@@ -423,7 +382,7 @@ export const usePasteFileNotices = createGlobalState<StaticFileNotices>(
 
 export const useReorderUnits = (courseId?: string) => {
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'reorderUnits'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'reorderUnits'),
     mutationFn: (variables: {
       sectionId: string;
       subsectionId: string;
@@ -434,14 +393,14 @@ export const useReorderUnits = (courseId?: string) => {
 
 export const useReorderSections = (courseId: string) => {
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'reorderSections'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'reorderSections'),
     mutationFn: (sectionListIds: string[]) => setSectionOrderList(courseId, sectionListIds),
   });
 };
 
 export const useReorderSubsections = (courseId?: string) => {
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'reorderSubsections'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'reorderSubsections'),
     mutationFn: (variables: {
       sectionId: string;
       subsectionListIds: string[];
@@ -454,7 +413,7 @@ export const usePasteItem = (courseId?: string) => {
   const { setData: setScrollState } = useScrollState(courseId);
   const { setData } = usePasteFileNotices(courseId);
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'paste'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'paste'),
     mutationFn: (
       variables: {
         parentLocator: string;
@@ -477,10 +436,10 @@ export const usePasteItem = (courseId?: string) => {
 export function useSetVideoSharingOption(courseId: string) {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'videoSharing'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'videoSharing'),
     mutationFn: (value: string) => setVideoSharingOption(courseId, value),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.index(courseId) });
     },
   });
 }
@@ -492,10 +451,10 @@ export function useSetVideoSharingOption(courseId: string) {
 export function useEnableCourseHighlightsEmails(courseId: string) {
   const queryClient = useQueryClient();
   return useMutationWithProcessingNotification({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'highlightsEmail'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'highlightsEmail'),
     mutationFn: () => enableCourseHighlightsEmails(courseId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.index(courseId) });
     },
   });
 }
@@ -506,7 +465,7 @@ export function useEnableCourseHighlightsEmails(courseId: string) {
  */
 export function useDismissNotification(courseId: string) {
   return useMutation({
-    mutationKey: courseOutlineMutationKeys.savingOperation(courseId, 'dismissNotification'),
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'dismissNotification'),
     mutationFn: (dismissUrl: string) => {
       const url = `${getConfig().STUDIO_BASE_URL}${dismissUrl}`;
       return dismissNotification(url);
@@ -545,7 +504,7 @@ export function useCourseLaunch(courseId: string) {
 
 export function useRestartIndexingOnCourse(courseId: string) {
   return useMutation({
-    mutationKey: courseOutlineMutationKeys.reindex(courseId),
+    mutationKey: courseOutlineQueryKeys.mutations.reindex(courseId),
     mutationFn: (reindexLink: string) => restartIndexingOnCourse(reindexLink),
   });
 }

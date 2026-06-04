@@ -5,7 +5,6 @@ import { UnitSidebar } from './UnitInfoSidebar';
 // Mocks
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseItemData: jest.fn(),
-  courseOutlineQueryKeys: { courseItemId: (id: string) => ['courseItem', id] },
   useDuplicateItem: jest.fn(() => ({ mutate: jest.fn() })),
 }));
 

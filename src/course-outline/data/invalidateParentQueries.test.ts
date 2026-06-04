@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
-import { invalidateParentQueries, courseOutlineQueryKeys } from './apiHooks';
+import { invalidateParentQueries } from './apiHooks';
+import { courseOutlineQueryKeys } from './queryKeys';
 
 describe('invalidateParentQueries', () => {
   let queryClient: QueryClient;

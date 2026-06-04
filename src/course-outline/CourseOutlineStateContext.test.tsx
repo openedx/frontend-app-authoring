@@ -13,7 +13,8 @@ import {
   CourseOutlineProvider,
   useCourseOutlineContext,
 } from './CourseOutlineContext';
-import { courseOutlineIndexQueryKey, getCourseOutlineIndexApiUrl } from './data';
+import { courseOutlineQueryKeys } from './data/queryKeys';
+import { getCourseOutlineIndexApiUrl } from './data';
 
 let currentItemData;
 const mockOutlineIndexData = {
@@ -206,10 +207,10 @@ describe('CourseOutlineContext', () => {
 
       const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
-      // courseOutlineIndexQueryKey(courseBId) = ['courseOutline', courseBId, 'index']
+      // courseOutlineQueryKeys.index(courseBId) = ['courseOutline', courseBId, 'index']
       // Query cache for course B should be empty until fetch resolves
       // (no initialData was passed for course B)
-      const courseBQueryData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseBId));
+      const courseBQueryData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseBId));
       expect(courseBQueryData).toBeUndefined();
 
       // Query for course B should be in pending state (fetching)

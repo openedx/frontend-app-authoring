@@ -33,9 +33,8 @@ import {
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
   exportTags,
-  courseOutlineIndexQueryKey,
-  courseOutlineQueryKeys,
 } from './data';
+import { courseOutlineQueryKeys } from './data/queryKeys';
 
 import {
   courseOutlineIndexMock as originalCourseOutlineIndexMock,
@@ -174,7 +173,7 @@ describe('<CourseOutline />', () => {
       }))
       .reply(200, courseLaunchMock);
     // Seed React Query cache with a clone so tests can mutate the mock data
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), cloneDeep(courseOutlineIndexMock));
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), cloneDeep(courseOutlineIndexMock));
 
     // Pre-seed item-level caches so useCourseItemData queries resolve immediately
     // rather than failing when getXBlockApiUrl mocks aren't yet set up.
@@ -391,7 +390,7 @@ describe('<CourseOutline />', () => {
     ]);
 
     // Verify React Query cache was updated with new order
-    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
     const cachedChildren = cachedData?.courseStructure?.childInfo?.children;
     expect(cachedChildren.map(s => s.id)).toEqual([
       sectionIds[1],
@@ -426,7 +425,7 @@ describe('<CourseOutline />', () => {
     });
 
     // Verify React Query cache still has original order (rollback cleared preview, cache unchanged)
-    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
     const cachedChildren = cachedData?.courseStructure?.childInfo?.children;
     expect(cachedChildren.map(s => s.id)).toEqual(sectionIds);
   });
@@ -674,7 +673,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexWithoutSections);
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), courseOutlineIndexWithoutSections);
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), courseOutlineIndexWithoutSections);
 
     const { getByTestId } = renderComponent();
 
@@ -690,7 +689,7 @@ describe('<CourseOutline />', () => {
         ...courseOutlineIndexMock,
         notificationDismissUrl: '/some/url',
       });
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), {
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), {
       ...courseOutlineIndexMock,
       notificationDismissUrl: '/some/url',
     });
@@ -1870,7 +1869,7 @@ describe('<CourseOutline />', () => {
     const moveUpButton = await within(sectionElement).findByTestId('section-card-header__menu-move-up-button');
     await act(async () => fireEvent.click(moveUpButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       expect(cachedData?.courseStructure?.childInfo?.children[0]?.id).toBe(secondSection.id);
     });
 
@@ -1881,7 +1880,7 @@ describe('<CourseOutline />', () => {
     const moveDownButton = await within(sectionElement).findByTestId('section-card-header__menu-move-down-button');
     await act(async () => fireEvent.click(moveDownButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       expect(cachedData?.courseStructure?.childInfo?.children[1]?.id).toBe(secondSection.id);
     });
   });
@@ -1964,7 +1963,7 @@ describe('<CourseOutline />', () => {
     const moveUpButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-up-button');
     await act(async () => fireEvent.click(moveUpButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       expect(cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children[0]?.id).toBe(secondSubsection.id);
     });
 
@@ -1977,7 +1976,7 @@ describe('<CourseOutline />', () => {
     );
     await act(async () => fireEvent.click(moveDownButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       expect(cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children[1]?.id).toBe(secondSubsection.id);
     });
   });
@@ -2017,7 +2016,7 @@ describe('<CourseOutline />', () => {
     const moveUpButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-up-button');
     await act(async () => fireEvent.click(moveUpButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const firstSectionSubsections = cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children || [];
       expect(firstSectionSubsections.length).toBe(firstSection.childInfo.children.length + 1);
       expect(firstSectionSubsections[firstSectionSubsections.length - 1]?.id).toBe(subsection.id);
@@ -2062,7 +2061,7 @@ describe('<CourseOutline />', () => {
     const moveDownBtn = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-down-button');
     await act(async () => fireEvent.click(moveDownBtn));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const firstSectionSubsections = cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children || [];
       expect(firstSectionSubsections.length).toBe(section.childInfo.children.length - 1);
       const subsectionsSecondSection = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children || [];
@@ -2156,7 +2155,7 @@ describe('<CourseOutline />', () => {
     const moveUpButton = await within(unitElement).findByTestId('unit-card-header__menu-move-up-button');
     await act(async () => fireEvent.click(moveUpButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const units = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[1]?.childInfo?.children;
       expect(secondUnit.id).toBe(units?.[0]?.id);
     });
@@ -2168,7 +2167,7 @@ describe('<CourseOutline />', () => {
     const moveDownButton = await within(subsectionElement).findByTestId('unit-card-header__menu-move-down-button');
     await act(async () => fireEvent.click(moveDownButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const units = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[1]?.childInfo?.children;
       expect(secondUnit.id).toBe(units?.[1]?.id);
     });
@@ -2211,7 +2210,7 @@ describe('<CourseOutline />', () => {
     const moveUpButton = await within(unitElement).findByTestId('unit-card-header__menu-move-up-button');
     await act(async () => fireEvent.click(moveUpButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const firstSubUnits =
         cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[0]?.childInfo?.children || [];
       expect(firstSubUnits[firstSubUnits.length - 1]?.id).toBe(unit.id);
@@ -2260,7 +2259,7 @@ describe('<CourseOutline />', () => {
     const moveUpButton = await within(unitElement).findByTestId('unit-card-header__menu-move-up-button');
     await act(async () => fireEvent.click(moveUpButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const firstSectionChildren = cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children || [];
       const firstSectionLastSubUnits = firstSectionChildren[firstSectionChildren.length - 1]?.childInfo?.children || [];
       expect(firstSectionLastSubUnits[firstSectionLastSubUnits.length - 1]?.id).toBe(unit.id);
@@ -2308,7 +2307,7 @@ describe('<CourseOutline />', () => {
     const moveDownButton = await within(unitElement).findByTestId('unit-card-header__menu-move-down-button');
     await act(async () => fireEvent.click(moveDownButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const firstSubUnits =
         cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children[0]?.childInfo?.children || [];
       expect(firstSubUnits.length).toBe(firstSubsection.childInfo.children.length - 1);
@@ -2359,7 +2358,7 @@ describe('<CourseOutline />', () => {
     const moveDownButton = await within(unitElement).findByTestId('unit-card-header__menu-move-down-button');
     await act(async () => fireEvent.click(moveDownButton));
     await waitFor(() => {
-      const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const secondSectionChildren = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children || [];
       const secondSectionLastSubUnits = secondSectionChildren[secondSectionChildren.length - 1]?.childInfo?.children ||
         [];
@@ -2455,7 +2454,7 @@ describe('<CourseOutline />', () => {
     ]);
 
     // Verify React Query cache was updated with fresh section data
-    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
     const cachedSection = cachedData?.courseStructure?.childInfo?.children
       .find((s: any) => s.id === section.id);
     expect(cachedSection.childInfo.children.map((c: any) => c.id)).toEqual([
@@ -2491,7 +2490,7 @@ describe('<CourseOutline />', () => {
     });
 
     // Verify React Query cache still has original order (rollback cleared preview, cache unchanged)
-    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
     const cachedSection = cachedData?.courseStructure?.childInfo?.children
       .find((s: any) => s.id === section.id);
     expect(cachedSection.childInfo.children.map((c: any) => c.id)).toEqual(
@@ -2534,7 +2533,7 @@ describe('<CourseOutline />', () => {
     expect(axiosMock.history.put[0].url).toContain(subsection.id);
 
     // Verify React Query cache was updated
-    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
     const cachedSection = cachedData?.courseStructure?.childInfo?.children
       .find((s: any) => s.id === section.id);
     expect(cachedSection).toBeDefined();
@@ -2572,7 +2571,7 @@ describe('<CourseOutline />', () => {
     });
 
     // Verify React Query cache still has original order (rollback cleared preview, cache unchanged)
-    const cachedData = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+    const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
     const cachedSection = cachedData?.courseStructure?.childInfo?.children
       .find((s: any) => s.id === section.id);
     expect(cachedSection).toBeDefined();
@@ -2744,7 +2743,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexWithoutSections);
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), courseOutlineIndexWithoutSections);
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), courseOutlineIndexWithoutSections);
 
     renderComponent();
 

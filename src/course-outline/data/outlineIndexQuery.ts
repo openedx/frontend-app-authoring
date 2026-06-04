@@ -2,8 +2,7 @@ import { skipToken, useQuery } from '@tanstack/react-query';
 
 import { getCourseOutlineIndex } from './api';
 import type { CourseOutline } from './types';
-
-export const courseOutlineIndexQueryKey = (courseId?: string) => ['courseOutline', courseId, 'index'];
+import { courseOutlineQueryKeys } from './queryKeys';
 
 type UseCourseOutlineIndexOptions = {
   enabled?: boolean;
@@ -20,7 +19,7 @@ export const useCourseOutlineIndex = (
   }: UseCourseOutlineIndexOptions = {},
 ) =>
   useQuery<CourseOutline>({
-    queryKey: courseOutlineIndexQueryKey(courseId),
+    queryKey: courseOutlineQueryKeys.index(courseId),
     queryFn: enabled && courseId ? () => getCourseOutlineIndex(courseId) : skipToken,
     initialData,
     refetchOnMount,

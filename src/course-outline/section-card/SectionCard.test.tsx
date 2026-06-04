@@ -12,7 +12,7 @@ import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
-import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import SectionCard from './SectionCard';
 import { CourseOutlineProvider } from '../CourseOutlineContext';

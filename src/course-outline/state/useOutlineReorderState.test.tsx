@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { courseOutlineIndexQueryKey } from '../data';
+import { courseOutlineQueryKeys } from '../data/queryKeys';
 import { useOutlineReorderState } from './useOutlineReorderState';
 
 // Mock the apiHooks module so the reorder mutation hooks return controllable fns
@@ -78,7 +78,7 @@ describe('useOutlineReorderState', () => {
     queryClient = new QueryClient();
 
     // Seed the query cache with outline index data containing the sections
-    queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), {
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), {
       courseStructure: {
         id: courseId,
         childInfo: {
@@ -125,13 +125,13 @@ describe('useOutlineReorderState', () => {
       expect(mockMutateAsync.sections).toHaveBeenCalledWith(['A', 'D', 'C']);
 
       // Cache unchanged — still shows original order
-      const cached: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cached: any = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const cachedIds = cached?.courseStructure?.childInfo?.children?.map((s: any) => s.id);
       expect(cachedIds).toEqual(['A', 'B', 'C']);
 
       // Invalidation triggered because ids mismatch
       expect(invalidateSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ queryKey: courseOutlineIndexQueryKey(courseId) }),
+        expect.objectContaining({ queryKey: courseOutlineQueryKeys.index(courseId) }),
       );
 
       invalidateSpy.mockRestore();
@@ -139,8 +139,8 @@ describe('useOutlineReorderState', () => {
 
     it('does not modify cache when cache has no outlineIndex structure', async () => {
       // Remove the cached outline data so the updater sees no structure.
-      queryClient.removeQueries({ queryKey: courseOutlineIndexQueryKey(courseId) });
-      expect(queryClient.getQueryData(courseOutlineIndexQueryKey(courseId))).toBeUndefined();
+      queryClient.removeQueries({ queryKey: courseOutlineQueryKeys.index(courseId) });
+      expect(queryClient.getQueryData(courseOutlineQueryKeys.index(courseId))).toBeUndefined();
 
       const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
@@ -153,7 +153,7 @@ describe('useOutlineReorderState', () => {
       });
 
       // Cache stays undefined — updater returns undefined unchanged
-      expect(queryClient.getQueryData(courseOutlineIndexQueryKey(courseId))).toBeUndefined();
+      expect(queryClient.getQueryData(courseOutlineQueryKeys.index(courseId))).toBeUndefined();
 
       // No invalidation (cache was empty, nothing to invalidate)
       expect(invalidateSpy).not.toHaveBeenCalled();
@@ -163,8 +163,8 @@ describe('useOutlineReorderState', () => {
 
     it('preserves unrelated cache fields when updater writes reordered children', async () => {
       // Add a custom field to the cached data that the updater must carry through.
-      const prior: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
-      queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), {
+      const prior: any = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
+      queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), {
         ...prior,
         customMeta: { source: 'test' },
       });
@@ -176,7 +176,7 @@ describe('useOutlineReorderState', () => {
         await result.current.commitSectionReorder(['B', 'A', 'C']);
       });
 
-      const cached: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const cached: any = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       // customMeta survived the updater
       expect(cached.customMeta).toEqual({ source: 'test' });
       // Children were reordered
@@ -199,7 +199,7 @@ describe('useOutlineReorderState', () => {
         // Inject concurrent change: remove section B from cache.
         // This runs in the microtask gap before
         // acceptReorderAndSyncSectionOrder's setQueryData.
-        queryClient.setQueryData(courseOutlineIndexQueryKey(courseId), (old: any) => ({
+        queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), (old: any) => ({
           ...old,
           courseStructure: {
             ...old.courseStructure,
@@ -216,7 +216,7 @@ describe('useOutlineReorderState', () => {
 
       const { result } = renderReorderHook();
 
-      const before: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const before: any = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       expect(before.courseStructure.childInfo.children.map((s: any) => s.id)).toEqual(['A', 'B', 'C']);
 
       await act(async () => {
@@ -225,13 +225,13 @@ describe('useOutlineReorderState', () => {
 
       // B was removed by concurrent change; reorder updater saw B absent
       // and triggered invalidation.
-      const after: any = queryClient.getQueryData(courseOutlineIndexQueryKey(courseId));
+      const after: any = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
       const afterIds = after?.courseStructure?.childInfo?.children?.map((s: any) => s.id) || [];
       expect(afterIds).not.toContain('B');
 
       // Invalidation was triggered because B was missing from cache
       expect(invalidateSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ queryKey: courseOutlineIndexQueryKey(courseId) }),
+        expect.objectContaining({ queryKey: courseOutlineQueryKeys.index(courseId) }),
       );
 
       invalidateSpy.mockRestore();
@@ -317,7 +317,7 @@ describe('useOutlineReorderState', () => {
 
       expect(mockReplaceSectionInOutlineIndex).not.toHaveBeenCalled();
       expect(invalidateSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ queryKey: courseOutlineIndexQueryKey(courseId) }),
+        expect.objectContaining({ queryKey: courseOutlineQueryKeys.index(courseId) }),
       );
 
       invalidateSpy.mockRestore();

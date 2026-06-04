@@ -1,7 +1,7 @@
 import { useMutationState } from '@tanstack/react-query';
 import { RequestStatus } from '@src/data/constants';
 import { getErrorDetails } from '../utils/getErrorDetails';
-import { courseOutlineMutationKeys } from './mutationKeys';
+import { courseOutlineQueryKeys } from './queryKeys';
 
 /**
  * Aggregate save status across all saving mutations for a course.
@@ -9,7 +9,7 @@ import { courseOutlineMutationKeys } from './mutationKeys';
  */
 export function useCourseOutlineSavingStatus(courseId?: string): string {
   const mutations = useMutationState({
-    filters: { mutationKey: courseOutlineMutationKeys.saving(courseId) },
+    filters: { mutationKey: courseOutlineQueryKeys.mutations.saving(courseId) },
   });
   // Pending wins
   const hasPending = mutations.some(m => m.status === 'pending');
@@ -50,7 +50,7 @@ export function useCourseOutlineReindexStatus(courseId?: string): {
   reindexError: any;
 } {
   const mutations = useMutationState({
-    filters: { mutationKey: courseOutlineMutationKeys.reindex(courseId) },
+    filters: { mutationKey: courseOutlineQueryKeys.mutations.reindex(courseId) },
   });
   const latest = latestMutation(mutations);
   const status = latest?.status;
