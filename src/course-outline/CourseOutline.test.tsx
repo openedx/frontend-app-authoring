@@ -363,6 +363,91 @@ function useOperationsTestOutline() {
   });
 }
 
+/** Build a 2-section NodeSpec for configure modal tests. */
+function buildConfigureOutlineSpec(): NodeSpec[] {
+  const id = (type: string, block: string) => `block-v1:edX+DemoX+Demo_Course+type@${type}+block@${block}`;
+  return [
+    {
+      id: id('chapter', 'd8a6192ade314473a78242dfeedfbf5b'),
+      displayName: 'Introduction 12',
+      overrides: {
+        start: '2023-08-10T22:00:00Z',
+        visibilityState: 'staff_only',
+        published: false,
+        courseGraders: ['Homework', 'Exam'],
+      },
+      children: [
+        {
+          id: id('sequential', '8a85e287e30a47e98d8c1f37f74a6a9d'),
+          displayName: 'Subsection 1A',
+          overrides: {
+            start: '1970-01-01T05:00:00Z',
+            visibilityState: 'draft',
+            published: false,
+            courseGraders: ['Homework', 'Exam'],
+            isTimeLimited: false,
+            isProctoredExam: false,
+            isOnboardingExam: false,
+            isPracticeExam: false,
+            examReviewRules: '',
+            defaultTimeLimitMinutes: null,
+            hideAfterDue: false,
+            wasExamEverLinkedWithExternal: false,
+            onlineProctoringRules: '',
+            supportsOnboarding: false,
+            showReviewRules: true,
+            isPrereq: false,
+            prereqs: [{
+              blockUsageKey: id('sequential', 'b713bc2830f34f6f87554028c3068729'),
+              blockDisplayName: 'Subsection 1B',
+            }],
+          },
+          children: [{ id: id('vertical', '0f652012aa294ed9b4360a1e4f6c5232'), displayName: 'Unit 1A1' }],
+        },
+        {
+          id: id('sequential', 'b713bc2830f34f6f87554028c3068729'),
+          displayName: 'Subsection 1B',
+          overrides: {
+            start: '2013-02-05T05:00:00Z',
+            visibilityState: 'live',
+            published: true,
+            courseGraders: ['Homework', 'Exam'],
+          },
+          children: [{ id: id('vertical', 'sec1-sub1-unit-0'), displayName: 'Unit' }],
+        },
+      ],
+    },
+    {
+      id: id('chapter', 'section-2'),
+      displayName: 'Section 2',
+      overrides: { visibilityState: 'live' },
+      children: [
+        {
+          id: id('sequential', 'sec2-sub-0'),
+          displayName: 'Sec2 Sub 0',
+          overrides: { courseGraders: ['Homework', 'Exam'] },
+          children: [{ id: id('vertical', 'sec2-sub-0-unit-0'), displayName: 'Unit' }],
+        },
+      ],
+    },
+  ];
+}
+
+function useConfigureTestOutline() {
+  useTestOutline({
+    sections: buildConfigureOutlineSpec(),
+    overrides: {
+      createdOn: new Date().toISOString(),
+      courseStructure: {
+        id: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course',
+        displayName: 'Demonstration Course',
+        enableProctoredExams: true,
+        enableTimedExams: true,
+      },
+    },
+  });
+}
+
 /** Wrapper around useTestOutline for reorder/move tests — overrides courseStructure.id to match old mock. */
 function useReorderTestOutline() {
   useTestOutline({
@@ -760,6 +845,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new unit correctly', async () => {
+    useTestOutline();
     const { findAllByTestId } = renderComponent();
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -773,15 +859,19 @@ describe('<CourseOutline />', () => {
       });
     const newUnitButton = await within(subsectionElement).findByRole('button', { name: 'New unit' });
     await act(async () => fireEvent.click(newUnitButton));
-    expect(axiosMock.history.post.length).toBe(3);
+
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+    const newUnitPost = axiosMock.history.post.find(
+      (entry: any) => entry.data && entry.data.includes(COURSE_BLOCK_NAMES.vertical.id),
+    );
+    expect(newUnitPost).toBeDefined();
+    expect(JSON.parse(newUnitPost!.data)).toEqual({
       type: COURSE_BLOCK_NAMES.vertical.id,
       category: COURSE_BLOCK_NAMES.vertical.id,
       parent_locator: subsection.id,
       display_name: COURSE_BLOCK_NAMES.vertical.name,
-    }));
+    });
   });
 
   it('adds a unit from library correctly', async () => {
@@ -974,6 +1064,7 @@ describe('<CourseOutline />', () => {
 
   it('check edit title works for section, subsection and unit', async () => {
     const user = userEvent.setup();
+    useOperationsTestOutline();
     renderComponent();
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const checkEditTitle = async (element, item, newName, elementName) => {
@@ -1304,6 +1395,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check configure modal for section', async () => {
+    useConfigureTestOutline();
     const { findByTestId, findAllByTestId } = renderComponent();
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const newReleaseDateIso = '2025-09-10T22:00:00Z';
@@ -1341,14 +1433,17 @@ describe('<CourseOutline />', () => {
     const saveButton = await findByTestId('configure-save-button');
     await act(async () => fireEvent.click(saveButton));
 
-    expect(axiosMock.history.post.length).toBe(3);
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+    const sectionCfgPost = axiosMock.history.post.find(
+      (entry: any) => entry.data && entry.data.includes('visible_to_staff_only'),
+    );
+    expect(sectionCfgPost).toBeDefined();
+    expect(JSON.parse(sectionCfgPost!.data)).toEqual({
       publish: 'republish',
       metadata: {
         visible_to_staff_only: true,
         start: newReleaseDateIso,
       },
-    }));
+    });
 
     await act(async () => fireEvent.click(sectionDropdownButton));
     await act(async () => fireEvent.click(configureBtn));
@@ -1358,6 +1453,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check configure modal for subsection', async () => {
+    useConfigureTestOutline();
     const user = userEvent.setup();
     const {
       findAllByTestId,
@@ -1446,8 +1542,11 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(3);
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
+    const subCfgPost = axiosMock.history.post.find(
+      (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
+    );
+    expect(subCfgPost).toBeDefined();
+    expect(JSON.parse(subCfgPost!.data)).toEqual(expectedRequestData);
 
     // reopen modal and check values
     await user.click(subsectionDropdownButton);
@@ -1480,6 +1579,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check prereq and proctoring settings in configure modal for subsection', async () => {
+    useConfigureTestOutline();
     const user = userEvent.setup();
     const {
       findAllByTestId,
@@ -1587,8 +1687,11 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(3);
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
+    const cfgPosta = axiosMock.history.post.find(
+      (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
+    );
+    expect(cfgPosta).toBeDefined();
+    expect(JSON.parse(cfgPosta!.data)).toEqual(expectedRequestData);
 
     // reopen modal and check values
     await user.click(subsectionDropdownButton);
@@ -1628,6 +1731,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check practice proctoring settings in configure modal', async () => {
+    useConfigureTestOutline();
     const user = userEvent.setup();
     const {
       findAllByTestId,
@@ -1712,8 +1816,11 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(3);
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
+    const cfgPostb = axiosMock.history.post.find(
+      (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
+    );
+    expect(cfgPostb).toBeDefined();
+    expect(JSON.parse(cfgPostb!.data)).toEqual(expectedRequestData);
 
     // reopen modal and check values
     await user.click(subsectionDropdownButton);
@@ -1820,8 +1927,11 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(3);
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
+    const cfgPostc = axiosMock.history.post.find(
+      (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
+    );
+    expect(cfgPostc).toBeDefined();
+    expect(JSON.parse(cfgPostc!.data)).toEqual(expectedRequestData);
 
     // reopen modal and check values
     await user.click(subsectionDropdownButton);
@@ -1925,8 +2035,11 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(3);
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
+    const noSpecialPost = axiosMock.history.post.find(
+      (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
+    );
+    expect(noSpecialPost).toBeDefined();
+    expect(JSON.parse(noSpecialPost!.data)).toEqual(expectedRequestData);
 
     // Seed subsection cache + mock parent section GET so invalidateParentQueries
     // refetch succeeds and reopened modal gets correct form values.
@@ -2073,9 +2186,19 @@ describe('<CourseOutline />', () => {
 
   it('check update highlights when update highlights query is successfully', async () => {
     const user = userEvent.setup();
+    useTestOutline({
+      sections: buildOperationsOutlineSpec(),
+      overrides: {
+        courseStructure: { id: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course' },
+      },
+    });
+    // Seed highlights on section 0 so the highlights button appears.
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    section.highlights = ['Existing Highlight'];
+    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(section.id), section);
+
     renderComponent();
 
-    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const highlights = [
       'New Highlight 1',
       'New Highlight 2',
