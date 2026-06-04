@@ -25,6 +25,7 @@ const TableActions = ({
   permissions = {
     canCreateFiles: true,
     canDeleteFiles: true,
+    canEditFiles: true,
   },
 }) => {
   const intl = useIntl();
@@ -46,46 +47,50 @@ const TableActions = ({
       <Button variant="outline-primary" onClick={openSort} iconBefore={Tune}>
         <FormattedMessage {...messages.sortButtonLabel} />
       </Button>
-      <Dropdown className="mx-2">
-        <Dropdown.Toggle
-          id="actions-menu-toggle"
-          alt="actions-menu-toggle"
-          variant="outline-primary"
-        >
-          <FormattedMessage {...messages.actionsButtonLabel} />
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          {encodingsDownloadUrl ?
-            (
-              <Dropdown.Item
-                download
-                href={`${getConfig().STUDIO_BASE_URL}${encodingsDownloadUrl}`}
-              >
-                <FormattedMessage {...messages.downloadEncodingsTitle} />
-              </Dropdown.Item>
-            ) :
-            null}
-          <Dropdown.Item
-            onClick={() => handleBulkDownload(selectedFlatRows)}
-            disabled={isEmpty(selectedFlatRows)}
+      {(permissions.canEditFiles || permissions.canDeleteFiles) && (
+        <Dropdown className="mx-2">
+          <Dropdown.Toggle
+            id="actions-menu-toggle"
+            alt="actions-menu-toggle"
+            variant="outline-primary"
           >
-            <FormattedMessage {...messages.downloadTitle} />
-          </Dropdown.Item>
-          {permissions.canDeleteFiles
-            && (
-              <>
-                <Dropdown.Divider />
+            <FormattedMessage {...messages.actionsButtonLabel} />
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {encodingsDownloadUrl ?
+              (
                 <Dropdown.Item
-                  data-testid="open-delete-confirmation-button"
-                  onClick={() => handleOpenDeleteConfirmation(selectedFlatRows)}
-                  disabled={isEmpty(selectedFlatRows)}
+                  download
+                  href={`${getConfig().STUDIO_BASE_URL}${encodingsDownloadUrl}`}
                 >
-                  <FormattedMessage {...messages.deleteTitle} />
+                  <FormattedMessage {...messages.downloadEncodingsTitle} />
                 </Dropdown.Item>
-              </>
+              ) :
+              null}
+            {permissions.canEditFiles && (
+              <Dropdown.Item
+                onClick={() => handleBulkDownload(selectedFlatRows)}
+                disabled={isEmpty(selectedFlatRows)}
+              >
+                <FormattedMessage {...messages.downloadTitle} />
+              </Dropdown.Item>
             )}
-        </Dropdown.Menu>
-      </Dropdown>
+            {permissions.canDeleteFiles
+              && (
+                <>
+                  <Dropdown.Divider />
+                  <Dropdown.Item
+                    data-testid="open-delete-confirmation-button"
+                    onClick={() => handleOpenDeleteConfirmation(selectedFlatRows)}
+                    disabled={isEmpty(selectedFlatRows)}
+                  >
+                    <FormattedMessage {...messages.deleteTitle} />
+                  </Dropdown.Item>
+                </>
+              )}
+          </Dropdown.Menu>
+        </Dropdown>
+      )}
       {permissions.canCreateFiles && (
         <Button iconBefore={Add} onClick={handleOpenFileSelector}>
           {intl.formatMessage(messages.addFilesButtonLabel, { fileType })}
@@ -125,6 +130,7 @@ TableActions.propTypes = {
   permissions: PropTypes.shape({
     canCreateFiles: PropTypes.bool,
     canDeleteFiles: PropTypes.bool,
+    canEditFiles: PropTypes.bool,
   }),
 };
 

@@ -55,8 +55,8 @@ const MoreInfoColumn = ({
         onEscapeKey={close}
       >
         <Menu className="more-info-menu">
-          {fileType === 'video' ?
-            (
+          {fileType === 'video'
+            ? permissions.canEditFiles && (
               <MenuItem
                 as={Button}
                 variant="tertiary"
@@ -68,8 +68,8 @@ const MoreInfoColumn = ({
               >
                 {intl.formatMessage(messages.copyVideoIdTitle)}
               </MenuItem>
-            ) :
-            (
+            )
+            : permissions.canEditFiles && (
               <>
                 <MenuItem
                   as={Button}
@@ -93,27 +93,27 @@ const MoreInfoColumn = ({
                 >
                   {intl.formatMessage(messages.copyWebUrlTitle)}
                 </MenuItem>
-                {permissions.canEditFiles && (
-                  <MenuItem
-                    as={Button}
-                    variant="tertiary"
-                    onClick={() => handleLock(id, !locked)}
-                  >
-                    {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
-                  </MenuItem>
-                )}
+                <MenuItem
+                  as={Button}
+                  variant="tertiary"
+                  onClick={() => handleLock(id, !locked)}
+                >
+                  {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
+                </MenuItem>
               </>
             )}
-          <MenuItem
-            as={Button}
-            variant="tertiary"
-            onClick={() =>
-              handleBulkDownload(
-                [{ original: { id, displayName, downloadLink } }],
-              )}
-          >
-            {intl.formatMessage(messages.downloadTitle)}
-          </MenuItem>
+          {permissions.canEditFiles && (
+            <MenuItem
+              as={Button}
+              variant="tertiary"
+              onClick={() =>
+                handleBulkDownload(
+                  [{ original: { id, displayName, downloadLink } }],
+                )}
+            >
+              {intl.formatMessage(messages.downloadTitle)}
+            </MenuItem>
+          )}
           <MenuItem
             as={Button}
             variant="tertiary"

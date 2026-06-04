@@ -36,15 +36,15 @@ const FileMenu = ({
         alt="file-menu-toggle"
       />
       <Dropdown.Menu>
-        {fileType === 'video' ?
-          (
+        {fileType === 'video'
+          ? permissions.canEditFiles && (
             <Dropdown.Item
               onClick={() => navigator.clipboard.writeText(id)}
             >
               {intl.formatMessage(messages.copyVideoIdTitle)}
             </Dropdown.Item>
-          ) :
-          (
+          )
+          : permissions.canEditFiles && (
             <>
               <Dropdown.Item
                 onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(portableUrl)}
@@ -56,16 +56,16 @@ const FileMenu = ({
               >
                 {intl.formatMessage(messages.copyWebUrlTitle)}
               </Dropdown.Item>
-              {permissions.canEditFiles && (
-                <Dropdown.Item onClick={handleLock}>
-                  {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
-                </Dropdown.Item>
-              )}
+              <Dropdown.Item onClick={handleLock}>
+                {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
+              </Dropdown.Item>
             </>
           )}
-        <Dropdown.Item onClick={onDownload}>
-          {intl.formatMessage(messages.downloadTitle)}
-        </Dropdown.Item>
+        {permissions.canEditFiles && (
+          <Dropdown.Item onClick={onDownload}>
+            {intl.formatMessage(messages.downloadTitle)}
+          </Dropdown.Item>
+        )}
         <Dropdown.Item onClick={openAssetInfo}>
           {intl.formatMessage(messages.infoTitle)}
         </Dropdown.Item>

@@ -161,6 +161,7 @@ const FileTable = ({
       permissions={{
         canCreateFiles: permissions.canCreateFiles,
         canDeleteFiles: permissions.canDeleteFiles,
+        canEditFiles: permissions.canEditFiles,
       }}
     />
   );
@@ -213,7 +214,7 @@ const FileTable = ({
         isFilterable
         isLoading={loadingStatus === RequestStatus.IN_PROGRESS}
         isSortable
-        isSelectable
+        isSelectable={permissions.canEditFiles || permissions.canDeleteFiles}
         isPaginated
         defaultColumnValues={{ Filter: TextFilter }}
         dataViewToggleOptions={{
