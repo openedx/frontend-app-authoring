@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { clipboardUnit } from '@src/__mocks__';
 import configureModalMessages from '@src/generic/configure-modal/messages';
 import pasteButtonMessages from '@src/generic/clipboard/paste-component/messages';
-import { getApiBaseUrl, getClipboardUrl } from '@src/generic/data/api';
+import { getClipboardUrl } from '@src/generic/data/api';
 import { ContainerType } from '@src/generic/key-utils';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
@@ -37,7 +37,6 @@ import {
 import { courseOutlineQueryKeys } from './data/queryKeys';
 
 import {
-  courseOutlineIndexMock as originalCourseOutlineIndexMock,
   courseBestPracticesMock,
   courseLaunchMock,
   buildTestOutline,
@@ -67,12 +66,7 @@ const courseId = 'course-v1:edX+DemoX+Demo_Course';
 const clearSelection = jest.fn();
 const startCurrentFlow = jest.fn();
 let selectedContainerId: string | undefined;
-const buildCourseOutlineIndexMock = () =>
-  buildTestOutline({
-    overrides: cloneDeep(originalCourseOutlineIndexMock) as Record<string, unknown>,
-  }) as unknown as typeof originalCourseOutlineIndexMock;
-
-let courseOutlineIndexMock: any = buildCourseOutlineIndexMock();
+let courseOutlineIndexMock: any = buildTestOutline();
 
 // ─── Local snake_case API-response mocks ────────────────────────────────
 const courseSectionMock = {
@@ -266,11 +260,31 @@ function buildReorderOutlineSpec(): NodeSpec[] {
         {
           id: oldSub0Id,
           displayName: 'S0 Sub 0',
+          overrides: {
+            actions: {
+              deletable: true,
+              draggable: true,
+              childAddable: true,
+              duplicable: true,
+              allowMoveUp: false,
+              allowMoveDown: true,
+            },
+          },
           children: [{ id: id('vertical', 's0-sub-0-unit-0'), displayName: 'Unit' }],
         },
         {
           id: oldSub1Id,
           displayName: 'S0 Sub 1',
+          overrides: {
+            actions: {
+              deletable: true,
+              draggable: true,
+              childAddable: true,
+              duplicable: true,
+              allowMoveUp: true,
+              allowMoveDown: true,
+            },
+          },
           children: [{ id: id('vertical', 's0-sub-1-unit-0'), displayName: 'Unit' }],
         },
       ],
@@ -435,7 +449,74 @@ function buildConfigureOutlineSpec(): NodeSpec[] {
 
 function useConfigureTestOutline() {
   useTestOutline({
-    sections: buildConfigureOutlineSpec(),
+    sections: buildConfigureOutlineSpec().map((s, si) => {
+      if (si === 0) {
+        return {
+          ...s,
+          children: s.children?.map((c, ci) => {
+            if (ci === 1) {
+              // Subsection 1B — add fields the configure tests expect
+              return {
+                ...c,
+                overrides: {
+                  ...c.overrides,
+                  isPrereq: true,
+                  examReviewRules: '',
+                  isProctoredExam: true,
+                  supportsOnboarding: true,
+                },
+              };
+            }
+            return {
+              ...c,
+              children: c.children?.map((u) => ({
+                ...u,
+                overrides: {
+                  ...u.overrides,
+                  discussionEnabled: true,
+                  userPartitionInfo: {
+                    selectablePartitions: [
+                      {
+                        id: 50,
+                        name: 'Enrollment Track Groups',
+                        scheme: 'enrollment_track',
+                        groups: [
+                          { id: 2, name: 'Verified Certificate', selected: false, deleted: false },
+                          { id: 1, name: 'Audit', selected: false, deleted: false },
+                        ],
+                      },
+                    ],
+                    selectedPartitionIndex: -1,
+                    selectedGroupsLabel: '',
+                  },
+                },
+              })),
+            };
+          }),
+        };
+      }
+      if (si === 1) {
+        return {
+          ...s,
+          children: s.children?.map((c) => ({
+            ...c,
+            overrides: {
+              ...c.overrides,
+              start: '1970-01-01T05:00:00Z',
+              visibilityState: 'live',
+              isTimeLimited: false,
+              isProctoredExam: false,
+              isOnboardingExam: false,
+              isPracticeExam: false,
+              examReviewRules: '',
+              defaultTimeLimitMinutes: null,
+              hideAfterDue: false,
+            },
+          })),
+        };
+      }
+      return s;
+    }),
     overrides: {
       createdOn: new Date().toISOString(),
       courseStructure: {
@@ -475,8 +556,16 @@ describe('<CourseOutline />', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
     selectedContainerId = undefined;
-    // restore index mock
-    courseOutlineIndexMock = buildCourseOutlineIndexMock();
+    // restore index mock — use reorder outline spec (section[0] has 2 subsections for configure/drag tests)
+    courseOutlineIndexMock = buildTestOutline({
+      sections: buildReorderOutlineSpec(),
+      overrides: {
+        courseStructure: {
+          id: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course',
+          displayName: 'Test Course',
+        },
+      },
+    });
 
     jest.mocked(useLocation).mockReturnValue({
       pathname: mockPathname,
@@ -618,6 +707,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option udpates correctly', async () => {
+    useTestOutline({ overrides: { courseStructure: { videoSharingEnabled: true } } });
     const { findByLabelText } = renderComponent();
 
     axiosMock
@@ -647,6 +737,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option shows error on failure', async () => {
+    useTestOutline({ overrides: { courseStructure: { videoSharingEnabled: true } } });
     renderComponent();
 
     axiosMock
@@ -1842,6 +1933,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check onboarding proctoring settings in configure modal', async () => {
+    useConfigureTestOutline();
     const user = userEvent.setup();
     const {
       findAllByTestId,
@@ -1953,6 +2045,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check no special exam setting in configure modal', async () => {
+    useConfigureTestOutline();
     const user = userEvent.setup();
     const {
       findAllByTestId,
@@ -2068,6 +2161,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check configure modal for unit', async () => {
+    useConfigureTestOutline();
     const user = userEvent.setup();
     const { findAllByTestId, findByTestId } = renderComponent();
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
@@ -2823,7 +2917,9 @@ describe('<CourseOutline />', () => {
     fireEvent.click(expandBtn);
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
-    const draggableButton = subsectionsDraggers[1];
+    // After clicking expand on the first subsection, unit drag buttons appear
+    // as extra buttons. Index [2] is the second subsection's drag handle.
+    const draggableButton = subsectionsDraggers[2];
     const subsection1 = section.childInfo.children[0].id;
     jest.mocked(closestCorners).mockReturnValue([{ id: subsection1 }]);
     axiosMock
@@ -2876,7 +2972,9 @@ describe('<CourseOutline />', () => {
     fireEvent.click(expandBtn);
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
-    const draggableButton = subsectionsDraggers[1];
+    // After clicking expand on the first subsection, unit drag buttons appear
+    // as extra buttons. Index [2] is the second subsection's drag handle.
+    const draggableButton = subsectionsDraggers[2];
     const subsection1 = section.childInfo.children[0].id;
     jest.mocked(closestCorners).mockReturnValue([{ id: subsection1 }]);
 
@@ -2985,6 +3083,31 @@ describe('<CourseOutline />', () => {
 
   it('check whether unit copy & paste option works correctly', async () => {
     const user = userEvent.setup();
+    useTestOutline({
+      sections: [{
+        id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@sec1',
+        displayName: 'Section',
+        children: [{
+          id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@sub1',
+          displayName: 'Subsection 1',
+          children: [{
+            id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_0270f6de40fc',
+            displayName: 'Unit',
+            overrides: {
+              studioUrl: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_0270f6de40fc',
+              enableCopyPasteUnits: true,
+            },
+          }],
+          overrides: { enableCopyPasteUnits: true },
+        }],
+      }],
+      overrides: {
+        courseStructure: {
+          id: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course',
+          displayName: 'Course',
+        },
+      },
+    });
     renderComponent();
     // get first section -> first subsection -> first unit element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -3193,6 +3316,12 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that the new status bar and expand bar is shown when flag is set', async () => {
+    useTestOutline({
+      overrides: {
+        lmsLink: 'http://example.com',
+        courseStructure: { videoSharingEnabled: true },
+      },
+    });
     renderComponent();
     const btn = await screen.findByRole('button', { name: 'Collapse all' });
     expect(btn).toBeInTheDocument();

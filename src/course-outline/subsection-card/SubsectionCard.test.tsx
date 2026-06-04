@@ -9,15 +9,19 @@ import {
   within,
 } from '@src/testUtils';
 import { ContainerType } from '@src/generic/key-utils';
-
-import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
+import {
+  mockAcceptLibBlockChanges as mockUseAcceptLibraryBlockChanges,
+  mockCardAuthoringContext,
+  mockHandleAddAndOpenUnit as handleOnAddUnitFromLibrary,
+  mockIgnoreLibBlockChanges as mockUseIgnoreLibraryBlockChanges,
+  mockOpenPublishModal,
+  mockCourseOutlineContextOverrides,
+  renderCard,
+  setupCardTestMocks,
+} from '../__mocks__/testSetup';
 import { mockSection as section, mockSubsection as subsection, mockUnit as unit } from '../__mocks__/testSetup';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
-
-const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
-const mockUseAcceptLibraryBlockChanges = jest.fn();
-const mockUseIgnoreLibraryBlockChanges = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -29,12 +33,11 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 }));
 
 jest.mock('@src/CourseAuthoringContext', () => ({
-  useCourseAuthoringContext: () => ({
-    courseId: 5,
-  }),
+  useCourseAuthoringContext: () => mockCardAuthoringContext,
 }));
 
 jest.mock('@src/course-outline/CourseOutlineContext', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const realModule = jest.requireActual('@src/course-outline/CourseOutlineContext');
   return {
     ...realModule,
@@ -42,9 +45,10 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
       const realResult = realModule.useCourseOutlineContext();
       return {
         ...realResult,
+        openPublishModal: mockOpenPublishModal,
         handleAddAndOpenUnit: handleOnAddUnitFromLibrary,
         handleAddBlock: {},
-        openPublishModal: jest.fn(),
+        ...mockCourseOutlineContextOverrides,
       };
     },
   };

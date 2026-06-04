@@ -4,7 +4,12 @@
  * Provides `buildTestOutline` — a factory that produces a full `CourseOutline`
  * structure with sensible defaults, replacing the 3,201-line static mock for
  * most test scenarios.
+ *
+ * Also provides `buildOutlineIndex` — a typed wrapper returning the exact
+ * `CourseOutline` interface from `data/types.ts`.
  */
+
+import type { CourseOutline } from '../data/types';
 
 // ---------------------------------------------------------------------------
 // NodeSpec — shorthand for a single tree node
@@ -242,4 +247,39 @@ export function buildTestOutline(
   }
 
   return result;
+}
+
+// ---------------------------------------------------------------------------
+// Typed wrapper — returns exact CourseOutline type
+// ---------------------------------------------------------------------------
+
+/**
+ * Build a `CourseOutline`-typed object for tests.
+ *
+ * Thin typed wrapper around `buildTestOutline` that returns the exact
+ * `CourseOutline` interface from `data/types.ts`. All calling conventions
+ * from `buildTestOutline` are supported:
+ *
+ *   // No args — 4 default sections
+ *   buildOutlineIndex()
+ *
+ *   // Shorthand — array of top-level sections
+ *   buildOutlineIndex([{ id: 'sec-1' }, ...])
+ *
+ *   // Options — explicit sections + top-level overrides
+ *   buildOutlineIndex({ sections: [...], overrides: { ... } })
+ *
+ * Optional `CourseOutline` fields (discussionsSettings, advanceSettingsUrl,
+ * isCustomRelativeDatesActive, createdOn) are absent by default; tests that
+ * need them pass them via `overrides`.
+ */
+export function buildOutlineIndex(
+  arg?: NodeSpec[] | { sections?: NodeSpec[]; overrides?: Record<string, unknown>; },
+): CourseOutline {
+  const result = buildTestOutline(arg);
+  return {
+    ...result,
+    // Narrow proctoringErrors from unknown[] to string[]
+    proctoringErrors: result.proctoringErrors as string[],
+  } as unknown as CourseOutline;
 }

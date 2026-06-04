@@ -8,14 +8,20 @@ import {
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
 import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
-import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
+import {
+  mockAcceptLibBlockChanges as mockUseAcceptLibraryBlockChanges,
+  mockCardAuthoringContext,
+  mockIgnoreLibBlockChanges as mockUseIgnoreLibraryBlockChanges,
+  mockOpenPublishModal,
+  mockCourseOutlineContextOverrides,
+  renderCard,
+  setupCardTestMocks,
+} from '../__mocks__/testSetup';
 import { mockSection as section, mockSubsection as subsection, mockUnit as unit } from '../__mocks__/testSetup';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 
-const mockUseAcceptLibraryBlockChanges = jest.fn();
-const mockUseIgnoreLibraryBlockChanges = jest.fn();
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
     mutateAsync: mockUseAcceptLibraryBlockChanges,
@@ -26,13 +32,11 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 }));
 
 jest.mock('@src/CourseAuthoringContext', () => ({
-  useCourseAuthoringContext: () => ({
-    courseId: 5,
-    getUnitUrl: (id: string) => `/some/${id}`,
-  }),
+  useCourseAuthoringContext: () => mockCardAuthoringContext,
 }));
 
 jest.mock('@src/course-outline/CourseOutlineContext', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const realModule = jest.requireActual('@src/course-outline/CourseOutlineContext');
   return {
     ...realModule,
@@ -40,7 +44,8 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
       const realResult = realModule.useCourseOutlineContext();
       return {
         ...realResult,
-        openPublishModal: jest.fn(),
+        openPublishModal: mockOpenPublishModal,
+        ...mockCourseOutlineContextOverrides,
       };
     },
   };

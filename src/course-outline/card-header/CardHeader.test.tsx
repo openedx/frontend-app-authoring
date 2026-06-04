@@ -4,19 +4,16 @@ import { ITEM_BADGE_STATUS } from '@src/course-outline/constants';
 import {
   act,
   fireEvent,
-  initializeMocks,
-  render,
   screen,
   waitFor,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
 import { userEvent } from '@testing-library/user-event';
+import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
 import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
-import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
-import { CourseOutlineProvider } from '../CourseOutlineContext';
 
 const onExpandMock = jest.fn();
 
@@ -80,7 +77,7 @@ const renderComponent = (props?: object, entry = '/') => {
     />
   );
 
-  return render(
+  return renderCard(
     <CardHeader
       {...cardHeaderProps}
       titleComponent={titleComponent}
@@ -93,11 +90,7 @@ const renderComponent = (props?: object, entry = '/') => {
       },
       extraWrapper: ({ children }) => (
         <CourseAuthoringProvider courseId={courseId}>
-          <CourseOutlineProvider>
-            <OutlineSidebarProvider>
-              {children}
-            </OutlineSidebarProvider>
-          </CourseOutlineProvider>
+          {children}
         </CourseAuthoringProvider>
       ),
     },
@@ -106,7 +99,7 @@ const renderComponent = (props?: object, entry = '/') => {
 
 describe('<CardHeader />', () => {
   beforeEach(() => {
-    initializeMocks();
+    setupCardTestMocks();
     useUpdateCourseBlockNameMock.isPending = false;
   });
 
@@ -183,8 +176,6 @@ describe('<CardHeader />', () => {
     fireEvent.click(expandButton);
     expect(onExpandMock).toHaveBeenCalled();
   });
-
-
 
   it('calls onClickPublish when item is clicked', async () => {
     renderComponent({

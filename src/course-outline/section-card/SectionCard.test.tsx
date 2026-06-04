@@ -2,24 +2,31 @@ import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   act,
   fireEvent,
-  initializeMocks,
-  render,
   screen,
   waitFor,
   within,
 } from '@src/testUtils';
-import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
+import {
+  mockAcceptLibBlockChanges as mockUseAcceptLibraryBlockChanges,
+  mockCardAuthoringContext,
+  mockIgnoreLibBlockChanges as mockUseIgnoreLibraryBlockChanges,
+  mockOpenPublishModal,
+  mockCourseOutlineContextOverrides,
+  renderCard,
+  setupCardTestMocks,
+} from '../__mocks__/testSetup';
+import {
+  mockSection as section,
+  mockSubsection as subsection,
+  mockUnit as unit,
+} from '../__mocks__/testSetup';
 import SectionCard from './SectionCard';
-import { CourseOutlineProvider } from '../CourseOutlineContext';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
-
-const mockUseAcceptLibraryBlockChanges = jest.fn();
-const mockUseIgnoreLibraryBlockChanges = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -31,12 +38,11 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 }));
 
 jest.mock('@src/CourseAuthoringContext', () => ({
-  useCourseAuthoringContext: () => ({
-    courseId: '5',
-  }),
+  useCourseAuthoringContext: () => mockCardAuthoringContext,
 }));
 
 jest.mock('@src/course-outline/CourseOutlineContext', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const realModule = jest.requireActual('@src/course-outline/CourseOutlineContext');
   return {
     ...realModule,
@@ -44,68 +50,15 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => {
       const realResult = realModule.useCourseOutlineContext();
       return {
         ...realResult,
-        openPublishModal: jest.fn(),
+        openPublishModal: mockOpenPublishModal,
+        ...mockCourseOutlineContextOverrides,
       };
     },
   };
 });
 
-const unit = {
-  id: 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
-};
-
-const subsection = {
-  id: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
-  displayName: 'Subsection Name',
-  category: 'sequential',
-  published: true,
-  visibilityState: 'live',
-  hasChanges: false,
-  actions: {
-    draggable: true,
-    childAddable: true,
-    deletable: true,
-    duplicable: true,
-  },
-  isHeaderVisible: true,
-  releasedToStudents: true,
-  childInfo: {
-    children: [unit],
-  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
-} satisfies Partial<XBlock> as XBlock;
-
-const section = {
-  id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
-  displayName: 'Section Name',
-  category: 'chapter',
-  published: true,
-  visibilityState: 'live',
-  hasChanges: false,
-  highlights: ['highlight 1', 'highlight 2'],
-  actions: {
-    draggable: true,
-    childAddable: true,
-    deletable: true,
-    duplicable: true,
-  },
-  isHeaderVisible: true,
-  childInfo: {
-    children: [subsection],
-  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
-  upstreamInfo: {
-    readyToSync: true,
-    upstreamRef: 'lct:org1:lib1:section:1',
-    versionSynced: 1,
-    versionAvailable: 2,
-    versionDeclined: null,
-    errorMessage: null,
-    downstreamCustomized: [] as string[],
-    upstreamName: 'Upstream',
-  },
-} satisfies Partial<XBlock> as XBlock;
-
 const renderComponent = (props?: object, entry = '/course/:courseId') =>
-  render(
+  renderCard(
     <SectionCard
       section={section}
       index={1}
@@ -127,13 +80,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') =>
       routerProps: {
         initialEntries: [entry],
       },
-      extraWrapper: ({ children }) => (
-        <CourseOutlineProvider>
-          <OutlineSidebarContext.OutlineSidebarProvider>
-            {children}
-          </OutlineSidebarContext.OutlineSidebarProvider>
-        </CourseOutlineProvider>
-      ),
     },
   );
 let axiosMock;
@@ -141,7 +87,7 @@ let queryClient;
 
 describe('<SectionCard />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
+    const mocks = setupCardTestMocks();
     axiosMock = mocks.axiosMock;
     queryClient = mocks.queryClient;
     axiosMock

@@ -1,4 +1,4 @@
-import { buildTestOutline, type NodeSpec } from './helpers';
+import { buildTestOutline, buildOutlineIndex, type NodeSpec } from './helpers';
 
 describe('buildTestOutline', () => {
   // -----------------------------------------------------------------------
@@ -138,5 +138,96 @@ describe('buildTestOutline', () => {
     expect(cs.childInfo.children).toHaveLength(1);
     // actions defaults preserved
     expect(cs.actions.deletable).toBe(true);
+  });
+});
+
+describe('buildOutlineIndex', () => {
+  // -----------------------------------------------------------------------
+  // Type compliance
+  // -----------------------------------------------------------------------
+  it('returns object matching CourseOutline type shape', () => {
+    const outline = buildOutlineIndex();
+
+    // Required CourseOutline fields
+    expect(outline.courseReleaseDate).toBe('');
+    expect(outline.courseStructure).toBeDefined();
+    expect(outline.deprecatedBlocksInfo).toBeDefined();
+    expect(outline.discussionsIncontextLearnmoreUrl).toBe('');
+    expect(outline.initialState).toBeDefined();
+    expect(outline.initialUserClipboard).toBeDefined();
+    expect(outline.languageCode).toBe('en');
+    expect(outline.lmsLink).toBe('');
+    expect(outline.mfeProctoredExamSettingsUrl).toBe('');
+    expect(outline.notificationDismissUrl).toBe('');
+    expect(outline.proctoringErrors).toEqual([]);
+    expect(outline.reindexLink).toBe('');
+    expect(outline.rerunNotificationId).toBeNull();
+  });
+
+  it('proctoringErrors is typed as string[]', () => {
+    const outline = buildOutlineIndex();
+    expect(Array.isArray(outline.proctoringErrors)).toBe(true);
+    // Must accept string assignment
+    const errors: string[] = outline.proctoringErrors;
+    expect(errors).toEqual([]);
+  });
+
+  // -----------------------------------------------------------------------
+  // Overload parity with buildTestOutline
+  // -----------------------------------------------------------------------
+  it('no-arg produces 4 default sections', () => {
+    const outline = buildOutlineIndex();
+    const children = (outline.courseStructure as any).childInfo.children;
+    expect(children).toHaveLength(4);
+  });
+
+  it('shorthand array overload', () => {
+    const outline = buildOutlineIndex([{ id: 'sec-1' }]);
+    const children = (outline.courseStructure as any).childInfo.children;
+    expect(children).toHaveLength(1);
+    expect(children[0].id).toBe('sec-1');
+  });
+
+  it('options overload with sections and overrides', () => {
+    const outline = buildOutlineIndex({
+      sections: [{ id: 'x' }],
+      overrides: { languageCode: 'de' },
+    });
+    expect(outline.languageCode).toBe('de');
+    expect((outline.courseStructure as any).childInfo.children).toHaveLength(1);
+  });
+
+  it('courseStructure override deep-merge', () => {
+    const outline = buildOutlineIndex({
+      overrides: { courseStructure: { displayName: 'Custom' } },
+    });
+    expect(outline.courseStructure.displayName).toBe('Custom');
+    expect(outline.courseStructure.childInfo).toBeDefined();
+  });
+
+  // -----------------------------------------------------------------------
+  // Optional field defaults
+  // -----------------------------------------------------------------------
+  it('optional CourseOutline fields are undefined by default', () => {
+    const outline = buildOutlineIndex();
+    expect(outline.discussionsSettings).toBeUndefined();
+    expect(outline.advanceSettingsUrl).toBeUndefined();
+    expect(outline.isCustomRelativeDatesActive).toBeUndefined();
+    expect(outline.createdOn).toBeUndefined();
+  });
+
+  it('optional fields can be set via overrides', () => {
+    const outline = buildOutlineIndex({
+      overrides: {
+        discussionsSettings: { providerType: 'test', enableGradedUnits: true },
+        advanceSettingsUrl: '/some/path',
+        isCustomRelativeDatesActive: true,
+        createdOn: '2025-01-01',
+      },
+    });
+    expect(outline.discussionsSettings).toEqual({ providerType: 'test', enableGradedUnits: true });
+    expect(outline.advanceSettingsUrl).toBe('/some/path');
+    expect(outline.isCustomRelativeDatesActive).toBe(true);
+    expect(outline.createdOn).toBe('2025-01-01');
   });
 });
