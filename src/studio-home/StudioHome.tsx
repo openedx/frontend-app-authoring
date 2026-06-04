@@ -49,8 +49,6 @@ const StudioHome = () => {
 
   const adminConsoleUrl = `${getConfig().ADMIN_CONSOLE_URL}/authz`;
 
-  const showV2LibraryURL = librariesV2Enabled;
-
   const {
     userIsActive,
     studioShortName,
@@ -100,7 +98,7 @@ const StudioHome = () => {
       );
     }
 
-    if (showV2LibraryURL && showNewLibraryV2Button) {
+    if (librariesV2Enabled && showNewLibraryV2Button) {
       const newLibraryClick = () => {
         navigate('/library/create');
       };

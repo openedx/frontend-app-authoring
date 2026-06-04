@@ -83,6 +83,18 @@ describe('<TabsSection />', () => {
     expect(screen.getByRole('tab', { name: tabMessages.librariesTabTitle.defaultMessage })).toBeInTheDocument();
   });
 
+  it('should not render libraries tab and default to courses when librariesV2Enabled is false', async () => {
+    render({ librariesV2Enabled: false });
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+    await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+    expect(screen.getByRole('tab', { name: tabMessages.coursesTabTitle.defaultMessage })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: tabMessages.librariesTabTitle.defaultMessage })).not.toBeInTheDocument();
+
+    const locationDisplay = screen.getByTestId('location-display');
+    expect(locationDisplay).toHaveTextContent('/home');
+  });
+
   describe('course tab', () => {
     it('should render specific course details', async () => {
       render();

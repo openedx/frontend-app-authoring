@@ -38,7 +38,7 @@ const TabsSection = ({
   type TabKeyType = keyof typeof TABS_LIST;
 
   const initTabKeyState = (pname: string) => {
-    if (pname.includes('/libraries')) {
+    if (pname.includes('/libraries') && librariesV2Enabled) {
       return TABS_LIST.libraries;
     }
 
