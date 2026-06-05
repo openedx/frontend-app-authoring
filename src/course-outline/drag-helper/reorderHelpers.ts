@@ -1,68 +1,47 @@
 import { type XBlock } from '@src/data/types';
 
 /**
- * Apply a subsection reorder from moveDetails and preview + commit.
+ * Apply a reorder from moveDetails and preview + commit.
  *
- * Shared between OutlineTree (drag drop) and SubsectionInfoSidebar (menu move).
+ * Handles both subsection and unit reorders. If moveDetails contains
+ * `subsectionId` the unit commit signature is used; otherwise the
+ * subsection commit signature is used.
  */
-export function applySubsectionReorderMove(
+export function applyReorderMove(
   moveDetails: any,
   currentSection: XBlock,
   previewSections: (sections: XBlock[]) => void,
-  commitSubsectionReorder: (
+  commitReorder: (
     sectionId: string,
     prevSectionId: string,
-    subsectionListIds: string[],
-  ) => void | Promise<void>,
-) {
-  const { fn, args, sectionId } = moveDetails as {
-    fn: (...a: any[]) => any;
-    args: any;
-    sectionId: string;
-  };
-  if (!args) { return; }
-  const [sectionsCopy, newSubsections] = fn(...args);
-  if (newSubsections && sectionId) {
-    previewSections(sectionsCopy);
-    commitSubsectionReorder(
-      sectionId,
-      currentSection.id,
-      newSubsections.map((s: XBlock) => s.id),
-    );
-  }
-}
-
-/**
- * Apply a unit reorder from moveDetails and preview + commit.
- *
- * Shared between OutlineTree (drag drop) and UnitInfoSidebar (menu move).
- */
-export function applyUnitReorderMove(
-  moveDetails: any,
-  currentSection: XBlock,
-  previewSections: (sections: XBlock[]) => void,
-  commitUnitReorder: (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionId: string,
-    unitListIds: string[],
+    ...rest: any[]
   ) => void | Promise<void>,
 ) {
   const { fn, args, sectionId, subsectionId } = moveDetails as {
     fn: (...a: any[]) => any;
     args: any;
     sectionId: string;
-    subsectionId: string;
+    subsectionId?: string;
   };
   if (!args) { return; }
-  const [sectionsCopy, newUnits] = fn(...args);
-  if (newUnits && subsectionId) {
-    previewSections(sectionsCopy);
-    commitUnitReorder(
+  const [sectionsCopy, newItems] = fn(...args);
+  if (!newItems || !sectionId) { return; }
+  previewSections(sectionsCopy);
+  const ids = newItems.map((s: XBlock) => s.id);
+  if (subsectionId) {
+    // Unit reorder
+    (commitReorder as any)(
       sectionId,
       currentSection.id,
       subsectionId,
-      newUnits.map((u: XBlock) => u.id),
+      ids,
+    );
+  } else {
+    // Subsection reorder
+    (commitReorder as any)(
+      sectionId,
+      currentSection.id,
+      ids,
     );
   }
 }

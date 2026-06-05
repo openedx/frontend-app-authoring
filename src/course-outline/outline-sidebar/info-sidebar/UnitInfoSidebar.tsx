@@ -27,7 +27,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getLibraryId } from '@src/generic/key-utils';
 import { extractCourseUnitId } from '@src/course-unit/legacy-sidebar/utils';
 import { possibleUnitMoves } from '@src/course-outline/drag-helper/utils';
-import { applyUnitReorderMove } from '@src/course-outline/drag-helper/reorderHelpers';
+import { applyReorderMove } from '@src/course-outline/drag-helper/reorderHelpers';
 import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
 import { useQueryClient } from '@tanstack/react-query';
 import { useOutlineSidebarContext } from '../OutlineSidebarContext';
@@ -157,7 +157,7 @@ export const UnitSidebar = () => {
     if (section && subsection && getPossibleMoves && index !== undefined && sectionIndex !== undefined) {
       const moveDetails = getPossibleMoves(index, step);
       // section is the current parent section (used as prevSection in cross-section moves)
-      applyUnitReorderMove(moveDetails, section, previewSections, commitUnitReorder);
+      applyReorderMove(moveDetails, section, previewSections, commitUnitReorder);
       if (!isEmpty(moveDetails)) {
         const newSectionId = moveDetails.sectionId;
         const newSubsectionId = moveDetails.subsectionId;

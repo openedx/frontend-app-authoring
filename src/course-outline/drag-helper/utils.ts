@@ -38,108 +38,98 @@ export const dragHelpers = {
 };
 
 /**
- * This function moves a subsection from one section to another in the copy of blocks.
- * It updates the copy with the new positions for the sections and their subsections,
- * while keeping other sections intact.
+ * Move an item (subsection or unit) across sections/subsections.
+ * 5 arguments = subsection cross‑section move.
+ * 7 arguments = unit cross‑subsection move.
  */
-export const moveSubsectionOver = (
+export const moveItemOver = (
   prevCopy: XBlock[],
-  activeSectionIdx: number,
-  activeSubsectionIdx: number,
-  overSectionIdx: number,
-  newIndex: number,
+  // Shared:
+  parentAIdx: number, // section index of the source
+  childAIdx: number, // subsection index (source) — or active unit index for unit variant
+  // Subsection variant (5 args): targetSectionIdx
+  // Unit variant (7 args): activeUnitIdx
+  midArg: number,
+  // Subsection variant (5 args): newIndex
+  // Unit variant (7 args): overSectionIdx
+  lastArg: number,
+  // Unit only:
+  overSubsectionIdx?: number,
+  newIndex?: number,
 ) => {
-  let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
-  let overSection = dragHelpers.copyBlockChildren({ ...prevCopy[overSectionIdx] });
-  const subsection = activeSection.childInfo.children[activeSubsectionIdx];
-
-  overSection = dragHelpers.insertChild(overSection, subsection, newIndex);
-
-  activeSection = dragHelpers.setBlockChildren(
-    activeSection,
-    activeSection.childInfo.children.filter((item) => item.id !== subsection.id),
-  );
-
-  // eslint-disable-next-line no-param-reassign
-  prevCopy[activeSectionIdx] = activeSection;
-  // eslint-disable-next-line no-param-reassign
-  prevCopy[overSectionIdx] = overSection;
-  return [prevCopy, overSection.childInfo.children];
-};
-
-export const moveUnitOver = (
-  prevCopy: XBlock[],
-  activeSectionIdx: number,
-  activeSubsectionIdx: number,
-  activeUnitIdx: number,
-  overSectionIdx: number,
-  overSubsectionIdx: number,
-  newIndex: number,
-) => {
-  const activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
-  let activeSubsection = dragHelpers.copyBlockChildren(
-    { ...activeSection.childInfo.children[activeSubsectionIdx] },
-  );
-
-  let overSection = { ...prevCopy[overSectionIdx] };
-  if (overSection.id === activeSection.id) {
-    overSection = activeSection;
+  // Subsection across sections — 5 positional args
+  if (overSubsectionIdx === undefined) {
+    let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[parentAIdx] });
+    let overSection = dragHelpers.copyBlockChildren({ ...prevCopy[midArg] }); // midArg = targetSectionIdx
+    const item = activeSection.childInfo.children[childAIdx];
+    overSection = dragHelpers.insertChild(overSection, item, lastArg); // lastArg = newIndex
+    activeSection = dragHelpers.setBlockChildren(
+      activeSection,
+      activeSection.childInfo.children.filter((i) => i.id !== item.id),
+    );
+    // eslint-disable-next-line no-param-reassign
+    prevCopy[parentAIdx] = activeSection;
+    // eslint-disable-next-line no-param-reassign
+    prevCopy[midArg] = overSection;
+    return [prevCopy, overSection.childInfo.children];
   }
-
+  // Unit across subsections — 7 positional args
+  const activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[parentAIdx] });
+  let activeSubsection = dragHelpers.copyBlockChildren(
+    { ...activeSection.childInfo.children[childAIdx] },
+  );
+  let overSection = { ...prevCopy[lastArg] }; // lastArg = overSectionIdx
+  if (overSection.id === activeSection.id) { overSection = activeSection; }
   overSection = dragHelpers.copyBlockChildren(overSection);
   let overSubsection = dragHelpers.copyBlockChildren(
     { ...overSection.childInfo.children[overSubsectionIdx] },
   );
-
-  const unit = activeSubsection.childInfo.children[activeUnitIdx];
-  overSubsection = dragHelpers.insertChild(overSubsection, unit, newIndex);
+  const unit = activeSubsection.childInfo.children[midArg]; // midArg = activeUnitIdx
+  overSubsection = dragHelpers.insertChild(overSubsection, unit, newIndex!);
   overSection = dragHelpers.setBlockChild(overSection, overSubsection, overSubsectionIdx);
-
   activeSubsection = dragHelpers.setBlockChildren(
     activeSubsection,
-    activeSubsection.childInfo.children.filter((item) => item.id !== unit.id),
+    activeSubsection.childInfo.children.filter((i) => i.id !== unit.id),
   );
-
   // eslint-disable-next-line no-param-reassign
-  prevCopy[activeSectionIdx] = dragHelpers.setBlockChild(activeSection, activeSubsection, activeSubsectionIdx);
+  prevCopy[parentAIdx] = dragHelpers.setBlockChild(activeSection, activeSubsection, childAIdx);
   // eslint-disable-next-line no-param-reassign
-  prevCopy[overSectionIdx] = overSection;
+  prevCopy[lastArg] = overSection;
   return [prevCopy, overSubsection.childInfo.children];
 };
 
 /**
- * Handles dragging and dropping a subsection within the same section.
+ * Move an item within its parent container.
+ * 4 arguments = subsection within‑section move.
+ * 5 arguments = unit within‑subsection move.
  */
-export const moveSubsection = (
+export const moveItem = (
   prevCopy: XBlock[],
   sectionIdx: number,
-  currentIdx: number,
-  newIdx: number,
+  // Subsection: currentIdx
+  // Unit: subsectionIdx
+  midArg: number,
+  // Subsection: newIdx
+  // Unit: currentIdx
+  otherArg: number,
+  // Unit only:
+  newIdx?: number,
 ) => {
+  if (newIdx === undefined) {
+    // Subsection within section
+    let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
+    const result = arrayMove(section.childInfo.children, midArg, otherArg);
+    section = dragHelpers.setBlockChildren(section, result);
+    // eslint-disable-next-line no-param-reassign
+    prevCopy[sectionIdx] = section;
+    return [prevCopy, result];
+  }
+  // Unit within subsection
   let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
-
-  const result = arrayMove(section.childInfo.children, currentIdx, newIdx);
-  section = dragHelpers.setBlockChildren(section, result);
-
-  // eslint-disable-next-line no-param-reassign
-  prevCopy[sectionIdx] = section;
-  return [prevCopy, result];
-};
-
-export const moveUnit = (
-  prevCopy: XBlock[],
-  sectionIdx: number,
-  subsectionIdx: number,
-  currentIdx: number,
-  newIdx: number,
-) => {
-  let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
-  let subsection = dragHelpers.copyBlockChildren({ ...section.childInfo.children[subsectionIdx] });
-
-  const result = arrayMove(subsection.childInfo.children, currentIdx, newIdx);
+  let subsection = dragHelpers.copyBlockChildren({ ...section.childInfo.children[midArg] }); // midArg = subsectionIdx
+  const result = arrayMove(subsection.childInfo.children, otherArg, newIdx); // otherArg = currentIdx
   subsection = dragHelpers.setBlockChildren(subsection, result);
-  section = dragHelpers.setBlockChild(section, subsection, subsectionIdx);
-
+  section = dragHelpers.setBlockChild(section, subsection, midArg);
   // eslint-disable-next-line no-param-reassign
   prevCopy[sectionIdx] = section;
   return [prevCopy, result];
@@ -185,7 +175,7 @@ export const possibleSubsectionMoves = (
   if ((step === -1 && index >= 1) || (step === 1 && subsections.length - index >= 2)) {
     // move subsection inside its own parent section
     return {
-      fn: moveSubsection,
+      fn: moveItem,
       args: [
         sections,
         sectionIndex,
@@ -203,7 +193,7 @@ export const possibleSubsectionMoves = (
       return {};
     }
     return {
-      fn: moveSubsectionOver,
+      fn: moveItemOver,
       args: [
         sections,
         sectionIndex,
@@ -223,7 +213,7 @@ export const possibleSubsectionMoves = (
       return {};
     }
     return {
-      fn: moveSubsectionOver,
+      fn: moveItemOver,
       args: [
         sections,
         sectionIndex,
@@ -295,7 +285,7 @@ const moveToPreviousLocation = (
     // If found a valid subsection within the same section
     if (newSubsectionIndex !== -1) {
       return {
-        fn: moveUnitOver,
+        fn: moveItemOver,
         args: [
           sections,
           sectionIndex,
@@ -319,7 +309,7 @@ const moveToPreviousLocation = (
   }
 
   return {
-    fn: moveUnitOver,
+    fn: moveItemOver,
     args: [
       sections,
       sectionIndex,
@@ -359,7 +349,7 @@ const moveToNextLocation = (
     // If found a valid subsection within the same section
     if (newSubsectionIndex !== -1) {
       return {
-        fn: moveUnitOver,
+        fn: moveItemOver,
         args: [
           sections,
           sectionIndex,
@@ -383,7 +373,7 @@ const moveToNextLocation = (
   }
 
   return {
-    fn: moveUnitOver,
+    fn: moveItemOver,
     args: [
       sections,
       sectionIndex,
@@ -421,7 +411,7 @@ export const possibleUnitMoves = (
   // Move within current subsection
   if ((step === -1 && index >= 1) || (step === 1 && units.length - index >= 2)) {
     return {
-      fn: moveUnit,
+      fn: moveItem,
       args: [sections, sectionIndex, subsectionIndex, index, index + step],
       sectionId: section.id,
       subsectionId: subsection.id,

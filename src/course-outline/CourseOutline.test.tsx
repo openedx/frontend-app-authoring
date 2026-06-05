@@ -53,10 +53,8 @@ import statusBarMessages from './status-bar/messages';
 import subsectionMessages from './subsection-card/messages';
 import pageAlertMessages from './page-alerts/messages';
 import {
-  moveSubsectionOver,
-  moveUnitOver,
-  moveSubsection,
-  moveUnit,
+  moveItemOver,
+  moveItem,
 } from './drag-helper/utils';
 
 let axiosMock: import('axios-mock-adapter/types');
@@ -2432,7 +2430,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(courseOutlineIndexMock.courseStructure.childInfo.children[0].id))
       .reply(200, { dummy: 'value' });
-    const expectedSection = moveSubsection(
+    const expectedSection = moveItem(
       [
         ...courseOutlineIndexMock.courseStructure.childInfo.children,
       ] as unknown as XBlock[],
@@ -2482,7 +2480,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(firstSection.id))
       .reply(200, { dummy: 'value' });
-    const expectedSections = moveSubsectionOver(
+    const expectedSections = moveItemOver(
       [
         ...courseOutlineIndexMock.courseStructure.childInfo.children,
       ] as unknown as XBlock[],
@@ -2528,7 +2526,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(secondSection.id))
       .reply(200, { dummy: 'value' });
-    const expectedSections = moveSubsectionOver(
+    const expectedSections = moveItemOver(
       [
         ...courseOutlineIndexMock.courseStructure.childInfo.children,
       ] as unknown as XBlock[],
@@ -2627,7 +2625,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(courseOutlineIndexMock.courseStructure.childInfo.children[1].childInfo.children[1].id))
       .reply(200, { dummy: 'value' });
-    const expectedSection = moveUnit(
+    const expectedSection = moveItem(
       [
         ...courseOutlineIndexMock.courseStructure.childInfo.children,
       ] as unknown as XBlock[],
@@ -2681,7 +2679,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(firstSubsection.id))
       .reply(200, { dummy: 'value' });
-    const expectedSections = moveUnitOver(
+    const expectedSections = moveItemOver(
       [
         ...courseOutlineIndexMock.courseStructure.childInfo.children,
       ] as unknown as XBlock[],
@@ -2730,7 +2728,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(firstSectionLastSubsection.id))
       .reply(200, { dummy: 'value' });
-    const expectedSections = moveUnitOver(
+    const expectedSections = moveItemOver(
       [...courseOutlineIndexMock.courseStructure.childInfo.children] as unknown as XBlock[],
       1,
       0,
@@ -2780,7 +2778,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(subsection.id))
       .reply(200, { dummy: 'value' });
-    const expectedSections = moveUnitOver(
+    const expectedSections = moveItemOver(
       [
         ...courseOutlineIndexMock.courseStructure.childInfo.children,
       ] as unknown as XBlock[],
@@ -2831,7 +2829,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(thirdSectionFirstSubsection.id))
       .reply(200, { dummy: 'value' });
-    const expectedSections = moveUnitOver(
+    const expectedSections = moveItemOver(
       [...courseOutlineIndexMock.courseStructure.childInfo.children] as unknown as XBlock[],
       1,
       lastSubIndex,
@@ -2925,7 +2923,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(section.id))
       .reply(200, { dummy: 'value' });
-    const expectedSection = moveSubsection(
+    const expectedSection = moveItem(
       [
         ...courseOutlineIndexMock.courseStructure.childInfo.children,
       ] as unknown as XBlock[],
@@ -3018,7 +3016,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(subsection.id))
       .reply(200, { dummy: 'value' });
-    const expectedSection = moveUnit([...sections] as unknown as XBlock[], 2, 0, 1, 0)[0][2];
+    const expectedSection = moveItem([...sections] as unknown as XBlock[], 2, 0, 1, 0)[0][2];
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, expectedSection);
@@ -3060,7 +3058,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(subsection.id))
       .reply(500);
-    const expectedSection = moveUnit([...sections] as unknown as XBlock[], 2, 0, 1, 0)[0][2];
+    const expectedSection = moveItem([...sections] as unknown as XBlock[], 2, 0, 1, 0)[0][2];
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, expectedSection);

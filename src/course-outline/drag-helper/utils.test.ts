@@ -1,11 +1,9 @@
 import { XBlock } from '@src/data/types';
 import {
   possibleSubsectionMoves,
-  moveSubsection,
-  moveSubsectionOver,
+  moveItem,
+  moveItemOver,
   possibleUnitMoves,
-  moveUnit,
-  moveUnitOver,
 } from './utils';
 
 describe('possibleSubsectionMoves', () => {
@@ -60,7 +58,7 @@ describe('possibleSubsectionMoves', () => {
   test('should allow moving subsection down within same section', () => {
     const result = createMoveFunction(0, 1);
     expect(result).toEqual({
-      fn: moveSubsection,
+      fn: moveItem,
       args: [mockSections, 1, 0, 1],
       sectionId: 'section2',
     });
@@ -69,7 +67,7 @@ describe('possibleSubsectionMoves', () => {
   test('should allow moving subsection up within same section', () => {
     const result = createMoveFunction(1, -1);
     expect(result).toEqual({
-      fn: moveSubsection,
+      fn: moveItem,
       args: [mockSections, 1, 1, 0],
       sectionId: 'section2',
     });
@@ -78,7 +76,7 @@ describe('possibleSubsectionMoves', () => {
   test('should move subsection to previous section when at first position', () => {
     const result = createMoveFunction(0, -1);
     expect(result).toEqual({
-      fn: moveSubsectionOver,
+      fn: moveItemOver,
       args: [mockSections, 1, 0, 0, mockSections[0].childInfo.children.length + 1],
       sectionId: 'section1',
     });
@@ -111,7 +109,7 @@ describe('possibleSubsectionMoves', () => {
 
     const result = createMove(2, 1);
     expect(result).toEqual({
-      fn: moveSubsectionOver,
+      fn: moveItemOver,
       args: [mockSections, 0, 2, 1, 0],
       sectionId: 'section2',
     });
@@ -182,7 +180,7 @@ describe('possibleSubsectionMoves', () => {
     // Positive step
     const resultPositive = createMoveFunction(1, 1);
     expect(resultPositive).toEqual({
-      fn: moveSubsection,
+      fn: moveItem,
       args: [mockSections, 1, 1, 2],
       sectionId: 'section2',
     });
@@ -190,7 +188,7 @@ describe('possibleSubsectionMoves', () => {
     // Negative step
     const resultNegative = createMoveFunction(1, -1);
     expect(resultNegative).toEqual({
-      fn: moveSubsection,
+      fn: moveItem,
       args: [mockSections, 1, 1, 0],
       sectionId: 'section2',
     });
@@ -236,7 +234,7 @@ describe('possibleSubsectionMoves - skipping non-childAddable sections', () => {
 
     const resultMoveDown = createMove(0, 1);
     expect(resultMoveDown).toEqual({
-      fn: moveSubsectionOver,
+      fn: moveItemOver,
       args: [sectionsWithBlockers, 0, 0, 3, 0],
       sectionId: 'section4',
     });
@@ -280,7 +278,7 @@ describe('possibleSubsectionMoves - skipping non-childAddable sections', () => {
 
     const resultMoveUp = createMove(0, -1);
     expect(resultMoveUp).toEqual({
-      fn: moveSubsectionOver,
+      fn: moveItemOver,
       args: [sectionsWithBlockers, 3, 0, 0, sectionsWithBlockers[0].childInfo.children.length + 1],
       sectionId: 'section1',
     });
@@ -340,7 +338,7 @@ describe('possibleUnitMoves', () => {
 
     const resultMoveDown = createMove(0, 1);
     expect(resultMoveDown).toEqual({
-      fn: moveUnit,
+      fn: moveItem,
       args: [mockSections, 0, 0, 0, 1],
       sectionId: 'section1',
       subsectionId: 'subsection1',
@@ -348,7 +346,7 @@ describe('possibleUnitMoves', () => {
 
     const resultMoveUp = createMove(1, -1);
     expect(resultMoveUp).toEqual({
-      fn: moveUnit,
+      fn: moveItem,
       args: [mockSections, 0, 0, 1, 0],
       sectionId: 'section1',
       subsectionId: 'subsection1',
@@ -386,7 +384,7 @@ describe('possibleUnitMoves', () => {
 
     const result = createMove(2, 1);
     expect(result).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [mockSections, 0, 0, 2, 0, 1, 0],
       sectionId: 'section1',
       subsectionId: 'subsection2',
@@ -405,7 +403,7 @@ describe('possibleUnitMoves', () => {
 
     const result = createMove(0, -1);
     expect(result).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [mockSections, 1, 0, 0, 0, 1, 0],
       sectionId: 'section1',
       subsectionId: 'subsection2',
@@ -458,7 +456,7 @@ describe('possibleUnitMoves', () => {
 
     const result = createMove(2, 1);
     expect(result).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [sectionsWithMultipleSubsections, 0, 0, 2, 1, 0, 0],
       sectionId: 'section2',
       subsectionId: 'subsection2',
@@ -563,7 +561,7 @@ describe('possibleUnitMoves', () => {
 
     const result = createMove(2, 1);
     expect(result).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [sectionsWithMixedSubsections, 0, 0, 2, 0, 1, 0],
       sectionId: 'section1',
       subsectionId: 'subsection2',
@@ -616,7 +614,7 @@ describe('possibleUnitMoves', () => {
 
     const result = createMove(0, -1);
     expect(result).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [sectionsWithMixedSubsections, 1, 1, 0, 0, 0, 0],
       sectionId: 'section1',
       subsectionId: 'subsection1',
@@ -674,7 +672,7 @@ describe('possibleUnitMoves', () => {
 
     const resultMoveDown = createMove(2, 1);
     expect(resultMoveDown).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [complexSections, 1, 0, 2, 3, 0, 0],
       sectionId: 'section4',
       subsectionId: 'subsection2',
@@ -691,7 +689,7 @@ describe('possibleUnitMoves', () => {
 
     const resultMoveUp = createMoveUp(0, -1);
     expect(resultMoveUp).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [complexSections, 3, 0, 0, 1, 0, 0],
       sectionId: 'section2',
       subsectionId: 'subsection1',
@@ -771,7 +769,7 @@ describe('possibleUnitMoves', () => {
 
     const resultMoveDown = createMove(0, 1);
     expect(resultMoveDown).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [singleUnitSections, 0, 0, 0, 1, 0, 0],
       sectionId: 'section2',
       subsectionId: 'subsection2',
@@ -823,7 +821,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
 
     const resultMoveDown = createMove(1, 1);
     expect(resultMoveDown).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [sectionsWithMixedSubsections, 0, 0, 1, 0, 2, 0],
       sectionId: 'section1',
       subsectionId: 'subsection3',
@@ -886,7 +884,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
 
     const resultMoveDown = createMove(1, 1);
     expect(resultMoveDown).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [sectionsWithMixedSubsections, 0, 0, 1, 1, 2, 0],
       sectionId: 'section2',
       subsectionId: 'subsection4',
@@ -949,7 +947,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
 
     const resultMoveUp = createMove(0, -1);
     expect(resultMoveUp).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [sectionsWithMixedSubsections, 1, 0, 0, 0, 2, 0],
       sectionId: 'section1',
       subsectionId: 'subsection3',
@@ -1018,7 +1016,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
 
     const resultMoveDown = createMoveDown(1, 1);
     expect(resultMoveDown).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [complexSections, 0, 2, 1, 1, 1, 0],
       sectionId: 'section2',
       subsectionId: 'subsection5',
@@ -1036,7 +1034,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
 
     const resultMoveUp = createMoveUp(0, -1);
     expect(resultMoveUp).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [complexSections, 1, 1, 0, 0, 2, 0],
       sectionId: 'section1',
       subsectionId: 'subsection3',
@@ -1162,7 +1160,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
 
     const resultMoveDown = createMoveDown(0, 1);
     expect(resultMoveDown).toEqual({
-      fn: moveUnitOver,
+      fn: moveItemOver,
       args: [multipleSections, 0, 0, 0, 2, 0, 0],
       sectionId: 'section3',
       subsectionId: 'subsection2',

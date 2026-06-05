@@ -27,10 +27,8 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { XBlock } from '@src/data/types';
 import DragContextProvider from './DragContextProvider';
 import {
-  moveSubsectionOver,
-  moveUnitOver,
-  moveSubsection,
-  moveUnit,
+  moveItemOver,
+  moveItem,
   dragHelpers,
 } from './utils';
 import CourseItemOverlay from './CourseItemOverlay';
@@ -180,7 +178,7 @@ const DraggableList = ({
       setCurrentOverId(overInfo.parent?.id || null);
     }
 
-    const [prevCopy] = moveSubsectionOver(
+    const [prevCopy] = moveItemOver(
       [...dragTreeRef.current],
       activeInfo.parentIndex!,
       activeInfo.index,
@@ -226,7 +224,7 @@ const DraggableList = ({
       setCurrentOverId(overInfo.parent?.id || null);
     }
 
-    const [prevCopy] = moveUnitOver(
+    const [prevCopy] = moveItemOver(
       [...dragTreeRef.current],
       activeInfo.grandParentIndex!,
       activeInfo.parentIndex!,
@@ -311,7 +309,7 @@ const DraggableList = ({
           break;
         }
         case COURSE_BLOCK_NAMES.sequential.id: {
-          const [nextTree, result] = moveSubsection(
+          const [nextTree, result] = moveItem(
             [...dragTreeRef.current],
             activeInfo.parentIndex!,
             activeInfo.index,
@@ -326,7 +324,7 @@ const DraggableList = ({
           break;
         }
         case COURSE_BLOCK_NAMES.vertical.id: {
-          const [nextTree, result] = moveUnit(
+          const [nextTree, result] = moveItem(
             [...dragTreeRef.current],
             activeInfo.grandParentIndex!,
             activeInfo.parentIndex!,

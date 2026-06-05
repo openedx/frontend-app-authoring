@@ -14,7 +14,7 @@ import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContex
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getLibraryId } from '@src/generic/key-utils';
 import { possibleSubsectionMoves } from '@src/course-outline/drag-helper/utils';
-import { applySubsectionReorderMove } from '@src/course-outline/drag-helper/reorderHelpers';
+import { applyReorderMove } from '@src/course-outline/drag-helper/reorderHelpers';
 import { XBlock } from '@src/data/types';
 
 import { InfoSection } from './InfoSection';
@@ -99,7 +99,7 @@ export const SubsectionSidebar = () => {
   const handleMove = (step: number) => {
     if (section && getPossibleMoves && index !== undefined && sectionIndex !== undefined) {
       const moveDetails = getPossibleMoves(index, step);
-      applySubsectionReorderMove(moveDetails, section, previewSections, commitSubsectionReorder);
+      applyReorderMove(moveDetails, section, previewSections, commitSubsectionReorder);
       if (!isEmpty(moveDetails)) {
         const newSectionId = moveDetails.sectionId;
         // A subsection can move to a different section (cross-section move)
