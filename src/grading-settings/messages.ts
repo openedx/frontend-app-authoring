@@ -85,6 +85,11 @@ const messages = defineMessages({
     id: 'course-authoring.grading-settings.add-new-assignment-type.btn',
     defaultMessage: 'New assignment type',
   },
+  viewOnlyAlert: {
+    id: 'course-authoring.grading.alert.view-only',
+    defaultMessage: 'You have view-only access to this page. Contact your organization admin to request editing permissions.',
+    description: 'Alert shown to users who can view but cannot edit grading settings',
+  },
 });
 
 export default messages;

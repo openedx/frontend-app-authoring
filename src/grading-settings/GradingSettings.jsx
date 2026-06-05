@@ -1,11 +1,12 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Alert,
   Button,
   Container,
   Layout,
   StatefulButton,
 } from '@openedx/paragon';
-import { Add as IconAdd, CheckCircle, Warning } from '@openedx/paragon/icons';
+import { Add as IconAdd, CheckCircle, Lock as LockIcon, Warning } from '@openedx/paragon/icons';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 
@@ -179,6 +180,11 @@ const GradingSettings = () => {
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
                     contentTitle={intl.formatMessage(messages.policy)}
                     description={intl.formatMessage(messages.policiesDescription)}
+                    banner={!isEditable ? (
+                      <Alert variant="info" icon={LockIcon}>
+                        {intl.formatMessage(messages.viewOnlyAlert)}
+                      </Alert>
+                    ) : null}
                   />
                   <section>
                     <GradingScale
@@ -243,14 +249,15 @@ const GradingSettings = () => {
                       setShowSuccessAlert={setShowSuccessAlert}
                       isEditable={isEditable}
                     />
-                    <Button
-                      variant="primary"
-                      iconBefore={IconAdd}
-                      onClick={handleAddAssignment}
-                      disabled={!isEditable}
-                    >
-                      {intl.formatMessage(messages.addNewAssignmentTypeBtn)}
-                    </Button>
+                    {isEditable && (
+                      <Button
+                        variant="primary"
+                        iconBefore={IconAdd}
+                        onClick={handleAddAssignment}
+                      >
+                        {intl.formatMessage(messages.addNewAssignmentTypeBtn)}
+                      </Button>
+                    )}
                   </section>
                 </article>
               </Layout.Element>
