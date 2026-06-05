@@ -324,4 +324,74 @@ describe('useOutlineReorderState', () => {
     });
   });
 
+  // ─── Cache/refetch updates before preview clear ───────────────────────
+
+  describe('commit updates cache before clearing preview', () => {
+    it('section commit: cache reflects new order; rerender from cache yields correct visibleSections', async () => {
+      // In the real app the cache update propagates through
+      // useCourseOutlineIndex → context → reorder hook with new sections prop.
+      // This test verifies the cache is updated before the preview is cleared,
+      // so a subsequent render with fresh cache sections shows the new order.
+      const { result, rerender } = renderHook(
+        ({ sections: dynamicSections }) => useOutlineReorderState({ courseId, sections: dynamicSections }),
+        { initialProps: { sections }, wrapper },
+      );
+
+      act(() => {
+        result.current.previewSections([sections[1], sections[0], sections[2]]);
+      });
+
+      mockMutateAsync.sections.mockResolvedValueOnce(undefined);
+
+      await act(async () => {
+        await result.current.commitSectionReorder(['B', 'A', 'C']);
+      });
+
+      // Cache has the new order (setQueryData ran before cancelReorderPreview).
+      const cached: any = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
+      expect(cached.courseStructure.childInfo.children.map((s: any) => s.id)).toEqual(['B', 'A', 'C']);
+
+      // Rerender with fresh sections from cache, simulating parent re-render.
+      rerender({ sections: cached.courseStructure.childInfo.children });
+      expect(result.current.visibleSections.map((s: any) => s.id)).toEqual(['B', 'A', 'C']);
+    });
+
+    it('subsection commit: preview stays visible until refetch updates cache', async () => {
+      const { result } = renderReorderHook();
+      const freshSectionA = { ...sections[0], published: true, hasChanges: false };
+
+      // Set preview
+      act(() => {
+        result.current.previewSections([sections[1], sections[0], sections[2]]);
+      });
+      expect(result.current.visibleSections.map((s: any) => s.id)).toEqual(['B', 'A', 'C']);
+
+      // Defer the refetch so we can observe intermediate state
+      let resolveRefetch: (value: any) => void;
+      const refetchPromise = new Promise(resolve => { resolveRefetch = resolve; });
+      mockGetCourseItem.mockReturnValue(refetchPromise);
+      mockMutateAsync.subsections.mockResolvedValueOnce(undefined);
+
+      // Start commit — the refetch will hang on our deferred promise
+      let commitPromise: Promise<void>;
+      act(() => {
+        commitPromise = result.current.commitSubsectionReorder('A', 'A', ['sub1', 'sub2']);
+      });
+
+      // While refetch is in-flight, preview should NOT have been cleared
+      // (new code: cancelReorderPreview runs after refetch;
+      //  old code: cancelReorderPreview runs before refetch and would revert to cache)
+      expect(result.current.visibleSections.map((s: any) => s.id)).toEqual(['B', 'A', 'C']);
+
+      // Resolve the refetch with fresh data
+      await act(async () => {
+        resolveRefetch!(freshSectionA);
+        await commitPromise!;
+      });
+
+      // After full commit: visibleSections falls back to cache, now updated with fresh data
+      expect(result.current.visibleSections.map((s: any) => s.id)).toEqual(['A', 'B', 'C']);
+    });
+
+  });
 });

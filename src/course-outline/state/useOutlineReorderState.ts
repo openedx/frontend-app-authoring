@@ -44,11 +44,11 @@ export function useOutlineReorderState({
     setPreviewSectionsState(undefined);
   }, []);
 
-  // Accept reorder preview then sync React Query cache with new section order.
+  // Sync React Query cache with new section order before clearing the reorder preview.
+  // This avoids a visual flash of the old order when the preview falls back to `sections`.
   // If any section id is missing from the current cache (e.g. concurrent change),
   // invalidate instead of writing a shorter list to avoid silent data loss.
   const acceptReorderAndSyncSectionOrder = useCallback((sectionListIds: string[]) => {
-    cancelReorderPreview();
     // Use setQueryData updater form so the cache read is atomic with the write.
     // This avoids a stale-read race if another mutation updates the cache
     // concurrently between reading and writing.
@@ -81,6 +81,7 @@ export function useOutlineReorderState({
     if (shouldInvalidate) {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.index(courseId) });
     }
+    cancelReorderPreview();
   }, [cancelReorderPreview, queryClient, courseId]);
 
   const callPreviewSections = useCallback((nextSections: XBlock[]) => {
@@ -134,13 +135,15 @@ export function useOutlineReorderState({
     }
   }, [reorderSectionsMutation, acceptReorderAndSyncSectionOrder, cancelReorderPreview]);
 
-  // Shared post-success for subsection/unit reorder: clear preview, refetch fresh data.
+  // Shared post-success for subsection/unit reorder: refetch fresh data before clearing preview.
+  // Refetching first ensures the cache has fresh publish-status before the preview
+  // falls back to `sections`, avoiding a visual flash of stale cached data.
   const finishSubtreeReorder = useCallback(async (
     sectionId: string,
     prevSectionId: string,
   ) => {
-    cancelReorderPreview();
     await refetchAffectedSections(sectionId, prevSectionId);
+    cancelReorderPreview();
   }, [cancelReorderPreview, refetchAffectedSections]);
 
   const runSubsectionReorder = useCallback(async (
