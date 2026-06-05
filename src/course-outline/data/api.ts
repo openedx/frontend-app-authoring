@@ -1,6 +1,6 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { courseIDtoBlockID } from '@src/course-outline/utils';
+import { courseIDtoBlockID, pickDefined } from '@src/course-outline/utils';
 import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { XBlock } from '@src/data/types';
 import {
@@ -14,11 +14,6 @@ import {
 } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-
-const pickDefined = <T extends Record<string, any>>(obj: T) =>
-  Object.fromEntries(
-    Object.entries(obj).filter(([, value]) => value !== undefined),
-  );
 
 export const getCourseOutlineIndexApiUrl = (
   courseId: string,
@@ -520,7 +515,7 @@ export async function getTagsExportFile(courseId: string, courseName: string) {
     responseType: 'blob',
   });
 
-  /* istanbul ignore next */
+  /* istanbul ignore next: blob download error path, HTTP client rarely fails */
   if (response.status !== 200) {
     throw response.statusText;
   }

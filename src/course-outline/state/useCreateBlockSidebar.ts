@@ -1,14 +1,24 @@
 import { useCallback } from 'react';
 import { ContainerType } from '@src/generic/key-utils';
+import type { ParentIds } from '@src/generic/types';
 import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
+import type { CreateCourseXBlockType } from '@src/course-outline/data/api';
 import { COURSE_BLOCK_NAMES } from '../constants';
 
-/**
- * Shared hook for creating section and subsection blocks and opening the info sidebar.
- *
- * Encapsulates the common mutateAsync → openContainerInfoSidebar flow used by
- * both OutlineAddChildButtons and AddSidebar's AddContentButton.
- */
+type SidebarResolver =
+  | string
+  | ((data: { locator: string; }) => string | undefined);
+
+function resolveSidebarValue(
+  resolver: SidebarResolver | undefined,
+  data: { locator: string; },
+): string | undefined {
+  if (typeof resolver === 'function') {
+    return resolver(data);
+  }
+  return resolver;
+}
+
 export function useCreateBlockSidebar(
   courseId: string,
   courseUsageKey: string,
@@ -21,39 +31,52 @@ export function useCreateBlockSidebar(
 ) {
   const handleAddBlock = useCreateCourseBlock(courseId);
 
-  const createSection = useCallback(async (
-    onSuccess?: (data: { locator: string }) => void,
+  const createBlock = useCallback(async (
+    payload: CreateCourseXBlockType & ParentIds,
+    onSuccess?: (data: { locator: string; }) => void,
+    sidebarSectionId?: SidebarResolver,
+    sidebarSubsectionId?: SidebarResolver,
   ) => {
-    const data = await handleAddBlock.mutateAsync({
-      type: ContainerType.Chapter,
-      parentLocator: courseUsageKey,
-      displayName: COURSE_BLOCK_NAMES.chapter.name,
-    });
+    const data = await handleAddBlock.mutateAsync(payload);
     if (onSuccess) {
       onSuccess(data);
-    } else {
-      openContainerInfoSidebar(data.locator, undefined, data.locator);
+      return data;
     }
+    openContainerInfoSidebar(
+      data.locator,
+      resolveSidebarValue(sidebarSubsectionId, data),
+      resolveSidebarValue(sidebarSectionId, data) ?? data.locator,
+    );
     return data;
-  }, [handleAddBlock, courseUsageKey, openContainerInfoSidebar]);
+  }, [handleAddBlock, openContainerInfoSidebar]);
+
+  const createSection = useCallback(async (
+    onSuccess?: (data: { locator: string; }) => void,
+  ) =>
+    createBlock(
+      {
+        type: ContainerType.Chapter,
+        parentLocator: courseUsageKey,
+        displayName: COURSE_BLOCK_NAMES.chapter.name,
+      },
+      onSuccess,
+    ), [createBlock, courseUsageKey]);
 
   const createSubsection = useCallback(async (
     sectionId: string,
-    onSuccess?: (data: { locator: string }) => void,
-  ) => {
-    const data = await handleAddBlock.mutateAsync({
-      type: ContainerType.Sequential,
-      parentLocator: sectionId,
-      displayName: COURSE_BLOCK_NAMES.sequential.name,
+    onSuccess?: (data: { locator: string; }) => void,
+  ) =>
+    createBlock(
+      {
+        type: ContainerType.Sequential,
+        parentLocator: sectionId,
+        displayName: COURSE_BLOCK_NAMES.sequential.name,
+        sectionId,
+      },
+      onSuccess,
       sectionId,
-    });
-    if (onSuccess) {
-      onSuccess(data);
-    } else {
-      openContainerInfoSidebar(data.locator, data.locator, sectionId);
-    }
-    return data;
-  }, [handleAddBlock, openContainerInfoSidebar]);
+      (data) => data.locator,
+    ), [createBlock]);
 
   return { createSection, createSubsection, handleAddBlock };
 }

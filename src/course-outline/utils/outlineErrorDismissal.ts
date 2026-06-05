@@ -1,4 +1,29 @@
 /**
+ * Iterate each dismissed-signature key where the base error still exists
+ * and its current signature matches. The callback receives the key, the
+ * matching signature, and the current error value.
+ */
+function forEachDismissedKey(
+  baseErrors: Record<string, any>,
+  dismissedSignatures: Record<string, string>,
+  fn: (key: string, currentSig: string, currentError: any) => void,
+): void {
+  for (const key of Object.keys(dismissedSignatures)) {
+    if (!(key in baseErrors)) {
+      continue;
+    }
+    const currentError = baseErrors[key];
+    if (currentError == null) {
+      continue;
+    }
+    const currentSig = computeErrorSignature(currentError);
+    if (currentSig === dismissedSignatures[key]) {
+      fn(key, currentSig, currentError);
+    }
+  }
+}
+
+/**
  * Compute a stable signature for an error object.
  * Two errors with identical type/data/status/dismissible fields
  * produce the same signature. Returns 'null' for null/undefined input.
@@ -17,16 +42,6 @@ export function computeErrorSignature(error: any): string {
 }
 
 /**
- * Build filtered errors object by applying dismissals.
- *
- * A dismissal for key K with signature S is applied only when:
- *   - baseErrors[K] is non-null
- *   - computeErrorSignature(baseErrors[K]) === S
- *
- * If the underlying error changed or cleared, the dismissal is
- * skipped so the new (or absent) error shows through naturally.
- */
-/**
  * Remove stale entries from the dismissed-signatures map.
  *
  * Drops a key K when:
@@ -42,50 +57,32 @@ export function pruneDismissedErrorSignatures(
 ): Record<string, string> {
   const pruned: Record<string, string> = {};
 
-  for (const key of Object.keys(dismissedSignatures)) {
-    if (!(key in baseErrors)) {
-      // Key no longer exists in error state – drop.
-      continue;
-    }
-    const currentError = baseErrors[key];
-    if (currentError == null) {
-      // Error cleared – drop.
-      continue;
-    }
-    const currentSig = computeErrorSignature(currentError);
-    if (currentSig !== dismissedSignatures[key]) {
-      // Error changed – drop.
-      continue;
-    }
-    // Error still matches – keep.
-    pruned[key] = dismissedSignatures[key];
-  }
+  forEachDismissedKey(baseErrors, dismissedSignatures, (key, currentSig) => {
+    pruned[key] = currentSig;
+  });
 
   return pruned;
 }
 
+/**
+ * Build filtered errors object by applying dismissals.
+ *
+ * A dismissal for key K with signature S is applied only when:
+ *   - baseErrors[K] is non-null
+ *   - computeErrorSignature(baseErrors[K]) === S
+ *
+ * If the underlying error changed or cleared, the dismissal is
+ * skipped so the new (or absent) error shows through naturally.
+ */
 export function filterDismissedErrors(
   baseErrors: Record<string, any>,
   dismissedSignatures: Record<string, string>,
 ): Record<string, any> {
   const filtered = { ...baseErrors };
 
-  for (const key of Object.keys(dismissedSignatures)) {
-    if (!(key in baseErrors)) {
-      continue;
-    }
-    const currentError = baseErrors[key];
-    if (currentError == null) {
-      // Error cleared – dismissal is stale, don't apply.
-      continue;
-    }
-    const currentSig = computeErrorSignature(currentError);
-    if (currentSig === dismissedSignatures[key]) {
-      // Same error instance – keep it dismissed.
-      filtered[key] = null;
-    }
-    // If signature differs, the error changed – let it show.
-  }
+  forEachDismissedKey(baseErrors, dismissedSignatures, (key) => {
+    filtered[key] = null;
+  });
 
   return filtered;
 }

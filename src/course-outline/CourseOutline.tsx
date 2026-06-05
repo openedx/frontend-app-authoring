@@ -19,7 +19,6 @@ import { RequestStatus } from '@src/data/constants';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 
-
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
@@ -319,18 +318,8 @@ const CourseOutline = () => {
           </div>
         </section>
         <OutlineModals
-          isEnableHighlightsModalOpen={highlightsModal.isEnableHighlightsModalOpen}
-          closeEnableHighlightsModal={highlightsModal.closeEnableHighlightsModal}
-          handleEnableHighlightsSubmit={highlightsModal.handleEnableHighlightsSubmit}
-          isHighlightsModalOpen={highlightsModal.isHighlightsModalOpen}
-          closeHighlightsModal={highlightsModal.closeHighlightsModal}
-          handleHighlightsFormSubmit={highlightsModal.handleHighlightsFormSubmit}
-          highlightsModalCurrentId={highlightsModal.highlightsModalCurrentId}
-          isConfigureModalOpen={configureDialog.isConfigureModalOpen}
-          handleConfigureModalClose={configureDialog.handleConfigureModalClose}
-          handleConfigureItemSubmitWrapper={configureDialog.handleConfigureItemSubmitWrapper}
-          isOverflowVisible={configureDialog.isOverflowVisible}
-          configureItemData={configureDialog.currentItemData}
+          highlights={highlightsModal}
+          configure={configureDialog}
         />
       </Container>
       <div className="alert-toast">
@@ -342,7 +331,7 @@ const CourseOutline = () => {
       {toastMessage && (
         <Toast
           show
-          onClose={/* istanbul ignore next */ () => setToastMessage(null)}
+          onClose={/* istanbul ignore next: toast dismissal, trivial setState */ () => setToastMessage(null)}
           data-testid="taxonomy-toast"
         >
           {toastMessage}

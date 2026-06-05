@@ -254,7 +254,7 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
     );
   };
 
-  /* istanbul ignore next */
+  /* istanbul ignore next: blocker confirm, only triggered via browser back button */
   const handleConfirmNavigation = () => {
     setFormDirty(false);
     blocker.proceed?.();
@@ -265,7 +265,7 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
       <ConfirmNavigationModal
         isOpen={blocker.state === 'blocked'}
         onConfirm={handleConfirmNavigation}
-        onCancel={/* istanbul ignore next */ () => {
+        onCancel={/* istanbul ignore next: blocker cancel, only triggered via browser back button */ () => {
           blocker.reset?.();
         }}
       />

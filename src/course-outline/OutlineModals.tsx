@@ -12,24 +12,12 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useDeleteModal } from './state/useDeleteModal';
 import { useUnlinkModal } from './state/useUnlinkModal';
 import { COURSE_BLOCK_NAMES } from './constants';
-import type { XBlock } from '@src/data/types';
-import type { HighlightData } from './highlights-modal/HighlightsModal';
+import type { UseHighlightsModalOutput } from './state/useHighlightsModal';
+import type { UseConfigureDialogOutput } from './state/useConfigureModal';
 
 export interface OutlineModalsProps {
-  // Highlights modal
-  isEnableHighlightsModalOpen: boolean;
-  closeEnableHighlightsModal: () => void;
-  handleEnableHighlightsSubmit: () => void;
-  isHighlightsModalOpen: boolean;
-  closeHighlightsModal: () => void;
-  handleHighlightsFormSubmit: (highlights: HighlightData) => void;
-  highlightsModalCurrentId: string | undefined;
-  // Configure modal
-  isConfigureModalOpen: boolean;
-  handleConfigureModalClose: () => void;
-  handleConfigureItemSubmitWrapper: (variables: Record<string, unknown>) => Promise<void>;
-  isOverflowVisible: boolean;
-  configureItemData: XBlock | undefined;
+  highlights: UseHighlightsModalOutput;
+  configure: UseConfigureDialogOutput;
 }
 
 /**
@@ -38,18 +26,22 @@ export interface OutlineModalsProps {
  * and calls delete/unlink sub-hooks directly.
  */
 const OutlineModals: React.FC<OutlineModalsProps> = ({
-  isEnableHighlightsModalOpen,
-  closeEnableHighlightsModal,
-  handleEnableHighlightsSubmit,
-  isHighlightsModalOpen,
-  closeHighlightsModal,
-  handleHighlightsFormSubmit,
-  highlightsModalCurrentId,
-  isConfigureModalOpen,
-  handleConfigureModalClose,
-  handleConfigureItemSubmitWrapper,
-  isOverflowVisible,
-  configureItemData,
+  highlights: {
+    isEnableHighlightsModalOpen,
+    closeEnableHighlightsModal,
+    handleEnableHighlightsSubmit,
+    isHighlightsModalOpen,
+    closeHighlightsModal,
+    handleHighlightsFormSubmit,
+    highlightsModalCurrentId,
+  },
+  configure: {
+    isConfigureModalOpen,
+    handleConfigureModalClose,
+    handleConfigureItemSubmitWrapper,
+    isOverflowVisible,
+    currentItemData,
+  },
 }) => {
   const {
     enableProctoredExams,
@@ -94,7 +86,7 @@ const OutlineModals: React.FC<OutlineModalsProps> = ({
         onClose={handleConfigureModalClose}
         onConfigureSubmit={handleConfigureItemSubmitWrapper}
         isOverflowVisible={isOverflowVisible}
-        currentItemData={configureItemData}
+        currentItemData={currentItemData}
         enableProctoredExams={enableProctoredExams}
         enableTimedExams={enableTimedExams}
         isSelfPaced={statusBarData?.isSelfPaced ?? false}

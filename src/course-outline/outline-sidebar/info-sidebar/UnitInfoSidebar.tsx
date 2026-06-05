@@ -14,6 +14,7 @@ import {
 } from '@openedx/paragon/icons';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
+import { withUpstreamGuard } from '@src/course-outline/utils';
 
 import { SidebarTitle } from '@src/generic/sidebar';
 
@@ -80,7 +81,7 @@ export const UnitSidebar = () => {
     setSelectedContainerState,
   } = useOutlineSidebarContext();
   const {
-    currentId: unitId = /* istanbul ignore next */ '',
+    currentId: unitId = /* istanbul ignore next: default when no selection */ '',
     index,
   } = selectedContainerState ?? {};
   const { data: unitData, isPending } = useCourseItemData(unitId);
@@ -123,10 +124,8 @@ export const UnitSidebar = () => {
   if (isPending || !unitData) {
     return <Loading />;
   }
-  // re-create actions object for customizations
-  const actions = { ...unitData.actions };
-  actions.deletable = actions.deletable && !subsection?.upstreamInfo?.upstreamRef;
-  actions.duplicable = actions.duplicable && !subsection?.upstreamInfo?.upstreamRef;
+  // Guard actions against upstream reference
+  const actions = withUpstreamGuard(unitData.actions, subsection?.upstreamInfo);
 
   // Build move calculator only when all ancestor context is available
   const getPossibleMoves = (section && subsection && subsectionIndex !== -1)
@@ -145,7 +144,7 @@ export const UnitSidebar = () => {
       const moveDetails = getPossibleMoves(oldIndex, step);
       return !isEmpty(moveDetails) && !subsection?.upstreamInfo?.upstreamRef;
     }
-    /* istanbul ignore next */
+    /* istanbul ignore next: unreachable — getPossibleMoves always set when section+subsection exist */
     return false;
   };
 
@@ -159,18 +158,18 @@ export const UnitSidebar = () => {
         const newSubsectionId = moveDetails.subsectionId;
         // Cross-subsection move: unit goes to end of previous or start of next subsection
         const isCrossSubsection = newSubsectionId !== subsection.id;
-        /* istanbul ignore next */
+        /* istanbul ignore next: cross-section move only exercised by E2E */
         const newSectionIndex = newSectionId !== section.id
           ? sections.findIndex((s) => s.id === newSectionId)
           : sectionIndex;
-        /* istanbul ignore next */
+        /* istanbul ignore next: cross-subsection move only exercised by E2E */
         const newIndex = isCrossSubsection
           ? (step === -1
             ? sections[newSectionIndex].childInfo.children.find((s) => s.id === newSubsectionId)?.childInfo.children
               .length ?? 0
             : 0)
           : index + step;
-        /* istanbul ignore next */
+        /* istanbul ignore next: cross-section/subsection move only exercised by E2E */
         setSelectedContainerState(
           selectedContainerState ?
             {
@@ -188,14 +187,14 @@ export const UnitSidebar = () => {
   const handleCopyLocation = () => {
     const locationId = extractCourseUnitId(unitId);
     if (!locationId) {
-      /* istanbul ignore next */
+      /* istanbul ignore next: early return when locationId missing (edge case) */
       return;
     }
 
     if (navigator.clipboard) {
       // Modern approach: requires HTTPS (secure context)
       void navigator.clipboard.writeText(locationId);
-    } /* istanbul ignore next */ else {
+    } /* istanbul ignore next: clipboard fallback for HTTP (insecure context) */ else {
       // Fallback for HTTP (non-secure) dev environments
       // Note: execCommand is deprecated but still widely supported as fallback
       const textarea = document.createElement('textarea');
@@ -257,7 +256,8 @@ export const UnitSidebar = () => {
               navigate(`/library/${libId}/unit/${upstreamRef}`);
             }
           },
-          onClickCopy: /* istanbul ignore next */ () => copyToClipboard(unitId),
+          onClickCopy: /* istanbul ignore next: copy-to-clipboard action, utility wrapper */ () =>
+            copyToClipboard(unitId),
           onClickCopyLocation: handleCopyLocation,
         }}
       />

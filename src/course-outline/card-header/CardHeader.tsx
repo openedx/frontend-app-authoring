@@ -159,7 +159,7 @@ const CardHeader = ({
     );
 
   useEscapeClick({
-    onEscape: /* istanbul ignore next */ () => {
+    onEscape: /* istanbul ignore next: escape-to-cancel, keyboard event only */ () => {
       setTitleValue(title);
       closeForm();
     },
@@ -206,7 +206,7 @@ const CardHeader = ({
                 onChange={(e) => setTitleValue(e.target.value)}
                 aria-label={intl.formatMessage(messages.editFieldAriaLabel)}
                 onBlur={handleEditSubmit}
-                onKeyDown={/* istanbul ignore next */ (e) => {
+                onKeyDown={/* istanbul ignore next: Enter/space keyboard handlers, inline lambda */ (e) => {
                   if (e.key === 'Enter') {
                     handleEditSubmit();
                   } else if (e.key === ' ') {

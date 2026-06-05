@@ -184,7 +184,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
 export function useOutlineSidebarContext(): OutlineSidebarContextData {
   const ctx = useContext(OutlineSidebarContext);
   if (ctx === undefined) {
-    /* istanbul ignore next */
+    /* istanbul ignore next: impossible in production, all consumers inside provider */
     throw new Error('useOutlineSidebarContext() was used in a component without a <OutlineSidebarProvider> ancestor.');
   }
   return ctx;

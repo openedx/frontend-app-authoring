@@ -1,4 +1,5 @@
 import type { IntlShape, MessageDescriptor } from 'react-intl';
+import type { XBlockActions, UpstreamInfo } from '@src/data/types';
 import {
   CheckCircle as CheckCircleIcon,
   Lock as LockIcon,
@@ -205,6 +206,31 @@ const getVideoSharingOptionText = (
 };
 
 /**
+ * Picks only defined (non-undefined) values from an object.
+ * Typed to preserve the original keys and value types.
+ */
+const pickDefined = <T extends Record<string, any>>(obj: T) =>
+  Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => value !== undefined),
+  ) as { [K in keyof T]: Exclude<T[K], undefined>; };
+
+/**
+ * Guards an XBlockActions object by disabling deletable and duplicable
+ * when the parent container has an upstream reference (library content).
+ * Prevents users from deleting/duplicating library-sourced items.
+ */
+const withUpstreamGuard = (
+  actions: XBlockActions,
+  upstreamInfo: UpstreamInfo | undefined | null,
+): XBlockActions => {
+  const guarded = { ...actions };
+  const hasUpstream = Boolean(upstreamInfo?.upstreamRef);
+  guarded.deletable = guarded.deletable && !hasUpstream;
+  guarded.duplicable = guarded.duplicable && !hasUpstream;
+  return guarded;
+};
+
+/**
  * Converts courseId to course block id
  * course-v1:demo+course+1 -> block-v1:demo+course+1+type@course+block@course
  */
@@ -224,4 +250,6 @@ export {
   getVideoSharingOptionText,
   scrollToElement,
   courseIDtoBlockID,
+  pickDefined,
+  withUpstreamGuard,
 };

@@ -32,7 +32,7 @@ import type { ModalState } from '@src/CourseAuthoringContext';
 
 import {
   CourseOutline,
-  CourseOutlineState as LegacyCourseOutlineState,
+  OutlineLoadingStatus,
   CourseOutlineStatusBar,
 } from './data';
 
@@ -45,7 +45,7 @@ type CourseOutlineContextData = {
   statusBarData: CourseOutlineStatusBar;
   savingStatus: string;
   errors: OutlinePageErrors;
-  loadingStatus: LegacyCourseOutlineState['loadingStatus'];
+  loadingStatus: OutlineLoadingStatus;
   isLoading: boolean;
   isLoadingDenied: boolean;
   isCustomRelativeDatesActive: boolean;

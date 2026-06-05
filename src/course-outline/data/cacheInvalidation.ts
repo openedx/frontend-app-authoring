@@ -18,7 +18,7 @@ export const invalidateParentQueries = async (queryClient: QueryClient, variable
   if (variables.sectionId) {
     await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
   } else if (variables.subsectionId) {
-    // istanbul ignore next
+    // istanbul ignore next: subsection-only branch, hard to isolate in tests
     await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.subsectionId) });
   }
 };

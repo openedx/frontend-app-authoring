@@ -20,7 +20,6 @@ import {
 } from '../utils/getChecklistForStatusBar';
 
 const DEFAULT_FETCH_SECTION_STATUS = RequestStatus.IN_PROGRESS;
-const DEFAULT_ERROR_NULL = null;
 
 const DEFAULT_COURSE_ACTIONS: XBlockActions = {
   deletable: true,
@@ -142,8 +141,6 @@ export function useOutlineStatusState({
       : null;
     return {
       outlineIndexApi: outlineIndexErrors,
-      reindexApi: null,
-      sectionLoadingApi: DEFAULT_ERROR_NULL,
       courseLaunchApi: courseLaunchErrors,
     };
   }, [outlineIndexQuery.error, outlineIndexIsDenied, courseLaunchErrors]);

@@ -6,6 +6,7 @@ import { Tab, Tabs } from '@openedx/paragon';
 import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
+import { withUpstreamGuard } from '@src/course-outline/utils';
 import { SidebarTitle } from '@src/generic/sidebar';
 import { useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
@@ -68,10 +69,8 @@ export const SubsectionSidebar = () => {
     return <Loading />;
   }
 
-  // re-create actions object for customizations
-  const actions = { ...subsectionData.actions };
-  actions.deletable = actions.deletable && !section?.upstreamInfo?.upstreamRef;
-  actions.duplicable = actions.duplicable && !section?.upstreamInfo?.upstreamRef;
+  // Guard actions against upstream reference
+  const actions = withUpstreamGuard(subsectionData.actions, section?.upstreamInfo);
 
   const getPossibleMoves = section ?
     possibleSubsectionMoves(
@@ -87,7 +86,7 @@ export const SubsectionSidebar = () => {
       const moveDetails = getPossibleMoves(oldIndex, step);
       return !isEmpty(moveDetails) && !section.upstreamInfo?.upstreamRef;
     }
-    // istanbul ignore next
+    // istanbul ignore next: unreachable — getPossibleMoves always set when section exists
     return false;
   };
 
@@ -99,16 +98,16 @@ export const SubsectionSidebar = () => {
         const newSectionId = moveDetails.sectionId;
         // A subsection can move to a different section (cross-section move)
         const isCrossSection = newSectionId !== section.id;
-        // istanbul ignore next
+        // istanbul ignore next: cross-section move only exercised by E2E
         const newSectionIndex = isCrossSection
           ? sections.findIndex((s) => s.id === newSectionId)
           : sectionIndex;
         // Cross-section up: goes to end of previous section; cross-section down: goes to start of next section
-        // istanbul ignore next
+        // istanbul ignore next: cross-section move only exercised by E2E
         const newIndex = isCrossSection
           ? (step === -1 ? sections[newSectionIndex].childInfo.children.length : 0)
           : index + step;
-        // istanbul ignore next
+        // istanbul ignore next: cross-section move only exercised by E2E
         setSelectedContainerState(
           selectedContainerState ?
             {

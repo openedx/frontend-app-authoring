@@ -194,36 +194,41 @@ export type OutlineActionSelection = {
   index?: number;
 };
 
-export type AccessManagedXBlockDataTypes = {
-  id: string;
-  displayName?: string;
-  start?: string;
-  visibilityState?: string | boolean;
-  due?: string;
-  isTimeLimited?: boolean;
-  defaultTimeLimitMinutes?: number;
-  hideAfterDue?: boolean;
+type AccessManagedOptional = Partial<
+  Pick<
+    XBlockBase,
+    | 'displayName'
+    | 'start'
+    | 'due'
+    | 'isTimeLimited'
+    | 'defaultTimeLimitMinutes'
+    | 'hideAfterDue'
+    | 'courseGraders'
+    | 'category'
+    | 'format'
+    | 'userPartitionInfo'
+    | 'ancestorHasStaffLock'
+    | 'isPrereq'
+    | 'prereqs'
+    | 'prereq'
+    | 'prereqMinScore'
+    | 'prereqMinCompletion'
+    | 'releasedToStudents'
+    | 'wasExamEverLinkedWithExternal'
+    | 'isProctoredExam'
+    | 'isOnboardingExam'
+    | 'isPracticeExam'
+    | 'examReviewRules'
+    | 'supportsOnboarding'
+    | 'showReviewRules'
+    | 'onlineProctoringRules'
+    | 'discussionEnabled'
+  >
+>;
+
+export type AccessManagedXBlockDataTypes = Pick<XBlockBase, 'id'> & AccessManagedOptional & {
+  visibilityState?: XBlockBase['visibilityState'] | boolean;
   showCorrectness?: string | boolean;
-  courseGraders?: string[];
-  category?: string;
-  format?: string;
-  userPartitionInfo?: UserPartitionInfoTypes;
-  ancestorHasStaffLock?: boolean;
-  isPrereq?: boolean;
-  prereqs?: XBlockPrereqs[];
-  prereq?: string;
-  prereqMinScore?: number;
-  prereqMinCompletion?: number;
-  releasedToStudents?: boolean;
-  wasExamEverLinkedWithExternal?: boolean;
-  isProctoredExam?: boolean;
-  isOnboardingExam?: boolean;
-  isPracticeExam?: boolean;
-  examReviewRules?: string;
-  supportsOnboarding?: boolean;
-  showReviewRules?: boolean;
-  onlineProctoringRules?: string;
-  discussionEnabled?: boolean;
 };
 
 export interface UserAgreementRecord {

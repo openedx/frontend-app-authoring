@@ -14,7 +14,7 @@ export const OutlineAlignSidebar = () => {
 
   const { data: contentData } = useContentData(sidebarContentId);
 
-  // istanbul ignore next
+  // istanbul ignore next: align sidebar back handler, UI interaction
   const handleBack = () => {
     clearSelection();
   };

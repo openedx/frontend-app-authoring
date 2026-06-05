@@ -40,7 +40,7 @@ export const InfoSection = ({ itemId }: Props) => {
    *   - Invalidates the library links query so the sync-status badges update.
    *   - Invalidates the full course outline query so the top-level view reflects the change.
    */
-  // istanbul ignore next
+  // istanbul ignore next: post-sync callback, depends on library link flow (E2E)
   const handleOnPostChangeSync = useCallback(() => {
     // invalidating section data will update all children blocks as well.
     if (selectedContainerState?.sectionId) {
@@ -53,7 +53,7 @@ export const InfoSection = ({ itemId }: Props) => {
     }
   }, [selectedContainerState, queryClient, courseId]);
 
-  /* istanbul ignore next */
+  /* istanbul ignore next: early return guard, itemData always loaded by parent */
   if (!itemData) {
     return null;
   }

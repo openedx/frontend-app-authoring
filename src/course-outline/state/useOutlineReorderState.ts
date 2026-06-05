@@ -40,7 +40,7 @@ export function useOutlineReorderState({
   const [previewSectionsState, setPreviewSectionsState] = useState<XBlock[] | undefined>();
   const visibleSections = previewSectionsState ?? sections;
 
-  const clearPreview = useCallback(() => {
+  const cancelReorderPreview = useCallback(() => {
     setPreviewSectionsState(undefined);
   }, []);
 
@@ -48,7 +48,7 @@ export function useOutlineReorderState({
   // If any section id is missing from the current cache (e.g. concurrent change),
   // invalidate instead of writing a shorter list to avoid silent data loss.
   const acceptReorderAndSyncSectionOrder = useCallback((sectionListIds: string[]) => {
-    clearPreview();
+    cancelReorderPreview();
     // Use setQueryData updater form so the cache read is atomic with the write.
     // This avoids a stale-read race if another mutation updates the cache
     // concurrently between reading and writing.
@@ -81,9 +81,7 @@ export function useOutlineReorderState({
     if (shouldInvalidate) {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.index(courseId) });
     }
-  }, [clearPreview, queryClient, courseId]);
-
-  const cancelReorderPreview = clearPreview;
+  }, [cancelReorderPreview, queryClient, courseId]);
 
   const callPreviewSections = useCallback((nextSections: XBlock[]) => {
     setPreviewSectionsState(nextSections);
@@ -132,18 +130,18 @@ export function useOutlineReorderState({
       await reorderSectionsMutation.mutateAsync(sectionListIds);
       acceptReorderAndSyncSectionOrder(sectionListIds);
     } catch {
-      clearPreview();
+      cancelReorderPreview();
     }
-  }, [reorderSectionsMutation, acceptReorderAndSyncSectionOrder, clearPreview]);
+  }, [reorderSectionsMutation, acceptReorderAndSyncSectionOrder, cancelReorderPreview]);
 
   // Shared post-success for subsection/unit reorder: clear preview, refetch fresh data.
   const finishSubtreeReorder = useCallback(async (
     sectionId: string,
     prevSectionId: string,
   ) => {
-    clearPreview();
+    cancelReorderPreview();
     await refetchAffectedSections(sectionId, prevSectionId);
-  }, [clearPreview, refetchAffectedSections]);
+  }, [cancelReorderPreview, refetchAffectedSections]);
 
   const runSubsectionReorder = useCallback(async (
     sectionId: string,
@@ -154,9 +152,9 @@ export function useOutlineReorderState({
       await reorderSubsectionsMutation.mutateAsync({ sectionId, subsectionListIds });
       await finishSubtreeReorder(sectionId, prevSectionId);
     } catch {
-      clearPreview();
+      cancelReorderPreview();
     }
-  }, [reorderSubsectionsMutation, finishSubtreeReorder, clearPreview]);
+  }, [reorderSubsectionsMutation, finishSubtreeReorder, cancelReorderPreview]);
 
   const runUnitReorder = useCallback(async (
     sectionId: string,
@@ -168,9 +166,9 @@ export function useOutlineReorderState({
       await reorderUnitsMutation.mutateAsync({ sectionId, subsectionId, unitListIds });
       await finishSubtreeReorder(sectionId, prevSectionId);
     } catch {
-      clearPreview();
+      cancelReorderPreview();
     }
-  }, [reorderUnitsMutation, finishSubtreeReorder, clearPreview]);
+  }, [reorderUnitsMutation, finishSubtreeReorder, cancelReorderPreview]);
 
   // ─── Public API: guard + compute preview + delegate ───────────────────────
 

@@ -28,7 +28,7 @@ const NotificationHookConsumer = ({ hook }: { hook: () => HookType; }) => {
 export const NotificationStatusIcon = () => {
   const loadedHook = useDynamicHookShim();
 
-  // istanbul ignore if
+  // istanbul ignore if: dynamic hook shim not loaded (plugin slot edge case)
   if (!loadedHook) {
     return null;
   }

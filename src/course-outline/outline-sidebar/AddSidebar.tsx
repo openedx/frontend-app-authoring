@@ -220,7 +220,7 @@ const ShowLibraryContent = () => {
           parentLocator: courseUsageKey,
           libraryContentKey: usageKey,
         });
-        // istanbul ignore next
+        // istanbul ignore next: open info sidebar after add — hard to sequence in unit test
         openContainerInfoSidebar(data.locator, undefined, data.locator);
         break;
       }
@@ -234,7 +234,7 @@ const ShowLibraryContent = () => {
             libraryContentKey: usageKey,
             sectionId: sectionParentId,
           });
-          // istanbul ignore next
+          // istanbul ignore next: open info sidebar after add — hard to sequence in unit test
           openContainerInfoSidebar(data.locator, data.locator, sectionParentId);
         }
         break;
@@ -250,7 +250,7 @@ const ShowLibraryContent = () => {
             libraryContentKey: usageKey,
             sectionId: sectionParentId,
           });
-          // istanbul ignore next
+          // istanbul ignore next: open info sidebar after add — hard to sequence in unit test
           openContainerInfoSidebar(data.locator, subsectionParentId, sectionParentId);
         }
         break;

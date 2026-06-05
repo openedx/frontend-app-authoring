@@ -149,7 +149,7 @@ const DraggableList = ({
   // new index and parent are ignored.
   // See https://github.com/openedx/frontend-app-course-authoring/pull/859#discussion_r1519199622
   // for more details.
-  /* istanbul ignore next */
+  /* istanbul ignore next: complex drag-over logic covered by E2E, see PR #859 */
   const subsectionDragOver = (
     active: Active,
     over: Over,
@@ -192,7 +192,7 @@ const DraggableList = ({
     }
   };
 
-  /* istanbul ignore next */
+  /* istanbul ignore next: complex drag-over logic covered by E2E, see PR #859 */
   const unitDragOver = (
     active: Active,
     over: Over,
@@ -240,7 +240,7 @@ const DraggableList = ({
     }
   };
 
-  /* istanbul ignore next */
+  /* istanbul ignore next: drag-over dispatch, coordinator for sub-handlers */
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!active || !over) {
