@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useDefaultTab } from '../../../hooks/useDefaultTab';
 import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -42,12 +42,7 @@ export const SubsectionSidebar = () => {
     settings: 'settings',
   };
 
-  useEffect(() => {
-    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
-      // Set default Tab key
-      setCurrentTabKey('info');
-    }
-  }, [currentTabKey, setCurrentTabKey]);
+  useDefaultTab('subsection');
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
   const duplicateMutation = useDuplicateItem(courseId);

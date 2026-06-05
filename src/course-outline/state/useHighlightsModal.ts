@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { useToggle } from '@openedx/paragon';
 import type { XBlock } from '@src/data/types';
@@ -7,6 +7,7 @@ import {
   useEnableCourseHighlightsEmails,
 } from '../data';
 import type { HighlightData } from '../highlights-modal/HighlightsModal';
+import { useModalState } from './useModalState';
 
 export interface UseHighlightsModalOutput {
   isEnableHighlightsModalOpen: boolean;
@@ -28,8 +29,12 @@ export function useHighlightsModal(courseId: string): UseHighlightsModalOutput {
   const enableHighlightsEmailsMutation = useEnableCourseHighlightsEmails(courseId);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
-  const [isHighlightsModalOpen, openHighlightsModal, closeHighlightsModal] = useToggle(false);
-  const [highlightsModalData, setHighlightsModalData] = useState<string | undefined>();
+  const {
+    isOpen: isHighlightsModalOpen,
+    open: openHighlightsModal,
+    close: closeHighlightsModal,
+    data: highlightsModalData,
+  } = useModalState<string>();
 
   const handleEnableHighlightsSubmit = useCallback(() => {
     enableHighlightsEmailsMutation.mutate();
@@ -37,8 +42,7 @@ export function useHighlightsModal(courseId: string): UseHighlightsModalOutput {
   }, [enableHighlightsEmailsMutation, closeEnableHighlightsModal]);
 
   const handleOpenHighlightsModal = useCallback((section: XBlock) => {
-    setHighlightsModalData(section.id);
-    openHighlightsModal();
+    openHighlightsModal(section.id);
   }, [openHighlightsModal]);
 
   const handleHighlightsFormSubmit = useCallback((highlights: HighlightData) => {
@@ -48,7 +52,6 @@ export function useHighlightsModal(courseId: string): UseHighlightsModalOutput {
     ) as string[];
     highlightsMutation.mutate({ sectionId: highlightsModalData, highlights: dataToSend });
     closeHighlightsModal();
-    setHighlightsModalData(undefined);
   }, [highlightsModalData, highlightsMutation, closeHighlightsModal]);
 
   return {

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useDefaultTab } from '../../../hooks/useDefaultTab';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 import { useNavigate } from 'react-router-dom';
@@ -45,12 +45,7 @@ export const SectionSidebar = () => {
     settings: 'settings',
   };
 
-  useEffect(() => {
-    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
-      // Set default Tab key
-      setCurrentTabKey('info');
-    }
-  }, [currentTabKey, setCurrentTabKey]);
+  useDefaultTab('section');
   const { sectionId = '', index } = selectedContainerState ?? {};
   const { data: sectionData, isLoading } = useCourseItemData(sectionId);
 

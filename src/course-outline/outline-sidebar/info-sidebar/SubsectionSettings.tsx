@@ -14,10 +14,9 @@ import AdvancedTab from '@src/generic/configure-modal/AdvancedTab';
 import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useStateWithCallback } from '@src/hooks';
+import { useItemFieldSync } from '../../../hooks/useItemFieldSync';
 import {
   useCallback,
-  useEffect,
-  useRef,
   useState,
 } from 'react';
 import { ReleaseSection } from './sharedSettings/ReleaseSection';
@@ -53,19 +52,11 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
     },
     (val) => onChange(val || {}),
   );
-  const didMountRef = useRef(false);
-
-  useEffect(() => {
+  useItemFieldSync(() => {
     const nextState = {
       graderType: itemData?.format,
       dueDate: itemData?.due || '',
     };
-
-    if (!didMountRef.current) {
-      didMountRef.current = true;
-      return;
-    }
-
     if (localState?.graderType !== nextState.graderType || localState?.dueDate !== nextState.dueDate) {
       setLocalState(nextState);
     }
@@ -149,14 +140,7 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
     },
     (val) => onChange(val || {}),
   );
-  const didMountRef = useRef(false);
-
-  useEffect(() => {
-    if (!didMountRef.current) {
-      didMountRef.current = true;
-      return;
-    }
-
+  useItemFieldSync(() => {
     if (localState?.showCorrectness !== itemData?.showCorrectness) {
       setLocalState({ showCorrectness: itemData?.showCorrectness });
     }
@@ -222,17 +206,9 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
     getLatestLocalState,
     (val) => onChange(val || {}),
   );
-  const didMountRef = useRef(false);
-
-  useEffect(() => {
-    if (!didMountRef.current) {
-      didMountRef.current = true;
-      return;
-    }
-
+  useItemFieldSync(() => {
     const nextState = getLatestLocalState();
     const hasChanges = Object.keys(nextState).some((key) => (localState as any)?.[key] !== (nextState as any)[key]);
-
     if (hasChanges) {
       setLocalState({ value: nextState, skipCallback: true });
     }

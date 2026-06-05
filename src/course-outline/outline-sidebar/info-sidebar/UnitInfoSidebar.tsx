@@ -1,4 +1,5 @@
-import { useEffect, useContext } from 'react';
+import { useContext } from 'react';
+import { useDefaultTab } from '../../../hooks/useDefaultTab';
 import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -89,12 +90,7 @@ export const UnitSidebar = () => {
     settings: 'settings',
   };
 
-  useEffect(() => {
-    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
-      // Set default Tab key
-      setCurrentTabKey('preview');
-    }
-  }, [currentTabKey, setCurrentTabKey]);
+  useDefaultTab('unit');
 
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
   const { data: subsection } = useCourseItemData<XBlock>(selectedContainerState?.subsectionId);

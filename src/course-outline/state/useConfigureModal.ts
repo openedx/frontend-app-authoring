@@ -1,6 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 
-import { useToggle } from '@openedx/paragon';
 import type { OutlineActionSelection, XBlock } from '@src/data/types';
 import {
   useCourseItemData,
@@ -11,6 +10,7 @@ import {
 } from '../data';
 import { useOutlineConfigureAction } from './useOutlineActions';
 import { COURSE_BLOCK_NAMES } from '../constants';
+import { useModalState } from './useModalState';
 
 export interface UseConfigureDialogOutput {
   isConfigureModalOpen: boolean;
@@ -27,8 +27,12 @@ export interface UseConfigureDialogOutput {
 export function useConfigureDialog(courseId: string): UseConfigureDialogOutput {
   const { handleConfigureItemSubmit } = useOutlineConfigureAction(courseId);
 
-  const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
-  const [configureModalData, setConfigureModalData] = useState<OutlineActionSelection | undefined>();
+  const {
+    isOpen: isConfigureModalOpen,
+    open: openConfigureModal,
+    close: closeConfigureModal,
+    data: configureModalData,
+  } = useModalState<OutlineActionSelection>();
 
   const { data: configureItemData } = useCourseItemData(
     isConfigureModalOpen ? configureModalData?.currentId : undefined,
@@ -39,18 +43,26 @@ export function useConfigureDialog(courseId: string): UseConfigureDialogOutput {
 
   const handleConfigureModalClose = useCallback(() => {
     closeConfigureModal();
-    setConfigureModalData(undefined);
   }, [closeConfigureModal]);
 
   const handleOpenConfigureModal = useCallback((selection: OutlineActionSelection) => {
-    setConfigureModalData(selection);
-    openConfigureModal();
+    openConfigureModal(selection);
   }, [openConfigureModal]);
 
-  const payloadBuilders: Record<string, (data: typeof configureModalData, vars: Record<string, unknown>) => ConfigureItemPayload> = {
+  const payloadBuilders: Record<
+    string,
+    (data: typeof configureModalData, vars: Record<string, unknown>) => ConfigureItemPayload
+  > = {
     chapter: (data, vars) => ({ category: 'chapter', sectionId: data!.sectionId, ...vars }) as ChapterConfigurePayload,
-    sequential: (data, vars) => ({ category: 'sequential', itemId: data!.currentId, sectionId: data!.sectionId, ...vars }) as SequentialConfigurePayload,
-    vertical: (data, vars) => ({ category: 'vertical', unitId: data!.currentId, sectionId: data!.sectionId, ...vars }) as UnitConfigurePayload,
+    sequential: (data, vars) =>
+      ({
+        category: 'sequential',
+        itemId: data!.currentId,
+        sectionId: data!.sectionId,
+        ...vars,
+      }) as SequentialConfigurePayload,
+    vertical: (data, vars) =>
+      ({ category: 'vertical', unitId: data!.currentId, sectionId: data!.sectionId, ...vars }) as UnitConfigurePayload,
   };
 
   const handleConfigureItemSubmitWrapper = useCallback(async (variables: Record<string, unknown>) => {
