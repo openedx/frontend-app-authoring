@@ -61,7 +61,7 @@ describe('useCourseBestPractices', () => {
   it('calls getCourseBestPractices with expected args', async () => {
     mockGetCourseBestPractices.mockResolvedValue({ some: 'checklist' });
 
-    const { result } = renderHook(() => useCourseBestPractices(courseId), { wrapper: makeWrapper() });
+    renderHook(() => useCourseBestPractices(courseId), { wrapper: makeWrapper() });
 
     await waitFor(() => {
       expect(mockGetCourseBestPractices).toHaveBeenCalled();

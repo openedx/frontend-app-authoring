@@ -6,7 +6,9 @@ const key = (type: string, id: string) => `block-v1:org+type@${type}+block@${id}
 const section = (id: string, subs: any[] = []) => ({
   id: key('chapter', id),
   category: 'chapter',
-  childInfo: { children: subs.map(s => ({ ...s, category: 'sequential', childInfo: { children: s.childInfo?.children || [] } })) },
+  childInfo: {
+    children: subs.map(s => ({ ...s, category: 'sequential', childInfo: { children: s.childInfo?.children || [] } })),
+  },
 });
 
 const subsection = (id: string, units: any[] = []) => ({
@@ -43,23 +45,35 @@ describe('removeItemFromOutlineIndexData', () => {
 
   it('removes a sequential from its parent section', () => {
     const tree = makeTree([secA, secB]);
-    const result = removeItemFromOutlineIndexData(tree, key('sequential', 'sub-1'), { sectionId: key('chapter', 'sec-a') });
+    const result = removeItemFromOutlineIndexData(tree, key('sequential', 'sub-1'), {
+      sectionId: key('chapter', 'sec-a'),
+    });
     const sections = result.courseStructure.childInfo.children;
-    expect(sections.find((s: any) => s.id === key('chapter', 'sec-a')).childInfo.children.map((s: any) => s.id)).toEqual([key('sequential', 'sub-2')]);
-    expect(sections.find((s: any) => s.id === key('chapter', 'sec-b')).childInfo.children.map((s: any) => s.id)).toEqual([key('sequential', 'sub-3')]);
+    expect(sections.find((s: any) => s.id === key('chapter', 'sec-a')).childInfo.children.map((s: any) => s.id))
+      .toEqual([key('sequential', 'sub-2')]);
+    expect(sections.find((s: any) => s.id === key('chapter', 'sec-b')).childInfo.children.map((s: any) => s.id))
+      .toEqual([key('sequential', 'sub-3')]);
   });
 
   it('removes a vertical from its parent subsection', () => {
     const tree = makeTree([secA, secB]);
-    const result = removeItemFromOutlineIndexData(tree, key('vertical', 'unit-1a'), { sectionId: key('chapter', 'sec-a'), subsectionId: key('sequential', 'sub-1') });
+    const result = removeItemFromOutlineIndexData(tree, key('vertical', 'unit-1a'), {
+      sectionId: key('chapter', 'sec-a'),
+      subsectionId: key('sequential', 'sub-1'),
+    });
     const sections = result.courseStructure.childInfo.children;
-    const sub1result = sections.find((s: any) => s.id === key('chapter', 'sec-a')).childInfo.children.find((s: any) => s.id === key('sequential', 'sub-1'));
+    const sub1result = sections.find((s: any) => s.id === key('chapter', 'sec-a')).childInfo.children.find((s: any) =>
+      s.id === key('sequential', 'sub-1')
+    );
     expect(sub1result.childInfo.children.map((u: any) => u.id)).toEqual([key('vertical', 'unit-1b')]);
   });
 
   it('returns unchanged when id not found', () => {
     const tree = makeTree([secA]);
-    const result = removeItemFromOutlineIndexData(tree, key('chapter', 'ghost'), { sectionId: key('chapter', 'sec-a'), subsectionId: key('sequential', 'sub-1') });
+    const result = removeItemFromOutlineIndexData(tree, key('chapter', 'ghost'), {
+      sectionId: key('chapter', 'sec-a'),
+      subsectionId: key('sequential', 'sub-1'),
+    });
     expect(result).toStrictEqual(tree);
   });
 

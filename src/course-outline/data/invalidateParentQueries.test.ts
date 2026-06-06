@@ -43,5 +43,4 @@ describe('invalidateParentQueries', () => {
 
     expect(queryClient.invalidateQueries).not.toHaveBeenCalled();
   });
-
 });

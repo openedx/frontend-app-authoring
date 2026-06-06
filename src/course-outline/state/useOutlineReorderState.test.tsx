@@ -30,14 +30,6 @@ jest.mock('../data/api', () => ({
 
 const courseId = 'course-v1:test+course+2025';
 
-const createSubsection = (id: string): any => ({
-  id,
-  displayName: `Sub ${id}`,
-  category: 'sequential',
-  actions: { deletable: true, draggable: true, childAddable: true, duplicable: true },
-  childInfo: { children: [] },
-});
-
 const createSection = (id: string): any => ({
   id,
   displayName: `Section ${id}`,
@@ -238,10 +230,6 @@ describe('useOutlineReorderState', () => {
     });
   });
 
-
-
-
-
   // --- Refetch behavior for publish-status refresh ---
 
   describe('commitSubsectionReorder (refetch)', () => {
@@ -368,7 +356,9 @@ describe('useOutlineReorderState', () => {
 
       // Defer the refetch so we can observe intermediate state
       let resolveRefetch: (value: any) => void;
-      const refetchPromise = new Promise(resolve => { resolveRefetch = resolve; });
+      const refetchPromise = new Promise(resolve => {
+        resolveRefetch = resolve;
+      });
       mockGetCourseItem.mockReturnValue(refetchPromise);
       mockMutateAsync.subsections.mockResolvedValueOnce(undefined);
 
@@ -392,6 +382,5 @@ describe('useOutlineReorderState', () => {
       // After full commit: visibleSections falls back to cache, now updated with fresh data
       expect(result.current.visibleSections.map((s: any) => s.id)).toEqual(['A', 'B', 'C']);
     });
-
   });
 });

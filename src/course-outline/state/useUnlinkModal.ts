@@ -35,7 +35,9 @@ export function useUnlinkModal(): UseUnlinkModalOutput {
       sectionId: currentUnlinkModalData.sectionId,
       subsectionId: currentUnlinkModalData.subsectionId,
     }, {
-      onSuccess: () => { closeUnlinkModal(); },
+      onSuccess: () => {
+        closeUnlinkModal();
+      },
     });
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
 

@@ -12,46 +12,54 @@ export const courseOutlineQueryKeys = {
 
   course: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId] as const,
 
-  courseItemId: (itemId?: string) => [
-    ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId) : undefined),
-    itemId,
-  ] as const,
+  courseItemId: (itemId?: string) =>
+    [
+      ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId) : undefined),
+      itemId,
+    ] as const,
 
-  scrollToCourseItemId: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'scroll',
-  ] as const,
+  scrollToCourseItemId: (courseId?: string) =>
+    [
+      ...courseOutlineQueryKeys.course(courseId),
+      'scroll',
+    ] as const,
 
-  pasteFileNotices: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'pasteFileNotices',
-  ] as const,
+  pasteFileNotices: (courseId?: string) =>
+    [
+      ...courseOutlineQueryKeys.course(courseId),
+      'pasteFileNotices',
+    ] as const,
 
-  courseDetails: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'details',
-  ] as const,
+  courseDetails: (courseId?: string) =>
+    [
+      ...courseOutlineQueryKeys.course(courseId),
+      'details',
+    ] as const,
 
-  courseBestPractices: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'bestPractices',
-  ] as const,
+  courseBestPractices: (courseId?: string) =>
+    [
+      ...courseOutlineQueryKeys.course(courseId),
+      'bestPractices',
+    ] as const,
 
-  courseLaunch: (courseId?: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'launch',
-  ] as const,
+  courseLaunch: (courseId?: string) =>
+    [
+      ...courseOutlineQueryKeys.course(courseId),
+      'launch',
+    ] as const,
 
-  legacyLibReadyToMigrateBlocks: (courseId: string) => [
-    ...courseOutlineQueryKeys.course(courseId),
-    'legacyLibReadyToMigrateBlocks',
-  ] as const,
+  legacyLibReadyToMigrateBlocks: (courseId: string) =>
+    [
+      ...courseOutlineQueryKeys.course(courseId),
+      'legacyLibReadyToMigrateBlocks',
+    ] as const,
 
-  legacyLibReadyToMigrateBlocksStatus: (courseId: string, taskId?: string) => [
-    ...courseOutlineQueryKeys.legacyLibReadyToMigrateBlocks(courseId),
-    'status',
-    { taskId },
-  ] as const,
+  legacyLibReadyToMigrateBlocksStatus: (courseId: string, taskId?: string) =>
+    [
+      ...courseOutlineQueryKeys.legacyLibReadyToMigrateBlocks(courseId),
+      'status',
+      { taskId },
+    ] as const,
 
   /** Index (outline tree) key: ['courseOutline', courseId, 'index'] */
   index: (courseId?: string) => ['courseOutline', courseId, 'index'] as const,
@@ -60,15 +68,11 @@ export const courseOutlineQueryKeys = {
   mutations: {
     all: ['courseOutline', 'mutations'] as const,
 
-    saving: (courseId?: string) =>
-      [...courseOutlineQueryKeys.mutations.all, courseId, 'saving'] as const,
+    saving: (courseId?: string) => [...courseOutlineQueryKeys.mutations.all, courseId, 'saving'] as const,
 
     savingOperation: (courseId: string | undefined, operation: string) =>
       [...courseOutlineQueryKeys.mutations.saving(courseId), operation] as const,
 
-    reindex: (courseId?: string) =>
-      [...courseOutlineQueryKeys.mutations.all, courseId, 'reindex'] as const,
+    reindex: (courseId?: string) => [...courseOutlineQueryKeys.mutations.all, courseId, 'reindex'] as const,
   } as const,
 };
-
-

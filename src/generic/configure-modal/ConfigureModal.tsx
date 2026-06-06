@@ -283,8 +283,15 @@ const ConfigureModal = ({
     ),
   };
 
-  [COURSE_BLOCK_NAMES.vertical.id, COURSE_BLOCK_NAMES.libraryContent.id, COURSE_BLOCK_NAMES.splitTest.id, COURSE_BLOCK_NAMES.component.id].forEach(
-    (key) => { configureHandlers[key] = nodeHandler; }
+  [
+    COURSE_BLOCK_NAMES.vertical.id,
+    COURSE_BLOCK_NAMES.libraryContent.id,
+    COURSE_BLOCK_NAMES.splitTest.id,
+    COURSE_BLOCK_NAMES.component.id,
+  ].forEach(
+    (key) => {
+      configureHandlers[key] = nodeHandler;
+    },
   );
 
   const activeHandler = configureHandlers[category];

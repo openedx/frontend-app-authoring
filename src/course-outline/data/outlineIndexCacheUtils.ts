@@ -57,8 +57,7 @@ export const replaceSectionInOutlineIndex = (
         return s;
       }
       return replacement;
-    }),
-  );
+    }));
   queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), updated);
   if (hadMissingChildInfo) {
     queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.index(courseId) });
@@ -87,8 +86,7 @@ export function removeItemFromOutlineIndexData(
 
   const removeHandlers: Record<string, (o: any, id: string, v: typeof variables) => any> = {
     chapter: (o, id) =>
-      updateCourseStructure(o, () =>
-        o.courseStructure.childInfo.children.filter((s: any) => s.id !== id)),
+      updateCourseStructure(o, () => o.courseStructure.childInfo.children.filter((s: any) => s.id !== id)),
     sequential: (o, id, v) =>
       mapSections(o, (s: any) =>
         s.id !== v.sectionId ? s : {
@@ -111,7 +109,7 @@ export function removeItemFromOutlineIndexData(
                   ...sub.childInfo,
                   children: (sub.childInfo?.children || []).filter((u: any) => u.id !== id),
                 },
-              },
+              }
             ),
           },
         }),
@@ -139,7 +137,6 @@ export const insertDuplicatedSectionInOutlineIndex = (
           return [...result, current];
         },
         [],
-      ),
-    );
+      ));
   });
 };

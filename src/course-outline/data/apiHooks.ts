@@ -319,7 +319,7 @@ export const usePasteItem = (courseId?: string) => {
   >(courseId, {
     operation: 'paste',
     mutationFn: (variables) => pasteBlock(variables.parentLocator),
-    onSuccess: (data, _variables) => {
+    onSuccess: (data) => {
       // set pasteFileNotices
       setData(data.staticFileNotices);
       // scroll to pasted block
