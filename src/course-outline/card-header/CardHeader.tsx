@@ -1,5 +1,5 @@
 import {
-  ReactNode,
+  type ReactNode,
   useCallback,
   useEffect,
   useRef,
@@ -119,6 +119,13 @@ const CardHeader = ({
   }, [setCurrentPageKey, cardId]);
   const { courseId } = useCourseAuthoringContext();
   const [isFormOpen, openForm, closeForm] = useToggle(false);
+  // Set true by any Escape keydown handler; checked in handleEditSubmit
+  // to prevent blur-after-Escape from saving the dirty titleValue.
+  const escapeCancelledRef = useRef(false);
+  // Set true on any pointerdown while the form is open.
+  // Lets handleEditSubmit distinguish real clicks (save) from
+  // programmatic/layout blurs (CDP Escape, window defocus — do not save).
+  const hasPointerInteractionRef = useRef(false);
 
   // Use studio url as base if proctoringExamConfigurationLink is a relative link
   const fullProctoringExamConfigurationLink = () => (
@@ -131,6 +138,8 @@ const CardHeader = ({
   const { data: contentTagCount } = useContentTagsCount(cardId);
 
   const onEditClick = () => {
+    escapeCancelledRef.current = false;
+    hasPointerInteractionRef.current = false;
     openForm();
   };
 
@@ -160,14 +169,60 @@ const CardHeader = ({
 
   useEscapeClick({
     onEscape: /* istanbul ignore next: escape-to-cancel, keyboard event only */ () => {
+      escapeCancelledRef.current = true;
       setTitleValue(title);
       closeForm();
     },
     dependency: [title],
   });
 
+  /**
+   * Capture-phase pointerdown listener on document.
+   * Sets hasPointerInteractionRef so handleEditSubmit can distinguish
+   * real clicks (save) from programmatic blurs (no pointer — do not save).
+   */
+  useEffect(() => {
+    if (!isFormOpen) { return undefined; }
+    const onPointerDown = () => {
+      hasPointerInteractionRef.current = true;
+    };
+    document.addEventListener('pointerdown', onPointerDown, { capture: true });
+    return () => document.removeEventListener('pointerdown', onPointerDown, { capture: true });
+  }, [isFormOpen]);
+
   const editMutation = useUpdateCourseBlockName(courseId);
-  const handleEditSubmit = useCallback(() => {
+
+  /**
+   * Handles form submission on blur, Enter, or Escape cleanup.
+   *
+   * - Escape path: escapeCancelledRef set true by keydown layers → close without saving.
+   * - Programmatic/layout blur path: blur event with neither a relatedTarget
+   *   nor a prior pointerdown is treated as a phantom blur (CDP Escape, window
+   *   defocus, etc.) → close without saving.
+   * - Real blur path: user clicked/tabbed elsewhere → save if title changed.
+   * - Enter path: save if title changed.
+   */
+  const handleEditSubmit = useCallback((event?: React.FocusEvent<HTMLInputElement>) => {
+    // 1. Escape key guard — escapeCancelledRef set by Escape keydown handlers
+    if (escapeCancelledRef.current) {
+      closeForm();
+      return;
+    }
+
+    // 2. Phantom blur guard: blur without a preceding pointerdown AND
+    //    without a usable relatedTarget (Tab to next element provides one)
+    //    is treated as programmatic/layout blur (CDP Escape, window defocus).
+    //    Close without saving — never mutate on a phantom blur.
+    if (event && !hasPointerInteractionRef.current) {
+      const rt = event.relatedTarget;
+      if (!rt || rt === document.body) {
+        closeForm();
+        return;
+      }
+    }
+
+    // 3. Normal save or close (Enter call without event, Tab-away blur,
+    //    or real user blur with pointerdown)
     if (title !== titleValue) {
       editMutation.mutate({
         itemId: cardId,
@@ -180,7 +235,7 @@ const CardHeader = ({
     } else {
       closeForm();
     }
-  }, [title, titleValue, cardId, editMutation]);
+  }, [title, titleValue, cardId, editMutation, hasPointerInteractionRef, closeForm]);
 
   return (
     <>
@@ -206,8 +261,15 @@ const CardHeader = ({
                 onChange={(e) => setTitleValue(e.target.value)}
                 aria-label={intl.formatMessage(messages.editFieldAriaLabel)}
                 onBlur={handleEditSubmit}
-                onKeyDown={/* istanbul ignore next: Enter/space keyboard handlers, inline lambda */ (e) => {
-                  if (e.key === 'Enter') {
+                onKeyDown={/* istanbul ignore next: Enter/space/Escape keyboard handlers, inline lambda */ (e) => {
+                  if (e.key === 'Escape') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    escapeCancelledRef.current = true;
+                    setTitleValue(title);
+                    closeForm();
+                  } else if (e.key === 'Enter') {
+                    escapeCancelledRef.current = false;
                     handleEditSubmit();
                   } else if (e.key === ' ') {
                     // Avoid passing propagation to the `SortableItem` in the card,

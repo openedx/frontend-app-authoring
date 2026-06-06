@@ -33,7 +33,7 @@ jest.mock('@src/generic/data/api', () => ({
   getTagsCount: () => mockGetTagsCount(),
 }));
 
-const useUpdateCourseBlockNameMock = { mutateAsync: jest.fn(), isPending: false };
+const useUpdateCourseBlockNameMock = { mutateAsync: jest.fn(), mutate: jest.fn(), isPending: false };
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   ...jest.requireActual('@src/course-outline/data/apiHooks'),
   useUpdateCourseBlockName: () => useUpdateCourseBlockNameMock,
@@ -101,6 +101,8 @@ describe('<CardHeader />', () => {
   beforeEach(() => {
     setupCardTestMocks();
     useUpdateCourseBlockNameMock.isPending = false;
+    useUpdateCourseBlockNameMock.mutate.mockClear();
+    useUpdateCourseBlockNameMock.mutateAsync.mockClear();
   });
 
   it('render CardHeader component correctly', async () => {
@@ -237,6 +239,123 @@ describe('<CardHeader />', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('subsection-card-header__expanded-btn')).not.toBeInTheDocument();
       expect(screen.queryByTestId('edit-button')).not.toBeInTheDocument();
+    });
+  });
+
+  /** Open the edit form and return the edit field + a user instance. */
+  async function openEdit() {
+    const user = userEvent.setup();
+    const button = await screen.findByTestId('subsection-edit-button');
+    await user.click(button);
+    const field = await screen.findByTestId('subsection-edit-field');
+    return { user, field };
+  }
+
+  it('pressing Escape cancels rename without triggering onBlur save', async () => {
+    renderComponent();
+    const { user, field } = await openEdit();
+
+    // Type a new name
+    await user.clear(field);
+    await user.type(field, 'Cancelled name');
+
+    // Press Escape to cancel
+    await user.keyboard('{Escape}');
+
+    // Form should close, original title reappears
+    await waitFor(() => {
+      expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText(cardHeaderProps.title)).toBeInTheDocument();
+
+    // Mutation should NOT have been called (neither mutate nor mutateAsync)
+    expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
+    expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
+
+    // Re-open the form and submit to prove cancelling doesn't block future saves
+    const { field: field2 } = await openEdit();
+    await user.clear(field2);
+    await user.type(field2, 'Valid saved name');
+    await user.keyboard('{Enter}');
+
+    // Mutation should have been called with the new name
+    await waitFor(() => {
+      expect(useUpdateCourseBlockNameMock.mutate).toHaveBeenCalledWith(
+        expect.objectContaining({ displayName: 'Valid saved name' }),
+        expect.any(Object),
+      );
+    });
+  });
+
+  it('click-away blur on edited field triggers save mutation', async () => {
+    renderComponent();
+    const { user, field } = await openEdit();
+
+    // Type a new name
+    await user.clear(field);
+    await user.type(field, 'Blur saved name');
+
+    // Click outside the input to trigger real blur (pointerdown + blur)
+    const header = await screen.findByTestId('subsection-card-header');
+    await user.click(header);
+
+    // Mutation should have been called with the new name
+    await waitFor(() => {
+      expect(useUpdateCourseBlockNameMock.mutate).toHaveBeenCalledWith(
+        expect.objectContaining({ displayName: 'Blur saved name' }),
+        expect.any(Object),
+      );
+    });
+  });
+
+  it('phantom blur (null relatedTarget, no pointerdown) does not mutate', async () => {
+    renderComponent();
+    await openEdit();
+
+    // Set value without pointerdown events (use fireEvent.change)
+    const editField = await screen.findByTestId('subsection-edit-field');
+    await act(async () => {
+      fireEvent.change(editField, { target: { value: 'Phantom blur name' } });
+    });
+
+    // Programmatically blur with no pointerdown and null relatedTarget
+    await act(async () => {
+      fireEvent.blur(editField);
+    });
+
+    // Mutation should NOT have been called
+    expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
+    expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
+
+    // Form should close
+    await waitFor(() => {
+      expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText(cardHeaderProps.title)).toBeInTheDocument();
+  });
+
+  it('Tab-away blur with valid relatedTarget saves without pointerdown', async () => {
+    renderComponent();
+    await openEdit();
+
+    // Set value without pointerdown events
+    const editField = await screen.findByTestId('subsection-edit-field');
+    await act(async () => {
+      fireEvent.change(editField, { target: { value: 'Tab saved name' } });
+    });
+
+    // Blur with a valid relatedTarget (Tab-style navigation)
+    const header = await screen.findByTestId('subsection-card-header');
+    await act(async () => {
+      fireEvent.blur(editField, { relatedTarget: header });
+    });
+
+    // Mutation should have been called
+    await waitFor(() => {
+      expect(useUpdateCourseBlockNameMock.mutate).toHaveBeenCalledWith(
+        expect.objectContaining({ displayName: 'Tab saved name' }),
+        expect.any(Object),
+      );
     });
   });
 
