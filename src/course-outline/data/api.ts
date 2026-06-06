@@ -122,7 +122,7 @@ export async function getCourseBestPractices({
   return camelCaseObject(data);
 }
 
-interface CourseLaunchData {
+export interface CourseLaunchData {
   isSelfPaced: boolean;
   dates: object;
   assignments: object;
