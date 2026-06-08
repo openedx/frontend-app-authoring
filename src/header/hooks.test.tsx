@@ -85,7 +85,6 @@ describe('header utils', () => {
     it('when video upload page disabled should not include Video Uploads option', () => {
       mockWaffleFlags({
         enableAuthzCourseAuthoring: false,
-        useNewVideoUploadsPage: false,
       });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
@@ -237,7 +236,6 @@ describe('header utils', () => {
     beforeAll(() => {
       mockWaffleFlags({
         enableAuthzCourseAuthoring: false,
-        useNewVideoUploadsPage: false,
       });
     });
     beforeEach(() => {

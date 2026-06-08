@@ -53,7 +53,7 @@ describe('<Breadcrumbs />', () => {
     await executeThunk(fetchCourseSectionVerticalData(courseId), reduxStore.dispatch);
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, { useNewCourseOutlinePage: true });
+      .reply(200, {});
   });
 
   it('render Breadcrumbs component correctly', async () => {
