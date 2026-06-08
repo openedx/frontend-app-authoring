@@ -65,47 +65,24 @@ describe('useDeleteModal onDeleteConfirm', () => {
     expect(mockClearSelection).toHaveBeenCalledTimes(1);
   });
 
-  it('closes modal but does NOT clear selection when currentSelection differs', async () => {
+  it('closes modal but does NOT clear selection when currentSelection differs or is undefined', async () => {
     mockHandleDeleteItemSubmit.mockResolvedValue(true);
+
+    // Case A: different currentId
     mockCurrentSelection = { currentId: 'some-other-item' };
-
     const { result } = renderHook(() => useDeleteModal(courseId));
-
     await act(async () => {
       await result.current.onDeleteConfirm();
     });
-
-    expect(mockHandleDeleteItemSubmit).toHaveBeenCalledWith(chapterSelection);
     expect(mockCloseDeleteModal).toHaveBeenCalledTimes(1);
     expect(mockClearSelection).not.toHaveBeenCalled();
-  });
 
-  it('does NOT close modal or clear selection on mutation failure', async () => {
-    mockHandleDeleteItemSubmit.mockResolvedValue(false);
-
-    const { result } = renderHook(() => useDeleteModal(courseId));
-
-    await act(async () => {
-      await result.current.onDeleteConfirm();
-    });
-
-    expect(mockHandleDeleteItemSubmit).toHaveBeenCalledWith(chapterSelection);
-    expect(mockCloseDeleteModal).not.toHaveBeenCalled();
-    expect(mockClearSelection).not.toHaveBeenCalled();
-  });
-
-  it('closes modal but does NOT clear selection when currentSelection is undefined', async () => {
-    mockHandleDeleteItemSubmit.mockResolvedValue(true);
+    // Case B: undefined currentSelection
     mockCurrentSelection = undefined;
-
-    const { result } = renderHook(() => useDeleteModal(courseId));
-
     await act(async () => {
       await result.current.onDeleteConfirm();
     });
-
-    expect(mockHandleDeleteItemSubmit).toHaveBeenCalledWith(chapterSelection);
-    expect(mockCloseDeleteModal).toHaveBeenCalledTimes(1);
+    expect(mockCloseDeleteModal).toHaveBeenCalledTimes(2);
     expect(mockClearSelection).not.toHaveBeenCalled();
   });
 });

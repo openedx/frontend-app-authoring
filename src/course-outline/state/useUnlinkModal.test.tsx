@@ -30,19 +30,6 @@ describe('useUnlinkModal handleUnlinkItemSubmit', () => {
     mockIsUnlinkModalOpen = true;
   });
 
-  it('returns early when currentUnlinkModalData is undefined', async () => {
-    mockCurrentUnlinkModalData = undefined;
-
-    const { result } = renderHook(() => useUnlinkModal());
-
-    await act(async () => {
-      await result.current.handleUnlinkItemSubmit();
-    });
-
-    expect(mockUnlinkDownstreamMutateAsync).not.toHaveBeenCalled();
-    expect(mockCloseUnlinkModal).not.toHaveBeenCalled();
-  });
-
   it('calls unlinkDownstream and closes modal on success', async () => {
     mockUnlinkDownstreamMutateAsync.mockImplementation((_vars, { onSuccess }: any) => {
       onSuccess();

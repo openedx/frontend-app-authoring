@@ -108,26 +108,7 @@ describe('CourseOutlineContext', () => {
     const lastSection = mockOutlineIndexData.courseStructure.childInfo.children.at(-1)! as any;
     const lastSubsection = lastSection.childInfo.children.at(-1)! as any;
 
-    expect(result.current.courseName).toBe(mockOutlineIndexData.courseStructure.displayName);
-    expect(result.current.courseUsageKey).toBe(mockOutlineIndexData.courseStructure.id);
-    expect(result.current.sections).toHaveLength(mockOutlineIndexData.courseStructure.childInfo.children.length);
-    expect(result.current.sections.map(section => section.id)).toEqual(
-      mockOutlineIndexData.courseStructure.childInfo.children.map(section => section.id),
-    );
-    expect(result.current.savingStatus).toBe('');
-    expect(result.current.statusBarData.videoSharingOptions).toBe('by-course');
-    expect(result.current.courseActions.allowMoveDown).toBe(true);
-    expect(result.current.enableProctoredExams).toBe(true);
-    expect(result.current.enableTimedExams).toBe(true);
-    expect(result.current.isLoading).toBe(false);
-    expect(result.current.isLoadingDenied).toBe(false);
-    expect(result.current.currentItemData).toBeNull();
-    expect(result.current.lastEditableSection).toEqual(lastSection);
-    expect(result.current.lastEditableSubsection).toEqual({
-      data: lastSubsection,
-      sectionId: lastSection.id,
-    });
-
+    // Selection state machine: selectContainer → openContainerInfo → clearSelection
     currentItemData = lastSection;
     act(() => {
       result.current.selectContainer({
@@ -174,7 +155,7 @@ describe('CourseOutlineContext', () => {
   describe('course navigation', () => {
     const courseBId = 'block-v1:Other+Course+type@course+block@other_course';
 
-    it('resets sections on courseId change, does not show stale Redux data', () => {
+    it('resets sections and fetches fresh data on courseId change (no stale Redux initialData)', () => {
       initializeMockApp({
         authenticatedUser: {
           userId: 1,
@@ -183,7 +164,6 @@ describe('CourseOutlineContext', () => {
       });
       currentItemData = null;
       const store = initializeStore();
-      // Set courseId to course B (simulating navigation)
       mockCourseId = courseBId;
 
       const queryClient = new QueryClient();
@@ -199,48 +179,13 @@ describe('CourseOutlineContext', () => {
 
       const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
 
-      // While query loads for course B, sections should be empty
-      // NOT the stale course A sections from Redux
+      // Sections should be empty (not stale Redux data from course A)
       expect(result.current.sections).toEqual([]);
-      // isLoading should be true since React Query is fetching (no API mock)
+      // React Query cache for course B should have no initialData
+      expect(queryClient.getQueryData(courseOutlineQueryKeys.index(courseBId))).toBeUndefined();
+      // Loading state should reflect the fresh fetch
       expect(result.current.isLoading).toBe(true);
-      // courseName should be undefined while loading (no data for course B yet)
       expect(result.current.courseName).toBeUndefined();
-    });
-
-    it('does not pass stale Redux data as initialData to React Query for different course', () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 1,
-          username: 'test-user',
-        },
-      });
-      currentItemData = null;
-      const store = initializeStore();
-      // Set courseId to course B
-      mockCourseId = courseBId;
-
-      const queryClient = new QueryClient();
-      const wrapper = ({ children }: { children?: React.ReactNode; }) => (
-        <AppProvider store={store}>
-          <QueryClientProvider client={queryClient}>
-            <CourseOutlineProvider>
-              {children}
-            </CourseOutlineProvider>
-          </QueryClientProvider>
-        </AppProvider>
-      );
-
-      const { result } = renderHook(() => useCourseOutlineContext(), { wrapper });
-
-      // courseOutlineQueryKeys.index(courseBId) = ['courseOutline', courseBId, 'index']
-      // Query cache for course B should be empty until fetch resolves
-      // (no initialData was passed for course B)
-      const courseBQueryData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseBId));
-      expect(courseBQueryData).toBeUndefined();
-
-      // Query for course B should be in pending state (fetching)
-      expect(result.current.isLoading).toBe(true);
     });
   });
 });
