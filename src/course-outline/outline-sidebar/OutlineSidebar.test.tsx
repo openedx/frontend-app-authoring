@@ -17,6 +17,20 @@ import OutlineSidebar from './OutlineSidebar';
 // Mock the useCourseDetails hook
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseDetails: jest.fn().mockReturnValue({ isPending: false, data: { title: 'Test Course' } }),
+  useCourseBestPractices: jest.fn().mockReturnValue({
+    data: undefined,
+    isPending: false,
+    isError: false,
+    isSuccess: false,
+    error: null,
+  }),
+  useCourseLaunch: jest.fn().mockReturnValue({
+    data: undefined,
+    isPending: false,
+    isError: false,
+    isSuccess: false,
+    error: null,
+  }),
   useCreateCourseBlock: jest.fn(),
   useCourseItemData: jest.fn().mockReturnValue({ data: {} }),
   useDuplicateItem: jest.fn().mockReturnValue({ mutate: jest.fn() }),
