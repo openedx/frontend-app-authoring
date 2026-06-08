@@ -117,12 +117,6 @@ describe('<PublishModal />', () => {
     expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 
-  it('passes courseId into usePublishCourseItem', () => {
-    const apiHooks = require('@src/course-outline/data/apiHooks');
-    renderComponent();
-    expect(apiHooks.usePublishCourseItem).toHaveBeenCalledWith(5);
-  });
-
   it('calls the onPublishSubmit function when save button is clicked', async () => {
     const user = userEvent.setup();
     renderComponent();

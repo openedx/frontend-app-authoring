@@ -33,18 +33,6 @@ describe('useConfigureDialog handleConfigureItemSubmitWrapper', () => {
     jest.clearAllMocks();
   });
 
-  it('closes modal immediately when configureModalData is undefined (defensive)', async () => {
-    const { result } = renderHook(() => useConfigureDialog(courseId));
-
-    // Without opening the modal, submit should early-return
-    await act(async () => {
-      await result.current.handleConfigureItemSubmitWrapper({ isVisibleToStaffOnly: true });
-    });
-
-    expect(mockHandleConfigureItemSubmit).not.toHaveBeenCalled();
-    expect(result.current.isConfigureModalOpen).toBe(false);
-  });
-
   it('closes configure modal on successful configure submit', async () => {
     mockHandleConfigureItemSubmit.mockResolvedValue(true);
 

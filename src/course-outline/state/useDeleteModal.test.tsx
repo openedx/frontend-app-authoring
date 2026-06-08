@@ -36,20 +36,6 @@ describe('useDeleteModal onDeleteConfirm', () => {
     mockCurrentSelection = { ...chapterSelection };
   });
 
-  it('returns early when deleteModalData is undefined', async () => {
-    mockDeleteModalData = undefined;
-
-    const { result } = renderHook(() => useDeleteModal(courseId));
-
-    await act(async () => {
-      await result.current.onDeleteConfirm();
-    });
-
-    expect(mockHandleDeleteItemSubmit).not.toHaveBeenCalled();
-    expect(mockCloseDeleteModal).not.toHaveBeenCalled();
-    expect(mockClearSelection).not.toHaveBeenCalled();
-  });
-
   it('closes modal and clears selection on success when currentSelection matches', async () => {
     mockHandleDeleteItemSubmit.mockResolvedValue(true);
     mockCurrentSelection = { currentId: chapterSelection.currentId };

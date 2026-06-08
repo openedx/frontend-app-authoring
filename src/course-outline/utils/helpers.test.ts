@@ -1,4 +1,4 @@
-import { buildTestOutline, buildOutlineIndex, type NodeSpec } from './helpers';
+import { buildTestOutline, buildOutlineIndex, type NodeSpec } from '../__mocks__/helpers';
 
 describe('buildTestOutline', () => {
   // -----------------------------------------------------------------------

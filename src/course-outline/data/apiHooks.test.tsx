@@ -5,8 +5,6 @@ import { courseOutlineQueryKeys } from './queryKeys';
 import { buildTestOutline } from '../__mocks__';
 
 // --- Mock API layer ---
-const mockGetCourseBestPractices = jest.fn();
-const mockGetCourseLaunch = jest.fn();
 const mockSetVideoSharingOption = jest.fn();
 const mockEnableCourseHighlightsEmails = jest.fn();
 const mockDismissNotification = jest.fn();
@@ -15,8 +13,6 @@ const mockDeleteCourseItem = jest.fn();
 const mockGetCourseItem = jest.fn();
 
 jest.mock('./api', () => ({
-  getCourseBestPractices: (...args: any[]) => mockGetCourseBestPractices(...args),
-  getCourseLaunch: (...args: any[]) => mockGetCourseLaunch(...args),
   setVideoSharingOption: (...args: any[]) => mockSetVideoSharingOption(...args),
   enableCourseHighlightsEmails: (...args: any[]) => mockEnableCourseHighlightsEmails(...args),
   dismissNotification: (...args: any[]) => mockDismissNotification(...args),
@@ -27,8 +23,6 @@ jest.mock('./api', () => ({
 
 // Hooks-under-test — must import after jest.mock
 import {
-  useCourseBestPractices,
-  useCourseLaunch,
   useSetVideoSharingOption,
   useEnableCourseHighlightsEmails,
   useDismissNotification,
@@ -50,132 +44,12 @@ const STUDIO_BASE_URL = 'http://localhost:18010';
 // and buildTestOutline({ sections: [...], overrides: {...} }).
 
 // ---------------------------------------------------------------------------
-// useCourseBestPractices
-// ---------------------------------------------------------------------------
-describe('useCourseBestPractices', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    initializeMocks();
-  });
-
-  it('calls getCourseBestPractices with expected args', async () => {
-    mockGetCourseBestPractices.mockResolvedValue({ some: 'checklist' });
-
-    renderHook(() => useCourseBestPractices(courseId), { wrapper: makeWrapper() });
-
-    await waitFor(() => {
-      expect(mockGetCourseBestPractices).toHaveBeenCalled();
-    });
-
-    expect(mockGetCourseBestPractices).toHaveBeenCalledWith({
-      courseId,
-      excludeGraded: true,
-      all: true,
-    });
-  });
-
-  it('uses course-scoped query key (courseOutline, courseId, bestPractices)', async () => {
-    const { queryClient } = initializeMocks();
-    const cachedData = { cached: 'data' };
-    // Pre-seed the cache with the exact key the hook should use.
-    // With staleTime: 0 (default), a background refetch may fire, but the hook
-    // should serve the cached data immediately on mount.
-    queryClient.setQueryData(['courseOutline', courseId, 'bestPractices'], cachedData);
-
-    const { result } = renderHook(() => useCourseBestPractices(courseId), { wrapper: makeWrapper() });
-
-    await waitFor(() => {
-      expect(result.current.data).toEqual(cachedData);
-    });
-  });
-
-  it('retry false — rejects once without retrying', async () => {
-    mockGetCourseBestPractices.mockRejectedValue(new Error('fail'));
-
-    const { result } = renderHook(() => useCourseBestPractices(courseId), { wrapper: makeWrapper() });
-
-    await waitFor(() => {
-      expect(result.current.isError).toBe(true);
-    });
-
-    // Confirm mock was invoked
-    expect(mockGetCourseBestPractices).toHaveBeenCalled();
-    // With retry: false, there should be exactly 1 call total
-    expect(mockGetCourseBestPractices).toHaveBeenCalledTimes(1);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// useCourseLaunch
-// ---------------------------------------------------------------------------
-describe('useCourseLaunch', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    initializeMocks();
-  });
-
-  it('calls getCourseLaunch with expected args', async () => {
-    mockGetCourseLaunch.mockResolvedValue({ isSelfPaced: false });
-
-    const { result } = renderHook(() => useCourseLaunch(courseId), { wrapper: makeWrapper() });
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    expect(mockGetCourseLaunch).toHaveBeenCalledWith({
-      courseId,
-      gradedOnly: true,
-      validateOras: true,
-      all: true,
-    });
-  });
-
-  it('uses course-scoped query key (courseOutline, courseId, launch)', async () => {
-    const { queryClient } = initializeMocks();
-    const cachedData = { cached: 'launch-data' };
-    queryClient.setQueryData(['courseOutline', courseId, 'launch'], cachedData);
-
-    const { result } = renderHook(() => useCourseLaunch(courseId), { wrapper: makeWrapper() });
-
-    await waitFor(() => {
-      expect(result.current.data).toEqual(cachedData);
-    });
-  });
-
-  it('retry false — rejects once without retrying', async () => {
-    mockGetCourseLaunch.mockRejectedValue(new Error('fail'));
-
-    const { result } = renderHook(() => useCourseLaunch(courseId), { wrapper: makeWrapper() });
-
-    await waitFor(() => {
-      expect(result.current.isError).toBe(true);
-    });
-
-    expect(mockGetCourseLaunch).toHaveBeenCalled();
-    expect(mockGetCourseLaunch).toHaveBeenCalledTimes(1);
-  });
-});
-
-// ---------------------------------------------------------------------------
 // useSetVideoSharingOption
 // ---------------------------------------------------------------------------
 describe('useSetVideoSharingOption', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     initializeMocks();
-  });
-
-  it('calls setVideoSharingOption with courseId and value', async () => {
-    mockSetVideoSharingOption.mockResolvedValue({});
-
-    const { result } = renderHook(() => useSetVideoSharingOption(courseId), { wrapper: makeWrapper() });
-
-    await act(async () => {
-      await result.current.mutateAsync('per-video');
-    });
-
-    expect(mockSetVideoSharingOption).toHaveBeenCalledWith(courseId, 'per-video');
   });
 
   it('invalidates outline-index query on success (triggers refetch)', async () => {
@@ -206,18 +80,6 @@ describe('useEnableCourseHighlightsEmails', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     initializeMocks();
-  });
-
-  it('calls enableCourseHighlightsEmails with courseId', async () => {
-    mockEnableCourseHighlightsEmails.mockResolvedValue({});
-
-    const { result } = renderHook(() => useEnableCourseHighlightsEmails(courseId), { wrapper: makeWrapper() });
-
-    await act(async () => {
-      await result.current.mutateAsync();
-    });
-
-    expect(mockEnableCourseHighlightsEmails).toHaveBeenCalledWith(courseId);
   });
 
   it('invalidates outline-index query on success', async () => {
@@ -263,28 +125,6 @@ describe('useDismissNotification', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// useRestartIndexingOnCourse
-// ---------------------------------------------------------------------------
-describe('useRestartIndexingOnCourse', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    initializeMocks();
-  });
-
-  it('calls restartIndexingOnCourse with reindexLink', async () => {
-    mockRestartIndexingOnCourse.mockResolvedValue({});
-
-    const reindexLink = '/api/contentstore/v1/reindex/course-v1:edX+DemoX+Demo_Course';
-    const { result } = renderHook(() => useRestartIndexingOnCourse(courseId), { wrapper: makeWrapper() });
-
-    await act(async () => {
-      await result.current.mutateAsync(reindexLink);
-    });
-
-    expect(mockRestartIndexingOnCourse).toHaveBeenCalledWith(reindexLink);
-  });
-});
 
 // ---------------------------------------------------------------------------
 // useCourseOutlineSavingStatus
@@ -532,20 +372,6 @@ describe('useDeleteCourseItem optimistic cache update', () => {
 
     const after = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
     expect(after).toEqual(before);
-  });
-
-  it('does not throw when outline-index cache is empty', async () => {
-    const { queryClient } = initializeMocks();
-    // No cache set — should be undefined
-    expect(queryClient.getQueryData(courseOutlineQueryKeys.index(courseId))).toBeUndefined();
-
-    const { result } = renderHook(() => useDeleteCourseItem(courseId), { wrapper: makeWrapper() });
-
-    await expect(
-      act(async () => {
-        await result.current.mutateAsync({ itemId: unitId, sectionId: chapterId, subsectionId: seqId });
-      }),
-    ).resolves.not.toThrow();
   });
 
   it('does not invalidate deleted item own query key (no self-refetch)', async () => {

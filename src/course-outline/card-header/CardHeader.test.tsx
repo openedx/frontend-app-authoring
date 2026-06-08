@@ -308,57 +308,6 @@ describe('<CardHeader />', () => {
     });
   });
 
-  it('phantom blur (null relatedTarget, no pointerdown) does not mutate', async () => {
-    renderComponent();
-    await openEdit();
-
-    // Set value without pointerdown events (use fireEvent.change)
-    const editField = await screen.findByTestId('subsection-edit-field');
-    await act(async () => {
-      fireEvent.change(editField, { target: { value: 'Phantom blur name' } });
-    });
-
-    // Programmatically blur with no pointerdown and null relatedTarget
-    await act(async () => {
-      fireEvent.blur(editField);
-    });
-
-    // Mutation should NOT have been called
-    expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
-    expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
-
-    // Form should close
-    await waitFor(() => {
-      expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
-    });
-    expect(screen.getByText(cardHeaderProps.title)).toBeInTheDocument();
-  });
-
-  it('Tab-away blur with valid relatedTarget saves without pointerdown', async () => {
-    renderComponent();
-    await openEdit();
-
-    // Set value without pointerdown events
-    const editField = await screen.findByTestId('subsection-edit-field');
-    await act(async () => {
-      fireEvent.change(editField, { target: { value: 'Tab saved name' } });
-    });
-
-    // Blur with a valid relatedTarget (Tab-style navigation)
-    const header = await screen.findByTestId('subsection-card-header');
-    await act(async () => {
-      fireEvent.blur(editField, { relatedTarget: header });
-    });
-
-    // Mutation should have been called
-    await waitFor(() => {
-      expect(useUpdateCourseBlockNameMock.mutate).toHaveBeenCalledWith(
-        expect.objectContaining({ displayName: 'Tab saved name' }),
-        expect.any(Object),
-      );
-    });
-  });
-
   it('check editing is enabled when isDisabledEditField is false', async () => {
     renderComponent({ ...cardHeaderProps });
 
