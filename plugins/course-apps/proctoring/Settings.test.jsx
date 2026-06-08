@@ -471,9 +471,8 @@ describe('ProctoredExamSettings', () => {
         screen.getByDisplayValue('mockproc');
       });
       // (1) for studio settings
-      // (2) waffle flags
-      // (3) for course details
-      expect(axiosMock.history.get.length).toBe(3);
+      // (2) for course details
+      expect(axiosMock.history.get.length).toBe(2);
       expect(axiosMock.history.get[0].url.includes('proctored_exam_settings')).toEqual(true);
     });
 

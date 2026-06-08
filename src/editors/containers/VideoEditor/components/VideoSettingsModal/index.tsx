@@ -21,17 +21,15 @@ interface Props {
   onReturn: () => void;
   isLibrary: boolean;
   onClose?: (() => void) | null;
-  useNewVideoUploadsPage?: boolean;
 }
 
 const VideoSettingsModal: React.FC<Props> = ({
   onReturn,
   isLibrary,
   onClose,
-  useNewVideoUploadsPage,
 }) => (
   <>
-    {!isLibrary && useNewVideoUploadsPage && (
+    {!isLibrary && (
       <Button
         variant="link"
         className="text-primary-500"

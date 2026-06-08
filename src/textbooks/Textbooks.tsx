@@ -14,7 +14,7 @@ import { SavingErrorAlert } from '@src/generic/saving-error-alert';
 import { LoadingSpinner } from '@src/generic/Loading';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 
-import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import TextbookCard from './textbook-card/TextbooksCard';
 import TextbookSidebar from './textbook-sidebar/TextbookSidebar';

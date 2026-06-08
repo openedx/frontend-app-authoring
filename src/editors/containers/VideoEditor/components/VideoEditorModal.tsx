@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { useWaffleFlags } from '@src/data/apiHooks';
 import * as appHooks from '../../../hooks';
 import { thunkActions, selectors } from '../../../data/redux';
 import VideoSettingsModal from './VideoSettingsModal';
@@ -42,7 +41,6 @@ const VideoEditorModal: React.FC<Props> = ({
   const isLoaded = useSelector(
     (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchVideos }),
   );
-  const { useNewVideoUploadsPage } = useWaffleFlags();
 
   useEffect(() => {
     hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
@@ -54,7 +52,6 @@ const VideoEditorModal: React.FC<Props> = ({
         onReturn: onSettingsReturn,
         isLibrary,
         onClose,
-        useNewVideoUploadsPage,
       }}
     />
   );
