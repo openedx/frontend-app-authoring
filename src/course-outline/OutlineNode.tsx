@@ -339,9 +339,11 @@ const OutlineNode = ({
     ) :
     undefined;
 
-  const isDroppable = depth === 2
-    ? (parentSubsection as any)?.actions?.childAddable ?? false
-    : actions.childAddable || (parentSection?.actions?.childAddable ?? false);
+  // Node is droppable when it can be a same-level reorder target or can accept children
+  const isDroppable = Boolean(actions.draggable
+    || actions.childAddable
+    || (depth === 1 && parentSection?.actions?.childAddable)
+    || (depth === 2 && parentSubsection?.actions?.childAddable));
 
   const showPaste = depth === 1 && blk.enableCopyPasteUnits && showPasteUnit && sharedClipboardData;
 

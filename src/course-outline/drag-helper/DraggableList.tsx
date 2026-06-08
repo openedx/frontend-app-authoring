@@ -203,6 +203,7 @@ const DraggableList = ({
       activeInfo.parent?.id === overInfo.parent?.id
       || activeInfo.parent?.id === overInfo.item.id
       || (activeInfo.parent?.category === overInfo.category && !overInfo.item.actions.childAddable)
+      || (activeInfo.category === overInfo.category && !overInfo.parent?.actions.childAddable)
     ) {
       return;
     }

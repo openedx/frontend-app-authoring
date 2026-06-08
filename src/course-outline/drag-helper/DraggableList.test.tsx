@@ -260,6 +260,43 @@ describe('DraggableList — drag-local tree ref', () => {
     });
   });
 
+  describe('unit drag over non-childAddable subsection via contained-unit collision', () => {
+    it('must not preview or commit when over unit inside childAddable=false subsection', () => {
+      // sub-B has childAddable=false (e.g. library subsection) but draggable=true
+      const unitA = makeUnit('unit-A');
+      const unitB = makeUnit('unit-B');
+      const subsectionA = makeSubsection('sub-A', [unitA]);
+      const subsectionB = makeSubsection('sub-B', [unitB]);
+      subsectionB.actions.childAddable = false;
+      const section1 = makeSection('sec-1', [subsectionA]);
+      const section2 = makeSection('sec-2', [subsectionB]);
+      const items = [section1, section2];
+
+      const callbacks = renderList(items);
+
+      expect(mockDndHandlers.current).not.toBeNull();
+
+      // Start dragging unit-A from sub-A.
+      fireDragStart('unit-A', 'Unit A', 'vertical');
+
+      // Drag over unit-B inside sub-B (childAddable=false).
+      fireDragOver(
+        'unit-A',
+        'unit-B',
+        { category: 'vertical' },
+        { category: 'vertical' },
+      );
+
+      // unitDragOver guard should fire — no preview.
+      expect(callbacks.onPreviewTreeChange).not.toHaveBeenCalled();
+
+      // Drag end — no commit.
+      fireDragEnd('unit-A', 'unit-B');
+
+      expect(callbacks.onUnitDrop).not.toHaveBeenCalled();
+    });
+  });
+
   describe('drag cancellations reset ref', () => {
     it('resets drag-local state on cancel', () => {
       const section1 = makeSection('sec-1', [makeSubsection('sub-A')]);
