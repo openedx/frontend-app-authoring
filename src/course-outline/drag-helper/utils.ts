@@ -194,7 +194,7 @@ export const possibleSubsectionMoves = (
   sectionIndex: number,
   section: XBlock,
   subsections: XBlock[],
-): ((index: number, step: number) => SubsectionMoveDetails | null) =>
+): (index: number, step: number) => SubsectionMoveDetails | null =>
 (index: number, step: number) => {
   if (!subsections[index]?.actions?.draggable) {
     return null;
@@ -428,7 +428,7 @@ export const possibleUnitMoves = (
   section: XBlock,
   subsection: XBlock,
   units: XBlock[],
-): ((index: number, step: number) => UnitMoveDetails | null) =>
+): (index: number, step: number) => UnitMoveDetails | null =>
 (index: number, step: number) => {
   // Early return if unit is not draggable
   if (!units[index]?.actions?.draggable) {

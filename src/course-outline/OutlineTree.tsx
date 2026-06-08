@@ -84,9 +84,12 @@ const OutlineTree = ({
     await commitSectionReorder(sectionListIds);
   }, [sections, previewSections, commitSectionReorder]);
 
-  const handleSubsectionOrderChange = useCallback(async (section: XBlock, moveDetails: SubsectionMoveDetails | null) => {
-    applyReorderMove(moveDetails, section, previewSections, commitSubsectionReorder);
-  }, [previewSections, commitSubsectionReorder]);
+  const handleSubsectionOrderChange = useCallback(
+    async (section: XBlock, moveDetails: SubsectionMoveDetails | null) => {
+      applyReorderMove(moveDetails, section, previewSections, commitSubsectionReorder);
+    },
+    [previewSections, commitSubsectionReorder],
+  );
 
   const handleUnitOrderChange = useCallback(async (section: XBlock, moveDetails: UnitMoveDetails | null) => {
     applyReorderMove(moveDetails, section, previewSections, commitUnitReorder);
@@ -116,7 +119,7 @@ const OutlineTree = ({
       );
 
     const orderHandler = depth === 0
-      ? (_blk: XBlock, d: { oldIndex: number; newIndex: number }) => handleSectionOrderChange(d.oldIndex, d.newIndex)
+      ? (_blk: XBlock, d: { oldIndex: number; newIndex: number; }) => handleSectionOrderChange(d.oldIndex, d.newIndex)
       : depth === 1 ?
       handleSubsectionOrderChange
       : handleUnitOrderChange;

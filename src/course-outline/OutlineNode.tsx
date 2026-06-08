@@ -97,7 +97,10 @@ export interface OutlineNodeProps {
   isCustomRelativeDatesActive: boolean;
   isSectionsExpanded: boolean;
   getPossibleMoves?: (index: number, step: number) => MoveDetails | null;
-  onOrderChange: (parentBlock: XBlock, moveDetails: MoveDetails | { oldIndex: number; newIndex: number } | null) => void;
+  onOrderChange: (
+    parentBlock: XBlock,
+    moveDetails: MoveDetails | { oldIndex: number; newIndex: number; } | null,
+  ) => void;
   onOpenConfigureModal: (selection: OutlineActionSelection) => void;
   onOpenDeleteModal: (selection: OutlineActionSelection) => void;
   onOpenHighlightsModal?: (section: XBlock) => void;
@@ -340,10 +343,12 @@ const OutlineNode = ({
     undefined;
 
   // Node is droppable when it can be a same-level reorder target or can accept children
-  const isDroppable = Boolean(actions.draggable
-    || actions.childAddable
-    || (depth === 1 && parentSection?.actions?.childAddable)
-    || (depth === 2 && parentSubsection?.actions?.childAddable));
+  const isDroppable = Boolean(
+    actions.draggable
+      || actions.childAddable
+      || (depth === 1 && parentSection?.actions?.childAddable)
+      || (depth === 2 && parentSubsection?.actions?.childAddable),
+  );
 
   const showPaste = depth === 1 && blk.enableCopyPasteUnits && showPasteUnit && sharedClipboardData;
 

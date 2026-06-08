@@ -291,7 +291,7 @@ export const UnitSidebar = () => {
               courseId={courseId}
               blockId={unitId}
               isUnitVerticalType={false}
-              unitXBlockActions={{ handleDelete: () => { }, handleDuplicate: () => { }, handleUnlink: () => { } }}
+              unitXBlockActions={{ handleDelete: () => {}, handleDuplicate: () => {}, handleUnlink: () => {} }}
               courseVerticalChildren={[]}
               readonly
             />
