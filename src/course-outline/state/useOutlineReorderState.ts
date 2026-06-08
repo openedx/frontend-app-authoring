@@ -124,8 +124,6 @@ export function useOutlineReorderState({
   const reorderSubsectionsMutation = useReorderSubsections(courseId);
   const reorderUnitsMutation = useReorderUnits(courseId);
 
-  // ─── Shared helpers: own mutation + success callback + error catch ─────────
-
   const runSectionReorder = useCallback(async (sectionListIds: string[]) => {
     try {
       await reorderSectionsMutation.mutateAsync(sectionListIds);
@@ -172,8 +170,6 @@ export function useOutlineReorderState({
       cancelReorderPreview();
     }
   }, [reorderUnitsMutation, finishSubtreeReorder, cancelReorderPreview]);
-
-  // ─── Public API: guard + compute preview + delegate ───────────────────────
 
   const commitSectionReorder = useCallback(async (sectionListIds: string[]) => {
     if (!courseId) { return; }

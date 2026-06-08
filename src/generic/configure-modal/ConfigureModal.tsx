@@ -156,8 +156,6 @@ const ConfigureModal = ({
     ? intl.formatMessage(messages.componentTitle, { title: displayName })
     : intl.formatMessage(messages.title, { title: displayName });
 
-  // ─── Category-configured handlers ──────────────────────────────────
-  // Eliminates parallel switch pairs on category.
   const configureHandlers: Record<string, {
     handleSave: (data: Record<string, any>) => void;
     renderBody: (values: any, setFieldValue: any) => React.ReactNode;

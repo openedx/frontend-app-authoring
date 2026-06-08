@@ -125,8 +125,6 @@ export type StaticFileNotices = {
   newFiles: string[];
 };
 
-// ─── Configure flow payloads (category-discriminated) ─────────────────────
-
 export type ChapterConfigurePayload = {
   category: 'chapter';
   sectionId: string;

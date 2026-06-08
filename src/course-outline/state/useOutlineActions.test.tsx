@@ -6,8 +6,6 @@ import { useOutlineDeleteAction, useOutlineConfigureAction } from './useOutlineA
 
 const courseId = 'course-v1:test+course';
 
-// ─── Mock data layer ─────────────────────────────────────────────────────
-
 const mockDeleteMutateAsync = jest.fn();
 const mockConfigureSectionMutateAsync = jest.fn();
 const mockConfigureSubsectionMutateAsync = jest.fn();
@@ -19,8 +17,6 @@ jest.mock('../data', () => ({
   useConfigureSubsection: () => ({ mutateAsync: mockConfigureSubsectionMutateAsync }),
   useConfigureUnit: () => ({ mutateAsync: mockConfigureUnitMutateAsync }),
 }));
-
-// ─── Shared test data ────────────────────────────────────────────────────
 
 const chapterSelection: OutlineActionSelection = {
   category: 'chapter',

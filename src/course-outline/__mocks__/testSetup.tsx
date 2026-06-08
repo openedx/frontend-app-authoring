@@ -4,7 +4,6 @@ import { CourseOutlineProvider } from '../CourseOutlineContext';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 import type { XBlock } from '@src/data/types';
 
-// ─── Shared jest.mock handles ───────────────────────────────────────────
 // Test files that share common jest.mock() boilerplate can import these
 // handles instead of defining their own jest.fn() variables. The jest.mock()
 // calls themselves must stay in each test file (Jest hoisting requires it),
@@ -47,8 +46,6 @@ export const mockCardAuthoringContext: Record<string, unknown> = {
  */
 export const mockCourseOutlineContextOverrides: Record<string, unknown> = {};
 
-// ─── Shared provider wrapper ─────────────────────────────────────────────
-
 interface CardTestProvidersProps {
   children: React.ReactNode;
 }
@@ -64,8 +61,6 @@ export const CardTestProviders = ({ children }: CardTestProvidersProps) => (
     </OutlineSidebarProvider>
   </CourseOutlineProvider>
 );
-
-// ─── Common block mocks ──────────────────────────────────────────────────
 
 /** Minimal module-level mock unit block. */
 export const mockUnit: XBlock = {
@@ -156,8 +151,6 @@ export const mockSection: XBlock = {
   },
 } satisfies Partial<XBlock> as XBlock;
 
-// ─── renderCard — one-stop render with providers ───────────────────────
-
 /** Options accepted by renderCard, combining testUtils render + wrapper options. */
 export interface RenderCardOptions extends WrapperOptions, RouteOptions {}
 
@@ -175,7 +168,7 @@ export interface RenderCardOptions extends WrapperOptions, RouteOptions {}
  * this function only handles provider composition.
  *
  * @example
- *   renderCard(<UnitCard ... />, { path: '/course/:courseId', params: { courseId: '5' } })
+ *   renderCard(<Component />, { path: '/course/:courseId', params: { courseId: '5' } })
  *
  *   // With custom wrapper outside CardTestProviders:
  *   renderCard(<HeaderActions ... />, {
@@ -196,8 +189,6 @@ export function renderCard(ui: React.ReactElement, options: RenderCardOptions = 
     },
   });
 }
-
-// ─── Test setup helper ───────────────────────────────────────────────────
 
 /** Options for setupCardTestMocks(). */
 export interface SetupCardTestMocksOptions {

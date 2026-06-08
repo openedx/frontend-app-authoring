@@ -46,13 +46,14 @@ export interface OutlineTreeProps {
 
 type Depth = 0 | 1 | 2;
 
-/** Context carried through the recursive render for computing move helpers. */
 interface RenderContext {
   section: XBlock;
   sectionIndex: number;
   subsection?: XBlock;
   subsectionIndex?: number;
 }
+
+const LEVEL_NAMES = ['section', 'subsection', 'unit'] as const;
 
 const OutlineTree = ({
   sections,
@@ -73,7 +74,6 @@ const OutlineTree = ({
   openDeleteModal,
   handlePasteClipboardClick,
 }: OutlineTreeProps) => {
-  // ─── Card order change handlers (preview + commit) ────────────────
   const handleSectionOrderChange = useCallback(async (oldIndex: number, newIndex: number) => {
     if (oldIndex === newIndex) { return; }
     const nextSections = arrayMove(sections, oldIndex, newIndex) as XBlock[];
@@ -90,11 +90,9 @@ const OutlineTree = ({
     applyReorderMove(moveDetails, section, previewSections, commitUnitReorder);
   }, [previewSections, commitUnitReorder]);
 
-  // ─── Recursive node renderer ─────────────────────────────────────
   const renderNode = (block: XBlock, index: number, depth: Depth, ctx: RenderContext): ReactNode => {
     const children = depth < 2 ? (block.childInfo?.children ?? []) : [];
 
-    // Per-depth callbacks
     const canMove = depth === 0 ? canMoveSection(sections) : undefined;
 
     const getPossibleMoves = depth === 0 ?
@@ -140,8 +138,7 @@ const OutlineTree = ({
         subsection={depth >= 2 ? ctx.subsection : undefined}
         onPasteClick={depth === 1 ? handlePasteClipboardClick : undefined}
         discussionsSettings={depth === 2 ? discussionsSettings : undefined}
-        testId={`${['section', 'subsection', 'unit'][depth]}-card`}
-        headerTestId={`${['section', 'subsection', 'unit'][depth]}-card-header`}
+        testId={`${LEVEL_NAMES[depth]}-card`}
       >
         {depth < 2 && (
           <SortableContext id={block.id} items={children} strategy={verticalListSortingStrategy}>

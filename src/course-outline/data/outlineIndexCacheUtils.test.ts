@@ -1,6 +1,5 @@
 import { removeItemFromOutlineIndexData } from './outlineIndexCacheUtils';
 
-// ─── Helpers ───────────────────────────────────────────────────────────────
 const key = (type: string, id: string) => `block-v1:org+type@${type}+block@${id}`;
 
 const section = (id: string, subs: any[] = []) => ({
@@ -29,7 +28,6 @@ const makeTree = (sections: any[]) => ({
   },
 });
 
-// ─── Tests ─────────────────────────────────────────────────────────────────
 describe('removeItemFromOutlineIndexData', () => {
   const sub1 = subsection('sub-1', [unit('unit-1a'), unit('unit-1b')]);
   const sub2 = subsection('sub-2', [unit('unit-2a')]);

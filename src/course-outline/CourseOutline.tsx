@@ -62,7 +62,6 @@ const CourseOutline = () => {
     commitSubsectionReorder,
     commitUnitReorder,
     dismissError,
-    // Read directly from context instead of via hooks.jsx pass-through
     courseActions,
     savingStatus,
     statusBarData,
@@ -98,7 +97,6 @@ const CourseOutline = () => {
   const isInternetConnectionAlertFailed = savingStatus === RequestStatus.FAILED;
   const isReIndexShow = Boolean(reindexLink);
 
-  // ─── Non-modal mutations & handlers ─────────────────────────────────────
   const handleAddBlock = useCreateCourseBlock(courseId);
   const pasteMutation = usePasteItem(courseId);
   const videoSharingMutation = useSetVideoSharingOption(courseId);
@@ -152,7 +150,6 @@ const CourseOutline = () => {
     lmsLink: lmsLink ?? '',
   }), [handleAddBlock, courseUsageKey, reindexLink, reindexMutation, lmsLink]);
 
-  // ─── Effects (previously in hooks.jsx) ───────────────────────────────────
   useEffect(() => {
     setShowSuccessAlert(reIndexLoadingStatus === RequestStatus.SUCCESSFUL);
   }, [reIndexLoadingStatus]);

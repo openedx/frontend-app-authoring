@@ -95,8 +95,6 @@ const renderComponent = () =>
   });
 let axiosMock;
 
-// ─── Sidebar menu test helper ─────────────────────────────────────────
-
 interface SidebarMenuConfig {
   /** Level name for test descriptions: 'Section', 'Subsection', 'Unit'. */
   level: string;
@@ -197,8 +195,6 @@ function describeSidebarMenus(config: SidebarMenuConfig): void {
     });
   });
 }
-
-// ─── Tests ────────────────────────────────────────────────────────────
 
 describe('InfoSidebar component', () => {
   beforeEach(() => {
@@ -334,8 +330,6 @@ describe('InfoSidebar component', () => {
     });
   });
 
-  // ─── Parameterized sidebar menu tests ─────────────────────────────
-
   describeSidebarMenus({
     level: 'Section',
     defaultData: {
@@ -388,8 +382,6 @@ describe('InfoSidebar component', () => {
     },
     upstreamRef: 'lb:org:lib:vertical:unit-id',
   });
-
-  // ─── Unit-only menu tests ──────────────────────────────────────────
 
   describe('UnitSidebar menus', () => {
     const unitId = 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@unit1';

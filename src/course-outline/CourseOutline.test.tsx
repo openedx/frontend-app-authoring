@@ -66,7 +66,6 @@ const startCurrentFlow = jest.fn();
 let selectedContainerId: string | undefined;
 let courseOutlineIndexMock: any = buildTestOutline();
 
-// ─── Local snake_case API-response mocks ────────────────────────────────
 const courseSectionMock = {
   id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@d0e78d363a424da6be5c22704c34f7a7',
   display_name: 'Section',
@@ -245,7 +244,7 @@ function useTestOutline(
 function buildReorderOutlineSpec(): NodeSpec[] {
   const id = (type: string, block: string) => `block-v1:edX+DemoX+Demo_Course+type@${type}+block@${block}`;
 
-  /** Match the old mock's IDs for section-0 so collision-based drag handlers work. */
+  // IDs must match the values collision-based drag handlers compare against.
   const oldSectionId = id('chapter', 'd8a6192ade314473a78242dfeedfbf5b');
   const oldSub0Id = id('sequential', '8a85e287e30a47e98d8c1f37f74a6a9d');
   const oldSub1Id = id('sequential', 'b713bc2830f34f6f87554028c3068729');
@@ -527,7 +526,7 @@ function useConfigureTestOutline() {
   });
 }
 
-/** Wrapper around useTestOutline for reorder/move tests — overrides courseStructure.id to match old mock. */
+/** Wrapper around useTestOutline for reorder/move tests — overrides courseStructure.id to match buildReorderOutlineSpec ids. */
 function useReorderTestOutline() {
   useTestOutline({
     sections: buildReorderOutlineSpec(),

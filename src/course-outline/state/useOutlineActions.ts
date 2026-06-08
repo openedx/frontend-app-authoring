@@ -9,8 +9,6 @@ import {
 } from '../data';
 import { OUTLINE_CATEGORY_CONFIG } from '../constants';
 
-// ─── Narrow hook: delete only ────────────────────────────────────────────
-
 /**
  * Narrow hook for delete mutation coordination.
  * Registers only useDeleteCourseItem — avoids registering configure mutations.
@@ -39,8 +37,6 @@ export function useOutlineDeleteAction(courseId: string): {
 
   return { handleDeleteItemSubmit };
 }
-
-// ─── Narrow hook: configure only ─────────────────────────────────────────
 
 /**
  * Narrow hook for configure mutation coordination.

@@ -312,8 +312,6 @@ describe('useOutlineReorderState', () => {
     });
   });
 
-  // ─── Cache/refetch updates before preview clear ───────────────────────
-
   describe('commit updates cache before clearing preview', () => {
     it('section commit: cache reflects new order; rerender from cache yields correct visibleSections', async () => {
       // In the real app the cache update propagates through

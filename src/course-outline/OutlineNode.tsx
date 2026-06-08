@@ -8,6 +8,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -43,9 +44,53 @@ import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutli
 import sectionMessages from './section-card/messages';
 import subsectionMessages from './subsection-card/messages';
 
+type Depth = 0 | 1 | 2;
+type IconSize = 'md' | 'sm' | 'xs';
+
+interface LevelConfig {
+  name: string;
+  contentClass: string;
+  contentTestId: string;
+  childContainerClass?: string;
+  childContainerTestId?: string;
+  containerType?: ContainerType;
+  iconSize: IconSize;
+  background: CSSProperties;
+}
+
+const LEVEL_CONFIG: Record<Depth, LevelConfig> = {
+  0: {
+    name: 'section',
+    contentClass: 'section-card__content',
+    contentTestId: 'section-card__content',
+    childContainerClass: 'section-card__subsections',
+    childContainerTestId: 'section-card__subsections',
+    containerType: ContainerType.Subsection,
+    iconSize: 'md',
+    background: { padding: '1.75rem' },
+  },
+  1: {
+    name: 'subsection',
+    contentClass: 'subsection-card__content item-children',
+    contentTestId: 'subsection-card__content',
+    childContainerClass: 'subsection-card__units',
+    childContainerTestId: 'subsection-card__units',
+    containerType: ContainerType.Unit,
+    iconSize: 'sm',
+    background: { background: '#f8f7f6' },
+  },
+  2: {
+    name: 'unit',
+    contentClass: 'unit-card__content item-children',
+    contentTestId: 'unit-card__content',
+    iconSize: 'xs',
+    background: { background: '#fdfdfd' },
+  },
+};
+
 export interface OutlineNodeProps {
   block: XBlock;
-  depth: 0 | 1 | 2;
+  depth: Depth;
   index: number;
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean;
@@ -61,11 +106,8 @@ export interface OutlineNodeProps {
   subsection?: XBlock;
   discussionsSettings?: { providerType: string; enableGradedUnits: boolean; };
   children?: ReactNode;
-  /** Extra content in the expanded children area (used by SubsectionCard wrapper). */
   expandedExtra?: ReactNode;
   testId?: string;
-  /** @deprecated No longer consumed by OutlineNode; kept for wrapper compatibility. */
-  headerTestId?: string;
 }
 
 const OutlineNode = ({
@@ -87,9 +129,7 @@ const OutlineNode = ({
   discussionsSettings,
   children,
   expandedExtra,
-  testId = `${['section', 'subsection', 'unit'][depth]}-card`,
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  headerTestId: _unusedHeaderTestId,
+  testId,
 }: OutlineNodeProps) => {
   const currentRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
@@ -108,6 +148,7 @@ const OutlineNode = ({
   const { data: liveBlock = initialData } = useCourseItemData(initialData.id, initialData as any);
   const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
 
+  const levelConfig = LEVEL_CONFIG[depth];
   const blk = liveBlock as any;
   const initBlk = initialData as any;
   const effectiveSection: XBlock = parentSection || (depth === 0 ? initialData : parentSection!)!;
@@ -117,7 +158,6 @@ const OutlineNode = ({
 
   const blockSyncData = useMemo(() => {
     if (!blk.upstreamInfo?.readyToSync) { return undefined; }
-    const levelNames = ['section', 'subsection', 'unit'];
     return {
       displayName: blk.displayName,
       downstreamBlockId: blk.id,
@@ -125,9 +165,9 @@ const OutlineNode = ({
       upstreamBlockVersionSynced: blk.upstreamInfo.versionSynced,
       isReadyToSyncIndividually: blk.upstreamInfo.isReadyToSyncIndividually,
       isContainer: true,
-      blockType: levelNames[depth],
+      blockType: levelConfig.name,
     };
-  }, [blk.upstreamInfo, blk.displayName, blk.id, depth]);
+  }, [blk.upstreamInfo, blk.displayName, blk.id, levelConfig.name]);
 
   const handleOnPostChangeSync = useCallback(() => {
     queryClient.invalidateQueries({
@@ -152,7 +192,6 @@ const OutlineNode = ({
     }
   }, [isScrolledToElement, scrollState, resetScrollState, blk.id]);
 
-  // ── Expand / collapse ───────────────────────────────────────────
   const containsSearchResult = useCallback(() => {
     if (!locatorId || depth === 2) { return false; }
     if (depth === 0) {
@@ -199,7 +238,6 @@ const OutlineNode = ({
     ) { setIsExpanded(true); }
   }, [scrollState?.id, blk.childInfo, depth]);
 
-  // ── Actions ───────────────────────────────────────────────────
   const actions = { ...blk.actions };
   if (depth === 0 && canMoveItem) {
     actions.allowMoveUp = canMoveItem(index, -1);
@@ -265,17 +303,15 @@ const OutlineNode = ({
       && !(depth === 1 ? parentSection?.upstreamInfo?.upstreamRef : parentSubsection?.upstreamInfo?.upstreamRef)
     ));
 
-  // ── Title component ───────────────────────────────────────────
-  const upstreamIconSize = ['md', 'sm', 'xs'][depth] as 'md' | 'sm' | 'xs';
   const titleComponent = depth < 2 ?
     (
       <TitleButton
         title={blk.displayName}
         isExpanded={isExpanded}
         onTitleClick={() => setIsExpanded((p: boolean) => !p)}
-        namePrefix={['section', 'subsection', 'unit'][depth]}
+        namePrefix={levelConfig.name}
         prefixIcon={
-          <UpstreamInfoIcon upstreamInfo={blk.upstreamInfo} size={upstreamIconSize} openSyncModal={openSyncModal} />
+          <UpstreamInfoIcon upstreamInfo={blk.upstreamInfo} size={levelConfig.iconSize} openSyncModal={openSyncModal} />
         }
       />
     ) :
@@ -283,14 +319,13 @@ const OutlineNode = ({
       <TitleLink
         title={blk.displayName}
         titleLink={getUnitUrl(blk.id)}
-        namePrefix={['section', 'subsection', 'unit'][depth]}
+        namePrefix={levelConfig.name}
         prefixIcon={
-          <UpstreamInfoIcon upstreamInfo={blk.upstreamInfo} size={upstreamIconSize} openSyncModal={openSyncModal} />
+          <UpstreamInfoIcon upstreamInfo={blk.upstreamInfo} size={levelConfig.iconSize} openSyncModal={openSyncModal} />
         }
       />
     );
 
-  // ── Plugin slot components ─────────────────────────────────────
   const extraActionsComponent = depth === 1 && parentSection ?
     <CourseOutlineSubsectionCardExtraActionsSlot subsection={liveBlock as any} section={parentSection as any} /> :
     depth === 2 && parentSection && parentSubsection ?
@@ -303,29 +338,14 @@ const OutlineNode = ({
     ) :
     undefined;
 
-  // ── isDroppable ───────────────────────────────────────────────
   const isDroppable = depth === 2
     ? (parentSubsection as any)?.actions?.childAddable ?? false
     : actions.childAddable || (parentSection?.actions?.childAddable ?? false);
 
-  // ── Content class and test-id per depth ───────────────────────
-  const contentClass = depth === 0
-    ? 'section-card__content'
-    : depth === 1
-    ? 'subsection-card__content item-children'
-    : 'unit-card__content item-children';
-  const contentTestId = depth === 0
-    ? 'section-card__content'
-    : depth === 1
-    ? 'subsection-card__content'
-    : 'unit-card__content';
-
-  // ── Clipboard paste UI (depth 1 only) ─────────────────────────
   const showPaste = depth === 1 && blk.enableCopyPasteUnits && showPasteUnit && sharedClipboardData;
 
   if (!shouldRenderUnit) { return null; }
 
-  // ── Render ─────────────────────────────────────────────────────
   return (
     <>
       <SortableItem
@@ -339,23 +359,18 @@ const OutlineNode = ({
         isDraggable={isDraggable}
         isDroppable={isDroppable}
         key={blk.id}
-        componentStyle={{
-          ...(depth === 0 ? { padding: '1.75rem' } : {}),
-          ...(depth === 1 ? { background: '#f8f7f6' } : {}),
-          ...(depth === 2 ? { background: '#fdfdfd' } : {}),
-          ...borderStyle,
-        }}
+        componentStyle={{ ...levelConfig.background, ...borderStyle }}
         onClick={(e) => onClickCard(e, true)}
       >
         <div
           className={classNames(
-            `${['section', 'subsection', 'unit'][depth]}-card`,
+            `${levelConfig.name}-card`,
             {
               highlight: isScrolledToElement,
               'outline-card-selected': blk.id === selectedContainerState?.currentId,
             },
           )}
-          data-testid={testId}
+          data-testid={testId ?? `${levelConfig.name}-card`}
           ref={currentRef}
         >
           {isHeaderVisible && (
@@ -414,7 +429,7 @@ const OutlineNode = ({
                   } as any)}
                 onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
-                namePrefix={['section', 'subsection', 'unit'][depth]}
+                namePrefix={levelConfig.name}
                 actions={actions}
                 extraActionsComponent={extraActionsComponent}
                 {...(depth === 1
@@ -435,8 +450,11 @@ const OutlineNode = ({
                   {})}
                 readyToSync={blk.upstreamInfo?.readyToSync}
               />
-              {/* Content area */}
-              <div className={contentClass} data-testid={contentTestId} onClick={(e) => onClickCard(e, false)}>
+              <div
+                className={levelConfig.contentClass}
+                data-testid={levelConfig.contentTestId}
+                onClick={(e) => onClickCard(e, false)}
+              >
                 {depth === 0 && onOpenHighlightsModal && (
                   <div className="outline-section__status mb-1">
                     <Button
@@ -458,23 +476,21 @@ const OutlineNode = ({
               </div>
             </>
           )}
-          {/* Expanded children (depth 0 + 1) */}
           {depth < 2 && isExpanded && (
             <div
-              data-testid={depth === 0 ? 'section-card__subsections' : 'subsection-card__units'}
-              className={classNames(depth === 0 ? 'section-card__subsections' : 'subsection-card__units', {
+              data-testid={levelConfig.childContainerTestId}
+              className={classNames(levelConfig.childContainerClass, {
                 'item-children': isDraggable,
               })}
             >
               {children}
               {actions.childAddable && (
                 <OutlineAddChildButtons
-                  childType={depth === 0 ? ContainerType.Subsection : ContainerType.Unit}
+                  childType={levelConfig.containerType!}
                   parentLocator={blk.id}
                   grandParentLocator={depth === 1 ? parentSection?.id : undefined}
                 />
               )}
-              {/* Paste component (depth 1) */}
               {showPaste && (
                 <PasteComponent
                   className="mt-4 border-gray-500 rounded-0"

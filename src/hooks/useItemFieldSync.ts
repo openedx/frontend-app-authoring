@@ -3,9 +3,8 @@ import { useEffect, useRef } from 'react';
 /**
  * Runs `effect` on every render after the first mount.
  *
- * The original pattern this replaces uses `didMountRef` + `useEffect` to
- * skip the initial mount. This hook preserves that first‑mount skip
- * behavior.
+ * Uses a `didMountRef` to skip the initial mount, matching the behavior
+ * of the `useEffect` + mount-guard pattern it replaces.
  *
  * NOTE: intentionally does **not** return `effect()` — the original pattern
  * discards cleanup by design. Returning it would cause React to call the

@@ -19,13 +19,7 @@ import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { useCreateBlockSidebar } from '@src/course-outline/state';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
-/**
- * Placeholder component that is displayed when a user clicks the "Use content from library" button.
- * Shows a loading spinner when the component is selected and being added to the course.
- * Finally it is hidden once the add component operation is complete and the content is successfully
- * added to the course.
- * @param props.parentLocator The locator of the parent flow item to which the content will be added.
- */
+/** Props for AddPlaceholder. */
 interface AddPlaceholderProps {
   parentLocator?: string;
   isPending: boolean;
