@@ -1,5 +1,8 @@
 import { PluginSlot } from '@openedx/frontend-plugin-framework/dist';
+import classNames from 'classnames';
+
 import { UnitSidebar } from '@src/course-unit/unit-sidebar/UnitSidebar';
+import { isUnitPageNewDesignEnabled } from '@src/course-unit/utils';
 
 export const CourseAuthoringUnitSidebarSlot = (
   {
@@ -12,28 +15,32 @@ export const CourseAuthoringUnitSidebarSlot = (
     isSplitTestType,
   }: CourseAuthoringUnitSidebarSlotProps,
 ) => (
-  <PluginSlot
-    id="org.openedx.frontend.authoring.course_unit_sidebar.v2"
-    pluginProps={{
-      blockId,
-      courseId,
-      unitTitle,
-      xBlocks,
-      readOnly,
-      isUnitVerticalType,
-      isSplitTestType,
-    }}
+  <div
+    className={classNames({ 'sidebar': isUnitPageNewDesignEnabled() })}
   >
-    <UnitSidebar
-      legacySidebarProps={{
+    <PluginSlot
+      id="org.openedx.frontend.authoring.course_unit_sidebar.v2"
+      pluginProps={{
+        blockId,
+        courseId,
         unitTitle,
         xBlocks,
         readOnly,
         isUnitVerticalType,
         isSplitTestType,
       }}
-    />
-  </PluginSlot>
+    >
+      <UnitSidebar
+        legacySidebarProps={{
+          unitTitle,
+          xBlocks,
+          readOnly,
+          isUnitVerticalType,
+          isSplitTestType,
+        }}
+      />
+    </PluginSlot>
+  </div>
 );
 
 type XBlock = {
