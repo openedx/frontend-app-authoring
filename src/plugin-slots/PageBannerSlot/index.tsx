@@ -6,12 +6,18 @@ export interface PageBannerSlotProps {
   show: boolean;
   onDismiss: () => void;
   children: ReactNode;
+  lmsLinkForAboutPage?: string;
+  courseDisplayName?: string;
+  platformName?: string;
 }
 
 const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
   show,
   onDismiss,
   children,
+  lmsLinkForAboutPage,
+  courseDisplayName,
+  platformName,
 }) => (
   <PluginSlot
     id="org.openedx.frontend.authoring.page_banner.v1"
@@ -19,6 +25,9 @@ const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
     pluginProps={{
       show,
       onDismiss,
+      lmsLinkForAboutPage,
+      courseDisplayName,
+      platformName,
     }}
   >
     <div className="align-items-start">

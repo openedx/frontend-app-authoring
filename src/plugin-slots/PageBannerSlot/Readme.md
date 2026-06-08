@@ -51,3 +51,48 @@ const config = {
 
 export default config;
 ```
+
+## Restoring the course enrollment card
+
+Prior to the removal of `ENABLE_MKTG_SITE`, deployments running with `ENABLE_MKTG_SITE=False`
+showed a "Course summary page" card in Schedule & Details instead of the promotional banner.
+That card displayed a direct link to the LMS about/enrollment page and an "Invite your students"
+mailto button.
+
+If you want to restore that experience, you can use `CoursePromotionCard` — exported from
+`basic-section` — via this slot. The slot passes `lmsLinkForAboutPage`, `courseDisplayName`,
+and `platformName` as `pluginProps` so the card has everything it needs.
+
+```jsx
+import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
+import { CoursePromotionCard } from '@edx/frontend-app-authoring/src/schedule-and-details/basic-section';
+
+const config = {
+  pluginSlots: {
+    'org.openedx.frontend.authoring.page_banner.v1': {
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Hide,
+          widgetId: 'default_contents',
+        },
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'course_promotion_card',
+            type: DIRECT_PLUGIN,
+            RenderWidget: ({ pluginProps }) => (
+              <CoursePromotionCard
+                lmsLinkForAboutPage={pluginProps.lmsLinkForAboutPage}
+                courseDisplayName={pluginProps.courseDisplayName}
+                platformName={pluginProps.platformName}
+              />
+            ),
+          },
+        },
+      ],
+    },
+  },
+};
+
+export default config;
+```
