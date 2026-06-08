@@ -1,5 +1,4 @@
 import { useDefaultTab } from '@src/hooks/useDefaultTab';
-import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
@@ -84,7 +83,7 @@ export const SubsectionSidebar = () => {
   const canMoveSubsection = (oldIndex: number, step: number) => {
     if (getPossibleMoves && section) {
       const moveDetails = getPossibleMoves(oldIndex, step);
-      return !isEmpty(moveDetails) && !section.upstreamInfo?.upstreamRef;
+      return moveDetails !== null && !section.upstreamInfo?.upstreamRef;
     }
     // istanbul ignore next: unreachable — getPossibleMoves always set when section exists
     return false;
@@ -94,20 +93,20 @@ export const SubsectionSidebar = () => {
     if (section && getPossibleMoves && index !== undefined && sectionIndex !== undefined) {
       const moveDetails = getPossibleMoves(index, step);
       applyReorderMove(moveDetails, section, previewSections, commitSubsectionReorder);
-      if (!isEmpty(moveDetails)) {
+      if (moveDetails) {
         const newSectionId = moveDetails.sectionId;
         // A subsection can move to a different section (cross-section move)
         const isCrossSection = newSectionId !== section.id;
-        // istanbul ignore next: cross-section move only exercised by E2E
+        // istanbul ignore next
         const newSectionIndex = isCrossSection
           ? sections.findIndex((s) => s.id === newSectionId)
           : sectionIndex;
         // Cross-section up: goes to end of previous section; cross-section down: goes to start of next section
-        // istanbul ignore next: cross-section move only exercised by E2E
+        // istanbul ignore next
         const newIndex = isCrossSection
           ? (step === -1 ? sections[newSectionIndex].childInfo.children.length : 0)
           : index + step;
-        // istanbul ignore next: cross-section move only exercised by E2E
+        // istanbul ignore next
         setSelectedContainerState(
           selectedContainerState ?
             {

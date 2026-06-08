@@ -38,6 +38,7 @@ import { useCourseOutlineContext } from './CourseOutlineContext';
 import { useOutlineSidebarContext } from './outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys } from './data/queryKeys';
 import { useCourseItemData, useScrollState, useDuplicateItem } from './data/apiHooks';
+import type { MoveDetails } from './drag-helper/utils';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
@@ -95,8 +96,8 @@ export interface OutlineNodeProps {
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean;
   isSectionsExpanded: boolean;
-  getPossibleMoves?: (index: number, step: number) => any;
-  onOrderChange: (parentBlock: XBlock, moveDetails: any) => void;
+  getPossibleMoves?: (index: number, step: number) => MoveDetails | null;
+  onOrderChange: (parentBlock: XBlock, moveDetails: MoveDetails | { oldIndex: number; newIndex: number } | null) => void;
   onOpenConfigureModal: (selection: OutlineActionSelection) => void;
   onOpenDeleteModal: (selection: OutlineActionSelection) => void;
   onOpenHighlightsModal?: (section: XBlock) => void;

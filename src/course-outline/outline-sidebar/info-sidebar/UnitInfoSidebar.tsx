@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 import { useDefaultTab } from '@src/hooks/useDefaultTab';
-import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -142,7 +141,7 @@ export const UnitSidebar = () => {
   const canMoveUnit = (oldIndex: number, step: number) => {
     if (getPossibleMoves) {
       const moveDetails = getPossibleMoves(oldIndex, step);
-      return !isEmpty(moveDetails) && !subsection?.upstreamInfo?.upstreamRef;
+      return moveDetails !== null && !subsection?.upstreamInfo?.upstreamRef;
     }
     /* istanbul ignore next: unreachable — getPossibleMoves always set when section+subsection exist */
     return false;
@@ -153,23 +152,23 @@ export const UnitSidebar = () => {
       const moveDetails = getPossibleMoves(index, step);
       // section is the current parent section (used as prevSection in cross-section moves)
       applyReorderMove(moveDetails, section, previewSections, commitUnitReorder);
-      if (!isEmpty(moveDetails)) {
+      if (moveDetails) {
         const newSectionId = moveDetails.sectionId;
         const newSubsectionId = moveDetails.subsectionId;
         // Cross-subsection move: unit goes to end of previous or start of next subsection
         const isCrossSubsection = newSubsectionId !== subsection.id;
-        /* istanbul ignore next: cross-section move only exercised by E2E */
+        /* istanbul ignore next */
         const newSectionIndex = newSectionId !== section.id
           ? sections.findIndex((s) => s.id === newSectionId)
           : sectionIndex;
-        /* istanbul ignore next: cross-subsection move only exercised by E2E */
+        /* istanbul ignore next */
         const newIndex = isCrossSubsection
           ? (step === -1
             ? sections[newSectionIndex].childInfo.children.find((s) => s.id === newSubsectionId)?.childInfo.children
               .length ?? 0
             : 0)
           : index + step;
-        /* istanbul ignore next: cross-section/subsection move only exercised by E2E */
+        /* istanbul ignore next */
         setSelectedContainerState(
           selectedContainerState ?
             {
@@ -292,7 +291,7 @@ export const UnitSidebar = () => {
               courseId={courseId}
               blockId={unitId}
               isUnitVerticalType={false}
-              unitXBlockActions={{ handleDelete: () => {}, handleDuplicate: () => {}, handleUnlink: () => {} }}
+              unitXBlockActions={{ handleDelete: () => { }, handleDuplicate: () => { }, handleUnlink: () => { } }}
               courseVerticalChildren={[]}
               readonly
             />

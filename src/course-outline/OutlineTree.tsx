@@ -12,6 +12,8 @@ import {
   canMoveSection,
   possibleUnitMoves,
   possibleSubsectionMoves,
+  type SubsectionMoveDetails,
+  type UnitMoveDetails,
 } from './drag-helper/utils';
 import { applyReorderMove } from './drag-helper/reorderHelpers';
 
@@ -82,11 +84,11 @@ const OutlineTree = ({
     await commitSectionReorder(sectionListIds);
   }, [sections, previewSections, commitSectionReorder]);
 
-  const handleSubsectionOrderChange = useCallback(async (section: XBlock, moveDetails: any) => {
+  const handleSubsectionOrderChange = useCallback(async (section: XBlock, moveDetails: SubsectionMoveDetails | null) => {
     applyReorderMove(moveDetails, section, previewSections, commitSubsectionReorder);
   }, [previewSections, commitSubsectionReorder]);
 
-  const handleUnitOrderChange = useCallback(async (section: XBlock, moveDetails: any) => {
+  const handleUnitOrderChange = useCallback(async (section: XBlock, moveDetails: UnitMoveDetails | null) => {
     applyReorderMove(moveDetails, section, previewSections, commitUnitReorder);
   }, [previewSections, commitUnitReorder]);
 
@@ -114,7 +116,7 @@ const OutlineTree = ({
       );
 
     const orderHandler = depth === 0
-      ? (_blk: XBlock, d: any) => handleSectionOrderChange(d.oldIndex, d.newIndex)
+      ? (_blk: XBlock, d: { oldIndex: number; newIndex: number }) => handleSectionOrderChange(d.oldIndex, d.newIndex)
       : depth === 1 ?
       handleSubsectionOrderChange
       : handleUnitOrderChange;

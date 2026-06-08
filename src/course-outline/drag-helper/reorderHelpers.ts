@@ -1,4 +1,21 @@
 import { type XBlock } from '@src/data/types';
+import type {
+  MoveDetails,
+  SubsectionMoveDetails,
+  UnitMoveDetails,
+} from './utils';
+
+/**
+ * Commit callback type for reorder operations.
+ * Uses variadic tuple rest to express both call signatures:
+ * - 3 params: subsection reorder  (sectionId, prevSectionId, subsectionListIds)
+ * - 4 params: unit reorder       (sectionId, prevSectionId, subsectionId, unitListIds)
+ */
+type ReorderCommitFn = (
+  sectionId: string,
+  prevSectionId: string,
+  ...rest: [string[]] | [string, string[]]
+) => void | Promise<void>;
 
 /**
  * Apply a reorder from moveDetails and preview + commit.
@@ -8,40 +25,34 @@ import { type XBlock } from '@src/data/types';
  * subsection commit signature is used.
  */
 export function applyReorderMove(
-  moveDetails: any,
+  moveDetails: SubsectionMoveDetails | null,
   currentSection: XBlock,
   previewSections: (sections: XBlock[]) => void,
-  commitReorder: (
-    sectionId: string,
-    prevSectionId: string,
-    ...rest: any[]
-  ) => void | Promise<void>,
-) {
-  const { fn, args, sectionId, subsectionId } = moveDetails as {
-    fn: (...a: any[]) => any;
-    args: any;
-    sectionId: string;
-    subsectionId?: string;
-  };
-  if (!args) { return; }
+  commitReorder: ReorderCommitFn,
+): void;
+export function applyReorderMove(
+  moveDetails: UnitMoveDetails | null,
+  currentSection: XBlock,
+  previewSections: (sections: XBlock[]) => void,
+  commitReorder: ReorderCommitFn,
+): void;
+export function applyReorderMove(
+  moveDetails: MoveDetails | null,
+  currentSection: XBlock,
+  previewSections: (sections: XBlock[]) => void,
+  commitReorder: ReorderCommitFn,
+): void {
+  if (!moveDetails) { return; }
+  const { fn, args, sectionId, subsectionId } = moveDetails;
   const [sectionsCopy, newItems] = fn(...args);
   if (!newItems || !sectionId) { return; }
   previewSections(sectionsCopy);
   const ids = newItems.map((s: XBlock) => s.id);
   if (subsectionId) {
     // Unit reorder
-    (commitReorder as any)(
-      sectionId,
-      currentSection.id,
-      subsectionId,
-      ids,
-    );
+    commitReorder(sectionId, currentSection.id, subsectionId, ids);
   } else {
     // Subsection reorder
-    (commitReorder as any)(
-      sectionId,
-      currentSection.id,
-      ids,
-    );
+    commitReorder(sectionId, currentSection.id, ids);
   }
 }

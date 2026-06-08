@@ -38,7 +38,7 @@ describe('possibleSubsectionMoves', () => {
     mockSubsections,
   );
 
-  test('should return empty object if subsection is not draggable', () => {
+  test('should return null if subsection is not draggable', () => {
     const mockNonDraggableSubsections = [
       { actions: { draggable: false } },
       { actions: { draggable: true } },
@@ -52,7 +52,7 @@ describe('possibleSubsectionMoves', () => {
     );
 
     const result = createMove(0, 1);
-    expect(result).toEqual({});
+    expect(result).toBeNull();
   });
 
   test('should allow moving subsection down within same section', () => {
@@ -82,7 +82,7 @@ describe('possibleSubsectionMoves', () => {
     });
   });
 
-  test('should return empty object when moving to previous section not allowed', () => {
+  test('should return null when moving to previous section not allowed', () => {
     const mockRestrictedSections = [
       { id: 'section1', actions: { childAddable: false } },
       { id: 'section2', actions: { childAddable: true } },
@@ -96,7 +96,7 @@ describe('possibleSubsectionMoves', () => {
     );
 
     const result = createMove(0, -1);
-    expect(result).toEqual({});
+    expect(result).toBeNull();
   });
 
   test('should move subsection to next section when at last position', () => {
@@ -115,12 +115,12 @@ describe('possibleSubsectionMoves', () => {
     });
   });
 
-  test('should return empty object when moving subsection to next section that does not accept children', () => {
+  test('should return null when moving subsection to next section that does not accept children', () => {
     const result = createMoveFunction(2, 1);
-    expect(result).toEqual({});
+    expect(result).toBeNull();
   });
 
-  test('should return empty object when moving to next section not allowed', () => {
+  test('should return null when moving to next section not allowed', () => {
     const mockRestrictedSections = [
       { id: 'section1', actions: { childAddable: true } },
       { id: 'section2', actions: { childAddable: false } },
@@ -134,10 +134,10 @@ describe('possibleSubsectionMoves', () => {
     );
 
     const result = createMove(2, 1);
-    expect(result).toEqual({});
+    expect(result).toBeNull();
   });
 
-  test('should return empty object when attempting to move beyond section boundaries', () => {
+  test('should return null when attempting to move beyond section boundaries', () => {
     // Test moving up from first subsection of first section
     const firstSectionMove = possibleSubsectionMoves(
       mockSections,
@@ -147,7 +147,7 @@ describe('possibleSubsectionMoves', () => {
     );
 
     const resultUp = firstSectionMove(0, -1);
-    expect(resultUp).toEqual({});
+    expect(resultUp).toBeNull();
 
     // Test moving down from last subsection of last section
     const lastSectionMove = possibleSubsectionMoves(
@@ -158,7 +158,7 @@ describe('possibleSubsectionMoves', () => {
     );
 
     const resultDown = lastSectionMove(2, 1);
-    expect(resultDown).toEqual({});
+    expect(resultDown).toBeNull();
   });
 
   test('should handle edge cases with empty sections or subsections', () => {
@@ -173,7 +173,7 @@ describe('possibleSubsectionMoves', () => {
     );
 
     const result = createMove(0, 1);
-    expect(result).toEqual({});
+    expect(result).toBeNull();
   });
 
   test('should work with different step values', () => {
@@ -353,7 +353,7 @@ describe('possibleUnitMoves', () => {
     });
   });
 
-  test('should return empty object for non-draggable units', () => {
+  test('should return null for non-draggable units', () => {
     const nonDraggableUnits = [
       { actions: { draggable: false } },
       { actions: { draggable: true } },
@@ -369,7 +369,7 @@ describe('possibleUnitMoves', () => {
     );
 
     const result = createMove(0, 1);
-    expect(result).toEqual({});
+    expect(result).toBeNull();
   });
 
   test('should move unit to next subsection within same section', () => {
@@ -463,7 +463,7 @@ describe('possibleUnitMoves', () => {
     });
   });
 
-  test('should return empty object when no valid move locations exist', () => {
+  test('should return null when no valid move locations exist', () => {
     const restrictedSections = [
       {
         id: 'section1',
@@ -487,10 +487,10 @@ describe('possibleUnitMoves', () => {
     );
 
     const resultMoveDown = createMove(2, 1);
-    expect(resultMoveDown).toEqual({});
+    expect(resultMoveDown).toBeNull();
 
     const resultMoveUp = createMove(0, -1);
-    expect(resultMoveUp).toEqual({});
+    expect(resultMoveUp).toBeNull();
   });
 
   test('should handle edge cases with single section and subsection', () => {
@@ -512,7 +512,7 @@ describe('possibleUnitMoves', () => {
     );
 
     const result = createMove(0, -1);
-    expect(result).toEqual({});
+    expect(result).toBeNull();
   });
 
   test('should skip non-childAddable subsections when moving', () => {
@@ -696,7 +696,7 @@ describe('possibleUnitMoves', () => {
     });
   });
 
-  test('should return empty object when no valid move locations exist in any direction', () => {
+  test('should return null when no valid move locations exist in any direction', () => {
     const restrictedSections = [
       {
         id: 'section1',
@@ -720,10 +720,10 @@ describe('possibleUnitMoves', () => {
     );
 
     const resultMoveDown = createMove(2, 1);
-    expect(resultMoveDown).toEqual({});
+    expect(resultMoveDown).toBeNull();
 
     const resultMoveUp = createMove(0, -1);
-    expect(resultMoveUp).toEqual({});
+    expect(resultMoveUp).toBeNull();
   });
 
   test('should handle scenarios with single unit', () => {
@@ -1041,7 +1041,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
     });
   });
 
-  test('should return empty object when no childAddable subsections exist', () => {
+  test('should return null when no childAddable subsections exist', () => {
     const sectionsWithNoChildAddable = [
       {
         id: 'section1',
@@ -1095,7 +1095,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
     );
 
     const resultMoveDown = createMoveDown(0, 1);
-    expect(resultMoveDown).toEqual({});
+    expect(resultMoveDown).toBeNull();
 
     const createMoveUp = possibleUnitMoves(
       sectionsWithNoChildAddable,
@@ -1107,7 +1107,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
     );
 
     const resultMoveUp = createMoveUp(0, -1);
-    expect(resultMoveUp).toEqual({});
+    expect(resultMoveUp).toBeNull();
   });
 
   test('should handle scenarios with multiple sections and mixed childAddable states', () => {

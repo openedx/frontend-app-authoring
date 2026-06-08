@@ -3,6 +3,33 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { XBlock } from '@src/data/types';
 import { findIndex, findLastIndex } from 'lodash';
 
+/**
+ * Move function signature — accepts sections array followed by numeric indices.
+ * Returns [modifiedSections, movedChildren].
+ */
+export type MoveFn = (prevCopy: XBlock[], ...args: number[]) => [XBlock[], XBlock[]];
+
+/**
+ * Move details discriminated by presence of subsectionId.
+ * - SubsectionMoveDetails: no subsectionId (moving subsections within/across sections)
+ * - UnitMoveDetails: has subsectionId (moving units within/across subsections)
+ */
+export type SubsectionMoveDetails = {
+  fn: MoveFn;
+  args: [XBlock[], ...number[]];
+  sectionId: string;
+  subsectionId?: undefined;
+};
+
+export type UnitMoveDetails = {
+  fn: MoveFn;
+  args: [XBlock[], ...number[]];
+  sectionId: string;
+  subsectionId: string;
+};
+
+export type MoveDetails = SubsectionMoveDetails | UnitMoveDetails;
+
 export const dragHelpers = {
   copyBlockChildren: (block: XBlock) => {
     // eslint-disable-next-line no-param-reassign
@@ -56,7 +83,7 @@ export const moveItemOver = (
   // Unit only:
   overSubsectionIdx?: number,
   newIndex?: number,
-) => {
+): [XBlock[], XBlock[]] => {
   // Subsection across sections — 5 positional args
   if (overSubsectionIdx === undefined) {
     let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[parentAIdx] });
@@ -114,7 +141,7 @@ export const moveItem = (
   otherArg: number,
   // Unit only:
   newIdx?: number,
-) => {
+): [XBlock[], XBlock[]] => {
   if (newIdx === undefined) {
     // Subsection within section
     let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
@@ -167,10 +194,10 @@ export const possibleSubsectionMoves = (
   sectionIndex: number,
   section: XBlock,
   subsections: XBlock[],
-) =>
+): ((index: number, step: number) => SubsectionMoveDetails | null) =>
 (index: number, step: number) => {
   if (!subsections[index]?.actions?.draggable) {
-    return {};
+    return null;
   }
   if ((step === -1 && index >= 1) || (step === 1 && subsections.length - index >= 2)) {
     // move subsection inside its own parent section
@@ -190,7 +217,7 @@ export const possibleSubsectionMoves = (
     const newSectionIndex = findLastIndex(sections, { actions: { childAddable: true } }, sectionIndex + step);
     if (newSectionIndex === -1) {
       // return if previous section doesn't allow adding subsections
-      return {};
+      return null;
     }
     return {
       fn: moveItemOver,
@@ -210,7 +237,7 @@ export const possibleSubsectionMoves = (
     // move subsection to first position of next section
     if (newSectionIndex === -1) {
       // return if below sections don't allow adding subsections
-      return {};
+      return null;
     }
     return {
       fn: moveItemOver,
@@ -224,7 +251,7 @@ export const possibleSubsectionMoves = (
       sectionId: sections[newSectionIndex].id,
     };
   }
-  return {};
+  return null;
 };
 
 /**
@@ -273,7 +300,7 @@ const moveToPreviousLocation = (
   sectionIndex: number,
   subsectionIndex: number,
   index: number,
-) => {
+): UnitMoveDetails | null => {
   if (subsectionIndex > 0) {
     // Find the previous childAddable subsection within the same section
     const newSubsectionIndex = findLastIndex(
@@ -305,7 +332,7 @@ const moveToPreviousLocation = (
   const previousLocationResult = findValidSubsectionIndex(sections, sectionIndex, -1, findLastIndex);
 
   if (!previousLocationResult) {
-    return {};
+    return null;
   }
 
   return {
@@ -336,7 +363,7 @@ const moveToNextLocation = (
   sectionIndex: number,
   subsectionIndex: number,
   index: number,
-) => {
+): UnitMoveDetails | null => {
   // Find the next childAddable subsection within the same section
   const subsections = sections[sectionIndex].childInfo.children;
   if (subsectionIndex < (subsections.length - 1)) {
@@ -369,7 +396,7 @@ const moveToNextLocation = (
   const nextLocationResult = findValidSubsectionIndex(sections, sectionIndex, 1, findIndex);
 
   if (!nextLocationResult) {
-    return {};
+    return null;
   }
 
   return {
@@ -401,11 +428,11 @@ export const possibleUnitMoves = (
   section: XBlock,
   subsection: XBlock,
   units: XBlock[],
-) =>
+): ((index: number, step: number) => UnitMoveDetails | null) =>
 (index: number, step: number) => {
   // Early return if unit is not draggable
   if (!units[index]?.actions?.draggable) {
-    return {};
+    return null;
   }
 
   // Move within current subsection
@@ -428,5 +455,5 @@ export const possibleUnitMoves = (
     return moveToNextLocation(sections, sectionIndex, subsectionIndex, index);
   }
 
-  return {};
+  return null;
 };
