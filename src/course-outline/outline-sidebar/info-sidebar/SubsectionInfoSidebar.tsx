@@ -1,4 +1,4 @@
-import { useDefaultTab } from '../../../hooks/useDefaultTab';
+import { useDefaultTab } from '@src/hooks/useDefaultTab';
 import { isEmpty } from 'lodash';
 
 import { useIntl } from '@edx/frontend-platform/i18n';

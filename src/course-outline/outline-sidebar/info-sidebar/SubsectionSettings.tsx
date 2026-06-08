@@ -14,7 +14,7 @@ import AdvancedTab from '@src/generic/configure-modal/AdvancedTab';
 import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useStateWithCallback } from '@src/hooks';
-import { useItemFieldSync } from '../../../hooks/useItemFieldSync';
+import { useItemFieldSync } from '@src/hooks/useItemFieldSync';
 import {
   useCallback,
   useState,

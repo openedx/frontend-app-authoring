@@ -18,16 +18,16 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePasteFileNotices } from '@src/course-outline/data/apiHooks';
 import { AlertAgreementGatedFeature } from '@src/generic/agreement-gated-feature';
-import { AgreementGated } from '../../constants';
-import CourseOutlinePageAlertsSlot from '../../plugin-slots/CourseOutlinePageAlertsSlot';
-import advancedSettingsMessages from '../../advanced-settings/messages';
-import { OutOfSyncAlert } from '../../course-libraries/OutOfSyncAlert';
-import { RequestStatus } from '../../data/constants';
+import { AgreementGated } from '@src/constants';
+import CourseOutlinePageAlertsSlot from '@src/plugin-slots/CourseOutlinePageAlertsSlot';
+import advancedSettingsMessages from '@src/advanced-settings/messages';
+import { OutOfSyncAlert } from '@src/course-libraries/OutOfSyncAlert';
+import { RequestStatus } from '@src/data/constants';
 import { API_ERROR_TYPES } from '../constants';
 
-import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
-import AlertMessage from '../../generic/alert-message';
-import AlertProctoringError from '../../generic/AlertProctoringError';
+import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import AlertMessage from '@src/generic/alert-message';
+import AlertProctoringError from '@src/generic/AlertProctoringError';
 import messages from './messages';
 
 const PageAlerts = ({

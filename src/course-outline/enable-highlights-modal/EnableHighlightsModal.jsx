@@ -9,7 +9,7 @@ import {
 } from '@openedx/paragon';
 
 import messages from './messages';
-import { useHelpUrls } from '../../help-urls/hooks';
+import { useHelpUrls } from '@src/help-urls/hooks';
 
 const EnableHighlightsModal = ({
   onEnableHighlightsSubmit,

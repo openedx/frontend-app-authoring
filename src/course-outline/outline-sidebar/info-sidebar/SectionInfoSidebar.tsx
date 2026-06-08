@@ -1,4 +1,4 @@
-import { useDefaultTab } from '../../../hooks/useDefaultTab';
+import { useDefaultTab } from '@src/hooks/useDefaultTab';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 import { useNavigate } from 'react-router-dom';
