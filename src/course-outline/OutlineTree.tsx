@@ -15,7 +15,7 @@ import {
   type SubsectionMoveDetails,
   type UnitMoveDetails,
 } from './drag-helper/utils';
-import { applyReorderMove } from './drag-helper/reorderHelpers';
+import { applyReorderMove } from './drag-helper/utils';
 
 export interface OutlineTreeProps {
   sections: XBlock[];

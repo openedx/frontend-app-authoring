@@ -28,7 +28,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getLibraryId } from '@src/generic/key-utils';
 import { extractCourseUnitId } from '@src/course-unit/legacy-sidebar/utils';
 import { possibleUnitMoves } from '@src/course-outline/drag-helper/utils';
-import { applyReorderMove } from '@src/course-outline/drag-helper/reorderHelpers';
+import { applyReorderMove } from '@src/course-outline/drag-helper/utils';
 import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
 import { useQueryClient } from '@tanstack/react-query';
 import { useOutlineSidebarContext } from '../OutlineSidebarContext';

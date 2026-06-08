@@ -14,7 +14,7 @@ import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContex
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getLibraryId } from '@src/generic/key-utils';
 import { possibleSubsectionMoves } from '@src/course-outline/drag-helper/utils';
-import { applyReorderMove } from '@src/course-outline/drag-helper/reorderHelpers';
+import { applyReorderMove } from '@src/course-outline/drag-helper/utils';
 import { XBlock } from '@src/data/types';
 
 import { InfoSection } from './InfoSection';
