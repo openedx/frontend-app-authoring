@@ -76,7 +76,6 @@ const ScheduleAndDetails = () => {
     isCreditCourse,
     upgradeDeadline,
     languageOptions,
-    marketingEnabled,
     licensingEnabled,
     aboutPageEditable,
     courseDisplayName,
@@ -261,7 +260,6 @@ const ScheduleAndDetails = () => {
                     courseNumber={courseNumber}
                     run={run}
                     lmsLinkForAboutPage={lmsLinkForAboutPage}
-                    marketingEnabled={marketingEnabled}
                     courseDisplayName={courseDisplayName}
                     platformName={platformName}
                   />

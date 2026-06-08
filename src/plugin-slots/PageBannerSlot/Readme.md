@@ -10,6 +10,14 @@
 
 This slot wraps the Paragon `PageBanner` component to allow plugins to replace, modify, or hide the banner shown on pages like Schedule & Details. By default, it renders the standard `PageBanner` with the provided props and children.
 
+### Plugin Props:
+
+- `show` - Boolean. Whether the banner is currently shown.
+- `onDismiss` - Function. Callback invoked when the banner is dismissed.
+- `lmsLinkForAboutPage` - String. URL of the course about page on the LMS.
+- `courseDisplayName` - String. The course's display name.
+- `platformName` - String. The platform name configured for the site.
+
 ## Example
 
 The following `env.config.jsx` example replaces the default banner message with a custom message.
@@ -41,6 +49,51 @@ const config = {
                   This message was injected via the PageBanner plugin slot.
                 </span>
               </>
+            ),
+          },
+        },
+      ],
+    },
+  },
+};
+
+export default config;
+```
+
+## Restoring the course enrollment card
+
+Prior to the removal of `ENABLE_MKTG_SITE`, deployments running with `ENABLE_MKTG_SITE=False`
+showed a "Course summary page" card in Schedule & Details instead of the promotional banner.
+That card displayed a direct link to the LMS about/enrollment page and an "Invite your students"
+mailto button.
+
+If you want to restore that experience, you can use `CoursePromotionCard` — exported from
+`basic-section` — via this slot. The slot passes `lmsLinkForAboutPage`, `courseDisplayName`,
+and `platformName` as plugin props so the card has everything it needs.
+
+```jsx
+import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
+import { CoursePromotionCard } from '@edx/frontend-app-authoring/src/schedule-and-details/basic-section';
+
+const config = {
+  pluginSlots: {
+    'org.openedx.frontend.authoring.page_banner.v1': {
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Hide,
+          widgetId: 'default_contents',
+        },
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'course_promotion_card',
+            type: DIRECT_PLUGIN,
+            RenderWidget: ({ lmsLinkForAboutPage, courseDisplayName, platformName }) => (
+              <CoursePromotionCard
+                lmsLinkForAboutPage={lmsLinkForAboutPage}
+                courseDisplayName={courseDisplayName}
+                platformName={platformName}
+              />
             ),
           },
         },
