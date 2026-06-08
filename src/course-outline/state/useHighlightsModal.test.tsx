@@ -6,6 +6,7 @@ const mockHighlightsMutate = jest.fn();
 
 jest.mock('../data', () => ({
   useUpdateCourseSectionHighlights: jest.fn(() => ({ mutate: mockHighlightsMutate })),
+  useEnableCourseHighlightsEmails: jest.fn(() => ({ mutate: jest.fn() })),
 }));
 
 describe('useHighlightsModal', () => {
