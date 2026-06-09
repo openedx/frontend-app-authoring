@@ -187,7 +187,7 @@ const AddComponent = ({
             /* istanbul ignore next */
             ({ courseKey, locator }) => {
               setCourseId(courseKey);
-              setBlockType(moduleName ?? null);
+              setBlockType(moduleName);
               setNewBlockId(locator);
               showXBlockEditorModal();
             },
