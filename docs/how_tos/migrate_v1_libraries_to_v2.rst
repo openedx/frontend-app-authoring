@@ -121,12 +121,19 @@ b. **Create the version directory**::
        TYPE=html                                   # e.g. html, problem, video
        mkdir -p "v2_library/entities/xblock.v1/${TYPE}/${UUID}/component_versions/v1/static"
 
-c. **Copy the block XML** — the V1 export stores each block's XML at
-   ``<type>/<block_id>/definition.xml`` (or sometimes directly as
-   ``<type>/<block_id>.xml``).  Copy it to the V2 path::
+c. **Copy the block XML** — the V1 export stores each block's XML either at
+   ``<type>/<block_id>/definition.xml`` (subdirectory layout) or directly as
+   ``<type>/<block_id>.xml`` (flat layout).  Copy it to the V2 path::
 
-       cp "v1_library_A/${TYPE}/${BLOCK_ID}/definition.xml" \
-          "v2_library/entities/xblock.v1/${TYPE}/${UUID}/component_versions/v1/block.xml"
+       # Subdirectory layout (most common):
+       if [ -f "v1_library_A/${TYPE}/${BLOCK_ID}/definition.xml" ]; then
+           cp "v1_library_A/${TYPE}/${BLOCK_ID}/definition.xml" \
+              "v2_library/entities/xblock.v1/${TYPE}/${UUID}/component_versions/v1/block.xml"
+       else
+           # Flat layout:
+           cp "v1_library_A/${TYPE}/${BLOCK_ID}.xml" \
+              "v2_library/entities/xblock.v1/${TYPE}/${UUID}/component_versions/v1/block.xml"
+       fi
 
    The XML content itself is unchanged — V2 uses the same XBlock XML format.
 
@@ -138,7 +145,8 @@ d. **Copy static assets** — any files from ``v1_library_A/static/`` that are
           "v2_library/entities/xblock.v1/${TYPE}/${UUID}/component_versions/v1/static/"
 
 e. **Write the entity TOML** at
-   ``v2_library/entities/xblock.v1/<type>/<uuid>.toml``:
+   ``v2_library/entities/xblock.v1/<type>/<uuid>.toml``
+   (the ``<type>/`` directory was already created by step 4b):
 
    .. code-block:: toml
 
@@ -216,5 +224,5 @@ Further Reading
 
 * :ref:`backup-restore-format` — full reference for the V2 archive schema
   (in the ``openedx-core`` documentation).
-* `Legacy Libraries Deprecation <https://openedx.atlassian.net/wiki/spaces/COMM/pages/>`_
-  — deprecation timeline for V1 (legacy) content libraries.
+* `Legacy Libraries Deprecation <https://github.com/openedx/edx-platform/issues/32457>`_
+  — deprecation tracking issue for V1 (legacy) content libraries.
