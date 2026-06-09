@@ -192,5 +192,4 @@ describe('DraggableList — drag-local tree ref', () => {
       expect(callbacks.onUnitDrop).not.toHaveBeenCalled();
     });
   });
-
 });
