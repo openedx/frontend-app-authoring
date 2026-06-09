@@ -74,6 +74,38 @@ export const SectionSidebar = () => {
     }
   };
 
+  const handleDuplicate = () => {
+    const sel = selectedContainerState;
+    if (!sel?.currentId) { return; }
+    duplicateMutation.mutate({
+      itemId: sel.currentId,
+      parentId: courseIDtoBlockID(courseId),
+      sectionId: sel.sectionId ?? sel.currentId,
+    });
+  };
+
+  const handleUnlink = () => {
+    openUnlinkModal({ value: sectionData, sectionId });
+  };
+
+  const handleDelete = () => {
+    if (sectionData) {
+      openDeleteModal({
+        category: 'chapter',
+        currentId: sectionData.id,
+        sectionId: sectionData.id,
+      });
+    }
+  };
+
+  const handleViewLibrary = () => {
+    const upstreamRef = sectionData.upstreamInfo?.upstreamRef;
+    if (upstreamRef) {
+      const libId = getLibraryId(upstreamRef);
+      navigate(`/library/${libId}/section/${upstreamRef}`);
+    }
+  };
+
   return (
     <>
       <SidebarTitle
@@ -85,34 +117,12 @@ export const SectionSidebar = () => {
           index: index ?? -1,
           actions: sectionData.actions || {},
           canMoveItem: canMoveSection(sections),
-          onClickDuplicate: () => {
-            const sel = selectedContainerState;
-            if (!sel?.currentId) { return; }
-            duplicateMutation.mutate({
-              itemId: sel.currentId,
-              parentId: courseIDtoBlockID(courseId),
-              sectionId: sel.sectionId ?? sel.currentId,
-            });
-          },
+          onClickDuplicate: handleDuplicate,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
-          onClickUnlink: () => openUnlinkModal({ value: sectionData, sectionId }),
-          onClickDelete: () => {
-            if (sectionData) {
-              openDeleteModal({
-                category: 'chapter',
-                currentId: sectionData.id,
-                sectionId: sectionData.id,
-              });
-            }
-          },
-          onClickViewLibrary: () => {
-            const upstreamRef = sectionData.upstreamInfo?.upstreamRef;
-            if (upstreamRef) {
-              const libId = getLibraryId(upstreamRef);
-              navigate(`/library/${libId}/section/${upstreamRef}`);
-            }
-          },
+          onClickUnlink: handleUnlink,
+          onClickDelete: handleDelete,
+          onClickViewLibrary: handleViewLibrary,
         }}
       />
       {sectionData.hasChanges && <PublishButon onClick={handlePublish} />}

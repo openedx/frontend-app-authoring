@@ -125,6 +125,43 @@ export const SubsectionSidebar = () => {
     }
   };
 
+  const handleDuplicate = () => {
+    const sel = selectedContainerState;
+    if (!sel?.currentId || !sel.sectionId) { return; }
+    duplicateMutation.mutate({
+      itemId: sel.currentId,
+      parentId: sel.sectionId,
+      sectionId: sel.sectionId,
+      subsectionId: sel.subsectionId,
+    });
+  };
+
+  const handleUnlink = () => {
+    openUnlinkModal({
+      value: subsectionData,
+      sectionId: selectedContainerState?.sectionId,
+    });
+  };
+
+  const handleDelete = () => {
+    const sectionId = selectedContainerState?.sectionId;
+    if (!sectionId) { return; }
+    openDeleteModal({
+      category: 'sequential',
+      currentId: subsectionData.id,
+      subsectionId: subsectionData.id,
+      sectionId,
+    });
+  };
+
+  const handleViewLibrary = () => {
+    const upstreamRef = subsectionData?.upstreamInfo?.upstreamRef;
+    if (upstreamRef) {
+      const libId = getLibraryId(upstreamRef);
+      navigate(`/library/${libId}/subsection/${upstreamRef}`);
+    }
+  };
+
   return (
     <>
       <SidebarTitle
@@ -136,40 +173,12 @@ export const SubsectionSidebar = () => {
           index: index ?? -1,
           actions,
           canMoveItem: canMoveSubsection,
-          onClickDuplicate: () => {
-            const sel = selectedContainerState;
-            if (!sel?.currentId || !sel.sectionId) { return; }
-            duplicateMutation.mutate({
-              itemId: sel.currentId,
-              parentId: sel.sectionId,
-              sectionId: sel.sectionId,
-              subsectionId: sel.subsectionId,
-            });
-          },
+          onClickDuplicate: handleDuplicate,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
-          onClickUnlink: () =>
-            openUnlinkModal({
-              value: subsectionData,
-              sectionId: selectedContainerState?.sectionId,
-            }),
-          onClickDelete: () => {
-            const sectionId = selectedContainerState?.sectionId;
-            if (!sectionId) { return; }
-            openDeleteModal({
-              category: 'sequential',
-              currentId: subsectionData.id,
-              subsectionId: subsectionData.id,
-              sectionId,
-            });
-          },
-          onClickViewLibrary: () => {
-            const upstreamRef = subsectionData?.upstreamInfo?.upstreamRef;
-            if (upstreamRef) {
-              const libId = getLibraryId(upstreamRef);
-              navigate(`/library/${libId}/subsection/${upstreamRef}`);
-            }
-          },
+          onClickUnlink: handleUnlink,
+          onClickDelete: handleDelete,
+          onClickViewLibrary: handleViewLibrary,
         }}
       />
       {subsectionData?.hasChanges && <PublishButon onClick={handlePublish} />}

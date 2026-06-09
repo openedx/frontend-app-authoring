@@ -211,6 +211,45 @@ export const UnitSidebar = () => {
     showToast(intl.formatMessage(messages.locationCopiedText));
   };
 
+  const handleDuplicate = () => {
+    const sel = selectedContainerState;
+    if (!sel?.currentId || !sel.sectionId || !sel.subsectionId) { return; }
+    duplicateMutation.mutate({
+      itemId: sel.currentId,
+      parentId: sel.subsectionId,
+      sectionId: sel.sectionId,
+      subsectionId: sel.subsectionId,
+    });
+  };
+
+  const handleUnlink = () => {
+    openUnlinkModal({
+      value: unitData,
+      sectionId: selectedContainerState?.sectionId,
+      subsectionId: selectedContainerState?.subsectionId,
+    });
+  };
+
+  const handleDelete = () => {
+    const sectionId = selectedContainerState?.sectionId;
+    const subsectionId = selectedContainerState?.subsectionId;
+    if (!sectionId || !subsectionId) { return; }
+    openDeleteModal({
+      category: 'vertical',
+      currentId: unitData.id,
+      subsectionId,
+      sectionId,
+    });
+  };
+
+  const handleViewLibrary = () => {
+    const upstreamRef = unitData?.upstreamInfo?.upstreamRef;
+    if (upstreamRef) {
+      const libId = getLibraryId(upstreamRef);
+      navigate(`/library/${libId}/unit/${upstreamRef}`);
+    }
+  };
+
   return (
     <>
       <SidebarTitle
@@ -222,44 +261,12 @@ export const UnitSidebar = () => {
           index: index ?? -1,
           actions,
           canMoveItem: canMoveUnit,
-          onClickDuplicate: unitData?.actions?.duplicable
-            ? () => {
-              const sel = selectedContainerState;
-              if (!sel?.currentId || !sel.sectionId || !sel.subsectionId) { return; }
-              duplicateMutation.mutate({
-                itemId: sel.currentId,
-                parentId: sel.subsectionId,
-                sectionId: sel.sectionId,
-                subsectionId: sel.subsectionId,
-              });
-            }
-            : undefined,
+          onClickDuplicate: unitData?.actions?.duplicable ? handleDuplicate : undefined,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
-          onClickUnlink: () =>
-            openUnlinkModal({
-              value: unitData,
-              sectionId: selectedContainerState?.sectionId,
-              subsectionId: selectedContainerState?.subsectionId,
-            }),
-          onClickDelete: () => {
-            const sectionId = selectedContainerState?.sectionId;
-            const subsectionId = selectedContainerState?.subsectionId;
-            if (!sectionId || !subsectionId) { return; }
-            openDeleteModal({
-              category: 'vertical',
-              currentId: unitData.id,
-              subsectionId,
-              sectionId,
-            });
-          },
-          onClickViewLibrary: () => {
-            const upstreamRef = unitData?.upstreamInfo?.upstreamRef;
-            if (upstreamRef) {
-              const libId = getLibraryId(upstreamRef);
-              navigate(`/library/${libId}/unit/${upstreamRef}`);
-            }
-          },
+          onClickUnlink: handleUnlink,
+          onClickDelete: handleDelete,
+          onClickViewLibrary: handleViewLibrary,
           onClickCopy: /* istanbul ignore next: copy-to-clipboard action, utility wrapper */ () =>
             copyToClipboard(unitId),
           onClickCopyLocation: handleCopyLocation,
