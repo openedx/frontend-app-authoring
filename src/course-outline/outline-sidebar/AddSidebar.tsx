@@ -29,6 +29,7 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
 import AlertMessage from '@src/generic/alert-message';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useBackNavigation } from './back-navigation';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import messages from './messages';
 
@@ -363,9 +364,9 @@ export const AddSidebar = () => {
     isCurrentFlowOn,
     currentFlow,
     currentItemData,
-    clearSelection,
     stopCurrentFlow,
     selectedContainerState,
+    openContainerSidebar,
   } = useOutlineSidebarContext();
   const { data: flowData } = useCourseItemData(currentFlow?.parentLocator);
   const titleAndIcon = useMemo(() => {
@@ -386,9 +387,13 @@ export const AddSidebar = () => {
     courseDetails,
   ]);
 
+  const handleSelectionBack = useBackNavigation({
+    openContainer: openContainerSidebar,
+  });
+
   const handleBack = () => {
-    clearSelection();
     stopCurrentFlow();
+    handleSelectionBack();
   };
 
   return (

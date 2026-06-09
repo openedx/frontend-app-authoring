@@ -2,6 +2,7 @@ import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { AlignSidebar } from '@src/generic/sidebar/AlignSidebar';
+import { useBackNavigation } from './back-navigation';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
 /**
@@ -10,17 +11,16 @@ import { useOutlineSidebarContext } from './OutlineSidebarContext';
 export const OutlineAlignSidebar = () => {
   const { courseId } = useCourseAuthoringContext();
   const { setCurrentSelection } = useCourseOutlineContext();
-  const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerSidebar } = useOutlineSidebarContext();
 
   const sidebarContentId = selectedContainerState?.currentId || courseId;
 
   const { data: contentData } = useContentData(sidebarContentId);
 
-  // istanbul ignore next
-  const handleBack = () => {
-    clearSelection();
-    setCurrentSelection(undefined);
-  };
+  const handleBack = useBackNavigation({
+    openContainer: openContainerSidebar,
+    onSelectionChange: setCurrentSelection,
+  });
 
   return (
     <AlignSidebar
