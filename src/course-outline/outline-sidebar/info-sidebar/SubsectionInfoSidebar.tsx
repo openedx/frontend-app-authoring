@@ -16,6 +16,7 @@ import { getLibraryId } from '@src/generic/key-utils';
 import { possibleSubsectionMoves } from '@src/course-outline/drag-helper/utils';
 import { applyReorderMove } from '@src/course-outline/drag-helper/utils';
 import { XBlock } from '@src/data/types';
+import { useBackNavigation } from '../back-navigation';
 
 import { InfoSection } from './InfoSection';
 import { PublishButon } from './PublishButon';
@@ -27,11 +28,11 @@ export const SubsectionSidebar = () => {
   const navigate = useNavigate();
 
   const {
-    clearSelection,
     currentTabKey,
     setCurrentTabKey,
     selectedContainerState,
     setSelectedContainerState,
+    openContainerInfoSidebar,
   } = useOutlineSidebarContext();
   const { subsectionId = '', index } = selectedContainerState ?? {};
 
@@ -54,6 +55,10 @@ export const SubsectionSidebar = () => {
     commitSubsectionReorder,
   } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
+
+  const handleBack = useBackNavigation({
+    openContainer: openContainerInfoSidebar,
+  });
 
   const handlePublish = () => {
     if (selectedContainerState?.sectionId && subsectionData?.hasChanges) {
@@ -125,7 +130,7 @@ export const SubsectionSidebar = () => {
       <SidebarTitle
         title={subsectionData?.displayName || ''}
         icon={getItemIcon(subsectionData?.category || '')}
-        onBackBtnClick={clearSelection}
+        onBackBtnClick={handleBack}
         menuProps={{
           itemId: subsectionId,
           index: index ?? -1,

@@ -174,4 +174,53 @@ describe('UnitSidebar', () => {
     await user.click(screen.getByRole('tab', { name: /Settings/i }));
     expect(screen.getByText('GenericUnitInfoSettings')).toBeInTheDocument();
   });
+
+  it('back opens subsection info sidebar when subsectionId exists', async () => {
+    const user = userEvent.setup();
+    const openContainerInfoSidebar = jest.fn();
+    outlineContext.useOutlineSidebarContext.mockReturnValue({
+      selectedContainerState: { currentId: 'unit-5', sectionId: 's1', subsectionId: 'ss1' },
+      clearSelection: jest.fn(),
+      openContainerInfoSidebar,
+      setSelectedContainerState: jest.fn(),
+      currentTabKey: 'info',
+      setCurrentTabKey: jest.fn(),
+    });
+    outlineState.useCourseOutlineContext.mockReturnValue({
+      openPublishModal: jest.fn(),
+      handleDuplicateUnitSubmit: jest.fn(),
+      sections: [{ id: 's1' }],
+      updateUnitOrderByIndex: jest.fn(),
+      openDeleteModal: jest.fn(),
+    });
+    apiHooks.useCourseItemData.mockImplementation((id: string) => {
+      if (id === 's1') {
+        return {
+          data: { id: 's1', childInfo: { children: [{ id: 'ss1' }] } },
+          isPending: false,
+        };
+      }
+      if (id === 'ss1') {
+        return {
+          data: { id: 'ss1', childInfo: { children: [] } },
+          isPending: false,
+        };
+      }
+      return {
+        data: {
+          displayName: 'Unit 5',
+          hasChanges: false,
+          category: 'vertical',
+          id: 'unit-5',
+          actions: { deletable: true, duplicable: true },
+        },
+        isPending: false,
+      };
+    });
+
+    render(<UnitSidebar />);
+    await user.click(screen.getByRole('button', { name: 'Back' }));
+
+    expect(openContainerInfoSidebar).toHaveBeenCalledWith('ss1', 'ss1', 's1', 0);
+  });
 });

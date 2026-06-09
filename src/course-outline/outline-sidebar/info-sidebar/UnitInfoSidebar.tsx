@@ -38,6 +38,7 @@ import { InfoSection } from './InfoSection';
 import { useClipboard } from '@src/generic/clipboard';
 import { ToastContext } from '@src/generic/toast-context';
 import { XBlock } from '@src/data/types';
+import { useBackNavigation } from '../back-navigation';
 interface Props {
   unitId: string;
 }
@@ -74,10 +75,10 @@ export const UnitSidebar = () => {
   const navigate = useNavigate();
   const {
     selectedContainerState,
-    clearSelection,
     currentTabKey,
     setCurrentTabKey,
     setSelectedContainerState,
+    openContainerInfoSidebar,
   } = useOutlineSidebarContext();
   const {
     currentId: unitId = /* istanbul ignore next: default when no selection */ '',
@@ -109,6 +110,10 @@ export const UnitSidebar = () => {
   ) ?? -1;
   const { copyToClipboard } = useClipboard();
   const { showToast } = useContext(ToastContext);
+
+  const handleBack = useBackNavigation({
+    openContainer: openContainerInfoSidebar,
+  });
 
   const handlePublish = () => {
     if (unitData?.hasChanges) {
@@ -211,7 +216,7 @@ export const UnitSidebar = () => {
       <SidebarTitle
         title={unitData?.displayName || ''}
         icon={getItemIcon(unitData?.category || '')}
-        onBackBtnClick={clearSelection}
+        onBackBtnClick={handleBack}
         menuProps={{
           itemId: unitId,
           index: index ?? -1,

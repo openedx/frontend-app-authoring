@@ -9,13 +9,15 @@ import { InfoSidebar } from './InfoSidebar';
 
 const mockDuplicateItem = { mutate: jest.fn() };
 let selectedContainerState: SelectionState | undefined;
+const mockClearSelection = jest.fn();
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
     ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     selectedContainerState,
-    clearSelection: jest.fn(),
+    clearSelection: mockClearSelection,
     setSelectedContainerState: mockSetSelectedContainerState,
+    openContainerInfoSidebar: mockOpenContainerInfoSidebar,
   }),
 }));
 
@@ -40,6 +42,7 @@ const commitSubsectionReorder = jest.fn();
 const commitUnitReorder = jest.fn();
 const previewSections = jest.fn();
 const mockSetSelectedContainerState = jest.fn();
+const mockOpenContainerInfoSidebar = jest.fn();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mockSections: any[] = [];
 
@@ -210,6 +213,8 @@ describe('InfoSidebar component', () => {
     commitSectionReorder.mockClear();
     previewSections.mockClear();
     mockSetSelectedContainerState.mockClear();
+    mockOpenContainerInfoSidebar.mockClear();
+    mockClearSelection.mockClear();
     mockSections = [];
   });
 
@@ -533,6 +538,7 @@ describe('InfoSidebar component', () => {
   describe('SubsectionSidebar menus', () => {
     const subsectionId = 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sub1';
     const chId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1';
+    const upstreamRef = 'lb:org:lib:sequential:sub-id';
     const subsectionData = {
       id: subsectionId,
       displayName: 'subsection name',
@@ -541,6 +547,105 @@ describe('InfoSidebar component', () => {
       actions: { deletable: true, duplicable: true, draggable: false },
       upstreamInfo: null,
     };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const renderSubsectionMenu = async (data: any = subsectionData) => {
+      selectedContainerState = {
+        currentId: subsectionId,
+        subsectionId,
+        sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
+      };
+      axiosMock.onGet(getXBlockApiUrl(subsectionId)).reply(200, data);
+      renderComponent();
+      await screen.findByText(data.displayName);
+      await screen.findByRole('button', { name: 'Item Menu' });
+    };
+
+    it('goes back to parent section with section index', async () => {
+      const user = userEvent.setup();
+      mockSections = [{
+        id: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
+        actions: { childAddable: true },
+        upstreamInfo: null,
+        childInfo: { children: [] },
+      }];
+      await renderSubsectionMenu();
+
+      await user.click(screen.getByRole('button', { name: /back/i }));
+
+      expect(mockOpenContainerInfoSidebar).toHaveBeenCalledWith(
+        'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
+        undefined,
+        'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
+        0,
+      );
+    });
+
+    it('calls openDeleteModal when Delete is clicked in subsection menu', async () => {
+      const user = userEvent.setup();
+      await renderSubsectionMenu();
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const deleteBtn = await screen.findByText('Delete');
+      await user.click(deleteBtn);
+
+      expect(openDeleteModal).toHaveBeenCalled();
+    });
+
+    it('calls mockDuplicateItem.mutate when Duplicate is clicked in subsection menu', async () => {
+      const user = userEvent.setup();
+      await renderSubsectionMenu();
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const duplicateBtn = await screen.findByText('Duplicate');
+      await user.click(duplicateBtn);
+
+      expect(mockDuplicateItem.mutate).toHaveBeenCalled();
+    });
+
+    it('calls openUnlinkModal when Unlink is clicked in subsection menu', async () => {
+      const user = userEvent.setup();
+      const subsectionWithUpstream = {
+        ...subsectionData,
+        actions: { ...subsectionData.actions, unlinkable: true },
+        upstreamInfo: { upstreamRef },
+      };
+      await renderSubsectionMenu(subsectionWithUpstream);
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const unlinkBtn = await screen.findByText('Unlink from Library');
+      await user.click(unlinkBtn);
+
+      expect(openUnlinkModal).toHaveBeenCalledWith(expect.objectContaining({
+        value: subsectionWithUpstream,
+        sectionId: selectedContainerState?.sectionId,
+      }));
+    });
+
+    it('navigates to library when View in Library is clicked in subsection menu', async () => {
+      const user = userEvent.setup();
+      const subsectionWithUpstream = {
+        ...subsectionData,
+        upstreamInfo: { upstreamRef },
+      };
+      await renderSubsectionMenu(subsectionWithUpstream);
+
+      const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
+      fireEvent.click(menuToggle);
+
+      const viewLibBtn = await screen.findByText('View in Library');
+      await user.click(viewLibBtn);
+
+      expect(mockedNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/library/'),
+      );
+    });
 
     describe('handleMove', () => {
       const draggableSubsectionData = {
