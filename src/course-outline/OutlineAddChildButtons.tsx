@@ -13,7 +13,7 @@ import {
   OUTLINE_CATEGORY_CONFIG,
   CONTAINER_CATEGORY_CONFIG,
 } from './constants';
-import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
+import { useCreateCourseBlock } from '@src/course-outline/data';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { useCreateBlockSidebar } from '@src/course-outline/state';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';

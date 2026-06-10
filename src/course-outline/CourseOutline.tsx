@@ -33,8 +33,7 @@ import {
   useRestartIndexingOnCourse,
 } from '@src/course-outline/data';
 import { useCourseOutlineContext } from './CourseOutlineContext';
-import { useHighlightsModal } from './state/useHighlightsModal';
-import { useConfigureDialog } from './state/useConfigureModal';
+import { useHighlightsModal, useConfigureDialog } from './state';
 import { COURSE_BLOCK_NAMES } from './constants';
 
 import PageAlerts from './page-alerts/PageAlerts';

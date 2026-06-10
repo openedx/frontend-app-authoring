@@ -33,7 +33,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from './CourseOutlineContext';
 import { useOutlineSidebarContext } from './outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys } from './data/queryKeys';
-import { useCourseItemData, useScrollState, useDuplicateItem } from './data/apiHooks';
+import { useCourseItemData, useScrollState, useDuplicateItem } from './data';
 import type { MoveDetails } from './drag-helper/utils';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
