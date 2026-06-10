@@ -3,12 +3,14 @@ import { useCallback } from 'react';
 import type { OutlineActionSelection, XBlock } from '@src/data/types';
 import {
   useCourseItemData,
+  useConfigureSection,
+  useConfigureSubsection,
+  useConfigureUnit,
   type ConfigureItemPayload,
   type ChapterConfigurePayload,
   type SequentialConfigurePayload,
   type UnitConfigurePayload,
 } from '../data';
-import { useOutlineConfigureAction } from './useOutlineActions';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import { useModalState } from './useModalState';
 
@@ -25,7 +27,29 @@ export interface UseConfigureDialogOutput {
  * Configure modal hook — manage configure dialog state and submission.
  */
 export function useConfigureDialog(courseId: string): UseConfigureDialogOutput {
-  const { handleConfigureItemSubmit } = useOutlineConfigureAction(courseId);
+  const configureSectionMutation = useConfigureSection(courseId);
+  const configureSubsectionMutation = useConfigureSubsection(courseId);
+  const configureUnitMutation = useConfigureUnit(courseId);
+
+  const configureMutationMap = {
+    chapter: configureSectionMutation,
+    sequential: configureSubsectionMutation,
+    vertical: configureUnitMutation,
+  } as const;
+
+  const handleConfigureItemSubmit = useCallback(
+    async (payload: ConfigureItemPayload): Promise<boolean> => {
+      if (!payload) { return false; }
+      try {
+        const { category: _, ...rest } = payload;
+        await configureMutationMap[payload.category].mutateAsync(rest as any);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [configureSectionMutation, configureSubsectionMutation, configureUnitMutation],
+  );
 
   const {
     isOpen: isConfigureModalOpen,

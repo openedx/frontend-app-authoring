@@ -1,12 +1,10 @@
 import userEvent from '@testing-library/user-event';
 import { ContainerType } from '@src/generic/key-utils';
+import { initializeMocks, render, screen, waitFor } from '@src/testUtils';
 import {
-  initializeMocks,
-  render,
-  screen,
-  waitFor,
-} from '@src/testUtils';
-import { OutlineFlow, OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+  OutlineFlow,
+  OutlineSidebarProvider,
+} from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
 jest.mock('@src/studio-home/data/selectors', () => ({
@@ -18,11 +16,21 @@ jest.mock('@src/studio-home/data/selectors', () => ({
 
 const mockMutateAsync = jest.fn();
 const mockMutate = jest.fn();
-const mockCreateBlock = { mutateAsync: mockMutateAsync, mutate: mockMutate, isPending: false };
+const mockCreateBlock = {
+  mutateAsync: mockMutateAsync,
+  mutate: mockMutate,
+  isPending: false,
+};
 
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   ...jest.requireActual('@src/course-outline/data/apiHooks'),
   useCreateCourseBlock: jest.fn(() => mockCreateBlock),
+}));
+
+let mockIsMutatingCount = 0;
+jest.mock('@tanstack/react-query', () => ({
+  ...jest.requireActual('@tanstack/react-query'),
+  useIsMutating: jest.fn(() => mockIsMutatingCount),
 }));
 
 const courseUsageKey = 'some/usage/key';
@@ -42,8 +50,16 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
     selectContainer: jest.fn(),
     clearSelection: jest.fn(),
     openContainerInfo: jest.fn(),
-    handleAddBlock: { isPending: false, mutate: mockMutate, mutateAsync: mockMutateAsync },
-    handleAddAndOpenUnit: { isPending: false, mutate: mockMutate, mutateAsync: mockMutateAsync },
+    handleAddBlock: {
+      isPending: false,
+      mutate: mockMutate,
+      mutateAsync: mockMutateAsync,
+    },
+    handleAddAndOpenUnit: {
+      isPending: false,
+      mutate: mockMutate,
+      mutateAsync: mockMutateAsync,
+    },
   }),
 }));
 
@@ -51,9 +67,15 @@ const startCurrentFlow = jest.fn();
 const openContainerInfoSidebar = jest.fn();
 let currentFlow: OutlineFlow | null = null;
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
-  ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
+  ...jest.requireActual(
+    '@src/course-outline/outline-sidebar/OutlineSidebarContext',
+  ),
   useOutlineSidebarContext: () => ({
-    ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
+    ...jest
+      .requireActual(
+        '@src/course-outline/outline-sidebar/OutlineSidebarContext',
+      )
+      .useOutlineSidebarContext(),
     startCurrentFlow,
     openContainerInfoSidebar,
     currentFlow,
@@ -71,6 +93,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
       initializeMocks();
       mockMutateAsync.mockReset();
       mockMutate.mockReset();
+      mockIsMutatingCount = 0;
     });
 
     it('renders and behaves correctly', async () => {
@@ -84,9 +107,13 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
         { extraWrapper: OutlineSidebarProvider },
       );
 
-      const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
+      const newBtn = await screen.findByRole('button', {
+        name: `New ${containerType}`,
+      });
       expect(newBtn).toBeInTheDocument();
-      const useBtn = await screen.findByRole('button', { name: `Use ${containerType} from library` });
+      const useBtn = await screen.findByRole('button', {
+        name: `Use ${containerType} from library`,
+      });
       expect(useBtn).toBeInTheDocument();
       await userEvent.click(newBtn);
       await waitFor(() => expect(newClickHandler).toHaveBeenCalled());
@@ -110,7 +137,9 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
         { extraWrapper: OutlineSidebarProvider },
       );
 
-      const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
+      const newBtn = await screen.findByRole('button', {
+        name: `New ${containerType}`,
+      });
       expect(newBtn).toBeInTheDocument();
 
       // Set mocked return value before click so follow-up code
@@ -137,7 +166,11 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
             })
           );
           await waitFor(() => {
-            expect(openContainerInfoSidebar).toHaveBeenCalledWith('new-section-id', undefined, 'new-section-id');
+            expect(openContainerInfoSidebar).toHaveBeenCalledWith(
+              'new-section-id',
+              undefined,
+              'new-section-id',
+            );
           });
           break;
         case ContainerType.Subsection:
@@ -181,7 +214,9 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
         />,
         { extraWrapper: OutlineSidebarProvider },
       );
-      const useBtn = await screen.findByRole('button', { name: `Use ${containerType} from library` });
+      const useBtn = await screen.findByRole('button', {
+        name: `Use ${containerType} from library`,
+      });
       expect(useBtn).toBeInTheDocument();
       await userEvent.click(useBtn);
       await waitFor(() =>
@@ -211,6 +246,29 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
           name: new RegExp(`Adding Library ${containerType}`, 'i'),
         }),
       ).toBeInTheDocument();
+    });
+
+    it('shows spinner when createBlock mutation is pending', async () => {
+      const parentLocator = `parent-of-${containerType}`;
+      currentFlow = {
+        flowType: containerType,
+        parentLocator,
+      };
+      mockIsMutatingCount = 1;
+      render(
+        <OutlineAddChildButtons
+          childType={containerType}
+          parentLocator={parentLocator}
+        />,
+        { extraWrapper: OutlineSidebarProvider },
+      );
+      // should show placeholder with spinner when mutation is pending
+      expect(
+        await screen.findByRole('heading', {
+          name: new RegExp(`Adding Library ${containerType}`, 'i'),
+        }),
+      ).toBeInTheDocument();
+      expect(screen.getByRole('status')).toBeInTheDocument();
     });
   });
 });

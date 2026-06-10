@@ -1,11 +1,6 @@
-import {
-  Button,
-  Col,
-  IconButton,
-  Row,
-  Stack,
-} from '@openedx/paragon';
+import { Button, Col, IconButton, Row, Stack } from '@openedx/paragon';
 import { Add as IconAdd, Close, Newsstand } from '@openedx/paragon/icons';
+import { useIsMutating } from '@tanstack/react-query';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
@@ -14,8 +9,12 @@ import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/Ou
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
-import { OUTLINE_CATEGORY_CONFIG, CONTAINER_CATEGORY_CONFIG } from './constants';
+import {
+  OUTLINE_CATEGORY_CONFIG,
+  CONTAINER_CATEGORY_CONFIG,
+} from './constants';
 import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { useCreateBlockSidebar } from '@src/course-outline/state';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
@@ -96,11 +95,20 @@ const OutlineAddChildButtons = ({
   const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const { courseUsageKey } = useCourseOutlineContext();
   const { startCurrentFlow, openContainerInfoSidebar } = useOutlineSidebarContext();
-  const { createSection, createSubsection, handleAddBlock } = useCreateBlockSidebar(
+  const { createSection, createSubsection } = useCreateBlockSidebar(
     courseId,
     courseUsageKey,
     openContainerInfoSidebar,
   );
+
+  // Use global mutation state to track all createBlock mutations,
+  // including those triggered from library add flows in other components
+  const isCreatingBlock = useIsMutating({
+    mutationKey: courseOutlineQueryKeys.mutations.savingOperation(
+      courseId,
+      'createBlock',
+    ),
+  }) > 0;
   // Core config from single source of truth
   const categoryConfig = CONTAINER_CATEGORY_CONFIG[childType];
   if (!categoryConfig) {
@@ -143,18 +151,13 @@ const OutlineAddChildButtons = ({
       parentLocator,
       grandParentLocator,
     });
-  }, [
-    childType,
-    parentLocator,
-    grandParentLocator,
-    startCurrentFlow,
-  ]);
+  }, [childType, parentLocator, grandParentLocator, startCurrentFlow]);
 
   return (
     <>
       <AddPlaceholder
         parentLocator={parentLocator}
-        isPending={handleAddBlock.isPending || handleAddAndOpenUnit.isPending}
+        isPending={isCreatingBlock}
       />
       <Stack direction="horizontal" gap={3} onClick={onClickCard}>
         <Button

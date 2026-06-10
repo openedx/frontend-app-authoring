@@ -12,7 +12,6 @@ export { useDeleteModal } from './useDeleteModal';
 export type { UseDeleteModalOutput } from './useDeleteModal';
 export { useHighlightsModal } from './useHighlightsModal';
 export type { UseHighlightsModalOutput } from './useHighlightsModal';
-export { useOutlineDeleteAction, useOutlineConfigureAction } from './useOutlineActions';
 export { useOutlineReorderState } from './useOutlineReorderState';
 export type { UseOutlineReorderStateOutput } from './useOutlineReorderState';
 export { useOutlineStatusState } from './useOutlineStatusState';

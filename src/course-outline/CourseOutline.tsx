@@ -103,11 +103,11 @@ const CourseOutline = () => {
   const dismissNotificationMutation = useDismissNotification(courseId);
   const reindexMutation = useRestartIndexingOnCourse(courseId);
 
-  const handlePasteClipboardClick = useCallback((parentLocator, subsectionId, sectionId) => {
+  const handlePasteClipboardClick = useCallback((parentLocator: string, subsectionId: string, sectionId: string) => {
     pasteMutation.mutate({ parentLocator, subsectionId, sectionId });
   }, [pasteMutation]);
 
-  const handleVideoSharingOptionChange = useCallback((value) => {
+  const handleVideoSharingOptionChange = useCallback((value: string) => {
     videoSharingMutation.mutate(value);
   }, [videoSharingMutation]);
 
