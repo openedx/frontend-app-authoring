@@ -52,11 +52,16 @@ export function useCourseOutlineReindexStatus(courseId?: string): {
   const mutations = useMutationState({
     filters: { mutationKey: courseOutlineQueryKeys.mutations.reindex(courseId) },
   });
-  const latest = latestMutation(mutations);
-  const status = latest?.status;
-  if (status === 'pending') {
+
+  // Pending wins — must check before latestMutation, which filters out 'pending'.
+  // This ensures IN_PROGRESS is reported even when a previous mutation succeeded/failed
+  // and a new reindex has been started (including retries after prior failure/success).
+  if (mutations.some(m => m.status === 'pending')) {
     return { reindexLoadingStatus: RequestStatus.IN_PROGRESS, reindexError: null };
   }
+
+  const latest = latestMutation(mutations);
+  const status = latest?.status;
   if (status === 'error' && latest) {
     return {
       reindexLoadingStatus: RequestStatus.FAILED,

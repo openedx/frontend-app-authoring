@@ -26,7 +26,7 @@ export interface OutlineTreeProps {
   isCustomRelativeDatesActive: boolean;
   isSectionsExpanded: boolean;
   isSelfPaced: boolean;
-  discussionsSettings: { providerType: string; enableGradedUnits: boolean; };
+  discussionsSettings?: { providerType: string; enableGradedUnits: boolean; };
   previewSections: (nextSections: XBlock[]) => void;
   cancelReorderPreview: () => void;
   commitSectionReorder: (sectionListIds: string[]) => Promise<void>;

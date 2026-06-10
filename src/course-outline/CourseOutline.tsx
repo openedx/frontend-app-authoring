@@ -292,7 +292,7 @@ const CourseOutline = () => {
                     isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                     isSectionsExpanded={isSectionsExpanded}
                     isSelfPaced={statusBarData.isSelfPaced}
-                    discussionsSettings={discussionsSettings!}
+                    discussionsSettings={discussionsSettings}
                     previewSections={previewSections}
                     cancelReorderPreview={cancelReorderPreview}
                     commitSectionReorder={commitSectionReorder}
