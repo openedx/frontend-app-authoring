@@ -8,7 +8,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type ReactNode,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -16,7 +15,6 @@ import { Bubble, Button, useToggle } from '@openedx/paragon';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import moment from 'moment';
-import { isEmpty } from 'lodash';
 
 import CardHeader from './card-header/CardHeader';
 import SortableItem from './drag-helper/SortableItem';
@@ -24,15 +22,14 @@ import { DragContext } from './drag-helper/DragContextProvider';
 import TitleButton from './card-header/TitleButton';
 import TitleLink from './card-header/TitleLink';
 import XBlockStatus from './xblock-status/XBlockStatus';
-import { courseIDtoBlockID, getItemStatus, getItemStatusBorder, scrollToElement } from './utils';
-import { ContainerType } from '@src/generic/key-utils';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from './utils';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { useClipboard, PasteComponent } from '@src/generic/clipboard';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import type { OutlineActionSelection, XBlock } from '@src/data/types';
+import type { XBlock, OutlineActionSelection } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from './CourseOutlineContext';
 import { useOutlineSidebarContext } from './outline-sidebar/OutlineSidebarContext';
@@ -44,50 +41,15 @@ import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/Cours
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import sectionMessages from './section-card/messages';
 import subsectionMessages from './subsection-card/messages';
-
-type Depth = 0 | 1 | 2;
-type IconSize = 'md' | 'sm' | 'xs';
-
-interface LevelConfig {
-  name: string;
-  contentClass: string;
-  contentTestId: string;
-  childContainerClass?: string;
-  childContainerTestId?: string;
-  containerType?: ContainerType;
-  iconSize: IconSize;
-  background: CSSProperties;
-}
-
-const LEVEL_CONFIG: Record<Depth, LevelConfig> = {
-  0: {
-    name: 'section',
-    contentClass: 'section-card__content',
-    contentTestId: 'section-card__content',
-    childContainerClass: 'section-card__subsections',
-    childContainerTestId: 'section-card__subsections',
-    containerType: ContainerType.Subsection,
-    iconSize: 'md',
-    background: { padding: '1.75rem' },
-  },
-  1: {
-    name: 'subsection',
-    contentClass: 'subsection-card__content item-children',
-    contentTestId: 'subsection-card__content',
-    childContainerClass: 'subsection-card__units',
-    childContainerTestId: 'subsection-card__units',
-    containerType: ContainerType.Unit,
-    iconSize: 'sm',
-    background: { background: '#f8f7f6' },
-  },
-  2: {
-    name: 'unit',
-    contentClass: 'unit-card__content item-children',
-    contentTestId: 'unit-card__content',
-    iconSize: 'xs',
-    background: { background: '#fdfdfd' },
-  },
-};
+import {
+  type Depth,
+  type OutlineNodeAncestors,
+  getLevelConfig,
+  buildSidebarOpenArgs,
+  buildSelectionState,
+  containsSearchResult as containsSearchResultInBlock,
+  createOutlineNodeModel,
+} from './outline-level';
 
 export interface OutlineNodeProps {
   block: XBlock;
@@ -152,13 +114,31 @@ const OutlineNode = ({
   const { data: liveBlock = initialData } = useCourseItemData(initialData.id, initialData as any);
   const { data: scrollState, resetData: resetScrollState } = useScrollState(courseId);
 
-  const levelConfig = LEVEL_CONFIG[depth];
+  const levelConfig = getLevelConfig(depth);
   const blk = liveBlock as any;
   const initBlk = initialData as any;
-  const effectiveSection: XBlock = parentSection || (depth === 0 ? initialData : parentSection!)!;
+
+  // Build ancestor chain from props
+  const ancestors: OutlineNodeAncestors = {
+    section: parentSection || initialData,
+    subsection: parentSubsection,
+  };
+
+  // Create bound model for this node (use liveBlock for actions, IDs are stable)
+  const model = createOutlineNodeModel({
+    block: liveBlock,
+    depth,
+    index,
+    ancestors,
+    courseId,
+    canMoveItem,
+    getPossibleMoves,
+  });
+
+  const effectiveSection = model.effectiveSection;
   const isScrolledToElement = locatorId === blk.id;
 
-  const shouldRenderUnit = !(depth === 2 && blk.isHeaderVisible === false);
+  const shouldRenderUnit = model.shouldRender(blk.isHeaderVisible !== false);
 
   const blockSyncData = useMemo(() => {
     if (!blk.upstreamInfo?.readyToSync) { return undefined; }
@@ -178,7 +158,7 @@ const OutlineNode = ({
       queryKey: courseOutlineQueryKeys.courseItemId(effectiveSection.id),
     });
     if (courseId) { invalidateLinksQuery(queryClient, courseId); }
-  }, [effectiveSection, courseId, queryClient]);
+  }, [effectiveSection.id, courseId, queryClient]);
 
   useEffect(() => {
     if (moment(initBlk.editedOnRaw).isAfter(moment(blk.editedOnRaw))) {
@@ -196,23 +176,11 @@ const OutlineNode = ({
     }
   }, [isScrolledToElement, scrollState, resetScrollState, blk.id]);
 
-  const containsSearchResult = useCallback(() => {
-    if (!locatorId || depth === 2) { return false; }
-    if (depth === 0) {
-      const subs = blk.childInfo?.children ?? [];
-      return subs.some(
-        (sub: any) =>
-          sub.id === locatorId
-          || sub.childInfo?.children?.some((u: any) => u.id === locatorId),
-      );
-    }
-    return blk.childInfo?.children?.some((u: any) => u.id === locatorId) ?? false;
-  }, [locatorId, blk.childInfo, depth]);
-
   const isHeaderVisible = blk.isHeaderVisible !== false;
   const [isExpanded, setIsExpanded] = useState(
     depth < 2 &&
-      (containsSearchResult() || (depth === 0 ? isSectionsExpanded : (!isHeaderVisible || isSectionsExpanded))),
+      (containsSearchResultInBlock(blk, depth, locatorId) ||
+        (depth === 0 ? isSectionsExpanded : (!isHeaderVisible || isSectionsExpanded))),
   );
 
   useEffect(() => {
@@ -227,8 +195,10 @@ const OutlineNode = ({
   }, [activeId, overId, blk.id, isExpanded, depth]);
 
   useEffect(() => {
-    if (depth < 2 && locatorId) { setIsExpanded((prev: boolean) => containsSearchResult() || prev); }
-  }, [locatorId, containsSearchResult, depth]);
+    if (depth < 2 && locatorId) {
+      setIsExpanded((prev: boolean) => containsSearchResultInBlock(blk, depth, locatorId) || prev);
+    }
+  }, [locatorId, blk.childInfo, depth]);
 
   useEffect(() => {
     if (depth !== 0 || !scrollState?.id) { return; }
@@ -242,21 +212,7 @@ const OutlineNode = ({
     ) { setIsExpanded(true); }
   }, [scrollState?.id, blk.childInfo, depth]);
 
-  const actions = { ...blk.actions };
-  if (depth === 0 && canMoveItem) {
-    actions.allowMoveUp = canMoveItem(index, -1);
-    actions.allowMoveDown = canMoveItem(index, 1);
-  } else if (depth > 0 && getPossibleMoves) {
-    const moveUp = getPossibleMoves(index, -1);
-    const moveDown = getPossibleMoves(index, 1);
-    const inhibit = depth === 1
-      ? parentSection?.upstreamInfo?.upstreamRef
-      : parentSubsection?.upstreamInfo?.upstreamRef;
-    actions.allowMoveUp = !isEmpty(moveUp) && !inhibit;
-    actions.allowMoveDown = !isEmpty(moveDown) && !inhibit;
-    actions.deletable = actions.deletable && !inhibit;
-    actions.duplicable = actions.duplicable && !inhibit;
-  }
+  const actions = model.actions();
 
   const blockStatus = getItemStatus({
     published: blk.published,
@@ -267,30 +223,23 @@ const OutlineNode = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents?: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      if (depth === 0) {
-        openContainerSidebar(blk.id, undefined, blk.id, index);
-        setIsExpanded(true);
-      } else if (depth === 1) {
-        openContainerSidebar(blk.id, blk.id, parentSection?.id ?? blk.id, index);
-        setIsExpanded(true);
-      } else { openContainerSidebar(blk.id, parentSubsection?.id ?? blk.id, parentSection?.id ?? blk.id, index); }
+      const nodeAncestors: OutlineNodeAncestors = {
+        section: parentSection || initialData,
+        subsection: parentSubsection,
+      };
+      const args = buildSidebarOpenArgs(initialData, depth, index, nodeAncestors);
+      openContainerSidebar(args.containerId, args.subsectionId, args.sectionId, args.index);
+      if (depth < 2) { setIsExpanded(true); }
     }
-  }, [depth, blk.id, index, openContainerSidebar, parentSection, parentSubsection]);
+  }, [depth, blk.id, index, openContainerSidebar, parentSection, parentSubsection, initialData]);
 
   const handleClickManageTags = useCallback(() => {
-    setSelectedContainerState(
-      depth === 0
-        ? { currentId: blk.id, sectionId: blk.id, index }
-        : depth === 1
-        ? { currentId: blk.id, subsectionId: blk.id, sectionId: parentSection?.id ?? blk.id, index }
-        : {
-          currentId: blk.id,
-          subsectionId: parentSubsection?.id ?? blk.id,
-          sectionId: parentSection?.id ?? blk.id,
-          index,
-        },
-    );
-  }, [depth, blk.id, index, parentSection, parentSubsection, setSelectedContainerState]);
+    const nodeAncestors: OutlineNodeAncestors = {
+      section: parentSection || initialData,
+      subsection: parentSubsection,
+    };
+    setSelectedContainerState(buildSelectionState(initialData, depth, index, nodeAncestors));
+  }, [depth, blk.id, index, parentSection, parentSubsection, setSelectedContainerState, initialData]);
 
   const handleMoveUp = () => {
     if (depth === 0) { onOrderChange(initialData, { oldIndex: index, newIndex: index - 1 }); }
@@ -301,11 +250,7 @@ const OutlineNode = ({
     else { onOrderChange(effectiveSection, getPossibleMoves!(index, 1)); }
   };
 
-  const isDraggable = !!actions.draggable && !!(actions.allowMoveUp || actions.allowMoveDown)
-    && (depth === 0 || (
-      isHeaderVisible
-      && !(depth === 1 ? parentSection?.upstreamInfo?.upstreamRef : parentSubsection?.upstreamInfo?.upstreamRef)
-    ));
+  const isDraggable = model.isDraggable(actions, isHeaderVisible);
 
   const titleComponent = depth < 2 ?
     (
@@ -342,13 +287,7 @@ const OutlineNode = ({
     ) :
     undefined;
 
-  // Node is droppable when it can be a same-level reorder target or can accept children
-  const isDroppable = Boolean(
-    actions.draggable
-      || actions.childAddable
-      || (depth === 1 && parentSection?.actions?.childAddable)
-      || (depth === 2 && parentSubsection?.actions?.childAddable),
-  );
+  const isDroppable = model.isDroppable(actions);
 
   const showPaste = depth === 1 && blk.enableCopyPasteUnits && showPasteUnit && sharedClipboardData;
 
@@ -388,53 +327,17 @@ const OutlineNode = ({
                 status={blockStatus}
                 cardId={blk.id}
                 hasChanges={blk.hasChanges}
-                renameSectionId={parentSection?.id ?? blk.id}
-                renameSubsectionId={depth === 1 ? blk.id : depth === 2 ? (parentSubsection?.id ?? blk.id) : undefined}
-                onClickPublish={() =>
-                  openPublishModal({
-                    value: liveBlock,
-                    sectionId: parentSection?.id ?? blk.id,
-                    ...(depth >= 2 ? { subsectionId: parentSubsection?.id ?? blk.id } : {}),
-                  })}
-                onClickConfigure={() =>
-                  onOpenConfigureModal({
-                    category: blk.category,
-                    currentId: blk.id,
-                    ...(depth >= 1 ? { subsectionId: blk.id } : {}),
-                    ...(depth >= 2 ? { subsectionId: parentSubsection?.id ?? blk.id } : {}),
-                    sectionId: parentSection?.id ?? blk.id,
-                    index,
-                  } as any)}
-                onClickDelete={() =>
-                  onOpenDeleteModal({
-                    category: blk.category,
-                    currentId: blk.id,
-                    ...(depth >= 1 ? { subsectionId: blk.id } : {}),
-                    ...(depth >= 2 ? { subsectionId: parentSubsection?.id ?? blk.id } : {}),
-                    sectionId: parentSection?.id ?? blk.id,
-                    index,
-                  } as any)}
-                onClickUnlink={() =>
-                  openUnlinkModal({
-                    value: liveBlock,
-                    sectionId: parentSection?.id ?? blk.id,
-                    ...(depth >= 2 ? { subsectionId: parentSubsection?.id ?? blk.id } : {}),
-                  })}
+                renameSectionId={model.renameSectionId}
+                renameSubsectionId={model.renameSubsectionId}
+                onClickPublish={() => openPublishModal(model.publishPayload(liveBlock))}
+                onClickConfigure={() => onOpenConfigureModal(model.actionSelection())}
+                onClickDelete={() => onOpenDeleteModal(model.actionSelection())}
+                onClickUnlink={() => openUnlinkModal(model.unlinkPayload(liveBlock))}
                 onClickMoveUp={handleMoveUp}
                 onClickMoveDown={handleMoveDown}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
-                onClickDuplicate={() =>
-                  duplicateMutation.mutate({
-                    itemId: blk.id,
-                    parentId: depth === 0
-                      ? courseIDtoBlockID(courseId)
-                      : depth === 1
-                      ? parentSection?.id ?? blk.id
-                      : parentSubsection?.id ?? blk.id,
-                    sectionId: parentSection?.id ?? blk.id,
-                    ...(depth >= 1 ? { subsectionId: depth === 1 ? blk.id : (parentSubsection?.id ?? blk.id) } : {}),
-                  } as any)}
+                onClickDuplicate={() => duplicateMutation.mutate(model.duplicateParams())}
                 onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={levelConfig.name}

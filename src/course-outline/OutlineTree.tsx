@@ -16,6 +16,7 @@ import {
   type UnitMoveDetails,
 } from './drag-helper/utils';
 import { applyReorderMove } from './drag-helper/utils';
+import { type Depth, LEVEL_NAMES } from './outline-level';
 
 export interface OutlineTreeProps {
   sections: XBlock[];
@@ -46,16 +47,12 @@ export interface OutlineTreeProps {
   handlePasteClipboardClick: (parentLocator: string, subsectionId: string, sectionId: string) => void;
 }
 
-type Depth = 0 | 1 | 2;
-
 interface RenderContext {
   section: XBlock;
   sectionIndex: number;
   subsection?: XBlock;
   subsectionIndex?: number;
 }
-
-const LEVEL_NAMES = ['section', 'subsection', 'unit'] as const;
 
 const OutlineTree = ({
   sections,
