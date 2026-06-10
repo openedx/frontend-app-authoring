@@ -7,7 +7,6 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
   type ReactNode,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -47,9 +46,9 @@ import {
   getLevelConfig,
   buildSidebarOpenArgs,
   buildSelectionState,
-  containsSearchResult as containsSearchResultInBlock,
   createOutlineNodeModel,
 } from './outline-level';
+import { useOutlineNodeExpansion } from './useOutlineNodeExpansion';
 
 export interface OutlineNodeProps {
   block: XBlock;
@@ -177,40 +176,17 @@ const OutlineNode = ({
   }, [isScrolledToElement, scrollState, resetScrollState, blk.id]);
 
   const isHeaderVisible = blk.isHeaderVisible !== false;
-  const [isExpanded, setIsExpanded] = useState(
-    depth < 2 &&
-      (containsSearchResultInBlock(blk, depth, locatorId) ||
-        (depth === 0 ? isSectionsExpanded : (!isHeaderVisible || isSectionsExpanded))),
-  );
 
-  useEffect(() => {
-    if (depth < 2) { setIsExpanded(isSectionsExpanded); }
-  }, [isSectionsExpanded, depth]);
-
-  useEffect(() => {
-    if (depth < 2) {
-      if (activeId === blk.id && isExpanded) { setIsExpanded(false); }
-      else if (overId === blk.id && !isExpanded) { setIsExpanded(true); }
-    }
-  }, [activeId, overId, blk.id, isExpanded, depth]);
-
-  useEffect(() => {
-    if (depth < 2 && locatorId) {
-      setIsExpanded((prev: boolean) => containsSearchResultInBlock(blk, depth, locatorId) || prev);
-    }
-  }, [locatorId, blk.childInfo, depth]);
-
-  useEffect(() => {
-    if (depth !== 0 || !scrollState?.id) { return; }
-    const subs = blk.childInfo?.children ?? [];
-    if (
-      subs.some(
-        (sub: any) =>
-          sub.id === scrollState.id
-          || sub.childInfo?.children?.some((u: any) => u.id === scrollState.id),
-      )
-    ) { setIsExpanded(true); }
-  }, [scrollState?.id, blk.childInfo, depth]);
+  const { isExpanded, setIsExpanded } = useOutlineNodeExpansion({
+    depth,
+    block: liveBlock,
+    locatorId,
+    isSectionsExpanded,
+    isHeaderVisible,
+    activeId,
+    overId,
+    scrollState,
+  });
 
   const actions = model.actions();
 
