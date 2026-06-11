@@ -38,8 +38,6 @@ import {
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
 const STUDIO_BASE_URL = 'http://localhost:18010';
 
-
-
 describe('useSetVideoSharingOption', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -540,21 +538,24 @@ describe('useUpdateCourseBlockName cache updates', () => {
     });
 
     // Seed outline index with deeply nested unit
-    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), buildTestOutline([
-      {
-        id: chapterId,
-        displayName: 'Chapter 1',
-        children: [
-          {
-            id: seqId,
-            displayName: 'Subsection 1',
-            children: [
-              { id: unitId, displayName: 'Old Unit' },
-            ],
-          },
-        ],
-      },
-    ]));
+    queryClient.setQueryData(
+      courseOutlineQueryKeys.index(courseId),
+      buildTestOutline([
+        {
+          id: chapterId,
+          displayName: 'Chapter 1',
+          children: [
+            {
+              id: seqId,
+              displayName: 'Subsection 1',
+              children: [
+                { id: unitId, displayName: 'Old Unit' },
+              ],
+            },
+          ],
+        },
+      ]),
+    );
 
     const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
 

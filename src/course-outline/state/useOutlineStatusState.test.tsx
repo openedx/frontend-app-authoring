@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RequestStatus } from '@src/data/constants';
 import { useOutlineStatusState } from './useOutlineStatusState';
 
-
 const mockCreateDiscussionsTopics = jest.fn();
 const mockGetCourseOutlineStatusBarData = jest.fn();
 const mockUseCourseOutlineIndex = jest.fn();

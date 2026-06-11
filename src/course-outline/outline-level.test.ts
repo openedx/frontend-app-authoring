@@ -32,7 +32,6 @@ import {
   createOutlineNodeModel,
 } from './outline-level';
 
-
 const COURSE_ID = 'course-v1:test+course';
 
 const sectionBlock = {
@@ -95,7 +94,6 @@ const blockByDepth: Record<Depth, XBlock> = {
   2: unitBlock,
 };
 
-
 describe('LEVEL_CONFIG', () => {
   it('has exactly three levels', () => {
     expect(Object.keys(LEVEL_CONFIG)).toHaveLength(3);
@@ -128,7 +126,6 @@ describe('LEVEL_CONFIG', () => {
   });
 });
 
-
 describe('resolveEffectiveSection', () => {
   it.each([0, 1, 2] as Depth[])('depth %d returns expected section', (depth) => {
     const block = blockByDepth[depth];
@@ -155,7 +152,6 @@ describe('resolveRenameIds', () => {
   );
 });
 
-
 describe('buildSidebarOpenArgs', () => {
   const INDEX = 0;
 
@@ -174,7 +170,6 @@ describe('buildSidebarOpenArgs', () => {
     },
   );
 });
-
 
 describe('buildSelectionState', () => {
   const INDEX = 0;
@@ -199,7 +194,6 @@ describe('buildSelectionState', () => {
     expect(() => buildSelectionState(unitBlock, 2, 0, badAncestors)).toThrow();
   });
 });
-
 
 describe('buildOutlineActionSelection', () => {
   const INDEX = 0;
@@ -260,7 +254,6 @@ describe('buildOutlineActionSelection', () => {
   });
 });
 
-
 describe('buildPublishPayload', () => {
   it.each([0, 1] as Depth[])('depth %d omits subsectionId', (depth) => {
     const liveBlock = blockByDepth[depth];
@@ -283,7 +276,6 @@ describe('buildPublishPayload', () => {
   });
 });
 
-
 describe('buildUnlinkPayload', () => {
   it.each([0, 1] as Depth[])('depth %d omits subsectionId', (depth) => {
     const result = buildUnlinkPayload(blockByDepth[depth], depth, ancestorsByDepth[depth]);
@@ -304,7 +296,6 @@ describe('buildUnlinkPayload', () => {
     expect(() => buildUnlinkPayload(unitBlock, 2, badAncestors)).toThrow();
   });
 });
-
 
 describe('buildDuplicateParams', () => {
   it('depth 0: parentId derived from courseId, no subsectionId', () => {
@@ -336,7 +327,6 @@ describe('buildDuplicateParams', () => {
     expect(() => buildDuplicateParams(unitBlock, 2, COURSE_ID, badAncestors)).toThrow();
   });
 });
-
 
 describe('resolveNodeActions', () => {
   const INDEX = 0;
@@ -436,7 +426,6 @@ describe('resolveNodeActions', () => {
   });
 });
 
-
 describe('computeIsDraggable', () => {
   const movableActions: XBlockActions = {
     draggable: true,
@@ -493,7 +482,6 @@ describe('computeIsDraggable', () => {
   });
 });
 
-
 describe('computeIsDroppable', () => {
   const droppableActions: XBlockActions = {
     draggable: true,
@@ -532,7 +520,6 @@ describe('computeIsDroppable', () => {
   });
 });
 
-
 describe('shouldRenderNode', () => {
   it('always renders depth 0 even with hidden header', () => {
     expect(shouldRenderNode(0, false)).toBe(true);
@@ -550,7 +537,6 @@ describe('shouldRenderNode', () => {
     expect(shouldRenderNode(2, true)).toBe(true);
   });
 });
-
 
 describe('containsSearchResult', () => {
   it('returns false when locatorId is null', () => {
@@ -598,7 +584,6 @@ describe('containsSearchResult', () => {
     expect(containsSearchResult(blockWithChildren, 1, 'unit3')).toBe(false);
   });
 });
-
 
 describe('createOutlineNodeModel', () => {
   it('returns object with all expected keys for depth 0', () => {

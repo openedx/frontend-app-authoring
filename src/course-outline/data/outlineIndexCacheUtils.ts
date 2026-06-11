@@ -139,9 +139,7 @@ function updateNodeInTree(
       ...node,
       childInfo: {
         ...node.childInfo,
-        children: node.childInfo.children.map((child: any) =>
-          updateNodeInTree(child, itemId, updater),
-        ),
+        children: node.childInfo.children.map((child: any) => updateNodeInTree(child, itemId, updater)),
       },
     };
   }
