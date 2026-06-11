@@ -4,7 +4,11 @@ import MockAdapter from 'axios-mock-adapter';
 
 import { initializeMocks } from '../../testUtils';
 import {
-  getReleaseNotes, createReleaseNote, editReleaseNote, deleteReleaseNote,
+  getReleaseNotes,
+  createReleaseNote,
+  editReleaseNote,
+  deleteReleaseNote,
+  unsubscribeFromReleaseNoteEmails,
 } from './api';
 
 describe('release-notes api', () => {
@@ -52,5 +56,13 @@ describe('release-notes api', () => {
     const url = new URL('/api/release_notes/v1/posts/', getConfig().STUDIO_BASE_URL).href;
     mock.onGet(url).reply(500, {});
     await expect(getReleaseNotes()).rejects.toBeTruthy();
+  });
+
+  test('unsubscribeFromReleaseNoteEmails issues authenticated GET', async () => {
+    const expectedUrl = new URL('/api/release_notes/v1/email/unsubscribe/', getConfig().STUDIO_BASE_URL).href;
+    mock.onGet(expectedUrl).reply(200, { message: 'unsubscribed' });
+    const res = await unsubscribeFromReleaseNoteEmails();
+    expect(res.message).toBe('unsubscribed');
+    expect(mock.history.get[0].url).toBe(expectedUrl);
   });
 });

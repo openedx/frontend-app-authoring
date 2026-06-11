@@ -106,6 +106,14 @@ const messages = defineMessages({
     id: 'release-notes.form.error.description.required',
     defaultMessage: 'Enter post content',
   },
+  sendEmailCheckboxLabel: {
+    id: 'release-notes.form.send-email.label',
+    defaultMessage: 'Send email notification to all course authors',
+  },
+  sendEmailCheckboxHelp: {
+    id: 'release-notes.form.send-email.help',
+    defaultMessage: 'When checked, an email will be sent to all course authors on the platform notifying them of this release note.',
+  },
 });
 
 export default messages;

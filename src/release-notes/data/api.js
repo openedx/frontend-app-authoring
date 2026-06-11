@@ -5,6 +5,7 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 const getReleaseNotesApiUrl = () => new URL('/api/release_notes/v1/posts/', getApiBaseUrl()).href;
 const getReleaseNoteApiUrl = (id) => new URL(`/api/release_notes/v1/posts/${id}/`, getApiBaseUrl()).href;
+const getUnsubscribeApiUrl = () => new URL('/api/release_notes/v1/email/unsubscribe/', getApiBaseUrl()).href;
 
 export async function getReleaseNotes() {
   const { data } = await getAuthenticatedHttpClient().get(getReleaseNotesApiUrl());
@@ -23,5 +24,10 @@ export async function editReleaseNote(note) {
 
 export async function deleteReleaseNote(id) {
   const { data } = await getAuthenticatedHttpClient().delete(getReleaseNoteApiUrl(id));
+  return camelCaseObject(data);
+}
+
+export async function unsubscribeFromReleaseNoteEmails() {
+  const { data } = await getAuthenticatedHttpClient().get(getUnsubscribeApiUrl());
   return camelCaseObject(data);
 }

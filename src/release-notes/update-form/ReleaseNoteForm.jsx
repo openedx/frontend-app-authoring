@@ -25,6 +25,7 @@ const ReleaseNoteForm = ({
   initialValues,
   close,
   onSubmit,
+  canSendReleaseNoteEmails,
   savingStatuses,
   isDirtyCheckRef,
   showUnsavedModalRef,
@@ -171,6 +172,8 @@ const ReleaseNoteForm = ({
     const initialDesc = normalizeHtml(initialVals.description);
     if (currentDesc !== initialDesc) { return true; }
 
+    if (values.sendEmail !== initialVals.sendEmail) { return true; }
+
     return false;
   }, []);
 
@@ -186,6 +189,7 @@ const ReleaseNoteForm = ({
         publishTime: initialValues.published_at
           ? moment(initialValues.published_at).format(TIME_FORMAT)
           : '',
+        sendEmail: Boolean(initialValues.sendEmail),
       };
       const customDirty = isFormDirty(currentValuesRef.current, formInitialValues);
       isDirtyRef.current = customDirty;
@@ -205,6 +209,7 @@ const ReleaseNoteForm = ({
           description: initialValues.description || '',
           publishDate: initialValues.published_at ? moment(convertToDateFromString(initialValues.published_at)).format('YYYY-MM-DD') : '',
           publishTime: initialValues.published_at ? moment(initialValues.published_at).format(TIME_FORMAT) : '',
+          sendEmail: Boolean(initialValues.sendEmail),
         }}
         validationSchema={validationSchema}
         validateOnMount
@@ -222,6 +227,7 @@ const ReleaseNoteForm = ({
             title: values.title,
             description: values.description,
             published_at: composed,
+            sendEmail: values.sendEmail,
           };
           onSubmit(payload);
         }}
@@ -332,6 +338,21 @@ const ReleaseNoteForm = ({
                 )}
               </Form.Group>
 
+              {canSendReleaseNoteEmails && (
+                <Form.Group className="mb-3">
+                  <Form.Checkbox
+                    checked={values.sendEmail || false}
+                    onChange={(e) => setFieldValue('sendEmail', e.target.checked)}
+                    data-testid="send-email-checkbox"
+                  >
+                    {intl.formatMessage(messages.sendEmailCheckboxLabel)}
+                  </Form.Checkbox>
+                  <Form.Text muted>
+                    {intl.formatMessage(messages.sendEmailCheckboxHelp)}
+                  </Form.Text>
+                </Form.Group>
+              )}
+
               <ActionRow>
                 <Button variant="tertiary" type="button" onClick={(e) => handleCancel(e, dirty)}>
                   {intl.formatMessage(messages.cancelButton)}
@@ -358,9 +379,11 @@ ReleaseNoteForm.propTypes = {
     title: PropTypes.string,
     description: PropTypes.string,
     published_at: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+    sendEmail: PropTypes.bool,
   }).isRequired,
   close: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  canSendReleaseNoteEmails: PropTypes.bool,
   savingStatuses: PropTypes.shape({
     createReleaseNoteQuery: PropTypes.string,
     editReleaseNoteQuery: PropTypes.string,
@@ -372,6 +395,7 @@ ReleaseNoteForm.propTypes = {
 };
 
 ReleaseNoteForm.defaultProps = {
+  canSendReleaseNoteEmails: false,
   savingStatuses: {},
   isDirtyCheckRef: null,
   showUnsavedModalRef: null,

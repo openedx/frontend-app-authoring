@@ -13,6 +13,7 @@ import {
 import {
   getReleaseNotes as selectReleaseNotes,
   getHasAccess,
+  getCanSendReleaseNoteEmails,
   getLoadingStatuses,
   getSavingStatuses,
   getErrors,
@@ -31,6 +32,7 @@ const useReleaseNotes = () => {
 
   const notes = useSelector(selectReleaseNotes) || [];
   const hasAccess = useSelector(getHasAccess);
+  const canSendReleaseNoteEmails = useSelector(getCanSendReleaseNoteEmails);
   const loadingStatuses = useSelector(getLoadingStatuses);
   const savingStatuses = useSelector(getSavingStatuses);
   const errors = useSelector(getErrors);
@@ -105,6 +107,7 @@ const useReleaseNotes = () => {
     requestType,
     notes,
     hasAccess,
+    canSendReleaseNoteEmails,
     notesInitialValues,
     isMainFormOpen: isFormOpen && requestType !== REQUEST_TYPES.edit_update,
     isInnerFormOpen: (id) => (

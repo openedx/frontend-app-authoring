@@ -26,6 +26,7 @@ import {
 import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import ReleaseNotes from './release-notes/ReleaseNotes';
+import ReleaseNoteUnsubscribe from './release-notes/unsubscribe/ReleaseNoteUnsubscribe';
 import Head from './head/Head';
 import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
@@ -97,6 +98,7 @@ const App = () => {
         {getConfig().ENABLE_RELEASE_NOTES === 'true' && (
           <Route path="/release-notes" element={<ReleaseNotes />} />
         )}
+        <Route path="/release-notes/unsubscribe" element={<ReleaseNoteUnsubscribe />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
           <Route path="/accessibility" element={<AccessibilityPage />} />
         )}

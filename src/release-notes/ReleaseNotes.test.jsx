@@ -22,6 +22,7 @@ const mockUseReleaseNotes = {
   requestType: null,
   notes: [],
   hasAccess: false,
+  canSendReleaseNoteEmails: false,
   notesInitialValues: {},
   isFormOpen: false,
   isDeleteModalOpen: false,

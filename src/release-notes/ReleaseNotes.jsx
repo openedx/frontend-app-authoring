@@ -36,6 +36,7 @@ const ReleaseNotes = () => {
     requestType,
     notes,
     hasAccess,
+    canSendReleaseNoteEmails,
     notesInitialValues,
     isFormOpen,
     isDeleteModalOpen,
@@ -277,6 +278,7 @@ const ReleaseNotes = () => {
             initialValues={notesInitialValues}
             close={closeForm}
             onSubmit={handleUpdatesSubmit}
+            canSendReleaseNoteEmails={canSendReleaseNoteEmails}
             savingStatuses={savingStatuses}
             isDirtyCheckRef={isDirtyCheckRef}
             showUnsavedModalRef={showUnsavedModalRef}
