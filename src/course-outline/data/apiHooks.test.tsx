@@ -10,6 +10,7 @@ const mockDismissNotification = jest.fn();
 const mockRestartIndexingOnCourse = jest.fn();
 const mockDeleteCourseItem = jest.fn();
 const mockGetCourseItem = jest.fn();
+const mockEditItemDisplayName = jest.fn();
 
 jest.mock('./api', () => ({
   setVideoSharingOption: (...args: any[]) => mockSetVideoSharingOption(...args),
@@ -18,6 +19,7 @@ jest.mock('./api', () => ({
   restartIndexingOnCourse: (...args: any[]) => mockRestartIndexingOnCourse(...args),
   deleteCourseItem: (...args: any[]) => mockDeleteCourseItem(...args),
   getCourseItem: (...args: any[]) => mockGetCourseItem(...args),
+  editItemDisplayName: (...args: any[]) => mockEditItemDisplayName(...args),
 }));
 
 // Hooks-under-test — must import after jest.mock
@@ -30,6 +32,7 @@ import {
   useCourseOutlineReindexStatus,
   useDeleteCourseItem,
   useCourseItemData,
+  useUpdateCourseBlockName,
 } from './apiHooks';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
@@ -473,5 +476,166 @@ describe('useCourseItemData cache priming', () => {
     });
 
     expect(queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(noChildren.id))).toEqual(noChildren);
+  });
+});
+
+describe('useUpdateCourseBlockName cache updates', () => {
+  const chapterId = 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@ch1';
+  const seqId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@seq1';
+  const unitId = 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@unit1';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    initializeMocks();
+    mockEditItemDisplayName.mockResolvedValue({});
+  });
+
+  it('updates the item own courseItemId cache with new displayName', async () => {
+    const { queryClient } = initializeMocks();
+
+    // Seed the item cache with old displayName
+    const oldItemData = {
+      id: chapterId,
+      displayName: 'Old Chapter Name',
+      category: 'chapter',
+      childInfo: { children: [] },
+    };
+    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(chapterId), oldItemData);
+
+    const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        itemId: chapterId,
+        displayName: 'New Chapter Name',
+        sectionId: chapterId,
+      });
+    });
+
+    const updated = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(chapterId)) as any;
+    expect(updated.displayName).toBe('New Chapter Name');
+    expect(updated.id).toBe(chapterId); // other fields preserved
+  });
+
+  it('updates chapter displayName in outline-index tree', async () => {
+    const { queryClient } = initializeMocks();
+
+    const outlineData = buildTestOutline([
+      { id: chapterId, displayName: 'Old Chapter' },
+    ]);
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
+
+    const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        itemId: chapterId,
+        displayName: 'Renamed Chapter',
+        sectionId: chapterId,
+      });
+    });
+
+    const updated = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
+    const chapter = updated.courseStructure.childInfo.children[0];
+    expect(chapter.id).toBe(chapterId);
+    expect(chapter.displayName).toBe('Renamed Chapter');
+  });
+
+  it('updates sequential displayName nested in outline-index tree', async () => {
+    const { queryClient } = initializeMocks();
+
+    const outlineData = buildTestOutline([
+      {
+        id: chapterId,
+        displayName: 'Chapter 1',
+        children: [
+          { id: seqId, displayName: 'Old Subsection' },
+        ],
+      },
+    ]);
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
+
+    const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        itemId: seqId,
+        displayName: 'Renamed Subsection',
+        sectionId: chapterId,
+        subsectionId: seqId,
+      });
+    });
+
+    const updated = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
+    const chapter = updated.courseStructure.childInfo.children[0];
+    expect(chapter.displayName).toBe('Chapter 1'); // unchanged
+    const subsection = chapter.childInfo.children[0];
+    expect(subsection.id).toBe(seqId);
+    expect(subsection.displayName).toBe('Renamed Subsection');
+  });
+
+  it('updates vertical displayName deeply nested in outline-index tree', async () => {
+    const { queryClient } = initializeMocks();
+
+    const outlineData = buildTestOutline([
+      {
+        id: chapterId,
+        displayName: 'Chapter 1',
+        children: [
+          {
+            id: seqId,
+            displayName: 'Subsection 1',
+            children: [
+              { id: unitId, displayName: 'Old Unit' },
+            ],
+          },
+        ],
+      },
+    ]);
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
+
+    const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        itemId: unitId,
+        displayName: 'Renamed Unit',
+        sectionId: chapterId,
+        subsectionId: seqId,
+      });
+    });
+
+    const updated = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
+    const chapter = updated.courseStructure.childInfo.children[0];
+    expect(chapter.displayName).toBe('Chapter 1');
+    const subsection = chapter.childInfo.children[0];
+    expect(subsection.displayName).toBe('Subsection 1');
+    const unit = subsection.childInfo.children[0];
+    expect(unit.id).toBe(unitId);
+    expect(unit.displayName).toBe('Renamed Unit');
+  });
+
+  it('does not modify outline-index tree when no matching item found', async () => {
+    const { queryClient } = initializeMocks();
+
+    const outlineData = buildTestOutline([
+      { id: chapterId, displayName: 'Chapter 1' },
+    ]);
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
+    const before = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
+
+    const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        itemId: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@nonexistent',
+        displayName: 'New Name',
+        sectionId: chapterId,
+        subsectionId: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@nonexistent',
+      });
+    });
+
+    const after = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
+    expect(after).toEqual(before);
   });
 });
