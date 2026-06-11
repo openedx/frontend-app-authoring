@@ -1,9 +1,6 @@
 import { buildTestOutline, buildOutlineIndex, type NodeSpec } from '../__mocks__/helpers';
 
 describe('buildTestOutline', () => {
-  // -----------------------------------------------------------------------
-  // No-arg / defaults
-  // -----------------------------------------------------------------------
   it('returns full CourseOutline shape when called with no args', () => {
     const outline = buildTestOutline();
 
@@ -38,9 +35,6 @@ describe('buildTestOutline', () => {
     expect(s4.childInfo.children).toHaveLength(0);
   });
 
-  // -----------------------------------------------------------------------
-  // Shorthand array
-  // -----------------------------------------------------------------------
   it('builds tree from shorthand array', () => {
     const outline = buildTestOutline([{ id: 'sec-1' }]);
     const children = (outline.courseStructure as any).childInfo.children;
@@ -68,7 +62,6 @@ describe('buildTestOutline', () => {
 
     expect(() => walk(outline, 'outline')).not.toThrow();
 
-    // Specific node checks
     const s1 = (outline.courseStructure as any).childInfo.children[0];
     expect(s1.actions.deletable).toBe(true);
     expect(s1.actions.draggable).toBe(true);
@@ -77,22 +70,17 @@ describe('buildTestOutline', () => {
     expect(s1.editedOn).toBe('2023-08-23T12:35:00Z');
     expect(s1.visibilityState).toBe('');
 
-    // Leaf (sequential) still has childInfo with empty children
     const sub1 = s1.childInfo.children[0];
     expect(sub1.childInfo).toBeDefined();
     expect(sub1.childInfo.children).toEqual([]);
     expect(sub1.category).toBe('sequential');
 
-    // Top-level fields
     expect(outline.deprecatedBlocksInfo).toBeDefined();
     expect(outline.initialState).toBeDefined();
     expect(outline.rerunNotificationId).toBeNull();
     expect(outline.createdOn).toBeUndefined();
   });
 
-  // -----------------------------------------------------------------------
-  // Node-level override
-  // -----------------------------------------------------------------------
   it('node override changes only that node, siblings keep defaults', () => {
     const specA: NodeSpec = { id: 's1', overrides: { hasExplicitStaffLock: true } };
     const specB: NodeSpec = { id: 's2' };
@@ -107,9 +95,6 @@ describe('buildTestOutline', () => {
     expect(children[1].hasExplicitStaffLock).toBe(false);
   });
 
-  // -----------------------------------------------------------------------
-  // Top-level override
-  // -----------------------------------------------------------------------
   it('top-level override merges shallow', () => {
     const outline = buildTestOutline({
       overrides: { languageCode: 'fr', notificationDismissUrl: '/custom/dismiss' },
@@ -142,13 +127,9 @@ describe('buildTestOutline', () => {
 });
 
 describe('buildOutlineIndex', () => {
-  // -----------------------------------------------------------------------
-  // Type compliance
-  // -----------------------------------------------------------------------
   it('returns object matching CourseOutline type shape', () => {
     const outline = buildOutlineIndex();
 
-    // Required CourseOutline fields
     expect(outline.courseReleaseDate).toBe('');
     expect(outline.courseStructure).toBeDefined();
     expect(outline.deprecatedBlocksInfo).toBeDefined();
@@ -167,14 +148,10 @@ describe('buildOutlineIndex', () => {
   it('proctoringErrors is typed as string[]', () => {
     const outline = buildOutlineIndex();
     expect(Array.isArray(outline.proctoringErrors)).toBe(true);
-    // Must accept string assignment
     const errors: string[] = outline.proctoringErrors;
     expect(errors).toEqual([]);
   });
 
-  // -----------------------------------------------------------------------
-  // Overload parity with buildTestOutline
-  // -----------------------------------------------------------------------
   it('no-arg produces 4 default sections', () => {
     const outline = buildOutlineIndex();
     const children = (outline.courseStructure as any).childInfo.children;
@@ -205,9 +182,6 @@ describe('buildOutlineIndex', () => {
     expect(outline.courseStructure.childInfo).toBeDefined();
   });
 
-  // -----------------------------------------------------------------------
-  // Optional field defaults
-  // -----------------------------------------------------------------------
   it('optional CourseOutline fields are undefined by default', () => {
     const outline = buildOutlineIndex();
     expect(outline.discussionsSettings).toBeUndefined();

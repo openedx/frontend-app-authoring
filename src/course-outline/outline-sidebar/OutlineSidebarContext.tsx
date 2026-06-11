@@ -87,7 +87,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
 
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);
-    // Reset tab
     setCurrentTabKey(undefined);
     stopCurrentFlow();
     open();

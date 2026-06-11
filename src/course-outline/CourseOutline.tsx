@@ -153,7 +153,6 @@ const CourseOutline = () => {
     setShowSuccessAlert(reIndexLoadingStatus === RequestStatus.SUCCESSFUL);
   }, [reIndexLoadingStatus]);
 
-  // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -166,7 +165,6 @@ const CourseOutline = () => {
         setToastMessage(intl.formatMessage(messages.exportTagsErrorToastMessage));
       });
 
-      // Delete `#export-tags` from location
       window.location.href = '#';
     }
   }, [location, courseId, courseName]);

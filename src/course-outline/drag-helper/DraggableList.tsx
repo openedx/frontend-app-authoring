@@ -185,7 +185,6 @@ const DraggableList = ({
       overSectionIndex!,
       newIndex,
     );
-    // Update drag-local tree and notify parent
     updateDragTree(prevCopy);
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.parent?.id;
@@ -234,7 +233,6 @@ const DraggableList = ({
       overSubsectionIndex!,
       newIndex,
     );
-    // Update drag-local tree and notify parent
     updateDragTree(prevCopy);
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.grandParent?.id;

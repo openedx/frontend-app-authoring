@@ -61,10 +61,8 @@ export const courseOutlineQueryKeys = {
       { taskId },
     ] as const,
 
-  /** Index (outline tree) key: ['courseOutline', courseId, 'index'] */
   index: (courseId?: string) => ['courseOutline', courseId, 'index'] as const,
 
-  /** Mutation-tracking keys: mutation state queries keyed under `['courseOutline', 'mutations']`. */
   mutations: {
     all: ['courseOutline', 'mutations'] as const,
 

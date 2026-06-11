@@ -71,20 +71,13 @@ export const dragHelpers = {
  */
 export const moveItemOver = (
   prevCopy: XBlock[],
-  // Shared:
-  parentAIdx: number, // section index of the source
-  childAIdx: number, // subsection index (source) — or active unit index for unit variant
-  // Subsection variant (5 args): targetSectionIdx
-  // Unit variant (7 args): activeUnitIdx
+  parentAIdx: number,
+  childAIdx: number,
   midArg: number,
-  // Subsection variant (5 args): newIndex
-  // Unit variant (7 args): overSectionIdx
   lastArg: number,
-  // Unit only:
   overSubsectionIdx?: number,
   newIndex?: number,
 ): [XBlock[], XBlock[]] => {
-  // Subsection across sections — 5 positional args
   if (overSubsectionIdx === undefined) {
     let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[parentAIdx] });
     let overSection = dragHelpers.copyBlockChildren({ ...prevCopy[midArg] }); // midArg = targetSectionIdx
@@ -100,7 +93,6 @@ export const moveItemOver = (
     prevCopy[midArg] = overSection;
     return [prevCopy, overSection.childInfo.children];
   }
-  // Unit across subsections — 7 positional args
   const activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[parentAIdx] });
   let activeSubsection = dragHelpers.copyBlockChildren(
     { ...activeSection.childInfo.children[childAIdx] },
@@ -133,17 +125,11 @@ export const moveItemOver = (
 export const moveItem = (
   prevCopy: XBlock[],
   sectionIdx: number,
-  // Subsection: currentIdx
-  // Unit: subsectionIdx
   midArg: number,
-  // Subsection: newIdx
-  // Unit: currentIdx
   otherArg: number,
-  // Unit only:
   newIdx?: number,
 ): [XBlock[], XBlock[]] => {
   if (newIdx === undefined) {
-    // Subsection within section
     let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
     const result = arrayMove(section.childInfo.children, midArg, otherArg);
     section = dragHelpers.setBlockChildren(section, result);
@@ -151,7 +137,6 @@ export const moveItem = (
     prevCopy[sectionIdx] = section;
     return [prevCopy, result];
   }
-  // Unit within subsection
   let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
   let subsection = dragHelpers.copyBlockChildren({ ...section.childInfo.children[midArg] }); // midArg = subsectionIdx
   const result = arrayMove(subsection.childInfo.children, otherArg, newIdx); // otherArg = currentIdx
@@ -200,7 +185,6 @@ export const possibleSubsectionMoves = (
     return null;
   }
   if ((step === -1 && index >= 1) || (step === 1 && subsections.length - index >= 2)) {
-    // move subsection inside its own parent section
     return {
       fn: moveItem,
       args: [
@@ -213,7 +197,6 @@ export const possibleSubsectionMoves = (
     };
   }
   if (step === -1 && index === 0 && sectionIndex > 0) {
-    // find a section that accepts children above/before the current section
     const newSectionIndex = findLastIndex(sections, { actions: { childAddable: true } }, sectionIndex + step);
     if (newSectionIndex === -1) {
       // return if previous section doesn't allow adding subsections

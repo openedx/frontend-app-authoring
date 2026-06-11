@@ -120,13 +120,11 @@ const OutlineNode = ({
   const blk = liveBlock as any;
   const initBlk = initialData as any;
 
-  // Build ancestor chain from props
   const ancestors: OutlineNodeAncestors = {
     section: parentSection || initialData,
     subsection: parentSubsection,
   };
 
-  // Create bound model for this node (use liveBlock for actions, IDs are stable)
   const model = createOutlineNodeModel({
     block: liveBlock,
     depth,

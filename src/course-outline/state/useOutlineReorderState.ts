@@ -36,7 +36,6 @@ export function useOutlineReorderState({
 }: UseOutlineReorderStateInput): UseOutlineReorderStateOutput {
   const queryClient = useQueryClient();
 
-  // --- Preview state for drag reorder ---
   const [previewSectionsState, setPreviewSectionsState] = useState<XBlock[] | undefined>();
   const visibleSections = previewSectionsState ?? sections;
 
@@ -119,7 +118,6 @@ export function useOutlineReorderState({
     }
   }, [queryClient, courseId]);
 
-  // --- Reorder mutation hooks ---
   const reorderSectionsMutation = useReorderSections(courseId);
   const reorderSubsectionsMutation = useReorderSubsections(courseId);
   const reorderUnitsMutation = useReorderUnits(courseId);

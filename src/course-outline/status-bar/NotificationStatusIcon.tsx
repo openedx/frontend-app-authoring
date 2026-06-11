@@ -4,7 +4,6 @@ import { NotificationsNone } from '@openedx/paragon/icons';
 import { HookType, useDynamicHookShim } from './hooks';
 import messages from './messages';
 
-// Component that actually calls the loaded hook
 const NotificationHookConsumer = ({ hook }: { hook: () => HookType; }) => {
   // The hook is now called on **every** render of this component
   const { notificationAppData } = hook();
@@ -24,7 +23,6 @@ const NotificationHookConsumer = ({ hook }: { hook: () => HookType; }) => {
   );
 };
 
-// Main component
 export const NotificationStatusIcon = () => {
   const loadedHook = useDynamicHookShim();
 
@@ -33,6 +31,5 @@ export const NotificationStatusIcon = () => {
     return null;
   }
 
-  // Once loaded, delegate to a component that calls the hook
   return <NotificationHookConsumer hook={loadedHook} />;
 };

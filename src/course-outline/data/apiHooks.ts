@@ -58,13 +58,14 @@ import {
   removeItemFromOutlineIndexData,
   insertDuplicatedSectionInOutlineIndex,
 } from './outlineIndexCacheUtils';
+import { useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './outlineStatusHooks';
+
 export {
   appendSectionToOutlineIndex,
   replaceSectionInOutlineIndex,
   removeItemFromOutlineIndexData,
   insertDuplicatedSectionInOutlineIndex,
 };
-import { useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './outlineStatusHooks';
 export { useCourseOutlineSavingStatus, useCourseOutlineReindexStatus };
 export { invalidateParentQueries, invalidateOutlineAndParents } from './cacheInvalidation';
 
@@ -97,10 +98,8 @@ export const useCreateCourseBlock = (
     onSuccess: async (data, variables, queryClient) => {
       await callback?.(data.locator, variables.parentLocator);
 
-      // Invalidate tags count for the newly created block
       const contentPattern = data.locator.replace(/\+type@.*$/, '*');
       queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
-      // scroll to newly added block
       setData({ id: data.locator });
       // If newly created block is chapter, append to outline index cache.
       if (getBlockType(data.locator) === 'chapter') {
@@ -246,7 +245,6 @@ export const useConfigureUnit = (courseId?: string) => {
     mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
     onMutate: (variables) => {
       const msg = getNotificationMessage(variables.type, variables.isVisibleToStaffOnly, true);
-      // Show processing notification
       showToast(msg, undefined, 15000);
     },
     onSettled: (_data, _err, variables) => {
@@ -274,7 +272,6 @@ export const useDuplicateItem = (courseKey: string) => {
         insertDuplicatedSectionInOutlineIndex(queryClient, courseKey, variables.itemId, duplicatedItem);
       }
 
-      // scroll to newly added block
       setData({ id: data.locator });
     },
   });
@@ -320,9 +317,7 @@ export const usePasteItem = (courseId?: string) => {
     operation: 'paste',
     mutationFn: (variables) => pasteBlock(variables.parentLocator),
     onSuccess: (data) => {
-      // set pasteFileNotices
       setData(data.staticFileNotices);
-      // scroll to pasted block
       setScrollState({ id: data.locator });
     },
   });
@@ -373,11 +368,6 @@ export function useDismissNotification(courseId: string) {
 }
 
 /**
- * Restart indexing on a course (reindex).
- * Uses bare useMutation (no processing toast) since reindex status is tracked
- * via useCourseOutlineReindexStatus.
- */
-/**
  * Fetch course best practices checklist data.
  * Non-blocking — errors return undefined data silently; caller defaults when absent.
  */
@@ -401,6 +391,11 @@ export function useCourseLaunch(courseId: string) {
   });
 }
 
+/**
+ * Restart indexing on a course (reindex).
+ * Uses bare useMutation (no processing toast) since reindex status is tracked
+ * via useCourseOutlineReindexStatus.
+ */
 export function useRestartIndexingOnCourse(courseId: string) {
   return useMutation({
     mutationKey: courseOutlineQueryKeys.mutations.reindex(courseId),

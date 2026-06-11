@@ -4,7 +4,6 @@ import { act, renderHook, waitFor, initializeMocks, makeWrapper } from '@src/tes
 import { courseOutlineQueryKeys } from './queryKeys';
 import { buildTestOutline } from '../__mocks__';
 
-// --- Mock API layer ---
 const mockSetVideoSharingOption = jest.fn();
 const mockEnableCourseHighlightsEmails = jest.fn();
 const mockDismissNotification = jest.fn();
@@ -36,16 +35,8 @@ import {
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
 const STUDIO_BASE_URL = 'http://localhost:18010';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
-// buildTestOutline is imported from __mocks__ — provides buildTestOutline([...])
-// and buildTestOutline({ sections: [...], overrides: {...} }).
 
-// ---------------------------------------------------------------------------
-// useSetVideoSharingOption
-// ---------------------------------------------------------------------------
 describe('useSetVideoSharingOption', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -67,15 +58,11 @@ describe('useSetVideoSharingOption', () => {
       await result.current.mutateAsync('per-course');
     });
 
-    // After invalidation, the query is marked invalidated
     const state = queryClient.getQueryState(courseOutlineQueryKeys.index(courseId));
     expect(state?.isInvalidated).toBe(true);
   });
 });
 
-// ---------------------------------------------------------------------------
-// useEnableCourseHighlightsEmails
-// ---------------------------------------------------------------------------
 describe('useEnableCourseHighlightsEmails', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -101,9 +88,6 @@ describe('useEnableCourseHighlightsEmails', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// useDismissNotification
-// ---------------------------------------------------------------------------
 describe('useDismissNotification', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -125,9 +109,6 @@ describe('useDismissNotification', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// useCourseOutlineSavingStatus
-// ---------------------------------------------------------------------------
 describe('useCourseOutlineSavingStatus', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -212,16 +193,12 @@ describe('useCourseOutlineSavingStatus', () => {
       expect(statusResult.current).toBe(RequestStatus.PENDING);
     });
 
-    // Clean up
     await act(async () => {
       resolveSecond({});
     });
   });
 });
 
-// ---------------------------------------------------------------------------
-// useCourseOutlineReindexStatus
-// ---------------------------------------------------------------------------
 describe('useCourseOutlineReindexStatus', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -256,9 +233,6 @@ describe('useCourseOutlineReindexStatus', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// useDeleteCourseItem — optimistic outline-index cache update
-// ---------------------------------------------------------------------------
 describe('useDeleteCourseItem optimistic cache update', () => {
   const chapterId = 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@ch1';
   const chapter2Id = 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@ch2';
@@ -400,9 +374,6 @@ describe('useDeleteCourseItem optimistic cache update', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// useCourseItemData — cache priming
-// ---------------------------------------------------------------------------
 describe('useCourseItemData cache priming', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -412,7 +383,6 @@ describe('useCourseItemData cache priming', () => {
   it('primes child, grandchild, and great-grandchild caches recursively with deterministic await order', async () => {
     const { queryClient } = initializeMocks();
 
-    // Build a 4-level tree: chapter → sequential → vertical → vertical (deep leaf)
     const greatGrandchild = {
       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@greatgrandchild',
       category: 'vertical',
@@ -456,11 +426,10 @@ describe('useCourseItemData cache priming', () => {
     const grandchildCached = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(grandchild.id));
     expect(grandchildCached).toEqual(grandchild);
 
-    // Verify great-grandchild is cached (proves depth beyond the original 3-level hardcode)
+    // Proves depth beyond the original 3-level hardcode.
     const greatGrandchildCached = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(greatGrandchild.id));
     expect(greatGrandchildCached).toEqual(greatGrandchild);
 
-    // Verify getCourseItem was called exactly once (all child reads from cache)
     expect(mockGetCourseItem).toHaveBeenCalledTimes(1);
   });
 

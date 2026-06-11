@@ -56,10 +56,8 @@ export interface UseOutlineStatusStateOutput {
 export function useOutlineStatusState({
   courseId,
 }: UseOutlineStatusStateInput): UseOutlineStatusStateOutput {
-  // Mount outline index query from React Query (primary source)
   const outlineIndexQuery = useCourseOutlineIndex(courseId);
 
-  // Effective outline data from React Query cache
   const effectiveOutlineIndexData = outlineIndexQuery.data;
 
   // Derive outline-index loading/error booleans from React Query fields
@@ -68,10 +66,8 @@ export function useOutlineStatusState({
     && !outlineIndexQuery.isSuccess
     && (outlineIndexQuery.error as any)?.response?.status === 403;
 
-  // Committed sections from query cache children
   const sections = effectiveOutlineIndexData?.courseStructure?.childInfo?.children || [];
 
-  // --- Dedicated query hooks for checklist/launch data ---
   const bestPracticesQuery = useCourseBestPractices(courseId);
   const launchQuery = useCourseLaunch(courseId);
 
@@ -107,14 +103,12 @@ export function useOutlineStatusState({
 
   const isSelfPaced = launchQuery.data?.isSelfPaced ?? false;
 
-  // --- Derived flags from outline data ---
   const courseActions = effectiveOutlineIndexData?.courseStructure?.actions || DEFAULT_COURSE_ACTIONS;
   const isCustomRelativeDatesActive = effectiveOutlineIndexData?.isCustomRelativeDatesActive ?? false;
   const enableProctoredExams = effectiveOutlineIndexData?.courseStructure?.enableProctoredExams;
   const enableTimedExams = effectiveOutlineIndexData?.courseStructure?.enableTimedExams;
   const createdOn = effectiveOutlineIndexData?.createdOn;
 
-  // --- Derived status bar data (merge query data + checklist/selfPaced from dedicated queries) ---
   const statusBarData = useMemo(() => {
     const base = effectiveOutlineIndexData
       ? getCourseOutlineStatusBarData(effectiveOutlineIndexData)
@@ -126,7 +120,6 @@ export function useOutlineStatusState({
     } as CourseOutlineStatusBar;
   }, [effectiveOutlineIndexData, mergedChecklist, isSelfPaced]);
 
-  // --- Derived loading status (query-derived; reindex handled by context) ---
   const effectiveLoadingStatus = useMemo(() => ({
     outlineIndexIsLoading: outlineIndexIsPending,
     outlineIndexIsDenied,
@@ -134,7 +127,6 @@ export function useOutlineStatusState({
     courseLaunchQueryStatus,
   }), [outlineIndexIsPending, outlineIndexIsDenied, courseLaunchQueryStatus]);
 
-  // --- Raw / base errors (before dismissal) ---
   const rawErrors = useMemo((): Record<string, any> => {
     const outlineIndexErrors = !outlineIndexIsDenied && outlineIndexQuery.error != null
       ? getErrorDetails(outlineIndexQuery.error, false)
@@ -145,7 +137,6 @@ export function useOutlineStatusState({
     };
   }, [outlineIndexQuery.error, outlineIndexIsDenied, courseLaunchErrors]);
 
-  // Create discussions topics if course was created recently
   useEffect(() => {
     if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
       createDiscussionsTopics(courseId).catch((err) => logError(err));

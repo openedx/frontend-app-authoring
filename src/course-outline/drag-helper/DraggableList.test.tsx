@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-// --- Mocks ---
 
 // Capture DndContext handlers so we can invoke them directly in tests.
 type DndHandlers = {
@@ -48,7 +47,6 @@ jest.mock('react-dom', () => {
 
 import DraggableList from './DraggableList';
 
-// --- Helpers ---
 
 const makeSection = (id: string, subsections: any[] = []) => ({
   id,
@@ -149,7 +147,6 @@ function renderList(
   return callbacks;
 }
 
-// --- Tests ---
 
 describe('DraggableList — drag-local tree ref', () => {
   beforeEach(() => {

@@ -109,7 +109,6 @@ const OutlineAddChildButtons = ({
       'createBlock',
     ),
   }) > 0;
-  // Core config from single source of truth
   const categoryConfig = CONTAINER_CATEGORY_CONFIG[childType];
   if (!categoryConfig) {
     throw new Error(`Unrecognized block type ${childType}`);

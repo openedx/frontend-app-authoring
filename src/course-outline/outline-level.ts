@@ -22,10 +22,6 @@ import { courseIDtoBlockID } from './utils';
 import type { MoveDetails } from './drag-helper/utils';
 import { isEmpty } from 'lodash';
 
-// ============================================================================
-// Core Types
-// ============================================================================
-
 /**
  * Tree depth: 0 = section, 1 = subsection, 2 = unit.
  */
@@ -62,10 +58,6 @@ export interface OutlineNodeAncestors {
   readonly subsection?: XBlock;
 }
 
-// ============================================================================
-// Ancestor Invariant Guard
-// ============================================================================
-
 /**
  * Require a subsection ancestor at depth 2.
  *
@@ -80,10 +72,6 @@ function requireSubsectionAncestor(ancestors: OutlineNodeAncestors): XBlock {
   }
   return ancestors.subsection;
 }
-
-// ============================================================================
-// Static Configuration
-// ============================================================================
 
 /**
  * Level configuration lookup by depth.
@@ -129,10 +117,6 @@ export const LEVEL_NAMES: readonly LevelName[] = ['section', 'subsection', 'unit
 export function getLevelConfig(depth: Depth): LevelConfig {
   return LEVEL_CONFIG[depth];
 }
-
-// ============================================================================
-// Parent Chain Resolvers
-// ============================================================================
 
 /**
  * Resolve the effective section for this node.
@@ -203,10 +187,6 @@ export function buildSidebarOpenArgs(
       };
   }
 }
-
-// ============================================================================
-// Payload Builders
-// ============================================================================
 
 /**
  * Build SelectionState for sidebar "Manage Tags" flow.
@@ -367,10 +347,6 @@ export function buildDuplicateParams(
   };
 }
 
-// ============================================================================
-// Behavior Computations
-// ============================================================================
-
 /**
  * Resolve node actions with depth-specific move permissions.
  *
@@ -433,7 +409,6 @@ export function computeIsDraggable(
     return true;
   }
 
-  // Depth 1, 2: check header visibility and upstream inhibition
   if (!isHeaderVisible) {
     return false;
   }
@@ -493,13 +468,8 @@ export function containsSearchResult(
     );
   }
 
-  // depth === 1
   return block.childInfo?.children?.some((u: any) => u.id === locatorId) ?? false;
 }
-
-// ============================================================================
-// Convenience Factory
-// ============================================================================
 
 /**
  * Parameters for creating an outline node model.
@@ -531,16 +501,12 @@ export function createOutlineNodeModel(params: OutlineNodeModelParams) {
   const levelConfig = getLevelConfig(depth);
 
   return {
-    // Static config
     levelConfig,
 
-    // Parent chain
     effectiveSection: resolveEffectiveSection(block, depth, ancestors),
 
-    // Rename IDs
     ...resolveRenameIds(block, depth, ancestors),
 
-    // Payload builders
     selectionState: () => buildSelectionState(block, depth, index, ancestors),
     actionSelection: () => buildOutlineActionSelection(block, depth, index, ancestors),
     sidebarOpenArgs: () => buildSidebarOpenArgs(block, depth, index, ancestors),
@@ -548,7 +514,6 @@ export function createOutlineNodeModel(params: OutlineNodeModelParams) {
     unlinkPayload: (liveBlock: XBlock) => buildUnlinkPayload(liveBlock, depth, ancestors),
     duplicateParams: () => buildDuplicateParams(block, depth, courseId!, ancestors),
 
-    // Behavior
     actions: () => resolveNodeActions(block, depth, index, ancestors, canMoveItem, getPossibleMoves),
     isDraggable: (resolvedActions: XBlockActions, isHeaderVisible: boolean) =>
       computeIsDraggable(resolvedActions, depth, ancestors, isHeaderVisible),

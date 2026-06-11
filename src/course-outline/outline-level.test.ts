@@ -32,9 +32,6 @@ import {
   createOutlineNodeModel,
 } from './outline-level';
 
-// ============================================================================
-// Fixtures
-// ============================================================================
 
 const COURSE_ID = 'course-v1:test+course';
 
@@ -98,9 +95,6 @@ const blockByDepth: Record<Depth, XBlock> = {
   2: unitBlock,
 };
 
-// ============================================================================
-// getLevelConfig / LEVEL_CONFIG
-// ============================================================================
 
 describe('LEVEL_CONFIG', () => {
   it('has exactly three levels', () => {
@@ -134,9 +128,6 @@ describe('LEVEL_CONFIG', () => {
   });
 });
 
-// ============================================================================
-// Parent Chain Resolvers
-// ============================================================================
 
 describe('resolveEffectiveSection', () => {
   it.each([0, 1, 2] as Depth[])('depth %d returns expected section', (depth) => {
@@ -164,9 +155,6 @@ describe('resolveRenameIds', () => {
   );
 });
 
-// ============================================================================
-// Sidebar Open Args
-// ============================================================================
 
 describe('buildSidebarOpenArgs', () => {
   const INDEX = 0;
@@ -187,9 +175,6 @@ describe('buildSidebarOpenArgs', () => {
   );
 });
 
-// ============================================================================
-// SelectionState (Manage Tags)
-// ============================================================================
 
 describe('buildSelectionState', () => {
   const INDEX = 0;
@@ -215,9 +200,6 @@ describe('buildSelectionState', () => {
   });
 });
 
-// ============================================================================
-// OutlineActionSelection (Configure/Delete modals)
-// ============================================================================
 
 describe('buildOutlineActionSelection', () => {
   const INDEX = 0;
@@ -278,9 +260,6 @@ describe('buildOutlineActionSelection', () => {
   });
 });
 
-// ============================================================================
-// Publish modal payload
-// ============================================================================
 
 describe('buildPublishPayload', () => {
   it.each([0, 1] as Depth[])('depth %d omits subsectionId', (depth) => {
@@ -304,9 +283,6 @@ describe('buildPublishPayload', () => {
   });
 });
 
-// ============================================================================
-// Unlink modal payload
-// ============================================================================
 
 describe('buildUnlinkPayload', () => {
   it.each([0, 1] as Depth[])('depth %d omits subsectionId', (depth) => {
@@ -329,9 +305,6 @@ describe('buildUnlinkPayload', () => {
   });
 });
 
-// ============================================================================
-// Duplicate mutation params
-// ============================================================================
 
 describe('buildDuplicateParams', () => {
   it('depth 0: parentId derived from courseId, no subsectionId', () => {
@@ -364,9 +337,6 @@ describe('buildDuplicateParams', () => {
   });
 });
 
-// ============================================================================
-// resolveNodeActions
-// ============================================================================
 
 describe('resolveNodeActions', () => {
   const INDEX = 0;
@@ -466,9 +436,6 @@ describe('resolveNodeActions', () => {
   });
 });
 
-// ============================================================================
-// computeIsDraggable
-// ============================================================================
 
 describe('computeIsDraggable', () => {
   const movableActions: XBlockActions = {
@@ -526,9 +493,6 @@ describe('computeIsDraggable', () => {
   });
 });
 
-// ============================================================================
-// computeIsDroppable
-// ============================================================================
 
 describe('computeIsDroppable', () => {
   const droppableActions: XBlockActions = {
@@ -568,9 +532,6 @@ describe('computeIsDroppable', () => {
   });
 });
 
-// ============================================================================
-// shouldRenderNode
-// ============================================================================
 
 describe('shouldRenderNode', () => {
   it('always renders depth 0 even with hidden header', () => {
@@ -590,9 +551,6 @@ describe('shouldRenderNode', () => {
   });
 });
 
-// ============================================================================
-// containsSearchResult
-// ============================================================================
 
 describe('containsSearchResult', () => {
   it('returns false when locatorId is null', () => {
@@ -641,9 +599,6 @@ describe('containsSearchResult', () => {
   });
 });
 
-// ============================================================================
-// createOutlineNodeModel (convenience factory)
-// ============================================================================
 
 describe('createOutlineNodeModel', () => {
   it('returns object with all expected keys for depth 0', () => {

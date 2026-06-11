@@ -11,9 +11,6 @@
 
 import type { CourseOutline } from '../data/types';
 
-// ---------------------------------------------------------------------------
-// NodeSpec — shorthand for a single tree node
-// ---------------------------------------------------------------------------
 export interface NodeSpec {
   id: string;
   displayName?: string;
@@ -22,9 +19,6 @@ export interface NodeSpec {
   overrides?: Record<string, unknown>;
 }
 
-// ---------------------------------------------------------------------------
-// Typed return shape — reduces `as any` casts in test callers
-// ---------------------------------------------------------------------------
 /** Strongly-typed view of the fields buildTestOutline always produces. */
 export interface TestCourseOutline {
   courseReleaseDate: string;
@@ -62,9 +56,6 @@ export interface TestCourseOutline {
   [key: string]: unknown;
 }
 
-// ---------------------------------------------------------------------------
-// Default field values (drawn from courseOutlineIndex mock)
-// ---------------------------------------------------------------------------
 const BASE_NODE_FIELDS = {
   locator: '',
   usageKey: '',
@@ -96,9 +87,6 @@ const BASE_NODE_FIELDS = {
   groupAccess: {},
 };
 
-// ---------------------------------------------------------------------------
-// Default tree — 4 sections with uneven nesting, enough for section-list tests
-// ---------------------------------------------------------------------------
 const DEFAULT_SECTIONS: NodeSpec[] = [
   {
     id: 'block-v1:test+course+2025+type@chapter+block@section-1',
@@ -139,9 +127,6 @@ const DEFAULT_SECTIONS: NodeSpec[] = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Internal node builder
-// ---------------------------------------------------------------------------
 function buildNode(spec: NodeSpec, category: string): Record<string, unknown> {
   const childCategory = category === 'chapter' ? 'sequential' : 'vertical';
   const children = (spec.children || []).map((c) => buildNode(c, childCategory));
@@ -163,10 +148,6 @@ function buildNode(spec: NodeSpec, category: string): Record<string, unknown> {
 
   return node;
 }
-
-// ---------------------------------------------------------------------------
-// Public factory
-// ---------------------------------------------------------------------------
 
 /**
  * Build a `CourseOutline`-shaped object for tests.
@@ -248,10 +229,6 @@ export function buildTestOutline(
 
   return result;
 }
-
-// ---------------------------------------------------------------------------
-// Typed wrapper — returns exact CourseOutline type
-// ---------------------------------------------------------------------------
 
 /**
  * Build a `CourseOutline`-typed object for tests.

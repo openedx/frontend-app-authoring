@@ -50,12 +50,10 @@ export function useOutlineNodeExpansion({
     depth < 2 && (hasSearchMatch || (depth === 0 ? isSectionsExpanded : (!isHeaderVisible || isSectionsExpanded))),
   );
 
-  // Sync with isSectionsExpanded prop
   useEffect(() => {
     if (depth < 2) { setIsExpanded(isSectionsExpanded); }
   }, [isSectionsExpanded, depth]);
 
-  // Drag state: collapse when dragging this node, expand when dragging over it
   useEffect(() => {
     if (depth < 2) {
       if (activeId === block.id && isExpanded) { setIsExpanded(false); }
@@ -63,12 +61,10 @@ export function useOutlineNodeExpansion({
     }
   }, [activeId, overId, block.id, isExpanded, depth]);
 
-  // Expand when search result appears in descendants
   useEffect(() => {
     if (depth < 2 && locatorId) { setIsExpanded((prev) => hasSearchMatch || prev); }
   }, [locatorId, hasSearchMatch, depth, block.childInfo]);
 
-  // Expand when scroll target is in descendants (depth 0 only)
   useEffect(() => {
     if (depth !== 0 || !scrollState?.id) { return; }
     if (containsSearchResult(block, depth, scrollState.id)) { setIsExpanded(true); }
