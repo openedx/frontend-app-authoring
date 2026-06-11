@@ -120,8 +120,8 @@ export function removeItemFromOutlineIndexData(
 }
 
 /**
- * Pure helper: recursively find an item by id in a node tree and
- * apply an updater function. Returns new tree with the matching item replaced.
+ * Recursively find an item by id in a node tree and apply an updater function.
+ * Returns new tree with the matching item replaced.
  */
 function updateNodeInTree(
   node: any,
@@ -150,27 +150,6 @@ function updateNodeInTree(
 }
 
 /**
- * Private generic: update a node by id inside any cache entry whose value
- * contains a traversable tree. Calls setQueryData, extracts the tree root
- * via getTree, walks with updateNodeInTree, and wraps the result back via setTree.
- * No-op if getTree returns a falsy value (cache missing or unexpected shape).
- */
-function updateNodeInCache(
-  queryClient: QueryClient,
-  queryKey: readonly unknown[],
-  itemId: string,
-  updater: (node: any) => any,
-  getTree: (data: any) => any,
-  setTree: (data: any, tree: any) => any,
-): void {
-  queryClient.setQueryData(queryKey, (old: any) => {
-    const tree = getTree(old);
-    if (!tree) { return old; }
-    return setTree(old, updateNodeInTree(tree, itemId, updater));
-  });
-}
-
-/**
  * Update a node in the outline-index tree cache by id using an updater function.
  * Recursively traverses the tree to find the item and applies updater to it.
  */
@@ -180,33 +159,15 @@ export function updateNodeInOutlineIndex(
   itemId: string,
   updater: (node: any) => any,
 ): void {
-  updateNodeInCache(
-    queryClient,
+  queryClient.setQueryData(
     courseOutlineQueryKeys.index(courseId),
-    itemId,
-    updater,
-    (old) => old?.courseStructure,
-    (old, tree) => ({ ...old, courseStructure: tree }),
-  );
-}
-
-/**
- * Update a node by id inside a courseItemId cache tree.
- * Walks the cached item tree and applies updater to the matching descendant.
- */
-export function updateNodeInCourseItemCache(
-  queryClient: QueryClient,
-  rootItemId: string,
-  itemId: string,
-  updater: (node: any) => any,
-): void {
-  updateNodeInCache(
-    queryClient,
-    courseOutlineQueryKeys.courseItemId(rootItemId),
-    itemId,
-    updater,
-    (old) => old,
-    (_old, tree) => tree,
+    (old: any) => {
+      if (!old?.courseStructure) { return old; }
+      return {
+        ...old,
+        courseStructure: updateNodeInTree(old.courseStructure, itemId, updater),
+      };
+    },
   );
 }
 

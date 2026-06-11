@@ -57,7 +57,6 @@ import {
   replaceSectionInOutlineIndex,
   removeItemFromOutlineIndexData,
   insertDuplicatedSectionInOutlineIndex,
-  updateNodeInCourseItemCache,
   updateNodeInOutlineIndex,
 } from './outlineIndexCacheUtils';
 import { useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './outlineStatusHooks';
@@ -187,25 +186,6 @@ export const useUpdateCourseBlockName = (courseId: string) =>
         variables.itemId,
         (node) => ({ ...node, displayName: variables.displayName }),
       );
-
-      // Update parent item caches (section and subsection) so child displayName
-      // changes are reflected without a backend refetch.
-      if (variables.sectionId) {
-        updateNodeInCourseItemCache(
-          queryClient,
-          variables.sectionId,
-          variables.itemId,
-          (node) => ({ ...node, displayName: variables.displayName }),
-        );
-      }
-      if (variables.subsectionId) {
-        updateNodeInCourseItemCache(
-          queryClient,
-          variables.subsectionId,
-          variables.itemId,
-          (node) => ({ ...node, displayName: variables.displayName }),
-        );
-      }
 
       // Preserve existing invalidations
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });

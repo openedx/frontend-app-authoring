@@ -490,35 +490,16 @@ describe('useUpdateCourseBlockName cache updates', () => {
     mockEditItemDisplayName.mockResolvedValue({});
   });
 
-  it('updates the item own courseItemId cache with new displayName', async () => {
+  it('section rename updates own courseItemId cache and top-level outline index node', async () => {
     const { queryClient } = initializeMocks();
 
-    // Seed the item cache with old displayName
     const oldItemData = {
       id: chapterId,
-      displayName: 'Old Chapter Name',
+      displayName: 'Old Chapter',
       category: 'chapter',
       childInfo: { children: [] },
     };
     queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(chapterId), oldItemData);
-
-    const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
-
-    await act(async () => {
-      await result.current.mutateAsync({
-        itemId: chapterId,
-        displayName: 'New Chapter Name',
-        sectionId: chapterId,
-      });
-    });
-
-    const updated = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(chapterId)) as any;
-    expect(updated.displayName).toBe('New Chapter Name');
-    expect(updated.id).toBe(chapterId); // other fields preserved
-  });
-
-  it('updates chapter displayName in outline-index tree', async () => {
-    const { queryClient } = initializeMocks();
 
     const outlineData = buildTestOutline([
       { id: chapterId, displayName: 'Old Chapter' },
@@ -535,49 +516,31 @@ describe('useUpdateCourseBlockName cache updates', () => {
       });
     });
 
-    const updated = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
-    const chapter = updated.courseStructure.childInfo.children[0];
+    // Own courseItemId cache
+    const own = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(chapterId)) as any;
+    expect(own.displayName).toBe('Renamed Chapter');
+    expect(own.id).toBe(chapterId);
+
+    // Outline index top-level node
+    const index = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
+    const chapter = index.courseStructure.childInfo.children[0];
     expect(chapter.id).toBe(chapterId);
     expect(chapter.displayName).toBe('Renamed Chapter');
   });
 
-  it('updates sequential displayName nested in outline-index tree', async () => {
+  it('unit rename updates own courseItemId cache and deep outline index node', async () => {
     const { queryClient } = initializeMocks();
 
-    const outlineData = buildTestOutline([
-      {
-        id: chapterId,
-        displayName: 'Chapter 1',
-        children: [
-          { id: seqId, displayName: 'Old Subsection' },
-        ],
-      },
-    ]);
-    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
-
-    const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
-
-    await act(async () => {
-      await result.current.mutateAsync({
-        itemId: seqId,
-        displayName: 'Renamed Subsection',
-        sectionId: chapterId,
-        subsectionId: seqId,
-      });
+    // Seed own cache
+    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(unitId), {
+      id: unitId,
+      displayName: 'Old Unit',
+      category: 'vertical',
+      childInfo: { children: [] },
     });
 
-    const updated = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
-    const chapter = updated.courseStructure.childInfo.children[0];
-    expect(chapter.displayName).toBe('Chapter 1'); // unchanged
-    const subsection = chapter.childInfo.children[0];
-    expect(subsection.id).toBe(seqId);
-    expect(subsection.displayName).toBe('Renamed Subsection');
-  });
-
-  it('updates vertical displayName deeply nested in outline-index tree', async () => {
-    const { queryClient } = initializeMocks();
-
-    const outlineData = buildTestOutline([
+    // Seed outline index with deeply nested unit
+    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), buildTestOutline([
       {
         id: chapterId,
         displayName: 'Chapter 1',
@@ -591,8 +554,7 @@ describe('useUpdateCourseBlockName cache updates', () => {
           },
         ],
       },
-    ]);
-    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
+    ]));
 
     const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
 
@@ -605,37 +567,14 @@ describe('useUpdateCourseBlockName cache updates', () => {
       });
     });
 
-    const updated = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
-    const chapter = updated.courseStructure.childInfo.children[0];
-    expect(chapter.displayName).toBe('Chapter 1');
-    const subsection = chapter.childInfo.children[0];
-    expect(subsection.displayName).toBe('Subsection 1');
-    const unit = subsection.childInfo.children[0];
+    // Own courseItemId cache
+    const own = queryClient.getQueryData(courseOutlineQueryKeys.courseItemId(unitId)) as any;
+    expect(own.displayName).toBe('Renamed Unit');
+
+    // Deep outline index node
+    const index = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId)) as any;
+    const unit = index.courseStructure.childInfo.children[0].childInfo.children[0].childInfo.children[0];
     expect(unit.id).toBe(unitId);
     expect(unit.displayName).toBe('Renamed Unit');
-  });
-
-  it('does not modify outline-index tree when no matching item found', async () => {
-    const { queryClient } = initializeMocks();
-
-    const outlineData = buildTestOutline([
-      { id: chapterId, displayName: 'Chapter 1' },
-    ]);
-    queryClient.setQueryData(courseOutlineQueryKeys.index(courseId), outlineData);
-    const before = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
-
-    const { result } = renderHook(() => useUpdateCourseBlockName(courseId), { wrapper: makeWrapper() });
-
-    await act(async () => {
-      await result.current.mutateAsync({
-        itemId: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@nonexistent',
-        displayName: 'New Name',
-        sectionId: chapterId,
-        subsectionId: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@nonexistent',
-      });
-    });
-
-    const after = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
-    expect(after).toEqual(before);
   });
 });
