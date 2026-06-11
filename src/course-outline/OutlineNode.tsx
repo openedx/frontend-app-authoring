@@ -99,6 +99,9 @@ const OutlineNode = ({
   const currentRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
+  // Tracks which ?show= locatorId we've already scrolled for, preventing
+  // re-scroll on every re-render (sidebar selection, context changes, etc.)
+  const scrolledToShowRef = useRef<string | null>(null);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
 
   const { activeId, overId } = useContext(DragContext);
@@ -169,11 +172,21 @@ const OutlineNode = ({
   }, [initBlk, blk, initialData, queryClient]);
 
   useEffect(() => {
-    if (currentRef.current && ((scrollState?.id === blk.id) || isScrolledToElement)) {
-      scrollToElement(currentRef.current, !!isScrolledToElement, true);
-      resetScrollState().catch((error) => handleResponseErrors(error));
+    // One-shot: scroll for ?show= only once per locator value.
+    // scrollState branch is independent (mutation-driven create/duplicate/paste).
+    const shouldScrollToShow = isScrolledToElement && scrolledToShowRef.current !== locatorId;
+    const shouldScrollToState = scrollState?.id === blk.id;
+
+    if (currentRef.current && (shouldScrollToState || shouldScrollToShow)) {
+      scrollToElement(currentRef.current, shouldScrollToShow, true);
+      if (shouldScrollToShow) {
+        scrolledToShowRef.current = locatorId;
+      }
+      if (shouldScrollToState) {
+        resetScrollState().catch((error) => handleResponseErrors(error));
+      }
     }
-  }, [isScrolledToElement, scrollState, resetScrollState, blk.id]);
+  }, [isScrolledToElement, scrollState, resetScrollState, blk.id, locatorId]);
 
   const isHeaderVisible = blk.isHeaderVisible !== false;
 
