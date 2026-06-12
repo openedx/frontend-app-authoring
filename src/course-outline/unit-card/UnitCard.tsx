@@ -407,6 +407,7 @@ const UnitCard = ({
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
       prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} size="sm" />}
+      titleLink={getTitleLink(id)}
     />
   ) : (
     <TitleLink

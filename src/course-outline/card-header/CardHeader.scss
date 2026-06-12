@@ -22,6 +22,52 @@
       text-align: left;
       -webkit-box-orient: vertical;  /* stylelint-disable-line value-no-vendor-prefix */
     }
+
+    &--with-link {
+      &:hover,
+      &:focus-within {
+        background-color: var(--pgn-color-light-300);
+      }
+
+      .item-card-header__title-expand-btn {
+        inset: 0;
+        min-height: unset;
+        box-shadow: none;
+
+        &:hover,
+        &:focus,
+        &:active {
+          background: transparent;
+          box-shadow: none;
+        }
+
+        &:focus-visible {
+          outline: .125rem solid var(--pgn-color-primary-500);
+          outline-offset: .125rem;
+        }
+      }
+
+      > .pgn__icon {
+        pointer-events: none;
+      }
+
+      .item-card-header__title-link-content .truncate-1-line {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+        -webkit-line-clamp: unset;
+        line-clamp: unset;
+        -webkit-box-orient: unset;
+      }
+
+      .item-card-header__title-link-content:hover .truncate-1-line {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 3px;
+      }
+    }
   }
 
   .item-card-button-icon {

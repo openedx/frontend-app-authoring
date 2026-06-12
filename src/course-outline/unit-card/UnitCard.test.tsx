@@ -329,6 +329,41 @@ describe('<UnitCard />', () => {
     expect(screen.queryByText(errorMessage)).not.toBeInTheDocument();
   });
 
+  it('renders the unit title as a link when expanded outline view is enabled', async () => {
+    renderComponent();
+
+    const titleLink = await screen.findByTestId('unit-card-header__title-link');
+    expect(titleLink).toHaveAttribute('href', `/some/${unit.id}`);
+    expect(titleLink).toHaveTextContent(unit.displayName);
+  });
+
+  it('does not expand the unit card when the title link is clicked', async () => {
+    renderComponent();
+
+    const titleLink = await screen.findByTestId('unit-card-header__title-link');
+    titleLink.addEventListener('click', (event) => event.preventDefault());
+
+    fireEvent.click(titleLink);
+
+    expect(screen.queryByTestId('unit-card__components')).not.toBeInTheDocument();
+  });
+
+  it('expands the unit card when the non-title expand area is clicked', async () => {
+    mockUseUnitHandler.mockReturnValue({
+      data: { components: [] },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: jest.fn(),
+    });
+    renderComponent();
+
+    const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+    fireEvent.click(expandButton);
+
+    expect(await screen.findByTestId('unit-card__components')).toBeInTheDocument();
+  });
+
   describe('component editor links', () => {
     const htmlComponent = {
       blockId: 'block-v1:test+type@html+block@1',
