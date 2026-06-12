@@ -308,6 +308,38 @@ describe('<CardHeader />', () => {
     });
   });
 
+  it('phantom blur with relatedTarget null closes form without mutation', async () => {
+    renderComponent();
+    const { field } = await openEdit();
+
+    // fireEvent.change avoids the document-level pointerdown that userEvent triggers,
+    // ensuring hasPointerInteractionRef stays false so the phantom blur guard fires.
+    fireEvent.change(field, { target: { value: 'Phantom name' } });
+    fireEvent.blur(field, { relatedTarget: null });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
+    });
+    expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
+    expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('phantom blur with relatedTarget document.body closes form without mutation', async () => {
+    renderComponent();
+    const { field } = await openEdit();
+
+    // fireEvent.change avoids the document-level pointerdown that userEvent triggers,
+    // ensuring hasPointerInteractionRef stays false so the phantom blur guard fires.
+    fireEvent.change(field, { target: { value: 'Phantom body name' } });
+    fireEvent.blur(field, { relatedTarget: document.body });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
+    });
+    expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
+    expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
+  });
+
   it('check editing is enabled when isDisabledEditField is false', async () => {
     renderComponent({ ...cardHeaderProps });
 

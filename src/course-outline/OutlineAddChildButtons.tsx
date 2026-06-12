@@ -34,10 +34,12 @@ const AddPlaceholder = ({ parentLocator, isPending }: AddPlaceholderProps) => {
 
   const getTitle = () => {
     const flowType = currentFlow?.flowType;
+    // istanbul ignore if: this should never happen
     if (!flowType) {
       throw new Error('Unknown flow type');
     }
     const config = CONTAINER_CATEGORY_CONFIG[flowType];
+    // istanbul ignore if: this should never happen
     if (!config) {
       throw new Error('Unknown flow type');
     }
@@ -110,6 +112,7 @@ const OutlineAddChildButtons = ({
     ),
   }) > 0;
   const categoryConfig = CONTAINER_CATEGORY_CONFIG[childType];
+  // istanbul ignore if: this should never happen
   if (!categoryConfig) {
     throw new Error(`Unrecognized block type ${childType}`);
   }
@@ -137,6 +140,7 @@ const OutlineAddChildButtons = ({
       }),
   };
   const onNewCreateContent = createContentMap[childType];
+  // istanbul ignore if: this should never happen
   if (!onNewCreateContent) {
     throw new Error(`Unrecognized block type ${childType}`);
   }
