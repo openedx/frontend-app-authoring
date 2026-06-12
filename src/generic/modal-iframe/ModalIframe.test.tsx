@@ -26,6 +26,11 @@ describe('ModalIframe Component', () => {
     expect(iframe).toHaveAttribute('scrolling', 'no');
   });
 
+  it('allows downloads initiated from the sandboxed iframe', () => {
+    const { getByTitle } = render(<ModalIframe title={title} src={src} />);
+    expect(getByTitle(title).getAttribute('sandbox')).toContain('allow-downloads');
+  });
+
   it('does not render when showLegacyEditModal is false', () => {
     const { container } = render(<ModalIframe title={title} src={src} />);
 
