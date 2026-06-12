@@ -340,6 +340,37 @@ describe('<CardHeader />', () => {
     expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
   });
 
+  it('escape via window listener then blur closes form without mutation', async () => {
+    renderComponent();
+    const { field } = await openEdit();
+
+    // fireEvent.change avoids document-level pointerdown.
+    fireEvent.change(field, { target: { value: 'Escaped name' } });
+
+    // Provide a valid relatedTarget to bypass the phantom blur guard.
+    const target = document.createElement('button');
+    document.body.appendChild(target);
+
+    // Register AFTER component mount so useEscapeClick listener fires first
+    // (sets escapeCancelledRef), then our listener fires blur while the input
+    // is still mounted (React hasn't flushed closeForm's state update yet).
+    const blurFiringListener = () => fireEvent.blur(field, { relatedTarget: target });
+    window.addEventListener('keydown', blurFiringListener);
+
+    try {
+      fireEvent.keyDown(window, { key: 'Escape' });
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
+      });
+      expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
+      expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
+    } finally {
+      window.removeEventListener('keydown', blurFiringListener);
+      document.body.removeChild(target);
+    }
+  });
+
   it('check editing is enabled when isDisabledEditField is false', async () => {
     renderComponent({ ...cardHeaderProps });
 
