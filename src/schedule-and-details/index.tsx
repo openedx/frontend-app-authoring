@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import {
   Container,
   Button,
@@ -10,10 +9,10 @@ import {
   ErrorOutline as ErrorOutlineIcon,
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
+import { CourseSettingsData } from '@src/data/api';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import Placeholder from '@src/editors/Placeholder';
-import { RequestStatus } from '@src/data/constants';
 import AlertMessage from '@src/generic/alert-message';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import { STATEFUL_BUTTON_STATES } from '@src/constants';
@@ -24,17 +23,6 @@ import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getScheduleAndDetailsPermissions } from '@src/authz/permissionHelpers';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 
-import {
-  fetchCourseSettingsQuery,
-  fetchCourseDetailsQuery,
-  updateCourseDetailsQuery,
-} from './data/thunks';
-import {
-  getCourseSettings,
-  getCourseDetails,
-  getLoadingDetailsStatus,
-  getLoadingSettingsStatus,
-} from './data/selectors';
 import BasicSection from './basic-section';
 import CreditSection from './credit-section';
 import DetailsSection from './details-section';
@@ -47,16 +35,31 @@ import RequirementsSection from './requirements-section';
 import LicenseSection from './license-section';
 import ScheduleSidebar from './schedule-sidebar';
 import messages from './messages';
-import { useLoadValuesPrompt, useSaveValuesPrompt } from './hooks';
+import { useSaveValuesPrompt } from './hooks';
+import { useCourseDetails } from './data/apiHooks';
+import { useCourseSettings } from '@src/data/apiHooks';
+import { CourseDetails } from './data/api';
+
+const EMPTY_COURSE_DETAILS: CourseDetails = {} as CourseDetails;
 
 const ScheduleAndDetails = () => {
   const intl = useIntl();
-  const courseSettings = useSelector(getCourseSettings);
-  const courseDetails = useSelector(getCourseDetails);
-  const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
-  const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
-
   const { courseId, courseDetails: course } = useCourseAuthoringContext();
+  const {
+    data: courseDetails = EMPTY_COURSE_DETAILS,
+    isPending: isPendingCourseDetails,
+    failureReason: courseDetailsError,
+    isError: isErrorCourseDetails,
+  } = useCourseDetails(courseId);
+  const {
+    data: courseSettings = {} as CourseSettingsData,
+    isPending: isPendingCourseSettings,
+    failureReason: courseSettingsError,
+    isError: isErrorCourseSettins,
+  } = useCourseSettings(courseId);
+
+  const showLoadFailedAlert = isErrorCourseDetails || isErrorCourseSettins;
+
   document.title = getPageHeadTitle(course?.name || '', intl.formatMessage(messages.headingTitle));
 
   const {
@@ -66,9 +69,7 @@ const ScheduleAndDetails = () => {
     canEditDetails,
   } = useCourseUserPermissions(courseId, getScheduleAndDetailsPermissions(courseId));
 
-  const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
-    || loadingSettingsStatus === RequestStatus.IN_PROGRESS
-    || isLoadingUserPermissions;
+  const isLoading = isPendingCourseDetails || isPendingCourseSettings || isLoadingUserPermissions;
 
   const {
     platformName,
@@ -93,16 +94,8 @@ const ScheduleAndDetails = () => {
   } = courseSettings;
 
   const {
-    showLoadFailedAlert,
-  } = useLoadValuesPrompt(
-    courseId,
-    fetchCourseDetailsQuery,
-    fetchCourseSettingsQuery,
-  );
-
-  const {
     errorFields,
-    savingStatus,
+    saveIsFailed,
     editedValues,
     isQueryPending,
     isEditableState,
@@ -116,7 +109,6 @@ const ScheduleAndDetails = () => {
     handleInternetConnectionFailed,
   } = useSaveValuesPrompt(
     courseId,
-    updateCourseDetailsQuery,
     canShowCertificateAvailableDateField,
     courseDetails,
   );
@@ -156,8 +148,10 @@ const ScheduleAndDetails = () => {
   // As updating them re-renders TinyMCE
   // Which causes issues with TinyMCE editor cursor position
   // https://www.tiny.cloud/docs/tinymce/5/react/#initialvalue
-  const { overview: initialOverview } = courseDetails || {};
-  const { aboutSidebarHtml: initialAboutSidebarHtml } = courseDetails || {};
+  const {
+    overview: initialOverview,
+    aboutSidebarHtml: initialAboutSidebarHtml,
+  } = courseDetails;
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -168,7 +162,10 @@ const ScheduleAndDetails = () => {
     return <PermissionDeniedAlert />;
   }
 
-  if (loadingDetailsStatus === RequestStatus.DENIED || loadingSettingsStatus === RequestStatus.DENIED) {
+  if (
+    courseDetailsError?.response?.status === 403
+    || courseSettingsError?.response?.status === 403
+  ) {
     return (
       <div className="row justify-content-center m-6">
         <Placeholder />
@@ -373,7 +370,7 @@ const ScheduleAndDetails = () => {
       <div className="alert-toast">
         {!isEditableState && (
           <InternetConnectionAlert
-            isFailed={savingStatus === RequestStatus.FAILED}
+            isFailed={saveIsFailed}
             isQueryPending={isQueryPending}
             onQueryProcessing={handleQueryProcessing}
             onInternetConnectionFailed={handleInternetConnectionFailed}
@@ -390,15 +387,17 @@ const ScheduleAndDetails = () => {
           )}
           role="dialog"
           actions={[
-            !isQueryPending && (
-              <Button
-                key="cancel-button"
-                variant="tertiary"
-                onClick={handleResetValues}
-              >
-                {intl.formatMessage(messages.buttonCancelText)}
-              </Button>
-            ),
+            !isQueryPending ?
+              (
+                <Button
+                  key="cancel-button"
+                  variant="tertiary"
+                  onClick={handleResetValues}
+                >
+                  {intl.formatMessage(messages.buttonCancelText)}
+                </Button>
+              ) :
+              null,
             <StatefulButton
               key="save-button"
               onClick={handleUpdateValues}
@@ -408,7 +407,7 @@ const ScheduleAndDetails = () => {
                 : STATEFUL_BUTTON_STATES.default}
               {...updateValuesButtonState}
             />,
-          ].filter(Boolean)}
+          ].filter(Boolean) as JSX.Element[]}
           variant="warning"
           icon={WarningIcon}
           title={alertWhileSavingTitle}
