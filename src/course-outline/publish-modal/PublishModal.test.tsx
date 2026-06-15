@@ -64,11 +64,11 @@ const onPublishSubmitMock = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
-    courseUsageKey: 'course-usage-key',
   }),
 }));
 
 jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  ...jest.requireActual('@src/course-outline/CourseOutlineContext'),
   useCourseOutlineContext: () => ({
     isPublishModalOpen: true,
     currentPublishModalData: { value: currentItemMock },
@@ -76,12 +76,13 @@ jest.mock('@src/course-outline/CourseOutlineContext', () => ({
   }),
 }));
 
-jest.mock('@src/course-outline/data/apiHooks', () => ({
-  ...jest.requireActual('@src/course-outline/data/apiHooks'),
-  usePublishCourseItem: () => ({
-    mutateAsync: onPublishSubmitMock,
-  }),
-}));
+jest.mock('@src/course-outline/data/apiHooks', () => {
+  const actual = jest.requireActual('@src/course-outline/data/apiHooks');
+  return {
+    ...actual,
+    usePublishCourseItem: jest.fn(() => ({ mutateAsync: onPublishSubmitMock })),
+  };
+});
 
 const renderComponent = () =>
   render(

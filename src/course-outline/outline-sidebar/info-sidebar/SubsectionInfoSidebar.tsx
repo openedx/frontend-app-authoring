@@ -1,19 +1,20 @@
-import { useEffect } from 'react';
-import { isEmpty } from 'lodash';
+import { useDefaultTab } from '@src/hooks/useDefaultTab';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
+import { withUpstreamGuard } from '@src/course-outline/utils';
 import { SidebarTitle } from '@src/generic/sidebar';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getLibraryId } from '@src/generic/key-utils';
 import { possibleSubsectionMoves } from '@src/course-outline/drag-helper/utils';
+import { applyReorderMove } from '@src/course-outline/drag-helper/utils';
 import { XBlock } from '@src/data/types';
 import { useBackNavigation } from '../back-navigation';
 
@@ -42,20 +43,16 @@ export const SubsectionSidebar = () => {
     settings: 'settings',
   };
 
-  useEffect(() => {
-    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
-      // Set default Tab key
-      setCurrentTabKey('info');
-    }
-  }, [currentTabKey, setCurrentTabKey]);
+  useDefaultTab('subsection');
   const { data: section } = useCourseItemData<XBlock>(selectedContainerState?.sectionId);
-  const { openUnlinkModal } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const duplicateMutation = useDuplicateItem(courseId);
   const {
     openPublishModal,
-    handleDuplicateSubsectionSubmit,
-    sections,
-    updateSubsectionOrderByIndex,
     openDeleteModal,
+    sections,
+    previewSections,
+    commitSubsectionReorder,
   } = useCourseOutlineContext();
   const sectionIndex = sections.findIndex((s) => s.id === selectedContainerState?.sectionId);
 
@@ -76,10 +73,8 @@ export const SubsectionSidebar = () => {
     return <Loading />;
   }
 
-  // re-create actions object for customizations
-  const actions = { ...subsectionData.actions };
-  actions.deletable = actions.deletable && !section?.upstreamInfo?.upstreamRef;
-  actions.duplicable = actions.duplicable && !section?.upstreamInfo?.upstreamRef;
+  // Guard actions against upstream reference
+  const actions = withUpstreamGuard(subsectionData.actions, section?.upstreamInfo);
 
   const getPossibleMoves = section ?
     possibleSubsectionMoves(
@@ -93,17 +88,17 @@ export const SubsectionSidebar = () => {
   const canMoveSubsection = (oldIndex: number, step: number) => {
     if (getPossibleMoves && section) {
       const moveDetails = getPossibleMoves(oldIndex, step);
-      return !isEmpty(moveDetails) && !section.upstreamInfo?.upstreamRef;
+      return moveDetails !== null && !section.upstreamInfo?.upstreamRef;
     }
-    // istanbul ignore next
+    // istanbul ignore next: unreachable — getPossibleMoves always set when section exists
     return false;
   };
 
   const handleMove = (step: number) => {
     if (section && getPossibleMoves && index !== undefined && sectionIndex !== undefined) {
       const moveDetails = getPossibleMoves(index, step);
-      updateSubsectionOrderByIndex(section, moveDetails);
-      if (!isEmpty(moveDetails)) {
+      applyReorderMove(moveDetails, section, previewSections, commitSubsectionReorder);
+      if (moveDetails) {
         const newSectionId = moveDetails.sectionId;
         // A subsection can move to a different section (cross-section move)
         const isCrossSection = newSectionId !== section.id;
@@ -130,6 +125,43 @@ export const SubsectionSidebar = () => {
     }
   };
 
+  const handleDuplicate = () => {
+    const sel = selectedContainerState;
+    if (!sel?.currentId || !sel.sectionId) { return; }
+    duplicateMutation.mutate({
+      itemId: sel.currentId,
+      parentId: sel.sectionId,
+      sectionId: sel.sectionId,
+      subsectionId: sel.subsectionId,
+    });
+  };
+
+  const handleUnlink = () => {
+    openUnlinkModal({
+      value: subsectionData,
+      sectionId: selectedContainerState?.sectionId,
+    });
+  };
+
+  const handleDelete = () => {
+    const sectionId = selectedContainerState?.sectionId;
+    if (!sectionId) { return; }
+    openDeleteModal({
+      category: 'sequential',
+      currentId: subsectionData.id,
+      subsectionId: subsectionData.id,
+      sectionId,
+    });
+  };
+
+  const handleViewLibrary = () => {
+    const upstreamRef = subsectionData?.upstreamInfo?.upstreamRef;
+    if (upstreamRef) {
+      const libId = getLibraryId(upstreamRef);
+      navigate(`/library/${libId}/subsection/${upstreamRef}`);
+    }
+  };
+
   return (
     <>
       <SidebarTitle
@@ -141,22 +173,12 @@ export const SubsectionSidebar = () => {
           index: index ?? -1,
           actions,
           canMoveItem: canMoveSubsection,
-          onClickDuplicate: handleDuplicateSubsectionSubmit,
+          onClickDuplicate: handleDuplicate,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
-          onClickUnlink: () =>
-            openUnlinkModal({
-              value: subsectionData,
-              sectionId: selectedContainerState?.sectionId,
-            }),
-          onClickDelete: openDeleteModal,
-          onClickViewLibrary: () => {
-            const upstreamRef = subsectionData?.upstreamInfo?.upstreamRef;
-            if (upstreamRef) {
-              const libId = getLibraryId(upstreamRef);
-              navigate(`/library/${libId}/subsection/${upstreamRef}`);
-            }
-          },
+          onClickUnlink: handleUnlink,
+          onClickDelete: handleDelete,
+          onClickViewLibrary: handleViewLibrary,
         }}
       />
       {subsectionData?.hasChanges && <PublishButon onClick={handlePublish} />}

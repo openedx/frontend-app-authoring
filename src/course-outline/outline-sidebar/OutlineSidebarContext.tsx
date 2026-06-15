@@ -2,19 +2,14 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
 import { useToggle } from '@openedx/paragon';
 
 import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
-import { SelectionState, XBlock } from '@src/data/types';
+import { SelectionState } from '@src/data/types';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { useSelector } from 'react-redux';
-import { getSectionsList } from '@src/course-outline/data/selectors';
-import { findLast, findLastIndex } from 'lodash';
 import { ContainerType } from '@src/generic/key-utils';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
@@ -54,40 +49,9 @@ interface OutlineSidebarContextData {
     index?: number,
   ) => void;
   clearSelection: () => void;
-  /** Stores last section that allows adding subsections inside it. */
-  lastEditableSection?: XBlock;
-  /** Stores last subsection that allows adding units inside it and its parent sectionId */
-  lastEditableSubsection?: { data?: XBlock; sectionId?: string; };
-  /** XBlock data of selectedContainerState.currentId */
-  currentItemData?: XBlock;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
-
-const getLastEditableItem = (blockList: Array<XBlock>) => findLast(blockList, (item) => item.actions.childAddable);
-
-const getLastEditableSubsection = (
-  blockList: Array<XBlock>,
-  startIndex?: number,
-): { data: XBlock; sectionId: string; } | undefined => {
-  const lastSectionIndex = findLastIndex(blockList, (item) => item.actions.childAddable, startIndex);
-  if (lastSectionIndex !== -1) {
-    const lastSubsectionIndex = findLastIndex(
-      blockList[lastSectionIndex].childInfo.children,
-      (item) => item.actions.childAddable,
-    );
-    if (lastSubsectionIndex !== -1) {
-      return {
-        data: blockList[lastSectionIndex].childInfo.children[lastSubsectionIndex],
-        sectionId: blockList[lastSectionIndex].id,
-      };
-    }
-    if (lastSectionIndex > 0) {
-      return getLastEditableSubsection(blockList, lastSectionIndex - 1);
-    }
-  }
-  return undefined;
-};
 
 export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNode; }) => {
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<OutlineSidebarPageKeys>(
@@ -114,24 +78,15 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
    * If selected container is an unit, set containerId as unitId, subsectionId as its parent subsection's id
    * and sectionId should be set to its top parent section's id.
    */
-  const [selectedContainerState, setSelectedContainerState] = useState<SelectionState | undefined>();
-  const { setCurrentSelection } = useCourseOutlineContext();
-
-  /**
-   * Set currentSelection to same as selectedContainerState whenever
-   * selectedContainerState or currentPageKey changes.
-   * This allows us to reset the currentSelection.
-   */
-  useEffect(() => {
-    // To allow tag buttons on other cards to jump to align page and not loose its selection
-    if (currentPageKey !== 'align') {
-      setCurrentSelection(selectedContainerState);
-    }
-  }, [currentPageKey, selectedContainerState]);
+  const {
+    currentSelection: selectedContainerState,
+    selectContainer: setSelectedContainerState,
+    clearSelection,
+    openContainerInfo,
+  } = useCourseOutlineContext();
 
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);
-    // Reset tab
     setCurrentTabKey(undefined);
     stopCurrentFlow();
     open();
@@ -143,14 +98,9 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     sectionId?: string,
     index?: number,
   ) => {
-    setSelectedContainerState({
-      currentId: containerId,
-      subsectionId,
-      sectionId,
-      index,
-    });
+    openContainerInfo(containerId, subsectionId, sectionId, index);
     setCurrentPageKey('info');
-  }, [setSelectedContainerState, setCurrentPageKey]);
+  }, [openContainerInfo, setCurrentPageKey]);
 
   const openContainerSidebar = useCallback((
     containerId: string,
@@ -166,10 +116,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     });
   }, [setSelectedContainerState]);
 
-  const clearSelection = useCallback(() => {
-    setSelectedContainerState(undefined);
-  }, [selectedContainerState]);
-
   /**
    * Starts add content flow.
    * The sidebar enters an add content flow which allows user to add content in a specific container.
@@ -180,37 +126,12 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     setCurrentFlow(flow);
   }, [setCurrentFlow, setCurrentPageKey]);
 
-  const { data: currentItemData } = useCourseItemData<XBlock>(selectedContainerState?.currentId);
-  const sectionsList = useSelector(getSectionsList);
-
-  /** Stores last section that allows adding subsections inside it. */
-  const lastEditableSection = useMemo(() => {
-    if (currentItemData?.category === 'chapter' && currentItemData.actions.childAddable) {
-      return currentItemData;
-    }
-    return currentItemData ? undefined : getLastEditableItem(sectionsList);
-  }, [currentItemData, sectionsList]);
-
-  /** Stores last subsection that allows adding units inside it. */
-  const lastEditableSubsection = useMemo(() => {
-    if (currentItemData?.category === 'sequential' && currentItemData.actions.childAddable) {
-      return { data: currentItemData, sectionId: selectedContainerState?.sectionId };
-    }
-    if (currentItemData?.category === 'chapter') {
-      return {
-        data: getLastEditableItem(currentItemData?.childInfo.children || []),
-        sectionId: selectedContainerState?.currentId,
-      };
-    }
-    return currentItemData ? undefined : getLastEditableSubsection(sectionsList);
-  }, [currentItemData, sectionsList, selectedContainerState]);
-
   useEscapeClick({
     onEscape: () => {
       stopCurrentFlow();
-      setSelectedContainerState(undefined);
+      clearSelection();
     },
-    dependency: [stopCurrentFlow],
+    dependency: [stopCurrentFlow, clearSelection],
   });
 
   const context = useMemo<OutlineSidebarContextData>(
@@ -231,9 +152,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       openContainerInfoSidebar,
       openContainerSidebar,
       clearSelection,
-      lastEditableSection,
-      lastEditableSubsection,
-      currentItemData,
     }),
     [
       currentPageKey,
@@ -252,9 +170,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       openContainerInfoSidebar,
       openContainerSidebar,
       clearSelection,
-      lastEditableSection,
-      lastEditableSubsection,
-      currentItemData,
     ],
   );
 
@@ -268,7 +183,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
 export function useOutlineSidebarContext(): OutlineSidebarContextData {
   const ctx = useContext(OutlineSidebarContext);
   if (ctx === undefined) {
-    /* istanbul ignore next */
+    /* istanbul ignore next: impossible in production, all consumers inside provider */
     throw new Error('useOutlineSidebarContext() was used in a component without a <OutlineSidebarProvider> ancestor.');
   }
   return ctx;
