@@ -84,6 +84,10 @@ export const useCourseUnit = ({
     COURSE_BLOCK_NAMES.legacyLibraryContent.id,
     COURSE_BLOCK_NAMES.itembank.id,
   ].includes(unitCategory);
+  // True for generic container XBlocks that are not one of the specially-handled types above.
+  // These containers can also host add-component buttons via the MFE native strip.
+  const isGenericContainerType = !isUnitVerticalType && !isSplitTestType && !isProblemBankType &&
+    !isUnitLegacyLibraryType && !!unitCategory;
 
   const headerNavigationsActions = {
     handleViewLive: () => {
@@ -259,6 +263,7 @@ export const useCourseUnit = ({
     isUnitLegacyLibraryType,
     isSplitTestType,
     isProblemBankType,
+    isGenericContainerType,
     sharedClipboardData,
     showPasteXBlock,
     showPasteUnit,
