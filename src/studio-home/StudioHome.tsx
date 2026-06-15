@@ -108,7 +108,8 @@ const StudioHome = () => {
         if (showV2LibraryURL) {
           navigate('/library/create');
         } else {
-          navigate('/libraries-v1/create');
+          // Studio home library for legacy libraries
+          window.open(`${getConfig().STUDIO_BASE_URL}/home_library`);
         }
       };
 
