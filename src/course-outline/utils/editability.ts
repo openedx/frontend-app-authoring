@@ -1,6 +1,6 @@
 import { findLast, findLastIndex } from 'lodash';
 
-import { type XBlock, type XBlockBase } from '@src/data/types';
+import type { XBlock, XBlockBase } from '@src/data/types';
 
 export type EditableSubsection = {
   data?: XBlock;

@@ -20,7 +20,7 @@ export interface UseConfigureDialogOutput {
   handleOpenConfigureModal: (selection: OutlineActionSelection) => void;
   handleConfigureItemSubmitWrapper: (variables: Record<string, unknown>) => Promise<void>;
   isOverflowVisible: boolean;
-  currentItemData: XBlock | undefined;
+  currentItemData?: XBlock;
 }
 
 /**

@@ -27,8 +27,7 @@ import {
   getLastEditableItem,
   getLastEditableSubsection,
 } from './state';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import type { ModalState } from '@src/CourseAuthoringContext';
+import { useCourseAuthoringContext, type ModalState } from '@src/CourseAuthoringContext';
 
 import {
   CourseOutline,
@@ -37,7 +36,7 @@ import {
 } from './data';
 
 type CourseOutlineContextData = {
-  outlineIndexData: CourseOutline | undefined;
+  outlineIndexData?: CourseOutline;
   courseName?: string;
   courseUsageKey: string;
   sections: XBlock[];

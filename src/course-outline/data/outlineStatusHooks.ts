@@ -16,11 +16,11 @@ export function useCourseOutlineSavingStatus(courseId?: string): string {
   if (hasPending) { return RequestStatus.PENDING; }
   // Find latest by submittedAt among completed
   let latest: { status: 'success' | 'error'; submittedAt: number; } | null = null;
-  for (const m of mutations) {
-    if (m.status !== 'success' && m.status !== 'error') { continue; }
-    const t = m.submittedAt ?? 0;
-    if (t > 0 && (!latest || t > latest.submittedAt)) {
-      latest = { status: m.status as 'success' | 'error', submittedAt: t };
+  for (const mutation of mutations) {
+    if (mutation.status !== 'success' && mutation.status !== 'error') { continue; }
+    const submittedAt = mutation.submittedAt ?? 0;
+    if (submittedAt > 0 && (!latest || submittedAt > latest.submittedAt)) {
+      latest = { status: mutation.status as 'success' | 'error', submittedAt };
     }
   }
   if (!latest) { return ''; }
@@ -32,11 +32,11 @@ export function useCourseOutlineSavingStatus(courseId?: string): string {
  */
 function latestMutation<T extends { submittedAt?: number; status?: string; }>(mutations: T[]): T | undefined {
   let latest: T | undefined;
-  for (const m of mutations) {
-    if (m.status !== 'success' && m.status !== 'error') { continue; }
-    const t = m.submittedAt ?? 0;
-    if (t > 0 && (!latest || (latest.submittedAt ?? 0) < t)) {
-      latest = m;
+  for (const mutation of mutations) {
+    if (mutation.status !== 'success' && mutation.status !== 'error') { continue; }
+    const submittedAt = mutation.submittedAt ?? 0;
+    if (submittedAt > 0 && (!latest || (latest.submittedAt ?? 0) < submittedAt)) {
+      latest = mutation;
     }
   }
   return latest;
@@ -61,14 +61,13 @@ export function useCourseOutlineReindexStatus(courseId?: string): {
   }
 
   const latest = latestMutation(mutations);
-  const status = latest?.status;
-  if (status === 'error' && latest) {
+  if (latest?.status === 'error') {
     return {
       reindexLoadingStatus: RequestStatus.FAILED,
       reindexError: getErrorDetails(latest.error),
     };
   }
-  if (status === 'success') {
+  if (latest?.status === 'success') {
     return { reindexLoadingStatus: RequestStatus.SUCCESSFUL, reindexError: null };
   }
   // idle / no mutations — preserve existing behavior (IN_PROGRESS)

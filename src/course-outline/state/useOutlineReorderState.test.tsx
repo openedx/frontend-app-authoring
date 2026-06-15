@@ -1,5 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
+import { makeQueryClientWrapper } from '@src/testUtils';
 import { courseOutlineQueryKeys } from '../data/queryKeys';
 import { useOutlineReorderState } from './useOutlineReorderState';
 
@@ -46,14 +47,10 @@ const sections: any[] = [
 
 let queryClient: QueryClient;
 
-const wrapper = ({ children }: { children: React.ReactNode; }) => (
-  <QueryClientProvider client={queryClient}>
-    {children}
-  </QueryClientProvider>
-);
-
 function renderReorderHook() {
-  return renderHook(() => useOutlineReorderState({ courseId, sections }), { wrapper });
+  return renderHook(() => useOutlineReorderState({ courseId, sections }), {
+    wrapper: makeQueryClientWrapper(queryClient),
+  });
 }
 
 describe('useOutlineReorderState', () => {
@@ -320,7 +317,7 @@ describe('useOutlineReorderState', () => {
       // so a subsequent render with fresh cache sections shows the new order.
       const { result, rerender } = renderHook(
         ({ sections: dynamicSections }) => useOutlineReorderState({ courseId, sections: dynamicSections }),
-        { initialProps: { sections }, wrapper },
+        { initialProps: { sections }, wrapper: makeQueryClientWrapper(queryClient) },
       );
 
       act(() => {

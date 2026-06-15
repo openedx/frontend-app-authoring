@@ -159,7 +159,7 @@ export function buildSidebarOpenArgs(
   ancestors: OutlineNodeAncestors,
 ): {
   containerId: string;
-  subsectionId: string | undefined;
+  subsectionId?: string;
   sectionId: string;
   index: number;
 } {

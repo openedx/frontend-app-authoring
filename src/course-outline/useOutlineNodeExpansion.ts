@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { UniqueIdentifier } from '@dnd-kit/core';
 import type { XBlock } from '@src/data/types';
-import type { Depth } from './outline-level';
-import { containsSearchResult } from './outline-level';
+import { containsSearchResult, type Depth } from './outline-level';
 
 type ScrollState = {
   id?: string;
@@ -16,7 +15,7 @@ interface UseOutlineNodeExpansionParams {
   isHeaderVisible: boolean;
   activeId: UniqueIdentifier | null;
   overId: UniqueIdentifier | null;
-  scrollState: ScrollState | null | undefined;
+  scrollState?: ScrollState | null;
 }
 
 interface UseOutlineNodeExpansionResult {

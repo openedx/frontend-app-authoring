@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
+import { makeQueryClientWrapper } from '@src/testUtils';
 import { RequestStatus } from '@src/data/constants';
 import { useOutlineStatusState } from './useOutlineStatusState';
 
@@ -79,16 +80,12 @@ const testQueryClient = new QueryClient({
   defaultOptions: { queries: { retry: false } },
 });
 
-function renderStatusHook(input?: Partial<ReturnType<typeof defaultInput>>) {
+const renderStatusHook = (input?: Partial<ReturnType<typeof defaultInput>>) => {
   const merged = { ...defaultInput(), ...input };
   return renderHook(() => useOutlineStatusState(merged), {
-    wrapper: ({ children }) => (
-      <QueryClientProvider client={testQueryClient}>
-        {children}
-      </QueryClientProvider>
-    ),
+    wrapper: makeQueryClientWrapper(testQueryClient),
   });
-}
+};
 
 describe('useOutlineStatusState', () => {
   beforeEach(() => {

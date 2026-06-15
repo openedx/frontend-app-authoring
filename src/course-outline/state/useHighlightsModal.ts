@@ -18,7 +18,7 @@ export interface UseHighlightsModalOutput {
   closeHighlightsModal: () => void;
   handleOpenHighlightsModal: (section: XBlock) => void;
   handleHighlightsFormSubmit: (highlights: HighlightData) => void;
-  highlightsModalCurrentId: string | undefined;
+  highlightsModalCurrentId?: string;
 }
 
 /**

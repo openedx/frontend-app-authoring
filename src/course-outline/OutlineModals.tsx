@@ -9,9 +9,8 @@ import PublishModal from './publish-modal/PublishModal';
 
 import { useCourseOutlineContext } from './CourseOutlineContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useDeleteModal, useUnlinkModal } from './state';
+import { useDeleteModal, useUnlinkModal, type UseHighlightsModalOutput, type UseConfigureDialogOutput } from './state';
 import { COURSE_BLOCK_NAMES } from './constants';
-import type { UseHighlightsModalOutput, UseConfigureDialogOutput } from './state';
 
 export interface OutlineModalsProps {
   highlights: UseHighlightsModalOutput;
