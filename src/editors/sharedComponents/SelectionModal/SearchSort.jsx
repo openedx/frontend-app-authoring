@@ -18,13 +18,14 @@ import {
 
 import messages from './messages';
 import './index.scss';
-import { sortKeys, sortMessages } from '../../containers/VideoGallery/utils';
 
 const SearchSort = ({
   searchString,
   onSearchChange,
   clearSearchString,
   sortBy,
+  sortKeys,
+  sortMessages,
   onSortClick,
   filterBy,
   onFilterClick,
@@ -135,6 +136,8 @@ SearchSort.propTypes = {
   onFilterClick: PropTypes.func,
   filterKeys: PropTypes.shape({}),
   filterMessages: PropTypes.shape({}),
+  sortKeys: PropTypes.shape({}).isRequired,
+  sortMessages: PropTypes.shape({}).isRequired,
   showSwitch: PropTypes.bool,
   switchMessage: PropTypes.shape({}).isRequired,
   onSwitchClick: PropTypes.func,

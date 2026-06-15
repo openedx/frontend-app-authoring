@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
   ActionRow,
@@ -10,6 +9,21 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
+interface BaseModalProps {
+  isOpen: boolean;
+  close: () => void;
+  title: string;
+  children: React.ReactNode;
+  confirmAction: React.ReactNode;
+  footerAction?: React.ReactNode;
+  headerComponent?: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'fullscreen';
+  isFullscreenScroll?: boolean;
+  bodyStyle?: React.CSSProperties;
+  className?: string;
+  hideCancelButton?: boolean;
+}
+
 const BaseModal = ({
   isOpen,
   close,
@@ -17,13 +31,13 @@ const BaseModal = ({
   children,
   headerComponent,
   confirmAction,
-  footerAction,
-  size,
-  isFullscreenScroll,
+  footerAction = null,
+  size = 'lg',
+  isFullscreenScroll = true,
   bodyStyle,
   className,
-  hideCancelButton,
-}) => (
+  hideCancelButton = false,
+}: BaseModalProps) => (
   <ModalDialog
     isOpen={isOpen}
     onClose={close}
@@ -34,6 +48,7 @@ const BaseModal = ({
     isFullscreenScroll={isFullscreenScroll}
     title={title}
     className={className}
+    isOverflowVisible={false}
   >
     <ModalDialog.Header style={{ zIndex: 1, boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.3)' }}>
       <ModalDialog.Title>
@@ -64,30 +79,5 @@ const BaseModal = ({
     </ModalDialog.Footer>
   </ModalDialog>
 );
-
-BaseModal.defaultProps = {
-  footerAction: null,
-  headerComponent: null,
-  size: 'lg',
-  isFullscreenScroll: true,
-  bodyStyle: null,
-  className: undefined,
-  hideCancelButton: false,
-};
-
-BaseModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  close: PropTypes.func.isRequired,
-  title: PropTypes.node.isRequired,
-  children: PropTypes.node.isRequired,
-  confirmAction: PropTypes.node.isRequired,
-  footerAction: PropTypes.node,
-  headerComponent: PropTypes.node,
-  size: PropTypes.string,
-  isFullscreenScroll: PropTypes.bool,
-  bodyStyle: PropTypes.shape({}),
-  className: PropTypes.string,
-  hideCancelButton: PropTypes.bool,
-};
 
 export default BaseModal;
