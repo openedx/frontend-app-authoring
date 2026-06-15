@@ -81,6 +81,10 @@ const messages = defineMessages({
     id: 'course-authoring.advanced-settings.alert.proctoring.error.aria.describedby',
     defaultMessage: 'alert-danger-description',
   },
+  noSearchResults: {
+    id: 'course-authoring.advanced-settings.no-search-results',
+    defaultMessage: 'No settings found for "{query}". Try a different search term.',
+  },
 });
 
 export default messages;
