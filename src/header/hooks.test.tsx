@@ -85,7 +85,6 @@ describe('header utils', () => {
     it('when video upload page disabled should not include Video Uploads option', () => {
       mockWaffleFlags({
         enableAuthzCourseAuthoring: false,
-        useNewVideoUploadsPage: false,
       });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
@@ -188,8 +187,8 @@ describe('header utils', () => {
       const actualItemsTitle = actualItems.map((item) => item.title);
       expect(actualItemsTitle).toContain(messages['header.links.updates'].defaultMessage);
     });
-    it('when useNewUpdatesPage is false should use legacy studio URL for updates', () => {
-      mockWaffleFlags({ enableAuthzCourseAuthoring: false, useNewUpdatesPage: false });
+    it('should always use MFE URL for updates', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: false,
@@ -201,7 +200,7 @@ describe('header utils', () => {
       const actualItems =
         renderHook(() => useContentMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
       const updatesItem = actualItems.find((item) => item.title === messages['header.links.updates'].defaultMessage);
-      expect(updatesItem?.href).toContain('/course_info/course-123');
+      expect(updatesItem?.href).toContain('/course/course-123/course_info');
     });
     it('when authz enabled and user has canViewPagesAndResources should include pages and resources option', async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
@@ -237,7 +236,6 @@ describe('header utils', () => {
     beforeAll(() => {
       mockWaffleFlags({
         enableAuthzCourseAuthoring: false,
-        useNewVideoUploadsPage: false,
       });
     });
     beforeEach(() => {
