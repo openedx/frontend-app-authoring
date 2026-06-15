@@ -2504,12 +2504,14 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(moveUpButton));
     await waitFor(() => {
       const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
-      const firstSectionSubsections = cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children || [];
-      expect(firstSectionSubsections.length).toBe(firstSection.childInfo.children.length + 1);
-      expect(firstSectionSubsections[firstSectionSubsections.length - 1]?.id).toBe(subsection.id);
-      const subsectionsSecondSection = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children || [];
-      expect(subsectionsSecondSection.length).toBe(section.childInfo.children.length - 1);
+      const subs = cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children || [];
+      expect(subs.length).toBe(firstSection.childInfo.children.length + 1);
     });
+    const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
+    const firstSectionSubsections = cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children || [];
+    expect(firstSectionSubsections[firstSectionSubsections.length - 1]?.id).toBe(subsection.id);
+    const subsectionsSecondSection = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children || [];
+    expect(subsectionsSecondSection.length).toBe(section.childInfo.children.length - 1);
   });
 
   it('check whether subsection move down to next section if it is in bottom position of its parent section', async () => {
@@ -2550,12 +2552,13 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(moveDownBtn));
     await waitFor(() => {
       const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
-      const firstSectionSubsections = cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children || [];
-      expect(firstSectionSubsections.length).toBe(section.childInfo.children.length - 1);
-      const subsectionsSecondSection = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children || [];
-      expect(subsectionsSecondSection.length).toBe(secondSection.childInfo.children.length + 1);
-      expect(subsectionsSecondSection[0]?.id).toBe(subsection.id);
+      const subs = cachedData?.courseStructure?.childInfo?.children[0]?.childInfo?.children || [];
+      expect(subs.length).toBe(section.childInfo.children.length - 1);
     });
+    const cachedData = queryClient.getQueryData(courseOutlineQueryKeys.index(courseId));
+    const subsectionsSecondSection = cachedData?.courseStructure?.childInfo?.children[1]?.childInfo?.children || [];
+    expect(subsectionsSecondSection.length).toBe(secondSection.childInfo.children.length + 1);
+    expect(subsectionsSecondSection[0]?.id).toBe(subsection.id);
   });
 
   it('check whether subsection move up & down option is rendered correctly based on index', async () => {
