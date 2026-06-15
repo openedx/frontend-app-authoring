@@ -222,7 +222,8 @@ specified in ``package.toml``.
 Further Reading
 ---------------
 
-* :ref:`backup-restore-format` — full reference for the V2 archive schema
-  (in the ``openedx-core`` documentation).
+* ``openedx-core`` backup/restore format reference — full schema for the V2
+  archive (``docs/openedx_content/backup_restore.rst`` in the ``openedx-core``
+  repository).
 * `Legacy Libraries Deprecation <https://github.com/openedx/edx-platform/issues/32457>`_
   — deprecation tracking issue for V1 (legacy) content libraries.
