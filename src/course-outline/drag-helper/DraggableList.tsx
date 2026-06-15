@@ -27,33 +27,21 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { XBlock } from '@src/data/types';
 import DragContextProvider from './DragContextProvider';
 import {
-  moveSubsectionOver,
-  moveUnitOver,
-  moveSubsection,
-  moveUnit,
+  moveItemOver,
+  moveItem,
   dragHelpers,
 } from './utils';
 import CourseItemOverlay from './CourseItemOverlay';
 
 interface DraggableListProps {
   items: XBlock[];
-  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
-  restoreSectionList: () => void;
-  handleSectionDragAndDrop: (sectionListIds: string[], restoreSectionList: () => void) => void;
-  handleSubsectionDragAndDrop: (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionListIds: string[],
-    restoreSectionList: () => void,
-  ) => void;
-  handleUnitDragAndDrop: (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionId: string,
-    unitListIds: string[],
-    restoreSectionList: () => void,
-  ) => void;
   children: React.ReactNode;
+  // Intent-level callbacks for drag operations
+  onPreviewTreeChange?: (nextTree: XBlock[]) => void;
+  onCancelDrag?: () => void;
+  onSectionDrop?: (sectionListIds: string[]) => void;
+  onSubsectionDrop?: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
+  onUnitDrop?: (sectionId: string, prevSectionId: string, subsectionId: string, unitListIds: string[]) => void;
 }
 
 interface ItemInfoType {
@@ -68,13 +56,19 @@ interface ItemInfoType {
 
 const DraggableList = ({
   items,
-  setSections,
-  restoreSectionList,
-  handleSectionDragAndDrop,
-  handleSubsectionDragAndDrop,
-  handleUnitDragAndDrop,
   children,
+  onPreviewTreeChange,
+  onCancelDrag,
+  onSectionDrop,
+  onSubsectionDrop,
+  onUnitDrop,
 }: DraggableListProps) => {
+  // Drag-local working tree: seeded from `items` before drag starts,
+  // updated immediately in preview handlers so cross-parent math
+  // always reads the latest tree even if parent hasn't re-rendered.
+  const dragTreeRef = React.useRef<XBlock[]>(items);
+  const activeIdRef = React.useRef<UniqueIdentifier | null>(null);
+
   const prevContainerInfo = React.useRef<string | null>();
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -83,24 +77,37 @@ const DraggableList = ({
     }),
   );
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
+
+  // Sync committed items into drag tree when no drag is in progress.
+  // This ensures the ref always has the latest committed state between drags.
+  if (!activeIdRef.current) {
+    dragTreeRef.current = items;
+  }
   const [draggedItemClone, setDraggedItemClone] = React.useState<React.ReactNode>(null);
   const [currentOverId, setCurrentOverId] = React.useState<string | null>(null);
 
+  // Notify parent of preview change and update drag-local tree immediately.
+  const updateDragTree = React.useCallback((nextTree: XBlock[]) => {
+    dragTreeRef.current = nextTree;
+    onPreviewTreeChange?.(nextTree);
+  }, [onPreviewTreeChange]);
+
   const findItemInfo = (id: UniqueIdentifier): ItemInfoType | null => {
+    const tree = dragTreeRef.current;
     // search id in sections
-    const sectionIndex = items.findIndex((section: XBlock) => section.id === id);
+    const sectionIndex = tree.findIndex((section: XBlock) => section.id === id);
     if (sectionIndex !== -1) {
       return {
         index: sectionIndex,
-        item: items[sectionIndex],
+        item: tree[sectionIndex],
         category: COURSE_BLOCK_NAMES.chapter.id,
         parent: undefined,
       };
     }
 
     // search id in subsections
-    for (let index = 0; index < items.length; index++) {
-      const section = items[index];
+    for (let index = 0; index < tree.length; index++) {
+      const section = tree[index];
       const subsectionIndex = section.childInfo.children.findIndex((subsection: XBlock) => subsection.id === id);
       if (subsectionIndex !== -1) {
         return {
@@ -114,8 +121,8 @@ const DraggableList = ({
     }
 
     // search id in units
-    for (let index = 0; index < items.length; index++) {
-      const section = items[index];
+    for (let index = 0; index < tree.length; index++) {
+      const section = tree[index];
       for (let subIndex = 0; subIndex < section.childInfo.children.length; subIndex++) {
         const subsection = section.childInfo.children[subIndex];
         const unitIndex = subsection.childInfo.children.findIndex((unit: XBlock) => unit.id === id);
@@ -142,7 +149,7 @@ const DraggableList = ({
   // new index and parent are ignored.
   // See https://github.com/openedx/frontend-app-course-authoring/pull/859#discussion_r1519199622
   // for more details.
-  /* istanbul ignore next */
+  /* istanbul ignore next: complex drag-over logic covered by E2E, see PR #859 */
   const subsectionDragOver = (
     active: Active,
     over: Over,
@@ -171,22 +178,20 @@ const DraggableList = ({
       setCurrentOverId(overInfo.parent?.id || null);
     }
 
-    setSections((prev) => {
-      const [prevCopy] = moveSubsectionOver(
-        [...prev],
-        activeInfo.parentIndex!,
-        activeInfo.index,
-        overSectionIndex!,
-        newIndex,
-      );
-      return prevCopy;
-    });
+    const [prevCopy] = moveItemOver(
+      [...dragTreeRef.current],
+      activeInfo.parentIndex!,
+      activeInfo.index,
+      overSectionIndex!,
+      newIndex,
+    );
+    updateDragTree(prevCopy);
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.parent?.id;
     }
   };
 
-  /* istanbul ignore next */
+  /* istanbul ignore next: complex drag-over logic covered by E2E, see PR #859 */
   const unitDragOver = (
     active: Active,
     over: Over,
@@ -197,6 +202,7 @@ const DraggableList = ({
       activeInfo.parent?.id === overInfo.parent?.id
       || activeInfo.parent?.id === overInfo.item.id
       || (activeInfo.parent?.category === overInfo.category && !overInfo.item.actions.childAddable)
+      || (activeInfo.category === overInfo.category && !overInfo.parent?.actions.childAddable)
     ) {
       return;
     }
@@ -218,24 +224,22 @@ const DraggableList = ({
       setCurrentOverId(overInfo.parent?.id || null);
     }
 
-    setSections((prev: XBlock[]) => {
-      const [prevCopy] = moveUnitOver(
-        [...prev],
-        activeInfo.grandParentIndex!,
-        activeInfo.parentIndex!,
-        activeInfo.index,
-        overSectionIndex!,
-        overSubsectionIndex!,
-        newIndex,
-      );
-      return prevCopy;
-    });
+    const [prevCopy] = moveItemOver(
+      [...dragTreeRef.current],
+      activeInfo.grandParentIndex!,
+      activeInfo.parentIndex!,
+      activeInfo.index,
+      overSectionIndex!,
+      overSubsectionIndex!,
+      newIndex,
+    );
+    updateDragTree(prevCopy);
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.grandParent?.id;
     }
   };
 
-  /* istanbul ignore next */
+  /* istanbul ignore next: drag-over dispatch, coordinator for sub-handlers */
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!active || !over) {
@@ -264,9 +268,11 @@ const DraggableList = ({
 
   const handleDragCancel = React.useCallback(() => {
     setActiveId?.(null);
+    activeIdRef.current = null;
     setDraggedItemClone(null);
-    restoreSectionList();
-  }, [setActiveId]);
+    prevContainerInfo.current = null;
+    onCancelDrag?.();
+  }, [onCancelDrag]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -274,6 +280,7 @@ const DraggableList = ({
       return;
     }
     setActiveId(null);
+    activeIdRef.current = null;
     setDraggedItemClone(null);
     setCurrentOverId(null);
     const { id } = active;
@@ -294,49 +301,44 @@ const DraggableList = ({
 
     if (activeInfo.index !== overInfo.index || prevContainerInfo.current) {
       switch (activeInfo.category) {
-        case COURSE_BLOCK_NAMES.chapter.id:
-          setSections((prev) => {
-            const result = arrayMove(prev, activeInfo.index, overInfo.index);
-            handleSectionDragAndDrop(result.map(section => section.id), restoreSectionList);
-            return result;
-          });
+        case COURSE_BLOCK_NAMES.chapter.id: {
+          const result = arrayMove(dragTreeRef.current, activeInfo.index, overInfo.index) as XBlock[];
+          updateDragTree(result);
+          onSectionDrop?.(result.map(section => section.id));
           break;
-        case COURSE_BLOCK_NAMES.sequential.id:
-          setSections((prev) => {
-            const [prevCopy, result] = moveSubsection(
-              [...prev],
-              activeInfo.parentIndex!,
-              activeInfo.index,
-              overInfo.index,
-            );
-            handleSubsectionDragAndDrop(
-              activeInfo.parent!.id,
-              prevContainerInfo.current!,
-              result.map(subsection => subsection.id),
-              restoreSectionList,
-            );
-            return prevCopy;
-          });
+        }
+        case COURSE_BLOCK_NAMES.sequential.id: {
+          const [nextTree, result] = moveItem(
+            [...dragTreeRef.current],
+            activeInfo.parentIndex!,
+            activeInfo.index,
+            overInfo.index,
+          );
+          updateDragTree(nextTree);
+          onSubsectionDrop?.(
+            activeInfo.parent!.id,
+            prevContainerInfo.current!,
+            result.map(subsection => subsection.id),
+          );
           break;
-        case COURSE_BLOCK_NAMES.vertical.id:
-          setSections((prev) => {
-            const [prevCopy, result] = moveUnit(
-              [...prev],
-              activeInfo.grandParentIndex!,
-              activeInfo.parentIndex!,
-              activeInfo.index,
-              overInfo.index,
-            );
-            handleUnitDragAndDrop(
-              activeInfo.grandParent!.id,
-              prevContainerInfo.current!,
-              activeInfo.parent!.id,
-              result.map(unit => unit.id),
-              restoreSectionList,
-            );
-            return prevCopy;
-          });
+        }
+        case COURSE_BLOCK_NAMES.vertical.id: {
+          const [nextTree, result] = moveItem(
+            [...dragTreeRef.current],
+            activeInfo.grandParentIndex!,
+            activeInfo.parentIndex!,
+            activeInfo.index,
+            overInfo.index,
+          );
+          updateDragTree(nextTree);
+          onUnitDrop?.(
+            activeInfo.grandParent!.id,
+            prevContainerInfo.current!,
+            activeInfo.parent!.id,
+            result.map(unit => unit.id),
+          );
           break;
+        }
         default:
           break;
       }
@@ -347,6 +349,10 @@ const DraggableList = ({
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const { id } = active;
+
+    // Capture the latest committed tree into drag-local ref.
+    dragTreeRef.current = items;
+    activeIdRef.current = id;
 
     setActiveId(id);
     // @ts-ignore-next-line
@@ -411,7 +417,7 @@ const DraggableList = ({
       </DragContextProvider>
       {createPortal(
         <DragOverlay>
-          {draggedItemClone && activeId ? draggedItemClone : null}
+          {draggedItemClone ? draggedItemClone : null}
         </DragOverlay>,
         document.body,
       )}

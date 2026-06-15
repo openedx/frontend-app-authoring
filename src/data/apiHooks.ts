@@ -3,6 +3,7 @@ import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { UserAgreement, UserAgreementRecord } from '@src/data/types';
 import { libraryAuthoringQueryKeys } from '@src/library-authoring/data/apiHooks';
 import {
+  QueryKey,
   skipToken,
   useMutation,
   useQueries,
@@ -149,7 +150,7 @@ export const useCourseDetails = (courseId: string) => {
  * Create a global state function for a query.
  */
 export function createGlobalState<T>(
-  queryKeyFn: (queryKeyArgs?: any) => unknown[],
+  queryKeyFn: (queryKeyArgs?: any) => QueryKey,
   initialData: T | null = null,
 ) {
   return (queryKeyArgs?: any) => {

@@ -6,7 +6,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { useConfigureSubsection, useCourseDetails, useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { getProctoredExamsFlag, getTimedExamsFlag } from '@src/course-outline/data/selectors';
+import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { ConfigureSubsectionData } from '@src/course-outline/data/types';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -14,13 +14,11 @@ import AdvancedTab from '@src/generic/configure-modal/AdvancedTab';
 import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useStateWithCallback } from '@src/hooks';
+import { useItemFieldSync } from '@src/hooks/useItemFieldSync';
 import {
   useCallback,
-  useEffect,
-  useRef,
   useState,
 } from 'react';
-import { useSelector } from 'react-redux';
 import { ReleaseSection } from './sharedSettings/ReleaseSection';
 import messages from './messages';
 import { VisibilitySection } from './sharedSettings/VisibilitySection';
@@ -54,19 +52,11 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
     },
     (val) => onChange(val || {}),
   );
-  const didMountRef = useRef(false);
-
-  useEffect(() => {
+  useItemFieldSync(() => {
     const nextState = {
       graderType: itemData?.format,
       dueDate: itemData?.due || '',
     };
-
-    if (!didMountRef.current) {
-      didMountRef.current = true;
-      return;
-    }
-
     if (localState?.graderType !== nextState.graderType || localState?.dueDate !== nextState.dueDate) {
       setLocalState(nextState);
     }
@@ -150,14 +140,7 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
     },
     (val) => onChange(val || {}),
   );
-  const didMountRef = useRef(false);
-
-  useEffect(() => {
-    if (!didMountRef.current) {
-      didMountRef.current = true;
-      return;
-    }
-
+  useItemFieldSync(() => {
     if (localState?.showCorrectness !== itemData?.showCorrectness) {
       setLocalState({ showCorrectness: itemData?.showCorrectness });
     }
@@ -202,8 +185,10 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
 const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(subsectionId);
-  const enableTimedExams = useSelector(getTimedExamsFlag);
-  const enableProctoredExams = useSelector(getProctoredExamsFlag);
+  const {
+    enableTimedExams,
+    enableProctoredExams,
+  } = useCourseOutlineContext();
   const getLatestLocalState = useCallback(() => ({
     isProctoredExam: itemData?.isProctoredExam,
     isTimeLimited: itemData?.isTimeLimited,
@@ -221,17 +206,9 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
     getLatestLocalState,
     (val) => onChange(val || {}),
   );
-  const didMountRef = useRef(false);
-
-  useEffect(() => {
-    if (!didMountRef.current) {
-      didMountRef.current = true;
-      return;
-    }
-
+  useItemFieldSync(() => {
     const nextState = getLatestLocalState();
     const hasChanges = Object.keys(nextState).some((key) => (localState as any)?.[key] !== (nextState as any)[key]);
-
     if (hasChanges) {
       setLocalState({ value: nextState, skipCallback: true });
     }

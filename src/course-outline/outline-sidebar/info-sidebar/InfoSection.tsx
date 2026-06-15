@@ -3,7 +3,8 @@ import { useToggle } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
@@ -12,7 +13,6 @@ import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useGetBlockTypes } from '@src/search-manager';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { LibraryReferenceCard } from '@src/generic/library-reference-card/LibraryReferenceCard';
 import messages from '../messages';
 
@@ -22,7 +22,6 @@ interface Props {
 
 export const InfoSection = ({ itemId }: Props) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { data: itemData } = useCourseItemData(itemId);
   const { data: componentData } = useGetBlockTypes(
@@ -52,9 +51,9 @@ export const InfoSection = ({ itemId }: Props) => {
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
     }
-  }, [dispatch, selectedContainerState, queryClient, courseId]);
+  }, [selectedContainerState, queryClient, courseId]);
 
-  /* istanbul ignore next */
+  /* istanbul ignore next: early return guard, itemData always loaded by parent */
   if (!itemData) {
     return null;
   }

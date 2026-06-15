@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container,
@@ -10,11 +10,7 @@ import {
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import { CheckCircle as CheckCircleIcon, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
-import { useSelector } from 'react-redux';
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+
 import { useLocation } from 'react-router-dom';
 import { CourseAuthoringOutlineSidebarSlot } from '@src/plugin-slots/CourseAuthoringOutlineSidebarSlot';
 
@@ -22,41 +18,32 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { RequestStatus } from '@src/data/constants';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
-import DeleteModal from '@src/generic/delete-modal/DeleteModal';
-import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
-import { UnlinkModal } from '@src/generic/unlink-modal';
+
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseOutlineContext } from './CourseOutlineContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import {
-  getProctoredExamsFlag,
-  getTimedExamsFlag,
-} from './data/selectors';
+  useCreateCourseBlock,
+  usePasteItem,
+  useSetVideoSharingOption,
+  useDismissNotification,
+  useRestartIndexingOnCourse,
+} from '@src/course-outline/data';
+import { useCourseOutlineContext } from './CourseOutlineContext';
+import { useHighlightsModal, useConfigureDialog } from './state';
 import { COURSE_BLOCK_NAMES } from './constants';
-import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
-import SectionCard from './section-card/SectionCard';
-import SubsectionCard from './subsection-card/SubsectionCard';
-import UnitCard from './unit-card/UnitCard';
-import HighlightsModal from './highlights-modal/HighlightsModal';
-import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
-import PublishModal from './publish-modal/PublishModal';
+
 import PageAlerts from './page-alerts/PageAlerts';
-import DraggableList from './drag-helper/DraggableList';
-import {
-  canMoveSection,
-  possibleUnitMoves,
-  possibleSubsectionMoves,
-} from './drag-helper/utils';
-import { useCourseOutline } from './hooks';
+
+import OutlineTree from './OutlineTree';
+import OutlineModals from './OutlineModals';
+
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
-import { getTagsExportFile } from './data/api';
-import OutlineAddChildButtons from './OutlineAddChildButtons';
+import { getTagsExportFile } from './data';
 import { StatusBar } from './status-bar/StatusBar';
 
 const CourseOutline = () => {
@@ -64,72 +51,108 @@ const CourseOutline = () => {
   const location = useLocation();
   const {
     courseId,
-    courseUsageKey,
-    isUnlinkModalOpen,
-    closeUnlinkModal,
   } = useCourseAuthoringContext();
   const {
-    currentSelection,
+    courseUsageKey,
     sections,
-    restoreSectionList,
-    setSections,
-    updateSectionOrderByIndex,
-    updateSubsectionOrderByIndex,
-    updateUnitOrderByIndex,
-  } = useCourseOutlineContext();
-
-  const {
-    courseName,
+    previewSections,
+    cancelReorderPreview,
+    commitSectionReorder,
+    commitSubsectionReorder,
+    commitUnitReorder,
+    dismissError,
+    courseActions,
     savingStatus,
     statusBarData,
-    courseActions,
     isCustomRelativeDatesActive,
     isLoading,
     isLoadingDenied,
-    isReIndexShow,
-    showSuccessAlert,
-    isSectionsExpanded,
-    isEnableHighlightsModalOpen,
-    isInternetConnectionAlertFailed,
-    isDisabledReindexButton,
-    isHighlightsModalOpen,
-    isConfigureModalOpen,
-    isDeleteModalOpen,
-    closeHighlightsModal,
-    handleConfigureModalClose,
-    closeDeleteModal,
-    openConfigureModal,
-    openDeleteModal,
-    headerNavigationsActions,
-    openEnableHighlightsModal,
-    closeEnableHighlightsModal,
-    handleEnableHighlightsSubmit,
-    handleInternetConnectionFailed,
-    handleOpenHighlightsModal,
-    handleHighlightsFormSubmit,
-    handleConfigureItemSubmit,
-    handleDeleteItemSubmit,
-    handleDuplicateSectionSubmit,
-    handleDuplicateSubsectionSubmit,
-    handleDuplicateUnitSubmit,
-    handleVideoSharingOptionChange,
-    handlePasteClipboardClick,
-    notificationDismissUrl,
-    discussionsSettings,
-    discussionsIncontextLearnmoreUrl,
-    deprecatedBlocksInfo,
-    proctoringErrors,
-    mfeProctoredExamSettingsUrl,
-    handleDismissNotification,
-    advanceSettingsUrl,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
-    handleUnitDragAndDrop,
+    courseName,
     errors,
-    handleUnlinkItemSubmit,
-  } = useCourseOutline({ courseId });
+    loadingStatus,
+    outlineIndexData,
+    openDeleteModal,
+  } = useCourseOutlineContext();
 
-  // Use `setToastMessage` to show the toast.
+  const highlightsModal = useHighlightsModal(courseId);
+  const configureDialog = useConfigureDialog(courseId);
+
+  const reindexLink = outlineIndexData?.reindexLink;
+  const lmsLink = outlineIndexData?.lmsLink;
+  const notificationDismissUrl = outlineIndexData?.notificationDismissUrl;
+  const discussionsSettings = outlineIndexData?.discussionsSettings;
+  const discussionsIncontextLearnmoreUrl = outlineIndexData?.discussionsIncontextLearnmoreUrl;
+  const deprecatedBlocksInfo = outlineIndexData?.deprecatedBlocksInfo;
+  const proctoringErrors = outlineIndexData?.proctoringErrors;
+  const mfeProctoredExamSettingsUrl = outlineIndexData?.mfeProctoredExamSettingsUrl;
+  const advanceSettingsUrl = outlineIndexData?.advanceSettingsUrl;
+
+  const { reIndexLoadingStatus } = loadingStatus || {};
+
+  const [isSectionsExpanded, setSectionsExpanded] = useState(true);
+  const [isDisabledReindexButton, setDisableReindexButton] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+
+  const isInternetConnectionAlertFailed = savingStatus === RequestStatus.FAILED;
+  const isReIndexShow = Boolean(reindexLink);
+
+  const handleAddBlock = useCreateCourseBlock(courseId);
+  const pasteMutation = usePasteItem(courseId);
+  const videoSharingMutation = useSetVideoSharingOption(courseId);
+  const dismissNotificationMutation = useDismissNotification(courseId);
+  const reindexMutation = useRestartIndexingOnCourse(courseId);
+
+  const handlePasteClipboardClick = useCallback((parentLocator: string, subsectionId: string, sectionId: string) => {
+    pasteMutation.mutate({ parentLocator, subsectionId, sectionId });
+  }, [pasteMutation]);
+
+  const handleVideoSharingOptionChange = useCallback((value: string) => {
+    videoSharingMutation.mutate(value);
+  }, [videoSharingMutation]);
+
+  const handleDismissNotification = useCallback(async () => {
+    if (notificationDismissUrl) {
+      try {
+        await dismissNotificationMutation.mutateAsync(notificationDismissUrl);
+      } catch {
+        // Error handled via mutation derived state
+      }
+    }
+  }, [notificationDismissUrl, dismissNotificationMutation]);
+
+  const headerNavigationsActions = useMemo(() => ({
+    handleNewSection: async () => {
+      await handleAddBlock.mutateAsync({
+        type: ContainerType.Chapter,
+        parentLocator: courseUsageKey,
+        displayName: COURSE_BLOCK_NAMES.chapter.name,
+      });
+    },
+    handleReIndex: async () => {
+      setDisableReindexButton(true);
+      setShowSuccessAlert(false);
+      try {
+        if (reindexLink) {
+          try {
+            await reindexMutation.mutateAsync(reindexLink);
+          } catch {
+            // Error handled via useCourseOutlineReindexStatus mutation state
+          }
+        }
+      } finally {
+        setDisableReindexButton(false);
+      }
+    },
+    handleExpandAll: () => {
+      setSectionsExpanded((prevState) => !prevState);
+    },
+    lmsLink: lmsLink ?? '',
+  }), [handleAddBlock, courseUsageKey, reindexLink, reindexMutation, lmsLink]);
+
+  useEffect(() => {
+    setShowSuccessAlert(reIndexLoadingStatus === RequestStatus.SUCCESSFUL);
+  }, [reIndexLoadingStatus]);
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -142,18 +165,9 @@ const CourseOutline = () => {
         setToastMessage(intl.formatMessage(messages.exportTagsErrorToastMessage));
       });
 
-      // Delete `#export-tags` from location
       window.location.href = '#';
     }
   }, [location, courseId, courseName]);
-
-  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
-
-  const itemCategory = currentItemData?.category || '';
-  const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();
-
-  const enableProctoredExams = useSelector(getProctoredExamsFlag);
-  const enableTimedExams = useSelector(getTimedExamsFlag);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -179,6 +193,7 @@ const CourseOutline = () => {
           advanceSettingsUrl={advanceSettingsUrl}
           savingStatus={savingStatus}
           errors={errors}
+          dismissError={dismissError}
         />
       </Container>
     );
@@ -187,7 +202,7 @@ const CourseOutline = () => {
   return (
     <>
       <Helmet>
-        <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
+        <title>{getPageHeadTitle(courseName ?? '', intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
       <Container fluid className="px-3">
         <section className="course-outline-container mb-4 mt-5">
@@ -203,6 +218,7 @@ const CourseOutline = () => {
             advanceSettingsUrl={advanceSettingsUrl}
             savingStatus={savingStatus}
             errors={errors}
+            dismissError={dismissError}
           />
           <LegacyLibContentBlockAlert courseId={courseId} />
           <TransitionReplace>
@@ -223,7 +239,7 @@ const CourseOutline = () => {
               null}
           </TransitionReplace>
           <SubHeader
-            title={courseName}
+            title={courseName ?? ''}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
             hideBorder
             headerActions={
@@ -243,7 +259,7 @@ const CourseOutline = () => {
             courseId={courseId}
             isLoading={isLoading}
             statusBarData={statusBarData}
-            openEnableHighlightsModal={openEnableHighlightsModal}
+            openEnableHighlightsModal={highlightsModal.openEnableHighlightsModal}
             handleVideoSharingOptionChange={handleVideoSharingOptionChange}
           />
           <hr className="mt-4 mb-0 w-100 text-light-400" />
@@ -266,186 +282,50 @@ const CourseOutline = () => {
                       </Button>
                     )}
                   </ActionRow>
-                  <section>
-                    {!errors?.outlineIndexApi && (
-                      <div className="pt-4">
-                        {sections.length ?
-                          (
-                            <>
-                              <DraggableList
-                                items={sections}
-                                setSections={setSections}
-                                restoreSectionList={restoreSectionList}
-                                handleSectionDragAndDrop={handleSectionDragAndDrop}
-                                handleSubsectionDragAndDrop={handleSubsectionDragAndDrop}
-                                handleUnitDragAndDrop={handleUnitDragAndDrop}
-                              >
-                                <SortableContext
-                                  id="root"
-                                  items={sections}
-                                  strategy={verticalListSortingStrategy}
-                                >
-                                  {sections.map((section, sectionIndex) => (
-                                    <SectionCard
-                                      key={section.id}
-                                      section={section}
-                                      index={sectionIndex}
-                                      canMoveItem={canMoveSection(sections)}
-                                      isSelfPaced={statusBarData.isSelfPaced}
-                                      isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                      onOpenHighlightsModal={handleOpenHighlightsModal}
-                                      onOpenConfigureModal={openConfigureModal}
-                                      onOpenDeleteModal={openDeleteModal}
-                                      onDuplicateSubmit={handleDuplicateSectionSubmit}
-                                      isSectionsExpanded={isSectionsExpanded}
-                                      onOrderChange={updateSectionOrderByIndex}
-                                    >
-                                      <SortableContext
-                                        id={section.id}
-                                        items={section.childInfo.children}
-                                        strategy={verticalListSortingStrategy}
-                                      >
-                                        {section.childInfo.children.map((subsection, subsectionIndex) => (
-                                          <SubsectionCard
-                                            key={subsection.id}
-                                            section={section}
-                                            subsection={subsection}
-                                            index={subsectionIndex}
-                                            getPossibleMoves={possibleSubsectionMoves(
-                                              [...sections],
-                                              sectionIndex,
-                                              section,
-                                              section.childInfo.children,
-                                            )}
-                                            isSectionsExpanded={isSectionsExpanded}
-                                            isSelfPaced={statusBarData.isSelfPaced}
-                                            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                            onOpenDeleteModal={openDeleteModal}
-                                            onDuplicateSubmit={handleDuplicateSubsectionSubmit}
-                                            onOpenConfigureModal={openConfigureModal}
-                                            onOrderChange={updateSubsectionOrderByIndex}
-                                            onPasteClick={handlePasteClipboardClick}
-                                          >
-                                            <SortableContext
-                                              id={subsection.id}
-                                              items={subsection.childInfo.children}
-                                              strategy={verticalListSortingStrategy}
-                                            >
-                                              {subsection.childInfo.children.map((unit, unitIndex) => (
-                                                <UnitCard
-                                                  key={unit.id}
-                                                  unit={unit}
-                                                  subsection={subsection}
-                                                  section={section}
-                                                  isSelfPaced={statusBarData.isSelfPaced}
-                                                  isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                                  index={unitIndex}
-                                                  getPossibleMoves={possibleUnitMoves(
-                                                    [...sections],
-                                                    sectionIndex,
-                                                    subsectionIndex,
-                                                    section,
-                                                    subsection,
-                                                    subsection.childInfo.children,
-                                                  )}
-                                                  onOpenConfigureModal={openConfigureModal}
-                                                  onOpenDeleteModal={openDeleteModal}
-                                                  onDuplicateSubmit={handleDuplicateUnitSubmit}
-                                                  onOrderChange={updateUnitOrderByIndex}
-                                                  discussionsSettings={discussionsSettings}
-                                                />
-                                              ))}
-                                            </SortableContext>
-                                          </SubsectionCard>
-                                        ))}
-                                      </SortableContext>
-                                    </SectionCard>
-                                  ))}
-                                </SortableContext>
-                              </DraggableList>
-                              {courseActions.childAddable && (
-                                <OutlineAddChildButtons
-                                  childType={ContainerType.Section}
-                                  parentLocator={courseUsageKey}
-                                />
-                              )}
-                            </>
-                          ) :
-                          (
-                            <EmptyPlaceholder>
-                              {courseActions.childAddable && (
-                                <OutlineAddChildButtons
-                                  childType={ContainerType.Section}
-                                  parentLocator={courseUsageKey}
-                                  btnVariant="primary"
-                                  btnClasses="mt-1"
-                                />
-                              )}
-                            </EmptyPlaceholder>
-                          )}
-                      </div>
-                    )}
-                  </section>
+                  <OutlineTree
+                    sections={sections}
+                    courseActions={courseActions}
+                    courseUsageKey={courseUsageKey}
+                    hasOutlineIndexError={!!errors?.outlineIndexApi}
+                    isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+                    isSectionsExpanded={isSectionsExpanded}
+                    isSelfPaced={statusBarData.isSelfPaced}
+                    discussionsSettings={discussionsSettings}
+                    previewSections={previewSections}
+                    cancelReorderPreview={cancelReorderPreview}
+                    commitSectionReorder={commitSectionReorder}
+                    commitSubsectionReorder={commitSubsectionReorder}
+                    commitUnitReorder={commitUnitReorder}
+                    handleOpenHighlightsModal={highlightsModal.handleOpenHighlightsModal}
+                    openConfigureModal={configureDialog.handleOpenConfigureModal}
+                    openDeleteModal={openDeleteModal}
+                    handlePasteClipboardClick={handlePasteClipboardClick}
+                  />
                 </div>
               </article>
             </div>
             <CourseAuthoringOutlineSidebarSlot
               courseId={courseId}
-              courseName={courseName}
+              courseName={courseName ?? ''}
               sections={sections}
             />
           </div>
-          <EnableHighlightsModal
-            isOpen={isEnableHighlightsModalOpen}
-            close={closeEnableHighlightsModal}
-            onEnableHighlightsSubmit={handleEnableHighlightsSubmit}
-          />
         </section>
-        <HighlightsModal
-          isOpen={isHighlightsModalOpen}
-          onClose={closeHighlightsModal}
-          onSubmit={handleHighlightsFormSubmit}
-        />
-        <PublishModal />
-        <ConfigureModal
-          isOpen={isConfigureModalOpen}
-          onClose={handleConfigureModalClose}
-          onConfigureSubmit={handleConfigureItemSubmit}
-          /**
-           * Only sections need overflow visible (for the Release date datepicker, fixed in #2901);
-           * enabling it for subsection/unit modals causes the Visibility tab background to clip.
-           */
-          isOverflowVisible={itemCategory === COURSE_BLOCK_NAMES.chapter.id}
-          currentItemData={currentItemData}
-          enableProctoredExams={enableProctoredExams}
-          enableTimedExams={enableTimedExams}
-          isSelfPaced={statusBarData.isSelfPaced}
-        />
-        <DeleteModal
-          category={itemCategoryName}
-          isOpen={isDeleteModalOpen}
-          close={closeDeleteModal}
-          onDeleteSubmit={handleDeleteItemSubmit}
-        />
-        <UnlinkModal
-          displayName={currentItemData?.displayName}
-          category={itemCategory}
-          isOpen={isUnlinkModalOpen}
-          close={closeUnlinkModal}
-          onUnlinkSubmit={handleUnlinkItemSubmit}
+        <OutlineModals
+          highlights={highlightsModal}
+          configure={configureDialog}
         />
       </Container>
       <div className="alert-toast">
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}
           isQueryPending={savingStatus === RequestStatus.PENDING}
-          onInternetConnectionFailed={handleInternetConnectionFailed}
         />
       </div>
       {toastMessage && (
         <Toast
           show
-          onClose={/* istanbul ignore next */ () => setToastMessage(null)}
+          onClose={/* istanbul ignore next: toast dismissal, trivial setState */ () => setToastMessage(null)}
           data-testid="taxonomy-toast"
         >
           {toastMessage}

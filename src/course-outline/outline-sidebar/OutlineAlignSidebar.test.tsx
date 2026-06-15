@@ -36,7 +36,7 @@ describe('OutlineAlignSidebar', () => {
     jest
       .spyOn(CourseOutlineContext, 'useCourseOutlineContext')
       .mockReturnValue({
-        setCurrentSelection,
+        selectContainer: setCurrentSelection,
         sections: [
           {
             id: sectionId,

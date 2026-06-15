@@ -6,7 +6,7 @@ import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sideb
 import { useHelpUrls } from '@src/help-urls/hooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
-import { useCourseDetails } from '../data/apiHooks';
+import { useCourseDetails } from '../data';
 import { getFormattedSidebarMessages } from './utils';
 
 const OutlineHelpSideBar = () => {

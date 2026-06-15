@@ -4,7 +4,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 
-import initializeStore from '../../store';
+import initializeStore from '@src/store';
 import EnableHighlightsModal from './EnableHighlightsModal';
 import messages from './messages';
 

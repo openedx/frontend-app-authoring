@@ -28,14 +28,15 @@ import { MultiLibraryProvider } from '@src/library-authoring/common/context/Mult
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
 import AlertMessage from '@src/generic/alert-message';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData, useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { useBackNavigation } from './back-navigation';
+import { useCreateBlockSidebar } from '@src/course-outline/state';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import messages from './messages';
 
 const CannotAddContentAlert = () => {
   const intl = useIntl();
-  const { currentItemData } = useOutlineSidebarContext();
+  const { currentItemData } = useCourseOutlineContext();
   return (
     <AlertMessage
       variant="info"
@@ -55,55 +56,25 @@ type AddContentButtonProps = {
 
 /** Add Content Button */
 const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
-  const { courseUsageKey } = useCourseAuthoringContext();
+  const { courseId, openUnitPage } = useCourseAuthoringContext();
+  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
   const {
-    handleAddBlock,
-    handleAddAndOpenUnit,
+    courseUsageKey,
+    lastEditableSection,
+    lastEditableSubsection,
   } = useCourseOutlineContext();
   const {
     currentFlow,
     stopCurrentFlow,
-    lastEditableSection,
-    lastEditableSubsection,
     openContainerInfoSidebar,
   } = useOutlineSidebarContext();
+  const { createSection, createSubsection, handleAddBlock } = useCreateBlockSidebar(
+    courseId,
+    courseUsageKey,
+    openContainerInfoSidebar,
+  );
   let sectionParentId = lastEditableSection?.id;
   let subsectionParentId = lastEditableSubsection?.data?.id;
-
-  const addSection = (onSuccess?: (data: { locator: string; }) => void) => {
-    handleAddBlock.mutate({
-      type: ContainerType.Chapter,
-      parentLocator: courseUsageKey,
-      displayName: COURSE_BLOCK_NAMES.chapter.name,
-    }, {
-      onSuccess: (data: { locator: string; }) => {
-        // istanbul ignore next
-        if (onSuccess) {
-          onSuccess(data);
-        } else {
-          openContainerInfoSidebar(data.locator, undefined, data.locator);
-        }
-      },
-    });
-  };
-
-  const addSubsection = (sectionId: string, onSuccess?: (data: { locator: string; }) => void) => {
-    handleAddBlock.mutate({
-      type: ContainerType.Sequential,
-      parentLocator: sectionId,
-      displayName: COURSE_BLOCK_NAMES.sequential.name,
-      sectionId,
-    }, {
-      onSuccess: (data: { locator: string; }) => {
-        // istanbul ignore next
-        if (onSuccess) {
-          onSuccess(data);
-        } else {
-          openContainerInfoSidebar(data.locator, data.locator, sectionId);
-        }
-      },
-    });
-  };
 
   const addUnit = (subsectionId: string, sectionId?: string) => {
     handleAddAndOpenUnit.mutate({
@@ -117,14 +88,17 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
   const onCreateContent = useCallback(async () => {
     switch (blockType) {
       case 'section':
-        addSection();
+        await createSection();
         break;
       case 'subsection':
         sectionParentId = currentFlow?.parentLocator || sectionParentId;
         if (sectionParentId) {
-          addSubsection(sectionParentId);
+          await createSubsection(sectionParentId);
         } else {
-          addSection(({ locator }) => addSubsection(locator));
+          // Create intermediate section but suppress its sidebar open
+          // so only the final subsection sidebar appears.
+          const data = await createSection(() => {});
+          await createSubsection(data.locator);
         }
         break;
       case 'unit':
@@ -133,13 +107,16 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
         if (subsectionParentId) {
           addUnit(subsectionParentId, sectionParentId);
         } else if (sectionParentId) {
-          addSubsection(sectionParentId, ({ locator }) => addUnit(locator));
+          // Create intermediate subsection but suppress its sidebar open
+          // — addUnit navigates to the unit page directly.
+          const data = await createSubsection(sectionParentId, () => {});
+          addUnit(data.locator);
         } else {
-          addSection(({ locator: sectionId }) => {
-            addSubsection(sectionId, ({ locator: subsectionId }) => {
-              addUnit(subsectionId, sectionId);
-            });
-          });
+          // Chain: section → subsection → unit.
+          // Suppress sidebar opens for intermediate section and subsection.
+          const sectionData = await createSection(() => {});
+          const subsectionData = await createSubsection(sectionData.locator, () => {});
+          addUnit(subsectionData.locator, sectionData.locator);
         }
         break;
       default:
@@ -150,8 +127,8 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
     stopCurrentFlow();
   }, [
     blockType,
-    courseUsageKey,
-    handleAddBlock,
+    createSection,
+    createSubsection,
     handleAddAndOpenUnit,
     currentFlow,
     sectionParentId,
@@ -174,7 +151,8 @@ const AddContentButton = ({ name, blockType }: AddContentButtonProps) => {
 /** Add New Content Tab Section */
 const AddNewContent = () => {
   const intl = useIntl();
-  const { isCurrentFlowOn, currentFlow, currentItemData } = useOutlineSidebarContext();
+  const { currentItemData } = useCourseOutlineContext();
+  const { isCurrentFlowOn, currentFlow } = useOutlineSidebarContext();
   const btns = useCallback(() => {
     if (currentFlow?.flowType) {
       return (
@@ -215,16 +193,19 @@ const AddNewContent = () => {
 
 /** Add Existing Content Tab Section */
 const ShowLibraryContent = () => {
-  const { courseUsageKey } = useCourseAuthoringContext();
-  const { handleAddBlock } = useCourseOutlineContext();
+  const { courseId } = useCourseAuthoringContext();
+  const handleAddBlock = useCreateCourseBlock(courseId);
+  const {
+    courseUsageKey,
+    currentItemData,
+    lastEditableSection,
+    lastEditableSubsection,
+  } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
     currentFlow,
     stopCurrentFlow,
-    lastEditableSection,
-    lastEditableSubsection,
     selectedContainerState,
-    currentItemData,
     openContainerInfoSidebar,
   } = useOutlineSidebarContext();
 
@@ -233,54 +214,48 @@ const ShowLibraryContent = () => {
 
   const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
     switch (blockType) {
-      case 'section':
-        await handleAddBlock.mutateAsync({
+      case 'section': {
+        const data = await handleAddBlock.mutateAsync({
           type: COMPONENT_TYPES.libraryV2,
           category: ContainerType.Chapter,
           parentLocator: courseUsageKey,
           libraryContentKey: usageKey,
-        }, {
-          onSuccess: (data: { locator: string; }) => {
-            // istanbul ignore next
-            openContainerInfoSidebar(data.locator, undefined, data.locator);
-          },
         });
+        // istanbul ignore next: open info sidebar after add — hard to sequence in unit test
+        openContainerInfoSidebar(data.locator, undefined, data.locator);
         break;
-      case 'subsection':
+      }
+      case 'subsection': {
         sectionParentId = currentFlow?.parentLocator || sectionParentId;
         if (sectionParentId) {
-          await handleAddBlock.mutateAsync({
+          const data = await handleAddBlock.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Sequential,
             parentLocator: sectionParentId,
             libraryContentKey: usageKey,
             sectionId: sectionParentId,
-          }, {
-            onSuccess: (data: { locator: string; }) => {
-              // istanbul ignore next
-              openContainerInfoSidebar(data.locator, data.locator, sectionParentId);
-            },
           });
+          // istanbul ignore next: open info sidebar after add — hard to sequence in unit test
+          openContainerInfoSidebar(data.locator, data.locator, sectionParentId);
         }
         break;
-      case 'unit':
+      }
+      case 'unit': {
         sectionParentId = currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId;
         subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
         if (subsectionParentId) {
-          await handleAddBlock.mutateAsync({
+          const data = await handleAddBlock.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Vertical,
             parentLocator: subsectionParentId,
             libraryContentKey: usageKey,
             sectionId: sectionParentId,
-          }, {
-            onSuccess: (data: { locator: string; }) => {
-              // istanbul ignore next
-              openContainerInfoSidebar(data.locator, subsectionParentId, sectionParentId);
-            },
           });
+          // istanbul ignore next: open info sidebar after add — hard to sequence in unit test
+          openContainerInfoSidebar(data.locator, subsectionParentId, sectionParentId);
         }
         break;
+      }
       default:
         // istanbul ignore next: should not happen
         throw new Error(`Unrecognized block type ${blockType}`);
@@ -360,10 +335,10 @@ const AddTabs = () => {
 export const AddSidebar = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
+  const { currentItemData } = useCourseOutlineContext();
   const {
     isCurrentFlowOn,
     currentFlow,
-    currentItemData,
     stopCurrentFlow,
     selectedContainerState,
     openContainerSidebar,
