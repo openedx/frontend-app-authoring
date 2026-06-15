@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
@@ -18,6 +19,14 @@ export const ReleaseSection = ({ itemId, onChange }: Props) => {
     itemData?.start,
     (val) => onChange(val),
   );
+
+  // Sync localState when itemData changes externally (e.g. release date updated
+  // from the left-side kebab configure modal). skipCallback prevents re-triggering
+  // the onChange mutation — we're just reflecting a change that already happened.
+  useEffect(() => {
+    setLocalState({ value: itemData?.start, skipCallback: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemData?.start]);
 
   return (
     <SidebarSection

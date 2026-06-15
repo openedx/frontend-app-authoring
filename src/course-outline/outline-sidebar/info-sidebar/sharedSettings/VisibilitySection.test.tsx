@@ -79,4 +79,38 @@ describe('VisibilitySection component', () => {
     render(<VisibilitySection {...defaultProps} onChange={onChange} />);
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
+
+  it('syncs displayed visibility when itemData changes externally without calling onChange', async () => {
+    // Start as staff-only: checkbox must not be present
+    mockUseCourseItemData.mockReturnValue({ data: { visibilityState: VisibilityTypes.STAFF_ONLY } });
+    const onChange = jest.fn();
+    const { rerender } = render(<VisibilitySection {...defaultProps} onChange={onChange} />);
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+
+    // Simulate the kebab-menu configure modal switching to student-visible:
+    // the mutation fires, the section refetches, and setQueryData updates the
+    // subsection cache — causing useCourseItemData to return the new state.
+    mockUseCourseItemData.mockReturnValue({ data: { visibilityState: undefined, hideAfterDue: false } });
+    rerender(<VisibilitySection {...defaultProps} onChange={onChange} />);
+
+    // Sidebar must now show the checkbox (only visible when student-visible)...
+    expect(await screen.findByRole('checkbox')).toBeInTheDocument();
+    // ...but must NOT trigger onChange (which would fire a redundant mutation)
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('syncs hideAfterDue checkbox state when itemData changes externally without calling onChange', async () => {
+    // Start with hideAfterDue unchecked
+    mockUseCourseItemData.mockReturnValue({ data: { visibilityState: undefined, hideAfterDue: false } });
+    const onChange = jest.fn();
+    const { rerender } = render(<VisibilitySection {...defaultProps} onChange={onChange} />);
+    expect(await screen.findByRole('checkbox')).not.toBeChecked();
+
+    // External update sets hideAfterDue to true (e.g. saved via kebab configure modal)
+    mockUseCourseItemData.mockReturnValue({ data: { visibilityState: undefined, hideAfterDue: true } });
+    rerender(<VisibilitySection {...defaultProps} onChange={onChange} />);
+
+    expect(await screen.findByRole('checkbox')).toBeChecked();
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });

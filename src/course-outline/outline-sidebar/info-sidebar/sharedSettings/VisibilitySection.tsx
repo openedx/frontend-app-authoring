@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Button, ButtonGroup, Form } from '@openedx/paragon';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
@@ -34,6 +35,20 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
       return onChange(val || {});
     },
   );
+
+  // Sync localState when itemData changes externally (e.g. visibility updated
+  // from the left-side kebab configure modal). skipCallback prevents re-triggering
+  // the onChange mutation — we're just reflecting a change that already happened.
+  useEffect(() => {
+    setLocalState({
+      value: {
+        isVisibleToStaffOnly: itemData?.visibilityState === VisibilityTypes.STAFF_ONLY,
+        hideAfterDue: itemData?.hideAfterDue,
+      },
+      skipCallback: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemData?.visibilityState, itemData?.hideAfterDue]);
 
   return (
     <SidebarSection
