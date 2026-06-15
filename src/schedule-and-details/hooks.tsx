@@ -1,48 +1,19 @@
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { RequestStatus } from '../data/constants';
-import { getLoadingDetailsStatus, getLoadingSettingsStatus, getSavingStatus } from './data/selectors';
 import { validateScheduleAndDetails, updateWithDefaultValues } from './utils';
+import { useUpdateCourseDetails } from './data/apiHooks';
+import { CourseDetails } from './data/api';
 
-const useLoadValuesPrompt = (
-  courseId,
-  fetchCourseDetailsQuery,
-  fetchCourseSettingsQuery,
-) => {
-  const dispatch = useDispatch();
-  const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
-  const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
-  const [showLoadFailedAlert, setShowLoadFailedAlert] = useState(false);
-
-  useEffect(() => {
-    dispatch(fetchCourseDetailsQuery(courseId));
-    dispatch(fetchCourseSettingsQuery(courseId));
-  }, [courseId]);
-
-  useEffect(() => {
-    if (loadingDetailsStatus === RequestStatus.FAILED || loadingSettingsStatus === RequestStatus.FAILED) {
-      setShowLoadFailedAlert(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [loadingDetailsStatus, loadingSettingsStatus]);
-
-  return {
-    showLoadFailedAlert,
-  };
-};
-
-const useSaveValuesPrompt = (
-  courseId,
-  updateDataQuery,
-  canShowCertificateAvailableDateField,
-  initialEditedData = {},
+export const useSaveValuesPrompt = (
+  courseId: string,
+  canShowCertificateAvailableDateField: boolean,
+  initialEditedData: CourseDetails = {} as CourseDetails,
 ) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
-  const savingStatus = useSelector(getSavingStatus);
-  const [editedValues, setEditedValues] = useState(initialEditedData);
+  const updateMutation = useUpdateCourseDetails(courseId);
+
+  const [editedValues, setEditedValues] = useState<CourseDetails>(initialEditedData);
   const [showSuccessfulAlert, setShowSuccessfulAlert] = useState(false);
   const [showFailedAlert, setShowFailedAlert] = useState(false);
   const [showModifiedAlert, setShowModifiedAlert] = useState(false);
@@ -101,11 +72,11 @@ const useSaveValuesPrompt = (
   const handleQueryProcessing = () => {
     setShowSuccessfulAlert(false);
     setShowFailedAlert(false);
-    dispatch(updateDataQuery(courseId, updateWithDefaultValues(editedValues)));
+    updateMutation.mutate(updateWithDefaultValues(editedValues));
   };
 
   useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
+    if (updateMutation.isSuccess) {
       setIsQueryPending(false);
       setShowSuccessfulAlert(true);
       setShowFailedAlert(false);
@@ -115,7 +86,7 @@ const useSaveValuesPrompt = (
       if (!isEditableState) {
         setShowModifiedAlert(false);
       }
-    } else if (savingStatus === RequestStatus.FAILED) {
+    } else if (updateMutation.isError) {
       setIsQueryPending(false);
       setShowSuccessfulAlert(false);
       setShowFailedAlert(true);
@@ -125,18 +96,17 @@ const useSaveValuesPrompt = (
         setShowModifiedAlert(false);
       }
     }
-  }, [savingStatus]);
+  }, [updateMutation.isSuccess, updateMutation.isError]);
 
   return {
     errorFields,
-    savingStatus,
+    saveIsFailed: updateMutation.isError,
     editedValues,
     isQueryPending,
     isEditableState,
     showModifiedAlert,
     showSuccessfulAlert,
     showFailedAlert,
-    dispatch,
     setErrorFields,
     handleResetValues,
     handleValuesChange,
@@ -145,5 +115,3 @@ const useSaveValuesPrompt = (
     handleInternetConnectionFailed,
   };
 };
-
-export { useLoadValuesPrompt, useSaveValuesPrompt };
