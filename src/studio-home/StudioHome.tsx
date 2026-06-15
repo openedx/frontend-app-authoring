@@ -44,20 +44,15 @@ const StudioHome = () => {
     hasAbilityToCreateNewCourse,
     isFiltered,
     setShowNewCourseContainer,
-    librariesV1Enabled,
     librariesV2Enabled,
   } = useStudioHome();
 
   const adminConsoleUrl = `${getConfig().ADMIN_CONSOLE_URL}/authz`;
 
-  const v1LibraryTab = librariesV1Enabled && location?.pathname.split('/').pop() === 'libraries-v1';
-  const showV2LibraryURL = librariesV2Enabled && !v1LibraryTab;
-
   const {
     userIsActive,
     studioShortName,
     studioRequestEmail,
-    showNewLibraryButton,
     showNewLibraryV2Button,
   } = studioHomeData;
 
@@ -103,13 +98,9 @@ const StudioHome = () => {
       );
     }
 
-    if ((showNewLibraryButton && !showV2LibraryURL) || (showV2LibraryURL && showNewLibraryV2Button)) {
+    if (librariesV2Enabled && showNewLibraryV2Button) {
       const newLibraryClick = () => {
-        if (showV2LibraryURL) {
-          navigate('/library/create');
-        } else {
-          navigate('/libraries-v1/create');
-        }
+        navigate('/library/create');
       };
 
       headerButtons.push(
@@ -167,7 +158,6 @@ const StudioHome = () => {
               showNewCourseContainer={showNewCourseContainer}
               onClickNewCourse={() => setShowNewCourseContainer(true)}
               isShowProcessing={Boolean(isShowProcessing) && !isFiltered}
-              librariesV1Enabled={librariesV1Enabled}
               librariesV2Enabled={librariesV2Enabled}
             />
           </section>

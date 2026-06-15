@@ -5,7 +5,6 @@ import {
   fireEvent,
   render,
   screen,
-  waitFor,
   initializeMocks,
   within,
 } from '@src/testUtils';
@@ -126,51 +125,15 @@ describe('<StudioHome />', () => {
     });
 
     describe('render new library button', () => {
-      it('should navigate to legacy library creation when libraries-v2 disabled', async () => {
-        mockUseSelector.mockReturnValue({
-          ...studioHomeMock,
-          courseCreatorStatus: COURSE_CREATOR_STATES.granted,
-          librariesV2Enabled: false,
-        });
-        render(<StudioHome />, { path: '/home' });
-        await waitFor(() => {
-          const createNewLibraryButton = screen.getByRole('button', { name: 'New library' });
-
-          fireEvent.click(createNewLibraryButton);
-          expect(mockNavigate).toHaveBeenCalledWith('/libraries-v1/create');
-        });
-      });
-
       it('should navigate to the library authoring page in course authoring', async () => {
         mockUseSelector.mockReturnValue({
           ...studioHomeMock,
-          librariesV1Enabled: false,
         });
         render(<StudioHome />, { path: '/home' });
         const createNewLibraryButton = screen.getByRole('button', { name: 'New library' });
         fireEvent.click(createNewLibraryButton);
         expect(mockNavigate).toHaveBeenCalledWith('/library/create');
       });
-    });
-
-    it('does not render new library button for "v1 only" mode if showNewLibraryButton is False', () => {
-      mockUseSelector.mockReturnValue({
-        ...studioHomeMock,
-        showNewLibraryButton: false,
-        librariesV2Enabled: false,
-      });
-      render(<StudioHome />, { path: '/home' });
-      expect(screen.queryByRole('button', { name: 'New library' })).not.toBeInTheDocument();
-    });
-
-    it('render new library button for "v2 only" mode even if showNewLibraryButton is False', () => {
-      mockUseSelector.mockReturnValue({
-        ...studioHomeMock,
-        showNewLibraryButton: false,
-        librariesV1Enabled: false,
-      });
-      render(<StudioHome />, { path: '/home' });
-      expect(screen.queryByRole('button', { name: 'New library' })).toBeInTheDocument();
     });
 
     it('should render "create new course" container', async () => {
