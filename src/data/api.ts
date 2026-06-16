@@ -247,7 +247,6 @@ export interface CourseSettingsData {
   languageOptions: [string, string][];
   lmsLinkForAboutPage: string;
   licensingEnabled: boolean;
-  marketingEnabled: boolean;
   mfeProctoredExamSettingsUrl: string;
   platformName: string;
   possiblePreRequisiteCourses: {
