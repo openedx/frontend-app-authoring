@@ -10,6 +10,7 @@ import {
   within,
 } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
+import { mockGetMigrationStatus } from '@src/data/api.mocks';
 import mockEmptyResult from '@src/search-modal/__mocks__/empty-search-result.json';
 import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
@@ -34,6 +35,7 @@ mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetLibraryTeam.applyMock();
 mockXBlockFields.applyMock();
+mockGetMigrationStatus.applyMock();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
@@ -1081,6 +1083,62 @@ describe('<LibraryAuthoringPage />', () => {
     render(<LibraryLayout />, { path, params: { libraryId: mockContentLibrary.libraryId } });
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'This page cannot be shown: Libraries v2 are disabled.',
+    );
+  });
+
+  it('Should show success in migration legacy libraries', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationId}`,
+        ],
+      },
+    });
+
+    await waitFor(() =>
+      expect(mockShowToast).toHaveBeenCalledWith('The migration of legacy libraries has been completed successfully.')
+    );
+  });
+
+  it('Should show fail in migration legacy libraries', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationIdFailed}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration have failed'));
+  });
+
+  it('Should show fail multiple legacy libraries in a migration', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationIdMultiple}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Multiple legacy libraries have failed'));
+  });
+
+  it('Should show fail one legacy library in a migration', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationIdOneLibrary}`,
+        ],
+      },
+    });
+
+    await waitFor(() =>
+      expect(mockShowToast).toHaveBeenCalledWith('The legacy library with this key has failed: legacy-lib-1')
     );
   });
 });

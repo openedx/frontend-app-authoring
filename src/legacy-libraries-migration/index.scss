@@ -1,0 +1,54 @@
+.legacy-library-migration-page {
+  .migration-container {
+    // Calculate all the screen size subtracting the height of the header and top/bottom margins
+    min-height: calc(calc(100vh - 60px) - calc(var(--pgn-spacing-spacer-base) * 6));
+
+    .courses-tab-container {
+      min-height: auto;
+    }
+
+    .migration-content {
+     flex: 1;
+    }
+
+    .card-item {
+      margin: 0 0 16px !important;
+    }
+  }
+
+  .confirmation-view {
+    .pgn__card-header-content {
+      margin-top: calc(var(--pgn-spacing-spacer-base)) !important;;
+    }
+  }
+
+  .content-buttons {
+    width: 100%;
+    position: sticky;
+    bottom: 0;
+  }
+
+  .row {
+    margin-right: 0; // To avoid create a horizontal scroll using Layout
+  }
+
+  [class*="col-"] {
+    // To avoid create an empty gray space between the main content and the sidebar
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+.legacy-libraries-migration-help {
+  z-index: 1000; // same as header
+  flex: 350px 0 0;
+  position: sticky;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  overflow-y: auto;
+
+  hr {
+    width: 100%;
+  }
+}

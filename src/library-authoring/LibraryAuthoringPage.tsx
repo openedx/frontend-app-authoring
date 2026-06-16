@@ -1,6 +1,7 @@
 import {
   type ReactNode,
   useCallback,
+  useContext,
   useEffect,
   useState,
 } from 'react';
@@ -19,8 +20,10 @@ import {
   Tabs,
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
+import { useModulestoreMigrationStatus } from '@src/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import Header from '@src/header';
@@ -30,6 +33,9 @@ import {
   SearchContextProvider,
   TypesFilterData,
 } from '@src/search-manager';
+import { ToastContext } from '@src/generic/toast-context';
+import migrationMessages from '@src/legacy-libraries-migration/messages';
+
 import { FiltersProps } from '@src/library-authoring/library-filters';
 import { MainFilters } from '@src/library-authoring/library-filters/MainFilters';
 import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
@@ -41,6 +47,7 @@ import { useOptionalLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 import messages from './messages';
+import { libraryQueryPredicate } from './data/apiHooks';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -135,6 +142,17 @@ const LibraryAuthoringPage = ({
 }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
   const location = useLocation();
+  const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+  const { showToast } = useContext(ToastContext);
+  const queryClient = useQueryClient();
+
+  // Get migration status every second if applicable
+  const migrationId = params.get('migration_task');
+  const {
+    data: migrationStatusData,
+  } = useModulestoreMigrationStatus(migrationId);
+
   const {
     isLoadingPage: isLoadingStudioHome,
     isFailedLoadingPage: isFailedLoadingStudioHome,
@@ -207,6 +225,45 @@ const LibraryAuthoringPage = ({
       navigateTo({ contentType: key });
     }
   }, [navigateTo]);
+
+  // Verify the migration task status
+  if (migrationId && libraryId) {
+    let deleteMigrationIdParam = false;
+    if (migrationStatusData?.state === 'Succeeded') {
+      // Check if any library migrations failed.
+      // A `Succeeded` state means that the bulk migration ended, but some libraries might have failed.
+      const failedMigrations = migrationStatusData.parameters.filter(item => item.isFailed);
+      if (failedMigrations.length > 1) {
+        showToast(intl.formatMessage(migrationMessages.migrationFailedMultiple));
+      } else if (failedMigrations.length === 1) {
+        showToast(intl.formatMessage(
+          migrationMessages.migrationFailedOneLibrary,
+          {
+            key: failedMigrations[0].source,
+          },
+        ));
+      } else {
+        showToast(intl.formatMessage(migrationMessages.migrationSuccess));
+      }
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      deleteMigrationIdParam = true;
+    } else if (migrationStatusData?.state === 'Failed') {
+      // A `Failed` state means that the entire bulk migration has failed.
+      showToast(intl.formatMessage(migrationMessages.migrationFailed));
+      deleteMigrationIdParam = true;
+    } else if (migrationStatusData?.state === 'Canceled') {
+      /* istanbul ignore next */
+      deleteMigrationIdParam = true;
+    }
+
+    if (deleteMigrationIdParam) {
+      params.delete('migration_task');
+      navigate({
+        pathname: location.pathname,
+        search: params.toString(),
+      }, { replace: true });
+    }
+  }
 
   if (isLoadingLibraryData) {
     return <Loading />;
