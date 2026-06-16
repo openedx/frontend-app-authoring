@@ -1083,5 +1083,4 @@ describe('<LibraryAuthoringPage />', () => {
       'This page cannot be shown: Libraries v2 are disabled.',
     );
   });
-
 });
