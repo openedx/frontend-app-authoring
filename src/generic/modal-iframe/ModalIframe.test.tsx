@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import { IFRAME_FEATURE_POLICY } from '../../constants';
 import ModalIframe, { SANDBOX_OPTIONS } from '.';
@@ -26,6 +26,10 @@ describe('ModalIframe Component', () => {
     expect(iframe).toHaveAttribute('scrolling', 'no');
   });
 
+  it('allows downloads initiated from the sandboxed iframe', async () => {
+    render(<ModalIframe title={title} src={src} />);
+    expect((await screen.findByTitle(title)).getAttribute('sandbox')).toContain('allow-downloads');
+  });
   it('does not render when showLegacyEditModal is false', () => {
     const { container } = render(<ModalIframe title={title} src={src} />);
 

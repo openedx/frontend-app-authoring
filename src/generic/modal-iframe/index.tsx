@@ -9,6 +9,7 @@ interface ModalIframeProps extends IframeHTMLAttributes<HTMLIFrameElement> {
 }
 
 export const SANDBOX_OPTIONS = [
+  'allow-downloads',
   'allow-forms',
   'allow-modals',
   'allow-popups',
