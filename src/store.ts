@@ -12,7 +12,6 @@ import { reducer as discussionsReducer } from './pages-and-resources/discussions
 import { reducer as pagesAndResourcesReducer } from './pages-and-resources/data/slice';
 import { reducer as customPagesReducer } from './custom-pages/data/slice';
 import { reducer as studioHomeReducer } from './studio-home/data/slice';
-import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/data/slice';
 import { reducer as filesReducer } from './files-and-videos/files-page/data/slice';
 import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';
 import { reducer as courseOptimizerReducer } from './optimizer-page/data/slice';
@@ -33,7 +32,6 @@ export interface DeprecatedReduxState {
   discussions: Record<string, any>;
   assets: Record<string, any>;
   pagesAndResources: Record<string, any>;
-  scheduleAndDetails: Record<string, any>;
   studioHome: InferState<typeof studioHomeReducer>;
   models: Record<string, any>;
   live: Record<string, any>;
@@ -60,7 +58,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       discussions: discussionsReducer,
       assets: filesReducer,
       pagesAndResources: pagesAndResourcesReducer,
-      scheduleAndDetails: scheduleAndDetailsReducer,
       studioHome: studioHomeReducer,
       models: modelsReducer,
       live: liveReducer,

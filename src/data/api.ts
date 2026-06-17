@@ -239,6 +239,7 @@ export interface CourseSettingsData {
   courseDisplayName: string;
   courseDisplayNameWithDefault: string;
   creditEligibilityEnabled: boolean;
+  creditRequirements?: Record<string, any>;
   enableExtendedCourseDetails: boolean;
   enrollmentEndEditable: boolean;
   isCreditCourse: boolean;
@@ -259,7 +260,7 @@ export interface CourseSettingsData {
     rerunLink: string;
     run: string;
     url: string;
-  };
+  }[];
   shortDescriptionEditable: boolean;
   showMinGradeWarning: boolean;
   sidebarHtmlEnabled: boolean;

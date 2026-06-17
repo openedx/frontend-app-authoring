@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+import { AxiosError } from 'axios';
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { UserAgreement, UserAgreementRecord } from '@src/data/types';
@@ -23,6 +25,7 @@ import {
   updateUserAgreementRecord,
   waffleFlagDefaults,
   getCourseSettings,
+  CourseSettingsData,
 } from './api';
 import { RequestStatus, RequestStatusType } from './constants';
 
@@ -229,7 +232,7 @@ export const useUserAgreement = (agreementType: string) => (
  * Get the course settings
  */
 export const useCourseSettings = (courseId: string) => (
-  useQuery({
+  useQuery<CourseSettingsData, AxiosError>({
     queryKey: ['courseSettings', courseId],
     queryFn: () => getCourseSettings(courseId),
   })

@@ -1,12 +1,9 @@
-// @ts-check
 import {
-  act,
   initializeMocks,
   render,
-  waitFor,
   fireEvent,
+  screen,
 } from '@src/testUtils';
-import { executeThunk } from '@src/utils';
 import genericMessages from '@src/generic/help-sidebar/messages';
 import { DATE_FORMAT } from '@src/constants';
 import { getCourseSettingsApiUrl } from '@src/data/api';
@@ -16,7 +13,6 @@ import { useCourseUserPermissions } from '@src/authz/hooks';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseDetailsMock, courseSettingsMock } from './__mocks__';
 import { getCourseDetailsApiUrl } from './data/api';
-import { updateCourseDetailsQuery } from './data/thunks';
 import creditMessages from './credit-section/messages';
 import pacingMessages from './pacing-section/messages';
 import basicMessages from './basic-section/messages';
@@ -45,7 +41,6 @@ const mockPermissions = (overrides = {}) =>
   });
 
 let axiosMock;
-let store;
 const courseId = '123';
 
 // Mock the tinymce lib
@@ -84,7 +79,6 @@ describe('<ScheduleAndDetails />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
-    store = mocks.reduxStore;
     axiosMock
       .onGet(getCourseDetailsApiUrl(courseId))
       .reply(200, courseDetailsMock);
@@ -97,29 +91,27 @@ describe('<ScheduleAndDetails />', () => {
   });
 
   it('should render without errors', async () => {
-    const { getByText, getByRole, getAllByText } = renderComponent();
-    await waitFor(() => {
-      const scheduleAndDetailElements = getAllByText(messages.headingTitle.defaultMessage);
-      const scheduleAndDetailTitle = scheduleAndDetailElements[0];
-      expect(
-        getByText(pacingMessages.pacingTitle.defaultMessage),
-      ).toBeInTheDocument();
-      expect(scheduleAndDetailTitle).toBeInTheDocument();
-      expect(
-        getByText(basicMessages.basicTitle.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        getByText(creditMessages.creditTitle.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        getByText(scheduleMessages.scheduleTitle.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        getByRole('navigation', {
-          name: genericMessages.sidebarTitleOther.defaultMessage,
-        }),
-      ).toBeInTheDocument();
-    });
+    renderComponent();
+    expect(
+      await screen.findByText(pacingMessages.pacingTitle.defaultMessage),
+    ).toBeInTheDocument();
+    const scheduleAndDetailElements = screen.getAllByText(messages.headingTitle.defaultMessage);
+    const scheduleAndDetailTitle = scheduleAndDetailElements[0];
+    expect(scheduleAndDetailTitle).toBeInTheDocument();
+    expect(
+      screen.getByText(basicMessages.basicTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(creditMessages.creditTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(scheduleMessages.scheduleTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('navigation', {
+        name: genericMessages.sidebarTitleOther.defaultMessage,
+      }),
+    ).toBeInTheDocument();
   });
 
   it('should hide credit section with condition', async () => {
@@ -132,63 +124,56 @@ describe('<ScheduleAndDetails />', () => {
       .onGet(getCourseSettingsApiUrl(courseId))
       .reply(200, updatedResponse);
 
-    const { queryAllByText } = renderComponent();
-    await waitFor(() => {
-      expect(
-        queryAllByText(creditMessages.creditTitle.defaultMessage).length,
-      ).toBe(0);
-    });
+    renderComponent();
+    expect(
+      screen.queryAllByText(creditMessages.creditTitle.defaultMessage).length,
+    ).toBe(0);
   });
 
   it('should show save alert onChange ', async () => {
-    const { getAllByPlaceholderText, getByText } = renderComponent();
-    let inputs;
-    await waitFor(() => {
-      inputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
-    });
+    renderComponent();
+    const inputs = await screen.findAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
     // @ts-ignore
     fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
 
     expect(
-      getByText(messages.alertWarning.defaultMessage),
+      screen.getByText(messages.alertWarning.defaultMessage),
     ).toBeInTheDocument();
   });
 
   it('should display a success message when course details saves', async () => {
-    const { getByText } = renderComponent();
-    await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
-    expect(getByText(messages.alertSuccess.defaultMessage)).toBeInTheDocument();
+    renderComponent();
+    const inputs = await screen.findAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
+    fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
+    fireEvent.click(await screen.findByText(messages.buttonSaveText.defaultMessage));
+    expect(await screen.findByText(messages.alertSuccess.defaultMessage)).toBeInTheDocument();
   });
 
   it('should display an error when GET CourseDetails fails', async () => {
     axiosMock
       .onGet(getCourseDetailsApiUrl(courseId))
       .reply(404, 'error');
-    const { getByText } = renderComponent();
-    await waitFor(() => {
-      expect(getByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
-    });
+    renderComponent();
+    expect(await screen.findByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
   });
 
   it('should display an error when GET CourseSettings fails', async () => {
     axiosMock
       .onGet(getCourseSettingsApiUrl(courseId))
       .reply(404, 'error');
-    const { getByText } = renderComponent();
-    await waitFor(() => {
-      expect(getByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
-    });
+    renderComponent();
+    expect(await screen.findByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
   });
 
   it('should display an error when PUT CourseDetails fails', async () => {
     axiosMock
       .onPut(getCourseDetailsApiUrl(courseId))
       .reply(404, 'error');
-    const { getByText } = renderComponent();
-    await act(async () => {
-      await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
-    });
-    expect(getByText(messages.alertFail.defaultMessage)).toBeInTheDocument();
+    renderComponent();
+    const inputs = await screen.findAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
+    fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
+    fireEvent.click(await screen.findByText(messages.buttonSaveText.defaultMessage));
+    expect(await screen.findByText(messages.alertFail.defaultMessage)).toBeInTheDocument();
   });
 });
 
@@ -197,7 +182,6 @@ describe('<ScheduleAndDetails /> permissions', () => {
     jest.restoreAllMocks();
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
-    store = mocks.reduxStore;
     axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, courseDetailsMock);
     axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, courseSettingsMock);
     axiosMock.onPut(getCourseDetailsApiUrl(courseId)).reply(200);
@@ -206,58 +190,48 @@ describe('<ScheduleAndDetails /> permissions', () => {
 
   it('renders normally when authz flag is disabled (no regression)', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: false });
-    const { getAllByText } = renderComponent();
-    await waitFor(() => {
-      expect(getAllByText(messages.headingTitle.defaultMessage).length).toBeGreaterThan(0);
-    });
+    renderComponent();
+    expect((await screen.findAllByText(messages.headingTitle.defaultMessage)).length).toBeGreaterThan(0);
   });
 
   it('renders normally when user has all permissions', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    const { getAllByText } = renderComponent();
-    await waitFor(() => {
-      expect(getAllByText(messages.headingTitle.defaultMessage).length).toBeGreaterThan(0);
-    });
+    renderComponent();
+    expect((await screen.findAllByText(messages.headingTitle.defaultMessage)).length).toBeGreaterThan(0);
   });
 
   it('shows PermissionDeniedAlert when user lacks view permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     mockPermissions({ canViewScheduleAndDetails: false, canEditSchedule: false, canEditDetails: false });
-    const { getByTestId } = renderComponent();
-    await waitFor(() => {
-      expect(getByTestId('permissionDeniedAlert')).toBeInTheDocument();
-    });
+    renderComponent();
+    expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
   });
 
   it('disables schedule date inputs when user lacks edit_schedule permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     mockPermissions({ canEditSchedule: false });
-    const { getAllByPlaceholderText } = renderComponent();
-    await waitFor(() => {
-      const dateInputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
-      dateInputs.forEach((input) => expect(input).toBeDisabled());
-    });
+    renderComponent();
+    const dateInputs = await screen.findAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
+    dateInputs.forEach((input) => expect(input).toBeDisabled());
   });
 
   it('disables pacing and details inputs when user lacks edit_details permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     mockPermissions({ canEditDetails: false });
-    const { getAllByRole } = renderComponent();
-    await waitFor(() => {
-      const radios = getAllByRole('radio');
-      radios.forEach((radio) => expect(radio).toBeDisabled());
-    });
+    renderComponent();
+    const radios = await screen.findAllByRole('radio');
+    radios.forEach((radio) => expect(radio).toBeDisabled());
   });
 
   it('save button cannot be triggered when user has no edit permissions', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     mockPermissions({ canEditSchedule: false, canEditDetails: false });
-    const { getAllByPlaceholderText, queryByText } = renderComponent();
+    renderComponent();
     // Wait for page to load
-    const dateInputs = await waitFor(() => getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase()));
+    const dateInputs = await screen.findAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
     // All date inputs must be disabled (no edit_schedule permission)
     dateInputs.forEach((input) => expect(input).toBeDisabled());
     // No changes can be made so the save button never appears
-    expect(queryByText(messages.buttonSaveText.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.buttonSaveText.defaultMessage)).not.toBeInTheDocument();
   });
 });
