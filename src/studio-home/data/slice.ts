@@ -58,7 +58,6 @@ const slice = createSlice({
       platformName?: string;
       rerunCreatorStatus?: boolean;
       requestCourseCreatorUrl?: string;
-      showNewLibraryButton?: boolean;
       showNewLibraryV2Button?: boolean;
       studioRequestEmail?: string;
       studioName?: string;

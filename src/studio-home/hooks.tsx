@@ -87,12 +87,14 @@ const useStudioHome = () => {
     courseCreatorStatus,
     librariesV1Enabled,
     librariesV2Enabled,
+    showNewLibraryV2Button,
   } = studioHomeData;
 
   const isShowOrganizationDropdown = optimizationEnabled && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const isShowEmailStaff = courseCreatorStatus === COURSE_CREATOR_STATES.disallowedForThisSite && !!studioRequestEmail;
   const isShowProcessing = allowCourseReruns && rerunCreatorStatus && inProcessCourseActions?.length > 0;
   const hasAbilityToCreateNewCourse = courseCreatorStatus === COURSE_CREATOR_STATES.granted;
+  const canCreateNewLibrary = !!librariesV2Enabled && !!showNewLibraryV2Button;
   const anyQueryIsPending = [deleteNotificationSavingStatus, courseCreatorSavingStatus, savingCreateRerunStatus]
     .includes(RequestStatus.PENDING);
   const anyQueryIsFailed = [deleteNotificationSavingStatus, courseCreatorSavingStatus, savingCreateRerunStatus]
@@ -111,6 +113,7 @@ const useStudioHome = () => {
     courseCreatorSavingStatus,
     isShowOrganizationDropdown,
     hasAbilityToCreateNewCourse,
+    canCreateNewLibrary,
     isFiltered,
     setShowNewCourseContainer,
     librariesV1Enabled,

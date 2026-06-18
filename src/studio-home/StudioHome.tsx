@@ -8,10 +8,10 @@ import {
   Row,
 } from '@openedx/paragon';
 import { Add as AddIcon, Error, ManageAccounts } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { useWaffleFlags } from '@src/data/apiHooks';
 import Loading from '../generic/Loading';
@@ -30,8 +30,6 @@ import AlertMessage from '../generic/alert-message';
 const StudioHome = () => {
   const intl = useIntl();
   const location = useLocation();
-  const navigate = useNavigate();
-
   const {
     isLoadingPage,
     isFailedLoadingPage,
@@ -45,6 +43,7 @@ const StudioHome = () => {
     hasAbilityToCreateNewCourse,
     isFiltered,
     setShowNewCourseContainer,
+    canCreateNewLibrary,
     librariesV1Enabled,
     librariesV2Enabled,
   } = useStudioHome();
@@ -53,15 +52,10 @@ const StudioHome = () => {
   const isAuthzEnabled = waffleFlags?.enableAuthzCourseAuthoring ?? false;
   const adminConsoleUrl = `${getConfig().ADMIN_CONSOLE_URL}/authz`;
 
-  const v1LibraryTab = librariesV1Enabled && location?.pathname.split('/').pop() === 'libraries-v1';
-  const showV2LibraryURL = librariesV2Enabled && !v1LibraryTab;
-
   const {
     userIsActive,
     studioShortName,
     studioRequestEmail,
-    showNewLibraryButton,
-    showNewLibraryV2Button,
   } = studioHomeData;
 
   const getHeaderButtons = useCallback(() => {
@@ -108,23 +102,16 @@ const StudioHome = () => {
       );
     }
 
-    if ((showNewLibraryButton && !showV2LibraryURL) || (showV2LibraryURL && showNewLibraryV2Button)) {
-      const newLibraryClick = () => {
-        if (showV2LibraryURL) {
-          navigate('/library/create');
-        } else {
-          navigate('/libraries-v1/create');
-        }
-      };
-
+    if (canCreateNewLibrary) {
       headerButtons.push(
         <Button
+          as={Link}
+          to="/library/create"
           variant="outline-primary"
           iconBefore={AddIcon}
           size="sm"
-          onClick={newLibraryClick}
         >
-          {intl.formatMessage(messages.addNewLibraryBtnText)}
+          <FormattedMessage {...messages.addNewLibraryBtnText} />
         </Button>,
       );
     }
