@@ -5,7 +5,6 @@ import {
   fireEvent,
   render,
   screen,
-  waitFor,
   initializeMocks,
   within,
 } from '@src/testUtils';
@@ -22,10 +21,8 @@ const {
 
 const mockUseSelector = jest.fn();
 jest.spyOn(reactRedux, 'useSelector').mockImplementation(mockUseSelector);
-const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
 }));
 
 /** Helper function to get the Studio header in the rendered HTML */
@@ -126,55 +123,35 @@ describe('<StudioHome />', () => {
     });
 
     describe('render new library button', () => {
-      it('should navigate to home_library when libraries-v2 disabled', async () => {
+      it('should not render new library button when libraries-v2 disabled', () => {
         mockUseSelector.mockReturnValue({
           ...studioHomeMock,
           courseCreatorStatus: COURSE_CREATOR_STATES.granted,
           librariesV2Enabled: false,
         });
-        const studioBaseUrl = 'http://localhost:18010';
 
         render(<StudioHome />, { path: '/home' });
-        await waitFor(() => {
-          const createNewLibraryButton = screen.getByRole('button', { name: 'New library' });
-
-          const mockWindowOpen = jest.spyOn(window, 'open');
-          fireEvent.click(createNewLibraryButton);
-          expect(mockWindowOpen).toHaveBeenCalledWith(`${studioBaseUrl}/home_library`);
-          mockWindowOpen.mockRestore();
-        });
+        expect(screen.queryByRole('button', { name: 'New library' })).not.toBeInTheDocument();
       });
 
-      it('should navigate to the library authoring page in course authoring', async () => {
+      it('should render a link to the library authoring page when libraries-v2 enabled', () => {
         mockUseSelector.mockReturnValue({
           ...studioHomeMock,
           librariesV1Enabled: false,
         });
         render(<StudioHome />, { path: '/home' });
-        const createNewLibraryButton = screen.getByRole('button', { name: 'New library' });
-        fireEvent.click(createNewLibraryButton);
-        expect(mockNavigate).toHaveBeenCalledWith('/library/create');
+        const createNewLibraryButton = screen.getByRole('link', { name: 'New library' });
+        expect(createNewLibraryButton).toHaveAttribute('href', '/library/create');
       });
     });
 
-    it('does not render new library button for "v1 only" mode if showNewLibraryButton is False', () => {
+    it('does not render new library button when showNewLibraryV2Button is False', () => {
       mockUseSelector.mockReturnValue({
         ...studioHomeMock,
-        showNewLibraryButton: false,
-        librariesV2Enabled: false,
+        showNewLibraryV2Button: false,
       });
       render(<StudioHome />, { path: '/home' });
       expect(screen.queryByRole('button', { name: 'New library' })).not.toBeInTheDocument();
-    });
-
-    it('render new library button for "v2 only" mode even if showNewLibraryButton is False', () => {
-      mockUseSelector.mockReturnValue({
-        ...studioHomeMock,
-        showNewLibraryButton: false,
-        librariesV1Enabled: false,
-      });
-      render(<StudioHome />, { path: '/home' });
-      expect(screen.queryByRole('button', { name: 'New library' })).toBeInTheDocument();
     });
 
     it('should render "create new course" container', async () => {
