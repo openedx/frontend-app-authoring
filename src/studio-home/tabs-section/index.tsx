@@ -101,7 +101,7 @@ const TabsSection = ({
     }
 
     return tabs;
-  }, [showNewCourseContainer]);
+  }, [showNewCourseContainer, isShowProcessing]);
 
   const handleSelectTab = (tab: TabKeyType) => {
     if (tab === TABS_LIST.courses) {
