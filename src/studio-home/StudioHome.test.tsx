@@ -151,7 +151,6 @@ describe('<StudioHome />', () => {
       it('should render a link to the library authoring page when libraries-v2 enabled', () => {
         mockUseSelector.mockReturnValue({
           ...studioHomeMock,
-          librariesV1Enabled: false,
         });
         render(<StudioHome />, { path: '/home' });
         const createNewLibraryButton = screen.getByRole('link', { name: 'New library' });

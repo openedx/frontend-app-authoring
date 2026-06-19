@@ -44,7 +44,6 @@ const StudioHome = () => {
     isFiltered,
     setShowNewCourseContainer,
     canCreateNewLibrary,
-    librariesV1Enabled,
     librariesV2Enabled,
   } = useStudioHome();
 
@@ -159,7 +158,6 @@ const StudioHome = () => {
               showNewCourseContainer={showNewCourseContainer}
               onClickNewCourse={() => setShowNewCourseContainer(true)}
               isShowProcessing={Boolean(isShowProcessing) && !isFiltered}
-              librariesV1Enabled={librariesV1Enabled}
               librariesV2Enabled={librariesV2Enabled}
             />
           </section>

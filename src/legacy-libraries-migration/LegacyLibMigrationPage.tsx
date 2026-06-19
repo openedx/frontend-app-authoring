@@ -64,7 +64,7 @@ const ExitModal = ({
           <ModalDialog.CloseButton variant="tertiary">
             <FormattedMessage {...messages.exitModalCancelText} />
           </ModalDialog.CloseButton>
-          <Button onClick={() => navigate('/libraries-v1')}>
+          <Button onClick={() => navigate('/libraries')}>
             <FormattedMessage {...messages.exitModalConfirmText} />
           </Button>
         </ActionRow>

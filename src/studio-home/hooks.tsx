@@ -85,7 +85,6 @@ const useStudioHome = () => {
     studioRequestEmail,
     inProcessCourseActions,
     courseCreatorStatus,
-    librariesV1Enabled,
     librariesV2Enabled,
     showNewLibraryV2Button,
   } = studioHomeData;
@@ -116,7 +115,6 @@ const useStudioHome = () => {
     canCreateNewLibrary,
     isFiltered,
     setShowNewCourseContainer,
-    librariesV1Enabled,
     librariesV2Enabled,
   };
 };
