@@ -114,7 +114,18 @@ describe('<SettingCard />', () => {
       <IntlProvider locale="en">
         <SettingCard
           name="showanswer"
-          settingData={{ deprecated: false, help: 'help', displayName: 'Show Answer', value: 'always' }}
+          settingData={{
+            deprecated: false,
+            help: 'help',
+            displayName: 'Show Answer',
+            value: 'always',
+            type: 'String',
+            options: [
+              { value: 'always', displayName: 'Always' },
+              { value: 'never', displayName: 'Never' },
+              { value: 'past_due', displayName: 'Past Due' },
+            ],
+          }}
           handleBlur={handleBlur}
           setEdited={setEdited}
           showSaveSettingsPrompt={showSaveSettingsPrompt}
@@ -172,7 +183,18 @@ describe('<SettingCard />', () => {
       <IntlProvider locale="en">
         <SettingCard
           name="showanswer"
-          settingData={{ deprecated: false, help: 'help', displayName: 'Show Answer', value: 'always' }}
+          settingData={{
+            deprecated: false,
+            help: 'help',
+            displayName: 'Show Answer',
+            value: 'always',
+            type: 'String',
+            options: [
+              { value: 'always', displayName: 'Always' },
+              { value: 'never', displayName: 'Never' },
+              { value: 'past_due', displayName: 'Past Due' },
+            ],
+          }}
           handleBlur={handleBlur}
           setEdited={setEdited}
           showSaveSettingsPrompt={showSaveSettingsPrompt}

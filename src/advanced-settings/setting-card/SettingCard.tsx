@@ -18,6 +18,7 @@ import {
   getFieldType,
   serializeValue,
 } from '../data/fieldTypes';
+import type { EnumOption } from '../data/fieldTypes';
 import { FIELD_PLACEHOLDER_MESSAGES } from '../data/fieldTypeMessages';
 import {
   BooleanInput,
@@ -44,7 +45,7 @@ const SettingCard = ({
   const [target, setTarget] = useState<HTMLButtonElement | null>(null);
   const [newValue, setNewValue] = useState(initialValue);
 
-  const fieldType = getFieldType(name, settingData.value);
+  const fieldType = getFieldType(settingData);
   const placeholder = FIELD_PLACEHOLDER_MESSAGES[name]
     ? intl.formatMessage(FIELD_PLACEHOLDER_MESSAGES[name])
     : '';
@@ -134,6 +135,7 @@ const SettingCard = ({
             value={displayValue as string}
             name={name}
             displayName={displayName}
+            options={settingData.options as EnumOption[]}
             onChange={handleImmediateChange}
           />
         );

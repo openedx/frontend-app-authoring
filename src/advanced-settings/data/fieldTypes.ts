@@ -1,56 +1,79 @@
 /**
- * Derives all field-type-related exports from SETTINGS_CONFIG.
- * This file exists for backward compatibility — consumers can import
- * directly from settingsConfig.ts in the future.
+ * Field-type helpers for Advanced Settings.
+ *
+ * The input type and the enum options for each setting come from the backend
+ * Advanced Settings API (the `type` and `options` fields on each setting), not
+ * from a hardcoded frontend table. `getFieldType` maps that backend metadata to
+ * the concrete input component the page should render.
  */
-import { FIELD_TYPE, SETTINGS_CONFIG } from './settingsConfig';
-import type { FieldType } from './settingsConfig';
 
-export type { FieldType, EnumOption } from './settingsConfig';
-export { FIELD_TYPE };
+export const FIELD_TYPE = {
+  BOOLEAN: 'boolean',
+  NUMBER: 'number',
+  ENUM: 'enum',
+  STRING: 'string',
+  JSON: 'json',
+} as const;
+
+export type FieldType = typeof FIELD_TYPE[keyof typeof FIELD_TYPE];
+
+/** A single choice for an enum field, as returned by the backend (`options`). */
+export interface EnumOption {
+  value: string;
+  displayName?: string;
+}
+
+/** The subset of a setting's data needed to decide its input type. */
+export interface FieldTypeInput {
+  type?: string;
+  options?: unknown;
+  value?: unknown;
+}
+
+/** A setting is an enum when the backend gives it a non-empty list of options. */
+export function hasEnumOptions(options: unknown): options is EnumOption[] {
+  return Array.isArray(options) && options.length > 0;
+}
 
 /**
- * NOTE: The `label` field in each option is an English-only fallback used when
- * a value has no entry in ENUM_LABEL_MESSAGES (fieldTypeMessages.ts).
- * All current values are covered there. When adding new options, always add
- * a corresponding i18n message — never rely on `label` for user-visible text.
+ * Infers the field type from the value's shape. Used only as a fallback when
+ * the backend does not provide a recognized `type` (e.g. an older backend or a
+ * custom XBlock field class).
  */
-export const ENUM_OPTIONS: Record<string, Array<{ value: string; label: string; }>> = Object.fromEntries(
-  SETTINGS_CONFIG.flatMap((cat) =>
-    cat.fields
-      .filter((f) => f.enumOptions)
-      .map((f) => [f.key, f.enumOptions!])
-  ),
-);
-
-const BOOLEAN_KEYS = new Set<string>(
-  SETTINGS_CONFIG.flatMap((cat) =>
-    cat.fields
-      .filter((f) => f.type === FIELD_TYPE.BOOLEAN)
-      .map((f) => f.key)
-  ),
-);
-
-const NUMBER_KEYS = new Set<string>(
-  SETTINGS_CONFIG.flatMap((cat) =>
-    cat.fields
-      .filter((f) => f.type === FIELD_TYPE.NUMBER)
-      .map((f) => f.key)
-  ),
-);
-
-/**
- * Returns the field type for a given setting key and its current value.
- * Key-based overrides are checked first to handle null/empty API values correctly.
- */
-export function getFieldType(key: string, value: unknown): FieldType {
-  if (BOOLEAN_KEYS.has(key)) { return FIELD_TYPE.BOOLEAN; }
-  if (NUMBER_KEYS.has(key)) { return FIELD_TYPE.NUMBER; }
-  if (ENUM_OPTIONS[key]) { return FIELD_TYPE.ENUM; }
+function inferTypeFromValue(value: unknown): FieldType {
   if (typeof value === 'boolean') { return FIELD_TYPE.BOOLEAN; }
   if (typeof value === 'number') { return FIELD_TYPE.NUMBER; }
   if (Array.isArray(value) || (typeof value === 'object' && value !== null)) { return FIELD_TYPE.JSON; }
   return FIELD_TYPE.STRING;
+}
+
+/**
+ * Returns the input type for a setting, preferring the backend-provided
+ * metadata. The backend `type` (the XBlock field class name) takes precedence:
+ * a Boolean stays a toggle and a number stays a number even though XBlock gives
+ * those fields a default `values` list. Only string-like fields with a
+ * non-empty `options` list become enums. Falls back to inferring from the
+ * value's shape for unknown or missing types.
+ */
+export function getFieldType({ type, options, value }: FieldTypeInput): FieldType {
+  switch (type) {
+    case 'Boolean':
+      return FIELD_TYPE.BOOLEAN;
+    case 'Integer':
+    case 'Float':
+      return FIELD_TYPE.NUMBER;
+    case 'List':
+    case 'Dict':
+      return FIELD_TYPE.JSON;
+    case 'String':
+    case 'Date':
+    case 'Timedelta':
+      return hasEnumOptions(options) ? FIELD_TYPE.ENUM : FIELD_TYPE.STRING;
+    default:
+      // Unknown or missing backend type (e.g. older backend, custom field class).
+      if (hasEnumOptions(options)) { return FIELD_TYPE.ENUM; }
+      return inferTypeFromValue(value);
+  }
 }
 
 /**

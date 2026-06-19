@@ -1,49 +1,62 @@
 import {
   FIELD_TYPE,
-  ENUM_OPTIONS,
   getFieldType,
+  hasEnumOptions,
   serializeValue,
 } from './fieldTypes';
 
 describe('getFieldType()', () => {
-  // Key-based overrides (must win regardless of value type)
-  it('returns BOOLEAN for keys in BOOLEAN_KEYS even when value is null', () => {
-    expect(getFieldType('selfPaced', null)).toBe(FIELD_TYPE.BOOLEAN);
+  // Enum: a non-empty options list wins over everything else.
+  it('returns ENUM when the backend provides a non-empty options list', () => {
+    expect(getFieldType({ type: 'String', options: [{ value: 'always' }] })).toBe(FIELD_TYPE.ENUM);
+    expect(getFieldType({ type: 'String', options: [{ value: 'a' }, { value: 'b' }] })).toBe(FIELD_TYPE.ENUM);
   });
 
-  it('returns NUMBER for keys in NUMBER_KEYS even when value is null', () => {
-    expect(getFieldType('maxAttempts', null)).toBe(FIELD_TYPE.NUMBER);
+  // Backend type → input type mapping.
+  it('maps the backend type to the matching input type', () => {
+    expect(getFieldType({ type: 'Boolean', value: null })).toBe(FIELD_TYPE.BOOLEAN);
+    expect(getFieldType({ type: 'Integer', value: null })).toBe(FIELD_TYPE.NUMBER);
+    expect(getFieldType({ type: 'Float', value: null })).toBe(FIELD_TYPE.NUMBER);
+    expect(getFieldType({ type: 'List', value: null })).toBe(FIELD_TYPE.JSON);
+    expect(getFieldType({ type: 'Dict', value: null })).toBe(FIELD_TYPE.JSON);
+    expect(getFieldType({ type: 'String', value: null })).toBe(FIELD_TYPE.STRING);
+    expect(getFieldType({ type: 'Date', value: null })).toBe(FIELD_TYPE.STRING);
+    expect(getFieldType({ type: 'Timedelta', value: null })).toBe(FIELD_TYPE.STRING);
   });
 
-  it('returns ENUM for keys present in ENUM_OPTIONS', () => {
-    expect(getFieldType('showanswer', 'always')).toBe(FIELD_TYPE.ENUM);
-    expect(getFieldType('rerandomize', 'never')).toBe(FIELD_TYPE.ENUM);
-    expect(getFieldType('catalogVisibility', 'both')).toBe(FIELD_TYPE.ENUM);
+  it('does not treat a non-list options value (e.g. numeric constraints) as an enum', () => {
+    expect(getFieldType({ type: 'Integer', options: { min: 0 } })).toBe(FIELD_TYPE.NUMBER);
+    expect(getFieldType({ type: 'String', options: [] })).toBe(FIELD_TYPE.STRING);
   });
 
-  // Value-based fallback
-  it('returns BOOLEAN when value is a boolean (and key not overridden)', () => {
-    expect(getFieldType('someUnknownKey', true)).toBe(FIELD_TYPE.BOOLEAN);
-    expect(getFieldType('someUnknownKey', false)).toBe(FIELD_TYPE.BOOLEAN);
+  it('keeps Boolean/Integer as toggle/number even though XBlock gives them default options', () => {
+    // XBlock Boolean fields carry a default values list ([True, False]); that must not turn
+    // the field into a dropdown — the backend `type` wins over the presence of options.
+    const booleanOptions = [{ value: 'true', displayName: 'True' }, { value: 'false', displayName: 'False' }];
+    expect(getFieldType({ type: 'Boolean', options: booleanOptions, value: true })).toBe(FIELD_TYPE.BOOLEAN);
+    expect(getFieldType({ type: 'Integer', options: [{ value: '1', displayName: 'One' }] })).toBe(FIELD_TYPE.NUMBER);
   });
 
-  it('returns NUMBER when value is a number (and key not overridden)', () => {
-    expect(getFieldType('someUnknownKey', 42)).toBe(FIELD_TYPE.NUMBER);
-    expect(getFieldType('someUnknownKey', 0)).toBe(FIELD_TYPE.NUMBER);
+  // Value-shape fallback for unknown/missing backend type (e.g. older backend, custom field class).
+  it('falls back to inferring from the value shape when type is unknown or missing', () => {
+    expect(getFieldType({ value: true })).toBe(FIELD_TYPE.BOOLEAN);
+    expect(getFieldType({ value: false })).toBe(FIELD_TYPE.BOOLEAN);
+    expect(getFieldType({ value: 42 })).toBe(FIELD_TYPE.NUMBER);
+    expect(getFieldType({ value: 0 })).toBe(FIELD_TYPE.NUMBER);
+    expect(getFieldType({ value: [] })).toBe(FIELD_TYPE.JSON);
+    expect(getFieldType({ value: { cohorted: true } })).toBe(FIELD_TYPE.JSON);
+    expect(getFieldType({ value: 'My Course' })).toBe(FIELD_TYPE.STRING);
+    expect(getFieldType({ type: 'UserPartitionList', value: ['a'] })).toBe(FIELD_TYPE.JSON);
   });
+});
 
-  it('returns JSON for array values', () => {
-    expect(getFieldType('advancedModules', [])).toBe(FIELD_TYPE.JSON);
-    expect(getFieldType('ltiPassports', ['key:secret'])).toBe(FIELD_TYPE.JSON);
-  });
-
-  it('returns JSON for object values', () => {
-    expect(getFieldType('cohortConfig', { cohorted: true })).toBe(FIELD_TYPE.JSON);
-  });
-
-  it('returns STRING as default for string values with no key override', () => {
-    expect(getFieldType('displayName', 'My Course')).toBe(FIELD_TYPE.STRING);
-    expect(getFieldType('giturl', '')).toBe(FIELD_TYPE.STRING);
+describe('hasEnumOptions()', () => {
+  it('is true only for a non-empty array', () => {
+    expect(hasEnumOptions([{ value: 'a' }])).toBe(true);
+    expect(hasEnumOptions([])).toBe(false);
+    expect(hasEnumOptions(null)).toBe(false);
+    expect(hasEnumOptions(undefined)).toBe(false);
+    expect(hasEnumOptions({ min: 0 })).toBe(false);
   });
 });
 
@@ -71,33 +84,5 @@ describe('serializeValue()', () => {
   it('returns JSON type values as-is (already a string)', () => {
     const raw = '["module_a","module_b"]';
     expect(serializeValue(raw, FIELD_TYPE.JSON)).toBe(raw);
-  });
-});
-
-describe('ENUM_OPTIONS', () => {
-  it('contains options for all 8 enum fields', () => {
-    const expectedFields = [
-      'showanswer',
-      'rerandomize',
-      'catalogVisibility',
-      'courseVisibility',
-      'showCorrectness',
-      'videoSharingOptions',
-      'courseEditMethod',
-      'certificatesDisplayBehavior',
-    ];
-    expectedFields.forEach((field) => {
-      expect(ENUM_OPTIONS[field]).toBeDefined();
-      expect(ENUM_OPTIONS[field].length).toBeGreaterThan(0);
-    });
-  });
-
-  it('every option has a value and a label', () => {
-    Object.entries(ENUM_OPTIONS).forEach(([, options]) => {
-      options.forEach(({ value, label }) => {
-        expect(typeof value).toBe('string');
-        expect(typeof label).toBe('string');
-      });
-    });
   });
 });
