@@ -4,22 +4,19 @@ import { ITEM_BADGE_STATUS } from '@src/course-outline/constants';
 import {
   act,
   fireEvent,
-  initializeMocks,
-  render,
   screen,
   waitFor,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
 import { userEvent } from '@testing-library/user-event';
+import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
 import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
-import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
-import { CourseOutlineProvider } from '../CourseOutlineContext';
 
 const onExpandMock = jest.fn();
-const onClickMenuButtonMock = jest.fn();
+
 const onClickPublishMock = jest.fn();
 const onClickDeleteMock = jest.fn();
 const onClickUnlinkMock = jest.fn();
@@ -36,7 +33,7 @@ jest.mock('@src/generic/data/api', () => ({
   getTagsCount: () => mockGetTagsCount(),
 }));
 
-const useUpdateCourseBlockNameMock = { mutateAsync: jest.fn(), isPending: false };
+const useUpdateCourseBlockNameMock = { mutateAsync: jest.fn(), mutate: jest.fn(), isPending: false };
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   ...jest.requireActual('@src/course-outline/data/apiHooks'),
   useUpdateCourseBlockName: () => useUpdateCourseBlockNameMock,
@@ -47,7 +44,7 @@ const cardHeaderProps = {
   status: ITEM_BADGE_STATUS.live,
   cardId: '12345',
   hasChanges: false,
-  onClickMenuButton: onClickMenuButtonMock,
+  renameSectionId: 'sec-1',
   onClickPublish: onClickPublishMock,
   onEditSubmit: jest.fn(),
   closeForm: closeFormMock,
@@ -80,7 +77,7 @@ const renderComponent = (props?: object, entry = '/') => {
     />
   );
 
-  return render(
+  return renderCard(
     <CardHeader
       {...cardHeaderProps}
       titleComponent={titleComponent}
@@ -93,11 +90,7 @@ const renderComponent = (props?: object, entry = '/') => {
       },
       extraWrapper: ({ children }) => (
         <CourseAuthoringProvider courseId={courseId}>
-          <CourseOutlineProvider>
-            <OutlineSidebarProvider>
-              {children}
-            </OutlineSidebarProvider>
-          </CourseOutlineProvider>
+          {children}
         </CourseAuthoringProvider>
       ),
     },
@@ -106,7 +99,10 @@ const renderComponent = (props?: object, entry = '/') => {
 
 describe('<CardHeader />', () => {
   beforeEach(() => {
-    initializeMocks();
+    setupCardTestMocks();
+    useUpdateCourseBlockNameMock.isPending = false;
+    useUpdateCourseBlockNameMock.mutate.mockClear();
+    useUpdateCourseBlockNameMock.mutateAsync.mockClear();
   });
 
   it('render CardHeader component correctly', async () => {
@@ -183,14 +179,6 @@ describe('<CardHeader />', () => {
     expect(onExpandMock).toHaveBeenCalled();
   });
 
-  it('calls onClickMenuButton when menu is clicked', async () => {
-    renderComponent();
-
-    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    await act(async () => fireEvent.click(menuButton));
-    expect(onClickMenuButtonMock).toHaveBeenCalled();
-  });
-
   it('calls onClickPublish when item is clicked', async () => {
     renderComponent({
       ...cardHeaderProps,
@@ -239,7 +227,6 @@ describe('<CardHeader />', () => {
 
     const editButton = await screen.findByTestId('subsection-edit-button');
     await user.click(editButton);
-    expect(onClickMenuButtonMock).toHaveBeenCalled();
   });
 
   it('check is field visible when edit is clicked', async () => {
@@ -253,6 +240,135 @@ describe('<CardHeader />', () => {
       expect(screen.queryByTestId('subsection-card-header__expanded-btn')).not.toBeInTheDocument();
       expect(screen.queryByTestId('edit-button')).not.toBeInTheDocument();
     });
+  });
+
+  /** Open the edit form and return the edit field + a user instance. */
+  async function openEdit() {
+    const user = userEvent.setup();
+    const button = await screen.findByTestId('subsection-edit-button');
+    await user.click(button);
+    const field = await screen.findByTestId('subsection-edit-field');
+    return { user, field };
+  }
+
+  it('pressing Escape cancels rename without triggering onBlur save', async () => {
+    renderComponent();
+    const { user, field } = await openEdit();
+
+    // Type a new name
+    await user.clear(field);
+    await user.type(field, 'Cancelled name');
+
+    // Press Escape to cancel
+    await user.keyboard('{Escape}');
+
+    // Form should close, original title reappears
+    await waitFor(() => {
+      expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText(cardHeaderProps.title)).toBeInTheDocument();
+
+    // Mutation should NOT have been called (neither mutate nor mutateAsync)
+    expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
+    expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
+
+    // Re-open the form and submit to prove cancelling doesn't block future saves
+    const { field: field2 } = await openEdit();
+    await user.clear(field2);
+    await user.type(field2, 'Valid saved name');
+    await user.keyboard('{Enter}');
+
+    // Mutation should have been called with the new name
+    await waitFor(() => {
+      expect(useUpdateCourseBlockNameMock.mutate).toHaveBeenCalledWith(
+        expect.objectContaining({ displayName: 'Valid saved name' }),
+        expect.any(Object),
+      );
+    });
+  });
+
+  it('click-away blur on edited field triggers save mutation', async () => {
+    renderComponent();
+    const { user, field } = await openEdit();
+
+    // Type a new name
+    await user.clear(field);
+    await user.type(field, 'Blur saved name');
+
+    // Click outside the input to trigger real blur (pointerdown + blur)
+    const header = await screen.findByTestId('subsection-card-header');
+    await user.click(header);
+
+    // Mutation should have been called with the new name
+    await waitFor(() => {
+      expect(useUpdateCourseBlockNameMock.mutate).toHaveBeenCalledWith(
+        expect.objectContaining({ displayName: 'Blur saved name' }),
+        expect.any(Object),
+      );
+    });
+  });
+
+  it('phantom blur with relatedTarget null closes form without mutation', async () => {
+    renderComponent();
+    const { field } = await openEdit();
+
+    // fireEvent.change avoids the document-level pointerdown that userEvent triggers,
+    // ensuring hasPointerInteractionRef stays false so the phantom blur guard fires.
+    fireEvent.change(field, { target: { value: 'Phantom name' } });
+    fireEvent.blur(field, { relatedTarget: null });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
+    });
+    expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
+    expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('phantom blur with relatedTarget document.body closes form without mutation', async () => {
+    renderComponent();
+    const { field } = await openEdit();
+
+    // fireEvent.change avoids the document-level pointerdown that userEvent triggers,
+    // ensuring hasPointerInteractionRef stays false so the phantom blur guard fires.
+    fireEvent.change(field, { target: { value: 'Phantom body name' } });
+    fireEvent.blur(field, { relatedTarget: document.body });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
+    });
+    expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
+    expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('escape via window listener then blur closes form without mutation', async () => {
+    renderComponent();
+    const { field } = await openEdit();
+
+    // fireEvent.change avoids document-level pointerdown.
+    fireEvent.change(field, { target: { value: 'Escaped name' } });
+
+    // Provide a valid relatedTarget to bypass the phantom blur guard.
+    const target = document.createElement('button');
+    document.body.appendChild(target);
+
+    // Register AFTER component mount so useEscapeClick listener fires first
+    // (sets escapeCancelledRef), then our listener fires blur while the input
+    // is still mounted (React hasn't flushed closeForm's state update yet).
+    const blurFiringListener = () => fireEvent.blur(field, { relatedTarget: target });
+    window.addEventListener('keydown', blurFiringListener);
+
+    try {
+      fireEvent.keyDown(window, { key: 'Escape' });
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('subsection-edit-field')).not.toBeInTheDocument();
+      });
+      expect(useUpdateCourseBlockNameMock.mutate).not.toHaveBeenCalled();
+      expect(useUpdateCourseBlockNameMock.mutateAsync).not.toHaveBeenCalled();
+    } finally {
+      window.removeEventListener('keydown', blurFiringListener);
+      document.body.removeChild(target);
+    }
   });
 
   it('check editing is enabled when isDisabledEditField is false', async () => {

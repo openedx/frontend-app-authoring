@@ -17,10 +17,34 @@ import OutlineSidebar from './OutlineSidebar';
 // Mock the useCourseDetails hook
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseDetails: jest.fn().mockReturnValue({ isPending: false, data: { title: 'Test Course' } }),
+  useCourseBestPractices: jest.fn().mockReturnValue({
+    data: undefined,
+    isPending: false,
+    isError: false,
+    isSuccess: false,
+    error: null,
+  }),
+  useCourseLaunch: jest.fn().mockReturnValue({
+    data: undefined,
+    isPending: false,
+    isError: false,
+    isSuccess: false,
+    error: null,
+  }),
   useCreateCourseBlock: jest.fn(),
   useCourseItemData: jest.fn().mockReturnValue({ data: {} }),
-  useDuplicateItem: jest.fn().mockReturnValue({ duplicateItem: jest.fn() }),
+  useDuplicateItem: jest.fn().mockReturnValue({ mutate: jest.fn() }),
   useDeleteCourseItem: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
+  useConfigureSection: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  useConfigureSubsection: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  useConfigureUnit: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  usePasteItem: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  useUpdateCourseSectionHighlights: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  useCourseOutlineSavingStatus: jest.fn().mockReturnValue(''),
+  useCourseOutlineReindexStatus: jest.fn().mockReturnValue({ reindexLoadingStatus: 'in-progress', reindexError: null }),
+  useReorderSections: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
+  useReorderSubsections: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
+  useReorderUnits: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
 }));
 
 const courseId = '123';

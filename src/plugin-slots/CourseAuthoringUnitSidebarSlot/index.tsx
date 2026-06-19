@@ -1,5 +1,8 @@
 import { PluginSlot } from '@openedx/frontend-plugin-framework/dist';
+import classNames from 'classnames';
+
 import { UnitSidebar } from '@src/course-unit/unit-sidebar/UnitSidebar';
+import { isUnitPageNewDesignEnabled } from '@src/course-unit/utils';
 
 export const CourseAuthoringUnitSidebarSlot = (
   {
@@ -12,7 +15,8 @@ export const CourseAuthoringUnitSidebarSlot = (
     isSplitTestType,
   }: CourseAuthoringUnitSidebarSlotProps,
 ) => (
-  <div className="pt-1" // This is to fix the vertical alignment of the sidebar
+  <div
+    className={classNames({ 'sidebar': isUnitPageNewDesignEnabled() })}
   >
     <PluginSlot
       id="org.openedx.frontend.authoring.course_unit_sidebar.v2"

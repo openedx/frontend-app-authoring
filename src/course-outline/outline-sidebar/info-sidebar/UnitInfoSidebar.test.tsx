@@ -5,7 +5,7 @@ import { UnitSidebar } from './UnitInfoSidebar';
 // Mocks
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseItemData: jest.fn(),
-  courseOutlineQueryKeys: { courseItemId: (id: string) => ['courseItem', id] },
+  useDuplicateItem: jest.fn(() => ({ mutate: jest.fn() })),
 }));
 
 jest.mock('../OutlineSidebarContext', () => ({
@@ -42,7 +42,7 @@ jest.mock(
 const apiHooks = jest.requireMock('@src/course-outline/data/apiHooks') as any;
 const outlineContext = jest.requireMock('../OutlineSidebarContext') as any;
 const authoring = jest.requireMock('@src/CourseAuthoringContext') as any;
-const outlineCtx = jest.requireMock('@src/course-outline/CourseOutlineContext') as any;
+const outlineState = jest.requireMock('@src/course-outline/CourseOutlineContext') as any;
 
 describe('UnitSidebar', () => {
   beforeEach(() => {
@@ -60,12 +60,15 @@ describe('UnitSidebar', () => {
       courseId: '5',
       openUnlinkModal: jest.fn(),
     });
-    outlineCtx.useCourseOutlineContext.mockReturnValue({
-      openPublishModal: jest.fn(),
-      handleDuplicateUnitSubmit: jest.fn(),
+    outlineState.useCourseOutlineContext.mockReturnValue({
       sections: [],
-      updateUnitOrderByIndex: jest.fn(),
+      restoreSectionList: jest.fn(),
+      commitUnitReorder: jest.fn(),
+      previewSections: jest.fn(),
+      openPublishModal: jest.fn(),
       openDeleteModal: jest.fn(),
+      duplicateCurrentSelection: jest.fn(),
+      duplicateUnit: jest.fn(),
     });
   });
 
@@ -88,12 +91,14 @@ describe('UnitSidebar', () => {
   it('shows publish button and triggers openPublishModal when unit has changes', async () => {
     const user = userEvent.setup();
     const openPublishModal = jest.fn();
-    outlineCtx.useCourseOutlineContext.mockReturnValue({
-      openPublishModal,
-      handleDuplicateUnitSubmit: jest.fn(),
+    outlineState.useCourseOutlineContext.mockReturnValue({
       sections: [],
+      restoreSectionList: jest.fn(),
       updateUnitOrderByIndex: jest.fn(),
+      openPublishModal,
       openDeleteModal: jest.fn(),
+      duplicateCurrentSelection: jest.fn(),
+      duplicateUnit: jest.fn(),
     });
     outlineContext.useOutlineSidebarContext.mockReturnValue({
       selectedContainerState: { currentId: 'unit-2', sectionId: 's1', subsectionId: 'ss1' },
@@ -168,5 +173,54 @@ describe('UnitSidebar', () => {
     render(<UnitSidebar />);
     await user.click(screen.getByRole('tab', { name: /Settings/i }));
     expect(screen.getByText('GenericUnitInfoSettings')).toBeInTheDocument();
+  });
+
+  it('back opens subsection info sidebar when subsectionId exists', async () => {
+    const user = userEvent.setup();
+    const openContainerInfoSidebar = jest.fn();
+    outlineContext.useOutlineSidebarContext.mockReturnValue({
+      selectedContainerState: { currentId: 'unit-5', sectionId: 's1', subsectionId: 'ss1' },
+      clearSelection: jest.fn(),
+      openContainerInfoSidebar,
+      setSelectedContainerState: jest.fn(),
+      currentTabKey: 'info',
+      setCurrentTabKey: jest.fn(),
+    });
+    outlineState.useCourseOutlineContext.mockReturnValue({
+      openPublishModal: jest.fn(),
+      handleDuplicateUnitSubmit: jest.fn(),
+      sections: [{ id: 's1' }],
+      updateUnitOrderByIndex: jest.fn(),
+      openDeleteModal: jest.fn(),
+    });
+    apiHooks.useCourseItemData.mockImplementation((id: string) => {
+      if (id === 's1') {
+        return {
+          data: { id: 's1', childInfo: { children: [{ id: 'ss1' }] } },
+          isPending: false,
+        };
+      }
+      if (id === 'ss1') {
+        return {
+          data: { id: 'ss1', childInfo: { children: [] } },
+          isPending: false,
+        };
+      }
+      return {
+        data: {
+          displayName: 'Unit 5',
+          hasChanges: false,
+          category: 'vertical',
+          id: 'unit-5',
+          actions: { deletable: true, duplicable: true },
+        },
+        isPending: false,
+      };
+    });
+
+    render(<UnitSidebar />);
+    await user.click(screen.getByRole('button', { name: 'Back' }));
+
+    expect(openContainerInfoSidebar).toHaveBeenCalledWith('ss1', 'ss1', 's1', 0);
   });
 });

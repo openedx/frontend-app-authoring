@@ -46,7 +46,7 @@ import {
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 import { isUnitPageNewDesignEnabled } from '../utils';
-import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { contentTagsQueryKeys } from '@src/content-tags-drawer/data/apiHooks';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({

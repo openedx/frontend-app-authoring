@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useDefaultTab } from '@src/hooks/useDefaultTab';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 import { useNavigate } from 'react-router-dom';
+import { arrayMove } from '@dnd-kit/sortable';
 
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarTitle } from '@src/generic/sidebar';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData, useDuplicateItem } from '@src/course-outline/data/apiHooks';
+import { courseIDtoBlockID } from '@src/course-outline/utils';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
@@ -22,13 +24,14 @@ export const SectionSidebar = () => {
   const intl = useIntl();
   const navigate = useNavigate();
 
-  const { openUnlinkModal } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const duplicateMutation = useDuplicateItem(courseId);
   const {
     openPublishModal,
-    handleDuplicateSectionSubmit,
-    sections,
-    updateSectionOrderByIndex,
     openDeleteModal,
+    sections,
+    previewSections,
+    commitSectionReorder,
   } = useCourseOutlineContext();
   const {
     clearSelection,
@@ -42,12 +45,7 @@ export const SectionSidebar = () => {
     settings: 'settings',
   };
 
-  useEffect(() => {
-    if (!currentTabKey || !Object.values(availableTabs).includes(currentTabKey)) {
-      // Set default Tab key
-      setCurrentTabKey('info');
-    }
-  }, [currentTabKey, setCurrentTabKey]);
+  useDefaultTab('section');
   const { sectionId = '', index } = selectedContainerState ?? {};
   const { data: sectionData, isLoading } = useCourseItemData(sectionId);
 
@@ -66,10 +64,45 @@ export const SectionSidebar = () => {
 
   const handleMove = (step: number) => {
     if (index !== undefined) {
-      updateSectionOrderByIndex(index, index + step);
+      const nextSections = arrayMove(sections, index, index + step);
+      const sectionListIds = nextSections.map((s: any) => s.id);
+      previewSections(nextSections);
+      commitSectionReorder(sectionListIds);
       setSelectedContainerState(
         selectedContainerState ? { ...selectedContainerState, index: index + step } : undefined,
       );
+    }
+  };
+
+  const handleDuplicate = () => {
+    const sel = selectedContainerState;
+    if (!sel?.currentId) { return; }
+    duplicateMutation.mutate({
+      itemId: sel.currentId,
+      parentId: courseIDtoBlockID(courseId),
+      sectionId: sel.sectionId ?? sel.currentId,
+    });
+  };
+
+  const handleUnlink = () => {
+    openUnlinkModal({ value: sectionData, sectionId });
+  };
+
+  const handleDelete = () => {
+    if (sectionData) {
+      openDeleteModal({
+        category: 'chapter',
+        currentId: sectionData.id,
+        sectionId: sectionData.id,
+      });
+    }
+  };
+
+  const handleViewLibrary = () => {
+    const upstreamRef = sectionData.upstreamInfo?.upstreamRef;
+    if (upstreamRef) {
+      const libId = getLibraryId(upstreamRef);
+      navigate(`/library/${libId}/section/${upstreamRef}`);
     }
   };
 
@@ -84,18 +117,12 @@ export const SectionSidebar = () => {
           index: index ?? -1,
           actions: sectionData.actions || {},
           canMoveItem: canMoveSection(sections),
-          onClickDuplicate: handleDuplicateSectionSubmit,
+          onClickDuplicate: handleDuplicate,
           onClickMoveUp: () => handleMove(-1),
           onClickMoveDown: () => handleMove(1),
-          onClickUnlink: () => openUnlinkModal({ value: sectionData, sectionId }),
-          onClickDelete: openDeleteModal,
-          onClickViewLibrary: () => {
-            const upstreamRef = sectionData.upstreamInfo?.upstreamRef;
-            if (upstreamRef) {
-              const libId = getLibraryId(upstreamRef);
-              navigate(`/library/${libId}/section/${upstreamRef}`);
-            }
-          },
+          onClickUnlink: handleUnlink,
+          onClickDelete: handleDelete,
+          onClickViewLibrary: handleViewLibrary,
         }}
       />
       {sectionData.hasChanges && <PublishButon onClick={handlePublish} />}

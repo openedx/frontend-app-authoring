@@ -69,7 +69,6 @@ export default {
   optimizationEnabled: false,
   requestCourseCreatorUrl: '/request_course_creator',
   rerunCreatorStatus: true,
-  showNewLibraryButton: true,
   showNewLibraryV2Button: true,
   studioName: 'Studio',
   studioShortName: 'Studio',

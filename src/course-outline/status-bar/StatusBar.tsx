@@ -114,7 +114,6 @@ const CourseDates = ({
   datesLink: string;
 }) => {
   if (!startDate.isValid()) {
-    // Returns string contained in startDate, i.e. `Set Date`
     return (
       <Link
         className="small"
