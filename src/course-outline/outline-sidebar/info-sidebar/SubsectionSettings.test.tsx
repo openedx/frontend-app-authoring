@@ -6,26 +6,35 @@ import { SubsectionSettings } from './SubsectionSettings';
 
 const subsectionId = 'sub-1';
 
-// Make useStateWithCallback synchronous so callbacks call mutate immediately
+// Make useStateWithCallback synchronous so callbacks call mutate immediately.
+// Also handles the { value, skipCallback } object form used by the external-sync hooks.
 jest.mock('@src/hooks', () => ({
   useStateWithCallback: (defaultValue: any, cb?: any) => {
     const [state, setState] = useState(defaultValue);
     const wrappedSetState = (val: any) => {
-      const newVal = typeof val === 'function' ? val(state) : val;
+      let newVal;
+      let skip = false;
+      if (typeof val === 'object' && val !== null && 'value' in val && 'skipCallback' in val) {
+        newVal = val.value;
+        skip = val.skipCallback;
+      } else {
+        newVal = typeof val === 'function' ? val(state) : val;
+      }
       setState(newVal);
-      if (cb) { cb(newVal); }
+      if (cb && !skip) { cb(newVal); }
     };
     return [state, wrappedSetState];
   },
 }));
 
-// Mock DatepickerControl used in GradingSection so we can trigger onChange
+// Mock DatepickerControl so we can trigger onChange and inspect the current value.
 jest.mock('@src/generic/datepicker-control', () => ({
   DATEPICKER_TYPES: { date: 'date', time: 'time' },
-  DatepickerControl: ({ onChange, type, ...props }: any) => (
+  DatepickerControl: ({ onChange, type, value, ...props }: any) => (
     <button
       type="button"
       data-testid={props['data-testid'] || type}
+      data-value={value}
       onClick={() => onChange(type === 'date' ? '2025-12-31' : '12:00')}
     >
       {type}
@@ -48,9 +57,10 @@ jest.mock('./sharedSettings/VisibilitySection', () => ({
 
 jest.mock('@src/generic/configure-modal/AdvancedTab', () => ({
   __esModule: true,
-  default: ({ setFieldValue }: any) => (
+  default: ({ setFieldValue, values }: any) => (
     <div>
       <button type="button" onClick={() => setFieldValue('isProctoredExam', true)}>Set Proctored</button>
+      <span data-testid="is-time-limited">{String(values?.isTimeLimited)}</span>
     </div>
   ),
 }));
@@ -208,7 +218,7 @@ describe('SubsectionSettings', () => {
     expect(mutate).not.toHaveBeenCalled();
   });
 
-  it('resets grading local state when itemData changes', async () => {
+  it('syncs grading state when itemData changes externally without calling mutate', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
     const firstItemData = {
       ...baseItemData,
@@ -219,30 +229,84 @@ describe('SubsectionSettings', () => {
     const secondItemData = { ...firstItemData, format: 'g2', due: '2024-02-02' };
 
     apiHooks.useCourseItemData.mockReturnValue({ data: firstItemData, isPending: false });
-
     const { rerender } = render(<SubsectionSettings subsectionId={subsectionId} />);
+    expect(screen.getByTestId('due-date-picker')).toHaveAttribute('data-value', '2024-01-01');
 
     mutate.mockClear();
     apiHooks.useCourseItemData.mockReturnValue({ data: secondItemData, isPending: false });
     rerender(<SubsectionSettings subsectionId={subsectionId} />);
 
-    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ graderType: 'g2', dueDate: '2024-02-02' }));
+    // Sidebar must reflect the updated due date...
+    expect(screen.getByTestId('due-date-picker')).toHaveAttribute('data-value', '2024-02-02');
+    // ...but must NOT trigger a mutation (which would fire a redundant configure call)
+    expect(mutate).not.toHaveBeenCalled();
   });
 
-  it('resets assessment visibility local state when itemData changes', async () => {
+  it('syncs graded toggle state when itemData changes externally without calling mutate', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
-    const firstItemData = { ...baseItemData, graded: false, showCorrectness: 'always' };
-    const secondItemData = { ...firstItemData, showCorrectness: 'never' };
+    // Start as graded: grader dropdown is visible
+    apiHooks.useCourseItemData.mockReturnValue({
+      data: { ...baseItemData, graded: true },
+      isPending: false,
+    });
+    const { rerender } = render(<SubsectionSettings subsectionId={subsectionId} />);
+    expect(screen.getByTestId('grader-type-select')).toBeInTheDocument();
+
+    mutate.mockClear();
+    // External update switches to ungraded
+    apiHooks.useCourseItemData.mockReturnValue({
+      data: { ...baseItemData, graded: false },
+      isPending: false,
+    });
+    rerender(<SubsectionSettings subsectionId={subsectionId} />);
+
+    // Grader dropdown must disappear...
+    expect(screen.queryByTestId('grader-type-select')).not.toBeInTheDocument();
+    // ...without triggering a mutation
+    expect(mutate).not.toHaveBeenCalled();
+  });
+
+  it('syncs assessment result visibility when itemData changes externally without calling mutate', async () => {
+    apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
+    const firstItemData = { ...baseItemData, graded: false, showCorrectness: 'never' };
+    const secondItemData = { ...firstItemData, showCorrectness: 'past_due' };
 
     apiHooks.useCourseItemData.mockReturnValue({ data: firstItemData, isPending: false });
-
     const { rerender } = render(<SubsectionSettings subsectionId={subsectionId} />);
+    expect(screen.getByRole('checkbox')).not.toBeChecked();
 
     mutate.mockClear();
     apiHooks.useCourseItemData.mockReturnValue({ data: secondItemData, isPending: false });
     rerender(<SubsectionSettings subsectionId={subsectionId} />);
 
-    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ showCorrectness: 'never' }));
+    // Checkbox must reflect the new value...
+    expect(screen.getByRole('checkbox')).toBeChecked();
+    // ...but must NOT trigger a mutation
+    expect(mutate).not.toHaveBeenCalled();
+  });
+
+  it('syncs special exam (timed/proctored) state when itemData changes externally without calling mutate', () => {
+    apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
+    // Start with timed exam disabled
+    apiHooks.useCourseItemData.mockReturnValue({
+      data: { ...baseItemData, graded: false, isTimeLimited: false },
+      isPending: false,
+    });
+    const { rerender } = render(<SubsectionSettings subsectionId={subsectionId} />);
+    expect(screen.getByTestId('is-time-limited').textContent).toBe('false');
+
+    mutate.mockClear();
+    // Simulate kebab-menu configure modal enabling timed exam
+    apiHooks.useCourseItemData.mockReturnValue({
+      data: { ...baseItemData, graded: false, isTimeLimited: true },
+      isPending: false,
+    });
+    rerender(<SubsectionSettings subsectionId={subsectionId} />);
+
+    // AdvancedTab must receive the updated value...
+    expect(screen.getByTestId('is-time-limited').textContent).toBe('true');
+    // ...but must NOT trigger a mutation
+    expect(mutate).not.toHaveBeenCalled();
   });
 
   it('does not call mutate when item data is absent', async () => {

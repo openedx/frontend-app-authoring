@@ -5,7 +5,7 @@ import { UserPartitionInfoTypes } from '@src/data/types';
 import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { Form, Formik } from 'formik';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import configureMessages from '@src/generic/configure-modal/messages';
 import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
 import { useStateWithCallback } from '@src/hooks';
@@ -75,6 +75,19 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
       handleUpdate(!!val.isVisible, null, val.isDiscussionEnabled);
     }
   });
+
+  // Sync localState when props change externally (e.g. visibility updated from the
+  // left-side kebab configure modal). skipCallback prevents re-triggering the mutation.
+  useEffect(() => {
+    setLocalState({
+      value: {
+        isVisible: visibilityState === UNIT_VISIBILITY_STATES.staffOnly,
+        isDiscussionEnabled: discussionEnabled,
+      },
+      skipCallback: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibilityState, discussionEnabled]);
 
   const handleSaveGroups = async (data: {
     selectedPartitionIndex: number;

@@ -58,9 +58,12 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
       dueDate: itemData?.due || '',
     };
     if (localState?.graderType !== nextState.graderType || localState?.dueDate !== nextState.dueDate) {
-      setLocalState(nextState);
+      setLocalState({ value: nextState, skipCallback: true });
     }
   }, [itemData?.format, itemData?.due]);
+  useItemFieldSync(() => {
+    setGraded(itemData?.graded);
+  }, [itemData?.graded]);
 
   const setUngraded = () => {
     setGraded(false);
@@ -142,7 +145,7 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
   );
   useItemFieldSync(() => {
     if (localState?.showCorrectness !== itemData?.showCorrectness) {
-      setLocalState({ showCorrectness: itemData?.showCorrectness });
+      setLocalState({ value: { showCorrectness: itemData?.showCorrectness }, skipCallback: true });
     }
   }, [itemData?.showCorrectness]);
 
