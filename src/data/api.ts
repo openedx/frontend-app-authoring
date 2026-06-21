@@ -85,7 +85,6 @@ export const waffleFlagDefaults = {
   useNewImportPage: false,
   useNewExportPage: true,
   useNewFilesUploadsPage: true,
-  useNewVideoUploadsPage: true,
   useNewCourseOutlinePage: true,
   useNewUnitPage: false,
   useNewTextbooksPage: true,

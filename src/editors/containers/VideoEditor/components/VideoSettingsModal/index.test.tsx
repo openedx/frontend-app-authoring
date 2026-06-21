@@ -10,7 +10,6 @@ const defaultProps = {
   onReturn: jest.fn(),
   isLibrary: false,
   onClose: jest.fn(),
-  useNewVideoUploadsPage: true,
 };
 
 const renderComponent = (overrideProps = {}) => {
@@ -38,7 +37,7 @@ describe('<VideoSettingsModal />', () => {
     window.scrollTo = jest.fn();
   });
 
-  it('renders back button when useNewVideoUploadsPage is true and isLibrary is false', () => {
+  it('renders back button when isLibrary is false', () => {
     renderComponent();
     expect(screen.getByRole('button', { name: /replace video/i })).toBeInTheDocument();
   });

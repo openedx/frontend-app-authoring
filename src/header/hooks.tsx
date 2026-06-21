@@ -62,7 +62,7 @@ export const useContentMenuItems = (courseId: string) => {
       }] :
       []),
   ];
-  if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' || waffleFlags.useNewVideoUploadsPage) {
+  if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true') {
     items.push({
       href: `/course/${courseId}/videos`,
       title: intl.formatMessage(messages['header.links.videoUploads']),
