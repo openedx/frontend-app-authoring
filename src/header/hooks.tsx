@@ -23,6 +23,7 @@ import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
 
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
+  const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
 
   const { canViewCourseUpdates, canViewPagesAndResources, canViewFiles } = useCourseUserPermissions(
@@ -59,7 +60,7 @@ export const useContentMenuItems = (courseId: string) => {
       []),
   ];
 
-  if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true') {
+  if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' || waffleFlags.useNewVideoUploadsPage) {
     items.push({
       href: `/course/${courseId}/videos`,
       title: intl.formatMessage(messages['header.links.videoUploads']),
