@@ -144,6 +144,7 @@ export const useSettingMenuItems = (courseId: string) => {
 
 export const useToolsMenuItems = (courseId: string) => {
   const intl = useIntl();
+  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const waffleFlags = useWaffleFlags();
 
   const items = [
@@ -157,7 +158,7 @@ export const useToolsMenuItems = (courseId: string) => {
     },
     ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
       ? [{
-        href: `${getConfig().STUDIO_BASE_URL}/course/${courseId}#export-tags`,
+        href: `${studioBaseUrl}/course/${courseId}#export-tags`,
         title: intl.formatMessage(messages['header.links.exportTags']),
       }] :
       []),

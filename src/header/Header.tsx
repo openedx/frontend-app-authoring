@@ -101,7 +101,8 @@ const Header = ({
         outlineLink={getOutlineLink()}
         searchButtonAction={meiliSearchEnabled ? openSearchModal : undefined}
         containerProps={containerProps}
-        isNewHomePage
+        // TODO: remove isNewHomePage prop once StudioHeader drops support for it (https://github.com/openedx/frontend-app-authoring/issues/3086)
+        isNewHomePage={true}
       />
       {meiliSearchEnabled && (
         <SearchModal
