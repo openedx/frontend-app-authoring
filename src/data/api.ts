@@ -79,6 +79,7 @@ export const waffleFlagDefaults = {
   enableCourseOptimizer: false,
   enableNotifications: false,
   enableCourseOptimizerCheckPrevRunLinks: false,
+  useNewPdfEditor: true,
   useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
   enableAuthzCourseAuthoring: false,
