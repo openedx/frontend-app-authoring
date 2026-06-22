@@ -3,10 +3,8 @@ import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
-import { getConfig } from '@edx/frontend-platform';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useWaffleFlags } from '@src/data/apiHooks';
 import { getMessageFromAxiosError } from '@src/generic/saving-error-alert/utils';
 import messages from './messages';
 import {
@@ -22,7 +20,6 @@ export type OnErrorCallbackFunc = (error: AxiosError) => void;
 export const useTextbooksFeatures = () => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
-  const waffleFlags = useWaffleFlags(courseId);
 
   const {
     data: textbooksData,
@@ -49,9 +46,7 @@ export const useTextbooksFeatures = () => {
   const breadcrumbs = [
     {
       label: intl.formatMessage(messages.breadcrumbContent),
-      to: waffleFlags.useNewCourseOutlinePage
-        ? `/course/${courseId}`
-        : `${getConfig().STUDIO_BASE_URL}/course/${courseId}`,
+      to: `/course/${courseId}`,
     },
     {
       label: intl.formatMessage(messages.breadcrumbPagesAndResources),

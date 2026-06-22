@@ -23,7 +23,6 @@ import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
 
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
-  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
 
@@ -38,14 +37,12 @@ export const useContentMenuItems = (courseId: string) => {
 
   const items = [
     {
-      href: waffleFlags.useNewCourseOutlinePage ? `/course/${courseId}` : `${studioBaseUrl}/course/${courseId}`,
+      href: `/course/${courseId}`,
       title: intl.formatMessage(messages['header.links.outline']),
     },
     ...(canViewCourseUpdates ?
       [{
-        href: waffleFlags.useNewUpdatesPage
-          ? `/course/${courseId}/course_info`
-          : `${studioBaseUrl}/course_info/${courseId}`,
+        href: `/course/${courseId}/course_info`,
         title: intl.formatMessage(messages['header.links.updates']),
       }] :
       []),
@@ -57,11 +54,12 @@ export const useContentMenuItems = (courseId: string) => {
       : []),
     ...(canViewFiles
       ? [{
-        href: waffleFlags.useNewFilesUploadsPage ? `/course/${courseId}/assets` : `${studioBaseUrl}/assets/${courseId}`,
+        href: `/course/${courseId}/assets`,
         title: intl.formatMessage(messages['header.links.filesAndUploads']),
       }] :
       []),
   ];
+
   if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' || waffleFlags.useNewVideoUploadsPage) {
     items.push({
       href: `/course/${courseId}/videos`,
@@ -152,11 +150,11 @@ export const useToolsMenuItems = (courseId: string) => {
 
   const items = [
     {
-      href: waffleFlags.useNewImportPage ? `/course/${courseId}/import` : `${studioBaseUrl}/import/${courseId}`,
+      href: `/course/${courseId}/import`,
       title: intl.formatMessage(messages['header.links.import']),
     },
     {
-      href: waffleFlags.useNewExportPage ? `/course/${courseId}/export` : `${studioBaseUrl}/export/${courseId}`,
+      href: `/course/${courseId}/export`,
       title: intl.formatMessage(messages['header.links.exportCourse']),
     },
     ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'

@@ -50,9 +50,7 @@ describe('LiveSettings', () => {
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {
-        useNewCourseOutlinePage: true,
-      });
+      .reply(200, {});
   });
 
   it('should render three cards', async () => {

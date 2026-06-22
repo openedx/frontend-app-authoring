@@ -6,7 +6,6 @@ import { Icon, IconButton } from '@openedx/paragon';
 import { ArrowForward, Settings } from '@openedx/paragon/icons';
 import { useNavigate, Link } from 'react-router-dom';
 
-import { useWaffleFlags } from '../../data/apiHooks';
 import { useCourseUserPermissions } from '../../authz/hooks';
 import { getAdvancedSettingsPermissions } from '../../authz/permissionHelpers';
 import messages from '../messages';
@@ -22,25 +21,12 @@ const PageSettingButton = ({
   const { path: pagesAndResourcesPath, isEditable } = useContext(PagesAndResourcesContext);
   const { canManageAdvancedSettings } = useCourseUserPermissions(courseId, getAdvancedSettingsPermissions(courseId));
   const navigate = useNavigate();
-  const waffleFlags = useWaffleFlags(courseId);
 
-  const determineLinkDestination = useMemo(() => {
-    if (!legacyLink) { return null; }
-
-    if (legacyLink.includes('textbooks')) {
-      return waffleFlags.useNewTextbooksPage
-        ? `/course/${courseId}/${id.replace('_', '-')}`
-        : legacyLink;
-    }
-
-    if (legacyLink.includes('tabs')) {
-      return waffleFlags.useNewCustomPages
-        ? `/course/${courseId}/${id.replace('_', '-')}`
-        : legacyLink;
-    }
-
-    return null;
-  }, [legacyLink, waffleFlags, id]);
+  const determineLinkDestination = useMemo(() => (
+    legacyLink?.includes('textbooks') || legacyLink?.includes('tabs')
+      ? `/course/${courseId}/${id.replace('_', '-')}`
+      : null
+  ), [legacyLink, courseId, id]);
 
   const canConfigureOrEnable = allowedOperations?.configure || allowedOperations?.enable;
 
