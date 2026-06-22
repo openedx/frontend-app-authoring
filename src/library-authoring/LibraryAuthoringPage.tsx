@@ -382,7 +382,7 @@ const LibraryAuthoringPage = ({
           <SearchContextProvider
             extraFilter={extraFilter}
             overrideTypesFilter={overrideTypesFilter}
-            skipUrlUpdate={componentPickerMode}
+            skipUrlUpdate={!!componentPickerMode}
           >
             {libraryData
               && (
