@@ -60,7 +60,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
   );
 };
 
-export const LibraryDropdownFilter = () => {
+export const LibraryDropdownFilter = ({ singleSelect = false }: { singleSelect?: boolean; }) => {
   const intl = useIntl();
   const [search, setSearch] = useState('');
   const { selectedLibraries, setSelectedLibraries } = useMultiLibraryContext();
@@ -75,6 +75,9 @@ export const LibraryDropdownFilter = () => {
 
   const onChange = (libraryId: string) => {
     setSelectedLibraries?.((prev) => {
+      if (singleSelect) {
+        return prev.includes(libraryId) ? [] : [libraryId];
+      }
       if (prev.includes(libraryId)) {
         return prev.filter((id) => id !== libraryId);
       }
@@ -84,14 +87,16 @@ export const LibraryDropdownFilter = () => {
 
   useEffect(() => {
     const baseName = intl.formatMessage(messages.librariesFilterBtnText);
-    if (!selectedLibraries.length || selectedLibraries.length === data?.length) {
+    if (!selectedLibraries.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length === 1) {
       setLabel(data?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
+    } else if (selectedLibraries.length === data?.length) {
+      setLabel(baseName);
     } else if (selectedLibraries.length > 1) {
       setLabel(intl.formatMessage(messages.librariesFilterBtnCount, { count: selectedLibraries.length }));
     }
-  }, [label, selectedLibraries, data]);
+  }, [intl, selectedLibraries, data]);
 
   return (
     <Dropdown

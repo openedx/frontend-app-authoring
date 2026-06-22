@@ -85,6 +85,18 @@ describe('LibraryDropdownFilter', () => {
     ])).toEqual(['lib:SampleTaxonomyOrg1:TL2']);
   });
 
+  it('should show library name when the only library is selected', async () => {
+    const mockApi = mockGetContentLibraryV2List.applyMockNoPagination();
+    mockApi.mockResolvedValue([
+      { id: 'lib:SampleTaxonomyOrg1:TL1', title: 'Test Library 1' },
+    ] as any);
+    mockValue = ['lib:SampleTaxonomyOrg1:TL1'];
+    renderComponent();
+
+    const dropdownTrigger = await screen.findByRole('button', { name: 'Test Library 1' });
+    expect(dropdownTrigger).toBeInTheDocument();
+  });
+
   it('should update label to library if one is selected', async () => {
     mockGetContentLibraryV2List.applyMockNoPagination();
     mockValue = ['lib:SampleTaxonomyOrg1:TL1'];
@@ -107,6 +119,24 @@ describe('LibraryDropdownFilter', () => {
 
     const dropdownTrigger = await screen.findByRole('button', { name: '2 Libraries' });
     expect(dropdownTrigger).toBeInTheDocument();
+  });
+
+  it('should replace selection in single-select mode', async () => {
+    const user = userEvent.setup();
+    mockGetContentLibraryV2List.applyMockNoPagination();
+    render(<LibraryDropdownFilter singleSelect />);
+
+    const dropdownTrigger = await screen.findByRole('button', { name: 'All libraries' });
+    await user.click(dropdownTrigger);
+
+    const item = await screen.findByRole('checkbox', { name: 'Test Library 1' });
+    await user.click(item);
+    const passedFunction = mockSetValue.mock.calls[0][0];
+    expect(passedFunction([])).toEqual(['lib:SampleTaxonomyOrg1:TL1']);
+
+    await user.click(item);
+    const passedFunction2 = mockSetValue.mock.calls[1][0];
+    expect(passedFunction2(['lib:SampleTaxonomyOrg1:TL1'])).toEqual([]);
   });
 
   it('should reset label to "All libraries" when all libraries are selected', async () => {
