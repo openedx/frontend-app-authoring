@@ -4,7 +4,8 @@ import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { ConfigureSubsectionData } from '@src/course-outline/data/types';
 import { VisibilityTypes } from '@src/data/constants';
 import { SidebarSection } from '@src/generic/sidebar';
-import { useStateWithCallback } from '@src/hooks';
+import { useFieldDraft } from '@src/hooks/useFieldDraft';
+import { useMemo } from 'react';
 import messages from '../messages';
 
 interface Props<T = Partial<ConfigureSubsectionData>> {
@@ -21,19 +22,19 @@ interface State {
 export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(itemId);
-  const [localState, setLocalState] = useStateWithCallback<State>(
-    {
-      isVisibleToStaffOnly: itemData?.visibilityState === VisibilityTypes.STAFF_ONLY,
-      hideAfterDue: itemData?.hideAfterDue,
-    },
-    (val) => {
-      if (val && !isSubsection) {
-        // eslint-disable-next-line no-param-reassign
-        val.hideAfterDue = undefined;
-      }
-      return onChange(val || {});
-    },
-  );
+
+  const serverState = useMemo<State>(() => ({
+    isVisibleToStaffOnly: itemData?.visibilityState === VisibilityTypes.STAFF_ONLY,
+    hideAfterDue: itemData?.hideAfterDue,
+  }), [itemData?.visibilityState, itemData?.hideAfterDue]);
+
+  const [localState, setLocalState] = useFieldDraft<State>(serverState, (val) => {
+    const payload = { ...val };
+    if (!isSubsection) {
+      payload.hideAfterDue = undefined;
+    }
+    return onChange(payload);
+  });
 
   return (
     <SidebarSection
