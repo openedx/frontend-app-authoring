@@ -18,13 +18,20 @@ import {
   SidebarBodyItemId,
   useSidebarContext,
 } from '@src/library-authoring/common/context/SidebarContext';
-import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
+import {
+  useContainerChildren,
+  useRemoveItemsFromCollection,
+  useUpdateContainerChildren,
+} from '@src/library-authoring/data/apiHooks';
 import containerMessages from '@src/library-authoring/containers/messages';
+import unitMessages from '@src/library-authoring/units/messages';
+import outlineCardMessages from '@src/course-outline/card-header/messages';
 import { useLibraryRoutes } from '@src/library-authoring/routes';
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import ComponentRemover from './ComponentRemover';
 import messages from './messages';
+import { LibraryBlockMetadata } from '../data/api';
 
 interface Props {
   usageKey: string;
@@ -86,6 +93,24 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
 
   const containerType = containerId ? getBlockType(containerId) : 'collection';
 
+  // The following provide information about the parent container so we can implement "Move Up" and "Move Down" menu
+  // actions, if relevant.
+  const orderMutator = useUpdateContainerChildren(containerId);
+  const { data: parentContainerComponents } = useContainerChildren<LibraryBlockMetadata>(containerId);
+  // If we're in a [draft/editable] container, these handlers will move the current component up and down:
+  const moveInParent = useCallback(async (delta: number) => {
+    const newOrder = parentContainerComponents?.map(c => c.id) ?? [];
+    const [idToMove] = newOrder.splice(index!, 1); // Remove from its current position
+    newOrder.splice(index! + delta, 0, idToMove); // Insert into new position
+    try {
+      await orderMutator.mutateAsync(newOrder); // Save the new order
+    } catch {
+      showToast(intl.formatMessage(unitMessages.failedOrderUpdatedMsg));
+    }
+  }, [index, orderMutator, parentContainerComponents]);
+  const moveUp = useCallback(() => moveInParent(-1), [moveInParent]);
+  const moveDown = useCallback(() => moveInParent(1), [moveInParent]);
+
   return (
     <Dropdown id="component-card-dropdown">
       <Dropdown.Toggle
@@ -107,16 +132,6 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
-        {containerId && (
-          <Dropdown.Item onClick={openRemoveModal}>
-            <FormattedMessage {...messages.removeComponentFromUnitMenu} />
-          </Dropdown.Item>
-        )}
-        {!readOnly && (
-          <Dropdown.Item onClick={openDeleteModal}>
-            <FormattedMessage {...messages.menuDelete} />
-          </Dropdown.Item>
-        )}
         {insideCollection && !readOnly && (
           <Dropdown.Item onClick={removeFromCollection}>
             <FormattedMessage
@@ -130,6 +145,30 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
         {!readOnly && (
           <Dropdown.Item onClick={showManageCollections}>
             <FormattedMessage {...containerMessages.menuAddToCollection} />
+          </Dropdown.Item>
+        )}
+
+        {!readOnly && parentContainerComponents && index !== undefined && (
+          <Dropdown.Item onClick={moveUp} disabled={index === 0}>
+            <FormattedMessage {...outlineCardMessages.menuMoveUp} />
+          </Dropdown.Item>
+        )}
+        {!readOnly && parentContainerComponents && index !== undefined && (
+          <Dropdown.Item onClick={moveDown} disabled={index >= parentContainerComponents.length - 1}>
+            <FormattedMessage {...outlineCardMessages.menuMoveDown} />
+          </Dropdown.Item>
+        )}
+
+        {(containerId || !readOnly) && <Dropdown.Divider />}
+
+        {containerId && (
+          <Dropdown.Item onClick={openRemoveModal}>
+            <FormattedMessage {...messages.removeComponentFromUnitMenu} />
+          </Dropdown.Item>
+        )}
+        {!readOnly && (
+          <Dropdown.Item onClick={openDeleteModal}>
+            <FormattedMessage {...messages.menuDelete} />
           </Dropdown.Item>
         )}
       </Dropdown.Menu>
