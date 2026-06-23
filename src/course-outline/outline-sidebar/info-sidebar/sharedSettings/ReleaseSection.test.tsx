@@ -4,17 +4,18 @@ import userEvent from '@testing-library/user-event';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { ReleaseSection } from './ReleaseSection';
 
-// Make useStateWithCallback synchronous so callbacks call onChange immediately
-jest.mock('@src/hooks', () => ({
-  useStateWithCallback: (defaultValue: any, cb?: any) => {
+// Make useFieldDraft commit synchronously (no debounce) so edits call onChange immediately.
+jest.mock('@src/hooks/useFieldDraft', () => ({
+  useFieldDraft: (serverValue: any, commit?: any) => {
     const { useState } = jest.requireActual('react');
-    const [state, setState] = useState(defaultValue);
-    const wrappedSetState = (val: any) => {
-      const newVal = typeof val === 'function' ? val(state) : val;
-      setState(newVal);
-      if (cb) { cb(newVal); }
+    const [override, setOverride] = useState(null);
+    const value = override ?? serverValue;
+    const update = (patch: any) => {
+      const next = typeof patch === 'function' ? patch(value) : { ...value, ...patch };
+      setOverride(next);
+      if (commit) { commit(next); }
     };
-    return [state, wrappedSetState];
+    return [value, update];
   },
 }));
 
