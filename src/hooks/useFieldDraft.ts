@@ -10,9 +10,9 @@ export type DraftUpdater<T> = (patch: Partial<T> | ((prev: T) => T)) => void;
  * keeps a local `override` ONLY while the user has an uncommitted edit, so the
  * displayed value is `override ?? serverValue`. Any external change to
  * `serverValue` (e.g. the outline configure modal) is therefore reflected
- * immediately whenever the user has no edit in flight — which is the bug the
- * previous `useStateWithCallback` + `useItemFieldSync` pattern could not fix
- * without either going stale or clobbering an in-progress edit.
+ * immediately whenever the user has no edit in flight — which the previous
+ * mount-seeded local-state pattern could not do without either going stale
+ * or clobbering an in-progress edit.
  *
  * Lifecycle of the override:
  *  - set when the user edits a field (instant, responsive);
