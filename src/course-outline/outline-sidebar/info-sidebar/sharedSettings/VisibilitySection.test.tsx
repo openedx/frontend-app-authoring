@@ -72,6 +72,18 @@ describe('VisibilitySection component', () => {
     });
   });
 
+  it('strips hideAfterDue from the payload when not a subsection', async () => {
+    const user = userEvent.setup();
+    const onChange = jest.fn();
+    mockUseCourseItemData.mockReturnValue({ data: { visibilityState: undefined, hideAfterDue: true } });
+    render(<VisibilitySection {...defaultProps} isSubsection={false} onChange={onChange} />);
+
+    await user.click(await screen.findByRole('button', { name: 'Staff Only' }));
+    await waitFor(async () => {
+      expect(onChange).toHaveBeenCalledWith({ isVisibleToStaffOnly: true });
+    });
+  });
+
   it('hides checkbox when staff visible', async () => {
     const onChange = jest.fn();
     // when item is staff only, checkbox should not be present

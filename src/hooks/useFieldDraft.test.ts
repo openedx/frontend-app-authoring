@@ -58,6 +58,21 @@ describe('useFieldDraft', () => {
     await waitFor(() => expect(result.current[0]).toEqual({ a: 7 }));
   });
 
+  it('debounces rapid edits and commits only the latest', async () => {
+    const commit = jest.fn().mockResolvedValue(undefined);
+    const { result } = renderHook(() => useFieldDraft({ a: 0 }, commit, 20));
+
+    // Second edit while the first commit is still pending reschedules the timer.
+    act(() => {
+      result.current[1]({ a: 1 });
+      result.current[1]({ a: 2 });
+    });
+    expect(result.current[0]).toEqual({ a: 2 });
+
+    await waitFor(() => expect(commit).toHaveBeenCalledWith({ a: 2 }));
+    expect(commit).toHaveBeenCalledTimes(1);
+  });
+
   it('reverts the override when the commit fails', async () => {
     const commit = jest.fn().mockRejectedValue(new Error('save failed'));
     const { result } = renderHook(() => useFieldDraft({ a: 1 }, commit, 10));
