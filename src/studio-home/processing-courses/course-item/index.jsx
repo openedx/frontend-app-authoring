@@ -1,10 +1,10 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   ActionRow,
   Card,
-  Hyperlink,
   Button,
   Icon,
 } from '@openedx/paragon';
@@ -14,7 +14,6 @@ import {
   RotateRight as RotateRightIcon,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
 
 import { handleDeleteNotificationQuery } from '../../data/thunks';
 import messages from './messages';
@@ -22,7 +21,6 @@ import messages from './messages';
 const CourseItem = ({ course }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const {
     displayName,
     org,
@@ -54,9 +52,9 @@ const CourseItem = ({ course }) => {
           <Card.Section className="p-3.5 small text-gray-700 bg-light-200">
             {intl.formatMessage(messages.itemInProgressFooterText, {
               refresh: (
-                <Hyperlink destination={`${studioBaseUrl}/home`}>
+                <Link to="/home" reloadDocument>
                   {intl.formatMessage(messages.itemInProgressFooterHyperlink)}
-                </Hyperlink>
+                </Link>
               ),
             })}
           </Card.Section>
