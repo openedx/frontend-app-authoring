@@ -99,7 +99,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
             </Form.Label>
             <Form.Control
               as="select"
-              defaultValue={itemData?.format}
+              value={localState?.graderType}
               onChange={(e) => setLocalState((prev) => ({ ...prev, graderType: e.target.value }))}
               data-testid="grader-type-select"
             >
