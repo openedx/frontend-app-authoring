@@ -1,10 +1,10 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   ActionRow,
   Card,
-  Hyperlink,
   Button,
   Icon,
 } from '@openedx/paragon';
@@ -52,9 +52,9 @@ const CourseItem = ({ course }) => {
           <Card.Section className="p-3.5 small text-gray-700 bg-light-200">
             {intl.formatMessage(messages.itemInProgressFooterText, {
               refresh: (
-                <Hyperlink destination="/home">
+                <Link to="/home" reloadDocument>
                   {intl.formatMessage(messages.itemInProgressFooterHyperlink)}
-                </Hyperlink>
+                </Link>
               ),
             })}
           </Card.Section>
