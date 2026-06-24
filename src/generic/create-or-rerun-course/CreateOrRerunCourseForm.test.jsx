@@ -189,6 +189,89 @@ describe('<CreateOrRerunCourseForm />', () => {
 
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`${url}${destinationCourseKey}`);
     });
+    it('should redirect to /home when re-running a course', async () => {
+      const user = userEvent.setup();
+      const rerunProps = { ...props, isCreateNewCourse: false };
+      render(<RootWrapper {...rerunProps} />);
+      await mockStore();
+      const url = '/course/';
+      const destinationCourseKey = 'courseKey';
+      const displayNameInput = screen.getByPlaceholderText(messages.courseDisplayNamePlaceholder.defaultMessage);
+      const orgInput = screen.getByText(messages.courseOrgNoOptions.defaultMessage);
+      const runInput = screen.getByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
+      const rerunBtn = screen.getByRole('button', { name: messages.rerunCreateButton.defaultMessage });
+      await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url, destinationCourseKey });
+
+      await user.type(displayNameInput, 'foo course name');
+      fireEvent.click(orgInput);
+      await user.type(runInput, '1');
+      await user.click(rerunBtn);
+      await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }, true), store.dispatch);
+
+      expect(mockedUsedNavigate).toHaveBeenCalledWith('/home');
+    });
+    it('should include sourceCourseKey in request data for rerun', async () => {
+      const user = userEvent.setup();
+      const rerunProps = {
+        ...props,
+        isCreateNewCourse: false,
+        initialValues: {
+          displayName: 'Test Course',
+          org: 'testOrg',
+          number: '101',
+          run: '',
+        },
+      };
+      render(<RootWrapper {...rerunProps} />);
+      await mockStore();
+      axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url: '/home' });
+
+      const runInput = screen.getByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
+      const rerunBtn = screen.getByRole('button', { name: messages.rerunCreateButton.defaultMessage });
+
+      await user.type(runInput, '2024');
+      await user.click(rerunBtn);
+
+      await waitFor(() => {
+        const postRequest = axiosMock.history.post.find(
+          (req) => req.url === getCreateOrRerunCourseUrl(),
+        );
+        expect(postRequest).toBeDefined();
+        const requestData = JSON.parse(postRequest.data);
+        expect(requestData.source_course_key).toBe('course-id-mock');
+      });
+    });
+    it('should not include sourceCourseKey in request data for new course', async () => {
+      const user = userEvent.setup();
+      const createProps = {
+        ...props,
+        isCreateNewCourse: true,
+        initialValues: {
+          displayName: 'New Course',
+          org: 'testOrg',
+          number: '101',
+          run: '',
+        },
+      };
+      render(<RootWrapper {...createProps} />);
+      await mockStore();
+      axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url: '/course/newCourseId' });
+
+      const runInput = screen.getByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
+      const createBtn = screen.getByRole('button', { name: messages.createButton.defaultMessage });
+
+      await user.type(runInput, '2024');
+      await user.click(createBtn);
+
+      await waitFor(() => {
+        const postRequest = axiosMock.history.post.find(
+          (req) => req.url === getCreateOrRerunCourseUrl(),
+        );
+        expect(postRequest).toBeDefined();
+        const requestData = JSON.parse(postRequest.data);
+        expect(requestData.source_course_key).toBeUndefined();
+      });
+    });
   });
 
   it('should be disabled create button if form not filled', async () => {
