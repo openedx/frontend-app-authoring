@@ -99,15 +99,21 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
   const { data: parentContainerComponents } = useContainerChildren<LibraryBlockMetadata>(containerId);
   // If we're in a [draft/editable] container, these handlers will move the current component up and down:
   const moveInParent = useCallback(async (delta: number) => {
-    const newOrder = parentContainerComponents?.map(c => c.id) ?? [];
-    const [idToMove] = newOrder.splice(index!, 1); // Remove from its current position
-    newOrder.splice(index! + delta, 0, idToMove); // Insert into new position
+    if (!parentContainerComponents || index === undefined) {
+      return;
+    }
+    const newOrder = parentContainerComponents.map(c => c.id);
+    const [idToMove] = newOrder.splice(index, 1); // Remove from its current position
+    newOrder.splice(index + delta, 0, idToMove); // Insert into new position
     try {
       await orderMutator.mutateAsync(newOrder); // Save the new order
+      if (sidebarItemInfo?.id === usageKey) {
+        openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo, index + delta);
+      }
     } catch {
       showToast(intl.formatMessage(unitMessages.failedOrderUpdatedMsg));
     }
-  }, [index, orderMutator, parentContainerComponents]);
+  }, [index, orderMutator, parentContainerComponents, sidebarItemInfo, usageKey, openItemSidebar]);
   const moveUp = useCallback(() => moveInParent(-1), [moveInParent]);
   const moveDown = useCallback(() => moveInParent(1), [moveInParent]);
 
