@@ -37,13 +37,17 @@ export function fetchCourseRerunQuery(courseId) {
   };
 }
 
-export function updateCreateOrRerunCourseQuery(courseData) {
+export function updateCreateOrRerunCourseQuery(courseData, isRerun = false) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
 
     try {
       const response = await createOrRerunCourse(courseData);
-      dispatch(updateRedirectUrlObj('url' in response ? response : {}));
+      if (isRerun) {
+        dispatch(updateRedirectUrlObj({ url: '/home' }));
+      } else {
+        dispatch(updateRedirectUrlObj('url' in response ? response : {}));
+      }
       dispatch(updatePostErrors('errMsg' in response ? response : {}));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;

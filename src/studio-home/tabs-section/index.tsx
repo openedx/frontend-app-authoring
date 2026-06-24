@@ -141,7 +141,7 @@ const TabsSection = ({
     }
 
     return tabs;
-  }, [showNewCourseContainer, isLoadingCourses, migrationFilter]);
+  }, [showNewCourseContainer, isLoadingCourses, migrationFilter, isShowProcessing]);
 
   const handleSelectTab = (tab: TabKeyType) => {
     if (tab === TABS_LIST.courses) {
