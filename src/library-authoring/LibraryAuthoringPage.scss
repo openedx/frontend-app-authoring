@@ -1,3 +1,21 @@
+.library-authoring-page-embedded {
+  padding: 0;
+
+  .library-cards-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-gap: 1rem;
+    justify-items: stretch;
+  }
+
+  .library-item-card {
+    width: 100%;
+
+    .pgn__card {
+      min-width: 0;
+    }
+  }
+}
+
 .library-authoring-page {
   .header-actions {
     .normal-border {

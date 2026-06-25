@@ -85,6 +85,18 @@ describe('LibraryDropdownFilter', () => {
     ])).toEqual(['lib:SampleTaxonomyOrg1:TL2']);
   });
 
+  it('should show library name when the only library is selected', async () => {
+    const mockApi = mockGetContentLibraryV2List.applyMockNoPagination();
+    mockApi.mockResolvedValue([
+      { id: 'lib:SampleTaxonomyOrg1:TL1', title: 'Test Library 1' },
+    ] as any);
+    mockValue = ['lib:SampleTaxonomyOrg1:TL1'];
+    renderComponent();
+
+    const dropdownTrigger = await screen.findByRole('button', { name: 'Test Library 1' });
+    expect(dropdownTrigger).toBeInTheDocument();
+  });
+
   it('should update label to library if one is selected', async () => {
     mockGetContentLibraryV2List.applyMockNoPagination();
     mockValue = ['lib:SampleTaxonomyOrg1:TL1'];
