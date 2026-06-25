@@ -60,7 +60,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
   );
 };
 
-export const LibraryDropdownFilter = ({ singleSelect = false }: { singleSelect?: boolean; }) => {
+export const LibraryDropdownFilter = () => {
   const intl = useIntl();
   const [search, setSearch] = useState('');
   const { selectedLibraries, setSelectedLibraries } = useMultiLibraryContext();
@@ -75,9 +75,6 @@ export const LibraryDropdownFilter = ({ singleSelect = false }: { singleSelect?:
 
   const onChange = (libraryId: string) => {
     setSelectedLibraries?.((prev) => {
-      if (singleSelect) {
-        return prev.includes(libraryId) ? [] : [libraryId];
-      }
       if (prev.includes(libraryId)) {
         return prev.filter((id) => id !== libraryId);
       }

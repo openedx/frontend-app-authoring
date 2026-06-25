@@ -2,8 +2,17 @@
   padding: 0;
 
   .library-cards-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-gap: 1rem;
+    justify-items: stretch;
+  }
+
+  .library-item-card {
+    width: 100%;
+
+    .pgn__card {
+      min-width: 0;
+    }
   }
 }
 

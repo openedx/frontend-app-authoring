@@ -27,7 +27,7 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
   return (
     <Stack gap={3} className="my-3">
       <Stack className="flex-wrap" direction="horizontal" gap={2}>
-        <LibraryDropdownFilter singleSelect />
+        <LibraryDropdownFilter />
         <Stack direction="horizontal" gap={1}>
           <SearchKeywordsField />
           <IconButton
