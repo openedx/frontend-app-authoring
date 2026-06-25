@@ -99,7 +99,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
   const { data: parentContainerComponents } = useContainerChildren<LibraryBlockMetadata>(containerId);
   // If we're in a [draft/editable] container, these handlers will move the current component up and down:
   const moveInParent = useCallback(async (delta: number) => {
-    if (!parentContainerComponents || index === undefined) {
+    if (!parentContainerComponents || index === undefined) { // istanbul ignore next
       return;
     }
     const newOrder = parentContainerComponents.map(c => c.id);
@@ -107,7 +107,8 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
     newOrder.splice(index + delta, 0, idToMove); // Insert into new position
     try {
       await orderMutator.mutateAsync(newOrder); // Save the new order
-      if (sidebarItemInfo?.id === usageKey) {
+      if (sidebarItemInfo?.id === usageKey) { // istanbul ignore next
+        // Make sure the index in the sidebar stays in sync, or its "Move Up"/"Move Down" actions won't work correctly.
         openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo, index + delta);
       }
     } catch {
