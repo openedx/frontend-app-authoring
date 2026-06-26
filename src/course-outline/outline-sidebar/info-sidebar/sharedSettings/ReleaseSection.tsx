@@ -3,7 +3,8 @@ import { Stack } from '@openedx/paragon';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
 import { SidebarSection } from '@src/generic/sidebar';
-import { useStateWithCallback } from '@src/hooks';
+import { useFieldDraft } from '@src/hooks/useFieldDraft';
+import { useMemo } from 'react';
 import messages from '../messages';
 
 interface Props {
@@ -14,10 +15,9 @@ interface Props {
 export const ReleaseSection = ({ itemId, onChange }: Props) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(itemId);
-  const [localState, setLocalState] = useStateWithCallback(
-    itemData?.start,
-    (val) => onChange(val),
-  );
+
+  const serverState = useMemo(() => ({ start: itemData?.start }), [itemData?.start]);
+  const [localState, setLocalState] = useFieldDraft(serverState, (val) => onChange(val.start));
 
   return (
     <SidebarSection
@@ -26,17 +26,17 @@ export const ReleaseSection = ({ itemId, onChange }: Props) => {
       <Stack className="mt-3" direction="horizontal" gap={3}>
         <DatepickerControl
           type={DATEPICKER_TYPES.date}
-          value={localState}
+          value={localState?.start}
           label={intl.formatMessage(messages.releaseDateLabel)}
           controlName="state-date"
-          onChange={setLocalState}
+          onChange={(val: string) => setLocalState({ start: val })}
         />
         <DatepickerControl
           type={DATEPICKER_TYPES.time}
-          value={localState}
+          value={localState?.start}
           label={intl.formatMessage(messages.releaseTimeLabel)}
           controlName="start-time"
-          onChange={setLocalState}
+          onChange={(val: string) => setLocalState({ start: val })}
         />
       </Stack>
     </SidebarSection>

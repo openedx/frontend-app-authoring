@@ -13,10 +13,10 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import AdvancedTab from '@src/generic/configure-modal/AdvancedTab';
 import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
-import { useStateWithCallback } from '@src/hooks';
-import { useItemFieldSync } from '@src/hooks/useItemFieldSync';
+import { useFieldDraft } from '@src/hooks/useFieldDraft';
 import {
-  useCallback,
+  useEffect,
+  useMemo,
   useState,
 } from 'react';
 import { ReleaseSection } from './sharedSettings/ReleaseSection';
@@ -42,28 +42,31 @@ interface SubProps extends Props {
 const GradingSection = ({ subsectionId, onChange }: SubProps) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(subsectionId);
-  const [graded, setGraded] = useState(itemData?.graded);
   const { courseId } = useCourseAuthoringContext();
   const { data: courseDetails } = useCourseDetails(courseId);
-  const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
-    {
-      graderType: itemData?.format,
-      dueDate: itemData?.due || '',
-    },
+
+  // `graded` follows the server, but allows a transient local override so the
+  // "Graded" button can reveal the grader dropdown before a grader is picked.
+  // The override is dropped once the server reflects it (or changes externally),
+  // keeping the toggle in sync with itemData.
+  const serverGraded = !!itemData?.graded;
+  const [gradedOverride, setGradedOverride] = useState<boolean | null>(null);
+  const graded = gradedOverride ?? serverGraded;
+  useEffect(() => {
+    setGradedOverride((curr) => (curr === serverGraded ? null : curr));
+  }, [serverGraded]);
+
+  const serverState = useMemo<Partial<ConfigureSubsectionData>>(() => ({
+    graderType: itemData?.format,
+    dueDate: itemData?.due || '',
+  }), [itemData?.format, itemData?.due]);
+  const [localState, setLocalState] = useFieldDraft<Partial<ConfigureSubsectionData>>(
+    serverState,
     (val) => onChange(val || {}),
   );
-  useItemFieldSync(() => {
-    const nextState = {
-      graderType: itemData?.format,
-      dueDate: itemData?.due || '',
-    };
-    if (localState?.graderType !== nextState.graderType || localState?.dueDate !== nextState.dueDate) {
-      setLocalState(nextState);
-    }
-  }, [itemData?.format, itemData?.due]);
 
   const setUngraded = () => {
-    setGraded(false);
+    setGradedOverride(false);
     onChange({ graderType: 'notgraded' });
   };
 
@@ -83,7 +86,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
         </Button>
         <Button
           variant={graded ? 'primary' : 'outline-primary'}
-          onClick={() => setGraded(true)}
+          onClick={() => setGradedOverride(true)}
         >
           <FormattedMessage {...messages.subsectionGradingGradedBtn} />
         </Button>
@@ -96,7 +99,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
             </Form.Label>
             <Form.Control
               as="select"
-              defaultValue={itemData?.format}
+              value={localState?.graderType}
               onChange={(e) => setLocalState((prev) => ({ ...prev, graderType: e.target.value }))}
               data-testid="grader-type-select"
             >
@@ -134,17 +137,14 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
 const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(subsectionId);
-  const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
-    {
-      showCorrectness: itemData?.showCorrectness,
-    },
+
+  const serverState = useMemo<Partial<ConfigureSubsectionData>>(() => ({
+    showCorrectness: itemData?.showCorrectness,
+  }), [itemData?.showCorrectness]);
+  const [localState, setLocalState] = useFieldDraft<Partial<ConfigureSubsectionData>>(
+    serverState,
     (val) => onChange(val || {}),
   );
-  useItemFieldSync(() => {
-    if (localState?.showCorrectness !== itemData?.showCorrectness) {
-      setLocalState({ showCorrectness: itemData?.showCorrectness });
-    }
-  }, [itemData?.showCorrectness]);
 
   return (
     <SidebarSection
@@ -189,7 +189,7 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
     enableTimedExams,
     enableProctoredExams,
   } = useCourseOutlineContext();
-  const getLatestLocalState = useCallback(() => ({
+  const serverState = useMemo<Partial<ConfigureSubsectionData>>(() => ({
     isProctoredExam: itemData?.isProctoredExam,
     isTimeLimited: itemData?.isTimeLimited,
     isOnboardingExam: itemData?.isOnboardingExam,
@@ -201,18 +201,10 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
     prereqMinCompletion: defaultPrereqScore(itemData?.prereqMinCompletion),
     prereqUsageKey: itemData?.prereq,
   }), [itemData]);
-
-  const [localState, setLocalState] = useStateWithCallback<Partial<ConfigureSubsectionData>>(
-    getLatestLocalState,
+  const [localState, setLocalState] = useFieldDraft<Partial<ConfigureSubsectionData>>(
+    serverState,
     (val) => onChange(val || {}),
   );
-  useItemFieldSync(() => {
-    const nextState = getLatestLocalState();
-    const hasChanges = Object.keys(nextState).some((key) => (localState as any)?.[key] !== (nextState as any)[key]);
-    if (hasChanges) {
-      setLocalState({ value: nextState, skipCallback: true });
-    }
-  }, [getLatestLocalState]);
 
   const setFieldValue = (key: keyof ConfigureSubsectionData, value: any) => {
     setLocalState((prev) => ({
