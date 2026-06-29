@@ -38,6 +38,7 @@ import { IframeProvider } from './generic/hooks/context/iFrameContext';
 import { CourseAuthoringProvider } from './CourseAuthoringContext';
 import { CourseImportProvider } from './import-page/CourseImportContext';
 import { CourseExportProvider } from './export-page/CourseExportContext';
+import { CertificatesProvider } from './certificates/context';
 
 /** Layout route: renders its child routes inside PageWrap. */
 const PageWrapLayout = () => (
@@ -186,7 +187,11 @@ const CourseAuthoringRoutes = () => {
             {enableCertificates && (
               <Route
                 path="certificates"
-                element={<Certificates />}
+                element={
+                  <CertificatesProvider>
+                    <Certificates />
+                  </CertificatesProvider>
+                }
               />
             )}
             <Route

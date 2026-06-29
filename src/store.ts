@@ -4,9 +4,6 @@ import { configureStore, Reducer } from '@reduxjs/toolkit';
 // If this app + the plugin were using React-query, there'd be no issues.
 import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/slice';
 
-import { RequestStatusType } from '@src/data/constants';
-import { MODE_STATES } from './certificates/data/constants';
-
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions/data/slice';
 import { reducer as pagesAndResourcesReducer } from './pages-and-resources/data/slice';
@@ -19,7 +16,6 @@ import { reducer as genericReducer } from './generic/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
 
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
-import { reducer as certificatesReducer } from './certificates/data/slice';
 
 type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
 
@@ -41,14 +37,6 @@ export interface DeprecatedReduxState {
   videos: Record<string, any>;
 
   courseUnit: Record<string, any>;
-  certificates: {
-    loadingStatus: RequestStatusType;
-    savingStatus: any;
-    savingImageStatus: string;
-    errorMessage: string;
-    componentMode: (typeof MODE_STATES)[keyof typeof MODE_STATES];
-    certificatesData: any;
-  };
 }
 
 export default function initializeStore(preloadedState: Partial<DeprecatedReduxState> | undefined = undefined) {
@@ -67,7 +55,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       videos: videosReducer,
 
       courseUnit: courseUnitReducer,
-      certificates: certificatesReducer,
     },
     preloadedState: preloadedState as DeprecatedReduxState | undefined,
   });
