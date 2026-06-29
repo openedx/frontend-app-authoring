@@ -1,3 +1,4 @@
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Stack, Form } from '@openedx/paragon';
 
@@ -7,8 +8,8 @@ import messages from './messages';
 interface CertificateDetailsFromsProps {
   courseTitleOverride: string;
   detailsCourseTitle: string;
-  handleChange: () => void;
-  handleBlur: () => void;
+  handleChange: React.ChangeEventHandler<any>;
+  handleBlur: React.FocusEventHandler<any>;
 }
 
 const CertificateDetailsForm = ({

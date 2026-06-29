@@ -28,10 +28,10 @@ const CertificateCreateForm = () => {
         <Form className="certificates-card-form" data-testid="certificates-create-form">
           <Card>
             <Card.Section>
-              <Stack gap="4">
+              <Stack gap={4}>
                 <CertificateDetailsForm
                   courseTitleOverride={values.courseTitle}
-                  detailsCourseTitle={courseTitle}
+                  detailsCourseTitle={courseTitle ?? ''}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                 />

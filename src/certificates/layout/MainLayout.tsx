@@ -50,7 +50,7 @@ const MainLayout = ({ showHeaderButtons = false, children }: MainLayoutProps) =>
               </article>
             </Layout.Element>
             <Layout.Element>
-              <CertificatesSidebar courseId={courseId} />
+              <CertificatesSidebar />
             </Layout.Element>
           </Layout>
         </section>

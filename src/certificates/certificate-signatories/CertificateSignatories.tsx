@@ -1,3 +1,4 @@
+import React from 'react';
 import { Stack, Button, Form } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -7,24 +8,22 @@ import SignatoryForm from './signatory/SignatoryForm';
 import useEditSignatory from './hooks/useEditSignatory';
 import useCreateSignatory from './hooks/useCreateSignatory';
 import messages from './messages';
+import { type FieldArrayRenderProps } from 'formik';
 
 interface CertificateSignatoriesProps {
-  isForm: boolean;
-  editModes: Record<string, boolean>;
-  initialSignatoriesValues: {
+  isForm?: boolean;
+  editModes?: Record<string, boolean>;
+  initialSignatoriesValues?: {
     name: string;
     organization: string;
     signatureImagePath: string;
     title: string;
   }[];
-  handleChange: () => void;
-  handleBlur: () => void;
+  handleChange: React.ChangeEventHandler<any>;
+  handleBlur: React.FocusEventHandler<any>;
   setFieldValue: (filed: string, value: any) => void;
-  setEditModes: (modes: Record<string, boolean>) => void;
-  arrayHelpers: {
-    push: (id: string) => void;
-    remove: (id: string) => void;
-  };
+  setEditModes?: (modes: Record<string, boolean>) => void;
+  arrayHelpers: FieldArrayRenderProps;
   signatories: {
     id: string;
     name: string;

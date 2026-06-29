@@ -51,10 +51,9 @@ const Certificates = () => {
         <title>{pageHeadTitle}</title>
       </Helmet>
       <MainLayout
-        courseId={courseId}
-        showHeaderButtons={hasCertificateModes && certificates && certificates?.length > 0}
+        showHeaderButtons={!!(hasCertificateModes && certificates && certificates?.length > 0)}
       >
-        <ModeComponent courseId={courseId} />
+        <ModeComponent />
       </MainLayout>
     </>
   );

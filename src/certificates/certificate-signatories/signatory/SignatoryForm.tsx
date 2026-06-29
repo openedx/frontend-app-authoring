@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Image,
   Icon,
@@ -25,8 +26,8 @@ interface SignatoryFormProps {
   signatureImagePath: string;
   index: number;
   isEdit: boolean;
-  handleChange?: () => void;
-  handleBlur?: () => void;
+  handleChange?: React.ChangeEventHandler<any>;
+  handleBlur?: React.FocusEventHandler<any>;
   setFieldValue?: (field: string, value: any) => void;
   handleDeleteSignatory?: () => void;
   handleCancelUpdateSignatory?: () => void;
