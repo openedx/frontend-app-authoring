@@ -3,7 +3,6 @@ import { Container, Layout } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { SavingErrorAlert } from '@src/generic/saving-error-alert';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import messages from '../messages';
 import CertificatesSidebar from './certificates-sidebar/CertificatesSidebar';
@@ -16,8 +15,6 @@ interface MainLayoutProps {
 }
 
 const MainLayout = ({ showHeaderButtons = false, children }: MainLayoutProps) => {
-  const { courseId } = useCourseAuthoringContext();
-
   const intl = useIntl();
 
   const {

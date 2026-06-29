@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet';
 
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import Placeholder from '../editors/Placeholder';
 import Loading from '../generic/Loading';
 import { useCertificatesData } from './hooks/useCertificates';
@@ -21,7 +20,6 @@ const MODE_COMPONENTS = {
 };
 
 const Certificates = () => {
-  const { courseId } = useCourseAuthoringContext();
   const {
     certificates,
     componentMode,
