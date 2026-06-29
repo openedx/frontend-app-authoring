@@ -49,6 +49,11 @@ type ComponentTemplateData = {
 export interface AddComponentProps {
   isSplitTestType?: boolean;
   isUnitVerticalType?: boolean;
+  /**
+   * True for generic container XBlocks that are not one of the specially-handled types
+   * (vertical, split_test, problem bank, or legacy library content). These containers
+   * can host the native add-component strip rendered by the MFE.
+   */
   isGenericContainerType?: boolean;
   parentLocator: string;
   handleCreateNewCourseXBlock: (
