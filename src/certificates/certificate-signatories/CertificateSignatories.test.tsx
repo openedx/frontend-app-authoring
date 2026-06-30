@@ -1,5 +1,4 @@
-import { initializeMocks, render, screen } from '@src/testUtils';
-import userEvent from '@testing-library/user-event';
+import { initializeMocks, render, screen, within, userEvent } from '@src/testUtils';
 
 import { signatoriesMock } from '../__mocks__';
 import commonMessages from '../messages';
@@ -11,14 +10,13 @@ const mockUseEditSignatory = jest.mocked(useEditSignatory);
 const mockUseCreateSignatory = jest.mocked(useCreateSignatory);
 import CertificateSignatories from './CertificateSignatories';
 
+jest.mock('./hooks/useEditSignatory');
+jest.mock('./hooks/useCreateSignatory');
+
 const mockArrayHelpers = {
   push: jest.fn(),
   remove: jest.fn(),
 };
-
-jest.mock('./hooks/useEditSignatory');
-
-jest.mock('./hooks/useCreateSignatory');
 
 const renderComponent = (props) =>
   render(
@@ -69,8 +67,22 @@ describe('CertificateSignatories', () => {
     await user.click(screen.getByText(messages.addSignatoryButton.defaultMessage));
     expect(mockUseCreateSignatory.mock.results[0].value.handleAddSignatory).toHaveBeenCalled();
   });
+});
 
-  it.skip('calls remove for the correct signatory when delete icon is clicked', async () => {
+describe('CertificateSignatories - real useEditSignatory', () => {
+  beforeEach(() => {
+    initializeMocks();
+
+    // Use the real implementation so handleDeleteSignatory actually calls arrayHelpers.remove
+    const realUseEditSignatory = jest.requireActual('./hooks/useEditSignatory').default;
+    mockUseEditSignatory.mockImplementation(realUseEditSignatory);
+
+    mockUseCreateSignatory.mockReturnValue({
+      handleAddSignatory: jest.fn(),
+    });
+  });
+
+  it('calls remove for the correct signatory when delete is confirmed', async () => {
     const user = userEvent.setup();
     renderComponent(defaultProps);
 
@@ -79,8 +91,11 @@ describe('CertificateSignatories', () => {
 
     await user.click(deleteIcons[0]);
 
-    // FIXME: this isn't called because the whole 'useEditSignatory' hook
-    // which calls it is mocked out.
+    // The delete icon opens a confirmation modal; confirm the deletion
+    const dialog = await screen.findByRole('dialog');
+    const confirmButton = within(dialog).getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
+    await user.click(confirmButton);
+
     expect(mockArrayHelpers.remove).toHaveBeenCalledWith(0);
   });
 });

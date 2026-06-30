@@ -1,4 +1,3 @@
-import userEvent from '@testing-library/user-event';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 import {
@@ -6,6 +5,7 @@ import {
   waitFor,
   initializeMocks,
   screen,
+  userEvent,
 } from '@src/testUtils';
 import { getCertificatesApiUrl, getUpdateCertificateActiveStatusApiUrl } from '../../data/api';
 import { certificatesDataMock } from '../../__mocks__';

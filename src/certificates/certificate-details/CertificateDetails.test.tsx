@@ -4,8 +4,8 @@ import {
   screen,
   within,
   initializeMocks,
+  userEvent,
 } from '@src/testUtils';
-import userEvent from '@testing-library/user-event';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CertificatesProvider } from '@src/certificates/context';
 

@@ -1,8 +1,6 @@
-import userEvent from '@testing-library/user-event';
-
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CertificatesProvider } from '@src/certificates/context';
-import { initializeMocks, render, screen } from '../testUtils';
+import { initializeMocks, render, screen, userEvent } from '../testUtils';
 import { getCertificatesApiUrl } from './data/api';
 import { certificatesDataMock } from './__mocks__';
 import Certificates from './Certificates';

@@ -1,5 +1,4 @@
-import { initializeMocks, render, screen, waitFor } from '@src/testUtils';
-import userEvent from '@testing-library/user-event';
+import { initializeMocks, render, screen, waitFor, userEvent } from '@src/testUtils';
 
 import { signatoriesMock } from '../../__mocks__';
 import commonMessages from '../../messages';

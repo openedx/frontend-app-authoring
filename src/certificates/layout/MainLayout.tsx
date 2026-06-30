@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { Container, Layout } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -7,7 +7,7 @@ import SubHeader from '@src/generic/sub-header/SubHeader';
 import messages from '../messages';
 import CertificatesSidebar from './certificates-sidebar/CertificatesSidebar';
 import HeaderButtons from './header-buttons/HeaderButtons';
-import useLayout from './hooks/useLayout';
+import { useCertificatesContext } from '../context';
 
 interface MainLayoutProps {
   showHeaderButtons: boolean;
@@ -18,8 +18,15 @@ const MainLayout = ({ showHeaderButtons = false, children }: MainLayoutProps) =>
   const intl = useIntl();
 
   const {
+    savingIsSuccess,
     savingErrorMessage,
-  } = useLayout();
+  } = useCertificatesContext();
+
+  useEffect(() => {
+    if (savingIsSuccess) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [savingIsSuccess]);
 
   return (
     <>

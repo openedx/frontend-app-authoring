@@ -1,16 +1,11 @@
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import CertificatesSidebar from './CertificatesSidebar';
 import messages from './messages';
-import { initializeMocks, render, screen } from '@src/testUtils';
+import {
+  findByDeepTextContent, initializeMocks, render, screen,
+} from '@src/testUtils';
 
 const courseId = 'course-123';
-
-jest.mock('@edx/frontend-platform/i18n', () => ({
-  ...jest.requireActual('@edx/frontend-platform/i18n'),
-  useIntl: () => ({
-    formatMessage: (message) => message.defaultMessage,
-  }),
-}));
 
 const renderComponent = (props) =>
   render(
@@ -29,12 +24,12 @@ describe('CertificatesSidebar', () => {
 
     expect(await screen.findByText(messages.workingWithCertificatesTitle.defaultMessage)).toBeInTheDocument();
     expect(await screen.findByText(messages.workingWithCertificatesFirstParagraph.defaultMessage)).toBeInTheDocument();
-    expect(await screen.findByText(messages.workingWithCertificatesSecondParagraph.defaultMessage)).toBeInTheDocument();
-    expect(await screen.findByText(messages.workingWithCertificatesThirdParagraph.defaultMessage)).toBeInTheDocument();
+    expect(await findByDeepTextContent(/select Edit or the delete icon/)).toBeInTheDocument();
+    expect(await findByDeepTextContent(/select Preview certificate/)).toBeInTheDocument();
 
     expect(screen.getByText(messages.issuingCertificatesTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(messages.issuingCertificatesFirstParagraph.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(messages.issuingCertificatesSecondParagraph.defaultMessage)).toBeInTheDocument();
+    expect(await findByDeepTextContent(/selects Activate/)).toBeInTheDocument();
+    expect(await findByDeepTextContent(/Do not delete certificates after a course has started/)).toBeInTheDocument();
 
     expect(screen.getByText(messages.learnMoreBtn.defaultMessage)).toBeInTheDocument();
   });

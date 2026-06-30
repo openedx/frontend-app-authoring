@@ -2,8 +2,8 @@ import {
   render,
   screen,
   initializeMocks,
+  userEvent,
 } from '@src/testUtils';
-import userEvent from '@testing-library/user-event';
 import { CertificatesProvider, useCertificatesContext } from '@src/certificates/context';
 import { MODE_STATES } from '../data/constants';
 import messages from '../messages';
