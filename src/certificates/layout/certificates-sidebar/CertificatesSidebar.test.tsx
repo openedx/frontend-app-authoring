@@ -2,7 +2,10 @@ import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import CertificatesSidebar from './CertificatesSidebar';
 import messages from './messages';
 import {
-  findByDeepTextContent, initializeMocks, render, screen,
+  findByDeepTextContent,
+  initializeMocks,
+  render,
+  screen,
 } from '@src/testUtils';
 
 const courseId = 'course-123';
