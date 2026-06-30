@@ -120,8 +120,8 @@ const CoursesTab: React.FC<Props> = ({
       />
     ) : (
       <div className="courses-tab-container">
+        {isShowProcessing && <ProcessingCourses />}
         <div className="d-flex flex-row align-items-center justify-content-between my-4">
-          {isShowProcessing && <ProcessingCourses />}
           <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
           <p data-testid="pagination-info" className="my-0">
             {intl.formatMessage(messages.coursesPaginationInfo, {

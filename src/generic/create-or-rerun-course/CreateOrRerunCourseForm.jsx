@@ -143,8 +143,10 @@ const CreateOrRerunCourseForm = ({
   };
 
   const handleOnClickCreate = () => {
-    const courseData = isCreateNewCourse ? values : { ...values, sourceCourseKey: courseId };
-    dispatch(updateCreateOrRerunCourseQuery(courseData));
+    const courseData = isCreateNewCourse
+      ? values
+      : { ...values, sourceCourseKey: courseId };
+    dispatch(updateCreateOrRerunCourseQuery(courseData, !isCreateNewCourse));
   };
 
   const handleOnClickCancel = () => {
