@@ -1,3 +1,4 @@
+import { setConfig, getConfig } from '@edx/frontend-platform';
 import {
   initializeMocks,
   render as testRender,
@@ -52,5 +53,24 @@ describe('<CourseImportHomePage>', () => {
     expect(await screen.findByRole('heading', { name: /Tools.*Import/ })).toBeInTheDocument(); // Header
     expect(screen.queryByRole('heading', { name: 'Previous Imports' })).not.toBeInTheDocument();
     expect(screen.getByText('You have not imported any courses into this library.')).toBeInTheDocument();
+  });
+
+  it('should show the import course button when flag is the string "true"', async () => {
+    setConfig({ ...getConfig(), ENABLE_COURSE_IMPORT_IN_LIBRARY: 'true' });
+    render(mockGetCourseImports.emptyLibraryId);
+    expect(await screen.findByRole('button', { name: /import course/i })).toBeInTheDocument();
+  });
+
+  it('should show the import course button when flag is the boolean true (MFE Config API)', async () => {
+    setConfig({ ...getConfig(), ENABLE_COURSE_IMPORT_IN_LIBRARY: true });
+    render(mockGetCourseImports.emptyLibraryId);
+    expect(await screen.findByRole('button', { name: /import course/i })).toBeInTheDocument();
+  });
+
+  it('should not show the import course button when flag is disabled', async () => {
+    setConfig({ ...getConfig(), ENABLE_COURSE_IMPORT_IN_LIBRARY: 'false' });
+    render(mockGetCourseImports.emptyLibraryId);
+    await screen.findByText('You have not imported any courses into this library.');
+    expect(screen.queryByRole('button', { name: /import course/i })).not.toBeInTheDocument();
   });
 });

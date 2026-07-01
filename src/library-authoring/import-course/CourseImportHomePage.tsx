@@ -23,7 +23,7 @@ import messages from './messages';
 const ImportCourseButton = () => {
   const navigate = useNavigate();
 
-  if (getConfig().ENABLE_COURSE_IMPORT_IN_LIBRARY === 'true') {
+  if ([true, 'true'].includes(getConfig().ENABLE_COURSE_IMPORT_IN_LIBRARY)) {
     return (
       <Button iconBefore={Add} onClick={() => navigate('courses')}>
         <FormattedMessage {...messages.importCourseButton} />
