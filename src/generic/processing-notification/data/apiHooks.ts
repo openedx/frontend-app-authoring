@@ -11,14 +11,17 @@ export const useMutationWithProcessingNotification = <
   TError = DefaultError,
   TVariables = void,
   TOnMutateResult = unknown,
->(...args: Parameters<typeof useMutation<TData, TError, TVariables, TOnMutateResult>>) => {
+>(
+  options?: Parameters<typeof useMutation<TData, TError, TVariables, TOnMutateResult>>[0],
+  { notificationMessage = NOTIFICATION_MESSAGES.saving }: { notificationMessage?: string; } = {},
+) => {
   const { showToast, closeToast } = useToastContext();
-  const originalOptions = args[0] || {};
+  const originalOptions = options || {};
   return useMutation({
     ...originalOptions,
     onMutate: async (...onMutateArgs) => {
       // Show processing notification
-      showToast(NOTIFICATION_MESSAGES.saving, undefined, 15000);
+      showToast(notificationMessage, undefined, 15000);
 
       // Call original onMutate if it exists
       return originalOptions.onMutate?.(...onMutateArgs);

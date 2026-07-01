@@ -1,10 +1,8 @@
 import { Helmet } from 'react-helmet';
 
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import Placeholder from '../editors/Placeholder';
-import { RequestStatus } from '../data/constants';
 import Loading from '../generic/Loading';
-import useCertificates from './hooks/useCertificates';
+import { useCertificatesData } from './hooks/useCertificates';
 import CertificateWithoutModes from './certificate-without-modes/CertificateWithoutModes';
 import EmptyCertificatesWithModes from './empty-certificates-with-modes/EmptyCertificatesWithModes';
 import CertificatesList from './certificates-list/CertificatesList';
@@ -22,21 +20,20 @@ const MODE_COMPONENTS = {
 };
 
 const Certificates = () => {
-  const { courseId } = useCourseAuthoringContext();
   const {
     certificates,
     componentMode,
     isLoading,
-    loadingStatus,
+    isDenied,
     pageHeadTitle,
     hasCertificateModes,
-  } = useCertificates({ courseId });
+  } = useCertificatesData();
 
   if (isLoading) {
     return <Loading />;
   }
 
-  if (loadingStatus === RequestStatus.DENIED) {
+  if (isDenied) {
     return (
       <div className="row justify-content-center m-6" data-testid="request-denied-placeholder">
         <Placeholder />
@@ -51,8 +48,10 @@ const Certificates = () => {
       <Helmet>
         <title>{pageHeadTitle}</title>
       </Helmet>
-      <MainLayout courseId={courseId} showHeaderButtons={hasCertificateModes && certificates?.length > 0}>
-        <ModeComponent courseId={courseId} />
+      <MainLayout
+        showHeaderButtons={!!(hasCertificateModes && certificates && certificates?.length > 0)}
+      >
+        <ModeComponent />
       </MainLayout>
     </>
   );

@@ -222,6 +222,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
 }
 
 export * from '@testing-library/react';
+export { default as userEvent } from '@testing-library/user-event';
 export { customRender as render, makeWrapper };
 
 /** Simulate a real Axios error (such as we'd see in response to a 404) */
