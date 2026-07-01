@@ -12,7 +12,9 @@ import * as module from '.';
 import { updateImageDimensions } from '../TinyMceWidget/hooks';
 
 export const propsString = (props) => (
-  Object.keys(props).map((key) => `${key}="${props[key]}"`).join(' ')
+  Object.keys(props)
+    .map((key) => `${key}="${String(props[key]).replace(/"/g, '&quot;')}"`)
+    .join(' ')
 );
 
 export const imgProps = ({
