@@ -14,7 +14,7 @@ import pluginConfig from './pluginConfig';
 
 import * as tinyMCE from '../../data/constants/tinyMCE';
 import { getRelativeUrl, getStaticUrl, parseAssetName } from './utils';
-import { isLibraryKey } from '../../../generic/key-utils';
+import { isLibraryKey } from '@src/generic/key-utils';
 
 export const state = StrictDict({
   // eslint-disable-next-line react-hooks/rules-of-hooks
