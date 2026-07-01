@@ -228,6 +228,10 @@ const AddComponent = ({
         });
         break;
       default:
+        // Generic handler for container-specific block types declared via
+        // StudioContainerWithNestedXBlocksMixin.allowed_nested_blocks that are
+        // not one of the MFE's built-in component types (html, video, problem…).
+        handleCreateNewCourseXBlock({ type, category: type, parentLocator: blockId });
     }
   };
 
