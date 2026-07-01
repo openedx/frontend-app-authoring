@@ -58,19 +58,21 @@ describe('<CourseImportHomePage>', () => {
   it('should show the import course button when flag is the string "true"', async () => {
     setConfig({ ...getConfig(), ENABLE_COURSE_IMPORT_IN_LIBRARY: 'true' });
     render(mockGetCourseImports.emptyLibraryId);
-    expect(await screen.findByRole('button', { name: /import course/i })).toBeInTheDocument();
+    // Button appears in both the SubHeader and the EmptyState call-to-action
+    expect(await screen.findAllByRole('button', { name: /import course/i })).toHaveLength(2);
   });
 
   it('should show the import course button when flag is the boolean true (MFE Config API)', async () => {
     setConfig({ ...getConfig(), ENABLE_COURSE_IMPORT_IN_LIBRARY: true });
     render(mockGetCourseImports.emptyLibraryId);
-    expect(await screen.findByRole('button', { name: /import course/i })).toBeInTheDocument();
+    // Button appears in both the SubHeader and the EmptyState call-to-action
+    expect(await screen.findAllByRole('button', { name: /import course/i })).toHaveLength(2);
   });
 
   it('should not show the import course button when flag is disabled', async () => {
     setConfig({ ...getConfig(), ENABLE_COURSE_IMPORT_IN_LIBRARY: 'false' });
     render(mockGetCourseImports.emptyLibraryId);
     await screen.findByText('You have not imported any courses into this library.');
-    expect(screen.queryByRole('button', { name: /import course/i })).not.toBeInTheDocument();
+    expect(screen.queryAllByRole('button', { name: /import course/i })).toHaveLength(0);
   });
 });
