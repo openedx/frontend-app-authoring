@@ -12,6 +12,7 @@ describe('ImageSettingsModal', () => {
       altText: 'AlTTExt',
       externalUrl: 'ExtERNALurL',
       url: 'UrL',
+      classList: [],
     },
     close: jest.fn().mockName('props.close'),
     returnToSelection: jest.fn().mockName('props.returnToSelector'),
@@ -69,9 +70,19 @@ describe('ImageSettingsModal', () => {
       expect(screen.queryByText(messages.altTextError.defaultMessage)).not.toBeInTheDocument();
       expect(props.saveToEditor).toHaveBeenCalled();
     });
+    test('It passes alt text containing quotes through to saveToEditor', async () => {
+      render(<ImageSettingsModal {...props} />);
+      const altTextBox = screen.getByRole('textbox', { name: /alt text/i });
+      await user.clear(altTextBox);
+      await user.type(altTextBox, 'some text that "has quotes"');
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+      expect(props.saveToEditor).toHaveBeenCalledWith(
+        expect.objectContaining({ altText: 'some text that "has quotes"' }),
+      );
+    });
   });
   describe('Image Dimensions Editing', () => {
-    function mockImageLoad(naturalWidth: number, naturalHeight: number) {
+    function mockImageLoad(naturalWidth, naturalHeight) {
       const img = screen.getByRole('img');
       Object.defineProperty(img, 'naturalWidth', { value: naturalWidth });
       Object.defineProperty(img, 'naturalHeight', { value: naturalHeight });

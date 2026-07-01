@@ -12,7 +12,9 @@ import * as module from '.';
 import { updateImageDimensions } from '../TinyMceWidget/hooks';
 
 export const propsString = (props) => (
-  Object.keys(props).map((key) => `${key}="${props[key]}"`).join(' ')
+  Object.keys(props)
+    .map((key) => `${key}="${String(props[key]).replace(/"/g, '&quot;')}"`)
+    .join(' ')
 );
 
 export const imgProps = ({
@@ -31,11 +33,14 @@ export const imgProps = ({
     const index = url.indexOf('static/');
     url = url.substring(index);
   }
+  const { dimensions, altText, isDecorative, classList, ...imgAttrs } = settings;
   return {
     src: url,
-    alt: settings.isDecorative ? '' : settings.altText,
-    width: settings.dimensions.width,
-    height: settings.dimensions.height,
+    alt: isDecorative ? '' : altText,
+    width: dimensions.width,
+    height: dimensions.height,
+    class: (classList ?? []).join(' '),
+    ...imgAttrs,
   };
 };
 
@@ -75,7 +80,6 @@ export const updateImagesRef = ({
     height,
     width,
   });
-
   // eslint-disable-next-line no-param-reassign
   images.current = imageAlreadyExists ? mappedImages : [...images.current, newImage];
 };
