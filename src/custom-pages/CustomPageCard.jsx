@@ -18,14 +18,15 @@ import {
   VisibilityOff,
 } from '@openedx/paragon/icons';
 import { useNavigate } from 'react-router-dom';
-import { deleteSingleCustomPage, updateCustomPageVisibility } from './data/thunks';
+import { RequestStatus } from '@src/data/constants';
+import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import { useDeleteCustomPage, useUpdateCustomPageVisibility } from './data/apiHooks';
 import messages from './messages';
 import { CustomPagesContext } from './CustomPagesProvider';
 
 const CustomPageCard = ({
   page,
-  dispatch,
-  deletePageStatus,
+  courseId,
   setCurrentPage,
 }) => {
   const intl = useIntl();
@@ -33,19 +34,21 @@ const CustomPageCard = ({
   const { path: customPagesPath } = useContext(CustomPagesContext);
   const navigate = useNavigate();
 
+  const deleteMutation = useDeleteCustomPage(courseId);
+  const visibilityMutation = useUpdateCustomPageVisibility(courseId);
+
   const handleDelete = () => {
-    dispatch(deleteSingleCustomPage({
-      blockId: page.id,
-      closeConfirmation: closeDeleteConfirmation,
-    }));
+    deleteMutation.mutate(page.id, { onSettled: closeDeleteConfirmation });
   };
 
   const toggleVisibility = () => {
-    dispatch(updateCustomPageVisibility({
+    visibilityMutation.mutate({
       blockId: page.id,
+      // snake_case matches the API wire format from existing thunk
       metadata: { course_staff_only: !page.courseStaffOnly },
-    }));
+    });
   };
+
   const handleEditOpen = () => {
     setCurrentPage(page.id);
     navigate(`${customPagesPath}/editor`);
@@ -100,6 +103,12 @@ const CustomPageCard = ({
           data-testid="delete-modal-icon"
         />
       </ActionRow>
+      <ErrorAlert hideHeading isError={deleteMutation.isError}>
+        {intl.formatMessage(messages.errorAlertMessage, { actionName: 'delete' })}
+      </ErrorAlert>
+      <ErrorAlert hideHeading isError={visibilityMutation.isError}>
+        {intl.formatMessage(messages.errorAlertMessage, { actionName: 'save' })}
+      </ErrorAlert>
       <AlertModal
         title={intl.formatMessage(messages.deleteConfirmationTitle)}
         isOpen={isDeleteConfirmationOpen}
@@ -109,7 +118,11 @@ const CustomPageCard = ({
             <Button variant="tertiary" onClick={closeDeleteConfirmation}>
               {intl.formatMessage(messages.cancelButtonLabel)}
             </Button>
-            <StatefulButton onClick={handleDelete} state={deletePageStatus} {...deletePageStateProps} />
+            <StatefulButton
+              onClick={handleDelete}
+              state={deleteMutation.isPending ? RequestStatus.PENDING : 'default'}
+              {...deletePageStateProps}
+            />
           </ActionRow>
         }
       >
@@ -125,8 +138,7 @@ CustomPageCard.propTypes = {
     id: PropTypes.string.isRequired,
     courseStaffOnly: PropTypes.bool.isRequired,
   }).isRequired,
-  dispatch: PropTypes.func.isRequired,
-  deletePageStatus: PropTypes.string.isRequired,
+  courseId: PropTypes.string.isRequired,
   setCurrentPage: PropTypes.func.isRequired,
 };
 
