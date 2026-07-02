@@ -40,7 +40,6 @@ import {
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
 import CustomPageCard from './CustomPageCard';
 import messages from './messages';
-import CustomPagesProvider from './CustomPagesProvider';
 import EditModal from './EditModal';
 
 const CustomPages = () => {
@@ -114,8 +113,7 @@ const CustomPages = () => {
     );
   }
   return (
-    <CustomPagesProvider courseId={courseId}>
-      <Container size="xl" className="p-4 pt-5">
+    <Container size="xl" className="p-4 pt-5">
         <div className="small gray-700">
           <Breadcrumb
             ariaLabel="Custom Page breadcrumbs"
@@ -268,8 +266,7 @@ const CustomPages = () => {
             )}
           />
         </Routes>
-      </Container>
-    </CustomPagesProvider>
+    </Container>
   );
 };
 
