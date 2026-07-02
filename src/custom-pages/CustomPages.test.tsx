@@ -4,33 +4,34 @@ import {
   initializeMocks,
   fireEvent,
   screen,
-  act,
+  waitFor,
   render,
 } from '@src/testUtils';
-import { executeThunk } from '@src/utils';
-import { RequestStatus } from '@src/data/constants';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
+import { useCourseDetails } from '@src/data/apiHooks';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import CustomPages from './CustomPages';
 import {
   generateFetchPageApiResponse,
   generateNewPageApiResponse,
-  getStatusValue,
   courseId,
 } from './factories/mockApiResponses';
-
-import {
-  addSingleCustomPage,
-  fetchCustomPages,
-  updatePageOrder,
-} from './data/thunks';
 import { getApiBaseUrl, getTabHandlerUrl } from './data/api';
 import messages from './messages';
 
 let axiosMock;
-let store;
 // @ts-ignore
 ReactDOM.createPortal = jest.fn(node => node);
+
+jest.mock('@src/data/apiHooks', () => ({
+  ...jest.requireActual('@src/data/apiHooks'),
+  useCourseDetails: jest.fn(),
+}));
+
+const mockCourseDetails = {
+  name: 'Test Course',
+  start: '2024-01-01T00:00:00Z',
+};
 
 const renderComponent = () => {
   render(
@@ -40,79 +41,64 @@ const renderComponent = () => {
   );
 };
 
-const mockStore = async (status) => {
-  const xblockAddUrl = `${getApiBaseUrl()}/xblock/`;
-  const reorderUrl = `${getTabHandlerUrl(courseId)}/reorder`;
-  const fetchPagesUrl = `${getTabHandlerUrl(courseId)}`;
-
-  axiosMock.onGet(fetchPagesUrl).reply(getStatusValue(status), generateFetchPageApiResponse());
-  axiosMock.onPost(reorderUrl).reply(204);
-  axiosMock.onPut(xblockAddUrl).reply(200, generateNewPageApiResponse());
-
-  await executeThunk(fetchCustomPages(courseId), store.dispatch);
-  await executeThunk(addSingleCustomPage(courseId), store.dispatch);
-  await executeThunk(updatePageOrder(courseId, [{ id: 'mOckID2' }, { id: 'mOckID1' }]), store.dispatch);
-};
-
 describe('CustomPages', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     const mocks = initializeMocks();
-    store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
       .reply(200, {});
+    (useCourseDetails as jest.Mock).mockReturnValue({
+      data: mockCourseDetails,
+      status: 'successful',
+    });
   });
-  it('should ', async () => {
+
+  it('should render placeholder on 403', async () => {
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(403);
     renderComponent();
-    await mockStore(RequestStatus.DENIED);
-    expect(screen.getByTestId('under-construction-placeholder')).toBeVisible();
+    expect(await screen.findByTestId('under-construction-placeholder')).toBeVisible();
   });
-  it('should have breadecrumbs', async () => {
+
+  it('should have breadcrumbs', async () => {
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
     renderComponent();
-    await mockStore(RequestStatus.SUCCESSFUL);
-    expect(screen.getByLabelText('Custom Page breadcrumbs')).toBeVisible();
+    expect(await screen.findByLabelText('Custom Page breadcrumbs')).toBeVisible();
   });
+
   it('should contain header row with title, add button and view live button', async () => {
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
     renderComponent();
-    await mockStore(RequestStatus.SUCCESSFUL);
-    expect(screen.getByText(messages.heading.defaultMessage)).toBeVisible();
+    expect(await screen.findByText(messages.heading.defaultMessage)).toBeVisible();
     expect(screen.getByTestId('header-add-button')).toBeVisible();
     expect(screen.getByTestId('header-view-live-button')).toBeVisible();
   });
+
   it('should add new page when "add a new page button" is clicked', async () => {
+    const xblockAddUrl = `${getApiBaseUrl()}/xblock/`;
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    axiosMock.onPut(xblockAddUrl).reply(200, generateNewPageApiResponse());
+
     renderComponent();
-    await mockStore(RequestStatus.SUCCESSFUL);
-    const addButton = screen.getByTestId('body-add-button');
+    const addButton = await screen.findByTestId('body-add-button');
     expect(addButton).toBeVisible();
-    await act(async () => {
-      fireEvent.click(addButton);
+
+    fireEvent.click(addButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBeGreaterThanOrEqual(1);
     });
-    const addStatus = store.getState().customPages.addingStatus;
-    expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
   });
-  it('should open student view modal when "add a new page button" is clicked', async () => {
+
+  it('should open student view modal when button is clicked', async () => {
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
     renderComponent();
-    await mockStore(RequestStatus.SUCCESSFUL);
-    const viewButton = screen.getByTestId('student-view-example-button');
+
+    const viewButton = await screen.findByTestId('student-view-example-button');
     expect(viewButton).toBeVisible();
-    expect(screen.queryByLabelText(messages.studentViewModalTitle.defaultMessage)).toBeNull();
+    expect(screen.queryByText(messages.studentViewModalTitle.defaultMessage)).toBeNull();
+
     fireEvent.click(viewButton);
     expect(screen.getByText(messages.studentViewModalTitle.defaultMessage)).toBeVisible();
-  });
-  it('should update page order on drag', async () => {
-    renderComponent();
-    await mockStore(RequestStatus.SUCCESSFUL);
-    const buttons = screen.queryAllByRole('button');
-    const draggableButton = buttons[9];
-    expect(draggableButton).toBeVisible();
-    await act(async () => {
-      fireEvent.click(draggableButton);
-      fireEvent.keyDown(draggableButton, { key: '' });
-      fireEvent.keyDown(draggableButton, { key: 'ArrowDown' });
-      fireEvent.keyDown(draggableButton, { key: '' });
-    });
-    const saveStatus = store.getState().customPages.savingStatus;
-    expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
   });
 });

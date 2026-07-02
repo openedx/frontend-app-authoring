@@ -5,7 +5,6 @@ import {
   useNavigate,
   Link,
 } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -27,19 +26,17 @@ import Placeholder from '@src/editors/Placeholder';
 import DraggableList, { SortableItem } from '@src/generic/DraggableList';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '@src/data/constants';
-import { useModels } from '@src/generic/model-store';
 import getPageHeadTitle from '@src/generic/utils';
 import { getPagePath } from '@src/utils';
-import { DeprecatedReduxState } from '@src/store';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { getLoadingStatus, getSavingStatus } from './data/selectors';
 import {
-  addSingleCustomPage,
-  fetchCustomPages,
-  updatePageOrder,
-  updateSingleCustomPage,
-} from './data/thunks';
+  useCustomPages,
+  useAddCustomPage,
+  useReorderCustomPages,
+  useUpdateCustomPageName,
+  type CustomPage,
+} from './data/apiHooks';
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
 import CustomPageCard from './CustomPageCard';
 import messages from './messages';
@@ -49,9 +46,8 @@ import EditModal from './EditModal';
 const CustomPages = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [orderedPages, setOrderedPages] = useState([]);
-  const [currentPage, setCurrentPage] = useState<any>();
+  const [orderedPages, setOrderedPages] = useState<CustomPage[]>([]);
+  const [currentPage, setCurrentPage] = useState<string | undefined>();
   const [isOpen, open, close] = useToggle(false);
   const { courseId, courseDetails } = useCourseAuthoringContext();
 
@@ -60,34 +56,38 @@ const CustomPages = () => {
   const config = getConfig();
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 
-  useEffect(() => {
-    dispatch(fetchCustomPages(courseId));
-  }, [courseId]);
+  const { data: pages, isLoading, error, isError } = useCustomPages(courseId);
+  const addPageMutation = useAddCustomPage(courseId);
+  const reorderMutation = useReorderCustomPages(courseId);
+  const updateNameMutation = useUpdateCustomPageName(courseId);
 
-  const customPagesIds = useSelector((state: DeprecatedReduxState) => state.customPages.customPagesIds);
-  const addPageStatus = useSelector((state: DeprecatedReduxState) => state.customPages.addingStatus);
-  const deletePageStatus = useSelector((state: DeprecatedReduxState) => state.customPages.deletingStatus);
-  const savingStatus = useSelector(getSavingStatus);
-  const loadingStatus = useSelector(getLoadingStatus);
-  const pages = useModels('customPages', customPagesIds);
+  const isDenied = isError && (error as any)?.response?.status === 403;
+  const isLoadError = isError && !isDenied;
+
+  useEffect(() => {
+    if (pages) {
+      setOrderedPages(pages);
+    }
+  }, [pages]);
 
   const handleAddPage = () => {
-    dispatch(addSingleCustomPage(courseId));
+    addPageMutation.mutate();
   };
-  const handleReorder = () => (newPageOrder) => {
-    dispatch(updatePageOrder(courseId, newPageOrder));
+
+  const handleReorder = () => (newPageOrder: CustomPage[]) => {
+    reorderMutation.mutate(newPageOrder);
   };
-  const handleEditClose = () => (content) => {
+
+  const handleEditClose = () => (content: any) => {
     navigate(`/course/${courseId}/custom-pages`);
     if (!content?.metadata) {
-      setCurrentPage(null);
+      setCurrentPage(undefined);
       return;
     }
-    dispatch(updateSingleCustomPage({
-      blockId: currentPage,
-      metadata: { displayName: content.metadata.display_name },
-      setCurrentPage,
-    }));
+    updateNameMutation.mutate(
+      { blockId: currentPage!, displayName: content.metadata.display_name },
+    );
+    setCurrentPage(undefined);
   };
 
   const addPageStateProps = {
@@ -101,14 +101,12 @@ const CustomPages = () => {
     },
     disabledStates: ['pending'],
   };
-  useEffect(() => {
-    setOrderedPages(pages);
-  }, [customPagesIds, savingStatus]);
-  if (loadingStatus === RequestStatus.IN_PROGRESS) {
+
+  if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
-  if (loadingStatus === RequestStatus.DENIED) {
+  if (isDenied && !pages) {
     return (
       <div data-testid="under-construction-placeholder" className="row justify-content-center m-6">
         <Placeholder />
@@ -164,20 +162,20 @@ const CustomPages = () => {
           xl={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
         >
           <Layout.Element>
-            <ErrorAlert hideHeading isError={deletePageStatus === RequestStatus.FAILED}>
-              {intl.formatMessage(messages.errorAlertMessage, { actionName: 'delete' })}
+            <ErrorAlert hideHeading isError={isLoadError}>
+              {intl.formatMessage(messages.errorAlertMessage, { actionName: 'load' })}
             </ErrorAlert>
-            <ErrorAlert hideHeading isError={addPageStatus === RequestStatus.FAILED}>
+            <ErrorAlert hideHeading isError={addPageMutation.isError}>
               {intl.formatMessage(messages.errorAlertMessage, { actionName: 'add' })}
             </ErrorAlert>
-            <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
+            <ErrorAlert hideHeading isError={reorderMutation.isError}>
               {intl.formatMessage(messages.errorAlertMessage, { actionName: 'save' })}
             </ErrorAlert>
             <div className="small gray-700 mb-4">
               <FormattedMessage {...messages.note} />
             </div>
             <DraggableList itemList={orderedPages} setState={setOrderedPages} updateOrder={handleReorder}>
-              {orderedPages.map((page: any) => (
+              {orderedPages.map((page) => (
                 <SortableItem
                   id={page.id}
                   key={page.id}
@@ -190,13 +188,9 @@ const CustomPages = () => {
                   }}
                   actions={
                     <CustomPageCard
-                      {...{
-                        page,
-                        dispatch,
-                        deletePageStatus,
-                        courseId,
-                        setCurrentPage,
-                      }}
+                      page={page}
+                      courseId={courseId}
+                      setCurrentPage={setCurrentPage}
                     />
                   }
                 />
@@ -205,7 +199,7 @@ const CustomPages = () => {
             <StatefulButton
               data-testid="body-add-button"
               onClick={handleAddPage}
-              state={addPageStatus}
+              state={addPageMutation.isPending ? RequestStatus.PENDING : 'default'}
               {...addPageStateProps}
             />
           </Layout.Element>
