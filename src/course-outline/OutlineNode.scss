@@ -1,0 +1,51 @@
+.section-card,
+.subsection-card,
+.unit-card {
+  flex-grow: 1;
+}
+
+.section-card .section-card-title,
+.subsection-card .subsection-card-title,
+.unit-card .unit-card-title {
+  font-family: var(--pgn-typography-headings-font-family);
+  font-weight: var(--pgn-typography-headings-font-weight);
+  line-height: var(--pgn-typography-headings-line-height);
+  color: var(--pgn-color-headings-base);
+}
+
+.section-card .section-card__content,
+.subsection-card .subsection-card__content {
+  margin-left: 1.7rem;
+}
+
+.section-card {
+  .section-card__subsections {
+    margin-top: var(--pgn-spacing-spacer-base);
+  }
+
+  .section-card-title {
+    font-size: var(--pgn-typography-font-size-h3-base);
+  }
+}
+
+.subsection-card {
+  .subsection-card__units {
+    margin-top: var(--pgn-spacing-spacer-base);
+  }
+
+  .subsection-card-title {
+    font-size: var(--pgn-typography-font-size-h4-base);
+  }
+}
+
+.unit-card {
+  // used in src/course-outline/card-header/TitleLink.tsx &
+  // src/course-outline/card-header/TitleButton.tsx as
+  // `${namePrefix}-card-title`
+  .unit-card-title {
+    font-size: var(--pgn-typography-font-size-h5-base);
+    align-self: center;
+    min-width: 10px !important;
+    max-width: 300px;
+  }
+}
