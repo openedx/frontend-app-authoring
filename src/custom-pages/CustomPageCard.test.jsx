@@ -111,4 +111,29 @@ describe('CustomPageCard', () => {
       expect(axiosMock.history.put.length).toBeGreaterThanOrEqual(1);
     });
   });
+
+  it('should show error alert on delete failure', async () => {
+    const xblockEditUrl = `${getApiBaseUrl()}/xblock/mOckID1`;
+    axiosMock.onDelete(xblockEditUrl).reply(500);
+
+    renderComponent();
+    fireEvent.click(screen.getByTestId('delete-modal-icon'));
+    fireEvent.click(screen.getByText(messages.deletePageLabel.defaultMessage));
+
+    await waitFor(() => {
+      expect(screen.getByText('Unable to delete page. Please try again.')).toBeVisible();
+    });
+  });
+
+  it('should show error alert on visibility save failure', async () => {
+    const xblockEditUrl = `${getApiBaseUrl()}/xblock/mOckID1`;
+    axiosMock.onPut(xblockEditUrl).reply(500);
+
+    renderComponent();
+    fireEvent.click(screen.getByTestId('visibility-toggle-icon'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Unable to save page. Please try again.')).toBeVisible();
+    });
+  });
 });
