@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Card,
   OverlayTrigger,
@@ -6,46 +6,11 @@ import {
 } from '@openedx/paragon';
 import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
-import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { TaxonomyMenu } from '@src/taxonomy/taxonomy-menu';
-import SystemDefinedBadge from '@src/taxonomy/system-defined-badge';
 import type { TaxonomyData } from '@src/taxonomy/data/types';
 
-import messages from './messages';
-
-const orgsCountEnabled = (orgsCount?: number) => orgsCount !== undefined && orgsCount !== 0;
-
-interface HeaderSubtitleProps {
-  id: number;
-  showSystemBadge: boolean;
-  orgsCount?: number;
-}
-
-const HeaderSubtitle = ({
-  id,
-  showSystemBadge,
-  orgsCount,
-}: HeaderSubtitleProps) => {
-  const intl = useIntl();
-
-  // Show system defined badge
-  if (showSystemBadge) {
-    return <SystemDefinedBadge taxonomyId={id} />;
-  }
-
-  // Or show orgs count
-  if (orgsCountEnabled(orgsCount)) {
-    return (
-      <div className="font-italic">
-        {intl.formatMessage(messages.assignedToOrgsLabel, { orgsCount })}
-      </div>
-    );
-  }
-
-  // Or none
-  return null;
-};
+import { TaxonomyBadges } from '../taxonomy-badges/TaxonomyBadges';
 
 interface HeaderTitleProps {
   taxonomyId: number;
@@ -90,7 +55,7 @@ const HeaderTitle = ({ taxonomyId, title }: HeaderTitleProps) => {
 
 interface TaxonomyCardProps {
   className?: string;
-  original: TaxonomyData & { orgsCount?: number; };
+  original: TaxonomyData;
 }
 
 const TaxonomyCard = ({ className = '', original }: TaxonomyCardProps) => {
@@ -99,19 +64,12 @@ const TaxonomyCard = ({ className = '', original }: TaxonomyCardProps) => {
     name,
     description,
     systemDefined,
-    orgsCount,
   } = original;
-
-  const getHeaderActions = () => (
-    <TaxonomyMenu
-      taxonomy={original}
-      iconMenu
-    />
-  );
+  const orgsCount = original.orgs.length;
 
   return (
     <Card
-      isClickable
+      isClickable={original.enabled}
       as={NavLink}
       to={`/taxonomy/${id}/`}
       className={classNames('taxonomy-card', className)}
@@ -119,19 +77,13 @@ const TaxonomyCard = ({ className = '', original }: TaxonomyCardProps) => {
     >
       <Card.Header
         title={<HeaderTitle taxonomyId={id} title={name} />}
-        subtitle={
-          <HeaderSubtitle
-            id={id}
-            showSystemBadge={systemDefined}
-            orgsCount={orgsCount}
-          />
-        }
-        actions={getHeaderActions()}
+        subtitle={<TaxonomyBadges taxonomy={original}/>}
+        actions={<TaxonomyMenu taxonomy={original} iconMenu />}
       />
       <Card.Body
         className={classNames('taxonomy-card-body', {
-          'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(orgsCount),
-          'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(orgsCount),
+          'taxonomy-card-body-overflow-m': !systemDefined && !orgsCount,
+          'taxonomy-card-body-overflow-sm': systemDefined || orgsCount,
         })}
       >
         <Card.Section>
