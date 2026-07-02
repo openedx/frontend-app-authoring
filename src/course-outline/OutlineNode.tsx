@@ -38,8 +38,7 @@ import type { MoveDetails } from './drag-helper/utils';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
-import sectionMessages from './section-card/messages';
-import subsectionMessages from './subsection-card/messages';
+import outlineNodeMessages from './OutlineNode.messages';
 import {
   type Depth,
   type OutlineNodeAncestors,
@@ -362,7 +361,7 @@ const OutlineNode = ({
                       onClick={() => onOpenHighlightsModal(liveBlock)}
                     >
                       <Bubble className="mr-1">{Number((blk.highlights as any[])?.length ?? 0)}</Bubble>
-                      <p className="m-0 text-black">{sectionMessages.sectionHighlightsBadge.defaultMessage}</p>
+                      <p className="m-0 text-black">{outlineNodeMessages.sectionHighlightsBadge.defaultMessage}</p>
                     </Button>
                   </div>
                 )}
@@ -392,7 +391,7 @@ const OutlineNode = ({
               {showPaste && (
                 <PasteComponent
                   className="mt-4 border-gray-500 rounded-0"
-                  text={intl.formatMessage(subsectionMessages.pasteButton)}
+                  text={intl.formatMessage(outlineNodeMessages.pasteButton)}
                   clipboardData={sharedClipboardData}
                   onClick={() => onPasteClick?.(blk.id, blk.id, parentSection?.id ?? blk.id)}
                 />

@@ -50,7 +50,7 @@ import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
 import statusBarMessages from './status-bar/messages';
-import subsectionMessages from './subsection-card/messages';
+import outlineNodeMessages from './OutlineNode.messages';
 import pageAlertMessages from './page-alerts/messages';
 import {
   moveItemOver,
@@ -3159,7 +3159,7 @@ describe('<CourseOutline />', () => {
           errorFiles: ['error.css'],
         },
       });
-    const pasteBtn = await within(subsectionElement).findByText(subsectionMessages.pasteButton.defaultMessage);
+    const pasteBtn = await within(subsectionElement).findByText(outlineNodeMessages.pasteButton.defaultMessage);
     await act(async () => fireEvent.click(pasteBtn));
 
     [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
