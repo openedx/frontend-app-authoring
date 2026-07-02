@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
 import { Form, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -10,12 +9,44 @@ import AddComponentButton from '../add-component-btn';
 import messages from '../messages';
 import ModalContainer from './ModalContainer';
 
+interface ComponentTemplate {
+  boilerplateName?: string;
+  category?: string;
+  displayName: string;
+  supportLevel?: string | boolean;
+}
+
+interface ComponentModalViewProps {
+  component: {
+    displayName: string;
+    category?: string;
+    type: string;
+    templates: ComponentTemplate[];
+    supportLegend: {
+      allowUnsupportedXblocks?: boolean;
+      documentationLabel?: string;
+      showLegend?: boolean;
+    };
+  };
+  modalParams: {
+    open: () => void;
+    close: () => void;
+    isOpen: boolean;
+  };
+  handleCreateNewXBlock: (type: string, moduleName?: string) => void;
+  isRequestedModalView?: boolean;
+  disabled?: boolean;
+  disabledReason?: string | null;
+}
+
 const ComponentModalView = ({
   component,
   modalParams,
   handleCreateNewXBlock,
-  isRequestedModalView,
-}) => {
+  isRequestedModalView = false,
+  disabled = false,
+  disabledReason = null,
+}: ComponentModalViewProps) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const [moduleTitle, setModuleTitle] = useState('');
@@ -40,6 +71,8 @@ const ComponentModalView = ({
         onClick={open}
         type={type}
         displayName={displayName}
+        disabled={disabled}
+        disabledReason={disabledReason}
       />
     </li>
   );
@@ -63,7 +96,9 @@ const ComponentModalView = ({
           >
             {templates.map((componentTemplate) => {
               const value = componentTemplate.boilerplateName || componentTemplate.category;
-              const isDisplaySupportLabel = supportLegend.showLegend && supportLabels[componentTemplate.supportLevel];
+              const { supportLevel } = componentTemplate;
+              const isDisplaySupportLabel = supportLegend.showLegend
+                && typeof supportLevel === 'string' && supportLabels[supportLevel];
 
               return (
                 <div
@@ -76,17 +111,17 @@ const ComponentModalView = ({
                   >
                     {componentTemplate.displayName}
                   </Form.Radio>
-                  {isDisplaySupportLabel && (
+                  {isDisplaySupportLabel && typeof supportLevel === 'string' && (
                     <OverlayTrigger
                       placement="right"
                       overlay={
                         <Tooltip id={`${componentTemplate.displayName}-support-tooltip`}>
-                          {supportLabels[componentTemplate.supportLevel].tooltip}
+                          {supportLabels[supportLevel].tooltip}
                         </Tooltip>
                       }
                     >
                       <span className="x-small text-gray-500 flex-shrink-0 ml-2">
-                        {supportLabels[componentTemplate.supportLevel].label}
+                        {supportLabels[supportLevel].label}
                       </span>
                     </OverlayTrigger>
                   )}
@@ -98,38 +133,6 @@ const ComponentModalView = ({
       </ModalContainer>
     </>
   );
-};
-
-ComponentModalView.defaultProps = {
-  isRequestedModalView: false,
-};
-
-ComponentModalView.propTypes = {
-  modalParams: PropTypes.shape({
-    open: PropTypes.func,
-    close: PropTypes.func,
-    isOpen: PropTypes.bool,
-  }).isRequired,
-  handleCreateNewXBlock: PropTypes.func.isRequired,
-  component: PropTypes.shape({
-    displayName: PropTypes.string.isRequired,
-    category: PropTypes.string,
-    type: PropTypes.string.isRequired,
-    templates: PropTypes.arrayOf(
-      PropTypes.shape({
-        boilerplateName: PropTypes.string,
-        category: PropTypes.string,
-        displayName: PropTypes.string.isRequired,
-        supportLevel: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-      }),
-    ),
-    supportLegend: PropTypes.shape({
-      allowUnsupportedXblocks: PropTypes.bool,
-      documentationLabel: PropTypes.string,
-      showLegend: PropTypes.bool,
-    }),
-  }).isRequired,
-  isRequestedModalView: PropTypes.bool,
 };
 
 export default ComponentModalView;
