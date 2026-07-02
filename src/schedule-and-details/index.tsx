@@ -1,0 +1,421 @@
+import {
+  Container,
+  Button,
+  Layout,
+  StatefulButton,
+} from '@openedx/paragon';
+import {
+  CheckCircle as CheckCircleIcon,
+  ErrorOutline as ErrorOutlineIcon,
+  Warning as WarningIcon,
+} from '@openedx/paragon/icons';
+import { CourseSettingsData } from '@src/data/api';
+import { useIntl } from '@edx/frontend-platform/i18n';
+
+import Placeholder from '@src/editors/Placeholder';
+import AlertMessage from '@src/generic/alert-message';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
+import { STATEFUL_BUTTON_STATES } from '@src/constants';
+import getPageHeadTitle from '@src/generic/utils';
+import { useScrollToHashElement } from '@src/hooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getScheduleAndDetailsPermissions } from '@src/authz/permissionHelpers';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
+
+import BasicSection from './basic-section';
+import CreditSection from './credit-section';
+import DetailsSection from './details-section';
+import IntroducingSection from './introducing-section';
+import PacingSection from './pacing-section';
+import ScheduleSection from './schedule-section';
+import LearningOutcomesSection from './learning-outcomes-section';
+import InstructorsSection from './instructors-section';
+import RequirementsSection from './requirements-section';
+import LicenseSection from './license-section';
+import ScheduleSidebar from './schedule-sidebar';
+import messages from './messages';
+import { useSaveValuesPrompt } from './hooks';
+import { useCourseDetails } from './data/apiHooks';
+import { useCourseSettings } from '@src/data/apiHooks';
+import { CourseDetails } from './data/api';
+
+const EMPTY_COURSE_DETAILS: CourseDetails = {} as CourseDetails;
+
+const ScheduleAndDetails = () => {
+  const intl = useIntl();
+  const { courseId, courseDetails: course } = useCourseAuthoringContext();
+  const {
+    data: courseDetails = EMPTY_COURSE_DETAILS,
+    isPending: isPendingCourseDetails,
+    failureReason: courseDetailsError,
+    isError: isErrorCourseDetails,
+  } = useCourseDetails(courseId);
+  const {
+    data: courseSettings = {} as CourseSettingsData,
+    isPending: isPendingCourseSettings,
+    failureReason: courseSettingsError,
+    isError: isErrorCourseSettins,
+  } = useCourseSettings(courseId);
+
+  const showLoadFailedAlert = isErrorCourseDetails || isErrorCourseSettins;
+
+  document.title = getPageHeadTitle(course?.name || '', intl.formatMessage(messages.headingTitle));
+
+  const {
+    isLoading: isLoadingUserPermissions,
+    canViewScheduleAndDetails,
+    canEditSchedule,
+    canEditDetails,
+  } = useCourseUserPermissions(courseId, getScheduleAndDetailsPermissions(courseId));
+
+  const isLoading = isPendingCourseDetails || isPendingCourseSettings || isLoadingUserPermissions;
+
+  const {
+    platformName,
+    isCreditCourse,
+    upgradeDeadline,
+    languageOptions,
+    marketingEnabled,
+    licensingEnabled,
+    aboutPageEditable,
+    courseDisplayName,
+    sidebarHtmlEnabled,
+    lmsLinkForAboutPage,
+    enrollmentEndEditable,
+    isEntranceExamsEnabled,
+    creditEligibilityEnabled,
+    shortDescriptionEditable,
+    enableExtendedCourseDetails,
+    isPrerequisiteCoursesEnabled,
+    mfeProctoredExamSettingsUrl,
+    possiblePreRequisiteCourses,
+    canShowCertificateAvailableDateField,
+  } = courseSettings;
+
+  const {
+    errorFields,
+    saveIsFailed,
+    editedValues,
+    isQueryPending,
+    isEditableState,
+    showModifiedAlert,
+    showSuccessfulAlert,
+    showFailedAlert,
+    handleResetValues,
+    handleValuesChange,
+    handleUpdateValues,
+    handleQueryProcessing,
+    handleInternetConnectionFailed,
+  } = useSaveValuesPrompt(
+    courseId,
+    canShowCertificateAvailableDateField,
+    courseDetails,
+  );
+
+  const {
+    org,
+    courseId: courseNumber,
+    run,
+    title,
+    effort,
+    endDate,
+    license,
+    language,
+    subtitle,
+    duration,
+    selfPaced,
+    startDate,
+    introVideo,
+    description,
+    learningInfo,
+    enrollmentEnd,
+    instructorInfo,
+    enrollmentStart,
+    shortDescription,
+    preRequisiteCourses,
+    entranceExamEnabled,
+    courseImageAssetPath,
+    bannerImageAssetPath,
+    certificateAvailableDate,
+    entranceExamMinimumScorePct,
+    certificatesDisplayBehavior,
+    videoThumbnailImageAssetPath,
+  } = editedValues;
+
+  useScrollToHashElement({ isLoading });
+  // No need to get overview and aboutSidebarHtml from editedValues
+  // As updating them re-renders TinyMCE
+  // Which causes issues with TinyMCE editor cursor position
+  // https://www.tiny.cloud/docs/tinymce/5/react/#initialvalue
+  const {
+    overview: initialOverview,
+    aboutSidebarHtml: initialAboutSidebarHtml,
+  } = courseDetails;
+
+  if (isLoading) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <></>;
+  }
+
+  if (!canViewScheduleAndDetails) {
+    return <PermissionDeniedAlert />;
+  }
+
+  if (
+    courseDetailsError?.response?.status === 403
+    || courseSettingsError?.response?.status === 403
+  ) {
+    return (
+      <div className="row justify-content-center m-6">
+        <Placeholder />
+      </div>
+    );
+  }
+
+  const canEdit = canEditSchedule || canEditDetails;
+
+  const showCreditSection = creditEligibilityEnabled && isCreditCourse;
+  const showRequirementsSection = aboutPageEditable || isPrerequisiteCoursesEnabled || isEntranceExamsEnabled;
+  const hasErrors = !!Object.keys(errorFields).length;
+  const updateValuesButtonState = {
+    labels: {
+      default: intl.formatMessage(messages.buttonSaveText),
+      pending: intl.formatMessage(messages.buttonSavingText),
+    },
+    disabledStates: [STATEFUL_BUTTON_STATES.pending],
+  };
+  const alertWhileSavingTitle = hasErrors
+    ? intl.formatMessage(messages.alertWarningOnSaveWithError)
+    : intl.formatMessage(messages.alertWarning);
+
+  const alertWhileSavingDescription = hasErrors
+    ? intl.formatMessage(messages.alertWarningDescriptionsOnSaveWithError)
+    : intl.formatMessage(messages.alertWarningDescriptions);
+
+  return (
+    <>
+      <Container size="xl" className="schedule-and-details px-4">
+        <div className="mt-5">
+          <AlertMessage
+            show={showSuccessfulAlert}
+            variant="success"
+            icon={CheckCircleIcon}
+            title={intl.formatMessage(messages.alertSuccess)}
+            aria-hidden="true"
+            aria-labelledby={intl.formatMessage(
+              messages.alertSuccessAriaLabelledby,
+            )}
+            aria-describedby={intl.formatMessage(
+              messages.alertSuccessAriaDescribedby,
+            )}
+          />
+          <AlertMessage
+            show={showLoadFailedAlert}
+            variant="danger"
+            icon={ErrorOutlineIcon}
+            title={intl.formatMessage(messages.alertLoadFail)}
+            aria-hidden="true"
+            aria-labelledby={intl.formatMessage(
+              messages.alertFailAriaLabelledby,
+            )}
+            aria-describedby={intl.formatMessage(
+              messages.alertFailAriaDescribedby,
+            )}
+          />
+          <AlertMessage
+            show={showFailedAlert}
+            variant="danger"
+            icon={ErrorOutlineIcon}
+            title={intl.formatMessage(messages.alertFail)}
+            aria-hidden="true"
+            aria-labelledby={intl.formatMessage(
+              messages.alertFailAriaLabelledby,
+            )}
+            aria-describedby={intl.formatMessage(
+              messages.alertFailAriaDescribedby,
+            )}
+          />
+          <header>
+            <span className="small text-gray-700">
+              {intl.formatMessage(messages.headingSubtitle)}
+            </span>
+            <h2 className="mb-4 pb-1">
+              {intl.formatMessage(messages.headingTitle)}
+            </h2>
+          </header>
+        </div>
+        <section className="setting-items mb-4">
+          <Layout
+            lg={[{ span: 9 }, { span: 3 }]}
+            md={[{ span: 9 }, { span: 3 }]}
+            sm={[{ span: 9 }, { span: 3 }]}
+            xs={[{ span: 9 }, { span: 3 }]}
+            xl={[{ span: 9 }, { span: 3 }]}
+          >
+            <Layout.Element>
+              <article>
+                <div>
+                  <BasicSection
+                    org={org}
+                    courseNumber={courseNumber}
+                    run={run}
+                    lmsLinkForAboutPage={lmsLinkForAboutPage}
+                    marketingEnabled={marketingEnabled}
+                    courseDisplayName={courseDisplayName}
+                    platformName={platformName}
+                  />
+                  {showCreditSection && (
+                    <CreditSection
+                      creditRequirements={courseSettings?.creditRequirements}
+                    />
+                  )}
+                  <PacingSection
+                    selfPaced={selfPaced}
+                    startDate={startDate}
+                    isEditable={canEditDetails}
+                    onChange={handleValuesChange}
+                  />
+                  <ScheduleSection
+                    endDate={endDate}
+                    startDate={startDate}
+                    errorFields={errorFields}
+                    platformName={platformName}
+                    enrollmentEnd={enrollmentEnd}
+                    enrollmentStart={enrollmentStart}
+                    upgradeDeadline={upgradeDeadline}
+                    enrollmentEndEditable={enrollmentEndEditable}
+                    certificateAvailableDate={certificateAvailableDate}
+                    certificatesDisplayBehavior={certificatesDisplayBehavior}
+                    canShowCertificateAvailableDateField={canShowCertificateAvailableDateField}
+                    isEditable={canEditSchedule}
+                    onChange={handleValuesChange}
+                  />
+                  {aboutPageEditable && (
+                    <DetailsSection
+                      language={language}
+                      languageOptions={languageOptions}
+                      isEditable={canEditDetails}
+                      onChange={handleValuesChange}
+                    />
+                  )}
+                  <IntroducingSection
+                    title={title}
+                    overview={initialOverview}
+                    duration={duration}
+                    subtitle={subtitle}
+                    introVideo={introVideo}
+                    description={description}
+                    aboutSidebarHtml={initialAboutSidebarHtml}
+                    shortDescription={shortDescription}
+                    aboutPageEditable={aboutPageEditable}
+                    sidebarHtmlEnabled={sidebarHtmlEnabled}
+                    lmsLinkForAboutPage={lmsLinkForAboutPage}
+                    courseImageAssetPath={courseImageAssetPath}
+                    bannerImageAssetPath={bannerImageAssetPath}
+                    shortDescriptionEditable={shortDescriptionEditable}
+                    enableExtendedCourseDetails={enableExtendedCourseDetails}
+                    videoThumbnailImageAssetPath={videoThumbnailImageAssetPath}
+                    isEditable={canEditDetails}
+                    onChange={handleValuesChange}
+                  />
+                  {enableExtendedCourseDetails && (
+                    <>
+                      <LearningOutcomesSection
+                        learningInfo={learningInfo}
+                        isEditable={canEditDetails}
+                        onChange={handleValuesChange}
+                      />
+                      <InstructorsSection
+                        instructors={instructorInfo?.instructors}
+                        isEditable={canEditDetails}
+                        onChange={handleValuesChange}
+                      />
+                    </>
+                  )}
+                  {showRequirementsSection && (
+                    <RequirementsSection
+                      effort={effort}
+                      errorFields={errorFields}
+                      aboutPageEditable={aboutPageEditable}
+                      entranceExamEnabled={entranceExamEnabled}
+                      preRequisiteCourses={preRequisiteCourses}
+                      isEntranceExamsEnabled={isEntranceExamsEnabled}
+                      possiblePreRequisiteCourses={possiblePreRequisiteCourses}
+                      entranceExamMinimumScorePct={entranceExamMinimumScorePct}
+                      isPrerequisiteCoursesEnabled={isPrerequisiteCoursesEnabled}
+                      isEditable={canEditDetails}
+                      onChange={handleValuesChange}
+                    />
+                  )}
+                  {licensingEnabled && (
+                    <LicenseSection
+                      license={license}
+                      isEditable={canEditDetails}
+                      onChange={handleValuesChange}
+                    />
+                  )}
+                </div>
+              </article>
+            </Layout.Element>
+            <Layout.Element>
+              <ScheduleSidebar
+                courseId={courseId}
+                proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
+              />
+            </Layout.Element>
+          </Layout>
+        </section>
+      </Container>
+      <div className="alert-toast">
+        {!isEditableState && (
+          <InternetConnectionAlert
+            isFailed={saveIsFailed}
+            isQueryPending={isQueryPending}
+            onQueryProcessing={handleQueryProcessing}
+            onInternetConnectionFailed={handleInternetConnectionFailed}
+          />
+        )}
+        <AlertMessage
+          show={showModifiedAlert}
+          aria-hidden={showModifiedAlert}
+          aria-labelledby={intl.formatMessage(
+            messages.alertWarningAriaLabelledby,
+          )}
+          aria-describedby={intl.formatMessage(
+            messages.alertWarningAriaDescribedby,
+          )}
+          role="dialog"
+          actions={[
+            !isQueryPending ?
+              (
+                <Button
+                  key="cancel-button"
+                  variant="tertiary"
+                  onClick={handleResetValues}
+                >
+                  {intl.formatMessage(messages.buttonCancelText)}
+                </Button>
+              ) :
+              null,
+            <StatefulButton
+              key="save-button"
+              onClick={handleUpdateValues}
+              disabled={hasErrors || !canEdit}
+              state={isQueryPending
+                ? STATEFUL_BUTTON_STATES.pending
+                : STATEFUL_BUTTON_STATES.default}
+              {...updateValuesButtonState}
+            />,
+          ].filter(Boolean) as JSX.Element[]}
+          variant="warning"
+          icon={WarningIcon}
+          title={alertWhileSavingTitle}
+          description={alertWhileSavingDescription}
+        />
+      </div>
+    </>
+  );
+};
+
+export default ScheduleAndDetails;

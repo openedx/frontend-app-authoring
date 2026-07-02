@@ -11,7 +11,7 @@ import { initializeMockApp, getConfig } from '@edx/frontend-platform';
 
 import PageAlerts from './PageAlerts';
 import messages from './messages';
-import initializeStore from '../../store';
+import initializeStore from '@src/store';
 import { API_ERROR_TYPES } from '../constants';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({

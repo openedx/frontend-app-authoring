@@ -373,10 +373,16 @@ const LibraryAuthoringPage = ({
               )}
             </>
           )}
-        <Container className="px-4 mt-4 mb-5 library-authoring-page">
+        <Container
+          className={classNames('library-authoring-page', {
+            'px-4 mt-4 mb-5': !componentPickerMode,
+            'library-authoring-page-embedded': componentPickerMode,
+          })}
+        >
           <SearchContextProvider
             extraFilter={extraFilter}
             overrideTypesFilter={overrideTypesFilter}
+            skipUrlUpdate={!!componentPickerMode}
           >
             {libraryData
               && (

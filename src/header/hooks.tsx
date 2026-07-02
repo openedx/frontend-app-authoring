@@ -10,36 +10,56 @@ import courseOptimizerMessages from '@src/optimizer-page/messages';
 import { SidebarActions } from '@src/library-authoring/common/context/SidebarContext';
 import { LibQueryParamKeys } from '@src/library-authoring/routes';
 
-import { useUserPermissions } from '@src/authz/data/apiHooks';
-import { COURSE_PERMISSIONS } from '@src/authz/constants';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import {
+  getAdvancedSettingsPermissions,
+  getGradingPermissions,
+  getPagesAndResourcesPermissions,
+  getScheduleAndDetailsPermissions,
+  getFilesPermissions,
+} from '@src/authz/permissionHelpers';
 import messages from './messages';
+import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
 
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
-  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const waffleFlags = useWaffleFlags();
+  const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
+
+  const { canViewCourseUpdates, canViewPagesAndResources, canViewFiles } = useCourseUserPermissions(
+    courseId,
+    {
+      ...getPagesAndResourcesPermissions(courseId),
+      ...getCourseUpdatesPermissions(courseId),
+      ...getFilesPermissions(courseId),
+    },
+  );
 
   const items = [
     {
-      href: waffleFlags.useNewCourseOutlinePage ? `/course/${courseId}` : `${studioBaseUrl}/course/${courseId}`,
+      href: `/course/${courseId}`,
       title: intl.formatMessage(messages['header.links.outline']),
     },
-    {
-      href: waffleFlags.useNewUpdatesPage
-        ? `/course/${courseId}/course_info`
-        : `${studioBaseUrl}/course_info/${courseId}`,
-      title: intl.formatMessage(messages['header.links.updates']),
-    },
-    {
-      href: getPagePath(courseId, 'true', 'tabs'),
-      title: intl.formatMessage(messages['header.links.pages']),
-    },
-    {
-      href: waffleFlags.useNewFilesUploadsPage ? `/course/${courseId}/assets` : `${studioBaseUrl}/assets/${courseId}`,
-      title: intl.formatMessage(messages['header.links.filesAndUploads']),
-    },
+    ...(canViewCourseUpdates ?
+      [{
+        href: `/course/${courseId}/course_info`,
+        title: intl.formatMessage(messages['header.links.updates']),
+      }] :
+      []),
+    ...(canViewPagesAndResources
+      ? [{
+        href: getPagePath(courseId, 'true', 'tabs'),
+        title: intl.formatMessage(messages['header.links.pages']),
+      }]
+      : []),
+    ...(canViewFiles
+      ? [{
+        href: `/course/${courseId}/assets`,
+        title: intl.formatMessage(messages['header.links.filesAndUploads']),
+      }] :
+      []),
   ];
+
   if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' || waffleFlags.useNewVideoUploadsPage) {
     items.push({
       href: `/course/${courseId}/videos`,
@@ -60,38 +80,40 @@ export const useContentMenuItems = (courseId: string) => {
 export const useSettingMenuItems = (courseId: string) => {
   const intl = useIntl();
   const { canAccessAdvancedSettings: legacyCanAccessAdvancedSettings } = useSelector(getStudioHomeData);
-  const waffleFlags = useWaffleFlags(courseId);
 
   /*
     AuthZ for Course Authoring
     If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
     Otherwise, fallback to existing logic.
   */
-  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
-    },
-  }, isAuthzEnabled);
-
-  const authzCanManageAdvancedSettings = isLoadingUserPermissions
-    ? false
-    : userPermissions?.canManageAdvancedSettings || false;
+  const {
+    isAuthzEnabled,
+    canManageAdvancedSettings,
+    canViewGradingSettings,
+    canViewScheduleAndDetails,
+  } = useCourseUserPermissions(courseId, {
+    ...getAdvancedSettingsPermissions(courseId),
+    ...getGradingPermissions(courseId),
+    ...getScheduleAndDetailsPermissions(courseId),
+  });
 
   const canAccessAdvancedSettings = isAuthzEnabled
-    ? authzCanManageAdvancedSettings
+    ? canManageAdvancedSettings
     : legacyCanAccessAdvancedSettings;
 
   const items = [
-    {
-      href: `/course/${courseId}/settings/details`,
-      title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
-    },
-    {
-      href: `/course/${courseId}/settings/grading`,
-      title: intl.formatMessage(messages['header.links.grading']),
-    },
+    ...(canViewScheduleAndDetails
+      ? [{
+        href: `/course/${courseId}/settings/details`,
+        title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
+      }]
+      : []),
+    ...(canViewGradingSettings
+      ? [{
+        href: `/course/${courseId}/settings/grading`,
+        title: intl.formatMessage(messages['header.links.grading']),
+      }]
+      : []),
     ...(isAuthzEnabled
       ? [{
         href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`,
@@ -112,7 +134,7 @@ export const useSettingMenuItems = (courseId: string) => {
       }] :
       []),
   ];
-  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' || waffleFlags.useNewCertificatesPage) {
+  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true') {
     items.push({
       href: `/course/${courseId}/certificates`,
       title: intl.formatMessage(messages['header.links.certificates']),
@@ -128,11 +150,11 @@ export const useToolsMenuItems = (courseId: string) => {
 
   const items = [
     {
-      href: waffleFlags.useNewImportPage ? `/course/${courseId}/import` : `${studioBaseUrl}/import/${courseId}`,
+      href: `/course/${courseId}/import`,
       title: intl.formatMessage(messages['header.links.import']),
     },
     {
-      href: waffleFlags.useNewExportPage ? `/course/${courseId}/export` : `${studioBaseUrl}/export/${courseId}`,
+      href: `/course/${courseId}/export`,
       title: intl.formatMessage(messages['header.links.exportCourse']),
     },
     ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'

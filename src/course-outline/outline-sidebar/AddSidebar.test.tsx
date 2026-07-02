@@ -1,4 +1,4 @@
-import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
+import { buildTestOutline } from '@src/course-outline/__mocks__';
 import {
   initializeMocks,
   render,
@@ -21,7 +21,7 @@ import {
 } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
-import { XBlock } from '@src/data/types';
+import { SelectionState, XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { snakeCaseKeys } from '@src/editors/utils';
@@ -42,8 +42,60 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     ...jest.requireActual('@src/CourseAuthoringContext').useCourseAuthoringContext(),
     courseId: 5,
-    courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
     courseDetails: { name: 'Test course' },
+  }),
+}));
+
+let currentItemData: Partial<XBlock> | null;
+let lastEditableSection: any;
+let lastEditableSubsection: { data?: any; sectionId?: string; } | undefined;
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  CourseOutlineProvider: ({ children }) => children,
+  useCourseOutlineContext: () => ({
+    courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
+    sections: outlineChildren,
+    setSections: jest.fn(),
+    restoreSectionList: jest.fn(),
+    currentItemData,
+    lastEditableSection,
+    lastEditableSubsection,
+    currentSelection: undefined,
+    selectContainer: jest.fn(),
+    clearSelection: jest.fn(),
+    openContainerInfo: jest.fn(),
+    setActionTargetSelection: jest.fn(),
+    handleAddBlock: {
+      isPending: false,
+      mutate: jest.fn((variables, options) => {
+        const api = jest.requireActual('@src/course-outline/data/api');
+        api.createCourseXblock(variables).then(
+          data => options?.onSuccess?.(data),
+          () => {},
+        );
+      }),
+      mutateAsync: jest.fn(async (variables) => {
+        const api = jest.requireActual('@src/course-outline/data/api');
+        return api.createCourseXblock(variables);
+      }),
+    },
+    handleAddAndOpenUnit: {
+      isPending: false,
+      mutate: jest.fn((variables, options) => {
+        const api = jest.requireActual('@src/course-outline/data/api');
+        api.createCourseXblock(variables).then(
+          data => options?.onSuccess?.(data),
+          () => {},
+        );
+      }),
+      mutateAsync: jest.fn(async (variables) => {
+        const api = jest.requireActual('@src/course-outline/data/api');
+        return api.createCourseXblock(variables);
+      }),
+    },
+    duplicateSection: jest.fn(),
+    duplicateSubsection: jest.fn(),
+    duplicateUnit: jest.fn(),
   }),
 }));
 
@@ -53,7 +105,51 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   useDeleteCourseItem: jest.fn().mockReturnValue({ mutateAsync: jest.fn() }),
 }));
 
-let outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
+const BLOCK_PREFIX = 'block-v1:UNIX+UX1+2025_T3+type@';
+const BLOCK_SUFFIX = '+block@';
+
+const outlineFixture = buildTestOutline({
+  sections: [
+    {
+      id: `${BLOCK_PREFIX}chapter${BLOCK_SUFFIX}section-1`,
+      displayName: 'Section 1',
+      children: [
+        {
+          id: `${BLOCK_PREFIX}sequential${BLOCK_SUFFIX}subsection-1a`,
+          displayName: 'Subsection 1A',
+          children: [
+            { id: `${BLOCK_PREFIX}vertical${BLOCK_SUFFIX}unit-1a1`, displayName: 'Unit 1A1' },
+          ],
+        },
+      ],
+    },
+    {
+      id: `${BLOCK_PREFIX}chapter${BLOCK_SUFFIX}section-2`,
+      displayName: 'Section 2',
+      children: [
+        { id: `${BLOCK_PREFIX}sequential${BLOCK_SUFFIX}subsection-2a`, displayName: 'Subsection 2A' },
+        {
+          id: `${BLOCK_PREFIX}sequential${BLOCK_SUFFIX}subsection-2b`,
+          displayName: 'Subsection 2B',
+          children: [
+            { id: `${BLOCK_PREFIX}vertical${BLOCK_SUFFIX}unit-2b1`, displayName: 'Unit 2B1' },
+            { id: `${BLOCK_PREFIX}vertical${BLOCK_SUFFIX}unit-2b2`, displayName: 'Unit 2B2' },
+          ],
+        },
+      ],
+    },
+    { id: `${BLOCK_PREFIX}chapter${BLOCK_SUFFIX}section-3`, displayName: 'Section 3' },
+    {
+      id: `${BLOCK_PREFIX}chapter${BLOCK_SUFFIX}section-4`,
+      displayName: 'Section 4',
+      children: [
+        { id: `${BLOCK_PREFIX}sequential${BLOCK_SUFFIX}subsection-4a`, displayName: 'Subsection 4A' },
+      ],
+    },
+  ],
+});
+
+let outlineChildren = (outlineFixture.courseStructure as any).childInfo.children;
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useSelector: () => outlineChildren,
@@ -69,9 +165,11 @@ jest.mock('@src/studio-home/hooks', () => ({
 
 let currentFlow: OutlineFlow | null = null;
 let isCurrentFlowOn = false;
-let currentItemData: Partial<XBlock> | null;
+let selectedContainerState: SelectionState | undefined;
 const clearSelection = jest.fn();
 const stopCurrentFlow = jest.fn();
+const mockOpenContainerInfoSidebar = jest.fn();
+const openContainerSidebar = jest.fn();
 jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
@@ -79,8 +177,11 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
     currentFlow,
     isCurrentFlowOn,
     currentItemData,
+    selectedContainerState,
     clearSelection,
     stopCurrentFlow,
+    openContainerInfoSidebar: mockOpenContainerInfoSidebar,
+    openContainerSidebar,
   }),
 }));
 
@@ -131,7 +232,20 @@ describe('AddSidebar', () => {
       });
       return newMockResult;
     });
-    outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
+    outlineChildren = (outlineFixture.courseStructure as any).childInfo.children;
+    currentItemData = null;
+    lastEditableSection = outlineChildren[outlineChildren.length - 1] as any;
+    lastEditableSubsection = lastEditableSection ?
+      {
+        data: lastEditableSection.childInfo.children[lastEditableSection.childInfo.children.length - 1] as any,
+        sectionId: lastEditableSection.id,
+      } :
+      undefined;
+    selectedContainerState = undefined;
+    clearSelection.mockClear();
+    stopCurrentFlow.mockClear();
+    mockOpenContainerInfoSidebar.mockClear();
+    openContainerSidebar.mockClear();
   });
 
   it('renders the AddSidebar component without any errors', async () => {
@@ -171,7 +285,7 @@ describe('AddSidebar', () => {
 
   it('calls appropriate handlers on new button click', async () => {
     const user = userEvent.setup();
-    const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const sectionList = (outlineFixture.courseStructure as any).childInfo.children;
     const lastSection = sectionList[3];
     const lastSubsection = lastSection.childInfo.children[0];
     axiosMock.onPost(getXBlockBaseApiUrl())
@@ -209,6 +323,8 @@ describe('AddSidebar', () => {
     const user = userEvent.setup();
     // the course is empty
     outlineChildren = [];
+    lastEditableSection = undefined;
+    lastEditableSubsection = undefined;
     const sectionId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chapter123';
     axiosMock.onPost(getXBlockBaseApiUrl())
       .reply(200, { locator: sectionId });
@@ -233,12 +349,18 @@ describe('AddSidebar', () => {
       parentLocator: sectionId,
       displayName: 'Subsection',
     })));
+    // Intermediate section creation should NOT have opened its sidebar.
+    // Only the final subsection should trigger openContainerInfoSidebar.
+    expect(mockOpenContainerInfoSidebar).toHaveBeenCalledTimes(1);
+    expect(mockOpenContainerInfoSidebar).toHaveBeenCalledWith(sectionId, sectionId, sectionId);
   });
 
   it('creates parent section and subsection if required', async () => {
     const user = userEvent.setup();
     // the course is empty
     outlineChildren = [];
+    lastEditableSection = undefined;
+    lastEditableSubsection = undefined;
     const sectionId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chapter123';
     const subsectionId = 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential234';
     const unitId = 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@vertical2133';
@@ -278,11 +400,14 @@ describe('AddSidebar', () => {
     expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(subsectionBody));
     // then unit
     expect(axiosMock.history.post[2].data).toEqual(JSON.stringify(unitBody));
+    // No sidebar opens for intermediate section/subsection creations.
+    // The unit page opens via handleAddAndOpenUnit's onSuccess.
+    expect(mockOpenContainerInfoSidebar).not.toHaveBeenCalled();
   });
 
   it('calls appropriate handlers on existing button click', async () => {
     const user = userEvent.setup();
-    const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const sectionList = (outlineFixture.courseStructure as any).childInfo.children;
     const lastSection = sectionList[3];
     const lastSubsection = lastSection.childInfo.children[0];
     axiosMock.onPost(getXBlockBaseApiUrl())
@@ -322,7 +447,7 @@ describe('AddSidebar', () => {
   ['section', 'subsection', 'unit'].forEach((category) => {
     it(`shows appropriate existing and new content based on ${category} use button click`, async () => {
       const user = userEvent.setup();
-      const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
+      const sectionList = (outlineFixture.courseStructure as any).childInfo.children;
       const firstSection = sectionList[0];
       const firstSubsection = firstSection.childInfo.children[0];
       currentFlow = {
@@ -399,7 +524,46 @@ describe('AddSidebar', () => {
 
     const back = await screen.findByRole('button', { name: 'Back' });
     await user.click(back);
-    expect(clearSelection).toHaveBeenCalled();
     expect(stopCurrentFlow).toHaveBeenCalled();
+  });
+
+  it('back from unit sets subsection index in selection', async () => {
+    const user = userEvent.setup();
+    const section = outlineChildren[0];
+    const subsection = section.childInfo.children[0];
+    const unit = subsection.childInfo.children[0];
+    selectedContainerState = {
+      currentId: unit.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    };
+    renderComponent();
+
+    const back = await screen.findByRole('button', { name: 'Back' });
+    await user.click(back);
+
+    expect(openContainerSidebar).toHaveBeenCalledWith(
+      subsection.id,
+      subsection.id,
+      section.id,
+      0,
+    );
+  });
+
+  it('back from subsection without section clears selection', async () => {
+    const user = userEvent.setup();
+    const section = outlineChildren[0];
+    const subsection = section.childInfo.children[0];
+    selectedContainerState = {
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+    };
+    renderComponent();
+
+    const back = await screen.findByRole('button', { name: 'Back' });
+    await user.click(back);
+
+    expect(clearSelection).toHaveBeenCalled();
+    expect(openContainerSidebar).not.toHaveBeenCalled();
   });
 });

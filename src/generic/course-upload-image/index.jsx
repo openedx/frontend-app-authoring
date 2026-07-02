@@ -27,6 +27,7 @@ const CourseUploadImage = ({
   identifierFieldText,
   showImageBodyText,
   customInputPlaceholder,
+  disabled = false,
   onChange,
 }) => {
   const { courseId } = useParams();
@@ -113,13 +114,16 @@ const CourseUploadImage = ({
       <Form.Label>{label}</Form.Label>
       <Card>
         <Card.Body className="image-body">
-          <Dropzone
-            onProcessUpload={handleProcessUpload}
-            inputComponent={inputComponent}
-            accept={{
-              'image/*': ['.png', '.jpeg'],
-            }}
-          />
+          <div style={disabled ? { pointerEvents: 'none' } : undefined}>
+            <Dropzone
+              onProcessUpload={handleProcessUpload}
+              inputComponent={inputComponent}
+              accept={{
+                'image/*': ['.png', '.jpeg'],
+              }}
+              disabled={disabled}
+            />
+          </div>
           {showImageBodyText && cardImageTextBody}
         </Card.Body>
         <Card.Divider />
@@ -131,6 +135,7 @@ const CourseUploadImage = ({
               || intl.formatMessage(messages.uploadImageInputPlaceholder, {
                 identifierFieldText,
               })}
+            disabled={disabled}
           />
         </Card.Footer>
       </Card>

@@ -28,7 +28,6 @@ import messages from './i18n';
 import {
   LibraryAndComponentPicker,
   CreateLibrary,
-  CreateLegacyLibrary,
   LibraryLayout,
   PreviewChangesEmbed,
 } from './library-authoring';
@@ -75,9 +74,8 @@ const App = () => {
       <Route>
         <Route path="/home" element={<StudioHome />} />
         <Route path="/libraries" element={<StudioHome />} />
-        <Route path="/libraries-v1" element={<StudioHome />} />
+
         <Route path="/libraries-v1/migrate" element={<LegacyLibMigrationPage />} />
-        <Route path="/libraries-v1/create" element={<CreateLegacyLibrary />} />
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route
@@ -182,7 +180,7 @@ initialize({
         ENABLE_ASSETS_PAGE: process.env.ENABLE_ASSETS_PAGE || 'false',
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN:
           process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN || 'false',
-        ENABLE_CERTIFICATE_PAGE: process.env.ENABLE_CERTIFICATE_PAGE || 'false',
+        ENABLE_CERTIFICATE_PAGE: process.env.ENABLE_CERTIFICATE_PAGE || 'true',
         ENABLE_COURSE_IMPORT_IN_LIBRARY: process.env.ENABLE_COURSE_IMPORT_IN_LIBRARY || 'false',
         ENABLE_UNIT_PAGE_NEW_DESIGN: process.env.ENABLE_UNIT_PAGE_NEW_DESIGN || 'true',
         ENABLE_TAGGING_TAXONOMY_PAGES: process.env.ENABLE_TAGGING_TAXONOMY_PAGES || 'false',

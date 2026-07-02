@@ -1,3 +1,6 @@
+import { ContainerType } from '@src/generic/key-utils';
+import messages from './messages';
+
 export const ITEM_BADGE_STATUS = {
   live: 'live',
   gated: 'gated',
@@ -85,3 +88,54 @@ export const API_ERROR_TYPES = {
   unknown: 'unknown',
   forbidden: 'forbidden',
 } as const;
+
+/**
+ * Single source of truth for outline category metadata.
+ * Replaces scattered switch/case on category strings.
+ *
+ * Each entry carries the display name, ContainerType mapping,
+ * delete-field mask, and UI message references needed by
+ * components like OutlineAddChildButtons.
+ */
+export const OUTLINE_CATEGORY_CONFIG = {
+  chapter: {
+    id: 'chapter',
+    name: 'Section',
+    containerType: ContainerType.Section,
+    deleteExtraFields: [] as const,
+    newButtonMessage: messages.newSectionButton,
+    importButtonMessage: messages.useSectionFromLibraryButton,
+    placeholderMessage: messages.placeholderSectionText,
+  },
+  sequential: {
+    id: 'sequential',
+    name: 'Subsection',
+    containerType: ContainerType.Subsection,
+    deleteExtraFields: ['sectionId'] as const,
+    newButtonMessage: messages.newSubsectionButton,
+    importButtonMessage: messages.useSubsectionFromLibraryButton,
+    placeholderMessage: messages.placeholderSubsectionText,
+  },
+  vertical: {
+    id: 'vertical',
+    name: 'Unit',
+    containerType: ContainerType.Unit,
+    deleteExtraFields: ['subsectionId', 'sectionId'] as const,
+    newButtonMessage: messages.newUnitButton,
+    importButtonMessage: messages.useUnitFromLibraryButton,
+    placeholderMessage: messages.placeholderUnitText,
+  },
+} as const;
+
+export type CategoryId = keyof typeof OUTLINE_CATEGORY_CONFIG;
+export type OutlineCategoryConfigEntry = typeof OUTLINE_CATEGORY_CONFIG[CategoryId];
+
+/**
+ * Lookup from public ContainerType (Section / Subsection / Unit)
+ * to the internal OUTLINE_CATEGORY_CONFIG entry.
+ */
+export const CONTAINER_CATEGORY_CONFIG: Partial<Record<ContainerType, OutlineCategoryConfigEntry>> = {
+  [ContainerType.Section]: OUTLINE_CATEGORY_CONFIG.chapter,
+  [ContainerType.Subsection]: OUTLINE_CATEGORY_CONFIG.sequential,
+  [ContainerType.Unit]: OUTLINE_CATEGORY_CONFIG.vertical,
+};

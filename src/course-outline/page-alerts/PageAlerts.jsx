@@ -6,30 +6,28 @@ import {
   Hyperlink,
   Truncate,
 } from '@openedx/paragon';
+import { uniqBy } from 'lodash';
 import {
   Campaign as CampaignIcon,
   Error as ErrorIcon,
   InfoOutline as InfoOutlineIcon,
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
-import { uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePasteFileNotices } from '@src/course-outline/data/apiHooks';
 import { AlertAgreementGatedFeature } from '@src/generic/agreement-gated-feature';
-import { AgreementGated } from '../../constants';
-import CourseOutlinePageAlertsSlot from '../../plugin-slots/CourseOutlinePageAlertsSlot';
-import advancedSettingsMessages from '../../advanced-settings/messages';
-import { OutOfSyncAlert } from '../../course-libraries/OutOfSyncAlert';
-import { RequestStatus } from '../../data/constants';
-
-import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
-import AlertMessage from '../../generic/alert-message';
-import AlertProctoringError from '../../generic/AlertProctoringError';
+import { AgreementGated } from '@src/constants';
+import CourseOutlinePageAlertsSlot from '@src/plugin-slots/CourseOutlinePageAlertsSlot';
+import advancedSettingsMessages from '@src/advanced-settings/messages';
+import { OutOfSyncAlert } from '@src/course-libraries/OutOfSyncAlert';
+import { RequestStatus } from '@src/data/constants';
 import { API_ERROR_TYPES } from '../constants';
-import { dismissError } from '../data/slice';
+
+import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import AlertMessage from '@src/generic/alert-message';
+import AlertProctoringError from '@src/generic/AlertProctoringError';
 import messages from './messages';
 
 const PageAlerts = ({
@@ -44,9 +42,9 @@ const PageAlerts = ({
   advanceSettingsUrl,
   savingStatus,
   errors,
+  dismissError,
 }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const discussionAlertDismissKey = `discussionAlertDismissed-${courseId}`;
   const [showConfigAlert, setShowConfigAlert] = useState(true);
@@ -352,55 +350,59 @@ const PageAlerts = ({
   };
 
   const renderApiErrors = () => {
-    let errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
-      switch (v.type) {
-        case API_ERROR_TYPES.forbidden: {
-          const description = intl.formatMessage(messages.forbiddenAlertBody, {
-            LMS: (
-              <Hyperlink
-                destination={`${getConfig().LMS_BASE_URL}`}
-                target="_blank"
-                showLaunchIcon={false}
-              >
-                {intl.formatMessage(messages.forbiddenAlertLmsUrl)}
-              </Hyperlink>
-            ),
-          });
-          return {
-            key: k,
-            desc: description,
-            title: intl.formatMessage(messages.forbiddenAlert),
-            dismissible: v.dismissible,
-          };
-        }
-        case API_ERROR_TYPES.serverError: {
-          const description = (
-            <Truncate.Deprecated lines={2}>
-              {v.data || intl.formatMessage(messages.serverErrorAlertBody)}
-            </Truncate.Deprecated>
-          );
-          return {
-            key: k,
-            desc: description,
-            title: intl.formatMessage(messages.serverErrorAlert),
-            dismissible: v.dismissible,
-          };
-        }
-        case API_ERROR_TYPES.networkError:
-          return {
-            key: k,
-            title: intl.formatMessage(messages.networkErrorAlert),
-            dismissible: v.dismissible,
-          };
-        default:
-          return {
-            key: k,
-            title: v.data,
-            dismissible: v.dismissible,
-          };
-      }
-    });
-    errorList = uniqBy(errorList, 'title');
+    const errorList = uniqBy(
+      Object.entries(errors)
+        .filter(([, value]) => value !== null)
+        .map(([key, value]) => {
+          switch (value.type) {
+            case API_ERROR_TYPES.forbidden: {
+              const description = intl.formatMessage(messages.forbiddenAlertBody, {
+                LMS: (
+                  <Hyperlink
+                    destination={`${getConfig().LMS_BASE_URL}`}
+                    target="_blank"
+                    showLaunchIcon={false}
+                  >
+                    {intl.formatMessage(messages.forbiddenAlertLmsUrl)}
+                  </Hyperlink>
+                ),
+              });
+              return {
+                key,
+                desc: description,
+                title: intl.formatMessage(messages.forbiddenAlert),
+                dismissible: value.dismissible,
+              };
+            }
+            case API_ERROR_TYPES.serverError: {
+              const description = (
+                <Truncate.Deprecated lines={2}>
+                  {value.data || intl.formatMessage(messages.serverErrorAlertBody)}
+                </Truncate.Deprecated>
+              );
+              return {
+                key,
+                desc: description,
+                title: intl.formatMessage(messages.serverErrorAlert),
+                dismissible: value.dismissible,
+              };
+            }
+            case API_ERROR_TYPES.networkError:
+              return {
+                key,
+                title: intl.formatMessage(messages.networkErrorAlert),
+                dismissible: value.dismissible,
+              };
+            default:
+              return {
+                key,
+                title: value.data,
+                dismissible: value.dismissible,
+              };
+          }
+        }),
+      'title',
+    );
     if (!errorList?.length) {
       return null;
     }
@@ -412,7 +414,7 @@ const PageAlerts = ({
               isError
               hideHeading
               key={msgObj.key}
-              dismissError={() => dispatch(dismissError(msgObj.key))}
+              dismissError={() => dismissError(msgObj.key)}
             >
               <Alert.Heading>{msgObj.title}</Alert.Heading>
               {msgObj.desc}
@@ -474,6 +476,7 @@ PageAlerts.defaultProps = {
   advanceSettingsUrl: '',
   savingStatus: '',
   errors: {},
+  dismissError: () => {},
 };
 
 PageAlerts.propTypes = {
@@ -503,6 +506,7 @@ PageAlerts.propTypes = {
   mfeProctoredExamSettingsUrl: PropTypes.string,
   advanceSettingsUrl: PropTypes.string,
   savingStatus: PropTypes.string,
+  dismissError: PropTypes.func,
   errors: PropTypes.shape({
     outlineIndexApi: PropTypes.shape({
       data: PropTypes.string,

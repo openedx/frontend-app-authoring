@@ -21,6 +21,10 @@ const MoreInfoColumn = ({
   handleOpenFileInfo,
   handleOpenDeleteConfirmation,
   fileType,
+  permissions = {
+    canEditFiles: true,
+    canDeleteFiles: true,
+  },
 }) => {
   const intl = useIntl();
   const [isOpen, , close, toggle] = useToggle();
@@ -89,13 +93,15 @@ const MoreInfoColumn = ({
                 >
                   {intl.formatMessage(messages.copyWebUrlTitle)}
                 </MenuItem>
-                <MenuItem
-                  as={Button}
-                  variant="tertiary"
-                  onClick={() => handleLock(id, !locked)}
-                >
-                  {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
-                </MenuItem>
+                {permissions.canEditFiles && (
+                  <MenuItem
+                    as={Button}
+                    variant="tertiary"
+                    onClick={() => handleLock(id, !locked)}
+                  >
+                    {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
+                  </MenuItem>
+                )}
               </>
             )}
           <MenuItem
@@ -115,18 +121,23 @@ const MoreInfoColumn = ({
           >
             {intl.formatMessage(messages.infoTitle)}
           </MenuItem>
-          <hr className="my-2" />
-          <MenuItem
-            as={Button}
-            variant="tertiary"
-            data-testid="open-delete-confirmation-button"
-            onClick={() => {
-              handleOpenDeleteConfirmation([{ original: row.original }]);
-              close();
-            }}
-          >
-            {intl.formatMessage(messages.deleteTitle)}
-          </MenuItem>
+
+          {permissions.canDeleteFiles && (
+            <>
+              <hr className="my-2" />
+              <MenuItem
+                as={Button}
+                variant="tertiary"
+                data-testid="open-delete-confirmation-button"
+                onClick={() => {
+                  handleOpenDeleteConfirmation([{ original: row.original }]);
+                  close();
+                }}
+              >
+                {intl.formatMessage(messages.deleteTitle)}
+              </MenuItem>
+            </>
+          )}
         </Menu>
       </ModalPopup>
     </>
@@ -147,6 +158,10 @@ MoreInfoColumn.propTypes = {
   handleOpenFileInfo: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   fileType: PropTypes.string.isRequired,
+  permissions: PropTypes.shape({
+    canEditFiles: PropTypes.bool,
+    canDeleteFiles: PropTypes.bool,
+  }),
 };
 
 MoreInfoColumn.defaultProps = {

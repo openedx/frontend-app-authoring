@@ -334,7 +334,7 @@ const CourseUnit = () => {
                 showPasteUnit={showPasteUnit}
               />
             )}
-            <div className="d-flex align-items-baseline">
+            <div className="d-flex align-items-start">
               <div className="flex-fill">
                 {currentlyVisibleToStudents && (
                   <AlertMessage

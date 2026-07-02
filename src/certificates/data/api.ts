@@ -12,10 +12,47 @@ export const getUpdateCertificateApiUrl = (courseId: string, certificateId: numb
   `${getCertificateApiUrl(courseId)}/${certificateId}`;
 export const getUpdateCertificateActiveStatusApiUrl = (path: string) => `${getApiBaseUrl()}${path}`;
 
+export interface Signature {
+  id?: number;
+  name: string;
+  organization: string;
+  signatureImagePath: string;
+  title: string;
+}
+
+export interface Certificate {
+  id: number;
+  courseTitle: string;
+  description: string;
+  editing?: boolean;
+  isActive: boolean;
+  name: string;
+  signatories: Signature[];
+  version: number;
+}
+
+export interface CertificatesMetadata {
+  certificateActivationHandlerUrl: string;
+  certificateWebViewUrl: string;
+  certificates: Certificate[];
+  courseModes: string[];
+  courseNumber: string;
+  courseNumberOverride: string;
+  courseTitle: string;
+  hasCertificateModes: boolean;
+  isActive: boolean;
+  isGlobalStaff: boolean;
+}
+
+export interface CreateCertificateData {
+  courseTitle: string;
+  signatories: Signature[];
+}
+
 /**
  * Gets certificates for a course.
  */
-export async function getCertificates(courseId: string): Promise<Record<string, any>> {
+export async function getCertificates(courseId: string): Promise<CertificatesMetadata> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCertificatesApiUrl(courseId));
 
@@ -27,8 +64,8 @@ export async function getCertificates(courseId: string): Promise<Record<string, 
  */
 export async function createCertificate(
   courseId: string,
-  certificatesData: Record<string, any>,
-): Promise<Record<string, any>> {
+  certificatesData: CreateCertificateData,
+): Promise<Certificate> {
   const { data } = await getAuthenticatedHttpClient()
     .post(
       getCertificateApiUrl(courseId),
@@ -43,8 +80,8 @@ export async function createCertificate(
  */
 export async function updateCertificate(
   courseId: string,
-  certificateData: Record<string, any>,
-): Promise<Record<string, any>> {
+  certificateData: Certificate,
+): Promise<Certificate> {
   const { data } = await getAuthenticatedHttpClient()
     .post(
       getUpdateCertificateApiUrl(courseId, certificateData.id),
@@ -57,26 +94,24 @@ export async function updateCertificate(
 /**
  * Delete course certificate.
  */
-export async function deleteCertificate(courseId: string, certificateId: number): Promise<Record<string, any>> {
-  const { data } = await getAuthenticatedHttpClient()
+export async function deleteCertificate(courseId: string, certificateId: number): Promise<void> {
+  return await getAuthenticatedHttpClient()
     .delete(
       getUpdateCertificateApiUrl(courseId, certificateId),
     );
-  return data;
 }
 
 /**
  * Activate/deactivate course certificate.
  */
-export async function updateActiveStatus(path: string, activationStatus: unknown): Promise<Record<string, any>> {
+export async function updateActiveStatus(path: string, activationStatus: unknown): Promise<void> {
   const body = {
     is_active: activationStatus,
   };
 
-  const { data } = await getAuthenticatedHttpClient()
+  return await getAuthenticatedHttpClient()
     .post(
       getUpdateCertificateActiveStatusApiUrl(path),
       body,
     );
-  return camelCaseObject(data);
 }

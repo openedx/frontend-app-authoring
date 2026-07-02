@@ -12,13 +12,12 @@ import { Edit as EditIcon } from '@openedx/paragon/icons';
 import { Formik, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 
-import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { ExpandableCard } from '@src/generic/expandable-card/ExpandableCard';
 import { useBlocker } from 'react-router';
 import PromptIfDirty from '@src/generic/prompt-if-dirty/PromptIfDirty';
-import { useHelpUrls } from '../../help-urls/hooks';
-import FormikControl from '../../generic/FormikControl';
+import { useHelpUrls } from '@src/help-urls/hooks';
+import FormikControl from '@src/generic/FormikControl';
 import { HIGHLIGHTS_FIELD_MAX_LENGTH } from '../constants';
 import { getHighlightsFormValues } from '../utils';
 import messages from './messages';
@@ -255,7 +254,7 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
     );
   };
 
-  /* istanbul ignore next */
+  /* istanbul ignore next: blocker confirm, only triggered via browser back button */
   const handleConfirmNavigation = () => {
     setFormDirty(false);
     blocker.proceed?.();
@@ -266,7 +265,7 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
       <ConfirmNavigationModal
         isOpen={blocker.state === 'blocked'}
         onConfirm={handleConfirmNavigation}
-        onCancel={/* istanbul ignore next */ () => {
+        onCancel={/* istanbul ignore next: blocker cancel, only triggered via browser back button */ () => {
           blocker.reset?.();
         }}
       />
@@ -293,20 +292,20 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
   );
 };
 
-// Keep the modal version for backward compatibility
 const HighlightsModal = ({
   isOpen,
   onClose,
   onSubmit,
+  currentId,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (highlights: HighlightData) => void;
+  currentId?: string;
 }) => {
   const intl = useIntl();
-  const { currentSelection } = useCourseOutlineContext();
   const { data: currentItemData } = useCourseItemData(
-    currentSelection?.currentId,
+    currentId,
   );
   const { displayName } = currentItemData || {};
   const { highlights = [] } = currentItemData || {};

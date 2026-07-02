@@ -79,17 +79,7 @@ export const waffleFlagDefaults = {
   enableCourseOptimizer: false,
   enableNotifications: false,
   enableCourseOptimizerCheckPrevRunLinks: false,
-  useNewHomePage: true,
-  useNewCustomPages: true,
-  useNewUpdatesPage: true,
-  useNewImportPage: false,
-  useNewExportPage: true,
-  useNewFilesUploadsPage: true,
   useNewVideoUploadsPage: true,
-  useNewCourseOutlinePage: true,
-  useNewUnitPage: false,
-  useNewCertificatesPage: true,
-  useNewTextbooksPage: true,
   useNewPdfEditor: true,
   useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
@@ -240,6 +230,7 @@ export interface CourseSettingsData {
   courseDisplayName: string;
   courseDisplayNameWithDefault: string;
   creditEligibilityEnabled: boolean;
+  creditRequirements?: Record<string, any>;
   enableExtendedCourseDetails: boolean;
   enrollmentEndEditable: boolean;
   isCreditCourse: boolean;
@@ -260,7 +251,7 @@ export interface CourseSettingsData {
     rerunLink: string;
     run: string;
     url: string;
-  };
+  }[];
   shortDescriptionEditable: boolean;
   showMinGradeWarning: boolean;
   sidebarHtmlEnabled: boolean;

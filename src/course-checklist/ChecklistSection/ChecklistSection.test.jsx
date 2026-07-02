@@ -39,10 +39,7 @@ describe('ChecklistSection', () => {
     const { axiosMock } = initializeMocks();
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {
-        useNewCertificatesPage: true,
-        useNewCourseOutlinePage: true,
-      });
+      .reply(200, {});
   });
 
   it('a heading using the dataHeading prop', () => {

@@ -5,7 +5,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
-const IntroductionVideo = ({ introVideo, onChange }) => {
+const IntroductionVideo = ({ introVideo, isEditable = true, onChange }) => {
   const intl = useIntl();
   const embedVideoUrl = introVideo
     ? `//www.youtube.com/embed/${introVideo}`
@@ -35,11 +35,12 @@ const IntroductionVideo = ({ introVideo, onChange }) => {
             value={introVideo || ''}
             placeholder={intl.formatMessage(messages.courseIntroductionVideoPlaceholder)}
             onChange={(e) => onChange(e.target.value, 'introVideo')}
+            disabled={!isEditable}
           />
           <Button
             variant="outline-primary"
             onClick={() => onChange('', 'introVideo')}
-            disabled={!introVideo}
+            disabled={!introVideo || !isEditable}
           >
             {intl.formatMessage(messages.courseIntroductionVideoDelete)}
           </Button>

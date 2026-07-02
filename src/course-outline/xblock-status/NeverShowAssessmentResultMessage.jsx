@@ -1,7 +1,7 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { HelpOutline } from '@openedx/paragon/icons';
-import messages from '../../generic/configure-modal/messages';
+import messages from '@src/generic/configure-modal/messages';
 
 const NeverShowAssessmentResultMessage = () => {
   const intl = useIntl();

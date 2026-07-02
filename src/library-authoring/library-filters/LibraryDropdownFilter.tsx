@@ -84,14 +84,16 @@ export const LibraryDropdownFilter = () => {
 
   useEffect(() => {
     const baseName = intl.formatMessage(messages.librariesFilterBtnText);
-    if (!selectedLibraries.length || selectedLibraries.length === data?.length) {
+    if (!selectedLibraries.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length === 1) {
       setLabel(data?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
+    } else if (selectedLibraries.length === data?.length) {
+      setLabel(baseName);
     } else if (selectedLibraries.length > 1) {
       setLabel(intl.formatMessage(messages.librariesFilterBtnCount, { count: selectedLibraries.length }));
     }
-  }, [label, selectedLibraries, data]);
+  }, [intl, selectedLibraries, data]);
 
   return (
     <Dropdown

@@ -61,10 +61,7 @@ describe('CustomPages', () => {
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {
-        useNewCertificatesPage: true,
-        useNewCourseOutlinePage: true,
-      });
+      .reply(200, {});
   });
   it('should ', async () => {
     renderComponent();

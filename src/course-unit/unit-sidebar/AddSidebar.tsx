@@ -355,6 +355,7 @@ export const AddSidebar = () => {
             className="mb-2 mx-n4.5 mx-n3.5"
             activeKey={currentTabKey}
             onSelect={setCurrentTabKey}
+            mountOnEnter
           >
             <Tab
               eventKey="add-new"

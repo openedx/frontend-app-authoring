@@ -4,24 +4,18 @@ import { configureStore, Reducer } from '@reduxjs/toolkit';
 // If this app + the plugin were using React-query, there'd be no issues.
 import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/slice';
 
-import { RequestStatusType } from '@src/data/constants';
-import { MODE_STATES } from './certificates/data/constants';
-
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions/data/slice';
 import { reducer as pagesAndResourcesReducer } from './pages-and-resources/data/slice';
 import { reducer as customPagesReducer } from './custom-pages/data/slice';
 import { reducer as studioHomeReducer } from './studio-home/data/slice';
-import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/data/slice';
 import { reducer as filesReducer } from './files-and-videos/files-page/data/slice';
 import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';
 import { reducer as courseOptimizerReducer } from './optimizer-page/data/slice';
 import { reducer as genericReducer } from './generic/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
-import { reducer as courseOutlineReducer } from './course-outline/data/slice';
+
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
-import { reducer as textbooksReducer } from './textbooks/data/slice';
-import { reducer as certificatesReducer } from './certificates/data/slice';
 
 type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
 
@@ -34,7 +28,6 @@ export interface DeprecatedReduxState {
   discussions: Record<string, any>;
   assets: Record<string, any>;
   pagesAndResources: Record<string, any>;
-  scheduleAndDetails: Record<string, any>;
   studioHome: InferState<typeof studioHomeReducer>;
   models: Record<string, any>;
   live: Record<string, any>;
@@ -42,17 +35,8 @@ export interface DeprecatedReduxState {
   courseOptimizer: Record<string, any>;
   generic: Record<string, any>;
   videos: Record<string, any>;
-  courseOutline: Record<string, any>;
+
   courseUnit: Record<string, any>;
-  certificates: {
-    loadingStatus: RequestStatusType;
-    savingStatus: any;
-    savingImageStatus: string;
-    errorMessage: string;
-    componentMode: (typeof MODE_STATES)[keyof typeof MODE_STATES];
-    certificatesData: any;
-  };
-  textbooks: Record<string, any>;
 }
 
 export default function initializeStore(preloadedState: Partial<DeprecatedReduxState> | undefined = undefined) {
@@ -62,7 +46,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       discussions: discussionsReducer,
       assets: filesReducer,
       pagesAndResources: pagesAndResourcesReducer,
-      scheduleAndDetails: scheduleAndDetailsReducer,
       studioHome: studioHomeReducer,
       models: modelsReducer,
       live: liveReducer,
@@ -70,10 +53,8 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       courseOptimizer: courseOptimizerReducer,
       generic: genericReducer,
       videos: videosReducer,
-      courseOutline: courseOutlineReducer,
+
       courseUnit: courseUnitReducer,
-      certificates: certificatesReducer,
-      textbooks: textbooksReducer,
     },
     preloadedState: preloadedState as DeprecatedReduxState | undefined,
   });

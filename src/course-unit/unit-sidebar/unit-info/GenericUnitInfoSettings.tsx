@@ -8,7 +8,7 @@ import { Form, Formik } from 'formik';
 import { useMemo } from 'react';
 import configureMessages from '@src/generic/configure-modal/messages';
 import { useConfigureUnit } from '@src/course-outline/data/apiHooks';
-import { useStateWithCallback } from '@src/hooks';
+import { useFieldDraft } from '@src/hooks/useFieldDraft';
 import ModalNotification from '@src/generic/modal-notification';
 import { InfoOutline } from '@openedx/paragon/icons';
 import messages from './messages';
@@ -64,16 +64,15 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     });
   };
 
-  const [localState, setLocalState] = useStateWithCallback<{
+  const serverState = useMemo<{
     isVisible?: boolean;
     isDiscussionEnabled?: boolean;
-  }>({
+  }>(() => ({
     isVisible: visibleToStaffOnly,
     isDiscussionEnabled: discussionEnabled,
-  }, (val) => {
-    if (val) {
-      handleUpdate(!!val.isVisible, null, val.isDiscussionEnabled);
-    }
+  }), [visibleToStaffOnly, discussionEnabled]);
+  const [localState, setLocalState] = useFieldDraft(serverState, (val) => {
+    handleUpdate(!!val.isVisible, null, val.isDiscussionEnabled);
   });
 
   const handleSaveGroups = async (data: {

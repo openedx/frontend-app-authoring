@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { courseLibrariesQueryKeys } from '@src/course-libraries';
 import { getCourseKey } from '@src/generic/key-utils';
 
-import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { ParentIds } from '@src/generic/types';
 import { unlinkDownstream } from './api';
 

@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useParams,
+  Outlet,
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
@@ -16,10 +17,10 @@ import { FilesPage, VideosPage } from './files-and-videos';
 import { AdvancedSettings } from './advanced-settings';
 import {
   CourseOutline,
+  CourseOutlineProvider,
   OutlineSidebarProvider,
   OutlineSidebarPagesProvider,
 } from './course-outline';
-import { CourseOutlineProvider } from './course-outline/CourseOutlineContext';
 import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
@@ -37,6 +38,14 @@ import { IframeProvider } from './generic/hooks/context/iFrameContext';
 import { CourseAuthoringProvider } from './CourseAuthoringContext';
 import { CourseImportProvider } from './import-page/CourseImportContext';
 import { CourseExportProvider } from './export-page/CourseExportContext';
+import { CertificatesProvider } from './certificates/context';
+
+/** Layout route: renders its child routes inside PageWrap. */
+const PageWrapLayout = () => (
+  <PageWrap>
+    <Outlet />
+  </PageWrap>
+);
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -62,208 +71,138 @@ const CourseAuthoringRoutes = () => {
     throw new Error('Error: route is missing courseId.');
   }
 
+  const enableVideos = getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true';
+  const enableCertificates = getConfig().ENABLE_CERTIFICATE_PAGE === 'true';
+
   return (
     <CourseAuthoringProvider courseId={courseId}>
       <CourseAuthoringPage>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <PageWrap>
-                <CourseOutlineProvider>
+          <Route element={<PageWrapLayout />}>
+            <Route
+              path="/"
+              element={
+                <CourseOutlineProvider key={courseId}>
                   <OutlineSidebarPagesProvider>
                     <OutlineSidebarProvider>
                       <CourseOutline />
                     </OutlineSidebarProvider>
                   </OutlineSidebarPagesProvider>
                 </CourseOutlineProvider>
-              </PageWrap>
-            }
-          />
-          <Route
-            path="course_info"
-            element={
-              <PageWrap>
-                <CourseUpdates />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="libraries"
-            element={
-              <PageWrap>
-                <CourseLibraries />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="assets"
-            element={
-              <PageWrap>
-                <FilesPage />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="videos"
-            element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true'
-              ? (
-                <PageWrap>
-                  <VideosPage />
-                </PageWrap>
-              )
-              : null}
-          />
-          <Route
-            path="pages-and-resources/*"
-            element={
-              <PageWrap>
-                <PagesAndResources />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="proctored-exam-settings"
-            element={<Navigate replace to={`/course/${courseId}/pages-and-resources`} />}
-          />
-          <Route
-            path="custom-pages/*"
-            element={
-              <PageWrap>
-                <CustomPages />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="/subsection/:subsectionId"
-            element={
-              <PageWrap>
-                <SubsectionUnitRedirect />
-              </PageWrap>
-            }
-          />
-          {DECODED_ROUTES.COURSE_UNIT.map((path) => (
+              }
+            />
             <Route
-              key={path}
-              path={path}
-              element={
-                <PageWrap>
+              path="course_info"
+              element={<CourseUpdates />}
+            />
+            <Route
+              path="libraries"
+              element={<CourseLibraries />}
+            />
+            <Route
+              path="assets"
+              element={<FilesPage />}
+            />
+            {enableVideos && (
+              <Route
+                path="videos"
+                element={<VideosPage />}
+              />
+            )}
+            <Route
+              path="pages-and-resources/*"
+              element={<PagesAndResources />}
+            />
+            <Route
+              path="custom-pages/*"
+              element={<CustomPages />}
+            />
+            <Route
+              path="/subsection/:subsectionId"
+              element={<SubsectionUnitRedirect />}
+            />
+            {DECODED_ROUTES.COURSE_UNIT.map((path) => (
+              <Route
+                key={path}
+                path={path}
+                element={
                   <IframeProvider>
                     <CourseUnit />
                   </IframeProvider>
-                </PageWrap>
-              }
+                }
+              />
+            ))}
+            <Route
+              path="editor/course-videos/:blockId"
+              element={<VideoSelectorContainer />}
             />
-          ))}
-          <Route
-            path="editor/course-videos/:blockId"
-            element={
-              <PageWrap>
-                <VideoSelectorContainer />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="editor/:blockType/:blockId?"
-            element={
-              <PageWrap>
-                <EditorContainer learningContextId={courseId} />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="settings/details"
-            element={
-              <PageWrap>
-                <ScheduleAndDetails />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="settings/grading"
-            element={
-              <PageWrap>
-                <GradingSettings />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="course_team"
-            element={
-              <PageWrap>
-                <CourseTeam />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="group_configurations"
-            element={
-              <PageWrap>
-                <GroupConfigurations />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="settings/advanced"
-            element={
-              <PageWrap>
-                <AdvancedSettings />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="import"
-            element={
-              <PageWrap>
+            <Route
+              path="editor/:blockType/:blockId?"
+              element={<EditorContainer learningContextId={courseId} />}
+            />
+            <Route
+              path="settings/details"
+              element={<ScheduleAndDetails />}
+            />
+            <Route
+              path="settings/grading"
+              element={<GradingSettings />}
+            />
+            <Route
+              path="course_team"
+              element={<CourseTeam />}
+            />
+            <Route
+              path="group_configurations"
+              element={<GroupConfigurations />}
+            />
+            <Route
+              path="settings/advanced"
+              element={<AdvancedSettings />}
+            />
+            <Route
+              path="import"
+              element={
                 <CourseImportProvider>
                   <CourseImportPage />
                 </CourseImportProvider>
-              </PageWrap>
-            }
-          />
-          <Route
-            path="export"
-            element={
-              <PageWrap>
+              }
+            />
+            <Route
+              path="export"
+              element={
                 <CourseExportProvider>
                   <CourseExportPage />
                 </CourseExportProvider>
-              </PageWrap>
-            }
-          />
+              }
+            />
+            <Route
+              path="optimizer"
+              element={<CourseOptimizerPage />}
+            />
+            <Route
+              path="checklists"
+              element={<CourseChecklist />}
+            />
+            {enableCertificates && (
+              <Route
+                path="certificates"
+                element={
+                  <CertificatesProvider>
+                    <Certificates />
+                  </CertificatesProvider>
+                }
+              />
+            )}
+            <Route
+              path="textbooks"
+              element={<Textbooks />}
+            />
+          </Route>
+          {/* Routes without PageWrap */}
           <Route
-            path="optimizer"
-            element={
-              <PageWrap>
-                <CourseOptimizerPage />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="checklists"
-            element={
-              <PageWrap>
-                <CourseChecklist />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="certificates"
-            element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true'
-              ? (
-                <PageWrap>
-                  <Certificates />
-                </PageWrap>
-              )
-              : null}
-          />
-          <Route
-            path="textbooks"
-            element={
-              <PageWrap>
-                <Textbooks />
-              </PageWrap>
-            }
+            path="proctored-exam-settings"
+            element={<Navigate replace to={`/course/${courseId}/pages-and-resources`} />}
           />
         </Routes>
       </CourseAuthoringPage>

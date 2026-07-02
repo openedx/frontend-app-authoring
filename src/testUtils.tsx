@@ -116,6 +116,20 @@ const RouterAndRoute: React.FC<RouteOptions> = ({
   return <MemoryRouter {...routerProps}>{children}</MemoryRouter>;
 };
 
+/**
+ * Build a `renderHook` wrapper that provides a React Query client.
+ * Use when a test needs a QueryClient but does not need the full app wrapper
+ * (e.g. no redux/intl/router). Pairs with a module- or test-scoped QueryClient.
+ */
+export function makeQueryClientWrapper(
+  client: QueryClient,
+): React.FC<{ children: React.ReactNode; }> {
+  const QueryClientWrapper = ({ children }: { children: React.ReactNode; }) => (
+    <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  );
+  return QueryClientWrapper;
+}
+
 function makeWrapper({ extraWrapper, ...routeArgs }: WrapperOptions & RouteOptions = {}) {
   const AllTheProviders = ({ children }) => (
     <AppProvider store={reduxStore} wrapWithRouter={false}>
@@ -208,6 +222,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
 }
 
 export * from '@testing-library/react';
+export { default as userEvent } from '@testing-library/user-event';
 export { customRender as render, makeWrapper };
 
 /** Simulate a real Axios error (such as we'd see in response to a 404) */

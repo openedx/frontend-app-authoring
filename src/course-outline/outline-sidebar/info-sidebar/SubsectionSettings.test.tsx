@@ -6,16 +6,17 @@ import { SubsectionSettings } from './SubsectionSettings';
 
 const subsectionId = 'sub-1';
 
-// Make useStateWithCallback synchronous so callbacks call mutate immediately
-jest.mock('@src/hooks', () => ({
-  useStateWithCallback: (defaultValue: any, cb?: any) => {
-    const [state, setState] = useState(defaultValue);
-    const wrappedSetState = (val: any) => {
-      const newVal = typeof val === 'function' ? val(state) : val;
-      setState(newVal);
-      if (cb) { cb(newVal); }
+// Make useFieldDraft commit synchronously (no debounce) so edits call mutate immediately.
+jest.mock('@src/hooks/useFieldDraft', () => ({
+  useFieldDraft: (serverValue: any, commit?: any) => {
+    const [override, setOverride] = useState<any>(null);
+    const value = override ?? serverValue;
+    const update = (patch: any) => {
+      const next = typeof patch === 'function' ? patch(value) : { ...value, ...patch };
+      setOverride(next);
+      if (commit) { commit(next); }
     };
-    return [state, wrappedSetState];
+    return [value, update];
   },
 }));
 
@@ -70,6 +71,13 @@ jest.mock('@src/CourseAuthoringContext', () => ({
 
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   useOutlineSidebarContext: () => ({ selectedContainerState: { sectionId: 'section-abc' } }),
+}));
+
+jest.mock('@src/course-outline/CourseOutlineContext', () => ({
+  useCourseOutlineContext: () => ({
+    enableProctoredExams: true,
+    enableTimedExams: true,
+  }),
 }));
 
 const apiHooks = jest.requireMock('@src/course-outline/data/apiHooks') as any;
@@ -201,7 +209,9 @@ describe('SubsectionSettings', () => {
     expect(mutate).not.toHaveBeenCalled();
   });
 
-  it('resets grading local state when itemData changes', async () => {
+  it('reflects external grading changes without re-saving', async () => {
+    // An external update to itemData (e.g. via the configure modal) should flow
+    // through to the panel WITHOUT re-firing a mutation.
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
     const firstItemData = {
       ...baseItemData,
@@ -219,10 +229,10 @@ describe('SubsectionSettings', () => {
     apiHooks.useCourseItemData.mockReturnValue({ data: secondItemData, isPending: false });
     rerender(<SubsectionSettings subsectionId={subsectionId} />);
 
-    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ graderType: 'g2', dueDate: '2024-02-02' }));
+    expect(mutate).not.toHaveBeenCalled();
   });
 
-  it('resets assessment visibility local state when itemData changes', async () => {
+  it('reflects external assessment visibility changes without re-saving', async () => {
     apiHooks.useCourseDetails.mockReturnValue({ data: { selfPaced: false } });
     const firstItemData = { ...baseItemData, graded: false, showCorrectness: 'always' };
     const secondItemData = { ...firstItemData, showCorrectness: 'never' };
@@ -235,7 +245,7 @@ describe('SubsectionSettings', () => {
     apiHooks.useCourseItemData.mockReturnValue({ data: secondItemData, isPending: false });
     rerender(<SubsectionSettings subsectionId={subsectionId} />);
 
-    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ showCorrectness: 'never' }));
+    expect(mutate).not.toHaveBeenCalled();
   });
 
   it('does not call mutate when item data is absent', async () => {

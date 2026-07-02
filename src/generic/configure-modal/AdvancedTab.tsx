@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import {
   Alert,
@@ -281,6 +281,11 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
     formatHour(defaultTimeLimitMinutes),
   );
   const showReviewRulesDiv = showReviewRules && isProctoredExam && !isPracticeExam && !isOnboardingExam;
+
+  // sync local input when defaultTimeLimitMinutes changes externally
+  useEffect(() => {
+    setTimeLimit(formatHour(defaultTimeLimitMinutes));
+  }, [defaultTimeLimitMinutes]);
 
   const handleChange = (value: string) => {
     if (value === 'timed') {

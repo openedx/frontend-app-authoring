@@ -42,12 +42,15 @@ export const useCourseUserPermissions = <Query extends PermissionValidationQuery
   permissions: Query,
 ): UseCourseUserPermissionsReturn<Query> => {
   const waffleFlags = useWaffleFlags(courseId);
+  const isWaffleFlagsLoading: boolean = waffleFlags?.isLoading ?? true;
   const isAuthzEnabled: boolean = waffleFlags?.enableAuthzCourseAuthoring ?? false;
 
   const {
     isLoading: isLoadingUserPermissions,
     data: userPermissions,
   } = useUserPermissions(permissions, isAuthzEnabled);
+
+  const isLoading = isWaffleFlagsLoading || (isAuthzEnabled && isLoadingUserPermissions);
 
   const resolvePermission = (key: string): boolean => {
     if (!isAuthzEnabled) {
@@ -56,15 +59,18 @@ export const useCourseUserPermissions = <Query extends PermissionValidationQuery
     return userPermissions?.[key] ?? false;
   };
 
-  const permissionResults: Record<string, boolean> = isLoadingUserPermissions
-    ? {}
+  const permissionResults: Record<string, boolean> = isLoading
+    ? Object.keys(permissions).reduce<Record<string, boolean>>((acc, key) => {
+      acc[key] = false;
+      return acc;
+    }, {})
     : Object.keys(permissions).reduce<Record<string, boolean>>((acc, key) => {
       acc[key] = resolvePermission(key);
       return acc;
     }, {});
 
   return {
-    isLoading: isAuthzEnabled ? isLoadingUserPermissions : false,
+    isLoading,
     isAuthzEnabled,
     ...permissionResults as PermissionValidationAnswer<Query>,
   };

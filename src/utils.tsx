@@ -183,6 +183,7 @@ export function setupYupExtensions() {
         }
       });
 
+      /* istanbul ignore next */
       if (errors.length > 0) {
         throw new Yup.ValidationError(errors);
       }
@@ -324,6 +325,7 @@ export const getFileSizeToClosestByte = (fileSize: any) => {
  * A generic hook to run callback on next render cycle.
  * @param {} callback - Callback function that needs to be run later
  */
+/* istanbul ignore next */
 export const useRunOnNextRender = (callback: () => void) => {
   const [scheduled, setScheduled] = useState(false);
 

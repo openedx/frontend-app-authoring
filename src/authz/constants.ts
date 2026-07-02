@@ -20,4 +20,17 @@ export const COURSE_PERMISSIONS = {
 
   VIEW_GRADING_SETTINGS: 'courses.view_grading_settings',
   EDIT_GRADING_SETTINGS: 'courses.edit_grading_settings',
+
+  VIEW_SCHEDULE_AND_DETAILS: 'courses.view_schedule_and_details',
+  EDIT_SCHEDULE: 'courses.edit_schedule',
+  EDIT_DETAILS: 'courses.edit_details',
+  VIEW_COURSE_UPDATES: 'courses.view_course_updates',
+  MANAGE_COURSE_UPDATES: 'courses.manage_course_updates',
+
+  VIEW_PAGES_AND_RESOURCES: 'courses.view_pages_and_resources',
+  MANAGE_PAGES_AND_RESOURCES: 'courses.manage_pages_and_resources',
+  VIEW_FILES: 'courses.view_files',
+  CREATE_FILES: 'courses.create_files',
+  DELETE_FILES: 'courses.delete_files',
+  EDIT_FILES: 'courses.edit_files',
 };

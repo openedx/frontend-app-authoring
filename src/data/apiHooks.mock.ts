@@ -7,7 +7,7 @@ import * as apiHooks from './apiHooks';
  * loading; if you need more realistic handling, use:
  *   axiosMock
  *    .onGet(getApiWaffleFlagsUrl(courseId))
- *    .reply(200, { useNewCourseOutlinePage: true }); // etc
+ *    .reply(200, { enableCourseOptimizer: true }); // etc
  */
 export function mockWaffleFlags(overrides: Partial<Record<WaffleFlagName, boolean>> = {}) {
   return jest.spyOn(apiHooks, 'useWaffleFlags').mockImplementation(() => ({
