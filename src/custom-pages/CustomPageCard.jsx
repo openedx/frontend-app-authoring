@@ -42,7 +42,6 @@ const CustomPageCard = ({
   const toggleVisibility = () => {
     visibilityMutation.mutate({
       blockId: page.id,
-      // snake_case matches the API wire format from existing thunk
       metadata: { course_staff_only: !page.courseStaffOnly },
     });
   };
