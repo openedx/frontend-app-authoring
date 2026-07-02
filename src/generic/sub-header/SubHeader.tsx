@@ -12,6 +12,7 @@ interface SubHeaderProps {
   titleActions?: ReactElement | ReactElement[] | null;
   hideBorder?: boolean;
   withSubHeaderContent?: boolean;
+  headerClassName?: string;
 }
 
 const SubHeader = ({
@@ -25,10 +26,11 @@ const SubHeader = ({
   titleActions,
   hideBorder = false,
   withSubHeaderContent = true,
+  headerClassName = '',
 }: SubHeaderProps) => (
   <div className={`${!hideBorder && 'border-bottom border-light-400'} mb-2`}>
     {breadcrumbs && <div className="sub-header-breadcrumbs">{breadcrumbs}</div>}
-    <header className="sub-header">
+    <header className={`sub-header ${headerClassName}`.trim()}>
       <h2 className="sub-header-title">
         <small className="sub-header-title-subtitle">{subtitle}</small>
         {title}
