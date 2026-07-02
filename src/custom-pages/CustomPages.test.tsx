@@ -154,7 +154,11 @@ describe('CustomPages', () => {
 
     // Start keyboard drag on the first page
     fireEvent.keyDown(dragHandles[0], { code: 'Space' });
-    await act(() => new Promise(r => { setTimeout(r, 1); }));
+    await act(() =>
+      new Promise(r => {
+        setTimeout(r, 1);
+      })
+    );
     // Drop — verticalSortableListCollisionDetection mock reports 'mOckID2' as over
     fireEvent.keyDown(dragHandles[0], { code: 'Space' });
 

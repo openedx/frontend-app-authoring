@@ -23,10 +23,11 @@ export const customPagesQueryKeys = {
 /**
  * Fetch custom pages for a course.
  */
-export const useCustomPages = (courseId: string) => useQuery({
-  queryKey: customPagesQueryKeys.list(courseId),
-  queryFn: () => getCustomPages(courseId),
-});
+export const useCustomPages = (courseId: string) =>
+  useQuery({
+    queryKey: customPagesQueryKeys.list(courseId),
+    queryFn: () => getCustomPages(courseId),
+  });
 
 /**
  * Delete a custom page by blockId.
@@ -75,7 +76,7 @@ export const useReorderCustomPages = (courseId: string) => {
 export const useUpdateCustomPageVisibility = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ blockId, metadata }: { blockId: string; metadata: Record<string, unknown> }) =>
+    mutationFn: ({ blockId, metadata }: { blockId: string; metadata: Record<string, unknown>; }) =>
       updateCustomPage({ blockId, metadata }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: customPagesQueryKeys.list(courseId) }),
   });
@@ -89,9 +90,9 @@ export const useUpdateCustomPageVisibility = (courseId: string) => {
 export const useUpdateCustomPageName = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ blockId, displayName }: { blockId: string; displayName: string }) => {
+    mutationFn: async ({ blockId, displayName }: { blockId: string; displayName: string; }) => {
       queryClient.setQueryData<CustomPage[]>(customPagesQueryKeys.list(courseId), (old) => {
-        if (!old) return old;
+        if (!old) { return old; }
         return old.map(page => (page.id === blockId ? { ...page, name: displayName } : page));
       });
     },
