@@ -30,32 +30,32 @@ export const useCustomPages = (courseId: string) => useQuery({
 
 /**
  * Delete a custom page by blockId.
- * Invalidates list query on settled.
+ * Invalidates list query on success.
  */
 export const useDeleteCustomPage = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (blockId: string) => deleteCustomPage(blockId),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: customPagesQueryKeys.list(courseId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: customPagesQueryKeys.list(courseId) }),
   });
 };
 
 /**
  * Add a new custom page.
- * Invalidates list query on settled.
+ * Invalidates list query on success.
  */
 export const useAddCustomPage = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => addCustomPage(courseId),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: customPagesQueryKeys.list(courseId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: customPagesQueryKeys.list(courseId) }),
   });
 };
 
 /**
  * Reorder custom pages.
  * Accepts pages array, maps to tab_locator format, and POSTs reorder.
- * Invalidates list query on settled.
+ * Invalidates list query on settled (including error, to roll back optimistic reorder).
  */
 export const useReorderCustomPages = (courseId: string) => {
   const queryClient = useQueryClient();
@@ -70,19 +70,19 @@ export const useReorderCustomPages = (courseId: string) => {
 
 /**
  * Update custom page visibility (courseStaffOnly).
- * Invalidates list query on settled.
+ * Invalidates list query on success.
  */
 export const useUpdateCustomPageVisibility = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ blockId, metadata }: { blockId: string; metadata: Record<string, unknown> }) =>
       updateCustomPage({ blockId, metadata }),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: customPagesQueryKeys.list(courseId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: customPagesQueryKeys.list(courseId) }),
   });
 };
 
 /**
- * Update custom page name — optimistic only (no API call).
+ * Update custom page name — cache-only (no API call).
  * EditorPage save already persists to /xblock/{blockId}; this hook only mirrors
  * returned display_name into the custom-pages list cache.
  */

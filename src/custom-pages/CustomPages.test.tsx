@@ -6,15 +6,22 @@ import {
   screen,
   waitFor,
   render,
+  act,
 } from '@src/testUtils';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
 import { useCourseDetails } from '@src/data/apiHooks';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import CustomPages from './CustomPages';
 import { getApiBaseUrl, getTabHandlerUrl } from './data/api';
+import { customPagesQueryKeys } from './data/apiHooks';
 import messages from './messages';
 
+jest.mock('@src/generic/DraggableList/verticalSortableList', () => ({
+  verticalSortableListCollisionDetection: jest.fn(),
+}));
+
 let axiosMock;
+let queryClient;
 // @ts-ignore
 ReactDOM.createPortal = jest.fn(node => node);
 
@@ -60,6 +67,7 @@ describe('CustomPages', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
+    queryClient = mocks.queryClient;
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
       .reply(200, {});
@@ -70,6 +78,15 @@ describe('CustomPages', () => {
   });
 
   it('should render placeholder on 403', async () => {
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(403);
+    renderComponent();
+    expect(await screen.findByTestId('under-construction-placeholder')).toBeVisible();
+  });
+
+  it('should render placeholder on 403 even with cached pages', async () => {
+    // Seed the query cache with pages simulating a prior successful fetch
+    queryClient.setQueryData(customPagesQueryKeys.list(courseId), generateFetchPageApiResponse());
+    // API returns 403 on the subsequent refetch triggered by staleTime: 0
     axiosMock.onGet(getTabHandlerUrl(courseId)).reply(403);
     renderComponent();
     expect(await screen.findByTestId('under-construction-placeholder')).toBeVisible();
@@ -115,5 +132,40 @@ describe('CustomPages', () => {
 
     fireEvent.click(viewButton);
     expect(screen.getByText(messages.studentViewModalTitle.defaultMessage)).toBeVisible();
+  });
+
+  it('should post reordered pages to /reorder endpoint', async () => {
+    const { verticalSortableListCollisionDetection } = await import('@src/generic/DraggableList/verticalSortableList');
+    const twoPages = [
+      { ...generateFetchPageApiResponse()[0], id: 'mOckID1', name: 'Page 1' },
+      { ...generateFetchPageApiResponse()[0], id: 'mOckID2', name: 'Page 2', tab_id: 'static_tab_2' },
+    ];
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, twoPages);
+    const reorderUrl = `${getTabHandlerUrl(courseId)}/reorder`;
+    axiosMock.onPost(reorderUrl).reply(204);
+
+    // Mock collision detection so keyboard drag lands on the second page
+    jest.mocked(verticalSortableListCollisionDetection).mockReturnValue([{ id: 'mOckID2' }]);
+
+    renderComponent();
+
+    const dragHandles = await screen.findAllByRole('button', { name: 'Drag to reorder' });
+    expect(dragHandles).toHaveLength(2);
+
+    // Start keyboard drag on the first page
+    fireEvent.keyDown(dragHandles[0], { code: 'Space' });
+    await act(() => new Promise(r => { setTimeout(r, 1); }));
+    // Drop — verticalSortableListCollisionDetection mock reports 'mOckID2' as over
+    fireEvent.keyDown(dragHandles[0], { code: 'Space' });
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBeGreaterThanOrEqual(1);
+    });
+
+    const postData = JSON.parse(axiosMock.history.post[0].data);
+    expect(postData).toEqual([
+      { tab_locator: 'mOckID2' },
+      { tab_locator: 'mOckID1' },
+    ]);
   });
 });

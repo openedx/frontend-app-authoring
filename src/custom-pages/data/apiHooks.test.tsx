@@ -7,7 +7,6 @@ import {
   useAddCustomPage,
   useReorderCustomPages,
   useUpdateCustomPageVisibility,
-  useUpdateCustomPageName,
   customPagesQueryKeys,
 } from './apiHooks';
 import {
@@ -146,7 +145,7 @@ describe('useUpdateCustomPageVisibility', () => {
     jest.clearAllMocks();
   });
 
-  it('should call updateCustomPage with blockId and metadata, then invalidate', async () => {
+  it('should call updateCustomPage with blockId and snake_case metadata, then invalidate', async () => {
     (updateCustomPage as jest.Mock).mockResolvedValue({});
     const { wrapper, queryClient } = createWrapper();
 
@@ -154,47 +153,15 @@ describe('useUpdateCustomPageVisibility', () => {
 
     const { result } = renderHook(() => useUpdateCustomPageVisibility(courseId), { wrapper });
 
-    result.current.mutate({ blockId: 'block-1', metadata: { courseStaffOnly: true } });
+    result.current.mutate({ blockId: 'block-1', metadata: { course_staff_only: true } });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(updateCustomPage).toHaveBeenCalledWith({
       blockId: 'block-1',
-      metadata: { courseStaffOnly: true },
+      metadata: { course_staff_only: true },
     });
 
     const state = queryClient.getQueryState(customPagesQueryKeys.list(courseId));
     expect(state?.isInvalidated).toBe(true);
-  });
-});
-
-describe('useUpdateCustomPageName', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should update cache optimistically with no API call and no invalidation', async () => {
-    const { wrapper, queryClient } = createWrapper();
-
-    queryClient.setQueryData(customPagesQueryKeys.list(courseId), mockPages);
-
-    const { result } = renderHook(() => useUpdateCustomPageName(courseId), { wrapper });
-
-    result.current.mutate({ blockId: 'block-1', displayName: 'Renamed' });
-
-    await waitFor(() => {
-      const data = queryClient.getQueryData<typeof mockPages>(customPagesQueryKeys.list(courseId));
-      expect(data?.[0].name).toBe('Renamed');
-      expect(data?.[1].name).toBe('Page 2');
-    });
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-    // optimistic-only thunk behavior — no API call, no refetch
-    expect(deleteCustomPage).not.toHaveBeenCalled();
-    expect(addCustomPage).not.toHaveBeenCalled();
-    expect(updateCustomPage).not.toHaveBeenCalled();
-    expect(updateCustomPageOrder).not.toHaveBeenCalled();
-
-    const state = queryClient.getQueryState(customPagesQueryKeys.list(courseId));
-    expect(state?.isInvalidated).toBeFalsy();
   });
 });

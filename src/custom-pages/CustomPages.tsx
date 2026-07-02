@@ -58,7 +58,7 @@ const CustomPages = () => {
   const { data: pages, isLoading, error, isError } = useCustomPages(courseId);
   const addPageMutation = useAddCustomPage(courseId);
   const reorderMutation = useReorderCustomPages(courseId);
-  const updateNameMutation = useUpdateCustomPageName(courseId);
+  const updatePageName = useUpdateCustomPageName(courseId);
 
   const isDenied = isError && (error as any)?.response?.status === 403;
   const isLoadError = isError && !isDenied;
@@ -83,9 +83,7 @@ const CustomPages = () => {
       setCurrentPage(undefined);
       return;
     }
-    updateNameMutation.mutate(
-      { blockId: currentPage!, displayName: content.metadata.display_name },
-    );
+    updatePageName.mutate({ blockId: currentPage!, displayName: content.metadata.display_name });
     setCurrentPage(undefined);
   };
 
@@ -105,7 +103,7 @@ const CustomPages = () => {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
-  if (isDenied && !pages) {
+  if (isDenied) {
     return (
       <div data-testid="under-construction-placeholder" className="row justify-content-center m-6">
         <Placeholder />
