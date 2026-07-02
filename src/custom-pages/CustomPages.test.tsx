@@ -11,17 +11,32 @@ import { getApiWaffleFlagsUrl } from '@src/data/api';
 import { useCourseDetails } from '@src/data/apiHooks';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import CustomPages from './CustomPages';
-import {
-  generateFetchPageApiResponse,
-  generateNewPageApiResponse,
-  courseId,
-} from './factories/mockApiResponses';
 import { getApiBaseUrl, getTabHandlerUrl } from './data/api';
 import messages from './messages';
 
 let axiosMock;
 // @ts-ignore
 ReactDOM.createPortal = jest.fn(node => node);
+
+const courseId = 'course-v1:edX+DemoX+Demo_Course';
+
+const generateFetchPageApiResponse = () => [{
+  type: 'static_tab',
+  title: null,
+  is_hideable: false,
+  is_hidden: false,
+  is_movable: true,
+  course_staff_only: false,
+  name: 'test',
+  tab_id: 'static_tab_1',
+  settings: { url_slug: '1' },
+  id: 'mOckID1',
+}];
+
+const generateNewPageApiResponse = () => ({
+  locator: 'mOckID2',
+  courseKey: courseId,
+});
 
 jest.mock('@src/data/apiHooks', () => ({
   ...jest.requireActual('@src/data/apiHooks'),

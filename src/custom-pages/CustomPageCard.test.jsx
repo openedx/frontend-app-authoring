@@ -5,15 +5,16 @@ import {
   waitFor,
   render,
 } from '@src/testUtils';
-import {
-  generateUpdateVisibilityApiResponse,
-  courseId,
-  generateXblockData,
-} from './factories/mockApiResponses';
 import { getApiBaseUrl } from './data/api';
 import messages from './messages';
 import CustomPageCard from './CustomPageCard';
-import CustomPagesProvider from './CustomPagesProvider';
+
+const courseId = 'course-v1:edX+DemoX+Demo_Course';
+
+const generateUpdateVisibilityApiResponse = (blockId, visibility) => ({
+  id: blockId,
+  metadata: { display_name: 'test', course_staff_only: visibility },
+});
 
 const defaultProps = {
   courseId,
@@ -29,9 +30,7 @@ let axiosMock;
 
 const renderComponent = (courseStaffOnly = false) => {
   render(
-    <CustomPagesProvider courseId={courseId}>
-      <CustomPageCard {...defaultProps} page={{ ...defaultProps.page, courseStaffOnly }} />
-    </CustomPagesProvider>,
+    <CustomPageCard {...defaultProps} page={{ ...defaultProps.page, courseStaffOnly }} />,
   );
 };
 
@@ -90,7 +89,6 @@ describe('CustomPageCard', () => {
   it('should update courseStaffOnly to true', async () => {
     const xblockEditUrl = `${getApiBaseUrl()}/xblock/mOckID1`;
     axiosMock.onPut(xblockEditUrl).reply(200, generateUpdateVisibilityApiResponse('mOckID1', true));
-    axiosMock.onGet(xblockEditUrl).reply(200, generateXblockData('mOckID1'));
 
     renderComponent(false);
     const visibilityButton = screen.getByTestId('visibility-toggle-icon');
@@ -104,7 +102,6 @@ describe('CustomPageCard', () => {
   it('should update courseStaffOnly to false', async () => {
     const xblockEditUrl = `${getApiBaseUrl()}/xblock/mOckID1`;
     axiosMock.onPut(xblockEditUrl).reply(200, generateUpdateVisibilityApiResponse('mOckID1', false));
-    axiosMock.onGet(xblockEditUrl).reply(200, generateXblockData('mOckID1'));
 
     renderComponent(true);
     const visibilityButton = screen.getByTestId('visibility-toggle-icon');

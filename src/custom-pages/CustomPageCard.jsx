@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -22,7 +22,6 @@ import { RequestStatus } from '@src/data/constants';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { useDeleteCustomPage, useUpdateCustomPageVisibility } from './data/apiHooks';
 import messages from './messages';
-import { CustomPagesContext } from './CustomPagesProvider';
 
 const CustomPageCard = ({
   page,
@@ -31,7 +30,6 @@ const CustomPageCard = ({
 }) => {
   const intl = useIntl();
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
-  const { path: customPagesPath } = useContext(CustomPagesContext);
   const navigate = useNavigate();
 
   const deleteMutation = useDeleteCustomPage(courseId);
@@ -51,7 +49,7 @@ const CustomPageCard = ({
 
   const handleEditOpen = () => {
     setCurrentPage(page.id);
-    navigate(`${customPagesPath}/editor`);
+    navigate(`/course/${courseId}/custom-pages/editor`);
   };
 
   const deletePageStateProps = {
