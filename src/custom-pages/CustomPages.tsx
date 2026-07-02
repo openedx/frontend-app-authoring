@@ -5,7 +5,6 @@ import {
   useNavigate,
   Link,
 } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -27,31 +26,27 @@ import Placeholder from '@src/editors/Placeholder';
 import DraggableList, { SortableItem } from '@src/generic/DraggableList';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '@src/data/constants';
-import { useModels } from '@src/generic/model-store';
 import getPageHeadTitle from '@src/generic/utils';
 import { getPagePath } from '@src/utils';
-import { DeprecatedReduxState } from '@src/store';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { getLoadingStatus, getSavingStatus } from './data/selectors';
 import {
-  addSingleCustomPage,
-  fetchCustomPages,
-  updatePageOrder,
-  updateSingleCustomPage,
-} from './data/thunks';
+  useCustomPages,
+  useAddCustomPage,
+  useReorderCustomPages,
+  useUpdateCustomPageName,
+  type CustomPage,
+} from './data/apiHooks';
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
 import CustomPageCard from './CustomPageCard';
 import messages from './messages';
-import CustomPagesProvider from './CustomPagesProvider';
 import EditModal from './EditModal';
 
 const CustomPages = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [orderedPages, setOrderedPages] = useState([]);
-  const [currentPage, setCurrentPage] = useState<any>();
+  const [orderedPages, setOrderedPages] = useState<CustomPage[]>([]);
+  const [currentPage, setCurrentPage] = useState<string | undefined>();
   const [isOpen, open, close] = useToggle(false);
   const { courseId, courseDetails } = useCourseAuthoringContext();
 
@@ -60,34 +55,36 @@ const CustomPages = () => {
   const config = getConfig();
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 
-  useEffect(() => {
-    dispatch(fetchCustomPages(courseId));
-  }, [courseId]);
+  const { data: pages, isLoading, error, isError } = useCustomPages(courseId);
+  const addPageMutation = useAddCustomPage(courseId);
+  const reorderMutation = useReorderCustomPages(courseId);
+  const updatePageName = useUpdateCustomPageName(courseId);
 
-  const customPagesIds = useSelector((state: DeprecatedReduxState) => state.customPages.customPagesIds);
-  const addPageStatus = useSelector((state: DeprecatedReduxState) => state.customPages.addingStatus);
-  const deletePageStatus = useSelector((state: DeprecatedReduxState) => state.customPages.deletingStatus);
-  const savingStatus = useSelector(getSavingStatus);
-  const loadingStatus = useSelector(getLoadingStatus);
-  const pages = useModels('customPages', customPagesIds);
+  const isDenied = isError && (error as any)?.response?.status === 403;
+  const isLoadError = isError && !isDenied;
+
+  useEffect(() => {
+    if (pages) {
+      setOrderedPages(pages);
+    }
+  }, [pages]);
 
   const handleAddPage = () => {
-    dispatch(addSingleCustomPage(courseId));
+    addPageMutation.mutate();
   };
-  const handleReorder = () => (newPageOrder) => {
-    dispatch(updatePageOrder(courseId, newPageOrder));
+
+  const handleReorder = () => (newPageOrder: CustomPage[]) => {
+    reorderMutation.mutate(newPageOrder);
   };
-  const handleEditClose = () => (content) => {
+
+  const handleEditClose = () => (content: any) => {
     navigate(`/course/${courseId}/custom-pages`);
     if (!content?.metadata) {
-      setCurrentPage(null);
+      setCurrentPage(undefined);
       return;
     }
-    dispatch(updateSingleCustomPage({
-      blockId: currentPage,
-      metadata: { displayName: content.metadata.display_name },
-      setCurrentPage,
-    }));
+    updatePageName.mutate({ blockId: currentPage!, displayName: content.metadata.display_name });
+    setCurrentPage(undefined);
   };
 
   const addPageStateProps = {
@@ -101,14 +98,12 @@ const CustomPages = () => {
     },
     disabledStates: ['pending'],
   };
-  useEffect(() => {
-    setOrderedPages(pages);
-  }, [customPagesIds, savingStatus]);
-  if (loadingStatus === RequestStatus.IN_PROGRESS) {
+
+  if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
-  if (loadingStatus === RequestStatus.DENIED) {
+  if (isDenied) {
     return (
       <div data-testid="under-construction-placeholder" className="row justify-content-center m-6">
         <Placeholder />
@@ -116,166 +111,160 @@ const CustomPages = () => {
     );
   }
   return (
-    <CustomPagesProvider courseId={courseId}>
-      <Container size="xl" className="p-4 pt-5">
-        <div className="small gray-700">
-          <Breadcrumb
-            ariaLabel="Custom Page breadcrumbs"
-            linkAs={Link}
-            links={[
-              {
-                label: 'Content',
-                to: `/course/${courseId}`,
-              },
-              { label: 'Pages and Resources', to: getPagePath(courseId, 'true', 'tabs') },
-            ]}
-          />
+    <Container size="xl" className="p-4 pt-5">
+      <div className="small gray-700">
+        <Breadcrumb
+          ariaLabel="Custom Page breadcrumbs"
+          linkAs={Link}
+          links={[
+            {
+              label: 'Content',
+              to: `/course/${courseId}`,
+            },
+            { label: 'Pages and Resources', to: getPagePath(courseId, 'true', 'tabs') },
+          ]}
+        />
+      </div>
+      <ActionRow>
+        <div className="h2">
+          <FormattedMessage {...messages.heading} />
         </div>
-        <ActionRow>
-          <div className="h2">
-            <FormattedMessage {...messages.heading} />
-          </div>
-          <ActionRow.Spacer />
-          <Button
-            iconBefore={Add}
-            onClick={handleAddPage}
-            data-testid="header-add-button"
-          >
-            <FormattedMessage {...messages.addPageHeaderLabel} />
+        <ActionRow.Spacer />
+        <Button
+          iconBefore={Add}
+          onClick={handleAddPage}
+          data-testid="header-add-button"
+        >
+          <FormattedMessage {...messages.addPageHeaderLabel} />
+        </Button>
+        <Hyperlink
+          destination={learningCourseURL}
+          target="_blank"
+          rel="noopener noreferrer"
+          showLaunchIcon={false}
+          data-testid="header-view-live-button"
+        >
+          <Button>
+            <FormattedMessage {...messages.viewLiveLabel} />
           </Button>
-          <Hyperlink
-            destination={learningCourseURL}
-            target="_blank"
-            rel="noopener noreferrer"
-            showLaunchIcon={false}
-            data-testid="header-view-live-button"
-          >
-            <Button>
-              <FormattedMessage {...messages.viewLiveLabel} />
-            </Button>
-          </Hyperlink>
-        </ActionRow>
-        <hr />
-        <Layout
-          lg={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          md={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          sm={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          xs={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          xl={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-        >
-          <Layout.Element>
-            <ErrorAlert hideHeading isError={deletePageStatus === RequestStatus.FAILED}>
-              {intl.formatMessage(messages.errorAlertMessage, { actionName: 'delete' })}
-            </ErrorAlert>
-            <ErrorAlert hideHeading isError={addPageStatus === RequestStatus.FAILED}>
-              {intl.formatMessage(messages.errorAlertMessage, { actionName: 'add' })}
-            </ErrorAlert>
-            <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
-              {intl.formatMessage(messages.errorAlertMessage, { actionName: 'save' })}
-            </ErrorAlert>
-            <div className="small gray-700 mb-4">
-              <FormattedMessage {...messages.note} />
-            </div>
-            <DraggableList itemList={orderedPages} setState={setOrderedPages} updateOrder={handleReorder}>
-              {orderedPages.map((page: any) => (
-                <SortableItem
-                  id={page.id}
-                  key={page.id}
-                  componentStyle={{
-                    background: 'white',
-                    borderRadius: '6px',
-                    padding: '24px',
-                    marginBottom: '16px',
-                    boxShadow: '0px 1px 5px #ADADAD',
-                  }}
-                  actions={
-                    <CustomPageCard
-                      {...{
-                        page,
-                        dispatch,
-                        deletePageStatus,
-                        courseId,
-                        setCurrentPage,
-                      }}
-                    />
-                  }
-                />
-              ))}
-            </DraggableList>
-            <StatefulButton
-              data-testid="body-add-button"
-              onClick={handleAddPage}
-              state={addPageStatus}
-              {...addPageStateProps}
-            />
-          </Layout.Element>
-          <Layout.Element>
-            <div className="h4">
-              <FormattedMessage {...messages.pageExplanationHeader} />
-            </div>
-            <div className="small gray-700">
-              <FormattedMessage {...messages.pageExplanationBody} />
-            </div>
-            <hr />
-            <div className="h4">
-              <FormattedMessage {...messages.customPagesExplanationHeader} />
-            </div>
-            <div className="small gray-700">
-              <FormattedMessage {...messages.customPagesExplanationBody} />
-            </div>
-            <hr />
-            <div className="h4">
-              <FormattedMessage {...messages.studentViewExplanationHeader} />
-            </div>
-            <div className="small gray-700">
-              <FormattedMessage {...messages.studentViewExplanationBody} />
-            </div>
-            <Button
-              data-testid="student-view-example-button"
-              variant="link"
-              size="sm"
-              onClick={open}
-              className="pl-0"
-            >
-              <FormattedMessage {...messages.studentViewExampleButton} />
-            </Button>
-          </Layout.Element>
-        </Layout>
-        <ModalDialog
-          isOpen={isOpen}
-          onClose={close}
-          size="lg"
-          title={intl.formatMessage(messages.studentViewModalTitle)}
-          isOverflowVisible={false}
-        >
-          <ModalDialog.Header>
-            <ModalDialog.Title>
-              <FormattedMessage {...messages.studentViewModalTitle} />
-            </ModalDialog.Title>
-          </ModalDialog.Header>
-          <ModalDialog.Body>
-            <Image src={previewLmsStaticPages} fluid className="mb-3" />
-            <div className="small">
-              <FormattedMessage {...messages.studentViewModalBody} />
-            </div>
-          </ModalDialog.Body>
-        </ModalDialog>
-        <Routes>
-          <Route
-            path="/editor"
-            element={currentPage && (
-              <PageWrap>
-                <EditModal
-                  courseId={courseId}
-                  pageId={currentPage}
-                  onClose={handleEditClose}
-                />
-              </PageWrap>
-            )}
+        </Hyperlink>
+      </ActionRow>
+      <hr />
+      <Layout
+        lg={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+        md={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+        sm={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+        xs={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+        xl={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+      >
+        <Layout.Element>
+          <ErrorAlert hideHeading isError={isLoadError}>
+            {intl.formatMessage(messages.errorAlertMessage, { actionName: 'load' })}
+          </ErrorAlert>
+          <ErrorAlert hideHeading isError={addPageMutation.isError}>
+            {intl.formatMessage(messages.errorAlertMessage, { actionName: 'add' })}
+          </ErrorAlert>
+          <ErrorAlert hideHeading isError={reorderMutation.isError}>
+            {intl.formatMessage(messages.errorAlertMessage, { actionName: 'save' })}
+          </ErrorAlert>
+          <div className="small gray-700 mb-4">
+            <FormattedMessage {...messages.note} />
+          </div>
+          <DraggableList itemList={orderedPages} setState={setOrderedPages} updateOrder={handleReorder}>
+            {orderedPages.map((page) => (
+              <SortableItem
+                id={page.id}
+                key={page.id}
+                componentStyle={{
+                  background: 'white',
+                  borderRadius: '6px',
+                  padding: '24px',
+                  marginBottom: '16px',
+                  boxShadow: '0px 1px 5px #ADADAD',
+                }}
+                actions={
+                  <CustomPageCard
+                    page={page}
+                    courseId={courseId}
+                    setCurrentPage={setCurrentPage}
+                  />
+                }
+              />
+            ))}
+          </DraggableList>
+          <StatefulButton
+            data-testid="body-add-button"
+            onClick={handleAddPage}
+            state={addPageMutation.isPending ? RequestStatus.PENDING : 'default'}
+            {...addPageStateProps}
           />
-        </Routes>
-      </Container>
-    </CustomPagesProvider>
+        </Layout.Element>
+        <Layout.Element>
+          <div className="h4">
+            <FormattedMessage {...messages.pageExplanationHeader} />
+          </div>
+          <div className="small gray-700">
+            <FormattedMessage {...messages.pageExplanationBody} />
+          </div>
+          <hr />
+          <div className="h4">
+            <FormattedMessage {...messages.customPagesExplanationHeader} />
+          </div>
+          <div className="small gray-700">
+            <FormattedMessage {...messages.customPagesExplanationBody} />
+          </div>
+          <hr />
+          <div className="h4">
+            <FormattedMessage {...messages.studentViewExplanationHeader} />
+          </div>
+          <div className="small gray-700">
+            <FormattedMessage {...messages.studentViewExplanationBody} />
+          </div>
+          <Button
+            data-testid="student-view-example-button"
+            variant="link"
+            size="sm"
+            onClick={open}
+            className="pl-0"
+          >
+            <FormattedMessage {...messages.studentViewExampleButton} />
+          </Button>
+        </Layout.Element>
+      </Layout>
+      <ModalDialog
+        isOpen={isOpen}
+        onClose={close}
+        size="lg"
+        title={intl.formatMessage(messages.studentViewModalTitle)}
+        isOverflowVisible={false}
+      >
+        <ModalDialog.Header>
+          <ModalDialog.Title>
+            <FormattedMessage {...messages.studentViewModalTitle} />
+          </ModalDialog.Title>
+        </ModalDialog.Header>
+        <ModalDialog.Body>
+          <Image src={previewLmsStaticPages} fluid className="mb-3" />
+          <div className="small">
+            <FormattedMessage {...messages.studentViewModalBody} />
+          </div>
+        </ModalDialog.Body>
+      </ModalDialog>
+      <Routes>
+        <Route
+          path="/editor"
+          element={currentPage && (
+            <PageWrap>
+              <EditModal
+                courseId={courseId}
+                pageId={currentPage}
+                onClose={handleEditClose}
+              />
+            </PageWrap>
+          )}
+        />
+      </Routes>
+    </Container>
   );
 };
 
