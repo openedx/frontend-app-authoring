@@ -29,7 +29,7 @@ jest.mock('react-router-dom', () => ({
 let capturedOnClose: ((...args: any[]) => any) | undefined;
 jest.mock('./EditModal', () => ({
   __esModule: true,
-  default: ({ onClose }: { onClose: (...args: any[]) => any }) => {
+  default: ({ onClose }: { onClose: (...args: any[]) => any; }) => {
     capturedOnClose = onClose;
     return <div data-testid="edit-modal-mock" />;
   },
